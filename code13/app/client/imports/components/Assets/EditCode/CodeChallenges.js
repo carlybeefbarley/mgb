@@ -11,6 +11,26 @@ import { StartCodeJsRoute } from '/client/imports/routes/Learn/LearnCodeJsRoute'
 
 import './editcode.css'
 
+// We expect SkillNodes for this scenario to contain the following:
+//  $meta.tests
+//  $meta.code
+//  $meta.description
+const _jsBasicsSkillsRootPath = 'code.js.basics'
+const _jsBasicsSkillsRootNode = SkillNodes.$meta.map[_jsBasicsSkillsRootPath]
+
+// This file is communicating with a test page hosted in an iFrame. 
+// The params related to it are in this structure for maintainability:
+const _runFrameConfig = {
+  srcUrl:     '/codeTests.html',         // In our git source, this is in app/public/
+  style:      { display: 'none', width: '10px', height: '10px' },
+  eventName:  'message',
+  codeTestsDataPrefix: 'codeTests'
+}
+
+const _hackDeferForFirstTestRunMs = 200
+const _openHelpChat = () => 
+  utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
+
 export default class CodeChallenges extends React.Component {
 
   static propTypes = {
@@ -22,9 +42,8 @@ export default class CodeChallenges extends React.Component {
 
   constructor(props) {
     super(props)
-    this.skillNode = this.getSkillNode(props.skillPath)
-    const skillArr = props.skillPath.split('.')
-    this.skillName = skillArr[skillArr.length-1]
+    this.skillNode = SkillNodes.$meta.map[props.skillPath]
+    this.skillName = _.last(_.split(props.skillPath, '.'))
     this.state = {
       results:                    [],       // Array of results we get back from the iFrame that runs the tests
       error:                      null,     // get back from iFrame if it has some syntax error
@@ -34,80 +53,54 @@ export default class CodeChallenges extends React.Component {
 
   componentDidMount() {
     this.getReference()
-    window.addEventListener("message", this.receiveMessage.bind(this), false)
-    setTimeout( () => this.runTests(), 200)   // for some reason tests (iframe, codeMirror) are not ready when component did mount
+    window.addEventListener(_runFrameConfig.eventName, this.receiveMessage, false)
+    // for some reason tests (iframe, codeMirror) are not ready when component did mount //!!!
+    setTimeout( () => this.runTests(), _hackDeferForFirstTestRunMs)   
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener(_runFrameConfig.eventName, this.receiveMessage, false)    
   }
 
   getReference() {
     this.iFrame = ReactDOM.findDOMNode(this.refs.iFrameTests)
   }
 
-  getSkillNode() {
-    let skillNodes = _.cloneDeep(SkillNodes)
-    const path = this.props.skillPath.split('.')
-    while (path.length > 0)
-      skillNodes = skillNodes[path.shift()]
-    return skillNodes
-  }
-
-  receiveMessage(e) {
-    if (e.data.prefix && e.data.prefix == 'codeTests') {
+  receiveMessage = e => {
+    if (e.data.prefix && e.data.prefix == _runFrameConfig.codeTestsDataPrefix) {
       this.setState({ results: e.data.results })
       this.setState({ error: e.data.error })
-      
-      let totalSuccess = true
-      e.data.results.map((result) => {
-        if (!result.success)
-          totalSuccess = false
-      })
-      if (totalSuccess)
+      if (_.every(e.data.results, 'success'))
         this.successPopup()
     }
   }
 
   successPopup() {
-    const skillPath = this.props.skillPath + '.' + this.skillName
-    // console.log('skill learned', skillPath)
     // TODO show notification for user
-    learnSkill( skillPath )
-
+    learnSkill( this.props.skillPath + '.' + this.skillName )
     this.setState( { showAllTestsCompletedModal: true } )
   }
 
-  runTests() {
-    const tests = this.skillNode.$meta.tests
+  runTests = () => {
     const message = {
-      code: this.props.codeMirror.getValue(),
-      tests: tests
+      code:  this.props.codeMirror.getValue(),
+      tests: this.skillNode.$meta.tests
     }
-
     this.iFrame.contentWindow.postMessage(message, "*")
   }
 
-  resetCode() {
+  resetCode = () => {
     const newCode = this.skillNode.$meta.code.join( '\n' )
     this.props.codeMirror.setValue(newCode)
   }
 
-  onpenHelpChat(){
-    utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
-  }
-
-  nextChallenge(){
-    const jsSkills = SkillNodes.code.js.basics
-    const skillsArr = []
-    for (let key in jsSkills) {
-      if (jsSkills.hasOwnProperty( key ) && key != '$meta')
-        skillsArr.push(key)
-    }
-
+  nextChallenge = () => {
+    const skillsArr = _.without(_.keys(_jsBasicsSkillsRootNode), '$meta')
     const idx = skillsArr.indexOf(this.skillName)
 
     if (idx < skillsArr.length-1) {
       const nextSkillName = skillsArr[idx+1]
-      const code = SkillNodes.code.js.basics[nextSkillName].$meta.code.join( '\n' )
-      // console.log(nextSkillName, code)
-
+      const code = _jsBasicsSkillsRootNode[nextSkillName].$meta.code.join( '\n' )
       this.setState( { showAllTestsCompletedModal: false } )
       StartCodeJsRoute(nextSkillName, code, this.props.currUser)
     } 
@@ -124,15 +117,9 @@ export default class CodeChallenges extends React.Component {
 
     return (
       <div className={"content " +(this.props.active ? "active" : "")}>
-        <Button size='small' color='green' onClick={this.runTests.bind(this)}>
-          <Icon name='play' /> Run tests
-        </Button>
-        <Button size='small' color='green' onClick={this.resetCode.bind(this)}>
-          <Icon name='refresh' /> Reset code
-        </Button>
-        <Button size='small' color='green' onClick={this.onpenHelpChat.bind(this)}>
-          <Icon name='help' /> Help
-        </Button>
+        <Button size='small' color='green' onClick={this.runTests} icon='play' content='Run tests' />
+        <Button size='small' color='green' onClick={this.resetCode} icon='refresh' content='Reset code' />
+        <Button size='small' color='green' onClick={_openHelpChat} icon='help' content='Help' />
 
         { this.state.error &&
           <Segment inverted color='red' size='mini' secondary>
@@ -183,13 +170,13 @@ export default class CodeChallenges extends React.Component {
           positioning='left center'
           inverted
           size='mini'
-          content='This Code Challenge uses FreeCodeCamp content. Click for details'/>
+          content='This Code Challenge is based on FreeCodeCamp content. Click for details'/>
 
         <iframe
-          style={{ display: "none", width: "10px", height: "10px" }}
+          style={_runFrameConfig.style}
           ref="iFrameTests"
           sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
-          src={makeCDNLink('/codeTests.html')}
+          src={makeCDNLink(_runFrameConfig.srcUrl)}
           frameBorder="0"
           id="mgbjr-EditCode-codeTests-iframe"
           >
@@ -211,7 +198,7 @@ export default class CodeChallenges extends React.Component {
                 <Button 
                     positive
                     content='Next challenge'
-                    onClick={this.nextChallenge.bind(this)} />
+                    onClick={this.nextChallenge} />
               </Modal.Actions>
             </Modal>
           )

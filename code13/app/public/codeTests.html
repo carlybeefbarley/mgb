@@ -38,7 +38,14 @@ let code, mgbData, mgbResults, mgbError
     }
 
     mgbData.tests.forEach((mgbTest) => {
-      eval(mgbTest)
+      try {
+        eval(mgbTest)
+      }
+      catch(err){
+        // console.log('errror', err)
+        // mgbError = err
+        assert(false, mgbTest.split('message: ')[1])
+      }
     })
   }
 

@@ -13,6 +13,39 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+    {
+      'timestamp': 'Mon Feb 27 2017 09:10 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3500'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'learn',
+          'type': 'bugfix',
+          'changeName': 'Coding Challenges in Tutorials',
+          'changeSummary': 'Bugfixes for some of the Code Challenges',
+          'otherUrls': [
+             { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' },
+             { txt: 'Example of viewing (hidden) assets created by Code Challenges', href: '/u/dgolds/assets?showChallengeAssets=1' }
+          ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Improved Resize, zoom, grid and checkerboard',
+          'changeSummary': 'Ui Tweaks for the Graphic Editor. Canvas resize is now an easier-to-use dialog (we will add image resize/scale soon). Grid can now be shown/hidden manually. Checkerboard background is off by default but can be enabled. ',
+          'otherUrls': [ ]
+        },
+      ]
+    },
 
     {
       'timestamp': 'Sat Feb 25 2017 09:10 GMT-0800 (PST)',
@@ -47,7 +80,6 @@ const mgbReleaseInfo = {
         },
       ]
     },
-
 
     {
       'timestamp': 'Thu Feb 23 2017 00:50 GMT-0800 (PST)',

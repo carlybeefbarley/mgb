@@ -27,7 +27,7 @@ let code, mgbData, mgbResults, mgbError
 /*
 * assert functionality
 */
-  var assert = function(mgbResult, mgbMessage){
+  const assert = function(mgbResult, mgbMessage){
     mgbResults.push({
       success: mgbResult ? true : false,
       message: mgbMessage
@@ -43,6 +43,33 @@ let code, mgbData, mgbResults, mgbError
 
   assert.isNaN = function(n, mgbMessage) {
     return assert(isNaN(n), mgbMessage)
+  }
+
+  assert.deepEqual = function(x, y, mgbMessage) {
+    return assert(deepEqual(x, y), mgbMessage)
+  }
+
+  const deepEqual = function (x, y) {
+    if ((typeof x == "object" && x != null) && (typeof y == "object" && y != null)) {
+      if (Object.keys(x).length != Object.keys(y).length)
+        return false;
+
+      for (var prop in x) {
+        if (y.hasOwnProperty(prop))
+        {  
+          if (! deepEqual(x[prop], y[prop]))
+            return false;
+        }
+        else
+          return false;
+      }
+
+      return true;
+    }
+    else if (x !== y)
+      return false;
+    else
+      return true;
   }
 
   function callback(mgbResults){

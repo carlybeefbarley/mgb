@@ -1787,7 +1787,35 @@ export default {
         "assert(nextInLine([2],1) === 2, 'message: <code>nextInLine([2], 1)</code> should return <code>2</code>');",
         "assert(nextInLine([5,6,7,8,9],1) === 5, 'message: <code>nextInLine([5,6,7,8,9], 1)</code> should return <code>5</code>');",
         "nextInLine(testArr, 10); assert(testArr[4] === 10, 'message: After <code>nextInLine(testArr, 10)</code>, <code>testArr[4]</code> should be <code>10</code>');"
+      ],
+      "head": [
+        "var logOutput = [];",
+        "var originalConsole = console",
+        "function capture() {",
+        "    var nativeLog = console.log;",
+        "    console.log = function (message) {",
+        "        logOutput.push(message);",
+        "        if(nativeLog.apply) {",
+        "          nativeLog.apply(originalConsole, arguments);",
+        "        } else {",
+        "          var nativeMsg = Array.prototype.slice.apply(arguments).join(' ');",
+        "          nativeLog(nativeMsg);",
+        "        }",
+        "    };",
+        "}",
+        "",
+        "function uncapture() {",
+        "  console.log = originalConsole.log;",
+        "}",
+        "",
+        "capture();"
+      ],
+      "tail": [
+        "uncapture();",
+        "testArr = [1,2,3,4,5];",
+        "(function() { return logOutput.join(\"\\n\");})();"
       ]
+
     },
     standInLine: C.En(0)
   },

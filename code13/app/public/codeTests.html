@@ -23,6 +23,39 @@
 window.addEventListener("message", receiveMessage, false)
 let code, mgbData, mgbResults, mgbError
 
+
+/*
+* assert functionality
+*/
+  var assert = function(mgbResult, mgbMessage){
+    mgbResults.push({
+      success: mgbResult ? true : false,
+      message: mgbMessage
+    })
+    if(mgbResults.length == mgbData.tests.length){
+      callback(mgbResults)
+    }
+  }
+
+  assert.isNumber = function(n, mgbMessage) {
+    return assert(!isNaN(parseFloat(n)) && isFinite(n), mgbMessage)
+  }
+
+  function callback(mgbResults){
+    const message = {
+      prefix: 'codeTests',
+      results: mgbResults,
+      error: mgbError
+    }
+    window.parent.postMessage(message, "*")
+    
+  }
+
+
+
+/*
+* receive user code and start testing
+*/
   function receiveMessage(mgbEvent)
   {
     mgbResults = []
@@ -58,6 +91,7 @@ let code, mgbData, mgbResults, mgbError
       }
     }
 
+
     // run tests. Note that some tests can have errors (because of user code)
     mgbData.tests.forEach((mgbTest) => {
       try {
@@ -71,26 +105,7 @@ let code, mgbData, mgbResults, mgbError
     })
   }
 
-
-  function assert(mgbResult, mgbMessage){
-    mgbResults.push({
-      success: mgbResult ? true : false,
-      message: mgbMessage
-    })
-    if(mgbResults.length == mgbData.tests.length){
-      callback(mgbResults)
-    }
-  }
-
-  function callback(mgbResults){
-    const message = {
-      prefix: 'codeTests',
-      results: mgbResults,
-      error: mgbError
-    }
-    window.parent.postMessage(message, "*")
-    
-  }
+  
 
 
 </script>

@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
-import { Grid, Header, Label, Popup, Button, Icon } from 'semantic-ui-react'
+import React from 'react'
+import { Grid, Header, Popup, Button, Icon } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import sty from  './editGraphic.css'
 import ReactColor from 'react-color'        // http://casesandberg.github.io/react-color/
@@ -12,9 +12,8 @@ import CanvasGrid from './CanvasGrid'
 
 import { snapshotActivity } from '/imports/schemas/activitySnapshots'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
-import NumberInput from '/client/imports/components/Controls/NumberInput'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-
+import ResizeImagePopup from './ResizeImagePopup'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
@@ -26,6 +25,7 @@ const MAX_GRAPHIC_FRAMES = 64 // TODO: Pass this into Importer, and also obey it
 const DEFAULT_GRAPHIC_WIDTH = 32
 const DEFAULT_GRAPHIC_HEIGHT = 32
 
+const MIN_ZOOM_FOR_GRIDLINES = 4
 
 //TODO put these in a settings object
 const settings_ignoreMouseLeave = true
@@ -51,11 +51,10 @@ const settings_ignoreMouseLeave = true
 let recentMarker = null  // See explanation above
 
 export default class EditGraphic extends React.Component {
-  // static PropTypes = {   // Note - static requires Ecmascript 7
-  //   asset: PropTypes.object,
-  //   handleContentChange: PropTypes.function,
-  //   canEdit: PropTypes.bool
-  // }
+  // See AssetEdit.js for propTypes. That wrapper just passes them to us
+
+  handleToggleGrid = () => this.setState( { showGrid: !this.state.showGrid} )
+  handleToggleCheckeredBg = () => this.setState( { showCheckeredBg: !this.state.showCheckeredBg} )
 
   constructor(props) {
     super(props)
@@ -69,6 +68,8 @@ export default class EditGraphic extends React.Component {
     this.state = {
       editScale:        this.getDefaultScale(),        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
+      showCheckeredBg:  false,
+      showGrid:         true,
       selectedLayerIdx: 0,
       selectedColors:   {
         // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
@@ -625,7 +626,7 @@ export default class EditGraphic extends React.Component {
     return tool
   }
 
-  zoomIn() {
+  zoomIn = () => {
     const i = this.zoomLevels.indexOf(this.state.editScale)
     if (i < this.zoomLevels.length-1) {
       recentMarker = null       // Since we now want to reload data for our new EditCanvas
@@ -633,7 +634,7 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  zoomOut() {
+  zoomOut = () => {
     const i = this.zoomLevels.indexOf(this.state.editScale)
     if (i > 0) {
       recentMarker = null       // Since we now want to reload data for our new EditCanvas
@@ -818,26 +819,22 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  handleResize(dw, dh, force = false)
-  {
-    if (!this.props.canEdit)
-    {
-      this.props.editDeniedReminder()
-      return
-    }
+  //
+  // CHANGE TILE WIDTH/HEIGHT
+  //
 
-    if (dw !== 0 || dh !== 0 || force === true)
-    {
-      this.doSaveStateForUndo(`Resize by (${dw}, ${dh}) `)
-      const c2 = this.props.asset.content2
-      c2.width = Math.min(c2.width+dw,   MAX_BITMAP_WIDTH)
-      c2.height = Math.min(c2.height+dh, MAX_BITMAP_HEIGHT)
-      this.handleSave(`Resize image`)      // Less spammy in activity log
-    }
+  handleImageResize = (newWidth, newHeight, scalingMode = 'None') => {
+    if (!this.hasPermission())
+      return
+      
+    const c2 = this.props.asset.content2
+    this.doSaveStateForUndo(`Resize from ${c2.width}x${c2.height} to ${newWidth}x${newHeight} using scaling mode '${scalingMode}`)
+    c2.width = newWidth
+    c2.height = newHeight
+    this.handleSave("Change canvas size")
   }
 
-
-  hasPermission() {
+  hasPermission = () => {
     if (!this.props.canEdit) {
       this.props.editDeniedReminder()
       return false
@@ -1250,10 +1247,8 @@ export default class EditGraphic extends React.Component {
         self.doSaveStateForUndo(`Drag+Drop Frame to Frame #`+idx.toString())
         if (idx === -2)     // Special case - MGB RESIZER CONTROL... So just resize to that imported image
         {
-          let c2 = self.props.asset.content2
-          c2.width = Math.min(img.width, MAX_BITMAP_WIDTH)
-          c2.height = Math.min(img.height, MAX_BITMAP_HEIGHT)
-          self.handleResize(0,0, true)
+          // Currently unreachable since I took this off of the resize control
+          self.handleImageResize(Math.min(img.width, MAX_BITMAP_WIDTH), Math.min(img.height, MAX_BITMAP_HEIGHT) )
         }
         else
         {
@@ -1292,10 +1287,7 @@ export default class EditGraphic extends React.Component {
         {
           var img = new Image
           img.onload = () => {
-            let c2 = self.props.asset.content2
-            c2.width = Math.min(img.width, MAX_BITMAP_WIDTH)
-            c2.height = Math.min(img.height, MAX_BITMAP_HEIGHT)
-            self.handleResize(0, 0, true)
+            self.handleImageResize(Math.min(img.width, MAX_BITMAP_WIDTH), Math.min(img.height, MAX_BITMAP_HEIGHT))
           }
           img.src = theUrl
         }
@@ -1345,7 +1337,7 @@ export default class EditGraphic extends React.Component {
 
 
   // This is passed to the <GraphicImport> Control so the tiles can be imported
-  importTileset(tileWidth, tileHeight, imgDataArr, thumbCanvas) {
+  importTileset = (tileWidth, tileHeight, imgDataArr, thumbCanvas) => {
     let c2 = this.props.asset.content2
     this.thumbCanvas = thumbCanvas
 
@@ -1369,33 +1361,6 @@ export default class EditGraphic extends React.Component {
     $(importPopup).modal('hide')
     this.setState({ editScale: this.getDefaultScale() })
   }
-
-
-  //
-  // CHANGE TILE WIDTH/HEIGHT
-  //
-
-  changeCanvasWidth(clampedVal) {
-    // The caller must have ensure clampedVal is an integer in range 1...MAX_BITMAP_WIDTH
-    const currWidth = this.props.asset.content2.width
-    if (currWidth !== clampedVal)
-    {
-      this.doSaveStateForUndo(`Change Graphic Width from ${currWidth} to ${clampedVal}`)
-      this.props.asset.content2.width = clampedVal
-      this.handleSave("Change canvas width")
-    }
-  }
-
-  changeCanvasHeight(clampedVal) {
-    const currHeight = this.props.asset.content2.height
-    if (currHeight !== clampedVal)
-    {
-      this.doSaveStateForUndo(`Change Graphic Height from ${currHeight} to ${clampedVal}`)
-      this.props.asset.content2.height = clampedVal
-      this.handleSave("Change canvas height")
-    }
-  }
-
 
   //
   // TOOLBAR
@@ -1508,13 +1473,13 @@ export default class EditGraphic extends React.Component {
     return { actions, config }
   }
 
-  setGrid(img) {
+  setGrid = (img) => {
     this.gridImg = img
   }
 
-  drawGrid(img) {
+  drawGrid() {
     const zoom = this.state.editScale
-    if (zoom >= 8 && this.gridImg){
+    if (zoom >= MIN_ZOOM_FOR_GRIDLINES && this.gridImg && this.state.showGrid) {
       const c2 = this.props.asset.content2
       for(let col=0; col<c2.width; col++){
         for(let row=0; row<c2.height; row++){
@@ -1548,78 +1513,92 @@ export default class EditGraphic extends React.Component {
       <Grid>
         {/***  Central Column is for Edit and other wide stuff  ***/}
 
-        <Grid.Column width='16' className='mgbEditGraphicSty_tagPosition'>
+        <Grid.Column width='16'>
           <div className="row" style={{marginBottom: "6px"}}>
 
-            <Popup
-              on='click'
-              positioning='right center'
+            <Popup 
+              on='hover'
+              positioning='bottom left'
               hoverable
               hideOnScroll
+              mouseEnterDelay={250}
               trigger={(
                 <Button
                   size='small'
                   id='mgbjr-EditGraphic-colorPicker'
+                  style={{ backgroundColor: this.state.selectedColors['fg'].hex }}
                   icon={{ name: 'block layout', style: { color: this.state.selectedColors['fg'].hex }}}
                 />
               )}
             >
-              <Header>Color Picker (1..9)</Header>
-              <ReactColor type="sketch"
-                          onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
-                          color={this.state.selectedColors['fg'].rgb}
+              <Header>Color Picker</Header>
+              <ReactColor 
+                  type="sketch"
+                  onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
+                  color={this.state.selectedColors['fg'].rgb}
               />
             </Popup>
 
-            <div className="ui small labeled input">
-              <Label size='small' content='w:'/>
-              <NumberInput
-                className="ui small input"
-                min={1}
-                max={MAX_BITMAP_WIDTH}
-                style={{width: "6em"}}
-                value={c2.width}
-                onFinalChange={(num) => {this.changeCanvasWidth(num)} }
-                />
-            </div>
+            <ResizeImagePopup 
+                initialWidth={c2.width} 
+                initialHeight={c2.height}
+                maxWidth={MAX_BITMAP_WIDTH}
+                maxheight={MAX_BITMAP_HEIGHT}
+                scalingOptions={['None']}
+                handleResize={this.handleImageResize} />
 
-            <span>&nbsp;&nbsp;</span>
-            <div className="ui small labeled input" id="mgbjr-editGraphic-changeHeightInput">
-              <Label size='small' content='h:'/>
-              <NumberInput
-                className="ui small input"
-                min={1}
-                max={MAX_BITMAP_HEIGHT}
-                style={{width: "6em"}}
-                value={c2.height}
-                onFinalChange={(num) => {this.changeCanvasHeight(num)} }
-                />
-            </div>
-
-            <span>&nbsp;&nbsp;</span>
-
-            <Popup trigger={ (
-              <div size='small' className='miniPadding ui button' id="mgbjr-editGraphic-changeCanvasZoom">
-                <span style={{"cursor": "pointer"}} onClick={this.zoomOut.bind(this)}>
-                  <Icon name='zoom out'/>
-                </span>
-                {zoom}x
-                <span>&nbsp;&nbsp;</span>
-                <span style={{"cursor": "pointer"}} onClick={this.zoomIn.bind(this)}>
-                  <Icon name='zoom in'/>
-                </span>
-              </div>)}
+            <Popup 
+                trigger={ (
+                  <Button size='small' id="mgbjr-editGraphic-changeCanvasZoom">
+                    <span style={{ cursor: 'pointer' }} onClick={this.zoomOut}>
+                      <Icon name='zoom out'/>
+                    </span>
+                    {zoom}x
+                    <span>&nbsp;&nbsp;</span>
+                    <span style={{ cursor: 'pointer' }} onClick={this.zoomIn}>
+                      <Icon name='zoom in'/>
+                    </span>
+                  </Button>
+                )}
                 on='hover'
+                header='Zoom'
+                mouseEnterDelay={250}
                 content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
                 size='tiny'
-                positioning='bottom center'/>
+                positioning='bottom left'/>
 
-            <span>&nbsp;&nbsp;</span>
+
+            <Popup 
+                trigger={ (
+                  <Button size='small' id="mgbjr-editGraphic-changeCanvasZoom">
+                    Grid&nbsp;
+                    <span style={{ cursor: 'pointer' }} onClick={this.handleToggleGrid}>
+                      <Icon name='grid layout' color={this.state.showGrid ? null : 'grey'}/>
+                    </span>
+                    <span>&nbsp;</span>
+                    <span style={{ cursor: 'pointer' }} onClick={this.handleToggleCheckeredBg}>
+                      <Icon name='clone' color={this.state.showCheckeredBg ? null : 'grey'}/>
+                    </span>
+                  </Button>
+                )}
+                on='hover'
+                mouseEnterDelay={250}
+                header='Grid Options'
+                content={(
+                  <div>
+                    <p>Show/Hide Gridlines (at Zoom >= {MIN_ZOOM_FOR_GRIDLINES}x)</p>
+                    <p>Show/Hide background transparency checkerboard helper'</p>
+                  </div>
+                  )}
+                size='tiny'
+                positioning='bottom left'/>
+
             <Popup
               trigger={<Button size='small' icon='spinner' content={`Frame #${1+this.state.selectedFrameIdx} of ${c2.frameNames.length}`}/>}
-               content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
-               size='small'
-               positioning='bottom center'/>
+              content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
+              size='small'
+              mouseEnterDelay={250}
+              positioning='bottom left'/>
             </div>
           <Grid.Row style={{marginBottom: "6px"}}>
             {<Toolbar actions={actions} config={config} name="EditGraphic" />}
@@ -1651,7 +1630,9 @@ export default class EditGraphic extends React.Component {
                         style={imgEditorSty}
                         width={zoom * c2.width}
                         height={zoom * c2.height}
-                        className={"mgbEditGraphicSty_checkeredBackground mgbEditGraphicSty_thinBorder mgbEditGraphicSty_atZeroZero"}
+                        className={(
+                          (this.state.showCheckeredBg ? 'mgbEditGraphicSty_checkeredBackground' : '')
+                          + ' mgbEditGraphicSty_thinBorder')}
                         id="mgb_edit_graphic_main_canvas"
                         onDragOver={this.handleDragOverPreview.bind(this)}
                         onDrop={this.handleDropPreview.bind(this,-1)}>
@@ -1659,7 +1640,7 @@ export default class EditGraphic extends React.Component {
               {/*** <canvas id="tilesetCanvas"></canvas> ***/}
               <CanvasGrid
                 scale={this.state.editScale}
-                setGrid={this.setGrid.bind(this)}
+                setGrid={this.setGrid}
               />
             </div>
           </Grid.Row>
@@ -1692,7 +1673,7 @@ export default class EditGraphic extends React.Component {
         <div className="ui modal" ref="graphicImportPopup">
           <GraphicImport
             EditGraphic={this}
-            importTileset={this.importTileset.bind(this)}
+            importTileset={this.importTileset}
             maxTileWidth={MAX_BITMAP_WIDTH}
             maxTileHeight={MAX_BITMAP_WIDTH}
           />
@@ -1704,7 +1685,7 @@ export default class EditGraphic extends React.Component {
             content2={c2}
             EditGraphic={this}
 
-            hasPermission={this.hasPermission.bind(this)}
+            hasPermission={this.hasPermission}
             handleSave={this.handleSave.bind(this)}
             forceDraw={this.forceDraw.bind(this)}
             forceUpdate={this.forceUpdate.bind(this)}

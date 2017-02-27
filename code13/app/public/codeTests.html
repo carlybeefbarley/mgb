@@ -41,6 +41,10 @@ let code, mgbData, mgbResults, mgbError
     return assert(!isNaN(parseFloat(n)) && isFinite(n), mgbMessage)
   }
 
+  assert.isNaN = function(n, mgbMessage) {
+    return assert(isNaN(n), mgbMessage)
+  }
+
   function callback(mgbResults){
     const message = {
       prefix: 'codeTests',

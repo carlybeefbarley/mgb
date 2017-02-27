@@ -420,8 +420,7 @@ export default {
       solutions: [],
       tests: [
         "assert(quotient === 2.2, 'message: The variable <code>quotient</code> should equal <code>2.2</code>');",
-        "assert(/4\\.40*\\s*\\/\\s*2\\.*0*/.test(code), 'message: You should use the <code>/</code> operator to divide 4.4 by 2');",
-        "assert(code.match(/quotient/g) && code.match(/quotient/g).length === 3, 'message: The quotient variable should only be assigned once');"
+        "assert(/4\\.40*\\s*\\/\\s*2\\.*0*/.test(code), 'message: You should use the <code>/</code> operator to divide 4.4 by 2');"
       ]
     },
     divideDecimal: C.En(0)

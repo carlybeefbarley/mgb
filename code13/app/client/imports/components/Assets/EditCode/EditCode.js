@@ -1295,8 +1295,9 @@ export default class EditCode extends React.Component {
   componentDidUpdate() {
     this.cm_updateActivityMarkers()
     this.updateDocName()
+      const asset = this.props.asset
     // enable auto bundle by default
-    if(this.props.asset.content2.needsBundle === void(0)){
+    if(asset.content2.needsBundle === void(0)){
       // disable code bundling for challenges
       if(!asset.skillPath){
         this.toggleBundling()

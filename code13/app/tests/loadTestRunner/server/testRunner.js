@@ -1,14 +1,22 @@
-const EventEmitter = require('events').EventEmitter
+// const EventEmitter = require('events').EventEmitter
 const spawn = require('child_process').spawn
 
 const startBrowser = require('../../procedures/startBrowser')
 const Mocha = require('mocha')
 const Reporter = require('../../reporters/benchmark')
 
-class TestRunner extends EventEmitter {
+class TestRunner {
 
   start(name, port = 4000){
-    const phantom = spawn('phantomjs', ["--webdriver="+port], {
+    const tmpPath = Date.now() + Math.random()
+
+    const phantom = spawn('phantomjs', [
+      '--webdriver=' + port,
+      '--local-storage-path=/tmp/' + tmpPath,
+      '--offline-storage-path=' + tmpPath,
+      '--cookies-file='+tmpPath+'/cookies'
+      //'--debug=true'
+    ], {
       env: {QT_QPA_PLATFORM: "", PATH: process.env.PATH}
     })
     const start = () => {
@@ -23,7 +31,7 @@ class TestRunner extends EventEmitter {
     phantom.stdout.once('data', start)
 
     phantom.stdout.on('data', data => {
-      //console.log(`phantom: ${data}`)
+      // console.log(`phantom: ${data}`)
     })
     phantom.on('exit', () => {
       console.log("Phantom exit")
@@ -35,7 +43,7 @@ class TestRunner extends EventEmitter {
     const mocha = new Mocha({
       timeout: 30000
     })
-    const testFileName = __dirname + '/../../loadTests/' + name + '.js'
+    const testFileName = __dirname + '/../loadTests/' + name + '.js'
     global.browser = startBrowser('local.phantom', {server: 'http://127.0.0.1:'+port})
     mocha.addFile(testFileName)
 

@@ -10,8 +10,11 @@ const createBrowser = function(browserName, options){
 
   browser.get(caps.url).then(() => {
     // clear localStorage - log out user in Meteor
-    browser.executeScript('window.localStorage.clear();')
-    browser.manage().window().maximize()
+    browser.executeScript('window.localStorage.clear(); window.location.reload();')
+    // browser.manage().window().maximize()
+    // most common based on wikipedia 1366x768
+    browser.manage().window().setSize(1366, 768)
+    //browser.navigate().refresh()
   })
 
 

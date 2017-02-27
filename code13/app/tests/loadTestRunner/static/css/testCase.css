@@ -1,0 +1,18 @@
+.testCase {
+  border-bottom: solid 1px;
+}
+
+.testCase span{
+  display: inline-block;
+  padding: 2px 10px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+
+.testCase .test {
+  padding-left: 35px;
+}
+.testCase .test span {
+  font-size: 0.95em
+}

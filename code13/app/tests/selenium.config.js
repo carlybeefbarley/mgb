@@ -14,7 +14,7 @@ module.exports = {
     // if this is filled - only those tests will be tested
     //only: ["code.update.test.js"],
     only: [
-      // "login.test.js",
+      "login.test.js",
       // "adjust.settings.test.js"
       // "code.bundler.test.js",
       // "code.mentor.test.js",
@@ -22,7 +22,7 @@ module.exports = {
       // "graphic.test.js",
       // "map.simple.test.js"
       // "code.load.import.test.cases.js"
-      "loadPage.test.js"
+      // "loadPage.test.js"
     ],
     // add here some tests to skip
     skip: ["login.test.js"] // skip login test as other tests logs in user anyway

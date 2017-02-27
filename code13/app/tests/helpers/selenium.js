@@ -74,7 +74,7 @@ module.exports = (browser) => {
     },
 
     wait(timeout, message){
-      browser.wait(new Promise((y, n) => {
+      return browser.wait(new Promise((y, n) => {
         setTimeout(y, timeout)
       }), timeout, message)
     },

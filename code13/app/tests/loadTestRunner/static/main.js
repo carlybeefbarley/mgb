@@ -17,7 +17,7 @@ const sendMessage = (action, data) => {
   ws.send(JSON.stringify({action, data}))
 }
 
-require(['widgets/gauge.js'], () => {
+require(['widgets/gauge.js', 'widgets/testCase.js'], () => {
   const statMeter = new Gauge()
   const loadMeter = new Gauge("blue", "white")
 
@@ -31,9 +31,12 @@ require(['widgets/gauge.js'], () => {
       // console.log("status:", data.loadAvg)
     },
     runnerStarted: data => {
+      const testCase = new TestCase(data)
       console.log("Runner started:", data)
     },
     runnerCompleted: data => {
+      const testCase = TestCase.find(data.id)
+      testCase.update(data)
       console.log("Runner completed:", data, data.tests[0])
     }
   }
@@ -41,10 +44,13 @@ require(['widgets/gauge.js'], () => {
 
   // hot reload
   ws.addEventListener('close', () => {
-    const bws = new WebSocket('ws://' + window.location.host)
-    bws.onopen = () => {
-      window.location.reload()
-    }
+    window.setInterval(() => {
+      const bws = new WebSocket('ws://' + window.location.host)
+      bws.onopen = () => {
+        window.location.reload()
+      }
+    }, 1000)
+
   })
 
   ws.addEventListener('message', msgStr => {

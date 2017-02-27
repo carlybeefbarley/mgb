@@ -28,7 +28,7 @@ module.exports = (browser) => {
     // wait for React root element
     sel.css("#root")
     // wait a little bit
-    sel.wait(1000)
+    sel.wait(500)
     // already logged in ?
     sel.exists(buttons.avatar, (e, found) => {
       if (found) {
@@ -56,7 +56,7 @@ module.exports = (browser) => {
           sel.takeScreenShot('scr/NOTLoggedIn.png')
           throw(e)
         }
-        sel.wait(1000)
+        sel.wait(500)
         sel.takeScreenShot('scr/LoggedIn.png')
         sel.done(done)
       })

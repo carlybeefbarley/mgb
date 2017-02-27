@@ -1297,7 +1297,10 @@ export default class EditCode extends React.Component {
     this.updateDocName()
     // enable auto bundle by default
     if(this.props.asset.content2.needsBundle === void(0)){
-      this.toggleBundling()
+      // disable code bundling for challenges
+      if(!asset.skillPath){
+        this.toggleBundling()
+      }
     }
   }
 
@@ -2209,7 +2212,7 @@ export default class EditCode extends React.Component {
 
               {/* TODO need to implement asset.skillPath to reference tutorial with this asset */}
               { !docEmpty && asset.kind === 'code' && asset.skillPath &&
-                <div className={"title " + (asset.skillPath ? "active" : "")}  
+                <div className={"title " + (asset.skillPath ? "active" : "")}
                 id="mgbjr-EditCode-codeChallenges">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />Code Challenges
@@ -2225,7 +2228,7 @@ export default class EditCode extends React.Component {
                   currUser={ this.props.currUser }
                   userSkills={ this.userSkills }
                 />
-              }              
+              }
 
               { !docEmpty && asset.kind === 'code' &&
                 // Current Line/Selection helper (header)

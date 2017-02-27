@@ -10,12 +10,9 @@ module.exports = (getBrowser, path) => {
     it("PageLoaded?", function(done){
       const sel = SeleniumHelper(browser)
       sel.css("#root")
-      sel.done(done)
+      sel.takeScreenShot(Date.now() + '', () => {
+        sel.done(done)
+      })
     })
   })
-}
-
-if(global.browser) {
-  console.log("Running test directly")
-  module.exports(() => global.browser, '../')
 }

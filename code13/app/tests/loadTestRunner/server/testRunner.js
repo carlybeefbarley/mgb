@@ -23,7 +23,7 @@ class TestRunner extends EventEmitter {
     phantom.stdout.once('data', start)
 
     phantom.stdout.on('data', data => {
-      console.log(`phantom: ${data}`)
+      //console.log(`phantom: ${data}`)
     })
     phantom.on('exit', () => {
       console.log("Phantom exit")
@@ -31,11 +31,11 @@ class TestRunner extends EventEmitter {
   }
 
   runTest(name, phantom, port){
-    console.log("running test: "+name)
+    // console.log("running test: "+name)
     const mocha = new Mocha({
       timeout: 30000
     })
-    const testFileName = __dirname + '/../../tests/' + name + '.test.js'
+    const testFileName = __dirname + '/../../loadTests/' + name + '.js'
     global.browser = startBrowser('local.phantom', {server: 'http://127.0.0.1:'+port})
     mocha.addFile(testFileName)
 

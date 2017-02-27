@@ -8,7 +8,7 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 const mgb_slack_eng__webhookUrl_mgb_community = "https://hooks.slack.com/services/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"
 
 const DISABLE_SLACK_NOTIFICATIONS = false
-const MUTE_ASSET_AND_PROJECT_CREATE_FOR_SPECIAL_USERS = 'tester,stauzs,dgolds,Bouhm,guntis'.split(',')
+const MUTE_ASSET_AND_PROJECT_CREATE_FOR_SPECIAL_USERS = 'tester,stauzs,dgolds,Bouhm,guntis,SuperAdmin'.split(',')
 
 function slackGenericNotify(slackWebhookUrl, data) {
 

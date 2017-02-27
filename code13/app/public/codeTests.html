@@ -29,7 +29,8 @@ let code, mgbData, mgbResults, mgbError
     mgbError = null
     mgbData = mgbEvent.data
     code = mgbData.code
-
+    
+    // eval user code and save error message if is present
     try {
       eval(code)
     }
@@ -37,6 +38,18 @@ let code, mgbData, mgbResults, mgbError
       mgbError = err.message
     }
 
+    // eval additional functions for more complex tasks
+    if(mgbData.tail){
+      try {
+        console.log('eval tail')
+        eval(mgbData.tail)
+      }
+      catch(err) {
+        console.log('Tail error', err)
+      }
+    }
+
+    // run tests. Note that some tests can have errors (because of user code)
     mgbData.tests.forEach((mgbTest) => {
       try {
         eval(mgbTest)

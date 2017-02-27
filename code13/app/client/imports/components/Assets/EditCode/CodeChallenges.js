@@ -87,8 +87,9 @@ export default class CodeChallenges extends React.Component {
 
   runTests = () => {
     const message = {
-      code:  this.props.codeMirror.getValue(),
-      tests: this.skillNode.$meta.tests
+      code:   this.props.codeMirror.getValue(),
+      tests:  this.skillNode.$meta.tests,
+      tail:   this.skillNode.$meta.tail.join( '\n' )
     }
     this.iFrame.contentWindow.postMessage(message, "*")
   }

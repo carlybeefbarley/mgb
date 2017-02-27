@@ -124,7 +124,7 @@ export default class CodeChallenges extends React.Component {
     const { showAllTestsCompletedModal } = this.state
 
     return (
-      <div className={"content " +(this.props.active ? "active" : "")}>
+      <div id="codeChallenges" className={"content " +(this.props.active ? "active" : "")}>
         <Button size='small' color='green' onClick={this.runTests} icon='play' content='Run tests' />
         <Button size='small' color='green' onClick={this.resetCode} icon='refresh' content='Reset code' />
         <Button size='small' color='green' onClick={_openHelpChat} icon='help' content='Help' />

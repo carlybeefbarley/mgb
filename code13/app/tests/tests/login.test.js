@@ -11,3 +11,8 @@ module.exports = (getBrowser, path) => {
     })
   })
 }
+
+if(global.browser) {
+  console.log("Running test directly")
+  module.exports(() => global.browser, '../')
+}

@@ -62,6 +62,9 @@ export default {
       solutions: ["var myName;"],
       tests: [
         "assert(/var\\s+myName\\s*;/.test(code), 'message: You should declare <code>myName</code> with the <code>var</code> keyword, ending with a semicolon');"
+      ],
+      "tail": [
+        "if(typeof myName !== \"undefined\"){(function(v){return v;})(myName);}"
       ]
     },
     variables: C.En(0)
@@ -97,6 +100,17 @@ export default {
         "assert(typeof a === 'number' && a === 7, 'message: <code>a</code> should have a value of 7');",
         "assert(typeof b === 'number' && b === 7, 'message: <code>b</code> should have a value of 7');",
         "assert(/b\\s*=\\s*a\\s*;/g.test(code), 'message: <code>a</code> should be assigned to <code>b</code> with <code>=</code>');"
+      ],
+      "head": [
+        "if (typeof a != 'undefined') {",
+        "  a = undefined;",
+        "}",
+        "if (typeof b != 'undefined') {",
+        "  b = undefined;",
+        "}"
+      ],
+      "tail": [
+        "(function(a,b){return \"a = \" + a + \", b = \" + b;})(a,b);"
       ]
     },
     assignmentOperator: C.En(0)
@@ -123,6 +137,9 @@ export default {
       solutions: ["var a = 9;"],
       tests: [
         "assert(/var\\s+a\\s*=\\s*9\\s*/.test(code), 'message: Initialize <code>a</code> to a value of <code>9</code>');"
+      ],
+      "tail": [
+        "if(typeof a !== 'undefined') {(function(a){return \"a = \" + a;})(a);} else { (function() {return 'a is undefined';})(); }"
       ]
     },
     initVariables: C.En(0)
@@ -158,6 +175,9 @@ export default {
         "assert(typeof b === 'number' && b === 15, 'message: <code>b</code> should be defined and have a value of <code>15</code>');",
         'assert(!/undefined/.test(c) && c === "I am a String!", \'message: <code>c</code> should not contain <code>undefined</code> and should have a value of "I am a String!"\');',
         "assert(/a = a \\+ 1;/.test(code) && /b = b \\+ 5;/.test(code) && /c = c \\+ \" String!\";/.test(code), 'message: Do not change code below the line');"
+      ],
+      "tail": [
+        "(function(a,b,c){ return \"a = \" + a + \", b = \" + b + \", c = '\" + c + \"'\"; })(a,b,c);"
       ]
     },
     unitializedVariables: C.En(0)
@@ -221,6 +241,9 @@ export default {
       tests: [
         "assert(sum === 20, 'message: <code>sum</code> should equal <code>20</code>');",
         "assert(/\\+/.test(code), 'message: Use the <code>+</code> operator');"
+      ],
+      "tail": [
+        "(function(z){return 'sum = '+z;})(sum);"
       ]
     },
     sumNumbers: C.En(0)
@@ -246,6 +269,9 @@ export default {
         "assert(difference === 12, 'message: Make the variable <code>difference</code> equal 12.');",
         "assert((code).match(/difference/g).length === 1,'message: Only change the first line');",
         "assert(/\\d+\\s*-\\s*\\d+/.test(code),'message: Use the <code>-</code> operator');"
+      ],
+      "tail": [
+        "(function(z){return 'difference = '+z;})(difference);"
       ]
     },
     subtractNumbers: C.En(0)
@@ -270,6 +296,9 @@ export default {
       tests: [
         "assert(product === 80,'message: Make the variable <code>product</code> equal 80');",
         "assert(/\\*/.test(code), 'message: Use the <code>*</code> operator');"
+      ],
+      "tail": [
+        "(function(z){return 'product = '+z;})(product);"
       ]
     },
     multiplyNumbers: C.En(0)
@@ -294,6 +323,9 @@ export default {
       tests: [
         "assert(quotient === 2, 'message: Make the variable <code>quotient</code> equal to 2.');",
         "assert(/\\d+\\s*\\/\\s*\\d+/.test(code), 'message: Use the <code>/</code> operator');"
+      ],
+      "tail": [
+        "(function(z){return 'quotient = '+z;})(quotient);"
       ]
     },
     divideNumbers: C.En(0)
@@ -326,6 +358,9 @@ export default {
         "assert(/myVar\\s*\\=.*myVar/.test(code) === false, 'message: <code>myVar = myVar + 1;</code> should be changed');",
         "assert(/[+]{2}\\s*myVar|myVar\\s*[+]{2}/.test(code), 'message: Use the <code>++</code> operator');",
         "assert(/var myVar = 87;/.test(code), 'message: Do not change code above the line');"
+      ],
+      "tail": [
+        "(function(z){return 'myVar = ' + z;})(myVar);"
       ]
     },
     incrementNumbers: C.En(0)
@@ -356,6 +391,9 @@ export default {
         "assert(myVar === 10, 'message: <code>myVar</code> should equal <code>10</code>');",
         "assert(/[-]{2}\\s*myVar|myVar\\s*[-]{2}/.test(code), 'message: Use the <code>--</code> operator on <code>myVar</code>');",
         "assert(/var myVar = 11;/.test(code), 'message: Do not change code above the line');"
+      ],
+      "tail": [
+        "(function(z){return 'myVar = ' + z;})(myVar);"
       ]
     },
     decrementNumbers: C.En(0)
@@ -382,6 +420,9 @@ export default {
       tests: [
         "assert(typeof myDecimal === \"number\", 'message: <code>myDecimal</code> should be a number.');",
         "assert(myDecimal % 1 != 0, 'message: <code>myDecimal</code> should have a decimal point'); "
+      ],
+      "tail": [
+        "(function(){if(typeof myDecimal !== \"undefined\"){return myDecimal;}})();"
       ]
     },
     createDecimal: C.En(0)
@@ -402,6 +443,9 @@ export default {
       tests: [
         "assert(product === 5.0, 'message: The variable <code>product</code> should equal <code>5.0</code>.');",
         "assert(/\\*/.test(code), 'message: You should use the <code>*</code> operator');"
+      ],
+      "tail": [
+        "(function(y){return 'product = '+y;})(product);"
       ]
     },
     multiplyDecimal: C.En(0)
@@ -421,6 +465,9 @@ export default {
       tests: [
         "assert(quotient === 2.2, 'message: The variable <code>quotient</code> should equal <code>2.2</code>');",
         "assert(/4\\.40*\\s*\\/\\s*2\\.*0*/.test(code), 'message: You should use the <code>/</code> operator to divide 4.4 by 2');"
+      ],
+      "tail": [
+        "(function(y){return 'quotient = '+y;})(quotient);"
       ]
     },
     divideDecimal: C.En(0)
@@ -446,6 +493,9 @@ export default {
         "assert(/var\\s+?remainder/.test(code), 'message: The variable <code>remainder</code> should be initialized');",
         "assert(remainder === 2, 'message: The value of <code>remainder</code> should be <code>2</code>');",
         "assert(/\\s+?remainder\\s*?=\\s*?.*%.*;/.test(code), 'message: You should use the <code>%</code> operator');"
+      ],
+      "tail": [
+        "(function(y){return 'remainder = '+y;})(remainder);"
       ]
     },
     findingRemainder: C.En(0)
@@ -485,6 +535,9 @@ export default {
         "assert(c === 19, 'message: <code>c</code> should equal <code>19</code>');",
         "assert(code.match(/\\+=/g) && code.match(/\\+=/g).length === 3, 'message: You should use the <code>+=</code> operator for each variable');",
         "assert(/var a = 3;/.test(code) && /var b = 17;/.test(code) && /var c = 12;/.test(code), 'message: Do not modify the code above the line');"
+      ],
+      "tail": [
+        "(function(a,b,c){ return \"a = \" + a + \", b = \" + b + \", c = \" + c; })(a,b,c);"
       ]
     },
     assignmentWithAddition: C.En(0)
@@ -524,6 +577,9 @@ export default {
         "assert(c === 2, 'message: <code>c</code> should equal <code>2</code>');",
         "assert(code.match(/-=/g) && code.match(/-=/g).length === 3, 'message: You should use the <code>-=</code> operator for each variable');",
         "assert(/var a = 11;/.test(code) && /var b = 9;/.test(code) && /var c = 3;/.test(code), 'message: Do not modify the code above the line');"
+      ],
+      "tail": [
+        "(function(a,b,c){ return \"a = \" + a + \", b = \" + b + \", c = \" + c; })(a,b,c);"
       ]
     },
     assignmentWithSubtraction: C.En(0)
@@ -563,6 +619,9 @@ export default {
         "assert(c === 46, 'message: <code>c</code> should equal <code>46</code>');",
         "assert(code.match(/\\*=/g) && code.match(/\\*=/g).length === 3, 'message: You should use the <code>*=</code> operator for each variable');",
         "assert(/var a = 5;/.test(code) && /var b = 12;/.test(code) && /var c = 4\\.6;/.test(code), 'message: Do not modify the code above the line');"
+      ],
+      "tail": [
+        "(function(a,b,c){ return \"a = \" + a + \", b = \" + b + \", c = \" + c; })(a,b,c);"
       ]
     },
     assignmentWithMultiplication: C.En(0)
@@ -601,6 +660,9 @@ export default {
         "assert(c === 3, 'message: <code>c</code> should equal <code>3</code>');",
         "assert(code.match(/\\/=/g) && code.match(/\\/=/g).length === 3, 'message: You should use the <code>/=</code> operator for each variable');",
         "assert(/var a = 48;/.test(code) && /var b = 108;/.test(code) && /var c = 33;/.test(code), 'message: Do not modify the code above the line');"
+      ],
+      "tail": [
+        "(function(a,b,c){ return \"a = \" + a + \", b = \" + b + \", c = \" + c; })(a,b,c);"
       ]
     },
     assignmentWithDivision: C.En(0)
@@ -630,6 +692,9 @@ export default {
       tests: [
         'assert((function(){if(typeof myFirstName !== "undefined" && typeof myFirstName === "string" && myFirstName.length > 0){return true;}else{return false;}})(), \'message: <code>myFirstName</code> should be a string with at least one character in it.\');',
         'assert((function(){if(typeof myLastName !== "undefined" && typeof myLastName === "string" && myLastName.length > 0){return true;}else{return false;}})(), \'message: <code>myLastName</code> should be a string with at least one character in it.\');'
+      ],
+      "tail": [
+        "if(typeof myFirstName !== \"undefined\" && typeof myLastName !== \"undefined\"){(function(){return myFirstName + ', ' + myLastName;})();}"
       ]
     },
     declareString: C.En(0)
@@ -652,8 +717,17 @@ export default {
       code: ['var myStr = ""; // Change this line', "", ""],
       solutions: [],
       tests: [
-        "assert(code.match(/\\\\\"/g).length === 6 && code.match(/[^\\\\]\"/g).length === 10, 'message: You should use two double quotes (<code>&quot;</code>) and four escaped double quotes (<code>&#92;&quot;</code>).');",
+        "assert(code.match(/\\\\\"/g).length >= 4 && code.match(/\"/g).length >= 6, 'message: You should use two double quotes (<code>&quot;</code>) and four escaped double quotes (<code>&#92;&quot;</code>).');",
         'assert(myStr == "I am a \\"double quoted\\" string inside \\"double quotes\\".", \'message: Variable myStr should contain the string: <code>I am a "double quoted" string inside "double quotes".</code>\');'
+      ],
+      "tail": [
+        "(function(){",
+        "  if(typeof myStr === 'string') {",
+        "    console.log(\"myStr = \\\"\" + myStr + \"\\\"\");",
+        "  } else {",
+        "    console.log(\"myStr is undefined\");",
+        "  }",
+        "})();"
       ]
     },
     escapingQoutesString: C.En(0)
@@ -683,6 +757,9 @@ export default {
       tests: [
         "assert(!/\\\\/g.test(code) && myStr === '<a href=\"http://www.example.com\" target=\"_blank\">Link</a>', 'message: Remove all the <code>backslashes</code> (<code>\\</code>)');",
         "assert(code.match(/\"/g).length === 6 && code.match(/'/g).length === 4, 'message: You should have two single quotes <code>&#39;</code> and four double quotes <code>&quot;</code>');"
+      ],
+      "tail": [
+        "(function() { return \"myStr = \" + myStr; })();"
       ]
     },
     qoutingWithSingleQoutes: C.En(0)
@@ -712,6 +789,11 @@ export default {
         "assert(/\\n\\t/.test(myStr), 'message: <code>myStr</code> should contain a tab character <code>\\t</code> which follows a newline character');",
         "assert(/\\SecondLine/.test(myStr), 'message: <code>SecondLine</code> should be preceded by the backslash character <code>\\\\</code>');",
         "assert(/SecondLine\\nThirdLine/.test(myStr), 'message: There should be a newline character between <code>SecondLine</code> and <code>ThirdLine</code>');"
+      ],
+      "tail": [
+        "(function(){",
+        "if (myStr !== undefined){",
+        "console.log('myStr:\\n' + myStr);}})();"
       ]
     },
     escapeSequences: C.En(0)
@@ -747,6 +829,15 @@ export default {
         "assert(code.match(/([\"']).*([\"'])\\s*\\+\\s*([\"']).*([\"'])/g) && code.match(/([\"']).*([\"'])\\s*\\+\\s*([\"']).*([\"'])/g).length > 1, 'message: Use the <code>+</code> operator to build <code>myStr</code>');",
         "assert(/var\\s+myStr/.test(code), 'message: <code>myStr</code> should be created using the <code>var</code> keyword.');",
         "assert(/myStr\\s*=/.test(code), 'message: Make sure to assign the result to the <code>myStr</code> variable.');"
+      ],
+      "tail": [
+        "(function(){",
+        "  if(typeof myStr === 'string') {",
+        "    return 'myStr = \"' + myStr + '\"';",
+        "  } else {",
+        "    return 'myStr is not a string';",
+        "  }",
+        "})();"
       ]
     },
     concatenatingStringPlus: C.En(0)
@@ -779,6 +870,15 @@ export default {
       tests: [
         "assert(myStr === \"This is the first sentence. This is the second sentence.\", 'message: <code>myStr</code> should have a value of <code>This is the first sentence. This is the second sentence.</code>');",
         "assert(code.match(/\\w\\s*\\+=\\s*[\"']/g).length > 1 && code.match(/\\w\\s*\\=\\s*[\"']/g).length > 1, 'message: Use the <code>+=</code> operator to build <code>myStr</code>');"
+      ],
+      "tail": [
+        "(function(){",
+        "  if(typeof myStr === 'string') {",
+        "    return 'myStr = \"' + myStr + '\"';",
+        "  } else {",
+        "    return 'myStr is not a string';",
+        "  }",
+        "})();"
       ]
     },
     concatenatingStringPlusEquals: C.En(0)
@@ -810,6 +910,22 @@ export default {
       tests: [
         "assert(typeof myName !== 'undefined' && myName.length > 2, 'message: <code>myName</code> should be set to a string at least 3 characters long');",
         "assert(code.match(/[\"']\\s*\\+\\s*myName\\s*\\+\\s*[\"']/g).length > 0, 'message: Use two <code>+</code> operators to build <code>myStr</code> with <code>myName</code> inside it');"
+      ],
+      "tail": [
+        "(function(){",
+        "  var output = [];",
+        "  if(typeof myName === 'string') {",
+        "    output.push('myName = \"' + myName + '\"');",
+        "  } else {",
+        "    output.push('myName is not a string');",
+        "  }",
+        "  if(typeof myStr === 'string') {",
+        "    output.push('myStr = \"' + myStr + '\"');",
+        "  } else {",
+        "    output.push('myStr is not a string');",
+        "  }",
+        "  return output.join('\\n');",
+        "})();"
       ]
     },
     constructingStringVariables: C.En(0)
@@ -842,6 +958,22 @@ export default {
       tests: [
         "assert(typeof someAdjective !== 'undefined' && someAdjective.length > 2, 'message: <code>someAdjective</code> should be set to a string at least 3 characters long');",
         "assert(code.match(/myStr\\s*\\+=\\s*someAdjective\\s*/).length > 0, 'message: Append <code>someAdjective</code> to <code>myStr</code> using the <code>+=</code> operator');"
+      ],
+      "tail": [
+        "(function(){",
+        "  var output = [];",
+        "  if(typeof someAdjective === 'string') {",
+        "    output.push('someAdjective = \"' + someAdjective + '\"');",
+        "  } else {",
+        "    output.push('someAdjective is not a string');",
+        "  }",
+        "  if(typeof myStr === 'string') {",
+        "    output.push('myStr = \"' + myStr + '\"');",
+        "  } else {",
+        "    output.push('myStr is not a string');",
+        "  }",
+        "  return output.join('\\n');",
+        "})();"
       ]
     },
     appendingStringToVariable: C.En(0)
@@ -881,6 +1013,9 @@ export default {
       tests: [
         'assert((function(){if(typeof lastNameLength !== "undefined" && typeof lastNameLength === "number" && lastNameLength === 8){return true;}else{return false;}})(), \'message: <code>lastNameLength</code> should be equal to eight.\');',
         "assert((function(){if(code.match(/\\.length/gi) && code.match(/\\.length/gi).length >= 2 && code.match(/var lastNameLength \\= 0;/gi) && code.match(/var lastNameLength \\= 0;/gi).length >= 1){return true;}else{return false;}})(), 'message: You should be getting the length of <code>lastName</code> by using <code>.length</code> like this: <code>lastName.length</code>.');"
+      ],
+      "tail": [
+        "if(typeof lastNameLength !== \"undefined\"){(function(){return lastNameLength;})();}"
       ]
     },
     stringLength: C.En(0)
@@ -920,6 +1055,9 @@ export default {
       tests: [
         "assert(firstLetterOfLastName === 'L', 'message: The <code>firstLetterOfLastName</code> variable should have the value of <code>L</code>.');",
         "assert(code.match(/firstLetterOfLastName\\s*?=\\s*?lastName\\[.*?\\]/), 'message: You should use bracket notation.');"
+      ],
+      "tail": [
+        "(function(v){return v;})(firstLetterOfLastName);"
       ]
     },
     findFirstCharacterBrackets: C.En(0)
@@ -952,6 +1090,9 @@ export default {
       tests: [
         "assert(myStr === \"Hello World\", 'message: <code>myStr</code> should have a value of <code>Hello World</code>');",
         "assert(/myStr = \"Jello World\"/.test(code), 'message: Do not change the code above the line');"
+      ],
+      "tail": [
+        "(function(v){return \"myStr = \" + v;})(myStr);"
       ]
     },
     stringImmutability: C.En(0)
@@ -987,6 +1128,9 @@ export default {
       tests: [
         "assert(thirdLetterOfLastName === 'v', 'message: The <code>thirdLetterOfLastName</code> variable should have the value of <code>v</code>.');",
         "assert(code.match(/thirdLetterOfLastName\\s*?=\\s*?lastName\\[.*?\\]/), 'message: You should use bracket notation.');"
+      ],
+      "tail": [
+        "(function(v){return v;})(thirdLetterOfLastName);"
       ]
     },
     findNthCharacterBrackets: C.En(0)
@@ -1022,6 +1166,9 @@ export default {
       tests: [
         'assert(lastLetterOfLastName === "e", \'message: <code>lastLetterOfLastName</code> should be "e".\');',
         "assert(code.match(/\\.length/g) && code.match(/\\.length/g).length === 2, 'message: You have to use <code>.length</code> to get the last letter.');"
+      ],
+      "tail": [
+        "(function(v){return v;})(lastLetterOfLastName);"
       ]
     },
     stringLastCharacter: C.En(0)
@@ -1057,6 +1204,9 @@ export default {
       tests: [
         "assert(secondToLastLetterOfLastName === 'c', 'message: <code>secondToLastLetterOfLastName</code> should be \"c\".');",
         "assert(code.match(/\\.length/g) && code.match(/\\.length/g).length === 2, 'message: You have to use <code>.length</code> to get the second last letter.');"
+      ],
+      "tail": [
+        "(function(v){return v;})(secondToLastLetterOfLastName);"
       ]
     },
     stringFindNthToLast: C.En(0)
@@ -1093,6 +1243,10 @@ export default {
         'assert(typeof wordBlanks("","","","") === \'string\', \'message: <code>wordBlanks("","","","")</code> should return a string.\');',
         'assert(/\\bdog\\b/.test(test1) && /\\bbig\\b/.test(test1) && /\\bran\\b/.test(test1) && /\\bquickly\\b/.test(test1),\'message: <code>wordBlanks("dog", "big", "ran", "quickly")</code> should contain all of the passed in words separated by non-word characters (and any additional words in your madlib).\');',
         'assert(/\\bcat\\b/.test(test2) && /\\blittle\\b/.test(test2) && /\\bhit\\b/.test(test2) && /\\bslowly\\b/.test(test2),\'message: <code>wordBlanks("cat", "little", "hit", "slowly")</code> should contain all of the passed in words separated by non-word characters (and any additional words in your madlib).\');'
+      ],
+      "tail": [
+        "var test1 = wordBlanks(\"dog\", \"big\", \"ran\", \"quickly\");",
+        "var test2 = wordBlanks(\"cat\", \"little\", \"hit\", \"slowly\");"
       ]
     },
     wordBlanks: C.En(0)
@@ -1123,6 +1277,9 @@ export default {
         "assert(typeof myArray == 'object', 'message: <code>myArray</code> should be an <code>array</code>.');",
         "assert(typeof myArray[0] !== 'undefined' && typeof myArray[0] == 'string', 'message: The first item in <code>myArray</code> should be a <code>string</code>.');",
         "assert(typeof myArray[1] !== 'undefined' && typeof myArray[1] == 'number', 'message: The second item in <code>myArray</code> should be a <code>number</code>.');"
+      ],
+      "tail": [
+        "(function(z){return z;})(myArray);"
       ]
     },
     arrayVariable: C.En(0)
@@ -1148,6 +1305,9 @@ export default {
       solutions: ["var myArray = [[1,2,3]];"],
       tests: [
         "assert(Array.isArray(myArray) && myArray.some(Array.isArray), 'message: <code>myArray</code> should have at least one array nested within another array.');"
+      ],
+      "tail": [
+        "if(typeof myArray !== \"undefined\"){(function(){return myArray;})();}"
       ]
     },
     nestArrays: C.En(0)
@@ -1181,6 +1341,9 @@ export default {
       tests: [
         "assert((function(){if(typeof myArray !== 'undefined' && typeof myData !== 'undefined' && myArray[0] === myData){return true;}else{return false;}})(), 'message: The variable <code>myData</code> should equal the first value of <code>myArray</code>.');",
         "assert((function(){if(code.match(/\\s*=\\s*myArray\\[0\\]/g)){return true;}else{return false;}})(), 'message: The data in variable <code>myArray</code> should be accessed using bracket notation.');"
+      ],
+      "tail": [
+        "if(typeof myArray !== \"undefined\" && typeof myData !== \"undefined\"){(function(y,z){return 'myArray = ' + JSON.stringify(y) + ', myData = ' + JSON.stringify(z);})(myArray, myData);}"
       ]
     },
     arrayIndexes: C.En(0)
@@ -1214,6 +1377,9 @@ export default {
       tests: [
         "assert((function(){if(typeof myArray != 'undefined' && myArray[0] == 3 && myArray[1] == 2 && myArray[2] == 3){return true;}else{return false;}})(), 'message: <code>myArray</code> should now be [3,2,3].');",
         "assert((function(){if(code.match(/myArray\\[0\\]\\s*=\\s*/g)){return true;}else{return false;}})(), 'message: You should be using correct index to modify the value in <code>myArray</code>.');"
+      ],
+      "tail": [
+        "if(typeof myArray !== \"undefined\"){(function(){return myArray;})();}"
       ]
     },
     modifyArray: C.En(0)
@@ -1245,6 +1411,9 @@ export default {
       tests: [
         "assert(myData === 8, 'message: <code>myData</code> should be equal to <code>8</code>.');",
         "assert(/myArray\\[2\\]\\[1\\]/g.test(code) && !/myData\\s*=\\s*(?:.*[-+*/%]|\\d)/g.test(code), 'message: You should be using bracket notation to read the correct value from <code>myArray</code>.');"
+      ],
+      "tail": [
+        "if(typeof myArray !== \"undefined\"){(function(){return \"myData: \" + myData + \" myArray: \" + JSON.stringify(myArray);})();}"
       ]
     },
     multiDimensionalArray: C.En(0)
@@ -1279,6 +1448,9 @@ export default {
       ],
       tests: [
         "assert((function(d){if(d[2] != undefined && d[0][0] == 'John' && d[0][1] === 23 && d[2][0] == 'dog' && d[2][1] === 3 && d[2].length == 2){return true;}else{return false;}})(myArray), 'message: <code>myArray</code> should now equal <code>[[\"John\", 23], [\"cat\", 2], [\"dog\", 3]]</code>.');"
+      ],
+      "tail": [
+        "(function(z){return 'myArray = ' + JSON.stringify(z);})(myArray);"
       ]
     },
     arrayPush: C.En(0)
@@ -1317,6 +1489,9 @@ export default {
         "assert((function(d){if(d[0][0] == 'John' && d[0][1] === 23 && d[1] == undefined){return true;}else{return false;}})(myArray), 'message: <code>myArray</code> should only contain <code>[[\"John\", 23]]</code>.');",
         "assert(/removedFromMyArray\\s*=\\s*myArray\\s*.\\s*pop\\s*(\\s*)/.test(code), 'message: Use <code>pop()</code> on <code>myArray</code>');",
         "assert((function(d){if(d[0] == 'cat' && d[1] === 2 && d[2] == undefined){return true;}else{return false;}})(removedFromMyArray), 'message: <code>removedFromMyArray</code> should only contain <code>[\"cat\", 2]</code>.');"
+      ],
+      "tail": [
+        "(function(y, z){return 'myArray = ' + JSON.stringify(y) + ' & removedFromMyArray = ' + JSON.stringify(z);})(myArray, removedFromMyArray);"
       ]
     },
     arrayPop: C.En(0)
@@ -1352,6 +1527,9 @@ export default {
       tests: [
         "assert((function(d){if(d[0][0] == 'dog' && d[0][1] === 3 && d[1] == undefined){return true;}else{return false;}})(myArray), 'message: <code>myArray</code> should now equal <code>[[\"dog\", 3]]</code>.');",
         "assert((function(d){if(d[0] == 'John' && d[1] === 23 && typeof removedFromMyArray === 'object'){return true;}else{return false;}})(removedFromMyArray), 'message: <code>removedFromMyArray</code> should contain <code>[\"John\", 23]</code>.');"
+      ],
+      "tail": [
+        "(function(y, z){return 'myArray = ' + JSON.stringify(y) + ' & removedFromMyArray = ' + JSON.stringify(z);})(myArray, removedFromMyArray);"
       ]
     },
     arrayShift: C.En(0)
@@ -1387,6 +1565,9 @@ export default {
       ],
       tests: [
         "assert((function(d){if(typeof d[0] === \"object\" && d[0][0] == 'Paul' && d[0][1] === 35 && d[1][0] != undefined && d[1][0] == 'dog' && d[1][1] != undefined && d[1][1] == 3){return true;}else{return false;}})(myArray), 'message: <code>myArray</code> should now have [[\"Paul\", 35], [\"dog\", 3]].');"
+      ],
+      "tail": [
+        "(function(y, z){return 'myArray = ' + JSON.stringify(y);})(myArray);"
       ]
     },
     arrayUnshift: C.En(0)
@@ -1476,6 +1657,37 @@ export default {
         "assert(typeof reusableFunction === 'function', 'message: <code>reusableFunction</code> should be a function');",
         'assert("Hi World" === logOutput, \'message: <code>reusableFunction</code> should output "Hi World" to the dev console\');',
         "assert(/^\\s*reusableFunction\\(\\)\\s*;/m.test(code), 'message: Call <code>reusableFunction</code> after you define it');"
+      ],
+      "head": [
+        "var logOutput = \"\";",
+        "var originalConsole = console",
+        "function capture() {",
+        "    var nativeLog = console.log;",
+        "    console.log = function (message) {",
+        "        if(message && message.trim) logOutput = message.trim();",
+        "        if(nativeLog.apply) {",
+        "          nativeLog.apply(originalConsole, arguments);",
+        "        } else {",
+        "          var nativeMsg = Array.prototype.slice.apply(arguments).join(' ');",
+        "          nativeLog(nativeMsg);",
+        "        }",
+        "    };",
+        "}",
+        "",
+        "function uncapture() {",
+        "  console.log = originalConsole.log;",
+        "}",
+        "",
+        "capture();"
+      ],
+      "tail": [
+        "uncapture();",
+        "",
+        "if (typeof reusableFunction !== \"function\") { ",
+        "  (function() { return \"reusableFunction is not defined\"; })();",
+        "} else {",
+        "  (function() { return logOutput || \"console.log never called\"; })();",
+        "}"
       ]
     },
     reusableArrays: C.En(0)
@@ -1514,6 +1726,28 @@ export default {
         "if(typeof functionWithArgs === \"function\") { capture(); functionWithArgs(1,2); uncapture(); } assert(logOutput == 3, 'message: <code>functionWithArgs(1,2)</code> should output <code>3</code>');",
         "if(typeof functionWithArgs === \"function\") { capture(); functionWithArgs(7,9); uncapture(); } assert(logOutput == 16, 'message: <code>functionWithArgs(7,9)</code> should output <code>16</code>');",
         "assert(/^\\s*functionWithArgs\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)\\s*;/m.test(code), 'message: Call <code>functionWithArgs</code> with two numbers after you define it.');"
+      ],
+      "head": [
+        "var logOutput = \"\";",
+        "var originalConsole = console",
+        "function capture() {",
+        "    var nativeLog = console.log;",
+        "    console.log = function (message) {",
+        "        if(message) logOutput = JSON.stringify(message).trim();",
+        "        if(nativeLog.apply) {",
+        "          nativeLog.apply(originalConsole, arguments);",
+        "        } else {",
+        "          var nativeMsg = Array.prototype.slice.apply(arguments).join(' ');",
+        "          nativeLog(nativeMsg);",
+        "        }",
+        "    };",
+        "}",
+        "",
+        "function uncapture() {",
+        "  console.log = originalConsole.log;",
+        "}",
+        "",
+        "capture();"
       ],
       "head": [
         "var logOutput = \"\";",
@@ -1591,6 +1825,34 @@ export default {
         "assert(/var\\s+myGlobal/.test(code), 'message: <code>myGlobal</code> should be declared using the <code>var</code> keyword');",
         "assert(typeof oopsGlobal != \"undefined\" && oopsGlobal === 5, 'message: <code>oopsGlobal</code> should have a value of <code>5</code>');",
         "assert(!/var\\s+oopsGlobal/.test(code), 'message: Do not declare <code>oopsGlobal</code> using the <code>var</code> keyword');"
+      ],
+      "head": [
+        "var logOutput = \"\";",
+        "var originalConsole = console",
+        "function capture() {",
+        "    var nativeLog = console.log;",
+        "    console.log = function (message) {",
+        "        logOutput = message;",
+        "        if(nativeLog.apply) {",
+        "          nativeLog.apply(originalConsole, arguments);",
+        "        } else {",
+        "          var nativeMsg = Array.prototype.slice.apply(arguments).join(' ');",
+        "          nativeLog(nativeMsg);",
+        "        }",
+        "    };",
+        "}",
+        "",
+        "function uncapture() {",
+        "  console.log = originalConsole.log;",
+        "}",
+        "var oopsGlobal;",
+        "capture();"
+      ],
+      "tail": [
+        "fun1();",
+        "fun2();",
+        "uncapture();",
+        "(function() { return logOutput || \"console.log never called\"; })();"
       ]
     },
     globalScope: C.En(0)
@@ -1630,6 +1892,31 @@ export default {
       tests: [
         "assert(typeof myVar === 'undefined', 'message: No global <code>myVar</code> variable');",
         "assert(/var\\s+myVar/.test(code), 'message: Add a local <code>myVar</code> variable');"
+      ],
+      "head": [
+        "var logOutput = \"\";",
+        "var originalConsole = console",
+        "function capture() {",
+        "  var nativeLog = console.log;",
+        "  console.log = function (message) {",
+        "    logOutput = message;",
+        "    if(nativeLog.apply) {",
+        "      nativeLog.apply(originalConsole, arguments);",
+        "    } else {",
+        "      var nativeMsg = Array.prototype.slice.apply(arguments).join(' ');",
+        "      nativeLog(nativeMsg);",
+        "    }",
+        "  };",
+        "}",
+        "",
+        "function uncapture() {",
+        "  console.log = originalConsole.log;",
+        "}",
+        ""
+      ],
+      "tail": [
+        "typeof myLocalScope === 'function' && (capture(), myLocalScope(), uncapture());",
+        "(function() { return logOutput || \"console.log never called\"; })();"
       ]
     },
     localScope: C.En(0)
@@ -1704,7 +1991,8 @@ export default {
         "assert(timesFive(5) === 25, 'message: <code>timesFive(5)</code> should return <code>25</code>');",
         "assert(timesFive(2) === 10, 'message: <code>timesFive(2)</code> should return <code>10</code>');",
         "assert(timesFive(0) === 0, 'message: <code>timesFive(0)</code> should return <code>0</code>');"
-      ]
+      ],
+      "tail": []
     },
     returnValue: C.En(0)
   },
@@ -1748,6 +2036,9 @@ export default {
       tests: [
         "assert(processed === 2, 'message: <code>processed</code> should have a value of <code>2</code>');",
         "assert(/processed\\s*=\\s*processArg\\(\\s*7\\s*\\)\\s*;/.test(code), 'message: You should assign <code>processArg</code> to <code>processed</code>');"
+      ],
+      "tail": [
+        "(function(){return \"processed = \" + processed})();"
       ]
     },
     assignmentReturnedValue: C.En(0)
@@ -1846,6 +2137,9 @@ export default {
       tests: [
         "assert(typeof welcomeToBooleans() === 'boolean', 'message: The <code>welcomeToBooleans()</code> function should return a boolean &#40;true/false&#41; value.');",
         "assert(welcomeToBooleans() === true, 'message: <code>welcomeToBooleans()</code> should return true.');"
+      ],
+      "tail": [
+        "welcomeToBooleans();"
       ]
     },
     booleans: C.En(0)
@@ -2776,6 +3070,9 @@ export default {
         "assert(isLess(10,15) === true, 'message: <code>isLess(10,15)</code> should return <code>true</code>');",
         "assert(isLess(15, 10) === false, 'message: <code>isLess(15,10)</code> should return <code>false</code>');",
         "assert(!/if|else/g.test(code), 'message: You should not use any <code>if</code> or <code>else</code> statements');"
+      ],
+      "tail": [
+        ""
       ]
     },
     returnBoolean: C.En(0)
@@ -2819,6 +3116,9 @@ export default {
         "assert(abTest(2,-2) === undefined , 'message: <code>abTest(2,-2)</code> should return <code>undefined</code>');",
         "assert(abTest(2,8) === 18 , 'message: <code>abTest(2,8)</code> should return <code>18</code>');",
         "assert(abTest(3,3) === 12 , 'message: <code>abTest(3,3)</code> should return <code>12</code>');"
+      ],
+      "tail": [
+        ""
       ]
     },
     returnPattern: C.En(0)
@@ -2908,6 +3208,9 @@ export default {
         'assert((function(z){if(z.hasOwnProperty("tails") && z.tails !== undefined && typeof z.tails === "number"){return true;}else{return false;}})(myDog), \'message: <code>myDog</code> should contain the property <code>tails</code> and it should be a <code>number</code>.\');',
         "assert((function(z){if(z.hasOwnProperty(\"friends\") && z.friends !== undefined && Array.isArray(z.friends)){return true;}else{return false;}})(myDog), 'message: <code>myDog</code> should contain the property <code>friends</code> and it should be an <code>array</code>.');",
         "assert((function(z){return Object.keys(z).length === 4;})(myDog), 'message: <code>myDog</code> should only contain all the given properties.');"
+      ],
+      "tail": [
+        "(function(z){return z;})(myDog);"
       ]
     },
     objects: C.En(0)
@@ -2947,6 +3250,9 @@ export default {
         "assert(typeof shirtValue === 'string' , 'message: <code>shirtValue</code> should be a string');",
         "assert(shirtValue === 'jersey' , 'message: The value of <code>shirtValue</code> should be <code>\"jersey\"</code>');",
         "assert(code.match(/testObj\\.\\w+/g) && code.match(/testObj\\.\\w+/g).length > 1, 'message: You should use dot notation twice');"
+      ],
+      "tail": [
+        "(function(a,b) { return \"hatValue = '\" + a + \"', shirtValue = '\" + b + \"'\"; })(hatValue,shirtValue);"
       ]
     },
     objectsPropertiesDot: C.En(0)
@@ -2986,6 +3292,9 @@ export default {
         "assert(typeof drinkValue === 'string' , 'message: <code>drinkValue</code> should be a string');",
         "assert(drinkValue === 'water' , 'message: The value of <code>drinkValue</code> should be <code>\"water\"</code>');",
         "assert(code.match(/testObj\\s*?\\[('|\")[^'\"]+\\1\\]/g) && code.match(/testObj\\s*?\\[('|\")[^'\"]+\\1\\]/g).length > 1, 'message: You should use bracket notation twice');"
+      ],
+      "tail": [
+        "(function(a,b) { return \"entreeValue = '\" + a + \"', drinkValue = '\" + b + \"'\"; })(entreeValue,drinkValue);"
       ]
     },
     objectsPropertiesBrackets: C.En(0)
@@ -3027,6 +3336,9 @@ export default {
         "assert(player === 'Montana', 'message: The value of <code>player</code> should be \"Montana\"');",
         "assert(/testObj\\s*?\\[.*?\\]/.test(code),'message: You should use bracket notation to access <code>testObj</code>');",
         "assert(/testObj\\s*?\\[\\s*playerNumber\\s*\\]/.test(code),'message: You should be using the variable <code>playerNumber</code> in your bracket notation');"
+      ],
+      "tail": [
+        "if(typeof player !== \"undefined\"){(function(v){return v;})(player);}"
       ]
     },
     objectsPropertiesVariables: C.En(0)
@@ -3076,6 +3388,9 @@ export default {
       tests: [
         'assert(/happy coder/gi.test(myDog.name), \'message: Update <code>myDog</code>&apos;s <code>"name"</code> property to equal "Happy Coder".\');',
         'assert(/"name": "Coder"/.test(code), \'message: Do not edit the <code>myDog</code> definition\');'
+      ],
+      "tail": [
+        "(function(z){return z;})(myDog);"
       ]
     },
     updatingProperties: C.En(0)
@@ -3123,6 +3438,9 @@ export default {
       tests: [
         "assert(myDog.bark !== undefined, 'message: Add the property <code>\"bark\"</code> to <code>myDog</code>.');",
         "assert(!/bark[^\\n]:/.test(code), 'message: Do not add <code>\"bark\"</code> to the setup section');"
+      ],
+      "tail": [
+        "(function(z){return z;})(myDog);"
       ]
     },
     newProperty: C.En(0)
@@ -3169,6 +3487,9 @@ export default {
       tests: [
         'assert(typeof myDog === "object" && myDog.tails === undefined, \'message: Delete the property <code>"tails"</code> from <code>myDog</code>.\');',
         "assert(code.match(/\"tails\": 1/g) && code.match(/\"tails\": 1/g).length > 1, 'message: Do not modify the <code>myDog</code> setup');"
+      ],
+      "tail": [
+        "(function(z){return z;})(myDog);"
       ]
     },
     deleteProperties: C.En(0)
@@ -3271,6 +3592,9 @@ export default {
         'assert(checkObj("gift") === "pony", \'message: <code>checkObj("gift")</code> should return  <code>"pony"</code>.\');',
         'assert(checkObj("pet") === "kitten", \'message: <code>checkObj("pet")</code> should return  <code>"kitten"</code>.\');',
         'assert(checkObj("house") === "Not Found", \'message: <code>checkObj("house")</code> should return  <code>"Not Found"</code>.\');'
+      ],
+      "tail": [
+        ""
       ]
     },
     testingObjects: C.En(0)
@@ -3322,6 +3646,9 @@ export default {
         "assert(myMusic[1].hasOwnProperty('release_year') && typeof myMusic[1].release_year === 'number', 'message: <code>myMusic[1]</code> should contain a <code>release_year</code> property which is a number');",
         "assert(myMusic[1].hasOwnProperty('formats') && Array.isArray(myMusic[1].formats), 'message: <code>myMusic[1]</code> should contain a <code>formats</code> property which is an array');",
         "assert(myMusic[1].formats.every(function(item) { return (typeof item === \"string\")}) && myMusic[1].formats.length > 1, 'message: <code>formats</code> should be an array of strings with at least two elements');"
+      ],
+      "tail": [
+        "(function(x){ if (Array.isArray(x)) { return JSON.stringify(x); } return \"myMusic is not an array\"})(myMusic);"
       ]
     },
     complexObjects: C.En(0)
@@ -3363,6 +3690,14 @@ export default {
       tests: [
         'assert(gloveBoxContents === "maps", \'message: <code>gloveBoxContents</code> should equal "maps"\');',
         "assert(/=\\s*myStorage\\.car\\.inside\\[\\s*(\"|')glove box\\1\\s*\\]/g.test(code), 'message: Use dot and bracket notation to access <code>myStorage</code>');"
+      ],
+      "tail": [
+        "(function(x) { ",
+        "  if(typeof x != 'undefined') { ",
+        "    return \"gloveBoxContents = \" + x;",
+        "  }",
+        "  return \"gloveBoxContents is undefined\";",
+        "})(gloveBoxContents);"
       ]
     },
     nestedObjects: C.En(0)
@@ -3411,6 +3746,14 @@ export default {
       tests: [
         'assert(secondTree === "pine", \'message: <code>secondTree</code> should equal "pine"\');',
         "assert(/=\\s*myPlants\\[1\\].list\\[1\\]/.test(code), 'message: Use dot and bracket notation to access <code>myPlants</code>');"
+      ],
+      "tail": [
+        "(function(x) { ",
+        "  if(typeof x != 'undefined') { ",
+        "    return \"secondTree = \" + x;",
+        "  }",
+        "  return \"secondTree is undefined\";",
+        "})(secondTree);"
       ]
     },
     nestedArrays: C.En(0)
@@ -3485,6 +3828,9 @@ export default {
         'assert(updateRecords(2468, "tracks", "Free")[2468]["tracks"][0] === "1999", \'message: After <code>updateRecords(2468, "tracks", "Free")</code>, <code>tracks</code> should have <code>"1999"</code> as the first element.\');',
         'updateRecords(2548, "tracks", ""); assert(!collection[2548].hasOwnProperty("tracks"), \'message: After <code>updateRecords(2548, "tracks", "")</code>, <code>tracks</code> should not be set\');',
         'assert(updateRecords(1245, "album", "Riptide")[1245]["album"] === "Riptide", \'message: After <code>updateRecords(1245, "album", "Riptide")</code>, <code>album</code> should be <code>"Riptide"</code>\');'
+      ],
+      "tail": [
+        ";(function(x) { return \"collection = \\n\" + JSON.stringify(x, '\\n', 2); })(collection);"
       ]
     },
     recordCollection: C.En(0)
@@ -3516,6 +3862,9 @@ export default {
       tests: [
         "assert(code.match(/while/g), 'message: You should be using a <code>while</code> loop for this.');",
         "assert.deepEqual(myArray, [0,1,2,3,4], 'message: <code>myArray</code> should equal <code>[0,1,2,3,4]</code>.');"
+      ],
+      "tail": [
+        "if(typeof myArray !== \"undefined\"){(function(){return myArray;})();}"
       ]
     },
     whileLoops: C.En(0)
@@ -3560,6 +3909,9 @@ export default {
       tests: [
         "assert(code.match(/for\\s*\\(/g) && code.match(/for\\s*\\(/g).length > 1, 'message: You should be using a <code>for</code> loop for this.');",
         "assert.deepEqual(myArray, [1,2,3,4,5], 'message: <code>myArray</code> should equal <code>[1,2,3,4,5]</code>.');"
+      ],
+      "tail": [
+        "if (typeof myArray !== \"undefined\"){(function(){return myArray;})();}"
       ]
     },
     forLoops: C.En(0)
@@ -3599,6 +3951,9 @@ export default {
       tests: [
         "assert(code.match(/for\\s*\\(/g) && code.match(/for\\s*\\(/g).length > 1, 'message: You should be using a <code>for</code> loop for this.');",
         "assert.deepEqual(myArray, [1,3,5,7,9], 'message: <code>myArray</code> should equal <code>[1,3,5,7,9]</code>.');"
+      ],
+      "tail": [
+        "if(typeof myArray !== \"undefined\"){(function(){return myArray;})();}"
       ]
     },
     oddNumbersIterate: C.En(0)
@@ -3640,6 +3995,9 @@ export default {
         "assert(code.match(/for\\s*\\(/g) && code.match(/for\\s*\\(/g).length > 1, 'message: You should be using a <code>for</code> loop for this.');",
         "assert(code.match(/myArray.push/), 'message: You should be using the array method <code>push</code>.');",
         "assert.deepEqual(myArray, [9,7,5,3,1], 'message: <code>myArray</code> should equal <code>[9,7,5,3,1]</code>.');"
+      ],
+      "tail": [
+        "if(typeof myArray !== \"undefined\"){(function(){return myArray;})();}"
       ]
     },
     countBackwardLoops: C.En(0)
@@ -3680,6 +4038,9 @@ export default {
         "assert(total === 20, 'message: <code>total</code> should equal 20');",
         "assert(code.match(/for\\s*\\(/g) && code.match(/for\\s*\\(/g).length > 1 && code.match(/myArr\\s*\\[/), 'message: You should use a <code>for</code> loop to iterate through <code>myArr</code>');",
         "assert(!code.match(/total[\\s\\+\\-]*=\\s*(\\d(?!\\s*[;,])|[1-9])/g), 'message: Do not set <code>total</code> to 20 directly');"
+      ],
+      "tail": [
+        "(function(){if(typeof total !== 'undefined') { return \"total = \" + total; } else { return \"total is undefined\";}})()"
       ]
     },
     iterateArrayLoop: C.En(0)
@@ -3716,6 +4077,9 @@ export default {
         "assert(multiplyAll([[1],[2],[3]]) === 6, 'message: <code>multiplyAll([[1],[2],[3]])</code> should return <code>6</code>');",
         "assert(multiplyAll([[1,2],[3,4],[5,6,7]]) === 5040, 'message: <code>multiplyAll([[1,2],[3,4],[5,6,7]])</code> should return <code>5040</code>');",
         "assert(multiplyAll([[5,1],[0.2, 4, 0.5],[3, 9]]) === 54, 'message: <code>multiplyAll([[5,1],[0.2, 4, 0.5],[3, 9]])</code> should return <code>54</code>');"
+      ],
+      "tail": [
+        ""
       ]
     },
     nestingLoops: C.En(0)
@@ -3813,6 +4177,9 @@ export default {
         "assert(typeof randomFraction() === \"number\", 'message: <code>randomFraction</code> should return a random number.');",
         "assert((randomFraction()+''). match(/\\./g), 'message: The number returned by <code>randomFraction</code> should be a decimal.');",
         "assert(code.match(/Math\\.random/g) && code.match(/Math\\.random/g).length >= 0, 'message: You should be using <code>Math.random</code> to generate the random decimal number.');"
+      ],
+      "tail": [
+        "(function(){return randomFraction();})();"
       ]
     },
     randomFractions: C.En(0)
@@ -3850,6 +4217,9 @@ export default {
         "assert(code.match(/Math.random/g) && code.match(/Math.random/g).length > 1, 'message: You should be using <code>Math.random</code> to generate a random number.');",
         "assert(code.match(/\\s*?Math.random\\s*?\\(\\s*?\\)\\s*?\\*\\s*?10[\\D]\\s*?/g) || code.match(/\\s*?10\\s*?\\*\\s*?Math.random\\s*?\\(\\s*?\\)\\s*?/g), 'message: You should have multiplied the result of <code>Math.random</code> by 10 to make it a number that is between zero and nine.');",
         "assert(code.match(/Math.floor/g) && code.match(/Math.floor/g).length > 1, 'message: You should use <code>Math.floor</code> to remove the decimal part of the number.');"
+      ],
+      "tail": [
+        "(function(){return randomWholeNum();})();"
       ]
     },
     randomIntegers: C.En(0)
@@ -3895,6 +4265,22 @@ export default {
         "assert(calcMax === 15, 'message: The highest random number that can be generated by <code>randomRange</code> should be equal to your maximum number, <code>myMax</code>.');",
         "assert(randomRange(0,1) % 1 === 0 , 'message: The random number generated by <code>randomRange</code> should be an integer, not a decimal.');",
         "assert((function(){if(code.match(/myMax/g).length > 1 && code.match(/myMin/g).length > 2 && code.match(/Math.floor/g) && code.match(/Math.random/g)){return true;}else{return false;}})(), 'message: <code>randomRange</code> should use both <code>myMax</code> and <code>myMin</code>, and return a random number in your range.');"
+      ],
+      "tail": [
+        "var calcMin = 100;",
+        "var calcMax = -100;",
+        "for(var i = 0; i < 100; i++) {",
+        "  var result = randomRange(5,15);",
+        "  calcMin = Math.min(calcMin, result);",
+        "  calcMax = Math.max(calcMax, result);",
+        "}",
+        "(function(){",
+        "  if(typeof myRandom === 'number') {",
+        "    return \"myRandom = \" + myRandom;",
+        "  } else {",
+        "    return \"myRandom undefined\";",
+        "  }",
+        "})();"
       ]
     },
     randomIntegersRange: C.En(0)
@@ -3925,7 +4311,8 @@ export default {
         'assert(convertToInteger("56") === 56, \'message: <code>convertToInteger("56")</code> should return 56\');',
         'assert(convertToInteger("77") === 77, \'message: <code>convertToInteger("77")</code> should return 77\');',
         'assert.isNaN(convertToInteger("JamesBond"), \'message: <code>convertToInteger("JamesBond")</code> should return NaN\');'
-      ]
+      ],
+      "tail": []
     },
     parseIntFunction: C.En(0)
   },
@@ -3958,7 +4345,8 @@ export default {
         'assert(convertToInteger("10011") === 19, \'message: <code>convertToInteger("10011")</code> should return 19\');',
         'assert(convertToInteger("111001") === 57, \'message: <code>convertToInteger("111001")</code> should return 57\');',
         'assert.isNaN(convertToInteger("JamesBond"), \'message: <code>convertToInteger("JamesBond")</code> should return NaN\');'
-      ]
+      ],
+      "tail": []
     },
     parseIntRadix: C.En(0)
   },
@@ -3985,7 +4373,8 @@ export default {
         "assert(checkEqual(1, 2) === false, 'message: <code>checkEqual(1, 2)</code> should return false');",
         "assert(checkEqual(1, 1) === true, 'message: <code>checkEqual(1, 1)</code> should return true');",
         "assert(checkEqual(1, -1) === false, 'message: <code>checkEqual(1, -1)</code> should return false');"
-      ]
+      ],
+      "tail": []
     },
     ternaryOperator: C.En(0)
   },
@@ -4010,7 +4399,8 @@ export default {
         "assert(checkSign(10) === 'positive', 'message: <code>checkSign(10)</code> should return \"positive\". Note that capitalization matters');",
         "assert(checkSign(-12) === 'negative', 'message: <code>checkSign(-12)</code> should return \"negative\". Note that capitalization matters');",
         "assert(checkSign(0) === 'zero', 'message: <code>checkSign(0)</code> should return \"zero\". Note that capitalization matters');"
-      ]
+      ],
+      "tail": []
     },
     multipleTernaryOperators: C.En(0)
   }

@@ -1543,7 +1543,7 @@ export default class EditGraphic extends React.Component {
                 initialWidth={c2.width} 
                 initialHeight={c2.height}
                 maxWidth={MAX_BITMAP_WIDTH}
-                maxheight={MAX_BITMAP_HEIGHT}
+                maxHeight={MAX_BITMAP_HEIGHT}
                 scalingOptions={['None']}
                 handleResize={this.handleImageResize} />
 

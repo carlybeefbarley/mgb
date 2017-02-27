@@ -1,8 +1,8 @@
 const createBrowser = function(browserName, options){
   const webdriver = require('selenium-webdriver')
-  const caps = require("../browsers/" + browserName)
-  const capabilities = Object.assign({}, caps.browser, options);
-
+  const caps = Object.assign(require("../browsers/" + browserName), options)
+  const capabilities = caps.browser
+  console.log("Starting browser with caps:", caps)
   const browser = new webdriver.Builder().
     usingServer(caps.server).
     withCapabilities(capabilities).

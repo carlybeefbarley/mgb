@@ -1,11 +1,14 @@
 .gauge {
-  border-radius: 100%;
+  border-radius: 50%;
   overflow: hidden;
   position: relative;
   transition-duration: 1s;
   width: 200px;
   height: 200px;
   box-sizing: border-box;
+  display: inline-block;
+  margin: 20px;
+  /* padding: 5px; */
 }
 
 .gauge .center {

@@ -41,7 +41,6 @@ let code, mgbData, mgbResults, mgbError
     // eval additional functions for more complex tasks
     if(mgbData.tail){
       try {
-        console.log('eval tail')
         eval(mgbData.tail)
       }
       catch(err) {

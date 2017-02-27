@@ -653,7 +653,7 @@ export default {
       solutions: [],
       tests: [
         "assert(code.match(/\\\\\"/g).length === 6 && code.match(/[^\\\\]\"/g).length === 10, 'message: You should use two double quotes (<code>&quot;</code>) and four escaped double quotes (<code>&#92;&quot;</code>).');",
-        'assert(myStr === "I am a \\"double quoted\\" string inside \\"double quotes\\".", \'message: Variable myStr should contain the string: <code>I am a "double quoted" string inside "double quotes".</code>\');'
+        'assert(myStr == "I am a \\"double quoted\\" string inside \\"double quotes\\".", \'message: Variable myStr should contain the string: <code>I am a "double quoted" string inside "double quotes".</code>\');'
       ]
     },
     escapingQoutesString: C.En(0)

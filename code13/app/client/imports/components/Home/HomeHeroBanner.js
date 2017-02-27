@@ -20,7 +20,7 @@ const HomeHeroBanner = ( { userId, username, respIsRuleActive } ) => {
         <Grid.Column>
           <Image size='large' floated='right' src={makeCDNLink("/images/mascots/team.png")} />
           <Header as='h1'>
-            My Game Builder
+            <big>My Game Builder</big>
             <Header.Subheader>
               Make Games. Make Friends. Have Fun.
             </Header.Subheader>

@@ -6,11 +6,13 @@ const RenderRoadmap = () => (
   <div>
     <h2>Features planned for Feb 2017</h2>
     <ul>
-      <li>(<small>Nearly complete</small>) Tutorial and progression content to help learn how to make games</li>
-      <li>(<small>Nearly complete</small>) Scalability config/work required for launch</li>
+      <li>(<small>Complete</small>) Tutorial and progression content to help learn how to make games</li>
+      <li>(<small>Complete</small>) Scalability config/work required for launch</li>
+      <li>(<small>Complete</small>) Fork Project + Fork Asset</li>
+      <li>(<small>Complete</small>) Project Chat</li>
       <li>(<small>Nearly complete</small>) MGBv1 asset migration (tiles, actors, maps)</li>
-      <li>Clone Project</li>
-      <li>Chat improvements (notifications, DMs etc)</li>
+      
+      <li>Direct Messages, Asset Chat</li>
       <li>Goal for Launch: <strong>During last week of Feb 2017</strong></li>
     </ul>
     <p>See the <QLink to='/whatsnew'>What's new</QLink> page for the lists of recent changes</p>

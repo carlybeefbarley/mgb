@@ -29,6 +29,16 @@ let code, mgbData, mgbResults, mgbError
     mgbError = null
     mgbData = mgbEvent.data
     code = mgbData.code
+
+    // eval additional (before user code) functionality for more complex tasks
+    if(mgbData.head){
+      try {
+        eval(mgbData.head)
+      }
+      catch(err) {
+        console.warn('Head error', err)
+      }
+    }
     
     // eval user code and save error message if is present
     try {
@@ -38,13 +48,13 @@ let code, mgbData, mgbResults, mgbError
       mgbError = err.message
     }
 
-    // eval additional functions for more complex tasks
+    // eval additional (after user code) functionality for more complex tasks
     if(mgbData.tail){
       try {
         eval(mgbData.tail)
       }
       catch(err) {
-        console.log('Tail error', err)
+        console.warn('Tail error', err)
       }
     }
 

@@ -1514,6 +1514,37 @@ export default {
         "if(typeof functionWithArgs === \"function\") { capture(); functionWithArgs(1,2); uncapture(); } assert(logOutput == 3, 'message: <code>functionWithArgs(1,2)</code> should output <code>3</code>');",
         "if(typeof functionWithArgs === \"function\") { capture(); functionWithArgs(7,9); uncapture(); } assert(logOutput == 16, 'message: <code>functionWithArgs(7,9)</code> should output <code>16</code>');",
         "assert(/^\\s*functionWithArgs\\s*\\(\\s*\\d+\\s*,\\s*\\d+\\s*\\)\\s*;/m.test(code), 'message: Call <code>functionWithArgs</code> with two numbers after you define it.');"
+      ],
+      "head": [
+        "var logOutput = \"\";",
+        "var originalConsole = console",
+        "function capture() {",
+        "    var nativeLog = console.log;",
+        "    console.log = function (message) {",
+        "        if(message) logOutput = JSON.stringify(message).trim();",
+        "        if(nativeLog.apply) {",
+        "          nativeLog.apply(originalConsole, arguments);",
+        "        } else {",
+        "          var nativeMsg = Array.prototype.slice.apply(arguments).join(' ');",
+        "          nativeLog(nativeMsg);",
+        "        }",
+        "    };",
+        "}",
+        "",
+        "function uncapture() {",
+        "  console.log = originalConsole.log;",
+        "}",
+        "",
+        "capture();"
+      ],
+      "tail": [
+        "uncapture();",
+        "",
+        "if (typeof functionWithArgs !== \"function\") { ",
+        "  (function() { return \"functionWithArgs is not defined\"; })();",
+        "} else {",
+        "  (function() { return logOutput || \"console.log never called\"; })();",
+        "}"
       ]
     },
     functionArguments: C.En(0)

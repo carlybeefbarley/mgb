@@ -48,6 +48,7 @@ export default class CodeChallenges extends React.Component {
     this.state = {
       results:                    [],       // Array of results we get back from the iFrame that runs the tests
       error:                      null,     // get back from iFrame if it has some syntax error
+      console:                    null,     // get back from iFrame console.log messages 
       showAllTestsCompletedModal: false     // true if we want to show the All Tests Completed Modal
     }
   }
@@ -74,6 +75,7 @@ export default class CodeChallenges extends React.Component {
     if (e.data.prefix && e.data.prefix == _runFrameConfig.codeTestsDataPrefix) {
       this.setState({ results: e.data.results })
       this.setState({ error: e.data.error })
+      this.setState({ console: e.data.console })
       if (_.every(e.data.results, 'success'))
         this.successPopup()
     }
@@ -134,6 +136,18 @@ export default class CodeChallenges extends React.Component {
             <Icon name='warning sign' />
             {this.state.error}
           </Segment>
+        }
+
+        { 
+          this.state.console &&
+            <Divider as={Header} color='grey' size='small' horizontal content='Console output'/>
+        }
+
+        { 
+          this.state.console &&
+            <Segment inverted color='black' size='mini' secondary>
+              {this.state.console}
+            </Segment>
         }
 
         { 

@@ -21,7 +21,7 @@
 
 
 window.addEventListener("message", receiveMessage, false)
-let code, mgbData, mgbResults, mgbError
+let code, mgbData, mgbResults, mgbError, mgbConsole
 
 
 /*
@@ -76,7 +76,8 @@ let code, mgbData, mgbResults, mgbError
     const message = {
       prefix: 'codeTests',
       results: mgbResults,
-      error: mgbError
+      error: mgbError,
+      console: mgbConsole
     }
     window.parent.postMessage(message, "*")
     
@@ -91,6 +92,7 @@ let code, mgbData, mgbResults, mgbError
   {
     mgbResults = []
     mgbError = null
+    mgbConsole = null
     mgbData = mgbEvent.data
     code = mgbData.code
 
@@ -120,6 +122,11 @@ let code, mgbData, mgbResults, mgbError
       catch(err) {
         console.warn('Tail error', err)
       }
+    }
+
+    // save console output
+    if(typeof logOutput !== 'undefined'){
+      mgbConsole = logOutput
     }
 
 

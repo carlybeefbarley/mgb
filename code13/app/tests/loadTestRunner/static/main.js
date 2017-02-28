@@ -1,42 +1,45 @@
-const require = (sources, cb) => {
-  const load = () => {
-    if (!sources.length) {
-      cb()
-      return
-    }
-    const script = document.createElement('script')
-    script.onload = load
-    script.src = sources.shift()
-    document.head.appendChild(script)
-  }
-  load()
-}
-
 let ws
 const sendMessage = (action, data) => {
   ws.send(JSON.stringify({action, data}))
 }
 
-require(['widgets/gauge.js', 'widgets/testCase.js'], () => {
-  const statMeter = new Gauge()
-  const loadMeter = new Gauge("blue", "white")
+// this is our workspace
+// ml - stands for MGB Loader
+window.ml = {}
 
-  statMeter.show(document.body)
-  loadMeter.show(document.body)
+require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () => {
+  const status = {
+    memory: new ml.Gauge(),
+    cpu: new ml.Gauge("blue", "white"),
+    info: new ml.Info()
+  }
+  status.memory.show(document.body)
+  status.cpu.show(document.body)
+  status.info.show(document.body)
 
+  window.test = new ml.TestCase({name: 'loadPage', id: "Main test case", title: "Simply load page"}, (data) => {
+    sendMessage('start', data)
+  })
+
+  new ml.TestCase({name: 'login', id: "Login test case", title: "Log In user"}, (data) => {
+    sendMessage('start', data)
+  })
   const actions = {
     status: (data) => {
-      statMeter.progress(data.used * 100)
-      loadMeter.progress(data.loadAvg * 100)
-      // console.log("status:", data.loadAvg)
+      status.memory.progress(data.status.used * 100)
+      status.cpu.progress(data.status.loadAvg * 100)
+      status.info.addOrUpdate('Phantoms running: ', data.phantoms)
     },
     runnerStarted: data => {
-      const testCase = new TestCase(data)
+      const testCase = ml.TestCase.find(data.id) || new ml.TestCase(data, () => {
+          sendMessage('start', data)
+        })
+      testCase.init(data)
       console.log("Runner started:", data)
     },
     runnerCompleted: data => {
-      const testCase = TestCase.find(data.id)
-      testCase.update(data)
+      const testCase = ml.TestCase.find(data.id)
+      testCase && testCase.update(data)
       console.log("Runner completed:", data, data.tests[0])
     }
   }

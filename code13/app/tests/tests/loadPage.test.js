@@ -10,12 +10,8 @@ module.exports = (getBrowser, path) => {
     it("PageLoaded?", function(done){
       const sel = SeleniumHelper(browser)
       sel.css("#root")
-      sel.wait(1000).then(() => {
-        sel.takeScreenShot(Date.now() + '.png', () => {
-          sel.done(done)
-        })
-      })
 
-    })
+      sel.done(done)
+      })
   })
 }

@@ -96,13 +96,14 @@ function runTests(browserName, tests) {
     this.timeout(120 * 1000)
     this.slow(10 * 1000)
     // create new instance of browser.. it can actually fail on some cases
-    it("connected to browser", function (done) {
+    it("connecting to browser", function (done) {
       /*
        TODO: due to meteor test specifics - 2nd time describe() won't be called - and
        if 2 tests are running in parallel (on 2 or more separate windows) both will crash - as
        they will overwrite browser instance
        child process should resolve this, but error reporting will suffer
        */
+      browser.loadHomePage()
       const waitForPreviousBrowserToClose = () => {
         if (browser) {
           setTimeout(waitForPreviousBrowserToClose, 100)
@@ -133,7 +134,7 @@ function runTests(browserName, tests) {
       this.slow(10001)
       //browser will auto close after 1-2 seconds
       browser = null
-      setTimeout(done, 1000)
+      setTimeout(done, 1)
     })
   })
 }

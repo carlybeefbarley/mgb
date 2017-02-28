@@ -7,47 +7,20 @@ const Reporter = require('../../reporters/benchmark')
 
 class TestRunner {
 
-  start(name, port = 4000){
-    const tmpPath = Date.now() + Math.random()
-
-    const phantom = spawn('phantomjs', [
-      '--webdriver=' + port,
-      '--local-storage-path=/tmp/' + tmpPath,
-      '--offline-storage-path=' + tmpPath,
-      '--cookies-file='+tmpPath+'/cookies'
-      //'--debug=true'
-    ], {
-      env: {QT_QPA_PLATFORM: "", PATH: process.env.PATH}
-    })
-    const start = () => {
-      this.runTest(name, phantom, port)
-    }
-
-    phantom.stderr.on('data', (data) => {
-      console.log(`phantom stderr: ${data}`)
-    })
-
-    // this is cheesy way to tell that phantom has been started
-    phantom.stdout.once('data', start)
-
-    phantom.stdout.on('data', data => {
-      // console.log(`phantom: ${data}`)
-    })
-    phantom.on('exit', () => {
-      console.log("Phantom exit")
-    })
+  start(name, port = 4000) {
+    this.runTest(name, port)
   }
 
-  runTest(name, phantom, port){
+  runTest(name, port) {
     // console.log("running test: "+name)
     const mocha = new Mocha({
       timeout: 30000
     })
     const testFileName = __dirname + '/../loadTests/' + name + '.js'
-    global.browser = startBrowser('local.phantom', {server: 'http://127.0.0.1:'+port})
+    global.browser = startBrowser('local.phantom', {server: 'http://127.0.0.1:' + port})
     mocha.addFile(testFileName)
 
-    mocha.reporter(Reporter).run(function(failures){
+    mocha.reporter(Reporter).run(function (failures) {
       const report = []
       global.report.forEach(t => {
         report.push({
@@ -57,10 +30,7 @@ class TestRunner {
         })
       })
       process.send && process.send(JSON.stringify(report))
-      console.log(global.report)
-
-      // give driver 2 sec to finalize session and close browser
-      setTimeout(() => { phantom.kill()}, 2000)
+      // console.log(global.report)
     })
   }
 }

@@ -14,19 +14,19 @@ class MyReporter extends Mocha.reporters.Base {
     runner.on('pass', function(test){
       passes++;
       report.push(test)
-      console.log(`pass: ${test.fullTitle()} (${test.duration}ms)`)
+      //console.log(`pass: ${test.fullTitle()} (${test.duration}ms)`)
       total += test.duration
     })
 
     runner.on('fail', function(test, err){
       report.push(test)
       failures++;
-      console.log(`fail: ${test.fullTitle()} (${test.duration}ms)`, err.message)
+      console.error(`fail: ${test.fullTitle()}`, err.message, err.stack)
       total += test.duration
     })
 
     runner.on('end', function(){
-      console.log(`end: ${passes}/${passes + failures} in ${total}ms`)
+      //console.log(`end: ${passes}/${passes + failures} in ${total}ms`)
     })
   }
 }

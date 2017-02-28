@@ -25,7 +25,7 @@ const phantoms = []
 
 function exitHandler(options, err) {
 
-  phantoms.forEach(p => p.kill())
+  phantoms.forEach(p => p.phantom.kill())
 
   if (options.cleanup) console.log('clean')
   if (err) console.log(err.stack)

@@ -139,9 +139,6 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
       data.tests.forEach((t, i) => {
         const idx = data.tests + i
         if (t.state !== 'passed') {
-
-          const ds = this.chartData.datasets[idx]
-
           if (!this.chartData.datasets[idx]) {
             this.chartData.datasets[idx] = {
               borderWidth: 1,
@@ -153,6 +150,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
             }
           }
 
+          const ds = this.chartData.datasets[idx]
           ds.data[idx] = t.duration || 0
         }
       })

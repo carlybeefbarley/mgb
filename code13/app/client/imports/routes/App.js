@@ -641,12 +641,20 @@ const App = React.createClass({
         utilPushTo(window.location, `/u/!vault/asset/${actParam}`)
         break
 
+      case 'navToRelativeUrl':
+        utilPushTo(window.location, actParam)
+        break
+
       case 'openVaultProjectById':
         utilPushTo(window.location, `/u/!vault/project/${actParam}`)
         break
 
       case 'closeFlexPanel':
         this.closeFlexPanel()
+        break
+
+      case 'openFlexPanel':
+        this.handleFlexPanelChange(actParam)
         break
 
       case 'closeNavPanel':

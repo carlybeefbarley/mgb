@@ -139,7 +139,23 @@ const stepMacros = [
   {
     key: _wrapKey('complete'),
     hint: `Tutorial completed`,
-    desc: `Tutorial completed, explain how to start next`,
+    desc: `Tutorial completed, Show GoalsFP to start next`,
+    newVal:
+    {
+      "title": `Great! You completed the tutorial`,
+      "text": `You can start the next tutorial from the Goals FlexPanel at any time`,
+      "selector": "#mgbjr-flexPanelIcons-goals",
+      "preparePage": 'openFlexPanel:goals',
+      "showStepOverlay": true,
+      "position": "left",
+      "style": "%green%"    // Note that full Step Macros can still use per-field macros :)
+    }
+  },
+
+  {
+    key: _wrapKey('complete2'),
+    hint: `Tutorial completed`,
+    desc: `Tutorial completed, explain how to start next using FP`,
     newVal:
     {
       "title": `Great! You completed the tutorial`,
@@ -147,7 +163,23 @@ const stepMacros = [
       "selector": "#mgbjr-flexPanelIcons-goals",
       "showStepOverlay": true,
       "position": "left",
-      "style": "%green%"    // Note that full Step Macros can still use per-field macros :)
+      "style": "%green%"
+    }
+  },
+
+  {
+    key: _wrapKey('completeLearnPhaserTut'),
+    hint: `Tutorial completed`,
+    desc: `Tutorial completed, go to /learn/code/phaser for next`,
+    newVal:
+    {
+      "title": `Great! You completed the tutorial`,
+      "text": `You can start the next tutorial from the Goals FlexPanel at any time`,
+      "selector": "#mgbjr-flexPanelIcons-goals",
+      "preparePage": 'navToRelativeUrl:/learn/code/phaser',
+      "showStepOverlay": true,
+      "position": "left",
+      "style": "%green%"
     }
   },
 
@@ -241,6 +273,7 @@ const stepMacros = [
 
 const usefulColors = {
   yellowish: 'rgba(148, 191, 22, 0.32)',
+  whiteTint: 'rgba(255, 255, 255, 0.45)',
   pinkish:   'rgba(201, 23, 33, 0.2)',
   orangeish: 'rgba(251, 189, 8, 0.3)'
 }
@@ -258,7 +291,7 @@ const propertyMacros = [
       "color": "#fff",
       "mainColor": "#fbbd08",
       "skip": { "color": "#f04" },
-      "hole": { "backgroundColor": usefulColors.orangeish }
+      "hole": { "backgroundColor": usefulColors.whiteTint }
     }
   },
   {
@@ -271,7 +304,7 @@ const propertyMacros = [
       "color": "#fff",
       "mainColor": "#fbbd08",
       "skip": { "color": "#f04" },
-      "hole": { "backgroundColor": usefulColors.orangeish }
+      "hole": { "backgroundColor": usefulColors.whiteTint }
     }
   },
 
@@ -285,7 +318,7 @@ const propertyMacros = [
       "color": "#fff",
       "mainColor": "#ff4456",
       "skip": { "color": "#ff4456" },
-      "hole": { "backgroundColor": usefulColors.orangeish },
+      "hole": { "backgroundColor": usefulColors.whiteTint },
       "boxShadow": "0px 0px 20px #fff"
     }
   },

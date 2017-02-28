@@ -369,6 +369,9 @@ export default class Joyride extends React.Component {
     const state = this.state
     const { scrollOffset, steps } = this.props
     const step = steps[state.index]
+    if (!step)
+      return 0
+      
     const target = _queryVisibleSelectorsInSequence(step.selector)
 
     if (!target)

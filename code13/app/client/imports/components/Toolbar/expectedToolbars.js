@@ -11,7 +11,7 @@ const _defaultTbDefaultLevel = 1
 const _defaultTbIconName = 'red help circle'
 
 export const expectedToolbars = {
-  FlexPanel:     { friendlyName: 'Flex Panel',           max:  8,   default: 1,  assetKinds: null, icon: 'pointing right'                   },  // Not really toolbars, but I wanted the same fpLevel stuff
+  FlexPanel:     { friendlyName: 'Flex Panel',           max:  8,   default: 1,  assetKinds: null, icon: 'ellipsis vertical'   },  // Not really toolbars, but I wanted the same fpLevel stuff
 
   EditGraphic:   { friendlyName: 'Graphic Editor',       max: 10,   default: 1,  assetKinds: ['graphic'], icon: AssetKinds.getIconName('graphic') },
   EditCode:      { friendlyName: 'Code/Tutorial Editor', max:  4,   default: 2,  assetKinds: ['code','tutorial'], icon: AssetKinds.getIconName('code')    },

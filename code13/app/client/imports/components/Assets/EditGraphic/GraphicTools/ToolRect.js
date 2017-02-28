@@ -1,40 +1,8 @@
 
-function drawHorizLine(drawEnv, x1, x2, y, fillFlag = false)
-{
-  if (x1 > x2)
-    [x1, x2] = [x2, x1]
-
-  if (fillFlag)
-  {
-
-    while (x1 <= x2) {
-      if (x1 >= -1 && y >= -1)                 // Tiny bit easy perf tweak. Could do for right/bottom if important. -1 because of Math.round
-        drawEnv.setPreviewPixelsAt(x1, y);
-      x1 = x1 + 1;
-    }
-  }
-  else
-  {
-    drawEnv.setPreviewPixelsAt( x1, y);
-    drawEnv.setPreviewPixelsAt( x2, y);
-  }
-}
-
-// x0, y0 are center of rectangle
-// h is half-height; w is half-width (i.e. center to edge)
-function drawRect(drawEnv, x0, y0, w, h, fillFlag = false) {
-  h = Math.abs(h)
-  w = Math.abs(w)
-
-  for (let j = -h; j <=h; j++) {
-    drawHorizLine(drawEnv, x0 - w, x0 + w, y0 + j, Math.abs(j) === h ? true : fillFlag)
-  }
-}
-
 const ToolRect = {
   label: "Rectangle",
   name: "rectTool",
-  tooltip: "Click center and then drag to corner to draw a rectangle. Use SHIFT+drag for filled rectangle",
+  tooltip: "Click and drag to draw a rectangle. Use SHIFT+drag for filled rectangle. Use CTRL+drag to constrain to square.",
   icon: "square icon",            // Semantic-UI icon CSS class
   editCursor: "crosshair",
   supportsDrag: true,
@@ -54,13 +22,16 @@ const ToolRect = {
 
     let w = drawEnv.x - ToolRect._startx
     let h = drawEnv.y - ToolRect._starty
-    let fillFlag = drawEnv.event.shiftKey === true
+    const fillFlag = drawEnv.event.shiftKey === true
+    const squareFlag = drawEnv.event.ctrlKey === true
+    if (squareFlag)
+      h = Math.abs(w) * Math.sign(h)
 
     // reset the preview canvas to how it was at MouseDown
     drawEnv.previewCtx.putImageData(ToolRect._storedPreviewImageData, 0, 0)
 
     // Draw a rectangle here
-    drawRect(drawEnv, ToolRect._startx, ToolRect._starty, w, h, fillFlag)
+    drawRect(drawEnv, ToolRect._startx + (w/2), ToolRect._starty + (h/2), w/2, h/2, fillFlag)
 
     // Clone and scale to edit Canvas
     drawEnv.updateEditCanvasFromSelectedPreviewCanvas()
@@ -71,7 +42,6 @@ const ToolRect = {
     ToolRect._storedPreviewImageData = null
     ToolRect._startx = null
     ToolRect._starty = null
-
   },
 
   handleMouseLeave: ( drawEnv ) => {
@@ -81,6 +51,39 @@ const ToolRect = {
     ToolRect.handleMouseUp()
   }
 
-};
+}
 
 export default ToolRect
+
+
+function drawHorizLine(drawEnv, x1, x2, y, fillFlag = false)
+{
+  if (x1 > x2)
+    [x1, x2] = [x2, x1]
+
+  if (fillFlag)
+  {
+
+    while (x1 <= x2) {
+      if (x1 >= -1 && y >= -1)                 // Tiny bit easy perf tweak. Could do for right/bottom if important. -1 because of Math.round
+        drawEnv.setPreviewPixelsAt(x1, y)
+      x1 = x1 + 1
+    }
+  }
+  else
+  {
+    drawEnv.setPreviewPixelsAt( x1, y)
+    drawEnv.setPreviewPixelsAt( x2, y)
+  }
+}
+
+// x0, y0 are center of rectangle
+// h is half-height; w is half-width (i.e. center to edge)
+function drawRect(drawEnv, x0, y0, w, h, fillFlag = false) {
+  h = Math.abs(h)
+  w = Math.abs(w)
+
+  for (let j = -h; j <=h; j++) {
+    drawHorizLine(drawEnv, x0 - w, x0 + w, y0 + j, Math.abs(j) === h ? true : fillFlag)
+  }
+}

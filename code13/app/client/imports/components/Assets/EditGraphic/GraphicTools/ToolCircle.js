@@ -1,50 +1,8 @@
 
-function drawHorizLine(drawEnv, x1, x2, y, fillFlag = false)
-{
-  if (x1 > x2)
-    [x1, x2] = [x2, x1]
-
-  if (fillFlag)
-  {
-
-    while (x1 <= x2) {
-      if (x1 >= -1 && y >= -1)                 // Tiny bit easy perf tweak. Could do for right/bottom if important. -1 because of Math.round
-        drawEnv.setPreviewPixelsAt(x1, y);
-      x1 = x1 + 1;
-    }
-  }
-  else
-  {
-    drawEnv.setPreviewPixelsAt( x1, y);
-    drawEnv.setPreviewPixelsAt( x2, y);
-  }
-}
-
-
-function drawCircle(drawEnv, x0, y0, radius, fillFlag = false) {
-  // Dgolds' faster variant of https://en.wikipedia.org/wiki/Midpoint_circle_algorithm
-  var x = radius;
-  var y = 0;
-  var decisionOver2 = 1 - x;   // Decision criterion divided by 2 evaluated at x=r, y=0
-
-  while (x >= y-1) {
-    drawHorizLine(drawEnv, x + x0, -x + x0, y + y0, fillFlag)
-    drawHorizLine(drawEnv, y + x0, -y + x0, x + y0, fillFlag)
-    drawHorizLine(drawEnv, -x + x0, x + x0, -y + y0, fillFlag)
-    drawHorizLine(drawEnv, -y + x0, y + x0, -x + y0, fillFlag)
-    y++;
-    if (decisionOver2<=0){
-      decisionOver2 += 2 * y + 1;   // Change in decision criterion for y -> y+1
-    }else{
-      x--;
-      decisionOver2 += 2 * (y - x) + 1;   // Change for y -> y+1, x -> x-1
-    }
-  }
-}
 const ToolCircle = {
   label: "Circle",
   name: "circleTool",
-  tooltip: "Click center and then drag to radius to draw a circle. Use SHIFT+drag for filled circles",
+  tooltip: "Click and drag to draw a circle/ellipse. Use SHIFT+drag for filled shapes. Use CTRL+drag to constrain to circle",
   icon: "circle icon",            // Semantic-UI icon CSS class
   editCursor: "crosshair",
   supportsDrag: true,
@@ -61,16 +19,17 @@ const ToolCircle = {
   },
 
   handleMouseMove: ( drawEnv ) => {
-
     let w = drawEnv.x - ToolCircle._startx
     let h = drawEnv.y - ToolCircle._starty
-    let fillFlag = drawEnv.event.shiftKey === true
+    const fillFlag = drawEnv.event.shiftKey === true
+    const circleFlag = drawEnv.event.ctrlKey === true
+    const y = circleFlag ? ToolCircle._starty + (Math.sign(h) * Math.abs(w)) : drawEnv.y
 
     // reset the preview canvas to how it was at MouseDown
     drawEnv.previewCtx.putImageData(ToolCircle._storedPreviewImageData, 0, 0)
 
     // Draw a circle here
-    drawCircle(drawEnv, ToolCircle._startx, ToolCircle._starty, Math.sqrt(w*w+h*h), fillFlag)
+    drawEllipseRect(drawEnv, ToolCircle._startx, ToolCircle._starty, drawEnv.x, y, fillFlag)
 
     // Clone and scale to edit Canvas
     drawEnv.updateEditCanvasFromSelectedPreviewCanvas()
@@ -91,6 +50,80 @@ const ToolCircle = {
     ToolCircle.handleMouseUp()
   }
 
-};
+}
 
 export default ToolCircle
+
+
+function drawHorizLine(drawEnv, x1, x2, y, fillFlag = false)
+{
+  if (x1 > x2)
+    [x1, x2] = [x2, x1]
+
+  if (fillFlag)
+  {
+
+    while (x1 <= x2) {
+      if (x1 >= -1 && y >= -1)                 // Tiny bit easy perf tweak. Could do for right/bottom if important. -1 because of Math.round
+        drawEnv.setPreviewPixelsAt( x1, y )
+      x1 = x1 + 1
+    }
+  }
+  else
+  {
+    drawEnv.setPreviewPixelsAt( x1, y )
+    drawEnv.setPreviewPixelsAt( x2, y )
+  }
+}
+
+
+// Ellipse algorithm from http://members.chello.at/~easyfilter/bresenham.html
+function drawEllipseRect(drawEnv, x0, y0, x1, y1, fillFlag = false)
+{
+  let a = Math.abs(x1-x0)
+  let b = Math.abs(y1-y0)
+  let b1 = b & 1                             // values of diameter
+  let dx = 4*(1-a)*b*b, dy = 4*(b1+1)*a*a    // error increment
+  let err = dx+dy+b1*a*a                     // error of 1.step
+  let e2 = 0 
+
+  if (x0 > x1)
+  { // Swap points if necessary
+    x0 = x1
+    x1 += a
+  } 
+
+  if (y0 > y1) 
+    y0 = y1  // exchange y if necessary
+
+  y0 += (b+1)/2
+  y1 = y0-b1        // starting pixel 
+  a *= 8*a
+  b1 = 8*b*b
+
+  do {
+    drawHorizLine(drawEnv, x0, x1, y0, fillFlag)
+    drawHorizLine(drawEnv, x0, x1, y1, fillFlag)
+    e2 = 2*err
+    if (e2 <= dy) 
+    { 
+      // calculate y-step
+      y0++
+      y1--
+      err += dy += a
+    }
+    if (e2 >= dx || 2*err > dy) 
+    { 
+      // calculate x-step
+      x0++
+      x1--
+      err += dx += b1
+    } 
+  } while (x0 <= x1)
+   
+  while (y0-y1 < b) {  
+    // Handle case of too-early stop of flat ellipses a=1
+    drawHorizLine(drawEnv, x0-1, x1+1, y0++)
+    drawHorizLine(drawEnv, x0-1, x1+1, y1--)
+  }
+}

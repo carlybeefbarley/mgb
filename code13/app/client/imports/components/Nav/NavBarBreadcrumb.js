@@ -21,8 +21,6 @@ const NavBarBreadcrumb = ( {
   currentlyEditingAssetCanEdit
  } ) => {
 
-  const homeWord = 'MyGameBuilder'
-
   const assetId = params && params.assetId
   const projectId = params && params.projectId
   const usernameToShow = user ? user.profile.name : params.username
@@ -32,8 +30,8 @@ const NavBarBreadcrumb = ( {
   return (
     <Breadcrumb>
       &emsp;
-      <QLink to="/" className="section">{homeWord}&nbsp;</QLink>
-
+      <QLink to="/" className="section"><img src='/images/logos/mgb/big/icon_01.png' style={{ height: '1em', verticalAlign: 'middle', paddingRight: '0.25em' }} /></QLink>
+      
       { usernameToShow && _sep }
 
       { usernameToShow && (

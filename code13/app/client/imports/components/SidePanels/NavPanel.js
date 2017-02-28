@@ -22,8 +22,8 @@ export const getNavPanels = (currUser, showAll) => {
         icon: { name: 'home'},
         explainClickAction: "Shortcut: Clicking here jumps to the Home Page",
         hdr: (
-            <Menu.Item color='black' style={{ padding: '0px 8px' }}>
-              <img src='/images/logo-inverted-puzzle-joystick.png' style={{ width: 130 }} />
+            <Menu.Item className='borderless' color='black' style={{ padding: '0px 8px' }}>
+              <img src='/images/logos/mgb/medium/03.png' style={{ width: 130 }} />
             </Menu.Item>
           ),
         to: '/',

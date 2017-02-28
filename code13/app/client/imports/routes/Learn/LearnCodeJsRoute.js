@@ -8,6 +8,7 @@ import { showToast } from '/client/imports/routes/App'
 import { logActivity } from '/imports/schemas/activity'
 
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
 
 // for convenience, extract out the skillItems' $meta content into a simple array
 const skillItems = _.compact(_.map(SkillNodes.code.js.basics, (val, key) => (
@@ -64,6 +65,11 @@ const LearnCodeJsRoute = ( { currUser }, context ) => (
         content='JavaScript programming basics'
         subheader='Click on an item and explore it'
       />
+      { currUser && (
+        <div style={{ clear: 'both' }}>
+          <SkillsMap user={currUser} subSkill={true} onlySkillArea={'code.js.basics'} userSkills={context.skills} ownsProfile={true} />
+        </div>
+      )}
     </Grid.Column>
     <Grid.Column>
       { _.map(_.keys(bySubsection), subkey => 

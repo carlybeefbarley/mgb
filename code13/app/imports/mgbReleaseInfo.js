@@ -14,6 +14,39 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Tue Feb 28 2017 12:30 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3528'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Shape tools in Graphic Editor',
+          'changeSummary': 'The Circle/Square tools in the Graphic Edit tool are now implemented as corner-to-corner ellipse/rectangle tools. To make squares/circles, use the CTRL-key while dragging',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'learn',
+          'type': 'bugfix',
+          'changeName': 'Coding Challenges now have console output',
+          'changeSummary': 'Some of the Code Challenges use console.log() output. We now show the console output for those tools in-browser',
+          'otherUrls': [
+             { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' },
+             { txt: 'Example of viewing (hidden) assets created by Code Challenges', href: '/u/dgolds/assets?showChallengeAssets=1' }
+          ]
+        }
+      ]
+    },
+    {
       'timestamp': 'Mon Feb 27 2017 18:50 GMT-0800 (PST)',
 
       'id': {

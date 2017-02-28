@@ -14,6 +14,8 @@ const createBrowser = function(browserName, options){
   browser.manage().window().setSize(1366, 768)
 
 
+  /*
+  this don't work nice in load testing
   const flow = browser.controlFlow()
   const scheduleClose = () => {
     // there might be other "idle" listeners - so wait 1 sec - to be sure queue is empty
@@ -28,9 +30,9 @@ const createBrowser = function(browserName, options){
       else{
         flow.once("idle", scheduleClose)
       }
-    }, 50)
+    }, 2000)
   }
-  scheduleClose()
+  scheduleClose()*/
   return browser
 }
 

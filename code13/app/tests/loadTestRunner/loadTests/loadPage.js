@@ -15,8 +15,13 @@ describe("Preparing: ", function(){
     })
   })
 
-  it("Clearing localStorage", done => {
-    browser.executeScript('try{window.localStorage.clear(); window.location.reload();}catch(e){}').then(done)
+  it("Cleaning up and closing browser", done => {
+    browser.executeScript('try{window.localStorage.clear(); window.location.reload();}catch(e){}').then(() => {
+       browser.close()
+       browser.quit()
+      done()
+    })
+
   })
 
 

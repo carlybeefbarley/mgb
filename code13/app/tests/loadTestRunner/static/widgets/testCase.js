@@ -161,7 +161,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
 
     createActions() {
       this.restartBtn = this.actions.appendChild(document.createElement('a'))
-      this.restartBtn.innerHTML = 'Run'
+      this.restartBtn.innerHTML = 'Add runner'
       this.restartBtn.classList.add("play")
       this.restartBtn.onclick = () => this.restart()
 
@@ -173,7 +173,10 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
       this.removeBtn = this.actions.appendChild(document.createElement('a'))
       this.removeBtn.innerHTML = 'Remove'
       this.removeBtn.classList.add("remove")
-      this.removeBtn.onclick = () => this.destroy()
+      this.removeBtn.onclick = () => {
+        alert("Not implemented")
+        //this.destroy()
+      }
     }
 
     restart() {

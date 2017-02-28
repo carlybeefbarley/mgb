@@ -111,6 +111,25 @@ function runTests(browserName, tests) {
         else {
           // only assign reference to browser - when all good
           const tmpbrowser = CreateBrowser(browserName)
+          /*
+           this don't work nice in load testing */
+          const flow = browser.controlFlow()
+          const scheduleClose = () => {
+            // there might be other "idle" listeners - so wait 1 sec - to be sure queue is empty
+            setTimeout(() => {
+              if (flow.isIdle()) {
+                console.log("CLOSING BROWSER!!!")
+                browser.close()
+                browser.quit()
+                // TODO (stauzs): is this available from browser?
+                browser.hasClosed = true;
+              }
+              else {
+                flow.once("idle", scheduleClose)
+              }
+            }, 2000)
+          }
+          scheduleClose()
           tmpbrowser.call(function () {
             browser = tmpbrowser
             browser.call(done)

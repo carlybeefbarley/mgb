@@ -35,12 +35,12 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
           sendMessage('start', data)
         })
       testCase.init(data)
-      console.log("Runner started:", data)
+      // console.log("Runner started:", data)
     },
     runnerCompleted: data => {
       const testCase = ml.TestCase.find(data.id)
       testCase && testCase.update(data)
-      console.log("Runner completed:", data, data.tests[0])
+      // console.log("Runner completed:", data, data.tests[0])
     }
   }
   ws = new WebSocket('ws://' + window.location.host)

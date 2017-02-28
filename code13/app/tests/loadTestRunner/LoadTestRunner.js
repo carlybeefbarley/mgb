@@ -25,7 +25,7 @@ s.on('request', (req, res) => {
 
 s.listen({
   port: 8082,
-  host: "127.0.0.1"
+  host: "0.0.0.0"
 })
 
 const wss = new WebSocketServer({server: s, perMessageDeflate: true})

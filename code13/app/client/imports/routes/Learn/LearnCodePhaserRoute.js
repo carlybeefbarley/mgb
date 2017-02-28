@@ -64,6 +64,11 @@ const LearnCodePhaserRoute = ({ currUser, params }, context) => {
             However, the concepts you learn here are very important and will apply to any game engine you use in future.
           </Header.Subheader>
         </Header>
+        { currUser && (
+          <div style={{ clear: 'both' }}>
+            <SkillsMap user={currUser} subSkill={true} onlySkillArea={'code.js.phaser'} userSkills={context.skills} ownsProfile={true} />
+          </div>
+        )}
       </Grid.Column>
       <Grid.Column>
         <Segment padded piled>

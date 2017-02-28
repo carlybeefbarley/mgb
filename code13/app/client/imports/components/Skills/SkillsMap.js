@@ -59,7 +59,8 @@ export default class SkillTree extends React.Component {
           total: 1,
           has: 0
         }
-        if (hasSkill(this.props.userSkills, newKey)) {
+        const newFullKey = this.parentPath ? this.parentPath + '.' + newKey : newKey
+        if (hasSkill(this.props.userSkills, newFullKey)) {
           tot[newKey].has++
           ret.has++
         }
@@ -79,7 +80,8 @@ export default class SkillTree extends React.Component {
 
   // TODO: create separate component for that?
   renderSingleNode (node, key, path, disabled) {
-    const hasIt = hasSkill(this.props.userSkills, path)
+    const fullPath = this.parentPath ? this.parentPath + '.' + path : path
+    const hasIt = hasSkill(this.props.userSkills, fullPath)
     let color = hasIt ? 'green' : 'grey'
     if (!node.$meta.enabled)
       color = 'grey'
@@ -91,10 +93,10 @@ export default class SkillTree extends React.Component {
     return (
       <div
         title={"requires:\n" + node.$meta.requires.join("\n") + " \n\nunlocks:\n" +  node.$meta.unlocks.join("\n")}
-        key={path}
+        key={fullPath}
         style={{ backgroundColor: color, margin: '5px', border: 'solid 1px', display: 'inline-block', padding: '4px' }}
         className={(!node.$meta.enabled || disabled) ? 'ui small semi-transparent button' : 'ui button'}
-        onClick={() => onClickFn(path)}>
+        onClick={() => onClickFn(fullPath)}>
         <i className={'icon ' + iconName + ' large'}></i>
         {key}  <small className='mgb-show-on-parent-div-hover' style={{color: 'white'}} title="Each individual skill is assigned a Level-of-difficulty group.. L1=beginner up to L4=guru">L{node.$meta.level || 1}</small>
       </div>
@@ -300,8 +302,14 @@ export default class SkillTree extends React.Component {
       return <div className='ui warning message'>This user does not yet have any Skills stored in our database. But I'm sure they are awesome anyway</div>
 
     let skillNodes = SkillNodes
+    this.parentPath
 
     if(subSkill){
+      this.parentPath = onlySkillArea
+      this.parentPath = this.parentPath.split('.')
+      this.parentPath.pop()
+      this.parentPath = this.parentPath.join('.')
+
       const subSkillNodes = this.getSubSkillNodes(SkillNodes, onlySkillArea)
       // console.log(subSkillNodes)
       skillNodes = subSkillNodes.skillNodes

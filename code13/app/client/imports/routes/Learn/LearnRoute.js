@@ -111,8 +111,8 @@ const LearnRoute = ({ currUser, params }, context) => (
     </Grid.Column>
     { currUser &&
     <Grid.Column>
-      <QLink style={{ color: "#333" }} to='/learn' query={ { _fp: 'chat.G_MGBHELP_' } }>
-        <i className="help icon"></i> Ask for help - Ask and we shall answer
+      <QLink className='link' style={{ float: 'right' }} to='/learn' query={ { _fp: 'chat.G_MGBHELP_' } }>
+        <Icon name='help' />Ask for help...
       </QLink>
     </Grid.Column>
     }

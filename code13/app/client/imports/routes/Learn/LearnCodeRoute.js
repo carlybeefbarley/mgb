@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
 import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
+
+import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
@@ -11,6 +13,7 @@ const learnCodeItems = [
     icon: 'code',
     content: 'Basics of programming',
     link: '/learn/code/javascript',
+    skillPath: 'code.js.basics',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
     desc: `Learn the basics of the Javascript programming language. 
@@ -22,6 +25,7 @@ const learnCodeItems = [
     icon: 'code',
     content: 'Game development concepts',
     link: '/learn/code/phaser',
+    skillPath: 'code.js.phaser',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
     desc: `'Phaser' is a very popular game programming library written in JavaScript. These tutorials explain what Phaser is, and how to use it to handle graphics, sound, maps, physics etc in games.`
@@ -48,7 +52,7 @@ const learnCodeItems = [
   },
 ]
 
-const LearnCodeRoute = () => (
+const LearnCodeRoute = ({ currUser, params }, context) => (
   <Grid container columns='1'>
     <Divider hidden />
     <Grid.Column>
@@ -65,6 +69,14 @@ const LearnCodeRoute = () => (
               <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
               <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
               <p style={descStyle}>{area.desc}.</p>
+              {
+                area.skillPath && currUser && 
+                (
+                  <div style={{ clear: 'both' }}>
+                    <SkillsMap user={currUser} subSkill={true} onlySkillArea={area.skillPath} userSkills={context.skills} ownsProfile={true} />
+                  </div>
+                )
+              }
             </Card.Content>
           </QLink>
         ) ) }
@@ -73,7 +85,12 @@ const LearnCodeRoute = () => (
   </Grid>
 )
 
+LearnCodeRoute.contextTypes = {
+  skills: PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
+}
+
 export default LearnCodeRoute
+
 
 const cardStyle = {
   color: "#2e2e2e"

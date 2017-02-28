@@ -126,8 +126,6 @@ export const showToast = (content, type = 'success') => {
   return useType.delay
 }
 
-
-
 const App = React.createClass({
   mixins: [ReactMeteorData],
   propTypes: {
@@ -199,11 +197,17 @@ const App = React.createClass({
       // hazUnreadChats is just a subset of the data in chatChannelTimestamps, but simplified - just an
       // Array of chat channelNames with at least one unread message. Handy for notification UIs, and quicker to parse
 
-      // This is so that we can pass the Asset 'kind' info into some other components like the flexpanels and Nav controls.
-      // The AssetEditRoute component is currently the only component expected to set this value, since that
-      // is the layer in the container hierarchy that actually loads assets for the AssetEditors
-      currentlyEditingAssetKind: null,     // null or a string which is a key into assets:AssetKindKeys.
-      currentlyEditingAssetCanEdit: false, // true or false. True iff editing anasset and user can edit
+      currentlyEditingAssetInfo: { 
+        // This is so that we can pass as subset of the Asset info into some other components 
+        // like the flexpanels and Nav controls.
+        // The AssetEditRoute component is currently the only component expected to set this
+        //  value, since that is the layer in the container hierarchy that actually loads 
+        // assets for the AssetEditors
+        kind: null,       // null or a string which is a one of assets:AssetKindKeys
+        canEdit: false,   // true or false. True iff editing an Asset _and_ user has edit permission
+        projectNames: []  // Empty array, or array of strings for project names as described in assets.js
+      },
+
       // For react-joyride
       joyrideSteps: [],
       joyrideSkillPathTutorial: null,      // String with skillPath (e.g code.js.foo) IFF it was started by startSkillPathTutorial -- i.e. it is an OFFICIAL SKILL TUTORIAL
@@ -311,18 +315,16 @@ const App = React.createClass({
       $.getScript(makeCDNLink("/lib/t-r-a-c-k-e-r.js"), doTrack)   // fallback to local version because of AdBlocks etc
   },
 
-  handleSetCurrentlyEditingAssetInfo(currentAssetKind = null, canEdit=false)
+  handleSetCurrentlyEditingAssetInfo( assetInfo )
   {
+    if (!_.isEqual(this.state.currentlyEditingAssetInfo, assetInfo))
+      this.setState( { currentlyEditingAssetInfo: assetInfo } )
     // See comments in getInitialState() for explanation
-    if (this.state.currentlyEditingAssetKind !== currentAssetKind)
-      this.setState( { currentlyEditingAssetKind: currentAssetKind } )
-    if (this.state.currentlyEditingAssetCanEdit !== canEdit)
-      this.setState( { currentlyEditingAssetCanEdit: canEdit } )
   },
 
   render() {
     const { respData, respWidth, params } = this.props
-    const { joyrideDebug, currentlyEditingAssetKind, currentlyEditingAssetCanEdit, chatChannelTimestamps, hazUnreadChats } = this.state
+    const { joyrideDebug, currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats } = this.state
 
     const { loading, currUser, user, currUserProjects, sysvars } = this.data
     const { query } = this.props.location
@@ -406,7 +408,7 @@ const App = React.createClass({
               flexPanelIsVisible={showFlexPanel}
               activity={this.data.activity}
               isSuperAdmin={isSuperAdmin}
-              currentlyEditingAssetKind={currentlyEditingAssetKind}
+              currentlyEditingAssetInfo={currentlyEditingAssetInfo}
               />
 
             <div style={mainPanelOuterDivSty} className="noScrollbarDiv">
@@ -428,8 +430,7 @@ const App = React.createClass({
                     params={this.props.params}
                     flexPanelWidth={flexPanelWidth}
                     sysvars={sysvars}
-                    currentlyEditingAssetKind={currentlyEditingAssetKind}
-                    currentlyEditingAssetCanEdit={currentlyEditingAssetCanEdit}
+                    currentlyEditingAssetInfo={currentlyEditingAssetInfo}
                     />
                 {
                   !loading && this.props.children && React.cloneElement(this.props.children, {

@@ -90,7 +90,7 @@ export default AssetEditRoute = React.createClass({
     currUserProjects: PropTypes.array,       // Both Owned and memberOf. Check ownerName / ownerId fields to know which
     isSuperAdmin:     PropTypes.bool,
     ownsProfile:      PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
-    handleSetCurrentlyEditingAssetInfo: PropTypes.func     // We should call this to set/clear current asset kind
+    handleSetCurrentlyEditingAssetInfo: PropTypes.func    // We should call this to set/clear current asset kind
   },
 
   getInitialState: function () {
@@ -191,7 +191,7 @@ export default AssetEditRoute = React.createClass({
 
     // Clear Asset kind status for parent App
     if (this.props.handleSetCurrentlyEditingAssetInfo)
-      this.props.handleSetCurrentlyEditingAssetInfo(null, false)
+      this.props.handleSetCurrentlyEditingAssetInfo( {} )
   },
 
   componentDidUpdate() {
@@ -208,7 +208,11 @@ export default AssetEditRoute = React.createClass({
     // TODO: Discuss with @stauzs to see if there are other cases to cover?
     const asset = this.assetHandler.asset
     if (asset && this.props.handleSetCurrentlyEditingAssetInfo)
-      this.props.handleSetCurrentlyEditingAssetInfo( asset.kind, this.canCurrUserEditThisAsset(asset) )
+      this.props.handleSetCurrentlyEditingAssetInfo( {
+        kind: asset.kind, 
+        canEdit: this.canCurrUserEditThisAsset(asset),
+        projectNames: asset.projectNames || []
+      } )
 
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId)
     let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId)

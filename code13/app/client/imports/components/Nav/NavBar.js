@@ -20,10 +20,10 @@ const NavBar = (
     pathLocation,
     flexPanelWidth,
     sysvars,
-    currentlyEditingAssetKind,
-    currentlyEditingAssetCanEdit
+    currentlyEditingAssetInfo
   } ) => {
 
+  // We special-case a few paths to not show the Breadcrumb for aesthetic reasons
   if (_.includes(['/', '/signup', '/login','/forgot-password'], pathLocation))
     return null
 
@@ -41,7 +41,12 @@ const NavBar = (
       }}>
       <SystemAlerts sysvars={sysvars} />
       <WhatsNew currUser={currUser} asHidingLink={true} />
-      <NavBarBreadcrumb pathLocation={pathLocation} name={name} user={user} params={params} currentlyEditingAssetKind={currentlyEditingAssetKind} currentlyEditingAssetCanEdit={currentlyEditingAssetCanEdit} />
+      <NavBarBreadcrumb 
+          pathLocation={pathLocation} 
+          name={name} 
+          user={user} 
+          params={params} 
+          currentlyEditingAssetInfo={currentlyEditingAssetInfo} />
     </Segment>
   )
 }
@@ -53,8 +58,7 @@ NavBar.propTypes = {
   pathLocation:       PropTypes.string,                 // basically windows.location.pathname, but via this.props.location.pathname from App.js
   flexPanelWidth:     PropTypes.string.isRequired,      // Typically something like "200px".
   name:               PropTypes.string,                 // Page title to show in NavBar breadcrumb
-  currentlyEditingAssetKind: PropTypes.string,          // null or a string which is one of AssetKindKeys - based on currently edited asset
-  currentlyEditingAssetCanEdit: PropTypes.bool          // true or false - true if CanEdit
+  currentlyEditingAssetInfo: PropTypes.object.isRequired// An object with some info about the currently edited Asset - as defined in App.js' this.state
 }
 
 export default NavBar

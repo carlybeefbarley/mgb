@@ -103,7 +103,7 @@ export default class JoyrideTooltip extends React.Component {
     const styles = {
       arrow:    { left: opts.arrowPosition },
       buttons:  {},
-      header:   {},
+      header:   { marginBottom: '0.5em' },
       hole:     {},
       tooltip:  {
         position: cssPosition === 'fixed' ? 'fixed' : 'absolute',

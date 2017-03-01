@@ -69,6 +69,11 @@ const LearnJsGamesRoute = ({ currUser }, context) => {
             For coders it is easy to start with this game and add more concepts to it.
           </Header.Subheader>
         </Header>
+        { currUser && (
+        <div style={{ clear: 'both' }}>
+          <SkillsMap user={currUser} subSkill={true} onlySkillArea={'code.js.games'} userSkills={context.skills} ownsProfile={true} />
+        </div>
+      )}
       </Grid.Column>
       <Grid.Column>
         <Segment padded piled>

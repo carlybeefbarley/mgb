@@ -33,12 +33,13 @@ const learnCodeItems = [
   {
     mascot: 'mole',
     icon: 'code',
-    content: 'Create game A-Z',
+    content: 'Game tutorials',
     link: '/learn/code/jsGames',
+    skillPath: 'code.js.games',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `Use your new game programming knowledge to create a 'Whack-a-Mole' game. 
-    The first tutorial shows how to code the minimal 'base' of this game. The next four tutorials show how to add features to the game.`
+    desc: `Use your new game programming knowledge to create a game step by step. 
+    The first tutorial shows how to code the minimal 'base' of game. The next tutorials show how to add features.`
   },
   {
     mascot: 'arcade_player',

@@ -2165,9 +2165,11 @@ export default class EditCode extends React.Component {
       if(asset.skillPath && asset.kind === 'code'){
         if (asset.skillPath.startsWith('code.js.basics'))
           isChallenge = true
-        else if (asset.skillPath.startsWith('code.js.phaser'))
+        else if (asset.skillPath.startsWith('code.js.games'))
           isCodeTutorial = true
       }
+
+      console.log(isChallenge, isCodeTutorial)
 
     return (
       <div className="ui grid">
@@ -2222,7 +2224,7 @@ export default class EditCode extends React.Component {
               }
 
               { isChallenge &&
-                <div className={"title " + (asset.skillPath ? "active" : "")}
+                <div className={"title active"}
                 id="mgbjr-EditCode-codeChallenges">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />Code Challenges
@@ -2241,10 +2243,10 @@ export default class EditCode extends React.Component {
               }
 
               { isCodeTutorial &&
-                <div className={"title " + (asset.skillPath ? "active" : "")}
+                <div className={"title active"}
                 id="mgbjr-EditCode-codeTutorials">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
-                    <i className='dropdown icon' />Code Challenges
+                    <i className='dropdown icon' />Code Tutorials
                   </span>
                 </div>
               }
@@ -2263,7 +2265,7 @@ export default class EditCode extends React.Component {
                 // Current Line/Selection helper (header)
                 <div id="mgbjr-EditCode-codeMentor" className={"title " + (asset.skillPath ? "" : "active") }>
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
-                    <i className='dropdown icon' />Code Tutorials
+                    <i className='dropdown icon' />Code Mentor
                   </span>
                 </div>
               }

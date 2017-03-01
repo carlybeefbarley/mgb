@@ -2159,14 +2159,18 @@ export default class EditCode extends React.Component {
         handleStop = {this.handleStop.bind(this)}
       />
 
-      let isChallenge = false
-      let isCodeTutorial = false
-      if(asset.skillPath && asset.kind === 'code'){
-        if (asset.skillPath.startsWith('code.js.basics'))
-          isChallenge = true
-        else if (asset.skillPath.startsWith('code.js.games'))
-          isCodeTutorial = true
-      }
+    let isChallenge = false
+    let isCodeTutorial = false
+    if (asset.skillPath && asset.kind === 'code') {
+      // TODO(@shmikucis): For maintainability, I think this decision should 
+      //                   be an attribute of the skillNodePath prefix, not 
+      //                   something deep in the editcode stack. Or at least
+      //                   make this a helper function inside skillNodes.js
+      if (asset.skillPath.startsWith('code.js.basics'))
+        isChallenge = true
+      else if (asset.skillPath.startsWith('code.js.games'))
+        isCodeTutorial = true
+    }
 
     return (
       <div className="ui grid">

@@ -14,12 +14,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Tue Feb 28 2017 12:30 GMT-0800 (PST)',
+      'timestamp': 'Tue Feb 28 2017 20:20 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3528'
+        'iteration': '3538'
       },
 
       'releaseManagement': {
@@ -38,7 +38,7 @@ const mgbReleaseInfo = {
           'featureTag': 'learn',
           'type': 'bugfix',
           'changeName': 'Coding Challenges now have console output',
-          'changeSummary': 'Some of the Code Challenges use console.log() output. We now show the console output for those tools in-browser',
+          'changeSummary': 'Some of the Code Challenges use console.log() output. We now show the console output for those tools in-browser. Also, the getStarted Page has had a facelift',
           'otherUrls': [
              { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' },
              { txt: 'Example of viewing (hidden) assets created by Code Challenges', href: '/u/dgolds/assets?showChallengeAssets=1' }

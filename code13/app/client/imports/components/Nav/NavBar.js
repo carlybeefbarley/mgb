@@ -23,7 +23,7 @@ const NavBar = (
     currentlyEditingAssetInfo
   } ) => {
   // We special-case a few paths to not show the Breadcrumb for aesthetic reasons
-  if (_.includes(['/', '/signup', '/login','/forgot-password'], location.path))
+  if (_.includes(['/', '/signup', '/login','/forgot-password'], location.pathname))
     return null
 
   return (

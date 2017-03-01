@@ -69,7 +69,7 @@ const LearnCodeRoute = ({ currUser, params }, context) => (
             <Card.Content>
               <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
               <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
-              <p style={descStyle}>{area.desc}.</p>
+              <p style={descStyle}>{area.desc}</p>
               {
                 area.skillPath && currUser && 
                 (

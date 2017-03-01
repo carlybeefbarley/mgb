@@ -2169,8 +2169,6 @@ export default class EditCode extends React.Component {
           isCodeTutorial = true
       }
 
-      console.log(isChallenge, isCodeTutorial)
-
     return (
       <div className="ui grid">
         { this.state.creatingBundle && <div className="loading-notification">Bundling source code...</div> }

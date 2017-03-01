@@ -100,10 +100,9 @@ const LearnJsGamesRoute = ({ currUser }, context) => {
       <Divider hidden />
       <Grid.Column>
         <Header as='h1'>
-          Develop a game from A-Z
+          Game tutorials
           <Header.Subheader>
-            Everyone knows "Whack a Mole" game.
-            For coders it is easy to start with this game and add more concepts to it.
+            Use your new game programming knowledge to create a game step by step. The first tutorial shows how to code the minimal 'base' of game. The next tutorials show how to add features.
           </Header.Subheader>
         </Header>
         { currUser && (

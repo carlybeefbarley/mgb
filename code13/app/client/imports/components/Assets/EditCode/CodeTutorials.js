@@ -11,6 +11,10 @@ import { learnSkill } from '/imports/schemas/skills'
 import './editcode.css'
 
 
+const _jsGamesSkillsPath = 'code.js.games'
+const _jsGamesSkillsNode = SkillNodes.$meta.map[_jsGamesSkillsPath]
+
+
 export default class CodeTutorials extends React.Component {
 
   static propTypes = {
@@ -30,6 +34,10 @@ export default class CodeTutorials extends React.Component {
     }
   }
 
+  componentDidMount() {
+    const tutorialUrl = makeCDNLink(window.location.origin + this.skillNode.$meta.link) 
+    // console.log(tutorialUrl, this.skillNode)
+  }
 
 
   render() {
@@ -38,7 +46,7 @@ export default class CodeTutorials extends React.Component {
 
     return (
       <div id="codeChallenges" className={"content " +(this.props.active ? "active" : "")}>
-        Code Tutorials
+        Code Tutorials soon to be implemented
       </div>
     )
   }

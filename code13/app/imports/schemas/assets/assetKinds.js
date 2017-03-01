@@ -146,7 +146,7 @@ export const AssetKinds = {
     explanation: "Code is written in the 'Javascript 2015' programming language. You can use Assets such as Graphics, Sound, Music, Map... and also other 'imported' code/modules/packages to make your game.", 
   },
   "game": {
-    name: "Game",
+    name: "GameConfig",
     selfPlural: false,
     disable: false,
     longName: "Game definition",
@@ -154,7 +154,7 @@ export const AssetKinds = {
     color: "brown",
     requiresUserRole: null,
     description: "Game rules, start location, and play statistics",
-    explanation: 'The Game Asset lets you choose options for your game, and specify which ActorMap or Code Asset is the start of the game. Game Assets are also used to publish your game so others can find it, and to store play information such as play counts, analytics, high scores, game saves etc.'
+    explanation: 'The GameConfig Asset lets you choose options for your game, and specify which ActorMap or Code Asset is the start of the game. GameConfig Assets are also used to publish your game so others can find it, and to store play information such as play counts, analytics, high scores, game saves etc.'
   },
   "tutorial": {
     name: "Tutorial",

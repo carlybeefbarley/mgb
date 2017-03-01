@@ -7,38 +7,39 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
       this.tests = []
       this.runners = 0
       this.needRestart = false
-
+      this.expanded = false
 
       this._restart = restart
 
 
-      this.widget = document.createElement("div")
-      this.widget.classList.add("testCase")
+      this.widget = document.createElement('div')
+      this.widget.classList.add('testCase')
 
-      this.title = this.widget.appendChild(document.createElement("span"))
+      this.title = this.widget.appendChild(document.createElement('span'))
+      this.title.classList.add("title")
+      this.title.onclick = () => this.toggleExpand()
+      this.title.setAttribute('label', '+')
+
       this.title.innerHTML = data.title ? `${data.title} (${data.name})` : data.name
 
-      this.status = this.widget.appendChild(document.createElement("span"))
+      this.status = this.widget.appendChild(document.createElement('span'))
 
-      this.autoRestart = this.widget.appendChild(document.createElement("input"))
+      this.autoRestart = this.widget.appendChild(document.createElement('input'))
 
-      this.autoRestart.setAttribute("type", "checkbox")
-      this.autoRestart.setAttribute("label", "auto restart?")
-      this.autoRestart.onclick = (val) => {
-        this.needRestart = !this.needRestart
-      }
+      this.autoRestart.setAttribute('type', 'checkbox')
+      this.autoRestart.setAttribute('label', 'auto restart?')
+      this.autoRestart.onclick = (val) => {this.needRestart = !this.needRestart}
 
-      this.actions = document.createElement("span")
-      this.actions.classList.add("actions")
+      this.actions = document.createElement('span')
+      this.actions.classList.add('actions')
 
       this.createActions()
       this.widget.insertBefore(this.actions, this.title.nextSibling)
 
-      this.chartWrapper = this.widget.appendChild(document.createElement("div"))
-      this.chartWrapper.style.height = "200px"
-      this.chartWrapper.style.maxHeight = "200px"
+      this.chartWrapper = this.widget.appendChild(document.createElement('div'))
+      this.chartWrapper.classList.add('chart-wrapper')
 
-      this.canvas = this.chartWrapper.appendChild(document.createElement("canvas"))
+      this.canvas = this.chartWrapper.appendChild(document.createElement('canvas'))
       this.canvas.height = 200
 
       this.chartData = {labels: [], datasets: []}
@@ -58,7 +59,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
 
     init(data) {
       // this.title.innerHTML = data.name
-      this.status.innerHTML = "Running " + this.runners
+      this.status.innerHTML = 'Running ' + this.runners
 
       // this.actions.parentNode && this.widget.removeChild(this.actions)
       this.widget.insertBefore(this.status, this.actions.nextSibling)
@@ -67,7 +68,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
     update(data) {
       this.runners--
 
-      this.status.innerHTML = "Running " + this.runners
+      this.status.innerHTML = 'Running ' + this.runners
       if (this.runners == 0) {
         this.status.parentNode && this.widget.removeChild(this.status)
       }
@@ -83,7 +84,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
        borderWidth: 1,
        lineTension: 0.1,
        fill: false,
-       borderColor: "rgba(255,192,192,1)",
+       borderColor: 'rgba(255,192,192,1)',
        label: 'Test 01',
        data: [1, 2]
        },
@@ -91,7 +92,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
        borderWidth: 1,
        lineTension: 0.1,
        fill: false,
-       borderColor: "rgba(75,192,192,1)",
+       borderColor: 'rgba(75,192,192,1)',
        label: 'Test 03',
        data: [7, 1]
        },
@@ -99,7 +100,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
        borderWidth: 1,
        lineTension: 0.1,
        fill: false,
-       borderColor: "rgba(75,20,255,1)",
+       borderColor: 'rgba(75,20,255,1)',
        label: 'Test 02',
        data: [3, 9]
        }
@@ -109,14 +110,15 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
       this.chartData.labels.push(this.chartData.labels.length + 1)
 
       const colors = [
-        //"#ff0000",
-        "#00ff00",
-        "#0000ff",
-        "#00ffff",
-        "#ff00ff",
-        "#ffff00"
+        //'#ff0000',
+        '#00ff00',
+        '#0000ff',
+        '#00ffff',
+        '#ff00ff',
+        '#ffff00'
       ]
 
+      let hasErrors = false
       data.tests.forEach((t, i) => {
         if (!this.chartData.datasets[i]) {
           this.chartData.datasets[i] = {
@@ -133,28 +135,33 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
           ds.data.push(t.duration || 0)
         }
         else {
+          hasErrors = true
           ds.data.push(null)
         }
       })
-      data.tests.forEach((t, i) => {
-        const idx = data.tests + i
-        if (t.state !== 'passed') {
+      if(hasErrors) {
+        data.tests.forEach((t, i) => {
+          const idx = data.tests.length + i
           if (!this.chartData.datasets[idx]) {
             this.chartData.datasets[idx] = {
               borderWidth: 1,
               lineTension: 0.01,
               fill: false,
-              borderColor: colors[idx] || '#000000',
-              label: "Failed: " + t.title,
+              borderColor: '#ff0000',
+              label: 'Failed: ' + t.title,
               data: []
             }
           }
+          if (t.state !== 'passed') {
+            const ds = this.chartData.datasets[idx]
+            const next = this.chartData.datasets[0].data.length - data.tests.length + i + 1
 
-          const ds = this.chartData.datasets[idx]
-          ds.data[idx] = t.duration || 0
-        }
-      })
-      this.chart.update()
+            ds.data[next] = t.duration || 0
+          }
+        })
+      }
+
+      this.expanded && this.chart.update()
 
       this.needRestart && this.restart()
     }
@@ -162,26 +169,40 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
     createActions() {
       this.restartBtn = this.actions.appendChild(document.createElement('a'))
       this.restartBtn.innerHTML = 'Add runner'
-      this.restartBtn.classList.add("play")
+      this.restartBtn.classList.add('play')
       this.restartBtn.onclick = () => this.restart()
 
       this.removeBtn = this.actions.appendChild(document.createElement('a'))
       this.removeBtn.innerHTML = 'Clear'
-      this.removeBtn.classList.add("clear")
+      this.removeBtn.classList.add('clear')
       this.removeBtn.onclick = () => this.clear()
 
       this.removeBtn = this.actions.appendChild(document.createElement('a'))
       this.removeBtn.innerHTML = 'Remove'
-      this.removeBtn.classList.add("remove")
+      this.removeBtn.classList.add('remove')
       this.removeBtn.onclick = () => {
-        alert("Not implemented")
+        alert('Not implemented')
         //this.destroy()
+      }
+    }
+
+    toggleExpand(expand){
+      this.expanded = expand != void(0) ? expand : !this.expanded
+      if(this.expanded){
+        this.chart.update()
+        this.widget.classList.add('expanded')
+        this.title.setAttribute('label', '-')
+      }
+      else{
+        this.widget.classList.remove('expanded')
+        this.title.setAttribute('label', '+')
       }
     }
 
     restart() {
       this.runners++
-      this.status.innerHTML = "Running " + this.runners
+      // this.toggleExpand(true)
+      this.status.innerHTML = 'Running ' + this.runners
       this._restart(this.data)
     }
 
@@ -197,6 +218,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
     clear() {
       this.chartData.labels.length = 0
       this.chartData.datasets.length = 0
+      this.expanded && this.chart.update()
       this.chart.update()
     }
   }

@@ -17,13 +17,20 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
   status.cpu.show(document.body)
   status.info.show(document.body)
 
-  window.test = new ml.TestCase({name: 'loadPage', id: "Main test case", title: "Simply load page"}, (data) => {
-    sendMessage('start', data)
-  })
+  const restart = data => sendMessage('start', data)
+  new ml.TestCase({name: 'load.home.page', id: 'load.home.page', title: 'Load home page'}, restart)
+  new ml.TestCase({name: 'login', id: 'login', title: 'Test Log In'}, restart)
 
-  new ml.TestCase({name: 'login', id: "Login test case", title: "Log In user"}, (data) => {
-    sendMessage('start', data)
-  })
+  new ml.TestCase({name: 'adjust.settings', id: "adjust.settings", title: 'Adjust Settings'}, restart)
+  new ml.TestCase({name: 'code.bundler', id: "code.bundler", title: 'Test Code Bundler'}, restart)
+  new ml.TestCase({name: 'code.load.import', id: "code.load.import'", title: 'Test Import Loader'}, restart)
+  new ml.TestCase({name: 'code.mentor', id: 'code.mentor', title: 'Test Code Mentor'}, restart)
+  new ml.TestCase({name: 'code.update', id: 'code.update', title: 'Test Code Updates'}, restart)
+  new ml.TestCase({name: 'graphic', id: 'graphic', title: 'Test Graphic Editor'}, restart)
+  new ml.TestCase({name: 'map.simple', id: 'map.simple', title: 'Test Map Editor'}, restart)
+
+  new ml.TestCase({name: 'random.error', id: 'random.error', title: 'SelfTest: Generate Errors Randomly'}, restart)
+
   const actions = {
     status: (data) => {
       status.memory.progress(data.status.used * 100)
@@ -41,6 +48,9 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
       const testCase = ml.TestCase.find(data.id)
       testCase && testCase.update(data)
       // console.log("Runner completed:", data, data.tests[0])
+    },
+    critical: data => {
+      alert("Critical error!\n" + data)
     }
   }
   ws = new WebSocket('ws://' + window.location.host)

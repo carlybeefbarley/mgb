@@ -103,7 +103,7 @@ function runTests(browserName, tests) {
        they will overwrite browser instance
        child process should resolve this, but error reporting will suffer
        */
-      browser.loadHomePage()
+
       const waitForPreviousBrowserToClose = () => {
         if (browser) {
           setTimeout(waitForPreviousBrowserToClose, 100)
@@ -111,27 +111,9 @@ function runTests(browserName, tests) {
         else {
           // only assign reference to browser - when all good
           const tmpbrowser = CreateBrowser(browserName)
-          /*
-           this don't work nice in load testing */
-          const flow = browser.controlFlow()
-          const scheduleClose = () => {
-            // there might be other "idle" listeners - so wait 1 sec - to be sure queue is empty
-            setTimeout(() => {
-              if (flow.isIdle()) {
-                console.log("CLOSING BROWSER!!!")
-                browser.close()
-                browser.quit()
-                // TODO (stauzs): is this available from browser?
-                browser.hasClosed = true;
-              }
-              else {
-                flow.once("idle", scheduleClose)
-              }
-            }, 2000)
-          }
-          scheduleClose()
           tmpbrowser.call(function () {
             browser = tmpbrowser
+            browser.loadHomePage()
             browser.call(done)
           })
         }
@@ -149,11 +131,11 @@ function runTests(browserName, tests) {
   describe(`Finalizing [${browserName}]`, function () {
     // actually we are just waiting here for browser to close
     it("closing browser", function (done) {
-      this.timeout(2000)
-      this.slow(10001)
-      //browser will auto close after 1-2 seconds
+      console.log("CLOSING BROWSER!!!")
+      browser.close()
+      browser.quit()
       browser = null
-      setTimeout(done, 1)
+      done()
     })
   })
 }

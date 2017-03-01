@@ -27,8 +27,7 @@ module.exports = (browser) => {
   return (done) => {
     // wait for React root element
     sel.css("#root")
-    // wait a little bit
-    sel.wait(500)
+    console.log("ROOT selected!")
     // already logged in ?
     sel.exists(buttons.avatar, (e, found) => {
       if (found) {
@@ -36,6 +35,7 @@ module.exports = (browser) => {
         sel.done(done)
         return
       }
+      console.log("Trying to log in..!")
       // and check again - just in case we are logged in already
       sel.css(buttons.login).click()
       // clear input - because chrome tends to save forms
@@ -49,14 +49,20 @@ module.exports = (browser) => {
       // OR login with click on the submit button
       // password.sendKeys(PASSWORD)
       // sel.css(buttons.submitLoginForm).click()
-      sel.wait(100)
-      sel.takeScreenShot('scr/isLogged.png')
+      //sel.wait(100)
+      //sel.takeScreenShot('scr/isLogged.png')
+
+
+      sel.untilVisible(buttons.avatar, 3000)
       sel.exists(buttons.avatar, e => {
         if (e) {
-          sel.takeScreenShot('scr/NOTLoggedIn.png')
-          throw(e)
+          console.log("LOGIN FAILED!", e)
+          sel.takeScreenShot('scr/NOTLoggedIn.png', () => {
+            throw(e)
+          })
+          sel.done(done)
+          return
         }
-        sel.wait(500)
         sel.takeScreenShot('scr/LoggedIn.png')
         sel.done(done)
       })

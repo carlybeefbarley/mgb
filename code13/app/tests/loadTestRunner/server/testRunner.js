@@ -14,10 +14,13 @@ class TestRunner {
   runTest(name, port) {
     // console.log("running test: "+name)
     const mocha = new Mocha({
-      timeout: 30000
+      timeout: 120000
     })
-    const testFileName = __dirname + '/../loadTests/' + name + '.js'
-    global.browser = startBrowser('local.phantom', {server: 'http://127.0.0.1:' + port})
+    const testFileName = __dirname + '/../loadTests/loadTest.js'
+    global.testInfo = {
+      browser: startBrowser('local.chrome', {server: 'http://127.0.0.1:' + port}),
+      test: name
+    }
     mocha.addFile(testFileName)
 
     mocha.reporter(Reporter).run(function (failures) {

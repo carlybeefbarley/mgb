@@ -1,5 +1,5 @@
 /* this is sample test which only tries to log in user */
-module.exports = (getBrowser, path) => {
+module.exports = (getBrowser) => {
   let browser;
   describe("Running code mentor tests", function(){
     before(function(){
@@ -12,15 +12,15 @@ module.exports = (getBrowser, path) => {
     })
 
     it("Creating Code Asset", function(done){
-      require(path + "procedures/createAsset.js")(browser)("code", done)
+      require(__dirname + "/../procedures/createAsset.js")(browser)("code", done)
     })
 
     it("Modifying Code", function(done){
-      require(path + "procedures/checkCodeMentor.js")(browser)(done)
+      require(__dirname + "/../procedures/checkCodeMentor.js")(browser)(done)
     })
 
     it("Remove Code - clean up", function(done){
-      require(path + "procedures/deleteAsset.js")(browser)(done)
+      require(__dirname + "/../procedures/deleteAsset.js")(browser)(done)
     })
   })
 }

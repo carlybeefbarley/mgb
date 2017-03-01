@@ -1,20 +1,32 @@
 const status = require('./status')
 const spawn = require('child_process').spawn
 // short for send message ;)
-const sm = (ws, action, data) => {
-  ws.send(JSON.stringify({action, data}))
+const sm = (ws, action, data, callback) => {
+  ws.send(JSON.stringify({action, data}), callback)
 }
 // send message to ALL connected clients
-const smAll = (wss, action, data) => {
+const smAll = (wss, action, data, callback) => {
+  let toComplete = wss.clients.length
   wss.clients.forEach((c) => {
-    sm(c, action, data)
+    sm(c, action, data, () => {
+      toComplete--
+      if(!toComplete){
+        callback && callback()
+      }
+    })
   })
 }
 // send message to OTHER connected clients
-const smOthers = (wss, action, data, ws) => {
+const smOthers = (wss, action, data, ws, callback) => {
+  let toComplete = wss.clients.length - 1
   wss.clients.forEach((c) => {
     if(c == ws) return
-    sm(c, action, data)
+    sm(c, action, data, () => {
+      toComplete--
+      if(!toComplete){
+        callback && callback()
+      }
+    })
   })
 }
 
@@ -39,7 +51,7 @@ process.on('SIGINT', exitHandler.bind(null, {exit:true}))
 //catches uncaught exceptions
 process.on('uncaughtException', exitHandler.bind(null, {exit:true}))
 
-const PHANTOM_MAX_AGE = 5 * 60 * 1000
+const PHANTOM_MAX_AGE = 5 * 60 * 1000 // 5 minutes
 
 const spawnPhantom = (port, callback = (p) => {p.available = true}) => {
   for(let i=0; i<phantoms.length; i++){
@@ -61,10 +73,10 @@ const spawnPhantom = (port, callback = (p) => {p.available = true}) => {
     oldPhantom.available = false
     // WARNING!!!
     if(oldPhantom.tmpPath.startsWith('/tmp/phantom')){
-      const rm = spawn('rm', ['-rf', oldPhantom.tmpPath])
-      rm.on('exit', () => {
+      //const rm = spawn('rm', ['-rf', oldPhantom.tmpPath])
+      //rm.on('exit', () => {
         callback(oldPhantom)
-      })
+      //})
     }
     else{
       console.error("Failed to clear phantom cache")
@@ -98,7 +110,7 @@ const spawnPhantom = (port, callback = (p) => {p.available = true}) => {
   phantom.stdout.once('data', () => {callback(retval)})
 
   phantom.stdout.on('data', data => {
-    // console.log(`phantom: ${data}`)
+    console.log(`phantom: ${data}`)
   })
 
   phantom.on('exit', () => {
@@ -143,6 +155,9 @@ module.exports = {
       })
       runner.stderr.on('data', (data) => {
         console.log(`Runner error: ${data}`)
+        /*sm(ws, 'critical', data.toString(), () => {
+          process.exit()
+        })*/
       })
       runner.on('message', data => {
         runnerData = JSON.parse(data)

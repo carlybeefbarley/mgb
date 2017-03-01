@@ -76,7 +76,7 @@ module.exports = (browser) => {
     wait(timeout, message){
       return browser.wait(new Promise((y, n) => {
         setTimeout(y, timeout)
-      }), timeout, message)
+      }), timeout*2, message)
     },
 
     takeScreenShot(name, cb){

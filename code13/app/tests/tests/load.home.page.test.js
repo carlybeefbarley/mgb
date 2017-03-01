@@ -1,17 +1,16 @@
 /* this is sample test which only tries to log in user */
 const SeleniumHelper = require("../helpers/selenium.js")
-module.exports = (getBrowser, path) => {
+module.exports = (getBrowser) => {
   var browser;
-  describe("Running login tests", function(){
-    before(function(){
+  describe("Running login tests", function () {
+    before(function () {
       browser = getBrowser();
     })
     // all action should be in the "it" block
-    it("PageLoaded?", function(done){
+    it("Load Main Page", function (done) {
       const sel = SeleniumHelper(browser)
       sel.css("#root")
-
       sel.done(done)
-      })
+    })
   })
 }

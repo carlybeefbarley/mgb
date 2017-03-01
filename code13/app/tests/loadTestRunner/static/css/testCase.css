@@ -3,6 +3,20 @@
   margin-bottom: 15px;
 }
 
+.testCase .title:before{
+  content: attr(label);
+  margin-right: 6px;
+}
+
+.testCase .chart-wrapper{
+  height: 200px;
+  max-height: 200px;
+  display: none;
+}
+.testCase.expanded .chart-wrapper{
+  display: block;
+}
+
 .testCase span{
   display: inline-block;
   padding: 2px 10px;
@@ -10,7 +24,12 @@
   font-size: 0.9em;
 }
 
-span.actions a {
+.testCase span.title{
+  min-width: 320px;
+  cursor: pointer;
+}
+
+.testCase span.actions a {
   padding: 15px;
   color: blue;
   cursor: pointer;

@@ -11,17 +11,26 @@ class MyReporter extends Mocha.reporters.Base {
     var failures = 0
     let total = 0
 
+    runner.on('test', (test) => {
+      test.started = Date.now()
+    })
+    /*runner.on('test', (test) => {
+      test.started = Date.now()
+    })*/
+
     runner.on('pass', function(test){
-      passes++;
+      test.duration = Date.now() - test.started
+      passes++
       report.push(test)
       //console.log(`pass: ${test.fullTitle()} (${test.duration}ms)`)
       total += test.duration
     })
 
     runner.on('fail', function(test, err){
+      test.duration = Date.now() - test.started
       report.push(test)
-      failures++;
-      console.error(`fail: ${test.fullTitle()}`, err.message, err.stack)
+      failures++
+      console.error(`fail: ${test.fullTitle()}`, test, err.message, err.stack)
       total += test.duration
     })
 

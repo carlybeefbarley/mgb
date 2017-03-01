@@ -57,7 +57,7 @@ const handleClick = (e, skillPath) => {
 
 }
 
-const LearnCodeMoleRoute = ({ currUser }, context) => {
+const LearnJsGamesRoute = ({ currUser }, context) => {
   return (
     <Grid container columns='1'>
       <Divider hidden />
@@ -96,8 +96,8 @@ const LearnCodeMoleRoute = ({ currUser }, context) => {
   )
 }
 
-LearnCodeMoleRoute.contextTypes = {
+LearnJsGamesRoute.contextTypes = {
   skills: PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
 }
 
-export default LearnCodeMoleRoute
+export default LearnJsGamesRoute

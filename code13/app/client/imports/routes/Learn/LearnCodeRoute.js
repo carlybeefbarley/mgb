@@ -34,7 +34,7 @@ const learnCodeItems = [
     mascot: 'mole',
     icon: 'code',
     content: 'Create game A-Z',
-    link: '/learn/code/mole',
+    link: '/learn/code/jsGames',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
     desc: `Use your new game programming knowledge to create a 'Whack-a-Mole' game. 

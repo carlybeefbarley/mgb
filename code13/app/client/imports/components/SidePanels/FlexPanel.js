@@ -79,7 +79,7 @@ export default FlexPanel = React.createClass({
     handleFlexPanelChange:  PropTypes.func.isRequired,    // Callback to change pane - records it in URL
     flexPanelWidth:         PropTypes.string.isRequired,  // Typically something like "200px".
     isSuperAdmin:           PropTypes.bool.isRequired,    // Yes if one of core engineering team. Show extra stuff
-    currentlyEditingAssetKind: PropTypes.string           // null or a string which is one of AssetKindKeys
+    currentlyEditingAssetInfo: PropTypes.object.isRequired// An object with some info about the currently edited Asset - as defined in App.js' this.state
   },
 
   contextTypes: {
@@ -342,7 +342,7 @@ export default FlexPanel = React.createClass({
                       activity={this.props.activity}
                       panelWidth={this.props.flexPanelWidth}
                       isSuperAdmin={this.props.isSuperAdmin}
-                      currentlyEditingAssetKind={this.props.currentlyEditingAssetKind}
+                      currentlyEditingAssetInfo={this.props.currentlyEditingAssetInfo}
                       subNavParam={this.getSubNavParam()}
                       handleChangeSubNavParam={this.handleChangeSubNavParam}
                       />

@@ -6,7 +6,7 @@ module.exports = {
     // TODO: add extension automatically
     //only: ["win8.1_ie"],//, "safari_9.1", "chrome", "edge", "firefox"],
     //only: ["win8.1_ie", "safari_9.1", "chrome", "edge", "firefox"],
-    only: ['local.chrome'],
+    only: ['local.phantom.hub'],
     // add here some tests to skip
     skip: []
   },

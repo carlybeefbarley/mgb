@@ -6,5 +6,5 @@ this.url = "http://localhost:3000"
 
 
 this.browser = {
-  'browserName': 'phantom'
+  'browserName': 'phantomjs'
 }

@@ -321,3 +321,5 @@ export const makeTutorialsFindSelector = dottedSkillKey =>
     dn_ownerName: SpecialGlobals.skillsModelTrifecta.tutorialAccount
   }
 }
+
+export const getFriendlySkillName = ( parentSkillNode, skillLeafKey ) => (parentSkillNode[skillLeafKey].$meta.name || _.startCase(skillLeafKey))

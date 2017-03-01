@@ -21,6 +21,7 @@ import SourceTools from './SourceTools.js'
 import CodeFlower from './CodeFlowerModded.js'
 import GameScreen from './GameScreen.js'
 import CodeChallenges from './CodeChallenges.js'
+import CodeTutorials from './CodeTutorials.js'
 import makeBundle from '/imports/helpers/codeBundle'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 
@@ -2159,6 +2160,15 @@ export default class EditCode extends React.Component {
         handleStop = {this.handleStop.bind(this)}
       />
 
+      let isChallenge = false
+      let isCodeTutorial = false
+      if(asset.skillPath && asset.kind === 'code'){
+        if (asset.skillPath.startsWith('code.js.basics'))
+          isChallenge = true
+        else if (asset.skillPath.startsWith('code.js.phaser'))
+          isCodeTutorial = true
+      }
+
     return (
       <div className="ui grid">
         { this.state.creatingBundle && <div className="loading-notification">Bundling source code...</div> }
@@ -2211,8 +2221,7 @@ export default class EditCode extends React.Component {
                 </div>
               }
 
-              {/* TODO need to implement asset.skillPath to reference tutorial with this asset */}
-              { !docEmpty && asset.kind === 'code' && asset.skillPath &&
+              { isChallenge &&
                 <div className={"title " + (asset.skillPath ? "active" : "")}
                 id="mgbjr-EditCode-codeChallenges">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -2221,8 +2230,27 @@ export default class EditCode extends React.Component {
                 </div>
               }
 
-              { !docEmpty && asset.kind === 'code' && asset.skillPath &&
+              { isChallenge &&
                 <CodeChallenges
+                  active={ asset.skillPath ? true : false}
+                  skillPath={ asset.skillPath }
+                  codeMirror={ this.codeMirror }
+                  currUser={ this.props.currUser }
+                  userSkills={ this.userSkills }
+                />
+              }
+
+              { isCodeTutorial &&
+                <div className={"title " + (asset.skillPath ? "active" : "")}
+                id="mgbjr-EditCode-codeTutorials">
+                  <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                    <i className='dropdown icon' />Code Challenges
+                  </span>
+                </div>
+              }
+
+              { isCodeTutorial &&
+                <CodeTutorials
                   active={ asset.skillPath ? true : false}
                   skillPath={ asset.skillPath }
                   codeMirror={ this.codeMirror }
@@ -2235,7 +2263,7 @@ export default class EditCode extends React.Component {
                 // Current Line/Selection helper (header)
                 <div id="mgbjr-EditCode-codeMentor" className={"title " + (asset.skillPath ? "" : "active") }>
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
-                    <i className='dropdown icon' />Code Mentor
+                    <i className='dropdown icon' />Code Tutorials
                   </span>
                 </div>
               }

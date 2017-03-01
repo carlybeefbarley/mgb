@@ -5,15 +5,11 @@ import QLink from '../QLink'
 import getStartedStyle from '../GetStarted.css'
 import {
   Button,
-  Card,
-  Dimmer,
   Divider,
   Grid,
   Header,
   Icon,
-  Image,
   Label,
-  Progress,
 } from 'semantic-ui-react'
 import SkillLinkCard from '/client/imports/components/Learn/SkillLinkCard'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
@@ -74,15 +70,6 @@ const _handleStartDefaultNextTutorial = (currUser, userSkills) => {
     startSkillPathTutorial( skillPath )
 }
 
-const continueIconStyle = {
-  position: 'absolute',
-  margin: 'auto',
-  height: '1em',
-  top: 0,
-  right: '1rem',
-  bottom: 0,
-}
-
 export const StartDefaultNextTutorial = ({ currUser, userSkills }) => (
   !currUser ? <OfferLoginTutorial /> : (
       <button
@@ -94,16 +81,6 @@ export const StartDefaultNextTutorial = ({ currUser, userSkills }) => (
         Start next...
       </button>
     )
-)
-
-const OfferNextTutorial = ({ skillPath }) => (
-  <button
-    onClick={() => startSkillPathTutorial( skillPath ) }
-    title={`Start skill tutorial for ${skillPath}`}
-    className="ui active yellow right floated small button mgb-show-on-parent-div-hover">
-    <Icon name='student' />
-    Start next...
-  </button>
 )
 
 const LearnGetStartedRoute = ({ currUser }, context) => {
@@ -132,31 +109,30 @@ const LearnGetStartedRoute = ({ currUser }, context) => {
          Add a pseudo-card for login/signup
          login/signup is a pseudo-tutorial that exists outside the normal skills databases
          so it is sort-of hard0coded here
+         since it has no skill tutorials to revisit, we hide it on completion
          */}
-        <SkillLinkCard
-          to='/signup'
-          mascot='flyingcat'
-          name='Log In / Sign Up'
-          description='You must be logged in to use these tutorials'
-          completed={!!currUser}
-        />
+        {!currUser && (
+          <SkillLinkCard
+            to='/signup'
+            mascot='flyingcat'
+            name='Log In / Sign Up'
+            description='You must be logged in to use these tutorials'
+          />
+        )}
 
-        { gsItems.map( (area, idx) => {
-          const { name, description, key } = area.node.$meta
-          const skillStatus = getSkillNodeStatus( currUser, context.skills, key )
-          const skillPath = key + '.' + skillStatus.todoSkills[0]
-
+        { gsItems.map( area => {
+          const skillStatus = getSkillNodeStatus( currUser, context.skills, area.node.$meta.key )
           return (
             <SkillLinkCard
-              key={name}
-              title={`Start skill tutorial for ${skillPath}`}
+              key={area.node.$meta.name}
+              disabled={!currUser}
               mascot={area.mascot}
-              name={name}
-              description={description}
+              name={area.node.$meta.name}
+              description={area.node.$meta.description}
               childSkills={skillStatus.childSkills}
               learnedSkills={skillStatus.learnedSkills}
               todoSkills={skillStatus.todoSkills}
-              skillPath={skillPath}
+              skillPath={area.node.$meta.key}
             />
           )
         } ) }

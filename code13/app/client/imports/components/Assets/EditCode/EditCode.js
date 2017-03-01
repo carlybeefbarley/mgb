@@ -294,11 +294,10 @@ export default class EditCode extends React.Component {
     //       NOTE that the parent elements have the wrong heights because of a bunch of cascading h=100% styles. D'oh.
     var ed = this.codeMirror
     this.edResizeHandler = e => {
-      let $sPane = $(".CodeMirror")
-      let h = window.innerHeight - ( 16 + $sPane.offset().top )
-      let hpx = h.toString() + "px"
-      ed.setSize("100%", hpx)
-      $(".mgbAccordionScroller").css("max-height", hpx)
+      const $sPane = $(".CodeMirror")
+      const edHeight = window.innerHeight - ( 16 + $sPane.offset().top )
+      ed.setSize("100%", `${edHeight}px`)
+      $(".mgbAccordionScroller").css("max-height", `${window.innerHeight-16}px`)
       $(".mgbAccordionScroller").css("overflow-y", "scroll")
     }
     $(window).on("resize", this.edResizeHandler)
@@ -2172,7 +2171,7 @@ export default class EditCode extends React.Component {
     return (
       <div className="ui grid">
         { this.state.creatingBundle && <div className="loading-notification">Bundling source code...</div> }
-        <div className={infoPaneOpts.col1 + ' wide column'}>
+        <div className={infoPaneOpts.col1 + ' wide column'} style={{ paddingTop: 0, paddingBottom: 0 }}>
 
           <div className="row" style={{marginBottom: "6px"}}>
             {<Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
@@ -2186,7 +2185,7 @@ export default class EditCode extends React.Component {
         </div>
 
         {
-        <div className={infoPaneOpts.col2 + ' wide column'} style={{display: infoPaneOpts.col2 ? "block" : "none"}}>
+        <div className={infoPaneOpts.col2 + ' wide column'} style={{paddingTop: 0, paddingBottom: 0, display: infoPaneOpts.col2 ? "block" : "none"}}>
 
           <div className="mgbAccordionScroller" style={{minHeight: '385px'}}>
             <div className="ui fluid styled accordion">

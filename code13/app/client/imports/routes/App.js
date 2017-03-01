@@ -425,7 +425,7 @@ const App = React.createClass({
                 <NavBar
                     currUser={currUser}
                     user={user}
-                    pathLocation={this.props.location.pathname}
+                    location={this.props.location}
                     name={this.props.routes[1].name}
                     params={this.props.params}
                     flexPanelWidth={flexPanelWidth}

@@ -8,8 +8,9 @@ import Helmet from 'react-helmet'
 
 import { Azzets } from '/imports/schemas'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
+import { makeAssetInfoFromAsset } from '/imports/schemas/assets/assets-client'
 
-import { Segment, Message, Header } from 'semantic-ui-react'
+import { Segment, Message, Header, Icon } from 'semantic-ui-react'
 import Mage from '/client/imports/components/MapActorGameEngine/Mage'
 import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 import QLink from '/client/imports/routes/QLink'
@@ -20,9 +21,7 @@ import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 import { getAssetHandlerWithContent2, makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const _incrementPlayCount = _.debounce(
-    assetId => {
-    Meteor.call('job.gamePlayStats.playGame', assetId)
-  },
+  assetId => { Meteor.call('job.gamePlayStats.playGame', assetId) },
   SpecialGlobals.gamePlay.playCountDebounceMs
 )
 
@@ -104,24 +103,24 @@ const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb }) => {
 const PlayGame = ({ game, user, incrementPlayCountCb }) => {
   if (!game.metadata)
     return <Message warning
-                    content='This Game Asset does not contain a game definition. Someone should edit it and fix that'/>
+                    content='This GameConfig Asset does not contain a game definition. Someone should edit it and fix that'/>
 
   switch (game.metadata.gameType) {
     case 'codeGame':
       if (!game.metadata.startCode || game.metadata.startCode === '')
         return <Message warning
-                        content='This Game Asset does not contain a link to the starting actorMap. Someone should edit it and fix that'/>
+                        content='This GameConfig Asset does not contain a link to the starting actorMap. Someone should edit it and fix that'/>
       return <PlayCodeGame _codeName={game.metadata.startCode} owner={user}
                            incrementPlayCountCb={incrementPlayCountCb}/>
     case 'actorGame':
       if (!game.metadata.startActorMap || game.metadata.startActorMap === '')
         return <Message warning
-                        content='This Game Asset does not contain a link to the starting Game Code file. Someone should edit it and fix that'/>
+                        content='This GameConfig Asset does not contain a link to the starting Game Code file. Someone should edit it and fix that'/>
       return <PlayMageGame _mapName={game.metadata.startActorMap} owner={user}
                            incrementPlayCountCb={incrementPlayCountCb}/>
     default:
       return <Message warning
-                      content='This Game Asset does not contain a game type definition. Someone should edit it and fix that'/>
+                      content='This GameConfig Asset does not contain a game type definition. Someone should edit it and fix that'/>
   }
 }
 
@@ -130,15 +129,34 @@ export default PlayGameRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    params: PropTypes.object,      // params.assetId is the ASSET id
-    user: PropTypes.object
+    params:           PropTypes.object,      // params.assetId is the ASSET id
+    user:             PropTypes.object,
+    // currUser:         PropTypes.object,
+    // currUserProjects: PropTypes.array,       // Both Owned and memberOf. Check ownerName / ownerId fields to know which
+    // isSuperAdmin:     PropTypes.bool,
+    // ownsProfile:      PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
+    handleSetCurrentlyEditingAssetInfo: PropTypes.func    // We should call this to set/clear current asset kind
   },
 
   getMeteorData: function () {
-    let assetId = this.props.params.assetId
+    const { params } = this.props
+    const { assetId } = params
     const assetHandler = this.assetHandler = getAssetHandlerWithContent2(assetId, () => {
-      this.assetHandler && this.forceUpdate()
+      if (this.assetHandler)
+        this.forceUpdate()
     })
+
+    if (this.assetHandler)
+    {
+      const { handleSetCurrentlyEditingAssetInfo } = this.props
+      const { asset } = this.assetHandler
+      if (asset && handleSetCurrentlyEditingAssetInfo)
+      {
+        const assetInfo = makeAssetInfoFromAsset( asset, 'Play' )
+        handleSetCurrentlyEditingAssetInfo( assetInfo )
+      }
+    }
+
     return {
       get asset(){
         return assetHandler.asset
@@ -172,6 +190,9 @@ export default PlayGameRoute = React.createClass({
     if (this.assetHandler) {
       this.assetHandler.stop()
       this.assetHandler = null
+      // Clear Asset kind status for parent App
+      if (this.props.handleSetCurrentlyEditingAssetInfo)
+        this.props.handleSetCurrentlyEditingAssetInfo( {} )      
     }
   },
 
@@ -184,17 +205,19 @@ export default PlayGameRoute = React.createClass({
       return <Spinner />
 
     if (!this.data.asset)
-      return <ThingNotFound type='Game Asset' id={params.assetId}/>
+      return <ThingNotFound type='GameConfig Asset' id={params.assetId}/>
 
     const { params, user } = this.props
     const game = this.data.asset      // One Asset provided via getMeteorData()
 
     return (
-      <Segment basic padded>
-        <QLink to={`/u/${game.dn_ownerName}/asset/${game._id}`}>
-          <Header content={game.name}/>
-        </QLink>
-        <small style={{ float: 'right'}}>{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</small>
+      <Segment basic padded style={{ paddingTop: 0}}>
+          <Header as='span'>
+            <QLink to={`/u/${game.dn_ownerName}/asset/${game._id}`}>
+              <Icon name='game'/>{game.name}
+            </QLink>
+          </Header>
+        <small>&emsp;{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</small>
         <PlayGame game={game} user={user} incrementPlayCountCb={this.incrementPlayCount}/>
       </Segment>
     )

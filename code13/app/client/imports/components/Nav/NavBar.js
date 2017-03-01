@@ -17,14 +17,13 @@ const NavBar = (
     user,
     params,
     currUser,
-    pathLocation,
+    location,
     flexPanelWidth,
     sysvars,
     currentlyEditingAssetInfo
   } ) => {
-
   // We special-case a few paths to not show the Breadcrumb for aesthetic reasons
-  if (_.includes(['/', '/signup', '/login','/forgot-password'], pathLocation))
+  if (_.includes(['/', '/signup', '/login','/forgot-password'], location.path))
     return null
 
   return (
@@ -42,7 +41,7 @@ const NavBar = (
       <SystemAlerts sysvars={sysvars} />
       <WhatsNew currUser={currUser} asHidingLink={true} />
       <NavBarBreadcrumb 
-          pathLocation={pathLocation} 
+          location={location} 
           name={name} 
           user={user} 
           params={params} 
@@ -55,7 +54,7 @@ NavBar.propTypes = {
   params:             PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params
   currUser:           PropTypes.object,                 // Currently logged in user.. or null if not logged in.
   user:               PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
-  pathLocation:       PropTypes.string,                 // basically windows.location.pathname, but via this.props.location.pathname from App.js
+  location:           PropTypes.object,                 // basically windows.location, but via this.props.location from App.js (from React Router)
   flexPanelWidth:     PropTypes.string.isRequired,      // Typically something like "200px".
   name:               PropTypes.string,                 // Page title to show in NavBar breadcrumb
   currentlyEditingAssetInfo: PropTypes.object.isRequired// An object with some info about the currently edited Asset - as defined in App.js' this.state

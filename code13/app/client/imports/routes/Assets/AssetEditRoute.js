@@ -13,7 +13,7 @@ import AssetEdit from '/client/imports/components/Assets/AssetEdit'
 import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
 import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
-
+import { makeAssetInfoFromAsset } from '/imports/schemas/assets/assets-client'
 import { showToast } from '/client/imports/routes/App'
 
 import WorkState from '/client/imports/components/Controls/WorkState'
@@ -208,11 +208,7 @@ export default AssetEditRoute = React.createClass({
     // TODO: Discuss with @stauzs to see if there are other cases to cover?
     const asset = this.assetHandler.asset
     if (asset && this.props.handleSetCurrentlyEditingAssetInfo)
-      this.props.handleSetCurrentlyEditingAssetInfo( {
-        kind: asset.kind, 
-        canEdit: this.canCurrUserEditThisAsset(asset),
-        projectNames: asset.projectNames || []
-      } )
+      this.props.handleSetCurrentlyEditingAssetInfo( makeAssetInfoFromAsset(asset, this.canCurrUserEditThisAsset(asset) ? 'Edit' : 'View') )
 
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId)
     let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId)

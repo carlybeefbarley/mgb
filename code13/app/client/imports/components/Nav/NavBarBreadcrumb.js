@@ -70,16 +70,18 @@ const NavBarBreadcrumb = ( {
   name,
   user,
   params,
-  pathLocation,
+  location,
   currentlyEditingAssetInfo
  } ) => {
-
+  const { query, pathname } = location
   const assetId = params && params.assetId
   const projectId = params && params.projectId
+  const queryProjectName = query ? query.project : null
   const usernameToShow = user ? user.profile.name : params.username
-  const { kind, canEdit, projectNames } = currentlyEditingAssetInfo
+  const { kind, assetVerb, projectNames } = currentlyEditingAssetInfo
   const kindName = AssetKinds.getName(kind)
-  const EditOrView = canEdit ? 'Edit' : 'View'
+  const isPlay = (assetVerb === 'Play')   // A bit of a hack while we decide if this is a good UX
+  const isAssets = (name === 'Assets')
 
   return (
     <Breadcrumb>
@@ -102,17 +104,25 @@ const NavBarBreadcrumb = ( {
         )
       }
 
-      { usernameToShow && assetId && _sep }
-      { usernameToShow && assetId && 
+      { /*   > Assets   ... inserted in breadcrumb if on an Asset-focussed page (play, edit) */ }
+      { usernameToShow && (isAssets || assetId) && !isPlay && _sep }
+      { usernameToShow && (isAssets || assetId) && !isPlay && 
         <QLink className="section" to={`/u/${usernameToShow}/assets`}>Assets&nbsp;</QLink> 
       }
 
+      { /*   > [ICON] Projects   .. from Asset's Project's list if on an asset-focussed page (play, edit) */ }
+      { usernameToShow && !assetId && queryProjectName && 
+        <ProjectsSection usernameToShow={usernameToShow} projectNames={[queryProjectName]} />
+      }
+
+      { /*   > [ICON] Projects   .. from Asset's Project's list */ }
       { usernameToShow && assetId &&
         <ProjectsSection usernameToShow={usernameToShow} projectNames={projectNames} />
       }
 
-      { usernameToShow && assetId && kind && _sep }
-      { usernameToShow && assetId && kind && (
+      { /*   > [ICON] AssetKind   */ }
+      { usernameToShow && assetId && kind && !isPlay && _sep }
+      { usernameToShow && assetId && kind && !isPlay && (
         <QLink 
             style={{color: AssetKinds.getColor(kind)}} 
             className="section" 
@@ -123,26 +133,33 @@ const NavBarBreadcrumb = ( {
         )
       }
 
+      { /*   > Projects   */ }
       { usernameToShow && projectId && _sep }
       { usernameToShow && projectId && 
         <QLink className="section" to={`/u/${usernameToShow}/projects`}>Projects&nbsp;</QLink> 
       }
 
-      { pathLocation && pathLocation.startsWith('/learn') && _sep }
-      { pathLocation && pathLocation.startsWith('/learn') && 
+      { /*   > Learn   */ }
+      { pathname && pathname.startsWith('/learn') && _sep }
+      { pathname && pathname.startsWith('/learn') && 
         <QLink className="section" to={`/learn`}>Learn&nbsp;</QLink> 
       }
-      { pathLocation && pathLocation.startsWith('/learn/skills') && _sep }
-      { pathLocation && pathLocation.startsWith('/learn/skills') && 
+
+      { /*   > Skills   */ }
+      { pathname && pathname.startsWith('/learn/skills') && _sep }
+      { pathname && pathname.startsWith('/learn/skills') && 
         <QLink className="section" to={`/learn/skills`}>Skills&nbsp;</QLink> 
       }
-      { pathLocation && pathLocation.startsWith('/learn/code/') && _sep }
-      { pathLocation && pathLocation.startsWith('/learn/code/') && 
+
+      { /*   > Code   */ }
+      { pathname && pathname.startsWith('/learn/code/') && _sep }
+      { pathname && pathname.startsWith('/learn/code/') && 
         <QLink className="section" to={`/learn/code`}>Programming&nbsp;</QLink> 
       }
 
-      { name && _sep }
-      { (usernameToShow && assetId && kind) ? EditOrView : ( name ? <span>{name}&nbsp;</span> : null ) }
+      { /*   > [assetVerb||pageName||null]   */ }
+      { (!isAssets && (assetVerb || name)) && _sep }
+      { (!isAssets && (assetVerb || name)) ? (assetVerb || name) : ( (name && !isAssets) ? <span>{name}&nbsp;</span> : null ) }
     </Breadcrumb>
   )
 }
@@ -151,7 +168,7 @@ NavBarBreadcrumb.propTypes = {
   params:             PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params
   user:               PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
   name:               PropTypes.string,                 // Page title to show in NavBar breadcrumb
-  pathLocation:       PropTypes.string,                 // basically windows.location.pathname, but via this.props.location.pathname from App.js
+  location:           PropTypes.object,                 // basically windows.location, but via this.props.location from App.js (from React Router)
   currentlyEditingAssetInfo: PropTypes.object.isRequired// An object with some info about the currently edited Asset - as defined in App.js' this.state
 }
 

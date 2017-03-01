@@ -2,6 +2,8 @@ import C from './CommonSkillNodes'
 
 import CodePhaserSkillNodes from './CodePhaserSkillNodes'
 import CodeBasicsSkillNodes from './CodeBasicsSkillNodes'
+import CodeGamesSkillNodes from './CodeGamesSkillNodes'
+
 
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
@@ -219,6 +221,7 @@ export default {
 
     basics: CodeBasicsSkillNodes,
     phaser: CodePhaserSkillNodes,
+    games: CodeGamesSkillNodes,
     
     react: {
       $meta: {

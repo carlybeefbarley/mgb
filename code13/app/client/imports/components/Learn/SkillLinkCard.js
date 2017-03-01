@@ -1,9 +1,22 @@
 import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
-import { Card, Grid, Header, Icon, Label, Progress } from 'semantic-ui-react'
+import {
+  Button,
+  Card,
+  Grid,
+  Header,
+  Icon,
+  Label,
+  List,
+  Popup,
+  Progress,
+} from 'semantic-ui-react'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import QLink from '/client/imports/routes/QLink'
 import { startSkillPathTutorial } from '/client/imports/routes/App'
+import SkillNodes, { getFriendlySkillName } from '/imports/Skills/SkillNodes/SkillNodes'
+
+// [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 const imageStyle = {
   margin: 'auto',
@@ -17,6 +30,7 @@ class SkillLinkCard extends Component {
     mascot: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
+    disabled: PropTypes.bool,
     completed: PropTypes.bool,
     started: PropTypes.bool,
     skillPath: PropTypes.string,
@@ -24,6 +38,8 @@ class SkillLinkCard extends Component {
     learnedSkills: PropTypes.arrayOf( PropTypes.string ),
     todoSkills: PropTypes.arrayOf( PropTypes.string ),
   }
+
+  state = {}
 
   isCompleted = () => {
     const { completed, todoSkills } = this.props
@@ -36,11 +52,23 @@ class SkillLinkCard extends Component {
   }
 
   handleClick = () => {
-    const { skillPath } = this.props
+    const { skillPath, todoSkills, disabled, to } = this.props
 
-    if (this.isCompleted())
+    // cards with links already have a path, skip on to
+    if (!!to || disabled || this.isCompleted())
       return
 
+    startSkillPathTutorial( skillPath + '.' + todoSkills[0] )
+  }
+
+  handleMouseEnter = () => this.setState( { isHovering: true } )
+  handleMouseLeave = () => this.setState( { isHovering: false } )
+
+  handlePopupOpen = () => this.setState( { showPopup: true } )
+  handlePopupClose = () => this.setState( { showPopup: false } )
+
+  handleDoItAgainClick = (skillPath) => () => {
+    this.setState( { isHovering: false, showPopup: false } )
     startSkillPathTutorial( skillPath )
   }
 
@@ -52,12 +80,55 @@ class SkillLinkCard extends Component {
     return <Progress active size='tiny' color='yellow' value={learnedSkills.length} total={childSkills.length} />
   }
 
+  renderShowCompleted = () => {
+    const { childSkills, skillPath } = this.props
+    const { isHovering, showPopup } = this.state
+
+    if (_.isEmpty( childSkills ) || !this.isCompleted())
+      return
+
+    const parentSkillNode = SkillNodes.$meta.map[skillPath]
+
+    return (
+      <Popup
+        trigger={(
+          <Button basic floated='right' style={{ transition: 'opacity 0.2s', opacity: +!!isHovering }}>
+            Show Completed
+          </Button>
+        )}
+        positioning='left center'
+        hoverable
+        open={showPopup}
+        closeOnTriggerBlur={false}
+        onOpen={this.handlePopupOpen}
+        onClose={this.handlePopupClose}
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}
+      >
+        <Header sub dividing textAlign='center'>Do it again</Header>
+        <List selection>
+          {_.map( childSkills, skillLeafKey => (
+            <List.Item key={skillLeafKey} onClick={this.handleDoItAgainClick( skillPath + '.' + skillLeafKey )}>
+              <Icon name='refresh' />
+              <List.Content>
+                <List.Header as='a'>
+                  {getFriendlySkillName( parentSkillNode, skillLeafKey )}
+                </List.Header>
+              </List.Content>
+            </List.Item>
+          ) )}
+        </List>
+      </Popup>
+    )
+  }
+
   render() {
     const {
       to,
       mascot,
       name,
       description,
+      disabled,
       childSkills,
       learnedSkills,
     } = this.props
@@ -71,7 +142,7 @@ class SkillLinkCard extends Component {
 
     const imageColumnStyle = {
       display: 'flex',
-      height: completed ? 100 : 120,
+      height: completed ? 70 : 120,
       flex: '0 0 120px',
     }
 
@@ -79,24 +150,25 @@ class SkillLinkCard extends Component {
       this.props,
       _.difference( _.keys( this.props ), _.keys( SkillLinkCard.propTypes ) )
     )
-
     return (
       <Card
         {...unhandledProps}
-        as={to && !completed ? QLink : 'div'}
-        to={to}
+        as={!disabled && to && !completed ? QLink : 'div'}
+        to={!disabled && to}
         fluid
         style={{ ...cardStyle, ...unhandledProps.style }}
         // TODO @levi after upgrading to SUIR 0.66, use link prop
-        // link={!isCompleted}
-        className={completed ? '' : 'link'}
+        // link={!completed && !disabled}
+        className={disabled || completed ? '' : 'link'}
+        onMouseEnter={this.handleMouseEnter}
+        onMouseLeave={this.handleMouseLeave}
         onClick={this.handleClick}
       >
         <Card.Content>
           <Grid columns='equal' verticalAlign='middle'>
             <Grid.Column style={imageColumnStyle} textAlign='center'>
               {completed
-                ? <Icon size='big' name='checkmark' color='green' style={{ margin: 'auto' }} />
+                ? <Icon size={completed ? 'large' : 'big'} name='checkmark' color='green' style={{ margin: 'auto' }} />
                 : <img src={makeCDNLink( `/images/mascots/${mascot}.png` )} style={imageStyle} />
               }
             </Grid.Column>
@@ -106,18 +178,20 @@ class SkillLinkCard extends Component {
                 {!completed && <Header.Subheader>{description}.</Header.Subheader>}
               </Header>
             </Grid.Column>
-            {!completed && (
+            {!disabled && (
               <Grid.Column width={4} textAlign='right'>
-                <div>
-                  <Label
-                    basic={!started}
-                    horizontal
-                    size='huge'
-                    color={started ? 'yellow' : 'grey'}
-                    content={started ? 'Continue' : 'Start'}
-                    detail={started ? `${learnedSkills.length} / ${childSkills.length}` : null}
-                  />
-                </div>
+                {completed
+                  ? this.renderShowCompleted()
+                  : (
+                    <Label
+                      basic={!started}
+                      horizontal
+                      size='huge'
+                      color={started ? 'yellow' : 'grey'}
+                      content={started ? 'Continue' : 'Start'}
+                      detail={started ? `${learnedSkills.length} / ${childSkills.length}` : null}
+                    />
+                  )}
               </Grid.Column>
             )}
           </Grid>

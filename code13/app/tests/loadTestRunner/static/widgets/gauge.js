@@ -22,7 +22,7 @@
       this.shading = this.widget.appendChild(document.createElement('div'))
       this.shading.classList.add("shading")
 
-      this.text = this.center.appendChild(document.createTextNode('0%'))
+      this.text = this.center.appendChild(document.createElement('span'))
 
       this.widget.style.backgroundColor = color2
 
@@ -39,7 +39,7 @@
 
     progress(proc){
       proc = Math.max(0, Math.min(100, proc))
-      this.text.nodeValue = proc.toFixed(2) + '%'
+      this.text.innerHTML = proc.toFixed(2) + '%'
       const val = proc * 360 / 100
       if (proc <= 50) {
         this.left.style.opacity = 0

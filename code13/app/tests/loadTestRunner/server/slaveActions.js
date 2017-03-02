@@ -17,6 +17,11 @@ const events = {
     sm(ws, "test", {test: "123"})
   },
   start: (data, ws, clients, slaves) => {
+    if(!slaves.length){
+      sm(ws, 'error', 'No slaves available!')
+      smAll(clients, 'runnerCompleted', data)
+      return
+    }
     const slave = getIdleSlave(slaves)
     if (slave) {
       console.log(`Starting test on slave with ${slave.jobs} jobs already running on: ${
@@ -27,7 +32,7 @@ const events = {
     else {
       console.log("No slaves available !!!")
       setTimeout(() => {
-        events.start(data, ws)
+        events.start(data, ws, clients, slaves)
       }, 1000)
     }
   },

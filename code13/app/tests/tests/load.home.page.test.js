@@ -7,7 +7,7 @@ module.exports = (getBrowser) => {
       browser = getBrowser();
     })
     // all action should be in the "it" block
-    it("Load Main Page", function (done) {
+    it("Main page loaded", function (done) {
       const sel = SeleniumHelper(browser)
       sel.css("#root")
       sel.done(done)

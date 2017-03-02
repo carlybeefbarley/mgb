@@ -27,6 +27,12 @@
   font-family: cursive;
   border: solid 20px rgba(250, 235, 215, 0.37);
 }
+.gauge .center span, .gauge.memory .center:before {
+  	z-index: 1;
+	font-size: 34px;
+	color: white;
+	text-shadow: 0 0 2px black;
+}
 
 .gauge .right, .gauge .left, .gauge .mask {
   position: absolute;
@@ -44,6 +50,12 @@
   height: 100%;
   border-radius: 100%;
 }
-.gauge.memory: after{
-  content: "RAM"
+.gauge .center:before {width: 100%;height: 100%;position: absolute;top: 0;display: block;left: 0;background-size: 90%;font-size: 28px;color: white;margin: 1px;line-height: 70px;}
+.gauge.memory .center:before {
+  content: 'RAM';
+  background: url('img/ram.png')  no-repeat center;
+}
+.gauge.cpu .center:before {
+  content: 'CPU';
+  background: url('img/cpu2.png')  no-repeat center;
 }

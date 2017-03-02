@@ -10,7 +10,7 @@ window.ml = {}
 require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () => {
   const status = {
     memory: new ml.Gauge("yellow", "red", "memory"),
-    cpu: new ml.Gauge("blue", "white", "cpu"),
+    cpu: new ml.Gauge("yellow", "blue", "cpu"),
     info: new ml.Info()
   }
   status.memory.show(document.body)
@@ -56,6 +56,9 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
     },
     critical: data => {
       alert("Critical error!\n" + data)
+    },
+    error: data => {
+      alert("Error:\n" + data)
     }
   }
   ws = new WebSocket('ws://' + window.location.host)

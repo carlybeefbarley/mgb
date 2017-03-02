@@ -22,7 +22,8 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
 
       this.title.innerHTML = data.title ? `${data.title} (${data.name})` : data.name
 
-      this.status = this.widget.appendChild(document.createElement('span'))
+      this.status = document.createElement('span')
+      this.status.classList.add("status")
 
       this.autoRestart = this.widget.appendChild(document.createElement('input'))
 
@@ -62,7 +63,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
       this.status.innerHTML = 'Running ' + this.runners
 
       // this.actions.parentNode && this.widget.removeChild(this.actions)
-      this.widget.insertBefore(this.status, this.actions.nextSibling)
+      this.widget.insertBefore(this.status, this.chartWrapper)
     }
 
     update(data) {
@@ -71,6 +72,9 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
       this.status.innerHTML = 'Running ' + this.runners
       if (this.runners == 0) {
         this.status.parentNode && this.widget.removeChild(this.status)
+      }
+      if(!data || !data.tests){
+        return
       }
       // this.widget.insertBefore(this.actions, this.title.nextSibling)
       /*data.tests.forEach( t => {

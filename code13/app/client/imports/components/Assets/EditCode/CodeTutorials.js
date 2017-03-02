@@ -35,13 +35,13 @@ export default class CodeTutorials extends React.Component {
     this.skillName = _.last(_.split(props.skillPath, '.'))
     this.tutorialData = tutorialObject[this.skillName]
     this.state = {
-      step: 0         // curent step of tutorial
+      step: 0,            // curent step of tutorial
+      isCompleted: false  // indicator if current tutorial is completed and we need to show modal
     }
   }
 
   componentDidMount () {
     const tutorialUrl = makeCDNLink(window.location.origin + this.skillNode.$meta.link) 
-    // console.log(tutorialUrl, this.skillNode)
   }
 
   stepNext = () => {
@@ -68,12 +68,14 @@ export default class CodeTutorials extends React.Component {
     this.props.codeMirror.setValue(code)
   }
 
-  successPopup () {
-
+  successPopup = () => {
+    learnSkill( this.props.skillPath + '.' + this.skillName )
+    this.setState({ isCompleted: true })
   }
 
   render () {
     const description = this.tutorialData.steps[this.state.step].text
+    const { isCompleted } = this.state
 
     return (
       <div id="codeChallenges" className={"content " +(this.props.active ? "active" : "")}>
@@ -83,6 +85,28 @@ export default class CodeTutorials extends React.Component {
 
         <Divider as={Header} color='grey' size='small' horizontal content='Description'/>
         <div style={{marginTop: '0.5em'}} dangerouslySetInnerHTML={{ __html: description}} />
+
+        { isCompleted && (
+            <Modal 
+                closeOnDocumentClick={true} 
+                closeOnRootNodeClick={false}
+                defaultOpen >
+              <Modal.Header>
+                <Icon size='big' color='green' name='check circle' />
+                Success
+              </Modal.Header>
+              <Modal.Content>
+                You completed this Code Tutorial
+              </Modal.Content>
+              <Modal.Actions>
+                <Button 
+                    positive
+                    content='Tutorial List'
+                    onClick={ () => { utilPushTo( window.location, '/learn/code/jsGames' ) }} />
+              </Modal.Actions>
+            </Modal>
+          )
+        }
 
       </div>
     )

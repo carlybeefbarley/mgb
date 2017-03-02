@@ -13,6 +13,48 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+
+    {
+      'timestamp': 'Wed Mar 1 2017 17:40 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3559'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.breadcrumb',
+          'type': 'feature',
+          'changeName': 'Project Navigation in Breadcrumb',
+          'changeSummary': 'The Breadcrumb Bar at the top of the page is now smart about selected Projects within Asset lists, so you can more easily navigate to the project from a Game, and to see what Project you are looking at in the Assets list',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Asset Card Small mode',
+          'changeSummary': 'The "small" Asset Card view is now a single row.. if you hover on it for half a second, it shows the medium card as a popup',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Coding Challenges gaining more features',
+          'changeSummary': 'The Phaser code tutorials are being upgraded to use the in-editor Code Challenge system. Not complete yet, but you can see what is coming... ',
+          'otherUrls': [
+             { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' },
+             { txt: 'Example of viewing (hidden) assets created by Code Challenges', href: '/u/dgolds/assets?showChallengeAssets=1' }
+          ]
+        }
+      ]
+    },
+
     {
       'timestamp': 'Tue Feb 28 2017 20:20 GMT-0800 (PST)',
 

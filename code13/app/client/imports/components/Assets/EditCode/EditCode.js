@@ -2258,12 +2258,13 @@ export default class EditCode extends React.Component {
 
               { isCodeTutorial &&
                 <CodeTutorials
-                  active      =   { asset.skillPath ? true : false}
-                  skillPath   =   { asset.skillPath }
-                  codeMirror  =   { this.codeMirror }
-                  currUser    =   { this.props.currUser }
-                  userSkills  =   { this.userSkills }
-                  quickSave   =   { this.quickSave.bind(this) }
+                  active      =     { asset.skillPath ? true : false}
+                  skillPath   =     { asset.skillPath }
+                  codeMirror  =     { this.codeMirror }
+                  currUser    =     { this.props.currUser }
+                  userSkills  =     { this.userSkills }
+                  quickSave   =     { this.quickSave.bind(this) }
+                  highlightLines =  { this.highlightLines.bind(this) }
                 />
               }
 

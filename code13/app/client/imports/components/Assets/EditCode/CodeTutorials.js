@@ -27,7 +27,8 @@ export default class CodeTutorials extends React.Component {
     userSkills:  PropTypes.object,
     codeMirror:  PropTypes.object,
     active:      PropTypes.bool,
-    quickSave:   PropTypes.func
+    quickSave:   PropTypes.func,
+    highlightLines: PropTypes.func
   }
 
   constructor(props) {
@@ -64,7 +65,7 @@ export default class CodeTutorials extends React.Component {
   }
 
   resetCode = (step) => {
-    step = typeof step != 'undefined' ? step : this.state.step
+    step = _.isInteger(step) ? step : this.state.step
     const code = this.tutorialData.steps[step].code
     this.props.codeMirror.setValue(code)
     this.props.quickSave()

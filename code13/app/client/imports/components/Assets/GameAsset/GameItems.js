@@ -16,7 +16,7 @@ const FittedImage = ({ src, height = '180px', ...rest}) => (
     />
 )
 export const GameItem = ( { game } ) => (
-	<Card>
+	<Card className='link'>
     <QLink 
         className='image'
         to={`/u/${game.dn_ownerName}/play/${game._id}`} 

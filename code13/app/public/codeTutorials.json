@@ -2,7 +2,7 @@
   "mole1": {
     "steps": [
       {
-        "text": "This tutorial is based on a very simple game - \"Whack a Mole\". The game has 9 holes where moles can appear randomly. You have to be fast and hit the mole before it moves to another hole. \nAt first we need to import Phaser framework. It will help us write game much faster and with less effort because a lot of common game code is already written there.",
+        "text": "This tutorial is based on a very simple game - \"Whack a Mole\". The game has 9 holes where moles can appear randomly. You have to be fast and hit the mole before it moves to another hole. <br/><br/>At first we need to import Phaser framework. It will help us write game much faster and with less effort because a lot of common game code is already written there.",
         "code": "import 'phaser'"
       },
       {

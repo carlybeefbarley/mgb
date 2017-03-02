@@ -33,26 +33,41 @@ export default class CodeTutorials extends React.Component {
     super(props)
     this.skillNode = SkillNodes.$meta.map[props.skillPath]
     this.skillName = _.last(_.split(props.skillPath, '.'))
+    this.tutorialData = tutorialObject[this.skillName]
     this.state = {
-      
+      step: 0         // curent step of tutorial
     }
   }
 
   componentDidMount() {
     const tutorialUrl = makeCDNLink(window.location.origin + this.skillNode.$meta.link) 
     // console.log(tutorialUrl, this.skillNode)
-
-    console.log(tutorialObject)
   }
 
+  stepNext(){
+
+  }
+
+  stepBack(){
+
+  }
+
+  resetCode(){
+
+  }
 
   render() {
-    const description = this.skillNode.$meta.description
-    const { showAllTestsCompletedModal } = this.state
+    const description = this.tutorialData.steps[this.state.step].text
 
     return (
       <div id="codeChallenges" className={"content " +(this.props.active ? "active" : "")}>
-        Code Tutorials soon to be implemented
+        <Button size='small' color='green' onClick={this.stepBack} icon='backward' content='Back' disabled={this.state.step === 0} />
+        <Button size='small' color='green' onClick={this.stepNext} icon='forward' content='Next' />
+        <Button size='small' color='green' onClick={this.resetCode} icon='refresh' content='Reset code' />
+
+        <Divider as={Header} color='grey' size='small' horizontal content='Description'/>
+        <div style={{marginTop: '0.5em'}} dangerouslySetInnerHTML={{ __html: description}} />
+
       </div>
     )
   }

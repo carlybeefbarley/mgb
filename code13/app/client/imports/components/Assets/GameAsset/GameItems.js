@@ -16,7 +16,7 @@ const FittedImage = ({ src, height = '180px', ...rest}) => (
     />
 )
 export const GameItem = ( { game } ) => (
-	<Card className='link'>
+	<Card className='link' style={{width: "200px"}}>
     <QLink 
         className='image'
         to={`/u/${game.dn_ownerName}/play/${game._id}`} 
@@ -37,7 +37,7 @@ export const GameItem = ( { game } ) => (
 )
 
 const GameItems = ( { games } ) => (
-  <Card.Group stackable doubling itemsPerRow={5} style={{clear: 'both', flexWrap: 'wrap'}}>
+  <Card.Group  style={{clear: 'both', flexWrap: 'wrap'}}>
     { (!games || games.length === 0) &&
       <p>No matching games</p>}
     { games.map( g => { 

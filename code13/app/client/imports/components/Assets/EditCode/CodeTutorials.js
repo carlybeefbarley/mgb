@@ -66,9 +66,15 @@ export default class CodeTutorials extends React.Component {
 
   resetCode = (step) => {
     step = _.isInteger(step) ? step : this.state.step
-    const code = this.tutorialData.steps[step].code
+    const currStep = this.tutorialData.steps[step]
+    const code = currStep.code
     this.props.codeMirror.setValue(code)
     this.props.quickSave()
+    if(currStep.highlight){
+      currStep.highlight.map((highlight) => {
+        this.props.highlightLines(highlight.from, highlight.to)
+      })
+    }
   }
 
   successPopup = () => {

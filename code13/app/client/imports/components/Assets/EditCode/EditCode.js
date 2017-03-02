@@ -157,7 +157,7 @@ export default class EditCode extends React.Component {
 
   quickSave(){
     let newC2 = {src: this.codeMirror.getValue()}
-    this.handleContentChange(newC2, null, `Beautify code`)
+    this.handleContentChange(newC2, null, `Save code`)
   }
   warnNoWriteAccess() {
     showToast("You don't have write access to this Asset", 'error')
@@ -2239,11 +2239,11 @@ export default class EditCode extends React.Component {
 
               { isChallenge &&
                 <CodeChallenges
-                  active={ asset.skillPath ? true : false}
-                  skillPath={ asset.skillPath }
-                  codeMirror={ this.codeMirror }
-                  currUser={ this.props.currUser }
-                  userSkills={ this.userSkills }
+                  active      =   { asset.skillPath ? true : false}
+                  skillPath   =   { asset.skillPath }
+                  codeMirror  =   { this.codeMirror }
+                  currUser    =   { this.props.currUser }
+                  userSkills  =   { this.userSkills }
                 />
               }
 
@@ -2258,11 +2258,12 @@ export default class EditCode extends React.Component {
 
               { isCodeTutorial &&
                 <CodeTutorials
-                  active={ asset.skillPath ? true : false}
-                  skillPath={ asset.skillPath }
-                  codeMirror={ this.codeMirror }
-                  currUser={ this.props.currUser }
-                  userSkills={ this.userSkills }
+                  active      =   { asset.skillPath ? true : false}
+                  skillPath   =   { asset.skillPath }
+                  codeMirror  =   { this.codeMirror }
+                  currUser    =   { this.props.currUser }
+                  userSkills  =   { this.userSkills }
+                  quickSave   =   { this.quickSave.bind(this) }
                 />
               }
 

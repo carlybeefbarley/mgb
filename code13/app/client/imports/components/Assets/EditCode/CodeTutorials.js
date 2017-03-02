@@ -26,7 +26,8 @@ export default class CodeTutorials extends React.Component {
     skillPath:   PropTypes.string,
     userSkills:  PropTypes.object,
     codeMirror:  PropTypes.object,
-    active:      PropTypes.bool
+    active:      PropTypes.bool,
+    quickSave:   PropTypes.func
   }
 
   constructor(props) {
@@ -66,6 +67,7 @@ export default class CodeTutorials extends React.Component {
     step = typeof step != 'undefined' ? step : this.state.step
     const code = this.tutorialData.steps[step].code
     this.props.codeMirror.setValue(code)
+    this.props.quickSave()
   }
 
   successPopup = () => {

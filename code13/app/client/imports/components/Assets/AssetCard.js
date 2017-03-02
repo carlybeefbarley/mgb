@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Card, Icon } from 'semantic-ui-react'
+import { Card, Icon, Popup } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import QLink, { utilPushTo } from "/client/imports/routes/QLink"
 import { AssetKinds } from '/imports/schemas/assets'
@@ -16,15 +16,14 @@ import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
-// TODO: Toast/error is a mess
 
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
 
 export const assetViewChoices =  {
-  "s": { icon: '', showFooter: false, header: '',       showWorkstate: true,  showMeta: false, showExtra: false, showHdr: true,  showImg: false },
-  "m":  { icon: '', showFooter: false, header: 'header', showWorkstate: true,  showMeta: false, showExtra: true,  showHdr: true,  showImg: true  },
-  "l":  { icon: '', showFooter: false, header: 'header', showWorkstate: true,  showMeta: true,  showExtra: true,  showHdr: true,  showImg: true  },
-  "xl": { icon: '', showFooter: true,  header: 'header', showWorkstate: true,  showMeta: true,  showExtra: true,  showHdr: true,  showImg: true  }
+  "s":  { icon: '', showFooter: false, showWorkstate: true,  showMeta: false, showExtra: false, showHdr: true,  showImg: false, tightRows: true },
+  "m":  { icon: '', showFooter: false, showWorkstate: true,  showMeta: false, showExtra: true,  showHdr: true,  showImg: true  },
+  "l":  { icon: '', showFooter: false, showWorkstate: true,  showMeta: true,  showExtra: true,  showHdr: true,  showImg: true  },
+  "xl": { icon: '', showFooter: true,  showWorkstate: true,  showMeta: true,  showExtra: true,  showHdr: true,  showImg: true  }
 }
 
 export const defaultAssetViewChoice = 'm'
@@ -137,11 +136,10 @@ export default AssetCard = React.createClass({
 
     const { renderView, asset, fluid, canEdit, allowDrag, ownersProjects } = this.props
     const actualLicense = (!asset.assetLicense || asset.assetLicense.length === 0) ? defaultAssetLicense : asset.assetLicense
-    const assetKindIcon = AssetKinds.getIconClass(asset.kind)
+    const assetKindIcon = AssetKinds.getIconName(asset.kind)
     const assetKindDescription = AssetKinds.getDescription(asset.kind)
     const assetKindName = AssetKinds.getName(asset.kind)
     const assetKindColor = AssetKinds.getColor(asset.kind)
-    const c2 = asset.content2 || { width:64, height:64 }
     const viewOpts = assetViewChoices[renderView]
 
     //const iw = c2.hasOwnProperty("width") ? c2.width : 64
@@ -172,9 +170,10 @@ export default AssetCard = React.createClass({
     return (
       <Card
           color={assetKindColor}
-          fluid={fluid}
+          fluid={fluid || viewOpts.tightRows}
+          style={viewOpts.tightRows ? {marginTop: '1px', marginBottom: '1px'} : {}}
           key={asset._id}
-          className='animated fadeIn'>
+          className='animated fadeIn link'>
 
         <div
             className="ui centered image"
@@ -213,29 +212,60 @@ export default AssetCard = React.createClass({
 
         { viewOpts.showHdr &&
           <div className="content">
-            { viewOpts.showExtra ||
-              <i className={assetKindColor + ' ' + assetKindIcon + ' icon'} />
-            }
             { viewOpts.showWorkstate &&
               <span style={{float: 'right'}}>
                 <WorkState
                   workState={asset.workState}
+                  size={viewOpts.showExtra ? null : 'small'}
                   canEdit={false}/>
               </span>
             }
-            <a
-                className={ viewOpts.header }
-                style={{ "color": asset.name ? 'black' : '#888',
-                  overflow: "hidden",
-                  whiteSpace: 'nowrap',
-                  display: 'block',
-                  textOverflow: "ellipsis"
-                }}
-                onMouseUp={this.handleEditClick}
-                onTouchEnd={this.handleEditClick}
+            { !viewOpts.showExtra && 
+              // This is used for SMALL sizes.. 
+              <Popup
+                hoverable
+                mouseEnterDelay={500}
+                positioning='left center'
+                trigger={(
+                  <div style={{flexDirection: 'column'}}>
+                    <Icon
+                        style={{float: 'left', marginRight: '12px'}} 
+                        color={assetKindColor}
+                        size='large'
+                        name={assetKindIcon} />
+                    <a
+                        style={{ "color": asset.name ? '' : '#888',
+                          display: 'block',
+                        }}
+                        onMouseUp={this.handleEditClick}
+                        onTouchEnd={this.handleEditClick}
+                        >
+                      <small>{shownAssetName}</small>
+                    </a>
+                  </div>
+                )}
                 >
-              <small>{shownAssetName}</small>
-            </a>
+                <div style={{width: '200px' }}>
+                  <AssetCard { ...{ ...this.props, renderView: 'm'} } />
+                </div>
+              </Popup>
+            }
+            { viewOpts.showExtra &&
+              <a
+                  className='header link'
+                  style={{ "color": asset.name ? '' : '#888',
+                    // overflow: "hidden",
+                    // whiteSpace: 'nowrap',
+                    display: 'inline',
+                    // textOverflow: "ellipsis"
+                  }}
+                  onMouseUp={this.handleEditClick}
+                  onTouchEnd={this.handleEditClick}
+                  >
+                <small>{shownAssetName}</small>
+              </a>
+            }
+
             { viewOpts.showMeta && (asset.text && asset.text !== "") &&
               <div className="meta" style={{ "color": 'black', 'cursor': 'pointer'}}  
                 onMouseUp={this.handleEditClick}
@@ -263,7 +293,7 @@ export default AssetCard = React.createClass({
         { viewOpts.showExtra &&
           <div className="extra content">
             <span style={{color: assetKindColor}} className={"left floated " + assetKindColor + " icon label"} title={assetKindDescription}>
-              <i className={assetKindColor + ' ' + assetKindIcon}></i>
+              <Icon color={assetKindColor} name={assetKindIcon} />
               { assetKindName }
               { asset.skillPath && asset.skillPath.length > 0 && <i style={{marginLeft: '4px'}} className='ui orange checked calendar icon' title='This is a Skill Challenge Asset'/> }
             </span>
@@ -288,19 +318,19 @@ export default AssetCard = React.createClass({
                 style={veryCompactButtonStyle}
                 title={ assetLicenses[actualLicense].name }
                 >
-              <i className='ui law icon'/>
+              <Icon name='law'/>
               <small>&nbsp;{actualLicense}</small>
             </a>
             <div className={(canEdit ? "" : "disabled ") + "ui " + (asset.isCompleted ? 'blue' : '') + " compact button"}
                   style={veryCompactButtonStyle}
                   onClick={this.handleCompletedClick} >
-              <i className={ asset.isCompleted ? "ui lock icon" : "ui unlock icon"}></i>
+              <Icon name={ asset.isCompleted ? "lock" : "unlock"}/>
               <small>&nbsp;{asset.isCompleted ? 'Locked' : 'Unlocked'}</small>
             </div>
             <div className={(canEdit? "" : "disabled ") + "ui compact button"}
                   style={veryCompactButtonStyle}
                   onClick={this.handleDeleteClick}>
-              {asset.isDeleted ? null : <i className="ui red trash icon"></i>}
+              {asset.isDeleted ? null : <Icon color='red' name='trash'/>}
               <small>&nbsp;{asset.isDeleted ? "Undelete" : "Delete" }</small>
             </div>
           </div>

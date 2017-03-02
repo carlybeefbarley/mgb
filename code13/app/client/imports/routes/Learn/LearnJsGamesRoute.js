@@ -9,6 +9,8 @@ import { logActivity } from '/imports/schemas/activity'
 
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
+// TODO make this dynamic
+import tutorialObject from '/public/codeTutorials.json'
 
 
 const jsGamesSkills = SkillNodes.code.js.games
@@ -117,13 +119,14 @@ const LearnJsGamesRoute = ({ currUser }, context) => {
             { skillItems.map( (area, idx) => {
               let skillPath = 'code/js/games/' + area.idx + '/' + area.idx
               const isComplete = currUser && !_.isEmpty( context.skills[skillPath] )
+              const code = tutorialObject[area.idx].steps[0].code
 
               return (
                 <List.Item
                   key={idx}
                   as={'a'} // isComplete ? 'div' : 'a'}
                   //disabled={isComplete}
-                  onClick={ (e) => handleClick( e, area.idx, '// hello world games!', currUser ) }
+                  onClick={ (e) => handleClick( e, area.idx, code, currUser ) }
                   icon={isComplete ? { name: 'checkmark', color: 'green' } : area.icon}
                   header={isComplete ? null : area.name}
                   content={isComplete ? area.name : area.description}

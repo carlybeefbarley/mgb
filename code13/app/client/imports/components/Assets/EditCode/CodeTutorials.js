@@ -8,6 +8,10 @@ import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo } from "/client/imports/routes/QLink"
 import { learnSkill } from '/imports/schemas/skills'
 
+// TODO make this dynamic
+import tutorialObject from '/public/codeTutorials.json'
+
+
 import './editcode.css'
 
 
@@ -37,6 +41,8 @@ export default class CodeTutorials extends React.Component {
   componentDidMount() {
     const tutorialUrl = makeCDNLink(window.location.origin + this.skillNode.$meta.link) 
     // console.log(tutorialUrl, this.skillNode)
+
+    console.log(tutorialObject)
   }
 
 

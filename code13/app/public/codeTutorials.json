@@ -1,0 +1,14 @@
+{
+  "mole1": {
+    "steps": [
+      {
+        "text": "This tutorial is based on a very simple game - \"Whack a Mole\". The game has 9 holes where moles can appear randomly. You have to be fast and hit the mole before it moves to another hole. \nAt first we need to import Phaser framework. It will help us write game much faster and with less effort because a lot of common game code is already written there.",
+        "code": "import 'phaser'"
+      },
+      {
+        "text": "Then we define Phaser game object. First two parameters defines dimension of game, third is about renderer (leave it to auto). 4th is parent container which will always be ‘game’ in MGB. The last parameter is predefined function set which we will created afterwards",
+        "code": "var game = new Phaser.Game(510, 600, Phaser.AUTO, 'game', { preload: preload, create: create })"
+      }
+    ]
+  }
+}

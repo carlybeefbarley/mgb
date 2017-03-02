@@ -34,14 +34,14 @@ export const WorkStateMultiSelect = ( { style, hideMask, handleChangeMask } ) =>
   </div>
 )
 
-const WorkState = ( { workState, canEdit, popupPosition, handleChange, labelStyle, onIconClick } ) => (
+const WorkState = ( { workState, canEdit, size, popupPosition, handleChange, labelStyle, onIconClick } ) => (
   <Popup
       on='hover'
       hoverable={canEdit}    // So mouse-over popup keeps it visible for Edit for example
       positioning={popupPosition}
       trigger={(
         <span>
-          <WorkStateIcon workState={workState} labelStyle={labelStyle} onIconClick={onIconClick}/>
+          <WorkStateIcon size={size} workState={workState} labelStyle={labelStyle} onIconClick={onIconClick}/>
         </span>
       )} >
       <div>

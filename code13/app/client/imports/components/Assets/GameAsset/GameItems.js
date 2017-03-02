@@ -3,16 +3,28 @@ import QLink from '/client/imports/routes/QLink'
 import { Card, Image } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
+
+const FittedImage = ({ src, height = '180px', ...rest}) => (
+  <img 
+    className='mgb-pixelated'
+    style={{
+      background: `url(${src}) no-repeat center`,
+      height: height,
+      backgroundSize: 'contain'
+    }} 
+    {...rest}
+    />
+)
 export const GameItem = ( { game } ) => (
 	<Card>
-    <QLink to={`/u/${game.dn_ownerName}/play/${game._id}`}>
+    <QLink 
+        className='image'
+        to={`/u/${game.dn_ownerName}/play/${game._id}`} 
+        >
     {
       Thumbnail.getLink(game)
       ?
-      <Image centered 
-        src={Thumbnail.getLink(game)}
-        style={{ height: '180px', margin: '0px auto', imageRendering: 'pixelated', width: 'initial', overflow: 'hidden' }} 
-      />
+      <FittedImage src={Thumbnail.getLink(game)} />
       :
       <div style={{ display: 'block', height: '180px' }}/>
     }

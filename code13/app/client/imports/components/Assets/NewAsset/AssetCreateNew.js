@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { Segment, Header, Button } from 'semantic-ui-react'
+import { Segment, Header, Button, Container } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import { AssetKinds } from '/imports/schemas/assets'
 import AssetCreateSelectKind from './AssetCreateSelectKind'
@@ -47,9 +47,9 @@ export default AssetCreateNew = React.createClass({
     const createButtonTooltip = isAssetReadyToCreate ? "Click here to create your new Asset" : "You must choose a valid name and 'kind' for your new asset. You can rename it later if you wish, but you cannot change it's 'kind' later"
     
     return (
-      <div>
+      <Container text>
         <Segment basic>
-          <Header as='h4' content='1. Enter Asset Name' />
+          <Header as='h4' content='1. Name your Asset' />
           <div className="ui items">
             <div className={"ui fluid input" + (isAssetNameValid ? "" : " error")}>
               <input className="fluid" type="text" value={newAssetName} onChange={(e) => this.setState({ newAssetName: e.target.value})} placeholder={placeholderName} 
@@ -60,7 +60,7 @@ export default AssetCreateNew = React.createClass({
         </Segment>
 
         <Segment basic>
-          <Header as='h4' content='2. Choose an Asset Kind'/>        
+          <Header as='h4' content='2. Choose which Kind of Asset to create'/>        
           <AssetCreateSelectKind 
             currUser={currUser} 
             selectedKind={selectedKind} 
@@ -87,7 +87,7 @@ export default AssetCreateNew = React.createClass({
             id="mgbjr-create-asset-button" 
             onClick={this.handleCreateAssetClick}
             content={`4. Create ${chosenKindStr} ${chosenNameStr}`} />
-      </div>
+      </Container>
     )
   },
 

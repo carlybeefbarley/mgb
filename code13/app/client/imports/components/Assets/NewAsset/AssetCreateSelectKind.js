@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import { AssetKinds, AssetKindKeys } from '/imports/schemas/assets'
 import { doesUserHaveRole } from '/imports/schemas/roles'
-import { Button, Icon } from 'semantic-ui-react'
+import { Button, Icon, Container } from 'semantic-ui-react'
 
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
@@ -39,7 +39,7 @@ export default AssetCreateSelectKind = React.createClass({
           const ak = AssetKinds[k]
           const isActive = (k === selectedKind)
           const elemId=`mgbjr-create-asset-select-kind-${k}`
-          let sty = { width: "6em", marginBottom: "4px" }
+          let sty = { width: "7em", margin: "0.5em" }
           if (ak.requiresUserRole)
           {
             if (!doesUserHaveRole(currUser, ak.requiresUserRole))

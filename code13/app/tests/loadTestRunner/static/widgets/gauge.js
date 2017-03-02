@@ -1,8 +1,11 @@
 {
   ml.Gauge = class Gauge {
-    constructor(color1 = 'red', color2 = 'yellow'){
+    constructor(color1 = 'red', color2 = 'yellow', className = ''){
       this.widget = document.createElement('div')
       this.widget.classList.add('gauge')
+      if(className){
+        this.widget.classList.add(className)
+      }
 
       this.right = this.widget.appendChild(document.createElement('div'))
       this.right.classList.add('right')

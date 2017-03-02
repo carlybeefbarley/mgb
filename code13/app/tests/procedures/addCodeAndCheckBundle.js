@@ -13,11 +13,13 @@ module.exports = (browser) => {
   return (done) => {
 
     browser.getWindowHandle()
-      .then(currentWindow => {
+      .then(mainWindow => {
         const sel = SeleniumHelper(browser)
 
         // wait for React root element
-        sel.css("#root")
+        sel.css("#root").then(() => {
+          console.log("Root Selected!")
+        })
 
         sel.css(el.codeTextArea).sendKeys(
           `import {appendToBody} from './stauzs:libForTestImports'
@@ -26,25 +28,33 @@ div.setAttribute("id", "test-element")
 
 `
         )
-        sel.css(el.toggleCodeRuner).click()
+        //browser.executeScript(`m.editCode.quickSave()`)
+        //sel.waitUntilSaved()
 
+        sel.css(el.toggleCodeRuner).click()
         sel.css(el.fullScreenButton).click()
+
         // wait for new window
-        browser.sleep(1000)
+        browser.sleep(5000)
+        //sel.untilInvisible('.loading-notification')
+        //sel.takeScreenShot('enteredCode.png')
         browser.getAllWindowHandles()
           .then(handles => {
             // there should be open window
             if (handles.length < 2) {
               throw new Error("Failed to open new window for bundle")
             }
-            const popup = handles.find(h => h != currentWindow)
+            const popup = handles.find(h => h != mainWindow)
             // switch to popup and find created element and close after
             browser.switchTo().window(popup)
-            sel.css("#test-element")
-            browser.close()
+            //sel.takeScreenShot('test.png', () => {
+              sel.untilVisible('#test-element')
+              browser.close()
 
-            browser.switchTo().window(currentWindow)
-            sel.done(done)
+              browser.switchTo().window(mainWindow)
+              sel.done(done)
+            //})
+
           })
       })
   }

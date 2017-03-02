@@ -129,13 +129,16 @@ function runTests(browserName, tests) {
 
   // we need to separate this because otherwise it will be called earlier than tests - in a case if tests will be wrapped into describe
   describe(`Finalizing [${browserName}]`, function () {
+
     // actually we are just waiting here for browser to close
     it("closing browser", function (done) {
-      console.log("CLOSING BROWSER!!!")
-      browser.close()
-      browser.quit()
-      browser = null
-      done()
+      this.timeout(5000)
+      this.slow(10000)
+      browser.executeScript('try{window.localStorage.clear(); window.location.reload();}catch(e){}').then(() => {
+        browser.close()
+        browser.quit()
+        done()
+      })
     })
   })
 }

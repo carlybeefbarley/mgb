@@ -155,6 +155,10 @@ export default class EditCode extends React.Component {
     this.handleContentChange(newC2, null, `Beautify code`)
   }
 
+  quickSave(){
+    let newC2 = {src: this.codeMirror.getValue()}
+    this.handleContentChange(newC2, null, `Beautify code`)
+  }
   warnNoWriteAccess() {
     showToast("You don't have write access to this Asset", 'error')
   }

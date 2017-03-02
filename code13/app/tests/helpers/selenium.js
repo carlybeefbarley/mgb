@@ -9,7 +9,7 @@ const until = webdriver.until
 // TODO: add xpath etc..
 module.exports = (browser) => {
   const sel = {
-    css: (rule, timeout ) => {
+    css: (rule, timeout) => {
       timeout = timeout == void(0) ? 30000 : timeout
       return browser.wait(until.elementLocated(By.css(rule)), timeout)
     },
@@ -18,9 +18,9 @@ module.exports = (browser) => {
       p.then((found) => {
         callback(null, !!found.length)
       })
-      .catch((e) => {
-        callback(e)
-      })
+        .catch((e) => {
+          callback(e)
+        })
     },
     getUri: () => {
       browser.executeAsyncScript("")
@@ -36,7 +36,7 @@ module.exports = (browser) => {
         browser.manage().logs().get("browser")
           .then(logs => {
             const errors = logs.filter(l => l.message.indexOf('Uncaught') > -1)
-            if(errors.length){
+            if (errors.length) {
               throw new Error("Javascript errors encountered \n" + JSON.stringify(errors, null, "\t"))
             }
             done && browser.call(done)
@@ -65,24 +65,29 @@ module.exports = (browser) => {
     },
 
     untilInvisible(rule, timeout){
+      console.log("Waiting to disappear:", rule)
       timeout = timeout == void(0) ? 10000 : timeout
       browser.wait(() => {
-        return browser.findElements(By.css(rule)).then((present) => {
-          return !present.length;
+        return browser.findElements(By.css(rule)).then((element) => {
+          console.log("Is Present?:", rule, !!element)
+          return !element.length;
         });
       }, 10000)
+
     },
 
     wait(timeout, message){
       return browser.wait(new Promise((y, n) => {
         setTimeout(y, timeout)
-      }), timeout*2, message)
+      }), timeout * 2, message)
     },
 
     takeScreenShot(name, cb){
       browser.takeScreenshot().then(data => {
         const fs = require("fs")
-        fs.writeFile(name, Buffer.from(data, 'base64'), () => {cb && cb()})
+        fs.writeFile(__dirname + '/../scr/' + name, Buffer.from(data, 'base64'), () => {
+          cb && cb()
+        })
       })
     },
 
@@ -116,7 +121,7 @@ module.exports = (browser) => {
         sel.wait(1000)
         sel.takeScreenShot("scr/settingsOpen.png")
 
-        if(name){
+        if (name) {
           const slider = sel.untilVisible('#mgbjr-input-level-slider-' + name)
           slider.getSize()
             .then((size) => {
@@ -126,8 +131,8 @@ module.exports = (browser) => {
                 .perform()
             })
         }
-        else{
-          sliders.forEach( s => {
+        else {
+          sliders.forEach(s => {
             const slider = sel.untilVisible(s)
             slider.getSize()
               .then((size) => {
@@ -151,7 +156,7 @@ module.exports = (browser) => {
     openAssetsPanel(){
       return browser.getCurrentUrl()
         .then((url) => {
-          if(url.indexOf("_fp=assets") == -1){
+          if (url.indexOf("_fp=assets") == -1) {
             // debug this SUI is not working well
             sel.css("#mgbjr-flexPanelIcons-assets > .icon").click()
           }
@@ -174,8 +179,8 @@ module.exports = (browser) => {
       try {
         savedImageData = fs.readFileSync(__dirname + `/../imagesToCompare/${filename}`)
       }
-      // ignore first time error - if we don't have file
-      catch(e){
+        // ignore first time error - if we don't have file
+      catch (e) {
         fs.writeFileSync(__dirname + `/../imagesToCompare/${filename}.tmp`, data)
       }
 

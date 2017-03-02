@@ -7,7 +7,7 @@ module.exports = (getBrowser) => {
     })
     // all action should be in the "it" block
     it("Logging in", function(done){
-      const login = require(path + "procedures/login.js")(browser)
+      const login = require(__dirname + "/../procedures/login.js")(browser)
       login(done)
     })
 

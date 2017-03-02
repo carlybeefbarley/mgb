@@ -9,8 +9,8 @@ window.ml = {}
 
 require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () => {
   const status = {
-    memory: new ml.Gauge(),
-    cpu: new ml.Gauge("blue", "white"),
+    memory: new ml.Gauge("yellow", "red", "memory"),
+    cpu: new ml.Gauge("blue", "white", "cpu"),
     info: new ml.Info()
   }
   status.memory.show(document.body)
@@ -22,20 +22,25 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
   new ml.TestCase({name: 'login', id: 'login', title: 'Test Log In'}, restart)
 
   new ml.TestCase({name: 'adjust.settings', id: "adjust.settings", title: 'Adjust Settings'}, restart)
-  new ml.TestCase({name: 'code.bundler', id: "code.bundler", title: 'Test Code Bundler'}, restart)
+
+  // code bundling is broken on phantomjs
+  // new ml.TestCase({name: 'code.mentor', id: 'code.mentor', title: 'Test Code Mentor'}, restart)
+  // new ml.TestCase({name: 'code.bundler', id: "code.bundler", title: 'Test Code Bundler'}, restart)
+  // new ml.TestCase({name: 'code.update', id: 'code.update', title: 'Test Code Updates'}, restart)
+
   new ml.TestCase({name: 'code.load.import', id: "code.load.import'", title: 'Test Import Loader'}, restart)
-  new ml.TestCase({name: 'code.mentor', id: 'code.mentor', title: 'Test Code Mentor'}, restart)
-  new ml.TestCase({name: 'code.update', id: 'code.update', title: 'Test Code Updates'}, restart)
+
   new ml.TestCase({name: 'graphic', id: 'graphic', title: 'Test Graphic Editor'}, restart)
   new ml.TestCase({name: 'map.simple', id: 'map.simple', title: 'Test Map Editor'}, restart)
 
-  new ml.TestCase({name: 'random.error', id: 'random.error', title: 'SelfTest: Generate Errors Randomly'}, restart)
+  // new ml.TestCase({name: 'random.error', id: 'random.error', title: 'SelfTest: Generate Errors Randomly'}, restart)
 
   const actions = {
     status: (data) => {
       status.memory.progress(data.status.used * 100)
       status.cpu.progress(data.status.loadAvg * 100)
-      status.info.addOrUpdate('Phantoms running: ', data.phantoms)
+      status.info.addOrUpdate('Clients connected: ', data.clients)
+      status.info.addOrUpdate('Slaves available: ', data.slaves)
     },
     runnerStarted: data => {
       const testCase = ml.TestCase.find(data.id) || new ml.TestCase(data, () => {

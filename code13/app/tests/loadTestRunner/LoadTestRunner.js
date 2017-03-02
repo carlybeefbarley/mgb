@@ -1,7 +1,9 @@
 const http = require('http')
 const WebSocketServer = require("ws").Server
 const fs = require('fs')
+
 const actions = require('./server/actions')
+const slaveActions = require('./server/slaveActions')
 
 const s = http.createServer()
 s.on('request', (req, res) => {
@@ -29,21 +31,56 @@ s.listen({
 })
 
 const wss = new WebSocketServer({server: s, perMessageDeflate: true})
+
+const clients = []
+const slaves = []
+
 setInterval(() => {
-  wss.clients.forEach((ws) => {
-    actions.status(null, ws, wss)
-  })
+  actions.broadcastStatus(clients, slaves)
 }, 1000)
 
+const removeWs = (ws, array) => {
+  const index = array.findIndex(i => i.ws == ws)
+  if(index > -1)
+    array.splice(index, 1)
+}
+
 wss.on('connection', (ws) => {
-  actions.status(null, ws, wss)
-  ws.on("message", function(msgStr){
-    try{
-      const msg = JSON.parse(msgStr)
-      actions[msg.action] && actions[msg.action](msg.data, ws, wss)
-    }
-    catch(e){
-      console.log("Error in WS connection:", e)
-    }
-  })
+  if(ws.upgradeReq.url === '/') {
+    clients.push({ws})
+    actions.events.status(null, ws, clients, slaves)
+    ws.on("message", function (msgStr) {
+      try {
+        const msg = JSON.parse(msgStr)
+        actions.events[msg.action] && actions.events[msg.action](msg.data, ws, clients, slaves)
+      }
+      catch (e) {
+        console.log("Error in WS connection:", e)
+      }
+    })
+
+    ws.on('close', () => {
+      removeWs(ws, clients)
+    })
+  }
+  else if(ws.upgradeReq.url === '/slave'){
+    console.log("Adding new slave...")
+    slaves.push({
+      ws, jobs: 0
+    })
+    ws.on("message", function (msgStr) {
+      try {
+        const msg = JSON.parse(msgStr)
+        slaveActions.events[msg.action] && slaveActions.events[msg.action](msg.data, ws, clients, slaves)
+      }
+      catch (e) {
+        console.log("Error in WS connection:", e)
+      }
+    })
+
+    ws.on('close', () => {
+      console.log("Removing slave!")
+      removeWs(ws, slaves)
+    })
+  }
 })

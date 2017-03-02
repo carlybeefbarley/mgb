@@ -18,7 +18,7 @@ class TestRunner {
     })
     const testFileName = __dirname + '/../loadTests/loadTest.js'
     global.testInfo = {
-      browser: startBrowser('local.chrome', {server: 'http://127.0.0.1:' + port}),
+      browser: startBrowser('local.phantom', {server: 'http://127.0.0.1:' + port}),
       test: name
     }
     mocha.addFile(testFileName)

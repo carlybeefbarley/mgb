@@ -1,6 +1,8 @@
 const spawn = require('child_process').spawn
 const PHANTOM_MAX_AGE = 5 * 60 * 1000 // 5 minutes
 const phantoms = []
+
+
 const spawnPhantom = (port, callback = (p) => {p.available = true}) => {
   for(let i=0; i<phantoms.length; i++){
     const p = phantoms[i]

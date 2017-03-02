@@ -39,24 +39,40 @@ export default class CodeTutorials extends React.Component {
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const tutorialUrl = makeCDNLink(window.location.origin + this.skillNode.$meta.link) 
     // console.log(tutorialUrl, this.skillNode)
   }
 
-  stepNext(){
+  stepNext = () => {
+    const step = this.state.step + 1
+    if (step < this.tutorialData.steps.length) {
+      this.setState({ step: step }) 
+      this.resetCode(step)
+    }
+    else
+      this.successPopup()
+  }
+
+  stepBack = () => {
+    if (this.state.step > 0) {
+      const step = this.state.step - 1
+      this.setState({ step: step }) 
+      this.resetCode(step)
+    }
+  }
+
+  resetCode = (step) => {
+    step = typeof step != 'undefined' ? step : this.state.step
+    const code = this.tutorialData.steps[step].code
+    this.props.codeMirror.setValue(code)
+  }
+
+  successPopup () {
 
   }
 
-  stepBack(){
-
-  }
-
-  resetCode(){
-
-  }
-
-  render() {
+  render () {
     const description = this.tutorialData.steps[this.state.step].text
 
     return (

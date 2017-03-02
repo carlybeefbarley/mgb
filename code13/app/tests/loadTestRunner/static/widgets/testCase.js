@@ -29,7 +29,9 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
 
       this.autoRestart.setAttribute('type', 'checkbox')
       this.autoRestart.setAttribute('label', 'auto restart?')
-      this.autoRestart.onclick = (val) => {this.needRestart = !this.needRestart}
+      this.autoRestart.onclick = (val) => {
+        this.needRestart = !this.needRestart
+      }
 
       this.actions = document.createElement('span')
       this.actions.classList.add('actions')
@@ -73,7 +75,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
       if (this.runners == 0) {
         this.status.parentNode && this.widget.removeChild(this.status)
       }
-      if(!data || !data.tests){
+      if (!data || !data.tests) {
         return
       }
       // this.widget.insertBefore(this.actions, this.title.nextSibling)
@@ -143,7 +145,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
           ds.data.push(null)
         }
       })
-      if(hasErrors) {
+      if (hasErrors) {
         data.tests.forEach((t, i) => {
           const idx = data.tests.length + i
           if (!this.chartData.datasets[idx]) {
@@ -190,20 +192,27 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
       }
     }
 
-    toggleExpand(expand){
+    toggleExpand(expand) {
       this.expanded = expand != void(0) ? expand : !this.expanded
-      if(this.expanded){
+      if (this.expanded) {
         this.chart.update()
         this.widget.classList.add('expanded')
         this.title.setAttribute('label', '-')
       }
-      else{
+      else {
         this.widget.classList.remove('expanded')
         this.title.setAttribute('label', '+')
       }
     }
 
     restart() {
+      if (location.hash !== '#admin') {
+        if (confirm("Only admin can add test runners.. do you wish to become the admin?")) {
+          location.hash = "admin"
+          alert("Now you are the admin!")
+        }
+        return
+      }
       this.runners++
       // this.toggleExpand(true)
       this.status.innerHTML = 'Running ' + this.runners

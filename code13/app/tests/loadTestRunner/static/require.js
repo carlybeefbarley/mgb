@@ -16,7 +16,7 @@
       const src = toLoad[0]
       const scripts = document.head.getElementsByTagName("script")
       const loading = Array.prototype.find.call(scripts, s => {
-        return s.src === src || s.src.substring(window.location.href.length - 1) === src
+        return s.src === src || s.src.substring(window.location.origin.length - 1) === src
       })
       if (loading) {
         if (!loading.loaded) {

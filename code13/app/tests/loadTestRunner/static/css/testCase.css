@@ -27,6 +27,7 @@
 .testCase span.title{
   min-width: 320px;
   cursor: pointer;
+  font-weight: bold;
 }
 
 .testCase span.actions a {
@@ -48,6 +49,7 @@
 }
 .testCase input{
   position: relative;
+  margin-right: 100px;
 }
 .testCase input:after {
   content: attr(label);
@@ -57,4 +59,8 @@
   white-space: nowrap;
   top: -1px;
 
+}
+
+.testCase .status {
+  float: right
 }

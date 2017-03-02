@@ -3,7 +3,8 @@ const {sm, smAll, smOthers} = require('./server/wsTools')
 
 const events = require('./server/slave/slaveEvents')
 const restart = () => {
-  const ws = new WebSocket('ws://127.0.0.1:8082/slave', {
+  const masterAddr = process.argv[2] || '127.0.0.1:8082'
+  const ws = new WebSocket(`ws://${masterAddr}/slave`, {
     perMessageDeflate: true
   })
 

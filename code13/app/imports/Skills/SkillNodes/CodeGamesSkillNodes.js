@@ -1,6 +1,7 @@
 import C from './CommonSkillNodes'
 
 // skillnodes for game tutorials
+// skillnodes are connected with /public/codeTutorials.json . Link is a key of node: "mole1", "digger"
 
 export default {
   $meta: {
@@ -9,11 +10,18 @@ export default {
   },
   'mole1': {
     $meta: {
-      name: 'Whack a Mole Nr1',
+      name: 'Whack a Mole Part 1',
       icon: 'code',
-      link: '/api/asset/tutorial/!vault:tutorials.game.basics.mole.1',
       description: `First game from series`,
     },
     'mole1': C.En(0)
+  },  
+  'digger': {
+    $meta: {
+      name: 'Digger',
+      icon: 'code',
+      description: `Digger game`,
+    },
+    'digger': C.En(0)
   }
 }

@@ -58,6 +58,8 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import SpecialGlobals from '/imports/SpecialGlobals'
 
+import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes.js'
+
 let showDebugAST = false    // Handy thing while doing TERN dev work
 
 
@@ -2165,15 +2167,11 @@ export default class EditCode extends React.Component {
       />
 
     let isChallenge = false
-    let isCodeTutorial = false
+    let isCodeTutorial = false 
     if (asset.skillPath && asset.kind === 'code') {
-      // TODO(@shmikucis): For maintainability, I think this decision should 
-      //                   be an attribute of the skillNodePath prefix, not 
-      //                   something deep in the editcode stack. Or at least
-      //                   make this a helper function inside skillNodes.js
-      if (asset.skillPath.startsWith('code.js.basics'))
+      if (isPathChallenge(asset.skillPath))
         isChallenge = true
-      else if (asset.skillPath.startsWith('code.js.games'))
+      else if (isPathCodeTutorial(asset.skillPath))
         isCodeTutorial = true
     }
 

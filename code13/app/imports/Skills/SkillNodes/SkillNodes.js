@@ -323,3 +323,7 @@ export const makeTutorialsFindSelector = dottedSkillKey =>
 }
 
 export const getFriendlySkillName = ( parentSkillNode, skillLeafKey ) => (parentSkillNode[skillLeafKey].$meta.name || _.startCase(skillLeafKey))
+
+export const isPathChallenge = (skillPath) => skillPath.startsWith('code.js.basics')
+
+export const isPathCodeTutorial = (skillPath) => skillPath.startsWith('code.js.games')

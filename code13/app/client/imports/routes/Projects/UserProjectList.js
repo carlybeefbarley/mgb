@@ -1,15 +1,22 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Helmet from 'react-helmet'
 import reactMixin from 'react-mixin'
 import Spinner from '/client/imports/components/Nav/Spinner'
 
 import { Projects } from '/imports/schemas'
-import { projectMakeSelector } from '/imports/schemas/projects'
-import { logActivity } from '/imports/schemas/activity'
+import { projectMakeSelector, projectSorters } from '/imports/schemas/projects'
 
 import ProjectCard from '/client/imports/components/Projects/ProjectCard'
 import CreateProjectLinkButton from '/client/imports/components/Projects/NewProject/CreateProjectLinkButton'
 import { Segment, Header, Divider } from 'semantic-ui-react'
+
+// Default values for url?query - i.e. the this.props.location.query keys
+const queryDefaults = {
+  searchName: "",               // Empty string means match all (more convenient than null for input box)
+  sort: "edited",               // Should be one of the keys of projectSorters{}
+  showForkable: "0"             // showForkable only
+}
 
 export default UserProjectList = React.createClass({
   mixins: [ReactMeteorData],
@@ -20,17 +27,39 @@ export default UserProjectList = React.createClass({
     currUser: PropTypes.object            // Currently Logged in user. Can be null
   },
   
+  /**
+   * queryNormalized() takes a location query that comes in via the browser url.
+   *   Any missing or invalid params are replaced by defaults
+   *   The result is a data structure that can be used without need for range/validity checking
+   * @param q typically this.props.location.query  -  from react-router
+  */
+  queryNormalized: function(q = {}) {
+    // Start with defaults
+    let newQ = _.clone(queryDefaults)
+    // Validate and apply values from location query
 
-  getInitialState: function() {
-    return {
-      showOnlyForkable: false
-    }
+    // query.sort
+    if (projectSorters.hasOwnProperty(q.sort))
+      newQ.sort = q.sort
+
+    // query.showForkable
+    if (q.showForkable === "1")
+      newQ.showForkable = q.showForkable
+
+    // query.searchName
+    if (q.searchName)
+      newQ.searchName = q.searchName
+
+    return newQ
   },
 
   getMeteorData: function() {
     const userId = this.props.user._id
-    const handleForProjects = Meteor.subscribe("projects.byUserId", userId, this.state.showOnlyForkable)
-    const projectSelector = projectMakeSelector(userId, this.state.showOnlyForkable)
+
+    const qN = this.queryNormalized(this.props.location.query)
+    const showOnlyForkable = (qN.showForkable === '1')
+    const handleForProjects = Meteor.subscribe("projects.byUserId", userId, showOnlyForkable)
+    const projectSelector = projectMakeSelector(userId, showOnlyForkable)
 
     return {
       projects: Projects.find(projectSelector).fetch(),

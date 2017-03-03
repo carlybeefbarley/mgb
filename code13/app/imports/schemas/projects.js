@@ -305,6 +305,11 @@ export function projectMakeSelector(userId, showOnlyForkable = false)
   return sel
 }
 
+export const projectSorters = {
+  "edited": { updatedAt: -1},
+  "name":   { name: 1 }
+}
+
 /**
  * This is used by the Front Page hero list. It's kind of lame
  * 

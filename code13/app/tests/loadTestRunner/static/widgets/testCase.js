@@ -70,6 +70,9 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
 
     update(data) {
       this.runners--
+      if(this.runners < 0){
+        this.runners = 0
+      }
 
       this.status.innerHTML = 'Running ' + this.runners
       if (this.runners == 0) {

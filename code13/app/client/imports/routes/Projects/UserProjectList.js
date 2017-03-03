@@ -23,7 +23,7 @@ export default UserProjectList = React.createClass({
 
   getInitialState: function() {
     return {
-      showOnlyForkable: true
+      showOnlyForkable: false
     }
   },
 

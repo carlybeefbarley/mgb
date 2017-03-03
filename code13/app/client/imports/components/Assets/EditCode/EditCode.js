@@ -2005,10 +2005,11 @@ export default class EditCode extends React.Component {
     else
       to--
 
-
-    this.highlightedLines.forEach((lh) => {
-      this.codeMirror.removeLineClass(lh, 'background', 'highlight')
-    })
+    if(from < 0){
+      this.highlightedLines.forEach((lh) => {
+        this.codeMirror.removeLineClass(lh, 'background', 'highlight')
+      })
+    }
 
     for(let i=from; i<=to; i++){
       const lh = this.codeMirror.getLineHandle(i)

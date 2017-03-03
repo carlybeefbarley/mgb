@@ -35,7 +35,7 @@ const ProjectForkGenerator = ( { project, isForkPending } ) => {
               color={isForkPending ? 'orange' : null}
               size='small'
               icon={{ name: 'fork', color: (fpLen > 0 ? 'blue' : null) }}
-              content={numChildren}
+              content={<span style={{color: project.allowForks ? 'green' : null}}>{numChildren}</span>}
               />
         )}
         positioning='bottom right' >

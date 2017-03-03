@@ -50,7 +50,7 @@ const ProjectCard = props => {
           </div>
           <div style={{ color: numChildForks ? 'black' : null }}>
             <Icon name="fork" color={hasParentFork ? 'blue' : null} />
-            <span>{numChildForks} Forks</span>
+            <span style={{ color: project.allowForks ? 'green' : null }}>{numChildForks} Forks</span>
           </div>
         </Card.Meta>
 

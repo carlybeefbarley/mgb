@@ -291,14 +291,18 @@ const schema = {
  * @param {String} userId 
  * @returns {Object} A MongoDB selector to find projects that userId is owner OR member of
  */
-export function projectMakeSelector(userId) 
+export function projectMakeSelector(userId, showOnlyForkable = false) 
 {
-  return {
+  const sel = {
     "$or": [
       { ownerId: userId },
       { memberIds: { $in: [userId]} }
     ]
   }
+  if (showOnlyForkable)
+    sel.allowForks = true
+
+  return sel
 }
 
 /**

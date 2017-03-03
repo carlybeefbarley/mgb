@@ -12,8 +12,8 @@ Meteor.publish('projects.forProjectId', function(projectId) {
 
 
 // Return projects relevant to this userId.. This includes owner, member, etc
-Meteor.publish('projects.byUserId', function(userId) {
-  const selector = projectMakeSelector(userId)
+Meteor.publish('projects.byUserId', function(userId, showOnlyForkable = false) {
+  const selector = projectMakeSelector(userId, showOnlyForkable)
   return Projects.find(selector)
 })
 

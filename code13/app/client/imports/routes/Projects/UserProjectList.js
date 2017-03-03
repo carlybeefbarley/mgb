@@ -20,10 +20,17 @@ export default UserProjectList = React.createClass({
     currUser: PropTypes.object            // Currently Logged in user. Can be null
   },
   
+
+  getInitialState: function() {
+    return {
+      showOnlyForkable: true
+    }
+  },
+
   getMeteorData: function() {
     const userId = this.props.user._id
-    const handleForProjects = Meteor.subscribe("projects.byUserId", userId)
-    const projectSelector = projectMakeSelector(userId)
+    const handleForProjects = Meteor.subscribe("projects.byUserId", userId, this.state.showOnlyForkable)
+    const projectSelector = projectMakeSelector(userId, this.state.showOnlyForkable)
 
     return {
       projects: Projects.find(projectSelector).fetch(),

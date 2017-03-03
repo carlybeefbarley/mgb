@@ -24,6 +24,14 @@ export default {
     },
     'mole2': C.En(0)
   },  
+  'mole3': {
+    $meta: {
+      name: 'Whack a Mole Part 3',
+      icon: 'code',
+      description: `Third game from series`,
+    },
+    'mole3': C.En(0)
+  },  
   'digger': {
     $meta: {
       name: 'Digger',

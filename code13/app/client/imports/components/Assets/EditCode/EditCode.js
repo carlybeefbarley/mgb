@@ -1547,9 +1547,14 @@ export default class EditCode extends React.Component {
     })
 
 
-    // Make sure that it's really visible.. and also auto-close accordion above so there's space.
-    $('.ui.accordion').accordion('close', 0)
-    $('.ui.accordion').accordion('open', 1)
+
+    const idx = Math.floor($('#mgbjr-EditCode-codeRunner').index() / 2)  //  because title + content for one entry
+    // auto-close accordion above so there's space.
+    for(let i=idx - 1; i > -1; i--){
+      $('.ui.accordion').accordion('close', i)
+    }
+    // Make sure that it's really visible.. and also
+    $('.ui.accordion').accordion('open', idx )
   }
 
 
@@ -2167,7 +2172,7 @@ export default class EditCode extends React.Component {
       />
 
     let isChallenge = false
-    let isCodeTutorial = false 
+    let isCodeTutorial = false
     if (asset.skillPath && asset.kind === 'code') {
       if (isPathChallenge(asset.skillPath))
         isChallenge = true

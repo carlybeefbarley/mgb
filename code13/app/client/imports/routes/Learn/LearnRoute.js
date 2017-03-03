@@ -42,6 +42,7 @@ const learnTopLevelItems = [
     content: 'Programming',
     link: '/learn/code',
     query: null,
+    skillnodeTopLevelTag: 'code',
     desc: 'Game programming with JavaScript and Phaser'
   },
   {

@@ -234,7 +234,7 @@ export default class EditActorMap extends EditMap {
     const { isLoading, isPlaying, activeLayer, activeTileset } = this.state
 
     const c2 = this.mgb_content2
-   
+
     return (
       <div className='ui grid' ref="container" style={{flexWrap: 'nowrap'}}>
         { isLoading && this.renderLoading() }

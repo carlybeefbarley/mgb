@@ -13,10 +13,16 @@ export default {
     "Floor that causes damage": "9"
   },
 
+  // This ordering is to match the templates when creating new actors
+  // Actor types 4, 5, 6, 7 will be part of 2 for MAGE. Distinction is primarily for Actor editor
   actorType: {
+    'Scenery': "4",
     'Player': "0",
     'Non-Player Character (NPC)': "1",
-    'Item, Wall or Scenery': "2",
+    'Item, Wall, or Scenery': "2", // Keep this one for backwards-compatibility with older actors
+    'Solid Object': "6",
+    'Floor': "7",
+    'Item': "5",    
     'Shot': "3"
   },
   

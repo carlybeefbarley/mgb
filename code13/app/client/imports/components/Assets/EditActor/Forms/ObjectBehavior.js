@@ -1,9 +1,10 @@
+import _ from 'lodash'
 import React from 'react'
 import BaseForm from '../../../Controls/BaseForm.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
 import actorOptions from '../../Common/ActorOptions.js'
 
-export default class ItemBehavior extends BaseForm {
+export default class ObjectBehavior extends BaseForm {
   get data() {
     return this.props.asset.content2.databag.item
   }
@@ -22,11 +23,11 @@ export default class ItemBehavior extends BaseForm {
           title:"When equipped, use this actor's graphics (base tile &amp; all animations) to show the player. For example, if this item is a weapon, you may have a new set of actor graphics where the actor is carrying the weapon. Sorry, but only one equipped item can override the actor at a time - so choose wisely which slot you want to use this feature with (usually weapons). You can choose ANY actor type for this, since only the graphics of that actor will be use, and all actor types define graphics"
         })}
         {this.data.equippedNewActorGraphics &&
-        <div>Note: It is recommended that items that can change the player look should use a slot called 'change_player_look'. This is because only one equipped item can only change how the player looks.</div>
+        <div>Note: It is recommended that items that can change the player's appearance should use the same slot name. This is because only one equipped item can only change how the player looks.</div>
         }
 
         {this.bool("Auto-equip item", 'autoEquipYN', {
-          title: "If yes, then this item is special and automatically is equipped when picked up by the player. It is useful for items like cars, horses, etc. Also, it cannot be explicitly unequipped by the user - it is only changed by another similar item"
+          title: "If yes, then this item is special and automatically is equipped when picked up by the pla yer. It is useful for items like cars, horses, etc. Also, it cannot be explicitly unequipped by the user - it is only changed by another similar item"
         })
         }
 
@@ -109,7 +110,7 @@ export default class ItemBehavior extends BaseForm {
     )
   }
 
-  showPushingOptions() {
+   showPushingOptions() {
     return (
       <div>
         {this.options("Direction this item pushes other actors", 'itemPushesActorType', [
@@ -130,17 +131,101 @@ export default class ItemBehavior extends BaseForm {
   }
 
   showFloorDamageOptions() {
-    { this.text("Heal (or harm) when used", 'healOrHarmWhenUsedNum', "number", {
-      title: "Enter the number of points of damage this item applies or heals. For example, if this was a healing item, and the number here was 5, it would heal by 5 points. If this was a harming item, and the number was 10, it would inflict 10 damage points",
-      max: 100
-    })}
+    return (
+      <div>
+        { this.text("Heal (or harm) when used", 'healOrHarmWhenUsedNum', "number", {
+          title: "Enter the number of points of damage this item applies or heals. For example, if this was a healing item, and the number here was 5, it would heal by 5 points. If this was a harming item, and the number was 10, it would inflict 10 damage points",
+          max: 100
+        })}
+      </div>
+    )
   }
 
-  render() {
+  renderItemBehavior(behaviorOptions) {
     return (
       <div className="ui form">
         <div id="mgbjr-edit-actor-tab-ItemBehavior-activation">
-          {this.options("Item Activation", 'itemActivationType', actorOptions.itemActivationType)}
+          {this.options("Item Type", 'itemActivationType', behaviorOptions)}
+        </div>
+
+        {this.data.itemActivationType == "4" &&
+          this.bool("Equippable?", 'inventoryEquippableYN', {
+            title: "'Yes' if this item can be equipped (wielded/worn etc) by the player"
+          })
+        }
+
+        {this.data.itemActivationType == "4" && this.data.inventoryEquippableYN == "1" && this.showInventoryOptions()}
+
+        {(this.data.itemActivationType == "4" || this.data.itemActivationType == "5"
+          || this.data.itemActivationType == "6" || this.data.itemActivationType == "7") &&
+          this.showPickableOptions()
+        }
+      </div>
+    )
+  }
+
+  renderSolidBehavior(behaviorOptions) {
+    return (
+      <div className="ui form">
+        <div id="mgbjr-edit-actor-tab-SolidBehavior-type">
+          {this.options("Solid Object Type", 'itemActivationType', behaviorOptions)}
+        </div>
+
+        {(this.data.itemActivationType == "1" ||
+            this.data.itemActivationType == "3" ) &&
+          this.text("Player can push object to slide it", 'pushToSlideNum', "number", {
+            title: "If the value here is '0', then this is just a normal wall or other obstruction that cannot move. However, if the value is not zero, this item will be able to slide when pushed - 'a sliding block' and this can be used for puzzles or as a weapon for the player",
+            max: 50
+          })
+        }
+
+        {/* hmm - not used?
+        (this.data.itemActivationType == "1" ||
+          this.data.itemActivationType == "3" ) && (this.data.pushToSlideNum > 0) &&
+            this.bool("Sliding block can squish players?", 'squishPlayerYN')
+        */}
+
+        {(this.data.itemActivationType == "1" ||
+          this.data.itemActivationType == "3" ) && (this.data.pushToSlideNum > 0) &&
+            this.bool("Sliding block can squish NPCs?", 'squishNPCYN', {
+              title: "If you want sliding blocks to be able to kill enemy NPCs, then select 'yes' here."
+            })
+        }
+
+        {(this.data.itemActivationType == "1" ||
+            this.data.itemActivationType == "3" ) && (this.data.pushToSlideNum == "0") &&
+              this.dropArea("Item that acts as a key:", "keyForThisDoor", "actor", {
+                title: "If the player is carrying the specified 'key' item, then the player can go past"
+              })
+        }
+        {(this.data.itemActivationType == "1" ||
+          this.data.itemActivationType == "3" ) && (this.data.pushToSlideNum == "0") &&
+            this.bool("Key is consumed when used", "keyForThisDoorConsumedYN", {
+              title: "Select Yes if the 'key' is taken from the player when used"
+            })
+        }
+      </div>
+    )
+  }
+
+
+  renderFloorBehavior(behaviorOptions) {
+    return (
+      <div className="ui form">
+        <div id="mgbjr-edit-actor-tab-FloorBehavior-type">
+          {this.options("Floor Type", 'itemActivationType', behaviorOptions)}
+        </div>
+        {this.data.itemActivationType == "8" && this.showPushingOptions()}
+        {this.data.itemActivationType == "9" && this.showFloorDamageOptions()}
+      </div>
+    )
+  }
+
+  renderAll() {
+     return (
+      <div className="ui form">
+        <div id="mgbjr-edit-actor-tab-ItemBehavior-activation">
+          {this.options("Object Type", 'itemActivationType', actorOptions.itemActivationType)}
         </div>
 
         {(this.data.itemActivationType == "1" ||
@@ -186,12 +271,31 @@ export default class ItemBehavior extends BaseForm {
         {this.data.itemActivationType == "4" && this.data.inventoryEquippableYN == "1" && this.showInventoryOptions()}
 
         {(this.data.itemActivationType == "4" || this.data.itemActivationType == "5"
-          || this.data.itemActivationType == "6") &&
+          || this.data.itemActivationType == "6" || this.data.itemActivationType == "7") &&
           this.showPickableOptions()
         }
 
         {this.data.itemActivationType == "8" && this.showPushingOptions()}
         {this.data.itemActivationType == "9" && this.showFloorDamageOptions()}
+      </div>
+    )
+  }
+
+  render() {
+    let behaviorOptions = null
+
+    if (this.props.asset.content2.databag.all.actorType === actorOptions.actorType["Item"])
+      behaviorOptions =  this.renderItemBehavior(_.pickBy(actorOptions.itemActivationType, type => { return (type === "4" || type === "5" || type === "6" || type === "7") }))
+    else if (this.props.asset.content2.databag.all.actorType === actorOptions.actorType["Solid Object"])
+      behaviorOptions = this.renderSolidBehavior(_.pickBy(actorOptions.itemActivationType, type => { return (type === "1" || type === "2" || type === "3") }))
+    else if (this.props.asset.content2.databag.all.actorType === actorOptions.actorType["Floor"])
+      behaviorOptions =  this.renderFloorBehavior(_.pickBy(actorOptions.itemActivationType, type => { return (type === "0" || type === "8" || type === "9") }))
+    else if (this.props.asset.content2.databag.all.actorType === actorOptions.actorType["Scenery"])
+      behaviorOptions = <div className="ui message ">This ActorType doesn't use this set of options</div>
+
+    return (
+      <div>
+        {behaviorOptions ? behaviorOptions : this.renderAll()}
       </div>
     )
   }

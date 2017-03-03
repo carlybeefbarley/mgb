@@ -1,8 +1,10 @@
+import _ from 'lodash'
 import React from 'react'
 import { Accordion } from 'semantic-ui-react'
 
 import BaseMapArea from '../Common/Map/BaseMapArea'
 import ActorHelper from '../Common/Map/Helpers/ActorHelper'
+import actorOptions from '../Common/ActorOptions.js'
 import PositionInfo from '../Common/Map/Tools/PositionInfo'
 import LayerTypes     from '../Common/Map//Tools/LayerTypes'
 import GridLayer      from '../Common/Map/Layers/GridLayer'
@@ -68,7 +70,6 @@ export default class ActorMapArea extends BaseMapArea {
       return null
     }
     const layer = this.getActiveLayer()
-    const types = ['Player', 'Non-Playable Character (NPC)', 'Item, Wall, or Scenery']
 
     info = info || (layer ? layer.getInfo() : null)
     let actor = info ? ActorHelper.getTilesetFromGid(info.gid, this.props.data.tilesets) : null
@@ -83,7 +84,7 @@ export default class ActorMapArea extends BaseMapArea {
               <span>
                 <span style={{fontSize: '11px'}}>&ensp;<b>Actor: </b>{actor.name.split(':').pop() + ' (' + actor.imagewidth + 'x' + actor.imageheight + ')'}</span>
                 <br />
-                <span style={{fontSize: '11px'}}>&ensp;<b>Type: </b>{types[parseInt(actor.actor.databag.all.actorType)]}</span>
+                <span style={{fontSize: '11px'}}>&ensp;<b>Type: </b>{_.findKey(actorOptions.actorType, type => { return type === actor.actor.databag.all.actorType })}</span>
               </span>
             }
             {

@@ -274,7 +274,7 @@ export default MagePlayGameMovement = {
                           MgbActor.intFromActorParam(ap.content2.databag.itemOrNPC.destroyableYN) == 1 &&
                           MgbActor.intFromActorParam(aa_p.content2.databag.allchar.touchDamageToNPCorItemNum) > 0
                           ))
-                      && (aType != MgbActor.alActorType_Item || 
+                      && ((aType != MgbActor.alActorType_Item && [4, 5, 6, 7].indexOf(aType) === -1) || 
                         0 == MgbActor.intFromActorParam(ap.content2.databag.item.pushToSlideNum))
                     )
                     obstructed = true

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react'
 
 import BaseForm from '../../../Controls/BaseForm.js'
@@ -13,9 +14,13 @@ export default class All extends BaseForm {
     return this.props.asset.content2.databag.all
   }
 
+  onActorTypeChange() {
+    //this.props.saveText("")
+    joyrideCompleteTag(`mgbjr-CT-edit-actor-${actorOptions.actorType}`)
+  }
+
   render() {
     const soundOptions = { options: MgbActor.alCannedSoundsList.map( s => ( { text: '[builtin]:'+s, value: '[builtin]:'+s } ) ) }
-
     // Handle limiting InitialHealth < initialMaxHealthNum
     let initHealthConfig = { min: 1 }
     if (this.data.initialMaxHealthNum)
@@ -24,10 +29,32 @@ export default class All extends BaseForm {
       if (max > 0)
         initHealthConfig.max = max
     }
+    const databag = this.props.asset.content2.databag
 
     return (
-    <div id="mgbjr-edit-actor-actorType" onChange={() => joyrideCompleteTag(`mgbjr-CT-edit-actor-${actorOptions.actorType}`)} className="ui form">
-          {this.options("Actor Type", 'actorType', actorOptions.actorType)}
+    <div id="mgbjr-edit-actor-actorType" onChange={() => this.onActorTypeChange()} className="ui form">
+          {this.options(
+            "Actor Type", 
+            'actorType', 
+            _.pickBy(actorOptions.actorType, (val, key) => {return key !== 'Item, Wall, or Scenery'}),
+            {},
+            () => { 
+              // Set correct itemActivationType when actorType is changed
+              switch(parseInt(databag.all.actorType)) {
+                case 4:
+                  databag.item.itemActivationType = databag.item.itemActivationType !== '0' ? '0' : databag.item.itemActivationType
+                  break
+                case 5:
+                  databag.item.itemActivationType = ['4', '5', '6', '7'].indexOf(databag.item.itemActivationType) === -1 ? '4' : databag.item.itemActivationType
+                  break
+                case 6:
+                  databag.item.itemActivationType = ['1', '2', '3'].indexOf(databag.item.itemActivationType) === -1 ? '3' : databag.item.itemActivationType
+                  break
+                case 7:
+                  databag.item.itemActivationType = ['0', '8', '9'].indexOf(databag.item.itemActivationType) === -1 ? '0' : databag.item.itemActivationType
+              }
+            }
+          )}
           {this.text("Description", 'description')}
           {this.text("Initial Heath", 'initialHealthNum', "number", initHealthConfig )}
           {this.text("Initial Max Health", 'initialMaxHealthNum', "number", {

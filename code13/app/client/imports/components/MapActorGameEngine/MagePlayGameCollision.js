@@ -167,7 +167,7 @@ export default MagePlayGameCollision = {
             this.playStopItemSliding(aa2)
           }
           break
-        case MgbActor.alActorType_Item:
+        case MgbActor.alActorType_Item: case 4: case 5: case 6: case 7:
           // 1. Effect of item on player (or vice versa)
           var itemUtilised = false		// True if the item had some effect - so we can trigger events
           var itemConsumed = false		// True if the item has been consumed and must be removed from play
@@ -258,7 +258,7 @@ export default MagePlayGameCollision = {
             // 1. Touch Damage from #1 to #2
             this.applyDamageToActor(aa2_idx, ap2, MgbActor.intFromActorParam(ap1.content2.databag.allchar.touchDamageToNPCorItemNum), MgbActor.intFromActorParam(ap1.content2.databag.allchar.touchDamageAttackChance))
             break
-          case MgbActor.alActorType_Item:
+          case MgbActor.alActorType_Item: case 4: case 5: case 6: case 7:
           case MgbActor.alActorType_Shot:
             if (aa1.isSliding)												// Aha, a Sliding block or shot... 
             {

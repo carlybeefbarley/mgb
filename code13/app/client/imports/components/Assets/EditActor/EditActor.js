@@ -20,7 +20,7 @@ import Spawning from './Forms/Spawning'
 import Animations from './Forms/Animations'
 import Conditions from './Forms/Conditions'
 import NPCBehavior from './Forms/NPCBehavior'
-import ItemBehavior from './Forms/ItemBehavior'
+import ObjectBehavior from './Forms/ObjectBehavior'
 import CharacterBehavior from './Forms/CharacterBehavior'
 
 
@@ -50,10 +50,13 @@ export default class EditActor extends React.Component {
       <Element
           asset={this.props.asset}
           onChange={this.handleSave.bind(this)}
-          saveThumbnail={ d => this.handleSave(null, d, "Updating thumbnail") }/>
+          saveThumbnail={ d => this.handleSave(null, d, "Updating thumbnail") }
+          saveText={ text => this.props.handleDescriptionChange(text)} />
     )
+
     const _mkDisabled = actorTypesArray => _.some(actorTypesArray, at => databag.all.actorType === actorOptions.actorType[at])
-    return [
+
+    const allTabs = [
       {
         tab: "All",
         content: _makeContent(FormsAll)
@@ -63,32 +66,85 @@ export default class EditActor extends React.Component {
         content: _makeContent(Animations) },
       {
         tab: "Character Behavior",
-        disabled: _mkDisabled( ['Item, Wall or Scenery', 'Shot'] ),
+        disabled: _mkDisabled( ['Item, Wall, or Scenery', 'Item', 'Solid Object', 'Floor', 'Scenery', 'Shot'] ),
         content: _makeContent(CharacterBehavior)
       },
       {
         tab: "NPC Behavior",
-        disabled: _mkDisabled( ['Player', 'Item, Wall or Scenery', 'Shot'] ),
+        disabled: _mkDisabled( ['Player', 'Item, Wall, or Scenery', 'Item', 'Solid Object', 'Floor', 'Scenery', 'Shot'] ),
         content: _makeContent(NPCBehavior)
       },
       {
-        tab: "Item Behavior",
-        disabled: _mkDisabled( ['Player', 'Non-Player Character (NPC)', 'Shot'] ),
-        content: _makeContent(ItemBehavior)
+        tab: "Object Behavior",
+        disabled: _mkDisabled( ['Player', 'Non-Player Character (NPC)', 'Scenery', 'Shot'] ),
+        content: _makeContent(ObjectBehavior)
       },
       {
         tab: "Destruction / Spawning",
         disabled: _mkDisabled( ['Player', 'Shot'] ),
         content: _makeContent(Spawning)
       },
+
       {
         tab: "Conditions",
         disabled: _mkDisabled( ['Player', 'Shot'] ),
         content: _makeContent(Conditions)
       }
     ]
+
+    return allTabs
   }
 
+  getTemplates() {
+    return ( 
+      <div className="actor-template ui internally celled grid">
+        <div className="row">
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-blank" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink('/images/newActor/blank.png')} data-template="alTemplateScenery" />
+            <span><b>Blank</b><br /> A blank template with no effects or behaviors. Used as scenery in the background or foreground layer</span>
+          </div>
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-player" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-player`) } src={makeCDNLink('/images/newActor/player.png')} data-template="alTemplatePlayer" />
+            <span><b>Player</b><br /> The Player's character</span>
+          </div>
+        </div>
+        <div className="row">
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-enemy" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-NPC`) } src={makeCDNLink("/images/newActor/enemy.png")} data-template="alTemplateEnemy" />
+            <span><b>Enemy</b><br /> Hostile NPCs that can harm the Player</span>
+          </div>
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-friend" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-NPC`) } src={makeCDNLink("/images/newActor/friend.png")} data-template="alTemplateFriend" />
+            <span><b>Friend</b><br /> Friendly NPCs that can help the Player</span>
+          </div>
+        </div>
+        <div className="row">
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-floor" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink("/images/newActor/floor.png")} data-template="alTemplateFloor" />
+            <span><b>Floor</b><br /> A floor tile that can have some effect including sliding, pushing, or damaging/healing the Player when stepped on</span>
+          </div>
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-solidObject" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink("/images/newActor/solidobject.png")} data-template="alTemplateSolidObject" />
+            <span><b>Solid Object</b><br /> A solid object or wall that obstructs the Player and/or NPCs. Can have effects to be moveable by the Player or accessible with the use of an Item</span>
+          </div>
+        </div>
+        <div className="row">
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-item" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink("/images/newActor/item.png")} data-template="alTemplateItem" />
+            <span><b>Item</b><br /> An item that can be picked up or used right away with some effect</span>
+          </div>
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-shot" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-shot`) } src={makeCDNLink("/images/newActor/projectile.png")}  data-template="alTemplateShot" />
+            <span><b>Shot</b><br /> A projectile that can be fired by the Player or NPC</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+
+  /*
+  // No longer used
   getTemplateTabs() {
     return [
       {
@@ -374,7 +430,7 @@ export default class EditActor extends React.Component {
             </div>
             <div className="eight wide column">
               <img src={makeCDNLink("/images/newActor/newActor_item.png")} data-template="alTemplateItem_InvincibilityNow" />
-              <span>This instantly makes the player temporarily invincible.</span>
+              <span>This makes the player temporarily invincible.</span>
             </div>
           </div>
 
@@ -394,12 +450,12 @@ export default class EditActor extends React.Component {
           <div className="row">
             <div className="eight wide column">
               <img src={makeCDNLink("/images/newActor/newActor_instantPoints.png")} data-template="alTemplateItem_ScorePoints" />
-              <span>This instantly changes the player's score.</span>
+              <span>This changes the player's score.</span>
             </div>
 
             <div className="eight wide column">
               <img src={makeCDNLink("/images/newActor/newActor_Win.png")} data-template="alTemplateItem_VictoryNow" />
-              <span>Victory! When the player picks up this item, the game is immediately over and they have won!</span>
+              <span>When the player picks up this item, the player wins!</span>
             </div>
 
           </div>
@@ -407,6 +463,7 @@ export default class EditActor extends React.Component {
       }
     ]
   }
+  */
 
   handleTemplateClick(e) {
     if (e.target.dataset.template) {
@@ -438,7 +495,6 @@ export default class EditActor extends React.Component {
   }
 
   render() {
-
     const { asset } = this.props
     if (!asset)
       return null
@@ -458,12 +514,12 @@ export default class EditActor extends React.Component {
         </div>
 
         { showTemplate &&
-          <Modal defaultOpen closeOnDocumentClick={false} closeOnRootNodeClick={false}onClick={(e)=>{this.handleTemplateClick(e)}}>
+          <Modal defaultOpen closeOnDocumentClick={false} closeOnRootNodeClick={false} onClick={(e)=>{this.handleTemplateClick(e)}}>
             <Modal.Header>
-              Choose the style of Actor you want to create, then modify the detailed choices in the Actor Editor
+              Choose a template for the type of Actor, then modify the detailed options in the Actor Editor
             </Modal.Header>
             <Modal.Content className="edit-actor">
-              <Tabs tabs={this.getTemplateTabs()}/>
+              {this.getTemplates()}
             </Modal.Content>
           </Modal>
         }

@@ -8,12 +8,18 @@ const MgbActor = {
   alNpcDialogFinalAction_stay:        1,
   alNpcDialogFinalAction_repeat:      2,
 
-  alActorType:              ["Player", "Non-Player Character (NPC)", "Item, wall or scenery", "Shot"],
+  alActorType:              ["Player", "Non-Player Character (NPC)", "Item, Wall, or Scenery", "Shot", "Item"],
   alActorTypeShort:         ["Player", "NPC", "Item", "Shot"],
   alActorType_Player:       0,
   alActorType_NPC:          1,
   alActorType_Item:         2,
   alActorType_Shot:         3,
+  /*
+  alActorType_Scenery:      4,
+  alActorType_Items:        5,
+  alActorType_SolidObject:  6,
+  alActorType_Floor:        7,
+  */
 
   alNpcTakeTypes:           ["Take", "Require"],
   alNpcTakeType_Take:       0,

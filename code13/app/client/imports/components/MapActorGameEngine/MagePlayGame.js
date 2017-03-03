@@ -324,7 +324,8 @@ export default class MagePlayGame
                 var floorActorName = this.map.mapLayer[MgbMap.layerBackground][cellIndex]
                 floorActor = (floorActorName && floorActorName != '') ? this.actors[floorActorName]: null
                 if (floorActor && floorActor.content2 &&
-                  MgbActor.intFromActorParam(floorActor.content2.databag.all.actorType) == MgbActor.alActorType_Item &&
+                  (MgbActor.intFromActorParam(floorActor.content2.databag.all.actorType) == MgbActor.alActorType_Item || 
+                   [4, 5, 6, 7].indexOf(MgbActor.intFromActorParam(floorActor.content2.databag.all.actorType)) > -1) &&
                   (MgbActor.intFromActorParam(floorActor.content2.databag.item.itemActivationType) == MgbActor.alItemActivationType_CausesDamage ||
                     MgbActor.intFromActorParam(floorActor.content2.databag.item.itemActivationType) == MgbActor.alItemActivationType_PushesActors))
                   break
@@ -392,7 +393,7 @@ export default class MagePlayGame
                       // Case 1: Player just collided with an NPC. This can spark a dialog
                       this.askNpcQuestion(this.activeActors[AAInCell], hitThing_ap)
                     }
-                    else if (this.activeActors[AAInCell].type == MgbActor.alActorType_Item
+                    else if ((this.activeActors[AAInCell].type == MgbActor.alActorType_Item || [4, 5, 6, 7].indexOf(this.activeActors[AAInCell].type) > -1)
                       && (activation == MgbActor.alItemActivationType_BlocksPlayer || activation == MgbActor.alItemActivationType_BlocksPlayerAndNPC)) {
                       // Case 2: It's a wall, I'm a player so see if there's a key available...
                       var key = hitThing_ap.content2.databag.item.keyForThisDoor
@@ -524,7 +525,7 @@ export default class MagePlayGame
             this.G_gameOver = true
           break
         case MgbActor.alActorType_NPC:
-        case MgbActor.alActorType_Item:
+        case MgbActor.alActorType_Item: case 4: case 5: case 6: case 7:
           if (this.activeActors[AA].health <= 0)		// We don't check ap.content2.databag.itemOrNPC.destroyableYN here; that should be done in the damage routine. This way we can handle death/usage the same way
           {
             // It dies... 

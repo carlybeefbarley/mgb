@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table } from 'semantic-ui-react'
+import { Table, Accordion, Icon } from 'semantic-ui-react'
 
 import DropArea from '../../../Controls/DropArea.js'
 import SmallDD from '../../../Controls/SmallDD.js'
@@ -33,45 +33,141 @@ export default class Animations extends React.Component {
     this.props.onChange && this.props.onChange()
   }
   
+  renderContent(animations, i) {
+    return (
+      <Table.Row key={i}>
+        <Table.Cell>{animations[i]}</Table.Cell>
+        <Table.Cell>
+          <DropArea kind="graphic" value={this.data[i].tileName} effect={this.data[i].effect} asset={this.props.asset} onChange={this.changeGraphic.bind(this, i)}/>
+        </Table.Cell>
+        <Table.Cell>
+          <SmallDD options={MgbActor.animationEffectNames} value={this.data[i].effect} onChange={this.changeEffect.bind(this, i)} />
+        </Table.Cell>
+      </Table.Row>
+    )
+  }
+
+  renderAccordion(animTable, prevTitle, i) {
+    return (
+      <div key={i}>
+        {
+          prevTitle === 'stationary'
+          ?
+          <Accordion exclusive={false} defaultActiveIndex={0} styled fluid>
+            <Accordion.Title active={true}>
+              {prevTitle}
+            </Accordion.Title>
+            <Accordion.Content active={true}>
+              <Table celled compact definition>
+                <Table.Header fullWidth>
+                  <Table.Row>
+                    <Table.HeaderCell>Animation Frame</Table.HeaderCell>
+                    <Table.HeaderCell>Graphic</Table.HeaderCell>
+                    <Table.HeaderCell>Orientation</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {_.map(animTable, content => { return content })}
+                </Table.Body>
+              </Table>
+            </Accordion.Content>
+          </Accordion>
+          :
+          <Accordion exclusive={false} defaultActiveIndex={0} styled fluid>
+            <Accordion.Title>
+              <Icon name='dropdown' />
+              {prevTitle}
+            </Accordion.Title>
+            <Accordion.Content>
+              <Table celled compact definition>
+                <Table.Header fullWidth>
+                  <Table.Row>
+                    <Table.HeaderCell>Animation Frame</Table.HeaderCell>
+                    <Table.HeaderCell>Graphic</Table.HeaderCell>
+                    <Table.HeaderCell>Orientation</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {_.map(animTable, content => { return content })}
+                </Table.Body>
+              </Table>
+            </Accordion.Content>
+          </Accordion>
+        }
+      </div>
+    )
+  }
+
   render() {
+    const aType = this.props.asset.content2.databag.all.actorType
+    const animations = MgbActor.animationNames
     const rows = []
-    for (let i=0; i<MgbActor.animationNames.length; i++) {
+    let animTable = [] 
+    let prevDirection = animations[0].split(' ')[1]
+    let name = animations[0]
+    let prevTitle = name.startsWith('face') ? 'move ' + name.split(' ')[1] : (name.split(' ').length > 2 ? name.split(' ')[0] + ' ' + name.split(' ')[1] : name.split(' ')[0])
+    let curr = 0
+
+    for (let i=0; i<animations.length; i++) {
+      name = animations[i]
       if (!this.data[i]) {
         this.data[i] = {
-          "action": MgbActor.animationNames[i],
+          "action": name,
           "tileName": null,
           "effect": "no effect" 
         }
       }
-      {
-        if (!(MgbActor.animationNames[i].startsWith("stationary") && MgbActor.animationNames[i].split(' ').length === 2)) // Hide deprecated stationary animation
-          rows.push(
-            <Table.Row key={i}>
-              <Table.Cell>{MgbActor.animationNames[i]}</Table.Cell>
-              <Table.Cell>
-                <DropArea kind="graphic" value={this.data[i].tileName} effect={this.data[i].effect} asset={this.props.asset} onChange={this.changeGraphic.bind(this, i)}/>
-              </Table.Cell>
-              <Table.Cell>
-                <SmallDD options={MgbActor.animationEffectNames} value={this.data[i].effect} onChange={this.changeEffect.bind(this, i)} />
-              </Table.Cell>
-            </Table.Row>
-          )
+
+      if (
+        !((aType === '0' || aType === '1') && (name.startsWith("stationary") && name.split(' ').length === 2)) && // Filter out stationary for Player/NPC
+        !(aType === '3' && (name.startsWith("stationary") || name.startsWith("melee"))) && // Filter out non-movement for Shot
+        !(['2', '4', '5', '6', '7'].indexOf(aType) > -1 && (!name.startsWith("stationary") || name.split(' ').length !== 2)) // Filter out non-stationary for Item/Wall/Floor/Scenery
+      ) {
+        // Group animations by direction 
+        if (
+          (['2', '4', '5', '6', '7'].indexOf(aType) === -1 && name.includes(prevDirection)) || 
+          (['2', '4', '5', '6', '7'].indexOf(aType) > -1  && name.startsWith("stationary") && name.split(' ').length === 2) || // Don't use prevDirection if only stationary animations
+          i+1 === animations.length
+        ) {
+          animTable.push(this.renderContent(animations, i)) 
+          // Fencepost
+          if (i+1 === animations.length) {
+            rows.push(this.renderAccordion(animTable, prevTitle, i))
+          }
+        } 
+        // Put animation group for current direction in accordion
+        else 
+        {
+          if (animTable.length > 0)
+            rows.push(this.renderAccordion(animTable, prevTitle, i))
+
+          // Content for next direction
+          prevDirection = name.split(' ')[1] // get direction from animation name which is the 2nd part of string (action direction frameNum)
+          prevTitle = name.startsWith('face') ? 'move ' + name.split(' ')[1] : (name.split(' ').length > 2 ? name.split(' ')[0] + ' ' + name.split(' ')[1] : name.split(' ')[0])
+          animTable = []
+          
+          animTable.push(this.renderContent(animations, i)) 
+        }
       }
-    }
+      else if (animTable.length > 0) {
+        if (['2', '4', '5', '6', '7'].indexOf(aType) > -1)
+          rows.push(this.renderAccordion(animTable, 'stationary', i))
+        else 
+          rows.push(this.renderAccordion(animTable, prevTitle, i))
+
+        animTable = []
+      }
+    } 
   
     return (
-      <Table celled compact definition>
-        <Table.Header fullWidth>
-          <Table.Row>
-            <Table.HeaderCell>Action</Table.HeaderCell>
-            <Table.HeaderCell>Graphic</Table.HeaderCell>
-            <Table.HeaderCell>Effect</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {rows}
-        </Table.Body>
-      </Table>
+      <div>
+        {
+          rows.map((anim) => {
+            return anim
+          })
+        }
+      </div>
     )
   }
 }
+

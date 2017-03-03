@@ -1,6 +1,8 @@
+import _ from 'lodash'
 import React from 'react'
 import DropArea from './DropArea.js'
 import SmallDD from './SmallDD.js'
+import actorOptions from '../Assets/Common/ActorOptions.js'
 
 // This partial class uses the following React props..
   // propTypes: {
@@ -16,11 +18,12 @@ import SmallDD from './SmallDD.js'
 
 
 export default class BaseForm extends React.Component {
-
-  options( name, key, options, fieldOptions = {} ) {
-    const val = this.data[key]
+  options( name, key, options, fieldOptions = {}, func) {
+    let val = this.data[key]
     if (val === void(0))
       console.warn("value not defined for:", name + '[' + key + ']')
+    if (func)
+      func()
 
     return (
       <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") } title={fieldOptions && fieldOptions.title}>
@@ -102,6 +105,7 @@ export default class BaseForm extends React.Component {
       <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") } title={fieldOptions && fieldOptions.title}>
         <label>{name}</label>
         <DropArea kind={kind} {...fieldOptions} value={this.data[key]} ids={this.data._ids} asset={this.props.asset} onChange={(val, asset) => {
+          console.log(this)
           this.data[key] = val
           this.props.onChange && this.props.onChange()
           cb && cb(asset)

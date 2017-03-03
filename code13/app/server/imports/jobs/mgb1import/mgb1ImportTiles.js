@@ -1,3 +1,5 @@
+import validate from '/imports/schemas/validate'
+
 // The Actual TILE importer
 // This should only be in server code
 
@@ -50,6 +52,17 @@ export const doImportTile = (content, rva, fullS3Name, assetName ) => {
   }
 
   console.log(newAsset)
+
+  if (!validate.assetName(newAsset.name))
+  {    
+    newAsset.text.replace(/[#:?]/g, '')
+    newAsset.text = newAsset.text.length > 64 ? newAsset.text.slice(0, 63) : newAsset.text
+  }
+
+  if (!validate.assetDescription(newAsset.text))
+  {
+    newAsset.text = newAsset.text.slice(0, 116) + '...'
+  }
 
   if (!isDryRun)
     Meteor.call('Azzets.create', newAsset)

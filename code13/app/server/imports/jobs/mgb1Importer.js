@@ -57,25 +57,25 @@ Meteor.methods({
       
 //*/  
 
-// /* for import of Two Cities project
-    // if (importParams === 42)
-    // {
-    //   console.log('The meaning of life!)')
-    //   importParams = {
-    //     mgb1Username:           'drblakeman',
-    //     mgb1Projectname:        'Two Cities Bother and Wise',              //   'mechanics demos',
-    //     mgb2Username:           'SuperAdmin',
-    //     mgb2ExistingProjectName:'Two Cities Bother and Wise',              //'Game Mechanics demo',
-    //     mgb2assetNamePrefix:    'two.',
-    //     excludeTiles:           true,
-    //     excludeActors:          false,
-    //     excludeMaps:            true,
-    //     isDryRun:               true
-    //   }
-    // }
-    //  thisUser = { profile: { name: 'SuperAdmin' } }
+/* //  for import of Two Cities project
+     if (importParams === 42)
+     {
+       console.log('The meaning of life!)')
+       importParams = {
+         mgb1Username:           'drblakeman',
+         mgb1Projectname:        'Two Cities Bother and Wise',              //   'mechanics demos',
+         mgb2Username:           'Bouhm',
+         mgb2ExistingProjectName:'Two Cities Bother & Wise',              //'Game Mechanics demo',
+         mgb2assetNamePrefix:    '2ct.',
+         excludeTiles:           false,
+         excludeActors:          false,
+         excludeMaps:            false,
+         isDryRun:               false
+       }
+     }
+      thisUser = { profile: { name: 'Bouhm' } }
       
-// */  
+// */
       //   importParams = {
       //     mgb1Username:           'azurehaze',
       //     mgb1Projectname:        'Galactic Combat',    //   'mechanics demos',

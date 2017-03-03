@@ -87,9 +87,14 @@ export const doImportActor = (content, rva, fullS3Name, assetName ) => {
 
   if (!validate.assetName(newAsset.name))
   {    
-    console.error(`!!!  INVALID asset name: '${newAsset.name}'`)
+    newAsset.text.replace(/[#:?]/g, '')
+    newAsset.text = newAsset.text.length > 64 ? newAsset.text.slice(0, 63) : newAsset.text
   }
 
+  if (!validate.assetDescription(newAsset.text))
+  {
+    newAsset.text = newAsset.text.slice(0, 116) + '...'
+  }
 
   if (!isDryRun)
     Meteor.call('Azzets.create', newAsset)

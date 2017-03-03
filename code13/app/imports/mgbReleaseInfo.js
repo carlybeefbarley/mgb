@@ -12,7 +12,45 @@
 const mgbReleaseInfo = {
 
   'releases': [
+    {
+      'timestamp': 'Friday Mar 3 2017 15:30 GMT-0800 (PST)',
 
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3595'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.code',
+          'type': 'feature',
+          'changeName': 'Whack-a-mole game tutorial',
+          'changeSummary': 'The Whack-a-mole Game and tutorial shows how to develop a Phaser game using the NEW in-editor Code Tutorial system!',
+          'otherUrls': [
+             { txt: 'JavaScript Game Tutorials', href: '/learn/code/jsGame' }
+          ]
+        },
+        {
+          'featureTag': 'asset.actor',
+          'type': 'improvement',
+          'changeName': 'Actor Editor improvements',
+          'changeSummary': 'The Actor templates have been simplified and the minor sub-templates are going to be taught as tutorials and as forkable sample Actor Assets',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.projects',
+          'type': 'feature',
+          'changeName': 'Project isForkable shown in Asset Card',
+          'changeSummary': 'There is now a concise summary of Project Fork status in the Project Card. It shows a green Project Fork count if the project is forkable; it shows a blue fork icon if the project was created by a fork. To see more information on forks, click the Project Card to see the Project Details page. There is also some support for showing only forkable assets in the Projects List views, but this is not yet enabled in the ui',
+          'otherUrls': [ ]
+        },
+      ]
+    },
 
     {
       'timestamp': 'Wed Mar 1 2017 19:30 GMT-0800 (PST)',

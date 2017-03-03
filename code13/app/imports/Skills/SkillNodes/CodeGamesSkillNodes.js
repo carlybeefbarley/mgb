@@ -15,12 +15,20 @@ export default {
       description: `First game from series`,
     },
     'mole1': C.En(0)
+  },
+  'mole2': {
+    $meta: {
+      name: 'Whack a Mole Part 2',
+      icon: 'code',
+      description: `Second game from series`,
+    },
+    'mole2': C.En(0)
   },  
   'digger': {
     $meta: {
       name: 'Digger',
       icon: 'code',
-      description: `Digger game`,
+      description: `Mining and collecting resources`,
     },
     'digger': C.En(0)
   }

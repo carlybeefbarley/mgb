@@ -118,6 +118,7 @@ export default QLink = React.createClass({
 
     this.context.router.push(location)
     event.preventDefault()    // Stop Link.handleClick from doing anything further
+ //   event.stopPropagation()
   },
 
   render: function () {

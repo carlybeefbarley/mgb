@@ -48,8 +48,7 @@ const mgbReleaseInfo = {
           'changeName': 'Coding Challenges gaining more features',
           'changeSummary': 'The Phaser code tutorials are being upgraded to use the in-editor Code Challenge system. Not complete yet, but you can see what is coming... ',
           'otherUrls': [
-             { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' },
-             { txt: 'Example of viewing (hidden) assets created by Code Challenges', href: '/u/dgolds/assets?showChallengeAssets=1' }
+             { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' }
           ]
         }
       ]
@@ -82,8 +81,7 @@ const mgbReleaseInfo = {
           'changeName': 'Coding Challenges now have console output',
           'changeSummary': 'Some of the Code Challenges use console.log() output. We now show the console output for those tools in-browser. Also, the getStarted Page has had a facelift',
           'otherUrls': [
-             { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' },
-             { txt: 'Example of viewing (hidden) assets created by Code Challenges', href: '/u/dgolds/assets?showChallengeAssets=1' }
+             { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' }
           ]
         }
       ]
@@ -108,8 +106,7 @@ const mgbReleaseInfo = {
           'changeName': 'Coding Challenges in Tutorials',
           'changeSummary': 'Bugfixes for some of the Code Challenges',
           'otherUrls': [
-             { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' },
-             { txt: 'Example of viewing (hidden) assets created by Code Challenges', href: '/u/dgolds/assets?showChallengeAssets=1' }
+             { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' }
           ]
         },
         {

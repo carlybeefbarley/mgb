@@ -733,6 +733,7 @@ export default class EditCode extends React.Component {
   }
 
   handleDropAsset(cm, event) {
+    // TODO: check if this is phaser game.. do something other if phaser is not included
     if (this.props.canEdit)
     {
       const draggedAsset = DragNDropHelper.getAssetFromEvent(event)

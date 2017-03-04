@@ -144,7 +144,7 @@ export default class ObjectBehavior extends BaseForm {
   renderItemBehavior(behaviorOptions) {
     return (
       <div className="ui form">
-        <div id="mgbjr-edit-actor-tab-ItemBehavior-activation">
+        <div id="mgbjr-edit-actor-tab-ObjectBehavior-type">
           {this.options("Item Type", 'itemActivationType', behaviorOptions)}
         </div>
 
@@ -167,7 +167,7 @@ export default class ObjectBehavior extends BaseForm {
   renderSolidBehavior(behaviorOptions) {
     return (
       <div className="ui form">
-        <div id="mgbjr-edit-actor-tab-SolidBehavior-type">
+        <div id="mgbjr-edit-actor-tab-ObjectBehavior-type">
           {this.options("Solid Object Type", 'itemActivationType', behaviorOptions)}
         </div>
 
@@ -212,7 +212,7 @@ export default class ObjectBehavior extends BaseForm {
   renderFloorBehavior(behaviorOptions) {
     return (
       <div className="ui form">
-        <div id="mgbjr-edit-actor-tab-FloorBehavior-type">
+        <div id="mgbjr-edit-actor-tab-ObjectBehavior-type">
           {this.options("Floor Type", 'itemActivationType', behaviorOptions)}
         </div>
         {this.data.itemActivationType == "8" && this.showPushingOptions()}
@@ -224,7 +224,7 @@ export default class ObjectBehavior extends BaseForm {
   renderAll() {
      return (
       <div className="ui form">
-        <div id="mgbjr-edit-actor-tab-ItemBehavior-activation">
+        <div id="mgbjr-edit-actor-tab-ObjectBehavior-type">
           {this.options("Object Type", 'itemActivationType', actorOptions.itemActivationType)}
         </div>
 

@@ -139,8 +139,8 @@ export default class MagePlayGame
   }
 
   scrollMapToSeePlayer(overrideX = -1, overrideY = -1) {
-    const marginX = Math.floor((this.container.clientWidth / 32) / 3)
-    const marginY = Math.floor((this.container.clientHeight / 32) / 3)
+    const marginX = Math.floor((this.container.clientWidth / 32) / 4)
+    const marginY = Math.floor((this.container.clientHeight / 32) / 4)
   
     var sx = overrideX == -1 ? this.activeActors[this.AA_player_idx].x : overrideX
     var sy = overrideY == -1 ? this.activeActors[this.AA_player_idx].y : overrideY

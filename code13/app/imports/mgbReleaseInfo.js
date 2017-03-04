@@ -13,6 +13,31 @@ const mgbReleaseInfo = {
 
   'releases': [
     {
+      'timestamp': 'Saturday Mar 4 2017 11:10 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3605'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.mobile',
+          'type': 'bugfix',
+          'changeName': 'Drag/drop on touch devices',
+          'changeSummary': 'Drag and Drop on touch devices is working correctly again',
+          'otherUrls': [ ]
+        }
+        
+      ]
+    },
+
+    {
       'timestamp': 'Friday Mar 3 2017 19:30 GMT-0800 (PST)',
 
       'id': {

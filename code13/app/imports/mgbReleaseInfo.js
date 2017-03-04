@@ -13,12 +13,12 @@ const mgbReleaseInfo = {
 
   'releases': [
     {
-      'timestamp': 'Friday Mar 3 2017 15:30 GMT-0800 (PST)',
+      'timestamp': 'Friday Mar 3 2017 19:30 GMT-0800 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3595'
+        'iteration': '3600'
       },
 
       'releaseManagement': {
@@ -31,6 +31,15 @@ const mgbReleaseInfo = {
           'type': 'feature',
           'changeName': 'Whack-a-mole game tutorial',
           'changeSummary': 'The Whack-a-mole Game and tutorial shows how to develop a Phaser game using the NEW in-editor Code Tutorial system!',
+          'otherUrls': [
+             { txt: 'Example Query of !vault forkable projects', href: '/u/!vault/projects?hidews=3&showForkable=1' }
+          ]
+        },
+        {
+          'featureTag': 'nav.projects',
+          'type': 'feature',
+          'changeName': 'Project Search',
+          'changeSummary': 'The Project list view now allows searching for names, isForkable, and workstate. This will be used soon to highlight template starter projects, but you can use it now also.',
           'otherUrls': [
              { txt: 'JavaScript Game Tutorials', href: '/learn/code/jsGame' }
           ]

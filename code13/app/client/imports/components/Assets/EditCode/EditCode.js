@@ -2188,12 +2188,13 @@ export default class EditCode extends React.Component {
           <div className="row" style={{marginBottom: "6px"}}>
             {<Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
           </div>
-
-            <textarea ref="textarea"
+            <div onDrop={(e) => { this.handleDropAsset(this.codeMirror, e) }} className="accept-drop">
+              <textarea ref="textarea"
                       className="allow-toolbar-shortcuts"
                       defaultValue={asset.content2.src}
                       autoComplete="off"
                       placeholder="Start typing code here..."/>
+            </div>
         </div>
 
         {

@@ -294,6 +294,7 @@ div:hover > .mgb-show-on-parent-div-hover {
   transform: translate(-50%, -50%);
   border-radius: 7px;
   padding: 2px 20px;
+  z-index: 1;
 }
 
 .ui.card.animated.fadeIn:hover{

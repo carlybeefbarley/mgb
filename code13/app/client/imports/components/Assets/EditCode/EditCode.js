@@ -711,10 +711,25 @@ export default class EditCode extends React.Component {
   }
 
   // Drag and Drop of Asset onto code area
-
   handleDragOver(cm, event) {
-    if (this.props.canEdit)
+
+
+    if (this.props.canEdit) {
       DragNDropHelper.preventDefault(event)
+      // change cursor style to indicate drop???
+      cm.focus()
+      // move cursor to exact drop location
+      const cur = cm.getCursor()
+      const coords = cm.coordsChar({left: event.clientX, top: event.clientY}, "window")
+      cur.ch = coords.ch
+      cur.line = coords.line
+      // workaround - force codemirror to really update cursor - when moving happens on the same line
+      if(cur.line == coords.line){
+        cm.setCursor({line: 0, ch: 0})
+      }
+
+      cm.setCursor(coords)
+    }
   }
 
   handleDropAsset(cm, event) {
@@ -2189,8 +2204,8 @@ export default class EditCode extends React.Component {
             {<Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
           </div>
             <div className="accept-drop"
-                 onDrop={(e) => { this.handleDropAsset(this.codeMirror, e) }}
-                 onDragOver={DragNDropHelper.preventDefault}
+                 onDrop={(e) => { this.handleDropAsset(this.codeMirror, e) } }
+                 onDragOver={ (e) => {this.handleDragOver(this.codeMirror, e) } }
               >
               <textarea ref="textarea"
                       className="allow-toolbar-shortcuts"

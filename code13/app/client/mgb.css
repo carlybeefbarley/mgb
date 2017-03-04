@@ -27,6 +27,12 @@ body {
   image-rendering: pixelated;
 }
 
+
+.mgb-suir-plainSegment {
+   border: 0 !important;                 /* SUI has a habit of putting unwanted dividers on horizontal segments */
+   background: 'transparent'
+}
+
 .accept-drop{
   position: relative;
 }

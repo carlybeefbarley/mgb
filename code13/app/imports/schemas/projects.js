@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { Projects } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
 import { checkIsLoggedIn, checkMgb } from './checkMgb'
-import { bestWorkStateName, defaultWorkStateName } from '/imports/Enums/workStates'
+import { bestWorkStateName, defaultWorkStateName, makeWorkstateNamesArray } from '/imports/Enums/workStates'
 
 //
 // MGB PROJECTS SCHEMA
@@ -291,7 +291,11 @@ const schema = {
  * @param {String} userId 
  * @returns {Object} A MongoDB selector to find projects that userId is owner OR member of
  */
-export function projectMakeSelector(userId, showOnlyForkable = false) 
+export function projectMakeSelector(
+  userId, 
+  nameSearch, 
+  showOnlyForkable = false,
+  hideWorkstateMask = 0)
 {
   const sel = {
     "$or": [
@@ -299,8 +303,21 @@ export function projectMakeSelector(userId, showOnlyForkable = false)
       { memberIds: { $in: [userId]} }
     ]
   }
+
   if (showOnlyForkable)
     sel.allowForks = true
+
+  if (hideWorkstateMask > 0)
+  {
+    const wsNamesToLookFor = makeWorkstateNamesArray(hideWorkstateMask)
+    sel["workState"] = { "$in": wsNamesToLookFor}
+  }
+
+  if (nameSearch && nameSearch.length > 0)
+  {
+    // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
+    sel["name"]= {$regex: new RegExp("^.*" + nameSearch, 'i')}
+  }
 
   return sel
 }

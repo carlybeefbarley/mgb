@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Segment, Popup, Message, Header } from 'semantic-ui-react'
+import { Segment, Popup, Menu, Message, Header } from 'semantic-ui-react'
 import reactMixin from 'react-mixin'
 
 import { Azzets, Projects } from '/imports/schemas'
@@ -37,9 +37,8 @@ const queryDefaults = {
   kinds: ""                     // Asset kinds. Empty means 'match all valid, non-disabled assets'
 }
 
-const _segmentPlainStyle = { border: 0, background: 'transparent' }
-const _assetsSegmentStyle = { ..._segmentPlainStyle, minHeight: '600px' }
-const _filterSegmentStyle = { ..._assetsSegmentStyle, minWidth: '220px', maxWidth: '220px' }
+const _contentsSegmentStyle = { minHeight: '600px' }
+const _filterSegmentStyle = { ..._contentsSegmentStyle, minWidth: '220px', maxWidth: '220px' }
 
 export default UserAssetListRoute = React.createClass({
   mixins: [ReactMeteorData],
@@ -215,8 +214,8 @@ export default UserAssetListRoute = React.createClass({
   handleChangeShowStableFlag(newValue) { this._updateLocationQuery( { showStable: newValue } ) },
   handleChangeShowDeletedFlag(newValue) { this._updateLocationQuery( { showDeleted: newValue } ) },
   handleChangeWorkstateHideMask(newValue) { this._updateLocationQuery( { hidews: String(newValue) } ) },
-  handleChangeShowChallengeAssetsFlag(newValue) { this._updateLocationQuery( { showChallengeAssets: newValue } ) },
   handleChangeSelectedProjectName(newValue) { this._updateLocationQuery( { project: newValue } ) },
+  handleChangeShowChallengeAssetsFlag(newValue) { this._updateLocationQuery( { showChallengeAssets: newValue } ) },
 
   handleChangeViewClick(newView)
   {
@@ -234,13 +233,13 @@ export default UserAssetListRoute = React.createClass({
     const pageTitle = user ? `${name}'s Assets` : "Public Assets"
 
     return (
-      <Segment.Group horizontal style={_segmentPlainStyle}>
+      <Segment.Group horizontal className='mgb-suir-plainSegment'>
 
         <Helmet
             title={pageTitle}
             meta={[ { "name": "Asset List", "content": "Assets" } ]} />
 
-        <Segment style={_filterSegmentStyle}>
+        <Segment style={_filterSegmentStyle} className='mgb-suir-plainSegment'>
           <Header as='h2' content={pageTitle} />
             { user ? <ProjectSelector
                       id='mgbjr-asset-search-projectSelector'
@@ -287,17 +286,17 @@ export default UserAssetListRoute = React.createClass({
               style={ { marginTop: '0.5em', textAlign: 'center' } }/>
 
           <div style={ { marginTop: '1em', textAlign: 'center' } }>
-            <div className="ui secondary compact borderless fitted menu">
+            <Menu secondary compact borderless className='fitted'>
               <AssetShowStableSelector showStableFlag={qN.showStable} handleChangeFlag={this.handleChangeShowStableFlag} />
               &ensp;
               <AssetShowDeletedSelector showDeletedFlag={qN.showDeleted} handleChangeFlag={this.handleChangeShowDeletedFlag} />
               &ensp;
               <AssetShowChallengeAssetsSelector showChallengeAssetsFlag={qN.showChallengeAssets} handleChangeFlag={this.handleChangeShowChallengeAssetsFlag} />
-            </div>
+            </Menu>
           </div>
         </Segment>
 
-        <Segment style={ _assetsSegmentStyle }>
+        <Segment style={ _contentsSegmentStyle } className='mgb-suir-plainSegment'>
           <div style={ { marginBottom: '1em' } }>
             <QLink className='ui compact green button' to='/assets/create' id="mgbjr-create-new-asset">Create New Asset</QLink>
             <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>

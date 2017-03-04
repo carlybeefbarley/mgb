@@ -22,6 +22,25 @@ Meteor.publish('projects.frontPageList', function (limitCount=5) {
   return Projects.find(selector, { limit: limitCount, sort: {updatedAt: -1} } )
 })
 
+
+Meteor.publish('projects.search', 
+  function (
+    userId, 
+    nameSearch,
+    showOnlyForkable = false,
+    hideWorkstateMask=0,          // As defined for use by assetMakeSelector()
+    ) 
+  {
+    const selector = projectMakeSelector(
+      userId, 
+      nameSearch,
+      showOnlyForkable,
+      hideWorkstateMask)
+  
+    return Projects.find(selector)
+  }
+)
+
 //
 //    PROJECTS Indexes
 //

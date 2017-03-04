@@ -3,6 +3,7 @@ import React from 'react'
 import DropArea from './DropArea.js'
 import SmallDD from './SmallDD.js'
 import actorOptions from '../Assets/Common/ActorOptions.js'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 // This partial class uses the following React props..
   // propTypes: {
@@ -18,7 +19,7 @@ import actorOptions from '../Assets/Common/ActorOptions.js'
 
 
 export default class BaseForm extends React.Component {
-  options( name, key, options, fieldOptions = {}, func) {
+  options( name, key, options, fieldOptions = {}, id="", mgbjrCT="", func) {
     let val = this.data[key]
     if (val === void(0))
       console.warn("value not defined for:", name + '[' + key + ']')
@@ -26,11 +27,15 @@ export default class BaseForm extends React.Component {
       func()
 
     return (
-      <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") } title={fieldOptions && fieldOptions.title}>
+      <div id={id ? id : ""} className={"inline fields" + (fieldOptions.disabled ? " disabled": "") } title={fieldOptions && fieldOptions.title}>
         <label>{name}</label>
         <SmallDD options={options} onChange={(val) => {
           this.data[key] = val
           this.props.onChange && this.props.onChange()
+          if (mgbjrCT) {
+            console.log(mgbjrCT + val)
+            joyrideCompleteTag(mgbjrCT + val)
+          }
         }} {...fieldOptions} value={val} />
       </div>
     )

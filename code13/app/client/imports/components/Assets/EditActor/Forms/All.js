@@ -14,11 +14,6 @@ export default class All extends BaseForm {
     return this.props.asset.content2.databag.all
   }
 
-  onActorTypeChange() {
-    //this.props.saveText("")
-    joyrideCompleteTag(`mgbjr-CT-edit-actor-${actorOptions.actorType}`)
-  }
-
   render() {
     const soundOptions = { options: MgbActor.alCannedSoundsList.map( s => ( { text: '[builtin]:'+s, value: '[builtin]:'+s } ) ) }
     // Handle limiting InitialHealth < initialMaxHealthNum
@@ -32,12 +27,14 @@ export default class All extends BaseForm {
     const databag = this.props.asset.content2.databag
 
     return (
-    <div id="mgbjr-edit-actor-actorType" onChange={() => this.onActorTypeChange()} className="ui form">
+    <div className="ui form">
           {this.options(
             "Actor Type", 
             'actorType', 
             _.pickBy(actorOptions.actorType, (val, key) => {return key !== 'Item, Wall, or Scenery'}),
             {},
+            "mgbjr-edit-actor-actorType",
+            "mgbjr-CT-edit-actor-actorType",
             () => { 
               // Set correct itemActivationType when actorType is changed
               switch(parseInt(databag.all.actorType)) {

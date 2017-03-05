@@ -178,6 +178,9 @@ export const AssetKinds = {
   //   description: "(MGB Dev Team Only) MGB UI Prototyping tool"
   // },
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
+  isValidKey: function(key) {
+    return AssetKinds.hasOwnProperty(key)
+  },
   getIconClass: function(key) {
     return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"
   },

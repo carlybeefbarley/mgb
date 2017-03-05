@@ -116,6 +116,8 @@ Meteor.startup(function () {
         <Route path="user/:id/badges" component={Users.BadgeListRoute} name="Badges" />
         <Route path="u/:username/badges" component={Users.BadgeListRoute} name="Badges" />
 
+        <Route path="/projects" component={Projects.UserProjectList} name="Projects" />
+
         <Route path="assets" component={Azzets.UserAssetList} name="Search All Assets" />
         <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
 

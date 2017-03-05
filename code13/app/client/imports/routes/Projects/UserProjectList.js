@@ -85,7 +85,7 @@ export default UserProjectList = React.createClass({
   },
 
   getMeteorData: function() {
-    const userId = this.props.user._id
+    const userId = this.props.user ? this.props.user._id : null
     const qN = this.queryNormalized(this.props.location.query)
     const showOnlyForkable = (qN.showForkable === '1')
     const handleForProjects = Meteor.subscribe("projects.search", userId, qN.searchName, showOnlyForkable, qN.hidews)
@@ -104,7 +104,7 @@ export default UserProjectList = React.createClass({
   render: function() {
     const { user, currUser, location } = this.props
     const { loading, projects } = this.data   // May still be loading...
-    const ownerName = user.profile.name
+    const ownerName = user  ? user.profile.name : 'all users'
     const qN = this.queryNormalized(location.query)
     const pageTitle = user ? `${ownerName}'s Projects` : "Public Projects"
 
@@ -139,14 +139,25 @@ export default UserProjectList = React.createClass({
 
         <Segment style={ _contentsSegmentStyle } className='mgb-suir-plainSegment'>
 
-          <Header as='h2'>Projects owned by {ownerName}</Header>
-          <CreateProjectLinkButton currUser={currUser} />
-          <p />
-          { this.renderProjectsAsCards(loading, projects, true) }
-          <br />
-          <Divider />
-          <Header as='h2'>Projects {ownerName} is a member of</Header>
-          { this.renderProjectsAsCards(loading, projects, false) }
+        { user ? 
+          <div>
+            <Header as='h2'>Projects owned by {ownerName}</Header>
+            <CreateProjectLinkButton currUser={currUser} />
+            <p />
+            { this.renderProjectsAsCards(loading, projects, true) }
+            <br />
+            <Divider />
+            <Header as='h2'>Projects {ownerName} is a member of</Header>
+            { this.renderProjectsAsCards(loading, projects, false) }
+          </div>
+          :
+          <div>
+            <CreateProjectLinkButton currUser={currUser} />
+            <p />
+            { this.renderProjectsAsCards(loading, projects, false) }
+            <br />
+          </div>
+        }
         </Segment>
       </Segment.Group>
     )
@@ -165,8 +176,8 @@ export default UserProjectList = React.createClass({
     const retval = (
       <div className="ui link cards">
         { projects.map( project => {
-          const isOwner = (project.ownerId === this.props.user._id)
-          if (isOwner === ownedFlag) 
+          const isOwner = (this.props.user && project.ownerId === this.props.user._id)
+          if (isOwner === ownedFlag || !this.props.user) 
           {
             count++
             return (

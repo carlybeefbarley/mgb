@@ -297,12 +297,14 @@ export function projectMakeSelector(
   showOnlyForkable = false,
   hideWorkstateMask = 0)
 {
-  const sel = {
-    "$or": [
+  const sel = {}
+
+  if (userId)
+    sel['$or'] = [
       { ownerId: userId },
       { memberIds: { $in: [userId]} }
     ]
-  }
+  
 
   if (showOnlyForkable)
     sel.allowForks = true

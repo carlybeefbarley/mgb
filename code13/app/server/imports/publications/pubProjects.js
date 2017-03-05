@@ -25,8 +25,8 @@ Meteor.publish('projects.frontPageList', function (limitCount=5) {
 
 Meteor.publish('projects.search', 
   function (
-    userId, 
-    nameSearch,
+    userId,                       // can be null
+    nameSearch,                   // can be null
     showOnlyForkable = false,
     hideWorkstateMask=0,          // As defined for use by assetMakeSelector()
     ) 

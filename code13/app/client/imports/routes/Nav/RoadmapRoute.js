@@ -4,16 +4,12 @@ import QLink from '/client/imports/routes/QLink'
 
 const RenderRoadmap = () => (
   <div>
-    <h2>Features planned for Feb 2017</h2>
+    <h2>Features planned for March 2017</h2>
     <ul>
-      <li>(<small>Complete</small>) Tutorial and progression content to help learn how to make games</li>
-      <li>(<small>Complete</small>) Scalability config/work required for launch</li>
-      <li>(<small>Complete</small>) Fork Project + Fork Asset</li>
-      <li>(<small>Complete</small>) Project Chat</li>
       <li>(<small>Nearly complete</small>) MGBv1 asset migration (tiles, actors, maps)</li>
-      
       <li>Direct Messages, Asset Chat</li>
-      <li>Goal for Launch: <strong>During last week of Feb 2017</strong></li>
+      <li>Goal for Launch: <strong>This month for sure!</strong></li>
+      <li>Stock/sample assets system</li>
     </ul>
     <p>See the <QLink to='/whatsnew'>What's new</QLink> page for the lists of recent changes</p>
     <h2>Features coming in Q1 2017</h2>
@@ -24,7 +20,6 @@ const RenderRoadmap = () => (
       <li>Keyboard shortcut editor and help</li>
       <li>Mentoring and AskForhelp systems</li>
       <li>Project rename</li>
-      <li>Stock/sample assets system</li>
     </ul>
   </div>
 )

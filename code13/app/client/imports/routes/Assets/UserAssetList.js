@@ -21,8 +21,8 @@ import { WorkStateMultiSelect } from '/client/imports/components/Controls/WorkSt
 import Spinner from '/client/imports/components/Nav/Spinner'
 import { browserHistory } from 'react-router'
 import Helmet from 'react-helmet'
-import SpecialGlobals from '/imports/SpecialGlobals.js'
-
+import SpecialGlobals from '/imports/SpecialGlobals'
+import AssetCreateLink from '/client/imports/components/Assets/NewAsset/AssetCreateLink'
 
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = {
@@ -298,7 +298,7 @@ export default UserAssetListRoute = React.createClass({
 
         <Segment style={ _contentsSegmentStyle } className='mgb-suir-plainSegment'>
           <div style={ { marginBottom: '1em' } }>
-            <QLink className='ui compact green button' to='/assets/create' id="mgbjr-create-new-asset">Create New Asset</QLink>
+            <AssetCreateLink />
             <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>
             <AssetListChooseView
                 sty={{ float: 'right', marginRight: '1em'}}

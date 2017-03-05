@@ -139,9 +139,17 @@ export const getNavPanels = (currUser, showAll) => {
             subcomponent: 'Item',
             jrkey: 'allAssets',
             to: '/assets',
-            query: { hidews: 3 },
+            query: { hidews: 7 },
             icon: 'pencil',
             content: 'All Assets',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'forkableProjects',
+            to: '/projects',
+            query: { hidews: 7, showForkable: 1 },
+            icon: 'sitemap',
+            content: 'Forkable Projects',
           },
           {
             subcomponent: 'Item',

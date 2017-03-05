@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-import QLink from '/client/imports/routes/QLink'
+import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import { Dropdown } from 'semantic-ui-react'
 import _ from 'lodash'
 
@@ -40,8 +40,11 @@ class NavPanelItem extends Component {
         id={`mgbjr-np-${name}`}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
-        onClick={() => joyrideCompleteTag(`mgbjr-CT-np-${name}`) }
-        trigger={<QLink to={to} query={query} >{hdr}</QLink>}
+        onClick={() => {
+          joyrideCompleteTag(`mgbjr-CT-np-${name}`)
+          utilPushTo(window.location, to, query)
+        }}
+        trigger={<span>{hdr}</span>}
         icon={null}
         open={open}
         style={style}>

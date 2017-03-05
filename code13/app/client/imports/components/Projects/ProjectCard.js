@@ -13,7 +13,7 @@ import { Card, Icon } from 'semantic-ui-react';
 // It is passed a project database object and it locally decides what fields to use/render within that structure.
 
 const ProjectCard = props => {
-  const { project, owner, canEdit, handleFieldChanged } = props;
+  const { project, canEdit, handleFieldChanged } = props;
   const linkTo = '/u/' + project.ownerName + '/project/' + project._id;
   const MemberStr = !project.memberIds || project.memberIds.length === 0
     ? '1 Member'
@@ -73,16 +73,13 @@ const ProjectCard = props => {
           <Icon name="sitemap" />
           Project
         </span>
-        <QLinkUser targetUser={owner} />
+        <QLinkUser userName={project.ownerName} userId={project.ownerId} />
       </Card.Content>
     </Card>
   );
 };
 
 ProjectCard.propTypes = {
-  // Optional user object for owner. It's best to have it, but sometimes it may be
-  // expensive to go get the user record so let's not force it
-  owner: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   project: PropTypes.object.isRequired,
   canEdit: PropTypes.bool,
   handleFieldChanged: PropTypes.func

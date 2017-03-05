@@ -230,6 +230,7 @@ export default UserAssetListRoute = React.createClass({
     const qN = this.queryNormalized(location.query)
     const view = qN.view
     const isAllKinds = isAssetKindsStringComplete(qN.kinds)
+    const isOneKind = !_.includes(qN.kinds, safeAssetKindStringSepChar)
     const pageTitle = user ? `${name}'s Assets` : "Public Assets"
 
     return (
@@ -298,7 +299,9 @@ export default UserAssetListRoute = React.createClass({
 
         <Segment style={ _contentsSegmentStyle } className='mgb-suir-plainSegment'>
           <div style={ { marginBottom: '1em' } }>
-            <AssetCreateLink projectName={qN.project} />
+            <AssetCreateLink 
+              assetKind={isOneKind ? qN.kinds : null}
+              projectName={qN.project} />
             <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>
             <AssetListChooseView
                 sty={{ float: 'right', marginRight: '1em'}}

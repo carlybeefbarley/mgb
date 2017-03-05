@@ -57,7 +57,7 @@ export default QLink = React.createClass({
 //  onlyActiveOnIndex:    PropTypes.bool.isRequired,
     onClick:              PropTypes.func,
     target:               PropTypes.string,
-    elOverride:           PropTypes.string  // eg "div"
+    elOverride:           PropTypes.oneOfType([PropTypes.string,PropTypes.object])  // eg "div"
   },
 
   getDefaultProps: function () {
@@ -118,7 +118,7 @@ export default QLink = React.createClass({
 
     this.context.router.push(location)
     event.preventDefault()    // Stop Link.handleClick from doing anything further
- //   event.stopPropagation()
+    event.stopPropagation()
   },
 
   render: function () {

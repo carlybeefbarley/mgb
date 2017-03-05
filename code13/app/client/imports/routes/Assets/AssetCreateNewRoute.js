@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { showToast } from '/client/imports/routes/App'
 import Helmet from 'react-helmet'
@@ -7,6 +8,10 @@ import { logActivity } from '/imports/schemas/activity'
 
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { Container, Segment } from 'semantic-ui-react'
+
+
+// Default params we will accept in ? params on url
+const suggestedParamNames = 'projectName,assetName,assetKind'.split(',')
 
 export default AssetCreateNewRoute = React.createClass({
 
@@ -24,6 +29,7 @@ export default AssetCreateNewRoute = React.createClass({
   },
 
   render: function() {
+
     return (
       <Segment basic>
         <Helmet
@@ -37,6 +43,7 @@ export default AssetCreateNewRoute = React.createClass({
               handleCreateAssetClick={this.handleCreateAssetClickFromComponent}
               currUser={this.props.currUser}
               currUserProjects={this.props.currUserProjects}
+              suggestedParams={_.pick(this.props.location.query, suggestedParamNames)}
               />
         </Container>
       </Segment>

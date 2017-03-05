@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Segment, Header, Button, Container } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
@@ -8,6 +9,7 @@ import validate from '/imports/schemas/validate'
 
 export default AssetCreateNew = React.createClass({
   propTypes: {
+    suggestedParams:        PropTypes.object,                 // projectName,assetName,assetKind
     placeholderName:        PropTypes.string.isRequired,      // Note that a default is provided below 
     handleCreateAssetClick: PropTypes.func.isRequired,        // Callback function to create the asset, and is expected to navigate to the new page. Params are (assetKindKey, newAssetNameString). The newAssetNameString can be ""
     currUser:               PropTypes.object,                 // currently logged in user (if any)
@@ -23,12 +25,15 @@ export default AssetCreateNew = React.createClass({
   },
 
   getInitialState: function () {
-    return {
-      selectedProject: null,          // Project Object or Null
+    const { currUserProjects, suggestedParams } = this.props
+    const { projectName, assetName, assetKind } = suggestedParams
+    const retval = {
+      selectedProject: _.find(currUserProjects, { name: projectName }) || null,          // Project Object or Null
       buttonActionPending: false,     // True after the button has been pushed. so it doesn't get pushed twice
-      selectedKind: "",               // "" or one of AssetKindKeys[]
-      newAssetName: ""                // "" or a valid assetName string
+      selectedKind: AssetKinds.isValidKey(assetKind) ? assetKind : '',               // "" or one of AssetKindKeys[]
+      newAssetName: assetName || ''                // "" or a valid assetName string
     }
+    return retval
   },
 
   handleChangeSelectedProjectName: function (selectedProjName, selectedProj) {

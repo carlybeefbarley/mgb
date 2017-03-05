@@ -2,8 +2,18 @@ import React, { PropTypes} from 'react'
 import QLink from '/client/imports/routes/QLink'
 
 
-export default AssetCreateLink = () => (
-  <QLink className='ui compact green button' to='/assets/create' id="mgbjr-create-new-asset">
+const AssetCreateLink = ( { projectName } ) => (
+  <QLink 
+        className='ui compact green button' 
+        to='/assets/create' 
+        query={ (projectName && projectName.length > 1) ? { projectName: projectName } : null}
+        id="mgbjr-create-new-asset">
     Create New Asset
   </QLink>
 )
+
+AssetCreateLink.PropTypes = {
+  projectName: PropTypes.string
+}
+
+export default AssetCreateLink

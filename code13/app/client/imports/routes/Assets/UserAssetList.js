@@ -298,7 +298,7 @@ export default UserAssetListRoute = React.createClass({
 
         <Segment style={ _contentsSegmentStyle } className='mgb-suir-plainSegment'>
           <div style={ { marginBottom: '1em' } }>
-            <AssetCreateLink />
+            <AssetCreateLink projectName={qN.project} />
             <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>
             <AssetListChooseView
                 sty={{ float: 'right', marginRight: '1em'}}

@@ -13,6 +13,32 @@ const mgbReleaseInfo = {
 
   'releases': [
     {
+      'timestamp': 'Sunday Mar 5 2017 14:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3619'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.mobile',
+          'type': 'bugfix',
+          'changeName': 'Public project search',
+          'changeSummary': 'There is now a Public project search page accessible from the "Meet" menu. This shows Forkable Projects from all users with a workState of "working" or better. You can change the search parameters from that page.' ,
+          'otherUrls': [ 
+            { txt: 'Public Forkable Projects, Quality = "working" or better', href: '/projects?hidews=7&showForkable=1' }
+          ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Saturday Mar 4 2017 11:10 GMT-0800 (PST)',
 
       'id': {

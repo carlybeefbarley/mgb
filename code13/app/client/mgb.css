@@ -30,7 +30,7 @@ body {
 
 .mgb-suir-plainSegment {
    border: 0 !important;                 /* SUI has a habit of putting unwanted dividers on horizontal segments */
-   background: 'transparent'
+   background: transparent !important;
 }
 
 .accept-drop{

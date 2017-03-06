@@ -23,6 +23,9 @@
           this.rows[i] = {tr, key, val}
         }
         this.rows[i].key.innerHTML = i
+        this.rows[i].key.style.minWidth = "150px"
+        this.rows[i].val.style.minWidth = "150px"
+
         if(this.data[i].cb) {
           this.rows[i].key.style.color = 'blue'
           this.rows[i].key.style.cursor = 'pointer'

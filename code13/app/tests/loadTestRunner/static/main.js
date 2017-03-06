@@ -8,6 +8,11 @@ const sendMessage = (action, data) => {
 window.ml = {}
 
 require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () => {
+
+  const txt = {
+    startSlave: 'Start New Slave',
+    terminateSlaves: 'Terminate All Slaves'
+  }
   const status = {
     memory: new ml.Gauge("yellow", "red", "memory"),
     cpu: new ml.Gauge("yellow", "blue", "cpu"),
@@ -34,10 +39,11 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
   new ml.TestCase({name: 'map.simple', id: 'map.simple', title: 'Test Map Editor'}, restart)
 
   // new ml.TestCase({name: 'random.error', id: 'random.error', title: 'SelfTest: Generate Errors Randomly'}, restart)
-
-  status.info.addOrUpdate('StartSlave', '', () => {
+  status.info.addOrUpdate(txt.startSlave, '', () => {
     sendMessage('startSlave')
-    return 'starting'
+  })
+  status.info.addOrUpdate(txt.terminateSlaves, '', () => {
+    confirm("DO YOU REALLY WANT TO TERMINATE ALL SLAVES???") && sendMessage('terminateSlaves')
   })
 
   const actions = {
@@ -60,7 +66,7 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
       // console.log("Runner completed:", data, data.tests[0])
     },
     slaveStarting: data => {
-      status.info.addOrUpdate('StartSlave', 'Starting Slave')
+      status.info.addOrUpdate(txt.startSlave, 'Starting Slave')
     },
     slaveStarted: data => {
       status.info.addOrUpdate('StartSlave', '', () => {

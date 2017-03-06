@@ -11,6 +11,7 @@ const loadedInstancesStr = fs.readFileSync(instancesFilename)
 const loadedInstances = JSON.parse(loadedInstancesStr)
 
 module.exports = {
+  /* t2.micro - has free tier */
   createSlaves(cb, count = 1, type = 't2.micro'){
     const params = {
       ImageId: config.slave.ami,
@@ -30,13 +31,23 @@ module.exports = {
         return
       }
 
+      const ids = []
       data.Instances.forEach((instance) => {
         console.log("Created instance:", instance.InstanceId)
         loadedInstances.push(instance.InstanceId)
+        ids.push(instance.InstanceId)
       })
       fs.writeFileSync(instancesFilename, JSON.stringify(loadedInstances))
-      cb && cb()
-      // Add tags to the instance
+      ec2.waitFor('instanceStatusOk', ids, function(err, data) {
+        if (err){
+          cb && cb(err)
+        } // an error occurred
+        else{
+          cb && cb()
+        }
+      })
+
+      // TODO: Add tags to the instance
       /*const tagParams = {Resources: [instanceId], Tags: [{
           Key: 'Name',
           Value: 'SDK Sample'

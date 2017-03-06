@@ -1177,8 +1177,8 @@ export default class EditGraphic extends React.Component {
     if (origCanvas) {
       const tmpCanvas = document.createElement("canvas")
       const tmpCtx = tmpCanvas.getContext('2d')
-      tmpCanvas.width = _.clamp(origCanvas.width, 32, 290)
-      tmpCanvas.height = _.clamp(origCanvas.height, 32, 150)
+      tmpCanvas.width = _.clamp(origCanvas.width, 32, 220)
+      tmpCanvas.height = _.clamp(origCanvas.height, 32, 155)
       const wRatio = tmpCanvas.width / origCanvas.width
       const hRatio = tmpCanvas.height / origCanvas.height
       let ratio = wRatio < hRatio ? wRatio : hRatio

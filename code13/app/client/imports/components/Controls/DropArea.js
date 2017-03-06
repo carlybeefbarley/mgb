@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import QLink from '/client/imports/routes/QLink'
@@ -188,7 +189,7 @@ export default class DropArea extends React.Component {
           this.props.value = val
           this.state.asset = null
           // Play sound when selecting
-          if (name === "Builtin samples")
+          if (MgbActor.alCannedSoundsList.includes(val))
             MgbActor.playCannedSound(val)
           this.props.onChange && this.props.onChange(val)
         }} value={this.props.value} />

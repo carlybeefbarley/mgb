@@ -15,7 +15,7 @@ export default class All extends BaseForm {
   }
   
   render() {
-    const soundOptions = { options: MgbActor.alCannedSoundsList.map( s => ( { text: '[builtin]:'+s, value: '[builtin]:'+s } ) ) }
+    const soundOptions = { options: MgbActor.alCannedSoundsList.map( s => ( { text: s, value: s } ) ) }
     // Handle limiting InitialHealth < initialMaxHealthNum
     let initHealthConfig = { min: 1 }
     if (this.data.initialMaxHealthNum)

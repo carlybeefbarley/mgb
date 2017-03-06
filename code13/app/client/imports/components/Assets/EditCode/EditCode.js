@@ -287,8 +287,18 @@ export default class EditCode extends React.Component {
     this.codeMirror.on('dragover', this.handleDragOver.bind(this))
     this.codeMirror.on('drop', this.handleDropAsset.bind(this))
 
+
     this.codeMirror.on('mousedown', this.handleDocumentClick.bind(this))
-    this.codeMirror.on('keyup', (cm, e) => e.ctrlKey && e.altKey && e.preventDefault())
+    this.codeMirror.on('keyup', (cm, e) => {
+      if(e.ctrlKey && e.altKey) e.preventDefault()
+      if(!this.props.canEdit) {
+        if (e.ctrlKey || e.altKey || e.which == 17 /* CTRL key*/) {
+          return
+        }
+
+        this.props.editDeniedReminder()
+      }
+    })
 
     this._currentCodemirrorValue = this.props.asset.content2.src || ''
 

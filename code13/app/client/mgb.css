@@ -221,7 +221,7 @@ body.dragging .accept-drop:hover{
 .lint-error:hover .lint-error-text {
   display: block;
 }
-
+/* this is special read only case in the code editor*/
 .read-only .CodeMirror:after {
   content: '';
   position: absolute;

@@ -5,11 +5,33 @@ const fs = require('fs')
 const actions = require('./server/actions')
 const slaveActions = require('./server/slaveActions')
 
+
 const s = http.createServer()
+
+const checkAuth = (headers, user, password) => {
+    var auth = headers['authorization']
+    if(!auth){
+      return false
+    }
+    var encPass = auth.substring(6)
+    if(new Buffer(encPass, 'base64').toString('binary') == user + ":" + password){
+      return true
+    }
+    return false
+}
+
 s.on('request', (req, res) => {
   const path = req.url == '/' ? '/static/index.html' : '/static' + req.url
   const filename = process.cwd() + path
   const rs = fs.createReadStream(filename)
+
+  if(!checkAuth(req.headers, 'mgb', 'superSecretPass')){
+    res.writeHead(401, "Unauthorized", {
+      "www-authenticate": 'Basic realm="Default"'
+    })
+    res.end()
+    return
+  }
 
   if(req.headers.accept){
     const f = req.headers.accept.split(',').shift()

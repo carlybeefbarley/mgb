@@ -58,6 +58,9 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import SpecialGlobals from '/imports/SpecialGlobals'
 
+const THUMBNAIL_WIDTH = SpecialGlobals.thumbnail.width
+const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
+
 import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes.js'
 
 let showDebugAST = false    // Handy thing while doing TERN dev work
@@ -284,8 +287,18 @@ export default class EditCode extends React.Component {
     this.codeMirror.on('dragover', this.handleDragOver.bind(this))
     this.codeMirror.on('drop', this.handleDropAsset.bind(this))
 
+
     this.codeMirror.on('mousedown', this.handleDocumentClick.bind(this))
-    this.codeMirror.on('keyup', (cm, e) => e.ctrlKey && e.altKey && e.preventDefault())
+    this.codeMirror.on('keyup', (cm, e) => {
+      if(e.ctrlKey && e.altKey) e.preventDefault()
+      if(!this.props.canEdit) {
+        if (e.ctrlKey || e.altKey || e.which == 17 /* CTRL key*/) {
+          return
+        }
+
+        this.props.editDeniedReminder()
+      }
+    })
 
     this._currentCodemirrorValue = this.props.asset.content2.src || ''
 
@@ -1348,7 +1361,7 @@ export default class EditCode extends React.Component {
     if (this.state.isPlaying)
       this._postMessageToIFrame({
         mgbCommand: 'screenshotCanvas',
-        recommendedHeight: 150            // See AssetCard for this size
+        recommendedHeight: THUMBNAIL_HEIGHT            // See AssetCard for this size
       })
   }
 
@@ -1366,30 +1379,15 @@ export default class EditCode extends React.Component {
 
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d")
-    canvas.width = 250
-    canvas.height = 150
-
-    /*
-
-      ctx.font = '16px courier'
-      canvas.width = 250
-      canvas.height = 150
-      ctx.fillStyle = 'rgba(153,204,153,0.2)'
-      ctx.fillRect(0,0,250,150)
-      ctx.fillStyle = 'black'
-      for(let i=0; i<list.length; i++) {
-        ctx.fillText(list[i].name, 6+(i*12), (i + 1)*16, 244 - i*12)
-      }
-      this.props.asset.thumbnail = canvas.toDataURL('image/png')
-      this.handleContentChange(null, this.props.asset.thumbnail, "update thumbnail")
-    })*/
+    canvas.width = THUMBNAIL_WIDTH
+    canvas.height = THUMBNAIL_HEIGHT
 
     this.ternServer.server.getAstFlowerTree({
       local: false
     }, (tree) => {
 
       const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower("#codeflower", w, w / canvas.width * 150)
+      const flower = new CodeFlower("#codeflower", w, w / canvas.width * THUMBNAIL_HEIGHT)
 
       flower.update(tree)
 
@@ -1422,7 +1420,7 @@ export default class EditCode extends React.Component {
     this.ternServer.server.getAstFlowerTree((tree) => {
 
       const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower("#codeflower", w, w / 250 * 150)
+      const flower = new CodeFlower("#codeflower", w, w / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT)
       flower.update(tree)
       this.setState({
         astFlowerReady: true
@@ -1435,7 +1433,7 @@ export default class EditCode extends React.Component {
         local: true
       }, (tree) => {
       const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower("#codeflower", w, w / 250 * 150, {
+      const flower = new CodeFlower("#codeflower", w, w / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT, {
         showNames: false,
         onclick: (node) => {
           // make node stay in place
@@ -1480,7 +1478,7 @@ export default class EditCode extends React.Component {
 
     }, (tree) => {
       const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower("#codeflower", w, w / 250 * 150, {
+      const flower = new CodeFlower("#codeflower", w, w / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT, {
         showNames: true
       })
       flower.update(tree)
@@ -1493,10 +1491,10 @@ export default class EditCode extends React.Component {
   saveAstThumbnail() {
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d")
-    canvas.width = 250
-    canvas.height = 150
+    canvas.width = THUMBNAIL_WIDTH
+    canvas.height = THUMBNAIL_HEIGHT
     ctx.fillStyle = 'rgba(153,204,153,0.2)'
-    ctx.fillRect(0,0,250,150)
+    ctx.fillRect(0,0,canvas.width, canvas.height)
 
     this.refs.codeflower.firstChild.setAttribute("xmlns","http://www.w3.org/2000/svg")
     const data = this.refs.codeflower.innerHTML
@@ -2204,7 +2202,7 @@ export default class EditCode extends React.Component {
           <div className="row" style={{marginBottom: "6px"}}>
             {<Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
           </div>
-            <div className="accept-drop"
+            <div className={'accept-drop' + (this.props.canEdit ? '' : ' read-only')}
                  onDrop={(e) => { this.handleDropAsset(this.codeMirror, e) } }
                  onDragOver={ (e) => {this.handleDragOver(this.codeMirror, e) } }
               >

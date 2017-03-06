@@ -5,7 +5,8 @@ import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
 
 const FittedImage = ({ src, height = '180px', ...rest}) => (
-  <img 
+  // This is <div> instead of <img> so that it won't have the border that chrome puts on if src has no content
+  <div 
     className='mgb-pixelated'
     style={{
       background: `url(${src}) no-repeat center`,

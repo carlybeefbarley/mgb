@@ -10,8 +10,8 @@
     show(parent){
       parent.appendChild(this.widget)
     }
-    addOrUpdate(key, val){
-      this.data[key] = val
+    addOrUpdate(key, val, cb){
+      this.data[key] = {val, cb}
       this.update()
     }
     update(){
@@ -23,7 +23,19 @@
           this.rows[i] = {tr, key, val}
         }
         this.rows[i].key.innerHTML = i
-        this.rows[i].val.innerHTML = this.data[i]
+        if(this.data[i].cb) {
+          this.rows[i].key.style.color = 'blue'
+          this.rows[i].key.style.cursor = 'pointer'
+          this.rows[i].key.onclick = () => {
+            this.data[i].cb()
+          }
+        }
+        else{
+          this.rows[i].key.style.color = ''
+          this.rows[i].key.style.cursor = ''
+          this.rows[i].key.onclick = null
+        }
+        this.rows[i].val.innerHTML = this.data[i].val
       }
     }
     remove(key){

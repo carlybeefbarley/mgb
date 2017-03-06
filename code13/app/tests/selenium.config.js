@@ -29,9 +29,9 @@ module.exports = {
       // 'code.update.test.js',
 
       // 'graphic.test.js',
-      'map.simple.test.js'
+      // 'map.simple.test.js'
 
-      // "load.home.page.test.js"
+      'load.home.page.test.js'
     ],
     // add here some tests to skip
     skip: ["login.test.js"] // skip login test as other tests logs in user anyway

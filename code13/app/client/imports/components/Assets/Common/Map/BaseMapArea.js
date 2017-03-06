@@ -808,10 +808,10 @@ export default class MapArea extends React.Component {
 
     this.update()
   }
-  generatePreviewAndSaveIt(){
+  generatePreviewAndSaveIt(data, reason){
     window.requestAnimationFrame(() => {
-      const preview = this.generatePreview()
-      this.props.saveThumbnail(preview)
+      const thumbnail = this.generatePreview()
+      this.props.saveThumbnail(data, reason, thumbnail)
     })
   }
   // find out correct thumbnail size

@@ -70,9 +70,9 @@ module.exports = (browser) => {
       console.log("Waiting to disappear:", rule)
       timeout = timeout == void(0) ? 10000 : timeout
       return browser.wait(() => {
-        return browser.findElements(By.css(rule)).then((element) => {
-          console.log("Is Present?:", rule, !!element)
-          return !element.length;
+        return browser.findElements(By.css(rule)).then((elements) => {
+          console.log("Is Present?:", rule, elements.length)
+          return !elements.length;
         });
       }, 10000)
 
@@ -166,7 +166,9 @@ module.exports = (browser) => {
     },
 
     waitUntilSaved(){
-      return sel.untilInvisible("#mgbjr-changes-saved")
+      return sel.untilInvisible("#mgbjr-saving-changes")
+        .then(() => sel.wait(1000))
+        .then(() => sel.untilInvisible("#mgbjr-saving-changes"))
     },
 
     compareImages(filename, data){

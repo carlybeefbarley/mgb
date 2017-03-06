@@ -167,12 +167,14 @@ export default class EditActorMap extends EditMap {
       this.saveForUndo(reason)
     }*/
 
-    const toSave = ActorHelper.v2_to_v1(data)
+
     // make sure we always have nice looking thumbnail
-    if(!thumbnail && this.refs.map){
-      this.refs.map.generatePreviewAndSaveIt()
+    if(!thumbnail && this.refs.map)
+      this.refs.map.generatePreviewAndSaveIt(data, reason)
+    else{
+      const toSave = ActorHelper.v2_to_v1(data)
+      this.props.handleContentChange(toSave, thumbnail, reason)
     }
-    this.props.handleContentChange(toSave, thumbnail, reason)
   }
 
   showModal = (action, cb) => {

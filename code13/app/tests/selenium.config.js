@@ -28,8 +28,8 @@ module.exports = {
 
       // 'code.update.test.js',
 
-      'graphic.test.js',
-      // "map.simple.test.js"
+      // 'graphic.test.js',
+      'map.simple.test.js'
 
       // "load.home.page.test.js"
     ],

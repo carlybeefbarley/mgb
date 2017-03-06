@@ -54,6 +54,7 @@ module.exports = (browser) => {
       }
     }
 
+    sel.untilInvisible(".loading")
     sel.waitUntilSaved()
     browser.executeScript(`
       return window.m.editMap.getImageData()`)

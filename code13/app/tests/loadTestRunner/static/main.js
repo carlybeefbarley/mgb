@@ -35,6 +35,11 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
 
   // new ml.TestCase({name: 'random.error', id: 'random.error', title: 'SelfTest: Generate Errors Randomly'}, restart)
 
+  status.info.addOrUpdate('StartSlave', '', () => {
+    sendMessage('startSlave')
+    return 'starting'
+  })
+
   const actions = {
     status: (data) => {
       status.memory.progress(data.status.used * 100)
@@ -53,6 +58,21 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
       const testCase = ml.TestCase.find(data.id)
       testCase && testCase.update(data)
       // console.log("Runner completed:", data, data.tests[0])
+    },
+    slaveStarting: data => {
+      status.info.addOrUpdate('StartSlave', 'Starting Slave')
+    },
+    slaveStarted: data => {
+      status.info.addOrUpdate('StartSlave', '', () => {
+        sendMessage('startSlave')
+        return 'starting'
+      })
+    },
+    slavesTerminating: data => {
+      console.log("Slaves terminating...")
+    },
+    slavesTerminated: data => {
+      console.log("Slaves terminated...")
     },
     critical: data => {
       alert("Critical error!\n" + data)

@@ -39,24 +39,8 @@ const LearnCodePhaserRoute = ({ currUser, params }, context) => {
   return (
     <Grid container columns='1'>
       <Divider hidden />
-      { /*TODO check if currUser logged in*/ }
-      {/*TODO need to implement count and onclick for subskills*/
-      }
-      {/*<SkillsMap user={currUser}
-       userSkills={context.skills}
-       ownsProfile={true}
-       onlySkillArea={'code'}
-       />
-
-       <SkillsMap user={currUser}
-       userSkills={context.skills}
-       ownsProfile={true}
-       subSkill={true}
-       onlySkillArea={'code.js.phaser'}
-       />*/
       }
       <Grid.Column>
-        {/*<div onClick={() => startSkillPathTutorial('getStarted.nonCodeGame.createGraphic') }>Start code tutorial</div>*/}
         <Header as='h1'>
           Game development concepts
           <Header.Subheader>

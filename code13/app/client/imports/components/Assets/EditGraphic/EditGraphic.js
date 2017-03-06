@@ -15,6 +15,7 @@ import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import ResizeImagePopup from './ResizeImagePopup'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
@@ -24,6 +25,11 @@ const MAX_BITMAP_HEIGHT = 1024
 const MAX_GRAPHIC_FRAMES = 64 // TODO: Pass this into Importer, and also obey it generally
 const DEFAULT_GRAPHIC_WIDTH = 32
 const DEFAULT_GRAPHIC_HEIGHT = 32
+
+
+const THUMBNAIL_WIDTH = SpecialGlobals.thumbnail.width
+const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
+
 
 const MIN_ZOOM_FOR_GRIDLINES = 4
 
@@ -1177,8 +1183,8 @@ export default class EditGraphic extends React.Component {
     if (origCanvas) {
       const tmpCanvas = document.createElement("canvas")
       const tmpCtx = tmpCanvas.getContext('2d')
-      tmpCanvas.width = _.clamp(origCanvas.width, 32, 220)
-      tmpCanvas.height = _.clamp(origCanvas.height, 32, 155)
+      tmpCanvas.width = _.clamp(origCanvas.width, 32, THUMBNAIL_WIDTH)
+      tmpCanvas.height = _.clamp(origCanvas.height, 32, THUMBNAIL_HEIGHT)
       const wRatio = tmpCanvas.width / origCanvas.width
       const hRatio = tmpCanvas.height / origCanvas.height
       let ratio = wRatio < hRatio ? wRatio : hRatio

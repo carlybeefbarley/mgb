@@ -29,7 +29,9 @@ module.exports = {
     startSlave: (data, ws, clients, slaves) => {
       smAll(clients, 'slaveStarting', data)
       console.log("starting slave")
-      /*setTimeout(() => {
+      /*
+      dummy test
+      setTimeout(() => {
         smAll(clients, 'slaveStarted', data)
         console.log("started slave")
       }, 1000)*/

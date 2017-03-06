@@ -13,7 +13,7 @@ export default class All extends BaseForm {
   get data() {
     return this.props.asset.content2.databag.all
   }
-
+  
   render() {
     const soundOptions = { options: MgbActor.alCannedSoundsList.map( s => ( { text: '[builtin]:'+s, value: '[builtin]:'+s } ) ) }
     // Handle limiting InitialHealth < initialMaxHealthNum

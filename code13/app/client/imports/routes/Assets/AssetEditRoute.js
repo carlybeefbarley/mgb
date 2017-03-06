@@ -298,9 +298,7 @@ export default AssetEditRoute = React.createClass({
       logActivity("asset.fork.from", "Forked new asset from this asset", null, this.data.asset )
       logActivity("asset.fork.to", "Forked this new asset from another asset", null, result.newAssetNoC2 )
 
-console.log("utilPushTo in forkResultCallback()", this.props.currUser.username, result.newId)
       utilPushTo(this.context.urlLocation.query, "/u/" + this.props.currUser.username + "/asset/" + result.newId)
-
       joyrideCompleteTag('mgbjr-CT-asset-fork')
     }
 
@@ -332,12 +330,6 @@ console.log("utilPushTo in forkResultCallback()", this.props.currUser.username, 
     const canEd = this.canCurrUserEditThisAsset()
     const currUserId = currUser ? currUser._id : null
     const hasUnsentSaves = !!this.m_deferredSaveObj
-    const chosenProjectNamesArray = asset.projectNames || []
-    const availableProjectNamesArray =
-        currUserProjects ?
-          _.map(_.filter(currUserProjects, {"ownerId": asset.ownerId}), 'name')
-        : []
-
 
     return (
       <Grid padded>

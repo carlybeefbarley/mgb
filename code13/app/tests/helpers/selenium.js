@@ -15,6 +15,12 @@ module.exports = (browser) => {
       timeout = timeout == void(0) ? 30000 : timeout
       return browser.wait(until.elementLocated(By.css(rule)), timeout)
     },
+    // show console log timed correctly
+    log: (...args) => {
+      browser.call(() => {
+        console.log(...args)
+      })
+    },
     exists: (rule, callback) => {
       const p = browser.findElements(By.css(rule))
       return p.then((found) => {
@@ -79,9 +85,14 @@ module.exports = (browser) => {
     },
 
     wait(timeout, message){
-      return browser.wait(new Promise((y, n) => {
-        setTimeout(y, timeout)
-      }), timeout * 2, message)
+      // browser.call is needed here to put wait call in the correct spot in the selenium stack
+      return browser.call(() => {
+        return browser.wait(
+          new Promise((y, n) => {
+            setTimeout(y, timeout)
+          })
+          , timeout * 2, message)
+      })
     },
 
     takeScreenShot(name, cb){
@@ -139,9 +150,8 @@ module.exports = (browser) => {
               })
           })
         }
-        // wait and check if everything is fine
-        //sel.wait(10 * 1000)
         // for some reason we get it back to 0
+        // TODO: debug - look at deferred setting save
         sel.wait(1000)
 
         // close side panel
@@ -149,6 +159,7 @@ module.exports = (browser) => {
       })
 
     },
+    // dead code?
     openAssetsPanel(){
       return browser.getCurrentUrl()
         .then((url) => {
@@ -167,8 +178,6 @@ module.exports = (browser) => {
 
     waitUntilSaved(){
       return sel.untilInvisible("#mgbjr-saving-changes")
-        .then(() => sel.wait(1000))
-        .then(() => sel.untilInvisible("#mgbjr-saving-changes"))
     },
 
     compareImages(filename, data){

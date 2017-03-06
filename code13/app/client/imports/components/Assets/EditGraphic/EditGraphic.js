@@ -214,7 +214,7 @@ export default class EditGraphic extends React.Component {
       // autoFix = true;
     // }
 
-    if (autoFix) 
+    if (autoFix)
       this.handleSave("Automatic fixing old assets")
   }
 
@@ -243,11 +243,11 @@ export default class EditGraphic extends React.Component {
     const wRatio = (screen.width *0.9) / width
     const hRatio = (screen.height * 0.5) / height
     let scale = wRatio < hRatio ? Math.floor(wRatio) : Math.floor(hRatio)
-    if ( scale > 4) 
+    if ( scale > 4)
       scale = 4
-    else if (scale < 1) 
+    else if (scale < 1)
       scale = 1
-    else if (scale == 3) 
+    else if (scale == 3)
       scale = 2
 
     return scale
@@ -391,7 +391,7 @@ export default class EditGraphic extends React.Component {
   forceDraw ()
   {
     let c2 = this.props.asset.content2
-    if (!c2.frameData || !c2.frameData[0]) 
+    if (!c2.frameData || !c2.frameData[0])
       return
 
     this.frameCtxArray[0].clearRect(0, 0, c2.width, c2.height)
@@ -440,9 +440,9 @@ export default class EditGraphic extends React.Component {
     for(let i=0; i<dashCount; i++) {
       let x = scaleRect.x1 - dashSize + timeOffset + i*dashSize*2
       let x2 = x+dashSize
-      if (x < scaleRect.x1) 
+      if (x < scaleRect.x1)
         x = scaleRect.x1;
-      if (x2 > scaleRect.x2) 
+      if (x2 > scaleRect.x2)
         x2 = scaleRect.x2
       drawLine(x, scaleRect.y1, x2, scaleRect.y1)
       drawLine(x, scaleRect.y2, x2, scaleRect.y2)
@@ -453,9 +453,9 @@ export default class EditGraphic extends React.Component {
     for (let i=0; i<dashCount; i++) {
       let y = scaleRect.y1 - dashSize + timeOffset + i*dashSize*2
       let y2 = y+dashSize
-      if (y < scaleRect.y1) 
+      if (y < scaleRect.y1)
         y = scaleRect.y1
-      if (y2 > scaleRect.y2) 
+      if (y2 > scaleRect.y2)
         y2 = scaleRect.y2
       drawLine(scaleRect.x1, y, scaleRect.x1, y2)
       drawLine(scaleRect.x2, y, scaleRect.x2, y2)
@@ -508,7 +508,7 @@ export default class EditGraphic extends React.Component {
         // Set Pixels on the Preview context ONLY
         self._setImageData4BytesFromRGBA(retval.previewCtxImageData1x1.data, retval.chosenColor.rgb)
         for (let i = 0; i < w; i++) {
-          for (let j = 0; j < h; j++) 
+          for (let j = 0; j < h; j++)
             retval.previewCtx.putImageData(retval.previewCtxImageData1x1, Math.round(x + i), Math.round(y + j))
         }
       },
@@ -531,9 +531,9 @@ export default class EditGraphic extends React.Component {
       },
 
       saveSelectRect: function(startX, startY, endX, endY) {
-        if (startX > endX) 
+        if (startX > endX)
           [startX, endX] = [endX, startX]
-        if (startY > endY) 
+        if (startY > endY)
           [startY, endY] = [endY, startY]
         self.setState({
           selectRect: {
@@ -584,7 +584,7 @@ export default class EditGraphic extends React.Component {
 
   toolCutSelected()
   {
-    if (!this.state.selectRect) 
+    if (!this.state.selectRect)
       return
 
     this.toolCopySelected()
@@ -598,7 +598,7 @@ export default class EditGraphic extends React.Component {
 
   toolCopySelected()
   {
-    if (!this.state.selectRect) 
+    if (!this.state.selectRect)
       return
 
     let x = this.state.selectRect.startX
@@ -832,7 +832,7 @@ export default class EditGraphic extends React.Component {
   handleImageResize = (newWidth, newHeight, scalingMode = 'None') => {
     if (!this.hasPermission())
       return
-      
+
     const c2 = this.props.asset.content2
     this.doSaveStateForUndo(`Resize from ${c2.width}x${c2.height} to ${newWidth}x${newHeight} using scaling mode '${scalingMode}`)
     c2.width = newWidth
@@ -1128,9 +1128,9 @@ export default class EditGraphic extends React.Component {
   }
 
   createTileset() {
-    if (!this.frameCanvasArray || this.frameCanvasArray.length == 0) 
+    if (!this.frameCanvasArray || this.frameCanvasArray.length == 0)
       return null
-    
+
     let c2   = this.props.asset.content2
     let cols = Math.ceil(Math.sqrt(c2.frameNames.length))
     let rows = Math.ceil(c2.frameNames.length/cols)
@@ -1188,7 +1188,7 @@ export default class EditGraphic extends React.Component {
       const wRatio = tmpCanvas.width / origCanvas.width
       const hRatio = tmpCanvas.height / origCanvas.height
       let ratio = wRatio < hRatio ? wRatio : hRatio
-      if (wRatio >= 1 && hRatio >= 1) 
+      if (wRatio >= 1 && hRatio >= 1)
         ratio = 1
       const width = origCanvas.width * ratio
       const height = origCanvas.height * ratio
@@ -1522,12 +1522,13 @@ export default class EditGraphic extends React.Component {
         <Grid.Column width='16'>
           <div className="row" style={{marginBottom: "6px"}}>
 
-            <Popup 
+            <Popup
               on='hover'
               positioning='bottom left'
               hoverable
               hideOnScroll
               mouseEnterDelay={250}
+              id="mgbjr-EditGraphic-colorPicker-body"
               trigger={(
                 <Button
                   size='small'
@@ -1538,22 +1539,22 @@ export default class EditGraphic extends React.Component {
               )}
             >
               <Header>Color Picker</Header>
-              <ReactColor 
+              <ReactColor
                   type="sketch"
                   onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
                   color={this.state.selectedColors['fg'].rgb}
               />
             </Popup>
 
-            <ResizeImagePopup 
-                initialWidth={c2.width} 
+            <ResizeImagePopup
+                initialWidth={c2.width}
                 initialHeight={c2.height}
                 maxWidth={MAX_BITMAP_WIDTH}
                 maxHeight={MAX_BITMAP_HEIGHT}
                 scalingOptions={['None']}
                 handleResize={this.handleImageResize} />
 
-            <Popup 
+            <Popup
                 trigger={ (
                   <Button size='small' id="mgbjr-editGraphic-changeCanvasZoom">
                     <span style={{ cursor: 'pointer' }} onClick={this.zoomOut}>
@@ -1574,7 +1575,7 @@ export default class EditGraphic extends React.Component {
                 positioning='bottom left'/>
 
 
-            <Popup 
+            <Popup
                 trigger={ (
                   <Button size='small' id="mgbjr-editGraphic-changeCanvasZoom">
                     Grid&nbsp;

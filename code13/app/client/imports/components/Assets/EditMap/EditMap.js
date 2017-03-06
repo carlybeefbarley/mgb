@@ -125,7 +125,7 @@ export default class EditMap extends React.Component {
     }, 5000)
   }
   getImageData(){
-    return this.props.asset.thumbnail
+    return this.refs.map.generatePreview()
   }
 
   setInitialStateFromContent(){

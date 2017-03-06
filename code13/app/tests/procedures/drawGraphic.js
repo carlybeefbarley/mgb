@@ -46,7 +46,7 @@ module.exports = (browser) => {
       .perform()
 
     // wait a little bit until color picker is closed
-    return sel.wait(1000)
+    return sel.untilInvisible('#mgbjr-EditGraphic-colorPicker-body')
 
   }
   const removeFrame = (id) => {
@@ -55,7 +55,6 @@ module.exports = (browser) => {
       .mouseMove(frameoptions)
       .perform()
 
-    sel.wait(1000)
     sel.untilVisible(el.getFrameOptionsSelector(id) + " .remove.icon")
     sel.css(el.getFrameOptionsSelector(id) + " .remove.icon").click()
   }

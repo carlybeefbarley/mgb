@@ -320,6 +320,7 @@ const MgbActor = {
       for (let n = 0 ; n < names.length ; n++) {
         name = names[n]
         MgbActor._loadedSounds[name] = document.createElement('audio')
+        MgbActor._loadedSounds[name].volume = 0.5 // Half volume
         MgbActor._loadedSounds[name].addEventListener('canplay', canplay, false)
         MgbActor._loadedSounds[name].src = "/audio/builtinForActors/" + name + ".wav"
       }

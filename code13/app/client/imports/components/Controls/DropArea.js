@@ -1,8 +1,10 @@
+import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
+import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
@@ -141,8 +143,9 @@ export default class DropArea extends React.Component {
       }
       const aa =  Azzets.find({dn_ownerName: owner, name: name}).fetch()
 
-      if (aa && aa.length)
+      if (aa && aa.length) {
         return aa[0]
+      }
     }
     return null
   }
@@ -185,6 +188,9 @@ export default class DropArea extends React.Component {
         <SmallDD options={options} onChange={(val) => {
           this.props.value = val
           this.state.asset = null
+          // Play sound when selecting
+          if (MgbActor.alCannedSoundsList.includes(val))
+            MgbActor.playCannedSound(val)
           this.props.onChange && this.props.onChange(val)
         }} value={this.props.value} />
       </div>

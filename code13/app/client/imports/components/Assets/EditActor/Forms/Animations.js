@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react'
 import { Table, Accordion, Icon } from 'semantic-ui-react'
 
@@ -105,7 +106,7 @@ export default class Animations extends React.Component {
     let animTable = [] 
     let prevDirection = animations[0].split(' ')[1]
     let name = animations[0]
-    let prevTitle = name.startsWith('face') ? 'move ' + name.split(' ')[1] : (name.split(' ').length > 2 ? name.split(' ')[0] + ' ' + name.split(' ')[1] : name.split(' ')[0])
+    let prevTitle = _.startsWith(name, 'face') ? 'move ' + name.split(' ')[1] : (name.split(' ').length > 2 ? name.split(' ')[0] + ' ' + name.split(' ')[1] : name.split(' ')[0])
     let curr = 0
 
     for (let i=0; i<animations.length; i++) {
@@ -119,14 +120,14 @@ export default class Animations extends React.Component {
       }
 
       if (
-        !((aType === '0' || aType === '1') && (name.startsWith("stationary") && name.split(' ').length === 2)) && // Filter out stationary for Player/NPC
-        !(aType === '3' && (name.startsWith("stationary") || name.startsWith("melee"))) && // Filter out non-movement for Shot
-        !(['2', '4', '5', '6', '7'].indexOf(aType) > -1 && (!name.startsWith("stationary") || name.split(' ').length !== 2)) // Filter out non-stationary for Item/Wall/Floor/Scenery
+        !((aType === '0' || aType === '1') && (_.startsWith(name, 'stationary') && name.split(' ').length === 2)) && // Filter out stationary for Player/NPC
+        !(aType === '3' && (_.startsWith(name, 'stationary') || _.startsWith(name, 'melee'))) && // Filter out non-movement for Shot
+        !(['2', '4', '5', '6', '7'].indexOf(aType) > -1 && (!_.startsWith(name, 'stationary') || name.split(' ').length !== 2)) // Filter out non-stationary for Item/Wall/Floor/Scenery
       ) {
         // Group animations by direction 
         if (
           (['2', '4', '5', '6', '7'].indexOf(aType) === -1 && name.includes(prevDirection)) || 
-          (['2', '4', '5', '6', '7'].indexOf(aType) > -1  && name.startsWith("stationary") && name.split(' ').length === 2) || // Don't use prevDirection if only stationary animations
+          (['2', '4', '5', '6', '7'].indexOf(aType) > -1  && _.startsWith(name, 'stationary') && name.split(' ').length === 2) || // Don't use prevDirection if only stationary animations
           i+1 === animations.length
         ) {
           animTable.push(this.renderContent(animations, i)) 
@@ -143,7 +144,7 @@ export default class Animations extends React.Component {
 
           // Content for next direction
           prevDirection = name.split(' ')[1] // get direction from animation name which is the 2nd part of string (action direction frameNum)
-          prevTitle = name.startsWith('face') ? 'move ' + name.split(' ')[1] : (name.split(' ').length > 2 ? name.split(' ')[0] + ' ' + name.split(' ')[1] : name.split(' ')[0])
+          prevTitle = _.startsWith(name, 'face') ? 'move ' + name.split(' ')[1] : (name.split(' ').length > 2 ? name.split(' ')[0] + ' ' + name.split(' ')[1] : name.split(' ')[0])
           animTable = []
           
           animTable.push(this.renderContent(animations, i)) 

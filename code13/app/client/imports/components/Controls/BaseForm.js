@@ -33,7 +33,6 @@ export default class BaseForm extends React.Component {
           this.data[key] = val
           this.props.onChange && this.props.onChange()
           if (mgbjrCT) {
-            console.log(mgbjrCT + val)
             joyrideCompleteTag(mgbjrCT + val)
           }
         }} {...fieldOptions} value={val} />
@@ -110,7 +109,6 @@ export default class BaseForm extends React.Component {
       <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") } title={fieldOptions && fieldOptions.title}>
         <label>{name}</label>
         <DropArea kind={kind} {...fieldOptions} value={this.data[key]} ids={this.data._ids} asset={this.props.asset} onChange={(val, asset) => {
-          console.log(this)
           this.data[key] = val
           this.props.onChange && this.props.onChange()
           cb && cb(asset)

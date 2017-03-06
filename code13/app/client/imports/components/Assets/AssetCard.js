@@ -152,6 +152,7 @@ export default AssetCard = React.createClass({
             display: viewOpts.showImg ? 'initial' : 'none',
             overflow: 'hidden',
             width: '100%',
+            minHeight: '155px',
             cursor: 'pointer',
             backgroundColor: 'white'
           }}
@@ -160,7 +161,6 @@ export default AssetCard = React.createClass({
             asset={asset}
             ref='thumbnailCanvas'
             style={{
-              minHeight: '155px',
               margin: '0 auto',
               width: 'initial'
             }}

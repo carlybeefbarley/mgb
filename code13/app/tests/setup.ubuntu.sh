@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 # usage: copy tests/ directory to the test server and run this file
 # scp -r -i "aws-autoscale-test.pem" /home/kaspars/Projects/mgb/code13/app/tests ubuntu@ec2-54-196-36-137.compute-1.amazonaws.com:~/mgb
 

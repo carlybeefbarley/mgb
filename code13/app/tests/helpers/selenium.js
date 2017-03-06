@@ -7,6 +7,8 @@ const until = webdriver.until
 //process.exit()
 // this is for easier css selectors
 // TODO: add xpath etc..
+
+// always return browser.XXX - to make function thenable
 module.exports = (browser) => {
   const sel = {
     css: (rule, timeout) => {
@@ -15,7 +17,7 @@ module.exports = (browser) => {
     },
     exists: (rule, callback) => {
       const p = browser.findElements(By.css(rule))
-      p.then((found) => {
+      return p.then((found) => {
         callback(null, !!found.length)
       })
         .catch((e) => {
@@ -23,10 +25,10 @@ module.exports = (browser) => {
         })
     },
     getUri: () => {
-      browser.executeAsyncScript("")
+      return browser.executeAsyncScript("")
     },
     showLogs: () => {
-      browser.manage().logs().get("browser")
+      return browser.manage().logs().get("browser")
         .then(logs => {
           console.log(logs)
         })
@@ -67,7 +69,7 @@ module.exports = (browser) => {
     untilInvisible(rule, timeout){
       console.log("Waiting to disappear:", rule)
       timeout = timeout == void(0) ? 10000 : timeout
-      browser.wait(() => {
+      return browser.wait(() => {
         return browser.findElements(By.css(rule)).then((element) => {
           console.log("Is Present?:", rule, !!element)
           return !element.length;
@@ -83,7 +85,7 @@ module.exports = (browser) => {
     },
 
     takeScreenShot(name, cb){
-      browser.takeScreenshot().then(data => {
+      return browser.takeScreenshot().then(data => {
         const fs = require("fs")
         fs.writeFile(__dirname + '/../scr/' + name, Buffer.from(data, 'base64'), () => {
           cb && cb()
@@ -94,12 +96,8 @@ module.exports = (browser) => {
     // REST is site specific stuff...
     // TODO (stauzs): move site specific actions to external file?
     adjustLevelSlider(name, level){
-      // fix strange bug with animations in phantomjs
-      browser.executeScript(`
-        m.addStyle('.fadeInRight {-webkit-animation-name: none; animation-name: none;}')
-      `).then(() => {
-
-
+      // hide notifications.. as they are in the way of setting
+      return browser.call(() => {
         level = level === void(0) ? 1 : level
         const sliders = [
           '#mgbjr-input-level-slider-FlexPanel',
@@ -110,15 +108,13 @@ module.exports = (browser) => {
         ]
 
         browser.actions()
-          .mouseMove(sel.css('#mgbjr-np-mgb')) // move to logo
-          .mouseMove(sel.css('#mgbjr-np-user > a')) // move to avatar
-          .mouseMove(sel.css('#mgbjr-np-user-avatar')) // move to avatar
+          .mouseMove(sel.css('#mgbjr-np-mgb')) // move to logo (this fixes strange issue when mouse is not moving directly to avatar
+          // .mouseMove(sel.css('#mgbjr-np-user')) // move to avatar
+          .mouseMove(sel.css('#mgbjr-np-user-avatar'))
+          .mouseMove(sel.css('#mgbjr-np-user-settings'), {x: 0, y: 0})
+          .click()
           .perform()
 
-        // settings should be visible now
-        const settings = sel.untilVisible('#mgbjr-np-user-settings')
-        settings.click() // side panel with settings should appear
-        sel.wait(1000)
         sel.takeScreenShot("scr/settingsOpen.png")
 
         if (name) {
@@ -170,7 +166,7 @@ module.exports = (browser) => {
     },
 
     waitUntilSaved(){
-      sel.untilInvisible("#mgbjr-changes-saved")
+      return sel.untilInvisible("#mgbjr-changes-saved")
     },
 
     compareImages(filename, data){
@@ -192,7 +188,7 @@ module.exports = (browser) => {
     },
 
     dragAndDrop(from, to){
-      browser.executeScript(`
+      return browser.executeScript(`
       return window.m.dnd.simulateDragAndDrop.apply(m.dnd, arguments);`, from, to)
     }
   }

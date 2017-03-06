@@ -1,3 +1,5 @@
+// this is only for selenium debug purposes - not used in the codebase
+
 var test = function() {
   var webdriver = require('selenium-webdriver');
 

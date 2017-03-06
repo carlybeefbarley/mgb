@@ -17,18 +17,18 @@ module.exports = {
     // if this is filled - only those tests will be tested
     //only: ["code.update.test.js"],
     only: [
-      'login.test.js',
-      // "adjust.settings.test.js"
+      //'login.test.js',
+      //'adjust.settings.test.js'
 
-      //"code.load.import.test.js",
+      //'code.load.import.test.js',
 
       // code bundling is not working on Phantom
-      // "code.bundler.test.js"
-      // "code.mentor.test.js",
+      // 'code.bundler.test.js',
+      // 'code.mentor.test.js',
 
-      // "code.update.test.js",
+      // 'code.update.test.js',
 
-      //"graphic.test.js",
+      'graphic.test.js',
       // "map.simple.test.js"
 
       // "load.home.page.test.js"

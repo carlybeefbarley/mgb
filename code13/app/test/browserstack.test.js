@@ -114,6 +114,11 @@ function runTests(browserName, tests) {
           tmpbrowser.call(function () {
             browser = tmpbrowser
             browser.loadHomePage()
+            // hide notifications - they are in the way of fp buttons...
+            // otherwise tests will need to wait for them to hide - and that will increase time on some tests by 5 seconds
+            browser.executeScript(`
+              m.addStyle('.notification {display: none}')
+            `)
             browser.call(done)
           })
         }

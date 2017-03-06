@@ -2287,6 +2287,7 @@ export default class EditCode extends React.Component {
                   userSkills  =     { this.userSkills }
                   quickSave   =     { this.quickSave.bind(this) }
                   highlightLines =  { this.highlightLines.bind(this) }
+                  assetId     =     { asset._id }
                 />
               }
 

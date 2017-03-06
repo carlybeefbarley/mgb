@@ -1,19 +1,16 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
-import QLink from '../QLink'
-import {
-  Divider,
-  Grid,
-  List,
-  Header,
-  Segment,
-} from 'semantic-ui-react'
+import { utilPushTo } from "/client/imports/routes/QLink"
+import { Divider, Grid, Header, List, Segment } from 'semantic-ui-react'
+
+import { showToast } from '/client/imports/routes/App'
+import { logActivity } from '/imports/schemas/activity'
 
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
-
-import { startSkillPathTutorial } from '/client/imports/routes/App'
+// TODO make this dynamic
+import tutorialObject from '/public/codeTutorialsPhaser.json'
 
 const phaserSkills = SkillNodes.code.js.phaser
 const skillItems = []
@@ -25,27 +22,56 @@ for (var key in phaserSkills) {
   }
 }
 
-const handleClick = (e, skillPath) => {
-  // console.log('handleClick', e.button)
-  // if(e.buttons == 4 || e.button == 1)
-  //     // start tutorial in a new tab
-  //   else
-  //     // start tutorial in the same tab
-
-  startSkillPathTutorial( skillPath )
+const handleClick = (e, idx, code, currUser) => {
+  const newTab = (e.buttons == 4 || e.button == 1)
+  StartJsGamesRoute(idx, code, currUser, newTab)
 }
 
-const LearnCodePhaserRoute = ({ currUser, params }, context) => {
+export const StartJsGamesRoute = (name, code, currUser, newTab) => {
+  if (!currUser)
+  {
+    showToast( 'You must be logged in to use these tutorials', 'info')
+    return
+  }
+
+  const newAsset = {
+    name: 'tutorials.phaser.' + name,
+    kind: 'code',
+    skillPath: 'code.js.phaser.' + name,
+    content2: { src: code },
+    isCompleted: false,
+    isDeleted: false,
+    isPrivate: false
+  }
+
+  Meteor.call( 'Azzets.create', newAsset, (error, result) => {
+    if (error) {
+      showToast( "cannot create Asset because: " + error.reason, 'error' )
+      return
+    }
+    newAsset._id = result             // So activity log will work
+    logActivity( "asset.create", 'Created game tutorial', null, newAsset )
+    const url = `/u/${currUser.username}/asset/${newAsset._id}`
+
+    if (newTab)
+      window.open( window.location.origin + url )
+    else
+      utilPushTo( window.location, url )
+  })
+}
+
+const LearnCodePhaserRoute = ({ currUser }, context) => {
   return (
     <Grid container columns='1'>
       <Divider hidden />
-      }
       <Grid.Column>
         <Header as='h1'>
           Game development concepts
           <Header.Subheader>
-            These concept examples use the 'Phaser' game engine for JavaScript.
-            However, the concepts you learn here are very important and will apply to any game engine you use in future.
+            These concept examples use the 'Phaser' game engine for JavaScript. However, the concepts you learn here are very important and will apply to any game engine you use in future.
+          </Header.Subheader>
+          <Header.Subheader>
+            NOTE! Game concepts temporary unavailable
           </Header.Subheader>
         </Header>
         { currUser && (
@@ -60,13 +86,14 @@ const LearnCodePhaserRoute = ({ currUser, params }, context) => {
             { skillItems.map( (area, idx) => {
               let skillPath = 'code/js/phaser/' + area.idx + '/' + area.idx
               const isComplete = currUser && !_.isEmpty( context.skills[skillPath] )
+              const code = tutorialObject[area.idx].steps[0].code
 
               return (
                 <List.Item
                   key={idx}
                   as={'a'} // isComplete ? 'div' : 'a'}
                   //disabled={isComplete}
-                  onClick={ (e) => handleClick( e, skillPath ) }
+                  onClick={ (e) => handleClick( e, area.idx, code, currUser ) }
                   icon={isComplete ? { name: 'checkmark', color: 'green' } : area.icon}
                   header={isComplete ? null : area.name}
                   content={isComplete ? area.name : area.description}

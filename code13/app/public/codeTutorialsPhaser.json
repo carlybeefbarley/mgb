@@ -1,0 +1,18 @@
+{
+  "drawImage": {
+    "steps": [
+      {
+        "text": "phaser draw image",
+        "code": "import 'phaser'\nvar drawImg"
+      }
+    ]
+  },
+  "positionImage": {
+    "steps": [
+      {
+        "text": "phaser position image",
+        "code": "import 'phaser'\nvar positionImg"
+      }
+    ]
+  }
+}

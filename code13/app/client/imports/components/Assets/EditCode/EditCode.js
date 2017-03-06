@@ -2192,7 +2192,7 @@ export default class EditCode extends React.Component {
           <div className="row" style={{marginBottom: "6px"}}>
             {<Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
           </div>
-            <div className="accept-drop"
+            <div className={'accept-drop' + (this.props.canEdit ? '' : ' read-only')}
                  onDrop={(e) => { this.handleDropAsset(this.codeMirror, e) } }
                  onDragOver={ (e) => {this.handleDragOver(this.codeMirror, e) } }
               >

@@ -222,6 +222,16 @@ body.dragging .accept-drop:hover{
   display: block;
 }
 
+.read-only .CodeMirror:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
 .mgb-show-on-parent-div-hover {
   opacity: 0;
 }

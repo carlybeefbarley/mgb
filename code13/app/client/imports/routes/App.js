@@ -32,7 +32,7 @@ import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
-import { makeChannelName, ChatChannels } from '/imports/schemas/chats'
+import { parseChannelName, makeChannelName, ChatChannels } from '/imports/schemas/chats'
 import { getLastReadTimestampForChannel } from '/imports/schemas/settings-client'
 
 // https://www.npmjs.com/package/react-notifications
@@ -194,8 +194,12 @@ const App = React.createClass({
       // read/unread Chat status. Gathered up here since it used across app, especially for notifications and lists
       chatChannelTimestamps:    null,          // as defined by Chats.getLastMessageTimestamps RPC
       hazUnreadChats:           [],            // will contain Array of channel names with unread chats
-      // hazUnreadChats is just a subset of the data in chatChannelTimestamps, but simplified - just an
-      // Array of chat channelNames with at least one unread message. Handy for notification UIs, and quicker to parse
+      // hazUnreadChats is a subset of the data in chatChannelTimestamps, but simplified - just an
+      // Array of chat channelNames that have at least one unread message. Note that Global ChatChannels
+      // are treated a little specially - if you have never visited a particular global channel you will 
+      // not get notifications for it. This is so new users don't get spammed to look at chat channels they
+      //are not yet interested in. 
+      // It is intended to be quick & convenient for generating notification UIs
 
       currentlyEditingAssetInfo: { 
         // This is so that we can pass as subset of the Asset info into some other components 
@@ -289,7 +293,11 @@ const App = React.createClass({
         _.each(chatChannelTimestamps, cct => {
           const channelName = cct._id
           const lastReadByUser = getLastReadTimestampForChannel(this.data.settings, channelName)
-          cct._hazUnreads = Boolean(!lastReadByUser || cct.lastCreatedAt.getTime() > lastReadByUser.getTime())
+          const channelObj = parseChannelName(channelName)
+          cct._hazUnreads = Boolean(
+            (channelObj && channelObj.scopeGroupName !== 'Global' && !lastReadByUser) // Non-global chat groups that user has access to but has not looked at
+            || (lastReadByUser && cct.lastCreatedAt.getTime() > lastReadByUser.getTime())   // Any chat channel user has looked at but has more recent messages
+          )
           if (cct._hazUnreads)
             hazUnreadChats.push(channelName)
         })

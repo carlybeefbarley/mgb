@@ -424,7 +424,7 @@ export default fpChat = React.createClass({
       return _colors.emptyChannel
     const lastReadByUser = getLastReadTimestampForChannel(this.context.settings, channelName)
     return (
-        !lastReadByUser || 
+        !lastReadByUser || // Note that we DO include Global channels in this list.. so this calulation is intentionally slightly different to the one in App.js that generates props.hazUnreadChats
         latestForChannel.lastCreatedAt.getTime() > lastReadByUser.getTime()
       ) ? _colors.unreadChannel : _colors.upToDateChannel
   },

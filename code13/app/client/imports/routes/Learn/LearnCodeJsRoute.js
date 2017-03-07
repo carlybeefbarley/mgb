@@ -10,7 +10,7 @@ import { logActivity } from '/imports/schemas/activity'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
 
-import {getAssetBySelector} from '/client/imports/helpers/assetFetchers'
+import { getAssetBySelector } from '/client/imports/helpers/assetFetchers'
 
 
 // for convenience, extract out the skillItems' $meta content into a simple array

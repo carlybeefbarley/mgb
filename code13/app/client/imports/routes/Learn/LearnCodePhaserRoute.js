@@ -12,6 +12,9 @@ import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
 // TODO make this dynamic
 import tutorialObject from '/public/codeTutorialsPhaser.json'
 
+import { getAssetBySelector } from '/client/imports/helpers/assetFetchers'
+
+
 const phaserSkills = SkillNodes.code.js.phaser
 const skillItems = []
 for (var key in phaserSkills) {
@@ -37,27 +40,44 @@ export const StartJsGamesRoute = (name, code, currUser, newTab) => {
   const newAsset = {
     name: 'tutorials.phaser.' + name,
     kind: 'code',
-    skillPath: 'code.js.phaser.' + name,
-    content2: { src: code },
-    isCompleted: false,
     isDeleted: false,
-    isPrivate: false
+    dn_ownerName: currUser.username
   }
 
-  Meteor.call( 'Azzets.create', newAsset, (error, result) => {
-    if (error) {
-      showToast( "cannot create Asset because: " + error.reason, 'error' )
-      return
+  // check if asset exists
+  getAssetBySelector(newAsset, (asset, err) => {
+    if (asset)  // asset exists. open it.
+    {  
+      const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
+      openUrl(url, newTab)
     }
-    newAsset._id = result             // So activity log will work
-    logActivity( "asset.create", 'Created game tutorial', null, newAsset )
-    const url = `/u/${currUser.username}/asset/${newAsset._id}`
+    else        // asset doesn't exist. create one.
+    {  
+      newAsset.skillPath = 'code.js.phaser.' + name
+      newAsset.content2 = { src: code }
+      newAsset.isCompleted = false
+      newAsset.isPrivate = false
 
-    if (newTab)
-      window.open( window.location.origin + url )
-    else
-      utilPushTo( window.location, url )
+      Meteor.call( 'Azzets.create', newAsset, (error, result) => {
+        if (error) {
+          showToast( "cannot create Asset because: " + error.reason, 'error' )
+          return
+        }
+        newAsset._id = result             // So activity log will work
+        logActivity( "asset.create", 'Created game tutorial', null, newAsset )
+        const url = `/u/${currUser.username}/asset/${newAsset._id}`
+
+        openUrl(url, newTab)
+      })
+    }
   })
+}
+
+const openUrl = (url, newTab) => {
+  if (newTab)
+    window.open( window.location.origin + url )
+  else
+    utilPushTo( window.location, url )
 }
 
 const LearnCodePhaserRoute = ({ currUser }, context) => {

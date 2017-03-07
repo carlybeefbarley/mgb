@@ -1,6 +1,7 @@
 #!/bin/bash
 # this file will setup brand new ubuntu ami - used for template for other slaves
 # you still need to create default ubuntu instance manually
+# this script can be used to update slave directly (but it's not it main purpose)
 
 if [ $# -lt 3 ]; then
   echo "usage:"
@@ -30,5 +31,8 @@ echo "executing update script on instance"
 ssh -i $awsCert ubuntu@${awsUri} 'bash -s' < ${DIR}/updateSlave.sh
 
 echo "executing setup script on instance"
-ssh -i $awsCert ubuntu@${awsUri} 'bash -s' < ${DIR}/setup.ubuntu.sh
+ssh -i $awsCert ubuntu@${awsUri} <<'ENDSSH'
+cd mgb
+./setup.ubuntu.sh
+ENDSSH
 

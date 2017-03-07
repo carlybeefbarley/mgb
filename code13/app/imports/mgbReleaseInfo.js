@@ -13,6 +13,40 @@ const mgbReleaseInfo = {
 
   'releases': [
     {
+      'timestamp': 'Monday Mar 6 2017 16:30 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3646'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': '"Game development concepts" tutorials in-editor',
+          'changeSummary': 'The "Game development concepts" tutorials are being moved to the new in-editor CodeTutorials system. Not complete yet, but you can see the progress so far.. ',
+          'otherUrls': [
+             { txt: '"Game development concepts Tutorials (changing...)', href: '/learn/code/phaser' },
+             { txt: 'Javascript Code Challenge Tutorials', href: '/learn/code/javascript' }
+          ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Bugfixes for improved error feedback for invalid asset name / descriptions. We no longer show chat counts for global channels for new users (until after they have visited the channel). Fix some issues with Thumbnail rendering.',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+    
+    {
       'timestamp': 'Sunday Mar 5 2017 14:00 GMT-0800 (PST)',
 
       'id': {
@@ -28,7 +62,7 @@ const mgbReleaseInfo = {
       'changes': [
         {
           'featureTag': 'nav.mobile',
-          'type': 'bugfix',
+          'type': 'feature',
           'changeName': 'Public project search',
           'changeSummary': 'There is now a Public project search page accessible from the "Meet" menu. This shows Forkable Projects from all users with a workState of "working" or better. You can change the search parameters from that page.' ,
           'otherUrls': [ 
@@ -175,7 +209,7 @@ const mgbReleaseInfo = {
         },
         {
           'featureTag': 'learn',
-          'type': 'bugfix',
+          'type': 'improvement',
           'changeName': 'Coding Challenges now have console output',
           'changeSummary': 'Some of the Code Challenges use console.log() output. We now show the console output for those tools in-browser. Also, the getStarted Page has had a facelift',
           'otherUrls': [

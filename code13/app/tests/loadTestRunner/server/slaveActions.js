@@ -24,7 +24,7 @@ const events = {
     }
     const slave = getIdleSlave(slaves)
     if (slave) {
-      console.log(`Starting test on slave with ${slave.jobs} jobs already running on: ${
+      smAll(clients, 'log', `Starting test on slave with ${slave.jobs} jobs already running on: ${
         slave.ws.upgradeReq.headers['x-forwarded-for'] || slave.ws.upgradeReq.connection.remoteAddress}`)
       slave.jobs++
       sm(slave.ws, "start", data)
@@ -52,7 +52,7 @@ const events = {
     })
   },
   updateCompleted: (data, ws, clients, slaves) => {
-    console.log(`Slave updated: ${
+    smAll(clients, 'log', `Slave updated: ${
       ws.upgradeReq.headers['x-forwarded-for'] || ws.upgradeReq.connection.remoteAddress}`)
   }
 }

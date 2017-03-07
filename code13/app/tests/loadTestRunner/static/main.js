@@ -84,6 +84,9 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
     slavesTerminated: data => {
       console.log("Slaves terminated...")
     },
+    log: data => {
+      console.log(">>>", data)
+    },
     critical: data => {
       alert("Critical error!\n" + data)
     },

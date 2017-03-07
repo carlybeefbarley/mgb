@@ -150,14 +150,17 @@ export default QLink = React.createClass({
 
 })
 
-/** utilPushTo()
- *
- * This is a replacement for browserHistory.push()
+/**
+ * This is a replacement for browserHistory.push(). Use this when you want to add an
+ * additional step into the browser history
  *
  * @export
- * @param {any} existingQuery
- * @param {string} newTo
- * @param {any} [extraQueryParams={}]
+ * @param {Object} existingQuery from something like window.location.query
+ * It is parameterized here instead of just using window.location.query in order to
+ * support a tab concept *within* an MGB page. Uses of window.location.query by the
+ * caller are tech debt against that future goal
+ * @param {string} newTo newUrl to go to
+ * @param {Object} [extraQueryParams={}] extra query params to apply
  */
 export function utilPushTo(existingQuery, newTo, extraQueryParams = {})
 {
@@ -170,6 +173,18 @@ export function utilPushTo(existingQuery, newTo, extraQueryParams = {})
   browserHistory.push(location)
 }
 
+/**
+ * This is a replacement for browserHistory.replace(). Use this when you DO NOT 
+ * want to add an additional step into the browser history - for example from a redirect
+ * See #225 for examples of cases that need to use this.
+ * 
+ * @param {Object} existingQuery from something like window.location.query.
+ * It is parameterized here instead of just using window.location.query in order to
+ * support a tab concept *within* an MGB page. Uses of window.location.query by the
+ * caller are tech debt against that future goal
+ * @param {string} newTo newUrl to go to
+ * @param {Object} [extraQueryParams={}] extra query params to apply
+ */
 export function utilReplaceTo(existingQuery, newTo, extraQueryParams = {})
 {
   const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery)

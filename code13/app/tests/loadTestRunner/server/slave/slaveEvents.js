@@ -43,5 +43,13 @@ module.exports = {
         // console.log(`child process exited with code ${code}`)
       })
     })
+  },
+  update:(data, ws)=>{
+    const update = spawn(__dirname + '/../../../updateSlave.sh', {
+      env: {PATH: process.env.PATH}
+    })
+    update.on('close', () => {
+      sm(ws, "updateCompleted", {})
+    })
   }
 }

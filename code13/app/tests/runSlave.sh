@@ -4,6 +4,9 @@
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
+#selfUpdate
+./updateSlave.sh
+
 # we don't use root account - so all npm modules (phantomjs) binaries are here
 export PATH=$PATH":$HOME/node_modules/.bin"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

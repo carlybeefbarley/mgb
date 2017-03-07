@@ -29,13 +29,6 @@ module.exports = {
     startSlave: (data, ws, clients, slaves) => {
       smAll(clients, 'slaveStarting', data)
       console.log("starting slave")
-      /*
-      dummy test
-      setTimeout(() => {
-        smAll(clients, 'slaveStarted', data)
-        console.log("started slave")
-      }, 1000)*/
-
       ec2.createSlaves(() => {
         smAll(clients, 'slaveStarted', data)
       })
@@ -45,6 +38,9 @@ module.exports = {
       ec2.terminateSlaves(() => {
         smAll(clients, 'slavesTerminated', data)
       })
+    },
+    updateSlaves: (data, ws, clients, slaves) => {
+      slaveActions.events.updateSlaves(data, ws, clients, slaves)
     }
   }
 }

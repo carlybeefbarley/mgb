@@ -45,6 +45,11 @@ const events = {
     //console.log("Runner completed!")
     smAll(clients, 'runnerCompleted', data)
     //clientActions.events.runnerCompleted(data, ws, clients, slaves)
+  },
+  updateSlaves: (data, ws, clients, slaves) => {
+    slaves.forEach((slave) => {
+      sm(slave.ws, "update", data)
+    })
   }
 }
 module.exports = {

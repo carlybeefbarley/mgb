@@ -55,8 +55,8 @@ const LearnCodeModifyRoute = ( { currUser }, context ) => {
       <Divider hidden />
       <Grid.Column>
         <Header as='h1'>
-          JavaScript programming basics
-          <Header.Subheader>Click on item and explore it</Header.Subheader>
+          Fork and Modify some existing games
+          <Header.Subheader>Click on item to see the game's project page. You can then try the game, see how it is written and even fork + modify it as you wish</Header.Subheader>
         </Header>
       </Grid.Column>
       <Grid.Column>

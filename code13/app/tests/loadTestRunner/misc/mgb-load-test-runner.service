@@ -1,0 +1,11 @@
+Description=MGB Load Test Runner
+After=network.target
+
+[Service]
+User=ubuntu
+Restart=always
+Type=simple
+ExecStart=/home/ubuntu/mgb/code13/app/tests/loadTestRunner/runService.sh
+
+[Install]
+WantedBy=multi-user.target

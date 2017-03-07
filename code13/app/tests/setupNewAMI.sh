@@ -24,13 +24,13 @@ if [ ! -f $awsCert ]; then
   exit 1
 fi
 
-echo "copying master certificate to instance"
+echo ">>>> copying master certificate to instance"
 scp -i $awsCert $cert ubuntu@${awsUri}:~/master.pem
 
-echo "executing update script on instance"
+echo ">>>> executing update script on instance"
 ssh -i $awsCert ubuntu@${awsUri} 'bash -s' < ${DIR}/updateSlave.sh
 
-echo "executing setup script on instance"
+echo ">>>> executing setup script on instance"
 ssh -i $awsCert ubuntu@${awsUri} <<'ENDSSH'
 cd mgb
 ./setup.ubuntu.sh

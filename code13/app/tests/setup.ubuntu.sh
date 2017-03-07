@@ -22,7 +22,7 @@ nvm install node
 # install dependencies
 npm install
 
-# create service
+# create service - move to separate file and copy instead of creating at runtime?
 sudo bash -c 'cat << EOF > /etc/systemd/system/mgb-test-slave.service
 [Unit]
 Description=MGB Test Slave
@@ -41,7 +41,7 @@ EOF'
 # update services daemon
 sudo systemctl daemon-reload
 # start service
-sudo service mgb-test-slave enable
+sudo service mgb-test-slave enable # this seems to be failing.. is it required at all ???
 sudo service mgb-test-slave start
 
 

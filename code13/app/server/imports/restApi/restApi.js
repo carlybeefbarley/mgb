@@ -14,9 +14,6 @@ export const emptyPixel = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAE
 
 // TODO: use enums instead of strings for asset kinds
 
-// this is used to test cache and cache invalidation - on NGINX and Cloudfront
-// Currently disabled as we are not using invalidation
-
 /*RestApi.addRoute('test', {authRequired: false}, {
   get: function(){
     if(this.request.headers[cache.cacheServerHeader]){

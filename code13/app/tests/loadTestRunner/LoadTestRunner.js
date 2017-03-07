@@ -22,7 +22,7 @@ const checkAuth = (headers, user, password) => {
 
 s.on('request', (req, res) => {
   const path = req.url == '/' ? '/static/index.html' : '/static' + req.url
-  const filename = process.cwd() + path
+  const filename = __dirname + path
   const rs = fs.createReadStream(filename)
 
   if(!checkAuth(req.headers, 'mgb', 'superSecretPass')){

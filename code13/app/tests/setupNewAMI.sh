@@ -5,7 +5,7 @@
 
 if [ $# -lt 3 ]; then
   echo "usage:"
-  echo "./setupNewAMI.sh ec2-ip-address.compute-1.amazonaws.com masterCertificate.pem amiCertificate.pem"
+  echo "./setupNewAMI.sh ec2-ip-address.compute-1.amazonaws.com amiCertificate.pem masterCertificate.pem"
   exit 0
 fi
 
@@ -16,7 +16,7 @@ awsCert=$2
 cert=$3
 
 if [ ! -f $cert ]; then
-  echo "Cannot find certificate! "$cert
+  echo "Cannot find master certificate! "$cert
   exit 1
 fi
 if [ ! -f $awsCert ]; then
@@ -24,7 +24,7 @@ if [ ! -f $awsCert ]; then
   exit 1
 fi
 
-echo "copying cert to instance"
+echo "copying master certificate to instance"
 scp -i $awsCert $cert ubuntu@${awsUri}:~/master.pem
 
 echo "executing update script on instance"

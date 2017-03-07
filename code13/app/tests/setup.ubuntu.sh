@@ -38,6 +38,8 @@ ExecStart=/home/ubuntu/mgb/runSlave.sh
 WantedBy=multi-user.target
 EOF'
 
+# update services daemon
+sudo systemctl daemon-reload
 # start service
 sudo service mgb-test-slave enable
 sudo service mgb-test-slave start

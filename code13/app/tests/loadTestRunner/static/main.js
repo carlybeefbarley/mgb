@@ -11,6 +11,7 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
 
   const txt = {
     startSlave: 'Start New Slave',
+    updateSlaves: 'Update All Slaves',
     terminateSlaves: 'Terminate All Slaves'
   }
   const status = {
@@ -41,6 +42,9 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
   // new ml.TestCase({name: 'random.error', id: 'random.error', title: 'SelfTest: Generate Errors Randomly'}, restart)
   status.info.addOrUpdate(txt.startSlave, '', () => {
     sendMessage('startSlave')
+  })
+  status.info.addOrUpdate(txt.updateSlaves, '', () => {
+    sendMessage('updateSlaves')
   })
   status.info.addOrUpdate(txt.terminateSlaves, '', () => {
     confirm("DO YOU REALLY WANT TO TERMINATE ALL SLAVES???") && sendMessage('terminateSlaves')

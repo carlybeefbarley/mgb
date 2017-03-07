@@ -1,9 +1,16 @@
-/*module.exports = {
-  "accessKeyId": "104QCDA4V07YPPSVBKG2",
-  "secretAccessKey": "QB65XLlJzlQ4w8ifWhkhv/a48ayihIS9k8v7CSPn",
-  "region": "us-east-1"
-}*/
+module.exports = {
+  aws: {
+    "accessKeyId": "104QCDA4V07YPPSVBKG2",
+    "secretAccessKey": "QB65XLlJzlQ4w8ifWhkhv/a48ayihIS9k8v7CSPn",
+    "region": "us-east-1",
+    apiVersion: '2016-11-15'
+  },
+  slave: {
+    ami: 'ami-168f2900'
+  }
+}
 
+/*
 module.exports = {
   aws: {
     "accessKeyId": "AKIAIUGO5M3BAOAW4MLQ",
@@ -15,3 +22,4 @@ module.exports = {
     ami: 'ami-7463bb62'
   }
 }
+*/

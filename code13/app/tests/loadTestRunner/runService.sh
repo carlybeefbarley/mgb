@@ -8,6 +8,7 @@ fi
 
 
 (
+export PATH=$PATH":/home/ubuntu/node_modules/.bin"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR"/../"
 # run and refresh automatically on changes

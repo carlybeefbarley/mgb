@@ -9,6 +9,7 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import Helmet from 'react-helmet'
 
 import AssetEdit from '/client/imports/components/Assets/AssetEdit'
+import { AssetKinds } from '/imports/schemas/assets'
 
 import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
@@ -78,6 +79,12 @@ const fAllowSuperAdminToEditAnything = false // TODO: PUT IN SERVER POLICY?
 export const offerRevertAssetToForkedParentIfParentIdIs = forkParentId => {
   const event = new CustomEvent('mgbOfferRevertToFork', { 'detail': forkParentId } )
   setTimeout(() => { window.dispatchEvent(event) }, 0) // Prevent setState during render if this was called due to render
+}
+
+const _makeTitle = (kind, hasUnsentSaves, isUnconfirmedSave, assetName) => {
+  const assetKindName = AssetKinds.getName(kind)
+  const unsavedMarker = hasUnsentSaves ? '〉' : (isUnconfirmedSave ? '》' : ' ')
+  return `${assetKindName}: ${unsavedMarker}'${assetName || '(unnamed)'}'`
 }
 
 export default AssetEditRoute = React.createClass({
@@ -335,10 +342,8 @@ export default AssetEditRoute = React.createClass({
       <Grid padded>
 
         <Helmet
-          title="Asset Editor"
-          meta={[
-              {"name": "description", "content": "Assets"}
-          ]}
+          title={ _makeTitle(asset.kind, hasUnsentSaves, asset.isUnconfirmedSave, asset.name) }
+          meta={[ { "name": "Asset Editor", "content": "Assets" } ]}
         />
 
         { !isTooSmall &&

@@ -2,16 +2,152 @@
   "drawImage": {
     "steps": [
       {
-        "text": "phaser draw image",
-        "code": "import 'phaser'\nvar drawImg"
+        "text": "<b>Draw an image</b>. First load texture in <code>preload()</code> function and then draw it in <code>create()</code> function.",
+        "code": "import 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create })\n\n\nfunction preload() {\n  //  You can fill the preloader with as many assets as your game requires\n\n  //  Here we are loading an image. The first parameter is the unique\n  //  string by which we'll identify the image later in our code.\n\n  //  The second parameter is the URL of the image (relative)\n  game.load.image('cupcake', '/api/asset/png/!vault/phaserData.cupcake')\n}\n\n\nfunction create() {\n  //  This creates a simple sprite that is using our loaded image and\n  //  displays it on-screen\n  game.add.sprite(20, 20, 'cupcake')\n}"
       }
     ]
   },
   "positionImage": {
     "steps": [
       {
-        "text": "phaser position image",
-        "code": "import 'phaser'\nvar positionImg"
+        "text": "<b>Positio image</b>. Sprite has <code>x</code> and <code>y</code> parameters to position it anywhere on the screen. Use <code>anchor</code> parameter to set position more convenient.",
+        "code": "import 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create })\n\n\nfunction preload() {\n  game.load.image('monster', '/api/asset/png/!vault/phaserData.monster')\n}\n\n\nfunction create() {\n  // draw two monster images and assing each to a variable\n  var monster1 = game.add.sprite(0, 0, 'monster')\n  var monster2 = game.add.sprite(0, 0, 'monster')\n  \n  // set monster position to center of the game\n  monster2.x = game.width / 2\n  monster2.y = game.height / 2\n  \n  // set monster anchor point to the middle of sprite\n  // now monster coordinates are note calculated from top left point, but from the middle\n  monster2.anchor.x = 0.5\n  monster2.anchor.y = 0.5\n  \n  // you can calculate and align middle point yourself, but it is not that handy\n  // comment anchor manipulations and uncomment code below and see yourself\n  // monster2.x = game.width / 2 - monster.width / 2\n  // monster2.y = game.height / 2 - monster.height / 2\n}"
+      }
+    ]
+  },
+  "taskSetPosition": {
+    "steps": [
+      {
+        "text": "<b>Task</b>. Draw 5 monster images. Position 4 of them on each corner precisely 20 px from sides like in this image<br/> <img src='/api/asset/png/!vault/phaserData.5monsters' /><br/> position 5th precisely in the middle.<br/><br/> TIP: use anchors",
+        "code": "// TASK\n// draw 5 monster images\n// position 4 of them on each corner precisely 20 px from sides like in this image\n// https://v2.mygamebuilder.com/api/asset/png/!vault/phaserData.5monsters\n// position 5th precisely in the middle\n// TIP: use anchors\n\n\nimport 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create })\n\n\nfunction preload() {\n  game.load.image('monster', '/api/asset/png/!vault/phaserData.monster')\n}\n\n\nfunction create() {\n   var monster = game.add.sprite(0, 0, 'monster')\n}"
+      }
+    ]
+  },
+  "manipulateImage": {
+    "steps": [
+      {
+        "text": "Image scaling, transparency, rotation and tinting",
+        "code": "import 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create })\n\nfunction preload() {\n  game.load.image('house', '/api/asset/png/!vault/phaserData.house')\n}\n\nfunction create() {\n  // draw five identical sprites at the same position\n  var house1 = game.add.sprite(80, 30, 'house')\n  var house2 = game.add.sprite(80, 30, 'house')\n  var house3 = game.add.sprite(80, 30, 'house')\n  var house4 = game.add.sprite(80, 30, 'house')\n  var house5 = game.add.sprite(80, 30, 'house')\n  \n  // rotate first house 45 degrees\n  // rotation 0 point is in top and rotation happens clockwise\n  house1.angle = 45\n  \n  // move second house to right bottom corner\n  // Coordinates starts at top left corner where x = 0 and y = 0\n  house2.x = 400\n  house2.y = 180\n  \n  // scale down third house 2x \n  house3.scale.x = 0.5\n  house3.scale.y = 0.5\n  house3.x = 400\n  \n  // tint fourth house red\n  // color has 3 components Red, Green, Blue \n  // Component values are hexadecimal from 00 to ff\n  // In this example Red = ff, Green = 00 and Blue = 00\n  house4.tint = 0xff0000\n  house4.y = 180\n  \n  // set image opacity so it can be barely seen\n  house5.alpha = 0.3\n}"
+      }
+    ]
+  },
+  "inputClick": {
+    "steps": [
+      {
+        "text": "Click on image, click on game",
+        "code": "import 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.AUTO, 'game', { preload: preload, create: create })\n\nfunction preload() {\n    game.load.image('cupcake', '/api/asset/png/!vault/phaserData.cupcake')\n}\n\n// define a global variable which we can access in any function in the file\nvar cupcake\n\nfunction create() {\n  cupcake = game.add.sprite(80, 120, 'cupcake')\n  \n  // anchor point by default is 0, 0 which is top left corner of image\n  // we are defining anchor point in the middle so that scaling doesn't look weird\n  // fork this project and play around with anchor points\n  cupcake.anchor.x = 0.5\n  cupcake.anchor.y = 0.5\n  \n  // by default clicking on sprite will have 0 effect. We have to enable this feature\n  cupcake.inputEnabled = true\n  \n  // sprite has different events. More http://phaser.io/docs/2.4.7/Phaser.Events.html#members\n  // we pass a function which is executed when trigger event occurs\n  cupcake.events.onInputDown.add(clickCupcake)\n  \n  // event triggers when we click anywhere on the game screen\n  game.input.onDown.add(clickGame)\n}\n\nfunction clickCupcake(){\n  cupcake.scale.x += 0.1\n  cupcake.scale.y += 0.1\n}\n\nfunction clickGame(){\n  cupcake.x += 10\n}"
+      }
+    ]
+  },
+  "taskInput": {
+    "steps": [
+      {
+        "text": "<b>Task</b>. On each click make the sprite rotate counter clockwise by 10°",
+        "code": "// TASK \n// On each click make the sprite rotate counter clockwise by 10°\n\nimport 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create })\n\n\nfunction preload() {\n  game.load.image('cupcake', '/api/asset/png/!vault/phaserData.cupcake')\n}\n\n\nfunction create() {\n  game.add.sprite(150, 20, 'cupcake')\n}"
+      }
+    ]
+  },
+  "inputKeyboard": {
+    "steps": [
+      {
+        "text": "Using Keyboard input for your game",
+        "code": "import 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create })\n\nfunction preload() {\n  // we don't have any graphics so there is nothing to preload\n}\n\n// global variables\nvar rightKey, rightText\n\nfunction create() {\n  // you can register also other keys for example:\n // Phaser.Keyboad.A   \n // Phaser.Keyboad.5   \n  // Phaser.Keyboard.SHIFT\n rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT)\n  \n  rightText = game.add.text(20, 120, 'Right key is up', {fill: '#ffffff'})\n  \n  // Add custom function and trigger on events\n  rightKey.onDown.add(rightKeyDown)\n  rightKey.onUp.add(rightKeyUp)\n}\n\nfunction rightKeyDown(){\n  rightText.setText('Right key is down')\n}\n\nfunction rightKeyUp(){\n  rightText.setText('Right key is up')\n}"
+      }
+    ]
+  },
+  "updateFunction": {
+    "steps": [
+      {
+        "text": "Example of increasing/descreasing Image size based on up/down arrow keypresses",
+        "code": "import 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update })\n\nfunction preload() {\n  // we don't have any graphics so there is nothing to preload\n}\n\n// global variables\nvar leftKey, leftText\n\nfunction create() {\n leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT)\n  \n  leftText = game.add.text(20, 20, 'Left key is up', {fill: '#ffffff'})\n}\n\n// update is build in function which calls 60 times a second\nfunction update(){\n  // in previous example we added custom functions to check if a key is down\n  // in this example we can check isDown parameter in update() function\n  if(leftKey.isDown){\n    leftText.setText('Left key is down')\n  } else {\n    leftText.setText('Left key is up')\n  }\n}"
+      }
+    ]
+  },
+  "taskMoveChar": {
+    "steps": [
+      {
+        "text": "<b>Task</b>. Move dwarf around screen using keyboard arrow keys. <br/>Extra point - pressing C key and setting dwarf position in the middle of screen. <br/>Extra 3 points - do not allow dwarf to go outside of visible screen. <br/><br/>TIP: for moving character use <code>update()</code> function and add event for resetting position",
+        "code": "// TASK\n// move dwarf around screen using keyboard arrow keys\n// extra point - pressing C key and setting dwarf position in the middle of screen with \n// extra 3 points - do not allow dwarf to go outside of visible screen\n// TIPS: for moving character use update() function and add event for resetting position \n\nimport 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update })\n\nfunction preload() {\n  game.load.image('dwarf', '/api/asset/png/!vault/phaserData.dwarf')\n  \n}\n\nvar dwarf\n\nfunction create() {\n dwarf = game.add.sprite(game.width/2, game.height/2, 'dwarf')\n dwarf.anchor.x = 0.5\n  dwarf.anchor.y = 0.5\n}\n\nfunction update(){\n  \n}"
+      }
+    ]
+  },
+  "spriteSheet": {
+    "steps": [
+      {
+        "text": "Frame animation for a character",
+        "code": "import 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create, render: render })\n\nfunction preload() {\n  // note that we are loading spritesheet instead of image - game.load.spritesheet\n  // spritesheet consists of multiple images combained\n  // take a look at link https://v2.mygamebuilder.com/api/asset/tileset/!vault/phaserData.digger\n  \n  // also there are two more parameters at the end 90, 90 - this represents width and height of one frame\n  game.load.spritesheet('digger', '/api/asset/tileset/!vault/phaserData.digger', 90, 90)\n}\n\nvar digger\n\nfunction create() {\n  digger = game.add.sprite(100, 100, 'digger')\n  digger.scale.set(2)\n  \n  // here we define animations for digger\n  // first parameter is a name - we need it later to play animation\n  // second parameter is an array of animation frames\n  // third parameter defines frame count per second\n  // last parameter is for auto looping\n  digger.animations.add('stand', [0, 1, 2, 3], 10, true)\n digger.animations.add('fly', [4, 5, 6, 7], 10, true)\n digger.animations.add('run', [8, 9, 10], 10, true)\n digger.animations.add('dig', [18, 19, 20], 10, false)\n  \n  // define keys and actions12\n  let key1 = game.input.keyboard.addKey(Phaser.Keyboard.ONE)\n  key1.onDown.add(standAnimation)\n  \n  let key2 = game.input.keyboard.addKey(Phaser.Keyboard.TWO)\n  key2.onDown.add(flyAnimation)\n  \n  let key3 = game.input.keyboard.addKey(Phaser.Keyboard.THREE)\n  key3.onDown.add(runAnimation)\n  \n  let key4 = game.input.keyboard.addKey(Phaser.Keyboard.FOUR)\n  key4.onDown.add(digAnimation)\n}\n\n// render is build in method and is used for debugging\nfunction render(){\n  game.debug.text('Press on keyboard 1, 2, 3 or 4', 32, 32)\n}\n\nfunction standAnimation(){\n  digger.animations.play('stand')\n}\n\nfunction flyAnimation(){\n  digger.animations.play('fly')\n}\n\nfunction runAnimation(){\n  digger.animations.play('run')\n}\n\nfunction digAnimation(){\n  digger.animations.play('dig')\n}"
+      }
+    ]
+  },
+  "spriteSheetEvents": {
+    "steps": [
+      {
+        "text": "Animation start, stop and looping",
+        "code": "import 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create })\n\n\nfunction preload() {\n  // this spritesheet has frames with dimension 194x214px\n  game.load.spritesheet('runner', '/api/asset/tileset/!vault/phaserData.character', 194, 214)\n}\n\nvar loopText\n\nfunction create() {\n  var runner = game.add.sprite(100, 90, 'runner')\n  \n  // note that we save animatin in variable\n  var anim = runner.animations.add('walk', [0, 1, 2, 3, 4, 5], 10, true)\n  \n  // adding functions to animation events\n  anim.onStart.add(animationStarted)\n  anim.onLoop.add(animationLooped)\n  anim.onComplete.add(animationStopped)\n\n  anim.play()\n}\n\nfunction animationStarted() {\n  game.add.text(32, 32, 'Animation started', { fill: 'white' })\n}\n\n// note that sprite and animation is passed automatically to function\n// so you don't have to define global variables and keep your code cleen\nfunction animationLooped(sprite, animation) {\n  if (animation.loopCount === 1){\n    loopText = game.add.text(32, 64, 'Animation looped', { fill: 'white' })\n  }\n  else {\n    loopText.text = 'Animation looped x2'\n    animation.loop = false\n  }\n}\n\nfunction animationStopped() {\n  game.add.text(32, 64+32, 'Animation stopped', { fill: 'white' })\n}"
+      }
+    ]
+  },
+  "taskCharAnim": {
+    "steps": [
+      {
+        "text": "<b>Task</b>. <br/>Move dwarf around screen using keyboard arrow keys. Add animations - spawn (in the beginning), run, idle. Do it correctly so after finishing run animation start idle animation. After spawning character start idle. <br/>Do not allow dwarf to go outside of visible screen ",
+        "code": "// TASK\n// move dwarf around screen using keyboard arrow keys\n// add animations - spawn (in the beginning), run, idle.\n// Do it correctly so after finishing run animation start idle animation. After spawning character start idle\n// do not allow dwarf to go outside of visible screen\n\nimport 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update })\n\nfunction preload() {\n  game.load.spritesheet('dwarf', '/api/asset/tileset/!vault/phaserData.dwarf', 64, 64)\n}\n\nvar dwarf\nvar leftKey\n\nfunction create() {\n  // setting background color for better dwarf visibility\n  game.stage.backgroundColor = '#2384e7'\n  \n dwarf = game.add.sprite(game.width/2, game.height/2, 'dwarf')\n dwarf.anchor.x = 0.5\n  dwarf.anchor.y = 0.5\n  \n  // add some more animations here. You can check the tileset https://v2.mygamebuilder.com/api/asset/tileset/!vault/phaserData.dwarf\n  // tip: spawn animation is frames 12-17\n  // tip: idle animation is frames 0-3\n  dwarf.animations.add('run', [4, 5, 6, 7], 10, true)\n  \n  \n  leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT)\n  leftKey.onDown.add(leftKeyDown)\n}\n\nfunction update(){\n  if(leftKey.isDown){\n    // minusing coordinates go, plusing to right\n    dwarf.x -= 5\n  }\n}\n\nfunction leftKeyDown(){\n  dwarf.animations.play('run')\n  // clever way to flip character on x axes. -1 flipped and 1 is back to normal\n  dwarf.scale.x = -1\n}\n\n\n"
+      }
+    ]
+  },
+  "physicsBasics": {
+    "steps": [
+      {
+        "text": "Velocity, gravity, bounce and world bounds",
+        "code": "import 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create })\n\nfunction preload() {\n  game.load.image('chest', '/api/asset/png/!vault/phaserData.chest')\n  game.load.image('ball', '/api/asset/png/!vault/phaserData.balls')\n  game.load.image('jelly', '/api/asset/png/!vault/phaserData.jelly')\n}\n\nfunction create() {\n  game.stage.backgroundColor = '#2d2d2d'\n  \n  // enable physics. By default it is disabled\n  game.physics.startSystem(Phaser.Physics.ARCADE)\n  \n  // create 3 sprites\n  var chest = game.add.sprite(20, 10, 'chest')\n  var ball = game.add.sprite(150, 10, 'ball')\n  var jelly = game.add.sprite(250, 10, 'jelly')\n  \n  // enable physics for sprites, pass them as array (one object is also accepted)\n  // after enabling physics sprite has one more property - body\n  game.physics.enable( [ chest, ball, jelly ], Phaser.Physics.ARCADE)\n  \n  // body.gravity applies gravity (we can do it also for x axis)\n  chest.body.gravity.y = 100\n  \n  ball.body.gravity.y = 100\n  // ball will collide with floor and wouldn't disappear\n  ball.body.collideWorldBounds = true\n  // after colliding with floor it will bounce back\n  ball.body.bounce.y = 0.5\n  \n  \n  // instead of gravity we can also apply a linar velocity (used more common on x axis for movement)\n  jelly.body.velocity.y = 100\n}\n"
+      }
+    ]
+  },
+  "physicsCollide": {
+    "steps": [
+      {
+        "text": "Collisions between two objects",
+        "code": "import 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update })\n\nfunction preload() {\n    game.load.spritesheet('face', '/api/asset/tileset/!vault/phaserData.jelly', 60, 70)\n}\n\nvar face1\nvar face2\n\nfunction create() {\n  face1 = game.add.sprite(0, 20, 'face')\n  face2 = game.add.sprite(400, 0, 'face')\n\n  face1.animations.add('smash', [4, 5, 6, 7, 8, 8, 0], 15, false)\n  face2.animations.add('smash', [4, 5, 6, 7, 8, 8, 0], 15, false)\n\n  game.physics.startSystem(Phaser.Physics.ARCADE)\n\n  //  Set-up the physics bodies\n  game.physics.arcade.enable([face1, face2])\n\n  face1.body.velocity.setTo(200, 200)\n  // bounce back with exactly the same speed\n  face1.body.bounce.set(1)\n\n  face2.body.velocity.setTo(-210, 210)\n  face2.body.bounce.set(1)\n\n  face1.body.collideWorldBounds = true\n  face2.body.collideWorldBounds = true\n}\n\nfunction update () {\n  // first two parameters are objects and third callback function\n  // calback executes when collision happens\n  // note that you can check collision only in update function\n  game.physics.arcade.collide(face1, face2, function(sprite1, sprite2){\n    sprite1.play('smash')\n    sprite2.play('smash')\n  })\n}\n"
+      }
+    ]
+  },
+  "taskJump": {
+    "steps": [
+      {
+        "text": "<b>Task</b>. Digger needs jump over chest. Set <code>gravity</code> and <code>velocity</code> <code>x</code> on digger. Add jump functionality (digger can't jump in air, only if touching ground)<br/>Tip: you will need to set two collision: digger and grass, digger and chest. <br/>Extra point: add animations to digger",
+        "code": "// TASK\n// digger needs jump over chest\n// set gravity and velocity x on digger\n// add jump functionality (digger can't jump in air, only if touching ground)\n// tip: you will need to set two collision: digger and grass, digger and chest\n// extra point: add animations to digger\n\nimport 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update, render, render })\n\nfunction preload() {\n  game.load.spritesheet('digger', '/api/asset/tileset/!vault/phaserData.digger', 90, 90)\n  game.load.image('grass', '/api/asset/png/!vault/phaserData.grass')\n  game.load.image('chest', '/api/asset/png/!vault/phaserData.chest')\n}\n\nvar digger, grass, chest\n\nfunction create() {\n  grass = game.add.sprite(0, game.height, 'grass')\n  grass.anchor.y = 1\n  \n digger = game.add.sprite(20, game.height - grass.height, 'digger')\n  digger.anchor.y = 1\n  \n  chest = game.add.sprite(game.width/2, game.height -grass.height, 'chest')\n  // one liner for setting x and y anchors\n  chest.anchor.setTo(0.5, 1)\n  \n  // enabling physics\n  game.physics.startSystem(Phaser.Physics.ARCADE)\n  game.physics.arcade.enable([grass, digger, chest])\n  \n  // setting grass and chest immovalbe. Only digger can move\n  grass.body.immovable = true\n  chest.body.immovable = true\n  \n  // get rid of transparent pixels around digger\n  // play around body size and render debug\n  digger.body.setSize(50, 60, 20, 13)\n\n}\n\nfunction update(){\n  // tip: here will go collide function\n}\n\nfunction render() {\n  // uncomment to debug body size\n//     game.debug.body(digger)\n}"
+      }
+    ]
+  },
+  "tweens": {
+    "steps": [
+      {
+        "text": "Animating images with interpolation instead of frames",
+        "code": "import 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create })\n\nfunction preload() {\n    game.load.image('cupcake', '/api/asset/png/!vault/phaserData.cupcake')\n}\n\nfunction create() {\n    var sprite = game.add.sprite(-100, 0, 'cupcake')\n\n    //  Here we create a tween on the sprite created above\n    var tween = game.add.tween(sprite);\n\n    //  The object defines the properties to tween.\n    //  In this case it will move to x 500\n    //  The 5000 is the duration in ms - 5000ms = 5 seconds\n   //  The 'true' means that it will start automaticly\n   // The 0 means that animation will start immediately\n   // The Infinity is times that animation will repeat\n   // True at the end means that our tween will come back, not magicly respawn\n    tween.to({ x: 500 }, 5000, 'Linear', true, 0, Infinity, true)\n\n    //  And .start() method plays animation\n    tween.start()\n}\n"
+      }
+    ]
+  },
+  "groups": {
+    "steps": [
+      {
+        "text": "Adding sprites to a group",
+        "code": "import 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create })\n\nfunction preload() {\n  game.load.image('cupcake', '/api/asset/png/!vault/phaserData.cupcake')\n  game.load.image('coin', '/api/asset/png/!vault/phaserData.coin')\n}\n\nfunction create() {\n  //  Here we create 2 new groups\n  var cupcakeGroup = game.add.group()\n  var coinGroup = game.add.group()\n\n  for (var i = 0; i < 16; i++)\n  {\n    //  This creates a new Phaser.Sprite instance within the group\n    //  It will be randomly placed within the world and use the 'coin' image to display\n    coinGroup.create(200 + Math.random() * 200, 50 + Math.random() * 200, 'coin')\n  }\n\n  //  You can also add existing sprites to a group.\n  //  Here we'll create a local sprite called 'cupcake'\n  var cupcake = game.add.sprite(50, 10, 'cupcake')\n\n  //  And then add it to the group\n  cupcakeGroup.add(cupcake)\n}\n"
+      }
+    ]
+  },
+  "taskTweenGroup": {
+    "steps": [
+      {
+        "text": "<b>Task</b>. Create a group of 5 dwarfs. Animate group with tween from left to right side",
+        "code": "// TASK\n// create a group of 5 dwarfs\n// animate group with tween from left to right side\n\nimport 'phaser'\n\nvar game = new Phaser.Game(500, 300, Phaser.CANVAS, 'game', { preload: preload, create: create })\n\nfunction preload() {\n  game.load.image('dwarf', '/api/asset/tileset/!vault/phaserData.dwarf', 60, 60)\n}\n\nfunction create() {\n  \n}\n"
+      }
+    ]
+  },
+  "next": {
+    "steps": [
+      {
+        "text": "<b>What to do next?</b> <br/><br/>Check tons of other Phaser examples <a href='https://phaser.io/examples' target='_blank'>https://phaser.io/examples</a> <br/><br/>Check documentation <a href='https://phaser.io/docs' target='_blank'>https://phaser.io/docs</a>",
+        "code": "/*\nWhat to do next?\n\n\nCheck tons of other Phaser examples\nhttps://phaser.io/examples\n\n\nCheck documentation\nhttps://phaser.io/docs\n\n\n*/\n"
       }
     ]
   }

@@ -29,8 +29,9 @@ module.exports = {
     startSlave: (data, ws, clients, slaves) => {
       smAll(clients, 'slaveStarting', data)
       console.log("starting slave")
-      ec2.createSlaves(() => {
-        smAll(clients, 'slaveStarted', data)
+      ec2.createSlaves((err) => {
+        if(err) smAll(clients, 'log', err)
+        else smAll(clients, 'slaveStarted', data)
       })
     },
     terminateSlaves: (data, ws, clients, slaves) => {

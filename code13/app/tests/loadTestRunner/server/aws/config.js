@@ -6,7 +6,7 @@ module.exports = {
     apiVersion: '2016-11-15'
   },
   slave: {
-    ami: 'ami-168f2900'
+    ami: 'ami-7a94326c'
   }
 }
 

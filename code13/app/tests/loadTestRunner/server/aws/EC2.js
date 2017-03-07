@@ -28,6 +28,7 @@ module.exports = {
     ec2.runInstances(params, function(err, data) {
       if (err) {
         console.log("Could not create instance", err)
+        cb && cb(err)
         return
       }
 

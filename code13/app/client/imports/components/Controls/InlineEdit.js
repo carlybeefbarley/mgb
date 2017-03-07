@@ -49,9 +49,6 @@ export default class InlineEdit extends React.Component {
 
   componentWillMount() {
     this.isInputValid = this.props.validate || this.isInputValid
-    // Warn about deprecated elements
-    if (this.props.element)
-        console.warn('`element` prop is deprecated: instead pass editingElement or staticElement to InlineEdit component')
   }
 
   componentWillReceiveProps(nextProps) {
@@ -67,12 +64,12 @@ export default class InlineEdit extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-      let inputElem = ReactDOM.findDOMNode(this.refs.input)
-      if (this.state.editing && !prevState.editing) {
-        inputElem.focus()
-        selectInputText(inputElem)
-      } else if (this.state.editing && prevProps.text != this.props.text)
-        this.finishEditing()
+    let inputElem = ReactDOM.findDOMNode(this.refs.input)
+    if (this.state.editing && !prevState.editing) {
+      inputElem.focus()
+      selectInputText(inputElem)
+    } else if (this.state.editing && prevProps.text != this.props.text)
+      this.finishEditing()
   }
 
   startEditing = (e) => {
@@ -123,14 +120,16 @@ export default class InlineEdit extends React.Component {
 
   render () {
     if (this.props.isDisabled) {
-      const Element = this.props.element || this.props.staticElement
+      const Element = this.props.staticElement
       return (
         <Element className={this.props.className} style={this.props.style} >
           {this.state.text || this.props.placeholder}
         </Element>
       )
-    } else if (!this.state.editing) {
-      const Element = this.props.element || this.props.staticElement
+    } 
+    
+    if (!this.state.editing) {
+      const Element = this.props.staticElement
       return (
         <Element
           className={this.props.className}
@@ -140,20 +139,21 @@ export default class InlineEdit extends React.Component {
           {this.state.text || this.props.placeholder}
         </Element>
       )
-    } else {
-      const Element = this.props.element || this.props.editingElement
-      return (
-        <Element
-          onClick={this.clickWhenEditing}
-          onKeyDown={this.keyDown}
-          onBlur={this.finishEditing}
-          className={this.props.activeClassName}
-          placeholder={this.props.placeholder}
-          defaultValue={this.state.text}
-          onChange={this.textChanged}
-          style={this.props.style}
-          ref="input" />
-      )
     }
+      
+    const Element = this.props.editingElement
+    const isValid = this.isInputValid(this.state.text)
+    return (
+      <Element
+        onClick={this.clickWhenEditing}
+        onKeyDown={this.keyDown}
+        onBlur={this.finishEditing}
+        className={this.props.activeClassName}
+        placeholder={this.props.placeholder}
+        defaultValue={this.state.text}
+        onChange={this.textChanged}
+        style={ { ...this.props.style, color: (isValid ? null : 'red') } } 
+        ref="input" />
+    )
   }
 }

@@ -50,6 +50,10 @@ const events = {
     slaves.forEach((slave) => {
       sm(slave.ws, "update", data)
     })
+  },
+  updateCompleted: (data, ws, clients, slaves) => {
+    console.log(`Slave updated: ${
+      ws.upgradeReq.headers['x-forwarded-for'] || ws.upgradeReq.connection.remoteAddress}`)
   }
 }
 module.exports = {

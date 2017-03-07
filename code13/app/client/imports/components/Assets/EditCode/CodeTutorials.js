@@ -42,8 +42,9 @@ export default class CodeTutorials extends React.Component {
     // TODO this will be replaced with getting data from db
     this.tutorialData =  this.isPhaserTutorial ? tutorialObjectPhaser[this.skillName] : tutorialObject[this.skillName]
     this.state = {
-      step: 0,            // curent step of tutorial
-      isCompleted: false  // indicator if current tutorial is completed and we need to show modal
+      step: 0,                // curent step of tutorial
+      isCompleted: false,     // indicator if current tutorial is completed and we need to show modal
+      isTaskSubmitted: false   // indicator if task is submitted and we need to show modal
     }
   }
 
@@ -73,8 +74,7 @@ export default class CodeTutorials extends React.Component {
     const url = `❮!vault:${this.props.assetId}❯`
     ChatSendMessageOnChannelName('G_MGBHELP_', 'Check my Phaser task ' + url)
     utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
-    // TODO need to call another popup which says something about admin will verify yor task
-    this.successPopup()
+    this.setState({ isTaskSubmitted: true })
   }
 
   resetCode = (step) => {
@@ -97,7 +97,7 @@ export default class CodeTutorials extends React.Component {
 
   render () {
     const description = this.tutorialData.steps[this.state.step].text
-    const { isCompleted } = this.state
+    const { isCompleted, isTaskSubmitted } = this.state
     const returnToSkillsUrl = this.isPhaserTutorial ? '/learn/code/phaser' : '/learn/code/jsGames'
 
     return (
@@ -130,6 +130,28 @@ export default class CodeTutorials extends React.Component {
               </Modal.Header>
               <Modal.Content>
                 You completed this Code Tutorial
+              </Modal.Content>
+              <Modal.Actions>
+                <Button 
+                    positive
+                    content='Tutorial List'
+                    onClick={ () => { utilPushTo( window.location, returnToSkillsUrl ) }} />
+              </Modal.Actions>
+            </Modal>
+          )
+        }
+
+        { isTaskSubmitted && (
+            <Modal 
+                closeOnDocumentClick={true} 
+                closeOnRootNodeClick={false}
+                defaultOpen >
+              <Modal.Header>
+                <Icon size='big' color='green' name='check circle' />
+                Task submitted
+              </Modal.Header>
+              <Modal.Content>
+                You have submitted task for review
               </Modal.Content>
               <Modal.Actions>
                 <Button 

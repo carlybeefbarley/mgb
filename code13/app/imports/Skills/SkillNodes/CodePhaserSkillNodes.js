@@ -32,7 +32,6 @@ export default {
     $meta: {
       name: 'Position image',
       icon: 'code',
-      isTask: true,
       link: '/u/!vault/asset/eoTTDhibmKGrhuvHn',
       description: `Position an image with x, y and anchor point`,
     },
@@ -41,6 +40,7 @@ export default {
   taskSetPosition: {
     $meta: {
       name: 'Task set position',
+      isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/Pn9mhjR7yAW3iTsRt',
       description: `Set image positions`,
@@ -67,6 +67,7 @@ export default {
   },
   taskInput: {
     $meta: {
+      isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/79YpYHXg9DbQG6tXp',
       name: 'Task Input',
@@ -94,6 +95,7 @@ export default {
   },
   taskMoveChar: {
     $meta: {
+      isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/kMhY34EAEsETMiGmF',
       name: 'Task move character',
@@ -121,6 +123,7 @@ export default {
   },
   taskCharAnim: {
     $meta: {
+      isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/qNcrwh2emqdBEpPH5',
       name: 'Task character animation',
@@ -148,6 +151,7 @@ export default {
   },
   taskJump: {
     $meta: {
+      isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/qoQgYNPev3xqNXhXD',
       name: 'Task jump',
@@ -175,6 +179,7 @@ export default {
   },
   taskTweenGroup: {
     $meta: {
+      isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/rDMCqocQv3nnYx8AB',
       name: 'Task animate group',

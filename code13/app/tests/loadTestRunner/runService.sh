@@ -1,5 +1,15 @@
 #!/bin/bash
-# cd && sudo npm install supervisor
+(
+supervisor > /dev/null
+if [ $? != "0" ]; then
+cd && sudo npm install supervisor
+fi
+)
 
+
+(
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $DIR"/../"
 # run and refresh automatically on changes
-supervisor ./LoadTestRunner.js
+supervisor ./loadTestRunner/LoadTestRunner.js
+)

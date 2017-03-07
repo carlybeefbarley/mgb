@@ -53,7 +53,7 @@ export const StartJsGamesRoute = (name, code, currUser, newTab) => {
     }
     else        // asset doesn't exist. create one.
     {  
-      newAsset.skillPath = 'code.js.jsGame.' + name
+      newAsset.skillPath = 'code.js.games.' + name
       newAsset.content2 = { src: code }
       newAsset.isCompleted = false
       newAsset.isPrivate = false

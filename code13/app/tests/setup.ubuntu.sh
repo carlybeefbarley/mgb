@@ -41,8 +41,13 @@ EOF'
 # update services daemon
 sudo systemctl daemon-reload
 # start service
-sudo service mgb-test-slave enable # this seems to be failing.. is it required at all ???
-sudo service mgb-test-slave start
+# ubuntu service has some sort of bug ... so use systemctl instead
+#sudo service mgb-test-slave enable # this seems to be failing.. is it required at all ???
+#sudo service mgb-test-slave start
 
+# enable service - so it can start automatically
+sudo systemctl enable mgb-test-slave.service
+# start service
+sudo systemctl start mgb-test-slave.service
 
 

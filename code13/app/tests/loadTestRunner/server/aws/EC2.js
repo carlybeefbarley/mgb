@@ -25,6 +25,11 @@ module.exports = {
         Enabled: false, // true || false /* required */
       }
     }
+
+    if(config.SubnetId){
+      params.SubnetId = config.SubnetId
+    }
+
     ec2.runInstances(params, function(err, data) {
       if (err) {
         console.log("Could not create instance", err)
@@ -40,9 +45,11 @@ module.exports = {
       })
       fs.writeFileSync(instancesFilename, JSON.stringify(loadedInstances))
       ec2.waitFor('instanceStatusOk', ids, function(err, data) {
+        console.log("INSTANCE OK", data)
         if (err){
+          // an error occurred
           cb && cb(err)
-        } // an error occurred
+        }
         else{
           cb && cb()
         }

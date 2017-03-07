@@ -6,8 +6,13 @@ module.exports = {
     apiVersion: '2016-11-15'
   },
   slave: {
-    ami: 'ami-7a94326c'
-  }
+    ami: 'ami-496acc5f'
+  },
+  // SubnetId:  // accounts without default VPC requires subnet to start Instance
+  // new accounts have default subnet, old accounts (before 2014) - don't.
+  // also default subnet can be deleted
+  // need to contact aws support if there is need to create new default vpc
+  SubnetId: 'subnet-87e99fdc'
 }
 
 /*

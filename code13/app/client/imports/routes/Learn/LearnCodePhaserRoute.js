@@ -71,7 +71,8 @@ const LearnCodePhaserRoute = ({ currUser }, context) => {
             These concept examples use the 'Phaser' game engine for JavaScript. However, the concepts you learn here are very important and will apply to any game engine you use in future.
           </Header.Subheader>
           <Header.Subheader>
-            NOTE! Game concepts temporary unavailable
+            <br/>
+            <div style={{color: 'red'}}>NOTE! The complete list of 'Game concepts' tutorials are temporarily unavailable while moving to new tutorial format.. Full content will be back in a couple of days!</div>
           </Header.Subheader>
         </Header>
         { currUser && (

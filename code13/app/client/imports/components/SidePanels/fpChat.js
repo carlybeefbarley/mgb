@@ -204,7 +204,7 @@ const ChatMessage = ( { msg } ) => {
 // This is a simple way to remember the channel key for the flexPanel since there is exactly one of these. 
 // Users got annoyed when they always went back to the default channel
 // TODO: Push this up to flexPanel.js? or have flexPanel.js provide an optional 'recent state' prop?
-let _previousChannelName = null // This should be null or a name know to pass isChannelNameValid() 
+let _previousChannelName = null // This should be null or a name known to succeed with isChannelNameValid() 
 
 export default fpChat = React.createClass({
   mixins: [ReactMeteorData],
@@ -216,14 +216,17 @@ export default fpChat = React.createClass({
     panelWidth:               PropTypes.string.isRequired,  // Typically something like "200px".
     isSuperAdmin:             PropTypes.bool.isRequired,    // Yes if one of core engineering team. Show extra stuff
     subNavParam:              PropTypes.string.isRequired,  // "" or a string that defines the sub-nav within this FlexPanel
-    handleChangeSubNavParam:  PropTypes.func.isRequired     // Call this back with the SubNav string (queryParam ?fp=___.subnavStr) to change it
+    handleChangeSubNavParam:  PropTypes.func.isRequired,    // Call this back with the SubNav string (queryParam ?fp=___.subnavStr) to change it
+    // chat stuff
+    chatChannelTimestamps:  PropTypes.array,              // as defined by Chats.getLastMessageTimestamps RPC
+    requestChatChannelTimestampsNow: PropTypes.func.isRequired,   // It does what it says on the box. Used by fpChat                                                          
+    hazUnreadChats:           PropTypes.array               // As defined in App.js:state
   },
 
   // Settings context needed for get/setLastReadTimestampForChannel and the pin/unpin list
   contextTypes: {
     settings:    PropTypes.object
   },
-
 
   _calculateActiveChannelName: function() {
     const { subNavParam } = this.props  // empty string means "default"
@@ -294,8 +297,11 @@ export default fpChat = React.createClass({
 
           // 0. First, note that we have done this stuff (so we don't redo it)
           this.setState( { pendingCommentsRenderForChannelName: null } )
-      
-          // Maybe scroll last message into view
+
+          // 1. Refresh the chat notifications
+          this.props.requestChatChannelTimestampsNow()
+
+          // 2. Maybe scroll last message into view
           if (this.state.pastMessageLimit <= initialMessageLimit && this.state.view === 'comments')
             this.refs.bottomOfMessageDiv.scrollIntoView(false)
 

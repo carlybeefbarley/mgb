@@ -52,7 +52,7 @@ let _theAppInstance = null
 
 
 // for now, until we have push notifications for chat
-const CHAT_POLL_INTERVAL_MS = (6*1000)
+const CHAT_POLL_INTERVAL_MS = (12*1000)
 
 // Tutorial/Joyride infrastructure support
 
@@ -430,6 +430,7 @@ const App = React.createClass({
               currUser={currUser}
               chatChannelTimestamps={chatChannelTimestamps}
               hazUnreadChats={hazUnreadChats}
+              requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
               currUserProjects={currUserProjects}
               user={user}
               selectedViewTag={flexPanelQueryValue}

@@ -13,6 +13,61 @@ const mgbReleaseInfo = {
 
   'releases': [
     {
+      'timestamp': 'Tuesday Mar 7 2017 23:30 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3676'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.code',
+          'type': 'feature',
+          'changeName': '"Game development concepts" tutorials in-editor',
+          'changeSummary': 'The "Game development concepts" tutorials are now in the new Code Tutorials system. Try it!',
+          'otherUrls': [
+             { txt: '"Game development concepts Tutorials (changing...)', href: '/learn/code/phaser' },
+          ]
+        },
+        {
+          'featureTag': 'chat.asset',
+          'type': 'feature',
+          'changeName': 'Asset Chat',
+          'changeSummary': 'The Asset Edit Header now has a chat button. If you push it, it brings up a chat-channel for the Asset. This allows people to comment/suggest/praise your asset, and also is a way to work with others who may be able to help you improve or debug an asset. The Chat icon on the Asset Edit header also indicates new messages with a small red dot. Maybe too small :)',
+          'otherUrls': [ 
+            { txt: "Example asset with some chat", href:'/u/dgolds/asset/rru3Jwm249ifhjYG2?_fp=chat.A_rru3Jwm249ifhjYG2_'}
+          ]
+        },
+        {
+          'featureTag': 'chat.pin',
+          'type': 'feature',
+          'changeName': 'Chat channel pinning',
+          'changeSummary': 'Chat channels can now be pinned to your chat channels list. The primary use case for this is Asset Chat. If you pin an Asset Chat channel, your chats indicators will include notifications of new messages on those Asset Chat Channels ',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'chat.notifications',
+          'type': 'improvement',
+          'changeName': 'Asset Chat notification refresh',
+          'changeSummary': 'The Asset Chat red-dot notification now updates within about a second of you viewing a chat channel',
+          'otherUrls': [ ]
+        },        {
+          'featureTag': 'nav.title',
+          'type': 'feature',
+          'changeName': 'Asset Edit Page Titles',
+          'changeSummary': 'When editing/viewing an Asset, we now have much better page (tab) titles. Also, they indicate save progress with > for pending saves, and >> for pending save-confirmations. Try it and see!',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+    
+    {
       'timestamp': 'Monday Mar 6 2017 16:30 GMT-0800 (PST)',
 
       'id': {

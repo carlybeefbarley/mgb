@@ -88,7 +88,7 @@ const LearnCodePhaserRoute = ({ currUser }, context) => {
         <Header as='h1'>
           Game development concepts
           <Header.Subheader>
-            These concept examples use the 'Phaser' game engine for JavaScript. However, the concepts you learn here are very important and will apply to any game engine you use in future.
+            These concept tutorials use the 'PhaserJS' game engine for JavaScript. However, these are fundamental concepts that will apply to any game engine you use in future.
           </Header.Subheader>
         </Header>
         { currUser && (

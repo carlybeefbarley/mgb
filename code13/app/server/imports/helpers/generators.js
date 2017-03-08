@@ -27,7 +27,7 @@ export const assetToCdn = (api, asset, uri) => {
 // e.g. transforming music using byteArray to base64 string
 export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   // default 404
-  if (body === void(0)) {
+  if (body === void(0) || body == null) {
     return {
       statusCode: 404,
       body: {}

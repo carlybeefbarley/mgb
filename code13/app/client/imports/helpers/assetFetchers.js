@@ -202,7 +202,7 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
         mgbAjax(window.location.origin + uri, callback, asset, onRequestOpen)
         return
       }
-      callback(this.statusText)
+      callback(this.status, this.response, client)
     }
   }
   client.onerror = function (e) {

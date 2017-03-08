@@ -195,3 +195,24 @@ export function utilReplaceTo(existingQuery, newTo, extraQueryParams = {})
 
   browserHistory.replace(location)
 }
+
+
+/**
+ * Show a flex Panel (given the chatChanel nav.subnav strings)
+ * @param {*} currentUrlLocation from something like window.location
+ * @param {*} chatChannelName as defined in chats:makeChannelName()
+ */
+export function utilShowFlexPanel(currentUrlLocation, newFpNavString)
+{
+  utilPushTo(currentUrlLocation.query, currentUrlLocation.pathname, { _fp: newFpNavString } )
+}
+
+/**
+ * 
+ * @param {*} currentUrlLocation from something like window.location
+ * @param {*} chatChannelName as defined in chats:makeChannelName()
+ */
+export function utilShowChatPanelChannel(currentUrlLocation, chatChannelName)
+{
+  utilShowFlexPanel(currentUrlLocation, 'chat.'+chatChannelName )
+}

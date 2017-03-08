@@ -501,7 +501,12 @@ export default class SourceTools {
     }
 
     // from now on only observe asset and update tern on changes only
-    this.subscriptions[ari] = observeAsset({dn_ownerName: owner, name: name, kind: AssetKindEnum.code}, onReady, onChange)
+    this.subscriptions[ari] = observeAsset({
+      dn_ownerName: owner,
+      name: name,
+      kind: AssetKindEnum.code,
+      isDeleted: false
+    }, onReady, onChange)
   }
   // expose private variable - EditCode uses this
   hasChanged(){

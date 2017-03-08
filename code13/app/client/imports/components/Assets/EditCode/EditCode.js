@@ -1451,13 +1451,10 @@ export default class EditCode extends React.Component {
             return
           }
           // we need to get line ch from char position
-          let found = false
           cm.eachLine((line) => {
-            if (found) return
             if (node.start >= char && node.start < char + line.text.length) {
               pos.ch = node.start - char
-              found = true
-              return
+              return true
             }
             pos.line++
             char += (line.text.length + 1)

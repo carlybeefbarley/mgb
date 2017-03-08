@@ -395,7 +395,7 @@ export default class SourceTools {
     if(this.babelWorker.isBusy){
       // debugger
       // racing condition - usually happens when one is working on the main file and second on the file included by the main file..
-      // it should be safe to ignore direct request - as main file will pull in dependency in anyway
+      // it should be safe to ignore direct request - as main file will pull in dependency anyway
       return
     }
     // TODO: spawn extra workers?
@@ -521,9 +521,10 @@ export default class SourceTools {
       return
     }
     this.collectSources((sources) => {
-      // check sources and skip bundling if sources are empty
+      // check sources and skip bundling if ALL sources are empty
+      // empty means ';' - because of babel transforms
       let canSkipBundling = true
-      for (let i in sources) {
+      for (let i =0; i < sources.length; i++) {
         const code = sources[i].code
         if(code && code !== ";"){
           canSkipBundling = false

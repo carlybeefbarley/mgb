@@ -33,7 +33,7 @@ import webkitSmallScrollbars from './webkitSmallScrollbars.css'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import { parseChannelName, makeChannelName, ChatChannels } from '/imports/schemas/chats'
-import { getLastReadTimestampForChannel } from '/imports/schemas/settings-client'
+import { getLastReadTimestampForChannel, getPinnedChannelNames } from '/imports/schemas/settings-client'
 
 // https://www.npmjs.com/package/react-notifications
 import { NotificationContainer, NotificationManager } from 'react-notifications'
@@ -198,7 +198,7 @@ const App = React.createClass({
       // Array of chat channelNames that have at least one unread message. Note that Global ChatChannels
       // are treated a little specially - if you have never visited a particular global channel you will 
       // not get notifications for it. This is so new users don't get spammed to look at chat channels they
-      //are not yet interested in. 
+      // are not yet interested in. This will always be an array, never null or undefined
       // It is intended to be quick & convenient for generating notification UIs
 
       currentlyEditingAssetInfo: { 
@@ -279,20 +279,35 @@ const App = React.createClass({
     if (!this.data.currUser)
       return
 
+    const { settings, currUserProjects } = this.data
+    const { assetId } = this.props.params
+
+    // 0. Make the list of channels we are interested in: 
+    //       Global, relevantProjects, currentAsset, pinnedChannels. 
+    // Regarding AssetsChannels, our UX model is that the user should Pin any 
+    // asset channels they want notification of. We don't want to spam the 
+    // chat notifications with too much Asset noise
+
     const chanArray = _.concat(
       _.map(ChatChannels.sortedKeys, k => makeChannelName( { scopeGroupName: 'Global', scopeId: k } ) ),
-      _.map(this.data.currUserProjects, p => makeChannelName( { scopeGroupName: 'Project', scopeId: p._id } ) )
+      _.map(currUserProjects, p => makeChannelName( { scopeGroupName: 'Project', scopeId: p._id } ) ),
+      getPinnedChannelNames(settings)
     )
+    if (assetId)
+      chanArray.push(makeChannelName( { scopeGroupName: 'Asset', scopeId: assetId } ) )
+
+    // 1. Now ask the server for the last message timestamps for these channels
     Meteor.call( 'Chats.getLastMessageTimestamps', chanArray, ( error, chatChannelTimestamps ) =>
     {
       if (error)
         console.log('unable to invoke Chats.getLastMessageTimestamps()', error )
       else
       {
+        // 2. Now process that list for easy consumption (and store results in state.hazUnreadChats and state.chatChannelTimestamps)
         let hazUnreadChats = []
         _.each(chatChannelTimestamps, cct => {
           const channelName = cct._id
-          const lastReadByUser = getLastReadTimestampForChannel(this.data.settings, channelName)
+          const lastReadByUser = getLastReadTimestampForChannel(settings, channelName)
           const channelObj = parseChannelName(channelName)
           cct._hazUnreads = Boolean(
             (channelObj && channelObj.scopeGroupName !== 'Global' && !lastReadByUser) // Non-global chat groups that user has access to but has not looked at
@@ -373,6 +388,14 @@ const App = React.createClass({
     const isSuperAdmin = isUserSuperAdmin(currUser)
     const ownsProfile = isSameUser(currUser, user)
 
+    const hazUnreadAssetChat = (
+      params.assetId && 
+      _.includes(
+        hazUnreadChats, 
+        makeChannelName( { scopeGroupName: 'Asset', scopeId: params.assetId } )
+      )
+    )
+
     return (
       <div >
 
@@ -446,6 +469,7 @@ const App = React.createClass({
                     user: user,
                     currUser: currUser,
                     currUserProjects: currUserProjects,
+                    hazUnreadAssetChat: hazUnreadAssetChat,
                     ownsProfile: ownsProfile,
                     isSuperAdmin: isSuperAdmin,
                     availableWidth: mainAreaAvailableWidth,

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Grid, Icon } from 'semantic-ui-react'
-import { utilPushTo, utilReplaceTo } from '../QLink'
+import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import reactMixin from 'react-mixin'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
@@ -25,9 +25,12 @@ import ChallengeState from '/client/imports/components/Controls/ChallengeState'
 import AssetPathDetail from '/client/imports/components/Assets/AssetPathDetail'
 import AssetUrlGenerator from '/client/imports/components/Assets/AssetUrlGenerator'
 import AssetForkGenerator from '/client/imports/components/Assets/AssetForkGenerator'
+import AssetChatDetail from '/client/imports/components/Assets/AssetChatDetail'
 import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail'
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
+
+import { makeChannelName } from '/imports/schemas/chats'
 
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -97,6 +100,7 @@ export default AssetEditRoute = React.createClass({
     currUserProjects: PropTypes.array,       // Both Owned and memberOf. Check ownerName / ownerId fields to know which
     isSuperAdmin:     PropTypes.bool,
     ownsProfile:      PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
+    hazUnreadAssetChat: PropTypes.bool,      // true IFF there is unread chat for this asset
     handleSetCurrentlyEditingAssetInfo: PropTypes.func    // We should call this to set/clear current asset kind
   },
 
@@ -316,7 +320,7 @@ export default AssetEditRoute = React.createClass({
     if (this.data.loading)
       return <Spinner />
 
-    const { params, currUser, currUserProjects, availableWidth } = this.props
+    const { params, currUser, currUserProjects, availableWidth, hazUnreadAssetChat } = this.props
     const { isForkPending, isDeletePending } = this.state
     const isTooSmall = availableWidth < 500
 
@@ -387,6 +391,7 @@ export default AssetEditRoute = React.createClass({
               operationPending={isDeletePending}
               canEdit={canEd}
               handleChange={this.handleDeletedStateChange} />
+            <AssetChatDetail hasUnreads={hazUnreadAssetChat} handleClick={this.handleChatClick}/>
             <AssetLicense
               license={asset.assetLicense}
               canEdit={canEd}
@@ -550,8 +555,6 @@ export default AssetEditRoute = React.createClass({
     }
   },
 
-
-
   // Internal only. Can't be called by sub-components
   // This intentionally does NOT use or manipulate this.m_deferredSaveObj, nor is it smart about asset.isUnconfirmedSave
   _sendContentChange(assetId, content2Object, thumbnail, changeText="content change")
@@ -656,18 +659,9 @@ export default AssetEditRoute = React.createClass({
     }
   },
 
-  handleCompletedClick() {
-    let newIsCompletedStatus = !this.props.asset.isCompleted
-    Meteor.call('Azzets.update', this.props.asset._id, this.canCurrUserEditThisAsset(), {isCompleted: newIsCompletedStatus}, (err, res) => {
-      if (err) {
-        showToast(err.reason, 'error')
-      }
-    });
-
-    if (newIsCompletedStatus)
-      logActivity("asset.stable",  "Mark asset as stable", null, this.props.asset);
-    else
-      logActivity("asset.unstable",  "Mark asset as unstable", null, this.props.asset);
+  handleChatClick() {
+    const channelName = makeChannelName( { scopeGroupName: 'Asset', scopeId: this.props.params.assetId } )
+    utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
 
   handleStableStateChange: function(newIsCompleted) {

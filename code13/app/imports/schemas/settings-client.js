@@ -10,23 +10,43 @@ import SpecialGlobals from '/imports/SpecialGlobals.js'
 //
 
 // Settings Group Name: Toolbar Feature Levels
-const   _GROUP_FEATURELEVELS = 'fLevels'            
+const _GROUP_FEATURELEVELS = 'fLevels'            
 
 // Settings Group Name: Toolbar Re-arrangement by user
 // const _GROUP_TOOLBARS      = 'toolbars' //No longer used as of Jan 2017.
 
 // Settings Group Name: Chat Channel last-read timestamps. These match latest read Chat.[channelName].createdAt
-const   _GROUP_LAST_READ_TIMESTAMP_ON_CHATCHANNELNAME = 'chatLastRead'
+const _GROUP_CHAT_LAST_READ_TIMESTAMP_ON_CHATCHANNELNAME = 'chatLastRead'
+
+// Settings Group Name: Chat settings - Channel pinned ChannelNames, etc
+const _GROUP_CHAT_SETTINGS = 'chatSettings'
+const _GROUP_CHAT_SETTINGS_SUBKEY_PINNED_CHANNELNAMES = 'chatPinnedChannelNames'
+
 
 // 
-// Internal helpers
+// Internal helper functions
 // 
+
+
+/**
+ * Check a settings keyPart isn't going to cause hell. 
+ * For example it must not have a '.' in it settingsKey.
+ * This doesn't return an error, it just does a console.error() so 
+ * we will notice during development
+ */
+const _validKeyRegex = /^[^\.]*/ 
+const _checkKeyIsValid = settingsKey => {
+  if (!_validKeyRegex.test(settingsKey))
+    console.error(`Settings client encountered invalid settingsKey '${settingsKey}'`)
+}
 
 // This can return null if there is no settings object, OR if there is no key defined yet
 const _getSettingType = (settingsGroupName, settingsObj, subKey) => 
 {
   if (!settingsObj)
     return null
+
+  _checkKeyIsValid(subKey)
 
   const group = settingsObj.get(settingsGroupName)
   return group ? group[subKey] : null
@@ -42,6 +62,8 @@ const _setSettingType = (settingsGroupName, settingsObj, subKey, value) =>
 {
   if (!settingsObj)
     return
+
+  _checkKeyIsValid(subKey)    
 
   const storedValue = _getSettingType(settingsGroupName, settingsObj, subKey)
 
@@ -118,7 +140,7 @@ export function resetAllFeatureLevelsToDefaults(settingsObj) {
  * @returns {Object} This can return null if there is no settings object, OR if there is no key defined yet
  */
 export function getLastReadTimestampForChannel(settingsObj, channelName) {
-  return _getSettingType(_GROUP_LAST_READ_TIMESTAMP_ON_CHATCHANNELNAME, settingsObj, channelName)
+  return _getSettingType(_GROUP_CHAT_LAST_READ_TIMESTAMP_ON_CHATCHANNELNAME, settingsObj, channelName)
 }
 
 /**
@@ -130,5 +152,64 @@ export function getLastReadTimestampForChannel(settingsObj, channelName) {
  * @returns {void}
  */
 export function setLastReadTimestampForChannel(settingsObj, channelName, timestamp) {
-  _setSettingType(_GROUP_LAST_READ_TIMESTAMP_ON_CHATCHANNELNAME, settingsObj, channelName, timestamp)
+  _setSettingType(_GROUP_CHAT_LAST_READ_TIMESTAMP_ON_CHATCHANNELNAME, settingsObj, channelName, timestamp)
+}
+
+
+
+// 3. Asset pinning
+
+/**
+ * get the list of Pinned Channels
+ * @param {ReactiveDict} settingsObj - must be the global Meteor-reactive Settings object
+ * @returns {Array} ordered Array of channelName strings as defined by chats.makeChannelName(). 
+ *          This will never be null or undefined; an empty list will be []
+ */
+export function getPinnedChannelNames(settingsObj)
+{
+  return _getSettingType(
+    _GROUP_CHAT_SETTINGS, 
+    settingsObj, 
+    _GROUP_CHAT_SETTINGS_SUBKEY_PINNED_CHANNELNAMES
+  ) || []
+}
+
+
+/**
+ * get the list of Pinned Channels
+ * @param {ReactiveDict} settingsObj - must be the global Meteor-reactive Settings object
+ * @param {channelNamesArray} ordered Array of channelName strings as defined by 
+ *          chats.makeChannelName(). This list is exactly like the list returned by 
+ *          getPinnedChannelNames(). If the passed in value is null or undefined, an error
+ *          will be logged and the setting will not be set, but there is no error value/return
+ */
+export function setPinnedChannelNames(settingsObj, channelNamesArray)
+{
+  if (!_.isArray(channelNamesArray))
+  {
+    console.error('Settings: setPinnedChannelNames() encountered non-array list of channelNames', channelNamesArray)
+    return
+  }
+
+  _setSettingType(
+    _GROUP_CHAT_SETTINGS, 
+    settingsObj, 
+    _GROUP_CHAT_SETTINGS_SUBKEY_PINNED_CHANNELNAMES,
+    channelNamesArray
+  )
+}
+
+/**
+ * Toggle on/off a pinned channelName in the pinned channelNames settings
+ * @param {ReactiveDict} settingsObj - must be the global Meteor-reactive Settings object
+ * @param {*} channelName. A channelName string as defined by chats.makeChannelName(). 
+ */
+export function togglePinnedChannelName(settingsObj, channelName)
+{
+  if (!_.isString(channelName))
+  {
+    console.error('Settings: togglePinnedChannelName() encountered non-string: ', channelName)
+    return
+  }
+  setPinnedChannelNames(settingsObj, _.xor(getPinnedChannelNames(settingsObj), [channelName]))
 }

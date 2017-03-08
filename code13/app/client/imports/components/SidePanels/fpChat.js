@@ -5,9 +5,14 @@ import QLink from '/client/imports/routes/QLink'
 import { showToast } from '/client/imports/routes/App'
 
 import reactMixin from 'react-mixin'
-import { Chats } from '/imports/schemas'
+import { Chats, Azzets } from '/imports/schemas'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
-import { getLastReadTimestampForChannel, setLastReadTimestampForChannel } from '/imports/schemas/settings-client'
+import { 
+  getLastReadTimestampForChannel, 
+  setLastReadTimestampForChannel, 
+  getPinnedChannelNames,
+  togglePinnedChannelName
+} from '/imports/schemas/settings-client'
 
 import { logActivity } from '/imports/schemas/activity'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -19,7 +24,8 @@ import {
   ChatSendMessageOnChannelName, 
   isChannelNameValid, 
   chatParams, 
-  makePresentedChannelName 
+  makePresentedChannelName,
+  makePresentedChannelIcon
 } from '/imports/schemas/chats'
 
 const _colors = {
@@ -60,7 +66,7 @@ import moment from 'moment'
  √ [Deploy] More deploy ftw.
  √ [More testing] and fix any bad stuff
 
-√ DONE (Phase 3a: Read/Unread)
+√ DONE (Phase 3: Read/Unread)
  √ RPC to support getting aggregates on channels (This is not a fun thing to do as a subscription)
  √ Call the Chats.getLastMessageTimestamps RPC from fpChats when channel selector shown
  √ Implement user settings for most recent message read
@@ -70,15 +76,32 @@ import moment from 'moment'
  √ [Deploy] ya.
  √ [More testing] and fix any bad stuff
 
-√ TODO (Phase 3b: Simple Notifications)
+~ TODO (Phase 4: Simple Notifications)
  √ Move fpChats._requestChannelTimestampsNow up to App level
  √ Add simple way to click a notification icon and go to the channel selector
  √ [Merge] Merge into master and test
  √ [Deploy] ya.
- ◊ [More testing] and fix any bad stuff
+ √ [More testing] and fix any bad stuff
  ◊ Make the update of the orange chat icon quicker
 
-TODO (Phase 4: DMs)
+~ TODO (Phase 5: Asset chat)
+ √ [Feature] Implement Chat icon is Asset Edit Header
+ √ [Feature] Add current Asset id to list of channels we want timestamps for in App.js
+ √ [Feature] Implement findObjectNameForChannelName() for Assets
+ √ [Enable]  Enable Send-to-User in currUserCanSend() for Assets
+ √ [Feature] show Asset Chats in fpChat list of channels.. colorForChannelNameHasUnreads()
+ √ [Feature] update the code in fpChat which gets unreadChannel info.. so it includes assets
+ √ [Feature] Get the Asset Names/Deleted/owner info from the server when we get the timestamps
+ √ [Merge] Merge into master and test
+ ◊ [Deploy] ya.
+
+~ TODO (Phase 6: Pinning chats)
+ √ [feature] Implement Pinning in settings
+ √ [feature] Implement Pinning in getMessageTimestamps
+ √ [feature] Implement Pinning for Asset Chats
+ ◊ [feature] Implement Pinning for Project Chats
+
+◊ TODO (Phase 7: DMs)
  ◊ [Enable] Enable Send-to-DM in currUserCanSend()
  ◊ [Feature] Implement UI to initiate a DM send
  ◊ [Feature] Implement DB stuff to update Notifications/ other records to make a DMs list
@@ -87,7 +110,7 @@ TODO (Phase 4: DMs)
  ◊ [Feature] Implement findObjectNameForChannelName() for DMs
  ◊ ...make this list of detailed work
 
-TODO (Phase 5: Delete message)
+◊ TODO (Phase 8: Delete message)
  ◊ [feature] Implement core delete Message code for server
  ◊ [feature] Implement core delete Message code for fpChat
  ◊ [feature] Make sure message OWNERS (only) can delete their messages
@@ -97,24 +120,18 @@ TODO (Phase 5: Delete message)
  ◊ [Deploy] ya.
  ◊ [More testing] and fix any bad stuff
 
-TODO (Phase 6: Pinning chats)
- ◊ [feature] Pinning project chat
-
-
-TODO (Phase 7: Refactor)
+◊ TODO (Phase 9: Refactor)
  ◊ [Refactor] break into <fpChats> + <ChatChannelSelector> + <ChatChannelMessages>
 
-TODO (Phase 8: Embedded scope-related chat)
+◊ TODO (Phase 10: Embedded scope-related chat)
  ◊ [feature] Allow <ChatChannelMessages> to be embedded in Project Overview (for owners/members)
  ◊ [Enable] Enable Send-to-Asset in currUserCanSend()
  ◊ [feature] Allow <ChatChannelMessages> to be embedded in Asset Overview (for owners/members)
- ◊ [Feature] Implement findObjectNameForChannelName() for Assets
- ◊ [Enable] Enable Send-to-User in currUserCanSend()
  ◊ [Feature] Implement findObjectNameForChannelName() for Users
  ◊ [feature] Allow <ChatChannelMessages> to be embedded in User Profile - for a Wall-style experience
 
-TODO (Phase 9: Forums/Threads)
- ◊ ...make this list of detailed work
+◊ TODO (Phase 11: Forums/Threads)
+ ◊ ...make this list of detailed work using _topic
 
 */
 
@@ -132,6 +149,23 @@ const MessageTopDivider = ( { elementId, content, title } ) => (
     {content}
   </Divider>  
 )
+
+/**
+ * This is a server-supported solution for getting the AssetNames for
+ * pinned Asset Chat channels. See how RPC "Chats.getLastMessageTimestamps" helps out here
+ * @param {String} assetId 
+ */
+const _getAssetNameIfAvailable = (assetId, chatChannelTimestamp) => {
+
+  // Hopefully it is in chatChannelTimestamps as returned by RPC Chats.getLastMessageTimestamps
+
+  if (chatChannelTimestamp && chatChannelTimestamp.assetInfo && chatChannelTimestamp.assetInfo.name)
+    return chatChannelTimestamp.assetInfo.name  // Sweet!
+
+  // ok, let's see what we've got here.. Maybe we don't have the info we need yet from the server 
+  const a = Azzets.findOne(assetId)
+  return a ? a.name : 'Asset #'+assetId
+}
 
 // Some magic for encoding and expanding asset links that are dragged in.
 const _encodeAssetInMsg = asset => `❮${asset.dn_ownerName}:${asset._id}:${asset.name}❯`      // See https://en.wikipedia.org/wiki/Dingbat#Unicode ❮  U276E , U276F  ❯
@@ -185,7 +219,7 @@ export default fpChat = React.createClass({
     handleChangeSubNavParam:  PropTypes.func.isRequired     // Call this back with the SubNav string (queryParam ?fp=___.subnavStr) to change it
   },
 
-  // Settings context needed for get/setLastReadTimestampForChannel
+  // Settings context needed for get/setLastReadTimestampForChannel and the pin/unpin list
   contextTypes: {
     settings:    PropTypes.object
   },
@@ -193,7 +227,7 @@ export default fpChat = React.createClass({
 
   _calculateActiveChannelName: function() {
     const { subNavParam } = this.props  // empty string means "default"
-    const channelName = subNavParam   // So this should be something like 'G:MGBBUGS:'.. i.e. a key into ChatChannels{}
+    const channelName = subNavParam   // So this should be something like 'G_MGBBUGS_'.. i.e. a key into ChatChannels{}
     return isChannelNameValid(channelName)? channelName : _previousChannelName || chatParams.defaultChannelName
   },
 
@@ -430,8 +464,10 @@ export default fpChat = React.createClass({
   },
 
   renderChannelSelector: function() {
-    const { currUser, currUserProjects } = this.props
-
+    const { currUser, currUserProjects, chatChannelTimestamps } = this.props
+    const { settings } = this.context
+    
+    // PUBLIC (GENERAL) CHANNELS
     const publicChannels = (
       <List selection>
         <List.Item>
@@ -445,7 +481,7 @@ export default fpChat = React.createClass({
               onClick={() => this.handleChatChannelChange(chan.channelName)}
               title={chan.description}
               content={makePresentedChannelName(chan.channelName)}
-              style={{ color: this.colorForChannelNameHasUnreads(chan.channelName, this.props.chatChannelTimestamps)}}
+              style={{ color: this.colorForChannelNameHasUnreads(chan.channelName, chatChannelTimestamps)}}
               icon={chan.icon}
             />
           )
@@ -480,6 +516,7 @@ export default fpChat = React.createClass({
     //   </List>
     // )
 
+    // PROJECT CHANNELS
     const projectChannels = (
       <List selection>
         <List.Item>
@@ -497,8 +534,7 @@ export default fpChat = React.createClass({
                   onClick={() => this.handleChatChannelChange(channelName)} >
                 <Icon name='sitemap' color={isOwner ? 'green' : 'blue' } />
                 <List.Content>
-                  <Icon name='pin' color='grey' style={{ position: 'absolute', right: '1em' }} />
-                  <span style={{ color: this.colorForChannelNameHasUnreads(channelName, this.props.chatChannelTimestamps)}}>
+                  <span style={{ color: this.colorForChannelNameHasUnreads(channelName, chatChannelTimestamps)}}>
                     { !isOwner && project.ownerName + ' : ' }
                     { project.name }
                   </span>
@@ -510,11 +546,60 @@ export default fpChat = React.createClass({
       </List>
     )
 
+    // ASSET CHANNELS
+    const pinnedChannelNames = getPinnedChannelNames(settings)
+    const assetChannelObjects = _
+      .chain([this.props.subNavParam])        // Current channel at top of this list
+      .concat(pinnedChannelNames)             // Add the other pinned Channels
+      .uniq()                                 // Remove dupes
+      .map(parseChannelName)                  // parse channelName to channelObject
+      .filter( { scopeGroupName: 'Asset' } )  // We only want the Asset channels for this list
+      .value()
+
+    const assetChannels = (
+      <List selection>
+        <List.Item>
+          <List.Header disabled style={{ textAlign: 'center' }}>Asset Channels</List.Header>
+        </List.Item>
+
+        { _.map(assetChannelObjects, aco => (
+          <List.Item
+              key={aco.channelName}
+              onClick={() => this.handleChatChannelChange(aco.channelName)} >
+            <Icon name='pencil'/>
+            <List.Content>
+              <Icon 
+                  name='pin' 
+                  color={ _.includes(pinnedChannelNames, aco.channelName) ? 'green' : 'grey' } 
+                  onClick={e => { 
+                    togglePinnedChannelName(settings, aco.channelName)
+                    e.stopPropagation()
+                    e.preventDefault()
+                  } }
+                  style={{ position: 'absolute', right: '1em' }} />
+              <span style={{ color: this.colorForChannelNameHasUnreads(aco.channelName, chatChannelTimestamps)}}>
+                { /* !isAssetOwner && assetOwnerName + ' : ' */ }
+                { _getAssetNameIfAvailable(aco.scopeId, _.find(chatChannelTimestamps, { _id: aco.channelName} ) ) } 
+              </span>
+            </List.Content>
+          </List.Item>
+        ) ) }
+
+        <List.Item>
+          <List.Content>
+            Pin an 'Asset Chat' channel here to enable chat notifications for that Asset
+          </List.Content>
+        </List.Item>
+ 
+      </List>
+    )
+
     return (
       <div>
         {publicChannels}
         {dmChannels}
         {projectChannels}
+        {assetChannels}
       </div>
     )
   },
@@ -583,15 +668,22 @@ export default fpChat = React.createClass({
       return proj ? proj.name : `Project Chat #${channelObj.scopeId}`
     }
 
+    if (channelObj.scopeGroupName === 'Asset')
+      return _getAssetNameIfAvailable(
+        channelObj.scopeId, 
+        _.find(this.props.chatChannelTimestamps, { _id: channelName} )
+      )
+
     console.error(`findObjectNameForChannelName() has a ScopeGroupName (${channelObj.scopeGroupName}) that is not in user context. #investigate#`)
     return 'TODO'
   },
  
-  render: function () {
+  render: function () {  
     const { view } = this.state
     const channelName = this._calculateActiveChannelName()
     const objName = this.findObjectNameForChannelName(channelName)
     const presentedChannelName = makePresentedChannelName(channelName, objName)
+    const presentedChannelIcon = makePresentedChannelIcon(channelName)
 
     return  (
       <div>
@@ -605,7 +697,7 @@ export default fpChat = React.createClass({
           fluid
           value={presentedChannelName}
           readOnly
-          icon='hashtag'
+          icon={presentedChannelIcon}
           size='small'
           iconPosition='left'
           label={{ 
@@ -619,7 +711,7 @@ export default fpChat = React.createClass({
           labelPosition='right'
           onFocus={this.handleShowChannelSelector}
           onBlur={this.handleBlurHideChannelSelector}
-          style={{ marginBottom: '0.5em' }}
+          style={{ marginBottom: '0.5em', marginTop: '0.2em' }}
           />
 
         { view === 'channels' && this.renderChannelSelector() }

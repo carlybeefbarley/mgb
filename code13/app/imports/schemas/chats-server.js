@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import { Chats } from '/imports/schemas'
-import { chatParams, parseChannelName, isChannelNameWellFormed, chatsSchema, currUserCanSend } from '/imports/schemas/chats'
+import { Chats, Azzets } from '/imports/schemas'
+import { chatParams, parseChannelName, makeChannelName, isChannelNameWellFormed, chatsSchema, currUserCanSend } from '/imports/schemas/chats'
 import { check,  } from 'meteor/check'
 import { lookupIsUseridInProject } from '/imports/schemas/projects-server'
 
@@ -30,6 +30,8 @@ function canUserReallySendToChannel(currUser, channelName)
     return lookupIsUseridInProject(currUser._id, channelObj.scopeId)
 
   case 'Asset':
+    return Boolean(currUser) // For now
+
   case 'User':
   case 'DirectMessage':
   default:
@@ -129,7 +131,7 @@ Meteor.methods({
         latestDate: Mon Jul 04 2016 08:45:33 GMT-0700 (PDT),
         latestId: '9untRgRvEG7a328ju' } ]
    * 
-   * @param {Array} channelNamesArray
+   * @param {Array} requestedChannelTimestamps Array - augmented with assetInfo for Asset Chat Channels
    * @returns
    */
   "Chats.getLastMessageTimestamps": function(channelNamesArray)
@@ -152,6 +154,31 @@ Meteor.methods({
         }
       ]
     )
+
+    // For now, we are getting the AssetInfo for asset channels here as well. 
+    // It's not ideal but overall this seems relatively efficient? #REVISIT
+
+    const assetIds = _
+      .chain(channelNamesArray)            // Start with the list of all Channel names
+      .map(parseChannelName)               // parse channelName to channelObject
+      .filter({ scopeGroupName: 'Asset'})  // We only want the Asset channels for this list
+      .map('scopeId')
+      .value()
+
+    const assetInfo = Azzets.find( 
+      { _id: { $in: assetIds } },
+      { fields: { name: 1, dn_ownerName: 1, isDeleted: 1 } }
+    ).fetch()
+
+    _.forEach(assetInfo, a => {
+      const row = _.find(
+        requestedChannelTimestamps, 
+        { _id: makeChannelName( { scopeGroupName: 'Asset', scopeId: a._id} ) }
+      )
+      if (row)
+        row.assetInfo = a
+    })
+
     return requestedChannelTimestamps
   }
 })

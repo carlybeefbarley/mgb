@@ -234,7 +234,7 @@ export default class SourceTools {
       if(!source.origin){
         source.origin = [origin]
       }
-      else{
+      else if(source.origin.indexOf(origin) === -1){
         source.origin.push(origin)
       }
     }

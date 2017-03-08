@@ -27,6 +27,7 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
   new ml.TestCase({name: 'load.home.page', id: 'load.home.page', title: 'Load home page'}, restart)
   new ml.TestCase({name: 'login', id: 'login', title: 'Test Log In'}, restart)
 
+  new ml.TestCase({name: 'code.observer', id: 'code.observer', title: 'Open code asset with 9 imports'}, restart)
   new ml.TestCase({name: 'adjust.settings', id: "adjust.settings", title: 'Adjust Settings'}, restart)
 
   // code bundling is broken on phantomjs

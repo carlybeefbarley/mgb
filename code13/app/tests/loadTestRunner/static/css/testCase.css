@@ -25,7 +25,7 @@
 }
 
 .testCase span.title{
-  min-width: 320px;
+  min-width: 350px;
   cursor: pointer;
   font-weight: bold;
 }

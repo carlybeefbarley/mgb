@@ -8,6 +8,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
       this.runners = 0
       this.needRestart = false
       this.expanded = false
+      this.errors = 0
 
       this._restart = restart
 
@@ -32,6 +33,8 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
       this.autoRestart.onclick = (val) => {
         this.needRestart = !this.needRestart
       }
+
+      this.errorsLabel = this.widget.appendChild(document.createElement('span'))
 
       this.actions = document.createElement('span')
       this.actions.classList.add('actions')
@@ -81,6 +84,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
       if (!data || !data.tests) {
         return
       }
+
       // this.widget.insertBefore(this.actions, this.title.nextSibling)
       /*data.tests.forEach( t => {
        this.tests.push(new Test(t, this.widget))
@@ -116,7 +120,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
        ]
        }*/
 
-      this.chartData.labels.push(this.chartData.labels.length + 1)
+
 
       const colors = [
         //'#ff0000',
@@ -129,49 +133,38 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
 
       let hasErrors = false
       data.tests.forEach((t, i) => {
-        if (!this.chartData.datasets[i]) {
-          this.chartData.datasets[i] = {
-            borderWidth: 1,
-            lineTension: 0.01,
-            fill: false,
-            borderColor: colors[i] || '#000000',
-            label: t.title,
-            data: []
-          }
-        }
-        const ds = this.chartData.datasets[i]
-        if (t.state == 'passed') {
-          ds.data.push(t.duration || 0)
-        }
-        else {
+        if (t.state != 'passed')
           hasErrors = true
-          ds.data.push(null)
-        }
       })
-      if (hasErrors) {
+
+      if(!hasErrors) {
+        this.chartData.labels.push(this.chartData.labels.length + 1)
         data.tests.forEach((t, i) => {
-          const idx = data.tests.length + i
-          if (!this.chartData.datasets[idx]) {
-            this.chartData.datasets[idx] = {
+          if (!this.chartData.datasets[i]) {
+            this.chartData.datasets[i] = {
               borderWidth: 1,
               lineTension: 0.01,
               fill: false,
-              borderColor: '#ff0000',
-              label: 'Failed: ' + t.title,
+              borderColor: colors[i] || '#000000',
+              label: t.title,
               data: []
             }
           }
-          if (t.state !== 'passed') {
-            const ds = this.chartData.datasets[idx]
-            const next = this.chartData.datasets[0].data.length - data.tests.length + i + 1
-
-            ds.data[next] = t.duration || 0
+          const ds = this.chartData.datasets[i]
+          if (t.state == 'passed') {
+            ds.data.push(t.duration || 0)
+          }
+          else {
+            hasErrors = true
+            ds.data.push(null)
           }
         })
+        this.expanded && this.chart.update()
       }
-
-      this.expanded && this.chart.update()
-
+      else{
+        this.errors++
+        this.errorsLabel.innerHTML = "Tests Failed:" + this.errors
+      }
       this.needRestart && this.restart()
     }
 
@@ -186,13 +179,13 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
       this.removeBtn.classList.add('clear')
       this.removeBtn.onclick = () => this.clear()
 
-      this.removeBtn = this.actions.appendChild(document.createElement('a'))
+      /*this.removeBtn = this.actions.appendChild(document.createElement('a'))
       this.removeBtn.innerHTML = 'Remove'
       this.removeBtn.classList.add('remove')
       this.removeBtn.onclick = () => {
         alert('Not implemented')
         //this.destroy()
-      }
+      }*/
     }
 
     toggleExpand(expand) {

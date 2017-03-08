@@ -23,7 +23,6 @@ const checkAuth = (headers, user, password) => {
 s.on('request', (req, res) => {
   const path = req.url == '/' ? '/static/index.html' : '/static' + req.url
   const filename = __dirname + path
-  const rs = fs.createReadStream(filename)
 
   if(!checkAuth(req.headers, 'mgb', 'superSecretPass')){
     res.writeHead(401, "Unauthorized", {
@@ -38,6 +37,7 @@ s.on('request', (req, res) => {
     res.writeHead(200, {'content-type': f})
   }
 
+  const rs = fs.createReadStream(filename)
   rs.on("error", err => {
     rs.unpipe(res)
     res.writeHead(404, "not found")
@@ -86,7 +86,7 @@ wss.on('connection', (ws) => {
     })
   }
   else if(ws.upgradeReq.url === '/slave'){
-    console.log("Adding new slave...")
+    console.log("Slave connected...")
     slaves.push({
       ws, jobs: 0
     })

@@ -2077,11 +2077,11 @@ export default class EditCode extends React.Component {
         // TODO: get link to asset
         else if(parts.length === 2){
           advices.push(
-            <div key={advices.length} style={{margin: 0}}><i className="ui fluid label"></i>
+            <a className="ui fluid label" key={advices.length} style={{marginBottom: "2px"}} href={`/assetEdit/code/${parts.join('/')}`} target='_blank'>
               <small style={{fontSize: '85%'}}>this string references <strong>{parts[0]}</strong> code asset:
                 <code>{parts[1]}</code></small>
               <Thumbnail className="ui right spaced medium image" id={parts.join('/')} expires={60} />
-            </div>
+            </a>
           )
         }
       }

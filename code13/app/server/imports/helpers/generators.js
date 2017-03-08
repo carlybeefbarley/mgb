@@ -27,7 +27,7 @@ export const assetToCdn = (api, asset, uri) => {
 // e.g. transforming music using byteArray to base64 string
 export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   // default 404
-  if (!body) {
+  if (body === void(0)) {
     return {
       statusCode: 404,
       body: {}
@@ -77,9 +77,14 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
     return
   }
 
+  let respBody = (typeof body == "function") ? body() : body
+  if(respBody === ''){
+    // if resp body will be empty ('') - then restivus will send headers as body - seems like a bug
+    respBody = "\n"
+  }
   // return full response with etag
   return {
     headers: newHeaders,
-    body: (typeof body == "function") ? body() : body
+    body: respBody
   }
 }

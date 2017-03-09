@@ -38,7 +38,7 @@ export default fpSkills = React.createClass({
             <span style={{position: 'relative', top: 0}}>My Skills</span>
           </QLink>
           <br />
-          <small><i>&emsp;...coming soon - better UI for this, and correlation from skill-tag to tutorials and contextual help...</i></small>
+          <small><i>&emsp;...in-progress - better UI for this, and correlation from skill-tag to tutorials and contextual help...</i></small>
         </p>
 
         <SkillsMap expandable toggleable skills={skills} />

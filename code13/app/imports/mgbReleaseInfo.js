@@ -13,6 +13,36 @@ const mgbReleaseInfo = {
 
   'releases': [
     {
+      'timestamp': 'Thursday Mar 9 2017 01:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3693'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'skills.map',
+          'type': 'improvement',
+          'changeName': 'Skills-map ui facelift',
+          'changeSummary': 'The Skills map ui has had a facelist and has better tree-like expansion',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Bugfixes for improved thumbnail rendering, edit code fixes for self-importing files, api fixes',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+    {
       'timestamp': 'Tuesday Mar 7 2017 23:30 GMT-0800 (PST)',
 
       'id': {
@@ -57,7 +87,8 @@ const mgbReleaseInfo = {
           'changeName': 'Asset Chat notification refresh',
           'changeSummary': 'The Asset Chat red-dot notification now updates within about a second of you viewing a chat channel',
           'otherUrls': [ ]
-        },        {
+        },        
+        {
           'featureTag': 'nav.title',
           'type': 'feature',
           'changeName': 'Asset Edit Page Titles',

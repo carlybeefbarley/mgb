@@ -670,9 +670,15 @@ main = function(){
         retainLines: false
       }])*/
 
-      cb(allInOneBundle)
-      this.cachedBundle = allInOneBundle
-      this._hasSourceChanged = false
+      if(this.cachedBundle === allInOneBundle){
+        this._hasSourceChanged = false
+        cb(this.cachedBundle, true)
+      }
+      else{
+        cb(allInOneBundle)
+        this.cachedBundle = allInOneBundle
+        this._hasSourceChanged = false
+      }
     })
   }
 

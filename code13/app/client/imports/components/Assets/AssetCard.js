@@ -51,10 +51,10 @@ export default AssetCard = React.createClass({
       renderView: defaultAssetViewChoice
     }
   },
-  
+
   componentDidMount()
   {
-    // this is here because React makes passive event listeners and it's not 
+    // this is here because React makes passive event listeners and it's not
     // possible to prevent default from passive event listener
     this.dragSurface = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
     this.dragSurface.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
@@ -80,7 +80,7 @@ export default AssetCard = React.createClass({
   },
 
   render () {
-    if (!this.props.asset) 
+    if (!this.props.asset)
       return null
 
     const { renderView, asset, fluid, canEdit, allowDrag, ownersProjects } = this.props
@@ -136,13 +136,13 @@ export default AssetCard = React.createClass({
           asset={asset}
         />
       </div>
-      
+
         <Card.Content>
           {viewOpts.showWorkstate &&
             <span style={{ float: 'right' }}>
               <WorkState
-               workState={asset.workState} 
-               size={viewOpts.showExtra ? null : 'small'} 
+               workState={asset.workState}
+               size={viewOpts.showExtra ? null : 'small'}
                canEdit={false} />
             </span>}
           {!viewOpts.showExtra &&
@@ -171,9 +171,9 @@ export default AssetCard = React.createClass({
             </Popup>}
 
           {viewOpts.showExtra &&
-            <Card.Header 
-              content={shownAssetName} 
-              style={{ marginRight: '2em', overflowWrap: 'break-word' }} 
+            <Card.Header
+              content={shownAssetName}
+              style={{ marginRight: '2em', overflowWrap: 'break-word' }}
             />}
 
           {viewOpts.showMeta &&
@@ -252,7 +252,7 @@ export default AssetCard = React.createClass({
               <small>&nbsp;{asset.isCompleted ? 'Locked' : 'Unlocked'}</small>
             </div>
             <div
-              className={(canEdit ? '' : 'disabled ') + 'ui compact button'}
+              className={( canEdit && !asset.isCompleted ? '' : 'disabled ') + 'ui compact button'}
               style={veryCompactButtonStyle}
               onMouseUp={this.handleDeleteClick}
               onTouchEnd={this.handleDeleteClick}
@@ -271,7 +271,7 @@ export default AssetCard = React.createClass({
    * @param {any} err
    */
   _handleMeteorErrResp (err) {
-    if (err) 
+    if (err)
       showToast(err.reason, 'error')
   },
 
@@ -299,9 +299,9 @@ export default AssetCard = React.createClass({
       this._handleMeteorErrResp
     )
 
-    if (newIsDeletedState) 
+    if (newIsDeletedState)
       logActivity('asset.delete', 'Delete asset', null, this.props.asset)
-    else 
+    else
       logActivity('asset.undelete', 'Undelete asset', null, this.props.asset)
 
     e.preventDefault()
@@ -318,9 +318,9 @@ export default AssetCard = React.createClass({
       this._handleMeteorErrResp
     )
 
-    if (newIsCompletedStatus) 
+    if (newIsCompletedStatus)
       logActivity('asset.stable', 'Mark asset as stable', null, this.props.asset)
-    else 
+    else
       logActivity('asset.unstable', 'Mark asset as unstable', null, this.props.asset)
 
     e.preventDefault()
@@ -331,9 +331,9 @@ export default AssetCard = React.createClass({
     const asset = this.props.asset
     const url = '/u/' + asset.dn_ownerName + '/asset/' + asset._id
     // middle click - mouseUp reports buttons == 0; button == 1
-    if (e.buttons == 4 || e.button == 1) 
+    if (e.buttons == 4 || e.button == 1)
       window.open(url + (window.location.search ? window.location.search : ''))
-    else 
+    else
       utilPushTo(this.context.urlLocation.query, url)
   }
 })

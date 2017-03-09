@@ -256,6 +256,9 @@ export default AssetEditRoute = React.createClass({
     if (!this.data.asset || this.data.loading || !this.props.currUser)
       return false  // Need to at least be logged in and have the data to do any edits!
 
+    if(this.data.asset.isCompleted)
+      return false
+
     const { currUser, currUserProjects } = this.props
     if (asset.ownerId === currUser._id)
       return true   // Owner can always edit
@@ -291,7 +294,18 @@ export default AssetEditRoute = React.createClass({
 
     return false    // Nope, can't edit it bro
   },
+  // only owner can mark asset as completed (locked)
+  canCurrUserChangeCompletion(assetOverride){
+    const asset = assetOverride || this.data.asset
+    if (!this.data.asset || this.data.loading || !this.props.currUser)
+      return false  // Need to at least be logged in and have the data to do any edits!
 
+    const { currUser, currUserProjects } = this.props
+    if (asset.ownerId === currUser._id)
+      return true   // Owner can always edit
+
+    return false
+  },
   doForkAsset: function() {
     if (!this.state.isForkPending) {
       const { asset } = this.data
@@ -339,6 +353,7 @@ export default AssetEditRoute = React.createClass({
     }
 
     const canEd = this.canCurrUserEditThisAsset()
+    const canEdCompleted = this.canCurrUserChangeCompletion()
     const currUserId = currUser ? currUser._id : null
     const hasUnsentSaves = !!this.m_deferredSaveObj
 
@@ -384,7 +399,7 @@ export default AssetEditRoute = React.createClass({
             <StableState
               isStable={asset.isCompleted}
               showMicro={true}
-              canEdit={canEd}
+              canEdit={canEdCompleted}
               handleChange={this.handleStableStateChange} />
             <DeletedState
               isDeleted={asset.isDeleted}
@@ -404,7 +419,7 @@ export default AssetEditRoute = React.createClass({
               asset={asset}
               currUser={currUser}
               assetActivity={this.data.assetActivity} />
-            { asset.skillPath && asset.skillPath.length > 0 && 
+            { asset.skillPath && asset.skillPath.length > 0 &&
               <ChallengeState ownername={asset.dn_ownerName}/>
             }
             <AssetForkGenerator
@@ -445,8 +460,15 @@ export default AssetEditRoute = React.createClass({
   {
     // This is a style on the Edit/view tag in render()
     $('.mgbReadOnlyReminder').transition({ animation: 'flash', duration: '800ms' })
-    if (this.props.currUser)
-      showToast("You do not have permission to edit this Asset. Ask owner for permission or make a fork..", 'error')
+    if (this.props.currUser){
+      if (this.data.asset.ownerId === this.props.currUser._id)
+          showToast("You can't edit Asset in the completed state - change asset state to unlocked to edit asset", 'error')
+      else
+        if (this.data.asset.isCompleted)
+          showToast("Asset is in completed state and can't be changed. Make a fork or ask owner to mark asset as incompleted", 'error')
+        else
+          showToast("You do not have permission to edit this Asset. Ask owner for permission or make a fork..", 'error')
+    }
     else
       showToast("You must create an account if you wish to edit Assets", 'error')
   }, 5000),  // 5000ms is the duration of an error Notification
@@ -668,7 +690,7 @@ export default AssetEditRoute = React.createClass({
     const { asset } = this.data
 
     if (asset && asset.isCompleted !== newIsCompleted) {
-      Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), { isCompleted: newIsCompleted}, (err, res) => {
+      Meteor.call('Azzets.update', asset._id, this.canCurrUserChangeCompletion(), { isCompleted: newIsCompleted}, (err, res) => {
         if (err)
           showToast(err.reason, 'error')
       })

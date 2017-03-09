@@ -54,38 +54,22 @@ export default AssetCard = React.createClass({
   
   componentDidMount()
   {
-    this.previewCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
-    // this is here because React makes passive event listeners and it's not possible to prevent default from passive event listener
-    // Drag on Touch devices broke on Feb6. See #478 (@stauzs). 
-    // @dgolds put the startSyntheticDrag pieces back in here on 3/3, but it's not
-    // working with scenarios like EditCode
-
-    this.previewCanvas.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+    // this is here because React makes passive event listeners and it's not 
+    // possible to prevent default from passive event listener
+    this.dragSurface = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
+    this.dragSurface.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
 
   },
   componentWillUnmount(){
     // See comment in componentDidMount() and #478
-    this.previewCanvas.removeEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+    this.dragSurface.removeEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
   },
-
 
   startDrag (e) {
     const { asset } = this.props
-    //console.log(`AssetCard startDrag(${asset ? asset._id : 'null?'})..`)
     const url = `/api/asset/png/${asset._id}`
-
     // IE supports only text.. so - encode everything in the "text"
     e.dataTransfer.setData( 'text', JSON.stringify({ link: url, asset: asset }) )
-
-    // allow to drop on graphics canvas
-    /*try {
-      e.dataTransfer.setData("mgb/image", thumbnail)
-    }
-    // IE will throw an error here.. just ignore
-    catch (e) { } */
-
-    // IE needs this:
-    //   e.dataTransfer.effectAllowed = "copy"
     $(document.body).addClass('dragging') // this is in mgb.css
   },
 
@@ -146,28 +130,13 @@ export default AssetCard = React.createClass({
         className='animated fadeIn link'
       >
 
-        <div
-          className='ui centered image'
-          style={{
-            display: viewOpts.showImg ? 'initial' : 'none',
-            overflow: 'hidden',
-            width: '100%',
-            minHeight: '155px',
-            cursor: 'pointer',
-            backgroundColor: 'white'
-          }}
-        >
-          <Thumbnail
-            asset={asset}
-            ref='thumbnailCanvas'
-            style={{
-              margin: '0 auto',
-              width: 'initial'
-            }}
-            className='mgb-pixelated'
-          />
-        </div>
-
+      <div ref='thumbnailCanvas'>
+        <Thumbnail
+          constrainHeight='155px'
+          asset={asset}
+        />
+      </div>
+      
         <Card.Content>
           {viewOpts.showWorkstate &&
             <span style={{ float: 'right' }}>

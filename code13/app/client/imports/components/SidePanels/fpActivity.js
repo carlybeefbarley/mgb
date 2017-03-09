@@ -68,7 +68,7 @@ const ActivityExtraDetail = ( { act} ) => {
 
         <Feed.Extra images>
           <QLink to={linkTo}>
-            <Thumbnail id={act.toAssetId} style={{ width: "auto", maxWidth: "12em", maxHeight: "6em" }} expires={5} />
+            <Thumbnail assetId={act.toAssetId} constrainHeight='60px' expires={5} />
           </QLink>
         </Feed.Extra>
       </div>

@@ -100,12 +100,14 @@ export default class DropArea extends React.Component {
 
   handleDrop(e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
+    
     if (!asset) {
       console.log("Drop - NO asset")
       return
     }
 
     if (asset.kind !== this.props.kind) {
+
       this.setState( { badAsset: asset, asset: null }, () => { this.saveChanges() })
       return
     }
@@ -171,6 +173,7 @@ export default class DropArea extends React.Component {
 
     const map = {
       rotate90: "rotate(90deg)",
+
       rotate180: "rotate(180deg)",
       rotate270: "rotate(270deg)",
       flipX: "scaleX(-1)",
@@ -189,7 +192,7 @@ export default class DropArea extends React.Component {
           this.props.value = val
           this.state.asset = null
           // Play sound when selecting
-          if (MgbActor.alCannedSoundsList.includes(val))
+          if (name === "Builtin samples" && MgbActor.alCannedSoundsList.includes(val))
             MgbActor.playCannedSound(val)
           this.props.onChange && this.props.onChange(val)
         }} value={this.props.value} />
@@ -199,6 +202,7 @@ export default class DropArea extends React.Component {
 
   render() {
     const asset = this.getAsset()
+
     return (
       <div
         /*TODO: this is bad id - e.g. actor has 3 sound options */

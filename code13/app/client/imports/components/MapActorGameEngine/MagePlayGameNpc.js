@@ -55,7 +55,7 @@ export default MagePlayGameNpc = {
     this.isPaused = true
   },
   
-  _hideNpcMessage()
+  hideNpcMessage()
   {
     if (this.isPaused)
     {
@@ -189,7 +189,7 @@ export default MagePlayGameNpc = {
       if (repeatQuestion)
         this.askNpcQuestion(npcDialogActor, ap)
       else
-        this._hideNpcMessage()
+        this.hideNpcMessage()
     }
   }
 

@@ -55,9 +55,6 @@ export default class MagePlayGame
 
   resetGameState() {
     this.G_gameStartedAtMS = (new Date()).getTime()
-    this.G_pausedTime = 0
-    this.G_gamePausedAtMS = 0
-    this.G_gameUnpausedAtMS = 0
     this.isPaused = false
     this.G_gameOver = false
 
@@ -171,8 +168,6 @@ export default class MagePlayGame
   }
 
   doPauseGame() {
-    if (!this.isPaused)
-      this.G_gamePausedAtMS = (new Date()).getTime()
     this.isPaused = true
   }
 
@@ -192,14 +187,6 @@ export default class MagePlayGame
     this.isPaused = newViz
   }
 
-  hideNpcMessage()
-  {
-    if (this.isPaused) 
-      this.G_gameUnpausedAtMS = (new Date()).getTime()
-      this.G_pausedTime += Math.floor(this.G_gameUnpausedAtMS - this.G_gamePausedAtMS) / 1000 // Don't move time when paused
-      this._hideNpcMessage()
-  }
-
   // This is a bit weird. It returns the NAME not the actor. TODO - rename for clarity
   loadActorByName(actorName) 
   {
@@ -216,7 +203,7 @@ export default class MagePlayGame
     if (this.G_gameOver)
       return
 
-    if (this.isTransitionInProgress) {      // transition to new map
+        if (this.isTransitionInProgress) {      // transition to new map
         // Transition tick function would not run unless specified here
         if (this.transitionStateWaitingForActorLoadRequests)
         {
@@ -618,11 +605,9 @@ export default class MagePlayGame
   }
 
   timeStrSinceGameStarted() {
-    const nowMS = (new Date()).getTime()  
-    const secondsPaused = this.G_pausedTime % 60
-    const minutesPaused = Math.floor(this.G_pausedTime / 60) 
-    const secondsPlayed = Math.floor(nowMS - this.G_gameStartedAtMS) / 1000 - secondsPaused
-    const minutesPlayed = Math.floor(secondsPlayed / 60) - minutesPaused
+    const nowMS = (new Date()).getTime()    
+    const secondsPlayed = Math.floor(nowMS - this.G_gameStartedAtMS) / 1000
+    const minutesPlayed = Math.floor(secondsPlayed / 60)
     const hoursPlayed = Math.floor(minutesPlayed / 60)
     let timeStr = ''
     if (hoursPlayed)

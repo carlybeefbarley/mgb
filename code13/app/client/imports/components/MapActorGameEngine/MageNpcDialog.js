@@ -24,12 +24,21 @@ class MageNpcDialogText extends React.Component {
   componentDidMount () {
     this._rafId = requestAnimationFrame(this.showNextChar_loopWithRAF)
   }
-  
+
   componentWillUnmount () {
     if (this._rafId)
     {
       cancelAnimationFrame(this._rafId)
       this._rafId = null
+    }
+  }
+
+  componentWillReceiveProps(nextProps)
+  {
+    if (nextProps.message !==this.props.message)
+    {
+      this.setState( { shownChars: 0 } )
+      this._rafId = requestAnimationFrame(this.showNextChar_loopWithRAF)
     }
   }
 
@@ -40,18 +49,22 @@ class MageNpcDialogText extends React.Component {
     {
       shownChars++
       // Double text speed; In the future, can make text speed an option the user can change
-      if (shownChars + 1 <= msg.length)
+      if (shownChars + 1 <= msg.length) 
         shownChars++
-
+      
+      
       this.setState( { shownChars } )
       this._rafId = requestAnimationFrame(this.showNextChar_loopWithRAF)
     }
-    else
+    else 
       this._rafId = null
+    
+    
   }
 
   render () {
     const { message } = this.props
+
     return (
       <Header as='h4'>
         <span>{ message.slice(0, this.state.shownChars) }</span>

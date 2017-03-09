@@ -52,7 +52,7 @@ export default class All extends BaseForm {
 
         {this.data[responseChoice] &&
           this.options("NPC Stays", responseChoiceStayYN, [
-            { text: "Disappers",       value: "0"},
+            { text: "Disappears",       value: "0"},
             { text: "Stays",           value: "1"},
             { text: "Repeat Question", value: "2"},
           ])

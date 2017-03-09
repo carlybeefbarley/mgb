@@ -23,8 +23,25 @@ export default class Animations extends React.Component {
     console.log("Form has changed")
   }
 
-  changeGraphic(index, val) {
+  changeGraphic(index, val, asset) {
     this.data[index].tileName = val
+    /* 
+    if (asset) {
+      $.get('/api/asset/tileset-info/' + asset._id, (data) => {
+        if (data.tilecount > 1) {
+          for (i=0; i<=data.tilecount; i++) {
+            if (!this.data[index+i].tileName) {
+              this.data[index+i] = {
+                "action": MgbActor.animationNames[index+i],
+                "tileName": data.name + '.frame' + i,
+                "effect": "no effect" 
+              }
+            }
+          }
+        }
+      })
+    }
+    */
     this.props.onChange && this.props.onChange()
   }
 
@@ -39,7 +56,13 @@ export default class Animations extends React.Component {
       <Table.Row key={i}>
         <Table.Cell>{animations[i]}</Table.Cell>
         <Table.Cell>
-          <DropArea kind="graphic" value={this.data[i].tileName} effect={this.data[i].effect} asset={this.props.asset} onChange={this.changeGraphic.bind(this, i)}/>
+          <DropArea 
+            kind="graphic" 
+            value={this.data[i].tileName} 
+            effect={this.data[i].effect} 
+            asset={this.props.asset}
+            onChange={this.changeGraphic.bind(this, i)}
+          />
         </Table.Cell>
         <Table.Cell>
           <SmallDD options={MgbActor.animationEffectNames} value={this.data[i].effect} onChange={this.changeEffect.bind(this, i)} />

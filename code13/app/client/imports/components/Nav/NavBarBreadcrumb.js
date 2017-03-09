@@ -4,7 +4,7 @@ import QLink from '/client/imports/routes/QLink'
 import { Popup, Breadcrumb, Icon } from 'semantic-ui-react'
 import { AssetKinds } from '/imports/schemas/assets'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
-
+import UserItem from '/client/imports/components/Users/UserItem'
 // The NavBar is the top row of the central column of the page (i.e. between the NavPanel column
 // on the left and the FlexPanel on the right).
 
@@ -88,19 +88,33 @@ const NavBarBreadcrumb = ( {
       &emsp;
       <QLink to="/" className="section"><img src='/images/logos/mgb/big/icon_01.png' style={{ height: '1em', verticalAlign: 'middle', paddingRight: '0.25em' }} /></QLink>
       
+      { /*    > USER     */ }
       { usernameToShow && _sep }
-
       { usernameToShow && (
-        <QLink className="section" to={`/u/${usernameToShow}`}>
-          { user && (
-            <img
-                className="ui avatar image"
-                style={{ width: '1.3em', height: '1.3em' }}
-                src={makeCDNLink(`/api/user/${user._id}/avatar/60`, makeExpireTimestamp(60))}></img>
-            )
-          }
-          {usernameToShow}&nbsp;
-        </QLink>
+          <Popup
+              trigger={(
+                <QLink className="section" to={`/u/${usernameToShow}`}>
+                  { user && (
+                    <img
+                        className="ui avatar image"
+                        style={{ width: '1.3em', height: '1.3em' }}
+                        src={makeCDNLink(`/api/user/${user._id}/avatar/60`, makeExpireTimestamp(60))}></img>
+                    )
+                  }
+                  {usernameToShow}&nbsp;
+                </QLink>
+              )}
+              on='hover'
+              hoverable
+              positioning='bottom center'
+              mouseEnterDelay={400} >
+            <Popup.Header>
+              {<usernameToShow></usernameToShow>}
+            </Popup.Header>
+            <Popup.Content>
+            { user && <UserItem user={user} /> }
+            </Popup.Content>
+          </Popup>
         )
       }
 

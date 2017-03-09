@@ -1,3 +1,5 @@
+// this is only for phantom testing purposes - not used in the codebase
+
 var page = require('webpage').create();
 page.viewportSize = {
   width: 1920,

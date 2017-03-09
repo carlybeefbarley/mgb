@@ -1451,13 +1451,10 @@ export default class EditCode extends React.Component {
             return
           }
           // we need to get line ch from char position
-          let found = false
           cm.eachLine((line) => {
-            if (found) return
             if (node.start >= char && node.start < char + line.text.length) {
               pos.ch = node.start - char
-              found = true
-              return
+              return true
             }
             pos.line++
             char += (line.text.length + 1)
@@ -2068,7 +2065,7 @@ export default class EditCode extends React.Component {
                 <a className="ui fluid label" key={script.id} style={{marginBottom: "2px"}} href={`/assetEdit/${script.id}`} target='_blank'>
                   <small style={{fontSize: '85%'}}>this string references <strong>your</strong> code asset:
                     <code>{string}</code></small>
-                  <Thumbnail className="ui right spaced medium image" id={script.id} expires={60} />
+                  <Thumbnail assetId={script.id} expires={60} constrainHeight='60px'/>
                   <small>{script.desc}</small>
                 </a>
             )
@@ -2077,11 +2074,11 @@ export default class EditCode extends React.Component {
         // TODO: get link to asset
         else if(parts.length === 2){
           advices.push(
-            <div key={advices.length} style={{margin: 0}}><i className="ui fluid label"></i>
+            <a className="ui fluid label" key={advices.length} style={{marginBottom: "2px"}} href={`/assetEdit/code/${parts.join('/')}`} target='_blank'>
               <small style={{fontSize: '85%'}}>this string references <strong>{parts[0]}</strong> code asset:
                 <code>{parts[1]}</code></small>
-              <Thumbnail className="ui right spaced medium image" id={parts.join('/')} expires={60} />
-            </div>
+              <Thumbnail assetId={parts.join('/')} expires={60} constrainHeight='60px'/>
+            </a>
           )
         }
       }
@@ -2146,11 +2143,11 @@ export default class EditCode extends React.Component {
 
     this.codeMirror && this.codeMirror.setOption("readOnly", !this.props.canEdit)
 
-    // preview ID and String references soing very similar things
+    // preview ID and String references doing very similar things. Refactor?
     const previewIdThings = this.state.previewAssetIdsArray.map(assetInfo => {
       return (
         <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}} href={`/assetEdit/${assetInfo.id}`} target='_blank'>
-          <Thumbnail className="ui right spaced medium image" id={assetInfo.id} expires={60} />
+          <Thumbnail assetId={assetInfo.id} expires={60} constrainHeight='60px'/>
           URL references MGB <strong>{assetInfo.kind}</strong> asset {assetInfo.refType} {assetInfo.id}
         </a>
       )
@@ -2287,6 +2284,7 @@ export default class EditCode extends React.Component {
                   userSkills  =     { this.userSkills }
                   quickSave   =     { this.quickSave.bind(this) }
                   highlightLines =  { this.highlightLines.bind(this) }
+                  assetId     =     { asset._id }
                 />
               }
 

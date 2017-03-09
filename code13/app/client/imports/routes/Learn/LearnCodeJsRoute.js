@@ -8,7 +8,10 @@ import { showToast } from '/client/imports/routes/App'
 import { logActivity } from '/imports/schemas/activity'
 
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
-import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap'
+
+import { getAssetBySelector } from '/client/imports/helpers/assetFetchers'
+
 
 // for convenience, extract out the skillItems' $meta content into a simple array
 const skillItems = _.compact(_.map(SkillNodes.code.js.basics, (val, key) => (
@@ -33,27 +36,43 @@ export const StartCodeJsRoute = (name, code, currUser, newTab) => {
   const newAsset = {
     name: 'tutorials.js.' + name,
     kind: 'code',
-    skillPath: 'code.js.basics.' + name,
-    content2: { src: code },
-    isCompleted: false,
     isDeleted: false,
-    isPrivate: false
+    dn_ownerName: currUser.username
   }
 
-  Meteor.call( 'Azzets.create', newAsset, (error, result) => {
-    if (error) {
-      showToast( "cannot create Asset because: " + error.reason, 'error' )
-      return
+  // check if asset exists
+  getAssetBySelector(newAsset, (asset, err) => {
+    if (asset)  // asset exists. open it.
+    {  
+      const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
+      openUrl(url, newTab)
     }
-    newAsset._id = result             // So activity log will work
-    logActivity( "asset.create", 'Created code tutorial', null, newAsset )
-    const url = `/u/${currUser.username}/asset/${newAsset._id}`
-
-    if (newTab)
-      window.open( window.location.origin + url )
-    else
-      utilPushTo( window.location, url )
+    else        // asset doesn't exist. create one.
+    {  
+      newAsset.skillPath = 'code.js.basics.' + name
+      newAsset.content2 = { src: code }
+      newAsset.isCompleted = false
+      newAsset.isPrivate = false
+    
+      Meteor.call( 'Azzets.create', newAsset, (error, result) => {
+        if (error) {
+          showToast( "cannot create Asset because: " + error.reason, 'error' )
+          return
+        }
+        newAsset._id = result             // So activity log will work
+        logActivity( "asset.create", 'Created code tutorial', null, newAsset )
+        const url = `/u/${currUser.username}/asset/${newAsset._id}`
+        openUrl(url, newTab)
+      })
+    }
   })
+}
+
+const openUrl = (url, newTab) => {
+  if (newTab)
+    window.open( window.location.origin + url )
+  else
+    utilPushTo( window.location, url )
 }
 
 const LearnCodeJsRoute = ( { currUser }, context ) => (
@@ -66,13 +85,11 @@ const LearnCodeJsRoute = ( { currUser }, context ) => (
         subheader='Click on an item and explore it'
       />
       { currUser && (
-        <div style={{ clear: 'both' }}>
-          <SkillsMap user={currUser} subSkill={true} onlySkillArea={'code.js.basics'} userSkills={context.skills} ownsProfile={true} />
-        </div>
+        <SkillsMap skills={context.skills} expandable toggleable skillPaths={['code.js.basics']} />
       )}
     </Grid.Column>
     <Grid.Column>
-      { _.map(_.keys(bySubsection), subkey => 
+      { _.map(_.keys(bySubsection), subkey =>
         <Segment padded piled key={subkey}>
           <Header as='h3' content={subkey}/>
           <List size='large' relaxed='very' link className="skills">
@@ -90,7 +107,7 @@ const LearnCodeJsRoute = ( { currUser }, context ) => (
                   icon={isComplete ? { name: 'checkmark', color: 'green' } : area.icon}
                   onClick={ (e) => handleClick( e, area.idx, area.code, currUser ) }
                 />
-              ) 
+              )
             } ) }
           </List>
         </Segment>

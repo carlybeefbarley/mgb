@@ -16,10 +16,10 @@ const AssetShowStableSelector = ( { showStableFlag, handleChangeFlag } ) => {
         trigger={button}
         on='hover'
         positioning='bottom center'
-        header='Show/hide completed Assets'      
+        header='Show/hide locked Assets'      
         content={ active ? 
-                    "Currently showing ONLY 'Completed' Assets. Click here to ALSO show 'Incomplete' Assets" 
-                  : "Currently showing 'Completed' AND 'Incomplete' Assets. Click here to ONLY show 'Completed' Assets"} 
+                    "Currently showing ONLY 'Locked' Assets. Click here to ALSO show 'Unlocked' Assets" 
+                  : "Currently showing 'Locked' AND 'Unlocked' Assets. Click here to ONLY show 'Locked' Assets"} 
     />
   )
 }

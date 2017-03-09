@@ -36,13 +36,13 @@ export default SkillTreeRoute = React.createClass({
     const handleForSkills = Meteor.subscribe("skills.userId", user._id)
     return {
       loading:  !handleForSkills.ready(),
-      skills:   Skills.findOne(user._id) 
+      skills:   Skills.findOne(user._id)
     }
   },
 
 
   render: function() {
-    const { user, ownsProfile, isTopLevelRoute } = this.props
+    const { ownsProfile, isTopLevelRoute } = this.props
 
     const userSkills = ownsProfile ? this.context.skills : this.data.skills
 
@@ -51,25 +51,22 @@ export default SkillTreeRoute = React.createClass({
         <Helmet
             title="Skill Tree"
             meta={ [ {"name": "description", "content": "SkillTree"} ] } />
-        { isTopLevelRoute && 
+        { isTopLevelRoute &&
           <Header as='h2' content='Skills'/>
         }
-        { isTopLevelRoute && 
+        { isTopLevelRoute &&
           <Segment>
             <p>
-              The Skill Bars below represent your progress on learning certain Skills. 
-              Skills will automatically advance as you complete tutorials, exercise certain skills, and as you code with CodeMentor. 
+              The Skill Bars below represent your progress on learning certain Skills.
+              Skills will automatically advance as you complete tutorials, exercise certain skills, and as you code with CodeMentor.
               You can expand each Skill Bar to see the details of your skill progress in that area, and even manually change your status for each Skill.
             </p>
             <p>
-              This system allows MGB to present appropriate help and tutorials to you based on your level, and for you to track your progress in these Skill areas. 
-            </p>
-            <p>
-              <small><em>(Note: expanded-UI for this feature is incomplete - and kind of ugly... It will be completed in February)</em></small>
+              This system allows MGB to present appropriate help and tutorials to you based on your level, and for you to track your progress in these Skill areas.
             </p>
           </Segment>
         }
-        <SkillsMap user={user} userSkills={userSkills} ownsProfile={ownsProfile} hideToolbars={!isTopLevelRoute}/>
+        <SkillsMap skills={userSkills} expandable toggleable={ownsProfile} />
       </Segment>
     )
   }

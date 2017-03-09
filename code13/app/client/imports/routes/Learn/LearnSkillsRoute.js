@@ -4,7 +4,7 @@ import QLink from '../QLink'
 import getStartedStyle from '../GetStarted.css'
 import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
-import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -53,11 +53,9 @@ const LearnSkillsRoute = ({ currUser }, context) => (
               <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
               <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.title}</Header>
               <p style={descStyle}>{area.desc}.</p>
-              { currUser &&
-              <div style={{ clear: 'both' }}>
-                <SkillsMap user={currUser} userSkills={context.skills} ownsProfile={true} onlySkillArea={area.tag} />
-              </div>
-              }
+              { currUser && (
+                <SkillsMap skills={context.skills} skillPaths={[area.tag]} />
+              )}
             </Card.Content>
           </Card>
         ) ) }

@@ -8,9 +8,11 @@ import { showToast } from '/client/imports/routes/App'
 import { logActivity } from '/imports/schemas/activity'
 
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
-import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 // TODO make this dynamic
 import tutorialObject from '/public/codeTutorials.json'
+
+import { getAssetBySelector } from '/client/imports/helpers/assetFetchers'
 
 
 const jsGamesSkills = SkillNodes.code.js.games
@@ -22,41 +24,6 @@ for (var key in jsGamesSkills) {
     skillItems.push( skill )
   }
 }
-
-// console.log(_jsGamesSkillsNode)
-
-// const jsItems = [
-//   {
-//     icon: 'code',
-//     link: '/u/!vault/project/2suHPANwpaN5Pjumc',
-//     content: 'Basic gameplay',
-//     desc: ``
-//   },
-//   {
-//     icon: 'code',
-//     link: '/u/!vault/project/aCdy9zz5cJjNog2en',
-//     content: 'Tweens',
-//     desc: ``
-//   },
-//   {
-//     icon: 'code',
-//     link: '/u/!vault/project/NwobuqkQqrcuzzAeo',
-//     content: 'Timing',
-//     desc: ``
-//   },
-//   {
-//     icon: 'code',
-//     link: '/u/!vault/project/PHjAGkS9L4mTTPepE',
-//     content: 'User interface',
-//     desc: ``
-//   },
-//   {
-//     icon: 'code',
-//     link: '/u/!vault/project/JqN5CbdnNFZZqBXnE',
-//     content: 'OOP',
-//     desc: `Refactor existing game OOP style.`
-//   },
-// ]
 
 const handleClick = (e, idx, code, currUser) => {
   const newTab = (e.buttons == 4 || e.button == 1)
@@ -73,27 +40,44 @@ export const StartJsGamesRoute = (name, code, currUser, newTab) => {
   const newAsset = {
     name: 'tutorials.jsGame.' + name,
     kind: 'code',
-    skillPath: 'code.js.games.' + name,
-    content2: { src: code },
-    isCompleted: false,
     isDeleted: false,
-    isPrivate: false
+    dn_ownerName: currUser.username
   }
 
-  Meteor.call( 'Azzets.create', newAsset, (error, result) => {
-    if (error) {
-      showToast( "cannot create Asset because: " + error.reason, 'error' )
-      return
+  // check if asset exists
+  getAssetBySelector(newAsset, (asset, err) => {
+    if (asset)  // asset exists. open it.
+    {  
+      const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
+      openUrl(url, newTab)
     }
-    newAsset._id = result             // So activity log will work
-    logActivity( "asset.create", 'Created game tutorial', null, newAsset )
-    const url = `/u/${currUser.username}/asset/${newAsset._id}`
+    else        // asset doesn't exist. create one.
+    {  
+      newAsset.skillPath = 'code.js.games.' + name
+      newAsset.content2 = { src: code }
+      newAsset.isCompleted = false
+      newAsset.isPrivate = false
 
-    if (newTab)
-      window.open( window.location.origin + url )
-    else
-      utilPushTo( window.location, url )
+      Meteor.call( 'Azzets.create', newAsset, (error, result) => {
+        if (error) {
+          showToast( "cannot create Asset because: " + error.reason, 'error' )
+          return
+        }
+        newAsset._id = result             // So activity log will work
+        logActivity( "asset.create", 'Created game tutorial', null, newAsset )
+        const url = `/u/${currUser.username}/asset/${newAsset._id}`
+
+        openUrl(url, newTab)
+      })
+    }
   })
+}
+
+const openUrl = (url, newTab) => {
+  if (newTab)
+    window.open( window.location.origin + url )
+  else
+    utilPushTo( window.location, url )
 }
 
 const LearnJsGamesRoute = ({ currUser }, context) => {
@@ -108,9 +92,7 @@ const LearnJsGamesRoute = ({ currUser }, context) => {
           </Header.Subheader>
         </Header>
         { currUser && (
-          <div style={{ clear: 'both' }}>
-            <SkillsMap user={currUser} subSkill={true} onlySkillArea={'code.js.games'} userSkills={context.skills} ownsProfile={true} />
-          </div>
+          <SkillsMap skills={context.skills} expandable toggleable skillPaths={['code.js.games']} />
         )}
       </Grid.Column>
       <Grid.Column>

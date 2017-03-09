@@ -72,9 +72,9 @@ RestApi.addRoute('asset/code/:id', { authRequired: false }, {
 RestApi.addRoute('asset/code/:owner/:name', {authRequired: false}, {
   get: function(){
     const asset = Azzets.findOne({dn_ownerName: this.urlParams.owner, name: this.urlParams.name, isDeleted: false})
-    return genAPIreturn(this, asset, asset ? asset.content2.src : null, {
+    return genAPIreturn(this, asset, asset ? (asset.content2.src || '')  : null, {
       'Content-Type': "text/plain",
-      'file-name': asset.name
+      'file-name': asset ? asset.name : this.urlParams.name
     })
   }
 })

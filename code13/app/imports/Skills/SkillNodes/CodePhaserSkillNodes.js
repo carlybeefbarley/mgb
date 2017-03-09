@@ -40,6 +40,7 @@ export default {
   taskSetPosition: {
     $meta: {
       name: 'Task set position',
+      isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/Pn9mhjR7yAW3iTsRt',
       description: `Set image positions`,
@@ -66,9 +67,10 @@ export default {
   },
   taskInput: {
     $meta: {
+      isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/79YpYHXg9DbQG6tXp',
-      name: 'Task',
+      name: 'Task Input',
       description: `On each click, make the sprite rotate counter-clockwise by 10°`
     },
     'taskInput': C.En(0),
@@ -93,9 +95,10 @@ export default {
   },
   taskMoveChar: {
     $meta: {
+      isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/kMhY34EAEsETMiGmF',
-      name: 'Task',
+      name: 'Task move character',
       description: `Move a character around the screen using arrow keys`
     },
     'taskMoveChar': C.En(0),
@@ -120,9 +123,10 @@ export default {
   },
   taskCharAnim: {
     $meta: {
+      isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/qNcrwh2emqdBEpPH5',
-      name: 'Task',
+      name: 'Task character animation',
       description: `Animate character - spawn, idle and run`
     },
     'taskCharAnim': C.En(0),
@@ -147,9 +151,10 @@ export default {
   },
   taskJump: {
     $meta: {
+      isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/qoQgYNPev3xqNXhXD',
-      name: 'Task',
+      name: 'Task jump',
       description: `Make a jumping character using simple physics`
     },
     'taskJump': C.En(0),
@@ -174,9 +179,10 @@ export default {
   },
   taskTweenGroup: {
     $meta: {
+      isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/rDMCqocQv3nnYx8AB',
-      name: 'Tasks',
+      name: 'Task animate group',
       description: `Animate a group of dwarves`
     },
     'taskTweenGroup': C.En(0),
@@ -201,6 +207,10 @@ export default {
     'next': C.En(0),
   }
 }
+
+
+
+
 
 
 //   basics: {

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Segment, Header, Button, Container } from 'semantic-ui-react'
+import { Segment, Header, Button, Container, Message } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import { AssetKinds } from '/imports/schemas/assets'
 import AssetCreateSelectKind from './AssetCreateSelectKind'
@@ -43,7 +43,8 @@ export default AssetCreateNew = React.createClass({
   render: function() {
     const { newAssetName, selectedKind } = this.state
     const { currUser, currUserProjects, placeholderName } = this.props
-    const isAssetNameValid = validate.assetName(newAssetName) && newAssetName && newAssetName !== ''
+    const isAssetNameValid = newAssetName && validate.assetName(newAssetName) && newAssetName !== ''
+    const assetNameErrText = (_.isString(newAssetName) && newAssetName.length > 1) ? validate.assetNameWithReason(newAssetName) : null
     const isKindChosen = selectedKind !== ''
     const isAssetReadyToCreate = isKindChosen && isAssetNameValid
     const chosenKindStr = isKindChosen ? AssetKinds[selectedKind].name : "Asset"
@@ -61,6 +62,7 @@ export default AssetCreateNew = React.createClass({
                 ref="inputAssetName"
               ></input>
             </div>
+            { assetNameErrText && <Message error content={assetNameErrText} /> }
           </div>
         </Segment>
 

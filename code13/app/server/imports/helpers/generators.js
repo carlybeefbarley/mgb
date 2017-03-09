@@ -25,9 +25,18 @@ export const assetToCdn = (api, asset, uri) => {
 // this will return only not-modified header if browser already has resource in the cache (based on etag)
 // It's good idea to pass body as function so heavy value calculations can be omitted if asset is not changed
 // e.g. transforming music using byteArray to base64 string
+const getBodyContent = (body) => {
+  const retval = (typeof body == "function") ? body() : body
+  // if resp body will be empty ('') - then restivus will send headers as body - seems like a bug
+  if(!retval){
+    return "\n"
+  }
+  return retval
+}
+
 export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   // default 404
-  if (!body) {
+  if (body === void(0) || body == null) {
     return {
       statusCode: 404,
       body: {}
@@ -36,7 +45,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   if (!asset) {
     return {
       headers: headers,
-      body: (typeof body == "function") ? body() : body
+      body: getBodyContent(body)
     }
   }
   // some fallback mechanism
@@ -80,6 +89,6 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   // return full response with etag
   return {
     headers: newHeaders,
-    body: (typeof body == "function") ? body() : body
+    body: getBodyContent(body)
   }
 }

@@ -12,7 +12,7 @@ const ToolEraser = {
   name: "eraserTool",
   tooltip: "Click and drag to erase individual pixels on the frame",
   icon: "eraser icon",            // Semantic-UI icon CSS class
-  editCursor: "not-allowed",
+  editCursor: "crosshair",
   supportsDrag: true,
   shortcut: 'e',
   changesImage: true,             // This does cause changes to the image, so image is dirty if this tool used

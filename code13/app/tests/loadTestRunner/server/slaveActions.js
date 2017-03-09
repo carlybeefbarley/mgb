@@ -11,9 +11,13 @@ const findSlave = (slave, slaves) => {
   return slaves.find(s => s.ws == slave)
 }
 
+const log = (clients, msg) => {
+  smAll(clients, 'log', msg)
+}
+
 const events = {
   test: (data, ws, clients, slaves) => {
-    console.log("From Slave:", data)
+    log(clients, "From Slave:", data)
     sm(ws, "test", {test: "123"})
   },
   start: (data, ws, clients, slaves) => {
@@ -24,13 +28,13 @@ const events = {
     }
     const slave = getIdleSlave(slaves)
     if (slave) {
-      console.log(`Starting test on slave with ${slave.jobs} jobs already running on: ${
+      log(clients, `Starting test ${data.name} on slave with ${slave.jobs} jobs already running on: ${
         slave.ws.upgradeReq.headers['x-forwarded-for'] || slave.ws.upgradeReq.connection.remoteAddress}`)
       slave.jobs++
       sm(slave.ws, "start", data)
     }
     else {
-      console.log("No slaves available !!!")
+      log(clients, "No slaves available !!! Waiting...")
       setTimeout(() => {
         events.start(data, ws, clients, slaves)
       }, 1000)
@@ -45,6 +49,15 @@ const events = {
     //console.log("Runner completed!")
     smAll(clients, 'runnerCompleted', data)
     //clientActions.events.runnerCompleted(data, ws, clients, slaves)
+  },
+  updateSlaves: (data, ws, clients, slaves) => {
+    slaves.forEach((slave) => {
+      sm(slave.ws, "update", data)
+    })
+  },
+  updateCompleted: (data, ws, clients, slaves) => {
+    log(clients, `Slave updated: ${
+      ws.upgradeReq.headers['x-forwarded-for'] || ws.upgradeReq.connection.remoteAddress}`)
   }
 }
 module.exports = {

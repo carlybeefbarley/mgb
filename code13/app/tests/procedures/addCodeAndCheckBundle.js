@@ -35,8 +35,8 @@ div.setAttribute("id", "test-element")
         sel.css(el.fullScreenButton).click()
 
         // wait for new window
-        browser.sleep(5000)
-        //sel.untilInvisible('.loading-notification')
+        // browser.sleep(5000)
+        sel.untilInvisible('.loading-notification')
         //sel.takeScreenShot('enteredCode.png')
         browser.getAllWindowHandles()
           .then(handles => {
@@ -45,14 +45,16 @@ div.setAttribute("id", "test-element")
               throw new Error("Failed to open new window for bundle")
             }
             const popup = handles.find(h => h != mainWindow)
+
             // switch to popup and find created element and close after
-            browser.switchTo().window(popup)
-            //sel.takeScreenShot('test.png', () => {
-              sel.untilVisible('#test-element')
+            browser.switchTo().window(popup).then(() => {
+              //sel.takeScreenShot('test.png', () => {
+              sel.css('#test-element')
               browser.close()
 
               browser.switchTo().window(mainWindow)
               sel.done(done)
+            })
             //})
 
           })

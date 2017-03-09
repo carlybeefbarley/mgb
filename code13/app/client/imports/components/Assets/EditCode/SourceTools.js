@@ -234,7 +234,7 @@ export default class SourceTools {
       if(!source.origin){
         source.origin = [origin]
       }
-      else{
+      else if(source.origin.indexOf(origin) === -1){
         source.origin.push(origin)
       }
     }
@@ -395,7 +395,7 @@ export default class SourceTools {
     if(this.babelWorker.isBusy){
       // debugger
       // racing condition - usually happens when one is working on the main file and second on the file included by the main file..
-      // it should be safe to ignore direct request - as main file will pull in dependency in anyway
+      // it should be safe to ignore direct request - as main file will pull in dependency anyway
       return
     }
     // TODO: spawn extra workers?
@@ -501,7 +501,12 @@ export default class SourceTools {
     }
 
     // from now on only observe asset and update tern on changes only
-    this.subscriptions[ari] = observeAsset({dn_ownerName: owner, name: name, kind: AssetKindEnum.code}, onReady, onChange)
+    this.subscriptions[ari] = observeAsset({
+      dn_ownerName: owner,
+      name: name,
+      kind: AssetKindEnum.code,
+      isDeleted: false
+    }, onReady, onChange)
   }
   // expose private variable - EditCode uses this
   hasChanged(){
@@ -516,9 +521,10 @@ export default class SourceTools {
       return
     }
     this.collectSources((sources) => {
-      // check sources and skip bundling if sources are empty
+      // check sources and skip bundling if ALL sources are empty
+      // empty means ';' - because of babel transforms
       let canSkipBundling = true
-      for (let i in sources) {
+      for (let i =0; i < sources.length; i++) {
         const code = sources[i].code
         if(code && code !== ";"){
           canSkipBundling = false
@@ -664,9 +670,15 @@ main = function(){
         retainLines: false
       }])*/
 
-      cb(allInOneBundle)
-      this.cachedBundle = allInOneBundle
-      this._hasSourceChanged = false
+      if(this.cachedBundle === allInOneBundle){
+        this._hasSourceChanged = false
+        cb(this.cachedBundle, true)
+      }
+      else{
+        cb(allInOneBundle)
+        this.cachedBundle = allInOneBundle
+        this._hasSourceChanged = false
+      }
     })
   }
 

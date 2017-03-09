@@ -3,7 +3,7 @@ import styles from '../home.css'
 import QLink from '../QLink'
 import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 
-import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
@@ -70,14 +70,9 @@ const LearnCodeRoute = ({ currUser, params }, context) => (
               <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
               <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
               <p style={descStyle}>{area.desc}</p>
-              {
-                area.skillPath && currUser && 
-                (
-                  <div style={{ clear: 'both' }}>
-                    <SkillsMap user={currUser} subSkill={true} onlySkillArea={area.skillPath} userSkills={context.skills} ownsProfile={true} />
-                  </div>
-                )
-              }
+              {area.skillPath && currUser && (
+                <SkillsMap skills={context.skills} skillPaths={[area.skillPath]} />
+              )}
             </Card.Content>
           </QLink>
         ) ) }

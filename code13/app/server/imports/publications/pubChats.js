@@ -20,6 +20,7 @@ Meteor.publish('chats.channelName', function(toChannelName, limit=20) {
       return this.ready()
     break
   case 'Asset':
+    break   // For now. May tighten up later
   case 'User':
   case 'DirectMessage':
   default:

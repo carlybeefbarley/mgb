@@ -94,7 +94,7 @@ Chat.channelName: (Indexed field, non-unique in Chats table, used to group the '
   Global       G_{publicChannelKey}_ // publicChannelKey is one of ChatChannel.sortedKeys[]. 
                                      // These are all public. There will be some user-'karma'
                                      // based policies to allow writing to each (pro users, beta vanguard etc)
-  Project      P_{projectId}_        // This one is for Project onwers and project Members. There may be 
+  Project      P_{projectId}_        // This one is for Project owners and project Members. There may be 
                                      // extra topics in future including public ones. Projects are more 
                                      // construction-oriented so this is probably fine.
   Asset        A_{AssetId}_          // Publicly writable. Owner might choose a 'approve comments' policy 
@@ -119,7 +119,7 @@ could be used as a message-thread within DMs
  * console.log(parseChannelName("U_alfkjsdafljsadlfj_"))
  * 
  * @param {string} channelName
- * @returns { channelName, scopeChar, scopeGroupName, scopeId, dmUid1, dmUid2, _topic }
+ * @returns { channelName, _scopeChar, scopeGroupName, scopeId, dmUid1, dmUid2, _topic }
  */
 export const parseChannelName = channelName => {
   if (!isChannelNameWellFormed(channelName))
@@ -354,8 +354,11 @@ export function currUserCanSend(currUser, channelName) {
   }
   if (channelObj.scopeGroupName === 'Project')
     return true // This is because the client isn't meant to see inaccessible Project chat anyway, so keep this simple
-    
-  console.log("TODO: [Asset/User/DM]-chat currUserCanSend()")
+
+  if (channelObj.scopeGroupName === 'Asset')
+    return true // We may tighten this up later
+
+  console.log("TODO: [User/DM]-chat currUserCanSend()")
   return false
 }
 
@@ -406,7 +409,7 @@ export function makePresentedChannelName(channelName, objectName) {
   case 'Project':
     return `${objectName} - Member chat`
   case 'Asset':
-    return `Asset Chat`
+    return `${objectName} - Asset Chat`
   case 'User':
     return `User Chat`
   case 'DirectMessage':
@@ -415,6 +418,15 @@ export function makePresentedChannelName(channelName, objectName) {
     console.trace("Unexpected ChatScope in channelName=",channelName)
   }
 }
+
+const _scopeGroupCharToIconNames = {
+  G: 'hashtag',
+  P: 'sitemap',
+  A: 'pencil',
+  U: 'user',  // Note that slack uses circle.. good options here would be 'user outline' and 'user'
+  D: 'comments outline'
+}
+export const makePresentedChannelIcon = channelName => _scopeGroupCharToIconNames[channelName[0]]
 
 
 export function ChatSendMessageOnChannelName( channelName, msg, completionCallback)

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Grid, Icon } from 'semantic-ui-react'
-import { utilPushTo, utilReplaceTo } from '../QLink'
+import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import reactMixin from 'react-mixin'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
@@ -9,6 +9,7 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import Helmet from 'react-helmet'
 
 import AssetEdit from '/client/imports/components/Assets/AssetEdit'
+import { AssetKinds } from '/imports/schemas/assets'
 
 import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
@@ -24,9 +25,12 @@ import ChallengeState from '/client/imports/components/Controls/ChallengeState'
 import AssetPathDetail from '/client/imports/components/Assets/AssetPathDetail'
 import AssetUrlGenerator from '/client/imports/components/Assets/AssetUrlGenerator'
 import AssetForkGenerator from '/client/imports/components/Assets/AssetForkGenerator'
+import AssetChatDetail from '/client/imports/components/Assets/AssetChatDetail'
 import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail'
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
+
+import { makeChannelName } from '/imports/schemas/chats'
 
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -80,6 +84,12 @@ export const offerRevertAssetToForkedParentIfParentIdIs = forkParentId => {
   setTimeout(() => { window.dispatchEvent(event) }, 0) // Prevent setState during render if this was called due to render
 }
 
+const _makeTitle = (kind, hasUnsentSaves, isUnconfirmedSave, assetName) => {
+  const assetKindName = AssetKinds.getName(kind)
+  const unsavedMarker = hasUnsentSaves ? '〉' : (isUnconfirmedSave ? '》' : ' ')
+  return `${assetKindName}: ${unsavedMarker}'${assetName || '(unnamed)'}'`
+}
+
 export default AssetEditRoute = React.createClass({
   mixins: [ReactMeteorData],
 
@@ -90,6 +100,7 @@ export default AssetEditRoute = React.createClass({
     currUserProjects: PropTypes.array,       // Both Owned and memberOf. Check ownerName / ownerId fields to know which
     isSuperAdmin:     PropTypes.bool,
     ownsProfile:      PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
+    hazUnreadAssetChat: PropTypes.bool,      // true IFF there is unread chat for this asset
     handleSetCurrentlyEditingAssetInfo: PropTypes.func    // We should call this to set/clear current asset kind
   },
 
@@ -245,6 +256,9 @@ export default AssetEditRoute = React.createClass({
     if (!this.data.asset || this.data.loading || !this.props.currUser)
       return false  // Need to at least be logged in and have the data to do any edits!
 
+    if(this.data.asset.isCompleted)
+      return false
+
     const { currUser, currUserProjects } = this.props
     if (asset.ownerId === currUser._id)
       return true   // Owner can always edit
@@ -280,7 +294,18 @@ export default AssetEditRoute = React.createClass({
 
     return false    // Nope, can't edit it bro
   },
+  // only owner can mark asset as completed (locked)
+  canCurrUserChangeCompletion(assetOverride){
+    const asset = assetOverride || this.data.asset
+    if (!this.data.asset || this.data.loading || !this.props.currUser)
+      return false  // Need to at least be logged in and have the data to do any edits!
 
+    const { currUser, currUserProjects } = this.props
+    if (asset.ownerId === currUser._id)
+      return true   // Owner can always edit
+
+    return false
+  },
   doForkAsset: function() {
     if (!this.state.isForkPending) {
       const { asset } = this.data
@@ -309,7 +334,7 @@ export default AssetEditRoute = React.createClass({
     if (this.data.loading)
       return <Spinner />
 
-    const { params, currUser, currUserProjects, availableWidth } = this.props
+    const { params, currUser, currUserProjects, availableWidth, hazUnreadAssetChat } = this.props
     const { isForkPending, isDeletePending } = this.state
     const isTooSmall = availableWidth < 500
 
@@ -328,6 +353,7 @@ export default AssetEditRoute = React.createClass({
     }
 
     const canEd = this.canCurrUserEditThisAsset()
+    const canEdCompleted = this.canCurrUserChangeCompletion()
     const currUserId = currUser ? currUser._id : null
     const hasUnsentSaves = !!this.m_deferredSaveObj
 
@@ -335,10 +361,8 @@ export default AssetEditRoute = React.createClass({
       <Grid padded>
 
         <Helmet
-          title="Asset Editor"
-          meta={[
-              {"name": "description", "content": "Assets"}
-          ]}
+          title={ _makeTitle(asset.kind, hasUnsentSaves, asset.isUnconfirmedSave, asset.name) }
+          meta={[ { "name": "Asset Editor", "content": "Assets" } ]}
         />
 
         { !isTooSmall &&
@@ -375,13 +399,14 @@ export default AssetEditRoute = React.createClass({
             <StableState
               isStable={asset.isCompleted}
               showMicro={true}
-              canEdit={canEd}
+              canEdit={canEdCompleted}
               handleChange={this.handleStableStateChange} />
             <DeletedState
               isDeleted={asset.isDeleted}
               operationPending={isDeletePending}
               canEdit={canEd}
               handleChange={this.handleDeletedStateChange} />
+            <AssetChatDetail hasUnreads={hazUnreadAssetChat} handleClick={this.handleChatClick}/>
             <AssetLicense
               license={asset.assetLicense}
               canEdit={canEd}
@@ -394,7 +419,7 @@ export default AssetEditRoute = React.createClass({
               asset={asset}
               currUser={currUser}
               assetActivity={this.data.assetActivity} />
-            { asset.skillPath && asset.skillPath.length > 0 && 
+            { asset.skillPath && asset.skillPath.length > 0 &&
               <ChallengeState ownername={asset.dn_ownerName}/>
             }
             <AssetForkGenerator
@@ -435,8 +460,15 @@ export default AssetEditRoute = React.createClass({
   {
     // This is a style on the Edit/view tag in render()
     $('.mgbReadOnlyReminder').transition({ animation: 'flash', duration: '800ms' })
-    if (this.props.currUser)
-      showToast("You do not have permission to edit this Asset. Ask owner for permission or make a fork..", 'error')
+    if (this.props.currUser){
+      if (this.data.asset.ownerId === this.props.currUser._id)
+          showToast("You can't edit Asset in the completed state - change asset state to unlocked to edit asset", 'error')
+      else
+        if (this.data.asset.isCompleted)
+          showToast("Asset is in completed state and can't be changed. Make a fork or ask the owner to mark asset as incompleted", 'error')
+        else
+          showToast("You do not have permission to edit this Asset. Ask owner for permission or make a fork..", 'error')
+    }
     else
       showToast("You must create an account if you wish to edit Assets", 'error')
   }, 5000),  // 5000ms is the duration of an error Notification
@@ -545,8 +577,6 @@ export default AssetEditRoute = React.createClass({
     }
   },
 
-
-
   // Internal only. Can't be called by sub-components
   // This intentionally does NOT use or manipulate this.m_deferredSaveObj, nor is it smart about asset.isUnconfirmedSave
   _sendContentChange(assetId, content2Object, thumbnail, changeText="content change")
@@ -651,25 +681,16 @@ export default AssetEditRoute = React.createClass({
     }
   },
 
-  handleCompletedClick() {
-    let newIsCompletedStatus = !this.props.asset.isCompleted
-    Meteor.call('Azzets.update', this.props.asset._id, this.canCurrUserEditThisAsset(), {isCompleted: newIsCompletedStatus}, (err, res) => {
-      if (err) {
-        showToast(err.reason, 'error')
-      }
-    });
-
-    if (newIsCompletedStatus)
-      logActivity("asset.stable",  "Mark asset as stable", null, this.props.asset);
-    else
-      logActivity("asset.unstable",  "Mark asset as unstable", null, this.props.asset);
+  handleChatClick() {
+    const channelName = makeChannelName( { scopeGroupName: 'Asset', scopeId: this.props.params.assetId } )
+    utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
 
   handleStableStateChange: function(newIsCompleted) {
     const { asset } = this.data
 
     if (asset && asset.isCompleted !== newIsCompleted) {
-      Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), { isCompleted: newIsCompleted}, (err, res) => {
+      Meteor.call('Azzets.update', asset._id, this.canCurrUserChangeCompletion(), { isCompleted: newIsCompleted}, (err, res) => {
         if (err)
           showToast(err.reason, 'error')
       })

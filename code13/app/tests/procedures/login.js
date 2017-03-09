@@ -11,7 +11,7 @@ const PASSWORD = 'tester1'
 const buttons = {
   // if avatar is visible login will be threated as successful
   avatar: '#mgbjr-np-user-avatar',
-  login: '#mgbjr-np-login > a',
+  login: '#mgbjr-np-login',
   submitLoginForm: 'form button.ui.button'
 }
 

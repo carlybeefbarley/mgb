@@ -1,0 +1,17 @@
+This is load testing service for MGB
+Service has 2 parts:
+1) LoadTestRunner (LoadTestRunner.js) - single page web app for controlling load tests and reporting test statuses
+2) Slave Service (slave.js) - nodejs program - which will actually run tests (on phantomjs by default)
+    and report back test results to LoadTestRunner (master)
+
+Info:
+* LoadTestRunner can spawn any number of slaves
+    slave will create separate AWS EC2 instance and automatically connect to master
+* Slaves has ability to self update - update occurs:
+    * on first run
+    * master can manually update all slaves
+
+* Master and slaves communicate through websocket in JSON format (defalted over network)
+* see slaveActions to see available commands on master
+* see slave/slaveEvents to see which commands can be executed on slave
+* To run test - LoadTestRunner will pick up first slave with less jobs running

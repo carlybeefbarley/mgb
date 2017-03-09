@@ -51,41 +51,25 @@ export default AssetCard = React.createClass({
       renderView: defaultAssetViewChoice
     }
   },
-  
+
   componentDidMount()
   {
-    this.previewCanvas = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
-    // this is here because React makes passive event listeners and it's not possible to prevent default from passive event listener
-    // Drag on Touch devices broke on Feb6. See #478 (@stauzs). 
-    // @dgolds put the startSyntheticDrag pieces back in here on 3/3, but it's not
-    // working with scenarios like EditCode
-
-    this.previewCanvas.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+    // this is here because React makes passive event listeners and it's not
+    // possible to prevent default from passive event listener
+    this.dragSurface = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
+    this.dragSurface.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
 
   },
   componentWillUnmount(){
     // See comment in componentDidMount() and #478
-    this.previewCanvas.removeEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+    this.dragSurface.removeEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
   },
-
 
   startDrag (e) {
     const { asset } = this.props
-    //console.log(`AssetCard startDrag(${asset ? asset._id : 'null?'})..`)
     const url = `/api/asset/png/${asset._id}`
-
     // IE supports only text.. so - encode everything in the "text"
     e.dataTransfer.setData( 'text', JSON.stringify({ link: url, asset: asset }) )
-
-    // allow to drop on graphics canvas
-    /*try {
-      e.dataTransfer.setData("mgb/image", thumbnail)
-    }
-    // IE will throw an error here.. just ignore
-    catch (e) { } */
-
-    // IE needs this:
-    //   e.dataTransfer.effectAllowed = "copy"
     $(document.body).addClass('dragging') // this is in mgb.css
   },
 
@@ -96,7 +80,7 @@ export default AssetCard = React.createClass({
   },
 
   render () {
-    if (!this.props.asset) 
+    if (!this.props.asset)
       return null
 
     const { renderView, asset, fluid, canEdit, allowDrag, ownersProjects } = this.props
@@ -146,34 +130,19 @@ export default AssetCard = React.createClass({
         className='animated fadeIn link'
       >
 
-        <div
-          className='ui centered image'
-          style={{
-            display: viewOpts.showImg ? 'initial' : 'none',
-            overflow: 'hidden',
-            width: '100%',
-            minHeight: '155px',
-            cursor: 'pointer',
-            backgroundColor: 'white'
-          }}
-        >
-          <Thumbnail
-            asset={asset}
-            ref='thumbnailCanvas'
-            style={{
-              margin: '0 auto',
-              width: 'initial'
-            }}
-            className='mgb-pixelated'
-          />
-        </div>
+      <div ref='thumbnailCanvas'>
+        <Thumbnail
+          constrainHeight='155px'
+          asset={asset}
+        />
+      </div>
 
         <Card.Content>
           {viewOpts.showWorkstate &&
             <span style={{ float: 'right' }}>
               <WorkState
-               workState={asset.workState} 
-               size={viewOpts.showExtra ? null : 'small'} 
+               workState={asset.workState}
+               size={viewOpts.showExtra ? null : 'small'}
                canEdit={false} />
             </span>}
           {!viewOpts.showExtra &&
@@ -202,9 +171,9 @@ export default AssetCard = React.createClass({
             </Popup>}
 
           {viewOpts.showExtra &&
-            <Card.Header 
-              content={shownAssetName} 
-              style={{ marginRight: '2em', overflowWrap: 'break-word' }} 
+            <Card.Header
+              content={shownAssetName}
+              style={{ marginRight: '2em', overflowWrap: 'break-word' }}
             />}
 
           {viewOpts.showMeta &&
@@ -283,7 +252,7 @@ export default AssetCard = React.createClass({
               <small>&nbsp;{asset.isCompleted ? 'Locked' : 'Unlocked'}</small>
             </div>
             <div
-              className={(canEdit ? '' : 'disabled ') + 'ui compact button'}
+              className={( canEdit && !asset.isCompleted ? '' : 'disabled ') + 'ui compact button'}
               style={veryCompactButtonStyle}
               onMouseUp={this.handleDeleteClick}
               onTouchEnd={this.handleDeleteClick}
@@ -302,7 +271,7 @@ export default AssetCard = React.createClass({
    * @param {any} err
    */
   _handleMeteorErrResp (err) {
-    if (err) 
+    if (err)
       showToast(err.reason, 'error')
   },
 
@@ -330,9 +299,9 @@ export default AssetCard = React.createClass({
       this._handleMeteorErrResp
     )
 
-    if (newIsDeletedState) 
+    if (newIsDeletedState)
       logActivity('asset.delete', 'Delete asset', null, this.props.asset)
-    else 
+    else
       logActivity('asset.undelete', 'Undelete asset', null, this.props.asset)
 
     e.preventDefault()
@@ -349,9 +318,9 @@ export default AssetCard = React.createClass({
       this._handleMeteorErrResp
     )
 
-    if (newIsCompletedStatus) 
+    if (newIsCompletedStatus)
       logActivity('asset.stable', 'Mark asset as stable', null, this.props.asset)
-    else 
+    else
       logActivity('asset.unstable', 'Mark asset as unstable', null, this.props.asset)
 
     e.preventDefault()
@@ -362,9 +331,9 @@ export default AssetCard = React.createClass({
     const asset = this.props.asset
     const url = '/u/' + asset.dn_ownerName + '/asset/' + asset._id
     // middle click - mouseUp reports buttons == 0; button == 1
-    if (e.buttons == 4 || e.button == 1) 
+    if (e.buttons == 4 || e.button == 1)
       window.open(url + (window.location.search ? window.location.search : ''))
-    else 
+    else
       utilPushTo(this.context.urlLocation.query, url)
   }
 })

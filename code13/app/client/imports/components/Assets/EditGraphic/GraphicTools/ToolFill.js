@@ -61,7 +61,7 @@ function pixelCompare(i, targetcolor, fillcolor, data, length, tolerance) {
   ) return true; //target matches surface
 
   if (
-    Math.abs(targetcolor[3] - data[i+3])<=(255-tolerance) &&
+    Math.abs(targetcolor[3] - data[i+3])<=tolerance &&
     Math.abs(targetcolor[0] - data[i]  )<=tolerance &&
     Math.abs(targetcolor[1] - data[i+1])<=tolerance &&
     Math.abs(targetcolor[2] - data[i+2])<=tolerance

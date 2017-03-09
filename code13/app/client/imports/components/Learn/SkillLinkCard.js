@@ -14,7 +14,7 @@ import {
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import QLink from '/client/imports/routes/QLink'
 import { startSkillPathTutorial } from '/client/imports/routes/App'
-import SkillNodes, { getFriendlySkillName } from '/imports/Skills/SkillNodes/SkillNodes'
+import SkillNodes, { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -87,8 +87,6 @@ class SkillLinkCard extends Component {
     if (_.isEmpty( childSkills ) || !this.isCompleted())
       return
 
-    const parentSkillNode = SkillNodes.$meta.map[skillPath]
-
     return (
       <Popup
         trigger={(
@@ -112,7 +110,7 @@ class SkillLinkCard extends Component {
               <Icon name='refresh' />
               <List.Content>
                 <List.Header as='a'>
-                  {getFriendlySkillName( parentSkillNode, skillLeafKey )}
+                  {getFriendlyName( skillPath + '.' + skillLeafKey )}
                 </List.Header>
               </List.Content>
             </List.Item>
@@ -179,14 +177,13 @@ class SkillLinkCard extends Component {
               </Header>
             </Grid.Column>
             {!disabled && (
-              <Grid.Column width={4} textAlign='right'>
+              <Grid.Column width={started ? 6 : 4} textAlign='right'>
                 {completed
                   ? this.renderShowCompleted()
                   : (
                     <Label
                       basic={!started}
-                      horizontal
-                      size='huge'
+                      size='big'
                       color={started ? 'yellow' : 'grey'}
                       content={started ? 'Continue' : 'Start'}
                       detail={started ? `${learnedSkills.length} / ${childSkills.length}` : null}

@@ -3,7 +3,7 @@ const Key = webdriver.Key
 
 const SeleniumHelper = require("../helpers/selenium.js")
 const el = {
-  goToAssets: '#mgbjr-np-assets > a',
+  goToAssets: '#mgbjr-np-assets',
   newAsset: '#mgbjr-create-new-asset',
   inputName: '.ui.basic.segment input',
   assetTypeButton: '#mgbjr-create-asset-select-kind-',

@@ -7,7 +7,7 @@ import C from './CommonSkillNodes.js'
 // The paths for these skills are related the .skillNodes properties of the helpInfo Object defined in TokenDescription.js
 
 // [MAINTAIN] When making changes:
-// a) Some of these are used in badges-server.js for the _skillBasedBadges[]   
+// a) Some of these are used in badges-server.js for the _skillBasedBadges[]
 //    Check you didn't break a skill-based badge when removing/renaming skills
 // b) For paranoia, each section has a 'sequence'.. check that always matches any
 //    changes in the names of child nodes for skills
@@ -17,7 +17,7 @@ export default {
     description:    'Represents basic MGB usage skills - set up your profile, play a game, find friends, etc',
     sequence:       'profile,chat,play,assetsBasics,projects,learn'
   },
-  
+
   profile: {
     $meta: {
       name:           'Profile',
@@ -36,7 +36,7 @@ export default {
       description:    'Learn to use chat and say Hi',
       sequence:       'chatFlexPanel,assetChat'
     },
-    chatFlexPanel:    C.E,  // Public chat - show flexPanels, change channel, say Hi on Random 
+    chatFlexPanel:    C.E,  // Public chat - show flexPanels, change channel, say Hi on Random
 //  chatAtMention:    C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
 //  privateChat:      C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
 //  projectChat:      C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
@@ -50,8 +50,9 @@ export default {
       sequence:       'playOneGame,gamesImade,continueAgame'
     },
     playOneGame:      C.E,
-    gamesImade:       C.E,
-    continueAgame:    C.E   // Not yet implemented as a feature.. this will just say 'coming soon' for now
+    gamesImade:       { ...C.E, $meta: { ...C.E.$meta, name: 'Games I Made' } },
+    // Not yet implemented as a feature.. this will just say 'coming soon' for now
+    continueAgame:    { ...C.E, $meta: { ...C.E.$meta, name: 'Continue A Game'} }
   },
 
   assetsBasics: {
@@ -93,8 +94,8 @@ export default {
     createObjects:   C.E,
     createShot:      C.E,
     createActorMap:  C.E,
-    addingAnEnemy:   C.E  
-//  learnMore:       C.E  
+    addingAnEnemy:   C.E
+//  learnMore:       C.E
   },
 
   codeGame: {
@@ -110,7 +111,7 @@ export default {
     codeMentor:      C.E
   },
 
-  
+
   // These probably should not be in GetStarted
 
   // assetsAdvanced: {

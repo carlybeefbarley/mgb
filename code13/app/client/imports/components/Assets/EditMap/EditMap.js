@@ -125,7 +125,7 @@ export default class EditMap extends React.Component {
     }, 5000)
   }
   getImageData(){
-    return this.props.asset.thumbnail
+    return this.refs.map.generatePreview()
   }
 
   setInitialStateFromContent(){
@@ -345,10 +345,10 @@ export default class EditMap extends React.Component {
       this.saveForUndo(reason)
     }*/
     // make sure we have thumbnail
-    if(!thumbnail && this.refs.map){
-      this.refs.map.generatePreviewAndSaveIt()
-    }
-    this.props.handleContentChange(data, thumbnail, reason)
+    if(!thumbnail && this.refs.map)
+      this.refs.map.generatePreviewAndSaveIt(data, reason)
+    else
+      this.props.handleContentChange(data, thumbnail, reason)
   }
 
   quickSave(reason = "noReason", skipUndo = true, thumbnail = null){

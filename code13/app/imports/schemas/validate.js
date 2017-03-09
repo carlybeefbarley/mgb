@@ -10,6 +10,7 @@ const _maxAssetNameLength = 64
 //    :   since we use that as a namespace delimeter
 //    #   since...?
 //    ?   since...?
+//    /   since it is used as an alternate asset Id format internally for some APIs (makeExpireThumbnailLink etc)
 const _validAssetNameRegex = /^[a-zA-Z0-9_\-. \(\)\!\/\~\;\'\<\>\@\&]*$/
 
 

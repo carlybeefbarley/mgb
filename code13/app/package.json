@@ -57,6 +57,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.37",
+    "autoprefixer": "^6.5.1",
     "babel-eslint": "^6.1.2",
     "eslint": "^3.1.1",
     "eslint-plugin-react": "^6.2.0",
@@ -70,6 +71,15 @@
     "redux": "^3.5.2",
     "redux-logger": "^2.6.1",
     "redux-thunk": "^2.1.0"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {
+        "browsers": [
+          "last 2 versions"
+        ]
+      }
+    }
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

@@ -58,7 +58,9 @@ body.dragging .accept-drop:hover{
   background-color: rgba(255,255,255,0.9);
 }
 
-/* map editor properties */
+/***************************************
+ *        Map Editor Properties        *
+ ***************************************/
 .compact {
   margin-top: -19px;
 }
@@ -124,9 +126,11 @@ body.dragging .accept-drop:hover{
 .compact > .ui.accordion.array.content {
   padding: 0 10px;
 }
-/* end of map editor properties */
 
-/* semantic hacks */
+/***************************************
+ *             SUI Hacks               *
+ * TODO(@levi): remove / move to theme *
+ ***************************************/
 .icon.flip{
   transform: scaleX(-1);
 }
@@ -143,7 +147,9 @@ body.dragging .accept-drop:hover{
   transition: 0s !important;
 }
 
-/* mgb-toolbar */
+/***************************************
+ *            MGB Toolbar              *
+ ***************************************/
 .mgb-toolbar .button.main{
   z-index: 1;
 }
@@ -204,7 +210,9 @@ body.dragging .accept-drop:hover{
     transform: rotate(359deg);
   }
 }
-/* code editor */
+/***************************************
+ *            Code Editor              *
+ ***************************************/
 .lint-error-text {
   display: none;
   position: absolute;
@@ -232,51 +240,12 @@ body.dragging .accept-drop:hover{
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.mgb-show-on-parent-div-hover {
+.mgb-show-on-parent-hover {
   opacity: 0;
 }
 
-div:hover > .mgb-show-on-parent-div-hover {
+*:hover > .mgb-show-on-parent-hover {
   opacity: 1;
-}
-
-
-.mgb-skillsmap-progress{
-  position: relative;
-  border: solid 1px;
-  margin: 0px;  /* was 2px */
-  padding: 2px 5px;
-  border-radius: 3px;
-}
-
-.mgb-skillsmap-progress .mgb-skillsmap-value{
-  border-radius: 3px;
-  border-right: solid 1px;
-  position: absolute;
-  content: "";
-  left: 0;
-  top: 0;
-  height: 100%;
-  background-color: rgba(0, 140, 255, 0.3);
-}
-
-.mgb-skillsmap-progress .mgb-skillsmap-part{
-  border-right: dotted 1px rgba(0,0,0,0.5);
-  display: inline-block;
-  height: 100%;
-  position: absolute;
-  top: 0;
-}
-
-.semi-transparent{
-  opacity: 0.5;
-}
-
-/* narrower containers */
-.ui.container.slim
-{
-  max-width: 1090px !important;
-  padding: 0 75px;
 }
 
 .allInline > .inline.fields {

@@ -8,7 +8,7 @@ import { showToast } from '/client/imports/routes/App'
 import { logActivity } from '/imports/schemas/activity'
 
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
-import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 
 import { getAssetBySelector } from '/client/imports/helpers/assetFetchers'
 
@@ -85,13 +85,11 @@ const LearnCodeJsRoute = ( { currUser }, context ) => (
         subheader='Click on an item and explore it'
       />
       { currUser && (
-        <div style={{ clear: 'both' }}>
-          <SkillsMap user={currUser} subSkill={true} onlySkillArea={'code.js.basics'} userSkills={context.skills} ownsProfile={true} />
-        </div>
+        <SkillsMap skills={context.skills} expandable toggleable skillPaths={['code.js.basics']} />
       )}
     </Grid.Column>
     <Grid.Column>
-      { _.map(_.keys(bySubsection), subkey => 
+      { _.map(_.keys(bySubsection), subkey =>
         <Segment padded piled key={subkey}>
           <Header as='h3' content={subkey}/>
           <List size='large' relaxed='very' link className="skills">
@@ -109,7 +107,7 @@ const LearnCodeJsRoute = ( { currUser }, context ) => (
                   icon={isComplete ? { name: 'checkmark', color: 'green' } : area.icon}
                   onClick={ (e) => handleClick( e, area.idx, area.code, currUser ) }
                 />
-              ) 
+              )
             } ) }
           </List>
         </Segment>

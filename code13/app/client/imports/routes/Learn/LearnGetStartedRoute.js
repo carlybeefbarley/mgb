@@ -100,9 +100,7 @@ const LearnGetStartedRoute = ({ currUser }, context) => {
         <ProgressLabel subSkillsComplete={numGsSkills} subSkillTotal={_maxGsSkillCount} />
         <Divider hidden />
         { currUser && (
-          <div style={{ clear: 'both' }}>
-            <SkillsMap user={currUser} userSkills={context.skills} ownsProfile={true} onlySkillArea={'getStarted'} />
-          </div>
+          <SkillsMap skills={context.skills} expandable toggleable skillPaths={['getStarted']} />
         )}
 
         {/*

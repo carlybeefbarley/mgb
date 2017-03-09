@@ -31,7 +31,7 @@ const fpNetwork = ( { meteorStatus } ) => {
               { retryInSeconds > 0 &&
                 <Message.Item><small>Retry Interval: </small>{retryInSeconds} <small>seconds</small></Message.Item>
               }
-              { (mStatus.FAILED === st.status) && 
+              { (mStatus.FAILED === st.status) &&
                 <Message.Item>Connection Failed reason: "{st.reason}"</Message.Item>
               }
             </Message.List>
@@ -46,7 +46,7 @@ const fpNetwork = ( { meteorStatus } ) => {
       <br />
       <br />
       <br />
-      <p className='mgb-show-on-parent-div-hover'><small>Meteor Connection ID: {cxnId}</small></p>
+      <p className='mgb-show-on-parent-hover'><small>Meteor Connection ID: {cxnId}</small></p>
     </div>
   )
 }

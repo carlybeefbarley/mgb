@@ -3,7 +3,7 @@ import styles from '../home.css'
 import QLink from '../QLink'
 import getStartedStyle from '../GetStarted.css'
 import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
-import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const cardStyle = {
@@ -93,16 +93,9 @@ const LearnRoute = ({ currUser, params }, context) => (
               <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
               <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
               <p style={descStyle}>{area.desc}.</p>
-              { currUser && ('string' == (typeof area.skillnodeTopLevelTag)) &&
-              <div style={{ clear: 'both' }}>
-                <SkillsMap
-                  user={currUser}
-                  userSkills={context.skills}
-                  ownsProfile={true}
-                  onlySkillArea={area.skillnodeTopLevelTag}
-                  initialZoomLevel={area.skillnodeTopLevelTag === '' ? 0 : 1} />
-              </div>
-              }
+              { currUser && ('string' == (typeof area.skillnodeTopLevelTag)) && (
+                <SkillsMap skills={context.skills} expandable toggleable skillPaths={[area.skillnodeTopLevelTag]} />
+              )}
 
             </Card.Content>
           </QLink>

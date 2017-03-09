@@ -83,7 +83,7 @@ const _doDeleteActivity = activityId => deleteActivityRecord( activityId )
 
 const DeleteActivity = ( { act, currUser, isSuperAdmin } ) => (
   ( currUser && (isSameUserId(act.byUserId, currUser._id) || isSuperAdmin)) &&
-    <span className='mgb-show-on-parent-div-hover' onClick={() => _doDeleteActivity(act._id)}>
+    <span className='mgb-show-on-parent-hover' onClick={() => _doDeleteActivity(act._id)}>
       &nbsp;
       <Icon color='red' circular link name='delete'/>
     </span>

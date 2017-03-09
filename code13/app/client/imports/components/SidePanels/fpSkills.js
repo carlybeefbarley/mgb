@@ -22,7 +22,7 @@ export default fpSkills = React.createClass({
   render: function ( ) {
     const { currUser } = this.props
     const { skills } = this.context
-  
+
     if (!currUser)
       return <Message warning content="You must be logged in to see your skills status" />
 
@@ -40,11 +40,8 @@ export default fpSkills = React.createClass({
           <br />
           <small><i>&emsp;...coming soon - better UI for this, and correlation from skill-tag to tutorials and contextual help...</i></small>
         </p>
-        
-        <div style={{clear: 'both'}}>
-          { /* Essential to hide the toolbars otherwise there can be conflicts for the toolsgizmo */ }
-          <SkillsMap user={currUser} userSkills={skills} ownsProfile={true} hideToolbars={true}/>
-        </div>
+
+        <SkillsMap expandable toggleable skills={skills} />
 
         <QLink to='/learn/skills' style={{clear: 'both'}}>
           <button className="ui button large fluid"><Icon name='refresh' />Learn skills</button>

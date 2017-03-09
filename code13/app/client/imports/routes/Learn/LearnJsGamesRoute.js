@@ -8,7 +8,7 @@ import { showToast } from '/client/imports/routes/App'
 import { logActivity } from '/imports/schemas/activity'
 
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
-import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
+import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 // TODO make this dynamic
 import tutorialObject from '/public/codeTutorials.json'
 
@@ -92,9 +92,7 @@ const LearnJsGamesRoute = ({ currUser }, context) => {
           </Header.Subheader>
         </Header>
         { currUser && (
-          <div style={{ clear: 'both' }}>
-            <SkillsMap user={currUser} subSkill={true} onlySkillArea={'code.js.games'} userSkills={context.skills} ownsProfile={true} />
-          </div>
+          <SkillsMap skills={context.skills} expandable toggleable skillPaths={['code.js.games']} />
         )}
       </Grid.Column>
       <Grid.Column>

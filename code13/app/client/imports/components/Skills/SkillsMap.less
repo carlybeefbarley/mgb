@@ -1,0 +1,305 @@
+// ========================================================
+// Base Definition
+// ========================================================
+.mgb-skillsmap-container {
+  clear: both;
+}
+
+.mgb-skillmap {
+  @height: 1.75em;
+
+  margin: 0.25em 0;
+  transition: margin 0.2s, box-shadow 0.2s;
+  &.active {
+    margin: 1em 0;
+    box-shadow: 0.15em 0.3em 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  &:not(.expandable) > .progress > .label .icon {
+    display: none;
+  }
+
+  // Content
+  // ----------------------------------------
+  & > .content {
+    padding: 0.5em;
+    background: #FFF;
+
+    //
+    // Child Leaves
+    //
+    & > .leaves {
+      display: flex;
+      flex-wrap: wrap;
+
+      & > .leaf {
+        flex: 1 1 10em;
+        transition: background 0.2s, opacity 0.2s, color 0.2s;
+        margin: 0.25em;
+        height: @height * 2;
+        line-height: @height * 2;
+        text-align: center;
+        background: transparent;
+        user-select: none;
+        &.active {
+          opacity: 0.8;
+          color: rgba(0, 0, 0, 0.4);
+        }
+      }
+    }
+
+    //
+    // Nested SkillMap
+    //
+    & > .mgb-skillmap {
+      margin-left: 1em;
+    }
+  }
+
+  // Progress Bar
+  // ----------------------------------------
+  & > .progress {
+    position: relative;
+    height: @height;
+    & > .label {
+      position: relative;
+      padding-left: 0.25em;
+      height: @height;
+      line-height: @height;
+      z-index: 1;
+      user-select: none;
+      .icon {
+        opacity: 0.5;
+      }
+    }
+    & > .cells {
+      position: absolute;
+      display: flex;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      & > .cell {
+        flex: 1;
+        transition: background 0.2s;
+        background: rgba(0, 0, 0, 0.05);
+        box-shadow: inset -1px 0 0 0 #FFF;
+        &:last-child {
+          box-shadow: none;
+        }
+      }
+    }
+  }
+}
+
+// ========================================================
+// Color Branded Variant Mixins
+// ========================================================
+// This is called before each mixin to set the variables
+.mgb-set-skillsmap-variant-variables(@mgbAreaColor) {
+  @hue: hue(@mgbAreaColor);
+  @textColor: hsl(@hue, 20%, 30%);
+  @textHoverColor: hsl(@hue, 20%, 20%);
+  @barColor: tint(@mgbAreaColor, 65%);
+  @barHoverColor: tint(@mgbAreaColor, 55%);
+}
+
+// Shareable active progress bar style
+.mgb-skillsmap-progress-active() {
+  & > .label {
+    color: @textHoverColor;
+  }
+  & > .cells > .cell {
+    background: rgba(0, 0, 0, 0.1);
+    &.active {
+      background: @barHoverColor;
+    }
+  }
+}
+
+// Color Variant Mixin
+// ----------------------------------------
+// Each skill area has a custom color variation
+.mgb-skillmap-color-variant(@mgbAreaColor) {
+  .mgb-set-skillsmap-variant-variables(@mgbAreaColor);
+
+  // Active
+  &.active > .progress {
+    .mgb-skillsmap-progress-active();
+  }
+
+  // Content
+  & > .content > .leaves > .leaf {
+    border: 1px solid @barHoverColor;
+    color: @textColor;
+    &.active {
+      border-color: transparent;
+      color: rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  // Progress bar
+  & > .progress {
+    & > .label {
+      color: @textColor;
+    }
+    & > .cells > .cell.active {
+      background: @barColor;
+    }
+  }
+}
+
+// Expandable Mixin
+// ----------------------------------------
+// The progress bar expands to show the children
+.mgb-skillmap-expandable-variant(@mgbAreaColor) {
+  .mgb-set-skillsmap-variant-variables(@mgbAreaColor);
+
+  // Progress bar
+  & > .progress {
+    cursor: pointer;
+    &:hover {
+      .mgb-skillsmap-progress-active();
+    }
+  }
+}
+
+// Toggleable Mixin
+// ----------------------------------------
+// Child leaves can be toggled
+.mgb-skillmap-toggleable-variant(@mgbAreaColor) {
+  .mgb-set-skillsmap-variant-variables(@mgbAreaColor);
+
+  // Content
+  & > .content > .leaves > .leaf {
+    cursor: pointer;
+    &:hover {
+      background: tint(@barColor, 85%);
+    }
+  }
+}
+
+// ========================================================
+// SkillPath Color Variants
+// ========================================================
+.mgb-skillmap.getStarted,
+.mgb-skillmap.code {
+  @color: green;
+  .mgb-skillmap-color-variant(@color);
+
+  &.expandable {
+    .mgb-skillmap-expandable-variant(@color);
+  }
+  &.toggleable {
+    .mgb-skillmap-toggleable-variant(@color);
+  }
+}
+
+.mgb-skillmap.art {
+  @color: orange;
+  .mgb-skillmap-color-variant(@color);
+
+  &.expandable {
+    .mgb-skillmap-expandable-variant(@color);
+  }
+  &.toggleable {
+    .mgb-skillmap-toggleable-variant(@color);
+  }
+}
+
+.mgb-skillmap.design {
+  @color: #B010B0;
+  .mgb-skillmap-color-variant(@color);
+
+  &.expandable {
+    .mgb-skillmap-expandable-variant(@color);
+  }
+  &.toggleable {
+    .mgb-skillmap-toggleable-variant(@color);
+  }
+}
+
+.mgb-skillmap.audio {
+  @color: #B08080;
+  .mgb-skillmap-color-variant(@color);
+
+  &.expandable {
+    .mgb-skillmap-expandable-variant(@color);
+  }
+  &.toggleable {
+    .mgb-skillmap-toggleable-variant(@color);
+  }
+}
+
+.mgb-skillmap.analytics {
+  @color: #B02050;
+  .mgb-skillmap-color-variant(@color);
+
+  &.expandable {
+    .mgb-skillmap-expandable-variant(@color);
+  }
+  &.toggleable {
+    .mgb-skillmap-toggleable-variant(@color);
+  }
+}
+
+.mgb-skillmap.writing {
+  @color: #001020;
+  .mgb-skillmap-color-variant(@color);
+
+  &.expandable {
+    .mgb-skillmap-expandable-variant(@color);
+  }
+  &.toggleable {
+    .mgb-skillmap-toggleable-variant(@color);
+  }
+}
+
+.mgb-skillmap.marketing {
+  @color: #00B020;
+  .mgb-skillmap-color-variant(@color);
+
+  &.expandable {
+    .mgb-skillmap-expandable-variant(@color);
+  }
+  &.toggleable {
+    .mgb-skillmap-toggleable-variant(@color);
+  }
+}
+
+.mgb-skillmap.community {
+  @color: #0010B0;
+  .mgb-skillmap-color-variant(@color);
+
+  &.expandable {
+    .mgb-skillmap-expandable-variant(@color);
+  }
+  &.toggleable {
+    .mgb-skillmap-toggleable-variant(@color);
+  }
+}
+
+.mgb-skillmap.legal {
+  @color: #008080;
+  .mgb-skillmap-color-variant(@color);
+
+  &.expandable {
+    .mgb-skillmap-expandable-variant(@color);
+  }
+  &.toggleable {
+    .mgb-skillmap-toggleable-variant(@color);
+  }
+}
+
+.mgb-skillmap.business {
+  @color: #002050;
+  .mgb-skillmap-color-variant(@color);
+
+  &.expandable {
+    .mgb-skillmap-expandable-variant(@color);
+  }
+  &.toggleable {
+    .mgb-skillmap-toggleable-variant(@color);
+  }
+}

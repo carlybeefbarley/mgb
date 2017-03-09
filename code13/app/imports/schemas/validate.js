@@ -22,7 +22,7 @@ var _listInvalidChars = (text, StringAllowedRegex) => (
   _.uniq(_.filter(text, c => ( !StringAllowedRegex.test(c) ) ) )
 )
 
-// Note that this allows leading/trailing spaces, even though we trim them on 
+// Note that this allows leading/trailing spaces, even though we trim them on
 // create or rename
 
 
@@ -36,7 +36,7 @@ var _listInvalidChars = (text, StringAllowedRegex) => (
 
   // Check for invalid PROJECT names
   var p=require('/imports/schemas').Projects
-  var 
+  var
   p.find( { "name": { "$not":  _validProjectNameRegex } }, { fields: { name: 1 } }).fetch()
 
 */
@@ -85,7 +85,7 @@ const validate = {
     return validate.lengthCap(text, 120)
   },
 
-  assetNameWithReason: function(text) { 
+  assetNameWithReason: function(text) {
     const isValid = validate.assetName(text)
     if (isValid)
       return null
@@ -118,18 +118,18 @@ const validate = {
   emailWithReason: function (text) {
     if (text.search(/[^\s@]+@[^\s@]+\.[^\s@]+/) < 0)
       return 'Doesn\'t look like a valid email'
-    
+
     return null
   },
-  
+
   usernameWithReason: function (value) {
-    if (value.search(/^[A-Za-z0-9_]+$/) < 0) 
+    if (value.search(/^[A-Za-z0-9_]+$/) < 0)
       return 'Only letters, digits and underscores are allowed in usernames'
-    if (value.length > _maxUsernameLength) 
+    if (value.length > _maxUsernameLength)
       return `Your username is too long. The maximum length is ${_maxUsernameLength} characters`
     if (value.length < _minUsernameLength )
       return `Your username is too short. It must be at least ${_minUsernameLength} characters long`
-      
+
     return null
   }
 

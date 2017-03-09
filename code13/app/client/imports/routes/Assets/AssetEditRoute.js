@@ -465,7 +465,7 @@ export default AssetEditRoute = React.createClass({
           showToast("You can't edit Asset in the completed state - change asset state to unlocked to edit asset", 'error')
       else
         if (this.data.asset.isCompleted)
-          showToast("Asset is in completed state and can't be changed. Make a fork or ask owner to mark asset as incompleted", 'error')
+          showToast("Asset is in completed state and can't be changed. Make a fork or ask the owner to mark asset as incompleted", 'error')
         else
           showToast("You do not have permission to edit this Asset. Ask owner for permission or make a fork..", 'error')
     }

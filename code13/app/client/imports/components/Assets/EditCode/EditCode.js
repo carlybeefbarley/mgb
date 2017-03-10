@@ -987,7 +987,7 @@ export default class EditCode extends React.Component {
     // get line
     if (!err.line || !clear) {
       const doc = this.codeMirror.getValue().split("\n")
-      err.line = doc.findIndex(v => v.indexOf(err.evidence) > -1) + 1
+      err.line = _.findIndex(doc, v => v.indexOf(err.evidence) > -1) + 1
     }
     const msg = msgs[err.line] ? msgs[err.line] : document.createElement("div")
     const errorText = " " + err.reason

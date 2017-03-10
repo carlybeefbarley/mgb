@@ -1015,7 +1015,7 @@ export default class EditCode extends React.Component {
     }
 
     // don't show multiple messages with same text
-    const index = Array.prototype.findIndex.call(
+    const index = _.findIndex(
         msg.container.children,
         child => child.childNodes[1].nodeValue == errorText
       )

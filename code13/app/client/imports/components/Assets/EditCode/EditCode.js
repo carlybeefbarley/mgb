@@ -990,6 +990,7 @@ export default class EditCode extends React.Component {
       err.line = doc.findIndex(v => v.indexOf(err.evidence) > -1) + 1
     }
     const msg = msgs[err.line] ? msgs[err.line] : document.createElement("div")
+    const errorText = " " + err.reason
 
     if (!msgs[err.line]) {
       msgs[err.line] = msg
@@ -1002,7 +1003,6 @@ export default class EditCode extends React.Component {
       }
       msg.container = msg.appendChild(document.createElement("div"))
       msg.container.className = "lint-error-text"
-
     }
     else if (!msg.multi) {
       msg.multi = msg.icon.appendChild(document.createElement("div"))
@@ -1014,6 +1014,14 @@ export default class EditCode extends React.Component {
       msg.icon.className = "CodeMirror-lint-marker-error"
     }
 
+    // don't show multiple messages with same text
+    const index = Array.prototype.findIndex.call(
+        msg.container.children,
+        child => child.childNodes[1].nodeValue == errorText
+      )
+    if(index > -1) return
+
+
     const text = msg.container.appendChild(document.createElement("div"))
     const ico = text.appendChild(document.createElement("div"))
     if (err.code.substring(0, 1) == "W") {
@@ -1023,7 +1031,7 @@ export default class EditCode extends React.Component {
       ico.className = "CodeMirror-lint-marker-error"
     }
 
-    text.appendChild(document.createTextNode(" " + err.reason))
+    text.appendChild(document.createTextNode(errorText))
 
     msg.className = "lint-error"
     this.codeMirror.setGutterMarker(err.line - 1, "CodeMirror-lint-markers", msg)

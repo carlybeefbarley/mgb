@@ -306,7 +306,7 @@ debugger  // step through first time
     {
       if (activeActors[AAi].alive)
       {
-        var name = activeActors[AAi].ACidx
+        var name = activeActors[AAi].ACidx.split(':').pop()
         ach[name] = ach[name] ? ach[name] + 1 : 1
       }
     }

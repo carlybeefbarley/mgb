@@ -73,7 +73,7 @@ export default SpecialGlobals = {
   },
 
   gamePlay: {
-    playCountDebounceMs: 180 * 1000
+    playCountDebounceMs: 300 * 1000
   },
 
   settings: {

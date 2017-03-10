@@ -73,6 +73,15 @@ RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
     })
   }
 })
+RestApi.addRoute('asset/thumbnail/png/:user/:name', {authRequired: false}, {
+  get: function () {
+    var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false})
+    return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ?  asset.thumbnail : emptyPixel ), {
+      'Content-Type': 'image/png'
+    })
+  }
+})
+
 RestApi.addRoute('asset/cached-thumbnail/png/:expires/:id', {authRequired: false}, {
   get: function () {
     const asset = Azzets.findOne(this.urlParams.id)
@@ -93,14 +102,7 @@ RestApi.addRoute('asset/cached-thumbnail/png/:expires/:user/:name', {authRequire
     })
   }
 })
-RestApi.addRoute('asset/thumbnail/png/:user/:name', {authRequired: false}, {
-  get: function () {
-    var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false})
-    return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ?  asset.thumbnail : emptyPixel ), {
-      'Content-Type': 'image/png'
-    })
-  }
-})
+
 // mainly used for autocomplete in the codeEditor, but can be used also for something else
 RestApi.addRoute('assets/:kind/:owner/', {authRequired: false}, {
   get: function () {

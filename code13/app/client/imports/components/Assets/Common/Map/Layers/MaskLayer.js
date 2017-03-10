@@ -58,17 +58,17 @@ export default class MaskLayer extends React.Component {
       this.refs.layer.style['z-index'] = this.props.layer.refs.layer.style['z-index']
     }
   }
-  
+
   draw () {
     this.adjustCanvas()
     this.drawMask()
   }
 
-  // Draw darker mask outside of active map area that covers the grid 
+  // Draw darker mask outside of active map area that covers the grid
   drawMask () {
     const camera = this.props.map.camera
     const data = this.props.map.data
-  
+
     let tilelayer = null, tw, th
     if (this.props.layer && LayerTypes.isTilemapLayer(this.props.layer.type)) {
       tilelayer = this.props.layer.data
@@ -113,11 +113,13 @@ export default class MaskLayer extends React.Component {
   }
 
   render () {
-    return (<div 
+    const style = Object.assign({}, this.props.style)
+    style.zIndex = 2
+    return (<div
               className='tilemap-layer no-events grid-layer'
               data-name='Mask'
               ref='layer'
-              style={{zIndex: 2}}>
+              style={style} >
               <canvas ref='mask'></canvas>
             </div>)
   }

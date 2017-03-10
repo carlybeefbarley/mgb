@@ -10,6 +10,10 @@ const createBrowser = function(browserName, options){
   browser.loadHomePage = () => {
     return browser.get(caps.url)
   }
+  browser.getLocal = (uri) => {
+    return browser.get(caps.url + uri)
+  }
+  browser.caps = caps
   // most common based on wikipedia 1366x768
   browser.manage().window().setSize(1366, 768)
 

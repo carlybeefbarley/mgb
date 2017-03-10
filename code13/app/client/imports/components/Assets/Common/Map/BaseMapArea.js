@@ -924,7 +924,7 @@ export default class MapArea extends React.Component {
         onTouchStart={this.handleMouseDown}
         style={{ height: '720px', position: 'relative', margin: '10px 0' }}>
         {layers}
-        <MaskLayer map={this} layer={this.layers[this.props.activeLayer]} ref='mask' />
+        <MaskLayer map={this} layer={this.layers[this.props.activeLayer]} ref='mask' style={{opacity: 0.9}} />
       </div>
     )
   }

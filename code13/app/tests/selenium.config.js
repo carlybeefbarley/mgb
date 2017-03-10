@@ -7,8 +7,8 @@ module.exports = {
     //only: ["win8.1_ie"],//, "safari_9.1", "chrome", "edge", "firefox"],
     //only: ["win8.1_ie", "safari_9.1", "chrome", "edge", "firefox"],
     only: [
-      //'local.phantom.hub',
-      'local.chrome'
+      'local.phantom.hub',
+      //'local.chrome'
     ],
     // add here some tests to skip
     skip: []
@@ -31,7 +31,7 @@ module.exports = {
       // 'graphic.test.js',
       // 'map.simple.test.js'
 
-      'load.home.page.test.js'
+      'api.test.js'
     ],
     // add here some tests to skip
     skip: ["login.test.js"] // skip login test as other tests logs in user anyway

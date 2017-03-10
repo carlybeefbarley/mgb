@@ -1,3 +1,5 @@
+// !!! important when adding new api endpoint add it also to tests/tests/api.test.js
+
 import { Azzets } from '/imports/schemas'
 import { genAPIreturn } from '/server/imports/helpers/generators'
 

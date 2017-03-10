@@ -7,9 +7,33 @@ import { genAPIreturn } from '/server/imports/helpers/generators'
 RestApi.addRoute('asset/music/:id/music.mp3', {authRequired: false}, {
   get: function () {
     "use strict";
-    let asset = Azzets.findOne(this.urlParams.id)
+    const asset = Azzets.findOne(this.urlParams.id)
 
-    if(asset) {     
+    if(asset) {
+      const regex = /^data:.+\/(.+);base64,(.*)$/;
+      const matches = asset.content2.dataUri.substring(0, 100).match(regex)
+      const extension = matches[1]
+
+      return genAPIreturn(this, asset, () => dataUriToBuffer(asset.content2.dataUri), {
+        'Content-Type': 'audio/'+extension
+      })
+    }
+    else
+      return { statusCode: 404 }
+  }
+})
+// get music by username / assetname
+RestApi.addRoute('asset/music/:user/:name/sound.mp3', {authRequired: false}, {
+  get: function () {
+    "use strict";
+    const asset = Azzets.findOne({
+      kind: "sound",
+      name: this.urlParams.name,
+      dn_ownerName: this.urlParams.user,
+      isDeleted: false
+    })
+
+    if(asset) {
       const regex = /^data:.+\/(.+);base64,(.*)$/;
       const matches = asset.content2.dataUri.substring(0, 100).match(regex)
       const extension = matches[1]

@@ -2349,7 +2349,7 @@ export default class EditCode extends React.Component {
                 </div>
               }
 
-              { docEmpty &&
+              { docEmpty && !asset.isCompleted &&
                 // Clean sheet helper!
                 <div className="active title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -2357,7 +2357,7 @@ export default class EditCode extends React.Component {
                     </span>
                 </div>
               }
-              { docEmpty &&
+              { docEmpty && !asset.isCompleted &&
                 <div className="active content">
                   An Empty Page! If you like, you can click one of the following buttons to paste some useful template code into your
                   empty file
@@ -2367,7 +2367,7 @@ export default class EditCode extends React.Component {
                   ...or, if you think you know what you are doing, just start hacking away!
                 </div>
               }
-              { docEmpty && this.state.astReady &&
+              { docEmpty && this.state.astReady && !asset.isCompleted &&
                 // Quick import for empty doc
               <div className="title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -2375,7 +2375,7 @@ export default class EditCode extends React.Component {
                     </span>
               </div>
               }
-              { docEmpty && this.state.astReady &&
+              { docEmpty && this.state.astReady && !asset.isCompleted &&
               <div className="content">
                 <ImportHelperPanel
                   scripts={this.state.userScripts}

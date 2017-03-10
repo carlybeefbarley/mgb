@@ -12,6 +12,31 @@
 const mgbReleaseInfo = {
 
   'releases': [
+
+    {
+      'timestamp': 'Thursday Mar 9 2017 19:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3701'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Bugfixes for improved asset Locking, actorMap games, skill rendering',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
     {
       'timestamp': 'Thursday Mar 9 2017 01:00 GMT-0800 (PST)',
 

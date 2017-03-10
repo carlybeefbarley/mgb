@@ -111,8 +111,8 @@ export default ProjectOverview = React.createClass({
               to={`/u/${project.ownerName}/assets`} 
               style={buttonSty} 
               query={{project:project.name}} 
-              className='ui small button' >
-            Project Assets
+              className='ui small primary button' >
+            View Project Assets
           </QLink>
 
           { /* FORK PROJECT STUFF */}

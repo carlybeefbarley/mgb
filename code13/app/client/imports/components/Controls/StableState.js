@@ -4,12 +4,12 @@ import { Popup, Icon } from 'semantic-ui-react'
 const _makeTitle = (isStable, canEdit) =>
 {
   if (isStable && canEdit)
-    return 'This Asset has been marked \'Locked\' and is protected against edits. Click to allow edits again'
+    return 'Your Asset has been marked \'Locked\' and is protected against edits. Click to allow edits again'
   if (isStable)
     return 'This Asset has been marked \'Locked\' by it\'s owner'
   if (canEdit)
-    return 'Click to mark this asset as \'Locked\' so it can be protected against accidental edits. It\'s ok, you can clear the \'Locked\' marker later if you change your mind'
-  return null
+    return 'Click to mark your asset as \'Locked\' so it can be protected against accidental edits. It\'s ok, you can unlock it later if you change your mind'
+  return 'This asset is Unlocked. The Asset owner may choose to Lock it to prevent any edits'
 }
 
 const StableState = ( { isStable, canEdit, handleChange } ) => (

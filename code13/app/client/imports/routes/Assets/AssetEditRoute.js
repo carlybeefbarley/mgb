@@ -11,6 +11,7 @@ import Helmet from 'react-helmet'
 import AssetEdit from '/client/imports/components/Assets/AssetEdit'
 import { AssetKinds } from '/imports/schemas/assets'
 
+import { isSameUserId } from '/imports/schemas/users'
 import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
 import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
@@ -250,17 +251,13 @@ export default AssetEditRoute = React.createClass({
     }
   },
 
-  canCurrUserEditThisAsset: function(assetOverride = null) {
+  canUserEditThisAssetIfUnlocked: function(assetOverride = null) {
     const asset = assetOverride || this.data.asset
 
-    if (!this.data.asset || this.data.loading || !this.props.currUser)
+    if (!asset || this.data.loading || !this.props.currUser)
       return false  // Need to at least be logged in and have the data to do any edits!
-
-    if(this.data.asset.isCompleted)
-      return false
-
     const { currUser, currUserProjects } = this.props
-    if (asset.ownerId === currUser._id)
+    if (isSameUserId(asset.ownerId, currUser._id))
       return true   // Owner can always edit
 
     // Are we superAdmin?
@@ -294,18 +291,31 @@ export default AssetEditRoute = React.createClass({
 
     return false    // Nope, can't edit it bro
   },
-  // only owner can mark asset as completed (locked)
-  canCurrUserChangeCompletion(assetOverride){
+
+  canCurrUserEditThisAsset: function(assetOverride = null) {
     const asset = assetOverride || this.data.asset
-    if (!this.data.asset || this.data.loading || !this.props.currUser)
-      return false  // Need to at least be logged in and have the data to do any edits!
-
-    const { currUser, currUserProjects } = this.props
-    if (asset.ownerId === currUser._id)
-      return true   // Owner can always edit
-
-    return false
+    return asset && this.canUserEditThisAssetIfUnlocked(asset) && !asset.isCompleted
   },
+
+
+  // only the Asset Owner can Lock/Unlock Asset (i.e. change asset.isCompleted)
+  canCurrUserChangeCompletion(assetOverride = null) {
+    const asset = assetOverride || this.data.asset
+    const { currUser } = this.props
+    
+    if (!asset || this.data.loading || !currUser)
+      return false  // Need to at least be logged in and have the data to do any edits...
+
+    // Are we superAdmin?
+    if (this.props.isSuperAdmin && fAllowSuperAdminToEditAnything)
+    {
+      console.log(`canCurrUserChangeCompletion=true because current User is SuperAdmin`)
+      return true
+    }
+
+    return isSameUserId(asset.ownerId, currUser._id)
+  },
+
   doForkAsset: function() {
     if (!this.state.isForkPending) {
       const { asset } = this.data
@@ -460,17 +470,19 @@ export default AssetEditRoute = React.createClass({
   {
     // This is a style on the Edit/view tag in render()
     $('.mgbReadOnlyReminder').transition({ animation: 'flash', duration: '800ms' })
-    if (this.props.currUser){
-      if (this.data.asset.ownerId === this.props.currUser._id)
-          showToast("You can't edit Asset in the completed state - change asset state to unlocked to edit asset", 'error')
+    if (this.props.currUser) {
+      if (!this.canUserEditThisAssetIfUnlocked())
+        showToast("You do not have edit permission for this Asset. Ask owner to join their Project, or fork this asset", 'error')
       else
-        if (this.data.asset.isCompleted)
-          showToast("Asset is in completed state and can't be changed. Make a fork or ask the owner to mark asset as incompleted", 'error')
+      {
+        if (this.canCurrUserChangeCompletion())
+          showToast("This Asset is Locked. Unlock it to enable editing", 'error')
         else
-          showToast("You do not have permission to edit this Asset. Ask owner for permission or make a fork..", 'error')
+          showToast("Asset is Locked. Fork it or ask the owner to Unlock it for editing", 'error')
+      }
     }
     else
-      showToast("You must create an account if you wish to edit Assets", 'error')
+      showToast("Not logged in. You must Log in to edit Assets", 'error')
   }, 5000),  // 5000ms is the duration of an error Notification
 
   // See comment at top of file for format of m_deferredSaveObj. We only defer content2 and thumbnail because they are slowest.

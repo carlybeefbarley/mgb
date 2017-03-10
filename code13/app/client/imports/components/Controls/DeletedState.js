@@ -2,23 +2,21 @@ import React, { PropTypes } from 'react'
 import { Popup, Icon } from 'semantic-ui-react'
 
 const DeletedState = ( { isDeleted, canEdit, handleChange, operationPending } ) => (
-  (!isDeleted && !canEdit) ? null : (
-    <Popup
-      size='small'
-      positioning='bottom right'
-      trigger={(
-        <Icon
-          bordered
-          color={operationPending ? 'orange' : (isDeleted ? 'red': null) }
-          inverted={isDeleted}
-          name={isDeleted ? 'trash' : 'trash outline'}
-          onClick={() => { canEdit && handleChange && !operationPending && handleChange(!isDeleted) }} 
-          />
-      )}
-      header={isDeleted ? 'Undelete Asset' : 'Delete Asset'}
-      content={isDeleted ? 'This asset has been deleted, but hasn\'t yet been purged. Click to Undelete it now' : 'Click to delete this asset. It\'s ok, you will have a few days to undelete it if you need it again.'}
-      />
-  )
+  <Popup
+    size='small'
+    positioning='bottom right'
+    trigger={(
+      <Icon
+        bordered
+        color={operationPending ? 'orange' : (isDeleted ? 'red': null) }
+        inverted={isDeleted}
+        name={isDeleted ? 'trash' : 'trash outline'}
+        onClick={() => { canEdit && handleChange && !operationPending && handleChange(!isDeleted) }} 
+        />
+    )}
+    header={isDeleted ? 'Undelete Asset' : 'Delete Asset'}
+    content={isDeleted ? 'This asset has been deleted, but hasn\'t yet been purged. Click to Undelete it now' : 'Click to delete this asset. It\'s ok, you will have a few days to undelete it if you need it again.'}
+    />
 )
 
 DeletedState.propTypes = {

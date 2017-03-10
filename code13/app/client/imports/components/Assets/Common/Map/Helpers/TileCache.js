@@ -36,8 +36,8 @@ export default class TileCache {
 
   _onReady() {
 
-    this.onReady && window.setTimeout(() => {
-      this.onReady()
+    window.setTimeout(() => {
+      this.onReady && this.onReady()
       this.inProgress = false
       this._doNextUpdate()
     }, 0)

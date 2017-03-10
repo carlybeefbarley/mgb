@@ -1,7 +1,8 @@
 const isLetter = /[a-zA-Z]/
 const isNum = /^\d*/
 const isNotAlphanumeric = /([^a-zA-Z\d])/gi // !!!notice NOT(^)
-
+// converts asset name to valid JS name
+// e.g. 123My.cool.lib7 => MyCoolLib7
 export default (str) => {
   // strip first number or other fancy char - and replace non alphanumeric
   // this can be improved to allow some UTF-8 symbols as variables

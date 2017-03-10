@@ -2367,7 +2367,24 @@ export default class EditCode extends React.Component {
                   ...or, if you think you know what you are doing, just start hacking away!
                 </div>
               }
-
+              { docEmpty && this.state.astReady &&
+                // Quick import for empty doc
+              <div className="title">
+                    <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                      <i className='dropdown icon' />Quick Import
+                    </span>
+              </div>
+              }
+              { docEmpty && this.state.astReady &&
+              <div className="content">
+                <ImportHelperPanel
+                  scripts={this.state.userScripts}
+                  includeLocalImport={this.includeLocalImport}
+                  includeExternalImport={this.includeExternalImport}
+                  knownImports={this.tools.collectImportsForFile(this.props.asset.name)}
+                  />
+                </div>
+                }
               { !docEmpty && asset.kind === 'code' &&
                 // Code run/stop (header)
                 <div className="title" id="mgbjr-EditCode-codeRunner">

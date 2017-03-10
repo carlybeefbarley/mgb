@@ -1,5 +1,5 @@
 const isLetter = /[a-zA-Z]/
-const isNum = /\d/
+const isNum = /^\d/
 const isNotAlphanumeric = /([^a-zA-Z\d])/gi // !!!notice NOT(^)
 
 export default (str) => {

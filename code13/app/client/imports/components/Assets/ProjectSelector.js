@@ -122,12 +122,12 @@ const ProjectSelector = props => {
         style={{ marginTop: '1px', marginBottom: '3px'}} // inline is compact but has no top/bottom margins
         inline
         trigger={
-          <small>
+          <span>
             <QLink to={actualProjectObj ? `/u/${actualProjectObj.ownerName}/project/${actualProjectObj._id}` : `/u/${userName}/projects`}>
               <Icon name='sitemap'/> 
             </QLink>
             { projectLabelNameToShow }&ensp;
-          </small>} 
+          </span>} 
         >
       <Dropdown.Menu>
         { ownedProjects }

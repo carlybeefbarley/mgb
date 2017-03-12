@@ -6,7 +6,9 @@ import { genAPIreturn } from '/server/imports/helpers/generators'
 
 // TODO: Maybe make this asset/graphic ? Look also at AssetUrlGenerator and generateUrlOptions()
 
+// Frequently used constants:
 const _retval404 = { statusCode: 404, body: {} }   // body required to correctly show 404 not found header
+const _cTypePng = { 'Content-Type': "image/png" }
 
 // Handle case where the spriteData has not yet been created
 const _getAssetFrameDataUri = (asset, frame = 0) => {
@@ -28,10 +30,7 @@ RestApi.addRoute('asset/png/:id', { authRequired: false }, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id)
     const dataUri = _getAssetFrameDataUri(asset, this.queryParams.frame)
-    return genAPIreturn(this, asset, dataUri ? dataUriToBuffer(dataUri) : null, {
-      'Content-Type': "image/png"
-    })
-
+    return genAPIreturn(this, asset, dataUri ? dataUriToBuffer(dataUri) : null, _cTypePng)
   }
 })
 
@@ -47,9 +46,7 @@ RestApi.addRoute('asset/png/:user/:name', { authRequired: false }, {
       return _retval404
   
     const dataUri = _getAssetFrameDataUri(asset, this.queryParams.frame)
-    return genAPIreturn(this, asset, dataUri ? dataUriToBuffer(dataUri) : null, {
-      'Content-Type': "image/png"
-    })
+    return genAPIreturn(this, asset, dataUri ? dataUriToBuffer(dataUri) : null, _cTypePng)
   }
 })
 
@@ -62,7 +59,6 @@ RestApi.addRoute('asset/fullgraphic/:user/:name', { authRequired: false }, {
 
 RestApi.addRoute('asset/tileset-info/:id', { authRequired: false }, {
   get: function () {
-    "use strict";
     const asset = Azzets.findOne(this.urlParams.id)
     if (!asset)
       return _retval404
@@ -103,39 +99,35 @@ RestApi.addRoute('asset/tileset-info/:id', { authRequired: false }, {
       })
 
       return {
-      image: "/api/asset/tileset/" + this.urlParams.id,
-      // don't do that - as image will be cached forever and embedded in the map (phaser don't know how to extract embedded images automatically)
-      //image: c2.tileset ? c2.tileset : "/api/asset/tileset/" + this.urlParams.id,
-      name:        asset.name,
-      imageheight: c2.rows ? c2.rows*c2.height : c2.height,
-      imagewidth:  c2.cols ? c2.cols*c2.width : c2.width * tilecount,
-      tilecount:   tilecount,
-      tileheight:  c2.height,
-      tilewidth:   c2.width,
-      tiles
-    }})
+        image: "/api/asset/tileset/" + this.urlParams.id,
+        // don't do that - as image will be cached forever and embedded in the map (phaser don't know how to extract embedded images automatically)
+        //image: c2.tileset ? c2.tileset : "/api/asset/tileset/" + this.urlParams.id,
+        name:        asset.name,
+        imageheight: c2.rows ? c2.rows*c2.height : c2.height,
+        imagewidth:  c2.cols ? c2.cols*c2.width : c2.width * tilecount,
+        tilecount:   tilecount,
+        tileheight:  c2.height,
+        tilewidth:   c2.width,
+        tiles
+      }
+    })
   }
 })
 
 RestApi.addRoute('asset/tileset/:id', { authRequired: false }, {
   get: function () {
     const asset = Azzets.findOne(this.urlParams.id)
-    return genAPIreturn(this, asset, () => {
+    return genAPIreturn(
+      this, 
+      asset, 
+      () => {
         if (!asset || !asset.content2)
           return _retval404
 
-        let dataUri
-        if(!asset.content2.tileset){
-          dataUri = _getAssetFrameDataUri(asset, this.queryParams.frame)
-        }
-        else{
-          dataUri = asset.content2.tileset
-        }
+        const dataUri = asset.content2.tileset || _getAssetFrameDataUri(asset, this.queryParams.frame)
         return dataUri ? dataUriToBuffer(dataUri) : null
       },
-      {
-        'Content-Type': "image/png"
-      }
+      _cTypePng
     )
   }
 })
@@ -149,8 +141,11 @@ RestApi.addRoute('asset/tileset/:user/:name', { authRequired: false }, {
       isDeleted:    false
     })
 
-    return genAPIreturn(this, asset, () => (asset && asset.content2 && asset.content2.tileset) ? dataUriToBuffer(asset.content2.tileset) : null, {
-      'Content-Type': "image/png"
-    })
+    return genAPIreturn(
+      this, 
+      asset, 
+      () => ((asset && asset.content2 && asset.content2.tileset) ? dataUriToBuffer(asset.content2.tileset) : null), 
+      _cTypePng
+    )
   }
 })

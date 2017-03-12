@@ -185,11 +185,11 @@ const ChatMessage = ({ msg }) => {
       chunks.push( link )
       return e
     }
-    else if (e2.length === 2){
-      const userName=e2[0].slice(1)
-      const assetId=e2[1].slice(0,-1)
-      const link=<QLink key={chunks.length} to={`/u/${userName}/asset/${assetId}`}>{userName}:{assetId}</QLink>
-      chunks.push(link)
+    else if (e2.length === 2) {
+      const userName = e2[0].slice( 1 )
+      const assetId = e2[1].slice( 0, -1 )
+      const link = <QLink key={chunks.length} to={`/u/${userName}/asset/${assetId}`}>{userName}:{assetId}</QLink>
+      chunks.push( link )
       return e
     }
     else {
@@ -270,6 +270,28 @@ export default fpChat = React.createClass( {
   handleChatChannelChange: function(newChannelName) {
     this.changeChannel( newChannelName )
     this.setState( { view: 'comments' } )
+  },
+
+  handleDocumentKeyDown: function(e) {
+    if (e.keyCode === 27 && this.state.view === 'channels') {
+      this.setState( { view: 'comments' } )
+    }
+  },
+
+  handleDocumentClick: function(e) {
+    if (this.state.view === 'channels') {
+      this.setState( { view: 'comments' } )
+    }
+  },
+
+  componentWillMount: function() {
+    document.addEventListener( 'keydown', this.handleDocumentKeyDown )
+    document.addEventListener( 'click', this.handleDocumentClick )
+  },
+
+  componentWillUnmount: function() {
+    document.removeEventListener( 'keydown', this.handleDocumentKeyDown )
+    document.removeEventListener( 'click', this.handleDocumentClick )
   },
 
   componentDidUpdate: function() {
@@ -416,19 +438,13 @@ export default fpChat = React.createClass( {
     this.setState( { messageValue: e.target.value } )
   },
 
-  handleToggleChannelSelector: function() {
-    if (this.state.view === 'channels')
-      this.handleHideChannelSelector()
-    else
-      this.handleShowChannelSelector()
-  },
+  handleToggleChannelSelector: function(e) {
+    // prevent document click from immediately closing the menu on toggle open
+    e.preventDefault()
+    e.nativeEvent.stopImmediatePropagation()
+    const { view } = this.state
 
-  handleHideChannelSelector: function() {
-    this.setState( { view: 'comments' } )
-  },
-
-  handleShowChannelSelector: function() {
-    this.setState( { view: 'channels' } )
+    this.setState( { view: view === 'comments' ? 'channels' : 'comments' } )
   },
 
   colorForChannelNameHasUnreads(channelName, channelTimestamps) {
@@ -496,6 +512,8 @@ export default fpChat = React.createClass( {
     //   </List>
     // )
 
+    // TODO(levi): make unread channels have a little red dot instead of coloring
+
     // PROJECT CHANNELS
     const projectChannels = (
       <List selection>
@@ -509,12 +527,16 @@ export default fpChat = React.createClass( {
             const isOwner = (project.ownerId === currUser._id)
             const channelName = makeChannelName( { scopeGroupName: 'Project', scopeId: project._id } )
             return (
-              <List.Item
-                  key={project._id}
-                  onClick={() => this.handleChatChannelChange(channelName)} >
-                <Icon name='sitemap' color={isOwner ? 'green' : 'blue' } />
-                <List.Content>
-                  <span style={{ color: this.colorForChannelNameHasUnreads(channelName, chatChannelTimestamps)}}>
+              <List.Item key={project._id}>
+                <Icon
+                  title={`Navigate to ${isOwner ? 'your' : 'their'} project`}
+                  as={QLink}
+                  elOverride='i'
+                  to={`/u/${project.ownerName}/project/${project._id}`}
+                  name='sitemap'
+                  color={isOwner ? 'green' : 'blue' } />
+                <List.Content onClick={() => this.handleChatChannelChange( channelName )} title='Select Channel'>
+                  <span style={{ color: this.colorForChannelNameHasUnreads( channelName, chatChannelTimestamps ) }}>
                     { !isOwner && project.ownerName + ' : ' }
                     { project.name }
                   </span>
@@ -529,10 +551,10 @@ export default fpChat = React.createClass( {
     // ASSET CHANNELS
     const pinnedChannelNames = getPinnedChannelNames( settings )
     const assetChannelObjects = _
-      .chain( [this.props.subNavParam] )        // Current channel at top of this list
-      .concat( pinnedChannelNames )             // Add the other pinned Channels
+      .chain( [this.props.subNavParam] )      // Current channel at top of this list
+      .concat( pinnedChannelNames )           // Add the other pinned Channels
       .uniq()                                 // Remove dupes
-      .map( parseChannelName )                  // parse channelName to channelObject
+      .map( parseChannelName )                // parse channelName to channelObject
       .filter( { scopeGroupName: 'Asset' } )  // We only want the Asset channels for this list
       .value()
 

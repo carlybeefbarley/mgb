@@ -23,8 +23,8 @@ export default SpecialGlobals = {
   defaultUserProfileImage: '//www.gravatar.com/avatar/2e2c17f8f3abdb1bb2594ebd2d3b35c5?s=50&d=mm',
 
   thumbnail: {
-    width: 200,
-    height: 150
+    width: 230,     // In px
+    height: 155     // In px
   },
   // in a case that observers will turn out too slow - we may change it to false - and then implement slow polling
   allowObservers: true,

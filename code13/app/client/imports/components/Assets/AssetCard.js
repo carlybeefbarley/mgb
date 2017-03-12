@@ -131,10 +131,12 @@ export default AssetCard = React.createClass({
       >
 
       <div ref='thumbnailCanvas'>
-        <Thumbnail
-          constrainHeight='155px'
-          asset={asset}
-        />
+        { viewOpts.showImg && 
+          <Thumbnail
+            constrainHeight='155px'
+            asset={asset}
+          />
+        }
       </div>
 
         <Card.Content>

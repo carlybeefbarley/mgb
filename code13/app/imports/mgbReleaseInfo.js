@@ -14,12 +14,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Sunday Mar 12 2017 23:40 GMT-0700 (PST)',
+      'timestamp': 'Monday Mar 13 2017 08:30 GMT-0700 (PST)',
 
       'id': {
         'ver': '0.0.1',
         'state': 'alpha',
-        'iteration': '3728'
+        'iteration': '3733'
       },
 
       'releaseManagement': {
@@ -41,6 +41,13 @@ const mgbReleaseInfo = {
           'changeSummary': 'The Chat Channel selection UI has been improved',
           'otherUrls': [ ]
         },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Bugfixes for Asset creation, tutorial messages',
+          'otherUrls': [ ]
+        }
       ]
     },
     {

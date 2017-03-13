@@ -1723,7 +1723,8 @@ export default class EditCode extends React.Component {
         const critical = errors.filter(e => e.code.substr(0, 1) === "E")
         this.hasErrors = !!critical.length
         if (this.tools) {
-          this.tools.collectAndTranspile(val, this.props.asset.name, () => {
+          // set asset name to /assetName - so recursion is handled correctly
+          this.tools.collectAndTranspile(val, '/' + this.props.asset.name, () => {
             this.setState({
               astReady: true
             })

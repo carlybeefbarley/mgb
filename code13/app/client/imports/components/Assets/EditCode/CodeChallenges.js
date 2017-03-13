@@ -47,6 +47,8 @@ export default class CodeChallenges extends React.Component {
     this.skillName = _.last(_.split(props.skillPath, '.'))
     this.state = {
       results:                    [],       // Array of results we get back from the iFrame that runs the tests
+      testCount:                  0,        // how many times user run this test
+      latestTest:                 null,     // indicates latest test date
       error:                      null,     // get back from iFrame if it has some syntax error
       console:                    null,     // get back from iFrame console.log messages 
       showAllTestsCompletedModal: false     // true if we want to show the All Tests Completed Modal
@@ -76,6 +78,8 @@ export default class CodeChallenges extends React.Component {
       this.setState({ results: e.data.results })
       this.setState({ error: e.data.error })
       this.setState({ console: e.data.console })
+      this.setState({ testCount: this.state.testCount+1 })
+      this.setState({ latestTest: Date.now() })
       if (_.every(e.data.results, 'success'))
         this.successPopup()
     }
@@ -121,9 +125,23 @@ export default class CodeChallenges extends React.Component {
     }
   }
 
+  formatTime = (ms) => {
+    const date = new Date(ms)
+    return twoDecimals(date.getHours()) + ':' + twoDecimals(date.getMinutes()) + ':' + twoDecimals(date.getSeconds())
+
+    function twoDecimals(num){
+      num += ''
+      if(num.length == 1) 
+        num = '0'+num
+      return num
+    }
+  }
+
   render() {
     const description = this.skillNode.$meta.description
     const { showAllTestsCompletedModal } = this.state
+    const testCountStr = this.state.testCount > 0 ? ' '+this.state.testCount : ''
+    const latestTest = this.state.latestTest ? this.formatTime(this.state.latestTest) : ''
 
     return (
       <div id="codeChallenges" className={"content " +(this.props.active ? "active" : "")}>
@@ -152,7 +170,11 @@ export default class CodeChallenges extends React.Component {
 
         { 
           this.state.results && this.state.results.length > 0 && 
-            <Divider as={Header} color='grey' size='small' horizontal content='Test Results'/>
+            <Divider 
+              as={Header} 
+              color='grey' 
+              size='small' 
+              horizontal content={'Test Results' + testCountStr}/>
         }
         <List verticalAlign='middle'>
         {
@@ -168,6 +190,7 @@ export default class CodeChallenges extends React.Component {
             </List.Item>
           ))
         }
+        <List.Item><List.Content style={{textAlign:'right', fontSize: '11px', color:'#999'}}>{latestTest}</List.Content></List.Item>
         </List>
 
         <Divider as={Header} color='grey' size='small' horizontal content='Challenge Instructions'/>

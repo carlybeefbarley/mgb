@@ -175,7 +175,7 @@ There are some additional indexed columns used to help find some items from othe
                       // in case of errors or db conflicts.
   Chat.isDeleted      // true if the message has been deleted. For simplicity this will show
                       // in the UI as '(deleted)' so we don't make counts overly complex
-  Chat.flagId         // non-null / non-empty if there is a Flag record for this message (See Flags.js)
+  Chat.suFlagId         // non-null / non-empty if there is a Flag record for this message (See Flags.js)
 
 From this it can be seen that the messages in a 'Chat thread' can be found via just constructing 
 the channelName for some context and then sorting by Chat.createdAt
@@ -240,7 +240,9 @@ export const chatsSchema = {
 
   // other special states
   isDeleted:    optional(Boolean),    // If true then show as '(deleted)'
-  flagId:       optional(String)      // (TODO) non-null / non-empty if there is a Flag record for this message (See Flags.js)
+
+  // The su fields can only be changed by a superAdmin User.. They typically relate to workflows or system counts
+  suFlagId:       optional(String)      // (TODO) non-null / non-empty if there is a Flag record for this message (See Flags.js)
 }
 
 export const ChatPosters = {

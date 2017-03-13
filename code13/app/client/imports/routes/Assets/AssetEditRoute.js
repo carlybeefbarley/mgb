@@ -31,6 +31,8 @@ import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDe
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
 
+import SuperAdminAssetControl from '/client/imports/components/Assets/SuperAdminAssetControl'
+
 import { makeChannelName } from '/imports/schemas/chats'
 
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
@@ -344,7 +346,7 @@ export default AssetEditRoute = React.createClass({
     if (this.data.loading)
       return <Spinner />
 
-    const { params, currUser, currUserProjects, availableWidth, hazUnreadAssetChat } = this.props
+    const { params, currUser, currUserProjects, availableWidth, hazUnreadAssetChat, isSuperAdmin } = this.props
     const { isForkPending, isDeletePending } = this.state
     const isTooSmall = availableWidth < 500
 
@@ -394,9 +396,10 @@ export default AssetEditRoute = React.createClass({
 
         { !isTooSmall &&
           <Grid.Column width='8' textAlign='right' id="mgbjr-asset-edit-header-right">
-            { /* We use this.props.params.assetId since it is available sooner than the asset
-              * TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
-            * */ }
+            { 
+              // We use this.props.params.assetId since it is available sooner than the asset
+              // TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
+            }
             { this.state.isForkRevertPending &&
               <Icon name='fork' loading />
             }
@@ -443,6 +446,9 @@ export default AssetEditRoute = React.createClass({
               currUserId={currUserId}
               currUserProjects={currUserProjects}
               handleToggleProjectName={this.handleToggleProjectName} />
+            { isSuperAdmin && 
+              <SuperAdminAssetControl asset={asset} />
+            }
           </Grid.Column>
         }
 

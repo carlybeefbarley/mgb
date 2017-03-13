@@ -5,45 +5,12 @@ import { storiesOf, action } from '@kadira/storybook';
 // React Storybook stories: 
 //    https://getstorybook.io/docs/react-storybook/basics/writing-stories
 
-import DeletedState from './components/Controls/DeletedState'
-import Footer from './components/Footer/Footer'
+import SuperAdminAssetControl from '/client/imports/components/Assets/SuperAdminAssetControl'
 
-
-storiesOf('Delete', module)
-  .add('isDeleted, CanEdit', () => (
-    <DeletedState isDeleted={true} canEdit={true} handleChange={action('clicked')} operationPending={false}/>       
+storiesOf('SuperAdminAssetControl', module)
+  .add('Banned Asset', () => (
+    <SuperAdminAssetControl asset={{ suIsBanned: true } }/>
   ))
-  .add('!isDeleted, CanEdit', () => (
-    <DeletedState isDeleted={false} canEdit={true} handleChange={action('clicked')} operationPending={false}/>       
-  ))
-
-
-// storiesOf('Footer', module)
-//   .add('Footer', () => (
-//     <Footer/>
-//   ))
-   
-
-
-import { Popup, Segment } from 'semantic-ui-react'
-
-
-
-
-storiesOf('EXPERIMENTING', module)
-  .add('foobar', () => (
-    <Segment padded>
-      oh Hai there
-    </Segment>
-  ))
-  .add('foobar2', () => (
-    <Popup 
-    trigger={(<Segment padded>
-      oh yoyo booty
-    </Segment>)}
-    >
-      <Popup.Header>
-        for realz!
-      </Popup.Header>
-    </Popup>
+  .add('Non-banned Asset', () => (
+    <SuperAdminAssetControl asset={{ suIsBanned: false } }/>
   ))

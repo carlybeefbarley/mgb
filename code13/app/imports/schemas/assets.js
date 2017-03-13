@@ -81,10 +81,12 @@ var schema = {
   // Various Asset flags
   isCompleted: Boolean,     // This supports the 'is stable' flag
   isDeleted:   Boolean,     // This is a soft marked-as-deleted indicator
-  isPrivate:   Boolean      // Not currently used
+  isPrivate:   Boolean,     // Not currently used
+  
+  // The su fields can only be changed by a superAdmin User.. They typically relate to workflows or system counts
+  suIsBanned:  Boolean,     // Optional. If true, then this image has been banned. See suFlagId for the flagging workflow
+  suFlagId:    String       // Optional. (TODO) non-null / non-empty if there is a Flag record for this message (See Flags.js)
 }
-
-
 
 // safeAssetKindStringSepChar is the separator to be used in the URL for encoding query.kinds
 //     Note that "," and "+" and others can get messy due to url encoding schemes.
@@ -192,7 +194,6 @@ export const allSorters = {
   "plays":  { 'metadata.playCount': -1 }
 }
 
-
 Meteor.methods({
   "Azzets.create": function(data) {
     checkIsLoggedIn()
@@ -203,6 +204,9 @@ Meteor.methods({
       data.ownerId = this.userId                   // We allow the caller to set this: Main scenario is 'Create As Member Of Project'
     if (!data.dn_ownerName) 
       data.dn_ownerName = username
+
+    if (!_.isUndefined(data.suIsBanned) || !_.isUndefined(data.suFlagId))
+      checkMgb.checkUserIsSuperAdmin()
 
     if (this.userId !== data.ownerId)
     {
@@ -238,7 +242,7 @@ Meteor.methods({
     data.metadata = data.metadata || {}
     data.assetLicense = data.assetLicense || defaultAssetLicense
     data.isUnconfirmedSave = this.isSimulation
-    // TODO: this will get moved
+    // TODO: this will get moved one day. See #34
     data.content2 = data.content2 || {}
 
     check(data, { 
@@ -268,10 +272,13 @@ Meteor.methods({
     //   Or check publications have correct deny rules.
     //   See comment below for selector = ...
     if (!canEdit)
-      throw new Meteor.Error(401, "You don't have permission to edit this.")   //TODO - make this secure,
+      throw new Meteor.Error(401, "You don't have permission to edit this.")   //TODO - make this secure. #insecure#
 
     data.updatedAt = new Date()
     data.isUnconfirmedSave = this.isSimulation
+
+    if (!_.isUndefined(data.suIsBanned) || !_.isUndefined(data.suFlagId))
+      checkMgb.checkUserIsSuperAdmin()
 
     if (data.name)
     {
@@ -304,7 +311,9 @@ Meteor.methods({
 
       isCompleted: optional(schema.isCompleted),
       isDeleted: optional(schema.isDeleted),
-      isPrivate: optional(schema.isPrivate)
+      isPrivate: optional(schema.isPrivate),
+      suIsBanned: optional(schema.suIsBanned),
+      suFlagId: optional(schema.suFlagId)
     })
 
     // if caller doesn't own doc, update will fail because fields like ownerId won't match

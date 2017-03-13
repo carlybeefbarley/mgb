@@ -9,6 +9,7 @@ import { checkIsLoggedIn, checkMgb } from './checkMgb.js'
 */
 
 import validate from './validate'
+import { isUserSuperAdmin } from './roles'
 
 /**
  * Check if user is Logged in. Throw Meteor.Error() if not logged in
@@ -43,5 +44,10 @@ export const checkMgb = {
   assetDescription: function (description) {
     if (!validate.assetDescription(description))
       throw new Meteor.Error(403, "Invalid Asset Description")
+  },
+
+  checkUserIsSuperAdmin: function() {
+    if (!isUserSuperAdmin(Meteor.user()))
+      throw new Meteor.Error(401, "Requires SuperAdmin powers")
   }
 }

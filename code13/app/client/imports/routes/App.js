@@ -196,16 +196,16 @@ const App = React.createClass({
       hazUnreadChats:           [],            // will contain Array of channel names with unread chats
       // hazUnreadChats is a subset of the data in chatChannelTimestamps, but simplified - just an
       // Array of chat channelNames that have at least one unread message. Note that Global ChatChannels
-      // are treated a little specially - if you have never visited a particular global channel you will 
+      // are treated a little specially - if you have never visited a particular global channel you will
       // not get notifications for it. This is so new users don't get spammed to look at chat channels they
       // are not yet interested in. This will always be an array, never null or undefined
       // It is intended to be quick & convenient for generating notification UIs
 
-      currentlyEditingAssetInfo: { 
-        // This is so that we can pass as subset of the Asset info into some other components 
+      currentlyEditingAssetInfo: {
+        // This is so that we can pass as subset of the Asset info into some other components
         // like the flexpanels and Nav controls.
         // The AssetEditRoute component is currently the only component expected to set this
-        //  value, since that is the layer in the container hierarchy that actually loads 
+        //  value, since that is the layer in the container hierarchy that actually loads
         // assets for the AssetEditors
         kind: null,       // null or a string which is a one of assets:AssetKindKeys
         canEdit: false,   // true or false. True iff editing an Asset _and_ user has edit permission
@@ -282,10 +282,10 @@ const App = React.createClass({
     const { settings, currUserProjects } = this.data
     const { assetId } = this.props.params
 
-    // 0. Make the list of channels we are interested in: 
-    //       Global, relevantProjects, currentAsset, pinnedChannels. 
-    // Regarding AssetsChannels, our UX model is that the user should Pin any 
-    // asset channels they want notification of. We don't want to spam the 
+    // 0. Make the list of channels we are interested in:
+    //       Global, relevantProjects, currentAsset, pinnedChannels.
+    // Regarding AssetsChannels, our UX model is that the user should Pin any
+    // asset channels they want notification of. We don't want to spam the
     // chat notifications with too much Asset noise
 
     const chanArray = _.concat(
@@ -374,7 +374,7 @@ const App = React.createClass({
       left:         0,
       right:        flexPanelWidth,
       marginBottom: '0px',
-      overflow:     "scroll"
+      overflow:     "auto" // this will make very ugly scrollbars on firefox
     }
 
     const mainPanelInnerDivSty = {
@@ -389,9 +389,9 @@ const App = React.createClass({
     const ownsProfile = isSameUser(currUser, user)
 
     const hazUnreadAssetChat = (
-      params.assetId && 
+      params.assetId &&
       _.includes(
-        hazUnreadChats, 
+        hazUnreadChats,
         makeChannelName( { scopeGroupName: 'Asset', scopeId: params.assetId } )
       )
     )

@@ -121,7 +121,8 @@ export default class CodeChallenges extends React.Component {
     else
     {
       this.setState( { showAllTestsCompletedModal: false } )
-      alert('Congratulations! You have finished the JavaScript basics challenges!')
+      // alert('Congratulations! You have finished the JavaScript basics challenges!')
+      utilPushTo( window.location, '/learn/code' )
     }
   }
 

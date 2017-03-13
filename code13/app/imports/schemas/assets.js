@@ -247,7 +247,7 @@ Meteor.methods({
 
     check(data, { 
       ...{ skillPath: optional(schema.skillPath) }, 
-      ..._.omit(schema, ['_id', 'forkChildren', 'forkParentChain', 'skillPath'])
+      ..._.omit(schema, ['_id', 'forkChildren', 'forkParentChain', 'skillPath', 'suIsBanned', 'suFlagId'])
     })
 
     let docId = Azzets.insert(data)

@@ -501,6 +501,7 @@ export default class SourceTools {
       if(this.asset_id === assets[0]._id){
         //this.subscriptions[ari].subscription.stop()
         this.setError({reason: "Recursion detected: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.RECURSION_DETECTED})
+        this.subscriptions[ari].subscription.stop()
         getSourceAndTranspile(null, [])
         return
       }

@@ -374,7 +374,7 @@ const App = React.createClass({
       left:         0,
       right:        flexPanelWidth,
       marginBottom: '0px',
-      overflow:     "auto" // this will make very ugly scrollbars on firefox
+      overflow:     "auto" // 'scroll' - this will make very ugly scrollbars on firefox
     }
 
     const mainPanelInnerDivSty = {

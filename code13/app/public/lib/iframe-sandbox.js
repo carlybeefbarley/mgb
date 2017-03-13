@@ -84,6 +84,9 @@ window.onload = function() {
     // Trace global keys Object.keys(window) before and after loading???
     var ret =  window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)]
     if(!ret){
+      window.setTimeout(function() {
+        window.require(key)
+      }, 100)
       console.warn("cannot find required resource: " + key + ". Check if module have export defined")
     }
     return ret

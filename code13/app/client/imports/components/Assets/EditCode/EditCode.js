@@ -316,8 +316,8 @@ export default class EditCode extends React.Component {
       const $sPane = $(".CodeMirror")
       const edHeight = window.innerHeight - ( 16 + $sPane.offset().top )
       ed.setSize("100%", `${edHeight}px`)
-      $(".mgbAccordionScroller").css("max-height", `${window.innerHeight-16}px`)
-      $(".mgbAccordionScroller").css("overflow-y", "scroll")
+      //$(".mgbAccordionScroller").css("max-height", `${window.innerHeight-16}px`)
+      //$(".mgbAccordionScroller").css("overflow-y", "scroll")
     }
     $(window).on("resize", this.edResizeHandler)
     this.edResizeHandler()
@@ -1648,6 +1648,7 @@ export default class EditCode extends React.Component {
 
   handleGamePopup() {
     this.setState( { isPopup: !this.state.isPopup } )
+    this.handleRun()
   }
 
   pasteSampleCode(item) {   // item is one of the templateCodeChoices[] elements
@@ -2176,7 +2177,7 @@ export default class EditCode extends React.Component {
     //   transformOrigin: "0 0",
     //   overflow: "hidden"
     // }
-
+    const fullSize = {position: "absolute", top: 0, bottom: 0, left: 0, right: 0, overflow: "auto" }
 
     const gameScreen = <GameScreen
         key="gameScreen"
@@ -2222,7 +2223,7 @@ export default class EditCode extends React.Component {
         {
         <div className={infoPaneOpts.col2 + ' wide column'} style={{padding: 0, display: infoPaneOpts.col2 ? "block" : "none"}}>
 
-          <div className="mgbAccordionScroller" style={{minHeight: (window.innerHeight - 180)+'px' }}>
+          <div className="mgbAccordionScroller" style={fullSize}>
             <div className="ui fluid styled accordion">
 
               { !docEmpty && asset.kind === 'tutorial' &&
@@ -2447,7 +2448,7 @@ export default class EditCode extends React.Component {
                     </span>
                     }
                   </span>
-                  {infoPaneOpts.col2 && gameScreen}
+                  {!this.state.isPopup && gameScreen}
 
                   <ConsoleMessageViewer
                     messages={this.state.consoleMessages}
@@ -2494,7 +2495,7 @@ export default class EditCode extends React.Component {
           </div>
         </div>
         }
-        {!infoPaneOpts.col2 && gameScreen}
+        {this.state.isPopup && gameScreen}
 
       </div>
     )

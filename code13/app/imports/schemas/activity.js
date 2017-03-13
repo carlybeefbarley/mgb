@@ -62,15 +62,17 @@ export const ActivityTypes = {
   "asset.edit":        { icon: "edit",             pri: 15,  description: "Edit asset" },
   "asset.description": { icon: "edit",             pri: 14,  description: "Change asset description" },
   "asset.metadata":    { icon: "edit",             pri: 16,  description: "Change asset metadata" },
-  "asset.stable":      { icon: "green checkmark",  pri: 6,   description: "Asset marked stable/complete" },
-  "asset.unstable":    { icon: "red checkmark",    pri: 6,   description: "Asset marked unstable/incomplete" },
+  "asset.stable":      { icon: "blue lock",        pri: 6,   description: "Asset marked as Locked" },
+  "asset.unstable":    { icon: "grey unlock",      pri: 6,   description: "Asset marked as Unlocked" },
   "asset.workState":   { icon: "orange checkmark", pri: 6,   description: "Asset workState changed" },
 
   "asset.rename":      { icon: "write",            pri: 11,  description: "Rename asset" },  
   "asset.delete":      { icon: "red trash",        pri: 12,  description: "Delete asset" },
   "asset.license":     { icon: "law",              pri: 11,  description: "Asset license changed" },
   "asset.project":     { icon: "folder sitemap",   pri: 12,  description: "Change Asset's project" },
-  "asset.undelete": { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
+  "asset.undelete":    { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
+  "asset.ban":         { icon: "red bomb",        pri: 12,  description: "Ban Asset" },
+  "asset.unban":       { icon: "green bomb",      pri: 12,  description: "Un-ban Asset" },
 
   "game.play.start":   { icon: "green play",       pri: 17,  description: "Start game" },
 

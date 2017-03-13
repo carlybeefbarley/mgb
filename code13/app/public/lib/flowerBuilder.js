@@ -207,7 +207,7 @@ var flowerBuilder = {
       filename = filename.substr(2);
       // this is external file.... check defs???
       if (!this.server.fileMap[filename] || this.config.local) {
-        if (this.uniqueNames[node.source.value]) 
+        if (this.uniqueNames[node.source.value])
           return
         colorId = this.genColorId(filename)
         var tmp = {
@@ -223,7 +223,7 @@ var flowerBuilder = {
         buffer.push(tmp);
         if (this.config.local)
           return
-        
+
         var defs = this.server.defs.find(function(d) {
           return d['!name'] == node.source.value
         })
@@ -234,7 +234,7 @@ var flowerBuilder = {
           Object.keys(defs).forEach(function(key) {
             if (key.length > 1 && (key.substr(0, 1) === "!" || key.substr(0, 1) === "_") )
               return;
-            
+
             Object.keys(defs[key]).forEach(function(key){
               tmp.children.push({
                 name: prefix + key,
@@ -249,11 +249,17 @@ var flowerBuilder = {
         }
         else
           tmp.size = 100 // make unknown external libs huge ( as they will be larger than max size in the sourceTools )
-        
+
         this.uniqueNames[node.source.value] = true
-        return;
+        return
       }
     }
+
+    // already parsed node
+    if (this.uniqueNames[node.source.value])
+      return
+
+    this.uniqueNames[node.source.value] = true
 
     var tree = this.getAstFlowerTree(filename)
     tree.name = name

@@ -490,13 +490,14 @@ export default class SourceTools {
     }
 
     const onReady = () => {
-      const assets = this.subscriptions[ari].getAssets();
-      // this is main file - only requested in different format
-      // stop observation and ignore further updates
+      const assets = this.subscriptions[ari].getAssets()
+      // if this is main file - only requested in different format
       if(this.asset_id === assets[0]._id){
-        this.subscriptions[ari].subscription.stop()
+        //this.subscriptions[ari].subscription.stop()
+        this.setError({reason: "Recursion detected: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.RECURSION_DETECTED})
         return
       }
+      // we need this for recursion warning
       getSourceAndTranspile(null, assets)
     }
     // on Change we should check if there is already something happening.. as it can be called at any time
@@ -504,7 +505,13 @@ export default class SourceTools {
       if(this.inProgress){
         return
       }
-      getSourceAndTranspile(null, this.subscriptions[ari].getAssets())
+      const assets = this.subscriptions[ari].getAssets()
+      // if this is main file - only requested in different format
+      if(this.asset_id === assets[0]._id){
+        this.setError({reason: "Recursion detected: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.RECURSION_DETECTED})
+        return
+      }
+      getSourceAndTranspile(null, assets)
     }
 
     // from now on only observe asset and update tern on changes only

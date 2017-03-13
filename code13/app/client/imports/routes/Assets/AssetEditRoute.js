@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Grid, Icon } from 'semantic-ui-react'
+import { Grid, Icon, Message } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import reactMixin from 'react-mixin'
 
@@ -354,6 +354,7 @@ export default AssetEditRoute = React.createClass({
     if (!this.data.asset)
       return <ThingNotFound type='Asset' id={params.assetId} />
 
+    const isOwner = currUser && currUser.id === asset.ownerId
     // Overlay any newer data to the child component so that it gets what it expects based on last save attempt
     const dso = this.m_deferredSaveObj
     if (dso)
@@ -452,22 +453,36 @@ export default AssetEditRoute = React.createClass({
           </Grid.Column>
         }
 
-        <Grid.Column width='16'>
-          <AssetEdit
-            key={asset._id}
-            asset={asset}
-            canEdit={canEd}
-            availableWidth={availableWidth}
-            currUser={currUser}
-            handleContentChange={this.deferContentChange}
-            handleMetadataChange={this.handleMetadataChange}
-            handleDescriptionChange={this.handleAssetDescriptionChange}
-            editDeniedReminder={this.handleEditDeniedReminder}
-            getActivitySnapshots={this.getActivitySnapshots}
-            hasUnsentSaves={hasUnsentSaves}
-            handleSaveNowRequest={this.handleSaveNowRequest}
-          />
-        </Grid.Column>
+        { asset.suIsBanned && 
+          <Grid.Column width='16'>
+            <Message error 
+              icon='ban'
+              header='This Asset has been Banned'
+              list={[
+                'The content does not meet the standards of our Code of Conduct',
+                'Only an Admin can remove the Ban',
+                'Only the Asset owner can view the banned content']}/>
+          </Grid.Column>
+        }
+
+        { (!asset.suIsBanned || isOwner) && 
+          <Grid.Column width='16'>
+            <AssetEdit
+              key={asset._id}
+              asset={asset}
+              canEdit={canEd}
+              availableWidth={availableWidth}
+              currUser={currUser}
+              handleContentChange={this.deferContentChange}
+              handleMetadataChange={this.handleMetadataChange}
+              handleDescriptionChange={this.handleAssetDescriptionChange}
+              editDeniedReminder={this.handleEditDeniedReminder}
+              getActivitySnapshots={this.getActivitySnapshots}
+              hasUnsentSaves={hasUnsentSaves}
+              handleSaveNowRequest={this.handleSaveNowRequest}
+            />
+          </Grid.Column>
+        }
       </Grid>
     )
   },

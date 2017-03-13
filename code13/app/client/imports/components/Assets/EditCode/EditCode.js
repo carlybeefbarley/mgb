@@ -2178,11 +2178,11 @@ export default class EditCode extends React.Component {
     //   overflow: "hidden"
     // }
     const fullSize = {position: "absolute", top: 0, bottom: 0, left: 0, right: 0, overflow: "auto" }
-
+    const isPopup = this.state.isPopup || !infoPaneOpts.col2
     const gameScreen = <GameScreen
         key="gameScreen"
         ref="gameScreen"
-        isPopup = {this.state.isPopup || !infoPaneOpts.col2}
+        isPopup = {isPopup}
         isPlaying = {this.state.isPlaying}
         asset = {this.props.asset}
         consoleAdd = {this._consoleAdd.bind(this)}
@@ -2424,7 +2424,7 @@ export default class EditCode extends React.Component {
                     }
                     {
                       isPlaying &&
-                      <a  className={`ui tiny ${this.state.isPopup ? 'active' : '' } icon button`}
+                      <a  className={`ui tiny ${isPopup ? 'active' : '' } icon button`}
                           title='Popout the code-run area so it can be moved around the screen'
                           onClick={this.handleGamePopup.bind(this)}>
                         <i className={"external icon"}></i>&emsp;Popout
@@ -2448,7 +2448,7 @@ export default class EditCode extends React.Component {
                     </span>
                     }
                   </span>
-                  {!this.state.isPopup && gameScreen}
+                  {!isPopup && gameScreen}
 
                   <ConsoleMessageViewer
                     messages={this.state.consoleMessages}
@@ -2495,7 +2495,7 @@ export default class EditCode extends React.Component {
           </div>
         </div>
         }
-        {this.state.isPopup && gameScreen}
+        {isPopup && gameScreen}
 
       </div>
     )

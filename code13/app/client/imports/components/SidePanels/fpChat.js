@@ -1,6 +1,16 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Button, Comment, Divider, Input, Form, Header, Icon, List } from 'semantic-ui-react'
+import {
+  Button,
+  Comment,
+  Divider,
+  Form,
+  Header,
+  Icon,
+  Input,
+  Label,
+  List
+} from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 import { showToast } from '/client/imports/routes/App'
 
@@ -29,12 +39,10 @@ import {
   makePresentedChannelIcon
 } from '/imports/schemas/chats'
 
-const _colors = {
-  emptyChannel:      '#aaa',
-  unreadChannel:     'orange',
-  upToDateChannel:   '#333',
-  ownedProjectIcon:  'green',
-  memberProjectIcon: 'blue',
+const unreadChannelIndicatorStyle = {
+  marginLeft:   '0.3em',
+  marginBottom: '0.9em',
+  fontSize:     '0.5rem',
 }
 
 import moment from 'moment'
@@ -447,15 +455,21 @@ export default fpChat = React.createClass( {
     this.setState( { view: view === 'comments' ? 'channels' : 'comments' } )
   },
 
-  colorForChannelNameHasUnreads(channelName, channelTimestamps) {
+  doesChannelHaveUnreads: function(channelName, channelTimestamps) {
     const latestForChannel = _.find( channelTimestamps, { _id: channelName } )
     if (!latestForChannel)
-      return _colors.emptyChannel
+      return false
+
     const lastReadByUser = getLastReadTimestampForChannel( this.context.settings, channelName )
-    return (
-      !lastReadByUser || // Note that we DO include Global channels in this list.. so this calulation is intentionally slightly different to the one in App.js that generates props.hazUnreadChats
-      latestForChannel.lastCreatedAt.getTime() > lastReadByUser.getTime()
-    ) ? _colors.unreadChannel : _colors.upToDateChannel
+
+    return !lastReadByUser || latestForChannel.lastCreatedAt.getTime() > lastReadByUser.getTime()
+  },
+
+  renderUnreadChannelIndicator: function(channelName, channelTimeStamps) {
+    if (!this.doesChannelHaveUnreads( channelName, channelTimeStamps ))
+      return null
+
+    return <Label empty circular color='red' size='mini' style={unreadChannelIndicatorStyle} />
   },
 
   renderChannelSelector: function() {
@@ -476,10 +490,13 @@ export default fpChat = React.createClass( {
               key={k}
               onClick={() => this.handleChatChannelChange( chan.channelName )}
               title={chan.description}
-              content={makePresentedChannelName( chan.channelName )}
-              style={{ color: this.colorForChannelNameHasUnreads( chan.channelName, chatChannelTimestamps ) }}
-              icon={chan.icon}
-            />
+            >
+              <Icon name={chan.icon} />
+              <List.Content>
+                {makePresentedChannelName( chan.channelName )}
+                {this.renderUnreadChannelIndicator( chan.channelName, chatChannelTimestamps )}
+              </List.Content>
+            </List.Item>
           )
         } )}
       </List>
@@ -512,8 +529,6 @@ export default fpChat = React.createClass( {
     //   </List>
     // )
 
-    // TODO(levi): make unread channels have a little red dot instead of coloring
-
     // PROJECT CHANNELS
     const projectChannels = (
       <List selection>
@@ -538,10 +553,9 @@ export default fpChat = React.createClass( {
                   onClick={e => e.nativeEvent.stopImmediatePropagation()}
                 />
                 <List.Content onClick={() => this.handleChatChannelChange( channelName )} title='Select Channel'>
-                  <span style={{ color: this.colorForChannelNameHasUnreads( channelName, chatChannelTimestamps ) }}>
-                    { !isOwner && project.ownerName + ' : ' }
-                    { project.name }
-                  </span>
+                  { !isOwner && project.ownerName + ' : ' }
+                  { project.name }
+                  {this.renderUnreadChannelIndicator( channelName, chatChannelTimestamps )}
                 </List.Content>
               </List.Item>
             )
@@ -581,10 +595,9 @@ export default fpChat = React.createClass( {
                   e.preventDefault()
                 } }
                 style={{ position: 'absolute', right: '1em' }} />
-              <span style={{ color: this.colorForChannelNameHasUnreads( aco.channelName, chatChannelTimestamps ) }}>
-                { /* !isAssetOwner && assetOwnerName + ' : ' */ }
-                { _getAssetNameIfAvailable( aco.scopeId, _.find( chatChannelTimestamps, { _id: aco.channelName } ) ) }
-              </span>
+              { /* !isAssetOwner && assetOwnerName + ' : ' */ }
+              { _getAssetNameIfAvailable( aco.scopeId, _.find( chatChannelTimestamps, { _id: aco.channelName } ) ) }
+              {this.renderUnreadChannelIndicator( aco.channelName, chatChannelTimestamps )}
             </List.Content>
           </List.Item>
         ) ) }

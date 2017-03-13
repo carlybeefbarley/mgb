@@ -737,6 +737,25 @@ export default AssetEditRoute = React.createClass({
       logActivity("asset.project",  `removed Asset from project '${pName}'`, null, asset)
     else
       logActivity("asset.project",  `Added Asset to project '${pName}'`, null, asset)
+  },
+
+
+
+// This should not conflict with the deferred changes since those don't change these fields :)
+  handleToggleBanState: function()
+  {
+    const { asset } = this.data
+    const newBanState = !asset.suIsBanned
+
+    Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), { suIsBanned: newBanState }, (err, res) => {
+      if (err)
+        showToast(err.reason, 'error')
+    })
+
+    if (newBanState)
+      logActivity("asset.ban",  `Banned Asset`, null, asset)
+    else
+      logActivity("asset.unban",  `Un-banned Asset`, null, asset)
   }
 })
 

@@ -2222,7 +2222,7 @@ export default class EditCode extends React.Component {
         {
         <div className={infoPaneOpts.col2 + ' wide column'} style={{padding: 0, display: infoPaneOpts.col2 ? "block" : "none"}}>
 
-          <div className="mgbAccordionScroller" style={{minHeight: '385px'}}>
+          <div className="mgbAccordionScroller" style={{minHeight: (window.innerHeight - 180)+'px' }}>
             <div className="ui fluid styled accordion">
 
               { !docEmpty && asset.kind === 'tutorial' &&

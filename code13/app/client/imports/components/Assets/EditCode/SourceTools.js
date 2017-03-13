@@ -491,10 +491,17 @@ export default class SourceTools {
 
     const onReady = () => {
       const assets = this.subscriptions[ari].getAssets()
+      if(!assets.length){
+        // we still need to call getSourceAndTranspile - so loaded files match requested files
+        getSourceAndTranspile(null, [])
+        return
+      }
+
       // if this is main file - only requested in different format
       if(this.asset_id === assets[0]._id){
         //this.subscriptions[ari].subscription.stop()
         this.setError({reason: "Recursion detected: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.RECURSION_DETECTED})
+        getSourceAndTranspile(null, [])
         return
       }
       // we need this for recursion warning

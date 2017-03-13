@@ -534,7 +534,9 @@ export default fpChat = React.createClass( {
                   elOverride='i'
                   to={`/u/${project.ownerName}/project/${project._id}`}
                   name='sitemap'
-                  color={isOwner ? 'green' : 'blue' } />
+                  color={isOwner ? 'green' : 'blue' }
+                  onClick={e => e.nativeEvent.stopImmediatePropagation()}
+                />
                 <List.Content onClick={() => this.handleChatChannelChange( channelName )} title='Select Channel'>
                   <span style={{ color: this.colorForChannelNameHasUnreads( channelName, chatChannelTimestamps ) }}>
                     { !isOwner && project.ownerName + ' : ' }

@@ -2220,7 +2220,7 @@ export default class EditCode extends React.Component {
         </div>
 
         {
-        <div className={infoPaneOpts.col2 + ' wide column'} style={{paddingTop: 0, paddingBottom: 0, display: infoPaneOpts.col2 ? "block" : "none"}}>
+        <div className={infoPaneOpts.col2 + ' wide column'} style={{padding: 0, display: infoPaneOpts.col2 ? "block" : "none"}}>
 
           <div className="mgbAccordionScroller" style={{minHeight: '385px'}}>
             <div className="ui fluid styled accordion">
@@ -2397,7 +2397,7 @@ export default class EditCode extends React.Component {
                 // Code run/stop (body)
                 <div className="content">
 
-                  <span style={{float: "right", marginTop: "-28px", position: "relative"}}>
+                  <span style={{float: "right", marginTop: "-19px", position: "relative"}}>
 
                     { isPlaying && this.props.canEdit &&
                       <a className={"ui tiny icon button"} onClick={this.handleScreenshotIFrame.bind(this)}

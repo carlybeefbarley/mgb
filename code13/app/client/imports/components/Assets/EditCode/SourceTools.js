@@ -490,7 +490,14 @@ export default class SourceTools {
     }
 
     const onReady = () => {
-      getSourceAndTranspile(null, this.subscriptions[ari].getAssets())
+      const assets = this.subscriptions[ari].getAssets();
+      // this is main file - only requested in different format
+      // stop observation and ignore further updates
+      if(this.asset_id === assets[0]._id){
+        this.subscriptions[ari].subscription.stop()
+        return
+      }
+      getSourceAndTranspile(null, assets)
     }
     // on Change we should check if there is already something happening.. as it can be called at any time
     const onChange = () => {

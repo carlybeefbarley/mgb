@@ -14,6 +14,36 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Sunday Mar 12 2017 23:40 GMT-0700 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3728'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.ban',
+          'type': 'feature',
+          'changeName': 'Asset Banning',
+          'changeSummary': 'Admins can now ban Assets that have offensive content. Other users will see a red thumbnail for these assets, and when they edit, they will see "Asset is Banned" message',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'chat',
+          'type': 'improvement',
+          'changeName': 'Chat UI',
+          'changeSummary': 'The Chat Channel selection UI has been improved',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+    {
       'timestamp': 'Thursday Mar 9 2017 19:00 GMT-0800 (PST)',
 
       'id': {

@@ -354,7 +354,7 @@ export default AssetEditRoute = React.createClass({
     if (!this.data.asset)
       return <ThingNotFound type='Asset' id={params.assetId} />
 
-    const isOwner = currUser && currUser.id === asset.ownerId
+    const isOwner = currUser && currUser._id === asset.ownerId
     // Overlay any newer data to the child component so that it gets what it expects based on last save attempt
     const dso = this.m_deferredSaveObj
     if (dso)

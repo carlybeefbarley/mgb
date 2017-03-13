@@ -1,8 +1,7 @@
-import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Popup, Label, Button, Icon, Segment } from 'semantic-ui-react'
+import { Popup, Label, Button, Segment } from 'semantic-ui-react'
 
-const SuperAdminAssetControl = ( { asset } ) => {
+const SuperAdminAssetControl = ( { asset, handleToggleBan } ) => {
   const isBanned = asset && asset.suIsBanned
   const labelText = isBanned ? 'BANNED' : null
   const labelStyle = labelText ? null : { marginRight: 0 }
@@ -30,7 +29,7 @@ const SuperAdminAssetControl = ( { asset } ) => {
             You have great power. Use it wisely.
             <Button 
               as='div'
-              onClick={() => alert("COMING SOON!")}
+              onClick={() => handleToggleBan()}
               size='tiny'
               style={{ margin: '1em 1em 0em 2em' }}
               compact 
@@ -44,7 +43,8 @@ const SuperAdminAssetControl = ( { asset } ) => {
 }
 
 SuperAdminAssetControl.propTypes = {
-  asset:              PropTypes.object.isRequired
+  asset:              PropTypes.object.isRequired,
+  handleToggleBan:    PropTypes.func.isRequired
 }
 
 export default SuperAdminAssetControl

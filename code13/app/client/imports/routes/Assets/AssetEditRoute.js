@@ -447,7 +447,7 @@ export default AssetEditRoute = React.createClass({
               currUserProjects={currUserProjects}
               handleToggleProjectName={this.handleToggleProjectName} />
             { isSuperAdmin && 
-              <SuperAdminAssetControl asset={asset} />
+              <SuperAdminAssetControl asset={asset} handleToggleBan={this.handleToggleBanState} />
             }
           </Grid.Column>
         }
@@ -738,8 +738,6 @@ export default AssetEditRoute = React.createClass({
     else
       logActivity("asset.project",  `Added Asset to project '${pName}'`, null, asset)
   },
-
-
 
 // This should not conflict with the deferred changes since those don't change these fields :)
   handleToggleBanState: function()

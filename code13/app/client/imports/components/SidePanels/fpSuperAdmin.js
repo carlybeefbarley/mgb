@@ -2,7 +2,9 @@ import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
 import { Menu, Header, List, Segment } from 'semantic-ui-react'
 
-const linkLi = (txt, url) => (<List.Item><a target="_blank" href={url}>{txt}</a></List.Item>)
+const linkLi = (txt, url) => (
+  <List.Item><a target="_blank" href={url}>{txt}</a></List.Item>
+)
 
 
 const _getFlipsideUrl = () => {
@@ -27,7 +29,6 @@ const LinkTabContent = () => (
       { linkLi("Stock Assets spreadsheet", "https://docs.google.com/spreadsheets/d/1LMmh_dTbBS51Nus8zLfXNAusoiUodBcJSMFzJz1agsg/edit#gid=1512032697")}
       { linkLi("'!vault/Stock Assets' view", "/u/!vault/assets?project=Stock+Assets")}
       { linkLi("'!vault/Tutorial Assets' view", "/u/!vault/assets?project=Tutorial+Data")}
-      
     </List>
 
     <Header sub>Deployment/Monitoring Quicklinks</Header>
@@ -82,12 +83,16 @@ class TabularMenu extends Component {
     )
   }
 }
+
 const _items = [
   { name: 'User',    el: UserAdmin },
   { name: 'Links',   el: LinkTabContent }
 ]
 
-const fpSuperAdmin = ( { user, isSuperAdmin}) => (isSuperAdmin ? <TabularMenu items={_items} user={user}/> : <div>Not Yet Implemented</div>) // Yes, we lie to non-admins
+const fpSuperAdmin = ( { user, isSuperAdmin } ) => (
+ // Yes, we lie to non-admins
+  isSuperAdmin ? <TabularMenu items={_items} user={user}/> : <div>Not Yet Implemented</div>
+)
 
 fpSuperAdmin.propTypes = {
   user:               PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user

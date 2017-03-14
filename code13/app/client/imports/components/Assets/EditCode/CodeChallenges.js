@@ -3,11 +3,11 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { Button, Modal, Icon, List, Segment, Popup, Divider, Header } from 'semantic-ui-react'
 
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo } from "/client/imports/routes/QLink"
 import { learnSkill, hasSkill } from '/imports/schemas/skills'
-import { StartCodeJsRoute } from '/client/imports/routes/Learn/LearnCodeJsRoute'
+import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
 
 import './editcode.css'
 
@@ -43,7 +43,8 @@ export default class CodeChallenges extends React.Component {
 
   constructor(props) {
     super(props)
-    this.skillNode = SkillNodes.$meta.map[props.skillPath]
+
+    // this.skillNode = SkillNodes.$meta.map[props.skillPath]
     this.skillName = _.last(_.split(props.skillPath, '.'))
     this.state = {
       results:                    [],       // Array of results we get back from the iFrame that runs the tests
@@ -51,18 +52,26 @@ export default class CodeChallenges extends React.Component {
       latestTest:                 null,     // indicates latest test date
       error:                      null,     // get back from iFrame if it has some syntax error
       console:                    null,     // get back from iFrame console.log messages 
-      showAllTestsCompletedModal: false     // true if we want to show the All Tests Completed Modal
+      showAllTestsCompletedModal: false,    // true if we want to show the All Tests Completed Modal
+      data:                       {},       // get challenge data from CDN
     }
+
+    mgbAjax(`/api/asset/code/!vault/challenges.`+this.skillName, (err, listStr) => {
+      if (err)
+        console.log('error', err)
+      else 
+        this.setState({ data: JSON.parse(listStr) })
+    })
   }
 
   componentDidMount() {
     this.getReference()
     window.addEventListener(_runFrameConfig.eventName, this.receiveMessage, false)
     // don't run automatic tests if user already has this skill. Useful for cases when user just checks his previous code
-    if(!hasSkill(this.props.userSkills, this.props.skillPath + '.' + this.skillName)){
-    // for some reason tests (iframe, codeMirror) are not ready when component did mount //!!!
-      setTimeout( () => this.runTests(), _hackDeferForFirstTestRunMs)   
-    }
+    // if(!hasSkill(this.props.userSkills, this.props.skillPath + '.' + this.skillName)){
+    // // for some reason tests (iframe, codeMirror) are not ready when component did mount //!!!
+    //   setTimeout( () => this.runTests(), _hackDeferForFirstTestRunMs)   
+    // }
   }
 
   componentWillUnmount() {
@@ -92,19 +101,25 @@ export default class CodeChallenges extends React.Component {
   }
 
   runTests = () => {
-    const head = this.skillNode.$meta.head
-    const tail = this.skillNode.$meta.tail
+    if(!this.state.data.tests)      // data not yet loaded from CDN
+      return false
+    // const head = this.skillNode.$meta.head
+    // const tail = this.skillNode.$meta.tail
+    const head = this.state.data.head || []
+    const tail = this.state.data.tail || []
     const message = {
       code:   this.props.codeMirror.getValue(),
-      tests:  this.skillNode.$meta.tests,
-      head:   head ? head.join( '\n' ) : null,
-      tail:   tail ? tail.join( '\n' ) : null
+      tests:  this.state.data.tests,
+      head:   head.join( '\n' ),
+      tail:   tail.join( '\n' )
     }
     this.iFrame.contentWindow.postMessage(message, "*")
   }
 
   resetCode = () => {
-    const newCode = this.skillNode.$meta.code.join( '\n' )
+    if(!this.state.data.code)       // data not yet loaded from CDN
+      return false
+    const newCode = this.state.data.code.join( '\n' )
     this.props.codeMirror.setValue(newCode)
   }
 
@@ -114,9 +129,8 @@ export default class CodeChallenges extends React.Component {
 
     if (idx < skillsArr.length-1) {
       const nextSkillName = skillsArr[idx+1]
-      const code = _jsBasicsSkillsRootNode[nextSkillName].$meta.code.join( '\n' )
       this.setState( { showAllTestsCompletedModal: false } )
-      StartCodeJsRoute(nextSkillName, code, this.props.currUser)
+      StartJsGamesRoute('basics', nextSkillName, this.props.currUser)
     } 
     else
     {
@@ -139,7 +153,8 @@ export default class CodeChallenges extends React.Component {
   }
 
   render() {
-    const description = this.skillNode.$meta.description
+    // const description = this.skillNode.$meta.description
+    const description = this.state.data.description || []
     const { showAllTestsCompletedModal } = this.state
     const testCountStr = this.state.testCount > 0 ? ' '+this.state.testCount : ''
     const latestTest = this.state.latestTest ? this.formatTime(this.state.latestTest) : ''

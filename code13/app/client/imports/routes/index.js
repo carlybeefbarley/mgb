@@ -17,9 +17,7 @@ import LearnSkillsAreaRoute from './Learn/LearnSkillsAreaRoute'
 import LearnGetStartedRoute from './Learn/LearnGetStartedRoute'
 
 import LearnCodeRoute from './Learn/LearnCodeRoute'
-import LearnCodeJsRoute from './Learn/LearnCodeJsRoute'
-import LearnCodePhaserRoute from './Learn/LearnCodePhaserRoute'
-import LearnJsGamesRoute from './Learn/LearnJsGamesRoute'
+import LearnCodeRouteItem from './Learn/LearnCodeRouteItem'
 import LearnCodeModifyRoute from './Learn/LearnCodeModifyRoute'
 
 import Users from './Users'
@@ -74,10 +72,9 @@ Meteor.startup(function () {
         <Route path="/learn/getstarted" component={LearnGetStartedRoute} name='Get Started'/>
 
         <Route path="/learn/code" component={LearnCodeRoute} name='Programming'/>
-        <Route path="/learn/code/javascript" component={LearnCodeJsRoute} name='JavaScript'/>
-        <Route path="/learn/code/phaser" component={LearnCodePhaserRoute} name='Phaser'/>
-        <Route path="/learn/code/jsGames" component={LearnJsGamesRoute} name='JS Games'/>
+        <Route path="/learn/code/:item" component={LearnCodeRouteItem} name='Learn Code'/>
         <Route path="/learn/code/modify" component={LearnCodeModifyRoute} name='Modify Games'/>
+
 
         <Route path="/games" component={BrowseGamesRoute} name="Browse Games" />
         <Route path="/u/:username/games" component={BrowseGamesRoute} name="Games" />

@@ -3,14 +3,10 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { Button, Modal, Icon, List, Segment, Popup, Divider, Header } from 'semantic-ui-react'
 
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import SkillNodes, { isPhaserTutorial } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo } from "/client/imports/routes/QLink"
 import { learnSkill } from '/imports/schemas/skills'
-
-// TODO make this dynamic
-import tutorialObject from '/public/codeTutorials.json'
-import tutorialObjectPhaser from '/public/codeTutorialsPhaser.json'
 
 import { ChatSendMessageOnChannelName } from '/imports/schemas/chats'
 
@@ -39,13 +35,21 @@ export default class CodeTutorials extends React.Component {
     this.skillNode = SkillNodes.$meta.map[props.skillPath]
     this.skillName = _.last(_.split(props.skillPath, '.'))
     this.isPhaserTutorial = isPhaserTutorial(props.skillPath)
-    // TODO this will be replaced with getting data from db
-    this.tutorialData =  this.isPhaserTutorial ? tutorialObjectPhaser[this.skillName] : tutorialObject[this.skillName]
+
     this.state = {
-      step: 0,                // curent step of tutorial
-      isCompleted: false,     // indicator if current tutorial is completed and we need to show modal
-      isTaskSubmitted: false   // indicator if task is submitted and we need to show modal
+      step: 0,                  // curent step of tutorial
+      isCompleted: false,       // indicator if current tutorial is completed and we need to show modal
+      isTaskSubmitted: false,   // indicator if task is submitted and we need to show modal
+      data: {}                  // will get from CDN
     }
+
+    const prefix = this.isPhaserTutorial ? 'phaser' : 'games'
+    mgbAjax(`/api/asset/code/!vault/`+prefix+`.`+this.skillName, (err, listStr) => {
+      if (err)
+        console.log('error', err)
+      else 
+        this.setState({ data: JSON.parse(listStr) })
+    })
   }
 
   componentDidMount () {
@@ -54,7 +58,7 @@ export default class CodeTutorials extends React.Component {
 
   stepNext = () => {
     const step = this.state.step + 1
-    if (step < this.tutorialData.steps.length) {
+    if (step < this.state.data.steps.length) {
       this.setState({ step: step }) 
       this.resetCode(step)
     }
@@ -79,7 +83,7 @@ export default class CodeTutorials extends React.Component {
 
   resetCode = (step) => {
     step = _.isInteger(step) ? step : this.state.step
-    const currStep = this.tutorialData.steps[step]
+    const currStep = this.state.data.steps[step]
     const code = currStep.code
     this.props.codeMirror.setValue(code)
     this.props.quickSave()
@@ -96,9 +100,9 @@ export default class CodeTutorials extends React.Component {
   }
 
   render () {
-    const description = this.tutorialData.steps[this.state.step].text
+    const description = this.state.data.steps ? this.state.data.steps[this.state.step].text : ''
     const { isCompleted, isTaskSubmitted } = this.state
-    const returnToSkillsUrl = this.isPhaserTutorial ? '/learn/code/phaser' : '/learn/code/jsGames'
+    const returnToSkillsUrl = this.isPhaserTutorial ? '/learn/code/phaser' : '/learn/code/games'
 
     return (
       <div id="codeChallenges" className={"content " +(this.props.active ? "active" : "")}>

@@ -36,7 +36,7 @@ export default class ImportGraphic extends React.Component {
     this.setState({ status: STATUS_EMPTY })
   }
 
-  onDrop(event, prefix, project, assetLicense, workState, isCompleted) {
+  onDrop(event, assetType, prefix, project, assetLicense, workState, isCompleted) {
     event.stopPropagation()
     event.preventDefault()
 
@@ -60,7 +60,7 @@ export default class ImportGraphic extends React.Component {
       if (item.isFile) {
         item.file(function(file) {
           // console.log("File:", path + file.name)
-          self.readFileUri(file, path, prefix)
+          self.readFileUri(file, assetType, path, prefix)
         })
       } else if (item.isDirectory) {
         // Get folder contents
@@ -74,52 +74,73 @@ export default class ImportGraphic extends React.Component {
     }
   }
 
-  readFileUri (file, path, prefix) {
+  readFileUri (file, assetType, path, prefix) {
+    const fileName = (prefix+path+file.name).replace(/\//gi, '.')
     const reader = new FileReader()
-    reader.onload = (e) => {
-      // console.log(e.target.result)
-      const dataUri = e.target.result
-      if(!dataUri.startsWith('data:image/')){
-        // file is not an image
-        return;
+
+    console.log(assetType)
+
+    switch(assetType){
+      case 'graphic':
+        reader.onload = (e) => {
+          // console.log(e.target.result)
+          const dataUri = e.target.result
+
+          let tmpImg = new Image()
+          tmpImg.onload = () => {
+            // console.log(tmpImg.width, tmpImg.height)
+            this.saveGraphic(tmpImg, fileName, assetType)
+          }
+          tmpImg.src = dataUri
+          
+          // this.setState({ status: STATUS_UPLOADED })
+        }
+        reader.readAsDataURL(file)
+        break
+
+      case 'code':
+        reader.onload = (e) => {
+          this.saveGraphic(e.target.result, fileName, assetType)
+        }
+        reader.readAsText(file)
+        break
       }
-      const fileName = (prefix+path+file.name).replace('/', '.')
-      let tmpImg = new Image()
-      tmpImg.onload = () => {
-        // console.log(tmpImg.width, tmpImg.height)
-        this.saveGraphic(tmpImg, fileName)
-      }
-      tmpImg.src = dataUri
-      // this.setState({ status: STATUS_UPLOADED })
-    }
-    reader.readAsDataURL(file)
   }
 
-  saveGraphic(imgObject, fileName){
-    const content2 = {
-      dataUri: imgObject.src,
-      width: imgObject.width,
-      height: imgObject.height,
-      layerParams: [{name:"Layer 1", isHidden: false, isLocked: false}],
-      frameNames: ["Frame 1"],
-      frameData: [ [ imgObject.src ] ],
-      spriteData: [ imgObject.src ],
-      tileset: imgObject.src,
-      cols: 1,
-      rows: 1,
-      fps: 10,
-      animations: [],
-    }
+  saveGraphic(imgObject, fileName, assetType){
+    let content2 = {}
+    let thumbnail = null
+    switch (assetType){
+      case 'graphic':
+        content2 = {
+          dataUri: imgObject.src,
+          width: imgObject.width,
+          height: imgObject.height,
+          layerParams: [{name:"Layer 1", isHidden: false, isLocked: false}],
+          frameNames: ["Frame 1"],
+          frameData: [ [ imgObject.src ] ],
+          spriteData: [ imgObject.src ],
+          tileset: imgObject.src,
+          cols: 1,
+          rows: 1,
+          fps: 10,
+          animations: [],
+        }
 
-    const thumbnail = this.createThumbnail(imgObject) 
-    // console.log(thumbnail)
+        thumbnail = this.createThumbnail(imgObject) 
+        // console.log(thumbnail)
+        break
+      case 'code':
+        content2.src = imgObject
+        break
+    }
 
     const projectName = this.project ? this.project.name : null
     const projectOwnerId = this.project ? this.project.ownerId : null
     const projectOwnerName = this.project ? this.project.ownerName : null
 
     this.props.createAsset(
-      "graphic",
+      assetType,
       fileName,
       projectName,
       projectOwnerId,

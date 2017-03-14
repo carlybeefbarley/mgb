@@ -13,8 +13,8 @@ import C from './CommonSkillNodes'
 
 export default {
   $meta: {
-    name:           'PhaserJS',
-    description:    'PhaserJS Game Development Framework',
+    name:           'Game development concepts',
+    description:    'These concept tutorials use the \'PhaserJS\' game engine for JavaScript. However, these are fundamental concepts that will apply to any game engine you use in future.',
     assetExamples:  [ '!vault:phaser.groups.addSprite'] // Not used yet. Example for discussion
   },
   // Game:       C.En(1),
@@ -25,6 +25,7 @@ export default {
       icon: 'code',
       link: '/u/!vault/asset/5Bm4R9kJHRAMBv4kD',
       description: `The most basic concept for starting game development`,
+      "subsection": "Image",
     },
     'drawImage': C.En(0),
   },
@@ -34,6 +35,7 @@ export default {
       icon: 'code',
       link: '/u/!vault/asset/eoTTDhibmKGrhuvHn',
       description: `Position an image with x, y and anchor point`,
+      "subsection": "Image",
     },
     'positionImage': C.En(0),
   },
@@ -44,6 +46,7 @@ export default {
       icon: 'tasks',
       link: '/u/!vault/asset/Pn9mhjR7yAW3iTsRt',
       description: `Set image positions`,
+      "subsection": "Image",
     },
     'taskSetPosition': C.En(0),
   },
@@ -53,6 +56,7 @@ export default {
       icon: 'code',
       link: '/u/!vault/asset/nzZK4r5a4WPAszBjj',
       description: `Image scaling, transparency, rotation and tinting`,
+      "subsection": "Image",
     },
     'manipulateImage': C.En(0),
   },
@@ -61,7 +65,8 @@ export default {
       icon: 'code',
       link: '/u/!vault/asset/ENnr8RSrrSRB3ybTg',
       name: 'Input click',
-      description: `Click on image, click on game`
+      description: `Click on image, click on game`,
+      "subsection": "Input",
     },
     'inputClick': C.En(0),
   },
@@ -71,7 +76,8 @@ export default {
       icon: 'tasks',
       link: '/u/!vault/asset/79YpYHXg9DbQG6tXp',
       name: 'Task Input',
-      description: `On each click, make the sprite rotate counter-clockwise by 10°`
+      description: `On each click, make the sprite rotate counter-clockwise by 10°`,
+      "subsection": "Input",
     },
     'taskInput': C.En(0),
   },
@@ -80,7 +86,8 @@ export default {
       icon: 'code',
       link: '/u/!vault/asset/8j9CBTzfBuT5GKLtF',
       name: 'Input keyboard',
-      description: `Using Keyboard input for your game`
+      description: `Using Keyboard input for your game`,
+      "subsection": "Input",
     },
     'inputKeyboard': C.En(0),
   },
@@ -89,7 +96,8 @@ export default {
       icon: 'code',
       link: '/u/!vault/asset/4fQsLapzr4uWGLbnp',
       name: 'update() function',
-      description: `Example of increasing/descreasing Image size based on up/down arrow keypresses`
+      description: `Example of increasing/descreasing Image size based on up/down arrow keypresses`,
+      "subsection": "Animation",
     },
     'updateFunction': C.En(0),
   },
@@ -99,7 +107,8 @@ export default {
       icon: 'tasks',
       link: '/u/!vault/asset/kMhY34EAEsETMiGmF',
       name: 'Task move character',
-      description: `Move a character around the screen using arrow keys`
+      description: `Move a character around the screen using arrow keys`,
+      "subsection": "Animation",
     },
     'taskMoveChar': C.En(0),
   },
@@ -108,7 +117,8 @@ export default {
       icon: 'code',
       link: '/u/!vault/asset/QN7cKdBnoZ2dKjj3m',
       name: 'Spritesheet',
-      description: `Frame animation for a character`
+      description: `Frame animation for a character`,
+      "subsection": "Animation",
     },
     'spriteSheet': C.En(0),
   },
@@ -117,7 +127,8 @@ export default {
       icon: 'code',
       link: '/u/!vault/asset/cSm7LivYTvCTa2dqf',
       name: 'Spritesheet events',
-      description: `Animation start, stop and looping`
+      description: `Animation start, stop and looping`,
+      "subsection": "Animation",
     },
     'spriteSheetEvents': C.En(0),
   },
@@ -127,7 +138,8 @@ export default {
       icon: 'tasks',
       link: '/u/!vault/asset/qNcrwh2emqdBEpPH5',
       name: 'Task character animation',
-      description: `Animate character - spawn, idle and run`
+      description: `Animate character - spawn, idle and run`,
+      "subsection": "Animation",
     },
     'taskCharAnim': C.En(0),
   },
@@ -136,7 +148,8 @@ export default {
       icon: 'code',
       link: '/u/!vault/asset/6gDjnQ6wAFQp2LZXB',
       name: 'Physics basics',
-      description: `Velocity, gravity, bounce and world bounds`
+      description: `Velocity, gravity, bounce and world bounds`,
+      "subsection": "Physics",
     },
     'physicsBasics': C.En(0),
   },
@@ -145,7 +158,8 @@ export default {
       icon: 'code',
       link: '/u/!vault/asset/9dhJ2jzY7iER84GeM',
       name: 'Physics collide',
-      description: `Collisions between two objects`
+      description: `Collisions between two objects`,
+      "subsection": "Physics",
     },
     'physicsCollide': C.En(0),
   },
@@ -155,7 +169,8 @@ export default {
       icon: 'tasks',
       link: '/u/!vault/asset/qoQgYNPev3xqNXhXD',
       name: 'Task jump',
-      description: `Make a jumping character using simple physics`
+      description: `Make a jumping character using simple physics`,
+      "subsection": "Physics",
     },
     'taskJump': C.En(0),
   },
@@ -164,7 +179,8 @@ export default {
       icon: 'code',
       link: '/u/!vault/asset/XnsehSEruvMKMBKLx',
       name: 'Tweens',
-      description: `Animating images with interpolation instead of frames`
+      description: `Animating images with interpolation instead of frames`,
+      "subsection": "Misc",
     },
     'tweens': C.En(0),
   },
@@ -173,7 +189,8 @@ export default {
       icon: 'code',
       link: '/u/!vault/asset/jYQwe8cv2rtDDCM89',
       name: 'Groups',
-      description: `Adding sprites to a group`
+      description: `Adding sprites to a group`,
+      "subsection": "Misc",
     },
     'groups': C.En(0),
   },
@@ -183,7 +200,8 @@ export default {
       icon: 'tasks',
       link: '/u/!vault/asset/rDMCqocQv3nnYx8AB',
       name: 'Task animate group',
-      description: `Animate a group of dwarves`
+      description: `Animate a group of dwarves`,
+      "subsection": "Misc",
     },
     'taskTweenGroup': C.En(0),
   },
@@ -202,7 +220,8 @@ export default {
       icon: 'info',
       link: '/u/!vault/asset/jWGJmWKcGe83r5pEY',
       name: 'What to do next?',
-      description: `Learn using the Phaser docs and examples`
+      description: `Learn using the Phaser docs and examples`,
+      "subsection": "Misc",
     },
     'next': C.En(0),
   }

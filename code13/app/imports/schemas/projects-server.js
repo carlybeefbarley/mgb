@@ -3,6 +3,7 @@
 import _ from 'lodash'
 import { Projects, Azzets } from '/imports/schemas'
 import { check } from 'meteor/check'
+import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 import { logActivity } from './activity'
 
 // SERVER-ONLY Project METHODS
@@ -37,9 +38,7 @@ Meteor.methods({
   // project operations while this is happening
   "Projects.deleteProjectId": function(projectId, fAutoDeleteAssets) {
     check(projectId, String)
-    if (!this.userId) 
-      throw new Meteor.Error(401, "Login required")
-
+    checkIsLoggedInAndNotSuspended()
     console.log("Delete Project #", projectId)
 
     // Check project still exists, is owned by this person, and has no members

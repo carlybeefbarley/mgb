@@ -169,14 +169,13 @@ export default class EditCode extends React.Component {
   }
 
   componentDidMount() {
-    const codeMirrorUpdateHints = this.codeMirrorUpdateHints
-    // Debounce the codeMirrorUpdateHints() function
-    this.codeMirrorUpdateHints = _.debounce(this.codeMirrorUpdateHints, 100, true)
+    // Debounce the codeMirrorUpdateHints() function - only once
+    this.codeMirrorUpdateHintsDebounced = _.debounce(this.codeMirrorUpdateHints, 100, true)
 
     this.updateUserScripts()
     // previous debounce eats up changes
     this.codeMirrorUpdateHintsChanged = _.debounce(() => {
-      codeMirrorUpdateHints.call(this, true)
+      this.codeMirrorUpdateHints.call(this, true)
     }, 100, true)
 
     this.listeners = {}
@@ -316,8 +315,8 @@ export default class EditCode extends React.Component {
       const $sPane = $(".CodeMirror")
       const edHeight = window.innerHeight - ( 16 + $sPane.offset().top )
       ed.setSize("100%", `${edHeight}px`)
-      $(".mgbAccordionScroller").css("max-height", `${window.innerHeight-16}px`)
-      $(".mgbAccordionScroller").css("overflow-y", "scroll")
+      //$(".mgbAccordionScroller").css("max-height", `${window.innerHeight-16}px`)
+      //$(".mgbAccordionScroller").css("overflow-y", "scroll")
     }
     $(window).on("resize", this.edResizeHandler)
     this.edResizeHandler()
@@ -330,6 +329,10 @@ export default class EditCode extends React.Component {
       undo: [],
       redo: []
     }
+
+    this.mgb_c2_hasChanged = true
+    // storing here misc stuff that can be accessed to gain performance
+    this.mgb_cache = {}
 
     this.highlightedLines = []
   }
@@ -421,6 +424,20 @@ export default class EditCode extends React.Component {
       })
     }
 
+    this.ternServer.server.getComments = (callback, filename = this.props.asset.name) => {
+      const cb = (e) => {
+        if (e.data.type != "getComments")
+          return
+        this.ternServer.worker.removeEventListener("message", cb)
+        callback(e.data.data)
+      }
+      this.ternServer.worker.addEventListener("message", cb)
+      this.ternServer.worker.postMessage({
+        type: "getComments",
+        filename: filename
+      })
+    }
+
     this.tools = new SourceTools(this.ternServer, this.props.asset._id, this.props.asset.dn_ownerName)
     this.tools.onError(errors => {
       this.showError(errors)
@@ -445,7 +462,7 @@ export default class EditCode extends React.Component {
 
   codeMirrorOnCursorActivity() {
     // Indirecting this to help with debugging and maybe some future optimizations
-    this.codeMirrorUpdateHints(false)
+    this.codeMirrorUpdateHintsDebounced(false)
   }
 
   componentWillUnmount() {
@@ -464,6 +481,8 @@ export default class EditCode extends React.Component {
     this.isActive = false
     this.cursorHistory = null
     this.highlightedLines = null
+
+    this.mgb_cache = null
   }
 
   terminateWorkers() {
@@ -1043,10 +1062,11 @@ export default class EditCode extends React.Component {
      */
   }
 
-  srcUpdate_GetInfoForCurrentFunction() {
+  srcUpdate_GetInfoForCurrentFunction(callback) {
     let ternServer = this.ternServer
     let editor = this.codeMirror
     if(!ternServer || !editor){
+      callback()
       return
     }
     let currentCursorPos = editor.getCursor()
@@ -1060,7 +1080,6 @@ export default class EditCode extends React.Component {
     editor.getTokenAt(currentCursorPos, true)
     currentCursorPos.line = line
     currentCursorPos.char = char
-
 
     // get token at current pos
     let currentToken = editor.getTokenAt(currentCursorPos, true)
@@ -1116,6 +1135,15 @@ export default class EditCode extends React.Component {
           currentToken: currentToken
         })
       }
+
+      const index = editor.indexFromPos(currentCursorPos)
+      this.getCommentAt( comment => {
+        // console.log("Comment: ", comment)
+        callback()
+        this.setState({
+          comment: comment
+        })
+      }, index)
     }
 
     if (argPos !== -1) {
@@ -1131,10 +1159,11 @@ export default class EditCode extends React.Component {
       _setState()
   }
 
-  srcUpdate_GetRelevantTypeInfo() {
+  srcUpdate_GetRelevantTypeInfo(callback) {
     let ternServer = this.ternServer
     let editor = this.codeMirror
     if(!ternServer || !editor){
+      callback()
       return
     }
     let position = editor.getCursor()
@@ -1167,13 +1196,15 @@ export default class EditCode extends React.Component {
         else
           this.setState({atCursorTypeRequestResponse: {data}})
       }
+      callback()
     }, position)
   }
 
-  srcUpdate_GetRefs() {
+  srcUpdate_GetRefs(callback) {
     let ternServer = this.ternServer
     let editor = this.codeMirror
     if(!ternServer || !editor){
+      callback()
       return
     }
     let position = editor.getCursor()
@@ -1186,13 +1217,15 @@ export default class EditCode extends React.Component {
         this.setState({atCursorRefRequestResponse: {"error": error}})
       else
         this.setState({atCursorRefRequestResponse: {data}})
+      callback()
     }, position)
   }
 
-  srcUpdate_GetDef() {
+  srcUpdate_GetDef(callback) {
     let ternServer = this.ternServer
     let editor = this.codeMirror
     if(!ternServer || !editor){
+      callback()
       return
     }
     let position = editor.getCursor()
@@ -1207,6 +1240,7 @@ export default class EditCode extends React.Component {
         data.definitionText = (data.origin === this.props.asset.name && data.start) ? editor.getLine(data.start.line).trim() : null
         this.setState({atCursorDefRequestResponse: {data}})
       }
+      callback()
     }, position)
   }
 
@@ -1231,11 +1265,12 @@ export default class EditCode extends React.Component {
   // }
 
 
-  srcUpdate_getMemberParent() {
+  srcUpdate_getMemberParent(callback) {
     if (showDebugAST) {
       let ternServer = this.ternServer
       let editor = this.codeMirror
       if(!ternServer || !editor){
+        callback()
         return
       }
       let position = editor.getCursor()
@@ -1251,8 +1286,11 @@ export default class EditCode extends React.Component {
         else {
           this.setState({atCursorMemberParentRequestResponse: {data}})
         }
+        callback()
       }, position)
     }
+    else
+      callback()
   }
 
 
@@ -1291,8 +1329,12 @@ export default class EditCode extends React.Component {
     }
     snapshotActivity(asset, passiveAction)
 
-
-    this.setState({_preventRenders: true})
+    let asyncCalls = 0
+    // prevent renders until all async functions has been completed
+    const onDone = () => {
+      asyncCalls++
+      return () => this.setState({_preventRenders: --asyncCalls})
+    }
 
     try {
       // TODO: update Read only???
@@ -1302,11 +1344,11 @@ export default class EditCode extends React.Component {
       this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
       if (asset.kind === 'code')
       {
-        this.srcUpdate_GetInfoForCurrentFunction()
-        this.srcUpdate_GetRelevantTypeInfo()
-        this.srcUpdate_GetRefs()
-        this.srcUpdate_GetDef()
-        this.srcUpdate_getMemberParent()
+        this.srcUpdate_GetInfoForCurrentFunction(onDone())
+        this.srcUpdate_GetRelevantTypeInfo(onDone())
+        this.srcUpdate_GetRefs(onDone())
+        this.srcUpdate_GetDef(onDone())
+        this.srcUpdate_getMemberParent(onDone())
       }
       if (asset.kind === 'tutorial')
       {
@@ -1316,12 +1358,13 @@ export default class EditCode extends React.Component {
       // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
     }
     finally {
-      this.setState({_preventRenders: false})
+      this.setState({_preventRenders: asyncCalls})
     }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !(nextState._preventRenders || this.state.creatingBundle)
+    const retval = !(nextState._preventRenders || this.state.creatingBundle)
+    return retval // && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
   }
 
   codemirrorValueChanged(doc, change) {
@@ -1648,6 +1691,7 @@ export default class EditCode extends React.Component {
 
   handleGamePopup() {
     this.setState( { isPopup: !this.state.isPopup } )
+    this.handleRun()
   }
 
   pasteSampleCode(item) {   // item is one of the templateCodeChoices[] elements
@@ -1680,6 +1724,7 @@ export default class EditCode extends React.Component {
         this.props.handleContentChange(c2, thumbnail, reason)
         return
       }
+      this.mgb_c2_hasChanged = true
       this.doFullUpdateOnContentChange((errors) => {
         // it's not possible to create useful bundle with errors in the code - just save
         if(errors.length || !this.props.asset.content2.needsBundle){
@@ -1722,7 +1767,8 @@ export default class EditCode extends React.Component {
         const critical = errors.filter(e => e.code.substr(0, 1) === "E")
         this.hasErrors = !!critical.length
         if (this.tools) {
-          this.tools.collectAndTranspile(val, this.props.asset.name, () => {
+          // set asset name to /assetName - so recursion is handled correctly
+          this.tools.collectAndTranspile(val, '/' + this.props.asset.name, () => {
             this.setState({
               astReady: true
             })
@@ -2131,6 +2177,17 @@ export default class EditCode extends React.Component {
     }
   }
 
+  getCommentAt(callback, char = 0){
+    if(this.mgb_c2_hasChanged || !this.mgb_cache.comments || this.mgb_cache.comments.length === 0){
+      this.ternServer.server.getComments((comments) => {
+        this.mgb_cache.comments = comments
+        callback(_.find(comments, com => com.start <= char && com.end >= char))
+      })
+    }
+    else{
+      callback(_.find(this.mgb_cache.comments, com => com.start <= char && com.end >= char))
+    }
+  }
 
   render() {
     const { asset, canEdit } = this.props
@@ -2176,12 +2233,12 @@ export default class EditCode extends React.Component {
     //   transformOrigin: "0 0",
     //   overflow: "hidden"
     // }
-
-
+    const fullSize = {position: "absolute", top: 0, bottom: 0, left: 0, right: 0, overflow: "auto" }
+    const isPopup = this.state.isPopup || !infoPaneOpts.col2
     const gameScreen = <GameScreen
         key="gameScreen"
         ref="gameScreen"
-        isPopup = {this.state.isPopup || !infoPaneOpts.col2}
+        isPopup = {isPopup}
         isPlaying = {this.state.isPlaying}
         asset = {this.props.asset}
         consoleAdd = {this._consoleAdd.bind(this)}
@@ -2222,7 +2279,7 @@ export default class EditCode extends React.Component {
         {
         <div className={infoPaneOpts.col2 + ' wide column'} style={{padding: 0, display: infoPaneOpts.col2 ? "block" : "none"}}>
 
-          <div className="mgbAccordionScroller" style={{minHeight: (window.innerHeight - 180)+'px' }}>
+          <div className="mgbAccordionScroller" style={fullSize}>
             <div className="ui fluid styled accordion">
 
               { !docEmpty && asset.kind === 'tutorial' &&
@@ -2306,11 +2363,13 @@ export default class EditCode extends React.Component {
               }
               { !docEmpty && asset.kind === 'code' &&
                 // Current Line/Selection helper (body)
+                // optimise: don't render if accordeon is closed
                 <div className={"content " + (asset.skillPath ? "" : "active")} >
                   <TokenDescription
                     currentToken={this.state.currentToken}
                     getPrevToken={cb => this.getPrevToken(cb)}
                     getNextToken={cb => this.getNextToken(cb)}
+                    comment={this.state.comment}
                     />
                   { this.state.astReady &&
                   <ImportHelperPanel
@@ -2423,7 +2482,7 @@ export default class EditCode extends React.Component {
                     }
                     {
                       isPlaying &&
-                      <a  className={`ui tiny ${this.state.isPopup ? 'active' : '' } icon button`}
+                      <a  className={`ui tiny ${isPopup ? 'active' : '' } icon button`}
                           title='Popout the code-run area so it can be moved around the screen'
                           onClick={this.handleGamePopup.bind(this)}>
                         <i className={"external icon"}></i>&emsp;Popout
@@ -2447,7 +2506,7 @@ export default class EditCode extends React.Component {
                     </span>
                     }
                   </span>
-                  {infoPaneOpts.col2 && gameScreen}
+                  {!isPopup && gameScreen}
 
                   <ConsoleMessageViewer
                     messages={this.state.consoleMessages}
@@ -2494,7 +2553,7 @@ export default class EditCode extends React.Component {
           </div>
         </div>
         }
-        {!infoPaneOpts.col2 && gameScreen}
+        {isPopup && gameScreen}
 
       </div>
     )

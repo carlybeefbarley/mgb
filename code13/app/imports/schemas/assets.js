@@ -5,7 +5,7 @@
 import _ from 'lodash'
 import { Azzets } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
-import { checkIsLoggedIn, checkMgb } from './checkMgb'
+import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 
 import { defaultWorkStateName, makeWorkstateNamesArray} from '/imports/Enums/workStates'
 import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
@@ -47,14 +47,6 @@ var schema = {
   // License information. See TermsOfService.js for description of what a missing license means
   // Ideally this will be one of the well-known license tags we define in assetLicenses.js.
   assetLicense: String,    // A license that covers this asset. 
-
-// Intended future Data for cloning. These may all be missing/null:
-  // clonedFromAssetId: String,        // An MGB Asset ID that we cloned this from
-  // clonedFromAssetVer: String,       // Version of the Asset ID that we cloned this from
-  // clonedFromAssetDate: String,      // Version of the Asset that we cloned this from (not yet implementable)
-  // clonedFromOwnerId: String,        // The UsserId whowe cloned this from
-  // clonedFromOwnerName: String,      // An asset id that we cloned this from
-  // clonedFromExternalSource: String,
 
   workState: String,  // A value matching a key from workStates.js
   content: String,    // depends on asset type
@@ -196,7 +188,7 @@ export const allSorters = {
 
 Meteor.methods({
   "Azzets.create": function(data) {
-    checkIsLoggedIn()
+    checkIsLoggedInAndNotSuspended()
     const username = Meteor.user().profile.name
     const now = new Date()
 
@@ -262,7 +254,7 @@ Meteor.methods({
 
   "Azzets.update": function(docId, canEdit, data) {
     var count, selector
-    checkIsLoggedIn()
+    checkIsLoggedInAndNotSuspended()
 
     check(docId, String)
     if (!this.userId)

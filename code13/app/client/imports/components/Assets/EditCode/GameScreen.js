@@ -144,7 +144,7 @@ export default class GameScreen extends React.Component {
           ref="wrapper"
           id="gameWrapper"
           className={this.props.isPopup ? "popup" : "accordion"}
-          style={{ display: (this.state.isHidden || !this.props.isPlaying) ? "none" : "block", overflow: this.props.isPopup ? 'initial' : "auto" }}>
+          style={{ display: (this.state.isHidden && !this.props.isPlaying) ? "none" : "block", overflow: this.props.isPopup ? 'initial' : "auto" }}>
         { this.props.isPopup &&
           <div style={{
             transform:        "translateY(-100%)",

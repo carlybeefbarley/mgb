@@ -30,6 +30,7 @@ var xlinks = {
 
 // For these Token types, render nothing at all
 const noHelpTypes = [
+  null
   // "variable"
 ]
 
@@ -1082,45 +1083,47 @@ function specialHandlerString2(rString) {
 }
 
 function specialHandlerCommentTitle(str, tokenDescriptionComponent){
-  if(str.startsWith(SpecialGlobals.editCode.mgbMentorPrefix.singleLine))
-    return (
-      'MGB Code Mentor\'s comment'
-    )
 
-  if(str.startsWith('//')){
+  const comment = tokenDescriptionComponent.props.comment
+  // we need AST (tern server) to be READY for this to work.. first queries may fail to locate comment
+  if(!comment)
     return null
-  }
-  let tmpToken = ''
-  let fullComment = str
-  if(!str.trim().startsWith("/*")) {
-    tokenDescriptionComponent.props.getPrevToken((tmp) => {
-      if (tmp && tmp.type === 'comment') {
-        fullComment = tmp.string + "\n" + fullComment
-        tmpToken = tmp
-        return !tmp.string.trim().startsWith("/*")
-      }
-      return tmp && tmp.type === null
-    })
-  }
-  if(str.startsWith(SpecialGlobals.editCode.mgbMentorPrefix.multiLine) || (tmpToken && tmpToken.string.startsWith(SpecialGlobals.editCode.mgbMentorPrefix.multiLine)))
-    return (
-      'MGB Code Mentor\'s comment'
-    )
-  return null
+
+  const text = comment.text.trim()
+  if(text.startsWith(SpecialGlobals.editCode.mgbMentorPrefix))
+    return 'MGB Code Mentor\'s comment'
+
+  if(text.startsWith('*'))
+    return 'JSDoc comment'
+
+  if(comment.block)
+    return 'Multiline comment'
+  else
+    return 'Single line comment'
 }
 // Explain multi-line and single-line comments.
 // Explain JSDoc comments and Special MGB comments
-function specialHandlerComment(str, tokenDescriptionComponent) {
+function specialHandlerComment(tokenStr, tokenDescriptionComponent) {
   let grn = {color: "green", fontWeight: "bold"}
-  if (str.startsWith(SpecialGlobals.editCode.mgbMentorPrefix.singleLine))
+  const comment = tokenDescriptionComponent.props.comment
+  // we need AST (tern server) to be READY for this to work.. first queries may fail to locate comment
+  if(!comment)
     return (
       <div>
-        <p>{str.substring(SpecialGlobals.editCode.mgbMentorPrefix.singleLine.length).trim()}</p>
+        <p>Javascript comment</p>
+      </div>
+    )
+
+  const str = comment.text.trim()
+  if (str.startsWith(SpecialGlobals.editCode.mgbMentorPrefix))
+    return (
+      <div>
+        <p>{str.substring(SpecialGlobals.editCode.mgbMentorPrefix.length).trim()}</p>
       </div>
     )
 
   // explain single line
-  if (str.startsWith("//"))
+  if (comment.block === false)
     return (
       <div>
         <p>Javascript <em>single line comments</em> start with <code style={grn}>//</code> and continue until the end of
@@ -1128,42 +1131,7 @@ function specialHandlerComment(str, tokenDescriptionComponent) {
       </div>
     )
 
-
-  // JSdocs - TODO: look for lines above
-  // somewhere in the middle of the comment
-  let tmpToken = ''
-  let fullComment = str
-  if (!str.trim().startsWith("/*")) {
-    tokenDescriptionComponent.props.getPrevToken((tmp) => {
-      if (tmp && tmp.type === 'comment') {
-        fullComment = tmp.string + "\n" + fullComment
-        tmpToken = tmp
-        return !tmp.string.trim().startsWith("/*")
-      }
-      return tmp && tmp.type === null
-    })
-  }
-  if (!str.trim().endsWith("*/")) {
-    tokenDescriptionComponent.props.getNextToken((tmp) => {
-      if (tmp && tmp.type === 'comment') {
-        //
-        if(str !== tmp.string) {
-          fullComment += "\n" + tmp.string
-          tmpToken = tmp
-        }
-        return !tmp.string.trim().endsWith("*/")
-      }
-      return tmp && tmp.type === null
-    }, tokenDescriptionComponent.props.currentToken)
-  }
-  if (fullComment.startsWith(SpecialGlobals.editCode.mgbMentorPrefix.multiLine))
-    return (
-      <div>
-        <p>{fullComment.trim().substring(SpecialGlobals.editCode.mgbMentorPrefix.multiLine.length, fullComment.length - 2)}</p>
-      </div>
-    )
-
-  if (str.startsWith('/**') || (tmpToken && tmpToken.string.startsWith('/**')))
+  if (comment.block && str.startsWith('*'))
     return (
       <div>
         <p>Comments starting with <code style={grn}>/**</code> and ending with <code style={grn}>*/</code> are special
@@ -1282,8 +1250,9 @@ function urlLink(urlString) {
 export default TokenDescription = React.createClass({
   propTypes: {
     currentToken: PropTypes.object,
-    getPrevToken: PropTypes.func.isRequired,
-    getNextToken: PropTypes.func.isRequired
+    comment: PropTypes.object, // info about comment - if any
+    //getPrevToken: PropTypes.func.isRequired,
+    //getNextToken: PropTypes.func.isRequired
   },
 
   contextTypes: {
@@ -1302,9 +1271,12 @@ export default TokenDescription = React.createClass({
 
   render: function () {
     let token = this.props.currentToken
+    // search for the next token - just in case..
+    /*
+    TODO: @stauzs fix this and uncomment - this is pretty slow atm
+    we need to check next token ONLY when char === 0
+    so we can show correct info if cursor is before keyword
 
-    // search for next token - just in case..
-    // this is especially important for the 0:0 pos and block comments
     if (!token || !token.type){
       this.props.getNextToken((tok) => {
         if(tok && tok.type){
@@ -1314,26 +1286,27 @@ export default TokenDescription = React.createClass({
       if(!token || !token.type){
         return null
       }
-    }
+    }*/
 
+    // we have slightly smarter comment handling - even if CM cannot figure out that token has comment type
+    let type = this.props.comment ? 'comment' : (token ? token.type : null)
 
-    let ts = token.string.trim()
-
-    if (_.includes(noHelpTypes, token.type))
+    if (_.includes(noHelpTypes, type))
       return null
 
-    let specialHandler = specialHelpTypes[token.type]
+    let ts = token.string.trim()
+    let specialHandler = specialHelpTypes[type]
 
     const maxTokenLenToShow = 20
     let tsTrunc = ts.length > maxTokenLenToShow ? ts.substr(0, maxTokenLenToShow) + "..." : ts
 
-    let help = _.find(helpInfo, h => (h.tt === token.type && (h.ts === null || h.ts === ts)))
+    let help = _.find(helpInfo, h => (h.tt === type && (h.ts === null || h.ts === ts)))
     let tokenTypeToDisplay = specialHandler
       ? (typeof specialHandler.betterTypeName == 'function'
-          ? (specialHandler.betterTypeName(ts, this) || token.type)
+          ? (specialHandler.betterTypeName(ts, this) || type)
           : specialHandler.betterTypeName
         )
-      : token.type
+      : type
 
     const skillNodeKey = specialHandler ? specialHandler.skillNodes :
                           (help ? (help.skillNodes || null) : null)
@@ -1341,11 +1314,11 @@ export default TokenDescription = React.createClass({
 
     let showStringInTitle = !specialHandler || specialHandler.showTokenStringInTitle
     // Special cases that won't involve a skillNode lookup
-    if (token.type != 'variable' && token.type != 'variable-2' && token.type != 'def' &&
+    if (type != 'variable' && type != 'variable-2' && type != 'def' &&
       (!skillNodeKey || !isSkillKeyValid(skillNodeKey))
     )
     {
-      console.log(`TokenDescription database has no SkillNode for TT:${token.type} TS:${tsTrunc}`)
+      console.log(`TokenDescription database has no SkillNode for TT:${type} TS:${tsTrunc}`)
       showExpanded = true
     }
 

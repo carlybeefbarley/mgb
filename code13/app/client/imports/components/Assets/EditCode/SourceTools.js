@@ -31,7 +31,12 @@ const ERROR = {
   SOURCE_NOT_FOUND: "W-ST-001", // warning - sourcetools - errnum -- atm only matters first letter: W(warning) E(error)
   MULTIPLE_SOURCES: "W-ST-002",
   UNREACHABLE_EXTERNAL_SOURCE: "W-ST-003",
-  RECURSION_DETECTED:  "E-ST-004"
+  // if same file is included - then export default won't work as expected - so show error
+  RECURSION_DETECTED:  "E-ST-004",
+  // if imported files will have recursion - usually everything will work fine.
+  // But we still need to notify user that some unexpected bahaviour can happen
+  // e.g. when imported resource is requested directly (not in the some function)
+  WARN_RECURSION_DETECTED: "W-ST-005"
 }
 
 
@@ -356,7 +361,8 @@ export default class SourceTools {
           const imp = imports.shift()
           // TODO: find out how to resolve this - if ever possible
           if(this.pendingChanges[imp.src]){
-            this.setError({reason: "Recursion detected: " + filename, evidence: filename, code: ERROR.RECURSION_DETECTED})
+            this.setError({reason: "Recursion detected: " + filename, evidence: filename, code: ERROR.WARN_RECURSION_DETECTED})
+            //this.setError({reason: "Recursion detected: " + filename, evidence: filename, code: ERROR.RECURSION_DETECTED})
             load()
             return
           }
@@ -501,6 +507,7 @@ export default class SourceTools {
       if(this.asset_id === assets[0]._id){
         //this.subscriptions[ari].subscription.stop()
         this.setError({reason: "Recursion detected: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.RECURSION_DETECTED})
+        this.subscriptions[ari].subscription.stop()
         getSourceAndTranspile(null, [])
         return
       }

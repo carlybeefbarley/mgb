@@ -6,6 +6,7 @@ import { Skills } from '/imports/schemas'
 
 import Helmet from 'react-helmet'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
+import Spinner from '/client/imports/components/Nav/Spinner'
 
 
 export default SkillTreeRoute = React.createClass({
@@ -66,7 +67,9 @@ export default SkillTreeRoute = React.createClass({
             </p>
           </Segment>
         }
-        <SkillsMap skills={userSkills} expandable toggleable={ownsProfile} />
+        { this.data.loading ? <Spinner/> : 
+          <SkillsMap skills={userSkills} expandable toggleable={ownsProfile} />
+        }
       </Segment>
     )
   }

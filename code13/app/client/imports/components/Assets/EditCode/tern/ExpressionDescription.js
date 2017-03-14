@@ -27,10 +27,9 @@ export default ExpressionDescription = React.createClass({
     const nameFriendly = makeFriendlyName(name, exprName)
 
     let docToDisplay = doc
-    const sl = SpecialGlobals.editCode.mgbMentorPrefix.singleLine.substring(2).trim()
-    const ml = SpecialGlobals.editCode.mgbMentorPrefix.multiLine.substring(2).trim()
+    const sl = SpecialGlobals.editCode.mgbMentorPrefix.trim()
 
-    if(doc && (doc.startsWith(sl) || doc.startsWith(ml)) ){
+    if(doc && (doc.trim().startsWith(sl)) ){
       docToDisplay = ''
     }
 

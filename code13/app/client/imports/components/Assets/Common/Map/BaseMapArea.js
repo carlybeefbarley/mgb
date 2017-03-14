@@ -922,7 +922,7 @@ export default class MapArea extends React.Component {
         onContextMenu={e => { e.preventDefault(); return false;}}
         onMouseDown={this.handleMouseDown}
         onTouchStart={this.handleMouseDown}
-        style={{ height: '720px', position: 'relative', margin: '10px 0' }}>
+        style={{ height: '680px', position: 'relative', margin: '10px 0' }}>
         {layers}
         <MaskLayer map={this} layer={this.layers[this.props.activeLayer]} ref='mask' style={{opacity: 0.9}} />
       </div>

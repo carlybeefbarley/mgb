@@ -1,11 +1,8 @@
 import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
-import { Menu, Header, List, Segment } from 'semantic-ui-react'
+import { Button, Menu, Header, List, Segment } from 'semantic-ui-react'
 
-const linkLi = (txt, url) => (
-  <List.Item><a target="_blank" href={url}>{txt}</a></List.Item>
-)
-
+const linkLi = (txt, url) => <List.Item><a target="_blank" href={url}>{txt}</a></List.Item>
 
 const _getFlipsideUrl = () => {
   const l = window.location
@@ -56,9 +53,17 @@ const UserAdmin = ( { user } ) => ( !user ? <div>Visit a page that has a user co
     <Header sub>Secret Info</Header>
     <List bulleted>
       { linkLi("TODO", "/") }
-      { linkLi("TODO", "/") }
-      { linkLi("TODO", "/") }
     </List>
+
+    <Header sub>Admin Actions</Header>
+    <Button.Group vertical size='small'>
+      <Button
+        color='red'
+        icon='bomb'
+        content={( user.suIsBanned ? "UNBAN" : "BAN") + ` user '${user.username}'`}
+        onClick={() => Meteor.call('User.toggleBan', user._id) }
+        />
+    </Button.Group>
   </div>
 ))
 

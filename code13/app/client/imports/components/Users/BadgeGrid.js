@@ -41,7 +41,7 @@ const BadgeGrid = ( { user, className } ) => {
           <Grid.Row>
             <BadgeN badge={uBadges[6]} />
             <BadgeN badge={uBadges[7]} />
-            <Grid.Column>
+            <Grid.Column textAlign='center'>
               <QLink to={badgesPageUrl}>
                 <Label content='more' />
               </QLink>

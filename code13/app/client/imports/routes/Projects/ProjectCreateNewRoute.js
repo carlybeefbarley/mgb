@@ -53,9 +53,9 @@ export default ProjectCreateNewRoute = React.createClass({
     }
 
     Meteor.call('Projects.create', newProj, (error, result) => {
-      if (error) {
-        showToast("Could not create project", 'error')
-      } else {
+      if (error) 
+        showToast("Could not create project - "+error.reason, 'error')
+      else {
         logActivity("project.create",  `Create project ${pName}`)
         utilPushTo(this.context.urlLocation.query, `/u/${this.props.currUser.profile.name}/project/${result}`)
       }

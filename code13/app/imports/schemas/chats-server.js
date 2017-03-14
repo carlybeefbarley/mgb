@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { Chats, Azzets } from '/imports/schemas'
 import { chatParams, parseChannelName, makeChannelName, isChannelNameWellFormed, chatsSchema, currUserCanSend } from '/imports/schemas/chats'
-import { check,  } from 'meteor/check'
+import { check } from 'meteor/check'
 import { lookupIsUseridInProject } from '/imports/schemas/projects-server'
 
 /**
@@ -19,6 +19,7 @@ function canUserReallySendToChannel(currUser, channelName)
     return false
 
   // Now to look for the cases that currUserCanSend() isn't smart about
+  // Note that suIsBanned (Suspended Account) is handled in Chats.send RPC
   const channelObj = parseChannelName(channelName)
   // Access check for publication of channels
   switch (channelObj.scopeGroupName)
@@ -56,6 +57,9 @@ function _checkChatSendIsValid(currUser, channelName, message) {
 
   if (!canUserReallySendToChannel(currUser, channelName))
     throw new Meteor.Error(401, "No access to write to that channel")
+
+  if (currUser.suIsBanned)    // TODO: Allow only chat with Moderator on a TBD special channel
+    throw new Meteor.Error(401, "Your account has been suspended by an Admin")
 }
 
 

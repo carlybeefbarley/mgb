@@ -1083,31 +1083,23 @@ function specialHandlerString2(rString) {
 }
 
 function specialHandlerCommentTitle(str, tokenDescriptionComponent){
-  if(str.startsWith(SpecialGlobals.editCode.mgbMentorPrefix.singleLine))
-    return (
-      'MGB Code Mentor\'s comment'
-    )
 
-  if(str.startsWith('//')){
+  const comment = tokenDescriptionComponent.props.comment
+  // we need AST (tern server) to be READY for this to work.. first queries may fail to locate comment
+  if(!comment)
     return null
-  }
-  let tmpToken = ''
-  let fullComment = str
-  if(!str.trim().startsWith("/*")) {
-    tokenDescriptionComponent.props.getPrevToken((tmp) => {
-      if (tmp && tmp.type === 'comment') {
-        fullComment = tmp.string + "\n" + fullComment
-        tmpToken = tmp
-        return !tmp.string.trim().startsWith("/*")
-      }
-      return tmp && tmp.type === null
-    })
-  }
-  if(str.startsWith(SpecialGlobals.editCode.mgbMentorPrefix.multiLine) || (tmpToken && tmpToken.string.startsWith(SpecialGlobals.editCode.mgbMentorPrefix.multiLine)))
-    return (
-      'MGB Code Mentor\'s comment'
-    )
-  return null
+
+  const text = comment.text.trim()
+  if(text.startsWith(SpecialGlobals.editCode.mgbMentorPrefix))
+    return 'MGB Code Mentor\'s comment'
+
+  if(text.startsWith('*'))
+    return 'JSDoc comment'
+
+  if(comment.block)
+    return 'Multiline comment'
+  else
+    return 'Single line comment'
 }
 // Explain multi-line and single-line comments.
 // Explain JSDoc comments and Special MGB comments
@@ -1279,10 +1271,13 @@ export default TokenDescription = React.createClass({
 
   render: function () {
     let token = this.props.currentToken
+    // search for the next token - just in case..
+    /*
+    TODO: @stauzs fix this and uncomment - this is pretty slow atm
+    we need to check next token ONLY when char === 0
+    so we can show correct info if cursor is before keyword
 
-    // search for next token - just in case..
-    // this is especially important for the 0:0 pos and block comments
-    /*if (!token || !token.type){
+    if (!token || !token.type){
       this.props.getNextToken((tok) => {
         if(tok && tok.type){
           token = tok
@@ -1292,14 +1287,14 @@ export default TokenDescription = React.createClass({
         return null
       }
     }*/
-    // we have slightly smarter comment handling - even if CM cannot figure out that token has comment type
-    let type = this.props.comment ? 'comment' : token.type
 
-    let ts = token.string.trim()
+    // we have slightly smarter comment handling - even if CM cannot figure out that token has comment type
+    let type = this.props.comment ? 'comment' : (token ? token.type : null)
 
     if (_.includes(noHelpTypes, type))
       return null
 
+    let ts = token.string.trim()
     let specialHandler = specialHelpTypes[type]
 
     const maxTokenLenToShow = 20

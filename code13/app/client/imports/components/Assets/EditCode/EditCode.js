@@ -1063,10 +1063,11 @@ export default class EditCode extends React.Component {
      */
   }
 
-  srcUpdate_GetInfoForCurrentFunction() {
+  srcUpdate_GetInfoForCurrentFunction(callback) {
     let ternServer = this.ternServer
     let editor = this.codeMirror
     if(!ternServer || !editor){
+      callback()
       return
     }
     let currentCursorPos = editor.getCursor()
@@ -1081,19 +1082,8 @@ export default class EditCode extends React.Component {
     currentCursorPos.line = line
     currentCursorPos.char = char
 
-
-
-
     // get token at current pos
     let currentToken = editor.getTokenAt(currentCursorPos, true)
-
-    const index = editor.indexFromPos(currentCursorPos)
-    this.getCommentAt( comment => {
-      // console.log("Comment: ", comment)
-      this.setState({
-        comment: comment
-      })
-    }, index)
 
     // I stole the following approach from
     // node_modules/codemirror/addon/tern/tern.js -> updateArgHints so I could get ArgPos
@@ -1146,6 +1136,15 @@ export default class EditCode extends React.Component {
           currentToken: currentToken
         })
       }
+
+      const index = editor.indexFromPos(currentCursorPos)
+      this.getCommentAt( comment => {
+        // console.log("Comment: ", comment)
+        callback()
+        this.setState({
+          comment: comment
+        })
+      }, index)
     }
 
     if (argPos !== -1) {
@@ -1161,10 +1160,11 @@ export default class EditCode extends React.Component {
       _setState()
   }
 
-  srcUpdate_GetRelevantTypeInfo() {
+  srcUpdate_GetRelevantTypeInfo(callback) {
     let ternServer = this.ternServer
     let editor = this.codeMirror
     if(!ternServer || !editor){
+      callback()
       return
     }
     let position = editor.getCursor()
@@ -1197,13 +1197,15 @@ export default class EditCode extends React.Component {
         else
           this.setState({atCursorTypeRequestResponse: {data}})
       }
+      callback()
     }, position)
   }
 
-  srcUpdate_GetRefs() {
+  srcUpdate_GetRefs(callback) {
     let ternServer = this.ternServer
     let editor = this.codeMirror
     if(!ternServer || !editor){
+      callback()
       return
     }
     let position = editor.getCursor()
@@ -1216,13 +1218,15 @@ export default class EditCode extends React.Component {
         this.setState({atCursorRefRequestResponse: {"error": error}})
       else
         this.setState({atCursorRefRequestResponse: {data}})
+      callback()
     }, position)
   }
 
-  srcUpdate_GetDef() {
+  srcUpdate_GetDef(callback) {
     let ternServer = this.ternServer
     let editor = this.codeMirror
     if(!ternServer || !editor){
+      callback()
       return
     }
     let position = editor.getCursor()
@@ -1237,6 +1241,7 @@ export default class EditCode extends React.Component {
         data.definitionText = (data.origin === this.props.asset.name && data.start) ? editor.getLine(data.start.line).trim() : null
         this.setState({atCursorDefRequestResponse: {data}})
       }
+      callback()
     }, position)
   }
 
@@ -1261,11 +1266,12 @@ export default class EditCode extends React.Component {
   // }
 
 
-  srcUpdate_getMemberParent() {
+  srcUpdate_getMemberParent(callback) {
     if (showDebugAST) {
       let ternServer = this.ternServer
       let editor = this.codeMirror
       if(!ternServer || !editor){
+        callback()
         return
       }
       let position = editor.getCursor()
@@ -1281,8 +1287,11 @@ export default class EditCode extends React.Component {
         else {
           this.setState({atCursorMemberParentRequestResponse: {data}})
         }
+        callback()
       }, position)
     }
+    else
+      callback()
   }
 
 
@@ -1321,8 +1330,15 @@ export default class EditCode extends React.Component {
     }
     snapshotActivity(asset, passiveAction)
 
-
-    this.setState({_preventRenders: true})
+    let asyncCalls = 0
+    // prevent renders until all async functions has been completed
+    const onDone = () => {
+      asyncCalls++
+      return () => {
+        this.setState({_preventRenders: --asyncCalls})
+        console.log("Async callback in action:", asyncCalls)
+      }
+    }
 
     try {
       // TODO: update Read only???
@@ -1332,11 +1348,13 @@ export default class EditCode extends React.Component {
       this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
       if (asset.kind === 'code')
       {
-        this.srcUpdate_GetInfoForCurrentFunction()
-        this.srcUpdate_GetRelevantTypeInfo()
-        this.srcUpdate_GetRefs()
-        this.srcUpdate_GetDef()
-        this.srcUpdate_getMemberParent()
+
+
+        this.srcUpdate_GetInfoForCurrentFunction(onDone())
+        this.srcUpdate_GetRelevantTypeInfo(onDone())
+        this.srcUpdate_GetRefs(onDone())
+        this.srcUpdate_GetDef(onDone())
+        this.srcUpdate_getMemberParent(onDone())
       }
       if (asset.kind === 'tutorial')
       {
@@ -1346,7 +1364,7 @@ export default class EditCode extends React.Component {
       // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
     }
     finally {
-      this.setState({_preventRenders: false})
+      this.setState({_preventRenders: asyncCalls})
     }
   }
 

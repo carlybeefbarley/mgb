@@ -10,7 +10,11 @@ const _maxAssetNameLength = 64
 //    :   since we use that as a namespace delimiter (e.g. api/asset/tutorial/username:assetname)
 //    /   since it is used as an alternate asset Id format internally for some APIs (makeExpireThumbnailLink etc)
 //    #   since...?
-//    ?   since...?
+//    ?   since... this could look string on a URI using our /api/asset/png/USERNAME/ASSETNAME?frame=4
+//                 URL format and would be a bit confusing / bug-prone when escaped
+//    {   since... we may want the option to have assetName-based apis that could instead have a 
+//                 richer JSON-encoded data instead
+//    *   since it is just going to make wild card search stupidly annoying
 const _validAssetNameRegex = /^[a-zA-Z0-9_\-. \(\)\!\~\;\'\<\>\@\&]*$/
 
 

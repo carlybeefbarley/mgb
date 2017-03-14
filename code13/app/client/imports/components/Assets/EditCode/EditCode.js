@@ -331,6 +331,10 @@ export default class EditCode extends React.Component {
       redo: []
     }
 
+    this.mgb_c2_hasChanged = true
+    // storing here misc stuff that can be accessed to gain performance
+    this.mgb_cache = {}
+
     this.highlightedLines = []
   }
 
@@ -421,6 +425,20 @@ export default class EditCode extends React.Component {
       })
     }
 
+    this.ternServer.server.getComments = (callback, filename = this.props.asset.name) => {
+      const cb = (e) => {
+        if (e.data.type != "getComments")
+          return
+        this.ternServer.worker.removeEventListener("message", cb)
+        callback(e.data.data)
+      }
+      this.ternServer.worker.addEventListener("message", cb)
+      this.ternServer.worker.postMessage({
+        type: "getComments",
+        filename: filename
+      })
+    }
+
     this.tools = new SourceTools(this.ternServer, this.props.asset._id, this.props.asset.dn_ownerName)
     this.tools.onError(errors => {
       this.showError(errors)
@@ -464,6 +482,8 @@ export default class EditCode extends React.Component {
     this.isActive = false
     this.cursorHistory = null
     this.highlightedLines = null
+
+    this.mgb_cache = null
   }
 
   terminateWorkers() {
@@ -1062,8 +1082,18 @@ export default class EditCode extends React.Component {
     currentCursorPos.char = char
 
 
+
+
     // get token at current pos
     let currentToken = editor.getTokenAt(currentCursorPos, true)
+
+    const index = editor.indexFromPos(currentCursorPos)
+    this.getCommentAt( comment => {
+      // console.log("Comment: ", comment)
+      this.setState({
+        comment: comment
+      })
+    }, index)
 
     // I stole the following approach from
     // node_modules/codemirror/addon/tern/tern.js -> updateArgHints so I could get ArgPos
@@ -1682,6 +1712,7 @@ export default class EditCode extends React.Component {
         this.props.handleContentChange(c2, thumbnail, reason)
         return
       }
+      this.mgb_c2_hasChanged = true
       this.doFullUpdateOnContentChange((errors) => {
         // it's not possible to create useful bundle with errors in the code - just save
         if(errors.length || !this.props.asset.content2.needsBundle){
@@ -2134,6 +2165,17 @@ export default class EditCode extends React.Component {
     }
   }
 
+  getCommentAt(callback, char = 0){
+    if(this.mgb_c2_hasChanged || !this.mgb_cache.comments || this.mgb_cache.comments.length === 0){
+      this.ternServer.server.getComments((comments) => {
+        this.mgb_cache.comments = comments
+        callback(_.find(comments, com => com.start <= char && com.end >= char))
+      })
+    }
+    else{
+      callback(_.find(this.mgb_cache.comments, com => com.start <= char && com.end >= char))
+    }
+  }
 
   render() {
     const { asset, canEdit } = this.props
@@ -2315,6 +2357,7 @@ export default class EditCode extends React.Component {
                     currentToken={this.state.currentToken}
                     getPrevToken={cb => this.getPrevToken(cb)}
                     getNextToken={cb => this.getNextToken(cb)}
+                    comment={this.state.comment}
                     />
                   { this.state.astReady &&
                   <ImportHelperPanel

@@ -45,6 +45,8 @@ this.onmessage = function(e) {
       return postMessage(server.fileMap)
     case "getAstFlowerTree":
       return postMessage({type: "flower", data: flowerBuilder.genTree(data, server)})
+    case "getComments":
+      return getComments(data)
     default: throw new Error("Unknown message type: " + data.type);
   }
 };
@@ -65,6 +67,19 @@ function startServer(defs, plugins, scripts) {
     plugins: plugins,
     projectDir: ''
   });
+}
+
+function getComments(data){
+  const comments = []
+  if(server.fileMap[data.filename]) {
+    // acorn is included by tern server
+    acorn.parse_dammit(server.fileMap[data.filename].text, {
+      onComment: function (block, text, start, end) {
+        comments.push({block: block, text: text, start: start, end: end})
+      }
+    })
+  }
+  return postMessage({type: "getComments", data: comments})
 }
 
 /*

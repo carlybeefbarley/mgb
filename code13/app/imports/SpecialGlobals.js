@@ -29,10 +29,7 @@ export default SpecialGlobals = {
   // in a case that observers will turn out too slow - we may change it to false - and then implement slow polling
   allowObservers: true,
   editCode: {
-    mgbMentorPrefix:{
-      singleLine: '// MGB mentor:',
-      multiLine: '/* MGB mentor:'
-    },
+    mgbMentorPrefix: 'MGB mentor:',
     maxFileSizeForAST: 10000 * 1024, // 100 KB
     typingSpeed: 750, //ms - this will prevent all updates for X time after keypress - improves fast typing UX (feels more responsive)
     maxLengthOfCursorHistory: 100,

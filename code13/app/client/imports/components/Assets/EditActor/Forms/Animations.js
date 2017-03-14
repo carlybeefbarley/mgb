@@ -97,7 +97,7 @@ export default class Animations extends React.Component {
                 <Table.Header fullWidth>
                   <Table.Row>
                     <Table.HeaderCell>Animation Frame</Table.HeaderCell>
-                    <Table.HeaderCell>Graphic</Table.HeaderCell>
+                    <Table.HeaderCell width={10}>Graphic</Table.HeaderCell>
                     <Table.HeaderCell>Orientation</Table.HeaderCell>
                   </Table.Row>
                 </Table.Header>
@@ -118,7 +118,7 @@ export default class Animations extends React.Component {
                 <Table.Header fullWidth>
                   <Table.Row>
                     <Table.HeaderCell>Animation Frame</Table.HeaderCell>
-                    <Table.HeaderCell>Graphic</Table.HeaderCell>
+                    <Table.HeaderCell width={10}>Graphic</Table.HeaderCell>
                     <Table.HeaderCell>Orientation</Table.HeaderCell>
                   </Table.Row>
                 </Table.Header>
@@ -196,11 +196,11 @@ export default class Animations extends React.Component {
     } 
   
     return (
-      <div>
+      <div style={{position: 'relative'}}>
         {
           this.state.isLoading && 
-          <Dimmer active inverted>
-            <Loader size='large'>Loading</Loader>
+          <Dimmer inverted>
+            <Loader style={{position: 'fixed', top: '50%', translate: "transform(-75%, -50%)"}} inline size='large'>Loading</Loader>
           </Dimmer>
         }
         {

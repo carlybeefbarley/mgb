@@ -34,7 +34,9 @@ export default class DropArea extends React.Component {
 
     if (this.props.value) {
       const parts = this.props.value.split(":")
-      const name = parts.pop()
+      let name = parts.pop()
+      if (/(\.frame\d\d)$/.test(name) && this.props.kind === 'graphic')
+        name = name.slice(0, name.length - 8)
       const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
       this.startSubscription(owner, name)
     }
@@ -166,10 +168,8 @@ export default class DropArea extends React.Component {
     // TODO: render effect
     return (
       <QLink to={`/u/${asset.dn_ownerName}/asset/${asset._id}`}>
-        <div>
-          <img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={imgLink}/> 
-          <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div> 
-        </div>
+        {<img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={imgLink}/> }
+        <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div> 
       </QLink>
     )
   }
@@ -180,7 +180,6 @@ export default class DropArea extends React.Component {
 
     const map = {
       rotate90: "rotate(90deg)",
-
       rotate180: "rotate(180deg)",
       rotate270: "rotate(270deg)",
       flipX: "scaleX(-1)",

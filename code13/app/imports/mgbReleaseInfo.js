@@ -13,6 +13,38 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+
+    {
+      'timestamp': 'Tuesday Mar 14 2017 00:30 GMT-0700 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3753'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'user.ban',
+          'type': 'feature',
+          'changeName': 'User Banning',
+          'changeSummary': 'Admins can now suspend User Accounts for users who are being inappropriate. Other users will see that those accounts are suspended. The Suspended accounts are prohibited from editing assets, managing projects, or sending chat messages.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'The site tutorials work again (the loading API was broken at the weekend). User and Project avatars have much more helpful popups describing how to change avatars. Skills model ui doesn\t show JS as white anymore. ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
     {
       'timestamp': 'Monday Mar 13 2017 08:30 GMT-0700 (PST)',
 

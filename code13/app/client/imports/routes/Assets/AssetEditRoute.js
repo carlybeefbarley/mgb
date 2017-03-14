@@ -304,7 +304,7 @@ export default AssetEditRoute = React.createClass({
   canCurrUserChangeCompletion(assetOverride = null) {
     const asset = assetOverride || this.data.asset
     const { currUser } = this.props
-    
+
     if (!asset || this.data.loading || !currUser)
       return false  // Need to at least be logged in and have the data to do any edits...
 
@@ -371,7 +371,7 @@ export default AssetEditRoute = React.createClass({
     const hasUnsentSaves = !!this.m_deferredSaveObj
 
     return (
-      <Grid padded>
+      <Grid padded style={{overflowX: 'hidden'/* this will prevent padding (+v scrolling) caused by mgbjr-asset-edit-header-right when all icons don't fit in the new line*/}}>
 
         <Helmet
           title={ _makeTitle(asset.kind, hasUnsentSaves, asset.isUnconfirmedSave, asset.name) }
@@ -397,7 +397,7 @@ export default AssetEditRoute = React.createClass({
 
         { !isTooSmall &&
           <Grid.Column width='8' textAlign='right' id="mgbjr-asset-edit-header-right">
-            { 
+            {
               // We use this.props.params.assetId since it is available sooner than the asset
               // TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
             }
@@ -447,15 +447,15 @@ export default AssetEditRoute = React.createClass({
               currUserId={currUserId}
               currUserProjects={currUserProjects}
               handleToggleProjectName={this.handleToggleProjectName} />
-            { isSuperAdmin && 
+            { isSuperAdmin &&
               <SuperAdminAssetControl asset={asset} handleToggleBan={this.handleToggleBanState} />
             }
           </Grid.Column>
         }
 
-        { asset.suIsBanned && 
+        { asset.suIsBanned &&
           <Grid.Column width='16'>
-            <Message error 
+            <Message error
               icon='ban'
               header='This Asset has been Banned'
               list={[
@@ -465,8 +465,8 @@ export default AssetEditRoute = React.createClass({
           </Grid.Column>
         }
 
-        { (!asset.suIsBanned || isOwner) && 
-          <Grid.Column width='16'>
+        { (!asset.suIsBanned || isOwner) &&
+          <Grid.Column width='16' style={{/* overflow: 'auto' /* restore overflow for editors - as we disabled it above ???? */}}>
             <AssetEdit
               key={asset._id}
               asset={asset}

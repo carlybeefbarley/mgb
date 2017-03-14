@@ -225,10 +225,14 @@ export default class Mage extends React.Component {
 
     const { pendingGraphicLoads, loadedGraphics } = this.state
     _.each(desiredGraphicNames, aName => {
+      let gName = aName
+      if (/(\.frame\d\d)$/.test(aName)) {
+        gName = aName.slice(0, aName.length - 8) // name without frame for fetching asset
+      }
       if (!_.has(pendingGraphicLoads, aName) && !_.has(loadedGraphics, aName))
       {
         pendingGraphicLoads.push(aName)
-        fetchAssetByUri(_mkGraphicUri(ownerName, aName))
+        fetchAssetByUri(_mkGraphicUri(ownerName, gName))
           .then(  data => this._graphicLoadResult(aName, true, JSON.parse(data)) )
           .catch( data => this._graphicLoadResult(aName, false, data) )
       }
@@ -251,8 +255,12 @@ export default class Mage extends React.Component {
           debugger
         }
       }
+      let frame = 0
+      if (/(\.frame\d\d)$/.test(aName)) {
+        frame = parseInt(aName.split('.frame').pop(), 10) // explicitly parse int as base-10 since it has leading zero
+      }
       // framedata contains frames for every layers spritedata contains merged layers
-      loadedGraphics[aName]._image.src = data.content2.spriteData[0]
+      loadedGraphics[aName]._image.src = data.content2.spriteData[frame]
     }
     else
       failedGraphics[aName] = data
@@ -294,16 +302,31 @@ export default class Mage extends React.Component {
     this.setState( { pendingActorLoads, loadedActors, failedActors, isPreloadingStr: newIsPreloadingStrValue } )    
   }
 
+  // Compare names without the frame number 
+  _equalGraphicNames = (name1, name2) => {
+    if (/(\.frame\d\d)$/.test(name1) && !(/(\.frame\d\d)$/.test(name2))) {
+      return name2 === name1.slice(0, name1.length - 8)
+    }
+  	else if (/(\.frame\d\d)$/.test(name2) && !(/(\.frame\d\d)$/.test(name1))) {
+      return name1 === name2.slice(0, name2.length - 8)
+    }
+    else if ((/(\.frame\d\d)$/.test(name1) && /(\.frame\d\d)$/.test(name2))) {
+      return name1.slice(0, name1.length - 8) === name2.slice(0, name2.length - 8)
+    }
+    return name1 === name2
+  }
+
   // An actor can also require other actors or tiles
   _loadRequiredAssetsForActor(actor, oName)
   {
     // Load any referenced graphics
-    const desiredGraphicNames = _.filter(_.union(
-      [actor.databag.all.defaultGraphicName],           // TODO: warn if this is blank
-      _.map(actor.animationTable, r => r.tileName)
-      // any other Tiles mentioned in databags?  I don't think so..
-     ), n => (n && n!==''))
-
+    const desiredGraphicNames = _.filter(
+      _.union(
+        [actor.databag.all.defaultGraphicName],       // TODO: warn if this is blank
+        _.map(actor.animationTable, r => r.tileName) // Store frame number in name (to avoid looping twice to get frame data)
+      ), 
+      n => (n && n!=='')
+    )
     this._loadRequiredGraphics(desiredGraphicNames, oName)
 
     // Add names of any referenced actors to list of desiredActors

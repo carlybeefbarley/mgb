@@ -24,24 +24,29 @@ export default class Animations extends React.Component {
   }
 
   changeGraphic(index, val, asset) {
-    this.data[index].tileName = val
-    /* 
+    this.data[index].tileName = val 
+    this.data[index].frame = 0
+
     if (asset) {
       $.get('/api/asset/tileset-info/' + asset._id, (data) => {
         if (data.tilecount > 1) {
-          for (i=0; i<=data.tilecount; i++) {
+          this.data[index].tileName = val + '.frame00'
+
+          for (i=1; i<data.tilecount; i++) {
             if (!this.data[index+i].tileName) {
               this.data[index+i] = {
                 "action": MgbActor.animationNames[index+i],
-                "tileName": data.name + '.frame' + i,
-                "effect": "no effect" 
+                "tileName": data.name + (i > 9 ? '.frame' + i : '.frame0' + i),
+                "frame": i,
+                "effect": "no effect"
               }
             }
+            else
+              break
           }
         }
       })
     }
-    */
     this.props.onChange && this.props.onChange()
   }
 
@@ -58,7 +63,8 @@ export default class Animations extends React.Component {
         <Table.Cell>
           <DropArea 
             kind="graphic" 
-            value={this.data[i].tileName} 
+            value={this.data[i].tileName}
+            frame={this.data[i].frame} 
             effect={this.data[i].effect} 
             asset={this.props.asset}
             onChange={this.changeGraphic.bind(this, i)}
@@ -138,7 +144,8 @@ export default class Animations extends React.Component {
         this.data[i] = {
           "action": name,
           "tileName": null,
-          "effect": "no effect" 
+          "frame": 0,
+          "effect": "no effect",
         }
       }
 

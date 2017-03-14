@@ -5,6 +5,7 @@ import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
+import Spinner from '/client/imports/components/Nav/Spinner'
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
@@ -14,13 +15,13 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 // TODO - change pattern to be getMeteorData so we fix the timing issues.
 export default class DropArea extends React.Component {
-  state = { text: '' }
+  state = { text: '', isLoading: false}
 
   static PropTypes = {
     kind: PropTypes.string.required, // asset kind which will accept this drop area
     value: PropTypes.string, // previously saved value
     ids: PropTypes.object, // map with [value] = asset._id - to track renamed assets
-    asset: PropTypes.object, // asset assigned to this dropArea
+    asset: PropTypes.object, // asse assigned to this dropArea
     onChange: PropTypes.function, // callback
     text: PropTypes.string // alternative text to display
  }
@@ -138,7 +139,9 @@ export default class DropArea extends React.Component {
 
     if (this.props.value) {
       const parts = this.props.value.split(":")
-      const name = parts.pop()
+      let name = parts.pop()
+      if (/(\.frame\d\d)$/.test(name) && this.props.kind === 'graphic')
+        name = name.slice(0, name.length - 8)
       const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
       if(owner == "[builtin]"){
         return
@@ -158,11 +161,22 @@ export default class DropArea extends React.Component {
       return
 
     const transform = this.getEffect(this.props.effect)
+    const frame = this.getFrame(this.props.frame)
+    const imgLink = frame === 0 ? Thumbnail.getLink(asset) : `/api/asset/png/${asset._id}?frame=${frame}`
+
     // TODO: render effect
     return (
       <QLink to={`/u/${asset.dn_ownerName}/asset/${asset._id}`}>
-        {<img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={Thumbnail.getLink(asset)}/> }
-        <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div>
+        {
+          imgLink
+          ?
+          <div>
+            <img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={imgLink}/> 
+            <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div> 
+          </div>
+          :
+          <Spinner />
+        }
       </QLink>
     )
   }
@@ -180,6 +194,13 @@ export default class DropArea extends React.Component {
       flipY: "scaleY(-1)"
     }
     return map[effect] || "none"
+  }
+
+  getFrame (frame) {
+    if (!frame)
+      return 0
+
+    return frame
   }
 
   renderOptions() {

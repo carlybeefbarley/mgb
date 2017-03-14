@@ -126,11 +126,21 @@ export default class ActorTileset extends React.Component {
   }
 
   genTilesetImage(index, isActive, tileset){
+    const FittedImage = ({ src, height = '80px', ...rest}) => (
+      // This is <div> instead of <img> so that it won't have the border that chrome puts on if src has no content
+      <div 
+        className='mgb-pixelated'
+        style={{
+          background: `url(${src}) no-repeat center center`,
+          height: height,
+          backgroundSize: 'contain'
+        }} 
+        {...rest}
+        />
+    )
     const types = ['Player', 'Non-Playable Character (NPC)', 'Item, Wall, or Scenery']
     const tsName = tileset.name.indexOf(':') === -1 ? tileset.name : tileset.name.split(':').pop()
     const title = `${tsName} (${tileset.imagewidth}x${tileset.imageheight})\n${types[parseInt(tileset.actor.databag.all.actorType)]}`
-    const imgRatio = tileset.imageheight / tileset.imagewidth
-    const width = 64
 
     return (
       <Grid.Column
@@ -153,12 +163,7 @@ export default class ActorTileset extends React.Component {
           opacity: 0.8
         }}
         >
-        <img
-          className="mgb-pixelated"
-          src={makeCDNLink(tileset.image, makeExpireTimestamp(30) /*Allow super small cache ?*/)}
-          width={width}
-          height={imgRatio * width}
-        />
+        <FittedImage src={makeCDNLink(tileset.image, makeExpireTimestamp(30) /*Allow super small cache ?*/)} />
         <Label attached='bottom' style={{backgroundColor: 'rgba(0, 0, 0, 0.75)', color: 'white', textAlign: 'center', padding: 0, verticalAlign: 'middle', maxHeight: '1.5em'}}>
           {
             <p style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>{tsName}</p>

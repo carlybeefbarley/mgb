@@ -11,16 +11,20 @@ function _makeBundle(api, asset){
   })
 }
 
-// get tutorial by id - tmp used for es6 import
+// get tutorial by id OR by ownerName:assetName. See addJoyrideSteps() for use case.
 RestApi.addRoute('asset/tutorial/:id', { authRequired: false }, {
   get: function () {
-    const asset = Azzets.findOne(this.urlParams.id)
+    const idParts = this.urlParams.id.split(':')		
+    const asset = idParts.length === 2
+      ? Azzets.findOne( { dn_ownerName: idParts[0], name: idParts[1], isDeleted: false, kind: 'tutorial' } ) // owner:name
+      : Azzets.findOne(this.urlParams.id)
     return genAPIreturn(this, asset, asset ? (asset.content2.src || '')  : null, {
       'Content-Type': "text/plain",
       'file-name': asset ? asset.name : this.urlParams.name
     })
   }
 })
+
 // get code by id - tmp used for es6 import
 RestApi.addRoute('asset/code/:id', { authRequired: false }, {
   get: function(){
@@ -37,6 +41,7 @@ RestApi.addRoute('asset/code/:id', { authRequired: false }, {
 // used in codeEdit - import X from '/owner/codeName'
 RestApi.addRoute('asset/code/:owner/:name', {authRequired: false}, {
   get: function(){
+      // TODO:@Stauzs - (dgolds thinks this should have kind===code in the Query)
     const asset = Azzets.findOne({dn_ownerName: this.urlParams.owner, name: this.urlParams.name, isDeleted: false})
     return genAPIreturn(this, asset, asset ? (asset.content2.src || '')  : null, {
       'Content-Type': "text/plain",

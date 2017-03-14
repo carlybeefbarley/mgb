@@ -7,7 +7,7 @@ const _maxAssetNameLength = 64
 
 // Valid ASSET name regex
 // The REALLY important ones to exclude are
-//    :   since we use that as a namespace delimeter
+//    :   since we use that as a namespace delimiter (e.g. api/asset/tutorial/username:assetname)
 //    /   since it is used as an alternate asset Id format internally for some APIs (makeExpireThumbnailLink etc)
 //    #   since...?
 //    ?   since...?

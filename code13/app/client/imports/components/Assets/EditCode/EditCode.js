@@ -1321,7 +1321,8 @@ export default class EditCode extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !(nextState._preventRenders || this.state.creatingBundle)
+    // console.log("Should update!")
+    return !(nextState._preventRenders || this.state.creatingBundle) && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
   }
 
   codemirrorValueChanged(doc, change) {
@@ -2308,6 +2309,7 @@ export default class EditCode extends React.Component {
               }
               { !docEmpty && asset.kind === 'code' &&
                 // Current Line/Selection helper (body)
+                // optimise: don't render if accordeon is closed
                 <div className={"content " + (asset.skillPath ? "" : "active")} >
                   <TokenDescription
                     currentToken={this.state.currentToken}

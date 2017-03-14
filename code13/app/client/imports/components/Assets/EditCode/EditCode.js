@@ -169,14 +169,13 @@ export default class EditCode extends React.Component {
   }
 
   componentDidMount() {
-    const codeMirrorUpdateHints = this.codeMirrorUpdateHints
-    // Debounce the codeMirrorUpdateHints() function
-    this.codeMirrorUpdateHints = _.debounce(this.codeMirrorUpdateHints, 100, true)
+    // Debounce the codeMirrorUpdateHints() function - only once
+    this.codeMirrorUpdateHintsDebounced = _.debounce(this.codeMirrorUpdateHints, 100, true)
 
     this.updateUserScripts()
     // previous debounce eats up changes
     this.codeMirrorUpdateHintsChanged = _.debounce(() => {
-      codeMirrorUpdateHints.call(this, true)
+      this.codeMirrorUpdateHints.call(this, true)
     }, 100, true)
 
     this.listeners = {}
@@ -463,7 +462,7 @@ export default class EditCode extends React.Component {
 
   codeMirrorOnCursorActivity() {
     // Indirecting this to help with debugging and maybe some future optimizations
-    this.codeMirrorUpdateHints(false)
+    this.codeMirrorUpdateHintsDebounced(false)
   }
 
   componentWillUnmount() {
@@ -1334,10 +1333,7 @@ export default class EditCode extends React.Component {
     // prevent renders until all async functions has been completed
     const onDone = () => {
       asyncCalls++
-      return () => {
-        this.setState({_preventRenders: --asyncCalls})
-        console.log("Async callback in action:", asyncCalls)
-      }
+      return () => this.setState({_preventRenders: --asyncCalls})
     }
 
     try {
@@ -1348,8 +1344,6 @@ export default class EditCode extends React.Component {
       this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
       if (asset.kind === 'code')
       {
-
-
         this.srcUpdate_GetInfoForCurrentFunction(onDone())
         this.srcUpdate_GetRelevantTypeInfo(onDone())
         this.srcUpdate_GetRefs(onDone())
@@ -1369,8 +1363,9 @@ export default class EditCode extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    // console.log("Should update!")
-    return !(nextState._preventRenders || this.state.creatingBundle) // && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
+    const retval = !(nextState._preventRenders || this.state.creatingBundle)
+    console.log("should update: ", retval)
+    return retval // && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
   }
 
   codemirrorValueChanged(doc, change) {

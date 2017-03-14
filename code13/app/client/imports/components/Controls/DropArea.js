@@ -168,18 +168,19 @@ export default class DropArea extends React.Component {
     // TODO: render effect
     return (
       <QLink to={`/u/${asset.dn_ownerName}/asset/${asset._id}`}>
-        {<img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={imgLink}/> }
+        <img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={imgLink}/>
         <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div> 
       </QLink>
     )
   }
 
   getEffect (effect) {
-    if (!effect)
+  if (!effect)
       return "none"
 
     const map = {
       rotate90: "rotate(90deg)",
+
       rotate180: "rotate(180deg)",
       rotate270: "rotate(270deg)",
       flipX: "scaleX(-1)",

@@ -29,6 +29,7 @@ export default class Animations extends React.Component {
 
     if (asset) {
       this.setState({isLoading: true})
+
       $.get('/api/asset/tileset-info/' + asset._id, (data) => {
         if (data.tilecount > 1) {
           this.data[index].tileName = val + '.frame00'
@@ -51,6 +52,7 @@ export default class Animations extends React.Component {
         this.setState({isLoading: false})
       })
     }
+
     this.props.onChange && this.props.onChange()
   }
 
@@ -75,7 +77,7 @@ export default class Animations extends React.Component {
             onChange={this.changeGraphic.bind(this, i)}
           />
         </Table.Cell>
-        <Table.Cell>
+        <Table.Cell style={{overflow: 'visible'}}>
           <SmallDD options={MgbActor.animationEffectNames} value={this.data[i].effect} onChange={this.changeEffect.bind(this, i)} />
         </Table.Cell>
       </Table.Row>
@@ -93,11 +95,11 @@ export default class Animations extends React.Component {
               {prevTitle}
             </Accordion.Title>
             <Accordion.Content active={true}>
-              <Table celled compact definition>
+              <Table fixed celled compact definition>
                 <Table.Header fullWidth>
                   <Table.Row>
                     <Table.HeaderCell>Animation Frame</Table.HeaderCell>
-                    <Table.HeaderCell width={10}>Graphic</Table.HeaderCell>
+                    <Table.HeaderCell width={8}>Graphic</Table.HeaderCell>
                     <Table.HeaderCell>Orientation</Table.HeaderCell>
                   </Table.Row>
                 </Table.Header>
@@ -114,11 +116,11 @@ export default class Animations extends React.Component {
               {prevTitle}
             </Accordion.Title>
             <Accordion.Content>
-              <Table celled compact definition>
+              <Table fixed celled compact definition>
                 <Table.Header fullWidth>
                   <Table.Row>
                     <Table.HeaderCell>Animation Frame</Table.HeaderCell>
-                    <Table.HeaderCell width={10}>Graphic</Table.HeaderCell>
+                    <Table.HeaderCell width={8}>Graphic</Table.HeaderCell>
                     <Table.HeaderCell>Orientation</Table.HeaderCell>
                   </Table.Row>
                 </Table.Header>
@@ -194,13 +196,13 @@ export default class Animations extends React.Component {
         animTable = []
       }
     } 
-  
+
     return (
       <div style={{position: 'relative'}}>
         {
           this.state.isLoading && 
-          <Dimmer inverted>
-            <Loader style={{position: 'fixed', top: '50%', translate: "transform(-75%, -50%)"}} inline size='large'>Loading</Loader>
+          <Dimmer active inverted>
+            <Loader style={{position: 'fixed', right: '345px', top: '50%', translate: "transform(-50%, -50%)"}} active inline size='large'>Loading</Loader>
           </Dimmer>
         }
         {

@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes, Component } from 'react'
 import ReactDOM from 'react-dom'
+import { Select } from 'semantic-ui-react'
 
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 import AssetLicense from '/client/imports/components/Controls/AssetLicense'
@@ -25,13 +26,14 @@ export default class UploadForm extends React.Component {
       workState:        defaultWorkStateName,
       prefix:           '',
       isCompleted:      false,
+      assetType:        'graphic'
     }
   }
 
   onDragOver(e) { this.props.onDragOver(e) }
   onDragLeave(e) { this.props.onDragLeave(e) }
   onDrop(e) {
-    this.props.onDrop(e, this.state.prefix, this.state.selectedProject, this.state.assetLicense, this.state.workState, this.state.isCompleted)
+    this.props.onDrop(e, this.state.assetType, this.state.prefix, this.state.selectedProject, this.state.assetLicense, this.state.workState, this.state.isCompleted)
   }
 
   handleChangeSelectedProjectName (selectedProjName, selectedProj) {
@@ -58,6 +60,10 @@ export default class UploadForm extends React.Component {
     this.setState({ isCompleted: !this.state.isCompleted})
   }
 
+  handleAssetTypeChange(e, param){
+    this.setState({ assetType: param.value })
+  }
+
   render (){
     const isWebkit = 'WebkitAppearance' in document.documentElement.style
 
@@ -74,6 +80,15 @@ export default class UploadForm extends React.Component {
 
         <div className={isWebkit ? "" : "mgb-hidden"}>
           <div className="row" style={{padding:"10px 30px"}}>
+
+            <Select 
+              onChange={this.handleAssetTypeChange.bind(this)} 
+              defaultValue={this.state.assetType} 
+              options={[
+                {key: 'graphic', value: 'graphic', text: 'graphic'},
+                {key: 'code', value: 'code', text: 'code'}
+              ]
+            } />
 
             <div className="ui input mini focus">
               Prefix &nbsp;

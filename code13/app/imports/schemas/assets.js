@@ -48,14 +48,6 @@ var schema = {
   // Ideally this will be one of the well-known license tags we define in assetLicenses.js.
   assetLicense: String,    // A license that covers this asset. 
 
-// Intended future Data for cloning. These may all be missing/null:
-  // clonedFromAssetId: String,        // An MGB Asset ID that we cloned this from
-  // clonedFromAssetVer: String,       // Version of the Asset ID that we cloned this from
-  // clonedFromAssetDate: String,      // Version of the Asset that we cloned this from (not yet implementable)
-  // clonedFromOwnerId: String,        // The UsserId whowe cloned this from
-  // clonedFromOwnerName: String,      // An asset id that we cloned this from
-  // clonedFromExternalSource: String,
-
   workState: String,  // A value matching a key from workStates.js
   content: String,    // depends on asset type
   content2: Object,   // THIS IS NOT IN PREVIEW SUBSCRIPTIONS (see publications.js) ..TODO: Move some small but widely needed stuff like size, num frames to another field: metadata

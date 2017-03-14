@@ -17,7 +17,6 @@ export default UserItem = React.createClass({
     renderAttached: PropTypes.bool          // if true, then render attached
   },
 
-
   contextTypes: {
     urlLocation: React.PropTypes.object
   },
@@ -31,7 +30,6 @@ export default UserItem = React.createClass({
     else
       utilPushTo(this.context.urlLocation.query, `/u/${name}`)
   },
-
 
   render: function() {
     const { user, narrowItem, renderAttached } = this.props
@@ -51,6 +49,7 @@ export default UserItem = React.createClass({
         <div className="ui header large">{name}</div>
         <img src={makeCDNLink(avatar, makeExpireTimestamp(60)) || SpecialGlobals.defaultUserProfileImage} className={`ui floated image ${imageSize}`} />
         { narrowItem ? <small>{titleSpan}</small> : <big>{titleSpan}</big> }
+        { user.suIsBanned &&  <div><small style={{color: 'red'}}>Suspended Account</small></div> }
         <p><small style={{color:"rgb(0, 176, 224)"}}>Joined {createdAtFmt}</small></p>
         {getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)}
       </div>

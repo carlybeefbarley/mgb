@@ -5,7 +5,7 @@
 import _ from 'lodash'
 import { Azzets } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
-import { checkIsLoggedIn, checkMgb } from './checkMgb'
+import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 
 import { defaultWorkStateName, makeWorkstateNamesArray} from '/imports/Enums/workStates'
 import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
@@ -188,7 +188,7 @@ export const allSorters = {
 
 Meteor.methods({
   "Azzets.create": function(data) {
-    checkIsLoggedIn()
+    checkIsLoggedInAndNotSuspended()
     const username = Meteor.user().profile.name
     const now = new Date()
 
@@ -254,7 +254,7 @@ Meteor.methods({
 
   "Azzets.update": function(docId, canEdit, data) {
     var count, selector
-    checkIsLoggedIn()
+    checkIsLoggedInAndNotSuspended()
 
     check(docId, String)
     if (!this.userId)

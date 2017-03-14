@@ -21,6 +21,14 @@ export function checkIsLoggedIn() {
     throw new Meteor.Error(401, "Login required")
 }
 
+export function checkIsLoggedInAndNotSuspended() {
+  const u = Meteor.user()
+  if (!u)
+    throw new Meteor.Error(401, "Login required")
+  if (u.suIsBanned)
+    throw new Meteor.Error(401, "Operation not permitted for Suspended Account")
+}
+
 export const checkMgb = {
   /**
    * Check projectName is valid. Throw Meteor.Error() if not valid

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { Projects } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
-import { checkIsLoggedIn, checkMgb } from './checkMgb'
+import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 import { bestWorkStateName, defaultWorkStateName, makeWorkstateNamesArray } from '/imports/Enums/workStates'
 
 //
@@ -409,7 +409,7 @@ Meteor.methods({
   "Projects.create": function(data) {
 
     // 0. Perform Input/User Validations
-    checkIsLoggedIn()
+    checkIsLoggedInAndNotSuspended()
     checkMgb.projectName(data.name)
     checkMgb.projectDescription(data.description)
     const username = Meteor.user().profile.name
@@ -460,7 +460,7 @@ Meteor.methods({
 
   "Projects.update": function(docId, data) {
     // 0. Perform Input/User Validations
-    checkIsLoggedIn()
+    checkIsLoggedInAndNotSuspended()
     check(docId, String)
     if (data.description)
       checkMgb.projectDescription(data.description)

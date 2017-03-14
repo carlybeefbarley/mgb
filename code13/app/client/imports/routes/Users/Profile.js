@@ -24,7 +24,7 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 
 
-import { Container, Segment, Header, Button, Grid, Item, Icon } from 'semantic-ui-react'
+import { Container, Segment, Header, Button, Grid, Item, Icon, Popup } from 'semantic-ui-react'
 
 const UserShowcase = () => ( null )    // TODO based on workState
 
@@ -77,7 +77,8 @@ export default UserProfileRoute = React.createClass({
 
   render: function() {
     const { user, ownsProfile } = this.props
-    if (!user) return <ThingNotFound type="User" />
+    if (!user) 
+      return <ThingNotFound type="User" />
 
     return (
       <Container>
@@ -115,8 +116,7 @@ export default UserProfileRoute = React.createClass({
 
   renderUserInfo: function(user, ownsProfile) {
     const { avatar, name, mgb1name, title, bio, focusMsg } = user.profile
-    const editsDisabled = !ownsProfile
-
+    const editsDisabled = !ownsProfile || user.suIsBanned
 
     return (
       <Grid.Column width={8} id="mgbjr-profile-bioDiv">
@@ -136,6 +136,7 @@ export default UserProfileRoute = React.createClass({
               <Item.Content>
 
                 <Item.Header content={name} />
+                { user.suIsBanned && <div><small style={{color: 'red'}}>Suspended Account</small></div> }
                 <Item.Meta>
                   <p>
                     <b title="This is the user's name on the old MGBv1 system. There is currently no verification of this claim">
@@ -151,6 +152,30 @@ export default UserProfileRoute = React.createClass({
                     change={this.handleProfileFieldChanged}
                     isDisabled={editsDisabled}
                     />
+                    
+                    { _.isString(mgb1name) && mgb1name.length > 0 && 
+                      <Popup
+                        on='hover'
+                        hoverable
+                        positioning='bottom right'
+                        trigger={<span>...</span>}
+                        mouseEnterDelay={500}
+                        >
+                        <Popup.Header>
+                          Legacy 'MGBv1' account
+                        </Popup.Header>
+                        <Popup.Content>
+                          <div>Prior account in the legacy Flash-based 'MGB1' system from 2007:</div>
+                          <br/>
+                          <a className="mini image"  href={`http://s3.amazonaws.com/apphost/MGB.html#user=${mgb1name};project=project1`} target="_blank">
+                            <img  
+                              className="ui centered image" 
+                              style={{ maxWidth: "64px", maxHeight: "64px" }}
+                              src={`https://s3.amazonaws.com/JGI_test1/${mgb1name}/project1/tile/avatar` } />
+                          </a>
+                        </Popup.Content>
+                      </Popup>
+                    }
                   </p>
                 </Item.Meta>
 
@@ -182,14 +207,6 @@ export default UserProfileRoute = React.createClass({
                       />
                   </p>
                 </Item.Description>
-                { /*
-                  mgb1name && false &&  // Currently not shown - doesn't have good place in layout
-                  <a className="right floated mini image"  href={`http://s3.amazonaws.com/apphost/MGB.html#user=${mgb1name};project=project1`} target="_blank">
-                    <img  style={{ maxWidth: "64px", maxHeight: "64px" }}
-                          ref={ (c) => { if (c) c.src=`https://s3.amazonaws.com/JGI_test1/${mgb1name}/project1/tile/avatar` } } />
-                  </a>
-                  */
-                }
 
                 <Item.Extra>
                   <Button.Group size='small' vertical>

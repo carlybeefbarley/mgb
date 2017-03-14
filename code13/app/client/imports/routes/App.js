@@ -454,6 +454,9 @@ const App = React.createClass({
                 { isNetworkFailure &&
                   <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable' style={{marginLeft: '8px'}}/>
                 }
+                { currUser && currUser.suIsBanned &&
+                  <Message error icon='ban' header='Your Account has been suspended by an Admin' list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']}/>
+                }
                 <NavBar
                     currUser={currUser}
                     user={user}

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { Projects, Azzets } from '/imports/schemas'
 import { check } from 'meteor/check'
-import { checkIsLoggedIn, checkMgb } from './checkMgb'
+import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 import validate from '/imports/schemas/validate'
 import { doFixupAssetReferences } from './assets-server-forkFixup'
 
@@ -24,7 +24,7 @@ Meteor.methods({
 
   "Project.Azzets.fork": function (opts = {}) {
     // 0. Perform Input/User Validations
-    checkIsLoggedIn()
+    checkIsLoggedInAndNotSuspended()
     checkMgb.projectName(opts.newProjectName)
     checkMgb.projectName(opts.sourceProjectName)
     check(opts.sourceProjectOwnerId, String)
@@ -134,7 +134,7 @@ Meteor.methods({
                                   // references. For NOW, they assume ONLY the owner has changed
   "Azzets.fork": function (srcId, opts = {}) {
     // 0. Perform Input/User Validations
-    checkIsLoggedIn()
+    checkIsLoggedInAndNotSuspended()
     check(srcId, String)
     if (opts.newAssetName)
       checkMgb.assetName(opts.newAssetName)
@@ -243,7 +243,7 @@ Meteor.methods({
 
   "Azzets.revertDataFromForkParent": function (assetId, forkParentId) {
     // 0. Perform Input/User Validations
-    checkIsLoggedIn()
+    checkIsLoggedInAndNotSuspended()
     check(assetId, String)
 
     // Load Asset

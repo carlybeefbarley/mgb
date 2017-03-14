@@ -158,13 +158,17 @@ module.exports = (getBrowser) => {
     it("Tutorial APIs", function(done){
       const id = 'Lbq3czHhanrawJJfJ'
       const name = 'stauzs/test.tutorial'
+      const idLike = 'stauzs:test.tutorial'
       browser.getLocal('/api/asset/tutorial/' + id)
+        .then(() => browser.getLocal('/api/asset/tutorial/' + idLike))
         .then(done)
     })
     it("Empty Tutorial APIs", function(done){
       const id = 'AHKcgRZBDJDgsL4jT'
       const name = 'stauzs/EmptyTutorial'
+      const idLike = 'stauzs:EmptyTutorial'
       browser.getLocal('/api/asset/tutorial/' + id)
+        .then(() => browser.getLocal('/api/asset/tutorial/' + idLike))
         .then(done)
     })
 

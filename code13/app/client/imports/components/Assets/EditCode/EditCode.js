@@ -1364,7 +1364,6 @@ export default class EditCode extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const retval = !(nextState._preventRenders || this.state.creatingBundle)
-    console.log("should update: ", retval)
     return retval // && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
   }
 

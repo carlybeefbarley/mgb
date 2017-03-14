@@ -27,6 +27,7 @@ const ProjectCard = props => {
       <ImageShowOrChange
         className="image"
         imageSrc={getProjectAvatarUrl(project)}
+        header='Project Avatar'
         canEdit={canEdit}
         canLinkToSrc={canEdit}
         handleChange={(newUrl, avatarId) => handleFieldChanged({ avatarAssetId: avatarId })}

@@ -97,8 +97,8 @@ export default SignupRoute = React.createClass({
       password: password,
       profile: {
         name: username,
-        avatar: "http://www.gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=50&d=mm",  // actual image picked by user to display
-        images: ["http://www.gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=50&d=mm"] // collection of images in users account
+        avatar: "http://www.gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=155&d=mm",  // actual image picked by user to display
+        images: ["http://www.gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=155&d=mm"] // collection of images in users account
       }
     }, error => {
       if (error)

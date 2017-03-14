@@ -20,7 +20,7 @@ export default SpecialGlobals = {
     "theta":          0.8,
     "gravity":        0.1
   },
-  defaultUserProfileImage: '//www.gravatar.com/avatar/2e2c17f8f3abdb1bb2594ebd2d3b35c5?s=50&d=mm',
+  defaultUserProfileImage: '//www.gravatar.com/avatar/2e2c17f8f3abdb1bb2594ebd2d3b35c5?s=155&d=mm',
 
   thumbnail: {
     width: 230,     // In px

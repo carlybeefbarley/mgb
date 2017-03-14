@@ -466,7 +466,7 @@ export default AssetEditRoute = React.createClass({
         }
 
         { (!asset.suIsBanned || isOwner) &&
-          <Grid.Column width='16' style={{/* overflow: 'auto' /* restore overflow for editors - as we disabled it above ???? */}}>
+          <Grid.Column width='16' style={{overflow: 'auto' /* restore overflow for editors - as we disabled it above ???? */}}>
             <AssetEdit
               key={asset._id}
               asset={asset}

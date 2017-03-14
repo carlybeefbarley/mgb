@@ -49,7 +49,7 @@ const ImageShowOrChange = ( { className, imageSrc, canEdit, canLinkToSrc, handle
           <span>Drag an MGB Graphic Asset here to change the chosen image. </span> :
           <span>You do not have permission to change this. </span>
         }
-        { canLinkToSrc && avatarAssetId && <span>You can click this to view/edit the Asset</span> }
+        { canLinkToSrc && avatarAssetId && <span>You can click the Image to view/edit the Graphic Asset</span> }
       </Popup.Content>
     </Popup>
   )

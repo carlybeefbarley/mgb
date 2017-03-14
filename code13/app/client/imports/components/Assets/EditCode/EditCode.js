@@ -1322,7 +1322,7 @@ export default class EditCode extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     // console.log("Should update!")
-    return !(nextState._preventRenders || this.state.creatingBundle) && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
+    return !(nextState._preventRenders || this.state.creatingBundle) // && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
   }
 
   codemirrorValueChanged(doc, change) {

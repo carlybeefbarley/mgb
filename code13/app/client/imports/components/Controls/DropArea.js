@@ -5,7 +5,6 @@ import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
-import Spinner from '/client/imports/components/Nav/Spinner'
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
@@ -15,13 +14,13 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 // TODO - change pattern to be getMeteorData so we fix the timing issues.
 export default class DropArea extends React.Component {
-  state = { text: '', isLoading: false}
+  state = { text: '' }
 
   static PropTypes = {
     kind: PropTypes.string.required, // asset kind which will accept this drop area
     value: PropTypes.string, // previously saved value
     ids: PropTypes.object, // map with [value] = asset._id - to track renamed assets
-    asset: PropTypes.object, // asse assigned to this dropArea
+    asset: PropTypes.object, // Asset assigned to this dropArea
     onChange: PropTypes.function, // callback
     text: PropTypes.string // alternative text to display
  }
@@ -101,7 +100,7 @@ export default class DropArea extends React.Component {
 
   handleDrop(e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
-    
+
     if (!asset) {
       console.log("Drop - NO asset")
       return
@@ -167,16 +166,10 @@ export default class DropArea extends React.Component {
     // TODO: render effect
     return (
       <QLink to={`/u/${asset.dn_ownerName}/asset/${asset._id}`}>
-        {
-          imgLink
-          ?
-          <div>
-            <img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={imgLink}/> 
-            <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div> 
-          </div>
-          :
-          <Spinner />
-        }
+        <div>
+          <img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={imgLink}/> 
+          <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div> 
+        </div>
       </QLink>
     )
   }

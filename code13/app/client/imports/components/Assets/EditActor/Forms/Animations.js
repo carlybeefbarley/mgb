@@ -1,13 +1,13 @@
 import _ from 'lodash'
 import React from 'react'
-import { Table, Accordion, Icon } from 'semantic-ui-react'
+import { Table, Accordion, Icon, Dimmer, Loader } from 'semantic-ui-react'
 
 import DropArea from '../../../Controls/DropArea.js'
 import SmallDD from '../../../Controls/SmallDD.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
 
 export default class Animations extends React.Component {
-  state = { serializedForm: {} }
+  state = { serializedForm: {}, isLoading: false }
   get data() {
     return this.props.asset.content2.animationTable
   }
@@ -28,15 +28,16 @@ export default class Animations extends React.Component {
     this.data[index].frame = 0
 
     if (asset) {
+      this.setState({isLoading: true})
       $.get('/api/asset/tileset-info/' + asset._id, (data) => {
         if (data.tilecount > 1) {
           this.data[index].tileName = val + '.frame00'
-
           for (i=1; i<data.tilecount; i++) {
             if (!this.data[index+i].tileName) {
+              let name = data.name + (i > 9 ? '.frame' + i : '.frame0' + i)
               this.data[index+i] = {
                 "action": MgbActor.animationNames[index+i],
-                "tileName": data.name + (i > 9 ? '.frame' + i : '.frame0' + i),
+                "tileName": name,
                 "frame": i,
                 "effect": "no effect"
               }
@@ -45,6 +46,9 @@ export default class Animations extends React.Component {
               break
           }
         }
+      })
+      .done(() => {
+        this.setState({isLoading: false})
       })
     }
     this.props.onChange && this.props.onChange()
@@ -67,6 +71,7 @@ export default class Animations extends React.Component {
             frame={this.data[i].frame} 
             effect={this.data[i].effect} 
             asset={this.props.asset}
+            isLoading={this.state.isLoading}
             onChange={this.changeGraphic.bind(this, i)}
           />
         </Table.Cell>
@@ -192,6 +197,12 @@ export default class Animations extends React.Component {
   
     return (
       <div>
+        {
+          this.state.isLoading && 
+          <Dimmer active inverted>
+            <Loader size='large'>Loading</Loader>
+          </Dimmer>
+        }
         {
           rows.map((anim) => {
             return anim

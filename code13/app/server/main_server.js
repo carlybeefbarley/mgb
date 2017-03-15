@@ -8,8 +8,11 @@ import { getCurrentReleaseVersionString }  from '/imports/mgbReleaseInfo'
 import '/imports/schemas/users'
 import '/imports/schemas/chats'
 import '/imports/schemas/chats-server'
+
 import '/imports/schemas/assets'
-import '/imports/schemas/assets-server'
+import '/imports/schemas/assets-server-fork'
+import '/imports/schemas/assets-server-purge'
+
 import '/imports/schemas/sysvars'
 import '/imports/schemas/projects'
 import '/imports/schemas/projects-server'

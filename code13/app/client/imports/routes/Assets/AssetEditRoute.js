@@ -760,7 +760,7 @@ export default AssetEditRoute = React.createClass({
     const { asset } = this.data
     const newBanState = !asset.suIsBanned
 
-    Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), { suIsBanned: newBanState }, (err, res) => {
+    Meteor.call('Azzets.changeAssetBan', asset._id, newBanState, err => {
       if (err)
         showToast(err.reason, 'error')
     })

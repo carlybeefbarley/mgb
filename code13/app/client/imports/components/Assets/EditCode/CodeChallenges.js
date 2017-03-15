@@ -153,11 +153,23 @@ export default class CodeChallenges extends React.Component {
   }
 
   render() {
-    // const description = this.skillNode.$meta.description
-    const description = this.state.data.description || []
+    const description = _.clone(this.state.data.description) || []
+    const instructions = []
     const { showAllTestsCompletedModal } = this.state
     const testCountStr = this.state.testCount > 0 ? ' '+this.state.testCount : ''
-    const latestTest = this.state.latestTest ? this.formatTime(this.state.latestTest) : ''
+    const latestTest = this.state.latestTest ? this.formatTime(this.state.latestTest) : null
+
+    // take out instructions from description array. Instructions are after <hr> tag
+    const hrIdx = description.indexOf('<hr>')
+    if(hrIdx > 0){
+      for(let i=description.length-1; i>=hrIdx; i--){
+        instructions.unshift(description.pop())
+      }
+
+      // remove <hr> element
+      instructions.shift()
+    }
+
 
     return (
       <div id="codeChallenges" className={"content " +(this.props.active ? "active" : "")}>
@@ -206,10 +218,33 @@ export default class CodeChallenges extends React.Component {
             </List.Item>
           ))
         }
-        <List.Item><List.Content style={{textAlign:'right', fontSize: '11px', color:'#999'}}>{latestTest}</List.Content></List.Item>
+        {
+          latestTest &&
+            <List.Item>
+              <List.Content style={{textAlign:'right', fontSize: '11px', color:'#999', paddingBottom: 0}}>
+                {latestTest}
+              </List.Content>
+            </List.Item>
+        }
         </List>
 
-        <Divider as={Header} color='grey' size='small' horizontal content='Challenge Instructions'/>
+        {
+          instructions.length > 0 &&
+            <Divider as={Header} color='grey' size='small' horizontal content='Challenge Instructions'/>
+        }
+
+        {
+          instructions.length > 0 &&
+            <Segment>
+              {
+                instructions.map((text, i) => (
+                  <div key={i} style={{marginTop: '0.5em'}} dangerouslySetInnerHTML={{ __html: text}} />
+                ))
+              }
+            </Segment>
+        }
+
+        <Divider as={Header} color='grey' size='small' horizontal content='Theory'/>
 
         {
           description.map((text, i) => (

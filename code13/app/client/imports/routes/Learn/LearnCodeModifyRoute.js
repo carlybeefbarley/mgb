@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
@@ -25,7 +24,7 @@ const jsItems = [
     icon: 'game',
     link: '/u/!vault/project/cpTvrRFnZzWLhxWgN',
     content: 'Runner',
-    desc: `Never ending runner game`,
+    desc: `Infinite runner game`,
     mascot: 'game_runner',
   },
   {
@@ -43,11 +42,7 @@ const jsItems = [
     desc: ``
   },
   */
-
-
 ]
-
-
 
 const LearnCodeModifyRoute = ( { currUser }, context ) => {
   return (

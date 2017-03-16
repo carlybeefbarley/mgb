@@ -7,7 +7,15 @@ import { checkMgb } from './checkMgb'
 // This file must be imported by main_server.js so that the Meteor method can be registered
 //
 
+// Currently, this is VERY conservative.. It moves Assets to a PurgedAzzets table that 
+// has no other use.    Later, when we are confident the purge is a reasonable system we 
+// could just skip the move to PurgedAzzets and do a cheaper Azzets.remove() query.. but 
+// the only real reason to do that would be excessive scale problems.. so best to leave this
+// as-is for now.
 const SHORTEST_PURGE_AGE_DAYS = 28
+
+// TODO: We can have orphaned chats in Chats.js.. there could be a lazy process to 
+// get rid of these ONCE no-one has them pinned any more.
 
 Meteor.methods({
   // 
@@ -17,6 +25,7 @@ Meteor.methods({
   //   opts.purgeIfUntouchedForNumDays      // Required Number
   //   opts.isDryRun                        // Required Boolean
   //   opts.assetOwnerName                  // Optional String. If null, or "" then all users' assets are in scope
+  //  e.g. Meteor.call("Azzets.Purge", { purgeIfUntouchedForNumDays: 200, isDryRun: true, assetOwnerName: '' })
 
   "Azzets.Purge": function (opts = {}) {
 
@@ -66,6 +75,7 @@ Meteor.methods({
         }
       )
     }
+    console.log(`PurgedAzzets DB contains ${PurgedAzzets.find().count()} items`)
 
     return { toPurgeCount, numPurgedCount, opts, now, purgeDate }
   }

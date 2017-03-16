@@ -2323,7 +2323,7 @@ export default class EditCode extends React.Component {
     //   transformOrigin: "0 0",
     //   overflow: "hidden"
     // }
-    const fullSize = {position: "absolute", top: 0, bottom: 0, left: 0, right: 0, overflow: "auto" }
+    const fullSize = {position: "absolute", top: 0, bottom: 0, left: 0, right: '0.5em', overflow: "auto" }
     const isPopup = this.state.isPopup || !infoPaneOpts.col2
     const gameScreen = <GameScreen
         key="gameScreen"

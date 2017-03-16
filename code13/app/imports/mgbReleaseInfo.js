@@ -15,6 +15,51 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Wednesday Mar 15 2017 22:00 GMT-0700 (PST)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3780'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'Beta',
+          'type': 'feature',
+          'changeName': 'From Alpha To Beta',
+          'changeSummary': 'We have been describing this system as being in "Alpha" condition for sometime, but we feel it is more like a "Beta" version now.. so as of this build we are calling ourselves "Beta" :) YAY!',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'db.assets',
+          'type': 'feature',
+          'changeName': 'Asset Purge',
+          'changeSummary': 'When Assets are deleted, they are just \'marked as deleted\'. In this build we have also added a time-delayed \'purge\' of deleted items that truly removes them from the system. Currently the purge timer is set for 28 days after a deleted asset was last edited, but this will shrink down to around 5 days once we are happy there are no adverse side-effects of purging.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'ui',
+          'type': 'improvement',
+          'changeName': 'UI Tweaks',
+          'changeSummary': 'Some UI aspects related to Code tutorials/challenges have been improved. Some of the Badges have been updated. Performance improvements. Bugfix for actorMap dialog problems',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Asset Ban now covers some extra cases.  ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Tuesday Mar 14 2017 00:30 GMT-0700 (PST)',
 
       'id': {

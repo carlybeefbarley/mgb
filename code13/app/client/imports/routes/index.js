@@ -34,9 +34,6 @@ import Privacy from '/client/imports/legal/Privacy'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
-import UserBashes from './UserBashes'
-
-
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
 // Route matching: https://github.com/reactjs/react-router/blob/master/docs/guides/RouteMatching.md
@@ -72,8 +69,8 @@ Meteor.startup(function () {
         <Route path="/learn/getstarted" component={LearnGetStartedRoute} name='Get Started'/>
 
         <Route path="/learn/code" component={LearnCodeRoute} name='Programming'/>
-        <Route path="/learn/code/:item" component={LearnCodeRouteItem} name='Learn Code'/>
         <Route path="/learn/code/modify" component={LearnCodeModifyRoute} name='Modify Games'/>
+        <Route path="/learn/code/:item" component={LearnCodeRouteItem}/>
 
 
         <Route path="/games" component={BrowseGamesRoute} name="Browse Games" />
@@ -87,7 +84,6 @@ Meteor.startup(function () {
         <Route path="users" component={Users.UserListRoute} name="Search All Users" />
 
         <Route path="u/:username/import" component={Import} />
-        <Route path="/userBashes" component={UserBashes} />
 
         <Route path="user/:id" component={Users.Profile} name="Profile"/>
         <Route path="u/:username" component={Users.Profile} name="Profile"/>

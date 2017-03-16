@@ -66,6 +66,12 @@ const ProjectsSection = ( { usernameToShow, projectNames } ) =>
   )
 }
 
+const _learnCodeItemHdrs = {
+  'basics': 'JavaScript basics',
+  'phaser': 'GameDev Concepts',
+  'games': 'GameDev Tutorials'
+}
+
 const NavBarBreadcrumb = ( {
   name,
   user,
@@ -76,6 +82,7 @@ const NavBarBreadcrumb = ( {
   const { query, pathname } = location
   const assetId = params && params.assetId
   const projectId = params && params.projectId
+  const learnCodeItem = params && pathname && pathname.startsWith('/learn/code/') && params.item
   const queryProjectName = query ? query.project : null
   const usernameToShow = user ? user.profile.name : params.username
   const { kind, assetVerb, projectNames } = currentlyEditingAssetInfo
@@ -169,6 +176,11 @@ const NavBarBreadcrumb = ( {
       { pathname && pathname.startsWith('/learn/code/') && _sep }
       { pathname && pathname.startsWith('/learn/code/') && 
         <QLink className="section" to={`/learn/code`}>Programming&nbsp;</QLink> 
+      }
+
+      { /*   > LearnCode ITEM   */ }
+      { learnCodeItem &&  _sep }
+      { learnCodeItem && <span>{_learnCodeItemHdrs[learnCodeItem]}&nbsp;</span>
       }
 
       { /*   > [assetVerb||pageName||null]   */ }

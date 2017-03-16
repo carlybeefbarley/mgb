@@ -2449,7 +2449,7 @@ export default class EditCode extends React.Component {
                 />
               }
 
-              { !docEmpty && asset.kind === 'code' &&
+              { !docEmpty && asset.kind === 'code' && 
                 // Current Line/Selection helper (header)
                 <div id="mgbjr-EditCode-codeMentor" className={"title " + (asset.skillPath ? "" : "active") }>
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -2504,7 +2504,7 @@ export default class EditCode extends React.Component {
                 </div>
               }
 
-              { docEmpty && !asset.isCompleted &&
+              { docEmpty && !asset.isCompleted && !isCodeTutorial && !isChallenge && 
                 // Clean sheet helper!
                 <div className="active title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -2512,7 +2512,7 @@ export default class EditCode extends React.Component {
                     </span>
                 </div>
               }
-              { docEmpty && !asset.isCompleted &&
+              { docEmpty && !asset.isCompleted && !isCodeTutorial && !isChallenge && 
                 <div className="active content">
                   An Empty Page! If you like, you can click one of the following buttons to paste some useful template code into your
                   empty file

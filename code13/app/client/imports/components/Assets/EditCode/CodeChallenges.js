@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import { Button, Message, Icon, List, Segment, Popup, Divider, Header } from 'semantic-ui-react'
 
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
-import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
+import SkillNodes, { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo } from "/client/imports/routes/QLink"
 import { learnSkill, hasSkill } from '/imports/schemas/skills'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
@@ -29,7 +29,7 @@ const _runFrameConfig = {
   codeTestsDataPrefix: 'codeTests'
 }
 
-const _hackDeferForFirstTestRunMs = 200
+//const _hackDeferForFirstTestRunMs = 200
 const _openHelpChat = () => 
   utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
 
@@ -50,12 +50,13 @@ export default class CodeChallenges extends React.Component {
     // this.skillNode = SkillNodes.$meta.map[props.skillPath]
     this.skillName = _.last(_.split(props.skillPath, '.'))
     this.state = {
+      pendingLoadNextSkill:       false,    // True when next skill is loading.. better experience for slow networks
       results:                    [],       // Array of results we get back from the iFrame that runs the tests
       testCount:                  0,        // how many times user run this test
       latestTest:                 null,     // indicates latest test date
       error:                      null,     // get back from iFrame if it has some syntax error
       console:                    null,     // get back from iFrame console.log messages 
-      showAllTestsCompletedMessage: false,    // true if we want to show the All Tests Completed Modal
+      showAllTestsCompletedMessage: false,  // true if we want to show the All Tests Completed Modal
       data:                       {},       // get challenge data from CDN
     }
 
@@ -132,12 +133,12 @@ export default class CodeChallenges extends React.Component {
 
     if (idx < skillsArr.length-1) {
       const nextSkillName = skillsArr[idx+1]
-      this.setState( { showAllTestsCompletedMessage: false } )
+      this.setState( { pendingLoadNextSkill: true } )
       StartJsGamesRoute('basics', nextSkillName, this.props.currUser)
     } 
     else
     {
-      this.setState( { showAllTestsCompletedMessage: false } )
+      // this.setState( { showAllTestsCompletedMessage: false } )  <-- Better not to - reduce the number of redraws as we change.. we are redirecting anyway
       // alert('Congratulations! You have finished the JavaScript basics challenges!')
       utilPushTo( window.location, '/learn/code' )
     }
@@ -160,6 +161,8 @@ export default class CodeChallenges extends React.Component {
     const instructions = []
     const { showAllTestsCompletedMessage } = this.state
     const latestTestTimeStr = this.state.latestTest ? this.formatTime(this.state.latestTest) : null
+
+    const fullBannerText = this.props.skillPath ? getFriendlyName(this.props.skillPath) : null
 
     // take out instructions from description array. Instructions are after <hr> tag
     const hrIdx = description.indexOf('<hr>')
@@ -189,7 +192,7 @@ export default class CodeChallenges extends React.Component {
 
         { 
           this.state.console &&
-            <Divider as={Header} color='grey' size='small' horizontal content='Console output'/>
+            <Divider as={Header} color='grey' size='tiny' horizontal content='Console output'/>
         }
 
         { 
@@ -205,7 +208,7 @@ export default class CodeChallenges extends React.Component {
               as={Header} 
               {..._smallTopMarginSty}
               color='grey' 
-              size='small' 
+              size='tiny' 
               horizontal>
               <span>Test Results&ensp;
                 {
@@ -244,7 +247,8 @@ export default class CodeChallenges extends React.Component {
                     positive
                     size='small'
                     content='Start next challenge'
-                    icon='right arrow circle'
+                    disabled={this.state.pendingLoadNextSkill}
+                    icon={ this.state.pendingLoadNextSkill ? { loading: true, name: 'circle notched' } : 'right arrow circle' }
                     labelPosition='right'
                     {..._smallTopMarginSty}
                     onClick={this.nextChallenge} />
@@ -253,9 +257,19 @@ export default class CodeChallenges extends React.Component {
           )
         }
 
+        { /*  Challenge Instructions Header  */ }
+        <Divider 
+            as={Header} 
+            {..._smallTopMarginSty} 
+            color='grey' 
+            size='tiny' 
+            horizontal 
+            content='Challenge Instructions'/>
 
-        <Divider as={Header} {..._smallTopMarginSty} color='grey' size='small' horizontal content='Challenge Instructions'/>
-
+        { fullBannerText && 
+          <Header sub content={fullBannerText} {..._smallTopMarginSty}/>
+        }
+        
         {
           description.map((text, i) => (
             <div key={i} {..._smallTopMarginSty} dangerouslySetInnerHTML={{ __html: text}} />
@@ -279,8 +293,8 @@ export default class CodeChallenges extends React.Component {
             <a
                 href='https://github.com/freeCodeCamp/freeCodeCamp/blob/staging/LICENSE.md'
                 target="_blank" 
-                style={ { color: '#aaa', float: 'right' } } >
-              <small>(FreeCodeCamp content)</small>
+                style={ { color: '#bbb', float: 'right' } } >
+              <small>(based on FreeCodeCamp.com content)</small>
             </a>
           )}
           positioning='left center'

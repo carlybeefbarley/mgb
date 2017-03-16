@@ -28,7 +28,7 @@ const learnCodeItems = [
     skillPath: 'code.js.phaser',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `'Phaser' is a very popular game programming library written in JavaScript. These tutorials explain what Phaser is, and how to use it to handle graphics, sound, maps, physics etc in games.`
+    desc: `'Phaser' is a very popular game programming library written in JavaScript. These tutorials explain what Phaser is, and demonstrate how to use it to handle graphics, sound, maps, physics etc in your games.`
   },
   {
     mascot: 'mole',
@@ -38,8 +38,7 @@ const learnCodeItems = [
     skillPath: 'code.js.games',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `Use your new game programming knowledge to create a game step by step. 
-    The first tutorial shows how to code the minimal 'base' of game. The next tutorials show how to add features.`
+    desc: `These walkthoughs will show you how to create a game using your new PhaserJS game-dev skills.`
   },
   {
     mascot: 'arcade_player',
@@ -48,8 +47,7 @@ const learnCodeItems = [
     link: '/learn/code/modify',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `There are couple of games to play around with. You can fork (copy) them and then 
-    add your own ideas to each game.`
+    desc: `We provide some working games that you can fork (copy) and change as you wish.`
   },
 ]
 

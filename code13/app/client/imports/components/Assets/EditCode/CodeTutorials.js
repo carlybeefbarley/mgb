@@ -1,10 +1,9 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import ReactDOM from 'react-dom'
-import { Button, Modal, Icon, List, Segment, Popup, Divider, Header } from 'semantic-ui-react'
+import { Button, Modal, Icon, Message, Divider, Header } from 'semantic-ui-react'
 
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
-import SkillNodes, { isPhaserTutorial } from '/imports/Skills/SkillNodes/SkillNodes'
+import SkillNodes, { isPhaserTutorial, getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo } from "/client/imports/routes/QLink"
 import { learnSkill } from '/imports/schemas/skills'
 
@@ -12,10 +11,7 @@ import { ChatSendMessageOnChannelName } from '/imports/schemas/chats'
 
 import './editcode.css'
 
-
-const _jsGamesSkillsPath = 'code.js.games'
-const _jsGamesSkillsNode = SkillNodes.$meta.map[_jsGamesSkillsPath]
-
+const _smallTopMarginSty = { style: { marginTop: '0.5em'} }
 
 export default class CodeTutorials extends React.Component {
 
@@ -53,10 +49,6 @@ export default class CodeTutorials extends React.Component {
     })
   }
 
-  componentDidMount () {
-    const tutorialUrl = makeCDNLink(window.location.origin + this.skillNode.$meta.link) 
-  }
-
   stepNext = () => {
     const step = this.state.step + 1
     if (step < this.state.data.steps.length) {
@@ -88,7 +80,7 @@ export default class CodeTutorials extends React.Component {
     const code = currStep.code
     this.props.codeMirror.setValue(code)
     this.props.quickSave()
-    if(currStep.highlight){
+    if (currStep.highlight) {
       currStep.highlight.map((highlight) => {
         this.props.highlightLines(highlight.from, highlight.to)
       })
@@ -100,10 +92,16 @@ export default class CodeTutorials extends React.Component {
     this.setState({ isCompleted: true })
   }
 
+  navigateToSkillsList = () => {
+    const returnToSkillsUrl = this.isPhaserTutorial ? '/learn/code/phaser' : '/learn/code/games'
+    utilPushTo( window.location, returnToSkillsUrl )
+  }
+
   render () {
     const description = this.state.data.steps ? this.state.data.steps[this.state.step].text : ''
+    const totalSteps = this.state.data.steps ? this.state.data.steps.length : 0
+    const isLastStep = totalSteps > 0 && this.state.step == totalSteps-1
     const { isCompleted, isTaskSubmitted } = this.state
-    const returnToSkillsUrl = this.isPhaserTutorial ? '/learn/code/phaser' : '/learn/code/games'
 
     return (
       <div id="mgb-codeChallenges" className={"content " +(this.props.active ? "active" : "")} style={this.props.style}>
@@ -113,37 +111,54 @@ export default class CodeTutorials extends React.Component {
         }
         {
           !this.isPhaserTutorial &&
-          <Button size='small' color='green' onClick={this.stepBack} icon='backward' content='Back' disabled={this.state.step === 0} />
+          <Button 
+              size='small' 
+              color='green' 
+              onClick={this.stepBack} 
+              icon='backward' 
+              content='Back' 
+              disabled={this.state.step === 0 || isCompleted} />
         }
         {
           !this.skillNode.$meta.isTask &&
-          <Button size='small' color='green' onClick={this.stepNext} icon='forward' content='Next' />
+          <Button 
+              size='small' 
+              color='green' 
+              onClick={this.stepNext} 
+              icon='forward' 
+              content={isLastStep ? 'Finish' : 'Next'} 
+              disabled={isCompleted}/>
         }
-        <Button size='small' color='green' onClick={this.resetCode} icon='refresh' content='Reset code' />
+        <Button basic size='small' color='green' onClick={this.resetCode} icon='refresh' content='Reset code' />
 
-        <Divider as={Header} color='grey' size='small' horizontal content='Description'/>
-        <div style={{marginTop: '0.5em'}} dangerouslySetInnerHTML={{ __html: description}} />
+        <Divider as={Header} color='grey' size='tiny' horizontal content={getFriendlyName(this.props.skillPath)}/>
 
         { isCompleted && (
-            <Modal 
-                closeOnDocumentClick={true} 
-                closeOnRootNodeClick={false}
-                defaultOpen >
-              <Modal.Header>
-                <Icon size='big' color='green' name='check circle' />
-                Success
-              </Modal.Header>
-              <Modal.Content>
+            <Message size='small' icon style={{paddingBottom: 0}}>
+              <Icon color='green' name='check circle'/>
+              <Message.Content>
+                <Message.Header>
+                  Success
+                </Message.Header>
                 You completed this Code Tutorial
-              </Modal.Content>
-              <Modal.Actions>
                 <Button 
                     positive
-                    content='Tutorial List'
-                    onClick={ () => { utilPushTo( window.location, returnToSkillsUrl ) }} />
-              </Modal.Actions>
-            </Modal>
+                    size='small'
+                    content='Return to Tutorial List'
+                    icon='up arrow circle'
+                    labelPosition='right'
+                    {..._smallTopMarginSty}
+                    onClick={ this.navigateToSkillsList } />
+              </Message.Content>
+            </Message>
           )
+        }
+        
+        <div style={{marginTop: '0.5em'}} dangerouslySetInnerHTML={{ __html: description}} />
+        
+        { 
+          totalSteps > 0 && 
+          <div style={{float: 'right', color: '#aaa'}}><small>Step #{1+this.state.step} of {totalSteps}</small></div>
         }
 
         { isTaskSubmitted && (
@@ -162,7 +177,7 @@ export default class CodeTutorials extends React.Component {
                 <Button 
                     positive
                     content='Tutorial List'
-                    onClick={ () => { utilPushTo( window.location, returnToSkillsUrl ) }} />
+                    onClick={ this.navigateToSkillsList } />
               </Modal.Actions>
             </Modal>
           )

@@ -313,7 +313,6 @@ const MgbActor = {
     {
       MgbActor._loadedSounds = {}
       var names = this.alCannedSoundsList.slice(1)    // ignore first item
-      console.log(names)
       var name
       var countClosure = names.length
       var canplay = function(result) { if (--countClosure === 0) { callback && callback(result)} };
@@ -325,6 +324,8 @@ const MgbActor = {
         MgbActor._loadedSounds[name].addEventListener('canplay', canplay, false)
         MgbActor._loadedSounds[name].src = "/audio/builtinForActors/" + name + ".wav"
       }
+
+      
     }
   },
 
@@ -349,7 +350,8 @@ const MgbActor = {
     currentStepStyle, 					// -1 means stationary. 0...3 Mean north/east/south/west. If -1, we use priorstepStyle to work out the direction the actor should be facing
     priorStepStyle, 
     tweenCount, 
-    meleeStep = -1)     				// If in Melee, this is 0..7, stating which melee Animation step to use. This then chooses a melee animation (if there is one) depending on the direction - it can return "", unlike the non-melee use of this function. Note that -1 == ActiveActor.MELEESTEP_NOT_IN_MELEE
+    meleeStep = -1     				  // If in Melee, this is 0..7, stating which melee Animation step to use. This then chooses a melee animation (if there is one) depending on the direction - it can return "", unlike the non-melee use of this function. Note that -1 == ActiveActor.MELEESTEP_NOT_IN_MELEE
+  )
   {
     const frame = tweenCount % 5									  // Normal move animations have 5 steps
     const frame_Stationary = (tweenCount >> 1) % 16	// # Stationary animations have 16 steps

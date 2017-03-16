@@ -3,8 +3,7 @@
 // Basically - deny the client, and only use Methods.
 
 
-import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats, Settings, Sysvars, Skills } from '/imports/schemas'
-
+import { Users, Azzets, Projects, Activity, ActivitySnapshots, Chats, Settings, Sysvars, Skills, PurgedAzzets } from '/imports/schemas'
 
 const _doDenies = (collectionObjectsArray) => {
   const deniedNames = []
@@ -20,4 +19,4 @@ const _doDenies = (collectionObjectsArray) => {
 }
 
 
-_doDenies([ Users, Azzets, Projects, Activity, ActivitySnapshots, Chats, Settings, Sysvars, Skills ])
+_doDenies([ Users, Azzets, Projects, Activity, ActivitySnapshots, Chats, Settings, Sysvars, Skills, PurgedAzzets ])

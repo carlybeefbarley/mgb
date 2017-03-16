@@ -252,25 +252,42 @@ Meteor.methods({
     return docId
   },
 
-  "Azzets.update": function(docId, canEdit, data) {
-    var count, selector
-    checkIsLoggedInAndNotSuspended()
-
+  "Azzets.changeAssetBan": function(docId, newBool) {
+    checkMgb.checkUserIsSuperAdmin()
     check(docId, String)
-    if (!this.userId)
-      throw new Meteor.Error(401, "Login required")
+    check(newBool, Boolean)
+    const sel = { _id: docId }
+    const changedData = {
+      updatedAt: new Date(),
+      isUnconfirmedSave: this.isSimulation,
+      suIsBanned: newBool
+    }
+
+    const count = Azzets.update(sel, { $set: changedData } )
+
+    if (Meteor.isServer)
+      console.log(`  [Azzets.changeAssetBan]  (${count}) #${docId}  New=${newBool}`)
+    
+    return count
+  },
+
+  // This does not allow changes to the su* fields. It is much simpler 
+  // and more robust to handle those cases in a simpler, privileged path instead of
+  // complicating the general update path
+  "Azzets.update": function(docId, canEdit, data) {
+    checkIsLoggedInAndNotSuspended()
+    check(docId, String)
+
+    var count, selector
 
     // TODO: Move this access check to be server side..
     //   Or check publications have correct deny rules.
     //   See comment below for selector = ...
-    if (!canEdit)
+    if (!canEdit )
       throw new Meteor.Error(401, "You don't have permission to edit this.")   //TODO - make this secure. #insecure#
 
     data.updatedAt = new Date()
     data.isUnconfirmedSave = this.isSimulation
-
-    if (!_.isUndefined(data.suIsBanned) || !_.isUndefined(data.suFlagId))
-      checkMgb.checkUserIsSuperAdmin()
 
     if (data.name)
     {
@@ -284,7 +301,7 @@ Meteor.methods({
       checkMgb.assetDescription(data.text)
     }
 
-    // whitelist what can be updated
+    // whitelist what can be updated. Note that su* are INTENTIONALLY excluded.
     check(data, {
       updatedAt: schema.updatedAt,
 //    dn_ownerName: optional(schema.dn_ownerName),    // may do this lazily in future?
@@ -303,9 +320,7 @@ Meteor.methods({
 
       isCompleted: optional(schema.isCompleted),
       isDeleted: optional(schema.isDeleted),
-      isPrivate: optional(schema.isPrivate),
-      suIsBanned: optional(schema.suIsBanned),
-      suFlagId: optional(schema.suFlagId)
+      isPrivate: optional(schema.isPrivate)
     })
 
     // if caller doesn't own doc, update will fail because fields like ownerId won't match

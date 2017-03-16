@@ -41,15 +41,22 @@ RestApi.addRoute('asset/code/:id', { authRequired: false }, {
 // used in codeEdit - import X from '/owner/codeName'
 RestApi.addRoute('asset/code/:owner/:name', {authRequired: false}, {
   get: function(){
-      // TODO:@Stauzs - (dgolds thinks this should have kind===code in the Query)
     const asset = Azzets.findOne({
       dn_ownerName: this.urlParams.owner,
       name: this.urlParams.name,
       kind: 'code',
       isDeleted: false
     })
+
+    // this can be cached - probably no-go - need better solution (or adjust cloudfront headers)
+    // nice trick to respond browser with his accepted type - e.g. css
+    let contentType = 'text/plain'
+    if(this.request.headers.accept){
+      contentType = this.request.headers.accept.split(',').shift()
+    }
+
     return genAPIreturn(this, asset, asset ? (asset.content2.src || '')  : null, {
-      'Content-Type': "text/plain",
+      'Content-Type': contentType,
       'file-name': asset ? asset.name : this.urlParams.name
     })
   }
@@ -70,14 +77,25 @@ RestApi.addRoute('asset/code/bundle/cdn/:id', {authRequired: false}, {
 // why there is 'u' in the middle ?
 RestApi.addRoute('asset/code/bundle/u/:username/:codename', { authRequired: false }, {
   get: function () {
-    const asset = Azzets.findOne( { dn_ownerName: this.urlParams.username, name: this.urlParams.codename, isDeleted: false } )
+    const asset = Azzets.findOne( {
+      dn_ownerName: this.urlParams.username,
+      name: this.urlParams.codename,
+      isDeleted: false,
+      kind: 'code'
+    } )
     return _makeBundle(this, asset)
   }
 })
 
 RestApi.addRoute('asset/code/bundle/cdn/u/:username/:codename', { authRequired: false }, {
   get: function () {
-    const asset = Azzets.findOne( { dn_ownerName: this.urlParams.username, name: this.urlParams.codename, isDeleted: false }, {
+    const asset = Azzets.findOne( {
+        dn_ownerName: this.urlParams.username,
+        name: this.urlParams.codename,
+        isDeleted: false,
+        kind: 'code'
+      },
+      {
       fields: {updatedAt: 1}
     } )
     return assetToCdn(this, asset, `/api/asset/code/bundle/u/${this.urlParams.username}/${this.urlParams.codename}`)

@@ -32,8 +32,8 @@ import getCDNWorker from '/client/imports/helpers/CDNWorker'
 import validJSName from '/client/imports/helpers/validJSName'
 
 // **GLOBAL*** Tern JS - See comment below...
-import scoped_tern from "tern"
-window.tern = scoped_tern   // 'tern' symbol needs to be GLOBAL due to some legacy non-module stuff in tern-phaser
+// import scoped_tern from "tern"
+// window.tern = scoped_tern   // 'tern' symbol needs to be GLOBAL due to some legacy non-module stuff in tern-phaser
 
 // Tern 'definition files'
 // import "tern/lib/def"     // Do I need? since I'm doing it differently in next 2 lines...
@@ -42,7 +42,9 @@ window.tern = scoped_tern   // 'tern' symbol needs to be GLOBAL due to some lega
 
 import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js'
 
-import InstallMgbTernExtensions from './tern/MgbTernExtensions.js'
+// removed this - as we are using tern worker for a while now -
+// TODO(stauzs): move MGB tern extensions to worker
+// import InstallMgbTernExtensions from './tern/MgbTernExtensions.js'
 import "codemirror/addon/tern/tern"
 import "codemirror/addon/comment/comment"
 
@@ -174,9 +176,12 @@ export default class EditCode extends React.Component {
 
     this.updateUserScripts()
     // previous debounce eats up changes
+    // CHANGES_DELAY_TIMEOUT - improves typing speed significantly on the price of responsiviness of CodeMentor
+    // CodeMentor is affected here only on content change
+    // codeMirrorUpdateHintsDebounced is responsible for simple code browsing
     this.codeMirrorUpdateHintsChanged = _.debounce(() => {
       this.codeMirrorUpdateHints.call(this, true)
-    }, 100, true)
+    }, CHANGES_DELAY_TIMEOUT, true)
 
     this.listeners = {}
     this.listeners.joyrideCodeAction = event => {
@@ -444,7 +449,7 @@ export default class EditCode extends React.Component {
     })
 
     this.tools.loadCommonDefs()
-    InstallMgbTernExtensions(tern)
+    // InstallMgbTernExtensions(tern)
   }
   // update file name - to correctly report 'part of'
   updateDocName() {
@@ -906,9 +911,13 @@ export default class EditCode extends React.Component {
 
   /** Just show the Clean Sheet helpers if there is no code */
   srcUpdate_CleanSheetCase() {
-    this.setState({documentIsEmpty: this._currentCodemirrorValue.length === 0})
-    if(this._currentCodemirrorValue.length === 0){
-      joyrideCompleteTag('mgbjr-CT-EditCode-editor-clean')
+    const isEmpty = this._currentCodemirrorValue.length === 0
+    if(this.state.documentIsEmpty !==  isEmpty) {
+      // set state seems to be expensive - based on profiler data
+      this.setState({documentIsEmpty: isEmpty})
+      if (this._currentCodemirrorValue.length === 0) {
+        joyrideCompleteTag('mgbjr-CT-EditCode-editor-clean')
+      }
     }
   }
 
@@ -1063,186 +1072,234 @@ export default class EditCode extends React.Component {
      */
   }
 
-  srcUpdate_GetInfoForCurrentFunction(callback) {
-    let ternServer = this.ternServer
-    let editor = this.codeMirror
-    if(!ternServer || !editor){
-      callback()
-      return
-    }
-    let currentCursorPos = editor.getCursor()
-    // we need to force internal tern cache to clean up - move cursor to 0,0 and then back
-    // TODO: (stauzs) debug this in free time
-    let {line, char} = currentCursorPos
-    currentCursorPos.line = 0
-    currentCursorPos.char = 0
+  /**
+   * Gets info about function from tern server asynchronously and resolves promise with new state props on completion.
+   * @returns Promise
+   */
+  srcUpdate_GetInfoForCurrentFunction() {
+    return new Promise( resolve => {
+      const ternServer = this.ternServer
+      const editor = this.codeMirror
+      if(!ternServer || !editor){
+        resolve()
+        return
+      }
+      const currentCursorPos = editor.getCursor()
 
-    // get token at 0,0
-    editor.getTokenAt(currentCursorPos, true)
-    currentCursorPos.line = line
-    currentCursorPos.char = char
+      // we need to force internal tern cache to clean up - move cursor to 0,0 and then back
+      // TODO: (stauzs) debug this in free time
+      const {line, char} = currentCursorPos
+      currentCursorPos.line = 0
+      currentCursorPos.char = 0
 
-    // get token at current pos
-    let currentToken = editor.getTokenAt(currentCursorPos, true)
+      // get token at 0,0
+      editor.getTokenAt(currentCursorPos, true)
+      currentCursorPos.line = line
+      currentCursorPos.char = char
 
-    // I stole the following approach from
-    // node_modules/codemirror/addon/tern/tern.js -> updateArgHints so I could get ArgPos
-    // which is otherwise not stored/exposed
-    var argPos = -1
-    if (!editor.somethingSelected()) {
-      var state = currentToken.state
-      var inner = CodeMirror.innerMode(editor.getMode(), state)
-      if (inner.mode.name === "javascript") {
-        var lex = inner.state.lexical
-        if (lex.info === "call") {
-          argPos = lex.pos || 0
-          lex.pos = argPos
+      // get token at current pos
+      const currentToken = editor.getTokenAt(currentCursorPos, true)
+
+      // I stole the following approach from
+      // node_modules/codemirror/addon/tern/tern.js -> updateArgHints so I could get ArgPos
+      // which is otherwise not stored/exposed
+      let argPos = -1
+      if (!editor.somethingSelected()) {
+        const state = currentToken.state
+        const inner = CodeMirror.innerMode(editor.getMode(), state)
+        if (inner.mode.name === "javascript") {
+          const lex = inner.state.lexical
+          if (lex.info === "call") {
+            argPos = lex.pos || 0
+            lex.pos = argPos
+          }
         }
       }
-    }
-    // this hint tooltip is still off when cursor is in the comment.. e.g.
-    // fn(
-    //  arg1, // comment about arg1
-    //  arg2
-    // )
-    ternServer && ternServer.updateArgHints(this.codeMirror)
+      // this hint tooltip is still off when cursor is in the comment.. e.g.
+      // fn(
+      //  arg1, // comment about arg1
+      //  arg2
+      // )
+      ternServer && ternServer.updateArgHints(this.codeMirror)
 
-    var functionTypeInfo = null
-    const _setState = (functionTypeInfo) => {
-      if (functionTypeInfo) {
-        JsonDocsFinder.getApiDocsAsync({
-            frameworkName: functionTypeInfo.origin,
-            //frameworkVersion: "x.x.x",
-            symbolType: "method",
-            symbol: functionTypeInfo.name || functionTypeInfo.exprName   // Tern can't always provide a 'name', for example when guessing
-          },
-          (originalRequest, result) => {
-            // This callback will always be called, but could be sync or async
-            this.setState({
-              "helpDocJsonMethodInfo": result.data,
-              "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {},
-              "functionArgPos": argPos,
-              "functionTypeInfo": functionTypeInfo || {},
-              currentToken: currentToken
-            })   // MIGHT BE SYNC OR ASYNC. THIS MATTERS. Maybe find a better way to handle this down in a component?
+      let functionTypeInfo = null
+      const _doResolve = (functionTypeInfo) => {
+        if (functionTypeInfo) {
+          JsonDocsFinder.getApiDocsAsync({
+              frameworkName: functionTypeInfo.origin,
+              //frameworkVersion: "x.x.x",
+              symbolType: "method",
+              symbol: functionTypeInfo.name || functionTypeInfo.exprName   // Tern can't always provide a 'name', for example when guessing
+            },
+            (originalRequest, result) => {
+              resolve({
+                "helpDocJsonMethodInfo": result.data,
+                "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {},
+                "functionArgPos": argPos,
+                "functionTypeInfo": functionTypeInfo || {},
+                currentToken: currentToken
+              })
+            })
+        }
+        else {
+          resolve({
+            "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {},
+            "functionArgPos": argPos,
+            "helpDocJsonMethodInfo": null,
+            "functionTypeInfo": functionTypeInfo || {},
+            currentToken: currentToken
           })
-      }
-      else {
-        this.setState({
-          "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {},
-          "functionArgPos": argPos,
-          "helpDocJsonMethodInfo": null,
-          "functionTypeInfo": functionTypeInfo || {},
-          currentToken: currentToken
-        })
+        }
       }
 
-      const index = editor.indexFromPos(currentCursorPos)
-      this.getCommentAt( comment => {
-        // console.log("Comment: ", comment)
-        callback()
-        this.setState({
-          comment: comment
-        })
-      }, index)
-    }
+      if (argPos !== -1) {
+        ternServer.request(editor, "type",  (error, data) => {
+          // async call - component may be unmounted already
+          if(!this.isActive)
+            return
+          functionTypeInfo = error ? { error } : data
+          _doResolve(functionTypeInfo)
+        }, currentCursorPos)     // TODO - We need CodeMirror 5.13.5 so this will work
+      }
+      else
+        _doResolve()
+    })
+  }
+  /**
+   * Gets type from tern server asynchronously and resolves promise with new state props on completion.
+   * @returns Promise
+   */
+  srcUpdate_GetRelevantTypeInfo() {
+    return new Promise(resolve => {
+      const ternServer = this.ternServer
+      const editor = this.codeMirror
+      if(!ternServer || !editor){
+        resolve()
+        return
+      }
+      const position = editor.getCursor()
+      const query = {
+        type: "type",
+        depth: 0
+        //preferFunction: true
+      }
 
-    if (argPos !== -1) {
-      ternServer.request(editor, "type",  (error, data) => {
+      ternServer.request(editor, query, (error, data) => {
         // async call - component may be unmounted already
         if(!this.isActive)
           return
-        functionTypeInfo = error ? { error } : data
-        _setState(functionTypeInfo)
-      }, currentCursorPos)     // TODO - We need CodeMirror 5.13.5 so this will work
-    }
-    else
-      _setState()
-  }
-
-  srcUpdate_GetRelevantTypeInfo(callback) {
-    let ternServer = this.ternServer
-    let editor = this.codeMirror
-    if(!ternServer || !editor){
-      callback()
-      return
-    }
-    let position = editor.getCursor()
-    let query = {
-      type: "type",
-      depth: 0
-      //preferFunction: true
-    }
-
-    ternServer.request(editor, query, (error, data) => {
-      // async call - component may be unmounted already
-      if(!this.isActive)
-        return
-      if (error)
-        this.setState({atCursorTypeRequestResponse: {"error": error}})
-      else {
-        if (data.type == data.name) {
-          query.depth = 1
-          ternServer.request(editor, query, (error, data) => {
-            // async call - component may be unmounted already
-            if(!this.isActive)
-              return
-            if (error)
-              this.setState({atCursorTypeRequestResponse: {"error": error}})
-            else {
-              this.setState({atCursorTypeRequestResponse: {data}})
-            }
-          }, position)
+        if (error)
+          resolve({atCursorTypeRequestResponse: {"error": error}})
+        else {
+          if (data.type == data.name) {
+            query.depth = 1
+            ternServer.request(editor, query, (error, data) => {
+              // async call - component may be unmounted already
+              if(!this.isActive)
+                return
+              if (error)
+                resolve({atCursorTypeRequestResponse: {"error": error}})
+              else
+                resolve({atCursorTypeRequestResponse: {data}})
+            }, position)
+          }
+          else
+            resolve({atCursorTypeRequestResponse: {data}})
         }
+      }, position)
+    })
+  }
+  /**
+   * Gets references from tern server asynchronously and resolves promise with new state props on completion.
+   * @returns Promise
+   */
+  srcUpdate_GetRefs() {
+    return new Promise(resolve => {
+      let ternServer = this.ternServer
+      let editor = this.codeMirror
+      if(!ternServer || !editor){
+        resolve()
+        return
+      }
+      let position = editor.getCursor()
+
+      ternServer.request(editor, "refs", (error, data) => {
+        // async call - component may be unmounted already
+        if(!this.isActive)
+          return // discuss: resolve or just ignore???
+        if (error)
+          resolve({atCursorRefRequestResponse: {"error": error}})
         else
-          this.setState({atCursorTypeRequestResponse: {data}})
+          resolve({atCursorRefRequestResponse: {data}})
+      }, position)
+    })
+  }
+  /**
+   * Gets definitions from tern server asynchronously and resolves promise with new state props on completion.
+   * @returns Promise
+   */
+  srcUpdate_GetDef() {
+    return new Promise( resolve => {
+      let ternServer = this.ternServer
+      let editor = this.codeMirror
+      if (!ternServer || !editor) {
+        resolve()
+        return
       }
-      callback()
-    }, position)
+      let position = editor.getCursor()
+
+      ternServer.request(editor, "definition", (error, data) => {
+        // async call - component may be unmounted already
+        if (!this.isActive)
+          return
+        if (error)
+          resolve({atCursorDefRequestResponse: {"error": error}})
+        else {
+          data.definitionText = (data.origin === this.props.asset.name && data.start) ? editor.getLine(data.start.line).trim() : null
+          resolve({atCursorDefRequestResponse: {data}})
+        }
+      }, position)
+    })
+  }
+  /**
+   * Gets comment at char index - resolves on completetion with found comment (if any) - may or may not be async
+   * @param {number} index - character index in the WHOLE document
+   * @returns Promise
+   */
+  getCommentAt(index = 0){
+    return new Promise(resolve => {
+      if(this.mgb_c2_hasChanged || !this.mgb_cache.comments || this.mgb_cache.comments.length === 0){
+        this.ternServer.server.getComments((comments) => {
+          this.mgb_cache.comments = comments
+          resolve(_.find(comments, com => com.start <= index && com.end >= index))
+        })
+      }
+      else{
+        resolve(_.find(this.mgb_cache.comments, com => com.start <= index && com.end >= index))
+      }
+    })
   }
 
-  srcUpdate_GetRefs(callback) {
-    let ternServer = this.ternServer
-    let editor = this.codeMirror
+  /**
+   * @typedef {Object} Comment
+   * @property {boolean} block - is this a block comment?
+   * @property {string} text - comment's text without starting symbols - // or /* * /
+   * @property {number} start - starting index of the comment
+   * @property {number} end - ending index of the comment
+   *
+   * Gets Comment at cursor position - resolves on completion with found Comment (if any) - may or may not be async
+   * @returns Promise
+   */
+  getCommentAtCursor(){
+    const ternServer = this.ternServer
+    const editor = this.codeMirror
     if(!ternServer || !editor){
-      callback()
-      return
+      return Promise.resolve()
     }
-    let position = editor.getCursor()
+    let currentCursorPos = editor.getCursor()
+    const index = editor.indexFromPos(currentCursorPos)
 
-    ternServer.request(editor, "refs", (error, data) => {
-      // async call - component may be unmounted already
-      if(!this.isActive)
-        return
-      if (error)
-        this.setState({atCursorRefRequestResponse: {"error": error}})
-      else
-        this.setState({atCursorRefRequestResponse: {data}})
-      callback()
-    }, position)
-  }
-
-  srcUpdate_GetDef(callback) {
-    let ternServer = this.ternServer
-    let editor = this.codeMirror
-    if(!ternServer || !editor){
-      callback()
-      return
-    }
-    let position = editor.getCursor()
-
-    ternServer.request(editor, "definition", (error, data) => {
-      // async call - component may be unmounted already
-      if(!this.isActive)
-        return
-      if (error)
-        this.setState({atCursorDefRequestResponse: {"error": error}})
-      else {
-        data.definitionText = (data.origin === this.props.asset.name && data.start) ? editor.getLine(data.start.line).trim() : null
-        this.setState({atCursorDefRequestResponse: {data}})
-      }
-      callback()
-    }, position)
+    return this.getCommentAt(index)
   }
 
   // srcUpdate_getProperties()
@@ -1265,13 +1322,25 @@ export default class EditCode extends React.Component {
   //   }, position)
   // }
 
-
+  /**
+   * Gets MemberParent definitions from tern server asynchronously and resolves promise on completion.
+   * @returns Promise
+   */
+  /* TODO (@stauzs): fix this - Tern worker don't have MGB extensions installed
+    (move EditCode/tern/MgbTernExtensions.js to TernWorker)
+  */
   srcUpdate_getMemberParent(callback) {
-    if (showDebugAST) {
+    return new Promise(resolve => {
+      if (!showDebugAST) {
+        // nothing to do
+        resolve()
+        return
+      }
+
       let ternServer = this.ternServer
       let editor = this.codeMirror
-      if(!ternServer || !editor){
-        callback()
+      if (!ternServer || !editor) {
+        resolve()
         return
       }
       let position = editor.getCursor()
@@ -1280,18 +1349,16 @@ export default class EditCode extends React.Component {
 
       ternServer.request(editor, query, (error, data) => {
         // async call - component may be unmounted already
-        if(!this.isActive)
+        if (!this.isActive)
           return
         if (error)
           this.setState({atCursorMemberParentRequestResponse: {"error": error}})
         else {
           this.setState({atCursorMemberParentRequestResponse: {data}})
         }
-        callback()
+        resolve()
       }, position)
-    }
-    else
-      callback()
+    })
   }
 
 
@@ -1322,54 +1389,79 @@ export default class EditCode extends React.Component {
     if(!this.isActive){
       return
     }
+
     const editor = this.codeMirror
     const position = editor.getCursor()
     const { asset } = this.props
-    const passiveAction = {
-      position: position
-    }
+    const passiveAction = { position }
     snapshotActivity(asset, passiveAction)
+    // this is one very heavy function called on cursor changes
+    // prevent updates to whole component - so we can complete it faster
+    // also preventing updates will allow user to type normally (without freezing codemirror)
+    this.setState({_preventRenders: true})
 
-    let asyncCalls = 0
-    // prevent renders until all async functions has been completed
-    const onDone = () => {
-      asyncCalls++
-      return () => this.setState({_preventRenders: --asyncCalls})
+    // TODO: update Read only???
+    // TODO: Batch the async setState() calls also for tutprial.
+    this.srcUpdate_CleanSheetCase()
+    this.srcUpdate_LookForMgbAssets()
+    this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
+    if (asset.kind === 'code')
+    {
+      // collect new state properties and set state on full resolve
+      const newState = {_preventRenders: false}
+      this.srcUpdate_GetInfoForCurrentFunction()
+        .then((state) => {
+          Object.assign(newState, state)
+          return this.srcUpdate_GetRelevantTypeInfo()
+        })
+        .then((state) => {
+          Object.assign(newState, state)
+          return this.srcUpdate_GetRefs()
+        })
+        .then((state) => {
+          Object.assign(newState, state)
+          return this.srcUpdate_GetDef()
+        })
+        .then((state) => {
+          Object.assign(newState, state)
+          return this.getCommentAtCursor()
+        })
+        .then(comment => {
+          Object.assign(newState, {comment})
+        })
+        .then(() => {
+          this.setState(newState)
+          // we have analysed source
+          this.mgb_c2_hasChanged = false
+        })
+      // not used: see comment near function
+      // this.srcUpdate_getMemberParent(onDone())
     }
+    else if (asset.kind === 'tutorial')
+    {
+      this.srcUpdate_AnalyzeTutorial()
+      this.setState({_preventRenders: false})
+    }
+    else
+    {
+      // undo prevent
+      this.setState({_preventRenders: false})
+    }
+    // TODO:  See atInterestingExpression() and findContext() which are
+    // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
 
-    try {
-      // TODO: update Read only???
-      // TODO: Batch the async setState() calls also.
-      this.srcUpdate_CleanSheetCase()
-      this.srcUpdate_LookForMgbAssets()
-      this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
-      if (asset.kind === 'code')
-      {
-        this.srcUpdate_GetInfoForCurrentFunction(onDone())
-        this.srcUpdate_GetRelevantTypeInfo(onDone())
-        this.srcUpdate_GetRefs(onDone())
-        this.srcUpdate_GetDef(onDone())
-        this.srcUpdate_getMemberParent(onDone())
-      }
-      if (asset.kind === 'tutorial')
-      {
-        this.srcUpdate_AnalyzeTutorial()
-      }
-      // TODO:  See atInterestingExpression() and findContext() which are
-      // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
-    }
-    finally {
-      this.setState({_preventRenders: asyncCalls})
-    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const retval = !(nextState._preventRenders || this.state.creatingBundle)
+    // this.changeTimeout - is set when user is typing
+    const retval = !( this.changeTimeout || nextState._preventRenders || this.state.creatingBundle)
+    //console.log("Should update:", retval)
     return retval // && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
   }
 
   codemirrorValueChanged(doc, change) {
     // Ignore SetValue so we don't bounce changes from server back up to server
+    this.mgb_c2_hasChanged = true
     if (change.origin !== "setValue") {
       const newValue = doc.getValue()
       this._currentCodemirrorValue = newValue
@@ -1711,6 +1803,7 @@ export default class EditCode extends React.Component {
       this.props.handleContentChange(c2, thumbnail, reason)
       return
     }
+
     c2.needsBundle = this.props.asset.content2.needsBundle
     //props trigger forceUpdate - so delay changes a little bit - on very fast changes
     if (this.changeTimeout) {
@@ -1725,7 +1818,7 @@ export default class EditCode extends React.Component {
         this.props.handleContentChange(c2, thumbnail, reason)
         return
       }
-      this.mgb_c2_hasChanged = true
+
       this.doFullUpdateOnContentChange((errors) => {
         // it's not possible to create useful bundle with errors in the code - just save
         if(errors.length || !this.props.asset.content2.needsBundle){
@@ -1762,6 +1855,7 @@ export default class EditCode extends React.Component {
   doFullUpdateOnContentChange( cb ) {
     // operation() is a way to prevent CodeMirror updates until the function completes
     // However, it is still synchronous - this isn't an async callback
+    this.mgb_c2_hasChanged = true
     this.codeMirror.operation(() => {
       const val = this.codeMirror.getValue()
       this.runJSHintWorker(val, (errors) => {
@@ -2178,17 +2272,6 @@ export default class EditCode extends React.Component {
     }
   }
 
-  getCommentAt(callback, char = 0){
-    if(this.mgb_c2_hasChanged || !this.mgb_cache.comments || this.mgb_cache.comments.length === 0){
-      this.ternServer.server.getComments((comments) => {
-        this.mgb_cache.comments = comments
-        callback(_.find(comments, com => com.start <= char && com.end >= char))
-      })
-    }
-    else{
-      callback(_.find(this.mgb_cache.comments, com => com.start <= char && com.end >= char))
-    }
-  }
 
   render() {
     const { asset, canEdit } = this.props
@@ -2197,15 +2280,24 @@ export default class EditCode extends React.Component {
       return null
 
     const templateKind = asset.kind === 'tutorial' ? templateTutorial : templateCode
-    const templateCodeChoices = templateKind.map(item => {
-      const label = item.label.replace(/ /g, '-')
-      return (
-        <a className="item" id={"mgbjr-EditCode-template-"+label} key={item.label} onClick={this.pasteSampleCode.bind(this,item)}>
-          <div className="ui green horizontal label">{item.label}</div>
-          {item.description}
-        </a>
-      )
-    })
+
+    const docEmpty = this.state.documentIsEmpty
+    const isPlaying = this.state.isPlaying
+
+
+    let templateCodeChoices
+    // get templateCodeChoices only IF we need them
+    if(docEmpty && !asset.isCompleted){
+      templateCodeChoices = templateKind.map(item => {
+        const label = item.label.replace(/ /g, '-')
+        return (
+          <a className="item" id={"mgbjr-EditCode-template-"+label} key={item.label} onClick={this.pasteSampleCode.bind(this,item)}>
+            <div className="ui green horizontal label">{item.label}</div>
+            {item.description}
+          </a>
+        )
+      })
+    }
 
     this.codeMirror && this.codeMirror.setOption("readOnly", !this.props.canEdit)
 
@@ -2225,9 +2317,6 @@ export default class EditCode extends React.Component {
     const infoPaneOpts = _infoPaneModes[this.state.infoPaneMode]
 
     const tbConfig = this.generateToolbarConfig()
-
-    let docEmpty = this.state.documentIsEmpty
-    let isPlaying = this.state.isPlaying
 
     // const RunCodeIFrameStyle = {
     //   transform: "scale(0.5)",

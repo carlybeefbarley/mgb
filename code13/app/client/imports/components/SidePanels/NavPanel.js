@@ -160,23 +160,6 @@ export const getNavPanels = (currUser, showAll) => {
           }
         ],
       }
-      // , {
-      //   name: 'userBash',
-      //   explainClickAction: "Shortcut: Clicking here jumps to the UserBashes search page",
-      //   icon: 'plug',
-      //   hdr: 'UserBash',
-      //   to: '/userBashes',
-      //   highlight: true,
-      //   menu: [
-      //     {
-      //       subcomponent: 'Item',
-      //       jrkey: 'userbash',
-      //       to: '/userBashes',
-      //       icon: { color: 'orange', name: 'plug' },
-      //       content: 'UserBash Info',
-      //     }
-      //   ],
-      // }      
     ],
     // Right side
     right: _.compact([

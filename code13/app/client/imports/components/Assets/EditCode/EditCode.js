@@ -2403,8 +2403,10 @@ export default class EditCode extends React.Component {
               }
 
               { isChallenge &&
-                <div className={"title active"}
-                id="mgbjr-EditCode-codeChallenges">
+                <div 
+                    className="title active"
+                    style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+                    id="mgbjr-EditCode-codeChallenges">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />Code Challenges
                   </span>
@@ -2413,6 +2415,7 @@ export default class EditCode extends React.Component {
 
               { isChallenge &&
                 <CodeChallenges
+                  style       =   {{ backgroundColor: 'rgba(0,255,0,0.02)' }}
                   active      =   { asset.skillPath ? true : false}
                   skillPath   =   { asset.skillPath }
                   codeMirror  =   { this.codeMirror }
@@ -2422,8 +2425,10 @@ export default class EditCode extends React.Component {
               }
 
               { isCodeTutorial &&
-                <div className={"title active"}
-                id="mgbjr-EditCode-codeTutorials">
+                <div 
+                    className="title active"
+                    style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+                    id="mgbjr-EditCode-codeTutorials">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />Code Tutorials
                   </span>
@@ -2432,6 +2437,7 @@ export default class EditCode extends React.Component {
 
               { isCodeTutorial &&
                 <CodeTutorials
+                  style       =     {{ backgroundColor: 'rgba(0,255,0,0.02)' }}
                   active      =     { asset.skillPath ? true : false}
                   skillPath   =     { asset.skillPath }
                   codeMirror  =     { this.codeMirror }

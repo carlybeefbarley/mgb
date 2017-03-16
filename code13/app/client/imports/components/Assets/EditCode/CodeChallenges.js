@@ -18,6 +18,8 @@ import './editcode.css'
 const _jsBasicsSkillsRootPath = 'code.js.basics'
 const _jsBasicsSkillsRootNode = SkillNodes.$meta.map[_jsBasicsSkillsRootPath]
 
+const _smallTopMarginSty = { style: { marginTop: '0.5em'} }
+
 // This file is communicating with a test page hosted in an iFrame. 
 // The params related to it are in this structure for maintainability:
 const _runFrameConfig = {
@@ -38,7 +40,8 @@ export default class CodeChallenges extends React.Component {
     skillPath:   PropTypes.string,
     userSkills:  PropTypes.object,
     codeMirror:  PropTypes.object,
-    active:      PropTypes.bool
+    active:      PropTypes.bool,
+    style:       PropTypes.object
   }
 
   constructor(props) {
@@ -156,23 +159,23 @@ export default class CodeChallenges extends React.Component {
     const description = _.clone(this.state.data.description) || []
     const instructions = []
     const { showAllTestsCompletedMessage } = this.state
-    const testCountStr = this.state.testCount > 0 ? ' '+this.state.testCount : ''
     const latestTestTimeStr = this.state.latestTest ? this.formatTime(this.state.latestTest) : null
 
     // take out instructions from description array. Instructions are after <hr> tag
     const hrIdx = description.indexOf('<hr>')
-    if(hrIdx > 0){
-      for(let i=description.length-1; i>=hrIdx; i--){
+    if (hrIdx > 0) {
+      for (let i=description.length-1; i>=hrIdx; i--)
         instructions.unshift(description.pop())
-      }
 
       // remove <hr> element
       instructions.shift()
     }
 
-
     return (
-      <div id="codeChallenges" className={"content " +(this.props.active ? "active" : "")}>
+      <div 
+          id="mgb-codeChallenges" 
+          className={"content " +(this.props.active ? "active" : "")}
+          style={this.props.style}>
         <Button basic={showAllTestsCompletedMessage} size='small' color='green' onClick={this.runTests} icon='play' content='Run tests' />
         <Button basic size='small' color='green' onClick={this.resetCode} icon='refresh' content='Reset code' />
         <Button basic size='small' color='green' onClick={_openHelpChat} icon='help' content='Help' />
@@ -200,7 +203,7 @@ export default class CodeChallenges extends React.Component {
           this.state.results && this.state.results.length > 0 && 
             <Divider 
               as={Header} 
-              style={{marginTop: '0.5em'}} 
+              {..._smallTopMarginSty}
               color='grey' 
               size='small' 
               horizontal>
@@ -231,19 +234,19 @@ export default class CodeChallenges extends React.Component {
         </List>
 
         { showAllTestsCompletedMessage && (
-            <Message size='small' icon>
-              <Icon name='check circle'/>
+            <Message size='small' icon style={{paddingBottom: 0}}>
+              <Icon color='green' name='check circle'/>
               <Message.Content>
                 <Message.Header>
-                  Challenge Completed!
+                  Challenge Goal Achieved!
                 </Message.Header>
-                <Divider hidden/>
                 <Button 
                     positive
                     size='small'
-                    content='Next challenge'
+                    content='Start next challenge'
                     icon='right arrow circle'
                     labelPosition='right'
+                    {..._smallTopMarginSty}
                     onClick={this.nextChallenge} />
               </Message.Content>
             </Message>
@@ -251,11 +254,11 @@ export default class CodeChallenges extends React.Component {
         }
 
 
-        <Divider as={Header} style={{marginTop: '0.5em'}} color='grey' size='small' horizontal content='Challenge Instructions'/>
+        <Divider as={Header} {..._smallTopMarginSty} color='grey' size='small' horizontal content='Challenge Instructions'/>
 
         {
           description.map((text, i) => (
-            <div key={i} style={{marginTop: '0.5em'}} dangerouslySetInnerHTML={{ __html: text}} />
+            <div key={i} {..._smallTopMarginSty} dangerouslySetInnerHTML={{ __html: text}} />
           ))
         }
 
@@ -265,7 +268,7 @@ export default class CodeChallenges extends React.Component {
               <Header sub content='Challenge Goal'/>
               {
                 instructions.map((text, i) => (
-                  <div key={i} style={{marginTop: '0.5em'}} dangerouslySetInnerHTML={{ __html: text}} />
+                  <div key={i} {..._smallTopMarginSty} dangerouslySetInnerHTML={{ __html: text}} />
                 ))
               }
             </Segment>

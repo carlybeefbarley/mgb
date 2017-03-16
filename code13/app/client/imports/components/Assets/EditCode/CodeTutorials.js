@@ -27,7 +27,8 @@ export default class CodeTutorials extends React.Component {
     active:      PropTypes.bool,
     quickSave:   PropTypes.func,
     highlightLines: PropTypes.func,
-    assetId:     PropTypes.string
+    assetId:     PropTypes.string,
+    style:       PropTypes.object
   }
 
   constructor(props) {
@@ -105,7 +106,7 @@ export default class CodeTutorials extends React.Component {
     const returnToSkillsUrl = this.isPhaserTutorial ? '/learn/code/phaser' : '/learn/code/games'
 
     return (
-      <div id="codeChallenges" className={"content " +(this.props.active ? "active" : "")}>
+      <div id="mgb-codeChallenges" className={"content " +(this.props.active ? "active" : "")} style={this.props.style}>
         {
           this.skillNode.$meta.isTask &&
           <Button size='small' color='green' onClick={this.submitTask} content='Submit task' />

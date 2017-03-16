@@ -15,7 +15,7 @@
 }
 
 
-#codeChallenges code {
+#mgb-codeChallenges code {
   font-family: courier,monospace;
   font-size: .75rem;
   line-height: .75rem;
@@ -28,7 +28,7 @@
   white-space:pre;
 }
 
-#codeChallenges blockquote {
+#mgb-codeChallenges blockquote {
   font-family: courier,monospace;
   padding: 5px;
   font-size: .75rem;

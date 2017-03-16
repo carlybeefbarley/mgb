@@ -6,41 +6,41 @@ import C from './CommonSkillNodes'
 export default {
   $meta: {
     name:           'Game tutorials',
-    description:    'Use your new game programming knowledge to create a game step by step. The first tutorial shows how to code the minimal \'base\' of game. The next tutorials show how to add features.'
+    description:    'These walkthoughs will show you how to create a game using your new PhaserJS game-dev skills. For each game there is a first tutorial that shows how to code the minimal \'base\' of a game. Subsequent tutorials then add more features to that base.'
   },
   'mole1': {
     $meta: {
-      name: 'Whack a Mole Part 1',
+      name: 'Whack a Mole 1: Base',
       icon: 'code',
       description: `First game from series`,
-      "subsection": "Games",
-   },
+      "subsection": "Whack-a-Mole",
+    },
     'mole1': C.En(0)
   },
   'mole2': {
     $meta: {
-      name: 'Whack a Mole Part 2',
+      name: 'Whack a Mole 2: Animations',
       icon: 'code',
       description: `Second game from series`,
-      "subsection": "Games",
+      "subsection": "Whack-a-Mole",
     },
     'mole2': C.En(0)
   },  
   'mole3': {
     $meta: {
-      name: 'Whack a Mole Part 3',
+      name: 'Whack a Mole 3: Speedup',
       icon: 'code',
       description: `Third game from series`,
-      "subsection": "Games",
+      "subsection": "Whack-a-Mole",
     },
     'mole3': C.En(0)
   }, 
   'mole4': {
     $meta: {
-      name: 'Whack a Mole Part 4',
+      name: 'Whack a Mole 4: Menus',
       icon: 'code',
       description: `Fourth game from series`,
-      "subsection": "Games",
+      "subsection": "Whack-a-Mole",
     },
     'mole4': C.En(0)
   },  
@@ -49,7 +49,7 @@ export default {
       name: 'Digger',
       icon: 'code',
       description: `Mining and collecting resources`,
-      "subsection": "Games",
+      "subsection": "Digger",
     },
     'digger': C.En(0)
   }

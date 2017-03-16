@@ -139,10 +139,11 @@ export default class MageGameCanvas extends React.Component {
 
   render() {
     const { cellsWide, cellsHigh } = this.props
-    let height = Math.min((cellsHigh * 32), 720)
-    let width = Math.min((cellsWide * 32), window.innerWidth)
+    // Canvas strangely clips 2 pixels from height/width
+    let height = Math.min((cellsHigh * 32), 680) + 2
+    let width = Math.min((cellsWide * 32), window.innerWidth) + 2
 
-    // maxHeight and maxWidth for #mgb-game-container determine the size of the game canvas - 720px to match map editor size
+    // maxHeight and maxWidth for #mgb-game-container determine the size of the game canvas - 680px to match map editor size
     return ( 
       <div id="mgb-game-container" style = {{maxHeight: height + 'px', maxWidth: width + 'px', overflow: 'hidden', border: 'grey 1px solid'}}>
         <canvas 

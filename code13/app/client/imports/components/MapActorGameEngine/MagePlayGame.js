@@ -143,7 +143,7 @@ export default class MagePlayGame
   scrollMapToSeePlayer(overrideX = -1, overrideY = -1) {
     const marginX = Math.floor((this.container.clientWidth / 32) / 4)
     const marginY = Math.floor((this.container.clientHeight / 32) / 4)
-  
+
     var sx = overrideX == -1 ? this.activeActors[this.AA_player_idx].x : overrideX
     var sy = overrideY == -1 ? this.activeActors[this.AA_player_idx].y : overrideY
 
@@ -151,25 +151,26 @@ export default class MagePlayGame
     G_VSPdelta = 0
 
     var horizontalScrollPosition = this.container.scrollLeft
-    var verticalScrollPosition = this.container.scrollTop
+    var verticalScrollPosition = this.container.scrollTop 
     var maxHorizontalScrollPosition = this.container.scrollWidth - this.container.clientWidth
     var maxVerticalScrollPosition = this.container.scrollHeight - this.container.clientHeight
     var w = (this.map.metadata.width * MgbSystem.tileMinWidth) - maxHorizontalScrollPosition
-    var h = (this.map.metadata.height * MgbSystem.tileMinWidth) - maxVerticalScrollPosition
-    var maxHSP_toSeePlayer = (sx-marginX) * MgbSystem.tileMinWidth					// Maximum Horizontal Scroll Position to see player
+    var h = (this.map.metadata.height * MgbSystem.tileMinHeight) - maxVerticalScrollPosition
+    var maxHSP_toSeePlayer = (sx-marginX) * MgbSystem.tileMinWidth		  // Maximum Horizontal Scroll Position to see player
     var maxVSP_toSeePlayer = (sy-marginY) * MgbSystem.tileMinHeight			// Maximum Vertical Scroll Position to see player
 
     if (horizontalScrollPosition > maxHSP_toSeePlayer)
-      G_HSPdelta = ((maxHSP_toSeePlayer) - horizontalScrollPosition)/this.G_tweensPerTurn;	// Scroll left if needed
+      G_HSPdelta = ((maxHSP_toSeePlayer) - horizontalScrollPosition) / this.G_tweensPerTurn	// Scroll left if needed
     if (verticalScrollPosition > maxVSP_toSeePlayer)
-      G_VSPdelta = ((maxVSP_toSeePlayer) - verticalScrollPosition)/this.G_tweensPerTurn;	// Scroll up if needed
+      G_VSPdelta = ((maxVSP_toSeePlayer) - verticalScrollPosition) / this.G_tweensPerTurn	  // Scroll up if needed
 
     var minHSP_toSeePlayer = ((sx+1+marginX) * MgbSystem.tileMinWidth) - w 				// Minimum Horizontal Scroll Position to see player
     var minVSP_toSeePlayer = ((sy+1+marginY) * MgbSystem.tileMinHeight) - h 			// Minimum Vertical Scroll Position to see player
+
     if (minHSP_toSeePlayer > 0 && horizontalScrollPosition < minHSP_toSeePlayer)				
-      G_HSPdelta = ((minHSP_toSeePlayer) - horizontalScrollPosition) / this.G_tweensPerTurn;	// Scroll right if needed
+      G_HSPdelta = (minHSP_toSeePlayer - horizontalScrollPosition) / this.G_tweensPerTurn	// Scroll right if needed
     if (minVSP_toSeePlayer > 0 && verticalScrollPosition < minVSP_toSeePlayer)				
-      G_VSPdelta = ((minVSP_toSeePlayer) - verticalScrollPosition) / this.G_tweensPerTurn;		// Scroll down if needed
+      G_VSPdelta = (minVSP_toSeePlayer - verticalScrollPosition) / this.G_tweensPerTurn		// Scroll down if needed
   }
 
   doPauseGame() {

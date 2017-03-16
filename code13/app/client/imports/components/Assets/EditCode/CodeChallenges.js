@@ -157,7 +157,7 @@ export default class CodeChallenges extends React.Component {
     const instructions = []
     const { showAllTestsCompletedModal } = this.state
     const testCountStr = this.state.testCount > 0 ? ' '+this.state.testCount : ''
-    const latestTest = this.state.latestTest ? this.formatTime(this.state.latestTest) : null
+    const latestTestTimeStr = this.state.latestTest ? this.formatTime(this.state.latestTest) : null
 
     // take out instructions from description array. Instructions are after <hr> tag
     const hrIdx = description.indexOf('<hr>')
@@ -174,8 +174,8 @@ export default class CodeChallenges extends React.Component {
     return (
       <div id="codeChallenges" className={"content " +(this.props.active ? "active" : "")}>
         <Button size='small' color='green' onClick={this.runTests} icon='play' content='Run tests' />
-        <Button size='small' color='green' onClick={this.resetCode} icon='refresh' content='Reset code' />
-        <Button size='small' color='green' onClick={_openHelpChat} icon='help' content='Help' />
+        <Button basic size='small' color='green' onClick={this.resetCode} icon='refresh' content='Reset code' />
+        <Button basic size='small' color='green' onClick={_openHelpChat} icon='help' content='Help' />
 
         { this.state.error &&
           <Segment inverted color='red' size='mini' secondary>
@@ -200,14 +200,24 @@ export default class CodeChallenges extends React.Component {
           this.state.results && this.state.results.length > 0 && 
             <Divider 
               as={Header} 
+              style={{marginTop: '0.5em'}} 
               color='grey' 
               size='small' 
-              horizontal content={'Test Results' + testCountStr}/>
+              horizontal>
+              <span>Test Results&ensp;
+                {
+                  latestTestTimeStr &&
+                    <small style={{color:'#bbb'}}>
+                      @{latestTestTimeStr}
+                    </small>
+                }
+              </span>
+            </Divider>
         }
         <List verticalAlign='middle'>
         {
           this.state.results.map((result, i) => (
-            <List.Item key={i}>
+            <List.Item key={i} className='animated fadeIn'>
               <List.Icon 
                   size='large'
                   name={`circle ${result.success ? 'check' : 'minus'}`}
@@ -218,33 +228,9 @@ export default class CodeChallenges extends React.Component {
             </List.Item>
           ))
         }
-        {
-          latestTest &&
-            <List.Item>
-              <List.Content style={{textAlign:'right', fontSize: '11px', color:'#999', paddingBottom: 0}}>
-                {latestTest}
-              </List.Content>
-            </List.Item>
-        }
         </List>
 
-        {
-          instructions.length > 0 &&
-            <Divider as={Header} color='grey' size='small' horizontal content='Challenge Instructions'/>
-        }
-
-        {
-          instructions.length > 0 &&
-            <Segment>
-              {
-                instructions.map((text, i) => (
-                  <div key={i} style={{marginTop: '0.5em'}} dangerouslySetInnerHTML={{ __html: text}} />
-                ))
-              }
-            </Segment>
-        }
-
-        <Divider as={Header} color='grey' size='small' horizontal content='Theory'/>
+        <Divider as={Header} style={{marginTop: '0.5em'}} color='grey' size='small' horizontal content='Challenge Instructions'/>
 
         {
           description.map((text, i) => (
@@ -252,7 +238,17 @@ export default class CodeChallenges extends React.Component {
           ))
         }
 
-        <Divider />
+        {
+          instructions.length > 0 &&
+            <Segment stacked color='green'>
+              <Header sub content='Goal'/>
+              {
+                instructions.map((text, i) => (
+                  <div key={i} style={{marginTop: '0.5em'}} dangerouslySetInnerHTML={{ __html: text}} />
+                ))
+              }
+            </Segment>
+        }
 
         <Popup
           trigger={(

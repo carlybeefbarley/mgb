@@ -42,12 +42,10 @@ import '/server/imports/rateLimiter'
 // Create fixtures on first time app is launched (useful for dev/test)
 import { createUsers } from './fixtures.js'
 
-// remove true after debugging is done
-if (true || Meteor.isProduction) {
-  setUpCloudFront()
-}
+// sets up cloudfront CDN
+setUpCloudFront()
 
-if (!Users.find().fetch().length) 
+if (!Users.find().fetch().length)
   createUsers()
 
 function userHasLoggedIn(loginInfo)
@@ -65,7 +63,7 @@ Meteor.startup(function () {
     Meteor.call('Slack.MGB.productionStartup')
 
   Accounts.onLogin(userHasLoggedIn)
-  
+
   //sets up keys for social logins
   ServiceConfiguration.configurations.upsert(
     { service: "google" },
@@ -111,7 +109,7 @@ console.log(`
   Meteor.isProduction: ${Meteor.isProduction}
   Meteor.isDevelopment: ${Meteor.isDevelopment}
   MgbRelease: ${getCurrentReleaseVersionString()}
-  
+
   Meteor.absoluteUrl: ${Meteor.absoluteUrl('')}
   Entry point: main_server.js
   `

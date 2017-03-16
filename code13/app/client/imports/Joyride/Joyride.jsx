@@ -142,7 +142,7 @@ export default class Joyride extends React.Component {
       close:  'Close',
       last:   'Done',
       next:   'Next',
-      skip:   'QUIT',
+      skip:   'STOP',
       submit: 'Submit Code',
       reset:  'Reset',
       help:   'Help',

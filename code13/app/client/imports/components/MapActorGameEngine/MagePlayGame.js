@@ -55,6 +55,11 @@ export default class MagePlayGame
 
   resetGameState() {
     this.G_gameStartedAtMS = (new Date()).getTime()
+    this.G_pausedTime = 0
+    this.G_gamePausedAtMS = 0
+    this.G_gameUnpausedAtMS = 0
+    this.G_pauseTime = 0
+    this.G_gameTime = 0
     this.isPaused = false
     this.G_gameOver = false
 
@@ -168,6 +173,8 @@ export default class MagePlayGame
   }
 
   doPauseGame() {
+    if (!this.isPaused)
+      this.G_gamePausedAtMS = (new Date()).getTime()
     this.isPaused = true
   }
 
@@ -605,9 +612,11 @@ export default class MagePlayGame
   }
 
   timeStrSinceGameStarted() {
-    const nowMS = (new Date()).getTime()    
-    const secondsPlayed = Math.floor(nowMS - this.G_gameStartedAtMS) / 1000
-    const minutesPlayed = Math.floor(secondsPlayed / 60)
+    const nowMS = (new Date()).getTime()  
+    const secondsPaused = this.G_pausedTime % 60
+    const minutesPaused = Math.floor(this.G_pausedTime / 60) 
+    const secondsPlayed = Math.floor(nowMS - this.G_gameStartedAtMS) / 1000 - secondsPaused 
+    const minutesPlayed = Math.floor(secondsPlayed / 60) - minutesPaused
     const hoursPlayed = Math.floor(minutesPlayed / 60)
     let timeStr = ''
     if (hoursPlayed)

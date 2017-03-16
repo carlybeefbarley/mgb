@@ -313,6 +313,7 @@ const MgbActor = {
     {
       MgbActor._loadedSounds = {}
       var names = this.alCannedSoundsList.slice(1)    // ignore first item
+      console.log(names)
       var name
       var countClosure = names.length
       var canplay = function(result) { if (--countClosure === 0) { callback && callback(result)} };

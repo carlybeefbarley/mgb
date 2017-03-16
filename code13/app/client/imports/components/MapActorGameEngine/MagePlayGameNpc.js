@@ -52,13 +52,15 @@ export default MagePlayGameNpc = {
     params.activeActor = actor
     params.responseCallbackFn = choice => this.handleNpcResponse(choice)
     this.showNpcMessageFn( params )
-    this.isPaused = true
+    this.doPauseGame()
   },
   
   hideNpcMessage()
   {
     if (this.isPaused)
     {
+      this.G_gameUnpausedAtMS = (new Date()).getTime()
+      this.G_pausedTime += Math.floor(this.G_gameUnpausedAtMS - this.G_gamePausedAtMS) / 1000 // Paused time to subtract from game time
       this.npcDialogActor = null
       this.showNpcMessageFn(null)
       this.isPaused = false

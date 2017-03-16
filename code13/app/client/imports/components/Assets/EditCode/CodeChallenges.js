@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { Button, Modal, Icon, List, Segment, Popup, Divider, Header } from 'semantic-ui-react'
+import { Button, Message, Icon, List, Segment, Popup, Divider, Header } from 'semantic-ui-react'
 
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
@@ -52,7 +52,7 @@ export default class CodeChallenges extends React.Component {
       latestTest:                 null,     // indicates latest test date
       error:                      null,     // get back from iFrame if it has some syntax error
       console:                    null,     // get back from iFrame console.log messages 
-      showAllTestsCompletedModal: false,    // true if we want to show the All Tests Completed Modal
+      showAllTestsCompletedMessage: false,    // true if we want to show the All Tests Completed Modal
       data:                       {},       // get challenge data from CDN
     }
 
@@ -97,7 +97,7 @@ export default class CodeChallenges extends React.Component {
   successPopup() {
     // TODO show notification for user
     learnSkill( this.props.skillPath + '.' + this.skillName )
-    this.setState( { showAllTestsCompletedModal: true } )
+    this.setState( { showAllTestsCompletedMessage: true } )
   }
 
   runTests = () => {
@@ -129,12 +129,12 @@ export default class CodeChallenges extends React.Component {
 
     if (idx < skillsArr.length-1) {
       const nextSkillName = skillsArr[idx+1]
-      this.setState( { showAllTestsCompletedModal: false } )
+      this.setState( { showAllTestsCompletedMessage: false } )
       StartJsGamesRoute('basics', nextSkillName, this.props.currUser)
     } 
     else
     {
-      this.setState( { showAllTestsCompletedModal: false } )
+      this.setState( { showAllTestsCompletedMessage: false } )
       // alert('Congratulations! You have finished the JavaScript basics challenges!')
       utilPushTo( window.location, '/learn/code' )
     }
@@ -155,7 +155,7 @@ export default class CodeChallenges extends React.Component {
   render() {
     const description = _.clone(this.state.data.description) || []
     const instructions = []
-    const { showAllTestsCompletedModal } = this.state
+    const { showAllTestsCompletedMessage } = this.state
     const testCountStr = this.state.testCount > 0 ? ' '+this.state.testCount : ''
     const latestTestTimeStr = this.state.latestTest ? this.formatTime(this.state.latestTest) : null
 
@@ -173,7 +173,7 @@ export default class CodeChallenges extends React.Component {
 
     return (
       <div id="codeChallenges" className={"content " +(this.props.active ? "active" : "")}>
-        <Button size='small' color='green' onClick={this.runTests} icon='play' content='Run tests' />
+        <Button basic={showAllTestsCompletedMessage} size='small' color='green' onClick={this.runTests} icon='play' content='Run tests' />
         <Button basic size='small' color='green' onClick={this.resetCode} icon='refresh' content='Reset code' />
         <Button basic size='small' color='green' onClick={_openHelpChat} icon='help' content='Help' />
 
@@ -230,6 +230,27 @@ export default class CodeChallenges extends React.Component {
         }
         </List>
 
+        { showAllTestsCompletedMessage && (
+            <Message size='small' icon>
+              <Icon name='check circle'/>
+              <Message.Content>
+                <Message.Header>
+                  Challenge Completed!
+                </Message.Header>
+                <Divider hidden/>
+                <Button 
+                    positive
+                    size='small'
+                    content='Next challenge'
+                    icon='right arrow circle'
+                    labelPosition='right'
+                    onClick={this.nextChallenge} />
+              </Message.Content>
+            </Message>
+          )
+        }
+
+
         <Divider as={Header} style={{marginTop: '0.5em'}} color='grey' size='small' horizontal content='Challenge Instructions'/>
 
         {
@@ -241,7 +262,7 @@ export default class CodeChallenges extends React.Component {
         {
           instructions.length > 0 &&
             <Segment stacked color='green'>
-              <Header sub content='Goal'/>
+              <Header sub content='Challenge Goal'/>
               {
                 instructions.map((text, i) => (
                   <div key={i} style={{marginTop: '0.5em'}} dangerouslySetInnerHTML={{ __html: text}} />
@@ -274,27 +295,7 @@ export default class CodeChallenges extends React.Component {
           >
         </iframe>
 
-        { showAllTestsCompletedModal && (
-            <Modal 
-                closeOnDocumentClick={true} 
-                closeOnRootNodeClick={false}
-                defaultOpen >
-              <Modal.Header>
-                <Icon size='big' color='green' name='check circle' />
-                Success
-              </Modal.Header>
-              <Modal.Content>
-                You completed this Code Challenge
-              </Modal.Content>
-              <Modal.Actions>
-                <Button 
-                    positive
-                    content='Next challenge'
-                    onClick={this.nextChallenge} />
-              </Modal.Actions>
-            </Modal>
-          )
-        }
+
       </div>
     )
   }

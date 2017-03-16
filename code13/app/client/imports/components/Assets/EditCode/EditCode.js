@@ -977,7 +977,8 @@ export default class EditCode extends React.Component {
         "PIXI": false,
         "console": false,
         "_": false
-      }
+      },
+      "maxerr" : 999
     }
 
     this.jshintWorker.isBusy = true

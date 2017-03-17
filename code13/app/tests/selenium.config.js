@@ -8,6 +8,7 @@ module.exports = {
     //only: ["win8.1_ie", "safari_9.1", "chrome", "edge", "firefox"],
     only: [
       'local.phantom.hub',
+      //'local.phantom',
       //'local.chrome'
     ],
     // add here some tests to skip
@@ -17,21 +18,19 @@ module.exports = {
     // if this is filled - only those tests will be tested
     //only: ["code.update.test.js"],
     only: [
-      //'login.test.js',
-      //'adjust.settings.test.js'
+      // 'login.test.js', // - all other tests includes login
+      //'adjust.settings.test.js',
 
-      //'code.load.import.test.js',
+       //'code.load.import.test.js',
 
-      // code bundling is not working on Phantom
-      // 'code.bundler.test.js',
-      // 'code.mentor.test.js',
+       'code.bundler.test.js', //not working on Phantom
+       //'code.mentor.test.js', //not working on Phantom
+       //'code.update.test.js', //not working on Phantom
 
-      // 'code.update.test.js',
+       //'graphic.test.js',
+       //'map.simple.test.js'
 
-      // 'graphic.test.js',
-      // 'map.simple.test.js'
-
-      'api.test.js'
+      // 'api.test.js'
     ],
     // add here some tests to skip
     skip: ["login.test.js"] // skip login test as other tests logs in user anyway

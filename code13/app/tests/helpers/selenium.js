@@ -172,8 +172,10 @@ module.exports = (browser) => {
     findAsset(val){
       sel.openAssetsPanel()
       sel.untilVisible("#mgbjr_fp_search_asset input")
-      sel.css("#mgbjr_fp_search_asset input").sendKeys(val, Key.ENTER)
-      return sel.css(".ui.card img.mgb-pixelated")
+      const elm = sel.css("#mgbjr_fp_search_asset input")
+      elm.clear()
+      elm.sendKeys(val, Key.ENTER)
+      return sel.css(".ui.cards *[draggable=true]")
     },
 
     waitUntilSaved(){

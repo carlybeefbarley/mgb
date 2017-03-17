@@ -222,7 +222,15 @@ export default AssetEditRoute = React.createClass({
     // TODO: Discuss with @stauzs to see if there are other cases to cover?
     const asset = this.assetHandler.asset
     if (asset && this.props.handleSetCurrentlyEditingAssetInfo)
-      this.props.handleSetCurrentlyEditingAssetInfo( makeAssetInfoFromAsset(asset, this.canCurrUserEditThisAsset(asset) ? 'Edit' : 'View') )
+    {
+      const assetVerb = (
+        ( (this.canCurrUserEditThisAsset(asset) ? 'Edit' : 'View')
+          + (asset.isCompleted ? '  [locked asset]' : '')
+          + (asset.isDeleted ? '  [deleted asset]' : '') 
+         )
+      )
+      this.props.handleSetCurrentlyEditingAssetInfo( makeAssetInfoFromAsset(asset, assetVerb) )
+    }
 
     let handleForActivitySnapshots = Meteor.subscribe("activitysnapshots.assetid", assetId)
     let handleForAssetActivity = Meteor.subscribe("activity.public.recent.assetid", assetId)
@@ -367,6 +375,7 @@ export default AssetEditRoute = React.createClass({
 
     const canEd = this.canCurrUserEditThisAsset()
     const canEdCompleted = this.canCurrUserChangeCompletion()
+    const canEdIfUnlocked = this.canUserEditThisAssetIfUnlocked()
     const currUserId = currUser ? currUser._id : null
     const hasUnsentSaves = !!this.m_deferredSaveObj
 
@@ -418,7 +427,7 @@ export default AssetEditRoute = React.createClass({
             <DeletedState
               isDeleted={asset.isDeleted}
               operationPending={isDeletePending}
-              canEdit={canEd}
+              canEdit={canEdIfUnlocked}
               handleChange={this.handleDeletedStateChange} />
             <AssetChatDetail hasUnreads={hazUnreadAssetChat} handleClick={this.handleChatClick}/>
             <AssetLicense
@@ -699,10 +708,18 @@ export default AssetEditRoute = React.createClass({
 // This should not conflict with the deferred changes since those don't change these fields :)
   handleDeletedStateChange: function(newIsDeleted) {
     const { asset } = this.data
+    const canEd = this.canCurrUserEditThisAsset()
+    if (!asset)
+      return
 
-    if (asset && asset.isDeleted !== newIsDeleted) {
+    if (!canEd)
+    {
+      this.handleEditDeniedReminder() /// Give clear message if asset is locked
+      return
+    }
+    if (asset.isDeleted !== newIsDeleted) {
       this.setState( { isDeletePending: true } )
-      Meteor.call('Azzets.update', asset._id, this.canCurrUserEditThisAsset(), { isDeleted: newIsDeleted }, (err, res) => {
+      Meteor.call('Azzets.update', asset._id, canEd, { isDeleted: newIsDeleted }, (err, res) => {
         if (err)
           showToast(err.reason, 'error')
       })
@@ -721,8 +738,17 @@ export default AssetEditRoute = React.createClass({
 
   handleStableStateChange: function(newIsCompleted) {
     const { asset } = this.data
+    if (!asset)
+      return
 
-    if (asset && asset.isCompleted !== newIsCompleted) {
+    if (asset.isCompleted !== newIsCompleted) {
+
+      if (asset.isDeleted === true && newIsCompleted === true)
+      {
+        showToast("Asset is deleted. It doesn't make sense to Lock it", 'error')
+        return
+      }
+
       Meteor.call('Azzets.update', asset._id, this.canCurrUserChangeCompletion(), { isCompleted: newIsCompleted}, (err, res) => {
         if (err)
           showToast(err.reason, 'error')

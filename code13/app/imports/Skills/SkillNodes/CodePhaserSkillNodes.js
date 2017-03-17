@@ -21,7 +21,7 @@ export default {
   // Loader:     C.En(1),
   drawImage: {
     $meta: {
-      name: 'Draw image',
+      name: 'Load & Draw image',
       icon: 'code',
       link: '/u/!vault/asset/5Bm4R9kJHRAMBv4kD',
       description: `The most basic concept for starting game development`,
@@ -31,7 +31,7 @@ export default {
   },
   positionImage: {
     $meta: {
-      name: 'Position image',
+      name: 'Positioning images as Sprites',
       icon: 'code',
       link: '/u/!vault/asset/eoTTDhibmKGrhuvHn',
       description: `Position an image with x, y and anchor point`,
@@ -41,18 +41,18 @@ export default {
   },
   taskSetPosition: {
     $meta: {
-      name: 'Task set position',
+      name: 'Task: Position five Sprites',
       isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/Pn9mhjR7yAW3iTsRt',
-      description: `Set image positions`,
+      description: `Position five instances of a Sprite`,
       "subsection": "Image",
     },
     'taskSetPosition': C.En(0),
   },
   manipulateImage: {
     $meta: {
-      name: 'Manipulate image',
+      name: 'Image scaling, rotation, and more',
       icon: 'code',
       link: '/u/!vault/asset/nzZK4r5a4WPAszBjj',
       description: `Image scaling, transparency, rotation and tinting`,
@@ -64,7 +64,7 @@ export default {
     $meta: {
       icon: 'code',
       link: '/u/!vault/asset/ENnr8RSrrSRB3ybTg',
-      name: 'Input click',
+      name: 'Mouse/Touch Input',
       description: `Click on image, click on game`,
       "subsection": "Input",
     },
@@ -85,7 +85,7 @@ export default {
     $meta: {
       icon: 'code',
       link: '/u/!vault/asset/8j9CBTzfBuT5GKLtF',
-      name: 'Input keyboard',
+      name: 'Keyboard input',
       description: `Using Keyboard input for your game`,
       "subsection": "Input",
     },

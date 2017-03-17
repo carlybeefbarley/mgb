@@ -2274,7 +2274,7 @@ export default class EditCode extends React.Component {
 
 
   render() {
-    const { asset, canEdit } = this.props
+    const { asset, canEdit, currUser } = this.props
 
     if (!asset)
       return null
@@ -2283,7 +2283,6 @@ export default class EditCode extends React.Component {
 
     const docEmpty = this.state.documentIsEmpty
     const isPlaying = this.state.isPlaying
-
 
     let templateCodeChoices
     // get templateCodeChoices only IF we need them
@@ -2437,7 +2436,8 @@ export default class EditCode extends React.Component {
 
               { isCodeTutorial &&
                 <CodeTutorials
-                  style       =     {{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+                  style       =     { { backgroundColor: 'rgba(0,255,0,0.02)' } }
+                  isOwner     =     { currUser && currUser._id === asset.ownerId }
                   active      =     { asset.skillPath ? true : false}
                   skillPath   =     { asset.skillPath }
                   codeMirror  =     { this.codeMirror }

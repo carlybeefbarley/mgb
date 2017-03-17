@@ -5,7 +5,7 @@ import { Button, Message, Icon, List, Segment, Popup, Divider, Header } from 'se
 
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import SkillNodes, { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
-import { utilPushTo } from "/client/imports/routes/QLink"
+import { utilPushTo, utilShowChatPanelChannel } from "/client/imports/routes/QLink"
 import { learnSkill, hasSkill } from '/imports/schemas/skills'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
 
@@ -29,9 +29,8 @@ const _runFrameConfig = {
   codeTestsDataPrefix: 'codeTests'
 }
 
-//const _hackDeferForFirstTestRunMs = 200
-const _openHelpChat = () => 
-  utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
+const _openHelpChat = () => utilShowChatPanelChannel(window.location, 'G_MGBHELP_')
+const _openChallengeList = () => utilPushTo( window.location, '/learn/code/basics' )
 
 export default class CodeChallenges extends React.Component {
 
@@ -121,7 +120,7 @@ export default class CodeChallenges extends React.Component {
   }
 
   resetCode = () => {
-    if(!this.state.data.code)       // data not yet loaded from CDN
+    if (!this.state.data.code)       // data not yet loaded from CDN
       return false
     const newCode = this.state.data.code.join( '\n' )
     this.props.codeMirror.setValue(newCode)
@@ -179,9 +178,10 @@ export default class CodeChallenges extends React.Component {
           id="mgb-codeChallenges" 
           className={"content " +(this.props.active ? "active" : "")}
           style={this.props.style}>
-        <Button basic={showAllTestsCompletedMessage} size='small' color='green' onClick={this.runTests} icon='play' content='Run tests' />
-        <Button basic size='small' color='green' onClick={this.resetCode} icon='refresh' content='Reset code' />
-        <Button basic size='small' color='green' onClick={_openHelpChat} icon='help' content='Help' />
+        <Button compact basic={showAllTestsCompletedMessage} size='small' color='green' onClick={this.runTests} icon='play' content='Run tests' />
+        <Button compact basic size='small' color='green' onClick={this.resetCode} icon='refresh' content='Reset code' />
+        <Button compact basic size='small' color='green' onClick={_openHelpChat} icon='help'  data-position='top right' data-tooltip="Ask for help" />
+        <Button compact basic size='small' color='green' onClick={_openChallengeList} icon='up arrow'  data-position='top right' data-tooltip="Go up to Challenges list"/>
 
         { this.state.error &&
           <Segment inverted color='red' size='mini' secondary>
@@ -248,7 +248,7 @@ export default class CodeChallenges extends React.Component {
                     size='small'
                     content='Start next challenge'
                     disabled={this.state.pendingLoadNextSkill}
-                    icon={ this.state.pendingLoadNextSkill ? { loading: true, name: 'circle notched' } : 'right arrow circle' }
+                    icon={ this.state.pendingLoadNextSkill ? { loading: true, name: 'circle notched' } : 'right arrow' }
                     labelPosition='right'
                     {..._smallTopMarginSty}
                     onClick={this.nextChallenge} />
@@ -269,7 +269,7 @@ export default class CodeChallenges extends React.Component {
         { fullBannerText && 
           <Header sub content={fullBannerText} {..._smallTopMarginSty}/>
         }
-        
+
         {
           description.map((text, i) => (
             <div key={i} {..._smallTopMarginSty} dangerouslySetInnerHTML={{ __html: text}} />

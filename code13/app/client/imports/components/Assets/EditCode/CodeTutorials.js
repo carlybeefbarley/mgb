@@ -4,7 +4,7 @@ import { Button, Modal, Icon, Message, Divider, Header } from 'semantic-ui-react
 
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import SkillNodes, { isPhaserTutorial, getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
-import { utilPushTo } from "/client/imports/routes/QLink"
+import { utilPushTo, utilShowChatPanelChannel } from "/client/imports/routes/QLink"
 import { learnSkill } from '/imports/schemas/skills'
 
 import { ChatSendMessageOnChannelName } from '/imports/schemas/chats'
@@ -12,6 +12,7 @@ import { ChatSendMessageOnChannelName } from '/imports/schemas/chats'
 import './editcode.css'
 
 const _smallTopMarginSty = { style: { marginTop: '0.5em'} }
+const _openHelpChat = () => utilShowChatPanelChannel(window.location, 'G_MGBHELP_')
 
 export default class CodeTutorials extends React.Component {
 
@@ -24,7 +25,8 @@ export default class CodeTutorials extends React.Component {
     quickSave:   PropTypes.func,
     highlightLines: PropTypes.func,
     assetId:     PropTypes.string,
-    style:       PropTypes.object
+    style:       PropTypes.object,
+    isOwner:     PropTypes.bool
   }
 
   constructor(props) {
@@ -68,9 +70,10 @@ export default class CodeTutorials extends React.Component {
   }
 
   submitTask = () => {
-    const url = `❮!vault:${this.props.assetId}❯`
-    ChatSendMessageOnChannelName('G_MGBHELP_', 'Check my Phaser task ' + url)
-    utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
+    const { currUser, assetId, skillPath } = this.props 
+    const url = `❮${currUser.username}:${assetId}❯`
+    ChatSendMessageOnChannelName('G_MGBHELP_', 'Please check my Phaser task ' + url + ` for '${getFriendlyName(skillPath)}'`)
+    _openHelpChat()
     this.setState({ isTaskSubmitted: true })
   }
 
@@ -107,11 +110,15 @@ export default class CodeTutorials extends React.Component {
       <div id="mgb-codeChallenges" className={"content " +(this.props.active ? "active" : "")} style={this.props.style}>
         {
           this.skillNode.$meta.isTask &&
-          <Button size='small' color='green' onClick={this.submitTask} content='Submit task' />
+          <Button compact
+              size='small' 
+              color='green' 
+              disabled={!this.props.isOwner}
+              onClick={this.submitTask} content='Submit task' />
         }
         {
           !this.isPhaserTutorial &&
-          <Button 
+          <Button compact
               size='small' 
               color='green' 
               onClick={this.stepBack} 
@@ -121,7 +128,7 @@ export default class CodeTutorials extends React.Component {
         }
         {
           !this.skillNode.$meta.isTask &&
-          <Button 
+          <Button compact
               size='small' 
               color='green' 
               onClick={this.stepNext} 
@@ -129,7 +136,10 @@ export default class CodeTutorials extends React.Component {
               content={isLastStep ? 'Finish' : 'Next'} 
               disabled={isCompleted}/>
         }
-        <Button basic size='small' color='green' onClick={this.resetCode} icon='refresh' content='Reset code' />
+
+        <Button compact basic size='small' color='green' onClick={this.resetCode} icon='refresh' content='Reset code' />
+        <Button compact basic size='small' color='green' onClick={_openHelpChat} icon='help'  data-position='top right' data-tooltip="Ask for help" />
+        <Button compact basic size='small' color='green' onClick={this.navigateToSkillsList} icon='up arrow' data-position='top right' data-tooltip="Go up to Tutorial list"/>
 
         <Divider as={Header} color='grey' size='tiny' horizontal content={getFriendlyName(this.props.skillPath)}/>
 
@@ -145,7 +155,7 @@ export default class CodeTutorials extends React.Component {
                     positive
                     size='small'
                     content='Return to Tutorial List'
-                    icon='up arrow circle'
+                    icon='up arrow'
                     labelPosition='right'
                     {..._smallTopMarginSty}
                     onClick={ this.navigateToSkillsList } />

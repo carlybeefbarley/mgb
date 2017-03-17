@@ -181,7 +181,7 @@ export default class CodeTutorials extends React.Component {
                 Task submitted
               </Modal.Header>
               <Modal.Content>
-                You have submitted task for review
+                Your task has been submitted for review. One of the moderators will look at it soon.
               </Modal.Content>
               <Modal.Actions>
                 <Button 

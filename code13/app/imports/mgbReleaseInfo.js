@@ -13,7 +13,36 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+    {
+      'timestamp': 'Thursday Mar 16 2017 18:30 GMT-0700 (PST)',
 
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3797'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'ui',
+          'type': 'improvement',
+          'changeName': 'UI Tweaks',
+          'changeSummary': 'Some more UI aspects related to Code tutorials/challenges have been improved. We have a clearer indication of locked/deleted assets in Breadcrumb bar, and when trying to lock a deleted asset, or delete a locked asset. . ',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed some cases that slowed down code editing; Improved scrolling system for actorMap games.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
     {
       'timestamp': 'Wednesday Mar 15 2017 22:00 GMT-0700 (PST)',
 

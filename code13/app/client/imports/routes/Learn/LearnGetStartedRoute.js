@@ -38,8 +38,8 @@ const gsItems = [
   { node: gsSkills.play, mascot: 'whale' },
   { node: gsSkills.assetsBasics, mascot: 'ideaguy' },
   { node: gsSkills.projects, mascot: 'team' },
-  { node: gsSkills.nonCodeGame, mascot: 'duck' },
-  { node: gsSkills.codeGame, mascot: 'bigguy' }
+  { node: gsSkills.nonCodeGame, mascot: 'duck' }
+//  { node: gsSkills.codeGame, mascot: 'bigguy' }
   // { node: gsSkills.assetsAdvanced,  mascot: 'ideaguy'      },
   // { node: gsSkills.learn,           mascot: 'MgbLogo'      }
 ]

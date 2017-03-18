@@ -584,7 +584,15 @@ export default fpChat = React.createClass( {
           <List.Item
             key={aco.channelName}
             onClick={() => this.handleChatChannelChange( aco.channelName )}>
-            <Icon name='pencil' />
+              <Icon
+                title={`View/Edit Asset`}
+                as={QLink}
+                elOverride='i'
+                to={`/assetEdit/${aco.scopeId}`}
+                name='pencil'
+                color='blue'
+                onClick={e => e.nativeEvent.stopImmediatePropagation()}
+              />
             <List.Content>
               <Icon
                 name='pin'

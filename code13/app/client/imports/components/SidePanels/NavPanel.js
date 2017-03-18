@@ -10,10 +10,12 @@ import { logActivity } from '/imports/schemas/activity'
 
 // exported since the Tutorial Editor uses this to generate some
 // macros in JoyrideSpecialMacros.jsx
+// Note that this uses Meteor's Accounts.loggingIn() so it doesn't flash the Login/Sigup during user login
 export const getNavPanels = (currUser, showAll) => {
   const uname = currUser ? currUser.username : null
-  const showGuestOptions = !currUser || showAll
-  const showUserOptions = !!currUser || showAll
+  const isLoggingIn = Meteor.loggingIn()
+  const showGuestOptions = (!isLoggingIn && !currUser) || showAll
+  const showUserOptions = (!isLoggingIn && !!currUser) || showAll
 
   return { 
     left: [

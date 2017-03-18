@@ -134,6 +134,7 @@ const LearnGetStartedRoute = ({ currUser }, context) => {
             />
           )
         } ) }
+        <div>After this, how about <QLink to='/learn/code'>learning to write code-based games?</QLink></div>
       </Grid.Column>
     </Grid>
   )

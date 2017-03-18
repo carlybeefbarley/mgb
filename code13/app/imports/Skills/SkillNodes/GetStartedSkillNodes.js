@@ -15,7 +15,7 @@ export default {
   $meta: {
     name:           'Get Started',
     description:    'Represents basic MGB usage skills - set up your profile, play a game, find friends, etc',
-    sequence:       'profile,chat,play,assetsBasics,projects,learn'
+    sequence:       'profile,chat,play,assetsBasics,projects,nonCodeGame'
   },
 
   profile: {
@@ -57,7 +57,7 @@ export default {
 
   assetsBasics: {
     $meta: {
-      name:           'Assets (basics)',
+      name:           'Assets',
       description:    'Find, create and work with Game Assets',
       sequence:       'findAssets,createAssets,assetProperties,searchAssets'
     },
@@ -98,21 +98,23 @@ export default {
 //  learnMore:       C.E
   },
 
-  codeGame: {
-    $meta: {
-      name:           'Simple code-based game',
-      description:    'A simple game written in JavaScript',
-      sequence:       'createCode,starterTemplate,runGame,stopGame,codeMentor'
-    },
-    createCode:      C.E,
-    starterTemplate: C.E,
-    runGame:         C.E,
-    stopGame:        C.E,
-    codeMentor:      C.E
-  },
-
-
   // These probably should not be in GetStarted
+
+
+  // codeGame: {
+  //   $meta: {
+  //     name:           'Simple code-based game',
+  //     description:    'A simple game written in JavaScript',
+  //     sequence:       'createCode,starterTemplate,runGame,stopGame,codeMentor'
+  //   },
+  //   createCode:      C.E,
+  //   starterTemplate: C.E,
+  //   runGame:         C.E,
+  //   stopGame:        C.E,
+  //   codeMentor:      C.E
+  // },
+
+
 
   // assetsAdvanced: {
   //   $meta: {

@@ -75,7 +75,7 @@ export default {
       isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/79YpYHXg9DbQG6tXp',
-      name: 'Task Input',
+      name: 'Task: Mouse/Touch click-to-rotate',
       description: `On each click, make the sprite rotate counter-clockwise by 10°`,
       "subsection": "Input",
     },

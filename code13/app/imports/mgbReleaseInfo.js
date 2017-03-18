@@ -14,12 +14,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Thursday Mar 16 2017 18:30 GMT-0700 (PST)',
+      'timestamp': 'Friday Mar 17 2017 17:45 GMT-0700 (PST)',
 
       'id': {
         'ver': '0.1.0',
         'state': 'Beta',
-        'iteration': '3797'
+        'iteration': '3802'
       },
 
       'releaseManagement': {
@@ -31,7 +31,7 @@ const mgbReleaseInfo = {
           'featureTag': 'ui',
           'type': 'improvement',
           'changeName': 'UI Tweaks',
-          'changeSummary': 'Some more UI aspects related to Code tutorials/challenges have been improved. We have a clearer indication of locked/deleted assets in Breadcrumb bar, and when trying to lock a deleted asset, or delete a locked asset. . ',
+          'changeSummary': 'Some more UI aspects related to Code tutorials/challenges have been improved. We have a clearer indication of locked/deleted assets in Breadcrumb bar, and when trying to lock a deleted asset, or delete a locked asset. Changes to Learn/Code/phaser tutorial list and to the learn/getStarted tutorial list.',
           'otherUrls': [ ]
         },
         {

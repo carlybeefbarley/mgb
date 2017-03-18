@@ -18,11 +18,13 @@ const fieldsUserPublic = {
   permissions: 1, 
   createdAt: 1, 
   badges: 1,
-  suIsBanned: 1
+  suIsBanned: 1,
+  isDeactivated: 1
 }
 
-Meteor.users._ensureIndex({"profile.name": 1})
-Meteor.users._ensureIndex({"createdAt": 1})
+Meteor.users._ensureIndex( { "profile.name": 1 } )
+Meteor.users._ensureIndex( { "profile.name": 1, "isDeactivated": 1 } )
+Meteor.users._ensureIndex( { "createdAt": 1 } )
 
 // This is for Meteor.user()   See http://www.east5th.co/blog/2015/03/16/user-fields-and-universal-publications/
 Meteor.publish(null, function() {
@@ -33,7 +35,7 @@ Meteor.publish(null, function() {
 })
 
 Meteor.publish('users.byName', function(nameSearch, limitCount, userSortType) {
-  let selector = {}
+  let selector = { isDeactivated: { $ne: true } }
   let userSorter = userSortType ? userSorters[userSortType] : userSorters.default
   if (nameSearch && nameSearch.length > 0)
   {
@@ -90,4 +92,3 @@ Meteor.publish('settings.userId', function(userId) {
 Meteor.publish('skills.userId', function(userId) {
   return Skills.find(userId)
 })
-

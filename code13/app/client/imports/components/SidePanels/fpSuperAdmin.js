@@ -56,12 +56,20 @@ const UserAdmin = ( { user } ) => ( !user ? <div>Visit a page that has a user co
     </List>
 
     <Header sub>Admin Actions</Header>
-    <Button.Group vertical size='small'>
+    <Button.Group vertical basic compact size='small'>
       <Button
-        color='red'
-        icon='bomb'
+        icon={{ color: 'red', name: 'ban' }}
+        labelPosition='left'
+        title='Banned users can still log in and be seen in user lists, but they cannot create/change/message'
         content={( user.suIsBanned ? "UNBAN" : "BAN") + ` user '${user.username}'`}
         onClick={() => Meteor.call('User.toggleBan', user._id) }
+        />
+      <Button
+        icon={{ color: 'red', name: 'user close' }}
+        labelPosition='left'
+        title='Deactivated users are not shown in user lists, and cannot login. However (for now), their content and messages are still visible'
+        content={( user.isDeactivated ? "Re-activate" : "Deactivate") + ` user '${user.username}'`}
+        onClick={() => Meteor.call(user.isDeactivated ? 'User.reactivateAccount' :  'User.deactivateAccount', user._id) }
         />
     </Button.Group>
   </div>

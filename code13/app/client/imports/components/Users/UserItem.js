@@ -4,6 +4,7 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import Badge from '/client/imports/components/Controls/Badge/Badge'
 import { getAllBadgesForUser } from '/imports/schemas/badges'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
+import { Header, Label, Segment } from 'semantic-ui-react'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
 // These can be rendered as attached segments so the caller can easily place/attach buttons around it
@@ -21,7 +22,6 @@ export default UserItem = React.createClass({
     urlLocation: React.PropTypes.object
   },
 
-
   handleClickUser: function() {
     const { name } = this.props.user.profile
     const uid = this.props.user._id
@@ -33,10 +33,9 @@ export default UserItem = React.createClass({
 
   render: function() {
     const { user, narrowItem, renderAttached } = this.props
-    const { profile, createdAt } = user
+    const { profile, createdAt, suIsBanned, isDeactivated } = user
     const { name, avatar, title } = profile
     const createdAtFmt = moment(createdAt).format('MMMM DD, YYYY')
-    const segClass = renderAttached ? "ui attached  segment" : "ui raised  segment"
     const imageSize = narrowItem ? "mini" : "tiny"
     const titleSpan = <span><i className="quote left icon blue"></i>{title || "(no title)"}&nbsp;<i className="quote right icon blue"></i></span>
     const badgesForUser = getAllBadgesForUser(user)
@@ -45,14 +44,22 @@ export default UserItem = React.createClass({
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui segment' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     // avatar here comes directly from mgb server - as we need it to be up to date always (mgb server will still handle etag - if not changed)
     return (
-      <div className={segClass} onClick={this.handleClickUser} >
-        <div className="ui header large">{name}</div>
+      <Segment
+          raised={!renderAttached}
+          attached={renderAttached}
+          onClick={this.handleClickUser} >
+        <Header size='large' content={name}/>
         <img src={makeCDNLink(avatar, makeExpireTimestamp(60)) || SpecialGlobals.defaultUserProfileImage} className={`ui floated image ${imageSize}`} />
         { narrowItem ? <small>{titleSpan}</small> : <big>{titleSpan}</big> }
-        { user.suIsBanned &&  <div><small style={{color: 'red'}}>Suspended Account</small></div> }
+        { suIsBanned &&
+          <div><Label size='small' color='red' content='Suspended Account' /></div>
+        }
+        { isDeactivated &&
+          <div><Label size='small' color='purple' content='Deactivated Account' /></div>
+        }
         <p><small style={{color:"rgb(0, 176, 224)"}}>Joined {createdAtFmt}</small></p>
         {getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)}
-      </div>
+      </Segment>
     )
   }
 })

@@ -35,6 +35,8 @@ const schema = {
     roles: optional([String])            // See in App.js for 'super-admin' handling 
   },
 
+  isDeactivated: optional(Boolean),      // Added March 2017. Users can choose to deactivate their own accounts. This may get some special workflow in future
+
   // The su fields can only be changed by a superAdmin User.. They typically relate to workflows or system counts
   suIsBanned:  optional(Boolean),     // Optional. If true, then this USER has been banned. See suFlagId for the flagging workflow
   suFlagId:    optional(String)       // Optional. (TODO) non-null / non-empty if there is a Flag record for this message (See Flags.js)
@@ -129,25 +131,6 @@ Meteor.methods({
     return count
   }
 })
-
-
-if (Meteor.isServer)
-  Meteor.methods( { 
-    "User.toggleBan": function(userId) {
-      console.log("[User.toggleBan]")
-      checkIsLoggedInAndNotSuspended()
-      checkMgb.checkUserIsSuperAdmin()
-      check(userId, String)
-      const sel = { _id: userId }
-      const u = Meteor.users.findOne( sel )
-      if (!u)
-        throw new Meteor.Error(404, `User #${userId} not found`)
-      const newIsBanned = !u.suIsBanned
-      const count = Meteor.users.update( sel, { $set: { suIsBanned: newIsBanned } } ) 
-      console.log("[User.toggleBan]", count, userId, `NewValue=${newIsBanned}`)
-      return count
-    },    
-  })
 
 //
 // helper functions

@@ -24,7 +24,7 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 
 
-import { Container, Segment, Header, Button, Grid, Item, Icon, Popup } from 'semantic-ui-react'
+import { Container, Segment, Header, Button, Grid, Item, Icon, Label, Popup } from 'semantic-ui-react'
 
 const UserShowcase = () => ( null )    // TODO based on workState
 
@@ -136,7 +136,12 @@ export default UserProfileRoute = React.createClass({
               <Item.Content>
 
                 <Item.Header content={name} />
-                { user.suIsBanned && <div><small style={{color: 'red'}}>Suspended Account</small></div> }
+                { user.suIsBanned &&
+                  <div><Label size='small' color='red' content='Suspended Account' /></div>
+                }
+                { user.isDeactivated &&
+                  <div><Label size='small' color='purple' content='Deactivated Account' /></div>
+                }
                 <Item.Meta>
                   <p>
                     <b title="This is the user's name on the old MGBv1 system. There is currently no verification of this claim">

@@ -754,9 +754,9 @@ export default AssetEditRoute = React.createClass({
           showToast(err.reason, 'error')
       })
       if (newIsCompleted)
-        logActivity("asset.stable",  "Marked asset as complete", null, asset)
+        logActivity("asset.stable",  "Locked an asset", null, asset)
       else
-        logActivity("asset.unstable",  "Marked asset as incomplete", null, asset)
+        logActivity("asset.unstable",  "Unlocked an asset", null, asset)
     }
   },
 

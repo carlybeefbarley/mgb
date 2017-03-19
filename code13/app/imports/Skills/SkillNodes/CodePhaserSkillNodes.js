@@ -95,8 +95,8 @@ export default {
     $meta: {
       icon: 'code',
       link: '/u/!vault/asset/4fQsLapzr4uWGLbnp',
-      name: 'update() function',
-      description: `Example of increasing/descreasing Image size based on up/down arrow keypresses`,
+      name: 'Using Phaser\'s update() function',
+      description: `Using Phaser's update() function to change text based on up/down arrow keypresses`,
       "subsection": "Animation",
     },
     'updateFunction': C.En(0),
@@ -106,8 +106,8 @@ export default {
       isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/kMhY34EAEsETMiGmF',
-      name: 'Task move character',
-      description: `Move a character around the screen using arrow keys`,
+      name: 'Task: Player movement using arrow keys',
+      description: `Move a game character around the screen using arrow keys`,
       "subsection": "Animation",
     },
     'taskMoveChar': C.En(0),
@@ -116,7 +116,7 @@ export default {
     $meta: {
       icon: 'code',
       link: '/u/!vault/asset/QN7cKdBnoZ2dKjj3m',
-      name: 'Spritesheet',
+      name: 'Using Spritesheets for animation',
       description: `Frame animation for a character`,
       "subsection": "Animation",
     },
@@ -126,7 +126,7 @@ export default {
     $meta: {
       icon: 'code',
       link: '/u/!vault/asset/cSm7LivYTvCTa2dqf',
-      name: 'Spritesheet events',
+      name: 'Spritesheet events to start, stop and loop animations',
       description: `Animation start, stop and looping`,
       "subsection": "Animation",
     },
@@ -137,12 +137,13 @@ export default {
       isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/qNcrwh2emqdBEpPH5',
-      name: 'Task character animation',
+      name: 'Task: Animate a character\'s movements',
       description: `Animate character - spawn, idle and run`,
       "subsection": "Animation",
     },
     'taskCharAnim': C.En(0),
   },
+
   physicsBasics: {
     $meta: {
       icon: 'code',

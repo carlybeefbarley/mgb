@@ -26,18 +26,18 @@ export default {
       link: '/u/!vault/asset/5Bm4R9kJHRAMBv4kD',
       description: `The most basic concept for starting game development`,
       "subsection": "Image",
+      ...(C.E.$meta)
     },
-    'drawImage': C.En(0),
   },
   positionImage: {
     $meta: {
-      name: 'Positioning images as Sprites',
+      name: 'Positioning Sprites',
       icon: 'code',
       link: '/u/!vault/asset/eoTTDhibmKGrhuvHn',
       description: `Position an image with x, y and anchor point`,
       "subsection": "Image",
+      ...(C.E.$meta)
     },
-    'positionImage': C.En(0),
   },
   taskSetPosition: {
     $meta: {
@@ -47,8 +47,8 @@ export default {
       link: '/u/!vault/asset/Pn9mhjR7yAW3iTsRt',
       description: `Position five instances of a Sprite`,
       "subsection": "Image",
+      ...(C.E.$meta)
     },
-    'taskSetPosition': C.En(0),
   },
   manipulateImage: {
     $meta: {
@@ -57,18 +57,18 @@ export default {
       link: '/u/!vault/asset/nzZK4r5a4WPAszBjj',
       description: `Image scaling, transparency, rotation and tinting`,
       "subsection": "Image",
+      ...(C.E.$meta)
     },
-    'manipulateImage': C.En(0),
   },
   inputClick: {
     $meta: {
+      name: 'Mouse/Touch Input',
       icon: 'code',
       link: '/u/!vault/asset/ENnr8RSrrSRB3ybTg',
-      name: 'Mouse/Touch Input',
       description: `Click on image, click on game`,
       "subsection": "Input",
+      ...(C.E.$meta)
     },
-    'inputClick': C.En(0),
   },
   taskInput: {
     $meta: {
@@ -78,8 +78,8 @@ export default {
       name: 'Task: Mouse/Touch click-to-rotate',
       description: `On each click, make the sprite rotate counter-clockwise by 10°`,
       "subsection": "Input",
+      ...(C.E.$meta)
     },
-    'taskInput': C.En(0),
   },
   inputKeyboard: {
     $meta: {
@@ -88,123 +88,123 @@ export default {
       name: 'Keyboard input',
       description: `Using Keyboard input for your game`,
       "subsection": "Input",
+      ...(C.E.$meta)
     },
-    'inputKeyboard': C.En(0),
   },
   updateFunction: {
     $meta: {
       icon: 'code',
       link: '/u/!vault/asset/4fQsLapzr4uWGLbnp',
-      name: 'Using Phaser\'s update() function',
+      name: 'Phaser\'s update() function',
       description: `Using Phaser's update() function to change text based on up/down arrow keypresses`,
       "subsection": "Animation",
+      ...(C.E.$meta)
     },
-    'updateFunction': C.En(0),
   },
   taskMoveChar: {
     $meta: {
       isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/kMhY34EAEsETMiGmF',
-      name: 'Task: Player movement using arrow keys',
+      name: 'Task: Player movement',
       description: `Move a game character around the screen using arrow keys`,
       "subsection": "Animation",
+      ...(C.E.$meta)
     },
-    'taskMoveChar': C.En(0),
   },
   spriteSheet: {
     $meta: {
       icon: 'code',
       link: '/u/!vault/asset/QN7cKdBnoZ2dKjj3m',
-      name: 'Using Spritesheets for animation',
+      name: 'Spritesheet animations',
       description: `Frame animation for a character`,
       "subsection": "Animation",
+      ...(C.E.$meta)
     },
-    'spriteSheet': C.En(0),
   },
   spriteSheetEvents: {
     $meta: {
       icon: 'code',
       link: '/u/!vault/asset/cSm7LivYTvCTa2dqf',
-      name: 'Spritesheet events to start, stop and loop animations',
+      name: 'Spritesheet events',
       description: `Animation start, stop and looping`,
       "subsection": "Animation",
+      ...(C.E.$meta)
     },
-    'spriteSheetEvents': C.En(0),
   },
   taskCharAnim: {
     $meta: {
       isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/qNcrwh2emqdBEpPH5',
-      name: 'Task: Animate a character\'s movements',
+      name: 'Task: Character animation',
       description: `Animate character - spawn, idle and run`,
       "subsection": "Animation",
+      ...(C.E.$meta)
     },
-    'taskCharAnim': C.En(0),
   },
 
   physicsBasics: {
     $meta: {
+      name: 'Physics basics',
       icon: 'code',
       link: '/u/!vault/asset/6gDjnQ6wAFQp2LZXB',
-      name: 'Physics basics',
       description: `Velocity, gravity, bounce and world bounds`,
       "subsection": "Physics",
+      ...(C.E.$meta)
     },
-    'physicsBasics': C.En(0),
   },
   physicsCollide: {
     $meta: {
+      name: 'Physics collisions',
       icon: 'code',
       link: '/u/!vault/asset/9dhJ2jzY7iER84GeM',
-      name: 'Physics collide',
       description: `Collisions between two objects`,
       "subsection": "Physics",
+      ...(C.E.$meta)
     },
-    'physicsCollide': C.En(0),
   },
   taskJump: {
     $meta: {
+      name: 'Task: Jumping',
       isTask: true,
       icon: 'tasks',
       link: '/u/!vault/asset/qoQgYNPev3xqNXhXD',
-      name: 'Task jump',
       description: `Make a jumping character using simple physics`,
       "subsection": "Physics",
+      ...(C.E.$meta)
     },
-    'taskJump': C.En(0),
   },
   tweens: {
     $meta: {
+      name: 'Tweening',
       icon: 'code',
       link: '/u/!vault/asset/XnsehSEruvMKMBKLx',
-      name: 'Tweens',
       description: `Animating images with interpolation instead of frames`,
       "subsection": "Misc",
+      ...(C.E.$meta)
     },
-    'tweens': C.En(0),
   },
   groups: {
     $meta: {
+      name: 'Sprite Groups',
       icon: 'code',
       link: '/u/!vault/asset/jYQwe8cv2rtDDCM89',
-      name: 'Groups',
       description: `Adding sprites to a group`,
       "subsection": "Misc",
+      ...(C.E.$meta)
     },
-    'groups': C.En(0),
   },
   taskTweenGroup: {
     $meta: {
       isTask: true,
+      name: 'Task: Animate a group',
       icon: 'tasks',
       link: '/u/!vault/asset/rDMCqocQv3nnYx8AB',
-      name: 'Task animate group',
       description: `Animate a group of dwarves`,
       "subsection": "Misc",
+      ...(C.E.$meta)
     },
-    'taskTweenGroup': C.En(0),
   },
   // TODO needs joyride selectors, completation tags
   // oop: {
@@ -223,8 +223,8 @@ export default {
       name: 'What to do next?',
       description: `Learn using the Phaser docs and examples`,
       "subsection": "Misc",
+      ...(C.E.$meta)
     },
-    'next': C.En(0),
   }
 }
 

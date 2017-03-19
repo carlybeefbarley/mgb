@@ -15,9 +15,9 @@ export default {
     {
       "name": "Comment your JavaScript Code",
       "icon": "code",
-      "subsection": "Comments"
+      "subsection": "Comments",
+      ...(C.E.$meta)
     },
-    "comments": C.En(0)
   },
   "variables":
   {
@@ -25,9 +25,9 @@ export default {
     {
       "name": "Declare JavaScript Variables",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "variables": C.En(0)
   },
   "assignmentOperator":
   {
@@ -35,9 +35,9 @@ export default {
     {
       "name": "Storing Values with the Assignment Operator",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "assignmentOperator": C.En(0)
   },
   "initVariables":
   {
@@ -45,9 +45,9 @@ export default {
     {
       "name": "Initializing Variables with the Assignment Operator",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "initVariables": C.En(0)
   },
   "unitializedVariables":
   {
@@ -55,9 +55,9 @@ export default {
     {
       "name": "Understanding Uninitialized Variables",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "unitializedVariables": C.En(0)
   },
   "caseSensitiveVariables":
   {
@@ -65,9 +65,9 @@ export default {
     {
       "name": "Understanding Case Sensitivity in Variables",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "caseSensitiveVariables": C.En(0)
   },
   "sumNumbers":
   {
@@ -75,9 +75,9 @@ export default {
     {
       "name": "Add Two Numbers with JavaScript",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "sumNumbers": C.En(0)
   },
   "subtractNumbers":
   {
@@ -85,9 +85,9 @@ export default {
     {
       "name": "Subtract One Number from Another with JavaScript",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "subtractNumbers": C.En(0)
   },
   "multiplyNumbers":
   {
@@ -95,9 +95,9 @@ export default {
     {
       "name": "Multiply Two Numbers with JavaScript",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "multiplyNumbers": C.En(0)
   },
   "divideNumbers":
   {
@@ -105,9 +105,9 @@ export default {
     {
       "name": "Divide One Number by Another with JavaScript",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "divideNumbers": C.En(0)
   },
   "incrementNumbers":
   {
@@ -115,9 +115,9 @@ export default {
     {
       "name": "Increment a Number with JavaScript",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "incrementNumbers": C.En(0)
   },
   "decrementNumbers":
   {
@@ -125,9 +125,9 @@ export default {
     {
       "name": "Decrement a Number with JavaScript",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "decrementNumbers": C.En(0)
   },
   "createDecimal":
   {
@@ -135,9 +135,9 @@ export default {
     {
       "name": "Create Decimal Numbers with JavaScript",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "createDecimal": C.En(0)
   },
   "multiplyDecimal":
   {
@@ -145,9 +145,9 @@ export default {
     {
       "name": "Multiply Two Decimals with JavaScript",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "multiplyDecimal": C.En(0)
   },
   "divideDecimal":
   {
@@ -155,9 +155,9 @@ export default {
     {
       "name": "Divide one Decimal by Another with JavaScript",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "divideDecimal": C.En(0)
   },
   "findingRemainder":
   {
@@ -165,9 +165,9 @@ export default {
     {
       "name": "Finding a Remainder in JavaScript",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "findingRemainder": C.En(0)
   },
   "assignmentWithAddition":
   {
@@ -175,9 +175,9 @@ export default {
     {
       "name": "Compound Assignment With Augmented Addition",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "assignmentWithAddition": C.En(0)
   },
   "assignmentWithSubtraction":
   {
@@ -185,9 +185,9 @@ export default {
     {
       "name": "Compound Assignment With Augmented Subtraction",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "assignmentWithSubtraction": C.En(0)
   },
   "assignmentWithMultiplication":
   {
@@ -195,9 +195,9 @@ export default {
     {
       "name": "Compound Assignment With Augmented Multiplication",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "assignmentWithMultiplication": C.En(0)
   },
   "assignmentWithDivision":
   {
@@ -205,9 +205,9 @@ export default {
     {
       "name": "Compound Assignment With Augmented Division",
       "icon": "code",
-      "subsection": "Numbers"
+      "subsection": "Numbers",
+      ...(C.E.$meta)
     },
-    "assignmentWithDivision": C.En(0)
   },
   "declareString":
   {
@@ -215,9 +215,9 @@ export default {
     {
       "name": "Declare String Variables",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "declareString": C.En(0)
   },
   "escapingQoutesString":
   {
@@ -225,9 +225,9 @@ export default {
     {
       "name": "Escaping Literal Quotes in Strings",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "escapingQoutesString": C.En(0)
   },
   "qoutingWithSingleQoutes":
   {
@@ -235,9 +235,9 @@ export default {
     {
       "name": "Quoting Strings with Single Quotes",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "qoutingWithSingleQoutes": C.En(0)
   },
   "escapeSequences":
   {
@@ -245,9 +245,9 @@ export default {
     {
       "name": "Escape Sequences in Strings",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "escapeSequences": C.En(0)
   },
   "concatenatingStringPlus":
   {
@@ -255,9 +255,9 @@ export default {
     {
       "name": "Concatenating Strings with Plus Operator",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "concatenatingStringPlus": C.En(0)
   },
   "concatenatingStringPlusEquals":
   {
@@ -265,9 +265,9 @@ export default {
     {
       "name": "Concatenating Strings with the Plus Equals Operator",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "concatenatingStringPlusEquals": C.En(0)
   },
   "constructingStringVariables":
   {
@@ -275,9 +275,9 @@ export default {
     {
       "name": "Constructing Strings with Variables",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "constructingStringVariables": C.En(0)
   },
   "appendingStringToVariable":
   {
@@ -285,9 +285,9 @@ export default {
     {
       "name": "Appending Variables to Strings",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "appendingStringToVariable": C.En(0)
   },
   "stringLength":
   {
@@ -295,9 +295,9 @@ export default {
     {
       "name": "Find the Length of a String",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "stringLength": C.En(0)
   },
   "findFirstCharacterBrackets":
   {
@@ -305,9 +305,9 @@ export default {
     {
       "name": "Use Bracket Notation to Find the First Character in a String",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "findFirstCharacterBrackets": C.En(0)
   },
   "stringImmutability":
   {
@@ -315,9 +315,9 @@ export default {
     {
       "name": "Understand String Immutability",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "stringImmutability": C.En(0)
   },
   "findNthCharacterBrackets":
   {
@@ -325,9 +325,9 @@ export default {
     {
       "name": "Use Bracket Notation to Find the Nth Character in a String",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "findNthCharacterBrackets": C.En(0)
   },
   "stringLastCharacter":
   {
@@ -335,9 +335,9 @@ export default {
     {
       "name": "Use Bracket Notation to Find the Last Character in a String",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "stringLastCharacter": C.En(0)
   },
   "stringFindNthToLast":
   {
@@ -345,9 +345,9 @@ export default {
     {
       "name": "Use Bracket Notation to Find the Nth-to-Last Character in a String",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "stringFindNthToLast": C.En(0)
   },
   "wordBlanks":
   {
@@ -355,9 +355,9 @@ export default {
     {
       "name": "Word Blanks",
       "icon": "code",
-      "subsection": "Strings"
+      "subsection": "Strings",
+      ...(C.E.$meta)
     },
-    "wordBlanks": C.En(0)
   },
   "arrayVariable":
   {
@@ -365,9 +365,9 @@ export default {
     {
       "name": "Store Multiple Values in one Variable using JavaScript Arrays",
       "icon": "code",
-      "subsection": "Arrays"
+      "subsection": "Arrays",
+      ...(C.E.$meta)
     },
-    "arrayVariable": C.En(0)
   },
   "nestArrays":
   {
@@ -375,9 +375,9 @@ export default {
     {
       "name": "Nest one Array within Another Array",
       "icon": "code",
-      "subsection": "Arrays"
+      "subsection": "Arrays",
+      ...(C.E.$meta)
     },
-    "nestArrays": C.En(0)
   },
   "arrayIndexes":
   {
@@ -385,9 +385,9 @@ export default {
     {
       "name": "Access Array Data with Indexes",
       "icon": "code",
-      "subsection": "Arrays"
+      "subsection": "Arrays",
+      ...(C.E.$meta)
     },
-    "arrayIndexes": C.En(0)
   },
   "modifyArray":
   {
@@ -395,9 +395,9 @@ export default {
     {
       "name": "Modify Array Data With Indexes",
       "icon": "code",
-      "subsection": "Arrays"
+      "subsection": "Arrays",
+      ...(C.E.$meta)
     },
-    "modifyArray": C.En(0)
   },
   "multiDimensionalArray":
   {
@@ -405,9 +405,9 @@ export default {
     {
       "name": "Access Multi-Dimensional Arrays With Indexes",
       "icon": "code",
-      "subsection": "Arrays"
+      "subsection": "Arrays",
+      ...(C.E.$meta)
     },
-    "multiDimensionalArray": C.En(0)
   },
   "arrayPush":
   {
@@ -415,9 +415,9 @@ export default {
     {
       "name": "Manipulate Arrays With push()",
       "icon": "code",
-      "subsection": "Arrays"
+      "subsection": "Arrays",
+      ...(C.E.$meta)
     },
-    "arrayPush": C.En(0)
   },
   "arrayPop":
   {
@@ -425,9 +425,9 @@ export default {
     {
       "name": "Manipulate Arrays With pop()",
       "icon": "code",
-      "subsection": "Arrays"
+      "subsection": "Arrays",
+      ...(C.E.$meta)
     },
-    "arrayPop": C.En(0)
   },
   "arrayShift":
   {
@@ -435,9 +435,9 @@ export default {
     {
       "name": "Manipulate Arrays With shift()",
       "icon": "code",
-      "subsection": "Arrays"
+      "subsection": "Arrays",
+      ...(C.E.$meta)
     },
-    "arrayShift": C.En(0)
   },
   "arrayUnshift":
   {
@@ -445,9 +445,9 @@ export default {
     {
       "name": "Manipulate Arrays With unshift()",
       "icon": "code",
-      "subsection": "Arrays"
+      "subsection": "Arrays",
+      ...(C.E.$meta)
     },
-    "arrayUnshift": C.En(0)
   },
   "shoppingList":
   {
@@ -455,9 +455,9 @@ export default {
     {
       "name": "Shopping List",
       "icon": "code",
-      "subsection": "Arrays"
+      "subsection": "Arrays",
+      ...(C.E.$meta)
     },
-    "shoppingList": C.En(0)
   },
   "reusableArrays":
   {
@@ -465,9 +465,9 @@ export default {
     {
       "name": "Write Reusable JavaScript with Functions",
       "icon": "code",
-      "subsection": "Functions"
+      "subsection": "Functions",
+      ...(C.E.$meta)
     },
-    "reusableArrays": C.En(0)
   },
   "functionArguments":
   {
@@ -475,9 +475,9 @@ export default {
     {
       "name": "Passing Values to Functions with Arguments",
       "icon": "code",
-      "subsection": "Functions"
+      "subsection": "Functions",
+      ...(C.E.$meta)
     },
-    "functionArguments": C.En(0)
   },
   "globalScope":
   {
@@ -485,9 +485,9 @@ export default {
     {
       "name": "Global Scope and Functions",
       "icon": "code",
-      "subsection": "Functions"
+      "subsection": "Functions",
+      ...(C.E.$meta)
     },
-    "globalScope": C.En(0)
   },
   "localScope":
   {
@@ -495,9 +495,9 @@ export default {
     {
       "name": "Local Scope and Functions",
       "icon": "code",
-      "subsection": "Functions"
+      "subsection": "Functions",
+      ...(C.E.$meta)
     },
-    "localScope": C.En(0)
   },
   "globalVsLocal":
   {
@@ -505,9 +505,9 @@ export default {
     {
       "name": "Global vs. Local Scope in Functions",
       "icon": "code",
-      "subsection": "Functions"
+      "subsection": "Functions",
+      ...(C.E.$meta)
     },
-    "globalVsLocal": C.En(0)
   },
   "returnValue":
   {
@@ -515,9 +515,9 @@ export default {
     {
       "name": "Return a Value from a Function with Return",
       "icon": "code",
-      "subsection": "Functions"
+      "subsection": "Functions",
+      ...(C.E.$meta)
     },
-    "returnValue": C.En(0)
   },
   "assignmentReturnedValue":
   {
@@ -525,9 +525,9 @@ export default {
     {
       "name": "Assignment with a Returned Value",
       "icon": "code",
-      "subsection": "Functions"
+      "subsection": "Functions",
+      ...(C.E.$meta)
     },
-    "assignmentReturnedValue": C.En(0)
   },
   "standInLine":
   {
@@ -535,9 +535,9 @@ export default {
     {
       "name": "Stand in Line",
       "icon": "code",
-      "subsection": "Functions"
+      "subsection": "Functions",
+      ...(C.E.$meta)
     },
-    "standInLine": C.En(0)
   },
   "booleans":
   {
@@ -545,9 +545,9 @@ export default {
     {
       "name": "Understanding Boolean Values",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "booleans": C.En(0)
   },
   "ifStatement":
   {
@@ -555,9 +555,9 @@ export default {
     {
       "name": "Use Conditional Logic with If Statements",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "ifStatement": C.En(0)
   },
   "comparison":
   {
@@ -565,9 +565,9 @@ export default {
     {
       "name": "Comparison with the Equality Operator",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "comparison": C.En(0)
   },
   "strictComparison":
   {
@@ -575,9 +575,9 @@ export default {
     {
       "name": "Comparison with the Strict Equality Operator",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "strictComparison": C.En(0)
   },
   "comparisonInequeality":
   {
@@ -585,9 +585,9 @@ export default {
     {
       "name": "Comparison with the Inequality Operator",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "comparisonInequeality": C.En(0)
   },
   "comparisonStrictInequeality":
   {
@@ -595,9 +595,9 @@ export default {
     {
       "name": "Comparison with the Strict Inequality Operator",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "comparisonStrictInequeality": C.En(0)
   },
   "greaterThan":
   {
@@ -605,9 +605,9 @@ export default {
     {
       "name": "Comparison with the Greater Than Operator",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "greaterThan": C.En(0)
   },
   "greaterTharOr":
   {
@@ -615,9 +615,9 @@ export default {
     {
       "name": "Comparison with the Greater Than Or Equal To Operator",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "greaterTharOr": C.En(0)
   },
   "lessThan":
   {
@@ -625,9 +625,9 @@ export default {
     {
       "name": "Comparison with the Less Than Operator",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "lessThan": C.En(0)
   },
   "lessThanOr":
   {
@@ -635,9 +635,9 @@ export default {
     {
       "name": "Comparison with the Less Than Or Equal To Operator",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "lessThanOr": C.En(0)
   },
   "logicalAnd":
   {
@@ -645,9 +645,9 @@ export default {
     {
       "name": "Comparisons with the Logical And Operator",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "logicalAnd": C.En(0)
   },
   "logicalOr":
   {
@@ -655,9 +655,9 @@ export default {
     {
       "name": "Comparisons with the Logical Or Operator",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "logicalOr": C.En(0)
   },
   "elseStatement":
   {
@@ -665,9 +665,9 @@ export default {
     {
       "name": "Introducing Else Statements",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "elseStatement": C.En(0)
   },
   "elseIfStatement":
   {
@@ -675,9 +675,9 @@ export default {
     {
       "name": "Introducing Else If Statements",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "elseIfStatement": C.En(0)
   },
   "ifElseOrder":
   {
@@ -685,9 +685,9 @@ export default {
     {
       "name": "Logical Order in If Else Statements",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "ifElseOrder": C.En(0)
   },
   "chainingIfElse":
   {
@@ -695,9 +695,9 @@ export default {
     {
       "name": "Chaining If Else Statements",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "chainingIfElse": C.En(0)
   },
   "golfCode":
   {
@@ -705,9 +705,9 @@ export default {
     {
       "name": "Golf Code",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "golfCode": C.En(0)
   },
   "switchStatement":
   {
@@ -715,9 +715,9 @@ export default {
     {
       "name": "Selecting from many options with Switch Statements",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "switchStatement": C.En(0)
   },
   "switchDefault":
   {
@@ -725,9 +725,9 @@ export default {
     {
       "name": "Adding a default option in Switch statements",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "switchDefault": C.En(0)
   },
   "identicalStatements":
   {
@@ -735,9 +735,9 @@ export default {
     {
       "name": "Multiple Identical Options in Switch Statements",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "identicalStatements": C.En(0)
   },
   "replaceIfElseWithSwitch":
   {
@@ -745,9 +745,9 @@ export default {
     {
       "name": "Replacing If Else Chains with Switch",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "replaceIfElseWithSwitch": C.En(0)
   },
   "returnBoolean":
   {
@@ -755,9 +755,9 @@ export default {
     {
       "name": "Returning Boolean Values from Functions",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "returnBoolean": C.En(0)
   },
   "returnPattern":
   {
@@ -765,9 +765,9 @@ export default {
     {
       "name": "Return Early Pattern for Functions",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "returnPattern": C.En(0)
   },
   "countingCards":
   {
@@ -775,9 +775,9 @@ export default {
     {
       "name": "Counting Cards",
       "icon": "code",
-      "subsection": "Decision Making"
+      "subsection": "Decision Making",
+      ...(C.E.$meta)
     },
-    "countingCards": C.En(0)
   },
   "objects":
   {
@@ -785,9 +785,9 @@ export default {
     {
       "name": "Build JavaScript Objects",
       "icon": "code",
-      "subsection": "Objects"
+      "subsection": "Objects",
+      ...(C.E.$meta)
     },
-    "objects": C.En(0)
   },
   "objectsPropertiesDot":
   {
@@ -795,9 +795,9 @@ export default {
     {
       "name": "Accessing Objects Properties with the Dot Operator",
       "icon": "code",
-      "subsection": "Objects"
+      "subsection": "Objects",
+      ...(C.E.$meta)
     },
-    "objectsPropertiesDot": C.En(0)
   },
   "objectsPropertiesBrackets":
   {
@@ -805,9 +805,9 @@ export default {
     {
       "name": "Accessing Objects Properties with Bracket Notation",
       "icon": "code",
-      "subsection": "Objects"
+      "subsection": "Objects",
+      ...(C.E.$meta)
     },
-    "objectsPropertiesBrackets": C.En(0)
   },
   "objectsPropertiesVariables":
   {
@@ -815,9 +815,9 @@ export default {
     {
       "name": "Accessing Objects Properties with Variables",
       "icon": "code",
-      "subsection": "Objects"
+      "subsection": "Objects",
+      ...(C.E.$meta)
     },
-    "objectsPropertiesVariables": C.En(0)
   },
   "updatingProperties":
   {
@@ -825,9 +825,9 @@ export default {
     {
       "name": "Updating Object Properties",
       "icon": "code",
-      "subsection": "Objects"
+      "subsection": "Objects",
+      ...(C.E.$meta)
     },
-    "updatingProperties": C.En(0)
   },
   "newProperty":
   {
@@ -835,9 +835,9 @@ export default {
     {
       "name": "Add New Properties to a JavaScript Object",
       "icon": "code",
-      "subsection": "Objects"
+      "subsection": "Objects",
+      ...(C.E.$meta)
     },
-    "newProperty": C.En(0)
   },
   "deleteProperties":
   {
@@ -845,9 +845,9 @@ export default {
     {
       "name": "Delete Properties from a JavaScript Object",
       "icon": "code",
-      "subsection": "Objects"
+      "subsection": "Objects",
+      ...(C.E.$meta)
     },
-    "deleteProperties": C.En(0)
   },
   "objectLookups":
   {
@@ -855,9 +855,9 @@ export default {
     {
       "name": "Using Objects for Lookups",
       "icon": "code",
-      "subsection": "Objects"
+      "subsection": "Objects",
+      ...(C.E.$meta)
     },
-    "objectLookups": C.En(0)
   },
   "testingObjects":
   {
@@ -865,9 +865,9 @@ export default {
     {
       "name": "Testing Objects for Properties",
       "icon": "code",
-      "subsection": "Objects"
+      "subsection": "Objects",
+      ...(C.E.$meta)
     },
-    "testingObjects": C.En(0)
   },
   "complexObjects":
   {
@@ -875,9 +875,9 @@ export default {
     {
       "name": "Manipulating Complex Objects",
       "icon": "code",
-      "subsection": "Objects"
+      "subsection": "Objects",
+      ...(C.E.$meta)
     },
-    "complexObjects": C.En(0)
   },
   "nestedObjects":
   {
@@ -885,9 +885,9 @@ export default {
     {
       "name": "Accessing Nested Objects",
       "icon": "code",
-      "subsection": "Nesting"
+      "subsection": "Nesting",
+      ...(C.E.$meta)
     },
-    "nestedObjects": C.En(0)
   },
   "nestedArrays":
   {
@@ -895,9 +895,9 @@ export default {
     {
       "name": "Accessing Nested Arrays",
       "icon": "code",
-      "subsection": "Nesting"
+      "subsection": "Nesting",
+      ...(C.E.$meta)
     },
-    "nestedArrays": C.En(0)
   },
   "recordCollection":
   {
@@ -905,9 +905,9 @@ export default {
     {
       "name": "Record Collection",
       "icon": "code",
-      "subsection": "Nesting"
+      "subsection": "Nesting",
+      ...(C.E.$meta)
     },
-    "recordCollection": C.En(0)
   },
   "whileLoops":
   {
@@ -915,9 +915,9 @@ export default {
     {
       "name": "Iterate with JavaScript While Loops",
       "icon": "code",
-      "subsection": "Loops"
+      "subsection": "Loops",
+      ...(C.E.$meta)
     },
-    "whileLoops": C.En(0)
   },
   "forLoops":
   {
@@ -925,9 +925,9 @@ export default {
     {
       "name": "Iterate with JavaScript For Loops",
       "icon": "code",
-      "subsection": "Loops"
+      "subsection": "Loops",
+      ...(C.E.$meta)
     },
-    "forLoops": C.En(0)
   },
   "oddNumbersIterate":
   {
@@ -935,9 +935,9 @@ export default {
     {
       "name": "Iterate Odd Numbers With a For Loop",
       "icon": "code",
-      "subsection": "Loops"
+      "subsection": "Loops",
+      ...(C.E.$meta)
     },
-    "oddNumbersIterate": C.En(0)
   },
   "countBackwardLoops":
   {
@@ -945,9 +945,9 @@ export default {
     {
       "name": "Count Backwards With a For Loop",
       "icon": "code",
-      "subsection": "Loops"
+      "subsection": "Loops",
+      ...(C.E.$meta)
     },
-    "countBackwardLoops": C.En(0)
   },
   "iterateArrayLoop":
   {
@@ -955,9 +955,9 @@ export default {
     {
       "name": "Iterate Through an Array with a For Loop",
       "icon": "code",
-      "subsection": "Loops"
+      "subsection": "Loops",
+      ...(C.E.$meta)
     },
-    "iterateArrayLoop": C.En(0)
   },
   "nestingLoops":
   {
@@ -965,9 +965,9 @@ export default {
     {
       "name": "Nesting For Loops",
       "icon": "code",
-      "subsection": "Loops"
+      "subsection": "Loops",
+      ...(C.E.$meta)
     },
-    "nestingLoops": C.En(0)
   },
   "profileLookup":
   {
@@ -975,9 +975,9 @@ export default {
     {
       "name": "Profile Lookup",
       "icon": "code",
-      "subsection": "Loops"
+      "subsection": "Loops",
+      ...(C.E.$meta)
     },
-    "profileLookup": C.En(0)
   },
   "randomFractions":
   {
@@ -985,9 +985,9 @@ export default {
     {
       "name": "Generate Random Fractions with JavaScript",
       "icon": "code",
-      "subsection": "Useful stuff"
+      "subsection": "Useful stuff",
+      ...(C.E.$meta)
     },
-    "randomFractions": C.En(0)
   },
   "randomIntegers":
   {
@@ -995,9 +995,9 @@ export default {
     {
       "name": "Generate Random Whole Numbers with JavaScript",
       "icon": "code",
-      "subsection": "Useful stuff"
+      "subsection": "Useful stuff",
+      ...(C.E.$meta)
     },
-    "randomIntegers": C.En(0)
   },
   "randomIntegersRange":
   {
@@ -1005,9 +1005,9 @@ export default {
     {
       "name": "Generate Random Whole Numbers within a Range",
       "icon": "code",
-      "subsection": "Useful stuff"
+      "subsection": "Useful stuff",
+      ...(C.E.$meta)
     },
-    "randomIntegersRange": C.En(0)
   },
   "parseIntFunction":
   {
@@ -1015,9 +1015,9 @@ export default {
     {
       "name": "Use the parseInt Function",
       "icon": "code",
-      "subsection": "Useful stuff"
+      "subsection": "Useful stuff",
+      ...(C.E.$meta)
     },
-    "parseIntFunction": C.En(0)
   },
   "parseIntRadix":
   {
@@ -1025,9 +1025,9 @@ export default {
     {
       "name": "Use the parseInt Function with a Radix",
       "icon": "code",
-      "subsection": "Useful stuff"
+      "subsection": "Useful stuff",
+      ...(C.E.$meta)
     },
-    "parseIntRadix": C.En(0)
   },
   "ternaryOperator":
   {
@@ -1035,9 +1035,9 @@ export default {
     {
       "name": "Use the Conditional (Ternary) Operator",
       "icon": "code",
-      "subsection": "Useful stuff"
+      "subsection": "Useful stuff",
+      ...(C.E.$meta)
     },
-    "ternaryOperator": C.En(0)
   },
   "multipleTernaryOperators":
   {
@@ -1045,8 +1045,8 @@ export default {
     {
       "name": "Use Multiple Conditional (Ternary) Operators",
       "icon": "code",
-      "subsection": "Useful stuff"
+      "subsection": "Useful stuff",
+      ...(C.E.$meta)
     },
-    "multipleTernaryOperators": C.En(0)
   }
 }

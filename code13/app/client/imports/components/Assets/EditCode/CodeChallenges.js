@@ -71,7 +71,7 @@ export default class CodeChallenges extends React.Component {
     this.getReference()
     window.addEventListener(_runFrameConfig.eventName, this.receiveMessage, false)
     // don't run automatic tests if user already has this skill. Useful for cases when user just checks his previous code
-    // if(!hasSkill(this.props.userSkills, this.props.skillPath + '.' + this.skillName)){
+    // if(!hasSkill(this.props.userSkills, this.props.skillPath){
     // // for some reason tests (iframe, codeMirror) are not ready when component did mount //!!!
     //   setTimeout( () => this.runTests(), _hackDeferForFirstTestRunMs)   
     // }
@@ -99,7 +99,7 @@ export default class CodeChallenges extends React.Component {
 
   successPopup() {
     // TODO show notification for user
-    learnSkill( this.props.skillPath + '.' + this.skillName )
+    learnSkill( this.props.skillPath )
     this.setState( { showAllTestsCompletedMessage: true } )
   }
 
@@ -241,10 +241,11 @@ export default class CodeChallenges extends React.Component {
               <Icon color='green' name='check circle'/>
               <Message.Content>
                 <Message.Header>
-                  Challenge Goal Achieved!
+                  Success
                 </Message.Header>
                 <Button 
                     positive
+                    compact
                     size='small'
                     content='Start next challenge'
                     disabled={this.state.pendingLoadNextSkill}

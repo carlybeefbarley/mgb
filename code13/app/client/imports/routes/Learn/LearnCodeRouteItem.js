@@ -143,7 +143,7 @@ const LearnCodeRouteItem = (params, context) => {
             <Header as='h3' content={subkey}/>
             <List size='large' relaxed='very' link className="skills">
               { _.map(bySubsection[subkey],  (area, idx) => {
-                let skillPath = 'code/js/'+learnItem+'/' + area.idx + '/' + area.idx
+                let skillPath = 'code/js/'+learnItem+'/' + area.idx
                 const isComplete = currUser && !_.isEmpty( context.skills[skillPath] )
 
                 return (

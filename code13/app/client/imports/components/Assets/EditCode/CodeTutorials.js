@@ -91,7 +91,7 @@ export default class CodeTutorials extends React.Component {
   }
 
   successPopup = () => {
-    learnSkill( this.props.skillPath + '.' + this.skillName )
+    learnSkill( this.props.skillPath )
     this.setState({ isCompleted: true })
   }
 
@@ -150,9 +150,9 @@ export default class CodeTutorials extends React.Component {
                 <Message.Header>
                   Success
                 </Message.Header>
-                You completed this Code Tutorial
                 <Button 
                     positive
+                    compact
                     size='small'
                     content='Return to Tutorial List'
                     icon='up arrow'

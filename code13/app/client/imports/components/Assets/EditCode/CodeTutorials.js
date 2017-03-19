@@ -148,7 +148,7 @@ export default class CodeTutorials extends React.Component {
               <Icon color='green' name='check circle'/>
               <Message.Content>
                 <Message.Header>
-                  Success
+                  Completed...
                 </Message.Header>
                 <Button 
                     positive

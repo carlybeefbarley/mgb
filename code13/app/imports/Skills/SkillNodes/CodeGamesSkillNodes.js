@@ -14,8 +14,8 @@ export default {
       icon: 'code',
       description: `First game from series`,
       "subsection": "Whack-a-Mole",
-    },
-    'mole1': C.En(0)
+      ...(C.E.$meta)
+    }
   },
   'mole2': {
     $meta: {
@@ -23,8 +23,8 @@ export default {
       icon: 'code',
       description: `Second game from series`,
       "subsection": "Whack-a-Mole",
-    },
-    'mole2': C.En(0)
+      ...(C.E.$meta)
+    }
   },  
   'mole3': {
     $meta: {
@@ -32,8 +32,8 @@ export default {
       icon: 'code',
       description: `Third game from series`,
       "subsection": "Whack-a-Mole",
-    },
-    'mole3': C.En(0)
+      ...(C.E.$meta)
+    }
   }, 
   'mole4': {
     $meta: {
@@ -41,8 +41,8 @@ export default {
       icon: 'code',
       description: `Fourth game from series`,
       "subsection": "Whack-a-Mole",
-    },
-    'mole4': C.En(0)
+      ...(C.E.$meta)
+    }
   },  
   'digger': {
     $meta: {
@@ -50,7 +50,7 @@ export default {
       icon: 'code',
       description: `Mining and collecting resources`,
       "subsection": "Digger",
-    },
-    'digger': C.En(0)
+      ...(C.E.$meta)
+    }
   }
 }

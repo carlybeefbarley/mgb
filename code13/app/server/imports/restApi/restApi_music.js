@@ -23,11 +23,11 @@ RestApi.addRoute('asset/music/:id/music.mp3', {authRequired: false}, {
   }
 })
 // get music by username / assetname
-RestApi.addRoute('asset/music/:user/:name/sound.mp3', {authRequired: false}, {
+RestApi.addRoute('asset/music/:user/:name/music.mp3', {authRequired: false}, {
   get: function () {
     "use strict";
     const asset = Azzets.findOne({
-      kind: "sound",
+      kind: "music",
       name: this.urlParams.name,
       dn_ownerName: this.urlParams.user,
       isDeleted: false

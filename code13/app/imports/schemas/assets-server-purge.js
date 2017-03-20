@@ -29,7 +29,7 @@ Meteor.methods({
 
   "Azzets.Purge": function (opts = {}) {
 
-    //checkMgb.checkUserIsSuperAdmin() 
+    checkMgb.checkUserIsSuperAdmin() 
     check(opts, Object)
     check(opts.purgeIfUntouchedForNumDays, Match.Integer)
     check(opts.isDryRun, Boolean)

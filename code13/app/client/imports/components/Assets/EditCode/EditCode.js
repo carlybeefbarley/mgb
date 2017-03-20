@@ -793,10 +793,11 @@ export default class EditCode extends React.Component {
           code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.audio( '${draggedAsset.name}', '${url}' )`
           break
         case 'code':
+          // TODO: support extensions or something similar - e.g. in case when importing css
           if (this.props.asset.dn_ownerName === draggedAsset.dn_ownerName)
             code = this.createImportString(draggedAsset.name)
           else
-            code = `import ${validJSName(draggedAsset.name)} from './${draggedAsset.dn_ownerName}:${draggedAsset.name}'`
+            code = this.createImportString(draggedAsset.name, draggedAsset.dn_ownerName)
 
           break
         default:
@@ -2145,8 +2146,8 @@ export default class EditCode extends React.Component {
     addJoyrideSteps( [], { replace: true } )
   }
 
-  createImportString(val){
-    return `import ${validJSName(val)} from '/${val}'\n`
+  createImportString(val, user){
+    return `import ${validJSName(val)} from '/${user ? user + ':' : ''}${val}'\n`
   }
 
   includeLocalImport(val){
@@ -2402,7 +2403,7 @@ export default class EditCode extends React.Component {
               }
 
               { isChallenge &&
-                <div 
+                <div
                     className="title active"
                     style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
                     id="mgbjr-EditCode-codeChallenges">
@@ -2424,7 +2425,7 @@ export default class EditCode extends React.Component {
               }
 
               { isCodeTutorial &&
-                <div 
+                <div
                     className="title active"
                     style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
                     id="mgbjr-EditCode-codeTutorials">
@@ -2449,7 +2450,7 @@ export default class EditCode extends React.Component {
                 />
               }
 
-              { !docEmpty && asset.kind === 'code' && 
+              { !docEmpty && asset.kind === 'code' &&
                 // Current Line/Selection helper (header)
                 <div id="mgbjr-EditCode-codeMentor" className={"title " + (asset.skillPath ? "" : "active") }>
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -2504,7 +2505,7 @@ export default class EditCode extends React.Component {
                 </div>
               }
 
-              { docEmpty && !asset.isCompleted && !isCodeTutorial && !isChallenge && 
+              { docEmpty && !asset.isCompleted && !isCodeTutorial && !isChallenge &&
                 // Clean sheet helper!
                 <div className="active title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -2512,7 +2513,7 @@ export default class EditCode extends React.Component {
                     </span>
                 </div>
               }
-              { docEmpty && !asset.isCompleted && !isCodeTutorial && !isChallenge && 
+              { docEmpty && !asset.isCompleted && !isCodeTutorial && !isChallenge &&
                 <div className="active content">
                   An Empty Page! If you like, you can click one of the following buttons to paste some useful template code into your
                   empty file

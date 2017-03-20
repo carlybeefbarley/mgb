@@ -731,8 +731,7 @@ export default fpChat = React.createClass( {
     return (
       <div>
         <label
-          style={{ fontWeight: 'bold' } }
-          id='mgbjr-fp-chat-channelDropdown'>
+          style={{ fontWeight: 'bold' } }>
           Channel:
         </label>
 
@@ -742,6 +741,7 @@ export default fpChat = React.createClass( {
           readOnly
           icon={presentedChannelIcon}
           size='small'
+          id='mgbjr-fp-chat-channelDropdown'          
           iconPosition='left'
           action={{
             icon:    'dropdown',

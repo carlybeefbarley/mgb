@@ -29,8 +29,7 @@ const OfferLoginTutorial = () => (
 )
 
 const _gsSkillNodeName = 'getStarted'
-const _maxGsSkillCount = 1 + countMaxUserSkills( _gsSkillNodeName + '.' )     // The 1+ is because of the special
-                                                                              // pseudo-skill of login/signup
+const _maxGsSkillCount = countMaxUserSkills( _gsSkillNodeName + '.' )   
 const gsSkills = SkillNodes[_gsSkillNodeName]    // shorthand
 const gsItems = [
   { node: gsSkills.profile, mascot: 'arcade_player' },
@@ -84,7 +83,7 @@ export const StartDefaultNextTutorial = ({ currUser, userSkills }) => (
 )
 
 const LearnGetStartedRoute = ({ currUser }, context) => {
-  const numGsSkills = (countCurrentUserSkills( context.skills, _gsSkillNodeName + '.' ) || 0) + (currUser ? 1 : 0)
+  const numGsSkills = (countCurrentUserSkills( context.skills, _gsSkillNodeName + '.' ) || 0)
 
   return (
     <Grid container columns='1'>

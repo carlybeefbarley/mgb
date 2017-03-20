@@ -733,6 +733,7 @@ export default AssetEditRoute = React.createClass({
 
   handleChatClick() {
     const channelName = makeChannelName( { scopeGroupName: 'Asset', scopeId: this.props.params.assetId } )
+    joyrideCompleteTag('mgbjr-CT-asset-edit-header-right-chat')
     utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
 

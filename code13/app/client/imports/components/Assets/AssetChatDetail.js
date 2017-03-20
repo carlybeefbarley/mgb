@@ -15,7 +15,7 @@ const AssetChatDetail = ( { hasUnreads, handleClick } ) => (
       <Label 
         basic
         id="mgbjr-asset-edit-header-right-chat"
-              size='small'
+        size='small'
          >
       <Icon.Group >
         <Icon

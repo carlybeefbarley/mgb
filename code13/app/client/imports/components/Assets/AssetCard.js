@@ -233,17 +233,7 @@ export default AssetCard = React.createClass({
           </Card.Content>}
 
         {viewOpts.showFooter &&
-          <div className='ui three small bottom attached icon buttons'>
-            <a
-              to={assetLicenses[actualLicense].url}
-              target='_blank'
-              className='ui compact button'
-              style={veryCompactButtonStyle}
-              title={assetLicenses[actualLicense].name}
-            >
-              <Icon name='law' />
-              <small>&nbsp;{actualLicense}</small>
-            </a>
+          <div className='ui two small bottom attached icon buttons'>
             <div
               className={(canEdit ? '' : 'disabled ') + 'ui ' + (asset.isCompleted ? 'blue' : '') + ' compact button'}
               style={veryCompactButtonStyle}

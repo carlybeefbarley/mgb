@@ -101,7 +101,7 @@ export default fpAssets = React.createClass({
    * Optionally get the Project info - if this is a user-scoped view
    */
   getMeteorData: function() {
-    // Much of this is copied from UserAssetList - repeats.. needs cleanup
+    // Much of this is copied from UserAssetListRoute - repeats.. needs cleanup
 
     const { user, currUser, currUserProjects } = this.props
     const { searchName, kindsActive, project, showFromUserId, projectName } = this.state

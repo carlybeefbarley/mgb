@@ -9,6 +9,7 @@ import Home from './Home'
 import Import from './Import'
 import PlayGameRoute from './PlayGameRoute'
 import BrowseGamesRoute from './BrowseGamesRoute'
+import DashboardRoute from './Dashboard/DashboardRoute'
 
 import LearnRoute from './Learn/LearnRoute'
 import LearnGamesRoute from './Learn/LearnGamesRoute'
@@ -51,7 +52,8 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 // 1) All /users/:id are legacy and shoudl be removed soon (superceded July 6 2016)
 // 2) The /assetEdit/:assetId route is legacy - it will automatically redirect to user/:id/asset/:assetId once it gets the owner User._id from the Asset
 
-Meteor.startup(function () {
+// We also export it for potential future use by some of the fast-build variants like storybook...
+export function clientStartup() {
   const router =
     <Router history={browserHistory}>
       <Route component={App}>
@@ -61,6 +63,9 @@ Meteor.startup(function () {
         <Route path="/" component={Home} />
         <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />
+
+        <Route path="/dashboard" component={DashboardRoute} name="Dashboard" />
+
 
         <Route path="/learn" component={LearnRoute} />
         <Route path="/learn/skills" component={LearnSkillsRoute} />
@@ -88,8 +93,8 @@ Meteor.startup(function () {
         <Route path="user/:id" component={Users.Profile} name="Profile"/>
         <Route path="u/:username" component={Users.Profile} name="Profile"/>
 
-        <Route path="user/:id/assets" component={Azzets.UserAssetList} name="Assets" />
-        <Route path="u/:username/assets" component={Azzets.UserAssetList} name="Assets" />
+        <Route path="user/:id/assets" component={Azzets.UserAssetListRoute} name="Assets" />
+        <Route path="u/:username/assets" component={Azzets.UserAssetListRoute} name="Assets" />
 
         <Route path="user/:id/asset/:assetId" component={Azzets.AssetEditRoute} name="Loading asset..." />
         <Route path="u/:username/asset/:assetId" component={Azzets.AssetEditRoute} name="Loading asset..." />
@@ -111,7 +116,7 @@ Meteor.startup(function () {
 
         <Route path="/projects" component={Projects.UserProjectList} name="Search All Projects" />
 
-        <Route path="assets" component={Azzets.UserAssetList} name="Search All Assets" />
+        <Route path="assets" component={Azzets.UserAssetListRoute} name="Search All Assets" />
         <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
 
         <Route path="assetEdit/:assetId" component={Azzets.AssetEditRoute} name="Edit Asset (finding owner...)" />
@@ -130,5 +135,10 @@ Meteor.startup(function () {
 
   registerDebugGlobal( 'router', router, __filename, 'TopLevel react-router instance')
   urlMaker.setKnownRoutes(router)
+  return router
+}
+
+Meteor.startup(function () {
+  const router = clientStartup()
   ReactDOM.render(router, document.getElementById('root'))
 })

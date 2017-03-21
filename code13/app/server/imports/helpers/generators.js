@@ -11,10 +11,17 @@ const DEFAULT_MAX_AGE = 600 // This cache MAX_AGE config param is for dynamic re
 
 export const assetToCdn = (api, asset, uri) => {
   const domain = getCDNDomain()
+  // we need to pass origin to CDN iframes - so we know later what is our origin
+  // ATM used in the play game - game's iframe content is served from CDN - for faster page load and isolation
+  // also look at: app/imports/helpers/makeCodeBundle.js where origin is used
+
+  const origin = api.queryParams.origin ? '&origin=' + api.queryParams.origin : ''
   return {
     statusCode: 302,    // FOUND (redirect). See https://developer.mozilla.org/en-US/docs/Web/HTTP/Response_codes
     headers: {
-      'Location': domain ? '//' + getCDNDomain() + uri + "/?etag=" + genetag(asset) : uri + "/?etag=" + genetag(asset)
+      'Location': domain
+        ? '//' + getCDNDomain() + uri + "?etag=" + genetag(asset) + origin
+        : uri + "?etag=" + genetag(asset) + origin
       // 'cache-control': 'max-age=30'
       // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
     },

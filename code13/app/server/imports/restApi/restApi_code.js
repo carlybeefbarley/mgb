@@ -1,11 +1,10 @@
 import { RestApi } from './restApi'
 import { Azzets } from '/imports/schemas'
-import makeHtmlBundle from '/imports/helpers/codeBundle'
+import makeCodeBundle from '/imports/helpers/makeCodeBundle'
 import { genAPIreturn, assetToCdn } from '/server/imports/helpers/generators'
 
 function _makeBundle(api, asset){
-
-  return genAPIreturn(api, asset, () => asset ? makeHtmlBundle(asset) : null, {
+  return genAPIreturn(api, asset, () => asset ? makeCodeBundle(asset, api.queryParams.origin) : null, {
     'Content-Type': "text/html",
     'file-name':  asset ? asset.name : this.urlParams.name
   })

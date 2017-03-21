@@ -21,7 +21,6 @@ import GameScreen from './GameScreen'
 import CodeStarter from './CodeStarter'
 import CodeChallenges from './CodeChallenges'
 import CodeTutorials from './CodeTutorials'
-import makeBundle from '/imports/helpers/codeBundle'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'

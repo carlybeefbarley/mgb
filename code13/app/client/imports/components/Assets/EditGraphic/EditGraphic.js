@@ -19,6 +19,8 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
+import { makeExpireThumbnailLink } from '/client/imports/helpers/assetFetchers.js'
+
 // Some constants we will use
 const MAX_BITMAP_WIDTH = 1500
 const MAX_BITMAP_HEIGHT = 1024
@@ -1223,7 +1225,10 @@ export default class EditGraphic extends React.Component {
     event.dataTransfer.dropEffect = 'copy'   // Explicitly show this is a copy.
   }
 
-
+  /**
+   * @param {number} idx - layer index, when -1 automatically selects active layer
+   * @param {event} - drop event
+   * */
   handleDropPreview(idx, event)
   {
     event.stopPropagation()
@@ -1279,7 +1284,13 @@ export default class EditGraphic extends React.Component {
 
     var imgData = DragNDropHelper.getDataFromEvent(event)
     if (imgData && imgData.link) {
-      this.pasteImage(imgData.link, idx)
+      if(!imgData.asset || imgData.asset.kind === 'graphic')
+        this.pasteImage(imgData.link, idx)
+      else{
+        // use thumbnail instead
+        const linkToImage = makeExpireThumbnailLink(imgData.asset)
+        this.pasteImage(linkToImage, idx)
+      }
       return
     }
 
@@ -1319,11 +1330,15 @@ export default class EditGraphic extends React.Component {
       this.previewCtxArray[idx].clearRect(0, 0, w, h)
 
       if (img.width > w || img.height > h) {
-        const aspect = img.width/img.height
-        if (aspect > 1)
-          this.previewCtxArray[idx].drawImage(e.target, 0, 0, w, h / aspect)  // add w, h to scale it.
-        else
-          this.previewCtxArray[idx].drawImage(e.target, 0, 0, w * aspect, h)  // add w, h to scale it.
+        const aspect =   (w * img.height) / (h * img.width)
+        if (aspect > 1){
+          const nHeight = h / aspect
+          this.previewCtxArray[idx].drawImage(e.target, 0, (h - nHeight) * 0.5, w, nHeight)  // add w, h to scale it.
+        }
+        else{
+          const nWidth = w / aspect
+          this.previewCtxArray[idx].drawImage(e.target, (w - nWidth) * 0.5, 0, nWidth, h)  // add w, h to scale it.
+        }
       }
       else
         this.previewCtxArray[idx].drawImage(e.target, 0, 0)  // add w, h to scale it.

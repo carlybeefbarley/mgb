@@ -2153,6 +2153,11 @@ export default class EditCode extends React.Component {
   }
 
   includeLocalImport(val){
+    if (!this.props.canEdit)
+    {
+      this.warnNoWriteAccess()
+      return
+    }
     const imp = this.createImportString(val) + this.codeMirror.getValue()
 
     this.codeMirror.setValue(imp)
@@ -2160,6 +2165,11 @@ export default class EditCode extends React.Component {
   }
 
   includeExternalImport(val){
+    if (!this.props.canEdit)
+    {
+      this.warnNoWriteAccess()
+      return
+    }
     const imp = `import ${val.name} from '${val.import}'\n` + this.codeMirror.getValue()
 
     this.codeMirror.setValue(imp)
@@ -2451,7 +2461,7 @@ export default class EditCode extends React.Component {
                     getNextToken={cb => this.getNextToken(cb)}
                     comment={this.state.comment}
                     />
-                  { this.state.astReady &&
+                  { this.state.astReady && this.props.canEdit &&
                   <ImportHelperPanel
                     scripts={this.state.userScripts}
                     includeLocalImport={this.includeLocalImport}
@@ -2507,7 +2517,7 @@ export default class EditCode extends React.Component {
                     </span>
               </div>
               }
-              { docEmpty && this.state.astReady && !asset.isCompleted &&
+              { docEmpty && this.state.astReady && this.props.canEdit &&
               <div className="content">
                 <ImportHelperPanel
                   scripts={this.state.userScripts}

@@ -3,7 +3,7 @@
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
 import _ from 'lodash'
-import { Azzets } from '/imports/schemas'
+import { Azzets, Projects } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
 import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 
@@ -12,6 +12,10 @@ import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
 import { AssetKinds } from './assets/assetKinds'
 export { AssetKinds }
+
+import { canUserEditAssetIfUnlocked } from '/imports/schemas/roles'
+
+import { projectMakeSelector } from './projects'
 
 const optional = Match.Optional
 
@@ -46,7 +50,7 @@ var schema = {
 
   // License information. See TermsOfService.js for description of what a missing license means
   // Ideally this will be one of the well-known license tags we define in assetLicenses.js.
-  assetLicense: String,    // A license that covers this asset. 
+  assetLicense: String,    // A license that covers this asset.
 
   workState: String,  // A value matching a key from workStates.js
   content: String,    // depends on asset type
@@ -74,7 +78,7 @@ var schema = {
   isCompleted: Boolean,     // This supports the 'is stable' flag
   isDeleted:   Boolean,     // This is a soft marked-as-deleted indicator
   isPrivate:   Boolean,     // Not currently used
-  
+
   // The su fields can only be changed by a superAdmin User.. They typically relate to workflows or system counts
   suIsBanned:  Boolean,     // Optional. If true, then this image has been banned. See suFlagId for the flagging workflow
   suFlagId:    String       // Optional. (TODO) non-null / non-empty if there is a Flag record for this message (See Flags.js)
@@ -125,7 +129,7 @@ export function assetMakeSelector(
                       hideWorkstateMask=0,
                       showChallengeAssets=false)
 {
-  const selector = { 
+  const selector = {
     isDeleted: Boolean(showDeleted),
 //    skillPath: { '$exists': Boolean(showChallengeAssets) }
   }
@@ -134,7 +138,7 @@ export function assetMakeSelector(
 
 if (showChallengeAssets)
   selector.skillPath = { $nin: ['', null] }
-else 
+else
   selector.skillPath = { $in: ['', null] }
 
   if (projectName === '_')
@@ -192,9 +196,9 @@ Meteor.methods({
     const username = Meteor.user().profile.name
     const now = new Date()
 
-    if (!data.ownerId) 
+    if (!data.ownerId)
       data.ownerId = this.userId                   // We allow the caller to set this: Main scenario is 'Create As Member Of Project'
-    if (!data.dn_ownerName) 
+    if (!data.dn_ownerName)
       data.dn_ownerName = username
 
     if (!_.isUndefined(data.suIsBanned) || !_.isUndefined(data.suFlagId))
@@ -237,8 +241,8 @@ Meteor.methods({
     // TODO: this will get moved one day. See #34
     data.content2 = data.content2 || {}
 
-    check(data, { 
-      ...{ skillPath: optional(schema.skillPath) }, 
+    check(data, {
+      ...{ skillPath: optional(schema.skillPath) },
       ..._.omit(schema, ['_id', 'forkChildren', 'forkParentChain', 'skillPath', 'suIsBanned', 'suFlagId'])
     })
 
@@ -267,19 +271,16 @@ Meteor.methods({
 
     if (Meteor.isServer)
       console.log(`  [Azzets.changeAssetBan]  (${count}) #${docId}  New=${newBool}`)
-    
+
     return count
   },
 
-  // This does not allow changes to the su* fields. It is much simpler 
+  // This does not allow changes to the su* fields. It is much simpler
   // and more robust to handle those cases in a simpler, privileged path instead of
   // complicating the general update path
   "Azzets.update": function(docId, canEdit, data) {
     checkIsLoggedInAndNotSuspended()
     check(docId, String)
-
-    var count, selector
-
     // TODO: Move this access check to be server side..
     //   Or check publications have correct deny rules.
     //   See comment below for selector = ...
@@ -323,13 +324,27 @@ Meteor.methods({
       isPrivate: optional(schema.isPrivate)
     })
 
+    const selector = { _id: docId }
+    // client can have empty minimongo and fail event when it shouldn't - so do extra checks only on server side
+    if(Meteor.isServer) {
+      // access DB only after data check
+      // get real asset and check if user can REALLY edit asset
+      const asset = Azzets.findOne(selector, {fields: {ownerId: 1, projectNames: 1, isCompleted: 1}})
+      const userProjects = Projects.find(projectMakeSelector(this.userId), {fields: {name: 1, ownerId: 1}}).fetch()
+      if (!canUserEditAssetIfUnlocked(asset, userProjects, Meteor.user()))
+        throw new Meteor.Error(401, "You don't have permission to edit this asset. canUserEditAsset:failed")
+
+      if (asset.isCompleted && data.isCompleted !== false)
+        throw new Meteor.Error(401, "You cannot edit locked asset.")
+    }
+
     // if caller doesn't own doc, update will fail because fields like ownerId won't match
-    selector = { _id: docId }
-    count = Azzets.update(selector, { $set: data } )
+
+    const count = Azzets.update(selector, { $set: data } )
 
     if (Meteor.isServer)
       console.log(`  [Azzets.update]  (${count}) #${docId}  Kind=${data.kind}  Owner=${data.dn_ownerName}`) // These fields might not be provided for updates
-    
+
     return count
   }
 })

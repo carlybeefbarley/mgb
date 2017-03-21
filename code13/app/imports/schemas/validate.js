@@ -136,7 +136,6 @@ const validate = {
 
     return null
   }
-
 }
 
 export default validate

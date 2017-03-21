@@ -38,9 +38,9 @@ import { makeChannelName } from '/imports/schemas/chats'
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
-const FLUSH_TIMER_INTERVAL_MS = 6000         // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
+import { canUserEditAssetIfUnlocked, fAllowSuperAdminToEditAnything } from '/imports/schemas/roles'
 
-const fAllowSuperAdminToEditAnything = false // TODO: PUT IN SERVER POLICY?
+const FLUSH_TIMER_INTERVAL_MS = 6000         // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
 
 // This AssetEditRoute serves the following objectives
 // 1. Provide a reactive  this.data.___ for the data needed to view/edit this Asset
@@ -226,7 +226,7 @@ export default AssetEditRoute = React.createClass({
       const assetVerb = (
         ( (this.canCurrUserEditThisAsset(asset) ? 'Edit' : 'View')
           + (asset.isCompleted ? '  [locked asset]' : '')
-          + (asset.isDeleted ? '  [deleted asset]' : '') 
+          + (asset.isDeleted ? '  [deleted asset]' : '')
          )
       )
       this.props.handleSetCurrentlyEditingAssetInfo( makeAssetInfoFromAsset(asset, assetVerb) )
@@ -261,52 +261,19 @@ export default AssetEditRoute = React.createClass({
     }
   },
 
-  canUserEditThisAssetIfUnlocked: function(assetOverride = null) {
-    const asset = assetOverride || this.data.asset
-
-    if (!asset || this.data.loading || !this.props.currUser)
-      return false  // Need to at least be logged in and have the data to do any edits!
-    const { currUser, currUserProjects } = this.props
-    if (isSameUserId(asset.ownerId, currUser._id))
-      return true   // Owner can always edit
-
-    // Are we superAdmin?
-    if (this.props.isSuperAdmin && fAllowSuperAdminToEditAnything)
-    {
-      console.log(`CanEdit=true because current User is SuperAdmin`)
-      return true
-    }
-
-    // Are we a projectMember for any of this asset's Projects?
-    const apn = asset.projectNames     // Shorthand
-    const cup = currUserProjects       // Shorthand
-    if (apn && apn.length > 0 && cup && cup.length > 0)
-    {
-      // There's at least one possibility of a matching project:
-      // Let's cycle through them and return true as soon as we find one
-      // TODO: find the lodash way to this in one line :)
-      for (let currUserProjectIdx = 0; currUserProjectIdx < cup.length; currUserProjectIdx++)
-      {
-        for (let assetProjectIdx = 0; assetProjectIdx < apn.length; assetProjectIdx++)
-        {
-          if (asset.ownerId === cup[currUserProjectIdx].ownerId
-           && apn[assetProjectIdx] === cup[currUserProjectIdx].name)
-          {
-            //console.log(`CanEdit=true because asset "${asset.name}" is in project "${apn[assetProjectIdx]}" and user ${currUser.profile.name} is a member of Project "${asset.dn_ownerName}.${cup[currUserProjectIdx].name}"`)
-            return true
-          }
-        }
-      }
-    }
-
-    return false    // Nope, can't edit it bro
-  },
 
   canCurrUserEditThisAsset: function(assetOverride = null) {
     const asset = assetOverride || this.data.asset
     return asset && this.canUserEditThisAssetIfUnlocked(asset) && !asset.isCompleted
   },
 
+  canUserEditThisAssetIfUnlocked: function(assetOverride = null) {
+    if (this.data.loading || !this.props.currUser)
+      return false  // Need to at least be logged in and have the data to do any edits!
+
+    const asset = assetOverride || this.data.asset
+    return canUserEditAssetIfUnlocked(asset, this.props.currUserProjects, this.props.currUser)
+  },
 
   // only the Asset Owner can Lock/Unlock Asset (i.e. change asset.isCompleted)
   canCurrUserChangeCompletion(assetOverride = null) {
@@ -362,7 +329,7 @@ export default AssetEditRoute = React.createClass({
     if (!this.data.asset)
       return <ThingNotFound type='Asset' id={params.assetId} />
 
-    const isOwner = currUser && currUser._id === asset.ownerId
+    const isOwner = currUser && isSameUserId(currUser._id, asset.ownerId)
     // Overlay any newer data to the child component so that it gets what it expects based on last save attempt
     const dso = this.m_deferredSaveObj
     if (dso)

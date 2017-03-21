@@ -6,22 +6,21 @@ import React, { PropTypes } from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import TutorialMentor from './TutorialEditHelpers'
 
-import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
+import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import { showToast, addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import moment from 'moment'
-import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-import { templateCode } from './templates/TemplateCode.js'
-import { templateTutorial } from './templates/TemplateTutorial.js'
+import { snapshotActivity } from '/imports/schemas/activitySnapshots'
 import { js_beautify } from 'js-beautify'
-import CodeMirror from '../../CodeMirror/CodeMirrorComponent.js'
-import ConsoleMessageViewer from './ConsoleMessageViewer.js'
-import SourceTools from './SourceTools.js'
-import CodeFlower from './CodeFlowerModded.js'
-import GameScreen from './GameScreen.js'
-import CodeChallenges from './CodeChallenges.js'
-import CodeTutorials from './CodeTutorials.js'
+import CodeMirror from '../../CodeMirror/CodeMirrorComponent'
+import ConsoleMessageViewer from './ConsoleMessageViewer'
+import SourceTools from './SourceTools'
+import CodeFlower from './CodeFlowerModded'
+import GameScreen from './GameScreen'
+import CodeStarter from './CodeStarter'
+import CodeChallenges from './CodeChallenges'
+import CodeTutorials from './CodeTutorials'
 import makeBundle from '/imports/helpers/codeBundle'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 
@@ -84,7 +83,6 @@ const _infoPaneModes = [
   { col1: 'six',     col2: 'ten'   },
   { col1: 'eight',   col2: 'eight' },
 ]
-
 
 // Code asset - Data format:
 //
@@ -1788,12 +1786,17 @@ export default class EditCode extends React.Component {
     this.handleRun()
   }
 
-  pasteSampleCode(item) {   // item is one of the templateCodeChoices[] elements
-    let newValue = item.code
+
+  /**
+   * item is one of the templateCodeChoices[] elements with non-null { label, code }
+   */
+  pasteSampleCode = item => {
+    const newValue = item.code
     this.codeMirror.setValue(newValue)
     this._currentCodemirrorValue = newValue
-    let newC2 = {src: newValue}
+    const newC2 = { src: newValue }
     this.handleContentChange(newC2, null, `Template code: ${item.label}`)
+
     const label = item.label.replace(/ /g, '-')
     joyrideCompleteTag('mgbjr-CT-EditCode-templates-'+label+'-invoke')
   }
@@ -2280,24 +2283,8 @@ export default class EditCode extends React.Component {
     if (!asset)
       return null
 
-    const templateKind = asset.kind === 'tutorial' ? templateTutorial : templateCode
-
     const docEmpty = this.state.documentIsEmpty
     const isPlaying = this.state.isPlaying
-
-    let templateCodeChoices
-    // get templateCodeChoices only IF we need them
-    if(docEmpty && !asset.isCompleted){
-      templateCodeChoices = templateKind.map(item => {
-        const label = item.label.replace(/ /g, '-')
-        return (
-          <a className="item" id={"mgbjr-EditCode-template-"+label} key={item.label} onClick={this.pasteSampleCode.bind(this,item)}>
-            <div className="ui green horizontal label">{item.label}</div>
-            {item.description}
-          </a>
-        )
-      })
-    }
 
     this.codeMirror && this.codeMirror.setOption("readOnly", !this.props.canEdit)
 
@@ -2311,9 +2298,6 @@ export default class EditCode extends React.Component {
       )
     })
     const stringReferences = this.getStringReferences()
-
-
-
     const infoPaneOpts = _infoPaneModes[this.state.infoPaneMode]
 
     const tbConfig = this.generateToolbarConfig()
@@ -2514,20 +2498,13 @@ export default class EditCode extends React.Component {
                 </div>
               }
               { docEmpty && !asset.isCompleted && !isCodeTutorial && !isChallenge &&
-                <div className="active content">
-                  An Empty Page! If you like, you can click one of the following buttons to paste some useful template code into your
-                  empty file
-                  <div className="ui divided selection list">
-                    {templateCodeChoices}
-                  </div>
-                  ...or, if you think you know what you are doing, just start hacking away!
-                </div>
+                <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />
               }
               { docEmpty && this.state.astReady && !asset.isCompleted &&
                 // Quick import for empty doc
               <div className="title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
-                      <i className='dropdown icon' />Quick Import
+                      <i className='dropdown icon' />Quick Module Import
                     </span>
               </div>
               }

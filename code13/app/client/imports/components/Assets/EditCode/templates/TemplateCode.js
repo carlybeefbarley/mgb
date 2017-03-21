@@ -1,7 +1,7 @@
 export const templateCode = [
 
-  { label: "PhaserJS outline",
-    description: "Empty functions for preload(), create() and render()",
+  { label: "PhaserJS: Basic outline",
+    description: "Empty functions for a PhaserJS game with preload(), create() and render()",
     code: `// Start to make a Phaser game.
 import 'phaser@2.4.6'
 const game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', {
@@ -40,8 +40,8 @@ function render() {
 }`
   },
 
-  { label: "Moving player",
-    description: "Player character that can move and jump",
+  { label: "PhaserJS: Moving player",
+    description: "PhaserJs base template with player character that can move and jump",
     code: `// Start to make a Phaser game.
 
 import 'phaser'
@@ -119,8 +119,43 @@ function render()
   },
 
   {
-    label: "Empty React Component - with docs",
-    description: "Empty Component filled with lifecycle methods - ready for export",
+    label: "PhaserJS: Load MGB Map in Phaser",
+    description: "Load a MGB Map into a Phaser Game",
+    code:
+`
+import Phaser from 'phaser'
+import '/!vault/mgb-map-loader'
+
+const game = new Phaser.Game(27*16, 15*16, Phaser.AUTO, document.body, {
+  preload: function(){
+    this.game.load.mgbMap("{REPLACE_WITH_MAP_ID}")
+    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+  },
+
+  create: function(){
+    /*
+    mgb map structure: {
+      data, // raw map data in tiled json format
+      layers, // Object containing layer with name - layer can be either group or tilemaplayer
+      map // reference to phaser tilemap object
+    }
+    */
+    const mgbMap = this.game.create.mgbMap("{REPLACE_WITH_MAP_ID}")
+    // set world bound to match map size
+    this.game.world.setBounds(0, 0,
+                              mgbMap.data.width * mgbMap.data.tilewidth,
+                              mgbMap.data.height* mgbMap.data.tileheight
+    );
+
+  }
+})
+// allow to take screenshots in the webgl mode
+game.preserveDrawingBuffer = true;
+`
+  },
+  {
+    label: "React: Class-based React Component",
+    description: "Empty Component filled with commented lifecycle methods - ready for export",
     code:
 `//https://facebook.github.io/react/docs/reusable-components.html#es6-classes
 //https://facebook.github.io/react/docs/component-specs.html
@@ -236,7 +271,7 @@ export default class extends React.Component {
   },
 
   {
-    label: "Empty React Component - simplified",
+    label: "React: Simple Class Component",
     description: "Empty Component - ready for export",
     code:
 `import React from "react"
@@ -265,41 +300,6 @@ export default class extends React.Component {
     return <div>Hello {this.props.name}!</div>
   }
 }
-`
-  },
-  {
-    label: "Load MGB Map in phaser",
-    description: "",
-    code:
-`
-import Phaser from 'phaser'
-import '/!vault/mgb-map-loader'
-
-const game = new Phaser.Game(27*16, 15*16, Phaser.AUTO, document.body, {
-  preload: function(){
-    this.game.load.mgbMap("{REPLACE_WITH_MAP_ID}")
-    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-  },
-
-  create: function(){
-    /*
-    mgb map structure: {
-      data, // raw map data in tiled json format
-      layers, // Object containing layer with name - layer can be either group or tilemaplayer
-      map // reference to phaser tilemap object
-    }
-    */
-    const mgbMap = this.game.create.mgbMap("{REPLACE_WITH_MAP_ID}")
-    // set world bound to match map size
-    this.game.world.setBounds(0, 0,
-                              mgbMap.data.width * mgbMap.data.tilewidth,
-                              mgbMap.data.height* mgbMap.data.tileheight
-    );
-
-  }
-})
-// allow to take screenshots in the webgl mode
-game.preserveDrawingBuffer = true;
 `
   }
 ]

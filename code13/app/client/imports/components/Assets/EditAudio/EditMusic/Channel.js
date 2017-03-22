@@ -322,6 +322,7 @@ export default class Channel extends React.Component {
       this.sample.delay = this.sample.offsetX / this.props.pxPerSecond
       let channel = this.props.channel
       channel.delay = this.sample.delay
+      this.doSaveStateForUndo("Drag")
       this.props.saveChannel(channel)
       // console.log(this.sample.delay)
     }
@@ -390,6 +391,7 @@ export default class Channel extends React.Component {
       this.sample.delay = startTime
       this.props.channel.delay = startTime
       this.sample.offsetX = this.calculateOffsetX()
+      this.props.doSaveStateForUndo("Cut selected")
       this.saveNewBuffer()
     }
   }
@@ -469,6 +471,7 @@ export default class Channel extends React.Component {
   changeVolume (e) {
     this.props.channel.volume = parseFloat(e.target.value)
     this.props.handleSave('Volume change')
+    this.props.doSaveStateForUndo('Volume change')
     this.gainNode.gain.value = this.props.channel.volume
     // as we are setting volume directly to props - update will be skipped - so keep internal volume state
     this.setState({volume: this.props.channel.volume})

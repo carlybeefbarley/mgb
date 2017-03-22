@@ -23,6 +23,14 @@ export default class AudioToolbar extends React.Component {
     this.props.toggleLoop()
   }
 
+  handleUndo(){
+    this.props.handleUndo()
+  }
+
+  handleRedo(){
+    this.props.handleRedo()
+  }
+
   zoomIn() {
     this.props.zoom(true)
   }
@@ -92,6 +100,29 @@ export default class AudioToolbar extends React.Component {
         },
         // loop component
         // duration component
+        {
+          name: 'separator'
+        },
+        {
+          label: "Undo",                    
+          name: "handleUndo",           
+          tooltip: "Undo",                  
+          iconText: this.props.undoSteps.length,  
+          disabled: !this.props.undoSteps.length, 
+          icon: "undo icon",                
+          // shortcut: 'Ctrl+Z',              
+          level: 2, 
+        },
+        {
+         label: "Redo",
+          name: "handleRedo",
+          tooltip: "Redo",
+          iconText: this.props.redoSteps.length,
+          disabled: !this.props.redoSteps.length,
+          icon: "undo flip icon",
+          // shortcut: 'Ctrl+Shift+Z',
+          level: 2,
+        },
         {
           name: 'separator'
         },

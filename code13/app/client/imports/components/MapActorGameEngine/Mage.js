@@ -67,6 +67,14 @@ const _mkGraphicUri = (ownerName, assetName) => {
   const p = _resolveOwner(ownerName, assetName)
   return `/api/asset/fullgraphic/${p.ownerName}/${p.assetName}`
 } 
+const _mkSoundUri = (ownerName, assetName) =>  {
+  const p = _resolveOwner(ownerName, assetName)
+  return `/api/asset/sound/${p.ownerName}/${p.assetName}/sound.mp3`
+}
+const _mkMusicUri = (ownerName, assetName) =>  {
+  const p = _resolveOwner(ownerName, assetName)
+  return `/api/asset/music/${p.ownerName}/${p.assetName}/music.mp3`
+}
 
 export default class Mage extends React.Component {
   constructor(props) {
@@ -217,6 +225,32 @@ export default class Mage extends React.Component {
       window.requestAnimationFrame( () => this.callDoBlit() )
   }
 
+  /*
+  // Compare names without the frame number 
+  _equalGraphicNames = (name1, name2) => {
+    if (/(\#\d+)$/.test(name1) && !(/(\#\d+)$/.test(name2))) {
+      return name2 === name1.split(" #")[0]
+    }
+  	else if (/(\#\d+)$/.test(name2) && !(/(\#\d+)$/.test(name1))) {
+      return name1 === name2.split(" #")[0]
+    }
+    else if ((/(\#\d+)$/.test(name1) && /(\#\d+)$/.test(name2))) {
+      return name1.split(" #")[0] === name2.split(" #")[0]
+    }
+    return name1 === name2
+  }
+  */
+
+  // Check if name has " #frameNumber"
+  _isFrameNamedGraphicAsset(name) {
+    return /(\#\d+)$/.test(name)
+  }
+
+  // Get frame number from name
+  _parseFrameNamedGraphicAsset(name) {
+    return parseInt(name.split(' #').pop(), 10) // explicitly parse int as base-10 since it has leading zero
+  }
+
   // Load any actors that we don't already have in state.actors or pendingActorLoads
   _loadRequiredGraphics(desiredGraphicNames, oName)
   {
@@ -226,8 +260,8 @@ export default class Mage extends React.Component {
     const { pendingGraphicLoads, loadedGraphics } = this.state
     _.each(desiredGraphicNames, aName => {
       let gName = aName
-      if (/(\.frame\d\d)$/.test(aName)) {
-        gName = aName.slice(0, aName.length - 8) // name without frame for fetching asset
+      if (this._isFrameNamedGraphicAsset(aName)) {
+        gName = aName.split(' #')[0] // name without frame for fetching asset
       }
       if (!_.has(pendingGraphicLoads, aName) && !_.has(loadedGraphics, aName))
       {
@@ -256,8 +290,8 @@ export default class Mage extends React.Component {
         }
       }
       let frame = 0
-      if (/(\.frame\d\d)$/.test(aName)) {
-        frame = parseInt(aName.split('.frame').pop(), 10) // explicitly parse int as base-10 since it has leading zero
+      if (this._isFrameNamedGraphicAsset(aName)) {
+        frame = this._parseFrameNamedGraphicAsset(aName) - 1
       }
       // framedata contains frames for every layers spritedata contains merged layers
       loadedGraphics[aName]._image.src = data.content2.spriteData[frame]
@@ -300,20 +334,6 @@ export default class Mage extends React.Component {
       failedActors[aName] = data
     const newIsPreloadingStrValue = this._countPendingLoads() > 0 ? 'actors' : null ///  TODO - handle pending tiles
     this.setState( { pendingActorLoads, loadedActors, failedActors, isPreloadingStr: newIsPreloadingStrValue } )    
-  }
-
-  // Compare names without the frame number 
-  _equalGraphicNames = (name1, name2) => {
-    if (/(\.frame\d\d)$/.test(name1) && !(/(\.frame\d\d)$/.test(name2))) {
-      return name2 === name1.slice(0, name1.length - 8)
-    }
-  	else if (/(\.frame\d\d)$/.test(name2) && !(/(\.frame\d\d)$/.test(name1))) {
-      return name1 === name2.slice(0, name2.length - 8)
-    }
-    else if ((/(\.frame\d\d)$/.test(name1) && /(\.frame\d\d)$/.test(name2))) {
-      return name1.slice(0, name1.length - 8) === name2.slice(0, name2.length - 8)
-    }
-    return name1 === name2
   }
 
   // An actor can also require other actors or tiles

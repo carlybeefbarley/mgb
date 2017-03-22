@@ -9,7 +9,7 @@ const _maxAssetNameLength = 64
 // The REALLY important ones to exclude are
 //    :   since we use that as a namespace delimiter (e.g. api/asset/tutorial/username:assetname)
 //    /   since it is used as an alternate asset Id format internally for some APIs (makeExpireThumbnailLink etc)
-//    #   since...?
+//    #   since... it is used to denote graphic frame number in Actor Editor
 //    ?   since... this could look string on a URI using our /api/asset/png/USERNAME/ASSETNAME?frame=4
 //                 URL format and would be a bit confusing / bug-prone when escaped
 //    {   since... we may want the option to have assetName-based apis that could instead have a 

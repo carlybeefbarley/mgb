@@ -35,8 +35,8 @@ export default class DropArea extends React.Component {
     if (this.props.value) {
       const parts = this.props.value.split(":")
       let name = parts.pop()
-      if (/(\.frame\d\d)$/.test(name) && this.props.kind === 'graphic')
-        name = name.slice(0, name.length - 8)
+      if (/(\#\d+)$/.test(name) && this.props.kind === 'graphic')
+        name = name.split(' #')[0]
       const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
       this.startSubscription(owner, name)
     }
@@ -141,8 +141,8 @@ export default class DropArea extends React.Component {
     if (this.props.value) {
       const parts = this.props.value.split(":")
       let name = parts.pop()
-      if (/(\.frame\d\d)$/.test(name) && this.props.kind === 'graphic')
-        name = name.slice(0, name.length - 8)
+      if (/(\#\d+)$/.test(name) && this.props.kind === 'graphic')
+        name = name.split(' #')[0]
       const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
       if(owner == "[builtin]"){
         return
@@ -162,7 +162,7 @@ export default class DropArea extends React.Component {
       return
 
     const transform = this.getEffect(this.props.effect)
-    const frame = this.getFrame(this.props.frame)
+    const frame = this.getFrame(this.props.frame) 
     const imgLink = frame === 0 ? Thumbnail.getLink(asset) : `/api/asset/png/${asset._id}?frame=${frame}`
 
     // TODO: render effect

@@ -23,6 +23,30 @@ export default class Animations extends React.Component {
     console.log("Form has changed")
   }
 
+  /*
+  Graphic assets with multiple frames will have " #frameNumber" appended to the name.
+  The frames are imported into Animations when a graphic asset with multiple frames is dropped.
+  The frame numbers are parsed from the names in Mage.js to display the correct frame.
+  The tileset API and MAGE use 0-based indexing. This uses 1-based indexing like the graphic editor.
+  */
+  makeFrameNamedGraphicAsset(data, val, index) {
+    this.data[index].tileName = val + ' #1' // Asset that is dropped is frame 1
+    // Frame 2 and up until all frames are iterated or until it reaches an non-empty animation entry
+    for (i=1; i<data.tilecount; i++) {
+      if (this.data[index+i] && !this.data[index+i].tileName) {
+        let name = data.name + ' #' + (i+1)
+        this.data[index+i] = {
+          "action": MgbActor.animationNames[index+i],
+          "tileName": name,
+          "frame": i,
+          "effect": "no effect"
+        }
+      }
+      else
+        break
+    }
+  }
+
   changeGraphic(index, val, asset) {
     this.data[index].tileName = val 
     this.data[index].frame = 0
@@ -31,22 +55,8 @@ export default class Animations extends React.Component {
       this.setState({isLoading: true})
 
       $.get('/api/asset/tileset-info/' + asset._id, (data) => {
-        if (data.tilecount > 1) {
-          this.data[index].tileName = val + '.frame00'
-          for (i=1; i<data.tilecount; i++) {
-            if (!this.data[index+i].tileName) {
-              let name = data.name + (i > 9 ? '.frame' + i : '.frame0' + i)
-              this.data[index+i] = {
-                "action": MgbActor.animationNames[index+i],
-                "tileName": name,
-                "frame": i,
-                "effect": "no effect"
-              }
-            }
-            else
-              break
-          }
-        }
+        if (data.tilecount > 1) 
+          this.makeFrameNamedGraphicAsset(data, val, index)
       })
       .done(() => {
         this.setState({isLoading: false})

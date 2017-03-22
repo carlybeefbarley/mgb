@@ -16,6 +16,7 @@ import AudioConverter from '../lib/AudioConverter.js'
 import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { showToast } from '/client/imports/routes/App'
 
 export default class EditMusic extends React.Component {
 
@@ -132,7 +133,10 @@ export default class EditMusic extends React.Component {
   }
 
   importMusic (audioObject, saveText) {
-    if (!this.hasPermission) return
+    if (!this.hasPermission()) {
+      showToast("You don't have write access to this Asset", 'error')
+      return false
+    }
 
     if (audioObject) {
       let c2 = _.cloneDeep(this.props.asset.content2)
@@ -269,7 +273,7 @@ export default class EditMusic extends React.Component {
 
   hasPermission () {
     if (!this.props.canEdit) {
-      this.props.editDeniedReminder()
+      // this.props.editDeniedReminder()
       return false
     }else {
       return true
@@ -277,7 +281,10 @@ export default class EditMusic extends React.Component {
   }
 
   handleSave (saveText, c2) {
-    if (!this.hasPermission()) return
+    if (!this.hasPermission()) {
+      showToast("You don't have write access to this Asset", 'error')
+      return false
+    }
     if (!c2) c2 = this.props.asset.content2
 
     // console.log("SAVE", saveText, c2)
@@ -524,6 +531,7 @@ export default class EditMusic extends React.Component {
                 cutSelected={this.cutSelected.bind(this)}
                 copySelected={this.copySelected.bind(this)}
                 selectableButtons={this.selectableButtons.bind(this)}
+                hasPermission={this.hasPermission.bind(this)}
               />
 
 

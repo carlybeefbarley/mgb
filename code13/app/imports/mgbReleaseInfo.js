@@ -13,6 +13,38 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+
+    {
+      'timestamp': 'Tuesday Mar 21 2017 22:00 GMT-0700 (PST)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3831'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'ui',
+          'type': 'improvement',
+          'changeName': 'UI Tweaks',
+          'changeSummary': 'Added two more license types (BSD, GPL).  Re-arranged the components of the User Profile menu - in particular, potentially long lists (projects, games etc) now are on a single horizontally-scrolling row. This prevents profile pages from getting too long). Simplified the UI for the Edit Code new-code template UI.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed some cases that prevented games playing correctly over the CDN. Bugfix for drag-and-drop of thumbnail images to assets. Bugfix for paths when assets are dragged into code files. Security stuff. ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
     {
       'timestamp': 'Sunday Mar 19 2017 20:00 GMT-0700 (PST)',
 

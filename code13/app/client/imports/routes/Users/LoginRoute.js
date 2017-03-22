@@ -74,12 +74,15 @@ export default LoginRoute = React.createClass({
         stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
         utilPushTo(this.context.urlLocation.query, `/u/${userName}`)
         showToast("Login ok!  Welcome back")
-        analytics.identify(Meteor.user()._id, {
-          name: userName,
-          email: Meteor.user().emails[0].address
-        })
-        analytics.track('Logged in')
-        analytics.page('/login')
+
+
+        // analytics.identify(Meteor.user()._id, {
+        //   name: userName,
+        //   email: Meteor.user().emails[0].address
+        // })
+        // analytics.track('Logged in')
+        // analytics.page('/login')
+        ga('send', 'pageview', '/login')
       }
     })
   }

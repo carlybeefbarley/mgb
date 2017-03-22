@@ -50,6 +50,13 @@ const getPagepathFromProps = props => props.routes[1].path
 
 let _theAppInstance = null
 
+// we need to detect if user is not logged in and to do it once
+// analytics is sent from getMeteorData() 
+// when analytics is send then change flag to false
+let analyticsAnonymousSendFlag = true
+// same for sending user logged in data
+let analyticsLoggedInSendFlag = true
+
 
 // for now, until we have push notifications for chat
 const CHAT_POLL_INTERVAL_MS = (12*1000)
@@ -155,6 +162,12 @@ const App = React.createClass({
     this._schedule_requestChatChannelTimestampsNow()
     registerDebugGlobal( 'app', this, __filename, 'The global App.js instance')
     _theAppInstance = this   // This is so we can expose a few things conveniently but safely, and without too much react.context stuff
+
+    if (window.performance) {
+      // Gets the number of milliseconds since page load    
+      const timeSincePageLoad = Math.round(performance.now())
+      ga('send', 'timing', 'Page load', 'load', timeSincePageLoad)
+    }
   },
 
   componentDidUpdate: function(prevProps, prevState) {
@@ -174,6 +187,11 @@ const App = React.createClass({
     // Handle transition from empty to non-empty joyride and start the joyride/tutorial
     if (prevState.joyrideSteps.length ===0 && this.state.joyrideSteps.length > 0)
       this.refs.joyride.start(true)
+
+
+    // if(this.props.params.assetId){
+    //   console.log( this.props.params.assetId, this.state.currentlyEditingAssetInfo)
+    // }
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -182,9 +200,53 @@ const App = React.createClass({
 
     // analytics is from the Meteor package okgrow:analytics
     // See https://segment.com/docs/sources/website/analytics.js/#page for the analytics.page() params
-    analytics.page(getPagenameFromProps(nextProps), {
-      path: nextProps.location.pathname
-    })
+    
+
+
+    // getPagenameFromProps(nextProps) sometimes doesn't work. For example for /learn page
+    const currUser = this.props.currUser
+    const pageName = getPagenameFromProps(nextProps)
+    const pathName = window.location.pathname
+    const routeName = getPagepathFromProps(nextProps)
+    
+    let trackPage = null
+
+    // TODO users routeName returns 'users' instead of '/users'
+    if (_.indexOf(['/', '/games', 'users'], routeName) != -1)  
+      trackPage = routeName
+
+    else if (pathName == '/')
+      trackPage = '/'
+
+    else if (_.startsWith(routeName, '/learn'))
+      // if routeName starts with learn then add all routeName to log
+      trackPage = routeName
+
+    else if (nextProps.params.projectId)
+      // if params has projectId then we know that it's project details page
+      trackPage = '/projectDetails'
+
+    else if (nextProps.params.assetId)
+    {
+      // don't track here because we don't know asset type
+      // do it in handleSetCurrentlyEditingAssetInfo()
+    }
+
+    else if (_.indexOf(['Games', 'Profile', 'Badges', 'Skills', 'Projects', 'Assets'], pageName) != -1)  
+      trackPage = '/' + pageName.toLowerCase()
+
+    else 
+      trackPage = pathName  // for any other untracked page
+    
+
+    if (trackPage) 
+    {
+      // console.log('#################### ->', trackPage)
+      
+      ga('set', 'page', trackPage)
+      ga('send', 'pageview', trackPage)
+    }
+    
   },
 
   getInitialState: function() {
@@ -248,6 +310,25 @@ const App = React.createClass({
       // if the settings are changed while the debounced save is happening..
       // but it's pretty small, so worry about that another day
       G_localSettings.set(Settings.findOne(currUserId))
+    }
+
+    // send analytics data if user is not logged in and do it only once!
+    if(typeof currUser != 'undefined' && currUser === null && analyticsAnonymousSendFlag){
+      // analytics.page('/notLoggedIn')
+      ga('send', 'pageview', '/notLoggedIn')
+      analyticsAnonymousSendFlag = false
+    }
+    // set various analytics params when user logs in
+    if(currUser && analyticsLoggedInSendFlag){
+      // dimension1 = user id dimension (trick google to show individual id's)
+      ga('set', 'dimension1', currUser._id)   
+      // superAdmin or tester user - need to filter them out in reports
+      if(isUserSuperAdmin(currUser) || currUser._id == 'AJ8jrFjxSYJATzscA')
+        ga('set', 'dimension2', 'admin')     
+      
+      // tell google that this is user and all session need to connect to this data point
+      ga('set', 'userId', currUser._id)
+      analyticsLoggedInSendFlag = false
     }
 
     const retval = {
@@ -340,9 +421,17 @@ const App = React.createClass({
 
   handleSetCurrentlyEditingAssetInfo( assetInfo )
   {
-    if (!_.isEqual(this.state.currentlyEditingAssetInfo, assetInfo))
+    if (!_.isEqual(this.state.currentlyEditingAssetInfo, assetInfo)){
+      // See comments in getInitialState() for explanation
       this.setState( { currentlyEditingAssetInfo: assetInfo } )
-    // See comments in getInitialState() for explanation
+    
+      // guntis - the only place where I can get asset type and send to analytics
+      if(assetInfo.assetVerb == 'View'){
+        const path = '/asset/'+assetInfo.kind
+        ga('set', 'page', path)
+        ga('send', 'pageview', path)
+      }
+    }
   },
 
   render() {

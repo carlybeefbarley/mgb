@@ -84,8 +84,12 @@ export default class Toolbar extends React.Component {
         const action = this.keyActions[keyval].action
         joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-keypress`)
         joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-invoke`)
-        // analytics?
         this.keyActions[keyval](e)
+
+        const pageName = this.props.name
+        const actionName = b.name
+        // analytics.track( actionName, { page: pageName } )
+        ga( 'send', 'event', pageName, actionName, 'shortcut' )
       }
     }
   }
@@ -212,7 +216,10 @@ export default class Toolbar extends React.Component {
       joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-click`)
       joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-invoke`)
       this.props.actions[action](e)
-      analytics.track( action, { page: this.props.name } )
+
+      const pageName = this.props.name
+      // analytics.track( action, { page: pageName } )
+      ga( 'send', 'event', pageName, action, 'button' )
     }
     else
       console.error(`Cannot find action for button '${action}'`, this.props.actions)

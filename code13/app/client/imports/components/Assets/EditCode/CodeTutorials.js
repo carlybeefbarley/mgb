@@ -59,6 +59,7 @@ export default class CodeTutorials extends React.Component {
     }
     else
       this.successPopup()
+      ga('send', 'pageview', this.props.skillPath)
   }
 
   stepBack = () => {
@@ -75,6 +76,7 @@ export default class CodeTutorials extends React.Component {
     ChatSendMessageOnChannelName('G_MGBHELP_', 'Please check my Phaser task ' + url + ` for '${getFriendlyName(skillPath)}'`)
     _openHelpChat()
     this.setState({ isTaskSubmitted: true })
+    ga('send', 'pageview', this.props.skillPath)
   }
 
   resetCode = (step) => {

@@ -109,13 +109,17 @@ export default SignupRoute = React.createClass({
         stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial        
         utilPushTo(this.context.urlLocation.query, '/learn/getstarted')
         
-        analytics.identify(Meteor.user()._id, {
-          name: Meteor.user().profile.name,
-          email: Meteor.user().emails[0].address
-        })
-        analytics.track('Signed up')
-        analytics.page('/signup')
-        showToast("Sign up ok!  Welcome aboard")
+
+
+        // analytics.identify(Meteor.user()._id, {
+        //   name: Meteor.user().profile.name,
+        //   email: Meteor.user().emails[0].address
+        // })
+        // analytics.track('Signed up')
+        // analytics.page('/signup')
+        // showToast("Sign up ok!  Welcome aboard")
+        ga('send', 'pageview', '/signup')
+        ga('send', 'pageview', '/login')
       }
     })
   }

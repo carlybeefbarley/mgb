@@ -48,10 +48,13 @@ export default SkillTreeRoute = React.createClass({
     const userSkills = ownsProfile ? this.context.skills : this.data.skills
 
     return (
-      <Segment basic>
-        <Helmet
-            title="Skill Tree"
-            meta={ [ {"name": "description", "content": "SkillTree"} ] } />
+      <div className={isTopLevelRoute ? 'ui basic padded segment' : null}>
+        { isTopLevelRoute &&
+
+          <Helmet
+              title="Skill Tree"
+              meta={ [ {"name": "description", "content": "SkillTree"} ] } />
+        }
         { isTopLevelRoute &&
           <Header as='h2' content='Skills'/>
         }
@@ -70,7 +73,7 @@ export default SkillTreeRoute = React.createClass({
         { this.data.loading ? <Spinner/> : 
           <SkillsMap skills={userSkills} expandable toggleable={ownsProfile} />
         }
-      </Segment>
+      </div>
     )
   }
 })

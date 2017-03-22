@@ -3,7 +3,7 @@ import reactMixin from 'react-mixin'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import QLink from '/client/imports/routes/QLink'
 import { assetMakeSelector, assetSorters } from '/imports/schemas/assets'
-import GameItemList from './GameItemList'
+import GameItems from '/client/imports/components/Assets/GameAsset/GameItems'
 
 import { Azzets } from '/imports/schemas'
 import { projectMakeFrontPageListSelector } from '/imports/schemas/projects'
@@ -46,6 +46,6 @@ export default GamesAvailableGet = React.createClass({
   render: function() {
     const { loading, games } = this.data  
     // In profile, vertically stackeded list view fits better than card view
-    return loading ? <Spinner /> :  <GameItemList games={games} />
+    return loading ? <Spinner /> :  <GameItems games={games} wrap={false}/>
   }
 })

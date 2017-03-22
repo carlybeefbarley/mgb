@@ -4,8 +4,8 @@ import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/Games
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import { Header, Grid } from 'semantic-ui-react'
 
-export const UserGamesRoute = ( { user } ) => (
-  <Grid.Column width={8}>
+export const UserProfileGamesList = ( { user, width } ) => (
+  <Grid.Column width={width}>
       <Helmet
         title={user.profile.name}
         meta={[ {"name": "description", "content": user.profile.name + "\'s Games"} ]}
@@ -13,9 +13,7 @@ export const UserGamesRoute = ( { user } ) => (
       { user ? 
           <div>
             <Header as='h2'>
-              <QLink to={`/u/${user.profile.name}/games`}>
-                Games
-              </QLink> 
+              <QLink to={`/u/${user.profile.name}/games`}>Games</QLink> 
             </Header>
             <GamesAvailableGET scopeToUserId={user._id}/>
           </div>
@@ -25,11 +23,12 @@ export const UserGamesRoute = ( { user } ) => (
   </Grid.Column>
 )
 
-UserGamesRoute.propTypes = {
+UserProfileGamesList.propTypes = {
   query: PropTypes.object,
+  width: PropTypes.number,  // In semantic=ui columns
   user: PropTypes.object,
   currUser: PropTypes.object,
   ownsProfile: PropTypes.bool
 }
 
-export default UserGamesRoute
+export default UserProfileGamesList

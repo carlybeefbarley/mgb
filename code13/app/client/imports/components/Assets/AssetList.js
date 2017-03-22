@@ -1,24 +1,22 @@
 import React, { PropTypes } from 'react'
-import AssetCard from './AssetCard.js'
+import AssetCard from './AssetCard'
+import { Card } from 'semantic-ui-react'
+import { isSameUserId } from '/imports/schemas/users'
 
-const AssetList = props => (
-  <div className="ui cards">
+const AssetList = ( { currUser, assets, ...rest }) => (
+  <Card.Group>
     {
-      props.assets.map((asset) => (
+      assets.map((asset) => (
         <AssetCard
-          className="mgb-pixelated"
-          canEdit={props.currUser && asset.ownerId === props.currUser._id}
-          currUser={props.currUser}
+          canEdit={currUser && isSameUserId(asset.ownerId, currUser._id) }
+          currUser={currUser}
           asset={asset}
-          fluid={props.fluid}
-          ownersProjects={props.ownersProjects}
           key={asset._id}
-          showEditButton={true}
-          renderView={props.renderView}
-          allowDrag={props.allowDrag} />
+          showEditButton={true} 
+          {...rest}/>
       ))
     }
-  </div>
+  </Card.Group>
 )
 
 AssetList.propTypes = {

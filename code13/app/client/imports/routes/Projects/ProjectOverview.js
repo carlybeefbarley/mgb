@@ -13,9 +13,9 @@ import Spinner from '/client/imports/components/Nav/Spinner'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import UserListRoute from '../Users/UserListRoute'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
+import SlidingCardList from '/client/imports/components/Controls/SlidingCardList'
 
 import { logActivity } from '/imports/schemas/activity'
-import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 import ProjectForkGenerator from './ProjectForkGenerator'
 
 export default ProjectOverview = React.createClass({

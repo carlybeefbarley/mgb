@@ -185,7 +185,7 @@ export default BrowseGamesRoute = React.createClass({
         }
 
         { !loading && games.length === 0 && <Message style={{marginTop: '8em'}} warning icon='help circle' header='No games match your search' content='Widen your search to see more games' /> }
-        { loading ? <Spinner /> : <GameItems games={games} /> }
+        { loading ? <Spinner /> : <GameItems wrap={true} games={games} /> }
 
       </Segment>
     )

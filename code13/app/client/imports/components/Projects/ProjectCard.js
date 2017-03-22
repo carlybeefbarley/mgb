@@ -22,7 +22,11 @@ const ProjectCard = props => {
   const hasParentFork = _.isArray(project.forkParentChain) && project.forkParentChain.length > 0;
 
   return (
-    <Card key={project._id} className="animated fadeIn" onClick={() => utilPushTo(window.location.query, linkTo)}>
+    <Card 
+      key={project._id} 
+      className="animated fadeIn" 
+      style={{maxWidth: '230px', minWidth: '230px'}}
+      onClick={() => utilPushTo(window.location.query, linkTo)}>
 
       <ImageShowOrChange
         className="image"

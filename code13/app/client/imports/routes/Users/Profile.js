@@ -6,8 +6,8 @@ import moment from 'moment'
 
 import UserProjects from '/client/imports/components/Users/UserProjects'
 import UserHistory from '/client/imports/components/Users/UserHistory'
-import BadgeGrid from '/client/imports/components/Users/BadgeGrid'
-import UserGamesRoute from '/client/imports/routes/Users/UserGamesRoute'
+import UserProfileBadgeList from '/client/imports/components/Users/UserProfileBadgeList'
+import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
 import SkillTreeRoute from '/client/imports/routes/Users/SkillTreeRoute'
 import ActivityHeatmap from '/client/imports/components/Users/ActivityHeatmap'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
@@ -81,7 +81,7 @@ export default UserProfileRoute = React.createClass({
       return <ThingNotFound type="User" />
 
     return (
-      <Container>
+      <Segment basic>
         <Grid padded stackable stretched>
           <Helmet
             title={user.profile.name}
@@ -90,36 +90,48 @@ export default UserProfileRoute = React.createClass({
             ]}
           />
 
-          { this.renderUserInfo(user, ownsProfile) }
-          <BadgeGrid user={user} className="eight wide column" />
+          { /* User Avatar & Bio */ }
+          { this.renderUserInfo(user, ownsProfile, 8) }
+
+          { /* User History ("Activity") */ }
+          <UserHistory user={user} width={8}/>     
+
+          { /* User Badges */ }
+          <UserProfileBadgeList user={user} className="sixteen wide column" />
+
+          { /* User Games */ }
+          <UserProfileGamesList user={user} width={16}/>
+
+          { /* User Showcase (TODO) */ }
           <UserShowcase user={user} />
+
+          { /* User Activity Heatmap (TODO) */ }
           { false &&
             <ActivityHeatmap user={user} className="eight wide column" />
           }
-          <Grid.Column width={8} id="mgbjr-profile-skills">
-            <Segment>
-              <Header as='h2'>
-                <QLink to={`/u/${user.profile.name}/skilltree`}>
-                  Skills
-                </QLink>
-              </Header>
-              <SkillTreeRoute user={user} ownsProfile={ownsProfile} />
-            </Segment>
+
+          { /* User Projects */ }
+          <UserProjects user={user} width={16} projects={this.data.projects} />
+
+          { /* User Skills */ }
+          <Grid.Column width={16} id="mgbjr-profile-skills">
+            <Header as='h2'>
+              <QLink to={`/u/${user.profile.name}/skilltree`}>Skills</QLink>
+            </Header>
+            <SkillTreeRoute user={user} ownsProfile={ownsProfile} />
           </Grid.Column>
-          <UserHistory user={user} />
-          <UserGamesRoute user={user} />
-          <UserProjects user={user} projects={this.data.projects} />
+
         </Grid>
-      </Container>
+      </Segment>
     )
   },
 
-  renderUserInfo: function(user, ownsProfile) {
+  renderUserInfo: function(user, ownsProfile, width) {
     const { avatar, name, mgb1name, title, bio, focusMsg } = user.profile
     const editsDisabled = !ownsProfile || user.suIsBanned
 
     return (
-      <Grid.Column width={8} id="mgbjr-profile-bioDiv">
+      <Grid.Column width={width} id="mgbjr-profile-bioDiv">
         <Segment>
           <Item.Group>
             <Item>

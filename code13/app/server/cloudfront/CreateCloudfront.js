@@ -239,7 +239,7 @@ export const setUpCloudFront = function () {
       },
       // TODO: do we need custom error responses ???
       CustomErrorResponses: {
-        Quantity: 0, /* required */
+        Quantity: 6, /* required */
         Items: [
           {
             ErrorCode: 400, // bad request

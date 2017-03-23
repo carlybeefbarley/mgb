@@ -26,7 +26,10 @@ const _defaultGameAssetMetadata = {
   gameType:       'codeGame',
   startCode:      '',
   startActorMap:  '',
-  playCount:      0
+  playCount:      0,
+  allowFullScreen: true,
+  width: 800,
+  height: 600
 }
 
 
@@ -35,6 +38,7 @@ class EditGameForm extends BaseForm {
   get data() {
     return this.props.asset.metadata
   }
+
 
   render() {
     const isActorGame = _isActorGame(this.data)
@@ -68,6 +72,19 @@ class EditGameForm extends BaseForm {
         { this.options('Game Type', 'gameType', _gameTypes)}
 
         { isCodeGame  && this.dropArea('Starting Code', 'startCode', 'code' )}
+        { isCodeGame  && this.text('Game Width', 'width', 'number', {
+            min: 480,
+            max: 1920
+          }
+        )}
+        { isCodeGame  && this.text('Game Height', 'height', 'number', {
+            min: 480,
+            max: 1600
+          }
+        )}
+        { isCodeGame && this.bool('Allow fullscreen', 'allowFullScreen')}
+
+
         { isActorGame && this.dropArea('Starting ActorMap', 'startActorMap', 'actormap' )}
 
         { hasGameType &&

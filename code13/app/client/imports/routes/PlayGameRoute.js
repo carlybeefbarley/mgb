@@ -17,6 +17,7 @@ import QLink from '/client/imports/routes/QLink'
 import SpecialGlobals from '/imports/SpecialGlobals'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 
+import elementResizeDetectorMaker  from 'element-resize-detector'
 
 import { getAssetHandlerWithContent2, makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
@@ -30,6 +31,99 @@ class PlayCodeGame extends React.Component {
     return false
   }
 
+  componentDidMount(){
+    this.container = document.getElementById('mgb-jr-main-container')
+    if (!this.container)
+      throw(new Error("Main container cannot be found."))
+
+    this.adjustIframeSize()
+    this.onresize = _.debounce( () => {
+      this.adjustIframeSize()
+    }, 16, {leading: false, trailing: true})
+
+
+
+
+    this.erd = elementResizeDetectorMaker({
+      strategy: "scroll" //<- For ultra performance.
+    })
+    this.erd.listenTo(this.container, this.onresize)
+
+
+
+    /*
+    TODO: techdebt - Compare this to erd - and if erd is REALLY better then remove commented code below
+
+     // slowly check container size and adjust game size if size has changed
+    let savedBox = container.getBoundingClientRect()
+    const checkResize = () => {
+      const outerBox = container.getBoundingClientRect()
+      if(savedBox.width != outerBox.width || savedBox.height != outerBox.height)
+         this.onresize()
+      savedBox = outerBox
+      this.resizeTimeout = setTimeout(checkResize, 1000)
+    }
+    window.addEventListener('resize', this.onresize)
+    checkResize()
+    */
+  }
+
+  // cleanup
+  componentWillUnmount(){
+    this.erd.removeListener(this.container, this.onresize)
+
+    /*
+    window.removeEventListener('resize', this.onresize)
+    clearTimeout(this.resizeTimeout)*/
+  }
+
+  /**
+   * Adjusts iframe - to fit in the current window
+   * */
+  adjustIframeSize(){
+    // fullscreen - don't adjust anything
+    if(this.refs.iframe.offsetHeight === window.innerHeight)
+      return
+
+    const container = this.container
+
+    const style = this.refs.wrapper.style
+    const outerBox = container.getBoundingClientRect()
+    const box = this.refs.wrapper.getBoundingClientRect()
+
+    const gameWidth = outerBox.width - box.left * 2
+    const gameHeight = window.innerHeight - box.top
+    style.height = gameHeight + 'px'
+    style.width = gameWidth + 'px'
+
+    const {width, height} = this.props.metadata
+    const setScale = () => {
+      const sx = gameWidth / width
+      const sy = gameHeight / height
+      this.refs.iframe.style.transform = 'scale(' + Math.min(sx, sy) + ')'
+    }
+
+    if(width > gameWidth || height > gameHeight)
+      setScale()
+
+    if(this.props.metadata.allowFullScreen){
+      this.fsListener = () => {
+        // this means that iframe is in fullscreen mode!!!
+        if(this.refs.iframe.offsetHeight === window.innerHeight){
+          this.refs.iframe.style.transform = 'scale(1)'
+        }
+        else{
+          setScale()
+        }
+      }
+      this.refs.iframe.onwebkitfullscreenchange = this.fsListener
+      this.refs.iframe.onmozfullscreenchange = this.fsListener
+      this.refs.iframe.onmsfullscreenchange = this.fsListener
+    }
+  }
+  /**
+   * Restarts on game (reloads iframe)
+   * */
   restart() {
     if (this.refs.iframe) {
       // jquery only for cross browser support
@@ -37,9 +131,71 @@ class PlayCodeGame extends React.Component {
       this.props.incrementPlayCountCb()
     }
   }
+  /**
+   * Enables fullscreen on game's iframe
+   * */
+  fullscreen(){
+    // TODO: find out
+    const rfs = this.refs.iframe.requestFullScreen
+      || this.refs.iframe.webkitRequestFullScreen
+      || this.refs.iframe.mozRequestFullScreen
+      || this.refs.iframe.msRequestFullScreen
+
+    rfs && rfs.call(this.refs.iframe)
+  }
+
+  /**
+   * Checks if we can offer fullscreen functionality
+   * */
+  canDoFullScreen(){
+    const { allowFullScreen } = this.props.metadata
+    const rfs = document.body.requestFullScreen
+      || document.body.webkitRequestFullScreen
+      || document.body.mozRequestFullScreen
+      || document.body.msRequestFullScreen
+
+    return allowFullScreen && rfs
+  }
+
+  createConfig(){
+
+
+    const toolbarConfig = {
+      buttons: [
+        {
+          name: 'restart',
+          label: 'Restart Game',
+          icon: 'refresh',
+          tooltip: 'Restart game',
+          disabled: false,
+          level: 1,
+          shortcut: 'Alt+R'
+        }
+      ]
+    }
+
+    if(this.canDoFullScreen()) {
+      toolbarConfig.buttons.push({
+        name: 'fullscreen',
+        label: 'Fullscreen',
+        icon: 'television',
+        tooltip: 'Run game in Fullscreen',
+        disabled: false,
+        level: 1,
+        shortcut: 'Alt+F'
+      })
+    }
+
+    return toolbarConfig
+  }
 
   render() {
-    const {_codeName, owner} = this.props
+    const { metadata, owner} = this.props
+    const _codeName = metadata.startCode
+    let width = metadata.width || 800 // fallback for older games
+    let height = metadata.height || 600 // fallback for older games
+
+
     if (!_codeName || _codeName === '')
       return <ThingNotFound type='CodeGame' id='""'/>
 
@@ -51,31 +207,20 @@ class PlayCodeGame extends React.Component {
         <Toolbar
           actions={this}
           name="PlayCodeGame"
-          config={{
-            buttons: [
-              {
-                name:  'restart',
-                label: 'Restart Game',
-                icon:  'refresh',
-                tooltip: 'Restart game',
-                disabled: false,
-                level:    1,
-                shortcut: 'Alt+R'
-              }
-            ]
-          }}
+          config={this.createConfig()}
           />
+        <div ref='wrapper' style={{overflow: 'hidden'}}>
+          <iframe
+            key={ 0 }
+            ref="iframe"
+            id="iFrame1"
+            style={{ minWidth: width + 'px', minHeight: height + 'px', borderStyle: 'none', transformOrigin: '0 0' }}
+            sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
+            src={`/api/asset/code/bundle/cdn/u/${ownerName}/${codeName}?origin=${origin}`}
 
-        <iframe
-          key={ 0 }
-          ref="iframe"
-          id="iFrame1"
-          style={{ minWidth:'800px', minHeight:'600px', borderStyle: 'none' }}
-          sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
-          src={`/api/asset/code/bundle/cdn/u/${ownerName}/${codeName}?origin=${origin}`}
-
-          >
-        </iframe>
+            >
+          </iframe>
+        </div>
       </div>
     )
   }
@@ -111,7 +256,7 @@ const PlayGame = ({ game, user, incrementPlayCountCb }) => {
       if (!game.metadata.startCode || game.metadata.startCode === '')
         return <Message warning
                         content='This GameConfig Asset does not contain a link to the starting actorMap. Someone should edit it and fix that'/>
-      return <PlayCodeGame _codeName={game.metadata.startCode} owner={user}
+      return <PlayCodeGame metadata={game.metadata} owner={user}
                            incrementPlayCountCb={incrementPlayCountCb}/>
     case 'actorGame':
       if (!game.metadata.startActorMap || game.metadata.startActorMap === '')
@@ -212,7 +357,7 @@ export default PlayGameRoute = React.createClass({
     const game = this.data.asset      // One Asset provided via getMeteorData()
 
     return (
-      <Segment basic padded style={{ paddingTop: 0}}>
+      <Segment basic padded style={{ paddingTop: 0, paddingBottom: 0}}>
           <Header as='span'>
             <QLink to={`/u/${game.dn_ownerName}/asset/${game._id}`}>
               <Icon name='game'/>{game.name}

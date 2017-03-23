@@ -51,7 +51,7 @@ const getPagepathFromProps = props => props.routes[1].path
 let _theAppInstance = null
 
 // we need to detect if user is not logged in and to do it once
-// analytics is sent from getMeteorData() 
+// analytics is sent from getMeteorData()
 // when analytics is send then change flag to false
 let analyticsAnonymousSendFlag = true
 // same for sending user logged in data
@@ -164,7 +164,7 @@ const App = React.createClass({
     _theAppInstance = this   // This is so we can expose a few things conveniently but safely, and without too much react.context stuff
 
     if (window.performance) {
-      // Gets the number of milliseconds since page load    
+      // Gets the number of milliseconds since page load
       const timeSincePageLoad = Math.round(performance.now())
       ga('send', 'timing', 'Page load', 'load', timeSincePageLoad)
     }
@@ -200,7 +200,7 @@ const App = React.createClass({
 
     // analytics is from the Meteor package okgrow:analytics
     // See https://segment.com/docs/sources/website/analytics.js/#page for the analytics.page() params
-    
+
 
 
     // getPagenameFromProps(nextProps) sometimes doesn't work. For example for /learn page
@@ -208,11 +208,11 @@ const App = React.createClass({
     const pageName = getPagenameFromProps(nextProps)
     const pathName = window.location.pathname
     const routeName = getPagepathFromProps(nextProps)
-    
+
     let trackPage = null
 
     // TODO users routeName returns 'users' instead of '/users'
-    if (_.indexOf(['/', '/games', 'users'], routeName) != -1)  
+    if (_.indexOf(['/', '/games', 'users'], routeName) != -1)
       trackPage = routeName
 
     else if (pathName == '/')
@@ -232,21 +232,21 @@ const App = React.createClass({
       // do it in handleSetCurrentlyEditingAssetInfo()
     }
 
-    else if (_.indexOf(['Games', 'Profile', 'Badges', 'Skills', 'Projects', 'Assets'], pageName) != -1)  
+    else if (_.indexOf(['Games', 'Profile', 'Badges', 'Skills', 'Projects', 'Assets'], pageName) != -1)
       trackPage = '/' + pageName.toLowerCase()
 
-    else 
+    else
       trackPage = pathName  // for any other untracked page
-    
 
-    if (trackPage) 
+
+    if (trackPage)
     {
       // console.log('#################### ->', trackPage)
-      
+
       ga('set', 'page', trackPage)
       ga('send', 'pageview', trackPage)
     }
-    
+
   },
 
   getInitialState: function() {
@@ -321,11 +321,11 @@ const App = React.createClass({
     // set various analytics params when user logs in
     if(currUser && analyticsLoggedInSendFlag){
       // dimension1 = user id dimension (trick google to show individual id's)
-      ga('set', 'dimension1', currUser._id)   
+      ga('set', 'dimension1', currUser._id)
       // superAdmin or tester user - need to filter them out in reports
       if(isUserSuperAdmin(currUser) || currUser._id == 'AJ8jrFjxSYJATzscA')
-        ga('set', 'dimension2', 'admin')     
-      
+        ga('set', 'dimension2', 'admin')
+
       // tell google that this is user and all session need to connect to this data point
       ga('set', 'userId', currUser._id)
       analyticsLoggedInSendFlag = false
@@ -424,7 +424,7 @@ const App = React.createClass({
     if (!_.isEqual(this.state.currentlyEditingAssetInfo, assetInfo)){
       // See comments in getInitialState() for explanation
       this.setState( { currentlyEditingAssetInfo: assetInfo } )
-    
+
       // guntis - the only place where I can get asset type and send to analytics
       if(assetInfo.assetVerb == 'View'){
         const path = '/asset/'+assetInfo.kind
@@ -532,7 +532,7 @@ const App = React.createClass({
               currentlyEditingAssetInfo={currentlyEditingAssetInfo}
               />
 
-            <div style={mainPanelOuterDivSty} className="noScrollbarDiv">
+            <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id='mgb-jr-main-container'>
               <div style={mainPanelInnerDivSty}>
                 <NavPanel
                   currUser={currUser}

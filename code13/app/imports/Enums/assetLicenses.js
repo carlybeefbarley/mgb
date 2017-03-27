@@ -39,6 +39,14 @@ export default assetLicenses =
     summary: `A permissive license that lets others distribute, remix, tweak, and build upon the owner's work, even commercially, as long as they credit the copyright owner for the original creation. This is the most accommodating of Creative Commons licenses offered. Recommended for maximum dissemination and use of licensed materials.`
   },
 
+  'CC-BY-SA-4.0': { 
+    name: `Creative Commons Attribution-ShareAlike 4.0 International`,
+    url:  _mkCcUrl('by-sa/4.0'),
+    img:  _mkCcButton('by-sa/4.0/88x31.png'),
+    tldrLegal: 'https://tldrlegal.com/license/creative-commons-attribution-sharealike-4.0-international-(cc-by-sa-4.0)',
+    summary: `Lets others distribute, remix, tweak, and build upon the owner's work, even commercially, as long as they credit the copyright owner for the original creation and share the work under the same license.`
+  },
+
   'CC-BY-NC-4.0': { 
     name: `Creative Commons Attribution-NonCommercial`,
     url:  _mkCcUrl('by-nc/4.0'),
@@ -61,7 +69,15 @@ export default assetLicenses =
     img:  null,
     tldrLegal: 'https://tldrlegal.com/license/mit-license',
     summary: `A short, permissive software license. A licensee can do whatever they want as long as they include the original copyright and license notice in any copy of the asset`
-  },  
+  },
+
+  'UNKNOWN': {
+    name: `(Unknown License)`,
+    url:  `https://en.wikipedia.org/wiki/Wikipedia:Upload/Unknown_author_or_license`, 
+    img:  null,
+    tldrLegal: 'https://tldrlegal.com',
+    summary: `The license has not yet been set. DO NOT SUBMIT COPYRIGHTED WORK WITHOUT PERMISSION.`
+  }
 }
 
 export const defaultAssetLicense = 'MIT'

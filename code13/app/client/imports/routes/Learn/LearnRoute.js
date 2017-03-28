@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
@@ -7,22 +6,24 @@ import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
+import sty from  './learnRoute.css';
+
 const cardStyle = {
   color: "#2e2e2e"
 }
 
-const mascotStyle = {
-  // maxWidth: "8em",
-  width: "8em",
-  height: "10em",
-  paddingRight: "0.5em",
-  marginBottom: "0",
-  float: "left",
-  marginRight: "1em",
-  backgroundPosition: "center center",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "contain"
-}
+// const mascotStyle = {
+//   // maxWidth: "8em",
+//   width: "8em",
+//   height: "10em",
+//   paddingRight: "0.5em",
+//   marginBottom: "0",
+//   float: "left",
+//   marginRight: "1em",
+//   backgroundPosition: "center center",
+//   backgroundRepeat: "no-repeat",
+//   backgroundSize: "contain"
+// }
 
 const headerStyle = {
   marginTop: "0.15em",
@@ -96,12 +97,11 @@ const LearnRoute = ({ currUser, params }, context) => (
     <Grid.Column>
       <Card.Group itemsPerRow={1} stackable className="skills">
         { learnTopLevelItems.map( (area, idx) => {
-          const imgStyle = _.cloneDeep(mascotStyle)
-          imgStyle.backgroundImage = "url(" + makeCDNLink( `/images/mascots/${area.mascot}.png` ) + ")"
+          const imgStyle = { backgroundImage: "url(" + makeCDNLink( `/images/mascots/${area.mascot}.png` ) + ")" }
           return (
             <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
               <Card.Content>
-                <div style={imgStyle}></div>
+                <div className="learnThumbnail" style={imgStyle}></div>
                 <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
                 <p style={descStyle}>{area.desc}.</p>
                 { currUser && ('string' == (typeof area.skillnodeTopLevelTag)) && (

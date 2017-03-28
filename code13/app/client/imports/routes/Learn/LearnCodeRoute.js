@@ -69,12 +69,7 @@ const LearnCodeRoute = ({ currUser, params }, context) => (
           return (
             <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
               <Card.Content>
-                {/* We do need emptyPixel, because without src browser will show borders
-                  background-image is a way more handy to automatically scale images with different aspect ratios
-                */}
-                <Image floated='left' style={imgStyle} src={ makeCDNLink( `/images/emptyPixel.png` ) } />
-
-
+                <div style={imgStyle}></div>
                 <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
                 <p style={descStyle}>{area.desc}</p>
                 {area.skillPath && currUser && (
@@ -102,6 +97,7 @@ const cardStyle = {
 const mascotStyle = {
   width: "8em",
   height: "10em",
+  float: "left",
   backgroundPosition: "center center",
   backgroundRepeat: "no-repeat",
   backgroundSize: "contain",

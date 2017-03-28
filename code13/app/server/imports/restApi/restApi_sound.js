@@ -30,7 +30,7 @@ RestApi.addRoute('asset/sound/:id/sound.mp3', {authRequired: false}, {
     return makeAudioResponse(this, asset)
   }
 })
-// get sound by user / name combo - not used?
+// get sound by user / name combo 
 RestApi.addRoute('asset/sound/:user/:name/sound.mp3', {authRequired: false}, {
   get: function () {
     const asset = Azzets.findOne({

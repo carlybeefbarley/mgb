@@ -16,7 +16,7 @@ export default MagePlayGameShoot = {
   
   actorCreateShot: function(aa_idx, stepStyleOverride = NaN)
   {
-    const { actors, activeActors, AA_player_idx, inventory, map } = this
+    const { actors, activeActors, AA_player_idx, inventory, map, ownerName } = this
     var actor = activeActors[aa_idx]
     var ap = actors[actor.ACidx]
     var spawn = ap ? ap.content2.databag.allchar.shotActor : null
@@ -80,7 +80,7 @@ export default MagePlayGameShoot = {
       var shotSound = ap.content2.databag.allchar.soundWhenShooting
       if (aa_idx == AA_player_idx && inventory.equipmentShotSoundOverride)
         shotSound = inventory.equipmentShotSoundOverride
-      MgbActor.playCannedSound(shotSound)
+      MgbActor.playCannedSound(shotSound, ap.content2, ownerName)
     }
   },
   

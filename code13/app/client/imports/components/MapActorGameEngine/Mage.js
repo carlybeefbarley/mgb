@@ -7,6 +7,8 @@ import MagePlayGame from './MagePlayGame'
 import MageNpcDialog from './MageNpcDialog'
 import MageGameCanvas from './MageGameCanvas'
 import MageInventoryDialog from './MageInventoryDialog'
+import MageMgbActor from './MageMgbActor'
+import MageMgbMusic from './MageMgbMusic'
 
 import { Message, Button, Icon, Modal } from 'semantic-ui-react'
 
@@ -67,14 +69,6 @@ const _mkGraphicUri = (ownerName, assetName) => {
   const p = _resolveOwner(ownerName, assetName)
   return `/api/asset/fullgraphic/${p.ownerName}/${p.assetName}`
 } 
-const _mkSoundUri = (ownerName, assetName) =>  {
-  const p = _resolveOwner(ownerName, assetName)
-  return `/api/asset/sound/${p.ownerName}/${p.assetName}/sound.mp3`
-}
-const _mkMusicUri = (ownerName, assetName) =>  {
-  const p = _resolveOwner(ownerName, assetName)
-  return `/api/asset/music/${p.ownerName}/${p.assetName}/music.mp3`
-}
 
 export default class Mage extends React.Component {
   constructor(props) {
@@ -146,7 +140,7 @@ export default class Mage extends React.Component {
     if (this.props.playCountIncFn)
       this.props.playCountIncFn()
 
-    this._game = new MagePlayGame()
+    this._game = new MagePlayGame(this.props.ownerName)
     let startedOk = false
 
     try {
@@ -182,7 +176,7 @@ export default class Mage extends React.Component {
       isInventoryShowing: false,
       activeNpcDialog:    null,
       activeMap:          this.state.loadedMaps[this.props.startMapName] 
-    } )
+  } )
   }
 
   callDoBlit()
@@ -318,6 +312,11 @@ export default class Mage extends React.Component {
           .catch( data => this._actorLoadResult(aName, p.ownerName, false, data) )
       }
     })
+    // Load any referenced music
+    this._game && _.map(this._game.map.mapLayer[3], musicSource => {
+      if (musicSource) {
+        MageMgbMusic.loadMusic(musicSource, oName)}
+    })
     this.setState( { pendingActorLoads } )    // and maybe isPreloadingStr? use a _mkIisPreloadingStrFn 
   }
 
@@ -348,6 +347,9 @@ export default class Mage extends React.Component {
       n => (n && n!=='')
     )
     this._loadRequiredGraphics(desiredGraphicNames, oName)
+
+    // Load any referenced sounds
+    MageMgbActor.loadSounds(actor, oName)
 
     // Add names of any referenced actors to list of desiredActors
     let desiredActorNames = []

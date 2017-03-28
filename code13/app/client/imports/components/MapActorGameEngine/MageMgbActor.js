@@ -1,4 +1,4 @@
-
+import _ from 'lodash'
 import ActiveActor from './MageActiveActorClass'
 
 const MgbActor = {
@@ -307,37 +307,59 @@ const MgbActor = {
     "stationary west 15",
     "stationary west 16", 
   ],
-
-  loadSounds: function(callback) {
+  loadSounds: function(actor, oName, callback) {
     if (!MgbActor._loadedSounds)
     {
       MgbActor._loadedSounds = {}
+      // Builtin sounds
       var names = this.alCannedSoundsList.slice(1)    // ignore first item
+
+      // Relevant sound assets
+      if (actor) {
+        // Do user:asset to differentiate from builtin
+        let actorSounds = [
+          _.includes(actor.databag.all.soundWhenHarmed, ':') ? actor.databag.all.soundWhenHarmed : oName + ':' + actor.databag.all.soundWhenHarmed,
+          _.includes(actor.databag.all.soundWhenHealed, ':') ? actor.databag.all.soundWhenHealed : oName + ':' + actor.databag.all.soundWhenHealed,
+          _.includes(actor.databag.all.soundWhenKilled, ':') ? actor.databag.all.soundWhenKilled : oName + ':' + actor.databag.all.soundWhenKilled,
+          _.includes(actor.databag.allchar.soundWhenMelee, ':') ? actor.databag.allchar.soundWhenMelee : oName + ':' + actor.databag.allchar.soundWhenMelee, 
+          _.includes(actor.databag.allchar.soundWhenShooting, ':') ? actor.databag.allchar.soundWhenShooting : oName + ':' + actor.databag.allchar.soundWhenShooting,
+          _.includes(actor.databag.item.equippedNewMeleeSound, ':') ? actor.databag.item.equippedNewMeleeSound : oName + ':' + actor.databag.item.equippedNewMeleeSound,
+          _.includes(actor.databag.item.equippedNewShotSound, ':') ? actor.databag.item.equippedNewShotSound : oName + ':' + actor.databag.item.equippedNewShotSound
+        ]
+        const desiredSoundNames = _.filter(
+          _.uniqWith(actorSounds, _.isEqual),
+          n => n
+        )
+        names = names.concat(desiredSoundNames)
+      }
+
       var name
       var countClosure = names.length
       var canplay = function(result) { if (--countClosure === 0) { callback && callback(result)} };
-
       for (let n = 0 ; n < names.length ; n++) {
         name = names[n]
         MgbActor._loadedSounds[name] = document.createElement('audio')
-        MgbActor._loadedSounds[name].volume = 0.5 // Half volume
         MgbActor._loadedSounds[name].addEventListener('canplay', canplay, false)
-        MgbActor._loadedSounds[name].src = "/audio/builtinForActors/" + name + ".wav"
+        if (_.includes(name, ':')) { // sound asset
+          MgbActor._loadedSounds[name].src = "/api/asset/sound/" + name.split(':')[0] + "/" + name.split(':')[1] + "/sound.mp3"
+        }
+        else { // builtin sound
+          MgbActor._loadedSounds[name].src = "/audio/builtinForActors/" + name + ".wav"
+          MgbActor._loadedSounds[name].volume = 0.5 // Half volume
+        }
       }
-
-      
     }
   },
 
   // TODO: Implement a preloadSoundsForActor() method
-  playCannedSound: function(_soundName) {
+  playCannedSound: function(_soundName, actor, oName) {
     if (!_soundName)
       return
 
     const soundName = _soundName.replace(/^\[builtin\]\:/,'')   // We will handle missing [builtin]: for now
 
     if (!MgbActor._loadedSounds)
-      MgbActor.loadSounds()
+      MgbActor.loadSounds(actor, oName)
     else if (soundName !== 'none')
     {
       const sound = MgbActor._loadedSounds[soundName]

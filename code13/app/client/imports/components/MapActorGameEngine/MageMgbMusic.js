@@ -1,3 +1,4 @@
+import _ from 'lodash'
 
 // This is a simple Music Manager for Mage (actorMap) games
 
@@ -12,21 +13,56 @@ let _currentlyPlaying = null    // null, or the string which was the param to pl
 // how to get from the full name (with the [builtin] prefix) to the URL (stored on S3 for now)
 
 const MgbMusic = {
-  musicUrlFromMusicFileName: name => {
+  musicUrlFromMusicFileName: (name, oName) => {
     if (!name || name === '') {
       console.error('Empty/invalid music filename provided to musicUrlFromMusicFileName')
       return ''
     }
 
-    const safeName = name.replace(/^\[builtin\]:/, '')
-    return _musicUrlPrefix + safeName
+    if (name.startsWith("[builtin]:")) {
+      const safeName = name.replace(/^\[builtin\]:/, '')
+      return _musicUrlPrefix + safeName
+    } 
+    else {
+      name = _.includes(name, ':') ? name : oName + ':' + name
+      return "/api/asset/music/" + name.split(':')[0] + "/" + name.split(':')[1] + "/music.mp3"
+    }
   },
-  
+
   _loadedMusic: {},       // This is a place we store/cache loaded music. // TODO: Consider memory implications - Consider just keeping N entries
 
   // TODO: A preloader method..which is why there is a loadedMusic structure here for future use.
+  loadMusic: function(musicSource, oName) {
+    if (!musicSource || musicSource === '' || musicSource === 'none')
+      return 
 
-  playMusic: function(musicSource) {
+    const canplay = function(e) {
+      if (!e || !e.target)
+        return
+      const music = e.target
+
+      try {
+        // Only try to play it if it hasn't since been cancelled or superceded. Think async!
+        if (_currentlyPlaying && music === MgbMusic._loadedMusic[_currentlyPlaying])
+        {
+          console.log(`playMusic():canplay() Matched music as ${_currentlyPlaying} and is attempting to start it`)
+          e.target.play()
+        }
+      }
+      catch (err) {
+        console.error(`playMusic():canplay() Failed to play post-loaded music '${_currentlyPlaying}': `, err)
+      }
+      // now remove the handler, otherwise it will restart when it stops
+      e.target.removeEventListener('canplaythrough', canplay, false)  
+    }
+
+    const newMusic = document.createElement('audio')
+    MgbMusic._loadedMusic[musicSource] = newMusic
+    _currentlyPlaying = musicSource
+    newMusic.addEventListener('canplaythrough', canplay, false)
+    newMusic.src = MgbMusic.musicUrlFromMusicFileName(musicSource, oName)
+  },
+  playMusic: function(musicSource, oName) {
     
     if (musicSource && musicSource === _currentlyPlaying) {
       // Too noisy...  console.log(`playMusic determined that '${musicSource}' is already playing, so no action required`)
@@ -48,34 +84,10 @@ const MgbMusic = {
         // cannnot load music, or cannot handle this music encoding... let devs know about it, but don't break functionality
         console.error('playMusic() Unable to play pre-loaded music: ', err)
       })
-    }
-    else
+    } 
+    else 
     {
-      const canplay = function(e) {
-        if (!e || !e.target)
-          return
-        const music = e.target
-
-        try {
-          // Only try to play it if it hasn't since been cancelled or superceded. Think async!
-          if (_currentlyPlaying && music === MgbMusic._loadedMusic[_currentlyPlaying])
-          {
-            console.log(`playMusic():canplay() Matched music as ${_currentlyPlaying} and is attempting to start it`)
-            e.target.play()
-          }
-        }
-        catch (err) {
-          console.error(`playMusic():canplay() Failed to play post-loaded music '${_currentlyPlaying}': `, err)
-        }
-        // now remove the handler, otherwise it will restart when it stops
-        e.target.removeEventListener('canplaythrough', canplay, false)  
-      }
-
-      const newMusic = document.createElement('audio')
-      MgbMusic._loadedMusic[musicSource] = newMusic
-      _currentlyPlaying = musicSource
-      newMusic.addEventListener('canplaythrough', canplay, false)
-      newMusic.src = MgbMusic.musicUrlFromMusicFileName(musicSource)
+      MgbMusic.loadMusic(musicSource, oName)
     }
   },
 

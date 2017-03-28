@@ -98,6 +98,7 @@ const mascotStyle = {
   width: "8em",
   height: "10em",
   float: "left",
+  marginRight: "1em",
   backgroundPosition: "center center",
   backgroundRepeat: "no-repeat",
   backgroundSize: "contain",

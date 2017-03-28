@@ -312,11 +312,7 @@ export default class Mage extends React.Component {
           .catch( data => this._actorLoadResult(aName, p.ownerName, false, data) )
       }
     })
-    // Load any referenced music
-    this._game && _.map(this._game.map.mapLayer[3], musicSource => {
-      if (musicSource) {
-        MageMgbMusic.loadMusic(musicSource, oName)}
-    })
+
     this.setState( { pendingActorLoads } )    // and maybe isPreloadingStr? use a _mkIisPreloadingStrFn 
   }
 
@@ -349,7 +345,7 @@ export default class Mage extends React.Component {
     this._loadRequiredGraphics(desiredGraphicNames, oName)
 
     // Load any referenced sounds
-    MageMgbActor.loadSounds(actor, oName)
+    //MageMgbActor.loadSounds(actor, oName)
 
     // Add names of any referenced actors to list of desiredActors
     let desiredActorNames = []

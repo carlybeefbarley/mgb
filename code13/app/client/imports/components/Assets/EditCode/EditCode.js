@@ -1677,6 +1677,10 @@ export default class EditCode extends React.Component {
 
     this.setState({isPlaying: true})
 
+    // we don't want to hide tutorials so we open popup
+    if(asset.skillPath && !this.state.isPopup)
+      this.setState({ isPopup: true })
+
     this.tools.collectSources((collectedSources) => {
       const startRun = () => {
         if (this.refs.gameScreen && this.refs.gameScreen.isIframeReady()) {
@@ -1699,15 +1703,18 @@ export default class EditCode extends React.Component {
 
     })
 
-
-
-    const idx = Math.floor($('#mgbjr-EditCode-codeRunner').index() / 2)  //  because title + content for one entry
-    // auto-close accordion above so there's space.
-    for(let i=idx - 1; i > -1; i--){
-      $('.ui.accordion').accordion('close', i)
-    }
-    // Make sure that it's really visible.. and also
-    $('.ui.accordion').accordion('open', idx )
+    
+    
+      const idx = Math.floor($('#mgbjr-EditCode-codeRunner').index() / 2)  //  because title + content for one entry
+      // auto-close accordion above so there's space.
+      for(let i=idx - 1; i > -1; i--){
+        // don't close code tutorial accordion (should be 0th element)
+        if(asset.skillPath && i==0)
+          continue
+        $('.ui.accordion').accordion('close', i)
+      }
+      // Make sure that it's really visible.. and also
+      $('.ui.accordion').accordion('open', idx )
   }
 
 

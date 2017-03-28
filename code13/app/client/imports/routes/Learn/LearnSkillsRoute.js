@@ -6,16 +6,12 @@ import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+
+import sty from  './learnRoute.css';
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 const cardStyle = {
   color: "#2e2e2e"
-}
-
-const mascotStyle = {
-  maxWidth: "8em",
-  paddingRight: "0.5em",
-  marginBottom: "0"
 }
 
 const headerStyle = {
@@ -50,7 +46,7 @@ const LearnSkillsRoute = ({ currUser }, context) => (
             key={idx}
             to={ _linkOverrides[area.tag] ? _linkOverrides[area.tag] : `/learn/skills/${area.tag}`}>
             <Card.Content>
-              <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
+              <div className="learnThumbnail" style={{backgroundImage: "url(" + makeCDNLink( `/images/mascots/${area.mascot}.png` ) + ")"}}></div>
               <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.title}</Header>
               <p style={descStyle}>{area.desc}.</p>
               { currUser && (

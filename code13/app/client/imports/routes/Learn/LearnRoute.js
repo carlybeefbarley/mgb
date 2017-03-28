@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
@@ -11,9 +12,16 @@ const cardStyle = {
 }
 
 const mascotStyle = {
-  maxWidth: "8em",
+  // maxWidth: "8em",
+  width: "8em",
+  height: "10em",
   paddingRight: "0.5em",
-  marginBottom: "0"
+  marginBottom: "0",
+  float: "left",
+  marginRight: "1em",
+  backgroundPosition: "center center",
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "contain"
 }
 
 const headerStyle = {
@@ -87,19 +95,22 @@ const LearnRoute = ({ currUser, params }, context) => (
     </Grid.Column>
     <Grid.Column>
       <Card.Group itemsPerRow={1} stackable className="skills">
-        { learnTopLevelItems.map( (area, idx) => (
-          <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
-            <Card.Content>
-              <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
-              <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
-              <p style={descStyle}>{area.desc}.</p>
-              { currUser && ('string' == (typeof area.skillnodeTopLevelTag)) && (
-                <SkillsMap skills={context.skills} expandable toggleable skillPaths={[area.skillnodeTopLevelTag]} />
-              )}
+        { learnTopLevelItems.map( (area, idx) => {
+          const imgStyle = _.cloneDeep(mascotStyle)
+          imgStyle.backgroundImage = "url(" + makeCDNLink( `/images/mascots/${area.mascot}.png` ) + ")"
+          return (
+            <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
+              <Card.Content>
+                <div style={imgStyle}></div>
+                <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
+                <p style={descStyle}>{area.desc}.</p>
+                { currUser && ('string' == (typeof area.skillnodeTopLevelTag)) && (
+                  <SkillsMap skills={context.skills} expandable toggleable skillPaths={[area.skillnodeTopLevelTag]} />
+                )}
 
-            </Card.Content>
-          </QLink>
-        ) )
+              </Card.Content>
+            </QLink>
+        )} )
         }
       </Card.Group>
     </Grid.Column>

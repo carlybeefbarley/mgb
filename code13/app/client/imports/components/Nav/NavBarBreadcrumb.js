@@ -1,10 +1,14 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
-import { Popup, Breadcrumb, Icon } from 'semantic-ui-react'
+import { Popup, Breadcrumb, Icon, List } from 'semantic-ui-react'
 import { AssetKinds } from '/imports/schemas/assets'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import UserItem from '/client/imports/components/Users/UserItem'
+
+import reactMixin from 'react-mixin'
+import { ReactMeteorData } from 'meteor/react-meteor-data'
+
 // The NavBar is the top row of the central column of the page (i.e. between the NavPanel column
 // on the left and the FlexPanel on the right).
 
@@ -12,6 +16,7 @@ import UserItem from '/client/imports/components/Users/UserItem'
 // params (assetId, projectId etc)
 
 const _sep = <Icon color='grey' name='right angle' />
+const _sepTo = <Icon color='blue' name='right angle' />
 
 const ProjectsSection = ( { usernameToShow, projectNames } ) =>
 {
@@ -72,12 +77,14 @@ const _learnCodeItemHdrs = {
   'games': 'GameDev Tutorials'
 }
 
-const NavBarBreadcrumb = ( {
+const NavBarBreadcrumbUI = ( {
   name,
   user,
   params,
   location,
-  currentlyEditingAssetInfo
+  currentlyEditingAssetInfo,
+  loading,
+  assetNames
  } ) => {
   const { query, pathname } = location
   const assetId = params && params.assetId
@@ -186,16 +193,77 @@ const NavBarBreadcrumb = ( {
       { /*   > [assetVerb||pageName||null]   */ }
       { (!isAssets && (assetVerb || name)) && _sep }
       { (!isAssets && (assetVerb || name)) ? (assetVerb || name) : ( (name && !isAssets) ? <span>{name}&nbsp;</span> : null ) }
+
+      { (!loading && assetNames && assetNames.length > 0) && 
+        <Popup
+          trigger={_sepTo}
+          hoverable
+          positioning='bottom left'
+          on='hover'
+          size='small'
+          >
+          <Popup.Header>
+            Related Assets:
+          </Popup.Header>
+          <Popup.Content
+            style={{ maxHeight: '20em', overflowY: 'auto'}}>
+            <List selection>
+            { _.map(assetNames, a => (
+              <List.Item 
+                  as={QLink}
+                  key={a._id} 
+                  style={{color: AssetKinds.getColor(a.kind)}} 
+                  icon={AssetKinds.getIconName(a.kind)} 
+                  content={a.name} 
+                  to={`/u/${a.dn_ownerName}/asset/${a._id}`}
+                />
+              )
+            )}
+            </List>
+          </Popup.Content>
+        </Popup>
+      }
     </Breadcrumb>
   )
 }
 
-NavBarBreadcrumb.propTypes = {
+NavBarBreadcrumbUI.propTypes = {
   params:             PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params
   user:               PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
   name:               PropTypes.string,                 // Page title to show in NavBar breadcrumb
   location:           PropTypes.object,                 // basically windows.location, but via this.props.location from App.js (from React Router)
   currentlyEditingAssetInfo: PropTypes.object.isRequired// An object with some info about the currently edited Asset - as defined in App.js' this.state
 }
+
+
+const NameInfoAzzets = new Meteor.Collection('NameInfoAzzets')
+
+const NavBarBreadcrumb = React.createClass({
+  mixins: [ReactMeteorData],
+
+
+  getMeteorData() {
+    const { name, user, params, location, currentlyEditingAssetInfo } = this.props
+    const { kind, assetVerb, projectNames } = currentlyEditingAssetInfo
+
+    const handleForAssets = Meteor.subscribe("assets.public.nameInfo.query",
+      user ? user._id : null,
+      null,   // assetKinds=all
+      null,   // No search prefix
+      projectNames ? projectNames[0] : null,
+      false,
+      false,
+      'edited'  // Sort by recently edited
+      )
+    return {
+      loading: !handleForAssets.ready(),
+      assetNames: NameInfoAzzets.find().fetch()
+    }
+  },
+
+  render() { 
+    return <NavBarBreadcrumbUI {...(this.props)} {...this.data} />
+  }
+})
 
 export default NavBarBreadcrumb

@@ -15,6 +15,37 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Tuesday Mar 28 2017 23:10 GMT-0700 (PST)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3851'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'ui',
+          'type': 'improvement',
+          'changeName': 'UI Tweaks',
+          'changeSummary': 'Added two more license types (UNKNOWN, CC-SA). Undo/redo for music editor; better notifications for read-only music assets; tweaks to the /learn pages',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'play.game',
+          'type': 'improvement',
+          'changeName': 'Play game sizing/scaling',
+          'changeSummary': 'Game width/height can be set in the gameConfig. We now do smart scaling based on the desired size and the available space.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Tuesday Mar 21 2017 22:00 GMT-0700 (PST)',
 
       'id': {

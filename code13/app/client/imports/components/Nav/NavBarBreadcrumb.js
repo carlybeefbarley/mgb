@@ -103,7 +103,7 @@ const NavBarBreadcrumbUI = ( {
   const isPlay = (assetVerb === 'Play')   // A bit of a hack while we decide if this is a good UX
   const isLearn = (pathname && pathname.startsWith('/learn'))
   const isAssets = (name === 'Assets')
-  const assetNameQuickNavRegex = new RegExp( '^.*' + quickAssetSearch )
+  const assetNameQuickNavRegex = new RegExp( '^.*' + quickAssetSearch, 'i' )
   const filteredRelatedAssets = _.filter(relatedAssets, a => assetNameQuickNavRegex.test(a.name))
 
   return (

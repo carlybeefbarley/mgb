@@ -93,6 +93,8 @@ const NavBarBreadcrumbUI = ( {
   const { query, pathname } = location
   const assetId = params && params.assetId
   const projectId = params && params.projectId
+  const projectName = params && params.projectName
+  const isProjectOnPath = Boolean(projectId || projectName)
   const learnCodeItem = params && pathname && pathname.startsWith('/learn/code/') && params.item
   const queryProjectName = query ? query.project : null
   const usernameToShow = user ? user.profile.name : params.username
@@ -169,8 +171,8 @@ const NavBarBreadcrumbUI = ( {
       }
 
       { /*   > Projects   */ }
-      { usernameToShow && projectId && _sep }
-      { usernameToShow && projectId && 
+      { usernameToShow && isProjectOnPath && _sep }
+      { usernameToShow && isProjectOnPath && 
         <QLink className="section" to={`/u/${usernameToShow}/projects`}>Projects&nbsp;</QLink> 
       }
 
@@ -228,7 +230,7 @@ const NavBarBreadcrumbUI = ( {
             </span>
           </Popup.Header>
           <Popup.Content>            
-            <List selection style={{ maxHeight: '30em', width: '20em', overflowY: 'auto'}}>
+            <List selection animated celled style={{ maxHeight: '30em', width: '20em', overflowY: 'auto'}}>
               { _.map(filteredRelatedAssets, a => ( 
                 <List.Item 
                     as={QLink}

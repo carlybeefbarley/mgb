@@ -31,19 +31,17 @@ const _isSameProject = (chosenProjectObj, chosenProjectName, candidateProjectObj
   return chosenProjectName === candidateProjectObj.name
 }
 
-const ProjectSelector = props => {
-  const { 
-    user, 
-    canEdit, 
-    availableProjects, 
-    showProjectsUserIsMemberOf, 
-    ProjectListLinkUrl, 
-    isUseCaseCreate, 
-    chosenProjectObj,
-    chosenProjectName,
-    handleChangeSelectedProjectName,
-   } = props
-
+const ProjectSelector = ( {
+  user, 
+  canEdit, 
+  availableProjects, 
+  showProjectsUserIsMemberOf, 
+  ProjectListLinkUrl, 
+  isUseCaseCreate, 
+  chosenProjectObj,
+  chosenProjectName,
+  handleChangeSelectedProjectName 
+} ) => {
   const ownedProjects = []
   const memberOfProjects = []
   const userName = user ? user.profile.name : "guest"
@@ -123,7 +121,7 @@ const ProjectSelector = props => {
         inline
         trigger={
           <span>
-            <QLink to={actualProjectObj ? `/u/${actualProjectObj.ownerName}/project/${actualProjectObj._id}` : `/u/${userName}/projects`}>
+            <QLink to={actualProjectObj ? `/u/${actualProjectObj.ownerName}/projects/${actualProjectObj.name}` : `/u/${userName}/projects`}>
               <Icon name='sitemap'/> 
             </QLink>
             { projectLabelNameToShow }&ensp;

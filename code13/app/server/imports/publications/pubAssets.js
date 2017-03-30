@@ -73,6 +73,7 @@ Meteor.publish('assets.public.nameInfo.query', function(
   showDeleted=false,
   showStable=false,
   assetSortType=undefined,      // null/undefined or one of the keys of allSorters{}
+  limitCount=50,
   hideWorkstateMask=0,          // As defined for use by assetMakeSelector()
   showChallengeAssets=false
 )
@@ -89,7 +90,7 @@ Meteor.publish('assets.public.nameInfo.query', function(
   const findOpts = {
     fields:  { updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1 },
     sort:  assetSorter,
-    limit: 1000
+    limit: Math.min(limitCount, 99)
   }
   const cursor = Azzets.find(selector, findOpts )
   // Publish to another client Collection - as partial data will interfere with the

@@ -8,28 +8,28 @@ import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 const jsItems = [
   {
     icon: 'game',
-    link: '/u/!vault/project/MNuSHoYkTeT6WHrzE',
+    link: '/u/!vault/projects/RockySmasher',            // '/u/!vault/project/MNuSHoYkTeT6WHrzE',
     content: 'Rocky Smasher',
     desc: `Tap left/right to cut down the tree`,
     mascot: 'game_rocky',
   },
   {
     icon: 'game',
-    link: '/u/!vault/project/7dDxP35DeHTYdMZjt',
+    link: '/u/!vault/projects/digger',      // '/u/!vault/project/7dDxP35DeHTYdMZjt',
     content: 'Digger',
     desc: `Mine precious minerals and sell them in a shop`,
     mascot: 'game_shop',
   },
   {
     icon: 'game',
-    link: '/u/!vault/project/cpTvrRFnZzWLhxWgN',
+    link: '/u/!vault/projects/Runner',    // '/u/!vault/project/cpTvrRFnZzWLhxWgN',
     content: 'Runner',
     desc: `Infinite runner game`,
     mascot: 'game_runner',
   },
   {
     icon: 'game',
-    link: '/u/!vault/project/yHxhXxrRLqxsgnBCf',
+    link: '/u/!vault/projects/snake',    // '/u/!vault/project/yHxhXxrRLqxsgnBCf',
     content: 'Snake',
     desc: `Classic`,
     mascot: 'game_snake',

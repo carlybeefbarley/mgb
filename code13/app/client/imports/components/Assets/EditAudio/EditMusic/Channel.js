@@ -326,7 +326,7 @@ export default class Channel extends React.Component {
       this.sample.delay = this.sample.offsetX / this.props.pxPerSecond
       let channel = this.props.channel
       channel.delay = this.sample.delay
-      this.doSaveStateForUndo("Drag")
+      this.props.doSaveStateForUndo("Drag")
       this.props.saveChannel(channel)
       // console.log(this.sample.delay)
     }

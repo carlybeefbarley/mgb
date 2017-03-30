@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Segment, Header, Divider, Menu } from 'semantic-ui-react'
+import { Card, Segment, Header, Divider, Menu } from 'semantic-ui-react'
+import { createContainer } from 'meteor/react-meteor-data'
 import Helmet from 'react-helmet'
-import reactMixin from 'react-mixin'
 import { browserHistory } from 'react-router'
 import Spinner from '/client/imports/components/Nav/Spinner'
 
@@ -25,87 +25,109 @@ const queryDefaults = {
 const _contentsSegmentStyle = { minHeight: '600px' }
 const _filterSegmentStyle = { ..._contentsSegmentStyle, minWidth: '220px', maxWidth: '220px' }
 
-export default UserProjectList = React.createClass({
-  mixins: [ReactMeteorData],
+/**  Returns the given query EXCEPT for keys that match a key/value pair in queryDefaults array
+*/
+const _stripQueryOfDefaults = queryObj => {
+  var strippedQ = _.omitBy(queryObj, function (val, key) {
+    let retval = queryDefaults.hasOwnProperty(key) && queryDefaults[key] === val
+    return retval
+  })
+  return strippedQ
+}
 
-  propTypes: {
+
+/**
+ * queryNormalized() takes a location query that comes in via the browser url.
+ *   Any missing or invalid params are replaced by defaults
+ *   The result is a data structure that can be used without need for range/validity checking
+ * @param q typically this.props.location.query  -  from react-router
+*/
+const _queryNormalized = ( q = {} ) => {
+  // Start with defaults
+  let newQ = _.clone(queryDefaults)
+  // Validate and apply values from location query
+
+  // query.sort
+  if (projectSorters.hasOwnProperty(q.sort))
+    newQ.sort = q.sort
+
+  // query.hidews - This is a hideWorkState bitmask as defined in makeWorkstateNamesArray()
+  if (q.hidews)
+    newQ.hidews = q.hidews
+
+  // query.showForkable
+  if (q.showForkable === "1")
+    newQ.showForkable = q.showForkable
+
+  // query.searchName
+  if (q.searchName)
+    newQ.searchName = q.searchName
+
+  return newQ
+}
+
+const Empty = <p>No matching projects</p>
+
+const ProjectsAsCards = ( { projects, ownedFlag, user } ) => {
+
+  if (!projects || projects.length === 0)
+    return Empty
+
+  var count = 0
+      
+  const retval = (
+    <Card.Group>
+      { projects.map( project => {
+        const isOwner = (user && project.ownerId === user._id)
+        if (isOwner === ownedFlag || !user) 
+        {
+          count++
+          return (
+            <ProjectCard 
+                project={project} 
+                canEdit={false}
+                canLinkToSrc={false}
+                key={project._id} />
+          )
+        }
+      } ) }
+    </Card.Group>
+  )
+
+  return count > 0 ? retval : Empty
+}
+
+class UserProjectListUI extends React.PureComponent {
+
+  propTypes = {
     params: PropTypes.object,             // params.id is the USER id  OR  params.username is the username
     user: PropTypes.object,               // This is the related user record. We list the projects for this user
-    currUser: PropTypes.object            // Currently Logged in user. Can be null
-  },
+    currUser: PropTypes.object,           // Currently Logged in user. Can be null
+    location: PropTypes.object,
+    loading: PropTypes.bool,
+    projects: PropTypes.array
+  }
   
-  /**
-   * queryNormalized() takes a location query that comes in via the browser url.
-   *   Any missing or invalid params are replaced by defaults
-   *   The result is a data structure that can be used without need for range/validity checking
-   * @param q typically this.props.location.query  -  from react-router
-  */
-  queryNormalized: function(q = {}) {
-    // Start with defaults
-    let newQ = _.clone(queryDefaults)
-    // Validate and apply values from location query
-
-    // query.sort
-    if (projectSorters.hasOwnProperty(q.sort))
-      newQ.sort = q.sort
-
-    // query.hidews - This is a hideWorkState bitmask as defined in makeWorkstateNamesArray()
-    if (q.hidews)
-      newQ.hidews = q.hidews
-
-    // query.showForkable
-    if (q.showForkable === "1")
-      newQ.showForkable = q.showForkable
-
-    // query.searchName
-    if (q.searchName)
-      newQ.searchName = q.searchName
-
-    return newQ
-  },
-
-  /**  Returns the given query EXCEPT for keys that match a key/value pair in queryDefaults array
-  */
-  _stripQueryOfDefaults: function(queryObj) {
-    var strippedQ = _.omitBy(queryObj, function (val, key) {
-      let retval = queryDefaults.hasOwnProperty(key) && queryDefaults[key] === val
-      return retval
-    })
-    return strippedQ
-  },
-
   /** helper Function for updating just a query string with react router
   */
-  _updateLocationQuery(queryModifier) {
+  _updateLocationQuery = queryModifier => {
     let loc = this.props.location
     let newQ = Object.assign( {}, loc.query, queryModifier )
-    newQ = this._stripQueryOfDefaults(newQ)
+    newQ = _stripQueryOfDefaults(newQ)
     // This is browserHistory.push and NOT utilPushTo() since we are staying on the same page
     browserHistory.push( Object.assign( {}, loc,  { query: newQ } ) )
-  },
+  }
 
-  getMeteorData: function() {
-    const userId = this.props.user ? this.props.user._id : null
-    const qN = this.queryNormalized(this.props.location.query)
-    const showOnlyForkable = (qN.showForkable === '1')
-    const handleForProjects = Meteor.subscribe("projects.search", userId, qN.searchName, showOnlyForkable, qN.hidews)
-    const projectSelector = projectMakeSelector(userId, qN.searchName, showOnlyForkable, qN.hidews)
+  handleSearchGo = newSearchText => this._updateLocationQuery( { searchName: newSearchText } )
 
-    return {
-      projects: Projects.find(projectSelector).fetch(),
-      loading: !handleForProjects.ready()
-    }
-  },
+  handleChangeShowForkableFlag = newValue => this._updateLocationQuery( { showForkable: newValue } ) 
 
-  handleSearchGo(newSearchText) { this._updateLocationQuery( { searchName: newSearchText } ) },
-  handleChangeShowForkableFlag(newValue) { this._updateLocationQuery( { showForkable: newValue } ) },
-  handleChangeWorkstateHideMask(newValue) { this._updateLocationQuery( { hidews: String(newValue) } ) },
+  handleChangeWorkstateHideMask = newValue => this._updateLocationQuery( { hidews: String(newValue) } )
   
-  render: function() {
-    const { user, currUser, location } = this.props
-    const { loading, projects } = this.data   // May still be loading...
-    const ownerName = user  ? user.profile.name : 'all users'
-    const qN = this.queryNormalized(location.query)
+  render() {
+    const { user, currUser, location, loading, projects } = this.props
+    const ownerName = user ? user.profile.name : 'all users'
+    const qN = _queryNormalized(location.query)
     const pageTitle = user ? `${ownerName}'s Projects` : "Public Projects"
 
     return (
@@ -144,11 +166,15 @@ export default UserProjectList = React.createClass({
             <Header as='h2'>Projects owned by {ownerName}</Header>
             <CreateProjectLinkButton currUser={currUser} />
             <p />
-            { this.renderProjectsAsCards(loading, projects, true) }
+            { loading ? <Spinner/> : 
+              <ProjectsAsCards projects={projects} ownedFlag={true} user={currUser} />
+            }
             <br />
             <Divider />
             <Header as='h2'>Projects {ownerName} is a member of</Header>
-            { this.renderProjectsAsCards(loading, projects, false) }
+            { loading ? <Spinner/> : 
+              <ProjectsAsCards projects={projects} ownedFlag={false} user={currUser} />
+            }
           </div>
           :
           <div>
@@ -161,37 +187,18 @@ export default UserProjectList = React.createClass({
         </Segment>
       </Segment.Group>
     )
-  },
-  
-  renderProjectsAsCards(isLoading, projects, ownedFlag)
-  {
-    if (isLoading)
-      return <Spinner/>
-
-    const Empty = <p>No matching projects</p>
-    var count = 0
-    if (!projects || projects.length === 0)
-      return Empty
-      
-    const retval = (
-      <div className="ui link cards">
-        { projects.map( project => {
-          const isOwner = (this.props.user && project.ownerId === this.props.user._id)
-          if (isOwner === ownedFlag || !this.props.user) 
-          {
-            count++
-            return (
-              <ProjectCard 
-                  project={project} 
-                  canEdit={false}
-                  canLinkToSrc={false}
-                  key={project._id} />
-            )
-          }
-        } ) }
-      </div>
-    )
-
-    return count > 0 ? retval : Empty
   }
-})
+}
+
+export default UserProjectList = createContainer( ({ user, location }) => {
+  const userId = user ? user._id : null
+  const qN = _queryNormalized(location.query)
+  const showOnlyForkable = (qN.showForkable === '1')
+  const handleForProjects = Meteor.subscribe("projects.search", userId, qN.searchName, showOnlyForkable, qN.hidews)
+  const projectSelector = projectMakeSelector(userId, qN.searchName, showOnlyForkable, qN.hidews)
+  
+  return {
+    projects: Projects.find(projectSelector).fetch(),
+    loading: !handleForProjects.ready()
+  }}, UserProjectListUI
+)

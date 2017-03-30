@@ -326,7 +326,6 @@ const NavBarBreadcrumb = React.createClass({
   },
 
   handleSearchNavKey(e) {
-    console.log(e.key)
     if (e.key && e.key.length === 1)
       this.setState( { quickAssetSearch: this.state.quickAssetSearch + e.key})
     if (e.key === 'Backspace')

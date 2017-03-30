@@ -355,7 +355,6 @@ export default AssetEditRoute = React.createClass({
         />
 
         { !isTooSmall &&
-          <Grid.Column width='8' id="mgbjr-asset-edit-header-left">
             <AssetPathDetail
               canEdit={canEd}
               isUnconfirmedSave={asset.isUnconfirmedSave}
@@ -368,7 +367,6 @@ export default AssetEditRoute = React.createClass({
               handleNameChange={this.handleAssetNameChange}
               handleDescriptionChange={this.handleAssetDescriptionChange}
               handleSaveNowRequest={this.handleSaveNowRequest} />
-          </Grid.Column>
         }
 
         { !isTooSmall &&

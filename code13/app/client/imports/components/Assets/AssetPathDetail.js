@@ -81,7 +81,7 @@ export default AssetPathDetail = React.createClass({
     const untitledAssetString = canEdit ? "(Type asset name here)" : "(untitled)"
 
     return (
-      <div>
+      <Grid.Column width='8' id="mgbjr-asset-edit-header-left">
         <Grid.Row>
 
           <AssetKindExplainer kind={kind} ownerName={ownerName}/>
@@ -117,7 +117,7 @@ export default AssetPathDetail = React.createClass({
             </div>
           </small>
         </Grid.Row>
-      </div>
+      </Grid.Column>
     )
   }
 })

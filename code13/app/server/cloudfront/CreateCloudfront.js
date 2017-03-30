@@ -44,8 +44,8 @@ const allowedOrigins = [
   'https://v2.mygamebuilder.com',
 
   // latest master
-  'http://staging.mygamebuilder.com:3000',
   'http://staging.mygamebuilder.com',
+  'https://staging.mygamebuilder.com',
 
   // local developement
   'http://localhost:3000',

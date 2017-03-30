@@ -130,7 +130,7 @@ const NavBarBreadcrumbUI = ( {
               on='hover'
               hoverable
               positioning='bottom center'
-              mouseEnterDelay={400} >
+              mouseEnterDelay={500} >
             <Popup.Header>
               {<usernameToShow></usernameToShow>}
             </Popup.Header>

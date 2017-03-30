@@ -536,8 +536,6 @@ const App = React.createClass({
               <div style={mainPanelInnerDivSty}>
                 <NavPanel
                   currUser={currUser}
-                  currUserProjects={currUserProjects}
-                  fpReservedRightSidebarWidth={flexPanelWidth}
                   navPanelAvailableWidth={mainAreaAvailableWidth}
                 />
                 { isNetworkFailure &&

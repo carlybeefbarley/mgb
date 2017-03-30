@@ -5,11 +5,11 @@ import { projectMakeSelector, projectMakeFrontPageListSelector } from '/imports/
 //    PROJECTS Publications
 //
 
-// Return one project. This is a good subscription for ProjectOverviewRoute
-Meteor.publish('projects.forProjectId', function(projectId) {
-  return Projects.find(projectId)
+// Return one project by ID. This is a good subscription for ProjectOverviewRoute
+// sel is either of the form { _id : projectId } or { ownerId: user._id, name: projectName }
+Meteor.publish('projects.oneProject', function(sel) {
+  return Projects.find(sel)
 })
-
 
 // Return projects relevant to this userId.. This includes owner, member, etc
 Meteor.publish('projects.byUserId', function(userId, showOnlyForkable = false) {
@@ -48,3 +48,4 @@ Meteor.publish('projects.search',
 Projects._ensureIndex({"updatedAt": -1})
 Projects._ensureIndex({"workState": -1})
 Projects._ensureIndex({"workState": 1, "updatedAt": -1})
+Projects._ensureIndex({"ownerId": 1, "name": 1})

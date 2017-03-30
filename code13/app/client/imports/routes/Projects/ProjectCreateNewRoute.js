@@ -57,7 +57,7 @@ export default ProjectCreateNewRoute = React.createClass({
         showToast("Could not create project - "+error.reason, 'error')
       else {
         logActivity("project.create",  `Create project ${pName}`)
-        utilPushTo(this.context.urlLocation.query, `/u/${this.props.currUser.profile.name}/project/${result}`)
+        utilPushTo(this.context.urlLocation.query, `/u/${this.props.currUser.profile.name}/projects/${pName}`)
       }
     })
   }

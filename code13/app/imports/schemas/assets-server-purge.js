@@ -12,7 +12,7 @@ import { checkMgb } from './checkMgb'
 // could just skip the move to PurgedAzzets and do a cheaper Azzets.remove() query.. but 
 // the only real reason to do that would be excessive scale problems.. so best to leave this
 // as-is for now.
-const SHORTEST_PURGE_AGE_DAYS = 21
+const SHORTEST_PURGE_AGE_DAYS = 14
 
 // TODO: We can have orphaned chats in Chats.js.. there could be a lazy process to 
 // get rid of these ONCE no-one has them pinned any more.
@@ -25,7 +25,7 @@ Meteor.methods({
   //   opts.purgeIfUntouchedForNumDays      // Required Number
   //   opts.isDryRun                        // Required Boolean
   //   opts.assetOwnerName                  // Optional String. If null, or "" then all users' assets are in scope
-  //  e.g. Meteor.call("Azzets.Purge", { purgeIfUntouchedForNumDays: 21, isDryRun: false, assetOwnerName: '' })
+  //  e.g. Meteor.call("Azzets.Purge", { purgeIfUntouchedForNumDays: 14, isDryRun: false, assetOwnerName: '' })
 
   "Azzets.Purge": function (opts = {}) {
 

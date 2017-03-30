@@ -64,6 +64,45 @@ Meteor.publish('assets.public.partial.bySelector', function(selector) {
   this.ready()
 })
 
+
+Meteor.publish('assets.public.nameInfo.query', function(
+  userId,
+  selectedAssetKinds,
+  nameSearch,                   // TODO: cleanse the nameSearch RegExp. Issue is regex vs text index. See notes in _ensureIndex() below.
+  projectName=null,
+  showDeleted=false,
+  showStable=false,
+  assetSortType=undefined,      // null/undefined or one of the keys of allSorters{}
+  limitCount=50,
+  hideWorkstateMask=0,          // As defined for use by assetMakeSelector()
+  showChallengeAssets=false
+)
+{
+  const selector = assetMakeSelector(userId,
+                      selectedAssetKinds,
+                      nameSearch,
+                      projectName,
+                      showDeleted,
+                      showStable,
+                      hideWorkstateMask,
+                      showChallengeAssets)
+  let assetSorter = assetSortType ? allSorters[assetSortType] : allSorters["edited"]
+  const findOpts = {
+    fields:  { updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1 },
+    sort:  assetSorter,
+    limit: Math.min(limitCount, 99)
+  }
+  const cursor = Azzets.find(selector, findOpts )
+  // Publish to another client Collection - as partial data will interfere with the
+  //   Azzets collection on the client side (Meteor miniMongo)
+  //   (@stauzs) I know - this is ugly, but seems that there is no better solution
+  //   TODO(@dgolds): Research and review to see if there was a better way.
+  Mongo.Collection._publishCursor(cursor, this, 'NameInfoAzzets')
+  this.ready()
+})
+
+
+
 // Return one asset info only.
 Meteor.publish('assets.public.byId', function(assetId) {
   return Azzets.find(assetId, {fields: {content2: 0}})

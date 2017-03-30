@@ -22,7 +22,7 @@ export default ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    params:   PropTypes.object,       // Contains params.projectId
+    params:   PropTypes.object,       // Contains params.projectId  OR projectName
     user:     PropTypes.object,       // App.js gave us this from params.id OR params.username
     currUser: PropTypes.object
   },
@@ -34,14 +34,17 @@ export default ProjectOverview = React.createClass({
     isDeleteComplete:             false,       // True if a delete project operation succeeded.
     compoundNameOfDeletedProject: null,        // Used for User feedback after deleting project. using Compound name for full clarity
     confirmDeleteNum:             -1           // If >=0 then it indicates how many assets will be deleted. Used to flag 2-stage DELETE PROJECT
-  }),   
+  }),
   
   getMeteorData: function() {
-    let projectId = this.props.params.projectId
-    let handleForProject = Meteor.subscribe("projects.forProjectId", projectId)
+    const { projectId, projectName } = this.props.params
+    const { user } = this.props
+    const sel = projectId ? { _id : projectId } : { ownerId: user._id, name: projectName }
+
+    let handleForProject = Meteor.subscribe("projects.oneProject", sel)
 
     return {
-      project: Projects.findOne(projectId),
+      project: Projects.findOne(sel),
       loading: !handleForProject.ready()
     }
   },
@@ -90,7 +93,7 @@ export default ProjectOverview = React.createClass({
       return <p>What the heck? Project '{compoundNameOfDeletedProject}' is still here? Err, refresh page maybe!?</p>
 
     if (!project)
-      return <ThingNotFound type='Project' id={params.projectId} defaultHead={true}/>
+      return <ThingNotFound type='Project' id={params.projectId || params.projectName} defaultHead={true}/>
     
     const buttonSty = { width: '220px', marginTop: '2px', marginBottom: '2px'}
     return (

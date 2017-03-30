@@ -222,8 +222,8 @@ const App = React.createClass({
       // if routeName starts with learn then add all routeName to log
       trackPage = routeName
 
-    else if (nextProps.params.projectId)
-      // if params has projectId then we know that it's project details page
+    else if (nextProps.params.projectId || nextProps.params.projectName)
+      // if params has projectId or projectName then we know that it's project details page
       trackPage = '/projectDetails'
 
     else if (nextProps.params.assetId)
@@ -536,8 +536,6 @@ const App = React.createClass({
               <div style={mainPanelInnerDivSty}>
                 <NavPanel
                   currUser={currUser}
-                  currUserProjects={currUserProjects}
-                  fpReservedRightSidebarWidth={flexPanelWidth}
                   navPanelAvailableWidth={mainAreaAvailableWidth}
                 />
                 { isNetworkFailure &&
@@ -773,6 +771,10 @@ const App = React.createClass({
 
       case 'openVaultProjectById':
         utilPushTo(window.location, `/u/!vault/project/${actParam}`)
+        break
+
+      case 'openVaultProjectByName':
+        utilPushTo(window.location, `/u/!vault/projects/${actParam}`)
         break
 
       case 'closeFlexPanel':

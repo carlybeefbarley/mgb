@@ -547,7 +547,7 @@ export default fpChat = React.createClass( {
                   title={`Navigate to ${isOwner ? 'your' : 'their'} project`}
                   as={QLink}
                   elOverride='i'
-                  to={`/u/${project.ownerName}/project/${project._id}`}
+                  to={`/u/${project.ownerName}/projects/${project.name}`}
                   name='sitemap'
                   color={isOwner ? 'green' : 'blue' }
                   onClick={e => e.nativeEvent.stopImmediatePropagation()}

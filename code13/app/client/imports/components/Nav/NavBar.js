@@ -44,6 +44,7 @@ const NavBar = (
           location={location} 
           name={name} 
           user={user} 
+          currUser={currUser}
           params={params} 
           currentlyEditingAssetInfo={currentlyEditingAssetInfo} />
     </Segment>

@@ -39,7 +39,7 @@ const ProjectMenu = ( { projects, ownedFlag, currUserId, hazUnreadChats } ) =>
       }
       &ensp;
       <QLink 
-          to={`/u/${p.ownerName}/project/${p._id}`} 
+          to={`/u/${p.ownerName}/projects/${p.name}`} 
           altTo={`/u/${p.ownerName}/assets`} 
           altQuery={{project:p.name}}
           title="click for project page; alt-click for project Assets" >

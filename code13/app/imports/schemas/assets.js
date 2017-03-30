@@ -38,7 +38,7 @@ var schema = {
                         //              must fallback to user#userid
 
   //the actual asset information
-  name: String,       // Asset's name
+  name: String,       // Asset's name (Note: This is NOT necessarily unique even for the same owner+kind)
   kind: String,       // Asset's kind (image, map, etc)
   text: String,       // A description field
 
@@ -53,8 +53,8 @@ var schema = {
   assetLicense: String,    // A license that covers this asset.
 
   workState: String,  // A value matching a key from workStates.js
-  content: String,    // depends on asset type
-  content2: Object,   // THIS IS NOT IN PREVIEW SUBSCRIPTIONS (see publications.js) ..TODO: Move some small but widely needed stuff like size, num frames to another field: metadata
+  content: String,    // depends on asset type (I THINK THIS IS DEAD AND WAS REPLACED BY CONTENT2)
+  content2: Object,   // THIS IS *NOT* IN PREVIEW SUBSCRIPTIONS (see publications.js) since it is huge ..TODO: Move some small but widely needed stuff like size, num frames to another field: metadata
   thumbnail: String,  // Can be data-uri base 64 of thumbnail image (for example "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==") OR a link to an external URL
 
   // Fork information
@@ -112,7 +112,7 @@ export const isAssetKindsStringComplete = ks => ks.split(safeAssetKindStringSepC
  * @export
  * @param {string} userId
  * @param {Array} selectedAssetKinds
- * @param {string} nameSearch
+ * @param {string} nameSearch. Null, undefined, or '' will be ignored. Otherwise it will be used as part of a case-insensitive word search using a regex
  * @param {string} [projectName=null]
  * @param {boolean} [showDeleted=false]
  * @param {boolean} [showStable=false]

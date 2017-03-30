@@ -7,6 +7,8 @@ import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
+import sty from  './learnRoute.css';
+
 const learnCodeItems = [
   {
     mascot: 'bigguy',
@@ -62,18 +64,20 @@ const LearnCodeRoute = ({ currUser, params }, context) => (
     </Grid.Column>
     <Grid.Column>
       <Card.Group itemsPerRow={1} stackable className="skills">
-        { learnCodeItems.map( (area, idx) => (
-          <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
-            <Card.Content>
-              <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
-              <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
-              <p style={descStyle}>{area.desc}</p>
-              {area.skillPath && currUser && (
-                <SkillsMap skills={context.skills} skillPaths={[area.skillPath]} />
-              )}
-            </Card.Content>
-          </QLink>
-        ) ) }
+        { learnCodeItems.map( (area, idx) => {
+          const imgStyle = { backgroundImage: "url(" + makeCDNLink( `/images/mascots/${area.mascot}.png` ) + ")" }
+          return (
+            <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
+              <Card.Content>
+                <div className="learnThumbnail" style={imgStyle}></div>
+                <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
+                <p style={descStyle}>{area.desc}</p>
+                {area.skillPath && currUser && (
+                  <SkillsMap skills={context.skills} skillPaths={[area.skillPath]} />
+                )}
+              </Card.Content>
+            </QLink>
+        ) } ) }
       </Card.Group>
     </Grid.Column>
   </Grid>
@@ -91,8 +95,13 @@ const cardStyle = {
 }
 
 const mascotStyle = {
-  maxWidth: "8em",
-  paddingRight: "0.5em",
+  width: "8em",
+  height: "10em",
+  float: "left",
+  marginRight: "1em",
+  backgroundPosition: "center center",
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "contain",
   marginBottom: "0"
 }
 

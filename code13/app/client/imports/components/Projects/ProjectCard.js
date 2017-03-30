@@ -14,7 +14,7 @@ import { Card, Icon } from 'semantic-ui-react';
 
 const ProjectCard = props => {
   const { project, canEdit, handleFieldChanged } = props;
-  const linkTo = '/u/' + project.ownerName + '/project/' + project._id;
+  const linkTo = '/u/' + project.ownerName + '/projects/' + project.name;
   const MemberStr = !project.memberIds || project.memberIds.length === 0
     ? '1 Member'
     : project.memberIds.length + 1 + ' Members';

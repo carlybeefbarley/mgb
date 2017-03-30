@@ -99,7 +99,7 @@ const ProjectsAsCards = ( { projects, ownedFlag, user } ) => {
 
 class UserProjectListUI extends React.PureComponent {
 
-  propTypes = {
+  static propTypes = {
     params: PropTypes.object,             // params.id is the USER id  OR  params.username is the username
     user: PropTypes.object,               // This is the related user record. We list the projects for this user
     currUser: PropTypes.object,           // Currently Logged in user. Can be null
@@ -180,7 +180,9 @@ class UserProjectListUI extends React.PureComponent {
           <div>
             <CreateProjectLinkButton currUser={currUser} />
             <p />
-            { this.renderProjectsAsCards(loading, projects, false) }
+            { loading ? <Spinner/> : 
+              <ProjectsAsCards projects={projects} ownedFlag={false} user={null} />
+            }
             <br />
           </div>
         }

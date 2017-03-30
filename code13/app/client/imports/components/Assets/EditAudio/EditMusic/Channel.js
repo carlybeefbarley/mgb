@@ -88,8 +88,12 @@ export default class Channel extends React.Component {
     return selectBuffer
   }
 
-  initWave () {
-    const channel = this.props.channel
+  forceDraw(channel){
+    this.initWave(channel)
+  }
+
+  initWave (channel) {
+    channel = channel || this.props.channel
     if (!channel.dataUri) return
 
     const soundBlob = this.dataURItoBlob(channel.dataUri)

@@ -1,10 +1,11 @@
-import React, { Component, PropTypes } from 'react'
+import React, { PropTypes } from 'react'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import { Dropdown } from 'semantic-ui-react'
 import _ from 'lodash'
 
-class NavPanelItem extends Component {
+const _openLeftStyle = { left: 'auto', right: '0' } 
+class NavPanelItem extends React.PureComponent {
   static propTypes = {
     hdr: PropTypes.node,
     name: PropTypes.string.isRequired,        // Used for generating mgbjr-id-${name}-.. parts of joyride tags
@@ -24,14 +25,19 @@ class NavPanelItem extends Component {
 
   handleMouseEnter = () => this.setState({ open: true })
   handleMouseLeave = () => this.setState({ open: false })
-  handleItemClick = (e) => { 
+  handleItemClick = e => { 
     if (e.target.dataset && e.target.dataset.joyridecompletiontag)
       joyrideCompleteTag(e.target.dataset.joyridecompletiontag)
     this.setState({ open: false })
   }
-  // TODO(@Levi): How to remove the bind in OnClick.. data-____ props
+  handleDropdownClick = () => {
+    const { to, query, name } = this.props
+    joyrideCompleteTag(`mgbjr-CT-np-${name}`)
+    utilPushTo(window.location, to, query)
+  }
+
   render() {
-    const { hdr, name, menu, style, to, query, openLeft } = this.props
+    const { hdr, name, menu, style, openLeft } = this.props
     const { open } = this.state
 
     return (
@@ -40,15 +46,12 @@ class NavPanelItem extends Component {
         id={`mgbjr-np-${name}`}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
-        onClick={() => {
-          joyrideCompleteTag(`mgbjr-CT-np-${name}`)
-          utilPushTo(window.location, to, query)
-        }}
+        onClick={this.handleDropdownClick}
         trigger={<span>{hdr}</span>}
         icon={null}
         open={open}
         style={style}>
-        <Dropdown.Menu style={openLeft ? { left: 'auto', right: '0' } : null}>
+        <Dropdown.Menu style={openLeft ? _openLeftStyle : null}>
           {_.map(menu, ({ subcomponent, ...subcomponentProps }) => {
             return React.createElement(Dropdown[subcomponent], {
               key: subcomponentProps.jrkey,

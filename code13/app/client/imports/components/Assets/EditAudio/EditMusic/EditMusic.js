@@ -418,6 +418,18 @@ export default class EditMusic extends React.Component {
     this.doSaveStateForUndo('Remove channel')
   }
 
+  // useful for undo and redo
+  forceDraw (newC2) 
+  {
+    let channels = this.props.asset.content2.channels
+    if(newC2.channels.length != channels.length)
+      return false
+
+    channels.forEach((channel, id) => {
+      this.refs['channel' + channel.id].forceDraw(newC2.channels[id])
+    })
+  }
+
   handleUndo()
   {
     if (this.undoSteps.length > 0)
@@ -425,10 +437,9 @@ export default class EditMusic extends React.Component {
       let zombie = this.undoSteps.pop()
       let c2 = zombie.savedContent2
 
-      console.log('undo channels', c2.channels.length)
-      
       this.doSaveStateForRedo("Redo changes")
-      this.handleSave("Redo changes", c2)
+      this.handleSave("Undo changes", c2)
+      this.forceDraw(c2)
     }
   }
 
@@ -439,7 +450,8 @@ export default class EditMusic extends React.Component {
       let c2 = zombie.savedContent2
 
       this.doSaveStateForUndo("Undo changes")
-      this.handleSave("Undo changes", c2)
+      this.handleSave("Redo changes", c2)
+      this.forceDraw(c2)
     }
   }
 

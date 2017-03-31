@@ -22,39 +22,44 @@ const ImageShowOrChange = ( { className, imageSrc, canEdit, canLinkToSrc, handle
   const propsImgContainer = {
     className: className,
     onDragOver: e => ( canEdit && DragNDropHelper.preventDefault(e) ),
-    onDrop: e => ( canEdit && _importFromDrop(e, handleChange) )
+    onDrop: e => ( (handleChange && canEdit) && _importFromDrop(e, handleChange) )
   }
 
   if (canLinkToSrc)
     propsImgContainer.to = avatarAssetId ? `/assetEdit/${avatarAssetId}` : imageSrcToUse
 
-  const img = (
+  const innerImg = (
+    <img
+      style={{backgroundColor: '#ffffff', minHeight:"155px", maxHeight:"155px", maxWidth:"230px", width:"auto"}}
+      className="ui centered image mgb-pixelated"
+      src={imageSrcToUse} />
+  )
+  
+  const imgPopup = (
     <Popup 
       on='hover'
       size='small'
       inverted
       mouseEnterDelay={500}
       positioning='bottom left'
-      trigger={(
-        <img
-          style={{backgroundColor: '#ffffff', minHeight:"155px", maxHeight:"155px", maxWidth:"230px", width:"auto"}}
-          className="ui centered image mgb-pixelated"
-          src={imageSrcToUse} />
-      )} >
+      trigger={innerImg} >
       <Popup.Header>
-        {header}
+        { header }
       </Popup.Header>
       <Popup.Content>
         { canEdit ? 
-          <span>Drag an MGB Graphic Asset here to change the chosen image. </span> :
+          <span>Drag an MGB Graphic Asset here to change the chosen image. </span> 
+          :
           <span>You do not have permission to change this. </span>
         }
-        { canLinkToSrc && avatarAssetId && <span>You can click the Image to view/edit the Graphic Asset</span> }
+        { (canLinkToSrc && avatarAssetId) && 
+          <span>You can click the Image to view/edit the Graphic Asset</span> 
+        }
       </Popup.Content>
     </Popup>
   )
 
-  return React.createElement((canLinkToSrc && avatarAssetId) ? QLink : 'div', propsImgContainer, img)
+  return React.createElement((canLinkToSrc && avatarAssetId) ? QLink : 'div', propsImgContainer, handleChange ? imgPopup : innerImg)
 }
 
 ImageShowOrChange.propTypes = {
@@ -63,7 +68,7 @@ ImageShowOrChange.propTypes = {
   imageSrc:     PropTypes.string,               // A string which will be passed to img.src. Can be null
   canEdit:      PropTypes.bool.isRequired,      // True if this should be able to accept changes via Drag
   canLinkToSrc: PropTypes.bool.isRequired,      // True if this should be a QLink to the image (or image editor)
-  handleChange: PropTypes.func.isRequired       // Function callback - takes (newUrlString, assetIdString) as params
+  handleChange: PropTypes.func                  // Function callback - takes (newUrlString, assetIdString) as params
 }
 
 export default ImageShowOrChange

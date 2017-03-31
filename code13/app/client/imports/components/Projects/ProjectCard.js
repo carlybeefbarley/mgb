@@ -34,14 +34,14 @@ const ProjectCard = props => {
         header='Project Avatar'
         canEdit={canEdit}
         canLinkToSrc={canEdit}
-        handleChange={(newUrl, avatarId) => handleFieldChanged({ avatarAssetId: avatarId })}
+        handleChange={!handleFieldChanged ? undefined : ((newUrl, avatarId) => handleFieldChanged({ avatarAssetId: avatarId } )) }
       />
 
       <Card.Content>
         <span style={{ float: 'right' }}>
           <WorkState
             workState={project.workState}
-            handleChange={newWorkState => handleFieldChanged({ workState: newWorkState })}
+            handleChange={!handleFieldChanged ? undefined : (newWorkState => handleFieldChanged({ workState: newWorkState } )) }
             canEdit={canEdit}
           />
         </span>

@@ -299,53 +299,59 @@ const _doLogout = () =>
   utilPushTo( {}, '/' )
 }
 
-const NavPanel = ( { currUser, navPanelAvailableWidth } ) => {
-  const menuStyle = { borderRadius: 0, marginBottom: 0 }
-  const useIcons = navPanelAvailableWidth < 600  // px
-  const allNavPanels = getNavPanels(currUser, false)
+const _isLoggedInSty = { padding: '4px 8px'}
+const _isNotLoggedInSty = { padding: '4px 16px'}
 
-  const userMenuKey = 'user'  // We render this specially, even though it's part of allNavPanels
-  const userMenu = _.find(allNavPanels.right, { name: userMenuKey })
-  const userAvatarSrc = _.get(currUser, 'profile.avatar', 'http://placehold.it/50')
 
-  const navPanelItems = (side) => allNavPanels[side]
-    .filter(v => (v.name !== userMenuKey))
-    .map(v => (
-      <NavPanelItem 
-        name={v.name}
-        openLeft={side==='right'} 
-        key={v.name} 
-        hdr={(useIcons || !v.hdr )? <Icon size='large' {...v.icon}/> : v.hdr} 
-        menu={v.menu} 
-        style={{ backgroundColor: (v.highlight ? 'orange' : '') }}
-        to={v.to}
-        query={v.query}
-        />))
+class NavPanel extends React.PureComponent {
 
-  return (
-    <Menu inverted style={menuStyle} id='mgbjr-np'>
-      { navPanelItems('left') }
+  static propTypes = {
+    currUser: PropTypes.object,                           // Currently Logged in user. Can be null/undefined
+    navPanelAvailableWidth: PropTypes.number,             // Width of the page area available for NavPanel menu
+  }
 
-      {/* The user menu, pushed to the right */}
-      <Menu.Menu position='right'>
-        { navPanelItems('right') }
-        { currUser && 
-        <NavPanelItem
-          key='user'
-          name='user'
-          style={{ padding: currUser ? '4px 8px' : '4px 16px'}}
-          hdr={!currUser ? 'Sign Up' :  <Image id="mgbjr-np-user-avatar" centered avatar src={userAvatarSrc} />}
-          menu={userMenu.menu}
-          to={userMenu.to} />
-        }
-      </Menu.Menu>
-    </Menu>
-  )
+  render() {
+    const { currUser, navPanelAvailableWidth } = this.props
+    const menuStyle = { borderRadius: 0, marginBottom: 0 }
+    const useIcons = navPanelAvailableWidth < 600  // px
+    const allNavPanels = getNavPanels(currUser, false)
+
+    const userMenuKey = 'user'  // We render this specially, even though it's part of allNavPanels
+    const userMenu = _.find(allNavPanels.right, { name: userMenuKey })
+    const userAvatarSrc = _.get(currUser, 'profile.avatar', 'http://placehold.it/50')
+
+    const navPanelItems = side => allNavPanels[side]
+      .filter(v => (v.name !== userMenuKey))
+      .map(v => (
+        <NavPanelItem 
+          name={v.name}
+          openLeft={side==='right'} 
+          key={v.name} 
+          hdr={(useIcons || !v.hdr )? <Icon size='large' {...v.icon}/> : v.hdr} 
+          menu={v.menu} 
+          to={v.to}
+          query={v.query}
+          />))
+
+    return (
+      <Menu inverted style={menuStyle} id='mgbjr-np'>
+        { navPanelItems('left') }
+
+        {/* The user menu, pushed to the right */}
+        <Menu.Menu position='right'>
+          { navPanelItems('right') }
+          { currUser && 
+          <NavPanelItem
+            key='user'
+            name='user'
+            style={ currUser ? _isLoggedInSty : _isNotLoggedInSty }
+            hdr={!currUser ? 'Sign Up' :  <Image id="mgbjr-np-user-avatar" centered avatar src={userAvatarSrc} />}
+            menu={userMenu.menu}
+            to={userMenu.to} />
+          }
+        </Menu.Menu>
+      </Menu>
+    )
+  }
 }
-
-NavPanel.propTypes = {
-  currUser: PropTypes.object,                           // Currently Logged in user. Can be null/undefined
-  navPanelAvailableWidth: PropTypes.number,             // Width of the page area available for NavPanel menu
-}
-
 export default NavPanel

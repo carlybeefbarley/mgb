@@ -3,13 +3,11 @@ import React, { PropTypes } from 'react'
 import { Message, Icon } from 'semantic-ui-react'
 import { browserHistory } from 'react-router'
 import Helmet from "react-helmet"
-import reactMixin from 'react-mixin'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
+import { createContainer } from 'meteor/react-meteor-data'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
-import SpecialGlobals from '/imports/SpecialGlobals'
 
-import { utilPushTo, utilReplaceTo } from "/client/imports/routes/QLink"
+import { utilPushTo } from "/client/imports/routes/QLink"
 
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
@@ -81,7 +79,7 @@ export const joyrideDebugEnable = joyrideDebug => {
   // It may also be nice to do the equivalent of m.jr._ctDebugSpew = joyrideDebug
 }
 
-export const startSkillPathTutorial = (skillPath) => {
+export const startSkillPathTutorial = skillPath => {
   if (_theAppInstance)
     _theAppInstance.startSkillPathTutorial.call(_theAppInstance, skillPath)
 }
@@ -103,9 +101,6 @@ export const clearPriorPathsForJoyrideCompletionTags = () => {
 
 // General utils
 const px = someNumber => (`${someNumber}px`)
-
-// NavBar numbers
-const navBarReservedHeightInPixels = 32
 
 // FlexPanel numbers
 const fpIconColumnWidthInPixels = 60          // The Column of Icons
@@ -133,8 +128,7 @@ export const showToast = (content, type = 'success') => {
   return useType.delay
 }
 
-const App = React.createClass({
-  mixins: [ReactMeteorData],
+const AppUI = React.createClass({
   propTypes: {
     params:   PropTypes.object,
     query:    PropTypes.object,
@@ -153,8 +147,8 @@ const App = React.createClass({
     // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See https://github.com/facebook/react/issues/2517
     return {
       urlLocation:  this.props.location,
-      settings:     this.data.settings,  // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
-      skills:       this.data.skills     // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
+      settings:     this.props.settings,  // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
+      skills:       this.props.skills     // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
     }
   },
 
@@ -202,9 +196,7 @@ const App = React.createClass({
     // See https://segment.com/docs/sources/website/analytics.js/#page for the analytics.page() params
 
 
-
     // getPagenameFromProps(nextProps) sometimes doesn't work. For example for /learn page
-    const currUser = this.props.currUser
     const pageName = getPagenameFromProps(nextProps)
     const pathName = window.location.pathname
     const routeName = getPagepathFromProps(nextProps)
@@ -246,7 +238,6 @@ const App = React.createClass({
       ga('set', 'page', trackPage)
       ga('send', 'pageview', trackPage)
     }
-
   },
 
   getInitialState: function() {
@@ -283,84 +274,16 @@ const App = React.createClass({
     }
   },
 
-  getMeteorData() {
-    const pathUserName = this.props.params.username      // This is the username (profile.name) on the url /u/xxxx/...
-    const pathUserId = this.props.params.id              // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
-    const currUser = Meteor.user()
-    const currUserId = currUser && currUser._id
-    const handleForUser = pathUserName ?
-                             Meteor.subscribe("user.byName", pathUserName)
-                           : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
-    const handleForSysvars = Meteor.subscribe('sysvars')
-
-    const handleForSkills = currUserId ? Meteor.subscribe("skills.userId", currUserId) : null
-    const skillsReady = handleForSkills === null ? true : handleForSkills.ready()
-
-    const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
-    const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
-    const handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit)
-    const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null
-    const projectsReady = handleForProjects === null ? true : handleForProjects.ready()
-    const projectSelector = projectMakeSelector(currUserId)
-
-    if (handleForSettings && handleForSettings.ready())
-    {
-      //console.log("Update Settings Reactive.Dict object from Meteor")
-      // There is a very small race where local settings could get replaced
-      // if the settings are changed while the debounced save is happening..
-      // but it's pretty small, so worry about that another day
-      G_localSettings.set(Settings.findOne(currUserId))
-    }
-
-    // send analytics data if user is not logged in and do it only once!
-    if(typeof currUser != 'undefined' && currUser === null && analyticsAnonymousSendFlag){
-      // analytics.page('/notLoggedIn')
-      ga('send', 'pageview', '/notLoggedIn')
-      analyticsAnonymousSendFlag = false
-    }
-    // set various analytics params when user logs in
-    if(currUser && analyticsLoggedInSendFlag){
-      // dimension1 = user id dimension (trick google to show individual id's)
-      ga('set', 'dimension1', currUser._id)
-      // superAdmin or tester user - need to filter them out in reports
-      if(isUserSuperAdmin(currUser) || currUser._id == 'AJ8jrFjxSYJATzscA')
-        ga('set', 'dimension2', 'admin')
-
-      // tell google that this is user and all session need to connect to this data point
-      ga('set', 'userId', currUser._id)
-      analyticsLoggedInSendFlag = false
-    }
-
-    const retval = {
-      currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
-
-      currUserProjects: Projects.find(projectSelector).fetch(),
-      user:             pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
-      activity:         Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
-      settings:         G_localSettings,
-      meteorStatus:     Meteor.status(),
-      skills:           currUser ? Skills.findOne(currUserId) : null,
-      sysvars:          Sysvars.findOne(),
-      loading:          !handleForUser.ready()    ||
-                        !handleForSysvars.ready() ||
-                        !handleActivity.ready()   ||
-                        !projectsReady            ||
-                        !settingsReady            ||
-                        !skillsReady
-    }
-    return retval
-  },
-
   _schedule_requestChatChannelTimestampsNow() {
     window.setInterval(this.requestChatChannelTimestampsNow, CHAT_POLL_INTERVAL_MS)
   },
 
   // TODO: Make this throttled, called when relevant
   requestChatChannelTimestampsNow: function () {
-    if (!this.data.currUser)
+    if (!this.props.currUser)
       return
 
-    const { settings, currUserProjects } = this.data
+    const { settings, currUserProjects } = this.props
     const { assetId } = this.props.params
 
     // 0. Make the list of channels we are interested in:
@@ -435,10 +358,8 @@ const App = React.createClass({
   },
 
   render() {
-    const { respData, respWidth, params } = this.props
+    const { respData, respWidth, params, loading, currUser, user, currUserProjects, sysvars  } = this.props
     const { joyrideDebug, currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats } = this.state
-
-    const { loading, currUser, user, currUserProjects, sysvars } = this.data
     const { query } = this.props.location
 
     if (!loading)
@@ -453,7 +374,7 @@ const App = React.createClass({
 
     const mainAreaAvailableWidth = respWidth-parseInt(flexPanelWidth)
 
-    const isNetworkFailure = !_.includes(['connected','connecting'], this.data.meteorStatus.status)
+    const isNetworkFailure = !_.includes(['connected','connecting'], this.props.meteorStatus.status)
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
@@ -527,7 +448,7 @@ const App = React.createClass({
               handleFlexPanelChange={this.handleFlexPanelChange}
               flexPanelWidth={flexPanelWidth}
               flexPanelIsVisible={showFlexPanel}
-              activity={this.data.activity}
+              activity={this.props.activity}
               isSuperAdmin={isSuperAdmin}
               currentlyEditingAssetInfo={currentlyEditingAssetInfo}
               />
@@ -816,6 +737,76 @@ const App = React.createClass({
   }
 
 })
+
+
+
+const App = createContainer( ( { params } ) => {
+  const pathUserName = params.username      // This is the username (profile.name) on the url /u/xxxx/...
+  const pathUserId = params.id              // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
+  const currUser = Meteor.user()
+  const currUserId = currUser && currUser._id
+  const handleForUser = pathUserName ?
+                            Meteor.subscribe("user.byName", pathUserName)
+                          : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
+  const handleForSysvars = Meteor.subscribe('sysvars')
+
+  const handleForSkills = currUserId ? Meteor.subscribe("skills.userId", currUserId) : null
+  const skillsReady = handleForSkills === null ? true : handleForSkills.ready()
+
+  const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
+  const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
+  const handleActivity = Meteor.subscribe("activity.public.recent", 11) // TODO - use activityHistoryLimit ?
+  const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null
+  const projectsReady = handleForProjects === null ? true : handleForProjects.ready()
+  const projectSelector = projectMakeSelector(currUserId)
+
+  if (handleForSettings && handleForSettings.ready())
+  {
+    //console.log("Update Settings Reactive.Dict object from Meteor")
+    // There is a very small race where local settings could get replaced
+    // if the settings are changed while the debounced save is happening..
+    // but it's pretty small, so worry about that another day
+    G_localSettings.set(Settings.findOne(currUserId))
+  }
+
+  // send analytics data if user is not logged in and do it only once!
+  if (typeof currUser != 'undefined' && currUser === null && analyticsAnonymousSendFlag) {
+    // analytics.page('/notLoggedIn')
+    ga('send', 'pageview', '/notLoggedIn')
+    analyticsAnonymousSendFlag = false
+  }
+  // set various analytics params when user logs in
+  if (currUser && analyticsLoggedInSendFlag) {
+    // dimension1 = user id dimension (trick google to show individual id's)
+    ga('set', 'dimension1', currUser._id)
+    // superAdmin or tester user - need to filter them out in reports
+    if (isUserSuperAdmin(currUser) || currUser._id == 'AJ8jrFjxSYJATzscA')
+      ga('set', 'dimension2', 'admin')
+
+    // tell google that this is user and all session need to connect to this data point
+    ga('set', 'userId', currUser._id)
+    analyticsLoggedInSendFlag = false
+  }
+
+  return {
+    currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
+
+    currUserProjects: Projects.find(projectSelector).fetch(),
+    user:             pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
+    activity:         Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
+    settings:         G_localSettings,
+    meteorStatus:     Meteor.status(),
+    skills:           currUser ? Skills.findOne(currUserId) : null,
+    sysvars:          Sysvars.findOne(),
+    loading:          !handleForUser.ready()    ||
+                      !handleForSysvars.ready() ||
+                      !handleActivity.ready()   ||
+                      !projectsReady            ||
+                      !settingsReady            ||
+                      !skillsReady
+  }
+}, AppUI)
+
 
 App.responsiveRules = {
   'portraitPhoneUI': {

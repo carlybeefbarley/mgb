@@ -32,11 +32,22 @@ const DEFAULT_ISDEVELOPMENT_MGB_CLOUDFRONT_ORIGIN_ID = 'test.mygamebuilder.com-d
 
 // CORS fixes, needs to have the domain names we will test/deploy against. These are used in WebApp.rawConnectHandlers.use()
 const allowedOrigins = [
+  // test relase
   'http://test.mygamebuilder.com',
   'https://test.mygamebuilder.com',
+
+  // dev version on test server
   'http://test.mygamebuilder.com:3000',
+
+  // main page
   'http://v2.mygamebuilder.com',
   'https://v2.mygamebuilder.com',
+
+  // latest master
+  'http://staging.mygamebuilder.com',
+  'https://staging.mygamebuilder.com',
+
+  // local developement
   'http://localhost:3000',
   'http://test.loc:3000'
 ]

@@ -358,7 +358,7 @@ const MgbActor = {
 
     const soundName = _soundName.replace(/^\[builtin\]\:/,'')   // We will handle missing [builtin]: for now
 
-    if (!MgbActor._loadedSounds)
+    if (!MgbActor._loadedSounds || !(_.includes(MgbActor._loadedSounds, _soundName)))
       MgbActor.loadSounds(actor, oName)
     else if (soundName !== 'none')
     {

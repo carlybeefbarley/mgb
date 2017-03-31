@@ -101,7 +101,8 @@ export default class Mage extends React.Component {
     
       pendingGraphicLoads:    [],      // contains list of unique Graphics Names that have pending loads
       loadedGraphics:         {},      // The loaded Graphics Data. Contains map of actorname -> actor
-      failedGraphics:         {}       // Graphics that failed to load. Content is the error data
+      failedGraphics:         {},       // Graphics that failed to load. Content is the error data
+
     }
   }
   
@@ -110,7 +111,7 @@ export default class Mage extends React.Component {
   }
 
   handleInventoryAction(action, item) {
-    this._game && this._game.inventoryDialogActionHandler(action, item)
+    this._game && this._game.inventoryDialogActionHandler(action, item) 
   }
 
   handleSetGameStatus(lineNum, text) {

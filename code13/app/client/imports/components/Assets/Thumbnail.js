@@ -1,22 +1,9 @@
 import React, { PropTypes } from 'react'
 import { makeExpireThumbnailLink } from '/client/imports/helpers/assetFetchers'
+import FittedImage from '/client/imports/components/Controls/FittedImage'
 
 const _DEFAULT_EXPIRES_DURATION_S = 3600
 
-const FittedImage = ({ src, height, ...rest}) => (
-  // This is <div> instead of <img> so that it won't have the 
-  // border that chrome puts on if <img src=> has no content
-  <div 
-    className='mgb-pixelated'
-    crossOrigin='anonymous'
-    style={{
-      background: `url(${src}) no-repeat center`,
-      height: height,
-      backgroundSize: 'contain'
-    }} 
-    {...rest}
-    />
-)
 
 // This will use display:block formatting; it can not work inline
 const Thumbnail = ( { 

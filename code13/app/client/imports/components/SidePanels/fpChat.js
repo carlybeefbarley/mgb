@@ -1,18 +1,9 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import {
-  Button,
-  Comment,
-  Divider,
-  Form,
-  Header,
-  Icon,
-  Input,
-  Label,
-  List
-} from 'semantic-ui-react'
+import { Button, Comment, Divider, Form, Header, Icon, Input, Label, List, Popup } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 import { showToast } from '/client/imports/routes/App'
+import AssetCardGET from '/client/imports/components/Assets/AssetCardGET'
 
 import reactMixin from 'react-mixin'
 import { Chats, Azzets } from '/imports/schemas'
@@ -36,7 +27,7 @@ import {
   isChannelNameValid,
   chatParams,
   makePresentedChannelName,
-  makePresentedChannelIcon
+  makePresentedChannelIconName
 } from '/imports/schemas/chats'
 
 const unreadChannelIndicatorStyle = {
@@ -200,9 +191,8 @@ const ChatMessage = ({ msg }) => {
       chunks.push( link )
       return e
     }
-    else {
+    else
       return e
-    }
   } )
   chunks.push( <span key={chunks.length}>{msg.slice( begin )}</span> )
   return <span>{chunks}</span>
@@ -477,7 +467,7 @@ export default fpChat = React.createClass( {
     const { currUser, currUserProjects, chatChannelTimestamps } = this.props
     const { settings } = this.context
 
-    // PUBLIC (GENERAL) CHANNELS
+    // PUBLIC (GLOBAL) CHANNELS
     const publicChannels = (
       <List selection>
         <List.Item>
@@ -648,7 +638,10 @@ export default fpChat = React.createClass( {
     )
   },
 
-  renderComments: function() {
+  /**
+   * @param {React.Component} MessageContextComponent - A react component that will be rendered to the left of the 'Send Message' Button as context for the message send
+   */
+  renderComments: function(MessageContextComponent) {
     const { messageValue } = this.state
     const { currUser } = this.props
     const channelName = this._calculateActiveChannelName()
@@ -679,14 +672,17 @@ export default fpChat = React.createClass( {
               onDrop={this.onDropChatMsg}>
             </Form.TextArea>
           </Form.Field>
-          <Button
-            floated='right'
-            color='blue'
-            icon='chat'
-            labelPosition='left'
-            disabled={!canSend}
-            content='Send Message'
-            onClick={this.doSendMessage} />
+          <div>
+            { MessageContextComponent }
+            <Button
+              floated='right'
+              color='blue'
+              icon='chat'
+              labelPosition='left'
+              disabled={!canSend}
+              content='Send Message'
+              onClick={this.doSendMessage} />
+          </div>
         </Form>
       </div>
     )
@@ -698,8 +694,8 @@ export default fpChat = React.createClass( {
    * It's done here since we don't want the generic code in chats.js to have to
    * re-get the objects in order to get their names. It's more efficient to get the
    * names locally
-   * @param {any} channelName
-   * @returns
+   * @param {String} channelName
+   * @returns {String} something like project.name or asset.name
    */
   findObjectNameForChannelName: function(channelName) {
     const channelObj = parseChannelName( channelName )
@@ -724,9 +720,11 @@ export default fpChat = React.createClass( {
   render: function() {
     const { view } = this.state
     const channelName = this._calculateActiveChannelName()
+    const channelObj = parseChannelName( channelName )
     const objName = this.findObjectNameForChannelName( channelName )
     const presentedChannelName = makePresentedChannelName( channelName, objName )
-    const presentedChannelIcon = makePresentedChannelIcon( channelName )
+    const presentedChannelIconName = makePresentedChannelIconName( channelName )
+
 
     return (
       <div>
@@ -739,7 +737,7 @@ export default fpChat = React.createClass( {
           fluid
           value={presentedChannelName}
           readOnly
-          icon={presentedChannelIcon}
+          icon={presentedChannelIconName}
           size='small'
           id='mgbjr-fp-chat-channelDropdown'          
           iconPosition='left'
@@ -753,7 +751,36 @@ export default fpChat = React.createClass( {
         />
 
         { this.renderChannelSelector() }
-        { view === 'comments' && this.renderComments() }
+        { view === 'comments' && this.renderComments( channelObj.scopeGroupName === 'Global' ? null : 
+            <Popup
+              on='hover'
+              size='small'
+              hoverable
+              positioning='left center'
+              trigger={(
+                <Icon 
+                    style={{ padding: '4px 0px 0px 16px' }}
+                    size='big'
+                    color='grey'
+                    name={presentedChannelIconName}/>
+              )}
+              >
+              <Popup.Header>
+                { channelObj.scopeGroupName === 'Asset' ? 'Public Chat Channel for this Asset' : 'Chat Channel for:' }
+              </Popup.Header>
+              <Popup.Content>
+                { 
+                  channelObj.scopeGroupName === 'Asset' ?
+                    <div style={{minWidth: '300px'}}>
+                      <AssetCardGET assetId={channelObj.scopeId} allowDrag={true} renderView='s' /> 
+                    </div>
+                    :
+                    <div>{presentedChannelName}</div>
+                }
+              </Popup.Content>
+            </Popup>
+          ) 
+        }
 
         <p ref="bottomOfMessageDiv">&nbsp;</p>
       </div>

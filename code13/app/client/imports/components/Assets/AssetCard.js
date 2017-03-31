@@ -147,8 +147,9 @@ export default AssetCard = React.createClass({
                size={viewOpts.showExtra ? null : 'small'}
                canEdit={false} />
             </span>}
-          {!viewOpts.showExtra &&
-            // This is used for SMALL sizes..
+
+          { !viewOpts.showExtra &&
+            // This is used for SMALL sizes. It has a popup to show the Medium one!
             <Popup
               hoverable
               mouseEnterDelay={500}
@@ -156,6 +157,7 @@ export default AssetCard = React.createClass({
               trigger={
                 (
                   <div style={{ flexDirection: 'column' }}>
+                  { /* Asset Kind Icon */ }
                     <Icon
                       style={{ float: 'left', marginRight: '12px' }}
                       color={assetKindColor}
@@ -170,7 +172,8 @@ export default AssetCard = React.createClass({
               <div style={{ width: '200px' }}>
                 <AssetCard {...{ ...this.props, renderView: 'm' }} />
               </div>
-            </Popup>}
+            </Popup>
+          }
 
           {viewOpts.showExtra &&
             <Card.Header

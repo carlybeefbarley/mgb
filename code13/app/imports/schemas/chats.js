@@ -428,7 +428,12 @@ const _scopeGroupCharToIconNames = {
   U: 'user',  // Note that slack uses circle.. good options here would be 'user outline' and 'user'
   D: 'comments outline'
 }
-export const makePresentedChannelIcon = channelName => _scopeGroupCharToIconNames[channelName[0]]
+
+/**
+ * @param {String} channelName - as defined above and constructed by makeChannelName()
+ * @returns {String} name of a semantic UI icon (e.g. 'pencil'). 
+ */
+export const makePresentedChannelIconName = channelName => _scopeGroupCharToIconNames[channelName[0]]
 
 
 export function ChatSendMessageOnChannelName( channelName, msg, completionCallback)

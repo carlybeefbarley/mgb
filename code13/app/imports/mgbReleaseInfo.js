@@ -15,6 +15,37 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Friday Mar 31 2017 10:10 GMT-0700 (PST)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3876'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'navbar',
+          'type': 'feature',
+          'changeName': 'Quick Navigation to related Assets',
+          'changeSummary': 'Pages that are related to a user have a \'Related Assets\' popup at the right of the breadcrumb bar. Hover over it to see related assets',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fied undo/redo for Music assets; perf improvements across site ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Tuesday Mar 28 2017 23:10 GMT-0700 (PST)',
 
       'id': {

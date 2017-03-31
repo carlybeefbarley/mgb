@@ -14,6 +14,11 @@ import '/imports/schemas/activitySnapshots'
 
 import { Tracker } from 'meteor/tracker'
 
+
+// import Perf from "react-addons-perf"
+// // Expose the React Performance Tools on the`window` object
+// window.Perf = Perf
+
 // prevent nasty Meteor error catching - which breaks break on exception functionality
 if (Meteor.isDevelopment) {
   Tracker.Computation.prototype._recompute = function () {

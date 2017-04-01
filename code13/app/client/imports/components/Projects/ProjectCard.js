@@ -29,7 +29,6 @@ const ProjectCard = props => {
       onClick={() => utilPushTo(window.location.query, linkTo)}>
 
       <ImageShowOrChange
-        className="image"
         imageSrc={getProjectAvatarUrl(project)}
         header='Project Avatar'
         canEdit={canEdit}

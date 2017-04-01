@@ -25,6 +25,7 @@ import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetF
 
 
 import { Container, Segment, Header, Button, Grid, Item, Icon, Label, Popup } from 'semantic-ui-react'
+import FittedImage from '/client/imports/components/Controls/FittedImage'
 
 const UserShowcase = () => ( null )    // TODO based on workState
 
@@ -138,14 +139,14 @@ export default UserProfileRoute = React.createClass({
 
               <ImageShowOrChange
                 id='mgbjr-profile-avatar'
-                className="image"
+                maxWidth="150px"
                 imageSrc={avatar}
                 header='User Avatar'
                 canEdit={ownsProfile}
                 canLinkToSrc={true}
                 handleChange={(newUrl) => this.handleProfileFieldChanged( { "profile.avatar": newUrl }) } />
 
-              <Item.Content>
+              <Item.Content style={{marginLeft: '8px'}}>
 
                 <Item.Header content={name} />
                 { user.suIsBanned &&

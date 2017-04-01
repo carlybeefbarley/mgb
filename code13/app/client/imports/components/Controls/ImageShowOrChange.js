@@ -4,6 +4,7 @@ import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import QLink from '/client/imports/routes/QLink'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import { Popup } from 'semantic-ui-react'
+import FittedImage from '/client/imports/components/Controls/FittedImage'
 
 const _getAssetIdFromUrl = url => (url && url.startsWith("/api/asset/png")) ? _.last(url.split("/")).split('?').shift() : null
 
@@ -15,12 +16,11 @@ const _importFromDrop = (event, handleChange) => {
   }
 }
 
-const ImageShowOrChange = ( { className, imageSrc, canEdit, canLinkToSrc, handleChange, header } ) => {
+const ImageShowOrChange = ( { imageSrc, canEdit, canLinkToSrc, handleChange, header, maxHeight="155px", maxWidth="230px" } ) => {
   const avatarAssetId = _getAssetIdFromUrl(imageSrc)
   const imageSrcToUse = makeCDNLink(imageSrc, makeExpireTimestamp(60)) || makeCDNLink('/images/wireframe/image.png')
 
   const propsImgContainer = {
-    className: className,
     onDragOver: e => ( canEdit && DragNDropHelper.preventDefault(e) ),
     onDrop: e => ( (handleChange && canEdit) && _importFromDrop(e, handleChange) )
   }
@@ -29,12 +29,12 @@ const ImageShowOrChange = ( { className, imageSrc, canEdit, canLinkToSrc, handle
     propsImgContainer.to = avatarAssetId ? `/assetEdit/${avatarAssetId}` : imageSrcToUse
 
   const innerImg = (
-    <img
-      style={{backgroundColor: '#ffffff', minHeight:"155px", maxHeight:"155px", maxWidth:"230px", width:"auto"}}
-      className="ui centered image mgb-pixelated"
-      src={imageSrcToUse} />
+    <FittedImage 
+      src={imageSrcToUse} 
+      height={maxHeight} 
+      width={maxWidth}/>
   )
-  
+
   const imgPopup = (
     <Popup 
       on='hover'
@@ -63,12 +63,13 @@ const ImageShowOrChange = ( { className, imageSrc, canEdit, canLinkToSrc, handle
 }
 
 ImageShowOrChange.propTypes = {
-  className:    PropTypes.string.isRequired,    // Classname for the outer div
   header:       PropTypes.string.isRequired,    // e.g "Project Avatar"
   imageSrc:     PropTypes.string,               // A string which will be passed to img.src. Can be null
   canEdit:      PropTypes.bool.isRequired,      // True if this should be able to accept changes via Drag
   canLinkToSrc: PropTypes.bool.isRequired,      // True if this should be a QLink to the image (or image editor)
-  handleChange: PropTypes.func                  // Function callback - takes (newUrlString, assetIdString) as params
+  handleChange: PropTypes.func,                 // Function callback - takes (newUrlString, assetIdString) as params
+  maxWidth:     PropTypes.string,               // for example "120px"
+  maxHeight:    PropTypes.string                // for ex "120px"
 }
 
 export default ImageShowOrChange

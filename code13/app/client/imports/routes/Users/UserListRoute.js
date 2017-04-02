@@ -102,7 +102,7 @@ export default UserListRoute = React.createClass({
     const searchSegmentStyle = renderVertical ? {} : {  minWidth:"220px", maxWidth:"220px" }   // TODO(@dgolds): Move magic number to special globals or pass down?
     const narrowItem = !!renderVertical
     const segClass = renderVertical ? "" : "ui basic segment"
-    const killBordersStyle = { borderStyle: "none", boxShadow: "none", maxWidth: "700px" }                // TODO(@dgolds): Move magic number to special globals or pass down?
+    const killBordersStyle = { borderStyle: "none", boxShadow: "none" }               
     const Body = (
       <div className={containerClassName} style={killBordersStyle}>
         <div className={segClass} style={searchSegmentStyle}>
@@ -131,7 +131,7 @@ export default UserListRoute = React.createClass({
       </div>
     )
 
-    return isTopLevelRoute ? <Container>{Body}</Container> : Body
+    return Body
   },
 
   handleLoadMore() {

@@ -2,10 +2,10 @@ import React, { PropTypes } from 'react'
 import UserItem from './UserItem'
 
 
-import { List } from 'semantic-ui-react'
+import { Card } from 'semantic-ui-react'
 
 const UserList = ( { users, narrowItem, handleClickUser } ) => (  
-  <List relaxed divided animated verticalAlign='middle'>
+  <Card.Group animated>
     {
       users.map(user => (
         <UserItem
@@ -15,7 +15,7 @@ const UserList = ( { users, narrowItem, handleClickUser } ) => (
             handleClickUser={handleClickUser} />
       ))
     }
-  </List>
+  </Card.Group>
 )
 
 UserList.propTypes = {

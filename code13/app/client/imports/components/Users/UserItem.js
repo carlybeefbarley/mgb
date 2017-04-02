@@ -4,7 +4,7 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import Badge from '/client/imports/components/Controls/Badge/Badge'
 import { getAllBadgesForUser } from '/imports/schemas/badges'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
-import { Header, Label, Segment } from 'semantic-ui-react'
+import { Header, Label, Segment, Card } from 'semantic-ui-react'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
 // These can be rendered as attached segments so the caller can easily place/attach buttons around it
@@ -43,14 +43,41 @@ export default UserItem = React.createClass({
 
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui segment' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     // avatar here comes directly from mgb server - as we need it to be up to date always (mgb server will still handle etag - if not changed)
+    // return (
+    //   <Segment
+    //       raised={!renderAttached}
+    //       attached={renderAttached}
+    //       onClick={this.handleClickUser} >
+    //     <Header size='large' content={name}/>
+    //     <img src={makeCDNLink(avatar, makeExpireTimestamp(60)) || SpecialGlobals.defaultUserProfileImage} className={`ui floated image ${imageSize}`} />
+    //     { narrowItem ? <small>{titleSpan}</small> : <big>{titleSpan}</big> }
+    //     { suIsBanned &&
+    //       <div><Label size='small' color='red' content='Suspended Account' /></div>
+    //     }
+    //     { isDeactivated &&
+    //       <div><Label size='small' color='purple' content='Deactivated Account' /></div>
+    //     }
+    //     <p><small style={{color:"rgb(0, 176, 224)"}}>Joined {createdAtFmt}</small></p>
+    //     {getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)}
+    //   </Segment>
+    // )
     return (
-      <Segment
+      <Card
           raised={!renderAttached}
           attached={renderAttached}
           onClick={this.handleClickUser} >
+          <Card.Content>
+          </Card.Content>
+          <Card.Content style={{textAlign: "center"}}>
+        <img src={makeCDNLink(avatar, makeExpireTimestamp(60)) || SpecialGlobals.defaultUserProfileImage} className={`ui centered image circular ${imageSize}`} />
+        </Card.Content>
+        <Card.Content style={{textAlign: "center"}}>
+        <Card.Header>
         <Header size='large' content={name}/>
-        <img src={makeCDNLink(avatar, makeExpireTimestamp(60)) || SpecialGlobals.defaultUserProfileImage} className={`ui floated image ${imageSize}`} />
+        </Card.Header>
+        <Card.Meta>
         { narrowItem ? <small>{titleSpan}</small> : <big>{titleSpan}</big> }
+        </Card.Meta>
         { suIsBanned &&
           <div><Label size='small' color='red' content='Suspended Account' /></div>
         }
@@ -58,8 +85,36 @@ export default UserItem = React.createClass({
           <div><Label size='small' color='purple' content='Deactivated Account' /></div>
         }
         <p><small style={{color:"rgb(0, 176, 224)"}}>Joined {createdAtFmt}</small></p>
-        {getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)}
-      </Segment>
+        </Card.Content>
+        <Card.Content extra style={{textAlign: "center"}}>{getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)}
+        </Card.Content>
+      </Card>
     )
   }
 })
+//i tried to use the card stuff for semantic ui lol it looks not good... partly because its so tiny but when i made it bigger it just looked sparse
+//i think it wouldnt look so weird in general tho using card or segment if users list was two columns instead of just one, also it wouldnt feel like you had to endlessly scroll to the bottom as much...
+  // return (
+  //     <Card
+  //         raised={!renderAttached}
+  //         attached={renderAttached}
+  //         onClick={this.handleClickUser} >
+  //         <Card.Content>
+  //         <Card.Header>
+  //       <Header size='large' content={name}/>
+  //       </Card.Header>
+  //       <img src={makeCDNLink(avatar, makeExpireTimestamp(60)) || SpecialGlobals.defaultUserProfileImage} className={`ui floated image ${imageSize}`} />
+  //       <Card.Meta>
+  //       { narrowItem ? <small>{titleSpan}</small> : <big>{titleSpan}</big> }
+  //       </Card.Meta>
+  //       { suIsBanned &&
+  //         <div><Label size='small' color='red' content='Suspended Account' /></div>
+  //       }
+  //       { isDeactivated &&
+  //         <div><Label size='small' color='purple' content='Deactivated Account' /></div>
+  //       }
+  //       <p><small style={{color:"rgb(0, 176, 224)"}}>Joined {createdAtFmt}</small></p>
+  //       </Card.Content>
+  //       <Card.Content extra>{getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)}</Card.Content>
+  //     </Card>
+  //   )

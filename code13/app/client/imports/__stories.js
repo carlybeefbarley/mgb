@@ -1,6 +1,6 @@
 import React from 'react';
 import { storiesOf, action } from '@kadira/storybook';
-
+import moment from 'moment';
 // This file should NOT be included as part of the product code on client or server
 
 // It is ONLY for fast-build of dev components for React Storybook stories: 
@@ -34,20 +34,18 @@ fakeAppRouteProps.handleSetCurrentlyEditingAssetInfo = action('Invoked handleSet
   //   .add('Dashboard', () => <DashboardRoute {...fakeAppRouteProps}/>)
 
 
-
 import { Card, Image, Icon } from 'semantic-ui-react'
 
-
-const CardExampleCard = () => (
+const CardExampleCard = ( { currUser } ) => (
   <Card>
     <Image src='/images/mascots/bigguy.png' />
     <Card.Content>
       <Card.Header>
-        Matthew
+        { currUser ? currUser.username : 'NONAME'}
       </Card.Header>
       <Card.Meta>
         <span className='date'>
-          Joined in 2015
+         { currUser ? moment(currUser.createdAt).fromNow() : 'NODATE'}
         </span>
       </Card.Meta>
       <Card.Description>
@@ -64,5 +62,4 @@ const CardExampleCard = () => (
 )
 
 storiesOf('Examples', module)
-  .add('Card', () => <CardExampleCard />)
-
+  .add('Card', () => <CardExampleCard currUser={fakeAppRouteProps.currUser}/>)

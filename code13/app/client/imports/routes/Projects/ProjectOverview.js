@@ -97,13 +97,13 @@ export default ProjectOverview = React.createClass({
     
     const buttonSty = { width: '220px', marginTop: '2px', marginBottom: '2px'}
     return (
-      <Grid padded>
+      <Grid padded columns='equal'>
         <Helmet
           title={`Project: ${relativeProjectName}`}
           meta={[ { name: `Project: ${relativeProjectName}`, content: 'Project' } ]}
         />
 
-        <Grid.Column width={6} style={{ minWidth: '250px', maxWidth: '250px' }}>
+        <Grid.Column style={{ minWidth: '250px', maxWidth: '250px' }}>
           <ProjectCard 
               project={project} 
               owner={this.props.user}
@@ -169,7 +169,7 @@ export default ProjectOverview = React.createClass({
           { this.renderRenameDeleteProject() } 
         </Grid.Column>
         
-        <Grid.Column width={8}>
+        <Grid.Column>
           <Header as="h3" >Games in this Project</Header>
           <Segment basic>
             <GamesAvailableGET 

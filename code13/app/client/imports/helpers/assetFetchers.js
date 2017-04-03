@@ -4,6 +4,9 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 import { genetag } from '/imports/helpers/generators'
 import { getProjectAvatarUrl as getProjectAvatarUrlBasic } from '/imports/schemas/projects'
 
+// export so all required functions can be accesed only from assetFetchers
+export { genetag }
+
 // This browser/client will store partially fetched Azzets.
 // PartialAssets because Meteor atm cannot merge assets recursively
 // https://medium.com/@MaxDubrovin/workaround-for-meteor-limitations-if-you-want-to-sub-for-more-nested-fields-of-already-received-docs-eb3fdbfe4e07#.k76s2u4cs

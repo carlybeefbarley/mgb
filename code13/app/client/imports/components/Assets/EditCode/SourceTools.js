@@ -2,7 +2,7 @@
  this is reviewed and adjusted SourceTools for current requirements
  */
 import knownLibs from "./knownLibs.js"
-import {observeAsset, mgbAjax, makeCDNLink} from "/client/imports/helpers/assetFetchers"
+import {observeAsset, mgbAjax, makeCDNLink, genetag} from "/client/imports/helpers/assetFetchers"
 import getCDNWorker from '/client/imports/helpers/CDNWorker'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
@@ -333,16 +333,16 @@ export default class SourceTools extends EventEmitter {
       return this.startObserver(parts)
         .then(asset => {
           // TODO: what to do without asset????
-          const src = `/api/asset/code/${parts.join('/')}`
-          const es5src = `/api/asset/code/es5/${parts.join('/')}`
+          const url = makeCDNLink(`/api/asset/code/${parts.join('/')}`, genetag(asset))
+          const es5src = makeCDNLink(`/api/asset/code/es5/${parts.join('/')}`, genetag(asset))
           // try to get e5 source from asset
           // TODO: store in the asset meta info - as we only need to verify if asset has es5 available
           return this.load(es5src, asset).then(es5 => {
 
-            return this.load(src, asset, Object.assign(additionalProps, {
+            return this.load(url, asset, Object.assign(additionalProps, {
               referrer: asset ? asset.dn_ownerName : ref,
               isExternalFile: !!(es5 && es5.data && es5.data.trim()),
-              url: `/api/asset/code/es5/${parts.join('/')}`
+              url: es5src
             }), ignoreCache)
               .then(info => {
                 // TODO: check file size
@@ -368,12 +368,19 @@ export default class SourceTools extends EventEmitter {
   }
 
   addFileToTern(filename, src){
-  if(src.length < SpecialGlobals.maxFileSizeForAST) {
-    this.tern.server.addFile(filename, src, true)
-    console.log("Added file", filename, (src.length / 1024) + "KB")
-  }
-  else
-    console.log(`File ${filename} is too big (${src.length / 1024}KB )!`)
+    const prev = this.transpileCache[filename]
+    if(this.transpileCache[filename]){
+      if(prev.src === src){
+        console.log("Already added to tern server... skipping")
+        return
+      }
+    }
+    if(src.length < SpecialGlobals.editCode.maxFileSizeForAST) {
+      this.tern.server.addFile(filename, src, true)
+      console.log("Added file", filename, (src.length / 1024).toFixed(2) + "KB")
+    }
+    else
+      console.log(`File ${filename} is too big (${(src.length / 1024).toFixed(2)}KB )!`)
   }
   /**
    * Starts observing asset

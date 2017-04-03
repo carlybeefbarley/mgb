@@ -8,20 +8,28 @@ importScripts("https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.12.0/ba
 onmessage = function (e) {
   var filename = e.data[0]
   var srcText = e.data[1]
-  var options = e.data[2] || {
-      filename: filename,
-      compact: false,           // Default of "auto" fails on ReactImport
-      presets: ['es2015', 'react'], // remove comments as they will break bundled code
-      plugins: ['transform-class-properties'], // , "transform-es2015-modules-amd" - not working
-      retainLines: true
-    }
+  var options = Object.assign({
+    filename: filename,
+    compact: false,           // Default of "auto" fails on ReactImport
+    presets: ['es2015', 'react'], // remove comments as they will break bundled code
+    plugins: ['transform-class-properties'], // , "transform-es2015-modules-amd" - not working
+    retainLines: true,
+    moduleRoot: "testxxx",
+    resolveModuleSource: (source, filename) => {
+      // only imports starting with /
+      if (source.indexOf('/') === 0 && source.indexOf('//') !== 0) {
+        return source + '.js'
+      }
+      return source
+    },
+  }, e.data[2])
   if (!options.filename) {
     options.filename = filename
   }
 
   var trans
   try {
-    trans = Babel.transform(srcText , options);
+    trans = Babel.transform(srcText, options);
   }
     // TODO: what to do if babel fails to transform code?
   catch (e) {

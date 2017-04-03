@@ -337,6 +337,13 @@ export default class EditCode extends React.Component {
     this.mgb_cache = {}
 
     this.highlightedLines = []
+
+    const c2 = this.props.asset.content2
+    this.setState({
+      needsBundle: c2.needsBundle,
+      hotReload: c2.hotReload
+    })
+
   }
 
 
@@ -406,7 +413,7 @@ export default class EditCode extends React.Component {
     }
     // overwrite default function - so we can use replace
     this.ternServer.server.addFile = (name, text, replace) => {
-      this.ternServer.worker.postMessage({type: "add", name, text, replace})
+      this.ternServer && this.ternServer.worker.postMessage({type: "add", name, text, replace})
     }
     this.ternServer.server.getAstFlowerTree = (options, callback, filename = this.props.asset.name) => {
       if (!options.filename) {
@@ -440,9 +447,12 @@ export default class EditCode extends React.Component {
       })
     }
 
-    this.tools = new SourceTools(this.ternServer, this.props.asset._id, this.props.asset.dn_ownerName)
-    this.tools.onError(errors => {
-      this.showError(errors)
+    this.tools = new SourceTools(this.ternServer, this.props.asset)
+    this.tools.on('change', asset => {
+      this.quickSave()
+    })
+    this.tools.on('error', err => {
+      this.showError(err)
     })
 
     this.tools.loadCommonDefs()
@@ -675,9 +685,15 @@ export default class EditCode extends React.Component {
       if (this.changeTimeout) {
         return
       }
+
+
       let currentCursor = this.codeMirror.getCursor()
       this.codeMirror.setValue(newVal)
-      this.setState({needsBundle: nextProps.asset.content2.needsBundle})
+      this.setState({
+        needsBundle: nextProps.asset.content2.needsBundle,
+        hotReload: nextProps.asset.content2.hotReload
+      })
+
       this._currentCodemirrorValue = newVal       // This needs to be done here or we will loop around forever
       this.codeMirror.setCursor(currentCursor)    // Note that this will trigger the source Analysis stuff also.. and can update activitySnapshots. TODO(@dgolds) look at inhibiting the latter
       // force update source tools related files
@@ -853,10 +869,20 @@ export default class EditCode extends React.Component {
 
     if (event.ctrlKey) {
       const token = cm.getTokenAt(pos, true)
-      this.codeMirror.setCursor(pos)
-      this.cursorHistory.undo.push(pos)
-      this.ternServer.jumpToDef(cm)
-
+      if(token.type == 'string'){
+        const link = this.getImportStringLocation(token.string)
+        if(link) {
+          const a = document.createElement('a')
+          a.setAttribute('href', link)
+          a.setAttribute('target', '_balnk')
+          a.click()
+        }
+      }
+      else {
+        this.codeMirror.setCursor(pos)
+        this.cursorHistory.undo.push(pos)
+        this.ternServer.jumpToDef(cm)
+      }
       // disable multi select ?
       event.preventDefault() // if you don't want the cursor to move here.
     }
@@ -1454,7 +1480,8 @@ export default class EditCode extends React.Component {
     // this.changeTimeout - is set when user is typing
     const retval = !( this.changeTimeout || nextState._preventRenders || this.state.creatingBundle)
     //console.log("Should update:", retval)
-    return retval // && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
+    // && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
+    return retval || this.state.needsBundle != nextState.needsBundle || this.state.hotReload != nextState.hotReload
   }
 
   codemirrorValueChanged(doc, change) {
@@ -1668,6 +1695,11 @@ export default class EditCode extends React.Component {
 
   /** Start the code running! */
   handleRun() {
+    // always make sure we are running latest sources and not stacking them
+    if(this.state.isPlaying)
+      this.handleStop()
+
+
     this._consoleClearAllMessages()
     if (!this.bound_handle_iFrameMessageReceiver)
       this.bound_handle_iFrameMessageReceiver = this._handle_iFrameMessageReceiver.bind(this)
@@ -1676,35 +1708,33 @@ export default class EditCode extends React.Component {
     const { asset } = this.props
 
     this.setState({isPlaying: true})
-
     // we don't want to hide tutorials so we open popup
     if(asset.skillPath && !this.state.isPopup)
       this.setState({ isPopup: true })
 
-    this.tools.collectSources((collectedSources) => {
-      const startRun = () => {
-        if (this.refs.gameScreen && this.refs.gameScreen.isIframeReady()) {
-          this._postMessageToIFrame({
-            mgbCommand: 'startRun',
-            sourcesToRun: collectedSources,
-            asset_id: asset._id,
-            filename: asset.name || ""
-          })
+    this.tools.collectSources()
+      .then(collectedSources => {
+        const startRun = () => {
+          if (this.refs.gameScreen && this.refs.gameScreen.isIframeReady()) {
+            this._postMessageToIFrame({
+              mgbCommand: 'startRun',
+              sourcesToRun: collectedSources,
+              asset_id: asset._id,
+              filename: asset.name || ""
+            })
+          }
+          else{
+            // ask iframe to tell parent that it is ready.. fix for very slow connections
+            this._postMessageToIFrame({
+              mgbCommand: 'approveIsReady'
+            })
+            window.setTimeout(startRun, 100)
+          }
         }
-        else{
-          // ask iframe to tell parent that it is ready.. fix for very slow connections
-          this._postMessageToIFrame({
-            mgbCommand: 'approveIsReady'
-          })
-          window.setTimeout(startRun, 100)
-        }
-      }
-      startRun()
+        startRun()
 
-    })
+      })
 
-    
-    
       const idx = Math.floor($('#mgbjr-EditCode-codeRunner').index() / 2)  //  because title + content for one entry
       // auto-close accordion above so there's space.
       for(let i=idx - 1; i > -1; i--){
@@ -1719,31 +1749,34 @@ export default class EditCode extends React.Component {
 
 
   handleStop() {
+    this.refs.gameScreen && this.refs.gameScreen.stop()
     this.setState({
       gameRenderIterationKey: this.state.gameRenderIterationKey + 1, // or this.iFrameWindow.contentWindow.location.reload() ?
       isPlaying: false
     })
     window.removeEventListener('message', this.bound_handle_iFrameMessageReceiver)
   }
-  handleFullScreen(id) {
+  handleFullScreen(id = this.props.asset._id) {
     if (this.props.canEdit) {
       const urlToOpen = "about:blank"; //window.location.origin + '/api/blank' //- to work with pushState without reload
-      let child = window.open(urlToOpen, "Bundle")
-      child.document.write(
+      let fullScreenWindow = window.open(urlToOpen, "Bundle")
+      this.mgb_fullScreenWindow = fullScreenWindow
+
+      fullScreenWindow.document.write(
         `<h1>Creating bundle</h1>
 <p>Please wait - the latest version of your game is being bundled and loaded</p>`
       )
       this.createBundle(() => {
         // clear previous data - and everything else
-        if (!child.document) {
-          child = window.open(urlToOpen, "Bundle")
+        if (!fullScreenWindow.document) {
+          fullScreenWindow = window.open(urlToOpen, "Bundle")
         }
         const delayReloadIfSaving = () => {
           if(this.props.hasUnsentSaves || this.props.asset.isUnconfirmedSave)
             window.setTimeout(delayReloadIfSaving, 100)
           else {
             //child.history.pushState(null, "Bundle", `/api/asset/code/bundle/${id}`)
-            child.location = `/api/asset/code/bundle/${id}`
+            fullScreenWindow.location = `/api/asset/code/bundle/${id}`
           }
         }
 
@@ -1759,32 +1792,36 @@ export default class EditCode extends React.Component {
     if(this.props.asset.kind == "tutorial"){
       return
     }
-    if (this.state.creatingBundle) {
-      cb && cb()
+
+    if (this.state.creatingBundle || !this.props.canEdit) {
+      setTimeout(() => {
+        this.createBundle(cb)
+      }, 100)
       return
     }
-    if (this.props.canEdit) {
-      this.setState({
-        creatingBundle: true
-      })
-      this.tools.createBundle((bundle, notChanged) => {
-        if(!notChanged){
-          const value = this.codeMirror.getValue()
-          const newC2 = {src: value, bundle: bundle, needsBundle: this.props.asset.content2.needsBundle}
-          // make sure we have bundle before every save
-          this.handleContentChangeAsync(newC2, null, `Store code bundle`)
-        }
-        if(this.isActive) {
-          this.setState({
-            creatingBundle: false
+
+    this.setState({creatingBundle: true})
+    this.tools.createBundle()
+      .then(bundle => {
+        const value = this.codeMirror.getValue()
+        this.tools.transpileAndMinify('/' + this.props.asset.name, value)
+          .then(es5 => {
+            const c2 = this.props.asset.content2
+
+            const newC2 = {
+              src: value,
+              bundle: bundle,
+              needsBundle: c2.needsBundle,
+              hotReload: c2.hotReload,
+              es5
+            }
+            // make sure we have bundle before every save
+            this.handleContentChangeAsync(newC2, null, `Store code bundle`)
+            this.setState({creatingBundle: false})
+            cb && cb()
           })
-        }
-        cb && cb()
       })
-    }
-    else{
-      cb && cb()
-    }
+
   }
 
   handleGamePopup() {
@@ -1815,6 +1852,8 @@ export default class EditCode extends React.Component {
     }
 
     c2.needsBundle = this.props.asset.content2.needsBundle
+    c2.hotReload = this.props.asset.content2.hotReload
+
     //props trigger forceUpdate - so delay changes a little bit - on very fast changes
     if (this.changeTimeout) {
       window.clearTimeout(this.changeTimeout)
@@ -1830,11 +1869,15 @@ export default class EditCode extends React.Component {
       }
 
       this.doFullUpdateOnContentChange((errors) => {
+
         // it's not possible to create useful bundle with errors in the code - just save
         if(errors.length || !this.props.asset.content2.needsBundle){
-          this.changeTimeout = 0
-          this.lastSavedValue = c2.src
-          this.props.handleContentChange(c2, thumbnail, reason)
+          this.tools.transpileAndMinify('/' + this.props.asset.name, c2.src)
+            .then(es5 => {
+              c2.es5 = es5
+              this.lastSavedValue = c2.src
+              this.props.handleContentChange(c2, thumbnail, reason)
+            })
         }
         else{
           // createBundle is calling handleContentChangeAsync after completion
@@ -1860,6 +1903,18 @@ export default class EditCode extends React.Component {
     }
 
   }
+
+  handleHotReload() {
+    if (this.state.hotReload) {
+      if (this.state.isPlaying){
+        this.handleRun()
+      }
+      if (this.mgb_fullScreenWindow && !this.mgb_fullScreenWindow.closed)
+        this.handleFullScreen()
+    }
+  }
+
+
   // this is very heavy function - use with care
   // callback gets one argument - array with critical errors
   doFullUpdateOnContentChange( cb ) {
@@ -1873,17 +1928,19 @@ export default class EditCode extends React.Component {
         this.hasErrors = !!critical.length
         if (this.tools) {
           // set asset name to /assetName - so recursion is handled correctly
-          this.tools.collectAndTranspile(val, '/' + this.props.asset.name, () => {
-            this.setState({
-              astReady: true
+          this.tools.collectAndTranspile('/' + this.props.asset.name, val)
+            .then(() => {
+              this.setState({
+                astReady: true
+              })
+              this.codeMirrorOnCursorActivity()
+              cb && cb(critical)
+              this.handleHotReload()
+            }, (a) => {
+              console.log("Something failed!!!", a)
             })
-            // this will force to update mentor info - even if cursor wasn't moving
-            // used in the case when we have pulled defs or new code in to tern server
-            this.codeMirrorOnCursorActivity()
-            cb && cb(critical)
-          }, true)
         }
-        else{
+        else {
           cb && cb(critical)
         }
       })
@@ -1931,7 +1988,6 @@ export default class EditCode extends React.Component {
     // if(!_infoPaneModes[newMode].col2) this.handleStop()
     //
     if(this.state.isPlaying && (!oldMode.col2 || !curMode.col2) ){
-      this.handleStop()
       this.handleRun()
     }
 
@@ -2053,7 +2109,7 @@ export default class EditCode extends React.Component {
         label:    'Run code',
         icon:     'play',
         tooltip:  'Run Code',
-        disabled: this.state.isPlaying,
+        disabled: this.state.isPlaying || !this.state.astReady,
         level:    1,
         shortcut: 'Ctrl+ENTER'
       })
@@ -2086,7 +2142,16 @@ export default class EditCode extends React.Component {
         level:    3,
         shortcut: 'Ctrl+Alt+Shift+B'
       })
-
+      config.buttons.push( {
+        name:  'toggleHotReload',
+        label: 'Automatically reload game screen',
+        icon:  'refresh' + `${this.tools && this.mgb_c2_hasChanged ? ' red' : ''} ${!this.state.astReady ? ' animate rotate' : ''}`,
+        tooltip: (!this.state.astReady ? "Loading all required files...\n" : '') + 'Automatically reloads game screen when one of the imported scripts changes',
+        disabled: false,
+        active: this.props.asset.content2.hotReload,
+        level:    3,
+        shortcut: 'Ctrl+Alt+Shift+R'
+      })
     }
     return config
   }
@@ -2108,8 +2173,15 @@ export default class EditCode extends React.Component {
 
   toggleBundling() {
     this.props.asset.content2.needsBundle = !this.props.asset.content2.needsBundle
-    this.handleContentChange(this.props.asset.content2, null, "enableBundling")
     this.setState({needsBundle: this.props.asset.content2.needsBundle})
+
+    this.handleContentChange(this.props.asset.content2, null, "enableBundling")
+  }
+  toggleHotReload(){
+    this.props.asset.content2.hotReload = !this.props.asset.content2.hotReload
+    this.setState({hotReload: this.props.asset.content2.hotReload})
+
+    this.handleContentChange(this.props.asset.content2, null, "enableHotReload")
   }
 
   insertTextAtCursor(text) {
@@ -2228,31 +2300,38 @@ export default class EditCode extends React.Component {
         string = string.substring(1)
         const parts = string.split(":")
         if(parts.length === 1){
-          const script = this.state.userScripts.find(a => a.text == string)
-          if(script){
-            advices.push(
-                <a className="ui fluid label" key={script.id} style={{marginBottom: "2px"}} href={`/assetEdit/${script.id}`} target='_blank'>
-                  <small style={{fontSize: '85%'}}>this string references <strong>your</strong> code asset:
-                    <code>{string}</code></small>
-                  <Thumbnail assetId={script.id} expires={60} constrainHeight='60px'/>
-                  <small>{script.desc}</small>
-                </a>
-            )
-          }
+          parts.unshift(this.props.asset.dn_ownerName)
         }
-        // TODO: get link to asset
-        else if(parts.length === 2){
-          advices.push(
-            <a className="ui fluid label" key={advices.length} style={{marginBottom: "2px"}} href={`/assetEdit/code/${parts.join('/')}`} target='_blank'>
-              <small style={{fontSize: '85%'}}>this string references <strong>{parts[0]}</strong> code asset:
-                <code>{parts[1]}</code></small>
-              <Thumbnail assetId={parts.join('/')} expires={60} constrainHeight='60px'/>
-            </a>
-          )
-        }
+        advices.push(
+          <a className="ui fluid label" key={advices.length} style={{marginBottom: "2px"}} href={`/assetEdit/code/${parts.join('/')}`} target='_blank'>
+            <small style={{fontSize: '85%'}}>this string references <strong>{parts[0]}</strong> code asset:
+              <code>{parts[1]}</code></small>
+            <Thumbnail assetId={parts.join('/')} expires={60} constrainHeight='60px'/>
+          </a>
+        )
       }
     }
     return advices
+  }
+
+  // need to do some cleanup as this function has almost same code as one above
+  getImportStringLocation(importString){
+    let string = importString
+    if(string.indexOf("'") === 0)
+      string = importString.substring(1, importString.length -1)
+    if(string.indexOf('/') === 0 && string.indexOf('//') !== 0){
+      string = string.substring(1)
+      const parts = string.split(":")
+      if(parts.length === 1) {
+        parts.unshift(this.props.asset.dn_ownerName)
+        /*const script = this.state.userScripts.find(a => a.text == string)
+        if (!script)
+          return this.getImportStringLocation('/' + this.props.asset.dn_ownerName + ':' + string)
+        return `/assetEdit/${script.id}`*/
+      }
+      return `/assetEdit/code/${parts.join('/')}`
+    }
+    return ''
   }
 
   getPrevToken(callback, cursor = null){
@@ -2473,7 +2552,7 @@ export default class EditCode extends React.Component {
                     scripts={this.state.userScripts}
                     includeLocalImport={this.includeLocalImport}
                     includeExternalImport={this.includeExternalImport}
-                    knownImports={this.tools.collectImportsForFile(this.props.asset.name)}
+                    knownImports={this.tools.collectAvailableImportsForFile(this.props.asset.name)}
                     /> }
                   <FunctionDescription
                     functionHelp={this.state.functionHelp}
@@ -2530,7 +2609,7 @@ export default class EditCode extends React.Component {
                   scripts={this.state.userScripts}
                   includeLocalImport={this.includeLocalImport}
                   includeExternalImport={this.includeExternalImport}
-                  knownImports={this.tools.collectImportsForFile(this.props.asset.name)}
+                  knownImports={this.tools.collectAvailableImportsForFile(this.props.asset.name)}
                   />
                 </div>
                 }
@@ -2554,7 +2633,7 @@ export default class EditCode extends React.Component {
                         <i className='save icon' />
                       </a>
                     }
-                    { !isPlaying &&
+                    { !isPlaying && this.state.astReady &&
                       <a  className='ui tiny icon button'
                           title='Click here to start the program running'
                           id="mgb-EditCode-start-button"
@@ -2579,20 +2658,13 @@ export default class EditCode extends React.Component {
                       </a>
                     }
                     { !this.hasErrors &&
-                    <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""}>
+                    <span className={( this.state.creatingBundle && this.props.canEdit) ? "ui button labeled" : ""}>
                       <a  className='ui tiny icon button full-screen'
                           id="mgb-EditCode-full-screen-button"
                           title='Click here to start running your program in a different browser tab'
                           onClick={this.handleFullScreen.bind(this, asset._id)}>
                         <i className='external icon' />&emsp;Full&nbsp;
                       </a>
-                      {/*Moved to global notification - (this.tools.hasChanged()) - not used anymore - as we are creating bundle on every save - to make play game - better
-                      { this.state.creatingBundle && this.props.canEdit &&
-                        <a className="ui tiny left pointing label reload" onClick={() => {this.createBundle( () => {} )}}
-                          title="Updating Bundle">
-                          <i className={'refresh icon ' + (this.state.creatingBundle ? ' loading' : '')} />
-                        </a>
-                      }*/}
                     </span>
                     }
                   </span>

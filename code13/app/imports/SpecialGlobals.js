@@ -53,7 +53,7 @@ export default SpecialGlobals = {
   },
 
   assets: {
-    "maxUploadSize":  1*1024*1024,     // 1 MB
+    "maxUploadSize":  3*1024*1024,     // 1 MB
     "mainAssetsListDefaultLimit": 50   // Number of assets shown by default in main Asset list UI per page
   },
 

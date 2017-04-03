@@ -55,7 +55,7 @@ Meteor.publish('assets.public.partial.bySelector', function(selector) {
   const cleanSelector = typeof selector === "object" ? {dn_ownerName: selector.dn_ownerName, kind: selector.kind, name: selector.name } : selector
 
   // TODO(@stauzs) Should server look for deleted assets? What about asset editors?
-  const cursor = Azzets.find(cleanSelector, {fields: {updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1}})
+  const cursor = Azzets.find(cleanSelector, {fields: {updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1, metadata: 1}})
   // Publish to another client Collection - as partial data will interfere with the
   //   Azzets collection on the client side (Meteor miniMongo)
   //   (@stauzs) I know - this is ugly, but seems that there is no better solution

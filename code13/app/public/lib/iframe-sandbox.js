@@ -307,6 +307,10 @@ window.onload = function() {
             if(!imports[key])
               imports[key] = window.exports === window.module.exports ? window.exports : window.module.exports
 
+            // babel quirks
+            if(!imports[key+'.js'])
+              imports[key+'.js'] = window.exports === window.module.exports ? window.exports : window.module.exports
+
             if(!imports[localKey])
               imports[localKey] = window.exports === window.module.exports ? window.exports : window.module.exports
 

@@ -250,7 +250,7 @@ export const setUpCloudFront = function () {
       },
       // TODO: do we need custom error responses ???
       CustomErrorResponses: {
-        Quantity: 5, /* required */
+        Quantity: 6, /* required */
         Items: [
           {
             ErrorCode: 400, // bad request
@@ -266,6 +266,10 @@ export const setUpCloudFront = function () {
           },
           {
             ErrorCode: 502, // bad gateway
+            ErrorCachingMinTTL: 0
+          },
+          {
+            ErrorCode: 503, // bad gateway
             ErrorCachingMinTTL: 0
           },
           {

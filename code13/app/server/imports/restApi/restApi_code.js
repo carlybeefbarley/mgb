@@ -6,7 +6,7 @@ import { genAPIreturn, assetToCdn } from '/server/imports/helpers/generators'
 function _makeBundle(api, asset){
   return genAPIreturn(api, asset, () => asset ? makeCodeBundle(asset, api.queryParams.origin) : null, {
     'Content-Type': "text/html",
-    'file-name':  asset ? asset.name : this.urlParams.name
+    'file-name':  asset ? asset.name : api.urlParams.name
   })
 }
 
@@ -67,6 +67,7 @@ RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
     return _makeBundle(this, asset)
   }
 })
+
 RestApi.addRoute('asset/code/bundle/cdn/:id', {authRequired: false}, {
   get: function () {
     const asset = Azzets.findOne(this.urlParams.id)
@@ -74,7 +75,7 @@ RestApi.addRoute('asset/code/bundle/cdn/:id', {authRequired: false}, {
   }
 })
 // why there is 'u' in the middle ?
-RestApi.addRoute('asset/code/bundle/u/:username/:codename', { authRequired: false }, {
+RestApi.addRoute('asset/code/bundle/:username/:codename', { authRequired: false }, {
   get: function () {
     const asset = Azzets.findOne( {
       dn_ownerName: this.urlParams.username,
@@ -86,7 +87,26 @@ RestApi.addRoute('asset/code/bundle/u/:username/:codename', { authRequired: fals
   }
 })
 
-RestApi.addRoute('asset/code/bundle/cdn/u/:username/:codename', { authRequired: false }, {
+RestApi.addRoute('asset/code/es5/:username/:codename', { authRequired: false }, {
+  get: function () {
+    const asset = Azzets.findOne( {
+      dn_ownerName: this.urlParams.username,
+      name: this.urlParams.codename,
+      isDeleted: false,
+      kind: 'code'
+    } )
+    let contentType = 'text/plain'
+    if(this.request.headers.accept){
+      contentType = this.request.headers.accept.split(',').shift()
+    }
+    return genAPIreturn(this, asset, asset ? (asset.content2.es5 || '')  : null, {
+      'Content-Type': contentType,
+      'file-name': asset ? asset.name : this.urlParams.name
+    })
+  }
+})
+
+RestApi.addRoute('asset/code/bundle/cdn/:username/:codename', { authRequired: false }, {
   get: function () {
     const asset = Azzets.findOne( {
         dn_ownerName: this.urlParams.username,
@@ -97,6 +117,6 @@ RestApi.addRoute('asset/code/bundle/cdn/u/:username/:codename', { authRequired: 
       {
       fields: {updatedAt: 1}
     } )
-    return assetToCdn(this, asset, `/api/asset/code/bundle/u/${this.urlParams.username}/${this.urlParams.codename}`)
+    return assetToCdn(this, asset, `/api/asset/code/bundle/${this.urlParams.username}/${this.urlParams.codename}`)
   }
 })

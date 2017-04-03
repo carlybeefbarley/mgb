@@ -216,7 +216,7 @@ class PlayCodeGame extends React.Component {
             id="iFrame1"
             style={{ minWidth: width + 'px', minHeight: height + 'px', borderStyle: 'none', transformOrigin: '0 0' }}
             sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
-            src={`/api/asset/code/bundle/cdn/u/${ownerName}/${codeName}?origin=${origin}`}
+            src={`/api/asset/code/bundle/cdn/${ownerName}/${codeName}?origin=${origin}`}
 
             >
           </iframe>

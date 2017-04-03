@@ -77,6 +77,20 @@ export default class GameScreen extends React.Component {
       commands[data.mgbCmd].call(this, data)
   }
 
+  stop(){
+    if(this.refs.iFrame1) {
+      this.refs.iFrame1.src = makeCDNLink('/codeEditSandbox.html')
+      this._isIframeReady = false
+    }
+    // reset game screen size on stop
+    if(this.wrapper){
+      this.wrapper.style.width = this.props.isPopup ? "auto" : '100%'
+      this.wrapper.style.height = "320px"
+      this.iFrameWindow.setAttribute("width", "100%")
+      this.iFrameWindow.setAttribute("height", "100%")
+    }
+  }
+
   isIframeReady(){
     const lastVal = this._isIframeReady
     // reset ready status for next stop
@@ -102,9 +116,18 @@ export default class GameScreen extends React.Component {
 
     this.iFrameWindow.setAttribute("width", size.width + "")
     this.iFrameWindow.setAttribute("height", size.height + "")
-    this.wrapper.style.width = size.width + "px"
+    const bounds = this.wrapper.getBoundingClientRect()
+    const w = Math.min(window.innerWidth*0.5, size.width)
+    const h = Math.min(window.innerHeight*0.5, size.height)
+    if(this.props.isPopup){
+      this.wrapper.style.width = w + "px"
+      this.wrapper.style.height = h + "px"
+    }
+    else
+      this.wrapper.style.width = '100%'
     // height will break minimize
     // this.wrapper.style.height = size.height + "px"
+    // this.wrapper.style.height = "initial"
   }
 
   onDragStart (e) {
@@ -144,7 +167,16 @@ export default class GameScreen extends React.Component {
           ref="wrapper"
           id="gameWrapper"
           className={this.props.isPopup ? "popup" : "accordion"}
-          style={{ display: (this.state.isHidden && !this.props.isPlaying) ? "none" : "block", overflow: this.props.isPopup ? 'initial' : "auto" }}>
+          style={{
+            display: (this.state.isHidden && !this.props.isPlaying) ? "none" : "block",
+            overflow: this.props.isPopup ? 'initial' : "auto",
+            width: this.props.isPopup ? window.innerHeight * 0.3 : "100%",
+            height: "320px",
+            minWidth: "200px",
+            minHeight: "160px",
+            maxHeight: (window.innerHeight * 0.5) + "px",
+            maxWidth: (window.innerWidth * 0.5) + 'px'
+          }}>
         { this.props.isPopup &&
           <div style={{
             transform:        "translateY(-100%)",
@@ -183,12 +215,12 @@ export default class GameScreen extends React.Component {
         <iframe
             style={{
               display:    this.state.isMinimized ? "none" : "block",
-              minWidth:   window.innerWidth * 0.3,
+              minWidth:   "100%",
               minHeight: window.innerHeight * 0.3
             }}
-            key={ this.props.gameRenderIterationKey }
+            // key={ this.props.gameRenderIterationKey }
             ref="iFrame1"
-            sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
+            sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
             src={makeCDNLink('/codeEditSandbox.html')}
             frameBorder="0"
             id="mgbjr-EditCode-sandbox-iframe"

@@ -1,589 +1,560 @@
-"use strict"
+/*
+ this is reviewed and adjusted SourceTools for current requirements
+ */
 import knownLibs from "./knownLibs.js"
 import {observeAsset, mgbAjax, makeCDNLink} from "/client/imports/helpers/assetFetchers"
-import {AssetKindEnum} from '/imports/schemas/assets'
+import getCDNWorker from '/client/imports/helpers/CDNWorker'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
-import getCDNWorker from '/client/imports/helpers/CDNWorker'
+import { AssetKindEnum } from '/imports/schemas/assets'
 
-// serving modules from...
+import { EventEmitter } from 'events'
+
+/**
+ * Gets full url to module without known libs - e.g. jquery
+ * @param lib
+ * @param version
+ * @returns {String}
+ */
 const getModuleServer = (lib, version = 'latest') => {
   const parts = lib.split("@")
-  if(parts.length === 1){
+  if (parts.length === 1) {
     return `https://cdn.jsdelivr.net/${lib}/${version}/${lib}.min.js`
   }
-  else{
+  else {
     const name = parts[0]
     return `https://cdn.jsdelivr.net/${name}/${parts[1]}/${name}.min.js`
   }
 }
-
-// CDN ajax requests cache lifetime
-const INVALIDATE_CACHE_TIMEOUT = 60 * 60 * 1000
-
-// delay between re-checking sources
-const UPDATE_DELAY = 0.5 * 1000 // 500ms
-
-// add only smalls libs to tern
-const MAX_ACCEPTABLE_SOURCE_SIZE = SpecialGlobals.editCode.maxFileSizeForAST // 1024 * 100 // 100 KB
 
 const ERROR = {
   SOURCE_NOT_FOUND: "W-ST-001", // warning - sourcetools - errnum -- atm only matters first letter: W(warning) E(error)
   MULTIPLE_SOURCES: "W-ST-002",
   UNREACHABLE_EXTERNAL_SOURCE: "W-ST-003",
   // if same file is included - then export default won't work as expected - so show error
-  RECURSION_DETECTED:  "E-ST-004",
+  RECURSION_DETECTED: "E-ST-004",
   // if imported files will have recursion - usually everything will work fine.
-  // But we still need to notify user that some unexpected bahaviour can happen
+  // But we still need to notify user that some unexpected behavior can happen
   // e.g. when imported resource is requested directly (not in the some function)
   WARN_RECURSION_DETECTED: "W-ST-005"
 }
 
+/**
+ * Class SourceTools - collects imports, transpiles ES6 to ES5 and bundles code.
+ * @extends EventEmitter
+ * @emits 'change' - if one of imported files has been changed - we should re-bundle
+ * @emits 'error' - if error occurred - for example cannot find requested resource
+ */
+export default class SourceTools extends EventEmitter {
+  /**
+   * Creates new instance of SourceTools
+   * @param tern - reference to tern instance
+   * @param asset - reference to asset
+   */
+  constructor(tern, asset) {
+    super()
+    this.tern = tern
+    this.asset = asset
 
-export default class SourceTools {
-  // here are sources loaded from CDN
-  static tmpCache = {}
-  // here are sources which failed load from CDN - so we can avoid multiple calls to CDN
-  static cached404 = {}
-  constructor(ternServer, asset_id, owner) {
-    // map with collected files and definitions - so we can avoid tern server updates
-    this.addedFilesAndDefs = {}
-    // meteor subscriptions - keep track - so we could unsubscribe
-    this.subscriptions = {}
-    //
-    this.asset_id = asset_id
-    this.tern = ternServer
     this.babelWorker = getCDNWorker("/lib/workers/BabelWorker.js")
 
-    // all collected sources in the order of inclusion
-    this.collectedSources = []
-    // store timeoutID = so wec clear it later
-    this.timeout = 0
 
-    // asset owner is used to resolve imports without user prefix
-    this.owner = owner
-    // here will live external libraries
-    this.cache = {}
-    // here we will keep our transpiled files
+    this.cachedBundle = ''
+    this.cachedAndMinfiedBundle = ''
+
+    // map<name, source> containing all loaded defs and files
+    this.loadedFilesAndDefs = {}
+
+    // map<filename, transpiledData> containing transpiled files
     this.transpileCache = {}
-    // save cached bundle - so we can quickly return it - if code is not changed
-    this.cachedBundle = ''
 
-    // internal state - shows that something is happening
-    this._inProgress = false
-    // switch which forces full code update on first run
-    this._firstTime = true
-    // to prevent unnecessary updates - this can be set from active asset - or from subscription
-    this._hasSourceChanged = true
-    // if this instance is destroyed no more updates or callbacks will be fired
-    this._isDestroyed = false
+    // Array of collcted sources for current Asset
+    this.collectedSources = []
 
-    // caches last action - to prevent intensive updates in a case when external lib(s) is intensively updating and triggering updates
-    this._lastActionSrc = ''
-    // store entry point filename - usually will bet automatically set to asset name
-    this.mainJS = "main.js"
+    // map<assetKey, subscription> Active subscriptions
+    this.subscriptions = {}
+    // temporary subscriptions - will be closed after all fetching all sources
+    this.tmpSubscriptions = {}
 
-    // callback which gets executed if error has encountered
-    this.errorCBs = []
-    // collected errors from last run
-    this.errors = {}
-    // used to track recursive dependencies
-    this.pendingChanges = {}
+    // map<importName, origin> - used to track down recursion
+    this.pending = {}
+
   }
 
-  // set/get for private variable
-  set inProgress(val) {
-    this._inProgress = val
-  }
-  get inProgress() {
-    return this._inProgress
-  }
-
-  // TODO(stauzs): this is like typical Promise use case - refactor to promises
-  // getter for destroyed state - used to track/debug state and notify on destruction
-  get isDestroyed() {
-    return this._isDestroyed
-  }
-
-  // error related methods - used in the edit code - to show nice errors - e.g. recursion
-  onError(cb){
-    this.errorCBs.push(cb)
-  }
-  getErrors(){
-    const ret = []
-    for(let i in this.errors){
-      ret.push(this.errors[i])
-    }
-    return ret
-  }
-  setError(err){
-    this.errors[err.code] = err
-    this.errorCBs.forEach((c) => {
-      c(err)
-    })
-  }
-
-  // collects and transpiles ES6 imports - launches callback on completion
-  collectAndTranspile(srcText, filename, callback, force = false) {
-    // TODO: break instantly callback chain
-    if (this.isDestroyed) return
-    // clean previous pending call
-    if (this.timeout) {
-      window.clearTimeout(this.timeout)
-      this.timeout = 0
-    }
-
-    if (!force) {
-      if ((this.inProgress && !this._firstTime) || (this._lastActionSrc === srcText)) {
-        this.delayed = (force) => {
-          // this may never be called if new sources will come in
-          this.collectAndTranspile(srcText, filename, callback, force)
-        }
-        this.timeout = window.setTimeout(this.delayed, UPDATE_DELAY)
-        return
-      }
-    }
-    else if (this.inProgress) {
-      console.log("This never should happen - Debug ASAP!")
-    }
-
-    // clean up old errors
-    this.errors = {}
-
-    this._lastActionSrc = srcText
-
-    this._firstTime = false
-    this.mainJS = filename
-
-    this.cleanup()
-
-    // this.collectedSources.length = 0
-
-    this.inProgress = true
-    this._collectAndTranspile(srcText, filename, () => {
-      if (this.isDestroyed) return
-      // force tern to update arg hint cache as we may have loaded new files / defs / docs
-      callback && callback(this.collectedSources)
-      this.inProgress = false
-    }, this.mainJS)
-  }
-  // calls callback with collected sources
-  collectSources(cb) {
-    if (this.isDestroyed) return
-    // wait for first action...
-    if(this._firstTime){
-      window.setTimeout(() => {
-        this.collectSources(cb)
-      }, 100)
-      return
-    }
-    // make sure we are collecting latest sources
-    this.updateNow(() => {
-      cb(this.collectedSources)
-    })
-  }
-  // clear all references / kill workers etc
+  /**
+   * Cleanup
+   */
   destroy() {
-    this._isDestroyed = true
-
-    this.cache = null
-    this.transpileCache = null
-    this.cachedBundle = ''
-
     this.babelWorker.terminate()
+    this.loadedFilesAndDefs = {}
+    this.transpileCache = {}
+    this.collectedSources = []
 
-    // next will be first time again :)
-    this._firstTime = true
-    this._hasSourceChanged = true
-    // clean global cache
-    // TODO: clean only changed files.. add some sort of meteor subscriber
-    for (let i in SourceTools.tmpCache) {
-      delete SourceTools.tmpCache[i]
-    }
+    this.closeSubscriptions(this.subscriptions)
+    this.subscriptions = {}
+  }
 
+  /**
+   * Closes all stored subscriptions - opened by objeserveAsset in the assetFetchers
+   * @param subscriptions
+   */
+  closeSubscriptions(subscriptions) {
     // close all used subscriptions
-    for (let i in this.subscriptions) {
-      this.subscriptions[i].subscription.stop()
-    }
-    this.subscriptions = null
-    this.errorCBs = null
-    this.errors = null
-
-    this.cleanup()
-    for(let i=0; i<this.collectedSources.length; i++){
-     this.tern.server.delFile(this.collectedSources[i].name)
+    for (let i in subscriptions) {
+      subscriptions[i].subscription.stop()
     }
   }
 
-  // clean up old data
-  cleanup(){
-    this.removeTranspiled(this.mainJS)
-    this.collectedSources.length = 0;
+  /**
+   * Entry point for collecting sources - Converts ES6 to ES5 and resolves imports + cleans up old sources and calls private method
+   * @param filename - name of the file ( usually /asset.name )
+   * @param src - source code (ES6)
+   * @param started - timestamp when call has started
+   * @returns {Promise.<>} - resolves without arguments
+   */
+  collectAndTranspile(filename, src, started = Date.now()) {
+    // do some cleanup - so we wont waste memory
+
+    // wait.... if in progress
+    // we need only last call to be completed.. we will reject any previous calls and start last one
+
+    if(this.inProgress){
+      if(this.inProgress > started)
+        return Promise.reject() // bail out
+
+      console.log("Stopping previous call:", this.inProgress)
+      this.shouldCancelASAP = true
+      return new Promise( resolve => {
+        setTimeout(() => {
+          resolve(this.collectAndTranspile(filename, src, started))
+        }, 1000)
+      })
+    }
+
+    this.inProgress = started
+    this.collectedSources.length = 0
+    const subs = Object.keys(this.subscriptions)
+    this.tmpSubscriptions = this.subscriptions
+    this.subscriptions = {}
+
+    return this._collectAndTranspile(filename, src)
+      .then(() => {
+        // clean up pending scripts
+        this.pending = {}
+        subs.forEach((key) => {
+          if (!this.subscriptions[key]) {
+            console.log("Closing old SUB:", key)
+            this.tmpSubscriptions[key].subscription.stop()
+            delete this.transpileCache['/' + key]
+          }
+        })
+        this.tmpSubscriptions = {}
+        this.inProgress = 0
+      }, (e) => {
+        console.log("Cancelled..", e)
+        this.inProgress = 0
+      }
+    )
   }
 
-  // collects info about script
-  collectScript(name, source, cb, localName = name, force = false, origin = null) {
-    if (this.isDestroyed) return
-    // skip transpiled and compiled and empty scripts
-    if (!name || !source.code || (!force && this.isAlreadyTranspiled(name)) ) {
-      cb && cb()
-      return;
+  /**
+   * checks if we should reject promise becasue of newer request
+   * @param reject
+   */
+  checkCancel(reject){
+    if(this.shouldCancelASAP) {
+      this.shouldCancelASAP = false
+      reject("Canceling previous running job...")
     }
+  }
+  /**
+   * Main job for this class - deeply recursive function (can call itself many times - on evry imported file)
+   * Collects and transpiles filename and all imported files found in the src
+   * @async - may or may not
+   * @private
+   * @param filename - name of the code asset (file) - tern and babel threats it as normal filename
+   * @param src - source code
+   * @param origin - reference to first importer ( null for main script )
+   * @param additionalProps - additional into that should be appended to source info:
+   *  useGlobal (for phaser only) - tells to threat file as global script instead of module
+   *  referer - for imported scripts from another user
+   *  url - url to the script
+   *  isExternalFile - not an asset
+   * @returns {Promise.<>} - resolves without arguments
+   */
+  _collectAndTranspile(filename, src, origin = null, additionalProps = null) {
+    if (this.pending[filename] && !this.transpileCache[filename]) {
 
-    const lib = SourceTools.getKnowLib(name)
-    source.useGlobal = lib && lib.useGlobal
-    source.name = name
-    source.localName = localName
-    source.isExternalFile = SourceTools.isExternalFile(source.url)
-    if(origin){
-      if(!source.origin){
-        source.origin = [origin]
+      this.emit('error', {
+        reason: "Recursion: " + filename,
+        evidence: filename,
+        code: ERROR.WARN_RECURSION_DETECTED
+      })
+      return Promise.resolve()
+    }
+    this.pending[filename] = origin || filename
+
+    // referring itself...
+    if (filename === origin) {
+      this.emit('error', {
+        reason: "Recursion: " + filename,
+        evidence: filename,
+        code: ERROR.RECURSION_DETECTED
+      })
+      return Promise.resolve()
+    }
+    // this object will cointain all necessary info about script
+    // we need to push it only after all other imported files from this file are resolved to maintain correct order
+    const toAdd = Object.assign(this.findCollected(filename) || {name: filename}, additionalProps)
+    // partial calls don't know origin - so leave as is
+    if (origin)
+      toAdd.origin = origin
+
+    return this.transpile(filename, src)
+      .then(data => {
+        const imports = SourceTools.parseImport(data)
+        const promises = []
+        toAdd.code = data.code
+        imports.forEach(imp => {
+          // ignore empty urls
+          if (imp.url.trim())
+            promises.push(this.loadImportedFile(imp.url, {
+              filename: imp.url,
+              referrer: additionalProps ? additionalProps.referrer : null
+            }))
+        })
+        return Promise.all(promises)
+      })
+      .then(sources => {
+        const promises = []
+        sources.forEach(info => {
+          // or remove data from info and assign all info ???
+          const data = info.data
+          delete info.data
+          promises.push(this._collectAndTranspile(info.filename, data, filename, info))
+        })
+        return Promise.all(promises).then(() => {
+          if (!this.findCollected(toAdd.name)) {
+            this.collectedSources.push(toAdd)
+          }
+        })
       }
-      else if(source.origin.indexOf(origin) === -1){
-        source.origin.push(origin)
+    )
+  }
+
+  /**
+   * collects imports - ignoring already imported scripts
+   * @param filename
+   * @returns {Array.<T>}
+   */
+  collectAvailableImportsForFile(filename) {
+    return this.collectedSources.filter(script => {
+      // after renaming asset script name won't match asset name
+      // only main script don't have origin
+      if (script.name != filename && !script.origin) {
+        return false
+      }
+      return script.name != filename && script.origin.indexOf(filename) > -1
+    })
+  }
+  /**
+   * @typedef {Object} collectedSource
+   * @property {String} filename - name of the imported file (can be only asset name or owner:asset combo
+   * @property {String} code - transpiled code
+   * @property {String} name - import name - usually same as filename
+   * @property {String} origin - asset name from which this file has been imported
+   * @property {String} referrer - guessed asset owner name ( if it don't have one in the filename )
+   * @property {String} url - api link to transpiled asset - so it can be loaded from bundle
+   * @property {Boolean} isExternalFile - if true - it's not MGB asset
+   *
+   * Finds collected source by filename
+   * @param filename
+   * @returns {collectedSource}
+   */
+  findCollected(filename) {
+    return this.collectedSources.find(s => s.name === filename)
+  }
+
+
+  /**
+   * Converts import to URL and loads it: there are 3 cases:
+   *    global import e.g. phase / react / jquery
+   *       if it's known import we will use provided CDN location and load defs for tern
+   *       if unknown - we will load generate link from CDN and load source directly into tern
+   *    local import e.g. /!vault:cssLoader (any code asset)
+   *    direct link e.g. https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js
+   *
+   * @private
+   * @param filename - filename as defined in the source file /user:asset
+   * @param additionalProps - add additional props for resolve value
+   * @param ignoreCache - forces to retrieve latest content
+   * @returns {Promise.<{url, data}>}
+   */
+  loadImportedFile(filename, additionalProps, ignoreCache = false) {
+    additionalProps = additionalProps || {}
+
+    // remove leading . from filename - old imports has one
+    if (filename.indexOf('.') === 0)
+      filename = filename.substring(1, filename.length)
+
+    // simple import e.g. 'phaser', 'jquery'
+    if (SourceTools.isGlobalImport(filename)) {
+      const parts = SourceTools.getLibAndVersion(filename)
+      const lib = knownLibs[parts[0]]
+      // load knowLib - e.g. phaser
+      if (lib) {
+        return this.load(lib.src ? lib.src(parts[1]) : src, null,
+          Object.assign(additionalProps, {
+            useGlobal: lib.useGlobal,
+            isExternalFile: true
+          })
+        )
+          .then(info => {
+            if (lib.defs)
+              this.loadDefs(lib.defs())
+            else
+              this.addFileToTern(filename, info.data)
+            return info
+          })
+      }
+      // unknown lib - e.g. jquery
+      else {
+        return this.load(getModuleServer(parts[0], parts[1]), null, additionalProps)
+          .then(info => {
+            this.addFileToTern(filename, info.data)
+            return info
+          })
       }
     }
-    this.collectSource(source)
-    // MGB assets will have cache.. remote won't
-    if (!source.isExternalFile) {
-      this.addDefsOrFile(name, this.transpileCache[name].src, true)
+    // load local file
+    else if (!SourceTools.isExternalFile(filename)) {
+      const ref = additionalProps.referrer || this.asset.dn_ownerName
+      const parts = SourceTools.getUserAndName(filename, ref)
+      return this.startObserver(parts)
+        .then(asset => {
+          // TODO: what to do without asset????
+          const src = `/api/asset/code/${parts.join('/')}`
+          const es5src = `/api/asset/code/es5/${parts.join('/')}`
+          // try to get e5 source from asset
+          // TODO: store in the asset meta info - as we only need to verify if asset has es5 available
+          return this.load(es5src, asset).then(es5 => {
+
+            return this.load(src, asset, Object.assign(additionalProps, {
+              referrer: asset ? asset.dn_ownerName : ref,
+              isExternalFile: !!(es5 && es5.data && es5.data.trim()),
+              url: `/api/asset/code/es5/${parts.join('/')}`
+            }), ignoreCache)
+              .then(info => {
+                // TODO: check file size
+                this.addFileToTern(filename, info.data)
+                return info
+              })
+
+          })
+
+        })
     }
+    // should be full url
     else {
-      this.addDefsOrFile(name, source.code)
+      return this.load(filename, null, Object.assign(additionalProps, {
+        isExternalFile: true
+      }))
+        .then(info => {
+          // TODO: check file size
+          this.addFileToTern(filename, info.data)
+          return info
+        })
     }
-
-    cb && cb()
   }
 
-  // adds def of file to the tern server - so we can show autocomplete and other info from imported files
-  addDefsOrFile(filename, code, replace = false) {
-    if (this.isDestroyed) return
-    // skip added defs and files
-    if(this.addedFilesAndDefs[filename]){
-      return
+  addFileToTern(filename, src){
+  if(src.length < SpecialGlobals.maxFileSizeForAST) {
+    this.tern.server.addFile(filename, src, true)
+    console.log("Added file", filename, (src.length / 1024) + "KB")
+  }
+  else
+    console.log(`File ${filename} is too big (${src.length / 1024}KB )!`)
+  }
+  /**
+   * Starts observing asset
+   * @private
+   * @param {String[]} parts
+   * @returns {Promise.<Asset>}
+   */
+  startObserver(parts) {
+    const key = parts.join(':')
+    // restore subscription
+    if (this.tmpSubscriptions[key]) {
+      this.subscriptions[key] = this.tmpSubscriptions[key]
     }
 
-    const lib = SourceTools.getKnowLib(filename)
-    if (lib && lib.defs) {
-      this.loadDefs(lib.defs())
-    }
-    else {
-      // TODO: debug: sometimes code isn't defined at all
-      if (!code) {
-        return
-      }
-      if (code.length < MAX_ACCEPTABLE_SOURCE_SIZE) {
-        if(!replace){
-          this.addedFilesAndDefs[filename] = true
-        }
-        /*const cleanFileName = filename.startsWith("./") ? filename.substr(2) : (
-          filename.startsWith("/") && !filename.startsWith('//') ? filename.substr(1) : filename)*/
-        this.tern.server.addFile(filename, code, replace)
-        this.tern.cachedArgHints = null
+    if (this.subscriptions[key] && !this.subscriptions[key].stopped()) {
+      if (this.subscriptions[key].ready()) {
+        return Promise.resolve(this.subscriptions[key].getAsset())
       }
       else {
-        console.log(`${filename} is too big [${code.length} bytes] and no defs defined`)
-      }
-    }
-  }
-  // adds script to the collection - user has added import
-  collectSource(source){
-    const oldSource = this.isAlreadyTranspiled(source.name)
-    if(oldSource){
-      oldSource.code = source.code
-      oldSource.useGlobal = source.useGlobal
-      oldSource.localName = source.localName
-      return
-    }
-    this.collectedSources.push(source)
-  }
-  // helper to check is script already is already transpiled - so we could skip unnecessary transpilations
-  isAlreadyTranspiled(filename) {
-    return this.collectedSources.find(s => s.name == filename)
-  }
-  // removes script from collection - user has removed import
-  removeTranspiled(filename) {
-    const item = this.isAlreadyTranspiled(filename)
-    if (item) {
-      this.collectedSources.splice(this.collectedSources.indexOf(item), 1)
-    }
-  }
-
-  // schedules update on the next update loop (also waits until previous task is done)
-  updateNow(cb) {
-    if (this.isDestroyed) return
-    // wait for active job to complete
-    if (this.inProgress) {
-      setTimeout(() => {
-        this.updateNow(cb)
-      }, 1000)
-      return;
-    }
-
-    // call manually pending changes
-    if (this.timeout) {
-      // this will trigger in progress and waiting will start again
-      window.clearTimeout(this.timeout);
-      this.timeout = 0;
-
-      this.delayed(true);
-      this.updateNow(cb);
-    }
-    // already on the latest version, yay!
-    else
-      cb()
-  }
-
-  // real source collection and transformation method
-  _collectAndTranspile(srcText, filename, callback, force, origin) {
-    if (this.isDestroyed) return
-    this.pendingChanges[filename] = true
-    const compiled = !force && this.isAlreadyTranspiled(filename);
-    if (compiled) {
-      callback && callback(compiled.code)
-      return
-    }
-    this._hasSourceChanged = true
-    this.transform(srcText, filename, (output) => {
-      var imports = SourceTools.parseImport(output)
-      var cb
-      if (callback) {
-        // execute callback on the next tick
-        cb = () => {
-          window.setTimeout(() => {
-            callback(output.code)
-          }, 0)
-        }
-      }
-
-      var load = () => {
-        if (imports.length) {
-          const imp = imports.shift()
-          // TODO: find out how to resolve this - if ever possible
-          if(this.pendingChanges[imp.src]){
-            this.setError({reason: "Recursion detected: " + filename, evidence: filename, code: ERROR.WARN_RECURSION_DETECTED})
-            //this.setError({reason: "Recursion detected: " + filename, evidence: filename, code: ERROR.RECURSION_DETECTED})
-            load()
-            return
+        return new Promise( (resolve, reject) => {
+            this.checkCancel(reject)
+            setTimeout(() => {
+              return this.startObserver(parts).then(asset => resolve(asset))
+            }, 300)
           }
-          this.loadFromCache(imp.src, load, imp.name, filename)
-        }
-        else {
-          this.collectScript(filename, {code: output.code, url: filename}, cb, null, force, origin)
-          delete this.pendingChanges[filename]
-        }
-      }
-      load()
-    })
-
-  }
-  // transforms code from ES6 to ES5 + skips external libs
-  transform(srcText, filename, cb) {
-    if (this.isDestroyed) return
-    let code = '';
-    if (!SourceTools.isExternalFile(filename)) {
-      code = srcText;
-    }
-    this.transpile(filename, code, cb);
-  }
-  // real transpilation is happening here
-  transpile(filename, src, cb) {
-    // this instance has been destroyed while doing some background work
-    if (this.isDestroyed) return
-
-    if (this.transpileCache[filename]) {
-      if (this.transpileCache[filename].src == src) {
-        cb(this.transpileCache[filename].data)
-        return
-      }
-    }
-    //
-    if(this.babelWorker.isBusy){
-      // debugger
-      // racing condition - usually happens when one is working on the main file and second on the file included by the main file..
-      // it should be safe to ignore direct request - as main file will pull in dependency anyway
-      return
-    }
-    // TODO: spawn extra workers?
-    this.babelWorker.onmessage = (m) => {
-      this.transpileCache[filename] = {src, data: m.data}
-      // prevent extra calls
-      this.babelWorker.onmessage = null
-      this.babelWorker.isBusy = false
-      cb(m.data)
-    };
-    this.babelWorker.isBusy = filename
-    this.babelWorker.postMessage([filename, src])
-  }
-
-  // cb usually will be this@load
-  // wrapper around loadImport - to avoid extra ajax calls to CDN
-  loadFromCache(urlFinalPart, cb, localName, origin) {
-    if (this.isDestroyed) return
-
-    // don't load at all
-    if (this.cache[urlFinalPart] || !urlFinalPart) {
-      this.collectScript(urlFinalPart, this.cache[urlFinalPart], null, localName, false, origin)
-      cb && cb('', '')
-      return
-    }
-    const url = SourceTools.resolveUrl(urlFinalPart, this.asset_id)
-    if (!url) {
-      cb && cb('', '')
-      return
-    }
-
-    if (!SourceTools.isExternalFile(url)) {
-      this.loadAndObserveLocalFile(url, urlFinalPart, cb, origin)
-      // ajax
-      /*SourceTools.loadImport(url, (src) => {
-        this._collectAndTranspile(src, urlFinalPart, cb)
-      })*/
-      return
-    }
-    // load external file and cache - so we can skip loading next time
-    SourceTools.loadImport(url, (source, error) => {
-      if(error){
-        this.setError(error)
-      }
-      // we got destroyed while loading import... nothing to do here anymore
-      if(!this.cache){
-        return
-      }
-      this.cache[urlFinalPart] = source
-      this.collectScript(urlFinalPart, source, cb, localName, false, origin)
-    }, urlFinalPart)
-  }
-
-  // loads and observes imported MGB code asset for changes
-  loadAndObserveLocalFile(url, urlFinalPart, cb, origin){
-    // import './stauzs:asset_name'
-    const parts = urlFinalPart.split("/").pop().split(":")
-    const name = parts.pop()
-    const owner = parts.length > 0 ? parts.pop() : this.owner
-    const assetUrl = `/api/asset/code/${owner}/${name}`
-
-    const getSourceAndTranspile = (err, assets) => {
-      if(assets.length > 1){
-        this.setError({reason: "Multiple candidates found for " + urlFinalPart, evidence: urlFinalPart, code: ERROR.MULTIPLE_SOURCES})
-      }
-      const asset = assets[0]
-      if (asset) {
-        mgbAjax(assetUrl, (err, content) => {
-            if(err){
-              this.setError({reason: "Unable to load: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.SOURCE_NOT_FOUND})
-              return
-            }
-            this._collectAndTranspile(content, urlFinalPart, cb, true, origin)
-          }, asset
         )
       }
-      else {
-        // TODO somewhere in the callstack get line number and pass to this function - atm EditCode is guessing lines by evidence string
-        this.setError({reason: "Unable to locate: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.SOURCE_NOT_FOUND})
-        cb("")
-      }
-    }
-    // asset resource identifier
-    const ari = url ; //+ '/' + urlFinalPart
-    // already subscribed and observing
-    // TODO: this can be skipped - but requires to check all edge cases - e.g. first time load / file removed and then added again etc
-    // atm this seems pretty quick
-
-    if (this.subscriptions[ari]) {
-      getSourceAndTranspile(null, this.subscriptions[ari].getAssets())
-      return
     }
 
-    const onReady = () => {
-      const assets = this.subscriptions[ari].getAssets()
-      if(!assets.length){
-        // we still need to call getSourceAndTranspile - so loaded files match requested files
-        getSourceAndTranspile(null, [])
-        return
+    return new Promise(resolve => {
+      const owner = parts[0]
+      const name = parts[1]
+
+      const onReady = () => {
+        // if subscription cannot be found - it has been moved for cleanup - restore it
+        if (!this.subscriptions[key])
+          this.subscriptions[key] = this.tmpSubscriptions[key]
+        const assets = this.subscriptions[key].getAssets()
+        if (assets.length > 1) {
+          this.emit('error', {
+            reason: "Multiple candidates found for: /" + key,
+            evidence: '/' + key,
+            code: ERROR.MULTIPLE_SOURCES
+          })
+        }
+
+        if (!assets.length) {
+          this.emit('error', {
+            reason: "Unable to load: /" + key,
+            evidence: '/' + key,
+            code: ERROR.SOURCE_NOT_FOUND
+          })
+          resolve()
+          return
+        }
+
+        const asset = assets[0]
+        // stop subscription for active asset immediately
+        if (this.asset._id === asset._id) {
+          this.subscriptions[key].subscription.stop()
+        }
+        resolve(asset)
       }
 
-      // if this is main file - only requested in different format
-      if(this.asset_id === assets[0]._id){
-        //this.subscriptions[ari].subscription.stop()
-        this.setError({reason: "Recursion detected: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.RECURSION_DETECTED})
-        this.subscriptions[ari].subscription.stop()
-        getSourceAndTranspile(null, [])
-        return
+      const onChange = () => {
+        this.loadImportedFile('/' + key, null, true)
+          .then(data => this._collectAndTranspile(data.url, data.data))
+          .then(() => {
+            this.emit("change", this.subscriptions[key].getAsset())
+          })
       }
-      // we need this for recursion warning
-      getSourceAndTranspile(null, assets)
-    }
-    // on Change we should check if there is already something happening.. as it can be called at any time
-    const onChange = () => {
-      if(this.inProgress){
-        return
-      }
-      const assets = this.subscriptions[ari].getAssets()
-      // if this is main file - only requested in different format
-      if(this.asset_id === assets[0]._id){
-        this.setError({reason: "Recursion detected: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.RECURSION_DETECTED})
-        return
-      }
-      getSourceAndTranspile(null, assets)
-    }
 
-    // from now on only observe asset and update tern on changes only
-    this.subscriptions[ari] = observeAsset({
-      dn_ownerName: owner,
-      name: name,
-      kind: AssetKindEnum.code,
-      isDeleted: false
-    }, onReady, onChange)
-  }
-  // expose private variable - EditCode uses this
-  hasChanged(){
-    return this._hasSourceChanged
+      this.subscriptions[key] = observeAsset({
+        dn_ownerName: owner,
+        name: name,
+        kind: AssetKindEnum.code,
+        isDeleted: false
+      }, onReady, onChange)
+    })
+
   }
 
-  // includes only local MGB code in the bundle - leave CDN untouched
-  createBundle(cb){
-    if (this.isDestroyed) return
-    if (!this._hasSourceChanged) {
-      cb(this.cachedBundle, true)
-      return
+  /**
+   * @typedef {Object} babelResponse
+   * @property {String} code - transpiled code
+   * @property {Object} data - information about modules (imports / exports)
+   * @property {Object} astTokens - babel AST tokens (after transpilation) - not used atm
+   *
+   * Transpiles src from ES6 to ES5 and resolves promise with {babelResponse}
+   * @param filename - name of the file
+   * @param src - content of the file
+   * @returns {Promise.<babelResponse>}
+   */
+  transpile(filename, src) {
+    if (this.transpileCache[filename] && this.transpileCache[filename].src === src)
+      return Promise.resolve(this.transpileCache[filename].data)
+
+    if (SourceTools.isExternalFile(filename) || SourceTools.isGlobalImport(filename)) {
+      const fakeBabelResponse = {data: {modules: {imports: [], exports: {specifiers: []}}}, code: src}
+      this.transpileCache[filename] = {src, data: fakeBabelResponse}
+      return Promise.resolve(fakeBabelResponse)
     }
-    this.collectSources((sources) => {
-      // check sources and skip bundling if ALL sources are empty
-      // empty means ';' - because of babel transforms
-      let canSkipBundling = true
-      for (let i =0; i < sources.length; i++) {
-        const code = sources[i].code
-        if(code && code !== ";"){
-          canSkipBundling = false
-          break
+    return new Promise((resolve, reject) => {
+      this.checkCancel(reject)
+      const runBabelJob = () => {
+        // TODO: spawn extra workers?
+        this.babelWorker.onmessage = (m) => {
+          this.transpileCache[filename] = {src, data: m.data}
+          // prevent extra calls
+          this.babelWorker.onmessage = null
+          this.babelWorker.isBusy = false
+          resolve(m.data)
         }
+        this.babelWorker.isBusy = filename
+        this.babelWorker.postMessage([filename, src])
       }
-      if(canSkipBundling){
-        this.cachedBundle = ''
-        this._hasSourceChanged = false
-        cb('')
-        return
+      const checkBabelStatus = () => {
+        if (this.babelWorker.isBusy)
+          setTimeout(checkBabelStatus, 100)
+        else
+          runBabelJob()
       }
+      checkBabelStatus()
 
+    })
+  }
 
+  /**
+   * Collects all sources - promise to keep async behaviour
+   * @returns {Promise.<Array>}
+   */
+  collectSources() {
+    return Promise.resolve(this.collectedSources)
+  }
 
-      // only phaser is global atm
-      const externalGlobal = []
-      const externalLocal = []
-      for (let i in sources) {
-        const source = sources[i]
-        if (source.isExternalFile) {
-          const localKey = source.url.split("/").pop().split(".").shift()
-          const partial = {url: source.url, localName: source.localName, name: source.name, localKey: localKey, key: source.key}
-          source.useGlobal
-            ? externalGlobal.push(partial)
-            : externalLocal.push(partial)
+  /**
+   * Creates Code Bundle - without external (CDN) files
+   * @returns {Promise.<String>} - resolves with bundle string
+   */
+  createBundle() {
+    return this.collectSources()
+      .then((sources) => {
+
+        // check sources and skip bundling if ALL sources are empty
+        // empty means ';' - because of babel transforms
+        let canSkipBundling = true
+        for (let i = 0; i < sources.length; i++) {
+          const code = sources[i].code
+          if (code && code !== ";") {
+            canSkipBundling = false
+            break
+          }
         }
-      }
+        if (canSkipBundling) {
+          this.cachedBundle = ''
+          this._hasSourceChanged = false
+          return
+        }
 
-      let allInOneBundle =
-`
+        // only phaser is global atm
+        const externalGlobal = []
+        const externalLocal = []
+        for (let i = 0; i < sources.length; i++) {
+          const source = sources[i]
+          if (source.isExternalFile) {
+            const localKey = source.url.split("/").pop().split(".").shift()
+            const partial = {
+              url: source.url,
+              localName: source.localName,
+              name: source.name,
+              localKey: localKey,
+              key: source.key
+            }
+            source.useGlobal
+              ? externalGlobal.push(partial)
+              : externalLocal.push(partial)
+          }
+        }
+
+        let allInOneBundle =
+          `
 (function(){
 
 var imports = {};
@@ -624,8 +595,11 @@ var loadLocalLibs = function(){
   }
   var lib = localLibs.shift()
   loadScript(lib.url, function(){
-            if(!imports[lib.key])
+            if(lib.key && !imports[lib.key])
               imports[lib.key] = window.exports === window.module.exports ? window.exports : window.module.exports
+
+            if(lib.key && !imports[lib.key + '.js'])
+              imports[lib.key + '.js'] = window.exports === window.module.exports ? window.exports : window.module.exports
 
             if(!imports[lib.localKey])
               imports[lib.localKey] = window.exports === window.module.exports ? window.exports : window.module.exports
@@ -635,6 +609,9 @@ var loadLocalLibs = function(){
 
             if (lib.name && !imports[lib.name])
               imports[lib.name] = window.exports === window.module.exports ? window.exports : window.module.exports
+            if (lib.name && !imports[lib.name + '.js'])
+              imports[lib.name + '.js'] = window.exports === window.module.exports ? window.exports : window.module.exports
+
     loadLocalLibs()
   })
 }
@@ -656,265 +633,254 @@ loadGlobalLibs(globalLibs)
 
 main = function(){
 `
-      const imports = {}
-      for (let i in sources) {
-        const source = sources[i]
-        if(source.isExternalFile){
-          continue
-        }
-
-        const key = source.name.split("@").shift();
-        const localKeyWithExt = key.split("/").pop()
-        const localKey = localKeyWithExt.split(".").shift().split(":").pop()
-
-        allInOneBundle += "window.module = {exports: {}};window.exports = window.module.exports;\n" +
-          source.code + ";\n"
-
-        if(!imports[key])
-          allInOneBundle += "\n" + 'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-        if(!imports[localKey])
-          allInOneBundle += "\n" + 'imports["' + localKey + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-        if (source.localName && !imports[source.localName])
-          allInOneBundle += "\n" + 'imports["' + source.localName + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-        if (source.name && !imports[source.name])
-          allInOneBundle += "\n" + 'imports["' + source.name + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-      }
-
-      allInOneBundle += "\n" + "}})(); "
-      // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
-      /*const worker = new Worker("/lib/BabelWorker.js")
-      worker.onmessage = (e) => {
-        cb(e.data.code)
-        worker.terminate()
-      }
-      worker.postMessage(["bundled_" + this.mainJS, allInOneBundle, {
-        compact: true,
-        minified: true,
-        comments: false,
-        ast: false,
-        retainLines: false
-      }])*/
-
-      if(this.cachedBundle === allInOneBundle){
-        this._hasSourceChanged = false
-        cb(this.cachedBundle, true)
-      }
-      else{
-        cb(allInOneBundle)
-        this.cachedBundle = allInOneBundle
-        this._hasSourceChanged = false
-      }
-    })
-  }
-
-  loadDefs(defs){
-    for(let i=0; i<defs.length; i++){
-      if( this.addedFilesAndDefs[defs[i]]){
-        continue
-      }
-      mgbAjax(defs[i], (err, data) => {
-        if(err){
-          console.error(`Failed to load def ${defs[i]}`, err)
-          return
-        }
-        this.tern.server.addDefs && this.tern.server.addDefs(JSON.parse(data), true)
-        this.addedFilesAndDefs[defs[i]] = true
-        this.tern.cachedArgHints = null
-      })
-    }
-  }
-
-  loadCommonDefs(){
-    this.loadDefs(knownLibs.common.defs())
-  }
-
-  collectImportsForFile(name){
-    return this.collectedSources.filter(script => {
-      // after renaming asset script name won't match asset name
-      // only main script don't have origin
-      if(script.name != name && !script.origin){
-        return false
-      }
-      return script.name != name && script.origin.indexOf(name) > -1
-    })
-  }
-
-
-  // includes all files in the on big bundle file - not used atm
-  createBundle_commonJS(cb) {
-    if (this.isDestroyed) return
-    if (!this._hasSourceChanged) {
-      cb(this.cachedBundle, true)
-      return
-    }
-    this.collectSources((sources) => {
-      let allInOneBundle = `
-(function(){
-  var imports = {};
-  window.require = function(key){
-    if(imports[key] && imports[key] !== true) {
-      return imports[key];
-    }
-    var name = key.split("@").shift()
-    if(imports[name] && imports[name] !== true) {
-      return imports[name]
-    }
-    name = name.split(":").pop();
-    if(imports[name] && imports[name] !== true) {
-      return imports[name]
-    }
-    return (window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)])
-  };`
-      for (let i in sources) {
-        const key = sources[i].name.split("@").shift();
-
-        if (sources[i].useGlobal) {
-          allInOneBundle += "\n" + 'delete window.exports; delete window.module; '
-        }
-        else {
-          allInOneBundle += "\n" + 'window.module = {exports: {}};window.exports = window.module.exports; '
-        }
-        allInOneBundle += sources[i].code + "; "
-
-        if (sources[i].useGlobal) {
-          allInOneBundle += "\n" + 'imports["' + sources[i].name + '"] = true; '
-        }
-        else {
-          allInOneBundle +=
-            "\n" + 'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports)';
-          if (sources[i].name) {
-            allInOneBundle += "\n" + 'imports["' + sources[i].name + '"] = window.module.exports;'
+        const imports = {}
+        for (let i in sources) {
+          const source = sources[i]
+          if (source.isExternalFile) {
+            continue
           }
+
+          const key = source.name.split("@").shift();
+          const localKeyWithExt = key.split("/").pop()
+          const localKey = localKeyWithExt.split(".").shift().split(":").pop()
+
+          allInOneBundle += "window.module = {exports: {}};window.exports = window.module.exports;\n" +
+            source.code + ";\n"
+
+          if (!imports[key])
+            allInOneBundle += "\n" + 'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+
+          if (!imports[key+'.js'])
+            allInOneBundle += "\n" + 'imports["' + key + '.js"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+
+          if (!imports[localKey])
+            allInOneBundle += "\n" + 'imports["' + localKey + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+
+          if (source.localName && !imports[source.localName])
+            allInOneBundle += "\n" + 'imports["' + source.localName + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+
+          if (source.name && !imports[source.name])
+            allInOneBundle += "\n" + 'imports["' + source.name + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
         }
-      }
 
-      allInOneBundle += "\n" + "})(); "
+        allInOneBundle += "\n" + "}})(); "
+        // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
 
-      // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
+        if (this.cachedBundle === allInOneBundle) {
+          this._hasSourceChanged = false
+          return this.cachedAndMinfiedBundle || this.cachedBundle
+        }
+
+        this.cachedBundle = allInOneBundle
+
+        // uncomment to get readable version of es5 code
+        //return  this.cachedBundle
+        return this.transpileAndMinify("bundled_" + this.asset.name, allInOneBundle).then((code) => {
+          this.cachedAndMinfiedBundle = code
+          this._hasSourceChanged = false
+          return this.cachedAndMinfiedBundle
+        })
+      })
+  }
+
+  /**
+   * Transpiles and minifies requested ES6 code - used to store ES5 version of this file
+   * @param name - filename (asset name)
+   * @param codeToTranspile - ES6 code
+   * @returns {Promise}
+   */
+  transpileAndMinify(name, codeToTranspile){
+    name = name  + '.js'
+    return new Promise(resolve => {
       const worker = getCDNWorker("/lib/workers/BabelWorker.js")
       worker.onmessage = (e) => {
-        cb(e.data.code)
         worker.terminate()
+        resolve(e.data.code)
       }
-      worker.postMessage(["bundled_" + this.mainJS, allInOneBundle, {
+      worker.postMessage([name, codeToTranspile, {
         compact: true,
         minified: true,
         comments: false,
         ast: false,
         retainLines: false
       }])
-      this.cachedBundle = allInOneBundle
-      this._hasSourceChanged = false
+    })
+
+  }
+
+  /**
+   * Loads content via AJAX
+   * @param url - source to load
+   * @param asset - if known - allows to use etag
+   * @param additionalProps - additional props to be added when promise resolves
+   * @param ignoreCache - skip cache
+   * @returns {Promise.<{url, data +additionalProps}>}
+   */
+  load(url, asset = null, additionalProps = null, ignoreCache = false) {
+
+    return new Promise((resolve, reject) => {
+      this.checkCancel(reject)
+      if (!ignoreCache && this.loadedFilesAndDefs[url])
+        resolve(Object.assign({url, data: this.loadedFilesAndDefs[url]}, additionalProps))
+
+      mgbAjax(url, (err, data) => {
+        if (err) {
+          console.log("FAILED TO LOAD:", err, additionalProps)
+          const filename = additionalProps ? (additionalProps.filename || url) : url
+          this.emit('error', {
+            reason: "Unable to load: " + filename,
+            evidence: filename,
+            code: ERROR.SOURCE_NOT_FOUND
+          })
+        }
+        this.loadedFilesAndDefs[url] = data || ''
+        resolve(Object.assign({url, data}, additionalProps))
+      }, asset)
     })
   }
 
 
-  static isExternalFile(url) {
-    return !(url.indexOf("http") !== 0 && url.indexOf("//") !== 0)
+  /**
+   * Loads definition files defined in the knownLibs
+   * @param defs{[String]} - Array with strings representing definition file location on server
+   * @returns {Promise.<>} - resolves on success - rejects on failure
+   */
+  loadDefs(defs) {
+    const promises = []
+    for (let i = 0; i < defs.length; i++)
+      promises.push(this.loadSingleDef(defs[i]))
+
+    return Promise.all(promises)
   }
 
-  // gets imported / exported sources from babel response
-  static parseImport(babel) {
+  /**
+   * Load common definition files - e.g. browser, ecmascript
+   * @returns Promise.<>
+   */
+  loadCommonDefs() {
+    return this.loadDefs(knownLibs.common.defs())
+  }
+
+  /**********************************************************/
+  /*****************    Private stuff    ********************/
+  /**********************************************************/
+  /**
+   * @private
+   * Loads single definition file - not used directly
+   * @param def
+   * @returns {Promise.<>}
+   */
+  loadSingleDef(def) {
+    return this.load(def).then(contents => {
+      this.tern.server.addDefs && this.tern.server.addDefs(JSON.parse(contents.data), true)
+      this.tern.cachedArgHints = null
+    })
+  }
+
+  /**********************************************************/
+  /*****************    Static stuff     ********************/
+  /**********************************************************/
+
+  /**
+   * Checks if url is local or remote (CDN)
+   * @param url - source location
+   * @returns {boolean}
+   */
+  static
+  isExternalFile(url) {
+    return url.indexOf("http:") === 0 || url.indexOf("https:") === 0 || url.indexOf("//") === 0
+  }
+
+  /**
+   * Check if url is global import e.g. 'phaser', 'react' etc
+   * @param url
+   * @returns {boolean}
+   */
+  static
+  isGlobalImport(url) {
+    if (url.indexOf('.') === 0)
+      url = url.substring(1, url.length)
+    return url.indexOf('/') !== 0 && url.indexOf('http:') !== 0 && url.indexOf('https:') !== 0
+  }
+
+  /**
+   * extracts username and assetname from filename
+   * @param filename
+   * @param defaultUser - default user
+   * @returns {String[]}
+   */
+  static
+  getUserAndName(filename, defaultUser) {
+    // older imports have format './myLib'
+    if (filename.indexOf('./') === 0) {
+      filename = filename.substring(2, filename.length)
+    }
+    // default import format './myLib'
+    if (filename.indexOf('/') === 0) {
+      filename = filename.substring(1, filename.length)
+    }
+    const parts = filename.split(':')
+    if (parts.length > 1)
+      return parts
+    else if (defaultUser)
+      return [defaultUser, parts[0]]
+    else
+      throw new Error("defaultUser is missing!!!")
+  }
+
+  /**
+   * Splits lib@version - or fallbacks to 'latest' version
+   * @param filename
+   * @returns {String[]}
+   */
+  static
+  getLibAndVersion(filename) {
+    const parts = filename.split('@')
+    if (parts.length > 1) {
+      return parts
+    }
+    return [filename, 'latest']
+  }
+
+  /**
+   * Parses imported files from babel response
+   * @param babelAST
+   * @returns String[]} - array with imported files
+   */
+  static
+  parseImport(babelAST) {
     let imp;
     const ret = [];
 
-    imp = babel.data.modules.imports
+    imp = babelAST.data.modules.imports
     for (let i = 0; i < imp.length; i++) {
-      ret.indexOf(imp[i].source) === -1 && ret.push({
-        src: imp[i].source,
+      const source = imp[i].source
+      const im = source.split('.')
+      if (source.indexOf('/') === 0 && source.indexOf('//') !== 0) {
+        im.pop()
+      }
+      ret.push({
+        url: im.join('.'),
         name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null
       })
     }
 
     // also add export from 'externalSource'
-    imp = babel.data.modules.exports.specifiers
+    imp = babelAST.data.modules.exports.specifiers
     for (let i = 0; i < imp.length; i++) {
+      const source = imp[i].source
+      const im = source.split('.')
+      if (source.indexOf('/') === 0 && source.indexOf('//') !== 0) {
+        im.pop()
+      }
       if (imp[i].kind == "external" && imp[i].source) {
-        ret.indexOf(imp[i].source) === -1 && ret.push({
-          src: imp[i].source,
+        ret.push({
+          url: im.join('.'),
           name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null
         })
       }
     }
 
     return ret
-  }
-
-  // resolves imported file to external (or mgb) link
-  static resolveUrl(urlFinalPart, asset_id) {
-    var lib = SourceTools.getKnowLib(urlFinalPart)
-    if (lib) {
-      return lib.src(lib.ver);
-    }
-    // import X from '/asset name' or import X from '/user/asset name'
-    if (urlFinalPart.startsWith("./") ) {
-      return '/api/asset/code/' + asset_id
-    }
-    if(urlFinalPart.startsWith("/") && urlFinalPart.indexOf("//") === -1){
-      return '/api/asset/code' + urlFinalPart
-    }
-    // import X from 'react' OR
-    // import X from 'asset_id'
-    if (!SourceTools.isExternalFile(urlFinalPart)) {
-      // try CDN
-      return getModuleServer(urlFinalPart)
-      //return MODULE_SERVER + urlFinalPart
-    }
-
-    // import X from 'http://cdn.com/x'
-    return urlFinalPart
-  }
-
-  // loads and caches import
-  static loadImport(url, cb, urlFinalPart = '') {
-    if (SourceTools.tmpCache[url]) {
-      // remove from stack to maintain order
-      window.setTimeout(() => {
-        cb(SourceTools.tmpCache[url])
-      }, 0)
-      return
-    }
-    if (SourceTools.cached404[url]) {
-      //console.error("Failed to load script: [" + url + "]", cached404[url])
-      cb("", {reason: "Failed to include external source: " + urlFinalPart + " ("+SourceTools.cached404[url]+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})
-      return;
-    }
-
-    mgbAjax(url, (err, src, httpRequest) => {
-      if(err){
-        SourceTools.cached404[url] = httpRequest.status
-        cb({code: "", url}, {reason: "Failed to include external source: " + urlFinalPart + " ("+httpRequest.status+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})
-      }
-      else{
-        SourceTools.tmpCache[url] = src
-        window.setTimeout(() => {
-          delete SourceTools.tmpCache[url]
-        }, INVALIDATE_CACHE_TIMEOUT)
-        cb({code: src, url})
-      }
-    })
-  }
-
-  // extracts short name from CDN link lib@ver.js => lib
-  static getShortName(fullUrl) {
-    var name = fullUrl.split("/").pop().split("@").shift().split(".").shift();
-    return name;
-  }
-
-  // check if we already have info about library - e.g. defs / cdn location etc
-  static getKnowLib(urlFinalPart) {
-    var parts = urlFinalPart.split("@")
-    var name = parts[0]
-    var ver = parts[1]
-    var lib = knownLibs[name]
-    if (lib) {
-      lib.ver = ver
-      lib.name = name
-      return lib
-    }
-    return null
   }
 }

@@ -113,11 +113,21 @@ export const observeAsset = (selector, onReady, onChange = onReady, cachedObserv
   const cursor = PartialAzzets.find(selector)
   // from now on only observe asset and call onChange only when asset has been changed
   let onReadyCalled = false
+  let stopped = false
   const observable = cachedObservable || {
-    observer: null,
-    getAssets: () => cursor.fetch(),
-    subscription: null,
-    ready: () => onReadyCalled
+      observer: null,
+      getAssets: () => cursor.fetch(),
+      getAsset: () => {
+        const assets = cursor.fetch()
+        if(assets.length > 0){
+          return assets[0]
+        }
+        // throw error instead ????
+        return null
+      },
+      subscription: null,
+      ready: () => onReadyCalled && !stopped,
+      stopped: () => stopped
   }
   observable.subscription = Meteor.subscribe("assets.public.partial.bySelector", selector, {
     onStop: () => {
@@ -126,7 +136,10 @@ export const observeAsset = (selector, onReady, onChange = onReady, cachedObserv
       // ..this is caused by subscriptions called in ReactGetMeteorData() - as they
       // automatically gets closed. Another fix is to remove from stack Meteor.subscribe..:( (DG says NO NO NO!)
       // TODO(@dgolds):See if there is another approach?
-      !onReadyCalled && observeAsset(selector, onReady, onChange, observable)
+      if(!onReadyCalled)
+        observeAsset(selector, onReady, onChange, observable)
+      else
+        stopped = true
     },
     onReady: () => {
       onReadyCalled = true

@@ -22,8 +22,8 @@ import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import { makeExpireThumbnailLink } from '/client/imports/helpers/assetFetchers.js'
 
 // Some constants we will use
-const MAX_BITMAP_WIDTH = 1500
-const MAX_BITMAP_HEIGHT = 1024
+const MAX_BITMAP_WIDTH = 2048
+const MAX_BITMAP_HEIGHT = 2048
 const MAX_GRAPHIC_FRAMES = 64 // TODO: Pass this into Importer, and also obey it generally
 const DEFAULT_GRAPHIC_WIDTH = 32
 const DEFAULT_GRAPHIC_HEIGHT = 32

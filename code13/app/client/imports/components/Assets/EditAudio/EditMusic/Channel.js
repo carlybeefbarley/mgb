@@ -265,6 +265,14 @@ export default class Channel extends React.Component {
   onDragStart (e) {
     if (e.touches && e.touches[0])
       e = e.touches[0]
+
+    e.dataTransfer.setData('text', 'startDrag')
+    console.log('drag start')
+
+    // firefox way of implementing dragover. actually chrome also can work that way
+    document.ondragover = (event) => 
+      this.onDrag(event)
+
     
     // empty image so you don't see canvas element drag. Need to see only what is dragged inside canvas
     if(e.dataTransfer){
@@ -520,7 +528,6 @@ export default class Channel extends React.Component {
             onMouseOut={this.clearPastePreview.bind(this)}
             draggable={true}
             onDragStart={this.onDragStart.bind(this)}
-            onDrag={this.onDrag.bind(this)}
             onDragEnd={this.onDragEnd.bind(this)}
             onTouchStart={this.onDragStart.bind(this)}
             onTouchMove={this.onDrag.bind(this)}

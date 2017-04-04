@@ -322,7 +322,7 @@ window.onload = function() {
           }
         }
         else{
-          console.log("(info) All files have loaded.")
+          console.info("MGB: All files have loaded!")
           sendSizeUpdate()
         }
       };

@@ -32,14 +32,16 @@ export default ConsoleMessageViewer = React.createClass({
       this.props.gotoLinehandler(msg.line, msg.file)
   },
 
-
+  componentDidUpdate(){
+    this.refs.msgContainer.scrollTop = this.refs.msgContainer.scrollHeight
+  },
   smartRender: function () {
     if (!this.props.messages)
       return null
 
     let fmt = { "log":  { style: {}, icon: "" },
                 "debug": { style: {}, icon: "" },
-                "info":  { style: {}, icon: "" },
+                "info":  { style: {color: 'blue'}, icon: "info " },
                 "warn":  { style: {color: "orange"}, icon: "warning " },
                 "error": { style: {color: "red"}, icon: "x" },
                 "windowOnerror": { style: {color: "red"}, icon: "bug" }
@@ -64,8 +66,8 @@ export default ConsoleMessageViewer = React.createClass({
     return (
         <div id="mgbjr-EditCode-console" className="ui grey segment" style={{
           backgroundColor: "rgba(0,0,0,0.03)",
-          maxHeight: "200px",
-          overflow: "auto", // scroll will create ugly scrollbars in the firefox
+          // maxHeight: "200px",
+          // overflow: "auto",
           clear:"both"
           }}>
           <div className="header">
@@ -74,7 +76,14 @@ export default ConsoleMessageViewer = React.createClass({
               <i style={{float: 'right'}} className='ui trash outline icon' title='clear console' onClick={clearConsoleHandler} />
             }
           </div>
+          <div className="message-container" ref="msgContainer" style={{
+            overflow: "auto",
+            width: "100%",
+            maxHeight: "150px",
+            marginTop: "6px"
+          }}>
           { this.smartRender() }
+          </div>
         </div>
       )
   }

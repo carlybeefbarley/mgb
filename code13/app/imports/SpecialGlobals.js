@@ -30,6 +30,7 @@ export default SpecialGlobals = {
   allowObservers: true,
   editCode: {
     mgbMentorPrefix: 'MGB mentor:',
+    messagesInConsole: 30,
     maxFileSizeForAST: 200 * 1024, // 200 KB - seems very stable on 8GB machine - more can crash sometimes
     typingSpeed: 750, //ms - this will prevent all updates for X time after keypress - improves fast typing UX (feels more responsive)
     maxLengthOfCursorHistory: 100,

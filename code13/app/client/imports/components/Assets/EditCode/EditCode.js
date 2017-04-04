@@ -332,7 +332,7 @@ export default class EditCode extends React.Component {
       redo: []
     }
 
-    this.mgb_c2_hasChanged = true
+    this.mgb_c2_hasChanged = this.props.canEdit
     // storing here misc stuff that can be accessed to gain performance
     this.mgb_cache = {}
 
@@ -449,6 +449,7 @@ export default class EditCode extends React.Component {
 
     this.tools = new SourceTools(this.ternServer, this.props.asset)
     this.tools.on('change', asset => {
+      this.consoleLog(`Updated asset: /${asset.dn_ownerName}:${asset.name}`)
       this.quickSave()
     })
     this.tools.on('error', err => {
@@ -1515,11 +1516,18 @@ export default class EditCode extends React.Component {
 
   _consoleAdd(data) {
     // Using immutability helpers as described on https://facebook.github.io/react/docs/update.html
-    let newMessages = update(this.state.consoleMessages, {$push: [data]}).slice(-10)
+    let newMessages = update(this.state.consoleMessages, {$push: [data]}).slice(-SpecialGlobals.editCode.messagesInConsole)
     this.setState({consoleMessages: newMessages})
     // todo -  all the fancy stuff in https://github.com/WebKit/webkit/blob/master/Source/WebInspectorUI/UserInterface/Views/ConsoleMessageView.js
   }
 
+  consoleLog(message) {
+    this._consoleAdd({
+      args:['MGB: ' + message],
+      timestamp: new Date,
+      consoleFn:"info"
+    })
+  }
   _handle_iFrameMessageReceiver(event) {
     // there is no ref for empty code
     if (this.refs.gameScreen)   // TODO: This maybe a code smell that we (a) are getting a bunch more mesage noise than we expect (e.g. Meteor.immediate) and (b) that we should maybe register/deregister this handler more carefully
@@ -1700,7 +1708,7 @@ export default class EditCode extends React.Component {
       this.handleStop()
 
 
-    this._consoleClearAllMessages()
+    this.consoleLog("Starting new game runner")
     if (!this.bound_handle_iFrameMessageReceiver)
       this.bound_handle_iFrameMessageReceiver = this._handle_iFrameMessageReceiver.bind(this)
     window.addEventListener('message', this.bound_handle_iFrameMessageReceiver)
@@ -1795,7 +1803,6 @@ export default class EditCode extends React.Component {
       }, 100)
       return
     }
-
     this.setState({creatingBundle: true})
     this.tools.createBundle()
       .then(bundle => {
@@ -1902,6 +1909,7 @@ export default class EditCode extends React.Component {
 
   handleHotReload() {
     if (this.state.hotReload) {
+      this.consoleLog(`Hot Reload - refreshing`)
       if (this.state.isPlaying){
         this.handleRun()
       }

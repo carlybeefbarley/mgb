@@ -440,11 +440,12 @@ export default class TileSet extends React.Component {
   }
 
   render () {
-    if (!this.props.tilesets.length) {
+    const ts = this.tileset
+    if (!this.props.tilesets.length || !ts) {
       return this.renderEmpty()
     }
     const tilesets = this.renderTileset()
-    const ts = this.tileset
+
     return (
       <div className='mgbAccordionScroller tilesets'>
         {this.renderForModal()}

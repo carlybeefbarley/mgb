@@ -1767,7 +1767,8 @@ export default class EditCode extends React.Component {
   handleFullScreen(id = this.props.asset._id) {
     if (this.props.canEdit) {
       // use this so we can get favicon
-      const urlToOpen = makeCDNLink("/blank.html") //window.location.origin + '/api/blank' //- to work with pushState without reload
+      // TODO: change iframe manipulations to messages - to use CDN link to blank page
+      const urlToOpen = "/blank.html" //window.location.origin + '/api/blank' //- to work with pushState without reload
       let fullScreenWindow = window.open(urlToOpen, "Bundle")
       this.mgb_fullScreenWindow = fullScreenWindow
       this.createBundle(() => {

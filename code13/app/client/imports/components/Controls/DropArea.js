@@ -134,6 +134,10 @@ export default class DropArea extends React.Component {
     this.props.onChange && this.props.onChange(name, this.state.asset)
   }
 
+
+  /**
+   * Gets asset related to this drop area
+   */
   getAsset() {
     if (this.state.asset)
       return this.state.asset
@@ -143,15 +147,18 @@ export default class DropArea extends React.Component {
       let name = parts.pop()
       if (/(\#\d+)$/.test(name) && this.props.kind === 'graphic')
         name = name.split(' #')[0]
-      const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
-      if(owner == "[builtin]"){
-        return
-      }
-      const aa =  Azzets.find({dn_ownerName: owner, name: name}).fetch()
 
-      if (aa && aa.length) {
-        return aa[0]
-      }
+      const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
+      if(owner == "[builtin]")
+        return
+
+      // use or not to use isDeleted here ???????
+      const assets =  Azzets.find({dn_ownerName: owner, name: name, kind: this.props.kind}).fetch()
+      if(assets.length > 1)
+        console.warn("Multiple assets located for DropArea", assets)
+
+      if (assets && assets.length)
+        return assets[0]
     }
     return null
   }
@@ -162,14 +169,14 @@ export default class DropArea extends React.Component {
       return
 
     const transform = this.getEffect(this.props.effect)
-    const frame = this.getFrame(this.props.frame) 
+    const frame = this.getFrame(this.props.frame)
     const imgLink = frame === 0 ? Thumbnail.getLink(asset) : `/api/asset/png/${asset._id}?frame=${frame}`
 
     // TODO: render effect
     return (
       <QLink to={`/u/${asset.dn_ownerName}/asset/${asset._id}`}>
         <img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={imgLink}/>
-        <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div> 
+        <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div>
       </QLink>
     )
   }

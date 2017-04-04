@@ -1569,9 +1569,15 @@ export default class EditGraphic extends React.Component {
                 scalingOptions={['None']}
                 handleResize={this.handleImageResize} />
 
+            {/* !!!! span instead of buttons becasue firefox don't understand miltiple actions inside Button:*/}
+            {/* <button> */}
+            {/*   <span onClick...></span> */ }
+            {/*   <span onClick...></span> */ }
+            {/* </button> */ }
+
             <Popup
                 trigger={ (
-                  <Button size='small' id="mgbjr-editGraphic-changeCanvasZoom">
+                  <span id="mgbjr-editGraphic-changeCanvasZoom" className="ui button small">
                     <span style={{ cursor: 'pointer' }} onClick={this.zoomOut}>
                       <Icon name='zoom out'/>
                     </span>
@@ -1580,7 +1586,7 @@ export default class EditGraphic extends React.Component {
                     <span style={{ cursor: 'pointer' }} onClick={this.zoomIn}>
                       <Icon name='zoom in'/>
                     </span>
-                  </Button>
+                  </span>
                 )}
                 on='hover'
                 header='Zoom'
@@ -1592,7 +1598,7 @@ export default class EditGraphic extends React.Component {
 
             <Popup
                 trigger={ (
-                  <Button size='small' id="mgbjr-editGraphic-changeCanvasZoom">
+                  <span className="ui button small" id="mgbjr-editGraphic-toggleGrid">
                     Grid&nbsp;
                     <span style={{ cursor: 'pointer' }} onClick={this.handleToggleGrid}>
                       <Icon name='grid layout' color={this.state.showGrid ? null : 'grey'}/>
@@ -1601,7 +1607,7 @@ export default class EditGraphic extends React.Component {
                     <span style={{ cursor: 'pointer' }} onClick={this.handleToggleCheckeredBg}>
                       <Icon name='clone' color={this.state.showCheckeredBg ? null : 'grey'}/>
                     </span>
-                  </Button>
+                  </span>
                 )}
                 on='hover'
                 mouseEnterDelay={250}

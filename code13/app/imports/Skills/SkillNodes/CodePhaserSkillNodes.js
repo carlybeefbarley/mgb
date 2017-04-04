@@ -206,6 +206,15 @@ export default {
       ...(C.E.$meta)
     },
   },
+  sound: {
+    $meta: {
+      name: 'Sound',
+      icon: 'code',
+      description: `Music and sound`,
+      "subsection": "Misc",
+      ...(C.E.$meta)
+    },
+  },
   // TODO needs joyride selectors, completation tags
   // oop: {
   //   $meta: {

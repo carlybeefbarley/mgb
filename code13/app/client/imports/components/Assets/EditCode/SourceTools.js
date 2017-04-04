@@ -367,11 +367,16 @@ export default class SourceTools extends EventEmitter {
     }
   }
 
+  /**
+   * Adds file (es5/6 code) to tern server
+   * @param filename
+   * @param src
+   */
   addFileToTern(filename, src){
     const prev = this.transpileCache[filename]
     if(this.transpileCache[filename]){
       if(prev.src === src){
-        console.log("Already added to tern server... skipping")
+        /// console.log("Already added to tern server... skipping")
         return
       }
     }

@@ -1758,21 +1758,17 @@ export default class EditCode extends React.Component {
   }
   handleFullScreen(id = this.props.asset._id) {
     if (this.props.canEdit) {
-      const urlToOpen = "about:blank"; //window.location.origin + '/api/blank' //- to work with pushState without reload
+      // use this so we can get favicon
+      const urlToOpen = makeCDNLink("/blank.html") //window.location.origin + '/api/blank' //- to work with pushState without reload
       let fullScreenWindow = window.open(urlToOpen, "Bundle")
       this.mgb_fullScreenWindow = fullScreenWindow
-
-      fullScreenWindow.document.write(
-        `<h1>Creating bundle</h1>
-<p>Please wait - the latest version of your game is being bundled and loaded</p>`
-      )
       this.createBundle(() => {
         // clear previous data - and everything else
         if (!fullScreenWindow.document) {
           fullScreenWindow = window.open(urlToOpen, "Bundle")
         }
         const delayReloadIfSaving = () => {
-          if(this.props.hasUnsentSaves || this.props.asset.isUnconfirmedSave)
+          if (this.props.hasUnsentSaves || this.props.asset.isUnconfirmedSave)
             window.setTimeout(delayReloadIfSaving, 100)
           else {
             //child.history.pushState(null, "Bundle", `/api/asset/code/bundle/${id}`)

@@ -18,6 +18,7 @@ const makeCodeBundle = (asset, origin) => {
 <html>
 <head>
 <meta charset="UTF-8" />
+<link rel="shortcut icon" href="/images/favicons/favicon.ico">
 <title>${asset.name}</title>
 <style>html, body{padding: 0; margin: 0; width: 100%; height: 100%}</style>
 </head>

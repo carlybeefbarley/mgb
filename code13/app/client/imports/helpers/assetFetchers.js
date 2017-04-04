@@ -32,9 +32,15 @@ Meteor.startup(() => {
 })
 
 export const getCDNDomain = () => CDN_DOMAIN
-// makeCDNLink() will convert a local link e.g. /api/asset to //xxx.cloufront.com/api/asset?hash
-// uri MUST have a leading slash in order to be converted (but not //)
-export const makeCDNLink = (uri, etagOrHash = null) => {
+
+/**
+ * Converts uri to full url on CDN server (prefixes uri with CDN server)
+ * @param uri - uri to convert
+ * @param etagOrHash - used for cache bust
+ * @param prefixDomainAlways - set this to force prefixing - even if CDN is not set it will add origin to the uri
+ * @returns {String}
+ */
+export const makeCDNLink = (uri, etagOrHash = null, prefixDomainAlways = false) => {
   if (uri === undefined){
     //throw new Error("UriIsNotDefined!")
     console.error("makeCDNLink - missing uri") // error for stack trace
@@ -55,7 +61,7 @@ export const makeCDNLink = (uri, etagOrHash = null) => {
       if(__meteor_runtime_config__ && __meteor_runtime_config__.ROOT_URL){
         // make sure we don't break http / https
         const root_host = __meteor_runtime_config__.ROOT_URL.split("//").pop()
-        if(!root_host.startsWith(window.location.host) && !root_host.startsWith("localhost")){
+        if( (!root_host.startsWith(window.location.host) && !root_host.startsWith("localhost")) || prefixDomainAlways){
           return `${__meteor_runtime_config__.ROOT_URL}${uri}?hash=${hash}`
         }
       }

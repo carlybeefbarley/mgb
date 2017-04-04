@@ -1,0 +1,302 @@
+.mgb-mock-skillsmap {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  padding: 0.25em;
+  background: #FFF;
+  border-radius: 0.2em;
+  line-height: 1;
+}
+.mgb-mock-skillsmap .bar {
+  cursor: pointer;
+  margin-bottom: 0.125em;
+  background-repeat: repeat-x;
+}
+.mgb-mock-skillsmap .bar .label {
+  padding: 0.3em 0.6em;
+  white-space: nowrap;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-transform: uppercase;
+}
+.mgb-mock-skillsmap .bar.getStarted {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #EEE 1px, #EEE);
+  background-size: 4.16666667% 100%;
+}
+.mgb-mock-skillsmap .bar.getStarted .label {
+  width: 87.5%;
+  color: #3d5c3d;
+  background-image: linear-gradient(90deg, #c1e0c1, #c1e0c1 1px, #a6d3a6 1px, #a6d3a6);
+  background-size: 4.76190476% 100%;
+}
+.mgb-mock-skillsmap .bar.getStarted:hover {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #DDD 1px, #DDD);
+}
+.mgb-mock-skillsmap .bar.getStarted:hover .label {
+  color: #293d29;
+  background-image: linear-gradient(90deg, #c6e2c6, #c6e2c6 1px, #8cc68c 1px, #8cc68c);
+}
+.mgb-mock-skillsmap .bar.code {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #EEE 1px, #EEE);
+  background-size: 1% 100%;
+}
+.mgb-mock-skillsmap .bar.code .label {
+  width: 33%;
+  color: #3d5c3d;
+  background-image: linear-gradient(90deg, #c1e0c1, #c1e0c1 1px, #a6d3a6 1px, #a6d3a6);
+  background-size: 3.03030303% 100%;
+}
+.mgb-mock-skillsmap .bar.code:hover {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #DDD 1px, #DDD);
+}
+.mgb-mock-skillsmap .bar.code:hover .label {
+  color: #293d29;
+  background-image: linear-gradient(90deg, #c6e2c6, #c6e2c6 1px, #8cc68c 1px, #8cc68c);
+}
+.mgb-mock-skillsmap .bar.art {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #EEE 1px, #EEE);
+  background-size: 3.33333333% 100%;
+}
+.mgb-mock-skillsmap .bar.art .label {
+  width: 50%;
+  color: #5c513d;
+  background-image: linear-gradient(90deg, #ffe9c1, #ffe9c1 1px, #ffe0a6 1px, #ffe0a6);
+  background-size: 6.66666667% 100%;
+}
+.mgb-mock-skillsmap .bar.art:hover {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #DDD 1px, #DDD);
+}
+.mgb-mock-skillsmap .bar.art:hover .label {
+  color: #3d3629;
+  background-image: linear-gradient(90deg, #ffebc6, #ffebc6 1px, #ffd78c 1px, #ffd78c);
+}
+.mgb-mock-skillsmap .bar.design {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #EEE 1px, #EEE);
+  background-size: 2% 100%;
+}
+.mgb-mock-skillsmap .bar.design .label {
+  width: 76%;
+  color: #5c3d5c;
+  background-image: linear-gradient(90deg, #ecc4ec, #ecc4ec 1px, #e3abe3 1px, #e3abe3);
+  background-size: 2.63157895% 100%;
+}
+.mgb-mock-skillsmap .bar.design:hover {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #DDD 1px, #DDD);
+}
+.mgb-mock-skillsmap .bar.design:hover .label {
+  color: #3d293d;
+  background-image: linear-gradient(90deg, #edc9ed, #edc9ed 1px, #db93db 1px, #db93db);
+}
+.mgb-mock-skillsmap .bar.audio {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #EEE 1px, #EEE);
+  background-size: 20% 100%;
+}
+.mgb-mock-skillsmap .bar.audio .label {
+  width: 60%;
+  color: #5c3d3d;
+  background-image: linear-gradient(90deg, #ece0e0, #ece0e0 1px, #e3d3d3 1px, #e3d3d3);
+  background-size: 33.33333333% 100%;
+}
+.mgb-mock-skillsmap .bar.audio:hover {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #DDD 1px, #DDD);
+}
+.mgb-mock-skillsmap .bar.audio:hover .label {
+  color: #3d2929;
+  background-image: linear-gradient(90deg, #ede2e2, #ede2e2 1px, #dbc6c6 1px, #dbc6c6);
+}
+.mgb-mock-skillsmap .bar.analytics {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #EEE 1px, #EEE);
+  background-size: 25% 100%;
+}
+.mgb-mock-skillsmap .bar.analytics .label {
+  width: 50%;
+  color: #5c3d47;
+  background-image: linear-gradient(90deg, #ecc8d4, #ecc8d4 1px, #e3b1c2 1px, #e3b1c2);
+  background-size: 50% 100%;
+}
+.mgb-mock-skillsmap .bar.analytics:hover {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #DDD 1px, #DDD);
+}
+.mgb-mock-skillsmap .bar.analytics:hover .label {
+  color: #3d2930;
+  background-image: linear-gradient(90deg, #edcdd8, #edcdd8 1px, #db9bb0 1px, #db9bb0);
+}
+.mgb-mock-skillsmap .bar.writing {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #EEE 1px, #EEE);
+  background-size: 9.09090909% 100%;
+}
+.mgb-mock-skillsmap .bar.writing .label {
+  width: 90.90909091%;
+  color: #3d4c5c;
+  background-image: linear-gradient(90deg, #c1c4c8, #c1c4c8 1px, #a6abb1 1px, #a6abb1);
+  background-size: 10% 100%;
+}
+.mgb-mock-skillsmap .bar.writing:hover {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #DDD 1px, #DDD);
+}
+.mgb-mock-skillsmap .bar.writing:hover .label {
+  color: #29333d;
+  background-image: linear-gradient(90deg, #c6c9cd, #c6c9cd 1px, #8c939b 1px, #8c939b);
+}
+.mgb-mock-skillsmap .bar.marketing {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #EEE 1px, #EEE);
+  background-size: 16.66666667% 100%;
+}
+.mgb-mock-skillsmap .bar.marketing .label {
+  width: 66.66666667%;
+  color: #3d5c43;
+  background-image: linear-gradient(90deg, #c1ecc8, #c1ecc8 1px, #a6e3b1 1px, #a6e3b1);
+  background-size: 25% 100%;
+}
+.mgb-mock-skillsmap .bar.marketing:hover {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #DDD 1px, #DDD);
+}
+.mgb-mock-skillsmap .bar.marketing:hover .label {
+  color: #293d2d;
+  background-image: linear-gradient(90deg, #c6edcd, #c6edcd 1px, #8cdb9b 1px, #8cdb9b);
+}
+.mgb-mock-skillsmap .bar.community {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #EEE 1px, #EEE);
+  background-size: 16.66666667% 100%;
+}
+.mgb-mock-skillsmap .bar.community .label {
+  width: 33.33333333%;
+  color: #3d405c;
+  background-image: linear-gradient(90deg, #c1c4ec, #c1c4ec 1px, #a6abe3 1px, #a6abe3);
+  background-size: 50% 100%;
+}
+.mgb-mock-skillsmap .bar.community:hover {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #DDD 1px, #DDD);
+}
+.mgb-mock-skillsmap .bar.community:hover .label {
+  color: #292b3d;
+  background-image: linear-gradient(90deg, #c6c9ed, #c6c9ed 1px, #8c93db 1px, #8c93db);
+}
+.mgb-mock-skillsmap .bar.legal {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #EEE 1px, #EEE);
+  background-size: 10% 100%;
+}
+.mgb-mock-skillsmap .bar.legal .label {
+  width: 80%;
+  color: #3d5c5c;
+  background-image: linear-gradient(90deg, #c1e0e0, #c1e0e0 1px, #a6d3d3 1px, #a6d3d3);
+  background-size: 12.5% 100%;
+}
+.mgb-mock-skillsmap .bar.legal:hover {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #DDD 1px, #DDD);
+}
+.mgb-mock-skillsmap .bar.legal:hover .label {
+  color: #293d3d;
+  background-image: linear-gradient(90deg, #c6e2e2, #c6e2e2 1px, #8cc6c6 1px, #8cc6c6);
+}
+.mgb-mock-skillsmap .bar.business {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #EEE 1px, #EEE);
+  background-size: 16.66666667% 100%;
+}
+.mgb-mock-skillsmap .bar.business .label {
+  width: 50%;
+  color: #3d495c;
+  background-image: linear-gradient(90deg, #c1c8d4, #c1c8d4 1px, #a6b1c2 1px, #a6b1c2);
+  background-size: 33.33333333% 100%;
+}
+.mgb-mock-skillsmap .bar.business:hover {
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #DDD 1px, #DDD);
+}
+.mgb-mock-skillsmap .bar.business:hover .label {
+  color: #29313d;
+  background-image: linear-gradient(90deg, #c6cdd8, #c6cdd8 1px, #8c9bb0 1px, #8c9bb0);
+}
+section {
+  color: rgba(255, 255, 255, 0.8);
+}
+/***************************************
+ *                Hero                 *
+ ***************************************/
+.mgb-hero {
+  background: radial-gradient(#00BECC, #2B7277);
+}
+.mgb-hero .mgb-hero-caption {
+  text-align: center;
+  padding: 8em 0 6em;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+.mgb-hero .mgb-hero-caption .ui.header {
+  font-size: 3rem;
+  margin: 0;
+}
+.mgb-hero .mgb-hero-caption .mgb-lead {
+  font-size: 2rem;
+  color: #FFF;
+  font-weight: 300;
+}
+/***************************************
+ *            Piled Section            *
+ ***************************************/
+.mgb-piled-container {
+  position: relative;
+  z-index: 1;
+  /*
+   * Game
+   */
+}
+.mgb-piled-container .mgb-piled-panel,
+.mgb-piled-container .mgb-piled-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-shadow: 0 5px 0 10px rgba(0, 0, 0, 0.05);
+}
+.mgb-piled-container .mgb-piled-section {
+  margin: 1em -1em;
+}
+.mgb-piled-container .mgb-piled-panel.back {
+  background: #F4E285;
+  transform: perspective(4000px) rotateY(0) skewY(-0.5deg);
+}
+.mgb-piled-container .mgb-piled-panel.middle {
+  background: #F4A259;
+  transform: perspective(5000px) rotateY(5deg) skewY(1deg) scale(0.98);
+}
+.mgb-piled-container .mgb-piled-panel.front {
+  background: #BC4B51;
+  transform: perspective(3000px) rotateY(-2deg) skewY(-0.5deg) scale(0.97);
+}
+.mgb-piled-container .mgb-game {
+  text-align: center;
+}
+.mgb-piled-container .mgb-game img {
+  box-shadow: 0 0 0 0.5em rgba(0, 0, 0, 0.1);
+  border: 1px solid #000;
+  border-radius: 1px;
+}
+/***************************************
+ *            Main Bullets             *
+ ***************************************/
+.mgb-bullets {
+  padding: 3em 0;
+  background: #483C46;
+  text-align: center;
+}
+/***************************************
+ *             Alternating             *
+ ***************************************/
+.mgb-alternating {
+  padding: 3em 0;
+  background: radial-gradient(#00BECC, #2B7277);
+}
+.mgb-alternating .mgb-alternating-media {
+  box-shadow: 0 0 0 0.5em rgba(0, 0, 0, 0.1);
+}
+/***************************************
+ *               Footer                *
+ ***************************************/
+footer {
+  padding: 4em 0 2em;
+  background: #373E40;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9em;
+}
+/* TODO media query sizes */

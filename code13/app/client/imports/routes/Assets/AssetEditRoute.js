@@ -32,6 +32,7 @@ import AssetActivityDetail from '/client/imports/components/Assets/AssetActivity
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
 
 import SuperAdminAssetControl from '/client/imports/components/Assets/SuperAdminAssetControl'
+import TaskApprove from '/client/imports/components/Assets/TaskApprove'
 
 import { makeChannelName } from '/imports/schemas/chats'
 
@@ -39,6 +40,8 @@ import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetche
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import { canUserEditAssetIfUnlocked, fAllowSuperAdminToEditAnything } from '/imports/schemas/roles'
+
+import { learnSkill, forgetSkill } from '/imports/schemas/skills'
 
 const FLUSH_TIMER_INTERVAL_MS = 6000         // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
 
@@ -117,8 +120,10 @@ export default AssetEditRoute = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object
+    urlLocation: React.PropTypes.object,
+    skills: React.PropTypes.object 
   },
+
 
   // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the userId
   // TODO: Make this QLink-smart so it preserves queries
@@ -421,6 +426,12 @@ export default AssetEditRoute = React.createClass({
               currUserId={currUserId}
               currUserProjects={currUserProjects}
               handleToggleProjectName={this.handleToggleProjectName} />
+            { isSuperAdmin && asset.skillPath &&
+              <TaskApprove 
+                asset={asset} 
+                ownerID={asset.ownerId}
+                handleTaskApprove={this.handleTaskApprove} />
+            }
             { isSuperAdmin &&
               <SuperAdminAssetControl asset={asset} handleToggleBan={this.handleToggleBanState} />
             }
@@ -744,6 +755,13 @@ export default AssetEditRoute = React.createClass({
       logActivity("asset.project",  `removed Asset from project '${pName}'`, null, asset)
     else
       logActivity("asset.project",  `Added Asset to project '${pName}'`, null, asset)
+  },
+
+  handleTaskApprove: function(hasSkill)
+  {
+    const skillPath = this.data.asset.skillPath
+    const assetUserID = this.props.user._id
+    hasSkill ? forgetSkill(skillPath, assetUserID) : learnSkill(skillPath, assetUserID)
   },
 
 // This should not conflict with the deferred changes since those don't change these fields :)

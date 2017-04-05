@@ -481,9 +481,10 @@ export default class Channel extends React.Component {
   }
 
   changeVolume (e) {
+    // TODO need to save change only when drag is finished
     this.props.channel.volume = parseFloat(e.target.value)
     this.props.handleSave('Volume change')
-    this.props.doSaveStateForUndo('Volume change')
+    // this.props.doSaveStateForUndo('Volume change')
     this.gainNode.gain.value = this.props.channel.volume
     // as we are setting volume directly to props - update will be skipped - so keep internal volume state
     this.setState({volume: this.props.channel.volume})

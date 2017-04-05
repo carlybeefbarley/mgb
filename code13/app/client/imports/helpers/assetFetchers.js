@@ -371,7 +371,6 @@ class AssetHandler {
             const asset = Azzets.findOne(this.id)
             if(!asset){
               console.log("Asset has been deleted")
-              this.isReady = true
               this.onChange && this.onChange()
             }
           },

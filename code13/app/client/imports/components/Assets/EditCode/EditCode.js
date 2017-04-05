@@ -341,7 +341,8 @@ export default class EditCode extends React.Component {
     const c2 = this.props.asset.content2
     this.setState({
       needsBundle: c2.needsBundle,
-      hotReload: c2.hotReload
+      hotReload: c2.hotReload,
+      documentIsEmpty: c2.src.length === 0
     })
 
   }
@@ -936,7 +937,7 @@ export default class EditCode extends React.Component {
 
   /** Just show the Clean Sheet helpers if there is no code */
   srcUpdate_CleanSheetCase() {
-    const isEmpty = this._currentCodemirrorValue.length === 0
+    const isEmpty = this.props.asset.content2.src.length === 0
     if(this.state.documentIsEmpty !==  isEmpty) {
       // set state seems to be expensive - based on profiler data
       this.setState({documentIsEmpty: isEmpty})

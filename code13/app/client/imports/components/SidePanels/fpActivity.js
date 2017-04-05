@@ -62,7 +62,7 @@ const ActivityExtraDetail = ( { act} ) => {
         <Feed.Extra text>
           <Icon color={assetKindColor} name={assetKindIconName} />
           <QLink to={linkTo}>
-            { act.toOwnerId === act.byUserId ? assetName : `${assetName}@${act.toOwnerName}` }
+            { act.toOwnerId === act.byUserId ? assetName : `${act.toOwnerName}:${assetName}` }
           </QLink>
         </Feed.Extra>
 

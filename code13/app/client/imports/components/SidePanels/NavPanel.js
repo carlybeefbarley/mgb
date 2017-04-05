@@ -303,7 +303,7 @@ const _isLoggedInSty = { padding: '4px 8px'}
 const _isNotLoggedInSty = { padding: '4px 16px'}
 
 
-class NavPanel extends React.PureComponent {
+class NavPanel extends React.Component {
 
   static propTypes = {
     currUser: PropTypes.object,                           // Currently Logged in user. Can be null/undefined
@@ -312,7 +312,7 @@ class NavPanel extends React.PureComponent {
 
   render() {
     const { currUser, navPanelAvailableWidth } = this.props
-    const menuStyle = { borderRadius: 0, marginBottom: 0 }
+    const menuStyle = { borderRadius: 0, marginBottom: 0, background: 'radial-gradient(circle farthest-side at right bottom,#8cc4c4 8%, #155f66 70%, #232929)'}
     const useIcons = navPanelAvailableWidth < 600  // px
     const allNavPanels = getNavPanels(currUser, false)
 

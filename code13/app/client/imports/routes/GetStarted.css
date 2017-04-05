@@ -3,7 +3,7 @@
 	position: relative;
 	overflow: hidden;
 	background: #155f66;
-	background: radial-gradient(circle farthest-side at right bottom,#8cc4c4 8%, #155f66 70%, #232929);
+	background: radial-gradient(circle farthest-side at right top,#8cc4c4 8%, #155f66 70%, #232929);
 }
 
 .hero,

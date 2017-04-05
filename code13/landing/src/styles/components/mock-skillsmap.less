@@ -1,0 +1,92 @@
+// Keep this mixin synced with app SkillsMap.less
+.mgb-set-skillsmap-variant-variables(@mgbAreaColor) {
+  @hue: hue(@mgbAreaColor);
+  @textColor: hsl(@hue, 20%, 30%);
+  @textHoverColor: hsl(@hue, 20%, 20%);
+  @barColor: tint(@mgbAreaColor, 65%);
+  @barHoverColor: tint(@mgbAreaColor, 55%);
+}
+
+.mgb-mock-skillsmap-bar-variant(@color, @complete, @total) {
+  .mgb-set-skillsmap-variant-variables(@color);
+
+  background-image: linear-gradient(90deg, #FFF, #FFF 1px, #EEE 1px, #EEE);
+  background-size: (100% / @total) 100%;
+
+  .label {
+    width: (100% / @total) * @complete;
+    color: @textColor;
+    background-image: linear-gradient(90deg, mix(#FFF, @barColor, 30), mix(#FFF, @barColor, 30) 1px, @barColor 1px, @barColor);
+    background-size: (100% / @complete) 100%;
+  }
+
+  &:hover {
+    background-image: linear-gradient(90deg, #FFF, #FFF 1px, #DDD 1px, #DDD);
+    .label {
+      color: @textHoverColor;
+      background-image: linear-gradient(90deg, mix(#FFF, @barHoverColor), mix(#FFF, @barHoverColor) 1px, @barHoverColor 1px, @barHoverColor);
+    }
+  }
+}
+
+.mgb-mock-skillsmap {
+  user-select: none;
+  padding: 0.25em;
+  background: #FFF;
+  border-radius: 0.2em;
+  line-height: 1;
+  .bar {
+    cursor: pointer;
+    margin-bottom: 0.125em;
+    background-repeat: repeat-x;
+    .label {
+      padding: 0.3em 0.6em;
+      white-space: nowrap;
+      font-weight: bold;
+      font-size: 0.9em;
+      text-transform: uppercase;
+    }
+    &.getStarted {
+      .mgb-mock-skillsmap-bar-variant(green, 21, 24);
+    }
+    &.code {
+      .mgb-mock-skillsmap-bar-variant(green, 33, 100);
+    }
+
+    &.art {
+      .mgb-mock-skillsmap-bar-variant(orange, 15, 30);
+    }
+
+    &.design {
+      .mgb-mock-skillsmap-bar-variant(#B010B0, 38, 50);
+    }
+
+    &.audio {
+      .mgb-mock-skillsmap-bar-variant(#B08080, 3, 5);
+    }
+
+    &.analytics {
+      .mgb-mock-skillsmap-bar-variant(#B02050, 2, 4);
+    }
+
+    &.writing {
+      .mgb-mock-skillsmap-bar-variant(#001020, 10, 11);
+    }
+
+    &.marketing {
+      .mgb-mock-skillsmap-bar-variant(#00B020, 4, 6);
+    }
+
+    &.community {
+      .mgb-mock-skillsmap-bar-variant(#0010B0, 2, 6);
+    }
+
+    &.legal {
+      .mgb-mock-skillsmap-bar-variant(#008080, 8, 10);
+    }
+
+    &.business {
+      .mgb-mock-skillsmap-bar-variant(#002050, 3, 6);
+    }
+  }
+}

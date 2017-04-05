@@ -14,6 +14,46 @@ const mgbReleaseInfo = {
   'releases': [
 
 
+
+    {
+      'timestamp': 'Tuesday Apr 04 2017 21:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3903'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.user',
+          'type': 'improvement',
+          'changeName': 'Improved User Card Layout',
+          'changeSummary': 'User Lists are now presented as Cards with centered content. These support more content per page than the lists we used before, but still seem visually well differentiated from project and asset cards',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'code.editor',
+          'type': 'improvement',
+          'changeName': 'Code Editor performance',
+          'changeSummary': 'Performance improvements for the dynamic code builder and for console logging. We are now able to work with the larger JavaScript games we have been recently scale-testing with, for example the City3D project',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'flexpanel.chat',
+          'type': 'improvement',
+          'changeName': 'Asset Chat context',
+          'changeSummary': 'We now show a helper icon next to \'send message\' that has a hover popup with information on the asset/card that is the topic for the current chat',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
     {
       'timestamp': 'Friday Mar 31 2017 10:10 GMT-0700 (PST)',
 
@@ -39,7 +79,7 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'Fied undo/redo for Music assets; perf improvements across site ',
+          'changeSummary': 'Fixed undo/redo for Music assets; perf improvements across site ',
           'otherUrls': [ ]
         }
       ]

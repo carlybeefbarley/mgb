@@ -56,7 +56,7 @@ export default class Channel extends React.Component {
 
   getBuffer () {
     if(!this.buffer) return null
-    const bufferLength = this.props.duration * this.props.audioCtx.sampleRate
+    const bufferLength = Math.round( this.props.duration * this.props.audioCtx.sampleRate )
     const delayLength = Math.round(this.sample.delay * this.props.audioCtx.sampleRate)
     // console.log(bufferLength, delayLength)
     let returnBuffer = new Float32Array(bufferLength)

@@ -51,7 +51,7 @@ export default UserItem = React.createClass({
           <Card.Content>
           </Card.Content>
           <Card.Content style={{textAlign: "center"}}>
-        <img src={makeCDNLink(avatar, makeExpireTimestamp(60)) || SpecialGlobals.defaultUserProfileImage} className={`ui centered image circular ${imageSize}`} />
+        <img src={makeCDNLink(avatar, makeExpireTimestamp(SpecialGlobals.avatar.validFor)) || SpecialGlobals.defaultUserProfileImage} className={`ui centered image circular ${imageSize}`} />
         </Card.Content>
         <Card.Content style={{textAlign: "center"}}>
         <Card.Header>

@@ -11,6 +11,7 @@ import moment from 'moment'
 import { Feed, Icon } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 const _propTypes = {
   currUser:     PropTypes.object,             // Currently Logged in user. Can be null/undefined
@@ -104,7 +105,7 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
             <img src={makeCDNLink(currUser.profile.avatar)} style={{ width: 'auto', maxHeight: "3em" }}></img>
           }
           {(!currUser || currUser._id != byUserId) &&
-            <img src={makeCDNLink(`/api/user/${byUserId}/avatar/60`)} style={{ width: 'auto', maxHeight: "3em" }}></img>
+            <img src={makeCDNLink(`/api/user/${byUserId}/avatar/${SpecialGlobals.avatar.validFor}`, makeExpireTimestamp(SpecialGlobals.avatar.validFor))} style={{ width: 'auto', maxHeight: "3em" }}></img>
           }
         </QLink>
       </Feed.Label>

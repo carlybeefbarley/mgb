@@ -8,6 +8,7 @@ import UserItem from '/client/imports/components/Users/UserItem'
 
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 // The NavBar is the top row of the central column of the page (i.e. between the NavPanel column
 // on the left and the FlexPanel on the right).
@@ -25,9 +26,9 @@ const ProjectsSection = ( { usernameToShow, projectNames } ) =>
     return null
 
   const section = (
-    <QLink 
-        className="section" 
-        to={`/u/${usernameToShow}/assets`} 
+    <QLink
+        className="section"
+        to={`/u/${usernameToShow}/assets`}
         query={{ project: firstProjectNameForAsset }}>
       <Icon name='sitemap' />{firstProjectNameForAsset}&nbsp;
     </QLink>
@@ -40,7 +41,7 @@ const ProjectsSection = ( { usernameToShow, projectNames } ) =>
         { section }
       </span>
     )
-  
+
   // Else it's going to need a Popup to show the other options
   return (
     <span>
@@ -57,15 +58,15 @@ const ProjectsSection = ( { usernameToShow, projectNames } ) =>
         <Popup.Content>
           { _.map(projectNames, pN => (
               <div key={pN} style={{ margin: '0.25em'}} >
-                <QLink 
-                  to={`/u/${usernameToShow}/assets`} 
+                <QLink
+                  to={`/u/${usernameToShow}/assets`}
                   query={{ project: pN }}>
                 <Icon name='sitemap' />{pN}
               </QLink>
             </div>
             ))
           }
-        </Popup.Content>        
+        </Popup.Content>
       </Popup>
     </span>
   )
@@ -110,7 +111,7 @@ const NavBarBreadcrumbUI = ( {
     <Breadcrumb>
       &emsp;
       <QLink to="/" className="section"><img src='/images/logos/mgb/big/icon_01.png' style={{ height: '1em', verticalAlign: 'middle', paddingRight: '0.25em' }} /></QLink>
-      
+
       { /*    > USER     */ }
       { usernameToShow && _sep }
       { usernameToShow && (
@@ -121,7 +122,7 @@ const NavBarBreadcrumbUI = ( {
                     <img
                         className="ui avatar image"
                         style={{ width: '1.3em', height: '1.3em' }}
-                        src={makeCDNLink(`/api/user/${user._id}/avatar/60`, makeExpireTimestamp(60))}></img>
+                        src={makeCDNLink(`/api/user/${user._id}/avatar/${SpecialGlobals.avatar.validFor}`, makeExpireTimestamp(SpecialGlobals.avatar.validFor))}></img>
                     )
                   }
                   {usernameToShow}&nbsp;
@@ -143,12 +144,12 @@ const NavBarBreadcrumbUI = ( {
 
       { /*   > Assets   ... inserted in breadcrumb if on an Asset-focussed page (play, edit) */ }
       { usernameToShow && (isAssets || assetId) && !isPlay && _sep }
-      { usernameToShow && (isAssets || assetId) && !isPlay && 
-        <QLink className="section" to={`/u/${usernameToShow}/assets`}>Assets&nbsp;</QLink> 
+      { usernameToShow && (isAssets || assetId) && !isPlay &&
+        <QLink className="section" to={`/u/${usernameToShow}/assets`}>Assets&nbsp;</QLink>
       }
 
       { /*   > [ICON] Projects   .. from Asset's Project's list if on an asset-focussed page (play, edit) */ }
-      { usernameToShow && !assetId && queryProjectName && 
+      { usernameToShow && !assetId && queryProjectName &&
         <ProjectsSection usernameToShow={usernameToShow} projectNames={[queryProjectName]} />
       }
 
@@ -160,10 +161,10 @@ const NavBarBreadcrumbUI = ( {
       { /*   > [ICON] AssetKind   */ }
       { usernameToShow && assetId && kind && !isPlay && _sep }
       { usernameToShow && assetId && kind && !isPlay && (
-        <QLink 
-            style={{color: AssetKinds.getColor(kind)}} 
-            className="section" 
-            to={`/u/${usernameToShow}/assets`} 
+        <QLink
+            style={{color: AssetKinds.getColor(kind)}}
+            className="section"
+            to={`/u/${usernameToShow}/assets`}
             query={{ kinds: kind, ...(projectNames ? {project: projectNames[0]} : {} ) }}>
           { kindName }&nbsp;
         </QLink>
@@ -172,26 +173,26 @@ const NavBarBreadcrumbUI = ( {
 
       { /*   > Projects   */ }
       { usernameToShow && isProjectOnPath && _sep }
-      { usernameToShow && isProjectOnPath && 
-        <QLink className="section" to={`/u/${usernameToShow}/projects`}>Projects&nbsp;</QLink> 
+      { usernameToShow && isProjectOnPath &&
+        <QLink className="section" to={`/u/${usernameToShow}/projects`}>Projects&nbsp;</QLink>
       }
 
       { /*   > Learn   */ }
       { isLearn && _sep }
-      { isLearn && 
-        <QLink className="section" to={`/learn`}>Learn&nbsp;</QLink> 
+      { isLearn &&
+        <QLink className="section" to={`/learn`}>Learn&nbsp;</QLink>
       }
 
       { /*   > Skills   */ }
       { pathname && pathname.startsWith('/learn/skills') && _sep }
-      { pathname && pathname.startsWith('/learn/skills') && 
-        <QLink className="section" to={`/learn/skills`}>Skills&nbsp;</QLink> 
+      { pathname && pathname.startsWith('/learn/skills') &&
+        <QLink className="section" to={`/learn/skills`}>Skills&nbsp;</QLink>
       }
 
       { /*   > Code   */ }
       { pathname && pathname.startsWith('/learn/code/') && _sep }
-      { pathname && pathname.startsWith('/learn/code/') && 
-        <QLink className="section" to={`/learn/code`}>Programming&nbsp;</QLink> 
+      { pathname && pathname.startsWith('/learn/code/') &&
+        <QLink className="section" to={`/learn/code`}>Programming&nbsp;</QLink>
       }
 
       { /*   > LearnCode ITEM   */ }
@@ -204,19 +205,19 @@ const NavBarBreadcrumbUI = ( {
       { (!isAssets && (assetVerb || name)) ? (assetVerb || name) : ( (name && !isAssets) ? <span>{name}&nbsp;</span> : null ) }
 
       { /* Popup for  > Related Assets */}
-      { usernameToShow && 
+      { usernameToShow &&
         <Popup
           //style={{ outline: 'none' }}
           trigger={_sepTo}
           hoverable
-          wide 
+          wide
           positioning='bottom left'
           on='hover'
           onOpen={_handleRelatedAssetsPopupOpen}
           // size='small'
           >
           <Popup.Header>
-            Related Assets 
+            Related Assets
             <small
                 id='mgb-navbar-relatedassets-popup'  // So we can find it to focus it
                 tabIndex='-1' // So we can focus it
@@ -226,25 +227,25 @@ const NavBarBreadcrumbUI = ( {
               <span>{quickAssetSearch || '(type to search)'}...</span>
             </small>
             <span style={{float: 'right'}}>
-              { relatedAssetsLoading && <Icon color='grey' loading name='refresh'/> }              
+              { relatedAssetsLoading && <Icon color='grey' loading name='refresh'/> }
             </span>
           </Popup.Header>
-          <Popup.Content>            
+          <Popup.Content>
             <List selection animated celled style={{ maxHeight: '30em', width: '20em', overflowY: 'auto'}}>
-              { _.map(filteredRelatedAssets, a => ( 
-                <List.Item 
+              { _.map(filteredRelatedAssets, a => (
+                <List.Item
                     as={QLink}
-                    key={a._id} 
-                    style={{color: AssetKinds.getColor(a.kind)}} 
+                    key={a._id}
+                    style={{color: AssetKinds.getColor(a.kind)}}
                     icon={{ name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind)}}
-                    content={(currUser && currUser.username === a.dn_ownerName) ? a.name : `${a.dn_ownerName}:${a.name}`} 
+                    content={(currUser && currUser.username === a.dn_ownerName) ? a.name : `${a.dn_ownerName}:${a.name}`}
                     to={`/u/${a.dn_ownerName}/asset/${a._id}`}
                   />
                 )
               )}
             </List>
               <div>
-                { contextualProjectName && 
+                { contextualProjectName &&
                     <small>
                       <span>Within </span>
                       <QLink to={`/u/${user ? user.username : (currUser ? currUser.username : null)}/projects/${contextualProjectName}`}>
@@ -271,14 +272,14 @@ const _handleRelatedAssetsPopupOpen = () => {
   // wait for it to open, then focus it
   setTimeout(() => {
     const popup = document.querySelector('#mgb-navbar-relatedassets-popup')
-    popup.focus()    
+    popup.focus()
   })
 }
 
 NavBarBreadcrumbUI.propTypes = {
   params:             PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params
   user:               PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
-  currUser:           PropTypes.object,                 // Currently logged in user.. or null if not logged in.  
+  currUser:           PropTypes.object,                 // Currently logged in user.. or null if not logged in.
   name:               PropTypes.string,                 // Page title to show in NavBar breadcrumb
   location:           PropTypes.object,                 // basically windows.location, but via this.props.location from App.js (from React Router)
   currentlyEditingAssetInfo: PropTypes.object.isRequired// An object with some info about the currently edited Asset - as defined in App.js' this.state
@@ -301,7 +302,7 @@ const NavBarBreadcrumb = React.createClass({
     const { projectNames } = currentlyEditingAssetInfo
     return projectNames && projectNames.length > 0 ? projectNames[0] : (
       // Else is it a query?
-      query && query.project && query.project.length > 1 ? query.project : 
+      query && query.project && query.project.length > 1 ? query.project :
         ( params.projectName || null )
     )
   },
@@ -332,14 +333,14 @@ const NavBarBreadcrumb = React.createClass({
       this.setState( { quickAssetSearch: this.state.quickAssetSearch.slice(0, -1)})
   },
 
-  render() { 
+  render() {
     return (
-      <NavBarBreadcrumbUI 
-        {...(this.props)} 
-        {...this.data} 
-        {...this.state} 
+      <NavBarBreadcrumbUI
+        {...(this.props)}
+        {...this.data}
+        {...this.state}
         contextualProjectName={this._getContextualProjectName()}
-        handleSearchNavKey={this.handleSearchNavKey} 
+        handleSearchNavKey={this.handleSearchNavKey}
       />
     )
   }

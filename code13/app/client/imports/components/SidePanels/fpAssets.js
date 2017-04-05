@@ -16,11 +16,11 @@ import { assetViewChoices, defaultAssetViewChoice } from '/client/imports/compon
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
-
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 // This lets this flexPanel remember it's state!
 let _persistedState = null
 
-const _makeAvatarSrc = userId => makeCDNLink(`/api/user/${userId}/avatar/60`, makeExpireTimestamp(60))
+const _makeAvatarSrc = userId => makeCDNLink(`/api/user/${userId}/avatar/${SpecialGlobals.avatar.validFor}`, makeExpireTimestamp(SpecialGlobals.avatar.validFor))
 const _showFromAllValue = ':showFromAll:' // since colon is not allowed in Meteor _ids. Null wasnt working well as a value for 'all'
 const ShowFromWho = ( { value, currUser, otherUser, style, onChange }) => {
   const options = _.compact([

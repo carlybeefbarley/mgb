@@ -5,6 +5,7 @@ import QLink from '/client/imports/routes/QLink'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import { Popup } from 'semantic-ui-react'
 import FittedImage from '/client/imports/components/Controls/FittedImage'
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 const _getAssetIdFromUrl = url => (url && url.startsWith("/api/asset/png")) ? _.last(url.split("/")).split('?').shift() : null
 
@@ -18,7 +19,7 @@ const _importFromDrop = (event, handleChange) => {
 
 const ImageShowOrChange = ( { imageSrc, canEdit, canLinkToSrc, handleChange, header, maxHeight="155px", maxWidth="230px" } ) => {
   const avatarAssetId = _getAssetIdFromUrl(imageSrc)
-  const imageSrcToUse = makeCDNLink(imageSrc, makeExpireTimestamp(60)) || makeCDNLink('/images/wireframe/image.png')
+  const imageSrcToUse = makeCDNLink(imageSrc, makeExpireTimestamp(SpecialGlobals.avatar.validFor)) || makeCDNLink('/images/wireframe/image.png')
 
   const propsImgContainer = {
     onDragOver: e => ( canEdit && DragNDropHelper.preventDefault(e) ),
@@ -29,14 +30,14 @@ const ImageShowOrChange = ( { imageSrc, canEdit, canLinkToSrc, handleChange, hea
     propsImgContainer.to = avatarAssetId ? `/assetEdit/${avatarAssetId}` : imageSrcToUse
 
   const innerImg = (
-    <FittedImage 
-      src={imageSrcToUse} 
-      height={maxHeight} 
+    <FittedImage
+      src={imageSrcToUse}
+      height={maxHeight}
       width={maxWidth}/>
   )
 
   const imgPopup = (
-    <Popup 
+    <Popup
       on='hover'
       size='small'
       inverted
@@ -47,13 +48,13 @@ const ImageShowOrChange = ( { imageSrc, canEdit, canLinkToSrc, handleChange, hea
         { header }
       </Popup.Header>
       <Popup.Content>
-        { canEdit ? 
-          <span>Drag an MGB Graphic Asset here to change the chosen image. </span> 
+        { canEdit ?
+          <span>Drag an MGB Graphic Asset here to change the chosen image. </span>
           :
           <span>You do not have permission to change this. </span>
         }
-        { (canLinkToSrc && avatarAssetId) && 
-          <span>You can click the Image to view/edit the Graphic Asset</span> 
+        { (canLinkToSrc && avatarAssetId) &&
+          <span>You can click the Image to view/edit the Graphic Asset</span>
         }
       </Popup.Content>
     </Popup>

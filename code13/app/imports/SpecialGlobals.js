@@ -21,7 +21,9 @@ export default SpecialGlobals = {
     "gravity":        0.1
   },
   defaultUserProfileImage: '//www.gravatar.com/avatar/2e2c17f8f3abdb1bb2594ebd2d3b35c5?s=155&d=mm',
-
+  avatar: {
+    validFor: 60 // seconds until we force avatar to refresh
+  },
   thumbnail: {
     width: 230,     // In px
     height: 155     // In px

@@ -29,6 +29,7 @@ import {
   makePresentedChannelName,
   makePresentedChannelIconName
 } from '/imports/schemas/chats'
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 const unreadChannelIndicatorStyle = {
   marginLeft:   '0.3em',
@@ -406,7 +407,7 @@ export default fpChat = React.createClass( {
           <img src={makeCDNLink( currUser.profile.avatar )} style={{ maxHeight: "3em" }}></img>
           }
           {(!currUser || currUser._id != c.byUserId) &&
-          <img src={makeCDNLink( `/api/user/${c.byUserId}/avatar/60`, makeExpireTimestamp( 60 ) )}
+          <img src={makeCDNLink( `/api/user/${c.byUserId}/avatar/${SpecialGlobals.avatar.validFor}`, makeExpireTimestamp( SpecialGlobals.avatar.validFor ) )}
                style={{ maxHeight: "3em" }}></img>
           }
         </QLink>
@@ -739,7 +740,7 @@ export default fpChat = React.createClass( {
           readOnly
           icon={presentedChannelIconName}
           size='small'
-          id='mgbjr-fp-chat-channelDropdown'          
+          id='mgbjr-fp-chat-channelDropdown'
           iconPosition='left'
           action={{
             icon:    'dropdown',
@@ -751,14 +752,14 @@ export default fpChat = React.createClass( {
         />
 
         { this.renderChannelSelector() }
-        { view === 'comments' && this.renderComments( channelObj.scopeGroupName === 'Global' ? null : 
+        { view === 'comments' && this.renderComments( channelObj.scopeGroupName === 'Global' ? null :
             <Popup
               on='hover'
               size='small'
               hoverable
               positioning='left center'
               trigger={(
-                <Icon 
+                <Icon
                     style={{ padding: '4px 0px 0px 16px' }}
                     size='big'
                     color='grey'
@@ -769,17 +770,17 @@ export default fpChat = React.createClass( {
                 { channelObj.scopeGroupName === 'Asset' ? 'Public Chat Channel for this Asset' : 'Chat Channel for:' }
               </Popup.Header>
               <Popup.Content>
-                { 
+                {
                   channelObj.scopeGroupName === 'Asset' ?
                     <div style={{minWidth: '300px'}}>
-                      <AssetCardGET assetId={channelObj.scopeId} allowDrag={true} renderView='s' /> 
+                      <AssetCardGET assetId={channelObj.scopeId} allowDrag={true} renderView='s' />
                     </div>
                     :
                     <div>{presentedChannelName}</div>
                 }
               </Popup.Content>
             </Popup>
-          ) 
+          )
         }
 
         <p ref="bottomOfMessageDiv">&nbsp;</p>

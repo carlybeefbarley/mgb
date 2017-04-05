@@ -17,7 +17,7 @@ import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
-
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
 
 export const assetViewChoices = {
@@ -131,7 +131,7 @@ export default AssetCard = React.createClass({
       >
 
       <div ref='thumbnailCanvas'>
-        { viewOpts.showImg && 
+        { viewOpts.showImg &&
           <Thumbnail
             constrainHeight='155px'
             asset={asset}
@@ -223,12 +223,12 @@ export default AssetCard = React.createClass({
                   currUser._id == asset.ownerId &&
                   <img
                     className='ui avatar image'
-                    src={makeCDNLink(currUser.profile.avatar, makeExpireTimestamp(60))}
+                    src={makeCDNLink(currUser.profile.avatar, makeExpireTimestamp(SpecialGlobals.avatar.validFor))}
                   />}
                 {(!currUser || currUser._id != asset.ownerId) &&
                   <img
                     className='ui avatar image'
-                    src={makeCDNLink(`/api/user/${asset.ownerId}/avatar/60`, makeExpireTimestamp(60))}
+                    src={makeCDNLink(`/api/user/${asset.ownerId}/avatar/${SpecialGlobals.avatar.validFor}`, makeExpireTimestamp(SpecialGlobals.avatar.validFor))}
                   />}
                 {ownerName || `#${asset.ownerId}`}
               </div>

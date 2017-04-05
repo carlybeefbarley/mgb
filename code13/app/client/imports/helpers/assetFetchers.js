@@ -110,7 +110,7 @@ export const makeExpireTimestamp = (maxAge) => {
 // project avatar url prefixed with CDN host
 export const getProjectAvatarUrl = (p, expires = 60) => (
   // etag here is hardcoded - because we will receive asset which will stay very short period of time (1-60) minutes
-  makeCDNLink(getProjectAvatarUrlBasic(p, expires), makeExpireTimestamp(60))
+  makeCDNLink(getProjectAvatarUrlBasic(p, expires), makeExpireTimestamp(SpecialGlobals.avatar.validFor))
 )
 
 

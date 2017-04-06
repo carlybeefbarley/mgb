@@ -759,9 +759,19 @@ export default AssetEditRoute = React.createClass({
 
   handleTaskApprove: function(hasSkill)
   {
+    const { asset } = this.data
     const skillPath = this.data.asset.skillPath
     const assetUserID = this.props.user._id
-    hasSkill ? forgetSkill(skillPath, assetUserID) : learnSkill(skillPath, assetUserID)
+    if ( hasSkill ) 
+    {
+      forgetSkill(skillPath, assetUserID) 
+      logActivity("task.disapprove",  `Disapproved Task`, null, asset)
+    }
+    else 
+    {
+      learnSkill(skillPath, assetUserID)
+      logActivity("task.approve",  `Approved Task`, null, asset)
+    }
   },
 
 // This should not conflict with the deferred changes since those don't change these fields :)

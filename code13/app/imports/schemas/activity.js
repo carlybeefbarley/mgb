@@ -73,6 +73,8 @@ export const ActivityTypes = {
   "asset.undelete":    { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
   "asset.ban":         { icon: "red bomb",        pri: 12,  description: "Ban Asset" },
   "asset.unban":       { icon: "green bomb",      pri: 12,  description: "Un-ban Asset" },
+  "task.approve":      { icon: "green tasks",     pri: 12,  description: "Approve Task" },
+  "task.disapprove":   { icon: "grey tasks",      pri: 12,  description: "Disapprove Task" },
 
   "game.play.start":   { icon: "green play",       pri: 17,  description: "Start game" },
 

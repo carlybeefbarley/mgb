@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import SkillNodes, { makeSlashSeparatedSkillKey, makeTutorialsFindSelector } from '/imports/Skills/SkillNodes/SkillNodes.js'
 import { Azzets, Skills } from '/imports/schemas'
+import { isUserSuperAdmin } from './roles'
+
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -21,16 +23,29 @@ const skillBasis = {
 
 
 Meteor.methods({
-  "Skill.learn": function(dottedSkillKey, basis = skillBasis.SELF_CLAIMED) {
+  "Skill.learn": function(dottedSkillKey, userID, basis = skillBasis.SELF_CLAIMED) {
+    console.log(dottedSkillKey, userID, basis)
     if (!this.userId)
       throw new Meteor.Error(401, "Login required")
 
-    if (basis !== skillBasis.SELF_CLAIMED)
-      throw new Meteor.Error(401, 'Only self-claimed skills are currently supported')
+    // if (basis !== skillBasis.SELF_CLAIMED)
+    //   throw new Meteor.Error(401, 'Only self-claimed skills are currently supported')
+
+    if (userID)
+    {
+      // if userID passed then it means that admin is giving a skill to user
+      basis = skillBasis.MGB_MEASURED
+      // superAdmin check
+      if (!isUserSuperAdmin(Meteor.user()))
+        return false
+    }
+
+    // id userID is passed then admin is givin skill for another user
+    userID = userID || this.userId
 
     const slashSeparatedSkillKey = makeSlashSeparatedSkillKey(dottedSkillKey)
 
-    const count = Skills.update(this.userId, {
+    const count = Skills.update(userID, {
       $addToSet: { [slashSeparatedSkillKey]: basis },
       $set:      { updatedAt: new Date() }
     })
@@ -38,16 +53,28 @@ Meteor.methods({
     return count
   },
 
-  "Skill.forget": function(dottedSkillKey, basis = skillBasis.SELF_CLAIMED) {
+  "Skill.forget": function(dottedSkillKey, userID, basis = skillBasis.SELF_CLAIMED) {
     if (!this.userId)
       throw new Meteor.Error(401, "Login required")
 
-    if (basis !== skillBasis.SELF_CLAIMED)
-      throw new Meteor.Error(401, 'Only self-claimed skills are currently supported')
+    // if (basis !== skillBasis.SELF_CLAIMED)
+    //   throw new Meteor.Error(401, 'Only self-claimed skills are currently supported')
+
+    if (userID)
+    {
+      // if userID passed then it means that admin is remofing a skill from user
+      basis = skillBasis.MGB_MEASURED
+      // superAdmin check
+      if (!isUserSuperAdmin(Meteor.user()))
+        return false
+    }
+
+    // id userID is passed then admin is removing skill from another user
+    userID = userID || this.userId
 
     const slashSeparatedSkillKey = makeSlashSeparatedSkillKey(dottedSkillKey)
 
-    const count = Skills.update(this.userId, {
+    const count = Skills.update(userID, {
       $pullAll:  { [slashSeparatedSkillKey]: [ basis ] },
       $set:      { updatedAt: new Date() }
     })
@@ -100,16 +127,15 @@ export const hasMultipleSkills = (skillsObj, dottedSkillKeysArray) => {
 
 
 
-export const learnSkill = dottedSkillKey => {
-  Meteor.call("Skill.learn", dottedSkillKey, (err, result) => {
+export const learnSkill = (dottedSkillKey, userID) => {
+  Meteor.call("Skill.learn", dottedSkillKey, userID, (err, result) => {
     console.log(`${result} Skill learned: '${dottedSkillKey}'. Err=`, err)
   })
   // TODO: set it with a rounded timestamp so we know timeline and recency of this skill change
 }
 
-
-export const forgetSkill = dottedSkillKey => {
-  Meteor.call("Skill.forget", dottedSkillKey, (err, result) => {
+export const forgetSkill = (dottedSkillKey, userID) => {
+  Meteor.call("Skill.forget", dottedSkillKey, userID, (err, result) => {
     console.log(`${result} Skill forgotten: '${dottedSkillKey}'. Err=`, err)
   })
 }

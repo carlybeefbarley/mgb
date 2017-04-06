@@ -34,7 +34,8 @@ import ProjectMembershipEditorV2 from '/client/imports/components/Assets/Project
 import SuperAdminAssetControl from '/client/imports/components/Assets/SuperAdminAssetControl'
 import TaskApprove from '/client/imports/components/Assets/TaskApprove'
 
-import { makeChannelName } from '/imports/schemas/chats'
+import { makeChannelName, ChatSendMessageOnChannelName } from '/imports/schemas/chats'
+
 
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -762,15 +763,22 @@ export default AssetEditRoute = React.createClass({
     const { asset } = this.data
     const skillPath = this.data.asset.skillPath
     const assetUserID = this.props.user._id
+    const channelName = makeChannelName( { scopeGroupName: 'Asset', scopeId: this.props.params.assetId } )
+    const otherData = {
+      toChatChannelName: channelName
+    }
+
     if ( hasSkill ) 
     {
       forgetSkill(skillPath, assetUserID) 
       logActivity("task.disapprove",  `Disapproved Task`, null, asset)
+      ChatSendMessageOnChannelName(channelName, 'Task disapproved')
     }
     else 
     {
       learnSkill(skillPath, assetUserID)
       logActivity("task.approve",  `Approved Task`, null, asset)
+      ChatSendMessageOnChannelName(channelName, 'Task approved')
     }
   },
 

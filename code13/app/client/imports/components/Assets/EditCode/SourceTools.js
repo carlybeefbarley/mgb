@@ -122,7 +122,6 @@ export default class SourceTools extends EventEmitter {
       if(this.inProgress > started)
         return Promise.reject() // bail out
 
-      console.log("Stopping previous call:", this.inProgress)
       this.shouldCancelASAP = true
       return new Promise( resolve => {
         setTimeout(() => {
@@ -145,6 +144,7 @@ export default class SourceTools extends EventEmitter {
           if (!this.subscriptions[key]) {
             console.log("Closing old SUB:", key)
             this.tmpSubscriptions[key].subscription.stop()
+            this.tern.server.delFile('/' + key)
             delete this.transpileCache['/' + key]
           }
         })

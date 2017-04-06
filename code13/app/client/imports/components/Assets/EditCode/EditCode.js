@@ -342,7 +342,7 @@ export default class EditCode extends React.Component {
     this.setState({
       needsBundle: c2.needsBundle,
       hotReload: c2.hotReload,
-      documentIsEmpty: c2.src.length === 0
+      documentIsEmpty: !c2.src || c2.src.length === 0
     })
 
   }
@@ -415,6 +415,9 @@ export default class EditCode extends React.Component {
     // overwrite default function - so we can use replace
     this.ternServer.server.addFile = (name, text, replace) => {
       this.ternServer && this.ternServer.worker.postMessage({type: "add", name, text, replace})
+    }
+    this.ternServer.server.delFile = (name) => {
+      this.ternServer && this.ternServer.worker.postMessage({type: "del", name})
     }
     this.ternServer.server.getAstFlowerTree = (options, callback, filename = this.props.asset.name) => {
       if (!options.filename) {
@@ -937,7 +940,7 @@ export default class EditCode extends React.Component {
 
   /** Just show the Clean Sheet helpers if there is no code */
   srcUpdate_CleanSheetCase() {
-    const isEmpty = this.props.asset.content2.src.length === 0
+    const isEmpty = this.codeMirror.getValue().length === 0
     if(this.state.documentIsEmpty !==  isEmpty) {
       // set state seems to be expensive - based on profiler data
       this.setState({documentIsEmpty: isEmpty})

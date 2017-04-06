@@ -102,10 +102,18 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
       <Feed.Label>
         <QLink to={"/u/" + byUserName}>
           {currUser && currUser._id == byUserId &&
-            <img src={makeCDNLink(currUser.profile.avatar)} style={{ width: 'auto', maxHeight: "3em" }}></img>
+            <FittedImage 
+            src={makeCDNLink(currUser.profile.avatar)} 
+            width='auto'
+            maxHeight="3em"
+            />
           }
           {(!currUser || currUser._id != byUserId) &&
-            <img src={makeCDNLink(`/api/user/${byUserId}/avatar/${SpecialGlobals.avatar.validFor}`, makeExpireTimestamp(SpecialGlobals.avatar.validFor))} style={{ width: 'auto', maxHeight: "3em" }}></img>
+            <FittedImage 
+            src={makeCDNLink(`/api/user/${byUserId}/avatar/60`, makeExpireTimestamp(SpecialGlobals.avatar.validFor))}
+            width='auto'
+            maxHeight="3em"
+            />
           }
         </QLink>
       </Feed.Label>

@@ -3,6 +3,8 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 
 import sty from  './editMusic.css'
+import VolumeSlider from  './VolumeSlider.js'
+
 import WaveSurfer from '../lib/WaveSurfer.js'
 import AudioConverter from '../lib/AudioConverter.js'
 
@@ -480,15 +482,11 @@ export default class Channel extends React.Component {
     this.selectDiv.style.width = this.selectWidth + "px"
   }
 
-  changeVolume (e) {
-    // TODO need to save change only when drag is finished
-    this.props.channel.volume = parseFloat(e.target.value)
-    this.props.handleSave('Volume change')
-    // this.props.doSaveStateForUndo('Volume change')
-    this.gainNode.gain.value = this.props.channel.volume
-    // as we are setting volume directly to props - update will be skipped - so keep internal volume state
-    this.setState({volume: this.props.channel.volume})
-  // console.log(parseFloat(e.target.value))
+  changeVolume (volume) {
+    this.props.doSaveStateForUndo('Volume change')
+    this.props.channel.volume = volume
+    this.gainNode.gain.value = volume
+    this.props.saveChannel(this.props.channel)
   }
 
   deleteChannel () {
@@ -502,7 +500,7 @@ export default class Channel extends React.Component {
       <div key={this.props.id} className='channelContainer'>
         <div className='controls chn'>
           {channel.title}
-          <div>
+          {/*<div>
             <input
               type='range'
               value={channel.volume}
@@ -511,7 +509,11 @@ export default class Channel extends React.Component {
               step='0.05'
               onChange={this.changeVolume.bind(this)} /> Volume
             <br/>
-          </div>
+          </div>*/}
+          <VolumeSlider
+            volume        = { channel.volume }
+            changeVolume  = { this.changeVolume.bind(this) }
+          />
           <buton className='ui mini icon button' onClick={this.deleteChannel.bind(this)}>
             <i className='remove icon'></i>
           </buton>

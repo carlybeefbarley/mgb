@@ -267,7 +267,6 @@ export default class Channel extends React.Component {
       e = e.touches[0]
 
     e.dataTransfer.setData('text', 'startDrag')
-    console.log('drag start')
 
     // firefox way of implementing dragover. actually chrome also can work that way
     document.ondragover = (event) => 
@@ -275,11 +274,12 @@ export default class Channel extends React.Component {
 
     
     // empty image so you don't see canvas element drag. Need to see only what is dragged inside canvas
-    if(e.dataTransfer){
-      let ghost = e.target.cloneNode(true)
-      ghost.style.display = "none"
-      e.dataTransfer.setDragImage(ghost, 0, 0)
-    }
+    // guntis - commented this out because it showed some weird icon in firefox
+    // if(e.dataTransfer){
+    //   let ghost = e.target.cloneNode(true)
+    //   ghost.style.display = "none"
+    //   e.dataTransfer.setDragImage(ghost, 0, 0)
+    // }
     if(this.props.isSelecting){
       this.clearSelect()
     }

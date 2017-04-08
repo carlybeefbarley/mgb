@@ -14,6 +14,38 @@ const mgbReleaseInfo = {
   'releases': [
 
 
+    {
+      'timestamp': 'Friday Apr 07 2017 20:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3924'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.settings',
+          'type': 'improvement',
+          'changeName': 'Maxed default toolbar feaureLevels',
+          'changeSummary': 'New users are still confused by the small number of default tools, and aren\'t noticing the settings button. So, by default we are having the tools at max level, and may lower these later when we have an onboarding flow that explains the dynamic toolbars.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Improved sizing/layout for wide/tall avatars; fixed undo issues with music/audio assets; fixed ambiguous cases when loading game with conflicting asset names; moderators can now approve codeing challenge tasks',
+          'otherUrls': [ ]
+        }        
+      ]
+    },
+
+
 
     {
       'timestamp': 'Wednesday Apr 05 2017 00:40 GMT-0700 (PDT)',

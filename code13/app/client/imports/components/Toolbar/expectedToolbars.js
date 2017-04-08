@@ -11,12 +11,12 @@ const _defaultTbDefaultLevel = 1
 const _defaultTbIconName = 'red help circle'
 
 export const expectedToolbars = {
-  FlexPanel:     { friendlyName: 'Flex Panel',           max:  8,   default: 1,  assetKinds: null, icon: 'ellipsis vertical'   },  // Not really toolbars, but I wanted the same fpLevel stuff
+  FlexPanel:     { friendlyName: 'Flex Panel',           max:  8,   default: 6,  assetKinds: null, icon: 'ellipsis vertical'   },  // Not really toolbars, but I wanted the same fpLevel stuff
 
-  EditGraphic:   { friendlyName: 'Graphic Editor',       max: 10,   default: 1,  assetKinds: ['graphic'], icon: AssetKinds.getIconName('graphic') },
-  EditCode:      { friendlyName: 'Code/Tutorial Editor', max:  4,   default: 2,  assetKinds: ['code','tutorial'], icon: AssetKinds.getIconName('code')    },
-  MapTools:      { friendlyName: 'Map/ActorMap Editor',  max: 27,   default: 3,  assetKinds: ['map','actormap'], icon: AssetKinds.getIconName('map')     },
-  AudioTools:    { friendlyName: 'Sound/Music Editor',   max: 25,   default: 3,  assetKinds: ['sound','music'],  icon: AssetKinds.getIconName('sound')   },
+  EditGraphic:   { friendlyName: 'Graphic Editor',       max: 10,   default: 10,  assetKinds: ['graphic'], icon: AssetKinds.getIconName('graphic') },
+  EditCode:      { friendlyName: 'Code/Tutorial Editor', max:  4,   default: 4,  assetKinds: ['code','tutorial'], icon: AssetKinds.getIconName('code')    },
+  MapTools:      { friendlyName: 'Map/ActorMap Editor',  max: 27,   default: 27,  assetKinds: ['map','actormap'], icon: AssetKinds.getIconName('map')     },
+  AudioTools:    { friendlyName: 'Sound/Music Editor',   max: 25,   default: 25,  assetKinds: ['sound','music'],  icon: AssetKinds.getIconName('sound')   },
 
   SkillsMap:     { friendlyName: 'Skills Viewer',        max:  1,   default: 1,  icon: 'plus circle'                          },
 
@@ -28,8 +28,6 @@ expectedToolbars.scopeNames = _.keys(expectedToolbars)
 
 // This is useful for UIs that don't want to show the non-tunable toolbars (i.e. those for maxLevel = 1)
 expectedToolbars.scopeNamesTunable = _.keys(_.pickBy(expectedToolbars, t => t.max > 1))
-
-
 
 // get Max Value for feature level
 expectedToolbars.getMaxLevel = toolbarName =>

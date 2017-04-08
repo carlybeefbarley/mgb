@@ -36,12 +36,12 @@ const flexPanelViews = [
 // Experimental UI for mobile
 //{ tag: 'more',      lev: 8,  name: 'more',     icon: 'ellipsis horizontal', hdr: 'More', el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
   { tag: 'users',     lev: 5,  name: 'users',    icon: 'street view',hdr: 'Users',         el: fpUsers,         superAdminOnly: false, mobileUI: false },
-  { tag: 'network',   lev: 6,  name: 'network',  icon: 'signal',     hdr: 'Network',       el: fpNetwork,       superAdminOnly: false, mobileUI: false },
 //{ tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   hdr: 'Keys',          el: fpKeyboard,      superAdminOnly: false, mobileUI: false },
-  { tag: 'projects',  lev: 7,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',      el: fpProjects,      superAdminOnly: false, mobileUI: false },
+  { tag: 'projects',  lev: 6,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',      el: fpProjects,      superAdminOnly: false, mobileUI: false },
+  { tag: 'network',   lev: 7,  name: 'network',  icon: 'signal',     hdr: 'Network',       el: fpNetwork,       superAdminOnly: false, mobileUI: false },
 
   // SuperAdmin-only:
-  { tag: 'super',     lev: 8,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',    el: fpSuperAdmin,    superAdminOnly: true, mobileUI: false  } // ALWAYS SuperAdmin
+  { tag: 'super',     lev: 4,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',    el: fpSuperAdmin,    superAdminOnly: true, mobileUI: false  } // ALWAYS SuperAdmin
 ]
 
 const menuItemIndicatorStyle = {

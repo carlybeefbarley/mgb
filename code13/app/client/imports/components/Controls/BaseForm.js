@@ -143,9 +143,10 @@ export default class BaseForm extends React.Component {
       <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") }
            title={fieldOptions && fieldOptions.title}>
         <label>{name}</label>
-        <DropArea kind={kind} {...fieldOptions} value={this.data[key]} ids={this.data._ids} asset={this.props.asset}
+        <DropArea kind={kind} {...fieldOptions} value={this.data[key]} _id={this.data._ids[key]} asset={this.props.asset}
                   onChange={(val, asset) => {
           this.data[key] = val
+          this.data._ids[key] = asset._id
           this.props.onChange && this.props.onChange()
           cb && cb(asset)
         }}/>

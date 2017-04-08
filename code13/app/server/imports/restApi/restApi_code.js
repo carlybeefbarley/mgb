@@ -70,10 +70,25 @@ RestApi.addRoute('asset/code/bundle/:id', {authRequired: false}, {
 
 RestApi.addRoute('asset/code/bundle/cdn/:id', {authRequired: false}, {
   get: function () {
-    const asset = Azzets.findOne(this.urlParams.id)
+    const asset = Azzets.findOne(this.urlParams.id, {fields: {_id: 1, updatedAt: 1}})
     return assetToCdn(this, asset, '/api/asset/code/bundle/' + this.urlParams.id)
   }
 })
+
+// this tries to locate asset, if asset is deleted - tries to find new asset with same name
+RestApi.addRoute('asset/code/bundle/cdn/:id/:username/:codename', {authRequired: false}, {
+  get: function () {
+    const asset = Azzets.findOne({$or: [{_id: this.urlParams.id, isDeleted: false}, {
+      dn_ownerName: this.urlParams.username,
+      name: this.urlParams.codename,
+      isDeleted: false,
+      kind: 'code'
+    }]}, {fields: {_id: 1, updatedAt: 1}})
+    return assetToCdn(this, asset, '/api/asset/code/bundle/' + asset._id)
+  }
+})
+
+
 // why there is 'u' in the middle ?
 RestApi.addRoute('asset/code/bundle/:username/:codename', { authRequired: false }, {
   get: function () {

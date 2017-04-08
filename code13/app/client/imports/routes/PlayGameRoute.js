@@ -202,6 +202,11 @@ class PlayCodeGame extends React.Component {
     const origin = window.location.origin || window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '')
     const colonPlace = _codeName.search(':')
     const [ ownerName, codeName ] = colonPlace == -1 ? [owner.profile.name, _codeName] : [_codeName.slice(0, colonPlace), _codeName.slice(colonPlace + 1)]
+
+    // recover on missing asset
+    const src = metadata._ids && metadata._ids.startCode
+              ? `/api/asset/code/bundle/cdn/${metadata._ids.startCode}/${ownerName}/${codeName}?origin=${origin}`
+              : `/api/asset/code/bundle/cdn/${ownerName}/${codeName}?origin=${origin}`
     return (
       <div>
         <Toolbar
@@ -216,7 +221,7 @@ class PlayCodeGame extends React.Component {
             id="iFrame1"
             style={{ minWidth: width + 'px', minHeight: height + 'px', borderStyle: 'none', transformOrigin: '0 0' }}
             sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
-            src={`/api/asset/code/bundle/cdn/${ownerName}/${codeName}?origin=${origin}`}
+            src={src}
 
             >
           </iframe>

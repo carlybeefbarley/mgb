@@ -8,7 +8,15 @@ export { genetag }
 
 const DEFAULT_MAX_AGE = 600 // This cache MAX_AGE config param is for dynamic requests (10 minutes) - probably we can increase this. This is not for static assets
 
-
+/**
+ * This function redirects from our server to CDN link -
+ * so we can do some extra work, but not send data directly to client
+ *
+ * @param api - instance of Restivus API
+ * @param asset - partial asset {_id: {String}, updatedAt: {Date}}
+ * @param uri - uri on CDN
+ * @returns {{statusCode: number, headers: {Location: string}, body: {}}}
+ */
 export const assetToCdn = (api, asset, uri) => {
   const domain = getCDNDomain()
   // we need to pass origin to CDN iframes - so we know later what is our origin

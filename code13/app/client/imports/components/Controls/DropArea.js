@@ -76,7 +76,7 @@ export default class DropArea extends React.Component {
     window.setTimeout(() => {
 
       console.log("Subscription started",key)
-      this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, kind, {
+      this.subscription = Meteor.subscribe("assets.public.id.or.owner.name", this.props._id, owner, name, kind, {
         onStop: () => {
           delete DropArea.subscriptions[`${owner}:${name}`]
           this.subscription.isStopped = true
@@ -108,18 +108,7 @@ export default class DropArea extends React.Component {
       return
     }
 
-    if (asset.kind !== this.props.kind) {
-
-      this.setState( { badAsset: asset, asset: null }, () => { this.saveChanges() })
-      return
-    }
-
-    this.setState( { asset: asset, badAsset: null }, () => {
-      this.subscription && this.subscription.stop()
-      // subscribe to new asset
-      this.startSubscription(asset.dn_ownerName, asset.name, asset.kind)
-      this.saveChanges()
-    })
+    this.setAsset(asset)
   }
 
   saveChanges() {
@@ -153,14 +142,35 @@ export default class DropArea extends React.Component {
         return
 
       // use or not to use isDeleted here ???????
-      const assets =  Azzets.find({dn_ownerName: owner, name: name, kind: this.props.kind}).fetch()
-      if(assets.length > 1)
+      const selByName = {dn_ownerName: owner, name: name, kind: this.props.kind, isDeleted: false}
+      const sel = this.props._id ? {_id: this.props._id, isDeleted: false} : selByName
+
+      let assets =  Azzets.find(sel).fetch()
+      // if we cannot find by id - check by name
+      if(assets.length === 0 && this.props._id){
+        assets = Azzets.find(selByName).fetch()
+      }
+      else if(assets.length > 1)
         console.warn("Multiple assets located for DropArea", assets)
 
       if (assets && assets.length)
         return assets[0]
     }
     return null
+  }
+
+  setAsset(asset){
+    if (asset.kind !== this.props.kind) {
+      this.setState( { badAsset: asset, asset: null }, () => { this.saveChanges() })
+      return
+    }
+
+    this.setState( { asset: asset, badAsset: null }, () => {
+      this.subscription && this.subscription.stop()
+      // subscribe to new asset
+      this.startSubscription(asset.dn_ownerName, asset.name, asset.kind)
+      this.saveChanges()
+    })
   }
 
   createAssetView() {
@@ -187,7 +197,6 @@ export default class DropArea extends React.Component {
 
     const map = {
       rotate90: "rotate(90deg)",
-
       rotate180: "rotate(180deg)",
       rotate270: "rotate(270deg)",
       flipX: "scaleX(-1)",

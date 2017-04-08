@@ -1,79 +1,105 @@
 #controller{
-    font-family: "Icons";
-    font-size: 93.5vw;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    height: 0.374em;
-    max-height: 35vh;
-    user-select: none;
-    opacity: 0.4;
+  font-size: 0.01vw;
+  margin-bottom: 0px;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  user-select: none;
+  width: 100%;
+  height: 35vw;
+  max-height: 40vh;
+  z-index: 100;
+  transition: 0.5s;
 }
 
 #controller .button {
-    position: absolute;
-    width: 0.15em;
-    height: 0.15em;
-    background-color: black;
-    opacity: 1;
-    border-radius: 0.05em;
-    cursor: pointer;
+  position: absolute;
+  width: 14em;
+  height: 14em;
+  background-color: rgb(30, 59, 61);
+  border-radius: 4em;
+  cursor: pointer;
+  display: flex;
+  font-size: 100em;
+  justify-content: center;
+  align-items: center;
+  border: solid 0.11em rgb(35, 41, 41);
+  transform-origin: center;
+  box-shadow: inset 0 0 4em 0.8em rgb(140, 196, 196);
 }
-#controller .button span{
-    font-family: fantasy;
-    font-size: 0.1em;
-    -webkit-text-stroke: 5px blue;
-    font-weight: bold;
-    text-shadow: 3px 3px black;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    line-height: 1.1em;
-    left: 0.45em;
-    pointer-events: none;
-    color: white;
+#controller .button.arrow {
+  border-radius: 4em 4em 9em 9em;
+}
+#controller .button:after{
+  font-size: 10em;
+  position: relative;
+  font-weight: bolder;
+  outline: 2em rgb(140, 196, 196);
+  -webkit-text-stroke: 0.02em rgb(28, 68, 72);
+  color: white;
+  text-shadow: 0 0 35px rgb(140, 196, 196);
+}
+#controller .button.arrow:after{
+  content: "\2191";
+  top: -0.2em;
 }
 #controller .button.up{
-    top: -0.11em;
-    left: 0.21em;
+  bottom: 59%;
+  left: 12em;
+  z-index: 1;
 }
-#controller .button.up span{
-    margin: 0.05em 0.04em;
+
+#controller .button.left{
+  bottom: 31%;
+  left: 1em;
+  transform: rotate(-90deg);
+}
+
+#controller .button.right{
+  bottom: 31%;
+  left: 23em;
+  transform: rotate(90deg);
 }
 
 #controller .button.down{
-    top: 0.12em;
-    left: 0.21em;
-}
-#controller .button.down span{
-    margin: 0.05em 0.04em;
-}
-#controller .button.left{
-    top: 0.0051em;
-    left: 0.085em;
-}
-#controller .button.left span {
-    margin: 0.09em -0.23em;
-}
-#controller .button.right{
-    top: 0.0051em;
-    left: 0.3361em;
-}
-#controller .button.right span{
-    margin: 0.09em -0.2em;
+  bottom: 3%;
+  left: 12em;
+  transform: rotate(180deg);
 }
 #controller .button.shoot {
-    top: 0.0777em;
-    left: 0.639em;
+  bottom: 35%;
+  right: 1em;
 }
-#controller .button.shoot span{
-    margin: 0.21em 0.08em;
+#controller .button.shoot:after{
+    content: "S"
 }
+
 #controller .button.melee {
-    top: -0.0665em;
-    left: 0.783em;
+  bottom: 10%;
+  right: 20em;
 }
-#controller .button.melee span {
-    margin: 0.2em -0.07em;
+#controller .button.melee:after {
+  content: "M"
+}
+
+#controller .button.pause{
+  right: 22em;
+  bottom: 80%;
+  width: 16em;
+  height: 7em;
+}
+#controller .button.pause:after {
+  content: "Pause";
+  font-size: 3em;
+}
+
+#controller .button.inventory{
+  left: 40em;
+  bottom: 44%;
+  width: 16em;
+  height: 7em;
+}
+#controller .button.inventory:after {
+  content: "Inventory";
+  font-size: 3em;
 }

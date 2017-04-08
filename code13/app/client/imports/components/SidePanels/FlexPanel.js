@@ -66,7 +66,7 @@ export default FlexPanel = React.createClass({
     hazUnreadChats:         PropTypes.array,              // This is just a subset of the data in chatChannelTimestamps,
                                                           // but simplified - just an Array of chat channelNames with at
                                                           // least one unread message. Handy for notification UIs, and quicker to parse
-    requestChatChannelTimestampsNow: PropTypes.func.isRequired,   // It does what it says on the box. Used by fpChat                                                          
+    requestChatChannelTimestampsNow: PropTypes.func.isRequired,   // It does what it says on the box. Used by fpChat
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     joyrideSteps:           PropTypes.array,              // As passed to Joyride. If non-empty, a joyride is active
     joyrideSkillPathTutorial: PropTypes.string,           // Null, unless it is one of the builtin skills tutorials which is currently active
@@ -230,8 +230,8 @@ export default FlexPanel = React.createClass({
       border:       'none',
       borderRadius: 0,
       marginBottom: 0,
-      backgroundColor: 'rgba(242, 242, 242, 1)',
-      zIndex:       90    // Temp Hack
+      backgroundColor: 'rgba(242, 242, 242, 1)'
+      //zIndex:       90    // Temp Hack - this forces onscreen controller to be behind controls
     }
     :
     {

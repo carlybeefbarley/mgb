@@ -16,9 +16,9 @@
 
 <!-- MENU -->
 <div class="mgb-main-menu ui inverted borderless teal top fixed menu">
-  <div class="item">
+  <a class="item" href="{{ MGB_URL}}">
     <img class="mgb-menu-logo ui small image" src="~/app/images/logos/mgb/medium/03.png" />
-  </div>
+  </a>
   <a class="item" href="{{ MGB_URL }}learn">Learn</a>
   <a class="item" href="{{ MGB_URL }}games">Play</a>
   <a class="item" href="{{ MGB_URL }}users">Meet</a>
@@ -42,7 +42,7 @@
     <p class="mgb-lead">
       Make and play games together while learning real skills.
     </p>
-  </div>
+  </div> 
 
   <!-- PILED SECTION -->
   <div class="mgb-piled-container">
@@ -56,52 +56,50 @@
     <div style="position: absolute; top: 0;right: 0;bottom: 0;left: 0;border:2px solid black;"></div>
     -->
     <div class="ui stackable equal width grid">
-      <div class="one wide computer only column"></div>
-      <div class="column">
+      <div class="column mgb-play-column">
         <p></p>
-        <h1 class="ui inverted header">Play me ⟶</h1>
+        <h1 class="ui inverted header">Play</h1>
         <p>&nbsp;</p>
         <p>
-          <big>Giant hungry...</big>
+          <big>Eat...</big>
         </p>
         <p>
-          &emsp;Giant want fast eating...
+          <big>Click...</big>
         </p>
         <p>
-          &emsp;Smart to make Giant happy...
+          <big>Quick !</big>
         </p>
       </div>
-      <div class="eight wide column">
+      <div class="column mgb-game-column">
         <!-- GAME -->
         <div class="mgb-game">
           <!--<img class="ui image" src="{{ BASE_URL }}/img/game-placeholder.jpg" />-->
-          <iframe width="653px" height="292px" style="overflow: hidden; border: solid 1px black" scrolling="no" src="{{ MGB_URL }}api/asset/code/bundle/hHncMnhmS7f5Mb5qa"></iframe>
+          <iframe width="100%" height="100%" scrolling="no" src="{{ MGB_URL }}api/asset/code/bundle/hHncMnhmS7f5Mb5qa"></iframe>
         </div>
       </div>
-      <div class="column">
+      <div class="column mgb-make-column">
         <p></p>        
-        <h1 class="ui inverted header">⟵ Make me</h1>
+        <h1 class="ui inverted header">Make</h1>
         <div class="ui large inverted selection list">
-          <div class="item">
-            <i class="code icon"></i> Code
-          </div>
-          <div class="item">
-            <i class="music icon"></i> Music
-          </div>
-          <div class="item">
-            <i class="picture icon"></i> Graphics
-          </div>
-          <div class="item">
-            <i class="sitemap icon"></i> Projects
-          </div>
+          <a class="item" href="{{ MGB_URL }}u/!vault/asset/hHncMnhmS7f5Mb5qa" target="_blank">
+            <i class="code icon"></i>&nbsp;Code
+          </a>
+          <a class="item" href="{{ MGB_URL }}u/!vault/asset/gNXbH4XdcadrnDpKZ" target="_blank">
+            <i class="music icon"></i>&nbsp;Sound
+          </a>
+          <a class="item" href="{{ MGB_URL }}u/!vault/asset/EADCuDifrQZZFJPrb" target="_blank">
+            <i class="picture icon"></i>&nbsp;Graphics
+          </a>
+          <a class="item" href="{{ MGB_URL }}u/!vault/projects/landingPage" target="_blank">
+            <i class="sitemap icon"></i>&nbsp;Projects
+          </a>
         </div>
-        <a class="ui large fluid secondary button" href="{{ MGB_URL }}u/!vault/projects/landingPage">
+        <a class="ui large secondary button" href="{{ MGB_URL }}u/!vault/projects/landingPage" target="_blank">
           <i class="fork code icon"></i>
           Fork Game
         </a>
       </div>
 
-      <div class="one wide computer only column"></div>
     </div>
   </div>
 </section>
@@ -110,7 +108,7 @@
 <section class="mgb-bullets">
   <div class="ui hidden divider"></div>
 
-  <div class="ui very padded very relaxed equal width grid">
+  <div class="ui very padded very relaxed equal width stackable grid">
     <div class="column">
       <h2 class="ui inverted disabled icon header">
         <i class="circular hand paper icon"></i>

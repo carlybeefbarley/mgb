@@ -72,12 +72,18 @@ section {
    */
   .mgb-game {
     text-align: center;
-    img {
+    iframe,img {
       .mgb-box-shadow-border(0.5em);
       border: 1px solid #000;
       border-radius: 1px;
     }
   }
+
+  .mgb-game-columnXX {
+    min-width: 653px;
+    max-width: 653px;
+  }
+
 }
 
 /***************************************
@@ -112,3 +118,94 @@ footer {
 }
 
 /* TODO media query sizes */
+
+@media (max-width: 767px) {
+  .mgb-game-column {
+    width: 100%;
+    height: ~"calc( 100vw / 2.16 )" !important;
+    margin-right: auto !important;
+    margin-left: auto  !important;
+  }
+  .mgb-game {
+    max-width: 680px;
+    height: 100%;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  .mgb-play-column {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .mgb-make-column {
+    text-align: center;
+    margin-right: auto;
+    margin-left: auto;
+  }  
+}
+
+@media (min-width: 768px) and (max-width: 1139px) {
+  .mgb-game-column {
+    width: ~"calc(100vw - 496px)" !important;
+    height: ~"calc( 56px + ( ( 100vw - 496px ) / 2.24))" !important;
+    max-height: 292px;
+    max-width: 618px;
+  }
+  .mgb-game {
+    max-width: 680px;
+    margin-right: auto;
+    margin-left: auto;
+    height: 100%;
+    max-height: 264px;
+  }
+  .mgb-play-column {
+    text-align: right;
+    min-width: 220px;
+    max-width: 220px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .mgb-make-column {
+    text-align: left;
+    min-width: 220px;
+    max-width: 220px;
+    margin-right: auto;
+    margin-left: auto;
+  }  
+}
+
+
+
+@media (min-width: 1140px) {
+  .mgb-game-column {
+    width: ~"calc(100% - 440px)" !important;
+    height: 292px !important;
+    min-height: 292px;
+    max-height: 292px;
+    max-width: 618px;
+  }
+  .mgb-game {
+    height: 264px;
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 590px;
+  }
+
+  .mgb-play-column {
+    text-align: right;
+    min-width: 220px;
+    max-width: 220px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .mgb-make-column {
+    text-align: left;
+    min-width: 220px;
+    max-width: 220px;
+    margin-right: auto;
+    margin-left: auto;
+  }  
+}

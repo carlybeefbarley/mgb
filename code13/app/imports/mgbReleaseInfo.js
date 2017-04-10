@@ -15,6 +15,31 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Sunday Apr 09 2017 18:45 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3929'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fix some warnings on activity flex panel; fix bug that could prevent a logged-out-user opening the chat panel; "see more games" button now actually shows games',
+          'otherUrls': [ ]
+        }        
+      ]
+    },
+
+
+    {
       'timestamp': 'Friday Apr 07 2017 20:00 GMT-0700 (PDT)',
 
       'id': {

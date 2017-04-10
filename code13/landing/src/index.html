@@ -64,26 +64,25 @@
         <h1 class="ui inverted header" data-position="bottom right" data-inverted="" data-tooltip="Click Game to play">Play</h1>
         <p>&nbsp;</p>
         <p>
-          <big>Eat...</big>
+          <big data-tooltip="Sample game built in MyGameBuilder" data-inverted="">Sample game</big>
         </p>
         <p>
-          <big>Click...</big>
+          <big data-tooltip="Feed the giant" data-inverted="">Eat...</big>
         </p>
         <p>
-          <big>Quick !</big>
+          <big data-tooltip="Just click/touch food" data-inverted="">Click...</big>
         </p>
       </div>
       <div class="column mgb-game-column">
         <!-- GAME -->
         <div class="mgb-game">
-          <div style="height: 60px; padding-top: 35px">Loading Game...</div>
           <!--<img class="ui image" src="{{ BASE_URL }}/img/game-placeholder.jpg" />-->
-          <iframe width="100%" height="100%" scrolling="no" style="margin-top: -60px" src="{{ MGB_URL }}api/asset/code/bundle/hHncMnhmS7f5Mb5qa"></iframe>
+          <iframe class="mgb-game-iframe" scrolling="no" src="{{ MGB_URL }}api/asset/code/bundle/hHncMnhmS7f5Mb5qa"></iframe>
         </div>
       </div>
       <div class="column mgb-make-column">
         <p></p>
-        <h1 class="ui inverted header" data-position="bottom left" data-inverted="" data-tooltip="Click below for source">Make</h1>
+        <h1 class="ui inverted header" data-position="bottom left" data-inverted="" data-tooltip="See the source...">Make</h1>
         <div class="ui large inverted selection list">
           <a class="item" href="{{ MGB_URL }}u/!vault/asset/hHncMnhmS7f5Mb5qa" target="_blank" >
             <span data-position="bottom left" data-inverted="" data-tooltip="JavaScript Editor + Tutorials">

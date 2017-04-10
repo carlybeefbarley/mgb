@@ -274,16 +274,25 @@ section {
 }
 .mgb-piled-container .mgb-game {
   text-align: center;
+  height: 292px;
+  min-height: 100%;
+  width: 1px;
+  min-width: 100%;
 }
 .mgb-piled-container .mgb-game iframe,
 .mgb-piled-container .mgb-game img {
-  box-shadow: 0 0 0 0.5em rgba(0, 0, 0, 0.1);
-  border: 1px solid #000;
-  border-radius: 1px;
+  /* 
+      .mgb-box-shadow-border(0.5em);
+      border: 1px solid #000;
+      border-radius: 1px;
+      */
+  border: none;
 }
-.mgb-piled-container .mgb-game-columnXX {
-  min-width: 653px;
-  max-width: 653px;
+.mgb-piled-container .mgb-game-iframe {
+  height: 292px;
+  min-height: 100%;
+  width: 1px;
+  min-width: 100%;
 }
 /***************************************
  *            Main Bullets             *
@@ -312,17 +321,18 @@ footer {
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.9em;
 }
-/* TODO media query sizes */
+/***************************************
+ *          Media Query Sizes          *
+ ***************************************/
 @media (max-width: 767px) {
   .mgb-game-column {
-    width: 100%;
+    width: calc(100vw - 180px) !important;
     height: calc( 100vw / 2.16 ) !important;
     margin-right: auto !important;
     margin-left: auto  !important;
   }
-  .mgb-game {
-    max-width: 680px;
-    height: 100%;
+  .mgb-game,
+  .mgb-game-iframe {
     margin-right: auto;
     margin-left: auto;
   }
@@ -338,18 +348,9 @@ footer {
   }
 }
 @media (min-width: 768px) and (max-width: 1139px) {
-  .mgb-game-column {
-    width: calc(100vw - 456px) !important;
-    height: calc( 56px + ( ( 100vw - 456px ) / 2.24)) !important;
-    max-height: 292px;
-    max-width: 618px;
-  }
   .mgb-game {
-    max-width: 680px;
     margin-right: auto;
     margin-left: auto;
-    height: 100%;
-    max-height: 264px;
   }
   .mgb-play-column {
     text-align: right;
@@ -367,18 +368,9 @@ footer {
   }
 }
 @media (min-width: 1140px) {
-  .mgb-game-column {
-    width: calc(100% - 400px) !important;
-    height: 292px !important;
-    min-height: 292px;
-    max-height: 292px;
-    max-width: 618px;
-  }
   .mgb-game {
-    height: 264px;
     margin-right: auto;
     margin-left: auto;
-    max-width: 590px;
   }
   .mgb-play-column {
     text-align: right;

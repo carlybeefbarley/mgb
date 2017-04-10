@@ -17,7 +17,7 @@ import SpecialGlobals from '/imports/SpecialGlobals.js'
 // params (assetId, projectId etc)
 
 const _sep = <Icon color='grey' name='right angle' />
-const _sepTo = <span>&nbsp;<Icon color='blue' name='right angle' />&nbsp;</span>
+const _sepTo = <span>&nbsp;<Icon color='blue' name='angle double right' />&nbsp;</span>
 
 const ProjectsSection = ( { usernameToShow, projectNames } ) =>
 {

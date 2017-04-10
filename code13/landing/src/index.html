@@ -73,8 +73,9 @@
       <div class="column mgb-game-column">
         <!-- GAME -->
         <div class="mgb-game">
+          <div style="height: 60px; padding-top: 35px">Loading Game...</div>
           <!--<img class="ui image" src="{{ BASE_URL }}/img/game-placeholder.jpg" />-->
-          <iframe width="100%" height="100%" scrolling="no" src="{{ MGB_URL }}api/asset/code/bundle/hHncMnhmS7f5Mb5qa"></iframe>
+          <iframe width="100%" height="100%" scrolling="no" style="margin-top: -60px" src="{{ MGB_URL }}api/asset/code/bundle/hHncMnhmS7f5Mb5qa"></iframe>
         </div>
       </div>
       <div class="column mgb-make-column">
@@ -225,7 +226,7 @@
               Gain coding, design, team and business skills through real experiences with others.
             </span>
         </h2>
-        <div class="ui big green fluid button">Get Started</div>
+        <a class="ui big green fluid button" href="{{ MGB_URL }}learn/getStarted" target="_blank">Get Started</a>
       </div>
     </div>
 
@@ -242,7 +243,7 @@
             Step-by-step programming tutorials and help systems within the game editors.
           </span>
         </h2>
-        <div class="ui big green fluid button">Try it</div>
+        <a class="ui big green fluid button" href="{{ MGB_URL }}learn/code" target="_blank">Try it</a>
       </div>
       <div class="six wide column">
         <img class="mgb-alternating-media ui image" src="{{ BASE_URL }}/img/tutorials_1200x720.png">
@@ -272,7 +273,7 @@
             Decorate your profile and show off your hard earned skills.
           </span>
         </h2>
-        <div class="ui big green fluid button">Earn Badges</div>
+        <a class="ui big green fluid button" href="{{ MGB_URL }}learn/skills" target="_blank">Earn Badges</a>
       </div>
     </div>
   </div>

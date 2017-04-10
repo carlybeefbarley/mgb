@@ -105,14 +105,14 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
             <FittedImage 
             src={makeCDNLink(currUser.profile.avatar)} 
             width='auto'
-            maxHeight="3em"
+            height="3em"
             />
           }
           {(!currUser || currUser._id != byUserId) &&
             <FittedImage 
             src={makeCDNLink(`/api/user/${byUserId}/avatar/60`, makeExpireTimestamp(SpecialGlobals.avatar.validFor))}
             width='auto'
-            maxHeight="3em"
+            height="3em"
             />
           }
         </QLink>

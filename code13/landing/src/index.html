@@ -19,9 +19,9 @@
   <a class="item" href="{{ MGB_URL}}">
     <img class="mgb-menu-logo ui small image" src="~/app/images/logos/mgb/medium/03.png" />
   </a>
-  <a class="item" href="{{ MGB_URL }}learn">Learn</a>
-  <a class="item" href="{{ MGB_URL }}games">Play</a>
-  <a class="item" href="{{ MGB_URL }}users">Meet</a>
+  <a class="item" href="{{ MGB_URL }}learn" target="_blank">Learn</a>
+  <a class="item" href="{{ MGB_URL }}games" target="_blank">Play</a>
+  <a class="item" href="{{ MGB_URL }}users" target="_blank">Meet</a>
 
   <div class="right menu">
     <a class="item" href="{{ MGB_URL }}login">
@@ -42,6 +42,9 @@
     <p class="mgb-lead">
       Make and play games together while learning real skills.
     </p>
+    <p class="mgb-sub-lead">
+      MyGameBuilder is 100% FREE while in <span data-tooltip="Open Beta begins April 25th 2017">BETA</span> <a href="{{ MGB_URL }}roadmap" target="_blank">*</a>
+    </p>
   </div> 
 
   <!-- PILED SECTION -->
@@ -58,7 +61,7 @@
     <div class="ui stackable equal width grid">
       <div class="column mgb-play-column">
         <p></p>
-        <h1 class="ui inverted header">Play</h1>
+        <h1 class="ui inverted header" data-position="bottom right" data-inverted="" data-tooltip="Click Game to play">Play</h1>
         <p>&nbsp;</p>
         <p>
           <big>Eat...</big>
@@ -79,20 +82,28 @@
         </div>
       </div>
       <div class="column mgb-make-column">
-        <p></p>        
-        <h1 class="ui inverted header">Make</h1>
+        <p></p>
+        <h1 class="ui inverted header" data-position="bottom left" data-inverted="" data-tooltip="Click below for source">Make</h1>
         <div class="ui large inverted selection list">
-          <a class="item" href="{{ MGB_URL }}u/!vault/asset/hHncMnhmS7f5Mb5qa" target="_blank">
-            <i class="code icon"></i>&nbsp;Code
+          <a class="item" href="{{ MGB_URL }}u/!vault/asset/hHncMnhmS7f5Mb5qa" target="_blank" >
+            <span data-position="bottom left" data-inverted="" data-tooltip="JavaScript Editor + Tutorials">
+              <i class="code icon"></i>&nbsp;Code
+            </span>
           </a>
           <a class="item" href="{{ MGB_URL }}u/!vault/asset/gNXbH4XdcadrnDpKZ" target="_blank">
-            <i class="music icon"></i>&nbsp;Sound
+            <span data-position="bottom left" data-inverted="" data-tooltip="Sound Synthesizer">
+              <i class="music icon"></i>&nbsp;Sound
+            </span>
           </a>
           <a class="item" href="{{ MGB_URL }}u/!vault/asset/EADCuDifrQZZFJPrb" target="_blank">
-            <i class="picture icon"></i>&nbsp;Graphics
+            <span data-position="bottom left" data-inverted="" data-tooltip="Multilayer Multiframe Editor">
+              <i class="picture icon"></i>&nbsp;Graphics
+            </span>
           </a>
           <a class="item" href="{{ MGB_URL }}u/!vault/projects/landingPage" target="_blank">
-            <i class="sitemap icon"></i>&nbsp;Projects
+            <span data-position="bottom left" data-inverted="" data-tooltip="Team Projects + Team Chat">
+              <i class="sitemap icon"></i>&nbsp;Projects
+            </span>
           </a>
         </div>
         <a class="ui large secondary button" href="{{ MGB_URL }}u/!vault/projects/landingPage" target="_blank">
@@ -116,16 +127,16 @@
         <span class="content">Make Games</span>
       </h2>
       <p>
-        Learn by Doing
+        Like <a href="{{ MGB_URL }}u/!vault/projects/The2048" target="_blank">2048</a>, <a href="{{ MGB_URL }}u/stauzs/projects/Project%20Cube" target="_blank">Minecraft</a>, <a href="{{ MGB_URL }}u/Bouhm/play/iXC8qq3NMydRsf6eH" target="_blank">RPGs</a> etc
       </p>
       <p>
-        Fork + Mod a game
+        <a href="{{ MGB_URL }}projects?hidews=7&amp;showForkable=1" target="_blank">Fork + Mod a game</a>
       </p>
       <p>
-        Join another team
+        Make <a href="{{ MGB_URL }}u/!vault/play/vK3oPY8zatZH5FCWv?_fp=chat.A_ZT5KCyZLYsmeZpFST_" target="_blank">code-based</a> <span data-tooltip="Make games using actor-rules or JavasScript code" data-inverted="">OR</span> <a href="{{ MGB_URL }}u/dgolds/play/X8P7sLMovtS9uLafE" target="_blank">non-code</a> games
       </p>
       <p>
-        Start your own project     
+        Join or start a team     
       </p>
     </div>
     <div class="column">
@@ -134,16 +145,16 @@
         <span class="content">Learn from friends</span>
       </h2>
       <p>
-        Ask for the community for help
+        <a href="{{ MGB_URL }}?_fp=chat.G_MGBHELP_" target="_blank">Ask the community for help</a>
       </p>
       <p>
         Pay it forward when you can
       </p>
       <p>
-        Use, make &amp; share tutorials
+        <a href="{{ MGB_URL }}learn/skills" target="_blank">Use</a>, <a href="{{ MGB_URL }}u/!vault/assets?kinds=tutorial&project=Tutorial+Data" target="_blank">make</a> &amp; share tutorials
       </p>      
       <p>
-        Chat in-system about projects, games &amp; assets
+        <a href="{{ MGB_URL }}?_fp=chat" target="_blank">Chat</a> in-system about projects, <a href="{{ MGB_URL }}u/!vault/projects/OnslaughtArena?_fp=chat.A_ZT5KCyZLYsmeZpFST_" target="_blank">games</a> &amp; <a href="{{ MGB_URL }}?_fp=chat" target="_blank">assets</a>
       </p>
     </div>
     <div class="column">
@@ -155,7 +166,7 @@
         People play your games
       </p>
       <p>
-        You play friends' games
+        You play <a href="{{ MGB_URL }}games?sort=plays" target="_blank">friends' games</a>
       </p>
       <p>
         Make and receive suggestions
@@ -183,39 +194,39 @@
       <div class="seven wide column">
         <!-- Mock SkillsMap -->
         <div class="mgb-mock-skillsmap mgb-alternating-media">
-          <div class="bar getStarted">
+          <a class="bar getStarted" target="_blank" href="{{ MGB_URL }}learn/getStarted">
             <div class="label"><i class="small plus icon"></i>Get Started</div>
-          </div>
-          <div class="bar code">
-            <div class="label"><i class="small plus icon"></i>Code</div>
-          </div>
-          <div class="bar art">
+          </a>
+          <a class="bar code" target="_blank" href="{{ MGB_URL }}learn/code">
+            <div class="label"><i class="small plus icon"></i>Code</a>
+          </a>
+          <a class="bar art" target="_blank" href="{{ MGB_URL }}learn/skills/art">
             <div class="label"><i class="small plus icon"></i>Art</div>
-          </div>
-          <div class="bar design">
-            <div class="label"><i class="small plus icon"></i>Design</div>
-          </div>
-          <div class="bar audio">
-            <div class="label"><i class="small plus icon"></i>Audio</div>
-          </div>
-          <div class="bar analytics">
-            <div class="label"><i class="small plus icon"></i>Analytics</div>
-          </div>
-          <div class="bar writing">
-            <div class="label"><i class="small plus icon"></i>Writing</div>
-          </div>
-          <div class="bar marketing">
-            <div class="label"><i class="small plus icon"></i>Marketing</div>
-          </div>
-          <div class="bar community">
-            <div class="label"><i class="small plus icon"></i>Community</div>
-          </div>
-          <div class="bar legal">
-            <div class="label"><i class="small plus icon"></i>Legal</div>
-          </div>
-          <div class="bar business">
-            <div class="label"><i class="small plus icon"></i>Business</div>
-          </div>
+          </a>
+          <a class="bar design" target="_blank" href="{{ MGB_URL }}learn/skills/design">
+            <div class="label"><i class="small plus icon"></i>Design&emsp;<small>(coming soon)</small></div>
+          </a>
+          <a class="bar audio" target="_blank" href="{{ MGB_URL }}learn/skills/audio">
+            <div class="label"><i class="small plus icon"></i>Audio&emsp;<small>(coming soon)</small></div>
+          </a>
+          <a class="bar analytics" target="_blank" href="{{ MGB_URL }}learn/skills/analytics">
+            <div class="label"><i class="small plus icon"></i>Analytics&emsp;<small>(coming soon)</small></div>
+          </a>
+          <a class="bar writing" target="_blank" href="{{ MGB_URL }}learn/skills/writing">
+            <div class="label"><i class="small plus icon"></i>Writing&emsp;<small>(coming soon)</small></div>
+          </a>
+          <a class="bar marketing" target="_blank" href="{{ MGB_URL }}learn/skills/marketing">
+            <div class="label"><i class="small plus icon"></i>Marketing&emsp;<small>(coming soon)</small></div>
+          </a>
+          <a class="bar community" target="_blank" href="{{ MGB_URL }}learn/skill/community">
+            <div class="label"><i class="small plus icon"></i>Community&emsp;<small>(coming soon)</small></div>
+          </a>
+          <a class="bar legal" target="_blank" href="{{ MGB_URL }}learn/skills/legal">
+            <div class="label"><i class="small plus icon"></i>Legal&emsp;<small>(coming soon)</small></div>
+          </a>
+          <a class="bar business" target="_blank" href="{{ MGB_URL }}learn/skills/business">
+            <div class="label" ><i class="small plus icon"></i>Business&emsp;<small>(coming soon)</small></div>
+          </a>
         </div>
       </div>
       <div class="six wide column">
@@ -226,7 +237,7 @@
               Gain coding, design, team and business skills through real experiences with others.
             </span>
         </h2>
-        <a class="ui big green fluid button" href="{{ MGB_URL }}learn/getStarted" target="_blank">Get Started</a>
+        <a class="ui big green fluid button" href="{{ MGB_URL }}learn" target="_blank">Start Learning</a>
       </div>
     </div>
 
@@ -283,7 +294,9 @@
   <div class="ui hidden section divider"></div>
   <h1 class="ui center aligned icon header">
     <img class="ui small image" src="~/app/images/mascots/team.png" />
-    <span class="content">For everyone</span>
+    <span class="content" data-inverted="" data-tooltip="Beginners: Tutorials, templates &amp; help;&emsp;Gurus: ES6, modules and media editors" data-position="bottom center">
+      For everyone
+    </span>
   </h1>
   <div class="ui hidden section divider"></div>
 </section>

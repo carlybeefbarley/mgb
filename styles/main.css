@@ -387,3 +387,9 @@ footer {
     margin-left: auto;
   }
 }
+@media (max-width: 500px) {
+  .mgb-game,
+  .mgb-game-iframe {
+    max-height: 200px;
+  }
+}

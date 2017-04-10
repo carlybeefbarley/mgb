@@ -331,8 +331,8 @@ footer {
 }
 @media (min-width: 768px) and (max-width: 1139px) {
   .mgb-game-column {
-    width: calc(100vw - 496px) !important;
-    height: calc( 56px + ( ( 100vw - 496px ) / 2.24)) !important;
+    width: calc(100vw - 456px) !important;
+    height: calc( 56px + ( ( 100vw - 456px ) / 2.24)) !important;
     max-height: 292px;
     max-width: 618px;
   }
@@ -345,22 +345,22 @@ footer {
   }
   .mgb-play-column {
     text-align: right;
-    min-width: 220px;
-    max-width: 220px;
+    min-width: 200px;
+    max-width: 200px;
     margin-left: auto;
     margin-right: auto;
   }
   .mgb-make-column {
     text-align: left;
-    min-width: 220px;
-    max-width: 220px;
+    min-width: 200px;
+    max-width: 200px;
     margin-right: auto;
     margin-left: auto;
   }
 }
 @media (min-width: 1140px) {
   .mgb-game-column {
-    width: calc(100% - 440px) !important;
+    width: calc(100% - 400px) !important;
     height: 292px !important;
     min-height: 292px;
     max-height: 292px;
@@ -374,15 +374,15 @@ footer {
   }
   .mgb-play-column {
     text-align: right;
-    min-width: 220px;
-    max-width: 220px;
+    min-width: 200px;
+    max-width: 200px;
     margin-left: auto;
     margin-right: auto;
   }
   .mgb-make-column {
     text-align: left;
-    min-width: 220px;
-    max-width: 220px;
+    min-width: 200px;
+    max-width: 200px;
     margin-right: auto;
     margin-left: auto;
   }

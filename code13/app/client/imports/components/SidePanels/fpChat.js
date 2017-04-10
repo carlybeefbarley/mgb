@@ -406,7 +406,7 @@ export default fpChat = React.createClass( {
           {currUser && currUser._id == c.byUserId &&
           <img src={makeCDNLink( currUser.profile.avatar )} style={{ maxHeight: "3em" }}></img>
           }
-          {(!currUser || currUser._id != c.byUserId) &&
+          {(!currUser || currUser._id !== c.byUserId) &&
           <img src={makeCDNLink( `/api/user/${c.byUserId}/avatar/${SpecialGlobals.avatar.validFor}`, makeExpireTimestamp( SpecialGlobals.avatar.validFor ) )}
                style={{ maxHeight: "3em" }}></img>
           }
@@ -528,9 +528,9 @@ export default fpChat = React.createClass( {
         </List.Item>
         {
           _.sortBy(
-            currUserProjects, p => (p.ownerId === currUser._id ? '' : p.ownerName)
+            currUserProjects, p => (currUser && p.ownerId === currUser._id ? '' : p.ownerName)
           ).map( project => {
-            const isOwner = (project.ownerId === currUser._id)
+            const isOwner = (currUser && project.ownerId === currUser._id)
             const channelName = makeChannelName( { scopeGroupName: 'Project', scopeId: project._id } )
             return (
               <List.Item key={project._id}>

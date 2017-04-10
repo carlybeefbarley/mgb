@@ -30,7 +30,8 @@ export default TaskApprove = React.createClass({
       return(<span></span>)
 
     const slashSkillPath = this.props.asset.skillPath.replace(/\./gi, '/')
-    const hasSkill = ownerSkills[0][slashSkillPath].length > 0
+    const oSkills = ownerSkills[0][slashSkillPath]
+    const hasSkill = oSkills && oSkills.length > 0 ? true : false
     const color = hasSkill ? 'green' : 'grey'
     const buttonText = hasSkill ? 'Remove Skill' : 'Approve Task' 
 

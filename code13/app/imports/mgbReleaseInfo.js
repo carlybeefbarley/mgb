@@ -15,12 +15,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Sunday Apr 09 2017 18:45 GMT-0700 (PDT)',
+      'timestamp': 'Monday Apr 10 2017 15:40 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.1.0',
         'state': 'Beta',
-        'iteration': '3929'
+        'iteration': '3940'
       },
 
       'releaseManagement': {
@@ -28,6 +28,13 @@ const mgbReleaseInfo = {
       },
 
       'changes': [
+        {
+          'featureTag': 'learn.art',
+          'type': 'feature',
+          'changeName': 'Art Skills!',
+          'changeSummary': 'We have added the first Art Skill tutorials. Learn about lines, curves, colors and more',
+          'otherUrls': [ {  txt: 'Art Skills', href: '/learn/art' } ]
+        },
         {
           'featureTag': 'bugfix',
           'type': 'bugfix',

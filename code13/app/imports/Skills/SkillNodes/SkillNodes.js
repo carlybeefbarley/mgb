@@ -349,3 +349,5 @@ export const isPathChallenge = (skillPath) => _.startsWith( skillPath, 'code.js.
 export const isPathCodeTutorial = (skillPath) => _.startsWith( skillPath, 'code.js.games' ) || _.startsWith( skillPath, 'code.js.phaser' )
 
 export const isPhaserTutorial = (skillPath) => _.startsWith( skillPath, 'code.js.phaser' )
+
+export const isArtTutorial = (skillPath) => _.startsWith( skillPath, 'art' )

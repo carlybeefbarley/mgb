@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import React from 'react'
-import { Grid, Header, Popup, Button, Icon } from 'semantic-ui-react'
+import React, { PropTypes } from 'react'
+import { Grid, Segment, Divider, Header, Popup, Button, Icon } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import sty from  './editGraphic.css'
 import ReactColor from 'react-color'        // http://casesandberg.github.io/react-color/
@@ -16,6 +16,7 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import ResizeImagePopup from './ResizeImagePopup'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
+import ArtTutorial from './ArtTutorials'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
@@ -64,7 +65,7 @@ export default class EditGraphic extends React.Component {
   handleToggleGrid = () => this.setState( { showGrid: !this.state.showGrid} )
   handleToggleCheckeredBg = () => this.setState( { showCheckeredBg: !this.state.showCheckeredBg} )
 
-  constructor(props) {
+  constructor(props, context) {
     super(props)
     registerDebugGlobal( 'editGraphic', this, __filename, 'Active Instance of Graphic editor')
 
@@ -72,6 +73,8 @@ export default class EditGraphic extends React.Component {
 
     this.zoomLevels = [1, 2, 4, 6, 8, 10, 12, 14, 16]
     this.gridImg = null
+
+    this.userSkills = context.skills
 
     this.state = {
       editScale:        this.getDefaultScale(),        // Zoom scale of the Edit Canvas
@@ -1518,7 +1521,7 @@ export default class EditGraphic extends React.Component {
     this.initDefaultContent2()      // The NewAsset code is lazy, so add base content here
     this.initDefaultUndoStack()
 
-    const asset = this.props.asset
+    const { asset, canEdit, currUser } = this.props
     const c2 = asset.content2
     const zoom = this.state.editScale
     const { actions, config } = this.generateToolbarActions()
@@ -1529,14 +1532,14 @@ export default class EditGraphic extends React.Component {
 
     const scrollModes = ["Normal", "Rotate", "Scale", "Flip"]
 
+    colWidth = (asset.skillPath && _.startsWith( asset.skillPath, 'art' )) ? '8' : '10'
+
     // Make element
     return (
       <Grid>
         {/***  Central Column is for Edit and other wide stuff  ***/}
-
-        <Grid.Column width='16'>
+        <Grid.Column width={colWidth}>
           <div className="row" style={{marginBottom: "6px"}}>
-
             <Popup
               on='hover'
               positioning='bottom left'
@@ -1651,30 +1654,32 @@ export default class EditGraphic extends React.Component {
             </div>
           </div>
 
-
+          {/*** Drawing Canvas ***/}
           <Grid.Row style={{"minHeight": "92px"}}>
-            <div   style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": "600px"}}>
-              <canvas ref="editCanvas"
-                        style={imgEditorSty}
-                        width={zoom * c2.width}
-                        height={zoom * c2.height}
-                        className={(
-                          (this.state.showCheckeredBg ? 'mgbEditGraphicSty_checkeredBackground' : '')
-                          + ' mgbEditGraphicSty_thinBorder')}
-                        id="mgb_edit_graphic_main_canvas"
-                        onDragOver={this.handleDragOverPreview.bind(this)}
-                        onDrop={this.handleDropPreview.bind(this,-1)}>
-              </canvas>
-              {/*** <canvas id="tilesetCanvas"></canvas> ***/}
-              <CanvasGrid
-                scale={this.state.editScale}
-                setGrid={this.setGrid}
-              />
-            </div>
+            <Grid.Column style={{height: '100%'}} width={10}>
+              <div style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": "600px"}}>
+                <canvas 
+                  ref="editCanvas"
+                  style={imgEditorSty}
+                  width={zoom * c2.width}
+                  height={zoom * c2.height}
+                  className={(
+                    (this.state.showCheckeredBg ? 'mgbEditGraphicSty_checkeredBackground' : '')
+                    + ' mgbEditGraphicSty_thinBorder')}
+                  id="mgb_edit_graphic_main_canvas"
+                  onDragOver={this.handleDragOverPreview.bind(this)}
+                  onDrop={this.handleDropPreview.bind(this,-1)}>
+                </canvas>
+                {/*** <canvas id="tilesetCanvas"></canvas> ***/}
+                <CanvasGrid
+                  scale={this.state.editScale}
+                  setGrid={this.setGrid}
+                />
+              </div>
+            </Grid.Column>
           </Grid.Row>
 
           {/*** Status Bar ***/}
-
           <div className="ui horizontal very relaxed list" ref="statusBarDiv">
             <div className="item">
               <Icon name='pointing up' />
@@ -1696,8 +1701,20 @@ export default class EditGraphic extends React.Component {
             width: {this.state.selectDimensions.width} &nbsp;&nbsp;&nbsp; height: {this.state.selectDimensions.height}
           </div>
         </Grid.Column>
+        {/*** Art Mentor ***/}
+        {asset.skillPath && _.startsWith( asset.skillPath, 'art' ) &&
+          <ArtTutorial
+            style       =     { { backgroundColor: 'rgba(0,255,0,0.02)' } }
+            isOwner     =     { currUser && currUser._id === asset.ownerId }
+            active      =     { asset.skillPath ? true : false}
+            skillPath   =     { asset.skillPath }
+            currUser    =     { this.props.currUser }
+            userSkills  =     { this.userSkills }
+            assetId     =     { asset._id }
+          />
+        }
 
-      {/*** GraphicImport ***/}
+        {/*** GraphicImport ***/}
         <div className="ui modal" ref="graphicImportPopup">
           <GraphicImport
             EditGraphic={this}
@@ -1724,4 +1741,8 @@ export default class EditGraphic extends React.Component {
       </Grid>
     )
   }
+}
+
+EditGraphic.contextTypes = {
+  skills: PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
 }

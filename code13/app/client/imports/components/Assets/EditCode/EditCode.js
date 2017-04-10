@@ -2731,10 +2731,6 @@ export default class EditCode extends React.Component {
   }
 }
 
-
-
-
-
 EditCode.contextTypes = {
   skills: PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
 }

@@ -21,6 +21,8 @@ import LearnCodeRoute from './Learn/LearnCodeRoute'
 import LearnCodeRouteItem from './Learn/LearnCodeRouteItem'
 import LearnCodeModifyRoute from './Learn/LearnCodeModifyRoute'
 
+import LearnArtRoute from './Learn/LearnArtRoute'
+
 import Users from './Users'
 import Azzets from './Assets'
 import Projects from './Projects'
@@ -77,6 +79,7 @@ export function clientStartup() {
         <Route path="/learn/code/modify" component={LearnCodeModifyRoute} name='Modify Games'/>
         <Route path="/learn/code/:item" component={LearnCodeRouteItem}/>
 
+        <Route path="/learn/art" component={LearnArtRoute} name='Pixel Art'/>
 
         <Route path="/games" component={BrowseGamesRoute} name="Browse Games" />
         <Route path="/u/:username/games" component={BrowseGamesRoute} name="Games" />

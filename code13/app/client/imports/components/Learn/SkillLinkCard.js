@@ -37,6 +37,7 @@ class SkillLinkCard extends Component {
     childSkills: PropTypes.arrayOf( PropTypes.string ),
     learnedSkills: PropTypes.arrayOf( PropTypes.string ),
     todoSkills: PropTypes.arrayOf( PropTypes.string ),
+    handleDoItAgainClick: PropTypes.func
   }
 
   state = {}
@@ -67,7 +68,7 @@ class SkillLinkCard extends Component {
   handlePopupOpen = () => this.setState( { showPopup: true } )
   handlePopupClose = () => this.setState( { showPopup: false } )
 
-  handleDoItAgainClick = (skillPath) => () => {
+  handleDoItAgainClick(skillPath) {
     this.setState( { isHovering: false, showPopup: false } )
     startSkillPathTutorial( skillPath )
   }
@@ -81,7 +82,7 @@ class SkillLinkCard extends Component {
   }
 
   renderShowCompleted = () => {
-    const { childSkills, skillPath } = this.props
+    const { user, childSkills, skillPath } = this.props
     const { isHovering, showPopup } = this.state
 
     if (_.isEmpty( childSkills ) || !this.isCompleted())
@@ -106,7 +107,18 @@ class SkillLinkCard extends Component {
         <Header sub dividing textAlign='center'>Do it again</Header>
         <List selection>
           {_.map( childSkills, skillLeafKey => (
-            <List.Item key={skillLeafKey} onClick={this.handleDoItAgainClick( skillPath + '.' + skillLeafKey )}>
+            <List.Item 
+              key={skillLeafKey} 
+              onClick={ (e) => {
+                if (this.props.handleDoItAgainClick) {
+                  this.props.handleDoItAgainClick(e, skillPath + '.' + skillLeafKey, user) 
+                  this.setState( { isHovering: false, showPopup: false } )
+                } 
+                else {
+                  this.handleDoItAgainClick( skillPath + '.' + skillLeafKey )
+                } 
+              }}
+            >
               <Icon name='refresh' />
               <List.Content>
                 <List.Header as='a'>
@@ -160,7 +172,9 @@ class SkillLinkCard extends Component {
         className={disabled || completed ? '' : 'link'}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
-        onClick={this.handleClick}
+        onClick={this.props.onClick || this.handleClick}
+        onMouseUp={this.props.onMouseUp}
+        onTouchEnd={this.props.onTouchEnd}
       >
         <Card.Content>
           <Grid columns='equal' verticalAlign='middle'>

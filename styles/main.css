@@ -17,7 +17,7 @@
   padding: 0.3em 0.6em;
   white-space: nowrap;
   font-weight: bold;
-  font-size: 0.9em;
+  font-size: 0.8em;
   text-transform: uppercase;
 }
 .mgb-mock-skillsmap .bar.getStarted {
@@ -218,7 +218,7 @@ section {
 }
 .mgb-hero .mgb-hero-caption {
   text-align: center;
-  padding: 8em 0 6em;
+  padding: 8em 0 3em;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
 }
 .mgb-hero .mgb-hero-caption .ui.header {
@@ -227,6 +227,12 @@ section {
 }
 .mgb-hero .mgb-hero-caption .mgb-lead {
   font-size: 2rem;
+  color: #FFF;
+  font-weight: 300;
+}
+.mgb-hero .mgb-hero-caption .mgb-sub-lead {
+  padding: 0em 0 0em;
+  font-size: 1.4rem;
   color: #FFF;
   font-weight: 300;
 }
@@ -281,7 +287,7 @@ section {
  *            Main Bullets             *
  ***************************************/
 .mgb-bullets {
-  padding: 3em 0;
+  padding: 1em 0;
   background: #483C46;
   text-align: center;
 }

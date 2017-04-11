@@ -1,13 +1,11 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Grid, Segment, Button, Modal, Icon, Message, Divider, Header } from 'semantic-ui-react'
+import { Grid, Segment, Button, Icon, Message, Divider, Header } from 'semantic-ui-react'
 
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import SkillNodes, { isArtTutorial, getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo } from "/client/imports/routes/QLink"
 import { learnSkill } from '/imports/schemas/skills'
-
-const _smallTopMarginSty = { style: { marginTop: '0.5em'} }
 
 export default class ArtTutorial extends React.Component {
 
@@ -96,7 +94,7 @@ export default class ArtTutorial extends React.Component {
             content={isLastStep ? 'Finish' : 'Next'} 
             disabled={isCompleted}
           />
-          <Button compact basic size='small' color='green' onClick={this.navigateToSkillsList} icon='up arrow' data-position='top right' data-tooltip="Go up to Tutorial list"/>
+          <Button compact basic size='small' color='green' onClick={this.navigateToSkillsList} icon='up arrow' data-position='bottom right' data-tooltip="Go up to Tutorial list"/>
           
           <Divider as={Header} style={{color:'grey'}} size='tiny' horizontal >{this.state.data.title}</Divider>
           
@@ -109,12 +107,11 @@ export default class ArtTutorial extends React.Component {
                 </Message.Header>
                 <Button 
                     positive
-                    compact
                     size='small'
                     content='Return to Tutorial List'
                     icon='up arrow'
                     labelPosition='right'
-                    {..._smallTopMarginSty}
+                    style={{ margin: '1em 1em 1em 0' }}
                     onClick={ this.navigateToSkillsList } />
               </Message.Content>
             </Message>

@@ -27,15 +27,6 @@ import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-const OfferLoginTutorial = () => (
-  <QLink to='/signup'>
-    <Button floated='right'>
-      <Icon name='sign in' />
-      Log In or Sign Up
-    </Button>
-  </QLink>
-)
-
 const _artSkillNodeName = 'art'
 const _maxArtSkillCount = countMaxUserSkills( _artSkillNodeName + '.' )   
 const artSkills = SkillNodes[_artSkillNodeName]    // shorthand
@@ -57,33 +48,6 @@ ProgressLabel.propTypes = {
   subSkillsComplete: PropTypes.number,
   subSkillTotal: PropTypes.number
 }
-
-const _handleStartDefaultNextTutorial = (currUser, userSkills) => {
-  var skillPath = null
-  _.each( artItems, (area) => {
-    const { key } = area.node.$meta
-    const skillStatus = getSkillNodeStatus( currUser, userSkills, key )
-    if (skillStatus.todoSkills.length !== 0) {
-      skillPath = key + '.' + skillStatus.todoSkills[0]
-      return false
-    }
-  } )
-  if (skillPath)
-    startSkillPathTutorial( skillPath )
-}
-
-export const StartDefaultNextTutorial = ({ currUser, userSkills }) => (
-  !currUser ? <OfferLoginTutorial /> : (
-      <button
-        className="ui active yellow right floated button"
-        onClick={() => {
-          _handleStartDefaultNextTutorial( currUser, userSkills )
-        } }>
-        <Icon name='student' />
-        Start next...
-      </button>
-    )
-)
 
 const handleClick = (e, key, currUser, todoSkills) => {
   // cards with links already have a path, skip on to
@@ -171,7 +135,6 @@ const LearnArtRoute = ({ currUser }, context) => {
           Pixel Art
           <Header.Subheader>
             Learn to make art for your games
-            <StartDefaultNextTutorial currUser={currUser} userSkills={context.skills} />
           </Header.Subheader>
         </Header>
         <ProgressLabel subSkillsComplete={numArtSkills} subSkillTotal={_maxArtSkillCount} />

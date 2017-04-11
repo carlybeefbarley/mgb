@@ -118,9 +118,13 @@ export default class ArtTutorial extends React.Component {
           )
         }
           <Segment basic textAlign="center">
+            <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'row'}}>
             {_.map(images, (img, i) => {
-              return <img key={i} style={{padding: '0px 10px 0px 10px', height: '175px'}} src={img} />
+              return (
+                <img key={i} style={{padding: '0px 10px 0px 10px', maxHeight: '175px'}} src={img} />
+              )
             })}
+            </div>
           </Segment> 
           <Segment basic>
             {description}

@@ -15,7 +15,7 @@ export default class CharacterBehavior extends BaseForm {
   }
 
   render() {
-    const soundOptions = { options: MgbActor.alCannedSoundsList.map( s => ( { text: s, value: s } ) ) }
+    const soundOptions = { options: MgbActor.alCannedSoundsList.map( s => ( { text: '[builtin]:'+s, value: '[builtin]:'+s } ) ) }
 
     return (
       <div className="ui form">

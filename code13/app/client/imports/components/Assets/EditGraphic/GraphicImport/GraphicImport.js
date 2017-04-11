@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Button, Header, Icon, Message } from 'semantic-ui-react'
 import { showToast } from '/client/imports/routes/App'
 import ReactDOM from 'react-dom'
 import GifParser from  './GifParser.js'
@@ -24,7 +25,7 @@ export default class GraphicImport extends React.Component {
     super(props)
 
     this.state = {
-      status: STATUS_EMPTY,     // STATUS_EMPTY or STATUS_DRAGGED_OVER or STATUS_UPLOADING or STATUS_UPLOADED 
+      status: STATUS_EMPTY,     // STATUS_EMPTY or STATUS_DRAGGED_OVER or STATUS_UPLOADING or STATUS_UPLOADED
       tileWidth: SUGGESTED_FRAME_WIDTH,
       tileHeight: SUGGESTED_FRAME_HEIGHT,
       imgWidth: null,
@@ -80,13 +81,12 @@ export default class GraphicImport extends React.Component {
           self.setState({ status: STATUS_UPLOADED, importName: file.name})
           if (tmpImg.src.startsWith("data:image/gif;base64,"))
             self.gifLoaded(tmpImg)
-          else 
+          else
            self.spriteSheetLoaded(tmpImg)    // TODO: Make sure we don't get confused by non-image stuff like .ogg etc
         }
         tmpImg.src = theUrl
       }
       reader.readAsDataURL(file)
-			
     }
   }
 
@@ -117,7 +117,7 @@ export default class GraphicImport extends React.Component {
       newImage.onload = function(e) {
         self.loadedImg = newImage
         self.drawImage()
-        self.drawGrid()  
+        self.drawGrid()
       }
       newImage.src = self.canvas.toDataURL('image/png')
     })
@@ -130,9 +130,9 @@ export default class GraphicImport extends React.Component {
     this.canvas.width = img.width
     this.canvas.height = img.height
 
-    if (this.state.tileWidth > img.width) 
+    if (this.state.tileWidth > img.width)
       this.setState({ tileWidth: img.width })
-    if (this.state.tileHeight > img.height) 
+    if (this.state.tileHeight > img.height)
       this.setState({ tileHeight: img.height })
 
     this.drawImage()
@@ -170,7 +170,6 @@ export default class GraphicImport extends React.Component {
     }
   }
 
-
   changeTileWidth(event) {
     const maxWidth = Math.min(this.state.imgWidth, this.props.maxTileWidth)
     const clampedWidth =_.clamp(parseInt(event.target.value), MIN_FRAME_WIDTH, maxWidth)
@@ -193,12 +192,12 @@ export default class GraphicImport extends React.Component {
     return cols * rows
   }
 
-  setOneFrame () {
+  setOneFrame = () => {
     this.setState({ tileWidth: this.state.imgWidth, tileHeight: this.state.imgHeight })
   }
 
   // Do the actual import
-  performImport() {
+  performImport = () => {
     let tmpCanvas = document.createElement("canvas")
     tmpCanvas.width = this.canvas.width
     tmpCanvas.height = this.canvas.height
@@ -221,7 +220,8 @@ export default class GraphicImport extends React.Component {
         let ctx = canvas.getContext('2d')
         ctx.putImageData(imgData, 0, 0)
         imgDataArr.push( canvas.toDataURL('image/png') )
-        if(row == 0 && col == 0) thumbCanvas = canvas
+        if (row == 0 && col == 0) 
+          thumbCanvas = canvas
         importedSoFar++
       }
     }
@@ -230,10 +230,10 @@ export default class GraphicImport extends React.Component {
   }
 
 
-  clearAll() {
-    this.setState( { 
-      status: STATUS_EMPTY, 
-      tileWidth: SUGGESTED_FRAME_WIDTH, 
+  clearAll = () => {
+    this.setState( {
+      status: STATUS_EMPTY,
+      tileWidth: SUGGESTED_FRAME_WIDTH,
       tileHeight: SUGGESTED_FRAME_HEIGHT,
       imgWidth: null,
       imgHeight: null,
@@ -242,17 +242,27 @@ export default class GraphicImport extends React.Component {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.loadedImg = null
   }
-  
+
 
   render() {
     const { status, tileWidth, tileHeight, imgHeight, imgWidth, importName } = this.state
-		const { maxTileWidth, maxTileHeight } = this.props
-    const divClass = "uploadForm " + (status === STATUS_UPLOADED ? "hidden " : " ") + (status === STATUS_DRAGGED_OVER ? "draggedOver" : "")
+    const { maxTileWidth, maxTileHeight } = this.props
+    const divClass = "uploadForm " + (status === STATUS_UPLOADED ? "mgb-hidden " : " ") + (status === STATUS_DRAGGED_OVER ? "draggedOver" : "")
     const framesYielded = this.calcNumFramesThisWouldImport()
-    const tooManyFramesWarning = framesYielded > MAX_IMPORTED_FRAMES ? ` which exceeds the limit of ${MAX_IMPORTED_FRAMES} frames per import` : null
+    const tooManyFramesWarning = framesYielded <= MAX_IMPORTED_FRAMES ? 
+      null : `This exceeds the limit of ${MAX_IMPORTED_FRAMES} frames per import`
+
+    const tooBigWarning = (tileWidth <= maxTileWidth & tileHeight <= maxTileHeight) ? 
+      null : `Tile size exceeds maximum allowed size of ${maxTileWidth}x${maxTileHeight} pixels`
     const buttonSty = { marginRight: "4px", marginBottom: "4px" }  // So they wrap nicely on narrow screen
+
+    const isInvalid = !!tooBigWarning || !!tooManyFramesWarning
+
+    const framesWord = `frame${framesYielded > 1 ? 's' : ''}`
     return (
       <div className="content">
+
+        <Header as='h2' content='Slice & import image'/>
 
         {/*** upload form ***/}
         <div className={divClass}
@@ -266,7 +276,7 @@ export default class GraphicImport extends React.Component {
         </div>
 
         {/*** uploaded image ***/}
-        <div className={status === STATUS_UPLOADED ? "" : "hidden"}>
+        <div className={status === STATUS_UPLOADED ? "" : "mgb-hidden"}>
           <div className="row">
 
             <div className="ui small labeled input" style={buttonSty}>
@@ -277,40 +287,49 @@ export default class GraphicImport extends React.Component {
             </div>
 
             &nbsp;
-            
+
             <div className="ui small labeled input" style={buttonSty}>
               <div className="ui small label" title={`Choose the height of each frame to import. Maximum permitted height is ${maxTileHeight} pixels`}>
                 Frame height
               </div>
               <input className="ui small input" type="number" min={MIN_FRAME_HEIGHT} max={imgHeight} value={tileHeight} onChange={this.changeTileHeight.bind(this)} />
             </div>
-            
+
             &emsp;
-            
-            <div onClick={this.performImport.bind(this)} className="ui small labeled icon button" title={`Import ${framesYielded} (${tileWidth}px x ${tileHeight}px) frames`} style={buttonSty}>
-              <i className="icon small save"></i>Perform import
-            </div>
 
-            <div onClick={this.setOneFrame.bind(this)} className="ui small labeled icon button" title={`Set to one frame (${tileWidth}px x ${tileHeight}px)`} style={buttonSty}>
-              <i className="icon small expand"></i>One frame
+            <div onClick={this.setOneFrame} className="ui small labeled icon button" title={`Set to one frame (${tileWidth}px x ${tileHeight}px)`} style={buttonSty}>
+              <Icon name='expand'/>Size as one frame
             </div>
-
-            <div onClick={this.clearAll.bind(this)} className="ui small labeled icon button" title="Cancel this import and choose a different image to import instead" style={buttonSty}>
-              <i className="icon small remove circle"></i>Clear Import
-            </div>
-
           </div>
 
-          <small>
-            <i className="ui info circle icon" />&nbsp;Import image "{importName}" is {imgWidth} pixels wide,  {imgHeight} pixels high
-            <br />
-            <i className="ui info circle icon" />&nbsp;This import operation would create {framesYielded} frames
-            <span style={{color:"red"}}>{ tooManyFramesWarning  }</span>
-            <br />
-          </small>    
+          <Message 
+              info={!isInvalid}
+              error={isInvalid}
+              icon='info circle'
+              list={_.compact([
+                `Import image '${importName}' is ${imgWidth} pixels wide, ${imgHeight} pixels high`,
+                tooBigWarning,
+                `This import operation would create ${framesYielded} ${framesWord}`,
+                tooManyFramesWarning
+              ])} />
 
-          <div className="ui divider" />
-
+          <Button.Group style={{marginBottom: '8px'}}>
+            <Button 
+              onClick={this.performImport} 
+              disabled={isInvalid}
+              primary
+              title={`Import ${framesYielded} (${tileWidth}px x ${tileHeight}px) ${framesWord}`} 
+              icon='save'
+              content={`Import as ${framesYielded} ${framesWord}`}
+              style={buttonSty}/>
+            <Button.Or />
+            <Button 
+              onClick={this.clearAll} 
+              size='small' 
+              title="Cancel this import and choose a different image to import instead" 
+              style={buttonSty}
+              content='Select a different image'/>
+          </Button.Group>
 
           <div style={{ "overflow": "auto", "maxHeight": "600px"}}>
             <canvas ref="uploadCanvas" className="uploadCanvas" />

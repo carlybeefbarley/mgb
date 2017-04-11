@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes, Component } from 'react'
 import ReactDOM from 'react-dom'
+import { Select } from 'semantic-ui-react'
 
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 import AssetLicense from '/client/imports/components/Controls/AssetLicense'
@@ -20,55 +21,55 @@ export default class UploadForm extends React.Component {
     super(props)
 
     this.state = {
-      projectCompoundName: null,
-      selectedProject: null,
-      assetLicense: defaultAssetLicense,
-      workState: defaultWorkStateName,
-      prefix: "",
-      isCompleted: false,
+      selectedProject:  null,
+      assetLicense:     defaultAssetLicense,
+      workState:        defaultWorkStateName,
+      prefix:           '',
+      isCompleted:      false,
+      assetType:        'graphic'
     }
-  } 
-
-  onDragOver(e){ this.props.onDragOver(e) }
-  onDragLeave(e){ this.props.onDragLeave(e) }
-  onDrop(e){ 
-    this.props.onDrop(e, this.state.prefix, this.state.selectedProject, this.state.assetLicense, this.state.workState, this.state.isCompleted) 
   }
 
-  handleChangeSelectedProjectName (selectedProjName, selectedProj, selectedCompoundName) {
-    this.setState( { projectCompoundName: selectedCompoundName, selectedProject: selectedProj } )
-    // console.log(selectedProjName, selectedProj, selectedCompoundName)
+  onDragOver(e) { this.props.onDragOver(e) }
+  onDragLeave(e) { this.props.onDragLeave(e) }
+  onDrop(e) {
+    this.props.onDrop(e, this.state.assetType, this.state.prefix, this.state.selectedProject, this.state.assetLicense, this.state.workState, this.state.isCompleted)
+  }
+
+  handleChangeSelectedProjectName (selectedProjName, selectedProj) {
+    this.setState( { selectedProject: selectedProj } )
   }
 
   handleLicenseChange(newLicense) {
-    if(newLicense != this.state.assetLicense){
+    if (newLicense != this.state.assetLicense)
       this.setState({ assetLicense: newLicense})
-    }
   }
 
-  handleWorkStateChange(newWorkState){
-    if(newWorkState != this.state.workState){
+  handleWorkStateChange(newWorkState) {
+    if (newWorkState != this.state.workState)
       this.setState({ workState: newWorkState })
-    }
   }
 
-  handlePrefixChange(e){
-    if(e.target.value != this.state.prefix){
+  handlePrefixChange(e) {
+    if (e.target.value != this.state.prefix){
       this.setState({ prefix: e.target.value })
     }
   }
 
-  handleStableStateChange(e){
+  handleStableStateChange(e) {
     this.setState({ isCompleted: !this.state.isCompleted})
+  }
+
+  handleAssetTypeChange(e, param){
+    this.setState({ assetType: param.value })
   }
 
   render (){
     const isWebkit = 'WebkitAppearance' in document.documentElement.style
-    // console.log('isWebkit', isWebkit)
 
     return (
-      <div className={this.props.isHidden ? "hidden" : ""}> 
-        
+      <div className={this.props.isHidden ? "mgb-hidden" : ""}>
+
         <div className={"ui big negative message " + (isWebkit ? "hidden" : "")}>
           <i className="close icon"></i>
           <div className="header">
@@ -77,54 +78,63 @@ export default class UploadForm extends React.Component {
           <p>Please use webkit browsers like Chrome, Safari or Opera</p>
         </div>
 
-        <div className={isWebkit ? "" : "hidden"}>
+        <div className={isWebkit ? "" : "mgb-hidden"}>
           <div className="row" style={{padding:"10px 30px"}}>
+
+            <Select 
+              onChange={this.handleAssetTypeChange.bind(this)} 
+              defaultValue={this.state.assetType} 
+              options={[
+                {key: 'graphic', value: 'graphic', text: 'graphic'},
+                {key: 'code', value: 'code', text: 'code'}
+              ]
+            } />
 
             <div className="ui input mini focus">
               Prefix &nbsp;
-              <input 
+              <input
                 style={{padding:"2px 5px"}}
                 type="text"
-                value={this.state.prefix} 
-                onChange={this.handlePrefixChange.bind(this)} 
+                value={this.state.prefix}
+                onChange={this.handlePrefixChange.bind(this)}
               />
             </div>
 
             &nbsp;&nbsp;
-            
+
             <ProjectSelector
               canEdit={false}
               user={this.props.currUser}
+              isUseCaseCreate={true}
               handleChangeSelectedProjectName={this.handleChangeSelectedProjectName.bind(this)}
               availableProjects={this.props.currUserProjects}
               ProjectListLinkUrl={this.props.currUser && `/u/${this.props.currUser.profile.name}/projects`}
               showProjectsUserIsMemberOf={true}
-              chosenProjectName={this.state.projectCompoundName} 
+              chosenProjectObj={this.state.selectedProject}
             />
 
             &nbsp;&nbsp;
 
-            <StableState 
-              isStable={this.state.isCompleted} 
+            <StableState
+              isStable={this.state.isCompleted}
               showMicro={true}
               canEdit={true}
               handleChange={this.handleStableStateChange.bind(this)}
             />
-            
+
             &nbsp;&nbsp;
 
-            <AssetLicense 
-              license={this.state.assetLicense} 
+            <AssetLicense
+              license={this.state.assetLicense}
               canEdit={true}
               handleChange={this.handleLicenseChange.bind(this)}
             />
 
             &nbsp;&nbsp;
 
-            <WorkState 
-              workState={this.state.workState} 
+            <WorkState
+              workState={this.state.workState}
               popupPosition="bottom center"
-              showMicro={true}
               canEdit={true}
               handleChange={this.handleWorkStateChange.bind(this)}
             />

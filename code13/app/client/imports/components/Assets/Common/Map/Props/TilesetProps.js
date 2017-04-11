@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import TileHelper from '../Helpers/TileHelper.js'
 import EditModes from '../Tools/EditModes.js'
 
@@ -38,15 +39,29 @@ export default {
     const reason = "Removed Tileset: " + c2.tilesets[id].name
 
     this.saveForUndo(reason)
+    this.setState({activeTileset: this.state.activeTileset > 0 ? this.state.activeTileset -1 : 0})
 
     c2.tilesets.splice(id, 1)
-    this.cache.update(c2)
+    // update cache - so we can zero out tiles
+    this.cache.update(c2, () => {
+      // async call - map can be unloaded already
+      if(!this.cache)
+        return
 
-    this.state.activeTileset = this.state.activeTileset > 0 ? this.state.activeTileset -1 : 0
-    TileHelper.zeroOutUnreachableTiles(c2, this.cache.tiles)
+      TileHelper.zeroOutUnreachableTiles(c2, this.cache.tiles)
 
-    this.quickSave(reason)
-    this.setState({activeTileset: this.state.activeTileset})
+      this.cache.update(c2, () => {
+        // async call map can be removed already
+        if(!this.cache)
+          return
+        this.quickSave(reason)
+        this.setState({activeTileset: this.state.activeTileset})
+      })
+    })
+
+
+
+
   },
   selectTileset: function(id){
     this.setState({activeTileset: id})
@@ -55,7 +70,7 @@ export default {
   updateTilesetFromData: function(data, ref = null, fixGids = false){
     const c2 = this.mgb_content2
     let ts
-    if (data.imagewidth == data.tilewidth) {
+    if (data && data.imagewidth == data.tilewidth) {
       ts = TileHelper.genTileset(c2, data.image, data.imagewidth, data.imageheight)
       ts.name = data.name
     }
@@ -99,14 +114,17 @@ export default {
   getActiveLayerData: function(){
     return this.mgb_content2.layers[this.state.activeLayer]
   },
+
   addActor: function(ts){
     // make sure we don't collide gids
     ts.firstgid = Infinity // nothing is infinite
     this.mgb_content2.tilesets.push(ts)
     // this function will change infinity to real GID
     TileHelper.fixTilesetGids(this.mgb_content2)
+    this.updateMap()
     this.quickSave("Added actor")
   },
+
   setActiveLayerByName: function(name){
     const layers = this.mgb_content2.layers
     for(let i=0; i<layers.length; i++){
@@ -115,6 +133,17 @@ export default {
         return;
       }
     }
+  },
+  fixImportNames: function() {
+    _.map(this.mgb_content2.tilesets, ts => {
+      if (ts.name !== 'Actions' && ts.name.indexOf(':') === -1) {
+        ts.name = this.props.asset.dn_ownerName + ':' + ts.name
+      }
+    })
+  },
+  fixImportGids: function() {
+    TileHelper.fixTilesetGids(this.mgb_content2)
+    this.quickSave("Loaded imported actors")
   },
   startLoading: function(){
     this.setState({isLoading: true})

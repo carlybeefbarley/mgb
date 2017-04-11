@@ -11,7 +11,7 @@ export default class UploadList extends React.Component {
 
   render (){
     return (
-      <div className={this.props.isHidden ? "hidden" : ""}>
+      <div className={this.props.isHidden ? "mgb-hidden" : ""}>
         <div className="row">
           <button className="ui button" onClick={()=>this.props.clearImport()}>
             Clear import

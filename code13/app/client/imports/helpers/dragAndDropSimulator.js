@@ -105,6 +105,10 @@ export default {
 
         const changedTouch = e.changedTouches[0]
         const target = document.elementFromPoint(changedTouch.clientX, changedTouch.clientY)
+
+        // this only works with React - DOM events won't pick up react drop event
+        // as workaround - wrap target into <div className="accept-drop" onDrop={() => dropHandler }>
+        // this will allow to catch React drop event
         ReactTestUtils.Simulate.drop(target, initalEventData)
         ReactTestUtils.Simulate.dragEnd(e.target, initalEventData)
       }

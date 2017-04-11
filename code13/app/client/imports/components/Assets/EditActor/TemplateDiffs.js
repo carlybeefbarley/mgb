@@ -4,16 +4,55 @@
 
 export default {
   // basic
-  alTemplatePlayer: {},   // this is base template as defined in getDefaultActor.js
-  alTemplateEnemy:        { "all": { "actorType":"1" }, "npc":     { "movementType":"1" } },
-  alTemplateFriend:       { "all": { "actorType":"1" }, "allchar": { "movementSpeedNum":"0" },   "itemOrNPC": { "destroyableYN":"0" } },
-  alTemplateShot:         { "all": { "actorType":"3" }, "item":    { "itemActivationType":"0" }, "itemOrNPC": { "destroyableYN":"0" } },
-  alTemplateIce:          { "all": { "actorType":"2" }, "item":    { "itemActivationType":"8" } },
-  alTemplateFloor:        { "all": { "actorType":"2" }, "allchar": { "movementSpeedNum":"0" },   "item": { "itemActivationType":"0" }, "itemOrNPC": { "destroyableYN":"0" } },
-  alTemplateWall:         { "all": { "actorType":"2" }, "allchar": { "movementSpeedNum":"0" },   "itemOrNPC": { "destroyableYN":"0" } },
-  alTemplateItem:         { "all": { "actorType":"2" }, "allchar": { "movementSpeedNum":"0" },   "item": { "itemActivationType":"5" }, "itemOrNPC": { "destroyableYN":"0" } },
-  alTemplateSlidingBlock: { "all": { "actorType":"2" }, "item":    { "pushToSlideNum":"4", "squishPlayerYN":"1", "squishNPCYN":"1" } },
+  alTemplateScenery:      {}, // this is base template as defined in getDefaultActor.js
 
+  alTemplatePlayer: {
+    "all": { "actorType":"0" },
+    "allchar": { "movementSpeedNum":"1" },
+    "item": { "itemActivationType":"3" },
+    "itemOrNPC": { "destroyableYN":"1" }
+  },
+
+  alTemplateEnemy:
+  {
+    "all": { "actorType":"1" },
+    "allchar": { "movementSpeedNum":"1" },
+    "item": { "itemActivationType":"3" },
+    "itemOrNPC": { "destroyableYN":"1" },
+    "npc": { "movementType":"1" }
+  },
+
+  alTemplateFriend:
+  {
+    "all": { "actorType":"1" },
+    "item": { "itemActivationType":"3" }
+  },
+
+  alTemplateSolidObject:
+  {
+    "all": { "actorType":"6" },
+    "item": { "itemActivationType":"3" }
+  },
+
+  alTemplateFloor:
+  {
+    "all": { "actorType":"7" },
+    "item": { "itemActivationType":"0" }
+  },
+
+  alTemplateItem:
+  {
+    "all": { "actorType":"5" },
+    "item": { "itemActivationType":"5" }
+  },
+
+  alTemplateShot:
+  {
+    "all": { "actorType":"3" },
+    "item": { "itemActivationType":"0" }
+  },
+
+  /*
   // player
   // this is for FG tile same as floor
   //alTemplateFloor: { "all": { "actorType":"2" }, "allchar": { "movementSpeedNum":"0" }, "item": { "itemActivationType":"0" }, "itemOrNPC": { "destroyableYN":"0" } },
@@ -63,4 +102,5 @@ export default {
   alTemplateItem_InvincibilityLater: { "all": { "actorType":"2" }, "allchar": { "movementSpeedNum":"0" }, "item": { "itemActivationType":"4", "gainPowerType":"1", "gainPowerSecondsNum":"20", "useText":"An invincibilty potion!!" }, "itemOrNPC": { "destroyableYN":"0" } },
   alTemplateItem_ScorePoints:        { "all": { "actorType":"2" }, "allchar": { "movementSpeedNum":"0" }, "item": { "itemActivationType":"5", "gainOrLosePointsNum":"1" }, "itemOrNPC": { "destroyableYN":"0" } },
   alTemplateItem_VictoryNow:         { "all": { "actorType":"2" }, "allchar": { "movementSpeedNum":"0" }, "item": { "itemActivationType":"5", "winLevelYN":"1" }, "itemOrNPC": { "destroyableYN":"0" } }
+  */
 }

@@ -3,7 +3,8 @@ const Key = webdriver.Key
 
 const SeleniumHelper = require("../helpers/selenium.js")
 const el = {
-  newAsset: '#mgbjr-np-create-createNewAsset',
+  goToAssets: '#mgbjr-np-assets',
+  newAsset: '#mgbjr-create-new-asset',
   inputName: '.ui.basic.segment input',
   assetTypeButton: '#mgbjr-create-asset-select-kind-',
   createBtn: '#mgbjr-create-asset-button',
@@ -19,11 +20,9 @@ module.exports = (browser) => {
     // wait for React root element
     sel.css("#root")
 
-    // open nav panel
-    sel.css(el.navPanelCreate).click()
-
-
+    sel.css(el.goToAssets).click()
     sel.css(el.newAsset).click()
+
     sel.css(el.inputName).sendKeys('test.junk.' + type)
 
     sel.css(el.assetTypeButton + type).click()

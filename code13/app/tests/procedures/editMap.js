@@ -14,17 +14,20 @@ module.exports = (browser) => {
       const tx = id % widthInTiles
       const ty = Math.floor(id / widthInTiles)
       const pos = {x: (tx + 0.5) * tileWidth, y: (ty + 0.5) * tileHeight}
+      //console.log("SELECTING: ", pos)
       browser.actions()
         .mouseMove(ts, pos)
         .click()
         .perform()
+
     })
   }
 
   const putTileOnMap = (x, y, tileWidth = 32, tileHeight = 32) => {
     const map = sel.css(el.mapArea)
+    const loc = {x: (x + 0.5) * tileWidth, y: (y + 0.5) * tileHeight}
     browser.actions()
-      .mouseMove(map, {x: x * tileWidth, y: y * tileHeight})
+      .mouseMove(map, loc)
       .click()
       .perform()
   }
@@ -41,18 +44,18 @@ module.exports = (browser) => {
     sel.untilInvisible(".loading")
     // sel.waitUntilSaved() - user wouldn't wait 5 seconds to start putting tiles on the map
 
-    for(let y=0; y<4; y++){
-      for(let x =0; x<4; x++){
-        selectTile((x + y) % 4)
+    for (let y = 0; y < 4; y++) {
+      for (let x = 0; x < 4; x++) {
+        selectTile((x + y) % 4, 32, 32)
           .then(() => {
             putTileOnMap(x, y)
           })
       }
     }
-
+    sel.untilInvisible(".loading")
     sel.waitUntilSaved()
     browser.executeScript(`
-      return window.m.editMap.getImageData()`)
+    return window.m.editMap.getImageData()`)
       .then(pngData => {
         sel.compareImages('simple.map.thumbnail.pngdata.txt', pngData)
       })

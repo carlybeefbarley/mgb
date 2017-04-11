@@ -26,7 +26,7 @@ const ToolSelect = {
     let h = drawEnv.y - ToolSelect._starty
 
     drawEnv.saveSelectRect(ToolSelect._startx, ToolSelect._starty, drawEnv.x, drawEnv.y);
-
+    drawEnv.showDimensions(Math.abs(drawEnv.x - ToolSelect._startx), Math.abs(drawEnv.y - ToolSelect._starty))
     // update canvas clearing from previous select area
     drawEnv.updateEditCanvasFromSelectedPreviewCanvas()
   },

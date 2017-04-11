@@ -1,3 +1,5 @@
 dump
 node_modules
 .idea
+*.tmp
+settings.staging.generated.json

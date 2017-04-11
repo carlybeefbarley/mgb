@@ -32,7 +32,7 @@ import MgbMap from './MageMgbMap'
 export default class MagePlayGame
 {
 
-  constructor() {
+  constructor(ownerName) {
     // This has been a hard class to break into clean sub-classes, so I'm just putting some of the code
     // in other files and I'm connecting them here so it isn't one huge source file.
     // This is sort of a cheap 'partial class' mechanism for javascript classes
@@ -50,10 +50,17 @@ export default class MagePlayGame
     _.assign(this, MagePlayGameTransition)
     _.assign(this, MagePlayGameActiveLayers)
     _.assign(this, MagePlayGameBackgroundLayers)
+    this.container = document.getElementById("mgb-game-container")
+    this.ownerName = ownerName
   }
 
   resetGameState() {
     this.G_gameStartedAtMS = (new Date()).getTime()
+    this.G_pausedTime = 0
+    this.G_gamePausedAtMS = 0
+    this.G_gameUnpausedAtMS = 0
+    this.G_pauseTime = 0
+    this.G_gameTime = 0
     this.isPaused = false
     this.G_gameOver = false
 
@@ -134,11 +141,42 @@ export default class MagePlayGame
     console.error(msg) 
   }
 
-  scrollMapToSeePlayer() {
-    // TODO
+  scrollMapToSeePlayer(overrideX = -1, overrideY = -1) {
+    const marginX = Math.floor((this.container.clientWidth / 32) / 4)
+    const marginY = Math.floor((this.container.clientHeight / 32) / 4)
+
+    var sx = overrideX == -1 ? this.activeActors[this.AA_player_idx].x : overrideX
+    var sy = overrideY == -1 ? this.activeActors[this.AA_player_idx].y : overrideY
+
+    G_HSPdelta = 0
+    G_VSPdelta = 0
+
+    var horizontalScrollPosition = this.container.scrollLeft
+    var verticalScrollPosition = this.container.scrollTop 
+    var maxHorizontalScrollPosition = this.container.scrollWidth - this.container.clientWidth
+    var maxVerticalScrollPosition = this.container.scrollHeight - this.container.clientHeight
+    var w = (this.map.metadata.width * MgbSystem.tileMinWidth) - maxHorizontalScrollPosition
+    var h = (this.map.metadata.height * MgbSystem.tileMinHeight) - maxVerticalScrollPosition
+    var maxHSP_toSeePlayer = (sx-marginX) * MgbSystem.tileMinWidth		  // Maximum Horizontal Scroll Position to see player
+    var maxVSP_toSeePlayer = (sy-marginY) * MgbSystem.tileMinHeight			// Maximum Vertical Scroll Position to see player
+
+    if (horizontalScrollPosition > maxHSP_toSeePlayer)
+      G_HSPdelta = ((maxHSP_toSeePlayer) - horizontalScrollPosition) / this.G_tweensPerTurn	// Scroll left if needed
+    if (verticalScrollPosition > maxVSP_toSeePlayer)
+      G_VSPdelta = ((maxVSP_toSeePlayer) - verticalScrollPosition) / this.G_tweensPerTurn	  // Scroll up if needed
+
+    var minHSP_toSeePlayer = ((sx+1+marginX) * MgbSystem.tileMinWidth) - w 				// Minimum Horizontal Scroll Position to see player
+    var minVSP_toSeePlayer = ((sy+1+marginY) * MgbSystem.tileMinHeight) - h 			// Minimum Vertical Scroll Position to see player
+
+    if (minHSP_toSeePlayer > 0 && horizontalScrollPosition < minHSP_toSeePlayer)				
+      G_HSPdelta = (minHSP_toSeePlayer - horizontalScrollPosition) / this.G_tweensPerTurn	// Scroll right if needed
+    if (minVSP_toSeePlayer > 0 && verticalScrollPosition < minVSP_toSeePlayer)				
+      G_VSPdelta = (minVSP_toSeePlayer - verticalScrollPosition) / this.G_tweensPerTurn		// Scroll down if needed
   }
 
   doPauseGame() {
+    if (!this.isPaused)
+      this.G_gamePausedAtMS = (new Date()).getTime()
     this.isPaused = true
   }
 
@@ -174,8 +212,48 @@ export default class MagePlayGame
     if (this.G_gameOver)
       return
 
-    if (this.isTransitionInProgress) {      // transition to new map
-      this.transitionTick()
+        if (this.isTransitionInProgress) {      // transition to new map
+        // Transition tick function would not run unless specified here
+        if (this.transitionStateWaitingForActorLoadRequests)
+        {
+          //trace("transitionTick: "+actorLoadsPending+" actor loads still Pending")
+          // TODO: Fadeout... if (view.alpha > 0.1)     view.alpha -= 0.1
+        }
+        else
+        {
+          // TODO: Fadein
+          // if (view.alpha < 1.0)
+          // {
+          //   // Fade it in - looks nice
+          //   view.alpha += 0.1
+          //   if (view.alpha > 1.0)
+          //     view.alpha = 1.0
+          //   return
+          // }
+          // Fade-in done.. We're ready to play!
+          this.playPrepareActiveLayer(this.map, true)   // Was set by transitionResourcesHaveLoaded()
+          this.playPrepareBackgroundLayer()
+
+          this.transitionPlayerAA.x = this.transitionNewX
+          this.transitionPlayerAA.fromx = this.transitionNewX
+          this.transitionPlayerAA.y = this.transitionNewY
+          this.transitionPlayerAA.fromy = this.transitionNewY
+          this.transitionPlayerAA.renderX = this.transitionPlayerAA.fromx * MgbSystem.tileMinWidth
+          this.transitionPlayerAA.renderY = this.transitionPlayerAA.fromy * MgbSystem.tileMinHeight
+
+          this.transitionPlayerAA.currentActiveShots = 0
+
+          this.AA_player_idx = this.activeActors.length
+          this.activeActors[this.AA_player_idx] = this.transitionPlayerAA
+          
+          this.container = document.getElementById("mgb-game-container") 
+          this.scrollMapToSeePlayer()
+
+          this.clearTicTable()
+          // G_tweenCount = 0
+          this.isTransitionInProgress = false
+          this.clearPlayerKeys()
+        }
       return
     }
 
@@ -242,7 +320,8 @@ export default class MagePlayGame
                 var floorActorName = this.map.mapLayer[MgbMap.layerBackground][cellIndex]
                 floorActor = (floorActorName && floorActorName != '') ? this.actors[floorActorName]: null
                 if (floorActor && floorActor.content2 &&
-                  MgbActor.intFromActorParam(floorActor.content2.databag.all.actorType) == MgbActor.alActorType_Item &&
+                  (MgbActor.intFromActorParam(floorActor.content2.databag.all.actorType) == MgbActor.alActorType_Item || 
+                   [4, 5, 6, 7].indexOf(MgbActor.intFromActorParam(floorActor.content2.databag.all.actorType)) > -1) &&
                   (MgbActor.intFromActorParam(floorActor.content2.databag.item.itemActivationType) == MgbActor.alItemActivationType_CausesDamage ||
                     MgbActor.intFromActorParam(floorActor.content2.databag.item.itemActivationType) == MgbActor.alItemActivationType_PushesActors))
                   break
@@ -290,7 +369,7 @@ export default class MagePlayGame
             actor.x = actor.fromx
             actor.y = actor.fromy
             actor.wasStopped = true
-            //					        	actor.stepStyle = -1		// These need to be free to move again. -1 means if they are on ice, they have stopped sliding and are free to choose their movement direction again
+            //actor.stepStyle = -1		// These need to be free to move again. -1 means if they are on ice, they have stopped sliding and are free to choose their movement direction again
             actor.stepCount = 0				// Reset the step count; used to trigger a new movement choice.
 
             if (AA == this.AA_player_idx) {
@@ -310,7 +389,7 @@ export default class MagePlayGame
                       // Case 1: Player just collided with an NPC. This can spark a dialog
                       this.askNpcQuestion(this.activeActors[AAInCell], hitThing_ap)
                     }
-                    else if (this.activeActors[AAInCell].type == MgbActor.alActorType_Item
+                    else if ((this.activeActors[AAInCell].type == MgbActor.alActorType_Item || [4, 5, 6, 7].indexOf(this.activeActors[AAInCell].type) > -1)
                       && (activation == MgbActor.alItemActivationType_BlocksPlayer || activation == MgbActor.alItemActivationType_BlocksPlayerAndNPC)) {
                       // Case 2: It's a wall, I'm a player so see if there's a key available...
                       var key = hitThing_ap.content2.databag.item.keyForThisDoor
@@ -320,7 +399,7 @@ export default class MagePlayGame
                         if (keyItem) {
                           var keyDestroyed = (1 == MgbActor.intFromActorParam(hitThing_ap.content2.databag.item.keyForThisDoorConsumedYN))
                           // Yup.. so let's do it!
-                          this.setGameStatusString(1, keyDestroyed ?
+                          this.setGameStatusFn(1, keyDestroyed ?
                             ("You use your " + key + " to pass") :
                             ("Since you are carrying the " + key + " you are able to pass through"))
                           if (keyDestroyed)
@@ -401,13 +480,11 @@ export default class MagePlayGame
     // Now, for this tween, check for post-move collisions between *alive* actors- item/enemy/player touch events
     this.playProcessAACollisions()
 
-
-  // TODO - something like this
-    // // Update scroll position (by tweened amount) if this is the player
-    // if (G_VSPdelta)
-    //   Container(parent).verticalScrollPosition += G_VSPdelta;
-    // if (G_HSPdelta)
-    //   Container(parent).horizontalScrollPosition += G_HSPdelta;
+    // Update scroll position (by tweened amount) if this is the player
+    if (G_VSPdelta)
+      this.container.scrollTop += G_VSPdelta;
+    if (G_HSPdelta)
+      this.container.scrollLeft += G_HSPdelta;
 
     // Housekeeping for end-of-turn
     // TODO: Kill & recycle dead enemies
@@ -444,7 +521,7 @@ export default class MagePlayGame
             this.G_gameOver = true
           break
         case MgbActor.alActorType_NPC:
-        case MgbActor.alActorType_Item:
+        case MgbActor.alActorType_Item: case 4: case 5: case 6: case 7:
           if (this.activeActors[AA].health <= 0)		// We don't check ap.content2.databag.itemOrNPC.destroyableYN here; that should be done in the damage routine. This way we can handle death/usage the same way
           {
             // It dies... 
@@ -511,47 +588,43 @@ export default class MagePlayGame
     let mhs = this.activeActors[this.AA_player_idx].maxHealth == 0 ? "" : ("/" + this.activeActors[this.AA_player_idx].maxHealth)
     this.setGameStatusFn(0, //"Lives: "+activeActors[this.AA_player_idx].extraLives   +
       "Health " + this.activeActors[this.AA_player_idx].health + mhs +
-      "     Score " + this.activeActors[this.AA_player_idx].score + ps +
-      "     Time " + timeStr)
+      "  |  Score " + this.activeActors[this.AA_player_idx].score + ps +
+      "  |  Time " + timeStr)
 
     if (this.G_gameOver) {
-      debugger//  this needs work
+      //debugger//  this needs work
       // var gee = new GameEngineEvent(GameEngineEvent.COMPLETED,
       //   this.initialMap.userName, this.initialMap.projectName, this.initialMap.name,
       //   true, secondsPlayed, this.activeActors[this.AA_player_idx].score)
 
       if (this.activeActors[this.AA_player_idx].winLevel) {
-        debugger// alert sucks
+        //debugger// alert sucks
         alert("Final Score: " + this.activeActors[this.AA_player_idx].score +
           ", Time: " + timeStr, "You Win!")
       }
       else {
-        debugger // alert sucks 
-        alert("G A M E   O V E R\n", "They got you...")
+        //debugger // alert sucks 
+        alert("G A M E   O V E R")
         // gee.completedVictory = false		// Change just one parameter...
       }
-      debugger // needs thinking about state management with parent obects
+      //debugger // needs thinking about state management with parent obects
   //    dispatchEvent(gee)
       this.endGame()
     }
   }
 
   timeStrSinceGameStarted() {
-    const nowMS = (new Date()).getTime()    
-    const secondsPlayed = Math.floor(nowMS - this.G_gameStartedAtMS) / 1000
-    const minutesPlayed = Math.floor(secondsPlayed / 60)
+    const nowMS = (new Date()).getTime()  
+    const secondsPaused = this.G_pausedTime % 60
+    const minutesPaused = Math.floor(this.G_pausedTime / 60) 
+    const secondsPlayed = Math.floor(nowMS - this.G_gameStartedAtMS) / 1000 - secondsPaused 
+    const minutesPlayed = Math.floor(secondsPlayed / 60) - minutesPaused
     const hoursPlayed = Math.floor(minutesPlayed / 60)
     let timeStr = ''
     if (hoursPlayed)
       timeStr += hoursPlayed + ":"
-    timeStr += (minutesPlayed % 60 < 10 ? "0" : "") + Math.floor(minutesPlayed % 60) + "."
+    timeStr += (minutesPlayed % 60 < 10 ? "0" : "") + Math.floor(minutesPlayed % 60) + ":"
     timeStr += (secondsPlayed % 60 < 10 ? "0" : "") + Math.floor(secondsPlayed % 60)
     return timeStr
   }
-
-  scrollMapToSeePlayer()
-  {
-    // TODO
-  }
-
 }

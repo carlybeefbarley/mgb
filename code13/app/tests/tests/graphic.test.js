@@ -1,26 +1,26 @@
 /* this is sample test which only tries to log in user */
-module.exports = (getBrowser, path) => {
+module.exports = (getBrowser) => {
   let browser;
-  describe("Running code bundler tests", function(){
+  describe("Running Graphics tests", function(){
     before(function(){
       browser = getBrowser();
     })
     // all action should be in the "it" block
     it("Logging in", function(done){
-      const login = require(path + "procedures/login.js")(browser)
+      const login = require(__dirname + "/../procedures/login.js")(browser)
       login(done)
     })
 
     it("Creating Graphic Asset", function(done){
-      require(path + "procedures/createAsset.js")(browser)("graphic", done)
+      require(__dirname + "/../procedures/createAsset.js")(browser)("graphic", done)
     })
 
     it("Drawing image", function(done){
-      require(path + "procedures/drawGraphic.js")(browser)(done)
+      require(__dirname + "/../procedures/drawGraphic.js")(browser)(done)
     })
 
     it("Remove Graphic - clean up", function(done){
-      require(path + "procedures/deleteAsset.js")(browser)(done)
+      require(__dirname + "/../procedures/deleteAsset.js")(browser)(done)
     })
 
   })

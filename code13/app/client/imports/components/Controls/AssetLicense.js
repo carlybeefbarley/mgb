@@ -2,23 +2,12 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import assetLicenses, { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
-import { Icon, Header, List, Label } from 'semantic-ui-react'
-
-const _initPopup = (c, popupPosition) => (
-  c && $(c).popup( {
-    on: "hover",
-    hoverable: true,    // So mouse-over popup keeps it visible for Edit for example
-    inline: true,
-    closable: true,
-    position: popupPosition || "bottom right",
-    lastResort: "bottom right"
-  })
-)
+import { Icon, Header, List, Label, Popup } from 'semantic-ui-react'
 
 const _labelSty = {
   marginBottom:   '4px',
   textAlign:      'left',
-  whiteSpace:     'nowrap'  
+  whiteSpace:     'nowrap'
 }
 
 const AssetLicense = ( { license, popupPosition, handleChange, canEdit } ) => {
@@ -26,16 +15,21 @@ const AssetLicense = ( { license, popupPosition, handleChange, canEdit } ) => {
 
   return (
     <span style={{textAlign: 'left'}}>
-      <div 
-          className='ui basic label' 
-          style={{ borderRadius: '0px'}}
-          ref={ (c) => { _initPopup(c, popupPosition); this._popupInitiator = c } }>
-        <Icon name='law' /><small>{ actualLicense }</small>
-      </div>
-      
-      <div className="ui small popup" style={canEdit ? {fontSize: '16px'} : {} }>
+      <Popup
+        hoverable    // So mouse-over popup keeps it visible for Edit for example
+        on='hover'
+        positioning={popupPosition}
+        size='small'
+        style={canEdit ? {fontSize: '16px'} : {} }
+        trigger={(
+          <Label basic size='small' style={{ borderRadius: '0px' }}>
+            <Icon name='law' />
+            <small>{ actualLicense }</small>
+          </Label>
+        )}
+      >
         <Header textAlign='left'><small>License for this Asset</small></Header>
-        { !canEdit ? 
+        { !canEdit ?
           <div>
             <p>
               <a href={assetLicenses[actualLicense].url} target='_blank'>
@@ -55,42 +49,42 @@ const AssetLicense = ( { license, popupPosition, handleChange, canEdit } ) => {
               See the full license for the exact terms
             </a></small></p>
           </div>
-        : 
-          <List className="left aligned selection">
-          {
-            _.map(_.keys(assetLicenses), key => (
-                <List.Item
-                    key={key}
-                    title={assetLicenses[key].summary}
-                    style={_labelSty}
-                    className={`left aligned fluid ${(key === actualLicense) ? "active" : ""}`} >
-                  <List.Content floated='right'>
-                    <a href={assetLicenses[key].url} target='_blank'>
-                      <Icon name='external' style={{paddingTop: '0.25em'}} />
-                    </a>
-                  </List.Content>
-                  <List.Content 
-                      style={{paddingRight: '2em'}}
-                      onClick={e => {
-                        e.preventDefault()
-                        $(this._popupInitiator).popup('hide')
-                        canEdit && handleChange && handleChange(key)
-                      }}>
-                    <Label basic={key !== actualLicense} color={(key === actualLicense) ? 'black' : null} style={{width: '9em'}}>
-                      <Icon name='law' /><small>{ key }</small>
-                    </Label>
-                    &nbsp;&nbsp;
-                    <small>{ assetLicenses[key].name }</small>
-                  </List.Content>
-                </List.Item>
-              )
-            )
-          }
+        :
+          <List selection>
+          {_.map(_.keys(assetLicenses), key => (
+            <List.Item
+                key={key}
+                title={assetLicenses[key].summary}
+                style={_labelSty}
+                className={`left aligned fluid ${(key === actualLicense) ? 'active' : ''}`} >
+              <List.Content floated='right'>
+                <a href={assetLicenses[key].url} target='_blank'>
+                  <Icon name='external' style={{paddingTop: '0.25em'}} />
+                </a>
+              </List.Content>
+              <List.Content
+                  style={{paddingRight: '2em'}}
+                  onClick={e => {
+                    e.preventDefault()
+                    canEdit && handleChange && handleChange(key)
+                  }}>
+                <Label basic={key !== actualLicense} color={(key === actualLicense) ? 'black' : null} style={{width: '9em'}}>
+                  <Icon name='law' /><small>{ key }</small>
+                </Label>
+                &nbsp;&nbsp;
+                <small>{ assetLicenses[key].name }</small>
+              </List.Content>
+            </List.Item>
+          ))}
           </List>
         }
-      </div>
+      </Popup>
     </span>
   )
+}
+
+AssetLicense.defaultProps = {
+  popupPosition: 'bottom right',
 }
 
 AssetLicense.propTypes = {

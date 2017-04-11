@@ -28,9 +28,10 @@
     },
 
     maybeOverride: function(name) {
+      if (this.modules[name]) return this.modules[name]
+
       if (!this.options.modules || !this.options.modules.hasOwnProperty(name))
         return false
-      if (this.modules[name]) return this.modules[name]
 
       var override = this.options.modules[name]
       if (typeof(override) == "string" && override.charAt(0) == "=")

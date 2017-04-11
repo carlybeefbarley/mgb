@@ -1,12 +1,13 @@
 import React from 'react'
+import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
 
 import { stopCurrentTutorial } from '/client/imports/routes/App'
 
 import LoginLinks from './LoginLinks'
 import { utilPushTo } from '../QLink'
 import { logActivity } from '/imports/schemas/activity'
-import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
-
+import { showToast } from '/client/imports/routes/App'
+import Footer from '/client/imports/components/Footer/Footer'
 
 export default LoginRoute = React.createClass({
   
@@ -28,7 +29,7 @@ export default LoginRoute = React.createClass({
 
     const innerRender = () => {
       if (currUser)
-        return <Message error content='You are logged in already!' />
+        return <Message info content='You are logged in already!' />
 
       return (
         <Form onSubmit={this.handleSubmit} loading={isLoading} error={!!errorMsg}>
@@ -37,20 +38,24 @@ export default LoginRoute = React.createClass({
           <Message error
             header='Error'
             content={errorMsg} />
-          <Form.Button>Submit</Form.Button>
+          <Form.Button color='teal'>Log in</Form.Button>
         </Form>
       ) 
     }
 
     return (
-      <Container text>
-      <br></br>
-        <Segment padded>
-          <Header as='h2'>Log In</Header>
-          { innerRender() }
-          { !currUser && <LoginLinks showSignup={true} showForgot={true} /> }
-        </Segment>
-      </Container>
+      <div>
+        <div className='hero' style={{paddingTop: '3em', paddingBottom: '3em'}}>
+          <Container text>
+            <Segment padded>
+              <Header style={{color:'black'}} as='h2'>Log in</Header>
+              { innerRender() }
+              { !currUser && <LoginLinks showSignup={true} showForgot={true} /> }
+            </Segment>
+          </Container>
+        </div>
+        <Footer />
+      </div>
     )
   },
 
@@ -67,14 +72,17 @@ export default LoginRoute = React.createClass({
         var userName = Meteor.user().profile.name
         logActivity("user.login",  `Logging in "${userName}"`, null, null)
         stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
-        utilPushTo(this.context.urlLocation.query, `/u/${userName}`, { _fp: 'goals'})
+        utilPushTo(this.context.urlLocation.query, `/u/${userName}`)
+        showToast("Login ok!  Welcome back")
 
-        analytics.identify(Meteor.user()._id, {
-          name: userName,
-          email: Meteor.user().emails[0].address
-        })
-        analytics.track('Logged in')
-        analytics.page('/login')
+
+        // analytics.identify(Meteor.user()._id, {
+        //   name: userName,
+        //   email: Meteor.user().emails[0].address
+        // })
+        // analytics.track('Logged in')
+        // analytics.page('/login')
+        ga('send', 'pageview', '/login')
       }
     })
   }

@@ -34,13 +34,14 @@ export default ProjectMembersGET = React.createClass({
   
   renderMembers()
   {
+    // TODO: The UserItem Card should be able accept an array of buttons for actions so that the buttons are actually attached to the card
     return this.data.users.map( user => {
       return (
         <div className="ui basic segment" key={user._id}>
-          <UserItem renderAttached={true} user={user} />
-          <div className="ui bottom attached buttons">
+          <UserItem renderAttached={true} user={user} style={{paddingBottom: 0}}/>
+          <div className="ui bottom attached buttons" >
             { this.props.enableRemoveButton && 
-              <div className="ui button" onClick={this.handleRemove.bind(this, user)}><i className="ui red remove icon" />Remove Member from Project</div> }
+              <div className="ui button" style={{ maxWidth: '230px' }} onClick={this.handleRemove.bind(this, user)}><i className="ui red remove icon" />Remove Member '{user.username}' from Project</div> }
           </div>
         </div>
       )

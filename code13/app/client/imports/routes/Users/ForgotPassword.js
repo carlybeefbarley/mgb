@@ -2,12 +2,13 @@ import _ from 'lodash'
 import React from 'react'
 import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
 import validate from '/imports/schemas/validate'
+import Footer from '/client/imports/components/Footer/Footer'
 
 const ErrMsg = props => { return props.text ? <Message error color='red' content={props.text} /> : null }
 
 export default ForgotPasswordRoute = React.createClass({
 
-  getInitialState: function() {    
+  getInitialState: function() {
     return {
       errors:     {},
       isLoading:  false,
@@ -16,12 +17,13 @@ export default ForgotPasswordRoute = React.createClass({
   },
 
   render: function() {
+
     const { isLoading, isComplete, errors } = this.state
     const { currUser } = this.props
 
     const innerRender = () => {
       if (currUser)
-        return <Message error content='You are logged in already. Once you log out, you may request a password reset' />
+        return <Message info content='You are logged in already. Once you log out, you may request a password reset' />
 
       if (isComplete)
         return <Message success header='Password reset request successful' content='Please check your email inbox (and also junk folders) for the link to finish resetting your password' />
@@ -31,23 +33,29 @@ export default ForgotPasswordRoute = React.createClass({
           <Form.Input label='Enter your email to reset your password' name='email' placeholder='Email address' error={!!errors.email} type="email" />
           <ErrMsg text={errors.email} />
           <ErrMsg text={errors.result} />
-          <Form.Button>Submit</Form.Button>
+          <Form.Button color='teal'>Request reset</Form.Button>
         </Form>
       )
     }
 
     return (
-      <Container text>
-      <br></br>
-        <Segment padded>
-          <Header as='h2'>Request a password reset</Header>
-          { innerRender() }
-        </Segment>
-      </Container>
+      <div>
+        <div className='hero' style={{paddingTop: '3em', paddingBottom: '3em'}}>
+          <Container text>
+            <Segment padded>
+              <Header style={{color: 'black'}} as='h2' content='Request a password reset'/>
+              { innerRender() }
+            </Segment>
+          </Container>
+        </div>
+        <Footer />
+      </div>
     )
   },
 
   handleSubmit: function(event, formData) {
+    // console.log(this.testTemplate())
+
     event.preventDefault()
     const { email } = formData.formData  // formData.formData as of SUIR v0.62.x.. See https://github.com/Semantic-Org/Semantic-UI-React/pull/951
 
@@ -60,7 +68,7 @@ export default ForgotPasswordRoute = React.createClass({
     Accounts.forgotPassword( { email }, error => {
       if (error)
         this.setState( { isLoading: false, errors: { result: error.reason || 'Server Error while requesting password-reset email for account' } } )
-      else
+      else 
         this.setState( { isLoading: false, errors: {}, isComplete: true } )
     })
   }

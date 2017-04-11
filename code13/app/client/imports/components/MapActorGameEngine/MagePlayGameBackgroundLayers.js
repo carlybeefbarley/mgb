@@ -20,7 +20,7 @@ export default MagePlayGameBackgroundLayers = {
           const ap = this.actors[ACidx]
           if (ap) {
             var at = MgbActor.intFromActorParam(ap.content2.databag.all.actorType)
-            if (at == MgbActor.alActorType_Item) {
+            if (at == MgbActor.alActorType_Item || [4, 5, 6, 7].indexOf(at) > -1) {
               // Now, we need to work out how big this thing is. We learn this from the tile
               var tp = this.graphics[ap.content2.databag.all.defaultGraphicName]
               if (!tp)

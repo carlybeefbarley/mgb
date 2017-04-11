@@ -1,14 +1,15 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Label } from 'semantic-ui-react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { getFeatureLevel } from '/imports/schemas/settings-client'
-import { expectedToolbars,  } from '/client/imports/components/Toolbar/Toolbar'
+import { expectedToolbars } from '/client/imports/components/Toolbar/expectedToolbars'
 
-
-import fpFeatureLevels from './fpFeatureLevels'
 import fpSuperAdmin from './fpSuperAdmin'
+import fpMobileMore from './fpMobileMore'
+import fpSettings from './fpSettings'
 import fpActivity from './fpActivity'
 import fpKeyboard from './fpKeyboard'
 import fpProjects from './fpProjects'
@@ -25,29 +26,30 @@ import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
 const flexPanelViews = [
-  { tag: 'activity',  lev: 4,  name: 'activity', icon: 'lightning',  hdr: 'Activity',          el: fpActivity,      superAdminOnly: false },
+  { tag: 'activity',  lev: 1,  name: 'activity', icon: 'lightning',  hdr: 'Activity',      el: fpActivity,      superAdminOnly: false, mobileUI: true   },
+  { tag: 'goals',     lev: 1,  name: 'goals',    icon: 'student',    hdr: 'Goals',         el: fpGoals,         superAdminOnly: false, mobileUI: false  },
+  { tag: 'assets',    lev: 1,  name: 'assets',   icon: 'pencil',     hdr: 'Assets',        el: fpAssets,        superAdminOnly: false, mobileUI: true   },
+  { tag: 'chat',      lev: 1,  name: 'chat',     icon: 'chat',       hdr: 'Chat',          el: fpChat,          superAdminOnly: false, mobileUI: true   },
+  { tag: 'skills',    lev: 2,  name: 'skills',   icon: 'plus circle',hdr: 'Skills',        el: fpSkills,        superAdminOnly: false, mobileUI: false  },
+  { tag: 'settings',  lev: 3,  name: 'settings', icon: 'settings',   hdr: 'Settings',      el: fpSettings,      superAdminOnly: false, mobileUI: false  },
 
-  { tag: 'goals',     lev: 1,  name: 'goals',    icon: 'student',    hdr: 'Goals',             el: fpGoals,         superAdminOnly: false  },
-  { tag: 'assets',    lev: 1,  name: 'assets',   icon: 'pencil',     hdr: 'Assets',            el: fpAssets,        superAdminOnly: false },
-  { tag: 'chat',      lev: 1,  name: 'chat',     icon: 'chat',       hdr: 'Chat',              el: fpChat,          superAdminOnly: false },
-
-  { tag: 'skills',    lev: 2,  name: 'skills',   icon: 'plus circle', hdr: 'Skills',            el: fpSkills,        superAdminOnly: false  },
-
-  { tag: 'features',  lev: 3,  name: 'options',  icon: 'options',    hdr: 'Feature Levels',    el: fpFeatureLevels, superAdminOnly: false },
-
- // activity makes most sens at top if enabled?
-  
-  { tag: 'users',     lev: 5,  name: 'users',    icon: 'street view',hdr: 'Users',             el: fpUsers,         superAdminOnly: false },
-  
-  { tag: 'network',   lev: 6,  name: 'network',  icon: 'signal',     hdr: 'Network',           el: fpNetwork,       superAdminOnly: false },
-
-  { tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   hdr: 'Keyboard Shortcuts',el: fpKeyboard,      superAdminOnly: false },
-
-  { tag: 'projects',  lev: 8,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',          el: fpProjects,      superAdminOnly: false },
+// Experimental UI for mobile
+//{ tag: 'more',      lev: 8,  name: 'more',     icon: 'ellipsis horizontal', hdr: 'More', el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
+  { tag: 'users',     lev: 5,  name: 'users',    icon: 'street view',hdr: 'Users',         el: fpUsers,         superAdminOnly: false, mobileUI: false },
+//{ tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   hdr: 'Keys',          el: fpKeyboard,      superAdminOnly: false, mobileUI: false },
+  { tag: 'projects',  lev: 6,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',      el: fpProjects,      superAdminOnly: false, mobileUI: false },
+  { tag: 'network',   lev: 7,  name: 'network',  icon: 'signal',     hdr: 'Network',       el: fpNetwork,       superAdminOnly: false, mobileUI: false },
 
   // SuperAdmin-only:
-  { tag: 'super',     lev: 8,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',        el: fpSuperAdmin,    superAdminOnly: true  } // ALWAYS SuperAdmin
+  { tag: 'super',     lev: 4,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',    el: fpSuperAdmin,    superAdminOnly: true, mobileUI: false  } // ALWAYS SuperAdmin
 ]
+
+const menuItemIndicatorStyle = {
+  position: 'absolute',
+  top:      '0.4em',
+  right:    '0.4em',
+  margin:   '0',
+}
 
 const defaultPanelViewIndex = 0
 const DEFAULT_FLEXPANEL_FEATURELEVEL = expectedToolbars.getDefaultLevel('FlexPanel')
@@ -59,6 +61,12 @@ export default FlexPanel = React.createClass({
     fpIsFooter:             PropTypes.bool.isRequired,    // If true, then flexPanel is fixed page footer
     currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
     currUserProjects:       PropTypes.array,              // Projects list for currently logged in user
+
+    chatChannelTimestamps:  PropTypes.array,              // as defined by Chats.getLastMessageTimestamps RPC
+    hazUnreadChats:         PropTypes.array,              // This is just a subset of the data in chatChannelTimestamps,
+                                                          // but simplified - just an Array of chat channelNames with at
+                                                          // least one unread message. Handy for notification UIs, and quicker to parse
+    requestChatChannelTimestampsNow: PropTypes.func.isRequired,   // It does what it says on the box. Used by fpChat
     user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     joyrideSteps:           PropTypes.array,              // As passed to Joyride. If non-empty, a joyride is active
     joyrideSkillPathTutorial: PropTypes.string,           // Null, unless it is one of the builtin skills tutorials which is currently active
@@ -70,7 +78,8 @@ export default FlexPanel = React.createClass({
     handleFlexPanelToggle:  PropTypes.func.isRequired,    // Callback for enabling/disabling FlexPanel view
     handleFlexPanelChange:  PropTypes.func.isRequired,    // Callback to change pane - records it in URL
     flexPanelWidth:         PropTypes.string.isRequired,  // Typically something like "200px".
-    isSuperAdmin:           PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff
+    isSuperAdmin:           PropTypes.bool.isRequired,    // Yes if one of core engineering team. Show extra stuff
+    currentlyEditingAssetInfo: PropTypes.object.isRequired// An object with some info about the currently edited Asset - as defined in App.js' this.state
   },
 
   contextTypes: {
@@ -88,9 +97,9 @@ export default FlexPanel = React.createClass({
   },
 
   getMeteorData: function() {
-    return { 
+    return {
       fpFeatureLevel: getFeatureLevel(this.context.settings, makeLevelKey('FlexPanel')),
-      meteorStatus:   Meteor.status() 
+      meteorStatus:   Meteor.status()
     }
   },
 
@@ -157,7 +166,7 @@ export default FlexPanel = React.createClass({
 
   getFpButtonSpecialStyleForTag: function(tag) {
     const { meteorStatus } = this.data
-    
+
     if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
       return { backgroundColor: 'rgba(255,0,0,0.2)' }
 
@@ -165,32 +174,53 @@ export default FlexPanel = React.createClass({
   },
 
   getFpButtonSpecialClassForTag: function(tag) {
-    const { joyrideSteps } = this.props
+    const { joyrideSteps, hazUnreadChats } = this.props
     const { wiggleActivity } = this.state
+
+    if (tag === 'chat' && hazUnreadChats.length > 0)
+      return ' animated swing '
 
     if (tag === 'activity' && wiggleActivity)
       return ' green animated swing '
 
     if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
-      return ' green animated swing '
+      return ' animated swing '
 
     return ''
   },
 
+
+  getFpButtonExtraLabelForTag: function(tag) {
+    const { joyrideSteps, hazUnreadChats } = this.props
+
+    if (tag === 'chat' && hazUnreadChats.length > 0)
+      return <Label color='red' size='mini' circular style={menuItemIndicatorStyle} content={hazUnreadChats.length} />
+
+    if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
+      return <Label color='orange' empty circular style={menuItemIndicatorStyle} />
+
+    return null
+  },
+
+
   getFpButtonAutoShowForTag: function(tag) {
     const { meteorStatus } = this.data
-    
+
     if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
+      return true
+
+    if (this.props.selectedViewTag == tag)
       return true
 
     return false
   },
 
   render: function () {
-    const { flexPanelWidth, flexPanelIsVisible, handleFlexPanelToggle, fpIsFooter } = this.props
+    const { flexPanelWidth, flexPanelIsVisible, handleFlexPanelToggle, fpIsFooter, hazUnreadChats } = this.props
 
+    const isMobileUI = fpIsFooter
     const fpFeatureLevel = this.data.fpFeatureLevel || DEFAULT_FLEXPANEL_FEATURELEVEL
-    const panelStyle = fpIsFooter ? 
+    const panelStyle = fpIsFooter ?
     {
       position:     'fixed',
       top:          flexPanelIsVisible ? '0px' : undefined,
@@ -200,8 +230,8 @@ export default FlexPanel = React.createClass({
       border:       'none',
       borderRadius: 0,
       marginBottom: 0,
-      backgroundColor: 'rgba(242, 242, 242, 1)',
-      zIndex:       90    // Temp Hack
+      backgroundColor: 'rgba(242, 242, 242, 1)'
+      //zIndex:       90    // Temp Hack - this forces onscreen controller to be behind controls
     }
     :
     {
@@ -216,8 +246,10 @@ export default FlexPanel = React.createClass({
       backgroundColor: 'rgba(242, 242, 242, 1)'   //making this non-opaque solves the overlap issues on very narrow screens
     }
 
-    const miniNavClassNames = fpIsFooter ? 'ui horizontal six item icon fluid menu' : 'ui attached vertical icon menu' 
-    const miniNavStyle = fpIsFooter ? 
+    const miniNavClassNames = fpIsFooter
+      ? 'ui horizontal six item icon fluid menu'
+      : 'ui attached vertical horizontally fitted labeled icon menu'
+    const miniNavStyle = fpIsFooter ?
     {
       position:     'fixed',
       bottom:       '0px',
@@ -230,8 +262,8 @@ export default FlexPanel = React.createClass({
       marginBottom: 0,
       backgroundColor: 'none',
       zIndex:       300     // Temp Hack
-      
-    } 
+
+    }
     :
     {// This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel
       position:     'fixed',
@@ -276,14 +308,13 @@ export default FlexPanel = React.createClass({
     const flexPanelIcon = flexPanelChoice.icon
     const ElementFP = (!this.props.isSuperAdmin && flexPanelChoice.superAdminOnly) ? null : flexPanelChoice.el
 
-
     if (flexPanelIsVisible && ElementFP !== null)
       joyrideCompleteTag(`mgbjr-CT-flexPanel-${flexPanelChoice.tag}-show`)
 
     return  (
       <div className="basic segment mgbFlexPanel" style={panelStyle} id='mgbjr-flexPanelArea'>
         { flexPanelIsVisible &&
-          <div className='animated fadeInRight' style={{animationFillMode: "none"} /*animation fill mode breaks flex panel on ff and mobile chrome (samsung) */ }>
+          <div>
 
             <div className="flex header" style={flexHeaderStyle}>
               <span className="title">
@@ -302,6 +333,9 @@ export default FlexPanel = React.createClass({
                       currUserProjects={this.props.currUserProjects}
                       user={this.props.user}
                       meteorStatus={this.data.meteorStatus}
+                      chatChannelTimestamps={this.props.chatChannelTimestamps}
+                      hazUnreadChats={hazUnreadChats}
+                      requestChatChannelTimestampsNow={this.props.requestChatChannelTimestampsNow}
                       joyrideSteps={this.props.joyrideSteps}
                       joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
                       joyrideOriginatingAssetId={this.props.joyrideOriginatingAssetId}
@@ -309,6 +343,7 @@ export default FlexPanel = React.createClass({
                       activity={this.props.activity}
                       panelWidth={this.props.flexPanelWidth}
                       isSuperAdmin={this.props.isSuperAdmin}
+                      currentlyEditingAssetInfo={this.props.currentlyEditingAssetInfo}
                       subNavParam={this.getSubNavParam()}
                       handleChangeSubNavParam={this.handleChangeSubNavParam}
                       />
@@ -319,29 +354,32 @@ export default FlexPanel = React.createClass({
           </div>
         }
         <div id='mgbjr-flexPanelIcons' className={miniNavClassNames} style={miniNavStyle} >
-          { flexPanelViews.map(v => {
+          { flexPanelViews.map(v => {  /* TODO: WORK OUT HOW TO HANDLE 5 equally space buttons */
             const active = this._viewTagMatchesPropSelectedViewTag(v.tag) ? " active selected " : ""
+            if (isMobileUI && !v.mobileUI )
+              return null
             if (v.lev > fpFeatureLevel && this.getFpButtonAutoShowForTag(v.tag) !== true)
               return null
-            if (v.superAdminOnly && !this.props.isSuperAdmin) 
+            if (v.superAdminOnly && !this.props.isSuperAdmin)
               return null
             if (fpIsFooter && v.lev > 4)
               return null
 
             const specialSty = this.getFpButtonSpecialStyleForTag(v.tag)
             const specialClass = this.getFpButtonSpecialClassForTag(v.tag)
-            
+
             return (
-              <div
+              <a
                 id={`mgbjr-flexPanelIcons-${v.tag}`}
                 key={v.tag}
                 style={specialSty}
                 className={active +  " item"}
                 title={v.name}
                 onClick={this.fpViewSelect.bind(this, v.tag)}>
-                <i className={v.icon + specialClass + " large icon"}></i>
-                { fpIsFooter ? null : <span>{v.name}</span> }
-              </div>
+                <i className={v.icon + ' ' + specialClass + ' large icon'}></i>
+                { fpIsFooter ? null : v.name }
+                { this.getFpButtonExtraLabelForTag(v.tag) }
+              </a>
             )
           })}
         </div>

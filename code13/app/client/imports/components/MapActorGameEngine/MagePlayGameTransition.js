@@ -31,7 +31,7 @@ export default MagePlayGameTransition = {
   },
 
   resetTransitionState() {
-debugger    // DO WE NEED THIS?
+    debugger // DO WE NEED THIS?
     this.transitionInProgress = false
     this.transitionNewX = 0
     this.transitionNewY = 0
@@ -47,6 +47,8 @@ debugger    // DO WE NEED THIS?
     // Note we do NOT set this.isTransitionInProgress = false  -- that is done in TranitionTick()  
   },
 
+  /* 
+  // When debugging, the function gets called but does not run
   // Called on 'Tick' by game loop if transitioning to new map (isTransitionInProgress == true)
   transitionTick()
   {
@@ -81,7 +83,8 @@ debugger    // DO WE NEED THIS?
 
       this.AA_player_idx = this.activeActors.length
       this.activeActors[this.AA_player_idx] = this.transitionPlayerAA
-        
+      
+      this.container = document.getElementById("mgb-game-container") 
       this.scrollMapToSeePlayer()
 
       this.clearTicTable()
@@ -90,6 +93,5 @@ debugger    // DO WE NEED THIS?
       this.clearPlayerKeys()
     }
   }
-
-
+  */
 }

@@ -1,9 +1,4 @@
 import React from 'react'
-import UserListRoute from '/client/imports/routes/Users/List.js'
+import UserListRoute from '/client/imports/routes/Users/UserListRoute'
 
-export default fpUsers = () => (
-  <UserListRoute  
-    initialLimit={20}
-    renderVertical={true} 
-    hideTitle={true}/>
-  )
+export default fpUsers = () => ( <UserListRoute initialLimit={20} renderVertical={true} /> )

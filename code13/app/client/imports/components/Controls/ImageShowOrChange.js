@@ -2,41 +2,75 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import QLink from '/client/imports/routes/QLink'
+import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
+import { Popup } from 'semantic-ui-react'
+import FittedImage from '/client/imports/components/Controls/FittedImage'
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 
-const _getAssetIdFromUrl = url => (url && url.startsWith("/api/asset/png")) ? _.last(url.split("/")) : null
+const _getAssetIdFromUrl = url => (url && url.startsWith("/api/asset/png")) ? _.last(url.split("/")).split('?').shift() : null
 
 const _importFromDrop = (event, handleChange) => {
   const asset = DragNDropHelper.getAssetFromEvent(event)
   if (asset && asset.kind === 'graphic') {
-    const imgUrl = `/api/asset/png/${asset._id}`
+    const imgUrl = `/api/asset/png/${asset._id}?hash=${Date.now()}`
     handleChange(imgUrl, asset._id)
   }
 }
 
-const ImageShowOrChange = props => {
-  const { className, imageSrc, canEdit, canLinkToSrc, handleChange } = props
+const ImageShowOrChange = ( { imageSrc, canEdit, canLinkToSrc, handleChange, header, maxHeight="155px", maxWidth="230px" } ) => {
   const avatarAssetId = _getAssetIdFromUrl(imageSrc)
-  const imageSrcToUse = imageSrc || '/images/wireframe/image.png'
-  
+  const imageSrcToUse = makeCDNLink(imageSrc, makeExpireTimestamp(SpecialGlobals.avatar.validFor)) || makeCDNLink('/images/wireframe/image.png')
+
   const propsImgContainer = {
-    title: canEdit ?  'Drag an Image asset here to change the chosen image' : '',
-    className: className, 
     onDragOver: e => ( canEdit && DragNDropHelper.preventDefault(e) ),
-    onDrop: e => ( canEdit && _importFromDrop(e, handleChange) )
+    onDrop: e => ( (handleChange && canEdit) && _importFromDrop(e, handleChange) )
   }
-  
-  if (canLinkToSrc) 
+
+  if (canLinkToSrc)
     propsImgContainer.to = avatarAssetId ? `/assetEdit/${avatarAssetId}` : imageSrcToUse
 
-  return React.createElement((canLinkToSrc && avatarAssetId) ? QLink : 'div', propsImgContainer, <img className="ui fluid image mgb-pixelated" src={imageSrcToUse} /> )
+  const innerImg = (
+    <FittedImage
+      src={imageSrcToUse}
+      height={maxHeight}
+      width={maxWidth}/>
+  )
+
+  const imgPopup = (
+    <Popup
+      on='hover'
+      size='small'
+      inverted
+      mouseEnterDelay={500}
+      positioning='bottom left'
+      trigger={innerImg} >
+      <Popup.Header>
+        { header }
+      </Popup.Header>
+      <Popup.Content>
+        { canEdit ?
+          <span>Drag an MGB Graphic Asset here to change the chosen image. </span>
+          :
+          <span>You do not have permission to change this. </span>
+        }
+        { (canLinkToSrc && avatarAssetId) &&
+          <span>You can click the Image to view/edit the Graphic Asset</span>
+        }
+      </Popup.Content>
+    </Popup>
+  )
+
+  return React.createElement((canLinkToSrc && avatarAssetId) ? QLink : 'div', propsImgContainer, handleChange ? imgPopup : innerImg)
 }
 
 ImageShowOrChange.propTypes = {
-  className:    PropTypes.string.isRequired,    // Classname for the outer div
-  imageSrc:     PropTypes.string,               // A string which will be passed to img.src. Can be null 
+  header:       PropTypes.string.isRequired,    // e.g "Project Avatar"
+  imageSrc:     PropTypes.string,               // A string which will be passed to img.src. Can be null
   canEdit:      PropTypes.bool.isRequired,      // True if this should be able to accept changes via Drag
   canLinkToSrc: PropTypes.bool.isRequired,      // True if this should be a QLink to the image (or image editor)
-  handleChange: PropTypes.func.isRequired       // Function callback - takes (newUrlString, assetIdString) as params
+  handleChange: PropTypes.func,                 // Function callback - takes (newUrlString, assetIdString) as params
+  maxWidth:     PropTypes.string,               // for example "120px"
+  maxHeight:    PropTypes.string                // for ex "120px"
 }
 
 export default ImageShowOrChange

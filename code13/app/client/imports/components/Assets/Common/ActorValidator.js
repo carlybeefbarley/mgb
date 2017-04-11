@@ -17,7 +17,12 @@ const validator = {
     const hasConditionalBehavior = validator.hasConditionalBehavior(databag)
     const hasKey = validator.hasKey(databag)
 
-    return databag.all.actorType == options.actorType['Item, Wall or Scenery']
+    return [
+        options.actorType['Item, Wall, or Scenery'],
+        options.actorType['Solid Object'],
+        options.actorType['Floor'],
+        options.actorType['Scenery']
+      ].indexOf(databag.all.actorType) > -1
       && !hasConditionalBehavior
       && [
         options.itemActivationType["Inactive"],
@@ -39,7 +44,11 @@ const validator = {
       || validator.hasConditionalBehavior(databag)
       || validator.hasKey(databag)
       || (
-        databag.all.actorType == options.actorType['Item, Wall or Scenery']
+        [
+          options.actorType['Item, Wall, or Scenery'],
+          options.actorType['Solid Object'],
+          options.actorType['Item'],
+        ].indexOf(databag.all.actorType) > -1
         && databag.item.itemActivationType != options.itemActivationType['Floor that causes damage']
         && databag.item.itemActivationType != options.itemActivationType['Pushes actors in a direction']
         && (
@@ -59,7 +68,8 @@ const validator = {
     if(!databag){
       return false
     }
-    return databag.all.actorType == options.actorType['Item, Wall or Scenery']
+    return (databag.all.actorType == options.actorType['Item, Wall, or Scenery'] || databag.all.actorType == options.actorType['Scenery'])
+      && databag.all.actorType !== options.actorType['Floor'] // To prioritize use of Scenery in FG
       && databag.item.itemActivationType == options.itemActivationType['Inactive']
   }
 }

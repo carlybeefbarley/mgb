@@ -1,15 +1,18 @@
 // MGBv1 to TMX like format conversion.. straight forward
 /*
-  layer <actors> => layer <tiles>
-  actor => tileset + additional info
-  tile => image
-  */
+ layer <actors> => layer <tiles>
+ actor => tileset + additional info
+ tile => image
+ */
+// images are cached and observed in the TileCache
+// here are cached and observed only Actors
+
 import TileHelper from './TileHelper'
 import ActorValidator from '../../ActorValidator'
 import SpecialGlobals from '/imports/SpecialGlobals'
-import {AssetKindEnum as AssetKind} from '/imports/schemas/assets'
+import {AssetKindEnum} from '/imports/schemas/assets'
 
-import {fetchAndObserve, observe} from "/client/imports/helpers/assetFetchers"
+import {observeAsset, mgbAjax, makeCDNLink} from "/client/imports/helpers/assetFetchers"
 
 // 0 - jump
 // 1 - music
@@ -17,12 +20,23 @@ const ACTION_IMAGE = SpecialGlobals.actorMap.actionsImage
 const EVENT_LAYER = SpecialGlobals.actorMap.eventLayerId
 
 // in this context:
-// v1 - map format used by MGB_v1 (modified to fit MGB_v2 needs) - layers contains names
-// v2 - TMX format - layers contains tile global ids
+// v1 - map format used by MGB_v1 (modified to fit MGB_v2 needs) - layers contain names
+// v2 - TMX format - layers contain tile global ids
 
 export default ActorHelper = {
   TILES_IN_ACTIONS: SpecialGlobals.actorMap.actionsInImage,
-  v2_to_v1: function(data){
+  errorTypes: {
+    MISSING_IMAGE: 'missing image',
+    MISSING_ACTOR: 'missing actor',
+    UNKNOWN_ACTOR: 'unknown actor',
+    UNKNOWN_ACTION: 'unknown action tile'
+  },
+  layerNames: ['Background', 'Active', 'Foreground', 'Events'],
+  errors: [],
+  getErrors: function () {
+    return ActorHelper.errors
+  },
+  v2_to_v1: function (data) {
     const d = {
       mapLayer: [],
       maxLayers: 4,
@@ -39,21 +53,23 @@ export default ActorHelper = {
     const getActorName = (tileId, pos) => {
       if (!tileId)
         return ''
-      
+
       // action tiles
       if (tileId <= this.TILES_IN_ACTIONS)
         return data.layers[EVENT_LAYER].mgb_events[pos]
 
-      // data tilesets is not orderer.. after user add / removed tiles ini the middle order gets screwed
+      // data tilesets is not orderer.. after user add / removed tiles in the middle order gets screwed
       const ts = ActorHelper.getTilesetFromGid(tileId, data.tilesets)
       if (!ts) {
         console.error("Critical: Failed to locate tileset for gid:", tileId)
+        ActorHelper.errors.push({actor: tileId, error: ActorHelper.errorTypes.UNKNOWN_ACTOR})
         return ''
       }
       return ts.name
     }
-    for (let i=0; i<data.layers.length; i++) {
-      for (let j=0; j<data.layers[i].data.length; j++) {
+
+    for (let i = 0; i < data.layers.length; i++) {
+      for (let j = 0; j < data.layers[i].data.length; j++) {
         let ld = data.layers[i].data[j]
         if (!d.mapLayer[i])
           d.mapLayer[i] = []
@@ -64,7 +80,8 @@ export default ActorHelper = {
     return d
   },
 
-  v1_to_v2: function(data, names, cb, onChange) {
+  v1_to_v2: function (data, names, cb, onChange, onRemovedActor) {
+    ActorHelper.errors.length = 0
     if (!data.metadata) {
       cb(this.createEmptyMap())
       return
@@ -101,21 +118,22 @@ export default ActorHelper = {
     dd.width = parseInt(data.metadata.width, 10)
 
     const actorMap = {}
-    // last is action layer ( or not anymore??? )
-    for (let i=0; i<data.mapLayer.length - 1; i++) {
-      for (let j=0; j<data.mapLayer[i].length; j++) {
+    // last is action layer
+    for (let i = 0; i < data.mapLayer.length - 1; i++) {
+      for (let j = 0; j < data.mapLayer[i].length; j++) {
         let name = data.mapLayer[i][j]
+        name = name || ''
         // make sure these is not conflicting with real actors - try to load anyway?
-        if(name.indexOf("jump:") > -1 || name.indexOf("music:") > -1){
+        if (name.indexOf("jump:") > -1 || name.indexOf("music:") > -1) {
           console.error(`Action ${name} in the NON action layer`)
           continue
         }
-        if (name && actorMap[name] === undefined) {
+        if (name && actorMap[name] === void(0)) {
 
           if (makeInitialTilesets) {
             // actions tileset should be already pushed
             // assume that we have only 1 image per tileset
-            dd.tilesets.push({name, firstgid: dd.tilesets.length + this.TILES_IN_ACTIONS }) //TileHelper.getNextGid(dd.tilesets[dd.tilesets.length - 1])})
+            dd.tilesets.push({name, firstgid: dd.tilesets.length + this.TILES_IN_ACTIONS}) //TileHelper.getNextGid(dd.tilesets[dd.tilesets.length - 1])})
           }
           // will be filled later
           actorMap[name] = {
@@ -140,7 +158,7 @@ export default ActorHelper = {
 
       // we already have actor in the tilesets.. map it and update actor
       keys.forEach((n) => {
-        dd.tilesets.forEach( (ts, index) => {
+        dd.tilesets.forEach((ts, index) => {
           const actor = actorMap[n]
           if (ts.name === n) {
             // set correct firstgid
@@ -151,42 +169,42 @@ export default ActorHelper = {
         })
       })
 
-      for (let i=0; i<data.mapLayer.length - 1; i++) {
+      for (let i = 0; i < data.mapLayer.length - 1; i++) {
         let layer = {
-          name:       'Background,Active,Foreground,Events'.split(',')[i],
-          visible:    true,
-          data:       [],
-          height:     parseInt(data.metadata.height, 10),
-          width:      parseInt(data.metadata.width, 10),
-          draworder:  "topdown",
+          name: ActorHelper.layerNames[i],
+          visible: true,
+          data: [],
+          height: parseInt(data.metadata.height, 10),
+          width: parseInt(data.metadata.width, 10),
+          draworder: "topdown",
           mgb_tiledrawdirection: "rightdown",
-          type:       "mgb1-actor-layer",
-          x:          0,
-          y:          0
+          type: "mgb1-actor-layer",
+          x: 0,
+          y: 0
         }
-        for (let j=0; j<data.mapLayer[i].length; j++) {
+        for (let j = 0; j < data.mapLayer[i].length; j++) {
           const name = data.mapLayer[i][j]
-          layer.data.push( ( name && actorMap[name] ) ? actorMap[name].firstgid : 0)
+          layer.data.push(( name && actorMap[name] ) ? actorMap[name].firstgid : 0)
         }
         dd.layers.push(layer)
       }
 
       // Event layer
       let layer = {
-        name:     "Events",
-        visible:  true,
-        data:     [],
-        height:   parseInt(data.metadata.height, 10),
-        width:    parseInt(data.metadata.width, 10),
+        name: "Events",
+        visible: true,
+        data: [],
+        height: parseInt(data.metadata.height, 10),
+        width: parseInt(data.metadata.width, 10),
         draworder: "topdown",
-        type:     "mgb1-event-layer",
-        x:        0,
-        y:        0,
+        type: "mgb1-event-layer",
+        x: 0,
+        y: 0,
         mgb_tiledrawdirection: "rightdown",
         mgb_events: []
       }
 
-      for (let j=0; j<data.mapLayer[EVENT_LAYER].length; j++) {
+      for (let j = 0; j < data.mapLayer[EVENT_LAYER].length; j++) {
         let name = data.mapLayer[EVENT_LAYER][j]
         if (name) {
           /*
@@ -207,7 +225,7 @@ export default ActorHelper = {
         dd.meta.options = data.meta.options
       }
       cb(dd)
-    }, onChange)
+    }, onChange, onRemovedActor)
   },
 
   createEmptyMap() {
@@ -220,9 +238,9 @@ export default ActorHelper = {
       {
         name: "Background",
         visible: true,
-        data: [0,0,0,0],
-        height: 2,
-        width: 2,
+        data: [0, 0, 0, 0],
+        height: 20,
+        width: 20,
         draworder: "topdown",
         mgb_tiledrawdirection: "rightdown",
         type: "mgb1-actor-layer",
@@ -232,9 +250,9 @@ export default ActorHelper = {
       {
         name: "Active",
         visible: true,
-        data: [0,0,0,0],
-        height: 2,
-        width: 2,
+        data: [0, 0, 0, 0],
+        height: 20,
+        width: 20,
         draworder: "topdown",
         mgb_tiledrawdirection: "rightdown",
         type: "mgb1-actor-layer",
@@ -244,9 +262,9 @@ export default ActorHelper = {
       {
         name: "Foreground",
         visible: true,
-        data: [0,0,0,0],
-        height: 2,
-        width: 2,
+        data: [0, 0, 0, 0],
+        height: 20,
+        width: 20,
         draworder: "topdown",
         mgb_tiledrawdirection: "rightdown",
         type: "mgb1-actor-layer",
@@ -256,10 +274,10 @@ export default ActorHelper = {
       {
         name: "Events",
         visible: true,
-        data: [0,0,0,0],
-        mgb_events: ['','','',''],
-        height: 2,
-        width: 2,
+        data: [0, 0, 0, 0],
+        mgb_events: ['', '', '', ''],
+        height: 20,
+        width: 20,
         draworder: "topdown",
         mgb_tiledrawdirection: "rightdown",
         type: "mgb1-event-layer",
@@ -270,39 +288,59 @@ export default ActorHelper = {
     dd.tilesets.push({
       name: "Actions",
       firstgid: 1,
-      image: '/api/asset/tileset/AymKGyM9grSAo3yjp',
+      image: ACTION_IMAGE,
       imageheight: 32,
       imagewidth: 64,
       margin: 0,
       spacing: 0,
-      tilecount: this.TILES_IN_ACTIONS,
+      tilecount: ActorHelper.TILES_IN_ACTIONS,
       tileheight: 32,
-      tilewidth: 32,
+      tilewidth: 32
     })
     dd.mgb_event_tiles = {}
     return dd;
   },
 
-  loadActors: function(actorMap, names, images, cb, onChange){
-    const actors = Object.keys(actorMap);
-    if(actors.length === 0){
+  loadActors: function (actorMap, names, images, cb, onChange, onRemovedActor) {
+    const actors = Object.keys(actorMap)
+    // nothing to do
+    if (actors.length === 0) {
       cb()
-      return;
+      return
     }
     let loaded = 0
-    for(let i=0; i<actors.length; i++){
-      this.loadActor(actors[i], actorMap, i + 1 + this.TILES_IN_ACTIONS, images, names, () => {
-        loaded++;
-        if(loaded === actors.length){
-          cb()
+    const onload = () => {
+      loaded++
+      if (loaded === actors.length) {
+        cb()
+      }
+      if(loaded > actors.length){
+        debugger
+      }
+    }
+
+    for (let i = 0; i < actors.length; i++) {
+      this.loadActor(
+        actors[i],
+        actorMap,
+        i + 1 + ActorHelper.TILES_IN_ACTIONS,
+        images,
+        names,
+        onload,
+        onChange,
+        // remove deleted or broken actor SILENTLY
+        () => {
+          console.error("removing deleted actor from map", actors[i])
+          // delete actorMap[actors[i]]
+          // onload()
         }
-      }, onChange)
+      )
     }
   },
   isLoading: {},
   cache: {},
   clearCache: (key) => {
-    if(key == void(0))
+    if (key == void(0))
       ActorHelper.cache = {}
     else
       delete ActorHelper.cache[key]
@@ -315,14 +353,14 @@ export default ActorHelper = {
     ActorHelper.subscriptions = {}
     ActorHelper.clearCache()
   },
-  loadActor: function(name, map, nr, images, names, cb, onChange) {
+  loadActor: function (name, map, nr, images, names, cb, onChange, onRemovedActor) {
     const parts = name.split(":")
     const user = parts.length > 1 ? parts.shift() : names.user
     const actorName = parts.length ? parts.pop() : name
     const key = `${user}/${actorName}`
 
     // actor is loading - be patient..
-    if(ActorHelper.isLoading[key]){
+    if (ActorHelper.isLoading[key]) {
       window.setTimeout(() => {
         ActorHelper.loadActor.apply(ActorHelper, arguments)
       }, 100)
@@ -330,36 +368,48 @@ export default ActorHelper = {
     }
 
     if (ActorHelper.cache[key]) {
-      map[name] = ActorHelper.cache[key].map
-      images[TileHelper.normalizePath(ActorHelper.cache[key].image)] = ActorHelper.cache[key].image
+      const cached = ActorHelper.cache[key]
+      map[name] = cached.map
+      images[TileHelper.normalizePath(cached.image)] = cached.image
       cb()
       return
     }
     ActorHelper.isLoading[key] = 1
 
-    /*ActorHelper.subscriptions[key] = fetchAndObserve(user, actorName, AssetKind.actor, (error, actors) => {
-      if(!actors.length){
-        throw new Error(`Failed to locate an actor ${user}:${actorName}`)
-      }
-      if(actors.length > 1){
-        console.error(`Multiple actor has been located for: ${user}:${actorName}`)
-      }
-      const actorC2 = actors[0].content2
-      if(!actorC2){
-        throw new Error("Unable to locate actor data")
-      }
+    let asset = ActorHelper.subscriptions[key] ? ActorHelper.subscriptions[key].getAssets()[0] : null
 
-      const iparts = actorC2.databag.all.defaultGraphicName.split(":");
+    const onLoadFailed = () => {
+      delete ActorHelper.isLoading[key]
+      onRemovedActor(nr)
+      cb()
+    }
+    mgbAjax(`/api/asset/actor/${user}/${actorName}`, (err, dataStr) => {
+      if (err) {
+        ActorHelper.errors.push({actor: name, error: ActorHelper.errorTypes.MISSING_ACTOR})
+        onLoadFailed()
+        return
+      }
+      let d
+      try {
+        d = JSON.parse(dataStr)
+      }
+      catch (e) {
+        onLoadFailed()
+        return
+      }
+      const iparts = d.databag.all.defaultGraphicName.split(":");
       const iuser = iparts.length > 1 ? iparts.shift() : user
       const iname = iparts.pop()
 
-      const src = `/api/asset/png/${iuser}/${iname}`
+      const src = makeCDNLink(`/api/asset/png/${iuser}/${iname}`)
 
       map[name].firstgid = nr
-      map[name].actor = actorC2
+      map[name].actor = d
       map[name].image = src
       var img = new Image()
-      img.onload = function(){
+      img.crossOrigin = "anonymous"
+      img.onload = function () {
+        delete ActorHelper.isLoading[key]
         map[name].imagewidth = img.width
         map[name].imageheight = img.height
         // TODO: adjust these when MAGE will support multiple frames per actor
@@ -372,89 +422,71 @@ export default ActorHelper = {
           map: map[name],
           image: src
         }
-        delete ActorHelper.isLoading[key]
+        ActorHelper.subscriptions[key] = observeAsset({
+            dn_ownerName: user,
+            name: actorName,
+            isDeleted: false,
+            kind: AssetKindEnum.actor
+          },
+          () => {
+            // clean up has been called before subscription become ready
+            if (!ActorHelper.subscriptions[key]) {
+              return
+            }
+            const assets = ActorHelper.subscriptions[key].getAssets()
+            if (!assets.length) {
+              console.error("Cannot find asset: ", key)
+              return
+            }
+            if (assets.length > 1) {
+              console.error("Multiple assets found: ", key)
+            }
+          },
+          (...a) => {
+            ActorHelper.clearCache(key)
+            onChange && onChange(...a)
+          }
+        )
         cb()
+      }
+      // load empty image on error
+      img.onerror = () => {
+        ActorHelper.errors.push({actor: name, error: ActorHelper.errorTypes.MISSING_IMAGE})
+        img.src = makeCDNLink("/images/error.png")
       }
       img.src = src
 
-
-    }, (...a) => {
-      ActorHelper.clearCache(key)
-      onChange(...a)
-    })*/
+    }, asset)
 
 
-    $.get(`/api/asset/actor/${user}/${actorName}`).done((d) => {
-      ActorHelper.subscriptions[key] = observe({
-        dn_ownerName: user,
-        name: actorName,
-        isDeleted: false,
-        kind: AssetKind.actor
-      }, (...a) => {
-        ActorHelper.clearCache(key)
-        onChange(...a)
-      })
-
-
-      const iparts = d.databag.all.defaultGraphicName.split(":");
-      const iuser = iparts.length > 1 ? iparts.shift() : user
-      const iname = iparts.pop()
-
-      const src = `/api/asset/png/${iuser}/${iname}`
-
-      map[name].firstgid = nr
-      map[name].actor = d
-      map[name].image = src
-      var img = new Image()
-      img.onload = function(){
-
-        delete ActorHelper.isLoading[key]
-        map[name].imagewidth = img.width
-        map[name].imageheight = img.height
-        // TODO: adjust these when MAGE will support multiple frames per actor
-        map[name].tilewidth = img.width
-        map[name].tileheight = img.height
-
-        images[TileHelper.normalizePath(src)] = src
-
-        ActorHelper.cache[key] ={
-          map: map[name],
-          image: src
-        }
-        cb()
-      }
-      img.src = src
-    })
   },
 
   checks: {
     Background: tileset => ActorValidator.isValidForBG(tileset.actor.databag),
-    Active:     tileset => ActorValidator.isValidForActive(tileset.actor.databag),
+    Active: tileset => ActorValidator.isValidForActive(tileset.actor.databag),
     Foreground: tileset => ActorValidator.isValidForFG(tileset.actor.databag),
-    Events:     tileset => tileset.firstgid <= ActorHelper.TILES_IN_ACTIONS
+    Events: tileset => tileset.firstgid <= ActorHelper.TILES_IN_ACTIONS
   },
 
   getTilesetFromGid: (gid, tilesets) => {
+    // is this still true???
     // after adding and removing tilesets  - tileset ordering is messed up - don't rely that firstgid will be ordered in tilesets array
-    for (let i=0; i<tilesets.length; i++) {
+    for (let i = 0; i < tilesets.length; i++) {
       const ts = tilesets[i]
-      if (gid >= ts.firstgid && gid < ts.firstgid + ts.tilecount )
+      if (gid >= ts.firstgid && gid < ts.firstgid + ts.tilecount)
         return tilesets[i]
     }
     return null
   },
 
-  loadActorSimple: function(asset, map) {
-    debugger   // Appears to be dead code?
-  },
-
-  eventNameToTile: function(name) {
+  eventNameToTile: function (name) {
     if (name.indexOf("jump") === 0)
       return 1
-    
-    if (name.indexOf("music") ===0 )
+
+    if (name.indexOf("music") === 0)
       return 2
 
+    ActorHelper.errors.push({actor: name, error: ActorHelper.errorTypes.UNKNOWN_ACTION})
     console.error(`Unknown eventName '${name}' in actorMap`)
   }
 

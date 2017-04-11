@@ -25,7 +25,7 @@ import GetStartedSkillNodes from './GetStartedSkillNodes'
 //   2) tutorials     -- Our tutorials that support a user's learning in some area
 //   3) dynamic help  -- Systems like 'Code Mentor' in EditCode that provide context-sensitive help
 //
-// ..in order to support this, there is INTENTIONAL AND MANDATORY correlation between 
+// ..in order to support this, there is INTENTIONAL AND MANDATORY correlation between
 // the namespace/keys of three seemingly separate data structures in MGBv2:
 //
 //   1a) skills.js     -- This supports the persistence of skills information to the Meteor/MongoDB.
@@ -33,11 +33,11 @@ import GetStartedSkillNodes from './GetStartedSkillNodes'
 //                        To convert dottedKeys to slashSeparated keys, use
 //                    >>    import { makeSlashSeparatedSkillKey } from '/imports/Skills/SkillNodes/SkillNodes'
 //
-//   1b) SkillNodes.js -- This (and the parts it combines from *SkillNodes.js) define the total 'learniverse' 
+//   1b) SkillNodes.js -- This (and the parts it combines from *SkillNodes.js) define the total 'learniverse'
 //                        of all skills we understand and track in MGB
 //                        ...Example key: code.js.lang.basics.types.string
 //                        To check that some string (either a dotted path or a slashSeparatedPath) is a valid
-//                        *LEAF* skill (leaf skills are explained below), use 
+//                        *LEAF* skill (leaf skills are explained below), use
 //                    >>    import { isSkillKeyValid } from '/imports/Skills/SkillNodes/SkillNodes'
 //
 //   1c) SkillAreas.js -- This defines the overall skillAreas (the top-level keys of SkillNodes.js)
@@ -48,46 +48,46 @@ import GetStartedSkillNodes from './GetStartedSkillNodes'
 //        (MGB assets)    stored in JSON files as **MGB Game Assets** of kind 'tutorial' in the !vault account:
 //                        ...Example key (MGB Asset Name): !vault:tutorials.code.js.lang.basics.types.string.00
 //                           (The .00 suffix is there to support having multi-part tutorials for a given asset)
-//                        To generate a tutorial path from a skills path, use 
+//                        To generate a tutorial path from a skills path, use
 //                    >>    import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
 //
-//   2b) SpecialGlobals.js   -- The '!vault:tutorials.' prefix is defined in /imports/SpecialGlobals.js to 
-//                              preserve my ADHD/OCD-sanity 
+//   2b) SpecialGlobals.js   -- The '!vault:tutorials.' prefix is defined in /imports/SpecialGlobals.js to
+//                              preserve my ADHD/OCD-sanity
 // --
 //   3a) TokenDescription.js -- This is the help for Editing Javascript Code
 //                              This has a different (flat, token-based) key hierarchy, but maps back to skillNodes
 //                              via the 'help' object that is used in that sourcefile
 //                              ..Example:  help['string'].skillNodes = 'code.js.lang.basics.types.string'
 //
-//   3b) (TBD MORE)          -- There will probably similar things in future for other areas where we can 
+//   3b) (TBD MORE)          -- There will probably similar things in future for other areas where we can
 //                              automate help - for example Toolbars.js
 
 // B) MANDATORY CONSTRAINTS FOR THESE DATA MODELS
 //
-// The top level names in SkillsNode.js (and it's partial imports from the *SkillNodes.js files') 
-// (code, art, audio etc) and in fact the full paths MUST correlate with the tag of skillAreaItems 
+// The top level names in SkillsNode.js (and it's partial imports from the *SkillNodes.js files')
+// (code, art, audio etc) and in fact the full paths MUST correlate with the tag of skillAreaItems
 //  as defined in SkillAreas.js
 //
 // B0) For easy grepping, any files that have to be aware of these constriants must include the comment
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-// B1) CRITICAL: Casually re-arranging the skillNodes hierarchy is a NO-NO because the skills 
-//     are persisted in MongoDB in the Skills table. 
+// B1) CRITICAL: Casually re-arranging the skillNodes hierarchy is a NO-NO because the skills
+//     are persisted in MongoDB in the Skills table.
 //     Moving/Deleting any skill in SkillNodes will require a matching change
-//     in ALL users' Skills table entries to represent the move (and then also 
+//     in ALL users' Skills table entries to represent the move (and then also
 //     of course the other source code files mentioned in 1a/1b/2a/3a above)
 //
-// B2) The keys for skills, tutorials, and help MUST have the same paths 
-//     (though note that the separators unfortunately have to differ because of 
-//      constraints in stores and libraries in order to supported a dottedNested 
-//      syntax for nested objeects. But this is ok, as long as we are CAREFUL)
+// B2) The keys for skills, tutorials, and help MUST have the same paths
+//     (though note that the separators unfortunately have to differ because of
+//      constraints in stores and libraries in order to support a dottedNested
+//      syntax for nested objects. But this is ok, as long as we are CAREFUL)
 //
 // B3), Property/Field keys MUST NOT contain any of the following characters:
-//  NO   .      - because we (and lodash and MongoDB) use these as a separator 
+//  NO   .      - because we (and lodash and MongoDB) use these as a separator
 //                for nesting fields for some syntaxes (eg. _.get() etc)
-//  NO   /      - because we convert any dottedPaths we use in memory to slash-separated 
+//  NO   /      - because we convert any dottedPaths we use in memory to slash-separated
 //                paths when storing in MongoDB/Meteor
-//  NO   ,      - because we use , as a separator when specifying multiple fields 
+//  NO   ,      - because we use , as a separator when specifying multiple fields
 //                sometimes (for example $meta.sequence)
 //
 //  YES  -      - if you really need a separator within a fieldname, the recommendation
@@ -95,7 +95,7 @@ import GetStartedSkillNodes from './GetStartedSkillNodes'
 
 // C) Expected future work on this model
 //
-// C1)  [ TODO(@dgolds/@stauzs): Implement a check the constraints described in B at runtime 
+// C1)  [ TODO(@dgolds/@stauzs): Implement a check the constraints described in B at runtime
 //      or as a unit test, so we don't have a bad day when we mess up a constraint by accident. ]
 //
 // C2)  [ TODO(@dgolds): Implement multi-part tutorials for a skill area (as enabled in the
@@ -195,7 +195,7 @@ const buildMap = (nodes, key = '') => {
 
     if (!node.$meta)
       node.$meta = {}
-  
+
     node.$meta.key = nextKey
     SkillNodes.$meta.map[nextKey] = node
 
@@ -236,10 +236,10 @@ resolveUnlocksAndRequires()
 export default SkillNodes
 
 /**
- * Count (fixed) max-available totals achieved Skills. 
+ * Count (fixed) max-available totals achieved Skills.
  * Note that there is a handy pre-computed export maxSkillsCount for all skills
  * The counterpart for a User's number of actual achieved Skills is countCurrentUserSkills() in skills.js
- * 
+ *
  * @export
  * @param {string} [dotttedSkillPrefix=null] Optional prefix in dotted form.. e.g. getStarted.
  * @returns {Number}
@@ -248,7 +248,7 @@ export function countMaxUserSkills(dotttedSkillPrefix = null)
 {
   let count = 0
   _.each(SkillNodes.$meta.map, (node, sk) => {
-    if ( node.$meta && node.$meta.isLeaf === 1 && 
+    if ( node.$meta && node.$meta.isLeaf === 1 &&
         (dotttedSkillPrefix === null || sk.startsWith(dotttedSkillPrefix) )
     )
       count++
@@ -286,11 +286,11 @@ export const makeTutorialAssetPathFromSkillPath = (skillPath, partNumber = 0) =>
     // This is part of the namespace design for the SKILLS_MODEL_TRIFECTA, but isn't actually used yet.
     // Let's make sure it doesn't get called and used by mistake before we are ready.
     console.error(`PREMATURE! makeTutorialAssetPathFromSkillPath(${skillPath}, ${partNumber}) is not expecting a partNumber > 0 YET. Are you from the future?`)
-    debugger    
+    debugger
   }
 
 
-  if (!isSkillKeyValid(skillPath)) 
+  if (!isSkillKeyValid(skillPath))
   {
     console.error(`makeTutorialAssetPathFromSkillPath(${skillPath}) error: isSkillKeyValid() failed validation`)
     return null
@@ -304,7 +304,7 @@ export const makeTutorialAssetPathFromSkillPath = (skillPath, partNumber = 0) =>
   return retVal
 }
 
-export const makeTutorialsFindSelector = dottedSkillKey => 
+export const makeTutorialsFindSelector = dottedSkillKey =>
 {
   if (!dottedSkillKey)
     return null
@@ -321,3 +321,33 @@ export const makeTutorialsFindSelector = dottedSkillKey =>
     dn_ownerName: SpecialGlobals.skillsModelTrifecta.tutorialAccount
   }
 }
+
+export const getNode = skillPath => Object.freeze( ({ ...SkillNodes.$meta.map[skillPath] }) )
+export const getPath = skillNode => skillNode.$meta.key
+
+export const getParentPath = skillPath => _.initial( skillPath.split( '.' ) ).join( '.' )
+
+export const isRootPath = skillPath => !_.includes( skillPath, '.' ) && !!getNode( skillPath )
+export const isLeafPath = skillPath => !!getNode( skillPath ).$meta.isLeaf
+export const isLeafNode = skillPath => !isRootPath( skillPath )
+
+export const getChildPaths = skillPath => {
+  return Object.keys( getNode( skillPath ) )
+    .filter( key => !_.startsWith( key, '$' ) )
+    .map( key => ([skillPath, key].join( '.' )) )
+}
+
+export const getParentNode = skillPath => getNode( getParentPath( skillPath ) )
+export const getChildNodes = skillPath => getChildPaths( skillPath ).map( getNode )
+
+export const getFriendlyName = skillPath => {
+  return _.get( getNode( skillPath ), '$meta.name' ) || _.startCase( _.last( skillPath.split( '.' ) ) )
+}
+
+export const isPathChallenge = (skillPath) => _.startsWith( skillPath, 'code.js.basics' )
+
+export const isPathCodeTutorial = (skillPath) => _.startsWith( skillPath, 'code.js.games' ) || _.startsWith( skillPath, 'code.js.phaser' )
+
+export const isPhaserTutorial = (skillPath) => _.startsWith( skillPath, 'code.js.phaser' )
+
+export const isArtTutorial = (skillPath) => _.startsWith( skillPath, 'art' )

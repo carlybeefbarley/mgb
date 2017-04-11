@@ -1,4 +1,4 @@
-
+import _ from 'lodash'
 import ActiveActor from './MageActiveActorClass'
 
 const MgbActor = {
@@ -8,12 +8,18 @@ const MgbActor = {
   alNpcDialogFinalAction_stay:        1,
   alNpcDialogFinalAction_repeat:      2,
 
-  alActorType:              ["Player", "Non-Player Character (NPC)", "Item, wall or scenery", "Shot"],
+  alActorType:              ["Player", "Non-Player Character (NPC)", "Item, Wall, or Scenery", "Shot", "Item"],
   alActorTypeShort:         ["Player", "NPC", "Item", "Shot"],
   alActorType_Player:       0,
   alActorType_NPC:          1,
   alActorType_Item:         2,
   alActorType_Shot:         3,
+  /*
+  alActorType_Scenery:      4,
+  alActorType_Items:        5,
+  alActorType_SolidObject:  6,
+  alActorType_Floor:        7,
+  */
 
   alNpcTakeTypes:           ["Take", "Require"],
   alNpcTakeType_Take:       0,
@@ -123,7 +129,7 @@ const MgbActor = {
   ANIMATION_INDEX_BASE_FACE_EAST:               5,
   ANIMATION_INDEX_BASE_FACE_SOUTH:              10,
   ANIMATION_INDEX_BASE_FACE_WEST:               15,
-  ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION: 20,   // This was called 'ANIMATION_INDEX_BASE_STATIONARY' before we had directional staionary animations
+  ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION: 20,   // Deprecated; only exists for backward-compat with old MGB1 games. Hidden for new Actors
   ANIMATION_INDEX_BASE_MELEE_NORTH:             36,
   ANIMATION_INDEX_BASE_MELEE_EAST:              44,
   ANIMATION_INDEX_BASE_MELEE_SOUTH:             52,
@@ -143,30 +149,35 @@ const MgbActor = {
   ],
 
   animationNames: [
+    // 0 - 4
     "face north",
     "step north 1",
     "step north 2",
     "step north 3",
     "step north 4",
     
+    // 5 - 9
     "face east",
     "step east 1",
     "step east 2",
     "step east 3",
     "step east 4",
 
+    // 10 - 14
     "face south",
     "step south 1",
     "step south 2",
     "step south 3",
     "step south 4",
 
+    // 15 - 19
     "face west",
     "step west 1",
     "step west 2",
     "step west 3",
     "step west 4",
     
+    // 20 - 35
     "stationary 1",
     "stationary 2",
     "stationary 3",
@@ -182,7 +193,9 @@ const MgbActor = {
     "stationary 13",
     "stationary 14",
     "stationary 15",
-    
+    "stationary 16",
+
+    // 36 - 43
     "melee north 1",
     "melee north 2",
     "melee north 3",
@@ -192,6 +205,7 @@ const MgbActor = {
     "melee north 7",
     "melee north 8",
 
+    // 44 - 51
     "melee east 1",
     "melee east 2",
     "melee east 3",
@@ -201,6 +215,7 @@ const MgbActor = {
     "melee east 7",
     "melee east 8",
 
+    // 52 - 59
     "melee south 1",
     "melee south 2",
     "melee south 3",
@@ -210,6 +225,7 @@ const MgbActor = {
     "melee south 7",
     "melee south 8",
 
+    // 60 - 67
     "melee west 1",
     "melee west 2",
     "melee west 3",
@@ -219,6 +235,7 @@ const MgbActor = {
     "melee west 7",
     "melee west 8",
 
+    // 68 - 83
     "stationary north 1",
     "stationary north 2",
     "stationary north 3",
@@ -236,6 +253,7 @@ const MgbActor = {
     "stationary north 15",
     "stationary north 16",
 
+    // 84 - 99
     "stationary east 1",
     "stationary east 2",
     "stationary east 3",
@@ -253,6 +271,7 @@ const MgbActor = {
     "stationary east 15",
     "stationary east 16",
 
+    // 100 - 115
     "stationary south 1",
     "stationary south 2",
     "stationary south 3",
@@ -270,6 +289,7 @@ const MgbActor = {
     "stationary south 15",
     "stationary south 16",
 
+    // 116 - 131
     "stationary west 1",
     "stationary west 2",
     "stationary west 3",
@@ -287,34 +307,59 @@ const MgbActor = {
     "stationary west 15",
     "stationary west 16", 
   ],
-
-  loadSounds: function(callback) {
+  loadSounds: function(actor, oName, callback) {
     if (!MgbActor._loadedSounds)
     {
       MgbActor._loadedSounds = {}
+      // Builtin sounds
       var names = this.alCannedSoundsList.slice(1)    // ignore first item
+
+      // Relevant sound assets
+      if (actor) {
+        // Do user:asset to differentiate from builtin
+        let actorSounds = [
+          _.includes(actor.databag.all.soundWhenHarmed, ':') ? actor.databag.all.soundWhenHarmed : oName + ':' + actor.databag.all.soundWhenHarmed,
+          _.includes(actor.databag.all.soundWhenHealed, ':') ? actor.databag.all.soundWhenHealed : oName + ':' + actor.databag.all.soundWhenHealed,
+          _.includes(actor.databag.all.soundWhenKilled, ':') ? actor.databag.all.soundWhenKilled : oName + ':' + actor.databag.all.soundWhenKilled,
+          _.includes(actor.databag.allchar.soundWhenMelee, ':') ? actor.databag.allchar.soundWhenMelee : oName + ':' + actor.databag.allchar.soundWhenMelee, 
+          _.includes(actor.databag.allchar.soundWhenShooting, ':') ? actor.databag.allchar.soundWhenShooting : oName + ':' + actor.databag.allchar.soundWhenShooting,
+          _.includes(actor.databag.item.equippedNewMeleeSound, ':') ? actor.databag.item.equippedNewMeleeSound : oName + ':' + actor.databag.item.equippedNewMeleeSound,
+          _.includes(actor.databag.item.equippedNewShotSound, ':') ? actor.databag.item.equippedNewShotSound : oName + ':' + actor.databag.item.equippedNewShotSound
+        ]
+        const desiredSoundNames = _.filter(
+          _.uniqWith(actorSounds, _.isEqual),
+          n => n
+        )
+        names = names.concat(desiredSoundNames)
+      }
+
       var name
       var countClosure = names.length
       var canplay = function(result) { if (--countClosure === 0) { callback && callback(result)} };
-
       for (let n = 0 ; n < names.length ; n++) {
         name = names[n]
         MgbActor._loadedSounds[name] = document.createElement('audio')
         MgbActor._loadedSounds[name].addEventListener('canplay', canplay, false)
-        MgbActor._loadedSounds[name].src = "/audio/builtinForActors/" + name + ".wav"
+        if (_.includes(name, ':')) { // sound asset
+          MgbActor._loadedSounds[name].src = "/api/asset/sound/" + name.split(':')[0] + "/" + name.split(':')[1] + "/sound.mp3"
+        }
+        else { // builtin sound
+          MgbActor._loadedSounds[name].src = "/audio/builtinForActors/" + name + ".wav"
+          MgbActor._loadedSounds[name].volume = 0.5 // Half volume
+        }
       }
     }
   },
 
   // TODO: Implement a preloadSoundsForActor() method
-  playCannedSound: function(_soundName) {
+  playCannedSound: function(_soundName, actor, oName) {
     if (!_soundName)
       return
 
     const soundName = _soundName.replace(/^\[builtin\]\:/,'')   // We will handle missing [builtin]: for now
 
-    if (!MgbActor._loadedSounds)
-      MgbActor.loadSounds()
+    if (!MgbActor._loadedSounds || !(_.includes(MgbActor._loadedSounds, _soundName)))
+      MgbActor.loadSounds(actor, oName)
     else if (soundName !== 'none')
     {
       const sound = MgbActor._loadedSounds[soundName]
@@ -327,7 +372,8 @@ const MgbActor = {
     currentStepStyle, 					// -1 means stationary. 0...3 Mean north/east/south/west. If -1, we use priorstepStyle to work out the direction the actor should be facing
     priorStepStyle, 
     tweenCount, 
-    meleeStep = -1)     				// If in Melee, this is 0..7, stating which melee Animation step to use. This then chooses a melee animation (if there is one) depending on the direction - it can return "", unlike the non-melee use of this function. Note that -1 == ActiveActor.MELEESTEP_NOT_IN_MELEE
+    meleeStep = -1     				  // If in Melee, this is 0..7, stating which melee Animation step to use. This then chooses a melee animation (if there is one) depending on the direction - it can return "", unlike the non-melee use of this function. Note that -1 == ActiveActor.MELEESTEP_NOT_IN_MELEE
+  )
   {
     const frame = tweenCount % 5									  // Normal move animations have 5 steps
     const frame_Stationary = (tweenCount >> 1) % 16	// # Stationary animations have 16 steps
@@ -354,8 +400,8 @@ const MgbActor = {
       case -1: // stationary
         switch (priorStepStyle)
         {
-        case -1: // stationary
-          animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_SOUTH + frame_Stationary
+        case -1: 
+          animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary
           break
         case 0:	// North
           animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_NORTH + frame_Stationary
@@ -370,13 +416,31 @@ const MgbActor = {
           animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_WEST + frame_Stationary
           break 
         }
-
-        if (!MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex))
-          animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary				// Hmm, nothing there. Let's try the default (non-directional) stationary animations
         
-        if (!MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex))
-          animationTableIndex = -1			// We give up. Just use the default, nothing better has been specified.
-        
+        if (!MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex)) {
+          animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary // Try non-directional stationary animation
+          if (MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex)) 
+            break
+          else 
+            switch (priorStepStyle)
+            {
+            case -1: 
+              animationTableIndex = -1
+              break
+            case 0:	// North
+              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_NORTH
+              break
+            case 1: // East 
+              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_EAST
+              break
+            case 2:	// South
+              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_SOUTH 
+              break
+            case 3:	// West
+              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_WEST
+              break 
+            }
+        }    
         break
       }
     }

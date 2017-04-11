@@ -37,7 +37,12 @@ var schema = {
   toAssetKind: String,    // Asset's kind (image, map, etc)
 
   // Others - may not be on all records:
+
+  // DEAD AS OF 2/16/2017:
   toChatChannelKey: Match.Optional(String),  // Chat Channel KEY (no # prefix, using a KEY from ChatChannels - e.g. GENERAL). Added 12/10/2016
+  // The above is still here so that we can update records which has that info.
+
+  toChatChannelName: Match.Optional(String),  // Chat Channel Name as defined in makeChannelName() in chats.js. Added  2/16/2017
 }
 
 // Info on each type of activity, as the UI cares about it
@@ -48,27 +53,33 @@ export const ActivityTypes = {
   "user.logout":       { icon: "grey user",        pri:  9,  description: "User Logged Out" },
   "user.changeFocus":  { icon: "green alarm",      pri:  9,  description: "User changed their focus" },
   "user.clearFocus":   { icon: "grey alarm",       pri:  9,  description: "User cleared their focus" },
-  "user.message":      { icon: "green chat",       pri:  9,  description: "User sent a public message" }, // Should also include toChatChannelKey
+  "user.message":      { icon: "green chat",       pri:  9,  description: "User sent a public message" }, // Should also include toChatChannelName
 
   "asset.create":      { icon: "green plus",       pri: 10,  description: "Create new asset" },
   "asset.fork.from":   { icon: "blue fork",        pri: 10,  description: "Forked new asset from this asset" },
   "asset.fork.to":     { icon: "green fork",       pri: 10,  description: "Created new asset by forking existing asset" },
+  "asset.fork.revertTo": { icon: "orange fork",    pri: 10,  description: "Reverted asset content to ForkParent's content" },
   "asset.edit":        { icon: "edit",             pri: 15,  description: "Edit asset" },
   "asset.description": { icon: "edit",             pri: 14,  description: "Change asset description" },
   "asset.metadata":    { icon: "edit",             pri: 16,  description: "Change asset metadata" },
-  "asset.stable":      { icon: "green checkmark",  pri: 6,   description: "Asset marked stable/complete" },
-  "asset.unstable":    { icon: "red checkmark",    pri: 6,   description: "Asset marked unstable/incomplete" },
+  "asset.stable":      { icon: "blue lock",        pri: 6,   description: "Asset marked as Locked" },
+  "asset.unstable":    { icon: "grey unlock",      pri: 6,   description: "Asset marked as Unlocked" },
   "asset.workState":   { icon: "orange checkmark", pri: 6,   description: "Asset workState changed" },
 
   "asset.rename":      { icon: "write",            pri: 11,  description: "Rename asset" },  
   "asset.delete":      { icon: "red trash",        pri: 12,  description: "Delete asset" },
   "asset.license":     { icon: "law",              pri: 11,  description: "Asset license changed" },
   "asset.project":     { icon: "folder sitemap",   pri: 12,  description: "Change Asset's project" },
-  "asset.undelete": { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
+  "asset.undelete":    { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
+  "asset.ban":         { icon: "red bomb",        pri: 12,  description: "Ban Asset" },
+  "asset.unban":       { icon: "green bomb",      pri: 12,  description: "Un-ban Asset" },
+  "task.approve":      { icon: "green tasks",     pri: 12,  description: "Approve Task" },
+  "task.disapprove":   { icon: "grey tasks",      pri: 12,  description: "Disapprove Task" },
 
   "game.play.start":   { icon: "green play",       pri: 17,  description: "Start game" },
 
   "project.create":    { icon: "green sitemap",    pri: 3,   description: "Create project" },
+  "project.fork":      { icon: "green fork",       pri: 3,   description: "Fork project" },
   "project.addMember": { icon: "sitemap",          pri: 4,   description: "Add Member to project" },
   "project.destroy":   { icon: "red sitemap",      pri: 4,   description: "Destroyed Empty project" },
   "project.removeMember": { icon: "sitemap",       pri: 4,   description: "Remove Member from project" },
@@ -139,7 +150,7 @@ var priorLog   // The prior activity that was logged - for simplistic de-dupe pu
 
 // Helper function to invoke a logActivity function. If called from client it has a VERY 
 // limited co-allesce capability for duplicate activities.
-// Support otherData fields are { toChatChannelKey }
+// Support otherData fields such as { toChatChannelName }
 export function logActivity(activityType, description, thumbnail, asset, otherData = {}) {
  
   const user = Meteor.user()
@@ -172,8 +183,8 @@ export function logActivity(activityType, description, thumbnail, asset, otherDa
     toAssetName:            (asset && asset.name ? asset.name : ""),
     toAssetKind:            (asset && asset.kind ? asset.kind : "")    
   }
-  if (otherData.toChatChannelKey)
-    logData.toChatChannelKey = otherData.toChatChannelKey
+  if (otherData.toChatChannelName)
+    logData.toChatChannelName = otherData.toChatChannelName
 
   let fSkipLog = false
 

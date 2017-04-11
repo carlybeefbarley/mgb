@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react'
 import { Link, browserHistory } from 'react-router'
 import urlMaker from './urlMaker'
 import { clearPriorPathsForJoyrideCompletionTags } from '/client/imports/routes/App'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 // TODO   Implement some  <QLink nav="..."> cases to clean up code
 
 function isLeftClickEvent(event) {
@@ -32,11 +33,11 @@ function createLocationDescriptor(to, _ref) {
 
 
 
-// This is a Query-aware Link that adds some MGB-related smarts to the standard 
+// This is a Query-aware Link that adds some MGB-related smarts to the standard
 // React Router <Link> as documented at https://github.com/reactjs/react-router/blob/master/docs/API.md#link
 
 // This QLink has the following additional capabilities
-// 
+//
 // 1. Any app-wide query params that should be preserved (see urlMaker.getCrossAppQueryParams() )
 
 export default QLink = React.createClass({
@@ -55,40 +56,44 @@ export default QLink = React.createClass({
     activeClassName:      PropTypes.string,
 //  onlyActiveOnIndex:    PropTypes.bool.isRequired,
     onClick:              PropTypes.func,
-    closeNavPanelOnClick: PropTypes.bool,   // If true, then show NavPanel with some Alpha to hint that there is stuff below. Also we must close NavPanel when NavPanel's links are clicked'
     target:               PropTypes.string,
-    elOverride:           PropTypes.string  // eg "div"
+    elOverride:           PropTypes.oneOfType([PropTypes.string,PropTypes.object])  // eg "div"
   },
-  
+
   getDefaultProps: function () {
     return {
 //  onlyActiveOnIndex: false,
       style: {}
     };
   },
-  
-    
+
+
   contextTypes: {
     urlLocation: React.PropTypes.object,
     router:  React.PropTypes.object
   },
-  
-  /** This click handler will be called by the <Link> we create. 
+
+  /** This click handler will be called by the <Link> we create.
    *  This click handler effectively overrides from the handleClick() in node_modules/react-router/es6/Link.js
    *  since that calls us and we then disable it with event.preventDefault()
-   * 
-   *  Any explicit original key/value pairs in props.query will override the app-scoped params so this can be 
+   *
+   *  Any explicit original key/value pairs in props.query will override the app-scoped params so this can be
    *  used to change NavPanels and FlexPanels for example
+   *
+   * In orded to simplify tutorial development, we also file mgbjr-CT-
+   * joyrideCompletionTags if the item had an id=mgbjr-.*
    */
   handleClick: function (event) {
     const p = this.props
 
-    const excludedSymbolName = p.closeNavPanelOnClick ? "app_navPanel" : null
-    const appScopedQuery = urlMaker.getCrossAppQueryParams(this.context.urlLocation.query, excludedSymbolName)
+    const appScopedQuery = urlMaker.getCrossAppQueryParams(this.context.urlLocation.query)
 
-    if (p.onClick) 
+    if (event.target && event.target.id && event.target.id.startsWith('mgbjr-'))
+      joyrideCompleteTag(event.target.id.replace(/^mgbjr-/, 'mgbjr-CT-'))
+
+    if (p.onClick)
       p.onClick(event)    // Call the click handler we were given. Note that it has the option to preventDefault()
-      
+
     if (
          event.defaultPrevented === true  // p.OnClick() handler preventedDefault processing, that includes us.
       || isModifiedEvent(event)           // Dont handle clicks with Shift, Meta, Ctrl etc  -- leave to Browser
@@ -113,16 +118,16 @@ export default QLink = React.createClass({
 
     this.context.router.push(location)
     event.preventDefault()    // Stop Link.handleClick from doing anything further
+    event.stopPropagation()
   },
 
   render: function () {
     const p = this.props
     const chosenEl = p.elOverride ? p.elOverride : Link
-    const pClean = _.omit(p, ["elOverride" , "closeNavPanelOnClick", "altTo", "altQuery"])
+    const pClean = _.omit(p, ["elOverride", "altTo", "altQuery"])
 
     if (!p.nav)
       return React.createElement(chosenEl, Object.assign({}, pClean, { onClick: this.handleClick }))
-
 
     // Now try the             <QLink nav="users" className="item"></QLink> variant
 
@@ -133,26 +138,29 @@ export default QLink = React.createClass({
       newText = "_Users"
       break
     default:
-      console.error(`Unknown case for QLink nav="${p.nav}"`)      
+      console.error(`Unknown case for QLink nav="${p.nav}"`)
       break
     }
 
     return React.createElement(
-                      chosenEl, 
+                      chosenEl,
                       Object.assign({}, pClean, { to: newTo, onClick: this.handleClick }),
                       <span>{newText}</span>)
   }
-  
+
 })
 
-/** utilPushTo()
- * 
- * This is a replacement for browserHistory.push() 
- * 
+/**
+ * This is a replacement for browserHistory.push(). Use this when you want to add an
+ * additional step into the browser history
+ *
  * @export
- * @param {any} existingQuery
- * @param {string} newTo
- * @param {any} [extraQueryParams={}]
+ * @param {Object} existingQuery from something like window.location.query
+ * It is parameterized here instead of just using window.location.query in order to
+ * support a tab concept *within* an MGB page. Uses of window.location.query by the
+ * caller are tech debt against that future goal
+ * @param {string} newTo newUrl to go to
+ * @param {Object} [extraQueryParams={}] extra query params to apply
  */
 export function utilPushTo(existingQuery, newTo, extraQueryParams = {})
 {
@@ -163,4 +171,48 @@ export function utilPushTo(existingQuery, newTo, extraQueryParams = {})
   clearPriorPathsForJoyrideCompletionTags()
 
   browserHistory.push(location)
+}
+
+/**
+ * This is a replacement for browserHistory.replace(). Use this when you DO NOT 
+ * want to add an additional step into the browser history - for example from a redirect
+ * See #225 for examples of cases that need to use this.
+ * 
+ * @param {Object} existingQuery from something like window.location.query.
+ * It is parameterized here instead of just using window.location.query in order to
+ * support a tab concept *within* an MGB page. Uses of window.location.query by the
+ * caller are tech debt against that future goal
+ * @param {string} newTo newUrl to go to
+ * @param {Object} [extraQueryParams={}] extra query params to apply
+ */
+export function utilReplaceTo(existingQuery, newTo, extraQueryParams = {})
+{
+  const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery)
+  const location = createLocationDescriptor(newTo, { query: Object.assign( {}, appScopedQuery, extraQueryParams) } )
+
+  // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
+  clearPriorPathsForJoyrideCompletionTags()
+
+  browserHistory.replace(location)
+}
+
+
+/**
+ * Show a flex Panel (given the chatChanel nav.subnav strings)
+ * @param {*} currentUrlLocation from something like window.location
+ * @param {*} chatChannelName as defined in chats:makeChannelName()
+ */
+export function utilShowFlexPanel(currentUrlLocation, newFpNavString)
+{
+  utilPushTo(currentUrlLocation.query, currentUrlLocation.pathname, { _fp: newFpNavString } )
+}
+
+/**
+ * 
+ * @param {*} currentUrlLocation from something like window.location
+ * @param {*} chatChannelName as defined in chats:makeChannelName()
+ */
+export function utilShowChatPanelChannel(currentUrlLocation, chatChannelName)
+{
+  utilShowFlexPanel(currentUrlLocation, 'chat.'+chatChannelName )
 }

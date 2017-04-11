@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="svg3750"
+   width="64"
+   height="64"
+   viewBox="0 0 64 64"
+   sodipodi:docname="pencil_icon.svg"
+   inkscape:version="0.92.1 r15371">
+  <metadata
+     id="metadata3756">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3754">
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Lightness-Contrast"
+       id="filter3768">
+      <feColorMatrix
+         values="1 0 0 0.2 -0 0 1 0 0.2 -0 0 0 1 0.2 -0 0 0 0 1 0"
+         id="feColorMatrix3766" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="697"
+     inkscape:window-height="480"
+     id="namedview3752"
+     showgrid="false"
+     inkscape:zoom="3.6875"
+     inkscape:cx="32"
+     inkscape:cy="32"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg3750" />
+  <image
+     width="64"
+     height="64"
+     preserveAspectRatio="none"
+     xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
+AAAOwQAADsEBuJFr7QAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4xMzQDW3oAAALsSURB
+VHhe5dtByAxxHMbxN0lIkiRJSJEcnKQ4aC+clZOTnDig3NzclJQ44OgkRcnB9T2QkwOOXF1wIeWi
+FM/37Z3tt//3md3Z993d+f9ntz6HeWbmP+8zszs7bzuz0Ov15poN54kNC7VetsomWbecjWTDAlH8
+uFyQi3JCtolbdoANC7NHrss3+bfsp9wQ5rl1+mxYkL1yV6riKeaxjFt3iQ0LsV/uiyse3ZPanWDD
+AlD+kbjCTu1OWBEUgCIPxBUd5o7sloHxBiYKQPkmb/s6l2Sz9MeMg+eO8ryVXbGm3sjAN0PcQM4m
+UR5vZZ/0x44bydWkyuOKbJH++HFDOXLlnwtXe59D1sQt4SQ4cJkcN5YbV/6JHBKO4mn5JHF+Hcax
+V4UrgkwMK18dQc7mvN5LXC7FOIyXbmOJDVvWpHxloxyTZxKXrwwtDxu2aJzyFXbCGfkucT2uF4aW
+hw1bspry5Mx/KnG9kUe+YsMWrKU8y8X1GpeHDWestfKw4Qy1Wh42nJHWy8OGM5BFedhwyrIpDxtO
+UVblYcMpya48bDgFWZaHDScs2/Kw4QRlXR42nJDsy8OGE1BEedhwjYopDxuuQVHlYcNVKq48bLgK
+RZaHDcdUbHnYcAxFl4cNGyq+PGzYQCfKw4YjdKY8bDhEp8rDhjU6Vx42NDpZHjZMdLY8bBh0ujxs
+uIzf0ztdHjaUHXJTYonOlYcL+bn5rPyVTpdHGlDkoLySqsSiHJbOlUcabJBz8kuqIi+EW1PTZVF0
+eaQB991ck1imrlDx5ZEG2+WhxEKuWCfKIw34419LLBVRkI8D54TiyyMNjsgXicVSnBM4McasyPJI
+g5PyR2K5UYotjzjBU1c8dORK1uH205HP5eQsTuyU9HazOj/kquySOEZx4gQnt3eSlv0tX+WjvJTb
+ckp4VC2uX6Q4wXN2l+WDPJbzwovn8Y7KAeGIU5yPS1y3WHGC73auAyjKP0NMx/mdZMN5YsN5YsP5
+0Vv4D8RFORNLFyckAAAAAElFTkSuQmCC
+"
+     id="image3758"
+     x="0"
+     y="0" />
+  <path
+     style="fill:#000000;filter:url(#filter3768)"
+     d="M 3.601636,59.124374 C 3.4030224,58.780968 3.805187,56.309928 4.4953351,53.633173 5.6415254,49.187648 7.6863392,46.828721 28.116741,26.383173 40.418365,14.072428 51.186307,4 52.045499,4 c 0.859192,0 3.100058,1.5867003 4.979702,3.5260007 L 60.442735,11.052001 36.971368,34.514229 C 14.710566,56.766362 13.254052,58.022161 8.7313759,58.862602 6.1086326,59.349982 3.8002497,59.46778 3.601636,59.124374 Z M 31.688579,36.785463 c 10.071282,-10.017996 18.29728,-18.680496 18.279996,-19.25 -0.01728,-0.569505 -1.199895,-1.887428 -2.628026,-2.928718 L 44.743948,12.713489 26.18761,31.346048 7.6312731,49.978606 9.9899506,52.489303 C 11.287223,53.870186 12.580047,55 12.862893,55 c 0.282846,0 8.754405,-8.196542 18.825686,-18.214537 z"
+     id="path3764"
+     inkscape:connector-curvature="0" />
+</svg>

@@ -26,6 +26,9 @@ const _importParamsSchema = {
 
 Meteor.methods({
   'job.import.mgb1.project': function( importParams ) {
+
+    if (!this.userId)
+      throw new Meteor.Error(500, "Not logged in")
     let thisUser = this.user && this.user()
 
     // MAGIC TEST HACK   ##insecure##
@@ -33,25 +36,46 @@ Meteor.methods({
     //  > Meteor.call('job.import.mgb1.project', 42)
     //
 
-/* for import of Two Cities project
-    if (importParams === 42)
-    {
-      console.log('The meaning of life!)')
-      importParams = {
-        mgb1Username:           'drblakeman',
-        mgb1Projectname:        'Two Cities Bother and Wise',              //   'mechanics demos',
-        mgb2Username:           'dgolds',
-        mgb2ExistingProjectName:'Two Cities Bother and Wise',              //'Game Mechanics demo',
-        mgb2assetNamePrefix:    'two.',
-        excludeTiles:           false,
-        excludeActors:          true,
-        excludeMaps:            true,
-        isDryRun:               false
-      }
-    }
-    thisUser = { profile: { name: 'dgolds' } }
+
+///* for import of Jacob505 (Jaketor)'s Nightmare project
+    // if (importParams === 42)
+    // {
+    //   console.log('The meaning of life!)')
+    //   importParams = {
+    //     mgb1Username:           'jacob505',
+    //     mgb1Projectname:        'Nightmare',              //   'mechanics demos',
+    //     mgb2Username:           'SuperAdmin',
+    //     mgb2ExistingProjectName:'Nightmare',              //   'Game Mechanics demo',
+    //     mgb2assetNamePrefix:    'Nightmare.',
+    //     excludeTiles:           true,
+    //     excludeActors:          false,
+    //     excludeMaps:            true,
+    //     isDryRun:               true
+    //   }
+    // }
+    // thisUser = { profile: { name: 'SuperAdmin' } }
       
-*/      
+//*/  
+
+/* //  for import of Two Cities project
+     if (importParams === 42)
+     {
+       console.log('The meaning of life!)')
+       importParams = {
+         mgb1Username:           'drblakeman',
+         mgb1Projectname:        'Two Cities Bother and Wise',              //   'mechanics demos',
+         mgb2Username:           'Bouhm',
+         mgb2ExistingProjectName:'Two Cities Bother & Wise',              //'Game Mechanics demo',
+         mgb2assetNamePrefix:    '2ct.',
+         excludeTiles:           false,
+         excludeActors:          false,
+         excludeMaps:            false,
+         isDryRun:               false
+       }
+     }
+      thisUser = { profile: { name: 'Bouhm' } }
+      
+// */
       //   importParams = {
       //     mgb1Username:           'azurehaze',
       //     mgb1Projectname:        'Galactic Combat',    //   'mechanics demos',
@@ -91,7 +115,7 @@ Meteor.methods({
       console.log(`Preparing to ${importParams.isDryRun ? 'DRYRUN' : ''} import ${assetNames.length} MGB1 ${mgb1Kind}s into MGB2`)
       _.each(assetNames, aName => {
         const fullS3Name = (kp+aName).replace(/\+/g, ' ')
-console.log(fullS3Name)
+        console.log(`Getting asset '${aName}' from S3: `, fullS3Name)
         const assetName = aName.replace(/\+/g, ' ')
         const content = getContent(s3, fullS3Name)
         content.Metadata._tileDataUri = ''
@@ -189,7 +213,7 @@ const _getAssetNames = (s3, keyPrefix) => {
 
 const _checkAllParams = (importParams, thisUser) =>
 {
-console.log("a")
+console.log("_checkAllParams()")
   check(importParams, _importParamsSchema)
   checkAssetNamePrefix(importParams)
   _checkUserRights(importParams, thisUser)

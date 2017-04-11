@@ -17,35 +17,37 @@ export default class SmallDD extends React.Component{
     if(this.state.hasTriggered){
       for(let i=0; i<options.length; i++){
         items.push(
-          <div className="item" onClick={
-            (e) => {
-                  console.log(e.target.dataset.value);
-                  this.props.onchange && this.props.onchange(e.target.dataset.value)
-
-             }
-          }
-                        data-value={options[i].value == void(0) ? options[i].text : options[i].value}
-                        key={i}
+          <div 
+            className="item" 
+            onClick={
+              (e) => {
+                console.log(e.target.dataset.value);
+                this.props.onChange && this.props.onChange(e.target.dataset.value)
+              }
+            }
+            data-value={options[i].value == void(0) ? options[i].text : options[i].value}
+            key={i}
           >
           {options[i].text}
         </div>)
       }
     }
-    const active = options.find( o => o.value !== void(0) ? o.value == this.props.value : o.text == this.props.value)
+    const active = options.find( o => o.value !== void(0) ? o.value == this.props.value : o.text == this.props.value)  
+
     return (
-      <div className="ui fluid selection dropdown"
-           onMouseOver={ this.state.hasTriggered ? null : (e) => {
-                 console.log("initialized dropdown!!", $(e.target).closest(".selection.dropdown"))
-                 $(e.target).closest(".selection.dropdown").dropdown()
-                 this.setState({hasTriggered: true});
-               }
-           }
-        >
+      <div 
+        className="ui fluid selection dropdown"
+        onMouseOver={ this.state.hasTriggered ? null : (e) => {
+            //console.log("initialized dropdown!!", $(e.target).closest(".selection.dropdown"))
+            $(e.target).closest(".selection.dropdown").dropdown()
+            this.setState({hasTriggered: true})
+          }
+        }
+      >
         <input type="hidden" name="country" value="0" />
         <i className="dropdown icon"></i>
-
         {this.props.value != void(0) ?
-          <div className="text">{
+          <div id="dd-text" className="text">{
             active && active.text
           }</div> : <div className="default text">Select...</div>
         }

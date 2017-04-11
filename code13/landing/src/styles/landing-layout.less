@@ -1,0 +1,216 @@
+@import "mixins";
+
+section {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@blueGradient: radial-gradient(#00BECC, #2B7277);
+
+/***************************************
+ *                Hero                 *
+ ***************************************/
+.mgb-hero {
+  background: @blueGradient;
+
+  .mgb-hero-caption {
+    text-align: center;
+    padding: 8em 0 3em;
+    text-shadow: 0 1px 1px fade(#000, 50);
+    .ui.header {
+      font-size: 3rem;
+      margin: 0;
+    }
+
+    .mgb-lead {
+      font-size: 2rem;
+      color: #FFF;
+      font-weight: 300;
+    }
+
+    .mgb-sub-lead {
+      padding: 0em 0 0em;
+      font-size: 1.4rem;
+      color: #FFF;
+      font-weight: 300;
+    }
+  }
+}
+
+/***************************************
+ *            Piled Section            *
+ ***************************************/
+.mgb-piled-container {
+  position: relative;
+  z-index: 1;
+
+  .mgb-piled-panel,
+  .mgb-piled-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    box-shadow: 0 5px 0 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .mgb-piled-section {
+    margin: 1em -1em;
+  }
+
+  .mgb-piled-panel {
+    &.back {
+      background: #F4E285;
+      transform: perspective(4000px) rotateY(0) skewY(-0.5deg);
+    }
+
+    &.middle {
+      background: #F4A259;
+      /* Note that rotateY(5deg) caused layer/zindex issues on Chrome on iOS */
+      transform: perspective(5000px) rotateY(0) skewY(1deg) scale(0.98);
+    }
+
+    &.front {
+      /* Note that rotateY(-2deg) caused layer/zindex issues on Chrome on iOS */
+      background: #BC4B51;
+      transform: perspective(3000px) rotateY(0) skewY(-0.5deg) scale(0.97);
+    }
+  }
+
+  /*
+   * Game
+   */
+  .mgb-game {
+    text-align: center;
+    height: 292px;
+    min-height: 100%;
+    width: 1px;
+    min-width: 100%;    
+    iframe,img {
+      /* 
+      .mgb-box-shadow-border(0.5em);
+      border: 1px solid #000;
+      border-radius: 1px;
+      */
+      border: none;
+    }
+  }
+  .mgb-game-iframe {
+    height: 292px;
+    min-height: 100%;
+    width: 1px;
+    min-width: 100%;    
+  }
+
+}
+
+/***************************************
+ *            Main Bullets             *
+ ***************************************/
+.mgb-bullets {
+  padding: 1em 0;
+  background: #483C46;
+  text-align: center;
+}
+
+/***************************************
+ *             Alternating             *
+ ***************************************/
+.mgb-alternating {
+  padding: 3em 0;
+  background: @blueGradient;
+
+  .mgb-alternating-media {
+    .mgb-box-shadow-border(0.5em);
+  }
+}
+
+/***************************************
+ *               Footer                *
+ ***************************************/
+footer {
+  padding: 4em 0 2em;
+  background: #373E40;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9em;
+}
+
+/***************************************
+ *          Media Query Sizes          *
+ ***************************************/
+
+@media (max-width: 767px) {
+  .mgb-game-column {
+    width: ~"calc(100vw - 180px)" !important;
+    height: ~"calc( 100vw / 2.16 )" !important;
+    margin-right: auto !important;
+    margin-left: auto  !important;
+  }
+  .mgb-game, .mgb-game-iframe {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .mgb-play-column {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .mgb-make-column {
+    text-align: center;
+    margin-right: auto;
+    margin-left: auto;
+  }  
+}
+
+@media (min-width: 768px) and (max-width: 1139px) {
+  .mgb-game {
+    margin-right: auto;
+    margin-left: auto;
+  }
+  .mgb-play-column {
+    text-align: right;
+    min-width: 200px;
+    max-width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .mgb-make-column {
+    text-align: left;
+    min-width: 200px;
+    max-width: 200px;
+    margin-right: auto;
+    margin-left: auto;
+  }  
+}
+
+@media (min-width: 1140px) {
+  .mgb-game {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .mgb-play-column {
+    text-align: right;
+    min-width: 200px;
+    max-width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .mgb-make-column {
+    text-align: left;
+    min-width: 200px;
+    max-width: 200px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 500px) {
+  .mgb-game, .mgb-game-iframe {
+    max-height: 200px;
+  }
+
+}

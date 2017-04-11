@@ -11,21 +11,1268 @@
 
 const mgbReleaseInfo = {
 
-
   'releases': [
 
-/* Pending changes -- accumulate here in comment until time to deploy
+
+    {
+      'timestamp': 'Monday Apr 10 2017 15:40 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3940'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
 
       'changes': [
         {
+          'featureTag': 'learn.art',
+          'type': 'feature',
+          'changeName': 'Art Skills!',
+          'changeSummary': 'We have added the first Art Skill tutorials. Learn about lines, curves, colors and more',
+          'otherUrls': [ {  txt: 'Art Skills', href: '/learn/art' } ]
         },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fix some warnings on activity flex panel; fix bug that could prevent a logged-out-user opening the chat panel; "see more games" button now actually shows games',
+          'otherUrls': [ ]
+        }        
+      ]
+    },
+
+
+    {
+      'timestamp': 'Friday Apr 07 2017 20:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3924'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.settings',
+          'type': 'improvement',
+          'changeName': 'Maxed default toolbar feaureLevels',
+          'changeSummary': 'New users are still confused by the small number of default tools, and aren\'t noticing the settings button. So, by default we are having the tools at max level, and may lower these later when we have an onboarding flow that explains the dynamic toolbars.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Improved sizing/layout for wide/tall avatars; fixed undo issues with music/audio assets; fixed ambiguous cases when loading game with conflicting asset names; moderators can now approve codeing challenge tasks',
+          'otherUrls': [ ]
+        }        
+      ]
+    },
+
+
+
+    {
+      'timestamp': 'Wednesday Apr 05 2017 00:40 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3905'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.user',
+          'type': 'improvement',
+          'changeName': 'Improved User Card Layout',
+          'changeSummary': 'User Lists are now presented as Cards with centered content. These support more content per page than the lists we used before, but still seem visually well differentiated from project and asset cards',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'code.editor',
+          'type': 'improvement',
+          'changeName': 'Code Editor performance',
+          'changeSummary': 'Performance improvements for the dynamic code builder and for console logging. We are now able to work with the larger JavaScript games we have been recently scale-testing with, for example the City3D project',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'flexpanel.chat',
+          'type': 'improvement',
+          'changeName': 'Asset Chat context',
+          'changeSummary': 'We now show a helper icon next to \'send message\' that has a hover popup with information on the asset/card that is the topic for the current chat',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+    {
+      'timestamp': 'Friday Mar 31 2017 10:10 GMT-0700 (PST)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3876'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'navbar',
+          'type': 'feature',
+          'changeName': 'Quick Navigation to related Assets',
+          'changeSummary': 'Pages that are related to a user have a \'Related Assets\' popup at the right of the breadcrumb bar. Hover over it to see related assets',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed undo/redo for Music assets; perf improvements across site ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Tuesday Mar 28 2017 23:10 GMT-0700 (PST)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3851'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'ui',
+          'type': 'improvement',
+          'changeName': 'UI Tweaks',
+          'changeSummary': 'Added two more license types (UNKNOWN, CC-SA). Undo/redo for music editor; better notifications for read-only music assets; tweaks to the /learn pages',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'play.game',
+          'type': 'improvement',
+          'changeName': 'Play game sizing/scaling',
+          'changeSummary': 'Game width/height can be set in the gameConfig. We now do smart scaling based on the desired size and the available space.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Tuesday Mar 21 2017 22:00 GMT-0700 (PST)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3831'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'ui',
+          'type': 'improvement',
+          'changeName': 'UI Tweaks',
+          'changeSummary': 'Added two more license types (BSD, GPL).  Re-arranged the components of the User Profile menu - in particular, potentially long lists (projects, games etc) now are on a single horizontally-scrolling row. This prevents profile pages from getting too long). Simplified the UI for the Edit Code new-code template UI.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed some cases that prevented games playing correctly over the CDN. Bugfix for drag-and-drop of thumbnail images to assets. Bugfix for paths when assets are dragged into code files. Security stuff. ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Sunday Mar 19 2017 20:00 GMT-0700 (PST)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3820'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'ui',
+          'type': 'improvement',
+          'changeName': 'UI Tweaks',
+          'changeSummary': 'Some more UI aspects related to Code tutorials/challenges have been improved. We have a clearer indication of locked/deleted assets in Breadcrumb bar, and when trying to lock a deleted asset, or delete a locked asset. Changes to Learn/Code/phaser tutorial list and to the learn/getStarted tutorial list.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed some cases that slowed down code editing; Improved scrolling system for actorMap games.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+    {
+      'timestamp': 'Wednesday Mar 15 2017 22:00 GMT-0700 (PST)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3780'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'Beta',
+          'type': 'feature',
+          'changeName': 'From Alpha To Beta',
+          'changeSummary': 'We have been describing this system as being in "Alpha" condition for sometime, but we feel it is more like a "Beta" version now.. so as of this build we are calling ourselves "Beta" :) YAY!',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'db.assets',
+          'type': 'feature',
+          'changeName': 'Asset Purge',
+          'changeSummary': 'When Assets are deleted, they are just \'marked as deleted\'. In this build we have also added a time-delayed \'purge\' of deleted items that truly removes them from the system. Currently the purge timer is set for 28 days after a deleted asset was last edited, but this will shrink down to around 5 days once we are happy there are no adverse side-effects of purging.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'ui',
+          'type': 'improvement',
+          'changeName': 'UI Tweaks',
+          'changeSummary': 'Some UI aspects related to Code tutorials/challenges have been improved. Some of the Badges have been updated. Performance improvements. Bugfix for actorMap dialog problems',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Asset Ban now covers some extra cases.  ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Tuesday Mar 14 2017 00:30 GMT-0700 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3753'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'user.ban',
+          'type': 'feature',
+          'changeName': 'User Banning',
+          'changeSummary': 'Admins can now suspend User Accounts for users who are being inappropriate. Other users will see that those accounts are suspended. The Suspended accounts are prohibited from editing assets, managing projects, or sending chat messages.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'The site tutorials work again (the loading API was broken at the weekend). User and Project avatars have much more helpful popups describing how to change avatars. Skills model ui doesn\t show JS as white anymore. ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Monday Mar 13 2017 08:30 GMT-0700 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3733'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.ban',
+          'type': 'feature',
+          'changeName': 'Asset Banning',
+          'changeSummary': 'Admins can now ban Assets that have offensive content. Other users will see a red thumbnail for these assets, and when they edit, they will see "Asset is Banned" message',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'chat',
+          'type': 'improvement',
+          'changeName': 'Chat UI',
+          'changeSummary': 'The Chat Channel selection UI has been improved',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Bugfixes for Asset creation, tutorial messages',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+    {
+      'timestamp': 'Thursday Mar 9 2017 19:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3701'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Bugfixes for improved asset Locking, actorMap games, skill rendering',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
+    {
+      'timestamp': 'Thursday Mar 9 2017 01:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3693'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'skills.map',
+          'type': 'improvement',
+          'changeName': 'Skills-map ui facelift',
+          'changeSummary': 'The Skills map ui has had a facelist and has better tree-like expansion',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Bugfixes for improved thumbnail rendering, edit code fixes for self-importing files, api fixes',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+    {
+      'timestamp': 'Tuesday Mar 7 2017 23:30 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3676'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.code',
+          'type': 'feature',
+          'changeName': '"Game development concepts" tutorials in-editor',
+          'changeSummary': 'The "Game development concepts" tutorials are now in the new Code Tutorials system. Try it!',
+          'otherUrls': [
+             { txt: '"Game development concepts Tutorials (changing...)', href: '/learn/code/phaser' },
+          ]
+        },
+        {
+          'featureTag': 'chat.asset',
+          'type': 'feature',
+          'changeName': 'Asset Chat',
+          'changeSummary': 'The Asset Edit Header now has a chat button. If you push it, it brings up a chat-channel for the Asset. This allows people to comment/suggest/praise your asset, and also is a way to work with others who may be able to help you improve or debug an asset. The Chat icon on the Asset Edit header also indicates new messages with a small red dot. Maybe too small :)',
+          'otherUrls': [ 
+            { txt: "Example asset with some chat", href:'/u/dgolds/asset/rru3Jwm249ifhjYG2?_fp=chat.A_rru3Jwm249ifhjYG2_'}
+          ]
+        },
+        {
+          'featureTag': 'chat.pin',
+          'type': 'feature',
+          'changeName': 'Chat channel pinning',
+          'changeSummary': 'Chat channels can now be pinned to your chat channels list. The primary use case for this is Asset Chat. If you pin an Asset Chat channel, your chats indicators will include notifications of new messages on those Asset Chat Channels ',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'chat.notifications',
+          'type': 'improvement',
+          'changeName': 'Asset Chat notification refresh',
+          'changeSummary': 'The Asset Chat red-dot notification now updates within about a second of you viewing a chat channel',
+          'otherUrls': [ ]
+        },        
+        {
+          'featureTag': 'nav.title',
+          'type': 'feature',
+          'changeName': 'Asset Edit Page Titles',
+          'changeSummary': 'When editing/viewing an Asset, we now have much better page (tab) titles. Also, they indicate save progress with > for pending saves, and >> for pending save-confirmations. Try it and see!',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+    
+    {
+      'timestamp': 'Monday Mar 6 2017 16:30 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3646'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': '"Game development concepts" tutorials in-editor',
+          'changeSummary': 'The "Game development concepts" tutorials are being moved to the new in-editor CodeTutorials system. Not complete yet, but you can see the progress so far.. ',
+          'otherUrls': [
+             { txt: '"Game development concepts Tutorials (changing...)', href: '/learn/code/phaser' },
+             { txt: 'Javascript Code Challenge Tutorials', href: '/learn/code/javascript' }
+          ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Bugfixes for improved error feedback for invalid asset name / descriptions. We no longer show chat counts for global channels for new users (until after they have visited the channel). Fix some issues with Thumbnail rendering.',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+    
+    {
+      'timestamp': 'Sunday Mar 5 2017 14:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3619'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.mobile',
+          'type': 'feature',
+          'changeName': 'Public project search',
+          'changeSummary': 'There is now a Public project search page accessible from the "Meet" menu. This shows Forkable Projects from all users with a workState of "working" or better. You can change the search parameters from that page.' ,
+          'otherUrls': [ 
+            { txt: 'Public Forkable Projects, Quality = "working" or better', href: '/projects?hidews=7&showForkable=1' }
+          ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Saturday Mar 4 2017 11:10 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3605'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.mobile',
+          'type': 'bugfix',
+          'changeName': 'Drag/drop on touch devices',
+          'changeSummary': 'Drag and Drop on touch devices is working correctly again',
+          'otherUrls': [ ]
+        }
         
       ]
-Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
+    },
 
-*/
+    {
+      'timestamp': 'Friday Mar 3 2017 19:30 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3600'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.code',
+          'type': 'feature',
+          'changeName': 'Whack-a-mole game tutorial',
+          'changeSummary': 'The Whack-a-mole Game and tutorial shows how to develop a Phaser game using the NEW in-editor Code Tutorial system!',
+          'otherUrls': [
+             { txt: 'Example Query of !vault forkable projects', href: '/u/!vault/projects?hidews=3&showForkable=1' }
+          ]
+        },
+        {
+          'featureTag': 'nav.projects',
+          'type': 'feature',
+          'changeName': 'Project Search',
+          'changeSummary': 'The Project list view now allows searching for names, isForkable, and workstate. This will be used soon to highlight template starter projects, but you can use it now also.',
+          'otherUrls': [
+             { txt: 'JavaScript Game Tutorials', href: '/learn/code/jsGame' }
+          ]
+        },
+        {
+          'featureTag': 'asset.actor',
+          'type': 'improvement',
+          'changeName': 'Actor Editor improvements',
+          'changeSummary': 'The Actor templates have been simplified and the minor sub-templates are going to be taught as tutorials and as forkable sample Actor Assets',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.projects',
+          'type': 'feature',
+          'changeName': 'Project isForkable shown in Asset Card',
+          'changeSummary': 'There is now a concise summary of Project Fork status in the Project Card. It shows a green Project Fork count if the project is forkable; it shows a blue fork icon if the project was created by a fork. To see more information on forks, click the Project Card to see the Project Details page. There is also some support for showing only forkable assets in the Projects List views, but this is not yet enabled in the ui',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
+    {
+      'timestamp': 'Wed Mar 1 2017 19:30 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3561'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.breadcrumb',
+          'type': 'feature',
+          'changeName': 'Project Navigation in Breadcrumb',
+          'changeSummary': 'The Breadcrumb Bar at the top of the page is now smart about selected Projects within Asset lists, so you can more easily navigate to the project from a Game, and to see what Project you are looking at in the Assets list',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Asset Card Small mode',
+          'changeSummary': 'The "small" Asset Card view is now a single row.. if you hover on it for half a second, it shows the medium card as a popup',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Coding Challenges gaining more features',
+          'changeSummary': 'The Phaser code tutorials are being upgraded to use the in-editor Code Challenge system. Not complete yet, but you can see what is coming... ',
+          'otherUrls': [
+             { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' }
+          ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Tue Feb 28 2017 20:20 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3538'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Shape tools in Graphic Editor',
+          'changeSummary': 'The Circle/Square tools in the Graphic Edit tool are now implemented as corner-to-corner ellipse/rectangle tools. To make squares/circles, use the CTRL-key while dragging',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'learn',
+          'type': 'improvement',
+          'changeName': 'Coding Challenges now have console output',
+          'changeSummary': 'Some of the Code Challenges use console.log() output. We now show the console output for those tools in-browser. Also, the getStarted Page has had a facelift',
+          'otherUrls': [
+             { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' }
+          ]
+        }
+      ]
+    },
+    {
+      'timestamp': 'Mon Feb 27 2017 18:50 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3517'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'learn',
+          'type': 'bugfix',
+          'changeName': 'Coding Challenges in Tutorials',
+          'changeSummary': 'Bugfixes for some of the Code Challenges',
+          'otherUrls': [
+             { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' }
+          ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Improved Resize, zoom, grid and checkerboard',
+          'changeSummary': 'Ui Tweaks for the Graphic Editor. Canvas resize is now an easier-to-use dialog (we will add image resize/scale soon). Grid can now be shown/hidden manually. Checkerboard background is off by default but can be enabled. ',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
+    {
+      'timestamp': 'Sat Feb 25 2017 09:10 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3485'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'learn',
+          'type': 'feature',
+          'changeName': 'Coding Challenges in Tutorials',
+          'changeSummary': 'We have embedded around 100 JavaScript programming tutorials from FreeCodeCamp (thanks to their BSD licensed content) in order to provide a great way to learn JavaScript. The Assets created by these can be viewed from the normal assets screen using the ChallengeAssets flag',
+          'otherUrls': [
+             { txt: 'Code Challenge Tutorials', href: '/learn/code/javascript' },
+             { txt: 'Example of viewing (hidden) assets created by Code Challenges', href: '/u/dgolds/assets?showChallengeAssets=1' }
+          ]
+        },
+        {
+          'featureTag': 'ui',
+          'type': 'improvement',
+          'changeName': 'More UI tweaks',
+          'changeSummary': 'Ui Tweaks for the learning/skills pages',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
+    {
+      'timestamp': 'Thu Feb 23 2017 00:50 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3425'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.assets',
+          'type': 'feature',
+          'changeName': 'Filter asset search by Workstate',
+          'changeSummary': 'You can now show/hide Assets by workstate',
+          'otherUrls': [ { txt: 'example', href: '/assets?hidews=15' }, ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes',
+          'changeSummary': 'Bugfixes for firefox, game play, tutorials, project delete, assetLinks in chat.',
+          'otherUrls': [ ]
+        },
+      ]
+    },
 
 
+    {
+      'timestamp': 'Tue Feb 21 2017 16:30 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3392'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes',
+          'changeSummary': 'Bugfixes for some of the tutorial flows, handling of missing assets, project delete causing some object-vs-array warnings later.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.ui',
+          'type': 'improvement',
+          'changeName': 'A bunch of UI tweaks',
+          'changeSummary': 'Chat indicator shows how many chat channels have unread messages. Improved visuals for workState icons (shades of green instead of many colors), simplified icons. Advanced Projects FlexPanel (which is not shown by default) now also shows projects with unread chat Messages. ',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
+    {
+      'timestamp': 'Mon Feb 20 2017 18:40 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3362'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.actormap',
+          'type': 'improvement',
+          'changeName': 'Improvements for non-code games',
+          'changeSummary': 'Bugfixes and UI improvements for Actors & ActorMaps',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'project.delete',
+          'type': 'feature',
+          'changeName': 'Project Delete can auto-delete Assets',
+          'changeSummary': 'Project Delete UI offers a confiormation and will then delete the Project\'s assets while it deletes the project. It will remove them from the project. If the Asset is still in another project, it will not be deleted. Asset deletion can be undone by viewing deleted-assets in the Asset viewer',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.search',
+          'type': 'feature',
+          'changeName': 'Search for Assets with no Project',
+          'changeSummary': 'It is now possible to also search for Assets that are not in a project',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.fork',
+          'type': 'bugfix',
+          'changeName': 'Asset fork bugfix',
+          'changeSummary': 'Fixed the assetName error on fork.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Sun Feb 19 2017 21:30 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3338'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'chat',
+          'type': 'improvement',
+          'changeName': 'Chat Notifications and Read/Unread',
+          'changeSummary': 'Moved chat indicator back to Right-hand column. It was weird on the top.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'project.fork',
+          'type': 'feature',
+          'changeName': 'Project Fork tracking',
+          'changeSummary': 'The Project overview page now has an improved fork UI, and a way to track parents and children - very similar to the Asset fork tracker UI',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Sat Feb 18 2017 14:40 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3314'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'chat',
+          'type': 'feature',
+          'changeName': 'Chat Notifications and Read/Unread',
+          'changeSummary': 'Chat icon in top header Nav Menus shows orange if there are unread mesages on any channel. The Chat channels list in the Chat Flex Panel also shows channels with unread messages in orange, channels with no messages at all in light grey, and read channels in normal-grey color. Also prevented script tag insertion in messages. Now with added bugfixes.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'tutorials',
+          'type': 'improvement',
+          'changeName': 'Tutorial dialogs',
+          'changeSummary': 'Fixed the ugly X icon and added a tooltip to explain what it does. \'Exit\' button renamed to \'QUIT\' for clarity.',
+          'otherUrls': [ ]
+        },
+      ]
+    },
+
+    {
+      'timestamp': 'Thu Feb 16 2017 20:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3293'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'chat',
+          'type': 'feature',
+          'changeName': 'Project Team Chat',
+          'changeSummary': 'The Chat FlexPanel now enables private Team Chat channels for members of Projects. Project chat messages do NOT get announced as part of the public activity feed. Even if they use the _fp=chat.P_xxx_ path, unauthorized users cannot read or send to project chat (either through the UI or API)',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'tutorials',
+          'type': 'feature',
+          'changeName': 'Code tutorials',
+          'changeSummary': 'The Code tutorials have more content, specific PhaserJS skills, and also additional code-specific tutorial Asset capabilities, such as highlighting code regions',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'core.quality',
+          'type': 'bugfix',
+          'changeName': 'Many Bugfixes',
+          'changeSummary': 'We are fixing many many bugs at present, getting ever-closer to launch...',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Sun Feb 12 2017 21:45 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3231'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'chat',
+          'type': 'improvement',
+          'changeName': 'Chat simplification',
+          'changeSummary': 'Removed a couple of not-very-useful chat channels. Internal changes to simplify code in readiness for DMs and project-based chat',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.fork',
+          'type': 'feature',
+          'changeName': 'Asset Forking UI',
+          'changeSummary': 'The Asset Forking UI provides clear info on children and on ancestors',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.flexpanel.assets',
+          'type': 'improvement',
+          'changeName': 'Improved Assets & Projects UI',
+          'changeSummary': 'Changed Card UI for readability & fewer lines',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.play',
+          'type': 'improvement',
+          'changeName': 'Improved Game Play UI for non-code games',
+          'changeSummary': 'Nicer layout and no annoying keyboard-controls message anymore',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'feature',
+          'changeName': 'Code Mentor now has ways to help with import statements',
+          'changeSummary': ' Start typing import in the Code Editor and the Import Helper will appear in Code Mentor',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'core.quality',
+          'type': 'bugfix',
+          'changeName': 'Many Bugfixes',
+          'changeSummary': 'We are fixing many many bugs at present, getting closer to launch...',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Thu Feb 09 2017 23:45 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3179'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.flexpanel.assets',
+          'type': 'feature',
+          'changeName': 'Improved Assets flexPanel',
+          'changeSummary': 'Nicer layout and ability to choose user scope; remembers recent settings',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.tutorials',
+          'type': 'improvement',
+          'changeName': 'Tutorial UI is improving',
+          'changeSummary': 'They are less ugly than they were, but still not pretty :)  There are some issues with touch devices and also the colors are pretty nasty!',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.favicon',
+          'type': 'feature',
+          'changeName': 'We finally have a favicon!',
+          'changeSummary': 'We finally have a favicon so your bookmarks and browser tabs look prettier',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.settings',
+          'type': 'improvement',
+          'changeName': 'Setttings. Just Settings',
+          'changeSummary': 'We now consistently use the word \'settings\ (and the actual settings icon) instead of other words like Feature Levels, options etc.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Code Mentor and autocomplete',
+          'changeSummary': 'Updated the ctrl-enter autocomplete for more cases including \'import from\', and updated the PhaserJS definitions and auto-help',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'edit.asset',
+          'type': 'improvement',
+          'changeName': 'UI improvements for Asset Edit header',
+          'changeSummary': 'Simpler presentation of saved/unsved/autosave state of edited assets.. Grey text, similar to how google-docs shows it',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.learn',
+          'type': 'improvement',
+          'changeName': 'Learning routes',
+          'changeSummary': 'We have added more content on the Programming skills and learning routes. This is still very incomplete, but the content and structure is progressing',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Mon Feb 06 2017 17:45 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3097'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.signup',
+          'type': 'improvement',
+          'changeName': 'Detect and Warn if using Internet Explorer',
+          'changeSummary': 'We do not support IE10 and IE11. For best results use another browser. We recommend Chrome.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.signup',
+          'type': 'improvement',
+          'changeName': 'Improved signup and login',
+          'changeSummary': 'Direct links on Nav Bar; ui aligned with Home page look and feel',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+    {
+      'timestamp': 'Sat Feb 04 2017 09:45 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '3060'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.userBash',
+          'type': 'feature',
+          'changeName': 'Vivid HeaderLink + Page explaining good activities for the User Bash',
+          'changeSummary': 'This weekend we are running a couple of \'User Bash\' events - at 10am PST on Saturday and Sunday. Join us - find tasty bugs and make some games',
+          'otherUrls': [ { txt: 'User Bash Page', href: '/userBashes' } ]
+        },
+        {
+          'featureTag': 'nav.tutorials',
+          'type': 'improvement',
+          'changeName': 'TUTORIALS ARE BEING UPDATED',
+          'changeSummary': 'NOTE: We are re-working the tutorials for the new Top-Nav UI, they will be ugly until Saturday...',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'project.fork',
+          'type': 'feature',
+          'changeName': 'Project Fork',
+          'changeSummary': 'Users can allow their projects to be forked by other users. This is managed and triggered on the Project overview page. There are still some cases where complex assets (code, maps, actors) need fixup for the new assets, but we will do those soon.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.toolbars',
+          'type': 'bugfix',
+          'changeName': 'Toolbars have been re-worked',
+          'changeSummary': 'There were some issues with Toolbar buttons not activating tools, conflicting with edit boxes, and some drag/reset issues. These have been fixed',
+          'otherUrls': [ ]
+        },        {
+          'featureTag': 'nav.cards',
+          'type': 'improvement',
+          'changeName': 'Narrower Cards',
+          'changeSummary': 'Cards view (Assets List, Projects List) have been narrowed from 290px to 220px. They are going to get some more significant UI improvements next week',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'New default size for Graphic Asset is 32x32',
+          'changeSummary': 'New default size for Graphic Asset is 32x32 which is simpler for working with non-code games (Actors and ActorMaps)',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'email',
+          'type': 'feature',
+          'changeName': 'Email notifications',
+          'changeSummary': 'We now have email wired up for Password reset and a few other critical functions',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'core.quality',
+          'type': 'bugfix',
+          'changeName': 'Many Bugfixes',
+          'changeSummary': 'We are fixing many many bugs at present, getting closer to launch...',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+    {
+      'timestamp': 'Wed Feb 01 2017 12:00:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2950'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.tutorials',
+          'type': 'improvement',
+          'changeName': 'TUTORIALS ARE BEING UPDATED',
+          'changeSummary': 'NOTE: We are re-working the tutorials today, they will be buggy until Friday...',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'UI Theme & Spacing update',
+          'changeSummary': '@levithomason has re-worked a lot of the jQuery-based ui and our unthemed original UI into a more consistent style. Lots more UI cleanup coming soon',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'mobile',
+          'type': 'feature',
+          'changeName': 'Mobile Apps!',
+          'changeSummary': 'We now have mobile app builds (phone & tablet). Contact us in Chat if you want to be a Beta tester for the mobile apps on iOS or Android devices. ',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'core.quality',
+          'type': 'bugfix',
+          'changeName': 'Many Bugfixes',
+          'changeSummary': 'We are fixing many many bugs at present, getting closer to launch...',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+    {
+      'timestamp': 'Fri Jan 27 2017 16:30:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2799'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.actorMap',
+          'type': 'improvement',
+          'changeName': 'Major UI update for ActorMap Editor',
+          'changeSummary': '@Bouhm has made significant changes to the ActorMap Editor to make it easier to use. Also, at the same time we have made some changes to the format requirements for the ActorMap asset references so we will be reimporting some games from the old flash-based MGB editor to be more compliant with the new format.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'core.scalability',
+          'type': 'feature',
+          'changeName': 'Caching and CDN distribution',
+          'changeSummary': 'Assets are now cached and distributed via CDN, so the site should be much faster in use. This is a very large change and there may be a few bugs left',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Wed Jan 25 2017 19:30:00 GMT-0800 (PST)',
+
+      'id': {
+        'ver': '0.0.1',
+        'state': 'alpha',
+        'iteration': '2725'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'core.scalability',
+          'type': 'feature',
+          'changeName': 'Caching and CDN distribution',
+          'changeSummary': 'Assets are now cached and distributed via CDN, so the site should be much faster in use. There may be bugs...',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
     {
       'timestamp': 'Tue Jan 17 2017 10:20:00 GMT-0800 (PST)',
@@ -758,7 +2005,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'featureTag': 'asset.fork',
           'type': 'improvement',
           'changeName': 'Asset forking progress indicator',
-          'changeSummary': 'The UI now indicates when an asset fork is pending (icon shown orange, action clarified as pending)',
+          'changeSummary': 'The UI now indicates when an Asset fork is pending (icon shown orange, action clarified as pending)',
           'otherUrls': [ ]
         },
         {
@@ -2906,7 +4153,7 @@ Fri Dec 09 2016 12:41:00 GMT-0800 (PST)
           'featureTag': 'nav.flexpanel.chat',
           'type': 'improvement',
           'changeName': 'Chat channels are on the url',
-          'changeSummary': 'Chat channels are now part of the url (e.g ?_fp=chat.random) so back/fwd navigation and deep links work correctly',
+          'changeSummary': 'Chat channels are now part of the url (e.g ?_fp=chat.G_RANDOM_) so back/fwd navigation and deep links work correctly',
           'otherUrls': []
         },
         {

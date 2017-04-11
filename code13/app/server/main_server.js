@@ -1,28 +1,37 @@
+import { setUpCloudFront } from './cloudfront/CreateCloudfront'
+
 import { Users } from '../imports/schemas'
 
 import { getCurrentReleaseVersionString }  from '/imports/mgbReleaseInfo'
 
 // Import all server-side schema stubs in order to register their Meteor.call() methods
 import '/imports/schemas/users'
+import '/imports/schemas/users-server'
 import '/imports/schemas/chats'
+import '/imports/schemas/chats-server'
+
 import '/imports/schemas/assets'
+import '/imports/schemas/assets-server-fork'
+import '/imports/schemas/assets-server-purge'
+
 import '/imports/schemas/sysvars'
 import '/imports/schemas/projects'
+import '/imports/schemas/projects-server'
 import '/imports/schemas/activity'
 import '/imports/schemas/activitySnapshots'
 
 import '/imports/schemas/settings'
-import { createInitialSettings } from '/imports/schemas/settings-server.js'
+import { createInitialSettings } from '/imports/schemas/settings-server'
 
 import '/imports/schemas/skills'
-import { createInitialSkills } from '/imports/schemas/skills-server.js'
+import { createInitialSkills } from '/imports/schemas/skills-server'
 
 import '/imports/schemas/badges'
 import '/imports/schemas/badges-server'
 
 // Import rules and publications
 import '/imports/schemas/denyRules'
-import '/server/imports/publications/publications'
+import '/server/imports/publications'
 
 import './EmailTemplates'
 import './CreateUser'
@@ -32,9 +41,12 @@ import '/server/imports/jobs'
 import '/server/imports/rateLimiter'
 
 // Create fixtures on first time app is launched (useful for dev/test)
-import { createUsers } from './fixtures.js'
+import { createUsers } from './fixtures'
 
-if (!Users.find().fetch().length) 
+// sets up cloudfront CDN
+setUpCloudFront()
+
+if (!Users.find().fetch().length)
   createUsers()
 
 function userHasLoggedIn(loginInfo)
@@ -46,13 +58,28 @@ function userHasLoggedIn(loginInfo)
   createInitialSettings(u._id)
 }
 
+// This gets registered with http://docs.meteor.com/api/accounts-multi.html#AccountsServer-validateLoginAttempt
+function userLoginAttempt(attemptInfo)
+{
+  const { user } = attemptInfo
+  if (user)
+  {
+    if (user.isDeactivated)
+      throw new Meteor.Error(401, `User Account '${user.username}' is deactivated. Contact an Admin to have your account reactivated`)
+    // Note that suspended users (suIsBanned) are still allowed to log in but their
+    // rights are very limited
+  }
+  return true
+}
+
 Meteor.startup(function () {
 
   if (Meteor.isProduction)
     Meteor.call('Slack.MGB.productionStartup')
 
   Accounts.onLogin(userHasLoggedIn)
-  
+  Accounts.validateLoginAttempt(userLoginAttempt)
+
   //sets up keys for social logins
   ServiceConfiguration.configurations.upsert(
     { service: "google" },
@@ -93,13 +120,12 @@ Meteor.startup(function () {
 Npm.require;
 Assets;
 
-
 console.log(`
   MGBv2 server running ${Meteor.release}
   Meteor.isProduction: ${Meteor.isProduction}
   Meteor.isDevelopment: ${Meteor.isDevelopment}
   MgbRelease: ${getCurrentReleaseVersionString()}
-  
+
   Meteor.absoluteUrl: ${Meteor.absoluteUrl('')}
   Entry point: main_server.js
   `

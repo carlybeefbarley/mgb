@@ -1,4 +1,5 @@
 import pako from 'pako'
+import validate from '/imports/schemas/validate'
 
 // The Actual ACTORS importer
 // This should only be in server code
@@ -105,6 +106,17 @@ export const doImportMap = (content, rva, fullS3Name, assetName ) => {
   console.log('------ ' + assetName + ' ------')  
   console.log(newAsset)
   console.log(newAsset.content2.mapLayer[3].join('≈'))
+
+  if (!validate.assetName(newAsset.name))
+  {    
+    newAsset.text.replace(/[#:?]/g, '')
+    newAsset.text = newAsset.text.length > 64 ? newAsset.text.slice(0, 63) : newAsset.text
+  }
+
+  if (!validate.assetDescription(newAsset.text))
+  {
+    newAsset.text = newAsset.text.slice(0, 116) + '...'
+  }
 
   if (!isDryRun)
     Meteor.call('Azzets.create', newAsset)

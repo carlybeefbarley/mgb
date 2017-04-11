@@ -1,12 +1,13 @@
+import _ from 'lodash'
 import React from 'react'
-import { Table } from 'semantic-ui-react'
+import { Table, Accordion, Icon, Dimmer, Loader } from 'semantic-ui-react'
 
 import DropArea from '../../../Controls/DropArea.js'
 import SmallDD from '../../../Controls/SmallDD.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
 
 export default class Animations extends React.Component {
-  state = { serializedForm: {} }
+  state = { serializedForm: {}, isLoading: false }
   get data() {
     return this.props.asset.content2.animationTable
   }
@@ -22,52 +23,205 @@ export default class Animations extends React.Component {
     console.log("Form has changed")
   }
 
-  changeGraphic(index, val) {
-    this.data[index].tileName = val
-    this.props.onchange && this.props.onchange()
+  /*
+  Graphic assets with multiple frames will have " #frameNumber" appended to the name.
+  The frames are imported into Animations when a graphic asset with multiple frames is dropped.
+  The frame numbers are parsed from the names in Mage.js to display the correct frame.
+  The tileset API and MAGE use 0-based indexing. This uses 1-based indexing like the graphic editor.
+  */
+  makeFrameNamedGraphicAsset(data, val, index) {
+    this.data[index].tileName = val + ' #1' // Asset that is dropped is frame 1
+    // Frame 2 and up until all frames are iterated or until it reaches an non-empty animation entry
+    for (i=1; i<data.tilecount; i++) {
+      if (this.data[index+i] && !this.data[index+i].tileName) {
+        let name = data.name + ' #' + (i+1)
+        this.data[index+i] = {
+          "action": MgbActor.animationNames[index+i],
+          "tileName": name,
+          "frame": i,
+          "effect": "no effect"
+        }
+      }
+      else
+        break
+    }
+  }
+
+  changeGraphic(index, val, asset) {
+    this.data[index].tileName = val 
+    this.data[index].frame = 0
+
+    if (asset) {
+      this.setState({isLoading: true})
+
+      $.get('/api/asset/tileset-info/' + asset._id, (data) => {
+        if (data.tilecount > 1) 
+          this.makeFrameNamedGraphicAsset(data, val, index)
+      })
+      .done(() => {
+        this.setState({isLoading: false})
+      })
+    }
+
+    this.props.onChange && this.props.onChange()
   }
 
   changeEffect(index, val) {
     this.data[index].effect = val
     this.forceUpdate()
-    this.props.onchange && this.props.onchange()
+    this.props.onChange && this.props.onChange()
+  }
+  
+  renderContent(animations, i) {
+    return (
+      <Table.Row key={i}>
+        <Table.Cell>{animations[i]}</Table.Cell>
+        <Table.Cell>
+          <DropArea 
+            kind="graphic" 
+            value={this.data[i].tileName}
+            frame={this.data[i].frame} 
+            effect={this.data[i].effect} 
+            asset={this.props.asset}
+            isLoading={this.state.isLoading}
+            onChange={this.changeGraphic.bind(this, i)}
+          />
+        </Table.Cell>
+        <Table.Cell style={{overflow: 'visible'}}>
+          <SmallDD options={MgbActor.animationEffectNames} value={this.data[i].effect} onChange={this.changeEffect.bind(this, i)} />
+        </Table.Cell>
+      </Table.Row>
+    )
+  }
+
+  renderAccordion(animTable, prevTitle, i) {
+    return (
+      <div key={i}>
+        {
+          prevTitle === 'stationary'
+          ?
+          <Accordion exclusive={false} defaultActiveIndex={0} styled fluid>
+            <Accordion.Title active={true}>
+              {prevTitle}
+            </Accordion.Title>
+            <Accordion.Content active={true}>
+              <Table fixed celled compact definition>
+                <Table.Header fullWidth>
+                  <Table.Row>
+                    <Table.HeaderCell>Animation Frame</Table.HeaderCell>
+                    <Table.HeaderCell width={8}>Graphic</Table.HeaderCell>
+                    <Table.HeaderCell>Orientation</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {_.map(animTable, content => { return content })}
+                </Table.Body>
+              </Table>
+            </Accordion.Content>
+          </Accordion>
+          :
+          <Accordion exclusive={false} defaultActiveIndex={0} styled fluid>
+            <Accordion.Title>
+              <Icon name='dropdown' />
+              {prevTitle}
+            </Accordion.Title>
+            <Accordion.Content>
+              <Table fixed celled compact definition>
+                <Table.Header fullWidth>
+                  <Table.Row>
+                    <Table.HeaderCell>Animation Frame</Table.HeaderCell>
+                    <Table.HeaderCell width={8}>Graphic</Table.HeaderCell>
+                    <Table.HeaderCell>Orientation</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {_.map(animTable, content => { return content })}
+                </Table.Body>
+              </Table>
+            </Accordion.Content>
+          </Accordion>
+        }
+      </div>
+    )
   }
 
   render() {
+    const aType = this.props.asset.content2.databag.all.actorType
+    const animations = MgbActor.animationNames
     const rows = []
-    for (let i=0; i<MgbActor.animationNames.length; i++) {
+    let animTable = [] 
+    let prevDirection = animations[0].split(' ')[1]
+    let name = animations[0]
+    let prevTitle = _.startsWith(name, 'face') ? 'move ' + name.split(' ')[1] : (name.split(' ').length > 2 ? name.split(' ')[0] + ' ' + name.split(' ')[1] : name.split(' ')[0])
+    let curr = 0
+
+    for (let i=0; i<animations.length; i++) {
+      name = animations[i]
       if (!this.data[i]) {
         this.data[i] = {
-          "action": MgbActor.animationNames[i],
+          "action": name,
           "tileName": null,
-          "effect": "no effect" }
+          "frame": 0,
+          "effect": "no effect",
+        }
       }
-      rows.push(
-        <Table.Row key={i}>
-          <Table.Cell>{MgbActor.animationNames[i]}</Table.Cell>
-          <Table.Cell>
-            <DropArea kind="graphic" value={this.data[i].tileName} effect={this.data[i].effect} asset={this.props.asset} onChange={this.changeGraphic.bind(this, i)}/>
-          </Table.Cell>
-          <Table.Cell>
-            <SmallDD options={MgbActor.animationEffectNames} value={this.data[i].effect} onchange={this.changeEffect.bind(this, i)} />
-          </Table.Cell>
-        </Table.Row>
-      )
-    }
+
+      if (
+        !((aType === '0' || aType === '1') && (_.startsWith(name, 'stationary') && name.split(' ').length === 2)) && // Filter out stationary for Player/NPC
+        !(aType === '3' && (_.startsWith(name, 'stationary') || _.startsWith(name, 'melee'))) && // Filter out non-movement for Shot
+        !(['2', '4', '5', '6', '7'].indexOf(aType) > -1 && (!_.startsWith(name, 'stationary') || name.split(' ').length !== 2)) // Filter out non-stationary for Item/Wall/Floor/Scenery
+      ) {
+        // Group animations by direction 
+        if (
+          (['2', '4', '5', '6', '7'].indexOf(aType) === -1 && name.includes(prevDirection)) || 
+          (['2', '4', '5', '6', '7'].indexOf(aType) > -1  && _.startsWith(name, 'stationary') && name.split(' ').length === 2) || // Don't use prevDirection if only stationary animations
+          i+1 === animations.length
+        ) {
+          animTable.push(this.renderContent(animations, i)) 
+          // Fencepost
+          if (i+1 === animations.length) {
+            rows.push(this.renderAccordion(animTable, prevTitle, i))
+          }
+        } 
+        // Put animation group for current direction in accordion
+        else 
+        {
+          if (animTable.length > 0)
+            rows.push(this.renderAccordion(animTable, prevTitle, i))
+
+          // Content for next direction
+          prevDirection = name.split(' ')[1] // get direction from animation name which is the 2nd part of string (action direction frameNum)
+          prevTitle = _.startsWith(name, 'face') ? 'move ' + name.split(' ')[1] : (name.split(' ').length > 2 ? name.split(' ')[0] + ' ' + name.split(' ')[1] : name.split(' ')[0])
+          animTable = []
+          
+          animTable.push(this.renderContent(animations, i)) 
+        }
+      }
+      else if (animTable.length > 0) {
+        if (['2', '4', '5', '6', '7'].indexOf(aType) > -1)
+          rows.push(this.renderAccordion(animTable, 'stationary', i))
+        else 
+          rows.push(this.renderAccordion(animTable, prevTitle, i))
+
+        animTable = []
+      }
+    } 
 
     return (
-      <Table celled compact definition>
-        <Table.Header fullWidth>
-          <Table.Row>
-            <Table.HeaderCell>Action</Table.HeaderCell>
-            <Table.HeaderCell>Graphic</Table.HeaderCell>
-            <Table.HeaderCell>Effect</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {rows}
-        </Table.Body>
-      </Table>
+      <div style={{position: 'relative'}}>
+        {
+          this.state.isLoading && 
+          <Dimmer active inverted>
+            <Loader style={{position: 'fixed', right: '345px', top: '50%', translate: "transform(-50%, -50%)"}} active inline size='large'>Loading</Loader>
+          </Dimmer>
+        }
+        {
+          rows.map((anim) => {
+            return anim
+          })
+        }
+      </div>
     )
   }
 }
+

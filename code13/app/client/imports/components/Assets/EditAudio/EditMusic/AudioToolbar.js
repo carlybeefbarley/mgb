@@ -23,6 +23,14 @@ export default class AudioToolbar extends React.Component {
     this.props.toggleLoop()
   }
 
+  handleUndo(){
+    this.props.handleUndo()
+  }
+
+  handleRedo(){
+    this.props.handleRedo()
+  }
+
   zoomIn() {
     this.props.zoom(true)
   }
@@ -96,6 +104,29 @@ export default class AudioToolbar extends React.Component {
           name: 'separator'
         },
         {
+          label: "Undo",                    
+          name: "handleUndo",           
+          tooltip: "Undo",                  
+          iconText: this.props.undoSteps.length,  
+          disabled: !this.props.undoSteps.length, 
+          icon: "undo icon",                
+          // shortcut: 'Ctrl+Z',              
+          level: 2, 
+        },
+        {
+         label: "Redo",
+          name: "handleRedo",
+          tooltip: "Redo",
+          iconText: this.props.redoSteps.length,
+          disabled: !this.props.redoSteps.length,
+          icon: "undo flip icon",
+          // shortcut: 'Ctrl+Shift+Z',
+          level: 2,
+        },
+        {
+          name: 'separator'
+        },
+        {
           name: 'zoomIn',
           label: 'Zoom In',
           icon:  'zoom',
@@ -118,6 +149,7 @@ export default class AudioToolbar extends React.Component {
           icon:  'hand paper',
           tooltip: 'Drag sample',
           level: 5,
+          disabled: !this.props.hasPermission(),
           active: this.props.isDrag,
         },
         {
@@ -127,6 +159,7 @@ export default class AudioToolbar extends React.Component {
           tooltip: 'Select',
           level: 5,
           active: this.props.isSelecting,
+          disabled: !this.props.hasPermission(),
         },
         {
           name: 'eraseSelected',
@@ -134,7 +167,7 @@ export default class AudioToolbar extends React.Component {
           icon:  'eraser',
           tooltip: 'Erase selected area',
           level: 5,
-          disabled: !this.props.selectData,
+          disabled: !this.props.selectData || !this.props.hasPermission(),
         },
         {
           name: 'cutSelected',
@@ -142,7 +175,7 @@ export default class AudioToolbar extends React.Component {
           icon:  'cut',
           tooltip: 'Cut selected area',
           level: 5,
-          disabled: !this.props.selectData,
+          disabled: !this.props.selectData || !this.props.hasPermission(),
         },
         {
           name: 'copySelected',
@@ -150,7 +183,7 @@ export default class AudioToolbar extends React.Component {
           icon:  'copy',
           tooltip: 'Copy selected area',
           level: 5,
-          disabled: !this.props.selectData,
+          disabled: !this.props.selectData || !this.props.hasPermission(),
         },
         {
           name: 'pasteSelected',
@@ -158,7 +191,7 @@ export default class AudioToolbar extends React.Component {
           icon:  'paste',
           tooltip: 'Paste audio sample',
           level: 5,
-          disabled: !this.props.pasteData,
+          disabled: !this.props.pasteData || !this.props.hasPermission(),
           active: this.props.isPaste,
         },
       ]

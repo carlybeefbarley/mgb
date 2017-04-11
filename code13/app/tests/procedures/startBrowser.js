@@ -1,32 +1,25 @@
 const createBrowser = function(browserName, options){
   const webdriver = require('selenium-webdriver')
-  const caps = require("../browsers/" + browserName)
-  const capabilities = Object.assign({}, caps.browser, options);
-
+  const caps = Object.assign(require("../browsers/" + browserName), options)
+  const capabilities = caps.browser
   const browser = new webdriver.Builder().
     usingServer(caps.server).
     withCapabilities(capabilities).
     build()
-  browser.get(caps.url)
-  browser.manage().window().maximize()
 
-  const flow = browser.controlFlow()
-  const scheduleClose = () => {
-    // there might be other "idle" listeners - so wait 1 sec - to be sure queue is empty
-    setTimeout(() => {
-      if(flow.isIdle()){
-        browser.close()
-        browser.quit()
-        // TODO (stauzs): is this available from browser?
-        browser.hasClosed = true;
-      }
-      else{
-        flow.once("idle", scheduleClose)
-      }
-    }, 1000)
-  };
-  flow.once("idle", scheduleClose)
-  return browser;
+  browser.loadHomePage = () => {
+    return browser.get(caps.url)
+  }
+  browser.getLocal = (uri) => {
+    return browser.get(caps.url + uri)
+  }
+  browser.caps = caps
+  // most common based on wikipedia 1366x768
+  browser.manage().window().setSize(1366, 768)
+
+
+  console.log(`Starting browser: ${browserName} with caps:`, caps)
+  return browser
 }
 
 module.exports = function create(browserName, options){

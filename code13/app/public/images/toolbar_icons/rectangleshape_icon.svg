@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="svg3788"
+   width="64"
+   height="64"
+   viewBox="0 0 64 64"
+   sodipodi:docname="rectangleshape_icon.svg"
+   inkscape:version="0.92.1 r15371">
+  <metadata
+     id="metadata3794">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3792">
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Lightness-Contrast"
+       id="filter3802">
+      <feColorMatrix
+         values="1 0 0 0.2 -0 0 1 0 0.2 -0 0 0 1 0.2 -0 0 0 0 1 0"
+         id="feColorMatrix3800" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="697"
+     inkscape:window-height="480"
+     id="namedview3790"
+     showgrid="false"
+     inkscape:zoom="3.6875"
+     inkscape:cx="32"
+     inkscape:cy="32"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg3788" />
+  <image
+     width="64"
+     height="64"
+     preserveAspectRatio="none"
+     xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAARnQU1BAACx
+jwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAu
+MTM0A1t6AAABaUlEQVR4XuXOsY0DQQDDQJfm/ps6p48FtQED4R4KJmEifZ7nmYZxCcYlGJdgXIJx
+CcYlGJdgXIJxCcYlGJPv9/v8B+fvG4wJjb3R+fsGY0Jjb3T+vsGY2JEG+w1jYkca7DeMiR1psN8w
+JnakwX7DmNiRBvsNY2JHGuw3jIkdabDfMCZ2pMF+w5jYkQb7DWNiRxrsN4yJHWmw3zAmdqTBfsOY
+2JEG+w1jYkca7DeMiR1psN8wJnakwX7DmNiRBvsNY2JHGuw3jIkdabDfMCZ2pMF+w5jYkQb7DWNi
+RxrsN4yJHWmw3zAmdqTBfsOY2JEG+w1jYkca7DeMiR1psN8wJnakwX7DmNiRBvsNY2JHGuw3jIkd
+abDfMCZ2pMF+w5jYkQb7DWNiRxrsN4yJHWmw3zAmdqTBfsOY/B15s/P3DcaExt7o/H2DMaGxNzp/
+32BcgnEJxiUYl2BcgnEJxiUYl2BcgnEJxh3P5wd1vY1MFYexiQAAAABJRU5ErkJggg==
+"
+     id="image3796"
+     x="0"
+     y="0" />
+  <path
+     style="fill:#000000;filter:url(#filter3802)"
+     d="M 11,32 V 11 H 32 53 V 32 53 H 32 11 Z m 39,0 V 14 H 32 14 v 18 18 h 18 18 z"
+     id="path3798"
+     inkscape:connector-curvature="0" />
+</svg>

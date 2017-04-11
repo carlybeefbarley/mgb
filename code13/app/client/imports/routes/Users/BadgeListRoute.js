@@ -2,19 +2,7 @@ import React, { PropTypes } from 'react'
 import Helmet from 'react-helmet'
 import Badge from '/client/imports/components/Controls/Badge/Badge'
 import { badgeList, getAllBadgesForUser } from '/imports/schemas/badges'
-import { Segment, Item } from 'semantic-ui-react'
-
-const makeBadgeFromVal = val => {
-  const badge = badgeList[val] 
-  return (
-    <Item key={val}>
-      <Item.Image as={Badge} name={val} key={val} />
-      <Item.Content>
-        <Item.Header content={(badge ? badge[1] : val) + ' Badge' } />
-      </Item.Content>
-    </Item>
-  )
-}
+import { Header, Container, Segment, Item } from 'semantic-ui-react'
 
 const BadgeListRoute = ( { user } ) => {
   if (!user) 
@@ -23,25 +11,34 @@ const BadgeListRoute = ( { user } ) => {
   const badgesForUser = getAllBadgesForUser(user)
 
   return (
-    <Segment basic padded>
+    <Container text> 
+      <Segment basic padded>
 
-      <Helmet
-        title={`${user.profile.name} Badge List`}
-        meta={[
-            {"name": "description", "content": "Badges"}
-        ]}
-      />
-      
-      <Item.Group divided>
-        { badgesForUser.map(val => makeBadgeFromVal(val) ) } 
-      </Item.Group>
+        <Helmet
+            title={`${user.profile.name} Badge List`}
+            meta={[ {"name": "User Badges", "content": "Badges"} ]} />
+            
+        <Header as='h2' content={`${user.username} has ${badgesForUser.length} badges`} />
 
-    </Segment>
+        <Item.Group divided>
+          { badgesForUser.map(val => (
+            <Item key={val}>
+              <Item.Image as={Badge} name={val} key={val} />
+              <Item.Content>
+              <br></br>
+                <Item.Header content={(badgeList[val] ? badgeList[val][1] : val) } />
+              </Item.Content>
+            </Item>
+          ))}
+        </Item.Group>
+
+      </Segment>
+    </Container>
   )
 }
 
 BadgeListRoute.propTypes = {
-  user: PropTypes.object
+  user:             PropTypes.object
 }
 
 export default BadgeListRoute

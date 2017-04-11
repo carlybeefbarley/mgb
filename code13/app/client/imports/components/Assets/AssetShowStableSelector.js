@@ -1,20 +1,25 @@
 import React, { PropTypes } from 'react'
-import { Button } from 'semantic-ui-react'
+import { Popup, Button } from 'semantic-ui-react'
 
-const AssetShowStableSelector = props => {
-  const { showStableFlag, handleChangeFlag } = props
+const AssetShowStableSelector = ( { showStableFlag, handleChangeFlag } ) => {
   const active = showStableFlag === "1"
-
-  return (
+  const button = (
     <Button 
         icon='lock'
         color={ active ? 'blue' : null }
-        onClick={() => handleChangeFlag( active ? "0" : "1" ) }
-        data-delay='250'
-        data-position='bottom left'
-        data-tooltip={ active ? 
-                          "Currently showing ONLY 'Complete' assets. Click here to ALSO show 'Incomplete' assets" 
-                        : "Currently showing 'Complete' AND 'Incomplete' assets. Click here to ONLY show 'Complete' assets"} 
+        onClick={ () => handleChangeFlag( active ? "0" : "1" ) } />
+  )
+
+  return (
+    <Popup 
+        size='small'
+        trigger={button}
+        on='hover'
+        positioning='bottom center'
+        header='Show/hide locked Assets'      
+        content={ active ? 
+                    "Currently showing ONLY 'Locked' Assets. Click here to ALSO show 'Unlocked' Assets" 
+                  : "Currently showing 'Locked' AND 'Unlocked' Assets. Click here to ONLY show 'Locked' Assets"} 
     />
   )
 }

@@ -6,37 +6,43 @@ import React, { PropTypes } from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import TutorialMentor from './TutorialEditHelpers'
 
-import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
+import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import { showToast, addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import moment from 'moment'
-import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-import { templateCode } from './templates/TemplateCode.js'
-import { templateTutorial } from './templates/TemplateTutorial.js'
+import { snapshotActivity } from '/imports/schemas/activitySnapshots'
 import { js_beautify } from 'js-beautify'
-import CodeMirror from '../../CodeMirror/CodeMirrorComponent.js'
-import ConsoleMessageViewer from './ConsoleMessageViewer.js'
-import SourceTools from './SourceTools.js'
-import CodeFlower from './CodeFlowerModded.js'
-import GameScreen from './GameScreen.js'
-import makeBundle from '/imports/helpers/codeBundle'
+import CodeMirror from '../../CodeMirror/CodeMirrorComponent'
+import ConsoleMessageViewer from './ConsoleMessageViewer'
+import SourceTools from './SourceTools'
+import CodeFlower from './CodeFlowerModded'
+import GameScreen from './GameScreen'
+import CodeStarter from './CodeStarter'
+import CodeChallenges from './CodeChallenges'
+import CodeTutorials from './CodeTutorials'
+import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+
+import getCDNWorker from '/client/imports/helpers/CDNWorker'
 // import tlint from 'tern-lint'
+import validJSName from '/client/imports/helpers/validJSName'
 
-// **GLOBAL*** Tern JS - See comment below...   
-import scoped_tern from "tern"
-window.tern = scoped_tern   // 'tern' symbol needs to be GLOBAL due to some legacy non-module stuff in tern-phaser
-
+// **GLOBAL*** Tern JS - See comment below...
+// import scoped_tern from "tern"
+// window.tern = scoped_tern   // 'tern' symbol needs to be GLOBAL due to some legacy non-module stuff in tern-phaser
 
 // Tern 'definition files'
 // import "tern/lib/def"     // Do I need? since I'm doing it differently in next 2 lines...
-import Defs_ecma5 from "./tern/Defs/ecma5.json"
-import Defs_browser from './tern/Defs/browser.json'
+// import Defs_ecma5 from "./tern/Defs/ecma5.json"
+// import Defs_browser from './tern/Defs/browser.json'
 
 import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js'
 
-import InstallMgbTernExtensions from './tern/MgbTernExtensions.js'
+// removed this - as we are using tern worker for a while now -
+// TODO(stauzs): move MGB tern extensions to worker
+// import InstallMgbTernExtensions from './tern/MgbTernExtensions.js'
 import "codemirror/addon/tern/tern"
 import "codemirror/addon/comment/comment"
 
@@ -44,24 +50,31 @@ import FunctionDescription from './tern/FunctionDescription.js'
 import ExpressionDescription from './tern/ExpressionDescription.js'
 import RefsAndDefDescription from './tern/RefsAndDefDescription.js'
 import TokenDescription from './tern/TokenDescription.js'
+import ImportHelperPanel from './tern/ImportHelperPanel.js'
 
 import DebugASTview from './tern/DebugASTview.js'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
+import SpecialGlobals from '/imports/SpecialGlobals'
+
+const THUMBNAIL_WIDTH = SpecialGlobals.thumbnail.width
+const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
+
+import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes.js'
 
 let showDebugAST = false    // Handy thing while doing TERN dev work
 
 
-// NOTE, if we deliver phaser.min.js from another domain, then it will 
+// NOTE, if we deliver phaser.min.js from another domain, then it will
 // limit the error handler's knowledge of that code - see 'Notes' on
-// https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror    
+// https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror
 //   BAD:  return "//cdn.jsdelivr.net/phaser/" + phaserVerNNN + "/phaser.min.js"
 
 
 // we are delaying heavy jobs for this amount of time (in ms) .. e.g. when user types - there is no need to re-analyze all content on every key press
 // reasonable value would be equal to average user typing speed (chars / second) * 1000
-const CHANGES_DELAY_TIMEOUT = 750
+const CHANGES_DELAY_TIMEOUT = SpecialGlobals.editCode.typingSpeed
 
 const _infoPaneModes = [
   { col1: 'ten',     col2: 'six'   },
@@ -69,7 +82,6 @@ const _infoPaneModes = [
   { col1: 'six',     col2: 'ten'   },
   { col1: 'eight',   col2: 'eight' },
 ]
-
 
 // Code asset - Data format:
 //
@@ -84,7 +96,7 @@ export default class EditCode extends React.Component {
   //   activitySnapshots: PropTypes.array               // can be null whilst loading
   // }
 
-  constructor(props) {
+  constructor(props, context) {
     super(props)
     registerDebugGlobal( 'editCode', this, __filename, 'Active Instance of Code editor')
 
@@ -92,8 +104,10 @@ export default class EditCode extends React.Component {
     // save jshint reference - so we can kill it later
     this.jshintWorker = null
 
+    this.userSkills = context.skills
+
     this.state = {
-      _preventRenders: false,        // We use this as a way to batch updates. 
+      _preventRenders: false,        // We use this as a way to batch updates.
       consoleMessages: [],
       gameRenderIterationKey: 0,
       isPlaying: false,
@@ -126,6 +140,14 @@ export default class EditCode extends React.Component {
 
     // store last saved value to prevent unnecessary updates and fancy behavior
     this.lastSavedValue = ""
+
+    this.cursorHistory = {
+      undo: [],
+      redo: []
+    }
+
+    this.includeLocalImport = this.includeLocalImport.bind(this)
+    this.includeExternalImport = this.includeExternalImport.bind(this)
   }
 
 
@@ -137,19 +159,26 @@ export default class EditCode extends React.Component {
     this.handleContentChange(newC2, null, `Beautify code`)
   }
 
+  quickSave(){
+    let newC2 = {src: this.codeMirror.getValue()}
+    this.handleContentChange(newC2, null, `Save code`)
+  }
   warnNoWriteAccess() {
     showToast("You don't have write access to this Asset", 'error')
   }
 
   componentDidMount() {
-    const codeMirrorUpdateHints = this.codeMirrorUpdateHints
-    // Debounce the codeMirrorUpdateHints() function
-    this.codeMirrorUpdateHints = _.debounce(this.codeMirrorUpdateHints, 100, true)
+    // Debounce the codeMirrorUpdateHints() function - only once
+    this.codeMirrorUpdateHintsDebounced = _.debounce(this.codeMirrorUpdateHints, 100, true)
 
+    this.updateUserScripts()
     // previous debounce eats up changes
+    // CHANGES_DELAY_TIMEOUT - improves typing speed significantly on the price of responsiviness of CodeMentor
+    // CodeMentor is affected here only on content change
+    // codeMirrorUpdateHintsDebounced is responsible for simple code browsing
     this.codeMirrorUpdateHintsChanged = _.debounce(() => {
-      codeMirrorUpdateHints.call(this, true)
-    }, 100, true)
+      this.codeMirrorUpdateHints.call(this, true)
+    }, CHANGES_DELAY_TIMEOUT, true)
 
     this.listeners = {}
     this.listeners.joyrideCodeAction = event => {
@@ -166,7 +195,13 @@ export default class EditCode extends React.Component {
         this.warnNoWriteAccess()
     }
 
+
     window.addEventListener('mgbjr-stepAction-appendCode', this.listeners.joyrideCodeAction)
+
+    this.listeners.joyrideHighlightCode = event => {
+      this.highlightLines(parseInt(event.data.from, 10), parseInt(event.data.to))
+    }
+    window.addEventListener('mgbjr-highlight-code', this.listeners.joyrideHighlightCode)
 
     // Semantic-UI item setup (Accordion etc)
     $('.ui.accordion').accordion({exclusive: false, selector: {trigger: '.title .explicittrigger'}})
@@ -221,9 +256,6 @@ export default class EditCode extends React.Component {
         "Ctrl-B": (cm) => {
           this.handleJsBeautify(cm)
         },
-        "Alt-,": (cm) => {
-          this.ternServer.jumpBack(cm)
-        },
         "Ctrl-Q": (cm) => {
           this.ternServer.rename(cm)
         },
@@ -235,7 +267,9 @@ export default class EditCode extends React.Component {
         },
         "Ctrl-/": (cm) => {
           cm.execCommand("toggleComment")
-        }
+        },
+        "Alt-.": cm => this.goToDef(),
+        "Alt-,": cm => this.goBack()
       },
       //lint: true,   // TODO - use eslint instead? Something like jssc?
       autofocus: true,
@@ -243,6 +277,9 @@ export default class EditCode extends React.Component {
     }
 
     this.codeMirror = CodeMirror.fromTextArea(textareaNode, codemirrorOptions)
+    // allow toolbar keyboard shortcuts from codemirror text area
+    codemirrorOptions.inputStyle == 'textarea' && this.codeMirror.display.input.textarea.classList.add('allow-toolbar-shortcuts')
+
     this.updateDocName()
     this.doFullUpdateOnContentChange()
 
@@ -250,6 +287,19 @@ export default class EditCode extends React.Component {
     this.codeMirror.on('cursorActivity', this.codeMirrorOnCursorActivity.bind(this, false))
     this.codeMirror.on('dragover', this.handleDragOver.bind(this))
     this.codeMirror.on('drop', this.handleDropAsset.bind(this))
+
+
+    this.codeMirror.on('mousedown', this.handleDocumentClick.bind(this))
+    this.codeMirror.on('keyup', (cm, e) => {
+      if(e.ctrlKey && e.altKey) e.preventDefault()
+      if(!this.props.canEdit) {
+        if (e.ctrlKey || e.altKey || e.which == 17 /* CTRL key*/) {
+          return
+        }
+
+        this.props.editDeniedReminder()
+      }
+    })
 
     this._currentCodemirrorValue = this.props.asset.content2.src || ''
 
@@ -264,19 +314,37 @@ export default class EditCode extends React.Component {
     //       NOTE that the parent elements have the wrong heights because of a bunch of cascading h=100% styles. D'oh.
     var ed = this.codeMirror
     this.edResizeHandler = e => {
-      let $sPane = $(".CodeMirror")
-      let h = window.innerHeight - ( 16 + $sPane.offset().top )
-      let hpx = h.toString() + "px"
-      ed.setSize("100%", hpx)
-      $(".mgbAccordionScroller").css("max-height", hpx)
-      $(".mgbAccordionScroller").css("overflow-y", "scroll")
+      const $sPane = $(".CodeMirror")
+      const edHeight = window.innerHeight - ( 16 + $sPane.offset().top )
+      ed.setSize("100%", `${edHeight}px`)
+      //$(".mgbAccordionScroller").css("max-height", `${window.innerHeight-16}px`)
+      //$(".mgbAccordionScroller").css("overflow-y", "scroll")
     }
     $(window).on("resize", this.edResizeHandler)
     this.edResizeHandler()
     this.updateDocName()
-    this.doHandleFontSizeDelta(0, { force: true } ) 
+    this.doHandleFontSizeDelta(0, { force: true } )
 
     this.isActive = true
+
+    this.cursorHistory = {
+      undo: [],
+      redo: []
+    }
+
+    this.mgb_c2_hasChanged = this.props.canEdit
+    // storing here misc stuff that can be accessed to gain performance
+    this.mgb_cache = {}
+
+    this.highlightedLines = []
+
+    const c2 = this.props.asset.content2
+    this.setState({
+      needsBundle: c2.needsBundle,
+      hotReload: c2.hotReload,
+      documentIsEmpty: !c2.src || c2.src.length === 0
+    })
+
   }
 
 
@@ -286,7 +354,8 @@ export default class EditCode extends React.Component {
       // in worker mode it's not possible to add defs and doc_comment plugin also can't add parsed defs
       // TODO: find workaround and uncomment
       useWorker: true,
-      defs: [Defs_ecma5, Defs_browser],//[Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser, Defs_sample],
+      // load defs at runtime
+      defs: [], //[Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser, Defs_sample],
       completionTip: function (curData) {
         // we get called for the CURRENTLY highlighted entry in the autocomplete list.
         // We are provided fields like
@@ -295,19 +364,18 @@ export default class EditCode extends React.Component {
         const doc = curData.doc ? curData.doc : ''
         return doc + (doc ? "\n\n" + curData.type : "")
       },
-      // TODO: is there a simple "meteor" way to get these files from node_modules???
       workerDeps: [
-        "/lib/acorn/acorn.js",
-        "/lib/acorn/acorn_loose.js",
-        "/lib/acorn/walk.js",
-        "/lib/tern/lib/signal.js",
-        "/lib/tern/lib/tern.js",
-        "/lib/tern/lib/def.js",
-        "/lib/tern/lib/infer.js",
-        "/lib/tern/lib/comment.js",
-        "/lib/tern/plugin/modules.js",
-        "/lib/tern/plugin/es_modules.js",
-        "/lib/tern/plugin/doc_comment.js"
+        makeCDNLink("/lib/acorn/acorn.js"),
+        makeCDNLink("/lib/acorn/acorn_loose.js"),
+        makeCDNLink("/lib/acorn/walk.js"),
+        makeCDNLink("/lib/tern/lib/signal.js"),
+        makeCDNLink("/lib/tern/lib/tern.js"),
+        makeCDNLink("/lib/tern/lib/def.js"),
+        makeCDNLink("/lib/tern/lib/infer.js"),
+        makeCDNLink("/lib/tern/lib/comment.js"),
+        makeCDNLink("/lib/tern/plugin/modules.js"),
+        makeCDNLink("/lib/tern/plugin/es_modules.js"),
+        makeCDNLink("/lib/tern/plugin/doc_comment.js")
         //"/lib/tern/plugin/lint.js"
       ],
       plugins: {
@@ -325,7 +393,7 @@ export default class EditCode extends React.Component {
           strong: true
         }
       },
-      workerScript: "/lib/TernWorker.js"
+      workerScript: "/lib/workers/TernWorker.js"
       /*,
        responseFilter: function (doc, query, request, error, data) {
        // Woah - capture all the responses from the TernServer
@@ -337,7 +405,8 @@ export default class EditCode extends React.Component {
     this.ternServer = new CodeMirror.TernServer(myTernConfig)
     if (!this.ternServer.server.addDefs) {
       this.ternServer.server.addDefs = (defs) => {
-        this.ternServer.worker.postMessage({
+        // async - can be unmounted already
+        this.ternServer && this.ternServer.worker.postMessage({
           type: "addDefs",
           defs: defs
         })
@@ -345,7 +414,10 @@ export default class EditCode extends React.Component {
     }
     // overwrite default function - so we can use replace
     this.ternServer.server.addFile = (name, text, replace) => {
-      this.ternServer.worker.postMessage({type: "add", name, text, replace})
+      this.ternServer && this.ternServer.worker.postMessage({type: "add", name, text, replace})
+    }
+    this.ternServer.server.delFile = (name) => {
+      this.ternServer && this.ternServer.worker.postMessage({type: "del", name})
     }
     this.ternServer.server.getAstFlowerTree = (options, callback, filename = this.props.asset.name) => {
       if (!options.filename) {
@@ -365,17 +437,37 @@ export default class EditCode extends React.Component {
       })
     }
 
-    this.tools = new SourceTools(this.ternServer, this.props.asset._id, this.props.asset.dn_ownerName)
-    this.tools.onError(errors => {
-      this.showError(errors)
+    this.ternServer.server.getComments = (callback, filename = this.props.asset.name) => {
+      const cb = (e) => {
+        if (e.data.type != "getComments")
+          return
+        this.ternServer.worker.removeEventListener("message", cb)
+        callback(e.data.data)
+      }
+      this.ternServer.worker.addEventListener("message", cb)
+      this.ternServer.worker.postMessage({
+        type: "getComments",
+        filename: filename
+      })
+    }
+
+    this.tools = new SourceTools(this.ternServer, this.props.asset)
+    this.tools.on('change', asset => {
+      this.consoleLog(`Updated asset: /${asset.dn_ownerName}:${asset.name}`)
+      this.quickSave()
+    })
+    this.tools.on('error', err => {
+      this.showError(err)
     })
 
-    InstallMgbTernExtensions(tern)
+    this.tools.loadCommonDefs()
+    // InstallMgbTernExtensions(tern)
   }
   // update file name - to correctly report 'part of'
   updateDocName() {
-
-    if (this.codeMirror && this.lastName !== this.props.asset.name) {
+    // don't update doc name until all required assets are loaded.
+    // tern won't update itself after loading new import - without changes to active document
+    if (this.state.astReady && this.lastName !== this.props.asset.name) {
       const doc = this.codeMirror.getDoc()
       if (this.ternServer && doc) {
         this.ternServer.delDoc(doc)
@@ -387,12 +479,13 @@ export default class EditCode extends React.Component {
 
   codeMirrorOnCursorActivity() {
     // Indirecting this to help with debugging and maybe some future optimizations
-    this.codeMirrorUpdateHints(false)
+    this.codeMirrorUpdateHintsDebounced(false)
   }
 
   componentWillUnmount() {
     $(window).off("resize", this.edResizeHandler)
     window.removeEventListener('mgbjr-stepAction-appendCode', this.listeners.joyrideCodeAction)
+    window.removeEventListener('mgbjr-highlight-code', this.listeners.joyrideHighlightCode)
 
     // TODO: Destroy CodeMirror editor instance?
 
@@ -403,6 +496,10 @@ export default class EditCode extends React.Component {
       this.changeTimeoutFn()
     }
     this.isActive = false
+    this.cursorHistory = null
+    this.highlightedLines = null
+
+    this.mgb_cache = null
   }
 
   terminateWorkers() {
@@ -432,9 +529,139 @@ export default class EditCode extends React.Component {
     if(this.props.asset.kind === "tutorial"){
       return TutorialMentor.showHint(cm, CodeMirror)
     }
-    else if (this.props.canEdit && this.state.currentToken && this.state.currentToken.type !== "comment")
+    else if (this.props.canEdit && this.state.currentToken){
+      if(this.state.currentToken.type == "comment")
+        return CodeMirror.Pass
+      if(this.state.currentToken.type == "string"){
+        return this.showUserAssetHint(cm, CodeMirror, this.state.currentToken)
+      }
       return this.ternServer.complete(cm)
+    }
     return CodeMirror.Pass
+  }
+
+  // autocomplete options type: [{text: '', desc: ''}, ...]
+  showCustomCMHint(cm, autocompleteOptions, keywordSubstring = 0){
+    let tooltip = null
+    // TODO: optimize - reuse tooltip
+    const createTooltip = () => {
+      const node = document.createElement("div")
+      // same class as for JS tooltips
+      node.className = "CodeMirror-Tern-tooltip CodeMirror-Tern-hint-doc"
+      return node
+    }
+    const removeTooltip = () => {
+      if(tooltip && tooltip.parentNode){
+        tooltip.parentNode.removeChild(tooltip)
+      }
+    }
+
+    const hintObj = {
+      // hint will be called on every change
+      hint: () => {
+
+        const cursor = cm.getCursor()
+        const token = cm.getTokenAt(cursor, true)
+        const keyword = token.string.substring(1 + keywordSubstring, token.string.length - 1)
+
+        // filter our list
+        const list = autocompleteOptions.filter(a => {
+          return !keyword || a.text.toLowerCase().startsWith(keyword.toLowerCase())
+        })
+        const from = Object.assign({}, cursor)
+        from.ch = token.start + 1 + keywordSubstring  // keep quote
+
+        const to = Object.assign({}, from)
+        to.ch = token.end - 1 // keep quote
+
+        list.sort((a, b) => {
+          return a.text < b.text ? -1 : 1
+        })
+        const hints = {
+          list, from, to,
+          // completeSingle seems that is not working ?
+          completeSingle: false
+        }
+
+        CodeMirror.on(hints, "select", (completion, element) => {
+          // remove old tooltip
+          removeTooltip()
+          if(completion.desc){
+            tooltip = createTooltip()
+            tooltip.innerHTML = completion.desc
+            // li < ul < body - by default
+            element.parentNode.parentNode.appendChild(tooltip)
+            const box = element.getBoundingClientRect()
+            const ulbox = element.parentNode.getBoundingClientRect()
+
+            tooltip.style.left = ulbox.left + ulbox.width + "px"
+            tooltip.style.top = box.top + "px"
+          }
+        })
+        CodeMirror.on(hints, "close", () => {
+          removeTooltip()
+          CodeMirror.off(hints, "close")
+          CodeMirror.off(hints, "select")
+          CodeMirror.on(hints, "shown")
+        })
+        return hints
+      }
+    }
+
+    return cm.showHint(hintObj)
+  }
+
+  showUserAssetHint(cm, CodeMirror, token){
+    // strip quotes
+    const keyword = token.string.substring(1, token.string.length - 1)
+    // this combo starts to repeat too often
+    if(keyword && keyword.startsWith('/') && !keyword.startsWith('//')){
+      const parts = keyword.split(':')
+      // get hints for own assets
+      if(parts.length == 1){
+        //if(keyword.length < 2){
+          this.showCustomCMHint(cm, this.state.userScripts, 1)
+        //  return
+        //}
+
+        // we already know all user scripts - update only
+        this.updateUserScripts()
+        /*mgbAjax(`/api/assets/code/${Meteor.user().username}/?query=${keyword.substring(1)}`, (err, listStr) => {
+          if (err)
+            return
+          this.showCustomCMHint(cm, JSON.parse(listStr), 1)
+        })*/
+      }
+      // check if user exists at all? parts[0] - is username
+      else if(parts.length == 2){
+        const user = parts.shift()
+        mgbAjax(`/api/assets/code/${user}/?query=${parts.shift()}`, (err, listStr) => {
+          if(err)
+            return
+          this.showCustomCMHint(cm, JSON.parse(listStr), user.length + 1)
+        })
+      }
+    }
+    return CodeMirror.Pass
+  }
+
+  updateUserScripts(cb){
+    if(Meteor.user()) {
+      mgbAjax(`/api/assets/code/${Meteor.user().username}/?query=`, (err, listStr) => {
+        // async call
+        if(!this.isActive){
+          return
+        }
+        if (err)
+          return
+
+        try {
+          this.setState({"userScripts": JSON.parse(listStr)})
+        }
+        catch (e) {}
+        cb && cb()
+      })
+    }
   }
 
   codeEditPassAndHint(cm) {
@@ -448,10 +675,10 @@ export default class EditCode extends React.Component {
         return
       this.codeEditShowHint(cm)
     }, 1000)      // Pop up a helper after a second
-// this.ternServer.getHint(cm, function (hint) 
+// this.ternServer.getHint(cm, function (hint)
 // {
 // console.log("HINT",hint)
-// })    
+// })
     return CodeMirror.Pass       // Allow the typed character to be part of the document
   }
 
@@ -459,23 +686,27 @@ export default class EditCode extends React.Component {
   componentWillReceiveProps(nextProps) {
     const newVal = nextProps.asset.content2.src
     if (this.codeMirror && newVal !== undefined && this._currentCodemirrorValue !== newVal && this.lastSavedValue != newVal) {
-      // user is typing - intensively working with document - don't update until it finishes
+      // user is typing - intensively working with document - don't update until it finishes ( update will trigger automatically on finish )
       if (this.changeTimeout) {
-        // console.log("Preventing update! User in action")
         return
       }
-      console.log("Setting src to: ", newVal.substr(0, 3))
+
+
       let currentCursor = this.codeMirror.getCursor()
       this.codeMirror.setValue(newVal)
+      this.setState({
+        needsBundle: nextProps.asset.content2.needsBundle,
+        hotReload: nextProps.asset.content2.hotReload
+      })
+
       this._currentCodemirrorValue = newVal       // This needs to be done here or we will loop around forever
       this.codeMirror.setCursor(currentCursor)    // Note that this will trigger the source Analysis stuff also.. and can update activitySnapshots. TODO(@dgolds) look at inhibiting the latter
-
-      // update source tools related files
+      // force update source tools related files
       this.doFullUpdateOnContentChange()
     }
   }
 
-  // opts can be    force = true ... force a font change even if delta =0 
+  // opts can be    force = true ... force a font change even if delta =0
   doHandleFontSizeDelta(delta, opts = {} ) {   // delta should be -1 or +1
     const fontSizes = [
       {fontSize: '8.5px', lineHeight: '10px'},    //  0
@@ -495,7 +726,7 @@ export default class EditCode extends React.Component {
     if (this.fontSizeSettingIndex === undefined)
       this.fontSizeSettingIndex = 8
 
-    // Changing font size - http://codemirror.977696.n3.nabble.com/Changing-font-quot-on-the-go-quot-td4026016.html 
+    // Changing font size - http://codemirror.977696.n3.nabble.com/Changing-font-quot-on-the-go-quot-td4026016.html
     let editor = this.codeMirror
     let validDelta = 0
 
@@ -535,13 +766,29 @@ export default class EditCode extends React.Component {
   }
 
   // Drag and Drop of Asset onto code area
-
   handleDragOver(cm, event) {
-    if (this.props.canEdit)
+
+
+    if (this.props.canEdit) {
       DragNDropHelper.preventDefault(event)
+      // change cursor style to indicate drop???
+      cm.focus()
+      // move cursor to exact drop location
+      const cur = cm.getCursor()
+      const coords = cm.coordsChar({left: event.clientX, top: event.clientY}, "window")
+      cur.ch = coords.ch
+      cur.line = coords.line
+      // workaround - force codemirror to really update cursor - when moving happens on the same line
+      if(cur.line == coords.line){
+        cm.setCursor({line: 0, ch: 0})
+      }
+
+      cm.setCursor(coords)
+    }
   }
 
   handleDropAsset(cm, event) {
+    // TODO: check if this is phaser game.. do something other if phaser is not included
     if (this.props.canEdit)
     {
       const draggedAsset = DragNDropHelper.getAssetFromEvent(event)
@@ -564,11 +811,12 @@ export default class EditCode extends React.Component {
           code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.audio( '${draggedAsset.name}', '${url}' )`
           break
         case 'code':
+          // TODO: support extensions or something similar - e.g. in case when importing css
           if (this.props.asset.dn_ownerName === draggedAsset.dn_ownerName)
-            url = `./${draggedAsset.name}`
-          else 
-            url = `./${draggedAsset.dn_ownerName}:${draggedAsset.name}`
-          code = `import '${url}'`
+            code = this.createImportString(draggedAsset.name)
+          else
+            code = this.createImportString(draggedAsset.name, draggedAsset.dn_ownerName)
+
           break
         default:
           code = draggedAsset._id
@@ -608,6 +856,66 @@ export default class EditCode extends React.Component {
     }
   }
 
+  // TODO(@stauzs): add deeper analysis - would be really nice to - allow to change asset on include ??
+  handleDocumentClick(cm, event) {
+    const pos = cm.coordsChar({left: event.clientX, top: event.clientY})
+    // click on the gutter
+    if(pos.xRel < 0){
+      return
+    }
+    const currentCursor = _.cloneDeep(this.codeMirror.getCursor())
+    this.cursorHistory.undo.push(currentCursor)
+
+    // do we really need to reset redo steps??? - test it
+    this.cursorHistory.redo.length = 0
+    if(this.cursorHistory.undo.length > SpecialGlobals.editCode.maxLengthOfCursorHistory){
+      this.cursorHistory.undo.shift()
+    }
+
+    if (event.ctrlKey) {
+      const token = cm.getTokenAt(pos, true)
+      if(token.type == 'string'){
+        const link = this.getImportStringLocation(token.string)
+        if(link) {
+          const a = document.createElement('a')
+          a.setAttribute('href', link)
+          a.setAttribute('target', '_balnk')
+          a.click()
+        }
+      }
+      else {
+        this.codeMirror.setCursor(pos)
+        this.cursorHistory.undo.push(pos)
+        this.ternServer.jumpToDef(cm)
+      }
+      // disable multi select ?
+      event.preventDefault() // if you don't want the cursor to move here.
+    }
+  }
+
+  goToDef(){
+    const currentCursor = _.cloneDeep(this.codeMirror.getCursor())
+    this.cursorHistory.undo.push(currentCursor)
+
+    this.ternServer.jumpToDef(this.codeMirror)
+  }
+  goBack(){
+    const pos = this.cursorHistory.undo.pop()
+    this.cursorHistory.redo.push(_.cloneDeep(this.codeMirror.getCursor()))
+
+    this.codeMirror.setCursor(pos)
+    //this.ternServer.jumpBack(this.codeMirror)
+    this.codeMirror.focus()
+  }
+  goForward(){
+    const currentCursor = _.cloneDeep(this.codeMirror.getCursor())
+    this.cursorHistory.undo.push(currentCursor)
+
+    const pos = this.cursorHistory.redo.pop()
+    pos && this.codeMirror.setCursor(pos)
+    //this.ternServer.jumpBack(this.codeMirror)
+    this.codeMirror.focus()
+  }
 
   _getMgbAssetIdsInLine(lineText) {
     //  let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)/g
@@ -632,9 +940,13 @@ export default class EditCode extends React.Component {
 
   /** Just show the Clean Sheet helpers if there is no code */
   srcUpdate_CleanSheetCase() {
-    this.setState({documentIsEmpty: this._currentCodemirrorValue.length === 0})
-    if(this._currentCodemirrorValue.length === 0){
-      joyrideCompleteTag('mgbjr-CT-EditCode-editor-clean')
+    const isEmpty = this.codeMirror.getValue().length === 0
+    if(this.state.documentIsEmpty !==  isEmpty) {
+      // set state seems to be expensive - based on profiler data
+      this.setState({documentIsEmpty: isEmpty})
+      if (this._currentCodemirrorValue.length === 0) {
+        joyrideCompleteTag('mgbjr-CT-EditCode-editor-clean')
+      }
     }
   }
 
@@ -673,7 +985,7 @@ export default class EditCode extends React.Component {
   runJSHintWorker(code, cb) {
     if (this.props.asset.kind === "tutorial")
       return
-    
+
     // terminate old busy worker - as jshint can take a lot time on huge scripts
     if (this.jshintWorker && this.jshintWorker.isBusy) {
       this.jshintWorker.terminate()
@@ -682,7 +994,7 @@ export default class EditCode extends React.Component {
 
     if (!this.jshintWorker) {
       // TODO: now should be easy to change hinting library - as separate worker - make as end user preference?
-      this.jshintWorker = new Worker("/lib/JSHintWorker.js")
+      this.jshintWorker = getCDNWorker("/lib/workers/JSHintWorker.js")
     }
 
     const conf = {
@@ -703,7 +1015,8 @@ export default class EditCode extends React.Component {
         "PIXI": false,
         "console": false,
         "_": false
-      }
+      },
+      "maxerr" : 999
     }
 
     this.jshintWorker.isBusy = true
@@ -732,9 +1045,10 @@ export default class EditCode extends React.Component {
     // get line
     if (!err.line || !clear) {
       const doc = this.codeMirror.getValue().split("\n")
-      err.line = doc.findIndex(v => v.indexOf(err.evidence) > -1) + 1
+      err.line = _.findIndex(doc, v => v.indexOf(err.evidence) > -1) + 1
     }
     const msg = msgs[err.line] ? msgs[err.line] : document.createElement("div")
+    const errorText = " " + err.reason
 
     if (!msgs[err.line]) {
       msgs[err.line] = msg
@@ -747,7 +1061,6 @@ export default class EditCode extends React.Component {
       }
       msg.container = msg.appendChild(document.createElement("div"))
       msg.container.className = "lint-error-text"
-
     }
     else if (!msg.multi) {
       msg.multi = msg.icon.appendChild(document.createElement("div"))
@@ -759,6 +1072,14 @@ export default class EditCode extends React.Component {
       msg.icon.className = "CodeMirror-lint-marker-error"
     }
 
+    // don't show multiple messages with same text
+    const index = _.findIndex(
+        msg.container.children,
+        child => child.childNodes[1].nodeValue == errorText
+      )
+    if(index > -1) return
+
+
     const text = msg.container.appendChild(document.createElement("div"))
     const ico = text.appendChild(document.createElement("div"))
     if (err.code.substring(0, 1) == "W") {
@@ -768,7 +1089,7 @@ export default class EditCode extends React.Component {
       ico.className = "CodeMirror-lint-marker-error"
     }
 
-    text.appendChild(document.createTextNode(" " + err.reason))
+    text.appendChild(document.createTextNode(errorText))
 
     msg.className = "lint-error"
     this.codeMirror.setGutterMarker(err.line - 1, "CodeMirror-lint-markers", msg)
@@ -780,158 +1101,247 @@ export default class EditCode extends React.Component {
      */
   }
 
+  /**
+   * Gets info about function from tern server asynchronously and resolves promise with new state props on completion.
+   * @returns Promise
+   */
   srcUpdate_GetInfoForCurrentFunction() {
-    let ternServer = this.ternServer
-    let editor = this.codeMirror
-    if(!ternServer || !editor){
-      return
-    }
-    let currentCursorPos = editor.getCursor()
-    // we need to force internal tern cache to clean up - move cursor to 0,0 and then back
-    // TODO: (stauzs) debug this in free time
-    let {line, char} = currentCursorPos
-    currentCursorPos.line = 0
-    currentCursorPos.char = 0
+    return new Promise( resolve => {
+      const ternServer = this.ternServer
+      const editor = this.codeMirror
+      if(!ternServer || !editor){
+        resolve()
+        return
+      }
+      const currentCursorPos = editor.getCursor()
 
-    // get token at 0,0
-    editor.getTokenAt(currentCursorPos, true)
-    currentCursorPos.line = line
-    currentCursorPos.char = char
+      // we need to force internal tern cache to clean up - move cursor to 0,0 and then back
+      // TODO: (stauzs) debug this in free time
+      const {line, char} = currentCursorPos
+      currentCursorPos.line = 0
+      currentCursorPos.char = 0
 
+      // get token at 0,0
+      editor.getTokenAt(currentCursorPos, true)
+      currentCursorPos.line = line
+      currentCursorPos.char = char
 
-    // get token at current pos
-    let currentToken = editor.getTokenAt(currentCursorPos, true)
+      // get token at current pos
+      const currentToken = editor.getTokenAt(currentCursorPos, true)
 
-    // I stole the following approach from 
-    // node_modules/codemirror/addon/tern/tern.js -> updateArgHints so I could get ArgPos
-    // which is otherwise not stored/exposed
-    var argPos = -1
-    if (!editor.somethingSelected()) {
-      var state = currentToken.state
-      var inner = CodeMirror.innerMode(editor.getMode(), state)
-      if (inner.mode.name === "javascript") {
-        var lex = inner.state.lexical
-        if (lex.info === "call") {
-          argPos = lex.pos || 0
-          lex.pos = argPos
+      // I stole the following approach from
+      // node_modules/codemirror/addon/tern/tern.js -> updateArgHints so I could get ArgPos
+      // which is otherwise not stored/exposed
+      let argPos = -1
+      if (!editor.somethingSelected()) {
+        const state = currentToken.state
+        const inner = CodeMirror.innerMode(editor.getMode(), state)
+        if (inner.mode.name === "javascript") {
+          const lex = inner.state.lexical
+          if (lex.info === "call") {
+            argPos = lex.pos || 0
+            lex.pos = argPos
+          }
         }
       }
-    }
-    // this hint tooltip is still off when cursor is in the comment.. e.g.
-    // fn(
-    //  arg1, // comment about arg1
-    //  arg2
-    // )
-    ternServer && ternServer.updateArgHints(this.codeMirror)
+      // this hint tooltip is still off when cursor is in the comment.. e.g.
+      // fn(
+      //  arg1, // comment about arg1
+      //  arg2
+      // )
+      ternServer && ternServer.updateArgHints(this.codeMirror)
 
-    var functionTypeInfo = null
-    const _setState = (functionTypeInfo) => {
-      if (functionTypeInfo) {
-        JsonDocsFinder.getApiDocsAsync({
-            frameworkName: functionTypeInfo.origin,
-            //frameworkVersion: "x.x.x",
-            symbolType: "method",
-            symbol: functionTypeInfo.name || functionTypeInfo.exprName   // Tern can't always provide a 'name', for example when guessing
-          },
-          (originalRequest, result) => {
-            // This callback will always be called, but could be sync or async
-            this.setState({
-              "helpDocJsonMethodInfo": result.data,
-              "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {},
-              "functionArgPos": argPos,
-              "functionTypeInfo": functionTypeInfo || {},
-              currentToken: currentToken
-            })   // MIGHT BE SYNC OR ASYNC. THIS MATTERS. Maybe find a better way to handle this down in a component?
+      let functionTypeInfo = null
+      const _doResolve = (functionTypeInfo) => {
+        if (functionTypeInfo) {
+          JsonDocsFinder.getApiDocsAsync({
+              frameworkName: functionTypeInfo.origin,
+              //frameworkVersion: "x.x.x",
+              symbolType: "method",
+              symbol: functionTypeInfo.name || functionTypeInfo.exprName   // Tern can't always provide a 'name', for example when guessing
+            },
+            (originalRequest, result) => {
+              resolve({
+                "helpDocJsonMethodInfo": result.data,
+                "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {},
+                "functionArgPos": argPos,
+                "functionTypeInfo": functionTypeInfo || {},
+                currentToken: currentToken
+              })
+            })
+        }
+        else {
+          resolve({
+            "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {},
+            "functionArgPos": argPos,
+            "helpDocJsonMethodInfo": null,
+            "functionTypeInfo": functionTypeInfo || {},
+            currentToken: currentToken
           })
+        }
       }
-      else {
-        this.setState({
-          "functionHelp": functionTypeInfo ? ternServer.cachedArgHints : {},
-          "functionArgPos": argPos,
-          "helpDocJsonMethodInfo": null,
-          "functionTypeInfo": functionTypeInfo || {},
-          currentToken: currentToken
+
+      if (argPos !== -1) {
+        ternServer.request(editor, "type",  (error, data) => {
+          // async call - component may be unmounted already
+          if(!this.isActive)
+            return
+          functionTypeInfo = error ? { error } : data
+          _doResolve(functionTypeInfo)
+        }, currentCursorPos)     // TODO - We need CodeMirror 5.13.5 so this will work
+      }
+      else
+        _doResolve()
+    })
+  }
+  /**
+   * Gets type from tern server asynchronously and resolves promise with new state props on completion.
+   * @returns Promise
+   */
+  srcUpdate_GetRelevantTypeInfo() {
+    return new Promise(resolve => {
+      const ternServer = this.ternServer
+      const editor = this.codeMirror
+      if(!ternServer || !editor){
+        resolve()
+        return
+      }
+      const position = editor.getCursor()
+      const query = {
+        type: "type",
+        depth: 0
+        //preferFunction: true
+      }
+
+      ternServer.request(editor, query, (error, data) => {
+        // async call - component may be unmounted already
+        if(!this.isActive)
+          return
+        if (error)
+          resolve({atCursorTypeRequestResponse: {"error": error}})
+        else {
+          if (data.type == data.name) {
+            query.depth = 1
+            ternServer.request(editor, query, (error, data) => {
+              // async call - component may be unmounted already
+              if(!this.isActive)
+                return
+              if (error)
+                resolve({atCursorTypeRequestResponse: {"error": error}})
+              else
+                resolve({atCursorTypeRequestResponse: {data}})
+            }, position)
+          }
+          else
+            resolve({atCursorTypeRequestResponse: {data}})
+        }
+      }, position)
+    })
+  }
+  /**
+   * Gets references from tern server asynchronously and resolves promise with new state props on completion.
+   * @returns Promise
+   */
+  srcUpdate_GetRefs() {
+    return new Promise(resolve => {
+      let ternServer = this.ternServer
+      let editor = this.codeMirror
+      if(!ternServer || !editor){
+        resolve()
+        return
+      }
+      let position = editor.getCursor()
+
+      ternServer.request(editor, "refs", (error, data) => {
+        // async call - component may be unmounted already
+        if(!this.isActive)
+          return // discuss: resolve or just ignore???
+        if (error)
+          resolve({atCursorRefRequestResponse: {"error": error}})
+        else
+          resolve({atCursorRefRequestResponse: {data}})
+      }, position)
+    })
+  }
+  /**
+   * Gets definitions from tern server asynchronously and resolves promise with new state props on completion.
+   * @returns Promise
+   */
+  srcUpdate_GetDef() {
+    return new Promise( resolve => {
+      let ternServer = this.ternServer
+      let editor = this.codeMirror
+      if (!ternServer || !editor) {
+        resolve()
+        return
+      }
+      let position = editor.getCursor()
+
+      ternServer.request(editor, "definition", (error, data) => {
+        // async call - component may be unmounted already
+        if (!this.isActive)
+          return
+        if (error)
+          resolve({atCursorDefRequestResponse: {"error": error}})
+        else {
+          data.definitionText = (data.origin === this.props.asset.name && data.start) ? editor.getLine(data.start.line).trim() : null
+          resolve({atCursorDefRequestResponse: {data}})
+        }
+      }, position)
+    })
+  }
+  /**
+   * Gets comment at char index - resolves on completetion with found comment (if any) - may or may not be async
+   * @param {number} index - character index in the WHOLE document
+   * @returns Promise
+   */
+  getCommentAt(index = 0){
+    return new Promise(resolve => {
+      if(this.mgb_c2_hasChanged || !this.mgb_cache.comments || this.mgb_cache.comments.length === 0){
+        this.ternServer.server.getComments((comments) => {
+          this.mgb_cache.comments = comments
+          resolve(_.find(comments, com => com.start <= index && com.end >= index))
         })
       }
-    }
-
-    if (argPos !== -1) {
-      ternServer.request(editor, "type", function (error, data) {
-        functionTypeInfo = error ? { error } : data
-        _setState(functionTypeInfo)
-      }, currentCursorPos)     // TODO - We need CodeMirror 5.13.5 so this will work
-    }
-    else
-      _setState()
-  }
-
-  srcUpdate_GetRelevantTypeInfo() {
-    let ternServer = this.ternServer
-    let editor = this.codeMirror
-    if(!ternServer || !editor){
-      return
-    }
-    let position = editor.getCursor()
-    var self = this
-    let query = {
-      type: "type",
-      depth: 0
-    }
-
-    ternServer.request(editor, query, function (error, data) {
-      if (error)
-        self.setState({atCursorTypeRequestResponse: {"error": error}})
-      else
-        self.setState({atCursorTypeRequestResponse: {data}})
-    }, position)
-  }
-
-  srcUpdate_GetRefs() {
-    let ternServer = this.ternServer
-    let editor = this.codeMirror
-    if(!ternServer || !editor){
-      return
-    }
-    let position = editor.getCursor()
-    var self = this
-
-    ternServer.request(editor, "refs", function (error, data) {
-      if (error)
-        self.setState({atCursorRefRequestResponse: {"error": error}})
-      else
-        self.setState({atCursorRefRequestResponse: {data}})
-    }, position)
-  }
-
-  srcUpdate_GetDef() {
-    let ternServer = this.ternServer
-    let editor = this.codeMirror
-    if(!ternServer || !editor){
-      return
-    }
-    let position = editor.getCursor()
-
-    ternServer.request(editor, "definition", (error, data) => {
-      if (error)
-        this.setState({atCursorDefRequestResponse: {"error": error}})
-      else {
-        data.definitionText = (data.origin === this.props.asset.name && data.start) ? editor.getLine(data.start.line).trim() : null
-        this.setState({atCursorDefRequestResponse: {data}})
+      else{
+        resolve(_.find(this.mgb_cache.comments, com => com.start <= index && com.end >= index))
       }
-    }, position)
+    })
+  }
+
+  /**
+   * @typedef {Object} Comment
+   * @property {boolean} block - is this a block comment?
+   * @property {string} text - comment's text without starting symbols - // or /* * /
+   * @property {number} start - starting index of the comment
+   * @property {number} end - ending index of the comment
+   *
+   * Gets Comment at cursor position - resolves on completion with found Comment (if any) - may or may not be async
+   * @returns Promise
+   */
+  getCommentAtCursor(){
+    const ternServer = this.ternServer
+    const editor = this.codeMirror
+    if(!ternServer || !editor){
+      return Promise.resolve()
+    }
+    let currentCursorPos = editor.getCursor()
+    const index = editor.indexFromPos(currentCursorPos)
+
+    return this.getCommentAt(index)
   }
 
   // srcUpdate_getProperties()
   // {
   /// This doesn't seem super useful. It's just an array of completion strings, no extra data
   //   let ternServer=this.ternServer
-  //   let editor = this.codeMirror      
+  //   let editor = this.codeMirror
   //   let position = editor.getCursor()
   //   var self = this
 
   //   ternServer.request(editor, "properties", function(error, data) {
   //     if (error)
-  //       self.setState( { atCursorPropertiesRequestResponse: { "error": error } } ) 
+  //       self.setState( { atCursorPropertiesRequestResponse: { "error": error } } )
   //     else
   //     {
 
@@ -941,27 +1351,43 @@ export default class EditCode extends React.Component {
   //   }, position)
   // }
 
+  /**
+   * Gets MemberParent definitions from tern server asynchronously and resolves promise on completion.
+   * @returns Promise
+   */
+  /* TODO (@stauzs): fix this - Tern worker don't have MGB extensions installed
+    (move EditCode/tern/MgbTernExtensions.js to TernWorker)
+  */
+  srcUpdate_getMemberParent(callback) {
+    return new Promise(resolve => {
+      if (!showDebugAST) {
+        // nothing to do
+        resolve()
+        return
+      }
 
-  srcUpdate_getMemberParent() {
-    if (showDebugAST) {
       let ternServer = this.ternServer
       let editor = this.codeMirror
-      if(!ternServer || !editor){
+      if (!ternServer || !editor) {
+        resolve()
         return
       }
       let position = editor.getCursor()
-      var self = this
 
       var query = {type: "mgbGetMemberParent"}
 
-      ternServer.request(editor, query, function (error, data) {
+      ternServer.request(editor, query, (error, data) => {
+        // async call - component may be unmounted already
+        if (!this.isActive)
+          return
         if (error)
-          self.setState({atCursorMemberParentRequestResponse: {"error": error}})
+          this.setState({atCursorMemberParentRequestResponse: {"error": error}})
         else {
-          self.setState({atCursorMemberParentRequestResponse: {data}})
+          this.setState({atCursorMemberParentRequestResponse: {data}})
         }
+        resolve()
       }, position)
-    }
+    })
   }
 
 
@@ -969,7 +1395,7 @@ export default class EditCode extends React.Component {
     var ed = this.codeMirror
     ed.clearGutter("mgb-cm-user-markers")
 
-    let acts = this.props.activitySnapshots
+    let acts = this.props.getActivitySnapshots()
     _.each(acts, act => {
       var currUserId = this.props.currUser ? this.props.currUser._id : "BY_SESSION:" + Meteor.default_connection._lastSessionId
       if (currUserId !== act.byUserId) {
@@ -992,49 +1418,80 @@ export default class EditCode extends React.Component {
     if(!this.isActive){
       return
     }
+
     const editor = this.codeMirror
     const position = editor.getCursor()
     const { asset } = this.props
-    const passiveAction = {
-      position: position
-    }
+    const passiveAction = { position }
     snapshotActivity(asset, passiveAction)
-    
-
+    // this is one very heavy function called on cursor changes
+    // prevent updates to whole component - so we can complete it faster
+    // also preventing updates will allow user to type normally (without freezing codemirror)
     this.setState({_preventRenders: true})
 
-    try {
-      // TODO: update Read only???
-      // TODO: Batch the async setState() calls also. 
-      this.srcUpdate_CleanSheetCase()
-      this.srcUpdate_LookForMgbAssets()
-      this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
-      if (asset.kind === 'code')
-      {
-        this.srcUpdate_GetInfoForCurrentFunction()
-        this.srcUpdate_GetRelevantTypeInfo()
-        this.srcUpdate_GetRefs()
-        this.srcUpdate_GetDef()
-        this.srcUpdate_getMemberParent()
-      }
-      if (asset.kind === 'tutorial')
-      {
-        this.srcUpdate_AnalyzeTutorial()
-      }
-      // TODO:  See atInterestingExpression() and findContext() which are 
-      // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
+    // TODO: update Read only???
+    // TODO: Batch the async setState() calls also for tutprial.
+    this.srcUpdate_CleanSheetCase()
+    this.srcUpdate_LookForMgbAssets()
+    this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
+    if (asset.kind === 'code')
+    {
+      // collect new state properties and set state on full resolve
+      const newState = {_preventRenders: false}
+      this.srcUpdate_GetInfoForCurrentFunction()
+        .then((state) => {
+          Object.assign(newState, state)
+          return this.srcUpdate_GetRelevantTypeInfo()
+        })
+        .then((state) => {
+          Object.assign(newState, state)
+          return this.srcUpdate_GetRefs()
+        })
+        .then((state) => {
+          Object.assign(newState, state)
+          return this.srcUpdate_GetDef()
+        })
+        .then((state) => {
+          Object.assign(newState, state)
+          return this.getCommentAtCursor()
+        })
+        .then(comment => {
+          Object.assign(newState, {comment})
+        })
+        .then(() => {
+          this.setState(newState)
+          // we have analysed source
+          this.mgb_c2_hasChanged = false
+        })
+      // not used: see comment near function
+      // this.srcUpdate_getMemberParent(onDone())
     }
-    finally {
+    else if (asset.kind === 'tutorial')
+    {
+      this.srcUpdate_AnalyzeTutorial()
       this.setState({_preventRenders: false})
     }
+    else
+    {
+      // undo prevent
+      this.setState({_preventRenders: false})
+    }
+    // TODO:  See atInterestingExpression() and findContext() which are
+    // called by TernServer.jumpToDef().. LOOK AT THESE.. USEFUL?
+
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !(nextState._preventRenders || this.state.creatingBundle)
+    // this.changeTimeout - is set when user is typing
+    const retval = !( this.changeTimeout || nextState._preventRenders || this.state.creatingBundle)
+    //console.log("Should update:", retval)
+    // && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
+    return retval || this.state.needsBundle != nextState.needsBundle || this.state.hotReload != nextState.hotReload
   }
 
   codemirrorValueChanged(doc, change) {
     // Ignore SetValue so we don't bounce changes from server back up to server
+    this.mgb_c2_hasChanged = true
     if (change.origin !== "setValue") {
       const newValue = doc.getValue()
       this._currentCodemirrorValue = newValue
@@ -1047,6 +1504,14 @@ export default class EditCode extends React.Component {
   componentDidUpdate() {
     this.cm_updateActivityMarkers()
     this.updateDocName()
+      const asset = this.props.asset
+    // enable auto bundle by default
+    if(asset.content2.needsBundle === void(0)){
+      // disable code bundling for challenges
+      if(!asset.skillPath){
+        this.toggleBundling()
+      }
+    }
   }
 
   _consoleClearAllMessages() {
@@ -1055,12 +1520,20 @@ export default class EditCode extends React.Component {
 
   _consoleAdd(data) {
     // Using immutability helpers as described on https://facebook.github.io/react/docs/update.html
-    let newMessages = update(this.state.consoleMessages, {$push: [data]}).slice(-10)
+    let newMessages = update(this.state.consoleMessages, {$push: [data]}).slice(-SpecialGlobals.editCode.messagesInConsole)
     this.setState({consoleMessages: newMessages})
     // todo -  all the fancy stuff in https://github.com/WebKit/webkit/blob/master/Source/WebInspectorUI/UserInterface/Views/ConsoleMessageView.js
   }
 
+  consoleLog(message) {
+    this._consoleAdd({
+      args:['MGB: ' + message],
+      timestamp: new Date,
+      consoleFn:"info"
+    })
+  }
   _handle_iFrameMessageReceiver(event) {
+    // there is no ref for empty code
     if (this.refs.gameScreen)   // TODO: This maybe a code smell that we (a) are getting a bunch more mesage noise than we expect (e.g. Meteor.immediate) and (b) that we should maybe register/deregister this handler more carefully
       this.refs.gameScreen.handleMessage(event)
   }
@@ -1069,7 +1542,7 @@ export default class EditCode extends React.Component {
     if (this.state.isPlaying)
       this._postMessageToIFrame({
         mgbCommand: 'screenshotCanvas',
-        recommendedHeight: 150            // See AssetCard for this size
+        recommendedHeight: THUMBNAIL_HEIGHT            // See AssetCard for this size
       })
   }
 
@@ -1087,30 +1560,15 @@ export default class EditCode extends React.Component {
 
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d")
-    canvas.width = 250
-    canvas.height = 150
-
-    /*
-
-      ctx.font = '16px courier'
-      canvas.width = 250
-      canvas.height = 150
-      ctx.fillStyle = 'rgba(153,204,153,0.2)'
-      ctx.fillRect(0,0,250,150)
-      ctx.fillStyle = 'black'
-      for(let i=0; i<list.length; i++) {
-        ctx.fillText(list[i].name, 6+(i*12), (i + 1)*16, 244 - i*12)
-      }
-      this.props.asset.thumbnail = canvas.toDataURL('image/png')
-      this.handleContentChange(null, this.props.asset.thumbnail, "update thumbnail")
-    })*/
+    canvas.width = THUMBNAIL_WIDTH
+    canvas.height = THUMBNAIL_HEIGHT
 
     this.ternServer.server.getAstFlowerTree({
       local: false
     }, (tree) => {
 
       const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower("#codeflower", w, w / canvas.width * 150)
+      const flower = new CodeFlower("#codeflower", w, w / canvas.width * THUMBNAIL_HEIGHT)
 
       flower.update(tree)
 
@@ -1143,7 +1601,7 @@ export default class EditCode extends React.Component {
     this.ternServer.server.getAstFlowerTree((tree) => {
 
       const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower("#codeflower", w, w / 250 * 150)
+      const flower = new CodeFlower("#codeflower", w, w / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT)
       flower.update(tree)
       this.setState({
         astFlowerReady: true
@@ -1156,7 +1614,7 @@ export default class EditCode extends React.Component {
         local: true
       }, (tree) => {
       const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower("#codeflower", w, w / 250 * 150, {
+      const flower = new CodeFlower("#codeflower", w, w / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT, {
         showNames: false,
         onclick: (node) => {
           // make node stay in place
@@ -1174,13 +1632,10 @@ export default class EditCode extends React.Component {
             return
           }
           // we need to get line ch from char position
-          let found = false
           cm.eachLine((line) => {
-            if (found) return
             if (node.start >= char && node.start < char + line.text.length) {
               pos.ch = node.start - char
-              found = true
-              return
+              return true
             }
             pos.line++
             char += (line.text.length + 1)
@@ -1201,7 +1656,7 @@ export default class EditCode extends React.Component {
 
     }, (tree) => {
       const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower("#codeflower", w, w / 250 * 150, {
+      const flower = new CodeFlower("#codeflower", w, w / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT, {
         showNames: true
       })
       flower.update(tree)
@@ -1214,10 +1669,10 @@ export default class EditCode extends React.Component {
   saveAstThumbnail() {
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d")
-    canvas.width = 250
-    canvas.height = 150
+    canvas.width = THUMBNAIL_WIDTH
+    canvas.height = THUMBNAIL_HEIGHT
     ctx.fillStyle = 'rgba(153,204,153,0.2)'
-    ctx.fillRect(0,0,250,150)
+    ctx.fillRect(0,0,canvas.width, canvas.height)
 
     this.refs.codeflower.firstChild.setAttribute("xmlns","http://www.w3.org/2000/svg")
     const data = this.refs.codeflower.innerHTML
@@ -1245,13 +1700,19 @@ export default class EditCode extends React.Component {
   }
 
   _postMessageToIFrame(messageObject) {
-    this.refs.gameScreen.postMessage(messageObject)
+    // there is no ref for empty code
+    this.refs.gameScreen && this.refs.gameScreen.postMessage(messageObject)
     // this.iFrameWindow.contentWindow.postMessage(messageObject, "*")
   }
 
   /** Start the code running! */
   handleRun() {
-    this._consoleClearAllMessages()
+    // always make sure we are running latest sources and not stacking them
+    if(this.state.isPlaying)
+      this.handleStop()
+
+
+    this.consoleLog("Starting new game runner")
     if (!this.bound_handle_iFrameMessageReceiver)
       this.bound_handle_iFrameMessageReceiver = this._handle_iFrameMessageReceiver.bind(this)
     window.addEventListener('message', this.bound_handle_iFrameMessageReceiver)
@@ -1259,49 +1720,72 @@ export default class EditCode extends React.Component {
     const { asset } = this.props
 
     this.setState({isPlaying: true})
+    // we don't want to hide tutorials so we open popup
+    if(asset.skillPath && !this.state.isPopup)
+      this.setState({ isPopup: true })
 
-    this.tools.collectSources((collectedSources) => {
-      this._postMessageToIFrame({
-        mgbCommand: 'startRun',
-        sourcesToRun: collectedSources,
-        asset_id: asset._id,
-        filename: asset.name || ""
+    this.tools.collectSources()
+      .then(collectedSources => {
+        const startRun = () => {
+          if (this.refs.gameScreen && this.refs.gameScreen.isIframeReady()) {
+            this._postMessageToIFrame({
+              mgbCommand: 'startRun',
+              sourcesToRun: collectedSources,
+              asset_id: asset._id,
+              filename: asset.name || ""
+            })
+          }
+          else{
+            // ask iframe to tell parent that it is ready.. fix for very slow connections
+            this._postMessageToIFrame({
+              mgbCommand: 'approveIsReady'
+            })
+            window.setTimeout(startRun, 100)
+          }
+        }
+        startRun()
+
       })
-    })
 
-
-    // Make sure that it's really visible.. and also auto-close accordion above so there's space.
-    $('.ui.accordion').accordion('close', 0)
-    $('.ui.accordion').accordion('open', 1)
+      const idx = Math.floor($('#mgbjr-EditCode-codeRunner').index() / 2)  //  because title + content for one entry
+      // auto-close accordion above so there's space.
+      for(let i=idx - 1; i > -1; i--){
+        // don't close code tutorial accordion (should be 0th element)
+        if(asset.skillPath && i==0)
+          continue
+        $('.ui.accordion').accordion('close', i)
+      }
+      // Make sure that it's really visible.. and also
+      $('.ui.accordion').accordion('open', idx )
   }
 
 
   handleStop() {
+    this.refs.gameScreen && this.refs.gameScreen.stop()
     this.setState({
       gameRenderIterationKey: this.state.gameRenderIterationKey + 1, // or this.iFrameWindow.contentWindow.location.reload() ?
       isPlaying: false
     })
     window.removeEventListener('message', this.bound_handle_iFrameMessageReceiver)
   }
-  handleFullScreen(id) {
+  handleFullScreen(id = this.props.asset._id) {
     if (this.props.canEdit) {
-      const urlToOpen = "about:blank"; //window.location.origin + '/api/blank' //- to work with pushState without reload
-      let child = window.open(urlToOpen, "Bundle")
-      child.document.write(
-        `<h1>Creating bundle</h1>
-<p>Please wait - the latest version of your game is being bundled and loaded</p>`
-      )
+      // use this so we can get favicon
+      // TODO: change iframe manipulations to messages - to use CDN link to blank page
+      const urlToOpen = "/blank.html" //window.location.origin + '/api/blank' //- to work with pushState without reload
+      let fullScreenWindow = window.open(urlToOpen, "Bundle")
+      this.mgb_fullScreenWindow = fullScreenWindow
       this.createBundle(() => {
         // clear previous data - and everything else
-        if (!child.document) {
-          child = window.open(urlToOpen, "Bundle")
+        if (!fullScreenWindow.document) {
+          fullScreenWindow = window.open(urlToOpen, "Bundle")
         }
         const delayReloadIfSaving = () => {
-          if(this.props.hasUnsentSaves || this.props.asset.isUnconfirmedSave)
+          if (this.props.hasUnsentSaves || this.props.asset.isUnconfirmedSave)
             window.setTimeout(delayReloadIfSaving, 100)
           else {
             //child.history.pushState(null, "Bundle", `/api/asset/code/bundle/${id}`)
-            child.location = `/api/asset/code/bundle/${id}`
+            fullScreenWindow.location = `/api/asset/code/bundle/${id}`
           }
         }
 
@@ -1317,45 +1801,53 @@ export default class EditCode extends React.Component {
     if(this.props.asset.kind == "tutorial"){
       return
     }
-    if (this.state.creatingBundle) {
-      console.log("creating bundle - in progress")
-      cb && cb()
+
+    if (this.state.creatingBundle || !this.props.canEdit) {
+      setTimeout(() => {
+        this.createBundle(cb)
+      }, 100)
       return
     }
-    if (this.props.canEdit) {
-      this.setState({
-        creatingBundle: true
-      })
-      this.tools.createBundle((bundle, notChanged) => {
-        if(!notChanged){
-          const value = this.codeMirror.getValue()
-          const newC2 = {src: value, bundle: bundle, needsBundle: this.state.needsBundle}
-          // make sure we have bundle before every save
-          this.handleContentChangeAsync(newC2, null, `Store code bundle`)
-        }
-        if(this.isActive) {
-          this.setState({
-            creatingBundle: false
+    this.setState({creatingBundle: true})
+    this.tools.createBundle()
+      .then(bundle => {
+        const value = this.codeMirror.getValue()
+        this.tools.transpileAndMinify('/' + this.props.asset.name, value)
+          .then(es5 => {
+            const c2 = this.props.asset.content2
+
+            const newC2 = {
+              src: value,
+              bundle: bundle,
+              needsBundle: c2.needsBundle,
+              hotReload: c2.hotReload,
+              es5
+            }
+            // make sure we have bundle before every save
+            this.handleContentChangeAsync(newC2, null, `Store code bundle`)
+            this.setState({creatingBundle: false})
+            cb && cb()
           })
-        }
-        cb && cb()
       })
-    }
-    else{
-      cb && cb()
-    }
+
   }
 
   handleGamePopup() {
     this.setState( { isPopup: !this.state.isPopup } )
+    this.handleRun()
   }
 
-  pasteSampleCode(item) {   // item is one of the templateCodeChoices[] elements
-    let newValue = item.code
+
+  /**
+   * item is one of the templateCodeChoices[] elements with non-null { label, code }
+   */
+  pasteSampleCode = item => {
+    const newValue = item.code
     this.codeMirror.setValue(newValue)
     this._currentCodemirrorValue = newValue
-    let newC2 = {src: newValue}
+    const newC2 = { src: newValue }
     this.handleContentChange(newC2, null, `Template code: ${item.label}`)
+
     const label = item.label.replace(/ /g, '-')
     joyrideCompleteTag('mgbjr-CT-EditCode-templates-'+label+'-invoke')
   }
@@ -1366,7 +1858,10 @@ export default class EditCode extends React.Component {
       this.props.handleContentChange(c2, thumbnail, reason)
       return
     }
+
     c2.needsBundle = this.props.asset.content2.needsBundle
+    c2.hotReload = this.props.asset.content2.hotReload
+
     //props trigger forceUpdate - so delay changes a little bit - on very fast changes
     if (this.changeTimeout) {
       window.clearTimeout(this.changeTimeout)
@@ -1380,12 +1875,17 @@ export default class EditCode extends React.Component {
         this.props.handleContentChange(c2, thumbnail, reason)
         return
       }
+
       this.doFullUpdateOnContentChange((errors) => {
+
         // it's not possible to create useful bundle with errors in the code - just save
         if(errors.length || !this.props.asset.content2.needsBundle){
-          this.changeTimeout = 0
-          this.lastSavedValue = c2.src
-          this.props.handleContentChange(c2, thumbnail, reason)
+          this.tools.transpileAndMinify('/' + this.props.asset.name, c2.src)
+            .then(es5 => {
+              c2.es5 = es5
+              this.lastSavedValue = c2.src
+              this.props.handleContentChange(c2, thumbnail, reason)
+            })
         }
         else{
           // createBundle is calling handleContentChangeAsync after completion
@@ -1411,28 +1911,45 @@ export default class EditCode extends React.Component {
     }
 
   }
+
+  handleHotReload() {
+    if (this.state.hotReload) {
+      this.consoleLog(`Hot Reload - refreshing`)
+      if (this.state.isPlaying){
+        this.handleRun()
+      }
+      if (this.mgb_fullScreenWindow && !this.mgb_fullScreenWindow.closed)
+        this.handleFullScreen()
+    }
+  }
+
+
   // this is very heavy function - use with care
   // callback gets one argument - array with critical errors
   doFullUpdateOnContentChange( cb ) {
     // operation() is a way to prevent CodeMirror updates until the function completes
     // However, it is still synchronous - this isn't an async callback
+    this.mgb_c2_hasChanged = true
     this.codeMirror.operation(() => {
       const val = this.codeMirror.getValue()
       this.runJSHintWorker(val, (errors) => {
         const critical = errors.filter(e => e.code.substr(0, 1) === "E")
         this.hasErrors = !!critical.length
         if (this.tools) {
-          this.tools.collectAndTranspile(val, this.props.asset.name, () => {
-            this.setState({
-              astReady: true
+          // set asset name to /assetName - so recursion is handled correctly
+          this.tools.collectAndTranspile('/' + this.props.asset.name, val)
+            .then(() => {
+              this.setState({
+                astReady: true
+              })
+              this.codeMirrorOnCursorActivity()
+              cb && cb(critical)
+              this.handleHotReload()
+            }, (a) => {
+              console.log("Something failed!!!", a)
             })
-            // this will force to update mentor info - even if cursor wasn't moving
-            // used in the case when we have pulled defs or new code in to tern server
-            this.codeMirrorOnCursorActivity()
-            cb && cb(critical)
-          }, true)
         }
-        else{
+        else {
           cb && cb(critical)
         }
       })
@@ -1470,11 +1987,19 @@ export default class EditCode extends React.Component {
   toolCommentUnFade() {
     this.doHandleCommentFadeDelta(-1)
   }
-  
+
   toolToggleInfoPane() {
     const i = this.state.infoPaneMode
-    const newMode = (i+1) % _infoPaneModes.length 
+    const newMode = (i+1) % _infoPaneModes.length
+
+    const oldMode = _infoPaneModes[this.state.infoPaneMode]
+    const curMode = _infoPaneModes[newMode]
     // if(!_infoPaneModes[newMode].col2) this.handleStop()
+    //
+    if(this.state.isPlaying && (!oldMode.col2 || !curMode.col2) ){
+      this.handleRun()
+    }
+
     this.setState( { infoPaneMode: newMode } )
   }
 
@@ -1494,10 +2019,30 @@ export default class EditCode extends React.Component {
           level:    1,
           shortcut: 'Ctrl+I'
         },
+        { name: 'separator' },
+        {
+          name: 'goBack',
+          icon: 'arrow left',
+          level:    2,
+          label: 'Go Back',
+          tooltip: 'This action will move cursor to the previous location',
+          disabled: !this.cursorHistory.undo.length,
+          shortcut: 'Ctrl+Alt+LEFT'
+        },
+        {
+          name: 'goForward',
+          icon: 'arrow right',
+          label: 'Go Forward',
+          level:    2,
+          tooltip: 'This action will move cursor to the next location',
+          disabled: !this.cursorHistory.redo.length,
+          shortcut: 'Ctrl+Alt+RIGHT'
+        },
+        { name: 'separator' },
         {
           name:  'toolZoomOut',
           label: 'Small Font',
-          icon:  'font',
+          icon:  'zoom out',
           tooltip: 'Smaller Text',
           disabled: false,
           level:    2,
@@ -1506,12 +2051,13 @@ export default class EditCode extends React.Component {
         {
           name:  'toolZoomIn',
           label: 'Large font',
-          icon:  'large font',
+          icon:  'zoom in',
           tooltip: 'Larger text',
           disabled: false,
           level:    2,
           shortcut: 'Ctrl+L'
         },
+        { name: 'separator' },
         {
           name:  'handleJsBeautify',
           label: 'Beautify Code',
@@ -1520,7 +2066,18 @@ export default class EditCode extends React.Component {
           disabled: false,
           level:    3,
           shortcut: 'Ctrl+B'
-        }
+        },
+        { name: 'separator' },
+        {
+          name:  'toggleFold',
+          label: this.mgb_code_folded ? 'Expand all nodes' : 'Fold all nodes',
+          icon:  this.mgb_code_folded ? 'expand' : 'compress',
+          tooltip: this.mgb_code_folded ? 'Unfold all nodes in the code' : 'Fold all nodes in the code',
+          disabled: false,
+          level:    3,
+          shortcut: 'Ctrl+Shift+\\'
+        },
+        { name: 'separator' }
       ]
     }
 
@@ -1553,17 +2110,17 @@ export default class EditCode extends React.Component {
         icon:     'stop',
         tooltip:  'Stop Running',
         disabled: !this.state.isPlaying,
-        level:    1
-        // shortcut: 'Ctrl+T'
+        level:    1,
+        shortcut: 'Ctrl+ENTER'
       })
       config.buttons.unshift( {
         name:     'handleRun',
         label:    'Run code',
         icon:     'play',
         tooltip:  'Run Code',
-        disabled: this.state.isPlaying,
-        level:    1
-        // shortcut: 'Ctrl+T'
+        disabled: this.state.isPlaying || !this.state.astReady,
+        level:    1,
+        shortcut: 'Ctrl+ENTER'
       })
       config.buttons.push( {
         name:  'toolCommentFade',
@@ -1583,6 +2140,7 @@ export default class EditCode extends React.Component {
         level:    3,
         shortcut: 'Ctrl+Alt+Shift+F'
       })
+      config.buttons.push({ name: 'separator' })
       config.buttons.push( {
         name:  'toggleBundling',
         label: 'Auto Bundle code',
@@ -1593,22 +2151,53 @@ export default class EditCode extends React.Component {
         level:    3,
         shortcut: 'Ctrl+Alt+Shift+B'
       })
-
-    }    
+      config.buttons.push( {
+        name:  'toggleHotReload',
+        label: 'Automatically reload game screen',
+        icon:  'refresh' + `${this.tools && this.mgb_c2_hasChanged ? ' red' : ''} ${!this.state.astReady ? ' animate rotate' : ''}`,
+        tooltip: (!this.state.astReady ? "Loading all required files...\n" : '') + 'Automatically reloads game screen when one of the imported scripts changes',
+        disabled: false,
+        active: this.props.asset.content2.hotReload,
+        level:    3,
+        shortcut: 'Ctrl+Alt+Shift+R'
+      })
+    }
     return config
+  }
+
+  toggleFold(){
+    const cm = this.codeMirror
+
+    cm.operation(() => {
+      for (var l = cm.firstLine(); l <= cm.lastLine(); ++l)
+        cm.foldCode({line: l, ch: 0}, null, this.mgb_code_folded ? 'unfold' : 'fold')
+
+      this.mgb_code_folded = !this.mgb_code_folded
+      this.setState({
+        mgb_code_folded: this.mgb_code_folded
+      })
+    })
+
   }
 
   toggleBundling() {
     this.props.asset.content2.needsBundle = !this.props.asset.content2.needsBundle
-    this.handleContentChange(this.props.asset.content2, null, "enableBundling")
     this.setState({needsBundle: this.props.asset.content2.needsBundle})
+
+    this.handleContentChange(this.props.asset.content2, null, "enableBundling")
+  }
+  toggleHotReload(){
+    this.props.asset.content2.hotReload = !this.props.asset.content2.hotReload
+    this.setState({hotReload: this.props.asset.content2.hotReload})
+
+    this.handleContentChange(this.props.asset.content2, null, "enableHotReload")
   }
 
   insertTextAtCursor(text) {
     if (!this.props.canEdit)
     {
       this.warnNoWriteAccess()
-      return      
+      return
     }
     const editor = this.codeMirror
     var doc = editor.getDoc()
@@ -1647,69 +2236,231 @@ export default class EditCode extends React.Component {
     addJoyrideSteps( [], { replace: true } )
   }
 
+  createImportString(val, user){
+    return `import ${validJSName(val)} from '/${user ? user + ':' : ''}${val}'\n`
+  }
+
+  includeLocalImport(val){
+    if (!this.props.canEdit)
+    {
+      this.warnNoWriteAccess()
+      return
+    }
+    const imp = this.createImportString(val) + this.codeMirror.getValue()
+
+    this.codeMirror.setValue(imp)
+    this.handleContentChange({src: imp})
+  }
+
+  includeExternalImport(val){
+    if (!this.props.canEdit)
+    {
+      this.warnNoWriteAccess()
+      return
+    }
+    const imp = `import ${val.name} from '${val.import}'\n` + this.codeMirror.getValue()
+
+    this.codeMirror.setValue(imp)
+    this.handleContentChange({src: imp})
+  }
+
+  // TODO: add some sort of message to highlighted lines????
+  highlightLines(from, to){
+    // make from 1 -> 0 so it's not confusing
+    from--
+    if(to == void(0) || isNaN(to))
+      to = from
+    else
+      to--
+
+    if(from < 0){
+      this.highlightedLines.forEach((lh) => {
+        this.codeMirror.removeLineClass(lh, 'background', 'highlight')
+      })
+    }
+
+    for(let i=from; i<=to; i++){
+      const lh = this.codeMirror.getLineHandle(i)
+      // reached end of the file
+      if(!lh)
+        return
+      this.codeMirror.addLineClass(lh, 'background', 'highlight')
+      this.highlightedLines.push(lh)
+    }
+    // scroll to first highlighted line
+    if(from > -1)
+      this.scrollToLine(from)
+  }
+
+  scrollToLine(line){
+    this.codeMirror.setCursor(line, 0)
+    var t = this.codeMirror.charCoords({line, ch: 0}, "local").top
+    var middleHeight = this.codeMirror.getScrollerElement().offsetHeight / 2
+    this.codeMirror.scrollTo(null, t - middleHeight - 5)
+  }
+
+  getStringReferences(){
+    const token = this.state.currentToken
+    const advices = []
+    // TODO.. something useful with token.state?
+    if(token && token.type == 'string' && this.state.userScripts && this.state.userScripts.length > 0){
+      let string = token.string.substring(1, token.string.length -1)
+      if(string.startsWith('/') && !string.startsWith('//')){
+        string = string.substring(1)
+        const parts = string.split(":")
+        if(parts.length === 1){
+          parts.unshift(this.props.asset.dn_ownerName)
+        }
+        advices.push(
+          <a className="ui fluid label" key={advices.length} style={{marginBottom: "2px"}} href={`/assetEdit/code/${parts.join('/')}`} target='_blank'>
+            <small style={{fontSize: '85%'}}>this string references <strong>{parts[0]}</strong> code asset:
+              <code>{parts[1]}</code></small>
+            <Thumbnail assetId={parts.join('/')} expires={60} constrainHeight='60px'/>
+          </a>
+        )
+      }
+    }
+    return advices
+  }
+
+  // need to do some cleanup as this function has almost same code as one above
+  getImportStringLocation(importString){
+    let string = importString
+    if(string.indexOf("'") === 0)
+      string = importString.substring(1, importString.length -1)
+    if(string.indexOf('/') === 0 && string.indexOf('//') !== 0){
+      string = string.substring(1)
+      const parts = string.split(":")
+      if(parts.length === 1) {
+        parts.unshift(this.props.asset.dn_ownerName)
+        /*const script = this.state.userScripts.find(a => a.text == string)
+        if (!script)
+          return this.getImportStringLocation('/' + this.props.asset.dn_ownerName + ':' + string)
+        return `/assetEdit/${script.id}`*/
+      }
+      return `/assetEdit/code/${parts.join('/')}`
+    }
+    return ''
+  }
+
+  getPrevToken(callback, cursor = null){
+    const cur = cursor || Object.assign({}, this.codeMirror.getCursor())
+    // TODO: maybe get correct last char of line instead for forcing random number?
+    cur.ch = 100
+    if(cur.line){
+      cur.line--
+      if(callback(this.codeMirror.getTokenAt(cur)))
+        this.getPrevToken(callback, cur)
+    }
+  }
+  getNextToken(callback, tokenIn, cursor = null){
+    const cur = cursor || Object.assign({}, this.codeMirror.getCursor())
+    const token = tokenIn || this.codeMirror.getTokenAt(cur)
+
+    // TODO: maybe get correct last char of line instead for forcing random number?
+    const line = this.codeMirror.getLine(cur.line)
+    if(line === void(0))
+      return
+
+    if(cur.ch > line.length){
+      cur.ch = 0
+      cur.line++
+    }
+    else
+      cur.ch = (tokenIn ? tokenIn.end : cur.ch) + 1
+    const nextToken = this.codeMirror.getTokenAt(cur)
+    // is this same token?
+    if(nextToken.start == token.start && nextToken.end == token.end){
+      this.getNextToken(callback, nextToken, cur)
+    }
+    else{
+      if(callback(nextToken)){
+        this.getNextToken(callback, nextToken, cur)
+      }
+    }
+  }
+
+
   render() {
-    const { asset, canEdit } = this.props
+    const { asset, canEdit, currUser } = this.props
 
     if (!asset)
       return null
 
-    const templateKind = asset.kind === 'tutorial' ? templateTutorial : templateCode
-    const templateCodeChoices = templateKind.map(item => {
-      const label = item.label.replace(/ /g, '-')
-      return (
-        <a className="item" id={"mgbjr-EditCode-template-"+label} key={item.label} onClick={this.pasteSampleCode.bind(this,item)}>
-          <div className="ui green horizontal label">{item.label}</div>
-          {item.description}
-        </a>
-      )
-    })
+    const docEmpty = this.state.documentIsEmpty
+    const isPlaying = this.state.isPlaying
 
     this.codeMirror && this.codeMirror.setOption("readOnly", !this.props.canEdit)
 
+    // preview ID and String references doing very similar things. Refactor?
     const previewIdThings = this.state.previewAssetIdsArray.map(assetInfo => {
       return (
         <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}} href={`/assetEdit/${assetInfo.id}`} target='_blank'>
-          <img className="ui right spaced medium image" src={`/api/asset/thumbnail/png/${assetInfo.id}`}></img>
+          <Thumbnail assetId={assetInfo.id} expires={60} constrainHeight='60px'/>
           URL references MGB <strong>{assetInfo.kind}</strong> asset {assetInfo.refType} {assetInfo.id}
         </a>
       )
     })
-
+    const stringReferences = this.getStringReferences()
     const infoPaneOpts = _infoPaneModes[this.state.infoPaneMode]
 
     const tbConfig = this.generateToolbarConfig()
 
-    let docEmpty = this.state.documentIsEmpty
-    let isPlaying = this.state.isPlaying
-
     // const RunCodeIFrameStyle = {
-    //   transform: "scale(0.5)",  
+    //   transform: "scale(0.5)",
     //   transformOrigin: "0 0",
     //   overflow: "hidden"
     // }
+    const fullSize = {position: "absolute", top: 0, bottom: 0, left: 0, right: '0.5em', overflow: "auto" }
+    const isPopup = this.state.isPopup || !infoPaneOpts.col2
+    const gameScreen = <GameScreen
+        key="gameScreen"
+        ref="gameScreen"
+        isPopup = {isPopup}
+        isPlaying = {this.state.isPlaying}
+        asset = {this.props.asset}
+        consoleAdd = {this._consoleAdd.bind(this)}
+        gameRenderIterationKey = {this.state.gameRenderIterationKey}
+        handleContentChange = {this.handleContentChange.bind(this)}
+        handleStop = {this.handleStop.bind(this)}
+      />
+
+    let isChallenge = false
+    let isCodeTutorial = false
+    if (asset.skillPath && asset.kind === 'code') {
+      if (isPathChallenge(asset.skillPath))
+        isChallenge = true
+      else if (isPathCodeTutorial(asset.skillPath))
+        isCodeTutorial = true
+    }
 
     return (
       <div className="ui grid">
         { this.state.creatingBundle && <div className="loading-notification">Bundling source code...</div> }
-        <div className={infoPaneOpts.col1 + ' wide column'}>
+        <div className={infoPaneOpts.col1 + ' wide column'} style={{ paddingTop: 0, paddingBottom: 0 }}>
 
           <div className="row" style={{marginBottom: "6px"}}>
-            {<Toolbar actions={this} config={tbConfig} name="EditCode" />}
+            {<Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
           </div>
-
-            <textarea ref="textarea"
+            <div className={'accept-drop' + (this.props.canEdit ? '' : ' read-only')}
+                 onDrop={(e) => { this.handleDropAsset(this.codeMirror, e) } }
+                 onDragOver={ (e) => {this.handleDragOver(this.codeMirror, e) } }
+              >
+              <textarea ref="textarea"
+                      className="allow-toolbar-shortcuts"
                       defaultValue={asset.content2.src}
                       autoComplete="off"
                       placeholder="Start typing code here..."/>
+            </div>
         </div>
 
-        { 
-        <div className={infoPaneOpts.col2 + ' wide column'} style={{display: infoPaneOpts.col2 ? "block" : "none"}}>
+        {
+        <div className={infoPaneOpts.col2 + ' wide column'} style={{padding: 0, display: infoPaneOpts.col2 ? "block" : "none"}}>
 
-          <div className="mgbAccordionScroller">
+          <div className="mgbAccordionScroller" style={fullSize}>
             <div className="ui fluid styled accordion">
 
-              { !docEmpty && asset.kind === 'tutorial' && 
+              { !docEmpty && asset.kind === 'tutorial' &&
                 // Current Line/Selection helper (header)
                 <div className="active title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -1717,35 +2468,101 @@ export default class EditCode extends React.Component {
                   </span>
                 </div>
               }
-              { !docEmpty && asset.kind === 'tutorial' &&     // TUTORIAL Current Line/Selection helper (body)               
+              { !docEmpty && asset.kind === 'tutorial' &&     // TUTORIAL Current Line/Selection helper (body)
                 <div className="active content">
-                  <TutorialMentor 
-                      tryTutorial={() => this.tryTutorial()} 
-                      stopTutorial={() => this.stopTutorial()}  
-                      parsedTutorialData={this.state.parsedTutorialData} 
+                  <TutorialMentor
+                      tryTutorial={() => this.tryTutorial()}
+                      stopTutorial={() => this.stopTutorial()}
+                      parsedTutorialData={this.state.parsedTutorialData}
                       insertCodeCallback={ canEdit ? (newCodeStr => this.insertTextAtCursor(newCodeStr) ) : null }/>
+
                   { previewIdThings && previewIdThings.length > 0 &&
                     <div className="ui divided selection list">
                       {previewIdThings}
                     </div>
                   }
+
+                  { stringReferences && stringReferences.length > 0 &&
+                  <div className="ui divided selection list">
+                    {stringReferences}
+                  </div>
+                  }
                 </div>
               }
 
-              { !docEmpty && asset.kind === 'code' && 
+              { isChallenge &&
+                <div
+                    className="title active"
+                    style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+                    id="mgbjr-EditCode-codeChallenges">
+                  <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                    <i className='dropdown icon' />Code Challenges
+                  </span>
+                </div>
+              }
+
+              { isChallenge &&
+                <CodeChallenges
+                  style       =   {{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+                  active      =   { asset.skillPath ? true : false}
+                  skillPath   =   { asset.skillPath }
+                  codeMirror  =   { this.codeMirror }
+                  currUser    =   { this.props.currUser }
+                  userSkills  =   { this.userSkills }
+                />
+              }
+
+              { isCodeTutorial &&
+                <div
+                    className="title active"
+                    style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+                    id="mgbjr-EditCode-codeTutorials">
+                  <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                    <i className='dropdown icon' />Code Tutorials
+                  </span>
+                </div>
+              }
+
+              { isCodeTutorial &&
+                <CodeTutorials
+                  style       =     { { backgroundColor: 'rgba(0,255,0,0.02)' } }
+                  isOwner     =     { currUser && currUser._id === asset.ownerId }
+                  active      =     { asset.skillPath ? true : false}
+                  skillPath   =     { asset.skillPath }
+                  codeMirror  =     { this.codeMirror }
+                  currUser    =     { this.props.currUser }
+                  userSkills  =     { this.userSkills }
+                  quickSave   =     { this.quickSave.bind(this) }
+                  highlightLines =  { this.highlightLines.bind(this) }
+                  assetId     =     { asset._id }
+                />
+              }
+
+              { !docEmpty && asset.kind === 'code' &&
                 // Current Line/Selection helper (header)
-                <div id="mgbjr-EditCode-codeMentor" className="active title">
+                <div id="mgbjr-EditCode-codeMentor" className={"title " + (asset.skillPath ? "" : "active") }>
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />Code Mentor
                   </span>
                 </div>
               }
-              { !docEmpty && asset.kind === 'code' && 
+              { !docEmpty && asset.kind === 'code' &&
                 // Current Line/Selection helper (body)
-                <div className="active content">
+                // optimise: don't render if accordeon is closed
+                <div className={"content " + (asset.skillPath ? "" : "active")} >
                   <TokenDescription
-                    currentToken={this.state.currentToken}/>
-
+                    currentToken={this.state.currentToken}
+                    getPrevToken={cb => this.getPrevToken(cb)}
+                    getNextToken={cb => this.getNextToken(cb)}
+                    comment={this.state.comment}
+                    />
+                  { this.state.astReady && this.props.canEdit &&
+                  <ImportHelperPanel
+                    scripts={this.state.userScripts}
+                    includeLocalImport={this.includeLocalImport}
+                    includeExternalImport={this.includeExternalImport}
+                    knownImports={this.tools.collectAvailableImportsForFile(this.props.asset.name)}
+                    /> }
                   <FunctionDescription
                     functionHelp={this.state.functionHelp}
                     functionArgPos={this.state.functionArgPos}
@@ -1767,29 +2584,45 @@ export default class EditCode extends React.Component {
                       {previewIdThings}
                     </div>
                   }
+
+                  { stringReferences && stringReferences.length > 0 &&
+                  <div className="ui divided selection list">
+                    {stringReferences}
+                  </div>
+                  }
                 </div>
               }
 
-              { docEmpty &&
-                // Clean sheet helper!          
+              { docEmpty && !asset.isCompleted && !isCodeTutorial && !isChallenge &&
+                // Clean sheet helper!
                 <div className="active title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                       <i className='dropdown icon' />Code Starter
                     </span>
                 </div>
               }
-              { docEmpty &&
-                <div className="active content">
-                  An Empty Page! If you like, you can click one of the following buttons to paste some useful template code into your
-                  empty file
-                  <div className="ui divided selection list">
-                    {templateCodeChoices}
-                  </div>
-                  ...or, if you think you know what you are doing, just start hacking away!
-                </div>
+              { docEmpty && !asset.isCompleted && !isCodeTutorial && !isChallenge &&
+                <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />
               }
-
-              { !docEmpty && asset.kind === 'code' && 
+              { docEmpty && this.state.astReady && !asset.isCompleted &&
+                // Quick import for empty doc
+              <div className="title">
+                    <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                      <i className='dropdown icon' />Quick Module Import
+                    </span>
+              </div>
+              }
+              { docEmpty && this.state.astReady && this.props.canEdit &&
+              <div className="content">
+                <ImportHelperPanel
+                  scripts={this.state.userScripts}
+                  includeLocalImport={this.includeLocalImport}
+                  includeExternalImport={this.includeExternalImport}
+                  knownImports={this.tools.collectAvailableImportsForFile(this.props.asset.name)}
+                  />
+                </div>
+                }
+              { !docEmpty && asset.kind === 'code' &&
                 // Code run/stop (header)
                 <div className="title" id="mgbjr-EditCode-codeRunner">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
@@ -1797,20 +2630,20 @@ export default class EditCode extends React.Component {
                   </span>
                 </div>
               }
-              { !docEmpty && asset.kind === 'code' && 
+              { !docEmpty && asset.kind === 'code' &&
                 // Code run/stop (body)
                 <div className="content">
-                  
-                  <span style={{float: "right", marginTop: "-28px", position: "relative"}}>
 
-                    { isPlaying && this.props.canEdit && 
+                  <span style={{float: "right", marginTop: "-19px", position: "relative"}}>
+
+                    { isPlaying && this.props.canEdit &&
                       <a className={"ui tiny icon button"} onClick={this.handleScreenshotIFrame.bind(this)}
                         title='This will set the Asset preview Thumbnail image to be a screenshot of the first <canvas> element in the page, *IF* your code has created one...'>
                         <i className='save icon' />
                       </a>
                     }
-                    { !isPlaying &&
-                      <a  className='ui tiny icon button' 
+                    { !isPlaying && this.state.astReady &&
+                      <a  className='ui tiny icon button'
                           title='Click here to start the program running'
                           id="mgb-EditCode-start-button"
                           onClick={this.handleRun.bind(this)}>
@@ -1818,48 +2651,33 @@ export default class EditCode extends React.Component {
                       </a>
                     }
                     { isPlaying &&
-                      <a  className='ui tiny icon button' 
+                      <a  className='ui tiny icon button'
                           title='Click here to stop the running program'
                           id="mgb-EditCode-stop-button"
                           onClick={this.handleStop.bind(this)}>
                         <i className={"stop icon"}></i>&emsp;Stop
                       </a>
                     }
-                    { 
+                    {
                       isPlaying &&
-                      <a  className={`ui tiny ${this.state.isPopup ? 'active' : '' } icon button`}
+                      <a  className={`ui tiny ${isPopup ? 'active' : '' } icon button`}
                           title='Popout the code-run area so it can be moved around the screen'
                           onClick={this.handleGamePopup.bind(this)}>
                         <i className={"external icon"}></i>&emsp;Popout
                       </a>
                     }
                     { !this.hasErrors &&
-                    <span className={( (this.tools.hasChanged() || this.state.creatingBundle) && this.props.canEdit) ? "ui button labeled" : ""}>
+                    <span className={( this.state.creatingBundle && this.props.canEdit) ? "ui button labeled" : ""}>
                       <a  className='ui tiny icon button full-screen'
+                          id="mgb-EditCode-full-screen-button"
                           title='Click here to start running your program in a different browser tab'
                           onClick={this.handleFullScreen.bind(this, asset._id)}>
                         <i className='external icon' />&emsp;Full&nbsp;
                       </a>
-                      {/*Moved to global notification - (this.tools.hasChanged()) - not used anymore - as we are creating bundle on every save - to make play game - better
-                      { this.state.creatingBundle && this.props.canEdit &&
-                        <a className="ui tiny left pointing label reload" onClick={() => {this.createBundle( () => {} )}}
-                          title="Updating Bundle">
-                          <i className={'refresh icon ' + (this.state.creatingBundle ? ' loading' : '')} />
-                        </a>
-                      }*/}
                     </span>
                     }
-                  </span>                
-                  <GameScreen
-                    ref="gameScreen"
-                    isPopup = {this.state.isPopup}
-                    isPlaying = {this.state.isPlaying}
-                    asset = {this.props.asset}
-                    consoleAdd = {this._consoleAdd.bind(this)}
-                    gameRenderIterationKey = {this.state.gameRenderIterationKey}
-                    handleContentChange = {this.handleContentChange.bind(this)}
-                    handleStop = {this.handleStop.bind(this)}
-                  />
+                  </span>
+                  {!isPopup && gameScreen}
 
                   <ConsoleMessageViewer
                     messages={this.state.consoleMessages}
@@ -1867,14 +2685,14 @@ export default class EditCode extends React.Component {
                     clearConsoleHandler={this._consoleClearAllMessages.bind(this) }/>
                 </div>
               }
-              { this.state.astReady && asset.kind === 'code' && 
+              { this.state.astReady && asset.kind === 'code' &&
                 <div id="mgbjr-EditCode-codeFlower" className="title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                     <i className='dropdown icon' />CodeFlower
                   </span>
                 </div>
               }
-              { this.state.astReady && asset.kind === 'code' && 
+              { this.state.astReady && asset.kind === 'code' &&
                 <div className='content'>
                   {/* this.props.canEdit && this.state.astReady &&
                    <a className={"ui right floated mini icon button"} onClick={this.drawAstFlower.bind(this)}
@@ -1906,8 +2724,13 @@ export default class EditCode extends React.Component {
           </div>
         </div>
         }
-        
+        {isPopup && gameScreen}
+
       </div>
     )
   }
+}
+
+EditCode.contextTypes = {
+  skills: PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
 }

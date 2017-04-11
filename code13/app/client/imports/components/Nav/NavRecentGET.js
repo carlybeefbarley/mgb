@@ -1,12 +1,13 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Icon, Popup } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 import reactMixin from 'react-mixin'
 import {Activity, ActivitySnapshots} from '/imports/schemas'
 import { AssetKinds } from '/imports/schemas/assets'
 import { ActivityTypes } from '/imports/schemas/activity.js'
 import moment from 'moment'
-
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -19,8 +20,7 @@ export default NavRecentGET = React.createClass({
 
   propTypes: {
     currUser:            PropTypes.object,           // Currently Logged in user. Can be null/undefined
-    styledForNavPanel:   PropTypes.bool.isRequired,  // True if we want the NavPanel style (inverted etc)
-    navPanelIsOverlay:   PropTypes.bool,             // If true, we must close NavPanel when links are clicked.. we do this with a QLink option    
+    styledForNavPanel:   PropTypes.bool.isRequired,  // True if we want the NavPanel style (inverted etc)   //TOD(@dgolds remove this old feature)
     showUserActivities:  PropTypes.bool.isRequired
   },
 
@@ -46,26 +46,6 @@ export default NavRecentGET = React.createClass({
     }
   },
 
-  enablePopups()
-  {
-    $(".hazRecentPopup").popup()
-  },
-
-  componentWillUnmount()
-  {
-    $(".hazRecentPopup").popup('destroy')
-  },
-
-  componentDidMount()
-  {
-    this.enablePopups()
-  },
-
-  componentDidUpdate()
-  {
-    this.enablePopups()
-  },
-
   renderMergedActivities()   // merge and sort by timestamp.. assets only? idk
   {
     if (!this.props.currUser || this.data.loading)
@@ -78,71 +58,82 @@ export default NavRecentGET = React.createClass({
     mergedArray = _.uniqBy(mergedArray, 'toAssetId')    // Remove later duplicate assetIds
     let retval = { justNow: [], today: [], older: []}
 
-    const { navPanelIsOverlay } = this.props
-
-
     _.each(mergedArray, a => {
       const isSnapshot = a.hasOwnProperty("currentUrl")
       const mTime = moment(a.timestamp)
       const ago = (isSnapshot ? "Viewed" : ActivityTypes.getDescription(a.activityType)) + " - " + mTime.fromNow()                   // TODO: Make reactive
-      const basicDataHtml = `<div><small>${ago}</small></div>`
+      const basicDataElement = <div><small>{ago}</small></div>
       let item = null
       if (this.props.showUserActivities && a.activityType && a.activityType.startsWith("user.")) {
 
         item = (
-          <QLink 
-              to={`/u/${a.byUserName}`} 
-              closeNavPanelOnClick={navPanelIsOverlay}
-              className="ui item" 
-              key={a._id}  
-              data-html={basicDataHtml} 
-              data-position="right center" >
-            <i className={"ui " + ActivityTypes.getIconClass(a.activityType)}></i>
-            {a.description}
-          </QLink>
+          <Popup
+            key={a._id}
+            positioning="right center">
+            trigger={
+            <QLink to={`/u/${a.byUserName}`} className="ui item">
+              <i className={"ui " + ActivityTypes.getIconClass(a.activityType)} />
+              {a.description}
+            </QLink>
+          }
+            {basicDataElement}
+          </Popup>
         )
       }
       else if (a.toAssetId)
       {
         // We only add Asset activities so far - not profile views etc
-        const assetKindIconClassName = AssetKinds.getIconClass(a.toAssetKind)
+        const assetKindIconName = AssetKinds.getIconName(a.toAssetKind)
         const assetKindColor = AssetKinds.getColor(a.toAssetKind)
         const assetActivityIconClass = isSnapshot ? "grey unhide icon" : ActivityTypes.getIconClass(a.activityType)
         const assetKindCap = capitalizeFirstLetter(a.toAssetKind)
         const assetNameTruncated = (this.props.styledForNavPanel && a.toAssetName && a.toAssetName.length > 19) ? a.toAssetName.substring(0, 19) + "..." : a.toAssetName
-        const assetThumbnailUrl = "/api/asset/thumbnail/png/" + a.toAssetId
-        const dataHtml = `<div><p>${assetKindCap}: ${a.toAssetName}</p><small><p>${ago}</p></small><img style="max-width: 240px;" src="${assetThumbnailUrl}" /><small><p>Owner: ${a.toOwnerName}</p></small></div>`
+        const assetThumbnailUrl = Thumbnail.getLink(a.toAssetId, 60)
+        const dataElement = (
+          <div>
+            <p>{assetKindCap}: {a.toAssetName}</p>
+            <small><p>{ago}</p></small>
+            <img style={{ maxWidth: '240px' }} src={assetThumbnailUrl} />
+            <small><p>Owner: {a.toOwnerName}</p></small>
+          </div>
+        )
         // Note that this uses the old /assetEdit route since I'd not originally stored the .toOwnerId id. Oh well, we'll take a redirect for now in those cases
         const linkTo = a.toOwnerId ?
                         `/u/${a.toOwnerName}/asset/${a.toAssetId}` :   // New format as of Jun 8 2016
                         `/assetEdit/${a.toAssetId}`                    // Old format. (LEGACY ROUTES for VERY old activity records). TODO: Nuke these and the special handlers
         item = (
-          <QLink 
-              to={linkTo} 
-              closeNavPanelOnClick={navPanelIsOverlay}
-              className="ui item hazRecentPopup"  
-              key={a._id}  
-              data-html={dataHtml} 
-              data-position="right center" >
-            <span>
-              <i className={assetKindColor + ' ' + assetKindIconClassName} />{assetNameTruncated || "(unnamed)"}
-            </span>
-            <i className={assetActivityIconClass}></i>
-          </QLink>
+          <Popup
+            key={a._id}
+            positioning="right center"
+            trigger={(
+              <QLink
+                to={linkTo}
+                className="ui item"
+              >
+                <span>
+                  <Icon color={assetKindColor} name={assetKindIconName} />{assetNameTruncated || "(unnamed)"}
+                </span>
+                <i className={assetActivityIconClass} />
+              </QLink>
+            )}>
+            {dataElement}
+          </Popup>
         )
       }
       else if (a.activityType.startsWith("project.")) {
         item = (
-          <QLink 
-              to={`/u/${a.byUserName}/projects`} 
-              closeNavPanelOnClick={navPanelIsOverlay}
-              className="ui item" 
-              key={a._id}  
-              data-html={basicDataHtml} 
-              data-position="right center" >
-            <i className={"ui " + ActivityTypes.getIconClass(a.activityType)}></i>
-            {a.description}
-          </QLink>
+          <Popup
+            key={a._id}
+            positioning="right center"
+            trigger={
+              <QLink to={`/u/${a.byUserName}/projects`} className="ui item">
+                <i className={"ui " + ActivityTypes.getIconClass(a.activityType)} />
+                {a.description}
+              </QLink>
+            }
+          >
+            {basicDataElement}
+          </Popup>
         )
       }
 

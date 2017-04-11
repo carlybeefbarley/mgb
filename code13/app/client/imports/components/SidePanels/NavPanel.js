@@ -1,271 +1,357 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+import { Menu, Image, Header, Icon } from 'semantic-ui-react'
+import NavPanelItem from './NavPanelItem'
+import WhatsNew from '/client/imports/components/Nav/WhatsNew'
 
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-import { getFeatureLevel } from '/imports/schemas/settings-client'
+// imports to enable logout functionality
 import { utilPushTo } from '/client/imports/routes/QLink'
+import { logActivity } from '/imports/schemas/activity'
 
-import npHome from './npHome'
-import npPlay from './npPlay'
-import npLearn from './npLearn'
-import npCreate from './npCreate'
-import npPeople from './npPeople'
-import npHistory from './npHistory'
-import npProjects from './npProjects'
-import urlMaker from '/client/imports/routes/urlMaker'
+// exported since the Tutorial Editor uses this to generate some
+// macros in JoyrideSpecialMacros.jsx
+// Note that this uses Meteor's Accounts.loggingIn() so it doesn't flash the Login/Sigup during user login
+export const getNavPanels = (currUser, showAll) => {
+  const uname = currUser ? currUser.username : null
+  const isLoggingIn = Meteor.loggingIn()
+  const showGuestOptions = (!isLoggingIn && !currUser) || showAll
+  const showUserOptions = (!isLoggingIn && !!currUser) || showAll
 
-import reactMixin from 'react-mixin'
-import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
-
-
-const _npFeatureLevelHideWords = 4
-
-import style from './FlexPanel.css' // TODO(nico): get rid of this css
-
-const navPanelViews = [
-  {
-    tag: "home",
-    name: "home",
-    icon: "home",
-    hdr: "Home",
-    getDirectUrl: (uname) => (uname ? `/u/${uname}` : '/login'),
-    el: npHome,
-    hideIfNoUser: false,
-  },
-  {
-    tag: "learn",
-    name: "learn",
-    icon: "student",
-    hdr: "Learn",
-    getDirectUrl: () => (`/learn`),
-    el: npLearn,
-    hideIfNoUser: false
-  },
-  {
-    tag: "create",
-    name: "create",
-    icon: "pencil",
-    hdr: "Create",
-    getDirectUrl: () => (`/assets/create`),
-    el: npCreate,
-    hideIfNoUser: false
-  },  
-  {
-    tag: "play",
-    name: "play",
-    icon: "game",
-    hdr: "Play",
-    getDirectUrl: () => (`/games`),
-    el: npPlay,
-    hideIfNoUser: false
-  },
-  {
-    tag: "meet",
-    name: "meet",
-    icon: "street view",
-    hdr: "Meet",
-    getDirectUrl: () => (`/users`),
-    el: npPeople,
-    hideIfNoUser: false
-  },
-  {
-    tag: "projects",
-    name: "projects",
-    icon: "sitemap",
-    hdr: "Projects",
-    getDirectUrl: (uname) => (uname ? `/u/${uname}/projects` : '/u/!vault/projects'),
-    el: npProjects,
-    hideIfNoUser: true,
-    hideIfFewProjects: true,
-    showAtNavPanelFeatureLevel: 2    
-  },
-  {
-    tag: "history",
-    name: "history",
-    icon: "history",
-    hdr: "History",
-    getDirectUrl: (uname) => (uname ? `/u/${uname}/assets` : '/assets'),
-    el: npHistory,
-    hideIfNoUser: true,
-    hideIfLittleHistory: true,
-    showAtNavPanelFeatureLevel: 3
-  },
-  // { tag: "skills",    icon: "university", hdr: "Skills" }
-]
-
-const defaultPanelViewIndex = 0
-
-function _getNavPanelViewFromTag(npViewTag) {
-  // If the navPanel choice isn't recognized, just default to using our 'default' one
-  return _.find(navPanelViews, ['tag', npViewTag]) || navPanelViews[defaultPanelViewIndex]
+  return { 
+    left: [
+      {
+        name: 'mgb',                  // used for mgjr-np-{name}- id generation
+        icon: { name: 'home'},
+        explainClickAction: "Shortcut: Clicking here jumps to the Home Page",
+        hdr: (
+            <Menu.Item className='borderless' color='black' style={{ padding: '0px 8px' }}>
+              <img src='/images/logos/mgb/medium/03.png' style={{ width: 130 }} />
+            </Menu.Item>
+          ),
+        to: '/',
+        menu: [
+          {
+            subcomponent: 'Item',
+            jrkey: 'whatsNew',       // used for mgjr-np-mgb-{jrkey} id generation for joyride system
+            explainClickAction: "What's New",
+            to: '/whatsnew',
+            content: (
+              <div>
+                What's New&emsp;
+                <WhatsNew currUser={currUser} />
+              </div>
+            ),
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'roadmap',
+            to: '/roadmap',
+            content: 'Roadmap',
+          }
+        ]
+      },
+      {
+        name: "learn",
+        explainClickAction: "Shortcut: Clicking here jumps to the Learning Paths page",
+        icon: { name: "student" },
+        hdr: "Learn",
+        to: '/learn',
+        menu: [
+        /*
+          {
+            subcomponent: 'Item',
+            jrkey: 'learningPaths',
+            to: '/learn',
+            icon: { color: 'orange', name: 'map signs' },
+            content: 'All Learning paths',
+          },
+          */
+          {
+            subcomponent: 'Item',
+            jrkey: 'getStarted',
+            to: '/learn/getStarted',
+            icon: { color: 'yellow', name: 'rocket' },
+            content: 'Get Started',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'learnCode',
+            to: '/learn/code',
+            icon: { name: 'code' },
+            content: 'Learn programming',
+          },
+          /*
+          {
+            subcomponent: 'Item',
+            jrkey: 'makeGames',
+            to: '/learn/games',
+            icon: { name: 'game' },
+            content: 'Make/Mod games',
+          },
+          */
+          {
+            subcomponent: 'Item',
+            jrkey: 'learnSkills',
+            to: '/learn/skills',
+            icon: { color: 'green', name: 'student' },
+            content: 'All skills',
+          },
+        ],
+      },
+      {
+        name: 'play',
+        explainClickAction: "Shortcut: Clicking here jumps to the list of playable games",
+        icon: { name: 'game' },
+        hdr: 'Play',
+        to: '/games',
+        menu: [
+          {
+            subcomponent: 'Item',
+            jrkey: 'popularGames',
+            icon: { name: 'game', color: 'blue' },
+            to: '/games',
+            query: { sort: 'plays' },
+            content: 'Popular Games',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'updatedGames',
+            icon: { name: 'game', color: 'green' },
+            to: '/games',
+            query: { sort: 'edited' },
+            content: 'Updated Games',
+          }
+        ]
+      },
+      {
+        name: 'meet',
+        explainClickAction: "Shortcut: Clicking here jumps to the User search page",
+        icon: { name: 'street view' },
+        hdr: 'Meet',
+        to: '/users',
+        menu: [
+          {
+            subcomponent: 'Item',
+            jrkey: 'allUsers',
+            to: '/users',
+            icon: 'street view',
+            content: 'All Users',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'allAssets',
+            to: '/assets',
+            query: { hidews: 7 },
+            icon: 'pencil',
+            content: 'All Assets',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'forkableProjects',
+            to: '/projects',
+            query: { hidews: 7, showForkable: 1 },
+            icon: 'sitemap',
+            content: 'Forkable Projects',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'publicChat',
+            query: { _fp: 'G_GENERAL_' },
+            icon: 'chat',
+            content: 'Public Chat',
+          }
+        ],
+      }
+    ],
+    // Right side
+    right: _.compact([
+      showUserOptions && {
+        name: 'assets',
+        explainClickAction: "Shortcut: Clicking here jumps to the list of your Assets",
+        icon: { name: 'pencil' },
+        hdr: 'Assets',
+        to: uname ? `/u/${uname}/assets` : '/assets',
+        menu: [
+          {
+            subcomponent: 'Item',
+            jrkey: 'listMy',
+            to: `/u/${uname}/assets`,
+            title: 'List my Assets',
+            icon: 'pencil',
+            content: 'List My Assets',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'createNew',
+            to: `/assets/create`,
+            title: 'Create New Asset',
+            icon: { name: 'pencil', color: 'green' },
+            content: 'Create New Asset',
+          }
+        ]
+      },
+      showUserOptions && {
+        name: 'projects',
+        explainClickAction: "Shortcut: Clicking here jumps to the list of your Projects",
+        icon: { name: 'sitemap' },
+        hdr: 'Projects',
+        to: `/u/${uname}/projects`,
+        menu: [
+          showUserOptions && {
+            subcomponent: 'Item',
+            jrkey: 'listMy',
+            to: `/u/${uname}/projects`,
+            icon: 'sitemap',
+            content: 'List My Projects',
+          },
+          showUserOptions && {
+            subcomponent: 'Item',
+            jrkey: 'createNew',
+            to: `/u/${uname}/projects/create`,
+            icon: { name: 'sitemap', color: 'green' },
+            content: 'Create New Project',
+          }
+        ]
+      },
+      showGuestOptions && {
+        name: 'login',
+        hdr: 'Log in',
+        icon: { name : 'sign in' },
+        style: { padding: '4px 16px'},
+        menu: null,
+        to: '/login'
+      },
+      showGuestOptions && {
+        name: 'signup',
+        hdr: 'Sign up',
+        icon: { name: 'signup' },
+        style: { padding: '4px 16px'},
+        menu: null,
+        to: '/signup'
+      },
+      {
+        name: 'user',
+        explainClickAction: "Shortcut: Clicking here jumps to your Profile Page", // if logged in, and this is used by tutorials, so that's ok
+        icon: { name: 'user' },
+        hdr: 'Login',
+        to: uname ? `/u/${uname}` : '/signup',
+        menu: _.compact([
+          showUserOptions && {
+            subcomponent: 'Header',
+            jrkey: 'username',
+            content: <Header style={{paddingLeft: '1.2em'}}>{uname}</Header>
+          },
+          showUserOptions && {
+            subcomponent: 'Item',
+            to: `/u/${uname}`,
+            jrkey: 'myProfile',
+            icon: 'user',
+            content: 'My Profile',
+          },
+          showUserOptions && {
+            subcomponent: 'Item',
+            to: `/u/${uname}/badges`,
+            jrkey: 'myBadges',
+            icon: 'trophy',
+            content: 'My Badges',
+          },
+          showUserOptions && {
+            subcomponent: 'Item',
+            to: `/u/${uname}/games`,
+            jrkey: 'myGames',
+            icon: 'game',
+            content: 'My Games',
+          },
+          showUserOptions && {
+            subcomponent: 'Item',
+            to: `/u/${uname}/skilltree`,
+            jrkey: 'mySkills',
+            icon: 'plus circle',
+            content: 'My Skills',
+          },
+          showUserOptions && {
+            subcomponent: 'Item',
+            query: { '_fp': 'settings' },
+            jrkey: 'settings',
+            icon: 'settings',
+            content: 'Settings',
+          },
+          showUserOptions && {
+            subcomponent: 'Item',
+            jrkey: 'logout',
+            icon: 'sign out',
+            style: { marginTop: '1em' },
+            content: 'Logout',
+            onClick: _doLogout
+          }
+        ])
+      }
+    ])
+  }
 }
 
+const _doLogout = () => 
+{  
+  const userName = Meteor.user().profile.name
+  logActivity("user.logout",  `Logging out "${userName}"`, null, null)
 
-export default NavPanel = React.createClass({
-  mixins: [ReactMeteorData],
+  Meteor.logout()
+  utilPushTo( {}, '/' )
+}
 
-  propTypes: {
-    currUser:               PropTypes.object,             // Currently Logged in user. Can be null/undefined
-    currUserProjects:       PropTypes.array,              // Projects list for currently logged in user
-    fpReservedFooterHeight: PropTypes.string.isRequired,  // Something like 0px or 60px typically
-    user:                   PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    selectedViewTag:        PropTypes.string,             // One of the navPanelViews.tags values
-    navPanelIsVisible:      PropTypes.bool.isRequired,
-    handleNavPanelToggle:   PropTypes.func.isRequired,    // Callback for enabling/disabling NavPanel view
-    handleNavPanelChange:   PropTypes.func.isRequired,    // Callback to change pane - records it in URL
-    navPanelWidth:          PropTypes.string.isRequired,  // Typically something like "200px".
-    navPanelIsOverlay:      PropTypes.bool.isRequired,    // If true, then show NavPanel with some Alpha to hint that there is stuff below. Also we must close NavPanel when NavPanel's links are clicked'
-    isSuperAdmin:           PropTypes.bool.isRequired     // Yes if one of core engineering team. Show extra stuff
-  },
-
-  statics: {
-    getDefaultPanelViewTag: function() { return navPanelViews[defaultPanelViewIndex].tag }
-  },
-
-  contextTypes: {
-    urlLocation: React.PropTypes.object,
-    settings:    PropTypes.object                         // Used so some panels can be hidden by user
-  },
-
-  getMeteorData: function() {
-    return { npFeatureLevel: getFeatureLevel(this.context.settings, makeLevelKey('NavPanel'))}
-  },
-
-  componentDidMount: function() {
-    registerDebugGlobal( 'np', this, __filename, 'The global NavPanel instance')
-  },
-
-  // 
-  /**
-   * @param {String} npViewTag
-   * @param {Boolean} fGoDirect - If true, go directly to the default URL for this NavPanel
-   * @param {Boolean} fLockNavPanel - If true, request the navPanel to be locked (disable auto-hide / navPanelIsOverlay)
-   */
-  npViewSelect(npViewTag, fGoDirect, fLockNavPanel)
-  {
-    if (fGoDirect)
-    {
-      // Go directly to the default URL for this NavPanel
-      const navPanelChoice = _getNavPanelViewFromTag(npViewTag)
-      const newUrl = navPanelChoice.getDirectUrl(this.props.currUser ? this.props.currUser.profile.name : null)
-      if (newUrl)
-        utilPushTo(this.context.urlLocation.query, newUrl)
-    }
-    else
-    {
-      if (npViewTag === this.props.selectedViewTag)
-        this.props.handleNavPanelChange(urlMaker.disableQueryParamPrefix + npViewTag)
-      else
-        this.props.handleNavPanelChange(npViewTag, fLockNavPanel)
-    }
-  },
+const _isLoggedInSty = { padding: '4px 8px'}
+const _isNotLoggedInSty = { padding: '4px 16px'}
 
 
-  render: function () {
-    const { user, currUser, navPanelWidth, navPanelIsOverlay, selectedViewTag, navPanelIsVisible, currUserProjects, fpReservedFooterHeight } = this.props
-    const panelStyle = {    // This is the overall NavPanel with either just the first column (just icons, always shown), or 1st and 2nd columns
-      position: "fixed",
-      left: "0px",
-      top: "0px",
-      bottom: fpReservedFooterHeight, //61?
-      width: navPanelWidth,
-      backgroundColor: `rgba(50, 60, 60, ${navPanelIsOverlay ? 0.85 : 1})`,
-      zIndex: 100
-    }
+class NavPanel extends React.Component {
 
-    const miniNavStyle = {  // This is the First column of the NavPanel (just icons, always shown). It is logically nested within the outer panel
-      position: "fixed",
-      top: "0px",
-      bottom: fpReservedFooterHeight, // 61?
-      left: "0px",
-      width: "61px",
-      borderRadius: 0,
-      marginRight: "0px",
-      marginBottom: "0px",
-      backgroundColor: "rgba(50, 60, 60, 1)",
-      overflowY:    "scroll"
-    }
-
-    const panelScrollContainerStyle = {
-      position:     "absolute",
-      left:         "60px",
-      right:        "0px",
-      top:          "0px",
-      bottom:       "0px",
-      paddingTop:   "8px",
-      paddingLeft:  "1px",
-      backgroundColor: `rgba(40, 50, 50, ${navPanelIsOverlay ? 0.85 : 1})`,       // TODO: Use the less variables from the .ui.inverted.menu style, or see how to stretch this with semanticUI
-      overflowY:    "scroll"
-    }
-
-    const miniNavItemStyle = {
-      borderRadius: "0px"           // Otherwise active first-item / last-item is rounded
-    }
-    const miniNavAvatarItemStyle = {
-      borderRadius:  "0px",          // Otherwise active first-item / last-item is rounded
-      paddingTop:    "8px",
-      paddingBottom: "8px"
-    }
-
-    const navPanelChoice = _getNavPanelViewFromTag(selectedViewTag)
-    const navPanelHdr = navPanelChoice.hdr
-    const ElementNP = navPanelChoice.el    // Can be null
-    const npFeatureLevel = this.data.npFeatureLevel || 2
-    const hasAvatar = (currUser && currUser.profile && currUser.profile.avatar)
-    if (navPanelIsVisible && ElementNP !== null)
-      joyrideCompleteTag(`mgbjr-CT-navPanel-${navPanelChoice.tag}-show`)
-
-    return (
-      <div id='mgbjr-navPanelIcons' className="basic segment mgbNavPanel" style={panelStyle}>
-
-        <div className="ui inverted attached vertical icon menu" style={miniNavStyle}>
-          { navPanelViews.map(v => {
-            if (v.hideIfNoUser && !currUser)
-              return null
-            if (v.hideIfFewProjects && currUser && (!currUserProjects || currUserProjects.length < 3))
-              return null
-
-            if (v.showAtNavPanelFeatureLevel && npFeatureLevel < v.showAtNavPanelFeatureLevel)
-              return
-              
-            const actv = (v.tag === selectedViewTag) ? " active selected " : ""
-            const showAvatarInsteadOfIcon =  (v.tag === 'home' && hasAvatar)
-            return (
-              <div
-                key={v.tag}
-                id={`mgbjr-navPanelIcons-${v.tag}`}
-                className={actv + 'item animated fadeInLeft'}
-                title={v.name}
-                style={showAvatarInsteadOfIcon ? miniNavAvatarItemStyle : miniNavItemStyle}
-                onClick={(e) => { this.npViewSelect(v.tag, e.altKey, e.shiftKey)}}>
-                { showAvatarInsteadOfIcon ? 
-                  <img className="ui centered avatar image" style={{ width: '3em', height: '3em'}} src={currUser.profile.avatar} />
-                  :
-                  <i className={v.icon + actv + " big icon"} />
-                }
-                { (npFeatureLevel < _npFeatureLevelHideWords && !showAvatarInsteadOfIcon) && 
-                  <span style={{opacity: '0.3'}}>{v.name}</span>
-                }
-              </div>
-            )
-          })}
-        </div>
-
-        { navPanelIsVisible &&
-          <div style={panelScrollContainerStyle}>
-            { !ElementNP ? <div className="ui fluid label">TODO: {navPanelHdr} navPanel</div> :
-              <ElementNP
-                currUser={currUser}
-                currUserProjects={currUserProjects}
-                user={user}
-                navPanelIsOverlay={navPanelIsOverlay}
-                panelWidth={navPanelWidth} />
-            }
-          </div>
-        }
-      </div>
-    )
+  static propTypes = {
+    currUser: PropTypes.object,                           // Currently Logged in user. Can be null/undefined
+    navPanelAvailableWidth: PropTypes.number,             // Width of the page area available for NavPanel menu
   }
 
-})
+  render() {
+    const { currUser, navPanelAvailableWidth } = this.props
+    const menuStyle = { borderRadius: 0, marginBottom: 0, background: 'radial-gradient(circle farthest-side at right bottom,#8cc4c4 8%, #155f66 70%, #232929)'}
+    const useIcons = navPanelAvailableWidth < 600  // px
+    const allNavPanels = getNavPanels(currUser, false)
+
+    const userMenuKey = 'user'  // We render this specially, even though it's part of allNavPanels
+    const userMenu = _.find(allNavPanels.right, { name: userMenuKey })
+    const userAvatarSrc = _.get(currUser, 'profile.avatar', 'http://placehold.it/50')
+
+    const navPanelItems = side => allNavPanels[side]
+      .filter(v => (v.name !== userMenuKey))
+      .map(v => (
+        <NavPanelItem 
+          name={v.name}
+          openLeft={side==='right'} 
+          key={v.name} 
+          hdr={(useIcons || !v.hdr )? <Icon size='large' {...v.icon}/> : v.hdr} 
+          menu={v.menu} 
+          to={v.to}
+          query={v.query}
+          />))
+
+    return (
+      <Menu inverted style={menuStyle} id='mgbjr-np'>
+        { navPanelItems('left') }
+
+        {/* The user menu, pushed to the right */}
+        <Menu.Menu position='right'>
+          { navPanelItems('right') }
+          { currUser && 
+          <NavPanelItem
+            key='user'
+            name='user'
+            style={ currUser ? _isLoggedInSty : _isNotLoggedInSty }
+            hdr={!currUser ? 'Sign Up' :  <Image id="mgbjr-np-user-avatar" centered avatar src={userAvatarSrc} />}
+            menu={userMenu.menu}
+            to={userMenu.to} />
+          }
+        </Menu.Menu>
+      </Menu>
+    )
+  }
+}
+export default NavPanel

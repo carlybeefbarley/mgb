@@ -1,76 +1,92 @@
-import React, { PropTypes } from 'react'
-import QLink from '/client/imports/routes/QLink'
-import QLinkUser from '/client/imports/routes/QLinkUser'
-import InlineEdit from '/client/imports/components/Controls/InlineEdit'
-import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
-import WorkState from '/client/imports/components/Controls/WorkState'
-import { getProjectAvatarUrl } from '/imports/schemas/projects'
-import { Card, Icon, Header } from 'semantic-ui-react'
+import _ from 'lodash';
+import React, { PropTypes } from 'react';
+import QLinkUser from '/client/imports/routes/QLinkUser';
+import QLink, { utilPushTo } from '/client/imports/routes/QLink';
+import validate from '/imports/schemas/validate';
+import InlineEdit from '/client/imports/components/Controls/InlineEdit';
+import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange';
+import WorkState from '/client/imports/components/Controls/WorkState';
+import { getProjectAvatarUrl } from '/client/imports/helpers/assetFetchers';
+import { Card, Icon } from 'semantic-ui-react';
 
 // This is a Project Card which is a card-format version of the Project information.
 // It is passed a project database object and it locally decides what fields to use/render within that structure.
 
 const ProjectCard = props => {
-  const { project, owner, canEdit, handleFieldChanged } = props        
-  const linkTo = "/u/" + project.ownerName + "/project/" + project._id
-  const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Member" : (project.memberIds.length + 1) + " Members"
+  const { project, canEdit, handleFieldChanged } = props;
+  const linkTo = '/u/' + project.ownerName + '/projects/' + project.name;
+  const MemberStr = !project.memberIds || project.memberIds.length === 0
+    ? '1 Member'
+    : project.memberIds.length + 1 + ' Members';
+  const numChildForks = _.isArray(project.forkChildren) ? project.forkChildren.length : 0;
+  const hasParentFork = _.isArray(project.forkParentChain) && project.forkParentChain.length > 0;
 
   return (
-    <Card key={project._id} className='animated fadeIn'>
+    <Card 
+      key={project._id} 
+      className="animated fadeIn" 
+      style={{maxWidth: '230px', minWidth: '230px'}}
+      onClick={() => utilPushTo(window.location.query, linkTo)}>
 
-      <QLink className="image" to={linkTo} elOverride='div'>
-        <ImageShowOrChange
-          className="image"
-          imageSrc={getProjectAvatarUrl(project)}
-          canEdit={canEdit}
-          canLinkToSrc={canEdit}
-          handleChange={(newUrl, avatarId) => handleFieldChanged( { "avatarAssetId": avatarId }) } />
-      </QLink>
+      <ImageShowOrChange
+        imageSrc={getProjectAvatarUrl(project)}
+        header='Project Avatar'
+        canEdit={canEdit}
+        canLinkToSrc={canEdit}
+        handleChange={!handleFieldChanged ? undefined : ((newUrl, avatarId) => handleFieldChanged({ avatarAssetId: avatarId } )) }
+      />
 
-      <QLink className="content" to={linkTo}>
-        <Icon name='star' className="right floated" />
-        <div className="header">
-          {project.name}&nbsp;
-          <WorkState 
-              workState={project.workState} 
-              popupPosition="bottom center"
-              showMicro={true}
-              handleChange={(newWorkState) => handleFieldChanged( { "workState": newWorkState } )}
-              canEdit={canEdit}/>
-        </div>
+      <Card.Content>
+        <span style={{ float: 'right' }}>
+          <WorkState
+            workState={project.workState}
+            handleChange={!handleFieldChanged ? undefined : (newWorkState => handleFieldChanged({ workState: newWorkState } )) }
+            canEdit={canEdit}
+          />
+        </span>
+
+        <Card.Header content={project.name} style={{ marginRight: '2em', overflowWrap: 'break-word' }} />
+
         <Card.Meta>
-          <Icon name='users' />&nbsp;{MemberStr}
+          <div>
+            <Icon name="users" />
+            <span>{MemberStr}</span>
+          </div>
+          <div style={{ color: numChildForks ? 'black' : null }}>
+            <Icon name="fork" color={hasParentFork ? 'blue' : null} />
+            <span style={{ color: project.allowForks ? 'green' : null }}>{numChildForks} Forks</span>
+          </div>
         </Card.Meta>
 
         <Card.Description>
-          <b>Description:&nbsp;</b> 
-          <InlineEdit
-            validate={text => (text.length >= 0 && text.length < 64)}
-            activeClassName="editing"
-            text={project.description || "(no description)"}
-            paramName="description"
-            change={data => handleFieldChanged({...data})}
-            isDisabled={!canEdit}
+          <small>
+            <InlineEdit
+              validate={validate.projectDescription}
+              activeClassName="editing"
+              text={project.description || '(no description)'}
+              paramName="description"
+              change={data => handleFieldChanged({ ...data })}
+              isDisabled={!canEdit}
             />
+          </small>
         </Card.Description>
-      </QLink>
+      </Card.Content>
 
       <Card.Content extra>
         <span>
-          <Icon size='large' name='sitemap' />
+          <Icon name="sitemap" />
           Project
         </span>
-        <QLinkUser targetUser={owner} />
+        <QLinkUser userName={project.ownerName} userId={project.ownerId} />
       </Card.Content>
     </Card>
-  )
-}
+  );
+};
 
 ProjectCard.propTypes = {
   project: PropTypes.object.isRequired,
-  owner:   PropTypes.oneOfType([PropTypes.string, PropTypes.object]),     // Optional user object for owner. It's best to have it, but sometimes it may be expensive to go get the user record so let's not force it
   canEdit: PropTypes.bool,
   handleFieldChanged: PropTypes.func
-}
+};
 
-export default ProjectCard
+export default ProjectCard;

@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import Helmet from 'react-helmet'
+import { Grid, Segment, Checkbox, Message, Icon, Header, Button, Popup } from 'semantic-ui-react'
 import { showToast } from '/client/imports/routes/App'
 import reactMixin from 'react-mixin'
 import QLink from '../QLink'
@@ -8,100 +10,166 @@ import ProjectCard from '/client/imports/components/Projects/ProjectCard'
 import ProjectMembersGET from '/client/imports/components/Projects/ProjectMembersGET'
 import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/GamesAvailableGET'
 import Spinner from '/client/imports/components/Nav/Spinner'
-import Helmet from 'react-helmet'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-import UserListRoute from '../Users/List'
+import UserListRoute from '../Users/UserListRoute'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
+import SlidingCardList from '/client/imports/components/Controls/SlidingCardList'
 
 import { logActivity } from '/imports/schemas/activity'
-import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-import { Grid, Segment, Message, Icon, Header, Button } from 'semantic-ui-react'
+import ProjectForkGenerator from './ProjectForkGenerator'
 
 export default ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    params: PropTypes.object,       // Contains params.projectId
-    user:   PropTypes.object,       // App.js gave us this from params.id OR params.username
+    params:   PropTypes.object,       // Contains params.projectId  OR projectName
+    user:     PropTypes.object,       // App.js gave us this from params.id OR params.username
     currUser: PropTypes.object
   },
   
   getInitialState: () => ({ 
-    showAddUserSearch: false,       // True if user search box is to be shown
-    isDeletePending:   false,       // True if a delete project operation is pending
-    isDeleteComplete:  false        // True if a delete project operation succeeded.
-  }),   
+    showAddUserSearch:            false,       // True if user search box is to be shown
+    isForkPending:                false,       // True if a fork operation is pending
+    isDeletePending:              false,       // True if a delete project operation is pending
+    isDeleteComplete:             false,       // True if a delete project operation succeeded.
+    compoundNameOfDeletedProject: null,        // Used for User feedback after deleting project. using Compound name for full clarity
+    confirmDeleteNum:             -1           // If >=0 then it indicates how many assets will be deleted. Used to flag 2-stage DELETE PROJECT
+  }),
   
   getMeteorData: function() {
-    let projectId = this.props.params.projectId
-    let handleForProject = Meteor.subscribe("projects.forProjectId", projectId)
+    const { projectId, projectName } = this.props.params
+    const { user } = this.props
+    const sel = projectId ? { _id : projectId } : { ownerId: user._id, name: projectName }
+
+    let handleForProject = Meteor.subscribe("projects.oneProject", sel)
 
     return {
-      project: Projects.findOne(projectId),
+      project: Projects.findOne(sel),
       loading: !handleForProject.ready()
     }
   },
 
   canEdit: function() {
-    return !this.data.loading &&
+    return Boolean(!this.data.loading &&
            this.data.project &&
            this.props.currUser && 
-           this.data.project.ownerId === this.props.currUser._id
+           this.data.project.ownerId === this.props.currUser._id)
   },
 
   render: function() {
-    if (this.data.loading)
+    const { project, loading } = this.data               // One Project provided via getMeteorData()
+    if (loading)
       return <Spinner />
-          
-    const { currUser } = this.props
-    const project = this.data.project     // One Project provided via getMeteorData()
-    const canEdit = this.canEdit()
 
-    if (!project && this.state.isDeleteComplete)
+    const { currUser, params } = this.props
+    const { isDeleteComplete, compoundNameOfDeletedProject } = this.state
+    const canEdit = this.canEdit()
+    const isMyProject = (currUser && project && project.ownerId === currUser._id)
+    const relativeProjectName = project ? `${isMyProject ? '' : `${project.ownerName}:`}${project.name}` : ''
+
+    if (!project && isDeleteComplete)
       return (
         <Segment basic padded>
-          <Message warning>
-            <Icon name='warning' />
-            You successfully deleted this empty project. You monster.
-            { currUser && 
-              <p>
-                <QLink to={"/u/" + currUser.profile.name + "/projects"}>
-                  Go to your Projects List..
-                </QLink>
-              </p>
-            }
-          </Message>
+          <Helmet
+              title={ `Deleted Project: ${compoundNameOfDeletedProject}` }
+              meta={[ { name: `Deleted Project: ${compoundNameOfDeletedProject}`, content: 'Project'} ]} />
+          <Message
+              warning
+              icon='trash'
+              header={`You successfully deleted Project '${compoundNameOfDeletedProject}'`}
+              content={
+                <div>
+                  <br></br>
+                  <QLink to={`/u/${currUser.profile.name}/projects`}>
+                    View your Projects List.
+                  </QLink>
+                  &emsp;The ones that still survive, at least...
+                </div>
+              } />
         </Segment>
       )
 
     if (project && this.state.isDeleteComplete)
-      return <p>What the heck? It's still here? Err, refresh page maybe!?</p>
+      return <p>What the heck? Project '{compoundNameOfDeletedProject}' is still here? Err, refresh page maybe!?</p>
 
     if (!project)
-      return <ThingNotFound type="Project" />
+      return <ThingNotFound type='Project' id={params.projectId || params.projectName} defaultHead={true}/>
     
+    const buttonSty = { width: '220px', marginTop: '2px', marginBottom: '2px'}
     return (
-      <Grid padded>
+      <Grid padded columns='equal'>
         <Helmet
-          title={`Project Overview: ${project.name}`}
-          meta={[
-              {"name": `Project Overview: ${project.name}`, "content": "Projects"}
-          ]}
+          title={`Project: ${relativeProjectName}`}
+          meta={[ { name: `Project: ${relativeProjectName}`, content: 'Project' } ]}
         />
 
-        <Grid.Column width={6} style={{minWidth: "250px"}}>
+        <Grid.Column style={{ minWidth: '250px', maxWidth: '250px' }}>
           <ProjectCard 
               project={project} 
               owner={this.props.user}
               canEdit={canEdit}
               handleFieldChanged={this.handleFieldChanged} />
-            <QLink to={"/u/" + project.ownerName + "/assets"} query={{project:project.name}} className="ui button" >
-              Project Assets
-            </QLink>
-            { this.renderRenameDeleteProject() } 
+          <QLink 
+              id='mgbjr-project-overview-assets'
+              to={`/u/${project.ownerName}/assets`} 
+              style={buttonSty} 
+              query={{project:project.name}} 
+              className='ui small primary button' >
+            View Project Assets
+          </QLink>
+
+          { /* FORK PROJECT STUFF */}
+          <Segment secondary compact style={{ width: '220px' }}>
+            <Header content='Project Forking'/>
+            <span style={{float: 'right'}}>
+              <ProjectForkGenerator 
+                  project={project}
+                  isForkPending={this.state.isForkPending}
+                  />
+            </span>
+            <div style={{ padding: '2px 2px 8px 2px' }}>
+              <Checkbox 
+                  disabled={!canEdit}
+                  checked={!!this.data.project.allowForks} 
+                  onChange={ () => this.handleFieldChanged( { allowForks: !this.data.project.allowForks } ) }
+                  label='Allow forks' 
+                  title="Project Owner may allow other users to fork this Project and it's Assets"/>
+
+            </div>
+            <Popup 
+                inverted
+                wide='very'
+                on='click'
+                trigger={(
+                  <Button
+                    fluid
+                    id='mgbjr-project-overview-fork'
+                    disabled={!this.data.project.allowForks || !currUser}
+                    size='small' 
+                    content={this.state.isForkPending ? 'Forking project...' : 'Fork Project'}/>
+                )} >
+              { this.state.isForkPending ? ( <div>Forking... please wait..</div> ) : (
+                <div>
+                  <Header as='h4' content='Name for new Forked project'/>
+                  <div className="ui small fluid action input" style={{ minWidth: '300px' }}>
+                    <input  type="text"
+                            id="mgbjr-fork-project-name-input"
+                            placeholder="New Project name" 
+                            defaultValue={this.data.project.name + ' (fork)'} 
+                            ref="forkNameInput"
+                            size="22"></input>
+                    <Button icon='fork' ref="forkGoButton" onClick={this.handleForkGo}/>
+                  </div>
+                </div>
+                ) 
+              }
+            </Popup>
+          </Segment>
+                  
+          { this.renderRenameDeleteProject() } 
         </Grid.Column>
         
-        <Grid.Column width={8}>
+        <Grid.Column>
           <Header as="h3" >Games in this Project</Header>
           <Segment basic>
             <GamesAvailableGET 
@@ -112,7 +180,7 @@ export default ProjectOverview = React.createClass({
           
           <Header as="h3" >Project Members</Header>
           <Segment basic>
-            Project Members may create, edit or delete assets in this project &nbsp;        
+            Project Members may create, edit or delete Assets in this Project &nbsp;        
             <ProjectMembersGET 
                 project={this.data.project} 
                 enableRemoveButton={canEdit} 
@@ -125,6 +193,30 @@ export default ProjectOverview = React.createClass({
     )
   },
   
+  handleForkGo()
+  {
+    const newProjName = this.refs.forkNameInput.value
+    showToast(`Forking project '${this.data.project.name}' to '${newProjName}..`, 'info')
+    this.setState( { isForkPending: true } )
+    const forkCallParams = {
+      sourceProjectName: this.data.project.name,
+      sourceProjectOwnerId: this.data.project.ownerId,
+      newProjectName: newProjName
+    }
+    Meteor.call("Project.Azzets.fork", forkCallParams, (err, result) => {
+      if (err)
+        showToast(`Could not fork project: ${err}`, 'error')
+      else
+      {
+        const msg = `Forked project '${this.data.project.name}' to '${newProjName}, creating ${result.numNewAssets} new Assets`
+        logActivity("project.fork",  msg)
+        showToast(msg)
+        // TODO: navigate to /u/${currUser.username}/projects/${result.newProjectId}
+      }
+      this.setState( { isForkPending: false } )
+    })
+  },
+
   // TODO - override 'Search Users" header level in UserListRoute
   // TODO - some better UI for Add People.
   handleClickUser: function(userId, userName)
@@ -137,12 +229,11 @@ export default ProjectOverview = React.createClass({
 
     var project = this.data.project
     var newData = { memberIds: _.union(project.memberIds, [userId])}   
-    Meteor.call('Projects.update', project._id, this.canEdit(), newData, (error, result) => {
-      if (error) {
-        console.log(`Could not add member ${userName} to project ${project.name}`)
-      } else {
-        logActivity("project.addMember",  `Add Member ${userName} to project ${project.name}`);
-      }
+    Meteor.call('Projects.update', project._id, newData, (error, result) => {
+      if (error)
+        showToast(`Could not add member ${userName} to project ${project.name}`, 'error')
+      else
+        logActivity("project.addMember",  `Add Member ${userName} to project ${project.name}`)
     })
   },
   
@@ -156,12 +247,11 @@ export default ProjectOverview = React.createClass({
     var project = this.data.project
     var newData = { memberIds: _.without(project.memberIds, userId)}   
 
-    Meteor.call('Projects.update', project._id, this.canEdit(), newData, (error, result) => {
-      if (error) {
-        console.log(`Could not remove member ${userName} from project ${project.name}`)
-      } else {
+    Meteor.call('Projects.update', project._id, newData, (error, result) => {
+      if (error) 
+        showToast(`Could not remove member ${userName} from project ${project.name}`, error)
+      else 
         logActivity("project.removeMember",  `Removed Member ${userName} from project ${project.name}`);
-      }
     })
   },
     
@@ -170,11 +260,11 @@ export default ProjectOverview = React.createClass({
    */
   handleFieldChanged: function(changeObj)
   {
-    var project = this.data.project
+    const { project } = this.data
 
-    Meteor.call('Projects.update', project._id, this.canEdit(), changeObj, (error) => {
+    Meteor.call('Projects.update', project._id, changeObj, (error) => {
       if (error) 
-        console.log("Could not update project: ", error.reason)
+        showToast(`Could not update project: ${error.reason}`, error)
       else 
       {
        // Go through all the keys, log completion tags for each
@@ -183,13 +273,23 @@ export default ProjectOverview = React.createClass({
     })
   },
 
-  handleDeleteProject: function()
+  handleDeleteProject: function() {
+    var { name } = this.data.project
+    Meteor.call( 'Projects.countNonDeletedAssets', name, (error, result ) => {
+      if (error)
+        showToast(`Could not count Number of Assets in Project '${name}: ${error.reason}`, 'error')
+      else
+        this.setState( { confirmDeleteNum: result } ) 
+    })
+  },
+
+  handleConfirmedDeleteProject: function()
   {
-    var { name, _id } = this.data.project
-    this.setState( { isDeletePending: true } )
+    var { name, _id, ownerName } = this.data.project
+    var compoundNameOfDeletedProject = `${ownerName}:${name}`
+    this.setState( { isDeletePending: true } )  // Button disable/enable also guards against re-entrancy
 
-    Meteor.call('Projects.deleteProjectId', _id, this.canEdit(), (error, result ) => {
-
+    Meteor.call('Projects.deleteProjectId', _id, true, (error, result ) => {
       if (error)
       {
         showToast(`Could not delete Project '${name}: ${error.reason}`, 'error')
@@ -197,8 +297,12 @@ export default ProjectOverview = React.createClass({
       }
       else
       {
-        logActivity("project.destroy",  `Destroyed empty project ${name}`)
-        this.setState( { isDeletePending: false, isDeleteComplete: true } )
+        logActivity("project.destroy",  `Deleted ${result} Project ${name}`)
+        this.setState( {
+          isDeletePending:  false,
+          isDeleteComplete: true,
+          compoundNameOfDeletedProject: compoundNameOfDeletedProject
+        } )
       }
     })
   },
@@ -207,27 +311,40 @@ export default ProjectOverview = React.createClass({
   
   renderRenameDeleteProject: function()
   {
-    if (!this.canEdit()) return null
-    const { isDeleteComplete, isDeletePending } = this.state
+    const { isDeleteComplete, isDeletePending, confirmDeleteNum } = this.state
+    const canEdit = this.canEdit()
 
+    if (!canEdit)
+      return null
+    
     return (
-      <Segment secondary compact>
+      <Segment secondary compact style={{width: '220px'}}>
         <Header>Manage Project</Header>
-        <Button 
-            icon="edit" 
-            content="Rename" 
+        <div style={{padding: '2px'}}>
+          <Button 
+            fluid
+            icon='edit'
+            size='small'
+            content='Rename'
             disabled={isDeleteComplete || isDeletePending} 
-            onClick={ () => { showToast("Rename Project has not yet been implemented.. ", 'warning')}} />
-        <Button 
-            icon="red trash" 
+            onClick={ () => { showToast('Rename Project has not yet been implemented..', 'warning')}} />
+        </div>
+        <div style={{ padding: '2px' }}>
+          <Button
+            fluid
+            icon={confirmDeleteNum < 0 ? <Icon color='red' name='trash'/> : null}
+            size='small'
             disabled={isDeleteComplete || isDeletePending} 
-            content="Delete" 
-            onClick={ () => { this.handleDeleteProject() } } />
+            content={confirmDeleteNum < 0 ? 'Delete' : `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`} 
+            color={confirmDeleteNum < 0 ? null : 'red' }
+            onClick={confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject } />
+        </div>
+
         { isDeletePending && 
-          <Message icon>
+          <Message icon size='mini'>
             <Icon name='circle notched' loading />
             <Message.Content>
-              <Message.Header>Deleting this project</Message.Header>
+              <Message.Header>Deleting Project</Message.Header>
               Please wait while we make sure it's really deleted...
             </Message.Content>
           </Message>        
@@ -238,7 +355,8 @@ export default ProjectOverview = React.createClass({
 
   renderAddPeople: function()
   {
-    if (!this.canEdit()) return null
+    if (!this.canEdit()) 
+      return null
       
     const project = this.data.project
     const relevantUserIds = [ project.ownerId, ...project.memberIds]   
@@ -258,11 +376,9 @@ export default ProjectOverview = React.createClass({
                 handleClickUser={this.handleClickUser}
                 initialLimit={20}
                 excludeUserIdsArray={relevantUserIds}
-                renderVertical={true} 
-                hideTitle={true}/>
+                renderVertical={true} />
          }              
       </Segment>
     )
   }
-  
 })

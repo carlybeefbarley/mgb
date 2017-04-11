@@ -1,56 +1,44 @@
-import React from 'react'
+import _ from 'lodash'
+import React, {PropTypes} from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
 import SmallDD from './SmallDD.js'
+import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
 
-import {fetchAndObserve} from "/client/imports/helpers/assetFetchers"
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+
+// TODO: use observeAsset from assetFetchers instead of custom observer
+// import { observeAsset } from "/client/imports/helpers/assetFetchers"
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 // TODO - change pattern to be getMeteorData so we fix the timing issues.
 export default class DropArea extends React.Component {
   state = { text: '' }
 
+  static PropTypes = {
+    kind: PropTypes.string.required, // asset kind which will accept this drop area
+    value: PropTypes.string, // previously saved value
+    ids: PropTypes.object, // map with [value] = asset._id - to track renamed assets
+    asset: PropTypes.object, // Asset assigned to this dropArea
+    onChange: PropTypes.function, // callback
+    text: PropTypes.string // alternative text to display
+ }
+  static subscriptions = {} // key = owner:name / value subscription
   get data() {
     return this.props.value
   }
 
   componentDidMount() {
     this.isUnmounted = false
-    
+
     if (this.props.value) {
       const parts = this.props.value.split(":")
-      const name = parts.pop()
+      let name = parts.pop()
+      if (/(\#\d+)$/.test(name) && this.props.kind === 'graphic')
+        name = name.split(' #')[0]
       const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
-      // no need for subscription here
-      if(owner == "[builtin]"){
-        return
-      }
-      this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name, {
-        onReady: () => {
-          if (this.isUnmounted)
-            return          
-          this.setState( { asset: this.getAsset() } )
-        },
-        onError: (e) => { console.log("DropArea - subscription did not become ready", e) }
-      })
-      // meteor subscriptions onReady might not get called - somehow buggish behavior
-      // keep looping until we get an asset (:doh)
-      // TODO: there MUST be better way
-      let count = 0
-      const onReady = () => {
-        const a = this.getAsset()
-        count++
-        // TODO: react devs assume that isMounted is antipattern.. need to redo all this onReady magic
-        if (this.isUnmounted)
-          return
-        
-        if (!a && count < 100)
-          window.setTimeout( onReady, 1000)
-        else if (!this.state.asset)
-          this.setState( { asset: a } )
-      }
-      onReady()
+      this.startSubscription(owner, name)
     }
   }
 
@@ -59,13 +47,119 @@ export default class DropArea extends React.Component {
     this.subscription && this.subscription.stop()
   }
 
+  startSubscription(owner, name, kind = this.props.kind){
+    // no need for subscription here
+    if(owner == "[builtin]"){
+      return
+    }
+
+    if(this.subscription && !this.subscription.isStopped){
+      return
+    }
+    const key = `${owner}:${name}`
+    // prevent inception
+    const oldSub = DropArea.subscriptions[key]
+    if(oldSub && !oldSub.isStopped){
+      this.subscription = oldSub
+      const oldReady = this.subscription.onReady
+      // keep stacking on ready
+      this.subscription.onReady = () => {
+        oldReady()
+        this.setState({asset: this.getAsset()})
+      }
+      return
+    }
+
+    // stop old subscription
+    this.subscription && this.subscription.stop()
+    // remove from stack just in case we are called from getMeteorData stack - which will auto stop sub
+    window.setTimeout(() => {
+
+      console.log("Subscription started",key)
+      this.subscription = Meteor.subscribe("assets.public.id.or.owner.name", this.props._id, owner, name, kind, {
+        onStop: () => {
+          delete DropArea.subscriptions[`${owner}:${name}`]
+          this.subscription.isStopped = true
+          console.log("Subscription stopped", key)
+        },
+        onReady: () => {
+          // we are stopping subscription on unmount - is this still gets triggered
+          if (this.isUnmounted)
+            return
+          this.subscription.onReady()
+        },
+        onError: (e) => {
+          console.log("DropArea - subscription did not become ready", e)
+        }
+      })
+
+      this.subscription.onReady = () => {
+        this.setState({asset: this.getAsset()})
+      }
+
+    }, 0)
+  }
+
   handleDrop(e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
+
     if (!asset) {
       console.log("Drop - NO asset")
       return
     }
 
+    this.setAsset(asset)
+  }
+
+  saveChanges() {
+    if(this.state.badAsset){
+      return
+    }
+    let name = this.state.asset ? this.state.asset.dn_ownerName + ":" + this.state.asset.name : ''
+
+    if (name && this.props.asset && this.props.asset.dn_ownerName === this.state.asset.dn_ownerName)
+      name = this.state.asset.name
+
+    this.props.onChange && this.props.onChange(name, this.state.asset)
+  }
+
+
+  /**
+   * Gets asset related to this drop area
+   */
+  getAsset() {
+    if (this.state.asset)
+      return this.state.asset
+
+    if (this.props.value) {
+      const parts = this.props.value.split(":")
+      let name = parts.pop()
+      if (/(\#\d+)$/.test(name) && this.props.kind === 'graphic')
+        name = name.split(' #')[0]
+
+      const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
+      if(owner == "[builtin]")
+        return
+
+      // use or not to use isDeleted here ???????
+      const selByName = {dn_ownerName: owner, name: name, kind: this.props.kind, isDeleted: false}
+      const sel = this.props._id ? {_id: this.props._id, isDeleted: false} : selByName
+
+      let assets =  Azzets.find(sel).fetch()
+      // if we cannot find by id - check by name
+      if(assets.length === 0 && this.props._id){
+        assets = Azzets.find(selByName).fetch()
+      }
+      else if(assets.length > 1)
+        console.warn("Multiple assets located for DropArea", assets)
+
+      if (assets && assets.length)
+        return assets[0]
+    }
+    return null
+  }
+
+  setAsset(asset){
     if (asset.kind !== this.props.kind) {
       this.setState( { badAsset: asset, asset: null }, () => { this.saveChanges() })
       return
@@ -73,64 +167,34 @@ export default class DropArea extends React.Component {
 
     this.setState( { asset: asset, badAsset: null }, () => {
       this.subscription && this.subscription.stop()
-      if(asset.dn_ownerName == "[builtin]"){
-        return
-      }
-      this.subscription = Meteor.subscribe("assets.public.owner.name", asset.dn_ownerName, asset.name, {
-        onReady: () => { this.forceUpdate() }
-      })
+      // subscribe to new asset
+      this.startSubscription(asset.dn_ownerName, asset.name, asset.kind)
       this.saveChanges()
     })
-  }
-
-  saveChanges() {
-    let name = this.state.asset ? this.state.asset.dn_ownerName + ":" + this.state.asset.name : ''
-
-    if (name && this.props.asset.dn_ownerName === this.state.asset.dn_ownerName)
-      name = this.state.asset.name
-
-    this.props.onChange && this.props.onChange(name, this.state.asset)
-  }
-
-  getAsset() {
-    if (this.state.asset)
-      return this.state.asset
-    
-    if (this.props.value) {
-      const parts = this.props.value.split(":")
-      const name = parts.pop()
-      const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
-      if(owner == "[builtin]"){
-        return
-      }
-      this.subscription = Meteor.subscribe("assets.public.owner.name", owner, name)
-      const aa =  Azzets.find({dn_ownerName: owner, name: name}).fetch()
-
-      if (aa && aa.length)
-        return aa[0]
-    }
-    return null
   }
 
   createAssetView() {
     const asset = this.state.asset || this.getAsset() || this.state.badAsset;
     if (!asset)
       return
-    
+
     const transform = this.getEffect(this.props.effect)
+    const frame = this.getFrame(this.props.frame)
+    const imgLink = frame === 0 ? Thumbnail.getLink(asset) : `/api/asset/png/${asset._id}?frame=${frame}`
+
     // TODO: render effect
     return (
       <QLink to={`/u/${asset.dn_ownerName}/asset/${asset._id}`}>
-        {asset.thumbnail && <img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={asset.thumbnail}/> }
+        <img className='mgb-pixelated' style={{maxHeight: "50px", transform}} src={imgLink}/>
         <div>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div>
       </QLink>
     )
   }
 
-  getEffect(effect) {
-    if (!effect)
+  getEffect (effect) {
+  if (!effect)
       return "none"
-    
+
     const map = {
       rotate90: "rotate(90deg)",
       rotate180: "rotate(180deg)",
@@ -141,15 +205,25 @@ export default class DropArea extends React.Component {
     return map[effect] || "none"
   }
 
+  getFrame (frame) {
+    if (!frame)
+      return 0
+
+    return frame
+  }
+
   renderOptions() {
     const name = this.props.title || "Builtin samples"
     const options = this.props.options
     return (
       <div className="inline fields">
         <label>{name}</label>
-        <SmallDD options={options} onchange={(val) => {
+        <SmallDD options={options} onChange={(val) => {
           this.props.value = val
           this.state.asset = null
+          // Play sound when selecting
+          if (name === "Builtin samples" && MgbActor.alCannedSoundsList.includes(val))
+            MgbActor.playCannedSound(val)
           this.props.onChange && this.props.onChange(val)
         }} value={this.props.value} />
       </div>
@@ -158,8 +232,10 @@ export default class DropArea extends React.Component {
 
   render() {
     const asset = this.getAsset()
+
     return (
       <div
+        /*TODO: this is bad id - e.g. actor has 3 sound options */
         id={`mgbjr-dropArea-${this.props.kind}`}
         style={{width: "100%"}}
         className={'ui message accept-drop message' + (asset ? " positive" : "") + (this.state.badAsset ? " negative" : "")}
@@ -170,7 +246,7 @@ export default class DropArea extends React.Component {
         }}
         >
 
-        {!asset && !this.state.badAsset ? (this.props.value || `Drop Asset (${this.props.kind || "any"}) here!`) :
+        {!asset && !this.state.badAsset ? (this.props.text || this.props.value || `Drop Asset (${this.props.kind || "any"}) here!`) :
           <i className="floated right ui icon remove" onClick={()=>{
               this.props.value = ""
               this.setState(

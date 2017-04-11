@@ -2,8 +2,9 @@ export default () => {
   return {
       "databag": {
         "all": {
-          "actorType": "0",
+          "actorType": "4",
           "description": "",
+          "name": "",
           "initialHealthNum": "1",
           "initialMaxHealthNum": "0",
           "gravityYN": "0",
@@ -16,7 +17,7 @@ export default () => {
           "defaultGraphicName": ""
         },
         "allchar": {
-          "movementSpeedNum": "1",
+          "movementSpeedNum": "0",
           "upYN": "1",
           "downYN": "1",
           "leftYN": "1",
@@ -33,6 +34,7 @@ export default () => {
           "touchDamageToNPCorItemNum": "0",
           "touchDamageAttackChance": "100",
           "touchDamageCases": "0",
+          //"meleeYN": "1", 
           "meleeDamageToPlayerNum": "0",
           "meleeDamageToNPCorItemNum": "0",
           "soundWhenMelee": '[builtin]:none',
@@ -72,7 +74,7 @@ export default () => {
           "saysWhatOnChoice3": ""
         },
         "item": {
-          "itemActivationType": "3",
+          "itemActivationType": "0",
           "inventoryEquippableYN": "0",
           "inventoryEquipSlot": "",
           "visualEffectWhenUsedType": "0",
@@ -104,7 +106,7 @@ export default () => {
           "equippedNewMeleeRepeatDelayModifierNum": "0"
         },
         "itemOrNPC": {
-          "destroyableYN": "1",
+          "destroyableYN": "0",
           "scoreOrLosePointsWhenShotByPlayerNum": "0",
           "scoreOrLosePointsWhenKilledByPlayerNum": "0",
           "dropsObjectWhenKilledName": "",

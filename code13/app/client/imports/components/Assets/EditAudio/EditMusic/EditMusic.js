@@ -16,6 +16,7 @@ import AudioConverter from '../lib/AudioConverter.js'
 import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { showToast } from '/client/imports/routes/App'
 
 export default class EditMusic extends React.Component {
 
@@ -106,6 +107,7 @@ export default class EditMusic extends React.Component {
   }
 
   componentWillUnmount () {
+    this._raf = () => {}
     this.stopMusic()
   }
 
@@ -131,7 +133,10 @@ export default class EditMusic extends React.Component {
   }
 
   importMusic (audioObject, saveText) {
-    if (!this.hasPermission) return
+    if (!this.hasPermission()) {
+      showToast("You don't have write access to this Asset", 'error')
+      return false
+    }
 
     if (audioObject) {
       let c2 = _.cloneDeep(this.props.asset.content2)
@@ -268,7 +273,7 @@ export default class EditMusic extends React.Component {
 
   hasPermission () {
     if (!this.props.canEdit) {
-      this.props.editDeniedReminder()
+      // this.props.editDeniedReminder()
       return false
     }else {
       return true
@@ -276,7 +281,10 @@ export default class EditMusic extends React.Component {
   }
 
   handleSave (saveText, c2) {
-    if (!this.hasPermission()) return
+    if (!this.hasPermission()) {
+      showToast("You don't have write access to this Asset", 'error')
+      return false
+    }
     if (!c2) c2 = this.props.asset.content2
 
     // console.log("SAVE", saveText, c2)
@@ -289,6 +297,7 @@ export default class EditMusic extends React.Component {
     c2.duration = newDuration
     // this.handleSave('Change duration', c2)
     this.mergeChannels(c2, "Change duration")
+    this.doSaveStateForUndo('Change duration')    
   }
 
   // updateCanvasLength () {
@@ -353,6 +362,7 @@ export default class EditMusic extends React.Component {
     this.copySelected()
     const sData = this.state.selectData
     this.refs["channel"+sData.channelID].clearBufferPart(sData.selectStart, sData.selectDuration)
+    this.doSaveStateForUndo("Cut selected")
   }
 
   copySelected () {
@@ -374,6 +384,7 @@ export default class EditMusic extends React.Component {
 
     const sData = this.state.selectData
     this.refs["channel"+sData.channelID].eraseBufferPart(sData.selectStart, sData.selectDuration)
+    this.doSaveStateForUndo("Erase selected")
   }
 
   selectableButtons (button) {
@@ -396,6 +407,7 @@ export default class EditMusic extends React.Component {
       dataUri: dataUri
     })
     this.handleSave('Add channel', c2)
+    this.doSaveStateForUndo('Add channel')
   }
 
   deleteChannel (channelID) {
@@ -403,6 +415,97 @@ export default class EditMusic extends React.Component {
     c2.channels.splice(channelID, 1)
     // this.mergeChannels(c2)
     this.handleSave('Remove channel', c2)
+    this.doSaveStateForUndo('Remove channel')
+  }
+
+  // useful for undo and redo
+  forceDraw (newC2) 
+  {
+    let channels = this.props.asset.content2.channels
+    if(newC2.channels.length != channels.length)
+      return false
+
+    channels.forEach((channel, id) => {
+      this.refs['channel' + channel.id].forceDraw(newC2.channels[id])
+    })
+  }
+
+  handleUndo()
+  {
+    if (this.undoSteps.length > 0)
+    {
+      let zombie = this.undoSteps.pop()
+      let c2 = zombie.savedContent2
+
+      this.doSaveStateForRedo("Redo changes")
+      this.handleSave("Undo changes", c2)
+      this.forceDraw(c2)
+    }
+  }
+
+  handleRedo() {
+    if (this.redoSteps.length > 0)
+    {
+      let zombie = this.redoSteps.pop()
+      let c2 = zombie.savedContent2
+
+      this.doSaveStateForUndo("Undo changes")
+      this.handleSave("Redo changes", c2)
+      this.forceDraw(c2)
+    }
+  }
+
+  initDefaultUndoStack()
+  {
+    // undoSteps will be an array of
+    //   {
+    //      when:           Date.now() of when it was added to the stack
+    //      byUserName      username who made the change
+    //      byUserContext   Where the user made the change (IP address etc)
+    //      changeInfo      The change - for example 'Deleted frame'
+    //      savedContent2   The saved data
+    //    }
+    //
+    // Oldest items will be at index=0 in array
+
+    if (this.hasOwnProperty("undoSteps") === false)
+      this.undoSteps = []
+
+    if (this.hasOwnProperty("redoSteps") === false)
+      this.redoSteps = []
+  }
+
+  doMakeUndoStackEntry(changeInfoString)
+  {
+    return {
+      when: Date.now(),
+      byUserName: "usernameTODO",        // TODO
+      byUserContext: "someMachineTODO",  // TODO
+      changeInfo: changeInfoString,
+      savedContent2: _.cloneDeep(this.props.asset.content2)
+    }
+  }
+
+  doTrimUndoStack()
+  {
+    let u = this.undoSteps
+    if (u.length > 20)
+      u.shift()         // Remove 0th element (which is the oldest)
+  }
+
+  doSaveStateForUndo(changeInfoString)
+  {
+    this.doTrimUndoStack()
+    this.undoSteps.push(this.doMakeUndoStackEntry(changeInfoString))
+  }
+
+  doTrimRedoStack() {
+    if (this.redoSteps.length > 20) this.redoSteps.shift()
+  }
+
+  doSaveStateForRedo(changeInfoString) {
+    this.doTrimRedoStack()
+    this.redoSteps.push(this.doMakeUndoStackEntry(changeInfoString))
   }
 
   renderChannels () {
@@ -432,6 +535,7 @@ export default class EditMusic extends React.Component {
           pasteData={this.state.pasteData}
 
           handleSave={this.handleSave.bind(this)}
+          doSaveStateForUndo={this.doSaveStateForUndo.bind(this)}
           saveChannel={this.saveChannel.bind(this)}
           setAudioTime={this.setAudioTime.bind(this)}
           deleteChannel={this.deleteChannel.bind(this)}
@@ -442,6 +546,7 @@ export default class EditMusic extends React.Component {
   }
 
   render () {
+    this.initDefaultUndoStack()
     let c2 = this.props.asset.content2
     let zoomInd = this.zoomLevels.indexOf(this.state.pxPerSecond)
 
@@ -509,6 +614,8 @@ export default class EditMusic extends React.Component {
                 selectData={this.state.selectData}
                 pasteData={this.state.pasteData}
                 isLoop={this.state.isLoop}
+                undoSteps={this.undoSteps}
+                redoSteps={this.redoSteps}
 
                 isDrag={this.state.isDrag}
                 isSelecting={this.state.isSelecting}
@@ -518,11 +625,14 @@ export default class EditMusic extends React.Component {
                 togglePlayMusic={this.togglePlayMusic.bind(this)}
                 stopMusic={this.stopMusic.bind(this)}
                 toggleLoop={this.toggleLoop.bind(this)}
+                handleUndo={this.handleUndo.bind(this)}
+                handleRedo={this.handleRedo.bind(this)}
                 zoom={this.zoom.bind(this)}
                 eraseSelected={this.eraseSelected.bind(this)}
                 cutSelected={this.cutSelected.bind(this)}
                 copySelected={this.copySelected.bind(this)}
                 selectableButtons={this.selectableButtons.bind(this)}
+                hasPermission={this.hasPermission.bind(this)}
               />
 
 

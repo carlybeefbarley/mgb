@@ -1,4 +1,6 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Segment, Header, Button, Container, Message } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import { AssetKinds } from '/imports/schemas/assets'
 import AssetCreateSelectKind from './AssetCreateSelectKind'
@@ -7,6 +9,7 @@ import validate from '/imports/schemas/validate'
 
 export default AssetCreateNew = React.createClass({
   propTypes: {
+    suggestedParams:        PropTypes.object,                 // projectName,assetName,assetKind
     placeholderName:        PropTypes.string.isRequired,      // Note that a default is provided below 
     handleCreateAssetClick: PropTypes.func.isRequired,        // Callback function to create the asset, and is expected to navigate to the new page. Params are (assetKindKey, newAssetNameString). The newAssetNameString can be ""
     currUser:               PropTypes.object,                 // currently logged in user (if any)
@@ -22,84 +25,57 @@ export default AssetCreateNew = React.createClass({
   },
 
   getInitialState: function () {
-    return {
-      projectCompoundName: "",
-      selectedProject: null,          // 
+    const { currUserProjects, suggestedParams } = this.props
+    const { projectName, assetName, assetKind } = suggestedParams
+    const retval = {
+      selectedProject: _.find(currUserProjects, { name: projectName }) || null,          // Project Object or Null
       buttonActionPending: false,     // True after the button has been pushed. so it doesn't get pushed twice
-      selectedKind: "",               // "" or one of AssetKindKeys[]
-      newAssetName: ""                // "" or a valid assetName string
+      selectedKind: AssetKinds.isValidKey(assetKind) ? assetKind : '',               // "" or one of AssetKindKeys[]
+      newAssetName: assetName || ''                // "" or a valid assetName string
     }
+    return retval
   },
 
-  handleChangeSelectedProjectName: function (selectedProjName, selectedProj, selectedCompoundName) {
-    this.setState( { projectCompoundName: selectedCompoundName, selectedProject: selectedProj } )
+  handleChangeSelectedProjectName: function (selectedProjName, selectedProj) {
+    this.setState( { selectedProject: selectedProj } )
   },
 
   render: function() {
     const { newAssetName, selectedKind } = this.state
-    const { currUser, currUserProjects } = this.props
-    const isAssetNameValid = validate.assetName(newAssetName) && newAssetName && newAssetName !== ''
+    const { currUser, currUserProjects, placeholderName } = this.props
+    const isAssetNameValid = newAssetName && validate.assetName(newAssetName) && newAssetName !== ''
+    const assetNameErrText = (_.isString(newAssetName) && newAssetName.length > 1) ? validate.assetNameWithReason(newAssetName) : null
     const isKindChosen = selectedKind !== ''
     const isAssetReadyToCreate = isKindChosen && isAssetNameValid
     const chosenKindStr = isKindChosen ? AssetKinds[selectedKind].name : "Asset"
     const chosenNameStr = isAssetNameValid ? `"${newAssetName}"` : ""
     const isButtonDisabled = this.state.buttonActionPending || !isAssetReadyToCreate
-    const createButtonClassName = "ui primary " + (isButtonDisabled ? " disabled " : " ") + "button"
     const createButtonTooltip = isAssetReadyToCreate ? "Click here to create your new Asset" : "You must choose a valid name and 'kind' for your new asset. You can rename it later if you wish, but you cannot change it's 'kind' later"
     
     return (
-      <div>
-      { /*}
-        <div className="ui fluid small ordered evenly divided steps">
-          <div className={(isAssetNameValid ? "completed " : "active ") + "step"}>
-            <div className="content">
-              <div className="title">Name</div>
-              <div className="description">Name your<br />new asset</div>
-            </div>
-          </div>
-          <div className={(isKindChosen ? "completed " : "active ") + "step"}>
-            <div className="content">
-              <div className="title">Kind</div>
-              <div className="description">Choose which<br />kind to create</div>
-            </div>
-          </div>
-          <div className={ (this.state.buttonActionPending ? "completed ": (isAssetReadyToCreate ? "active " : "")) + "step" }>
-            <div className="content">
-              <div className="title">Choose Project</div>
-              <div className="description">Optionally place<br />Asset in a Project</div>
-            </div>
-          </div>
-          <div className={ (this.state.buttonActionPending ? "completed ": (isAssetReadyToCreate ? "active " : "")) + "step" }>
-            <div className="content">
-              <div className="title">Confirm Create</div>
-              <div className="description">Create it!<br />&nbsp;</div>
-            </div>
-          </div>
-        </div>
-      */ 
-    }
-        
-        <div className="ui basic padded segment">
-          <h4 className="ui header">1. Enter Asset Name</h4>
+      <Container text>
+        <Segment basic>
+          <Header as='h4' content='1. Name your Asset' />
           <div className="ui items">
             <div className={"ui fluid input" + (isAssetNameValid ? "" : " error")}>
-              <input className="fluid" type="text" value={newAssetName} onChange={(e) => this.setState({ newAssetName: e.target.value})} placeholder={this.props.placeholderName} 
+              <input className="fluid" type="text" value={newAssetName} onChange={(e) => this.setState({ newAssetName: e.target.value})} placeholder={placeholderName} 
                 ref="inputAssetName"
               ></input>
             </div>
+            { assetNameErrText && <Message error content={assetNameErrText} /> }
           </div>
-        </div>
+        </Segment>
 
-        <div className="ui basic padded segment">
-          <h4 className="ui header">2. Choose an Asset Kind</h4>        
+        <Segment basic>
+          <Header as='h4' content='2. Choose which Kind of Asset to create'/>        
           <AssetCreateSelectKind 
             currUser={currUser} 
             selectedKind={selectedKind} 
             handleSelectAsset={this.handleSelectAssetKindClick} />
-        </div>
+        </Segment>
 
-        <div className="ui basic padded segment">
-          <h4 className="ui header">3. Optionally - place the new asset within a project</h4>        
+        <Segment basic>
+          <Header as='h4' content='3. (Optional) place the new Asset into a Project' />
           <ProjectSelector
               canEdit={false}
               isUseCaseCreate={true}
@@ -108,22 +84,23 @@ export default AssetCreateNew = React.createClass({
               availableProjects={currUserProjects}
               ProjectListLinkUrl={currUser && `/u/${currUser.profile.name}/projects`}
               showProjectsUserIsMemberOf={true}
-              chosenProjectName={this.state.projectCompoundName} />
-        </div>
+              chosenProjectObj={this.state.selectedProject} />
+        </Segment>
 
-        <div title={createButtonTooltip}>
-          <div id="mgbjr-create-asset-button" className={createButtonClassName} onClick={this.handleCreateAssetClick} >
-            4. Create {chosenKindStr} {chosenNameStr}
-            <i className="right chevron icon"></i>
-          </div>
-        </div>        
-      </div>
+        <Button 
+            title={createButtonTooltip}
+            primary
+            disabled={isButtonDisabled}
+            id="mgbjr-create-asset-button" 
+            onClick={this.handleCreateAssetClick}
+            content={`4. Create ${chosenKindStr} ${chosenNameStr}`} />
+      </Container>
     )
   },
 
   handleSelectAssetKindClick: function(assetKindKey)
   {
-    this.setState( { selectedKind: assetKindKey})
+    this.setState( { selectedKind: assetKindKey} )
     // this.blurInput()
   },
 

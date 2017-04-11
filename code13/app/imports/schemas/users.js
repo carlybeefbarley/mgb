@@ -1,8 +1,9 @@
-
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
+import _ from 'lodash'
 import { Users } from '/imports/schemas'
 import { Match, check } from 'meteor/check' 
+import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 
 const optional = Match.Optional
 let count                                // TODO: IDK why I put this out here. Come back and move it into methods once I'm sure there wasn't some meteor-magic here.
@@ -32,7 +33,13 @@ const schema = {
   badges: optional([]),
   permissions: {                         // TODO: Actually this is modelled as an array of team/??/perm stuff. Look at fixtures for the super-admin example. Needs cleaning up.
     roles: optional([String])            // See in App.js for 'super-admin' handling 
-  }
+  },
+
+  isDeactivated: optional(Boolean),      // Added March 2017. Users can choose to deactivate their own accounts. This may get some special workflow in future
+
+  // The su fields can only be changed by a superAdmin User.. They typically relate to workflows or system counts
+  suIsBanned:  optional(Boolean),     // Optional. If true, then this USER has been banned. See suFlagId for the flagging workflow
+  suFlagId:    optional(String)       // Optional. (TODO) non-null / non-empty if there is a Flag record for this message (See Flags.js)
 }
 
 
@@ -45,10 +52,10 @@ export const userSorters = {
 //"mgbRecentsDate":  { "profile.latestNewsTimestampSeen": -1 },   // This can't work until the date strings are replaced with Date() values in the DB
 }
 
-
 Meteor.methods({
   "User.storeProfileImage": function( url ) {
     check( url, String )
+    checkIsLoggedInAndNotSuspended()
 
     try {
       Meteor.users.update(Meteor.userId(), { $push: {"profile.images": url }} )
@@ -61,13 +68,16 @@ Meteor.methods({
 
   "User.setProfileImage": function ( url ) {
     check( url, String )
+    checkIsLoggedInAndNotSuspended()
     Meteor.users.update(Meteor.userId(), { $set: {"profile.avatar": url }} )
   },
 
   "User.updateEmail": function(docId, data) {
     check(docId, String)
-    if (!this.userId) throw new Meteor.Error(401, "Login required")
-    if (this.userId !== docId) throw new Meteor.Error(401, "You don't have permission to edit this Profile")
+    checkIsLoggedInAndNotSuspended()
+
+    if (this.userId !== docId) 
+      throw new Meteor.Error(401, "You don't have permission to edit this Profile")
 
     // whitelist what can be updated
     check(data, {
@@ -80,24 +90,26 @@ Meteor.methods({
     return count
   },
 
-// TODO: Enable this once I know it is actually safe!
+  // TODO: Enable this once I know it how to fully secure and audit it
   // "User.setPasswordIfDoesNotExist": function(userId, newPassword) {
-  //   // Yikes!!!
   //   Accounts.setPassword(userId, newPassword)
   // },
 
 
-  "User.updateProfile": function(docId, data) {
 
+  "User.updateProfile": function(docId, data) {
     check(docId, String)
-    if (!this.userId) 
-      throw new Meteor.Error(401, "Login required")
+    checkIsLoggedInAndNotSuspended()
+
     if (this.userId !== docId)
       throw new Meteor.Error(401, "You don't have permission to edit this Profile")
     // whitelist what can be updated
+
+    if (!_.isUndefined(data.suIsBanned) || !_.isUndefined(data.suFlagId))
+      checkMgb.checkUserIsSuperAdmin()
     
     check(data, {
-      "profile.name": optional(schema.profile.name),
+      "profile.name": optional(schema.profile.name),    // TODO: Disallow?
       "profile.avatar": optional(schema.profile.avatar),
       "profile.title": optional(schema.profile.title),
       "profile.bio": optional(schema.profile.bio),
@@ -108,9 +120,10 @@ Meteor.methods({
       "profile.images": optional(schema.profile.images),
       "profile.isDeleted": optional(schema.profile.isDeleted),
       "profile.projectNames": optional(schema.profile.projectNames),
-      "profile.latestNewsTimestampSeen": optional(schema.profile.latestNewsTimestampSeen)
-    });
-
+      "profile.latestNewsTimestampSeen": optional(schema.profile.latestNewsTimestampSeen),
+      "suIsBanned": (schema.suIsBanned),
+      "suFlagId": (schema.suFlagId)
+    })
     count = Meteor.users.update(docId, {$set: data})
 
     if (Meteor.isServer)
@@ -119,16 +132,15 @@ Meteor.methods({
   }
 })
 
-
+//
 // helper functions
+//
+
 export function isSameUser(user1, user2)
 {
   return user1 && user2 && user1._id && user2._id && user1._id === user2._id
 }
 
-
-
-// helper functions
 export function isSameUserId(id1, id2)
 {
   return id1 && id2 && id1 === id2

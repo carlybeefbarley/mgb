@@ -1,29 +1,40 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Grid, Segment, Divider, Header, Popup, Button, Icon } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import sty from  './editGraphic.css'
-import ColorPicker from 'react-color'        // http://casesandberg.github.io/react-color/
+import ReactColor from 'react-color'        // http://casesandberg.github.io/react-color/
 import Tools from './GraphicTools'
 
-import SpriteLayers from './Layers/SpriteLayers.js'
-import GraphicImport from './GraphicImport/GraphicImport.js'
-import CanvasGrid from './CanvasGrid.js'
+import SpriteLayers from './Layers/SpriteLayers'
+import GraphicImport from './GraphicImport/GraphicImport'
+import CanvasGrid from './CanvasGrid'
 
-import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
-import NumberInput from '/client/imports/components/Controls/NumberInput'
+import { snapshotActivity } from '/imports/schemas/activitySnapshots'
+import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-
+import ResizeImagePopup from './ResizeImagePopup'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+import SpecialGlobals from '/imports/SpecialGlobals'
+import ArtTutorial from './ArtTutorials'
 
+import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
+
+import { makeExpireThumbnailLink } from '/client/imports/helpers/assetFetchers.js'
 
 // Some constants we will use
-const MAX_BITMAP_WIDTH = 1500
-const MAX_BITMAP_HEIGHT = 1024
+const MAX_BITMAP_WIDTH = 2048
+const MAX_BITMAP_HEIGHT = 2048
 const MAX_GRAPHIC_FRAMES = 64 // TODO: Pass this into Importer, and also obey it generally
-const DEFAULT_GRAPHIC_WIDTH = 64
+const DEFAULT_GRAPHIC_WIDTH = 32
 const DEFAULT_GRAPHIC_HEIGHT = 32
 
+
+const THUMBNAIL_WIDTH = SpecialGlobals.thumbnail.width
+const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
+
+
+const MIN_ZOOM_FOR_GRIDLINES = 4
 
 //TODO put these in a settings object
 const settings_ignoreMouseLeave = true
@@ -31,11 +42,10 @@ const settings_ignoreMouseLeave = true
 // This is React, but some fast-changing items use Jquery or direct DOM manipulation,
 // typically those that can change per mouse-move:
 //   1. Drawing on preview+Editor canvas
-//   2. Some popup handling (uses Semanticui .popup() jquery extension. Typically these have the 'hazPopup' class
-//   3. Status bar has some very dynamic data like mouse position, current color, etc. See sb_* functions
+//   2. Status bar has some very dynamic data like mouse position, current color, etc. See sb_* functions
 
 
-// Also, in order to optimize some draw and draw-while-save-is-pending scenarios, there is some special handling 
+// Also, in order to optimize some draw and draw-while-save-is-pending scenarios, there is some special handling
 // of saves via this.handleSave()
 //   The normal flow of changes are..
 //          Step 1.   User changes graphic locally with tool. The tool should save to the preview and edit canvases
@@ -43,33 +53,34 @@ const settings_ignoreMouseLeave = true
 //          Step 3.   While the save-response is pending, we allow the user to continue editing
 //          Step 4.   The change to the Azzet collection comes back to us via the meteor DDP sync mechanism..
 //                       ** At this point we must decide what to do with the subsequent edits. We use a special
-//                       ** marker in the asset.content2 object:   content2.recentMarker.. which we change randomly each 
+//                       ** marker in the asset.content2 object:   content2.recentMarker.. which we change randomly each
 //                       ** time we save data. If the recentMarker coming back is one we just set, then we don't allow
-//                       ** this data from the server to replace the user's subsequent edits. 
-//                       ** See the code using 'recentMarker' variable for the actual implementation of this optimization. 
+//                       ** this data from the server to replace the user's subsequent edits.
+//                       ** See the code using 'recentMarker' variable for the actual implementation of this optimization.
 let recentMarker = null  // See explanation above
 
 export default class EditGraphic extends React.Component {
-  // static PropTypes = {   // Note - static requires Ecmascript 7
-  //   asset: PropTypes.object,
-  //   handleContentChange: PropTypes.function,
-  //   canEdit: PropTypes.bool
-  // }
+  // See AssetEdit.js for propTypes. That wrapper just passes them to us
 
-  constructor(props) {
+  handleToggleGrid = () => this.setState( { showGrid: !this.state.showGrid} )
+  handleToggleCheckeredBg = () => this.setState( { showCheckeredBg: !this.state.showCheckeredBg} )
+
+  constructor(props, context) {
     super(props)
     registerDebugGlobal( 'editGraphic', this, __filename, 'Active Instance of Graphic editor')
-
-    // console.log(this.props.asset)
 
     this.doSnapshotActivity = _.throttle(this.doSnapshotActivity, 5*1000)
 
     this.zoomLevels = [1, 2, 4, 6, 8, 10, 12, 14, 16]
     this.gridImg = null
 
+    this.userSkills = context.skills
+
     this.state = {
       editScale:        this.getDefaultScale(),        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
+      showCheckeredBg:  false,
+      showGrid:         true,
       selectedLayerIdx: 0,
       selectedColors:   {
         // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
@@ -79,6 +90,7 @@ export default class EditGraphic extends React.Component {
       toolActive: false,
       toolChosen: this.findToolByLabelString("Pen"),
       selectRect: null,   // if asset area is selected then value {startX, startY, endX, endY}
+      selectDimensions: { width: 0, height: 0 },
       pasteCanvas: null,     // if object cut or copied then {x, y, width, height, imgData}
       scrollMode: "Normal"
     }
@@ -87,8 +99,7 @@ export default class EditGraphic extends React.Component {
     // this.fixingOldAssets()
 
     this.onpaste = (e) => {
-      "use strict";
-      var items = e.clipboardData.items;
+      var items = e.clipboardData.items
       if (items) {
         let isImagePasted = false
         //access data directly
@@ -96,27 +107,29 @@ export default class EditGraphic extends React.Component {
           if (items[i].type.indexOf("image") !== -1) {
             //image
             isImagePasted = true
-            var blob = items[i].getAsFile();
+            var blob = items[i].getAsFile()
             var source = URL.createObjectURL(blob)
-            this.pasteImage(source);
+            this.pasteImage(source)
           }
         }
-        if(isImagePasted)
+        if (isImagePasted)
           e.preventDefault()
       }
     }
 
     // animframe for updating selecting rectangle animation
     this._raf = () => {
-      if(this.state.selectRect) this.drawSelectRect(this.state.selectRect);
-      window.requestAnimationFrame(this._raf);
+      if(this.state.selectRect) this.drawSelectRect(this.state.selectRect)
+      window.requestAnimationFrame(this._raf)
     }
     this._raf()
 
   }
 
-  getImageData(){
-    return this.props.asset.thumbnail
+  getImageData() {
+    const a = {}
+    this.setThumbnail(a)
+    return a.thumbnail
   }
 
   // Graphic asset - Data format:
@@ -147,11 +160,10 @@ export default class EditGraphic extends React.Component {
       mouseAtText: $(ReactDOM.findDOMNode(this.refs.statusBarMouseAtText)),
       colorAtText: $(ReactDOM.findDOMNode(this.refs.statusBarColorAtText)),
       colorAtIcon: $(ReactDOM.findDOMNode(this.refs.statusBarColorAtIcon))
-
     }
     this.setStatusBarInfo()
 
-    this.handleColorChangeComplete('fg', { rgb: {r: 0, g: 0, b:128, a: 1} } )
+    this.handleColorChangeComplete('fg', { rgb: { r: 0, g: 0, b:128, a: 1 } } )
 
     // Touch and Mouse events for Edit Canvas
     this.editCanvas.addEventListener('touchmove',     this.handleTouchMove.bind(this))
@@ -166,9 +178,6 @@ export default class EditGraphic extends React.Component {
     this.editCanvas.addEventListener('mouseenter',    this.handleMouseEnter.bind(this))
     this.editCanvas.addEventListener('contextmenu',   this.handleContextMenu.bind(this))
 
-    // Tool button initializations
-    this.activateToolPopups()    
-    
     this.doSnapshotActivity()
 
     //TODO: add only to canvas?
@@ -190,7 +199,7 @@ export default class EditGraphic extends React.Component {
     if (!c2.layerParams && c2.layerNames) {
       c2.layerParams = []
       for (let i=0; i<c2.layerNames.length; i++)
-        c2.layerParams[i] = { name: c2.layerNames[i], isHidden: false, isLocked: false }    
+        c2.layerParams[i] = { name: c2.layerNames[i], isHidden: false, isLocked: false }
       autoFix = true
     }
     if (!c2.spriteData) {
@@ -207,24 +216,15 @@ export default class EditGraphic extends React.Component {
     }
     // if(!c2.tileset){
       // c2.tileset = this.createTileset();
-      // autoFix = true; 
+      // autoFix = true;
     // }
 
-    if (autoFix) this.handleSave("Automatic fixing old assets")
-  }
-
-
-  activateToolPopups()
-  {
-    // See http://semantic-ui.com/modules/popup.html#/usage
-
-    let $a = $(ReactDOM.findDOMNode(this))
-    $a.find('.hazPopup').popup( { delay: {show: 250, hide: 0}} )
-
+    if (autoFix)
+      this.handleSave("Automatic fixing old assets")
   }
 
 // TODO: DGOLDS to clean this up -- combine with mgb1ImportTiles etc
-  initDefaultContent2() 
+  initDefaultContent2()
   {
     let asset = this.props.asset
     if (!asset.hasOwnProperty("content2") || !asset.content2.hasOwnProperty('width')) {
@@ -248,9 +248,12 @@ export default class EditGraphic extends React.Component {
     const wRatio = (screen.width *0.9) / width
     const hRatio = (screen.height * 0.5) / height
     let scale = wRatio < hRatio ? Math.floor(wRatio) : Math.floor(hRatio)
-    if(scale > 4) scale = 4
-    else if(scale < 1) scale = 1
-    else if(scale == 3) scale = 2
+    if ( scale > 4)
+      scale = 4
+    else if (scale < 1)
+      scale = 1
+    else if (scale == 3)
+      scale = 2
 
     return scale
   }
@@ -276,7 +279,7 @@ export default class EditGraphic extends React.Component {
   }
 
   /** Stash references to the preview canvases after initial render and subsequent renders
-   * 
+   *
    */
   getPreviewCanvasReferences()
   {
@@ -314,11 +317,10 @@ export default class EditGraphic extends React.Component {
     let frameCount = c2.frameNames.length
     let layerCount = c2.layerParams.length
 
-    for(let frameID=0; frameID<frameCount; frameID++) {
+    for (let frameID=0; frameID<frameCount; frameID++) {
       this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height)
-      for(let layerID=layerCount-1; layerID>=0; layerID--) {
+      for (let layerID=layerCount-1; layerID>=0; layerID--)
         this.loadAssetAsync(frameID, layerID)
-      }
     }
     setTimeout(() => this.updateEditCanvasFromSelectedPreviewCanvas(), 0)
   }
@@ -327,28 +329,27 @@ export default class EditGraphic extends React.Component {
     let c2 = this.props.asset.content2
     if (!c2.frameData[frameID] || !c2.frameData[frameID][layerID]) { // manage empty frameData cases
       // console.log('empty framedata', frameID, layerID)
-      if (frameID === this.state.selectedFrameIdx) {
+      if (frameID === this.state.selectedFrameIdx)
         this.previewCtxArray[layerID].clearRect(0,0, c2.width, c2.height)
-      }
       return
     }
-    let dataURI = c2.frameData[frameID][layerID];
+    let dataURI = c2.frameData[frameID][layerID]
     // if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
     if (dataURI !== undefined && dataURI.startsWith("data:image/")) {
-      var _img = new Image;
+      var _img = new Image
       _img.frameID = frameID   // hack so in onload() we know which frame is loaded
       _img.layerID = layerID   // hack so in onload() we know which layer is loaded
       let self = this
       _img.onload = function(e) {
         let loadedImage = e.target
-        if(loadedImage.frameID === self.state.selectedFrameIdx) {       
+        if(loadedImage.frameID === self.state.selectedFrameIdx) {
           self.previewCtxArray[loadedImage.layerID].clearRect(0,0, c2.width, c2.height)
           self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0)
         }
-        if (!c2.layerParams[loadedImage.layerID].isHidden) { 
+        if (!c2.layerParams[loadedImage.layerID].isHidden) {
           let frame = self.frameCtxArray[loadedImage.frameID]
-          if (frame) 
-            frame.drawImage(loadedImage, 0, 0)  // There seems to be a race condition that means frame is sometime null. 
+          if (frame)
+            frame.drawImage(loadedImage, 0, 0)  // There seems to be a race condition that means frame is sometime null.
         }
       }
       _img.src = dataURI
@@ -360,7 +361,6 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-
   updateFrameLayers() {
     let c2 = this.props.asset.content2
     let frameData = c2.frameData[this.state.selectedFrameIdx]
@@ -368,7 +368,6 @@ export default class EditGraphic extends React.Component {
       this.loadAssetAsync(this.state.selectedFrameIdx, i)
     setTimeout(() => this.updateEditCanvasFromSelectedPreviewCanvas(), 0)
   }
-
 
   updateEditCanvasFromSelectedPreviewCanvas()   // TODO(DGOLDS?): Do we still need the vendor-prefix smoothing flags?
   {
@@ -385,7 +384,7 @@ export default class EditGraphic extends React.Component {
 
     // draws all layers on edit canvas and layer canvas
     for (let i=this.previewCanvasArray.length-1; i>=0; i--) {
-      if (!this.props.asset.content2.layerParams[i].isHidden) { 
+      if (!this.props.asset.content2.layerParams[i].isHidden) {
         this.editCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w*s, h*s)
         this.frameCtxArray[this.state.selectedFrameIdx].drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h)
       }
@@ -397,10 +396,11 @@ export default class EditGraphic extends React.Component {
   forceDraw ()
   {
     let c2 = this.props.asset.content2
-    if(!c2.frameData || !c2.frameData[0]) return
+    if (!c2.frameData || !c2.frameData[0])
+      return
 
     this.frameCtxArray[0].clearRect(0, 0, c2.width, c2.height)
-    for(let i=c2.frameData[0].length-1; i>=0; i--){
+    for (let i=c2.frameData[0].length-1; i>=0; i--) {
       let lData = c2.frameData[0][i]
       let img = new Image()
       img.width = c2.width
@@ -411,13 +411,12 @@ export default class EditGraphic extends React.Component {
       this.frameCtxArray[0].drawImage(img, 0, 0)
     }
     this.editCtx.drawImage(this.frameCanvasArray[0], 0, 0)
-    console.log('---force draw')
   }
 
   drawSelectRect(selectRect) {
     var self = this
 
-    // normalize rect with scale and set always x1,y1 as top left corner 
+    // normalize rect with scale and set always x1,y1 as top left corner
     // 0.5 hack to draw 1 px line
     let scaleRect = {
       x1: (selectRect.startX < selectRect.endX ? selectRect.startX : selectRect.endX) * self.state.editScale -0.5
@@ -426,39 +425,43 @@ export default class EditGraphic extends React.Component {
       , y2: (selectRect.startY > selectRect.endY ? selectRect.startY : selectRect.endY) * self.state.editScale +0.5
     };
 
-    this.editCtx.lineWidth = 1;
-    this.editCtx.strokeStyle = '#000000';
-    drawLine(scaleRect.x1, scaleRect.y1, scaleRect.x2, scaleRect.y1);
-    drawLine(scaleRect.x2, scaleRect.y1, scaleRect.x2, scaleRect.y2);
-    drawLine(scaleRect.x1, scaleRect.y1, scaleRect.x1, scaleRect.y2);
-    drawLine(scaleRect.x1, scaleRect.y2, scaleRect.x2, scaleRect.y2);
+    this.editCtx.lineWidth = 1
+    this.editCtx.strokeStyle = '#000000'
+    drawLine(scaleRect.x1, scaleRect.y1, scaleRect.x2, scaleRect.y1)
+    drawLine(scaleRect.x2, scaleRect.y1, scaleRect.x2, scaleRect.y2)
+    drawLine(scaleRect.x1, scaleRect.y1, scaleRect.x1, scaleRect.y2)
+    drawLine(scaleRect.x1, scaleRect.y2, scaleRect.x2, scaleRect.y2)
 
-    let time = new Date().getMilliseconds();
-    time = Math.round(time/100);
-    let timeOffset = (time % 10) * 2;
+    let time = new Date().getMilliseconds()
+    time = Math.round(time/100)
+    let timeOffset = (time % 10) * 2
 
-    this.editCtx.strokeStyle = '#ffffff';
-    let width = Math.abs(scaleRect.x1 - scaleRect.x2);
-    let height = Math.abs(scaleRect.y1 - scaleRect.y2);
-    let dashSize = 10;
-    let dashCount = Math.ceil((width+dashSize-timeOffset)/(dashSize*2));
+    this.editCtx.strokeStyle = '#ffffff'
+    let width = Math.abs(scaleRect.x1 - scaleRect.x2)
+    let height = Math.abs(scaleRect.y1 - scaleRect.y2)
+    let dashSize = 10
+    let dashCount = Math.ceil((width+dashSize-timeOffset)/(dashSize*2))
     // draw horizontal dashes
-    for(let i=0; i<dashCount; i++){
-      let x = scaleRect.x1 - dashSize + timeOffset + i*dashSize*2;
-      let x2 = x+dashSize;
-      if(x < scaleRect.x1) x = scaleRect.x1;
-      if(x2 > scaleRect.x2) x2 = scaleRect.x2;
-      drawLine(x, scaleRect.y1, x2, scaleRect.y1); 
-      drawLine(x, scaleRect.y2, x2, scaleRect.y2); 
+    for(let i=0; i<dashCount; i++) {
+      let x = scaleRect.x1 - dashSize + timeOffset + i*dashSize*2
+      let x2 = x+dashSize
+      if (x < scaleRect.x1)
+        x = scaleRect.x1;
+      if (x2 > scaleRect.x2)
+        x2 = scaleRect.x2
+      drawLine(x, scaleRect.y1, x2, scaleRect.y1)
+      drawLine(x, scaleRect.y2, x2, scaleRect.y2)
     }
 
-    dashCount = Math.ceil((height+dashSize-timeOffset)/(dashSize*2));
+    dashCount = Math.ceil((height+dashSize-timeOffset)/(dashSize*2))
     // draw vertical dashes
     for (let i=0; i<dashCount; i++) {
       let y = scaleRect.y1 - dashSize + timeOffset + i*dashSize*2
       let y2 = y+dashSize
-      if (y < scaleRect.y1) y = scaleRect.y1
-      if (y2 > scaleRect.y2) y2 = scaleRect.y2
+      if (y < scaleRect.y1)
+        y = scaleRect.y1
+      if (y2 > scaleRect.y2)
+        y2 = scaleRect.y2
       drawLine(scaleRect.x1, y, scaleRect.x1, y2)
       drawLine(scaleRect.x2, y, scaleRect.x2, y2)
     }
@@ -471,14 +474,12 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-
   // A plugin-api for the graphic editing Tools in Tools.js
 
   _setImageData4BytesFromRGBA(d, c)
   {
     d[0] = c.r ; d[1] = c.g ; d[2] = c.b ; d[3] = c.a * 255
   }
-
 
   collateDrawingToolEnv(event)  // used to gather current useful state for the Tools and passed to them in most callbacks
   {
@@ -505,17 +506,15 @@ export default class EditGraphic extends React.Component {
       editCtx:                this.editCtx,
       editCtxImageData1x1:    this.editCtxImageData1x1,
 
-
       // setPreviewPixelsAt() Like CanvasRenderingContext2D.fillRect, but
       //   It SETS rather than draws-with-alpha-blending
-      setPreviewPixelsAt: function (x, y, w=1, h=1) 
+      setPreviewPixelsAt: function (x, y, w=1, h=1)
       {
         // Set Pixels on the Preview context ONLY
         self._setImageData4BytesFromRGBA(retval.previewCtxImageData1x1.data, retval.chosenColor.rgb)
         for (let i = 0; i < w; i++) {
-          for (let j = 0; j < h; j++) {
+          for (let j = 0; j < h; j++)
             retval.previewCtx.putImageData(retval.previewCtxImageData1x1, Math.round(x + i), Math.round(y + j))
-          }
         }
       },
 
@@ -523,7 +522,7 @@ export default class EditGraphic extends React.Component {
       //   (a) It SETS rather than draws-with-alpha-blending
       //   (b) It does this to both the current Preview AND the Edit contexts (with zoom scaling)
       //   So this is faster than a ClearRect+FillRect in many cases.
-      setPixelsAt: function (x, y, w=1, h=1) 
+      setPixelsAt: function (x, y, w=1, h=1)
       {
         // First, set Pixels on the Preview context
         retval.setPreviewPixelsAt(x, y, w, h)
@@ -537,15 +536,17 @@ export default class EditGraphic extends React.Component {
       },
 
       saveSelectRect: function(startX, startY, endX, endY) {
-        if (startX > endX) [startX, endX] = [endX, startX]
-        if (startY > endY) [startY, endY] = [endY, startY]
-        self.setState({ 
-          selectRect: { 
-            startX: startX, 
-            startY: startY, 
-            endX: endX, 
-            endY: endY 
-          } 
+        if (startX > endX)
+          [startX, endX] = [endX, startX]
+        if (startY > endY)
+          [startY, endY] = [endY, startY]
+        self.setState({
+          selectRect: {
+            startX: startX,
+            startY: startY,
+            endX: endX,
+            endY: endY
+          }
         })
       },
 
@@ -554,8 +555,12 @@ export default class EditGraphic extends React.Component {
       },
 
       unselect: function() {
-        self.setState({ selectRect: null })
+        self.setState( { selectRect: null } )
         self.updateEditCanvasFromSelectedPreviewCanvas()
+      },
+
+      showDimensions: function(width, height) {
+        self.setState({ selectDimensions: { width: width, height: height} })
       },
 
       // clearPixelsAt() Like CanvasRenderingContext2D.clearRect, but
@@ -582,9 +587,10 @@ export default class EditGraphic extends React.Component {
   // CUT/COPY/PASTE    -  Note that there is also some special support in collateDrawingToolEnv()
   //
 
-  toolCutSelected() 
+  toolCutSelected()
   {
-    if (!this.state.selectRect) return
+    if (!this.state.selectRect)
+      return
 
     this.toolCopySelected()
     let ctx = this.previewCtxArray[this.state.selectedLayerIdx]
@@ -595,9 +601,10 @@ export default class EditGraphic extends React.Component {
     this.handleSave("Cut selected area")
   }
 
-  toolCopySelected() 
+  toolCopySelected()
   {
-    if (!this.state.selectRect) return
+    if (!this.state.selectRect)
+      return
 
     let x = this.state.selectRect.startX
     let y = this.state.selectRect.startY
@@ -630,7 +637,7 @@ export default class EditGraphic extends React.Component {
     return tool
   }
 
-  zoomIn() {
+  zoomIn = () => {
     const i = this.zoomLevels.indexOf(this.state.editScale)
     if (i < this.zoomLevels.length-1) {
       recentMarker = null       // Since we now want to reload data for our new EditCanvas
@@ -638,7 +645,7 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  zoomOut() {
+  zoomOut = () => {
     const i = this.zoomLevels.indexOf(this.state.editScale)
     if (i > 0) {
       recentMarker = null       // Since we now want to reload data for our new EditCanvas
@@ -648,7 +655,7 @@ export default class EditGraphic extends React.Component {
 
   //
   // TOUCH EVENTS (on Edit Canvas). We create equivalent MouseEvents then re-dispatch them
-  // See https://w3c.github.io/touch-events/#toc, 
+  // See https://w3c.github.io/touch-events/#toc,
   //     https://developer.mozilla.org/en-US/docs/Web/API/Touch_events
   //     https://bencentra.com/code/2014/12/05/html5-canvas-touch-events.html
   //
@@ -673,7 +680,7 @@ export default class EditGraphic extends React.Component {
 
   handleTouchMove(touchEvent) {
     this._redispatchEditCanvasMouseEventFromTouchEvent("mousemove", touchEvent, event.touches[0])
-  }  
+  }
 
   handleTouchEnd(touchEvent) {
     this._redispatchEditCanvasMouseEventFromTouchEvent("mouseup", touchEvent, event.changedTouches[0])
@@ -729,7 +736,7 @@ export default class EditGraphic extends React.Component {
     }
 
     // console.log(event.which)
-    if(event.which && event.which == 3){
+    if (event.which && event.which == 3) {
       const moveTool = this.findToolByLabelString('Move')
       this.state.toolChosen = moveTool
       event.preventDefault()
@@ -759,13 +766,12 @@ export default class EditGraphic extends React.Component {
       this.handleSave(`Drawing`, false, false)   // This is a one-shot tool, so save its results now
   }
 
-  handleContextMenu(event){
-    // console.log('handle context menu')
+  handleContextMenu(event) {
     event.preventDefault()
   }
 
 
-  // Might be better to have two event handlers, each with a clearer role? 
+  // Might be better to have two event handlers, each with a clearer role?
   // This does two things: (1) Update SB, and (2) Call on to Tool handler
   handleMouseMove(event)
   {
@@ -824,27 +830,23 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  handleResize(dw, dh, force = false)
-  {
-    if (!this.props.canEdit)
-    { 
-      this.props.editDeniedReminder()
+  //
+  // CHANGE TILE WIDTH/HEIGHT
+  //
+
+  handleImageResize = (newWidth, newHeight, scalingMode = 'None') => {
+    if (!this.hasPermission())
       return
-    }
-    
-    if (dw !== 0 || dh !== 0 || force === true)
-    {
-      this.doSaveStateForUndo(`Resize by (${dw}, ${dh}) `)
-      const c2 = this.props.asset.content2
-      c2.width = Math.min(c2.width+dw,   MAX_BITMAP_WIDTH)
-      c2.height = Math.min(c2.height+dh, MAX_BITMAP_HEIGHT)
-      this.handleSave(`Resize image`)      // Less spammy in activity log      
-    }
+
+    const c2 = this.props.asset.content2
+    this.doSaveStateForUndo(`Resize from ${c2.width}x${c2.height} to ${newWidth}x${newHeight} using scaling mode '${scalingMode}`)
+    c2.width = newWidth
+    c2.height = newHeight
+    this.handleSave("Change canvas size")
   }
 
-
-  hasPermission() {
-    if (!this.props.canEdit) { 
+  hasPermission = () => {
+    if (!this.props.canEdit) {
       this.props.editDeniedReminder()
       return false
     }
@@ -867,15 +869,14 @@ export default class EditGraphic extends React.Component {
   {
     const sb = this._statusBar
 
-    if (mouseAtText === "") {  
+    if (mouseAtText === '')
       sb.outer.css( {visibility: "hidden"} )
-    }
     else {
       const layerIdx = this.state.selectedLayerIdx
       const layerParam = this.props.asset.content2.layerParams[layerIdx]
       const layerName = layerParam.name && layerParam.name.length > 0 ? layerParam.name : `Unnamed layer #${layerIdx+1}`
-      const layerMsg = ` of \"${layerName}\"` 
-                    + (layerParam.isLocked ? " (locked)": "") 
+      const layerMsg = ` of \"${layerName}\"`
+                    + (layerParam.isLocked ? " (locked)": "")
                     + (layerParam.isHidden ? " (hidden)" : "")
 
       sb.colorAtIcon.css( { color: colorCSSstring } )
@@ -925,14 +926,14 @@ export default class EditGraphic extends React.Component {
       chosenColor.hex = `#${this.RGBToHex(chosenColor.rgb.r, chosenColor.rgb.g, chosenColor.rgb.b)}`
 
     if (chosenColor.hex.indexOf('NaN') === -1)
-    { 
+    {
       // It is a valid color. Remember it - this is because react-color Color Picker returns screwy colors if it's container is hidden
       this._recentValidColor = _.clone(chosenColor)
     }
     else
-    { 
+    {
       // It is an invalid color. Ignore this result and use the last good color we had. or red if no last good color
-      chosenColor = this._recentValidColor ||  { hex: "#800000", rgb: { r: 128, g: 0, b:0, a: 1 } } 
+      chosenColor = this._recentValidColor ||  { hex: "#800000", rgb: { r: 128, g: 0, b:0, a: 1 } }
     }
     // See http://casesandberg.github.io/react-color/#api-onChangeComplete
     this.state.selectedColors[colortype] = chosenColor
@@ -961,7 +962,7 @@ export default class EditGraphic extends React.Component {
   }
 
   handleSelectLayer(layerIndex) {
-    // this.doSnapshotActivity(layerIndex)        
+    // this.doSnapshotActivity(layerIndex)
     this.setState( { selectedLayerIdx: layerIndex } )
   }
 
@@ -991,7 +992,6 @@ export default class EditGraphic extends React.Component {
       this.redoSteps = []
   }
 
-
   doMakeUndoStackEntry(changeInfoString)
   {
     return {
@@ -1002,7 +1002,6 @@ export default class EditGraphic extends React.Component {
       savedContent2: $.extend(true, {}, this.props.asset.content2)
     }
   }
-
 
   doTrimUndoStack()
   {
@@ -1017,8 +1016,6 @@ export default class EditGraphic extends React.Component {
     this.undoSteps.push(this.doMakeUndoStackEntry(changeInfoString))
   }
 
-
-
   doTrimRedoStack() {
     if (this.redoSteps.length > 20) this.redoSteps.shift()
   }
@@ -1031,10 +1028,10 @@ export default class EditGraphic extends React.Component {
 
 
   /* This stores a short-term record indicating this user is viewing this graphic
-   * It provides the data for the 'just now' part of the history navigation and also 
+   * It provides the data for the 'just now' part of the history navigation and also
    * the 'viewers' indicator. It helps users know other people are looking at some asset
    * right now
-   * 
+   *
    * This gets _.throttle()d in the constructor so we don't kill the DB
    */
   doSnapshotActivity(frameIdxOverride)
@@ -1044,7 +1041,6 @@ export default class EditGraphic extends React.Component {
     }
     snapshotActivity(this.props.asset, passiveAction)
   }
-
 
   toolHandleUndo()
   {
@@ -1080,11 +1076,20 @@ export default class EditGraphic extends React.Component {
       this.saveChangedContent2(c2, c2.frameData[0][0], "Redo changes", true)        // Allow Backwash from database to replace current viewed state
     }
   }
-  
+
+  toolEraseFrame(){
+    let w = this.props.asset.content2.width
+    let h = this.props.asset.content2.height
+
+    this.previewCtxArray.map( (ctx) => {
+      ctx.clearRect(0, 0, w, h)
+    })
+    this.handleSave("Erase frame")
+  }
+
 
   handleSave(changeText="change graphic", dontSaveFrameData = false, allowBackwash = true)    // TODO(DGOLDS): Maybe _.throttle() this?
   {
-    console.log('save', changeText)
     if (!this.props.canEdit)
     {
       this.props.editDeniedReminder()
@@ -1093,12 +1098,12 @@ export default class EditGraphic extends React.Component {
 
     // Make really sure we have the frameCanvasArrays up-to-date with the latest edits from all layers
     if (this.previewCanvasArray && !dontSaveFrameData)
-      this.updateEditCanvasFromSelectedPreviewCanvas() 
+      this.updateEditCanvasFromSelectedPreviewCanvas()
 
     const asset = this.props.asset
     let c2 = asset.content2
 
-    if (this.previewCanvasArray && !dontSaveFrameData) 
+    if (this.previewCanvasArray && !dontSaveFrameData)
     { // hack for automatic checking and saving old assets to new
         // dontSaveFrameData - hack when deleting/moving frames (previewCanvases are not yet updated)
       let layerCount = this.previewCanvasArray.length  // New layer is not yet added, so we don't use c2.layerParams.length
@@ -1108,13 +1113,13 @@ export default class EditGraphic extends React.Component {
       // Saving the composite Frame (using all layers for this frame) for convenient use in the map editor.
       // TODO(@stauzs): Would this be nicer as a list comprehension?    c2.spriteData = _.map(this.frameCanvasArray, c => c.toDataURL('image/png'))
       c2.spriteData = []
-      for (let i = 0; i < this.frameCanvasArray.length; i++) 
+      for (let i = 0; i < this.frameCanvasArray.length; i++)
         c2.spriteData[i] = this.frameCanvasArray[i].toDataURL('image/png')
     }
 
     // tileset saving
     let tilesetInfo = this.createTileset()
-    if(tilesetInfo){
+    if (tilesetInfo) {
       c2.tileset = tilesetInfo.image
       c2.cols = tilesetInfo.cols
       c2.rows = tilesetInfo.rows
@@ -1128,7 +1133,9 @@ export default class EditGraphic extends React.Component {
   }
 
   createTileset() {
-    if(!this.frameCanvasArray || this.frameCanvasArray.length == 0) return null
+    if (!this.frameCanvasArray || this.frameCanvasArray.length == 0)
+      return null
+
     let c2   = this.props.asset.content2
     let cols = Math.ceil(Math.sqrt(c2.frameNames.length))
     let rows = Math.ceil(c2.frameNames.length/cols)
@@ -1146,7 +1153,7 @@ export default class EditGraphic extends React.Component {
     }
 
     return {
-      image: canvas.toDataURL('image/png'), 
+      image: canvas.toDataURL('image/png'),
       cols: cols,
       rows: rows
     }
@@ -1155,8 +1162,12 @@ export default class EditGraphic extends React.Component {
 
   saveChangedContent2(c2, thumbnail, changeText, allowBackwash = false)
   {
+    // this will prevent small sync gap between parent and component:
+    // noticeable: undo -> draw a line ( part of the line will be truncated )
+    this.props.asset.content2 = c2
+
     recentMarker = allowBackwash ? null : "_graphic_" + Random.id()   // http://docs.meteor.com/packages/random.html
-    c2.changeMarker = recentMarker      
+    c2.changeMarker = recentMarker
     //console.log("Backwash marker = " + recentMarker)
     this.props.handleContentChange(c2, thumbnail, changeText)
     this.doSnapshotActivity()
@@ -1164,25 +1175,26 @@ export default class EditGraphic extends React.Component {
 
   setThumbnail (asset) {
     let origCanvas
-    if(this.thumbCanvas) {
+    if (this.thumbCanvas) {
       // origCanvas = this.thumbCanvas.toDataURL('image/png')
       origCanvas = this.thumbCanvas
       this.thumbCanvas = null
     }
-    else if(this.frameCanvasArray && this.frameCanvasArray[0]){
+    else if (this.frameCanvasArray && this.frameCanvasArray[0]) {
       // origCanvas = this.frameCanvasArray[0].toDataURL('image/png')
       origCanvas = this.frameCanvasArray[0]
     }
 
-    if(origCanvas){
+    if (origCanvas) {
       const tmpCanvas = document.createElement("canvas")
       const tmpCtx = tmpCanvas.getContext('2d')
-      tmpCanvas.width = _.clamp(origCanvas.width, 32, 290)
-      tmpCanvas.height = _.clamp(origCanvas.height, 32, 150)
+      tmpCanvas.width = _.clamp(origCanvas.width, 32, THUMBNAIL_WIDTH)
+      tmpCanvas.height = _.clamp(origCanvas.height, 32, THUMBNAIL_HEIGHT)
       const wRatio = tmpCanvas.width / origCanvas.width
       const hRatio = tmpCanvas.height / origCanvas.height
       let ratio = wRatio < hRatio ? wRatio : hRatio
-      if(wRatio >= 1 && hRatio >= 1) ratio = 1
+      if (wRatio >= 1 && hRatio >= 1)
+        ratio = 1
       const width = origCanvas.width * ratio
       const height = origCanvas.height * ratio
       const x = (tmpCanvas.width - width) / 2
@@ -1205,8 +1217,7 @@ export default class EditGraphic extends React.Component {
       idx = this.state.selectedLayerIdx
 
     e.dataTransfer.effectAllowed = 'copy'   // This must match what is in handleDragOverPreview()
-    e.dataTransfer.setData('mgb/image', this.previewCanvasArray[idx].toDataURL('image/png')
-    )
+    e.dataTransfer.setData('mgb/image', this.previewCanvasArray[idx].toDataURL('image/png'))
   }
 
 
@@ -1217,25 +1228,28 @@ export default class EditGraphic extends React.Component {
     event.dataTransfer.dropEffect = 'copy'   // Explicitly show this is a copy.
   }
 
-
+  /**
+   * @param {number} idx - layer index, when -1 automatically selects active layer
+   * @param {event} - drop event
+   * */
   handleDropPreview(idx, event)
   {
     event.stopPropagation()
     event.preventDefault()
-    
+
     if (!this.props.canEdit)
-    { 
+    {
       this.props.editDeniedReminder()
       return
     }
-    
+
     var self = this
 
     if (idx === -1)                         // The Edit Window does this
       idx = this.state.selectedLayerIdx
-      
-    // Note that idx === -2 means the MgbResizerHost control. 
-    // In thise case we must ONLY resize the graphics, not actually import the graphic. 
+
+    // Note that idx === -2 means the MgbResizerHost control.
+    // In thise case we must ONLY resize the graphics, not actually import the graphic.
 
     let mgbImageDataUri =  event.dataTransfer.getData('mgb/image')
     if (mgbImageDataUri !== undefined && mgbImageDataUri !== null && mgbImageDataUri.length > 0)
@@ -1247,10 +1261,8 @@ export default class EditGraphic extends React.Component {
         self.doSaveStateForUndo(`Drag+Drop Frame to Frame #`+idx.toString())
         if (idx === -2)     // Special case - MGB RESIZER CONTROL... So just resize to that imported image
         {
-          let c2 = self.props.asset.content2
-          c2.width = Math.min(img.width, MAX_BITMAP_WIDTH)
-          c2.height = Math.min(img.height, MAX_BITMAP_HEIGHT)
-          self.handleResize(0,0, true)
+          // Currently unreachable since I took this off of the resize control
+          self.handleImageResize(Math.min(img.width, MAX_BITMAP_WIDTH), Math.min(img.height, MAX_BITMAP_HEIGHT) )
         }
         else
         {
@@ -1267,6 +1279,24 @@ export default class EditGraphic extends React.Component {
       return
     }
 
+    var imageUrl = event.dataTransfer.getData('URL')
+    if (imageUrl) {
+      this.pasteImage(imageUrl, idx)
+      return
+    }
+
+    var imgData = DragNDropHelper.getDataFromEvent(event)
+    if (imgData && imgData.link) {
+      if(!imgData.asset || imgData.asset.kind === 'graphic')
+        this.pasteImage(imgData.link, idx)
+      else{
+        // use thumbnail instead
+        const linkToImage = makeExpireThumbnailLink(imgData.asset)
+        this.pasteImage(linkToImage, idx)
+      }
+      return
+    }
+
     let files = event.dataTransfer.files     // FileList object.
     if (files.length > 0)
     {
@@ -1276,17 +1306,13 @@ export default class EditGraphic extends React.Component {
         if (idx === -2)     // Special case - MGB RESIZER CONTROL... So just resize to that imported image
         {
           var img = new Image
-          img.onload = (e) => {
-            let c2 = self.props.asset.content2
-            c2.width = Math.min(img.width, MAX_BITMAP_WIDTH)
-            c2.height = Math.min(img.height, MAX_BITMAP_HEIGHT)
-            self.handleResize(0, 0, true)
+          img.onload = () => {
+            self.handleImageResize(Math.min(img.width, MAX_BITMAP_WIDTH), Math.min(img.height, MAX_BITMAP_HEIGHT))
           }
           img.src = theUrl
         }
-        else{
+        else
           this.pasteImage(theUrl, idx)
-        }
       }
       reader.readAsDataURL(files[0])
     }
@@ -1296,33 +1322,46 @@ export default class EditGraphic extends React.Component {
 
   pasteImage(url, idx = this.state.selectedLayerIdx)
   {
-    var img = new Image
-    img.onload = (e) => {
+    const img = new Image
+    img.crossOrigin = "anonymous"
+    img.onload = e => {
       // The DataURI seems to have loaded ok now as an Image, so process what to do with it
       this.doSaveStateForUndo(`Drag+Drop Image to Frame #`+idx.toString())
 
-      let w = this.props.asset.content2.width
-      let h = this.props.asset.content2.height
+      const w = this.props.asset.content2.width
+      const h = this.props.asset.content2.height
+      this.previewCtxArray[idx].clearRect(0, 0, w, h)
 
-      this.previewCtxArray[idx].clearRect(0,0,w,h)
-      this.previewCtxArray[idx].drawImage(e.target, 0, 0)  // add w, h to scale it.
-      if (idx === this.state.selectedLayerIdx) {
-        this.updateEditCanvasFromSelectedPreviewCanvas()
+      if (img.width > w || img.height > h) {
+        const aspect =   (w * img.height) / (h * img.width)
+        if (aspect > 1){
+          const nHeight = h / aspect
+          this.previewCtxArray[idx].drawImage(e.target, 0, (h - nHeight) * 0.5, w, nHeight)  // add w, h to scale it.
+        }
+        else{
+          const nWidth = w / aspect
+          this.previewCtxArray[idx].drawImage(e.target, (w - nWidth) * 0.5, 0, nWidth, h)  // add w, h to scale it.
+        }
       }
+      else
+        this.previewCtxArray[idx].drawImage(e.target, 0, 0)  // add w, h to scale it.
+
+      if (idx === this.state.selectedLayerIdx)
+        this.updateEditCanvasFromSelectedPreviewCanvas()
       this.handleSave(`Drag external file to frame #${idx+1}`)
-    };
+    }
     img.src = url  // is the data URL because called
   }
 
 
   toolOpenImportPopup() {
-    let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
+    const importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
     $(importPopup).modal('show')
   }
 
- 
+
   // This is passed to the <GraphicImport> Control so the tiles can be imported
-  importTileset(tileWidth, tileHeight, imgDataArr, thumbCanvas) { 
+  importTileset = (tileWidth, tileHeight, imgDataArr, thumbCanvas) => {
     let c2 = this.props.asset.content2
     this.thumbCanvas = thumbCanvas
 
@@ -1340,47 +1379,18 @@ export default class EditGraphic extends React.Component {
     }
     c2.layerParams = [ {name: "Layer 1", isHidden: false, isLocked: false} ]
     c2.animations = []
-    
 
     this.handleSave("Import tileset", true)
     let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
     $(importPopup).modal('hide')
     this.setState({ editScale: this.getDefaultScale() })
-    // $('.ui.modal').modal('hide');
   }
-
-
-  //
-  // CHANGE TILE WIDTH/HEIGHT
-  //
-
-  changeCanvasWidth(clampedVal) {
-    // The caller must have ensure clampedVal is an integer in range 1...MAX_BITMAP_WIDTH
-    const currWidth = this.props.asset.content2.width
-    if (currWidth !== clampedVal)
-    {
-      this.doSaveStateForUndo(`Change Graphic Width from ${currWidth} to ${clampedVal}`)
-      this.props.asset.content2.width = clampedVal
-      this.handleSave("Change canvas width")
-    }
-  }
-
-  changeCanvasHeight(clampedVal) {
-    const currHeight = this.props.asset.content2.height
-    if (currHeight !== clampedVal)
-    {
-      this.doSaveStateForUndo(`Change Graphic Height from ${currHeight} to ${clampedVal}`)
-      this.props.asset.content2.height = clampedVal
-      this.handleSave("Change canvas height")
-    }
-  }
-
 
   //
   // TOOLBAR
   //
 
-  // This is used by render() so is frequently called. 
+  // This is used by render() so is frequently called.
   // It can therefore have values that are based on this, this.state, this.props etc
   generateToolbarActions() {
     const simpleTools = {
@@ -1399,10 +1409,20 @@ export default class EditGraphic extends React.Component {
         label: "Redo",
         name: "toolHandleRedo",
         tooltip: "Redo",
-        iconText: this.redoSteps.length,        
+        iconText: this.redoSteps.length,
         disabled: !this.redoSteps.length,
         icon: "undo flip icon",
         shortcut: 'Ctrl+Shift+Z',
+        level: 2,
+        simpleTool: true
+      },
+      EraseFrame: {
+        label: "Erase Frame",
+        name: "toolEraseFrame",
+        tooltip: "Erase Frame",
+        disabled: false,
+        icon: "square outline icon",
+        shortcut: 'Ctrl+Shift+E',
         level: 2,
         simpleTool: true
       },
@@ -1424,17 +1444,17 @@ export default class EditGraphic extends React.Component {
         icon: "copy icon",
         shortcut: 'Ctrl+C',
         level: 6,
-        simpleTool: true 
+        simpleTool: true
       },
       Import: {
         label: "Import",
-        name: "toolOpenImportPopup", 
+        name: "toolOpenImportPopup",
         tooltip: "Import",
         disabled: false,
         icon: "add square icon",
         shortcut: 'Ctrl+I',
         level: 3,
-        simpleTool: true 
+        simpleTool: true
       }
     }
 
@@ -1450,9 +1470,9 @@ export default class EditGraphic extends React.Component {
     const actions = {}
     const config = {
       // level: 1,       // default level -- This is now in expectedToolbars.getDefaultLevel
-      
+
       // vertical: true, // Nope, we want to have horizontal for now
-     
+
       buttons: []
     }
 
@@ -1477,13 +1497,13 @@ export default class EditGraphic extends React.Component {
     return { actions, config }
   }
 
-  setGrid(img){
+  setGrid = (img) => {
     this.gridImg = img
   }
 
-  drawGrid(img) {
+  drawGrid() {
     const zoom = this.state.editScale
-    if (zoom >= 8 && this.gridImg){
+    if (zoom >= MIN_ZOOM_FOR_GRIDLINES && this.gridImg && this.state.showGrid) {
       const c2 = this.props.asset.content2
       for(let col=0; col<c2.width; col++){
         for(let row=0; row<c2.height; row++){
@@ -1493,18 +1513,15 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  setScrollMode(mode){
+  setScrollMode(mode) {
     this.setState({ scrollMode: mode})
   }
 
-
-  // React Callback: render()
-  // See http://semantic-ui.com to understand the classNames we are using.
   render() {
     this.initDefaultContent2()      // The NewAsset code is lazy, so add base content here
     this.initDefaultUndoStack()
 
-    const asset = this.props.asset
+    const { asset, canEdit, currUser } = this.props
     const c2 = asset.content2
     const zoom = this.state.editScale
     const { actions, config } = this.generateToolbarActions()
@@ -1515,126 +1532,164 @@ export default class EditGraphic extends React.Component {
 
     const scrollModes = ["Normal", "Rotate", "Scale", "Flip"]
 
+    colWidth = (asset.skillPath && _.startsWith( asset.skillPath, 'art' )) ? '8' : '10'
+
     // Make element
     return (
-      <div className="ui grid">
-
+      <Grid>
         {/***  Central Column is for Edit and other wide stuff  ***/}
-
-        <div className={"mgbEditGraphicSty_tagPosition ui sixteen wide column"} >
+        <Grid.Column width={colWidth}>
           <div className="row" style={{marginBottom: "6px"}}>
-
-            <div className="ui small labeled input">
-              <div className="ui small label" title="Canvas width">
-                w:
-              </div>
-              <NumberInput
-                className="ui small input"
-                min={1}
-                max={MAX_BITMAP_WIDTH}
-                style={{width: "6em"}}
-                value={c2.width}
-                onFinalChange={(num) => {this.changeCanvasWidth(num)} } 
+            <Popup
+              on='hover'
+              positioning='bottom left'
+              hoverable
+              hideOnScroll
+              mouseEnterDelay={250}
+              id="mgbjr-EditGraphic-colorPicker-body"
+              trigger={(
+                <Button
+                  size='small'
+                  id='mgbjr-EditGraphic-colorPicker'
+                  style={{ backgroundColor: this.state.selectedColors['fg'].hex }}
+                  icon={{ name: 'block layout', style: { color: this.state.selectedColors['fg'].hex }}}
                 />
-            </div>
-
-            <span>&nbsp;&nbsp;</span>
-            <div className="ui small labeled input" id="mgbjr-editGraphic-changeHeightInput">
-              <div className="ui small label" title="Canvas height">
-                h:
-              </div>
-              <NumberInput
-                className="ui small input"P
-                min={1}
-                max={MAX_BITMAP_HEIGHT}
-                style={{width: "6em"}}
-                value={c2.height}
-                onFinalChange={(num) => {this.changeCanvasHeight(num)} }
-                />
-            </div>
-
-
-            <span>&nbsp;&nbsp;</span> 
-            <div className="ui small button miniPadding hazPopup"
-              id="mgbjr-editGraphic-changeCanvasZoom"
-              data-content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
-              data-variation="tiny"
-              data-position="bottom center">
-              <span style={{"cursor": "pointer"}} onClick={this.zoomOut.bind(this)}>
-                <i className="icon zoom out"></i>
-              </span>
-              {zoom}x
-              <span>&nbsp;&nbsp;</span>
-              <span style={{"cursor": "pointer"}} onClick={this.zoomIn.bind(this)}>
-                <i className="icon zoom"></i>
-              </span>
-            </div>
-
-
-            <span>&nbsp;&nbsp;</span>
-            <div className="ui small button hazPopup"
-               data-content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
-               data-variation="tiny"
-               data-position="bottom center">
-              <i className="spinner icon"></i>Frame #{1+this.state.selectedFrameIdx} of {c2.frameNames.length}
-            </div>
-          </div>
-
-          <div className="row" style={{marginBottom: "6px"}}>
-            {<Toolbar actions={actions} config={config} name="EditGraphic" />}
-          </div>
-
-          <div className={"ui form " + (this.state.toolChosen && this.state.toolChosen.label=="Paste" ? "" : "hidden")}>
-          <div className="inline fields">
-            <label>Scroll modes</label>
-            {
-              scrollModes.map( (mode) => (
-                <div key={mode} className="field">
-                <div className="ui radio checkbox" >
-                  <input type="radio" name={mode} 
-                  checked={mode == this.state.scrollMode ? "checked" : ""} 
-                  onChange={this.setScrollMode.bind(this, mode)} />
-                  <label>{mode}</label>
-                </div>
-                </div>
-                
-              ))
-            }
-          </div>
-          </div>
-
-
-          <div className="row" style={{"minHeight": "92px"}}>
-            <div   style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": "600px"}}>
-              <canvas ref="editCanvas"
-                        style={imgEditorSty}
-                        width={zoom * c2.width}
-                        height={zoom * c2.height}
-                        className={"mgbEditGraphicSty_checkeredBackground mgbEditGraphicSty_thinBorder mgbEditGraphicSty_atZeroZero"}
-                        id="mgb_edit_graphic_main_canvas"
-                        onDragOver={this.handleDragOverPreview.bind(this)}
-                        onDrop={this.handleDropPreview.bind(this,-1)}>
-              </canvas>
-              {/*** <canvas id="tilesetCanvas"></canvas> ***/}
-              <CanvasGrid
-                scale={this.state.editScale}
-                setGrid={this.setGrid.bind(this)}
+              )}
+            >
+              <Header>Color Picker</Header>
+              <ReactColor
+                  type="sketch"
+                  onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
+                  color={this.state.selectedColors['fg'].rgb}
               />
+            </Popup>
+
+            <ResizeImagePopup
+                initialWidth={c2.width}
+                initialHeight={c2.height}
+                maxWidth={MAX_BITMAP_WIDTH}
+                maxHeight={MAX_BITMAP_HEIGHT}
+                scalingOptions={['None']}
+                handleResize={this.handleImageResize} />
+
+            {/* !!!! span instead of buttons becasue firefox don't understand miltiple actions inside Button:*/}
+            {/* <button> */}
+            {/*   <span onClick...></span> */ }
+            {/*   <span onClick...></span> */ }
+            {/* </button> */ }
+
+            <Popup
+                trigger={ (
+                  <span id="mgbjr-editGraphic-changeCanvasZoom" className="ui button small">
+                    <span style={{ cursor: 'pointer' }} onClick={this.zoomOut}>
+                      <Icon name='zoom out'/>
+                    </span>
+                    {zoom}x
+                    <span>&nbsp;&nbsp;</span>
+                    <span style={{ cursor: 'pointer' }} onClick={this.zoomIn}>
+                      <Icon name='zoom in'/>
+                    </span>
+                  </span>
+                )}
+                on='hover'
+                header='Zoom'
+                mouseEnterDelay={250}
+                content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
+                size='tiny'
+                positioning='bottom left'/>
+
+
+            <Popup
+                trigger={ (
+                  <span className="ui button small" id="mgbjr-editGraphic-toggleGrid">
+                    Grid&nbsp;
+                    <span style={{ cursor: 'pointer' }} onClick={this.handleToggleGrid}>
+                      <Icon name='grid layout' color={this.state.showGrid ? null : 'grey'}/>
+                    </span>
+                    <span>&nbsp;</span>
+                    <span style={{ cursor: 'pointer' }} onClick={this.handleToggleCheckeredBg}>
+                      <Icon name='clone' color={this.state.showCheckeredBg ? null : 'grey'}/>
+                    </span>
+                  </span>
+                )}
+                on='hover'
+                mouseEnterDelay={250}
+                header='Grid Options'
+                content={(
+                  <div>
+                    <p>Show/Hide Gridlines (at Zoom >= {MIN_ZOOM_FOR_GRIDLINES}x)</p>
+                    <p>Show/Hide background transparency checkerboard helper'</p>
+                  </div>
+                  )}
+                size='tiny'
+                positioning='bottom left'/>
+
+            <Popup
+              trigger={<Button size='small' icon='spinner' content={`Frame #${1+this.state.selectedFrameIdx} of ${c2.frameNames.length}`}/>}
+              content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
+              size='small'
+              mouseEnterDelay={250}
+              positioning='bottom left'/>
+            </div>
+          <Grid.Row style={{marginBottom: "6px"}}>
+            {<Toolbar actions={actions} config={config} name="EditGraphic" />}
+          </Grid.Row>
+
+          <div className={"ui form " + (this.state.toolChosen && this.state.toolChosen.label=="Paste" ? "" : "mgb-hidden")}>
+            <div className="inline fields">
+              <label>Scroll modes</label>
+              {
+                scrollModes.map( (mode) => (
+                  <div key={mode} className="field">
+                  <div className="ui radio checkbox" >
+                    <input type="radio" name={mode}
+                    checked={mode == this.state.scrollMode ? "checked" : ""}
+                    onChange={this.setScrollMode.bind(this, mode)} />
+                    <label>{mode}</label>
+                  </div>
+                  </div>
+
+                ))
+              }
             </div>
           </div>
+
+          {/*** Drawing Canvas ***/}
+          <Grid.Row style={{"minHeight": "92px"}}>
+            <Grid.Column style={{height: '100%'}} width={10}>
+              <div style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": "600px"}}>
+                <canvas 
+                  ref="editCanvas"
+                  style={imgEditorSty}
+                  width={zoom * c2.width}
+                  height={zoom * c2.height}
+                  className={(
+                    (this.state.showCheckeredBg ? 'mgbEditGraphicSty_checkeredBackground' : '')
+                    + ' mgbEditGraphicSty_thinBorder')}
+                  id="mgb_edit_graphic_main_canvas"
+                  onDragOver={this.handleDragOverPreview.bind(this)}
+                  onDrop={this.handleDropPreview.bind(this,-1)}>
+                </canvas>
+                {/*** <canvas id="tilesetCanvas"></canvas> ***/}
+                <CanvasGrid
+                  scale={this.state.editScale}
+                  setGrid={this.setGrid}
+                />
+              </div>
+            </Grid.Column>
+          </Grid.Row>
 
           {/*** Status Bar ***/}
-
           <div className="ui horizontal very relaxed list" ref="statusBarDiv">
             <div className="item">
-              <i className="pointing up icon"></i>
+              <Icon name='pointing up' />
               <div className="content" ref="statusBarMouseAtText">
                 Mouse at xy
               </div>
             </div>
 
             <div className="item">
-              <i className="square icon" ref="statusBarColorAtIcon"></i>
+              <i className="square icon" ref="statusBarColorAtIcon"/>
               <div className="content" ref="statusBarColorAtText">
                 Color at xy
               </div>
@@ -1642,46 +1697,52 @@ export default class EditGraphic extends React.Component {
 
           </div>
 
-
-          {/***  Popups are defined in this column for no good reason ***/}
-
-          <div className="ui popup mgbColorPickerWidget">
-            <div className="ui header">Color Picker (1..9)</div>
-            <ColorPicker type="sketch"
-                         onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
-                         color={this.state.selectedColors['fg'].rgb}/>
+          <div className={this.state.selectRect ? "" : "mgb-hidden"}>
+            width: {this.state.selectDimensions.width} &nbsp;&nbsp;&nbsp; height: {this.state.selectDimensions.height}
           </div>
+        </Grid.Column>
+        {/*** Art Mentor ***/}
+        {asset.skillPath && _.startsWith( asset.skillPath, 'art' ) &&
+          <ArtTutorial
+            style       =     { { backgroundColor: 'rgba(0,255,0,0.02)' } }
+            isOwner     =     { currUser && currUser._id === asset.ownerId }
+            active      =     { asset.skillPath ? true : false}
+            skillPath   =     { asset.skillPath }
+            currUser    =     { this.props.currUser }
+            userSkills  =     { this.userSkills }
+            assetId     =     { asset._id }
+          />
+        }
 
-        </div>
-
-      {/*** GraphicImport ***/}
+        {/*** GraphicImport ***/}
         <div className="ui modal" ref="graphicImportPopup">
           <GraphicImport
             EditGraphic={this}
-            importTileset={this.importTileset.bind(this)}
+            importTileset={this.importTileset}
             maxTileWidth={MAX_BITMAP_WIDTH}
             maxTileHeight={MAX_BITMAP_WIDTH}
           />
         </div>
 
-
       {/*** SpriteLayers ***/}
-        
-          <SpriteLayers 
+
+          <SpriteLayers
             content2={c2}
             EditGraphic={this}
 
-            hasPermission={this.hasPermission.bind(this)}
+            hasPermission={this.hasPermission}
             handleSave={this.handleSave.bind(this)}
             forceDraw={this.forceDraw.bind(this)}
             forceUpdate={this.forceUpdate.bind(this)}
             getFrameData={ frameId => this.frameCanvasArray[frameId].toDataURL('image/png') }
-            getLayerData={ layerId => {
-              return this.previewCanvasArray[layerId].toDataURL('image/png')
-            } }
+            getLayerData={ layerId => (this.previewCanvasArray[layerId].toDataURL('image/png') ) }
           />
 
-      </div>
+      </Grid>
     )
   }
+}
+
+EditGraphic.contextTypes = {
+  skills: PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
 }

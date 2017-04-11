@@ -1,18 +1,24 @@
 // TODO: add predefined defs files
 // TODO: load these defs dynamically
-import Defs_phaser from "./tern/Defs/DefsPhaser";
-import DefsLodash from "./tern/Defs/DefsLodash";
+// import Defs_phaser from "./tern/Defs/DefsPhaser";
+// import DefsLodash from "./tern/Defs/DefsLodash";
 
 export default {
+  common: {
+    defs: () => [
+      '/lib/tern/defs/browser.json',
+      '/lib/tern/defs/ecmascript.json',
+      // '/lib/tern/defs/test.json' // for testing purposes only :)
+      //,'/lib/tern/defs/phaser.new.json'
+    ]
+  },
   phaser: {
     useGlobal: true,
     src: function (version) {
       version = version || "latest";
-      return 'https://cdn.jsdelivr.net/phaser/' + version + '/phaser.min.js';
-      //return 'http://localhost:3000/phaser/2.4.6/phaser.js'
-      //return '/phaser/' + version + '/phaser.min.js'
+      return 'https://cdn.jsdelivr.net/phaser/' + version + '/phaser.js';
     },
-    defs: Defs_phaser
+    defs: () => ['/lib/tern/defs/phaser.old.json']
   },
   react: {
     src: function (version) {
@@ -35,7 +41,7 @@ export default {
       version = version || "latest";
       return 'https://cdn.jsdelivr.net/lodash/' + version + '/lodash.js';
     },
-    defs: DefsLodash
+    defs: () => ['/lib/tern/defs/lodash.json']
   }
 }
 

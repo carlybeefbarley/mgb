@@ -3,7 +3,7 @@ if (typeof Meteor !== 'undefined') {
   if (Meteor.isTest) {
     shouldRun = true
     npm = Npm
-    // 
+    //
     parallel = function (...args) {
       return describe(...args)
     }
@@ -96,13 +96,14 @@ function runTests(browserName, tests) {
     this.timeout(120 * 1000)
     this.slow(10 * 1000)
     // create new instance of browser.. it can actually fail on some cases
-    it("connected to browser", function (done) {
+    it("connecting to browser", function (done) {
       /*
        TODO: due to meteor test specifics - 2nd time describe() won't be called - and
        if 2 tests are running in parallel (on 2 or more separate windows) both will crash - as
        they will overwrite browser instance
        child process should resolve this, but error reporting will suffer
        */
+
       const waitForPreviousBrowserToClose = () => {
         if (browser) {
           setTimeout(waitForPreviousBrowserToClose, 100)
@@ -112,26 +113,39 @@ function runTests(browserName, tests) {
           const tmpbrowser = CreateBrowser(browserName)
           tmpbrowser.call(function () {
             browser = tmpbrowser
+            browser.loadHomePage()
+            .then(() => {
+                // hide notifications - they are in the way of fp buttons...
+                browser.executeScript(`
+                  window.m && m.addStyle('.notification {display: none}')
+                `)
+              })
+            // otherwise tests will need to wait for them to hide - and that will increase time on some tests by 5 seconds
             browser.call(done)
           })
         }
       }
       waitForPreviousBrowserToClose()
     })
+
     tests.forEach((name) => {
       npm.require(testsLocation + name)(getBrowser, testWorkingDirectory)
     })
+
   })
 
   // we need to separate this because otherwise it will be called earlier than tests - in a case if tests will be wrapped into describe
   describe(`Finalizing [${browserName}]`, function () {
+
     // actually we are just waiting here for browser to close
     it("closing browser", function (done) {
-      this.timeout(2000)
-      this.slow(10001)
-      //browser will auto close after 1-2 seconds
-      browser = null
-      setTimeout(done, 1000)
+      this.timeout(5000)
+      this.slow(10000)
+      browser.executeScript('try{window.localStorage.clear(); window.location.reload();}catch(e){}').then(() => {
+        browser.close()
+        browser.quit()
+        done()
+      })
     })
   })
 }

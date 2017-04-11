@@ -1,6 +1,9 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import sty from  './editcode.css'
+
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+
+import './editcode.css'
 
 export default class GameScreen extends React.Component {
 
@@ -14,11 +17,11 @@ export default class GameScreen extends React.Component {
 
     this.screenX = 0
     this.screenY = 0 // px from bottom
+    this._isIframeReady = false
   }
 
   componentDidMount() {
     this.getReference()
-    this.adjustIframe()
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -27,8 +30,12 @@ export default class GameScreen extends React.Component {
       this.minimize()
   }
 
+  componentWillReceiveProps(props){
+    this.postMessage({mgbCommand: "requestSizeUpdate"})
+  }
+
   getReference() {
-    // TODO - change to use the ref={ c => { codestuff } } pattern that is now recommended. 
+    // TODO - change to use the ref={ c => { codestuff } } pattern that is now recommended.
     //        This will also help with the TODO in EditCode:_handle_iFrameMessageReceiver
     this.iFrameWindow = ReactDOM.findDOMNode(this.refs.iFrame1)
     this.wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
@@ -37,7 +44,7 @@ export default class GameScreen extends React.Component {
   handleMessage(event) {
 
     // Message receivers like this can receive a lot of crap from malicious windows
-    // debug tools etc, so we have to be careful to filter out what we actually care 
+    // debug tools etc, so we have to be careful to filter out what we actually care
     // about
     const source = event.source
     const data = event.data
@@ -55,8 +62,11 @@ export default class GameScreen extends React.Component {
         this.props.handleContentChange(null, asset.thumbnail, "update thumbnail")
       },
 
-      mgbAdjustIframe: function() {
-        this.adjustIframe()
+      mgbAdjustIframe: function(data) {
+        this.adjustIframe(data.size)
+      },
+      mgbSetIframeReady: function(){
+        this._isIframeReady = true
       }
     }
 
@@ -67,8 +77,28 @@ export default class GameScreen extends React.Component {
       commands[data.mgbCmd].call(this, data)
   }
 
+  stop(){
+    if(this.refs.iFrame1) {
+      this.refs.iFrame1.src = makeCDNLink('/codeEditSandbox.html')
+      this._isIframeReady = false
+    }
+    // reset game screen size on stop
+    if(this.wrapper){
+      this.wrapper.style.width = this.props.isPopup ? "auto" : '100%'
+      this.wrapper.style.height = "320px"
+      this.iFrameWindow.setAttribute("width", "100%")
+      this.iFrameWindow.setAttribute("height", "100%")
+    }
+  }
+
+  isIframeReady(){
+    const lastVal = this._isIframeReady
+    // reset ready status for next stop
+    this._isIframeReady = false
+    return lastVal
+  }
   postMessage(messageObject) {
-    if (messageObject.mgbCommand == "startRun") 
+    if (messageObject.mgbCommand == "startRun")
       this.setState( { isHidden: false } )
     this.getReference()
     this.iFrameWindow.contentWindow.postMessage(messageObject, "*")
@@ -82,49 +112,29 @@ export default class GameScreen extends React.Component {
     this.props.handleStop()
   }
 
-  adjustIframe() {
-    if (this.props.isPlaying) {
+  adjustIframe(size) {
 
-      window.setTimeout(() => {
-        if (!this.props.isPlaying || !this.iFrameWindow || !this.iFrameWindow.contentWindow || !this.iFrameWindow.contentWindow.document.body)
-          return
-
-        let gameDiv = this.iFrameWindow.contentWindow.document.querySelector("#game") // TODO - get rid of global selectors as much as possible, They are an antipattern for large SPAs
-        let newWidth = gameDiv ? gameDiv.offsetWidth : 0
-        let newHeight = gameDiv ? gameDiv.offsetHeight : 0
-
-        // adjust by body if cannot find gamediv - or it's not used
-        if (!gameDiv || gameDiv.offsetWidth === 0) {
-          if (gameDiv)
-            gameDiv.style.display = "none"
-          
-          gameDiv = this.iFrameWindow.contentWindow.document.body
-          newWidth = gameDiv ? gameDiv.scrollWidth : 0
-          newHeight = gameDiv ? gameDiv.scrollHeight : 0
-        }
-        else
-          this.iFrameWindow.contentWindow.document.body.style.overflow = "hidden"
-
-        if (parseInt(this.iFrameWindow.getAttribute("width")) == newWidth && parseInt(this.iFrameWindow.getAttribute("height")) == newHeight)
-          return
-        
-        if (newWidth && newHeight) {
-          this.iFrameWindow.setAttribute("width", newWidth + "")
-          this.iFrameWindow.setAttribute("height", newHeight + "")
-          this.wrapper.style.width = newWidth + "px"
-          // this.wrapper.style.height = newHeight + "px"   // Why not?
-        }
-        // keep adjusting
-        this.adjustIframe()
-      }, 1000)
+    this.iFrameWindow.setAttribute("width", size.width + "")
+    this.iFrameWindow.setAttribute("height", size.height + "")
+    const bounds = this.wrapper.getBoundingClientRect()
+    const w = Math.min(window.innerWidth*0.5, size.width)
+    const h = Math.min(window.innerHeight*0.5, size.height)
+    if(this.props.isPopup){
+      this.wrapper.style.width = w + "px"
+      this.wrapper.style.height = h + "px"
     }
+    else
+      this.wrapper.style.width = '100%'
+    // height will break minimize
+    // this.wrapper.style.height = size.height + "px"
+    // this.wrapper.style.height = "initial"
   }
 
   onDragStart (e) {
     // empty image so you don't see canvas element drag. Need to see only what is dragged inside canvas
     // don't do this on mobile devices
     // e.preventDefault()
-    if (e.dataTransfer) { 
+    if (e.dataTransfer) {
       let ghost = e.target.cloneNode(true)
       ghost.style.display = "none"
       e.dataTransfer.setDragImage(ghost, 0, 0)
@@ -137,10 +147,10 @@ export default class GameScreen extends React.Component {
 
   onDrag (e) {
     e.preventDefault()
-    if (e.touches && e.touches[0]) 
+    if (e.touches && e.touches[0])
       e = e.touches[0]
 
-    if (e.clientX == 0 && e.clientY == 0) 
+    if (e.clientX == 0 && e.clientY == 0)
       return   // avoiding weird glitch when at the end of drag 0,0 coords returned
 
     this.screenX += this.dragStartX - e.clientX
@@ -153,36 +163,44 @@ export default class GameScreen extends React.Component {
 
   render() {
     return (
-      <div 
-          ref="wrapper" 
+      <div
+          ref="wrapper"
           id="gameWrapper"
           className={this.props.isPopup ? "popup" : "accordion"}
-          style={{ display: (this.state.isHidden || !this.props.isPlaying) ? "none" : "block" }}>
+          style={{
+            display: (this.state.isHidden && !this.props.isPlaying) ? "none" : "block",
+            overflow: this.props.isPopup ? 'initial' : "auto",
+            width: this.props.isPopup ? window.innerHeight * 0.3 : "100%",
+            height: "320px",
+            minWidth: "200px",
+            minHeight: "160px",
+            maxHeight: (window.innerHeight * 0.5) + "px",
+            maxWidth: (window.innerWidth * 0.5) + 'px'
+          }}>
         { this.props.isPopup &&
           <div style={{
-            //height:"32px",
-            transform:        "translateY(-100%)", // move up by full height}}
+            transform:        "translateY(-100%)",
             position:         "absolute",
             right:            "0",
             left:             "0",
             backgroundColor:  "inherit"
           }}>
-            <button 
-                title="Close" 
+            <button
+                title="Close"
                 className="ui mini right floated icon button"
                 onClick={this.close.bind(this)} >
               <i className="remove icon" />
             </button>
-            
-            <button 
+
+            <button
                 title={this.state.isMinimized ? "Maximize" : "Minimize"}
                 className="ui mini right floated icon button"
                 onClick={this.minimize.bind(this)} >
               <i className={"icon " +(this.state.isMinimized ? "maximize" : "minus")} />
             </button>
 
-            <button 
-                title="Drag Window" 
+            <button
+                title="Drag Window"
                 className="ui mini right floated icon button"
                 draggable={true}
                 onDragStart={this.onDragStart.bind(this)}
@@ -197,13 +215,13 @@ export default class GameScreen extends React.Component {
         <iframe
             style={{
               display:    this.state.isMinimized ? "none" : "block",
-              minWidth:   window.innerWidth * 0.3,
+              minWidth:   "100%",
               minHeight: window.innerHeight * 0.3
             }}
-            key={ this.props.gameRenderIterationKey }
+            // key={ this.props.gameRenderIterationKey }
             ref="iFrame1"
-            sandbox='allow-modals allow-same-origin allow-scripts allow-popups'
-            src="/codeEditSandbox.html"
+            sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
+            src={makeCDNLink('/codeEditSandbox.html')}
             frameBorder="0"
             id="mgbjr-EditCode-sandbox-iframe"
             >

@@ -11,41 +11,44 @@ export default {
     name:           'Art',
     description:    'Represents pixel art and animation skills',
   },
-  proportion:         C.E,
-  process: {
-    'concept':        C.E,
-    'constraints':    C.E,
-    'sketch':         C.E,
-    'review':         C.E,
-    'coloring':       C.E
+
+  'lineArt': {
+    $meta: {
+      name:           'Line Art',
+      description:    'Basics of creating line art.',
+    },
+    'linesAndCurves': C.En(0),
+    'antiAliasing':   C.En(2)
   },
-  shading: {
-    'pillow shading':   C.E,
-    'dithering':        C.E,
-    'anti-aliasing':    C.E,
-    'reverse aa':       C.E,
-    'lines-and-curves': C.E,
-    'ambient lighting': C.E,
-    'transparency':     C.E,
-    'interlaces-scanlines': C.E,
-    'layers':           C.E
+
+  'colors': {
+    $meta: {
+      name:           'Colors',
+      description:    'Creating and applying an appropriate color palette for your art.',
+    },
+    'colorPalette': C.En(0),
+    'HSL':          C.En(1),
+    'colorRamps':   C.En(2)
   },
-  perspectives: {
-    'top-down':     C.E,
-    'side-view':    C.E,
-    isometric:      C.E
-    // @stanchion.. others?
+
+  'shadesAndTextures': {
+    $meta: {
+      name:           'Shades and Textures',
+      description:    'Shading and adding textures to your art.',
+    },
+    'shadowAndLight': C.En(0),
+    'dithering':      C.En(2),
+    'textures':       C.En(1)
   },
-  'character-design': {
-    humanoids:		C.E,
-    animals:	  	C.E,
-    monsters:     C.E,
-    objects:			C.E	// i.e. cookies, burgers, etc
+
+  'gameSprites': {
+    $meta: {
+      name:           'Game Sprites',
+      description:    'Designing and creating sprite with the game in mind.',
+    },
+    perspective:     C.En(3),
+    characterDesign: C.En(1),
+    tiling:          C.En(1),
+    animations:      C.En(2)
   },
-  color: 
-  { 
-    'palettes':    C.E,
-    'color-temp':  C.E,
-  },
-  animations:      C.E
 }

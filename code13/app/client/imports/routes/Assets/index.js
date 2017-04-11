@@ -1,9 +1,11 @@
-import UserAssetList from './UserAssetList';
-import AssetEdit from './AssetEditRoute';
-import AssetCreateNewRoute from './AssetCreateNewRoute';
+import UserAssetListRoute from './UserAssetListRoute'
+import AssetEditRoute from './AssetEditRoute'
+import AssetCreateNewRoute from './AssetCreateNewRoute'
+import AssetEditRedirect from './AssetEditRedirect'
 
 export default {
-  UserAssetList,
-  AssetEdit,
-  AssetCreateNewRoute
+  UserAssetListRoute,
+  AssetEditRoute,
+  AssetCreateNewRoute,
+  AssetEditRedirect
 }

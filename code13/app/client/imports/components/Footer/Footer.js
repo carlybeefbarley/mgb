@@ -12,7 +12,7 @@ const Footer = ( { respIsRuleActive, respData }) => (
   <div className="ui padded vertical footer segment" style={footerStyle}>
 
     <div className="ui section"></div>
-    { respIsRuleActive('showCallsToAction') && 
+    { respIsRuleActive('showCallsToAction') &&
       <div className="ui left aligned container">
         <div className="ui  grid">
           <div className="seven wide column">

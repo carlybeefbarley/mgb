@@ -4,6 +4,7 @@ import React from 'react'
 import EditModes from '../../Common/Map/Tools/EditModes'
 import LayerTypes from '../../Common/Map/Tools/LayerTypes'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
+import Properties from './ActorMapProperties'
 
 export default class MapToolbar extends React.Component {
 
@@ -13,10 +14,12 @@ export default class MapToolbar extends React.Component {
       this.props.options.mode = EditModes.stamp
     }
     const disabled = this.props.isPlaying
-    
+
     const layer = this.props.getActiveLayer()
+
     const config = {
-//      level: 3,  -- This is now in expectedToolbars.getDefaultLevel
+      // vertical: true,
+      // level: 3,  -- This is now in expectedToolbars.getDefaultLevel
       buttons: [
         {
           name: 'save',
@@ -69,13 +72,32 @@ export default class MapToolbar extends React.Component {
           disabled
         },
         {
+          name: 'zoomIn',
+          icon: 'zoom in',
+          label: 'Zoom in map',
+          tooltip: 'Click here or SHIFT + mousewheel over map area to change zoom level. Use mousewheel to scroll if the zoom is too large',
+          shortcut: 'Shift+PLUS',
+          level: 7,
+          disabled
+        },
+        {
           name: 'resetCamera',
           icon: 'crosshairs',
+          iconText:  disabled ? '100%' : `${(this.props.options.camera.zoom * 100).toFixed(0)}%`,
           label: 'Reset Camera',
           tooltip: 'Set Zoom to 100% and move map to 0,0 coordinates',
           disabled,
           level: 6,
           shortcut: 'Ctrl+Alt+R'
+        },
+        {
+          name: 'zoomOut',
+          icon: 'zoom out',
+          label: 'Zoom out map',
+          tooltip: 'Click here or SHIFT + mousewheel over map area to change zoom level. Use mousewheel to scroll if the zoom is too large',
+          shortcut: 'Shift+MINUS',
+          level: 7,
+          disabled
         },
         {
           name: 'preview',
@@ -149,7 +171,7 @@ export default class MapToolbar extends React.Component {
           icon: 'wizard',
           active: this.props.options.mode == EditModes.wand,
           label: 'Magic Wand',
-          tooltip: 'Magic Wand selection - select adjacent tiles with same ID',
+          tooltip: 'Magic Wand selection - Select adjacent tiles with same ID',
           disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
           level: 12
         },
@@ -158,7 +180,7 @@ export default class MapToolbar extends React.Component {
           active: this.props.options.mode == EditModes.picker,
           icon: 'qrcode picker',
           label: 'Tile Picker',
-          tooltip: 'Tile Picker - Select All tiles with same ID',
+          tooltip: 'Tile Picker - Select all tiles with same ID',
           disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
           level: 13
         },

@@ -1,7 +1,7 @@
 export const templateCode = [
-  
-  { label: "PhaserJS outline",
-    description: "Empty functions for preload(), create() and render()",
+
+  { label: "PhaserJS: Basic outline",
+    description: "Empty functions for a PhaserJS game with preload(), create() and render()",
     code: `// Start to make a Phaser game.
 import 'phaser@2.4.6'
 const game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', {
@@ -18,8 +18,8 @@ function preload() {
 
   game.load.crossOrigin = 'anonymous'
 
-  // Example of how to load and name an asset to use in code. 
-  // You can drag assets from the right hand Assets panel towards 
+  // Example of how to load and name an asset to use in code.
+  // You can drag assets from the right hand Assets panel towards
   // this code area to generate these kinds of api/url links:
   game.load.image('playerThing', '/api/asset/png/2ojWGXPXC99A7eDP7')
 
@@ -39,21 +39,21 @@ function render() {
 
 }`
   },
-  
-  { label: "Moving player",
-    description: "Player character that can move and jump",
+
+  { label: "PhaserJS: Moving player",
+    description: "PhaserJs base template with player character that can move and jump",
     code: `// Start to make a Phaser game.
 
 import 'phaser'
-// Create the Phaser Game. 
-// 
+// Create the Phaser Game.
+//
 const game = new Phaser.Game(
    "100", // Phaser.Game uses this number in quotes to mean % of screen width
-   window.innerHeight - 40, // another way to automatically calculate size (height) 
+   window.innerHeight - 40, // another way to automatically calculate size (height)
    Phaser.AUTO, // Automatically choose the fastest renderer type for this browser
    'mygame', // The name of this game
-   { 
-     // now we need to tell phaser what we decided to call various functions it will need 
+   {
+     // now we need to tell phaser what we decided to call various functions it will need
      // so the game can work.
      preload: preload, // The preload function is called preload (it is defined below)
      create: create,   // The create function is called create (it is defined below)
@@ -74,7 +74,7 @@ function preload() {
     game.load.crossOrigin = 'anonymous'
 
     // example of how to load and name an MGB asset to use in code
-    // You can drag assets from the right hand Assets panel towards 
+    // You can drag assets from the right hand Assets panel towards
     // this code area to generate these kinds of api/url links:
     game.load.image('playerThing','/api/asset/png/2ojWGXPXC99A7eDP7')
 }
@@ -105,13 +105,13 @@ function update () {
 
     if (jumpButton.isDown && (player.body.onFloor() || player.body.touching.down))
       player.body.velocity.y = -400
-  
+
     // Allow the player to jump if they are touching the ground.
     if (cursors.up.isDown && (player.body.onFloor() || player.body.touching.down))
         player.body.velocity.y = -350
 }
 
-function render() 
+function render()
 {
   // We don't need to do anything special here for this demo yet since
   // the object we created includes the needed logic to draw it
@@ -119,8 +119,43 @@ function render()
   },
 
   {
-    label: "Empty React Component - with docs",
-    description: "Empty Component filled with lifecycle methods - ready for export",
+    label: "PhaserJS: Load MGB Map in Phaser",
+    description: "Load a MGB Map into a Phaser Game",
+    code:
+`
+import Phaser from 'phaser'
+import '/!vault/mgb-map-loader'
+
+const game = new Phaser.Game(27*16, 15*16, Phaser.AUTO, document.body, {
+  preload: function(){
+    this.game.load.mgbMap("{REPLACE_WITH_MAP_ID}")
+    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+  },
+
+  create: function(){
+    /*
+    mgb map structure: {
+      data, // raw map data in tiled json format
+      layers, // Object containing layer with name - layer can be either group or tilemaplayer
+      map // reference to phaser tilemap object
+    }
+    */
+    const mgbMap = this.game.create.mgbMap("{REPLACE_WITH_MAP_ID}")
+    // set world bound to match map size
+    this.game.world.setBounds(0, 0,
+                              mgbMap.data.width * mgbMap.data.tilewidth,
+                              mgbMap.data.height* mgbMap.data.tileheight
+    );
+
+  }
+})
+// allow to take screenshots in the webgl mode
+game.preserveDrawingBuffer = true;
+`
+  },
+  {
+    label: "React: Class-based React Component",
+    description: "Empty Component filled with commented lifecycle methods - ready for export",
     code:
 `//https://facebook.github.io/react/docs/reusable-components.html#es6-classes
 //https://facebook.github.io/react/docs/component-specs.html
@@ -236,7 +271,7 @@ export default class extends React.Component {
   },
 
   {
-    label: "Empty React Component - simplified",
+    label: "React: Simple Class Component",
     description: "Empty Component - ready for export",
     code:
 `import React from "react"
@@ -265,41 +300,6 @@ export default class extends React.Component {
     return <div>Hello {this.props.name}!</div>
   }
 }
-`
-  },
-  {
-    label: "Load MGB Map in phaser",
-    description: "",
-    code:
-`
-import 'phaser'
-import '/stauzs/mgb-map-loader'
-
-const game = new Phaser.Game(27*16, 15*16, Phaser.AUTO, document.body, {
-  preload: function(){
-    this.game.load.mgbMap("{REPLACE_WITH_MAP_ID}")
-    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-  },
-
-  create: function(){
-    /*
-    mgb map structure: {
-      data, // raw map data in tiled json format
-      layers, // Object containing layer with name - layer can be either group or tilemaplayer
-      map // reference to phaser tilemap object
-    }
-    */
-    const mgbMap = this.game.create.mgbMap("{REPLACE_WITH_MAP_ID}")
-    // set world bound to match map size
-    this.game.world.setBounds(0, 0,
-                              mgbMap.data.width * mgbMap.data.tilewidth,
-                              mgbMap.data.height* mgbMap.data.tileheight
-    );
-
-  }
-})
-// allow to take screenshots in the webgl mode
-game.preserveDrawingBuffer = true;
 `
   }
 ]

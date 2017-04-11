@@ -1,0 +1,14 @@
+{
+  "!name": "Test",
+  "Test": {
+    "!type": "fn(numberOrString: number|string) -> Element",
+    "!doc": "This is definition Test",
+    "A": {
+      "!doc": "This is simple 'A'. It should contain B and C",
+      "!type": "+Test",
+      "B": {
+        "!type": "Test"
+      }
+    }
+  }
+}

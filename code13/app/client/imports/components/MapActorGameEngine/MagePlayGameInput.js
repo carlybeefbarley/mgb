@@ -37,12 +37,17 @@ export default MagePlayGameInput = {
   
   playHandleKeyEvents(k)    // k is a keyboard event
   {
+    // don't steal events from input fields
+    if (_.includes(["INPUT", "SELECT","TEXTAREA"], k.target.tagName))
+      return
+
     k.preventDefault()
     const { actors, activeActors, AA_player_idx, isPaused, G_gameOver, isTransitionInProgress } = this
     if (!G_gameOver && !isTransitionInProgress)
     {
       var newstate = (k.type === 'keydown')
       var pp = actors[activeActors[AA_player_idx].ACidx]
+
       switch (k.key)
       {
       case 'Backspace':
@@ -77,9 +82,9 @@ export default MagePlayGameInput = {
         break
       case 'm':		// Melee
       case 'End':	
-        if (MgbActor.intFromActorParam(pp.content2.databag.allchar.meleeYN))
+        if (_.some(pp.content2.animationTable, anim => { return (anim.action.startsWith('melee') && anim.tileName !== "") }))
           this.G_player_action.melee = newstate
-        break
+          break
       case 'Control':
         if (isPaused && newstate)
           this.hideNpcMessage()				// unpause

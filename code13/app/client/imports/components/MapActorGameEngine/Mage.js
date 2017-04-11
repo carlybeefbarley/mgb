@@ -7,12 +7,14 @@ import MagePlayGame from './MagePlayGame'
 import MageNpcDialog from './MageNpcDialog'
 import MageGameCanvas from './MageGameCanvas'
 import MageInventoryDialog from './MageInventoryDialog'
+import MageMgbActor from './MageMgbActor'
+import MageMgbMusic from './MageMgbMusic'
 
-import { Message, Button } from 'semantic-ui-react'
+import { Message, Button, Icon, Modal } from 'semantic-ui-react'
 
 import TouchController from './TouchController'
 
-const _overlayStyle = { 
+const _overlayStyle = {
   position:   'absolute', 
   left:       '80px', 
   right:      '80px', 
@@ -25,6 +27,7 @@ const _overlayStyle = {
 
 
 // MapActorGameEngine (MAGE)
+// For now, make everything backwards-compatible. Any changes that would break MGB1 games should be in separate files w/ versioning 2.x.x+
 
 // This is the top-level React wrapper for the MapActorGameEngine
 
@@ -42,7 +45,7 @@ let _haveShownInstructionsOnceSinceStart = false      // We show this once per a
 
 
 const _compactMsgSty = { maxWidth: '500px' }  // Message icon cancels compact prop, so need a style
-const Preloader = ( { msg } ) => <Message style={_compactMsgSty} icon='circle notched loading' content={`Preloading ${msg}`} />
+const Preloader = ( { msg } ) => <Message style={_compactMsgSty} icon={<Icon name='circle notched' loading/>} content={`Preloading ${msg}`} />
 const MapLoadFailed = ( { err } ) => <Message style={_compactMsgSty} icon='warning sign' error content={err} />
 
 const _resolveOwner = (implicitOwnerName, assetName) => {
@@ -55,7 +58,8 @@ const _resolveOwner = (implicitOwnerName, assetName) => {
 }
 const _mkMapUri = (ownerName, assetName) => { 
   const p = _resolveOwner(ownerName, assetName)
-  return `/api/asset/actormap/${p.ownerName}/${p.assetName}`
+  // make sure we have ALWAYS latest map
+  return `/api/asset/actormap/${p.ownerName}/${p.assetName}?hash=${Date.now()}`
 }
 const _mkActorUri = (ownerName, assetName) =>  {
   const p = _resolveOwner(ownerName, assetName)
@@ -97,7 +101,8 @@ export default class Mage extends React.Component {
     
       pendingGraphicLoads:    [],      // contains list of unique Graphics Names that have pending loads
       loadedGraphics:         {},      // The loaded Graphics Data. Contains map of actorname -> actor
-      failedGraphics:         {}       // Graphics that failed to load. Content is the error data
+      failedGraphics:         {},       // Graphics that failed to load. Content is the error data
+
     }
   }
   
@@ -106,7 +111,7 @@ export default class Mage extends React.Component {
   }
 
   handleInventoryAction(action, item) {
-    this._game && this._game.inventoryDialogActionHandler(action, item)
+    this._game && this._game.inventoryDialogActionHandler(action, item) 
   }
 
   handleSetGameStatus(lineNum, text) {
@@ -136,7 +141,7 @@ export default class Mage extends React.Component {
     if (this.props.playCountIncFn)
       this.props.playCountIncFn()
 
-    this._game = new MagePlayGame()
+    this._game = new MagePlayGame(this.props.ownerName)
     let startedOk = false
 
     try {
@@ -172,7 +177,7 @@ export default class Mage extends React.Component {
       isInventoryShowing: false,
       activeNpcDialog:    null,
       activeMap:          this.state.loadedMaps[this.props.startMapName] 
-    } )
+  } )
   }
 
   callDoBlit()
@@ -215,6 +220,32 @@ export default class Mage extends React.Component {
       window.requestAnimationFrame( () => this.callDoBlit() )
   }
 
+  /*
+  // Compare names without the frame number 
+  _equalGraphicNames = (name1, name2) => {
+    if (/(\#\d+)$/.test(name1) && !(/(\#\d+)$/.test(name2))) {
+      return name2 === name1.split(" #")[0]
+    }
+  	else if (/(\#\d+)$/.test(name2) && !(/(\#\d+)$/.test(name1))) {
+      return name1 === name2.split(" #")[0]
+    }
+    else if ((/(\#\d+)$/.test(name1) && /(\#\d+)$/.test(name2))) {
+      return name1.split(" #")[0] === name2.split(" #")[0]
+    }
+    return name1 === name2
+  }
+  */
+
+  // Check if name has " #frameNumber"
+  _isFrameNamedGraphicAsset(name) {
+    return /(\#\d+)$/.test(name)
+  }
+
+  // Get frame number from name
+  _parseFrameNamedGraphicAsset(name) {
+    return parseInt(name.split(' #').pop(), 10) // explicitly parse int as base-10 since it has leading zero
+  }
+
   // Load any actors that we don't already have in state.actors or pendingActorLoads
   _loadRequiredGraphics(desiredGraphicNames, oName)
   {
@@ -223,10 +254,14 @@ export default class Mage extends React.Component {
 
     const { pendingGraphicLoads, loadedGraphics } = this.state
     _.each(desiredGraphicNames, aName => {
+      let gName = aName
+      if (this._isFrameNamedGraphicAsset(aName)) {
+        gName = aName.split(' #')[0] // name without frame for fetching asset
+      }
       if (!_.has(pendingGraphicLoads, aName) && !_.has(loadedGraphics, aName))
       {
         pendingGraphicLoads.push(aName)
-        fetchAssetByUri(_mkGraphicUri(ownerName, aName))
+        fetchAssetByUri(_mkGraphicUri(ownerName, gName))
           .then(  data => this._graphicLoadResult(aName, true, JSON.parse(data)) )
           .catch( data => this._graphicLoadResult(aName, false, data) )
       }
@@ -249,8 +284,12 @@ export default class Mage extends React.Component {
           debugger
         }
       }
+      let frame = 0
+      if (this._isFrameNamedGraphicAsset(aName)) {
+        frame = this._parseFrameNamedGraphicAsset(aName) - 1
+      }
       // framedata contains frames for every layers spritedata contains merged layers
-      loadedGraphics[aName]._image.src = data.content2.spriteData[0]
+      loadedGraphics[aName]._image.src = data.content2.spriteData[frame]
     }
     else
       failedGraphics[aName] = data
@@ -274,6 +313,7 @@ export default class Mage extends React.Component {
           .catch( data => this._actorLoadResult(aName, p.ownerName, false, data) )
       }
     })
+
     this.setState( { pendingActorLoads } )    // and maybe isPreloadingStr? use a _mkIisPreloadingStrFn 
   }
 
@@ -296,13 +336,17 @@ export default class Mage extends React.Component {
   _loadRequiredAssetsForActor(actor, oName)
   {
     // Load any referenced graphics
-    const desiredGraphicNames = _.filter(_.union(
-      [actor.databag.all.defaultGraphicName],           // TODO: warn if this is blank
-      _.map(actor.animationTable, r => r.tileName)
-      // any other Tiles mentioned in databags?  I don't think so..
-     ), n => (n && n!==''))
-
+    const desiredGraphicNames = _.filter(
+      _.union(
+        [actor.databag.all.defaultGraphicName],       // TODO: warn if this is blank
+        _.map(actor.animationTable, r => r.tileName) // Store frame number in name (to avoid looping twice to get frame data)
+      ), 
+      n => (n && n!=='')
+    )
     this._loadRequiredGraphics(desiredGraphicNames, oName)
+
+    // Load any referenced sounds
+    //MageMgbActor.loadSounds(actor, oName)
 
     // Add names of any referenced actors to list of desiredActors
     let desiredActorNames = []
@@ -393,7 +437,7 @@ export default class Mage extends React.Component {
     else
     {
       failedMaps[nextMapName] = data
-debugger  // TODO - stop game, no map.
+      debugger  // TODO - stop game, no map.
     }
     const newIsPreloadingStrValue = pendingMapLoads.length > 0 ? 'actors' : null ///  TODO - handle pending tiles
     this.setState( { pendingMapLoads, loadedMaps, failedMaps, isPreloadingStr: newIsPreloadingStrValue } )
@@ -412,21 +456,22 @@ debugger  // TODO - stop game, no map.
 
   // This is for the shown-once help info
   componentDidUpdate (prevProps, prevState) {
-    if (prevState.isPlaying === false && this.state.isPlaying === true && !!this._game)
-    {
-      if (_haveShownInstructionsOnceSinceStart !== true)
+    if (!this.props.playCountIncFn) // Not Game asset
+      if (prevState.isPlaying === false && this.state.isPlaying === true && !!this._game)
       {
-        _haveShownInstructionsOnceSinceStart = true
-        this._game.doPauseGame()
-        this.handleShowNpcDialog( 
-          { 
-            message: "Keyboard instructions:  Use WASD or arrow keys to move your player.   'Enter' is shoot.   'M' is for Melee attack.   I is for Inventory.    Ctrl is Pause.   GLHF.\n", 
-            leftActor: null, // TODO - find the playerActor for this message
-            responseCallbackFn: () => { this.handleShowNpcDialog(null) ; this._game.isPaused = false }
-          }
-        )
+        if (_haveShownInstructionsOnceSinceStart !== true)
+        {
+          _haveShownInstructionsOnceSinceStart = true
+          this._game.doPauseGame()
+          this.handleShowNpcDialog( 
+            { 
+              message: "Keyboard instructions:  Use WASD or arrow keys to move your player.   'Enter' is shoot.   'M' is for Melee attack.   I is for Inventory.    Ctrl is Pause.  ", 
+              leftActor: null, // TODO - find the playerActor for this message
+              responseCallbackFn: () => { this.handleShowNpcDialog(null) ; this._game.isPaused = false }
+            }
+          )
+        }
       }
-    }
   }
 
   handleTouchControls(){
@@ -439,14 +484,39 @@ debugger  // TODO - stop game, no map.
     const isAnOverlayShowing = !!activeNpcDialog || !!isInventoryShowing
     const isGameShowing = !isPreloadingStr && !mapLoadError
     const isPreloading = !!isPreloadingStr
+    const style = {
+      backgroundColor: 'whitesmoke',
+      border: '1px solid lightgrey',
+      borderRadius: '3px',
+      padding: '1px 3px 1px 3px',
+      display: 'inline-block',
+      minWidth: '1.5em',
+      textAlign: 'center',
+      boxShadow: '0 1px 0px rgba(0, 0, 0, 0.2),0 0 0 2px #ffffff inset'
+    }
+    let gameWasPaused = false
 
     return (
       <div>
         { this.state.showTouchControls && <TouchController />}
         { !this.props.hideButtons &&
           <div style={ {marginBottom: '5px', zIndex: 1, position: "relative"} }>
-            <Button disabled={isPreloading ||  isPlaying} icon='play' content='play' onClick={() => this.handlePlay()}/>
-            <Button disabled={isPreloading || !isPlaying} icon='stop' content='stop' onClick={() => this.handleStop()}/>
+            <Button disabled={isPreloading ||  isPlaying} icon='play' content='Play' onClick={() => this.handlePlay()}/>
+            <Button disabled={isPreloading || !isPlaying} icon='stop' content='Stop' onClick={() => this.handleStop()}/>
+            <Modal 
+              trigger={<Button>Controls</Button>} 
+              onOpen={() => { if (this._game && !this._game.isPaused) { this._game.doPauseGame() } else { gameWasPaused = true } }} 
+              onClose={() => { if (this._game && this._game.isPaused && !gameWasPaused) { this._game.hideNpcMessage()	}}}
+              size='small'>
+              <Modal.Header>Keyboard Controls</Modal.Header>
+              <Modal.Content>
+                <p>Use <span style={style}>W</span><span style={style}>A</span><span style={style}>S</span><span style={style}>D</span> or arrow keys to move your player.</p>  
+                <p>Press <span style={style}>&#8629; Enter</span> to fire projectiles, if equipped.</p>
+                <p>Press <span style={style}>M</span> to perform melee attacks, if any.</p>
+                <p>Press <span style={style}>I</span> to open the inventory.</p>
+                <p>Press <span style={style}>Ctrl</span> to pause/unpause the game.</p>
+              </Modal.Content>
+            </Modal>
             { this.state.showTouchControls && <Button disabled={isPreloading} icon='game' content='Hide Screen Controller' onClick={() => this.handleTouchControls()}/> }
             { !this.state.showTouchControls && <Button disabled={isPreloading} icon='game' content='Show Screen Controller' onClick={() => this.handleTouchControls()}/> }
 

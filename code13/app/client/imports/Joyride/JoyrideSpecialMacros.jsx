@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { getNavPanels } from '/client/imports/components/SidePanels/NavPanel'
 
 // This code is used by the Joyride/Tutorial systems to make it easier to write tutorials.
 //
@@ -21,24 +22,60 @@ const _fullStepField = null     // This is returned in notFoundMacros[].field re
 
 */
 
-// Helper which makes a NavPanel stepMacro: e.g. _mkNp( 'learn', 'student' )
-const _mkNp = ( npname, icon ) => (
-  {
-    key: _wrapKey(`np-${npname}`),
-    hint: `${_.upperFirst(npname)} NavPanel`,
-    desc: `Step for finding the ${_.upperFirst(npname)} NavPanel`,
-    newVal:
-    {
-      "title": `The '${_.upperFirst(npname)}' Navigation panel`,
-      "text": `Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(npname)} button here`,
-      "selector": `#mgbjr-navPanelIcons-${npname}`,
-      "showStepOverlay": true,
-      "awaitCompletionTag": `mgbjr-CT-navPanel-${npname}-show`,
-      "position": "right",
-      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
-    }
+// Style: Use %inverted% for any step requiring user action (mostly with awaitCompletionTag)
+
+// Helper which makes an array of NavPanel stepMacro: e.g. _mkNp( 'learn', 'student' )
+const _mkNavPanelMacros = () => {
+
+  const np = getNavPanels(null, true) // this gets the complete set so we can extract what we want
+  const retval = []
+  const parseDropdown = (dd, position) => {
+    const ddUpName = _.upperFirst(dd.name)
+    // 1. The Top Menu to find (as a click action)
+    retval.push({
+      key: _wrapKey(`np-${dd.name}`),
+      hint: `${_.upperFirst(dd.name)} Menu`,
+      desc: `Step for clicking the ${ddUpName} Menu`,
+      newVal:
+      {
+        "title": `Click the '${ddUpName}' menu header`,
+        "text": dd.explainClickAction,
+        "selector": `#mgbjr-np-${dd.name}`,
+        "showStepOverlay": true,
+        "awaitCompletionTag": `mgbjr-CT-np-${dd.name}`,
+        "position": position,
+        "style": "%inverted%"
+      }
+    })
+    // 2. Each of the options in the Menu DropDown
+    _.each(dd.menu, item => {
+      const smText = _.isString(item.content) ? item.content : (item.explainClickAction || item.jrkey) // hacky
+      retval.push({
+        key: _wrapKey(`np-${dd.name}-${item.jrkey}`),
+        hint: `${_.upperFirst(smText)} Menu`,
+        desc: `Step for finding the '${smText}' menu`,
+        newVal:
+        {
+          "title": `Go to the '${smText}' page:`,
+          "text": `Hover on the <div style='border: 1px solid dimgrey' class='ui small black compact button'>${ddUpName}</div> menu,<br></br> then click the <div class='ui small label'>${smText}</div> option`,
+          "selector": `#mgbjr-np-${dd.name}-${item.jrkey},#mgbjr-np-${dd.name}`,  // Note the  comma  which allows multiple selectors, in descending preference
+          "showStepOverlay": true,
+          "awaitCompletionTag": `mgbjr-CT-np-${dd.name}-${item.jrkey}`,
+          "position": position,
+          "style": "%inverted%"
+        }
+      })
+
+    })
+
   }
-)
+ 
+  _.each(np.left,  dd => parseDropdown(dd, 'right'))
+  _.each(np.right, dd => parseDropdown(dd, 'left'))
+
+  return retval
+
+}
 
 // Helper which makes a FlexPanel stepMacro: e.g. _mkNp( 'learn', 'student' ) is %fp-learn%
 const _mkFp = ( fpname, icon ) => (
@@ -48,7 +85,7 @@ const _mkFp = ( fpname, icon ) => (
     desc: `Step for finding the ${_.upperFirst(fpname)} FlexPanel`,
     newVal:
     {
-      "title": `The '${_.upperFirst(fpname)}' Flex panel`,
+      "title": `The '${_.upperFirst(fpname)}' FlexPanel`,
       "text": `Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(fpname)} button here`,
       "selector": `#mgbjr-flexPanelIcons-${fpname}`,
       "showStepOverlay": true,
@@ -67,7 +104,7 @@ const _mkFpDescribe = ( fpname, icon, describeText ) => (
     desc: `Step for finding the ${_.upperFirst(fpname)} FlexPanel`,
     newVal:
     {
-      "title": `The '${_.upperFirst(fpname)}' Flex panel`,
+      "title": `The '${_.upperFirst(fpname)}' FlexPanel`,
       "text": `${describeText}. <br></br>Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(fpname)} button here to show this Panel`,
       "selector": `#mgbjr-flexPanelIcons-${fpname}`,
       "showStepOverlay": true,
@@ -87,12 +124,12 @@ const _mkCreateAsset = kind => (
     newVal:
     {
       "title": `Create a ${_.upperCase(kind)} Asset`,
-      "text": `First, type in a name for the asset above... 
-      for example '<span style='color: red'>my avatar</span>'.<br></br>Second.. Select the ${_.upperCase(kind)} asset kind above.<br></br>Third... Click on the 'Create Asset' button to the left here`,
+      "text": `First, type in a name for the asset above.<br></br>Second.. Select the ${_.upperCase(kind)} asset kind above.<br></br>Third... Click on the 'Create Asset' button to the left here`,
       "selector": "#mgbjr-create-asset-button",
       "showStepOverlay": false,
       "awaitCompletionTag": `mgbjr-CT-asset-create-new-${kind}`,
-      "position": "right"
+      "position": "right",
+      "style": "%inverted%" 
     }
   }
 )
@@ -102,7 +139,23 @@ const stepMacros = [
   {
     key: _wrapKey('complete'),
     hint: `Tutorial completed`,
-    desc: `Tutorial completed, explain how to start next`,
+    desc: `Tutorial completed, Show GoalsFP to start next`,
+    newVal:
+    {
+      "title": `Great! You completed the tutorial`,
+      "text": `You can start the next tutorial from the Goals FlexPanel at any time`,
+      "selector": "#mgbjr-flexPanelIcons-goals",
+      "preparePage": 'openFlexPanel:goals',
+      "showStepOverlay": true,
+      "position": "left",
+      "style": "%green%"    // Note that full Step Macros can still use per-field macros :)
+    }
+  },
+
+  {
+    key: _wrapKey('complete2'),
+    hint: `Tutorial completed`,
+    desc: `Tutorial completed, explain how to start next using FP`,
     newVal:
     {
       "title": `Great! You completed the tutorial`,
@@ -110,7 +163,23 @@ const stepMacros = [
       "selector": "#mgbjr-flexPanelIcons-goals",
       "showStepOverlay": true,
       "position": "left",
-      "style": "%green%"    // Note that full Step Macros can still use per-field macros :)
+      "style": "%green%"
+    }
+  },
+
+  {
+    key: _wrapKey('completeLearnPhaserTut'),
+    hint: `Tutorial completed`,
+    desc: `Tutorial completed, go to /learn/code/phaser for next`,
+    newVal:
+    {
+      "title": `Great! You completed the tutorial`,
+      "text": `You can start the next tutorial from the Goals FlexPanel at any time`,
+      "selector": "#mgbjr-flexPanelIcons-goals",
+      "preparePage": 'navToRelativeUrl:/learn/code/phaser',
+      "showStepOverlay": true,
+      "position": "left",
+      "style": "%green%"
     }
   },
 
@@ -124,8 +193,7 @@ const stepMacros = [
       "text": `Lorem ipsum hocus pocus testing 1 2 3 Ground Control To Major Tom. Kthxbye`,
       "selector": "body",
       "showStepOverlay": false,
-      "position": "top",
-      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
+      "position": "top"
     }
   },
   
@@ -139,169 +207,25 @@ const stepMacros = [
       "text": `This stack of icons on the right-hand side is called the <em>FlexPanel</em>. These panels have useful context while you are working on other assets`,
       "selector": "#mgbjr-flexPanelIcons",
       "showStepOverlay": true,
-      "position": "left",
-      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
+      "position": "left"
     }
   },
 
   {
     key: _wrapKey('navPanel'),
-    hint: `Find NavPanel`,
-    desc: `Step for finding the NavPanel`,
+    hint: `Find Top Menu NavPanel`,
+    desc: `Step for finding the Top Menu NavPanel`,
     newVal:
     {
-      "title": `The NavPanel area`,
-      "text": `This stack of icons on the left-hand side is called the <em>NavPanel</em>. These Navigation Panels are useful for navigating the site`,
-      "selector": "#mgbjr-navPanelIcons",
+      "title": `The page header`,
+      "text": `This header has direct links and submenus to navigate this site`,
+      "selector": "#mgbjr-np",
       "showStepOverlay": true,
-      "position": "right",
-      "style": "%inverted%"    // Note that full Step Macros can still use per-field macros :)
+      "position": "bottom"
     }
   },
 
-  {
-    key: _wrapKey('np-home-myProfile'),
-    hint: `np-home>MyProfile`,
-    desc: `Step for clicking the 'My Profile' Button from np-home`,
-    newVal:
-    {
-      "title": "My Profile",
-      "text": "Click on the &ensp;<div class='ui label'>My Profile&emsp;<i class='grey user icon'></i></div>&ensp; option",
-      "selector": "#mgbjr-np-home-myProfile",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username",
-      "position": "right"
-    }
-  },
-
-  {
-    key: _wrapKey('np-play-popularGames'),
-    hint: `np-play>PopularGames`,
-    desc: `Step for clicking the 'Popular Games' Button from np-play`,
-    newVal:
-    {
-      "title": "Popular Games",
-      "text": "Click on the &ensp;<div class='ui label'>Popular Games</div>&ensp; option now to see Games that have been played most frequently",
-      "selector": "#mgbjr-np-play-popularGames",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-/games",
-      "position": "right"
-    }
-  },
- 
-  {
-    key: _wrapKey('np-play-updatedGames'),
-    hint: `np-play>UpdatedGames`,
-    desc: `Step for clicking the 'Updated Games' Button from np-play`,
-    newVal:
-    {
-      "title": "Updated Games",
-      "text": "Click on the &ensp;<div class='ui label'>Popular Games</div>&ensp; option now to see Games that have been updated recently",
-      "selector": "#mgbjr-np-play-updatedGames",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-/games",
-      "position": "right"
-    }
-  },
-
-  {
-    key: _wrapKey('np-play-gamesImade'),
-    hint: `np-play>gamesImade`,
-    desc: `Step for clicking the 'Games I made' Button from np-play`,
-    newVal:
-    {
-      "title": "Games I made",
-      "text": "Click on the &ensp;<div class='ui label'>Games I made</div>&ensp; option now to see Games that you made",
-      "selector": "#mgbjr-np-play-gamesImade",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-/u/:username/games",
-      "position": "right"
-    }
-  },
- 
-  {
-    key: _wrapKey('np-meet-allAssets'),
-    hint: `np-meet>allAssets`,
-    desc: `Step for clicking the 'All Assets' Button from np-meet`,
-    newVal:
-    {
-      "title": "Browse All Assets - across all users",
-      "text": "Click on the &ensp;<div class='ui label'>All Assets&emsp;<i class='pencil icon'></i></div>&ensp; option now to see Assets being made by you and other users",
-      "selector": "#mgbjr-np-meet-allAssets",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-location-path-/assets",
-      "position": "right"
-    }
-  },
- 
-  {
-    key: _wrapKey('create-new-asset'),
-    hint: `np-create>CreateNewAsset`,
-    desc: `Step for Create New Asset. Prior step should be %np-create%`,
-    newVal:
-    {
-      "title": "Great. Now choose 'Create New Asset'",
-      "text": "Click on the&ensp;<div class='ui label'>Create New Asset&emsp;<i class='green pencil icon'></i></div>&ensp;option",
-      "selector": "#mgbjr-np-create-createNewAsset",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-location-path-/assets/create",
-      "position": "right"
-    },
-  },
-
-  {
-    key: _wrapKey('np-create-myAssets'),
-    hint: `np-create>myAssets`,
-    desc: `Step for List My Assets. Prior step should be %np-create%`,
-    newVal:
-    {
-      "title": "Great. Now choose 'List My Assets'",
-      "text": "Click on the&ensp;<div class='ui label'>List My Assets&emsp;<i class='pencil icon'></i></div>&ensp;option",
-      "selector": "#mgbjr-np-create-myAssets",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username/assets",
-      "position": "right"
-    },
-  },
-
-  {
-    key: _wrapKey('np-create-project'),
-    hint: `np-create>Project`,
-    desc: `Step for 'Create Project'. Prior step should be %np-create%`,
-    newVal:
-    {
-      "title": "Great. Now choose 'Create New Project'",
-      "text": "Click on the&ensp;<div class='ui label'>Create New Project&emsp;<i class='green sitemap icon'></i></div>&ensp;option",
-      "selector": "#mgbjr-np-create-project",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username/projects/create",
-      "position": "right"
-    },
-  },
-
-  {
-    key: _wrapKey('np-create-list-my-projects'),
-    hint: `np-create>ListMyProjects`,
-    desc: `Step for 'List My Projects'. Prior step should be %np-create%`,
-    newVal:
-    {
-      "title": "Great. Now choose 'List My Projects'",
-      "text": "Click on the&ensp;<div class='ui label'>List My Projects&emsp;<i class='sitemap icon'></i></div>&ensp;option",
-      "selector": "#mgbjr-np-create-list-my-projects",
-      "showStepOverlay": true,
-      "awaitCompletionTag": "mgbjr-CT-app-router-path-u/:username/projects",
-      "position": "right"
-    },
-  },
-
-
-  _mkNp( 'home',     'home'         ),
-  _mkNp( 'learn',    'student'      ),
-  _mkNp( 'create',   'pencil'       ),
-  _mkNp( 'play',     'game'         ),
-  _mkNp( 'meet',     'street view'  ),
-  _mkNp( 'projects', 'sitemap'      ),
-  _mkNp( 'history',  'history'      ),
+  ..._mkNavPanelMacros(),
 
   _mkFp( 'activity', 'lightning'    ),
   _mkFp( 'goals',    'student'      ),
@@ -312,11 +236,10 @@ const stepMacros = [
   _mkFp( 'users',    'street view'  ),
   _mkFp( 'network',  'signal'       ),
   _mkFp( 'keys',     'keyboard'     ),
-
   _mkFpDescribe( 'activity', 'lightning',   'This activity feed lets you see what people are working on'   ),
   _mkFpDescribe( 'goals',    'student',     'You can track, start/stop or resume your tutorials from here' ),
   _mkFpDescribe( 'assets',   'pencil',      'This lets you find assets, load them, or drag them into other assets - for example dragging a Graphic to a Map' ),
-  _mkFpDescribe( 'chat',     'chat',        'This lets you chat with other users of the site' ),
+  _mkFpDescribe( 'chat',     'chat',        'The Chat FlexPanel allows you to chat with other users of the site, while still doing other work' ),
   _mkFpDescribe( 'options',  'options',     'This lets you enable advanced fetures that are initially hidden for new users' ),
   _mkFpDescribe( 'skills',   'plus circle', 'This lets you track your learning skills'),
   _mkFpDescribe( 'users',    'street view', 'This is a quick way to search for other users. It doesn\'t do much yet...' ),
@@ -343,30 +266,60 @@ const stepMacros = [
       "preparePage": 'refreshBadgeStatus',
       "title": "Waving magic wand...",
       "text": "See your new Badge?",
-      "style": '%inverted%',
       "position": "top-left"
     },
-  },
-
-
-
+  }
 ]
 
+const usefulColors = {
+  yellowish: 'rgba(148, 191, 22, 0.32)',
+  whiteTint: 'rgba(255, 255, 255, 0.45)',
+  pinkish:   'rgba(201, 23, 33, 0.2)',
+  orangeish: 'rgba(251, 189, 8, 0.3)'
+}
 
 const propertyMacros = [
 
   // field == someFieldName means this is a macros for fields (properties) WITHIN a step.. e.g ."style"
   {
     field: 'style',
+    key: _wrapKey('navpanelmenu'),
+    desc: "A style good for NavPanel steps",
+    newVal:
+    {
+      "backgroundColor": "rgba(0, 96, 0, 1)",
+      "color": "#fff",
+      "mainColor": "#fbbd08",
+      "skip": { "color": "#f04" },
+      "hole": { "backgroundColor": usefulColors.whiteTint }
+    }
+  },
+  {
+    field: 'style',
+    key: _wrapKey('begin'),
+    desc: "A style good for starting a Tutorial",
+    newVal:
+    {
+      "backgroundColor": "rgba(0, 96, 0, 1)",
+      "color": "#fff",
+      "mainColor": "#fbbd08",
+      "skip": { "color": "#f04" },
+      "hole": { "backgroundColor": usefulColors.whiteTint }
+    }
+  },
+
+  {
+    field: 'style',
     key: _wrapKey('inverted'),
     desc: "An inverted style for emphasis",
     newVal:
     {
-      "backgroundColor": "rgba(0, 0, 0, 0.8)",
+      "backgroundColor": "rgba(15, 15, 15, 0.8)",
       "color": "#fff",
       "mainColor": "#ff4456",
       "skip": { "color": "#ff4456" },
-      "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
+      "hole": { "backgroundColor": usefulColors.whiteTint },
+      "boxShadow": "0px 0px 20px #fff"
     }
   },
 
@@ -380,7 +333,7 @@ const propertyMacros = [
       "color": "#fff",
       "mainColor": "#fbbd08",
       "skip": { "color": "#f04" },
-      "hole": { "backgroundColor": "RGBA(201, 23, 33, 0.2)" }
+      "hole": { "backgroundColor": usefulColors.yellowish }
     }
   },
 
@@ -390,7 +343,7 @@ const propertyMacros = [
     desc: "An alert style for stuff that does not yet actually exist",
     newVal:
     {
-      "backgroundColor": "rgba(255, 128, 128, 0.95)",
+      "backgroundColor": "rgba(234, 174, 0, 0.95)",
       "color": "#fff",
       "mainColor": "#ff4456",
       "skip": { "color": "#ff4456" },

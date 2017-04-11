@@ -14,7 +14,7 @@ const HomeProjectsBeingMadeColumn = () => (
     <Header as='h2' style={{ marginBottom: '1em' }}>Watch games being made</Header>
     <ProjectsBeingMadeGET numEntries={4} chosenClassName="ui very relaxed list" />
     <br />
-    <QLink to={`/assets`}>
+    <QLink to={`/games`}>
       <Button color='teal' size='large' content='See more games' />
     </QLink>
   </Grid.Column>

@@ -27,6 +27,12 @@ body {
   image-rendering: pixelated;
 }
 
+
+.mgb-suir-plainSegment {
+   border: 0 !important;                 /* SUI has a habit of putting unwanted dividers on horizontal segments */
+   background: transparent !important;
+}
+
 .accept-drop{
   position: relative;
 }
@@ -41,7 +47,7 @@ body.dragging .accept-drop:after{
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1;
+  z-index: 10;
   height: 100%;
   background-color: rgba(255,255,255,0.5);
   text-align: center;
@@ -52,7 +58,9 @@ body.dragging .accept-drop:hover{
   background-color: rgba(255,255,255,0.9);
 }
 
-/* map editor properties */
+/***************************************
+ *        Map Editor Properties        *
+ ***************************************/
 .compact {
   margin-top: -19px;
 }
@@ -118,9 +126,11 @@ body.dragging .accept-drop:hover{
 .compact > .ui.accordion.array.content {
   padding: 0 10px;
 }
-/* end of map editor properties */
 
-/* semantic hacks */
+/***************************************
+ *             SUI Hacks               *
+ * TODO(@levi): remove / move to theme *
+ ***************************************/
 .icon.flip{
   transform: scaleX(-1);
 }
@@ -137,37 +147,18 @@ body.dragging .accept-drop:hover{
   transition: 0s !important;
 }
 
-/* Toolbar */
-.Toolbar .ui.button.reset{
-  position: absolute;
-  height: 19px;
-  padding: 0;
-  margin: 0;
-  right: 0;
-  line-height: 19px;
-}
-.Toolbar.vertical  .ui.button.reset{
-  right: auto;
-  bottom: 0;
-}
-.Toolbar .button.main{
+/***************************************
+ *            MGB Toolbar              *
+ ***************************************/
+.mgb-toolbar .button.main{
   z-index: 1;
 }
 
-.Toolbar .vertical{
+.mgb-toolbar .vertical{
   width: 100%;
 }
-.Toolbar .vertical *{
+.mgb-toolbar .vertical *{
   width: 100%;
-}
-/* adjust button text to match width*/
-.Toolbar .button div {
-  font-size: calc(0.7vw + 20%);
-  margin: 0 0 0 -10px;
-  text-align: center;
-  width: calc(100% + 20px);
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .invisible{
@@ -175,7 +166,7 @@ body.dragging .accept-drop:hover{
   display: none !important;
 }
 /* class that highlights element for short duration */
-.ui .button.isvisible.hazPopup.new {
+.ui.button.isvisible.new {
   animation-name: highlight !important;
   /*animation-iteration-count: infinite !important;*/
   animation-iteration-count: 1 !important;
@@ -219,7 +210,9 @@ body.dragging .accept-drop:hover{
     transform: rotate(359deg);
   }
 }
-/* code editor */
+/***************************************
+ *            Code Editor              *
+ ***************************************/
 .lint-error-text {
   display: none;
   position: absolute;
@@ -236,63 +229,23 @@ body.dragging .accept-drop:hover{
 .lint-error:hover .lint-error-text {
   display: block;
 }
+/* this is special read only case in the code editor*/
+.read-only .CodeMirror:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+}
 
-.mgb-show-on-parent-div-hover { 
+.mgb-show-on-parent-hover {
   opacity: 0;
 }
 
-div:hover > .mgb-show-on-parent-div-hover { 
+*:hover > .mgb-show-on-parent-hover {
   opacity: 1;
-}
-
-
-.mgb-skillsmap-progress{
-  position: relative;
-  border: solid 1px;
-  margin: 0px;  /* was 2px */
-  padding: 2px 5px;
-  border-radius: 3px;
-}
-
-.mgb-skillsmap-progress .mgb-skillsmap-value{
-  border-radius: 3px;
-  border-right: solid 1px;
-  position: absolute;
-  content: "";
-  left: 0;
-  top: 0;
-  height: 100%;
-  background-color: rgba(0, 140, 255, 0.3);
-}
-
-.mgb-skillsmap-progress .mgb-skillsmap-part{
-  border-right: dotted 1px rgba(0,0,0,0.5);
-  display: inline-block;
-  height: 100%;
-  position: absolute;
-  top: 0;
-}
-
-.semi-transparent{
-  opacity: 0.5;
-}
-
-/* make semantic-ui cards stack when we need to conserve space */
-.conserveSpace .ui.stackable.cards
-{
-  display: block;
-}
-
-.conserveSpace .ui.stackable.cards > .card
-{
-  width: calc(100% - 2em);
-}
-
-/* narrower containers */
-.ui.container.slim
-{
-  max-width: 1090px !important;
-  padding: 0 75px;
 }
 
 .allInline > .inline.fields {
@@ -303,13 +256,13 @@ div:hover > .mgb-show-on-parent-div-hover {
 .allInline > * {
   display: inline-block !important;
 }
-.disabled{
+.mgb-disabled{
   pointer-events: none;
   background-color: #f1f1f1;
   padding: 5px;
   border-radius: 6px;
 }
-.disabled *{
+.mgb-disabled *{
   color: #999 !important;
 }
 .loading-notification{
@@ -320,9 +273,25 @@ div:hover > .mgb-show-on-parent-div-hover {
   transform: translate(-50%, -50%);
   border-radius: 7px;
   padding: 2px 20px;
+  z-index: 1;
+  top: 12px; /* move down as overflow hides top of */
 }
 
 .ui.card.animated.fadeIn:hover{
   position: relative;
   z-index: 1;
+}
+.blink {
+  animation: blink-animation 1s steps(5, start) infinite;
+  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+}
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
 }

@@ -16,7 +16,7 @@ export default ProjectMembershipEditor = React.createClass({
     const projectNames = "In projects: " + (this.props.chosenProjectNames.length === 0 ? "none" :  this.props.chosenProjectNames.join(", ") )
 
     if (!this.props.canEdit || !this.props.availableProjectNamesArray || this.props.availableProjectNamesArray.length === 0)
-      return <div>{projectNames}</div>
+      return <div><i className="sitemap icon"/> {projectNames}</div>
 
     // OK, so we can edit! Let's do this!
     
@@ -34,9 +34,9 @@ export default ProjectMembershipEditor = React.createClass({
     // Create the       | (edit) > |      UI
     return (
       <div>
-        <i className="sitemap icon"></i> {projectNames} 
+        <i className="sitemap icon"/> {projectNames} 
         <div className="ui simple dropdown item">        
-          <i className="dropdown icon"></i>
+          <i className="dropdown icon"/>
           <div className="ui menu">
             {choices}
           </div>

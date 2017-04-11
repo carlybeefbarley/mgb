@@ -1,3 +1,6 @@
+// this file is for NGINX caching and invalidation - not used ATM
+// (it can be used with Cloudfront also, but not used due to high costs of invalidation)
+
 const prefix = "/api/"
 
 const API_SERVERS = [
@@ -71,6 +74,7 @@ export default {
       ]
     }
   },
+  // call this after updating asset
   invalidateAsset: function (assetData) {
     const id = assetData._id
     const user = assetData.dn_ownerName
@@ -81,14 +85,7 @@ export default {
     API_SERVERS.forEach((server) => {
       const forSource = url => {
         const uri = server + "api/" + url
-
-        // TODO: find out why meteor call is not clrearing cache, but curl is clearing?
-        /*const exec = Npm.require('child_process').exec
-        const cmd = `curl -I -k -H "nocache: true" ${uri}`
-        exec(cmd, function (error, stdout, stderr) {
-          console.log("cleared:", uri, error, stdout, stderr)
-        })*/
-        
+        //NOTICE:  make sure server has proper vary header
         Meteor.http.call("HEAD", uri, {headers: {"nocache": "true", "user-agent": "curl/7.51.0"}}, (error) => {
           if (error) {
             console.log("Failed to clear cache", uri, error)
@@ -97,8 +94,6 @@ export default {
             console.log("cleared:", uri)
           }
         })
-
-
       }
 
       this.routes.common(id, user, name).forEach(forSource)

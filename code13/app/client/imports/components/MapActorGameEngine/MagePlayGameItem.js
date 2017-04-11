@@ -15,13 +15,13 @@ export default MagePlayGameItem = {
 
   useItemActorOnPlayer(itemAP)  	// This just handles the effects on the player, not the resulting effects (visuals, messages, destruction etc) on the item
   {
-    const { actors, activeActors, AA_player_idx } = this
+    const { actors, activeActors, AA_player_idx, ownerName } = this
     var increasesMaxHealth = MgbActor.intFromActorParam(itemAP.content2.databag.item.increasesMaxHealthNum)
     if (increasesMaxHealth && activeActors[AA_player_idx].maxHealth != 0)
     {
       activeActors[AA_player_idx].maxHealth += increasesMaxHealth
       var ap = actors[activeActors[AA_player_idx].ACidx]
-      MgbActor.playCannedSound(increasesMaxHealth > 0 ? ap.content2.databag.all.soundWhenHealed : ap.content2.databag.all.soundWhenHarmed )  
+      MgbActor.playCannedSound((increasesMaxHealth > 0 ? ap.content2.databag.all.soundWhenHealed : ap.content2.databag.all.soundWhenHarmed), ap.content2, ownerName)  
       // TODO: Player's content2.databag.all.visualEffectWhenHarmedType / content2.databag.all.visualEffectWhenHealedType
     }
     
@@ -30,7 +30,7 @@ export default MagePlayGameItem = {
     {
       activeActors[AA_player_idx].health += heal
       ap = actors[activeActors[AA_player_idx].ACidx]
-      MgbActor.playCannedSound(heal > 0 ? ap.content2.databag.all.soundWhenHealed : ap.content2.databag.all.soundWhenHarmed)								// TODO: ap1.content2.databag.all.visualEffectWhenHarmedType  
+      MgbActor.playCannedSound((heal > 0 ? ap.content2.databag.all.soundWhenHealed : ap.content2.databag.all.soundWhenHarmed), ap.content2, ownerName)								// TODO: ap1.content2.databag.all.visualEffectWhenHarmedType  
       // TODO: Player's content2.databag.all.visualEffectWhenHarmedType / content2.databag.all.visualEffectWhenHealedType
     }
     if (1 == MgbActor.intFromActorParam(itemAP.content2.databag.item.gainExtraLifeYN))

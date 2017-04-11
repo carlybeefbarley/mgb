@@ -1,10 +1,12 @@
 import React, { PropTypes } from 'react'
 import reactMixin from 'react-mixin'
+import { Segment, Header } from 'semantic-ui-react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { Skills } from '/imports/schemas'
 
 import Helmet from 'react-helmet'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
+import Spinner from '/client/imports/components/Nav/Spinner'
 
 
 export default SkillTreeRoute = React.createClass({
@@ -35,37 +37,42 @@ export default SkillTreeRoute = React.createClass({
     const handleForSkills = Meteor.subscribe("skills.userId", user._id)
     return {
       loading:  !handleForSkills.ready(),
-      skills:   Skills.findOne(user._id) 
+      skills:   Skills.findOne(user._id)
     }
   },
 
 
   render: function() {
-    const { user, ownsProfile, isTopLevelRoute } = this.props
+    const { ownsProfile, isTopLevelRoute } = this.props
 
     const userSkills = ownsProfile ? this.context.skills : this.data.skills
 
     return (
-      <div className="ui basic segment">
-        <Helmet
-            title="Skill Tree"
-            meta={ [ {"name": "description", "content": "SkillTree"} ] } />
-        { isTopLevelRoute && 
-          <div className='ui segment'>
+      <div className={isTopLevelRoute ? 'ui basic padded segment' : null}>
+        { isTopLevelRoute &&
+
+          <Helmet
+              title="Skill Tree"
+              meta={ [ {"name": "description", "content": "SkillTree"} ] } />
+        }
+        { isTopLevelRoute &&
+          <Header as='h2' content='Skills'/>
+        }
+        { isTopLevelRoute &&
+          <Segment>
             <p>
-              The Skill Bars below represent your progress on learning certain Skills. 
-              Skills will automatically advance as you complete tutorials, exercise certain skills, and as you code with CodeMentor. 
+              The Skill Bars below represent your progress on learning certain Skills.
+              Skills will automatically advance as you complete tutorials, exercise certain skills, and as you code with CodeMentor.
               You can expand each Skill Bar to see the details of your skill progress in that area, and even manually change your status for each Skill.
             </p>
             <p>
-              This system allows MGB to present appropriate help and tutorials to you based on your level, and for you to track your progress in these Skill areas. 
+              This system allows MGB to present appropriate help and tutorials to you based on your level, and for you to track your progress in these Skill areas.
             </p>
-            <p>
-              <small><em>(Note: expanded-UI for this feature is incomplete - and kind of ugly... It will be completed in January)</em></small>
-            </p>
-          </div>
+          </Segment>
         }
-        <SkillsMap user={user} userSkills={userSkills} ownsProfile={ownsProfile} hideToolbars={!isTopLevelRoute}/>
+        { this.data.loading ? <Spinner/> : 
+          <SkillsMap skills={userSkills} expandable toggleable={ownsProfile} />
+        }
       </div>
     )
   }

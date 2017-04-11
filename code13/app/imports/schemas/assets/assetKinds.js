@@ -46,7 +46,7 @@ export const AssetKinds = {
     icon: "child",
     color: "teal",
     requiresUserRole: null,
-    description: "Actors define Game behaviors without you having to write any code.",
+    description: "Actors define Game behaviors without you having to write any code. Put them on ActorMaps",
     explanation: 'Actors provide sets of rules you can modify in order to make the behaviors you want - player, NPC, item, bullet, trap, healthpack, etc. You define them using the Actor Editor, then place them on a special kind of map called an ActorMap (using the ActorMap Editor) in order to create complete games'
   },
   "actormap": {
@@ -57,7 +57,7 @@ export const AssetKinds = {
     icon: "map",
     color: "blue",
     requiresUserRole: null,
-    description: 'ActorMaps are games / game-levels that use Actors instead of code.',
+    description: 'ActorMaps are games / game-levels that use Actors instead of code. Put Actors on ActorMaps',
     explanation: 'You can place Actors on background, middle and foreground layers of an ActorMap, and instantly play the game you are designing without needing to write any code. You can also link maps using the Effects layer of the ActorMap in order to make large multi-level games'
 
   },
@@ -82,17 +82,6 @@ export const AssetKinds = {
   //   description: "Physics configuration",
   //   explanation: 'Not yet implemented'    
   // },
-  "code": {
-    name: "Code",
-    selfPlural: true,
-    disable: false,
-    longName: "Code Script",
-    icon: "code",
-    color: "green",
-    requiresUserRole: null,
-    description: "Code is Source code script used to make your game",
-    explanation: "Code is written in the 'Javascript 2015' programming language. Your code can use Graphics, Sound, Music, and even other 'imported' code/modules to make your game.", 
-  },
   "doc": {
     name: "Doc",
     selfPlural: false,
@@ -145,8 +134,19 @@ export const AssetKinds = {
     description: "Background Music for use in games",
     explanation: 'You can create or import Music for your games. You can make your game play this music by attaching Music Events to an ActorMap, or by writing your own custom Code for your games'
   },
+  "code": {
+    name: "Code",
+    selfPlural: true,
+    disable: false,
+    longName: "Code Script",
+    icon: "code",
+    color: "green",
+    requiresUserRole: null,
+    description: "Code is Source code script used to make your game",
+    explanation: "Code is written in the 'Javascript 2015' programming language. You can use Assets such as Graphics, Sound, Music, Map... and also other 'imported' code/modules/packages to make your game.", 
+  },
   "game": {
-    name: "Game",
+    name: "GameConfig",
     selfPlural: false,
     disable: false,
     longName: "Game definition",
@@ -154,7 +154,7 @@ export const AssetKinds = {
     color: "brown",
     requiresUserRole: null,
     description: "Game rules, start location, and play statistics",
-    explanation: 'The Game Asset lets you choose options for your game, and specify which ActorMap or Code Asset is the start of the game. Game Assets are also used to publish your game so others can find it, and to store play information such as play counts, analytics, high scores, game saves etc.'
+    explanation: 'The GameConfig Asset lets you choose options for your game, and specify which ActorMap or Code Asset is the start of the game. GameConfig Assets are also used to publish your game so others can find it, and to store play information such as play counts, analytics, high scores, game saves etc.'
   },
   "tutorial": {
     name: "Tutorial",
@@ -164,7 +164,7 @@ export const AssetKinds = {
     icon: "student",
     color: "black",
     requiresUserRole: null,
-    description: "Tutorial",
+    description: "The tutorials that you use in MGB are defined in Tutorial Assets",
     explanation: 'Tutorials in MGB are JSON files. You can see how the built-in tutorials work, or make your own to share'
   },  
   // PURGED FROM DB 9/24/2016
@@ -178,6 +178,9 @@ export const AssetKinds = {
   //   description: "(MGB Dev Team Only) MGB UI Prototyping tool"
   // },
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
+  isValidKey: function(key) {
+    return AssetKinds.hasOwnProperty(key)
+  },
   getIconClass: function(key) {
     return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"
   },

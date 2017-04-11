@@ -3,6 +3,8 @@ import React from 'react'
 import { Modal } from 'semantic-ui-react'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+
 
 import './EditActor.css'
 import getDefaultActor from './getDefaultActor.js'
@@ -18,7 +20,7 @@ import Spawning from './Forms/Spawning'
 import Animations from './Forms/Animations'
 import Conditions from './Forms/Conditions'
 import NPCBehavior from './Forms/NPCBehavior'
-import ItemBehavior from './Forms/ItemBehavior'
+import ObjectBehavior from './Forms/ObjectBehavior'
 import CharacterBehavior from './Forms/CharacterBehavior'
 
 
@@ -26,7 +28,6 @@ export default class EditActor extends React.Component {
   constructor(...props) {
     super(...props)
     this.state = {}
-    this.isModalVisible = false
   }
 
   doSnapshotActivity() {
@@ -46,48 +47,104 @@ export default class EditActor extends React.Component {
 
   getTabs(databag) {
     const _makeContent = Element => (
-      <Element 
-          asset={this.props.asset} 
-          onchange={this.handleSave.bind(this)} 
-          saveThumbnail={ d => this.handleSave(null, d, "Updating thumbnail") }/>
+      <Element
+          asset={this.props.asset}
+          onChange={this.handleSave.bind(this)}
+          saveThumbnail={ d => this.handleSave(null, d, "Updating thumbnail") }
+          saveText={ text => this.props.handleDescriptionChange(text)} />
     )
+
     const _mkDisabled = actorTypesArray => _.some(actorTypesArray, at => databag.all.actorType === actorOptions.actorType[at])
-    return [
-      { 
-        tab: "All",         
-        content: _makeContent(FormsAll)   
+
+    const allTabs = [
+      {
+        tab: "All",
+        content: _makeContent(FormsAll)
       },
-      { 
-        tab: "Animations",  
+      {
+        tab: "Animations",
         content: _makeContent(Animations) },
-      { 
-        tab: "Character Behavior", 
-        disabled: _mkDisabled( ['Item, Wall or Scenery', 'Shot'] ),
+      {
+        tab: "Character Behavior",
+        disabled: _mkDisabled( ['Item, Wall, or Scenery', 'Item', 'Solid Object', 'Floor', 'Scenery', 'Shot'] ),
         content: _makeContent(CharacterBehavior)
       },
       {
         tab: "NPC Behavior",
-        disabled: _mkDisabled( ['Player', 'Item, Wall or Scenery', 'Shot'] ),
-        content: _makeContent(NPCBehavior) 
+        disabled: _mkDisabled( ['Player', 'Item, Wall, or Scenery', 'Item', 'Solid Object', 'Floor', 'Scenery', 'Shot'] ),
+        content: _makeContent(NPCBehavior)
       },
       {
-        tab: "Item Behavior",
-        disabled: _mkDisabled( ['Player', 'Non-Player Character (NPC)', 'Shot'] ),
-        content: _makeContent(ItemBehavior)
+        tab: "Object Behavior",
+        disabled: _mkDisabled( ['Player', 'Non-Player Character (NPC)', 'Scenery', 'Shot'] ),
+        content: _makeContent(ObjectBehavior)
       },
       {
         tab: "Destruction / Spawning",
         disabled: _mkDisabled( ['Player', 'Shot'] ),
         content: _makeContent(Spawning)
       },
+
       {
         tab: "Conditions",
         disabled: _mkDisabled( ['Player', 'Shot'] ),
         content: _makeContent(Conditions)
       }
     ]
+
+    return allTabs
   }
 
+  getTemplates() {
+    return ( 
+      <div className="actor-template ui internally celled grid">
+        <div className="row">
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-blank" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink('/images/newActor/blank.png')} data-template="alTemplateScenery" />
+            <span><b>Blank</b><br /> A blank template with no effects or behaviors. Used as scenery in the background or foreground layer</span>
+          </div>
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-player" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-player`) } src={makeCDNLink('/images/newActor/player.png')} data-template="alTemplatePlayer" />
+            <span><b>Player</b><br /> The Player's character</span>
+          </div>
+        </div>
+        <div className="row">
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-enemy" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-NPC`) } src={makeCDNLink("/images/newActor/enemy.png")} data-template="alTemplateEnemy" />
+            <span><b>Enemy</b><br /> Hostile NPCs that can harm the Player</span>
+          </div>
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-friend" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-NPC`) } src={makeCDNLink("/images/newActor/friend.png")} data-template="alTemplateFriend" />
+            <span><b>Friend</b><br /> Friendly NPCs that can help the Player</span>
+          </div>
+        </div>
+        <div className="row">
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-floor" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink("/images/newActor/floor.png")} data-template="alTemplateFloor" />
+            <span><b>Floor</b><br /> A floor tile that can have some effect including sliding, pushing, or damaging/healing the Player when stepped on</span>
+          </div>
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-solidObject" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink("/images/newActor/solidobject.png")} data-template="alTemplateSolidObject" />
+            <span><b>Solid Object</b><br /> A solid object or wall that obstructs the Player and/or NPCs. Can have effects to be moveable by the Player or accessible with the use of an Item</span>
+          </div>
+        </div>
+        <div className="row">
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-item" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink("/images/newActor/item.png")} data-template="alTemplateItem" />
+            <span><b>Item</b><br /> An item that can be picked up or used right away with some effect</span>
+          </div>
+          <div className="eight wide column">
+            <img id="mgbjr-create-actor-shot" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-shot`) } src={makeCDNLink("/images/newActor/projectile.png")}  data-template="alTemplateShot" />
+            <span><b>Shot</b><br /> A projectile that can be fired by the Player or NPC</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+
+  /*
+  // No longer used
   getTemplateTabs() {
     return [
       {
@@ -95,51 +152,51 @@ export default class EditActor extends React.Component {
         content: <div className="actor-template ui internally celled grid">
           <div className="row">
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-player" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-player`) } src="/images/newActor/newActor_player.png" data-template="alTemplatePlayer" />
+              <img id="mgbjr-create-actor-player" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-player`) } src={makeCDNLink('/images/newActor/newActor_player.png')} data-template="alTemplatePlayer" />
               <span>The player's character</span>
             </div>
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-enemy" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-NPC`) } src="/images/newActor/newActor_enemy.png" data-template="alTemplateEnemy" />
+              <img id="mgbjr-create-actor-enemy" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-NPC`) } src={makeCDNLink("/images/newActor/newActor_enemy.png")} data-template="alTemplateEnemy" />
               <span>Enemies and bosses</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-friend" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-NPC`) } src="/images/newActor/newActor_friend.png" data-template="alTemplateFriend" />
+              <img id="mgbjr-create-actor-friend" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-NPC`) } src={makeCDNLink("/images/newActor/newActor_friend.png")} data-template="alTemplateFriend" />
               <span>Friendly characters who help the player</span>
             </div>
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-shot" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-shot`) } src="/images/newActor/newActor_shot.png"  data-template="alTemplateShot" />
+              <img id="mgbjr-create-actor-shot" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-shot`) } src={makeCDNLink("/images/newActor/newActor_shot.png")}  data-template="alTemplateShot" />
               <span>A projectile attack - arrow, fireball, etc"</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-ice" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src="/images/newActor/newActor_ice.png" data-template="alTemplateIce" />
+              <img id="mgbjr-create-actor-ice" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink("/images/newActor/newActor_ice.png")} data-template="alTemplateIce" />
               <span>A floor tile. Actors who step onto this tile will keep on moving past it</span>
             </div>
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-floor" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src="/images/newActor/newActor_floor.png" data-template="alTemplateFloor" />
+              <img id="mgbjr-create-actor-floor" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink("/images/newActor/newActor_floor.png")} data-template="alTemplateFloor" />
               <span>A floor tile. Decorative, but has no effect</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-wall" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src="/images/newActor/newActor_wall.png" data-template="alTemplateWall" />
+              <img id="mgbjr-create-actor-wall" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink("/images/newActor/newActor_wall.png")} data-template="alTemplateWall" />
               <span>A wall. Blocks a player or enemy</span>
             </div>
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-item" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src="/images/newActor/newActor_item.png" data-template="alTemplateItem" />
+              <img id="mgbjr-create-actor-item" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink("/images/newActor/newActor_item.png")} data-template="alTemplateItem" />
               <span>An item that has some effect</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-slider" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src="/images/newActor/newActor_slider.png" data-template="alTemplateSlidingBlock" />
+              <img id="mgbjr-create-actor-slider" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink("/images/newActor/newActor_slider.png")} data-template="alTemplateSlidingBlock" />
               <span>A solid block that can be pushed to make it slide some distance</span>
             </div>
             <div className="eight wide column">
-              <img id="mgbjr-create-actor-foreground" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src="/images/newActor/newActor_foreground.png" data-template="alTemplateFloor" />
+              <img id="mgbjr-create-actor-foreground" onClick={ () => joyrideCompleteTag(`mgbjr-CT-create-actor-object`) } src={makeCDNLink("/images/newActor/newActor_foreground.png")} data-template="alTemplateFloor" />
               <span>A foreground tile - used on the foreground map layer. Decorative, but has no effect</span>
             </div>
           </div>
@@ -156,11 +213,11 @@ export default class EditActor extends React.Component {
 
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_player.png" data-template="alTemplatePlayer" />
+              <img src={makeCDNLink("/images/newActor/newActor_player.png")} data-template="alTemplatePlayer" />
               <span>A player with no attacks. This good for an RPG-style game as the player can gain abilities during the game.</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_playerTouch.png" data-template="alTemplatePlayer_TouchDamage" />
+              <img src={makeCDNLink("/images/newActor/newActor_playerTouch.png")} data-template="alTemplatePlayer_TouchDamage" />
               <span>A player who starts with the ability to do damage by just touching enemies. This is good for 'rampage'-style games.</span>
             </div>
 
@@ -168,17 +225,17 @@ export default class EditActor extends React.Component {
           <div className="row">
             <div className="eight wide column" style={{flexWrap: "wrap"}}>
               <div className="eight wide column">
-                <img src="/images/newActor/newActor_ShotPlayer.png" data-template="alTemplatePlayer_Shoots" />
+                <img src={makeCDNLink("/images/newActor/newActor_ShotPlayer.png")} data-template="alTemplatePlayer_Shoots" />
                 <span>A player who can shoot. This is a good start for action-style games. You will also need an actor for the 'shots'...</span>
               </div>
               <br />
               <div className="eight wide column sub">
-                <img src="/images/newActor/newActor_shot.png" data-template="alTemplateShot" />
+                <img src={makeCDNLink("/images/newActor/newActor_shot.png")} data-template="alTemplateShot" />
               < span>A projectile attack - arrow, bullet, fireball, etc. The  'shooting actor' has an option selecting which actor provides the shot graphics.</span>
               </div>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_player.png" data-template="alTemplatePlayer_MeleeDamage" />
+              <img src={makeCDNLink("/images/newActor/newActor_player.png")} data-template="alTemplatePlayer_MeleeDamage" />
               <span>A player who starts with the ability to do damage using a melee attack. This is good for many kinds of game, but it is a more advanced feature and requires a lot of graphics to be animated.</span>
             </div>
           </div>
@@ -192,29 +249,29 @@ export default class EditActor extends React.Component {
           </span>
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_ShotArmor.png" data-template="alTemplateProjectileWeapon" />
+              <img src={makeCDNLink("/images/newActor/newActor_ShotArmor.png")} data-template="alTemplateProjectileWeapon" />
               <span>An item that enables the player to shoot. This could be a gun, a bow, a magic spell, a staff, a salt pot etc. You will also need an actor for the 'shots'..</span>
             </div>
             <div className="eight wide column" style={{"boxShadow": "none"}}>
-              <img src="/images/newActor/newActor_item.png" data-template="alTemplateShotModifier" />
+              <img src={makeCDNLink("/images/newActor/newActor_item.png")} data-template="alTemplateShotModifier" />
               <span>A Shot modifier can improve the range, rate, or damage of existing shot attacks. This might be represented as a ring, amulet, etc</span>
             </div>
           </div>
 
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_MeleeWeapon.png" data-template="alTemplateMeleeWeapon" />
+              <img src={makeCDNLink("/images/newActor/newActor_MeleeWeapon.png")} data-template="alTemplateMeleeWeapon" />
               <span>A Melee weapon enables the player to melee attack. This could be a stick, a sword, a fish, a yoyo etc.. This is a more advanced feature since it requires many animations.</span>
             </div>
             <div className="eight wide column" style={{"boxShadow": "none"}}>
-              <img src="/images/newActor/newActor_item.png" data-template="alTemplateMeleeWeaponModifier" />
+              <img src={makeCDNLink("/images/newActor/newActor_item.png")} data-template="alTemplateMeleeWeaponModifier" />
               <span>A Melee modifier can improve the damage or speed of existing melee attacks. This might be represented as a ring, amulet, etc</span>
             </div>
           </div>
 
           <div className="row">
             <div className="sixteen wide column">
-              <img src="/images/newActor/newActor_armour.png" data-template="alTemplateArmor" />
+              <img src={makeCDNLink("/images/newActor/newActor_armour.png")} data-template="alTemplateArmor" />
               <span>Armor increases the player's ability to resist attacks. Multiple pieces of armor can be combined to get a better defense.</span>
             </div>
           </div>
@@ -229,31 +286,31 @@ export default class EditActor extends React.Component {
           </span>
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_TouchEnemy.png" data-template="alTemplateEnemy_TouchDamage" />
+              <img src={makeCDNLink("/images/newActor/newActor_TouchEnemy.png")} data-template="alTemplateEnemy_TouchDamage" />
               <span>An enemy that moves randomly and can harm the player by touch.</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_ShotEnemy.png" data-template="alTemplateEnemy_Shoots" />
+              <img src={makeCDNLink("/images/newActor/newActor_ShotEnemy.png")} data-template="alTemplateEnemy_Shoots" />
               <span>An enemy that moves randomly and shoots. You will also need an actor for the 'shots'...</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_shot.png" data-template="alTemplateShot" />
+              <img src={makeCDNLink("/images/newActor/newActor_shot.png")} data-template="alTemplateShot" />
               <span>A projectile attack - arrow, fireball, etc. The  'shooting actor' will select which actor provides the shot graphics.</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_ShotEnemy.png" data-template="alTemplateEnemy_ShootsFromAfar" />
+              <img src={makeCDNLink("/images/newActor/newActor_ShotEnemy.png")} data-template="alTemplateEnemy_ShootsFromAfar" />
               <span>An enemy that stays away from the player and shoots. You will also need an actor for the 'shots'...</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_Generator.png" data-template="alTemplateEnemyGenerator" />
+              <img src={makeCDNLink("/images/newActor/newActor_Generator.png")} data-template="alTemplateEnemyGenerator" />
               <span>Something that generates new enemies. The rate of generation and what is generated can be selected. This could attack you too!</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_TouchEnemy.png" data-template="alTemplateEnemy_TouchDamageHuntsPlayer" />
+              <img src={makeCDNLink("/images/newActor/newActor_TouchEnemy.png")} data-template="alTemplateEnemy_TouchDamageHuntsPlayer" />
               <span>An enemy that moves towards the player and can harm the player by touch.</span>
             </div>
           </div>
@@ -267,35 +324,35 @@ export default class EditActor extends React.Component {
           </span>
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_floor.png" data-template="alTemplateFloor" />
+              <img src={makeCDNLink("/images/newActor/newActor_floor.png")} data-template="alTemplateFloor" />
               <span>A normal floor tile. Decorative, but has no effect</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_ice.png" data-template="alTemplateIce" />
+              <img src={makeCDNLink("/images/newActor/newActor_ice.png")} data-template="alTemplateIce" />
               <span>A floor that pushes actors onward, as if they were on ice and cannot stop moving</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_BackPush.png" data-template="alTemplateBounce" />
+              <img src={makeCDNLink("/images/newActor/newActor_BackPush.png")} data-template="alTemplateBounce" />
               <span>A floor that pushes actors back the way they came from</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_RandomPush.png" data-template="alTemplatePusher_Random" />
+              <img src={makeCDNLink("/images/newActor/newActor_RandomPush.png")} data-template="alTemplatePusher_Random" />
               <span>A floor that pushes actors in a randomly chosen direction - North, East, South or West</span>
             </div>
           </div>
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_DamageFloor.png" data-template="alTemplateFriend" />
+              <img src={makeCDNLink("/images/newActor/newActor_DamageFloor.png")} data-template="alTemplateFriend" />
               <span>A damage-inflicting floor. It might be lava, acid, a spike etc</span>
             </div>
             <div className="eight wide column" style={{height: "130px", position: "relative"}}>
               <div className="directions">
-                <img src="/images/newActor/newActor_NorthPush.png" data-template="alTemplatePusher_North" className="north" />
-                <img src="/images/newActor/newActor_eastpush.png" data-template="alTemplatePusher_East" className="east" />
-                <img src="/images/newActor/newActor_SouthPush.png" data-template="alTemplatePusher_South" className="south" />
-                <img src="/images/newActor/newActor_WestPush.png" data-template="alTemplatePusher_West" className="west" />
+                <img src={makeCDNLink("/images/newActor/newActor_NorthPush.png")} data-template="alTemplatePusher_North" className="north" />
+                <img src={makeCDNLink("/images/newActor/newActor_eastpush.png")} data-template="alTemplatePusher_East" className="east" />
+                <img src={makeCDNLink("/images/newActor/newActor_SouthPush.png")} data-template="alTemplatePusher_South" className="south" />
+                <img src={makeCDNLink("/images/newActor/newActor_WestPush.png")} data-template="alTemplatePusher_West" className="west" />
               </div>
               <span className="has-directions">These floors push the player North, East, South and West respectively</span>
             </div>
@@ -310,40 +367,40 @@ export default class EditActor extends React.Component {
           </span>
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_wall.png" data-template="alTemplateWall" />
+              <img src={makeCDNLink("/images/newActor/newActor_wall.png")} data-template="alTemplateWall" />
               <span>This wall prevents all actors from passing through it.</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_PlayerBlock.png" data-template="alTemplateWall_BlocksPlayer" />
+              <img src={makeCDNLink("/images/newActor/newActor_PlayerBlock.png")} data-template="alTemplateWall_BlocksPlayer" />
               <span>This kind of wall only stops players from passing through it.</span>
             </div>
           </div>
 
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_EnemyBlock.png" data-template="alTemplateWall_BlocksNPC" />
+              <img src={makeCDNLink("/images/newActor/newActor_EnemyBlock.png")} data-template="alTemplateWall_BlocksNPC" />
               <span>This kind of wall only stops NPCs and enemy actors from passing through it.</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_PlayerBlock.png" data-template="alTemplateWall_BlocksPlayer" />
+              <img src={makeCDNLink("/images/newActor/newActor_PlayerBlock.png")} data-template="alTemplateWall_BlocksPlayer" />
               <span>This kind of wall only stops players from passing through it.</span>
             </div>
           </div>
 
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_Door.png" data-template="alTemplateDoor" />
+              <img src={makeCDNLink("/images/newActor/newActor_Door.png")} data-template="alTemplateDoor" />
               <span>This kind of wall acts like a door - it allows the player to pass if they are carrying a specified item.</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_wall.png" data-template="alTemplateWall_Conditional" />
+              <img src={makeCDNLink("/images/newActor/newActor_wall.png")} data-template="alTemplateWall_Conditional" />
               <span>This wall has 'conditional behavior'. This is an example of an advanced feature that lets actors appear or disappear depending on which other actors are currently on the map...</span>
             </div>
           </div>
 
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_slider.png" data-template="alTemplateSlidingBlock" />
+              <img src={makeCDNLink("/images/newActor/newActor_slider.png")} data-template="alTemplateSlidingBlock" />
               <span>A solid block that can be pushed to make it slide some distance</span>
             </div>
           </div>
@@ -357,48 +414,48 @@ export default class EditActor extends React.Component {
           </span>
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_maxhp.png" data-template="alTemplateItem_MaxHealthBoost" />
+              <img src={makeCDNLink("/images/newActor/newActor_maxhp.png")} data-template="alTemplateItem_MaxHealthBoost" />
               <span>This instantly raises the player's maximum allowed health level by a specified amount.</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_instantHealth.png" data-template="alTemplateItem_HealNow" />
+              <img src={makeCDNLink("/images/newActor/newActor_instantHealth.png")} data-template="alTemplateItem_HealNow" />
               <span>This item instantly heals the player by a specified amount.</span>
             </div>
           </div>
 
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_HealthPotion.png" data-template="alTemplateItem_HealLater" />
+              <img src={makeCDNLink("/images/newActor/newActor_HealthPotion.png")} data-template="alTemplateItem_HealLater" />
               <span>This is a potion/meal/herb/etc that can be carried and used to heal the player by a specified amount when needed.</span>
             </div>
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_item.png" data-template="alTemplateItem_InvincibilityNow" />
-              <span>This instantly makes the player temporarily invincible.</span>
+              <img src={makeCDNLink("/images/newActor/newActor_item.png")} data-template="alTemplateItem_InvincibilityNow" />
+              <span>This makes the player temporarily invincible.</span>
             </div>
           </div>
 
 
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_InvinciblePotion.png" data-template="alTemplateItem_InvincibilityLater" />
+              <img src={makeCDNLink("/images/newActor/newActor_InvinciblePotion.png")} data-template="alTemplateItem_InvincibilityLater" />
               <span>This is a potion/meal/herb/etc that can be carried and used to make the player temporarily invincible when needed.</span>
             </div>
 
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_HealthPotion.png" data-template="alTemplateItem_HealLater" />
+              <img src={makeCDNLink("/images/newActor/newActor_HealthPotion.png")} data-template="alTemplateItem_HealLater" />
               <span>This is a potion/meal/herb/etc that can be carried and used to make the player temporarily invincible when needed.</span>
             </div>
           </div>
 
           <div className="row">
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_instantPoints.png" data-template="alTemplateItem_ScorePoints" />
-              <span>This instantly changes the player's score.</span>
+              <img src={makeCDNLink("/images/newActor/newActor_instantPoints.png")} data-template="alTemplateItem_ScorePoints" />
+              <span>This changes the player's score.</span>
             </div>
 
             <div className="eight wide column">
-              <img src="/images/newActor/newActor_Win.png" data-template="alTemplateItem_VictoryNow" />
-              <span>Victory! When the player picks up this item, the game is immediately over and they have won!</span>
+              <img src={makeCDNLink("/images/newActor/newActor_Win.png")} data-template="alTemplateItem_VictoryNow" />
+              <span>When the player picks up this item, the player wins!</span>
             </div>
 
           </div>
@@ -406,12 +463,13 @@ export default class EditActor extends React.Component {
       }
     ]
   }
+  */
 
   handleTemplateClick(e) {
     if (e.target.dataset.template) {
       const templateName = e.target.dataset.template
       this.loadTemplate(templateName)
-      this.props.handleDescriptionChange("Created from Template: " + templateName.replace(/^alTemplate/, ''))      
+      this.props.handleDescriptionChange("Created from Template: " + templateName.replace(/^alTemplate/, ''))
       this.handleSave("Initial Template selected")
       joyrideCompleteTag(`mgbjr-CT-create-actor-any`)
     }
@@ -425,10 +483,10 @@ export default class EditActor extends React.Component {
     const d = this.props.asset.content2.databag
     const merge = (a, b) => {     // Is this different from things like _.merge or Object.Assign()
       for (let i in a) {
-        if (typeof b[i] == "object") 
+        if (typeof b[i] == "object")
           merge(a[i], b[i])
         else
-          b[i] = a[i]        
+          b[i] = a[i]
       }
     }
 
@@ -440,10 +498,10 @@ export default class EditActor extends React.Component {
     const { asset } = this.props
     if (!asset)
       return null
-    
+
     const databag = asset.content2.databag
     const showTemplate = !databag
-    
+
     const LayerValid = ( {layerName, isValid } ) => (isValid ? <strong>{layerName}: Yes&emsp;</strong> : <em style={{color: 'grey'}}>{layerName}: No&emsp;</em>)
 
     return (
@@ -455,13 +513,13 @@ export default class EditActor extends React.Component {
           <LayerValid layerName='Foreground' isValid={ActorValidator.isValidForFG(databag)} />
         </div>
 
-        { showTemplate && 
-          <Modal defaultOpen closeOnDocumentClick={false} closeOnRootNodeClick={false}onClick={(e)=>{this.handleTemplateClick(e)}}>
+        { showTemplate &&
+          <Modal defaultOpen closeOnDocumentClick={false} closeOnRootNodeClick={false} onClick={(e)=>{this.handleTemplateClick(e)}}>
             <Modal.Header>
-              Choose the style of Actor you want to create, then modify the detailed choices in the Actor Editor
+              Choose a template for the type of Actor, then modify the detailed options in the Actor Editor
             </Modal.Header>
             <Modal.Content className="edit-actor">
-              <Tabs tabs={this.getTemplateTabs()}/>
+              {this.getTemplates()}
             </Modal.Content>
           </Modal>
         }

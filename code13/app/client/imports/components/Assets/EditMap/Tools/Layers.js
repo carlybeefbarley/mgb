@@ -1,22 +1,22 @@
 import _ from 'lodash'
 import React from 'react'
 import LayerControls from './LayerControls.js'
+import { Accordion, List } from 'semantic-ui-react'
 
 export default class Layers extends React.Component {
+  handleClick = (event, index) => {
+    // do not change selection when toggling visibility icon
+    if (_.includes(event.target.classList, 'icon'))
+      return
 
-  componentDidMount () {
-    $('.ui.accordion')
-      .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
+    this.props.setActiveLayer(index)
   }
 
-  handleClick (layerNum) {
-    this.props.setActiveLayer(layerNum)
-  }
-  showOrHideLayer (layerId, wasVisible, e) {
+  showOrHideLayer = (e, i, isVisible) => {
     e.preventDefault()
     e.stopPropagation()
 
-    this.props.toggleLayerVisibilty(layerId, !wasVisible)
+    this.props.toggleLayerVisibilty(i, !isVisible)
   }
 
   render () {
@@ -25,35 +25,35 @@ export default class Layers extends React.Component {
     const layers = []
 
     // layers goes from bottom to top - as first drawn layer will be last visible
-    for (let i = data.length - 1; i > -1; i--) {
-      let className = 'icon'
-      + (data[i].visible ? ' unhide' : ' hide')
-
-      layers.push(
-        <div
+    _.times(data.length, (i) => {
+      layers.unshift(
+        <List.Item
           key={i}
-          className={(i == active ? 'bold active' : 'item')}
-          onClick={this.handleClick.bind(this, i)}
-          href='javascript:;'>
-          <i className={className} onClick={this.showOrHideLayer.bind(this, i, data[i].visible)}></i>
-          <a href='javascript:;'>
-            {data[i].name}
-          </a>
-        </div>
+          active={i == active}
+          onClick={(e) => this.handleClick(e, i)}
+          content={data[i].name}
+          icon={{
+            name: data[i].visible ? 'unhide' : 'hide',
+            onClick: (e) => this.showOrHideLayer(e, i, data[i].visible)
+          }}
+        />
       )
-    }
-    return (
-      <div className='mgbAccordionScroller'>
-        <div className='ui fluid styled accordion'>
-          <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> Layers</span>
-          </div>
-          <div className='active content menu'>
+    })
+
+    const panels = [
+      {
+        title: 'Layers',
+        content: (
+          <div>
             <LayerControls {...this.props} />
-            {layers}
+            <List selection>
+              {layers}
+            </List>
           </div>
-        </div>
-      </div>
-    )
+        )
+      }
+    ]
+
+    return <Accordion fluid styled panels={panels} defaultActiveIndex={0} />
   }
 }

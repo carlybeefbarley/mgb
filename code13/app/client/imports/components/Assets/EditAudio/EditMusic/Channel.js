@@ -3,6 +3,8 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 
 import sty from  './editMusic.css'
+import VolumeSlider from  './VolumeSlider.js'
+
 import WaveSurfer from '../lib/WaveSurfer.js'
 import AudioConverter from '../lib/AudioConverter.js'
 
@@ -56,7 +58,7 @@ export default class Channel extends React.Component {
 
   getBuffer () {
     if(!this.buffer) return null
-    const bufferLength = this.props.duration * this.props.audioCtx.sampleRate
+    const bufferLength = Math.round( this.props.duration * this.props.audioCtx.sampleRate )
     const delayLength = Math.round(this.sample.delay * this.props.audioCtx.sampleRate)
     // console.log(bufferLength, delayLength)
     let returnBuffer = new Float32Array(bufferLength)
@@ -88,8 +90,12 @@ export default class Channel extends React.Component {
     return selectBuffer
   }
 
-  initWave () {
-    const channel = this.props.channel
+  forceDraw(channel){
+    this.initWave(channel)
+  }
+
+  initWave (channel) {
+    channel = channel || this.props.channel
     if (!channel.dataUri) return
 
     const soundBlob = this.dataURItoBlob(channel.dataUri)
@@ -261,13 +267,21 @@ export default class Channel extends React.Component {
   onDragStart (e) {
     if (e.touches && e.touches[0])
       e = e.touches[0]
+
+    e.dataTransfer.setData('text', 'startDrag')
+
+    // firefox way of implementing dragover. actually chrome also can work that way
+    document.ondragover = (event) => 
+      this.onDrag(event)
+
     
     // empty image so you don't see canvas element drag. Need to see only what is dragged inside canvas
-    if(e.dataTransfer){
-      let ghost = e.target.cloneNode(true)
-      ghost.style.display = "none"
-      e.dataTransfer.setDragImage(ghost, 0, 0)
-    }
+    // guntis - commented this out because it showed some weird icon in firefox
+    // if(e.dataTransfer){
+    //   let ghost = e.target.cloneNode(true)
+    //   ghost.style.display = "none"
+    //   e.dataTransfer.setDragImage(ghost, 0, 0)
+    // }
     if(this.props.isSelecting){
       this.clearSelect()
     }
@@ -322,6 +336,7 @@ export default class Channel extends React.Component {
       this.sample.delay = this.sample.offsetX / this.props.pxPerSecond
       let channel = this.props.channel
       channel.delay = this.sample.delay
+      this.props.doSaveStateForUndo("Drag")
       this.props.saveChannel(channel)
       // console.log(this.sample.delay)
     }
@@ -390,6 +405,7 @@ export default class Channel extends React.Component {
       this.sample.delay = startTime
       this.props.channel.delay = startTime
       this.sample.offsetX = this.calculateOffsetX()
+      this.props.doSaveStateForUndo("Cut selected")
       this.saveNewBuffer()
     }
   }
@@ -466,11 +482,11 @@ export default class Channel extends React.Component {
     this.selectDiv.style.width = this.selectWidth + "px"
   }
 
-  changeVolume (e) {
-    this.props.channel.volume = parseFloat(e.target.value)
-    this.props.handleSave('Volume change')
-    this.gainNode.gain.value = this.props.channel.volume
-  // console.log(parseFloat(e.target.value))
+  changeVolume (volume) {
+    this.props.doSaveStateForUndo('Volume change')
+    this.props.channel.volume = volume
+    this.gainNode.gain.value = volume
+    this.props.saveChannel(this.props.channel)
   }
 
   deleteChannel () {
@@ -484,7 +500,7 @@ export default class Channel extends React.Component {
       <div key={this.props.id} className='channelContainer'>
         <div className='controls chn'>
           {channel.title}
-          <div>
+          {/*<div>
             <input
               type='range'
               value={channel.volume}
@@ -493,7 +509,11 @@ export default class Channel extends React.Component {
               step='0.05'
               onChange={this.changeVolume.bind(this)} /> Volume
             <br/>
-          </div>
+          </div>*/}
+          <VolumeSlider
+            volume        = { channel.volume }
+            changeVolume  = { this.changeVolume.bind(this) }
+          />
           <buton className='ui mini icon button' onClick={this.deleteChannel.bind(this)}>
             <i className='remove icon'></i>
           </buton>
@@ -511,7 +531,6 @@ export default class Channel extends React.Component {
             onMouseOut={this.clearPastePreview.bind(this)}
             draggable={true}
             onDragStart={this.onDragStart.bind(this)}
-            onDrag={this.onDrag.bind(this)}
             onDragEnd={this.onDragEnd.bind(this)}
             onTouchStart={this.onDragStart.bind(this)}
             onTouchMove={this.onDrag.bind(this)}

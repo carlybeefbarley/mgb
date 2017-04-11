@@ -1,15 +1,21 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Message, Icon } from 'semantic-ui-react'
 import { browserHistory } from 'react-router'
 import Helmet from "react-helmet"
-import reactMixin from 'react-mixin'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
+import { createContainer } from 'meteor/react-meteor-data'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
-import SpecialGlobals from '/imports/SpecialGlobals'
 
+import { utilPushTo } from "/client/imports/routes/QLink"
+
+<<<<<<< HEAD
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride' 
 import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
+=======
+import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
+>>>>>>> 6bb0b2068608cf33e69b5b12065d3958e731902d
 
 import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
 import { hasSkill, learnSkill } from '/imports/schemas/skills'
@@ -28,6 +34,10 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'
 
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { parseChannelName, makeChannelName, ChatChannels } from '/imports/schemas/chats'
+import { getLastReadTimestampForChannel, getPinnedChannelNames } from '/imports/schemas/settings-client'
+
 // https://www.npmjs.com/package/react-notifications
 import { NotificationContainer, NotificationManager } from 'react-notifications'
 // Note css is in /client/notifications.css
@@ -41,42 +51,67 @@ let G_localSettings = new ReactiveDict()
 const getPagenameFromProps = props => props.routes[1].name
 const getPagepathFromProps = props => props.routes[1].path
 
-const npColumn1Width = "60px"
-
 let _theAppInstance = null
 
-// This is for making the Completion Tag thing work so it edge triggers only when pages are actually navigated to (rather than every update). 
-// QLink.js calls this. There may be a better way to do this, but this isn't too terribly factored so is OKish
-// and it gets the job done. 
+// we need to detect if user is not logged in and to do it once
+// analytics is sent from getMeteorData()
+// when analytics is send then change flag to false
+let analyticsAnonymousSendFlag = true
+// same for sending user logged in data
+let analyticsLoggedInSendFlag = true
+
+
+// for now, until we have push notifications for chat
+const CHAT_POLL_INTERVAL_MS = (12*1000)
+
+// Tutorial/Joyride infrastructure support
+
+
+export const stopCurrentTutorial = () => {
+  if (_theAppInstance)
+    _theAppInstance.addJoyrideSteps.call(_theAppInstance, [], { replace: true } )
+
+}
+export const addJoyrideSteps = (steps, opts) => {
+  if (_theAppInstance)
+    _theAppInstance.addJoyrideSteps.call(_theAppInstance, steps, opts)
+}
+
+export const joyrideDebugEnable = joyrideDebug => {
+// Disabled for now; it's pretty noisy and mostly useful for debugging joyride itself.
+  // if (_theAppInstance)
+  //   _theAppInstance.setState( { joyrideDebug } )
+  // It may also be nice to do the equivalent of m.jr._ctDebugSpew = joyrideDebug
+}
+
+export const startSkillPathTutorial = skillPath => {
+  if (_theAppInstance)
+    _theAppInstance.startSkillPathTutorial.call(_theAppInstance, skillPath)
+}
+
+
+// clearPriorPathsForJoyrideCompletionTags() is for making the Completion Tag thing
+//  work so it edge triggers only when pages are actually navigated to (rather than
+//  every update).
+// QLink.js calls this. There may be a better way to do this, but this isn't too
+//  terribly factored so is OKish and it gets the job done for now.
+// We will revisit this if any issues come up with this approach.
 export const clearPriorPathsForJoyrideCompletionTags = () => {
-  if (_theAppInstance) 
+  if (_theAppInstance)
   {
     _theAppInstance._priorLocationPath = null
     _theAppInstance._priorRouterPath = null
   }
 }
 
-export const stopCurrentTutorial = () => {
-  if (_theAppInstance) 
-    _theAppInstance.addJoyrideSteps.call(_theAppInstance, [], { replace: true } ) 
-  
-}
-export const addJoyrideSteps = (steps, opts) => { 
-  if (_theAppInstance) 
-    _theAppInstance.addJoyrideSteps.call(_theAppInstance, steps, opts) 
-}
+// General utils
+const px = someNumber => (`${someNumber}px`)
 
-export const startSkillPathTutorial = (skillPath) => { 
-  if (_theAppInstance) 
-    _theAppInstance.startSkillPathTutorial.call(_theAppInstance, skillPath) 
-}
+// FlexPanel numbers
+const fpIconColumnWidthInPixels = 60          // The Column of Icons
+const fpFlexPanelContentWidthInPixels = 285   // The cool stuff
 
-export const startSignUpTutorial = () => {
-  if (_theAppInstance) 
-    _theAppInstance.startSignUpTutorial.call(_theAppInstance) 
-  
-}
-
+// Toast and other warnings
 const _toastTypes = {
   error:    { funcName: 'error',   hdr: 'Error',   delay: 5000 },
   warning:  { funcName: 'warning', hdr: 'Warning', delay: 4000 },
@@ -84,20 +119,21 @@ const _toastTypes = {
   success:  { funcName: 'success', hdr: 'Success', delay: 4000 }
 }
 
-export const showToast = (content, type = 'success') => { 
-  //console.log(`Showing (${type}) Toast Message: '${content}'`)
+/**
+ *
+ *
+ * @param {string} content . . If non-null, then display the Notification
+ * @param {string} [type='success']
+ * @returns {Number} number of Milliseconds the alert will remain for. Can be used for revising _throttle etc. Even returned when content=null
+ */
+export const showToast = (content, type = 'success') => {
   const useType = _toastTypes[type] || _toastTypes['success']
-  NotificationManager[useType.funcName](content, useType.hdr, useType.delay)
+  if (content)
+    NotificationManager[useType.funcName](content, useType.hdr, useType.delay)
+  return useType.delay
 }
 
-export const joyrideDebugEnable = joyrideDebug => {
-  if (_theAppInstance) 
-    _theAppInstance.setState( { joyrideDebug } )
-  // It may also be nice to do the equivalent of m.jr._ctDebugSpew = joyrideDebug
-}
-
-const App = React.createClass({
-  mixins: [ReactMeteorData],
+const AppUI = React.createClass({
   propTypes: {
     params:   PropTypes.object,
     query:    PropTypes.object,
@@ -116,24 +152,22 @@ const App = React.createClass({
     // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See https://github.com/facebook/react/issues/2517
     return {
       urlLocation:  this.props.location,
-      settings:     this.data.settings,  // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
-      skills:       this.data.skills     // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
-    }
-  },
-
-  togglePanelsKeyHandler: function(e) {
-    e = e || window.event
-    if (e.key === 'Escape' || e.keyCode === 27) {
-      this.handleDualPaneToggle()
+      settings:     this.props.settings,  // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
+      skills:       this.props.skills     // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
     }
   },
 
   componentDidMount: function() {
-    window.onkeyup = this.togglePanelsKeyHandler
+    this._schedule_requestChatChannelTimestampsNow()
     registerDebugGlobal( 'app', this, __filename, 'The global App.js instance')
     _theAppInstance = this   // This is so we can expose a few things conveniently but safely, and without too much react.context stuff
-  },
 
+    if (window.performance) {
+      // Gets the number of milliseconds since page load
+      const timeSincePageLoad = Math.round(performance.now())
+      ga('send', 'timing', 'Page load', 'load', timeSincePageLoad)
+    }
+  },
 
   componentDidUpdate: function(prevProps, prevState) {
     const pagepath = getPagepathFromProps(this.props)
@@ -152,6 +186,11 @@ const App = React.createClass({
     // Handle transition from empty to non-empty joyride and start the joyride/tutorial
     if (prevState.joyrideSteps.length ===0 && this.state.joyrideSteps.length > 0)
       this.refs.joyride.start(true)
+
+
+    // if(this.props.params.assetId){
+    //   console.log( this.props.params.assetId, this.state.currentlyEditingAssetInfo)
+    // }
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -160,16 +199,76 @@ const App = React.createClass({
 
     // analytics is from the Meteor package okgrow:analytics
     // See https://segment.com/docs/sources/website/analytics.js/#page for the analytics.page() params
-    analytics.page(getPagenameFromProps(nextProps), {
-      path: nextProps.location.pathname
-    })
+
+
+    // getPagenameFromProps(nextProps) sometimes doesn't work. For example for /learn page
+    const pageName = getPagenameFromProps(nextProps)
+    const pathName = window.location.pathname
+    const routeName = getPagepathFromProps(nextProps)
+
+    let trackPage = null
+
+    // TODO users routeName returns 'users' instead of '/users'
+    if (_.indexOf(['/', '/games', 'users'], routeName) != -1)
+      trackPage = routeName
+
+    else if (pathName == '/')
+      trackPage = '/'
+
+    else if (_.startsWith(routeName, '/learn'))
+      // if routeName starts with learn then add all routeName to log
+      trackPage = routeName
+
+    else if (nextProps.params.projectId || nextProps.params.projectName)
+      // if params has projectId or projectName then we know that it's project details page
+      trackPage = '/projectDetails'
+
+    else if (nextProps.params.assetId)
+    {
+      // don't track here because we don't know asset type
+      // do it in handleSetCurrentlyEditingAssetInfo()
+    }
+
+    else if (_.indexOf(['Games', 'Profile', 'Badges', 'Skills', 'Projects', 'Assets'], pageName) != -1)
+      trackPage = '/' + pageName.toLowerCase()
+
+    else
+      trackPage = pathName  // for any other untracked page
+
+
+    if (trackPage)
+    {
+      // console.log('#################### ->', trackPage)
+
+      ga('set', 'page', trackPage)
+      ga('send', 'pageview', trackPage)
+    }
   },
 
   getInitialState: function() {
     return {
-      initialLoad: true,
-      fNavPanelIsOverlay: true,    // Could make this initial value based on screen size, but that might be odd
       activityHistoryLimit: 11,
+
+      // read/unread Chat status. Gathered up here since it used across app, especially for notifications and lists
+      chatChannelTimestamps:    null,          // as defined by Chats.getLastMessageTimestamps RPC
+      hazUnreadChats:           [],            // will contain Array of channel names with unread chats
+      // hazUnreadChats is a subset of the data in chatChannelTimestamps, but simplified - just an
+      // Array of chat channelNames that have at least one unread message. Note that Global ChatChannels
+      // are treated a little specially - if you have never visited a particular global channel you will
+      // not get notifications for it. This is so new users don't get spammed to look at chat channels they
+      // are not yet interested in. This will always be an array, never null or undefined
+      // It is intended to be quick & convenient for generating notification UIs
+
+      currentlyEditingAssetInfo: {
+        // This is so that we can pass as subset of the Asset info into some other components
+        // like the flexpanels and Nav controls.
+        // The AssetEditRoute component is currently the only component expected to set this
+        //  value, since that is the layer in the container hierarchy that actually loads
+        // assets for the AssetEditors
+        kind: null,       // null or a string which is a one of assets:AssetKindKeys
+        canEdit: false,   // true or false. True iff editing an Asset _and_ user has edit permission
+        projectNames: []  // Empty array, or array of strings for project names as described in assets.js
+      },
 
       // For react-joyride
       joyrideSteps: [],
@@ -180,51 +279,55 @@ const App = React.createClass({
     }
   },
 
-  getMeteorData() {
-    const pathUserName = this.props.params.username      // This is the username (profile.name) on the url /u/xxxx/...
-    const pathUserId = this.props.params.id              // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
-    const currUser = Meteor.user()
-    const currUserId = currUser && currUser._id
-    const handleForUser = pathUserName ?
-                             Meteor.subscribe("user.byName", pathUserName)
-                           : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
-    const handleForSysvars = Meteor.subscribe('sysvars')
+  _schedule_requestChatChannelTimestampsNow() {
+    window.setInterval(this.requestChatChannelTimestampsNow, CHAT_POLL_INTERVAL_MS)
+  },
 
-    const handleForSkills = currUserId ? Meteor.subscribe("skills.userId", currUserId) : null
-    const skillsReady = handleForSkills === null ? true : handleForSkills.ready()
+  // TODO: Make this throttled, called when relevant
+  requestChatChannelTimestampsNow: function () {
+    if (!this.props.currUser)
+      return
 
-    const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
-    const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
-    const handleActivity = Meteor.subscribe("activity.public.recent", this.state.activityHistoryLimit)
-    const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null
-    const projectsReady = handleForProjects === null ? true : handleForProjects.ready()
-    const projectSelector = projectMakeSelector(currUserId)
+    const { settings, currUserProjects } = this.props
+    const { assetId } = this.props.params
 
-    if (handleForSettings && handleForSettings.ready())
+    // 0. Make the list of channels we are interested in:
+    //       Global, relevantProjects, currentAsset, pinnedChannels.
+    // Regarding AssetsChannels, our UX model is that the user should Pin any
+    // asset channels they want notification of. We don't want to spam the
+    // chat notifications with too much Asset noise
+
+    const chanArray = _.concat(
+      _.map(ChatChannels.sortedKeys, k => makeChannelName( { scopeGroupName: 'Global', scopeId: k } ) ),
+      _.map(currUserProjects, p => makeChannelName( { scopeGroupName: 'Project', scopeId: p._id } ) ),
+      getPinnedChannelNames(settings)
+    )
+    if (assetId)
+      chanArray.push(makeChannelName( { scopeGroupName: 'Asset', scopeId: assetId } ) )
+
+    // 1. Now ask the server for the last message timestamps for these channels
+    Meteor.call( 'Chats.getLastMessageTimestamps', chanArray, ( error, chatChannelTimestamps ) =>
     {
-      // There is a very small race where local settings could get replaced 
-      // if the settings are changed while the debounced save is happening.. 
-      // but it's pretty small, so worry about that another day
-      G_localSettings.set(Settings.findOne(currUserId))
-    }
-
-    const retval = {
-      currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
-
-      currUserProjects: Projects.find(projectSelector).fetch(),
-      user:     pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
-      activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
-      settings: G_localSettings,
-      skills:   currUser ? Skills.findOne(currUserId) : null,
-      sysvars:  Sysvars.findOne(),
-      loading:  !handleForUser.ready()    ||
-                !handleForSysvars.ready() || 
-                !handleActivity.ready()   ||
-                !projectsReady            ||
-                !settingsReady            ||
-                !skillsReady
-    }
-    return retval
+      if (error)
+        console.log('unable to invoke Chats.getLastMessageTimestamps()', error )
+      else
+      {
+        // 2. Now process that list for easy consumption (and store results in state.hazUnreadChats and state.chatChannelTimestamps)
+        let hazUnreadChats = []
+        _.each(chatChannelTimestamps, cct => {
+          const channelName = cct._id
+          const lastReadByUser = getLastReadTimestampForChannel(settings, channelName)
+          const channelObj = parseChannelName(channelName)
+          cct._hazUnreads = Boolean(
+            (channelObj && channelObj.scopeGroupName !== 'Global' && !lastReadByUser) // Non-global chat groups that user has access to but has not looked at
+            || (lastReadByUser && cct.lastCreatedAt.getTime() > lastReadByUser.getTime())   // Any chat channel user has looked at but has more recent messages
+          )
+          if (cct._hazUnreads)
+            hazUnreadChats.push(channelName)
+        })
+        this.setState( { chatChannelTimestamps, hazUnreadChats } )
+      }
+    })
   },
 
   configureTrackJs() {
@@ -241,60 +344,56 @@ const App = React.createClass({
     if (window.trackJs)
       doTrack()
     else
-      $.getScript("/lib/tracker.js", doTrack)   // fallback to local version because of AdBlocks etc
+      $.getScript(makeCDNLink("/lib/t-r-a-c-k-e-r.js"), doTrack)   // fallback to local version because of AdBlocks etc
+  },
+
+  handleSetCurrentlyEditingAssetInfo( assetInfo )
+  {
+    if (!_.isEqual(this.state.currentlyEditingAssetInfo, assetInfo)){
+      // See comments in getInitialState() for explanation
+      this.setState( { currentlyEditingAssetInfo: assetInfo } )
+
+      // guntis - the only place where I can get asset type and send to analytics
+      if(assetInfo.assetVerb == 'View'){
+        const path = '/asset/'+assetInfo.kind
+        ga('set', 'page', path)
+        ga('send', 'pageview', path)
+      }
+    }
   },
 
   render() {
-    const { respData } = this.props
-    const { joyrideDebug } = this.state
-    const fNavPanelIsOverlay = this.state.fNavPanelIsOverlay || (respData.npForceAsOverlay === true)
-
-    const { loading, currUser, user, currUserProjects, sysvars } = this.data
+    const { respData, respWidth, params, loading, currUser, user, currUserProjects, sysvars  } = this.props
+    const { joyrideDebug, currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats } = this.state
     const { query } = this.props.location
-
-
 
     if (!loading)
       this.configureTrackJs()
 
-    // The NavPanel (left), NavBar (top) and FlexPanel (right) are fixed/absolute positioned so we need to account for that
-
-    // ProjectScopeLock is an optional 2nd row of the NavBar.
-    const projectScopeLockValue = query[urlMaker.queryParams("app_projectScopeLock")]
-    const showProjectScopeLock = !!projectScopeLockValue
-
-    // TODO: Expose this in settings somehow
-    const fFixedTopNavBar = false
-
-    const navBarReservedHeightInPixels = 40
-    const projectScopeLockHeightInPixels = showProjectScopeLock ? 40 : 0
-    const navBarAreaHeightStr = (navBarReservedHeightInPixels + projectScopeLockHeightInPixels) + "px"
-
-    // The Nav Panel is on the left and is primarily navigation-oriented
-    const navPanelQueryValue = query[urlMaker.queryParams("app_navPanel")]
-    const showNavPanel = !!navPanelQueryValue && navPanelQueryValue[0] !== "-"
-    const navPanelWidth = showNavPanel ? "268px" : npColumn1Width     // Available width to render
-    const navPanelReservedWidth = fNavPanelIsOverlay ? npColumn1Width : navPanelWidth    // Space main page area cannot use
-
-    // The Flex Panel is for communications and common quick searches in a right hand margin (or fixed footer for Phone-size PortraitUI)
+    // The Flex Panel is for communications and common quick searches in a right hand margin
+    //   (or fixed footer for Phone-size PortraitUI)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
     const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== "-"
-    const flexPanelWidthWhenExpanded = respData.fpReservedRightSidebarWidth ? "345px" : "285px"
-    const flexPanelWidth = showFlexPanel ? flexPanelWidthWhenExpanded : respData.fpReservedRightSidebarWidth    // The 285px width works well with default vertical menu size and padding=8px
+    const flexPanelWidthWhenExpanded = respData.fpReservedRightSidebarWidth ? px(fpIconColumnWidthInPixels + fpFlexPanelContentWidthInPixels) : px(fpFlexPanelContentWidthInPixels)
+    const flexPanelWidth = showFlexPanel ? flexPanelWidthWhenExpanded : respData.fpReservedRightSidebarWidth
+
+    const mainAreaAvailableWidth = respWidth-parseInt(flexPanelWidth)
+
+    const isNetworkFailure = !_.includes(['connected','connecting'], this.props.meteorStatus.status)
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
       position:     "fixed",
-      top:          fFixedTopNavBar ? navBarAreaHeightStr : "0px",
+      top:          0,
       bottom:       respData.fpReservedFooterHeight,
-      left:         navPanelReservedWidth,
+      left:         0,
       right:        flexPanelWidth,
-      marginBottom: "0px",
-      overflow: "scroll"
+      marginBottom: '0px',
+      overflow:     "auto" // 'scroll' - this will make very ugly scrollbars on firefox
     }
 
     const mainPanelInnerDivSty = {
-      padding:       "0px",
+      padding:       '0px',
       height:        "auto"
     }
 
@@ -304,32 +403,17 @@ const App = React.createClass({
     const isSuperAdmin = isUserSuperAdmin(currUser)
     const ownsProfile = isSameUser(currUser, user)
 
-    // This is a flag used for some mid-column elements (NavBar and Maybe page) to hint they should be
-    // space conservative because the Nav and Flex panels are both being displayed.
-    // Most things can be done reactively or with CSS, but this is useful for some extra cases
-    // This is probably not a long term solution - but is helpful for now
-    const conserveSpace = showNavPanel && showFlexPanel && !fNavPanelIsOverlay
-
-    const navbar = (
-      <NavBar
-        currUser={currUser}
-        user={user}
-        pathLocation={this.props.location.pathname}
-        fFixedTopNavBar={fFixedTopNavBar}
-        name={this.props.routes[1].name}
-        params={this.props.params}
-        flexPanelWidth={flexPanelWidth}
-        navPanelWidth={navPanelReservedWidth}
-        navPanelIsVisible={showNavPanel}
-        conserveSpace={conserveSpace}
-        projectScopeLock={projectScopeLockValue}
-        sysvars={sysvars}
-        />    
+    const hazUnreadAssetChat = (
+      params.assetId &&
+      _.includes(
+        hazUnreadChats,
+        makeChannelName( { scopeGroupName: 'Asset', scopeId: params.assetId } )
+      )
     )
 
     return (
       <div >
-      
+
         <Helmet
           title="MGB"
           titleTemplate="%s"
@@ -337,54 +421,31 @@ const App = React.createClass({
               {"name": "My Game Builder", "content": "MyGameBuilder"}
           ]}
         />
-        <Joyride 
-          ref="joyride" 
-          steps={this.state.joyrideSteps} 
+        <Joyride
+          ref="joyride"
+          steps={this.state.joyrideSteps}
           showOverlay={true}
           disableOverlay={false}
           showSkipButton={true}
           tooltipOffset={0}
-          keyboardNavigation={false}
           showStepsProgress={true}
           type="continuous"
           callback={this.handleJoyrideCallback}
           preparePageHandler={this.joyridePreparePageHandler}
+          assetId={params.assetId}
           debug={joyrideDebug} />
 
         <div>
-            <NavPanel
-              currUser={currUser}
-              currUserProjects={currUserProjects}
-              fpReservedFooterHeight={respData.fpReservedFooterHeight}
-              user={user}
-              selectedViewTag={navPanelQueryValue}
-              handleNavPanelToggle={this.handleNavPanelToggle}
-              handleNavPanelChange={this.handleNavPanelChange}
-              navPanelWidth={navPanelWidth}
-              navPanelIsVisible={showNavPanel}
-              isSuperAdmin={isSuperAdmin}
-              navPanelIsOverlay={fNavPanelIsOverlay}
-            />
-
-            { (showNavPanel && !respData.npForceAsOverlay) && 
-              <i 
-                title={!fNavPanelIsOverlay ? 
-                   `The Navigation Panel is locked, so it will not auto-hide when used. Clicking this icon will unlock it and enable auto-hide`
-                 : `The Navigation Panel is unlocked, so it auto-hides when used. If the window is wide enough, clicking this icon will lock it and disable auto-hide` }
-                className={`ui grey ${fNavPanelIsOverlay ? "unlock":"lock"} icon`} 
-                onClick={() => this.setState( { "fNavPanelIsOverlay": !fNavPanelIsOverlay } ) }
-                style={{position: "fixed", marginBottom: "8px", bottom: respData.fpReservedFooterHeight, left: npColumn1Width, zIndex: 200}} />
-            }
-
-            { fFixedTopNavBar && navbar }
-
             <FlexPanel
               fpIsFooter={!!respData.footerTabMajorNav}
-              joyrideSteps={this.state.joyrideSteps} 
+              joyrideSteps={this.state.joyrideSteps}
               joyrideSkillPathTutorial={this.state.joyrideSkillPathTutorial}
               joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
               joyrideOriginatingAssetId={this.state.joyrideOriginatingAssetId}
               currUser={currUser}
+              chatChannelTimestamps={chatChannelTimestamps}
+              hazUnreadChats={hazUnreadChats}
+              requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
               currUserProjects={currUserProjects}
               user={user}
               selectedViewTag={flexPanelQueryValue}
@@ -392,50 +453,55 @@ const App = React.createClass({
               handleFlexPanelChange={this.handleFlexPanelChange}
               flexPanelWidth={flexPanelWidth}
               flexPanelIsVisible={showFlexPanel}
-              activity={this.data.activity}
+              activity={this.props.activity}
               isSuperAdmin={isSuperAdmin}
+              currentlyEditingAssetInfo={currentlyEditingAssetInfo}
               />
 
-            <div
-              style={mainPanelOuterDivSty}
-              className={conserveSpace ? "conserveSpace noScrollbarDiv" : "noScrollbarDiv"}>
+            <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id='mgb-jr-main-container'>
               <div style={mainPanelInnerDivSty}>
-                { !fFixedTopNavBar && navbar }
+                <NavPanel
+                  currUser={currUser}
+                  navPanelAvailableWidth={mainAreaAvailableWidth}
+                />
+                { isNetworkFailure &&
+                  <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable' style={{marginLeft: '8px'}}/>
+                }
+                { currUser && currUser.suIsBanned &&
+                  <Message error icon='ban' header='Your Account has been suspended by an Admin' list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']}/>
+                }
+                <NavBar
+                    currUser={currUser}
+                    user={user}
+                    location={this.props.location}
+                    name={this.props.routes[1].name}
+                    params={this.props.params}
+                    flexPanelWidth={flexPanelWidth}
+                    sysvars={sysvars}
+                    currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+                    />
                 {
                   !loading && this.props.children && React.cloneElement(this.props.children, {
                     // Make below props available to all routes.
                     user: user,
                     currUser: currUser,
                     currUserProjects: currUserProjects,
+                    hazUnreadAssetChat: hazUnreadAssetChat,
                     ownsProfile: ownsProfile,
                     isSuperAdmin: isSuperAdmin,
+                    availableWidth: mainAreaAvailableWidth,
+                    handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
                     isTopLevelRoute: true // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
                   })
                 }
               </div>
             </div>
 
-            { (fNavPanelIsOverlay && showNavPanel) &&   // Overlay to catch clicks when Overlay NavPanel is up.
-              <div 
-                  onClick={ () => this.handleNavPanelToggle() } 
-                  style={ { 
-                    position: "fixed",
-                    zIndex: 200,
-                    top:      "0px",
-                    bottom:   "0px",
-                    left:     navPanelWidth,
-                    right:    flexPanelWidth,
-                    backgroundColor: "rgba(0,0,0,0.2)",
-                    overflow: "scroll",
-                    marginBottom: "0px"} } />
-            }
-            
           </div>
-          <NotificationContainer/>
+          <NotificationContainer/> {/* This is for the top-right toast messages */}
       </div>
     )
   },
-
 
   /**
    * This will show/hide the Flex Panel
@@ -448,7 +514,7 @@ const App = React.createClass({
     if (loc.query[qp])
       newQ = _.omit(loc.query, qp)
     else
-      newQ = {...loc.query, [qp]:NavPanel.getDefaultPanelViewTag()}
+      newQ = {...loc.query, [qp]:NavPanel.getDefaultPanelViewTag()}   //TODO: Wrong tag!?
     browserHistory.push( {  ...loc,  query: newQ })
   },
 
@@ -473,94 +539,9 @@ const App = React.createClass({
     browserHistory.push( {  ...loc,  query: newQ })
   },
 
-
-  /**
-   * This will show/hide the Nav Panel
-   */
-  handleNavPanelToggle: function()
-  {
-    const loc = this.props.location
-    const qp = urlMaker.queryParams("app_navPanel")
-    let newQ
-    if (loc.query[qp])
-      newQ = _.omit(loc.query, qp)
-    else
-      newQ = {...loc.query, [qp]:FlexPanel.getDefaultPanelViewTag()}
-    browserHistory.push( {  ...loc,  query: newQ })
-  },
-
-  closeNavPanel: function()
-  {
-    const loc = this.props.location
-    const qp = urlMaker.queryParams("app_navPanel")
-    if (loc.query[qp])
-    {
-      const newQ = _.omit(loc.query, qp)
-      browserHistory.push( {  ...loc,  query: newQ })
-    }
-  },
-
-  handleNavPanelChange: function(newFpView, fForceNavPanelIsNotOverlay)
-  {
-    const qp = urlMaker.queryParams("app_navPanel")
-
-    const queryModifier = {[qp]: newFpView}
-    const loc = this.props.location
-    const newQ = {...loc.query, ...queryModifier }
-    
-    if (fForceNavPanelIsNotOverlay)
-      this.setState( { "fNavPanelIsOverlay": false })
-    browserHistory.push( {  ...loc,  query: newQ })
-  },
-
-  /**
-   * This hides/shows both Nav and FlexPanels. Press ESC for this
-   * Note that it takes a lot of care to preserve deep url state, but also discard url query params that are defaults
-   */
-  handleDualPaneToggle: function()
-  {
-    const loc = this.props.location
-    const qpNp = urlMaker.queryParams("app_navPanel")    // Query Param for NavPanel (e.g "_np")
-    const qpFp = urlMaker.queryParams("app_flexPanel")   // Query Param for FlexPanel (e.g "_fp")
-    const qvNp = loc.query[qpNp]                         // Query Value for NavPanel
-    const qvFp = loc.query[qpFp]                         // Query Value for FlexPanel
-    const aPanelIsVisible = urlMaker.isQueryEnabled(qvNp) || urlMaker.isQueryEnabled(qvFp)
-
-    let newQ
-    if (aPanelIsVisible)
-    {
-      const new_qvNp = urlMaker.disableQuery(qvNp, NavPanel.getDefaultPanelViewTag())
-      const new_qvFp = urlMaker.disableQuery(qvFp, FlexPanel.getDefaultPanelViewTag())
-      newQ = { ..._.omit(loc.query, [qpNp, qpFp]) }
-      if (new_qvNp) newQ[qpNp] = new_qvNp
-      if (new_qvFp) newQ[qpFp] = new_qvFp
-    }
-    else
-    {
-      newQ = {
-        ...loc.query,
-        [qpNp]:urlMaker.enableQuery(qvNp, NavPanel.getDefaultPanelViewTag() ),
-        [qpFp]:urlMaker.enableQuery(qvFp, FlexPanel.getDefaultPanelViewTag() )
-      }
-    }
-    browserHistory.push( {  ...loc,  query: newQ })
-  },
-
   //
   // TOAST
   //
-
-  startSignUpTutorial() 
-  {
-    if (this.currUser)
-    {
-      console.error('startSignUpTutorial() but user is already loggedin')
-      return
-    }
-    const tutPath = ':' + SpecialGlobals.skillsModelTrifecta.signupTutorialName
-    this.addJoyrideSteps(tutPath, { replace: true } )
-  },
-
   startSkillPathTutorial(skillPath)
   {
     const tutPath = makeTutorialAssetPathFromSkillPath(skillPath, 0)
@@ -576,13 +557,13 @@ const App = React.createClass({
   },
 
   //
-  // React-Joyride 
+  // React-Joyride
   //
 
 
   // This is the React-joyride (user tours) support
   // See https://github.com/gilbarbara/react-joyride for background
-  // See /DeveloperDocs/ReactJoyrideTours.md for our rules/conventions 
+  // See /DeveloperDocs/ReactJoyrideTours.md for our rules/conventions
   //     for using it in our codebase
 
   // addJoyrideSteps()
@@ -614,16 +595,21 @@ const App = React.createClass({
           {
             this.addJoyrideSteps(loadedSteps.steps, opts)
           }
+          // console.log('started tutorial...', this.state.joyrideSkillPathTutorial)
+          analytics.track('startTutorial', {
+            title: this.state.joyrideSkillPathTutorial
+            , category: "Tutorials"
+          })
         })
         .catch( err => {
-          showToast(`Unable to start tutorial '${steps}': ${err.toString()}`, 'error') 
+          showToast(`Unable to start tutorial '${steps}': ${err.toString()}`, 'error')
         } )
       return
     }
 
 
-    if (!Array.isArray(steps)) 
-      steps = [steps] 
+    if (!Array.isArray(steps))
+      steps = [steps]
 
     if (!joyride || (steps.length === 0 && !opts.replace))
       return false
@@ -637,49 +623,101 @@ const App = React.createClass({
         currentState.joyrideCurrentStepNum = 0
       if (opts.origAssetId)
         currentState.joyrideOriginatingAssetId = opts.origAssetId  // Just to enable a nice edit Tutorial button in fpGoals
-      
+
       return currentState
     })
   },
 
-  addJoyrideTooltip(data) {
-    this.refs.joyride.addTooltip(data)
-  },
-
   handleJoyrideCallback( func ) {
     if (func.type === 'finished') {
+      // console.log('finished tutorial...', this.state.joyrideSkillPathTutorial)
+          analytics.track('startTutorial', {
+            title: this.state.joyrideSkillPathTutorial
+            , category: "Tutorials"
+          })
       if (this.state.joyrideSkillPathTutorial && func.skipped === false)
         this.handleCompletedSkillTutorial( this.state.joyrideSkillPathTutorial )
       this.setState(
-        { 
-          joyrideSteps: [], 
-          joyrideSkillPathTutorial: null, 
+        {
+          joyrideSteps: [],
+          joyrideSkillPathTutorial: null,
           joyrideCurrentStepNum: 0,
           joyrideOriginatingAssetId: null
         }
-      ) 
+      )
     } else if (func.type === 'step:after')
     {
       this.setState( { joyrideCurrentStepNum: func.newIndex } )
     }
   },
-
+  joyrideHandlers: {
+    // !!! these functions must not refer to this or do other funny stuff !!!
+    openAsset: (type, user, name) => {
+      // TODO: get location query ???? - or location query should be handled by QLink?
+      utilPushTo(null, `/assetEdit/${type}/${user}/${name}`)
+    },
+    highlightCode: (from, to) => {
+      const evt = new Event("mgbjr-highlight-code")
+      evt.data = {from, to}
+      window.dispatchEvent(evt)
+    }
+  },
   // return null for no error, or a string with errors
   joyridePreparePageHandler( actionsString ) {
     const errors = []
     if (!actionsString || actionsString === '')
       return
 
+    // The preparePage string can have multiple actions, each are separated by a comma character
     actionsString.split(',').forEach( act => {
-      switch (act) {
+      // defined above in
+      const params = act.split(":")
+      const action = params.shift()
+      if (this.joyrideHandlers[action]) {
+        this.joyrideHandlers[action].apply(null, params)
+        return
+      }
+
+      // Some preparePage actions have a parameter - this is usually colon separated
+      const [ actText , actParam ] = _.split(act, ':')
+      switch (actText) {
+      case 'openVaultAssetById':
+        // we want to open asset !vault:actParam
+        utilPushTo(window.location, `/u/!vault/asset/${actParam}`)
+        break
+
+      case 'openVaultAssetByName':
+        debugger// TODO @@@@@ need to actually get id fromname
+        utilPushTo(window.location, `/u/!vault/asset/${actParam}`)
+        break
+
+      case 'navToRelativeUrl':
+        utilPushTo(window.location, actParam)
+        break
+
+      case 'openVaultProjectById':
+        utilPushTo(window.location, `/u/!vault/project/${actParam}`)
+        break
+
+      case 'openVaultProjectByName':
+        utilPushTo(window.location, `/u/!vault/projects/${actParam}`)
+        break
+
       case 'closeFlexPanel':
         this.closeFlexPanel()
         break
 
-      case 'closeNavPanel':
-        this.closeNavPanel()
+      case 'openFlexPanel':
+        this.handleFlexPanelChange(actParam)
         break
 
+      case 'closeNavPanel':
+        console.error("joyridePreparePageHandler(closeNavPanel) has been deprecated. Tutorial should be simplified")
+        break
+
+      case 'highlightCode':
+        console.log("Highlight code", actParam)
+        break
 
       case 'refreshBadgeStatus':
         Meteor.call('User.refreshBadgeStatus', (err, result) => {
@@ -694,7 +732,7 @@ const App = React.createClass({
           }
         })
         break
-        
+
       default:
         errors.push(`Action '${act} not recognized`)
       }
@@ -702,31 +740,94 @@ const App = React.createClass({
 
     return errors.length === 0 ? null : errors.join('; ') + '.'
   }
- 
+
 })
+
+
+
+const App = createContainer( ( { params } ) => {
+  const pathUserName = params.username      // This is the username (profile.name) on the url /u/xxxx/...
+  const pathUserId = params.id              // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
+  const currUser = Meteor.user()
+  const currUserId = currUser && currUser._id
+  const handleForUser = pathUserName ?
+                            Meteor.subscribe("user.byName", pathUserName)
+                          : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
+  const handleForSysvars = Meteor.subscribe('sysvars')
+
+  const handleForSkills = currUserId ? Meteor.subscribe("skills.userId", currUserId) : null
+  const skillsReady = handleForSkills === null ? true : handleForSkills.ready()
+
+  const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
+  const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
+  const handleActivity = Meteor.subscribe("activity.public.recent", 11) // TODO - use activityHistoryLimit ?
+  const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null
+  const projectsReady = handleForProjects === null ? true : handleForProjects.ready()
+  const projectSelector = projectMakeSelector(currUserId)
+
+  if (handleForSettings && handleForSettings.ready())
+  {
+    //console.log("Update Settings Reactive.Dict object from Meteor")
+    // There is a very small race where local settings could get replaced
+    // if the settings are changed while the debounced save is happening..
+    // but it's pretty small, so worry about that another day
+    G_localSettings.set(Settings.findOne(currUserId))
+  }
+
+  // send analytics data if user is not logged in and do it only once!
+  if (typeof currUser != 'undefined' && currUser === null && analyticsAnonymousSendFlag) {
+    // analytics.page('/notLoggedIn')
+    ga('send', 'pageview', '/notLoggedIn')
+    analyticsAnonymousSendFlag = false
+  }
+  // set various analytics params when user logs in
+  if (currUser && analyticsLoggedInSendFlag) {
+    // dimension1 = user id dimension (trick google to show individual id's)
+    ga('set', 'dimension1', currUser._id)
+    // superAdmin or tester user - need to filter them out in reports
+    if (isUserSuperAdmin(currUser) || currUser._id == 'AJ8jrFjxSYJATzscA')
+      ga('set', 'dimension2', 'admin')
+
+    // tell google that this is user and all session need to connect to this data point
+    ga('set', 'userId', currUser._id)
+    analyticsLoggedInSendFlag = false
+  }
+
+  return {
+    currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
+
+    currUserProjects: Projects.find(projectSelector).fetch(),
+    user:             pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
+    activity:         Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
+    settings:         G_localSettings,
+    meteorStatus:     Meteor.status(),
+    skills:           currUser ? Skills.findOne(currUserId) : null,
+    sysvars:          Sysvars.findOne(),
+    loading:          !handleForUser.ready()    ||
+                      !handleForSysvars.ready() ||
+                      !handleActivity.ready()   ||
+                      !projectsReady            ||
+                      !settingsReady            ||
+                      !skillsReady
+  }
+}, AppUI)
+
 
 App.responsiveRules = {
   'portraitPhoneUI': {
     maxWidth: 420,
-    respData: { 
+    respData: {
       footerTabMajorNav: true,        // |__| flexPanel as footer
       fpReservedFooterHeight:      '60px',
       fpReservedRightSidebarWidth: '0px'
     }
   },
-  'npForceAsOverlay': {
-    minWidth: 0,
-    maxWidth: 900,
-    respData: {
-      npForceAsOverlay: true
-    }
-  },
   'desktopUI': {
     minWidth: 421,
-    respData: { 
+    respData: {
       footerTabMajorNav: false,        //  flexPanel as right sidebar =|
       fpReservedFooterHeight:       '0px',
-      fpReservedRightSidebarWidth:  '60px'
+      fpReservedRightSidebarWidth:  px(fpIconColumnWidthInPixels)
     }
   }
 }

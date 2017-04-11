@@ -1,30 +1,9 @@
-.ui.container.slim
-{
-  max-width: 1090px !important;
-  padding: 0 75px;
-}
-
-.ui.segment.slim
-{
-  max-width: 940px !important;
-}
-
-.ui.segment.slim a
-{
-  color: #e88300;
-}
-
-.ui.segment.slim a:hover
-{
-  text-decoration: underline;
-}
-
 .hero
 {
 	position: relative;
 	overflow: hidden;
 	background: #155f66;
-	background: radial-gradient(circle farthest-side at right bottom,#8cc4c4 8%, #155f66 70%, #232929);
+	background: radial-gradient(circle farthest-side at right top,#8cc4c4 8%, #155f66 70%, #232929);
 }
 
 .hero,
@@ -34,13 +13,4 @@
 {
 	color: white;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-
-@media (max-width: 1200px)
-{
-  .ui.container.slim
-  {
-    padding: 0 15px;
-  }
 }

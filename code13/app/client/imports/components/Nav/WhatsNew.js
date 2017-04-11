@@ -12,12 +12,11 @@ const WhatsNew = ( { currUser, asHidingLink } ) => {
   const iconEl = <i className={hilite + ' info circle icon'} />
 
   if (asHidingLink)
-    return !laterNewsAvailable ? null : 
-      <QLink 
-          to='/whatsnew' 
-          title='Announcements of new features/fixes to MGB' 
-          className='fitted item' 
-          style={ { paddingLeft: '14px', marginTop: '4px' } }>
+    return !laterNewsAvailable ? null :
+      <QLink
+          to='/whatsnew'
+          title='Announcements of new features/fixes to MGB'
+          className='fitted item'>
         <i className='orange large info circle icon' />
       </QLink>
 

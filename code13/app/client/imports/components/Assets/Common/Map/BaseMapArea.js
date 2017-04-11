@@ -9,6 +9,7 @@ import TileCollection from './Tools/TileCollection'
 import EditModes      from './Tools/EditModes'
 import LayerTypes     from './Tools/LayerTypes'
 import GridLayer      from './Layers/GridLayer'
+import MaskLayer      from './Layers/MaskLayer'
 
 import Camera         from './Camera'
 
@@ -16,12 +17,32 @@ import Plural         from '/client/imports/helpers/Plural'
 
 import { showToast } from '/client/imports/routes/App'
 
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 
+const MOUSE_BUTTONS = {
+  none: 0,     //  No button or un-initialized
+  left: 1,     //  Left button
+  right: 2,    //  Right button
+  middle: 4,   //  Wheel button or middle button
+  back: 8,     //  4th button (typically the "Browser Back" button)
+  forward: 16  //  5th button (typically the "Browser Forward" button)
+}
 
 import './EditMap.css'
 
-const MAX_ZOOM = 10
-const MIN_ZOOM = 0.2
+const MAX_ZOOM = 10 // scale
+const MIN_ZOOM = 0.2 // scale
+const ZOOM_STEP = 0.1 // @golds - create an Array with possible zoom options - like in editGraphics?
+
+
+const DEFAULT_PREVIEW_ANGLE_X = 5 // degrees on x axis in 3d preview
+const DEFAULT_PREVIEW_ANGLE_Y = 15 // degrees on y axis in 3d preview
+const MAX_ANGLE_Y_IN_3D_VIEW = 60 // max degrees on y axis in 3d preview
+const DEFAULT_DISTANCE_BETWEEN_LAYERS = 20 // default distance between layers in 3d preview - can be adjusted with Alt + scroll at runtime
+const DEFAULT_DISTANCE_FROM_CAMERA = 300 // distance from camera on z axis in 3d review
+
+const THUMBNAIL_WIDTH = SpecialGlobals.thumbnail.width
+const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
 
 export default class MapArea extends React.Component {
 
@@ -29,9 +50,9 @@ export default class MapArea extends React.Component {
     super(props)
 
     this.preview = {
-      x: 5, // angle on x axis
-      y: 15, // angle on y axis
-      sep: 20 // layer separation pixels
+      x: DEFAULT_PREVIEW_ANGLE_X, // angle on x axis
+      y: DEFAULT_PREVIEW_ANGLE_Y, // angle on y axis
+      sep: DEFAULT_DISTANCE_BETWEEN_LAYERS // layer separation pixels
     }
     this.state = {
       isPlaying: false
@@ -72,7 +93,7 @@ export default class MapArea extends React.Component {
 
     // prevent IE scrolling thingy
     this.globalIEScroll = (e) => {
-      if (e.buttons == 4) {
+      if (e.buttons == MOUSE_BUTTONS.middle) {
         e.preventScrolling && e.preventScrolling()
         // e.stopPropagation() - this will eat up all events
         e.preventDefault()
@@ -180,7 +201,7 @@ export default class MapArea extends React.Component {
 
   /* import and conversion */
   xmlToJson (xml) {
-    window.xml = xml
+    // window.xml = xml
   }
   handleFileByExt_tmx (name, buffer) {
     // https://github.com/inexorabletash/text-encoding
@@ -195,11 +216,7 @@ export default class MapArea extends React.Component {
   handleFileByExt_json (name, buffer) {
     const jsonString = (new TextDecoder).decode(new Uint8Array(buffer))
     const newData = JSON.parse(jsonString)
-
-
-
     this.props.updateMapData(newData)
-
     //this.updateImages()
   }
   // TODO: move api links to external resource?
@@ -264,7 +281,8 @@ export default class MapArea extends React.Component {
   resize (newSize = this.data) {
     this.data.width = newSize.width
     this.data.height = newSize.height
-    this.props.saveForUndo("Resize map")
+    // Disabled until fixed
+    // this.props.saveForUndo("Resize map")
     this.data.layers.forEach((l) => {
       if(!LayerTypes.isTilemapLayer(l.type)){
         return;
@@ -387,13 +405,14 @@ export default class MapArea extends React.Component {
 
   resetPreview() {
 
-    this.preview.x = 5
-    this.preview.y = 15
+    this.preview.x = DEFAULT_PREVIEW_ANGLE_X
+    this.preview.y = DEFAULT_PREVIEW_ANGLE_Y
 
     this.adjustPreview()
   }
 
   moveCamera (e) {
+
     // special zoom case
     if(e.touches && e.touches.length > 1){
       // TODO: probably better would be interpolate between moving points and set distance according moving finger???
@@ -408,7 +427,6 @@ export default class MapArea extends React.Component {
       this.doCameraZoom( this.initialZoom - (this.startDistance - dist) / this.startDistance, midx, midy)
       return
     }
-
     const px = e.pageX === void(0) ? e.touches[0].pageX : e.pageX
     const py = e.pageY === void(0) ? e.touches[0].pageY : e.pageY
 
@@ -419,8 +437,14 @@ export default class MapArea extends React.Component {
       }
       return
     }
+
     this.camera.x -= (this.lastEvent.pageX - px) / this.camera.zoom
     this.camera.y -= (this.lastEvent.pageY - py) / this.camera.zoom
+    /*
+    if(e.ctrlKey){
+      this.camera.x = Math.round(this.camera.x / this.data.tilewidth) * this.data.tilewidth
+      this.camera.y = Math.round(this.camera.y / this.data.tileheight) * this.data.tileheight
+    }*/
     this.lastEvent.pageX = px
     this.lastEvent.pageY = py
 
@@ -438,16 +462,18 @@ export default class MapArea extends React.Component {
     this.doCameraZoom(newZoom, px, py)
   }
 
+  zoomIn(){
+    this.doCameraZoom(this.camera.zoom + ZOOM_STEP, this.camera.width * 0.5, this.camera.height * 0.5) // or 0,0 would be better?
+  }
+  zoomOut(){
+    this.doCameraZoom(this.camera.zoom - ZOOM_STEP, this.camera.width * 0.5, this.camera.height * 0.5) // or 0,0 would be better?
+  }
   doCameraZoom(newZoom, pivotX, pivotY){
-
 
     const zoom = Math.max(Math.min(newZoom, MAX_ZOOM), MIN_ZOOM)
 
-
     if(pivotX || pivotY){
-      // .getBoundingClientRect(); returns width with transformations - that is not what is needed in this case
-
-      const bounds = this.refs.mapElement
+      const bounds = this.refs.mapElement // .getBoundingClientRect(); returns width with transformations - that is not what is needed in this case
 
       const ox = pivotX / bounds.offsetWidth
       const oy = pivotY / bounds.offsetHeight
@@ -460,9 +486,7 @@ export default class MapArea extends React.Component {
 
       this.camera.x -= (width - newWidth) * ox
       this.camera.y -= (height - newHeight) * oy
-
     }
-
 
     this.camera.zoom = zoom
     this.redraw()
@@ -490,7 +514,7 @@ export default class MapArea extends React.Component {
   adjustPreview () {
     if (this.props.isPlaying)
       return
-    
+
     if (!this.data.layers)
       this.data.layers = []
 
@@ -512,16 +536,22 @@ export default class MapArea extends React.Component {
         return
       }
 
+      // 360 - full circle
+      // 90 - right angle
+      // 180 - straight angle
+      // 270 - opposite right angle
+
       const tr = this.preview
       tr.x = tr.x % 360
       tr.y = tr.y % 360
 
       l.refs.layer.style.transform = 'perspective(2000px) rotateX(' + this.preview.x + 'deg) ' +
         'rotateY(' + this.preview.y + 'deg) rotateZ(0deg) ' +
-        'translateZ(-' + ((tot - z) * tr.sep + 300) + 'px)'
+        'translateZ(-' + ((tot - z) * tr.sep + DEFAULT_DISTANCE_FROM_CAMERA) + 'px)'
       const ay = Math.abs(tr.y)
       const ax = Math.abs(tr.x)
 
+      // adjust z index based on angles vs screen
       if (ay > 90 && ay < 270 && ax > 90 && ax < 270)
         l.refs.layer.style.zIndex = -i
       else if (ay > 90 && ay < 270 || ax > 90 && ax < 270)
@@ -534,11 +564,11 @@ export default class MapArea extends React.Component {
 
 
     const baseWidth = this.refs.mapElement.parentElement.offsetWidth
-    const maxAngle = 60 // 90 will make map 2x width
+    const maxAngle = MAX_ANGLE_Y_IN_3D_VIEW // 90 will make map 2x width
     // resize map to show content which is further - depending on angle
     if(this.preview.y > 0 && this.options.preview) {
       const inc = this.preview.y > maxAngle ? maxAngle : this.preview.y
-      const w = baseWidth / Math.cos(inc * Math.PI / 180)
+      const w = baseWidth / Math.cos(inc * Math.PI / 180) // TODO: fix this formula
       this.refs.mapElement.style.width = w + "px"
     }
     else{
@@ -561,7 +591,12 @@ export default class MapArea extends React.Component {
 
   /* events */
   handleMouseMove (e) {
-    if (this.props.isPlaying || this.props.isLoading || !this.isMouseDown)
+    if(this.props.isPlaying || this.props.isLoading){
+      return
+    }
+
+    this.refs.positionInfo && this.refs.positionInfo.forceUpdate()
+    if (!this.isMouseDown)
       return
 
 
@@ -570,19 +605,23 @@ export default class MapArea extends React.Component {
     // https://msdn.microsoft.com/en-us/library/ms536947(v=vs.85).aspx
 
     // it seems that IE and chrome reports "buttons" correctly
-    // console.log(e.buttons)
     // 1 - left; 2 - right; 4 - middle + combinations
     // we will handle this => no buttons == touchmove event
     const editMode = this.props.getMode()
     if(e.buttons === void(0) && editMode === EditModes.view || (e.touches && e.touches.length > 1) ){
       this.moveCamera(e)
     }
-    else if (this.options.preview && (e.buttons == 4))
+    else if (this.options.preview && (e.buttons == MOUSE_BUTTONS.middle))
       this.movePreview(e)
-    else if (e.buttons == 2 || e.buttons == 4 || e.buttons == 2 + 4 || (e.buttons == 1 && editMode === EditModes.view)){
+    else if (e.buttons == MOUSE_BUTTONS.right
+              || e.buttons == MOUSE_BUTTONS.middle
+              || e.buttons == MOUSE_BUTTONS.right + MOUSE_BUTTONS.middle
+              || ( e.buttons == MOUSE_BUTTONS.left && editMode === EditModes.view )
+    )
+    {
       this.moveCamera(e)
     }
-    this.refs.positionInfo && this.refs.positionInfo.forceUpdate()
+
   }
 
   handleMouseUp (e) {
@@ -619,6 +658,9 @@ export default class MapArea extends React.Component {
     if (this.props.isPlaying)
       return
 
+    if(!e.shiftKey){
+      return
+    }
     e.preventDefault()
     if (e.altKey) {
       this.preview.sep += e.deltaY < 0 ? 1 : -1
@@ -629,12 +671,11 @@ export default class MapArea extends React.Component {
       return
     }
 
-    const step = 0.1
     if (e.deltaY < 0)
-      this.zoomCamera(this.camera.zoom + step, e)
+      this.zoomCamera(this.camera.zoom + ZOOM_STEP, e)
     else if (e.deltaY > 0) {
-      if (this.camera.zoom > step * 2)
-        this.zoomCamera(this.camera.zoom - step, e)
+      if (this.camera.zoom > ZOOM_STEP * 2)
+        this.zoomCamera(this.camera.zoom - ZOOM_STEP, e)
     }
   }
 
@@ -706,6 +747,7 @@ export default class MapArea extends React.Component {
   redraw () {
     this.redrawLayers()
     this.redrawGrid()
+    this.redrawMask()
   }
 
   redrawGrid () {
@@ -717,6 +759,10 @@ export default class MapArea extends React.Component {
       layer.adjustCanvas()
       layer.draw()
     })
+  }
+
+  redrawMask () {
+    this.refs.mask && this.refs.mask.draw()
   }
 
   // RAF calls this function
@@ -762,17 +808,17 @@ export default class MapArea extends React.Component {
 
     this.update()
   }
-  generatePreviewAndSaveIt(){
+  generatePreviewAndSaveIt(data, reason){
     window.requestAnimationFrame(() => {
-      const preview = this.generatePreview()
-      this.props.saveThumbnail(preview)
+      const thumbnail = this.generatePreview()
+      this.props.saveThumbnail(data, reason, thumbnail)
     })
   }
   // find out correct thumbnail size
   generatePreview() {
     const canvas = document.createElement('canvas')
-    canvas.width = 200
-    canvas.height = 150
+    canvas.width = THUMBNAIL_WIDTH
+    canvas.height = THUMBNAIL_HEIGHT
     const ctx = canvas.getContext('2d')
     let ratio
 
@@ -799,24 +845,7 @@ export default class MapArea extends React.Component {
   // render related methods
   getInfo() {
     const layer = this.getActiveLayer()
-    let st = ''
-    this.collection.forEach((t) => {
-      st += ', ' + t.gid
-    })
-    st = st.substr(2)
-    let info = layer ? layer.getInfo() : ''
-    info = info ? ': ' + info : ''
-    return (
-      <div>
-        <div>
-          { layer ? layer.data.name + ' Layer'+ info : '' }
-        </div>
-        <div>
-          {Plural.numStr2(this.collection.length, 'Selected Tile')}
-          {st}
-        </div>
-      </div>
-    )
+    return layer ? layer.getInfo() : null
   }
 
   getNotification(){
@@ -893,8 +922,9 @@ export default class MapArea extends React.Component {
         onContextMenu={e => { e.preventDefault(); return false;}}
         onMouseDown={this.handleMouseDown}
         onTouchStart={this.handleMouseDown}
-        style={{ height: 640 + 'px', position: 'relative', margin: '10px 0' }}>
+        style={{ height: '680px', position: 'relative', margin: '10px 0' }}>
         {layers}
+        <MaskLayer map={this} layer={this.layers[this.props.activeLayer]} ref='mask' style={{opacity: 0.9}} />
       </div>
     )
   }

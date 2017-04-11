@@ -1,4 +1,5 @@
 import AudioConverter from '../../../lib/AudioConverter.js'
+import {mgbAjax} from '/client/imports/helpers/assetFetchers'
 
 const bufferCache = {};
 const BufferLoader = (context) => {
@@ -24,6 +25,28 @@ const BufferLoader = (context) => {
                     return;
                 };
 
+              mgbAjax(url, (err, content) => {
+                if(err){
+                  rej(err)
+                  return
+                }
+                const converter = new AudioConverter(context)
+                converter.blobToDataURL(content, (dataUri) => {
+                  converter.dataUriToBuffer(dataUri, (buffer) => {
+                    newInstrument.buffers[sound.id] = buffer
+                    bufferCache[url] = buffer
+                    newInstrumentPack[index] = newInstrument
+                    bufferCount++
+                    if(bufferCount === bufferAmount) {
+                      res()
+                    }
+                  }, true)
+                })
+              }, null, (request) => {
+                request.responseType = "blob";
+              })
+
+              return
                 // Load buffer asynchronously
                 const request = new XMLHttpRequest();
                 request.open("GET", url, true);
@@ -78,8 +101,6 @@ const BufferLoader = (context) => {
                     //     }
                     // );
 
-
-
                     // context.decodeAudioData(
                     //     request.response,
                     //     (buffer) => {
@@ -100,12 +121,6 @@ const BufferLoader = (context) => {
                     //         alert('decode audio error')
                     //     }
                     // );
-
-
-
-
-
-
 
                     // function syncStream(node){ // should be done by api itself. and hopefully will.
                     //     var buf8 = new Uint8Array(node.buf); 
@@ -157,8 +172,6 @@ const BufferLoader = (context) => {
                     // node.sync = 0
                     // node.retry = 0 
                     // decode(node)
-
-
 
                 }
 
@@ -212,10 +225,12 @@ const playSound = (context, buffer, time, duration, volume, pitchAmount = 0) => 
     const gainNode = context.createGain();
     const durationMultiplier = getPitchPlaybackRatio(pitchAmount);
 
+    console.log(volume)
+    gainNode.gain.value = volume;
+
     source.connect(gainNode);
 
     gainNode.connect(context.destination);
-    gainNode.gain.value = volume;
 
     // source.pitch.value = pitchAmount;
     source.playbackRate.value = durationMultiplier;

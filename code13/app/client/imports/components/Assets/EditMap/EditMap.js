@@ -42,7 +42,6 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import MapArea from './MapArea.js'
 
-import InfoTool from '../Common/Map/Tools/InfoTool.js'
 import MapToolbar from './Tools/MapToolbar.js'
 
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
@@ -78,6 +77,13 @@ export default class EditMap extends React.Component {
     super(props)
     registerDebugGlobal( 'editMap', this, __filename, 'Active Instance of Map editor')
 
+    this.layerProps = this.enableTrait(LayerProps)
+    this.tilesetProps = this.enableTrait(TilesetProps)
+    this.mapProps = this.enableTrait(MapProps)
+    this.toolbarProps = this.enableTrait(ToolbarProps)
+    this.propertiesProps = this.enableTrait(PropertiesProps)
+    this.objectListProps = this.enableTrait(ObjectListProps)
+
     this.state = {
       isLoading: true,
       activeLayer: 0,
@@ -104,19 +110,25 @@ export default class EditMap extends React.Component {
     else{
       this.createNewMap()
     }
-
-    this.lastSave = this.mgb_content2
-
-    this.layerProps = this.enableTrait(LayerProps)
-    this.tilesetProps = this.enableTrait(TilesetProps)
-    this.mapProps = this.enableTrait(MapProps)
-    this.toolbarProps = this.enableTrait(ToolbarProps)
-    this.propertiesProps = this.enableTrait(PropertiesProps)
-    this.objectListProps = this.enableTrait(ObjectListProps)
   }
 
+  get preventUpdates(){
+    return this._preventUpdates
+  }
+  set preventUpdates(v){
+    this._preventUpdates = v
+    // console.log(v ? "Preventing updates: STARTED" : "Preventing updates: STOPPED")
+    // failsafe
+    /*
+    window.setTimeout(() => {
+      this._preventUpdates && console.error("Preventing updates for too long period of time.. unlocking map. DEBUG THIS!")
+
+      //this._preventUpdates = false
+    }, 5000)
+    */
+  }
   getImageData(){
-    return this.props.asset.thumbnail
+    return this.refs.map.generatePreview()
   }
 
   setInitialStateFromContent(){
@@ -148,6 +160,10 @@ export default class EditMap extends React.Component {
   createNewMap(){
     this.mgb_content2 = TileHelper.genNewMap(10, 10)
     this.cache = new Cache(this.mgb_content2, () => {
+      // unmounted during cache fetching
+      if(!this.cache){
+        return
+      }
       this.quickSave("New Map data")
       // this is called in the construct - and callback will be instant
       this.setState({isLoading: false})
@@ -199,18 +215,39 @@ export default class EditMap extends React.Component {
     this.doSnapshotActivity()
   }
 
+  shouldComponentUpdate() {
+    return !this.preventUpdates
+  }
+
   componentWillReceiveProps(newp){
-    if(newp.asset.content2) {
+    // new props will come in after we will save just edited data - throw away data this time
+    if(this.preventUpdates){
+      return
+    }
+    // sometimes we are getting empty c2 on new maps
+    if(newp.asset.content2 && Object.keys(newp.asset.content2).length ) {
       this.setState({isLoading: true})
       // or new Cache - if immutable is preferred - and need to force full cache update
       this.cache.update(newp.asset.content2, () => {
         this.setState({isLoading: false})
       })
+      if(!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave){
+        if(this.props.canEdit){
+          const oldMeta = this.mgb_content2.meta
+          this.mgb_content2 = newp.asset.content2
+          // don't update active tool / camera position etc - because it's annoying
+          this.mgb_content2.meta = oldMeta
+        }
+        else{
+          this.mgb_content2 = newp.asset.content2
+        }
+      }
     }
   }
 
   componentWillUnmount(){
     this.cache && this.cache.cleanUp()
+    this.cache = null
   }
 
   enableTrait(trait) {
@@ -226,6 +263,8 @@ export default class EditMap extends React.Component {
   }
 
   saveForUndo(reason = '' , skipRedo = false) {
+    // this will prevent update between editing step and next save
+    this.preventUpdates = true
     if (this.ignoreUndo)
       return
     const toSave = { data: this.copyData(this.mgb_content2), reason }
@@ -263,7 +302,7 @@ export default class EditMap extends React.Component {
     // we need to set state here because handle save callback will match with last save and nothing will get updated
 
     this.mgb_content2 = data
-    this.refs.map && this.refs.map.clearSelection()
+    // this.refs.map && this.refs.map.clearSelection() // Keep selected tile after undo (productivity improvement for undoing tile place action)
 
     this.setState({content2: data})
   }
@@ -299,19 +338,20 @@ export default class EditMap extends React.Component {
   }
 
   handleSave (data, reason, thumbnail, skipUndo = false) {
+    this.preventUpdates = false
     if(!this.props.canEdit){
       this.props.editDeniedReminder()
       return
     }
     // isn't it too late to save for undo?
-    if(!skipUndo && !_.isEqual(this.lastSave, data)){
+    /*if(!skipUndo && !_.isEqual(this.lastSave, data)){
       this.saveForUndo(reason)
-    }
+    }*/
     // make sure we have thumbnail
-    if(!thumbnail && this.refs.map){
-      this.refs.map.generatePreviewAndSaveIt()
-    }
-    this.props.handleContentChange(data, thumbnail, reason)
+    if(!thumbnail && this.refs.map)
+      this.refs.map.generatePreviewAndSaveIt(data, reason)
+    else
+      this.props.handleContentChange(data, thumbnail, reason)
   }
 
   quickSave(reason = "noReason", skipUndo = true, thumbnail = null){
@@ -342,6 +382,7 @@ export default class EditMap extends React.Component {
             options={this.options}
             undoSteps={this.mgb_undo}
             redoSteps={this.mgb_redo}
+            ref='toolbar'
           />
           <MapArea
             {...this.mapProps}
@@ -373,27 +414,27 @@ export default class EditMap extends React.Component {
             tilesets={c2.tilesets}
             options={this.options}
             />
-            <br />
-            <Properties
-              {...this.propertiesProps}
-              data={this.mgb_content2}
+          <br />
+          <Properties
+            {...this.propertiesProps}
+            data={this.mgb_content2}
 
-              map={{
-                width: c2.width,
-                height: c2.height,
-                tilewidth: c2.tilewidth,
-                tileheight: c2.tileheight
-              }}
-              tileset={c2.tilesets[this.state.activeTileset]}
-              layer={c2.layers[this.state.activeLayer]}
-              />
-            <br />
-            <ObjectList
-              {...this.objectListProps}
-              activeObject={this.state.activeObject}
-              data={this.mgb_content2}
-              layer={c2.layers[this.state.activeLayer]}
-              />
+            map={{
+              width: c2.width,
+              height: c2.height,
+              tilewidth: c2.tilewidth,
+              tileheight: c2.tileheight
+            }}
+            tileset={c2.tilesets[this.state.activeTileset]}
+            layer={c2.layers[this.state.activeLayer]}
+            />
+          <br />
+          <ObjectList
+            {...this.objectListProps}
+            activeObject={this.state.activeObject}
+            data={this.mgb_content2}
+            layer={c2.layers[this.state.activeLayer]}
+            />
         </div>
       </div>
     )

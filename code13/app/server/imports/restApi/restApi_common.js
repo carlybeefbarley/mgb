@@ -1,19 +1,42 @@
-import { RestApi } from './restApi'
+import { RestApi, emptyPixel, red64x64halfOpacity } from './restApi'
 import { Azzets }  from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
+import { genAPIreturn } from '/server/imports/helpers/generators'
 
-
+RestApi.addRoute('error', { authRequired: false }, {
+  get: function () {
+    return this.request.headers
+  }
+})
+RestApi.addRoute('make-error', { authRequired: false }, {
+  get: function () {
+    return {
+      statusCode: 503,
+      headers:{
+        location:`${process.env.ROOT_URL}${this.request.url.startsWith('/') ? this.request.url : '/'+this.request.url}`
+      },
+      body: {}
+    }
+  }
+})
 RestApi.addRoute('asset/:id', { authRequired: false }, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id)
-    return asset ? asset : {}
+    return genAPIreturn(this, asset)
+  }
+})
+
+RestApi.addRoute('asset/content2/:id', { authRequired: false }, {
+  get: function () {
+    var asset = Azzets.findOne(this.urlParams.id, {content2: 1})
+    return genAPIreturn(this, asset, asset ? asset.content2 : {})
   }
 })
 
 RestApi.addRoute('asset/full/:user/:name', { authRequired: false }, {
   get: function () {
     var asset = Azzets.findOne({ name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false })
-    return asset ? asset : { statusCode: 404, body: {} }
+    return genAPIreturn(this, asset)
   }
 })
 
@@ -21,7 +44,7 @@ RestApi.addRoute('asset/json/:id', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id)
     const src = asset.content2.src ? asset.content2.src : asset.content2
-    return asset ? JSON.parse(src) : { statusCode: 404, body: {} }
+    return genAPIreturn(this, asset, () => asset ? JSON.parse(src) : null)
   }
 })
 
@@ -29,7 +52,7 @@ RestApi.addRoute('asset/json/:id', {authRequired: false}, {
 RestApi.addRoute('asset/raw/:id', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id)
-    return asset ? asset : { statusCode: 404, body: {} }
+    return genAPIreturn(this, asset)
   }
 })
 
@@ -37,14 +60,7 @@ RestApi.addRoute('asset/raw/:id', {authRequired: false}, {
 RestApi.addRoute('asset/id/:user/:name', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false}, {fields: {_id: 1}});
-    if (asset)
-    {
-      return asset._id
-    }
-    else {
-      // without body returns 200 and json: {statusCode: 404}
-      return {statusCode: 404, body:{}};
-    }
+    return genAPIreturn(this, asset, asset ? asset._id : null)
   }
 })
 
@@ -52,31 +68,60 @@ RestApi.addRoute('asset/id/:user/:name', {authRequired: false}, {
 RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id)
-    // Return an empty image if there's no thumbnail yet. This is a transparent 1x1 GIF from https://css-tricks.com/snippets/html/base64-encode-of-1x1px-transparent-gif/
-    var emptyPixel = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" //1x1GIF
-
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'image/png'
-//      'Cache-Control': 'max-age=5, private'  // Max-age is in seconds?   seems to be over-active :()
-      },
-      body: dataUriToBuffer(asset && asset.thumbnail ?  asset.thumbnail : emptyPixel )
-    }
+    if (asset && asset.suIsBanned)
+      return genAPIreturn(this, asset, () => dataUriToBuffer(red64x64halfOpacity), { 'Content-Type': 'image/png' } )
+    return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ), {
+      'Content-Type': 'image/png'
+    })
   }
 })
 RestApi.addRoute('asset/thumbnail/png/:user/:name', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false})
-    // Return an empty image if there's no thumbnail yet. This is a 1x1 green pixel from http://png-pixel.com/
-    var emptyPixel = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'image/png'
-//      'Cache-Control': 'max-age=5, private'  // Max-age is in seconds?   seems to be over-active :()
-      },
-      body: dataUriToBuffer(asset && asset.thumbnail ?  asset.thumbnail : emptyPixel )
-    }
+    if (asset && asset.suIsBanned)
+      return genAPIreturn(this, asset, () => dataUriToBuffer(red64x64halfOpacity), { 'Content-Type': 'image/png' } )
+    return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ?  asset.thumbnail : emptyPixel ), {
+      'Content-Type': 'image/png'
+    })
+  }
+})
+
+RestApi.addRoute('asset/cached-thumbnail/png/:expires/:id', {authRequired: false}, {
+  get: function () {
+    const asset = Azzets.findOne(this.urlParams.id)
+    const expires = this.urlParams.expires || 30
+    if (asset && asset.suIsBanned)
+      return genAPIreturn(this, asset, () => dataUriToBuffer(red64x64halfOpacity), { 'Content-Type': 'image/png' } )
+    return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ), {
+      'Content-Type': 'image/png',
+      'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`
+    })
+  }
+})
+RestApi.addRoute('asset/cached-thumbnail/png/:expires/:user/:name', {authRequired: false}, {
+  get: function () {
+    var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false})
+    const expires = this.urlParams.expires || 30
+    return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ), {
+      'Content-Type': 'image/png',
+      'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`
+    })
+  }
+})
+
+// mainly used for autocomplete in the codeEditor, but can be used also for something else
+RestApi.addRoute('assets/:kind/:owner/', {authRequired: false}, {
+  get: function () {
+    const assets = Azzets.find({
+      dn_ownerName: this.urlParams.owner,
+      kind: this.urlParams.kind,
+      name: new RegExp('^'+this.queryParams.query, 'i'),
+      isDeleted: false
+    }, {
+      fields: {name: 1, text: 1}
+    })
+    return genAPIreturn(this, null, () => assets.map(a => {
+      return {text: a.name, desc: a.text, id: a._id}
+    }))
   }
 })

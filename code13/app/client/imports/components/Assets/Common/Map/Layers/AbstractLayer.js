@@ -48,6 +48,7 @@ export default class AbstractLayer extends React.Component {
     this.adjustCanvas()
     const canvas = this.refs.canvas
     this.ctx = canvas.getContext('2d')
+    this.ctx.imageSmoothingEnabled = false
 
     window.addEventListener('mouseup', this._mup)
     window.addEventListener('touchend', this._mup)
@@ -130,9 +131,18 @@ export default class AbstractLayer extends React.Component {
     }
   }
 
-  draw () {
-    this.isDirty = true
+  queueDraw (timeout) {
+    if (this.nextDraw <= this.now || this.nextDraw > this.now + timeout) {
+      this.nextDraw = this.now + timeout
+    }
+    if(this.isDirtySelection){
+      this.nextDraw = 0
+    }
   }
+  draw () {
+    this.nextDraw = 0
+  }
+
   // abstract
   _draw (timestamp) {}
 
@@ -148,8 +158,6 @@ export default class AbstractLayer extends React.Component {
 
     this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
     this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
-
-    console.log(e.type, this.mouseInWorldX, this.mouseInWorldX)
 
     this.pointerPosX = this.mouseInWorldX
     this.pointerPosY = this.mouseInWorldY
@@ -169,8 +177,6 @@ export default class AbstractLayer extends React.Component {
 
     this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
     this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
-
-    console.log(e.type, this.mouseInWorldX, this.mouseInWorldX)
 
     this.pointerPosX = this.mouseInWorldX
     this.pointerPosY = this.mouseInWorldY
@@ -199,7 +205,6 @@ export default class AbstractLayer extends React.Component {
     this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
     this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
 
-    //console.log(this.mouseInWorldX, this.mouseInWorldX)
     if (this.mouseDown) {
       this.movementX += (this.pointerMovementX / this.camera.zoom)
       this.movementY += (this.pointerMovementY / this.camera.zoom)

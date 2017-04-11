@@ -7,14 +7,14 @@ var Otito = function(obj, meta, cb = void(0), options = Otito.options, parent = 
 
   this.record = {};
   this._meta = {};
-  
+
   if(options && options != Otito.options){
     this.options = Object.create(Otito.options);
     for(var i in options){
       this.options[i] = options[i];
     }
   }
-  
+
   this.html = document.createElement("div");
   this.html.className = this.options.mainClassName;
 
@@ -29,43 +29,43 @@ Otito.FLAGS = {
 Otito.options = {
   precision: 10000,
   arrayClassName: "array content",
-  
+
   mainClassName: "compact",
-  
+
   headTagName: "div",
   headClassName: "title",
-  
+
   folderTagName: "div",
   folderClassName: "ui accordion",
   folderOpenClassName: "active",
-  
+
   labelTagName: "div",
   labelClassName: "column label",
 
   inputWrapperClassName: "ui input fluid",
 
   removeLinkClassName: "delete remove icon",
-  
+
   headlessClassName: "headless"
 };
 Otito.type = {
   bool: "bool", boolean: "boolean",
-  
+
   int: "int", uint: "uint",
-  
+
   float: "float", number: "number",
-  
+
   text: "text", string: "string",
   textarea: "textarea",
-  
+
   color: "color",
-  
+
   list: "list",
   array: "array",
-  
+
   upload: "upload",
   hidden: "hidden",
-  
+
   link: "link",
   folder: "folder"
 };
@@ -83,16 +83,16 @@ Otito.prototype = {
     if(object != void(0)){
       this.object = object;
     }
-    
+
     if(meta !== void(0) && meta != this.meta) {
       this._meta = this.meta;
       this.meta = meta;
       this._cleanup();
     }
-    
+
     this._parse();
   },
-  
+
   _parse: function(){
     if(!this.meta){
       console.warn("Meta is empty - nothing to do!");
@@ -104,7 +104,7 @@ Otito.prototype = {
       this._cleanup();
     }
   },
-  
+
   _basicToMeta: function(obj, meta){
     var val = obj[meta];
     obj[meta] = {
@@ -115,7 +115,7 @@ Otito.prototype = {
   },
   _normalizeMeta: function(obj, meta){
     var type = typeof obj[meta];
-    
+
     var make;
     if(type == "string"){
       obj[meta] = {
@@ -125,21 +125,21 @@ Otito.prototype = {
     if(type == "function") {
       obj[meta]._make = obj[meta];
     }
-    
+
     if(typeof obj[meta]._make === "function"){
       make = obj[meta]._make;
       obj[meta] = make(this, this.parent.object);
-      
+
       if(!obj[meta]._make){
         obj[meta]._make = make;
       }
     }
-    
+
     if( !(obj[meta] instanceof Object) ){
       obj[meta] = this._basicToMeta(obj, meta);
       return;
     }
-    
+
     var keys = Object.keys(obj[meta]);
     var submeta, key;
     for(var i=0; i<keys.length; i++){
@@ -165,7 +165,7 @@ Otito.prototype = {
       }
     }
   },
-  
+
   _updateHTML: function(){
     // final member
     var metatype = this.meta._type;
@@ -183,7 +183,7 @@ Otito.prototype = {
     var meta, key, f, i;
     for(i=0; i<keys.length; i++){
       key = keys[i];
-      
+
       // definition key
       if(key == "_type" || key == "_make"){
         continue;
@@ -194,15 +194,15 @@ Otito.prototype = {
       }
 
       meta = this.meta[key];
-      
+
       /* workaround for folders - as they don't get pass _type checks */
       if(! (meta instanceof Object) ){
         meta = this._basicToMeta(this.meta, key);
       }
-      
+
       // maybe simple values
       if(meta._type){
-        
+
         if(meta._type == "folder"){
           f = this._updateObjectRecord(meta.content, key, this.object);
           var cls = (this.options.folderClassName + " " + (meta.className ? meta.className : "") + " " + (meta.__className ?  meta.__className : "")).split(" ");
@@ -222,12 +222,12 @@ Otito.prototype = {
           this._addArray(meta, key);
           continue;
         }
-        
+
         if(meta._type == "hidden"){
           this._updateInputRecord(meta, key);
           continue;
         }
-        
+
         if(this.object[key] === void(0)){
           if(typeof this.object != "object"){
             this.object = {};
@@ -237,7 +237,7 @@ Otito.prototype = {
         this._updateInputRecord(meta, key);
         continue;
       }
-      
+
       if(Array.isArray(meta)){
         console.log("ARRAY");
       }
@@ -250,7 +250,7 @@ Otito.prototype = {
         this._enableFolderToggle(f, meta);
       }
     }
-    
+
     var next = 0;
     for(i=0; i<keys.length; i++) {
       key = keys[i];
@@ -258,17 +258,17 @@ Otito.prototype = {
       if(!f){
         continue;
       }
-      
+
       // definition key
       if(key == "_type" || key == "_make"){
         continue;
       }
-      
+
       // command keys
       if(key.substring(0, 2) == "__"){
         continue;
       }
-      
+
       var out = f.body;
       var index = Array.prototype.indexOf.call(out.parentNode.children, out);
       if(next != index){
@@ -281,7 +281,7 @@ Otito.prototype = {
     }
 
   },
-  
+
   _enableFolderToggle: function(f, meta){
     var that = this;
     f.head.onclick = function(){
@@ -308,12 +308,12 @@ Otito.prototype = {
       rec.body.parentNode.removeChild(rec.body);
       delete this.record[i];
     }
-    
+
     push = this.record["push"];
     if(push){
       this.html.appendChild(push.body);
     }
-    
+
     rec = this._updateObjectRecord({
       push: {
         _type: "link",
@@ -334,7 +334,7 @@ Otito.prototype = {
     rec.body.className="add-more";
     rec.input.html.className = "";
   },
-  
+
   _addArray: function(meta, key){
     if(!this.object[key]){
       this.object[key] = [];
@@ -368,7 +368,7 @@ Otito.prototype = {
         r.body.style.removeProperty("display");
       }
     }
-    
+
     r = this.record[key] || {};
 
 
@@ -383,7 +383,7 @@ Otito.prototype = {
     if(flags & Otito.FLAGS.DYNAMIC){
       r.del = this._createDelete(r.del, meta, key);
     }
-    
+
     if(!this.record[key]){
       if(!(flags & Otito.FLAGS.HEADLESS) && !meta.headless){
         r.body.appendChild(r.head);
@@ -394,7 +394,7 @@ Otito.prototype = {
         r.body.appendChild(r.del);
       }
     }
-    
+
     this.record[key] = r;
     return r;
   },
@@ -438,13 +438,13 @@ Otito.prototype = {
         r.body.style.removeProperty("display");
       }
     }
-    
+
     r = this.record[key] || {};
-    
-    
+
+
     r.body = r.body || document.createElement(this.options.labelTagName);
     r.body.className = this.options.labelClassName;
-    
+
     r.input = this._updateInput(meta, key, r.input);
     if(!meta.headless && !(flags & Otito.FLAGS.HEADLESS)){
       r.head = this._createHead(r.head, meta, key);
@@ -452,16 +452,16 @@ Otito.prototype = {
     else{
       r.body.classList.add(this.options.headlessClassName);
     }
-    
+
     if(flags & Otito.FLAGS.DYNAMIC){
       r.del = this._createDelete(r.del, meta, key);
     }
-    
+
     if(!this.record[key]){
       if(!meta.headless  && !(flags & Otito.FLAGS.HEADLESS)){
         r.body.appendChild(r.head);
       }
-      
+
       r.body.appendChild(r.input);
       this.html.appendChild(r.body);
       if(flags & Otito.FLAGS.DYNAMIC){
@@ -473,7 +473,7 @@ Otito.prototype = {
   },
   _updateInput: function(meta, key, oldInput){
     var input = oldInput;
-    
+
     if(input != void(0)){
       // changed type of simple input
       if(meta._type != input.meta._type){
@@ -495,7 +495,7 @@ Otito.prototype = {
     else{
       input = this._createInput(meta);
     }
-    
+
     if(!input.input.setValue){
       input.input.setValue = this._setValue;
     }
@@ -530,7 +530,7 @@ Otito.prototype = {
     return input;
   },
   _updateChild: function(meta, key, oldChild, objectIn){
-    
+
     var object = objectIn || this.object[key];
     var otito = oldChild || new Otito(object, meta, this.callback, this.options, this.parent);
     if(otito == oldChild){
@@ -543,7 +543,7 @@ Otito.prototype = {
         otito.parent = this.parent;
         oldChild.parentNode.insertBefore(otito.html, oldChild);
         oldChild.parentNode.removeChild(oldChild);
-        
+
       }
       else{
         otito.update(object, meta);
@@ -552,7 +552,7 @@ Otito.prototype = {
     return otito;
   },
   _setValue: function(val){
-    if(val != this.value){
+    if(val !== this.value){
       this.value = val;
     }
   },
@@ -607,7 +607,7 @@ Otito.prototype = {
         };
         input.innerHTML = meta.label || JSON.stringify(meta);
       } break;
-      
+
       case Otito.type.upload: {
         input = document.createElement("input");
         input.type = "file";
@@ -669,22 +669,22 @@ Otito.prototype = {
         input.type = meta._type;
       } break;
     }
-    
+
     var inputType = this._getInputType("meta");
-    
+
     var wrapper = document.createElement("div");
     wrapper.className = this.options.inputWrapperClassName;
     wrapper.input = input;
-    
+
     wrapper.meta = {};
     for(var k in meta){
       wrapper.meta[k] = meta[k];
     }
-    
+
     if(meta.className){
       input.className = meta.className;
     }
-    
+
     wrapper.appendChild(input);
     return wrapper;
   },
@@ -696,7 +696,7 @@ Otito.prototype = {
     else{
       val = value;
     }
-    
+
     switch(meta._type){
       case Otito.type.bool:
       case Otito.type.boolean:
@@ -706,17 +706,17 @@ Otito.prototype = {
         if(val === "false"){
           return false;
         }
-        
+
         return !!val;
-      
+
       case Otito.type.int:
       case Otito.type.uint:
         return parseInt(val,10) || 0;
-      
+
       case Otito.type.float:
       case Otito.type.number:
         return Math.round(parseFloat(val)*this.options.precision)/this.options.precision || 0;
-      
+
       case Otito.type.text:
       case Otito.type.string:
       case Otito.type.textarea:
@@ -724,10 +724,10 @@ Otito.prototype = {
           return val+"";
         }
         return meta.value || "";
-      
+
       case Otito.type.color:
         return val || "#FFFFFF";
-      
+
       case Otito.type.list:
         var tmp = parseInt(val)
         if(isNaN(val) || tmp+"" != val){

@@ -1,25 +1,46 @@
 import { RestApi } from './restApi'
 import { Azzets } from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
-
+import { genAPIreturn } from '/server/imports/helpers/generators'
 
 // get music by id
 RestApi.addRoute('asset/music/:id/music.mp3', {authRequired: false}, {
   get: function () {
     "use strict";
-    let music = Azzets.findOne(this.urlParams.id)
+    const asset = Azzets.findOne(this.urlParams.id)
 
-    if(music) {     
+    if(asset) {
       const regex = /^data:.+\/(.+);base64,(.*)$/;
-      const matches = music.content2.dataUri.substring(0, 100).match(regex)
+      const matches = asset.content2.dataUri.substring(0, 100).match(regex)
       const extension = matches[1]
-      return {
-        statusCode: 200,
-        headers: {
-          'Content-Type': 'audio/'+extension
-        },
-        body: dataUriToBuffer(music.content2.dataUri)
-      }
+
+      return genAPIreturn(this, asset, () => dataUriToBuffer(asset.content2.dataUri), {
+        'Content-Type': 'audio/'+extension
+      })
+    }
+    else
+      return { statusCode: 404 }
+  }
+})
+// get music by username / assetname
+RestApi.addRoute('asset/music/:user/:name/music.mp3', {authRequired: false}, {
+  get: function () {
+    "use strict";
+    const asset = Azzets.findOne({
+      kind: "music",
+      name: this.urlParams.name,
+      dn_ownerName: this.urlParams.user,
+      isDeleted: false
+    })
+
+    if(asset) {
+      const regex = /^data:.+\/(.+);base64,(.*)$/;
+      const matches = asset.content2.dataUri.substring(0, 100).match(regex)
+      const extension = matches[1]
+
+      return genAPIreturn(this, asset, () => dataUriToBuffer(asset.content2.dataUri), {
+        'Content-Type': 'audio/'+extension
+      })
     }
     else
       return { statusCode: 404 }

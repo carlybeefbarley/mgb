@@ -1,12 +1,39 @@
 #gameWrapper {
-  
+
 }
 
 #gameWrapper.popup {
   position: absolute;
-  z-index: 10; 
+  z-index: 10;
   bottom: 0;
   right: 0;
-  background-color: white; 
+  background-color: white;
   padding: 0;
+}
+.CodeMirror .highlight {
+  background-color: #feff99;
+}
+
+
+#mgb-codeChallenges code {
+  font-family: courier,monospace;
+  font-size: .75rem;
+  line-height: .75rem;
+  white-space: normal;
+  color: #C25;
+  background-color: #f7f7f9;
+  border: 1px solid #e1e1e8;
+  border-radius: 3px;
+  padding: 0 3px;
+  white-space:pre;
+}
+
+#mgb-codeChallenges blockquote {
+  font-family: courier,monospace;
+  padding: 5px;
+  font-size: .75rem;
+  line-height: 1.15rem;
+  background-color: #fbfaf8;
+  border: 1px solid rgba(0,0,0,.15);
+  white-space:pre;
 }

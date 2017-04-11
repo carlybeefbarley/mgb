@@ -1,63 +1,49 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Grid, Header, Image, Icon } from 'semantic-ui-react'
-import { getProjectAvatarUrl } from '/imports/schemas/projects'
+import { Card, Grid, Header, Segment } from 'semantic-ui-react'
+import ProjectCard from '/client/imports/components/Projects/ProjectCard'
 import QLink from '/client/imports/routes/QLink'
 
-const SomeProjects = props => {
-  const { user, projects, ownedFlag } = props
-  const Empty = <p>No projects</p>
+const Empty = <Segment basic >No projects</Segment>
 
-  if (!projects) return null
-  if (projects.length === 0) return Empty
-    
-  const retval = projects.map( (project) => {
-    const isOwner = (project.ownerId === props.user._id)
-    const MemberStr = (!project.memberIds || project.memberIds.length === 0) ? "1 Member" : (project.memberIds.length + 1) + " Members"
-    const projImg = getProjectAvatarUrl(project)
+const _wrapStyle = { clear: 'both', flexWrap: 'wrap' }
+const _nowrapStyle = { clear: 'both', flexWrap: 'nowrap', overflowX: 'auto', overflowY: 'hidden', marginBottom: '1em' }
 
+const SomeProjects = ( { user, projects, width,  ownedFlag, wrap, hdr } ) => {
+  const comps = _.compact(projects.map( p => {
+    const isOwner = (p.ownerId === user._id)
     return (isOwner !== ownedFlag) ? null : (
-      <Grid key={project._id}>
-        <Grid.Column width={4}>
-          <Image fluid src={projImg} className='mgb-pixelated'/>
-        </Grid.Column>
-        <Grid.Column width={12}>
-          <Header as='h4'>
-            <QLink to={`/u/${user.profile.name}/project/${project._id}`}>
-              {project.name}&emsp;
-            </QLink> 
-            {
-              isOwner ? 
-              <small>(owner)</small> : 
-              <small><QLink to={`/u/${project.ownerName}`} altTo={`/u/${project.ownerName}/projects`}>@{project.ownerName}</QLink></small>
-            }
-          </Header>
-{ /*      <p title="(Plays counter not yet implemented)">
-            {MemberStr}&emsp;<Icon name='play' />0,000 Plays
-          </p>
-*/ }
-        </Grid.Column>
-      </Grid>
+      <ProjectCard project={p} canEdit={false} key={p._id} />
     )
-  })
-  return retval.length > 0 ? <div>{retval}</div> : Empty
+  }))
+
+  return (
+    <Grid.Row width={width}>
+      <Header as="h2">
+        <QLink to={`/u/${user.profile.name}/projects`}>{hdr} <small>({comps.length})</small></QLink>
+      </Header>
+      <Card.Group style={wrap ? _wrapStyle : _nowrapStyle}>
+        { comps.length ? comps : Empty }
+      </Card.Group>
+    </Grid.Row>
+  )
 }
 
-const UserProjects = (props) => (
-  <Grid.Column width={8}>
-    <Header as="h2">
-      <QLink to={`/u/${props.user.profile.name}/projects`}>Owned Projects</QLink>
-    </Header>
-    <SomeProjects user={props.user} projects={props.projects} ownedFlag={true} />
-    <Header as="h2">
-      <QLink to={`/u/${props.user.profile.name}/projects`}>Member of</QLink>
-    </Header>
-    <SomeProjects user={props.user} projects={props.projects} ownedFlag={false} />
+const _variants = [
+  { ownedFlag: true,  hdr: 'Owned Projects'},
+  { ownedFlag: false, hdr: 'Project Memberships'},
+]
+
+const UserProjects = ( props ) => (
+  <Grid.Column width={props.width}>
+    { _.map( _variants, v => ( <SomeProjects key={v.hdr} {...props} {...v}/> ))  }
   </Grid.Column>
 )
 
 UserProjects.propTypes = {
   user:     PropTypes.object.isRequired,
-  projects: PropTypes.array
+  projects: PropTypes.array,
+  width:    PropTypes.number
 }
 
 export default UserProjects

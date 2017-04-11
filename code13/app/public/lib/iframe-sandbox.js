@@ -38,6 +38,30 @@ window.onload = function() {
   var errorCount = 0;
   var mainWindow = window.parent; // reference to the last poster
 
+  // hook ajax requests - so we can show them to user
+  var origSend = Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, "send")
+  var origOpen = Object.getOwnPropertyDescriptor(XMLHttpRequest.prototype, "open")
+  Object.defineProperties(XMLHttpRequest.prototype, {
+    send: {
+      value: function(){
+        var origOnError = this.onerror
+        this.onerror = function(e){
+          // TODO: HOW TO GET error details ???
+          console.error("Error in the XMLHttpRequest request while loading source:", this.url, e.stack)
+          origOnError && origOnError.call(this, e)
+        }
+        origSend.value.call(this)
+      }
+    },
+    open: {
+      value: function(method, url, async, user, password){
+        this.url = url
+        origOpen.value.call(this, method, url, async, user, password) // no arguments here
+      }
+    }
+  })
+
+
   // here will be stored all imported objects
   var imports = {};
   // SuperSimple implementation for CommonJS like module loading
@@ -82,7 +106,7 @@ window.onload = function() {
         console[stableName] = function(msg) {
           consoleOrigFns[stableName].origFn.apply(this, arguments);
           var args = []
-          for(let i=0; i<arguments.length; i++){
+          for(var i=0; i<arguments.length; i++){
             if(typeof arguments[i] == "object"){
               var cache = [];
               args[i] = JSON.stringify(arguments[i], function (key, value) {
@@ -145,6 +169,11 @@ window.onload = function() {
       return false;
   }
 
+  window.addEventListener("error", function (e) {
+    console.error("Error occurred: " + e.error.message);
+    return false;
+  })
+
   // is it safe to remove?
   function loadScript(url, callback) {
     // Adding the script tag to the head to load it
@@ -198,6 +227,18 @@ window.onload = function() {
 
   function loadScriptFromText(srcText, filename, callback) {
     appendScript(filename, srcText, callback);
+  }
+
+  function sendSizeUpdate(){
+    window.setTimeout(function () {
+      window.parent.postMessage( {
+        mgbCmd: "mgbAdjustIframe",
+        size: {
+          width: document.body.scrollWidth,
+          height: document.body.scrollHeight
+        }
+      }, "*");
+    }, 500)
   }
 
   var commands = {
@@ -266,6 +307,10 @@ window.onload = function() {
             if(!imports[key])
               imports[key] = window.exports === window.module.exports ? window.exports : window.module.exports
 
+            // babel quirks
+            if(!imports[key+'.js'])
+              imports[key+'.js'] = window.exports === window.module.exports ? window.exports : window.module.exports
+
             if(!imports[localKey])
               imports[localKey] = window.exports === window.module.exports ? window.exports : window.module.exports
 
@@ -277,15 +322,19 @@ window.onload = function() {
           }
         }
         else{
-          console.log("(info) All files have loaded.")
-          window.setTimeout(function () {
-            window.parent.postMessage( {
-              mgbCmd: "mgbAdjustIframe",
-            }, "*");
-          }, 500)
+          console.info("MGB: All files have loaded!")
+          sendSizeUpdate()
         }
       };
       run()
+    },
+    requestSizeUpdate: function(){
+      sendSizeUpdate()
+    },
+    approveIsReady: function(){
+      window.parent.postMessage({
+        mgbCmd: "mgbSetIframeReady"
+      }, "*")
     }
   }
 

@@ -12,6 +12,22 @@
 // thus be used in place abstract values that only ever contain a
 // single type.
 
+if(Array.prototype.findIndex === void(0)) {
+  Object.defineProperty(Array.prototype, 'findIndex', {
+    value: function (predicate) {
+      var o = Object(this), len = o.length >>> 0, thisArg = arguments[1], k = 0
+      while (k < len) {
+        var kValue = o[k]
+        if (predicate.call(thisArg, kValue, k, o)) {
+          return k
+        }
+        k++
+      }
+      return -1
+    }
+  })
+}
+
 (function(root, mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     return mod(exports, require("acorn"), require("acorn/dist/acorn_loose"), require("acorn/dist/walk"),
@@ -79,7 +95,18 @@
       }
 
       this.signal("addType", type);
-      this.types.push(type);
+      var index = -1;
+      // allow only one type from origin - doesn't make sense to keep more (at least for ES6)
+      if(type.origin && this.types.length > 0){
+        index = this.types.findIndex(function(t){return t.origin == type.origin});
+      }
+      if(index > -1){
+        this.types[index] = type
+      }
+      else{
+        this.types.push(type)
+      }
+
       var forward = this.forward;
       if (forward) withWorklist(function(add) {
         for (var i = 0; i < forward.length; ++i) add(type, forward[i], weight);
@@ -2037,7 +2064,7 @@
       }
     },
     ReturnStatement: function(_parent, node, get) {
-      // tweaking search position to avoid endless recursion 
+      // tweaking search position to avoid endless recursion
       // when looking for definition of key in fn ( return fn ( return object ) )
       // see ternjs/tern#777
       var fnNode = walk.findNodeAround(node.sourceFile.ast, node.start - 1, "Function");

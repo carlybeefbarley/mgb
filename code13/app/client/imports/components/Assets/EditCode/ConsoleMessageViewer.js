@@ -18,32 +18,34 @@ export default ConsoleMessageViewer = React.createClass({
       var noColor0 = arg0.replace(/%c/g, "")
       var removed = (arg0.length - noColor0.length)/2;
       var rest = argArray.slice(removed+1)
-    
+
       return (noColor0 + "  " + rest.join(", ")).trim()
     }
     else
       return argArray.join(", ")
   },
-  
+
   invokeGotoLinehandler(msg)
   {
     // TODO check if msg.url / show asset:line combo
     if (this.props.gotoLinehandler)
       this.props.gotoLinehandler(msg.line, msg.file)
   },
-  
-  
+
+  componentDidUpdate(){
+    this.refs.msgContainer.scrollTop = this.refs.msgContainer.scrollHeight
+  },
   smartRender: function () {
     if (!this.props.messages)
       return null
-      
+
     let fmt = { "log":  { style: {}, icon: "" },
                 "debug": { style: {}, icon: "" },
-                "info":  { style: {}, icon: "" },
+                "info":  { style: {color: 'blue'}, icon: "info " },
                 "warn":  { style: {color: "orange"}, icon: "warning " },
                 "error": { style: {color: "red"}, icon: "x" },
                 "windowOnerror": { style: {color: "red"}, icon: "bug" }
-              }              
+              }
 
     return this.props.messages.map( (msg, idx) => {
       let fn = msg.consoleFn
@@ -62,14 +64,26 @@ export default ConsoleMessageViewer = React.createClass({
       return null
 
     return (
-        <div id="mgbjr-EditCode-console" className="ui grey segment" style={{backgroundColor: "rgba(0,0,0,0.03)", maxHeight: "200px", overflow: "scroll", clear:"both"}}>
+        <div id="mgbjr-EditCode-console" className="ui grey segment" style={{
+          backgroundColor: "rgba(0,0,0,0.03)",
+          // maxHeight: "200px",
+          // overflow: "auto",
+          clear:"both"
+          }}>
           <div className="header">
             Latest Console output from program
             { messages.length > 0 && clearConsoleHandler &&
-              <i style={{float: 'right'}} className='ui trash outline icon' title='clear console' onClick={clearConsoleHandler} />  
+              <i style={{float: 'right'}} className='ui trash outline icon' title='clear console' onClick={clearConsoleHandler} />
             }
-          </div> 
+          </div>
+          <div className="message-container" ref="msgContainer" style={{
+            overflow: "auto",
+            width: "100%",
+            maxHeight: "150px",
+            marginTop: "6px"
+          }}>
           { this.smartRender() }
+          </div>
         </div>
       )
   }

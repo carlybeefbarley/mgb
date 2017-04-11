@@ -1,6 +1,7 @@
+// !!! important when adding new api endpoint add it also to tests/tests/api.test.js
+
 import { Azzets } from '/imports/schemas'
-import CachedRestivus from '/server/imports/dev/CachedRestivus'
-import cache from '/imports/cache'
+import { genAPIreturn } from '/server/imports/helpers/generators'
 
 // Note that Restivus's default url prefix is /api
 const options = {
@@ -8,13 +9,16 @@ const options = {
   prettyJson: true
 }
 
-// disable by default - as nobody except stauzs will actually test this
-export var RestApi = (Meteor.isDevelopment && false) ? new CachedRestivus(options) : new Restivus(options)
+export const RestApi = new Restivus(options)
+
+// Return an empty image if there's no thumbnail yet. This is a transparent 1x1 GIF from https://css-tricks.com/snippets/html/base64-encode-of-1x1px-transparent-gif/
+export const emptyPixel = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" //1x1GIF
+
+export const red64x64halfOpacity="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAY0lEQVR42u3QAREAAAQEsJdcdHI4W4TVJJ3HSoAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECLhvAUBsX8GVkqJPAAAAAElFTkSuQmCC"
 
 // TODO: use enums instead of strings for asset kinds
 
-// this is used to test cache and cache invalidation
-RestApi.addRoute('test', {authRequired: false}, {
+/*RestApi.addRoute('test', {authRequired: false}, {
   get: function(){
     if(this.request.headers[cache.cacheServerHeader]){
       if(cache.API_SERVERS.indexOf(this.request.headers[cache.cacheServerHeader]) === -1){
@@ -24,57 +28,8 @@ RestApi.addRoute('test', {authRequired: false}, {
     }
     return {servers: cache.API_SERVERS, date: Date.now(), headers: this.request.headers}
   }
-})
-// just add empty static file for blank pages
+})*/
 
-RestApi.addRoute('asset/map/:id', {authRequired: false}, {
-  get: function () {
-    var asset = Azzets.findOne(this.urlParams.id);
-    if (asset){
-      // map editor stores some info in the meta - e.g. camera position / active tool etc
-      delete asset.content2.meta;
-      // TODO: content2 will be moved
-      return asset.content2;
-    }
-    else {
-      return {
-        statusCode: 404
-      }
-    }
-  }
-});
-RestApi.addRoute('asset/map/:user/:name', {authRequired: false}, {
-  get: function () {
-    var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, kind: 'map', isDeleted: false})
-    if (asset){
-      // map editor stores some info in the meta - e.g. camera position / active tool etc
-      delete asset.content2.meta;
-      // TODO: content2 will be moved
-      return asset.content2;
-    }
-    else {
-      return {
-        statusCode: 404
-      }
-    }
-  }
-});
-RestApi.addRoute('asset/actormap/:user/:name', {authRequired: false}, {
-  get: function () {
-    var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, kind: 'actormap', isDeleted: false})
-    if (asset){
-      // map editor stores some info in the meta - e.g. camera position / active tool etc
-      delete asset.content2.meta;
-      // TODO: content2 will be moved
-      return asset.content2;
-    }
-    else {
-      return {
-        statusCode: 404
-      }
-    }
-  }
-});
 
 // TODO: cache + invalidate cache
 // TODO: check hidden layers

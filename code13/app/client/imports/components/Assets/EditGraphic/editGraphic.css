@@ -1,7 +1,3 @@
-.mgbEditGraphicSty_tagPosition {
-  position:relative;
-}
-
 .mgbEditGraphicSty_checkeredBackground {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMElEQVQ4T2N89uzZfwY8QFJSEp80A+OoAcMiDP7//483HTx//hx/Ohg1gIFx6IcBALl+VXknOCvFAAAAAElFTkSuQmCC);
 }
@@ -21,7 +17,7 @@
   top: -16px;
 }
 
-.hidden {
+.mgb-hidden {
 	display: none !important;
 }
 
@@ -68,11 +64,4 @@
 .animTH .label {
 	width: 100% !important;
 	text-align: center;
-}
-
-.miniPadding {
-	padding-left: 0.5833em !important;
-	padding-right: 0.5833em !important;
-	/*font-size: 0.85714286rem !important;
-	line-height: 0.85714286rem !important;*/
 }

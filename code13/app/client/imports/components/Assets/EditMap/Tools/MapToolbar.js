@@ -9,9 +9,8 @@ export default class MapToolbar extends React.Component {
 
   render() {
     // older maps don't have default mode
-    if (!this.props.options.mode) {
+    if (!this.props.options.mode)
       this.props.options.mode = EditModes.stamp
-    }
 
     const layer = this.props.getActiveLayer()
     const config = {
@@ -58,12 +57,29 @@ export default class MapToolbar extends React.Component {
           shortcut: 'Alt+G'
         },
         {
+          name: 'zoomIn',
+          icon: 'zoom in',
+          label: 'Zoom in map',
+          tooltip: 'Click here or SHIFT + mousewheel over map area to change zoom level. Use mousewheel to scroll if the zoom is too large',
+          shortcut: 'Shift+PLUS',
+          level: 7
+        },
+        {
           name: 'resetCamera',
           icon: 'crosshairs',
+          iconText:  `${(this.props.options.camera.zoom * 100).toFixed(1)}%`,
           label: 'Reset Camera',
           tooltip: 'Set Zoom to 100% and move map to 0,0 coordinates',
           level: 6,
           shortcut: 'Ctrl+Alt+R'
+        },
+        {
+          name: 'zoomOut',
+          icon: 'zoom out',
+          label: 'Zoom out map',
+          tooltip: 'Click here or SHIFT + mousewheel over map area to change zoom level. Use mousewheel to scroll if the zoom is too large',
+          shortcut: 'Shift+MINUS',
+          level: 7
         },
         {
           name: 'preview',
@@ -224,13 +240,11 @@ export default class MapToolbar extends React.Component {
           active: this.props.options.ctrlModifier,
           icon: 'asterisk',
           label: 'Ctrl Modifier',
-          tooltip: 'Ctrl key on mobile devices. allows to enable Snap To Grid',
+          tooltip: 'Ctrl key on mobile devices. Allows to enable Snap To Grid',
           shortcut: 'Ctrl',
           level: 20
         },
-        {
-          name: 'separator'
-        },
+        { name: 'separator' },
         {
           name: 'rotateClockwise',
           icon: 'share',

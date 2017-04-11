@@ -59,7 +59,7 @@ export default MagePlayGameDamage = {
   // This routine checks for aliveness, damageability, invulnerability, player armor and also plays sounds. Doesn't automatically calculate % chance of attack - sincethat depends on factors
   applyDamageToActor: function(actorIdx, ap, damage, attackChancePct = 100, playDamageSound = true)	// returns true if the actor did receive damage
   {
-    const { activeActors, AA_player_idx } = this
+    const { activeActors, AA_player_idx, ownerName } = this
 
     if (damage && attackChancePct != 100 && attackChancePct != 0 )		// 0 == 100%.. older objects have this value as 0 since it was introduced later
       damage = ((100 * Math.random()) < attackChancePct) ? damage : 0
@@ -81,7 +81,7 @@ export default MagePlayGameDamage = {
     {
       activeActors[actorIdx].health -= damage
       if (playDamageSound)
-        MgbActor.playCannedSound(ap.content2.databag.all.soundWhenHarmed)								// TODO: ap1.content2.databag.all.visualEffectWhenHarmedType  
+        MgbActor.playCannedSound(ap.content2.databag.all.soundWhenHarmed, ap.content2, ownerName)								// TODO: ap1.content2.databag.all.visualEffectWhenHarmedType  
     }
     return damage != 0
   },

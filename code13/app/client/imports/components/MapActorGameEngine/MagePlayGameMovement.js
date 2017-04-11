@@ -208,7 +208,7 @@ export default MagePlayGameMovement = {
 
   startMeleeIfAllowed(actor, isPlayer)	// actor is ActiveActor. return true if started ok
   {
-    const { actors, inventory } = this
+    const { actors, inventory, ownerName } = this
     if (!actor.inMelee() && actor.turnsBeforeMeleeReady == 0)
     {	
       var ms = null
@@ -216,7 +216,7 @@ export default MagePlayGameMovement = {
       var ap = actors[actor.ACidx]
       if (isPlayer)
         ms = inventory.equipmentMeleeSoundOverride
-      MgbActor.playCannedSound(MgbActor.isSoundNonNull(ms) ? ms : ap.content2.databag.allchar.soundWhenMelee)				
+      MgbActor.playCannedSound((MgbActor.isSoundNonNull(ms) ? ms : ap.content2.databag.allchar.soundWhenMelee), ap.content2, ownerName)				
       return true
     }		
     return false
@@ -274,7 +274,7 @@ export default MagePlayGameMovement = {
                           MgbActor.intFromActorParam(ap.content2.databag.itemOrNPC.destroyableYN) == 1 &&
                           MgbActor.intFromActorParam(aa_p.content2.databag.allchar.touchDamageToNPCorItemNum) > 0
                           ))
-                      && (aType != MgbActor.alActorType_Item || 
+                      && ((aType != MgbActor.alActorType_Item && [4, 5, 6, 7].indexOf(aType) === -1) || 
                         0 == MgbActor.intFromActorParam(ap.content2.databag.item.pushToSlideNum))
                     )
                     obstructed = true

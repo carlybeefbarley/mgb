@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import request from 'request'
 import os from 'os'   // Node OS import for os.hostname()
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
@@ -6,14 +7,21 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 // The following was defined by dgolds who has config rights for the devlapse.slack.com account:
 const mgb_slack_eng__webhookUrl_mgb_community = "https://hooks.slack.com/services/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"
 
+const DISABLE_SLACK_NOTIFICATIONS = false
+const MUTE_ASSET_AND_PROJECT_CREATE_FOR_SPECIAL_USERS = 'tester,stauzs,dgolds,Bouhm,guntis,SuperAdmin'.split(',')
 
 function slackGenericNotify(slackWebhookUrl, data) {
+
+  if (DISABLE_SLACK_NOTIFICATIONS) 
+  {
+    console.log("DISABLE_SLACK_NOTIFICATIONS set, preventing Slack Notifications")
+    return
+  }
+
   const options = {
     url: slackWebhookUrl,
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json' },
     json: data
   }
   
@@ -73,10 +81,15 @@ Meteor.methods({
 
     const userUrl=`https://v2.mygamebuilder.com/u/${username}`
     const assetUrl=`https://v2.mygamebuilder.com/u/${username}/asset/${docId}`
-    slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+    const text=`New ${kind} Asset <${assetUrl}|${assetname}> created by user <${userUrl}|${username}>`
+
+    if (_.includes(MUTE_ASSET_AND_PROJECT_CREATE_FOR_SPECIAL_USERS, username))
+      console.log(`Muted slack notify for user '${username}': '${text}`)
+    else
+      slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
       username: `MGBv2 @${username}`,
       icon_emoji: ':pencil:',
-      text: `New ${kind} Asset <${assetUrl}|${assetname}> created by user <${userUrl}|${username}>`
+      text: text
     })
   }
 })
@@ -84,14 +97,32 @@ Meteor.methods({
 
 Meteor.methods({
   "Slack.Projects.create": function(username, projectname, docId) {
-
     const userUrl=`https://v2.mygamebuilder.com/u/${username}`
     const projectUrl=`https://v2.mygamebuilder.com/u/${username}/project/${docId}`
+    const text=`New Project <${projectUrl}|${projectname}> created by user <${userUrl}|${username}>`
+    if (_.includes(MUTE_ASSET_AND_PROJECT_CREATE_FOR_SPECIAL_USERS, username))
+      console.log(`Muted slack notify for user '${username}': '${text}`)
+    else
     slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
       username: `MGBv2 @${username}`,
       icon_emoji: ':card_file_box:',
-      text: `New Project <${projectUrl}|${projectname}> created by user <${userUrl}|${username}>`
+      text: text
     })
+  }
+})
+
+Meteor.methods({
+  "Slack.Cloudfront.notification": function(message, isBad){
+    if(Meteor.isProduction) {
+      slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+        username: `MGBv2 Cloudfront bot`,
+        icon_emoji: isBad ? ':cyclone:' : ':cloud:',
+        text: message
+      })
+    }
+    else{
+      console.log(`will send to slack ${isBad ? 'bad' : ''}:`, message)
+    }
   }
 })
 

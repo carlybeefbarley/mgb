@@ -1,0 +1,66 @@
+.testCase {
+  border-bottom: solid 1px;
+  margin-bottom: 15px;
+}
+
+.testCase .title:before{
+  content: attr(label);
+  margin-right: 6px;
+}
+
+.testCase .chart-wrapper{
+  height: 200px;
+  max-height: 200px;
+  display: none;
+}
+.testCase.expanded .chart-wrapper{
+  display: block;
+}
+
+.testCase span{
+  display: inline-block;
+  padding: 2px 10px;
+  box-sizing: border-box;
+  font-size: 0.9em;
+}
+
+.testCase span.title{
+  min-width: 350px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.testCase span.actions a {
+  padding: 15px;
+  color: blue;
+  cursor: pointer;
+  user-select: none;
+}
+.testCase .test {
+  padding-left: 35px;
+}
+.testCase .test span {
+  font-size: 0.85em;
+  min-width: 250px;
+}
+
+.testCase canvas {
+
+}
+.testCase input{
+  position: relative;
+  margin-right: 100px;
+}
+.testCase input:after {
+  content: attr(label);
+  display: inline-block;
+  position: absolute;
+  left: 120%;
+  white-space: nowrap;
+  top: -1px;
+
+}
+
+.testCase .status {
+  float: right
+}

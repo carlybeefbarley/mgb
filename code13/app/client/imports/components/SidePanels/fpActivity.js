@@ -4,11 +4,14 @@ import QLink from '/client/imports/routes/QLink'
 import { ActivityTypes, deleteActivityRecord } from '/imports/schemas/activity.js'
 
 import { AssetKinds } from '/imports/schemas/assets'
-import { ChatChannels } from '/imports/schemas/chats'
+import { ChatChannels, makePresentedChannelName } from '/imports/schemas/chats'
 import { isSameUserId } from '/imports/schemas/users'
 
 import moment from 'moment'
 import { Feed, Icon } from 'semantic-ui-react'
+import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 const _propTypes = {
   currUser:     PropTypes.object,             // Currently Logged in user. Can be null/undefined
@@ -18,24 +21,40 @@ const _propTypes = {
 
 const ActivityExtraDetail = ( { act} ) => {
 
+  // CHAT
+  // CHAT (handle old toChatChannelKey that was prior to 2/16/2016)
   if (_.isString(act.toChatChannelKey) && act.toChatChannelKey.length > 0) {
-    const chName = ChatChannels[act.toChatChannelKey].name
-    return (      
+    const chan = ChatChannels[act.toChatChannelKey]
+    return (
+      <Feed.Extra text>
+        <Icon name='chat' />
+        <QLink  query={{_fp: `chat.${chan.channelName}`}}>
+          #{chan.name}
+        </QLink>
+      </Feed.Extra>
+    )
+  }
+  // CHAT (handle new toChatChannelName that was after 2/16/2016)
+  if (_.isString(act.toChatChannelName) && act.toChatChannelName.length > 0) {
+    const chName = act.toChatChannelName
+    // Currently, only global messsages are sent on the public channels and they are super-easy to get a friendly name for:
+    const friendlyName = makePresentedChannelName(chName)
+    return (
       <Feed.Extra text>
         <Icon name='chat' />
         <QLink  query={{_fp: `chat.${chName}`}}>
-          #{chName}
+          #{friendlyName}
         </QLink>
       </Feed.Extra>
     )
   }
 
+  // ASSET or GAME
   if (act.activityType.startsWith("asset.") || act.activityType.startsWith("game.")) {
     const assetKindIconName = AssetKinds.getIconName(act.toAssetKind)
     const assetKindColor = AssetKinds.getColor(act.toAssetKind)
     const assetName = act.toAssetName || `(untitled ${AssetKinds.getName(act.toAssetKind)})`
-    const assetThumbnailUrl = "/api/asset/thumbnail/png/" + act.toAssetId
-    const linkTo = act.toOwnerId ? 
+    const linkTo = act.toOwnerId ?
               `/u/${act.toOwnerName}/asset/${act.toAssetId}` :   // New format as of Jun 8 2016
               `/assetEdit/${act.toAssetId}`                       // Old format. (LEGACY ROUTES for VERY old activity records). TODO: Nuke these and the special handlers
 
@@ -44,13 +63,13 @@ const ActivityExtraDetail = ( { act} ) => {
         <Feed.Extra text>
           <Icon color={assetKindColor} name={assetKindIconName} />
           <QLink to={linkTo}>
-            { act.toOwnerId === act.byUserId ? assetName : `${assetName}@${act.toOwnerName}` }
+            { act.toOwnerId === act.byUserId ? assetName : `${act.toOwnerName}:${assetName}` }
           </QLink>
         </Feed.Extra>
 
         <Feed.Extra images>
           <QLink to={linkTo}>
-            <img src={assetThumbnailUrl} style={{ width: "auto", maxWidth: "12em", maxHeight: "6em" }} />
+            <Thumbnail assetId={act.toAssetId} constrainHeight='60px' expires={5} />
           </QLink>
         </Feed.Extra>
       </div>
@@ -64,8 +83,8 @@ const _doDeleteActivity = activityId => deleteActivityRecord( activityId )
 
 
 const DeleteActivity = ( { act, currUser, isSuperAdmin } ) => (
-  ( currUser && (isSameUserId(act.byUserId, currUser._id) || isSuperAdmin)) && 
-    <span className='mgb-show-on-parent-div-hover' onClick={() => _doDeleteActivity(act._id)}>
+  ( currUser && (isSameUserId(act.byUserId, currUser._id) || isSuperAdmin)) &&
+    <span className='mgb-show-on-parent-hover' onClick={() => _doDeleteActivity(act._id)}>
       &nbsp;
       <Icon color='red' circular link name='delete'/>
     </span>
@@ -75,14 +94,27 @@ const DeleteActivity = ( { act, currUser, isSuperAdmin } ) => (
 const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
   const { byUserName, byUserId } = act
   const ago = moment(act.timestamp).fromNow()   // TODO: Make reactive
-  const iconClass = ActivityTypes.getIconClass(act.activityType)  
+  const iconClass = ActivityTypes.getIconClass(act.activityType)
 
   return (
     <Feed.Event style={{borderBottom: "thin solid rgba(0,0,0,0.10)"}}>
-      
+
       <Feed.Label>
         <QLink to={"/u/" + byUserName}>
-          <img src={`/api/user/${byUserId}/avatar`}></img>
+          {currUser && currUser._id == byUserId &&
+            <FittedImage 
+            src={makeCDNLink(currUser.profile.avatar)} 
+            width='auto'
+            height="3em"
+            />
+          }
+          {(!currUser || currUser._id != byUserId) &&
+            <FittedImage 
+            src={makeCDNLink(`/api/user/${byUserId}/avatar/60`, makeExpireTimestamp(SpecialGlobals.avatar.validFor))}
+            width='auto'
+            height="3em"
+            />
+          }
         </QLink>
       </Feed.Label>
 
@@ -101,8 +133,8 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
         </Feed.Meta>
 
         <ActivityExtraDetail act={act} />
-      
-      </Feed.Content>       
+
+      </Feed.Content>
     </Feed.Event>
   )
 }
@@ -112,6 +144,6 @@ const fpActivity = ( { activity, currUser, isSuperAdmin } ) => (
     { activity.map((act) => ( <RenderOneActivity act={act} key={act._id} currUser={currUser} isSuperAdmin={isSuperAdmin} /> ) ) }
   </Feed>
 )
- 
+
 fpActivity.propTypes = _propTypes
 export default fpActivity

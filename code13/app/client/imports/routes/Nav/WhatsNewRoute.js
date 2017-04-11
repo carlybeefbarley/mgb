@@ -3,7 +3,8 @@ import QLink from '../QLink'
 import Footer from '/client/imports/components/Footer/Footer'
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import moment from 'moment'
-import { Segment, Container, Header, List, Item, Grid, Icon, Message } from 'semantic-ui-react'
+import { Segment, Container, Header, List, Item, Grid, Icon } from 'semantic-ui-react'
+import AboutHeader from './AboutHeader'
 
 const _releaseStateSymbols = {
   'alpha':  'α',
@@ -25,7 +26,6 @@ const _icons = {
 const _getIconForChangeType = (ct,size) => <Icon size={size} color={_icons[ct].color} name={_icons[ct].name} />
 
 
-const UserLink = ( { u } ) => (<QLink to={`/u/${u}`}>@{u}</QLink>)
 
 export default WhatsNewRoute = React.createClass({
 
@@ -68,42 +68,8 @@ export default WhatsNewRoute = React.createClass({
 
   handleReleaseClicked: function (releaseIdx)
   {
-    this.setState( { "releaseIdx": releaseIdx} )
+    this.setState( { "releaseIdx": releaseIdx } )
   },
-
-  headerMessage: (
-    <Segment raised padded>
-      <Header>
-        My Game Builder is in <em>Semi-Secret Beta</em> test...
-        <br />
-        <small>
-          ...actively developed by <UserLink u='dgolds'/>, <UserLink u='stauzs'/>, <UserLink u='guntis'/> and <UserLink u='Bouhm'/>
-        </small>
-      </Header>
-      <p>
-        You are very welcome to use this new MyGameBuilder site and give us feedback 
-        using the <i className="chat icon" />chat panel on the right hand side of the screen
-      </p>
-      <List className='bulleted'>
-        <List.Item>We are testing with Chrome, Firefox and Safari, but for best results now, use <a href='https://www.google.com/chrome/'> Google's Chrome browser</a> on Windows/Mac/Linux.</List.Item>
-      </List>
-      <Message warning icon>
-        <Icon name='spy' />
-        <Message.Content>
-          <Message.Header>Shhh</Message.Header>
-          <p>
-            Please <em>do NOT</em> post our <a href='https://v2.mygamebuilder.com'>v2.mygamebuilder.com</a> link to public sites like Forums, Facebook, ProductHunt, Reddit, SlashDot, HackerNews etc <em>YET</em>. We aren't quite ready for big groups yet!
-          </p>
-          <p>
-            It's OK to directly ask some friends or family to try it though if you like, as long as they follow this rule.
-          </p>
-        </Message.Content>
-      </Message>        
-      <p>
-        See what's coming soon in our <QLink to="/roadmap">feature roadmap</QLink>.
-      </p>
-    </Segment>
-  ),
 
   render: function() {
     return (
@@ -111,7 +77,10 @@ export default WhatsNewRoute = React.createClass({
         <Segment basic>
           <Container>
             <Header as='h2'><Icon name='info circle' />What's New</Header>
-            { this.headerMessage }
+            <AboutHeader />
+              <p>
+                See what's coming soon in our <QLink to="/roadmap">feature roadmap</QLink>.
+              </p>          
             { this.renderNews() }
           </Container>
         </Segment>

@@ -323,6 +323,16 @@ window.onload = function() {
         }
         else{
           console.info("MGB: All files have loaded!")
+          /**
+           * window.addEventListener('load', function() {
+  DEBUG && console.log('On load.');
+  if (Class._supported) {
+    Class.start();
+  }
+  // TODO if not supported
+}, false);
+           */
+          window.dispatchEvent(new Event('load'))
           sendSizeUpdate()
         }
       };

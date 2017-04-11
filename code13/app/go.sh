@@ -12,9 +12,6 @@ export METEOR_PROFILE=1000
 export NODE_OPTIONS="--debug=5858" #  --inspect when meteor update node to 6.x
 export ROOT_URL=http://localhost:3000
 echo Bundler cache size is now `du -s -h .meteor/local/bundler-cache/`
-<<<<<<< HEAD
-meteor.bat -p 0.0.0.0:3000 $@
-=======
 
 # For Windows
 if [[ "$OSTYPE" == "msys" ]]; then
@@ -22,5 +19,4 @@ if [[ "$OSTYPE" == "msys" ]]; then
 else
   meteor -p 0.0.0.0:3000 $@
 fi
->>>>>>> 6bb0b2068608cf33e69b5b12065d3958e731902d
 )

@@ -9,13 +9,10 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import { utilPushTo } from "/client/imports/routes/QLink"
 
-<<<<<<< HEAD
-import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride' 
-import joyrideStyles from 'react-joyride/lib/styles/react-joyride-compiled.css'
-=======
+
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
->>>>>>> 6bb0b2068608cf33e69b5b12065d3958e731902d
+
 
 import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
 import { hasSkill, learnSkill } from '/imports/schemas/skills'

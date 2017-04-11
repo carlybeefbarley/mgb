@@ -63,10 +63,7 @@ export function clientStartup() {
       <Route component={App}>
 
         <Route path='/u/:username/play/:assetId' component={PlayGameRoute} name='Play Game' />
-<<<<<<< HEAD
-=======
 
->>>>>>> 6bb0b2068608cf33e69b5b12065d3958e731902d
         <Route path="/" component={Home} />
         <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />

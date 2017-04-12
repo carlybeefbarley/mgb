@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Label } from 'semantic-ui-react'
+import { Label, Menu, Image, Header, Icon } from 'semantic-ui-react'
+
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -20,10 +21,29 @@ import fpGoals from './fpGoals'
 import fpUsers from './fpUsers'
 import fpChat from './fpChat'
 
+
+
 import reactMixin from 'react-mixin'
 import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
+
+const mobilePanelViews = [
+  {
+      tag: 'home',
+      name: 'mgb',                  // used for mgjr-np-{name}- id generation
+      icon: 'home',
+      fpViewTag: "Auto0", 
+      explainClickAction: "Shortcut: Clicking here jumps to the Home Page",
+      active: false, 
+      hdr: (
+          <Menu.Item className='borderless' color='black' style={{ padding: '0px 8px' }}>
+            <img src='/images/logos/mgb/medium/03.png' style={{ width: 130 }} />
+          </Menu.Item>
+        ),
+      to: '/'
+    }
+]
 
 const flexPanelViews = [
   { tag: 'activity',  lev: 1,  name: 'activity', icon: 'lightning',  hdr: 'Activity',      el: fpActivity,      superAdminOnly: false, mobileUI: true   },
@@ -34,7 +54,7 @@ const flexPanelViews = [
   { tag: 'settings',  lev: 3,  name: 'settings', icon: 'settings',   hdr: 'Settings',      el: fpSettings,      superAdminOnly: false, mobileUI: false  },
 
 // Experimental UI for mobile
-//{ tag: 'more',      lev: 8,  name: 'more',     icon: 'ellipsis horizontal', hdr: 'More', el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
+  { tag: 'more',      lev: 1,  name: 'more',     icon: 'ellipsis horizontal', hdr: 'More', el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
   { tag: 'users',     lev: 5,  name: 'users',    icon: 'street view',hdr: 'Users',         el: fpUsers,         superAdminOnly: false, mobileUI: false },
 //{ tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   hdr: 'Keys',          el: fpKeyboard,      superAdminOnly: false, mobileUI: false },
   { tag: 'projects',  lev: 6,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',      el: fpProjects,      superAdminOnly: false, mobileUI: false },
@@ -354,6 +374,23 @@ export default FlexPanel = React.createClass({
           </div>
         }
         <div id='mgbjr-flexPanelIcons' className={miniNavClassNames} style={miniNavStyle} >
+          {fpIsFooter && mobilePanelViews.map(v => {
+              const specialSty = this.getFpButtonSpecialStyleForTag(v.tag)
+              const specialClass = this.getFpButtonSpecialClassForTag(v.tag)
+
+              const active = this._viewTagMatchesPropSelectedViewTag(v.tag) ? " active selected " : ""
+              return <a
+                id={`mgbjr-flexPanelIcons-${v.tag}`}
+                key={v.tag}
+                style={specialSty}
+                className={active +  " item"}
+                title={v.name}
+                onClick={this.fpViewSelect.bind(this, v.tag)}>
+                <i className={v.icon + ' ' + specialClass + ' large icon'}></i>
+                { fpIsFooter ? null : v.name }
+                { this.getFpButtonExtraLabelForTag(v.tag) }
+              </a>
+          })}
           { flexPanelViews.map(v => {  /* TODO: WORK OUT HOW TO HANDLE 5 equally space buttons */
             const active = this._viewTagMatchesPropSelectedViewTag(v.tag) ? " active selected " : ""
             if (isMobileUI && !v.mobileUI )

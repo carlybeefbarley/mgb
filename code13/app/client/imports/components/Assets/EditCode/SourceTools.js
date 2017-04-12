@@ -675,7 +675,12 @@ main = function(){
             allInOneBundle += "\n" + 'imports["' + source.name + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
         }
 
-        allInOneBundle += "\n" + "}})(); "
+        allInOneBundle += "\n" + 
+          `// dispatch event here as there are some libs which 
+          window.dispatchEvent(new Event('load'))
+          ` +  
+        
+          "}})(); "
         // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
 
         if (this.cachedBundle === allInOneBundle) {

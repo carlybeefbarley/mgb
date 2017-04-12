@@ -457,10 +457,12 @@ const AppUI = React.createClass({
 
             <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id='mgb-jr-main-container'>
               <div style={mainPanelInnerDivSty}>
-                <NavPanel
-                  currUser={currUser}
-                  navPanelAvailableWidth={mainAreaAvailableWidth}
-                />
+                { !respData.footerTabMajorNav && 
+                  <NavPanel
+                    currUser={currUser}
+                    navPanelAvailableWidth={mainAreaAvailableWidth}
+                  />
+                }
                 { isNetworkFailure &&
                   <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable' style={{marginLeft: '8px'}}/>
                 }

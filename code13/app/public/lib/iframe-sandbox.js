@@ -323,15 +323,7 @@ window.onload = function() {
         }
         else{
           console.info("MGB: All files have loaded!")
-          /**
-           * window.addEventListener('load', function() {
-  DEBUG && console.log('On load.');
-  if (Class._supported) {
-    Class.start();
-  }
-  // TODO if not supported
-}, false);
-           */
+          // dispatch event here as there are some libs which 
           window.dispatchEvent(new Event('load'))
           sendSizeUpdate()
         }

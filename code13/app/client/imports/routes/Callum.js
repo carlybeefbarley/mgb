@@ -149,7 +149,7 @@ class SidebarBottomOverlay extends Component {
 
   handleChangeIndex = (index) => {
     this.setState({
-      index,
+      index: 0,
     })
   }
 
@@ -171,7 +171,7 @@ class SidebarBottomOverlay extends Component {
               </div>
               <div style={Object.assign({}, styles.slide, styles.slide3)}>
                 slide n°3
-          </div>
+              </div>
             </SwipeableViews>
             <Button onClick={this.toggleVisibility}>Toggle Visibility</Button>
             <Sidebar.Pushable as={Segment}>

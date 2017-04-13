@@ -35,6 +35,8 @@ import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import { parseChannelName, makeChannelName, ChatChannels } from '/imports/schemas/chats'
 import { getLastReadTimestampForChannel, getPinnedChannelNames } from '/imports/schemas/settings-client'
 
+import SwipeableViews from 'react-swipeable-views'
+
 // https://www.npmjs.com/package/react-notifications
 import { NotificationContainer, NotificationManager } from 'react-notifications'
 // Note css is in /client/notifications.css
@@ -479,7 +481,9 @@ const AppUI = React.createClass({
                     sysvars={sysvars}
                     currentlyEditingAssetInfo={currentlyEditingAssetInfo}
                     />
+                
                 {
+                  
                   !loading && this.props.children && React.cloneElement(this.props.children, {
                     // Make below props available to all routes.
                     user: user,

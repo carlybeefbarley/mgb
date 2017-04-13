@@ -195,6 +195,17 @@ export default {
       ...(C.E.$meta)
     },
   },
+  taskTweenGroup: {
+    $meta: {
+      isTask: true,
+      name: 'Task: Animate a group',
+      icon: 'tasks',
+      link: '/u/!vault/asset/rDMCqocQv3nnYx8AB',
+      description: `Animate a group of dwarves`,
+      "subsection": "Misc",
+      ...(C.E.$meta)
+    },
+  },
   getObjectFromGroup: {
     $meta: {
       name: 'Get object from group',
@@ -227,17 +238,6 @@ export default {
       name: 'Call all',
       icon: 'code',
       description: `Call all objects in a group`,
-      "subsection": "Misc",
-      ...(C.E.$meta)
-    },
-  },
-  taskTweenGroup: {
-    $meta: {
-      isTask: true,
-      name: 'Task: Animate a group',
-      icon: 'tasks',
-      link: '/u/!vault/asset/rDMCqocQv3nnYx8AB',
-      description: `Animate a group of dwarves`,
       "subsection": "Misc",
       ...(C.E.$meta)
     },

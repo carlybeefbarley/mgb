@@ -68,6 +68,11 @@ class MobileNav extends React.Component {
       Component: BlankPage,
       icon: 'home'
     },
+    assets: {
+      title: "Assets",
+      Component: BlankPage,
+      icon: 'edit'
+    },
     profile: {
       title: "Profile",
       Component: Checkboxes,
@@ -203,8 +208,8 @@ class MobileNav extends React.Component {
   }
 
   getMaxItems() {
-    console.log("MAX items:", window.innerWidth / 80)
-    return Math.floor(window.innerWidth / 80) - 1
+    console.log("MAX items:", window.innerWidth / 70)
+    return Math.floor(window.innerWidth / 70) - 1
   }
 
   render() {

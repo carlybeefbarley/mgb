@@ -44,6 +44,8 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 
 import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 
+import MobileNav from './MobileNav'
+
 let G_localSettings = new ReactiveDict()
 
   // This works because <App> is the first Route in /app/client/imports/routes
@@ -434,7 +436,7 @@ const AppUI = React.createClass({
           assetId={params.assetId}
           debug={joyrideDebug} />
 
-        <div>
+        {/*<div>
             <FlexPanel
               fpIsFooter={!!respData.footerTabMajorNav}
               joyrideSteps={this.state.joyrideSteps}
@@ -500,8 +502,9 @@ const AppUI = React.createClass({
               </div>
             </div>
 
-          </div>
+          </div>*/}
           <NotificationContainer/> {/* This is for the top-right toast messages */}
+          <MobileNav />
       </div>
     )
   },

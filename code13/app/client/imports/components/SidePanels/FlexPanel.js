@@ -130,6 +130,7 @@ export default FlexPanel = React.createClass({
   componentDidMount: function () {
     registerDebugGlobal('fp', this, __filename, 'The global FlexPanel instance')
     this.handleDown = () => {
+      console.log("Down")
       this.isDown = true
     }
     this.handleUp = () => {
@@ -413,7 +414,7 @@ export default FlexPanel = React.createClass({
       <div className="basic segment mgbFlexPanel" style={panelStyle} id='mgbjr-flexPanelArea'>
 
         {fpIsFooter && flexPanelIsVisible &&
-          <SwipeableViews style={{height: "100%"}} key={flexPanelChoice.btn} index={cIndex} onChangeIndex={this.handleChangeIndex} autoPlay={false}>
+          <SwipeableViews style={{height: ""}} key={flexPanelChoice.btn} index={cIndex} onChangeIndex={this.handleChangeIndex} autoPlay={false}>
 
             {first}
             {current}

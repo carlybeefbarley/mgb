@@ -176,7 +176,7 @@ export default class Toolbar extends React.Component {
 
   render() {
     return (
-      <div className='mgb-toolbar'>
+      <div style={this.props.nowrap ? {whiteSpace: 'nowrap'} : {}} className='mgb-toolbar'>
         { _.map(this.props.config.buttons, (b, i) => (
               b.name == 'separator' ? <span style={{width: '2px'}} key={i}>{' '}</span> : (
                 <Button.Group
@@ -249,7 +249,7 @@ export default class Toolbar extends React.Component {
             primary={!!b.active}
             id={joyrideId}
             disabled={b.disabled}
-            size={_defaultToolbarButtonSize}
+            size='big' 
             style={ { position: "relative" } }
             onClick={this._handleClick.bind(this, b.name, index)}
             data-index={index}>
@@ -269,7 +269,8 @@ Toolbar.propTypes = {
   name:      PropTypes.string.isRequired, // Name of this toolbar instance. Should be one of expectedToolbars.scopeNames
   config:    PropTypes.object.isRequired, // Config.. { buttons: {}, vertical: bool }
   levelName: PropTypes.string,            // Use this if you want to share active level with other toolbars - default = name
-  level:     PropTypes.number             // Default level if not specified in the user settings
+  level:     PropTypes.number,            // Default level if not specified in the user settings
+  nowrap:    PropTypes.bool               // For mobile, allow nowrap so it scrolls horizontally to save vertical space
 }
 
 Toolbar.contextTypes = {

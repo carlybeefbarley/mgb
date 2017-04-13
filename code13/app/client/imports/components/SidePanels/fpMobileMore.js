@@ -1,5 +1,6 @@
 import React from "react"
 import { Grid, Icon, Header } from "semantic-ui-react"
+import QLink from '/client/imports/routes/QLink'
 
 const rowStyle={ paddingTop: '10px', paddingBottom: '0px' }
 

@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Menu } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import { showToast } from '/client/imports/routes/App'
 
@@ -529,6 +530,64 @@ export default class SpriteLayers extends React.Component {
     const c2 = this.props.content2
     const buttonDivClass = "ui mini icon button"
 
+    if (this.props.isMobileView) {
+      return (
+        <div>
+          <Menu style={{padding: 0}}>
+            {_.map(c2.frameNames, (frameName, idx) => { 
+              return (
+                <Menu.Item 
+                  key={idx}
+                  ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } }
+                  id={"mgb_edit_graphics_frame_options_" + idx}
+                >
+                  {idx+1}
+                </Menu.Item>
+              )
+            })}
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center'}} onClick={this.addFrame.bind(this)}>
+              <p  style={{display: 'inline-block'}}>+ Add Frame</p>
+            </div>
+          </Menu>
+
+          {/** Previews for frames hidden for mobile but needed for EditGraphic **/}
+          <table style={{display: 'none'}} className="spriteLayersTable">
+            <thead>
+              <tr className={"frameCanvases " + (this.state.isCanvasFramesVisible ? "" : "mgb-hidden")}>
+              { // TODO: change from frameNames[] to frameData[] ?
+                _.map(c2.frameNames, (frameName, idx) => { return (
+                  <th key={"thCanvas_"+idx}>
+                    <div  className="ui image "
+                      // replace onClick wit mouseUp / touchEnd - to prevent conflict with mobile drag
+                      onMouseUp={this.selectFrame.bind(this, idx)}
+                      onTouchEnd={this.selectFrame.bind(this, idx)}
+                      style={{"maxWidth": "256px", "maxHeight": "256px", "width": `${c2.width}px`, "display": "block", "margin": "0px auto", "overflow": "auto" }}
+                      title={`Preview for combined visible layers of Frame #${idx+1}`}
+                    >
+                      <canvas
+                        width={c2.width}
+                        height={c2.height}
+
+                        onDragStart={this.handleDragStart.bind(this, idx)}
+                        onDragEnd={this.handleDragEnd}
+                        ref={this.registerPreviewCanvas.bind(this, idx)}
+                        draggable="true"
+                      />
+                    </div>
+                  </th>
+                )})
+              }
+              </tr>
+            </thead>
+
+            <tbody>
+              { this.renderLayers() }
+            </tbody>
+          </table>
+        </div>
+      )
+    }
+
     return (
       <div className="ui sixteen wide column">
         <div className="row">
@@ -769,4 +828,5 @@ SpriteLayers.propTypes = {
   handleSave: PropTypes.func,
   forceDraw: PropTypes.func,
   forceUpdate: PropTypes.func,
+  isMobileView: PropTypes.bool
 }

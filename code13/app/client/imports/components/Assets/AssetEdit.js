@@ -30,7 +30,7 @@ const AssetEdit = ( props ) => {
   const isTooSmall = props.availableWidth < 500
   return (
     <div style={{minWidth: '250px'}}>
-      { isTooSmall && 
+      { isTooSmall && props.asset.kind !== 'graphic' && 
         <Segment basic>
           <Message 
               warning 
@@ -48,7 +48,7 @@ const AssetEdit = ( props ) => {
         </Segment>
       }
       { /* We must keep this in the DOM since it has state we don't want to lose during a temporary resize */ }
-      <div style={ isTooSmall ? { display: 'none' } : null}>
+      <div style={ (isTooSmall && props.asset.kind !== 'graphic') ? { display: 'none' } : null}>
         <Element {...props}/>
       </div>
     </div>
@@ -66,7 +66,7 @@ AssetEdit.propTypes = {
   getActivitySnapshots:     PropTypes.func.isRequired,      // Activity snapshots causes very heavy re-rendering
   hasUnsentSaves:           PropTypes.bool.isRequired,      // True if there are deferred saves yet to be sent. HOWEVER, even if sent, then server accept + server ack/nack can be pending - see asset.isUnconfirmedSave for the flag to indicate that 'changes are in flight' status
   availableWidth:           PropTypes.number,               // Available screen width in pixels for editor
-  handleSaveNowRequest:     PropTypes.func.isRequired       // Asset Editor call this to request a flush now (but it does not wait or have a callback). An example of use for this: Flushing an ActorMap asset to play a game in the actorMap editor
+  handleSaveNowRequest:     PropTypes.func.isRequired      // Asset Editor call this to request a flush now (but it does not wait or have a callback). An example of use for this: Flushing an ActorMap asset to play a game in the actorMap editor
 }
 
 export default AssetEdit

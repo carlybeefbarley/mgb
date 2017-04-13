@@ -195,6 +195,42 @@ export default {
       ...(C.E.$meta)
     },
   },
+  getObjectFromGroup: {
+    $meta: {
+      name: 'Get object from group',
+      icon: 'code',
+      description: `Iterating through group children`,
+      "subsection": "Misc",
+      ...(C.E.$meta)
+    },
+  },
+  bringToTop: {
+    $meta: {
+      name: 'Bring to top',
+      icon: 'code',
+      description: `Bring object in a group to top`,
+      "subsection": "Misc",
+      ...(C.E.$meta)
+    },
+  },
+  swapChildren: {
+    $meta: {
+      name: 'Swap children',
+      icon: 'code',
+      description: `Swap object indexes in a group`,
+      "subsection": "Misc",
+      ...(C.E.$meta)
+    },
+  },
+  callAll: {
+    $meta: {
+      name: 'Call all',
+      icon: 'code',
+      description: `Call all objects in a group`,
+      "subsection": "Misc",
+      ...(C.E.$meta)
+    },
+  },
   taskTweenGroup: {
     $meta: {
       isTask: true,

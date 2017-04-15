@@ -320,7 +320,7 @@ export default FlexPanel = React.createClass({
               <span className="title">
                 <i className={flexPanelIcon + " icon"} />&nbsp;&nbsp;{flexPanelHdr}
               </span>
-              <span style={{"float": "right", padding: "3px"}} onClick={handleFlexPanelToggle}>
+              <span style={{ float: "right", cursor: "pointer", padding: "3px"}} onClick={handleFlexPanelToggle}>
                 <i className="ui grey small close icon"/>
               </span>
             </div>

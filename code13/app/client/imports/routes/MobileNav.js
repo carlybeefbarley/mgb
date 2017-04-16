@@ -9,6 +9,14 @@ import fpMobileMore from '../components/SidePanels/fpMobileMore.js'
 
 import elementResizeDetectorMaker from 'element-resize-detector'
 
+import Home from './Home'
+import fpAssets from '../components/SidePanels/fpAssets'
+import BrowseGamesRoute from './BrowseGamesRoute'
+
+import './MobileNav.css'
+
+
+
 const BlankPage = (p) => {
   return <div>{p.title}</div>
 }
@@ -19,8 +27,28 @@ const Checkboxes = (p) => {
     <input type="checkbox" />
     <input type="checkbox" />
     <input type="checkbox" />
-    
 
+
+  </div>
+}
+
+const AllButtons = (p) => {
+  return <div className="mobile-nav-all-buttons">
+    {p.buttons
+      .filter((bName, index) => !!MobileNav.availableButtons[bName])
+      .map((bName, index) => {
+        const b = MobileNav.availableButtons[bName]
+        return <a
+          className="item"
+          style={Object.assign({ padding: '5%' }, MobileNav.btnStyle)}
+          name={bName}
+          key={index}
+          onClick={() => p.mobileNav.onClick(b, index)}
+        >
+          <Icon name={b.icon || 'question'} size='large'></Icon>
+          <p>{b.title}</p>
+        </a>
+      })}
   </div>
 }
 
@@ -30,6 +58,10 @@ class MobileNav extends React.Component {
     super()
     this.buttons = [
       'home',
+      'assets',
+      'play',
+      'chat',
+      'more',
       'profile',
       'news',
       'learn',
@@ -58,20 +90,33 @@ class MobileNav extends React.Component {
     this.erd.listenTo(document.body, this.onresize)
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.erd.removeListener(document.body, this.onresize)
   }
 
   static availableButtons = {
     home: {
       title: 'Home',
-      Component: BlankPage,
+      Component: Home,
       icon: 'home'
     },
     assets: {
       title: "Assets",
+      Component: fpAssets,
+      getProps: (mobileNav) => {
+
+      },
+      icon: 'play'
+    },
+    play: {
+      title: "Play",
+      Component: BrowseGamesRoute,
+      icon: 'game'
+    },
+    chat: {
+      title: "Chat",
       Component: BlankPage,
-      icon: 'edit'
+      icon: 'chat'
     },
     profile: {
       title: "Profile",
@@ -133,7 +178,14 @@ class MobileNav extends React.Component {
       icon: 'log out',
       Component: BlankPage
     },
-
+    more: {
+      title: 'More',
+      icon: 'horizontal ellipsis',
+      Component: AllButtons,
+      getProps: (mobileNav) => {
+        return {buttons: mobileNav.buttons, mobileNav: mobileNav}
+      }
+    },
   }
 
   static style = {
@@ -158,7 +210,9 @@ class MobileNav extends React.Component {
     bottom: '0',
     left: '0',
     right: '0',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+    overflow: 'hidden',
+    paddingBottom: '40px'
   }
 
   static mainStyle = {
@@ -177,96 +231,68 @@ class MobileNav extends React.Component {
   showMore() {
     this.setState({ showMore: !this.state.showMore })
   }
-  allButtons() {
-    return <div style={{
-      backgroundColor: 'rgb(255, 255, 255)',
-      display: 'flex',
-      justifyContent: 'space-around',
-      textAlign: 'center',
-      height: '100%',
-      flexWrap: 'wrap',
-      overflow: 'auto',
-      alignContent: 'space-around',
-      paddingBottom: '50px'
-    }}>
-      {this.buttons
-        .filter((bName, index) => !!MobileNav.availableButtons[bName])
-        .map((bName, index) => {
-          const b = MobileNav.availableButtons[bName]
-          return <a
-            className="item"
-            style={Object.assign({ padding: '5%' }, MobileNav.btnStyle)}
-            name={bName}
-            key={index}
-            onClick={() => this.onClick(b, index)}
-          >
-            <Icon name={b.icon || 'question'} size='large'></Icon>
-            <p>{b.title}</p>
-          </a>
-        })}
-    </div>
-  }
 
   getMaxItems() {
+    return 5
+    // or return 4 always ?
     console.log("MAX items:", window.innerWidth / 70)
     return Math.floor(window.innerWidth / 70) - 1
   }
 
-  render() {
-    return (
-      <div style={MobileNav.mainStyle}>
-        {!this.state.showMore && 
-        <SwipeableViews index={this.state.index} style={MobileNav.viewStyle} onChangeIndex={this.handleChangeIndex.bind(this)}>
-          {
-            this.buttons
-              .filter(bName => !!MobileNav.availableButtons[bName])
-              .map((bName, index) => {
-                const b = MobileNav.availableButtons[bName]
-                return <div key={index}>
-                  <b.Component key={index} title={bName} />
-                </div>
-              })
 
-          }
-        </SwipeableViews>
+
+  render() {
+    const max = this.getMaxItems()
+    return (
+      <div style={MobileNav.mainStyle} key="mobileNav">
+        {!this.state.showMore &&
+          <SwipeableViews index={this.state.index} style={MobileNav.viewStyle} onChangeIndex={this.handleChangeIndex.bind(this)}>
+            {
+              this.buttons
+                .filter(bName => !!MobileNav.availableButtons[bName])
+                .map((bName, index) => {
+                  const b = MobileNav.availableButtons[bName]
+                  const props = b.getProps ? b.getProps(this) : {}
+
+                  return <div key={index}>
+                    <b.Component key={index} title={bName} {...props} />
+                  </div>
+                })
+            }
+            {/*{this.buttons.length > max && <AllButtons buttons={this.buttons} onClick={this.onClick} />}*/}
+          </SwipeableViews>
         }
-        {this.state.showMore && this.allButtons()}
+
         {/*{this.state.showMore && fpMobileMore()}*/}
 
         <div style={MobileNav.style} className="MobileNav">
           {
             this.buttons
-              .filter((bName, index) => !!MobileNav.availableButtons[bName] && index < this.getMaxItems())
-              .map((bName, index) => {
-                const b = MobileNav.availableButtons[bName]
-                return <a
-                  className={'item' + (index === this.state.index ? ' active' : '')}
-                  style={Object.assign({color: (index === this.state.index && !this.state.showMore) ? 'yellow' : 'initial'}, MobileNav.btnStyle)}
-                  name={bName}
-                  key={index}
-                  onClick={() => this.onClick(b, index)}
-                >
-                  <Icon name={b.icon || 'question'} size='large'></Icon>
-                  <p>{b.title}</p>
-                </a>
-              })
+              .filter((bName, index) => !!MobileNav.availableButtons[bName] && index < max)
+              .map(this.renderButton, this)
           }
 
-          {this.buttons.length > this.getMaxItems() &&
-            <a
-              className="item"
-              style={Object.assign({color: this.state.showMore ? 'yellow' : 'initial'}, MobileNav.btnStyle, { borderRight: 'none' })}
-              onClick={() => this.showMore()}
-            >
-              <Icon name='ellipsis horizontal' size='large'></Icon>
-              <p>More</p>
-            </a>
-
-
-          }
+          {/*{this.buttons.length > max &&
+            this.renderButton('more', max)
+          }*/}
         </div>
       </div>
     )
   }
+
+  renderButton(bName, index) {
+    const b = MobileNav.availableButtons[bName]
+    return <a
+      className={'item' + (index === this.state.index ? ' active' : '')}
+      style={Object.assign({ color: (index === this.state.index && !this.state.showMore) ? 'yellow' : 'initial' }, MobileNav.btnStyle)}
+      name={bName}
+      key={index}
+      onClick={() => this.onClick(b, index)}
+    >
+      <Icon name={b.icon || 'question'} size='large'></Icon>
+      <p>{b.title}</p>
+    </a>
+  }
 }
+
 export default MobileNav

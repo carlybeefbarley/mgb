@@ -8,7 +8,7 @@ import { projectMakeFrontPageListSelector } from '/imports/schemas/projects'
 import { getProjectAvatarUrl, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 
-export default ProjectsBeingMadeGET = React.createClass({
+const ProjectsBeingMadeGET = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -47,7 +47,7 @@ export default ProjectsBeingMadeGET = React.createClass({
     if (loading) return <Spinner />
 
     return (
-      <div className={chosenClassName}>
+      <div className={chosenClassName} style={{overflow: 'hidden'}}>
       {
         !projects.length ? "(none)" :
           projects.map( (p,idx) => (
@@ -64,3 +64,5 @@ export default ProjectsBeingMadeGET = React.createClass({
     )
   }
 })
+
+export default ProjectsBeingMadeGET

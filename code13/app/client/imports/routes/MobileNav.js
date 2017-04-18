@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Sidebar, Segment, Button, Menu, Image, Icon, Header } from 'semantic-ui-react'
+import {Grid, Sidebar, Segment, Button, Menu, Image, Icon, Header} from 'semantic-ui-react'
 
 import SwipeableViews from 'react-swipeable-views'
 import _ from 'lodash'
@@ -15,20 +15,18 @@ import BrowseGamesRoute from './BrowseGamesRoute'
 
 import './MobileNav.css'
 
-
+import NavBar from '/client/imports/components/Nav/NavBar'
 
 const BlankPage = (p) => {
   return <div>{p.title}</div>
 }
 const Checkboxes = (p) => {
   return <div>{p.title}:
-    <input type="checkbox" />
-    <input type="checkbox" />
-    <input type="checkbox" />
-    <input type="checkbox" />
-    <input type="checkbox" />
-
-
+    <input type="checkbox"/>
+    <input type="checkbox"/>
+    <input type="checkbox"/>
+    <input type="checkbox"/>
+    <input type="checkbox"/>
   </div>
 }
 
@@ -39,8 +37,8 @@ const AllButtons = (p) => {
       .map((bName, index) => {
         const b = MobileNav.availableButtons[bName]
         return <a
-          className="item"
-          style={Object.assign({ padding: '5%' }, MobileNav.btnStyle)}
+          className="mobile-nav-item item"
+          style={{padding: '5%'}}
           name={bName}
           key={index}
           onClick={() => p.mobileNav.onClick(b, index)}
@@ -51,6 +49,13 @@ const AllButtons = (p) => {
       })}
   </div>
 }
+
+const HomeWrap = (p) => (
+  <div>
+    <NavBar {...p} currentlyEditingAssetInfo={p.state.currentlyEditingAssetInfo}/>
+    <div>{p.children}</div>
+  </div>
+)
 
 class MobileNav extends React.Component {
 
@@ -94,10 +99,14 @@ class MobileNav extends React.Component {
     this.erd.removeListener(document.body, this.onresize)
   }
 
+  componentDidUpdate() {
+    console.log("PROPS:", this.props.location.pathname, this.props)
+  }
+
   static availableButtons = {
     home: {
       title: 'Home',
-      Component: Home,
+      Component: HomeWrap,
       icon: 'home'
     },
     assets: {
@@ -110,7 +119,7 @@ class MobileNav extends React.Component {
     },
     play: {
       title: "Play",
-      Component: BrowseGamesRoute,
+      Component: BlankPage,
       icon: 'game'
     },
     chat: {
@@ -188,48 +197,17 @@ class MobileNav extends React.Component {
     },
   }
 
-  static style = {
-    position: 'fixed',
-    bottom: 0,
-    left: 0,
-    display: 'flex',
-    right: 0,
-    justifyContent: 'space-around',
-    backgroundColor: 'white'
-  }
-  static btnStyle = {
-    display: 'inline-block',
-    textAlign: 'center'
-    // borderLeft: 'solid 1px rgba(0,0,0,0.1)',
-    // borderRight: 'solid 1px rgba(0,0,0,0.1)',
-  }
 
-  static viewStyle = {
-    position: 'absolute',
-    top: '0',
-    bottom: '0',
-    left: '0',
-    right: '0',
-    backgroundColor: 'white',
-    overflow: 'hidden',
-    paddingBottom: '40px'
-  }
-
-  static mainStyle = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0
-  }
   onClick(button, index) {
     this.handleChangeIndex(index)
   }
+
   handleChangeIndex(index) {
-    this.setState({ index, showMore: false })
+    this.setState({index, showMore: false})
   }
+
   showMore() {
-    this.setState({ showMore: !this.state.showMore })
+    this.setState({showMore: !this.state.showMore})
   }
 
   getMaxItems() {
@@ -240,32 +218,31 @@ class MobileNav extends React.Component {
   }
 
 
-
   render() {
     const max = this.getMaxItems()
     return (
-      <div style={MobileNav.mainStyle} key="mobileNav">
-        {!this.state.showMore &&
-          <SwipeableViews index={this.state.index} style={MobileNav.viewStyle} onChangeIndex={this.handleChangeIndex.bind(this)}>
-            {
-              this.buttons
-                .filter(bName => !!MobileNav.availableButtons[bName])
-                .map((bName, index) => {
-                  const b = MobileNav.availableButtons[bName]
-                  const props = b.getProps ? b.getProps(this) : {}
+      <div className='mobile-nav-main' key="mobileNav">
+        <SwipeableViews index={this.state.index}
+                        onChangeIndex={this.handleChangeIndex.bind(this)}>
+          {
+            this.buttons
+              .filter(bName => !!MobileNav.availableButtons[bName])
+              .map((bName, index) => {
+                const b = MobileNav.availableButtons[bName]
+                const props = b.getProps ? b.getProps(this) : {}
 
-                  return <div key={index}>
-                    <b.Component key={index} title={bName} {...props} />
-                  </div>
-                })
-            }
-            {/*{this.buttons.length > max && <AllButtons buttons={this.buttons} onClick={this.onClick} />}*/}
-          </SwipeableViews>
-        }
+                return <div key={index}>
+                  <b.Component key={index} title={bName} {...this.props} {...props} />
+                </div>
+              })
+          }
+          {/*{this.buttons.length > max && <AllButtons buttons={this.buttons} onClick={this.onClick} />}*/}
+        </SwipeableViews>
+
 
         {/*{this.state.showMore && fpMobileMore()}*/}
 
-        <div style={MobileNav.style} className="MobileNav">
+        <div className="mobile-nav">
           {
             this.buttons
               .filter((bName, index) => !!MobileNav.availableButtons[bName] && index < max)
@@ -273,8 +250,8 @@ class MobileNav extends React.Component {
           }
 
           {/*{this.buttons.length > max &&
-            this.renderButton('more', max)
-          }*/}
+           this.renderButton('more', max)
+           }*/}
         </div>
       </div>
     )
@@ -283,8 +260,8 @@ class MobileNav extends React.Component {
   renderButton(bName, index) {
     const b = MobileNav.availableButtons[bName]
     return <a
-      className={'item' + (index === this.state.index ? ' active' : '')}
-      style={Object.assign({ color: (index === this.state.index && !this.state.showMore) ? 'yellow' : 'initial' }, MobileNav.btnStyle)}
+      className={'mobile-nav-button item' + (index === this.state.index ? ' active' : '')}
+      style={{color: (index === this.state.index && !this.state.showMore) ? 'blue' : 'initial'}}
       name={bName}
       key={index}
       onClick={() => this.onClick(b, index)}

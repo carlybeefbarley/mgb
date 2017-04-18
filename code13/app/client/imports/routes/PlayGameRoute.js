@@ -148,6 +148,9 @@ class PlayCodeGame extends React.Component {
    * Checks if we can offer fullscreen functionality
    * */
   canDoFullScreen(){
+
+
+
     const { allowFullScreen } = this.props.metadata
     const rfs = document.body.requestFullScreen
       || document.body.webkitRequestFullScreen

@@ -31,10 +31,8 @@
           "error",
           2
         ]
-        // ,
-        // "semi": [
-        //     "error",
-        //     "never"
-        // ]
+     ,
+      "semi": ["error", "never"],
+      "semi": "off"
     }
 }

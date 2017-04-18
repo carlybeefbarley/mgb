@@ -412,6 +412,8 @@ const AppUI = React.createClass({
       )
     )
 
+    const isMobile = true
+
     return (
       <div >
 
@@ -436,7 +438,7 @@ const AppUI = React.createClass({
           assetId={params.assetId}
           debug={joyrideDebug} />
 
-        {/*<div>
+        { !isMobile && <div>
             <FlexPanel
               fpIsFooter={!!respData.footerTabMajorNav}
               joyrideSteps={this.state.joyrideSteps}
@@ -461,7 +463,7 @@ const AppUI = React.createClass({
 
             <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id='mgb-jr-main-container'>
               <div style={mainPanelInnerDivSty}>
-                { !respData.footerTabMajorNav && 
+                { !respData.footerTabMajorNav &&
                   <NavPanel
                     currUser={currUser}
                     navPanelAvailableWidth={mainAreaAvailableWidth}
@@ -483,9 +485,9 @@ const AppUI = React.createClass({
                     sysvars={sysvars}
                     currentlyEditingAssetInfo={currentlyEditingAssetInfo}
                     />
-                
+
                 {
-                  
+
                   !loading && this.props.children && React.cloneElement(this.props.children, {
                     // Make below props available to all routes.
                     user: user,
@@ -502,9 +504,27 @@ const AppUI = React.createClass({
               </div>
             </div>
 
-          </div>*/}
-          <NotificationContainer/> {/* This is for the top-right toast messages */}
-          <MobileNav />
+          </div>}
+
+
+        <NotificationContainer /> {/* This is for the top-right toast messages */}
+        {isMobile && !loading &&
+        <MobileNav
+          {...this.props}
+          state={this.state}
+          // Make below props available to all routes.
+          user={user}
+          currUser={currUser}
+          currUserProjects={currUserProjects}
+          hazUnreadAssetChat={hazUnreadAssetChat}
+          ownsProfile={ownsProfile}
+          isSuperAdmin={isSuperAdmin}
+          availableWidth={mainAreaAvailableWidth}
+          handleSetCurrentlyEditingAssetInfo={this.handleSetCurrentlyEditingAssetInfo}
+          isTopLevelRoute={true}// Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
+
+        />
+        }
       </div>
     )
   },

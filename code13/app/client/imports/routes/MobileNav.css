@@ -1,19 +1,46 @@
+.mobile-nav-main{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  right: 0;
+  justify-content: space-around;
+  background-color: white;
+}
+
+
 .react-swipeable-view-container{
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  overflow: hidden;
+  padding-bottom: 45px;
+}
+
+.mobile-nav-buttons {
+  display: inline-block;
+  text-align: center;
 }
 
 .mobile-nav-all-buttons{
-    background-color: rgb(255, 255, 255);
-    display: flex;
-    justify-content: space-around;
-    text-align: center;
-    height: 100%;
-    flex-wrap: wrap;
-    overflow: auto;
-    align-content: space-around;
-    padding-bottom: 50px
+  background-color: rgb(255, 255, 255);
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  height: 100%;
+  flex-wrap: wrap;
+  overflow: auto;
+  align-content: space-around;
+  padding-bottom: 50px;
 }

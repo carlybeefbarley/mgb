@@ -38,9 +38,11 @@
 //}
 
 // allows CDN connections from other locations
+  const lookForCDN = function () {
+    if (!window.__meteor_runtime_config__)
+      window.setTimeout(lookForCDN, 1); return
 
-  window.setTimeout(function () {
-    if (!__meteor_runtime_config__ || !__meteor_runtime_config__.ROOT_URL)
+    if(!__meteor_runtime_config__.ROOT_URL)
       return
 
     const root_host = __meteor_runtime_config__.ROOT_URL.split("//").pop()
@@ -48,5 +50,6 @@
       return
 
     __meteor_runtime_config__.DDP_DEFAULT_CONNECTION_URL = __meteor_runtime_config__.ROOT_URL
-  }, 1)
+  }
+  window.setTimeout(lookForCDN, 1)
 })()

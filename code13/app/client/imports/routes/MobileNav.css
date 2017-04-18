@@ -1,4 +1,4 @@
-.mobile-nav-main{
+.mobile-nav-main {
   position: fixed;
   top: 0;
   left: 0;
@@ -16,24 +16,22 @@
   background-color: white;
 }
 
-
-.react-swipeable-view-container{
+.react-swipeable-view-container {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   background-color: white;
-  overflow: hidden;
   padding-bottom: 45px;
 }
 
-.mobile-nav-buttons {
+.mobile-nav-button {
   display: inline-block;
   text-align: center;
 }
 
-.mobile-nav-all-buttons{
+.mobile-nav-all-buttons {
   background-color: rgb(255, 255, 255);
   display: flex;
   justify-content: space-around;

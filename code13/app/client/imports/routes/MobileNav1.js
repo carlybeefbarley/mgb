@@ -14,6 +14,9 @@ import './MobileNav.css'
 
 import NavBar from '/client/imports/components/Nav/NavBar'
 
+import {utilReplaceTo} from '/client/imports/routes/QLink.js'
+
+
 const BlankPage = (p) => {
   return <div>{p.title}</div>
 }
@@ -195,7 +198,7 @@ class MobileNav extends React.Component {
         const props = b.getProps ? b.getProps(this) : {}
 
         return <div key={index}>
-          <b.Component key={index} title={bName} {...this.props} {...props} ref={bName}/>
+          <b.Component  title={bName} isMobile={true} {...this.props} {...props} />
         </div>
       })
 

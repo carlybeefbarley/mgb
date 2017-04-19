@@ -59,86 +59,87 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 const knownRoutes = [
   {path: '/callum', component: Callum},
-  {component: App, routes: [
-    {path: '/', component: Home},
-    {path: '/u/:username/play/:assetId', component: PlayGameRoute, name: 'Play Game'},
-    {path: '/whatsnew', component: WhatsNewRoute, name: 'What\'s New'},
-    {path: '/roadmap', component: Roadmap, name: 'Roadmap'},
-    {path: '/dashboard', component: DashboardRoute, name: 'Dashboard'},
+  {
+    component: App, routes: [
+      {path: '/', component: Home},
+      {path: '/u/:username/play/:assetId', component: PlayGameRoute, name: 'Play Game'},
+      {path: '/whatsnew', component: WhatsNewRoute, name: 'What\'s New'},
+      {path: '/roadmap', component: Roadmap, name: 'Roadmap'},
+      {path: '/dashboard', component: DashboardRoute, name: 'Dashboard'},
 
-    {path: '/learn', component: LearnRoute},
-    {path: '/learn/skills', component: LearnSkillsRoute},
-    {path: '/learn/skills/:skillarea', component: LearnSkillsAreaRoute},
-    {path: '/learn/games', component: LearnGamesRoute},
-    {path: '/learn/getstarted', component: LearnGetStartedRoute,  name: 'Get Started'},
+      {path: '/learn', component: LearnRoute},
+      {path: '/learn/skills', component: LearnSkillsRoute},
+      {path: '/learn/skills/:skillarea', component: LearnSkillsAreaRoute},
+      {path: '/learn/games', component: LearnGamesRoute},
+      {path: '/learn/getstarted', component: LearnGetStartedRoute, name: 'Get Started'},
 
-    {path: '/learn/code', component: LearnCodeRoute, name: 'Programming'},
-    {path: '/learn/code/modify', component: LearnCodeModifyRoute, name: 'Modify Games'},
-    {path: '/learn/code/:item', component: LearnCodeRouteItem},
+      {path: '/learn/code', component: LearnCodeRoute, name: 'Programming'},
+      {path: '/learn/code/modify', component: LearnCodeModifyRoute, name: 'Modify Games'},
+      {path: '/learn/code/:item', component: LearnCodeRouteItem},
 
-    {path: '/learn/art', component: LearnArtRoute, name: 'Pixel Art'},
-    {path: '/games', component: BrowseGamesRoute, name: 'Browse Games'},
-    {path: '/u/:username/games', component: BrowseGamesRoute, name: 'Games'},
+      {path: '/learn/art', component: LearnArtRoute, name: 'Pixel Art'},
+      {path: '/games', component: BrowseGamesRoute, name: 'Browse Games'},
+      {path: '/u/:username/games', component: BrowseGamesRoute, name: 'Games'},
 
-    {path: '/signup', component: Users.SignupRoute, name: 'Sign up'},
-    {path: '/login', component: Users.LoginRoute, name: 'Log In'},
-    {path: '/forgot-password', component: Users.ForgotPassword, name: 'Forgot Password'},
-    {path: '/reset-password/:token', component: Users.ResetPassword, name: 'Reset Password'},
+      {path: '/signup', component: Users.SignupRoute, name: 'Sign up'},
+      {path: '/login', component: Users.LoginRoute, name: 'Log In'},
+      {path: '/forgot-password', component: Users.ForgotPassword, name: 'Forgot Password'},
+      {path: '/reset-password/:token', component: Users.ResetPassword, name: 'Reset Password'},
 
-    {path: '/users', component: Users.UserListRoute, name: 'Search All Users'},
-    {path: 'u/:username/import', component: Import},
-    {path: 'user/:id', component: Users.Profile, name: 'Profile'},
-    {path: 'u/:username', component: Users.Profile, name: 'Profile'},
-
-
-    {path: '/user/:id/assets', component: Azzets.UserAssetListRoute, name: 'Assets'},
-    {path: '/u/:username/assets', component: Azzets.UserAssetListRoute, name: 'Assets'},
-
-    {path: '/user/:id/asset/:assetId', component: Azzets.AssetEditRoute, name: 'Loading asset...'},
-    {path: '/u/:username/asset/:assetId', component: Azzets.AssetEditRoute, name: 'Loading asset...'},
-
-    {path: 'user/:id/projects', component: Projects.UserProjectList, name: 'Projects'},
-    {path: 'u/:username/projects', component: Projects.UserProjectList, name: 'Projects'},
-
-    {path: '/user/:id/projects/create', component: Projects.ProjectCreateNewRoute, name: 'Create New Project'},
-    {path: 'u/:username/projects/create', component: Projects.ProjectCreateNewRoute, name: 'Create New Project'},
-
-    {path: 'user/:id/project/:projectId', component: Projects.ProjectOverview, name: 'Project Details'},
-    {path: 'u/:username/projects/:projectName', component: Projects.ProjectOverview, name: 'Project Details'},
-    {path: 'u/:username/project/:projectId', component: Projects.ProjectOverview, name: 'Project Details'},
-
-    {path: '/user/:id/history', component: Users.UserHistoryRoute, name: 'History'},
-    {path: 'u/:username/history', component: Users.UserHistoryRoute, name: 'History'},
-
-    {path: '/user/:id/badges', component: Users.BadgeListRoute, name: 'Badges'},
-    {path: '/u/:username/badges', component: Users.BadgeListRoute, name: 'Badges'},
-
-    {path: '/projects', component: Projects.UserProjectList, name: 'Search All Projects'},
-    {path: '/assets', component: Azzets.UserAssetListRoute, name: 'Search All Assets'},
-    {path: '/assets/create', component: Azzets.AssetCreateNewRoute, name: 'Create New Asset'},
+      {path: '/users', component: Users.UserListRoute, name: 'Search All Users'},
+      {path: 'u/:username/import', component: Import},
+      {path: 'user/:id', component: Users.Profile, name: 'Profile'},
+      {path: 'u/:username', component: Users.Profile, name: 'Profile'},
 
 
-    {path: 'assetEdit/:assetId', component: Azzets.AssetEditRoute, name: 'Edit Asset (finding owner...)'},
-    {path: 'assetEdit/:kind/:user/:name', component: Azzets.AssetEditRedirect, name: 'Edit Asset (finding owner...)'},
+      {path: '/user/:id/assets', component: Azzets.UserAssetListRoute, name: 'Assets'},
+      {path: '/u/:username/assets', component: Azzets.UserAssetListRoute, name: 'Assets'},
+
+      {path: '/user/:id/asset/:assetId', component: Azzets.AssetEditRoute, name: 'Loading asset...'},
+      {path: '/u/:username/asset/:assetId', component: Azzets.AssetEditRoute, name: 'Loading asset...'},
+
+      {path: 'user/:id/projects', component: Projects.UserProjectList, name: 'Projects'},
+      {path: 'u/:username/projects', component: Projects.UserProjectList, name: 'Projects'},
+
+      {path: '/user/:id/projects/create', component: Projects.ProjectCreateNewRoute, name: 'Create New Project'},
+      {path: 'u/:username/projects/create', component: Projects.ProjectCreateNewRoute, name: 'Create New Project'},
+
+      {path: 'user/:id/project/:projectId', component: Projects.ProjectOverview, name: 'Project Details'},
+      {path: 'u/:username/projects/:projectName', component: Projects.ProjectOverview, name: 'Project Details'},
+      {path: 'u/:username/project/:projectId', component: Projects.ProjectOverview, name: 'Project Details'},
+
+      {path: '/user/:id/history', component: Users.UserHistoryRoute, name: 'History'},
+      {path: 'u/:username/history', component: Users.UserHistoryRoute, name: 'History'},
+
+      {path: '/user/:id/badges', component: Users.BadgeListRoute, name: 'Badges'},
+      {path: '/u/:username/badges', component: Users.BadgeListRoute, name: 'Badges'},
+
+      {path: '/projects', component: Projects.UserProjectList, name: 'Search All Projects'},
+      {path: '/assets', component: Azzets.UserAssetListRoute, name: 'Search All Assets'},
+      {path: '/assets/create', component: Azzets.AssetCreateNewRoute, name: 'Create New Asset'},
 
 
-    {path: 'user/:id/skilltree', component: Users.SkillTreeRoute, name: 'Skills'},
-    {path: 'u/:username/skilltree', component: Users.SkillTreeRoute, name: 'Skills'},
+      {path: 'assetEdit/:assetId', component: Azzets.AssetEditRoute, name: 'Edit Asset (finding owner...)'},
+      {path: 'assetEdit/:kind/:user/:name', component: Azzets.AssetEditRedirect, name: 'Edit Asset (finding owner...)'},
 
-    {path: '/legal/tosDRAFT', component: TermsOfService, name: 'Terms Of Service'},
-    {path: '/legal/privacyDRAFT', component: Privacy, name: 'Privacy Policy'},
 
-    {path: '/notyetimplemented/:featureName', component: NotYetImplementedRoute, name: 'Coming Soon!..'},
+      {path: 'user/:id/skilltree', component: Users.SkillTreeRoute, name: 'Skills'},
+      {path: 'u/:username/skilltree', component: Users.SkillTreeRoute, name: 'Skills'},
 
-    {path: '*', component: NotFoundRoute, name: 'Page Not Found'},
+      {path: '/legal/tosDRAFT', component: TermsOfService, name: 'Terms Of Service'},
+      {path: '/legal/privacyDRAFT', component: Privacy, name: 'Privacy Policy'},
 
-  ]},
+      {path: '/notyetimplemented/:featureName', component: NotYetImplementedRoute, name: 'Coming Soon!..'},
+
+      {path: '*', component: NotFoundRoute, name: 'Page Not Found'}
+    ]
+  }
 ]
 
 
 const createRoutes = (routes) => {
   const retval = []
-  for(let i=0; i<routes.length; i++){
+  for (let i = 0; i < routes.length; i++) {
 
     const cr = routes[i].routes ? createRoutes(routes[i].routes) : []
     const r = <route {...routes[i]}>{cr}</route>

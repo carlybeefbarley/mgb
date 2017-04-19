@@ -2,16 +2,13 @@ import React from 'react'
 import {Grid, Sidebar, Segment, Button, Menu, Image, Icon, Header} from 'semantic-ui-react'
 
 import SwipeableViews from 'react-swipeable-views'
-import _ from 'lodash'
-
-///home/stauzs/Projects/mgb/code13/app/client/imports/routes/MobileNav.js
-import fpMobileMore from '../components/SidePanels/fpMobileMore.js'
-
 import elementResizeDetectorMaker from 'element-resize-detector'
 
-import Home from './Home'
 import fpAssets from '../components/SidePanels/fpAssets'
 import BrowseGamesRoute from './BrowseGamesRoute'
+
+import fpChat from '../components/SidePanels/fpChat'
+
 
 import './MobileNav.css'
 
@@ -33,7 +30,7 @@ const Checkboxes = (p) => {
 const AllButtons = (p) => {
   return <div className="mobile-nav-all-buttons">
     {p.buttons
-      .filter((bName, index) => !!MobileNav.availableButtons[bName] && index > p.from && index < p.to)
+      .filter((bName, index) => !!MobileNav.availableButtons[bName] && index >= p.from && index < p.to)
       .map((bName, index) => {
         const b = MobileNav.availableButtons[bName]
         return <a
@@ -57,7 +54,12 @@ const HomeWrap = (p) => (
   </div>
 )
 
-class MobileNav extends React.PureComponent {
+const doLogout = () => {
+  Meteor.logout()
+  window.location = '/'
+}
+
+class MobileNav extends React.Component {
 
   constructor() {
     super()
@@ -84,6 +86,7 @@ class MobileNav extends React.PureComponent {
       index: 0
     }
     this.cache = {}
+
   }
 
   componentDidMount() {
@@ -95,30 +98,136 @@ class MobileNav extends React.PureComponent {
       this.forceUpdate()
     }
     this.erd.listenTo(document.body, this.onresize)
+    window.swp = this.refs.swipeable
   }
 
   componentWillUnmount() {
     this.erd.removeListener(document.body, this.onresize)
   }
 
+  shouldComponentUpdate(nextProps, nextState){
+    if(this.cache.pathname != nextProps.location.pathname){
+      this.cache.pathname = nextProps.location.pathname
+      this._tmpView = null
+    }
+    return true
+  }
+
   /*componentDidUpdate() {
-    console.log("PROPS:", this.props.location.pathname, this.props)
-  }*/
+   console.log("PROPS:", this.props.location.pathname, this.props)
+   }*/
+
+
+  onClick(button, index) {
+    const max = this.getMaxItems()
+    if (index > max) {
+      console.log('more than max:', button)
+      button.action && button.action()
+      return
+    }
+    this.handleChangeIndex(index)
+  }
+
+  handleChangeIndex(index) {
+    this.setState({index})
+
+    $(".mobile-nav-button.active", this.refs.mobileNav).removeClass("active")
+    $("#mobile-nav-button-" + index, this.refs.mobileNav).addClass("active")
+  }
+
+
+  getMaxItems() {
+    return 5
+    // or return 4 always ?
+    console.log("MAX items:", window.innerWidth / 70)
+    return Math.floor(window.innerWidth / 70) - 1
+  }
+
+  render() {
+
+    return (
+      <div className='mobile-nav-main' ref="mobileNav">
+
+        <SwipeableViews index={this.state.index}
+                        onChangeIndex={this.handleChangeIndex.bind(this)} ref="swipeable">
+          {
+            this.renderView()
+          }
+        </SwipeableViews>
+
+        {this.renderButtons()}
+      </div>
+    )
+  }
+
+  renderButtons() {
+
+    if (this._tmpButtons)
+      return this._tmpButtons
+
+
+    const max = this.getMaxItems()
+    this._tmpButtons = <div className="mobile-nav">
+      {
+        this.buttons
+          .filter((bName, index) => !!MobileNav.availableButtons[bName] && index < max)
+          .map(this.renderButton, this)
+      }
+    </div>
+    return this._tmpButtons
+  }
+
+  renderView() {
+    if (this._tmpView)
+      return this._tmpView
+
+    const max = this.getMaxItems()
+    this._tmpView = this.buttons
+      .filter((bName, index) => !!MobileNav.availableButtons[bName] && index < max)
+      .map((bName, index) => {
+        const b = MobileNav.availableButtons[bName]
+        const props = b.getProps ? b.getProps(this) : {}
+
+        return <div key={index}>
+          <b.Component key={index} title={bName} {...this.props} {...props} ref={bName}/>
+        </div>
+      })
+
+    return this._tmpView
+  }
+
+  renderButton(bName, index) {
+    const b = MobileNav.availableButtons[bName]
+    return <a
+      className={'mobile-nav-button item' + (index === this.state.index ? ' active' : '')}
+      name={bName}
+      key={index}
+      id={"mobile-nav-button-" + index}
+      onClick={() => this.onClick(b, index)}
+    >
+      <Icon name={b.icon || 'question'} size='large'></Icon>
+      <p>{b.title}</p>
+    </a>
+  }
 
 
   static availableButtons = {
     home: {
       title: 'Home',
-      Component: BlankPage, ///HomeWrap,
+      Component: HomeWrap, ///HomeWrap,
+      getProps: (mobileNav) => ({
+        flexPanelWidth: '0'
+      }),
       icon: 'home'
     },
     assets: {
       title: "Assets",
       Component: fpAssets, //BlankPage,
       getProps: (mobileNav) => ({
-        allowDrag: false
+        allowDrag: false,
+        panelWidth: '0'
       }),
-      icon: 'play'
+      icon: 'search'
     },
     play: {
       title: "Play",
@@ -127,7 +236,17 @@ class MobileNav extends React.PureComponent {
     },
     chat: {
       title: "Chat",
-      Component: BlankPage,
+      Component: fpChat, // BlankPage,
+      getProps: (mobileNav) => ({
+        panelWidth: '0',
+        // TODO: save and restore
+        subNavParam: '',
+        handleChangeSubNavParam: function (newSubNavParamStr) {
+          console.log(newSubNavParamStr, mobileNav.props)
+          localStorage.setItem("chat:subNavParam", newSubNavParamStr)
+          mobileNav.forceUpdate()
+        }
+      }),
       icon: 'chat'
     },
     profile: {
@@ -188,7 +307,7 @@ class MobileNav extends React.PureComponent {
     logout: {
       title: 'Log Out',
       icon: 'log out',
-      Component: BlankPage
+      action: doLogout
     },
     more: {
       title: 'More',
@@ -198,100 +317,6 @@ class MobileNav extends React.PureComponent {
         return {buttons: mobileNav.buttons, mobileNav: mobileNav, from: 5, to: Infinity}
       }
     },
-  }
-
-
-  onClick(button, index) {
-    this.handleChangeIndex(index)
-  }
-
-  handleChangeIndex(index) {
-    // this.setState({index, showMore: false})
-
-    $(".mobile-nav-button.active", this.refs.mobileNav).removeClass("active")
-    $("#mobile-nav-button-" + index, this.refs.mobileNav).addClass("active")
-  }
-
-
-  shouldComponentUpdate(nextProps, nextState){
-    if(this.cache.location != nextProps.location.pathname){
-      this.cache.location = nextProps.location.pathname
-      this._tmpView = null
-    }
-    return true
-  }
-
-  getMaxItems() {
-    return 5
-    // or return 4 always ?
-    console.log("MAX items:", window.innerWidth / 70)
-    return Math.floor(window.innerWidth / 70) - 1
-  }
-
-
-
-  render() {
-
-    return (
-      <div className='mobile-nav-main' ref="mobileNav">
-
-        <SwipeableViews index={this.state.index}
-                        onChangeIndex={this.handleChangeIndex.bind(this)}>
-          {
-            this.renderView()
-          }
-        </SwipeableViews>
-
-        {this.renderButtons()}
-      </div>
-    )
-  }
-
-  renderButtons(){
-
-    /*if(this._tmpButtons)
-      return this._tmpButtons
-    */
-
-    const max = this.getMaxItems()
-    this._tmpButtons = <div className="mobile-nav">
-      {
-        this.buttons
-          .filter((bName, index) => !!MobileNav.availableButtons[bName] && index < max)
-          .map(this.renderButton, this)
-      }
-    </div>
-    return this._tmpButtons
-  }
-
-  renderView(){
-    const max = this.getMaxItems()
-    this._tmpView = this.buttons
-      .filter((bName, index) => !!MobileNav.availableButtons[bName] && index < max)
-      .map((bName, index) => {
-        const b = MobileNav.availableButtons[bName]
-        const props = b.getProps ? b.getProps(this) : {}
-
-        return <div key={index}>
-          <b.Component key={index} title={bName} {...this.props} {...props} />
-        </div>
-      })
-
-    return this._tmpView
-  }
-
-  renderButton(bName, index) {
-    const b = MobileNav.availableButtons[bName]
-    return <a
-      className={'mobile-nav-button item' + (index === this.state.index ? ' active' : '')}
-      name={bName}
-      key={index}
-      id={"mobile-nav-button-"+index}
-      onClick={() => this.onClick(b, index)}
-    >
-      <Icon name={b.icon || 'question'} size='large'></Icon>
-      <p>{b.title}</p>
-    </a>
   }
 }
 

@@ -204,7 +204,7 @@ const ChatMessage = ({ msg }) => {
 // TODO: Push this up to flexPanel.js? or have flexPanel.js provide an optional 'recent state' prop?
 let _previousChannelName = null // This should be null or a name known to succeed with isChannelNameValid()
 
-export default fpChat = React.createClass( {
+const fpChat = React.createClass( {
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -788,3 +788,5 @@ export default fpChat = React.createClass( {
     )
   }
 } )
+
+export default fpChat

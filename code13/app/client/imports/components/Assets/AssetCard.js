@@ -57,12 +57,14 @@ export default AssetCard = React.createClass({
     // this is here because React makes passive event listeners and it's not
     // possible to prevent default from passive event listener
     this.dragSurface = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
-    this.dragSurface.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+    if(this.props.allowDrag)
+      this.dragSurface.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
 
   },
   componentWillUnmount(){
     // See comment in componentDidMount() and #478
-    this.dragSurface.removeEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+    if(this.props.allowDrag)
+      this.dragSurface.removeEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
   },
 
   startDrag (e) {
@@ -77,6 +79,18 @@ export default AssetCard = React.createClass({
     //const { asset } = this.props
     //console.log(`AssetCard stopDrag(${asset ? asset._id : 'null?'})..`)
     $(document.body).removeClass('dragging') // this is in mgb.css
+  },
+
+  getDropProps(){
+    if(!this.props.allowDrag)
+      return {}
+    return {
+      onDragStart: this.startDrag,
+      onDragEnd: this.endDrag,
+    // draggable must be explicitly set if element is not user-input, img, or link... see
+    // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/draggable
+      draggable: 'draggable'
+    }
   },
 
   render () {
@@ -112,6 +126,7 @@ export default AssetCard = React.createClass({
     const shownAssetName = asset.name || '(untitled)'
     const currUser = Meteor.user()
 
+    const dropProps = this.getDropProps()
     return (
       <Card
         color={assetKindColor}
@@ -121,12 +136,11 @@ export default AssetCard = React.createClass({
         // onClick() can trigger at the end of a drag on mobile Chrome
         onMouseUp={this.handleEditClick}
         onTouchEnd={this.handleEditClick}
-        onDragStart={this.startDrag}
-        onDragEnd={this.endDrag}
+        onTouchStart={this.handleTouchStart}
+        onTouchMove={this.handleTouchMove}
+        {...dropProps}
+
         key={asset._id}
-        // draggable must be explicitly set if element is not user-input, img, or link... see
-        // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/draggable
-        draggable
         className='animated fadeIn link'
       >
 
@@ -323,6 +337,9 @@ export default AssetCard = React.createClass({
   },
 
   handleEditClick (e) {
+    if(this.touchHasMoved)
+      return
+
     const asset = this.props.asset
     const url = '/u/' + asset.dn_ownerName + '/asset/' + asset._id
     // middle click - mouseUp reports buttons == 0; button == 1
@@ -330,5 +347,12 @@ export default AssetCard = React.createClass({
       window.open(url + (window.location.search ? window.location.search : ''))
     else
       utilPushTo(this.context.urlLocation.query, url)
+  },
+
+  handleTouchMove(){
+    this.touchHasMoved = true
+  },
+  handleTouchStart(){
+    this.touchHasMoved = false
   }
 })

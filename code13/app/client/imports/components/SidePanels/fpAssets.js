@@ -41,7 +41,7 @@ const ShowFromWho = ( { value, currUser, otherUser, style, onChange }) => {
     </small>
   )
 }
-
+// this creates global fpAsset variable
 export default fpAssets = React.createClass({
   mixins: [ReactMeteorData],
 
@@ -50,7 +50,8 @@ export default fpAssets = React.createClass({
     user:             PropTypes.object,             // User object for context we are navigating to in main page. Can be null/undefined. Can be same as currUser, or different user
     currUserProjects: PropTypes.array,              // Projects list for currently logged in user
     activity:         PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
-    panelWidth:       PropTypes.string.isRequired   // Typically something like "200px".
+    panelWidth:       PropTypes.string.isRequired,  // Typically something like "200px".
+    allowDrag:        PropTypes.bool                // Enable drag and drop ?
   },
 
   getInitialState: () => ( {
@@ -121,7 +122,7 @@ export default fpAssets = React.createClass({
       false,                // Show Only Deleted
       false,                // Show only Stable
       undefined,            // Use default sort order
-      20                    // Limit
+      5                    // Limit
     )
     const assetSorter = { updatedAt: -1 }
     let assetSelector = assetMakeSelector(
@@ -141,7 +142,7 @@ export default fpAssets = React.createClass({
     }
 
     return {
-      assets: Azzets.find(assetSelector, {sort: assetSorter}).fetch(),          // Note that the subscription we used excludes the content2 field which can get quite large
+      assets: Azzets.find(assetSelector, {sort: assetSorter, limit: 5}).fetch(),          // Note that the subscription we used excludes the content2 field which can get quite large
       userProjects: userId ? Projects.find(selectorForProjects).fetch() : currUserProjects, // Can be null
       loading: !handleForAssets.ready() || ( handleForProjects !== null && !handleForProjects.ready())
     }
@@ -239,7 +240,7 @@ export default fpAssets = React.createClass({
         <br></br>
         { loading ? <Spinner /> :
             <AssetList
-              allowDrag={true}
+              allowDrag={this.props.allowDrag}
               fluid={true}
               renderView={view}
               assets={assets}

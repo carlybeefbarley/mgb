@@ -29,6 +29,11 @@
 .mobile-nav-button {
   display: inline-block;
   text-align: center;
+  color: black;
+}
+
+.mobile-nav-button.active {
+  color: blue
 }
 
 .mobile-nav-all-buttons {
@@ -41,4 +46,8 @@
   overflow: auto;
   align-content: space-around;
   padding-bottom: 50px;
+}
+
+.react-swipeable-view-container > div {
+  position: relative;
 }

@@ -46,23 +46,31 @@ export const makeCDNLink = (uri, etagOrHash = null, prefixDomainAlways = false) 
     console.error("makeCDNLink - missing uri") // error for stack trace
     return
   }
+
+  const conf = window.__meteor_runtime_config__ ? __meteor_runtime_config__ : null
   // don't cache at all
   if (uri.startsWith("/api") && !etagOrHash)
-    return CDN_DOMAIN ? `//${CDN_DOMAIN}${uri}` : uri
+    return CDN_DOMAIN
+      ? `//${CDN_DOMAIN}${uri}`
+      : (
+        prefixDomainAlways && conf
+          ? conf.ROOT_URL + uri
+          : uri
+      )
 
   // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource
-  const hash = etagOrHash != null ? etagOrHash : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
+  const hash = etagOrHash != null ? etagOrHash : (conf ? conf.autoupdateVersion : Date.now())
 
   if (uri.startsWith("/") && !uri.startsWith("//")){
     if(CDN_DOMAIN){
       return `//${CDN_DOMAIN}${uri}?hash=${hash}`
     }
     else{
-      if(__meteor_runtime_config__ && __meteor_runtime_config__.ROOT_URL){
+      if(conf && conf.ROOT_URL){
         // make sure we don't break http / https
-        const root_host = __meteor_runtime_config__.ROOT_URL.split("//").pop()
+        const root_host = conf.ROOT_URL.split("//").pop()
         if( (!root_host.startsWith(window.location.host) && !root_host.startsWith("localhost")) || prefixDomainAlways){
-          return `${__meteor_runtime_config__.ROOT_URL}${uri}?hash=${hash}`
+          return `${conf.ROOT_URL}${uri}?hash=${hash}`
         }
       }
     }

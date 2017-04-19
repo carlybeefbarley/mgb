@@ -148,9 +148,6 @@ class PlayCodeGame extends React.Component {
    * Checks if we can offer fullscreen functionality
    * */
   canDoFullScreen(){
-
-
-
     const { allowFullScreen } = this.props.metadata
     const rfs = document.body.requestFullScreen
       || document.body.webkitRequestFullScreen
@@ -207,9 +204,10 @@ class PlayCodeGame extends React.Component {
     const [ ownerName, codeName ] = colonPlace == -1 ? [owner.profile.name, _codeName] : [_codeName.slice(0, colonPlace), _codeName.slice(colonPlace + 1)]
 
     // recover on missing asset
-    const src = metadata._ids && metadata._ids.startCode
+    const src = makeCDNLink(metadata._ids && metadata._ids.startCode
               ? `/api/asset/code/bundle/cdn/${metadata._ids.startCode}/${ownerName}/${codeName}?origin=${origin}`
-              : `/api/asset/code/bundle/cdn/${ownerName}/${codeName}?origin=${origin}`
+              : `/api/asset/code/bundle/cdn/${ownerName}/${codeName}?origin=${origin}`, null, true)
+
     return (
       <div>
         <Toolbar

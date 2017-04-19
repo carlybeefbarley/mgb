@@ -65,7 +65,7 @@ export default class ArtTutorial extends React.Component {
 
   navigateToSkillsList = () => {
     const returnToSkillsUrl = '/learn/art/'
-    utilPushTo( window.location, returnToSkillsUrl )
+    utilPushTo( null, returnToSkillsUrl )
   }
 
   render () {

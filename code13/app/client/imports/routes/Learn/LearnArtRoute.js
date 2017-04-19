@@ -120,7 +120,7 @@ const openUrl = (url, newTab) => {
   if (newTab)
     window.open( window.location.origin + url )
   else
-    utilPushTo( window.location, url )
+    utilPushTo( null, url )
 }
 
 const LearnArtRoute = ({ currUser }, context) => {

@@ -678,24 +678,24 @@ const AppUI = React.createClass({
       switch (actText) {
       case 'openVaultAssetById':
         // we want to open asset !vault:actParam
-        utilPushTo(window.location, `/u/!vault/asset/${actParam}`)
+        utilPushTo(null, `/u/!vault/asset/${actParam}`)
         break
 
       case 'openVaultAssetByName':
         debugger// TODO @@@@@ need to actually get id fromname
-        utilPushTo(window.location, `/u/!vault/asset/${actParam}`)
+        utilPushTo(null, `/u/!vault/asset/${actParam}`)
         break
 
       case 'navToRelativeUrl':
-        utilPushTo(window.location, actParam)
+        utilPushTo(null, actParam)
         break
 
       case 'openVaultProjectById':
-        utilPushTo(window.location, `/u/!vault/project/${actParam}`)
+        utilPushTo(null, `/u/!vault/project/${actParam}`)
         break
 
       case 'openVaultProjectByName':
-        utilPushTo(window.location, `/u/!vault/projects/${actParam}`)
+        utilPushTo(null, `/u/!vault/projects/${actParam}`)
         break
 
       case 'closeFlexPanel':

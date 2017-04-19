@@ -437,7 +437,7 @@ export default class Joyride extends React.Component {
         if (dataType === 'next' && steps[state.index].submitCode) {
           const url = `❮!vault:${assetId}❯`
           ChatSendMessageOnChannelName('G_MGBHELP_', 'Check my Phaser task ' + url)
-          utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
+          utilPushTo(null, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
           e.preventDefault()
           e.stopPropagation()
           // return // no other action
@@ -446,7 +446,7 @@ export default class Joyride extends React.Component {
         if (dataType === 'back' && steps[state.index].submitCode) {
           const url = `❮!vault:${assetId}❯`
           ChatSendMessageOnChannelName('G_MGBHELP_', 'Help me with code asset ' + url)
-          utilPushTo(window.location, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
+          utilPushTo(null, window.location.pathname, {'_fp':'chat.G_MGBHELP_'})
           e.preventDefault()
           e.stopPropagation()
           return // no other action

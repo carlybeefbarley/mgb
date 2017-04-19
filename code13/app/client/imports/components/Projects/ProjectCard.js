@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { PropTypes } from 'react';
 import QLinkUser from '/client/imports/routes/QLinkUser';
-import QLink, { utilPushTo } from '/client/imports/routes/QLink';
+import { utilPushTo } from '/client/imports/routes/QLink';
 import validate from '/imports/schemas/validate';
 import InlineEdit from '/client/imports/components/Controls/InlineEdit';
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange';
@@ -12,7 +12,7 @@ import { Card, Icon } from 'semantic-ui-react';
 // This is a Project Card which is a card-format version of the Project information.
 // It is passed a project database object and it locally decides what fields to use/render within that structure.
 
-const ProjectCard = props => {
+const ProjectCard = ( props, context ) => {
   const { project, canEdit, handleFieldChanged } = props;
   const linkTo = '/u/' + project.ownerName + '/projects/' + project.name;
   const MemberStr = !project.memberIds || project.memberIds.length === 0
@@ -26,7 +26,7 @@ const ProjectCard = props => {
       key={project._id} 
       className="animated fadeIn" 
       style={{maxWidth: '230px', minWidth: '230px'}}
-      onClick={() => utilPushTo(window.location.query, linkTo)}>
+      onClick={() => utilPushTo(context.urlLocation.query, linkTo)}>
 
       <ImageShowOrChange
         imageSrc={getProjectAvatarUrl(project)}
@@ -88,5 +88,9 @@ ProjectCard.propTypes = {
   canEdit: PropTypes.bool,
   handleFieldChanged: PropTypes.func
 };
+
+ProjectCard.contextTypes = {
+  urlLocation:  PropTypes.object
+}
 
 export default ProjectCard;

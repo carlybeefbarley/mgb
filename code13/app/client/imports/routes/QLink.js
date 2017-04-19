@@ -150,21 +150,85 @@ export default QLink = React.createClass({
 
 })
 
+// This is from https://www.sitepoint.com/get-url-parameters-with-javascript/
+function _getDefaultUrlQueryParams()
+{
+  // get query string from url (optional) or window
+  var queryString = window.location.search.slice(1);
+
+  // we'll store the parameters here
+  var obj = {};
+
+  // if query string exists
+  if (queryString) {
+
+    // stuff after # is not part of query string, so get rid of it
+    queryString = queryString.split('#')[0];
+
+    // split our query string into its component parts
+    var arr = queryString.split('&');
+
+    for (var i=0; i<arr.length; i++) {
+      // separate the keys and the values
+      var a = arr[i].split('=');
+
+      // in case params look like: list[]=thing1&list[]=thing2
+      var paramNum = undefined;
+      var paramName = a[0].replace(/\[\d*\]/, function(v) {
+        paramNum = v.slice(1,-1);
+        return '';
+      });
+
+      // set parameter value (use 'true' if empty)
+      var paramValue = typeof(a[1])==='undefined' ? true : a[1];
+
+      // (optional) keep case consistent
+      paramName = paramName.toLowerCase();
+      paramValue = paramValue.toLowerCase();
+
+      // if parameter name already exists
+      if (obj[paramName]) {
+        // convert value to array (if still string)
+        if (typeof obj[paramName] === 'string') {
+          obj[paramName] = [obj[paramName]];
+        }
+        // if no array index number specified...
+        if (typeof paramNum === 'undefined') {
+          // put the value on the end of the array
+          obj[paramName].push(paramValue);
+        }
+        // if array index number specified...
+        else {
+          // put the value at that index number
+          obj[paramName][paramNum] = paramValue;
+        }
+      }
+      // if param name doesn't exist yet, set it
+      else {
+        obj[paramName] = paramValue;
+      }
+    }
+  }
+
+  return obj
+}
+
 /**
  * This is a replacement for browserHistory.push(). Use this when you want to add an
  * additional step into the browser history
  *
  * @export
- * @param {Object} existingQuery from something like window.location.query
+ * @param {Object} existingQuery from something like context.urlLocation.query
+ * (or window.location.search parsed into an object as above in _getDefaultUrlQueryParams()
  * It is parameterized here instead of just using window.location.query in order to
- * support a tab concept *within* an MGB page. Uses of window.location.query by the
- * caller are tech debt against that future goal
+ * support a future tab concept *within* an MGB page. Uses of null (which becomes window.location.search)
+ * by the caller are tech debt against that future goal
  * @param {string} newTo newUrl to go to
  * @param {Object} [extraQueryParams={}] extra query params to apply
  */
 export function utilPushTo(existingQuery, newTo, extraQueryParams = {})
 {
-  const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery)
+  const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery || _getDefaultUrlQueryParams())
   const location = createLocationDescriptor(newTo, { query: Object.assign( {}, appScopedQuery, extraQueryParams) } )
 
   // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
@@ -187,7 +251,7 @@ export function utilPushTo(existingQuery, newTo, extraQueryParams = {})
  */
 export function utilReplaceTo(existingQuery, newTo, extraQueryParams = {})
 {
-  const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery)
+  const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery || _getDefaultUrlQueryParams())
   const location = createLocationDescriptor(newTo, { query: Object.assign( {}, appScopedQuery, extraQueryParams) } )
 
   // This is in support of the joyride/tutorial infrastructure to edge-detect page changes

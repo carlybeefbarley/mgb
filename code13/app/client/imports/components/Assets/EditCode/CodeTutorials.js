@@ -99,7 +99,7 @@ export default class CodeTutorials extends React.Component {
 
   navigateToSkillsList = () => {
     const returnToSkillsUrl = this.isPhaserTutorial ? '/learn/code/phaser' : '/learn/code/games'
-    utilPushTo( window.location, returnToSkillsUrl )
+    utilPushTo( null, returnToSkillsUrl )
   }
 
   render () {

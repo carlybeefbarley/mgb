@@ -33,7 +33,7 @@ class NavPanelItem extends React.PureComponent {
   handleDropdownClick = () => {
     const { to, query, name } = this.props
     joyrideCompleteTag(`mgbjr-CT-np-${name}`)
-    utilPushTo(window.location, to, query)
+    utilPushTo( null, to, query)
   }
 
   render() {

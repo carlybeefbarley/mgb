@@ -139,7 +139,7 @@ export default class CodeChallenges extends React.Component {
     {
       // this.setState( { showAllTestsCompletedMessage: false } )  <-- Better not to - reduce the number of redraws as we change.. we are redirecting anyway
       // alert('Congratulations! You have finished the JavaScript basics challenges!')
-      utilPushTo( window.location, '/learn/code' )
+      utilPushTo( null, '/learn/code' )
     }
   }
 

@@ -440,10 +440,13 @@ export default class Channel extends React.Component {
     if(newLength == 0) newLength = 1
     this.buffer = this.props.audioCtx.createBuffer(1, newLength, this.props.audioCtx.sampleRate)
     const channelData = this.buffer.getChannelData(0)
+    console.log('before loop', startId, endId, newLength)
     for(let i=0; i<newLength; i++){
       let key = i < startId ? i : i+deleteLength
-      channelData[i] = oldBuffer[key]
+      if(oldBuffer.length > key)
+        channelData[i] = oldBuffer[key]
     }
+    console.log('after loop', channelData)
     this.sample.duration = newLength * this.props.audioCtx.sampleRate
     this.props.duration = this.sample.duration
     this.saveNewBuffer()

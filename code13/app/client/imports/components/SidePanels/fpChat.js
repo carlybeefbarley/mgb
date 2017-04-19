@@ -4,6 +4,7 @@ import { Button, Comment, Divider, Form, Header, Icon, Input, Label, List, Popup
 import QLink from '/client/imports/routes/QLink'
 import { showToast } from '/client/imports/routes/App'
 import AssetCardGET from '/client/imports/components/Assets/AssetCardGET'
+import ProjectCardGET from '/client/imports/components/Projects/ProjectCardGET'
 
 import reactMixin from 'react-mixin'
 import { Chats, Azzets } from '/imports/schemas'
@@ -670,6 +671,7 @@ const fpChat = React.createClass( {
               onChange={this.handleMessageChange}
               maxLength={chatParams.maxChatMessageTextLen}
               onDragOver={DragNDropHelper.preventDefault}
+              onKeyUp={this.handleMessageKeyUp}
               onDrop={this.onDropChatMsg}>
             </Form.TextArea>
           </Form.Field>
@@ -682,6 +684,9 @@ const fpChat = React.createClass( {
               labelPosition='left'
               disabled={!canSend}
               content='Send Message'
+              data-tooltip="Shortcut: Ctrl-ENTER to send"
+              data-position="bottom right"
+              data-inverted=""
               onClick={this.doSendMessage} />
           </div>
         </Form>
@@ -716,6 +721,12 @@ const fpChat = React.createClass( {
 
     console.error( `findObjectNameForChannelName() has a ScopeGroupName (${channelObj.scopeGroupName}) that is not in user context. #investigate#` )
     return 'TODO'
+  },
+
+  handleMessageKeyUp: function(e)
+  {
+    if (e.keyCode === 13 && e.ctrlKey)
+      this.doSendMessage()
   },
 
   render: function() {
@@ -767,17 +778,17 @@ const fpChat = React.createClass( {
               )}
               >
               <Popup.Header>
-                { channelObj.scopeGroupName === 'Asset' ? 'Public Chat Channel for this Asset' : 'Chat Channel for:' }
+                { channelObj.scopeGroupName === 'Asset' ? 'Public Chat Channel for this Asset' : 'Chat Channel for this Project:' }
               </Popup.Header>
               <Popup.Content>
-                {
-                  channelObj.scopeGroupName === 'Asset' ?
-                    <div style={{minWidth: '300px'}}>
+                <div style={{minWidth: '300px'}}>
+                  {
+                    channelObj.scopeGroupName === 'Asset' ?
                       <AssetCardGET assetId={channelObj.scopeId} allowDrag={true} renderView='s' />
-                    </div>
                     :
-                    <div>{presentedChannelName}</div>
-                }
+                      <ProjectCardGET projectId={channelObj.scopeId} />
+                  }
+                </div>
               </Popup.Content>
             </Popup>
           )

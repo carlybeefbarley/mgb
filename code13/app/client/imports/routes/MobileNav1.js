@@ -148,8 +148,14 @@ class MobileNav extends React.Component {
     return (
       <div className='mobile-nav-main' ref="mobileNav">
 
-        <SwipeableViews index={this.state.index}
-                        onChangeIndex={this.handleChangeIndex.bind(this)} ref="swipeable">
+        <SwipeableViews
+          index={this.state.index}
+          onChangeIndex={this.handleChangeIndex.bind(this)}
+          ref="swipeable"
+          animateTransitions={false}
+
+
+        >
           {
             this.renderView()
           }

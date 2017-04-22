@@ -340,12 +340,12 @@ footer {
     margin-right: auto;
     margin-left: auto;
   }
-  .mgb-play-column {
+  .mgb-hero-left-column {
     text-align: center;
     margin-left: auto;
     margin-right: auto;
   }
-  .mgb-make-column {
+  .mgb-hero-right-column {
     text-align: center;
     margin-right: auto;
     margin-left: auto;
@@ -356,14 +356,15 @@ footer {
     margin-right: auto;
     margin-left: auto;
   }
-  .mgb-play-column {
-    text-align: right;
+  .mgb-hero-left-column {
+    padding-left: 2em !important;
+    text-align: left;
     min-width: 200px;
     max-width: 200px;
     margin-left: auto;
     margin-right: auto;
   }
-  .mgb-make-column {
+  .mgb-hero-right-column {
     text-align: left;
     min-width: 200px;
     max-width: 200px;
@@ -376,14 +377,17 @@ footer {
     margin-right: auto;
     margin-left: auto;
   }
-  .mgb-play-column {
-    text-align: right;
+  .mgb-game-column {
+    max-width: 680px;
+  }
+  .mgb-hero-left-column {
+    text-align: left;
     min-width: 200px;
     max-width: 200px;
     margin-left: auto;
     margin-right: auto;
   }
-  .mgb-make-column {
+  .mgb-hero-right-column {
     text-align: left;
     min-width: 200px;
     max-width: 200px;

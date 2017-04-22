@@ -241,7 +241,8 @@ export default fpChat = React.createClass( {
                                                                  // transitions etc). If null, there is nothing pending.
                                                                  // If '*' then render on whatever the next channelName is.
                                                                  // if any-other-string, then we are waiting for that specific channelName
-      pastMessageLimit:                    initialMessageLimit
+      pastMessageLimit:                    initialMessageLimit,
+      isMessagePending:                    false
     }
   },
 
@@ -338,7 +339,9 @@ export default fpChat = React.createClass( {
     joyrideCompleteTag( `mgbjr-CT-fp-chat-send-message-on-${channelName}` )
 
     // TODO: Set pending?, disable textarea on pending
+    this.setState( {isMessagePending: true} )
     ChatSendMessageOnChannelName( channelName, messageValue, (error, result) => {
+      this.setState( { isMessagePending: false } )
       if (error)
         showToast( "Cannot send message because: " + error.reason, 'error' )
       else {
@@ -680,9 +683,9 @@ export default fpChat = React.createClass( {
             <Button
               floated='right'
               color='blue'
-              icon='chat'
+              icon={ this.state.isMessagePending ? { loading: true, name: 'spinner' } : 'chat' }
               labelPosition='left'
-              disabled={!canSend}
+              disabled={!canSend || this.state.isMessagePending}
               content='Send Message'
               data-tooltip="Shortcut: Ctrl-ENTER to send"
               data-position="bottom right"

@@ -6,6 +6,8 @@ import { showToast } from '/client/imports/routes/App'
 import AssetCardGET from '/client/imports/components/Assets/AssetCardGET'
 import ProjectCardGET from '/client/imports/components/Projects/ProjectCardGET'
 
+import { isSameUserId } from '/imports/schemas/users'
+
 import reactMixin from 'react-mixin'
 import { Chats, Azzets } from '/imports/schemas'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
@@ -20,6 +22,7 @@ import { logActivity } from '/imports/schemas/activity'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import {
+  deleteChatRecord,
   parseChannelName,
   makeChannelName,
   ChatChannels,
@@ -170,6 +173,16 @@ const _getAssetNameIfAvailable = (assetId, chatChannelTimestamp) => {
 
 // Some magic for encoding and expanding asset links that are dragged in.
 const _encodeAssetInMsg = asset => `❮${asset.dn_ownerName}:${asset._id}:${asset.name}❯`      // See https://en.wikipedia.org/wiki/Dingbat#Unicode ❮  U276E , U276F  ❯
+
+const _doDeleteMessage = chatId => deleteChatRecord( chatId )
+
+const DeleteChatMessage = ( { chat, currUser, isSuperAdmin } ) => (
+  ( currUser && (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin)) && !chat.isDeleted &&
+    <span className='mgb-show-on-parent-hover' onClick={() => _doDeleteMessage(chat._id)}>
+      &nbsp;
+      <Icon color='red' circular link name='delete'/>
+    </span>
+)
 
 const ChatMessage = ({ msg }) => {
   let begin = 0
@@ -400,7 +413,7 @@ export default fpChat = React.createClass( {
   renderMessage: function(c) {
     const ago = moment( c.createdAt ).fromNow()
     const to = `/u/${c.byUserName}`
-
+    const {isSuperAdmin} = this.props
     const absTime = moment( c.createdAt ).format( 'MMMM Do YYYY, h:mm:ss a' )
     const currUser = Meteor.user()
 
@@ -419,8 +432,11 @@ export default fpChat = React.createClass( {
           <Comment.Author as={QLink} to={to}>{c.byUserName}</Comment.Author>
           <Comment.Metadata>
             <div title={absTime}>{ago}</div>
+            <DeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
           </Comment.Metadata>
-          <Comment.Text><ChatMessage msg={c.message} />&nbsp;</Comment.Text>
+          <Comment.Text>
+            <ChatMessage msg={c.isDeleted ? '(deleted)' : c.message} />&nbsp;
+          </Comment.Text>
         </Comment.Content>
       </Comment>
     )

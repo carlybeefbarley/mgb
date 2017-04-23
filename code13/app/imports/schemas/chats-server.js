@@ -3,6 +3,7 @@ import { Chats, Azzets } from '/imports/schemas'
 import { chatParams, parseChannelName, makeChannelName, isChannelNameWellFormed, chatsSchema, currUserCanSend } from '/imports/schemas/chats'
 import { check } from 'meteor/check'
 import { lookupIsUseridInProject } from '/imports/schemas/projects-server'
+import { isSameUserId } from '/imports/schemas/users'
 
 /**
  * This function calls lookupIsUseridInProject() so it is server-side only
@@ -95,6 +96,30 @@ Meteor.methods({
       Meteor.call('Slack.Chats.send', currUserName, data.message, channelName)
     }
     return docId
+  },
+    "Chat.delete": function(chatId) {
+    
+    if (!this.userId) 
+      throw new Meteor.Error(401, "Login required")
+
+    check(chatId, String)
+
+    const chat = Chats.findOne( { _id: chatId } )
+    if (!chat)
+      throw new Meteor.Error(404, "Chat Id does not exist")
+
+    if (!(isSameUserId(chat.byUserId, this.userId) || isUserSuperAdmin(Meteor.user()) ) )
+      throw new Meteor.Error(401, "Access not permitted")
+    const changedData = {
+      isDeleted: true,
+      updatedAt: new Date()
+    }
+    const nDeleted = Chats.update( { _id: chatId }, {$set: changedData } )
+
+    if (Meteor.isServer)
+      console.log(`  [Chat.delete]  #${chatId}  by: ${chat.byUserName}`)
+    
+    return nDeleted
   }
 })
 

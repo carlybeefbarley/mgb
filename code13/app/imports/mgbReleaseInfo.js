@@ -15,6 +15,37 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Sun Apr 23 2017 01:10:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3965'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'chat.delete',
+          'type': 'feature',
+          'changeName': 'Message delete/restore',
+          'changeSummary': 'Chat messages can be deleted and restored by the message owner',
+          'otherUrls': [  ]
+        },
+
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fix various small issues with project lists, user profile data,abilitty to find assets/projects from chat etc',
+          'otherUrls': [ ]
+        }        
+      ]
+    },
+    {
       'timestamp': 'Monday Apr 10 2017 15:40 GMT-0700 (PDT)',
 
       'id': {

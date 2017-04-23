@@ -23,6 +23,7 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import {
   deleteChatRecord,
+  restoreChatRecord,
   parseChannelName,
   makeChannelName,
   ChatChannels,
@@ -181,6 +182,15 @@ const DeleteChatMessage = ( { chat, currUser, isSuperAdmin } ) => (
     <span className='mgb-show-on-parent-hover' onClick={() => _doDeleteMessage(chat._id)}>
       &nbsp;
       <Icon color='red' circular link name='delete'/>
+    </span>
+)
+const _unDeleteMessage = chatId => restoreChatRecord( chatId )
+
+const UndeleteChatMessage = ( { chat, currUser, isSuperAdmin} ) => (
+  ( currUser && (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin)) && chat.isDeleted &&
+    <span className='mgb-show-on-parent-hover' onClick={() => _unDeleteMessage(chat._id)}>
+      &nbsp;
+      <Icon color='blue' circular link name='undo'/>
     </span>
 )
 
@@ -433,6 +443,7 @@ export default fpChat = React.createClass( {
           <Comment.Metadata>
             <div title={absTime}>{ago}</div>
             <DeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
+            <UndeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
           </Comment.Metadata>
           <Comment.Text>
             <ChatMessage msg={c.isDeleted ? '(deleted)' : c.message} />&nbsp;

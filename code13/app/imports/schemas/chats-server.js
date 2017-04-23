@@ -110,6 +110,8 @@ Meteor.methods({
 
     if (!(isSameUserId(chat.byUserId, this.userId) || isUserSuperAdmin(Meteor.user()) ) )
       throw new Meteor.Error(401, "Access not permitted")
+    if (chat.isDeleted)
+      throw new Meteor.Error(409, "Cannot delete message if it has already been deleted")
     const changedData = {
       isDeleted: true,
       updatedAt: new Date()
@@ -120,6 +122,33 @@ Meteor.methods({
       console.log(`  [Chat.delete]  #${chatId}  by: ${chat.byUserName}`)
     
     return nDeleted
+  },
+    "Chat.restore": function(chatId) {
+    
+    if (!this.userId) 
+      throw new Meteor.Error(401, "Login required")
+
+    check(chatId, String)
+
+    const chat = Chats.findOne( { _id: chatId } )
+    if (!chat)
+      throw new Meteor.Error(404, "Chat Id does not exist")
+
+    if (!(isSameUserId(chat.byUserId, this.userId) || isUserSuperAdmin(Meteor.user()) ) )
+      throw new Meteor.Error(401, "Access not permitted")
+      
+    if (!chat.isDeleted)
+      throw new Meteor.Error(409, "Cannot restore message if it has not been deleted")
+    const changedData = {
+      isDeleted: false,
+      updatedAt: new Date()
+    }
+    const nRestored = Chats.update( { _id: chatId }, {$set: changedData } )
+
+    if (Meteor.isServer)
+      console.log(`  [Chat.restore]  #${chatId}  by: ${chat.byUserName}`)
+    
+    return nRestored
   }
 })
 

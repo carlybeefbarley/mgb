@@ -458,6 +458,11 @@ export function ChatSendMessageOnChannelName( channelName, msg, completionCallba
   Meteor.call('Chats.send', channelName, msg, chatMetadata, completionCallback)
   return true
 }
+
 export function deleteChatRecord(chatId) {
   Meteor.call( "Chat.delete", chatId )
+}
+
+export function restoreChatRecord(chatId){
+  Meteor.call ( "Chat.restore", chatId )
 }

@@ -167,13 +167,13 @@ class UserProjectListUI extends React.PureComponent {
             <CreateProjectLinkButton currUser={currUser} />
             <p />
             { loading ? <Spinner/> : 
-              <ProjectsAsCards projects={projects} ownedFlag={true} user={currUser} />
+              <ProjectsAsCards projects={projects} ownedFlag={true} user={user} />
             }
             <br />
             <Divider />
             <Header as='h2'>Projects {ownerName} is a member of</Header>
             { loading ? <Spinner/> : 
-              <ProjectsAsCards projects={projects} ownedFlag={false} user={currUser} />
+              <ProjectsAsCards projects={projects} ownedFlag={false} user={user} />
             }
           </div>
           :

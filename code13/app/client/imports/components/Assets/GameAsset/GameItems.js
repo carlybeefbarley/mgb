@@ -5,10 +5,10 @@ import Thumbnail from "/client/imports/components/Assets/Thumbnail";
 import FittedImage from "/client/imports/components/Controls/FittedImage";
 
 export const GameItem = ({ game }) => (
-  <Card className="link" style={{ minWidth: "200px", maxWidth: "200px" }}>
+  <Card centered fluid className="link">
     <QLink className="image" to={`/u/${game.dn_ownerName}/play/${game._id}`}>
       {Thumbnail.getLink(game)
-        ? <FittedImage src={Thumbnail.getLink(game)} />
+        ? <FittedImage src={Thumbnail.getLink(game)}  />
         : <div style={{ display: "block", height: "140px" }} />}
     </QLink>
     <Card.Content extra>
@@ -36,7 +36,7 @@ const _nowrapStyle = {
 };
 
 const GameItems = ({ games, wrap }) => (
-  <Card.Group style={wrap ? _wrapStyle : _nowrapStyle}>
+  <Card.Group itemsPerRow={1} style={wrap ? _wrapStyle : _nowrapStyle}>
     {(!games || games.length === 0) &&
       <Segment basic>No matching games</Segment>}
     {games.map(g => {

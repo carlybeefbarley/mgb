@@ -26,6 +26,10 @@
   padding-bottom: 45px;
 }
 
+.react-swipeable-view-container > div > div {
+  height: 100%;
+}
+
 .mobile-nav-button {
   display: inline-block;
   text-align: center;

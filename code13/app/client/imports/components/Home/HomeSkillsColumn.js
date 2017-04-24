@@ -1,15 +1,16 @@
 import React, { PropTypes } from 'react'
 import homeStyles from '/client/imports/routes/home.css'
 import getStartedStyle from '/client/imports/routes/GetStarted.css'
-
+import ResponsiveComponent from '/client/imports/ResponsiveComponent'
 import { Grid, Header, List, Icon, Button } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 
 const _propTypes = {
-  userId:   PropTypes.string       // Can be null/undefined. It is used to indicate if anyone is logged in
+  userId:   PropTypes.string,       // Can be null/undefined. It is used to indicate if anyone is logged in
+  isMobile: PropTypes.bool
 }
 
-const skillsList = [ 
+const skillsList = [
   { icon: 'code',        msg: 'Programming' },
   { icon: 'paint brush', msg: 'Pixel art' },
   { icon: 'music',       msg: 'Music & audio' },

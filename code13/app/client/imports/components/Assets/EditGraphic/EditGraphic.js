@@ -94,7 +94,8 @@ export default class EditGraphic extends React.Component {
       selectRect: null,   // if asset area is selected then value {startX, startY, endX, endY}
       selectDimensions: { width: 0, height: 0 },
       pasteCanvas: null,     // if object cut or copied then {x, y, width, height, imgData}
-      scrollMode: "Normal"
+      scrollMode: "Normal",
+      recentColors: []
     }
 
     // TODO check if this can be deleted completely
@@ -1531,7 +1532,7 @@ export default class EditGraphic extends React.Component {
     const zoom = this.state.editScale
     const { actions, config } = this.generateToolbarActions()
 
-    let imgEditorSty = {}
+    let imgEditorSty = {width: "100%", height: "100%"}
     if (this.state.toolChosen)
       imgEditorSty.cursor = this.state.toolChosen.editCursor
 
@@ -1563,6 +1564,7 @@ export default class EditGraphic extends React.Component {
                   type="sketch"
                   onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
                   color={this.state.selectedColors['fg'].rgb}
+                  style={{minWidth: "100vw", maxHeight: "100%"}}
               />
             </Popup>
 
@@ -1609,7 +1611,7 @@ export default class EditGraphic extends React.Component {
         <Grid.Row style={{padding: 0}}>
         {/*** Drawing Canvas ***/}
         {!asset.skillPath &&
-          <Grid.Row style={{"minHeight": "92px"}}>
+          <Grid.Row style={{width: "100%", height: "100%"}}>
             <Grid.Column style={{height: '100%'}} width={10}>
               <div style={{ "overflow": "hidden", /*"maxWidth": "600px",*/ "maxHeight": "600px"}}>
                 <canvas 
@@ -1622,7 +1624,8 @@ export default class EditGraphic extends React.Component {
                     + ' mgbEditGraphicSty_thinBorder')}
                   id="mgb_edit_graphic_main_canvas"
                   onDragOver={this.handleDragOverPreview.bind(this)}
-                  onDrop={this.handleDropPreview.bind(this,-1)}>
+                  onDrop={this.handleDropPreview.bind(this,-1)}
+                >
                 </canvas>
                 {/*** <canvas id="tilesetCanvas"></canvas> ***/}
                 <CanvasGrid
@@ -1681,7 +1684,7 @@ export default class EditGraphic extends React.Component {
   }
 
   render() {  
-    const isMobileView = this.props.availableWidth < 420
+    const isMobileView = this.props.availableWidth < MOBILE_WIDTH
 
     if (isMobileView) 
       return this.renderMobileView()
@@ -1708,29 +1711,7 @@ export default class EditGraphic extends React.Component {
         {/***  Central Column is for Edit and other wide stuff  ***/}
         <Grid.Column width={colWidth}>
           <div className="row" style={{marginBottom: "6px"}}>
-            <Popup
-              on='hover'
-              positioning='bottom left'
-              hoverable
-              hideOnScroll
-              mouseEnterDelay={250}
-              id="mgbjr-EditGraphic-colorPicker-body"
-              trigger={(
-                <Button
-                  size='small'
-                  id='mgbjr-EditGraphic-colorPicker'
-                  style={{ backgroundColor: this.state.selectedColors['fg'].hex }}
-                  icon={{ name: 'block layout', style: { color: this.state.selectedColors['fg'].hex }}}
-                />
-              )}
-            >
-              <Header>Color Picker</Header>
-              <ReactColor
-                  type="sketch"
-                  onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
-                  color={this.state.selectedColors['fg'].rgb}
-              />
-            </Popup>
+           
 
             <ResizeImagePopup
                 initialWidth={c2.width}
@@ -1822,9 +1803,9 @@ export default class EditGraphic extends React.Component {
           </div>
 
           {/*** Drawing Canvas ***/}
-          <Grid.Row style={{"minHeight": "92px"}}>
+          <Grid.Row style={{minHeight: "92px"}}>
             <Grid.Column style={{height: '100%'}} width={10}>
-              <div style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": "600px"}}>
+              <div style={{ "overflow": "auto", /*"maxWidth": "600px",*/}}>
                 <canvas 
                   ref="editCanvas"
                   style={imgEditorSty}

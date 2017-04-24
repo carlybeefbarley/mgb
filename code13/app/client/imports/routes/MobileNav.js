@@ -31,19 +31,18 @@ const Checkboxes = (p) => {
 }
 
 const AllButtons = (p) => {
-  return <div className="mobile-nav-all-buttons">
+  return <div style={{display: 'flex', justifyContent: 'space-around', alignItems: 'center'}} className="mobile-nav-all-buttons">
     {p.buttons
       .filter((bName, index) => !!MobileNav.availableButtons[bName] && index > p.from && index < p.to)
       .map((bName, index) => {
         const b = MobileNav.availableButtons[bName]
         return <a
           className="mobile-nav-item item"
-          style={{padding: '5%'}}
           name={bName}
           key={index}
           onClick={() => p.mobileNav.onClick(b, index)}
         >
-          <Icon name={b.icon || 'question'} size='large'></Icon>
+          <Icon name={b.icon || 'question'} size='huge'></Icon>
           <p>{b.title}</p>
         </a>
       })}
@@ -53,7 +52,7 @@ const AllButtons = (p) => {
 const HomeWrap = (p) => (
   <div>
     <NavBar {...p} currentlyEditingAssetInfo={p.state.currentlyEditingAssetInfo}/>
-    <div>{React.cloneElement(p.children, p)}</div>
+    <div style={{height: '100%'}}>{React.cloneElement(p.children, p)}</div>
   </div>
 )
 
@@ -150,7 +149,7 @@ class MobileNav extends React.PureComponent {
       icon: 'users',
       Component: BlankPage
     },
-    projects: {
+    projects:                                                                                                                                                   {
       title: 'Projects',
       icon: 'sitemap',
       Component: BlankPage
@@ -272,7 +271,7 @@ class MobileNav extends React.PureComponent {
         const b = MobileNav.availableButtons[bName]
         const props = b.getProps ? b.getProps(this) : {}
 
-        return <div key={index}>
+        return <div style="height: 100%" key={index}>
           <b.Component key={index} title={bName} {...this.props} {...props} />
         </div>
       })
@@ -284,12 +283,13 @@ class MobileNav extends React.PureComponent {
     const b = MobileNav.availableButtons[bName]
     return <a
       className={'mobile-nav-button item' + (index === this.state.index ? ' active' : '')}
+      style={{padding: '5px'}}
       name={bName}
       key={index}
       id={"mobile-nav-button-"+index}
       onClick={() => this.onClick(b, index)}
     >
-      <Icon name={b.icon || 'question'} size='large'></Icon>
+      <Icon name={b.icon || 'question'} size='huge'></Icon>
       <p>{b.title}</p>
     </a>
   }

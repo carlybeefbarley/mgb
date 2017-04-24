@@ -11,12 +11,58 @@ import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const HomeHeroBanner = ( { userId, username, respIsRuleActive } ) => {
   const isSmall = respIsRuleActive('small')
+  const isMobile = respIsRuleActive('mobile')
   if (respIsRuleActive('impossible'))
     return <Header as='h1' size='large' style={{fontSize: '1em', margin: '0.75em 0em 0.75em 0em'}} content='MGB'/>
 
   return (
-    <Segment padded='very' basic vertical>
+    <Segment basic vertical>
       <Grid.Row>
+        {isMobile ?
+          <Grid.Column style={{textAlign: 'center'}}>
+            <Image size='medium' floated='right' src={makeCDNLink("/images/mascots/team.png")} />
+            <Header as='h1' style={{fontSize: '2.5em'}}>
+              My Game Builder
+              <Header.Subheader style={{fontSize: '16px'}}>
+                Make Games. Make Friends. Have Fun.
+              </Header.Subheader>
+            </Header>
+        { userId ?
+          <div style={{fontSize: '1.5em', maxWidth: '390px'}}>
+            Welcome back, {username}!
+            <span style={{}}>
+              <br />
+              Last time you were working on <br />
+              <em><RecentlyEditedAssetGET userId={userId} /></em>.
+            </span>
+            <div style={{display: 'flex', justifyContent: 'center', marginTop: '1em'}}>
+              <QLink to={`/u/${username}/assets`}>
+                <Button color='teal' size='medium' content='Keep going' />
+              </QLink>
+              <QLink to={`/learn`}>
+                <Button color='teal' size='medium' content='Learn new skills' />
+              </QLink>
+            </div>
+          </div>
+          :
+          <p style={{ fontSize: '1em', maxWidth: '390px' }}>
+            Learn coding, design, team and biz skills - by making original games with friends
+            <br />
+            <QLink to={`/learn/getstarted`}>
+              <Button color='teal' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em' }} content='Get started' />
+            </QLink>
+            {/*
+            <QLink to={`/userBashes`}>
+              <Button color='teal' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em' }} content='User Bashes' />
+            </QLink>
+            */}
+            <QLink to={`/signup`}>
+              <Button color='yellow' size='huge' style={{ marginTop: '0.5em'}} content='Sign me up' />
+            </QLink>
+          </p>
+        }
+        </Grid.Column>
+        :
         <Grid.Column>
           <Image size='large' floated='right' src={makeCDNLink("/images/mascots/team.png")} />
           <Header as='h1'>
@@ -58,6 +104,7 @@ const HomeHeroBanner = ( { userId, username, respIsRuleActive } ) => {
           </p>
         }
         </Grid.Column>
+        }
       </Grid.Row>
     </Segment>
   )
@@ -77,6 +124,10 @@ HomeHeroBanner.responsiveRules = {  // Note that this could also be a function t
   'small': {
     minWidth: 0,
     maxWidth: 400
+  },
+  'mobile': {
+    minWidth: 0,
+    maxWidth: 420
   }
 }
 export default ResponsiveComponent(HomeHeroBanner)

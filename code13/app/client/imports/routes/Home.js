@@ -25,7 +25,7 @@ const HomeRoute = ({currUser, respData, respIsRuleActive, isMobile}) => {
   const columns = respData.columns || 3
 
   if (isMobile) {
-    return <MobileHome username={username} userId={userId} />
+    return <MobileHome currUser={currUser} />
   }
   return (
     <div>

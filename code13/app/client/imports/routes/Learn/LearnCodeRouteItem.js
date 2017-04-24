@@ -39,12 +39,12 @@ export const StartJsGamesRoute = (learnItem, name, currUser, newTab) => {
   // check if asset exists
   getAssetBySelector(newAsset, (asset, err) => {
     if (asset)  // asset exists. open it.
-    {  
+    {
       const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
       openUrl(url, newTab)
     }
     else        // asset doesn't exist. create one.
-    {  
+    {
       const prefix = learnItem == 'basics' ? 'challenges' : learnItem
 
       // xhr to get code
@@ -120,7 +120,7 @@ const LearnCodeRouteItem = (params, context) => {
       // TODO redirect to 404
       <div>No such learn path</div>
     )
-  else 
+  else
     return (
       <Grid container columns='1'>
         <Divider hidden />
@@ -149,7 +149,7 @@ const LearnCodeRouteItem = (params, context) => {
                 return (
                   <List.Item
                     key={idx}
-                    as={'a'} 
+                    as={'a'}
                     onMouseUp={ (e) => handleClick( e, learnItem, area.idx, currUser ) }
                     onTouchEnd={ (e) => handleClick( e, learnItem, area.idx, currUser ) }
                     icon={isComplete ? { name: 'checkmark', color: 'green' } : area.icon}

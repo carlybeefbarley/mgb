@@ -533,10 +533,10 @@ export default class SpriteLayers extends React.Component {
     if (this.props.isMobileView) {
       return (
         <div>
-          <Menu style={{padding: 0}}>
-            {_.map(c2.frameNames, (frameName, idx) => { 
+          <Menu style={{overflowX: "scroll", width: "100%", padding: 0}}>
+            {_.map(c2.frameNames, (frameName, idx) => {
               return (
-                <Menu.Item 
+                <Menu.Item
                   key={idx}
                   ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } }
                   id={"mgb_edit_graphics_frame_options_" + idx}

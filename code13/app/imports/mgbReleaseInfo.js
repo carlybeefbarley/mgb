@@ -15,7 +15,7 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Mon Apr 24 2017 01:10:00 GMT-0700 (PDT)',
+      'timestamp': 'Mon Apr 24 2017 13:20:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.1.0',

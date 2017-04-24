@@ -178,20 +178,24 @@ const _encodeAssetInMsg = asset => `❮${asset.dn_ownerName}:${asset._id}:${asse
 const _doDeleteMessage = chatId => deleteChatRecord( chatId )
 
 const DeleteChatMessage = ( { chat, currUser, isSuperAdmin } ) => (
-  ( currUser && (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin)) && !chat.isDeleted &&
+  ( (currUser && (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin)) && !chat.isDeleted) ?
     <span className='mgb-show-on-parent-hover' onClick={() => _doDeleteMessage(chat._id)}>
       &nbsp;
       <Icon color='red' circular link name='delete'/>
     </span>
+    :
+    null
 )
 const _unDeleteMessage = chatId => restoreChatRecord( chatId )
 
 const UndeleteChatMessage = ( { chat, currUser, isSuperAdmin} ) => (
-  ( currUser && (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin)) && chat.isDeleted &&
+  ( (currUser && (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin)) && chat.isDeleted) ?
     <span className='mgb-show-on-parent-hover' onClick={() => _unDeleteMessage(chat._id)}>
       &nbsp;
       <Icon color='blue' circular link name='undo'/>
     </span>
+    :
+    null
 )
 
 const ChatMessage = ({ msg }) => {

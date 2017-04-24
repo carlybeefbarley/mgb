@@ -15,12 +15,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Sun Apr 23 2017 01:10:00 GMT-0700 (PDT)',
+      'timestamp': 'Mon Apr 24 2017 01:10:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.1.0',
         'state': 'Beta',
-        'iteration': '3965'
+        'iteration': '3967'
       },
 
       'releaseManagement': {
@@ -40,9 +40,9 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'Fix various small issues with project lists, user profile data,abilitty to find assets/projects from chat etc',
+          'changeSummary': 'Fix various small issues with project lists, user profile data, ability to find assets/projects from chat, chat not showing, etc',
           'otherUrls': [ ]
-        }        
+        }
       ]
     },
     {

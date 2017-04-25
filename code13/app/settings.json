@@ -16,6 +16,8 @@
     "appSecret": "99fe1486-f031-427c-95e2-a3fe9d48b828" 
   },
   "public": {
+      "MGB_GIT_BRANCH": "__MGB_GIT_BRANCH__WILL_GO_HERE__",
+      "MGB_GIT_BRANCH_COMMIT_COUNT": "__MGB_GIT_BRANCH_COMMIT_COUNT__WILL_GO_HERE__"
   }
 }
 

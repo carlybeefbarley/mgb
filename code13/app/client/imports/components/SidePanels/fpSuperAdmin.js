@@ -37,6 +37,7 @@ const LinkTabContent = () => (
       { linkLi("mLab telemetry", "https://mlab.com/realtime-dashboard?server=s-ds021730-a0") }
       { linkLi("mLab cluster", "https://mlab.com/clusters/rs-ds021730") }
     </List>
+    <p>{Meteor.settings.public.MGB_GIT_BRANCH} @ cc={Meteor.settings.public.MGB_GIT_BRANCH_COMMIT_COUNT}</p>
   </div>
 )
 

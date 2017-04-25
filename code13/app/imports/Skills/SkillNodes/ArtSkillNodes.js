@@ -26,8 +26,8 @@ export default {
       name:           'Colors',
       description:    'Creating and applying an appropriate color palette for your art.',
     },
-    'colorPalette': C.En(0),
-    'HSL':          C.En(1),
+    'HSV':          C.En(0),
+    'colorPalette': C.En(1),
     'colorRamps':   C.En(2)
   },
 

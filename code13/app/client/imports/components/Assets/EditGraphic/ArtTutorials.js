@@ -69,8 +69,10 @@ export default class ArtTutorial extends React.Component {
   }
 
   render () {
-    const description = this.state.data.steps ? this.state.data.steps[this.state.step].text : ''
-    const images = this.state.data.steps ? this.state.data.steps[this.state.step].images : []
+    const currStep = this.state.data.steps ? this.state.data.steps[this.state.step] : null
+    const description = currStep ? currStep.text : ''
+    const source = currStep ? currStep.source : ''
+    const images = currStep ? currStep.images : []
     const totalSteps = this.state.data.steps ? this.state.data.steps.length : 0
     const isLastStep = totalSteps > 0 && this.state.step == totalSteps-1
     const { isCompleted } = this.state
@@ -117,16 +119,19 @@ export default class ArtTutorial extends React.Component {
             </Message>
           )
         }
-          <Segment basic textAlign="center">
+          <Segment style={{marginBottom: 0}} basic textAlign="center">
             <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'row'}}>
             {_.map(images, (img, i) => {
               return (
-                <img key={i} style={{padding: '0px 10px 0px 10px', maxHeight: '175px'}} src={img} />
+                <img key={i} style={{padding: '0px 10px 0px 10px', height: '150px', width: 'auto'}} src={img} />
               )
             })}
             </div>
           </Segment>
-          <Segment basic>
+          <a style={{cursor: 'pointer'}} href={source.split('::').pop()} target="_blank">
+            <Header style={{padding: 0, textAlign: 'center'}} size='tiny' disabled>Source: {source.split('::')[0]}</Header>
+          </a>
+          <Segment style={{marginTop: 0}} basic>
             <p dangerouslySetInnerHTML={{__html: description}} />
           </Segment>
         </Segment>

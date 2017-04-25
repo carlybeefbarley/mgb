@@ -52,6 +52,7 @@ export default class Toolbar extends React.Component {
     this.maxLevel = expectedToolbars.getMaxLevel(this.lsActiveFeatureLevelName) + 1
 
     this.state = {
+      // TODO is this param actually in use?
       activeButtonIndex:    null,      // null, or an index into the list of buttons provided in props.config
       level:                this.getEffectiveFeatureLevel()          // current featureLevel slider value. This will be updated magically by _trackerComputationContext and Meteor
     }
@@ -76,15 +77,25 @@ export default class Toolbar extends React.Component {
       let keyval = this.getKeyval(e)
       if (this.keyActions[keyval]) {
         const b = this.getButtonFromAction(this.keyActions[keyval].action)
+        
         if (!b || b.disabled)
           return
 
         e.preventDefault()
 
+        // saves prev tool idx so after undo/redo we can set back tool
+        // Ctrl+Z or Ctrl+Shift+Z
+        if(keyval == 346 || keyval == 858){
+          if(this.props.setPrevToolIdx){
+            this.props.setPrevToolIdx(this.getActiveButtonIdx())
+          }
+        }
+
         const action = this.keyActions[keyval].action
         joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-keypress`)
         joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-invoke`)
         this.keyActions[keyval](e)
+
 
         const pageName = this.props.name
         const actionName = b.name
@@ -131,6 +142,17 @@ export default class Toolbar extends React.Component {
 
   getButtonFromAction(action) {
     return _.find(this.props.config.buttons, o => (o.name == action ))
+  }
+
+  getActiveButtonIdx ()
+  {
+    let idx = null
+    for(let i=0; i<this.props.config.buttons.length; i++){
+      const button = this.props.config.buttons[i]
+      if(!!button.active)
+        idx = i
+    }
+    return idx
   }
 
   registerShortcut(shortcut, action) {

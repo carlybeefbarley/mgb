@@ -76,6 +76,8 @@ export default class EditGraphic extends React.Component {
 
     this.userSkills = context.skills
 
+    this.prevToolIdx = null // for undo/redo to set back previous tool
+
     this.state = {
       editScale:        this.getDefaultScale(),        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
@@ -1057,6 +1059,10 @@ export default class EditGraphic extends React.Component {
       this.doSaveStateForRedo("Redo changes")
       // Now force this into the DB and that will cause a re-render
       this.saveChangedContent2(c2, c2.frameData[0][0], "Undo changes", true)        // Allow Backwash from database to replace current viewed state
+
+      if(this.prevToolIdx != null){
+        this.setState({ toolChosen: Tools[this.prevToolIdx] })
+      }
     }
   }
 
@@ -1517,6 +1523,10 @@ export default class EditGraphic extends React.Component {
     this.setState({ scrollMode: mode})
   }
 
+  setPrevToolIdx(toolIdx){
+    this.prevToolIdx = toolIdx
+  }
+
   render() {
     this.initDefaultContent2()      // The NewAsset code is lazy, so add base content here
     this.initDefaultUndoStack()
@@ -1632,7 +1642,12 @@ export default class EditGraphic extends React.Component {
               positioning='bottom left'/>
             </div>
           <Grid.Row style={{marginBottom: "6px"}}>
-            {<Toolbar actions={actions} config={config} name="EditGraphic" />}
+            {<Toolbar 
+              actions={actions} 
+              config={config} 
+              name="EditGraphic"
+              setPrevToolIdx={this.setPrevToolIdx.bind(this)} 
+            />}
           </Grid.Row>
 
           <div className={"ui form " + (this.state.toolChosen && this.state.toolChosen.label=="Paste" ? "" : "mgb-hidden")}>

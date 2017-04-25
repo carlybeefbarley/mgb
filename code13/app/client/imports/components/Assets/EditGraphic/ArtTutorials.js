@@ -36,7 +36,7 @@ export default class ArtTutorial extends React.Component {
     mgbAjax(`/api/asset/code/!vault/` + this.skillName, (err, listStr) => {
       if (err)
         console.log('error', err)
-      else 
+      else
         this.setState({ data: JSON.parse(listStr) })
     })
   }
@@ -44,7 +44,7 @@ export default class ArtTutorial extends React.Component {
   stepNext = () => {
     const step = this.state.step + 1
     if (step < this.state.data.steps.length) {
-      this.setState({ step: step }) 
+      this.setState({ step: step })
     }
     else
       this.successPopup()
@@ -54,7 +54,7 @@ export default class ArtTutorial extends React.Component {
   stepBack = () => {
     if (this.state.step > 0) {
       const step = this.state.step - 1
-      this.setState({ step: step }) 
+      this.setState({ step: step })
     }
   }
 
@@ -79,25 +79,25 @@ export default class ArtTutorial extends React.Component {
       <Grid.Column style={{height: '100%'}} width={8}>
         <Segment style={{width: '100%'}}>
           <Button compact
-            size='small' 
-            color='green' 
-            onClick={this.stepBack} 
-            icon='backward' 
+            size='small'
+            color='green'
+            onClick={this.stepBack}
+            icon='backward'
             content='Back'
-            disabled={this.state.step === 0 || isCompleted} 
+            disabled={this.state.step === 0 || isCompleted}
           />
           <Button compact
-            size='small' 
-            color='green' 
-            onClick={this.stepNext} 
-            icon='forward' 
-            content={isLastStep ? 'Finish' : 'Next'} 
+            size='small'
+            color='green'
+            onClick={this.stepNext}
+            icon='forward'
+            content={isLastStep ? 'Finish' : 'Next'}
             disabled={isCompleted}
           />
           <Button compact basic size='small' color='green' onClick={this.navigateToSkillsList} icon='up arrow' data-position='bottom right' data-tooltip="Go up to Tutorial list"/>
-          
+
           <Divider as={Header} style={{color:'grey'}} size='tiny' horizontal >{this.state.data.title}</Divider>
-          
+
           { isCompleted && (
             <Message size='small' icon style={{paddingBottom: 0}}>
               <Icon color='green' name='check circle'/>
@@ -105,7 +105,7 @@ export default class ArtTutorial extends React.Component {
                 <Message.Header>
                   Completed...
                 </Message.Header>
-                <Button 
+                <Button
                     positive
                     size='small'
                     content='Return to Tutorial List'
@@ -125,9 +125,9 @@ export default class ArtTutorial extends React.Component {
               )
             })}
             </div>
-          </Segment> 
+          </Segment>
           <Segment basic>
-            {description}
+            <p dangerouslySetInnerHTML={{__html: description}} />
           </Segment>
         </Segment>
       </Grid.Column>

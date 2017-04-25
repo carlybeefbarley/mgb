@@ -1060,9 +1060,8 @@ export default class EditGraphic extends React.Component {
       // Now force this into the DB and that will cause a re-render
       this.saveChangedContent2(c2, c2.frameData[0][0], "Undo changes", true)        // Allow Backwash from database to replace current viewed state
 
-      if(this.prevToolIdx != null){
+      if(this.prevToolIdx != null)
         this.setState({ toolChosen: Tools[this.prevToolIdx] })
-      }
     }
   }
 
@@ -1080,6 +1079,9 @@ export default class EditGraphic extends React.Component {
       this.doSaveStateForUndo("Undo changes")
       // Now force this into the DB and that will cause a re-render
       this.saveChangedContent2(c2, c2.frameData[0][0], "Redo changes", true)        // Allow Backwash from database to replace current viewed state
+
+      if(this.prevToolIdx != null)
+        this.setState({ toolChosen: Tools[this.prevToolIdx] })
     }
   }
 

@@ -19,6 +19,7 @@ export default class ArtTutorial extends React.Component {
     assetId:           PropTypes.string,
     style:             PropTypes.object,
     isOwner:           PropTypes.bool,
+    frameData:         PropTypes.object,
     handleSelectFrame: PropTypes.func
   }
 
@@ -45,7 +46,8 @@ export default class ArtTutorial extends React.Component {
   stepNext = () => {
     const step = this.state.step + 1
     if (step < this.state.data.steps.length) {
-      this.props.handleSelectFrame(step)
+      if (this.props.frameData[step])
+        this.props.handleSelectFrame(step)
       this.setState({ step: step })
     }
     else
@@ -56,7 +58,8 @@ export default class ArtTutorial extends React.Component {
   stepBack = () => {
     if (this.state.step > 0) {
       const step = this.state.step - 1
-      this.props.handleSelectFrame(step)
+      if (this.props.frameData[step])
+        this.props.handleSelectFrame(step)
       this.setState({ step: step })
     }
   }

@@ -245,7 +245,7 @@ export default class EditGraphic extends React.Component {
 
   getDefaultScale () {
     if (this.props.asset.skillPath && _.startsWith( this.props.asset.skillPath, 'art' ))
-      return 10
+      return 12
 
     const c2 = this.props.asset.content2
     const width = c2.width || DEFAULT_GRAPHIC_WIDTH
@@ -1545,7 +1545,7 @@ export default class EditGraphic extends React.Component {
     const c2 = asset.content2
     const zoom = this.state.editScale
     const { actions, config } = this.generateToolbarActions()
-
+    console.log(asset)
     let imgEditorSty = {}
     if (this.state.toolChosen)
       imgEditorSty.cursor = this.state.toolChosen.editCursor
@@ -1739,6 +1739,7 @@ export default class EditGraphic extends React.Component {
             currUser    =     { this.props.currUser }
             userSkills  =     { this.userSkills }
             assetId     =     { asset._id }
+            frameData   =     { c2.frameData }
             handleSelectFrame = { frame => this.handleSelectFrame(frame) }
           />
         }

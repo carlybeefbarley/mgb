@@ -7,7 +7,9 @@
     "build": "gulp clean build",
     "start": "nodemon -w gulpfile.js -w package.json node_modules/.bin/gulp",
     "predeploy": "cross-env BASE_URL=/mgb/ npm run build --silent",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "awspredeploy": "cross-env BASE_URL= npm run build --silent",
+    "awsdeploy": "gulp awspublish"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +21,8 @@
     "gh-pages": "^0.12.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.1",
+    "gulp-awspublish": "^3.3.0",
+    "gulp-cloudfront": "0.0.14",
     "gulp-connect": "^5.0.0",
     "gulp-dom-src": "^0.2.0",
     "gulp-htmlmin": "^3.0.0",
@@ -27,6 +31,7 @@
     "gulp-load-plugins": "^1.5.0",
     "gulp-plumber": "^1.1.0",
     "gulp-rename": "^1.2.2",
+    "gulp-rev-all": "^0.9.7",
     "gulp-uglify": "^2.1.2",
     "gulp-util": "^3.0.8",
     "nodemon": "^1.11.0",

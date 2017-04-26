@@ -16,9 +16,9 @@ export default class ActorTileset extends React.Component {
     // Properly update imported actor names and gids
     if (this.props.tilesets && this.props.tilesets.length > 1) {
       // Assumes if first actor does not have owner:asset convention and has improper gid, the rest are too
-      if (this.props.tilesets[1].name.indexOf(':') === -1) 
+      if (this.props.tilesets[1].name.indexOf(':') === -1)
         this.props.fixImportNames()
-      if (this.props.tilesets[1].firstgid < 100) {		
+      if (this.props.tilesets[1].firstgid < 100) {
         this.props.fixImportGids()}
     }
   }
@@ -128,13 +128,13 @@ export default class ActorTileset extends React.Component {
   genTilesetImage(index, isActive, tileset){
     const FittedImage = ({ src, height = '80px', ...rest}) => (
       // This is <div> instead of <img> so that it won't have the border that chrome puts on if src has no content
-      <div 
+      <div
         className='mgb-pixelated'
         style={{
           background: `url(${src}) no-repeat center center`,
           height: height,
           backgroundSize: 'contain'
-        }} 
+        }}
         {...rest}
         />
     )
@@ -152,8 +152,8 @@ export default class ActorTileset extends React.Component {
         }}
 
         style={{
-          minWidth: '70px',            
-          width: 'calc(50% - 1em)',	
+          minWidth: '70px',
+          width: 'calc(50% - 1em)',
           maxHeight: 'calc(50% - 1em)',
           margin: '0.5em',
           padding: 0,
@@ -163,7 +163,7 @@ export default class ActorTileset extends React.Component {
           opacity: 0.8
         }}
         >
-        <FittedImage src={makeCDNLink(tileset.image, makeExpireTimestamp(30) /*Allow super small cache ?*/)} />
+        <FittedImage src={makeCDNLink(tileset.image, makeExpireTimestamp(120) /*Allow super small cache ?*/)} />
         <Label attached='bottom' style={{backgroundColor: 'rgba(0, 0, 0, 0.75)', color: 'white', textAlign: 'center', padding: 0, verticalAlign: 'middle', maxHeight: '1.5em'}}>
           {
             <p style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>{tsName}</p>

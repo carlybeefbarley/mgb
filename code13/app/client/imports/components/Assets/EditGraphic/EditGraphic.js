@@ -244,12 +244,16 @@ export default class EditGraphic extends React.Component {
   }
 
   getDefaultScale () {
+    if (this.props.asset.skillPath && _.startsWith( this.props.asset.skillPath, 'art' ))
+      return 10
+
     const c2 = this.props.asset.content2
     const width = c2.width || DEFAULT_GRAPHIC_WIDTH
     const height = c2.height || DEFAULT_GRAPHIC_HEIGHT
     const wRatio = (screen.width *0.9) / width
     const hRatio = (screen.height * 0.5) / height
     let scale = wRatio < hRatio ? Math.floor(wRatio) : Math.floor(hRatio)
+
     if ( scale > 4)
       scale = 4
     else if (scale < 1)
@@ -1401,7 +1405,8 @@ export default class EditGraphic extends React.Component {
   // This is used by render() so is frequently called.
   // It can therefore have values that are based on this, this.state, this.props etc
   generateToolbarActions() {
-    const simpleTools = {
+    const simpleTools =
+    {
       Undo: {
         label: "Undo",                    // Label shown
         name: "toolHandleUndo",           // function name in this class
@@ -1473,6 +1478,9 @@ export default class EditGraphic extends React.Component {
       // special case for disabling paste tool when there is no pasteCanvas
       if (toolLabel === "Paste")
         Tools[i].disabled = !this.state.pasteCanvas
+
+      // hide unnecssary tools to make space for art tutorials
+      Tools[i].hideTool = ((this.props.asset.skillPath && _.startsWith( this.props.asset.skillPath, 'art' )) && ["Cut", "Copy", "Paste", "Import"].indexOf(toolLabel) !== -1)
     }
 
     const actions = {}
@@ -1576,13 +1584,16 @@ export default class EditGraphic extends React.Component {
               />
             </Popup>
 
-            <ResizeImagePopup
-                initialWidth={c2.width}
-                initialHeight={c2.height}
-                maxWidth={MAX_BITMAP_WIDTH}
-                maxHeight={MAX_BITMAP_HEIGHT}
-                scalingOptions={['None']}
-                handleResize={this.handleImageResize} />
+            {
+              !asset.skillPath &&
+              <ResizeImagePopup
+                  initialWidth={c2.width}
+                  initialHeight={c2.height}
+                  maxWidth={MAX_BITMAP_WIDTH}
+                  maxHeight={MAX_BITMAP_HEIGHT}
+                  scalingOptions={['None']}
+                  handleResize={this.handleImageResize} />
+            }
 
             {/* !!!! span instead of buttons becasue firefox don't understand miltiple actions inside Button:*/}
             {/* <button> */}
@@ -1644,11 +1655,11 @@ export default class EditGraphic extends React.Component {
               positioning='bottom left'/>
             </div>
           <Grid.Row style={{marginBottom: "6px"}}>
-            {<Toolbar 
-              actions={actions} 
-              config={config} 
+            {<Toolbar
+              actions={actions}
+              config={config}
               name="EditGraphic"
-              setPrevToolIdx={this.setPrevToolIdx.bind(this)} 
+              setPrevToolIdx={this.setPrevToolIdx.bind(this)}
             />}
           </Grid.Row>
 
@@ -1675,7 +1686,7 @@ export default class EditGraphic extends React.Component {
           <Grid.Row style={{"minHeight": "92px"}}>
             <Grid.Column style={{height: '100%'}} width={10}>
               <div style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": "600px"}}>
-                <canvas 
+                <canvas
                   ref="editCanvas"
                   style={imgEditorSty}
                   width={zoom * c2.width}
@@ -1728,6 +1739,7 @@ export default class EditGraphic extends React.Component {
             currUser    =     { this.props.currUser }
             userSkills  =     { this.userSkills }
             assetId     =     { asset._id }
+            handleSelectFrame = { frame => this.handleSelectFrame(frame) }
           />
         }
 

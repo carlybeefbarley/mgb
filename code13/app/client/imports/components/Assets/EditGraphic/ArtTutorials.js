@@ -10,15 +10,16 @@ import { learnSkill } from '/imports/schemas/skills'
 export default class ArtTutorial extends React.Component {
 
   static propTypes = {
-    currUser:    PropTypes.object,
-    skillPath:   PropTypes.string,
-    userSkills:  PropTypes.object,
-    active:      PropTypes.bool,
-    quickSave:   PropTypes.func,
-    images:      PropTypes.func,
-    assetId:     PropTypes.string,
-    style:       PropTypes.object,
-    isOwner:     PropTypes.bool
+    currUser:          PropTypes.object,
+    skillPath:         PropTypes.string,
+    userSkills:        PropTypes.object,
+    active:            PropTypes.bool,
+    quickSave:         PropTypes.func,
+    images:            PropTypes.func,
+    assetId:           PropTypes.string,
+    style:             PropTypes.object,
+    isOwner:           PropTypes.bool,
+    handleSelectFrame: PropTypes.func
   }
 
   constructor(props) {
@@ -44,6 +45,7 @@ export default class ArtTutorial extends React.Component {
   stepNext = () => {
     const step = this.state.step + 1
     if (step < this.state.data.steps.length) {
+      this.props.handleSelectFrame(step)
       this.setState({ step: step })
     }
     else
@@ -54,6 +56,7 @@ export default class ArtTutorial extends React.Component {
   stepBack = () => {
     if (this.state.step > 0) {
       const step = this.state.step - 1
+      this.props.handleSelectFrame(step)
       this.setState({ step: step })
     }
   }
@@ -138,5 +141,4 @@ export default class ArtTutorial extends React.Component {
       </Grid.Column>
     )
   }
-
 }

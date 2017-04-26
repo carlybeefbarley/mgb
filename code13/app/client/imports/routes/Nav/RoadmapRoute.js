@@ -6,11 +6,11 @@ import AboutHeader from './AboutHeader'
 
 const RenderRoadmap = () => (
   <div>
-    <h2>Features planned for April 2017</h2>
+    <h2>Features planned for April/May 2017</h2>
     <ul>
       <li>(<small>Nearly complete</small>) MGBv1 asset migration (tiles, actors, maps)</li>
       <li>Direct Messages</li>
-      <li>Launch on April 25th</li>
+      <li>Launch on May 4th (yeah, we delayed it a week)</li>
     </ul>
     <p>See the <QLink to='/whatsnew'>What's new</QLink> page for the lists of recent changes</p>
     <h2>Features coming in Summer 2017</h2>
@@ -23,7 +23,7 @@ const RenderRoadmap = () => (
         <li>Asset Tags & Tag search</li>
         <li>Stock/sample assets system</li>
         <li>Asset Versioning/Publishing system</li>
-        <li>TODO tracker</li>
+        <li>TODO /Kanbantracker</li>
       </ul>
       <li>Help and Education systems</li>
       <ul>

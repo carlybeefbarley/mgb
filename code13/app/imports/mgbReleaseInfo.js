@@ -15,12 +15,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Mon Apr 24 2017 13:20:00 GMT-0700 (PDT)',
+      'timestamp': 'Wed Apr 26 2017 00:45:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.1.0',
         'state': 'Beta',
-        'iteration': '3967'
+        'iteration': '3978'
       },
 
       'releaseManagement': {
@@ -28,6 +28,13 @@ const mgbReleaseInfo = {
       },
 
       'changes': [
+        {
+          'featureTag': 'learn.design',
+          'type': 'feature',
+          'changeName': 'Game Design Skills!',
+          'changeSummary': 'We have added the outline for the game design skills which are being developed by @Hawke. More depth will follow later..',
+          'otherUrls': [ {  txt: 'Game Design Skills', href: '/learn/skills/design' } ]
+        },
         {
           'featureTag': 'chat.delete',
           'type': 'feature',
@@ -45,6 +52,7 @@ const mgbReleaseInfo = {
         }
       ]
     },
+
     {
       'timestamp': 'Monday Apr 10 2017 15:40 GMT-0700 (PDT)',
 

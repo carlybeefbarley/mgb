@@ -48,10 +48,10 @@ window.addEventListener( 'resize', setMenuTransparency )
 console.log(
 '%cHello Curious hacker-type people who like to look under the hood!\n' + 
 'How r u?\n\n' + 
-'Since we are here, and you seem to know your way around a bit, here\'s the deal...\n'+
+'Since we are here, and you seem to know your way around, here\'s the deal...\n'+
 '1. This site is primarily designed as a great + _frictionless_ environment for people to learn to code _substantial_ projects.. Learning by Doing!\n'+
-'2. We strive to create a system that allows complex multi-module games to built (see "Project Cube" for example)\n'+
-'3. ...Yet we also provide learning-support for complete newbies to develop their skills in JavaScript, Art and other areas\n'+
+'2. We strive to create a system that allows complex multi-module games to be built (see "Project Cube" and "City3D" for example)\n'+
+'3. ...Yet we also provide learning-support for complete newbies to develop their skills in JavaScript, Art and other areas. They may also make pretty substantial games without code using "Actors" and "ActorMap" assets.\n'+
 '4. We have optimized the experience for middle-school/high-school aged kids, but this is NOT A TOY (scratch etc) and advanced users CAN do serious work in it.\n'+
 '   Even JavaScript ninjas can appreciate the collaborative tools and ability to experiment quickly (we do!)\n\n'+
 'Also, this site is in BETA, so expect...\n'+
@@ -66,6 +66,7 @@ console.log(
 '\nQ: Do you have 2048 example?\nA: yes! Hi HN folks!  We also have a whack-a-mole example of course\n'+
 '\nQ: Why just JavaScript?\nA: Focus, and simplicity. There are lots of other great languages, but JavaScript (ES6) can be presented simply for learning, and now has pretty fancy features including async capabilities. JS is nearly always going to be encountered in browser scenarios, and is good-enough on the server for the most common needs. Sorry Rust/Haskell fans, we love your cool stuff though...\n'+
 '\nQ: Oooh. server?\nA: Oh yes!!! Server multiplayer stuff is on the horizon. Our design goal is to enable users to easily implement .io style games for example. Should be fun!\n'+
+'\nQ: Are you going to Open Source this?\nA: Most of it..and in a super-cool way! The MGB core system is designed to actually have the Asset editors, flexPanels and game runtime systems to be run as *plugins*, and we intend to expose these (and also subtools within editors) as plugins that can be forked/extended/shared within MGB itself! We have disabled that for launch since it adds a LOT of surface area, but it is a very explicit goal for the team to have the majority of the site be open sourced WITHIN ITSELF: plugins written in MGB extending the MGB core platform. so our GameBuilder users can become GameBuilderBuilders! and yes, maybe they can sell the plugin tools as assets somehow...\n'+
 '\nQ: I want to know more!\nA: Come chat with us in-system, or tweet to @dgolds\n ^^^ GLHF ^^^\n',
 'color: #5c2197' // http://bada55.io ftw
 )

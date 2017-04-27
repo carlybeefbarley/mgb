@@ -18,12 +18,20 @@ export default {
       version = version || "latest";
       return 'https://cdn.jsdelivr.net/phaser/' + version + '/phaser.js';
     },
+    min: function(version) {
+      version = version || "latest";
+      return 'https://cdn.jsdelivr.net/phaser/' + version + '/phaser.min.js';
+    },
     defs: () => ['/lib/tern/defs/phaser.old.json']
   },
   react: {
     src: function (version) {
       version = version || "latest";
       return 'https://cdn.jsdelivr.net/react/' + version + '/react.js';
+    },
+    min: function(version) {
+      version = version || "latest";
+      return 'https://cdn.jsdelivr.net/react/' + version + '/react.min.js';
     },
     // prevent React from loading huge source file
     // TODO: generate defs

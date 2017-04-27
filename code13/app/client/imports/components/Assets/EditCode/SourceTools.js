@@ -203,7 +203,7 @@ export default class SourceTools extends EventEmitter {
       })
       return Promise.resolve()
     }
-    // this object will cointain all necessary info about script
+    // this object will contain all necessary info about script
     // we need to push it only after all other imported files from this file are resolved to maintain correct order
     const toAdd = Object.assign(this.findCollected(filename) || {name: filename}, additionalProps)
     // partial calls don't know origin - so leave as is
@@ -251,10 +251,10 @@ export default class SourceTools extends EventEmitter {
     return this.collectedSources.filter(script => {
       // after renaming asset script name won't match asset name
       // only main script don't have origin
-      if (script.name != filename && !script.origin) {
+      if (script.name !== filename && !script.origin) {
         return false
       }
-      return script.name != filename && script.origin.indexOf(filename) > -1
+      return script.name !== filename && script.origin.indexOf(filename) > -1
     })
   }
   /**
@@ -303,10 +303,12 @@ export default class SourceTools extends EventEmitter {
       const lib = knownLibs[parts[0]]
       // load knowLib - e.g. phaser
       if (lib) {
-        return this.load(lib.src ? lib.src(parts[1]) : src, null,
+        return this.load(lib.src ? lib.src(parts[1]) : getModuleServer(parts[0], parts[1]), null,
           Object.assign(additionalProps, {
             useGlobal: lib.useGlobal,
-            isExternalFile: true
+            isExternalFile: true,
+            lib: parts[0],
+            version: parts[1]
           })
         )
           .then(info => {
@@ -319,7 +321,12 @@ export default class SourceTools extends EventEmitter {
       }
       // unknown lib - e.g. jquery
       else {
-        return this.load(getModuleServer(parts[0], parts[1]), null, additionalProps)
+        return this.load(getModuleServer(parts[0], parts[1]), null,
+          Object.assign(additionalProps, {
+            lib: parts[0],
+            version: parts[1]
+          })
+        )
           .then(info => {
             this.addFileToTern(filename, info.data)
             return info
@@ -342,10 +349,11 @@ export default class SourceTools extends EventEmitter {
             return this.load(url, asset, Object.assign(additionalProps, {
               referrer: asset ? asset.dn_ownerName : ref,
               isExternalFile: !!(es5 && es5.data && es5.data.trim()),
-              url: es5src
+              url: es5src,
+              lib: parts[0],
+              version: parts[1]
             }), ignoreCache)
               .then(info => {
-                // TODO: check file size
                 this.addFileToTern(filename, info.data)
                 return info
               })
@@ -357,10 +365,11 @@ export default class SourceTools extends EventEmitter {
     // should be full url
     else {
       return this.load(filename, null, Object.assign(additionalProps, {
-        isExternalFile: true
+        isExternalFile: true,
+        lib: parts[0],
+        version: parts[1]
       }))
         .then(info => {
-          // TODO: check file size
           this.addFileToTern(filename, info.data)
           return info
         })
@@ -551,9 +560,16 @@ export default class SourceTools extends EventEmitter {
         for (let i = 0; i < sources.length; i++) {
           const source = sources[i]
           if (source.isExternalFile) {
+            // only lib should be used here
+            const name = source.lib || source.name
+            const lib = knownLibs[name]
+            const url = lib && lib.min
+              ? lib.min(source.version)
+              : source.url
+
             const localKey = source.url.split("/").pop().split(".").shift()
             const partial = {
-              url: source.url,
+              url: url,
               localName: source.localName,
               name: source.name,
               localKey: localKey,

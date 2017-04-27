@@ -220,7 +220,7 @@ export default class GameScreen extends React.Component {
             }}
             // key={ this.props.gameRenderIterationKey }
             ref="iFrame1"
-            sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
+            sandbox='allow-modals allow-scripts allow-popups allow-pointer-lock'
             src={makeCDNLink('/codeEditSandbox.html')}
             frameBorder="0"
             id="mgbjr-EditCode-sandbox-iframe"

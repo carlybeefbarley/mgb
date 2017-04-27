@@ -220,7 +220,7 @@ class PlayCodeGame extends React.Component {
             ref="iframe"
             id="iFrame1"
             style={{ minWidth: width + 'px', minHeight: height + 'px', borderStyle: 'none', transformOrigin: '0 0' }}
-            sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
+            sandbox='allow-modals allow-scripts allow-popups allow-pointer-lock'
             src={src}
 
             >

@@ -4,8 +4,8 @@ import React, { PropTypes } from 'react';
 // Import CodeMirror and its various dependencies.
 //   This is not as simple as it might sound...
 
-// 1) Due to Meteor 1.3 import limitations, there are also symlinks in the 
-//    /package-assets-symlink-hack/ directory for the CSS etc files that 
+// 1) Due to Meteor 1.3 import limitations, there are also symlinks in the
+//    /package-assets-symlink-hack/ directory for the CSS etc files that
 //    CodeMirror needs.
 // 2) We load JSHINT from /app.htm in browser because JSHINT redefines some fundamental
 //    globals like 'utils' and 'event', and that confuses node/meteor greatly.
@@ -43,4 +43,4 @@ import 'codemirror/addon/search/search';
 // import 'codemirror/addon/fold/markdown-fold';
 
 
-module.exports = CodeMirror;
+export default CodeMirror;

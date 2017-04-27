@@ -897,11 +897,12 @@ main = function(){
     imp = babelAST.data.modules.exports.specifiers
     for (let i = 0; i < imp.length; i++) {
       const source = imp[i].source
-      const im = source.split('.')
-      if (source.indexOf('/') === 0 && source.indexOf('//') !== 0) {
-        im.pop()
-      }
-      if (imp[i].kind == "external" && imp[i].source) {
+      if (source && imp[i].kind === "external") {
+        const im = source.split('.')
+
+        if (source.indexOf('/') === 0 && source.indexOf('//') !== 0)
+          im.pop()
+
         ret.push({
           url: im.join('.'),
           name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null

@@ -226,6 +226,10 @@ export default class EditCode extends React.Component {
       matchBrackets: true,
       viewportMargin: 10,
 
+      search: {
+        closeOnEnter: false
+      },
+
       /*hintOptions: {
        completeSingle: false    //    See https://codemirror.net/doc/manual.html -> completeSingle
        },*/
@@ -237,7 +241,8 @@ export default class EditCode extends React.Component {
         "mgb-cm-user-markers"
       ],
       extraKeys: {
-        "Alt-F": "findPersistent",
+        "Ctrl-F": "findPersistent",
+        "Alt-F": "find",
         "'.'": cm => {
           return this.codeEditPassAndHint(cm)
         },
@@ -1486,7 +1491,10 @@ export default class EditCode extends React.Component {
     const retval = !( this.changeTimeout || nextState._preventRenders || this.state.creatingBundle)
     //console.log("Should update:", retval)
     // && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
-    return retval || this.state.needsBundle != nextState.needsBundle || this.state.hotReload != nextState.hotReload
+    return retval
+      || this.state.needsBundle !== nextState.needsBundle
+      || this.state.hotReload !== nextState.hotReload
+      || this.state.lastUndoRedo !== nextState.lastUndoRedo
   }
 
   codemirrorValueChanged(doc, change) {
@@ -1988,6 +1996,14 @@ export default class EditCode extends React.Component {
     this.doHandleCommentFadeDelta(-1)
   }
 
+  doUndo(){
+    this.codeMirror.undo()
+    this.setState({"lastUndoRedo": Date.now()})
+  }
+  doRedo(){
+    this.codeMirror.redo()
+    this.setState({"lastUndoRedo": Date.now()})
+  }
   toolToggleInfoPane() {
     const i = this.state.infoPaneMode
     const newMode = (i+1) % _infoPaneModes.length
@@ -2004,11 +2020,30 @@ export default class EditCode extends React.Component {
   }
 
   generateToolbarConfig() {
-
+    const history = this.codeMirror ? this.codeMirror.historySize() : {undo: 0, redo: 0}
     const config = {
       // level: 2,    // default level -- This is now in expectedToolbars.getDefaultLevel
-
       buttons: [
+        {
+          name: 'doUndo',
+          icon: 'undo',
+          label: 'Undo',
+          iconText: (history.undo ? history.undo : ''),
+          disabled: !history.undo,
+          tooltip: 'Undo last action',
+          level: 1,
+          shortcut: 'Ctrl+Z'
+        },
+        {
+          name: 'doRedo',
+          icon: 'undo flip', // redo is flipped undo
+          iconText: '', // history.redo ? history.redo : '',
+          label: 'Redo',
+          disabled: !history.redo,
+          tooltip: 'Redo previous action',
+          level: 1,
+          shortcut: 'Ctrl+Shift+Z'
+        },
         { name: 'separator' },
         {
           name:  'toolToggleInfoPane',

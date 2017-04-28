@@ -447,8 +447,9 @@ export default class Channel extends React.Component {
         channelData[i] = oldBuffer[key]
     }
     console.log('after loop', channelData)
-    this.sample.duration = newLength * this.props.audioCtx.sampleRate
+    this.sample.duration = Math.round( newLength * this.props.audioCtx.sampleRate )
     this.props.duration = this.sample.duration
+    console.log('new duration', this.sample.duration)
     this.saveNewBuffer()
   }
 

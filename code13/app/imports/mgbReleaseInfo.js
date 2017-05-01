@@ -16,12 +16,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Sun Apr 30 2017 21:45:00 GMT-0700 (PDT)',
+      'timestamp': 'Mon May 01 2017 13:00:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.1.0',
         'state': 'Beta',
-        'iteration': '3996'
+        'iteration': '4008'
       },
 
       'releaseManagement': {
@@ -30,10 +30,17 @@ const mgbReleaseInfo = {
 
       'changes': [
         {
+          'featureTag': 'learn.skills',
+          'type': 'feature',
+          'changeName': 'You can no longer fake skills!',
+          'changeSummary': 'We have removed the alpha-tester feature that allowed users to manually claim a skill. You can (for now) still remove one of your own skills manually, but you will need to redo the normal process (complete tutorial etc) in order to re-acquire that skill',
+          'otherUrls': [ ]
+        },
+        {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'Fix some tutorials; Show undo/redo in code editor toolbar; more small fixes.',
+          'changeSummary': 'Fix some project & art tutorials; Show undo/redo in code editor toolbar; more small fixes.',
           'otherUrls': [ ]
         }
       ]

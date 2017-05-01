@@ -7,7 +7,7 @@ const UserLink = ( { u } ) => (<QLink to={`/u/${u}`}>@{u}</QLink>)
 export default () => (
   <Segment raised padded>
     <Header>
-      My Game Builder is in <em>Semi-Secret Beta</em> test until April 25th 2017.
+      My Game Builder is in <em>Semi-Secret Beta</em> test until May 4th 2017.
       <br />
       <small>
         ...actively developed by

@@ -78,7 +78,7 @@ class SkillLinkCard extends Component {
     if (this.isCompleted() || !this.isStarted() || _.isEmpty( childSkills ) || _.isEmpty( learnedSkills ))
       return null
 
-    return <Progress active size='tiny' color='yellow' value={learnedSkills.length} total={childSkills.length} />
+    return <Progress active size='tiny' color='yellow' percent={Math.round(100 * learnedSkills.length / childSkills.length)} />
   }
 
   renderShowCompleted = () => {

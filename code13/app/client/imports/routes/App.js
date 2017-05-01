@@ -353,11 +353,6 @@ const AppUI = React.createClass({
         const path = '/asset/'+assetInfo.kind
         ga('set', 'page', path)
         ga('send', 'pageview', path)
-
-        // console.log('asset ', assetInfo.kind)
-
-        // trigger hotjar heatmap
-        hj('trigger', 'editor-'+assetInfo.kind)
       }
     }
   },

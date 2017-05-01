@@ -25,35 +25,47 @@ const editElementsForKind = {
   'game':      EditGame
 }
 
-const AssetEdit = ( props ) => {
-  const Element = editElementsForKind[props.asset.kind] || EditUnknown
-  const isTooSmall = props.availableWidth < 500
-  return (
-    <div style={{minWidth: '250px'}}>
-      { isTooSmall && 
-        <Segment basic>
-          <Message 
-              warning 
-              icon='compress' 
-              header='Device too narrow'
-              content='Showing Asset summary instead of Editor'/>
-          <AssetCard 
-              asset={props.asset} 
-              currUser={props.currUser} 
-              fluid={true}
-              canEdit={false}
-              showEditButton={false}
-              allowDrag={true}
-              renderView='l' />
-        </Segment>
-      }
-      { /* We must keep this in the DOM since it has state we don't want to lose during a temporary resize */ }
-      <div style={ isTooSmall ? { display: 'none' } : null}>
-        <Element {...props}/>
+export default AssetEdit = React.createClass({
+
+  componentDidMount: function()
+  {
+    // console.log(this.props.asset.kind)
+    // trigger hotjar heatmap
+    hj('trigger', 'editor-'+this.props.asset.kind)
+  },
+
+  render: function() 
+  {
+    const props = this.props
+    const Element = editElementsForKind[props.asset.kind] || EditUnknown
+    const isTooSmall = props.availableWidth < 500
+    return (
+      <div style={{minWidth: '250px'}}>
+        { isTooSmall && 
+          <Segment basic>
+            <Message 
+                warning 
+                icon='compress' 
+                header='Device too narrow'
+                content='Showing Asset summary instead of Editor'/>
+            <AssetCard 
+                asset={props.asset} 
+                currUser={props.currUser} 
+                fluid={true}
+                canEdit={false}
+                showEditButton={false}
+                allowDrag={true}
+                renderView='l' />
+          </Segment>
+        }
+        { /* We must keep this in the DOM since it has state we don't want to lose during a temporary resize */ }
+        <div style={ isTooSmall ? { display: 'none' } : null}>
+          <Element {...props}/>
+        </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
+})
 
 AssetEdit.propTypes = {
   asset:                    PropTypes.object.isRequired,    // The invoker of this component must ensure that there is a valid Asset object
@@ -68,5 +80,3 @@ AssetEdit.propTypes = {
   availableWidth:           PropTypes.number,               // Available screen width in pixels for editor
   handleSaveNowRequest:     PropTypes.func.isRequired       // Asset Editor call this to request a flush now (but it does not wait or have a callback). An example of use for this: Flushing an ActorMap asset to play a game in the actorMap editor
 }
-
-export default AssetEdit

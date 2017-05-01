@@ -10,12 +10,12 @@ const _propTypes = {
 }
 
 const skillsList = [ 
-  { icon: 'code',        msg: 'Programming' },
-  { icon: 'paint brush', msg: 'Pixel art' },
-  { icon: 'music',       msg: 'Music & audio' },
-  { icon: 'idea',        msg: 'Game design' },
-  { icon: 'book',        msg: 'Story writing' },
-  { icon: 'line chart',  msg: 'Analytics' }
+  { icon: 'code',        msg: 'Programming',  link: '/learn/code' },
+  { icon: 'paint brush', msg: 'Pixel art',    link: '/learn/art' },
+  { icon: 'music',       msg: 'Music & audio',link: '/learn/skills/audio' },
+  { icon: 'idea',        msg: 'Game design',  link: '/learn/skills/design' },
+  { icon: 'book',        msg: 'Story writing',link: '/learn/skills/writing' },
+  { icon: 'line chart',  msg: 'Analytics',    link: '/learn/skills/analytics' }
 ]
 
 const HomeSkillsColumn = () => (
@@ -24,7 +24,7 @@ const HomeSkillsColumn = () => (
     <List className="very relaxed">
       {
         skillsList.map( (skill, idx) => (
-          <List.Item key={idx}>
+          <List.Item key={idx} as={QLink} to={skill.link}>
             <Icon name={skill.icon} size='large' />
             <Header className="content" as='h3' >{skill.msg}</Header>
           </List.Item>

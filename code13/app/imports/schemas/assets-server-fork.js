@@ -63,7 +63,7 @@ Meteor.methods({
     // 2. Try to create new Project
     const newProjData = { 
       name: opts.newProjectName, 
-      description: `Fork of Project '${sourceProject.ownerName}:${sourceProject.name}'`
+      description: `[Fork] ${sourceProject.description}`
       // forkParentChain will be handled in the code below...
     }
 

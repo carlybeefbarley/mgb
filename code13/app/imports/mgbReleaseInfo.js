@@ -14,6 +14,31 @@ const mgbReleaseInfo = {
   'releases': [
 
 
+
+    {
+      'timestamp': 'Sun Apr 30 2017 21:45:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3996'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fix some tutorials; Show undo/redo in code editor toolbar; more small fixes.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
     {
       'timestamp': 'Wed Apr 26 2017 00:45:00 GMT-0700 (PDT)',
 

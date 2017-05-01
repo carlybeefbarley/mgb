@@ -115,7 +115,8 @@ export default class Channel extends React.Component {
   initAudio (songTime = 0) {
     if (!this.buffer) return
     this.clearAudio()
-    this.sample.duration = this.buffer.length / this.props.audioCtx.sampleRate
+    this.sample.duration = Math.round( this.buffer.length / this.props.audioCtx.sampleRate )
+    console.log('initAudio duration', this.sample.duration)
     this.source = this.props.audioCtx.createBufferSource()
     this.gainNode = this.props.audioCtx.createGain()
 
@@ -131,7 +132,7 @@ export default class Channel extends React.Component {
       startTime = Math.abs(delay)
       delay = 0
     }
-    // console.log(delay, startTime)
+    console.log(delay, startTime)
     this.source.start(this.props.audioCtx.currentTime + delay, startTime) // delay, startTime
     this.props.audioCtx.suspend()
 
@@ -414,6 +415,7 @@ export default class Channel extends React.Component {
     this.initAudio()
     this.drawWave()
     const channelData = this.buffer.getChannelData(0)
+    console.log('chData', channelData)
     this.converter.bufferToDataUri(channelData, (dataUri) => {
       this.props.channel.dataUri = dataUri
       this.props.saveChannel(this.props.channel)

@@ -87,7 +87,7 @@ Meteor.publish('settings.userId', function(userId) {
 Meteor.publish('users.frontPageList', function () 
 {
   return Meteor.users.find(
-    { "badges.0":{$exists: true}}, 
+    { "badges.1":{$exists: true}}, 
     { sort: {"createdAt":-1}, limit: 3 }
   )
 })

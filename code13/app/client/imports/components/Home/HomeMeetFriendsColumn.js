@@ -40,7 +40,7 @@ const HomeMeetFriendsColumn = createContainer (
     }
     let selector = {
       badges: {$exists: true},
-      "badges.0":{$exists: true}
+      "badges.1":{$exists: true}
     }
     return {
       userList: Users.find(selector, findOpts).fetch(),

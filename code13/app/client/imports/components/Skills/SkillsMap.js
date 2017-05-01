@@ -65,7 +65,11 @@ class SkillsMapNode extends React.Component {
           const classes = _.compact( [hasSkill && 'active', 'leaf'] ).join( ' ' )
 
           return (
-            <div key={skillPath} className={classes} onClick={this.toggleSkill( skillPath )}>
+            <div key={skillPath} className={classes} 
+              data-tooltip={hasSkill ? "Warning: Unchecking means you must earn the skill again" : null} 
+              data-inverted=""
+              onClick={ hasSkill ? this.toggleSkill( skillPath ) : null} >
+
               <Icon { ...iconProps } />
               {skillsModel.getFriendlyName( skillPath )}
             </div>

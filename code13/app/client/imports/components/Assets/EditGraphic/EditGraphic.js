@@ -1545,7 +1545,7 @@ export default class EditGraphic extends React.Component {
     const c2 = asset.content2
     const zoom = this.state.editScale
     const { actions, config } = this.generateToolbarActions()
-    console.log(asset)
+
     let imgEditorSty = {}
     if (this.state.toolChosen)
       imgEditorSty.cursor = this.state.toolChosen.editCursor
@@ -1730,7 +1730,7 @@ export default class EditGraphic extends React.Component {
           </div>
         </Grid.Column>
         {/*** Art Mentor ***/}
-        {asset.skillPath && _.startsWith( asset.skillPath, 'art' ) &&
+        {asset.skillPath && _.startsWith( asset.skillPath, 'lineArt' ) &&
           <ArtTutorial
             style       =     { { backgroundColor: 'rgba(0,255,0,0.02)' } }
             isOwner     =     { currUser && currUser._id === asset.ownerId }

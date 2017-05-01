@@ -796,7 +796,7 @@ const App = createContainer( ( { params } ) => {
   return {
     currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
 
-    currUserProjects: Projects.find(projectSelector).fetch(),
+    currUserProjects: handleForProjects ? Projects.find(projectSelector).fetch() : [],
     user:             pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
     activity:         Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
     settings:         G_localSettings,

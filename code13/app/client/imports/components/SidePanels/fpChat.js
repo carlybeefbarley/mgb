@@ -714,10 +714,10 @@ export default fpChat = React.createClass( {
             <Button
               floated='right'
               color='blue'
-              icon={ this.state.isMessagePending ? { loading: true, name: 'spinner' } : 'chat' }
+              icon={ this.state.isMessagePending ? { loading: false, name: 'spinner' } : 'chat' }
               labelPosition='left'
               disabled={!canSend || this.state.isMessagePending}
-              content='Send Message'
+              content={this.state.isMessagePending ? 'Sending Message...' : 'Send Message' }
               data-tooltip="Shortcut: Ctrl-ENTER to send"
               data-position="bottom right"
               data-inverted=""

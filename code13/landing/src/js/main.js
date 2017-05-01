@@ -31,10 +31,6 @@ var setMenuTransparency = throttle( function (e) {
   $menu.style.background = 'rgba(20, 150, 160, ' + inRatio + ')'
   $menu.style.boxShadow = '0 ' + inRatio * 5 + 'px ' + inRatio * 10 + 'px rgba(0, 0, 0, ' + inRatio * 0.25 + ')'
   $heroCaption.style.opacity=(heroCaptionRect.bottom / heroCaptionRect.height)
-  if (inRatio >= 1)
-    $menuSignupButton.classList.remove('basic')
-  else
-    $menuSignupButton.classList.add('basic')
 } )
 
 // set initial transparency

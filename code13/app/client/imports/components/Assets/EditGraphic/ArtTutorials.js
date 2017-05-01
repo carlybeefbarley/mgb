@@ -19,7 +19,7 @@ export default class ArtTutorial extends React.Component {
     assetId:           PropTypes.string,
     style:             PropTypes.object,
     isOwner:           PropTypes.bool,
-    frameData:         PropTypes.object,
+    frameData:         PropTypes.array,
     handleSelectFrame: PropTypes.func
   }
 

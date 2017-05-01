@@ -46,7 +46,7 @@ export default {
       name:           'Game Sprites',
       description:    'Designing and creating sprite with the game in mind.',
     },
-    perspective:     C.En(3),
+    perspectives:     C.En(3),
     characterDesign: C.En(1),
     tiling:          C.En(1),
     animations:      C.En(2)

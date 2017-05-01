@@ -71,7 +71,7 @@ export const StartArtRoute = (key, currUser, newTab) => {
   }
 
   const newAsset = {
-    name: 'tutorials.' + key,
+    name: 'tutorials.' + (key.startsWith('art.') ? key : 'art.' + key),
     kind: 'graphic',
     isDeleted: false,
     dn_ownerName: currUser.username
@@ -97,7 +97,7 @@ export const StartArtRoute = (key, currUser, newTab) => {
             newAsset.content2 = data.content2
           }
 
-          newAsset.skillPath = key
+          newAsset.skillPath = key.startsWith('art.') ? key : 'art.' + key
           newAsset.isCompleted = false
           newAsset.isPrivate = false
 

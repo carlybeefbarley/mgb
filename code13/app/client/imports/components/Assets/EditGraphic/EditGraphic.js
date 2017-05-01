@@ -1730,7 +1730,7 @@ export default class EditGraphic extends React.Component {
           </div>
         </Grid.Column>
         {/*** Art Mentor ***/}
-        {asset.skillPath && _.startsWith( asset.skillPath, 'lineArt' ) &&
+        {asset.skillPath && _.startsWith( asset.skillPath, 'art.' ) &&
           <ArtTutorial
             style       =     { { backgroundColor: 'rgba(0,255,0,0.02)' } }
             isOwner     =     { currUser && currUser._id === asset.ownerId }

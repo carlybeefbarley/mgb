@@ -4,6 +4,7 @@ import { chatParams, parseChannelName, makeChannelName, isChannelNameWellFormed,
 import { check } from 'meteor/check'
 import { lookupIsUseridInProject } from '/imports/schemas/projects-server'
 import { isSameUserId } from '/imports/schemas/users'
+import { isUserSuperAdmin } from '/imports/schemas/roles'
 
 /**
  * This function calls lookupIsUseridInProject() so it is server-side only

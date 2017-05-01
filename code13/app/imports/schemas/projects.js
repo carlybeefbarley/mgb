@@ -288,7 +288,7 @@ const schema = {
  * projects relevant to a user
  * 
  * @export
- * @param {String} userId 
+ * @param {String} userId. If provided, then filter to only select projects owmned by or joined by userId. If null/undefined, then this selector will *not* filter for ownership/membership.
  * @returns {Object} A MongoDB selector to find projects that userId is owner OR member of
  */
 export function projectMakeSelector(

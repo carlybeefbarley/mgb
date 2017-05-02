@@ -1996,12 +1996,14 @@ export default class EditCode extends React.Component {
     this.doHandleCommentFadeDelta(-1)
   }
 
-  doUndo(){
-    this.codeMirror.undo()
+  doUndo(e){
+    if(e.target.className !== 'allow-toolbar-shortcuts')
+      this.codeMirror.undo()
     this.setState({"lastUndoRedo": Date.now()})
   }
-  doRedo(){
-    this.codeMirror.redo()
+  doRedo(e){
+    if(e.target.className !== 'allow-toolbar-shortcuts')
+      this.codeMirror.redo()
     this.setState({"lastUndoRedo": Date.now()})
   }
   toolToggleInfoPane() {

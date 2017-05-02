@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Menu, Image, Header, Icon } from 'semantic-ui-react'
+import { Button, Menu, Image, Header, Icon } from 'semantic-ui-react'
 import NavPanelItem from './NavPanelItem'
 import WhatsNew from '/client/imports/components/Nav/WhatsNew'
 
@@ -223,7 +223,7 @@ export const getNavPanels = (currUser, showAll) => {
       },
       showGuestOptions && {
         name: 'signup',
-        hdr: 'Sign up',
+        hdr: <Button color='yellow' content='Sign Up'/>,  // Button here will grow the height of the NavPanel but that's ok for not-logged in case IMHO
         icon: { name: 'signup' },
         style: { padding: '4px 16px'},
         menu: null,
@@ -300,8 +300,6 @@ const _doLogout = () =>
 }
 
 const _isLoggedInSty = { padding: '4px 8px'}
-const _isNotLoggedInSty = { padding: '4px 16px'}
-
 
 class NavPanel extends React.Component {
 
@@ -341,14 +339,14 @@ class NavPanel extends React.Component {
         <Menu.Menu position='right'>
           { navPanelItems('right') }
           { currUser && 
-          <NavPanelItem
-            key='user'
-            name='user'
-            style={ currUser ? _isLoggedInSty : _isNotLoggedInSty }
-            hdr={!currUser ? 'Sign Up' :  <Image id="mgbjr-np-user-avatar" centered avatar src={userAvatarSrc} />}
-            menu={userMenu.menu}
-            to={userMenu.to} />
-          }
+            <NavPanelItem
+              key='user'
+              name='user'
+              style={_isLoggedInSty}
+              hdr={<Image id="mgbjr-np-user-avatar" centered avatar src={userAvatarSrc} />}
+              menu={userMenu.menu}
+              to={userMenu.to} />
+            }
         </Menu.Menu>
       </Menu>
     )

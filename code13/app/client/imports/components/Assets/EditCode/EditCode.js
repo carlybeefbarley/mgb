@@ -1943,7 +1943,7 @@ export default class EditCode extends React.Component {
       this.runJSHintWorker(val, (errors) => {
         const critical = errors.filter(e => e.code.substr(0, 1) === "E")
         this.hasErrors = !!critical.length
-        if (this.tools) {
+        if (this.tools && !this.hasErrors) {
           // set asset name to /assetName - so recursion is handled correctly
           this.tools.collectAndTranspile('/' + this.props.asset.name, val)
             .then(() => {

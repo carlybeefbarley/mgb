@@ -177,7 +177,7 @@ export default class SourceTools extends EventEmitter {
    * @param origin - reference to first importer ( null for main script )
    * @param additionalProps - additional into that should be appended to source info:
    *  useGlobal (for phaser only) - tells to threat file as global script instead of module
-   *  referer - for imported scripts from another user
+   *  referrer - for imported scripts from another user
    *  url - url to the script
    *  isExternalFile - not an asset
    * @returns {Promise.<>} - resolves without arguments
@@ -391,7 +391,7 @@ export default class SourceTools extends EventEmitter {
     }
     if(src.length < SpecialGlobals.editCode.maxFileSizeForAST) {
       this.tern.server.addFile(filename, src, true)
-      console.log("Added file", filename, (src.length / 1024).toFixed(2) + "KB")
+      //console.log("Added file", filename, (src.length / 1024).toFixed(2) + "KB")
     }
     else
       console.log(`File ${filename} is too big (${(src.length / 1024).toFixed(2)}KB )!`)

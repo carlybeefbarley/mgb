@@ -163,7 +163,7 @@ export default class Channel extends React.Component {
     this.drawTimeline()
     this.drawSampleBG()
     if (!this.buffer) return // in situations when audio is not decoded yet
-    // console.log("draw wave", this.props.id)
+    console.log("draw wave", this.props.id)
     const sampleWidth = Math.floor(this.sample.duration * this.props.pxPerSecond)
     const channelData = this.buffer.getChannelData(0)
     const chunk = Math.floor(channelData.length / sampleWidth)
@@ -185,7 +185,7 @@ export default class Channel extends React.Component {
       if(endX > sampleWidth) endX = sampleWidth
     }
 
-    // console.log(startX, endX)
+    console.log('start end', startX, endX)
     this.waveCtx.save()
     this.waveCtx.strokeStyle = '#4dd2ff'
     this.waveCtx.globalAlpha = 0.4
@@ -205,6 +205,7 @@ export default class Channel extends React.Component {
     }
     // console.log(count, startX, endX)
     this.waveCtx.restore()
+    console.log('wave drawn')
   }
 
   setViewOffset (seconds) {

@@ -131,7 +131,7 @@ export default class ActorTileset extends React.Component {
       <div
         className='mgb-pixelated'
         style={{
-          background: `url(${src}) no-repeat center center`,
+          background: `url("${src}") no-repeat center center`,
           height: height,
           backgroundSize: 'contain'
         }}

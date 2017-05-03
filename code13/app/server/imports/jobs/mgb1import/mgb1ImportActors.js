@@ -15,8 +15,8 @@ import validate from '/imports/schemas/validate'
 //  Avoid throwing Meteor.Error()
 
 
-// The main change we do is 
-//  move  MGB1 asset's Metadata.tilename 
+// The main change we do is
+//  move  MGB1 asset's Metadata.tilename
 //    to  MGB2 asset's content2.databag.all.defaultGraphicName
 
 
@@ -35,17 +35,17 @@ export const doImportActor = (content, rva, fullS3Name, assetName ) => {
 
   var strData = String.fromCharCode.apply(null, data3.slice(2)) // The slice2 is to skip the 32bit CRC/Adler32 header
 
-  // Because of the silliness of trying to store XML in a soap payload in MGB1 
-  // (which was written when S3 had a SOAP api that was more full-features than 
+  // Because of the silliness of trying to store XML in a soap payload in MGB1
+  // (which was written when S3 had a SOAP api that was more full-features than
   // the S3 REST API, in 2007 I decided to just replace < with {{{ and > with }}}
   // Now we pay the price for that...
   var strDataANGL = strData.replace(/{{{/g, "<").replace(/}}}/g, ">");
 
   var jsonData
   xml2js.parseString(
-    strDataANGL, 
-    { explicitArray: false, async: false}, 
-    function (e, r) { 
+    strDataANGL,
+    { explicitArray: false, async: false},
+    function (e, r) {
       if (e)
       {
         console.log(` xml2js.parseString() has error=`, e)
@@ -86,7 +86,7 @@ export const doImportActor = (content, rva, fullS3Name, assetName ) => {
   // console.dir(newAsset, 1)
 
   if (!validate.assetName(newAsset.name))
-  {    
+  {
     newAsset.text.replace(/[#:?]/g, '')
     newAsset.text = newAsset.text.length > 64 ? newAsset.text.slice(0, 63) : newAsset.text
   }
@@ -97,7 +97,7 @@ export const doImportActor = (content, rva, fullS3Name, assetName ) => {
   }
 
   if (!isDryRun)
-    Meteor.call('Azzets.create', newAsset)
+    Meteor.call('Azzets.create', newAsset, true)
 }
 
 

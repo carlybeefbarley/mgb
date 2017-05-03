@@ -196,7 +196,9 @@ function isUniqueName(name, kind, owner) {
 
 Meteor.methods({
   'Azzets.isUnique': isUniqueName,
-  "Azzets.create": function(data) {
+
+
+  "Azzets.create": function(data, skipUniqueNameCheck = false) {
 
 
     checkIsLoggedInAndNotSuspended()
@@ -248,7 +250,7 @@ Meteor.methods({
     // TODO: this will get moved one day. See #34
     data.content2 = data.content2 || {}
 
-    if(!isUniqueName(data.name, data.kind, username)){
+    if(Meteor.isServer && !skipUniqueNameCheck && !isUniqueName(data.name, data.kind, username)){
       // TODO: collect all messages in one place - this message repeats on client side also
       throw new Meteor.Error(401, "Asset name must be unique")
     }

@@ -121,7 +121,9 @@ Meteor.methods({
             fixupReferences: true,
             assets: srcAssetIds,
             projectNames: [newProjData.name],
-            newAssetName: opts.sourceProjectOwnerId == this.userId ? entry.name + ` (forked${forksUserAlreadyHave > 0 ? ' ' + forksUserAlreadyHave : ''})` : entry.name
+            newAssetName: opts.sourceProjectOwnerId == this.userId
+              ? ( entry.name + ` (forked${forksUserAlreadyHave > 0 ? ' ' + forksUserAlreadyHave : ''})`)
+              : ( forksUserAlreadyHave ? entry.name + ` (forked ${forksUserAlreadyHave})`: entry.name + 'no - forks' )
           }
         )
     })

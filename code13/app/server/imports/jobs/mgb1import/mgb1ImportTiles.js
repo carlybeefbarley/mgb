@@ -54,7 +54,7 @@ export const doImportTile = (content, rva, fullS3Name, assetName ) => {
   console.log(newAsset)
 
   if (!validate.assetName(newAsset.name))
-  {    
+  {
     newAsset.text.replace(/[#:?]/g, '')
     newAsset.text = newAsset.text.length > 64 ? newAsset.text.slice(0, 63) : newAsset.text
   }
@@ -65,5 +65,5 @@ export const doImportTile = (content, rva, fullS3Name, assetName ) => {
   }
 
   if (!isDryRun)
-    Meteor.call('Azzets.create', newAsset)
+    Meteor.call('Azzets.create', newAsset, true)
 }

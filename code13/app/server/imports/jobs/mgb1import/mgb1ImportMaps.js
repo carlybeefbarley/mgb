@@ -80,13 +80,13 @@ export const doImportMap = (content, rva, fullS3Name, assetName ) => {
   // fixup Layer[3] which is an eventLayer with a few kinds of thing
   //   See https://github.com/dgolds/MGB-Flex-source-code/search?utf8=%E2%9C%93&q=CommandEngine.encode
   const eventLayer = newAsset.content2.mapLayer[3]
-  
+
   _.each(eventLayer, (cmdStr, idx) => {
     if (cmdStr)
     {
       const [ cmd, params ] = cmdStr.split(': ')
       const p2 = params.split(',').sort()
-      switch (cmd) {          
+      switch (cmd) {
       case 'jump':
         // example: "jump: mapname=XXXXXXXXX,y=N,x=N"
         var [cmdMapname, mapname] =p2[0].trim().split('=')
@@ -103,12 +103,12 @@ export const doImportMap = (content, rva, fullS3Name, assetName ) => {
   })
 
 
-  console.log('------ ' + assetName + ' ------')  
+  console.log('------ ' + assetName + ' ------')
   console.log(newAsset)
   console.log(newAsset.content2.mapLayer[3].join('≈'))
 
   if (!validate.assetName(newAsset.name))
-  {    
+  {
     newAsset.text.replace(/[#:?]/g, '')
     newAsset.text = newAsset.text.length > 64 ? newAsset.text.slice(0, 63) : newAsset.text
   }
@@ -119,5 +119,5 @@ export const doImportMap = (content, rva, fullS3Name, assetName ) => {
   }
 
   if (!isDryRun)
-    Meteor.call('Azzets.create', newAsset)
+    Meteor.call('Azzets.create', newAsset, true)
 }

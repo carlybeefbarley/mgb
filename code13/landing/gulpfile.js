@@ -66,11 +66,11 @@ const uglifyOpts = {
 
 const aws = {
   "params": {
-    "Bucket": "landing.mygamebuilder.com"
+    "Bucket": process.env.AWS_S3_LANDINGPAGE_BUCKETNAME || "landing.mygamebuilder.com"
   },
   "accessKeyId":     "",           // Caller should provide this in ENV: AWS_ACCESS_KEY_ID="shhhhh"
   "secretAccessKey": "",           // Caller should provide this in ENV: AWS_SECRET_ACCESS_KEY="shhhhh"
-  "distributionId": "E2FKDU47P960M9",
+  "distributionId": process.env.AWS_S3_LANDINGPAGE_CLOUDFRONT_DISTRIBUTIONID || "E2FKDU47P960M9",
   "region": "us-east-1",
 };
  

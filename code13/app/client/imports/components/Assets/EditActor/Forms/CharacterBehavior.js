@@ -20,10 +20,12 @@ export default class CharacterBehavior extends BaseForm {
     return (
       <div className="ui form">
         <div id="mgbjr-edit-actor-tab-CharacterBehavior-movement">
+           <span style={{color: "red"}}>Note: 'movement speed' works as a probability (frequency) of an NPC moving each turn</span>
+
           {this.text("Movement speed", 'movementSpeedNum', "number", {
             min: 0,
-            max: 3,
-            step: 0.5
+            max: 1,
+            step: 0.1
           })}
           { this.bool("Can Move Up \u2191",    'upYN')}
           { this.bool("Can Move Down \u2193",  'downYN')}

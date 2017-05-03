@@ -7,13 +7,14 @@ const _menuItemIndicatorStyle = {
   textShadow: '-1px -1px 0 rgba(0,0,0,0), 1px -1px 0 rgba(0,0,0,0), -1px 1px 0 rgba(0,0,0,0), 1px 1px 0 rgba(0,0,0,0)'
 }
 
-const AssetChatDetail = ( { hasUnreads, handleClick } ) => (
+const AssetChatDetail = ( { hasUnreads, handleClick, style } ) => (
   <Popup
     size='small'
     positioning='bottom right'
     trigger={(
       <Label 
         basic
+        style={style}
         id="mgbjr-asset-edit-header-right-chat"
         size='small'
          >

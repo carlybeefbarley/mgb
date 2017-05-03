@@ -50,6 +50,9 @@ export default AssetCreateNew = React.createClass({
 
   handleAssetNameChange(e){
     const newAssetName = e.target.value
+    if(this.state.newAssetName === newAssetName)
+      return
+    
     this.setState({newAssetName})
     this.validateNewName(newAssetName)
   },

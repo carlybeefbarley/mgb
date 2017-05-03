@@ -1541,7 +1541,7 @@ export default class EditGraphic extends React.Component {
     this.initDefaultContent2()      // The NewAsset code is lazy, so add base content here
     this.initDefaultUndoStack()
 
-    const { asset, canEdit, currUser } = this.props
+    const { asset, currUser } = this.props
     const c2 = asset.content2
     const zoom = this.state.editScale
     const { actions, config } = this.generateToolbarActions()
@@ -1552,13 +1552,14 @@ export default class EditGraphic extends React.Component {
 
     const scrollModes = ["Normal", "Rotate", "Scale", "Flip"]
 
-    colWidth = (asset.skillPath && _.startsWith( asset.skillPath, 'art' )) ? '8' : '10'
+    const isSkillTutorialGraphic = asset && asset.skillPath && _.startsWith( asset.skillPath, 'art' )
+    const column1Width = isSkillTutorialGraphic ? 8 : 16
 
     // Make element
     return (
       <Grid>
         {/***  Central Column is for Edit and other wide stuff  ***/}
-        <Grid.Column width={colWidth}>
+        <Grid.Column width={column1Width}>
           <div className="row" style={{marginBottom: "6px"}}>
             <Popup
               on='hover'
@@ -1730,7 +1731,7 @@ export default class EditGraphic extends React.Component {
           </div>
         </Grid.Column>
         {/*** Art Mentor ***/}
-        {asset.skillPath && _.startsWith( asset.skillPath, 'art.' ) &&
+        {isSkillTutorialGraphic &&
           <ArtTutorial
             style       =     { { backgroundColor: 'rgba(0,255,0,0.02)' } }
             isOwner     =     { currUser && currUser._id === asset.ownerId }

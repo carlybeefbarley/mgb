@@ -190,8 +190,15 @@ export const allSorters = {
   "plays":  { 'metadata.playCount': -1 }
 }
 
+function isUniqueName(name, kind, owner) {
+  return Azzets.find({name, kind, dn_ownerName: owner, isDeleted: false}).count() === 0
+}
+
 Meteor.methods({
+  'Azzets.isUnique': isUniqueName,
   "Azzets.create": function(data) {
+
+
     checkIsLoggedInAndNotSuspended()
     const username = Meteor.user().profile.name
     const now = new Date()
@@ -240,6 +247,11 @@ Meteor.methods({
     data.isUnconfirmedSave = this.isSimulation
     // TODO: this will get moved one day. See #34
     data.content2 = data.content2 || {}
+
+    if(!isUniqueName(data.name, data.kind, username)){
+      // TODO: collect all messages in one place - this message repeats on client side also
+      throw new Meteor.Error(401, "Asset name must be unique")
+    }
 
     check(data, {
       ...{ skillPath: optional(schema.skillPath) },
@@ -331,6 +343,10 @@ Meteor.methods({
       // get real asset and check if user can REALLY edit asset
       const asset = Azzets.findOne(selector, {fields: {ownerId: 1, projectNames: 1, isCompleted: 1}})
       const userProjects = Projects.find(projectMakeSelector(this.userId), {fields: {name: 1, ownerId: 1}}).fetch()
+
+      if(!isUniqueName(data.name, data.kind, data.dn_ownerName))
+        throw new Meteor.Error(401, "Asset name must be unique")
+
       if (!canUserEditAssetIfUnlocked(asset, userProjects, Meteor.user()))
         throw new Meteor.Error(401, "You don't have permission to edit this asset. canUserEditAsset:failed")
 

@@ -83,6 +83,14 @@ Meteor.methods({
 
     const newProjId = Meteor.call('Projects.create', newProjData)
 
+    // count forks for current user and add count to asset name
+    let forksUserAlreadyHave = 0
+    _.each(sourceProject.forkChildren, e => {
+      if(e.forkedByUserName === username){
+        forksUserAlreadyHave++
+      }
+    })
+
     // Next, update the parent's forkChildren Info. We do this directly
     // here since the "Projects.update" Meteor Method is callable by client
     // and we don't want clients to be able to manipulate these records directly
@@ -102,6 +110,8 @@ Meteor.methods({
       }
     )
 
+
+
     // Now we loop through the many assets and fork each
     _.each(srcAssetIds, entry => {
         Meteor.call(
@@ -111,7 +121,7 @@ Meteor.methods({
             fixupReferences: true,
             assets: srcAssetIds,
             projectNames: [newProjData.name],
-            newAssetName: opts.sourceProjectOwnerId == this.userId ? entry.name + ' (forked)' : entry.name
+            newAssetName: opts.sourceProjectOwnerId == this.userId ? entry.name + ` (forked${forksUserAlreadyHave > 0 ? ' ' + forksUserAlreadyHave : ''})` : entry.name
           }
         )
     })
@@ -136,6 +146,8 @@ Meteor.methods({
   //   opts.newAssetName          // if null it will just append ' (fork)' to the old name
   //   opts.fixupReferences       // if true, then call the smart asset-handlers that fixup
                                   // references. For NOW, they assume ONLY the owner has changed
+
+  // TODO: forked assets can end up non unique - by forking project 2 times
   "Azzets.fork": function (srcId, opts = {}) {
     // 0. Perform Input/User Validations
     checkIsLoggedInAndNotSuspended()

@@ -21,11 +21,8 @@ import { projectMakeSelector } from '/imports/schemas/projects'
 
 import QLink from '../QLink'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 
-
-import { Container, Segment, Header, Button, Grid, Item, Icon, Label, Popup } from 'semantic-ui-react'
-import FittedImage from '/client/imports/components/Controls/FittedImage'
+import { Segment, Header, Button, Grid, Item, Icon, Label, Popup } from 'semantic-ui-react'
 
 const UserShowcase = () => ( null )    // TODO based on workState
 

@@ -1,5 +1,7 @@
 import _ from 'lodash'
 
+import {Azzets} from '/imports/schemas'
+
 const _maxUsernameLength = 12
 const _minUsernameLength = 3
 
@@ -12,7 +14,7 @@ const _maxAssetNameLength = 64
 //    #   since... it is used to denote graphic frame number in Actor Editor
 //    ?   since... this could look string on a URI using our /api/asset/png/USERNAME/ASSETNAME?frame=4
 //                 URL format and would be a bit confusing / bug-prone when escaped
-//    {   since... we may want the option to have assetName-based apis that could instead have a 
+//    {   since... we may want the option to have assetName-based apis that could instead have a
 //                 richer JSON-encoded data instead
 //    *   since it is just going to make wild card search stupidly annoying
 const _validAssetNameRegex = /^[a-zA-Z0-9_\-. \(\)\!\~\;\'\<\>\@\&]*$/
@@ -83,6 +85,29 @@ const validate = {
 
   assetName: function(text) {
     return validate.lengthCap(text, _maxAssetNameLength) && _validAssetNameRegex.test(text)
+  },
+  /**
+   *
+   * Checks if asset name is unique in the context of kind and owner
+   * @param name - potential asset name
+   * @param kind - asset kind
+   * @param owner - asset owner
+   * @returns {Promise.<Bool>}
+   */
+  isAssetNameUnique: function (name, kind, owner) {
+
+    return new Promise((resolve, reject) => {
+      const selector = {name: name, kind: kind, dn_ownerName: owner, isDeleted: false}
+      // we already have it on the client side
+      if (Azzets.find(selector).count() > 0) {
+        resolve(false)
+        return
+      }
+
+      Meteor.call('Azzets.isUnique', name, kind, owner, (err, resp) => {
+        err ? reject(err) : resolve(resp)
+      })
+    })
   },
 
   assetDescription: function(text) {

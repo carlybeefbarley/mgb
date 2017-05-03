@@ -9,6 +9,14 @@ import { assetMakeSelector, allSorters } from '/imports/schemas/assets'
 //
 
 
+Meteor.methods({
+
+  'Azzets.isUnique': function(name, kind, owner) {
+    return Azzets.find({name, kind, dn_ownerName: owner, isDeleted: false}).count() === 0
+  }
+
+})
+
 /**
  * Can see all assets, but does NOT include the big 'content2' field
  * @param userId can be undefined or -1 .. indicating don't filter by user if

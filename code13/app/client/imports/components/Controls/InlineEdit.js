@@ -45,17 +45,23 @@ export default class InlineEdit extends React.Component {
     text: this.props.text,
     minLength: this.props.minLength,
     maxLength: this.props.maxLength,
+    isInputValid: true
   }
 
   componentWillMount() {
-    this.isInputValid = this.props.validate || this.isInputValid
+    const validate = this.props.validate || this.isInputValid
+    this.isInputValid = (text) => {
+      return new Promise((resolve, reject) => {
+        resolve(validate(text))
+      })
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     const isTextChanged = (nextProps.text !== this.props.text)
     const isEditingChanged = (nextProps.editing !== this.props.editing)
     let nextState = {}
-    if (isTextChanged) 
+    if (isTextChanged)
       nextState.text = nextProps.text
     if (isEditingChanged)
       nextState.editing = nextProps.editing
@@ -79,10 +85,15 @@ export default class InlineEdit extends React.Component {
   }
 
   finishEditing = () => {
-    if (this.isInputValid(this.state.text) && this.props.text != this.state.text)
+    if(this.props.text !== this.state.text && this.state.isInputValid)
+      this.commitEditing()
+    else
+      this.cancelEditing()
+
+    /*if (this.isInputValid(this.state.text) && this.props.text != this.state.text)
       this.commitEditing()
     else if (this.props.text === this.state.text || !this.isInputValid(this.state.text))
-      this.cancelEditing()
+      this.cancelEditing()*/
   }
 
   cancelEditing = () => {
@@ -106,16 +117,18 @@ export default class InlineEdit extends React.Component {
   }
 
   keyDown = (event) => {
-    if (event.keyCode === 13) 
+    if (event.keyCode === 13)
       this.finishEditing()
     else if (event.keyCode === 27)
       this.cancelEditing()
   }
 
   textChanged = (event) => {
-    this.setState({
-      text: event.target.value.trim()
-    })
+    const text = event.target.value.trim()
+    this.isInputValid(text)
+      .then( isValid => {
+        this.setState({text, isInputValid: isValid})
+      })
   }
 
   render () {
@@ -126,8 +139,8 @@ export default class InlineEdit extends React.Component {
           {this.state.text || this.props.placeholder}
         </Element>
       )
-    } 
-    
+    }
+
     if (!this.state.editing) {
       const Element = this.props.staticElement
       return (
@@ -140,9 +153,9 @@ export default class InlineEdit extends React.Component {
         </Element>
       )
     }
-      
+
     const Element = this.props.editingElement
-    const isValid = this.isInputValid(this.state.text)
+    const isValid = this.state.isInputValid
     return (
       <Element
         onClick={this.clickWhenEditing}
@@ -152,7 +165,7 @@ export default class InlineEdit extends React.Component {
         placeholder={this.props.placeholder}
         defaultValue={this.state.text}
         onChange={this.textChanged}
-        style={ { ...this.props.style, color: (isValid ? null : 'red') } } 
+        style={ { ...this.props.style, color: (isValid ? null : 'red') } }
         ref="input" />
     )
   }

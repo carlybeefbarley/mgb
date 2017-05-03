@@ -75,6 +75,17 @@ export default AssetPathDetail = React.createClass({
       this.props.handleDescriptionChange(data.text)
   },
 
+  validateAssetName(name){
+    return new Promise(resolve => {
+      if(!validate.assetName(name)){
+        return resolve(false)
+      }
+      return validate.isAssetNameUnique(name, this.props.kind, this.props.ownerName).then( isValid => {
+        resolve(isValid)
+      })
+    })
+  },
+
   render() {
     const { name, kind, text, ownerName, canEdit, isUnconfirmedSave, hasUnsentSaves, lastUpdated } = this.props
     const emptyAssetDescriptionText = canEdit ? '(no description)' : ''
@@ -88,7 +99,7 @@ export default AssetPathDetail = React.createClass({
 
           <InlineEdit
             style={{ marginLeft: '0.7em', marginRight: '1em' }}
-            validate={validate.assetName}
+            validate={this.validateAssetName}
             activeClassName="editing"
             text={name || untitledAssetString}
             paramName="name"

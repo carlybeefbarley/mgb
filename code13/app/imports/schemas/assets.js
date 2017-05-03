@@ -191,6 +191,7 @@ export const allSorters = {
 }
 
 function isUniqueName(name, kind, owner) {
+  //console.log("IS unique: ", name, kind, owner)
   return Azzets.find({name, kind, dn_ownerName: owner, isDeleted: false}).count() === 0
 }
 
@@ -343,10 +344,10 @@ Meteor.methods({
     if(Meteor.isServer) {
       // access DB only after data check
       // get real asset and check if user can REALLY edit asset
-      const asset = Azzets.findOne(selector, {fields: {ownerId: 1, projectNames: 1, isCompleted: 1}})
+      const asset = Azzets.findOne(selector, {fields: {ownerId: 1, projectNames: 1, isCompleted: 1, kind: 1, dn_ownerName: 1}})
       const userProjects = Projects.find(projectMakeSelector(this.userId), {fields: {name: 1, ownerId: 1}}).fetch()
 
-      if(!isUniqueName(data.name, data.kind, data.dn_ownerName))
+      if (!isUniqueName(data.name, data.kind || asset.kind, data.dn_ownerName || asset.dn_ownerName))
         throw new Meteor.Error(401, "Asset name must be unique")
 
       if (!canUserEditAssetIfUnlocked(asset, userProjects, Meteor.user()))

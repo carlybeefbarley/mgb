@@ -53,7 +53,7 @@ export default class InlineEdit extends React.Component {
     const validate = this.props.validate || this.isInputValid
     this.isInputValid = (text) => {
       return new Promise((resolve, reject) => {
-        if(this.props.text === this.state.text){
+        if(this.props.text === this.state.text === text){
           resolve(true)
           return
         }

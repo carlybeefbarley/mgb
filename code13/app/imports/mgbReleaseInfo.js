@@ -16,12 +16,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Mon May 01 2017 13:00:00 GMT-0700 (PDT)',
+      'timestamp': 'Tue May 02 2017 18:30:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.1.0',
         'state': 'Beta',
-        'iteration': '4008'
+        'iteration': '4021`'
       },
 
       'releaseManagement': {
@@ -40,7 +40,7 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'Fix some project & art tutorials; Show undo/redo in code editor toolbar; more small fixes.',
+          'changeSummary': 'Fix bug that prevented some thumbnails from being shown (if name had whitespace); Make frontPage skills links clickable; Project fork now handles cross-project asset references; Correct the Actor "movementSpeed" range for NPCs; Fix some project & art tutorials; Show undo/redo in code editor toolbar; more small fixes.',
           'otherUrls': [ ]
         }
       ]

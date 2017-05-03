@@ -52,7 +52,7 @@ export default AssetCreateNew = React.createClass({
     const newAssetName = e.target.value
     if(this.state.newAssetName === newAssetName)
       return
-    
+
     this.setState({newAssetName})
     this.validateNewName(newAssetName)
   },
@@ -140,6 +140,9 @@ export default AssetCreateNew = React.createClass({
 
   handleSelectAssetKindClick: function(selectedKind)
   {
+    if(this.state.selectedKind === selectedKind)
+      return
+    
     this.setState( { selectedKind } )
     this.validateNewName(this.state.newAssetName, selectedKind)
     // this.blurInput()

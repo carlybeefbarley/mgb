@@ -346,7 +346,7 @@ export default class EditMap extends React.Component {
       this.mgb_content2 = _.cloneDeep(this.props.asset.content2)
       // meta contains active layer , active tool, camera - etc
       this.mgb_content2.meta = meta
-      this.forceUpdate()
+      this.setState({lastUpdated: Date.now()})
       return
     }
     // isn't it too late to save for undo?
@@ -358,6 +358,8 @@ export default class EditMap extends React.Component {
       this.refs.map.generatePreviewAndSaveIt(data, reason)
     else
       this.props.handleContentChange(data, thumbnail, reason)
+
+    this.setState({lastUpdated: Date.now()})
   }
 
   quickSave(reason = "noReason", skipUndo = true, thumbnail = null){

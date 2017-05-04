@@ -240,7 +240,10 @@ export const chatsSchema = {
 
   // other special states
   isDeleted:    optional(Boolean),    // If true then show as '(deleted)'
-
+  
+  // if superadmin deletes a chat message it is saved in this field and text is replaced with deleted by admin and user cannot reenable
+  prvBannedMessage: optional(String),
+  
   // The su fields can only be changed by a superAdmin User.. They typically relate to workflows or system counts
   suFlagId:       optional(String)      // (TODO) non-null / non-empty if there is a Flag record for this message (See Flags.js)
 }

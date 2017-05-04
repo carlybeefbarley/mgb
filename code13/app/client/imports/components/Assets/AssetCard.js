@@ -1,23 +1,20 @@
 import _ from 'lodash'
+import moment from 'moment'
 import React, { PropTypes } from 'react'
-import { Card, Icon, Popup } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
+import { Card, Icon, Popup } from 'semantic-ui-react'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import { AssetKinds } from '/imports/schemas/assets'
-import moment from 'moment'
 import { logActivity } from '/imports/schemas/activity'
 import ProjectMembershipEditor from './ProjectMembershipEditor'
-import assetLicenses, { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 import WorkState from '/client/imports/components/Controls/WorkState'
 import ChallengeState from '/client/imports/components/Controls/ChallengeState'
 import { showToast } from '/client/imports/routes/App'
-
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
-
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
-
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
+
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
 
 export const assetViewChoices = {
@@ -31,6 +28,7 @@ export const defaultAssetViewChoice = 'm'
 
 export default AssetCard = React.createClass({
   propTypes: {
+    classNames: PropTypes.string,  // Null, or string with extra classnames
     showFooter: PropTypes.bool, // If false, hide the 4-button footer
     fluid: PropTypes.bool, // If true then this is a fluid (full width) card.
     asset: PropTypes.object,
@@ -83,10 +81,7 @@ export default AssetCard = React.createClass({
     if (!this.props.asset)
       return null
 
-    const { renderView, asset, fluid, canEdit, allowDrag, ownersProjects } = this.props
-    const actualLicense = !asset.assetLicense || asset.assetLicense.length === 0
-      ? defaultAssetLicense
-      : asset.assetLicense
+    const { renderView, asset, fluid, canEdit, classNames, ownersProjects } = this.props
     const assetKindIcon = AssetKinds.getIconName(asset.kind)
     const assetKindDescription = AssetKinds.getDescription(asset.kind)
     const assetKindName = AssetKinds.getName(asset.kind)
@@ -127,7 +122,7 @@ export default AssetCard = React.createClass({
         // draggable must be explicitly set if element is not user-input, img, or link... see
         // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/draggable
         draggable
-        className='animated fadeIn link'
+        className={`${classNames ? classNames : ''} animated fadeIn link`}
       >
 
       <div ref='thumbnailCanvas'>

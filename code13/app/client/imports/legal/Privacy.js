@@ -1,8 +1,8 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
 import { Container, Header } from 'semantic-ui-react'
 import Footer from '/client/imports/components/Footer/Footer'
 
-const lastUpdateDate = 'Last Update: September 29, 2016'
+const lastUpdateDate = 'May 3rd, 2017'
 
 const TosUrl = '/legal/tos'
 
@@ -15,7 +15,7 @@ const ageMinimumToUse = 13
 const assetTerm = 'Asset'
 const companyName = 'MyCodeBuilder'
 
-// Unsure why, but stardust Table isn't working so...
+// Unsure why, but SUIR Table wasn't working so...
 const Table =  props => <table className='ui two column celled table'>{props.children }</table>
 Table.Header = props => <thead>{props.children}</thead>
 Table.HeaderCell = props => <th>{props.children}</th>
@@ -124,7 +124,7 @@ export default Privacy = () => (
               to demonstrate the value we deliver to users.
             </p>
             <p>
-              The personal information we collect is not shared with or sold to other organizations 
+              The personal information we collect is NOT shared with or sold to other organizations 
               for commercial purposes, except to provide products or services you’ve requested, 
               when we have your permission, or under the following circumstances:
             </p>
@@ -149,11 +149,11 @@ export default Privacy = () => (
               We might use the analytics data to figure out how to make the site better. 
               We don't currently, but it's possible we might serve contextual ads based 
               on that data. We may show potential advertisers anonymous aggregate data 
-              (e.g. pageviews). We may use an {assetTerm} you have created to help use 
+              (e.g. pageviews). We may use an {assetTerm} you have created to help us 
               troubleshoot the site.
             </p>
             <p>
-              <strong>Your information is never shared or sold to anybody</strong>  
+              <strong>Your information is never shared or sold to anybody</strong>&ensp;
               unless we are required to by law
             </p>
           </Table.Data>
@@ -181,7 +181,7 @@ export default Privacy = () => (
           <Table.Data>
             You have a login and password to get into {thisSiteName}. You have a responsibility to 
             protect that. We store that information. We also have a responsibility to protect that 
-            and will do our absolute best to do so. Unfortunately there are bad people out there 
+            and will do our absolute best to do so. Unfortunately there are naughty people out there 
             and we can't guarantee there will never be a data breach.
           </Table.Data>
         </Table.Row>
@@ -206,7 +206,7 @@ export default Privacy = () => (
           </Table.Data>
           <Table.Data>
             <p>
-              We use cookies but we never store any personal information in cookies. 
+              We may use cookies but we never store any personal information in cookies. 
               If you see weirdly personal information on other sites, it's not from us. 
             </p>
             <p>
@@ -222,13 +222,12 @@ export default Privacy = () => (
             If you choose to cancel your Account and leave the Company Services or your 
             Account is terminated because of your breach of the Terms of Service, 
             please be aware that the Company may for a time retain residual information 
-            in our backup and/or archival copies of our database. We will make reasonable 
-            commercial efforts to delete your information as soon as reasonably practical.
+            in our backup and/or archival copies of our database. 
           </Table.Data>
           <Table.Data>
-            If you (or we) delete your account, it will be immediately gone from the website, 
+            If you (or we) delete your account, it will be immediately gone from the public view of the website, 
             but some of your data may still be in our backups. That data will also be deleted 
-            when our backups expire.
+            when our backups eventually expire.
           </Table.Data>
         </Table.Row>
       </LegalSection>
@@ -237,7 +236,7 @@ export default Privacy = () => (
       <LegalSection banner='Compliance with Children’s Online Privacy Protection Act'>
         <Table.Row>
           <Table.Data>
-            {companyName} does not target its offerings toward, and does not knowingly 
+            {companyName} does NOT target its offerings toward, and does not knowingly 
             collect any personal information from users under {ageMinimumToUse} years of age.
           </Table.Data>
           <Table.Data>
@@ -283,12 +282,12 @@ export default Privacy = () => (
           </Table.Data>
           <Table.Data>
             If we change anything of real significance in this policy, we'll notify you 
-            via the in-app notification system.
+            via the in-app notification or "What's New" systems.
           </Table.Data>
         </Table.Row>
       </LegalSection>
       <br />
-      <p>{lastUpdateDate}</p>
+      <p>This privacy policy was last updated at {lastUpdateDate}</p>
     </Container>
     <Footer />
   </div>

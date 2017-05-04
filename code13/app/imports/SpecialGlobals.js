@@ -25,7 +25,7 @@ export default SpecialGlobals = {
     validFor: 60 // seconds until we force avatar to refresh
   },
   thumbnail: {
-    width: 230,     // In px
+    width: 230,     // In px. See imn mgb.css for .mgb-projectcard-width and .mgb-assetcard-width
     height: 155     // In px
   },
   // in a case that observers will turn out too slow - we may change it to false - and then implement slow polling

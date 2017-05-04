@@ -49,10 +49,10 @@ const Footer = ( { respIsRuleActive, respData }) => (
     <div className="ui section"></div>
     <div className="ui left aligned container">
       <div className={`ui small ${respData.legalListDirection} relaxed divided link list`}>
-        <a className="item" href="#">Copyright ©2016 MyCodeBuilder Inc. All Rights Reserved.</a>
-        <a className="item" href="/legal/tos">Terms and Conditions</a>
+        <a className="item" href="#">Copyright ©2017 MyCodeBuilder Inc. All Rights Reserved.</a>
+        <a className="item" href="/legal/tos">Terms of Service</a>
         <a className="item" href="/legal/privacy">Privacy Policy</a>
-        <a className="item" href="#">Contact Us</a>
+        <a className="item" href="/?_fp=chat">Contact Us</a>
       </div>
     </div>
   </div>

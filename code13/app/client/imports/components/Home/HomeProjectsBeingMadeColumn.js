@@ -11,7 +11,7 @@ const _propTypes = {
 
 const HomeProjectsBeingMadeColumn = () => (
   <Grid.Column className='animated fadeIn'>
-    <Header as='h2' style={{ marginBottom: '1em' }}>Watch games being made</Header>
+    <Header as='h2' style={{ marginBottom: '1em' }}>See games being made</Header>
     <ProjectsBeingMadeGET numEntries={4} chosenClassName="ui very relaxed list" />
     <br />
     <QLink to={`/games`}>

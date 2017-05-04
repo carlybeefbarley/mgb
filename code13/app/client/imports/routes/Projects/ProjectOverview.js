@@ -14,7 +14,7 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import UserListRoute from '../Users/UserListRoute'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import SlidingCardList from '/client/imports/components/Controls/SlidingCardList'
-
+import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
 import { logActivity } from '/imports/schemas/activity'
 import ProjectForkGenerator from './ProjectForkGenerator'
 
@@ -178,6 +178,19 @@ export default ProjectOverview = React.createClass({
                 />
           </Segment>
           
+          <QLink 
+              id='mgbjr-project-overview-assets'
+              to={`/u/${project.ownerName}/assets`} 
+              query={{project:project.name}} >
+            <Header as="h3" >Project Assets</Header>
+          </QLink>
+          <Segment basic>
+            <AssetsAvailableGET 
+                scopeToUserId={project.ownerId}
+                scopeToProjectName={project.name}
+            />
+          </Segment>
+
           <Header as="h3" >Project Members</Header>
           <Segment basic>
             Project Members may create, edit or delete Assets in this Project &nbsp;        
@@ -187,7 +200,9 @@ export default ProjectOverview = React.createClass({
                 handleRemove={this.handleRemoveMemberFromProject}
             />
           </Segment>
-          { this.renderAddPeople() }
+          <Segment basic>
+            { this.renderAddPeople() }
+          </Segment>
         </Grid.Column>
       </Grid>
     )

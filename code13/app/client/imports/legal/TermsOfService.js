@@ -2,9 +2,9 @@ import React from 'react'
 import { Container, Header } from 'semantic-ui-react'
 import Footer from '/client/imports/components/Footer/Footer'
 
-const lastUpdateDate = 'Last Update: September 29, 2016'
+const lastUpdateDate = 'May 3rd, 2017'
+
 const supportEmail = 'support@mycodebuilder.com'
-const billingEmail = supportEmail
 const copyrightInfringmentEmail = supportEmail
 
 const privacyUrl = '/legal/privacy'
@@ -12,8 +12,8 @@ const privacyUrl = '/legal/privacy'
 // TODO: This is the main section that needs revision - need to allow overrides to default license.
 const licenseMitLink = <a href="http://opensource.org/licenses/MIT">MIT license</a>
 
-
-const supportUrl = '/support'   // TODO
+const whatsNewPage = '/whatsnew'
+const supportUrl = '/legal/tos?_fp=chat.G_MGBBUGS_'
 const thisSiteUrl = 'MyGameBuilder.com'
 const thisSiteName = 'MyGameBuilder'
 const thisSiteName_Site = `${thisSiteName} Site`
@@ -26,7 +26,7 @@ const assetTerm = 'Asset'
 const companyName = 'MyCodeBuilder'
 const companyNameCAPS = companyName.toUpperCase()
 const companyNameInc = 'MyCodeBuilder, Inc.'
-const companyAddress = '4557 11th Ave NE, Seattle, WA, 98105'
+const companyAddress = 'Seattle, WA, 98105'
 
 
 // Unsure why, but stardust Table isn't working so...
@@ -76,7 +76,7 @@ export default TermsOfService = () => (
           <Table.Data>
             These Terms of Service (the “<strong>Terms of Service</strong>”) are a 
             contract between you, the user, and {companyNameInc}, a Washington corporation with its principal
-            place of business at {companyAddress} (“<strong>{companyName}</strong>”). 
+            place of business in {companyAddress} (“<strong>{companyName}</strong>”).&ensp;
             {companyName} operates {thisSiteUrl} (the “<strong>{thisSiteName_Site}</strong>”)
             and the {assetTerm} creation service therein. By using the {thisSiteName_Site} and any services
             accessible from the {thisSiteName_Site}, you are agreeing to be bound by these Terms of
@@ -111,7 +111,7 @@ export default TermsOfService = () => (
             {thisSiteName_Site} (the “<strong>Content</strong>”)
             and activity that occurs under your Account (even when Content is posted by
             others who have access to your Account). Any information submitted by you shall
-            be subject to {companyName} <a href="{privacyUrl}">Privacy Policy</a>. One person or
+            be subject to {companyName} <a href={`${privacyUrl}`}>Privacy Policy</a>. One person or
             legal entity may not maintain more than one Account. Accounts registered by
             “bots” or other automated methods are not permitted.
           </Table.Data>
@@ -138,7 +138,7 @@ export default TermsOfService = () => (
             competitive product or service, (b) build a product using similar features,
             functions or graphics of the {thisSiteName_Site}, or (c) copy any features, functions
             or graphics of the {thisSiteName_Site}. You further acknowledge and agree that, as
-            between the parties, {companyName} owns all right, title, and interest in and to the
+            between the parties, {companyName} owns all right, title, and interest in and to the&ensp;
             {thisSiteName_Site}, including all intellectual property rights therein.
           </Table.Data>
           <Table.Data>
@@ -151,21 +151,22 @@ export default TermsOfService = () => (
       <LegalSection banner='Your License to Us'>
         <Table.Row>
           <Table.Data>
-            By submitting, posting or displaying Content on the {thisSiteName_Site}, you grant
+            By submitting, posting or displaying Content on the {thisSiteName_Site}, by default
+            (and unless otherwise specified) you grant
             {companyName} and other users of the Services a worldwide, non-exclusive, royalty-free
             license (with the right to sublicense) to use, copy, reproduce, process, adapt,
             modify, publish, transmit, display and distribute such Content in any and all
             media or distribution methods (now known or later developed). Specifically, the
-            {licenseMitLink}. If you
-            specifically save an {assetTerm} as private in {thisSiteName}, and that {assetTerm} has never been
-            public on {thisSiteName} or anywhere else, the code and content in that particular {assetTerm} is
-            unlicensed.
+            {licenseMitLink}. 
+            {thisSiteName_Site} also allows users to explicitly choose some other externally defined licenses
+            on a per-asset basis, in which case the license grants are as described by the legal terms that
+            the selected license links to. 
           </Table.Data>
           <Table.Data>
-            Public {assetTerm}s you build on {thisSiteName} are {licenseMitLink}d, meaning other
-            people are free to use it for whatever they like as long as that is also MIT
-            licensed. Don't put anything on {thisSiteName} where that wouldn't be OK. Private {assetTerm}s
-            are un-licensed so that you may apply your own license and retain direct ownership.<br/>
+            By default and unless otherwise specified, public {assetTerm}s you build on {thisSiteName} are {licenseMitLink}d, meaning other
+            people are free to use them for whatever they like as long as that is also MIT
+            licensed. Don't put anything on {thisSiteName} where that wouldn't be OK.&ensp;
+            You may choose from some other licenses for each asset, in which case see the terms for each license at the sites which host those license descriptions
           </Table.Data>
         </Table.Row>
         <Table.Row>
@@ -190,13 +191,14 @@ export default TermsOfService = () => (
             requirements or limitations of any networks, devices, services or media.
           </Table.Data>
           <Table.Data>
-            People can fork your work and modify it.
+            People can fork your work and modify it.&ensp;
+            You can disable forking for projects to make it less convenient for other users to fork an entire project, but individual assets can always be forked by other users.
           </Table.Data>
         </Table.Row>
         <Table.Row>
           <Table.Data>
             Additionally, by uploading Content to the {thisSiteName_Site}, you warrant, represent
-            and agree that you have the right to grant {companyName} the license described above.
+            and agree that you have the right to grant {companyName} the license(s) described above.
             You also represent, warrant and agree that you have not and will not contribute
             any Content that (a) infringes, violates or otherwise interferes with any
             copyright or trademark of another party, (b) reveals any trade secret, unless
@@ -216,7 +218,7 @@ export default TermsOfService = () => (
             any time, or pursue any other remedy or relief available under equity or law.
           </Table.Data>
           <Table.Data>
-            Don't put nasty or copyright-infringing things on {thisSiteName}.
+            Don't put nasty or copyright-infringing things on {thisSiteName}. This is a positive community and if you want to troll, you should go somewhere else
           </Table.Data>
         </Table.Row>
         <Table.Row>
@@ -241,9 +243,9 @@ export default TermsOfService = () => (
           <Table.Data>
             The Services are available only to individuals who have the capacity to form
             legally binding contracts under the law applicable to these Terms of Service.
-            Furthermore, our services are not available to minors (under {ageMinimumToJoin} years of age).
-            If you do not qualify as an authorized user, you are not permitted to use the
-            Services and no contract will be formed between you and {companyName}.
+            Furthermore, our services are NOT available to minors (under {ageMinimumToJoin} years of age).
+            If you do not qualify as an authorized user, you are NOT permitted to use the
+            Services and NO CONTRACT will be formed between you and {companyName}.
           </Table.Data>
           <Table.Data>
             You need to be {ageMinimumToJoin} or older to sign up for {thisSiteName}. We need these rules to be
@@ -316,7 +318,7 @@ export default TermsOfService = () => (
             security, of the Equipment.
           </Table.Data>
           <Table.Data>
-            BYO electricity, internet, computer, web browser, etc.
+            You pay for your own electricity, internet, computer, web browser, etc.
           </Table.Data>
         </Table.Row>
         <Table.Row>
@@ -498,8 +500,8 @@ export default TermsOfService = () => (
             property or safety of {companyName}, its users and the public.
           </Table.Data>
           <Table.Data>
-            We might pop into your account to help with a support request, but we otherwise
-            don't go snooping around.<p/>
+            We might pop into your account to help with a support/help request, but we otherwise
+            don't go snooping around for information in your account that isn't already exposed to other users publicly.<p/>
             <p>If we are legally required to provide information to the government that they
               request, we will, but not otherwise.
             </p>
@@ -520,12 +522,14 @@ export default TermsOfService = () => (
             all such Feedback.
           </Table.Data>
           <Table.Data>
-            If you send us an idea, we might use it, in which case it's protected by all the
+            If you send us an idea, we are allowed to use it, in which case it's protected by all the
             same rules on this page.
           </Table.Data>
         </Table.Row>
       </LegalSection>
 
+      { 
+      /*
 
       <LegalSection banner='Payment, Refunds, Upgrading and Downgrading'>
         <Table.Row>
@@ -579,6 +583,9 @@ export default TermsOfService = () => (
         </Table.Row>
       </LegalSection>
 
+      */
+      }
+
       <LegalSection banner='Violation of these Terms of Service' >
         <Table.Row>
           <Table.Data>
@@ -603,17 +610,11 @@ export default TermsOfService = () => (
       <LegalSection banner='Cancellation and Termination'>
         <Table.Row>
           <Table.Data>
-            You are solely responsible for properly canceling your account. You can cancel
-            your account at any time by logging in to your account and going to the Settings
-            page, the Profile tab, and clicking the Delete Account link and confirming the
-            dialog box. You may cancel your payment plan but keep your account by logging
-            in, going to the Settings page, the PRO account tab, and clicking the Cancel
-            Plan link. An email or phone request to cancel your account shall not result in
-            cancellation.
+            You can ask to cancel your account by messaging us at {supportEmail}
           </Table.Data>
           <Table.Data>
-            If you don't want a {thisSiteName} account anymore, it's up to you to delete it. You
-            can do it right from the site.
+            If you don't want a {thisSiteName} account anymore, it's up to you to ask us to delete it. You
+            can't yet do it directly from the site (while we are in Beta) but email us at {supportEmail} and we will delete it for you within a commercially reasonable time
           </Table.Data>
         </Table.Row>
         <Table.Row>
@@ -627,18 +628,7 @@ export default TermsOfService = () => (
             your information as soon as possible after you communicate that intention to us.
           </Table.Data>
           <Table.Data>
-            If you delete your account, everything in it is gone forever.
-          </Table.Data>
-        </Table.Row>
-        <Table.Row>
-          <Table.Data>
-            Cancellations will take effect immediately. Upon the commencement of a new
-            Service period the Service will terminate without additional notice, and you
-            will not be charged for any subsequent Service periods. You will not be provided
-            any refunds for unused time on your Service period.
-          </Table.Data>
-          <Table.Data>
-            If you are a PRO user and delete your account, you will not be re-billed.
+            If you ask us to delete your account, you accept that everything in it is gone forever.
           </Table.Data>
         </Table.Row>
         <Table.Row>
@@ -655,7 +645,7 @@ export default TermsOfService = () => (
             backup and/or archival copies of our database.
           </Table.Data>
           <Table.Data>
-            Don't use {thisSiteName} for asset storage for non-{thisSiteName} things.
+            Don't use {thisSiteName} for asset storage for non-{thisSiteName} things. If your game or assets become very popular we may have to ask you to host the content elsewhere instead so that we can still afford to feed our dogs
           </Table.Data>
         </Table.Row>
       </LegalSection>
@@ -669,9 +659,13 @@ export default TermsOfService = () => (
             part thereof) with or without notice.
           </Table.Data>
           <Table.Data>
-            We have no intention to shut down, but it is possible we might have to.
+            We have no intention to shut down, but it is possible we might have to. C'est la vie.
           </Table.Data>
         </Table.Row>
+
+        { 
+        /*
+
         <Table.Row>
           <Table.Data>
             Prices of all {companyName} Sites, including but not limited to monthly subscription
@@ -683,6 +677,10 @@ export default TermsOfService = () => (
             If we change prices we'll give you 30 days notice.
           </Table.Data>
         </Table.Row>
+
+        */
+        }
+      
         <Table.Row>
           <Table.Data>
             {companyName} shall not be liable to you or to any third party for any modification,
@@ -703,7 +701,7 @@ export default TermsOfService = () => (
           </Table.Data>
           <Table.Data>
             This page might change from time to time. We'll let you know through the in-app
-            notification systems of any major changes.
+            notification systems at {whatsNewPage} of any major changes.
           </Table.Data>
         </Table.Row>
       </LegalSection>
@@ -725,7 +723,7 @@ export default TermsOfService = () => (
             in part in any manner other than for the purposes of utilizing the Services.
           </Table.Data>
           <Table.Data>
-            The things you make on {thisSiteName} are yours, "{thisSiteName}" is ours.
+            The original things that you make on {thisSiteName} are yours, "{thisSiteName}" is ours.
           </Table.Data>
         </Table.Row>
       </LegalSection>
@@ -766,7 +764,7 @@ export default TermsOfService = () => (
             </ul>
           </Table.Data>
           <Table.Data>
-            If you need to report a copyright infringement, please email us
+            If you need to report a copyright infringement, please email us at <a href={`mailto:${copyrightInfringmentEmail}`}>{copyrightInfringmentEmail}</a>
           </Table.Data>
         </Table.Row>
       </LegalSection>
@@ -811,13 +809,10 @@ export default TermsOfService = () => (
         </Table.Row>
         <Table.Row>
           <Table.Data>
-            Technical support is only provided to paying Account holders and is only
-            available via email. We will use commercially reasonable efforts to respond
-            within a reasonable amount of time during regular business hours.
+            No Technical support commitment is provided at this time.
           </Table.Data>
           <Table.Data>
-            We actually respond to emails from any user the best we can, but with priority
-            given to PRO users.
+            We will help because (and when) we want to, not because we have to.
           </Table.Data>
         </Table.Row>
         <Table.Row>
@@ -827,7 +822,7 @@ export default TermsOfService = () => (
             OTHER RIGHTS THAT VARY FROM STATE TO STATE AND JURISDICTION TO JURISDICTION.
           </Table.Data>
           <Table.Data>
-            If you live somewhere where this doesn't apply, it doesn't apply.
+            If you live somewhere where this doesn't apply, then it doesn't apply. Legal concepts are so funny.
           </Table.Data>
         </Table.Row>
       </LegalSection>
@@ -891,7 +886,7 @@ export default TermsOfService = () => (
             loss of or fluctuations in heat, light, or air conditioning.
           </Table.Data>
           <Table.Data>
-            If Cthulhu rises, or other crazy things happen, we might go down.
+            This site might be unavailable at times, for all kinds of reasons.
           </Table.Data>
         </Table.Row>
       </LegalSection>
@@ -940,11 +935,7 @@ export default TermsOfService = () => (
             Service will be effective only if in writing and signed by an authorized
             representative of {companyName}.<p/>
             <p>Questions about the Terms of Service should be addressed to
-              {supportEmail} or by mail at:
-            </p>
-            <p>{companyName}<br/>
-              {companyAddress}</p>
-            <p>Questions about billing should be addressed to {billingEmail}.
+              {supportEmail} 
             </p>
           </Table.Data>
           <Table.Data>
@@ -954,7 +945,7 @@ export default TermsOfService = () => (
         </Table.Row>
       </LegalSection>
       <br />
-      <p>{lastUpdateDate}</p>
+      <p>These Terms of Service were last updated at {lastUpdateDate}</p>
     </Container>
     <Footer/>
   </div>

@@ -149,7 +149,7 @@ export default class EditMap extends React.Component {
       it's possible to use _.copyDeep - in case of some unexpected behavior,
       but I haven't experienced strange behavior.. ref is much faster
      */
-    this.mgb_content2 = this.props.asset.content2
+    this.mgb_content2 = _.cloneDeep(this.props.asset.content2)
 
     // restore last edit mode ???
     this.state.editMode = this.options.mode
@@ -341,6 +341,12 @@ export default class EditMap extends React.Component {
     this.preventUpdates = false
     if(!this.props.canEdit){
       this.props.editDeniedReminder()
+      // reset map
+      const meta = this.mgb_content2.meta
+      this.mgb_content2 = _.cloneDeep(this.props.asset.content2)
+      // meta contains active layer , active tool, camera - etc
+      this.mgb_content2.meta = meta
+      this.forceUpdate()
       return
     }
     // isn't it too late to save for undo?

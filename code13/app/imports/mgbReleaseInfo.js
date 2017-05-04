@@ -16,12 +16,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Tue May 02 2017 18:30:00 GMT-0700 (PDT)',
+      'timestamp': 'Wed May 03 2017 19:25:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.1.0',
         'state': 'Beta',
-        'iteration': '4021`'
+        'iteration': '4030'
       },
 
       'releaseManagement': {
@@ -29,6 +29,20 @@ const mgbReleaseInfo = {
       },
 
       'changes': [
+        {
+          'featureTag': 'legal',
+          'type': 'improvement',
+          'changeName': 'Terms of Service and Privacy policy have been updated.',
+          'changeSummary': 'See the links on the page footer to find the most recent TOS and Privacy policy',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.project',
+          'type': 'feature',
+          'changeName': 'Project page now previews some most-recently-edited assets',
+          'changeSummary': 'The project details page now has an additional row of data showing the most recently edited assets within that project. A maximum of 12 assets are shown, but the section-header is also a link to go to the fuller assets list for the project',
+          'otherUrls': [ ]
+        },
         {
           'featureTag': 'learn.skills',
           'type': 'feature',
@@ -40,7 +54,7 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'Fix bug that prevented some thumbnails from being shown (if name had whitespace); Make frontPage skills links clickable; Project fork now handles cross-project asset references; Correct the Actor "movementSpeed" range for NPCs; Fix some project & art tutorials; Show undo/redo in code editor toolbar; more small fixes.',
+          'changeSummary': 'EditGraphic can use full window width;Roadmap page updates; Fix bug that prevented some thumbnails from being shown (if name had whitespace); Make frontPage skills links clickable; Project fork now handles cross-project asset references; Correct the Actor "movementSpeed" range for NPCs; Fix some project & art tutorials; Show undo/redo in code editor toolbar; more small fixes.',
           'otherUrls': [ ]
         }
       ]

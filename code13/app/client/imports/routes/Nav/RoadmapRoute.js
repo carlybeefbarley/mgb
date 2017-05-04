@@ -6,9 +6,9 @@ import AboutHeader from './AboutHeader'
 
 const RenderRoadmap = () => (
   <div>
-    <h2>Features planned for April/May 2017</h2>
+    <h2>Features planned for May 2017</h2>
     <ul>
-      <li>(<small>Nearly complete</small>) MGBv1 asset migration (tiles, actors, maps)</li>
+      <li>(<small>Nearly complete</small>) Self-service MGBv1 asset migration (tiles, actors, maps)</li>
       <li>Direct Messages</li>
       <li>PR Launch on May 9th (yeah, we delayed it a week so we can do a soft ramp)</li>
     </ul>

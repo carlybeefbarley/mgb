@@ -296,12 +296,12 @@ export default class SourceTools extends EventEmitter {
     // remove leading . from filename - old imports has one
     if (filename.indexOf('.') === 0)
       filename = filename.substring(1, filename.length)
-
+    
+    const parts = SourceTools.getLibAndVersion(filename)
     // simple import e.g. 'phaser', 'jquery'
     if (SourceTools.isGlobalImport(filename)) {
-      const parts = SourceTools.getLibAndVersion(filename)
-      const lib = knownLibs[parts[0]]
       // load knowLib - e.g. phaser
+      const lib = knownLibs[parts[0]]
       if (lib) {
         return this.load(lib.src ? lib.src(parts[1]) : getModuleServer(parts[0], parts[1]), null,
           Object.assign(additionalProps, {

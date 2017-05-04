@@ -46,8 +46,14 @@ export const makeCDNLink = (uri, etagOrHash = null, prefixDomainAlways = false) 
     console.error("makeCDNLink - missing uri") // error for stack trace
     return
   }
+
+  // received
+  if(uri.indexOf('hash=') > 0) {
+    //console.error("Already hashed link!", uri)
+    return uri
+  }
   // don't cache at all
-  if (uri.startsWith("/api") && !etagOrHash)
+  if (uri.startsWith("/api")  && !etagOrHash)
     return CDN_DOMAIN ? `//${CDN_DOMAIN}${uri}` : uri
 
   // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource

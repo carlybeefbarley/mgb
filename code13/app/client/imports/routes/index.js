@@ -129,8 +129,8 @@ export function clientStartup() {
         <Route path="user/:id/skilltree" component={Users.SkillTreeRoute} name="Skills" />
         <Route path="u/:username/skilltree" component={Users.SkillTreeRoute} name="Skills" />
 
-        <Route path='/legal/tosDRAFT' component={TermsOfService} name='Terms Of Service' />
-        <Route path='/legal/privacyDRAFT' component={Privacy} name='Privacy Policy' />
+        <Route path='/legal/tos' component={TermsOfService} name='Terms Of Service' />
+        <Route path='/legal/privacy' component={Privacy} name='Privacy Policy' />
 
         <Route path="/notyetimplemented/:featureName" component={NotYetImplementedRoute} name="Coming Soon!.."/>
         <Route path="*" component={NotFoundRoute} name="Page Not Found"/>

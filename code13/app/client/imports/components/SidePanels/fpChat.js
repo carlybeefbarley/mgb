@@ -116,14 +116,14 @@ import moment from 'moment'
  ◊ ...make this list of detailed work
 
  ◊ TODO (Phase 8: Delete message)
- ◊ [feature] Implement core delete Message code for server
- ◊ [feature] Implement core delete Message code for fpChat
- ◊ [feature] Make sure message OWNERS (only) can delete their messages
- ◊ [feature] Make sure Admins (only) can delete any message
+ √ [feature] Implement core delete Message code for server
+ √ [feature] Implement core delete Message code for fpChat
+ √ [feature] Make sure message OWNERS (only) can delete their messages
+ √ [feature] Make sure Admins (only) can delete any message
  ◊ [feature] Make sure ProjectOwners (only) can delete any message in a project they own
- ◊ [Merge] Merge into master and test
- ◊ [Deploy] ya.
- ◊ [More testing] and fix any bad stuff
+ √ [Merge] Merge into master and test
+ √ [Deploy] ya.
+ √ [More testing] and fix any bad stuff
 
  ◊ TODO (Phase 9: Refactor)
  ◊ [Refactor] break into <fpChats> + <ChatChannelSelector> + <ChatChannelMessages>

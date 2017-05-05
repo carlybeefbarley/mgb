@@ -296,7 +296,7 @@ export default class SourceTools extends EventEmitter {
     // remove leading . from filename - old imports has one
     if (filename.indexOf('.') === 0)
       filename = filename.substring(1, filename.length)
-    
+
     const parts = SourceTools.getLibAndVersion(filename)
     // simple import e.g. 'phaser', 'jquery'
     if (SourceTools.isGlobalImport(filename)) {

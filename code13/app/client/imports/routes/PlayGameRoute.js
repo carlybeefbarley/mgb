@@ -225,7 +225,7 @@ class PlayCodeGame extends React.Component {
             ref="iframe"
             id="iFrame1"
             style={{ minWidth: width + 'px', minHeight: height + 'px', borderStyle: 'none', transformOrigin: '0 0' }}
-            sandbox='allow-modals allow-scripts allow-popups allow-pointer-lock'
+            sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
             src={src}
 
             >
@@ -287,7 +287,7 @@ export default PlayGameRoute = React.createClass({
   propTypes: {
     params:           PropTypes.object,      // params.assetId is the ASSET id
     user:             PropTypes.object,
-    hazUnreadAssetChat: PropTypes.bool, 
+    hazUnreadAssetChat: PropTypes.bool,
     // currUser:         PropTypes.object,
     // currUserProjects: PropTypes.array,       // Both Owned and memberOf. Check ownerName / ownerId fields to know which
     // isSuperAdmin:     PropTypes.bool,

@@ -16,12 +16,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Thu May 04 2017 14:50:00 GMT-0700 (PDT)',
+      'timestamp': 'Fri May 05 2017 12:00:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.1.0',
         'state': 'Beta',
-        'iteration': '4037'
+        'iteration': '4040'
       },
 
       'releaseManagement': {
@@ -54,7 +54,7 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'Code ES6 imports from long urls now work; EditGraphic can use full window width;Roadmap page updates; Fix bug that prevented some thumbnails from being shown (if name had whitespace); Make frontPage skills links clickable; Project fork now handles cross-project asset references; Correct the Actor "movementSpeed" range for NPCs; Fix some project & art tutorials; Show undo/redo in code editor toolbar; more small fixes.',
+          'changeSummary': 'revert change that prevented images loading; Code ES6 imports from long urls now work; EditGraphic can use full window width;Roadmap page updates; Fix bug that prevented some thumbnails from being shown (if name had whitespace); Make frontPage skills links clickable; Project fork now handles cross-project asset references; Correct the Actor "movementSpeed" range for NPCs; Fix some project & art tutorials; Show undo/redo in code editor toolbar; more small fixes.',
           'otherUrls': [ ]
         }
       ]

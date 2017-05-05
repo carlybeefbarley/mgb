@@ -52,7 +52,7 @@ export default ProjectMembersGET = React.createClass({
 
             { this.props.enableLeaveButton === user._id && 
               <div className="ui button" style={{ maxWidth: '230px' }} onClick={this.handleLeave.bind(this, user)}>
-                <i className="ui red remove icon" /> Leave from Project? 
+                <i className="ui red remove icon" /> Leave Project
               </div> 
             }
           </div>

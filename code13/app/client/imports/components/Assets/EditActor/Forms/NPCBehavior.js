@@ -3,9 +3,65 @@ import BaseForm from '../../../Controls/BaseForm.js'
 
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
-export default class All extends BaseForm {
+export default class NPCBehavior extends BaseForm {
   get data() {
     return this.props.asset.content2.databag.npc
+  }
+
+  // override to show responses onBlur
+  text(name, key, type, fieldOptions = {}) {
+
+    return (
+      <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") }
+           title={fieldOptions && fieldOptions.title}>
+        <label>{name}</label>
+        <input {...fieldOptions} placeholder={name} type={type == void(0) ? "text" : type}
+                                 onBlur={(e) => {
+          this.data[key] = e.target.value
+
+          // special handling for input numbers and min/max value
+          if (type == "number") {
+
+            if(this._bf_timeouts[key]){
+              window.clearTimeout(this._bf_timeouts[key])
+            }
+            this._bf_inProgress = true
+            this._bf_timeouts[key] = window.setTimeout( () => {
+              this._bf_inProgress = false
+              if (fieldOptions.min != void(0) && parseInt(this.data[key], 10) < fieldOptions.min) {
+                this.data[key] = fieldOptions.min
+              }
+              if (fieldOptions.max != void(0) && parseInt(this.data[key], 10) > fieldOptions.max) {
+                this.data[key] = fieldOptions.max
+              }
+              this.props.onChange && this.props.onChange()
+            }, 1000)
+
+          }
+          else
+            this.props.onChange && this.props.onChange()
+
+
+          // force input to update !!!!!!
+          this.setState({_bf_iterations: (this.state && this.state._bf_iterations) ? this.state._bf_iterations +1 : 1})
+        }}/>
+      </div>
+    )
+  }
+
+  // override to show responses onBlur
+  textArea(name, key, fieldOptions = {}) {
+    return (
+      <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") }
+           title={fieldOptions && fieldOptions.title}>
+        <label>{name}</label>
+        <textarea rows="3" onBlur={(e) => {
+            const val = e.target.value
+            this.data[key] = val
+            this.props.onChange && this.props.onChange()
+        } } ></textarea>
+      </div>
+    )
   }
 
   createResponses(num) {
@@ -102,7 +158,7 @@ export default class All extends BaseForm {
             })}
           </span>
         
-        {this.data.talkText &&
+        {this.data.talkText && this.data.talkText.length > 0 && 
         <div>
           {this.options("Font for message", 'talkTextFontIndex', [
             { text: "titlefont",         value: "0"},

@@ -129,7 +129,7 @@ export default class ArtTutorial extends React.Component {
             <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'row'}}>
             {_.map(images, (img, i) => {
               return (
-                <img key={i} style={{padding: '0px 10px 0px 10px', height: '150px', width: 'auto'}} src={img} />
+                <img key={i} style={{padding: '0px 10px 0px 10px', height: '175px', width: 'auto'}} src={img} />
               )
             })}
             </div>

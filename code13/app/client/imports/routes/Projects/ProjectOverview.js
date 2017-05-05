@@ -197,7 +197,9 @@ export default ProjectOverview = React.createClass({
             <ProjectMembersGET 
                 project={this.data.project} 
                 enableRemoveButton={canEdit} 
+                enableLeaveButton={currUser && currUser._id}
                 handleRemove={this.handleRemoveMemberFromProject}
+                handleLeave={this.handleMemberLeaveFromProject}
             />
           </Segment>
           <Segment basic>
@@ -269,7 +271,16 @@ export default ProjectOverview = React.createClass({
         logActivity("project.removeMember",  `Removed Member ${userName} from project ${project.name}`);
     })
   },
-    
+
+  handleMemberLeaveFromProject: function (userId, userName) {
+    var project = this.data.project
+    Meteor.call('Projects.leave', project._id, userId, (error, result) => {
+      if (error) 
+        showToast(`Member ${userName} could not leave project ${project.name}`, error)
+      else 
+        logActivity("project.leaveMember",  `Member ${userName} left from project ${project.name}`)
+    })
+  },
   /**
    *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
    */

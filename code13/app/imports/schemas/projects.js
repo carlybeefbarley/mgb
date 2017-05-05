@@ -494,6 +494,29 @@ Meteor.methods({
       console.log(`  [Projects.update]  (${count}) #${docId} '${existingProjectRecord.name}'`)
 
     return count
+  },
+  "Projects.leave": function(projectId, userId) {
+    checkIsLoggedInAndNotSuspended()
+    check(projectId, String)
+    check(userId, String)
+    if(userId !== this.userId)
+      throw new Meteor.Error(404, 'User Id does not match current user Id')
+
+    const selector = {_id: projectId}
+    const project = Projects.findOne(selector, { fields: { memberIds: 1, ownerId: 1, name: 1 } })
+    if (!project)
+      throw new Meteor.Error(404, 'Project Id does not exist')
+    if(userId === project.ownerId)
+      throw new Meteor.Error(404, 'Project owner may not leave the project')
+    var newData = { 
+      memberIds: _.without(project.memberIds, userId),
+      updatedAt: new Date()
+    }   
+    const count = Projects.update(selector, { $set: newData } )
+    if (Meteor.isServer)
+      console.log(`  [Projects.leave]  (${count}) #${projectId} '${project.name}'`)
+
+    return count
   }
 
   //

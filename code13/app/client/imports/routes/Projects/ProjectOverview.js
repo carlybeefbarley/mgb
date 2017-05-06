@@ -17,6 +17,23 @@ import SlidingCardList from '/client/imports/components/Controls/SlidingCardList
 import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
 import { logActivity } from '/imports/schemas/activity'
 import ProjectForkGenerator from './ProjectForkGenerator'
+import { makeChannelName} from '/imports/schemas/chats'
+import { utilShowChatPanelChannel } from '/client/imports/routes/QLink'
+
+const buttonSty = { width: '220px', marginTop: '2px', marginBottom: '2px'}
+
+const ProjectChatButton = ( { projId }) => {
+  const channelName = makeChannelName( { scopeGroupName: 'Project', scopeId: projId } )
+  return (
+    <QLink 
+        style={buttonSty} 
+        query={{ _fp: `chat.${channelName}` }} 
+        className='ui small primary button' >
+      <Icon name='chat' />
+      View Project Team Chat
+    </QLink>
+  )
+}
 
 export default ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],
@@ -94,8 +111,7 @@ export default ProjectOverview = React.createClass({
 
     if (!project)
       return <ThingNotFound type='Project' id={params.projectId || params.projectName} defaultHead={true}/>
-    
-    const buttonSty = { width: '220px', marginTop: '2px', marginBottom: '2px'}
+    const isPartOfTeam = !!currUser && (isMyProject ||  _.includes(project.memberIds, currUser._id))
     return (
       <Grid padded columns='equal'>
         <Helmet
@@ -117,6 +133,9 @@ export default ProjectOverview = React.createClass({
               className='ui small primary button' >
             View Project Assets
           </QLink>
+          {isPartOfTeam && 
+          <ProjectChatButton projId={project._id}/>
+          }
 
           { /* FORK PROJECT STUFF */}
           <Segment secondary compact style={{ width: '220px' }}>

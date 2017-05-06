@@ -13,15 +13,13 @@ const mgbReleaseInfo = {
 
   'releases': [
 
-
-
     {
-      'timestamp': 'Fri May 05 2017 12:00:00 GMT-0700 (PDT)',
+      'timestamp': 'Sat May 06 2017 16:20:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.1.0',
         'state': 'Beta',
-        'iteration': '4040'
+        'iteration': '4046'
       },
 
       'releaseManagement': {
@@ -29,6 +27,13 @@ const mgbReleaseInfo = {
       },
 
       'changes': [
+        {
+          'featureTag': 'project.chat',
+          'type': 'improvement',
+          'changeName': '"Project Team Chat" Button on Project Page',
+          'changeSummary': 'If the current user is owner/member of a project, the project overview page now shows a button to open the project chat',
+          'otherUrls': [ ]
+        },
         {
           'featureTag': 'legal',
           'type': 'improvement',
@@ -40,7 +45,7 @@ const mgbReleaseInfo = {
           'featureTag': 'nav.project',
           'type': 'feature',
           'changeName': 'Project page now previews some most-recently-edited assets',
-          'changeSummary': 'The project details page now has an additional row of data showing the most recently edited assets within that project. A maximum of 12 assets are shown, but the section-header is also a link to go to the fuller assets list for the project',
+          'changeSummary': 'Fix flickering assets in Map/ActorMap editor; project details page now has an additional row of data showing the most recently edited assets within that project. A maximum of 12 assets are shown, but the section-header is also a link to go to the fuller assets list for the project',
           'otherUrls': [ ]
         },
         {

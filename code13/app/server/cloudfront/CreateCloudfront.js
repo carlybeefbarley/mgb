@@ -21,7 +21,10 @@ import { WebApp } from 'meteor/webapp'
 
 // This will be set at runtime by setCDNParams() which will retrieve this value from AWS.
 // If it is not configured, then the various features using this shall fallback to non-cloudfronted
-let CLOUDFRONT_DOMAIN_NAME = ''
+// force localhost:3000 if in development mode.. to try out CDN like behaviour locally - add test.loc to /etc/hosts
+// 127.0.0.1 test.loc
+
+let CLOUDFRONT_DOMAIN_NAME = Meteor.isDevelopment ? 'localhost:3000' : ''
 
 const STATIC_RESOURCES_MAX_CACHE_AGE_MINUTES = 60      // This should be much larger for PRODUCTION
 
@@ -53,6 +56,11 @@ const allowedOrigins = [
 ]
 
 export const getCDNDomain = () => (CLOUDFRONT_DOMAIN_NAME)
+// The Client at first load will try to get CLOUDFRONT_DOMAIN_NAME using this Meteor.call() RPC
+// so it can use the CDN name for Ajax requests that we want to route via the CDN
+Meteor.methods({
+  "CDN.domain": getCDNDomain
+})
 
 export const setUpCloudFront = function () {
 
@@ -320,12 +328,6 @@ export const setUpCloudFront = function () {
     }
   }
 // this will be filled at runtime - after script will get assigned domain name (xxxxx.cloudfront.com)
-
-// The Client at first load will try to get CLOUDFRONT_DOMAIN_NAME using this Meteor.call() RPC
-// so it can use the CDN name for Ajax requests that we want to route via the CDN
-  Meteor.methods({
-    "CDN.domain": getCDNDomain
-  })
 
   AWS.config.update(config)
   const cloudfront = new AWS.CloudFront( { apiVersion: '2016-11-25' } )

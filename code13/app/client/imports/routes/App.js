@@ -338,8 +338,11 @@ const AppUI = React.createClass({
     }
     if (window.trackJs)
       doTrack()
-    else
+    else 
+    {
+      console.log("[tjfallback]")  // so it's easier to know when this is happening
       $.getScript(makeCDNLink("/lib/t-r-a-c-k-e-r.js"), doTrack)   // fallback to local version because of AdBlocks etc
+    }
   },
 
   handleSetCurrentlyEditingAssetInfo( assetInfo )

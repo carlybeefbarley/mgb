@@ -13,16 +13,14 @@ export default () => (
         ...actively developed by
         {' '}
         <UserLink u="dgolds" />
-        ,
-        {' '}
+        {', '}
         <UserLink u="stauzs" />
-        ,
-        {' '}
+        {', '}
         <UserLink u="guntis" />
-        {' '}
-        and
-        {' '}
+        {', '}
         <UserLink u="Bouhm" />
+        {'and '}
+        <UserLink u="leah" />
       </small>
     </Header>
     <p>

@@ -5,7 +5,7 @@ import UserItem from './UserItem'
 import { Card } from 'semantic-ui-react'
 
 const UserList = ( { users, narrowItem, handleClickUser } ) => (  
-  <Card.Group animated>
+  <Card.Group>
     {
       users.map(user => (
         <UserItem

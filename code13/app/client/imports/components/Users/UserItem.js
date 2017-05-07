@@ -46,29 +46,27 @@ export default UserItem = React.createClass({
     return (
       <Card
           raised={!renderAttached}
-          attached={renderAttached}
           onClick={this.handleClickUser} >
-          <Card.Content>
-          </Card.Content>
-          <Card.Content style={{textAlign: "center"}}>
-        <img src={makeCDNLink(avatar, makeExpireTimestamp(SpecialGlobals.avatar.validFor)) || SpecialGlobals.defaultUserProfileImage} className={`ui centered image circular ${imageSize}`} />
+        <Card.Content style={{textAlign: "center"}}>
+          <img src={makeCDNLink(avatar, makeExpireTimestamp(SpecialGlobals.avatar.validFor)) || SpecialGlobals.defaultUserProfileImage} className={`ui centered image circular ${imageSize}`} />
         </Card.Content>
         <Card.Content style={{textAlign: "center"}}>
-        <Card.Header>
-        <Header size='large' content={name}/>
-        </Card.Header>
-        <Card.Meta>
-        { narrowItem ? <small>{titleSpan}</small> : <big>{titleSpan}</big> }
-        </Card.Meta>
-        { suIsBanned &&
-          <div><Label size='small' color='red' content='Suspended Account' /></div>
-        }
-        { isDeactivated &&
-          <div><Label size='small' color='purple' content='Deactivated Account' /></div>
-        }
-        <p><small style={{color:"rgb(0, 176, 224)"}}>Joined {createdAtFmt}</small></p>
+          <Card.Header>
+          <Header size='large' content={name}/>
+          </Card.Header>
+          <Card.Meta>
+            { narrowItem ? <small>{titleSpan}</small> : <big>{titleSpan}</big> }
+          </Card.Meta>
+          { suIsBanned &&
+            <div><Label size='small' color='red' content='Suspended Account' /></div>
+          }
+          { isDeactivated &&
+            <div><Label size='small' color='purple' content='Deactivated Account' /></div>
+          }
+          <p><small style={{color:"rgb(0, 176, 224)"}}>Joined {createdAtFmt}</small></p>
         </Card.Content>
-        <Card.Content extra style={{textAlign: "center"}}>{getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)}
+        <Card.Content extra style={{textAlign: "center"}}>
+          {getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)}
         </Card.Content>
       </Card>
     )

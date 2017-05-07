@@ -19,13 +19,13 @@ export default () => (
         <UserLink u="guntis" />
         {', '}
         <UserLink u="Bouhm" />
-        {'and '}
+        {' and '}
         <UserLink u="leah" />
       </small>
     </Header>
     <p>
       You are very welcome to use this new MyGameBuilder site and give us feedback
-      using the <i className="chat icon" />chat panel on the right hand side of the screen
+      using the <QLink query={{_fp: 'chat'}}><Icon name='chat' />chat panel</QLink> on the right hand side of the screen
     </p>
     <List className="bulleted">
       <List.Item>

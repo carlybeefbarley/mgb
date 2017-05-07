@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import { hasMultipleSkills } from './skills'
 import { Skills } from '/imports/schemas'
+import { isUserSuperAdmin } from '/imports/schemas/roles'
 
 
 
@@ -51,6 +52,13 @@ const _nameBasedBadges = [
   }
 ]
 
+const _functionBasedBadges = [
+  {
+    newBadgeName: 'mgbAdmin',
+    func: isUserSuperAdmin       // a function that takes a user-record as a parameter, and returns true if badge should be granted
+  }
+]
+
 const _doRefreshBadgeStatus = user => {
   if (!user || !user._id)
     return []
@@ -63,7 +71,7 @@ const _doRefreshBadgeStatus = user => {
     {
       if (!_.includes(user.badges, nbb.newBadgeName))
       {
-        console.log(`User '${user.username}' does not have '${nbb.newBadgeName}' badge, so awarding it!`)
+//        console.log(`User '${user.username}' does not have '${nbb.newBadgeName}' badge, so awarding it!`)
         const count = Meteor.users.update(
           user._id, 
           {
@@ -83,7 +91,7 @@ const _doRefreshBadgeStatus = user => {
   _.each(_skillBasedBadges, sbb => {
     if ( hasMultipleSkills(skills, sbb.requiredSkills) )
     {
-      console.log(`User '${user.username}' meets Skill requirements for BADGE '${sbb.newBadgeName}'`)
+//      console.log(`User '${user.username}' meets Skill requirements for BADGE '${sbb.newBadgeName}'`)
       if (!_.includes(user.badges, sbb.newBadgeName))
       {
         console.log(`User '${user.username}' does not have '${sbb.newBadgeName}' badge, so awarding it!`)
@@ -94,13 +102,33 @@ const _doRefreshBadgeStatus = user => {
             $set:      { updatedAt: new Date() }
           }
         )
-        console.log(`Skill-based Badge Awarded -  update returned count=${count}`)
+        console.log(`Skill-based Badge '${sbb.newBadgeName}' award to '@${user.username}': Mongo Update returned count=${count}`)
         if (count === 1) // Note that this will be the case at least because of the $set: updatedAt
           newBadgeKeys.push(sbb.newBadgeName)
       }
     }
   })
 
+  // 0. function (code-based, using a function that takes a user-record as a parameter) awards
+  _.each(_functionBasedBadges, fbb => {
+    if (fbb.func(user))
+    {
+      if (!_.includes(user.badges, fbb.newBadgeName))
+      {
+//      console.log(`User '${user.username}' does not have '${fbb.newBadgeName}' badge, so awarding it!`)
+        const count = Meteor.users.update(
+          user._id, 
+          {
+            $addToSet: { 'badges': fbb.newBadgeName },
+            $set:      { updatedAt: new Date() }
+          }
+        )
+        console.log(`Function-based Badge '${fbb.newBadgeName}' award to '@${user.username}': Mongo Update returned count=${count}`)
+        if (count === 1) // Note that this will be the case at least because of the $set: updatedAt
+          newBadgeKeys.push(fbb.newBadgeName)
+      }
+    }
+  })
   // TODO: more...
 
 
@@ -112,8 +140,13 @@ Meteor.methods({
   "User.refreshBadgeStatus": function( ) {
     return _doRefreshBadgeStatus(Meteor.user())
   },
-
-  // "User.refreshAllUserBadges": function() {
-  //   Meteor.users.find().forEach(function(item) { _doRefreshBadgeStatus(item) } ) 
+  
+  // "User.refreshAllUserBadges": function() {   // e.g. call with   Meteor.call("User.refreshAllUserBadges")
+  //   Meteor.users.find(  ).forEach(function(u) { _doRefreshBadgeStatus(u) } ) 
+  //   console.log("---User.refreshAllUserBadges-done---")
   // }
 })
+
+
+// Example of how to fix badges given by mistake:
+//     Meteor.users.update( {}  , { $pull: { badges: "mgbAdmin" }}, { multi: true }  )

@@ -31,6 +31,7 @@ class SkillsMapNode extends React.Component {
     expandable: PropTypes.bool,        // whether or not nodes can be expanded to show children
     skills: PropTypes.object,          // user's skills object from context
     skillPath: PropTypes.string,       // the skill path within skills that this node should show
+    userCanManuallyClaimSkill : PropTypes.bool
   }
 
   state = {
@@ -55,7 +56,7 @@ class SkillsMapNode extends React.Component {
     if (_.isEmpty( childLeaves ))
       return null
 
-    const { skills } = this.props
+    const { skills, userCanManuallyClaimSkill } = this.props
 
     return (
       <div className='leaves'>
@@ -68,8 +69,8 @@ class SkillsMapNode extends React.Component {
             <div key={skillPath} className={classes} 
               data-tooltip={hasSkill ? "Warning: Unchecking means you must earn the skill again" : null} 
               data-inverted=""
-              onClick={ hasSkill ? this.toggleSkill( skillPath ) : null} >
-
+          onClick={(userCanManuallyClaimSkill || hasSkill) ? this.toggleSkill(skillPath) : null}
+              >
               <Icon { ...iconProps } />
               {skillsModel.getFriendlyName( skillPath )}
             </div>
@@ -80,7 +81,7 @@ class SkillsMapNode extends React.Component {
   }
 
   renderChildTree = (skillPath) => {
-    const { expandable, skills, toggleable } = this.props
+    const { expandable, skills, toggleable, userCanManuallyClaimSkill } = this.props
     return (
       <SkillsMapNode
         key={skillPath}
@@ -88,6 +89,7 @@ class SkillsMapNode extends React.Component {
         toggleable={toggleable}
         skills={skills}
         skillPath={skillPath}
+        userCanManuallyClaimSkill={userCanManuallyClaimSkill}
       />
     )
   }
@@ -152,7 +154,7 @@ export default class SkillsMap extends React.Component {
   }
 
   render() {
-    const { expandable, toggleable, skills, skillPaths } = this.props
+    const { expandable, toggleable, skills, skillPaths, userCanManuallyClaimSkill } = this.props
 
     if (!skills)
       return (
@@ -166,6 +168,7 @@ export default class SkillsMap extends React.Component {
         {_.map( skillPaths, skillPath => (
           <SkillsMapNode
             key={skillPath}
+            userCanManuallyClaimSkill={userCanManuallyClaimSkill}
             expandable={expandable}
             toggleable={toggleable}
             skills={skills}

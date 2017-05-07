@@ -743,7 +743,7 @@ const AppUI = React.createClass({
 
 
 
-const App = createContainer( ( { params } ) => {
+const App = createContainer( ( { params, location } ) => {
   const pathUserName = params.username      // This is the username (profile.name) on the url /u/xxxx/...
   const pathUserId = params.id              // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
   const currUser = Meteor.user()
@@ -753,12 +753,20 @@ const App = createContainer( ( { params } ) => {
                           : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
   const handleForSysvars = Meteor.subscribe('sysvars')
 
+  // skills stuff
   const handleForSkills = currUserId ? Meteor.subscribe("skills.userId", currUserId) : null
   const skillsReady = handleForSkills === null ? true : handleForSkills.ready()
 
+  // settings stuff
   const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
   const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
-  const handleActivity = Meteor.subscribe("activity.public.recent", 11) // TODO - use activityHistoryLimit ?
+
+  // activity? if useful.. 
+  const flexPanelQueryValue = location.query[urlMaker.queryParams("app_flexPanel")]
+  const getActivity = currUser || (flexPanelQueryValue === 'activity')
+  const handleActivity = getActivity ? Meteor.subscribe("activity.public.recent", 11) : null // TODO - use activityHistoryLimit ?
+  
+  // projects stuff
   const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null
   const projectsReady = handleForProjects === null ? true : handleForProjects.ready()
   const projectSelector = projectMakeSelector(currUserId)
@@ -796,14 +804,14 @@ const App = createContainer( ( { params } ) => {
 
     currUserProjects: handleForProjects ? Projects.find(projectSelector).fetch() : [],
     user:             pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
-    activity:         Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
+    activity:         getActivity ? Activity.find({}, {sort: {timestamp: -1}}).fetch(): [],     // Activity for any user
     settings:         G_localSettings,
     meteorStatus:     Meteor.status(),
     skills:           currUser ? Skills.findOne(currUserId) : null,
     sysvars:          Sysvars.findOne(),
     loading:          !handleForUser.ready()    ||
                       !handleForSysvars.ready() ||
-                      !handleActivity.ready()   ||
+                      //!handleActivity.ready()   ||
                       !projectsReady            ||
                       !settingsReady            ||
                       !skillsReady

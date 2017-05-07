@@ -86,15 +86,21 @@ export const makeExpireThumbnailLink = (assetOrId, maxAge = 60) => {
 
 }
 
+
+// This syncTime function is to help warn when a server and client have 
+// very different times.  Otherwise, it can be a confusing debug!
+// TODO: Maybe use https://github.com/mizzao/meteor-timesync instead
 let lastDiff = 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
 const syncTime = () => {
   const emitted = Date.now()
   Meteor.call('syncTime', {now: emitted}, (err, date) => {
     lastDiff = Date.now() - date.now
-    console.log("Last Diff:", lastDiff, "serverDiff", date.diff)
+    console.log(`[Timeslip check: Server->Client Diff = ${lastDiff}ms; Client->Server Diff = ${date.diff} ms]`)
   })
 }
-syncTime()
+// Wait for 5 (arbitrary) seconds after Meteor.startup() calls us.. Might be better to wait for a connection
+// but that's more client-side work than is worthwhile for this
+Meteor.startup( () => window.setTimeout(syncTime, 5000 ) )
 
 // use this to allow client NOT pull resources every time
 // will return timestamp with next expire datetime

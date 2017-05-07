@@ -591,10 +591,10 @@ const AppUI = React.createClass({
             this.addJoyrideSteps(loadedSteps.steps, opts)
           }
           // console.log('started tutorial...', this.state.joyrideSkillPathTutorial)
-          analytics.track('startTutorial', {
-            title: this.state.joyrideSkillPathTutorial
-            , category: "Tutorials"
-          })
+          // analytics.track('startTutorial', {
+          //   title: this.state.joyrideSkillPathTutorial
+          //   , category: "Tutorials"
+          // })
         })
         .catch( err => {
           showToast(`Unable to start tutorial '${steps}': ${err.toString()}`, 'error')
@@ -626,10 +626,10 @@ const AppUI = React.createClass({
   handleJoyrideCallback( func ) {
     if (func.type === 'finished') {
       // console.log('finished tutorial...', this.state.joyrideSkillPathTutorial)
-          analytics.track('startTutorial', {
-            title: this.state.joyrideSkillPathTutorial
-            , category: "Tutorials"
-          })
+      // analytics.track('startTutorial', {
+      //   title: this.state.joyrideSkillPathTutorial
+      //   , category: "Tutorials"
+      // })
       if (this.state.joyrideSkillPathTutorial && func.skipped === false)
         this.handleCompletedSkillTutorial( this.state.joyrideSkillPathTutorial )
       this.setState(

@@ -338,7 +338,7 @@ const AppUI = React.createClass({
     }
     if (window.trackJs)
       doTrack()
-    else 
+    else
     {
       console.log("[tjfallback]")  // so it's easier to know when this is happening
       $.getScript(makeCDNLink("/lib/t-r-a-c-k-e-r.js"), doTrack)   // fallback to local version because of AdBlocks etc
@@ -761,11 +761,11 @@ const App = createContainer( ( { params, location } ) => {
   const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
   const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
 
-  // activity? if useful.. 
+  // activity? if useful..
   const flexPanelQueryValue = location.query[urlMaker.queryParams("app_flexPanel")]
   const getActivity = currUser || (flexPanelQueryValue === 'activity')
   const handleActivity = getActivity ? Meteor.subscribe("activity.public.recent", 11) : null // TODO - use activityHistoryLimit ?
-  
+
   // projects stuff
   const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null
   const projectsReady = handleForProjects === null ? true : handleForProjects.ready()
@@ -811,7 +811,7 @@ const App = createContainer( ( { params, location } ) => {
     sysvars:          Sysvars.findOne(),
     loading:          !handleForUser.ready()    ||
                       !handleForSysvars.ready() ||
-                      //!handleActivity.ready()   ||
+                      !(!handleActivity || handleActivity.ready())   ||
                       !projectsReady            ||
                       !settingsReady            ||
                       !skillsReady

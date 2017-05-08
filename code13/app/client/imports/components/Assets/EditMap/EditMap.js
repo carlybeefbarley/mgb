@@ -234,12 +234,12 @@ export default class EditMap extends React.Component {
       if(!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave){
         if(this.props.canEdit){
           const oldMeta = this.mgb_content2.meta
-          this.mgb_content2 = newp.asset.content2
+          this.mgb_content2 = _.cloneDeep(newp.asset.content2)
           // don't update active tool / camera position etc - because it's annoying
           this.mgb_content2.meta = oldMeta
         }
         else{
-          this.mgb_content2 = newp.asset.content2
+          this.mgb_content2 = _.cloneDeep(newp.asset.content2)
         }
       }
     }

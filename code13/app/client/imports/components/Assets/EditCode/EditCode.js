@@ -1495,6 +1495,7 @@ export default class EditCode extends React.Component {
       || this.state.needsBundle !== nextState.needsBundle
       || this.state.hotReload !== nextState.hotReload
       || this.state.lastUndoRedo !== nextState.lastUndoRedo
+      || this.state.isPlaying !== nextState.isPlaying
   }
 
   codemirrorValueChanged(doc, change) {

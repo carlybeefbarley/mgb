@@ -14,12 +14,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Sat May 06 2017 20:20:00 GMT-0700 (PDT)',
+      'timestamp': 'Mon May 08 2017 15:00:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.1.0',
         'state': 'Beta',
-        'iteration': '4056'
+        'iteration': '4070'
       },
 
       'releaseManagement': {
@@ -59,7 +59,7 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'Fix issue where some internal links lowercased the url; Admin badges; sort userLists by badgeCount; Fix noisy console message about analytics; Revert change that prevented images loading; Code ES6 imports from long urls now work; EditGraphic can use full window width;Roadmap page updates; Fix bug that prevented some thumbnails from being shown (if name had whitespace); Make frontPage skills links clickable; Project fork now handles cross-project asset references; Correct the Actor "movementSpeed" range for NPCs; Fix some project & art tutorials; Show undo/redo in code editor toolbar; more small fixes.',
+          'changeSummary': 'Console noise cleanup; Fix issue where some internal links lowercased the url; Admin badges; sort userLists by badgeCount; Fix noisy console message about analytics; Revert change that prevented images loading; Code ES6 imports from long urls now work; EditGraphic can use full window width;Roadmap page updates; Fix bug that prevented some thumbnails from being shown (if name had whitespace); Make frontPage skills links clickable; Project fork now handles cross-project asset references; Correct the Actor "movementSpeed" range for NPCs; Fix some project & art tutorials; Show undo/redo in code editor toolbar; more small fixes.',
           'otherUrls': [ ]
         }
       ]

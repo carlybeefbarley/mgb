@@ -70,7 +70,8 @@ export default class TileSet extends React.Component {
   /* endof lifecycle functions */
 
   get tileset(){
-    return this.props.tilesets[this.props.activeTileset]
+    // fallback to first tileset
+    return this.props.tilesets[this.props.activeTileset] || this.props.tilesets[0]
   }
 
   get activeTileset(){

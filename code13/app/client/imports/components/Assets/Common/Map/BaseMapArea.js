@@ -825,7 +825,7 @@ export default class MapArea extends React.Component {
     for (let i = 0; i < this.data.layers.length; i++) {
       const ld = this.data.layers[i]
       if (!ld.visible)
-        return
+        continue
 
       const layer = this.getLayer(ld)
       if (!layer)

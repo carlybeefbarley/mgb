@@ -127,6 +127,15 @@ export default class EditMap extends React.Component {
     }, 5000)
     */
   }
+
+  get mgb_content2(){
+    return this._mgb_content2
+  }
+
+  set mgb_content2(v){
+    this._mgb_content2 = v
+  }
+
   getImageData(){
     return this.refs.map.generatePreview()
   }

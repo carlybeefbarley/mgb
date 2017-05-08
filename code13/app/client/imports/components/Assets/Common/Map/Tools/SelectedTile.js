@@ -23,8 +23,8 @@ export default class SelectedTile {
     this.y = (id - this.x) / width
   }
   getGid (tileset) {
-    this.id = this.x + this.y * tileset.columns
-    this.gid = this.id + tileset.firstgid
+    this.id = Math.floor(this.x + this.y * tileset.columns)
+    this.gid = Math.floor(this.id + tileset.firstgid)
     return this.gid
   }
   getGidFromLayer (layer) {

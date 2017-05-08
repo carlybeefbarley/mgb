@@ -132,7 +132,7 @@ export default class Channel extends React.Component {
       startTime = Math.abs(delay)
       delay = 0
     }
-    console.log(delay, startTime)
+    console.log(delay, startTime, this.props.audioCtx.currentTime)
     this.source.start(this.props.audioCtx.currentTime + delay, startTime) // delay, startTime
     this.props.audioCtx.suspend()
 
@@ -414,6 +414,7 @@ export default class Channel extends React.Component {
 
   saveNewBuffer(){
     this.initAudio()
+    console.log('before draw wave')
     this.drawWave()
     const channelData = this.buffer.getChannelData(0)
     console.log('chData', channelData)

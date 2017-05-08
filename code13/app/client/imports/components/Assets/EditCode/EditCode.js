@@ -1862,6 +1862,11 @@ export default class EditCode extends React.Component {
 
   // Note that either c2 or thumbnail could be null/undefined.
   handleContentChange(c2, thumbnail, reason) {
+    if(!this.props.canEdit) {
+      this.props.editDeniedReminder()
+      return
+    }
+
     if(!c2){
       this.props.handleContentChange(c2, thumbnail, reason)
       return

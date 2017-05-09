@@ -196,13 +196,16 @@ class UserProjectListUI extends React.PureComponent {
 
 export default UserProjectList = createContainer( ({ user, location }) => {
   const userId = user ? user._id : null
+  let findOpts = {
+    sort:   projectSorters["createdNewest"]
+  }
   const qN = _queryNormalized(location.query)
   const showOnlyForkable = (qN.showForkable === '1')
   const handleForProjects = Meteor.subscribe("projects.search", userId, qN.searchName, showOnlyForkable, qN.hidews)
   const projectSelector = projectMakeSelector(userId, qN.searchName, showOnlyForkable, qN.hidews)
   
   return {
-    projects: Projects.find(projectSelector).fetch(),
+    projects: Projects.find(projectSelector, findOpts).fetch(),
     loading: !handleForProjects.ready()
   }}, UserProjectListUI
 )

@@ -326,7 +326,8 @@ export function projectMakeSelector(
 
 export const projectSorters = {
   "edited": { updatedAt: -1},
-  "name":   { name: 1 }
+  "name":   { name: 1 },
+  "createdNewest": { createdAt: -1 }
 }
 
 /**

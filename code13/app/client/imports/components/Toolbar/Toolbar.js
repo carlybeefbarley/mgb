@@ -236,7 +236,7 @@ export default class Toolbar extends React.Component {
     if (this.props.actions[action])
     {
       // saves prev tool idx so after undo/redo we can set back tool
-      if(action == "toolHandleUndo" || action == "toolHandleRedo"){
+      if(action == "toolHandleUndo" || action == "toolHandleRedo" || action == "eyedropperTool"){
         if(this.props.setPrevToolIdx){
           this.props.setPrevToolIdx(this.getActiveButtonIdx())
         }

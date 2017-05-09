@@ -569,6 +569,11 @@ export default class EditGraphic extends React.Component {
         self.setState({ selectDimensions: { width: width, height: height} })
       },
 
+      setPrevTool: function(){
+        if(self.prevToolIdx != null)
+          self.setState({ toolChosen: Tools[self.prevToolIdx] })
+      },
+
       // clearPixelsAt() Like CanvasRenderingContext2D.clearRect, but
       //   (a) It does this to both the current Preview AND the Edit contexts (with zoom scaling)
       //   So this is more convenient than a ClearRect+FillRect in many cases.

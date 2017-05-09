@@ -17,7 +17,7 @@ import validate from '/imports/schemas/validate'
 
 import { Projects } from '/imports/schemas'
 import { logActivity } from '/imports/schemas/activity'
-import { projectMakeSelector } from '/imports/schemas/projects'
+import { projectMakeSelector, projectSorters } from '/imports/schemas/projects'
 
 import QLink from '../QLink'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -38,11 +38,14 @@ export default UserProfileRoute = React.createClass({
 
   getMeteorData: function() {
     const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
+    let findOpts ={
+      sort: projectSorters["createdNewest"]
+    }
     const handleForProjects = Meteor.subscribe("projects.byUserId", userId)
     const projectSelector = projectMakeSelector(userId)
 
     return {
-      projects: Projects.find(projectSelector).fetch(),
+      projects: Projects.find(projectSelector, findOpts).fetch(),
       loading: userId && !handleForProjects.ready()
     }
   },

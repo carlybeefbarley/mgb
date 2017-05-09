@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react'
+import { Segment, Grid, Header, Image, Button } from 'semantic-ui-react'
+import QLink from '/client/imports/routes/QLink'
 import homeStyles from '/client/imports/routes/home.css'
 import getStartedStyle from '/client/imports/routes/GetStarted.css'
 import ResponsiveComponent from '/client/imports/ResponsiveComponent'
 
-import { Segment, Grid, Header, Image, Button } from 'semantic-ui-react'
-import QLink from '/client/imports/routes/QLink'
 import RecentlyEditedAssetGET from '/client/imports/components/Nav/RecentlyEditedAssetGET'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
@@ -22,7 +22,12 @@ const HomeHeroBanner = ( { userId, username, respIsRuleActive } ) => {
           <Header as='h1'>
             <big>My Game Builder</big>
             <Header.Subheader>
-              Make Games. Make Friends. Have Fun.
+              <p>
+                Make Games. Make Friends. Have Fun.
+              </p>
+              <p>
+                <QLink to='/roadmap'>Public BETA</QLink>
+              </p>
             </Header.Subheader>
           </Header>
         { userId ?

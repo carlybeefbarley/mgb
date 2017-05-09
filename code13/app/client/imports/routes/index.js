@@ -107,6 +107,7 @@ export function clientStartup() {
 
         <Route path="user/:id/projects/create" component={Projects.ProjectCreateNewRoute} name="Create New Project" />
         <Route path="u/:username/projects/create" component={Projects.ProjectCreateNewRoute} name="Create New Project" />
+        <Route path="u/:username/projects/import/MGB1" component={Projects.ProjectImportMgb1Route} name="Import MGB1 Project" />
 
         <Route path="user/:id/project/:projectId" component={Projects.ProjectOverview} name="Project Details" />
         <Route path="u/:username/projects/:projectName" component={Projects.ProjectOverview} name="Project Details" />

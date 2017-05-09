@@ -160,8 +160,11 @@ export default class Channel extends React.Component {
 
   drawWave () {
     this.waveCtx.clearRect(0, 0, this.props.viewWidth, this.props.canvasHeight)
+    console.log('before timeline')
     this.drawTimeline()
+    console.log('before sampleBG')
     this.drawSampleBG()
+    console.log('is buffer', !!this.buffer)
     if (!this.buffer) return // in situations when audio is not decoded yet
     console.log("draw wave", this.props.id)
     const sampleWidth = Math.floor(this.sample.duration * this.props.pxPerSecond)

@@ -61,6 +61,7 @@ const RenderRoadmap = () => (
       <li>MGB feature usage reporting</li>
       <li>...We are also going to be working with the community on their thoughts on "monetization".. What advanced features they would feel are WORTH paying for, and what ways users might want to make payments to each other (asset stores etc). We are not going to nickel+dime and a HUGE amount of MGB's features will always be free. Feel free to come and chat to us about your thoughts.</li>
     </ul>
+    Please make suggestions on our <a href="https://trello.com/b/Fg0EcntK/my-game-builder" target="_blank">Trello work proposals list</a>
   </div>
 )
 

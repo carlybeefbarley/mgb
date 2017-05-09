@@ -14,6 +14,37 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Mon May 09 2017 16:15:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4080'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'rel',
+          'type': 'improvement',
+          'changeName': 'Public Beta',
+          'changeSummary': 'We are now in Public beta, so please spread the word and tell everyone about MyGameBuilder using our https://build.games link',
+          'otherUrls': [ { txt: "//build.games",  href: "https://build.games" } ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Update roadmap and front page to say "Public Beta"; Sort Projects by creation date; more small fixes.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Mon May 08 2017 15:00:00 GMT-0700 (PDT)',
 
       'id': {

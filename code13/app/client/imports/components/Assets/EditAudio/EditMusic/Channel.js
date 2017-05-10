@@ -116,7 +116,6 @@ export default class Channel extends React.Component {
     if (!this.buffer) return
     this.clearAudio()
     this.sample.duration = Math.round( this.buffer.length / this.props.audioCtx.sampleRate )
-    console.log('initAudio duration', this.sample.duration)
     this.source = this.props.audioCtx.createBufferSource()
     this.gainNode = this.props.audioCtx.createGain()
 
@@ -132,7 +131,6 @@ export default class Channel extends React.Component {
       startTime = Math.abs(delay)
       delay = 0
     }
-    console.log(delay, startTime, this.props.audioCtx.currentTime)
     this.source.start(this.props.audioCtx.currentTime + delay, startTime) // delay, startTime
     this.props.audioCtx.suspend()
 
@@ -184,7 +182,6 @@ export default class Channel extends React.Component {
       if(endX > sampleWidth) endX = sampleWidth
     }
 
-    console.log('start end', startX, endX)
     this.waveCtx.save()
     this.waveCtx.strokeStyle = '#4dd2ff'
     this.waveCtx.globalAlpha = 0.4
@@ -227,7 +224,7 @@ export default class Channel extends React.Component {
     this.waveCtx.save()
     this.waveCtx.strokeStyle = '#333'
     this.waveCtx.globalAlpha = 0.2
-    console.log('timeline count', count, this.props.duration)
+    // console.log('timeline count', count, this.props.duration)
     for (let i = 0; i < count; i++) {
       const x = i * this.props.pxPerSecond + 0.5 // 0.5 for 1px line instead of 2px
       this.waveCtx.beginPath()
@@ -413,10 +410,8 @@ export default class Channel extends React.Component {
 
   saveNewBuffer(){
     this.initAudio()
-    console.log('before draw wave')
     this.drawWave()
     const channelData = this.buffer.getChannelData(0)
-    console.log('chData', channelData)
     this.converter.bufferToDataUri(channelData, (dataUri) => {
       this.props.channel.dataUri = dataUri
       this.props.saveChannel(this.props.channel)
@@ -443,13 +438,11 @@ export default class Channel extends React.Component {
     if(newLength == 0) newLength = 1
     this.buffer = this.props.audioCtx.createBuffer(1, newLength, this.props.audioCtx.sampleRate)
     const channelData = this.buffer.getChannelData(0)
-    console.log('before loop', startId, endId, newLength)
     for(let i=0; i<newLength; i++){
       let key = i < startId ? i : i+deleteLength
       if(oldBuffer.length > key)
         channelData[i] = oldBuffer[key]
     }
-    console.log('after loop', channelData)
     this.sample.duration = Math.round( newLength * this.props.audioCtx.sampleRate )
     // this.props.duration = this.sample.duration     // could be nasty bug
     this.saveNewBuffer()

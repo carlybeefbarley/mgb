@@ -1,6 +1,3 @@
-import LayerTypes from '../Tools/LayerTypes.js'
-import TileHelper from '../Helpers/TileHelper.js'
-
 export default {
   saveThumbnail(data, reason, thumbnail){
     this.handleSave(data, reason, thumbnail)
@@ -26,6 +23,9 @@ export default {
   },
   updateMapData(data){
     this.updateMapData(data)
+  },
+  updateScale(scale){
+    this.setState({scale: scale})
   },
   addImage(img){
     if(!this.mgb_content2.images){

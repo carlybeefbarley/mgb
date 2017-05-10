@@ -58,6 +58,26 @@ export default class ObjectLayer extends AbstractLayer {
     return this.data.objects[this._pickedObject]
   }
 
+  get highlightedObject(){
+    if(!this._highlightedObject)
+      return null
+
+
+    const tmp = this.data.objects.find(a => a.id === this._highlightedObject.id)
+    if(!tmp) {
+      this.data.objects.push(this._highlightedObject)
+      console.log("Added new tmp object: ", this.data.objects)
+    }
+    else
+      this._highlightedObject = tmp
+
+    return this._highlightedObject
+  }
+
+  set highlightedObject(val){
+    this._highlightedObject = val
+  }
+
   getInfo () {
     let info
     if (this.info > -1) {
@@ -225,6 +245,8 @@ export default class ObjectLayer extends AbstractLayer {
 
     this.clearSelection(true)
 
+    // removed selected objects
+    this.props.handleSave("Deleted Some Objects")
     this.draw()
   }
   /* Events */
@@ -874,7 +896,7 @@ edit[EditModes.drawShape] = function (e) {
 
 edit[EditModes.stamp] = function (e) {
   const col = this.props.getCollection()
-  if (!col.length || e.target != this.refs.canvas) {
+  if (!col.length || e.target !== this.refs.canvas) {
     return
   }
   const tile = col[0]
@@ -895,12 +917,21 @@ edit[EditModes.stamp] = function (e) {
       pal, this.getMaxId(),
       x, y
     )
+    this.highlightedObject.tmp = true
     this.clearCache()
-    this.data.objects.push(this.highlightedObject)
   }
 
-  if (e.type == 'mouseup' && e.which == 1) {
+  if (e.type === 'mouseup' && e.which === 1) {
+    // at first we need to remove object from map - so we can save previous map state
+    this.deleteObject(this.highlightedObject)
     this.props.saveForUndo('Add Tile')
+
+    // now add back and save new state
+    this.data.objects.push(this._highlightedObject)
+    delete this._highlightedObject.tmp
+    this.props.handleSave("Added Tile Object")
+
+    // next loop will create new highlighted object
     this.highlightedObject = null
     return
   }

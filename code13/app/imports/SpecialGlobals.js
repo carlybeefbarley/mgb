@@ -61,7 +61,7 @@ export default SpecialGlobals = {
   },
 
   map: {
-    "maxUndoSteps":       99,
+    "maxUndoSteps":       20,
     "objectRotationStep": 15
   },
 

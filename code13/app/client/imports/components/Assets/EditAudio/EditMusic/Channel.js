@@ -232,7 +232,7 @@ export default class Channel extends React.Component {
     this.waveCtx.save()
     this.waveCtx.strokeStyle = '#333'
     this.waveCtx.globalAlpha = 0.2
-    concole.log('timeline count', count, this.props.duration)
+    console.log('timeline count', count, this.props.duration)
     for (let i = 0; i < count; i++) {
       const x = i * this.props.pxPerSecond + 0.5 // 0.5 for 1px line instead of 2px
       this.waveCtx.beginPath()

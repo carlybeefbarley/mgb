@@ -943,7 +943,7 @@ edit[EditModes.stamp] = function (e) {
 // TODO(stauzs): rework this and clean up
 let phase = 0; // 0 - selecting; 1 - moving
 edit[EditModes.rectangle] = function (e) {
-  if ((e.buttons & 0x2) == 0x2) {
+  if ((e.buttons & 0x2) === 0x2) {
     return
   }
 
@@ -955,7 +955,7 @@ edit[EditModes.rectangle] = function (e) {
 
   const tw = this.props.mapData.tilewidth
   const th = this.props.mapData.tileheight
-  if (e.type == 'mouseup' || e.type == 'touchend') {
+  if (e.type === 'mouseup' || e.type === 'touchend') {
     if (obj && !this.handles.activeHandle) {
       let selCount = this.selectObjects(obj)
       if (selCount > 0) {
@@ -964,7 +964,7 @@ edit[EditModes.rectangle] = function (e) {
         phase = 0
       }
 
-      if (selCount == 1 && this.pickedObject) {
+      if (selCount === 1 && this.pickedObject) {
         this.startPosX = this.pickedObject.x
         this.startPosY = this.pickedObject.y
       }else {
@@ -983,11 +983,13 @@ edit[EditModes.rectangle] = function (e) {
   }
 
   if (e.type == 'mousedown' || e.type == 'touchstart' ) {
-    phase && this.props.saveForUndo('Edit Object')
+
     if (!this.handles.activeHandle) {
       this.draw()
       this.mouseDown = true
       if (this.pickObject(e) > -1) {
+        this.props.saveForUndo('Edit Object')
+
         if (!this.selection.length) {
           this.startPosX = this.pickedObject.x
           this.startPosY = this.pickedObject.y
@@ -1007,9 +1009,13 @@ edit[EditModes.rectangle] = function (e) {
       obj.y = this.pointerPosY
       return
     }
+    else{
+      phase && this.props.saveForUndo('Edit Object')
+    }
   }
 
   if (this.mouseDown && phase == 1) {
+
     if (this.handles.activeHandle) {
       this.handles.moveActiveHandle(dx, dy, this.clonedObject)
       let selected = this.selection.length < 2 ? this.pickedObject : this.selection

@@ -117,15 +117,17 @@ export default class EditMap extends React.Component {
   }
   set preventUpdates(v){
     this._preventUpdates = v
-    // console.log(v ? "Preventing updates: STARTED" : "Preventing updates: STOPPED")
+    /*console.error(v ? "Preventing updates: STARTED" : "Preventing updates: STOPPED")
     // failsafe
-    /*
-    window.setTimeout(() => {
-      this._preventUpdates && console.error("Preventing updates for too long period of time.. unlocking map. DEBUG THIS!")
 
-      //this._preventUpdates = false
-    }, 5000)
-    */
+    window.setTimeout(() => {
+      // not sure how to debug this...
+      if(this._preventUpdates) {
+        this._preventUpdates && console.error("Preventing updates for too long period of time.. unlocking map. DEBUG THIS!")
+        // this._preventUpdates = false
+      }
+    }, 60000)*/
+
   }
 
   get mgb_content2(){

@@ -160,13 +160,9 @@ export default class Channel extends React.Component {
 
   drawWave () {
     this.waveCtx.clearRect(0, 0, this.props.viewWidth, this.props.canvasHeight)
-    console.log('before timeline')
     this.drawTimeline()
-    console.log('before sampleBG')
     this.drawSampleBG()
-    console.log('is buffer', !!this.buffer)
     if (!this.buffer) return // in situations when audio is not decoded yet
-    console.log("draw wave", this.props.id)
     const sampleWidth = Math.floor(this.sample.duration * this.props.pxPerSecond)
     const channelData = this.buffer.getChannelData(0)
     const chunk = Math.floor(channelData.length / sampleWidth)
@@ -208,7 +204,6 @@ export default class Channel extends React.Component {
     }
     // console.log(count, startX, endX)
     this.waveCtx.restore()
-    console.log('wave drawn')
   }
 
   setViewOffset (seconds) {
@@ -456,8 +451,7 @@ export default class Channel extends React.Component {
     }
     console.log('after loop', channelData)
     this.sample.duration = Math.round( newLength * this.props.audioCtx.sampleRate )
-    this.props.duration = this.sample.duration
-    console.log('new duration', this.sample.duration)
+    // this.props.duration = this.sample.duration     // could be nasty bug
     this.saveNewBuffer()
   }
 

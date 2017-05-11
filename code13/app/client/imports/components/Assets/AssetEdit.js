@@ -31,7 +31,8 @@ export default AssetEdit = React.createClass({
   {
     // console.log(this.props.asset.kind)
     // trigger hotjar heatmap
-    hj('trigger', 'editor-'+this.props.asset.kind)
+    // for music and graphic editor setTimeout (because larger content2 size and loads slower)
+    setTimeout( () => hj('trigger', 'editor-'+this.props.asset.kind), 200)
   },
 
   render: function() 

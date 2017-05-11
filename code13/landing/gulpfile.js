@@ -86,7 +86,7 @@ const copyUsedMeteorAssets = () => through2.obj( function (file) {
   const html = file.contents.toString()
   const $ = cheerio.load( html )
 
-  const attrs = ['src', 'href']
+  const attrs = ['src', 'href', 'content']
   const assetPaths = []
 
   attrs.forEach( attr => {

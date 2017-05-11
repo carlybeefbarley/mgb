@@ -13,6 +13,32 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+
+    {
+      'timestamp': 'Wed May 10 2017 23:15:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4091'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed some graphic and map editor bugs',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
     {
       'timestamp': 'Mon May 09 2017 16:15:00 GMT-0700 (PDT)',
 

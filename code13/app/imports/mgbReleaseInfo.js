@@ -15,12 +15,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Wed May 10 2017 23:15:00 GMT-0700 (PDT)',
+      'timestamp': 'Thu May 11 2017 14:45:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.2.0',
         'state': 'Beta',
-        'iteration': '4091'
+        'iteration': '4095'
       },
 
       'releaseManagement': {
@@ -32,7 +32,7 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'Fixed some graphic and map editor bugs',
+          'changeSummary': 'Fixed a graphic-fill bug that @jaketor had reported; fix editGraphic bug when importing graphic and not creating tileset; Fixed some other graphic and map editor bugs',
           'otherUrls': [ ]
         }
       ]

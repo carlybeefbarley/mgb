@@ -268,10 +268,11 @@ export default class EditGraphic extends React.Component {
   // React Callback: componentDidUpdate()
   componentDidUpdate(prevProps, prevState)
   {
+    const c2 = this.props.asset.content2
     this.getPreviewCanvasReferences()       // Since they could have changed during the update due to frame add/remove
     // console.log(prevState.selectedFrameIdx, this.state.selectedFrameIdx);
 
-    if (recentMarker !== null && this.props.asset.content2.changeMarker === recentMarker)
+    if (recentMarker !== null && c2.changeMarker === recentMarker)
     {
       /* Do nothing.. */
       // console.log("Backwash prevented by marker "+recentMarker)
@@ -282,6 +283,13 @@ export default class EditGraphic extends React.Component {
       this.updateFrameLayers()
     else
       this.loadAllPreviewsAsync()     // It wasn't the change we just sent, so apply the data
+
+    if(c2.doResaveTileset){
+      c2.doResaveTileset = false
+      // minimum delay just to be sure that previewcanvases are drawn
+      // this will affect edge case for graphic import
+      setTimeout( () => this.handleSave('Resave tilest'), 50)
+    }
   }
 
   /** Stash references to the preview canvases after initial render and subsequent renders
@@ -1401,6 +1409,11 @@ export default class EditGraphic extends React.Component {
     let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
     $(importPopup).modal('hide')
     this.setState({ editScale: this.getDefaultScale() })
+
+    // hack, but because of whole EditGraphic architecture
+    // we need to create tileset, but frame canvases are not yet drawn
+    // they are drawn only after content2 travels to server and back
+    c2.doResaveTileset = true
   }
 
   //

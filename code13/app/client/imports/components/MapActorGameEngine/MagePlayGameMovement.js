@@ -42,7 +42,7 @@ export default MagePlayGameMovement = {
       }	
       if ((stepStyleOverride == 1 || (stepStyleOverride == -1 && G_player_action.right)) && plyr.x < map.metadata.width)
       {
-        plyr.x++;
+        plyr.x++
         plyr.stepStyle = 1
       }
     }

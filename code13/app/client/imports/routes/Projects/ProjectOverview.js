@@ -43,6 +43,11 @@ export default ProjectOverview = React.createClass({
     user:     PropTypes.object,       // App.js gave us this from params.id OR params.username
     currUser: PropTypes.object
   },
+
+  componentDidMount(){
+    // setTimeou just to be sure that everything is loaded
+    setTimeout( () => hj('trigger', 'project-overview'), 200)
+  },
   
   getInitialState: () => ({ 
     showAddUserSearch:            false,       // True if user search box is to be shown

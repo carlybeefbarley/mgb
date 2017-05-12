@@ -87,7 +87,10 @@ Accounts.onCreateUser(function (options, user) {
 
   if (user.services.password) {
     if (options.profile)
+    {
+      // Extra checks for validity like is done in Meteor.call("User.updateProfile")" ?
       user.profile = options.profile
+    }
   }
 
   return user

@@ -156,7 +156,7 @@ export const getNavPanels = (currUser, showAll) => {
           {
             subcomponent: 'Item',
             jrkey: 'publicChat',
-            query: { _fp: 'G_GENERAL_' },
+            query: { _fp: 'chat.G_GENERAL_' },
             icon: 'chat',
             content: 'Public Chat',
           }

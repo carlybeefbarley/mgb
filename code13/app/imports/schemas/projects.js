@@ -442,7 +442,8 @@ Meteor.methods({
     data.workState = defaultWorkStateName
     data.allowForks = false
     data.memberIds = []
-    data.avatarAssetId = ''
+    if (!_.isString(data.avatarAssetId))
+      data.avatarAssetId = ''
 
     check(data, _.omit(schema, '_id'))
     let docId = Projects.insert(data)

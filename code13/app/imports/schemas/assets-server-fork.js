@@ -53,7 +53,7 @@ Meteor.methods({
     }
 
     // we need also name - as assets can be referenced from source as /assetName
-    const srcAssetIds = Azzets.find(azzSel, { fields: { name: 1, _id: 1, name: 1 } } ).fetch()
+    const srcAssetIds = Azzets.find(azzSel, { fields: { name: 1, _id: 1 } } ).fetch()
 
     if (srcAssetIds.length === 0)
       return new Meteor.Error(404, `Source Project '${sourceProject.ownerName}:${opts.sourceProjectName}' contains no Assets. Cannot fork empty project`)
@@ -66,7 +66,8 @@ Meteor.methods({
 
     const newProjData = {
       name: opts.newProjectName,
-      description: `[Fork] ${sourceProject.description}`
+      description: `[Fork] ${sourceProject.description}`,
+      avatarAssetId: sourceProject.avatarAssetId || ''
       // forkParentChain will be handled in the code below...
     }
 

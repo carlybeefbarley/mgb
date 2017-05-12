@@ -15,12 +15,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Thu May 11 2017 14:45:00 GMT-0700 (PDT)',
+      'timestamp': 'Thu May 11 2017 21:00:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.2.0',
         'state': 'Beta',
-        'iteration': '4095'
+        'iteration': '4100'
       },
 
       'releaseManagement': {
@@ -32,7 +32,7 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'Fixed a graphic-fill bug that @jaketor had reported; fix editGraphic bug when importing graphic and not creating tileset; Fixed some other graphic and map editor bugs',
+          'changeSummary': 'Project forks use the original project image/avatar now; Added some missing user badges; Fixed floodfill bug in graphic editor; fixed close-popout bug in code runner; fixed bug with Meet->Chat menu; Fixed a graphic-fill bug that @jaketor had reported; fix editGraphic bug when importing graphic and not creating tileset; Fixed some other graphic and map editor bugs',
           'otherUrls': [ ]
         }
       ]

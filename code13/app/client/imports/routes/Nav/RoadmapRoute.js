@@ -10,7 +10,7 @@ const RenderRoadmap = () => (
     <ul>
       <li>(<small>Nearly complete</small>) Self-service MGBv1 asset migration (tiles, actors, maps)</li>
       <li>Direct Messages</li>
-      <li>PR Launch on May 9th (yeah, we delayed it a week so we can do a soft ramp)</li>
+      <li>(done) Public Beta as of May 9th (yeah, we delayed it a week so we can do a soft ramp)</li>
     </ul>
     <p>See the <QLink to='/whatsnew'>What's new</QLink> page for the lists of recent changes</p>
     <h2>Features coming in 2017</h2>

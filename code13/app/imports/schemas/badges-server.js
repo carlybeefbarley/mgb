@@ -48,7 +48,7 @@ const _nameBasedBadges = [
 
   {
     newBadgeName: 'mgb2AlphaTester',
-    usernames:    'dgolds,stauzs,guntis,leah,Supergirl,stanchion,LunarRaid,hawke,Viveiros,jazeps,avaragado,triptych,sleepysort,hertlen,collectordx,skadwaz'
+    usernames:    'Puupuls,dgolds,stauzs,guntis,leah,Supergirl,stanchion,LunarRaid,hawke,Viveiros,jazeps,avaragado,triptych,sleepysort,hertlen,collectordx,skadwaz,jaketor,Fantasythief,Nemopolymer,rabbidpony'.split(',')
   }
 ]
 
@@ -139,8 +139,8 @@ const _doRefreshBadgeStatus = user => {
 Meteor.methods({
   "User.refreshBadgeStatus": function( ) {
     return _doRefreshBadgeStatus(Meteor.user())
-  },
-  
+  }
+  //,
   // "User.refreshAllUserBadges": function() {   // e.g. call with   Meteor.call("User.refreshAllUserBadges")
   //   Meteor.users.find(  ).forEach(function(u) { _doRefreshBadgeStatus(u) } ) 
   //   console.log("---User.refreshAllUserBadges-done---")
@@ -149,4 +149,4 @@ Meteor.methods({
 
 
 // Example of how to fix badges given by mistake:
-//     Meteor.users.update( {}  , { $pull: { badges: "mgbAdmin" }}, { multi: true }  )
+//   FIX FIX  Meteor.users.update( {}  , { $pull: { badges: "mgbAdmin" }}, { multi: true }  )

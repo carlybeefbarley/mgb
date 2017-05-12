@@ -24,6 +24,11 @@ export default AssetCreateNewRoute = React.createClass({
     location: PropTypes.object          // We get this from react-router
   },
 
+  componentDidMount(){
+    // setTimeou just to be sure that everything is loaded
+    setTimeout( () => hj('trigger', 'asset-create-new'), 200)
+  },
+
   contextTypes: {
     urlLocation: React.PropTypes.object
   },

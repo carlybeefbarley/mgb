@@ -51,6 +51,11 @@ export default UserAssetListRoute = React.createClass({
     location: PropTypes.object      // We get this from react-router
   },
 
+  componentDidMount(){
+    // setTimeou just to be sure that everything is loaded
+    setTimeout( () => hj('trigger', 'user-asset-list'), 200)
+  },
+
   /**
    * queryNormalized() takes a location query that comes in via the browser url.
    *   Any missing or invalid params are replaced by defaults

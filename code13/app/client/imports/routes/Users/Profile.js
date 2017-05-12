@@ -36,6 +36,12 @@ export default UserProfileRoute = React.createClass({
     ownsProfile: PropTypes.bool
   },
 
+  componentDidMount(){
+    // setTimeou just to be sure that everything is loaded
+    setTimeout( () => hj('trigger', 'user-profile'), 200)
+  },
+
+
   getMeteorData: function() {
     const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
     let findOpts ={

@@ -34,7 +34,6 @@ const LinkTabContent = () => (
       { linkLi("Hotjar (Ux analytics)", "https://insights.hotjar.com/sites/446876/dashboard") }
       { linkLi("TrackJs (client errors)", "https://my.trackjs.com/messages") }
       { linkLi("Galaxy (PaaS)", "https://galaxy.meteor.com/app/v2.mygamebuilder.com") }
-      { linkLi("Kadira (Meteor stats)", "https://ui.kadira.io/apps/e7zK3YN4QZijYhpmY/dashboard/overview") }
       { linkLi("mLab telemetry", "https://mlab.com/realtime-dashboard?server=s-ds021730-a0") }
       { linkLi("mLab cluster", "https://mlab.com/clusters/rs-ds021730") }
     </List>
@@ -46,6 +45,8 @@ const UserAdmin = ( { user } ) => ( !user ? <div>Visit a page that has a user co
   <div>
     <Header sub>Public Info: {user.username}</Header>
     <List bulleted>
+      { linkLi(`UserId: ${user._id}`)}
+      { linkLi(`MGB1 name: '${user.profile.mgb1name || ''}' ${!user.profile.mgb1nameVerified ? ' (verified)' : ''}`)}
       { linkLi(`Badges: ${_.join(user.badges, ',')}`,  `/u/${user.username}/badges`)}
       { linkLi(`Created: ${user.createdAt}`, `/u/${user.username}`)}
       { linkLi(`Latest WhatsNew seen: ${user.profile.latestNewsTimestampSeen}`, `/u/${user.username}`)}

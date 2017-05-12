@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import SpecialGlobals from '/imports/SpecialGlobals'
 import QLink from '/client/imports/routes/QLink'
 import { ActivityTypes, deleteActivityRecord } from '/imports/schemas/activity.js'
 
@@ -11,7 +12,6 @@ import moment from 'moment'
 import { Feed, Icon } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
-import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 const _propTypes = {
   currUser:     PropTypes.object,             // Currently Logged in user. Can be null/undefined
@@ -143,7 +143,11 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
 
 const fpActivity = ( { activity, currUser, isSuperAdmin } ) => (
   <Feed size="small">
-    { activity.map((act) => ( <RenderOneActivity act={act} key={act._id} currUser={currUser} isSuperAdmin={isSuperAdmin} /> ) ) }
+    { _.map( 
+        _.slice(activity, 0, SpecialGlobals.activity.activityHistoryLimit), // beyond the activityHistoryLimit it gets polluted with ones loaded for userProfile stuff and that looks like no-one used it for ages.. hence slice.
+        act => ( <RenderOneActivity act={act} key={act._id} currUser={currUser} isSuperAdmin={isSuperAdmin} /> ) 
+      ) 
+    }
   </Feed>
 )
 

@@ -6,6 +6,7 @@ import Helmet from "react-helmet"
 import { createContainer } from 'meteor/react-meteor-data'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 import { utilPushTo } from "/client/imports/routes/QLink"
 
@@ -242,8 +243,6 @@ const AppUI = React.createClass({
 
   getInitialState: function() {
     return {
-      activityHistoryLimit: 11,
-
       // read/unread Chat status. Gathered up here since it used across app, especially for notifications and lists
       chatChannelTimestamps:    null,          // as defined by Chats.getLastMessageTimestamps RPC
       hazUnreadChats:           [],            // will contain Array of channel names with unread chats
@@ -764,7 +763,7 @@ const App = createContainer( ( { params, location } ) => {
   // activity? if useful..
   const flexPanelQueryValue = location.query[urlMaker.queryParams("app_flexPanel")]
   const getActivity = currUser || (flexPanelQueryValue === 'activity')
-  const handleActivity = getActivity ? Meteor.subscribe("activity.public.recent", 11) : null // TODO - use activityHistoryLimit ?
+  const handleActivity = getActivity ? Meteor.subscribe("activity.public.recent", SpecialGlobals.activity.activityHistoryLimit) : null 
 
   // projects stuff
   const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null

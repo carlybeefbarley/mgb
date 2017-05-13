@@ -10,6 +10,7 @@ export default class NPCBehavior extends BaseForm {
 
   // override to show responses onBlur
   text(name, key, type, fieldOptions = {}) {
+
     return (
       <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") }
            title={fieldOptions && fieldOptions.title}>
@@ -117,7 +118,6 @@ export default class NPCBehavior extends BaseForm {
   }
 
   render() {
-
     return (
       <div className="ui form">
         <span id="mgbjr-edit-actor-tab-NPCBehavior-movement">
@@ -128,13 +128,6 @@ export default class NPCBehavior extends BaseForm {
             { text: "Moves away from player", value: "3" },
           ], {
             title: "Select the way the NPC will move"
-          })}
-          {this.data.movementType !== "0" && this.text("Movement Frequency", 'movementSpeedNum', "number", {
-            min: 0,
-            max: 1,
-            step: 0.1
-          }, {
-            title: "Works as a probability (frequency) of an NPC moving each turn"
           })}
         </span>
         <span id="mgbjr-edit-actor-tab-NPCBehavior-aggro">

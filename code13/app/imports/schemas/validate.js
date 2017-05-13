@@ -53,8 +53,13 @@ const validate = {
   },
 
   mgb1name: function (text) {
-    // TODO more safety content checks here
+    // TODO more safety content checks here ... should allow    name1
     return validate.lengthCap(text, 16)
+  },
+
+  mgb1names: function (text) {
+    // TODO more safety content checks here ... should allow    name1,name2,name3
+    return validate.lengthCap(text, 32)
   },
 
   userName: function (text) {

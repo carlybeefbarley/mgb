@@ -24,6 +24,19 @@ const _importParamsSchema = {
   isDryRun:               Boolean     // if true, do nothing, just return ids/stats
 }
 
+
+Meteor.methods({
+  'mgb1.getProjectNames': function( mgb1Username ) {
+
+    // if (!this.userId)
+    //   throw new Meteor.Error(500, "Not logged in")
+  
+    let s3 = new AWS.S3({region: aws_s3_region, maxRetries: 3})
+    return { projectNames: _getS3ProjectNames(s3, mgb1Username) }
+  }
+})
+
+
 Meteor.methods({
   'job.import.mgb1.project': function( importParams ) {
 
@@ -75,20 +88,27 @@ Meteor.methods({
      }
       thisUser = { profile: { name: 'Bouhm' } }
       
-// */
-      //   importParams = {
-      //     mgb1Username:           'azurehaze',
-      //     mgb1Projectname:        'Galactic Combat',    //   'mechanics demos',
-      //     mgb2Username:           'dgolds',
-      //     mgb2ExistingProjectName:'Galactic Combat',    //   'Game Mechanics demo',
-      //     mgb2assetNamePrefix:    'galco.',
-      //     excludeTiles:           false,
-      //     excludeActors:          false,
-      //     excludeMaps:            false,
-      //     isDryRun:               false
-      //   }
-      //   thisUser = { profile: { name: 'dgolds' } }
-      // }
+// 
+*/
+    // if (importParams === 42)
+    // {
+    //   console.log('The meaning of life!)')
+    //   importParams = {
+    //     mgb1Username:           'foo',
+    //     mgb1Projectname:        'project1',    //   'mechanics demos',
+    //     mgb2Username:           'dgolds',
+    //     mgb2ExistingProjectName:'project1',    //   'Game Mechanics demo',
+    //     mgb2assetNamePrefix:    'p1.',
+    //     excludeTiles:           false,
+    //     excludeActors:          false,
+    //     excludeMaps:            false,
+    //     isDryRun:               true
+    //   }
+    //   thisUser = { profile: { name: 'dgolds' } }
+    // }
+
+
+
     //// END HACK /////
 
     // Param validations - these must throw Meteor.Error on failures
@@ -108,6 +128,12 @@ Meteor.methods({
     let s3 = new AWS.S3({region: aws_s3_region, maxRetries: 3})
 
     // From now on AVOID THROWING. Instead use retValAccumulator.mgb1AssetsFailedToConvert
+
+
+    const projectNames = _getS3ProjectNames(s3, importParams.mgb1Username)
+
+    if (!_.includes(projectNames, importParams.mgb1Projectname))
+      throw new Meteor.Error(404, `MGB1 project ${importParams.mgb1Username}/${importParams.mgb1Projectname} Not found`)
 
     const doImport = (mgb1Kind, importFunction) => {
       const kp = `${importParams.mgb1Username}/${importParams.mgb1Projectname}/${mgb1Kind}/`
@@ -166,14 +192,67 @@ const getContent = (s3, s3Key) => {
 }
 
 
-// Asset key lister. Note that spaces in names are returned as '+'. 
-// Stupid S3
 
+
+/**
+ * User Project name lister
+ * Uses AWS JS SDK: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#listObjectsV2-property
+ * In the returned array of project name strings, this function will 
+ *   replace + chars with space chars (' '), 
+ *   remove leading & trailing / chars
+ *   remove the pseudo-project name '-' which was used for user settings.
+ * An example response would be [ 'projectName 1', 'proj2' ]
+ */
+const _getS3ProjectNames = (s3, userName) => {
+  const keyPrefix = userName + '/'
+  const opParams = {
+    Bucket: 'JGI_test1',
+    //ContinuationToken: 'STRING_VALUE',
+    Delimiter: '/',
+    EncodingType: 'url',
+    MaxKeys: 500,   // 1000 is the S3 max per batch. Chose 500 so fast, but still tests looping/continuation
+    Prefix: keyPrefix
+  }
+
+  const prefixLen = opParams.Prefix.length
+  var listObjectsV2Sync = Meteor.wrapAsync(s3.listObjectsV2, s3)
+  var response = {}
+  var projectNames = []
+
+  do
+  {
+    try {
+      response = listObjectsV2Sync( opParams )
+    }
+    catch (err)
+    {
+      console.dir('MGB1 _getS3ProjectNames  error: ', err)
+      return null
+    }
+    projectNames = projectNames.concat(
+      _.map(
+        response.CommonPrefixes, 
+        c => c.Prefix.slice(prefixLen, -1).replace(/\+/g, ' ') 
+      )
+    )
+    if (response.IsTruncated)
+    {
+      opParams.ContinuationToken = response.NextContinuationToken
+      console.log(`Getting more S3key batches for ${opParams.Prefix}.. ${projectNames.length} so far`)
+    }
+  } while (response && response.IsTruncated)
+
+  return _.without(projectNames, '-')  // Is a special 'folder' in MGB user accounts for settings and stuff
+}
+
+
+
+/**
+ *  Asset key lister. 
+ * Uses AWS JS SDK: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#listObjectsV2-property
+ * Note that spaces in names are returned by S3 as '+'  ...Stupid S3!
+ */
 const _getAssetNames = (s3, keyPrefix) => {
-
-  // This will use 
-  //   https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#listObjectsV2-property
-
   const opParams = {
     Bucket: 'JGI_test1',
     //ContinuationToken: 'STRING_VALUE',
@@ -213,7 +292,7 @@ const _getAssetNames = (s3, keyPrefix) => {
 
 const _checkAllParams = (importParams, thisUser) =>
 {
-console.log("_checkAllParams()")
+  console.log("_checkAllParams()")
   check(importParams, _importParamsSchema)
   checkAssetNamePrefix(importParams)
   _checkUserRights(importParams, thisUser)

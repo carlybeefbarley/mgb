@@ -46,7 +46,8 @@ const UserAdmin = ( { user } ) => ( !user ? <div>Visit a page that has a user co
     <Header sub>Public Info: {user.username}</Header>
     <List bulleted>
       { linkLi(`UserId: ${user._id}`)}
-      { linkLi(`MGB1 name: '${user.profile.mgb1name || ''}' ${!user.profile.mgb1nameVerified ? '' : ' (verified)' }`)}
+      { linkLi(`Self-claimed MGB1 name: '${user.profile.mgb1name || ''}'`)}
+      { linkLi(`ADMIN-verified MGB1 names: '${!user.profile.mgb1namesVerified }`)}
       { linkLi(`Badges: ${_.join(user.badges, ',')}`,  `/u/${user.username}/badges`)}
       { linkLi(`Created: ${user.createdAt}`, `/u/${user.username}`)}
       { linkLi(`Latest WhatsNew seen: ${user.profile.latestNewsTimestampSeen}`, `/u/${user.username}`)}

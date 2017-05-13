@@ -823,16 +823,20 @@ export default fpChat = React.createClass( {
               )}
               >
               <Popup.Header>
-                { channelObj.scopeGroupName === 'Asset' ? 'Public Chat Channel for this Asset' : 'Chat Channel for this Project:' }
+                Public Chat Channel for this {channelObj.scopeGroupName }
               </Popup.Header>
               <Popup.Content>
                 <div style={{minWidth: '300px'}}>
-                  {
-                    channelObj.scopeGroupName === 'Asset' ?
+                  { channelObj.scopeGroupName === 'Asset' &&
                       <AssetCardGET assetId={channelObj.scopeId} allowDrag={true} renderView='s' />
-                    :
+                  }
+                  { channelObj.scopeGroupName === 'Project' &&
                       <ProjectCardGET projectId={channelObj.scopeId} />
                   }
+                  { channelObj.scopeGroupName === 'User' &&
+                      <span>User Wall for <QLink to={`/u/${channelObj.scopeId}`} >@{channelObj.scopeId}</QLink></span>
+                  }
+                  
                 </div>
               </Popup.Content>
             </Popup>

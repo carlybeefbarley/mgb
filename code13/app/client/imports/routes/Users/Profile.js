@@ -19,6 +19,8 @@ import { Projects } from '/imports/schemas'
 import { logActivity } from '/imports/schemas/activity'
 import { projectMakeSelector, projectSorters } from '/imports/schemas/projects'
 
+import { makeChannelName} from '/imports/schemas/chats'
+
 import QLink from '../QLink'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
@@ -136,6 +138,7 @@ export default UserProfileRoute = React.createClass({
   renderUserInfo: function(user, ownsProfile, width) {
     const { avatar, name, mgb1name, title, bio, focusMsg } = user.profile
     const editsDisabled = !ownsProfile || user.suIsBanned
+    const channelName = makeChannelName( { scopeGroupName: 'User', scopeId: this.props.params.username } )
 
     return (
       <Grid.Column width={width} id="mgbjr-profile-bioDiv">
@@ -242,6 +245,9 @@ export default UserProfileRoute = React.createClass({
                     </QLink>
                     <QLink to={`/u/${name}/games`} style={{marginBottom: '6px'}}>
                       <Button size='small' icon='game' content='Games' />
+                    </QLink>
+                    <QLink query={{ _fp: `chat.${channelName}` }}  style={{marginBottom: '6px'}}>
+                      <Button size='small' icon='chat' content={`${user.username}'s Wall`} />
                     </QLink>
                   </Button.Group>
                 </Item.Extra>

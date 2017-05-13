@@ -33,6 +33,7 @@ function canUserReallySendToChannel(currUser, channelName) {
       return Boolean(currUser); // For now
 
     case "User":
+      return Boolean(currUser); //???
     case "DirectMessage":
     default:
       console.log(
@@ -65,6 +66,29 @@ function _checkChatSendIsValid(currUser, channelName, message) {
   )
     throw new Meteor.Error(401, "Your account has been suspended by an Admin");
 }
+
+//     Handling delete/restore chats:    //
+//
+//SuAdmin: can delete any chat by replacing chat text with (removed by admin)
+//             to prevent chatowner from restoring it. if chat owner clicks restore 
+//             they see that message instead
+//isWallOwner: can delte messages on their wall, for purposes of preventing chatowner
+//             restores the delete is treated the same as SUAdmin delete where
+//             message text is replaced with (removed by wall owner) upon restore
+//Restores for wall owners and SuAdmins: 
+//                    the original message is stored in chattable prvBannedMessage
+//                    the functionality for SUAdmin or wall owner restore would
+//                    be manual restore ex(chat.message = chat.prvbannedmessage)
+//                    in the system
+//
+//
+// future implementation possiblities for wallowner chat restore:
+//                    an if statement that allows wallowner restore by replacing
+//                    chat.message = chat.prvbannedmessage. with possible extra UI
+//                    asking if user is sure they want to restore it.
+
+
+
 
 Meteor.methods({
   /** Chats.send
@@ -103,16 +127,21 @@ Meteor.methods({
     if (!this.userId) throw new Meteor.Error(401, "Login required");
 
     check(chatId, String);
-
     const chat = Chats.findOne({ _id: chatId });
     if (!chat) throw new Meteor.Error(404, "Chat Id does not exist");
 
+    const channelInfo = parseChannelName(chat.toChannelName)
+    const isUsersWall = (Meteor.user().username === channelInfo.scopeId && channelInfo.scopeGroupName === 'User')
+    console.log(isUsersWall)
+
     if (
       !(isSameUserId(chat.byUserId, this.userId) ||
-        isUserSuperAdmin(Meteor.user()))
+        isUserSuperAdmin(Meteor.user()) || isUsersWall)
     )
       throw new Meteor.Error(401, "Access not permitted");
+
     const isAdminDelete = !isSameUserId(chat.byUserId, this.userId) && isUserSuperAdmin(Meteor.user())
+    
     if (chat.isDeleted)
       throw new Meteor.Error(
         409,
@@ -125,6 +154,10 @@ Meteor.methods({
     if (isAdminDelete) {
       changedData.prvBannedMessage = chat.message;
       changedData.message = "(Removed by Admin)";
+    }
+    if (isUsersWall) {
+      changedData.prvBannedMessage = chat.message;
+      changedData.message = "(Removed by Wall Owner)";
     }
     const nDeleted = Chats.update({ _id: chatId }, { $set: changedData })
 
@@ -143,7 +176,7 @@ Meteor.methods({
     if (!chat) throw new Meteor.Error(404, "Chat Id does not exist");
 
     if (
-      !(isSameUserId(chat.byUserId, this.userId) ||
+      !((isSameUserId(chat.byUserId, this.userId)) ||
         isUserSuperAdmin(Meteor.user()))
     )
       throw new Meteor.Error(401, "Access not permitted");

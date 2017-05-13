@@ -177,8 +177,16 @@ const _encodeAssetInMsg = asset => `❮${asset.dn_ownerName}:${asset._id}:${asse
 
 const _doDeleteMessage = chatId => deleteChatRecord( chatId )
 
+const _isCurrUsersWall = (chat, currUser) => {
+  const channelInfo = parseChannelName(chat.toChannelName)
+  return (currUser.username === channelInfo.scopeId && channelInfo.scopeGroupName === 'User')
+}
+
 const DeleteChatMessage = ( { chat, currUser, isSuperAdmin } ) => (
-  ( (currUser && (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin)) && !chat.isDeleted) ?
+  ( (currUser &&
+     (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin  || _isCurrUsersWall(chat, currUser))) &&
+     !chat.isDeleted
+    ) ?
     <span className='mgb-show-on-parent-hover' onClick={() => _doDeleteMessage(chat._id)}>
       &nbsp;
       <Icon color='red' circular link name='delete'/>
@@ -753,6 +761,9 @@ export default fpChat = React.createClass( {
         _.find( this.props.chatChannelTimestamps, { _id: channelName } )
       )
 
+    if (channelObj.scopeGroupName === 'User'){
+      return `User "${channelObj.scopeId}"`}
+    
     console.error( `findObjectNameForChannelName() has a ScopeGroupName (${channelObj.scopeGroupName}) that is not in user context. #investigate#` )
     return 'TODO'
   },

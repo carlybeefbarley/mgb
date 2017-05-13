@@ -29,13 +29,18 @@ Meteor.publish('chats.channelName', function(toChannelName, limit=20) {
   case 'Global':
     // Everyone can read these
     break
+
   case 'Project':
     if (!lookupIsUseridInProject(this.userId, channelObj.scopeId))
       return this.ready()
     break
+
   case 'Asset':
-    break   // For now. May tighten up later
+    break   // For now make these publicly readable. Maybe tighten up later
+
   case 'User':
+    break   // For now make these publicly readable. Maybe tighten up later
+  
   case 'DirectMessage':
   default:
     console.log(`Unhandled scopeGroupName ${channelObj.scopeGroupName} in chats.channelName`)

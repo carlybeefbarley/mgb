@@ -15,12 +15,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Thu May 11 2017 23:50 GMT-0700 (PDT)',
+      'timestamp': 'Fri May 12 2017 23:45 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.2.0',
         'state': 'Beta',
-        'iteration': '4105'
+        'iteration': '4122'
       },
 
       'releaseManagement': {
@@ -28,6 +28,20 @@ const mgbReleaseInfo = {
       },
 
       'changes': [
+        {
+          'featureTag': 'wall',
+          'type': 'feature',
+          'changeName': 'User Wall posts',
+          'changeSummary': 'We have a wall-channel that acts as a "wall post" for now. Users can delete any messages posted on their walls. This may move into the user profile screen in the future',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'edit.map',
+          'type': 'improvement',
+          'changeName': 'Map layer types',
+          'changeSummary': 'The layer lists on the Map editor now show the type of each layer',
+          'otherUrls': [ ]
+        },
         {
           'featureTag': 'bugfix',
           'type': 'bugfix',

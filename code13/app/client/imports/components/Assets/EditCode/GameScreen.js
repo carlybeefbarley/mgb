@@ -3,7 +3,10 @@ import ReactDOM from 'react-dom'
 import { Icon, Button } from 'semantic-ui-react'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+
 import './editcode.css'
+
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 const _wrapperHeightPx = '320px'
 const _popopButtonsRowStyle = {
@@ -22,7 +25,7 @@ export default class GameScreen extends React.Component {
     isPopup:   PropTypes.bool,
     asset:     PropTypes.object,
     gameRenderIterationKey: PropTypes.number,
-    
+
     handleStop: PropTypes.func.isRequired,
     handleContentChange: PropTypes.func.isRequired,
     consoleAdd: PropTypes.func.isRequired,
@@ -48,11 +51,11 @@ export default class GameScreen extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     this.getReference()
     if (!prevProps.isPlaying && this.props.isPlaying && this.state.isMinimized)
-      this.minimize()
+      this.handleMinimizeClick()
   }
 
   componentWillReceiveProps(props){
-    this.postMessage({mgbCommand: "requestSizeUpdate"})
+    this.requestAdjustIframe()
   }
 
   getReference() {
@@ -107,8 +110,8 @@ export default class GameScreen extends React.Component {
       this._isIframeReady = false
     }
     // reset game screen size on stop
-    if (this.wrapper) {
-      this.wrapper.style.width = this.props.isPopup ? "auto" : '100%'
+    if(this.wrapper){
+      this.wrapper.style.width = this.props.isPopup && this.props.isPlaying ? "auto" : '100%'
       this.wrapper.style.height = _wrapperHeightPx
       this.iFrameWindow.setAttribute("width", "100%")
       this.iFrameWindow.setAttribute("height", "100%")
@@ -131,21 +134,36 @@ export default class GameScreen extends React.Component {
     this.iFrameWindow.contentWindow.postMessage(messageObject, "*")
   }
 
+
+
   // click handlers for Buttons on this component when in the props.isPopup==true state
-  handleMinimizeClick = () => { this.setState( { isMinimized: !this.state.isMinimized } ) }
-  handleCloseClick = () => { 
-    this.setState( { isHidden: true } )
-    this.props.handleStop() 
+  handleMinimizeClick = () => {
+    this.setState( { isMinimized: !this.state.isMinimized } )
+    this.requestAdjustIframe()
+  }
+
+  handleCloseClick = () => {
+    // this.setState( { isHidden: true } )
+    this.props.handleStop()
+  }
+
+  // this function will tell sandbox to send back message with iframe size
+  requestAdjustIframe(){
+    this.postMessage({mgbCommand: "requestSizeUpdate"})
   }
 
   // adjust iFrame size. This is initiated by an event
   adjustIframe(size) {
+    if(this.state.isMinimized){
+      return
+    }
+
     this.iFrameWindow.setAttribute("width", size.width + "")
     this.iFrameWindow.setAttribute("height", size.height + "")
-    const bounds = this.wrapper.getBoundingClientRect()    // TODO: Use or get rid of unused bounds variable
-    const w = Math.min(window.innerWidth*0.5, size.width)
-    const h = Math.min(window.innerHeight*0.5, size.height)
-    if(this.props.isPopup) {
+    // const bounds = this.wrapper.getBoundingClientRect()
+    const w = Math.min(window.innerWidth * SpecialGlobals.editCode.popup.maxWidth, size.width)
+    const h = Math.min(window.innerHeight * SpecialGlobals.editCode.popup.maxHeight, size.height)
+    if(this.props.isPopup && this.props.isPlaying){
       this.wrapper.style.width = w + "px"
       this.wrapper.style.height = h + "px"
     }
@@ -154,6 +172,12 @@ export default class GameScreen extends React.Component {
     // height will break minimize
     // this.wrapper.style.height = size.height + "px"
     // this.wrapper.style.height = "initial"
+
+    const dx = w - this.iFrameWindow.innerWidth
+    const dy = h - this.iFrameWindow.innerHeight
+    this.clientX += dx
+    this.clientY += dy
+    this.forceUpdate()
   }
 
   // drag handlers for the 'Move' button on this component when in the props.isPopup==true state
@@ -177,75 +201,96 @@ export default class GameScreen extends React.Component {
     if (e.touches && e.touches[0])
       e = e.touches[0]
 
-    if (e.clientX == 0 && e.clientY == 0)
+    if (e.clientX === 0 && e.clientY === 0)
       return   // avoiding weird glitch when at the end of drag 0,0 coords returned
 
     this.screenX += this.dragStartX - e.clientX
     this.screenY += this.dragStartY - e.clientY
     this.dragStartX = e.clientX
     this.dragStartY = e.clientY
-    this.wrapper.style.right = this.screenX + "px"
-    this.wrapper.style.bottom = this.screenY + "px"
+    this.forceUpdate()
+    //this.wrapper.style.right = this.screenX + "px"
+    //this.wrapper.style.bottom = this.screenY + "px"
   }
 
-  // React render() for this component. 
+
   render() {
     const { isPopup, isPlaying } = this.props
     const { isHidden, isMinimized } = this.state
+
+    const wrapStyle = {
+      display: "block",
+      overflow: "auto",
+      width: "100%",
+      height: _wrapperHeightPx,
+      minWidth: "200px",
+      minHeight: "160px",
+      maxHeight: (window.innerHeight * SpecialGlobals.editCode.popup.maxHeight) + "px",
+      maxWidth: (window.innerWidth * SpecialGlobals.editCode.popup.maxWidth) + 'px',
+      position:  'relative',
+      right: this.screenX + 'px',
+      bottom: this.screenY + 'px'
+    }
+
+    if(isHidden && !isPlaying){
+      wrapStyle.display = 'none'
+    }
+    if(isPopup && isPlaying){
+      wrapStyle.width = window.innerHeight * SpecialGlobals.editCode.popup.maxWidth
+      wrapStyle.overflow = 'initial'
+      wrapStyle.position = 'absolute' // or fixed 
+    }
+    if(isMinimized){
+      wrapStyle.bottom = '0'
+      wrapStyle.right = '0'
+      wrapStyle.height = 0
+      wrapStyle.minHeight = 0
+    }
+
 
     return (
       <div
           ref="wrapper"
           id="gameWrapper"
-          className={isPopup ? "popup" : "accordion"}
-          style={{
-            boxShadow: '0 1px 4px rgba(0, 0, 0, 0.2)',
-            display:   (isHidden && !isPlaying) ? "none" : "block",
-            overflow:  isPopup ? 'initial' : "auto",
-            width:     isPopup ? window.innerHeight * 0.3 : "100%",
-            height:    _wrapperHeightPx,
-            minWidth:  "200px",
-            minHeight: "160px",
-            maxHeight: (window.innerHeight * 0.5) + "px",
-            maxWidth:  (window.innerWidth * 0.5) + 'px'
-          }}>
-
-        { /* Buttons for this Component when in the isPopup state */ }
-        { isPopup &&
+          className={isPopup && isPlaying ? "popup" : "accordion"}
+          style={wrapStyle}>
+        { isPopup && isPlaying &&
           <div style={_popopButtonsRowStyle}>
             <Button
-                title='Close'
-                icon='close'
-                size='mini'
-                floated='right'
-                onClick={this.handleCloseClick} />
+              title='Close'
+              icon='close'
+              size='mini'
+              floated='right'
+              onClick={this.handleCloseClick} />
 
             <Button
-                title={isMinimized ? "Maximize" : "Minimize"}
-                icon={isMinimized ? "maximize" : "minus"}
-                size='mini'
-                floated='right'
-                onClick={this.handleMinimizeClick} />
+              title={isMinimized ? "Maximize" : "Minimize"}
+              icon={isMinimized ? "maximize" : "minus"}
+              size='mini'
+              floated='right'
+              onClick={this.handleMinimizeClick} />
 
             <button
-                // Making the a SUIR Button creates some funny drag icon, so clean this up another day
-                title="Drag Window"
-                className="ui mini right floated icon button"
-                draggable={true}
-                onDragStart={this.onDragStart}
-                onDrag={this.onDrag}
-                onTouchStart={this.onDragStart}
-                onTouchMove={this.onDrag} >
+              // Making the a SUIR Button creates some funny drag icon, so clean this up another day
+              title="Drag Window"
+              className="ui mini right floated icon button"
+              draggable={true}
+              onDragStart={this.onDragStart}
+              onDrag={this.onDrag}
+              onTouchStart={this.onDragStart}
+              onTouchMove={this.onDrag} >
               <Icon name='move' />
             </button>
 
           </div>
         }
+        <div
+        style={{overflow: 'auto', position: 'absolute', width: '100%', height: '100%'}}>
         <iframe
             style={{
-              display:    isMinimized ? "none" : "block",
+              display:    this.state.isMinimized ? "none" : "block",
               minWidth:   "100%",
-              minHeight: window.innerHeight * 0.3
+              // minHeight: window.innerHeight * SpecialGlobals.editCode.popup.maxHeight
             }}
             // key={ this.props.gameRenderIterationKey }
             ref="iFrame1"
@@ -255,6 +300,7 @@ export default class GameScreen extends React.Component {
             id="mgbjr-EditCode-sandbox-iframe"
             >
         </iframe>
+        </div>
       </div>
     )
   }

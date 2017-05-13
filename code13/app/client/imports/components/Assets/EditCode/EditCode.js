@@ -2466,7 +2466,7 @@ export default class EditCode extends React.Component {
         consoleAdd = {this._consoleAdd.bind(this)}
         gameRenderIterationKey = {this.state.gameRenderIterationKey}
         handleContentChange = {this.handleContentChange.bind(this)}
-        handleStop = {this.handleStop.bind(this)}
+        handleStop = {this.handleGamePopup.bind(this)}
       />
 
     let isChallenge = false

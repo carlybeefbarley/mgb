@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import swearjar from 'swearjar'
 import { Chats, Azzets } from '/imports/schemas'
 import { chatParams, parseChannelName, makeChannelName, isChannelNameWellFormed, chatsSchema, currUserCanSend } from '/imports/schemas/chats'
 import { check } from 'meteor/check'
@@ -102,6 +103,9 @@ Meteor.methods({
     _checkChatSendIsValid(currUser, channelName, message);
 
     const currUserName = currUser.profile.name;
+    if(swearjar.profane(message)){
+      message = swearjar.censor(message)
+    }
     const now = new Date();
     const data = {
       toChannelName: channelName,

@@ -132,7 +132,6 @@ Meteor.methods({
 
     const channelInfo = parseChannelName(chat.toChannelName)
     const isUsersWall = (Meteor.user().username === channelInfo.scopeId && channelInfo.scopeGroupName === 'User')
-    console.log(isUsersWall)
 
     if (
       !(isSameUserId(chat.byUserId, this.userId) ||

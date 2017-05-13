@@ -510,6 +510,26 @@ export default fpChat = React.createClass( {
     const { view } = this.state
     const { currUser, currUserProjects, chatChannelTimestamps } = this.props
     const { settings } = this.context
+    const wallChannelName = currUser ? makeChannelName( { scopeGroupName: 'User', scopeId: currUser.username } ) : null
+
+    // My Wall
+    const myWall = ( !currUser ? null : 
+      <List selection>
+        <List.Item>
+          <List.Header disabled style={{ textAlign: 'center' }}>My Wall</List.Header>
+        </List.Item>
+        <List.Item
+          onClick={() => this.handleChatChannelChange( wallChannelName )}
+          title='My Wall'
+        >
+          <Icon name='user' />
+          <List.Content>
+            {makePresentedChannelName( wallChannelName, currUser.username )}
+            {this.renderUnreadChannelIndicator( wallChannelName, chatChannelTimestamps )}
+          </List.Content>
+        </List.Item>
+      </List>
+    )
 
     // PUBLIC (GLOBAL) CHANNELS
     const publicChannels = (
@@ -674,6 +694,7 @@ export default fpChat = React.createClass( {
 
     return (
       <div style={style}>
+        {myWall}
         {publicChannels}
         {dmChannels}
         {projectChannels}

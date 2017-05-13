@@ -282,7 +282,7 @@ const AppUI = React.createClass({
     if (!this.props.currUser)
       return
 
-    const { settings, currUserProjects } = this.props
+    const { settings, currUser, currUserProjects } = this.props
     const { assetId } = this.props.params
 
     // 0. Make the list of channels we are interested in:
@@ -292,6 +292,7 @@ const AppUI = React.createClass({
     // chat notifications with too much Asset noise
 
     const chanArray = _.concat(
+      [ makeChannelName( { scopeGroupName: 'User', scopeId: currUser.username } ) ],
       _.map(ChatChannels.sortedKeys, k => makeChannelName( { scopeGroupName: 'Global', scopeId: k } ) ),
       _.map(currUserProjects, p => makeChannelName( { scopeGroupName: 'Project', scopeId: p._id } ) ),
       getPinnedChannelNames(settings)

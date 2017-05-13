@@ -60,7 +60,7 @@ export default AssetEdit = React.createClass({
           </Segment>
         }
         { /* We must keep this in the DOM since it has state we don't want to lose during a temporary resize */ }
-        <div style={ isTooSmall ? { display: 'none' } : null}>
+        <div style={ isTooSmall ? { display: 'none' } : undefined}>
           <Element {...props}/>
         </div>
       </div>

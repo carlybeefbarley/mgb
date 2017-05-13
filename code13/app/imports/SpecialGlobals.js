@@ -88,6 +88,11 @@ export default SpecialGlobals = {
   skillsModelTrifecta: {  // See SkillNodes.js to understand these values related to the SKILLS_MODEL_TRIFECTA
     tutorialAccount:         '!vault',
     tutorialAssetNamePrefix: 'tutorials.'
+  },
+  quotas: {
+    defaultNumMembersAllowedInProject: 5,
+    defaultNumOfOwnedProjectsAllowed: 8,
+    SUdefaultNumOfOwnedProjectsAllowed: 99
   }
 
 }

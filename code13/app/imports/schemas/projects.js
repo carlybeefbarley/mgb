@@ -3,7 +3,8 @@ import { Projects } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
 import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 import { bestWorkStateName, defaultWorkStateName, makeWorkstateNamesArray } from '/imports/Enums/workStates'
-
+import { isUserSuperAdmin } from '/imports/schemas/roles'
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 //
 // MGB PROJECTS SCHEMA
 // This file must be imported by main_server.js so that the Meteor methods can be registered
@@ -396,6 +397,9 @@ export const getProjectAvatarUrl = (p, expires = 3600) => (
     : '/images/wireframe/image.png'
 )
 
+const _calcMaxNumMembersAllowedInProject = (user) => isUserSuperAdmin(user) ? SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject : SpecialGlobals.quotas.defaultNumMembersAllowedInProject
+
+const _calcMaxOwnedProjectsAllowed = (user) => isUserSuperAdmin(user) ? SpecialGlobals.quotas.SUdefaultNumOfOwnedProjectsAllowed : SpecialGlobals.quotas.defaultNumOfOwnedProjectsAllowed
 
 Meteor.methods({
 
@@ -468,11 +472,13 @@ Meteor.methods({
       checkMgb.projectDescription(data.description)
     // Load ownerId and name of existing record to make sure current user is the owner
     const selector = { _id: docId }
-    const existingProjectRecord = Projects.findOne( selector, { fields: { ownerId: 1, name: 1 } } )
+    const existingProjectRecord = Projects.findOne( selector, { fields: { ownerId: 1, name: 1, memberIds: 1 } } )
     if (!existingProjectRecord)
       throw new Meteor.Error(404, 'Project Id does not exist')
     if (existingProjectRecord.ownerId !== this.userId)
       throw new Meteor.Error(401, "You don't have permission to edit this")
+    if(existingProjectRecord.memberIds.length >= _calcMaxNumMembersAllowedInProject(Meteor.user()) )
+      throw new Meteor.Error(401, "You have exceeded maximum number of members allowed")
 
     // 1. Create new Project record and store in Collection
     const now = new Date()

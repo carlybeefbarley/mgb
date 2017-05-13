@@ -74,7 +74,8 @@ export default SkillTreeRoute = React.createClass({
           <SkillsMap skills={userSkills} 
           expandable 
           toggleable={ownsProfile}
-          userCanManuallyClaimSkill={ownsProfile && isAdmin} />
+          userCanManuallyClaimSkill={ownsProfile && isAdmin} 
+          ownsProfile={ownsProfile} />
         }
       </div>
     )

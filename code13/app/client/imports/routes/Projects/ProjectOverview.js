@@ -314,7 +314,7 @@ export default ProjectOverview = React.createClass({
 
     Meteor.call('Projects.update', project._id, changeObj, (error) => {
       if (error) 
-        showToast(`Could not update project: ${error.reason}`, error)
+        showToast(`Could not update project: ${error.reason}`, 'error')
       else 
       {
        // Go through all the keys, log completion tags for each

@@ -290,7 +290,7 @@ export default ProjectOverview = React.createClass({
 
     Meteor.call('Projects.update', project._id, newData, (error, result) => {
       if (error) 
-        showToast(`Could not remove member ${userName} from project ${project.name}`, error)
+        showToast(`Could not remove member ${userName} from project ${project.name}`, 'error')
       else 
         logActivity("project.removeMember",  `Removed Member ${userName} from project ${project.name}`);
     })
@@ -300,7 +300,7 @@ export default ProjectOverview = React.createClass({
     var project = this.data.project
     Meteor.call('Projects.leave', project._id, userId, (error, result) => {
       if (error) 
-        showToast(`Member ${userName} could not leave project ${project.name}`, error)
+        showToast(`Member ${userName} could not leave project ${project.name}`, 'error')
       else 
         logActivity("project.leaveMember",  `Member ${userName} left from project ${project.name}`)
     })

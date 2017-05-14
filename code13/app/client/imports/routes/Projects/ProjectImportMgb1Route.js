@@ -29,6 +29,10 @@ class ProjectImportMgb1Route extends React.Component {
     const { user } = this.props
     const { profile } = user
     const { mgb1namesVerified } = profile
+
+    if (!mgb1namesVerified || mgb1namesVerified === '')
+      return 
+
     Meteor.call( 'mgb1.getProjectNames', mgb1namesVerified, (err, result) => {
       if (err) 
         console.error('mgb1.getProjectNames failed: ', err.reason)
@@ -36,13 +40,18 @@ class ProjectImportMgb1Route extends React.Component {
       {
         const newPList = _.clone( this.state.mgb1Projects )
         newPList[mgb1namesVerified] = result.projectNames
-        this.setState( { mgb1Projects: newPList} )
+        this.setState( { mgb1Projects: newPList } )
       }
     })
   }
 
   componentDidMount() {
     this.refreshProjectList()
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.user && this.props.user.profile.mgb1namesVerified !== prevProps.user.profile.mgb1namesVerified)
+      this.refreshProjectList()    
   }
   
   /*
@@ -114,18 +123,20 @@ class ProjectImportMgb1Route extends React.Component {
                 </List.Content>
               </List.Item>
             }
-            <Segment>
-              <Header sub>Projects for mgb1@{profile.mgb1namesVerified}:</Header>
-              <List>
-                { _.map(mgb1Projects[profile.mgb1namesVerified], pName => (
-                  <List.Item>
-                    <List.Content>
-                      Project: '{pName}'
-                    </List.Content>
-                  </List.Item>
-                ))}
-              </List>
-            </Segment>
+            { ( profile.mgb1namesVerified && profile.mgb1namesVerified !== '' ) && 
+              <Segment>
+                <Header sub>Projects for mgb1@{profile.mgb1namesVerified}:</Header>
+                <List>
+                  { _.map(mgb1Projects[profile.mgb1namesVerified], pName => (
+                    <List.Item>
+                      <List.Content>
+                        Project: '{pName}'
+                      </List.Content>
+                    </List.Item>
+                  ))}
+                </List>
+              </Segment>
+            }
           </List>
         </Segment>
       </Segment>

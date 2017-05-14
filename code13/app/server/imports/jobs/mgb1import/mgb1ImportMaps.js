@@ -15,7 +15,7 @@ import validate from '/imports/schemas/validate'
 
 export const doImportMap = (content, rva, fullS3Name, assetName ) => {
 
-  const { mgb2ExistingProjectName, mgb2assetNamePrefix, isDryRun } = rva.importParams
+  const { mgb2NewProjectName, mgb2assetNamePrefix, isDryRun } = rva.importParams
   const { Body, Metadata, LastModified } = content   // Body is of type Buffer
 
   // content.Body needs a LOT of processing from the strange MGBv1 formats (Adobe Flex made me do it, honest...)
@@ -56,7 +56,7 @@ export const doImportMap = (content, rva, fullS3Name, assetName ) => {
 
   const newAsset = {
     createdAt:      LastModified ? new Date(LastModified) : undefined,
-    projectNames:   [ mgb2ExistingProjectName ],
+    projectNames:   [ mgb2NewProjectName ],
     name:           mgb2assetNamePrefix + assetName,
     kind:           'actormap',
     text:           `Imported from MGB1 (${fullS3Name}) ${Metadata.comment}`,

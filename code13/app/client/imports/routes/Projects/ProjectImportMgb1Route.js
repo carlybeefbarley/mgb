@@ -1,15 +1,22 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Helmet from 'react-helmet'
-import { Header, Icon, List, Message, Segment } from 'semantic-ui-react'
+import { Button, Header, Icon, Input, List, Message, Segment } from 'semantic-ui-react'
+import { showToast } from '/client/imports/routes/App'
+import { logActivity } from '/imports/schemas/activity'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import validate from '/imports/schemas/validate'
 
-const NameOrNone = ( { nameStr } )  => (
-  <span>
-    { (nameStr && _.isString(nameStr) && nameStr.length > 0) ? `'${nameStr}'` : <small>(none)</small> }
-  </span>
-)
+// Let's be smart about generating and remembering the user's 
+// default + desired assetPrefxes & mgb2projectnames for the new projects
+const prefixMemo = {}
+const mgb2projNameMemo = {}
+const _defaultAssetPrefix = pName => (_.toLower(pName.slice(0, 5)) + '.')
+const _defaultMgb2ProjectName = pName => (pName)
+
+//
+// The 'Import MGB1 project' UI code
+//
 
 class ProjectImportMgb1Route extends React.Component {
 
@@ -22,7 +29,10 @@ class ProjectImportMgb1Route extends React.Component {
   }
 
   state = {
-    mgb1Projects:        {}                    //  e.g. [ { 'foo': ['mechanics demos'] } ]
+    mgb1Projects:                 {},          //  e.g. [ { 'foo': ['mechanics demos'] } ]
+    confirmPendingForProjectName: null,
+    assetPrefix:                  'proj.',
+    mgb2NewProjectName:           ''
   }
 
   refreshProjectList = () => {
@@ -39,7 +49,7 @@ class ProjectImportMgb1Route extends React.Component {
       else
       {
         const newPList = _.clone( this.state.mgb1Projects )
-        newPList[mgb1namesVerified] = result.projectNames
+        newPList[mgb1namesVerified] = _.sortBy(result.projectNames)
         this.setState( { mgb1Projects: newPList } )
       }
     })
@@ -54,8 +64,44 @@ class ProjectImportMgb1Route extends React.Component {
       this.refreshProjectList()    
   }
   
+  // Used to maintain state.assetPrefix
+  _onAssetPrefixChange = event => { 
+    this.setState( { assetPrefix: event.target.value } ) 
+    prefixMemo[this.state.confirmPendingForProjectName] = event.target.value
+  }
+
+  _onMgb2ProjectNameChange = event => { 
+    this.setState( { mgb2NewProjectName: event.target.value } ) 
+    mgb2projNameMemo[this.state.confirmPendingForProjectName] = event.target.value
+  }
+
+
+  handleImportProject = (mgb1Username, mgb1Projectname, mgb2NewProjectName, mgb2assetNamePrefix) => 
+  {
+    var importParams = {    
+      // These params are described in Meteor.method('job.import.mgb1.project', ___)
+      mgb1Username, 
+      mgb1Projectname, 
+      mgb2NewProjectName, 
+      mgb2assetNamePrefix, 
+      mgb2Username:   Meteor.user().username,
+      excludeTiles:   false,
+      excludeActors:  false,
+      excludeMaps:    false,
+      isDryRun:       false      
+    }
+    Meteor.call('job.import.mgb1.project', importParams, (err, result) => {
+      if (err)
+        showToast(`Unable to import project: ${err.reason}`, 'error')
+      else {
+        showToast(`Completed import. New project id = ${result.newProjectId}`)
+        logActivity("project.create",  `Imported MGB1 project ${mgb1Username}/${mgb1Projectname} to ${mgb2NewProjectName}`)
+      }
+    })
+  }
+
   /*
-   *   @param changeObj contains { field: value } settings.. e.g "profile.mgb1namesVerified": "New Title"
+   *  @param changeObj contains { field: value } settings.. e.g "profile.mgb1namesVerified": "New Title"
    */
   handleProfileFieldChanged = changeObj =>
   {
@@ -65,11 +111,11 @@ class ProjectImportMgb1Route extends React.Component {
       // mgb1namesVerified has some additional handling.. 
       Meteor.call('User.update.mgb1namesVerified', this.props.user._id, m1verified, error => {
         if (error)
-          console.log("Could not update mgb1namesVerified: ", error.reason)
+          console.log("Could not update 'profile.mgb1namesVerified': ", error.reason)
       })
     }
     else
-      console.error("handleProfileFieldChanged() could not update changeObj: ", changeObj)
+      console.error("handleProfileFieldChanged() does not know how to update changeObj: ", changeObj)
   }
 
   render() {
@@ -77,7 +123,6 @@ class ProjectImportMgb1Route extends React.Component {
     const { profile, username } = user
     const { mgb1Projects } = this.state
     
-    console.log(mgb1Projects[profile.mgb1namesVerified])
     return (
       <Segment basic>
         <Helmet
@@ -86,18 +131,7 @@ class ProjectImportMgb1Route extends React.Component {
         />
         <Header as='h2' content='Import MGB1 Project'/>
         <Segment raised>
-          <Message info icon>
-            <Icon name='space shuttle' />
-            <Message.Content>
-              <Message.Header>At your service!</Message.Header>
-              <p>
-                All projects currently hosted in our prior flash-based 'MGB1' system are going be imported into the new system soon..
-              </p>
-              <p>
-                Contact us in chat to request having your project imported immediately
-              </p>
-            </Message.Content>
-          </Message>
+          <ExplanationMessage />
           <Header sub>MGB1 account status for @{username} in 'MGBv2'</Header>
           <List bulleted>
             <List.Item>
@@ -128,9 +162,44 @@ class ProjectImportMgb1Route extends React.Component {
                 <Header sub>Projects for mgb1@{profile.mgb1namesVerified}:</Header>
                 <List>
                   { _.map(mgb1Projects[profile.mgb1namesVerified], pName => (
-                    <List.Item>
+                    <List.Item key={pName}>
                       <List.Content>
-                        Project: '{pName}'
+                        <Button 
+                            compact 
+                            wide
+                            content={`Import '${pName}'...`}
+                            onClick={ () => this.setState( { 
+                              confirmPendingForProjectName: pName,
+                              assetPrefix: (prefixMemo[pName] || _defaultAssetPrefix(pName)),
+                              mgb2NewProjectName: (mgb2projNameMemo[pName] || _defaultMgb2ProjectName(pName))
+                            } ) }
+                            />
+                        
+                        { this.state.confirmPendingForProjectName === pName && 
+                          <div style={{padding: '8px'}}>
+                            <span>Asset Prefix: </span>
+                            <Input 
+                                placeholder='asset prefix'
+                                value={ this.state.assetPrefix }
+                                onChange={ this._onAssetPrefixChange }
+                                /> 
+                            &emsp;
+
+                            <span>New Project Name: </span>
+                            <Input 
+                                placeholder='Mgb2 project to create...'
+                                value={ this.state.mgb2NewProjectName }
+                                onChange={ this._onMgb2ProjectNameChange }
+                                /> 
+                            &emsp;
+
+                            <Button 
+                                compact 
+                                content='CONFIRM IMPORT' 
+                                onClick={ () => this.handleImportProject( profile.mgb1namesVerified, pName, pName, this.state.assetPrefix ) }
+                                />
+                          </div> 
+                        }
                       </List.Content>
                     </List.Item>
                   ))}
@@ -144,4 +213,29 @@ class ProjectImportMgb1Route extends React.Component {
   }
 }
 
+//
+// Some stateless Components to keep the main code above a bit cleaner
+//
+const NameOrNone = ( { nameStr } )  => (
+  <span>
+    { (nameStr && _.isString(nameStr) && nameStr.length > 0) ? `'${nameStr}'` : <small>(none)</small> }
+  </span>
+)
+
+const ExplanationMessage = () => (
+  <Message info icon>
+    <Icon name='space shuttle' />
+    <Message.Content>
+      <Message.Header>At your service!</Message.Header>
+      <p>
+        All projects currently hosted in our prior flash-based 'MGB1' system are going be imported into the new system soon..
+      </p>
+      <p>
+        Contact us in chat to request having your project imported immediately
+      </p>
+    </Message.Content>
+  </Message>
+)
+
+// Export it
 export default ProjectImportMgb1Route

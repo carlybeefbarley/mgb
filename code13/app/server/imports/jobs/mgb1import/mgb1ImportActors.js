@@ -21,7 +21,7 @@ import validate from '/imports/schemas/validate'
 
 
 export const doImportActor = (content, rva, fullS3Name, assetName ) => {
-  const { mgb2ExistingProjectName, mgb2assetNamePrefix, isDryRun } = rva.importParams
+  const { mgb2NewProjectName, mgb2assetNamePrefix, isDryRun } = rva.importParams
   const { Body, Metadata, LastModified } = content   // Body is of type Buffer
 
   console.log('------ doImportActor('+ assetName + ') ------')
@@ -69,7 +69,7 @@ export const doImportActor = (content, rva, fullS3Name, assetName ) => {
 
   const newAsset = {
     createdAt:      LastModified ? new Date(LastModified) : undefined,
-    projectNames:   [ mgb2ExistingProjectName ],
+    projectNames:   [ mgb2NewProjectName ],
     name:           mgb2assetNamePrefix + assetName,
     kind:           'actor',
     text:           `Imported from MGB1 (${fullS3Name}) ${Metadata.comment}`,

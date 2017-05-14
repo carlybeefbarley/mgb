@@ -274,6 +274,9 @@ const schema = {
   forkChildren:    optional(Array),   // Array of peer direct children
   forkParentChain: optional(Array),   // Array of parent forks
 
+  // mgb1Import Info IF this project was imported from MGB1. NOT Changeable once set
+  mgb1: optional(Object),     // { mgb1username: String, mgb1ProjectName: String, importInitiator: String(mgb2username), importProgress: String }
+
   // the actual project information
   name: String,               // Project Name (scoped to owner). Case sensitive
   description: String,        // A description field

@@ -15,7 +15,7 @@ import validate from '/imports/schemas/validate'
 
 export const doImportTile = (content, rva, fullS3Name, assetName ) => {
 
-  const { mgb2ExistingProjectName, mgb2assetNamePrefix, isDryRun  } = rva.importParams
+  const { mgb2NewProjectName, mgb2assetNamePrefix, isDryRun  } = rva.importParams
   const { Body, Metadata, LastModified } = content   // Body is of type Buffer
   const pngAsDataUri = 'data:image/png;base64,' + Body.toString('base64')
   // check content.Metadata exists
@@ -38,7 +38,7 @@ export const doImportTile = (content, rva, fullS3Name, assetName ) => {
 
   const newAsset = {
     createdAt:      LastModified ? new Date(LastModified) : undefined,
-    projectNames:   [ mgb2ExistingProjectName ],
+    projectNames:   [ mgb2NewProjectName ],
     name:           mgb2assetNamePrefix + assetName,
     kind:           'graphic',
     text:           `Imported from MGB1 (${fullS3Name}) ${Metadata.comment}`,

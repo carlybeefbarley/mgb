@@ -19,6 +19,8 @@ import { logActivity } from '/imports/schemas/activity'
 import ProjectForkGenerator from './ProjectForkGenerator'
 import { makeChannelName} from '/imports/schemas/chats'
 import { utilShowChatPanelChannel } from '/client/imports/routes/QLink'
+import { isUserSuperAdmin } from '/imports/schemas/roles'
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 const buttonSty = { width: '220px', marginTop: '2px', marginBottom: '2px'}
 
@@ -215,7 +217,7 @@ export default ProjectOverview = React.createClass({
             />
           </Segment>
 
-          <Header as="h3" >Project Members</Header>
+          <Header as="h3" >{`Project Members (${this.data.project.memberIds.length} of ${isUserSuperAdmin(currUser) ? SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject : SpecialGlobals.quotas.defaultNumMembersAllowedInProject})`}</Header>
           <Segment basic>
             Project Members may create, edit or delete Assets in this Project &nbsp;        
             <ProjectMembersGET 
@@ -290,7 +292,7 @@ export default ProjectOverview = React.createClass({
 
     Meteor.call('Projects.update', project._id, newData, (error, result) => {
       if (error) 
-        showToast(`Could not remove member ${userName} from project ${project.name}`, error)
+        showToast(`Could not remove member ${userName} from project ${project.name}`, 'error')
       else 
         logActivity("project.removeMember",  `Removed Member ${userName} from project ${project.name}`);
     })
@@ -300,7 +302,7 @@ export default ProjectOverview = React.createClass({
     var project = this.data.project
     Meteor.call('Projects.leave', project._id, userId, (error, result) => {
       if (error) 
-        showToast(`Member ${userName} could not leave project ${project.name}`, error)
+        showToast(`Member ${userName} could not leave project ${project.name}`, 'error')
       else 
         logActivity("project.leaveMember",  `Member ${userName} left from project ${project.name}`)
     })
@@ -314,7 +316,7 @@ export default ProjectOverview = React.createClass({
 
     Meteor.call('Projects.update', project._id, changeObj, (error) => {
       if (error) 
-        showToast(`Could not update project: ${error.reason}`, error)
+        showToast(`Could not update project: ${error.reason}`, 'error')
       else 
       {
        // Go through all the keys, log completion tags for each

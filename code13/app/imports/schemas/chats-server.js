@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import swearjar from 'swearjar'
 import { Chats, Azzets } from '/imports/schemas'
 import { chatParams, parseChannelName, makeChannelName, isChannelNameWellFormed, chatsSchema, currUserCanSend } from '/imports/schemas/chats'
 import { check } from 'meteor/check'
@@ -76,16 +77,27 @@ function _checkChatSendIsValid(currUser, channelName, message) {
 //             restores the delete is treated the same as SUAdmin delete where
 //             message text is replaced with (removed by wall owner) upon restore
 //Restores for wall owners and SuAdmins: 
-//                    the original message is stored in chattable prvBannedMessage
+//                    the original message is stored in chat table prvBannedMessage
 //                    the functionality for SUAdmin or wall owner restore would
 //                    be manual restore ex(chat.message = chat.prvbannedmessage)
 //                    in the system
-//
+//isWallOwner && isSuperAdmin: super admin currently can restore chats on other
+//                    users walls UNLESS they are also the owner in which case restore
+//                    says removed by wall owner. 
+// ownerreg user on reg user chats: reg user who is owner of wall can delete another
+//                     reg user's chats but cannot restore them. if reg user restores owned chat
+//                     one someone elses wall says removed by wall owner.
 //
 // future implementation possiblities for wallowner chat restore:
+//                    currently wall owner cannot restore
 //                    an if statement that allows wallowner restore by replacing
 //                    chat.message = chat.prvbannedmessage. with possible extra UI
-//                    asking if user is sure they want to restore it.
+//                    asking if user is sure they want to restore it. they can also 
+//                    restore but if they click delete again it is removed by admin.
+//                    if admin deletes a removed by wall owner replace it is replaced with
+//                    .removed by admin does not get repleaced by 
+//                    removed by wall owner in case of reg user instead button to delete does not appear unless its their own message
+//
 
 
 
@@ -102,6 +114,9 @@ Meteor.methods({
     _checkChatSendIsValid(currUser, channelName, message);
 
     const currUserName = currUser.profile.name;
+    if(swearjar.profane(message)){
+      message = swearjar.censor(message)
+    }
     const now = new Date();
     const data = {
       toChannelName: channelName,

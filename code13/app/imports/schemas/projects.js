@@ -3,7 +3,8 @@ import { Projects } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
 import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 import { bestWorkStateName, defaultWorkStateName, makeWorkstateNamesArray } from '/imports/Enums/workStates'
-
+import { isUserSuperAdmin } from '/imports/schemas/roles'
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 //
 // MGB PROJECTS SCHEMA
 // This file must be imported by main_server.js so that the Meteor methods can be registered
@@ -273,6 +274,9 @@ const schema = {
   forkChildren:    optional(Array),   // Array of peer direct children
   forkParentChain: optional(Array),   // Array of parent forks
 
+  // mgb1Import Info IF this project was imported from MGB1. NOT Changeable once set
+  mgb1: optional(Object),     // { mgb1username: String, mgb1ProjectName: String, importInitiator: String(mgb2username), importProgress: String }
+
   // the actual project information
   name: String,               // Project Name (scoped to owner). Case sensitive
   description: String,        // A description field
@@ -396,6 +400,9 @@ export const getProjectAvatarUrl = (p, expires = 3600) => (
     : '/images/wireframe/image.png'
 )
 
+const _calcMaxNumMembersAllowedInProject = (user) => isUserSuperAdmin(user) ? SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject : SpecialGlobals.quotas.defaultNumMembersAllowedInProject
+
+const _calcMaxOwnedProjectsAllowed = (user) => isUserSuperAdmin(user) ? SpecialGlobals.quotas.SUdefaultNumOfOwnedProjectsAllowed : SpecialGlobals.quotas.defaultNumOfOwnedProjectsAllowed
 
 Meteor.methods({
 
@@ -414,15 +421,23 @@ Meteor.methods({
     checkMgb.projectName(data.name)
     checkMgb.projectDescription(data.description)
     const username = Meteor.user().profile.name
-
+    
     // Note that this check will also run on the client, but could potentially fail to
     // find a conflict (since the client's subscription might not include all the user's
     // projects.. but that's ok since the check will run again on the server and that
     // will definitely have access to all records
+    if (Meteor.isServer)
+  {
+      const numProjectsOwnedByUser = Projects.find( { ownerId: this.userId } ).count()
+      if (numProjectsOwnedByUser >= _calcMaxOwnedProjectsAllowed(Meteor.user()))
+        throw new Meteor.Error(401, 'Max number of projects reached')
+    }
+    
     const existingProject = Projects.findOne( { ownerId: this.userId, name: data.name } )
     if (existingProject)
       throw new Meteor.Error(403, `Project ${username}:${data.name} already exists. Try again with a different name`)
 
+ 
     // Note: forkParentChain and forkChildren were added on 2/19/2017 so earlier
     // projects do not have them. For consistency, I have chose to NOT add
     // them at create-time even to new Projects created after this date.
@@ -468,11 +483,13 @@ Meteor.methods({
       checkMgb.projectDescription(data.description)
     // Load ownerId and name of existing record to make sure current user is the owner
     const selector = { _id: docId }
-    const existingProjectRecord = Projects.findOne( selector, { fields: { ownerId: 1, name: 1 } } )
+    const existingProjectRecord = Projects.findOne( selector, { fields: { ownerId: 1, name: 1, memberIds: 1 } } )
     if (!existingProjectRecord)
       throw new Meteor.Error(404, 'Project Id does not exist')
     if (existingProjectRecord.ownerId !== this.userId)
       throw new Meteor.Error(401, "You don't have permission to edit this")
+    if(data.memberIds.length > _calcMaxNumMembersAllowedInProject(Meteor.user()) )
+      throw new Meteor.Error(401, "You have exceeded maximum number of members allowed")
 
     // 1. Create new Project record and store in Collection
     const now = new Date()

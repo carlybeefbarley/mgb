@@ -51,7 +51,7 @@ export const doImportTile = (content, rva, fullS3Name, assetName ) => {
     isPrivate:      false
   }
 
-  console.log(newAsset)
+  //console.log(newAsset)
 
   if (!validate.assetName(newAsset.name))
   {    
@@ -64,6 +64,9 @@ export const doImportTile = (content, rva, fullS3Name, assetName ) => {
     newAsset.text = newAsset.text.slice(0, 116) + '...'
   }
 
+  let newTileAssetId = null
   if (!isDryRun)
-    Meteor.call('Azzets.create', newAsset)
+    newTileAssetId = Meteor.call('Azzets.create', newAsset)
+
+  return newTileAssetId
 }

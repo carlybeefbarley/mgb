@@ -86,7 +86,10 @@ Meteor.methods({
 
     const doImport = (mgb1Kind, importFunction) => {
       const kp = `${importParams.mgb1Username}/${importParams.mgb1Projectname}/${mgb1Kind}/`
+      _updateMgb1ImportProgressTxt( newProjectId, `Counting ${mgb1Kind}s`)
       const assetNames = _getAssetNames(s3, kp)
+      _updateMgb1ImportProgressTxt( newProjectId, `Importing ${assetNames.length} ${mgb1Kind}s`)
+      
       console.log(`Preparing to ${importParams.isDryRun ? 'DRYRUN' : ''} import ${assetNames.length} MGB1 ${mgb1Kind}s into MGB2`)
       _.each(assetNames, aName => {
         const fullS3Name = (kp+aName).replace(/\+/g, ' ')
@@ -110,7 +113,7 @@ Meteor.methods({
       })
     }
 
-    if (!importParams.excludeTiles)
+    if (!importParams.excludeTiles)    
       doImport( 'tile', doImportTile)
 
     if (!importParams.excludeActors)
@@ -118,7 +121,15 @@ Meteor.methods({
 
     if (!importParams.excludeMaps)
       doImport( 'map', doImportMap)
-    
+
+    const resultMsg = (
+      "Completed. " + 
+      (retValAccumulator.assetIdsAdded.length > 0 ? `Added ${retValAccumulator.assetIdsAdded.length} assets. ` : '' )+ 
+      (retValAccumulator.assetIdsUpdated.length > 0 ? `Updated ${retValAccumulator.assetIdsUpdated.length} assets. ` : '') + 
+      (retValAccumulator.mgb1AssetsFailedToConvert.length > 0 ? `Could not convert: ${retValAccumulator.mgb1AssetsFailedToConvert.length} assets. ` : '')
+    )
+    _updateMgb1ImportProgressTxt( newProjectId, resultMsg)
+
     return retValAccumulator
   }
 })
@@ -261,4 +272,13 @@ const _checkImportingAtLeastOneAssetType = params => {
 const checkAssetNamePrefix = params => {
   if (params.mgb2assetNamePrefix.length < 1)
     throw new Meteor.Error(500, "mgb2assetNamePrefix required")
+}
+
+const _updateMgb1ImportProgressTxt = ( mgb2ProjectId, newProgressTxt) =>
+{
+  console.log("Import progress: ", newProgressTxt)
+  Projects.update( 
+    { _id: mgb2ProjectId }, 
+    { $set: { 'mgb1.importProgress': newProgressTxt } } 
+  )
 }

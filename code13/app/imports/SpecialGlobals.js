@@ -91,6 +91,7 @@ export default SpecialGlobals = {
   },
   quotas: {
     defaultNumMembersAllowedInProject: 5,
+    SUdefaultNumMembersAllowedInProject: 99,
     defaultNumOfOwnedProjectsAllowed: 8,
     SUdefaultNumOfOwnedProjectsAllowed: 99
   }

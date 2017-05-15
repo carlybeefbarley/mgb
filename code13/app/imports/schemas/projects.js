@@ -421,15 +421,23 @@ Meteor.methods({
     checkMgb.projectName(data.name)
     checkMgb.projectDescription(data.description)
     const username = Meteor.user().profile.name
-
+    
     // Note that this check will also run on the client, but could potentially fail to
     // find a conflict (since the client's subscription might not include all the user's
     // projects.. but that's ok since the check will run again on the server and that
     // will definitely have access to all records
+    if (Meteor.isServer)
+  {
+      const numProjectsOwnedByUser = Projects.find( { ownerId: this.userId } ).count()
+      if (numProjectsOwnedByUser >= _calcMaxOwnedProjectsAllowed(Meteor.user()))
+        throw new Meteor.Error(401, 'Max number of projects reached')
+    }
+    
     const existingProject = Projects.findOne( { ownerId: this.userId, name: data.name } )
     if (existingProject)
       throw new Meteor.Error(403, `Project ${username}:${data.name} already exists. Try again with a different name`)
 
+ 
     // Note: forkParentChain and forkChildren were added on 2/19/2017 so earlier
     // projects do not have them. For consistency, I have chose to NOT add
     // them at create-time even to new Projects created after this date.
@@ -480,7 +488,7 @@ Meteor.methods({
       throw new Meteor.Error(404, 'Project Id does not exist')
     if (existingProjectRecord.ownerId !== this.userId)
       throw new Meteor.Error(401, "You don't have permission to edit this")
-    if(existingProjectRecord.memberIds.length >= _calcMaxNumMembersAllowedInProject(Meteor.user()) )
+    if(data.memberIds.length > _calcMaxNumMembersAllowedInProject(Meteor.user()) )
       throw new Meteor.Error(401, "You have exceeded maximum number of members allowed")
 
     // 1. Create new Project record and store in Collection

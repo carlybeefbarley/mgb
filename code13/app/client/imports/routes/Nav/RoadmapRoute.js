@@ -8,8 +8,8 @@ const RenderRoadmap = () => (
   <div>
     <h2>Features planned for May 2017</h2>
     <ul>
-      <li>(<small>Nearly complete</small>) Self-service MGBv1 asset migration (tiles, actors, maps)</li>
-      <li>Direct Messages</li>
+      <li>(<small>Rolling out - request enablement via chat</small>) Self-service MGBv1 asset migration (tiles, actors, maps)</li>
+      <li>(postponed) Direct Messages - we decided to prioritize wall first, especially since project chat provides group or 1:1 private chat</li>
       <li>(done) Public Beta as of May 9th (yeah, we delayed it a week so we can do a soft ramp)</li>
     </ul>
     <p>See the <QLink to='/whatsnew'>What's new</QLink> page for the lists of recent changes</p>

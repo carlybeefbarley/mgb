@@ -4,6 +4,7 @@ import reactMixin from 'react-mixin'
 import Helmet from 'react-helmet'
 import moment from 'moment'
 
+import mgb1 from '/client/imports/helpers/mgb1'
 import UserProjects from '/client/imports/components/Users/UserProjects'
 import UserHistory from '/client/imports/components/Users/UserHistory'
 import UserProfileBadgeList from '/client/imports/components/Users/UserProfileBadgeList'
@@ -169,7 +170,7 @@ export default UserProfileRoute = React.createClass({
                 }
                 <Item.Meta>
                   <p>
-                    <b title="This is the user's name on the old MGBv1 system. There is currently no verification of this claim">
+                    <b title="This is the user's name on the prior flash-based MGBv1 system. ">
                       MGB1 name:
                     </b>&nbsp;
                   <InlineEdit
@@ -188,7 +189,7 @@ export default UserProfileRoute = React.createClass({
                         on='hover'
                         hoverable
                         positioning='bottom right'
-                        trigger={<span>...</span>}
+                        trigger={<img className="ui avatar image" src={mgb1.getUserAvatarUrl(mgb1name)} />}
                         mouseEnterDelay={500}
                         >
                         <Popup.Header>
@@ -197,12 +198,14 @@ export default UserProfileRoute = React.createClass({
                         <Popup.Content>
                           <div>Prior account in the legacy Flash-based 'MGB1' system from 2007:</div>
                           <br/>
-                          <a className="mini image"  href={`http://s3.amazonaws.com/apphost/MGB.html#user=${mgb1name};project=project1`} target="_blank">
+                          <a className="mini image"  href={mgb1.getEditPageUrl(mgb1name)} target="_blank">
                             <img  
-                              className="ui centered image" 
+                              className="ui centered image bordered" 
                               style={{ maxWidth: "64px", maxHeight: "64px" }}
-                              src={`https://s3.amazonaws.com/JGI_test1/${mgb1name}/project1/tile/avatar` } />
+                              src={mgb1.getUserAvatarUrl(mgb1name)} />
                           </a>
+                          <br/>
+                          <QLink to={`/u/${user.username}/projects/import/mgb1`}>MGBv1 Project Importer...</QLink>
                         </Popup.Content>
                       </Popup>
                     }

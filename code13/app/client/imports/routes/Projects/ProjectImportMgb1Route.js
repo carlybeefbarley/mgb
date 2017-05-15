@@ -2,8 +2,10 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Helmet from 'react-helmet'
 import { Button, Header, Icon, Input, List, Message, Segment } from 'semantic-ui-react'
+import QLink from '/client/imports/routes/QLink'
 import { showToast } from '/client/imports/routes/App'
 import { logActivity } from '/imports/schemas/activity'
+import mgb1 from '/client/imports/helpers/mgb1'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import validate from '/imports/schemas/validate'
 
@@ -144,34 +146,43 @@ class ProjectImportMgb1RouteUI extends React.Component {
         <Header as='h2' content='Import MGB1 Projects'/>
         <Segment raised>
           <ExplanationMessage />
-          <Header sub>MGB1 account status for @{username} in 'MGBv2'</Header>
-          <List bulleted>
-            <List.Item>
-              Self-claimed MGB1 name: <NameOrNone nameStr={profile.mgb1name} />
-            </List.Item>
-            <List.Item>
-              ADMIN-verified MGB1 names: <NameOrNone nameStr={profile.mgb1namesVerified} />
-            </List.Item>
-            { isSuperAdmin && 
+          <Segment>
+            <Header sub>MGB1 account status for @{username} in MGBv2</Header>
+            <List bulleted>
               <List.Item>
-                <List.Icon color='red' name='bomb'/>
-                <List.Content>
-                  <span data-tooltip='Comma-separated names, no spaces'>SuperAdmin EDIT of verified MGB1 names: </span>
-                  <InlineEdit
-                    validate={validate.mgb1names}
-                    activeClassName="editing"
-                    placeholder='(add names here)'
-                    text={profile.mgb1namesVerified || ''}
-                    paramName="profile.mgb1namesVerified"
-                    change={this.handleProfileFieldChanged}
-                    isDisabled={false}
-                    />
-                </List.Content>
+                Self-claimed MGB1 name: <NameOrNone nameStr={profile.mgb1name} /> 
+                { profile.mgb1name && 
+                  <img className="ui avatar image" src={mgb1.getUserAvatarUrl(profile.mgb1name)} /> 
+                }
               </List.Item>
-            }
+              <List.Item>
+                ADMIN-verified MGB1 names: <NameOrNone nameStr={profile.mgb1namesVerified} />
+                { profile.mgb1namesVerified && 
+                  <img className="ui avatar image" src={mgb1.getUserAvatarUrl(profile.mgb1namesVerified)} /> 
+                }
+              </List.Item>
+              { isSuperAdmin && 
+                <List.Item>
+                  <List.Icon color='red' name='bomb'/>
+                  <List.Content>
+                    <span data-tooltip='Comma-separated names, no spaces'>SuperAdmin EDIT of verified MGB1 names: </span>
+                    <InlineEdit
+                      validate={validate.mgb1names}
+                      activeClassName="editing"
+                      placeholder='(add names here)'
+                      text={profile.mgb1namesVerified || ''}
+                      paramName="profile.mgb1namesVerified"
+                      change={this.handleProfileFieldChanged}
+                      isDisabled={false}
+                      />
+                  </List.Content>
+                </List.Item>
+              }
+              </List>
+            </Segment>
             { ( profile.mgb1namesVerified && profile.mgb1namesVerified !== '' ) && 
               <Segment>
-                <Header sub>Projects for mgb1@{profile.mgb1namesVerified}:</Header>
+                <Header as='h3'>Projects owned by '{profile.mgb1namesVerified}' in MGBv1:</Header>
                 { loadingUserProjects && <p>Loading...</p> }
                 <List>
                   { _.map(mgb1Projects[profile.mgb1namesVerified], mgb1pName => (
@@ -179,8 +190,9 @@ class ProjectImportMgb1RouteUI extends React.Component {
                       <List.Content>
                         <Button 
                             compact 
+                            fluid
                             disabled={!canImport || importInProcess}
-                            content={`Import '${mgb1pName}'...`}
+                            content={`Import '${mgb1pName}' from MGB v1...`}
                             onClick={ () => this.setState( { 
                               confirmPendingForProjectName: (mgb1pName === confirmPendingForProjectName) ? null : mgb1pName,
                               assetPrefix: (prefixMemo[mgb1pName] || _defaultAssetPrefix(mgb1pName)),
@@ -222,7 +234,6 @@ class ProjectImportMgb1RouteUI extends React.Component {
                 </List>
               </Segment>
             }
-          </List>
         </Segment>
       </Segment>
     )
@@ -245,10 +256,10 @@ const ExplanationMessage = () => (
     <Message.Content>
       <Message.Header>At your service!</Message.Header>
       <p>
-        All projects currently hosted in our prior flash-based 'MGB1' system are going be imported into the new system soon..
+        Verified users can import their projects from their linked accounts in our prior flash-based 'MGBv1' system
       </p>
       <p>
-        Contact us in chat to request having your project imported immediately
+        Contact us using the <QLink query={{_fp: 'chat'}}><Icon name='chat' />chat panel</QLink> to request verification of your prior MGBv1 account name 
       </p>
     </Message.Content>
   </Message>
@@ -265,7 +276,7 @@ const RelatedMgb2projects = ( { user, userProjects, mgb1Username, mgb1Projectnam
   return (
     <div>
       { _.map(relatedProjects, p => (
-          <Segment key={p._id}>
+          <Segment key={p._id} attached>
             Imported as <QLink to={`/u/${p.ownerName}/projects/${p.name}`}>{p.name}</QLink>.   Progress: <small>{p.mgb1.importProgress}</small>
           </Segment>
       ))}

@@ -1,22 +1,47 @@
 MGB-MOBILE WINDOWS SETUP INSTRUCTIONS
 
+===================================================
+===================== INSTALL =====================
+===================================================
+- Install these in mgb\code13\misc\atools
 
------Install-----
-Install thes in mgb\code13\misc\atools
+JDK:     http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-windows-x64.exe (install to \jdk)
+ANT:     http://archive.apache.org/dist/ant/binaries/apache-ant-1.10.1-bin.zip (extract to \ant)
+ANDROID: http://dl.google.com/android/android-sdk_r24.0.2-windows.zip (extract to \android)
 
-JDK:       http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-windows-x64.exe (install to \jdk)
-ANT:       http://archive.apache.org/dist/ant/binaries/apache-ant-1.10.1-bin.zip (extract to \ant)
-ANDROID:   https://dl.google.com/android/repository/platform-tools-latest-windows.zip (extract to \android)
 
------Set Environment Variables & Path-----
-Run these commands as admin in cmd, replacing PATH_TO_MGB with the correct path for your system:
+===================================================
+===== INSTALL REQUIRED ANDROID TOOLS/PLATFORM =====
+===================================================
+- Go to mgb\code13\misc\atools\android and run `SDK Manager.exe`
+- It will automatically list packages to install/update. Expand Android 6.0 (API 23), check SDK Platform, and click "Install X packages..."
+- Go through the list and click Accept on every item EXCEPT Android TV Intel, all items starting with Google APIs, and Android SDK Preview License.
+- Click Install. If the button is disabled, you have accepted an item you should have rejected.
+
+====================================================
+========= SET ENVIRONMENT VARIABLES & PATH =========
+====================================================
+- Run these commands as admin in cmd, replacing PATH_TO_MGB with the correct path for your system:
 
 set PATH=%BASEPATH%
 set ANT_HOME=PATH_TO_MGB\code13\misc\atools\ant
 set JAVA_HOME=PATH_TO_MGB\code13\misc\atools\jdk
-set PATH=%PATH%;%ANT_HOME%\bin;%JAVA_HOME%\bin;PATH_TO_MGB\code13\misc\atools\android
+set PATH=%PATH%;%ANT_HOME%\bin;%JAVA_HOME%\bin;PATH_TO_MGB\code13\misc\atools\android\tools;PATH_TO_MGB\code13\misc\atools\android\platform-tools;PATH_TO_MGB\code13\misc\atools\android\build-tools;
 
-If ant or adb cannot be found, verify that the paths are correct and try restarting.
+- If ant or adb cannot be found, verify that the paths are correct and try restarting.
 
------ Running Android Script -----
-run `sh go-android.sh`
+
+=====================================================
+====== RUN & TROUBLESHOOT ANDROID BUILD SCRIPT ======
+=====================================================
+- Make sure your android device is connected to the machine via USB, with developer options ON, USB debugging ON, on the same WiFi network, and "Select USB Configuration" set to PTP. If PTP does not work, choose any other option that is NOT MTP.
+- Your android device should be listed under 
+    adb --device
+- If anything goes wrong, kill the current adb process before trying again.
+
+- run 
+    sh go-android.sh
+
+- If you get "Error: Cannot find module 'is-property'" (replace YOUR_USERNAME with the correct string):
+    1. cd C:\Users\YOUR_USERNAME\AppData\Local\.meteor\packages\meteor-tool\1.4.2_3\mt-os.windows.x86_32\dev_bundle\lib\node_modules\cordova-lib\node_modules\npm\node_modules\request\node_modules\har-validator\node_modules\is-my-json-valid
+    2. meteor npm install is-property

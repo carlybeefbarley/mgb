@@ -1,0 +1,20 @@
+MGB-MOBILE WINDOWS SETUP INSTRUCTIONS
+
+
+-----Install-----
+Install thes in mgb\code13\misc\atools
+
+JDK:       http://download.oracle.com/otn-pub/java/jdk/8u131-b11/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-windows-x64.exe (install to \jdk)
+ANT:       http://archive.apache.org/dist/ant/binaries/apache-ant-1.10.1-bin.zip (extract to \ant)
+ANDROID:   https://dl.google.com/android/repository/platform-tools-latest-windows.zip (extract to \android)
+CROSSWALK: https://download.01.org/crosswalk/releases/crosswalk/android/stable/11.40.277.7/crosswalk-11.40.277.7.zip
+
+
+-----Set Environment Variables & Path-----
+Run these commands as admin in cmd, replacing PATH_TO_MGB with the correct path for your system:
+
+set PATH=%BASEPATH%
+set ANT_HOME=PATH_TO_MGB\code13\misc\atools\ant
+set JAVA_HOME=PATH_TO_MGB\code13\misc\atools\jdk
+set PATH=%PATH%;%ANT_HOME%\bin;%JAVA_HOME%\bin;PATH_TO_MGB\code13\misc\atools\android
+

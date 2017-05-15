@@ -13,5 +13,12 @@ echo Bundler cache size is now `du -s -h .meteor/local/bundler-cache/`
 rm -rf .meteor/local/bundler-cache/
 # remove old app - meteor don't update this for some reason
 rm -rf .meteor/local/cordova-build/www/application/
-meteor run android-device -p 0.0.0.0:3000 $@
+
+# For Windows
+if [[ "$OSTYPE" == "msys" ]]; then
+  meteor.bat run android-device -p 0.0.0.0:3000 $@
+else
+  meteor run android-device -p 0.0.0.0:3000 $@
+fi
 )
+

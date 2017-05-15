@@ -32,7 +32,7 @@ export default UserItem = React.createClass({
   },
 
   render: function() {
-    const { user, narrowItem, renderAttached } = this.props
+    const { user, narrowItem, renderAttached, className } = this.props
     const { profile, createdAt, suIsBanned, isDeactivated } = user
     const { name, avatar, title } = profile
     const createdAtFmt = moment(createdAt).format('MMMM DD, YYYY')
@@ -46,6 +46,7 @@ export default UserItem = React.createClass({
     return (
       <Card
           raised={!renderAttached}
+          className={className}
           onClick={this.handleClickUser} >
         <Card.Content style={{textAlign: "center"}}>
           <img src={makeCDNLink(avatar, makeExpireTimestamp(SpecialGlobals.avatar.validFor)) || SpecialGlobals.defaultUserProfileImage} className={`ui centered image circular ${imageSize}`} />

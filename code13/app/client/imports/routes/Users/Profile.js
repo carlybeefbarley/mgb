@@ -14,6 +14,7 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import validate from '/imports/schemas/validate'
+import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 
 import { Projects } from '/imports/schemas'
 import { logActivity } from '/imports/schemas/activity'
@@ -118,7 +119,9 @@ export default UserProfileRoute = React.createClass({
           { false &&
             <ActivityHeatmap user={user} className="eight wide column" />
           }
-
+          { /* Users who currUser is projects with -owned and not owned use pubsub */ }
+          <UserColleaguesList user={user} projects={this.data.projects} />
+    
           { /* User Projects */ }
           <UserProjects user={user} width={16} projects={this.data.projects} />
 

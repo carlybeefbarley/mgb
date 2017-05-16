@@ -22,7 +22,7 @@ export default ExpressionDescription = ({typeDescription}) => {
         <i className="help icon"/>
       </a>
       <div className="ui header">
-        <span> <code>{name}</code> definition</span>
+        <span>Invoking <code>{name}</code></span>
       </div>
       { docToDisplay && <p style={{whiteSpace: 'pre-line'}}>{docToDisplay}</p> }
       { url && <p><a target='_blank' href={url}>

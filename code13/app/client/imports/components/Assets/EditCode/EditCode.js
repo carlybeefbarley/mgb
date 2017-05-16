@@ -50,7 +50,7 @@ import FunctionDescription from './tern/FunctionDescription.js'
 import ExpressionDescription from './tern/ExpressionDescription.js'
 import RefsAndDefDescription from './tern/RefsAndDefDescription.js'
 import TokenDescription from './tern/TokenDescription.js'
-import TypeDescription from './tern/TypeDescription.js'
+import InvokingDescription from './tern/InvokingDescription.js'
 import ImportHelperPanel from './tern/ImportHelperPanel.js'
 
 import DebugASTview from './tern/DebugASTview.js'
@@ -2660,7 +2660,7 @@ export default class EditCode extends React.Component {
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data}/>
                   }
                   {(!this.state.atCursorTypeRequestResponse.data || !this.state.atCursorTypeRequestResponse.data.exprName) &&
-                  <TypeDescription
+                  <InvokingDescription
                     typeDescription={this.state.atCursorTypeDescription}/>
                   }
 

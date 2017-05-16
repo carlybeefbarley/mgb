@@ -6,6 +6,7 @@ import { createContainer } from "meteor/react-meteor-data";
 import { Users } from "/imports/schemas";
 import UserItem from '/client/imports/components/Users/UserItem'
 import _ from 'lodash'
+import { userSorters } from '/imports/schemas/users'
 
 const _wrapStyle = { clear: 'both', flexWrap: 'wrap' }
 const _nowrapStyle = { clear: 'both', flexWrap: 'nowrap', overflowX: 'auto', overflowY: 'hidden', marginBottom: '1em' }
@@ -46,11 +47,14 @@ const UserColleaguesList = createContainer((props) => {
   })
   colleagueIds = _.without(colleagueIds, props.user._id)
   const selector = {_id: {"$in": colleagueIds}}
+  let findOpts = {
+    sort: userSorters["nameDescending"]
+  }
 
   const usersHandle = Meteor.subscribe("users.getByIdList", colleagueIds);
 
   return {
-    userList: Users.find(selector).fetch(),
+    userList: Users.find(selector, findOpts).fetch(),
     loading: !usersHandle.ready()
   };
 }, UserColleaguesListUI);

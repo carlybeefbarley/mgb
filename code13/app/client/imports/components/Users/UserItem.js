@@ -4,9 +4,10 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import Badge from '/client/imports/components/Controls/Badge/Badge'
 import { getAllBadgesForUser } from '/imports/schemas/badges'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
-import { Header, Label, Card } from 'semantic-ui-react'
+import { Header, Label, Card, Icon } from 'semantic-ui-react'
 import SpecialGlobals from '/imports/SpecialGlobals'
-
+import { makeChannelName} from '/imports/schemas/chats'
+import QLink from '/client/imports/routes/QLink'
 // These can be rendered as attached segments so the caller can easily place/attach buttons around it
 // See http://v2.mygamebuilder.com/assetEdit/2Bot4CwduQRfRWBi6 for an example
 export default UserItem = React.createClass({
@@ -40,7 +41,7 @@ export default UserItem = React.createClass({
     const titleSpan = <span><i className="quote left icon blue"></i>{title || "(no title)"}&nbsp;<i className="quote right icon blue"></i></span>
     const badgesForUser = getAllBadgesForUser(user)
     const getBadgeN = idx => (<Badge forceSize={32} name={idx < badgesForUser.length ? badgesForUser[idx] : "_blankBadge"} />)
-
+    const channelName = makeChannelName( { scopeGroupName: 'User', scopeId: this.props.user.username } )
     // TODO: Find how to add style={overflow: "hidden"} back to the div style of 'ui segment' without hitting the off-window-images-dont-get-rendered problem that seems unique to Chrome
     // avatar here comes directly from mgb server - as we need it to be up to date always (mgb server will still handle etag - if not changed)
     return (
@@ -64,7 +65,12 @@ export default UserItem = React.createClass({
           { isDeactivated &&
             <div><Label size='small' color='purple' content='Deactivated Account' /></div>
           }
-          <p><small style={{color:"rgb(0, 176, 224)"}}>Joined {createdAtFmt}</small></p>
+          <p>
+            <small style={{color:"rgb(0, 176, 224)"}}>Joined {createdAtFmt}</small>
+            <QLink query={{ _fp: `chat.${channelName}` }}  style={{marginBottom: '6px'}}>
+              <Icon name='chat' style={{marginLeft: "4px"}} />
+            </QLink>
+          </p>
         </Card.Content>
         <Card.Content extra style={{textAlign: "center"}}>
           {getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)}

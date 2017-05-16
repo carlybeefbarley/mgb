@@ -47,8 +47,8 @@ export const userSorters = {
   "default":         { createdAt: -1 },    // Should be same as one of the others..
   "createdNewest":   { createdAt: -1 }, 
   "createdOldest":   { createdAt: 1 }, 
-  "nameAscending":   { "profile.name": 1  }, 
-  "nameDescending":  { "profile.name": -1 }
+  "nameAscending":   { "profile.name": 1  },        // NOTE: MongoDB doesn't yet support case-insensitive name sorts. grrr
+  "nameDescending":  { "profile.name": -1 }         // NOTE: MongoDB doesn't yet support case-insensitive name sorts. grrr
 //"mgbRecentsDate":  { "profile.latestNewsTimestampSeen": -1 },   // This can't work until the date strings are replaced with Date() values in the DB
 }
 

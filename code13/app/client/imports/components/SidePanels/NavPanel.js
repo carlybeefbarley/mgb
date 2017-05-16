@@ -13,6 +13,7 @@ import { logActivity } from '/imports/schemas/activity'
 // Note that this uses Meteor's Accounts.loggingIn() so it doesn't flash the Login/Sigup during user login
 export const getNavPanels = (currUser, showAll) => {
   const uname = currUser ? currUser.username : null
+  const mgb1name = currUser ? (currUser.profile.mgb1name || null) : null
   const isLoggingIn = Meteor.loggingIn()
   const showGuestOptions = (!isLoggingIn && !currUser) || showAll
   const showUserOptions = (!isLoggingIn && !!currUser) || showAll
@@ -196,7 +197,7 @@ export const getNavPanels = (currUser, showAll) => {
         icon: { name: 'sitemap' },
         hdr: 'Projects',
         to: `/u/${uname}/projects`,
-        menu: [
+        menu: _.compact([
           showUserOptions && {
             subcomponent: 'Item',
             jrkey: 'listMy',
@@ -210,8 +211,15 @@ export const getNavPanels = (currUser, showAll) => {
             to: `/u/${uname}/projects/create`,
             icon: { name: 'sitemap', color: 'green' },
             content: 'Create New Project',
+          },
+          (showUserOptions && mgb1name && mgb1name !== '') && {
+            subcomponent: 'Item',
+            jrkey: 'importMgb1',
+            to: `/u/${uname}/projects/import/mgb1`,
+            icon: { name: 'sitemap', color: 'orange' },
+            content: 'Import MGBv1 Project',
           }
-        ]
+        ])
       },
       showGuestOptions && {
         name: 'login',

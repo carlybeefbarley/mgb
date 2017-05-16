@@ -14,6 +14,85 @@ const mgbReleaseInfo = {
   'releases': [
 
 
+
+    {
+      'timestamp': 'Mon May 15 2017 21:30 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4146'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'user.colleagues',
+          'type': 'feature',
+          'changeName': 'Colleagues list on Profile page',
+          'changeSummary': 'The user profile page now shows the list of users with whom they are working on projects',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'mgb1.import',
+          'type': 'feature',
+          'changeName': 'Self-service import of older "MGBv1" games',
+          'changeSummary': 'Adding your username from the prior "MGBv1" system to your Profile bio will enable a link to the self-service project import page (from the bio section, and from the main "Projects" menu).',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed bug that prevented some Actor assets being changed; Improved MGBv1 import UI; Link in User item card to user wall; activity notifications for user wall posts; ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Mon May 15 2017 13:30 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4133'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'project.quotas',
+          'type': 'feature',
+          'changeName': 'Project/Member quotas',
+          'changeSummary': 'Projects being lightweight tags, and project-membership changes being instant is a core part of the rapid-collaboration user experience design of this site. As a way to limit potential project-member spamming though, we have implemented an initial limit of 5 owned-projects per user and 5 project-members per project. We wanted to keep the current "instant" feel for project membership changes instead of creating a slower invite/accept system (which is also still open to spamming abuse of course). We will provide ways for raising these limits for established users when/if they become a problem',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'mgb1.import',
+          'type': 'feature',
+          'changeName': 'Self-service import of older "MGBv1" games',
+          'changeSummary': 'As some of you know, this site is a major re-write of a simpler flash-based site developed in 2007. The actors + actorMap system was ported directly from that old codebase so that we could import and edit/run the games developed there. We are rolling out the self-service importer now. Message us on chat to have your account enabled for importing games if you had an old MGBv1 account.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed some error messages that said "success"!',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+
     {
       'timestamp': 'Fri May 12 2017 23:45 GMT-0700 (PDT)',
 

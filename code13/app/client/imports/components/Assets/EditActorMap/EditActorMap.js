@@ -223,6 +223,7 @@ export default class EditActorMap extends EditMap {
   }
 
   render () {
+
     if(this.state.errors && this.state.errors.length > 0)
       return <ActorMapErrorResolver errors={this.state.errors} content2={this.props.asset.content2} callback={(c2) => {
         ActorHelper.cleanUp()

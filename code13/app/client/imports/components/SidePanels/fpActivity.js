@@ -5,7 +5,7 @@ import QLink from '/client/imports/routes/QLink'
 import { ActivityTypes, deleteActivityRecord } from '/imports/schemas/activity.js'
 
 import { AssetKinds } from '/imports/schemas/assets'
-import { ChatChannels, makePresentedChannelName } from '/imports/schemas/chats'
+import { ChatChannels, makePresentedChannelName, parseChannelName, } from '/imports/schemas/chats'
 import { isSameUserId } from '/imports/schemas/users'
 
 import moment from 'moment'
@@ -37,8 +37,9 @@ const ActivityExtraDetail = ( { act} ) => {
   // CHAT (handle new toChatChannelName that was after 2/16/2016)
   if (_.isString(act.toChatChannelName) && act.toChatChannelName.length > 0) {
     const chName = act.toChatChannelName
+    const channelObj = parseChannelName( chName )
     // Currently, only global messsages are sent on the public channels and they are super-easy to get a friendly name for:
-    const friendlyName = makePresentedChannelName(chName)
+    const friendlyName = makePresentedChannelName(chName, channelObj.scopeId)
     return (
       <Feed.Extra text>
         <Icon name='chat' />

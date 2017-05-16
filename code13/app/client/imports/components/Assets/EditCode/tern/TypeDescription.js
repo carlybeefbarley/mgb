@@ -3,13 +3,15 @@ import React from 'react';
 /**
  * Works as fallback mechanism in a case when ExpressionDescription fails to retrieve info
  * main purpose is to show info about arrays in format '[]'
+ * @param typeDescription.name - name of the token type (e.g. Array / Object)
+ *        typeDescription.def - related definitions as defined in the def files (e.g. public/lib/tern/defs/ecma5.json#Array)
  */
 export default ExpressionDescription = ({typeDescription}) => {
-
-  const name = typeDescription.name
-  if (!typeDescription.def) {
+  if (!typeDescription || !typeDescription.def) {
     return null
   }
+
+  const name = typeDescription.name
   const docToDisplay = typeDescription.def['!doc']
   const url = typeDescription.def['!url']
 

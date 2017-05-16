@@ -261,6 +261,9 @@ const ExplanationMessage = () => (
       <p>
         Contact us using the <QLink query={{_fp: 'chat'}}><Icon name='chat' />chat panel</QLink> to request verification of your prior MGBv1 account name 
       </p>
+      <p>
+        NOTE: To appear on the games list, and to have a proper play experience, you will need to create a gameConfig asset that lists the start map
+      </p>
     </Message.Content>
   </Message>
 )

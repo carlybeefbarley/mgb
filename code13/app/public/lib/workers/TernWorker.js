@@ -47,6 +47,16 @@ this.onmessage = function(e) {
       return postMessage({type: "flower", data: flowerBuilder.genTree(data, server)})
     case "getComments":
       return getComments(data)
+
+    case "getDef":
+      var foundDef = null
+      for(var i=0; i<server.defs.length; i++){
+        foundDef = server.defs[i][data.def]
+        if(foundDef)
+          break
+      }
+      return postMessage({type: 'getDef', data: foundDef})
+
     default: throw new Error("Unknown message type: " + data.type);
   }
 };

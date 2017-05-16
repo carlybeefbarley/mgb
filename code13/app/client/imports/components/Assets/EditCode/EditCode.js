@@ -50,6 +50,7 @@ import FunctionDescription from './tern/FunctionDescription.js'
 import ExpressionDescription from './tern/ExpressionDescription.js'
 import RefsAndDefDescription from './tern/RefsAndDefDescription.js'
 import TokenDescription from './tern/TokenDescription.js'
+import TypeDescription from './tern/TypeDescription.js'
 import ImportHelperPanel from './tern/ImportHelperPanel.js'
 
 import DebugASTview from './tern/DebugASTview.js'
@@ -424,12 +425,14 @@ export default class EditCode extends React.Component {
     this.ternServer.server.delFile = (name) => {
       this.ternServer && this.ternServer.worker.postMessage({type: "del", name})
     }
+
+    // TODO: next 3 tern server extensions follows same pattern .. clean up: listen -> filter -> cleanup
     this.ternServer.server.getAstFlowerTree = (options, callback, filename = this.props.asset.name) => {
       if (!options.filename) {
         options.filename = filename
       }
       const getAstFlowerTree = (e) => {
-        if (e.data.type != "flower")
+        if (e.data.type !== "flower")
           return
         this.ternServer.worker.removeEventListener("message", getAstFlowerTree)
         callback(e.data.data)
@@ -444,7 +447,7 @@ export default class EditCode extends React.Component {
 
     this.ternServer.server.getComments = (callback, filename = this.props.asset.name) => {
       const cb = (e) => {
-        if (e.data.type != "getComments")
+        if (e.data.type !== "getComments")
           return
         this.ternServer.worker.removeEventListener("message", cb)
         callback(e.data.data)
@@ -454,6 +457,21 @@ export default class EditCode extends React.Component {
         type: "getComments",
         filename: filename
       })
+    }
+
+    this.ternServer.server.getDef = (def, callback) => {
+      const cb = (e) => {
+        if (e.data.type !== "getDef")
+          return
+        this.ternServer.worker.removeEventListener("message", cb)
+        callback(e.data.data)
+      }
+      this.ternServer.worker.addEventListener("message", cb)
+      this.ternServer.worker.postMessage({
+        type: "getDef",
+        def
+      })
+
     }
 
     this.tools = new SourceTools(this.ternServer, this.props.asset)
@@ -1336,6 +1354,25 @@ export default class EditCode extends React.Component {
     return this.getCommentAt(index)
   }
 
+  /**
+   * gets Type Description from tern tern server definitions
+   *
+   * @return Promise.<{atCursorTypeDescription: {}}>
+   */
+  getTypeDescription(atCursorTypeRequestResponse){
+    return new Promise(resolve => {
+      if(!atCursorTypeRequestResponse || !atCursorTypeRequestResponse.data || !atCursorTypeRequestResponse.data.name){
+        resolve({atCursorTypeDescription: null})
+      }
+      let type = atCursorTypeRequestResponse.data.name
+      type = type === 'o' ? 'Object' : type
+      // tern uses 'o' for  ... = {}
+      this.ternServer.server.getDef(type, (data) => {
+        resolve({atCursorTypeDescription: {def: data, name: type}})
+      })
+    })
+  }
+
   // srcUpdate_getProperties()
   // {
   /// This doesn't seem super useful. It's just an array of completion strings, no extra data
@@ -1455,6 +1492,10 @@ export default class EditCode extends React.Component {
         .then((state) => {
           Object.assign(newState, state)
           return this.srcUpdate_GetDef()
+        })
+        .then(state => {
+          Object.assign(newState, state)
+          return this.getTypeDescription(newState.atCursorTypeRequestResponse)
         })
         .then((state) => {
           Object.assign(newState, state)
@@ -2613,8 +2654,15 @@ export default class EditCode extends React.Component {
                     functionTypeInfo={this.state.functionTypeInfo}
                     helpDocJsonMethodInfo={this.state.helpDocJsonMethodInfo}/>
 
+
+                  {this.state.atCursorTypeRequestResponse.data && this.state.atCursorTypeRequestResponse.data.exprName &&
                   <ExpressionDescription
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data}/>
+                  }
+                  {(!this.state.atCursorTypeRequestResponse.data || !this.state.atCursorTypeRequestResponse.data.exprName) &&
+                  <TypeDescription
+                    typeDescription={this.state.atCursorTypeDescription}/>
+                  }
 
                   <RefsAndDefDescription
                     refsInfo={this.state.atCursorRefRequestResponse.data}

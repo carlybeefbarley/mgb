@@ -238,7 +238,7 @@ export default class GameScreen extends React.Component {
     if(isPopup && isPlaying){
       wrapStyle.width = window.innerHeight * SpecialGlobals.editCode.popup.maxWidth
       wrapStyle.overflow = 'initial'
-      wrapStyle.position = 'absolute' // or fixed 
+      wrapStyle.position = 'absolute' // or fixed
     }
     if(isMinimized){
       wrapStyle.bottom = '0'

@@ -16,6 +16,44 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Mon May 15 2017 21:30 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4146'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'user.colleagues',
+          'type': 'feature',
+          'changeName': 'Colleagues list on Profile page',
+          'changeSummary': 'The user profile page now shows the list of users with whom they are working on projects',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'mgb1.import',
+          'type': 'feature',
+          'changeName': 'Self-service import of older "MGBv1" games',
+          'changeSummary': 'Adding your username from the prior "MGBv1" system to your Profile bio will enable a link to the self-service project import page (from the bio section, and from the main "Projects" menu).',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed bug that prevented some Actor assets being changed; Improved MGBv1 import UI; Link in User item card to user wall; activity notifications for user wall posts; ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Mon May 15 2017 13:30 GMT-0700 (PDT)',
 
       'id': {

@@ -1,5 +1,5 @@
 "use strict"
-var update = require('react-addons-update')
+const update = require('react-addons-update')
 
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
@@ -22,6 +22,8 @@ import CodeStarter from './CodeStarter'
 import CodeChallenges from './CodeChallenges'
 import CodeTutorials from './CodeTutorials'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
+import { AssetKindEnum } from '/imports/schemas/assets'
+
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
@@ -821,16 +823,29 @@ export default class EditCode extends React.Component {
       {
         switch (draggedAsset.kind) {
         case 'graphic':
-          url = `/api/asset/png/${draggedAsset._id}`
+          url = `/api/asset/png/${draggedAsset.dn_ownerName}/${draggedAsset.name}`
           code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.image( '${draggedAsset.name}', '${url}' )`
           break
         case 'map':
-          url = `/api/asset/map/${draggedAsset._id}`
-          code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.tilemap( '${draggedAsset.name}', '${url}' )`
-          break
+          event.preventDefault()
+
+
+          let loadMap = `// place this command in the preload block`+ '\n' +
+              `game.load.mgbMap( '${draggedAsset.name}', '/${draggedAsset.dn_ownerName}/${draggedAsset.name}' )`+
+              '\n\n' +
+              `//use this command to create a map` + '\n' +
+              `const map = game.create.mgbMap('${draggedAsset.name}')`
+
+          this.codeMirror.replaceSelection( '\n' + loadMap + '\n')
+
+          const val = this.codeMirror.getValue()
+          if(val.indexOf('mgb-map-loader-extended') === -1){
+            this.codeMirror.setValue(`import '/!vault/mgb-map-loader-extended'` + '\n' + val)
+          }
+          return
         case 'sound':
         case 'music':
-          url = `/api/asset/${draggedAsset.kind}/${draggedAsset._id}/${draggedAsset.kind}.mp3`
+          url = `/api/asset/${draggedAsset.kind}/${draggedAsset.dn_ownerName}/${draggedAsset.name}/${draggedAsset.kind}.mp3`
           code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.audio( '${draggedAsset.name}', '${url}' )`
           break
         case 'code':
@@ -2384,11 +2399,25 @@ export default class EditCode extends React.Component {
     this.codeMirror.scrollTo(null, t - middleHeight - 5)
   }
 
+
+  getKind(maybeKind){
+    if(AssetKindEnum[maybeKind])
+      return maybeKind
+
+    switch(maybeKind){
+      case 'png':
+        return 'graphic'
+    }
+
+    return null
+  }
+  // this is almost same as: _getMgbAssetIdsInLine
+  // leave only one.. or merge both functions into one
   getStringReferences(){
     const token = this.state.currentToken
     const advices = []
     // TODO.. something useful with token.state?
-    if(token && token.type == 'string' && this.state.userScripts && this.state.userScripts.length > 0){
+    if(token && token.type === 'string' && this.state.userScripts && this.state.userScripts.length > 0){
       let string = token.string.substring(1, token.string.length -1)
       if(string.startsWith('/') && !string.startsWith('//')){
         string = string.substring(1)
@@ -2396,13 +2425,33 @@ export default class EditCode extends React.Component {
         if(parts.length === 1){
           parts.unshift(this.props.asset.dn_ownerName)
         }
-        advices.push(
-          <a className="ui fluid label" key={advices.length} style={{marginBottom: "2px"}} href={`/assetEdit/code/${parts.join('/')}`} target='_blank'>
-            <small style={{fontSize: '85%'}}>this string references <strong>{parts[0]}</strong> code asset:
-              <code>{parts[1]}</code></small>
-            <Thumbnail assetId={parts.join('/')} expires={60} constrainHeight='60px'/>
-          </a>
-        )
+        if(string.startsWith('api/asset/')){
+          const strParts = string.split('/')
+          const kind = this.getKind(strParts[2] || 'code')
+          if(!kind){
+            console.log("Unknow kind", strParts[2])
+            return
+          }
+          const url = strParts.slice(3, strParts.length).join('/')
+          advices.push(
+            <a className="ui fluid label" key={advices.length} style={{marginBottom: "2px"}}
+               href={`/assetEdit/${kind}/${url}`} target='_blank'>
+              <small style={{fontSize: '85%'}}>this string references <strong>{kind}</strong> asset:
+                <code>{parts[1]}</code></small>
+              <Thumbnail assetId={parts.join('/')} expires={60} constrainHeight='60px'/>
+            </a>
+          )
+        }
+        else {
+          advices.push(
+            <a className="ui fluid label" key={advices.length} style={{marginBottom: "2px"}}
+               href={`/assetEdit/code/${parts.join('/')}`} target='_blank'>
+              <small style={{fontSize: '85%'}}>this string references <strong>{parts[0]}</strong> code asset:
+                <code>{parts[1]}</code></small>
+              <Thumbnail assetId={parts.join('/')} expires={60} constrainHeight='60px'/>
+            </a>
+          )
+        }
       }
     }
     return advices

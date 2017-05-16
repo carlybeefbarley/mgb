@@ -489,7 +489,7 @@ Meteor.methods({
     if (existingProjectRecord.ownerId !== this.userId)
       throw new Meteor.Error(401, "You don't have permission to edit this")
     if(data.memberIds && data.memberIds.length > _calcMaxNumMembersAllowedInProject(Meteor.user()) )
-      throw new Meteor.Error(401, "You have exceeded maximum number of members allowed")
+      throw new Meteor.Error(401, "You have exceeded the maximum number of members allowed")
 
     // 1. Create new Project record and store in Collection
     const now = new Date()

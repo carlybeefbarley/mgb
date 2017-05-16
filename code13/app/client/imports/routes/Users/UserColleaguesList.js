@@ -47,14 +47,10 @@ const UserColleaguesList = createContainer((props) => {
   })
   colleagueIds = _.without(colleagueIds, props.user._id)
   const selector = {_id: {"$in": colleagueIds}}
-  let findOpts = {
-    sort: userSorters["nameDescending"]
-  }
-
-  const usersHandle = Meteor.subscribe("users.getByIdList", colleagueIds);
+  const usersHandle = Meteor.subscribe("users.getByIdList", colleagueIds)
 
   return {
-    userList: Users.find(selector, findOpts).fetch(),
+    userList: _.sortBy(Users.find(selector).fetch(), u => _.toLower(u.username)),
     loading: !usersHandle.ready()
   };
 }, UserColleaguesListUI);

@@ -59,6 +59,11 @@ Meteor.methods({
       return new Meteor.Error(404, `Source Project '${sourceProject.ownerName}:${opts.sourceProjectName}' contains no Assets. Cannot fork empty project`)
 
 
+    // Initial validations seem ok. So 'unblock' to allow other Meteor.call() requests for this client 
+    // since it may take a while.. Otherwise other functions like chat will be disabled during the fork work
+    this.unblock()
+
+
     // TODO: loop through these assets and confirm that they can be renamed (length etc)
     //       and still be valid.   See { newAssetName: ___} stuff below for the code to use/change
 

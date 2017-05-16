@@ -44,6 +44,7 @@ const UserColleaguesList = createContainer((props) => {
   _.forEach(props.projects, project => {
     colleagueIds = _.union(colleagueIds, project.memberIds, [project.ownerId])
   })
+  colleagueIds = _.without(colleagueIds, props.user._id)
   const selector = {_id: {"$in": colleagueIds}}
 
   const usersHandle = Meteor.subscribe("users.getByIdList", colleagueIds);

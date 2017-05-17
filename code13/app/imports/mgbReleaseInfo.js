@@ -13,7 +13,29 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+    {
+      'timestamp': 'Tue May 16 2017 19:30 GMT-0700 (PDT)',
 
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4158'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed some iPad/iOS touch issues with menus (the toolbutton ones are next); fixed some more codeEditor bugs; Fixed bug preventing chat working during project fork ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
     {
       'timestamp': 'Mon May 15 2017 21:30 GMT-0700 (PDT)',

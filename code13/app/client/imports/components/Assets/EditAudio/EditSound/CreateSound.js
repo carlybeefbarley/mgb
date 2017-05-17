@@ -115,8 +115,11 @@ export default class CreateSound extends React.Component {
 		let effectButtons = _.map(effects, (effect) => {
       return (
       	<div id={"mgbjr-editSound-createSound-button-"+effect} key={"effect_"+effect}>
-	      	<button className="ui fluid button small" onClick={this.gen.bind(this, effect)}>
-					  {effect}
+	      	<button 
+						className="ui fluid button small" 
+						onTouchEnd={this.gen.bind(this, effect)}
+						onMouseUp={this.gen.bind(this, effect)}>
+							{effect}
 					</button>
 				</div>
       );
@@ -185,14 +188,27 @@ export default class CreateSound extends React.Component {
 					</div>
 					
 					<div style={{float: "left", width: "30%"}}>
-						<button className="ui icon button massive" title="Play" onClick={this.regenerateSound.bind(this)}>
-						  <i className="play icon"></i>
+						<button 
+							className="ui icon button massive" 
+							title="Play" 
+							onTouchEnd={this.regenerateSound.bind(this)}
+							onMouseUp={this.regenerateSound.bind(this)}>
+						  	<i className="play icon"></i>
 						</button>
-						<button id="mgbjr-editSound-createSound-save" className="ui icon button massive" title="Save sound" onClick={this.saveSound.bind(this)}>
-						  <i className="save icon"></i>
+						<button 
+							id="mgbjr-editSound-createSound-save" 
+							className="ui icon button massive" 
+							title="Save sound"
+							onTouchEnd={this.saveSound.bind(this)}
+							onMouseUp={this.saveSound.bind(this)}>
+						  	<i className="save icon"></i>
 						</button>
-						<button className="ui icon button massive" title="Reset sliders" onClick={this.resetSliders.bind(this)}>
-						  <i className="erase icon"></i>
+						<button 
+							className="ui icon button massive" 
+							title="Reset sliders" 
+							onTouchEnd={this.resetSliders.bind(this)}
+							onMouseUp={this.resetSliders.bind(this)}>
+						  	<i className="erase icon"></i>
 						</button>
 						<div>&nbsp;</div>
 						<div className="ui form">
@@ -204,9 +220,14 @@ export default class CreateSound extends React.Component {
 
 						<div>
 							<div><b>Volume</b></div>
-		    			<input id="sound_vol" type="range" value={this.PARAMS.sound_vol*1000} min="0" max="1000" 
-		    			onChange={this.changeParam.bind(this, "sound_vol")} 
-		    			onMouseUp={this.regenerateSound.bind(this)}
+		    			<input 
+								id="sound_vol" 
+								type="range" 
+								value={this.PARAMS.sound_vol*1000} 
+								min="0" 
+								max="1000" 
+		    				onChange={this.changeParam.bind(this, "sound_vol")} 
+		    				onMouseUp={this.regenerateSound.bind(this)}
 		    			/>
 		    		</div>
 

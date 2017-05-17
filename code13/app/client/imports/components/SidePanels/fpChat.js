@@ -363,7 +363,7 @@ export default fpChat = React.createClass( {
 
   doSendMessage: function() {
     const { messageValue } = this.state
-    const username = this.props.user.username
+    const username = this.props.currUser.username
     if (!messageValue || messageValue.length < 1)
       return
     const channelName = this._calculateActiveChannelName()

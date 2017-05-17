@@ -14,12 +14,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Tue May 16 2017 19:30 GMT-0700 (PDT)',
+      'timestamp': 'Tue May 16 2017 21:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.2.0',
         'state': 'Beta',
-        'iteration': '4158'
+        'iteration': '4161'
       },
 
       'releaseManagement': {
@@ -27,6 +27,13 @@ const mgbReleaseInfo = {
       },
 
       'changes': [
+        {
+          'featureTag': 'mgb1.import',
+          'type': 'feature',
+          'changeName': 'Self-service import of older "MGBv1" games from multiple accounts',
+          'changeSummary': 'Adding your comma-separated usernames from the prior "MGBv1" system to your Profile bio will enable a link to the self-service project import page (from the bio section, and from the main "Projects" menu). Then, if thre is admin approval (for now) you can import your projects!',
+          'otherUrls': [ ]
+        },
         {
           'featureTag': 'bugfix',
           'type': 'bugfix',

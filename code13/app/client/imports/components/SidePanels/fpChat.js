@@ -514,7 +514,7 @@ export default fpChat = React.createClass( {
     const wallChannelName = currUser ? makeChannelName( { scopeGroupName: 'User', scopeId: currUser.username } ) : null
 
     // My Wall
-    const myWall = ( !currUser ? null : 
+    const myWall = ( !currUser ? null :
       <List selection>
         <List.Item>
           <List.Header disabled style={{ textAlign: 'center' }}>My Wall</List.Header>
@@ -597,7 +597,7 @@ export default fpChat = React.createClass( {
             const isOwner = (currUser && project.ownerId === currUser._id)
             const channelName = makeChannelName( { scopeGroupName: 'Project', scopeId: project._id } )
             return (
-              <List.Item key={project._id}>
+              <List.Item key={project._id} onClick={() => this.handleChatChannelChange( channelName )}>
                 <Icon
                   title={`Navigate to ${isOwner ? 'your' : 'their'} project`}
                   as={QLink}
@@ -607,7 +607,7 @@ export default fpChat = React.createClass( {
                   color={isOwner ? 'green' : 'blue' }
                   onClick={e => e.nativeEvent.stopImmediatePropagation()}
                 />
-                <List.Content onClick={() => this.handleChatChannelChange( channelName )} title='Select Channel'>
+                <List.Content title='Select Channel'>
                   { !isOwner && project.ownerName + ' : ' }
                   { project.name }
                   {this.renderUnreadChannelIndicator( channelName, chatChannelTimestamps )}
@@ -785,7 +785,7 @@ export default fpChat = React.createClass( {
 
     if (channelObj.scopeGroupName === 'User'){
       return `User "${channelObj.scopeId}"`}
-    
+
     console.error( `findObjectNameForChannelName() has a ScopeGroupName (${channelObj.scopeGroupName}) that is not in user context. #investigate#` )
     return 'TODO'
   },
@@ -858,7 +858,7 @@ export default fpChat = React.createClass( {
                   { channelObj.scopeGroupName === 'User' &&
                       <span>User Wall for <QLink to={`/u/${channelObj.scopeId}`} >@{channelObj.scopeId}</QLink></span>
                   }
-                  
+
                 </div>
               </Popup.Content>
             </Popup>

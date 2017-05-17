@@ -49,11 +49,15 @@ Meteor.methods({
     // Param validations - these must throw Meteor.Error() on failures
     _checkAllParams(importParams, thisUser)
 
+    
     // Check mgb1 project exists
     let s3 = new AWS.S3({region: aws_s3_region, maxRetries: 3})
     const projectNames = _getS3ProjectNames(s3, importParams.mgb1Username)
     if (!_.includes(projectNames, importParams.mgb1Projectname))
       throw new Meteor.Error(404, `MGB1 project ${importParams.mgb1Username}/${importParams.mgb1Projectname} Not found`)
+
+    // TODO: Check that project is in a validated MGB1 account for this users
+    // TODO: basically confirm that _.includes(_.split(Meteor.user().profile.mgb1namesVerified), importParams.mgb1Projectname)
 
     // Attempt to create MGB2 project
     const newProjData = {

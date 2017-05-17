@@ -144,6 +144,7 @@ export default UserProfileRoute = React.createClass({
     const editsDisabled = !ownsProfile || user.suIsBanned
     const channelName = makeChannelName( { scopeGroupName: 'User', scopeId: this.props.params.username } )
 
+    const firstMgb1name = (mgb1name && mgb1name.length>0 ) ? mgb1name.split(',')[0] : null
     return (
       <Grid.Column width={width} id="mgbjr-profile-bioDiv">
         <Segment>
@@ -189,7 +190,7 @@ export default UserProfileRoute = React.createClass({
                         on='hover'
                         hoverable
                         positioning='bottom right'
-                        trigger={<img className="ui avatar image" src={mgb1.getUserAvatarUrl(mgb1name)} />}
+                        trigger={<img className="ui avatar image" src={mgb1.getUserAvatarUrl(firstMgb1name)} />}
                         mouseEnterDelay={500}
                         >
                         <Popup.Header>
@@ -198,11 +199,11 @@ export default UserProfileRoute = React.createClass({
                         <Popup.Content>
                           <div>Prior account in the legacy Flash-based 'MGB1' system from 2007:</div>
                           <br/>
-                          <a className="mini image"  href={mgb1.getEditPageUrl(mgb1name)} target="_blank">
+                          <a className="mini image"  href={mgb1.getEditPageUrl(firstMgb1name)} target="_blank">
                             <img  
                               className="ui centered image bordered" 
                               style={{ maxWidth: "64px", maxHeight: "64px" }}
-                              src={mgb1.getUserAvatarUrl(mgb1name)} />
+                              src={mgb1.getUserAvatarUrl(firstMgb1name)} />
                           </a>
                           <br/>
                           <QLink to={`/u/${user.username}/projects/import/mgb1`}>MGBv1 Project Importer...</QLink>

@@ -22,6 +22,9 @@ const mgb2projNameMemo = {}
 const _defaultAssetPrefix = pName => (_.toLower(pName.slice(0, 5)) + '.')
 const _defaultMgb2ProjectName = pName => (pName)
 
+// CSS smell
+const _6pxSpcSty = { margin: '6px' }
+
 //
 // The 'Import MGB1 project' UI code
 //
@@ -40,13 +43,13 @@ class ProjectImportMgb1RouteUI extends React.Component {
 
   state = {
     mgb1Projects:                 {},          //  e.g. [ { 'foo': ['mechanics demos'] } ]
-    confirmPendingForProjectName: null,        // String with MGB1 projectName to expand to show Import choices, or null to expand none of them
+    confirmPendingForProjectName: null,        // String with MGB1 username@@projectName to expand to show Import choices, or null to expand none of them
     importInProcess:              false, 
     assetPrefix:                  'proj.',
     mgb2NewProjectName:           ''
   }
 
-  refreshProjectList = () => {
+  refreshMgb1ProjectNamesList = () => {
     const { user } = this.props
     const { profile } = user
     const { mgb1namesVerified } = profile
@@ -54,25 +57,27 @@ class ProjectImportMgb1RouteUI extends React.Component {
     if (!mgb1namesVerified || mgb1namesVerified === '')
       return 
 
-    Meteor.call( 'mgb1.getProjectNames', mgb1namesVerified, (err, result) => {
-      if (err) 
-        console.error('mgb1.getProjectNames failed: ', err.reason)
-      else
-      {
-        const newPList = _.clone( this.state.mgb1Projects )
-        newPList[mgb1namesVerified] = _.sortBy(result.projectNames, _.toLower)
-        this.setState( { mgb1Projects: newPList } )
-      }
+    _.each(mgb1namesVerified.split(','), mgb1vname => {
+      Meteor.call( 'mgb1.getProjectNames', mgb1vname, (err, result) => {
+        if (err) 
+          console.error(`mgb1.getProjectNames(${mgb1vname}) failed: `, err.reason)
+        else
+        {
+          const newPList = _.clone( this.state.mgb1Projects )
+          newPList[mgb1vname] = _.sortBy(result.projectNames, _.toLower)
+          this.setState( { mgb1Projects: newPList } )
+        }
+      })
     })
   }
 
   componentDidMount() {
-    this.refreshProjectList()
+    this.refreshMgb1ProjectNamesList()
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.user && this.props.user.profile.mgb1namesVerified !== prevProps.user.profile.mgb1namesVerified)
-      this.refreshProjectList()    
+      this.refreshMgb1ProjectNamesList()    
   }
   
   // Used to maintain state.assetPrefix
@@ -136,7 +141,12 @@ class ProjectImportMgb1RouteUI extends React.Component {
     const { profile, username } = user
     const { mgb1Projects, importInProcess, confirmPendingForProjectName } = this.state
     const canImport = ownsProfile    // TODO.. maybe add stuff like Projects Quota limit etc
-    
+
+    // Verified names
+    const mgb1vnamesArray = (profile.mgb1namesVerified && profile.mgb1namesVerified.length > 0) ? profile.mgb1namesVerified.split(',') : null
+    // Self-claimed names
+    const mgb1cnamesArray = (profile.mgb1name && profile.mgb1name.length > 0) ? profile.mgb1name.split(',') : null
+
     return (
       <Segment basic>
         <Helmet
@@ -148,91 +158,91 @@ class ProjectImportMgb1RouteUI extends React.Component {
           <ExplanationMessage />
           <Segment>
             <Header sub>MGB1 account status for @{username} in MGBv2</Header>
-            <List bulleted>
+            <List>
               <List.Item>
-                Self-claimed MGB1 name: <NameOrNone nameStr={profile.mgb1name} /> 
-                { profile.mgb1name && 
-                  <img className="ui avatar image" src={mgb1.getUserAvatarUrl(profile.mgb1name)} /> 
-                }
+                Self-claimed MGB1 names: 
+                <MgbUserNames names={mgb1cnamesArray} validationNamesList={mgb1vnamesArray}/>
               </List.Item>
               <List.Item>
-                ADMIN-verified MGB1 names: <NameOrNone nameStr={profile.mgb1namesVerified} />
-                { profile.mgb1namesVerified && 
-                  <img className="ui avatar image" src={mgb1.getUserAvatarUrl(profile.mgb1namesVerified)} /> 
-                }
+                ADMIN-verified ( ask using <ChatPanelRef/> ) MGB1 names:
+                <MgbUserNames names={mgb1vnamesArray} validationNamesList={mgb1cnamesArray}/>
               </List.Item>
-              { isSuperAdmin && 
-                <List.Item>
-                  <List.Icon color='red' name='bomb'/>
-                  <List.Content>
-                    <span data-tooltip='Comma-separated names, no spaces'>SuperAdmin EDIT of verified MGB1 names: </span>
-                    <InlineEdit
-                      validate={validate.mgb1names}
-                      activeClassName="editing"
-                      placeholder='(add names here)'
-                      text={profile.mgb1namesVerified || ''}
-                      paramName="profile.mgb1namesVerified"
-                      change={this.handleProfileFieldChanged}
-                      isDisabled={false}
-                      />
-                  </List.Content>
-                </List.Item>
-              }
-              </List>
-            </Segment>
-            { ( profile.mgb1namesVerified && profile.mgb1namesVerified !== '' ) && 
-              <Segment>
-                <Header as='h3'>Projects owned by '{profile.mgb1namesVerified}' in MGBv1:</Header>
-                { loadingUserProjects && <p>Loading...</p> }
-                <List>
-                  { _.map(mgb1Projects[profile.mgb1namesVerified], mgb1pName => (
-                    <List.Item key={mgb1pName}>
-                      <List.Content>
-                        <Button 
-                            compact 
-                            fluid
-                            disabled={!canImport || importInProcess}
-                            content={`Import '${mgb1pName}' from MGB v1...`}
-                            onClick={ () => this.setState( { 
-                              confirmPendingForProjectName: (mgb1pName === confirmPendingForProjectName) ? null : mgb1pName,
-                              assetPrefix: (prefixMemo[mgb1pName] || _defaultAssetPrefix(mgb1pName)),
-                              mgb2NewProjectName: (mgb2projNameMemo[mgb1pName] || _defaultMgb2ProjectName(mgb1pName))
-                            } ) }
-                            />
-                        <RelatedMgb2projects mgb1Username={profile.mgb1namesVerified} mgb1Projectname={mgb1pName} user={user} userProjects={userProjects} />
-                        { confirmPendingForProjectName === mgb1pName && 
-                          <div style={{padding: '8px'}}>
-                            <span>Asset Prefix: </span>
-                            <Input 
-                                disabled={!canImport || importInProcess}
-                                placeholder='asset prefix'
-                                value={ this.state.assetPrefix }
-                                onChange={ this._onAssetPrefixChange }
-                                /> 
-                            &emsp;
+            </List>
+            { isSuperAdmin && (
+                <Segment raised color='red'>
+                  <Icon color='red' name='bomb'/>
+                  <span data-tooltip='Comma-separated names, no spaces'>SuperAdmin EDIT of verified MGB1 names: </span>
+                  <InlineEdit
+                    validate={validate.mgb1names}
+                    activeClassName="editing"
+                    placeholder='(add names here)'
+                    text={profile.mgb1namesVerified || ''}
+                    paramName="profile.mgb1namesVerified"
+                    change={this.handleProfileFieldChanged}
+                    isDisabled={false}
+                    />
+                </Segment>
+              )
+            }
+          </Segment>
+            { _.map(mgb1vnamesArray, mgb1vname => (
+                <Segment key={mgb1vname}>
+                  <Header as='h3'>
+                    <img className="ui avatar image" style={_6pxSpcSty} src={mgb1.getUserAvatarUrl(mgb1vname)} />
+                    Projects owned by '{mgb1vname}' in MGBv1:
+                  </Header>
+                  { loadingUserProjects && <p>Loading...</p> }
+                  <List>
+                    { _.map(mgb1Projects[mgb1vname], mgb1pName => (
+                      <List.Item key={mgb1pName}>
+                        <List.Content>
+                          <Button 
+                              compact 
+                              fluid
+                              disabled={!canImport || importInProcess}
+                              content={`Import '${mgb1pName}' from MGB v1...`}
+                              onClick={ () => this.setState( { 
+                                confirmPendingForProjectName: (`${mgb1vname}@@${mgb1pName}` === confirmPendingForProjectName) ? null : `${mgb1vname}@@${mgb1pName}`,
+                                assetPrefix: (prefixMemo[mgb1pName] || _defaultAssetPrefix(mgb1pName)),
+                                mgb2NewProjectName: (mgb2projNameMemo[mgb1pName] || _defaultMgb2ProjectName(mgb1pName))
+                              } ) }
+                              />
+                          <RelatedMgb2projects mgb1Username={mgb1vname} mgb1Projectname={mgb1pName} user={user} userProjects={userProjects} />
+                          { confirmPendingForProjectName === `${mgb1vname}@@${mgb1pName}` && 
+                            <div style={{padding: '8px'}}>
+                              <span>Asset Prefix: </span>
+                              <Input 
+                                  disabled={!canImport || importInProcess}
+                                  placeholder='asset prefix'
+                                  value={ this.state.assetPrefix }
+                                  onChange={ this._onAssetPrefixChange }
+                                  /> 
+                              &emsp;
 
-                            <span>New Project Name: </span>
-                            <Input 
-                                placeholder='Mgb2 project to create...'
-                                disabled={!canImport || importInProcess}
-                                value={ this.state.mgb2NewProjectName }
-                                onChange={ this._onMgb2ProjectNameChange }
-                                /> 
-                            &emsp;
+                              <span>New Project Name: </span>
+                              <Input 
+                                  placeholder='Mgb2 project to create...'
+                                  disabled={!canImport || importInProcess}
+                                  value={ this.state.mgb2NewProjectName }
+                                  onChange={ this._onMgb2ProjectNameChange }
+                                  /> 
+                              &emsp;
 
-                            <Button 
-                                compact 
-                                disabled={!canImport || importInProcess}
-                                content={ importInProcess ? 'Importing...' : 'CONFIRM IMPORT' }
-                                onClick={ () => this.handleImportProject( profile.mgb1namesVerified, mgb1pName, this.state.mgb2NewProjectName, this.state.assetPrefix ) }
-                                />
-                          </div> 
-                        }
-                      </List.Content>
-                    </List.Item>
-                  ))}
-                </List>
-              </Segment>
+                              <Button 
+                                  compact 
+                                  color='green'
+                                  disabled={!canImport || importInProcess}
+                                  content={ importInProcess ? 'Importing...' : 'CONFIRM IMPORT' }
+                                  onClick={ () => this.handleImportProject( mgb1vname, mgb1pName, this.state.mgb2NewProjectName, this.state.assetPrefix ) }
+                                  />
+                            </div> 
+                          }
+                        </List.Content>
+                      </List.Item>
+                    ))}
+                  </List>
+                </Segment>
+              ))
             }
         </Segment>
       </Segment>
@@ -244,11 +254,23 @@ class ProjectImportMgb1RouteUI extends React.Component {
 // Some simple stateless sub-Components used by <ProjectImportMgb1RouteUI>.. 
 // They are factored out here in order to keep the main code above a bit cleaner
 //
-const NameOrNone = ( { nameStr } )  => (
-  <span>
-    { (nameStr && _.isString(nameStr) && nameStr.length > 0) ? `'${nameStr}'` : <small>(none)</small> }
-  </span>
+
+
+const MgbUserNames = ( { names, validationNamesList } ) => (
+  <div>
+  { names ? _.map( names, uname => (
+      <div key={uname}>
+        { validationNamesList && <Icon style={_6pxSpcSty} name={_.includes(validationNamesList, uname) ? 'check' : 'question' } /> }
+        <img className="ui avatar image" style={_6pxSpcSty} src={mgb1.getUserAvatarUrl(uname)} />
+        {uname}
+      </div>
+    )) : 
+    <small>(none)</small>
+  }
+  </div>
 )
+
+const ChatPanelRef = () => <QLink query={{_fp: 'chat'}}><Icon name='chat' />chat panel</QLink>
 
 const ExplanationMessage = () => (
   <Message info icon>
@@ -259,7 +281,7 @@ const ExplanationMessage = () => (
         Verified users can import their projects from their linked accounts in our prior flash-based 'MGBv1' system
       </p>
       <p>
-        Contact us using the <QLink query={{_fp: 'chat'}}><Icon name='chat' />chat panel</QLink> to request verification of your prior MGBv1 account name 
+        Contact us using the <ChatPanelRef/> to request verification of your prior MGBv1 account name 
       </p>
       <p>
         NOTE: To appear on the games list, and to have a proper play experience, you will need to create a gameConfig asset that lists the start map

@@ -65,3 +65,12 @@
 	width: 100% !important;
 	text-align: center;
 }
+
+.zoomIcon {
+	padding-left: 7px !important;
+	padding-right: 7px !important;
+}
+
+.noMargin {
+	margin: 0 !important;
+}

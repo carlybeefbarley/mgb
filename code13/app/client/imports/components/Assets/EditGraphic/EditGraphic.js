@@ -672,6 +672,10 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+  resetZoom = () => {
+    this.setState({ editScale: 1 })
+  }
+
   //
   // TOUCH EVENTS (on Edit Canvas). We create equivalent MouseEvents then re-dispatch them
   // See https://w3c.github.io/touch-events/#toc,
@@ -1620,9 +1624,9 @@ export default class EditGraphic extends React.Component {
             {/*   <span onClick...></span> */ }
             {/* </button> */ }
 
-            <Popup
+            {/*<Popup
                 trigger={ (
-                  <span id="mgbjr-editGraphic-changeCanvasZoom" className="ui button small">
+                  <span id="mgbjr-editGraphic-changeCanvasZoom">
                     <span style={{ cursor: 'pointer' }} onClick={this.zoomOut}>
                       <Icon name='zoom out'/>
                     </span>
@@ -1638,7 +1642,50 @@ export default class EditGraphic extends React.Component {
                 mouseEnterDelay={250}
                 content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
                 size='tiny'
+                positioning='bottom left'/>*/}
+
+            <Popup
+                trigger={ (
+                  <span style={{ cursor: 'pointer' }} onClick={this.zoomIn} className="ui button small zoomIcon noMargin">
+                    <Icon name='zoom in' className='noMargin' />
+                  </span>
+                )}
+                on='hover'
+                header='Zoom In'
+                mouseEnterDelay={250}
+                content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
+                size='tiny'
                 positioning='bottom left'/>
+
+            <Popup
+                trigger={ (
+                  <span style={{ cursor: 'pointer' }} onClick={this.resetZoom} className="ui button small zoomIcon noMargin">
+                    {zoom}x
+                  </span>
+                )}
+                on='hover'
+                header='Reset Zoom'
+                mouseEnterDelay={250}
+                content="Click here to reset zoom"
+                size='tiny'
+                positioning='bottom left'/>
+
+
+            <Popup
+                trigger={ (
+                  <span style={{ cursor: 'pointer' }} onClick={this.zoomOut} className="ui button small zoomIcon">
+                    <Icon name='zoom out' className='noMargin' />
+                  </span>
+                )}
+                on='hover'
+                header='Zoom Out'
+                mouseEnterDelay={250}
+                content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
+                size='tiny'
+                positioning='bottom left'/>
+
+
+
 
 
             <Popup

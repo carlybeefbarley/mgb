@@ -1,5 +1,7 @@
+import _ from 'lodash'
 import { Azzets } from '/imports/schemas'
 import { assetMakeSelector, allSorters } from '/imports/schemas/assets'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 //   aZZets !?
 //     ...Note that Meteor has a special reserved global "Assets" so we call these Azzets instead
@@ -24,12 +26,13 @@ Meteor.publish('assets.public', function(
   showDeleted=false,
   showStable=false,
   assetSortType=undefined,      // null/undefined or one of the keys of allSorters{}
-  limitCount=50,
+  limitCount=SpecialGlobals.assets.mainAssetsListDefaultLimit,
   hideWorkstateMask=0,          // As defined for use by assetMakeSelector()
   showChallengeAssets=false
 )
 {
-  let selector = assetMakeSelector(userId,
+  const actualLimit = _.clamp(limitCount, 1, SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit)
+  const selector = assetMakeSelector(userId,
                       selectedAssetKinds,
                       nameSearch,
                       projectName,
@@ -37,11 +40,11 @@ Meteor.publish('assets.public', function(
                       showStable,
                       hideWorkstateMask,
                       showChallengeAssets)
-  let assetSorter = assetSortType ? allSorters[assetSortType] : allSorters["edited"]
+  const assetSorter = assetSortType ? allSorters[assetSortType] : allSorters["edited"]
   const findOpts = {
     fields: { content2: 0, thumbnail: 0 },
     sort:  assetSorter,
-    limit: limitCount
+    limit: actualLimit
   }
   return Azzets.find(selector, findOpts )
 })

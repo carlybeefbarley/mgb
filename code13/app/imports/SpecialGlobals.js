@@ -66,12 +66,13 @@ export default SpecialGlobals = {
 
   assets: {
     "maxUploadSize":  3*1024*1024,     // 1 MB
-    "mainAssetsListDefaultLimit": 50   // Number of assets shown by default in main Asset list UI per page
+    "mainAssetsListDefaultLimit": 50,  // Number of assets shown by default in main Asset list UI per page
+    "mainAssetsListSubscriptionMaxLimit": 200   // Max number of assets to subscribe to from main Asset list UI per page
   },
 
   map: {
     "maxUndoSteps":       20,
-    "objectRotationStep": 15
+    "objectRotationStep": 15          // In degrees
   },
 
   //these are used in the ActorHelper
@@ -96,7 +97,7 @@ export default SpecialGlobals = {
   quotas: {
     defaultNumMembersAllowedInProject: 5,
     SUdefaultNumMembersAllowedInProject: 99,
-    defaultNumOfOwnedProjectsAllowed: 8,
+    defaultNumOfOwnedProjectsAllowed: 10,
     SUdefaultNumOfOwnedProjectsAllowed: 99
   }
 

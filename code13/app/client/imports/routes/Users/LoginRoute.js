@@ -8,6 +8,7 @@ import { utilPushTo } from '../QLink'
 import { logActivity } from '/imports/schemas/activity'
 import { showToast } from '/client/imports/routes/App'
 import Footer from '/client/imports/components/Footer/Footer'
+import HomeRoute from '/client/imports/routes/Home'
 
 export default LoginRoute = React.createClass({
   
@@ -27,21 +28,15 @@ export default LoginRoute = React.createClass({
     const { isLoading, errorMsg } = this.state
     const { currUser } = this.props
 
-    const innerRender = () => {
-      if (currUser)
-        return <Message info content='You are logged in already!' />
-
+    if (currUser)
       return (
-        <Form onSubmit={this.handleSubmit} loading={isLoading} error={!!errorMsg}>
-          <Form.Input type="email" label='email' name='email' placeholder='Email address' />
-          <Form.Input label='password' name='password' placeholder='Password' type='password'/>
-          <Message error
-            header='Error'
-            content={errorMsg} />
-          <Form.Button color='teal'>Log in</Form.Button>
-        </Form>
-      ) 
-    }
+        <div>
+          <Segment basic>
+            <Message info content='You are logged in already!' />
+          </Segment>
+          <HomeRoute {...this.props} />
+        </div>
+      )
 
     return (
       <div>
@@ -49,8 +44,15 @@ export default LoginRoute = React.createClass({
           <Container text>
             <Segment padded>
               <Header style={{color:'black'}} as='h2'>Log in</Header>
-              { innerRender() }
-              { !currUser && <LoginLinks showSignup={true} showForgot={true} /> }
+              <Form onSubmit={this.handleSubmit} loading={isLoading} error={!!errorMsg}>
+                <Form.Input type="email" label='email' name='email' placeholder='Email address' />
+                <Form.Input label='password' name='password' placeholder='Password' type='password'/>
+                <Message error
+                  header='Error'
+                  content={errorMsg} />
+                <Form.Button color='teal'>Log in</Form.Button>
+              </Form>
+              <LoginLinks showSignup={true} showForgot={true} />
             </Segment>
           </Container>
         </div>

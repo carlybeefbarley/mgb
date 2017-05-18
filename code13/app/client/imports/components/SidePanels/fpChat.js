@@ -363,12 +363,11 @@ export default fpChat = React.createClass( {
 
   doSendMessage: function() {
     const { messageValue } = this.state
-    const username = this.props.currUser.username
     if (!messageValue || messageValue.length < 1)
       return
     const channelName = this._calculateActiveChannelName()
     const channelObj = parseChannelName( channelName )
-    const presentedChannelName = makePresentedChannelName( channelName, username )
+    const presentedChannelName = makePresentedChannelName( channelName, channelObj.scopeId ) 
 
     joyrideCompleteTag( `mgbjr-CT-fp-chat-send-message` )
     joyrideCompleteTag( `mgbjr-CT-fp-chat-send-message-on-${channelName}` )
@@ -382,8 +381,7 @@ export default fpChat = React.createClass( {
       else {
         this.setState( { messageValue: '' } )
         if (channelObj.scopeGroupName === 'Global' || channelObj.scopeGroupName === 'User')
-          logActivity( 'user.message', `Sent a message on ${presentedChannelName}`, null, null, { toChatChannelName: channelName } )
-          //fix why this shows up as #undefined and not as channelname
+          logActivity( 'user.message', `Sent a message on ${presentedChannelName}`, null, null, { toChatChannelName: channelName } ) //
       }
     } )
   },

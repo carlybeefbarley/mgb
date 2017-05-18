@@ -13,6 +13,37 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+
+    {
+      'timestamp': 'Wed May 17 2017 22:30 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4174'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.assets',
+          'type': 'feature',
+          'changeName': 'Select how many Assets are listed in Asset search page',
+          'changeSummary': 'Added ability to change how many assets are listed on the asset-list pages. The chosen number is remembered in local storage on the browser for when you return to that view. Max number of assets listed increased from 50 to 200',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Added a "create GameConfig" button for MGBv1 game importer; Improved instructions/hints on dragging actors into ActorMap editor; Increased default number of owned projects from 8 to 10; Nicer colors for workstate; Fixed sound editor on iPad; Improved zoom button layout in graphic Editor; Fixed a wall-chat-notification bug.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
     {
       'timestamp': 'Tue May 16 2017 21:10 GMT-0700 (PDT)',
 

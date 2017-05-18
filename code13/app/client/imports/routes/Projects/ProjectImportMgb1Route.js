@@ -278,10 +278,10 @@ const ExplanationMessage = () => (
     <Message.Content>
       <Message.Header>At your service!</Message.Header>
       <p>
-        Verified users can import their projects from their linked accounts in our prior flash-based 'MGBv1' system
+        Verified users can import their projects from their linked accounts in our prior flash-based 'MGBv1' system. You can state your claimed MGBv1 names using the Bio area on your Profile Page.
       </p>
       <p>
-        Contact us using the <ChatPanelRef/> to request verification of your prior MGBv1 account name 
+        Contact us using the <ChatPanelRef/> to request verification of your prior MGBv1 account names 
       </p>
       <p>
         NOTE: To appear on the games list, and to have a proper play experience, you will need to create a gameConfig asset that lists the start map

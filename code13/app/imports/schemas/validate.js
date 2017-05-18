@@ -54,7 +54,7 @@ const validate = {
 
   mgb1name: function (text) {
     // TODO more safety content checks here ... should allow    name1
-    return validate.lengthCap(text, 16)
+    return validate.lengthCap(text, 64)   // 64 since can have comma-separated
   },
 
   mgb1names: function (text) {

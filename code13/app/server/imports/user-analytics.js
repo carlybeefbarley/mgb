@@ -2,11 +2,22 @@
 
 // This file contains the code to update the MongoDB user_analytics record.
 // This contains some interesting analytics info related to that userId.
-// So far, the only one of use is the list of IP addresses they have been seen from
+// So far, the only one of use is the list of IP addresses they have visited from
+// (it will be nice to have a geo-lookup cache for those)
 
 // This information is kept out of the User record in order to make 
 // leakage to clients very unlikely, and also to avoid any memory use 
 // from user-record publications
+
+// PERF note:
+// In future this table could be quite 'hot' for updates so we should
+// avoid change-driven subscriptions on this table. Use Meteor.call()
+// or have a polled subscription.
+
+// CONTENT note:
+// We will want to avoid duplicating data we have via
+// the Activity table.. but we might do some batched data updates 
+// from that and other info like asset count, # projects etc into here.
 
 const UserAnalytics = new Mongo.Collection('user_analytics')
 

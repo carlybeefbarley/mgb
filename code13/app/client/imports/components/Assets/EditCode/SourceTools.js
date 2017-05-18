@@ -432,6 +432,11 @@ export default class SourceTools extends EventEmitter {
         // if subscription cannot be found - it has been moved for cleanup - restore it
         if (!this.subscriptions[key])
           this.subscriptions[key] = this.tmpSubscriptions[key]
+
+        // not sure why this gets lost - probably tmpSubscriptions also is undefined.. as has been closed at some point
+        if (!this.subscriptions[key])
+          return resolve()
+
         const assets = this.subscriptions[key].getAssets()
         if (assets.length > 1) {
           this.emit('error', {

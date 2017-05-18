@@ -55,7 +55,11 @@ Meteor.publish('assets.public', function(
 // https://medium.com/@MaxDubrovin/workaround-for-meteor-limitations-if-you-want-to-sub-for-more-nested-fields-of-already-received-docs-eb3fdbfe4e07#.k76s2u4cs
 // selector can be an   id STRING  _or_ an object containing {.dn_OwnerName, .kind, .name }
 Meteor.publish('assets.public.partial.bySelector', function(selector) {
-  const cleanSelector = typeof selector === "object" ? {dn_ownerName: selector.dn_ownerName, kind: selector.kind, name: selector.name } : selector
+  const cleanSelector = typeof selector === "object" ? {dn_ownerName: selector.dn_ownerName, name: selector.name } : selector
+
+  // allow to guess assets only by owner:name ???
+  if(selector.kind)
+    cleanSelector.kind = selector.kind
 
   // TODO(@stauzs) Should server look for deleted assets? What about asset editors?
   const cursor = Azzets.find(cleanSelector, {fields: {updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1, metadata: 1}})

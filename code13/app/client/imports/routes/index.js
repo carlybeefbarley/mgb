@@ -126,6 +126,7 @@ export function clientStartup() {
 
         <Route path="assetEdit/:assetId" component={Azzets.AssetEditRoute} name="Edit Asset (finding owner...)" />
         <Route path="assetEdit/:kind/:user/:name" component={Azzets.AssetEditRedirect} name="Edit Asset (finding owner...)" />
+        <Route path="assetEdit/:user/:name" component={Azzets.AssetEditRedirect} name="Edit Asset (finding owner...)" />
 
         <Route path="user/:id/skilltree" component={Users.SkillTreeRoute} name="Skills" />
         <Route path="u/:username/skilltree" component={Users.SkillTreeRoute} name="Skills" />

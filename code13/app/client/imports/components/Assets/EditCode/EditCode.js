@@ -830,19 +830,20 @@ export default class EditCode extends React.Component {
           event.preventDefault()
 
 
-          let loadMap = `// place this command in the preload block`+ '\n' +
+          let loadMap = `// Loads MGB map and all related resources\n// place this function in the preload method`+ '\n' +
               `game.load.mgbMap( '${draggedAsset.name}', '/${draggedAsset.dn_ownerName}/${draggedAsset.name}' )`+
               '\n\n' +
-              `//use this command to create a map` + '\n' +
+              `// Creates full MGB map with all visible layers\n// place this function in the create method` + '\n' +
               `const map = game.create.mgbMap('${draggedAsset.name}')`
 
           this.codeMirror.replaceSelection( '\n' + loadMap + '\n')
 
           const val = this.codeMirror.getValue()
           if(val.indexOf('mgb-map-loader-extended') === -1){
-            this.codeMirror.setValue(`import '/!vault/mgb-map-loader-extended'` + '\n' + val)
+            this.codeMirror.setValue(`import '/!vault:mgb-map-loader-extended'` + '\n' + val)
           }
           return
+
         case 'sound':
         case 'music':
           url = `/api/asset/${draggedAsset.kind}/${draggedAsset.dn_ownerName}/${draggedAsset.name}/${draggedAsset.kind}.mp3`
@@ -854,10 +855,11 @@ export default class EditCode extends React.Component {
             code = this.createImportString(draggedAsset.name)
           else
             code = this.createImportString(draggedAsset.name, draggedAsset.dn_ownerName)
-
           break
+
+        // actor, actormap
         default:
-          code = draggedAsset._id
+          code = `'/${draggedAsset.kind}/${draggedAsset.dn_ownerName}/${draggedAsset.name}'`
         }
       }
 
@@ -911,24 +913,37 @@ export default class EditCode extends React.Component {
     }
 
     if (event.ctrlKey) {
+      // disable multi select
+      event.preventDefault()
+
       const token = cm.getTokenAt(pos, true)
-      if(token.type == 'string'){
-        const link = this.getImportStringLocation(token.string)
+      // open link in the new tab
+      if(token.type === 'string'){
+        const link = this.getImportStringLocation(this.cleanTokenString(token.string))
         if(link) {
           const a = document.createElement('a')
           a.setAttribute('href', link)
-          a.setAttribute('target', '_balnk')
+          a.setAttribute('target', '_blank')
           a.click()
         }
       }
+      // jump to definition
       else {
         this.codeMirror.setCursor(pos)
         this.cursorHistory.undo.push(pos)
         this.ternServer.jumpToDef(cm)
       }
-      // disable multi select ?
-      event.preventDefault() // if you don't want the cursor to move here.
     }
+  }
+
+  /**
+   * Removes quotes around token
+   * @param string - CodeMirror Token
+   * @returns string
+   */
+  cleanTokenString(string){
+    // check if we are actually stripping quotes?
+    return string.substring(1, string.length -1)
   }
 
   goToDef(){
@@ -2418,37 +2433,33 @@ export default class EditCode extends React.Component {
     const advices = []
     // TODO.. something useful with token.state?
     if(token && token.type === 'string' && this.state.userScripts && this.state.userScripts.length > 0){
-      let string = token.string.substring(1, token.string.length -1)
+      let string = this.cleanTokenString(token.string)
       if(string.startsWith('/') && !string.startsWith('//')){
         string = string.substring(1)
-        const parts = string.split(":")
-        if(parts.length === 1){
-          parts.unshift(this.props.asset.dn_ownerName)
-        }
+        const parts = this.getImportStringParts(string)
+        const {kind, owner, name} = parts
+        const urlToAsset = this.getAssetUrl(this.getImportStringParts(string))
+
         if(string.startsWith('api/asset/')){
-          const strParts = string.split('/')
-          const kind = this.getKind(strParts[2] || 'code')
-          if(!kind){
-            console.log("Unknow kind", strParts[2])
-            return
-          }
-          const url = strParts.slice(3, strParts.length).join('/')
+
           advices.push(
             <a className="ui fluid label" key={advices.length} style={{marginBottom: "2px"}}
-               href={`/assetEdit/${kind}/${url}`} target='_blank'>
-              <small style={{fontSize: '85%'}}>this string references <strong>{kind}</strong> asset:
-                <code>{parts[1]}</code></small>
-              <Thumbnail assetId={parts.join('/')} expires={60} constrainHeight='60px'/>
+               href={`/assetEdit/${urlToAsset}`} target='_blank'>
+              <small style={{fontSize: '85%'}}>
+                This string references API link to <strong>{kind}</strong> asset: <code> {name}</code>
+              </small>
+              <Thumbnail assetId={`/${urlToAsset}`} expires={60} constrainHeight='60px'/>
             </a>
           )
         }
         else {
           advices.push(
             <a className="ui fluid label" key={advices.length} style={{marginBottom: "2px"}}
-               href={`/assetEdit/code/${parts.join('/')}`} target='_blank'>
-              <small style={{fontSize: '85%'}}>this string references <strong>{parts[0]}</strong> code asset:
-                <code>{parts[1]}</code></small>
-              <Thumbnail assetId={parts.join('/')} expires={60} constrainHeight='60px'/>
+               href={`/assetEdit/${urlToAsset}`} target='_blank'>
+              <small style={{fontSize: '85%'}}>
+                This string references <strong>{owner}'s</strong> {kind ? kind : ''} asset: <code> {name}</code>
+              </small>
+              <Thumbnail assetId={`/${urlToAsset}`} expires={60} constrainHeight='60px'/>
             </a>
           )
         }
@@ -2457,24 +2468,52 @@ export default class EditCode extends React.Component {
     return advices
   }
 
-  // need to do some cleanup as this function has almost same code as one above
-  getImportStringLocation(importString){
-    let string = importString
-    if(string.indexOf("'") === 0)
-      string = importString.substring(1, importString.length -1)
-    if(string.indexOf('/') === 0 && string.indexOf('//') !== 0){
-      string = string.substring(1)
-      const parts = string.split(":")
-      if(parts.length === 1) {
-        parts.unshift(this.props.asset.dn_ownerName)
-        /*const script = this.state.userScripts.find(a => a.text == string)
-        if (!script)
-          return this.getImportStringLocation('/' + this.props.asset.dn_ownerName + ':' + string)
-        return `/assetEdit/${script.id}`*/
-      }
-      return `/assetEdit/code/${parts.join('/')}`
+  /**
+   * Retrieves kind / owner / name from string which references asset
+   * @param {string} string - string which references asset
+   *
+   * @returns {kind<string>, owner<string>, name<string>}
+   * */
+
+  getImportStringParts(string){
+    // split and filter out empty strings
+    const pieces = string.split('/').filter(p => {
+      return p
+    })
+
+    // assume that we have only name here
+    if(pieces.length === 1)
+      pieces.unshift(this.props.currUser.username)
+
+    // check if this is API link
+    if(pieces.length > 1 && pieces[0] === 'api' && pieces[1] === 'asset' ){
+      // remove api / asset
+      pieces.splice(0, 2)
+      const last = _.last(pieces)
+      // special handling for music and sound
+      if(last === 'music.mp3' || last === 'sound.mp3')
+        pieces.pop()
     }
-    return ''
+
+    const parts = pieces.pop().split(':')
+    const name = parts.pop()
+    const owner = parts.length ? parts.pop() : pieces.pop()
+
+    const kind = this.getKind(pieces.pop())
+
+    return {kind, owner, name}
+  }
+
+
+  getAssetUrl(assetInfo){
+    const {owner, name, kind} = assetInfo
+    // substr - because otherwise chaning to create link with others strings looks too strange - e.g. /thumbnail${myVar}
+    // /thumbnail/${myVar} - looks better
+    return (`${kind ? ( '/' + kind ) : ''}${owner ? ( '/' + owner ) : ''}${name ? ( '/' + name ) : ''}`).substr(1)
+  }
+
+  getImportStringLocation(string) {
+    return `/assetEdit/${this.getAssetUrl(this.getImportStringParts(string))}`
   }
 
   getPrevToken(callback, cursor = null){
@@ -2526,15 +2565,6 @@ export default class EditCode extends React.Component {
 
     this.codeMirror && this.codeMirror.setOption("readOnly", !this.props.canEdit)
 
-    // preview ID and String references doing very similar things. Refactor?
-    const previewIdThings = this.state.previewAssetIdsArray.map(assetInfo => {
-      return (
-        <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}} href={`/assetEdit/${assetInfo.id}`} target='_blank'>
-          <Thumbnail assetId={assetInfo.id} expires={60} constrainHeight='60px'/>
-          URL references MGB <strong>{assetInfo.kind}</strong> asset {assetInfo.refType} {assetInfo.id}
-        </a>
-      )
-    })
     const stringReferences = this.getStringReferences()
     const infoPaneOpts = _infoPaneModes[this.state.infoPaneMode]
 
@@ -2609,13 +2639,6 @@ export default class EditCode extends React.Component {
                       stopTutorial={() => this.stopTutorial()}
                       parsedTutorialData={this.state.parsedTutorialData}
                       insertCodeCallback={ canEdit ? (newCodeStr => this.insertTextAtCursor(newCodeStr) ) : null }/>
-
-                  { previewIdThings && previewIdThings.length > 0 &&
-                    <div className="ui divided selection list">
-                      {previewIdThings}
-                    </div>
-                  }
-
                   { stringReferences && stringReferences.length > 0 &&
                   <div className="ui divided selection list">
                     {stringReferences}
@@ -2719,12 +2742,6 @@ export default class EditCode extends React.Component {
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data}/>
 
                   { this.renderDebugAST() }
-
-                  { previewIdThings && previewIdThings.length > 0 &&
-                    <div className="ui divided selection list">
-                      {previewIdThings}
-                    </div>
-                  }
 
                   { stringReferences && stringReferences.length > 0 &&
                   <div className="ui divided selection list">

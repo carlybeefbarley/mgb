@@ -6,12 +6,15 @@ import { utilReplaceTo } from '../QLink'
 export default class extends React.Component{
   componentDidMount(){
     const {params} = this.props
-    getAssetBySelector({
+    const selector = {
       dn_ownerName: params.user,
       name: params.name,
-      kind: params.kind,
       isDeleted: false
-    }, (asset) => {
+    }
+    if(params.kind)
+      selector.kind = params.kind
+
+    getAssetBySelector(selector, (asset) => {
       if(asset)
         utilReplaceTo(this.props.location.query, "/u/" + asset.dn_ownerName + "/asset/" + asset._id)
     })

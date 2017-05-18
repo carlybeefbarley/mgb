@@ -2,7 +2,7 @@ import React, { PropTypes} from 'react'
 import QLink from '/client/imports/routes/QLink'
 
 
-const _makeQuery = ( assetKind, projectName ) => {
+const _makeQuery = ( assetKind, projectName, assetName ) => {
   const retval = {}
 
   if (assetKind)
@@ -11,22 +11,28 @@ const _makeQuery = ( assetKind, projectName ) => {
   if (projectName && projectName.length > 1) 
     retval.projectName = projectName
 
+  if (assetName && assetName.length > 0)
+    retval.assetName = assetName
+
   return retval
 }
 
-const AssetCreateLink = ( { assetKind, projectName } ) => (
+const AssetCreateLink = ( { assetKind, projectName, assetName, label, classNames } ) => (
   <QLink 
-        className='ui compact green button' 
+        className={`ui compact ${classNames || ' '} green button`} 
         to='/assets/create' 
-        query={ _makeQuery(assetKind, projectName) }
+        query={ _makeQuery(assetKind, projectName, assetName) }
         id="mgbjr-create-new-asset">
-    Create New Asset
+    {label || 'Create New Asset'}
   </QLink>
 )
 
 AssetCreateLink.PropTypes = {
-  assetKind: PropTypes.string,
-  projectName: PropTypes.string
+  assetKind:   PropTypes.string,
+  projectName: PropTypes.string,
+  assetName:   PropTypes.string,
+  label:       PropTypes.string,
+  classNames:  PropTypes.string
 }
 
 export default AssetCreateLink

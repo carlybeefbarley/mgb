@@ -66,6 +66,7 @@ Meteor.methods({
       mgb1: {
         mgb1username: importParams.mgb1Username, 
         mgb1ProjectName: importParams.mgb1Projectname, 
+        mgb2assetNamePrefix: importParams.mgb2assetNamePrefix,
         importInitiator: Meteor.user().userName,
         importProgress: 'started'   // I can use 'scheduled' later as a queue :)
       }

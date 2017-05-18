@@ -8,6 +8,7 @@ import { logActivity } from '/imports/schemas/activity'
 import mgb1 from '/client/imports/helpers/mgb1'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import validate from '/imports/schemas/validate'
+import AssetCreateLink from '/client/imports/components/Assets/NewAsset/AssetCreateLink'
 
 // Data Container stuff
 import { Projects } from '/imports/schemas'
@@ -302,7 +303,15 @@ const RelatedMgb2projects = ( { user, userProjects, mgb1Username, mgb1Projectnam
     <div>
       { _.map(relatedProjects, p => (
           <Segment key={p._id} attached>
-            Imported as <QLink to={`/u/${p.ownerName}/projects/${p.name}`}>{p.name}</QLink>.   Progress: <small>{p.mgb1.importProgress}</small>
+            Imported as <QLink to={`/u/${p.ownerName}/projects/${p.name}`}>{p.name}</QLink>.&emsp;
+            Progress: <small>{p.mgb1.importProgress}</small>.&emsp;
+          <AssetCreateLink 
+              assetKind='game'
+              assetName={`${(p.mgb1.mgb2assetNamePrefix || _defaultAssetPrefix(p.name))}${p.name}`}
+              projectName={p.name}
+              classNames='small right floated'
+              label='Create gameConfig Asset'/>
+
           </Segment>
       ))}
     </div>

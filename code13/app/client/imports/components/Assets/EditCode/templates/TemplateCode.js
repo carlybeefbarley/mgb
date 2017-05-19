@@ -132,22 +132,22 @@ import '/!vault:mgb-map-loader-extended'
 // 800 and 600 here is just initial width and height - we will automatically adjust game size to fit map
 const game = new Phaser.Game(800, 600, Phaser.AUTO, document.body, {
   preload: function(){
-    // first argument is map name (initialMap) - used later to load map
+    // first argument is map name (initialMap) - used later to create loaded map
     // you can choose any name - just don't forget to use changed name in the create function below
     // replace {userName} with map owner name
-    // replace {mapName} with real map name
+    // replace {mapName} with map name
     this.game.load.mgbMap('initialMap', '/{userName}/{mapName}')
     
-    // this tells Phaser.ScaleManager to show all world on single screen
+    // this tells Phaser.ScaleManager to show all world on a single screen
     this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL
   },
 
   create: function(){
     /*
     mgb map structure: {
-      data, // raw map data in tiled json format
-      layers, // Object containing layer with name - layer can be either group or tilemaplayer
-      map // reference to phaser tilemap object
+      data, // raw map data in tiled json format https://github.com/bjorn/tiled/wiki/JSON-Map-Format
+      layers, // Object containing layer with name - layer can be either objectgroup or tilemaplayer
+      map // reference to Phaser Tilemap http://phaser.io/docs/2.6.2/Phaser.Tilemap.html
     }
     */
     // create and put it on the screen
@@ -157,14 +157,14 @@ const game = new Phaser.Game(800, 600, Phaser.AUTO, document.body, {
     const mapWidthInPx =  mgbMap.data.width * mgbMap.data.tilewidth
     const mapHeightInPx =  mgbMap.data.height* mgbMap.data.tileheight
     
-    // set world bound to match map size
+    // set world bounds to match map size
     this.game.world.setBounds(0, 0, mapWidthInPx, mapHeightInPx)
     
     // adjust game size - to fit map on the screen
     this.game.scale.setGameSize(mapWidthInPx, mapHeightInPx)
   }
 })
-// allow to take screenshots in the webgl mode
+// allow to take screenshots in the WebGL mode
 game.preserveDrawingBuffer = true;
 `
   },

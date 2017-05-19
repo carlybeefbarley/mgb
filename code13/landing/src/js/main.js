@@ -23,29 +23,29 @@ window.addEventListener( 'load', function () {
   var $forEveryoneDivider = document.querySelector( '.mgb-for-everyone-divider' )
   var tabs = {
     Students:    {
-      main:      "Noah was making Zelda-style RPGs in MGB when he was 7, so YOU can make games here too",
-      secondary: "Start easy with 'Actors' instead of code. Make richer games in JavaScript when you're ready"
+      main:      $forEveryoneMain.innerText,
+      secondary: $forEveryoneSecondary.innerText
     },
     Parents:     {
       main:      "Help your kids learn to code and *make* games, not just play games.",
-      secondary: "See your kids develop real skills.  See them NOT get stuck.   Brag about what they make "
+      secondary: "See your kids develop real skills & confidence.  See them NOT get stuck.   Brag about what they make :)"
     },
     GameJammers: {
-      main:      "ES6 + modules for meaty projects. TMX Map editors for your big RPG ideas.",
+      main:      "ES6 + modules for meaty projects. TMX Map editors for your big RPG/platformer ideas.",
       secondary: "Integrated editors/importers for graphic/map/sound/music to make your ideas sizzle. No toolchain+git rabbit-holes"
     },
     Artists:     {
-      main:      "You can draw/paint or play an instrument... but coding sounds like hell to you?",
+      main:      "You can draw/paint/compose/write?... but coding sounds like hell to you?",
       secondary: "Great! Come find some crazy coder-types to work with &amp; make games together"
     },
     Teachers:    {
-      main:      "Point your students to our tutorials, then go get a nice cup of tea &amp; have a break. You deserve it!",
-      secondary: "We'll help if your students get stuck on tech stuff. We'd like YOU to teach THEM how to teach others"
+      main:      "Ideal for enrichment.. Point your students to our tutorials, then go get a nice cup of tea &amp; have a break. You deserve it!",
+      secondary: "We'll help on chat if your students get stuck on tech stuff, and we can even debug their games. Help them learn how to teach others"
     },
     Trolls:      {
       main:      "HAHA we lied... NO TROLLS ALLOWED",
-      secondary: "Seriously, we have *ZERO* tolerance for negativity/abuse/disrespect/discrimination"
-    },
+      secondary: "Seriously, we have *ZERO* tolerance for negativity/abuse/disrespect/discrimination. Our banhammer is swift and mighty."
+    }
   }
 
   var handleForEveryoneMenuClick = function handleClick (e) {

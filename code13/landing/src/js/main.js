@@ -27,24 +27,25 @@ window.addEventListener( 'load', function () {
       secondary: $forEveryoneSecondary.innerText
     },
     Parents:     {
-      main:      "Help your kids learn to code and *make* games, not just play games.",
-      secondary: "See your kids develop real skills & confidence.  See them NOT get stuck.   Brag about what they make :)"
+      main:      "We love helping game <em>players</em> become game <em>builders</em> - and we have helped many so far.",
+      secondary: "We provide all-in-one tools & training that let kids develop real skills & confidence within a safe, encouraging community.",
     },
     GameJammers: {
-      main:      "ES6 + modules for meaty projects. TMX Map editors for your big RPG/platformer ideas.",
-      secondary: "Integrated editors/importers for graphic/map/sound/music to make your ideas sizzle. No toolchain+git rabbit-holes"
+      main:      "Integrated editors/importers for graphic/map/sound/music so you can focus on gameplay. No toolchain+git side-quests!",
+      secondary: "Frictionless workflows, but <strong>not</strong> a toy. ES6+modules code/IDE; Multi-frame/layer graphic editor; TMX Map editor; JSFXR synths; and more."
     },
     Artists:     {
       main:      "You can draw/paint/compose/write?... but coding sounds like hell to you?",
-      secondary: "Great! Come find some crazy coder-types to work with &amp; make games together"
+      secondary: "Great! Come find some crazy coder-types to work with. Combine your talents and make games in a team."
     },
     Teachers:    {
-      main:      "Ideal for enrichment.. Point your students to our tutorials, then go get a nice cup of tea &amp; have a break. You deserve it!",
-      secondary: "We'll help on chat if your students get stuck on tech stuff, and we can even debug their games. Help them learn how to teach others"
+      main:      "MGB is ideal for enrichment. It supports a progressive and self-supporting learning model for age 13+",
+      // Point your students to our tutorials, then go get a nice cup of tea & have a break. You deserve it!
+      secondary: "Our core team and extended community will explain and debug problems, live, within the system. We foster a pay-it-forward learning culture."
     },
     Trolls:      {
-      main:      "HAHA we lied... NO TROLLS ALLOWED",
-      secondary: "Seriously, we have *ZERO* tolerance for negativity/abuse/disrespect/discrimination. Our banhammer is swift and mighty."
+      main:      "HAHA we lied... <strong>NO TROLLS ALLOWED</strong>",
+      secondary: "Seriously, we have <strong>ZERO</strong> tolerance for <strong>any</strong> kind of negativity, abuse, disrespect or discrimination. We are eagle-eyed and quick to ban."
     }
   }
 
@@ -56,8 +57,8 @@ window.addEventListener( 'load', function () {
     }
 
     // set tabs
-    $forEveryoneMain.innerText = activeTab.main
-    $forEveryoneSecondary.innerText = activeTab.secondary
+    $forEveryoneMain.innerHTML = activeTab.main
+    $forEveryoneSecondary.innerHTML = activeTab.secondary
 
     // set active item
     $forEveryoneMenus.forEach( function ($menu) {

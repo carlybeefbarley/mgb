@@ -11,7 +11,7 @@ const fs = require( 'fs-extra' )
 var RevAll = require('gulp-rev-all');
 var awspublish = require('gulp-awspublish');
 var cloudfront = require("gulp-cloudfront");
- 
+
 
 
 // ============================================================
@@ -73,7 +73,7 @@ const aws = {
   "distributionId": process.env.AWS_S3_LANDINGPAGE_CLOUDFRONT_DISTRIBUTIONID || "E2FKDU47P960M9",
   "region": "us-east-1",
 };
- 
+
 const publisher = awspublish.create(aws);
 const headers = {'Cache-Control': 'max-age=315360000, no-transform, public'};
 
@@ -130,9 +130,8 @@ const interpolateEnvVars = () => through2.obj( function (file) {
 // Tasks
 // ============================================================
 
-
 gulp.task('awspublish', function () {
- 
+
   gulp
     .src('dist/**')
     .pipe(RevAll.revision())
@@ -141,7 +140,7 @@ gulp.task('awspublish', function () {
     .pipe(publisher.cache())
     .pipe(awspublish.reporter())
     .pipe(cloudfront(aws));
- 
+
 });
 
 
@@ -150,6 +149,7 @@ gulp.task('awspublish', function () {
 // ----------------------------------------
 gulp.task( 'serve', () => {
   g.connect.server( {
+    host: '0.0.0.0',
     root:       distPath(),
     livereload: true
   } )

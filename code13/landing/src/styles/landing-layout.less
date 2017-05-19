@@ -1,9 +1,5 @@
 @import "mixins";
 
-section {
-  color: rgba(255, 255, 255, 0.8);
-}
-
 @blueGradient: radial-gradient(#00BECC, #2B7277);
 
 /***************************************
@@ -87,9 +83,9 @@ section {
     height: 292px;
     min-height: 100%;
     width: 1px;
-    min-width: 100%;    
-    iframe,img {
-      /* 
+    min-width: 100%;
+    iframe, img {
+      /*
       .mgb-box-shadow-border(0.5em);
       border: 1px solid #000;
       border-radius: 1px;
@@ -101,7 +97,7 @@ section {
     height: 292px;
     min-height: 100%;
     width: 1px;
-    min-width: 100%;    
+    min-width: 100%;
   }
 
 }
@@ -113,6 +109,7 @@ section {
   padding: 1.25em 0 2em;
   background: #483C46;
   text-align: center;
+  color: rgba(255, 255, 255, 0.8);
   a {
     color: cornflowerblue;
   }
@@ -155,8 +152,9 @@ footer {
     width: ~"calc(100vw - 180px)" !important;
     height: ~"calc( 100vw / 2.16 )" !important;
     margin-right: auto !important;
-    margin-left: auto  !important;
+    margin-left: auto !important;
   }
+
   .mgb-game, .mgb-game-iframe {
     margin-right: auto;
     margin-left: auto;
@@ -172,7 +170,7 @@ footer {
     text-align: center;
     margin-right: auto;
     margin-left: auto;
-  }  
+  }
 }
 
 @media (min-width: 768px) and (max-width: 1139px) {
@@ -180,6 +178,7 @@ footer {
     margin-right: auto;
     margin-left: auto;
   }
+
   .mgb-hero-left-column {
     padding-left: 2em !important;
     text-align: left;
@@ -195,15 +194,15 @@ footer {
     max-width: 200px;
     margin-right: auto;
     margin-left: auto;
-  }  
+  }
 }
 
 @media (min-width: 1140px) {
   .mgb-game {
     margin-right: auto;
     margin-left: auto;
-      }
-      
+  }
+
   .mgb-game-column {
     max-width: 680px;
   }

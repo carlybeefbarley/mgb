@@ -527,6 +527,9 @@ const AppUI = React.createClass({
     }
   },
 
+  /**
+   * @param newFpView {String} the string that will be used for _fp=panel.submparam eg. "chat", or "chat.G_GENERAL_" or "assets" etc
+   */
   handleFlexPanelChange: function(newFpView)
   {
     const qp = urlMaker.queryParams("app_flexPanel")

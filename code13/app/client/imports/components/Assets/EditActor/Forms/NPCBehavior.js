@@ -3,7 +3,7 @@ import BaseForm from '../../../Controls/BaseForm.js'
 
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
-export default class All extends BaseForm {
+export default class NPCBehavior extends BaseForm {
   get data() {
     return this.props.asset.content2.databag.npc
   }
@@ -93,7 +93,7 @@ export default class All extends BaseForm {
         <hr />
         <div id="mgbjr-edit-actor-tab-NPCBehavior-dialogue">
           {this.props.asset.content2.databag.itemOrNPC.destroyableYN &&
-            <span style={{color: "red"}}>Note: Players can't talk to NPCs that they can do 'touch damage' to</span>
+            <span style={{color: "#A91313"}}>Note: Players can't talk to NPCs that they can do 'touch damage' to</span>
           }
 
           <span onChange={ () => joyrideCompleteTag(`mgbjr-CT-edit-actor-tab-NPCBehavior-dialogue`)} >
@@ -102,7 +102,7 @@ export default class All extends BaseForm {
             })}
           </span>
         
-        {this.data.talkText &&
+        {this.data.talkText && this.data.talkText.length > 0 && 
         <div>
           {this.options("Font for message", 'talkTextFontIndex', [
             { text: "titlefont",         value: "0"},

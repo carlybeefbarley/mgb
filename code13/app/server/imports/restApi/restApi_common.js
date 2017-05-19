@@ -98,9 +98,22 @@ RestApi.addRoute('asset/cached-thumbnail/png/:expires/:id', {authRequired: false
     })
   }
 })
+
+RestApi.addRoute('asset/cached-thumbnail/png/:expires/:kind/:user/:name', {authRequired: false}, {
+  get: function () {
+    const asset = Azzets.findOne({name: this.urlParams.name, kind: this.urlParams.kind, dn_ownerName: this.urlParams.user, isDeleted: false})
+    const expires = this.urlParams.expires || 30
+    return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ), {
+      'Content-Type': 'image/png',
+      'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`
+    })
+  }
+})
+
+// this is guessing....
 RestApi.addRoute('asset/cached-thumbnail/png/:expires/:user/:name', {authRequired: false}, {
   get: function () {
-    var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false})
+    const asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false})
     const expires = this.urlParams.expires || 30
     return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ), {
       'Content-Type': 'image/png',

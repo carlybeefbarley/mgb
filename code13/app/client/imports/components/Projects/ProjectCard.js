@@ -24,8 +24,7 @@ const ProjectCard = ( props, context ) => {
   return (
     <Card 
       key={project._id} 
-      className="animated fadeIn" 
-      style={{maxWidth: '230px', minWidth: '230px'}}
+      className="animated fadeIn mgb-projectcard-width"
       onClick={() => utilPushTo(context.urlLocation.query, linkTo)}>
 
       <ImageShowOrChange

@@ -207,6 +207,13 @@ export default {
         'binding':        C.En(2),
         'call-function':  C.En(2),
         'apply-function': C.En(2)
+      },
+
+      jsx: {
+        'startOpenTagBracket':      C.En(2),
+        'closeTagBracket':          C.En(2),
+        'startClosingTagBracket':   C.En(2),
+        'endSelfClosingTagBracket': C.En(2)
       }
 
     },

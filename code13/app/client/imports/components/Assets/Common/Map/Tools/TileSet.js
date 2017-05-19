@@ -4,9 +4,6 @@ import React from 'react'
 import TileHelper from '../Helpers/TileHelper.js'
 import TilesetControls from './TilesetControls.js'
 import SelectedTile from './SelectedTile.js'
-import TileCollection from './TileCollection.js'
-
-import LayerTypes from './LayerTypes.js'
 
 import EditModes from './EditModes.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
@@ -70,7 +67,8 @@ export default class TileSet extends React.Component {
   /* endof lifecycle functions */
 
   get tileset(){
-    return this.props.tilesets[this.props.activeTileset]
+    // fallback to first tileset
+    return this.props.tilesets[this.props.activeTileset] || this.props.tilesets[0]
   }
 
   get activeTileset(){

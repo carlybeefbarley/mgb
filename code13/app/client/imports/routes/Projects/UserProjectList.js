@@ -167,13 +167,13 @@ class UserProjectListUI extends React.PureComponent {
             <CreateProjectLinkButton currUser={currUser} />
             <p />
             { loading ? <Spinner/> : 
-              <ProjectsAsCards projects={projects} ownedFlag={true} user={currUser} />
+              <ProjectsAsCards projects={projects} ownedFlag={true} user={user} />
             }
             <br />
             <Divider />
             <Header as='h2'>Projects {ownerName} is a member of</Header>
             { loading ? <Spinner/> : 
-              <ProjectsAsCards projects={projects} ownedFlag={false} user={currUser} />
+              <ProjectsAsCards projects={projects} ownedFlag={false} user={user} />
             }
           </div>
           :
@@ -192,15 +192,20 @@ class UserProjectListUI extends React.PureComponent {
   }
 }
 
+// TODO: Fix problem when an invalid user is in the path. Maybe fix that at the app.js level?
+
 export default UserProjectList = createContainer( ({ user, location }) => {
   const userId = user ? user._id : null
+  let findOpts = {
+    sort:   projectSorters["createdNewest"]
+  }
   const qN = _queryNormalized(location.query)
   const showOnlyForkable = (qN.showForkable === '1')
   const handleForProjects = Meteor.subscribe("projects.search", userId, qN.searchName, showOnlyForkable, qN.hidews)
   const projectSelector = projectMakeSelector(userId, qN.searchName, showOnlyForkable, qN.hidews)
   
   return {
-    projects: Projects.find(projectSelector).fetch(),
+    projects: Projects.find(projectSelector, findOpts).fetch(),
     loading: !handleForProjects.ready()
   }}, UserProjectListUI
 )

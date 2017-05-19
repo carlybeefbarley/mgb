@@ -206,6 +206,7 @@ export default class EditMusic extends React.Component {
   }
 
   saveChannel (channel) {
+    console.log('save channel')
     this.callChildren('initAudio', [this.songTime])
     if(this.state.isPlaying) this.audioCtx.resume()
     // updates channel, merge rest of channels and saves to db
@@ -213,6 +214,7 @@ export default class EditMusic extends React.Component {
     let nr = _.findIndex(c2.channels, (a) => a.id == channel.id)
     c2.channels[nr] = channel
     this.mergeChannels(c2)
+    console.log('channel saved')
   }
 
   toggleLoop () {

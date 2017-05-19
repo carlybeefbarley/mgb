@@ -60,7 +60,7 @@ export default ExpressionDescription = React.createClass({
         { type !== '?' && <span><span style={colorGrey}>Type:</span>  <code style={{ whiteSpace: 'pre-wrap' }}>{typeFriendly}</code><br></br></span>}
         { origin && <p><small>Part of '{origin}'</small></p> }
         { docToDisplay && <p style={{whiteSpace: 'pre-line'}}>{docToDisplay}</p> }
-        { url && <p><a href={url}><small>{url}</small></a></p> }
+        { url && <p><a target='_blank' href={url}><small>{url}</small></a></p> }
       </div>
     )
   }

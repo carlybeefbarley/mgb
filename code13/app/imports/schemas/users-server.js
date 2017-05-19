@@ -19,12 +19,26 @@ const serverMethodHelper = userId => {
 
 Meteor.methods({
   /**
+   * RPC User.update.mgb1namesVerified
+   * Currently only superAdmin can do this. Self-validation system "coming soon"
+   */
+  'User.update.mgb1namesVerified': function(userId, newMgb1namesVerified) {
+    const u = serverMethodHelper(userId)
+    check(newMgb1namesVerified, String)
+    checkMgb.checkUserIsSuperAdmin()
+    const count = Meteor.users.update( { _id: userId } , { $set: { 'profile.mgb1namesVerified': newMgb1namesVerified } })
+    console.log('[User.update.mgb1namesVerified]', count, userId, `Changed from '${u.profile.mgb1namesVerified}' to '${newMgb1namesVerified}'`)
+    return count
+  },
+  
+    /**
    * RPC User.toggleBan
    * Currently only superAdmin can ban/unban an account. The idea is that the
    * discussion with the banned user would happen via email for now.
    */
   'User.toggleBan': function(userId) {
     const u = serverMethodHelper(userId)
+    checkMgb.checkUserIsSuperAdmin()
     const newIsBanned = !u.suIsBanned
     const count = Meteor.users.update( { _id: userId } , { $set: { suIsBanned: newIsBanned } })
     console.log('[User.toggleBan]', count, userId, `NewValue=${newIsBanned}`)
@@ -33,7 +47,7 @@ Meteor.methods({
   
   /**
    * RPC User.deactivateAccount
-   * User or superadmin can mark an account as de-activated
+   * Only owning-User or superadmin can mark an account as de-activated
    */
   'User.deactivateAccount': function(userId) {
     const u = serverMethodHelper(userId)

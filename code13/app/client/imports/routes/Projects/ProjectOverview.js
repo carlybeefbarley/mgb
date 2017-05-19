@@ -14,9 +14,28 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import UserListRoute from '../Users/UserListRoute'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import SlidingCardList from '/client/imports/components/Controls/SlidingCardList'
-
+import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
 import { logActivity } from '/imports/schemas/activity'
 import ProjectForkGenerator from './ProjectForkGenerator'
+import { makeChannelName} from '/imports/schemas/chats'
+import { utilShowChatPanelChannel } from '/client/imports/routes/QLink'
+import { isUserSuperAdmin } from '/imports/schemas/roles'
+import SpecialGlobals from '/imports/SpecialGlobals.js'
+
+const buttonSty = { width: '220px', marginTop: '2px', marginBottom: '2px'}
+
+const ProjectChatButton = ( { projId }) => {
+  const channelName = makeChannelName( { scopeGroupName: 'Project', scopeId: projId } )
+  return (
+    <QLink 
+        style={buttonSty} 
+        query={{ _fp: `chat.${channelName}` }} 
+        className='ui small primary button' >
+      <Icon name='chat' />
+      View Project Team Chat
+    </QLink>
+  )
+}
 
 export default ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],
@@ -25,6 +44,11 @@ export default ProjectOverview = React.createClass({
     params:   PropTypes.object,       // Contains params.projectId  OR projectName
     user:     PropTypes.object,       // App.js gave us this from params.id OR params.username
     currUser: PropTypes.object
+  },
+
+  componentDidMount(){
+    // setTimeou just to be sure that everything is loaded
+    setTimeout( () => hj('trigger', 'project-overview'), 200)
   },
   
   getInitialState: () => ({ 
@@ -94,8 +118,7 @@ export default ProjectOverview = React.createClass({
 
     if (!project)
       return <ThingNotFound type='Project' id={params.projectId || params.projectName} defaultHead={true}/>
-    
-    const buttonSty = { width: '220px', marginTop: '2px', marginBottom: '2px'}
+    const isPartOfTeam = !!currUser && (isMyProject ||  _.includes(project.memberIds, currUser._id))
     return (
       <Grid padded columns='equal'>
         <Helmet
@@ -117,6 +140,9 @@ export default ProjectOverview = React.createClass({
               className='ui small primary button' >
             View Project Assets
           </QLink>
+          {isPartOfTeam && 
+          <ProjectChatButton projId={project._id}/>
+          }
 
           { /* FORK PROJECT STUFF */}
           <Segment secondary compact style={{ width: '220px' }}>
@@ -178,16 +204,33 @@ export default ProjectOverview = React.createClass({
                 />
           </Segment>
           
-          <Header as="h3" >Project Members</Header>
+          <QLink 
+              id='mgbjr-project-overview-assets'
+              to={`/u/${project.ownerName}/assets`} 
+              query={{project:project.name}} >
+            <Header as="h3" >Project Assets</Header>
+          </QLink>
+          <Segment basic>
+            <AssetsAvailableGET 
+                scopeToUserId={project.ownerId}
+                scopeToProjectName={project.name}
+            />
+          </Segment>
+
+          <Header as="h3" >{`Project Members (${this.data.project.memberIds.length} of ${isUserSuperAdmin(currUser) ? SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject : SpecialGlobals.quotas.defaultNumMembersAllowedInProject})`}</Header>
           <Segment basic>
             Project Members may create, edit or delete Assets in this Project &nbsp;        
             <ProjectMembersGET 
                 project={this.data.project} 
                 enableRemoveButton={canEdit} 
+                enableLeaveButton={currUser && currUser._id}
                 handleRemove={this.handleRemoveMemberFromProject}
+                handleLeave={this.handleMemberLeaveFromProject}
             />
           </Segment>
-          { this.renderAddPeople() }
+          <Segment basic>
+            { this.renderAddPeople() }
+          </Segment>
         </Grid.Column>
       </Grid>
     )
@@ -249,12 +292,21 @@ export default ProjectOverview = React.createClass({
 
     Meteor.call('Projects.update', project._id, newData, (error, result) => {
       if (error) 
-        showToast(`Could not remove member ${userName} from project ${project.name}`, error)
+        showToast(`Could not remove member ${userName} from project ${project.name}`, 'error')
       else 
         logActivity("project.removeMember",  `Removed Member ${userName} from project ${project.name}`);
     })
   },
-    
+
+  handleMemberLeaveFromProject: function (userId, userName) {
+    var project = this.data.project
+    Meteor.call('Projects.leave', project._id, userId, (error, result) => {
+      if (error) 
+        showToast(`Member ${userName} could not leave project ${project.name}`, 'error')
+      else 
+        logActivity("project.leaveMember",  `Member ${userName} left from project ${project.name}`)
+    })
+  },
   /**
    *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
    */
@@ -264,7 +316,7 @@ export default ProjectOverview = React.createClass({
 
     Meteor.call('Projects.update', project._id, changeObj, (error) => {
       if (error) 
-        showToast(`Could not update project: ${error.reason}`, error)
+        showToast(`Could not update project: ${error.reason}`, 'error')
       else 
       {
        // Go through all the keys, log completion tags for each

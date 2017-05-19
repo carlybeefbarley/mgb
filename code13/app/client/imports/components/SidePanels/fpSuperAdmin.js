@@ -31,12 +31,13 @@ const LinkTabContent = () => (
     <Header sub>Deployment/Monitoring Quicklinks</Header>
     <List bulleted>
       { linkLi("Google Analytics (RT)", "https://analytics.google.com/analytics/web/?authuser=0#realtime/rt-overview/a82379171w121883491p127579308/%3F_r.dsa%3D1%26_.advseg%3D%26_.useg%3D%26_.sectionId%3D/") }
+      { linkLi("Hotjar (Ux analytics)", "https://insights.hotjar.com/sites/446876/dashboard") }
       { linkLi("TrackJs (client errors)", "https://my.trackjs.com/messages") }
       { linkLi("Galaxy (PaaS)", "https://galaxy.meteor.com/app/v2.mygamebuilder.com") }
-      { linkLi("Kadira (Meteor stats)", "https://ui.kadira.io/apps/e7zK3YN4QZijYhpmY/dashboard/overview") }
       { linkLi("mLab telemetry", "https://mlab.com/realtime-dashboard?server=s-ds021730-a0") }
       { linkLi("mLab cluster", "https://mlab.com/clusters/rs-ds021730") }
     </List>
+    <p>{Meteor.settings.public.MGB_GIT_BRANCH} @ cc={Meteor.settings.public.MGB_GIT_BRANCH_COMMIT_COUNT}</p>
   </div>
 )
 
@@ -44,6 +45,9 @@ const UserAdmin = ( { user } ) => ( !user ? <div>Visit a page that has a user co
   <div>
     <Header sub>Public Info: {user.username}</Header>
     <List bulleted>
+      { linkLi(`UserId: ${user._id}`)}
+      { linkLi(`Self-claimed MGB1 name: '${user.profile.mgb1name || ''}'`)}
+      { linkLi(`ADMIN-verified MGB1 names: '${!user.profile.mgb1namesVerified }`)}
       { linkLi(`Badges: ${_.join(user.badges, ',')}`,  `/u/${user.username}/badges`)}
       { linkLi(`Created: ${user.createdAt}`, `/u/${user.username}`)}
       { linkLi(`Latest WhatsNew seen: ${user.profile.latestNewsTimestampSeen}`, `/u/${user.username}`)}

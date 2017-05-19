@@ -1,16 +1,4 @@
 (function() {
-// if adblock blocks analytics
-  Package = typeof(Package) === "undefined" ? {} : Package;
-  Package['okgrow:analytics'] = {
-    analytics: {
-      page: function () {
-      },
-      track: function () {
-      },
-      identify: function () {
-      }
-    }
-  }
 // IE and onlder browser fixes
   if (Number.isInteger === void(0)) {
     Number.isInteger = function (value) {

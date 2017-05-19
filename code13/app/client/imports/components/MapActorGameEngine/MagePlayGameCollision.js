@@ -1,9 +1,9 @@
-
-
 import InventoryItem from './MageInventoryItem'
 import MgbSystem from './MageMgbSystem'
 import MgbActor from './MageMgbActor'
 
+// Pixel with alpha level below this value is considered transparent
+const ALPHALEVEL = 20;
 
 class ActorCollision
 {
@@ -27,14 +27,14 @@ export default MagePlayGameCollision = {
   // The algorithm here is a variant of qtrees; we use sparse arrays to pigeon sort by cell#, then look for collisions within
   // the cell. We have to actually check to_cell and from_cell because 2 items could be switching positions. Finally we strip
   // duplicates out of the hits[] array
-  
+
   playFindAACollisions()
   {
     if (!this.G_tic)
       this.generateTicTable()					// Positions have changed enough that we have to update the tic table
     const { G_tic, activeActors, AA_player_idx } = this
 
-    var hits = []
+     var hits = []
 
     // Now, check the cells for collisions
     var i = 0, j = 0;
@@ -98,12 +98,104 @@ export default MagePlayGameCollision = {
     return hits
   },
 
+  // Implementation from http://www.playmycode.com/blog/2011/08/javascript-per-pixel-html5-canvas-image-collision-detection/
   pixelLevelHitTest(image1, x1, y1, image2, x2, y2)
   {
-    // In the original ActionScript 3.0 implementation, this used the BitmapData.hitTest() function as follows
-    //  if (a1._image.hitTest(new Point (x1, y1), 0xF0, a2._image, new Point (x2, y2), 0xF0))
+    // Not used for now
     return true
-    // TODO
+
+    /*
+    // we need to avoid using floats, as were doing array lookups
+    x1 = Math.round( x1 );
+    y1 = Math.round( y1 );
+    x2 = Math.round( x2 );
+    y2 = Math.round( y2 );
+
+    var w1  = image1.width,
+        h1  = image1.height,
+        w2 = image2.width,
+        h2 = image2.height ;
+
+    const c1 = document.createElement('canvas')
+    c1.ctx = c1.getContext('2d')
+    c1.width = w1
+    c1.height = h1
+    c1.ctx.drawImage(image1, x1, y1)
+    const c2 = document.createElement('canvas')
+    c2.ctx = c2.getContext('2d')
+    c2.width = w2
+    c2.height = h2
+    c2.ctx.drawImage(image2, x2, y2)
+
+    // find the top left and bottom right corners of overlapping area
+    var xMin = Math.max( x1, x2 ),
+        yMin = Math.max( y1, y2 ),
+        xMax = Math.min( x1+w1, x2+w2 ),
+        yMax = Math.min( y1+h1, y2+h2 );
+
+    // Sanity collision check, we ensure that the top-left corner is both
+    // above and to the left of the bottom-right corner.
+    if ( xMin >= xMax || yMin >= yMax ) {
+        return false;
+    }
+
+    var xDiff = xMax - xMin,
+        yDiff = yMax - yMin;
+
+    // get the pixels out from the images
+    var pixels1 = c1.ctx.getImageData(x1, y1, w1, h1),
+        pixels2 = c2.ctx.getImageData(x2, y2, w2, h2);
+
+    // if the area is really small,
+    // then just perform a normal image collision check
+    if ( xDiff < 4 && yDiff < 4 ) {
+        for ( var pixelX = xMin; pixelX < xMax; pixelX++ ) {
+            for ( var pixelY = yMin; pixelY < yMax; pixelY++ ) {
+                if (
+                        ( pixels1[ ((pixelX-x1) + (pixelY-y1)*w1)*4 + 3 ] !== 0 ) &&
+                        ( pixels2[ ((pixelX-x2) + (pixelY-y2)*w2)*4 + 3 ] !== 0 )
+                ) {
+                    return true;
+                }
+            }
+        }
+    } else {
+         //It is iterating over the overlapping area,
+         //across the x then y the,
+         //checking if the pixels are on top of this.
+         
+         //What is special is that it increments by incX or incY,
+         //allowing it to quickly jump across the image in large increments
+         //rather then slowly going pixel by pixel.
+         
+         //This makes it more likely to find a colliding pixel early.
+
+        // Work out the increments,
+        // it's a third, but ensure we don't get a tiny
+        // slither of an area for the last iteration (using fast ceil).
+        var incX = xDiff / 3.0,
+            incY = yDiff / 3.0;
+        incX = (~~incX === incX) ? incX : (incX+1 | 0);
+        incY = (~~incY === incY) ? incY : (incY+1 | 0);
+
+        for ( var offsetY = 0; offsetY < incY; offsetY++ ) {
+            for ( var offsetX = 0; offsetX < incX; offsetX++ ) {
+                for ( var pixelY = yMin+offsetY; pixelY < yMax; pixelY += incY ) {
+                    for ( var pixelX = xMin+offsetX; pixelX < xMax; pixelX += incX ) {
+                        if (
+                                ( pixels1[ ((pixelX-x1) + (pixelY-y1)*w1)*4 + 3 ] !== 0 ) &&
+                                ( pixels2[ ((pixelX-x2) + (pixelY-y2)*w2)*4 + 3 ] !== 0 )
+                        ) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
+    */
   },
 
   sortOnChoice(a, b) // a and b are ActorCollision object

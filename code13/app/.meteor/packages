@@ -26,7 +26,7 @@ babel-runtime@1.0.1
 # meteorhacks:kadira
 # meteorhacks:kadira-profiler
 random@1.0.10
-okgrow:analytics
+# okgrow:analytics
 reactive-dict@1.1.8
 shell-server@0.2.1
 dispatch:mocha

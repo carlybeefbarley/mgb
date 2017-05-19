@@ -4,6 +4,7 @@ import reactMixin from 'react-mixin'
 import Helmet from 'react-helmet'
 import moment from 'moment'
 
+import mgb1 from '/client/imports/helpers/mgb1'
 import UserProjects from '/client/imports/components/Users/UserProjects'
 import UserHistory from '/client/imports/components/Users/UserHistory'
 import UserProfileBadgeList from '/client/imports/components/Users/UserProfileBadgeList'
@@ -14,18 +15,18 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import validate from '/imports/schemas/validate'
+import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 
 import { Projects } from '/imports/schemas'
 import { logActivity } from '/imports/schemas/activity'
-import { projectMakeSelector } from '/imports/schemas/projects'
+import { projectMakeSelector, projectSorters } from '/imports/schemas/projects'
+
+import { makeChannelName} from '/imports/schemas/chats'
 
 import QLink from '../QLink'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 
-
-import { Container, Segment, Header, Button, Grid, Item, Icon, Label, Popup } from 'semantic-ui-react'
-import FittedImage from '/client/imports/components/Controls/FittedImage'
+import { Segment, Header, Button, Grid, Item, Icon, Label, Popup } from 'semantic-ui-react'
 
 const UserShowcase = () => ( null )    // TODO based on workState
 
@@ -39,13 +40,22 @@ export default UserProfileRoute = React.createClass({
     ownsProfile: PropTypes.bool
   },
 
+  componentDidMount(){
+    // setTimeou just to be sure that everything is loaded
+    setTimeout( () => hj('trigger', 'user-profile'), 200)
+  },
+
+
   getMeteorData: function() {
     const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
+    let findOpts ={
+      sort: projectSorters["createdNewest"]
+    }
     const handleForProjects = Meteor.subscribe("projects.byUserId", userId)
     const projectSelector = projectMakeSelector(userId)
 
     return {
-      projects: Projects.find(projectSelector).fetch(),
+      projects: Projects.find(projectSelector, findOpts).fetch(),
       loading: userId && !handleForProjects.ready()
     }
   },
@@ -110,7 +120,9 @@ export default UserProfileRoute = React.createClass({
           { false &&
             <ActivityHeatmap user={user} className="eight wide column" />
           }
-
+          { /* Users who currUser is projects with -owned and not owned use pubsub */ }
+          <UserColleaguesList user={user} projects={this.data.projects} />
+    
           { /* User Projects */ }
           <UserProjects user={user} width={16} projects={this.data.projects} />
 
@@ -130,7 +142,9 @@ export default UserProfileRoute = React.createClass({
   renderUserInfo: function(user, ownsProfile, width) {
     const { avatar, name, mgb1name, title, bio, focusMsg } = user.profile
     const editsDisabled = !ownsProfile || user.suIsBanned
+    const channelName = makeChannelName( { scopeGroupName: 'User', scopeId: this.props.params.username } )
 
+    const firstMgb1name = (mgb1name && mgb1name.length>0 ) ? mgb1name.split(',')[0] : null
     return (
       <Grid.Column width={width} id="mgbjr-profile-bioDiv">
         <Segment>
@@ -157,7 +171,7 @@ export default UserProfileRoute = React.createClass({
                 }
                 <Item.Meta>
                   <p>
-                    <b title="This is the user's name on the old MGBv1 system. There is currently no verification of this claim">
+                    <b title="This is the user's name on the prior flash-based MGBv1 system. ">
                       MGB1 name:
                     </b>&nbsp;
                   <InlineEdit
@@ -176,7 +190,7 @@ export default UserProfileRoute = React.createClass({
                         on='hover'
                         hoverable
                         positioning='bottom right'
-                        trigger={<span>...</span>}
+                        trigger={<img className="ui avatar image" src={mgb1.getUserAvatarUrl(firstMgb1name)} />}
                         mouseEnterDelay={500}
                         >
                         <Popup.Header>
@@ -185,12 +199,14 @@ export default UserProfileRoute = React.createClass({
                         <Popup.Content>
                           <div>Prior account in the legacy Flash-based 'MGB1' system from 2007:</div>
                           <br/>
-                          <a className="mini image"  href={`http://s3.amazonaws.com/apphost/MGB.html#user=${mgb1name};project=project1`} target="_blank">
+                          <a className="mini image"  href={mgb1.getEditPageUrl(firstMgb1name)} target="_blank">
                             <img  
-                              className="ui centered image" 
+                              className="ui centered image bordered" 
                               style={{ maxWidth: "64px", maxHeight: "64px" }}
-                              src={`https://s3.amazonaws.com/JGI_test1/${mgb1name}/project1/tile/avatar` } />
+                              src={mgb1.getUserAvatarUrl(firstMgb1name)} />
                           </a>
+                          <br/>
+                          <QLink to={`/u/${user.username}/projects/import/mgb1`}>MGBv1 Project Importer...</QLink>
                         </Popup.Content>
                       </Popup>
                     }
@@ -236,6 +252,9 @@ export default UserProfileRoute = React.createClass({
                     </QLink>
                     <QLink to={`/u/${name}/games`} style={{marginBottom: '6px'}}>
                       <Button size='small' icon='game' content='Games' />
+                    </QLink>
+                    <QLink query={{ _fp: `chat.${channelName}` }}  style={{marginBottom: '6px'}}>
+                      <Button size='small' icon='chat' content={`${user.username}'s Wall`} />
                     </QLink>
                   </Button.Group>
                 </Item.Extra>

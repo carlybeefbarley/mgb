@@ -144,11 +144,13 @@ export default class EditSound extends React.Component {
 							onClick={this.openImportPopup.bind(this)}>
 						  <i className="add square icon"></i> Import
 						</button>
-						<button className="ui small icon button"
+
+						{/*<button className="ui small icon button"
 							title="Get sound from stock"
 							onClick={this.openStockPopup.bind(this)}>
 						  <i className="folder icon"></i> Stock [not ready]
-						</button>
+						</button>*/}
+
 						<button className="ui small icon button"
 							id="mgbjr-EditSound-createSound"
 							title="Create sound with effect generator"

@@ -15,6 +15,7 @@ import AssetShowChallengeAssetsSelector from '/client/imports/components/Assets/
 import AssetShowStableSelector from '/client/imports/components/Assets/AssetShowStableSelector'
 import AssetListSortBy from '/client/imports/components/Assets/AssetListSortBy'
 import AssetListChooseView from '/client/imports/components/Assets/AssetListChooseView'
+import AssetListChooseLimit from '/client/imports/components/Assets/AssetListChooseLimit'
 import { assetViewChoices, defaultAssetViewChoice } from '/client/imports/components/Assets/AssetCard'
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 import { WorkStateMultiSelect } from '/client/imports/components/Controls/WorkState'
@@ -27,18 +28,22 @@ import AssetCreateLink from '/client/imports/components/Assets/NewAsset/AssetCre
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = {
   project: ProjectSelector.ANY_PROJECT_PROJNAME,
-  view: defaultAssetViewChoice, // Large. See assetViewChoices for explanation.
+  view: defaultAssetViewChoice, // Large. See assetViewChoices for explanation. Has special localStorage() way to override default
+  limit: SpecialGlobals.assets.mainAssetsListDefaultLimit, // Number of items to show. Has special localStorage() way to override default
   searchName: "",               // Empty string means match all (more convenient than null for input box)
   sort: "edited",               // Should be one of the keys of assetSorters{}
   showDeleted: "0",             // Should be "0" or "1"  -- as a string. 0 means False, 1 means True
   showStable: "0",              // Should be "0" or "1"  -- as a string. 0 means False, 1 means True
-  showChallengeAssets: "0",         // Should be "0" or "1"  -- as a string. 0 means False, 1 means True
+  showChallengeAssets: "0",     // Should be "0" or "1"  -- as a string. 0 means False, 1 means True
   hidews: '0',                  // hide WorkStates using a bitmask. Bit on = workstate[bitIndex] should be hidden
   kinds: ""                     // Asset kinds. Empty means 'match all valid, non-disabled assets'
 }
 
 const _contentsSegmentStyle = { minHeight: '600px' }
 const _filterSegmentStyle = { ..._contentsSegmentStyle, minWidth: '220px', maxWidth: '220px' }
+
+const _lsAssetViewKey = 'asset-view'
+const _lsAssetLimitKey = 'asset-limit-num'
 
 export default UserAssetListRoute = React.createClass({
   mixins: [ReactMeteorData],
@@ -51,6 +56,11 @@ export default UserAssetListRoute = React.createClass({
     location: PropTypes.object      // We get this from react-router
   },
 
+  componentDidMount(){
+    // setTimeou just to be sure that everything is loaded
+    setTimeout( () => hj('trigger', 'user-asset-list'), 200)
+  },
+
   /**
    * queryNormalized() takes a location query that comes in via the browser url.
    *   Any missing or invalid params are replaced by defaults
@@ -60,7 +70,8 @@ export default UserAssetListRoute = React.createClass({
   queryNormalized: function(q = {}) {
     // Start with defaults
     let newQ = _.clone(queryDefaults)
-    // Validate and apply values from location query
+
+    // Next, validate and apply values from url location query to overrride defaults
 
     // query.sort
     if (assetSorters.hasOwnProperty(q.sort))
@@ -68,8 +79,21 @@ export default UserAssetListRoute = React.createClass({
 
     if (assetViewChoices.hasOwnProperty(q.view))
       newQ.view = q.view
-    else if(localStorage.getItem("asset-view"))
-      newQ.view = localStorage.getItem("asset-view")
+    else if (localStorage.getItem(_lsAssetViewKey))
+      newQ.view = localStorage.getItem(_lsAssetViewKey)
+
+    if (_.isString(q.limit))
+    {
+      // It was supplied in URL
+      newQ.limit = _.toFinite(q.limit)
+    }
+    else if (localStorage.getItem(_lsAssetLimitKey))
+    {
+      // This browser has set a prior default
+      newQ.limit = localStorage.getItem(_lsAssetLimitKey)
+    }
+    newQ.limit = _.clamp(newQ.limit, 10, SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit)
+      
 
     // query.project
     if (q.project)
@@ -151,7 +175,7 @@ export default UserAssetListRoute = React.createClass({
                                   qN.showDeleted === "1",
                                   qN.showStable === "1",
                                   qN.sort,
-                                  SpecialGlobals.assets.mainAssetsListDefaultLimit,
+                                  qN.limit,
                                   qN.hidews,
                                   qN.showChallengeAssets === "1")
     let assetSorter = assetSorters[qN.sort]
@@ -219,8 +243,14 @@ export default UserAssetListRoute = React.createClass({
 
   handleChangeViewClick(newView)
   {
-    localStorage.setItem("asset-view", newView)
+    localStorage.setItem(_lsAssetViewKey, newView)
     this._updateLocationQuery( { view: newView } )
+  },
+
+  handleChangeLimitClick(newLimitNum)
+  {
+    localStorage.setItem(_lsAssetLimitKey, newLimitNum)
+    this._updateLocationQuery( { limit:  newLimitNum } )
   },
 
   render() {
@@ -228,7 +258,7 @@ export default UserAssetListRoute = React.createClass({
     const { currUser, user, ownsProfile, location } = this.props
     const name = user ? user.profile.name : ''
     const qN = this.queryNormalized(location.query)
-    const view = qN.view
+    const { view, limit } = qN
     const isAllKinds = isAssetKindsStringComplete(qN.kinds)
     const isOneKind = !_.includes(qN.kinds, safeAssetKindStringSepChar)
     const pageTitle = user ? `${name}'s Assets` : "Public Assets"
@@ -297,7 +327,9 @@ export default UserAssetListRoute = React.createClass({
           </div>
         </Segment>
 
+        { /* Content segment on right-hand-side */ }
         <Segment style={ _contentsSegmentStyle } className='mgb-suir-plainSegment'>
+        { /* Header controls - Create New, Size-select, order-select */ }
           <div style={ { marginBottom: '1em' } }>
             <AssetCreateLink 
               assetKind={isOneKind ? qN.kinds : null}
@@ -307,18 +339,45 @@ export default UserAssetListRoute = React.createClass({
                 sty={{ float: 'right', marginRight: '1em'}}
                 chosenView={view}
                 handleChangeViewClick={this.handleChangeViewClick} />
+            <AssetListChooseLimit
+                sty={{ float: 'right', marginRight: '1em'}}
+                chosenLimit={limit}
+                handleChangeLimitClick={this.handleChangeLimitClick} />
           </div>
+          { /* The Asset Cards */ }
           <div>
-            { !loading && qN.kinds === '' && <Message style={{marginTop: '8em'}} warning icon='help circle' header='Select one or more Asset kinds to be shown here' content='This list is empty because you have not selected any of the available Asset kinds to view' /> }
-            { !loading && qN.kinds !== '' && assets.length === 0 && <Message style={{marginTop: '8em'}} warning icon='help circle' header='No assets match your search' content="Widen your search to see more assets, or create a new Asset using the 'Create New Asset' button above" /> }
-            { loading ?  <div><Spinner /></div>
+            { (!loading && qN.kinds === '') && (
+                <Message 
+                    style={{marginTop: '8em'}} 
+                    warning 
+                    icon='help circle' 
+                    header='Select one or more Asset kinds to be shown here' 
+                    content='This list is empty because you have not selected any of the available Asset kinds to view' />
+              ) 
+            }
+            { (!loading && qN.kinds !== '' && assets.length === 0) && (
+                <Message 
+                    style={{marginTop: '8em'}} 
+                    warning 
+                    icon='help circle' 
+                    header='No assets match your search' 
+                    content="Widen your search to see more assets, or create a new Asset using the 'Create New Asset' button above" />
+              ) 
+            }
+            { loading ? <div><Spinner /></div>
               :
                 <AssetList
-                  allowDrag={true}
-                  assets={assets}
-                  renderView={view}
-                  currUser={currUser}
-                  ownersProjects={projects}  />
+                    allowDrag={true}
+                    assets={assets}
+                    renderView={view}
+                    currUser={currUser}
+                    ownersProjects={projects}  />
+            }
+            { (!loading && assets.length >= SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit) && (
+                <Segment basic>
+                  Reached maximum number of assets that can be listed here ({SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit}). Use the search filter options to display specific assets.
+                </Segment>
+              ) 
             }
           </div>
         </Segment>

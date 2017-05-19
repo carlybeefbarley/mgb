@@ -677,6 +677,9 @@ export default class MapArea extends React.Component {
       if (this.camera.zoom > ZOOM_STEP * 2)
         this.zoomCamera(this.camera.zoom - ZOOM_STEP, e)
     }
+
+    // simlpy force update
+    this.props.updateScale(this.camera.zoom)
   }
 
   handleKeyUp (e) {
@@ -825,7 +828,7 @@ export default class MapArea extends React.Component {
     for (let i = 0; i < this.data.layers.length; i++) {
       const ld = this.data.layers[i]
       if (!ld.visible)
-        return
+        continue
 
       const layer = this.getLayer(ld)
       if (!layer)

@@ -26,6 +26,8 @@ import { createInitialSettings } from '/imports/schemas/settings-server'
 import '/imports/schemas/skills'
 import { createInitialSkills } from '/imports/schemas/skills-server'
 
+import { createInitialUserAnalytics, uaNoteUserIp, uaNoteUsername } from '/server/imports/user-analytics'
+
 import '/imports/schemas/badges'
 import '/imports/schemas/badges-server'
 
@@ -56,6 +58,10 @@ function userHasLoggedIn(loginInfo)
   console.log(`Login: '${u.profile.name}' (${loginInfo.type})   uid:${u._id}   IP: ${loginInfo.connection.clientAddress}`)
   createInitialSkills(u._id)
   createInitialSettings(u._id)
+  createInitialUserAnalytics(u._id)
+
+  uaNoteUserIp(u._id, loginInfo.connection.clientAddress)
+  uaNoteUsername(u._id, u.username)
 }
 
 // This gets registered with http://docs.meteor.com/api/accounts-multi.html#AccountsServer-validateLoginAttempt

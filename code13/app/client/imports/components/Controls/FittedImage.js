@@ -8,7 +8,7 @@ export default (FittedImage = (
     className="mgb-pixelated"
     crossOrigin="anonymous"
     style={{
-      background: `url(${src}) no-repeat center 10% / contain`,
+      background: `url("${src}") no-repeat center 10% / contain`,
       height: height,
       width: width
     }}

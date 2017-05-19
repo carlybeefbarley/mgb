@@ -3,7 +3,7 @@ export default class PositionInfo extends React.Component {
 
   render () {
     return (
-      <div>
+      <div style={{position: 'fixed', bottom: 0}}>
         {this.props.getInfo()}
       </div>
     )

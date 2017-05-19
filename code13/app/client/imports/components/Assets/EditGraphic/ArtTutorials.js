@@ -10,15 +10,17 @@ import { learnSkill } from '/imports/schemas/skills'
 export default class ArtTutorial extends React.Component {
 
   static propTypes = {
-    currUser:    PropTypes.object,
-    skillPath:   PropTypes.string,
-    userSkills:  PropTypes.object,
-    active:      PropTypes.bool,
-    quickSave:   PropTypes.func,
-    images:      PropTypes.func,
-    assetId:     PropTypes.string,
-    style:       PropTypes.object,
-    isOwner:     PropTypes.bool
+    currUser:          PropTypes.object,
+    skillPath:         PropTypes.string,
+    userSkills:        PropTypes.object,
+    active:            PropTypes.bool,
+    quickSave:         PropTypes.func,
+    images:            PropTypes.func,
+    assetId:           PropTypes.string,
+    style:             PropTypes.object,
+    isOwner:           PropTypes.bool,
+    frameData:         PropTypes.array,
+    handleSelectFrame: PropTypes.func
   }
 
   constructor(props) {
@@ -36,7 +38,7 @@ export default class ArtTutorial extends React.Component {
     mgbAjax(`/api/asset/code/!vault/` + this.skillName, (err, listStr) => {
       if (err)
         console.log('error', err)
-      else 
+      else
         this.setState({ data: JSON.parse(listStr) })
     })
   }
@@ -44,7 +46,9 @@ export default class ArtTutorial extends React.Component {
   stepNext = () => {
     const step = this.state.step + 1
     if (step < this.state.data.steps.length) {
-      this.setState({ step: step }) 
+      if (this.props.frameData[step])
+        this.props.handleSelectFrame(step)
+      this.setState({ step: step })
     }
     else
       this.successPopup()
@@ -54,7 +58,9 @@ export default class ArtTutorial extends React.Component {
   stepBack = () => {
     if (this.state.step > 0) {
       const step = this.state.step - 1
-      this.setState({ step: step }) 
+      if (this.props.frameData[step])
+        this.props.handleSelectFrame(step)
+      this.setState({ step: step })
     }
   }
 
@@ -69,8 +75,10 @@ export default class ArtTutorial extends React.Component {
   }
 
   render () {
-    const description = this.state.data.steps ? this.state.data.steps[this.state.step].text : ''
-    const images = this.state.data.steps ? this.state.data.steps[this.state.step].images : []
+    const currStep = this.state.data.steps ? this.state.data.steps[this.state.step] : null
+    const description = currStep ? currStep.text : ''
+    const source = currStep ? currStep.source : ''
+    const images = currStep ? currStep.images : []
     const totalSteps = this.state.data.steps ? this.state.data.steps.length : 0
     const isLastStep = totalSteps > 0 && this.state.step == totalSteps-1
     const { isCompleted } = this.state
@@ -79,25 +87,25 @@ export default class ArtTutorial extends React.Component {
       <Grid.Column style={{height: '100%'}} width={8}>
         <Segment style={{width: '100%'}}>
           <Button compact
-            size='small' 
-            color='green' 
-            onClick={this.stepBack} 
-            icon='backward' 
+            size='small'
+            color='green'
+            onClick={this.stepBack}
+            icon='backward'
             content='Back'
-            disabled={this.state.step === 0 || isCompleted} 
+            disabled={this.state.step === 0 || isCompleted}
           />
           <Button compact
-            size='small' 
-            color='green' 
-            onClick={this.stepNext} 
-            icon='forward' 
-            content={isLastStep ? 'Finish' : 'Next'} 
+            size='small'
+            color='green'
+            onClick={this.stepNext}
+            icon='forward'
+            content={isLastStep ? 'Finish' : 'Next'}
             disabled={isCompleted}
           />
           <Button compact basic size='small' color='green' onClick={this.navigateToSkillsList} icon='up arrow' data-position='bottom right' data-tooltip="Go up to Tutorial list"/>
-          
+
           <Divider as={Header} style={{color:'grey'}} size='tiny' horizontal >{this.state.data.title}</Divider>
-          
+
           { isCompleted && (
             <Message size='small' icon style={{paddingBottom: 0}}>
               <Icon color='green' name='check circle'/>
@@ -105,7 +113,7 @@ export default class ArtTutorial extends React.Component {
                 <Message.Header>
                   Completed...
                 </Message.Header>
-                <Button 
+                <Button
                     positive
                     size='small'
                     content='Return to Tutorial List'
@@ -117,21 +125,23 @@ export default class ArtTutorial extends React.Component {
             </Message>
           )
         }
-          <Segment basic textAlign="center">
+          <Segment style={{marginBottom: 0}} basic textAlign="center">
             <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'row'}}>
             {_.map(images, (img, i) => {
               return (
-                <img key={i} style={{padding: '0px 10px 0px 10px', maxHeight: '175px'}} src={img} />
+                <img key={i} style={{padding: '0px 10px 0px 10px', height: '175px', width: 'auto'}} src={img} />
               )
             })}
             </div>
-          </Segment> 
-          <Segment basic>
-            {description}
+          </Segment>
+          <a style={{cursor: 'pointer'}} href={source.split('::').pop()} target="_blank">
+            <Header style={{padding: 0, textAlign: 'center'}} size='tiny' disabled>Source: {source.split('::')[0]}</Header>
+          </a>
+          <Segment style={{marginTop: 0}} basic>
+            <p dangerouslySetInnerHTML={{__html: description}} />
           </Segment>
         </Segment>
       </Grid.Column>
     )
   }
-
 }

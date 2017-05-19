@@ -7,6 +7,13 @@ const through2 = require( 'through2' )
 const cheerio = require( 'cheerio' )
 const fs = require( 'fs-extra' )
 
+
+var RevAll = require('gulp-rev-all');
+var awspublish = require('gulp-awspublish');
+var cloudfront = require("gulp-cloudfront");
+
+
+
 // ============================================================
 // Config
 // ============================================================
@@ -56,6 +63,21 @@ const uglifyOpts = {
                               //   function   : Specify your own comment preservation function.
 }
 
+
+const aws = {
+  "params": {
+    "Bucket": process.env.AWS_S3_LANDINGPAGE_BUCKETNAME || "landing.mygamebuilder.com"
+  },
+  "accessKeyId":     "",           // Caller should provide this in ENV: AWS_ACCESS_KEY_ID="shhhhh"
+  "secretAccessKey": "",           // Caller should provide this in ENV: AWS_SECRET_ACCESS_KEY="shhhhh"
+  "distributionId": process.env.AWS_S3_LANDINGPAGE_CLOUDFRONT_DISTRIBUTIONID || "E2FKDU47P960M9",
+  "region": "us-east-1",
+};
+
+const publisher = awspublish.create(aws);
+const headers = {'Cache-Control': 'max-age=315360000, no-transform, public'};
+
+
 // ============================================================
 // Custom Plugins
 // ============================================================
@@ -64,7 +86,7 @@ const copyUsedMeteorAssets = () => through2.obj( function (file) {
   const html = file.contents.toString()
   const $ = cheerio.load( html )
 
-  const attrs = ['src', 'href']
+  const attrs = ['src', 'href', 'content']
   const assetPaths = []
 
   attrs.forEach( attr => {
@@ -107,11 +129,27 @@ const interpolateEnvVars = () => through2.obj( function (file) {
 // ============================================================
 // Tasks
 // ============================================================
+
+gulp.task('awspublish', function () {
+
+  gulp
+    .src('dist/**')
+    .pipe(RevAll.revision())
+    .pipe(awspublish.gzip())
+    .pipe(publisher.publish(headers))
+    .pipe(publisher.cache())
+    .pipe(awspublish.reporter())
+    .pipe(cloudfront(aws));
+
+});
+
+
 // ----------------------------------------
 // Serve
 // ----------------------------------------
 gulp.task( 'serve', () => {
   g.connect.server( {
+    host: '0.0.0.0',
     root:       distPath(),
     livereload: true
   } )

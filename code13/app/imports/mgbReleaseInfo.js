@@ -15,6 +15,306 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Wed May 17 2017 22:30 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4174'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.assets',
+          'type': 'feature',
+          'changeName': 'Select how many Assets are listed in Asset search page',
+          'changeSummary': 'Added ability to change how many assets are listed on the asset-list pages. The chosen number is remembered in local storage on the browser for when you return to that view. Max number of assets listed increased from 50 to 200',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Added a "create GameConfig" button for MGBv1 game importer; Improved instructions/hints on dragging actors into ActorMap editor; Increased default number of owned projects from 8 to 10; Nicer colors for workstate; Fixed sound editor on iPad; Improved zoom button layout in graphic Editor; Fixed a wall-chat-notification bug.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+    {
+      'timestamp': 'Tue May 16 2017 21:10 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4163'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'mgb1.import',
+          'type': 'feature',
+          'changeName': 'Self-service import of older "MGBv1" games from multiple accounts',
+          'changeSummary': 'Adding your comma-separated usernames from the prior "MGBv1" system to your Profile bio will enable a link to the self-service project import page (from the bio section, and from the main "Projects" menu). Then, if thre is admin approval (for now) you can import your projects!',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed a message send bug; Fixed some iPad/iOS touch issues with menus (the toolbutton ones are next); fixed some more codeEditor bugs; Fixed bug preventing chat working during project fork ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Mon May 15 2017 21:30 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4146'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'user.colleagues',
+          'type': 'feature',
+          'changeName': 'Colleagues list on Profile page',
+          'changeSummary': 'The user profile page now shows the list of users with whom they are working on projects',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'mgb1.import',
+          'type': 'feature',
+          'changeName': 'Self-service import of older "MGBv1" games',
+          'changeSummary': 'Adding your username from the prior "MGBv1" system to your Profile bio will enable a link to the self-service project import page (from the bio section, and from the main "Projects" menu).',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed bug that prevented some Actor assets being changed; Improved MGBv1 import UI; Link in User item card to user wall; activity notifications for user wall posts; ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Mon May 15 2017 13:30 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4133'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'project.quotas',
+          'type': 'feature',
+          'changeName': 'Project/Member quotas',
+          'changeSummary': 'Projects being lightweight tags, and project-membership changes being instant is a core part of the rapid-collaboration user experience design of this site. As a way to limit potential project-member spamming though, we have implemented an initial limit of 5 owned-projects per user and 5 project-members per project. We wanted to keep the current "instant" feel for project membership changes instead of creating a slower invite/accept system (which is also still open to spamming abuse of course). We will provide ways for raising these limits for established users when/if they become a problem',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'mgb1.import',
+          'type': 'feature',
+          'changeName': 'Self-service import of older "MGBv1" games',
+          'changeSummary': 'As some of you know, this site is a major re-write of a simpler flash-based site developed in 2007. The actors + actorMap system was ported directly from that old codebase so that we could import and edit/run the games developed there. We are rolling out the self-service importer now. Message us on chat to have your account enabled for importing games if you had an old MGBv1 account.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed some error messages that said "success"!',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+
+    {
+      'timestamp': 'Fri May 12 2017 23:45 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4122'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'wall',
+          'type': 'feature',
+          'changeName': 'User Wall posts',
+          'changeSummary': 'We have a wall-channel that acts as a "wall post" for now. Users can delete any messages posted on their walls. This may move into the user profile screen in the future',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'edit.map',
+          'type': 'improvement',
+          'changeName': 'Map layer types',
+          'changeSummary': 'The layer lists on the Map editor now show the type of each layer',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Project forks use the original project image/avatar now; Added some missing user badges; Fixed floodfill bug in graphic editor; fixed close-popout bug in code runner; fixed bug with Meet->Chat menu; Fixed a graphic-fill bug that @jaketor had reported; fix editGraphic bug when importing graphic and not creating tileset; Fixed some other graphic and map editor bugs',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+    {
+      'timestamp': 'Mon May 09 2017 16:15:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4080'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'rel',
+          'type': 'improvement',
+          'changeName': 'Public Beta',
+          'changeSummary': 'We are now in Public beta, so please spread the word and tell everyone about MyGameBuilder using our https://build.games link',
+          'otherUrls': [ { txt: "//build.games",  href: "https://build.games" } ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Update roadmap and front page to say "Public Beta"; Sort Projects by creation date; more small fixes.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Mon May 08 2017 15:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '4070'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'project.chat',
+          'type': 'improvement',
+          'changeName': '"Project Team Chat" Button on Project Page',
+          'changeSummary': 'If the current user is owner/member of a project, the project overview page now shows a button to open the project chat',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'legal',
+          'type': 'improvement',
+          'changeName': 'Terms of Service and Privacy policy have been updated.',
+          'changeSummary': 'See the links on the page footer to find the most recent TOS and Privacy policy',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.project',
+          'type': 'feature',
+          'changeName': 'Project page now previews some most-recently-edited assets',
+          'changeSummary': 'Fix flickering assets in Map/ActorMap editor; project details page now has an additional row of data showing the most recently edited assets within that project. A maximum of 12 assets are shown, but the section-header is also a link to go to the fuller assets list for the project',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'learn.skills',
+          'type': 'feature',
+          'changeName': 'You can no longer fake skills!',
+          'changeSummary': 'We have removed the alpha-tester feature that allowed users to manually claim a skill. You can (for now) still remove one of your own skills manually, but you will need to redo the normal process (complete tutorial etc) in order to re-acquire that skill',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Console noise cleanup; Fix issue where some internal links lowercased the url; Admin badges; sort userLists by badgeCount; Fix noisy console message about analytics; Revert change that prevented images loading; Code ES6 imports from long urls now work; EditGraphic can use full window width;Roadmap page updates; Fix bug that prevented some thumbnails from being shown (if name had whitespace); Make frontPage skills links clickable; Project fork now handles cross-project asset references; Correct the Actor "movementSpeed" range for NPCs; Fix some project & art tutorials; Show undo/redo in code editor toolbar; more small fixes.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Wed Apr 26 2017 00:45:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.1.0',
+        'state': 'Beta',
+        'iteration': '3978'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'learn.design',
+          'type': 'feature',
+          'changeName': 'Game Design Skills!',
+          'changeSummary': 'We have added the outline for the game design skills which are being developed by @Hawke. More depth will follow later..',
+          'otherUrls': [ {  txt: 'Game Design Skills', href: '/learn/skills/design' } ]
+        },
+        {
+          'featureTag': 'chat.delete',
+          'type': 'feature',
+          'changeName': 'Message delete/restore',
+          'changeSummary': 'Chat messages can be deleted and restored by the message owner',
+          'otherUrls': [  ]
+        },
+
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fix various small issues with project lists, user profile data, ability to find assets/projects from chat, chat not showing, etc',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Monday Apr 10 2017 15:40 GMT-0700 (PDT)',
 
       'id': {

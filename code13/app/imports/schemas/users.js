@@ -22,7 +22,7 @@ const schema = {
     title: optional(String),
     bio: optional(String),
     mgb1name: optional(String),          // Added July 2016. This is the user's name in MGBv1 (they claim)
-    mgb1nameVerified: optional(Boolean), // Added July 2016. This indicates it has been verified (mechanism TBD)
+    mgb1namesVerified: optional(String), // Added July 2016. This indicates a comma-separated list of validated MGB1 accounts this user can import from (validation mechanism TBD)
     focusMsg: optional(String),          // A message to remind the person of their current focus. Good for ADHD people!
     focusStart: optional(Date),          // When that focus message was changed
     images: optional([String]),
@@ -47,8 +47,8 @@ export const userSorters = {
   "default":         { createdAt: -1 },    // Should be same as one of the others..
   "createdNewest":   { createdAt: -1 }, 
   "createdOldest":   { createdAt: 1 }, 
-  "nameAscending":   { "profile.name": 1  }, 
-  "nameDescending":  { "profile.name": -1 }
+  "nameAscending":   { "profile.name": 1  },        // NOTE: MongoDB doesn't yet support case-insensitive name sorts. grrr
+  "nameDescending":  { "profile.name": -1 }         // NOTE: MongoDB doesn't yet support case-insensitive name sorts. grrr
 //"mgbRecentsDate":  { "profile.latestNewsTimestampSeen": -1 },   // This can't work until the date strings are replaced with Date() values in the DB
 }
 
@@ -116,7 +116,7 @@ Meteor.methods({
       "profile.focusMsg": optional(schema.profile.focusMsg),
       "profile.focusStart": optional(schema.profile.focusStart),
       "profile.mgb1name": optional(schema.profile.mgb1name),
-//    "profile.mgb1nameVerified": optional(schema.profile.mgb1nameVerified),   // TODO: Some server-only validation for this
+//    "profile.mgb1namesVerified": optional(schema.profile.mgb1namesVerified),   // TODO: Some server-only validation for this
       "profile.images": optional(schema.profile.images),
       "profile.isDeleted": optional(schema.profile.isDeleted),
       "profile.projectNames": optional(schema.profile.projectNames),

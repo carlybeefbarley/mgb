@@ -177,7 +177,7 @@ export default class SourceTools extends EventEmitter {
    * @param origin - reference to first importer ( null for main script )
    * @param additionalProps - additional into that should be appended to source info:
    *  useGlobal (for phaser only) - tells to threat file as global script instead of module
-   *  referer - for imported scripts from another user
+   *  referrer - for imported scripts from another user
    *  url - url to the script
    *  isExternalFile - not an asset
    * @returns {Promise.<>} - resolves without arguments
@@ -203,7 +203,7 @@ export default class SourceTools extends EventEmitter {
       })
       return Promise.resolve()
     }
-    // this object will cointain all necessary info about script
+    // this object will contain all necessary info about script
     // we need to push it only after all other imported files from this file are resolved to maintain correct order
     const toAdd = Object.assign(this.findCollected(filename) || {name: filename}, additionalProps)
     // partial calls don't know origin - so leave as is
@@ -251,10 +251,10 @@ export default class SourceTools extends EventEmitter {
     return this.collectedSources.filter(script => {
       // after renaming asset script name won't match asset name
       // only main script don't have origin
-      if (script.name != filename && !script.origin) {
+      if (script.name !== filename && !script.origin) {
         return false
       }
-      return script.name != filename && script.origin.indexOf(filename) > -1
+      return script.name !== filename && script.origin.indexOf(filename) > -1
     })
   }
   /**
@@ -297,16 +297,18 @@ export default class SourceTools extends EventEmitter {
     if (filename.indexOf('.') === 0)
       filename = filename.substring(1, filename.length)
 
+    const parts = SourceTools.getLibAndVersion(filename)
     // simple import e.g. 'phaser', 'jquery'
     if (SourceTools.isGlobalImport(filename)) {
-      const parts = SourceTools.getLibAndVersion(filename)
-      const lib = knownLibs[parts[0]]
       // load knowLib - e.g. phaser
+      const lib = knownLibs[parts[0]]
       if (lib) {
-        return this.load(lib.src ? lib.src(parts[1]) : src, null,
+        return this.load(lib.src ? lib.src(parts[1]) : getModuleServer(parts[0], parts[1]), null,
           Object.assign(additionalProps, {
             useGlobal: lib.useGlobal,
-            isExternalFile: true
+            isExternalFile: true,
+            lib: parts[0],
+            version: parts[1]
           })
         )
           .then(info => {
@@ -319,7 +321,12 @@ export default class SourceTools extends EventEmitter {
       }
       // unknown lib - e.g. jquery
       else {
-        return this.load(getModuleServer(parts[0], parts[1]), null, additionalProps)
+        return this.load(getModuleServer(parts[0], parts[1]), null,
+          Object.assign(additionalProps, {
+            lib: parts[0],
+            version: parts[1]
+          })
+        )
           .then(info => {
             this.addFileToTern(filename, info.data)
             return info
@@ -342,10 +349,11 @@ export default class SourceTools extends EventEmitter {
             return this.load(url, asset, Object.assign(additionalProps, {
               referrer: asset ? asset.dn_ownerName : ref,
               isExternalFile: !!(es5 && es5.data && es5.data.trim()),
-              url: es5src
+              url: es5src,
+              lib: parts[0],
+              version: parts[1]
             }), ignoreCache)
               .then(info => {
-                // TODO: check file size
                 this.addFileToTern(filename, info.data)
                 return info
               })
@@ -357,10 +365,11 @@ export default class SourceTools extends EventEmitter {
     // should be full url
     else {
       return this.load(filename, null, Object.assign(additionalProps, {
-        isExternalFile: true
+        isExternalFile: true,
+        lib: parts[0],
+        version: parts[1]
       }))
         .then(info => {
-          // TODO: check file size
           this.addFileToTern(filename, info.data)
           return info
         })
@@ -382,7 +391,7 @@ export default class SourceTools extends EventEmitter {
     }
     if(src.length < SpecialGlobals.editCode.maxFileSizeForAST) {
       this.tern.server.addFile(filename, src, true)
-      console.log("Added file", filename, (src.length / 1024).toFixed(2) + "KB")
+      //console.log("Added file", filename, (src.length / 1024).toFixed(2) + "KB")
     }
     else
       console.log(`File ${filename} is too big (${(src.length / 1024).toFixed(2)}KB )!`)
@@ -423,6 +432,11 @@ export default class SourceTools extends EventEmitter {
         // if subscription cannot be found - it has been moved for cleanup - restore it
         if (!this.subscriptions[key])
           this.subscriptions[key] = this.tmpSubscriptions[key]
+
+        // not sure why this gets lost - probably tmpSubscriptions also is undefined.. as has been closed at some point
+        if (!this.subscriptions[key])
+          return resolve()
+
         const assets = this.subscriptions[key].getAssets()
         if (assets.length > 1) {
           this.emit('error', {
@@ -551,9 +565,16 @@ export default class SourceTools extends EventEmitter {
         for (let i = 0; i < sources.length; i++) {
           const source = sources[i]
           if (source.isExternalFile) {
+            // only lib should be used here
+            const name = source.lib || source.name
+            const lib = knownLibs[name]
+            const url = lib && lib.min
+              ? lib.min(source.version)
+              : source.url
+
             const localKey = source.url.split("/").pop().split(".").shift()
             const partial = {
-              url: source.url,
+              url: url,
               localName: source.localName,
               name: source.name,
               localKey: localKey,
@@ -886,11 +907,12 @@ main = function(){
     imp = babelAST.data.modules.exports.specifiers
     for (let i = 0; i < imp.length; i++) {
       const source = imp[i].source
-      const im = source.split('.')
-      if (source.indexOf('/') === 0 && source.indexOf('//') !== 0) {
-        im.pop()
-      }
-      if (imp[i].kind == "external" && imp[i].source) {
+      if (source && imp[i].kind === "external") {
+        const im = source.split('.')
+
+        if (source.indexOf('/') === 0 && source.indexOf('//') !== 0)
+          im.pop()
+
         ret.push({
           url: im.join('.'),
           name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null

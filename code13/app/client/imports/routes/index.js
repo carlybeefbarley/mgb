@@ -56,101 +56,89 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 // 2) The /assetEdit/:assetId route is legacy - it will automatically redirect to user/:id/asset/:assetId once it gets the owner User._id from the Asset
 
 // We also export it for potential future use by some of the fast-build variants like storybook...
-
-const knownRoutes = [
-  {path: '/callum', component: Callum},
-  {
-    component: App, routes: [
-      {path: '/', component: Home},
-      {path: '/u/:username/play/:assetId', component: PlayGameRoute, name: 'Play Game'},
-      {path: '/whatsnew', component: WhatsNewRoute, name: 'What\'s New'},
-      {path: '/roadmap', component: Roadmap, name: 'Roadmap'},
-      {path: '/dashboard', component: DashboardRoute, name: 'Dashboard'},
-
-      {path: '/learn', component: LearnRoute},
-      {path: '/learn/skills', component: LearnSkillsRoute},
-      {path: '/learn/skills/:skillarea', component: LearnSkillsAreaRoute},
-      {path: '/learn/games', component: LearnGamesRoute},
-      {path: '/learn/getstarted', component: LearnGetStartedRoute, name: 'Get Started'},
-
-      {path: '/learn/code', component: LearnCodeRoute, name: 'Programming'},
-      {path: '/learn/code/modify', component: LearnCodeModifyRoute, name: 'Modify Games'},
-      {path: '/learn/code/:item', component: LearnCodeRouteItem},
-
-      {path: '/learn/art', component: LearnArtRoute, name: 'Pixel Art'},
-      {path: '/games', component: BrowseGamesRoute, name: 'Browse Games'},
-      {path: '/u/:username/games', component: BrowseGamesRoute, name: 'Games'},
-
-      {path: '/signup', component: Users.SignupRoute, name: 'Sign up'},
-      {path: '/login', component: Users.LoginRoute, name: 'Log In'},
-      {path: '/forgot-password', component: Users.ForgotPassword, name: 'Forgot Password'},
-      {path: '/reset-password/:token', component: Users.ResetPassword, name: 'Reset Password'},
-
-      {path: '/users', component: Users.UserListRoute, name: 'Search All Users'},
-      {path: 'u/:username/import', component: Import},
-      {path: 'user/:id', component: Users.Profile, name: 'Profile'},
-      {path: 'u/:username', component: Users.Profile, name: 'Profile'},
-
-
-      {path: '/user/:id/assets', component: Azzets.UserAssetListRoute, name: 'Assets'},
-      {path: '/u/:username/assets', component: Azzets.UserAssetListRoute, name: 'Assets'},
-
-      {path: '/user/:id/asset/:assetId', component: Azzets.AssetEditRoute, name: 'Loading asset...'},
-      {path: '/u/:username/asset/:assetId', component: Azzets.AssetEditRoute, name: 'Loading asset...'},
-
-      {path: 'user/:id/projects', component: Projects.UserProjectList, name: 'Projects'},
-      {path: 'u/:username/projects', component: Projects.UserProjectList, name: 'Projects'},
-
-      {path: '/user/:id/projects/create', component: Projects.ProjectCreateNewRoute, name: 'Create New Project'},
-      {path: 'u/:username/projects/create', component: Projects.ProjectCreateNewRoute, name: 'Create New Project'},
-
-      {path: 'user/:id/project/:projectId', component: Projects.ProjectOverview, name: 'Project Details'},
-      {path: 'u/:username/projects/:projectName', component: Projects.ProjectOverview, name: 'Project Details'},
-      {path: 'u/:username/project/:projectId', component: Projects.ProjectOverview, name: 'Project Details'},
-
-      {path: '/user/:id/history', component: Users.UserHistoryRoute, name: 'History'},
-      {path: 'u/:username/history', component: Users.UserHistoryRoute, name: 'History'},
-
-      {path: '/user/:id/badges', component: Users.BadgeListRoute, name: 'Badges'},
-      {path: '/u/:username/badges', component: Users.BadgeListRoute, name: 'Badges'},
-
-      {path: '/projects', component: Projects.UserProjectList, name: 'Search All Projects'},
-      {path: '/assets', component: Azzets.UserAssetListRoute, name: 'Search All Assets'},
-      {path: '/assets/create', component: Azzets.AssetCreateNewRoute, name: 'Create New Asset'},
-
-
-      {path: 'assetEdit/:assetId', component: Azzets.AssetEditRoute, name: 'Edit Asset (finding owner...)'},
-      {path: 'assetEdit/:kind/:user/:name', component: Azzets.AssetEditRedirect, name: 'Edit Asset (finding owner...)'},
-
-
-      {path: 'user/:id/skilltree', component: Users.SkillTreeRoute, name: 'Skills'},
-      {path: 'u/:username/skilltree', component: Users.SkillTreeRoute, name: 'Skills'},
-
-      {path: '/legal/tosDRAFT', component: TermsOfService, name: 'Terms Of Service'},
-      {path: '/legal/privacyDRAFT', component: Privacy, name: 'Privacy Policy'},
-
-      {path: '/notyetimplemented/:featureName', component: NotYetImplementedRoute, name: 'Coming Soon!..'},
-
-      {path: '*', component: NotFoundRoute, name: 'Page Not Found'}
-    ]
-  }
-]
-
-
-const createRoutes = (routes) => {
-  const retval = []
-  for (let i = 0; i < routes.length; i++) {
-
-    const cr = routes[i].routes ? createRoutes(routes[i].routes) : []
-    const r = <route {...routes[i]}>{cr}</route>
-    retval.push(r)
-  }
-  return retval
-}
-
 export function clientStartup() {
-  const routes = createRoutes(knownRoutes)
-  const router = <Router history={browserHistory}>{routes}</Router>
+  const router =
+    <Router history={browserHistory}>
+      <Route component={App}>
+
+        <Route path='/u/:username/play/:assetId' component={PlayGameRoute} name='Play Game' />
+
+        <Route path="/" component={Home} />
+        <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />
+        <Route path="/roadmap" component={Roadmap} name="Roadmap" />
+
+        <Route path="/dashboard" component={DashboardRoute} name="Dashboard" />
+
+
+        <Route path="/learn" component={LearnRoute} />
+        <Route path="/learn/skills" component={LearnSkillsRoute} />
+        <Route path="/learn/skills/:skillarea" component={LearnSkillsAreaRoute} />
+        <Route path="/learn/games" component={LearnGamesRoute} />
+        <Route path="/learn/getstarted" component={LearnGetStartedRoute} name='Get Started'/>
+
+        <Route path="/learn/code" component={LearnCodeRoute} name='Programming'/>
+        <Route path="/learn/code/modify" component={LearnCodeModifyRoute} name='Modify Games'/>
+        <Route path="/learn/code/:item" component={LearnCodeRouteItem}/>
+
+        <Route path="/learn/art" component={LearnArtRoute} name='Pixel Art'/>
+
+        <Route path="/games" component={BrowseGamesRoute} name="Browse Games" />
+        <Route path="/u/:username/games" component={BrowseGamesRoute} name="Games" />
+
+        <Route path="/signup" component={Users.SignupRoute} name="Sign up" />
+        <Route path="/login" component={Users.LoginRoute} name="Log In" />
+        <Route path="/forgot-password" component={Users.ForgotPassword} name="Forgot Password" />
+        <Route path="/reset-password/:token" component={Users.ResetPassword} name="Reset Password" />
+
+        <Route path="users" component={Users.UserListRoute} name="Search All Users" />
+
+        <Route path="u/:username/import" component={Import} />
+
+        <Route path="user/:id" component={Users.Profile} name="Profile"/>
+        <Route path="u/:username" component={Users.Profile} name="Profile"/>
+
+        <Route path="user/:id/assets" component={Azzets.UserAssetListRoute} name="Assets" />
+        <Route path="u/:username/assets" component={Azzets.UserAssetListRoute} name="Assets" />
+
+        <Route path="user/:id/asset/:assetId" component={Azzets.AssetEditRoute} name="Loading asset..." />
+        <Route path="u/:username/asset/:assetId" component={Azzets.AssetEditRoute} name="Loading asset..." />
+
+        <Route path="user/:id/projects" component={Projects.UserProjectList} name="Projects" />
+        <Route path="u/:username/projects" component={Projects.UserProjectList} name="Projects" />
+
+        <Route path="user/:id/projects/create" component={Projects.ProjectCreateNewRoute} name="Create New Project" />
+        <Route path="u/:username/projects/create" component={Projects.ProjectCreateNewRoute} name="Create New Project" />
+        <Route path="u/:username/projects/import/MGB1" component={Projects.ProjectImportMgb1Route} name="Import MGB1 Project" />
+
+        <Route path="user/:id/project/:projectId" component={Projects.ProjectOverview} name="Project Details" />
+        <Route path="u/:username/projects/:projectName" component={Projects.ProjectOverview} name="Project Details" />
+        <Route path="u/:username/project/:projectId" component={Projects.ProjectOverview} name="Project Details" />
+
+        <Route path="user/:id/history" component={Users.UserHistoryRoute} name="History" />
+        <Route path="u/:username/history" component={Users.UserHistoryRoute} name="History" />
+
+        <Route path="user/:id/badges" component={Users.BadgeListRoute} name="Badges" />
+        <Route path="u/:username/badges" component={Users.BadgeListRoute} name="Badges" />
+
+        <Route path="/projects" component={Projects.UserProjectList} name="Search All Projects" />
+
+        <Route path="assets" component={Azzets.UserAssetListRoute} name="Search All Assets" />
+        <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
+
+        <Route path="assetEdit/:assetId" component={Azzets.AssetEditRoute} name="Edit Asset (finding owner...)" />
+        <Route path="assetEdit/:kind/:user/:name" component={Azzets.AssetEditRedirect} name="Edit Asset (finding owner...)" />
+        <Route path="assetEdit/:user/:name" component={Azzets.AssetEditRedirect} name="Edit Asset (finding owner...)" />
+
+        <Route path="user/:id/skilltree" component={Users.SkillTreeRoute} name="Skills" />
+        <Route path="u/:username/skilltree" component={Users.SkillTreeRoute} name="Skills" />
+
+        <Route path='/legal/tos' component={TermsOfService} name='Terms Of Service' />
+        <Route path='/legal/privacy' component={Privacy} name='Privacy Policy' />
+
+        <Route path="/notyetimplemented/:featureName" component={NotYetImplementedRoute} name="Coming Soon!.."/>
+        <Route path="*" component={NotFoundRoute} name="Page Not Found"/>
+      </Route>
+    </Router>
 
   registerDebugGlobal('router', router, __filename, 'TopLevel react-router instance')
   urlMaker.setKnownRoutes(router)

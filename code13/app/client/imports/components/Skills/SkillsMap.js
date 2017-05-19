@@ -31,6 +31,8 @@ class SkillsMapNode extends React.Component {
     expandable: PropTypes.bool,        // whether or not nodes can be expanded to show children
     skills: PropTypes.object,          // user's skills object from context
     skillPath: PropTypes.string,       // the skill path within skills that this node should show
+    userCanManuallyClaimSkill : PropTypes.bool,
+    ownsProfile: PropTypes.bool        //prevent user other than one who owns profile from seeing messages and checkmark boxes
   }
 
   state = {
@@ -55,7 +57,7 @@ class SkillsMapNode extends React.Component {
     if (_.isEmpty( childLeaves ))
       return null
 
-    const { skills } = this.props
+    const { skills, userCanManuallyClaimSkill, ownsProfile } = this.props
 
     return (
       <div className='leaves'>
@@ -65,7 +67,11 @@ class SkillsMapNode extends React.Component {
           const classes = _.compact( [hasSkill && 'active', 'leaf'] ).join( ' ' )
 
           return (
-            <div key={skillPath} className={classes} onClick={this.toggleSkill( skillPath )}>
+            <div key={skillPath} className={classes} 
+          data-tooltip={(hasSkill && ownsProfile) ? "Warning: Unchecking means you must earn the skill again" : null} 
+              data-inverted=""
+          onClick={(userCanManuallyClaimSkill || hasSkill) ? this.toggleSkill(skillPath) : null}
+              >
               <Icon { ...iconProps } />
               {skillsModel.getFriendlyName( skillPath )}
             </div>
@@ -76,7 +82,7 @@ class SkillsMapNode extends React.Component {
   }
 
   renderChildTree = (skillPath) => {
-    const { expandable, skills, toggleable } = this.props
+    const { expandable, skills, toggleable, userCanManuallyClaimSkill, ownsProfile } = this.props
     return (
       <SkillsMapNode
         key={skillPath}
@@ -84,6 +90,8 @@ class SkillsMapNode extends React.Component {
         toggleable={toggleable}
         skills={skills}
         skillPath={skillPath}
+        userCanManuallyClaimSkill={userCanManuallyClaimSkill}
+        ownsProfile={ownsProfile}
       />
     )
   }
@@ -148,7 +156,7 @@ export default class SkillsMap extends React.Component {
   }
 
   render() {
-    const { expandable, toggleable, skills, skillPaths } = this.props
+    const { expandable, toggleable, skills, skillPaths, userCanManuallyClaimSkill, ownsProfile } = this.props
 
     if (!skills)
       return (
@@ -162,10 +170,12 @@ export default class SkillsMap extends React.Component {
         {_.map( skillPaths, skillPath => (
           <SkillsMapNode
             key={skillPath}
+            userCanManuallyClaimSkill={userCanManuallyClaimSkill}
             expandable={expandable}
             toggleable={toggleable}
             skills={skills}
             skillPath={skillPath}
+            ownsProfile={ownsProfile}
           />
         ) )}
       </div>

@@ -5,6 +5,11 @@
 
 
 export default SpecialGlobals = {
+
+  activity: {
+    activityHistoryLimit: 20
+  },
+  
   // codeflower props (probably we could allow user to tune these some day)
   // description about props can be found here: https://github.com/d3/d3-3.x-api-reference/blob/master/Force-Layout.md
   codeFlower: {
@@ -25,7 +30,7 @@ export default SpecialGlobals = {
     validFor: 60 // seconds until we force avatar to refresh
   },
   thumbnail: {
-    width: 230,     // In px
+    width: 230,     // In px. See imn mgb.css for .mgb-projectcard-width and .mgb-assetcard-width
     height: 155     // In px
   },
   // in a case that observers will turn out too slow - we may change it to false - and then implement slow polling
@@ -36,6 +41,10 @@ export default SpecialGlobals = {
     maxFileSizeForAST: 200 * 1024, // 200 KB - seems very stable on 8GB machine - more can crash sometimes
     typingSpeed: 750, //ms - this will prevent all updates for X time after keypress - improves fast typing UX (feels more responsive)
     maxLengthOfCursorHistory: 100,
+    popup: {
+      maxWidth: 0.5, // 1 = 100% screen width
+      maxHeight: 0.5
+    },
     popularLibs: [
       {
         name: 'Phaser',
@@ -57,12 +66,13 @@ export default SpecialGlobals = {
 
   assets: {
     "maxUploadSize":  3*1024*1024,     // 1 MB
-    "mainAssetsListDefaultLimit": 50   // Number of assets shown by default in main Asset list UI per page
+    "mainAssetsListDefaultLimit": 50,  // Number of assets shown by default in main Asset list UI per page
+    "mainAssetsListSubscriptionMaxLimit": 200   // Max number of assets to subscribe to from main Asset list UI per page
   },
 
   map: {
-    "maxUndoSteps":       99,
-    "objectRotationStep": 15
+    "maxUndoSteps":       20,
+    "objectRotationStep": 15          // In degrees
   },
 
   //these are used in the ActorHelper
@@ -83,6 +93,12 @@ export default SpecialGlobals = {
   skillsModelTrifecta: {  // See SkillNodes.js to understand these values related to the SKILLS_MODEL_TRIFECTA
     tutorialAccount:         '!vault',
     tutorialAssetNamePrefix: 'tutorials.'
+  },
+  quotas: {
+    defaultNumMembersAllowedInProject: 5,
+    SUdefaultNumMembersAllowedInProject: 99,
+    defaultNumOfOwnedProjectsAllowed: 10,
+    SUdefaultNumOfOwnedProjectsAllowed: 99
   }
 
 }

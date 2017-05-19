@@ -39,6 +39,7 @@ Meteor.publish('users.byName', function(nameSearch, limitCount, userSortType) {
   let userSorter = userSortType ? userSorters[userSortType] : userSorters.default
   if (nameSearch && nameSearch.length > 0)
   {
+    //used by normal name list, may be useful for 641
     // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
     selector["profile.name"]= {$regex: new RegExp("^.*" + nameSearch, 'i')}
   }
@@ -82,6 +83,14 @@ Meteor.publish('settings.userId', function(userId) {
 })
 
 
+//  
+Meteor.publish('users.frontPageList', function () 
+{
+  return Meteor.users.find(
+    { "badges.1":{$exists: true}}, 
+    { sort: {"createdAt":-1}, limit: 3 }
+  )
+})
 
 //
 //    SKILLS (keyed by user._id)

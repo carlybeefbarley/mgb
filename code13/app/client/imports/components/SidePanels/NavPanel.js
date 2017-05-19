@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Menu, Image, Header, Icon } from 'semantic-ui-react'
+import { Button, Menu, Image, Header, Icon } from 'semantic-ui-react'
 import NavPanelItem from './NavPanelItem'
 import WhatsNew from '/client/imports/components/Nav/WhatsNew'
 
@@ -13,6 +13,7 @@ import { logActivity } from '/imports/schemas/activity'
 // Note that this uses Meteor's Accounts.loggingIn() so it doesn't flash the Login/Sigup during user login
 export const getNavPanels = (currUser, showAll) => {
   const uname = currUser ? currUser.username : null
+  const mgb1name = currUser ? (currUser.profile.mgb1name || null) : null
   const isLoggingIn = Meteor.loggingIn()
   const showGuestOptions = (!isLoggingIn && !currUser) || showAll
   const showUserOptions = (!isLoggingIn && !!currUser) || showAll
@@ -156,7 +157,7 @@ export const getNavPanels = (currUser, showAll) => {
           {
             subcomponent: 'Item',
             jrkey: 'publicChat',
-            query: { _fp: 'G_GENERAL_' },
+            query: { _fp: 'chat.G_GENERAL_' },
             icon: 'chat',
             content: 'Public Chat',
           }
@@ -196,7 +197,7 @@ export const getNavPanels = (currUser, showAll) => {
         icon: { name: 'sitemap' },
         hdr: 'Projects',
         to: `/u/${uname}/projects`,
-        menu: [
+        menu: _.compact([
           showUserOptions && {
             subcomponent: 'Item',
             jrkey: 'listMy',
@@ -210,8 +211,15 @@ export const getNavPanels = (currUser, showAll) => {
             to: `/u/${uname}/projects/create`,
             icon: { name: 'sitemap', color: 'green' },
             content: 'Create New Project',
+          },
+          (showUserOptions && mgb1name && mgb1name !== '') && {
+            subcomponent: 'Item',
+            jrkey: 'importMgb1',
+            to: `/u/${uname}/projects/import/mgb1`,
+            icon: { name: 'sitemap', color: 'orange' },
+            content: 'Import MGBv1 Project',
           }
-        ]
+        ])
       },
       showGuestOptions && {
         name: 'login',
@@ -223,7 +231,7 @@ export const getNavPanels = (currUser, showAll) => {
       },
       showGuestOptions && {
         name: 'signup',
-        hdr: 'Sign up',
+        hdr: <Button color='yellow' content='Sign Up'/>,  // Button here will grow the height of the NavPanel but that's ok for not-logged in case IMHO
         icon: { name: 'signup' },
         style: { padding: '4px 16px'},
         menu: null,
@@ -300,8 +308,6 @@ const _doLogout = () =>
 }
 
 const _isLoggedInSty = { padding: '4px 8px'}
-const _isNotLoggedInSty = { padding: '4px 16px'}
-
 
 class NavPanel extends React.Component {
 
@@ -341,14 +347,14 @@ class NavPanel extends React.Component {
         <Menu.Menu position='right'>
           { navPanelItems('right') }
           { currUser && 
-          <NavPanelItem
-            key='user'
-            name='user'
-            style={ currUser ? _isLoggedInSty : _isNotLoggedInSty }
-            hdr={!currUser ? 'Sign Up' :  <Image id="mgbjr-np-user-avatar" centered avatar src={userAvatarSrc} />}
-            menu={userMenu.menu}
-            to={userMenu.to} />
-          }
+            <NavPanelItem
+              key='user'
+              name='user'
+              style={_isLoggedInSty}
+              hdr={<Image id="mgbjr-np-user-avatar" centered avatar src={userAvatarSrc} />}
+              menu={userMenu.menu}
+              to={userMenu.to} />
+            }
         </Menu.Menu>
       </Menu>
     )

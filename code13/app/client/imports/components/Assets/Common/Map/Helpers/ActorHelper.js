@@ -401,12 +401,13 @@ export default ActorHelper = {
       const iuser = iparts.length > 1 ? iparts.shift() : user
       const iname = iparts.pop()
 
-      const src = makeCDNLink(`/api/asset/png/${iuser}/${iname}`)
+      // don't use here CDN link - as we will save this path as image path
+      const src = `/api/asset/png/${iuser}/${iname}`
 
       map[name].firstgid = nr
       map[name].actor = d
       map[name].image = src
-      var img = new Image()
+      const img = new Image()
       img.crossOrigin = "anonymous"
       img.onload = function () {
         delete ActorHelper.isLoading[key]
@@ -452,9 +453,9 @@ export default ActorHelper = {
       // load empty image on error
       img.onerror = () => {
         ActorHelper.errors.push({actor: name, error: ActorHelper.errorTypes.MISSING_IMAGE})
-        img.src = makeCDNLink("/images/error.png")
+        img.src = '/images/error.png'
       }
-      img.src = src
+      img.src = makeCDNLink(src)
 
     }, asset)
 

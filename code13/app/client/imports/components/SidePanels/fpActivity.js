@@ -1,17 +1,17 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import SpecialGlobals from '/imports/SpecialGlobals'
 import QLink from '/client/imports/routes/QLink'
 import { ActivityTypes, deleteActivityRecord } from '/imports/schemas/activity.js'
 
 import { AssetKinds } from '/imports/schemas/assets'
-import { ChatChannels, makePresentedChannelName } from '/imports/schemas/chats'
+import { ChatChannels, makePresentedChannelName, parseChannelName, } from '/imports/schemas/chats'
 import { isSameUserId } from '/imports/schemas/users'
 
 import moment from 'moment'
 import { Feed, Icon } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
-import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 const _propTypes = {
   currUser:     PropTypes.object,             // Currently Logged in user. Can be null/undefined
@@ -37,8 +37,9 @@ const ActivityExtraDetail = ( { act} ) => {
   // CHAT (handle new toChatChannelName that was after 2/16/2016)
   if (_.isString(act.toChatChannelName) && act.toChatChannelName.length > 0) {
     const chName = act.toChatChannelName
+    const channelObj = parseChannelName( chName )
     // Currently, only global messsages are sent on the public channels and they are super-easy to get a friendly name for:
-    const friendlyName = makePresentedChannelName(chName)
+    const friendlyName = makePresentedChannelName(chName, channelObj.scopeId)
     return (
       <Feed.Extra text>
         <Icon name='chat' />
@@ -83,11 +84,13 @@ const _doDeleteActivity = activityId => deleteActivityRecord( activityId )
 
 
 const DeleteActivity = ( { act, currUser, isSuperAdmin } ) => (
-  ( currUser && (isSameUserId(act.byUserId, currUser._id) || isSuperAdmin)) &&
+  ( currUser && (isSameUserId(act.byUserId, currUser._id) || isSuperAdmin)) ?
     <span className='mgb-show-on-parent-hover' onClick={() => _doDeleteActivity(act._id)}>
       &nbsp;
       <Icon color='red' circular link name='delete'/>
     </span>
+    :
+    null
 )
 
 
@@ -141,7 +144,11 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
 
 const fpActivity = ( { activity, currUser, isSuperAdmin } ) => (
   <Feed size="small">
-    { activity.map((act) => ( <RenderOneActivity act={act} key={act._id} currUser={currUser} isSuperAdmin={isSuperAdmin} /> ) ) }
+    { _.map( 
+        _.slice(activity, 0, SpecialGlobals.activity.activityHistoryLimit), // beyond the activityHistoryLimit it gets polluted with ones loaded for userProfile stuff and that looks like no-one used it for ages.. hence slice.
+        act => ( <RenderOneActivity act={act} key={act._id} currUser={currUser} isSuperAdmin={isSuperAdmin} /> ) 
+      ) 
+    }
   </Feed>
 )
 

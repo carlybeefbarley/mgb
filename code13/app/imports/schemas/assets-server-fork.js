@@ -11,7 +11,7 @@ import { doFixupAssetReferences } from './assets-server-forkFixup'
 //
 
 Meteor.methods({
-  // 
+  //
   // PROJECT FORK
   //
   // ..Note that the  PROJECT FORK  implementation is here in assets-server since it must perform
@@ -51,19 +51,28 @@ Meteor.methods({
       isDeleted:    false,
       projectNames: sourceProject.name
     }
+
+    // we need also name - as assets can be referenced from source as /assetName
     const srcAssetIds = Azzets.find(azzSel, { fields: { name: 1, _id: 1 } } ).fetch()
 
     if (srcAssetIds.length === 0)
       return new Meteor.Error(404, `Source Project '${sourceProject.ownerName}:${opts.sourceProjectName}' contains no Assets. Cannot fork empty project`)
 
 
-    // TODO: loop through these assets and confirm that they can be renamed (length etc) 
+    // Initial validations seem ok. So 'unblock' to allow other Meteor.call() requests for this client 
+    // since it may take a while.. Otherwise other functions like chat will be disabled during the fork work
+    this.unblock()
+
+
+    // TODO: loop through these assets and confirm that they can be renamed (length etc)
     //       and still be valid.   See { newAssetName: ___} stuff below for the code to use/change
 
     // 2. Try to create new Project
-    const newProjData = { 
-      name: opts.newProjectName, 
-      description: `Fork of Project '${sourceProject.ownerName}:${sourceProject.name}'`
+
+    const newProjData = {
+      name: opts.newProjectName,
+      description: `[Fork] ${sourceProject.description}`,
+      avatarAssetId: sourceProject.avatarAssetId || ''
       // forkParentChain will be handled in the code below...
     }
 
@@ -84,9 +93,9 @@ Meteor.methods({
     // here since the "Projects.update" Meteor Method is callable by client
     // and we don't want clients to be able to manipulate these records directly
     Projects.update(
-      { 
-        _id: sourceProject._id 
-      }, 
+      {
+        _id: sourceProject._id
+      },
       {
         $push: {
           forkChildren: {
@@ -106,6 +115,7 @@ Meteor.methods({
           entry._id,
           {
             fixupReferences: true,
+            assets: srcAssetIds,
             projectNames: [newProjData.name],
             newAssetName: opts.sourceProjectOwnerId == this.userId ? entry.name + ' (forked)' : entry.name
           }
@@ -119,12 +129,12 @@ Meteor.methods({
     }
   },
 
-  // 
+  //
   // ASSET FORK
   //
 
   // Fork Asset
-  // @param srcId - Source ID of Asset to be forked. 
+  // @param srcId - Source ID of Asset to be forked.
   // @param {opts} All other parameters are in the opts object:
   //   opts.ownerId               // Optional (together) to create asset in other user's account
   //   opts.dn_ownerName          // Optional (together) to create asset in other user's account
@@ -138,7 +148,7 @@ Meteor.methods({
     check(srcId, String)
     if (opts.newAssetName)
       checkMgb.assetName(opts.newAssetName)
-    // Handled below... Check opts.ownerId + opts.dn_ownerName are a valid pair, 
+    // Handled below... Check opts.ownerId + opts.dn_ownerName are a valid pair,
     // and the project can be placed there
 
     const now = new Date()
@@ -175,8 +185,8 @@ Meteor.methods({
     }
 
     if (opts.fixupReferences)
-      doFixupAssetReferences(dstAsset, dstAsset.dn_ownerName, username)
-    
+      doFixupAssetReferences(dstAsset, dstAsset.dn_ownerName, username, opts.assets)
+
     if (opts.ownerId && opts.dn_ownerName) {
       // We may in future allow the caller to set this: Main scenario is 'Create As Member Of Project'
       // TODO: Validate these further... DO THEY MATCH
@@ -266,7 +276,7 @@ Meteor.methods({
     const forkParentAsset = Azzets.findOne(forkParentId)
     if (!forkParentAsset)
       throw new Meteor.Error(404, `ForkParent Asset #${forkParentId} Not Found`)
-    
+
     // copy the data
     const data = {
       content2:          _.clone(forkParentAsset.content2),
@@ -285,7 +295,7 @@ Meteor.methods({
 
     if (Meteor.isServer)
       console.log(`  [Azzets.revertDataFromForkParent]  (${count}) #${asset._id}  Kind=${asset.kind}  Owner=${asset.dn_ownerName}`) // These fields might not be provided for updates
-    
-    return count  
+
+    return count
   }
 })

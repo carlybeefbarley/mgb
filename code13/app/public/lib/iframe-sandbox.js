@@ -241,13 +241,13 @@ window.onload = function() {
     }, 500)
   }
 
-  var commands = {
+  const commands = {
     ping: function(e){
       mainWindow.postMessage(_isAlive, e.origin);
     },
     screenshotCanvas: function(e){
-      var desiredHeight = e.data.recommendedHeight || 150;
-      var gameCanvas = document.getElementsByTagName ('canvas').item(0);
+      const desiredHeight = e.data.recommendedHeight || 150;
+      const gameCanvas = document.getElementsByTagName ('canvas').item(0);
       if (gameCanvas)
       {
         // use the height the caller suggested

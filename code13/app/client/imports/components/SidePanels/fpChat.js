@@ -6,6 +6,8 @@ import { showToast } from '/client/imports/routes/App'
 import AssetCardGET from '/client/imports/components/Assets/AssetCardGET'
 import ProjectCardGET from '/client/imports/components/Projects/ProjectCardGET'
 
+import { isSameUserId } from '/imports/schemas/users'
+
 import reactMixin from 'react-mixin'
 import { Chats, Azzets } from '/imports/schemas'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
@@ -20,6 +22,8 @@ import { logActivity } from '/imports/schemas/activity'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import {
+  deleteChatRecord,
+  restoreChatRecord,
   parseChannelName,
   makeChannelName,
   ChatChannels,
@@ -112,14 +116,14 @@ import moment from 'moment'
  ◊ ...make this list of detailed work
 
  ◊ TODO (Phase 8: Delete message)
- ◊ [feature] Implement core delete Message code for server
- ◊ [feature] Implement core delete Message code for fpChat
- ◊ [feature] Make sure message OWNERS (only) can delete their messages
- ◊ [feature] Make sure Admins (only) can delete any message
+ √ [feature] Implement core delete Message code for server
+ √ [feature] Implement core delete Message code for fpChat
+ √ [feature] Make sure message OWNERS (only) can delete their messages
+ √ [feature] Make sure Admins (only) can delete any message
  ◊ [feature] Make sure ProjectOwners (only) can delete any message in a project they own
- ◊ [Merge] Merge into master and test
- ◊ [Deploy] ya.
- ◊ [More testing] and fix any bad stuff
+ √ [Merge] Merge into master and test
+ √ [Deploy] ya.
+ √ [More testing] and fix any bad stuff
 
  ◊ TODO (Phase 9: Refactor)
  ◊ [Refactor] break into <fpChats> + <ChatChannelSelector> + <ChatChannelMessages>
@@ -170,6 +174,37 @@ const _getAssetNameIfAvailable = (assetId, chatChannelTimestamp) => {
 
 // Some magic for encoding and expanding asset links that are dragged in.
 const _encodeAssetInMsg = asset => `❮${asset.dn_ownerName}:${asset._id}:${asset.name}❯`      // See https://en.wikipedia.org/wiki/Dingbat#Unicode ❮  U276E , U276F  ❯
+
+const _doDeleteMessage = chatId => deleteChatRecord( chatId )
+
+const _isCurrUsersWall = (chat, currUser) => {
+  const channelInfo = parseChannelName(chat.toChannelName)
+  return (currUser.username === channelInfo.scopeId && channelInfo.scopeGroupName === 'User')
+}
+
+const DeleteChatMessage = ( { chat, currUser, isSuperAdmin } ) => (
+  ( (currUser &&
+     (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin  || _isCurrUsersWall(chat, currUser))) &&
+     !chat.isDeleted
+    ) ?
+    <span className='mgb-show-on-parent-hover' onClick={() => _doDeleteMessage(chat._id)}>
+      &nbsp;
+      <Icon color='red' circular link name='delete'/>
+    </span>
+    :
+    null
+)
+const _unDeleteMessage = chatId => restoreChatRecord( chatId )
+
+const UndeleteChatMessage = ( { chat, currUser, isSuperAdmin} ) => (
+  ( (currUser && (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin)) && chat.isDeleted) ?
+    <span className='mgb-show-on-parent-hover' onClick={() => _unDeleteMessage(chat._id)}>
+      &nbsp;
+      <Icon color='blue' circular link name='undo'/>
+    </span>
+    :
+    null
+)
 
 const ChatMessage = ({ msg }) => {
   let begin = 0
@@ -241,7 +276,8 @@ const fpChat = React.createClass( {
                                                                  // transitions etc). If null, there is nothing pending.
                                                                  // If '*' then render on whatever the next channelName is.
                                                                  // if any-other-string, then we are waiting for that specific channelName
-      pastMessageLimit:                    initialMessageLimit
+      pastMessageLimit:                    initialMessageLimit,
+      isMessagePending:                    false
     }
   },
 
@@ -329,22 +365,23 @@ const fpChat = React.createClass( {
     const { messageValue } = this.state
     if (!messageValue || messageValue.length < 1)
       return
-
     const channelName = this._calculateActiveChannelName()
     const channelObj = parseChannelName( channelName )
-    const presentedChannelName = makePresentedChannelName( channelName )
+    const presentedChannelName = makePresentedChannelName( channelName, channelObj.scopeId ) 
 
     joyrideCompleteTag( `mgbjr-CT-fp-chat-send-message` )
     joyrideCompleteTag( `mgbjr-CT-fp-chat-send-message-on-${channelName}` )
 
-    // TODO: Set pending?, disable textarea on pending
+    // TODO: Set pending?, disable textarea on pendings
+    this.setState( {isMessagePending: true} )
     ChatSendMessageOnChannelName( channelName, messageValue, (error, result) => {
+      this.setState( { isMessagePending: false } )
       if (error)
         showToast( "Cannot send message because: " + error.reason, 'error' )
       else {
         this.setState( { messageValue: '' } )
-        if (channelObj.scopeGroupName === 'Global')
-          logActivity( 'user.message', `Sent a message on ${presentedChannelName}`, null, null, { toChatChannelName: channelName } )
+        if (channelObj.scopeGroupName === 'Global' || channelObj.scopeGroupName === 'User')
+          logActivity( 'user.message', `Sent a message on ${presentedChannelName}`, null, null, { toChatChannelName: channelName } ) //
       }
     } )
   },
@@ -397,7 +434,7 @@ const fpChat = React.createClass( {
   renderMessage: function(c) {
     const ago = moment( c.createdAt ).fromNow()
     const to = `/u/${c.byUserName}`
-
+    const {isSuperAdmin} = this.props
     const absTime = moment( c.createdAt ).format( 'MMMM Do YYYY, h:mm:ss a' )
     const currUser = Meteor.user()
 
@@ -416,8 +453,12 @@ const fpChat = React.createClass( {
           <Comment.Author as={QLink} to={to}>{c.byUserName}</Comment.Author>
           <Comment.Metadata>
             <div title={absTime}>{ago}</div>
+            <DeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
+            <UndeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
           </Comment.Metadata>
-          <Comment.Text><ChatMessage msg={c.message} />&nbsp;</Comment.Text>
+          <Comment.Text>
+            <ChatMessage msg={c.isDeleted ? '(deleted)' : c.message} />&nbsp;
+          </Comment.Text>
         </Comment.Content>
       </Comment>
     )
@@ -468,6 +509,26 @@ const fpChat = React.createClass( {
     const { view } = this.state
     const { currUser, currUserProjects, chatChannelTimestamps } = this.props
     const { settings } = this.context
+    const wallChannelName = currUser ? makeChannelName( { scopeGroupName: 'User', scopeId: currUser.username } ) : null
+
+    // My Wall
+    const myWall = ( !currUser ? null :
+      <List selection>
+        <List.Item>
+          <List.Header disabled style={{ textAlign: 'center' }}>My Wall</List.Header>
+        </List.Item>
+        <List.Item
+          onClick={() => this.handleChatChannelChange( wallChannelName )}
+          title='My Wall'
+        >
+          <Icon name='user' />
+          <List.Content>
+            {makePresentedChannelName( wallChannelName, currUser.username )}
+            {this.renderUnreadChannelIndicator( wallChannelName, chatChannelTimestamps )}
+          </List.Content>
+        </List.Item>
+      </List>
+    )
 
     // PUBLIC (GLOBAL) CHANNELS
     const publicChannels = (
@@ -534,7 +595,7 @@ const fpChat = React.createClass( {
             const isOwner = (currUser && project.ownerId === currUser._id)
             const channelName = makeChannelName( { scopeGroupName: 'Project', scopeId: project._id } )
             return (
-              <List.Item key={project._id}>
+              <List.Item key={project._id} onClick={() => this.handleChatChannelChange( channelName )}>
                 <Icon
                   title={`Navigate to ${isOwner ? 'your' : 'their'} project`}
                   as={QLink}
@@ -544,7 +605,7 @@ const fpChat = React.createClass( {
                   color={isOwner ? 'green' : 'blue' }
                   onClick={e => e.nativeEvent.stopImmediatePropagation()}
                 />
-                <List.Content onClick={() => this.handleChatChannelChange( channelName )} title='Select Channel'>
+                <List.Content title='Select Channel'>
                   { !isOwner && project.ownerName + ' : ' }
                   { project.name }
                   {this.renderUnreadChannelIndicator( channelName, chatChannelTimestamps )}
@@ -632,6 +693,7 @@ const fpChat = React.createClass( {
 
     return (
       <div style={style}>
+        {myWall}
         {publicChannels}
         {dmChannels}
         {projectChannels}
@@ -680,10 +742,10 @@ const fpChat = React.createClass( {
             <Button
               floated='right'
               color='blue'
-              icon='chat'
+              icon={ this.state.isMessagePending ? { loading: false, name: 'spinner' } : 'chat' }
               labelPosition='left'
-              disabled={!canSend}
-              content='Send Message'
+              disabled={!canSend || this.state.isMessagePending}
+              content={this.state.isMessagePending ? 'Sending Message...' : 'Send Message' }
               data-tooltip="Shortcut: Ctrl-ENTER to send"
               data-position="bottom right"
               data-inverted=""
@@ -718,6 +780,9 @@ const fpChat = React.createClass( {
         channelObj.scopeId,
         _.find( this.props.chatChannelTimestamps, { _id: channelName } )
       )
+
+    if (channelObj.scopeGroupName === 'User'){
+      return `User "${channelObj.scopeId}"`}
 
     console.error( `findObjectNameForChannelName() has a ScopeGroupName (${channelObj.scopeGroupName}) that is not in user context. #investigate#` )
     return 'TODO'
@@ -778,16 +843,20 @@ const fpChat = React.createClass( {
               )}
               >
               <Popup.Header>
-                { channelObj.scopeGroupName === 'Asset' ? 'Public Chat Channel for this Asset' : 'Chat Channel for this Project:' }
+                Public Chat Channel for this {channelObj.scopeGroupName }
               </Popup.Header>
               <Popup.Content>
                 <div style={{minWidth: '300px'}}>
-                  {
-                    channelObj.scopeGroupName === 'Asset' ?
+                  { channelObj.scopeGroupName === 'Asset' &&
                       <AssetCardGET assetId={channelObj.scopeId} allowDrag={true} renderView='s' />
-                    :
+                  }
+                  { channelObj.scopeGroupName === 'Project' &&
                       <ProjectCardGET projectId={channelObj.scopeId} />
                   }
+                  { channelObj.scopeGroupName === 'User' &&
+                      <span>User Wall for <QLink to={`/u/${channelObj.scopeId}`} >@{channelObj.scopeId}</QLink></span>
+                  }
+
                 </div>
               </Popup.Content>
             </Popup>

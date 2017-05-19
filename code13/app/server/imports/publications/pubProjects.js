@@ -35,7 +35,8 @@ Meteor.publish('projects.search',
       userId, 
       nameSearch,
       showOnlyForkable,
-      hideWorkstateMask)
+      hideWorkstateMask,
+      {sort: {"createdAt": -1}})
   
     return Projects.find(selector)
   }

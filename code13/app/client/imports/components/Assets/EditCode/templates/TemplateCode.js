@@ -123,13 +123,23 @@ function render()
     description: "Load a MGB Map into a Phaser Game",
     code:
 `
-import Phaser from 'phaser'
-import '/!vault/mgb-map-loader'
 
-const game = new Phaser.Game(27*16, 15*16, Phaser.AUTO, document.body, {
+import Phaser from 'phaser'
+
+// MGB map loader adds mgbMap functionality to the Phaser.Loader and Phaser object factory
+import '/!vault:mgb-map-loader-extended'
+
+// 800 and 600 here is just initial width and height - we will automatically adjust game size to fit map
+const game = new Phaser.Game(800, 600, Phaser.AUTO, document.body, {
   preload: function(){
-    this.game.load.mgbMap("{REPLACE_WITH_MAP_ID}")
-    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    // first argument is map name (initialMap) - used later to load map
+    // you can choose any name - just don't forget to use changed name in the create function below
+    // replace {userName} with map owner name
+    // replace {mapName} with real map name
+    this.game.load.mgbMap('initialMap', '/{userName}/{mapName}')
+    
+    // this tells Phaser.ScaleManager to show all world on single screen
+    this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL
   },
 
   create: function(){
@@ -140,13 +150,18 @@ const game = new Phaser.Game(27*16, 15*16, Phaser.AUTO, document.body, {
       map // reference to phaser tilemap object
     }
     */
-    const mgbMap = this.game.create.mgbMap("{REPLACE_WITH_MAP_ID}")
+    // create and put it on the screen
+    const mgbMap = this.game.create.mgbMap('initialMap')
+    
+    // determine map size in the pixels
+    const mapWidthInPx =  mgbMap.data.width * mgbMap.data.tilewidth
+    const mapHeightInPx =  mgbMap.data.height* mgbMap.data.tileheight
+    
     // set world bound to match map size
-    this.game.world.setBounds(0, 0,
-                              mgbMap.data.width * mgbMap.data.tilewidth,
-                              mgbMap.data.height* mgbMap.data.tileheight
-    );
-
+    this.game.world.setBounds(0, 0, mapWidthInPx, mapHeightInPx)
+    
+    // adjust game size - to fit map on the screen
+    this.game.scale.setGameSize(mapWidthInPx, mapHeightInPx)
   }
 })
 // allow to take screenshots in the webgl mode

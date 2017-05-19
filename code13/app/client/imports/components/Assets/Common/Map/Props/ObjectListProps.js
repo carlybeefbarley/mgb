@@ -23,7 +23,11 @@ export default {
   showOrHideObject(index){
     const activeLayer = this.refs.map.getActiveLayer()
     const objects = activeLayer.data.objects
+
+    const msg = objects[index].visible  ? 'Hide object' : 'Reveal object'
+    
     objects[index].visible = !objects[index].visible
+    this.quickSave(msg)
   },
   setPickedObject(index){
     const l = this.refs.map.getActiveLayer()

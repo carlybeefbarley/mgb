@@ -34,6 +34,6 @@ registerDebugGlobal( '_what', `This is a handy debug object created by MGB's App
 
 registerDebugGlobal( '_what', `This is a handy debug object created by MGB's App.js component. It is a place to put debug stuff. It should only be set via the window._MGB_DBG variable, but there is also a convenient alias window.m for console debugging in browser\n\n Try typing   m.h  in the browser console to learn more`, __filename, 'Explains more about what this is')
 
-console.log(`%cMGB debug helpers enabled. Try typing 'm.h' in the browser debug console`, 'color: #00aa00; font-weight: bold; font-size: 14px;')
+//console.log(`%cMGB debug helpers enabled. Try typing 'm.h' in the browser debug console`, 'color: #00aa00; font-weight: bold; font-size: 14px;')
 
 export default registerDebugGlobal

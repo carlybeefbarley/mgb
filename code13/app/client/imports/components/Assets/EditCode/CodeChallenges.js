@@ -92,8 +92,10 @@ export default class CodeChallenges extends React.Component {
       this.setState({ console: e.data.console })
       this.setState({ testCount: this.state.testCount+1 })
       this.setState({ latestTest: Date.now() })
-      if (_.every(e.data.results, 'success'))
+      if (_.every(e.data.results, 'success')){
+        ga('send', 'pageview', this.props.skillPath)
         this.successPopup()
+      }
     }
   }
 

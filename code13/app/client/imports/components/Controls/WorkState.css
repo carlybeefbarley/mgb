@@ -1,29 +1,29 @@
 .mgb-workstate-broken
 {
-    background-color: #282 !important;
+    background-color: #52A7C4 !important;
 }
 
 .mgb-workstate-experiment
 {
-    background-color: #6a6 !important;
+    background-color: #67B7C8 !important;
 }
 
 .mgb-workstate-unknown
 {
-    background-color: #c0d8c0 !important;
+    background-color: #7CCDD0 !important;
 }
 
 .mgb-workstate-working
 {
-    background-color: #cfc !important;
+    background-color: #92D8CD !important;
 }
 
 .mgb-workstate-polished
 {
-    background-color: #6f6 !important;
+    background-color: #A8DFC8 !important;
 }
 
 .mgb-workstate-showcase
 {
-    background-color: #0f0 !important;
-}
+    background-color: #AEE7BB !important;
+}   

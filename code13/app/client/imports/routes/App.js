@@ -6,6 +6,7 @@ import Helmet from "react-helmet"
 import {createContainer} from 'meteor/react-meteor-data'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 import {utilPushTo} from "/client/imports/routes/QLink"
 
@@ -108,10 +109,10 @@ const fpFlexPanelContentWidthInPixels = 285   // The cool stuff
 
 // Toast and other warnings
 const _toastTypes = {
-  error: {funcName: 'error', hdr: 'Error', delay: 5000},
-  warning: {funcName: 'warning', hdr: 'Warning', delay: 4000},
-  info: {funcName: 'info', hdr: 'Info', delay: 4000},
-  success: {funcName: 'success', hdr: 'Success', delay: 4000}
+  error:    { funcName: 'error',   hdr: 'Error',   delay: 5000 },
+  warning:  { funcName: 'warning', hdr: 'Warning', delay: 4000 },
+  info:     { funcName: 'info',    hdr: 'Info',    delay: 4000 },
+  success:  { funcName: 'success', hdr: 'Success', delay: 4000 }
 }
 
 /**
@@ -130,25 +131,25 @@ export const showToast = (content, type = 'success') => {
 
 const AppUI = React.createClass({
   propTypes: {
-    params: PropTypes.object,
-    query: PropTypes.object,
-    routes: PropTypes.array,
+    params:   PropTypes.object,
+    query:    PropTypes.object,
+    routes:   PropTypes.array,
     location: PropTypes.object,
     children: PropTypes.object
   },
 
   childContextTypes: {
-    urlLocation: PropTypes.object,
-    settings: PropTypes.object,
-    skills: PropTypes.object
+    urlLocation:  PropTypes.object,
+    settings:     PropTypes.object,
+    skills:       PropTypes.object
   },
 
   getChildContext() {
     // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See https://github.com/facebook/react/issues/2517
     return {
-      urlLocation: this.props.location,
-      settings: this.props.settings,  // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
-      skills: this.props.skills     // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
+      urlLocation:  this.props.location,
+      settings:     this.props.settings,  // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
+      skills:       this.props.skills     // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
     }
   },
 
@@ -281,7 +282,7 @@ const AppUI = React.createClass({
     if (!this.props.currUser)
       return
 
-    const {settings, currUserProjects} = this.props
+    const {settings, currUser, currUserProjects} = this.props
     const {assetId} = this.props.params
 
     // 0. Make the list of channels we are interested in:
@@ -291,6 +292,7 @@ const AppUI = React.createClass({
     // chat notifications with too much Asset noise
 
     const chanArray = _.concat(
+      [ makeChannelName( { scopeGroupName: 'User', scopeId: currUser.username } ) ],
       _.map(ChatChannels.sortedKeys, k => makeChannelName({scopeGroupName: 'Global', scopeId: k})),
       _.map(currUserProjects, p => makeChannelName({scopeGroupName: 'Project', scopeId: p._id})),
       getPinnedChannelNames(settings)
@@ -335,7 +337,10 @@ const AppUI = React.createClass({
     if (window.trackJs)
       doTrack()
     else
+    {
+      console.log("[tjfallback]")  // so it's easier to know when this is happening
       $.getScript(makeCDNLink("/lib/t-r-a-c-k-e-r.js"), doTrack)   // fallback to local version because of AdBlocks etc
+    }
   },
 
   handleSetCurrentlyEditingAssetInfo(assetInfo)
@@ -374,18 +379,18 @@ const AppUI = React.createClass({
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
-      position: "fixed",
-      top: 0,
-      bottom: respData.fpReservedFooterHeight,
-      left: 0,
-      right: flexPanelWidth,
+      position:     "fixed",
+      top:          0,
+      bottom:       respData.fpReservedFooterHeight,
+      left:         0,
+      right:        flexPanelWidth,
       marginBottom: '0px',
-      overflow: "auto" // 'scroll' - this will make very ugly scrollbars on firefox
+      overflow:     "auto" // 'scroll' - this will make very ugly scrollbars on firefox
     }
 
     const mainPanelInnerDivSty = {
-      padding: '0px',
-      height: "auto"
+      padding:       '0px',
+      height:        "auto"
     }
 
     //Check permissions of current user for super-admin,
@@ -607,10 +612,10 @@ const AppUI = React.createClass({
             this.addJoyrideSteps(loadedSteps.steps, opts)
           }
           // console.log('started tutorial...', this.state.joyrideSkillPathTutorial)
-          analytics.track('startTutorial', {
-            title: this.state.joyrideSkillPathTutorial
-            , category: "Tutorials"
-          })
+          // analytics.track('startTutorial', {
+          //   title: this.state.joyrideSkillPathTutorial
+          //   , category: "Tutorials"
+          // })
         })
         .catch(err => {
           showToast(`Unable to start tutorial '${steps}': ${err.toString()}`, 'error')
@@ -642,10 +647,10 @@ const AppUI = React.createClass({
   handleJoyrideCallback(func) {
     if (func.type === 'finished') {
       // console.log('finished tutorial...', this.state.joyrideSkillPathTutorial)
-      analytics.track('startTutorial', {
-        title: this.state.joyrideSkillPathTutorial
-        , category: "Tutorials"
-      })
+          //analytics.track('startTutorial', {
+          //  title: this.state.joyrideSkillPathTutorial
+          //  , category: "Tutorials"
+          //})
       if (this.state.joyrideSkillPathTutorial && func.skipped === false)
         this.handleCompletedSkillTutorial(this.state.joyrideSkillPathTutorial)
       this.setState(
@@ -753,7 +758,8 @@ const AppUI = React.createClass({
 })
 
 
-const App = createContainer(({params}) => {
+
+const App = createContainer( ( { params , location} ) => {
   const pathUserName = params.username      // This is the username (profile.name) on the url /u/xxxx/...
   const pathUserId = params.id              // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
   const currUser = Meteor.user()
@@ -763,12 +769,20 @@ const App = createContainer(({params}) => {
     : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
   const handleForSysvars = Meteor.subscribe('sysvars')
 
+  // skills stuff
   const handleForSkills = currUserId ? Meteor.subscribe("skills.userId", currUserId) : null
   const skillsReady = handleForSkills === null ? true : handleForSkills.ready()
 
+  // settings stuff
   const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
   const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
-  const handleActivity = Meteor.subscribe("activity.public.recent", 11) // TODO - use activityHistoryLimit ?
+
+  // activity? if useful..
+  const flexPanelQueryValue = location.query[urlMaker.queryParams("app_flexPanel")]
+  const getActivity = currUser || (flexPanelQueryValue === 'activity')
+  const handleActivity = getActivity ? Meteor.subscribe("activity.public.recent", SpecialGlobals.activity.activityHistoryLimit) : null
+
+  // projects stuff
   const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null
   const projectsReady = handleForProjects === null ? true : handleForProjects.ready()
   const projectSelector = projectMakeSelector(currUserId)
@@ -803,19 +817,19 @@ const App = createContainer(({params}) => {
   return {
     currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
 
-    currUserProjects: Projects.find(projectSelector).fetch(),
-    user: pathUserName ? Meteor.users.findOne({"profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
-    activity: Activity.find({}, {sort: {timestamp: -1}}).fetch(),     // Activity for any user
-    settings: G_localSettings,
-    meteorStatus: Meteor.status(),
-    skills: currUser ? Skills.findOne(currUserId) : null,
-    sysvars: Sysvars.findOne(),
-    loading: !handleForUser.ready() ||
-    !handleForSysvars.ready() ||
-    !handleActivity.ready() ||
-    !projectsReady ||
-    !settingsReady ||
-    !skillsReady
+    currUserProjects: handleForProjects ?Projects.find(projectSelector).fetch(): [],
+    user:             pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
+    activity:         getActivity ?Activity.find({}, {sort: {timestamp: -1}}).fetch(): [],     // Activity for any user
+    settings:         G_localSettings,
+    meteorStatus:     Meteor.status(),
+    skills:           currUser ? Skills.findOne(currUserId) : null,
+    sysvars:          Sysvars.findOne(),
+    loading:          !handleForUser.ready()    ||
+                      !handleForSysvars.ready() ||
+                      !(!handleActivity ||handleActivity.ready()  ) ||
+                      !projectsReady            ||
+                      !settingsReady            ||
+                      !skillsReady
   }
 }, AppUI)
 
@@ -833,8 +847,8 @@ App.responsiveRules = {
     minWidth: 421,
     respData: {
       footerTabMajorNav: false,        //  flexPanel as right sidebar =|
-      fpReservedFooterHeight: '0px',
-      fpReservedRightSidebarWidth: px(fpIconColumnWidthInPixels)
+      fpReservedFooterHeight:       '0px',
+      fpReservedRightSidebarWidth:  px(fpIconColumnWidthInPixels)
     }
   }
 }

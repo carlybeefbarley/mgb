@@ -99,7 +99,7 @@ Chat.channelName: (Indexed field, non-unique in Chats table, used to group the '
                                      // construction-oriented so this is probably fine.
   Asset        A_{AssetId}_          // Publicly writable. Owner might choose a 'approve comments' policy 
                                      // in future (TODO - needs a comments-policy in asset.js)
-  User         U_{UserId}_           // Publicly writable subject to (TODO) policy on User Profile. 
+  User         U_{Username}_           // Publicly writable subject to (TODO) policy on User Profile. 
                                      // Owner-user might select an 'approve comments' policy in future
                                      // (TODO - needs a comments-policy in user.js)
   DirectMsg    D_{uid1+uid2}_        // such that uid1 is lexically less than uid2 and + is a separator
@@ -240,7 +240,10 @@ export const chatsSchema = {
 
   // other special states
   isDeleted:    optional(Boolean),    // If true then show as '(deleted)'
-
+  
+  // if superadmin deletes a chat message it is saved in this field and text is replaced with deleted by admin and user cannot reenable
+  prvBannedMessage: optional(String),
+  
   // The su fields can only be changed by a superAdmin User.. They typically relate to workflows or system counts
   suFlagId:       optional(String)      // (TODO) non-null / non-empty if there is a Flag record for this message (See Flags.js)
 }
@@ -359,6 +362,8 @@ export function currUserCanSend(currUser, channelName) {
 
   if (channelObj.scopeGroupName === 'Asset')
     return true // We may tighten this up later
+  if(channelObj.scopeGroupName === 'User')
+    return true
 
   console.log("TODO: [User/DM]-chat currUserCanSend()")
   return false
@@ -413,7 +418,7 @@ export function makePresentedChannelName(channelName, objectName) {
   case 'Asset':
     return `${objectName} - Asset Chat`
   case 'User':
-    return `User Chat`
+    return `${objectName} - User Wall`
   case 'DirectMessage':
     return 'DirectMessage '
   default:
@@ -457,4 +462,12 @@ export function ChatSendMessageOnChannelName( channelName, msg, completionCallba
 
   Meteor.call('Chats.send', channelName, msg, chatMetadata, completionCallback)
   return true
+}
+
+export function deleteChatRecord(chatId) {
+  Meteor.call( "Chat.delete", chatId )
+}
+
+export function restoreChatRecord(chatId){
+  Meteor.call ( "Chat.restore", chatId )
 }

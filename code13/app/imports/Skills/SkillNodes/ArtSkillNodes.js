@@ -17,8 +17,8 @@ export default {
       name:           'Line Art',
       description:    'Basics of creating line art.',
     },
-    'linesAndCurves': C.En(0),
-    'antiAliasing':   C.En(2)
+    'linesAndCurves':     C.En(0),
+    'antiAliasing':       C.En(2)
   },
 
   'colors': {
@@ -26,8 +26,8 @@ export default {
       name:           'Colors',
       description:    'Creating and applying an appropriate color palette for your art.',
     },
-    'colorPalette': C.En(0),
-    'HSL':          C.En(1),
+    'HSV':          C.En(0),
+    'colorPalette': C.En(1),
     'colorRamps':   C.En(2)
   },
 
@@ -38,7 +38,7 @@ export default {
     },
     'shadowAndLight': C.En(0),
     'dithering':      C.En(2),
-    'textures':       C.En(1)
+    'textures':       C.En(3)
   },
 
   'gameSprites': {
@@ -46,9 +46,9 @@ export default {
       name:           'Game Sprites',
       description:    'Designing and creating sprite with the game in mind.',
     },
-    perspective:     C.En(3),
-    characterDesign: C.En(1),
-    tiling:          C.En(1),
-    animations:      C.En(2)
+    perspectives:     C.En(3),
+    characterDesign:  C.En(1),
+    animations:       C.En(2),
+    tiling:           C.En(2)
   },
 }

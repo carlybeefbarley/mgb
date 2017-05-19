@@ -19,6 +19,8 @@ const ToolEyedropper = {
     let d = imageDataAtMouse.data
     drawEnv.setColorRGBA(...d)
 
+    drawEnv.setPrevTool()
+
     // We don't need to edit the Edit canvas since we declared 'supportsDrag: false' so EditGraphic will handle redraw
 
   },

@@ -147,6 +147,7 @@ export default class MageGameCanvas extends React.Component {
     return ( 
       <div id="mgb-game-container" style = {{maxHeight: height + 'px', maxWidth: width + 'px', overflow: 'hidden', border: 'grey 1px solid'}}>
         <canvas 
+            id="mgb-game-canvas"
             ref = { c => { this.prepCanvas(c) } }
             width = { cellsWide * 32 }
             height = { cellsHigh * 32 }

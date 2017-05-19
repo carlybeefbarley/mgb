@@ -117,16 +117,27 @@ export default class EditMap extends React.Component {
   }
   set preventUpdates(v){
     this._preventUpdates = v
-    // console.log(v ? "Preventing updates: STARTED" : "Preventing updates: STOPPED")
+    /*console.error(v ? "Preventing updates: STARTED" : "Preventing updates: STOPPED")
     // failsafe
-    /*
-    window.setTimeout(() => {
-      this._preventUpdates && console.error("Preventing updates for too long period of time.. unlocking map. DEBUG THIS!")
 
-      //this._preventUpdates = false
-    }, 5000)
-    */
+    window.setTimeout(() => {
+      // not sure how to debug this...
+      if(this._preventUpdates) {
+        this._preventUpdates && console.error("Preventing updates for too long period of time.. unlocking map. DEBUG THIS!")
+        // this._preventUpdates = false
+      }
+    }, 60000)*/
+
   }
+
+  get mgb_content2(){
+    return this._mgb_content2
+  }
+
+  set mgb_content2(v){
+    this._mgb_content2 = v
+  }
+
   getImageData(){
     return this.refs.map.generatePreview()
   }
@@ -149,7 +160,7 @@ export default class EditMap extends React.Component {
       it's possible to use _.copyDeep - in case of some unexpected behavior,
       but I haven't experienced strange behavior.. ref is much faster
      */
-    this.mgb_content2 = this.props.asset.content2
+    this.mgb_content2 = _.cloneDeep(this.props.asset.content2)
 
     // restore last edit mode ???
     this.state.editMode = this.options.mode
@@ -234,12 +245,12 @@ export default class EditMap extends React.Component {
       if(!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave){
         if(this.props.canEdit){
           const oldMeta = this.mgb_content2.meta
-          this.mgb_content2 = newp.asset.content2
+          this.mgb_content2 = _.cloneDeep(newp.asset.content2)
           // don't update active tool / camera position etc - because it's annoying
           this.mgb_content2.meta = oldMeta
         }
         else{
-          this.mgb_content2 = newp.asset.content2
+          this.mgb_content2 = _.cloneDeep(newp.asset.content2)
         }
       }
     }
@@ -341,6 +352,12 @@ export default class EditMap extends React.Component {
     this.preventUpdates = false
     if(!this.props.canEdit){
       this.props.editDeniedReminder()
+      // reset map
+      const meta = this.mgb_content2.meta
+      this.mgb_content2 = _.cloneDeep(this.props.asset.content2)
+      // meta contains active layer , active tool, camera - etc
+      this.mgb_content2.meta = meta
+      this.setState({lastUpdated: Date.now()})
       return
     }
     // isn't it too late to save for undo?
@@ -352,6 +369,8 @@ export default class EditMap extends React.Component {
       this.refs.map.generatePreviewAndSaveIt(data, reason)
     else
       this.props.handleContentChange(data, thumbnail, reason)
+
+    this.setState({lastUpdated: Date.now()})
   }
 
   quickSave(reason = "noReason", skipUndo = true, thumbnail = null){

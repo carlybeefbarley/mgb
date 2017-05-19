@@ -8,6 +8,10 @@ import Helmet from 'react-helmet'
 
 import { Azzets } from '/imports/schemas'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
+import { makeChannelName} from '/imports/schemas/chats'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { utilShowChatPanelChannel } from '/client/imports/routes/QLink'
+
 import { makeAssetInfoFromAsset } from '/imports/schemas/assets/assets-client'
 
 import { Segment, Message, Header, Icon } from 'semantic-ui-react'
@@ -16,6 +20,7 @@ import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 import QLink from '/client/imports/routes/QLink'
 import SpecialGlobals from '/imports/SpecialGlobals'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
+import AssetChatDetail from '/client/imports/components/Assets/AssetChatDetail'
 
 import elementResizeDetectorMaker  from 'element-resize-detector'
 
@@ -283,6 +288,7 @@ export default PlayGameRoute = React.createClass({
   propTypes: {
     params:           PropTypes.object,      // params.assetId is the ASSET id
     user:             PropTypes.object,
+    hazUnreadAssetChat: PropTypes.bool,
     // currUser:         PropTypes.object,
     // currUserProjects: PropTypes.array,       // Both Owned and memberOf. Check ownerName / ownerId fields to know which
     // isSuperAdmin:     PropTypes.bool,
@@ -347,9 +353,17 @@ export default PlayGameRoute = React.createClass({
         this.props.handleSetCurrentlyEditingAssetInfo( {} )
     }
   },
+  contextTypes: {
+    urlLocation: React.PropTypes.object
+  },
 
   componentDidUpdate () {
     this.checkForImplicitIncrementPlayCount()
+  },
+  handleChatClick() {
+    const channelName = makeChannelName( { scopeGroupName: 'Asset', scopeId: this.props.params.assetId } )
+    joyrideCompleteTag('mgbjr-CT-asset-play-game-show-chat')
+    utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
 
   render: function () {
@@ -358,8 +372,7 @@ export default PlayGameRoute = React.createClass({
 
     if (!this.data.asset)
       return <ThingNotFound type='GameConfig Asset' id={params.assetId}/>
-
-    const { params, user } = this.props
+    const { params, user, hazUnreadAssetChat } = this.props
     const game = this.data.asset      // One Asset provided via getMeteorData()
 
     return (
@@ -370,6 +383,7 @@ export default PlayGameRoute = React.createClass({
             </QLink>
           </Header>
         <small>&emsp;{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</small>
+        <AssetChatDetail style={{float: 'right'}} hasUnreads={hazUnreadAssetChat} handleClick={this.handleChatClick}/>
         <PlayGame game={game} user={user} incrementPlayCountCb={this.incrementPlayCount}/>
       </Segment>
     )

@@ -81,6 +81,8 @@ export default class ObjectList extends React.Component {
     const objects = activeLayer.data.objects
     const toRender = []
     _.times(objects.length, (i) => {
+      if(objects[i].tmp)
+        return
       toRender.unshift(
         <List.Item
           key={i}

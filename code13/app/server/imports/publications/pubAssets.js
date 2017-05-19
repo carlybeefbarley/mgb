@@ -1,5 +1,7 @@
+import _ from 'lodash'
 import { Azzets } from '/imports/schemas'
 import { assetMakeSelector, allSorters } from '/imports/schemas/assets'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 //   aZZets !?
 //     ...Note that Meteor has a special reserved global "Assets" so we call these Azzets instead
@@ -24,12 +26,13 @@ Meteor.publish('assets.public', function(
   showDeleted=false,
   showStable=false,
   assetSortType=undefined,      // null/undefined or one of the keys of allSorters{}
-  limitCount=50,
+  limitCount=SpecialGlobals.assets.mainAssetsListDefaultLimit,
   hideWorkstateMask=0,          // As defined for use by assetMakeSelector()
   showChallengeAssets=false
 )
 {
-  let selector = assetMakeSelector(userId,
+  const actualLimit = _.clamp(limitCount, 1, SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit)
+  const selector = assetMakeSelector(userId,
                       selectedAssetKinds,
                       nameSearch,
                       projectName,
@@ -37,11 +40,11 @@ Meteor.publish('assets.public', function(
                       showStable,
                       hideWorkstateMask,
                       showChallengeAssets)
-  let assetSorter = assetSortType ? allSorters[assetSortType] : allSorters["edited"]
+  const assetSorter = assetSortType ? allSorters[assetSortType] : allSorters["edited"]
   const findOpts = {
     fields: { content2: 0, thumbnail: 0 },
     sort:  assetSorter,
-    limit: limitCount
+    limit: actualLimit
   }
   return Azzets.find(selector, findOpts )
 })
@@ -52,7 +55,11 @@ Meteor.publish('assets.public', function(
 // https://medium.com/@MaxDubrovin/workaround-for-meteor-limitations-if-you-want-to-sub-for-more-nested-fields-of-already-received-docs-eb3fdbfe4e07#.k76s2u4cs
 // selector can be an   id STRING  _or_ an object containing {.dn_OwnerName, .kind, .name }
 Meteor.publish('assets.public.partial.bySelector', function(selector) {
-  const cleanSelector = typeof selector === "object" ? {dn_ownerName: selector.dn_ownerName, kind: selector.kind, name: selector.name } : selector
+  const cleanSelector = typeof selector === "object" ? {dn_ownerName: selector.dn_ownerName, name: selector.name } : selector
+
+  // allow to guess assets only by owner:name ???
+  if(selector.kind)
+    cleanSelector.kind = selector.kind
 
   // TODO(@stauzs) Should server look for deleted assets? What about asset editors?
   const cursor = Azzets.find(cleanSelector, {fields: {updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1, metadata: 1}})

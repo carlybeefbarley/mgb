@@ -48,8 +48,14 @@ export const makeCDNLink = (uri, etagOrHash = null, prefixDomainAlways = false) 
   }
 
   const conf = window.__meteor_runtime_config__ ? __meteor_runtime_config__ : null
+
+  // received
+  if(uri.indexOf('hash=') > 0) {
+    //console.error("Already hashed link!", uri)
+    return uri
+  }
   // don't cache at all
-  if (uri.startsWith("/api") && !etagOrHash)
+  if (uri.startsWith("/api")  && !etagOrHash)
     return CDN_DOMAIN
       ? `//${CDN_DOMAIN}${uri}`
       : (
@@ -88,15 +94,22 @@ export const makeExpireThumbnailLink = (assetOrId, maxAge = 60) => {
 
 }
 
+
+// lastDiff is used to generate cached which expires in the X amount of seconds
+// we need to use here server time
+// otherwise timestamp in the one timezone
+// could potentially conflict with another timezones cache
 let lastDiff = 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
 const syncTime = () => {
   const emitted = Date.now()
   Meteor.call('syncTime', {now: emitted}, (err, date) => {
     lastDiff = Date.now() - date.now
-    console.log("Last Diff:", lastDiff, "serverDiff", date.diff)
+    console.log(`[Timeslip check: Server->Client Diff = ${lastDiff}ms; Client->Server Diff = ${date.diff} ms]`)
   })
 }
-syncTime()
+// Wait for 5 (arbitrary) seconds after Meteor.startup() calls us.. Might be better to wait for a connection
+// but that's more client-side work than is worthwhile for this
+Meteor.startup( () => window.setTimeout(syncTime, 5000 ) )
 
 // use this to allow client NOT pull resources every time
 // will return timestamp with next expire datetime

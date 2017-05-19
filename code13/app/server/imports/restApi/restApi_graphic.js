@@ -21,7 +21,7 @@ const _getAssetFrameDataUri = (asset, frame = 0) => {
   // Fallback for older assets that didn't auto-create the spriteData. This will only have layer 0 though
   if (c2 && c2.frameData && c2.frameData[frame][0])
     return c2.frameData[frame][0]
-  
+
   console.error(`api/asset/png/${asset._id} has no frameData or spriteDate for frame #${frame}`)
   return emptyPixel
 }
@@ -44,7 +44,7 @@ RestApi.addRoute('asset/png/:user/:name', { authRequired: false }, {
     })
     if (!asset)
       return _retval404
-  
+
     const dataUri = _getAssetFrameDataUri(asset, this.queryParams.frame)
     return genAPIreturn(this, asset, dataUri ? dataUriToBuffer(dataUri) : null, _cTypePng)
   }
@@ -62,6 +62,7 @@ RestApi.addRoute('asset/tileset-info/:id', { authRequired: false }, {
     const asset = Azzets.findOne(this.urlParams.id)
     if (!asset)
       return _retval404
+
     /* Example...
       firstgid:    1
       image:       "main.png"
@@ -99,7 +100,7 @@ RestApi.addRoute('asset/tileset-info/:id', { authRequired: false }, {
       })
 
       return {
-        image: "/api/asset/tileset/" + this.urlParams.id,
+        image: "/api/asset/tileset/" + asset.dn_ownerName + '/' + asset.name,
         // don't do that - as image will be cached forever and embedded in the map (phaser don't know how to extract embedded images automatically)
         //image: c2.tileset ? c2.tileset : "/api/asset/tileset/" + this.urlParams.id,
         name:        asset.name,
@@ -118,8 +119,8 @@ RestApi.addRoute('asset/tileset/:id', { authRequired: false }, {
   get: function () {
     const asset = Azzets.findOne(this.urlParams.id)
     return genAPIreturn(
-      this, 
-      asset, 
+      this,
+      asset,
       () => {
         if (!asset || !asset.content2)
           return _retval404
@@ -142,9 +143,9 @@ RestApi.addRoute('asset/tileset/:user/:name', { authRequired: false }, {
     })
 
     return genAPIreturn(
-      this, 
-      asset, 
-      () => ((asset && asset.content2 && asset.content2.tileset) ? dataUriToBuffer(asset.content2.tileset) : null), 
+      this,
+      asset,
+      () => ((asset && asset.content2 && asset.content2.tileset) ? dataUriToBuffer(asset.content2.tileset) : null),
       _cTypePng
     )
   }

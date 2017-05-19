@@ -28,7 +28,7 @@ import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 const _artSkillNodeName = 'art'
-const _maxArtSkillCount = countMaxUserSkills( _artSkillNodeName + '.' )   
+const _maxArtSkillCount = countMaxUserSkills( _artSkillNodeName + '.' )
 const artSkills = SkillNodes[_artSkillNodeName]    // shorthand
 const artItems = [
   { key: "lineArt", node: artSkills.lineArt, mascot: 'arcade_player' },
@@ -71,7 +71,7 @@ export const StartArtRoute = (key, currUser, newTab) => {
   }
 
   const newAsset = {
-    name: 'tutorials.art.' + key,
+    name: 'tutorials.' + (key.startsWith('art.') ? key : 'art.' + key),
     kind: 'graphic',
     isDeleted: false,
     dn_ownerName: currUser.username
@@ -79,21 +79,25 @@ export const StartArtRoute = (key, currUser, newTab) => {
 
   // check if asset exists
   getAssetBySelector(newAsset, (asset, err) => {
-
     if (asset)  // asset exists. open it.
-    {  
+    {
       const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
       openUrl(url, newTab)
     }
     else        // asset doesn't exist. create one.
-    {  
+    {
       // xhr to get art
-      mgbAjax(`/api/asset/fullgraphic/!vault/art.blank`, (err, str) => {
-        if (err)
+      mgbAjax(`/api/asset/fullgraphic/!vault/graphic.${key.split('art.').pop()}`, (err, str) => {
+        if (err && err !== 404) // If asset does not exist (error 404) just create blank graphic
           console.log('error', err)
         else {
-          newAsset.skillPath = 'art.' + key
-          newAsset.content2 = str.content2
+          if (str) {
+            let data = JSON.parse(str)
+            newAsset.thumbnail = data.thumbnail
+            newAsset.content2 = data.content2
+          }
+
+          newAsset.skillPath = key.startsWith('art.') ? key : 'art.' + key
           newAsset.isCompleted = false
           newAsset.isPrivate = false
 
@@ -108,9 +112,7 @@ export const StartArtRoute = (key, currUser, newTab) => {
 
             openUrl(url, newTab)
           })
-
         }
-
       })
     }
   })

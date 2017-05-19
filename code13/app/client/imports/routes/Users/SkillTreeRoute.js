@@ -3,7 +3,7 @@ import reactMixin from 'react-mixin'
 import { Segment, Header } from 'semantic-ui-react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { Skills } from '/imports/schemas'
-
+import { isUserSuperAdmin } from '/imports/schemas/roles'
 import Helmet from 'react-helmet'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import Spinner from '/client/imports/components/Nav/Spinner'
@@ -15,7 +15,7 @@ export default SkillTreeRoute = React.createClass({
   propTypes: {
     user:             PropTypes.object,
     ownsProfile:      PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
-    isTopLevelRoute:  PropTypes.bool         // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
+    isTopLevelRoute:  PropTypes.bool         // Useful so routes can be re-used for embedding.  If false, they can turn                                                  off toolbars/headings etc as appropriate
   },
 
   contextTypes: {
@@ -43,10 +43,10 @@ export default SkillTreeRoute = React.createClass({
 
 
   render: function() {
-    const { ownsProfile, isTopLevelRoute } = this.props
+    const { ownsProfile, isTopLevelRoute} = this.props
 
     const userSkills = ownsProfile ? this.context.skills : this.data.skills
-
+    const isAdmin = isUserSuperAdmin(Meteor.user())
     return (
       <div className={isTopLevelRoute ? 'ui basic padded segment' : null}>
         { isTopLevelRoute &&
@@ -71,7 +71,11 @@ export default SkillTreeRoute = React.createClass({
           </Segment>
         }
         { this.data.loading ? <Spinner/> : 
-          <SkillsMap skills={userSkills} expandable toggleable={ownsProfile} />
+          <SkillsMap skills={userSkills} 
+          expandable 
+          toggleable={ownsProfile}
+          userCanManuallyClaimSkill={ownsProfile && isAdmin} 
+          ownsProfile={ownsProfile} />
         }
       </div>
     )

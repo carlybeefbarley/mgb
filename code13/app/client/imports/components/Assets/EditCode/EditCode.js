@@ -1,5 +1,5 @@
 "use strict"
-var update = require('react-addons-update')
+const update = require('react-addons-update')
 
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
@@ -22,6 +22,8 @@ import CodeStarter from './CodeStarter'
 import CodeChallenges from './CodeChallenges'
 import CodeTutorials from './CodeTutorials'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
+import { AssetKindEnum } from '/imports/schemas/assets'
+
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
@@ -50,6 +52,7 @@ import FunctionDescription from './tern/FunctionDescription.js'
 import ExpressionDescription from './tern/ExpressionDescription.js'
 import RefsAndDefDescription from './tern/RefsAndDefDescription.js'
 import TokenDescription from './tern/TokenDescription.js'
+import InvokingDescription from './tern/InvokingDescription.js'
 import ImportHelperPanel from './tern/ImportHelperPanel.js'
 
 import DebugASTview from './tern/DebugASTview.js'
@@ -226,6 +229,10 @@ export default class EditCode extends React.Component {
       matchBrackets: true,
       viewportMargin: 10,
 
+      search: {
+        closeOnEnter: false
+      },
+
       /*hintOptions: {
        completeSingle: false    //    See https://codemirror.net/doc/manual.html -> completeSingle
        },*/
@@ -237,7 +244,8 @@ export default class EditCode extends React.Component {
         "mgb-cm-user-markers"
       ],
       extraKeys: {
-        "Alt-F": "findPersistent",
+        "Ctrl-F": "findPersistent",
+        "Alt-F": "find",
         "'.'": cm => {
           return this.codeEditPassAndHint(cm)
         },
@@ -419,12 +427,14 @@ export default class EditCode extends React.Component {
     this.ternServer.server.delFile = (name) => {
       this.ternServer && this.ternServer.worker.postMessage({type: "del", name})
     }
+
+    // TODO: next 3 tern server extensions follows same pattern .. clean up: listen -> filter -> cleanup
     this.ternServer.server.getAstFlowerTree = (options, callback, filename = this.props.asset.name) => {
       if (!options.filename) {
         options.filename = filename
       }
       const getAstFlowerTree = (e) => {
-        if (e.data.type != "flower")
+        if (e.data.type !== "flower")
           return
         this.ternServer.worker.removeEventListener("message", getAstFlowerTree)
         callback(e.data.data)
@@ -439,7 +449,7 @@ export default class EditCode extends React.Component {
 
     this.ternServer.server.getComments = (callback, filename = this.props.asset.name) => {
       const cb = (e) => {
-        if (e.data.type != "getComments")
+        if (e.data.type !== "getComments")
           return
         this.ternServer.worker.removeEventListener("message", cb)
         callback(e.data.data)
@@ -449,6 +459,21 @@ export default class EditCode extends React.Component {
         type: "getComments",
         filename: filename
       })
+    }
+
+    this.ternServer.server.getDef = (def, callback) => {
+      const cb = (e) => {
+        if (e.data.type !== "getDef")
+          return
+        this.ternServer.worker.removeEventListener("message", cb)
+        callback(e.data.data)
+      }
+      this.ternServer.worker.addEventListener("message", cb)
+      this.ternServer.worker.postMessage({
+        type: "getDef",
+        def
+      })
+
     }
 
     this.tools = new SourceTools(this.ternServer, this.props.asset)
@@ -798,16 +823,30 @@ export default class EditCode extends React.Component {
       {
         switch (draggedAsset.kind) {
         case 'graphic':
-          url = `/api/asset/png/${draggedAsset._id}`
+          url = `/api/asset/png/${draggedAsset.dn_ownerName}/${draggedAsset.name}`
           code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.image( '${draggedAsset.name}', '${url}' )`
           break
         case 'map':
-          url = `/api/asset/map/${draggedAsset._id}`
-          code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.tilemap( '${draggedAsset.name}', '${url}' )`
-          break
+          event.preventDefault()
+
+
+          let loadMap = `// Loads MGB map and all related resources\n// place this function in the preload method`+ '\n' +
+              `game.load.mgbMap( '${draggedAsset.name}', '/${draggedAsset.dn_ownerName}/${draggedAsset.name}' )`+
+              '\n\n' +
+              `// Creates full MGB map with all visible layers\n// place this function in the create method` + '\n' +
+              `const map = game.create.mgbMap('${draggedAsset.name}')`
+
+          this.codeMirror.replaceSelection( '\n' + loadMap + '\n')
+
+          const val = this.codeMirror.getValue()
+          if(val.indexOf('mgb-map-loader-extended') === -1){
+            this.codeMirror.setValue(`import '/!vault:mgb-map-loader-extended'` + '\n' + val)
+          }
+          return
+
         case 'sound':
         case 'music':
-          url = `/api/asset/${draggedAsset.kind}/${draggedAsset._id}/${draggedAsset.kind}.mp3`
+          url = `/api/asset/${draggedAsset.kind}/${draggedAsset.dn_ownerName}/${draggedAsset.name}/${draggedAsset.kind}.mp3`
           code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.audio( '${draggedAsset.name}', '${url}' )`
           break
         case 'code':
@@ -816,10 +855,11 @@ export default class EditCode extends React.Component {
             code = this.createImportString(draggedAsset.name)
           else
             code = this.createImportString(draggedAsset.name, draggedAsset.dn_ownerName)
-
           break
+
+        // actor, actormap
         default:
-          code = draggedAsset._id
+          code = `'/${draggedAsset.kind}/${draggedAsset.dn_ownerName}/${draggedAsset.name}'`
         }
       }
 
@@ -873,24 +913,37 @@ export default class EditCode extends React.Component {
     }
 
     if (event.ctrlKey) {
+      // disable multi select
+      event.preventDefault()
+
       const token = cm.getTokenAt(pos, true)
-      if(token.type == 'string'){
-        const link = this.getImportStringLocation(token.string)
+      // open link in the new tab
+      if(token.type === 'string'){
+        const link = this.getImportStringLocation(this.cleanTokenString(token.string))
         if(link) {
           const a = document.createElement('a')
           a.setAttribute('href', link)
-          a.setAttribute('target', '_balnk')
+          a.setAttribute('target', '_blank')
           a.click()
         }
       }
+      // jump to definition
       else {
         this.codeMirror.setCursor(pos)
         this.cursorHistory.undo.push(pos)
         this.ternServer.jumpToDef(cm)
       }
-      // disable multi select ?
-      event.preventDefault() // if you don't want the cursor to move here.
     }
+  }
+
+  /**
+   * Removes quotes around token
+   * @param string - CodeMirror Token
+   * @returns string
+   */
+  cleanTokenString(string){
+    // check if we are actually stripping quotes?
+    return string.substring(1, string.length -1)
   }
 
   goToDef(){
@@ -1331,6 +1384,25 @@ export default class EditCode extends React.Component {
     return this.getCommentAt(index)
   }
 
+  /**
+   * gets Type Description from tern tern server definitions
+   *
+   * @return Promise.<{atCursorTypeDescription: {}}>
+   */
+  getTypeDescription(atCursorTypeRequestResponse){
+    return new Promise(resolve => {
+      if(!atCursorTypeRequestResponse || !atCursorTypeRequestResponse.data || !atCursorTypeRequestResponse.data.name){
+        resolve({atCursorTypeDescription: null})
+      }
+      let type = atCursorTypeRequestResponse.data.name
+      type = type === 'o' ? 'Object' : type
+      // tern uses 'o' for  ... = {}
+      this.ternServer.server.getDef(type, (data) => {
+        resolve({atCursorTypeDescription: {def: data, name: type}})
+      })
+    })
+  }
+
   // srcUpdate_getProperties()
   // {
   /// This doesn't seem super useful. It's just an array of completion strings, no extra data
@@ -1451,6 +1523,10 @@ export default class EditCode extends React.Component {
           Object.assign(newState, state)
           return this.srcUpdate_GetDef()
         })
+        .then(state => {
+          Object.assign(newState, state)
+          return this.getTypeDescription(newState.atCursorTypeRequestResponse)
+        })
         .then((state) => {
           Object.assign(newState, state)
           return this.getCommentAtCursor()
@@ -1486,7 +1562,12 @@ export default class EditCode extends React.Component {
     const retval = !( this.changeTimeout || nextState._preventRenders || this.state.creatingBundle)
     //console.log("Should update:", retval)
     // && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
-    return retval || this.state.needsBundle != nextState.needsBundle || this.state.hotReload != nextState.hotReload
+    return retval
+      || this.state.needsBundle !== nextState.needsBundle
+      || this.state.hotReload !== nextState.hotReload
+      || this.state.lastUndoRedo !== nextState.lastUndoRedo
+      || this.state.isPlaying !== nextState.isPlaying
+      || this.state.consoleMessages !== nextState.consoleMessages
   }
 
   codemirrorValueChanged(doc, change) {
@@ -1854,6 +1935,11 @@ export default class EditCode extends React.Component {
 
   // Note that either c2 or thumbnail could be null/undefined.
   handleContentChange(c2, thumbnail, reason) {
+    if(!this.props.canEdit) {
+      this.props.editDeniedReminder()
+      return
+    }
+
     if(!c2){
       this.props.handleContentChange(c2, thumbnail, reason)
       return
@@ -1935,7 +2021,7 @@ export default class EditCode extends React.Component {
       this.runJSHintWorker(val, (errors) => {
         const critical = errors.filter(e => e.code.substr(0, 1) === "E")
         this.hasErrors = !!critical.length
-        if (this.tools) {
+        if (this.tools && !this.hasErrors) {
           // set asset name to /assetName - so recursion is handled correctly
           this.tools.collectAndTranspile('/' + this.props.asset.name, val)
             .then(() => {
@@ -1988,6 +2074,16 @@ export default class EditCode extends React.Component {
     this.doHandleCommentFadeDelta(-1)
   }
 
+  doUndo(e){
+    if(e.target.className !== 'allow-toolbar-shortcuts')
+      this.codeMirror.undo()
+    this.setState({"lastUndoRedo": Date.now()})
+  }
+  doRedo(e){
+    if(e.target.className !== 'allow-toolbar-shortcuts')
+      this.codeMirror.redo()
+    this.setState({"lastUndoRedo": Date.now()})
+  }
   toolToggleInfoPane() {
     const i = this.state.infoPaneMode
     const newMode = (i+1) % _infoPaneModes.length
@@ -2004,11 +2100,30 @@ export default class EditCode extends React.Component {
   }
 
   generateToolbarConfig() {
-
+    const history = this.codeMirror ? this.codeMirror.historySize() : {undo: 0, redo: 0}
     const config = {
       // level: 2,    // default level -- This is now in expectedToolbars.getDefaultLevel
-
       buttons: [
+        {
+          name: 'doUndo',
+          icon: 'undo',
+          label: 'Undo',
+          iconText: (history.undo ? history.undo : ''),
+          disabled: !history.undo,
+          tooltip: 'Undo last action',
+          level: 1,
+          shortcut: 'Ctrl+Z'
+        },
+        {
+          name: 'doRedo',
+          icon: 'undo flip', // redo is flipped undo
+          iconText: '', // history.redo ? history.redo : '',
+          label: 'Redo',
+          disabled: !history.redo,
+          tooltip: 'Redo previous action',
+          level: 1,
+          shortcut: 'Ctrl+Shift+Z'
+        },
         { name: 'separator' },
         {
           name:  'toolToggleInfoPane',
@@ -2299,48 +2414,106 @@ export default class EditCode extends React.Component {
     this.codeMirror.scrollTo(null, t - middleHeight - 5)
   }
 
+
+  getKind(maybeKind){
+    if(AssetKindEnum[maybeKind])
+      return maybeKind
+
+    switch(maybeKind){
+      case 'png':
+        return 'graphic'
+    }
+
+    return null
+  }
+  // this is almost same as: _getMgbAssetIdsInLine
+  // leave only one.. or merge both functions into one
   getStringReferences(){
     const token = this.state.currentToken
     const advices = []
     // TODO.. something useful with token.state?
-    if(token && token.type == 'string' && this.state.userScripts && this.state.userScripts.length > 0){
-      let string = token.string.substring(1, token.string.length -1)
+    if(token && token.type === 'string' && this.state.userScripts && this.state.userScripts.length > 0){
+      let string = this.cleanTokenString(token.string)
       if(string.startsWith('/') && !string.startsWith('//')){
         string = string.substring(1)
-        const parts = string.split(":")
-        if(parts.length === 1){
-          parts.unshift(this.props.asset.dn_ownerName)
+        const parts = this.getImportStringParts(string)
+        const {kind, owner, name} = parts
+        const urlToAsset = this.getAssetUrl(this.getImportStringParts(string))
+
+        if(string.startsWith('api/asset/')){
+
+          advices.push(
+            <a className="ui fluid label" key={advices.length} style={{marginBottom: "2px"}}
+               href={`/assetEdit/${urlToAsset}`} target='_blank'>
+              <small style={{fontSize: '85%'}}>
+                This string references API link to <strong>{kind}</strong> asset: <code> {name}</code>
+              </small>
+              <Thumbnail assetId={`/${urlToAsset}`} expires={60} constrainHeight='60px'/>
+            </a>
+          )
         }
-        advices.push(
-          <a className="ui fluid label" key={advices.length} style={{marginBottom: "2px"}} href={`/assetEdit/code/${parts.join('/')}`} target='_blank'>
-            <small style={{fontSize: '85%'}}>this string references <strong>{parts[0]}</strong> code asset:
-              <code>{parts[1]}</code></small>
-            <Thumbnail assetId={parts.join('/')} expires={60} constrainHeight='60px'/>
-          </a>
-        )
+        else {
+          advices.push(
+            <a className="ui fluid label" key={advices.length} style={{marginBottom: "2px"}}
+               href={`/assetEdit/${urlToAsset}`} target='_blank'>
+              <small style={{fontSize: '85%'}}>
+                This string references <strong>{owner}'s</strong> {kind ? kind : ''} asset: <code> {name}</code>
+              </small>
+              <Thumbnail assetId={`/${urlToAsset}`} expires={60} constrainHeight='60px'/>
+            </a>
+          )
+        }
       }
     }
     return advices
   }
 
-  // need to do some cleanup as this function has almost same code as one above
-  getImportStringLocation(importString){
-    let string = importString
-    if(string.indexOf("'") === 0)
-      string = importString.substring(1, importString.length -1)
-    if(string.indexOf('/') === 0 && string.indexOf('//') !== 0){
-      string = string.substring(1)
-      const parts = string.split(":")
-      if(parts.length === 1) {
-        parts.unshift(this.props.asset.dn_ownerName)
-        /*const script = this.state.userScripts.find(a => a.text == string)
-        if (!script)
-          return this.getImportStringLocation('/' + this.props.asset.dn_ownerName + ':' + string)
-        return `/assetEdit/${script.id}`*/
-      }
-      return `/assetEdit/code/${parts.join('/')}`
+  /**
+   * Retrieves kind / owner / name from string which references asset
+   * @param {string} string - string which references asset
+   *
+   * @returns {kind<string>, owner<string>, name<string>}
+   * */
+
+  getImportStringParts(string){
+    // split and filter out empty strings
+    const pieces = string.split('/').filter(p => {
+      return p
+    })
+
+    // assume that we have only name here
+    if(pieces.length === 1)
+      pieces.unshift(this.props.currUser.username)
+
+    // check if this is API link
+    if(pieces.length > 1 && pieces[0] === 'api' && pieces[1] === 'asset' ){
+      // remove api / asset
+      pieces.splice(0, 2)
+      const last = _.last(pieces)
+      // special handling for music and sound
+      if(last === 'music.mp3' || last === 'sound.mp3')
+        pieces.pop()
     }
-    return ''
+
+    const parts = pieces.pop().split(':')
+    const name = parts.pop()
+    const owner = parts.length ? parts.pop() : pieces.pop()
+
+    const kind = this.getKind(pieces.pop())
+
+    return {kind, owner, name}
+  }
+
+
+  getAssetUrl(assetInfo){
+    const {owner, name, kind} = assetInfo
+    // substr - because otherwise chaning to create link with others strings looks too strange - e.g. /thumbnail${myVar}
+    // /thumbnail/${myVar} - looks better
+    return (`${kind ? ( '/' + kind ) : ''}${owner ? ( '/' + owner ) : ''}${name ? ( '/' + name ) : ''}`).substr(1)
+  }
+
+  getImportStringLocation(string) {
+    return `/assetEdit/${this.getAssetUrl(this.getImportStringParts(string))}`
   }
 
   getPrevToken(callback, cursor = null){
@@ -2392,15 +2565,6 @@ export default class EditCode extends React.Component {
 
     this.codeMirror && this.codeMirror.setOption("readOnly", !this.props.canEdit)
 
-    // preview ID and String references doing very similar things. Refactor?
-    const previewIdThings = this.state.previewAssetIdsArray.map(assetInfo => {
-      return (
-        <a className="ui fluid label" key={assetInfo.id} style={{marginBottom: "2px"}} href={`/assetEdit/${assetInfo.id}`} target='_blank'>
-          <Thumbnail assetId={assetInfo.id} expires={60} constrainHeight='60px'/>
-          URL references MGB <strong>{assetInfo.kind}</strong> asset {assetInfo.refType} {assetInfo.id}
-        </a>
-      )
-    })
     const stringReferences = this.getStringReferences()
     const infoPaneOpts = _infoPaneModes[this.state.infoPaneMode]
 
@@ -2422,7 +2586,7 @@ export default class EditCode extends React.Component {
         consoleAdd = {this._consoleAdd.bind(this)}
         gameRenderIterationKey = {this.state.gameRenderIterationKey}
         handleContentChange = {this.handleContentChange.bind(this)}
-        handleStop = {this.handleStop.bind(this)}
+        handleStop = {this.handleGamePopup.bind(this)}
       />
 
     let isChallenge = false
@@ -2475,13 +2639,6 @@ export default class EditCode extends React.Component {
                       stopTutorial={() => this.stopTutorial()}
                       parsedTutorialData={this.state.parsedTutorialData}
                       insertCodeCallback={ canEdit ? (newCodeStr => this.insertTextAtCursor(newCodeStr) ) : null }/>
-
-                  { previewIdThings && previewIdThings.length > 0 &&
-                    <div className="ui divided selection list">
-                      {previewIdThings}
-                    </div>
-                  }
-
                   { stringReferences && stringReferences.length > 0 &&
                   <div className="ui divided selection list">
                     {stringReferences}
@@ -2569,8 +2726,15 @@ export default class EditCode extends React.Component {
                     functionTypeInfo={this.state.functionTypeInfo}
                     helpDocJsonMethodInfo={this.state.helpDocJsonMethodInfo}/>
 
+
+                  {this.state.atCursorTypeRequestResponse.data && this.state.atCursorTypeRequestResponse.data.exprName &&
                   <ExpressionDescription
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data}/>
+                  }
+                  {(!this.state.atCursorTypeRequestResponse.data || !this.state.atCursorTypeRequestResponse.data.exprName) &&
+                  <InvokingDescription
+                    typeDescription={this.state.atCursorTypeDescription}/>
+                  }
 
                   <RefsAndDefDescription
                     refsInfo={this.state.atCursorRefRequestResponse.data}
@@ -2578,12 +2742,6 @@ export default class EditCode extends React.Component {
                     expressionTypeInfo={this.state.atCursorTypeRequestResponse.data}/>
 
                   { this.renderDebugAST() }
-
-                  { previewIdThings && previewIdThings.length > 0 &&
-                    <div className="ui divided selection list">
-                      {previewIdThings}
-                    </div>
-                  }
 
                   { stringReferences && stringReferences.length > 0 &&
                   <div className="ui divided selection list">

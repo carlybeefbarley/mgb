@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import LayerControls from './LayerControls.js'
 import { Accordion, List } from 'semantic-ui-react'
+import LayerTypes from '/client/imports/components/Assets/Common/Map/Tools/LayerTypes'
 
 export default class Layers extends React.Component {
   handleClick = (event, index) => {
@@ -31,12 +32,16 @@ export default class Layers extends React.Component {
           key={i}
           active={i == active}
           onClick={(e) => this.handleClick(e, i)}
-          content={data[i].name}
-          icon={{
-            name: data[i].visible ? 'unhide' : 'hide',
-            onClick: (e) => this.showOrHideLayer(e, i, data[i].visible)
-          }}
-        />
+        >
+          <List.Icon 
+            name={data[i].visible ? 'unhide' : 'hide'} 
+            onClick={e => this.showOrHideLayer(e, i, data[i].visible)}
+          />
+          <List.Content style={{width: '100%'}}>
+            <span>{data[i].name}</span>
+            <small style={{float: 'right'}}>({_.findKey(LayerTypes, kv => kv === data[i].type)} layer)</small>
+          </List.Content>
+        </List.Item>
       )
     })
 

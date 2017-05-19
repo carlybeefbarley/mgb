@@ -1,27 +1,28 @@
 import React, { PropTypes } from 'react'
-
+import { Dropdown } from 'semantic-ui-react'
 const _choiceOptions = "edited,name,kind".split(",")
 
+const _menuOpenLeftSty = { left: 'auto', right: '0' } // Magic from levithomason
+
 const AssetListSortBy = ( { chosenSortBy, handleChangeSortByClick } ) => (
-  <div 
+  <Dropdown
+      inline
+      trigger={<span>{chosenSortBy}</span>}
       id='mgbjr-asset-search-orderChooser'
-      className="ui small simple dropdown item" 
       style={{float: "right", color: "grey"}} 
       title="Sort Assets By..">
-    { chosenSortBy }
-    <i className='dropdown icon' style={{marginLeft: '0.2em'}}/>
-    <div className="ui small fitted menu">
-      { _choiceOptions.map((k) => (
-          <a  className={"ui item"+ (k === chosenSortBy ? " active" : "")} 
-              data-value={k} key={k} 
-              onClick={ () => handleChangeSortByClick(k) }>
-            {k}
-          </a>
+    <Dropdown.Menu style={_menuOpenLeftSty}>
+      { _choiceOptions.map(k => (
+          <Dropdown.Item 
+              active={k === chosenSortBy} 
+              value={k} 
+              key={k} 
+              content={<span>{k}</span>}
+              onClick={ () => handleChangeSortByClick(k) }/>
         ))
       }
-    </div>
-    &emsp;
-  </div>
+      </Dropdown.Menu>
+  </Dropdown>
 )
 
 AssetListSortBy.propTypes = {

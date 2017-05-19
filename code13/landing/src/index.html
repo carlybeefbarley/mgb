@@ -9,6 +9,7 @@
   <link rel="icon" href="~/app/images/favicons/favicon-310.png">
   <link rel="stylesheet" href="{{ BASE_URL }}/styles/main.css">
   <link rel="stylesheet" href="~/merged-stylesheets.css">
+  <meta property="og:image" content="~/app/images/mascots/team.png"/>
   <!-- TODO get all SEO tags in here-->
   <title>MyGameBuilder</title>
 </head>
@@ -28,7 +29,7 @@
       Login
     </a>
     <a class="item" href="{{ MGB_URL }}signup">
-      <button class="mgb-menu-signup-button ui green basic button">Signup</button>
+      <button class="mgb-menu-signup-button ui yellow button">Signup</button>
     </div>
   </div>
 </div>
@@ -40,12 +41,12 @@
       Learn to build games
     </h1>
     <p class="mgb-lead">
-      Make and play games together while learning real skills.
+      Make and play games together while learning real skills
     </p>
     <p class="mgb-sub-lead">
-      MyGameBuilder is 100% FREE while in <span data-tooltip="Open Beta begins April 25th 2017">BETA</span> <a href="{{ MGB_URL }}roadmap" target="_blank">*</a>
+      MyGameBuilder is 100% FREE while in <span data-tooltip="Public Beta begins May 4th 2017">BETA</span> <a href="{{ MGB_URL }}roadmap" target="_blank">*</a>
     </p>
-  </div> 
+  </div>
 
   <!-- PILED SECTION -->
   <div class="mgb-piled-container">
@@ -59,19 +60,41 @@
     <div style="position: absolute; top: 0;right: 0;bottom: 0;left: 0;border:2px solid black;"></div>
     -->
     <div class="ui stackable equal width grid">
-      <div class="column mgb-play-column">
+      <div class="column mgb-hero-left-column">
         <p></p>
-        <h1 class="ui inverted header" data-position="bottom right" data-inverted="" data-tooltip="Click Game to play">Play</h1>
-        <p>&nbsp;</p>
-        <p>
-          <big data-tooltip="Sample game built in MyGameBuilder" data-inverted="">Sample game</big>
-        </p>
-        <p>
-          <big data-tooltip="Feed the giant" data-inverted="">Eat...</big>
-        </p>
-        <p>
-          <big data-tooltip="Just click/touch food" data-inverted="">Click...</big>
-        </p>
+        <h1 class="ui inverted header" data-position="bottom left" data-inverted="" data-tooltip="Make Games. Make Friends. Have Fun.">Make&nbsp;&amp;&nbsp;Play</h1>
+        <div class="ui large inverted selection list">
+          <a class="item" href="{{ MGB_URL }}u/!vault/asset/uhNWpwN4prcsGcAWS?_fp=chat.A_uhNWpwN4prcsGcAWS_" target="_blank" >
+            <span data-position="bottom left" data-inverted="" data-tooltip="'Google-docs' style collaboration">
+              <i class="users icon"></i>&nbsp;Collaborative
+            </span>
+          </a>
+          <a class="item" href="{{ MGB_URL }}u/!vault/asset/gNXbH4XdcadrnDpKZ" target="_blank">
+            <span data-position="bottom left" data-inverted="" data-tooltip="Edit, Build &amp; Play in-browser">
+              <i class="cloud icon"></i>&nbsp;Online
+            </span>
+          </a>
+          <a class="item" href="{{ MGB_URL }}u/!vault/asset/hHncMnhmS7f5Mb5qa" target="_blank">
+            <span data-position="bottom left" data-inverted="" data-tooltip="Start with Actors. Progress to coding ES6/Javascript games">
+              <i class="check circle icon"></i>&nbsp;Progressive
+            </span>
+          </a>
+          <a class="item" href="{{ MGB_URL }}u/!vault/asset/uhNWpwN4prcsGcAWS?_fp=chat.A_uhNWpwN4prcsGcAWS_" target="_blank">
+            <span data-position="bottom left" data-inverted="" data-tooltip="Built-in Tutorials, Chat Feeds &amp; Forums">
+              <i class="talk outline icon"></i>&nbsp;Social
+            </span>
+          </a>
+          <a class="item" href="{{ MGB_URL }}assets/create" target="_blank">
+            <span data-position="bottom left" data-inverted="" data-tooltip="Every tool you need to make games">
+              <i class="game icon"></i>&nbsp;Game
+            </span>
+          </a>
+          <a class="item" href="{{ MGB_URL }}u/!vault/projects/landingPage" target="_blank">
+            <span data-position="bottom left" data-inverted="" data-tooltip="Team Projects, Team Chat &amp; Cloud Build">
+              <i class="code icon"></i>&nbsp;Development
+            </span>
+          </a>
+        </div>
       </div>
       <div class="column mgb-game-column">
         <!-- GAME -->
@@ -80,34 +103,36 @@
           <iframe class="mgb-game-iframe" scrolling="no" src="{{ MGB_URL }}api/asset/code/bundle/hHncMnhmS7f5Mb5qa"></iframe>
         </div>
       </div>
-      <div class="column mgb-make-column">
+      <div class="column mgb-hero-right-column">
         <p></p>
-        <h1 class="ui inverted header" data-position="bottom left" data-inverted="" data-tooltip="See the source...">Make</h1>
+        <h1 class="ui inverted header" data-position="bottom left" data-inverted="" data-tooltip="Look inside this game">
+          Look &amp; Learn
+        </h1>
         <div class="ui large inverted selection list">
           <a class="item" href="{{ MGB_URL }}u/!vault/asset/hHncMnhmS7f5Mb5qa" target="_blank" >
-            <span data-position="bottom left" data-inverted="" data-tooltip="JavaScript Editor + Tutorials">
+            <span data-position="bottom left" data-inverted="" data-tooltip="Try the JavaScript Editor">
               <i class="code icon"></i>&nbsp;Code
             </span>
           </a>
           <a class="item" href="{{ MGB_URL }}u/!vault/asset/gNXbH4XdcadrnDpKZ" target="_blank">
-            <span data-position="bottom left" data-inverted="" data-tooltip="Sound Synthesizer">
+            <span data-position="bottom left" data-inverted="" data-tooltip="Try the SoundFx Editor">
               <i class="music icon"></i>&nbsp;Sound
             </span>
           </a>
           <a class="item" href="{{ MGB_URL }}u/!vault/asset/EADCuDifrQZZFJPrb" target="_blank">
-            <span data-position="bottom left" data-inverted="" data-tooltip="Multilayer Multiframe Editor">
+            <span data-position="bottom left" data-inverted="" data-tooltip="Try the Animation Editor">
               <i class="picture icon"></i>&nbsp;Graphics
             </span>
           </a>
           <a class="item" href="{{ MGB_URL }}u/!vault/projects/landingPage" target="_blank">
-            <span data-position="bottom left" data-inverted="" data-tooltip="Team Projects + Team Chat">
+            <span data-position="bottom left" data-inverted="" data-tooltip="See a Project Page">
               <i class="sitemap icon"></i>&nbsp;Projects
             </span>
           </a>
         </div>
-        <a class="ui large secondary button" href="{{ MGB_URL }}u/!vault/projects/landingPage" target="_blank">
-          <i class="fork code icon"></i>
-          Fork Game
+        <a class="ui large green button" href="{{ MGB_URL }}signup" target="_blank">
+          <i class="signup icon"></i>
+          Join &amp; Make
         </a>
       </div>
 
@@ -117,7 +142,6 @@
 
 <!-- BULLETS -->
 <section class="mgb-bullets">
-  <div class="ui hidden divider"></div>
 
   <div class="ui very padded very relaxed equal width stackable grid">
     <div class="column">
@@ -135,7 +159,7 @@
         Make <a href="{{ MGB_URL }}u/!vault/play/vK3oPY8zatZH5FCWv?_fp=chat.A_ZT5KCyZLYsmeZpFST_" target="_blank">code-based</a> <span data-tooltip="Make games using actor-rules or JavasScript code" data-inverted="">OR</span> <a href="{{ MGB_URL }}u/dgolds/play/X8P7sLMovtS9uLafE" target="_blank">non-code</a> games
       </p>
       <p>
-        Join or start a team     
+        Join or start a team
       </p>
     </div>
     <div class="column">
@@ -147,11 +171,11 @@
         <a href="{{ MGB_URL }}?_fp=chat.G_MGBHELP_" target="_blank">Ask the community for help</a>
       </p>
       <p>
-        Pay it forward when you can
+        Pay it forward by <a href="{{ MGB_URL }}u/Enemby/asset/6q9aG3osdYKWm3SvH?_fp=chat.A_6q9aG3osdYKWm3SvH_">helping others</a>
       </p>
       <p>
         <a href="{{ MGB_URL }}learn/skills" target="_blank">Use</a>, <a href="{{ MGB_URL }}u/!vault/assets?kinds=tutorial&project=Tutorial+Data" target="_blank">make</a> &amp; share tutorials
-      </p>      
+      </p>
       <p>
         <a href="{{ MGB_URL }}?_fp=chat" target="_blank">Chat</a> in-system about projects, <a href="{{ MGB_URL }}u/!vault/projects/OnslaughtArena?_fp=chat.A_ZT5KCyZLYsmeZpFST_" target="_blank">games</a> &amp; <a href="{{ MGB_URL }}?_fp=chat" target="_blank">assets</a>
       </p>
@@ -176,7 +200,6 @@
     </div>
   </div>
 
-  <div class="ui hidden divider"></div>
 </section>
 
 <!-- ALTERNATING -->
@@ -250,7 +273,7 @@
         <h2 class="ui inverted header">
           Best tutorials you've ever seen
           <span class="sub header">
-            Step-by-step programming tutorials and help systems within the game editors.
+            Step-by-step programming/art/design tutorials &amp; help systems <em>within</em> the game editors.
           </span>
         </h2>
         <a class="ui big green fluid button" href="{{ MGB_URL }}learn/code" target="_blank">Try it</a>
@@ -277,13 +300,16 @@
       </div>
       <div class="seven wide column">
         <h2 class="ui inverted header">
-          Show off your achievements
+          Join and grow within our community
           <span class="sub header">
+            Join our community of <span data-inverted="" data-tooltip="yes... We are migrating all users+games from our older site here!" data-position="bottom center">150,000 Game Builders*.</span>&ensp;
             Earn skill badges as you progress from beginner to guru.
-            Decorate your profile and show off your hard earned skills.
           </span>
         </h2>
         <a class="ui big green fluid button" href="{{ MGB_URL }}learn/skills" target="_blank">Earn Badges</a>
+          <a class="sub header" style='float: right; color: rgba(200,200,255,0.5); padding-top: 0.5em' href="http://s3.amazonaws.com/apphost/MGB.html" target="_blank" data-inverted="" data-tooltip="These users created 3,000,000 original assets!" data-position="bottom center">
+            [Visit our ancient "v1" Flash-based site!]
+          </a>
       </div>
     </div>
   </div>
@@ -292,11 +318,33 @@
 <section>
   <div class="ui hidden section divider"></div>
   <h1 class="ui center aligned icon header">
+    <small class="content" data-inverted="" data-tooltip="It's like a social network, but Fun! You learn, make friends, play &amp; make stuff together" data-position="bottom center">
+      An <em data-tooltip="We totally made this 'Activity Network' term up, but we like it...">"Activity Network"</em>
+    </small>
     <img class="ui small image" src="~/app/images/mascots/team.png" />
-    <span class="content" data-inverted="" data-tooltip="Beginners: Tutorials, templates &amp; help;&emsp;Gurus: ES6, modules and media editors" data-position="bottom center">
+    <span class="content">
       For everyone
     </span>
   </h1>
+  <div class="ui one column center aligned padded grid">
+    <div class="column">
+      <div class="ui compact secondary menu mgb-for-everyone-menu">
+        <a class="item active">Students</a>
+        <a class="item">Parents</a>
+        <a class="item">GameJammers</a>
+      </div>
+      <div class="ui compact secondary menu mgb-for-everyone-menu">
+        <a class="item">Artists</a>
+        <a class="item">Teachers</a>
+        <a class="item">Trolls</a>
+      </div>
+      <div class="ui fitted hidden divider mgb-for-everyone-divider"></div>
+    </div>
+    <div class="column">
+      <p class="mgb-for-everyone-main">Have a great idea for a game? Sign up &amp; start making it with us.  We'll help!</p>
+      <p class="mgb-for-everyone-secondary">Start easy with 'Actors' instead of code. Make deeper games using JavaScript when you're ready</p>
+    </div>
+  </div>
   <div class="ui hidden section divider"></div>
 </section>
 
@@ -342,12 +390,12 @@
 
     <div class="ui equal width grid">
       <div class="eight wide column">
-        Copyright ©2016 MyCodeBuilder Inc. All Rights Reserved.
+        Copyright ©2017 MyCodeBuilder Inc. All Rights Reserved.
       </div>
       <div class="column">
         <div class="ui small inverted divided very relaxed horizontal link list">
-          <a class="item">Terms and Conditions</a>
-          <a class="item">Privacy Policy</a>
+          <a class="item" href="{{ MGB_URL }}legal/tos" target="_blank">Terms and Conditions</a>
+          <a class="item" href="{{ MGB_URL }}legal/privacy" target="_blank">Privacy Policy</a>
           <a class="item">Contact Us</a>
         </div>
       </div>
@@ -356,5 +404,33 @@
 </footer>
 
 <script src="{{ BASE_URL }}/js/main.js"></script>
+<script>
+// google analytics
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-82379171-2', 'auto');
+ga('send', 'pageview');
+</script>
+
+<!-- BEGIN HOTJAR -->
+<!-- debug line:
+  h._hjSettings={hjid:446876,hjsv:5,hjdebug:true};
+-->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:446876,hjsv:5};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+<!-- END HOTJAR -->
+
+
 </body>
 </html>

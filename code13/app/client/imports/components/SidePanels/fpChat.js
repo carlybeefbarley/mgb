@@ -304,6 +304,8 @@ const fpChat = React.createClass( {
   },
 
   handleChatChannelChange: function(newChannelName) {
+
+    console.log(newChannelName)
     this.changeChannel( newChannelName )
     this.setState( { view: 'comments' } )
   },
@@ -367,7 +369,7 @@ const fpChat = React.createClass( {
       return
     const channelName = this._calculateActiveChannelName()
     const channelObj = parseChannelName( channelName )
-    const presentedChannelName = makePresentedChannelName( channelName, channelObj.scopeId ) 
+    const presentedChannelName = makePresentedChannelName( channelName, channelObj.scopeId )
 
     joyrideCompleteTag( `mgbjr-CT-fp-chat-send-message` )
     joyrideCompleteTag( `mgbjr-CT-fp-chat-send-message-on-${channelName}` )
@@ -505,6 +507,9 @@ const fpChat = React.createClass( {
     return <Label empty circular color='red' size='mini' style={unreadChannelIndicatorStyle} />
   },
 
+  /** Render the channel chooser list. This is shown when this.state.view == 'channels'
+   *
+   */
   renderChannelSelector: function() {
     const { view } = this.state
     const { currUser, currUserProjects, chatChannelTimestamps } = this.props
@@ -763,27 +768,34 @@ const fpChat = React.createClass( {
    * re-get the objects in order to get their names. It's more efficient to get the
    * names locally
    * @param {String} channelName
-   * @returns {String} something like project.name or asset.name
+   * @returns {String} something like project.name or asset.name or user.name
    */
   findObjectNameForChannelName: function(channelName) {
     const channelObj = parseChannelName( channelName )
+
+    // Global channels are a special case since they are a fixed mapping in chats.js
     if (channelObj.scopeGroupName === 'Global')
-      return null // these are handled directly in makePresentedChannelName() which is what this is for
+      return null // these are handled directly in makePresentedChannelName() which is what we are generating this data for
+
+    // map project_id to project.name
     if (channelObj.scopeGroupName === 'Project') {
       const { currUserProjects } = this.props
       const proj = _.find( currUserProjects, { _id: channelObj.scopeId } )
       return proj ? proj.name : `Project Chat #${channelObj.scopeId}`
     }
 
+    // map asset_id to asset.name
     if (channelObj.scopeGroupName === 'Asset')
       return _getAssetNameIfAvailable(
         channelObj.scopeId,
         _.find( this.props.chatChannelTimestamps, { _id: channelName } )
       )
 
+    // user wall - no mapping required: scopeID for wall posts is the user id (for user friendlines, and user rename is unsupported currently and may never be)
     if (channelObj.scopeGroupName === 'User'){
       return `User "${channelObj.scopeId}"`}
 
+    // Catch-all error to remind us that we forgot to write this when adding a new channel time (DMs etc)
     console.error( `findObjectNameForChannelName() has a ScopeGroupName (${channelObj.scopeGroupName}) that is not in user context. #investigate#` )
     return 'TODO'
   },

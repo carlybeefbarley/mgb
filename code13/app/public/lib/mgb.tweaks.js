@@ -22,22 +22,23 @@
   }
 
   CustomEvent.prototype = window.Event.prototype;
-  window.CustomEvent = CustomEvent
+  window.CustomEvent = CustomEvent;
 //}
 
 // allows CDN connections from other locations
-  const lookForCDN = function () {
-    if (!window.__meteor_runtime_config__)
-      window.setTimeout(lookForCDN, 1); return
-
-    if(!__meteor_runtime_config__.ROOT_URL)
+  (function checkCDNLink() {
+    if (!window.__meteor_runtime_config__ || !window.__meteor_runtime_config__.ROOT_URL){
+      // keep looping until meteor is ready
+      window.setTimeout(checkCDNLink, 10)
       return
+    }
 
-    const root_host = __meteor_runtime_config__.ROOT_URL.split("//").pop()
+    const root_host = window.__meteor_runtime_config__.ROOT_URL.split("//").pop()
+    // ignore localhost
     if (root_host.startsWith(window.location.host) || root_host.startsWith('localhost'))
       return
 
-    __meteor_runtime_config__.DDP_DEFAULT_CONNECTION_URL = __meteor_runtime_config__.ROOT_URL
-  }
-  window.setTimeout(lookForCDN, 1)
+    // this tells meteor to use ROOT_URL also for WS (sockjs) connection
+    window.__meteor_runtime_config__.DDP_DEFAULT_CONNECTION_URL = window.__meteor_runtime_config__.ROOT_URL
+  })()
 })()

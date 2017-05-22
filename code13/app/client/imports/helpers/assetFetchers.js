@@ -54,6 +54,7 @@ export const makeCDNLink = (uri, etagOrHash = null, prefixDomainAlways = false) 
     //console.error("Already hashed link!", uri)
     return uri
   }
+
   // don't cache at all
   if (uri.startsWith("/api")  && !etagOrHash)
     return CDN_DOMAIN
@@ -86,14 +87,25 @@ export const makeCDNLink = (uri, etagOrHash = null, prefixDomainAlways = false) 
   return uri
 }
 
-export const makeExpireThumbnailLink = (assetOrId, maxAge = 60) => {
+export const makeExpireThumbnailLink = (assetOrId, maxAge = SpecialGlobals.thumbnail.defaultExpiresDuration ) => {
   return typeof assetOrId === 'string'
     ? makeCDNLink(`/api/asset/cached-thumbnail/png/${maxAge}/${assetOrId}`, makeExpireTimestamp(maxAge))
     // if we know asset - we can use etag to get updated version - which will be also updated when asset changes
     : makeCDNLink(`/api/asset/thumbnail/png/${assetOrId._id}`, genetag(assetOrId))
-
 }
-
+/**
+ * Generates CDN link to Graphic Asset
+ * @param assetOrId - object representing asset or ID or owner/name
+ * @param maxAge {int} - maximum amount of seconds fetched resource should be kept in the cache
+ * @returns {string}
+ */
+// TODO: this function can be more universal
+export const makeGraphicAPILink = (assetOrId, maxAge = SpecialGlobals.thumbnail.defaultExpiresDuration) => {
+  return typeof assetOrId === 'string'
+    ? makeCDNLink(`/api/asset/png/${assetOrId}`, makeExpireTimestamp(maxAge))
+    // if we know asset - we can use etag to get updated version - which will be also updated when asset changes
+    : makeCDNLink(`/api/asset/png/${assetOrId._id}`, genetag(assetOrId))
+}
 
 // lastDiff is used to generate cached which expires in the X amount of seconds
 // we need to use here server time

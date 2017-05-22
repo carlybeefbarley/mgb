@@ -1,9 +1,9 @@
 import _ from 'lodash'
-import React, {PropTypes} from 'react'
-import {Message, Icon} from 'semantic-ui-react'
-import {browserHistory} from 'react-router'
+import React, { PropTypes } from 'react'
+import { Message, Icon } from 'semantic-ui-react'
+import { browserHistory } from 'react-router'
 import Helmet from "react-helmet"
-import {createContainer} from 'meteor/react-meteor-data'
+import { createContainer } from 'meteor/react-meteor-data'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
@@ -549,6 +549,9 @@ const AppUI = React.createClass({
     }
   },
 
+  /**
+   * @param newFpView {String} the string that will be used for _fp=panel.submparam eg. "chat", or "chat.G_GENERAL_" or "assets" etc
+   */
   handleFlexPanelChange: function (newFpView) {
     const qp = urlMaker.queryParams("app_flexPanel")
 
@@ -776,11 +779,10 @@ const App = createContainer( ( { params , location} ) => {
   // settings stuff
   const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
   const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
-
-  // activity? if useful..
+// activity? if useful..
   const flexPanelQueryValue = location.query[urlMaker.queryParams("app_flexPanel")]
   const getActivity = currUser || (flexPanelQueryValue === 'activity')
-  const handleActivity = getActivity ? Meteor.subscribe("activity.public.recent", SpecialGlobals.activity.activityHistoryLimit) : null
+  const handleActivity = getActivity ?Meteor.subscribe("activity.public.recent", SpecialGlobals.activity. activityHistoryLimit ) : null
 
   // projects stuff
   const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null
@@ -796,7 +798,7 @@ const App = createContainer( ( { params , location} ) => {
   }
 
   // send analytics data if user is not logged in and do it only once!
-  if (typeof currUser != 'undefined' && currUser === null && analyticsAnonymousSendFlag) {
+  if (typeof currUser !== 'undefined' && currUser === null && analyticsAnonymousSendFlag) {
     // analytics.page('/notLoggedIn')
     ga('send', 'pageview', '/notLoggedIn')
     analyticsAnonymousSendFlag = false
@@ -806,7 +808,7 @@ const App = createContainer( ( { params , location} ) => {
     // dimension1 = user id dimension (trick google to show individual id's)
     ga('set', 'dimension1', currUser._id)
     // superAdmin or tester user - need to filter them out in reports
-    if (isUserSuperAdmin(currUser) || currUser._id == 'AJ8jrFjxSYJATzscA')
+    if (isUserSuperAdmin(currUser) || currUser._id === 'AJ8jrFjxSYJATzscA')
       ga('set', 'dimension2', 'admin')
 
     // tell google that this is user and all session need to connect to this data point

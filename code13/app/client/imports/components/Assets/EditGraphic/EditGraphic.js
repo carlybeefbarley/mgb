@@ -1700,6 +1700,10 @@ export default class EditGraphic extends React.Component {
     )
   }
 
+  setPrevToolIdx(toolIdx){
+    this.prevToolIdx = toolIdx
+  }
+
   render() {
     this.initDefaultContent2()      // The NewAsset code is lazy, so add base content here
     this.initDefaultUndoStack()
@@ -1751,12 +1755,12 @@ export default class EditGraphic extends React.Component {
             {
               !asset.skillPath &&
               <ResizeImagePopup
-                initialWidth={c2.width}
-                initialHeight={c2.height}
-                maxWidth={MAX_BITMAP_WIDTH}
-                maxHeight={MAX_BITMAP_HEIGHT}
-                scalingOptions={['None']}
-                handleResize={this.handleImageResize} />
+                  initialWidth={c2.width}
+                  initialHeight={c2.height}
+                  maxWidth={MAX_BITMAP_WIDTH}
+                  maxHeight={MAX_BITMAP_HEIGHT}
+                  scalingOptions={['None']}
+                  handleResize={this.handleImageResize} />
             }
 
             {/* !!!! span instead of buttons becasue firefox don't understand miltiple actions inside Button:*/}
@@ -1766,24 +1770,24 @@ export default class EditGraphic extends React.Component {
             {/* </button> */ }
 
             {/*<Popup
-             trigger={ (
-             <span id="mgbjr-editGraphic-changeCanvasZoom">
-             <span style={{ cursor: 'pointer' }} onClick={this.zoomOut}>
-             <Icon name='zoom out'/>
-             </span>
-             {zoom}x
-             <span>&nbsp;&nbsp;</span>
-             <span style={{ cursor: 'pointer' }} onClick={this.zoomIn}>
-             <Icon name='zoom in'/>
-             </span>
-             </span>
-             )}
-             on='hover'
-             header='Zoom'
-             mouseEnterDelay={250}
-             content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
-             size='tiny'
-             positioning='bottom left'/>*/}
+                trigger={ (
+                  <span id="mgbjr-editGraphic-changeCanvasZoom" >
+                    <span style={{ cursor: 'pointer' }} onClick={this.zoomOut}>
+                      <Icon name='zoom out'/>
+                    </span>
+                    {zoom}x
+                    <span>&nbsp;&nbsp;</span>
+                    <span style={{ cursor: 'pointer' }} onClick={this.zoomIn}>
+                      <Icon name='zoom in'/>
+                    </span>
+                  </span>
+                )}
+                on='hover'
+                header='Zoom'
+                mouseEnterDelay={250}
+                content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
+                size='tiny'
+                positioning='bottom left'/>*/}
 
             <Popup
               trigger={ (
@@ -1797,6 +1801,7 @@ export default class EditGraphic extends React.Component {
               content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too large"
               size='tiny'
               positioning='bottom left'/>
+
 
             <Popup
               trigger={ (
@@ -1938,17 +1943,16 @@ export default class EditGraphic extends React.Component {
         </Grid.Column>
         {/*** Art Mentor ***/}
         {isSkillTutorialGraphic &&
-        <ArtTutorial
-          style       =     { { backgroundColor: 'rgba(0,255,0,0.02)' } }
-          isOwner     =     { currUser && currUser._id === asset.ownerId }
-          active      =     { asset.skillPath ? true : false}
-          skillPath   =     { asset.skillPath }
-          currUser    =     { this.props.currUser }
-          userSkills  =     { this.userSkills }
-          assetId     =     { asset._id }
+          <ArtTutorial
+            style       =     { { backgroundColor: 'rgba(0,255,0,0.02)' } }
+            isOwner     =     { currUser && currUser._id === asset.ownerId }
+            active      =     { asset.skillPath }
+            skillPath   =     { asset.skillPath }
+            currUser    =     { this.props.currUser }
+            userSkills  =     { this.userSkills }
+            assetId     =     { asset._id }
           frameData   =     { c2.frameData }
-          handleSelectFrame = { frame => this.handleSelectFrame(frame) }
-        />
+          handleSelectFrame = { frame => this.handleSelectFrame(frame) }/>
         }
 
         {/*** GraphicImport ***/}

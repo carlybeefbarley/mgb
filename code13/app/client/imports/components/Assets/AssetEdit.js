@@ -37,36 +37,35 @@ const AssetEdit = React.createClass({
 
   render: function()
   {
-    const props = this.props
-    const Element = editElementsForKind[props.asset.kind] || EditUnknown
-    const isTooSmall = props.availableWidth < 500
-    return (
-      <div style={{minWidth: '250px'}}>
-        { isTooSmall && props.asset.kind !== 'graphic' &&
-          <Segment basic>
-            <Message
-                warning
-                icon='compress'
-                header='Device too narrow'
-                content='Showing Asset summary instead of Editor'/>
-            <AssetCard
-                asset={props.asset}
-                currUser={props.currUser}
-                fluid={true}
-                canEdit={false}
-                showEditButton={false}
-                allowDrag={true}
-                renderView='l' />
-          </Segment>
-        }
-        { /* We must keep this in the DOM since it has state we don't want to lose during a temporary resize */ }
-        <div style={ (isTooSmall && props.asset.kind !== 'graphic') ? { display: 'none' } : undefined}>
-          <Element {...props}/>
-        </div>
+    const props = this. props
+  const Element = editElementsForKind[props.asset.kind] || EditUnknown
+  const isTooSmall = props.availableWidth < 500
+  return (
+    <div style={{minWidth: '250px'}}>
+      { isTooSmall && props.asset.kind !== 'graphic' &&
+        <Segment basic>
+          <Message
+              warning
+              icon='compress'
+              header='Device too narrow'
+              content='Showing Asset summary instead of Editor'/>
+          <AssetCard
+              asset={props.asset}
+              currUser={props.currUser}
+              fluid={true}
+              canEdit={false}
+              showEditButton={false}
+              allowDrag={true}
+              renderView='l' />
+        </Segment>
+      }
+      { /* We must keep this in the DOM since it has state we don't want to lose during a temporary resize */ }
+      <div style={ (isTooSmall && props.asset.kind !== 'graphic')? { display: 'none' } : undefined}>
+        <Element {...props}/>
       </div>
-    )
-  }
-})
+    </div>
+  )
+}})
 
 AssetEdit.propTypes = {
   asset:                    PropTypes.object.isRequired,    // The invoker of this component must ensure that there is a valid Asset object

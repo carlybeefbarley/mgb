@@ -26,18 +26,19 @@ import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
 const flexPanelViews = [
-  { tag: 'activity',  lev: 1,  name: 'activity', icon: 'lightning',  hdr: 'Activity',      el: fpActivity,      superAdminOnly: false, mobileUI: true   },
-  { tag: 'goals',     lev: 1,  name: 'goals',    icon: 'student',    hdr: 'Goals',         el: fpGoals,         superAdminOnly: false, mobileUI: false  },
-  { tag: 'assets',    lev: 1,  name: 'assets',   icon: 'pencil',     hdr: 'Assets',        el: fpAssets,        superAdminOnly: false, mobileUI: true   },
+  // default_level is defined in expectedToolbars.js (probably = 6)
   { tag: 'chat',      lev: 1,  name: 'chat',     icon: 'chat',       hdr: 'Chat',          el: fpChat,          superAdminOnly: false, mobileUI: true   },
+  { tag: 'assets',    lev: 1,  name: 'assets',   icon: 'pencil',     hdr: 'Assets',        el: fpAssets,        superAdminOnly: false, mobileUI: true   },
+  { tag: 'goals',     lev: 1,  name: 'goals',    icon: 'student',    hdr: 'Goals',         el: fpGoals,         superAdminOnly: false, mobileUI: false  },
   { tag: 'skills',    lev: 2,  name: 'skills',   icon: 'plus circle',hdr: 'Skills',        el: fpSkills,        superAdminOnly: false, mobileUI: false  },
   { tag: 'settings',  lev: 3,  name: 'settings', icon: 'settings',   hdr: 'Settings',      el: fpSettings,      superAdminOnly: false, mobileUI: false  },
 
 // Experimental UI for mobile
 //{ tag: 'more',      lev: 8,  name: 'more',     icon: 'ellipsis horizontal', hdr: 'More', el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
-  { tag: 'users',     lev: 5,  name: 'users',    icon: 'street view',hdr: 'Users',         el: fpUsers,         superAdminOnly: false, mobileUI: false },
+  { tag: 'projects',  lev: 5,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',      el: fpProjects,      superAdminOnly: false, mobileUI: false },
+  { tag: 'users',     lev: 6,  name: 'users',    icon: 'street view',hdr: 'Users',         el: fpUsers,         superAdminOnly: false, mobileUI: false },
 //{ tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   hdr: 'Keys',          el: fpKeyboard,      superAdminOnly: false, mobileUI: false },
-  { tag: 'projects',  lev: 6,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',      el: fpProjects,      superAdminOnly: false, mobileUI: false },
+  { tag: 'activity',  lev: 6,  name: 'activity', icon: 'lightning',  hdr: 'Activity',      el: fpActivity,      superAdminOnly: false, mobileUI: true   },
   { tag: 'network',   lev: 7,  name: 'network',  icon: 'signal',     hdr: 'Network',       el: fpNetwork,       superAdminOnly: false, mobileUI: false },
 
   // SuperAdmin-only:

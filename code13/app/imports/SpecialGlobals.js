@@ -9,7 +9,7 @@ export default SpecialGlobals = {
   activity: {
     activityHistoryLimit: 20
   },
-  
+
   // codeflower props (probably we could allow user to tune these some day)
   // description about props can be found here: https://github.com/d3/d3-3.x-api-reference/blob/master/Force-Layout.md
   codeFlower: {
@@ -31,7 +31,8 @@ export default SpecialGlobals = {
   },
   thumbnail: {
     width: 230,     // In px. See imn mgb.css for .mgb-projectcard-width and .mgb-assetcard-width
-    height: 155     // In px
+    height: 155,     // In px
+    defaultExpiresDuration: 3600
   },
   // in a case that observers will turn out too slow - we may change it to false - and then implement slow polling
   allowObservers: true,

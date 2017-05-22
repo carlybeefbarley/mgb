@@ -22,7 +22,7 @@
   }
 
   CustomEvent.prototype = window.Event.prototype;
-  window.CustomEvent = CustomEvent
+  window.CustomEvent = CustomEvent;
 //}
 
 // allows CDN connections from other locations

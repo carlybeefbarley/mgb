@@ -26,6 +26,7 @@ import { AssetKindEnum } from '/imports/schemas/assets'
 
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+import ThumbnailWithInfo from '/client/imports/components/Assets/ThumbnailWithInfo'
 
 import getCDNWorker from '/client/imports/helpers/CDNWorker'
 // import tlint from 'tern-lint'
@@ -2448,7 +2449,14 @@ export default class EditCode extends React.Component {
               <small style={{fontSize: '85%'}}>
                 This string references API link to <strong>{kind}</strong> asset: <code> {name}</code>
               </small>
-              <Thumbnail assetId={`/${urlToAsset}`} expires={60} constrainHeight='60px'/>
+              <ThumbnailWithInfo
+                assetId={urlToAsset}
+                expires={60}
+                constrainHeight='60px'
+                showDimensions={kind === 'graphic'}
+                owner={owner}
+                name={name}
+              />
             </a>
           )
         }
@@ -2459,7 +2467,14 @@ export default class EditCode extends React.Component {
               <small style={{fontSize: '85%'}}>
                 This string references <strong>{owner}'s</strong> {kind ? kind : ''} asset: <code> {name}</code>
               </small>
-              <Thumbnail assetId={`/${urlToAsset}`} expires={60} constrainHeight='60px'/>
+              <ThumbnailWithInfo
+                assetId={urlToAsset}
+                expires={60}
+                constrainHeight='60px'
+                showDimensions={kind === 'graphic'}
+                owner={owner}
+                name={name}
+              />
             </a>
           )
         }

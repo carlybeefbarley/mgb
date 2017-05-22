@@ -78,16 +78,30 @@ export const makeCDNLink = (uri, etagOrHash = null, prefixDomainAlways = false) 
   return uri
 }
 
-export const makeExpireThumbnailLink = (assetOrId, maxAge = 60) => {
+export const makeExpireThumbnailLink = (assetOrId, maxAge = SpecialGlobals.thumbnail.defaultExpiresDuration ) => {
   return typeof assetOrId === 'string'
     ? makeCDNLink(`/api/asset/cached-thumbnail/png/${maxAge}/${assetOrId}`, makeExpireTimestamp(maxAge))
     // if we know asset - we can use etag to get updated version - which will be also updated when asset changes
     : makeCDNLink(`/api/asset/thumbnail/png/${assetOrId._id}`, genetag(assetOrId))
 
 }
+/**
+ * Generates CDN link to Graphic Asset
+ * @param assetOrId - object representing asset or ID or owner/name
+ * @param maxAge {int} - maximum amount of seconds fetched resource should be kept in the cache
+ * @returns {string}
+ */
+// TODO: this function can be more universal
+export const makeGraphicAPILink = (assetOrId, maxAge = SpecialGlobals.thumbnail.defaultExpiresDuration) => {
+  return typeof assetOrId === 'string'
+    ? makeCDNLink(`/api/asset/png/${assetOrId}`, makeExpireTimestamp(maxAge))
+    // if we know asset - we can use etag to get updated version - which will be also updated when asset changes
+    : makeCDNLink(`/api/asset/png/${assetOrId._id}`, genetag(assetOrId))
+
+}
 
 
-// This syncTime function is to help warn when a server and client have 
+// This syncTime function is to help warn when a server and client have
 // very different times.  Otherwise, it can be a confusing debug!
 // TODO: Maybe use https://github.com/mizzao/meteor-timesync instead
 let lastDiff = 10 * 365 * 24 * 60 * 60 * 1000 // 10 years

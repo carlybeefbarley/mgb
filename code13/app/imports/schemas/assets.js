@@ -61,6 +61,10 @@ var schema = {
   forkChildren:    Array,   // Array of peer direct children
   forkParentChain: Array,   // Array of parent forks
 
+  //heartedBy an array of userIds that represents people who hearted an asset
+  heartedBy: optional(Array),
+  heartedBy_count: optional(Number), //just how many people have hearted something
+
   // Metadata field wwas added 10/29/2016 so earlier objects do NOT have it.
   // The 'metdata' field is intended for a SMALL subset of data that is important for good asset-preview (previews exclude 'content2').
   // The fields are asset-kind-specific. Examples of metadata would be
@@ -274,6 +278,38 @@ Meteor.methods({
 
     return count
   },
+
+  "Azzets.toggleHeart": function(docId, userId) {
+    checkIsLoggedInAndNotSuspended()
+    check(docId, String)
+    check(userId, String)
+    if(userId !== this.userId)
+      throw new Meteor.Error(404, 'User Id does not match current user Id')
+    const selector = {_id: docId}
+    const asset = Azzets.findOne(selector, { fields: { heartedBy: 1, heartedBy_count: 1 } })
+    if (!asset)
+      throw new Meteor.Error(404, 'Asset Id does not exist')
+    const currUserLoves = _.includes(asset.heartedBy, userId) 
+    var newHeartedBy;
+    if (!currUserLoves)
+      newHeartedBy = _.union(asset.heartedBy, [userId])
+    else
+      newHeartedBy = _.without(asset.heartedBy, userId)
+
+    const newData = {
+      $set : {
+        heartedBy: newHeartedBy,
+        heartedBy_count: newHeartedBy.length,
+        updatedAt: new Date()
+      }
+    }
+    const count = Azzets.update(selector, newData )
+    if (Meteor.isServer)
+      console.log(`  [Assets.toggleHeart]  (${count}) #${docId} '${asset.name}'`)
+
+    return {'count': count, 'newLoveState': !currUserLoves}
+  },
+  
 
   // This does not allow changes to the su* fields. It is much simpler
   // and more robust to handle those cases in a simpler, privileged path instead of

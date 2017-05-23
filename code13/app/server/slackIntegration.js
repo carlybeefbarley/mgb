@@ -8,6 +8,8 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 const mgb_slack_eng__webhookUrl_mgb_community = "https://hooks.slack.com/services/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"
 
 const DISABLE_SLACK_NOTIFICATIONS = false
+
+const MUTE_ASSET_CREATE_NOTIFICATIONS = true
 const MUTE_ASSET_AND_PROJECT_CREATE_FOR_SPECIAL_USERS = 'tester,stauzs,dgolds,Bouhm,guntis,SuperAdmin'.split(',')
 
 function slackGenericNotify(slackWebhookUrl, data) {
@@ -83,14 +85,15 @@ Meteor.methods({
     const assetUrl=`https://v2.mygamebuilder.com/u/${username}/asset/${docId}`
     const text=`New ${kind} Asset <${assetUrl}|${assetname}> created by user <${userUrl}|${username}>`
 
-    if (_.includes(MUTE_ASSET_AND_PROJECT_CREATE_FOR_SPECIAL_USERS, username))
-      console.log(`Muted slack notify for user '${username}': '${text}`)
+    if (MUTE_ASSET_CREATE_NOTIFICATIONS ||
+        _.includes(MUTE_ASSET_AND_PROJECT_CREATE_FOR_SPECIAL_USERS, username))
+      console.log(`Muted Slack.Assets.create notify for user '${username}': '${text}`)
     else
       slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
-      username: `MGBv2 @${username}`,
-      icon_emoji: ':pencil:',
-      text: text
-    })
+        username: `MGBv2 @${username}`,
+        icon_emoji: ':pencil:',
+        text: text
+      })
   }
 })
 

@@ -4,6 +4,8 @@ import { Link, browserHistory } from 'react-router'
 import urlMaker from './urlMaker'
 import { clearPriorPathsForJoyrideCompletionTags } from '/client/imports/routes/App'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import SpecialGlobals from '/imports/SpecialGlobals'
+
 // TODO   Implement some  <QLink nav="..."> cases to clean up code
 
 function isLeftClickEvent(event) {
@@ -70,7 +72,8 @@ export default QLink = React.createClass({
 
   contextTypes: {
     urlLocation: React.PropTypes.object,
-    router:  React.PropTypes.object
+    router:  React.PropTypes.object,
+    tabs: React.PropTypes.object
   },
 
   /** This click handler will be called by the <Link> we create.
@@ -116,9 +119,14 @@ export default QLink = React.createClass({
     // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
     clearPriorPathsForJoyrideCompletionTags()
 
+    if(SpecialGlobals.isMobile)
+      this.context.tabs.setLocation(location)
+    //else
     this.context.router.push(location)
+
     event.preventDefault()    // Stop Link.handleClick from doing anything further
     event.stopPropagation()
+
   },
 
   render: function () {
@@ -238,10 +246,10 @@ export function utilPushTo(existingQuery, newTo, extraQueryParams = {})
 }
 
 /**
- * This is a replacement for browserHistory.replace(). Use this when you DO NOT 
+ * This is a replacement for browserHistory.replace(). Use this when you DO NOT
  * want to add an additional step into the browser history - for example from a redirect
  * See #225 for examples of cases that need to use this.
- * 
+ *
  * @param {Object} existingQuery from something like window.location.query.
  * It is parameterized here instead of just using window.location.query in order to
  * support a tab concept *within* an MGB page. Uses of window.location.query by the
@@ -272,7 +280,7 @@ export function utilShowFlexPanel(currentUrlLocation, newFpNavString)
 }
 
 /**
- * 
+ *
  * @param {*} currentUrlLocation from something like window.location
  * @param {*} chatChannelName as defined in chats:makeChannelName()
  */

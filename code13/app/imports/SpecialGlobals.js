@@ -4,7 +4,7 @@
 // this code smell in our codebase :)
 
 
-export default SpecialGlobals = {
+const SpecialGlobals = {
 
   activity: {
     activityHistoryLimit: 20
@@ -100,6 +100,9 @@ export default SpecialGlobals = {
     SUdefaultNumMembersAllowedInProject: 99,
     defaultNumOfOwnedProjectsAllowed: 10,
     SUdefaultNumOfOwnedProjectsAllowed: 99
-  }
+  },
+
+  isMobile: true
 
 }
+export default SpecialGlobals

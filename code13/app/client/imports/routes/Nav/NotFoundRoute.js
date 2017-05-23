@@ -4,6 +4,7 @@ import QLink from '../QLink'
 import Footer from '/client/imports/components/Footer/Footer'
 import { Segment, Header, Container, Button, Message, Divider } from 'semantic-ui-react'
 
+// TODO: redirect to static NOT FOUND page - so we can get nice errors in the network tab
 export default NotFoundRoute = ( { currUser } ) => (
   <div>
     <Segment className="vertical masthead center aligned">
@@ -16,7 +17,7 @@ export default NotFoundRoute = ( { currUser } ) => (
           <QLink to={`/u/${currUser.profile.name}/assets`}>
             <Button size='huge' primary content='Keep Going' icon='right arrow' />
           </QLink>
-          : 
+          :
           <QLink to='/learn/getStarted'>
             <Button size='huge' primary content='Get Started' icon='right arrow' />
           </QLink>

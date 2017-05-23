@@ -55,3 +55,32 @@
 .react-swipeable-view-container > div {
   position: relative;
 }
+
+.locationPopup{
+  position: fixed;
+  height: 100%;
+  background-color: white;
+  z-index: 9;
+}
+.locationPopup .head {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.locationPopup .head:after{
+  content: 'x';
+  border-radius: 100%;
+  width: 32px;
+  height: 32px;
+  font-size: 22px;
+  font-weight: bold;
+  border: #333 double 3px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  text-align: center;
+  line-height: 103%;
+  background-color: pink;
+  margin: 5px;
+  cursor: pointer;
+}

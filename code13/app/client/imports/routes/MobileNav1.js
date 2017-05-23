@@ -5,17 +5,23 @@ import SwipeableViews from 'react-swipeable-views'
 import elementResizeDetectorMaker from 'element-resize-detector'
 
 import fpAssets from '../components/SidePanels/fpAssets'
+
+import HomeRoute from './Home'
 import BrowseGamesRoute from './BrowseGamesRoute'
 
 import fpChat from '../components/SidePanels/fpChat'
 
 
-import './MobileNav.css'
+import App from '/client/imports/routes/App'
+
 
 import NavBar from '/client/imports/components/Nav/NavBar'
 
 import {utilReplaceTo} from '/client/imports/routes/QLink.js'
 
+
+
+import './MobileNav.css'
 
 const BlankPage = (p) => {
   return <div>{p.title}</div>
@@ -50,12 +56,16 @@ const AllButtons = (p) => {
   </div>
 }
 
-const HomeWrap = (p) => (
-  <div>
+
+const RouterWrap = (p) => (
+  <div className="locationPopup">
+    <div className="head" onClick={p.onClose}></div>
     <NavBar {...p} currentlyEditingAssetInfo={p.state.currentlyEditingAssetInfo}/>
     <div>{React.cloneElement(p.children, p)}</div>
   </div>
 )
+
+
 
 const doLogout = () => {
   Meteor.logout()
@@ -86,10 +96,18 @@ class MobileNav extends React.Component {
       'logout',
     ]
     this.state = {
-      index: 0
+      index: 0,
+      location: {}
     }
     this.cache = {}
 
+  }
+
+  setLocation(location){
+    console.log("Setting location:", location)
+    this.setState({
+      location: {[this.state.index]: location}
+    })
   }
 
   componentDidMount() {
@@ -134,6 +152,7 @@ class MobileNav extends React.Component {
   handleChangeIndex(index) {
     this.setState({index})
 
+    // this is here because this is much faster than react re-rendering
     $(".mobile-nav-button.active", this.refs.mobileNav).removeClass("active")
     $("#mobile-nav-button-" + index, this.refs.mobileNav).addClass("active")
   }
@@ -187,8 +206,10 @@ class MobileNav extends React.Component {
   }
 
   renderView() {
-    if (this._tmpView)
-      return this._tmpView
+    // without cache performance is very bad...
+
+    //if (this._tmpView)
+    //  return this._tmpView
 
     const max = this.getMaxItems()
     this._tmpView = this.buttons
@@ -196,10 +217,17 @@ class MobileNav extends React.Component {
       .map((bName, index) => {
         const b = MobileNav.availableButtons[bName]
         const props = b.getProps ? b.getProps(this) : {}
-
-        return <div key={index}>
-          <b.Component  title={bName} isMobile={true} {...this.props} {...props} />
-        </div>
+        return (
+          <div key={index}>
+            {bName} + {this.state.index}
+            {this.state.index === index && this.state.location[index] &&
+              <RouterWrap {...this.props} onClose={() => {
+                this.setState({location:{[index]: null}})
+              }} />
+            }
+            <b.Component title={bName} isMobile={true} {...this.props} {...props} />
+          </div>
+        )
       })
 
     return this._tmpView
@@ -207,7 +235,9 @@ class MobileNav extends React.Component {
 
   renderButton(bName, index) {
     const b = MobileNav.availableButtons[bName]
-    return <a
+    // a - leaves :hover on PC and that makes to appear as there would be
+    // multiple active tabs
+    return <span
       className={'mobile-nav-button item' + (index === this.state.index ? ' active' : '')}
       name={bName}
       key={index}
@@ -216,14 +246,14 @@ class MobileNav extends React.Component {
     >
       <Icon name={b.icon || 'question'} size='large'></Icon>
       <p>{b.title}</p>
-    </a>
+    </span>
   }
 
 
   static availableButtons = {
     home: {
       title: 'Home',
-      Component: HomeWrap, ///HomeWrap,
+      Component: HomeRoute, ///HomeWrap,
       getProps: (mobileNav) => ({
         flexPanelWidth: '0'
       }),

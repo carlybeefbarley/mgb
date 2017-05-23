@@ -1,3 +1,5 @@
+// @stauzs - you are looking for index.js not this file
+
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Message, Icon } from 'semantic-ui-react'
@@ -141,7 +143,8 @@ const AppUI = React.createClass({
   childContextTypes: {
     urlLocation:  PropTypes.object,
     settings:     PropTypes.object,
-    skills:       PropTypes.object
+    skills:       PropTypes.object,
+    tabs:       PropTypes.object,
   },
 
   getChildContext() {
@@ -149,7 +152,8 @@ const AppUI = React.createClass({
     return {
       urlLocation:  this.props.location,
       settings:     this.props.settings,  // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
-      skills:       this.props.skills     // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
+      skills:       this.props.skills,     // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
+      tabs: this.refs.mobileNav
     }
   },
 
@@ -407,7 +411,7 @@ const AppUI = React.createClass({
       )
     )
 
-    const isMobile = true
+    const isMobile = SpecialGlobals.isMobile
     return (
       <div >
 
@@ -503,23 +507,24 @@ const AppUI = React.createClass({
           !loading && isMobile &&
           <div id='mgb-jr-main-container' >
             <MobileNav
-            {...this.props}
-            state={this.state}
-            // Make below props available to all routes.
-            user={user}
-            currUser={currUser}
-            currUserProjects={currUserProjects}
-            hazUnreadAssetChat={hazUnreadAssetChat}
-            ownsProfile={ownsProfile}
-            isSuperAdmin={isSuperAdmin}
-            availableWidth={mainAreaAvailableWidth}
-            handleSetCurrentlyEditingAssetInfo={this.handleSetCurrentlyEditingAssetInfo}
-            isTopLevelRoute={true}// Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
-            chatChannelTimestamps={chatChannelTimestamps}
-            hazUnreadChats={hazUnreadChats}
-            requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
-            selectedViewTag={flexPanelQueryValue}
-          />
+              ref="mobileNav"
+              {...this.props}
+              state={this.state}
+              // Make below props available to all routes.
+              user={user}
+              currUser={currUser}
+              currUserProjects={currUserProjects}
+              hazUnreadAssetChat={hazUnreadAssetChat}
+              ownsProfile={ownsProfile}
+              isSuperAdmin={isSuperAdmin}
+              availableWidth={mainAreaAvailableWidth}
+              handleSetCurrentlyEditingAssetInfo={this.handleSetCurrentlyEditingAssetInfo}
+              isTopLevelRoute={true}// Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
+              chatChannelTimestamps={chatChannelTimestamps}
+              hazUnreadChats={hazUnreadChats}
+              requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
+              selectedViewTag={flexPanelQueryValue}
+            />
           </div>
         }
       </div>
@@ -763,6 +768,7 @@ const AppUI = React.createClass({
 
 
 const App = createContainer( ( { params , location} ) => {
+  console.log('app location:', location)
   const pathUserName = params.username      // This is the username (profile.name) on the url /u/xxxx/...
   const pathUserId = params.id              // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
   const currUser = Meteor.user()

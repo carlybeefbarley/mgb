@@ -304,8 +304,6 @@ export default fpChat = React.createClass( {
   },
 
   handleChatChannelChange: function(newChannelName) {
-
-    console.log(newChannelName)
     this.changeChannel( newChannelName )
     this.setState( { view: 'comments' } )
   },

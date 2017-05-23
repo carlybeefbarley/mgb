@@ -22,8 +22,13 @@ const optional = Match.Optional
 var schema = {
   _id: String,
 
-  createdAt: Date,
-  updatedAt: Date,
+  createdAt:    Date,      // Must be set when created and never changed
+  updatedAt:    Date,      // Must be altered for any change that should be pushed to clients. See assetFetchers.js
+
+// TODO - needed to fix the annoying sort order issues
+//   contentChangedAt: Date,  // A weaker change-timestamp that is used for changes that should not alter sorts - e.g. lock/unlock or heart/unheart
+// // ***TODO: MIGRATION Need to duplicate all updatedAt -> contentChangedAt
+
 
 //teamId: String,       // team owner user id (NOT USED. TODO: REMOVE FROM DB RECORDS)
   ownerId: String,      // Owner user id
@@ -175,23 +180,29 @@ else
 }
 
 export const assetSorters = {
-  "edited": { updatedAt: -1},
-  "name":   { name: 1 },
-  "kind":   { kind: 1 }
+  "edited":  { updatedAt: -1 },
+  "created": { createdAt: -1 },
+  "name":    { name: 1 },
+  "loves":   { heartedBy_count: -1 },
+  "kind":    { kind: 1 }
 }
 
 export const gameSorters = {
-  "edited": { updatedAt: -1},
-  "name":   { name: 1 },
-  "plays":  { 'metadata.playCount': -1 }
+  "edited":  { updatedAt: -1 },
+  "created": { createdAt: -1 },
+  "loves":   { heartedBy_count: -1 },
+  "name":    { name: 1 },
+  "plays":   { 'metadata.playCount': -1 }
 }
 
 // This is used by the publication. It's the merge of assetSorters, gameSorters, ...
 export const allSorters = {
-  "edited": { updatedAt: -1},
-  "name":   { name: 1 },
-  "kind":   { kind: 1 },
-  "plays":  { 'metadata.playCount': -1 }
+  "edited":  { updatedAt: -1 },
+  "created": { createdAt: -1 },
+  "loves":   { heartedBy_count: -1 },
+  "name":    { name: 1 },
+  "kind":    { kind: 1 },
+  "plays":   { 'metadata.playCount': -1 }
 }
 
 Meteor.methods({

@@ -25,6 +25,8 @@ export const assetViewChoices = {
   xl: { showFooter: true, showWorkstate: true, showMeta: true, showExtra: true, showImg: true }
 }
 
+const _preventOnMouseUpClickSteal= e => { e.preventDefault(); e.stopPropagation() }
+
 export const defaultAssetViewChoice = 'm'
 
 export default AssetCard = React.createClass({
@@ -98,12 +100,14 @@ export default AssetCard = React.createClass({
       ? _.map(_.filter(ownersProjects, { ownerId: asset.ownerId }), 'name')
       : []
     const editProjects = (
-      <ProjectMembershipEditor
-        canEdit={canEdit}
-        availableProjectNamesArray={availableProjectNamesArray}
-        chosenProjectNames={chosenProjectNamesArray}
-        handleChangeChosenProjectNames={this.handleChangeChosenProjectNames}
-      />
+      <span onMouseUp={_preventOnMouseUpClickSteal}>
+        <ProjectMembershipEditor
+          canEdit={canEdit}
+          availableProjectNamesArray={availableProjectNamesArray}
+          chosenProjectNames={chosenProjectNamesArray}
+          handleChangeChosenProjectNames={this.handleChangeChosenProjectNames}
+        />
+      </span>
     )
     const shownAssetName = asset.name || '(untitled)'
     const currUser = Meteor.user()
@@ -141,7 +145,7 @@ export default AssetCard = React.createClass({
         <Card.Content>
           {viewOpts.showWorkstate &&
             <span style={{ float: 'right' }}>
-              <span onMouseUp={e => {e.preventDefault(); e.stopPropagation();}}>
+              <span onMouseUp={_preventOnMouseUpClickSteal}>
                 <UserLoves
                 size={viewOpts.showExtra ? null : 'small'}
                 onIconClick={this.handleUserLoveClick}

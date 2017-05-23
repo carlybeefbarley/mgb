@@ -63,7 +63,7 @@ export default class NPCBehavior extends BaseForm {
 
   render() {
     return (
-      <div className="ui form">
+      <div style={!this.props.canEdit ? {pointerEvents: 'none'} : {}} className="ui form">
         <span id="mgbjr-edit-actor-tab-NPCBehavior-movement">
           {this.options("Movement Type", 'movementType', [
             { text: "No automatic movement",  value: "0" },

@@ -74,7 +74,7 @@ export default class Animations extends React.Component {
   
   renderContent(animations, i) {
     return (
-      <Table.Row key={i}>
+      <Table.Row style={!this.props.canEdit ? {pointerEvents: 'none'} : {}} key={i}>
         <Table.Cell>{animations[i]}</Table.Cell>
         <Table.Cell>
           <DropArea 

@@ -18,7 +18,7 @@ export default class CharacterBehavior extends BaseForm {
     const soundOptions = { options: MgbActor.alCannedSoundsList.map( s => ( { text: '[builtin]:'+s, value: '[builtin]:'+s } ) ) }
 
     return (
-      <div className="ui form">
+      <div style={!this.props.canEdit ? {pointerEvents: 'none'} : {}} className="ui form">
         <div id="mgbjr-edit-actor-tab-CharacterBehavior-movement">
           {this.props.asset.content2.databag.all.actorType === "1" && <span style={{color: "#A91313"}}>Note: 'movement frequency' works as a probability of an NPC moving each turn</span>}
 

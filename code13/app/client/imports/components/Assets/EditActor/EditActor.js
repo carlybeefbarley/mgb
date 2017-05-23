@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
-import { Modal, Segment, Grid} from 'semantic-ui-react'
+import {Modal, Segment, Grid} from 'semantic-ui-react'
 import {joyrideCompleteTag} from '/client/imports/Joyride/Joyride'
 import {snapshotActivity} from '/imports/schemas/activitySnapshots.js'
 import {makeCDNLink} from '/client/imports/helpers/assetFetchers'
@@ -42,6 +42,10 @@ export default class EditActor extends React.Component {
   }
 
   handleSave(reason, thumbnail) {
+    if(!this.props.canEdit){
+      this.props.editDeniedReminder()
+      return
+    }
     this.props.handleContentChange(this.props.asset.content2, thumbnail, reason)
   }
 
@@ -51,7 +55,8 @@ export default class EditActor extends React.Component {
           asset={this.props.asset}
           onChange={this.handleSave.bind(this)}
           saveThumbnail={ d => this.handleSave(null, d, "Updating thumbnail") }
-          saveText={ text => this.props.handleDescriptionChange(text)} />
+          saveText={ text => this.props.handleDescriptionChange(text)} 
+          canEdit={this.props.canEdit} />
     )
 
     const _mkDisabled = actorTypesArray => _.some(actorTypesArray, at => databag.all.actorType === actorOptions.actorType[at])

@@ -9,7 +9,7 @@ export default class All extends BaseForm {
 
   render() {
     return (
-      <div className="ui form">
+      <div style={!this.props.canEdit ? {pointerEvents: 'none'} : {}} className="ui form">
         <div id="mgbjr-edit-actor-tab-DestructionSpawning-points">
           {this.bool("Can this be destroyed/damaged", "destroyableYN")}
           {this.text("Points scored (or lost) when shot by player", "scoreOrLosePointsWhenShotByPlayerNum", "number", {

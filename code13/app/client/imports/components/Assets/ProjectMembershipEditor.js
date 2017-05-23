@@ -1,7 +1,13 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Icon } from 'semantic-ui-react'
 
-// This is a compact editor for membership
+// This is a compact editor for deciding if an Asset is in one or more projects. 
+// It is an earlier version of ProjectMembershipEditorv2 but with a slightly different 
+// use case and I (dgolds) haven't got around to merging them yet
+
+// TODO: Also rename so it is less confusing. This isn't users-who-are-project-members... 
+//       This control is for asset add/remove to project
 
 export default ProjectMembershipEditor = React.createClass({
   propTypes: {
@@ -13,45 +19,52 @@ export default ProjectMembershipEditor = React.createClass({
   
   render: function() {
 
-    const projectNames = "In projects: " + (this.props.chosenProjectNames.length === 0 ? "none" :  this.props.chosenProjectNames.join(", ") )
+    const { canEdit, chosenProjectNames, availableProjectNamesArray } = this.props
+    const projectNames = "In projects: " + (chosenProjectNames.length === 0 ? "none" : chosenProjectNames.join(", ") )
 
-    if (!this.props.canEdit || !this.props.availableProjectNamesArray || this.props.availableProjectNamesArray.length === 0)
-      return <div><i className="sitemap icon"/> {projectNames}</div>
+    if (!canEdit || !availableProjectNamesArray || availableProjectNamesArray.length === 0)
+      return (
+        <div>
+          <Icon name="sitemap"/> {projectNames}
+        </div>
+      )
 
     // OK, so we can edit! Let's do this!
     
     // Build the list of 'View Project' Menu choices
-    let choices = this.props.availableProjectNamesArray.map((k) => { 
-      let inList = _.includes(this.props.chosenProjectNames, k)
-      return    <a  className={"ui item"+ (inList ? " active" : "")} 
-                    data-value={k} key={k} 
-                    onClick={this.handleToggleProjectName.bind(this, k)}>
-                    <i className={inList ? "ui toggle on icon" : "ui toggle off icon"}></i>&nbsp;{k}
-                </a>        
+    let choices = availableProjectNamesArray.map((k) => { 
+      let inList = _.includes(chosenProjectNames, k)
+      return (
+        <a  className={"ui item"+ (inList ? " active" : "")} 
+            data-value={k} key={k} 
+            onClick={this.handleToggleProjectName.bind(this, k)}>
+            <Icon name={inList ? 'toggle on' : 'toggle off'} />&nbsp;{k}
+        </a>
+      )
     })
     
 
     // Create the       | (edit) > |      UI
     return (
       <div>
-        <i className="sitemap icon"/> {projectNames} 
-        <div className="ui simple dropdown item">        
-          <i className="dropdown icon"/>
+        <Icon name="sitemap"/> {projectNames} 
+        <div className="ui simple dropdown item">
+          <Icon name='dropdown'/>
           <div className="ui menu">
             {choices}
           </div>
         </div>
       </div>
-    );
+    )
   },
 
   handleToggleProjectName: function(pName)
   {
-    let list = this.props.chosenProjectNames;
+    const list = this.props.chosenProjectNames
     if (this.props.handleChangeChosenProjectNames)
     {
-      let inList = _.includes(list, pName)
-      this.props.handleChangeChosenProjectNames(inList ? _.without(list, pName) : _.union(list,[pName]));
+      const inList = _.includes(list, pName)
+      this.props.handleChangeChosenProjectNames(inList ? _.without(list, pName) : _.union(list,[pName]))
     }
   }
   

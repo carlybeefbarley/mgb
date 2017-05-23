@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
-import {Modal, Segment, Grid} from 'semantic-ui-react'
+import { Modal, Segment, Grid} from 'semantic-ui-react'
 import {joyrideCompleteTag} from '/client/imports/Joyride/Joyride'
 import {snapshotActivity} from '/imports/schemas/activitySnapshots.js'
 import {makeCDNLink} from '/client/imports/helpers/assetFetchers'
@@ -26,6 +26,8 @@ export default class EditActor extends React.Component {
   constructor(...props) {
     super(...props)
     this.state = {}
+    this.closeModal = false
+    this.templateSelected = false
   }
 
   doSnapshotActivity() {
@@ -523,6 +525,8 @@ export default class EditActor extends React.Component {
   */
   handleTemplateClick(e) {
     if (e.target.dataset.template) {
+      this.closeModal = true
+      this.templateSelected = true
       const templateName = e.target.dataset.template
       this.loadTemplate(templateName)
       this.props.handleDescriptionChange("Created from Template: " + templateName.replace(/^alTemplate/, ''))
@@ -546,13 +550,32 @@ export default class EditActor extends React.Component {
     merge(t, d)
     this.forceUpdate()
   }
+  loadDefaultTemplate() {
+    // force defaults
+    const templateName = "alTemplateScenery"
+    this.props.asset.content2 = getDefaultActor()
+    const t = templates[templateName]
+    const d = this.props.asset.content2.databag
+    
+    const merge = (a, b) => {     // Is this different from things like _.merge or Object.Assign()
+      for (let i in a) {
+        if (typeof b[i] == "object")
+          merge(a[i], b[i])
+        else
+          b[i] = a[i]
+      }
+    }
+    merge(t, d)
+    this.handleSave()
+    this.forceUpdate()
+  }
   render() {
     const { asset } = this.props
     if (!asset)
       return null
     const databag = asset.content2.databag
-    const showTemplate = !databag
     const LayerValid = ( {layerName, isValid } ) => (isValid ? <strong>{layerName}: Yes&emsp;</strong> : <em style={{color: 'grey'}}>{layerName}: No&emsp;</em>)
+
     return (
       <div className='ui grid edit-actor'>
         <b title='This Actor can work on the following Layers of an ActorMap'>ActorMap Layers:</b>
@@ -561,8 +584,15 @@ export default class EditActor extends React.Component {
           <LayerValid layerName='Active'     isValid={ActorValidator.isValidForActive(databag)} />
           <LayerValid layerName='Foreground' isValid={ActorValidator.isValidForFG(databag)} />
         </div>
-        { showTemplate &&
-          <Modal defaultOpen closeOnDocumentClick={false} closeOnRootNodeClick={false} onClick={(e)=>{this.handleTemplateClick(e)}}>
+        {
+          !databag && !this.closeModal && 
+          <Modal defaultOpen 
+            closeOnDocumentClick={false} 
+            closeOnDimmerClick={true} 
+            onUnmount={() => {if (!this.templateSelected) this.loadDefaultTemplate()}} 
+            onClick={(e)=>{
+              this.handleTemplateClick(e) 
+            }}>
             <Modal.Header>
               Choose a template for the type of Actor, then modify the detailed options in the Actor Editor
             </Modal.Header>
@@ -571,7 +601,7 @@ export default class EditActor extends React.Component {
             </Modal.Content>
           </Modal>
         }
-        { !showTemplate &&
+        { databag && 
           <Tabs tabs={this.getTabs(databag)}/>
         }
       </div>

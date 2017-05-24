@@ -147,12 +147,11 @@ export default AssetCard = React.createClass({
             <span style={{ float: 'right' }}>
               <span onMouseUp={_preventOnMouseUpClickSteal}>
                 <UserLoves
-                size={viewOpts.showExtra ? null : 'small'}
-                onIconClick={this.handleUserLoveClick}
-                currUserLoves={currUserLoves}
-                canEdit={canLove}
-                asset={asset}
-                seeLovers={false}
+                  currUser={currUser}
+                  asset={asset}
+                  size={viewOpts.showExtra ? null : 'small'}
+                  currUser={currUser}
+                  seeLovers={false}
                 />
               </span>
               <WorkState
@@ -335,25 +334,6 @@ export default AssetCard = React.createClass({
     e.preventDefault()
     e.stopPropagation()
   },
-
-  handleUserLoveClick () {
-    const userId = !this.props.currUser._id ? null : this.props.currUser._id
-    if(!userId)
-      return 
-    Meteor.call(
-      'Azzets.toggleHeart',
-      this.props.asset._id,
-      userId,
-      this._handleMeteorErrResp,
-      (error, result)=> {
-        if(error)
-          showToast('was unable to love/unlove this asset' + error.reason, 'error')
-        else {
-          if(result.newLoveState)
-            logActivity('asset.userLoves', `${this.props.currUser.username} loved this asset`, null, this.props.asset)
-        }
-      }
-    )},
 
   handleEditClick (e) {
     const asset = this.props.asset

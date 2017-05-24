@@ -353,8 +353,6 @@ export default AssetEditRoute = React.createClass({
     const canEdIfUnlocked = this.canUserEditThisAssetIfUnlocked()
     const currUserId = currUser ? currUser._id : null
     const hasUnsentSaves = !!this.m_deferredSaveObj
-    const currUserLoves = currUser ? _.includes(asset.heartedBy, currUser._id) : false
-    const canLove = Boolean(currUser)
 
     return (
       <Grid padded style={{overflowX: 'hidden'/* this will prevent padding (+v scrolling) caused by mgbjr-asset-edit-header-right when all icons don't fit in the new line*/}}>
@@ -389,12 +387,10 @@ export default AssetEditRoute = React.createClass({
               <Icon name='fork' loading />
             }
             <UserLoves
-            canEdit={canLove}
-            asset={asset}
-            size='small'
-            onIconClick={this.handleUserLoveClick}
-            currUserLoves={currUserLoves}
-            seeLovers={true}
+              currUser={currUser}
+              asset={asset}
+              size='small'
+              seeLovers={true}
             />
             <WorkState
               workState={asset.workState}
@@ -725,25 +721,6 @@ export default AssetEditRoute = React.createClass({
     joyrideCompleteTag('mgbjr-CT-asset-edit-header-right-chat')
     utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
-  handleUserLoveClick() {
-    const userId = !this.props.currUser._id ? null : this.props.currUser._id
-    const asset = this.data.asset
-    if(!userId)
-      return 
-    Meteor.call(
-      'Azzets.toggleHeart',
-      this.props.params.assetId,
-      userId,
-      this._handleMeteorErrResp,
-      (error, result)=> {
-        if(error)
-          showToast('was unable to love/unlove this asset' + error.reason, 'error')
-        else {
-          if(result.newLoveState)
-            logActivity('asset.userLoves', `User ${this.props.currUser.username} loved this asset`, null, asset)
-        }
-      }
-  )},
 
   handleStableStateChange: function(newIsCompleted) {
     const { asset } = this.data

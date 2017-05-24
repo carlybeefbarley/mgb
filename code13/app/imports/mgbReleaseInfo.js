@@ -15,6 +15,51 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Wed May 24 2017 13:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4213'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.flexpanel',
+          'type': 'improvement',
+          'changeName': 'Rearranged flexPanel icon ordering',
+          'changeSummary': 'The flexPanel is the set of optional information panels to the right of the window. Based on usage analytics, we have moved the less-used items down the list of icons (goals, activity) and moved Chat + Assets to the top of the list',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.loves',
+          'type': 'feature',
+          'changeName': 'Love/Heart Assets & Games',
+          'changeSummary': 'Assets and Games can now be hearted/loved! Because of this, the Assets and Games lists can optionally be sorted by # of loves.  On a user\'s Profile Page you can see the Assets/Games they have loved. Note that currently, \'loving\' an asset does change the updatedAt timestamp which can be a bit annoying (causes items to jump to top of list if sorted-by-edited), but we will fix that soon',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.sort',
+          'type': 'feature',
+          'changeName': 'Sort Assets/Games lists by created date',
+          'changeSummary': 'Assets and Games lists can also now be sorted by creation date (most recent first).',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'The \'XL\' Asset list view now lets the Asset owner change which projects an asset is in; the \'announce\' Global chat channel has been removed; More code Editor tweaks/bugfixes; ',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Wed May 17 2017 22:30 GMT-0700 (PDT)',
 
       'id': {
@@ -44,6 +89,7 @@ const mgbReleaseInfo = {
         }
       ]
     },
+
     {
       'timestamp': 'Tue May 16 2017 21:10 GMT-0700 (PDT)',
 

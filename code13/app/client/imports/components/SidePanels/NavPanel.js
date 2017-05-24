@@ -220,12 +220,12 @@ export const getNavPanels = (currUser, showAll) => {
             icon: { name: 'sitemap', color: 'green' },
             content: 'Create New Project',
           },
-          (showUserOptions && mgb1name && mgb1name !== '') && {
+          (showUserOptions /*&& mgb1name && mgb1name !== ''*/) && {
             subcomponent: 'Item',
             jrkey: 'importMgb1',
             to: `/u/${uname}/projects/import/mgb1`,
             icon: { name: 'sitemap', color: 'orange' },
-            content: 'Import MGBv1 Project',
+            content: 'Import MGBv1 Projects',
           }
         ])
       },

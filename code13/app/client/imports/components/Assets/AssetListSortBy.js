@@ -1,6 +1,9 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Dropdown } from 'semantic-ui-react'
-const _choiceOptions = "edited,name,kind".split(",")
+import { assetSorters } from '/imports/schemas/assets'
+
+const _choiceOptions = _.keys(assetSorters)
 
 const _menuOpenLeftSty = { left: 'auto', right: '0' } // Magic from levithomason
 

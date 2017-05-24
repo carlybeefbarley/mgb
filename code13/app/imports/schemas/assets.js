@@ -22,8 +22,13 @@ const optional = Match.Optional
 var schema = {
   _id: String,
 
-  createdAt: Date,
-  updatedAt: Date,
+  createdAt:    Date,      // Must be set when created and never changed
+  updatedAt:    Date,      // Must be altered for any change that should be pushed to clients. See assetFetchers.js
+
+// TODO - needed to fix the annoying sort order issues
+//   contentChangedAt: Date,  // A weaker change-timestamp that is used for changes that should not alter sorts - e.g. lock/unlock or heart/unheart
+// // ***TODO: MIGRATION Need to duplicate all updatedAt -> contentChangedAt
+
 
 //teamId: String,       // team owner user id (NOT USED. TODO: REMOVE FROM DB RECORDS)
   ownerId: String,      // Owner user id
@@ -60,6 +65,10 @@ var schema = {
   // Fork information
   forkChildren:    Array,   // Array of peer direct children
   forkParentChain: Array,   // Array of parent forks
+
+  //heartedBy an array of userIds that represents people who hearted an asset
+  heartedBy: optional(Array),
+  heartedBy_count: optional(Number), //just how many people have hearted something
 
   // Metadata field wwas added 10/29/2016 so earlier objects do NOT have it.
   // The 'metdata' field is intended for a SMALL subset of data that is important for good asset-preview (previews exclude 'content2').
@@ -171,23 +180,29 @@ else
 }
 
 export const assetSorters = {
-  "edited": { updatedAt: -1},
-  "name":   { name: 1 },
-  "kind":   { kind: 1 }
+  "edited":  { updatedAt: -1 },
+  "created": { createdAt: -1 },
+  "name":    { name: 1 },
+  "loves":   { heartedBy_count: -1 },
+  "kind":    { kind: 1 }
 }
 
 export const gameSorters = {
-  "edited": { updatedAt: -1},
-  "name":   { name: 1 },
-  "plays":  { 'metadata.playCount': -1 }
+  "edited":  { updatedAt: -1 },
+  "created": { createdAt: -1 },
+  "loves":   { heartedBy_count: -1 },
+  "name":    { name: 1 },
+  "plays":   { 'metadata.playCount': -1 }
 }
 
 // This is used by the publication. It's the merge of assetSorters, gameSorters, ...
 export const allSorters = {
-  "edited": { updatedAt: -1},
-  "name":   { name: 1 },
-  "kind":   { kind: 1 },
-  "plays":  { 'metadata.playCount': -1 }
+  "edited":  { updatedAt: -1 },
+  "created": { createdAt: -1 },
+  "loves":   { heartedBy_count: -1 },
+  "name":    { name: 1 },
+  "kind":    { kind: 1 },
+  "plays":   { 'metadata.playCount': -1 }
 }
 
 Meteor.methods({
@@ -274,6 +289,38 @@ Meteor.methods({
 
     return count
   },
+
+  "Azzets.toggleHeart": function(docId, userId) {
+    checkIsLoggedInAndNotSuspended()
+    check(docId, String)
+    check(userId, String)
+    if(userId !== this.userId)
+      throw new Meteor.Error(404, 'User Id does not match current user Id')
+    const selector = {_id: docId}
+    const asset = Azzets.findOne(selector, { fields: { heartedBy: 1, heartedBy_count: 1 } })
+    if (!asset)
+      throw new Meteor.Error(404, 'Asset Id does not exist')
+    const currUserLoves = _.includes(asset.heartedBy, userId) 
+    var newHeartedBy;
+    if (!currUserLoves)
+      newHeartedBy = _.union(asset.heartedBy, [userId])
+    else
+      newHeartedBy = _.without(asset.heartedBy, userId)
+
+    const newData = {
+      $set : {
+        heartedBy: newHeartedBy,
+        heartedBy_count: newHeartedBy.length,
+        updatedAt: new Date()
+      }
+    }
+    const count = Azzets.update(selector, newData )
+    if (Meteor.isServer)
+      console.log(`  [Assets.toggleHeart]  (${count}) #${docId} '${asset.name}'`)
+
+    return {'count': count, 'newLoveState': !currUserLoves}
+  },
+  
 
   // This does not allow changes to the su* fields. It is much simpler
   // and more robust to handle those cases in a simpler, privileged path instead of

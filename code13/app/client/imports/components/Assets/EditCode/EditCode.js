@@ -1394,6 +1394,7 @@ export default class EditCode extends React.Component {
     return new Promise(resolve => {
       if(!atCursorTypeRequestResponse || !atCursorTypeRequestResponse.data || !atCursorTypeRequestResponse.data.name){
         resolve({atCursorTypeDescription: null})
+        return
       }
       let type = atCursorTypeRequestResponse.data.name
       type = type === 'o' ? 'Object' : type

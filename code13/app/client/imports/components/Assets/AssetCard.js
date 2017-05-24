@@ -15,6 +15,7 @@ import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 
+import UserLoves from '/client/imports/components/Controls/UserLoves'
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
 
 export const assetViewChoices = {
@@ -23,6 +24,8 @@ export const assetViewChoices = {
   l: { showFooter: false, showWorkstate: true, showMeta: true, showExtra: true, showImg: true },
   xl: { showFooter: true, showWorkstate: true, showMeta: true, showExtra: true, showImg: true }
 }
+
+const _preventOnMouseUpClickSteal= e => { e.preventDefault(); e.stopPropagation() }
 
 export const defaultAssetViewChoice = 'm'
 
@@ -111,15 +114,20 @@ export default AssetCard = React.createClass({
       ? _.map(_.filter(ownersProjects, { ownerId: asset.ownerId }), 'name')
       : []
     const editProjects = (
-      <ProjectMembershipEditor
-        canEdit={canEdit}
-        availableProjectNamesArray={availableProjectNamesArray}
-        chosenProjectNames={chosenProjectNamesArray}
-        handleChangeChosenProjectNames={this.handleChangeChosenProjectNames}
-      />
+      <span onMouseUp={_preventOnMouseUpClickSteal}>
+        <ProjectMembershipEditor
+          canEdit={canEdit}
+          availableProjectNamesArray={availableProjectNamesArray}
+          chosenProjectNames={chosenProjectNamesArray}
+          handleChangeChosenProjectNames={this.handleChangeChosenProjectNames}
+        />
+      </span>
     )
     const shownAssetName = asset.name || '(untitled)'
     const currUser = Meteor.user()
+    const canLove = Boolean(currUser) 
+
+    const currUserLoves = currUser ? _.includes(asset.heartedBy, currUser._id) : false
 
     const dropProps = this.getDropProps()
     return (
@@ -151,10 +159,21 @@ export default AssetCard = React.createClass({
         <Card.Content>
           {viewOpts.showWorkstate &&
             <span style={{ float: 'right' }}>
+              <span onMouseUp={_preventOnMouseUpClickSteal}>
+                <UserLoves
+                size={viewOpts.showExtra ? null : 'small'}
+                onIconClick={this.handleUserLoveClick}
+                currUserLoves={currUserLoves}
+                canEdit={canLove}
+                asset={asset}
+                seeLovers={false}
+                />
+              </span>
               <WorkState
-               workState={asset.workState}
-               size={viewOpts.showExtra ? null : 'small'}
-               canEdit={false} />
+              workState={asset.workState}
+              size={viewOpts.showExtra ? null : 'small'}
+              canEdit={false} 
+              />
             </span>}
 
           { !viewOpts.showExtra &&
@@ -330,6 +349,25 @@ export default AssetCard = React.createClass({
     e.preventDefault()
     e.stopPropagation()
   },
+
+  handleUserLoveClick () {
+    const userId = !this.props.currUser._id ? null : this.props.currUser._id
+    if(!userId)
+      return 
+    Meteor.call(
+      'Azzets.toggleHeart',
+      this.props.asset._id,
+      userId,
+      this._handleMeteorErrResp,
+      (error, result)=> {
+        if(error)
+          showToast('was unable to love/unlove this asset' + error.reason, 'error')
+        else {
+          if(result.newLoveState)
+            logActivity('asset.userLoves', `${this.props.currUser.username} loved this asset`, null, this.props.asset)
+        }
+      }
+    )},
 
   handleEditClick (e) {
     if(this.touchHasMoved)

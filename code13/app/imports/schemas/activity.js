@@ -71,6 +71,7 @@ export const ActivityTypes = {
   "asset.license":     { icon: "law",              pri: 11,  description: "Asset license changed" },
   "asset.project":     { icon: "folder sitemap",   pri: 12,  description: "Change Asset's project" },
   "asset.undelete":    { icon: "green trash outline", pri: 12,  description: "Undelete asset" },
+  "asset.userLoves":   {icon: "heart",            pri: 12,  description: "love asset" },
   "asset.ban":         { icon: "red bomb",        pri: 12,  description: "Ban Asset" },
   "asset.unban":       { icon: "green bomb",      pri: 12,  description: "Un-ban Asset" },
   "task.approve":      { icon: "green tasks",     pri: 12,  description: "Approve Task" },

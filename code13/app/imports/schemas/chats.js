@@ -287,23 +287,21 @@ export const ChatChannels = {
     description:  "Off-topic discussions not related to MGB",
     subscopes:    {}
   },
-  ANNOUNCE: {
-    name:         "mgb-announce",
-    icon:         "hashtag",
-    channelName:  makeChannelName( { scopeGroupName: 'Global', scopeId: 'ANNOUNCE' } ),
-    poster:       ChatPosters.SUPERADMIN,
-    description:  "Global announcements/alerts from the MGB engineering team",
-    subscopes:    {}
-  },
+  // ANNOUNCE: {
+  //   name:         "mgb-announce",
+  //   icon:         "hashtag",
+  //   channelName:  makeChannelName( { scopeGroupName: 'Global', scopeId: 'ANNOUNCE' } ),
+  //   poster:       ChatPosters.SUPERADMIN,
+  //   description:  "Global announcements/alerts from the MGB engineering team",
+  //   subscopes:    {}
+  // },
   
   getIconClass: function (key) { return (ChatChannels.hasOwnProperty(key) ? ChatChannels[key].icon : "warning sign") + " icon"},
   sortedKeys: [
     "GENERAL",
     "MGBBUGS",
     "MGBHELP",
-    "RANDOM",
-    "ANNOUNCE"
-  ]
+    "RANDOM"  ]
 }
 
 // TODO: Move to SpecialGlobals.js

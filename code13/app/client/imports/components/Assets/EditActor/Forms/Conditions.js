@@ -10,7 +10,7 @@ export default class All extends BaseForm {
 
   render() {
     return (
-      <div className="ui form">
+      <div style={!this.props.canEdit ? {pointerEvents: 'none'} : {}} className="ui form">
         <span>'Conditions' make an actor appear or disappear, depending on how many other actors are on the map.</span>
         <div style={{height: '50vh'}} className="allInline">
           { this.options("", "appearIf", actorOptions.appearIf) }

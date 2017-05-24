@@ -27,7 +27,7 @@ export default class All extends BaseForm {
     const databag = this.props.asset.content2.databag
 
     return (
-    <div className="ui form">
+    <div style={!this.props.canEdit ? {pointerEvents: 'none'} : {}} className="ui form">
           {this.options(
             "Actor Type", 
             'actorType', 

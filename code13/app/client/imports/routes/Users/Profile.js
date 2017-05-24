@@ -7,6 +7,9 @@ import moment from 'moment'
 import mgb1 from '/client/imports/helpers/mgb1'
 import UserProjects from '/client/imports/components/Users/UserProjects'
 import UserHistory from '/client/imports/components/Users/UserHistory'
+
+import UserLovesList from '/client/imports/components/Users/UserLovesList'
+
 import UserProfileBadgeList from '/client/imports/components/Users/UserProfileBadgeList'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
 import SkillTreeRoute from '/client/imports/routes/Users/SkillTreeRoute'
@@ -113,6 +116,7 @@ export default UserProfileRoute = React.createClass({
           { /* User Games */ }
           <UserProfileGamesList user={user} width={16}/>
 
+
           { /* User Showcase (TODO) */ }
           <UserShowcase user={user} />
 
@@ -126,6 +130,7 @@ export default UserProfileRoute = React.createClass({
           { /* User Projects */ }
           <UserProjects user={user} width={16} projects={this.data.projects} />
 
+          
           { /* User Skills */ }
           <Grid.Column width={16} id="mgbjr-profile-skills">
             <Header as='h2'>
@@ -133,6 +138,8 @@ export default UserProfileRoute = React.createClass({
             </Header>
             <SkillTreeRoute user={user} ownsProfile={ownsProfile} />
           </Grid.Column>
+
+          <UserLovesList user={user} />
 
         </Grid>
       </Segment>

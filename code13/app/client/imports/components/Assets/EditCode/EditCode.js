@@ -556,9 +556,9 @@ export default class EditCode extends React.Component {
       return TutorialMentor.showHint(cm, CodeMirror)
     }
     else if (this.props.canEdit && this.state.currentToken){
-      if(this.state.currentToken.type == "comment")
+      if(this.state.currentToken.type === "comment")
         return CodeMirror.Pass
-      if(this.state.currentToken.type == "string"){
+      if(this.state.currentToken.type === "string"){
         return this.showUserAssetHint(cm, CodeMirror, this.state.currentToken)
       }
       return this.ternServer.complete(cm)
@@ -644,7 +644,7 @@ export default class EditCode extends React.Component {
     if(keyword && keyword.startsWith('/') && !keyword.startsWith('//')){
       const parts = keyword.split(':')
       // get hints for own assets
-      if(parts.length == 1){
+      if(parts.length === 1){
         //if(keyword.length < 2){
           this.showCustomCMHint(cm, this.state.userScripts, 1)
         //  return
@@ -659,7 +659,7 @@ export default class EditCode extends React.Component {
         })*/
       }
       // check if user exists at all? parts[0] - is username
-      else if(parts.length == 2){
+      else if(parts.length === 2){
         const user = parts.shift()
         mgbAjax(`/api/assets/code/${user}/?query=${parts.shift()}`, (err, listStr) => {
           if(err)
@@ -1394,6 +1394,7 @@ export default class EditCode extends React.Component {
     return new Promise(resolve => {
       if(!atCursorTypeRequestResponse || !atCursorTypeRequestResponse.data || !atCursorTypeRequestResponse.data.name){
         resolve({atCursorTypeDescription: null})
+        return
       }
       let type = atCursorTypeRequestResponse.data.name
       type = type === 'o' ? 'Object' : type
@@ -1956,7 +1957,7 @@ export default class EditCode extends React.Component {
     this.changeTimeoutFn = () => {
       // prevent asset changes to older one because of user activity forced update
       // sencond handle change will overwrite deferred save
-      if(this.props.asset.kind == "tutorial") {
+      if(this.props.asset.kind === "tutorial") {
         this.changeTimeout = 0
         this.lastSavedValue = c2.src
         this.props.handleContentChange(c2, thumbnail, reason)

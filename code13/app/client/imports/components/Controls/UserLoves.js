@@ -13,7 +13,7 @@ const UserLoveIcon = ( { size, onIconClick, currUserLoves } ) => (
       onClick={onIconClick}
       color='red'
       //className={`mgb-loves-${heartedBy}`} 
-      />
+    />
 )
 
 const UserLovesUI = ( { seeLovers, userList, canEdit, size, popupPosition, onIconClick, currUserLoves, asset } ) => (
@@ -71,6 +71,7 @@ UserLovesUI.defaultProps = {
 }
 
 
+// TODO: Only get the username list when the popup shows.. or find a cheaper cache for id->username
 
 const UserLoves = createContainer ((props)=> {
   const heartedByIds = props.asset.heartedBy

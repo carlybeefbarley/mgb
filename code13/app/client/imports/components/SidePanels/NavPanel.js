@@ -108,6 +108,14 @@ export const getNavPanels = (currUser, showAll) => {
         menu: [
           {
             subcomponent: 'Item',
+            jrkey: 'lovedGames',
+            icon: { name: 'heart', color: 'red' },
+            to: '/games',
+            query: { sort: 'loves' },
+            content: 'Loved Games',
+          },
+          {
+            subcomponent: 'Item',
             jrkey: 'popularGames',
             icon: { name: 'game', color: 'blue' },
             to: '/games',

@@ -4,7 +4,7 @@ import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/Games
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import { Header, Grid } from 'semantic-ui-react'
 
-export const UserProfileGamesList = ( { user, width } ) => (
+export const UserProfileGamesList = ( { user, width, currUser } ) => (
   <Grid.Column width={width}>
       <Helmet
         title={user.profile.name}
@@ -15,7 +15,7 @@ export const UserProfileGamesList = ( { user, width } ) => (
             <Header as='h2'>
               <QLink to={`/u/${user.profile.name}/games`}>Games</QLink> 
             </Header>
-            <GamesAvailableGET scopeToUserId={user._id}/>
+            <GamesAvailableGET currUser={currUser} scopeToUserId={user._id}/>
           </div>
         :
           <ThingNotFound type="User" />

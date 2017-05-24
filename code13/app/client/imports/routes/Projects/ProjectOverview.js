@@ -199,6 +199,7 @@ export default ProjectOverview = React.createClass({
           <Header as="h3" >Games in this Project</Header>
           <Segment basic>
             <GamesAvailableGET 
+                currUser={currUser}
                 scopeToUserId={project.ownerId}
                 scopeToProjectName={project.name}
                 />

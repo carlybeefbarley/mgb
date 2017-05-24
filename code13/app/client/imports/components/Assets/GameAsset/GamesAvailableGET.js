@@ -10,6 +10,7 @@ export default GamesAvailableGet = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
+    currUser:            PropTypes.object,      // Currently Logged in user. Can be null
     scopeToUserId:       PropTypes.string,      // e.g. 987e78dsygwef. Can be undefined/null
     scopeToProjectName:  PropTypes.string       // e.g. foobar. Can be undefined/null. If specified, then scopeToUserId must also be specified
   },
@@ -17,7 +18,7 @@ export default GamesAvailableGet = React.createClass({
   getMeteorData: function() {
     const { scopeToUserId, scopeToProjectName } = this.props
 
-    const handleForAssets = Meteor.subscribe("assets.public",       // ALSO NEED CONTENT2
+    const handleForAssets = Meteor.subscribe("assets.public",   // ALSO NEED CONTENT2
                               scopeToUserId, 
                               ['game'], 
                               null, 
@@ -40,8 +41,14 @@ export default GamesAvailableGet = React.createClass({
   },
 
   render: function() {
-    const { loading, games } = this.data  
-    // In profile, vertically stackeded list view fits better than card view
-    return loading ? <Spinner /> :  <GameItems games={games} wrap={false}/>
+    const { loading, games } = this.data
+    const { currUser } = this.props
+    // In profile, vertically stacked list view fits better than card view
+    return (
+      loading ?
+        <Spinner /> 
+      : 
+        <GameItems currUser={currUser} games={games} wrap={false}/>
+    )
   }
 })

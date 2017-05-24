@@ -44,7 +44,7 @@ export default UserProfileRoute = React.createClass({
   },
 
   componentDidMount(){
-    // setTimeou just to be sure that everything is loaded
+    // setTimeout just to be sure that everything is loaded
     setTimeout( () => hj('trigger', 'user-profile'), 200)
   },
 
@@ -90,7 +90,7 @@ export default UserProfileRoute = React.createClass({
   },
 
   render: function() {
-    const { user, ownsProfile } = this.props
+    const { user, ownsProfile, currUser } = this.props
     if (!user) 
       return <ThingNotFound type="User" />
 
@@ -114,7 +114,7 @@ export default UserProfileRoute = React.createClass({
           <UserProfileBadgeList user={user} className="sixteen wide column" />
 
           { /* User Games */ }
-          <UserProfileGamesList user={user} width={16}/>
+          <UserProfileGamesList currUser={currUser} user={user} width={16}/>
 
 
           { /* User Showcase (TODO) */ }

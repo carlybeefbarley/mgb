@@ -463,7 +463,7 @@ const AppUI = React.createClass({
                   navPanelAvailableWidth={mainAreaAvailableWidth}
                 />
                 { isNetworkFailure &&
-                  <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable' style={{marginLeft: '8px'}}/>
+                  <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable'/>
                 }
                 { currUser && currUser.suIsBanned &&
                   <Message error icon='ban' header='Your Account has been suspended by an Admin' list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']}/>

@@ -150,7 +150,6 @@ export default AssetCard = React.createClass({
                   currUser={currUser}
                   asset={asset}
                   size={viewOpts.showExtra ? null : 'small'}
-                  currUser={currUser}
                   seeLovers={false}
                 />
               </span>

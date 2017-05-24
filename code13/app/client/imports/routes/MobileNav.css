@@ -14,6 +14,7 @@
   right: 0;
   justify-content: space-around;
   background-color: white;
+  border-top: solid 1px #ccc;
 }
 
 .react-swipeable-view-container {
@@ -58,7 +59,10 @@
 
 .locationPopup{
   position: fixed;
-  height: 100%;
+  min-height: 100%;
+  min-width: 100%;
+  top: 0;
+  right: 0;
   background-color: white;
   z-index: 9;
 }
@@ -66,6 +70,7 @@
   position: absolute;
   top: 0;
   right: 0;
+  z-index: 1;
 }
 .locationPopup .head:after{
   content: 'x';

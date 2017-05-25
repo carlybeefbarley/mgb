@@ -56,6 +56,9 @@ const StepHelp = ( { insertCodeCallback } ) => (
 const TutSummary = props => {
   const pj = props.parsedTutorialData
 
+  if (!pj)
+    return null
+
   if (pj.errorHintString)
     return <Message error icon='warning sign' header='JSON Parse error:' content={pj.errorHintString} />
 
@@ -88,7 +91,7 @@ const TutSummary = props => {
 
 const TutorialMentor = ( { tryTutorial, stopTutorial, parsedTutorialData, insertCodeCallback } ) => { 
   const pj = parsedTutorialData
-  const isBadData = (pj.errorHintString || !pj.data || !_.isArray(pj.data.steps) || pj.data.steps.length === 0)
+  const isBadData = (!pj || pj.errorHintString || !pj.data || !_.isArray(pj.data.steps) || pj.data.steps.length === 0)
   return (
     <div>
       <Button size='small' color='yellow' disabled={isBadData} onClick={tryTutorial}>

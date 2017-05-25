@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { Button } from 'semantic-ui-react
+import { Button } from 'semantic-ui-react'
 
 import sty from  '../editGraphic.css'
 

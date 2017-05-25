@@ -11,15 +11,9 @@ import BrowseGamesRoute from './BrowseGamesRoute'
 
 import fpChat from '../components/SidePanels/fpChat'
 
-
-import App from '/client/imports/routes/App'
-
-
 import NavBar from '/client/imports/components/Nav/NavBar'
 
 import {utilReplaceTo} from '/client/imports/routes/QLink.js'
-
-
 
 import './MobileNav.css'
 
@@ -56,7 +50,6 @@ const AllButtons = (p) => {
   </div>
 }
 
-
 const RouterWrap = (p) => (
   <div className="locationPopup">
     <div className="head" onClick={p.onClose}></div>
@@ -65,14 +58,17 @@ const RouterWrap = (p) => (
   </div>
 )
 
-
-
 const doLogout = () => {
   Meteor.logout()
   window.location = '/'
 }
 
+let cache = {}
+
 class MobileNav extends React.Component {
+  static contextTypes = {
+    router:  React.PropTypes.object
+  }
 
   constructor() {
     super()
@@ -95,19 +91,23 @@ class MobileNav extends React.Component {
       'settings',
       'logout',
     ]
-    this.state = {
+    this.state = cache.state || {
       index: 0,
       location: {}
     }
-    this.cache = {}
+  }
 
+
+  setState(newState){
+    super.setState(newState, () => {
+      cache.state = this.state
+    })
   }
 
   setLocation(location){
-    console.log("Setting location:", location)
-    this.setState({
-      location: {[this.state.index]: location}
-    })
+    this.state.location[this.state.index] = location
+    this.setState({location: this.state.location, time: Date.now()})
+    this.context.router.push(location)
   }
 
   componentDidMount() {
@@ -127,10 +127,6 @@ class MobileNav extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState){
-    if(this.cache.pathname != nextProps.location.pathname){
-      this.cache.pathname = nextProps.location.pathname
-      this._tmpView = null
-    }
     return true
   }
 
@@ -151,6 +147,10 @@ class MobileNav extends React.Component {
 
   handleChangeIndex(index) {
     this.setState({index})
+
+    /*if(this.state.location[index]){
+      this.context.router.push(this.state.location[index])
+    }*/
 
     // this is here because this is much faster than react re-rendering
     $(".mobile-nav-button.active", this.refs.mobileNav).removeClass("active")
@@ -175,8 +175,6 @@ class MobileNav extends React.Component {
           onChangeIndex={this.handleChangeIndex.bind(this)}
           ref="swipeable"
           animateTransitions={false}
-
-
         >
           {
             this.renderView()
@@ -219,10 +217,11 @@ class MobileNav extends React.Component {
         const props = b.getProps ? b.getProps(this) : {}
         return (
           <div key={index}>
-            {bName} + {this.state.index}
+            {/*{bName} + {this.state.index}*/}
             {this.state.index === index && this.state.location[index] &&
               <RouterWrap {...this.props} onClose={() => {
-                this.setState({location:{[index]: null}})
+                this.state.location[index] = null
+                this.setState({time: Date.now()})
               }} />
             }
             <b.Component title={bName} isMobile={true} {...this.props} {...props} />

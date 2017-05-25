@@ -148,12 +148,15 @@ const AppUI = React.createClass({
   },
 
   getChildContext() {
+
+    const self = this
     // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See https://github.com/facebook/react/issues/2517
     return {
       urlLocation:  this.props.location,
       settings:     this.props.settings,  // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
       skills:       this.props.skills,     // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
-      tabs: this.refs.mobileNav
+      // keep reference to mobile nav updated
+      get tabs() { return self.refs.mobileNav }
     }
   },
 
@@ -354,7 +357,7 @@ const AppUI = React.createClass({
       this.setState({currentlyEditingAssetInfo: assetInfo})
 
       // guntis - the only place where I can get asset type and send to analytics
-      if (assetInfo.assetVerb == 'View') {
+      if (assetInfo.assetVerb === 'View') {
         const path = '/asset/' + assetInfo.kind
         ga('set', 'page', path)
         ga('send', 'pageview', path)

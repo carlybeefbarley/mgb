@@ -24,8 +24,8 @@ export default () => (
       </small>
     </Header>
     <p>
-      You are very welcome to use this new MyGameBuilder site and give us feedback
-      using the <QLink query={{_fp: 'chat'}}><Icon name='chat' />chat panel</QLink> on the right hand side of the screen
+      Welcome to MyGameBuilder!&emsp;
+      If you have thoughts, comments or feedback let us know using the <QLink query={{_fp: 'chat'}}><Icon name='chat' />chat panel</QLink> on the right hand side of the screen
     </p>
     <List className="bulleted">
       <List.Item>

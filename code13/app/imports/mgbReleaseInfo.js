@@ -13,6 +13,36 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+    {
+      'timestamp': 'Thu May 25 2017 13:10 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4220'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'edit.graphic.minimap',
+          'type': 'feature',
+          'changeName': 'New MiniMap 1x graphic preview for graphic editor',
+          'changeSummary': 'The graphic editor now has an extra \'MiniMap\' button. When clicked, this will show a draggable preview of the current frame at 1x resolution. The preview miniMap can also (optionally) show the current frame tessellated (in a 3x3 grid of itself).',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Forking assets now clears the \'loved\' entries from the new assets; Fixed one of the gettingStarted tutorials (#16) that was getting stuck',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
     {
       'timestamp': 'Wed May 24 2017 13:00 GMT-0700 (PDT)',

@@ -13,13 +13,15 @@ import fpChat from '../components/SidePanels/fpChat'
 
 import NavBar from '/client/imports/components/Nav/NavBar'
 
-import {utilReplaceTo} from '/client/imports/routes/QLink.js'
+import {utilReplaceTo, utilPushTo} from '/client/imports/routes/QLink.js'
 
 import './MobileNav.css'
 
 const BlankPage = (p) => {
   return <div>{p.title}</div>
 }
+
+// this is used to test if checkboxes remains checked...
 const Checkboxes = (p) => {
   return <div>{p.title}:
     <input type="checkbox"/>
@@ -41,7 +43,7 @@ const AllButtons = (p) => {
           style={{padding: '5%'}}
           name={bName}
           key={index}
-          onClick={() => p.mobileNav.onClick(b, index)}
+          onClick={() => p.mobileNav.onClickMoreContent(b, index)}
         >
           <Icon name={b.icon || 'question'} size='large'></Icon>
           <p>{b.title}</p>
@@ -58,11 +60,13 @@ const RouterWrap = (p) => (
   </div>
 )
 
+
 const doLogout = () => {
   Meteor.logout()
   window.location = '/'
 }
 
+// make use of this
 let cache = {}
 
 class MobileNav extends React.Component {
@@ -126,6 +130,7 @@ class MobileNav extends React.Component {
     this.erd.removeListener(document.body, this.onresize)
   }
 
+  // todo...
   shouldComponentUpdate(nextProps, nextState){
     return true
   }
@@ -136,13 +141,11 @@ class MobileNav extends React.Component {
 
 
   onClick(button, index) {
-    const max = this.getMaxItems()
-    if (index > max) {
-      console.log('more than max:', button)
-      button.action && button.action()
-      return
-    }
     this.handleChangeIndex(index)
+  }
+
+  onClickMoreContent(button, index){
+    button.action && button.action(this)
   }
 
   handleChangeIndex(index) {
@@ -287,66 +290,6 @@ class MobileNav extends React.Component {
       }),
       icon: 'chat'
     },
-    profile: {
-      title: "Profile",
-      Component: Checkboxes,
-      icon: 'user'
-    },
-    news: {
-      title: "What's new",
-      Component: BlankPage,
-      icon: 'bullhorn'
-    },
-    learn: {
-      title: 'Learn',
-      icon: 'graduation',
-      Component: BlankPage
-    },
-    users: {
-      title: 'Users',
-      icon: 'users',
-      Component: BlankPage
-    },
-    projects: {
-      title: 'Projects',
-      icon: 'sitemap',
-      Component: BlankPage
-    },
-    dailies: {
-      title: 'Dailies',
-      icon: 'exclamation',
-      Component: BlankPage
-    },
-    jams: {
-      title: 'Jams',
-      icon: 'winner',
-      Component: BlankPage
-    },
-    alerts: {
-      title: 'Alerts',
-      icon: 'bell outline',
-      Component: BlankPage
-    },
-    feedback: {
-      title: 'Feedback',
-      icon: 'mail outline',
-      Component: BlankPage
-    },
-    help: {
-      title: 'Help',
-      icon: 'question',
-      Component: BlankPage
-    },
-    settings: {
-      title: 'Settings',
-      icon: 'setting',
-      Component: BlankPage
-    },
-    logout: {
-      title: 'Log Out',
-      icon: 'log out',
-      action: doLogout
-    },
     more: {
       title: 'More',
       icon: 'horizontal ellipsis',
@@ -355,6 +298,94 @@ class MobileNav extends React.Component {
         return {buttons: mobileNav.buttons, mobileNav: mobileNav, from: 5, to: Infinity}
       }
     },
+    // TODO: use some sort of map / names for routes instead of hardcoded strings?
+    profile: {
+      title: "Profile",
+      action: (mobnav) => {
+        // TODO: handle guest
+        mobnav.setLocation(`/u/${Meteor.user().username}`)
+      },
+      icon: 'user'
+    },
+    news: {
+      title: "What's new",
+      action: (mobnav) => {
+        mobnav.setLocation(`/whatsnew`)
+      },
+      icon: 'bullhorn'
+    },
+    learn: {
+      title: 'Learn',
+      action: (mobnav) => {
+        mobnav.setLocation(`/learn`)
+      },
+      icon: 'graduation'
+    },
+    users: {
+      title: 'Users',
+      icon: 'users',
+      action: (mobnav) => {
+        mobnav.setLocation(`/users`)
+      },
+    },
+    projects: {
+      title: 'Projects',
+      icon: 'sitemap',
+      action: (mobnav) => {
+        mobnav.setLocation(`/u/${Meteor.user().username}/projects`)
+      },
+    },
+    dailies: {
+      title: 'Dailies',
+      icon: 'exclamation',
+      action: (mobnav) => {
+        alert('Dailies not implemented...')
+        mobnav.setLocation(`/dailies`)
+      },
+    },
+    jams: {
+      title: 'Jams',
+      icon: 'winner',
+      action: (mobnav) => {
+        alert('Jams are not implemented...')
+        mobnav.setLocation(`/jams`)
+      },
+    },
+    alerts: {
+      title: 'Alerts',
+      icon: 'bell outline',
+      action: (mobnav) => {
+        alert('Alerts are not implemented...')
+        mobnav.setLocation(`/alerts`)
+      },
+    },
+    feedback: {
+      title: 'Feedback',
+      icon: 'mail outline',
+      action: (mobnav) => {
+        alert('Feedback is not implemented...')
+        mobnav.setLocation(`/feedback`)
+      },
+    },
+    help: {
+      title: 'Help',
+      icon: 'question',
+      action: (mobnav) => {
+        alert('TODO: open chat tab -> help channel')
+      },
+    },
+    settings: {
+      title: 'Settings',
+      icon: 'setting',
+      action: (mobnav) => {
+        alert('TODO: load settings')
+      },
+    },
+    logout: {
+      title: 'Log Out',
+      icon: 'log out',
+      action: doLogout
+    }
   }
 }
 

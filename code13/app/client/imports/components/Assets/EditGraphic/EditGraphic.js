@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Grid, Segment, Divider, Header, Popup, Button, Icon } from 'semantic-ui-react'
+import { Grid, Header, Popup, Button, Icon } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import sty from  './editGraphic.css'
 import ReactColor from 'react-color'        // http://casesandberg.github.io/react-color/
@@ -9,7 +9,7 @@ import Tools from './GraphicTools'
 import SpriteLayers from './Layers/SpriteLayers'
 import GraphicImport from './GraphicImport/GraphicImport'
 import CanvasGrid from './CanvasGrid'
-import MiniMap from './MiniMap/MiniMap.js'
+import MiniMap from './MiniMap/MiniMap'
 
 import { snapshotActivity } from '/imports/schemas/activitySnapshots'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
@@ -21,7 +21,7 @@ import ArtTutorial from './ArtTutorials'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
-import { makeExpireThumbnailLink } from '/client/imports/helpers/assetFetchers.js'
+import { makeExpireThumbnailLink } from '/client/imports/helpers/assetFetchers'
 
 // Some constants we will use
 const MAX_BITMAP_WIDTH = 2048

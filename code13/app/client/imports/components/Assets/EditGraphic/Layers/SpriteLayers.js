@@ -159,6 +159,7 @@ export default class SpriteLayers extends React.Component {
     {
       clearTimeout(this._playAnimationTimeoutId)
       this._playAnimationTimeoutId = null
+      this._playLoopRange = null
     }
   }
 
@@ -172,10 +173,34 @@ export default class SpriteLayers extends React.Component {
       this.cancelNextAnimationTimeout()
   }
 
-  playAnimation(frameID) {
+  togglePartialAnimation(frameID, endFrameID, animationName)
+  {
+    if (this.state.isPlaying && this._playLoopRange && animationName === this._playLoopRange.name)
+    {
+      this.cancelNextAnimationTimeout()
+      this.setState({ isPlaying: false })
+    }
+    else
+    {
+      this.cancelNextAnimationTimeout()
+      this.playAnimation(frameID, endFrameID, animationName)
+      this.setState({ isPlaying: true })
+    }
+  }
+
+  playAnimation(frameID, endFrameID, animationName) {
     this.selectFrame(frameID)
     //
-    let nextFrameID = (frameID+1) % this.props.content2.frameNames.length
+    if (!this._playLoopRange)
+      this._playLoopRange = { 
+        startIdx: endFrameID ? frameID-1 : 0,
+        endIdx:   endFrameID ? endFrameID-1 : this.props.content2.frameNames.length -1,
+        name:  animationName
+      }
+
+    let nextFrameID = (frameID+1) 
+    if (nextFrameID > this._playLoopRange.endIdx)
+      nextFrameID = this._playLoopRange.startIdx
     let self = this
     this._playAnimationTimeoutId = setTimeout(function() {
       if (self.state.isPlaying)
@@ -578,7 +603,7 @@ export default class SpriteLayers extends React.Component {
                 _.map(this.getAnimationsTH(), (item, idx) => { return (
                   <th key={"thAnim_"+idx} colSpan={item.colspan} className="animTH">
                     <div className={"ui "+(item.color ? "simple tiny dropdown label "+item.color : "")}>
-                        { item.name }
+                        <span onClick={() => { this.togglePartialAnimation(item.startFrame, item.endFrame, item.name) }}>{ item.name }</span>
                         {
                           item.name ? (
                             <div className="ui menu">

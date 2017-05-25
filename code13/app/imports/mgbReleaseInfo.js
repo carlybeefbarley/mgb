@@ -14,12 +14,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Thu May 25 2017 13:10 GMT-0700 (PDT)',
+      'timestamp': 'Thu May 25 2017 14:10 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.2.0',
         'state': 'Beta',
-        'iteration': '4220'
+        'iteration': '4223'
       },
 
       'releaseManagement': {
@@ -38,7 +38,7 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'Forking assets now clears the \'loved\' entries from the new assets; Fixed one of the gettingStarted tutorials (#16) that was getting stuck',
+          'changeSummary': 'Hid last getStarted tutorial which didn\'t actually do anything; Forking assets now clears the \'loved\' entries from the new assets; Fixed one of the gettingStarted tutorials (#16) that was getting stuck',
           'otherUrls': [ ]
         }
       ]

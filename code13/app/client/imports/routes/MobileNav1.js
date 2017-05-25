@@ -82,6 +82,7 @@ class MobileNav extends React.Component {
       'play',
       'chat',
       'more',
+
       'profile',
       'news',
       'learn',
@@ -102,9 +103,10 @@ class MobileNav extends React.Component {
   }
 
 
-  setState(newState){
+  setState(newState, callback = null){
     super.setState(newState, () => {
       cache.state = this.state
+      callback && callback()
     })
   }
 
@@ -149,15 +151,17 @@ class MobileNav extends React.Component {
   }
 
   handleChangeIndex(index) {
-    this.setState({index})
+    this.setState({index}, () => {
+      // this is here because this is much faster than react re-rendering
+      $(".mobile-nav-button.active", this.refs.mobileNav).removeClass("active")
+      $("#mobile-nav-button-" + index, this.refs.mobileNav).addClass("active")
+    })
 
-    /*if(this.state.location[index]){
+    if(this.state.location[index]){
       this.context.router.push(this.state.location[index])
-    }*/
+    }
 
-    // this is here because this is much faster than react re-rendering
-    $(".mobile-nav-button.active", this.refs.mobileNav).removeClass("active")
-    $("#mobile-nav-button-" + index, this.refs.mobileNav).addClass("active")
+
   }
 
 

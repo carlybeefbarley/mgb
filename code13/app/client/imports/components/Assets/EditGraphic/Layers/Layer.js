@@ -8,11 +8,11 @@ import sty from  '../editGraphic.css';
 export default class Layer extends React.Component {
 
 	constructor(props) {
-	    super(props);
+	    super(props)
 
 	    this.state = {
 	    	editName: false,
-	    };
+	    }
 	}
 
 	toggleVisibility(){

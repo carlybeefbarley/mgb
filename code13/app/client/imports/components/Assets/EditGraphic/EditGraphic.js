@@ -1664,7 +1664,7 @@ export default class EditGraphic extends React.Component {
 
             <Popup
                 trigger={ (
-                  <span style={{ cursor: 'pointer' }} onClick={this.zoomIn} className="ui button small zoomIcon noMargin">
+                  <span id="mgbjr-editGraphic-changeCanvasZoom" style={{ cursor: 'pointer' }} onClick={this.zoomIn} className="ui button small zoomIcon noMargin">
                     <Icon name='zoom in' className='noMargin' />
                   </span>
                 )}

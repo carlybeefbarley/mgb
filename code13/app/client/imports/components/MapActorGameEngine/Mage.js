@@ -195,6 +195,7 @@ export default class Mage extends React.Component {
           if (this._transitioningToMapName && !pendingLoads)
           {
             const newMapData = this.state.loadedMaps[this._transitioningToMapName]
+            newMapData.name = this._transitioningToMapName
             this._game.transitionResourcesHaveLoaded(newMapData)
             this._transitioningToMapName = null
             this._tweenCount = 0

@@ -565,7 +565,7 @@ export default class SpriteLayers extends React.Component {
         </div>
 
         <table className="ui celled small padded table spriteLayersTable">
-          <thead>
+          <thead id="mgbjr-editGraphic-frames">
 
       {/** Animation tabs **/}
 

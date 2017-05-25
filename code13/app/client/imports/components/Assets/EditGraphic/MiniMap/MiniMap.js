@@ -1,13 +1,17 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
-import { Icon, Button } from 'semantic-ui-react'
+import React, { PropTypes } from 'react'
+import ReactDOM from 'react-dom'
+import { Button } from 'semantic-ui-react
 
-import sty from  '../editGraphic.css';
+import sty from  '../editGraphic.css'
 
 export default class MiniMap extends React.Component {
 
-	constructor(props) {
+  static propTypes = {
+    toggleMiniMap:  PropTypes.func.isRequired,
+    width:          PropTypes.number.isRequired,
+    height:         PropTypes.number.isRequired
+  }
+  constructor(props) {
     super(props)
 
     this.state = {
@@ -22,7 +26,7 @@ export default class MiniMap extends React.Component {
       h: null,
       editCanvas: null
     }
-	}
+  }
 
   componentDidMount () {
     this.canvas =  ReactDOM.findDOMNode(this.refs.canvas)
@@ -33,12 +37,12 @@ export default class MiniMap extends React.Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    if(this.state.isTessellated != prevState.isTessellated)
+    if (this.state.isTessellated !== prevState.isTessellated)
       this.redraw()
   }
 
   redraw (editCanvas, w, h) {
-    if(editCanvas){
+    if (editCanvas) {
       this.backup = {
         w: w,
         h: h,
@@ -46,14 +50,13 @@ export default class MiniMap extends React.Component {
       }
     }
     else {
-      if(!this.backup.editCanvas){
+      if (!this.backup.editCanvas) {
         return null
       }
       editCanvas = this.backup.editCanvas
       w = this.backup.w
       h = this.backup.h
     }
-    const c2 = this.props.content2
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     const cols = this.state.isTessellated ? 3 : 1 
     const rows = this.state.isTessellated ? 3 : 1 
@@ -98,7 +101,7 @@ export default class MiniMap extends React.Component {
     this.forceUpdate()
   }  
 
-  toggleTessalated = () => {
+  toggleTessellated = () => {
     this.setState({ isTessellated: !this.state.isTessellated })
   }
 
@@ -145,7 +148,7 @@ export default class MiniMap extends React.Component {
             icon="grid layout"
             primary={this.state.isTessellated}
             className="ui mini right floated icon button"
-            onClick={this.toggleTessalated}
+            onClick={this.toggleTessellated}
             />
         </div>
 

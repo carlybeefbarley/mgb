@@ -57,8 +57,7 @@ export default UserAssetListRoute = React.createClass({
   },
 
   componentDidMount(){
-    // setTimeou just to be sure that everything is loaded
-    setTimeout( () => hj('trigger', 'user-asset-list'), 200)
+    this.hotjarSent = false
   },
 
   /**
@@ -262,6 +261,13 @@ export default UserAssetListRoute = React.createClass({
     const isAllKinds = isAssetKindsStringComplete(qN.kinds)
     const isOneKind = !_.includes(qN.kinds, safeAssetKindStringSepChar)
     const pageTitle = user ? `${name}'s Assets` : "Public Assets"
+
+    // need to send hotjar when we have assets and only once
+    if(!this.hotjarSent && this.data.assets.length > 0){
+      this.hotjarSent = true
+      // setTimeout just to be sure that everything is loaded and rendered
+      setTimeout( () => hj('trigger', 'user-asset-list'), 200)
+    }
 
     return (
       <Segment.Group horizontal className='mgb-suir-plainSegment'>

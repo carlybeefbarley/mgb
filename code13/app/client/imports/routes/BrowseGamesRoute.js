@@ -52,8 +52,8 @@ export default BrowseGamesRoute = React.createClass({
       newQ.sort = q.sort
     if (q.project)
       newQ.project = q.project
-    if (q.showStable === '0' || q.showStable === '1')
-      newQ.showStable = q.showStable
+    // if (q.showStable === '0' || q.showStable === '1')
+    //   newQ.showStable = q.showStable
     if (q.searchName)
       newQ.searchName = q.searchName
       
@@ -133,7 +133,7 @@ export default BrowseGamesRoute = React.createClass({
 
   render() {
     const { games, projects, loading } = this.data         // list of Game Assets provided via getMeteorData()
-    const { user, ownsProfile, location } = this.props
+    const { currUser, user, ownsProfile, location } = this.props
     const name = user ? user.profile.name : ''
     const qN = this.queryNormalized(location.query)
 
@@ -165,11 +165,15 @@ export default BrowseGamesRoute = React.createClass({
             &emsp;
           </div>
 
-          <div style={{ float: 'right' }}>
-            <AssetShowStableSelector 
-                showStableFlag={qN.showStable} 
-                handleChangeFlag={v => this._updateLocationQuery( { showStable: v } ) } />
-          </div>
+          { 
+            /* Show only locked games.. ? 
+            <div style={{ float: 'right' }}>
+              <AssetShowStableSelector 
+                  showStableFlag={qN.showStable} 
+                  handleChangeFlag={v => this._updateLocationQuery( { showStable: v } ) } />
+            </div>
+            */
+          }
 
         { user && 
           <div style={{clear: 'both'}}>
@@ -184,8 +188,19 @@ export default BrowseGamesRoute = React.createClass({
           </div>
         }
 
-        { !loading && games.length === 0 && <Message style={{marginTop: '8em'}} warning icon='help circle' header='No games match your search' content='Widen your search to see more games' /> }
-        { loading ? <Spinner /> : <GameItems wrap={true} games={games} /> }
+        { !loading && games.length === 0 && 
+          <Message 
+              style={{marginTop: '8em'}} 
+              warning 
+              icon='help circle' 
+              header='No games match your search' 
+              content='Widen your search to see more games' /> 
+          }
+        { loading ? 
+            <Spinner />
+           :
+            <GameItems currUser={currUser} wrap={true} games={games} /> 
+        }
 
       </Segment>
     )

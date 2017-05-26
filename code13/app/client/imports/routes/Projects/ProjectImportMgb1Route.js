@@ -279,14 +279,15 @@ const ExplanationMessage = () => (
     <Message.Content>
       <Message.Header>At your service!</Message.Header>
       <p>
-        Verified users can import their projects from their linked accounts in our prior flash-based 'MGBv1' system. You can state your claimed MGBv1 names using the Bio area on your Profile Page.
+        Verified users can import their projects from their linked accounts in our prior flash-based 'MGBv1' system as follows:
       </p>
-      <p>
-        Contact us using the <ChatPanelRef/> to request verification of your prior MGBv1 account names 
-      </p>
-      <p>
-        NOTE: To appear on the games list, and to have a proper play experience, you will need to create a gameConfig asset that lists the start map
-      </p>
+      <ol>
+        <li>State your claimed MGBv1 names using the <em>MGBv1 username =</em> area on your Profile Page</li>
+        <li>Contact us using the <ChatPanelRef/> to request verification of those prior MGBv1 account names</li>
+        <li>We will message you via your wall when it is verified</li>
+        <li>Import your old games using the wonderful UI below</li>
+        <li>Create new gameConfig Assets to list start maps of any games (so that others can find and play your games)</li>
+      </ol>
     </Message.Content>
   </Message>
 )

@@ -84,7 +84,7 @@ export default {
     $meta: {
       name:           'Simple non-code game',
       description:    'A simple game using Actors instead of Code',
-      sequence:       'createGraphic,createActor,createPlayer,createNPC,createObjects,createShot,createActorMap,addingAnEnemy'
+      sequence:       'createGraphic,createActor,createPlayer,createNPC,createObjects,createShot,createActorMap'
     },
     createGraphic:   C.E,
     createActor:     C.E,
@@ -93,7 +93,7 @@ export default {
     createObjects:   C.E,
     createShot:      C.E,
     createActorMap:  C.E,
-    addingAnEnemy:   C.E
+//  addingAnEnemy:   C.E   // Hide this until @Bouhm has had a chance to do it
 //  learnMore:       C.E
   },
 

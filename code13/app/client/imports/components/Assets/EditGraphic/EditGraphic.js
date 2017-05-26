@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Grid, Segment, Divider, Header, Popup, Button, Icon } from 'semantic-ui-react'
+import { Grid, Header, Popup, Button, Icon } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import sty from  './editGraphic.css'
 import ReactColor from 'react-color'        // http://casesandberg.github.io/react-color/
@@ -9,6 +9,7 @@ import Tools from './GraphicTools'
 import SpriteLayers from './Layers/SpriteLayers'
 import GraphicImport from './GraphicImport/GraphicImport'
 import CanvasGrid from './CanvasGrid'
+import MiniMap from './MiniMap/MiniMap'
 
 import { snapshotActivity } from '/imports/schemas/activitySnapshots'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
@@ -20,7 +21,7 @@ import ArtTutorial from './ArtTutorials'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
-import { makeExpireThumbnailLink } from '/client/imports/helpers/assetFetchers.js'
+import { makeExpireThumbnailLink } from '/client/imports/helpers/assetFetchers'
 
 // Some constants we will use
 const MAX_BITMAP_WIDTH = 2048
@@ -61,6 +62,13 @@ const settings_ignoreMouseLeave = true
 //                       ** See the code using 'recentMarker' variable for the actual implementation of this optimization.
 let recentMarker = null  // See explanation above
 
+// keeps data about selected color from previous graphic asset
+let _selectedColors = {
+  // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
+  // Note that the .hex value excludes the leading # so it is for example (white) 'ffffff'
+  fg:    { hex: "#000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
+}
+
 export default class EditGraphic extends React.Component {
   // See AssetEdit.js for propTypes. That wrapper just passes them to us
 
@@ -79,18 +87,14 @@ export default class EditGraphic extends React.Component {
     this.userSkills = context.skills
 
     this.prevToolIdx = null // for undo/redo to set back previous tool
-
     this.state = {
       editScale:        this.getDefaultScale(),        // Zoom scale of the Edit Canvas
       selectedFrameIdx: 0,
       showCheckeredBg:  false,
       showGrid:         true,
       selectedLayerIdx: 0,
-      selectedColors:   {
-        // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
-        // Note that the .hex value excludes the leading # so it is for example (white) 'ffffff'
-        fg:    { hex: "#000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
-      },
+      isMiniMap:        true,
+      selectedColors:   _selectedColors,
       toolActive: false,
       toolChosen: this.findToolByLabelString("Pen"),
       selectRect: null,   // if asset area is selected then value {startX, startY, endX, endY}
@@ -153,6 +157,7 @@ export default class EditGraphic extends React.Component {
   // React Callback: componentDidMount()
   componentDidMount() {
     this.editCanvas =  ReactDOM.findDOMNode(this.refs.editCanvas)
+    this.miniMap =  ReactDOM.findDOMNode(this.refs.miniMap)
     this.editCtx = this.editCanvas.getContext('2d')
     this.editCtxImageData1x1 = this.editCtx.createImageData(1,1)
 
@@ -168,7 +173,7 @@ export default class EditGraphic extends React.Component {
     }
     this.setStatusBarInfo()
 
-    this.handleColorChangeComplete('fg', { rgb: { r: 0, g: 0, b:128, a: 1 } } )
+    this.handleColorChangeComplete('fg', _selectedColors.fg )
 
     // Touch and Mouse events for Edit Canvas
     this.editCanvas.addEventListener('touchmove',     this.handleTouchMove.bind(this))
@@ -410,6 +415,10 @@ export default class EditGraphic extends React.Component {
       }
     }
 
+    // draw minimap
+    if(this.state.isMiniMap)
+      this.refs.miniMap.redraw(this.editCanvas, w, h)
+
     this.drawGrid()
   }
 
@@ -583,6 +592,11 @@ export default class EditGraphic extends React.Component {
         self.setState({ selectDimensions: { width: width, height: height} })
       },
 
+      setPrevTool: function(){
+        if(self.prevToolIdx != null)
+          self.setState({ toolChosen: Tools[self.prevToolIdx] })
+      },
+
       // clearPixelsAt() Like CanvasRenderingContext2D.clearRect, but
       //   (a) It does this to both the current Preview AND the Edit contexts (with zoom scaling)
       //   So this is more convenient than a ClearRect+FillRect in many cases.
@@ -673,6 +687,10 @@ export default class EditGraphic extends React.Component {
     }
   }
 
+  resetZoom = () => {
+    this.setState({ editScale: 1 })
+  }
+
   //
   // TOUCH EVENTS (on Edit Canvas). We create equivalent MouseEvents then re-dispatch them
   // See https://w3c.github.io/touch-events/#toc,
@@ -718,8 +736,8 @@ export default class EditGraphic extends React.Component {
   handleMouseWheel(event)
   {
     // We only handle alt/shift/ctrl-key. Anything else is system behavior (scrolling etc)
-    if (event.altKey === false && event.shiftKey === false && event.ctrlKey === false && this.state.scrollMode == "Normal")
-      return
+    // if (event.altKey === false && event.shiftKey === false && event.ctrlKey === false && this.state.scrollMode == "Normal")
+    //   return
 
     event.preventDefault()      // No default scroll behavior in these cases
 
@@ -729,20 +747,21 @@ export default class EditGraphic extends React.Component {
       if (this.state.toolChosen !== null && this.state.toolChosen.label === "Paste")
         this.state.toolChosen.handleMouseWheel(this.collateDrawingToolEnv(event), wd, this.state.scrollMode)
       else {
-        // TODO maybe change keys so they are not the same as paste tool
-        // zooming canvas and changing frames
-        if (event.shiftKey === true) {          // Shift+Wheel is ZoomIn/ZoomOut
-          if (wd > 0)
-            this.zoomOut()
-          else if (wd < 0)
-            this.zoomIn()
-        }
-        else {                                  // ???+Wheel is NextFrame/PrevFrame
+        if(event.altKey || event.ctrlKey) {                                  // ???+Wheel is NextFrame/PrevFrame
           let f = this.state.selectedFrameIdx
           if (wd < 0 && f > 0)
             this.handleSelectFrame(f - 1)
           else if (wd > 0 && f + 1 < this.frameCanvasArray.length)  // aka c2.frameNames.length
             this.handleSelectFrame(f + 1)
+        }
+        // zoom with mouse wheel
+        // no Shift button as it was before
+        // because users are clicking zoom button way too often (from hotjar heatmaps)
+        else {
+          if (wd > 0)
+            this.zoomOut()
+          else if (wd < 0)
+            this.zoomIn()
         }
       }
     }
@@ -959,6 +978,8 @@ export default class EditGraphic extends React.Component {
     this.state.selectedColors[colortype] = chosenColor
     this.setState( { selectedColors: this.state.selectedColors } )      // Won't trigger redraw because React does shallow compare? Fast but not the 'react-way'
 
+    _selectedColors[colortype] = _.cloneDeep(chosenColor)
+
     // So we have to fix up UI stuff. This is a bit of a hack for perf. See statusBarInfo()
     $('.mgbColorPickerIcon.icon').css( { color: chosenColor.hex})
   }
@@ -1077,6 +1098,9 @@ export default class EditGraphic extends React.Component {
       this.doSaveStateForRedo("Redo changes")
       // Now force this into the DB and that will cause a re-render
       this.saveChangedContent2(c2, c2.frameData[0][0], "Undo changes", true)        // Allow Backwash from database to replace current viewed state
+
+      if(this.prevToolIdx != null)
+        this.setState({ toolChosen: Tools[this.prevToolIdx] })
     }
   }
 
@@ -1094,17 +1118,22 @@ export default class EditGraphic extends React.Component {
       this.doSaveStateForUndo("Undo changes")
       // Now force this into the DB and that will cause a re-render
       this.saveChangedContent2(c2, c2.frameData[0][0], "Redo changes", true)        // Allow Backwash from database to replace current viewed state
+
+      if(this.prevToolIdx != null)
+        this.setState({ toolChosen: Tools[this.prevToolIdx] })
     }
   }
 
   toolEraseFrame(){
-    let w = this.props.asset.content2.width
-    let h = this.props.asset.content2.height
+    if(confirm('Do you really want to erase whole frame?')){
+      let w = this.props.asset.content2.width
+      let h = this.props.asset.content2.height
 
-    this.previewCtxArray.map( (ctx) => {
-      ctx.clearRect(0, 0, w, h)
-    })
-    this.handleSave("Erase frame")
+      this.previewCtxArray.map( (ctx) => {
+        ctx.clearRect(0, 0, w, h)
+      })
+      this.handleSave("Erase frame")
+    }
   }
 
 
@@ -1404,6 +1433,11 @@ export default class EditGraphic extends React.Component {
     let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
     $(importPopup).modal('hide')
     this.setState({ editScale: this.getDefaultScale() })
+
+    // hack, but because of whole EditGraphic architecture
+    // we need to create tileset, but frame canvases are not yet drawn
+    // they are drawn only after content2 travels to server and back
+    c2.doResaveTileset = true
   }
 
   //
@@ -1441,7 +1475,7 @@ export default class EditGraphic extends React.Component {
         name: "toolEraseFrame",
         tooltip: "Erase Frame",
         disabled: false,
-        icon: "square outline icon",
+        icon: "remove circle outline icon",
         shortcut: 'Ctrl+Shift+E',
         level: 2,
         simpleTool: true
@@ -1485,6 +1519,9 @@ export default class EditGraphic extends React.Component {
       // special case for disabling paste tool when there is no pasteCanvas
       if (toolLabel === "Paste")
         Tools[i].disabled = !this.state.pasteCanvas
+
+      // hide unnecssary tools to make space for art tutorials
+      Tools[i].hideTool = ((this.props.asset.skillPath && _.startsWith( this.props.asset.skillPath, 'art' )) && ["Cut", "Copy", "Paste", "Import"].indexOf(toolLabel) !== -1)
     }
 
     const actions = {}
@@ -1700,8 +1737,8 @@ export default class EditGraphic extends React.Component {
     )
   }
 
-  setPrevToolIdx(toolIdx){
-    this.prevToolIdx = toolIdx
+  toggleMiniMap = () => {
+    this.setState({ isMiniMap: !this.state.isMiniMap })
   }
 
   render() {
@@ -1791,7 +1828,7 @@ export default class EditGraphic extends React.Component {
 
             <Popup
               trigger={ (
-                <span style={{ cursor: 'pointer' }} onClick={this.zoomIn} className="ui button small zoomIcon noMargin">
+                <span id="mgbjr-editGraphic-changeCanvasZoom" style={{ cursor: 'pointer' }} onClick={this.zoomIn} className="ui button small zoomIcon noMargin">
                     <Icon name='zoom in' className='noMargin' />
                   </span>
               )}
@@ -1831,8 +1868,12 @@ export default class EditGraphic extends React.Component {
               positioning='bottom left'/>
 
 
-
-
+            <Popup
+              trigger={<Button primary={this.state.isMiniMap} size='small' icon='map' content={'Minimap'}  onClick={this.toggleMiniMap} />}
+              content="Open minimap to see graphic asset in 1x scale"
+              size='small'
+              mouseEnterDelay={250}
+              positioning='bottom left'/>
 
             <Popup
               trigger={ (
@@ -1965,7 +2006,19 @@ export default class EditGraphic extends React.Component {
           />
         </div>
 
+        {/*** MiniMap ***/}
+        {
+          this.state.isMiniMap &&
+          <MiniMap
+            ref       = {"miniMap"}
+            width     = {c2.width}
+            height    = {c2.height}
+            toggleMiniMap = {this.toggleMiniMap}
+          />
+        }
+
         {/*** SpriteLayers ***/}
+
 
         <SpriteLayers
           content2={c2}

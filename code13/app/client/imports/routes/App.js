@@ -1,5 +1,3 @@
-// @stauzs - you are looking for index.js not this file
-
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Message, Icon } from 'semantic-ui-react'
@@ -366,7 +364,6 @@ const AppUI = React.createClass({
   },
 
   render() {
-    console.log("Re-render whole APP")
     const {respData, respWidth, params, loading, currUser, user, currUserProjects, sysvars} = this.props
     const {joyrideDebug, currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats} = this.state
     const {query} = this.props.location
@@ -463,46 +460,44 @@ const AppUI = React.createClass({
             currentlyEditingAssetInfo={currentlyEditingAssetInfo}
           />
 
-          <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id='mgb-jr-main-container'>
-            <div style={mainPanelInnerDivSty}>
-              <NavPanel
-                currUser={currUser}
-                navPanelAvailableWidth={mainAreaAvailableWidth}
-              />
-              { isNetworkFailure &&
-              <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable'
-                       style={{marginLeft: '8px'}}/>
-              }
-              { currUser && currUser.suIsBanned &&
-              <Message error icon='ban' header='Your Account has been suspended by an Admin'
-                       list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']}/>
-              }
-              <NavBar
-                currUser={currUser}
-                user={user}
-                location={this.props.location}
-                name={this.props.routes[1].name}
-                params={this.props.params}
-                flexPanelWidth={flexPanelWidth}
-                sysvars={sysvars}
-                currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-              />
-              {
-                !loading && this.props.children && React.cloneElement(this.props.children, {
-                  // Make below props available to all routes.
-                  user: user,
-                  currUser: currUser,
-                  currUserProjects: currUserProjects,
-                  hazUnreadAssetChat: hazUnreadAssetChat,
-                  ownsProfile: ownsProfile,
-                  isSuperAdmin: isSuperAdmin,
-                  availableWidth: mainAreaAvailableWidth,
-                  handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
-                  isTopLevelRoute: true // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
-                })
-              }
+            <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id='mgb-jr-main-container'>
+              <div style={mainPanelInnerDivSty}>
+                <NavPanel
+                  currUser={currUser}
+                  navPanelAvailableWidth={mainAreaAvailableWidth}
+                />
+                { isNetworkFailure &&
+                  <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable' />
+                }
+                { currUser && currUser.suIsBanned &&
+                  <Message error icon='ban' header='Your Account has been suspended by an Admin' list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']}/>
+                }
+                <NavBar
+                    currUser={currUser}
+                    user={user}
+                    location={this.props.location}
+                    name={this.props.routes[1].name}
+                    params={this.props.params}
+                    flexPanelWidth={flexPanelWidth}
+                    sysvars={sysvars}
+                    currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+                    />
+                {
+                  !loading && this.props.children && React.cloneElement(this.props.children, {
+                    // Make below props available to all routes.
+                    user: user,
+                    currUser: currUser,
+                    currUserProjects: currUserProjects,
+                    hazUnreadAssetChat: hazUnreadAssetChat,
+                    ownsProfile: ownsProfile,
+                    isSuperAdmin: isSuperAdmin,
+                    availableWidth: mainAreaAvailableWidth,
+                    handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
+                    isTopLevelRoute: true // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
+                  })
+                }
+              </div>
             </div>
-          </div>
 
         </div>
         }

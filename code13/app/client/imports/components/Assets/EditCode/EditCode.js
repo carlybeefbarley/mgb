@@ -2323,6 +2323,9 @@ export default class EditCode extends React.Component {
   }
 
   tryTutorial() {
+    if (!this._currentCodemirrorValue)
+      return
+      
     const pj = TutorialMentor.parseJson(this._currentCodemirrorValue)
 
     if (pj.errorHintString)

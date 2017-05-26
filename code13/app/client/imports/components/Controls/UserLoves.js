@@ -5,6 +5,9 @@ import style from './WorkState.css'
 import QLink from '/client/imports/routes/QLink'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Users } from "/imports/schemas"
+import { showToast } from '/client/imports/routes/App'
+import { logActivity } from '/imports/schemas/activity'
+
 
 const UserLoveIcon = ( { size, onIconClick, currUserLoves } ) => (
   <Icon 
@@ -12,11 +15,10 @@ const UserLoveIcon = ( { size, onIconClick, currUserLoves } ) => (
       size={size}
       onClick={onIconClick}
       color='red'
-      //className={`mgb-loves-${heartedBy}`} 
     />
 )
 
-const UserLovesUI = ( { seeLovers, userList, canEdit, size, popupPosition, onIconClick, currUserLoves, asset } ) => (
+const UserLovesUI = ( { seeLovers, userList, size, popupPosition, onIconClick, currUserLoves, asset } ) => (
   <Popup
       on='hover'
       size='small'
@@ -28,7 +30,7 @@ const UserLovesUI = ( { seeLovers, userList, canEdit, size, popupPosition, onIco
           <UserLoveIcon 
               currUserLoves={currUserLoves} 
               size={size} 
-              onIconClick={canEdit ? onIconClick : null }/>
+              onIconClick={onIconClick}/>
         </span>
       )} >
       { seeLovers && 
@@ -60,31 +62,58 @@ const UserLovesUI = ( { seeLovers, userList, canEdit, size, popupPosition, onIco
 
 UserLovesUI.propTypes = {
   popupPosition:  PropTypes.string.isRequired,
-  canEdit:        PropTypes.bool,
-  asset:          PropTypes.object,
+  asset:          PropTypes.object.isRequired,
   onIconClick:    PropTypes.func,
   currUserLoves:  PropTypes.bool,
   seeLovers:      PropTypes.bool
 }
+
 UserLovesUI.defaultProps = {
   popupPosition: "bottom right",
 }
 
-
 // TODO: Only get the username list when the popup shows.. or find a cheaper cache for id->username
 
-const UserLoves = createContainer ((props)=> {
-  const heartedByIds = props.asset.heartedBy
+const UserLoves = createContainer (props => {
+  const { seeLovers, currUser, asset } = props
+  const canLove = Boolean(currUser)
+  const userId = currUser ? currUser._id : null
+  const heartedByIds = asset.heartedBy
   const hasHearts = _.isArray(heartedByIds) && heartedByIds.length > 0
   const selector = {_id: {"$in": heartedByIds}}
+  const doGetUsernames = (seeLovers && hasHearts)
 
   // Only do this query if the asset has some Hearts
-  const usersHandle = hasHearts ? Meteor.subscribe("users.getByIdList", heartedByIds) : null
-    
+  /// ... AND if seeLovers == true ? 
+  const usersHandle = doGetUsernames ? Meteor.subscribe("users.getByIdList", heartedByIds) : null
+
   return {
-    userList: hasHearts ? _.sortBy(Users.find(selector).fetch(), u => _.toLower(u.username)) : [],
-    loading: hasHearts ? !usersHandle.ready() : false
+    userList: doGetUsernames ? _.sortBy(Users.find(selector).fetch(), u => _.toLower(u.username)) : [],
+    currUserLoves: currUser ? _.includes(asset.heartedBy, userId) : false,
+    onIconClick: !canLove ? null : () => {
+      Meteor.call(
+        'Azzets.toggleHeart',
+        asset._id,
+        userId,
+        (error, result) => {
+          if (error)
+            showToast('was unable to love/unlove this asset: ' + error.reason, 'error')
+          else {
+            if (result.newLoveState)
+              logActivity('asset.userLoves', `${currUser.username} loved this asset`, null, asset)
+          }
+        }
+      )
+    },
+    loading: doGetUsernames ? !usersHandle.ready() : false
   }
 
 }, UserLovesUI)
+
+UserLoves.propTypes = {
+  currUser:       PropTypes.object,             // currently Logged In user (not always provided)
+  asset:          PropTypes.object.isRequired,
+  seeLovers:      PropTypes.bool.isRequired
+}
+
 export default UserLoves

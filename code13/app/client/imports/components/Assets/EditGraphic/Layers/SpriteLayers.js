@@ -35,7 +35,6 @@ export default class SpriteLayers extends React.Component {
   {
     // Stop any playAnimation() cycles. However, we CANNOT use this.setState() in this callback!
     this.cancelNextAnimationTimeout()
-
   }
 
     /************************** FRAMES ******************************/
@@ -161,6 +160,7 @@ export default class SpriteLayers extends React.Component {
     {
       clearTimeout(this._playAnimationTimeoutId)
       this._playAnimationTimeoutId = null
+      this._playLoopRange = null
     }
   }
 
@@ -174,9 +174,34 @@ export default class SpriteLayers extends React.Component {
       this.cancelNextAnimationTimeout()
   }
 
-  playAnimation(frameID) {
+  togglePartialAnimation(frameID, endFrameID, animationName)
+  {
+    if (this.state.isPlaying && this._playLoopRange && animationName === this._playLoopRange.name)
+    {
+      this.cancelNextAnimationTimeout()
+      this.setState({ isPlaying: false })
+    }
+    else
+    {
+      this.cancelNextAnimationTimeout()
+      this.playAnimation(frameID, endFrameID, animationName)
+      this.setState({ isPlaying: true })
+    }
+  }
+
+  playAnimation(frameID, endFrameID, animationName) {
     this.selectFrame(frameID)
-    let nextFrameID = (frameID+1) % this.props.content2.frameNames.length
+    //
+    if (!this._playLoopRange)
+      this._playLoopRange = { 
+        startIdx: endFrameID ? frameID-1 : 0,
+        endIdx:   endFrameID ? endFrameID-1 : this.props.content2.frameNames.length -1,
+        name:  animationName
+      }
+
+    let nextFrameID = (frameID+1) 
+    if (nextFrameID > this._playLoopRange.endIdx)
+      nextFrameID = this._playLoopRange.startIdx
     let self = this
     this._playAnimationTimeoutId = setTimeout(function() {
       if (self.state.isPlaying)
@@ -624,7 +649,7 @@ export default class SpriteLayers extends React.Component {
         </div>
 
         <table className="ui celled small padded table spriteLayersTable">
-          <thead>
+          <thead id="mgbjr-editGraphic-frames">
 
       {/** Animation tabs **/}
 
@@ -637,42 +662,48 @@ export default class SpriteLayers extends React.Component {
                 _.map(this.getAnimationsTH(), (item, idx) => { return (
                   <th key={"thAnim_"+idx} colSpan={item.colspan} className="animTH">
                     <div className={"ui "+(item.color ? "simple tiny dropdown label "+item.color : "")}>
-                        { item.name }
+                        <span onClick={() => { this.togglePartialAnimation(item.startFrame, item.endFrame, item.name) }}>{ item.name }</span>
                         {
                           item.name ? (
-                            <div className="menu">
+                            <div className="ui menu">
 
-                              <div className="ui item input">
-                                <span className="text">Name</span>
-                                <input type="text" value={item.name} onChange={this.renameAnimation.bind(this, item.animID)} />
+                              <div className="item">
+                                <div className="ui input">
+                                  <span className="text">Animation Name:&ensp;</span>
+                                  <input type="text" value={item.name} onChange={this.renameAnimation.bind(this, item.animID)} />
+                                </div>
                               </div>
 
-                              <div className="ui item input">
-                                <span className="text">From:</span>
-                                <input
-                                      onChange={this.changeAnimStart.bind(this, item.animID)}
-                                      type="number"
-                                      value={item.startFrame}
-                                      min="1"
-                                      max={c2.frameNames.length} />
-                                <span className="text">To:</span>
-                                <input
-                                      onChange={this.changeAnimEnd.bind(this, item.animID)}
-                                      type="number"
-                                      value={item.endFrame}
-                                      min="1"
-                                      max={c2.frameNames.length} />
+                              <div className="item">
+                                <div className="ui input">
+                                  <span className="text">From:&ensp;</span>
+                                  <input
+                                        onChange={this.changeAnimStart.bind(this, item.animID)}
+                                        type="number"
+                                        value={item.startFrame}
+                                        min="1"
+                                        max={c2.frameNames.length} />
+                                  <span className="text">&nbsp;To:&nbsp;</span>
+                                  <input
+                                        onChange={this.changeAnimEnd.bind(this, item.animID)}
+                                        type="number"
+                                        value={item.endFrame}
+                                        min="1"
+                                        max={c2.frameNames.length} />
+                                </div>
                               </div>
 
-                              <div className="ui item input">
-                                <span className="text">FPS</span>
-                                <input type="number" value={item.fps} min="1" max="60" onChange={this.changeAnimFPS.bind(this, item.animID)} />
+                              <div className="item">
+                                <div className="ui input">
+                                  <span className="text">FPS:&ensp;</span>
+                                  <input type="number" value={item.fps} min="1" max="60" onChange={this.changeAnimFPS.bind(this, item.animID)} />
+                                </div>
                               </div>
 
                               <div className="divide"></div>
 
-                              <div className="item" onClick={this.deleteAnimation.bind(this, item.animID)}>
-                                <i className="remove icon"></i>Delete
+                              <div className="item" onClick={this.deleteAnimation.bind(this, item.animID)} title="Deletes the Animation data, but not the frames." >
+                                <i className="remove icon"/>Delete Animation
                               </div>
                             </div>
                           ) :  ""

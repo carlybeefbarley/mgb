@@ -12,13 +12,13 @@ export METEOR_PROFILE=1
 echo Bundler cache size is now `du -s -h .meteor/local/bundler-cache/`
 rm -rf .meteor/local/bundler-cache/
 # remove old app - meteor don't update this for some reason
-rm -rf .meteor/local/cordova-build/www/application/
+# rm -rf .meteor/local/cordova-build/
 
 # For Windows
 if [[ "$OSTYPE" == "msys" ]]; then
-  meteor.bat build ../bundle --server http://staging.mygamebuilder.com
+  meteor.bat build ../bundle --server http://test.mygamebuilder.com --mobile-server http://test.mygamebuilder.com
 else
-  meteor build ../bundle --server http://staging.mygamebuilder.com
+  meteor build ../bundle --server http://test.mygamebuilder.com --mobile-server http://test.mygamebuilder.com 
 fi
 )
 

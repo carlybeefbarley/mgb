@@ -1,3 +1,5 @@
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
 import { Card, Segment } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
@@ -6,7 +8,7 @@ import UserLoves from '/client/imports/components/Controls/UserLoves'
 
 
 export const GameItem = ( { game, currUser } ) => (
-  <Card className='link' style={{ minWidth: '200px', maxWidth: '200px' }}>
+  <Card className='link' >
     <QLink className='image' to={`/u/${game.dn_ownerName}/play/${game._id}`}>
       {Thumbnail.getLink(game)
         ? <FittedImage src={Thumbnail.getLink(game)}  />

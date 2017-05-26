@@ -43,7 +43,7 @@ import {NotificationContainer, NotificationManager} from 'react-notifications'
 
 import {fetchAssetByUri} from '/client/imports/helpers/assetFetchers'
 
-import MobileNav from './MobileNav1'
+import MobileNav from '../Mobile/MobileNav'
 let G_localSettings = new ReactiveDict()
 
 // This works because <App> is the first Route in /app/client/imports/routes
@@ -366,6 +366,7 @@ const AppUI = React.createClass({
   },
 
   render() {
+    console.log("Re-render whole APP")
     const {respData, respWidth, params, loading, currUser, user, currUserProjects, sysvars} = this.props
     const {joyrideDebug, currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats} = this.state
     const {query} = this.props.location

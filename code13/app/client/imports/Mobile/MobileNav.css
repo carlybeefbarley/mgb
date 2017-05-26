@@ -51,6 +51,7 @@
   overflow: auto;
   align-content: space-around;
   padding-bottom: 50px;
+  font-size: 4vw;
 }
 
 .react-swipeable-view-container > div {

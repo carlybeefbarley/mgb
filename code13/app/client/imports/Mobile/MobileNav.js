@@ -6,10 +6,12 @@ import elementResizeDetectorMaker from 'element-resize-detector'
 
 import fpAssets from '../components/SidePanels/fpAssets'
 
-import HomeRoute from './Home'
-import BrowseGamesRoute from './BrowseGamesRoute'
+import HomeRoute from '../routes/Home'
+import BrowseGamesRoute from '../routes/BrowseGamesRoute'
 
 import fpChat from '../components/SidePanels/fpChat'
+
+import RouterWrap from './RouterWrap'
 
 import NavBar from '/client/imports/components/Nav/NavBar'
 
@@ -51,14 +53,6 @@ const AllButtons = (p) => {
       })}
   </div>
 }
-
-const RouterWrap = (p) => (
-  <div className="locationPopup">
-    <div className="head" onClick={p.onClose}></div>
-    <NavBar {...p} currentlyEditingAssetInfo={p.state.currentlyEditingAssetInfo}/>
-    <div>{React.cloneElement(p.children, p)}</div>
-  </div>
-)
 
 
 const doLogout = () => {
@@ -112,6 +106,9 @@ class MobileNav extends React.Component {
 
   setLocation(location){
     this.state.location[this.state.index] = location
+
+    // clear view - as we will need to re-render it completely
+    this._tmpView = null
     this.setState({location: this.state.location, time: Date.now()})
     this.context.router.push(location)
   }
@@ -151,17 +148,18 @@ class MobileNav extends React.Component {
   }
 
   handleChangeIndex(index) {
+    console.log("Setting state index to:", index)
     this.setState({index}, () => {
       // this is here because this is much faster than react re-rendering
       $(".mobile-nav-button.active", this.refs.mobileNav).removeClass("active")
       $("#mobile-nav-button-" + index, this.refs.mobileNav).addClass("active")
+
+      const route = this.state.location[index] || '/'
+      if(this.state.lastRoute !== route){
+        this.context.router.push(route)
+        this.state.lastRoute = (this.state.location[index] || '/')
+      }
     })
-
-    if(this.state.location[index]){
-      this.context.router.push(this.state.location[index])
-    }
-
-
   }
 
 
@@ -213,8 +211,8 @@ class MobileNav extends React.Component {
   renderView() {
     // without cache performance is very bad...
 
-    //if (this._tmpView)
-    //  return this._tmpView
+    if (this._tmpView)
+      return this._tmpView
 
     const max = this.getMaxItems()
     this._tmpView = this.buttons
@@ -228,8 +226,7 @@ class MobileNav extends React.Component {
             {this.state.index === index && this.state.location[index] &&
               <RouterWrap {...this.props} onClose={() => {
                 this.state.location[index] = null
-                this.setState({time: Date.now()})
-              }} />
+              }} location={this.state.location[index]} key={Date.now() + index * 10000} />
             }
             <b.Component title={bName} isMobile={true} {...this.props} {...props} />
           </div>

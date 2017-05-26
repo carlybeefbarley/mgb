@@ -52,7 +52,11 @@ const allowedOrigins = [
 
   // local developement
   'http://localhost:3000',
-  'http://test.loc:3000'
+  'http://test.loc:3000',
+
+  // mobile device 
+  'http://localhost:12224',
+  'https://localhost:12224'
 ]
 
 export const getCDNDomain = () => (CLOUDFRONT_DOMAIN_NAME)

@@ -146,7 +146,6 @@ export default class Animations extends React.Component {
   }
 
   render() {
-    console.log(this)
     const aType = this.props.asset.content2.databag.all.actorType
     const animations = MgbActor.animationNames
     const rows = []

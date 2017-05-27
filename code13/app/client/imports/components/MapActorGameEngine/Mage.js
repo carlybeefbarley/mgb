@@ -147,6 +147,7 @@ export default class Mage extends React.Component {
     try {
       this._game.startGame(
         this.state.activeMap, 
+        this.props.startMapName,
         this.state.loadedActors, 
         this.state.loadedGraphics, 
         newMapName => this._transitionToNextMap(newMapName),

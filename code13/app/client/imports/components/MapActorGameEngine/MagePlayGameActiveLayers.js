@@ -26,6 +26,7 @@ export default MagePlayGameActiveLayers = {
     var num_players = 0
     var layer = MgbMap.layerActive
     this.activeActors = []
+    const mapName = map.name.indexOf(':') === -1 ? this.ownerName + ':' + map.name : map.name
 
     // Instantiate instances of the Actors using the map data
     for (var y = 0; y < map.metadata.height; y++) {
@@ -40,7 +41,7 @@ export default MagePlayGameActiveLayers = {
             if (skipCreatingPlayers == true && at == MgbActor.alActorType_Player)
               continue
 
-            var respawnId = map.name + "/" + x + "/" +y				// This is the only place I do this format, so no need for a function yet for it
+            var respawnId = mapName + "/" + x + "/" +y				// This is the only place I do this format, so no need for a function yet for it
             if (at != MgbActor.alActorType_Player && this.respawnMemory[respawnId])
             {
               // Aha.. there's a respawn behavior on this, and we've got to something we've remembered about it
@@ -150,7 +151,7 @@ export default MagePlayGameActiveLayers = {
   respawnRequiredActorsForMap: function() {
     // See the complementary code in playSpawnNewActor()
     if (this.respawnMemoryAutoRespawningActors[this.map.name]) {
-debugger  // step through first time
+      debugger  // step through first time
       var a = this.respawnMemoryAutoRespawningActors[this.map.name]		
       for (var i in a)
       {

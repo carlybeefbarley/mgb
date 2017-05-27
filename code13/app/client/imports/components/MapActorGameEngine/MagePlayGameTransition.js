@@ -43,7 +43,7 @@ export default MagePlayGameTransition = {
   transitionResourcesHaveLoaded(newMapData)
   {
     this.map = newMapData
-    this.map.name = newMapData.name
+    this.map.name = newMapData.name.indexOf(':') === -1 ? this.ownerName + ':' + newMapData.name : newMapData.name
     this.transitionStateWaitingForActorLoadRequests = false
     // Note we do NOT set this.isTransitionInProgress = false  -- that is done in TranitionTick()  
   },

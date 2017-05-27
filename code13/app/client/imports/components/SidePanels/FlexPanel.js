@@ -13,7 +13,6 @@ import fpSettings from './fpSettings'
 import fpActivity from './fpActivity'
 import fpKeyboard from './fpKeyboard'
 import fpProjects from './fpProjects'
-import fpNetwork from './fpNetwork'
 import fpAssets from './fpAssets'
 import fpSkills from './fpSkills'
 import fpGoals from './fpGoals'
@@ -39,7 +38,6 @@ const flexPanelViews = [
   { tag: 'users',     lev: 6,  name: 'users',    icon: 'street view',hdr: 'Users',         el: fpUsers,         superAdminOnly: false, mobileUI: false },
 //{ tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   hdr: 'Keys',          el: fpKeyboard,      superAdminOnly: false, mobileUI: false },
   { tag: 'activity',  lev: 6,  name: 'activity', icon: 'lightning',  hdr: 'Activity',      el: fpActivity,      superAdminOnly: false, mobileUI: true   },
-  { tag: 'network',   lev: 7,  name: 'network',  icon: 'signal',     hdr: 'Network',       el: fpNetwork,       superAdminOnly: false, mobileUI: false },
 
   // SuperAdmin-only:
   { tag: 'super',     lev: 4,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',    el: fpSuperAdmin,    superAdminOnly: true, mobileUI: false  } // ALWAYS SuperAdmin
@@ -99,8 +97,7 @@ export default FlexPanel = React.createClass({
 
   getMeteorData: function() {
     return {
-      fpFeatureLevel: getFeatureLevel(this.context.settings, makeLevelKey('FlexPanel')),
-      meteorStatus:   Meteor.status()
+      fpFeatureLevel: getFeatureLevel(this.context.settings, makeLevelKey('FlexPanel'))
     }
   },
 
@@ -166,11 +163,6 @@ export default FlexPanel = React.createClass({
   },
 
   getFpButtonSpecialStyleForTag: function(tag) {
-    const { meteorStatus } = this.data
-
-    if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
-      return { backgroundColor: 'rgba(255,0,0,0.2)' }
-
     return {}       // wiggleActivity is done as a class, so it's not in this function. See render()
   },
 
@@ -205,11 +197,6 @@ export default FlexPanel = React.createClass({
 
 
   getFpButtonAutoShowForTag: function(tag) {
-    const { meteorStatus } = this.data
-
-    if ((tag === 'network') && (!meteorStatus || !meteorStatus.connected ))
-      return true
-
     if (this.props.selectedViewTag == tag)
       return true
 
@@ -333,7 +320,6 @@ export default FlexPanel = React.createClass({
                       currUser={this.props.currUser}
                       currUserProjects={this.props.currUserProjects}
                       user={this.props.user}
-                      meteorStatus={this.data.meteorStatus}
                       chatChannelTimestamps={this.props.chatChannelTimestamps}
                       hazUnreadChats={hazUnreadChats}
                       requestChatChannelTimestampsNow={this.props.requestChatChannelTimestampsNow}

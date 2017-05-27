@@ -25,6 +25,7 @@ import { projectMakeSelector } from '/imports/schemas/projects'
 import NavBar from '/client/imports/components/Nav/NavBar'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
 import FlexPanel from '/client/imports/components/SidePanels/FlexPanel'
+import NetworkStatusMsg from '/client/imports/routes/Nav/NetworkStatusMsg'
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 
 import urlMaker from './urlMaker'
@@ -361,7 +362,7 @@ const AppUI = React.createClass({
   },
 
   render() {
-    const { respData, respWidth, params, loading, currUser, user, currUserProjects, sysvars  } = this.props
+    const { respData, respWidth, params, loading, currUser, user, currUserProjects, meteorStatus, sysvars } = this.props
     const { joyrideDebug, currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats } = this.state
     const { query } = this.props.location
 
@@ -376,8 +377,6 @@ const AppUI = React.createClass({
     const flexPanelWidth = showFlexPanel ? flexPanelWidthWhenExpanded : respData.fpReservedRightSidebarWidth
 
     const mainAreaAvailableWidth = respWidth-parseInt(flexPanelWidth)
-
-    const isNetworkFailure = !_.includes(['connected','connecting'], this.props.meteorStatus.status)
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
@@ -462,9 +461,7 @@ const AppUI = React.createClass({
                   currUser={currUser}
                   navPanelAvailableWidth={mainAreaAvailableWidth}
                 />
-                { isNetworkFailure &&
-                  <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable'/>
-                }
+                <NetworkStatusMsg meteorStatus={meteorStatus} />
                 { currUser && currUser.suIsBanned &&
                   <Message error icon='ban' header='Your Account has been suspended by an Admin' list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']}/>
                 }

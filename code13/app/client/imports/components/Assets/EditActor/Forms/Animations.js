@@ -34,7 +34,7 @@ export default class Animations extends React.Component {
     // Frame 2 and up until all frames are iterated or until it reaches an non-empty animation entry
     for (i=1; i<data.tilecount; i++) {
       if (this.data[index+i] && !this.data[index+i].tileName) {
-        let name = data.name + ' #' + (i+1)
+        let name = val + ' #' + (i+1)
         this.data[index+i] = {
           "action": MgbActor.animationNames[index+i],
           "tileName": name,
@@ -146,6 +146,7 @@ export default class Animations extends React.Component {
   }
 
   render() {
+    console.log(this)
     const aType = this.props.asset.content2.databag.all.actorType
     const animations = MgbActor.animationNames
     const rows = []

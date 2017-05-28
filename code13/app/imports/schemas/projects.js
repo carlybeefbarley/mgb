@@ -479,6 +479,7 @@ Meteor.methods({
     // 0. Perform Input/User Validations
     checkIsLoggedInAndNotSuspended()
     check(docId, String)
+    const currUser = Meteor.user()
     if (data.description)
       checkMgb.projectDescription(data.description)
     // Load ownerId and name of existing record to make sure current user is the owner
@@ -486,9 +487,9 @@ Meteor.methods({
     const existingProjectRecord = Projects.findOne( selector, { fields: { ownerId: 1, name: 1, memberIds: 1 } } )
     if (!existingProjectRecord)
       throw new Meteor.Error(404, 'Project Id does not exist')
-    if (existingProjectRecord.ownerId !== this.userId)
+    if (existingProjectRecord.ownerId !== this.userId && !isUserSuperAdmin(currUser))
       throw new Meteor.Error(401, "You don't have permission to edit this")
-    if(data.memberIds && data.memberIds.length > _calcMaxNumMembersAllowedInProject(Meteor.user()) )
+    if (data.memberIds && data.memberIds.length > _calcMaxNumMembersAllowedInProject(currUser) )
       throw new Meteor.Error(401, "You have exceeded the maximum number of members allowed")
 
     // 1. Create new Project record and store in Collection

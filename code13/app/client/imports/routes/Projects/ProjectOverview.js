@@ -74,10 +74,12 @@ export default ProjectOverview = React.createClass({
   },
 
   canEdit: function() {
-    return Boolean(!this.data.loading &&
-           this.data.project &&
-           this.props.currUser && 
-           this.data.project.ownerId === this.props.currUser._id)
+    return Boolean(
+      !this.data.loading &&
+      this.data.project &&
+      this.props.currUser && 
+      ( this.data.project.ownerId === this.props.currUser._id || isUserSuperAdmin(this.props.currUser) )
+    )
   },
 
   render: function() {

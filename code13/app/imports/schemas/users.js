@@ -46,6 +46,7 @@ const schema = {
 
 export const userSorters = { 
   "default":         { createdAt: -1 },    // Should be same as one of the others..
+  "badges":          { badges_count: -1 }, 
   "createdNewest":   { createdAt: -1 }, 
   "createdOldest":   { createdAt: 1 }, 
   "nameAscending":   { "profile.name": 1  },        // NOTE: MongoDB doesn't yet support case-insensitive name sorts. grrr

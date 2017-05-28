@@ -26,14 +26,17 @@ const fieldsUserPublic = {
 Meteor.users._ensureIndex( { "profile.name": 1 } )
 Meteor.users._ensureIndex( { "profile.name": 1, "isDeactivated": 1 } )
 Meteor.users._ensureIndex( { "createdAt": 1 } )
+Meteor.users._ensureIndex( { badges_count: -1 } )
 
-// This is for Meteor.user()   See http://www.east5th.co/blog/2015/03/16/user-fields-and-universal-publications/
+// The 'null'-named publication is for Meteor.user()   See http://www.east5th.co/blog/2015/03/16/user-fields-and-universal-publications/
 Meteor.publish(null, function() {
   if (this.userId)
     return Meteor.users.find( { _id: this.userId }, { fields: fieldsUserPublic } )
   else
     return null
 })
+
+
 
 Meteor.publish('users.byName', function(nameSearch, limitCount, userSortType) {
   let selector = { isDeactivated: { $ne: true } }

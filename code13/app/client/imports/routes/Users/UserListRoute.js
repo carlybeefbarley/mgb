@@ -31,7 +31,7 @@ export default UserListRoute = React.createClass({
     return {
       userLimit: this.props.initialLimit,
       searchName: "",
-      userSort: "createdNewest"                 // Must be one of the keys of userSorters. TODO: Implement select UI for this
+      userSort: "badges"                 // Must be one of the keys of userSorters. TODO: Implement select UI for this
     }
   },
 
@@ -125,9 +125,11 @@ export default UserListRoute = React.createClass({
             <div>
               <UserList users={filteredUsers} handleClickUser={handleClickUser} narrowItem={narrowItem}/>
               <Divider hidden/>
+              { filteredUsers.length === this.state.userLimit && 
               <Button onClick={this.handleLoadMore}>
-                Showing most recent matching {filteredUsers.length} users.  Click to load more...
+                Showing first {filteredUsers.length} matching users.  Click to load more...
               </Button>
+              }
             </div>
           } 
         </div>   

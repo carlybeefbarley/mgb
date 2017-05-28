@@ -23,7 +23,7 @@ const mgbReleaseInfo = {
       'id': {
         'ver': '0.2.0',
         'state': 'Beta',
-        'iteration': '4237'
+        'iteration': '4238'
       },
 
       'releaseManagement': {
@@ -35,7 +35,7 @@ const mgbReleaseInfo = {
           'featureTag': 'edit.graphic.minimap',
           'type': 'feature',
           'changeName': 'Preview animations',
-          'changeSummary': 'Feature suggested by @Zaqory - preview just the named animation changes. Now clicking on the animation name in the graphic editor will start/stop the animation preview just for the frames withing that animation.',
+          'changeSummary': 'Feature suggested by @Zaqory - preview just the named animation changes. Now clicking on the animation name in the graphic editor will start/stop the animation preview - but just for the frames within that animation.',
           'otherUrls': [ ]
         },
         {

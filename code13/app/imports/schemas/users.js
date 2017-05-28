@@ -118,6 +118,8 @@ Meteor.methods({
       "profile.focusStart": optional(schema.profile.focusStart),
       "profile.mgb1name": optional(schema.profile.mgb1name),
 //    "profile.mgb1namesVerified": optional(schema.profile.mgb1namesVerified),   // TODO: Some server-only validation for this
+// Note that badges and badges_count have their own special api
+
       "profile.images": optional(schema.profile.images),
       "profile.isDeleted": optional(schema.profile.isDeleted),
       "profile.projectNames": optional(schema.profile.projectNames),

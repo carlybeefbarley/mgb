@@ -59,6 +59,7 @@ let analyticsLoggedInSendFlag = true
 
 
 // for now, until we have push notifications for chat
+const CHAT_POLL_INITIAL_MS = (3*1000)
 const CHAT_POLL_INTERVAL_MS = (12*1000)
 
 // Tutorial/Joyride infrastructure support
@@ -275,6 +276,9 @@ const AppUI = React.createClass({
   },
 
   _schedule_requestChatChannelTimestampsNow() {
+    // One soon..
+    window.setTimeout(this.requestChatChannelTimestampsNow, CHAT_POLL_INITIAL_MS)
+    // And the ongoing poll less frequently
     window.setInterval(this.requestChatChannelTimestampsNow, CHAT_POLL_INTERVAL_MS)
   },
 
@@ -321,7 +325,8 @@ const AppUI = React.createClass({
           if (cct._hazUnreads)
             hazUnreadChats.push(channelName)
         })
-        this.setState( { chatChannelTimestamps, hazUnreadChats } )
+        if (!_.isEqual(hazUnreadChats, this.state.hazUnreadChats) || !_.isEqual(chatChannelTimestamps, this.state.chatChannelTimestamps))
+          this.setState( { chatChannelTimestamps, hazUnreadChats } )
       }
     })
   },

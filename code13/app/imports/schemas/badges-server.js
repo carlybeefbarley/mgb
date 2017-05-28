@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { hasMultipleSkills } from './skills'
-import { Skills } from '/imports/schemas'
+import { Skills, Projects } from '/imports/schemas'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
 
@@ -56,6 +56,18 @@ const _functionBasedBadges = [
   {
     newBadgeName: 'mgbAdmin',
     func: isUserSuperAdmin       // a function that takes a user-record as a parameter, and returns true if badge should be granted
+  },
+  {
+    newBadgeName: 'hasAvatar',
+    func: user => _.startsWith(user.profile.avatar, '/api/asset')
+  },
+  {
+    newBadgeName: 'mgb1namesVerified',
+    func: user => (_.isString(user.profile.mgb1namesVerified) && user.profile.mgb1namesVerified.length > 0)
+  },
+  {
+    newBadgeName: 'mgb1namesImported',
+    func: user => ( Projects.find( { ownerId: user._id, mgb1: { $exists: true } } ).count() > 0 )
   }
 ]
 
@@ -64,6 +76,7 @@ const _doRefreshBadgeStatus = user => {
     return []
 
   let newBadgeKeys = []
+  const now = new Date()
 
   // 0. manual (name-based) awards
   _.each(_nameBasedBadges, nbb => {
@@ -76,7 +89,7 @@ const _doRefreshBadgeStatus = user => {
           user._id, 
           {
             $addToSet: { 'badges': nbb.newBadgeName },
-            $set:      { updatedAt: new Date() }
+            $set:      { updatedAt: now }
           }
         )
         console.log(`Name-based Badge Awarded -  update returned count=${count}`)
@@ -99,7 +112,7 @@ const _doRefreshBadgeStatus = user => {
           user._id, 
           {
             $addToSet: { 'badges': sbb.newBadgeName },
-            $set:      { updatedAt: new Date() }
+            $set:      { updatedAt: now }
           }
         )
         console.log(`Skill-based Badge '${sbb.newBadgeName}' award to '@${user.username}': Mongo Update returned count=${count}`)
@@ -120,7 +133,7 @@ const _doRefreshBadgeStatus = user => {
           user._id, 
           {
             $addToSet: { 'badges': fbb.newBadgeName },
-            $set:      { updatedAt: new Date() }
+            $set:      { updatedAt: now }
           }
         )
         console.log(`Function-based Badge '${fbb.newBadgeName}' award to '@${user.username}': Mongo Update returned count=${count}`)
@@ -132,6 +145,21 @@ const _doRefreshBadgeStatus = user => {
   // TODO: more...
 
 
+  if (newBadgeKeys.length > 0)
+  {
+    const allBadges = (_.isArray(user.badges) && user.badges.length > 0) ? 
+      _.union(user.badges, newBadgeKeys) : newBadgeKeys
+    const count = Meteor.users.update( 
+      user._id, 
+      {
+        $set: { 
+          'badges_count': allBadges.length,
+          updatedAt:      now 
+        }
+      } )
+      console.log(count, user.username, allBadges.length, allBadges.join(','))  
+  }
+
   // OK, return the array of newly-granted badge keys
   return newBadgeKeys
 }
@@ -140,9 +168,10 @@ Meteor.methods({
   "User.refreshBadgeStatus": function( ) {
     return _doRefreshBadgeStatus(Meteor.user())
   }
-  //,
+  // ,
   // "User.refreshAllUserBadges": function() {   // e.g. call with   Meteor.call("User.refreshAllUserBadges")
-  //   Meteor.users.find(  ).forEach(function(u) { _doRefreshBadgeStatus(u) } ) 
+  //   console.log("---User.refreshAllUserBadges-start---")
+  //   Meteor.users.find( ).forEach(function(u) { _doRefreshBadgeStatus(u) } ) 
   //   console.log("---User.refreshAllUserBadges-done---")
   // }
 })

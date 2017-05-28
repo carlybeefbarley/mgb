@@ -17,12 +17,12 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
-      'timestamp': 'Sat May 27 2017 22:40 GMT-0700 (PDT)',
+      'timestamp': 'Sat May 27 2017 23:15 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.2.0',
         'state': 'Beta',
-        'iteration': '4241'
+        'iteration': '4243'
       },
 
       'releaseManagement': {
@@ -41,7 +41,7 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'More badges (and users are now sorted by badge count)! Fixed respawn/persist bug with actorMap games; reduced JS download size by 10%; Fixed bug reported by @Zaqory with actors using frames within graphics for animations; removed the \'Network\ flexPanel and instead moved the reconnect-now functionality to the main no-network message bar that is shown when offline; added server support for the upcoming mobile apps to connect via CDN; ' ,
+          'changeSummary': 'More badges (and users are now sorted by badge count)! Fixed respawn/persist bug with actorMap games; reduced JS download size by 10%; Fixed bug reported by @Zaqory with actors using frames within graphics for animations; removed the \'Network\ flexPanel and instead moved the reconnect-now functionality to the main no-network message bar that is shown when offline; added server support for the upcoming mobile apps to connect via CDN; Fixed issue where drawing would get interrupted every 12 seconds by a chat-unreads check' ,
           'otherUrls': [ ]
         }
       ]

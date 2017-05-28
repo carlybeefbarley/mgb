@@ -87,6 +87,16 @@ Meteor.publish('settings.userId', function(userId) {
 })
 
 
+
+//  
+Meteor.publish('users.badge.holders', function (badgename) 
+{
+  return Meteor.users.find(
+    { badges: { $in: [badgename]} },
+    { sort: { "badges_count": -1 }, limit: 20 }
+  )
+})
+
 //  
 Meteor.publish('users.frontPageList', function () 
 {

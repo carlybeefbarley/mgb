@@ -6,7 +6,7 @@ import _ from 'lodash'
 
 export const badgeList = {
 //mgb1veteran:      [ "v2/anvil.png",               'MGB1 Veteran' ],
-  mgbAdmin:         [ "maris_design/pro/winner.png",'MGB Admin' ],
+  mgbAdmin:         [ "maris_design/pro/winner.png",'MGB Administrator' ],
   hasAvatar:        [ "Has Avatar.png",             'Made an Avatar' ],
   mgb2AlphaTester:  [ "v2/beginner/bugfinder.png",  "Active Alpha Tester" ],
   mgb1namesVerified: [ "maris_design/beginner/necromancer.png", "Verified MGBv1 veteran"],

@@ -8,6 +8,7 @@
 import { checkIsLoggedIn, checkMgb } from './checkMgb.js'
 */
 
+import _ from 'lodash'
 import validate from './validate'
 import { isUserSuperAdmin } from './roles'
 
@@ -30,6 +31,17 @@ export function checkIsLoggedInAndNotSuspended() {
 }
 
 export const checkMgb = {
+
+  /**
+   * Check userId is valid (at least a string of chars or more. This is NOT a username)
+   * Throw Meteor.Error() if not valid
+   * @returns {void} or throws Meteor.Error()
+   */
+  userId: function(userId) {
+    if (!_.isString(userId) || userId.length < 8)
+      throw new Meteor.Error(403, "Invalid UserId")
+  },
+
   /**
    * Check projectName is valid. Throw Meteor.Error() if not valid
    * @returns {void} or throws Meteor.Error()

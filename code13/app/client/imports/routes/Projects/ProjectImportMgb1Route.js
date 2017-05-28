@@ -151,10 +151,10 @@ class ProjectImportMgb1RouteUI extends React.Component {
     return (
       <Segment basic>
         <Helmet
-          title="Import MGB1 Projects"
+          title="Import MGBv1 Projects"
           meta={[ {"name": "description", "content": "Import Projects"} ]}
         />
-        <Header as='h2' content='Import MGB1 Projects'/>
+        <Header as='h2' content='Import MGBv1 Projects'/>
         <Segment raised>
           <ExplanationMessage />
           <Segment>

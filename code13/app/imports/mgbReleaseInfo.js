@@ -16,6 +16,39 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+
+    {
+      'timestamp': 'Sat May 27 2017 19:45 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4237'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'edit.graphic.minimap',
+          'type': 'feature',
+          'changeName': 'Preview animations',
+          'changeSummary': 'Feature suggested by @Zaqory - preview just the named animation changes. Now clicking on the animation name in the graphic editor will start/stop the animation preview just for the frames withing that animation.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'More badges! Fixed respawn/persist bug with actorMap games; reduced JS download size by 10%; Fixed bug reported by @Zaqory with actors using frames within graphics for animations; removed the \'Network\ flexPanel and instead moved the reconnect-now functionality to the main no-network message bar that is shown when offline; added server support for the upcoming mobile apps to connect via CDN; ' ,
+          'otherUrls': [ ]
+        }
+      ]
+
+    },
+
     {
       'timestamp': 'Thu May 25 2017 14:10 GMT-0700 (PDT)',
 
@@ -46,12 +79,12 @@ const mgbReleaseInfo = {
         }
       ]
 
+    }
+
       // ,
       // Older history has been moved to ${olderHistoryPath} in order to reduce js size
       // But at least the most recent should be in this file. 
       // See notes in main_server.js for how to more to ${olderHistoryPath} as JSON
-
-    }
 
   ]
 }

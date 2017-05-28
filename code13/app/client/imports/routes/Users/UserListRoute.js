@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes} from 'react'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
-import { Container, Segment } from 'semantic-ui-react'
+import { Button, Divider, Container, Segment } from 'semantic-ui-react'
 import { Users } from '/imports/schemas'
 import { userSorters } from '/imports/schemas/users'
 
@@ -23,7 +23,7 @@ export default UserListRoute = React.createClass({
   getDefaultProps: function() {
     return {
       renderVertical: false,
-      initialLimit: 21
+      initialLimit: 50
     }
   },
 
@@ -124,7 +124,10 @@ export default UserListRoute = React.createClass({
           { this.data.loading ? <Spinner /> : 
             <div>
               <UserList users={filteredUsers} handleClickUser={handleClickUser} narrowItem={narrowItem}/>
-              <button onClick={this.handleLoadMore} className="ui button">Load more</button>
+              <Divider hidden/>
+              <Button onClick={this.handleLoadMore}>
+                Showing most recent matching {filteredUsers.length} users.  Click to load more...
+              </Button>
             </div>
           } 
         </div>   

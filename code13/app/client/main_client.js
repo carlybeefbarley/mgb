@@ -17,8 +17,16 @@ import { Tracker } from 'meteor/tracker'
 // iOS will only fire `onClick` events on elements with cursor: pointer
 // otherwise, it will only fire touch events
 // On touch enabled devices, ensure the cursor is a pointer so click events fire
+window.setInterval(() => {
+  document.body.style.cursor = ''
+  console.log("reset document style")
+}, 5000)
+/*
 
 (function setIOSHack(){
+  // only for ios
+  if(!/(iPad|iPhone|iPod)/g.test(navigator.userAgent))
+    return
   // check if body is present ( on cordova it was causing troubles )
   if(!document || !document.body || !document.body.style){
     setTimeout(setIOSHack, 100)
@@ -28,7 +36,7 @@ import { Tracker } from 'meteor/tracker'
     document.body.style.cursor = 'pointer';
   }
 })()
-
+*/
 // import Perf from "react-addons-perf"
 // // Expose the React Performance Tools on the`window` object
 // window.Perf = Perf

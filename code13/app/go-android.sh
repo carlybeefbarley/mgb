@@ -16,9 +16,9 @@ rm -rf .meteor/local/cordova-build/www/application/
 
 # For Windows
 if [[ "$OSTYPE" == "msys" ]]; then
-  meteor.bat run android-device -p 0.0.0.0:3000 --mobile-server http://test.mygamebuilder.com $@
+  meteor.bat run android-device --mobile-server http://test.mygamebuilder.com $@
 else
-  meteor run android-device -p 0.0.0.0:3000 --mobile-server http://test.mygamebuilder.com $@
+  meteor run android-device --mobile-server http://test.mygamebuilder.com $@
 fi
 )
 

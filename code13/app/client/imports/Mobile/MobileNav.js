@@ -19,21 +19,6 @@ import {utilReplaceTo, utilPushTo} from '/client/imports/routes/QLink.js'
 
 import './MobileNav.css'
 
-const BlankPage = (p) => {
-  return <div>{p.title}</div>
-}
-
-// this is used to test if checkboxes remains checked...
-const Checkboxes = (p) => {
-  return <div>{p.title}:
-    <input type="checkbox"/>
-    <input type="checkbox"/>
-    <input type="checkbox"/>
-    <input type="checkbox"/>
-    <input type="checkbox"/>
-  </div>
-}
-
 const AllButtons = (p) => {
   return <div className="mobile-nav-all-buttons">
     {p.buttons
@@ -303,8 +288,10 @@ class MobileNav extends React.Component {
     profile: {
       title: "Profile",
       action: (mobnav) => {
-        // TODO: handle guest
-        mobnav.setLocation(`/u/${Meteor.user().username}`)
+        if(Meteor.user())
+          mobnav.setLocation(`/u/${Meteor.user().username}`)
+        else
+          mobnav.setLocation(`/login`)
       },
       icon: 'user'
     },

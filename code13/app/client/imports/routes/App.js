@@ -371,6 +371,11 @@ const AppUI = React.createClass({
     if (!loading)
       this.configureTrackJs()
 
+
+    if(loading)
+      return null
+
+
     // The Flex Panel is for communications and common quick searches in a right hand margin
     //   (or fixed footer for Phone-size PortraitUI)
     const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
@@ -831,12 +836,13 @@ const App = createContainer( ( { params , location} ) => {
     meteorStatus:     Meteor.status(),
     skills:           currUser ? Skills.findOne(currUserId) : null,
     sysvars:          Sysvars.findOne(),
-    loading:          !handleForUser.ready()    ||
+    loading: false
+    /*loading:          !handleForUser.ready()    ||
                       !handleForSysvars.ready() ||
                       !(!handleActivity ||handleActivity.ready()  ) ||
                       !projectsReady            ||
                       !settingsReady            ||
-                      !skillsReady
+                      !skillsReady*/
   }
 }, AppUI)
 

@@ -151,10 +151,10 @@ function download(){
 
 		echo "FROM: ${JDK}"
 
-		curl -L -b "oraclelicense=a" "$JDK" -o "${WD}/"jdk.tar.gz "$JDK"
+		#curl -L -b "oraclelicense=a" "$JDK" -o "${WD}/"jdk.tar.gz "$JDK"
 		#curl -k -H "Cookie: oraclelicense=accept-securebackup-cookie" -o "${WD}/"jdk.tar.gz "$JDK"
 
-		#wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" -O "${WD}/"jdk.tar.gz $JDK
+		wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" -O "${WD}/"jdk.tar.gz $JDK
 	fi
 
 	if [ "$2" == "ant" ] || [ "$2" == "" ]; then
@@ -162,8 +162,8 @@ function download(){
 		if [ -d ant ]; then
 			rm -rf ant
 		fi
-		curl -o "${WD}/"ant.tar.gz $ANT
-		# wget -O "${WD}/"ant.tar.gz $ANT
+		#curl -o "${WD}/"ant.tar.gz $ANT
+		wget -O "${WD}/"ant.tar.gz $ANT
 	fi
 
 	# if [ "$2" == "crosswalk" ] || [ "$2" == "" ]; then
@@ -179,8 +179,8 @@ function download(){
 		if [ -d android ]; then
 			rm -rf android
 		fi
-		curl -o "${WD}/"android.tar.gz $ANDROID
-		# wget -O "${WD}/"android.tar.gz $ANDROID
+		#curl -o "${WD}/"android.tar.gz $ANDROID
+		wget -O "${WD}/"android.tar.gz $ANDROID
 	fi
 
 

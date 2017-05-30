@@ -1,4 +1,3 @@
-
 import React from 'react'
 
 import { Routes } from '/client/imports/routes'
@@ -17,7 +16,11 @@ import { Tracker } from 'meteor/tracker'
 // iOS will only fire `onClick` events on elements with cursor: pointer
 // otherwise, it will only fire touch events
 // On touch enabled devices, ensure the cursor is a pointer so click events fire
+alert('latest...')
 window.setInterval(() => {
+  if(!document || !document.body || !document.body.style){
+    return
+  }
   document.body.style.cursor = ''
   console.log("reset document style")
 }, 5000)

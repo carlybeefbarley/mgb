@@ -46,7 +46,7 @@ export default class ObjectBehavior extends BaseForm {
           max: 1000
         })}
 
-        {this.text("Shot rate bonus", 'equippedNewShotDamageBonusNum', "number", {
+        {this.text("Shot rate bonus", 'equippedNewShotRateBonusNum', "number", {
           title: "When equipped, increase base shot rate by this amount",
           min: -20,
           max: 20

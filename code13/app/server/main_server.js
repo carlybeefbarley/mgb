@@ -136,3 +136,8 @@ console.log(`
   Entry point: main_server.js
   `
 )
+
+// In order to create move more of the version history JSON out of the compiled codebase..
+  // var fs = require('fs')
+  // var mgbReleaseInfo = require('/imports/mgbReleaseInfo').default
+  // fs.writeFile('../../../../../tmpRelHistory.json', JSON.stringify(mgbReleaseInfo, null, 2))

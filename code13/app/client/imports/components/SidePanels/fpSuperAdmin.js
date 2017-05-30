@@ -1,8 +1,28 @@
 import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
+import QLink from '/client/imports/routes/QLink'
 import { Button, Menu, Header, List, Segment } from 'semantic-ui-react'
+import { isSameUser } from '/imports/schemas/users'
+import moment from 'moment'
 
-const linkLi = (txt, url) => <List.Item><a target="_blank" href={url}>{txt}</a></List.Item>
+
+const outlinkLi = (txt, url, key) => (
+  <List.Item key={key}>
+    <a target="_blank" href={url}>
+      <small>{txt}</small>
+    </a>
+  </List.Item>
+)
+
+const inlinkLi = (txt, url, key) => (
+  <List.Item key={key}>
+    <QLink to={url}>
+      <small>{txt}</small>
+    </QLink>
+  </List.Item>
+)
+
+const linkLi = (txt, url, key) => _.startsWith(url, '/') ? inlinkLi(txt,url, key) : outlinkLi(txt, url, key)
 
 const _getFlipsideUrl = () => {
   const l = window.location
@@ -18,7 +38,7 @@ const LinkTabContent = () => (
       { linkLi("Slack", "https://devlapse.slack.com/messages/mgb-dev") }
       { linkLi("Github", "https://github.com/devlapse/mgb") }
       { linkLi("SemanticUI", "http://react.semantic-ui.com/") }
-      { linkLi("TimeTracker spreadsheet", "https://docs.google.com/spreadsheets/d/1dq1FjxoHfMl49R-dIoxi7kpTZFi6HCHlz78-9QUO-Ds/edit#gid=131993583")}
+      { /*linkLi("TimeTracker spreadsheet", "https://docs.google.com/spreadsheets/d/1dq1FjxoHfMl49R-dIoxi7kpTZFi6HCHlz78-9QUO-Ds/edit#gid=131993583") */}
     </List>
 
     <Header sub>Stock Assets Quicklinks</Header>
@@ -41,46 +61,92 @@ const LinkTabContent = () => (
   </div>
 )
 
-const UserAdmin = ( { user } ) => ( !user ? <div>Visit a page that has a user context</div> : ( 
-  <div>
-    <Header sub>Public Info: {user.username}</Header>
-    <List bulleted>
-      { linkLi(`UserId: ${user._id}`)}
-      { linkLi(`Self-claimed MGB1 name: '${user.profile.mgb1name || ''}'`)}
-      { linkLi(`ADMIN-verified MGB1 names: '${!user.profile.mgb1namesVerified }`)}
-      { linkLi(`Badges: ${_.join(user.badges, ',')}`,  `/u/${user.username}/badges`)}
-      { linkLi(`Created: ${user.createdAt}`, `/u/${user.username}`)}
-      { linkLi(`Latest WhatsNew seen: ${user.profile.latestNewsTimestampSeen}`, `/u/${user.username}`)}
-      { linkLi(`Roles: ${user.permissions ? _.join(user.permissions[0].roles, ',') : 'none'}`, `/u/${user.username}`)}    
-    </List>
+const UserAdmin = ( { user, extraUserInfo } ) => {
+  if (!user)
+    return <div>Visit a page that has a user context</div> 
+    
+  const usrLink = `/u/${user.username}`
+  const mgb1Link = `${usrLink}/projects/import/mgb1`
 
-    <Header sub>Secret Info</Header>
-    <List bulleted>
-      { linkLi("TODO", "/") }
-    </List>
+  return ( 
+    <div>
+      <Header sub>Public Info: {user.username}</Header>
+      <List bulleted>
+        { linkLi(`UserId: ${user._id}`)}
+        { linkLi(`Roles: ${user.permissions ? _.join(user.permissions[0].roles, ',') : 'none'}`, usrLink)}
+        { linkLi(`Self-claimed MGB1 names: '${user.profile.mgb1name || ''}'`, mgb1Link)}
+        { linkLi(`ADMIN-verified MGB1 names: '${user.profile.mgb1namesVerified}'`, mgb1Link)}
+        { linkLi(`Badges: ${_.join(user.badges, ', ')}`, `${usrLink}/badges`)}
+        { linkLi(`Created: ${moment(user.createdAt).fromNow()}`, usrLink)}
+        { linkLi(`Latest WhatsNew seen: ${moment(new Date(user.profile.latestNewsTimestampSeen)).fromNow()}`, usrLink)}
+      </List>
 
-    <Header sub>Admin Actions</Header>
-    <Button.Group vertical basic compact size='small'>
-      <Button
-        icon={{ color: 'red', name: 'ban' }}
-        labelPosition='left'
-        title='Banned users can still log in and be seen in user lists, but they cannot create/change/message'
-        content={( user.suIsBanned ? "UNBAN" : "BAN") + ` user '${user.username}'`}
-        onClick={() => Meteor.call('User.toggleBan', user._id) }
-        />
-      <Button
-        icon={{ color: 'red', name: 'user close' }}
-        labelPosition='left'
-        title='Deactivated users are not shown in user lists, and cannot login. However (for now), their content and messages are still visible'
-        content={( user.isDeactivated ? "Re-activate" : "Deactivate") + ` user '${user.username}'`}
-        onClick={() => Meteor.call(user.isDeactivated ? 'User.reactivateAccount' :  'User.deactivateAccount', user._id) }
-        />
-    </Button.Group>
-  </div>
-))
+      <Header sub>Admin-only user Info</Header>
+      { extraUserInfo &&
+        <List bulleted>
+          { _.map(extraUserInfo.ua.ipAddresses, ipStr => linkLi('IP: ' + ipStr, "https://freegeoip.net/?q=" + ipStr, ipStr) ) }
+          { linkLi("usernames: "+_.join(extraUserInfo.ua.usernames, ', '), "/") }
+          { _.map(extraUserInfo.u.emails, email => linkLi(
+              'email: ' + email.address + (email.verified ? ' (v)' : ' (!v)'), 
+              "mailto:" + email.address,
+              email
+              )
+            )
+          }
+        </List> 
+      }
 
+      <Header sub>Admin Actions</Header>
+      <Button.Group vertical basic compact size='small'>
+        <Button
+          icon={{ color: 'red', name: 'ban' }}
+          labelPosition='left'
+          title='Banned users can still log in and be seen in user lists, but they cannot create/change/message'
+          content={( user.suIsBanned ? "UNBAN" : "BAN") + ` user '${user.username}'`}
+          onClick={() => Meteor.call('User.toggleBan', user._id) }
+          />
+        <Button
+          icon={{ color: 'red', name: 'user close' }}
+          labelPosition='left'
+          title='Deactivated users are not shown in user lists, and cannot login. However (for now), their content and messages are still visible'
+          content={( user.isDeactivated ? "Re-activate" : "Deactivate") + ` user '${user.username}'`}
+          onClick={() => Meteor.call(user.isDeactivated ? 'User.reactivateAccount' :  'User.deactivateAccount', user._id) }
+          />
+      </Button.Group>
+    </div>
+  )
+}
+
+/* TabularMenu is the actual tabbed admin menu. It will also get and inject extended user data 
+ * using an admin-only Meteor call so we can see email, IPs etc easily
+ */
 class TabularMenu extends Component {
-  state = { activeIndex: 0 }  
+  state = { 
+    activeIndex: 0,
+    extraUserInfo: null
+  }
+
+  getExtraUserInfo = user => {
+    if (user)
+    {
+      this.setState( { extraUserInfo: null } )
+      Meteor.call("User.su.analytics.info", user._id, (err, result) => {
+        if (result && !err)
+          this.setState( { extraUserInfo: result } )
+      } )
+    }
+  }
+  
+  componentWillMount() {
+    if (this.props.user)
+      this.getExtraUserInfo(this.props.user)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    
+    if (!isSameUser(this.props.user, nextProps.user))
+      this.getExtraUserInfo(nextProps.user)
+  }
 
   render() {
     const menuItems = _.map(this.props.items, (item,idx) => ({ name: item.name, index: idx, key: item.name }))
@@ -94,7 +160,7 @@ class TabularMenu extends Component {
           attached='top'
           onItemClick={(ev, item) => { this.setState( { activeIndex: item.index} ) } }/>
         <Segment attached='bottom' basic>
-          <SelectedElement user={this.props.user}/>
+          <SelectedElement user={this.props.user} extraUserInfo={this.state.extraUserInfo}/>
         </Segment>
       </div>
     )
@@ -106,9 +172,15 @@ const _items = [
   { name: 'Links',   el: LinkTabContent }
 ]
 
+
+/* fpSuperAdmin is the overall super admin Flex Panel. For non-admins it
+ * pretends to be not-yet-implemented lol
+ */
 const fpSuperAdmin = ( { user, isSuperAdmin } ) => (
- // Yes, we lie to non-admins
-  isSuperAdmin ? <TabularMenu items={_items} user={user}/> : <div>Not Yet Implemented</div>
+  isSuperAdmin ?
+   <TabularMenu items={_items} user={user}/> 
+   :
+   <div>Not Yet Implemented</div>
 )
 
 fpSuperAdmin.propTypes = {

@@ -1,5 +1,8 @@
 /* global Mongo, Meteor */
 
+import { checkMgb } from '/imports/schemas/checkMgb'
+
+
 // This file contains the code to update the MongoDB user_analytics record.
 // This contains some interesting analytics info related to that userId.
 // So far, the only one of use is the list of IP addresses they have visited from
@@ -42,6 +45,9 @@ export const uaNoteUserReferrer = (userId, referrer) =>
     UserAnalytics.update( { _id: userId }, { $addToSet: { 'referrers': referrer } } )
 
 
+/** Used by main_server to lazily create this record if it does not already exist
+ * 
+ */
 export function createInitialUserAnalytics(userId) {
   if (!Meteor.isServer || !userId) 
     return
@@ -64,3 +70,19 @@ export function createInitialUserAnalytics(userId) {
   let docId = UserAnalytics.insert(data)
   console.log(`  createInitialUserAnalytics(${data._id}) -> #${docId}`)
 }
+
+
+Meteor.methods({
+  /** This is ONLY for superAdmins to be nosey. See fpSuperAdmin which uses this */
+  "User.su.analytics.info": function(userId) {
+    checkMgb.checkUserIsSuperAdmin()
+    checkMgb.userId(userId)
+    const sel = { _id: userId }
+    const ua = UserAnalytics.findOne( sel )
+    const user = Meteor.users.findOne( sel )
+    return { 
+      ua, 
+      u: { emails: user.emails } 
+    }
+  }
+})

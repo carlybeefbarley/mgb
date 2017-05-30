@@ -27,7 +27,6 @@ const AllButtons = (p) => {
         const b = MobileNav.availableButtons[bName]
         return <a
           className="mobile-nav-item item"
-          style={{padding: '5%'}}
           name={bName}
           key={index}
           onClick={() => p.mobileNav.onClickMoreContent(b, index)}
@@ -48,6 +47,29 @@ const doLogout = () => {
 // make use of this
 let cache = {}
 
+/*
+* Profile
+* What's New
+* Roadmap
+*
+* Users
+* Feed
+* Dailies
+*
+* Badges
+* Projects
+* Competitions
+*
+* Send Feedback
+* Notifications
+* Learn
+*
+* Help
+* Settings
+* Log Out
+*
+* */
+
 class MobileNav extends React.Component {
   static contextTypes = {
     router:  React.PropTypes.object
@@ -64,13 +86,20 @@ class MobileNav extends React.Component {
 
       'profile',
       'news',
-      'learn',
+      'roadmap',
+
       'users',
-      'projects',
+      'feed',
       'dailies',
-      'jams',
-      'alerts',
+
+      'badges',
+      'projects',
+      'competitions', // jams?
+
       'feedback',
+      'notifications',
+      'learn',
+
       'help',
       'settings',
       'logout',
@@ -284,6 +313,7 @@ class MobileNav extends React.Component {
         return {buttons: mobileNav.buttons, mobileNav: mobileNav, from: 5, to: Infinity}
       }
     },
+
     // TODO: use some sort of map / names for routes instead of hardcoded strings?
     profile: {
       title: "Profile",
@@ -302,13 +332,14 @@ class MobileNav extends React.Component {
       },
       icon: 'bullhorn'
     },
-    learn: {
-      title: 'Learn',
+    roadmap: {
+      title: "Roadmap",
       action: (mobnav) => {
-        mobnav.setLocation(`/learn`)
+        mobnav.setLocation(`/roadmap`)
       },
-      icon: 'graduation'
+      icon: 'map'
     },
+
     users: {
       title: 'Users',
       icon: 'users',
@@ -316,12 +347,12 @@ class MobileNav extends React.Component {
         mobnav.setLocation(`/users`)
       },
     },
-    projects: {
-      title: 'Projects',
-      icon: 'sitemap',
+    feed: {
+      title: "Feed",
       action: (mobnav) => {
-        mobnav.setLocation(`/u/${Meteor.user().username}/projects`)
+        alert('Feed is not implemented!')
       },
+      icon: 'feed'
     },
     dailies: {
       title: 'Dailies',
@@ -331,22 +362,33 @@ class MobileNav extends React.Component {
         mobnav.setLocation(`/dailies`)
       },
     },
-    jams: {
-      title: 'Jams',
+
+    badges: {
+      title: 'Badges',
+      icon: 'star',
+      action: (mobnav) => {
+        if(Meteor.user())
+          mobnav.setLocation(`/u/${Meteor.user().username}/badges`)
+        else
+          mobnav.setLocation(`/login`)
+      },
+    },
+    projects: {
+      title: 'Projects',
+      icon: 'sitemap',
+      action: (mobnav) => {
+        mobnav.setLocation(`/u/${Meteor.user().username}/projects`)
+      },
+    },
+    competitions: {
+      title: 'Competitions',
       icon: 'winner',
       action: (mobnav) => {
-        alert('Jams are not implemented...')
-        mobnav.setLocation(`/jams`)
+        alert('Competitions are not implemented...')
+        mobnav.setLocation(`/competitions`)
       },
     },
-    alerts: {
-      title: 'Alerts',
-      icon: 'bell outline',
-      action: (mobnav) => {
-        alert('Alerts are not implemented...')
-        mobnav.setLocation(`/alerts`)
-      },
-    },
+
     feedback: {
       title: 'Feedback',
       icon: 'mail outline',
@@ -355,6 +397,22 @@ class MobileNav extends React.Component {
         mobnav.setLocation(`/feedback`)
       },
     },
+    notifications: {
+      title: 'Notifications',
+      icon: 'bell outline',
+      action: (mobnav) => {
+        alert('Notifications are not implemented...')
+        mobnav.setLocation(`/notifications`)
+      },
+    },
+    learn: {
+      title: 'Learn',
+      action: (mobnav) => {
+        mobnav.setLocation(`/learn`)
+      },
+      icon: 'graduation'
+    },
+
     help: {
       title: 'Help',
       icon: 'question',

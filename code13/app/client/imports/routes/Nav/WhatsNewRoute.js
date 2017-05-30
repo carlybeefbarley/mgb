@@ -1,7 +1,9 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '../QLink'
 import Footer from '/client/imports/components/Footer/Footer'
-import mgbReleaseInfo from '/imports/mgbReleaseInfo'
+import mgbReleaseInfo, { olderHistoryPath } from '/imports/mgbReleaseInfo'
+import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 import moment from 'moment'
 import { Segment, Container, Header, List, Item, Grid, Icon } from 'semantic-ui-react'
 import AboutHeader from './AboutHeader'
@@ -25,8 +27,6 @@ const _icons = {
 }
 const _getIconForChangeType = (ct,size) => <Icon size={size} color={_icons[ct].color} name={_icons[ct].name} />
 
-
-
 export default WhatsNewRoute = React.createClass({
 
   propTypes: {
@@ -36,11 +36,27 @@ export default WhatsNewRoute = React.createClass({
   /** React callback - before render() is called */
   getInitialState: function() {
     return {
-      releaseIdx: 0       // Index into mgbReleaseInfo[] for currently viewed release
+      releaseIdx: 0,                // Index into mgbReleaseInfo[] for currently viewed release
+      olderHistoryJsonResult: null  // Will be the data loaded from ${olderHistoryPath} once loaded
     }
   },
 
+  getCombinedReleaseInfo() { 
+    const { olderHistoryJsonResult } = this.state
+
+    return olderHistoryJsonResult ? 
+      _.concat( mgbReleaseInfo.releases, olderHistoryJsonResult.releases)
+      : 
+      mgbReleaseInfo.releases
+  },
+
   componentDidMount: function() {
+    if (olderHistoryPath && !this.state.olderHistoryJsonResult)
+    {
+      fetchAssetByUri(olderHistoryPath)
+        .then( data => this.setState( { olderHistoryJsonResult: JSON.parse(data) } ) )
+        .catch( err => console.error(`Unable to load olderHistoryPath via ajax: ${err.toString()}`))
+    }
     this.handleUserSawNews(this.latestRelTimestamp())
   },
   
@@ -96,7 +112,7 @@ export default WhatsNewRoute = React.createClass({
   /** This renders the 2 column structure for update info */  
   renderNews: function() {
     const { releaseIdx } = this.state
-    const rel = mgbReleaseInfo.releases[releaseIdx]
+    const rel = this.getCombinedReleaseInfo()[releaseIdx]
     const ago = moment(new Date(rel.timestamp)).fromNow() 
 
     return (
@@ -120,7 +136,7 @@ export default WhatsNewRoute = React.createClass({
 
   /** This is the left column. Uses React's state.releaseIdx */
   renderNewsMgbVersionsColumn: function() {
-    const rels = mgbReleaseInfo.releases
+    const rels = this.getCombinedReleaseInfo()
     const activeRelIdx = this.state.releaseIdx
 
     return (
@@ -160,7 +176,7 @@ export default WhatsNewRoute = React.createClass({
   /** This is the right column. Uses React's state.releaseIdx */
   renderNewsRelChangesColumn: function() {
     const relIdx = this.state.releaseIdx
-    const rel = mgbReleaseInfo.releases[relIdx]
+    const rel = this.getCombinedReleaseInfo()[relIdx]
     
     return (
       <Item.Group icon>

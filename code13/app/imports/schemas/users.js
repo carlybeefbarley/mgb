@@ -30,7 +30,8 @@ const schema = {
 //    invites: optional([]),             // DEPRECATED
     projectNames: optional([String])     // An array of strings  DEPRECATED, IGNORE+DELETE
   },
-  badges: optional([]),
+  badges: optional([]),                  // Empty.. or array of badge names (see badges.js)
+  badges_count: optional(Number),        // Number of badges
   permissions: {                         // TODO: Actually this is modelled as an array of team/??/perm stuff. Look at fixtures for the super-admin example. Needs cleaning up.
     roles: optional([String])            // See in App.js for 'super-admin' handling 
   },
@@ -45,6 +46,7 @@ const schema = {
 
 export const userSorters = { 
   "default":         { createdAt: -1 },    // Should be same as one of the others..
+  "badges":          { badges_count: -1 }, 
   "createdNewest":   { createdAt: -1 }, 
   "createdOldest":   { createdAt: 1 }, 
   "nameAscending":   { "profile.name": 1  },        // NOTE: MongoDB doesn't yet support case-insensitive name sorts. grrr
@@ -117,6 +119,8 @@ Meteor.methods({
       "profile.focusStart": optional(schema.profile.focusStart),
       "profile.mgb1name": optional(schema.profile.mgb1name),
 //    "profile.mgb1namesVerified": optional(schema.profile.mgb1namesVerified),   // TODO: Some server-only validation for this
+// Note that badges and badges_count have their own special api
+
       "profile.images": optional(schema.profile.images),
       "profile.isDeleted": optional(schema.profile.isDeleted),
       "profile.projectNames": optional(schema.profile.projectNames),

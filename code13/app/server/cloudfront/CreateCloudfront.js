@@ -54,7 +54,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://test.loc:3000',
 
-  // mobile device 
+  // mobile device
   'http://localhost:12224',
   'https://localhost:12224'
 ]

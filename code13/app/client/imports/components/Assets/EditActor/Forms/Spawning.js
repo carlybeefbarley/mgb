@@ -11,6 +11,12 @@ export default class All extends BaseForm {
     return (
       <div style={!this.props.canEdit ? {pointerEvents: 'none'} : {}} className="ui form">
         <div id="mgbjr-edit-actor-tab-DestructionSpawning-points">
+          {this.options("Respawn options", "respawnOption", 
+            [
+              { text: "Respawn on map reload", value: "0" },
+              { text: "Never respawn", value: "1" }
+            ]
+          )}
           {this.bool("Can this be destroyed/damaged", "destroyableYN")}
           {this.text("Points scored (or lost) when shot by player", "scoreOrLosePointsWhenShotByPlayerNum", "number", {
             disabled: this.data.destroyableYN == "0"
@@ -41,15 +47,6 @@ export default class All extends BaseForm {
             })
           }
 
-          {this.options("Respawn options", "respawnOption", 
-            [
-              { text: "Respawn on map reload", value: "0" },
-              { text: "Never respawn", value: "0" }
-            ],
-            {
-              disabled: this.data.destroyableYN == "0"
-            }
-          )}
 
           {this.dropArea("Randomly generates new actor", "dropsObjectRandomlyName", "actor", {
             disabled: this.data.destroyableYN == "0"

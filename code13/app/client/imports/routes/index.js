@@ -18,6 +18,8 @@ import LearnSkillsRoute from './Learn/LearnSkillsRoute'
 import LearnSkillsAreaRoute from './Learn/LearnSkillsAreaRoute'
 import LearnGetStartedRoute from './Learn/LearnGetStartedRoute'
 
+import BadgeHoldersListRoute from './BadgeHoldersListRoute'
+
 import LearnCodeRoute from './Learn/LearnCodeRoute'
 import LearnCodeRouteItem from './Learn/LearnCodeRouteItem'
 import LearnCodeModifyRoute from './Learn/LearnCodeModifyRoute'
@@ -108,7 +110,7 @@ export function clientStartup() {
 
         <Route path="user/:id/projects/create" component={Projects.ProjectCreateNewRoute} name="Create New Project" />
         <Route path="u/:username/projects/create" component={Projects.ProjectCreateNewRoute} name="Create New Project" />
-        <Route path="u/:username/projects/import/MGB1" component={Projects.ProjectImportMgb1Route} name="Import MGB1 Project" />
+        <Route path="u/:username/projects/import/MGB1" component={Projects.ProjectImportMgb1Route} name="Import MGBv1 Project" />
 
         <Route path="user/:id/project/:projectId" component={Projects.ProjectOverview} name="Project Details" />
         <Route path="u/:username/projects/:projectName" component={Projects.ProjectOverview} name="Project Details" />
@@ -119,6 +121,8 @@ export function clientStartup() {
 
         <Route path="user/:id/badges" component={Users.BadgeListRoute} name="Badges" />
         <Route path="u/:username/badges" component={Users.BadgeListRoute} name="Badges" />
+
+        <Route path="badge/:badgename" component={BadgeHoldersListRoute} name="Badge Holders" />
 
         <Route path="/projects" component={Projects.UserProjectList} name="Search All Projects" />
 

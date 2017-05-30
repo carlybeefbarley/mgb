@@ -8,19 +8,19 @@ import { createContainer } from 'meteor/react-meteor-data'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
-import {utilPushTo} from "/client/imports/routes/QLink"
+import { utilPushTo } from "/client/imports/routes/QLink"
 
-import Joyride, {joyrideCompleteTag} from '/client/imports/Joyride/Joyride'
+import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
 
-import {makeTutorialAssetPathFromSkillPath} from '/imports/Skills/SkillNodes/SkillNodes'
-import {hasSkill, learnSkill} from '/imports/schemas/skills'
+import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
+import { hasSkill, learnSkill } from '/imports/schemas/skills'
 
-import {Users, Activity, Projects, Settings, Sysvars, Skills} from '/imports/schemas'
-import {isSameUser} from '/imports/schemas/users'
-import {isUserSuperAdmin} from '/imports/schemas/roles'
+import { Users, Activity, Projects, Settings, Sysvars, Skills } from '/imports/schemas'
+import { isSameUser } from '/imports/schemas/users'
+import { isUserSuperAdmin } from '/imports/schemas/roles'
 
-import {projectMakeSelector} from '/imports/schemas/projects'
+import { projectMakeSelector } from '/imports/schemas/projects'
 
 import NavBar from '/client/imports/components/Nav/NavBar'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
@@ -30,16 +30,16 @@ import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import urlMaker from './urlMaker'
 import webkitSmallScrollbars from './webkitSmallScrollbars.css'
 
-import {makeCDNLink} from '/client/imports/helpers/assetFetchers'
-import {parseChannelName, makeChannelName, ChatChannels} from '/imports/schemas/chats'
-import {getLastReadTimestampForChannel, getPinnedChannelNames} from '/imports/schemas/settings-client'
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { parseChannelName, makeChannelName, ChatChannels } from '/imports/schemas/chats'
+import { getLastReadTimestampForChannel, getPinnedChannelNames } from '/imports/schemas/settings-client'
 
 // https://www.npmjs.com/package/react-notifications
-import {NotificationContainer, NotificationManager} from 'react-notifications'
+import { NotificationContainer, NotificationManager } from 'react-notifications'
 // Note css is in /client/notifications.css
 // Note - also, we copied the fonts this requires to public/fonts/notification.*
 
-import {fetchAssetByUri} from '/client/imports/helpers/assetFetchers'
+import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 
 import MobileNav from '../Mobile/MobileNav'
 let G_localSettings = new ReactiveDict()
@@ -59,7 +59,8 @@ let analyticsLoggedInSendFlag = true
 
 
 // for now, until we have push notifications for chat
-const CHAT_POLL_INTERVAL_MS = (12 * 1000)
+const CHAT_POLL_INITIAL_MS = (3*1000)
+const CHAT_POLL_INTERVAL_MS = (12*1000)
 
 // Tutorial/Joyride infrastructure support
 
@@ -279,6 +280,9 @@ const AppUI = React.createClass({
   },
 
   _schedule_requestChatChannelTimestampsNow() {
+    // One soon..
+    window.setTimeout(this.requestChatChannelTimestampsNow, CHAT_POLL_INITIAL_MS)
+    // And the ongoing poll less frequently
     window.setInterval(this.requestChatChannelTimestampsNow, CHAT_POLL_INTERVAL_MS)
   },
 
@@ -323,7 +327,8 @@ const AppUI = React.createClass({
           if (cct._hazUnreads)
             hazUnreadChats.push(channelName)
         })
-        this.setState({chatChannelTimestamps, hazUnreadChats})
+        if (!_.isEqual(hazUnreadChats, this.state.hazUnreadChats) || !_.isEqual(chatChannelTimestamps, this.state.chatChannelTimestamps))
+          this.setState({chatChannelTimestamps, hazUnreadChats})
       }
     })
   },
@@ -364,9 +369,9 @@ const AppUI = React.createClass({
   },
 
   render() {
-    const {respData, respWidth, params, loading, currUser, user, currUserProjects, sysvars} = this.props
-    const {joyrideDebug, currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats} = this.state
-    const {query} = this.props.location
+    const { respData, respWidth, params, loading, currUser, user, currUserProjects, meteorStatus,sysvars  } = this.props
+    const { joyrideDebug, currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats } = this.state
+    const { query } = this.props.location
 
     if (!loading)
       this.configureTrackJs()
@@ -471,9 +476,8 @@ const AppUI = React.createClass({
                   currUser={currUser}
                   navPanelAvailableWidth={mainAreaAvailableWidth}
                 />
-                { isNetworkFailure &&
-                  <Message error icon='signal' header='Network is Offline' content='The network or server is unavailable' />
-                }
+                <NetworkStatusMsg meteorStatus={meteorStatus
+                }/>
                 { currUser && currUser.suIsBanned &&
                   <Message error icon='ban' header='Your Account has been suspended by an Admin' list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']}/>
                 }
@@ -829,20 +833,19 @@ const App = createContainer( ( { params , location} ) => {
   return {
     currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
 
-    currUserProjects: handleForProjects ?Projects.find(projectSelector).fetch(): [],
+    currUserProjects: handleForProjects ? Projects.find(projectSelector).fetch(): [],
     user:             pathUserName ? Meteor.users.findOne( { "profile.name": pathUserName}) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
     activity:         getActivity ?Activity.find({}, {sort: {timestamp: -1}}).fetch(): [],     // Activity for any user
     settings:         G_localSettings,
     meteorStatus:     Meteor.status(),
     skills:           currUser ? Skills.findOne(currUserId) : null,
     sysvars:          Sysvars.findOne(),
-    loading: false
-    /*loading:          !handleForUser.ready()    ||
+    loading:          !handleForUser.ready()    ||
                       !handleForSysvars.ready() ||
                       !(!handleActivity ||handleActivity.ready()  ) ||
                       !projectsReady            ||
                       !settingsReady            ||
-                      !skillsReady*/
+                      !skillsReady
   }
 }, AppUI)
 

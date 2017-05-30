@@ -106,7 +106,7 @@ export default class MagePlayGame
   }
   
 
-  startGame(map, actors, graphics, 
+  startGame(map, mapName, actors, graphics, 
             transitionToNextMapFn, 
             setGameStatusFn, 
             showNpcMessageFn, 
@@ -115,6 +115,7 @@ export default class MagePlayGame
             keyCaptureElement) 
   { 
     this.map = map
+    this.map.name = mapName.indexOf(':') === -1 ? this.ownerName + ':' + mapName : mapName
     this.actors = actors
     this.graphics = graphics
     this.setGameStatusFn = setGameStatusFn

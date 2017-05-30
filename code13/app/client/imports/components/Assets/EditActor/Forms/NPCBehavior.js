@@ -52,7 +52,7 @@ export default class NPCBehavior extends BaseForm {
 
         {this.data[responseChoice] &&
           this.options("NPC Stays", responseChoiceStayYN, [
-            { text: "Disappears",       value: "0"},
+            { text: "Disappears",      value: "0"},
             { text: "Stays",           value: "1"},
             { text: "Repeat Question", value: "2"},
           ])

@@ -21,8 +21,11 @@ window.setInterval(() => {
   if(!document || !document.body || !document.body.style){
     return
   }
-  document.body.style.cursor = ''
-  console.log("reset document style")
+  if(document.body.style.cursor){
+    document.body.style.cursor = ''
+    console.log("reset document style")
+  }
+
 }, 5000)
 /*
 

@@ -21,6 +21,7 @@ import { makeChannelName} from '/imports/schemas/chats'
 import { utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
+import Hotjar from '/client/imports/helpers/hotjar.js'
 
 const buttonSty = { width: '220px', marginTop: '2px', marginBottom: '2px'}
 
@@ -48,7 +49,7 @@ export default ProjectOverview = React.createClass({
 
   componentDidMount(){
     // setTimeou just to be sure that everything is loaded
-    setTimeout( () => hj('trigger', 'project-overview'), 200)
+    setTimeout( () => Hotjar('trigger', 'project-overview'), 200)
   },
   
   getInitialState: () => ({ 

@@ -11,6 +11,7 @@ import EditSound from './EditAudio/EditSound/EditSound'
 import EditGraphic from './EditGraphic/EditGraphic'
 import EditUnknown from './EditUnknown'
 import AssetCard from './AssetCard'
+import Hotjar from '/client/imports/helpers/hotjar.js'
 
 const editElementsForKind = {
   'graphic':   EditGraphic,
@@ -32,7 +33,7 @@ export default AssetEdit = React.createClass({
     // console.log(this.props.asset.kind)
     // trigger hotjar heatmap
     // for music and graphic editor setTimeout (because larger content2 size and loads slower)
-    setTimeout( () => hj('trigger', 'editor-'+this.props.asset.kind), 200)
+    setTimeout( () => Hotjar('trigger', 'editor-'+this.props.asset.kind), 200)
   },
 
   render: function() 

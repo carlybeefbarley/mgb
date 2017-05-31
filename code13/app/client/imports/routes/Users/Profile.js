@@ -30,6 +30,7 @@ import QLink from '../QLink'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import { Segment, Header, Button, Grid, Item, Icon, Label, Popup } from 'semantic-ui-react'
+import Hotjar from '/client/imports/helpers/hotjar.js'
 
 const UserShowcase = () => ( null )    // TODO based on workState
 
@@ -45,7 +46,7 @@ export default UserProfileRoute = React.createClass({
 
   componentDidMount(){
     // setTimeout just to be sure that everything is loaded
-    setTimeout( () => hj('trigger', 'user-profile'), 200)
+    setTimeout( () => Hotjar('trigger', 'user-profile'), 200)
   },
 
 

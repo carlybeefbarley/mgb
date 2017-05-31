@@ -24,6 +24,7 @@ import { browserHistory } from 'react-router'
 import Helmet from 'react-helmet'
 import SpecialGlobals from '/imports/SpecialGlobals'
 import AssetCreateLink from '/client/imports/components/Assets/NewAsset/AssetCreateLink'
+import Hotjar from '/client/imports/helpers/hotjar.js'
 
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = {
@@ -266,7 +267,7 @@ export default UserAssetListRoute = React.createClass({
     if(!this.hotjarSent && this.data.assets.length > 0){
       this.hotjarSent = true
       // setTimeout just to be sure that everything is loaded and rendered
-      setTimeout( () => hj('trigger', 'user-asset-list'), 200)
+      setTimeout( () => Hotjar('trigger', 'user-asset-list'), 200)
     }
 
     return (

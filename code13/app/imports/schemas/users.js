@@ -5,7 +5,6 @@ import { Users } from '/imports/schemas'
 import { Match, check } from 'meteor/check' 
 import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 
-import { Mailgun } from '/imports/helpers/mailgun/mailgun.js'
 
 const optional = Match.Optional
 let count                                // TODO: IDK why I put this out here. Come back and move it into methods once I'm sure there wasn't some meteor-magic here.
@@ -93,35 +92,6 @@ Meteor.methods({
     console.log("[User.updateEmail]", count, docId)
     return count
   },
-
-  // TODO: Enable this once I know it how to fully secure and audit it
-  // "User.setPasswordIfDoesNotExist": function(userId, newPassword) {
-  //   Accounts.setPassword(userId, newPassword)
-  // },
-
-  "User.sendSignUpEmail": function () {
-    console.log('############## send email')
-
-    var options = {
-      apiKey: 'key-98c5eedae6607896b14f1a9b22f1785b',
-      domain: 'mailgun.mygamebuilder.com'
-    }
-    var mailgun = new Mailgun(options)
-
-    // TODO send to actual email
-    var mailgunData = {
-      from: 'MyGameBuilder Team <info@mygamebuilder.com>',
-      to: 'guntis.smaukstelis@gmail.com',
-      subject: 'Test',
-      'o:tag': 'test',
-      html: 'Test message'
-    }
-
-    mailgun.request('POST', '/messages', mailgunData, function (error, body) {
-      console.log(body);
-    });
-  },
-
 
 
   "User.updateProfile": function(docId, data) {

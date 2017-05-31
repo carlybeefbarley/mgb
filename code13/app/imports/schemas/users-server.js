@@ -1,6 +1,9 @@
 import { Users } from '/imports/schemas'
 import { check } from 'meteor/check'
 import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
+import { Mailgun } from '/imports/helpers/mailgun/mailgun'
+
+// This file is NOT included on the client
 
 /**
  * This will throw an Error if userId is not a string, if userId is is not a valid userId,
@@ -17,7 +20,39 @@ const serverMethodHelper = userId => {
   return u
 }
 
+// TODO(@dgolds): Enable this once I know it how to fully secure and audit it
+// "User.setPasswordIfDoesNotExist": function(userId, newPassword) {
+//   Accounts.setPassword(userId, newPassword)
+// },
+
 Meteor.methods({
+
+  "User.sendSignUpEmail": function () {
+    console.log('############## User.sendSignUpEmail...')
+
+    var options = {
+      apiKey: 'key-98c5eedae6607896b14f1a9b22f1785b',
+      domain: 'mailgun.mygamebuilder.com'
+    }
+    var mailgun = new Mailgun(options)
+
+    // TODO(@shmikucis) send to actual email
+    var mailgunData = {
+      from: 'MyGameBuilder Team <info@mygamebuilder.com>',
+      to: 'dgolds@hotmail.com',
+      subject: 'Test',
+      'o:tag': 'test',
+      html: '<p>This is a <em>test</em> message</p>'
+    }
+
+    mailgun.request('POST', '/messages', mailgunData, function (error, body) {
+      if (error)
+        console.error(" User.sendSignUpEmail: Error: ", error)
+      else
+        console.log(" User.sendSignUpEmail: bodyResponse: ", body);
+    })
+  },
+
   /**
    * RPC User.update.mgb1namesVerified
    * Currently only superAdmin can do this. Self-validation system "coming soon"

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
-import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
+import { Container, Message, Segment, Header, Form, Grid, Image } from 'semantic-ui-react'
 
 import { stopCurrentTutorial } from '/client/imports/routes/App'
 import LoginLinks from './LoginLinks'
@@ -28,6 +28,12 @@ export default SignupRoute = React.createClass({
     }
   },
 
+  fixUsername: function(e) {
+    var name = e.target.value || ""
+    e.target.value = _.trim(name).replace(/@[A-Za-z]+\.[A-Za-z]+$/,'').replace(/[^A-Za-z0-9_]/g,'')
+  },
+
+
   checkUserName: function (e) {
     if (e && e.target.value && e.target.value.length > 2 )
       Meteor.call('AccountsHelp.userNameTaken', e.target.value, (err,r) => { 
@@ -43,14 +49,17 @@ export default SignupRoute = React.createClass({
     const { isLoading, errors } = this.state
     const { currUser } = this.props
 
+    // Turn of autocomplete for signup as described at https://bugs.chromium.org/p/chromium/issues/detail?id=370363#c7
+    // and at https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion#The_autocomplete_attribute_and_login_fields
+
     const innerRender = () => (
       currUser ? <Message info content='You are logged in already!' /> : (
         <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
-          <Form.Input type="email" label='Email Address (used for login)' name='email' placeholder='Email address' error={!!errors.email} />
+          <Form.Input type="email" label='Enter your email address (used for login)' name='email' placeholder='Email address' error={!!errors.email} />
           <ErrMsg text={errors.email} />
-          <Form.Input onBlur={this.checkUserName} label='Choose your username (used for login and profile)' name='username' placeholder='User Name (short, no spaces)'  error={!!errors.username} />
+          <Form.Input onBlur={this.checkUserName} onChange={this.fixUsername} label='Choose a username (used for profile)' name='username' placeholder='New username (short, no spaces)'  error={!!errors.username} />
           <ErrMsg text={errors.username} />
-          <Form.Input label='Choose a Password for your new account' name='password' placeholder='Password' type='password'  error={!!errors.password} />
+          <Form.Input label='Choose a Password' name='password' placeholder='New password' type='password'  error={!!errors.password} autoComplete="new-password"/>
           <ErrMsg text={errors.password} />
           <ErrMsg text={errors.result} />
           <Form.Button color='teal'>Create Account</Form.Button>
@@ -62,11 +71,18 @@ export default SignupRoute = React.createClass({
       <div>
         <div className='hero' style={{paddingTop: '3em', paddingBottom: '3em'}}>
           <Container text>
-            <Segment padded>
-              <Header style={{color:'black'}} as='h2'>Sign Up</Header>
-              { innerRender() }
-              { !currUser && <LoginLinks showLogin={true} showForgot={true} /> }
-            </Segment>
+            <Grid columns='equal' verticalAlign='middle'>
+              <Grid.Column style={{minWidth: '22em'}}>
+                <Segment padded>
+                  <Header style={{color:'black'}} as='h2'>Sign Up</Header>
+                  { innerRender() }
+                  { !currUser && <LoginLinks showLogin={true} /> }
+                </Segment>
+              </Grid.Column>
+              <Grid.Column only='computer'>
+                <Image src='/images/mascots/team.png'/> 
+              </Grid.Column>
+            </Grid>
           </Container>
         </div>
         <Footer />
@@ -97,8 +113,8 @@ export default SignupRoute = React.createClass({
       password: password,
       profile: {
         name: username,
-        avatar: "http://www.gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=155&d=mm",  // actual image picked by user to display
-        images: ["http://www.gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=155&d=mm"] // collection of images in users account
+        avatar: "//www.gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=155&d=mm",  // actual image picked by user to display
+        images: ["/www.gravatar.com/avatar/" + md5(email.trim().toLowerCase()) + "?s=155&d=mm"] // collection of images in users account
       }
     }, error => {
       if (error)

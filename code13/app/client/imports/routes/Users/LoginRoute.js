@@ -45,8 +45,8 @@ export default LoginRoute = React.createClass({
             <Segment padded>
               <Header style={{color:'black'}} as='h2'>Log in</Header>
               <Form onSubmit={this.handleSubmit} loading={isLoading} error={!!errorMsg}>
-                <Form.Input type="email" label='email' name='email' placeholder='Email address' />
-                <Form.Input label='password' name='password' placeholder='Password' type='password'/>
+                <Form.Input type="email" label='email' name='email' placeholder='login using your email address' />
+                <Form.Input label='password' name='password' placeholder='enter your password' type='password'/>
                 <Message error
                   header='Error'
                   content={errorMsg} />

@@ -5,9 +5,28 @@ import './TouchController.css'
 
 export default class TouchController extends React.Component{
   componentDidMount(){
+    const node = ReactDOM.findDOMNode(this).firstChild
+    this.mousemove = e => {
+      const key = e.target.dataset.key || e.target.parentNode.dataset.key
+      if(!key)
+        return
+      
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    // fix: #670
+    node.addEventListener('mousemove', this.mousemove, {passive: false})
+    node.addEventListener('touchmove', this.mousemove, {passive: false})
+
+
     setTimeout(() => {
-      ReactDOM.findDOMNode(this).firstChild.style.opacity = 0.5
+      node.style.opacity = 0.5
     }, 100)
+  }
+  componentWillUnmount(){
+    const node = ReactDOM.findDOMNode(this).firstChild
+    node.removeEventListener('mousemove', this.mousemove)
+    node.removeEventListener('touchmove', this.mousemove)
   }
   handleInput(e, up){
     const key = e.target.dataset.key || e.target.parentNode.dataset.key

@@ -9,7 +9,8 @@ export default class MiniMap extends React.Component {
   static propTypes = {
     toggleMiniMap:  PropTypes.func.isRequired,
     width:          PropTypes.number.isRequired,
-    height:         PropTypes.number.isRequired
+    height:         PropTypes.number.isRequired,
+    editCanvasMaxHeight:  PropTypes.number.isRequired
   }
   constructor(props) {
     super(props)
@@ -20,6 +21,8 @@ export default class MiniMap extends React.Component {
 
     this.screenX = 0
     this.screenY = 0 // px from bottom
+
+    this.scale = 1
 
     this.backup = {
       w: null,
@@ -33,7 +36,10 @@ export default class MiniMap extends React.Component {
     this.ctx =  this.canvas.getContext('2d')
     // const wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
     // this.screenX = wrapper.parentNode.offsetWidth
-    // this.forceUpdate()
+    if(this.props.height > this.props.editCanvasMaxHeight){
+      this.scale = this.props.editCanvasMaxHeight / this.props.height
+    }
+    this.forceUpdate()
   }
 
   componentDidUpdate (prevProps, prevState) {
@@ -62,7 +68,7 @@ export default class MiniMap extends React.Component {
     const rows = this.state.isTessellated ? 3 : 1 
     for(let row=0; row<rows; row++){
       for(let col=0; col<cols; col++){
-        this.ctx.drawImage(editCanvas, w*col, h*row, w, h)
+        this.ctx.drawImage(editCanvas, w*col, h*row, w*this.scale, h*this.scale)
       }
     }
   }
@@ -108,8 +114,8 @@ export default class MiniMap extends React.Component {
 
   render () {
     const multiplier = this.state.isTessellated ? 3 : 1
-    const width = this.props.width * multiplier
-    const height = this.props.height * multiplier
+    const width = this.props.width * multiplier * this.scale
+    const height = this.props.height * multiplier * this.scale
 
     const wrapStyle = {
       display: "block",

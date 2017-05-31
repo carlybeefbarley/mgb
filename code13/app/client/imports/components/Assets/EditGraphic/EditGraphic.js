@@ -1791,6 +1791,18 @@ export default class EditGraphic extends React.Component {
                   scale={this.state.editScale}
                   setGrid={this.setGrid}
                 />
+
+                {/*** MiniMap ***/}
+                {
+                  this.state.isMiniMap &&
+                  <MiniMap
+                    ref       = {"miniMap"}
+                    width     = {c2.width}
+                    height    = {c2.height}
+                    toggleMiniMap = {this.toggleMiniMap}
+                  />
+                }
+
               </div>
             </Grid.Column>
           </Grid.Row>
@@ -1841,17 +1853,6 @@ export default class EditGraphic extends React.Component {
             maxTileHeight={MAX_BITMAP_WIDTH}
           />
         </div>
-
-        {/*** MiniMap ***/}
-        {
-          this.state.isMiniMap &&
-          <MiniMap
-            ref       = {"miniMap"}
-            width     = {c2.width}
-            height    = {c2.height}
-            toggleMiniMap = {this.toggleMiniMap}
-          />
-        }
 
       {/*** SpriteLayers ***/}
 

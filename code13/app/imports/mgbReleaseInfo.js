@@ -16,6 +16,39 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+
+    {
+      'timestamp': 'Wed May 31 2017 00:45 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4256'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.badges',
+          'type': 'feature',
+          'changeName': 'Badge holders',
+          'changeSummary': 'It is now possible to see which users have a specific badge.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Cleanup up signup/login pages to fix autocomplete issues and add an image next to signup; fixed some actormap logic bugs with weapons; ' ,
+          'otherUrls': [ ]
+        }
+      ]
+
+    },
+
     {
       'timestamp': 'Sat May 27 2017 23:15 GMT-0700 (PDT)',
 

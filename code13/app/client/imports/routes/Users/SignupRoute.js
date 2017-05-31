@@ -72,7 +72,7 @@ export default SignupRoute = React.createClass({
         <div className='hero' style={{paddingTop: '3em', paddingBottom: '3em'}}>
           <Container text>
             <Grid columns='equal' verticalAlign='middle'>
-              <Grid.Column style={{minWidth: '22em'}}>
+              <Grid.Column style={{minWidth: '24em'}}>
                 <Segment padded>
                   <Header style={{color:'black'}} as='h2'>Sign Up</Header>
                   { innerRender() }

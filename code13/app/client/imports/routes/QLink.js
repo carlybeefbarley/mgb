@@ -119,9 +119,14 @@ export default QLink = React.createClass({
     // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
     clearPriorPathsForJoyrideCompletionTags()
 
-    if (SpecialGlobals.isMobile)
+    if (SpecialGlobals.isMobile) {
+      if(!this.context.tabs){
+        console.log("WHERE is TABS reference???")
+        return
+      }
       this.context.tabs.setLocation(location)
-    // mobile will handle
+      // mobile will handle
+    }
     else
       this.context.router.push(location)
 

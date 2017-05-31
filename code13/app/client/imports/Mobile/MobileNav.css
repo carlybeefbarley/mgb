@@ -24,7 +24,8 @@
   left: 0;
   right: 0;
   background-color: white;
-  padding-bottom: 45px;
+  margin-bottom: 45px;
+  z-index: 1;
 }
 
 .react-swipeable-view-container > div > div {
@@ -72,9 +73,8 @@ a.mobile-nav-item.item {
   height: 100%;
   width: 100%;
   top: 0;
-  /* right: 0; this will force all popups on the first tab.. */
   background-color: white;
-  z-index: 9;
+  z-index: 1;
   overflow: auto;
 }
 .locationPopup .head {

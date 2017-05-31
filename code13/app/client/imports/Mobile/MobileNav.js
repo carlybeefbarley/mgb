@@ -194,6 +194,7 @@ class MobileNav extends React.Component {
           onChangeIndex={this.handleChangeIndex.bind(this)}
           ref="swipeable"
           animateTransitions={false}
+          style={{zIndex: 9}}
         >
           {
             this.renderView()

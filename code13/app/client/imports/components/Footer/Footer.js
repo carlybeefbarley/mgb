@@ -1,5 +1,6 @@
 import React from 'react'
 import ResponsiveComponent from '/client/imports/ResponsiveComponent'
+import QLink from '/client/imports/routes/QLink'
 
 const footerStyle = {
   marginTop: "10px",
@@ -49,10 +50,10 @@ const Footer = ( { respIsRuleActive, respData }) => (
     <div className="ui section"></div>
     <div className="ui left aligned container">
       <div className={`ui small ${respData.legalListDirection} relaxed divided link list`}>
-        <a className="item" href="#">Copyright ©2017 MyCodeBuilder Inc. All Rights Reserved.</a>
-        <a className="item" href="/legal/tos">Terms of Service</a>
-        <a className="item" href="/legal/privacy">Privacy Policy</a>
-        <a className="item" href="/?_fp=chat">Contact Us</a>
+        <QLink className="item" to="#">Copyright ©2017 MyCodeBuilder Inc. All Rights Reserved.</QLink>
+        <QLink className="item" to="/legal/tos">Terms of Service</QLink>
+        <QLink className="item" to="/legal/privacy">Privacy Policy</QLink>
+        <QLink className="item" to="/?_fp=chat">Contact Us</QLink>
       </div>
     </div>
   </div>

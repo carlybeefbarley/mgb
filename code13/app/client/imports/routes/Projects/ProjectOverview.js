@@ -49,7 +49,7 @@ export default ProjectOverview = React.createClass({
 
   componentDidMount(){
     // setTimeou just to be sure that everything is loaded
-    setTimeout( () => Hotjar('trigger', 'project-overview'), 200)
+    setTimeout( () => Hotjar('trigger', 'project-overview', this.props.currUser), 200)
   },
   
   getInitialState: () => ({ 

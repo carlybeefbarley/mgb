@@ -46,7 +46,7 @@ export default UserProfileRoute = React.createClass({
 
   componentDidMount(){
     // setTimeout just to be sure that everything is loaded
-    setTimeout( () => Hotjar('trigger', 'user-profile'), 200)
+    setTimeout( () => Hotjar('trigger', 'user-profile', this.props.currUser), 200)
   },
 
 

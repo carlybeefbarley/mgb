@@ -27,7 +27,7 @@ export default AssetCreateNewRoute = React.createClass({
 
   componentDidMount(){
     // setTimeou just to be sure that everything is loaded
-    setTimeout( () => Hotjar('trigger', 'asset-create-new'), 200)
+    setTimeout( () => Hotjar('trigger', 'asset-create-new', this.props.currUser), 200)
   },
 
   contextTypes: {

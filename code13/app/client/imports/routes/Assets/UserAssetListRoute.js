@@ -267,7 +267,7 @@ export default UserAssetListRoute = React.createClass({
     if(!this.hotjarSent && this.data.assets.length > 0){
       this.hotjarSent = true
       // setTimeout just to be sure that everything is loaded and rendered
-      setTimeout( () => Hotjar('trigger', 'user-asset-list'), 200)
+      setTimeout( () => Hotjar('trigger', 'user-asset-list', currUser), 200)
     }
 
     return (

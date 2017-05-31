@@ -8,6 +8,7 @@ import { logActivity } from '/imports/schemas/activity'
 
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { Container, Segment } from 'semantic-ui-react'
+import Hotjar from '/client/imports/helpers/hotjar.js'
 
 
 // Default params we will accept in ? params on url
@@ -26,7 +27,7 @@ export default AssetCreateNewRoute = React.createClass({
 
   componentDidMount(){
     // setTimeou just to be sure that everything is loaded
-    setTimeout( () => hj('trigger', 'asset-create-new'), 200)
+    setTimeout( () => Hotjar('trigger', 'asset-create-new', this.props.currUser), 200)
   },
 
   contextTypes: {

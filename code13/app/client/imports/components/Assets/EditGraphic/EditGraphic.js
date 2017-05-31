@@ -69,6 +69,8 @@ let _selectedColors = {
   fg:    { hex: "#000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
 }
 
+const editCanvasMaxHeight = 600
+
 export default class EditGraphic extends React.Component {
   // See AssetEdit.js for propTypes. That wrapper just passes them to us
 
@@ -1938,7 +1940,7 @@ export default class EditGraphic extends React.Component {
           {/*** Drawing Canvas ***/}
           <Grid.Row style={{"minHeight": "92px"}}>
             <Grid.Column style={{height: '100%'}} width={10}>
-              <div style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": "600px"}}>
+              <div style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": editCanvasMaxHeight+"px"}}>
                 <canvas
                   ref="editCanvas"
                   style={imgEditorSty}
@@ -1956,6 +1958,19 @@ export default class EditGraphic extends React.Component {
                   scale={this.state.editScale}
                   setGrid={this.setGrid}
                 />
+
+                {/*** MiniMap ***/}
+                {
+                  this.state.isMiniMap &&
+                  <MiniMap
+                    ref       = {"miniMap"}
+                    width     = {c2.width}
+                    height    = {c2.height}
+                    toggleMiniMap       = {this.toggleMiniMap}
+                    editCanvasMaxHeight = {editCanvasMaxHeight}
+                  />
+                }
+
               </div>
             </Grid.Column>
           </Grid.Row>
@@ -1992,8 +2007,8 @@ export default class EditGraphic extends React.Component {
             currUser    =     { this.props.currUser }
             userSkills  =     { this.userSkills }
             assetId     =     { asset._id }
-          frameData   =     { c2.frameData }
-          handleSelectFrame = { frame => this.handleSelectFrame(frame) }/>
+            frameData   =     { c2.frameData }
+            handleSelectFrame = { frame => this.handleSelectFrame(frame) }/>
         }
 
         {/*** GraphicImport ***/}
@@ -2006,18 +2021,7 @@ export default class EditGraphic extends React.Component {
           />
         </div>
 
-        {/*** MiniMap ***/}
-        {
-          this.state.isMiniMap &&
-          <MiniMap
-            ref       = {"miniMap"}
-            width     = {c2.width}
-            height    = {c2.height}
-            toggleMiniMap = {this.toggleMiniMap}
-          />
-        }
-
-        {/*** SpriteLayers ***/}
+      {/*** SpriteLayers ***/}
 
 
         <SpriteLayers

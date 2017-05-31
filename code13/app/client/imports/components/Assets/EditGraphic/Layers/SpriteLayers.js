@@ -141,6 +141,8 @@ export default class SpriteLayers extends React.Component {
       return
     }
 
+    this.deleteAnimationFrame(frameID)
+
     // this.doSaveStateForUndo("Delete Frame");
 
     c2.frameNames.splice(frameID, 1);
@@ -154,6 +156,29 @@ export default class SpriteLayers extends React.Component {
 
     /************************** ANIMATIONS ******************************/
 
+  deleteAnimationFrame (frameID) {
+    const c2 = this.props.content2
+    c2.animations.forEach((anim, idx) => {
+      // remove frame from animation
+      for(let i=0; i<anim.frames.length; i++){
+        if(anim.frames[i] == frameID){
+          anim.frames.splice(i, 1)
+        }
+      }
+      // all other frames are now -1
+      for(let i=0; i<anim.frames.length; i++){
+        if(anim.frames[i] > frameID){
+          anim.frames[i]--
+        }
+      }
+      // if animation has no frames then remove it completely
+      if(anim.frames.length == 0){
+        c2.animations.splice(idx, 1)
+      }
+    })
+
+    // console.log(c2.animations)
+  }
 
   cancelNextAnimationTimeout() {
     if (this._playAnimationTimeoutId)

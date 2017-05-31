@@ -5,6 +5,7 @@ import { Users } from '/imports/schemas'
 import { Match, check } from 'meteor/check' 
 import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 
+
 const optional = Match.Optional
 let count                                // TODO: IDK why I put this out here. Come back and move it into methods once I'm sure there wasn't some meteor-magic here.
 
@@ -91,12 +92,6 @@ Meteor.methods({
     console.log("[User.updateEmail]", count, docId)
     return count
   },
-
-  // TODO: Enable this once I know it how to fully secure and audit it
-  // "User.setPasswordIfDoesNotExist": function(userId, newPassword) {
-  //   Accounts.setPassword(userId, newPassword)
-  // },
-
 
 
   "User.updateProfile": function(docId, data) {

@@ -42,7 +42,7 @@ export default MagePlayGameInput = {
       return
 
     k.preventDefault()
-    const { actors, activeActors, AA_player_idx, isPaused, G_gameOver, isTransitionInProgress } = this
+    const { actors, activeActors, inventory, AA_player_idx, isPaused, G_gameOver, isTransitionInProgress } = this
     if (!G_gameOver && !isTransitionInProgress)
     {
       var newstate = (k.type === 'keydown')
@@ -92,7 +92,7 @@ export default MagePlayGameInput = {
           this.doPauseGame()
         break
       case 'Enter':
-        if (MgbActor.intFromActorParam(pp.content2.databag.allchar.shotRateNum))
+        if (MgbActor.intFromActorParam(pp.content2.databag.allchar.shotRateNum) || inventory.equipEffects.shotRateBonus)
           this.G_player_action.shoot = newstate
         break		    		
       }

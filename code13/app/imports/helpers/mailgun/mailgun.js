@@ -1,6 +1,4 @@
-// var tsscmp = Npm.require('tsscmp');
 import tsscmp from 'tsscmp'
-// var crypto = Npm.require('crypto');
 import crypto from 'crypto'
 
 var Attachment = require('./attachment')

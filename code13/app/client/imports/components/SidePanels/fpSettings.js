@@ -111,7 +111,7 @@ export default fpSettings = React.createClass({
     }
 
     return (
-      <Segment>
+      <Segment style={{overflow:'hidden'}}>
         <Header as='h4' id='mgbjr-CurrentFeatureLevelsInFp' content='Current Feature Levels' />
         <p>
           Slide to enable advanced features

@@ -121,6 +121,7 @@ export default SignupRoute = React.createClass({
         this.setState( { isLoading: false, errors: { result: error.reason || 'Server Error while creating account' } } )
       else 
       {
+        Meteor.call('User.sendSignUpEmail', email)
         logActivity("user.join",  `New user "${username}"`, null, null)
         stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial        
         utilPushTo(this.context.urlLocation.query, '/learn/getstarted')

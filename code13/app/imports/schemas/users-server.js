@@ -33,6 +33,7 @@ Meteor.methods({
     var mailgun = new Mailgun()
 
     // TODO how to get current domain to send it as a verify link?
+    // TODO actually verify email
     var mailgunData = {
       from: 'MyGameBuilder Team <info@mygamebuilder.com>',
       to: email,

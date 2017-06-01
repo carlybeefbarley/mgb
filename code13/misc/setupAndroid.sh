@@ -2,6 +2,7 @@
 
 # this file will download and install
 
+
 #sourcing - setup paths
 function addToPath(){
     new_entry=$1
@@ -10,17 +11,31 @@ function addToPath(){
     *) PATH="$new_entry:$PATH";; # or PATH="$PATH:$new_entry"
     esac
 }
-if [ "$0" == "/bin/bash" ]; then
-    #sourcing...
-    WD=`pwd`/atools
-    addToPath $WD/cordova/node_modules/cordova/bin
-    addToPath $WD/ant/bin
-    addToPath $WD/jdk/bin
-    addToPath $WD/android/tools
-    addToPath $WD/android/platform-tools
-    addToPath `echo $WD/android/build-tools/*`
 
-    export JAVA_HOME=$WD/jdk
+if [ "$0" == "/bin/bash" ] || [ "$0" == "./go-android.sh" ]; then
+    #sourcing...
+    # use android studio paths for osx
+    if [ `uname` == "Darwin" ]; then
+      WD=$HOME
+      addToPath $WD/Android/tools
+      addToPath $WD/Android/build-tools/23.0.3
+
+
+    else
+      WD=`pwd`/atools
+      addToPath $WD/cordova/node_modules/cordova/bin
+      addToPath $WD/ant/bin
+      addToPath $WD/jdk/bin
+      addToPath $WD/android/tools
+      addToPath $WD/android/platform-tools
+      addToPath `echo $WD/android/build-tools/*`
+    fi
+
+    # try to use system java - if available
+    if [ `whereis javac` == '' ]; then
+      export JAVA_HOME=$WD/jdk
+    fi
+
     echo "-> PATH has been set up: $WD"
     return
 fi

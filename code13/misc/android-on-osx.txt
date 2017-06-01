@@ -1,4 +1,4 @@
-1. JDK:
+. JDK:
  1.1. Download and install: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 
 2. ANDROID STUDIO:
@@ -24,12 +24,23 @@
 
 5. CONNECTING
   5.1. Make sure that USB debugging is enabled on the device
-  5.2. run: "adb devices" - this should list connected device
+  5.2. run: `adb devices` - this should list connected device
 
 6. RUNNING:
   6.1. Open in the terminal: mgb/code13/app
-  6.2. ./go-android.sh - this should install latest app on the phone
+  6.2. `./go-android.sh` - this should install latest app on the phone
 
 7. DEBUGGING:
   7.1. Open chrome -> Developer tools (alt + cmd + i)
   7.2. Follow steps in the: https://github.com/devlapse/mgb/issues/239#issuecomment-276039886
+
+8. SHARING:
+  8.1. debug apk is located: mgb/code13/app/.meteor/local/cordova-build/platforms/android/build/outputs/apk/android-armv7-debug.apk
+
+9. TROUBLESHOOTING:
+  9.1. Cannot connect to device:
+        execute: `adb devices` - this will start adb daemon
+  9.2. signatures do not match the previously installed version
+        manually delete app from phone or execute: `adb uninstall com.mygamebuilder.mobile.app`
+  9.3. !!! Be aware that meteor has very strange behaviour: and it can load "last known good app"
+        if current app will fail - and you will end up debugging some old version

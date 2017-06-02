@@ -42,6 +42,8 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 
 import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 
+import { InitHotjar } from '/client/imports/helpers/hotjar.js'
+
 let G_localSettings = new ReactiveDict()
 
   // This works because <App> is the first Route in /app/client/imports/routes
@@ -56,6 +58,8 @@ let _theAppInstance = null
 let analyticsAnonymousSendFlag = true
 // same for sending user logged in data
 let analyticsLoggedInSendFlag = true
+// init hotjar
+let hotjarInitFlag = true
 
 
 // for now, until we have push notifications for chat
@@ -802,6 +806,11 @@ const App = createContainer( ( { params, location } ) => {
     // tell google that this is user and all session need to connect to this data point
     ga('set', 'userId', currUser._id)
     analyticsLoggedInSendFlag = false
+  }
+
+  if (typeof currUser != 'undefined' && hotjarInitFlag){
+    InitHotjar(currUser)
+    hotjarInitFlag = false
   }
 
   return {

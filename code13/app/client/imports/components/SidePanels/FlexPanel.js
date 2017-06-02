@@ -20,6 +20,7 @@ import fpUsers from './fpUsers'
 import fpChat from './fpChat'
 
 import reactMixin from 'react-mixin'
+import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 
 import style from './FlexPanel.css' // TODO(nico): get rid of this css

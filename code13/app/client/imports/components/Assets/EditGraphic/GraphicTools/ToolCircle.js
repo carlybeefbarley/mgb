@@ -58,8 +58,12 @@ export default ToolCircle
 function drawHorizLine(drawEnv, x1, x2, y, fillFlag = false)
 {
   if (x1 > x2)
-    [x1, x2] = [x2, x1]
-
+  {
+    const tmp = x1
+    x1 = x2
+    x2 = tmp
+  }
+  
   if (fillFlag)
   {
 

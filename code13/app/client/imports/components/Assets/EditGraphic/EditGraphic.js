@@ -562,9 +562,17 @@ export default class EditGraphic extends React.Component {
 
       saveSelectRect: function(startX, startY, endX, endY) {
         if (startX > endX)
-          [startX, endX] = [endX, startX]
+        {
+          const tmp = startX
+          startX = endX
+          endX = tmp
+        }
         if (startY > endY)
-          [startY, endY] = [endY, startY]
+        {
+          const tmp = startY
+          startY = endY
+          endY = tmp
+        }
         self.setState({
           selectRect: {
             startX: startX,

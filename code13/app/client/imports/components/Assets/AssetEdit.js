@@ -13,6 +13,9 @@ import EditUnknown from './EditUnknown'
 import AssetCard from './AssetCard'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 
+
+
+
 const editElementsForKind = {
   'graphic':   EditGraphic,
   'tutorial':  EditCode,
@@ -26,17 +29,31 @@ const editElementsForKind = {
   'game':      EditGame
 }
 
-export default AssetEdit = React.createClass({
+export default class AssetEdit extends React.Component
+{
+  static propTypes = {
+    asset:                    PropTypes.object.isRequired,    // The invoker of this component must ensure that there is a valid Asset object
+    canEdit:                  PropTypes.bool.isRequired,      // The invoker provides
+    currUser:                 PropTypes.object,               // Can be null/undefined. This is the currently Logged-in user (or null if not logged in)
+    handleContentChange:      PropTypes.func.isRequired,      // Asset Editors call this to deferred-save content2 & thumbnail changes: deferContentChange(content2Object, thumbnail, changeText="content change")
+    handleMetadataChange:     PropTypes.func.isRequired,      // Asset Editors call this to perform IMMEDIATE save of newMetadata
+    handleDescriptionChange:  PropTypes.func.isRequired,      // Asset Editors call this to perform IMMEDIATE save of description change
+    editDeniedReminder:       PropTypes.func.isRequired,      // Asset Editors call this to give User a UI warning that they do not have write access to the current asset
+    getActivitySnapshots:     PropTypes.func.isRequired,      // Activity snapshots causes very heavy re-rendering
+    hasUnsentSaves:           PropTypes.bool.isRequired,      // True if there are deferred saves yet to be sent. HOWEVER, even if sent, then server accept + server ack/nack can be pending - see asset.isUnconfirmedSave for the flag to indicate that 'changes are in flight' status
+    availableWidth:           PropTypes.number,               // Available screen width in pixels for editor
+    handleSaveNowRequest:     PropTypes.func.isRequired       // Asset Editor call this to request a flush now (but it does not wait or have a callback). An example of use for this: Flushing an ActorMap asset to play a game in the actorMap editor
+  }
 
-  componentDidMount: function()
+  componentDidMount()
   {
     // console.log(this.props.asset.kind)
     // trigger hotjar heatmap
     // for music and graphic editor setTimeout (because larger content2 size and loads slower)
     setTimeout( () => Hotjar('trigger', 'editor-'+this.props.asset.kind, this.props.currUser), 200)
-  },
+  }
 
-  render: function() 
+  render() 
   {
     const props = this.props
     const Element = editElementsForKind[props.asset.kind] || EditUnknown
@@ -67,18 +84,4 @@ export default AssetEdit = React.createClass({
       </div>
     )
   }
-})
-
-AssetEdit.propTypes = {
-  asset:                    PropTypes.object.isRequired,    // The invoker of this component must ensure that there is a valid Asset object
-  canEdit:                  PropTypes.bool.isRequired,      // The invoker provides
-  currUser:                 PropTypes.object,               // Can be null/undefined. This is the currently Logged-in user (or null if not logged in)
-  handleContentChange:      PropTypes.func.isRequired,      // Asset Editors call this to deferred-save content2 & thumbnail changes: deferContentChange(content2Object, thumbnail, changeText="content change")
-  handleMetadataChange:     PropTypes.func.isRequired,      // Asset Editors call this to perform IMMEDIATE save of newMetadata
-  handleDescriptionChange:  PropTypes.func.isRequired,      // Asset Editors call this to perform IMMEDIATE save of description change
-  editDeniedReminder:       PropTypes.func.isRequired,      // Asset Editors call this to give User a UI warning that they do not have write access to the current asset
-  getActivitySnapshots:     PropTypes.func.isRequired,      // Activity snapshots causes very heavy re-rendering
-  hasUnsentSaves:           PropTypes.bool.isRequired,      // True if there are deferred saves yet to be sent. HOWEVER, even if sent, then server accept + server ack/nack can be pending - see asset.isUnconfirmedSave for the flag to indicate that 'changes are in flight' status
-  availableWidth:           PropTypes.number,               // Available screen width in pixels for editor
-  handleSaveNowRequest:     PropTypes.func.isRequired       // Asset Editor call this to request a flush now (but it does not wait or have a callback). An example of use for this: Flushing an ActorMap asset to play a game in the actorMap editor
 }

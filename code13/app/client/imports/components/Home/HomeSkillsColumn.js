@@ -21,7 +21,7 @@ const skillsList = [
 const HomeSkillsColumn = () => (
   <Grid.Column className='animated fadeIn'>
     <Header as='h2' style={{ marginBottom: "1em" }}>Grow your <em>real</em> skill tree</Header>
-    <List className="very relaxed">
+    <List inverted className="very relaxed">
       {
         skillsList.map( (skill, idx) => (
           <List.Item key={idx} as={QLink} to={skill.link}>

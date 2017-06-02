@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { Segment, Grid, Header, Image, Button } from 'semantic-ui-react'
+import { Button, Divider, Grid, Header, Image, Segment} from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 import homeStyles from '/client/imports/routes/home.css'
 import getStartedStyle from '/client/imports/routes/GetStarted.css'
@@ -11,11 +11,13 @@ import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const HomeHeroBanner = ( { userId, username, respIsRuleActive } ) => {
   const isSmall = respIsRuleActive('small')
+  
   if (respIsRuleActive('impossible'))
     return <Header as='h1' size='large' style={{fontSize: '1em', margin: '0.75em 0em 0.75em 0em'}} content='MGB'/>
 
   return (
-    <Segment padded='very' basic vertical>
+    <Segment basic vertical>
+    <Divider hidden/>
       <Grid.Row>
         <Grid.Column>
           <Image size='large' floated='right' src={makeCDNLink("/images/mascots/team.png")} />

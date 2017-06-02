@@ -11,7 +11,7 @@ import { userSorters } from '/imports/schemas/users'
 const HomeMeetFriendsColumnUI = (props) => (
   <Grid.Column className='animated fadeIn'>
     <Header as='h2' style={{ marginBottom: '1em' }}>Meet creative friends</Header>
-    <List className="very relaxed">
+    <List inverted className="very relaxed">
       {
         props.loading === false && 
         props.userList.map( (person, idx) => (
@@ -19,7 +19,7 @@ const HomeMeetFriendsColumnUI = (props) => (
             <Image avatar verticalAlign='middle' style={{ height: 60, width: 60 }} src={person.profile.avatar} />
             <div className="content middle aligned" style={{ marginLeft: '1em' }}>
               <Header as='h3' content={person.username} />
-              <p><Icon name='trophy' />{person.badges ? person.badges.length : 0} badges</p>
+              <p><Icon color='yellow' name='trophy' />{person.badges ? person.badges.length : 0} badges</p>
             </div>
           </List.Item>
         ))

@@ -1,10 +1,9 @@
 import React, { PropTypes } from 'react'
 import styles from './home.css'
-import QLink from './QLink'
 import getStartedStyle from './GetStarted.css'
 import ResponsiveComponent from '/client/imports/ResponsiveComponent'
 
-import { Grid } from 'semantic-ui-react'
+import { Container, Divider, Grid } from 'semantic-ui-react'
 import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
 import HomeSkillsColumn from '/client/imports/components/Home/HomeSkillsColumn'
 import HomeProjectsBeingMadeColumn from '/client/imports/components/Home/HomeProjectsBeingMadeColumn'
@@ -25,25 +24,25 @@ const HomeRoute = ( { currUser, respData, respIsRuleActive  } ) => {
 
   return (
     <div>
-      { _isIE && <div style={{color:'red', padding: '2px 8px'}}>Internet Explorer is not supported. Please use another browser</div> }
-      <div className="hero">
-        <div className="ui container">
-          <HomeHeroBanner username={username} userId={userId} />
-        </div>
-      </div>
-      { !respIsRuleActive('noColumns') && 
-        <div className="ui container" style={{paddingTop: "2.5em", paddingBottom: "2em"}}>
-          <Grid padded>
-            <Grid.Row>
-              <Grid columns={columns}>
-                <HomeSkillsColumn userId={userId}/>
-                <HomeProjectsBeingMadeColumn />
-                <HomeMeetFriendsColumn />
-              </Grid>
-            </Grid.Row>
-          </Grid>
-        </div>
+      { _isIE && 
+        <div style={{color:'red', padding: '2px 8px'}}>
+          Internet Explorer is not supported. Please use another browser
+        </div> 
       }
+      <div className="hero">
+        <Container>
+          <HomeHeroBanner username={username} userId={userId} />
+          { !respIsRuleActive('noColumns') && 
+            <Grid columns={columns} stretched style={{clear: 'both'}}>
+              <HomeSkillsColumn userId={userId}/>
+              <HomeProjectsBeingMadeColumn />
+              <HomeMeetFriendsColumn />
+            </Grid>
+          }
+          <Divider hidden/>
+        </Container>
+      </div>
+      
       <Footer />
     </div>
   )

@@ -16,7 +16,7 @@ const HomeMeetFriendsColumnUI = ( { loading, userList }) => (
         loading === false && 
         userList.map( (person, idx) => (
           <List.Item key={idx} as={QLink} to={`/u/${person.username}`}>
-            <Image avatar verticalAlign='middle' style={{ height: 60, width: 60 }} src={person.profile.avatar} />
+            <Image verticalAlign='middle' style={{ height: 60, width: 60 }} src={person.profile.avatar} />
             <div className="content middle aligned" style={{ marginLeft: '1em' }}>
               <Header as='h3' content={person.username} />
               <p><Icon color='yellow' name='trophy' />{person.badges ? person.badges.length : 0} badges</p>

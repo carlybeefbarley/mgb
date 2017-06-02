@@ -101,8 +101,8 @@ Meteor.publish('users.badge.holders', function (badgename)
 Meteor.publish('users.frontPageList', function () 
 {
   return Meteor.users.find(
-    { "badges.1":{$exists: true}}, 
-    { sort: {"createdAt":-1}, limit: 3 }
+    { "badges_count": { $gte: 3 } }, 
+    { sort: { "createdAt": -1 }, limit: 4 }
   )
 })
 

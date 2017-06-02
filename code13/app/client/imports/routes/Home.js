@@ -3,7 +3,7 @@ import styles from './home.css'
 import getStartedStyle from './GetStarted.css'
 import ResponsiveComponent from '/client/imports/ResponsiveComponent'
 
-import { Container, Divider, Grid } from 'semantic-ui-react'
+import { Container, Divider, Grid, Segment } from 'semantic-ui-react'
 import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
 import HomeSkillsColumn from '/client/imports/components/Home/HomeSkillsColumn'
 import HomeProjectsBeingMadeColumn from '/client/imports/components/Home/HomeProjectsBeingMadeColumn'
@@ -31,15 +31,17 @@ const HomeRoute = ( { currUser, respData, respIsRuleActive  } ) => {
       }
       <div className="hero">
         <Container>
-          <HomeHeroBanner username={username} userId={userId} />
-          { !respIsRuleActive('noColumns') && 
-            <Grid columns={columns} stretched style={{clear: 'both'}}>
-              <HomeSkillsColumn userId={userId}/>
-              <HomeProjectsBeingMadeColumn />
-              <HomeMeetFriendsColumn />
-            </Grid>
-          }
-          <Divider hidden/>
+          <Segment basic padded>
+            <HomeHeroBanner username={username} userId={userId} />
+            { !respIsRuleActive('noColumns') && 
+              <Grid columns={columns} stretched style={{clear: 'both'}}>
+                <HomeSkillsColumn userId={userId}/>
+                <HomeProjectsBeingMadeColumn />
+                <HomeMeetFriendsColumn />
+              </Grid>
+            }
+            <Divider hidden/>
+          </Segment>
         </Container>
       </div>
       

@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react'
+import React, { PropTypes } from 'react'
 import homeStyles from '/client/imports/routes/home.css'
 import getStartedStyle from '/client/imports/routes/GetStarted.css'
 
@@ -8,13 +8,13 @@ import { createContainer } from 'meteor/react-meteor-data'
 import { Users } from '/imports/schemas'
 import { userSorters } from '/imports/schemas/users'
 
-const HomeMeetFriendsColumnUI = (props) => (
+const HomeMeetFriendsColumnUI = ( { loading, userList }) => (
   <Grid.Column className='animated fadeIn'>
     <Header as='h2' style={{ marginBottom: '1em' }}>Meet creative friends</Header>
     <List inverted className="very relaxed">
       {
-        props.loading === false && 
-        props.userList.map( (person, idx) => (
+        loading === false && 
+        userList.map( (person, idx) => (
           <List.Item key={idx} as={QLink} to={`/u/${person.username}`}>
             <Image avatar verticalAlign='middle' style={{ height: 60, width: 60 }} src={person.profile.avatar} />
             <div className="content middle aligned" style={{ marginLeft: '1em' }}>
@@ -36,7 +36,7 @@ const HomeMeetFriendsColumn = createContainer (
     const usersHandle = Meteor.subscribe("users.frontPageList")
     let findOpts = {
       sort:   userSorters["createdNewest"],
-      limit:  3
+      limit:  4
     }
     let selector = {
       badges: {$exists: true},

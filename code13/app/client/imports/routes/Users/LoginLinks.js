@@ -10,7 +10,7 @@ const LoginLinks = props => {
     <Container fluid textAlign='right' style={{marginTop: '1em'}} >
       { showLogin  && <div style={sty}><QLink to='/login'>Already have an account?  <u>Log In</u></QLink></div> }
       { showSignup && <div style={sty}><QLink to='/signup'>Not a member yet?  <u>Sign up now!</u></QLink></div> }
-      { showForgot && <div style={sty}><QLink to='/forgot-password'>Forgot password? <u>Request reset</u></QLink></div> }
+      { showForgot && <div style={sty}><QLink to='/forgot-password'><u>Forgot password?</u></QLink></div> }
     </Container>
   )
 }

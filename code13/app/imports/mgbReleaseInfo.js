@@ -18,12 +18,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Fri Jun 02 2017 18:45 GMT-0700 (PDT)',
+      'timestamp': 'Sat Jun 03 2017 00:30 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.2.0',
         'state': 'Beta',
-        'iteration': '4278'
+        'iteration': '4284'
       },
 
       'releaseManagement': {
@@ -39,10 +39,17 @@ const mgbReleaseInfo = {
           'otherUrls': [ ]
         },
         {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Code Splitting',
+          'changeSummary': 'The site has been split into multiple dynamically loadable modules, so initial pages load faster. Currently all the asset editors except the code editor will load-on-demand, and more areas of the product will be chnaged to load dynamically soon',
+          'otherUrls': [ ]
+        },
+        {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'bugfix for Actors/ActorMaps with Melee weapons; homepage ui cleanup; Update to latest build system to enable code splitting in later releases.' ,
+          'changeSummary': 'bugfix for Actors/ActorMaps with Melee weapons; homepage ui cleanup; Update to latest build system to enable code splitting in later releases. Fix for audio/music editors not loading' ,
           'otherUrls': [ ]
         }
       ]

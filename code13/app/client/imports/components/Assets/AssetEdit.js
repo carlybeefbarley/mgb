@@ -1,29 +1,27 @@
 import React, { PropTypes } from 'react'
 import { Message, Segment } from 'semantic-ui-react'
-import EditActorMap from './EditActorMap/EditActorMap'
-import EditActor from './EditActor/EditActor'
-import EditMap from './EditMap/EditMap'
-import EditDoc from './EditDoc/EditDoc'
 import EditCode from './EditCode/EditCode'
-import EditGame from './EditGame/EditGame'
-import EditMusic from './EditAudio/EditMusic/EditMusic'
-import EditSound from './EditAudio/EditSound/EditSound'
-import EditGraphic from './EditGraphic/EditGraphic'
 import EditUnknown from './EditUnknown'
 import AssetCard from './AssetCard'
 import Hotjar from '/client/imports/helpers/hotjar'
+import Spinner from '/client/imports/components/Nav/Spinner'
+
+
+// @stauzs - for Cordova you may need to have to do the imports like we used to.. im which case 
+// add an     el: ComponentName field to the list below and use the static imports we used to do
+// before this new dynamic import() cuteness
 
 const editElementsForKind = {
-  'graphic':   EditGraphic,
-  'tutorial':  EditCode,
-  'code':      EditCode,
-  'map':       EditMap,
-  'actormap':  EditActorMap,
-  'actor':     EditActor,
-  'doc':       EditDoc,
-  'sound':     EditSound,
-  'music':     EditMusic,
-  'game':      EditGame
+  'graphic':   { loader: () => import('./EditGraphic/EditGraphic') },
+  'tutorial':  { el: EditCode, loader: () => import('./EditCode/EditCode') },
+  'code':      { el: EditCode, loader: () => import('./EditCode/EditCode') },
+  'map':       { loader: () => import('./EditMap/EditMap') },
+  'actormap':  { loader: () => import('./EditActorMap/EditActorMap') },
+  'actor':     { loader: () => import('./EditActor/EditActor') },
+  'doc':       { loader: () => import('./EditDoc/EditDoc') },
+  'sound':     { loader: () => import('./EditAudio/EditSound/EditSound') },
+  'music':     { loader: () => import('./EditAudio/EditMusic/EditMusic') },
+  'game':      { loader: () => import('./EditGame/EditGame') },
 }
 
 export default class AssetEdit extends React.Component
@@ -52,9 +50,20 @@ export default class AssetEdit extends React.Component
 
   render() 
   {
-    const props = this.props
-    const Element = editElementsForKind[props.asset.kind] || EditUnknown
-    const isTooSmall = props.availableWidth < 500
+    const { asset, currUser, availableWidth } = this.props
+
+    // Fancy dynamic module loader enables in Meteor 1.5. Woot
+    const loadable = editElementsForKind[asset.kind]
+    if (loadable.el === undefined)
+    {
+      loadable.el = null
+      loadable.loader().then( imp => { loadable.el = imp.default; this.forceUpdate() } )
+    }
+    if (loadable.el === null)
+      return <Spinner loadingMsg={`Loading ${asset.kind} editor...`} />
+
+    const Element = loadable.el || EditUnknown
+    const isTooSmall = availableWidth < 500
     return (
       <div style={{minWidth: '250px'}}>
         { isTooSmall && 
@@ -65,8 +74,8 @@ export default class AssetEdit extends React.Component
                 header='Device too narrow'
                 content='Showing Asset summary instead of Editor'/>
             <AssetCard 
-                asset={props.asset} 
-                currUser={props.currUser} 
+                asset={asset} 
+                currUser={currUser} 
                 fluid={true}
                 canEdit={false}
                 showEditButton={false}
@@ -76,7 +85,7 @@ export default class AssetEdit extends React.Component
         }
         { /* We must keep this in the DOM since it has state we don't want to lose during a temporary resize */ }
         <div style={ isTooSmall ? { display: 'none' } : undefined}>
-          <Element {...props}/>
+          <Element {...this.props}/>
         </div>
       </div>
     )

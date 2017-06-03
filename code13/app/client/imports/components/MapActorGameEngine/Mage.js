@@ -82,6 +82,13 @@ export default class Mage extends React.Component {
     this._gamePlayer = null             // Will be an instance of MagePlayGame class
     this._transitioningToMapName = null
 
+    // Frame-rate
+    this.fps = 30;
+    this.now;
+    this.then = Date.now();
+    this.interval = 1000/this.fps;
+    this.delta;
+
     // React state
     this.state = {
       activeNpcDialog:        null,   // null or (see render() )
@@ -193,24 +200,29 @@ export default class Mage extends React.Component {
       try
       {
         if (this._game) {
-          if (this._transitioningToMapName && !pendingLoads)
-          {
-            const newMapData = this.state.loadedMaps[this._transitioningToMapName]
-            newMapData.name = this._transitioningToMapName
-            this._game.transitionResourcesHaveLoaded(newMapData)
-            this._transitioningToMapName = null
-            this._tweenCount = 0
+          if (this.delta > this.interval) {
+            if (this._transitioningToMapName && !pendingLoads)
+            {
+              const newMapData = this.state.loadedMaps[this._transitioningToMapName]
+              newMapData.name = this._transitioningToMapName
+              this._game.transitionResourcesHaveLoaded(newMapData)
+              this._transitioningToMapName = null
+              this._tweenCount = 0
+            }
+            this._game.onTickGameDo()
           }
-          this._game.onTickGameDo()
-        }
-        // We have to check this._mageCanvas again because a failure to start the game will cause it
-        if (this._mageCanvas && !this._transitioningToMapName) {
-          this._mageCanvas.doBlit(
-            this.state.activeMap, 
-            this.state.loadedActors, 
-            this.state.loadedGraphics, 
-            this._game ? this._game.activeActors : null,
-            this._tweenCount++)
+
+          this.then = this.now - (this.delta % this.interval);
+
+          // We have to check this._mageCanvas again because a failure to start the game will cause it
+          if (this._mageCanvas && !this._transitioningToMapName) {
+            this._mageCanvas.doBlit(
+              this.state.activeMap, 
+              this.state.loadedActors, 
+              this.state.loadedGraphics, 
+              this._game ? this._game.activeActors : null,
+              this._tweenCount++)
+          }
         }
       }
       catch (e)
@@ -220,6 +232,8 @@ export default class Mage extends React.Component {
     }
     if (this._mounted)
       window.requestAnimationFrame( () => this.callDoBlit() )
+      this.now = Date.now();
+      this.delta = this.now - this.then;
   }
 
   /*

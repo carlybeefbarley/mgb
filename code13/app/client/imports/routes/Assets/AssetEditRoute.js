@@ -328,7 +328,7 @@ export default AssetEditRoute = React.createClass({
 
   render: function() {
     if (this.data.loading)
-      return <Spinner />
+      return <Spinner loadingMsg='Loading Asset data' />
 
     const { params, currUser, currUserProjects, availableWidth, hazUnreadAssetChat, isSuperAdmin } = this.props
     const { isForkPending, isDeletePending } = this.state

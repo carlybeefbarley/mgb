@@ -11,10 +11,7 @@ import EditSound from './EditAudio/EditSound/EditSound'
 import EditGraphic from './EditGraphic/EditGraphic'
 import EditUnknown from './EditUnknown'
 import AssetCard from './AssetCard'
-import Hotjar from '/client/imports/helpers/hotjar.js'
-
-
-
+import Hotjar from '/client/imports/helpers/hotjar'
 
 const editElementsForKind = {
   'graphic':   EditGraphic,

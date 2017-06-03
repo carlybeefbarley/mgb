@@ -1,13 +1,10 @@
-import _ from 'lodash';
-import React, { Component } from 'react';
+import React, { Component } from 'react'
+import { Segment } from 'semantic-ui-react'
 
 export default class Spinner extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      hiddenInitially: true               // Used for delayed display
-    }
+  state = {
+    hiddenInitially: true               // Used for delayed display
   }
 
   componentDidMount()
@@ -25,12 +22,12 @@ export default class Spinner extends Component {
   render() {
     const hide = this.state.hiddenInitially
     return ( hide ? null :  
-      <div className="ui basic segment animated fadeIn" style={{minHeight: "15em"}}>
+      <Segment basic className="animated fadeIn" style={{minHeight: "15em"}}>
         <div className={`ui ${hide ? "" : "active"} inverted dimmer`} >
-          <div className="ui text indeterminate loader">Loading</div>
+          <div className="ui text indeterminate loader">{this.props.loadingMsg || 'Loading'}</div>
         </div>
         <p></p>
-      </div>
-    );
+      </Segment>
+    )
   }
 }

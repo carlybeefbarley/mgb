@@ -3,9 +3,9 @@
     "env": {
         "browser": true,
         "commonjs": true,
+        "node": true,
         "es6": true
     },
-    "extends": "eslint:recommended",
     "parserOptions": {
         "ecmaFeatures": {
             "experimentalObjectRestSpread": true,
@@ -21,20 +21,44 @@
     "plugins": [
         "react"
     ],
+    "extends": "eslint:recommended",
     "rules": {
+        "eqeqeq": "off",
+        "curly": [
+            "error",
+            "multi-or-nest"
+        ],
         "linebreak-style": [
             "error",
             "unix"
         ],
         "react/jsx-uses-vars": 2,
+        "no-invalid-this": 2,
+        "nonblock-statement-body-position": [
+            "error",
+            "below"
+        ],
         "indent": [
-          "error",
-          2
+            "error",
+            2,
+            {
+                "SwitchCase": 1,
+                "MemberExpression": 1,
+                "ArrayExpression": 1,
+                "FunctionDeclaration": {
+                    "parameters": "first"
+                },
+                "VariableDeclarator": {
+                    "var": 2,
+                    "let": 2,
+                    "const": 3
+                }
+            }
+        ],
+        "no-eq-null": 2,
+        "semi": [
+            "error",
+            "never"
         ]
-        // ,
-        // "semi": [
-        //     "error",
-        //     "never"
-        // ]
     }
 }

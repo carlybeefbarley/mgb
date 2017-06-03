@@ -18,6 +18,39 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Fri Jun 02 2017 18:45 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4278'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Minimap improvement in Graphic Editor',
+          'changeSummary': 'The graphic editor \'minimap\' does not take so much space now, and scales down for very large images.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'bugfix for Actors/ActorMaps with Melee weapons; homepage ui cleanup; Update to latest build system to enable code splitting in later releases.' ,
+          'otherUrls': [ ]
+        }
+      ]
+
+    },
+
+
+    {
       'timestamp': 'Wed May 31 2017 00:45 GMT-0700 (PDT)',
 
       'id': {

@@ -261,12 +261,20 @@ export default class EditGraphic extends React.Component {
     const hRatio = (screen.height * 0.5) / height
     let scale = wRatio < hRatio ? Math.floor(wRatio) : Math.floor(hRatio)
 
+    // normalize scale to zoomLevels
     if ( scale > 4)
       scale = 4
     else if (scale < 1)
       scale = 1
     else if (scale == 3)
       scale = 2
+
+    // add +1 to zoomLevel (based on hotjar screen recordings and heatmaps)
+    let i = this.zoomLevels.indexOf(scale)
+    if(i < this.zoomLevels.length-1){
+      i++
+      scale = this.zoomLevels[i]
+    }
 
     return scale
   }

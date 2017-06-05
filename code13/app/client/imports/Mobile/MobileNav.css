@@ -6,6 +6,7 @@
   bottom: 0;
 }
 
+/* bottom nav */
 .mobile-nav {
   position: fixed;
   bottom: 0;
@@ -15,8 +16,10 @@
   justify-content: space-around;
   background-color: white;
   border-top: solid 1px #ccc;
-  font-size: 2vh;
-  height: 6vh;
+
+  /* size of bottom nav */
+  font-size: calc(1.5vh + 1vw);
+  line-height: calc(2vh + 2vw);
 }
 
 .react-swipeable-view-container {
@@ -26,8 +29,10 @@
   left: 0;
   right: 0;
   background-color: white;
-  margin-bottom: 6vh;
   z-index: 1;
+
+  /* size of bottom nav */
+  margin-bottom: calc(4vh + 4vw);
 }
 
 .react-swipeable-view-container > div > div {
@@ -63,7 +68,7 @@ a.mobile-nav-item.item {
   overflow: auto;
   align-content: space-around;
   padding-bottom: 50px;
-  font-size: 2.2vh;
+  font-size: calc(1.5vh + 1.2vw);
 }
 
 .react-swipeable-view-container > div {

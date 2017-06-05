@@ -205,6 +205,10 @@ class MobileNav extends React.Component {
   }
 
   loadMoreItems() {
+    // don't load if we have open popup
+    if(this.state.location[this.state.index])
+      return
+
     if (this.state.maxItems[this.state.index] === void(0))
       this.state.maxItems[this.state.index] = 5
 

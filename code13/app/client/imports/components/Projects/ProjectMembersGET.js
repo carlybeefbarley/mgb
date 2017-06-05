@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import { Segment } from 'semantic-ui-react';
 import React, {PropTypes} from 'react';
-import reactMixin from 'react-mixin';
+import reactMixin from 'react-mixin'
+import { ReactMeteorData } from 'meteor/react-meteor-data'
 import UserItem from '../Users/UserItem';
 
 const _nowrapStyle = {

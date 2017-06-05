@@ -9,6 +9,7 @@ import ProjectCardGET from '/client/imports/components/Projects/ProjectCardGET'
 import { isSameUserId } from '/imports/schemas/users'
 
 import reactMixin from 'react-mixin'
+import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { Chats, Azzets } from '/imports/schemas'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import {

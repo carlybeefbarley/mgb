@@ -25,6 +25,7 @@ import { projectMakeSelector } from '/imports/schemas/projects'
 import NavBar from '/client/imports/components/Nav/NavBar'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
 import FlexPanel from '/client/imports/components/SidePanels/FlexPanel'
+import NetworkStatusMsg from '/client/imports/routes/Nav/NetworkStatusMsg'
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 
 import urlMaker from './urlMaker'
@@ -41,10 +42,12 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 
 import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 
+import { InitHotjar } from '/client/imports/helpers/hotjar.js'
+
 import MobileNav from '../Mobile/MobileNav'
 let G_localSettings = new ReactiveDict()
 
-// This works because <App> is the first Route in /app/client/imports/routes
+  // This works because <App> is the first Route in /app/client/imports/routes
 const getPagenameFromProps = props => props.routes[1].name
 const getPagepathFromProps = props => props.routes[1].path
 
@@ -56,6 +59,8 @@ let _theAppInstance = null
 let analyticsAnonymousSendFlag = true
 // same for sending user logged in data
 let analyticsLoggedInSendFlag = true
+// init hotjar
+let hotjarInitFlag = true
 
 
 // for now, until we have push notifications for chat
@@ -781,8 +786,8 @@ const App = createContainer( ( { params , location} ) => {
   const pathUserId = params.id              // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
   const currUser = Meteor.user()
   const currUserId = currUser && currUser._id
-  const handleForUser = pathUserName ?
-    Meteor.subscribe("user.byName", pathUserName)
+  const handleForUser = pathUserName
+    ? Meteor.subscribe("user.byName", pathUserName)
     : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
   const handleForSysvars = Meteor.subscribe('sysvars')
 
@@ -828,6 +833,11 @@ const App = createContainer( ( { params , location} ) => {
     // tell google that this is user and all session need to connect to this data point
     ga('set', 'userId', currUser._id)
     analyticsLoggedInSendFlag = false
+  }
+
+  if (typeof currUser != 'undefined' && hotjarInitFlag){
+    InitHotjar(currUser)
+    hotjarInitFlag = false
   }
 
   return {

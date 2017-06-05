@@ -27,22 +27,19 @@ const serverMethodHelper = userId => {
 
 Meteor.methods({
 
-  "User.sendSignUpEmail": function () {
-    console.log('############## User.sendSignUpEmail...')
+  "User.sendSignUpEmail": function (email) {
+    console.log('############## User.sendSignUpEmail...', email)
+    
+    var mailgun = new Mailgun()
 
-    var options = {
-      apiKey: 'key-98c5eedae6607896b14f1a9b22f1785b',
-      domain: 'mailgun.mygamebuilder.com'
-    }
-    var mailgun = new Mailgun(options)
-
-    // TODO(@shmikucis) send to actual email
+    // TODO how to get current domain to send it as a verify link?
+    // TODO actually verify email
     var mailgunData = {
       from: 'MyGameBuilder Team <info@mygamebuilder.com>',
-      to: 'dgolds@hotmail.com',
-      subject: 'Test',
-      'o:tag': 'test',
-      html: '<p>This is a <em>test</em> message</p>'
+      to: email,
+      subject: 'Verify your email',
+      'o:tag': 'Signup email',
+      html: '<p>You have registered to MyGameBuilder. Please verify your email.</p><p><a href="https://v2.mygamebuilder.com">Click to Verify Email</a></p><br/><br/><br/><br/>'
     }
 
     mailgun.request('POST', '/messages', mailgunData, function (error, body) {

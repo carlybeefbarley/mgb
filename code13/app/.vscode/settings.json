@@ -1,11 +1,32 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-  "typescript.check.workspaceVersion": false,
   "search.exclude": {
     "**/.git": true,
     "**/node_modules": true,
     "**/bower_components": true,
     "**/tmp": true,
     ".meteor/**": true
-  }
+  },
+  "eslint.autoFixOnSave": false,
+  "editor.formatOnSave": false,
+  // Fit code within this line limit
+  "prettier.printWidth": 120,
+  // Number of spaces it should use per tab
+  "prettier.tabWidth": 2,
+  // Which parser to use. Valid options are 'flow' and 'babylon'
+  "prettier.parser": "babylon",
+  // Whether to add a semicolon at the end of every line
+  "prettier.semi": false,
+  // If true, will use single instead of double quotes
+  "prettier.singleQuote": true,
+  // Controls the printing of spaces inside object literals
+  "prettier.bracketSpacing": true,
+  // If true, puts the `>` of a multi-line jsx element at the end of the last line instead of being alone on the next line
+  "prettier.jsxBracketSameLine": true,
+  // Indent lines with tabs
+  "prettier.useTabs": false,
+  // Controls the printing of trailing commas wherever possible
+  "prettier.trailingComma": "none",
+  // Controls the printing of spaces inside array and objects
+  "prettier.bracketSpacing": true,
 }

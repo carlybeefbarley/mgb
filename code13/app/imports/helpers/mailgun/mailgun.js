@@ -10,10 +10,14 @@ var mailgunExpirey = 15 * 60 * 1000;
 var mailgunHashType = 'sha256';
 var mailgunSignatureEncoding = 'hex';
 
-export function Mailgun (options) {
-  if(!options.apiKey){
-    throw new Error('apiKey value must be defined!'); 
+export function Mailgun () {
+  var options = {
+    apiKey: 'key-98c5eedae6607896b14f1a9b22f1785b',
+    domain: 'mailgun.mygamebuilder.com'
   }
+  // if(!options.apiKey){
+  //   throw new Error('apiKey value must be defined!'); 
+  // }
   this.username = 'api';
   this.apiKey = options.apiKey;
   this.publicApiKey = options.publicApiKey;

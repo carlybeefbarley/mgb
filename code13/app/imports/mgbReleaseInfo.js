@@ -18,6 +18,46 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Sat Jun 03 2017 00:30 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4284'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Minimap improvement in Graphic Editor',
+          'changeSummary': 'The graphic editor \'minimap\' does not take so much space now, and scales down for very large images.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Code Splitting',
+          'changeSummary': 'The site has been split into multiple dynamically loadable modules, so initial pages load faster. Currently all the asset editors except the code editor will load-on-demand, and more areas of the product will be chnaged to load dynamically soon',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'bugfix for Actors/ActorMaps with Melee weapons; homepage ui cleanup; Update to latest build system to enable code splitting in later releases. Fix for audio/music editors not loading' ,
+          'otherUrls': [ ]
+        }
+      ]
+
+    },
+
+
+    {
       'timestamp': 'Wed May 31 2017 00:45 GMT-0700 (PDT)',
 
       'id': {

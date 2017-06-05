@@ -82,7 +82,7 @@ export default MagePlayGameInput = {
         break
       case 'm':		// Melee
       case 'End':	
-        if (_.some(pp.content2.animationTable, anim => { return (anim.action.startsWith('melee') && anim.tileName !== "") }))
+        if (inventory.equipEffects.newActorGraphics || (_.some(pp.content2.animationTable, anim => { return (anim.action.startsWith('melee') && anim.tileName !== "") })))
           this.G_player_action.melee = newstate
           break
       case 'Control':

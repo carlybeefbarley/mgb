@@ -1,10 +1,12 @@
 import React, { PropTypes } from 'react'
 import reactMixin from 'react-mixin'
+import { ReactMeteorData } from 'meteor/react-meteor-data'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import QLink from '/client/imports/routes/QLink'
 
 import { Projects } from '/imports/schemas'
 import { projectMakeFrontPageListSelector } from '/imports/schemas/projects'
+import { Header, Icon, List } from 'semantic-ui-react'
 import { getProjectAvatarUrl, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 
@@ -51,13 +53,19 @@ const ProjectsBeingMadeGET = React.createClass({
       {
         !projects.length ? "(none)" :
           projects.map( (p,idx) => (
-            <QLink key={idx} className="link item" style={{ whiteSpace: 'nowrap' }} to={`/u/${p.ownerName}/projects/${p.name}`}>
-              <img className="ui small middle aligned image" style={{ maxHeight: 60, maxWidth: 60 }}
+            <List.Item as={QLink} key={idx} style={{ whiteSpace: 'nowrap' }} to={`/u/${p.ownerName}/projects/${p.name}`}>
+              <img className="ui small middle aligned image" style={{ height: 60, width: 'auto', maxWidth: 90 }}
                    src={getProjectAvatarUrl(p, makeExpireTimestamp(SpecialGlobals.avatar.validFor))} />
               <div className="content middle aligned" style={titleWrapperStyle}>
-                <h3 className="ui header" style={titleStyle}>{p.name}</h3>
+                <Header as='h3' style={titleStyle}>
+                  {p.name}
+                </Header>
+                <p>
+                  <Icon color='grey' name='user' />
+                  { (p.memberIds && p.memberIds.length) ? `${1+p.memberIds.length} members` : '1 member'}
+                </p>
               </div>
-            </QLink>
+            </List.Item>
           ))
       }
       </div>

@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react'
 import { Grid, Icon, Message } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import reactMixin from 'react-mixin'
+import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
@@ -327,7 +328,7 @@ export default AssetEditRoute = React.createClass({
 
   render: function() {
     if (this.data.loading)
-      return <Spinner />
+      return <Spinner loadingMsg='Loading Asset data' />
 
     const { params, currUser, currUserProjects, availableWidth, hazUnreadAssetChat, isSuperAdmin } = this.props
     const { isForkPending, isDeletePending } = this.state

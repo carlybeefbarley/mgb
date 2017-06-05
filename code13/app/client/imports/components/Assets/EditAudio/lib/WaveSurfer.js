@@ -2,25 +2,7 @@
 * https://github.com/katspaugh/wavesurfer.js
 * @license CC-BY-3.0 */
 
-var WaveSurfer = (function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    // AMD. Register as an anonymous module unless amdModuleId is set
-    define('wavesurfer', [], function () {
-      return (root['WaveSurfer'] = factory());
-    });
-  } else if (typeof exports === 'object') {
-    // Node. Does not work with strict CommonJS, but
-    // only CommonJS-like environments that support module.exports,
-    // like Node.
-    module.exports = factory();
-  } else {
-    root['WaveSurfer'] = factory();
-  }
-}(this, function () {
-
-'use strict';
-
-var WaveSurfer = {
+const WaveSurfer = {
     defaultParams: {
         height        : 128,
         waveColor     : '#999',
@@ -551,7 +533,7 @@ var WaveSurfer = {
         this.backend.destroy();
         this.drawer.destroy();
     }
-};
+}
 
 WaveSurfer.create = function (params) {
     var wavesurfer = Object.create(WaveSurfer);
@@ -2098,41 +2080,28 @@ WaveSurfer.util.extend(WaveSurfer.Drawer.MultiCanvas, {
     }
 });
 
-'use strict';
+// 'use strict';
 
 /* Init from HTML */
-(function () {
-    var init = function () {
-        var containers = document.querySelectorAll('wavesurfer');
 
-        Array.prototype.forEach.call(containers, function (el) {
-            var params = WaveSurfer.util.extend({
-                container: el,
-                backend: 'MediaElement',
-                mediaControls: true
-            }, el.dataset);
+// var containers = document.querySelectorAll('wavesurfer')
 
-            el.style.display = 'block';
+// Array.prototype.forEach.call(containers, function (el) {
+//     var params = WaveSurfer.util.extend({
+//         container: el,
+//         backend: 'MediaElement',
+//         mediaControls: true
+//     }, el.dataset)
 
-            var wavesurfer = WaveSurfer.create(params);
+//     el.style.display = 'block'
 
-            if (el.dataset.peaks) {
-                var peaks = JSON.parse(el.dataset.peaks);
-            }
+//     var wavesurfer = WaveSurfer.create(params)
 
-            wavesurfer.load(el.dataset.url, peaks);
-        });
-    };
+//     if (el.dataset.peaks)
+//         var peaks = JSON.parse(el.dataset.peaks)
 
-    if (document.readyState === 'complete') {
-        init();
-    } else {
-        window.addEventListener('load', init);
-    }
-}());
+//     wavesurfer.load(el.dataset.url, peaks)
+// });
 
-return WaveSurfer;
-
-}));
 
 export default WaveSurfer;

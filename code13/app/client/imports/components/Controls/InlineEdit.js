@@ -119,40 +119,43 @@ export default class InlineEdit extends React.Component {
   }
 
   render () {
-    if (this.props.isDisabled) {
-      const Element = this.props.staticElement
+    const { activeClassName, className, editingElement, isDisabled, placeholder, style, staticElement, tabIndex } = this.props
+    const { text, editing } = this.state
+
+    if (isDisabled) {
+      const Element = staticElement
       return (
-        <Element className={this.props.className} style={this.props.style} >
-          {this.state.text || this.props.placeholder}
+        <Element className={className} style={style} >
+          { text || placeholder}
         </Element>
       )
     } 
     
-    if (!this.state.editing) {
-      const Element = this.props.staticElement
+    if (!editing) {
+      const Element = staticElement
       return (
         <Element
-          className={this.props.className}
+          className={className}
           onClick={this.startEditing}
-          tabIndex={this.props.tabIndex}
-          style={this.props.style} >
-          {this.state.text || this.props.placeholder}
+          tabIndex={tabIndex}
+          style={ { ...style, cursor: 'pointer' }} >
+          { text || placeholder }
         </Element>
       )
     }
       
-    const Element = this.props.editingElement
-    const isValid = this.isInputValid(this.state.text)
+    const Element = editingElement
+    const isValid = this.isInputValid(text)
     return (
       <Element
         onClick={this.clickWhenEditing}
         onKeyDown={this.keyDown}
         onBlur={this.finishEditing}
-        className={this.props.activeClassName}
-        placeholder={this.props.placeholder}
+        className={activeClassName}
+        placeholder={placeholder}
         defaultValue={this.state.text}
         onChange={this.textChanged}
-        style={ { ...this.props.style, color: (isValid ? null : 'red') } } 
+        style={ { ...style, color: (isValid ? null : 'red') } } 
         ref="input" />
     )
   }

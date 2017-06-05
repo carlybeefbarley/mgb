@@ -18,6 +18,7 @@ import NavBar from '/client/imports/components/Nav/NavBar'
 import {utilReplaceTo, utilPushTo} from '/client/imports/routes/QLink.js'
 
 import './MobileNav.css'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 const AllButtons = (p) => {
   return <div className="mobile-nav-all-buttons">
@@ -46,7 +47,7 @@ const doLogout = () => {
 
 // make use of this
 let cache = {}
-const LOAD_SCROLL_THRESHOLD = 100
+const LOAD_SCROLL_THRESHOLD = 100 // card has ~150px height
 /*
 * Profile
 * What's New
@@ -203,19 +204,22 @@ class MobileNav extends React.Component {
     })
   }
 
-  loadMoreItems(){
-    if(this.state.maxItems[this.state.index] === void(0) )
+  loadMoreItems() {
+    if (this.state.maxItems[this.state.index] === void(0))
       this.state.maxItems[this.state.index] = 5
 
-    this.state.maxItems[this.state.index]++
-    console.log('toLoad:', this.state.maxItems[this.state.index])
-    this.setState({maxItems: this.state.maxItems})
+    if (this.state.maxItems[this.state.index] < SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit) {
+      this.state.maxItems[this.state.index]++
+      console.log('toLoad:', this.state.maxItems[this.state.index])
+      this.setState({maxItems: this.state.maxItems})
+    }
   }
+
   handleScroll(e){
     const current = e.target.scrollTop + e.target.clientHeight
     const max = e.target.scrollHeight
     console.log("Scrolling:", max - current)
-    if(max - current < LOAD_SCROLL_THRESHOLD) {
+    if(max - current < max * 0.5) {
       this._tmpView = null
       this.loadMoreItems()
     }

@@ -23,7 +23,7 @@ export const GameItem = ( { game, currUser } ) => (
           whiteSpace: 'nowrap'
         }}
       >
-        {game.name}
+        {game.name} {currUser !== game.dn_ownerName && <span>(by <QLink to={`/u/${game.dn_ownerName}/`}>{game.dn_ownerName}</QLink>)</span>}
       </p>
       <p>
         <span>{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</span>

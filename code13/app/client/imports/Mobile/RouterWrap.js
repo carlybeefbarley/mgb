@@ -19,7 +19,7 @@ class RouterWrap extends React.PureComponent {
 
     const p = this.props
     return (
-      <div className="locationPopup">
+      <div className="locationPopup" id="locationPopup">
         <div className="head" onClick={this.onClose}></div>
         {/*<NavBar {...p} currentlyEditingAssetInfo={p.state.currentlyEditingAssetInfo}/>*/}
         <div>{React.cloneElement(p.children, p)}</div>

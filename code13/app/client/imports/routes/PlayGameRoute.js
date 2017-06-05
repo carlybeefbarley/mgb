@@ -37,7 +37,7 @@ class PlayCodeGame extends React.Component {
   }
 
   componentDidMount(){
-    this.container = document.getElementById('mgb-jr-main-container')
+    this.container = document.getElementById('locationPopup') /* mobile */ || document.getElementById('mgb-jr-main-container')
     if (!this.container)
       throw(new Error("Main container cannot be found."))
 

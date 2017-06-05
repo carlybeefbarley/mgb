@@ -43,7 +43,7 @@ Meteor.publish('assets.public', function(
   const assetSorter = assetSortType ? allSorters[assetSortType] : allSorters["edited"]
   const findOpts = {
     fields: { content2: 0, thumbnail: 0 },
-    sort:  assetSorter,
+    sort:  Object.assign(assetSorter, {name: 1}), // always sort by name if we have multiple items with same sorting outcome
     limit: actualLimit
   }
   return Azzets.find(selector, findOpts )

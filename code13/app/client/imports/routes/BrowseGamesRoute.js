@@ -76,6 +76,13 @@ export default BrowseGamesRoute = React.createClass({
     browserHistory.push( Object.assign( {}, loc, { query: newQ } ) )
   },
 
+  // TODO: figure out this....
+  getInitialState: function(){
+    return {
+      itemsToLoad: 5
+    }
+  },
+
   /**
    * Always get the Assets stuff.
    * Optionally get the Project info - if this is a user-scoped view
@@ -87,10 +94,12 @@ export default BrowseGamesRoute = React.createClass({
     const handleForGames = Meteor.subscribe( "assets.public", userId, ['game'], qN.searchName, qN.project, false, qN.showStable === "1", qN.sort, this.props.maxItems )
     const gamesSorter = gameSorters[qN.sort]
     const gamesSelector = assetMakeSelector(userId, ['game'], qN.searchName, qN.project, false, qN.showStable === "1")
+
+    // handleForProjects is not used, but subscription is
     const handleForProjects = userId ? Meteor.subscribe("projects.byUserId", userId) : null
     const selectorForProjects = { '$or': [ { ownerId: userId }, { memberIds: { $in: [userId] } } ] }
     return {
-      games: Azzets.find(gamesSelector, { sort: gamesSorter }).fetch(),      // Note that the subscription we used excludes the content2 field which can get quite large
+      games: Azzets.find(gamesSelector, { sort: Object.assign(gamesSorter, {name: 1}) }).fetch(),      // Note that the subscription we used excludes the content2 field which can get quite large
       projects: userId ? Projects.find(selectorForProjects).fetch() : null, // Can be null
       loading: !handleForGames.ready()
     }
@@ -152,8 +161,9 @@ export default BrowseGamesRoute = React.createClass({
               chosenSortBy={qN.sort}
               handleChangeSortByClick={v => this._updateLocationQuery( { sort: v } ) } />
 
-          <div className='ui action input' style={{ float: 'right' }}>
-            {user && <QLink to="/games" tab={-1}>All games</QLink>}
+          <div className='ui action input' style={{display: 'block', clear: 'both'}}>
+            {user && <QLink to="/games" tab={-1} style={{float: "left", padding: "0.4em 0"}}>All games</QLink>}
+            <div style={{float: "right"}}>
             <input
                 type='text'
                 placeholder='Search...'
@@ -165,6 +175,7 @@ export default BrowseGamesRoute = React.createClass({
               <i className="search icon" />
             </button>
             &emsp;
+            </div>
           </div>
 
           {

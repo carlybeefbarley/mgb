@@ -75,6 +75,8 @@ export default BrowseGamesRoute = React.createClass({
     const newQ = this._stripQueryOfDefaults( Object.assign( {}, loc.query, queryModifier) )
     // This is browserHistory.push and NOT utilPushTo() since we are staying on the same page
     browserHistory.push( Object.assign( {}, loc, { query: newQ } ) )
+    // mobile don't update whole app on location change
+    this.forceUpdate()
   },
 
   // TODO: figure out this....

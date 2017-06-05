@@ -835,7 +835,7 @@ const App = createContainer( ( { params , location} ) => {
     analyticsLoggedInSendFlag = false
   }
 
-  if (typeof currUser != 'undefined' && hotjarInitFlag){
+  if (typeof currUser !== 'undefined' && hotjarInitFlag){
     InitHotjar(currUser)
     hotjarInitFlag = false
   }

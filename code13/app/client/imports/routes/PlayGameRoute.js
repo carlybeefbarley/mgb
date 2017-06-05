@@ -100,7 +100,8 @@ class PlayCodeGame extends React.Component {
     const box = this.refs.wrapper.getBoundingClientRect()
 
     const gameWidth = outerBox.width - box.left * 2
-    const gameHeight = window.innerHeight - box.top
+    const gameHeight = outerBox.height - box.top
+    
     style.height = gameHeight + 'px'
     style.width = gameWidth + 'px'
 

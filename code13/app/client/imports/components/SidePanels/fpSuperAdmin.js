@@ -81,20 +81,6 @@ const UserAdmin = ( { user, extraUserInfo } ) => {
         { linkLi(`Latest WhatsNew seen: ${moment(new Date(user.profile.latestNewsTimestampSeen)).fromNow()}`, usrLink)}
       </List>
 
-      <Header sub>Admin-only user Info</Header>
-      { extraUserInfo &&
-        <List bulleted>
-          { _.map(extraUserInfo.ua.ipAddresses, ipStr => linkLi('IP: ' + ipStr, "https://freegeoip.net/?q=" + ipStr, ipStr) ) }
-          { linkLi("usernames: "+_.join(extraUserInfo.ua.usernames, ', '), "/") }
-          { _.map(extraUserInfo.u.emails, email => linkLi(
-              'email: ' + email.address + (email.verified ? ' (v)' : ' (!v)'), 
-              "mailto:" + email.address,
-              email
-              )
-            )
-          }
-        </List> 
-      }
 
       <Header sub>Admin Actions</Header>
       <Button.Group vertical basic compact size='small'>
@@ -113,6 +99,22 @@ const UserAdmin = ( { user, extraUserInfo } ) => {
           onClick={() => Meteor.call(user.isDeactivated ? 'User.reactivateAccount' :  'User.deactivateAccount', user._id) }
           />
       </Button.Group>
+
+
+      <Header sub>Admin-only user Info</Header>
+      { extraUserInfo &&
+        <List bulleted>
+          { linkLi("usernames: "+_.join(extraUserInfo.ua.usernames, ', '), "/") }
+          { _.map(extraUserInfo.u.emails, email => linkLi(
+              'email: ' + email.address + (email.verified ? ' (v)' : ' (!v)'), 
+              "mailto:" + email.address,
+              email
+              )
+            )
+          }
+          { _.map(extraUserInfo.ua.ipAddresses, ipStr => linkLi('IP: ' + ipStr, "https://freegeoip.net/?q=" + ipStr, ipStr) ) }
+        </List> 
+      }
     </div>
   )
 }

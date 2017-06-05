@@ -213,7 +213,7 @@ class MobileNav extends React.Component {
       this.state.maxItems[this.state.index] = 5
 
     if (this.state.maxItems[this.state.index] < SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit) {
-      this.state.maxItems[this.state.index]++
+      this.state.maxItems[this.state.index] *=2
       console.log('toLoad:', this.state.maxItems[this.state.index])
       this.setState({maxItems: this.state.maxItems})
     }
@@ -223,7 +223,7 @@ class MobileNav extends React.Component {
     const current = e.target.scrollTop + e.target.clientHeight
     const max = e.target.scrollHeight
     console.log("Scrolling:", max - current)
-    if(max - current < max * 0.5) {
+    if(max - current < LOAD_SCROLL_THRESHOLD) {
       this._tmpView = null
       this.loadMoreItems()
     }

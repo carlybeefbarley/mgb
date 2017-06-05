@@ -32,7 +32,7 @@ if [ "$0" == "/bin/bash" ] || [ "$0" == "./go-android.sh" ]; then
     fi
 
     # try to use system java - if available
-    if [ `whereis javac` == '' ]; then
+    if [ "`whereis javac`" == 'javac:' ]; then
       export JAVA_HOME=$WD/jdk
     fi
 

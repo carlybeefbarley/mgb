@@ -280,8 +280,8 @@ class MobileNav extends React.Component {
   renderView() {
     // without cache performance is very bad...
 
-    /*if (this._tmpView)
-      return this._tmpView*/
+    if (this._tmpView)
+      return this._tmpView
 
     const max = this.getMaxItems()
     this._tmpView = this.buttons

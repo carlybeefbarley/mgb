@@ -86,8 +86,10 @@ class PlayCodeGame extends React.Component {
    * Adjusts iframe - to fit in the current window
    * */
   adjustIframeSize(){
+
     // fullscreen - don't adjust anything
-    if(this.refs.iframe.offsetHeight === window.innerHeight)
+    // TODO: debug case without ref...
+    if(!this.refs.iframe || this.refs.iframe.offsetHeight === window.innerHeight)
       return
 
     const container = this.container

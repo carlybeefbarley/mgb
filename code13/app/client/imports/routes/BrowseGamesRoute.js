@@ -198,11 +198,12 @@ export default BrowseGamesRoute = React.createClass({
               header='No games match your search'
               content='Widen your search to see more games' />
           }
-        { loading && games.length === 0 ?
-            <Spinner />
-           :
-            <GameItems currUser={currUser} wrap={true} games={games} />
-        }
+
+        { games.length &&
+          <GameItems currUser={currUser} wrap={true} games={games} /> }
+
+        { loading &&
+          <Spinner /> }
 
       </Segment>
     )

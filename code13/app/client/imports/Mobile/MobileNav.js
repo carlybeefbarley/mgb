@@ -46,7 +46,7 @@ const doLogout = () => {
 
 // make use of this
 let cache = {}
-const LOAD_SCROLL_TRESHOLD = 140
+const LOAD_SCROLL_THRESHOLD = 100
 /*
 * Profile
 * What's New
@@ -160,21 +160,21 @@ class MobileNav extends React.Component {
     return this.state.maxItems[this.state.index] || 5
   }
 
-  loadMoreItems(){
-    if(this.state.maxItems[this.state.index] === void(0) )
-      this.state.maxItems[this.state.index] = 5
-
-    this.state.maxItems[this.state.index]++
-
-    this.setState({maxItems: this.state.maxItems})
-  }
 
 
-  setLocation(location){
-    this.state.location[this.state.index] = location
 
-    // clear view - as we will need to re-render it completely
-    this._tmpView = null
+  setLocation(location, tab){
+    console.log("SET LOCATION: tab:", tab)
+    if(tab !== -1) {
+      if(tab)
+        this.handleChangeIndex(tab)
+
+
+      this.state.location[this.state.index] = location
+      // clear view - as we will need to re-render it completely
+      this._tmpView = null
+    }
+
     this.setState({location: this.state.location, time: Date.now()})
     this.context.router.push(location)
   }
@@ -203,10 +203,19 @@ class MobileNav extends React.Component {
     })
   }
 
+  loadMoreItems(){
+    if(this.state.maxItems[this.state.index] === void(0) )
+      this.state.maxItems[this.state.index] = 5
+
+    this.state.maxItems[this.state.index]++
+    console.log('toLoad:', this.state.maxItems[this.state.index])
+    this.setState({maxItems: this.state.maxItems})
+  }
   handleScroll(e){
     const current = e.target.scrollTop + e.target.clientHeight
     const max = e.target.scrollHeight
-    if(max - current < LOAD_SCROLL_TRESHOLD) {
+    console.log("Scrolling:", max - current)
+    if(max - current < LOAD_SCROLL_THRESHOLD) {
       this._tmpView = null
       this.loadMoreItems()
     }

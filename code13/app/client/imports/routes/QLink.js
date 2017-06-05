@@ -124,7 +124,7 @@ export default QLink = React.createClass({
         console.log("WHERE is TABS reference???")
         return
       }
-      this.context.tabs.setLocation(location)
+      this.context.tabs.setLocation(location, this.props.tab)
       // mobile will handle
     }
     else

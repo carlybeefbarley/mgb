@@ -15,6 +15,9 @@ export default class ObjectBehavior extends BaseForm {
     return (
       <div>
         <hr />
+        {this.data.equippedNewActorGraphics &&
+          <span style={{color: "#A91313"}}>Note: It is recommended that items that can change the player's appearance should use the same slot name. This is because only one equipped item can only change how the player looks.</span>
+        }
         {this.text("Equipment slot", "inventoryEquipSlot", "text", {
           title: "Enter a string such as 'weapon' or 'right hand'. The player can only equip one item of any 'slot' at a time"
         })}
@@ -22,9 +25,6 @@ export default class ObjectBehavior extends BaseForm {
         {this.dropArea("New actor graphics", "equippedNewActorGraphics","actor", {
           title:"When equipped, use this actor's graphics (base tile &amp; all animations) to show the player. For example, if this item is a weapon, you may have a new set of actor graphics where the actor is carrying the weapon. Sorry, but only one equipped item can override the actor at a time - so choose wisely which slot you want to use this feature with (usually weapons). You can choose ANY actor type for this, since only the graphics of that actor will be use, and all actor types define graphics"
         })}
-        {this.data.equippedNewActorGraphics &&
-        <div>Note: It is recommended that items that can change the player's appearance should use the same slot name. This is because only one equipped item can only change how the player looks.</div>
-        }
 
         {this.bool("Auto-equip item", 'autoEquipYN', {
           title: "If yes, then this item is special and automatically is equipped when picked up by the pla yer. It is useful for items like cars, horses, etc. Also, it cannot be explicitly unequipped by the user - it is only changed by another similar item"
@@ -70,7 +70,7 @@ export default class ObjectBehavior extends BaseForm {
           options: soundOptions,
           title: "When equipped, use this as the Melee sound"
         })}
-        {this.text("Melee Repeat rate modifier", 'equippedNewMeleeDamageBonusNum', "number", {
+        {this.text("Melee Repeat rate modifier", 'equippedNewMeleeRepeatDelayModiferNum', "number", {
           title: "This raises or lowers the Melee repeat rate of the character who has equipped the item. If the value is zero, there is no change to melee repeat rate. A positive number increases the delay, a negative number reduces the delay",
           min: -10,
           max: 10

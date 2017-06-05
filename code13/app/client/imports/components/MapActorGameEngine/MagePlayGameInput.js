@@ -86,10 +86,14 @@ export default MagePlayGameInput = {
           this.G_player_action.melee = newstate
           break
       case 'Control':
-        if (isPaused && newstate)
-          this.hideNpcMessage()				// unpause
-        else if (!isPaused && newstate)	// "key down" event
+        if (isPaused && newstate) { // unpause
+          this.hideNpcMessage()		
+
+        }		
+        else if (!isPaused && newstate)	{ // "key down" event
           this.doPauseGame()
+
+        }
         break
       case 'Enter':
         if (MgbActor.intFromActorParam(pp.content2.databag.allchar.shotRateNum) || inventory.equipEffects.shotRateBonus)

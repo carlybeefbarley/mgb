@@ -46,7 +46,7 @@ const doLogout = () => {
 
 // make use of this
 let cache = {}
-
+const LOAD_SCROLL_TRESHOLD = 140
 /*
 * Profile
 * What's New
@@ -106,25 +106,19 @@ class MobileNav extends React.Component {
     ]
     this.state = cache.state || {
       index: 0,
-      location: {}
+      location: {},
+      maxItems: {}
     }
-  }
 
+    this.handleChangeIndex = this.handleChangeIndex.bind(this)
+    this.handleScroll = this.handleScroll.bind(this)
+  }
 
   setState(newState, callback = null){
     super.setState(newState, () => {
       cache.state = this.state
       callback && callback()
     })
-  }
-
-  setLocation(location){
-    this.state.location[this.state.index] = location
-
-    // clear view - as we will need to re-render it completely
-    this._tmpView = null
-    this.setState({location: this.state.location, time: Date.now()})
-    this.context.router.push(location)
   }
 
   componentDidMount() {
@@ -136,6 +130,14 @@ class MobileNav extends React.Component {
       this.forceUpdate()
     }
     this.erd.listenTo(document.body, this.onresize)
+    const views = document.querySelectorAll('div.react-swipeable-view-container > *')
+    views.forEach(v => {
+      v.addEventListener('scroll', e => {
+        console.log("loadMore")
+      })
+    })
+
+
     window.swp = this.refs.swipeable
   }
 
@@ -153,6 +155,30 @@ class MobileNav extends React.Component {
    }*/
 
 
+
+  getListItemCount(){
+    return this.state.maxItems[this.state.index] || 5
+  }
+
+  loadMoreItems(){
+    if(this.state.maxItems[this.state.index] === void(0) )
+      this.state.maxItems[this.state.index] = 5
+
+    this.state.maxItems[this.state.index]++
+
+    this.setState({maxItems: this.state.maxItems})
+  }
+
+
+  setLocation(location){
+    this.state.location[this.state.index] = location
+
+    // clear view - as we will need to re-render it completely
+    this._tmpView = null
+    this.setState({location: this.state.location, time: Date.now()})
+    this.context.router.push(location)
+  }
+
   onClick(button, index) {
     this.handleChangeIndex(index)
   }
@@ -169,13 +195,22 @@ class MobileNav extends React.Component {
       $("#mobile-nav-button-" + index, this.refs.mobileNav).addClass("active")
 
       const route = this.state.location[index] || '/'
-      if(this.state.lastRoute !== route){
+      //if(this.state.lastRoute !== route){
+        this._tmpView = null
         this.context.router.push(route)
         this.state.lastRoute = (this.state.location[index] || '/')
-      }
+     // }
     })
   }
 
+  handleScroll(e){
+    const current = e.target.scrollTop + e.target.clientHeight
+    const max = e.target.scrollHeight
+    if(max - current < LOAD_SCROLL_TRESHOLD) {
+      this._tmpView = null
+      this.loadMoreItems()
+    }
+  }
 
   getMaxItems() {
     return 5
@@ -191,10 +226,12 @@ class MobileNav extends React.Component {
 
         <SwipeableViews
           index={this.state.index}
-          onChangeIndex={this.handleChangeIndex.bind(this)}
           ref="swipeable"
           animateTransitions={false}
           style={{zIndex: 9}}
+
+          onChangeIndex={this.handleChangeIndex}
+          onScroll={this.handleScroll}
         >
           {
             this.renderView()
@@ -289,6 +326,9 @@ class MobileNav extends React.Component {
     play: {
       title: "Play",
       Component: BrowseGamesRoute,
+      getProps: (mobileNav) => ({
+        maxItems: mobileNav.getListItemCount()
+      }),
       icon: 'game'
     },
     chat: {

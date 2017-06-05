@@ -15,7 +15,7 @@ import AssetListSortBy from '/client/imports/components/Assets/AssetListSortBy'
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 
 // Default values for url?query - i.e. the this.props.location.query keys
-const queryDefaults = { 
+const queryDefaults = {
   project:    ProjectSelector.ANY_PROJECT_PROJNAME,
   searchName: '',               // Empty string means match all (more convenient than null for input box)
   sort: 'plays',                // Should be one of the keys of gameSorters{}
@@ -30,23 +30,24 @@ export default BrowseGamesRoute = React.createClass({
     user: PropTypes.object,         // Maybe absent if route is /games
     currUser: PropTypes.object,     // Currently Logged in user. Can be null
     ownsProfile: PropTypes.bool,
-    location: PropTypes.object      // We get this from react-router
+    location: PropTypes.object,     // We get this from react-router
+    maxItems: PropTypes.number      // Items to load
   },
-  
+
   contextTypes: {
     urlLocation: React.PropTypes.object
   },
-  
-  /** 
+
+  /**
    * queryNormalized() takes a location query that comes in via the browser url.
-   *   Any missing or invalid params are replaced by defaults 
+   *   Any missing or invalid params are replaced by defaults
    *   The result is a data structure that can be used without need for range/validity checking
    * @param q typically this.props.location.query  -  from react-router
   */
   queryNormalized: function(q) {
     // Start with defaults
     let newQ = _.clone(queryDefaults)
-    
+
     // Validate and apply values from location query
     if (gameSorters.hasOwnProperty(q.sort))
       newQ.sort = q.sort
@@ -56,16 +57,16 @@ export default BrowseGamesRoute = React.createClass({
     //   newQ.showStable = q.showStable
     if (q.searchName)
       newQ.searchName = q.searchName
-      
+
     return newQ
   },
 
-  /**  Returns the given query EXCEPT for keys that match a key/value pair in queryDefaults array 
-  */ 
+  /**  Returns the given query EXCEPT for keys that match a key/value pair in queryDefaults array
+  */
   _stripQueryOfDefaults: function(queryObj) {
     return _.omitBy(queryObj, (val, key) => (queryDefaults.hasOwnProperty(key) && queryDefaults[key] === val))
   },
-  
+
   /** helper Function for updating just a query string with react router
   */
   _updateLocationQuery(queryModifier) {
@@ -74,19 +75,19 @@ export default BrowseGamesRoute = React.createClass({
     // This is browserHistory.push and NOT utilPushTo() since we are staying on the same page
     browserHistory.push( Object.assign( {}, loc, { query: newQ } ) )
   },
-  
-  /** 
+
+  /**
    * Always get the Assets stuff.
    * Optionally get the Project info - if this is a user-scoped view
    */
   getMeteorData: function() {
     const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
     const qN = this.queryNormalized(this.props.location.query)
-    
-    const handleForGames = Meteor.subscribe( "assets.public", userId, ['game'], qN.searchName, qN.project, false, qN.showStable === "1", qN.sort )
+
+    const handleForGames = Meteor.subscribe( "assets.public", userId, ['game'], qN.searchName, qN.project, false, qN.showStable === "1", qN.sort, this.props.maxItems )
     const gamesSorter = gameSorters[qN.sort]
     const gamesSelector = assetMakeSelector(userId, ['game'], qN.searchName, qN.project, false, qN.showStable === "1")
-    const handleForProjects = userId ? Meteor.subscribe("projects.byUserId", userId) : null 
+    const handleForProjects = userId ? Meteor.subscribe("projects.byUserId", userId) : null
     const selectorForProjects = { '$or': [ { ownerId: userId }, { memberIds: { $in: [userId] } } ] }
     return {
       games: Azzets.find(gamesSelector, { sort: gamesSorter }).fetch(),      // Note that the subscription we used excludes the content2 field which can get quite large
@@ -94,7 +95,7 @@ export default BrowseGamesRoute = React.createClass({
       loading: !handleForGames.ready()
     }
   },
-  
+
   handleSearchGo()
   {
     // TODO - disallow/escape search string
@@ -102,8 +103,8 @@ export default BrowseGamesRoute = React.createClass({
     $button.removeClass('orange')
     this._updateLocationQuery( { searchName: this.refs.searchNameInput.value } )
   },
-  
-  /** 
+
+  /**
    * Make it clear that the search icon needs to be pushed while editing the search box
    * I could do this with React, but didn't want to since search triggers a few changes already
    */
@@ -120,11 +121,11 @@ export default BrowseGamesRoute = React.createClass({
   componentDidMount() {
     window.addEventListener('keydown', this.listenForEnter)
   },
-  
+
   componentWillUnmount() {
     window.removeEventListener('keydown', this.listenForEnter)
   },
-  
+
   listenForEnter(e) {
     e = e || window.event
     if (e.keyCode === 13)
@@ -138,7 +139,7 @@ export default BrowseGamesRoute = React.createClass({
     const qN = this.queryNormalized(location.query)
 
     return (
-      <Segment basic padded>
+      <Segment basic padded style={{height: "100%", overflow: "auto"}}>
         <Helmet
           title='Browse Games'
           meta={[ { name: 'Browse stable games', content: 'List of Games'} ]}  />
@@ -147,15 +148,16 @@ export default BrowseGamesRoute = React.createClass({
             { user ? <span><a>{name}</a>'s Games</span> : 'Public Games' }
           </div>
 
-          <AssetListSortBy 
-              chosenSortBy={qN.sort} 
+          <AssetListSortBy
+              chosenSortBy={qN.sort}
               handleChangeSortByClick={v => this._updateLocationQuery( { sort: v } ) } />
 
           <div className='ui action input' style={{ float: 'right' }}>
+            {user && <QLink to="/games" tab={-1}>All games</QLink>}
             <input
                 type='text'
-                placeholder='Search...' 
-                defaultValue={qN.searchName} 
+                placeholder='Search...'
+                defaultValue={qN.searchName}
                 onChange={this.handleSearchNameBoxChanges}
                 ref='searchNameInput'
                 size='16'></input>
@@ -165,19 +167,19 @@ export default BrowseGamesRoute = React.createClass({
             &emsp;
           </div>
 
-          { 
-            /* Show only locked games.. ? 
+          {
+            /* Show only locked games.. ?
             <div style={{ float: 'right' }}>
-              <AssetShowStableSelector 
-                  showStableFlag={qN.showStable} 
+              <AssetShowStableSelector
+                  showStableFlag={qN.showStable}
                   handleChangeFlag={v => this._updateLocationQuery( { showStable: v } ) } />
             </div>
             */
           }
 
-        { user && 
+        { user &&
           <div style={{clear: 'both'}}>
-            <ProjectSelector 
+            <ProjectSelector
                 canEdit={ownsProfile}
                 user={user}
                 isUseCaseCreate={false}
@@ -188,18 +190,18 @@ export default BrowseGamesRoute = React.createClass({
           </div>
         }
 
-        { !loading && games.length === 0 && 
-          <Message 
-              style={{marginTop: '8em'}} 
-              warning 
-              icon='help circle' 
-              header='No games match your search' 
-              content='Widen your search to see more games' /> 
+        { !loading && games.length === 0 &&
+          <Message
+              style={{marginTop: '8em'}}
+              warning
+              icon='help circle'
+              header='No games match your search'
+              content='Widen your search to see more games' />
           }
-        { loading ? 
+        { loading && games.length === 0 ?
             <Spinner />
            :
-            <GameItems currUser={currUser} wrap={true} games={games} /> 
+            <GameItems currUser={currUser} wrap={true} games={games} />
         }
 
       </Segment>

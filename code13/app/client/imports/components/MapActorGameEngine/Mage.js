@@ -83,11 +83,11 @@ export default class Mage extends React.Component {
     this._transitioningToMapName = null
 
     // Frame-rate
-    this.fps = 30;
-    this.now;
-    this.then = Date.now();
-    this.interval = 1000/this.fps;
-    this.delta;
+    this._frameRateFps = 35;
+    this._frameRateNow = null;
+    this._frameRateThen = Date.now();
+    this._frameRateInterval = 1000/this._frameRateFps;
+    this._frameRateDelta = null;
 
     // React state
     this.state = {
@@ -200,7 +200,7 @@ export default class Mage extends React.Component {
       try
       {
         if (this._game) {
-          if (this.delta > this.interval) {
+          if (this._frameRateDelta > this._frameRateInterval) {
             if (this._transitioningToMapName && !pendingLoads)
             {
               const newMapData = this.state.loadedMaps[this._transitioningToMapName]
@@ -212,7 +212,7 @@ export default class Mage extends React.Component {
             this._game.onTickGameDo()
           }
 
-          this.then = this.now - (this.delta % this.interval);
+          this._frameRateThen = this._frameRateNow - (this._frameRateDelta % this._frameRateInterval);
 
           // We have to check this._mageCanvas again because a failure to start the game will cause it
           if (this._mageCanvas && !this._transitioningToMapName) {
@@ -232,8 +232,8 @@ export default class Mage extends React.Component {
     }
     if (this._mounted)
       window.requestAnimationFrame( () => this.callDoBlit() )
-      this.now = Date.now();
-      this.delta = this.now - this.then;
+      this._frameRateNow = Date.now();
+      this._frameRateDelta = this._frameRateNow - this._frameRateThen;
   }
 
   /*

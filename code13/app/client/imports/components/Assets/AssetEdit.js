@@ -1,20 +1,20 @@
 import React, { PropTypes } from 'react'
 import { Message, Segment } from 'semantic-ui-react'
-import EditCode from './EditCode/EditCode'
+
 import EditUnknown from './EditUnknown'
 import AssetCard from './AssetCard'
 import Hotjar from '/client/imports/helpers/hotjar'
 import Spinner from '/client/imports/components/Nav/Spinner'
 
 
-// @stauzs - for Cordova you may need to have to do the imports like we used to.. im which case 
+// @stauzs - for Cordova you may need to have to do the imports like we used to.. im which case
 // add an     el: ComponentName field to the list below and use the static imports we used to do
 // before this new dynamic import() cuteness
 
 const editElementsForKind = {
   'graphic':   { loader: () => import('./EditGraphic/EditGraphic') },
-  'tutorial':  { el: EditCode, loader: () => import('./EditCode/EditCode') },
-  'code':      { el: EditCode, loader: () => import('./EditCode/EditCode') },
+  'tutorial':  { loader: () => import('./EditCode/EditCode') },
+  'code':      { loader: () => import('./EditCode/EditCode') },
   'map':       { loader: () => import('./EditMap/EditMap') },
   'actormap':  { loader: () => import('./EditActorMap/EditActorMap') },
   'actor':     { loader: () => import('./EditActor/EditActor') },
@@ -48,7 +48,7 @@ export default class AssetEdit extends React.Component
     setTimeout( () => Hotjar('trigger', 'editor-'+this.props.asset.kind, this.props.currUser), 200)
   }
 
-  render() 
+  render()
   {
     const { asset, currUser, availableWidth } = this.props
 
@@ -66,16 +66,16 @@ export default class AssetEdit extends React.Component
     const isTooSmall = availableWidth < 500
     return (
       <div style={{minWidth: '250px'}}>
-        { isTooSmall && 
+        { isTooSmall &&
           <Segment basic>
-            <Message 
-                warning 
-                icon='compress' 
+            <Message
+                warning
+                icon='compress'
                 header='Device too narrow'
                 content='Showing Asset summary instead of Editor'/>
-            <AssetCard 
-                asset={asset} 
-                currUser={currUser} 
+            <AssetCard
+                asset={asset}
+                currUser={currUser}
                 fluid={true}
                 canEdit={false}
                 showEditButton={false}

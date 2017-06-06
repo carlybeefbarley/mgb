@@ -377,6 +377,7 @@ const MgbActor = {
   {
     const frame = tweenCount % 5									  // Normal move animations have 5 steps
     const frame_Stationary = (tweenCount >> 1) % 16	// # Stationary animations have 16 steps
+    let hasStationaryAnyDirection = false
     let animationTableIndex = -1			      				// This will be used to work out which animation tile to use, and will become teh return value from this method
     const effectiveStepStyle = (currentStepStyle == -1) ? priorStepStyle : currentStepStyle;		// This will be the most valid (i.e. not -1) of current/prior stepstyle
 
@@ -422,23 +423,33 @@ const MgbActor = {
           if (MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex)) 
             break
           else 
-            switch (priorStepStyle)
-            {
-            case -1: 
-              animationTableIndex = -1
-              break
-            case 0:	// North
-              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_NORTH
-              break
-            case 1: // East 
-              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_EAST
-              break
-            case 2:	// South
-              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_SOUTH 
-              break
-            case 3:	// West
-              animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_WEST
-              break 
+            for (i = 1; i < 16; i++) {
+              idx = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + i
+              if (MgbActor.isAnimationTableIndexValid(actorPiece, idx)) {
+                hasStationaryAnyDirection = true
+                break
+              }
+            }
+            // If there are no any-direction stationary animations, play directional stationary animation or stay facing the same direction
+            if (!hasStationaryAnyDirection) {
+              switch (priorStepStyle)
+              {
+              case -1: 
+                animationTableIndex = -1
+                break
+              case 0:	// North
+                animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_NORTH
+                break
+              case 1: // East 
+                animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_EAST
+                break
+              case 2:	// South
+                animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_SOUTH 
+                break
+              case 3:	// West
+                animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_WEST
+                break 
+              }
             }
         }    
         break

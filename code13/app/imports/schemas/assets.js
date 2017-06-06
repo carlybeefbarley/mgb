@@ -205,6 +205,21 @@ export const allSorters = {
   "plays":   { 'metadata.playCount': -1 }
 }
 
+
+export const isValidCodeGame = g => (
+  g && g.metadata &&
+  (g.metadata.gameType === 'codeGame' &&
+    g.metadata.startCode &&
+    g.metadata.startCode !== '')
+)
+
+export const isValidActorMapGame = g => (
+  g && g.metadata &&
+  g.metadata.gameType === "actorGame" &&
+  g.metadata.startActorMap &&
+  g.metadata.startActorMap !== ""
+)
+
 Meteor.methods({
   "Azzets.create": function(data) {
     checkIsLoggedInAndNotSuspended()

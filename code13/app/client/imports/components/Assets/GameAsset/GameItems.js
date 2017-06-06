@@ -5,10 +5,13 @@ import { Card, Segment } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import FittedImage from '/client/imports/components/Controls/FittedImage'
 import UserLoves from '/client/imports/components/Controls/UserLoves'
+import { isValidCodeGame, isValidActorMapGame } from '/imports/schemas/assets'
 
+
+const _cardStyle = { minWidth: '200px', maxWidth: '200px' }
 
 export const GameItem = ( { game, currUser } ) => (
-  <Card className='link' >
+  <Card color={isValidCodeGame(game) ? 'green' : 'blue'} className='link' style={_cardStyle}>
     <QLink className='image' to={`/u/${game.dn_ownerName}/play/${game._id}`}>
       {Thumbnail.getLink(game)
         ? <FittedImage src={Thumbnail.getLink(game)}  />
@@ -39,37 +42,29 @@ export const GameItem = ( { game, currUser } ) => (
   </Card>
 )
 
-const _wrapStyle = { clear: 'both', flexWrap: 'wrap' };
+const _wrapStyle = { clear: 'both', flexWrap: 'wrap' }
 const _nowrapStyle = {
   clear: 'both',
   flexWrap: 'nowrap',
   overflowX: 'auto',
   overflowY: 'hidden'
-};
+}
 
-const GameItems = ({ games, wrap, currUser }) => (
+const GameItems = ( { games, wrap, currUser } ) => (
   <Card.Group itemsPerRow={1} style={wrap ? _wrapStyle : _nowrapStyle}>
-    {(!games || games.length === 0) &&
-      <Segment basic>No matching games</Segment>}
-    {games.map(g => {
-      if (
-        (g.metadata &&
-          (g.metadata.gameType === 'codeGame' &&
-            g.metadata.startCode &&
-            g.metadata.startCode !== '')) ||
-        (g.metadata.gameType === "actorGame" &&
-          g.metadata.startActorMap &&
-          g.metadata.startActorMap !== "")
-      )
-        return <GameItem currUser={currUser} game={g} key={g._id} />;
-    })}
+    { (!games || games.length === 0) &&
+      <Segment basic>No matching games</Segment>
+    }
+    { games.map(g => ( (isValidCodeGame(g) || isValidActorMapGame(g)) ?
+        <GameItem currUser={currUser} game={g} key={g._id} /> : null ))
+    }
   </Card.Group>
-);
+)
 
 GameItems.propTypes = {
   currUser: PropTypes.object,     // Currently Logged in user. Can be null
   games:    PropTypes.array,      // an array of game assets
   wrap:     PropTypes.bool        // if false, then lay this out as a flexWrap:nowrap scrolling row
-};
+}
 
-export default GameItems;
+export default GameItems

@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import { Message, Segment } from 'semantic-ui-react'
-//import EditCode from './EditCode/EditCode'
+
 import EditUnknown from './EditUnknown'
 import AssetCard from './AssetCard'
 import Hotjar from '/client/imports/helpers/hotjar'

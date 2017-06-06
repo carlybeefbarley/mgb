@@ -5,24 +5,13 @@ import { Card, Segment } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import FittedImage from '/client/imports/components/Controls/FittedImage'
 import UserLoves from '/client/imports/components/Controls/UserLoves'
+import { isValidCodeGame, isValidActorMapGame } from '/imports/schemas/assets'
 
-const _isValidCodeGame = g => (
-  g.metadata &&
-  (g.metadata.gameType === 'codeGame' &&
-    g.metadata.startCode &&
-    g.metadata.startCode !== '')
-)
-
-const _isValidActorMapGame = g => (
-  g.metadata.gameType === "actorGame" &&
-  g.metadata.startActorMap &&
-  g.metadata.startActorMap !== ""
-)
 
 const _cardStyle = { minWidth: '200px', maxWidth: '200px' }
 
 export const GameItem = ( { game, currUser } ) => (
-  <Card color={_isValidCodeGame(game) ? 'green' : 'blue'} className='link' style={_cardStyle}>
+  <Card color={isValidCodeGame(game) ? 'green' : 'blue'} className='link' style={_cardStyle}>
     <QLink className='image' to={`/u/${game.dn_ownerName}/play/${game._id}`}>
       {Thumbnail.getLink(game)
         ? <FittedImage src={Thumbnail.getLink(game)} />
@@ -61,12 +50,13 @@ const _nowrapStyle = {
   overflowY: 'hidden'
 }
 
-const GameItems = ({ games, wrap, currUser }) => (
+const GameItems = ( { games, wrap, currUser } ) => (
   <Card.Group style={wrap ? _wrapStyle : _nowrapStyle}>
-    {(!games || games.length === 0) &&
-      <Segment basic>No matching games</Segment>}
-    { games.map(g => ( (_isValidCodeGame(g) || _isValidActorMapGame(g)) ? 
-         <GameItem currUser={currUser} game={g} key={g._id} /> : null ))
+    { (!games || games.length === 0) &&
+      <Segment basic>No matching games</Segment>
+    }
+    { games.map(g => ( (isValidCodeGame(g) || isValidActorMapGame(g)) ? 
+        <GameItem currUser={currUser} game={g} key={g._id} /> : null ))
     }    
   </Card.Group>
 )

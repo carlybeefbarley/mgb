@@ -7,20 +7,19 @@ import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import Helmet from 'react-helmet'
 
-import { Azzets } from '/imports/schemas'
-import { ActivitySnapshots, Activity } from '/imports/schemas'
 import { makeChannelName} from '/imports/schemas/chats'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { utilShowChatPanelChannel } from '/client/imports/routes/QLink'
+import { isValidCodeGame, isValidActorMapGame } from '/imports/schemas/assets'
 
 import { makeAssetInfoFromAsset } from '/imports/schemas/assets/assets-client'
 
-import { Segment, Message, Header, Icon } from 'semantic-ui-react'
+import { Header, Icon, Label, Message, Popup, Segment } from 'semantic-ui-react'
 import Mage from '/client/imports/components/MapActorGameEngine/Mage'
 import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 import QLink from '/client/imports/routes/QLink'
 import SpecialGlobals from '/imports/SpecialGlobals'
-import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
+import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import AssetChatDetail from '/client/imports/components/Assets/AssetChatDetail'
 
 import elementResizeDetectorMaker  from 'element-resize-detector'
@@ -31,6 +30,58 @@ const _incrementPlayCount = _.debounce(
   assetId => { Meteor.call('job.gamePlayStats.playGame', assetId) },
   SpecialGlobals.gamePlay.playCountDebounceMs
 )
+
+const _styleGameNavButtons = { float: 'right' }  
+
+const GameTypeDetail = ( { game, style } ) => {
+  if (!game)
+    return null
+  
+  const linkToAsset = `/u/${game.dn_ownerName}/asset/${game._id}`
+
+  if (isValidCodeGame(game))
+    return (
+      <Popup
+          size='small'
+          positioning='bottom right'
+          trigger={(
+            <QLink to={linkToAsset} style={style}>
+              <Label 
+                basic
+                style={style}
+                id="mgbjr-asset-edit-header-right-chat"
+                size='small'
+                icon={{ name: 'code', style: { marginRight: 0 } }}
+                />
+            </QLink>
+          )}
+          header='Code-based Game'
+          content='This game is written in JavaScript. Click the icon above to open the game configuration file.'
+          />
+    )
+  if (isValidActorMapGame)
+    return (
+      <Popup
+        size='small'
+        positioning='bottom right'
+        trigger={(
+          <QLink to={linkToAsset} style={style}>
+            <Label 
+              basic
+              style={style}
+              id="mgbjr-asset-edit-header-right-chat"
+              size='small'
+              icon={{ name: 'map', color: 'blue', style: { marginRight: 0 } }}
+              />
+          </QLink>
+        )}
+        header='ActorMap-based Game'
+        content='This game has no custom JavaScript code; instead it has been made using Actors and ActorMaps. Click the icon above to open the game configuration file.'
+        />
+  )
+  return null
+}
+
 
 class PlayCodeGame extends React.Component {
   shouldComponentUpdate() {
@@ -47,15 +98,10 @@ class PlayCodeGame extends React.Component {
       this.adjustIframeSize()
     }, 16, {leading: false, trailing: true})
 
-
-
-
     this.erd = elementResizeDetectorMaker({
       strategy: "scroll" //<- For ultra performance.
     })
     this.erd.listenTo(this.container, this.onresize)
-
-
 
     /*
     TODO: techdebt - Compare this to erd - and if erd is REALLY better then remove commented code below
@@ -86,9 +132,9 @@ class PlayCodeGame extends React.Component {
   /**
    * Adjusts iframe - to fit in the current window
    * */
-  adjustIframeSize(){
+  adjustIframeSize() {
     // fullscreen - don't adjust anything
-    if(this.refs.iframe.offsetHeight === window.innerHeight)
+    if (this.refs.iframe.offsetHeight === window.innerHeight)
       return
 
     const container = this.container
@@ -109,24 +155,23 @@ class PlayCodeGame extends React.Component {
       this.refs.iframe.style.transform = 'scale(' + Math.min(sx, sy) + ')'
     }
 
-    if(width > gameWidth || height > gameHeight)
+    if (width > gameWidth || height > gameHeight)
       setScale()
 
-    if(this.props.metadata.allowFullScreen){
+    if (this.props.metadata.allowFullScreen){
       this.fsListener = () => {
         // this means that iframe is in fullscreen mode!!!
-        if(this.refs.iframe.offsetHeight === window.innerHeight){
+        if (this.refs.iframe.offsetHeight === window.innerHeight)
           this.refs.iframe.style.transform = 'scale(1)'
-        }
-        else{
+        else
           setScale()
-        }
       }
       this.refs.iframe.onwebkitfullscreenchange = this.fsListener
       this.refs.iframe.onmozfullscreenchange = this.fsListener
       this.refs.iframe.onmsfullscreenchange = this.fsListener
     }
   }
+
   /**
    * Restarts on game (reloads iframe)
    * */
@@ -140,7 +185,7 @@ class PlayCodeGame extends React.Component {
   /**
    * Enables fullscreen on game's iframe
    * */
-  fullscreen(){
+  fullscreen() {
     // TODO: find out
     const rfs = this.refs.iframe.requestFullScreen
       || this.refs.iframe.webkitRequestFullScreen
@@ -153,7 +198,7 @@ class PlayCodeGame extends React.Component {
   /**
    * Checks if we can offer fullscreen functionality
    * */
-  canDoFullScreen(){
+  canDoFullScreen() {
     const { allowFullScreen } = this.props.metadata
     const rfs = document.body.requestFullScreen
       || document.body.webkitRequestFullScreen
@@ -163,9 +208,7 @@ class PlayCodeGame extends React.Component {
     return allowFullScreen && rfs
   }
 
-  createConfig(){
-
-
+  createConfig() {
     const toolbarConfig = {
       buttons: [
         {
@@ -180,7 +223,7 @@ class PlayCodeGame extends React.Component {
       ]
     }
 
-    if(this.canDoFullScreen()) {
+    if (this.canDoFullScreen()) {
       toolbarConfig.buttons.push({
         name: 'fullscreen',
         label: 'Fullscreen',
@@ -200,7 +243,6 @@ class PlayCodeGame extends React.Component {
     const _codeName = metadata.startCode
     let width = metadata.width || 800 // fallback for older games
     let height = metadata.height || 600 // fallback for older games
-
 
     if (!_codeName || _codeName === '')
       return <ThingNotFound type='CodeGame' id='""'/>
@@ -228,7 +270,6 @@ class PlayCodeGame extends React.Component {
             style={{ minWidth: width + 'px', minHeight: height + 'px', borderStyle: 'none', transformOrigin: '0 0' }}
             sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
             src={src}
-
             >
           </iframe>
         </div>
@@ -259,25 +300,54 @@ const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb }) => {
 
 const PlayGame = ({ game, user, incrementPlayCountCb }) => {
   if (!game.metadata)
-    return <Message warning
-                    content='This GameConfig Asset does not contain a game definition. Someone should edit it and fix that'/>
+    return (
+      <Message 
+          warning
+          content='This GameConfig Asset does not contain a game definition. Someone should edit it and fix that'/>
+    )
+    const helmet = (
+      <Helmet
+        title={`MGB: Play '${game.name}'`}
+        titleTemplate="%s"
+        meta={[
+            {"name": "My Game Builder", "content": ""}
+        ]} />
+    )
+
 
   switch (game.metadata.gameType) {
     case 'codeGame':
       if (!game.metadata.startCode || game.metadata.startCode === '')
-        return <Message warning
-                        content='This GameConfig Asset does not contain a link to the starting actorMap. Someone should edit it and fix that'/>
-      return <PlayCodeGame metadata={game.metadata} owner={user}
-                           incrementPlayCountCb={incrementPlayCountCb}/>
+        return (
+          <Message 
+              warning
+              content='This GameConfig Asset does not contain a link to the starting actorMap. Someone should edit it and fix that'/>
+      )
+      return (
+        <div>
+          { helmet }
+          <PlayCodeGame metadata={game.metadata} owner={user} incrementPlayCountCb={incrementPlayCountCb}/>
+        </div>
+      )
     case 'actorGame':
       if (!game.metadata.startActorMap || game.metadata.startActorMap === '')
-        return <Message warning
-                        content='This GameConfig Asset does not contain a link to the starting Game Code file. Someone should edit it and fix that'/>
-      return <PlayMageGame _mapName={game.metadata.startActorMap} owner={user}
-                           incrementPlayCountCb={incrementPlayCountCb}/>
+        return (
+          <Message 
+              warning
+              content='This GameConfig Asset does not contain a link to the starting Game Code file. Someone should edit it and fix that'/>
+      )
+      return (
+        <div>
+          { helmet }
+          <PlayMageGame _mapName={game.metadata.startActorMap} owner={user} incrementPlayCountCb={incrementPlayCountCb}/>
+        </div>
+      )
     default:
-      return <Message warning
-                      content='This GameConfig Asset does not contain a game type definition. Someone should edit it and fix that'/>
+      return (
+        <Message 
+            warning
+            content='This GameConfig Asset does not contain a game type definition. Someone should edit it and fix that'/>
+      )
   }
 }
 
@@ -360,6 +430,7 @@ export default PlayGameRoute = React.createClass({
   componentDidUpdate () {
     this.checkForImplicitIncrementPlayCount()
   },
+
   handleChatClick() {
     const channelName = makeChannelName( { scopeGroupName: 'Asset', scopeId: this.props.params.assetId } )
     joyrideCompleteTag('mgbjr-CT-asset-play-game-show-chat')
@@ -383,7 +454,8 @@ export default PlayGameRoute = React.createClass({
             </QLink>
           </Header>
         <small>&emsp;{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</small>
-        <AssetChatDetail style={{float: 'right'}} hasUnreads={hazUnreadAssetChat} handleClick={this.handleChatClick}/>
+        <AssetChatDetail style={_styleGameNavButtons} hasUnreads={hazUnreadAssetChat} handleClick={this.handleChatClick}/>
+        <GameTypeDetail game={game} style={_styleGameNavButtons} />
         <PlayGame game={game} user={user} incrementPlayCountCb={this.incrementPlayCount}/>
       </Segment>
     )

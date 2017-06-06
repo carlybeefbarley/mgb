@@ -7,10 +7,8 @@ import MagePlayGame from './MagePlayGame'
 import MageNpcDialog from './MageNpcDialog'
 import MageGameCanvas from './MageGameCanvas'
 import MageInventoryDialog from './MageInventoryDialog'
-import MageMgbActor from './MageMgbActor'
-import MageMgbMusic from './MageMgbMusic'
 
-import { Message, Button, Icon, Modal } from 'semantic-ui-react'
+import { Message, Button, Icon, Popup, Segment } from 'semantic-ui-react'
 
 import TouchController from './TouchController'
 
@@ -511,35 +509,52 @@ export default class Mage extends React.Component {
       boxShadow: '0 1px 0px rgba(0, 0, 0, 0.2),0 0 0 2px #ffffff inset'
     }
     let gameWasPaused = false
+    const isTouchDevice = ('ontouchstart' in window)
+    const showPlayButton = !isPlaying
 
     return (
       <div>
         { this.state.showTouchControls && <TouchController />}
         { !this.props.hideButtons &&
           <div style={ {marginBottom: '5px', marginTop: '5px', zIndex: 1, position: "relative"} }>
-            <Button 
-              color={!isPreloading && !isPlaying ? 'green' : null}
-              disabled={isPreloading || isPlaying} 
-              icon='play' content='Play' 
-              onClick={() => this.handlePlay()}/>
-            <Button disabled={isPreloading || !isPlaying} icon='stop' content='Stop' onClick={() => this.handleStop()}/>
-            <Modal 
-              trigger={<Button>Controls</Button>} 
-              onOpen={() => { if (this._game && !this._game.isPaused) { this._game.doPauseGame() } else { gameWasPaused = true } }} 
-              onClose={() => { if (this._game && this._game.isPaused && !gameWasPaused) { this._game.hideNpcMessage()	}}}
+            { showPlayButton ? 
+                <Button 
+                  disabled={isPreloading || isPlaying} 
+                  color='green'
+                  icon='play' 
+                  content='Play' 
+                  onClick={() => this.handlePlay()}/>
+              :
+                <Button 
+                  disabled={isPreloading || !isPlaying} 
+                  icon='stop' 
+                  content='Stop' 
+                  onClick={() => this.handleStop()}/>
+            }
+            <Popup 
+              wide='very'
+              trigger={<Button icon='keyboard' content='Controls'/>} 
+              //onOpen={() => { if (this._game && !this._game.isPaused) { this._game.doPauseGame() } else { gameWasPaused = true } }} 
+              //onClose={() => { if (this._game && this._game.isPaused && !gameWasPaused) { this._game.hideNpcMessage()	}}}
               size='small'>
-              <Modal.Header>Keyboard Controls</Modal.Header>
-              <Modal.Content>
-                <p>Use <span style={style}>W</span><span style={style}>A</span><span style={style}>S</span><span style={style}>D</span> or arrow keys to move your player.</p>  
-                <p>Press <span style={style}>&#8629; Enter</span> to fire projectiles, if equipped.</p>
-                <p>Press <span style={style}>M</span> to perform melee attacks, if any.</p>
-                <p>Press <span style={style}>I</span> to open the inventory.</p>
-                <p>Press <span style={style}>Ctrl</span> to pause/unpause the game.</p>
-              </Modal.Content>
-            </Modal>
-            { this.state.showTouchControls && <Button disabled={isPreloading} icon='game' content='Hide Screen Controller' onClick={() => this.handleTouchControls()}/> }
-            { !this.state.showTouchControls && <Button disabled={isPreloading} icon='game' content='Show Screen Controller' onClick={() => this.handleTouchControls()}/> }
-
+              <Popup.Header>Game Keyboard Controls</Popup.Header>
+              <Popup.Content>
+                <Segment basic padded>
+                  <p>Use <span style={style}>W</span><span style={style}>A</span><span style={style}>S</span><span style={style}>D</span> or arrow keys to move your player.</p>  
+                  <p>Press <span style={style}>&#8629; Enter</span> to fire projectiles, if equipped.</p>
+                  <p>Press <span style={style}>M</span> to perform melee attacks, if any.</p>
+                  <p>Press <span style={style}>I</span> to open the inventory.</p>
+                  <p>Press <span style={style}>Ctrl</span> to pause/unpause the game.</p>
+                </Segment>
+              </Popup.Content>
+            </Popup>
+            { isTouchDevice &&
+               <Button 
+                  disabled={isPreloading} 
+                  icon='game' 
+                  content={ `${this.state.showTouchControls ? 'Hide' : 'Show' } Screen Controller`}
+                  onClick={() => this.handleTouchControls()}/> 
+            }
           </div>
         }
         { isPreloading && <Preloader msg={isPreloadingStr} /> }

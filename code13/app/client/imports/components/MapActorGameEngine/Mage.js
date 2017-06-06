@@ -516,8 +516,12 @@ export default class Mage extends React.Component {
       <div>
         { this.state.showTouchControls && <TouchController />}
         { !this.props.hideButtons &&
-          <div style={ {marginBottom: '5px', zIndex: 1, position: "relative"} }>
-            <Button disabled={isPreloading ||  isPlaying} icon='play' content='Play' onClick={() => this.handlePlay()}/>
+          <div style={ {marginBottom: '5px', marginTop: '5px', zIndex: 1, position: "relative"} }>
+            <Button 
+              color={!isPreloading && !isPlaying ? 'green' : null}
+              disabled={isPreloading || isPlaying} 
+              icon='play' content='Play' 
+              onClick={() => this.handlePlay()}/>
             <Button disabled={isPreloading || !isPlaying} icon='stop' content='Stop' onClick={() => this.handleStop()}/>
             <Modal 
               trigger={<Button>Controls</Button>} 

@@ -111,6 +111,8 @@ class MobileNav extends React.Component {
       maxItems: {}
     }
 
+    this.tabs = {}
+
     this.handleChangeIndex = this.handleChangeIndex.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
   }
@@ -162,8 +164,6 @@ class MobileNav extends React.Component {
   }
 
 
-
-
   setLocation(location, tab){
     console.log("SET LOCATION: tab:", tab)
     if(tab !== -1) {
@@ -209,20 +209,23 @@ class MobileNav extends React.Component {
     if(this.state.location[this.state.index])
       return
 
-    if (this.state.maxItems[this.state.index] === void(0))
-      this.state.maxItems[this.state.index] = 5
+    const ref = this.tabs[this.state.index]
 
-    if (this.state.maxItems[this.state.index] < SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit) {
-      this.state.maxItems[this.state.index] *=2
-      console.log('toLoad:', this.state.maxItems[this.state.index])
-      this.setState({maxItems: this.state.maxItems})
-    }
+    console.log("LOADING MORE!!!", this.tabs, ref, ref ? ref.loadMore : null)
+    if(ref)
+      ref.loadMore && ref.loadMore()
   }
 
   handleScroll(e){
     const current = e.target.scrollTop + e.target.clientHeight
+    if(e.target.scrollTop > 0)
+      e.target.classList.add('scrollback')
+    else
+      e.target.classList.remove('scrollback')
+
+
     const max = e.target.scrollHeight
-    console.log("Scrolling:", max - current)
+    console.log("Scrolling:", `max: ${max}, current: ${current}`)
     if(max - current < LOAD_SCROLL_THRESHOLD) {
       this._tmpView = null
       this.loadMoreItems()
@@ -258,6 +261,11 @@ class MobileNav extends React.Component {
         {this.renderButtons()}
       </div>
     )
+  }
+
+  saveTabRef(index, ref){
+    console.log("Saving tab ref = ", index, ref)
+    this.tabs[index] = ref
   }
 
   renderButtons() {
@@ -297,7 +305,7 @@ class MobileNav extends React.Component {
                 this.state.location[index] = null
               }} location={this.state.location[index]} key={Date.now() + index * 10000} />
             }
-            <b.Component title={bName} isMobile={true} {...this.props} {...props} />
+            <b.Component title={bName} isMobile={true} ref={(ref) => {this.saveTabRef(index, ref)}} {...this.props} {...props} />
           </div>
         )
       })
@@ -344,7 +352,7 @@ class MobileNav extends React.Component {
       title: "Play",
       Component: BrowseGamesRoute,
       getProps: (mobileNav) => ({
-        maxItems: mobileNav.getListItemCount(),
+
         location: mobileNav.props.location
       }),
       icon: 'game'

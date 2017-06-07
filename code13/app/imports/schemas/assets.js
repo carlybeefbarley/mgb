@@ -16,10 +16,11 @@ export { AssetKinds }
 import { canUserEditAssetIfUnlocked } from '/imports/schemas/roles'
 
 import { projectMakeSelector } from './projects'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 const optional = Match.Optional
 
-var schema = {
+const schema = {
   _id: String,
 
   createdAt:    Date,      // Must be set when created and never changed
@@ -125,19 +126,21 @@ export const isAssetKindsStringComplete = ks => ks.split(safeAssetKindStringSepC
  * @param {string} [projectName=null]
  * @param {boolean} [showDeleted=false]
  * @param {boolean} [showStable=false]
+ * @param {boolean} [hideWorkstateMask=0]
  * @param {boolean} [showChallengeAssets=false]
  * @returns
  */
 export function assetMakeSelector(
                       userId,
                       selectedAssetKinds,
-                      nameSearch,
+                      searchName,
                       projectName=null,   // '_' means 'not in a project'.   null means In any/all projects
                       showDeleted=false,
                       showStable=false,
                       hideWorkstateMask=0,
                       showChallengeAssets=false)
 {
+  console.log("make asset selector", arguments )
   const selector = {
     isDeleted: Boolean(showDeleted),
 //    skillPath: { '$exists': Boolean(showChallengeAssets) }
@@ -170,10 +173,10 @@ else
     selector["workState"] = { "$in": wsNamesToLookFor}
   }
 
-  if (nameSearch && nameSearch.length > 0)
+  if (searchName && searchName.length > 0)
   {
     // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
-    selector["name"]= {$regex: new RegExp("^.*" + nameSearch, 'i')}
+    selector["name"]= {$regex: new RegExp("^.*" + searchName, 'i')}
   }
 
   return selector
@@ -219,6 +222,60 @@ export const isValidActorMapGame = g => (
   g.metadata.startActorMap &&
   g.metadata.startActorMap !== ""
 )
+/**
+ * Loads assets from DB
+ * @param {String} userId - asset owner ID
+ * @param {Array} kind - array with asset kinds
+ * @param {String} searchName - part of asset name to look for
+ * @param {Integer} [limit = SpecialGlobals.assets.mainAssetsListDefaultLimit] - max amount of assets to be fetched
+ * @param {Integer} [page = 1] - active page
+ * @param {String} [projectName = null]
+ * @param {Boolean} [showDeleted = false]
+ * @param {Boolean} [showStable = false]
+ * @param {Boolean} [sort = undefined] - one of "edited", "created", "loves", "name", "kind", "plays"
+ * @param {Boolean} [showChallengeAssets = false]
+ * @param {Integer} [hideWorkstateMask = 0] - ????????
+ */
+export const loadAssets = ({
+                             userId,
+                             kind,
+                             searchName,                   // TODO: cleanse the nameSearch RegExp. Issue is regex vs text index. See notes in _ensureIndex() below.
+                             limit = SpecialGlobals.assets.mainAssetsListDefaultLimit,
+                             page = 1,
+                             projectName = null,
+                             showDeleted = false,
+                             showStable = false,
+                             sort = undefined,      // null/undefined or one of the keys of allSorters{}
+                             showChallengeAssets = false,
+                             hideWorkstateMask = 0,          // As defined for use by assetMakeSelector()
+                           }
+  ) => {
+
+
+  const actualLimit = _.clamp(limit, 1, SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit)
+  const selector = assetMakeSelector(userId,
+    kind,
+    searchName,
+    projectName,
+    showDeleted,
+    showStable,
+    hideWorkstateMask,
+    showChallengeAssets)
+
+
+
+
+  const assetSorter = sort ? allSorters[sort] : allSorters["edited"]
+  const findOpts = {
+    fields: { content2: 0, thumbnail: 0 },
+    sort:  Object.assign(assetSorter, {name: 1}), // always sort by name if we have multiple items with same sorting outcome
+    limit: actualLimit,
+    skip: page > 0 ? (page-1) * actualLimit : 0
+  }
+
+  console.log("Selector used:", selector, "\n", findOpts)
+  return Azzets.find(selector, findOpts )
+}
 
 Meteor.methods({
   "Azzets.create": function(data) {
@@ -315,7 +372,7 @@ Meteor.methods({
     const asset = Azzets.findOne(selector, { fields: { heartedBy: 1, heartedBy_count: 1 } })
     if (!asset)
       throw new Meteor.Error(404, 'Asset Id does not exist')
-    const currUserLoves = _.includes(asset.heartedBy, userId) 
+    const currUserLoves = _.includes(asset.heartedBy, userId)
     var newHeartedBy;
     if (!currUserLoves)
       newHeartedBy = _.union(asset.heartedBy, [userId])
@@ -335,7 +392,7 @@ Meteor.methods({
 
     return {'count': count, 'newLoveState': !currUserLoves}
   },
-  
+
 
   // This does not allow changes to the su* fields. It is much simpler
   // and more robust to handle those cases in a simpler, privileged path instead of

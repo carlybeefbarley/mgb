@@ -11,7 +11,7 @@ import { isValidCodeGame, isValidActorMapGame } from '/imports/schemas/assets'
 const _cardStyle = { minWidth: '200px', maxWidth: '200px' }
 
 export const GameItem = ( { game, currUser } ) => (
-  <Card color={isValidCodeGame(game) ? 'green' : 'blue'} className='link' style={_cardStyle}>
+  <Card color={isValidCodeGame(game) ? 'green' : 'blue'} className='link' style={{overflow: 'hidden'}}>
     <QLink className='image' to={`/u/${game.dn_ownerName}/play/${game._id}`}>
       {Thumbnail.getLink(game)
         ? <FittedImage src={Thumbnail.getLink(game)}  />

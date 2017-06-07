@@ -215,6 +215,8 @@ export const getAssetBySelector = (selector, onReady) => {
   }, 0)
 }
 
+
+
 // fetchAssetByUri() will fetch Asset by uri via ajax - returns Promise
 export const fetchAssetByUri = (uri) => {
   return new Promise(function (resolve, reject) {
@@ -224,6 +226,21 @@ export const fetchAssetByUri = (uri) => {
   })
 }
 
+/**
+ * Loads resources from API and keeps in cache for maxAge
+ * @param uri - resource to load
+ * @param maxAge - time in seconds cache is valid for
+ * @param callback(error, data, client)  - function which will execute with fetched data
+ */
+export const mgbAjaxCached = (uri, maxAge, callback) => mgbAjax(makeCDNLink(uri, makeExpireTimestamp(maxAge)), callback)
+
+/**
+ * Load resource from API - if requested resource is asset ( or asset related data ) - keeps data in the cache until asset modification
+ * @param uri - resource location
+ * @param callback(error, data, client) - function which will be executed with fetched data
+ * @param asset - asset to whom resource is related
+ * @param onRequestOpen(client) - callback which will be called right after request open - allows to add extra headers or modify connection in some other way
+ */
 export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
   const etag = (asset && typeof asset === "object") ? genetag(asset) : null
   const client = new XMLHttpRequest()

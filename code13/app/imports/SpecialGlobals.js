@@ -66,9 +66,10 @@ const SpecialGlobals = {
   },
 
   assets: {
-    "maxUploadSize":  3*1024*1024,     // 1 MB
-    "mainAssetsListDefaultLimit": 50,  // Number of assets shown by default in main Asset list UI per page
-    "mainAssetsListSubscriptionMaxLimit": 200   // Max number of assets to subscribe to from main Asset list UI per page
+    maxUploadSize:  3*1024*1024,     // 1 MB
+    mainAssetsListDefaultLimit: 20,  // Number of assets shown by default in main Asset list UI per page
+    // 50 gives - MongoError: Plan executor error during find: Overflow sort stage buffered data usage
+    mainAssetsListSubscriptionMaxLimit: 20   // Max number of assets to subscribe to from main Asset list UI per page
   },
 
   map: {

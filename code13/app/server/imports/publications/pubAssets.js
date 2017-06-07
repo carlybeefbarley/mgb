@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { Azzets } from '/imports/schemas'
-import { assetMakeSelector, allSorters } from '/imports/schemas/assets'
+import { assetMakeSelector, allSorters, loadAssets } from '/imports/schemas/assets'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
 //   aZZets !?
@@ -21,7 +21,7 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 Meteor.publish('assets.public', function(
   userId,
   selectedAssetKinds,
-  nameSearch,                   // TODO: cleanse the nameSearch RegExp. Issue is regex vs text index. See notes in _ensureIndex() below.
+  searchName,                   // TODO: cleanse the nameSearch RegExp. Issue is regex vs text index. See notes in _ensureIndex() below.
   projectName=null,
   showDeleted=false,
   showStable=false,
@@ -31,22 +31,12 @@ Meteor.publish('assets.public', function(
   showChallengeAssets=false
 )
 {
-  const actualLimit = _.clamp(limitCount, 1, SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit)
-  const selector = assetMakeSelector(userId,
-                      selectedAssetKinds,
-                      nameSearch,
-                      projectName,
-                      showDeleted,
-                      showStable,
-                      hideWorkstateMask,
-                      showChallengeAssets)
-  const assetSorter = assetSortType ? allSorters[assetSortType] : allSorters["edited"]
-  const findOpts = {
-    fields: { content2: 0, thumbnail: 0 },
-    sort:  Object.assign(assetSorter, {name: 1}), // always sort by name if we have multiple items with same sorting outcome
-    limit: actualLimit
-  }
-  return Azzets.find(selector, findOpts )
+  return loadAssets({
+    userId,
+    kind: selectedAssetKinds,
+    limit: limitCount,
+    sort: assetSortType,
+    searchName, projectName, showDeleted, showStable, hideWorkstateMask, showChallengeAssets})
 })
 
 // Observe assets only -

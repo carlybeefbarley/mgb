@@ -1,9 +1,11 @@
 import _ from 'lodash'
+
 import React, { PropTypes } from 'react'
 import Helmet from 'react-helmet'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { browserHistory } from 'react-router'
+
 import { Segment, Message } from 'semantic-ui-react'
 import Spinner from '/client/imports/components/Nav/Spinner'
 
@@ -13,29 +15,31 @@ import GameItems from '/client/imports/components/Assets/GameAsset/GameItems'
 import AssetListSortBy from '/client/imports/components/Assets/AssetListSortBy'
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 
+import LoadMore from '/client/imports/mixins/LoadMore'
+
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = {
   project:    ProjectSelector.ANY_PROJECT_PROJNAME,
   searchName: '',               // Empty string means match all (more convenient than null for input box)
   sort: 'plays',                // Should be one of the keys of gameSorters{}
-  showStable: '0'               // Should be '0' or '1'  -- as a string
+  showStable: false,               // Should be '0' or '1'  -- as a string
+  limit: 5                      // max item count to load initially and after steps
 }
 
-export default BrowseGamesRoute = React.createClass({
-  mixins: [ReactMeteorData],
+class BrowseGamesRoute extends LoadMore {
 
-  propTypes: {
+  propTypes = {
     params: PropTypes.object,       // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /games
     user: PropTypes.object,         // Maybe absent if route is /games
     currUser: PropTypes.object,     // Currently Logged in user. Can be null
     ownsProfile: PropTypes.bool,
     location: PropTypes.object,     // We get this from react-router
-    maxItems: PropTypes.number      // Items to load
-  },
+    limit: PropTypes.number,        // Items to load
+  }
 
-  contextTypes: {
+  contextTypes = {
     urlLocation: React.PropTypes.object
-  },
+  }
 
   /**
    * queryNormalized() takes a location query that comes in via the browser url.
@@ -43,7 +47,7 @@ export default BrowseGamesRoute = React.createClass({
    *   The result is a data structure that can be used without need for range/validity checking
    * @param q typically this.props.location.query  -  from react-router
   */
-  queryNormalized: function(q) {
+  queryNormalized (q) {
     // Start with defaults
     let newQ = _.clone(queryDefaults)
 
@@ -58,13 +62,13 @@ export default BrowseGamesRoute = React.createClass({
       newQ.searchName = q.searchName
 
     return newQ
-  },
+  }
 
   /**  Returns the given query EXCEPT for keys that match a key/value pair in queryDefaults array
   */
-  _stripQueryOfDefaults: function(queryObj) {
+  _stripQueryOfDefaults (queryObj) {
     return _.omitBy(queryObj, (val, key) => (queryDefaults.hasOwnProperty(key) && queryDefaults[key] === val))
-  },
+  }
 
   /** helper Function for updating just a query string with react router
   */
@@ -73,46 +77,56 @@ export default BrowseGamesRoute = React.createClass({
     const newQ = this._stripQueryOfDefaults( Object.assign( {}, loc.query, queryModifier) )
     // This is browserHistory.push and NOT utilPushTo() since we are staying on the same page
     browserHistory.push( Object.assign( {}, loc, { query: newQ } ) )
+
+    // reset all previously loaded data
+    this.loadMoreReset()
+
     // mobile don't update whole app on location change
     this.forceUpdate()
-  },
+  }
 
-  // TODO: figure out this....
-  getInitialState: function(){
-    return {
-      itemsToLoad: 5
-    }
-  },
 
+
+  getQueryParams(userId){
+    const qN = this.queryNormalized(this.props.location.query)
+    qN.userId = userId
+    qN.kind = ['game']
+    qN.showDeleted = false
+    qN.showStable = false
+    qN.limit = this.props.limit || queryDefaults.limit
+    return qN
+  }
   /**
    * Always get the Assets stuff.
    * Optionally get the Project info - if this is a user-scoped view
    */
-  getMeteorData: function() {
+  getMeteorData () {
     const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
-    const qN = this.queryNormalized(this.props.location.query)
+    const qN = this.getQueryParams(userId)
 
-    const handleForGames = Meteor.subscribe( "assets.public", userId, ['game'], qN.searchName, qN.project, false, qN.showStable === "1", qN.sort, this.props.maxItems )
+    const handleForGames = Meteor.subscribe( "assets.public", qN.userId, qN.kind, qN.searchName, qN.project, qN.showDeleted, qN.showStable, qN.sort, qN.limit )
     const gamesSorter = gameSorters[qN.sort]
-    const gamesSelector = assetMakeSelector(userId, ['game'], qN.searchName, qN.project, false, qN.showStable === "1")
+    const gamesSelector = assetMakeSelector(qN.userId, qN.kind, qN.searchName, qN.project, qN.showDeleted, qN.showStable)
 
     // handleForProjects is not used, but subscription is
-    const handleForProjects = userId ? Meteor.subscribe("projects.byUserId", userId) : null
-    const selectorForProjects = { '$or': [ { ownerId: userId }, { memberIds: { $in: [userId] } } ] }
+    const handleForProjects = qN.userId ? Meteor.subscribe("projects.byUserId", qN.userId) : null
+    const selectorForProjects = { '$or': [ { ownerId: qN.userId }, { memberIds: { $in: [qN.userId] } } ] }
+
+
+    this.src = `/api/assets`
     return {
       games: Azzets.find(gamesSelector, { sort: Object.assign(gamesSorter, {name: 1}) }).fetch(),      // Note that the subscription we used excludes the content2 field which can get quite large
       projects: userId ? Projects.find(selectorForProjects).fetch() : null, // Can be null
       loading: !handleForGames.ready()
     }
-  },
+  }
 
-  handleSearchGo()
-  {
+  handleSearchGo() {
     // TODO - disallow/escape search string
     const $button = $(this.refs.searchGoButton)
     $button.removeClass('orange')
     this._updateLocationQuery( { searchName: this.refs.searchNameInput.value } )
-  },
+  }
 
   /**
    * Make it clear that the search icon needs to be pushed while editing the search box
@@ -126,38 +140,45 @@ export default BrowseGamesRoute = React.createClass({
       $button.addClass('orange')
     else
       $button.removeClass('orange')
-  },
+  }
 
   componentDidMount() {
     window.addEventListener('keydown', this.listenForEnter)
-  },
+  }
 
   componentWillUnmount() {
     window.removeEventListener('keydown', this.listenForEnter)
-  },
+  }
 
   listenForEnter(e) {
     e = e || window.event
     if (e.keyCode === 13)
       this.handleSearchGo()
-  },
+  }
+
+  scrollToTop(){
+    if(this.refs.mainContainer)
+      this.refs.mainContainer.parentNode.scrollTop = 0
+  }
 
   render() {
-    const { games, projects, loading } = this.data         // list of Game Assets provided via getMeteorData()
+    const { games, projects } = this.data         // list of Game Assets provided via getMeteorData()
+    const loading = this.data.loading || this.state.loading
     const { currUser, user, ownsProfile, location } = this.props
     const name = user ? user.profile.name : ''
     const qN = this.queryNormalized(location.query)
 
     return (
-      <Segment basic padded style={{height: "100%", overflow: "auto"}}>
+      <Segment basic padded style={{height: "100%", overflow: "auto"}} ref="mainContainer">
         <Helmet
           title='Browse Games'
           meta={[ { name: 'Browse stable games', content: 'List of Games'} ]}  />
 
           <div className="ui large header" style={{ float: 'left' }}>
             { user ? <span><a>{name}</a>'s Games</span> : 'Public Games' }
-          </div>
 
+          </div>
+        <div>LoadMore ? {this.props.loadMore ? 'YES!' : 'NO!'}</div>
           <AssetListSortBy
               chosenSortBy={qN.sort}
               handleChangeSortByClick={v => this._updateLocationQuery( { sort: v } ) } />
@@ -171,7 +192,7 @@ export default BrowseGamesRoute = React.createClass({
                 defaultValue={qN.searchName}
                 onChange={this.handleSearchNameBoxChanges}
                 ref='searchNameInput'
-                size='16'></input>
+                size='16' />
             <button className='ui icon button' ref='searchGoButton' onClick={this.handleSearchGo}>
               <i className="search icon" />
             </button>
@@ -212,12 +233,16 @@ export default BrowseGamesRoute = React.createClass({
           }
 
         { games.length &&
-          <GameItems currUser={currUser} wrap={true} games={games} /> }
+          <GameItems currUser={currUser} wrap={true} games={games.concat(this._loadMoreState.data)} /> }
 
         { loading &&
           <Spinner /> }
 
+        <div className="scrollToTop" onClick={() => {this.scrollToTop()}}>&#8679;</div>
       </Segment>
     )
   }
-})
+}
+
+reactMixin(BrowseGamesRoute.prototype, ReactMeteorData)
+export default BrowseGamesRoute

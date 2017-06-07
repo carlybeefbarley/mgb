@@ -208,8 +208,14 @@ export default UserAssetListRoute = React.createClass({
   handleToggleKind(k, altKey) // k is the string for the AssetKindsKey to toggle existence of in the array
   {
     let newKindsString
-    if (k === "__all")
-      newKindsString = ""         // special case.. show all kinds
+    // get current qN.kinds string as array
+    const kindsStr = this.queryNormalized(this.props.location.query).kinds
+    // Beware that "".split("-") is [""] so we have to special case empty string
+    const kindsArray = (kindsStr === "" ) ? [] : kindsStr.split(safeAssetKindStringSepChar)
+    const isCurrentlOnlyKindBeingToggled = (kindsArray.length === 1 && kindsArray[0] === k)
+
+    if (k === '__all' || isCurrentlOnlyKindBeingToggled)
+      newKindsString = ''         // special case.. show all kinds
     else if (!altKey)
       newKindsString = k          // Alt key means ONLY this kind - pretty simple - the string is the given kind
     else
@@ -217,10 +223,6 @@ export default UserAssetListRoute = React.createClass({
       // Alt key, so this is a toggle
       // Just toggle this key, keep the rest.. Also, handle the special case string for none and all
 
-      // get current qN.kinds string as array
-      const kindsStr = this.queryNormalized(this.props.location.query).kinds
-      // Beware that "".split("-") is [""] so we have to special case empty string
-      const kindsArray = (kindsStr === "" ) ? [] : kindsStr.split(safeAssetKindStringSepChar)
       // Toggle it being there
       const newKindsArray =  _.indexOf(kindsArray,k) === -1 ? _.union(kindsArray,[k]) : _.without(kindsArray,k)
       if (newKindsArray.length === 0)

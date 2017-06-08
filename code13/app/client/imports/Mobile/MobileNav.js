@@ -242,9 +242,13 @@ class MobileNav extends React.Component {
 
       const index = i
       const bName = this.buttons[index]
-
-      const b = MobileNav.availableButtons[bName]
-      const props = b.getProps ? b.getProps(this) : null
+      let tabView = null
+      
+      if(!this.state.location[index]) {
+        const b = MobileNav.availableButtons[bName]
+        const props = b.getProps ? b.getProps(this) : null
+        tabView = <b.Component title={bName} isMobile={true} {...this.props} {...props} />
+      }
 
       this.cache.views[i] = (
         <div key={index}>
@@ -254,9 +258,7 @@ class MobileNav extends React.Component {
               this.state.location[index] = null
           }} location={this.state.location[index]} key={index * 10000} />
           }
-          {!this.state.location[index] &&
-            <b.Component title={bName} isMobile={true} {...this.props} {...props} />
-          }
+          { tabView }
         </div>
       )
     }

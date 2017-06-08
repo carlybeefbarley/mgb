@@ -241,7 +241,6 @@ class PlayCodeGame extends React.Component {
   }
 
   render() {
-    console.log("Render...")
     const { metadata, owner} = this.props
     const _codeName = metadata.startCode
     let width = metadata.width || 800 // fallback for older games

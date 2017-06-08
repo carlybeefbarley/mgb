@@ -146,12 +146,10 @@ class BrowseGamesRoute extends LoadMore {
   }
 
   componentDidMount() {
-    console.log("Mounted!!!")
     window.addEventListener('keydown', this.listenForEnter)
   }
 
   componentWillUnmount() {
-    console.log("UN Mounted!!!")
     window.removeEventListener('keydown', this.listenForEnter)
   }
 

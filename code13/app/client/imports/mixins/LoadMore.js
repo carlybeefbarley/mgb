@@ -63,7 +63,6 @@ class LoadMore extends React.Component {
   }
 
   onScroll(e){
-    console.log("Scrolling...")
     const current = e.target.scrollTop + e.target.clientHeight
     if(e.target.scrollTop > 0)
       e.target.classList.add('scrollback')

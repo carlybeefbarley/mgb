@@ -4,7 +4,7 @@ import {mgbAjaxCached} from '../helpers/assetFetchers'
 import './loadMore.css'
 
 class LoadMore extends React.Component {
-  propTypes = {
+  static propTypes = {
     limit: PropTypes.number,  // Items to load per page request
   }
   constructor(...a){

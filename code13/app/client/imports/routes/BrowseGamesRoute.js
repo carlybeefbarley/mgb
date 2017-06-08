@@ -30,7 +30,7 @@ const queryDefaults = {
 
 class BrowseGamesRoute extends LoadMore {
 
-  propTypes = {
+  static propTypes = {
     params: PropTypes.object,       // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /games
     user: PropTypes.object,         // Maybe absent if route is /games
     currUser: PropTypes.object,     // Currently Logged in user. Can be null
@@ -40,7 +40,7 @@ class BrowseGamesRoute extends LoadMore {
 
   }
 
-  contextTypes = {
+  static contextTypes = {
     urlLocation: React.PropTypes.object
   }
 
@@ -103,7 +103,6 @@ class BrowseGamesRoute extends LoadMore {
    * Optionally get the Project info - if this is a user-scoped view
    */
   getMeteorData () {
-    console.log("Get meteor datya!")
     const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
     const qN = this.getQueryParams(userId)
 
@@ -160,7 +159,6 @@ class BrowseGamesRoute extends LoadMore {
   }
 
   render() {
-    console.log("Render... why og why...")
     const { games, projects } = this.data         // list of Game Assets provided via getMeteorData()
     const loading = this.data.loading || this.state.loading || this._loadMoreState.isLoading
     const { currUser, user, ownsProfile, location } = this.props

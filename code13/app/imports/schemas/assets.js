@@ -250,6 +250,7 @@ export const loadAssets = ({
                            }
   ) => {
 
+  console.log("Load assets: userID: ",userId)
 
   const actualLimit = _.clamp(limit, 1, SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit)
   const selector = assetMakeSelector(userId,

@@ -243,7 +243,7 @@ class MobileNav extends React.Component {
       const index = i
       const bName = this.buttons[index]
       let tabView = null
-      
+
       if(!this.state.location[index]) {
         const b = MobileNav.availableButtons[bName]
         const props = b.getProps ? b.getProps(this) : null

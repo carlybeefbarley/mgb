@@ -89,7 +89,7 @@ class BrowseGamesRoute extends LoadMore {
     return this.props.limit || queryDefaults.limit
   }
 
-  getQueryParams(userId){
+  getQueryParams(userId = (this.props.user && this.props.user._id) ? this.props.user._id : null){
     const qN = this.queryNormalized(this.props.location.query)
     qN.userId = userId
     qN.kind = ['game']

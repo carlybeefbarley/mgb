@@ -140,7 +140,6 @@ export function assetMakeSelector(
                       hideWorkstateMask=0,
                       showChallengeAssets=false)
 {
-  console.log("make asset selector", arguments )
   const selector = {
     isDeleted: Boolean(showDeleted),
 //    skillPath: { '$exists': Boolean(showChallengeAssets) }
@@ -273,7 +272,6 @@ export const loadAssets = ({
     skip: page > 0 ? (page-1) * actualLimit : 0
   }
 
-  console.log("Selector used:", selector, "\n", findOpts)
   return Azzets.find(selector, findOpts )
 }
 

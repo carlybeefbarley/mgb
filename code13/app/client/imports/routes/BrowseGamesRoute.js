@@ -83,9 +83,6 @@ class BrowseGamesRoute extends LoadMore {
 
     // reset all previously loaded data
     this.loadMoreReset()
-
-    // mobile don't update whole app on location change
-    setTimeout(() => {this.forceUpdate()}, 1000)
   }
 
   getLimit(){
@@ -106,6 +103,7 @@ class BrowseGamesRoute extends LoadMore {
    * Optionally get the Project info - if this is a user-scoped view
    */
   getMeteorData () {
+    console.log("Get meteor datya!")
     const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
     const qN = this.getQueryParams(userId)
 
@@ -148,10 +146,12 @@ class BrowseGamesRoute extends LoadMore {
   }
 
   componentDidMount() {
+    console.log("Mounted!!!")
     window.addEventListener('keydown', this.listenForEnter)
   }
 
   componentWillUnmount() {
+    console.log("UN Mounted!!!")
     window.removeEventListener('keydown', this.listenForEnter)
   }
 
@@ -162,6 +162,7 @@ class BrowseGamesRoute extends LoadMore {
   }
 
   render() {
+    console.log("Render... why og why...")
     const { games, projects } = this.data         // list of Game Assets provided via getMeteorData()
     const loading = this.data.loading || this.state.loading || this._loadMoreState.isLoading
     const { currUser, user, ownsProfile, location } = this.props
@@ -178,7 +179,6 @@ class BrowseGamesRoute extends LoadMore {
             { user ? <span><a>{name}</a>'s Games</span> : 'Public Games' }
 
           </div>
-        <div>LoadMore ? {this.props.loadMore ? 'YES!' : 'NO!'}</div>
           <AssetListSortBy
               chosenSortBy={qN.sort}
               handleChangeSortByClick={v => this._updateLocationQuery( { sort: v } ) } />

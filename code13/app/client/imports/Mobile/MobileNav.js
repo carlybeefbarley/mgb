@@ -217,11 +217,6 @@ class MobileNav extends React.Component {
     )
   }
 
-  saveTabRef(index, ref){
-    console.log("Saving tab ref = ", index, ref)
-    this.tabs[index] = ref
-  }
-
   renderButtons() {
 
     if (this._tmpButtons)
@@ -255,11 +250,13 @@ class MobileNav extends React.Component {
         <div key={index}>
           {/*{bName} + {this.state.index}*/}
           {this.state.index === index && this.state.location[index] &&
-          <RouterWrap {...this.props} onClose={() => {
-            this.state.location[index] = null
-          }} location={this.state.location[index]} key={Date.now() + index * 10000} />
+            <RouterWrap {...this.props} onClose={() => {
+              this.state.location[index] = null
+          }} location={this.state.location[index]} key={index * 10000} />
           }
-          <b.Component title={bName} isMobile={true} ref={(ref) => {this.saveTabRef(index, ref)}} {...this.props} {...props} />
+          {!this.state.location[index] &&
+            <b.Component title={bName} isMobile={true} {...this.props} {...props} />
+          }
         </div>
       )
     }

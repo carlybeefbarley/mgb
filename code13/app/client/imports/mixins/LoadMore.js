@@ -24,7 +24,7 @@ class LoadMore extends React.Component {
     return this.props.limit || 5
   }
 
-  loadMore(page = this.state.page + 1, limit = this.getLimit()){
+  loadMore(page = this._loadMoreState.page + 1, limit = this.getLimit()){
     if(this._loadMoreState.isLoading)
       return
 
@@ -63,6 +63,7 @@ class LoadMore extends React.Component {
   }
 
   onScroll(e){
+    console.log("Scrolling...")
     const current = e.target.scrollTop + e.target.clientHeight
     if(e.target.scrollTop > 0)
       e.target.classList.add('scrollback')

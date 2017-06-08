@@ -17,18 +17,6 @@ import { Tracker } from 'meteor/tracker'
 // otherwise, it will only fire touch events
 // On touch enabled devices, ensure the cursor is a pointer so click events fire
 
-window.setInterval(() => {
-  if(!document || !document.body || !document.body.style){
-    return
-  }
-  if(document.body.style.cursor){
-    document.body.style.cursor = ''
-    console.log("reset document style")
-  }
-
-}, 5000)
-/*
-
 (function setIOSHack(){
   // only for ios
   if(!/(iPad|iPhone|iPod)/g.test(navigator.userAgent))
@@ -42,7 +30,7 @@ window.setInterval(() => {
     document.body.style.cursor = 'pointer';
   }
 })()
-*/
+
 // import Perf from "react-addons-perf"
 // // Expose the React Performance Tools on the`window` object
 // window.Perf = Perf

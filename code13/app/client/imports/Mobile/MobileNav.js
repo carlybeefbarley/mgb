@@ -111,10 +111,12 @@ class MobileNav extends React.Component {
       maxItems: {}
     }
 
+    this.cache = {
+      views: []
+    }
     this.tabs = {}
 
     this.handleChangeIndex = this.handleChangeIndex.bind(this)
-    this.handleScroll = this.handleScroll.bind(this)
   }
 
   setState(newState, callback = null){
@@ -204,34 +206,6 @@ class MobileNav extends React.Component {
     })
   }
 
-  loadMoreItems() {
-    // don't load if we have open popup
-    if(this.state.location[this.state.index])
-      return
-
-    const ref = this.tabs[this.state.index]
-
-    console.log("LOADING MORE!!!", this.tabs, ref, ref ? ref.loadMore : null)
-    if(ref)
-      ref.loadMore && ref.loadMore()
-  }
-
-  handleScroll(e){
-    const current = e.target.scrollTop + e.target.clientHeight
-    if(e.target.scrollTop > 0)
-      e.target.classList.add('scrollback')
-    else
-      e.target.classList.remove('scrollback')
-
-
-    const max = e.target.scrollHeight
-    console.log("Scrolling:", `max: ${max}, current: ${current}`)
-    if(max - current < LOAD_SCROLL_THRESHOLD) {
-      this._tmpView = null
-      this.loadMoreItems()
-    }
-  }
-
   getMaxItems() {
     return 5
     // or return 4 always ?
@@ -241,6 +215,7 @@ class MobileNav extends React.Component {
 
   render() {
 
+    console.log("Render...")
     return (
       <div className='mobile-nav-main' ref="mobileNav">
 
@@ -251,7 +226,6 @@ class MobileNav extends React.Component {
           style={{zIndex: 9}}
 
           onChangeIndex={this.handleChangeIndex}
-          onScroll={this.handleScroll}
         >
           {
             this.renderView()
@@ -286,18 +260,43 @@ class MobileNav extends React.Component {
   }
 
   renderView() {
-    // without cache performance is very bad...
-
-    if (this._tmpView)
-      return this._tmpView
-
     const max = this.getMaxItems()
+    for(let i=0; i<max; i++){
+      if(i !== this.state.index && this.cache.views[i])
+        continue
+
+      const index = i
+      const bName = this.buttons[index]
+
+      const b = MobileNav.availableButtons[bName]
+      const props = b.getProps ? b.getProps(this) : null
+
+      this.cache.views[i] = (
+        <div key={index}>
+          {/*{bName} + {this.state.index}*/}
+          {this.state.index === index && this.state.location[index] &&
+          <RouterWrap {...this.props} onClose={() => {
+            this.state.location[index] = null
+          }} location={this.state.location[index]} key={Date.now() + index * 10000} />
+          }
+          <b.Component title={bName} isMobile={true} ref={(ref) => {this.saveTabRef(index, ref)}} {...this.props} {...props} />
+        </div>
+      )
+    }
+    return this.cache.views
+
+
     this._tmpView = this.buttons
       .filter((bName, index) => !!MobileNav.availableButtons[bName] && index < max)
       .map((bName, index) => {
+        if(this.cache.views[index] && this.state.index === index){
+          return this.cache.views[index]
+        }
+
         const b = MobileNav.availableButtons[bName]
         const props = b.getProps ? b.getProps(this) : {}
-        return (
+
+        this.cache.views[index] = (
           <div key={index}>
             {/*{bName} + {this.state.index}*/}
             {this.state.index === index && this.state.location[index] &&
@@ -308,6 +307,8 @@ class MobileNav extends React.Component {
             <b.Component title={bName} isMobile={true} ref={(ref) => {this.saveTabRef(index, ref)}} {...this.props} {...props} />
           </div>
         )
+
+        return this.cache.views[index]
       })
 
     return this._tmpView
@@ -351,10 +352,7 @@ class MobileNav extends React.Component {
     play: {
       title: "Play",
       Component: BrowseGamesRoute,
-      getProps: (mobileNav) => ({
 
-        location: mobileNav.props.location
-      }),
       icon: 'game'
     },
     chat: {

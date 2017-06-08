@@ -17,13 +17,15 @@ import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 
 import LoadMore from '/client/imports/mixins/LoadMore'
 
+
+
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = {
   project:    ProjectSelector.ANY_PROJECT_PROJNAME,
   searchName: '',               // Empty string means match all (more convenient than null for input box)
   sort: 'plays',                // Should be one of the keys of gameSorters{}
   showStable: false,               // Should be '0' or '1'  -- as a string
-  limit: 5                      // max item count to load initially and after steps
+  limit: 10                      // max item count to load initially and after steps
 }
 
 class BrowseGamesRoute extends LoadMore {
@@ -35,6 +37,7 @@ class BrowseGamesRoute extends LoadMore {
     ownsProfile: PropTypes.bool,
     location: PropTypes.object,     // We get this from react-router
     limit: PropTypes.number,        // Items to load
+
   }
 
   contextTypes = {
@@ -82,7 +85,7 @@ class BrowseGamesRoute extends LoadMore {
     this.loadMoreReset()
 
     // mobile don't update whole app on location change
-    this.forceUpdate()
+    setTimeout(() => {this.forceUpdate()}, 1000)
   }
 
 
@@ -156,20 +159,15 @@ class BrowseGamesRoute extends LoadMore {
       this.handleSearchGo()
   }
 
-  scrollToTop(){
-    if(this.refs.mainContainer)
-      this.refs.mainContainer.parentNode.scrollTop = 0
-  }
-
   render() {
     const { games, projects } = this.data         // list of Game Assets provided via getMeteorData()
-    const loading = this.data.loading || this.state.loading
+    const loading = this.data.loading || this.state.loading || this._loadMoreState.isLoading
     const { currUser, user, ownsProfile, location } = this.props
     const name = user ? user.profile.name : ''
     const qN = this.queryNormalized(location.query)
 
     return (
-      <Segment basic padded style={{height: "100%", overflow: "auto"}} ref="mainContainer">
+      <Segment basic padded style={{height: "100%", overflow: "auto"}} onScroll={this.onScroll}>
         <Helmet
           title='Browse Games'
           meta={[ { name: 'Browse stable games', content: 'List of Games'} ]}  />
@@ -238,7 +236,8 @@ class BrowseGamesRoute extends LoadMore {
         { loading &&
           <Spinner /> }
 
-        <div className="scrollToTop" onClick={() => {this.scrollToTop()}}>&#8679;</div>
+
+        {super.render()}
       </Segment>
     )
   }

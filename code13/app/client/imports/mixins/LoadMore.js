@@ -13,7 +13,8 @@ class LoadMore extends React.Component {
     this._loadMoreState = {
       isLoading: false,
       page: 1,
-      data: []
+      data: [],
+      allLoaded: false
     }
 
     this.onScroll = this.onScroll.bind(this)
@@ -25,7 +26,7 @@ class LoadMore extends React.Component {
   }
 
   loadMore(page = this._loadMoreState.page + 1, limit = this.getLimit()){
-    if(this._loadMoreState.isLoading)
+    if(this._loadMoreState.isLoading || this._loadMoreState.allLoaded)
       return
 
     this._loadMoreState.isLoading = true
@@ -51,10 +52,14 @@ class LoadMore extends React.Component {
   }
 
   loadMoreAdd(data){
-    this._loadMoreState.data = this._loadMoreState.data.concat(JSON.parse(data))
-    this.setState({loading: false}, () => {
-      this._loadMoreState.isLoading = false
-    })
+    const loaded = JSON.parse(data)
+    if(loaded.length === 0)
+      this._loadMoreState.allLoaded = true
+    else
+      this._loadMoreState.data = this._loadMoreState.data.concat(loaded)
+
+    this._loadMoreState.isLoading = false
+    this.setState({loading: false})
   }
 
   /* TODO: animate without jQuery */
@@ -78,6 +83,7 @@ class LoadMore extends React.Component {
   loadMoreReset(){
     this._loadMoreState.page = 1
     this._loadMoreState.isLoading = false
+    this._loadMoreState.allLoaded = false
     this._loadMoreState.data = []
   }
 

@@ -20,14 +20,17 @@ class LoadMore extends React.Component {
   }
   src = '/api/assets'
   scrollThreshold = 150
-  loadMore(page = this.state.page + 1, limit = this.props.limit){
+  getLimit(){
+    return this.props.limit || 5
+  }
+
+  loadMore(page = this.state.page + 1, limit = this.getLimit()){
     if(this._loadMoreState.isLoading)
       return
 
     this._loadMoreState.isLoading = true
     this._loadMoreState.page++
 
-    console.log("Loading more!")
     this.setState({loading: true}, () => {
       this.loadMoreData(page, limit)
     })
@@ -35,10 +38,12 @@ class LoadMore extends React.Component {
 
   loadMoreData(page, limit){
     const p = this.getQueryParams()
-    p.page = this._loadMoreState.page
-    mgbAjaxCached(`${this.src}/${encodeURIComponent(JSON.stringify(p))}`, 120, (error, data) => {
+    p.page = page || this._loadMoreState.page
+    p.limit = limit || this.getLimit()
+
+    mgbAjaxCached(`${this.src}/${encodeURIComponent(JSON.stringify(p))}`, 600, (error, data) => {
       if(error){
-        console.error("ERROR:", error)
+        console.error("LOAD MORE ERROR:", error)
         return
       }
       this.loadMoreAdd(data)
@@ -46,18 +51,15 @@ class LoadMore extends React.Component {
   }
 
   loadMoreAdd(data){
-    // return
     this._loadMoreState.data = this._loadMoreState.data.concat(JSON.parse(data))
     this.setState({loading: false}, () => {
       this._loadMoreState.isLoading = false
-      console.log("Loaded more:", data)
     })
   }
 
   /* TODO: animate without jQuery */
   scrollToTop(e){
     $(e.target.parentElement).animate({"scrollTop": 0})
-    //e.target.parentElement.scrollTop = 0
   }
 
   onScroll(e){
@@ -68,7 +70,6 @@ class LoadMore extends React.Component {
       e.target.classList.remove('scrollback')
 
     const max = e.target.scrollHeight
-    console.log("Scrolling:", `max: ${max}, current: ${current}`)
     if(max - current < this.scrollThreshold)
       this.loadMore()
 

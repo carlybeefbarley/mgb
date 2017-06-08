@@ -131,19 +131,9 @@ class MobileNav extends React.Component {
       strategy: "scroll" //<- For ultra performance.
     })
     this.onresize = () => {
-      // console.log("Forced update!")
       this.forceUpdate()
     }
     this.erd.listenTo(document.body, this.onresize)
-    const views = document.querySelectorAll('div.react-swipeable-view-container > *')
-    views.forEach(v => {
-      v.addEventListener('scroll', e => {
-        console.log("loadMore")
-      })
-    })
-
-
-    window.swp = this.refs.swipeable
   }
 
   componentWillUnmount() {
@@ -159,15 +149,7 @@ class MobileNav extends React.Component {
    console.log("PROPS:", this.props.location.pathname, this.props)
    }*/
 
-
-
-  getListItemCount(){
-    return this.state.maxItems[this.state.index] || 5
-  }
-
-
   setLocation(location, tab){
-    console.log("SET LOCATION: tab:", tab)
     if(tab !== -1) {
       if(tab)
         this.handleChangeIndex(tab)
@@ -214,8 +196,6 @@ class MobileNav extends React.Component {
   }
 
   render() {
-
-    console.log("Render...")
     return (
       <div className='mobile-nav-main' ref="mobileNav">
 
@@ -284,34 +264,6 @@ class MobileNav extends React.Component {
       )
     }
     return this.cache.views
-
-
-    this._tmpView = this.buttons
-      .filter((bName, index) => !!MobileNav.availableButtons[bName] && index < max)
-      .map((bName, index) => {
-        if(this.cache.views[index] && this.state.index === index){
-          return this.cache.views[index]
-        }
-
-        const b = MobileNav.availableButtons[bName]
-        const props = b.getProps ? b.getProps(this) : {}
-
-        this.cache.views[index] = (
-          <div key={index}>
-            {/*{bName} + {this.state.index}*/}
-            {this.state.index === index && this.state.location[index] &&
-              <RouterWrap {...this.props} onClose={() => {
-                this.state.location[index] = null
-              }} location={this.state.location[index]} key={Date.now() + index * 10000} />
-            }
-            <b.Component title={bName} isMobile={true} ref={(ref) => {this.saveTabRef(index, ref)}} {...this.props} {...props} />
-          </div>
-        )
-
-        return this.cache.views[index]
-      })
-
-    return this._tmpView
   }
 
   renderButton(bName, index) {
@@ -363,7 +315,6 @@ class MobileNav extends React.Component {
         // TODO: save and restore
         subNavParam: '',
         handleChangeSubNavParam: function (newSubNavParamStr) {
-          console.log(newSubNavParamStr, mobileNav.props)
           localStorage.setItem("chat:subNavParam", newSubNavParamStr)
           mobileNav.forceUpdate()
         }

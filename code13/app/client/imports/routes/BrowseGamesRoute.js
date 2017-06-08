@@ -88,7 +88,9 @@ class BrowseGamesRoute extends LoadMore {
     setTimeout(() => {this.forceUpdate()}, 1000)
   }
 
-
+  getLimit(){
+    return this.props.limit || queryDefaults.limit
+  }
 
   getQueryParams(userId){
     const qN = this.queryNormalized(this.props.location.query)
@@ -96,7 +98,7 @@ class BrowseGamesRoute extends LoadMore {
     qN.kind = ['game']
     qN.showDeleted = false
     qN.showStable = false
-    qN.limit = this.props.limit || queryDefaults.limit
+    qN.limit = this.getLimit()
     return qN
   }
   /**

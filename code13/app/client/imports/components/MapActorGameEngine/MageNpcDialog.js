@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import autobind from 'react-autobind'
-import { Segment, Icon, Label, Header } from 'semantic-ui-react'
+import { Segment, Icon, Label, Header, Popup } from 'semantic-ui-react'
 
 // MapActorGameEngine NPC Dialog
 // This will be used as a modal/popup, and is instantiated when the game needs it. 
@@ -52,14 +52,11 @@ class MageNpcDialogText extends React.Component {
       if (shownChars + 1 <= msg.length) 
         shownChars++
       
-      
       this.setState( { shownChars } )
       this._rafId = requestAnimationFrame(this.showNextChar_loopWithRAF)
     }
     else 
       this._rafId = null
-    
-    
   }
 
   render () {
@@ -90,7 +87,15 @@ const MageNpcDialog = ( { leftActor, message, choices, responseCallbackFn, graph
         )
       }
     </Segment>
-    <Icon name='remove' className='right floated' onClick={() => responseCallbackFn(0)}/>
+    <Popup
+        trigger={
+          <Icon 
+              name='remove' 
+              className='right floated' 
+              onClick={() => responseCallbackFn(0)}/>
+        }
+        content="Click here or press CTRL to close dialog"
+        />
   </Segment.Group>
 )
 

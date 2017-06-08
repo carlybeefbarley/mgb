@@ -128,9 +128,11 @@ export default class Mage extends React.Component {
     this.setState( { activeNpcDialog: npcDialogData } )
   }
 
-  handleSetInventoryVisibility(newVisibility) {
-    this.setState( { isInventoryShowing: newVisibility } )
+  handleSetInventoryVisibility = newVisibility => {
+    this.setState( { isInventoryShowing: !!newVisibility } )
   }
+
+  handleHideInventory = () => this.handleSetInventoryVisibility(false)
 
   handleForceInventoryUpdate() {
     // This is a bit of a pain since the inventory object is in the _game object so can't be used as a prop.
@@ -498,17 +500,7 @@ export default class Mage extends React.Component {
     const isAnOverlayShowing = !!activeNpcDialog || !!isInventoryShowing
     const isGameShowing = !isPreloadingStr && !mapLoadError
     const isPreloading = !!isPreloadingStr
-    const style = {
-      backgroundColor: 'whitesmoke',
-      border: '1px solid lightgrey',
-      borderRadius: '3px',
-      padding: '1px 3px 1px 3px',
-      display: 'inline-block',
-      minWidth: '1.5em',
-      textAlign: 'center',
-      boxShadow: '0 1px 0px rgba(0, 0, 0, 0.2),0 0 0 2px #ffffff inset'
-    }
-    let gameWasPaused = false
+    //let gameWasPaused = false
     const isTouchDevice = ('ontouchstart' in window)
     const showPlayButton = !isPlaying
 
@@ -540,11 +532,11 @@ export default class Mage extends React.Component {
               <Popup.Header>Game Keyboard Controls</Popup.Header>
               <Popup.Content>
                 <Segment basic padded>
-                  <p>Use <span style={style}>W</span><span style={style}>A</span><span style={style}>S</span><span style={style}>D</span> or arrow keys to move your player.</p>  
-                  <p>Press <span style={style}>&#8629; Enter</span> to fire projectiles, if equipped.</p>
-                  <p>Press <span style={style}>M</span> to perform melee attacks, if any.</p>
-                  <p>Press <span style={style}>I</span> to open the inventory.</p>
-                  <p>Press <span style={style}>Ctrl</span> to pause/unpause the game.</p>
+                  <p>Use <span className='mgb-keycap-button'>W</span><span className='mgb-keycap-button'>A</span><span className='mgb-keycap-button'>S</span><span className='mgb-keycap-button'>D</span> or arrow keys to move your player.</p>  
+                  <p>Press <span className='mgb-keycap-button'>&#8629; Enter</span> to fire projectiles, if equipped.</p>
+                  <p>Press <span className='mgb-keycap-button'>M</span> to perform melee attacks, if any.</p>
+                  <p>Press <span className='mgb-keycap-button'>I</span> to open/close the inventory list.</p>
+                  <p>Press <span className='mgb-keycap-button'>Ctrl</span> to pause/unpause the game.</p>
                 </Segment>
               </Popup.Content>
             </Popup>
@@ -589,6 +581,7 @@ export default class Mage extends React.Component {
                 { !!isInventoryShowing && 
                   <MageInventoryDialog
                     inventory={this._game.inventory}
+                    hideMe={this.handleHideInventory}
                     graphics={this.state.loadedGraphics}
                     itemActionFn={(action, item) => this.handleInventoryAction(action, item)} />
                 }

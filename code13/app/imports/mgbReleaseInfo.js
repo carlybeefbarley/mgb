@@ -18,6 +18,39 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Tue Jun 06 2017 04:45 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4300'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'game.actormap',
+          'type': 'improvement',
+          'changeName': 'ActorMap game improvements',
+          'changeSummary': 'The buttons for the actorMap game player have been simplified and have better help text. Frame rate is now locked to 30fps. Fixed bug with melee repeat modifier',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.code',
+          'type': 'improvement',
+          'changeName': 'Code Splitting',
+          'changeSummary': 'The Code Editor is now also dynamically loaded, further reducing initial page load times',
+          'otherUrls': [ ]
+        }
+      ]
+
+    },
+
+
+    {
       'timestamp': 'Sat Jun 03 2017 00:30 GMT-0700 (PDT)',
 
       'id': {

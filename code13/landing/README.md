@@ -53,3 +53,10 @@ $ npm run deploy
 ```
 
 [1]: https://devlapse.github.io/mgb/
+
+
+Deploy to https://build.games 
+
+```
+$ sh deploy.sh
+```

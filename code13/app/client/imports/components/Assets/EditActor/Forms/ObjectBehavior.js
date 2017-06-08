@@ -294,7 +294,7 @@ export default class ObjectBehavior extends BaseForm {
       behaviorOptions = <div className="ui message ">This ActorType doesn't use this set of options</div>
 
     return (
-      <div>
+      <div style={{height: '50vh'}}>
         {behaviorOptions ? behaviorOptions : this.renderAll()}
       </div>
     )

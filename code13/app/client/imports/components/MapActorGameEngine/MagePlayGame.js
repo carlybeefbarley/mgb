@@ -259,8 +259,13 @@ export default class MagePlayGame
     }
 
     if (this.isPaused)
+    {
+      this.setGameStatusFn(0, "Game PAUSED. Press CTRL to resume"
+      )
       return
+    }
 
+    
     const nowMS = (new Date()).getTime()
     if (!this._timeInASecond || nowMS >= this._timeInASecond)
     {
@@ -590,7 +595,8 @@ export default class MagePlayGame
     this.setGameStatusFn(0, //"Lives: "+activeActors[this.AA_player_idx].extraLives   +
       "Health " + this.activeActors[this.AA_player_idx].health + mhs +
       "  |  Score " + this.activeActors[this.AA_player_idx].score + ps +
-      "  |  Time " + timeStr)
+      "  |  Time " + timeStr
+    )
 
     if (this.G_gameOver) {
       //debugger//  this needs work

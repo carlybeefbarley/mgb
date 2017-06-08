@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Menu, Segment, Header, Item, Image, Button } from 'semantic-ui-react'
+import { Menu, Segment, Header, Icon, Item, Image, Button, Popup } from 'semantic-ui-react'
 
 // MapActorGameEngine Inventory Dialog
 // This will be used as a modal/popup, and is instantiated when the game needs it. 
@@ -19,7 +19,7 @@ const SelectedItem = props =>
         { item ? 
           <Item.Image size='tiny' src={itemImgSrc(item, loadedGraphics)} style={{ width: 'auto', maxWidth: '10em' }} />
           :
-          <p>(Nothing selected)</p>
+          <p style={{color: 'grey'}}>(Nothing selected)</p>
         }
 
         { item && 
@@ -65,7 +65,8 @@ export default class MageInventoryDialog extends React.Component {
   static propTypes = {
     inventory:     PropTypes.object,
     graphics:      PropTypes.object,
-    itemActionFn:  PropTypes.func
+    itemActionFn:  PropTypes.func,
+    hideMe:        PropTypes.func.isRequired
   }
 
   state = { activeTab: 'Inventory', selectedInventory: -1, selectedEquipped: -1 }
@@ -74,7 +75,7 @@ export default class MageInventoryDialog extends React.Component {
 
   render () {
     const { activeTab } = this.state
-    const { inventory, graphics, itemActionFn } = this.props
+    const { inventory, graphics, hideMe, itemActionFn } = this.props
     const selectionKey = 'selected'+activeTab
     const selectedIdx = this.state[selectionKey]
     const isInventory = activeTab === 'Inventory'
@@ -83,7 +84,26 @@ export default class MageInventoryDialog extends React.Component {
 
     return (
       <Segment>
-        <Header>INVENTORY</Header>
+        <Popup
+          wide
+          trigger={(
+            <Header>
+              Inventory
+              <span style={{float: 'right'}}><Icon name='close' onClick={hideMe}/></span>
+            </Header>
+          )}>
+            <Popup.Header>
+              Player's Inventory. 
+            </Popup.Header>
+            <Popup.Content>
+              <p>
+                This list lets you equip, drop or destroy items you have picked up.
+              </p>
+              <p>
+                Use the <span className='mgb-keycap-button'>I</span> key to hide/show this list
+              </p>
+            </Popup.Content>
+        </Popup>
         <Segment raised>
 
           <SelectedItem
@@ -92,7 +112,7 @@ export default class MageInventoryDialog extends React.Component {
               itemActionFn={(item, action) => { itemActionFn(item, action); this.setState( { [selectionKey]: -1 } ) }}
               />
 
-          <p>Equipment Effect: {inventory.fullEquipmentEffectSummary}</p>              
+          <p>Equipment Effect: {inventory.fullEquipmentEffectSummary || <span style={{color: 'grey'}}>none</span>}</p>              
 
           <Menu attached='top' tabular>
             <Menu.Item name='Inventory' active={isInventory} onClick={this.handleItemClick} />
@@ -109,7 +129,9 @@ export default class MageInventoryDialog extends React.Component {
               )
             } 
             { (!itemsToShow || itemsToShow.length === 0 ) &&
-              <p>{ isEquipment ? '(No items equipped)' : '(No unequipped items in inventory)' }</p>
+              <p style={{color: 'grey'}}>
+                { isEquipment ? '(No items equipped)' : '(No unequipped items in inventory)' }
+              </p>
             }
           </Segment>
 

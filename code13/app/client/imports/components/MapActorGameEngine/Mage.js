@@ -81,11 +81,11 @@ export default class Mage extends React.Component {
     this._transitioningToMapName = null
 
     // Frame-rate
-    this._frameRateFps = 35;
-    this._frameRateNow = null;
-    this._frameRateThen = Date.now();
-    this._frameRateInterval = 1000/this._frameRateFps;
-    this._frameRateDelta = null;
+    this._frameRateFps = 35
+    this._frameRateNow = null
+    this._frameRateThen = Date.now()
+    this._frameRateInterval = 1000/this._frameRateFps
+    this._frameRateDelta = null
 
     // React state
     this.state = {
@@ -106,7 +106,9 @@ export default class Mage extends React.Component {
     
       pendingGraphicLoads:    [],      // contains list of unique Graphics Names that have pending loads
       loadedGraphics:         {},      // The loaded Graphics Data. Contains map of actorname -> actor
-      failedGraphics:         {},       // Graphics that failed to load. Content is the error data
+      failedGraphics:         {},      // Graphics that failed to load. Content is the error data
+
+      showTouchControls:      false    // If true then show an overlay for Touch controls
 
     }
   }

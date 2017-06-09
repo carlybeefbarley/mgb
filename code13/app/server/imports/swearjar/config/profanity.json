@@ -1,4 +1,5 @@
 {
+  "t35tphr4s3": ["inappropriate"],
   "anus": ["sexual"],
   "arse": ["insult"],
   "arsehole": ["insult"],
@@ -320,6 +321,10 @@
   "pusy": ["sexual"],
   "puto": ["insult"],
   "rape": ["sexual", "predatory"],
+  "rapist": ["sexual", "predatory"],
+  "raping": ["sexual", "predatory"],
+  "raper": ["sexual", "predatory"],
+  "raped": ["sexual", "predatory"],
   "renob": ["sexual"],
   "rimjob": ["sexual"],
   "ruski": ["discriminatory"],

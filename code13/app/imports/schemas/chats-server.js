@@ -110,16 +110,11 @@ Meteor.methods({
    * 
    */
   "Chats.send": function(channelName, message, chatMetadata) {
-    const currUser = Meteor.user();
-    _checkChatSendIsValid(currUser, channelName, message);
+    const currUser = Meteor.user()
+    _checkChatSendIsValid(currUser, channelName, message)
+    const currUserName = currUser.username
 
-    const currUserName = currUser.profile.name;
-
-    console.log("in chats-server")
-    if(swearjar.profane(message))
-      message = swearjar.censor(message)
-    
-    const now = new Date();
+    const now = new Date()
     const data = {
       toChannelName: channelName,
       message: _.trim(message),
@@ -127,7 +122,15 @@ Meteor.methods({
       updatedAt: now,
       byUserId: this.userId,
       byUserName: currUserName
-    };
+    }
+
+    if (swearjar.profane(message))
+    {
+      const censoredMsg = swearjar.censor(message)
+      Meteor.call("Slack.Chats.censored", currUserName, data.message, channelName, censoredMsg)
+      // Now throw so we don't store this in chats msg
+      throw new Meteor.Error(401, `Message contains offensive/disrespectful words. Please avoid such words/topics here so that everyone is able to participate comfortably: '${censoredMsg}'`)
+    }    
 
     check(data, _.omit(chatsSchema, "_id"));
     let docId = Chats.insert(data);
@@ -140,6 +143,7 @@ Meteor.methods({
     }
     return docId;
   },
+
   "Chat.delete": function(chatId) {
     if (!this.userId) throw new Meteor.Error(401, "Login required");
 

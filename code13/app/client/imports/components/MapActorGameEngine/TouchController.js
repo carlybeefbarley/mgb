@@ -33,7 +33,7 @@ export default class TouchController extends React.Component{
   render(){
 
     return (
-      <div className="ui icon game" id="controller"
+      <div className="ui icon game" id="mgb-mage-touch-controller"
           onMouseDown={e => this.handleInput(e, false)}
           onTouchStart={e => this.handleInput(e, false)}
 

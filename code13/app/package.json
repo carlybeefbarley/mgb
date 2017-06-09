@@ -52,7 +52,6 @@
     "request": "^2.75.0",
     "scroll": "^2.0.0",
     "semantic-ui-react": "^0.65.0",
-    "swearjar": "^0.2.0",
     "tern": "~0.20.0",
     "tsscmp": "^1.0.5",
     "utf-8-validate": "^1.2.1",

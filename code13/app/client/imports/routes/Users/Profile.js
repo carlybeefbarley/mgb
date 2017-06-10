@@ -128,7 +128,7 @@ export default UserProfileRoute = React.createClass({
             <ActivityHeatmap user={user} className="eight wide column" />
           }
           { /* Users who currUser is projects with -owned and not owned use pubsub */ }
-          <UserColleaguesList user={user} projects={this.data.projects} />
+          <UserColleaguesList user={user} narrowItem={true} projects={this.data.projects} />
     
           { /* User Projects */ }
           <UserProjects user={user} width={16} projects={this.data.projects} />

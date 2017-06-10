@@ -111,9 +111,6 @@ export default AssetCard = React.createClass({
     )
     const shownAssetName = asset.name || '(untitled)'
     const currUser = Meteor.user()
-    const canLove = Boolean(currUser) 
-
-    const currUserLoves = currUser ? _.includes(asset.heartedBy, currUser._id) : false
 
     return (
       <Card

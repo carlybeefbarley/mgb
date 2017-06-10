@@ -69,10 +69,10 @@ const UX = {
     )
   },
   
-  TimeAgo: ( { when, as } ) => {
+  TimeAgo: ( { when, as, style } ) => {
     const Element = as || 'span'
     return (
-      <Element>
+      <Element style={style}>
         {moment(when).fromNow()}
       </Element>
     )

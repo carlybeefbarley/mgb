@@ -14,12 +14,10 @@ import Spinner from '/client/imports/components/Nav/Spinner'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import UserListRoute from '../Users/UserListRoute'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-import SlidingCardList from '/client/imports/components/Controls/SlidingCardList'
 import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
 import { logActivity } from '/imports/schemas/activity'
 import ProjectForkGenerator from './ProjectForkGenerator'
 import { makeChannelName} from '/imports/schemas/chats'
-import { utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 import Hotjar from '/client/imports/helpers/hotjar.js'
@@ -160,8 +158,8 @@ export default ProjectOverview = React.createClass({
             <div style={{ padding: '2px 2px 8px 2px' }}>
               <Checkbox 
                   disabled={!canEdit}
-                  checked={!!this.data.project.allowForks} 
-                  onChange={ () => this.handleFieldChanged( { allowForks: !this.data.project.allowForks } ) }
+                  checked={!!project.allowForks} 
+                  onChange={ () => this.handleFieldChanged( { allowForks: !project.allowForks } ) }
                   label='Allow forks' 
                   title="Project Owner may allow other users to fork this Project and it's Assets"/>
 
@@ -174,7 +172,7 @@ export default ProjectOverview = React.createClass({
                   <Button
                     fluid
                     id='mgbjr-project-overview-fork'
-                    disabled={!this.data.project.allowForks || !currUser}
+                    disabled={!project.allowForks || !currUser}
                     size='small' 
                     content={this.state.isForkPending ? 'Forking project...' : 'Fork Project'}/>
                 )} >
@@ -185,7 +183,7 @@ export default ProjectOverview = React.createClass({
                     <input  type="text"
                             id="mgbjr-fork-project-name-input"
                             placeholder="New Project name" 
-                            defaultValue={this.data.project.name + ' (fork)'} 
+                            defaultValue={project.name + ' (fork)'} 
                             ref="forkNameInput"
                             size="22"></input>
                     <Button icon='fork' ref="forkGoButton" onClick={this.handleForkGo}/>
@@ -222,13 +220,13 @@ export default ProjectOverview = React.createClass({
             />
           </Segment>
 
-          <Header as="h3" >{`Project Members (${this.data.project.memberIds.length} of ${isUserSuperAdmin(currUser) ? SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject : SpecialGlobals.quotas.defaultNumMembersAllowedInProject})`}</Header>
+          <Header as="h3" >{`Project Members (${project.memberIds.length} of ${isUserSuperAdmin(currUser) ? SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject : SpecialGlobals.quotas.defaultNumMembersAllowedInProject})`}</Header>
           <Segment basic>
             Project Members may create, edit or delete Assets in this Project &nbsp;        
             <ProjectMembersGET 
-                project={this.data.project} 
+                project={project} 
                 enableRemoveButton={canEdit} 
-                enableLeaveButton={currUser && currUser._id}
+                enableLeaveButton={currUser ? currUser._id : null}
                 handleRemove={this.handleRemoveMemberFromProject}
                 handleLeave={this.handleMemberLeaveFromProject}
             />

@@ -24,6 +24,7 @@ const _makeAvatarImgLink = ( username, validFor ) => (
 const _UserJoinedSty = { color: "rgb(0, 176, 224)" }
 
 const UX = {
+  makeAvatarImgLink: _makeAvatarImgLink,
 
   UserLink: ( { username, prefix } ) => (
     <QLink to={`/u/${username}`}>

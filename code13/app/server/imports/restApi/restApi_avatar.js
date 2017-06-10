@@ -1,9 +1,23 @@
 import { RestApi } from './restApi'
 
+
+// For avatars, there is a common case where we want the avatar from just the name, 
+// So we provide a way to get this:
+
+// with user _id  just use   //api/user/kvBq9PB987zuKiENQ/avatar
+// with username  just use   //api/user/dgolds/avatar
+
+
+// Note that this is unlike the other api paths of /api/user/:id/ since it is 
+// for the very common use case of avatar from username
+
+const userIdSelector = id => (id[0] === '@') ? { username: id.slice(1) } : { _id: id }
+
+
 // This lets the client easily get user avatar.. e.g http://localhost:3000/api/user/raMDZ9atjHABXu5KG/avatar
 RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
   get: function () {
-    var user = Meteor.users.findOne(this.urlParams.id)
+    var user = Meteor.users.findOne( userIdSelector(this.urlParams.id) )
     if (user && user.profile.avatar)
     {
       const maxAge = 30
@@ -28,7 +42,7 @@ RestApi.addRoute('user/:id/avatar', {authRequired: false}, {
 // This lets the client easily get user avatar.. e.g http://localhost:3000/api/user/raMDZ9atjHABXu5KG/avatar
 RestApi.addRoute('user/:id/avatar/:expires', {authRequired: false}, {
   get: function () {
-    var user = Meteor.users.findOne(this.urlParams.id)
+    var user = Meteor.users.findOne( userIdSelector(this.urlParams.id) )
     if (user && user.profile.avatar)
     {
       let avatarLink;

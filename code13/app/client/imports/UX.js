@@ -28,6 +28,14 @@ const UX = {
       { `${_.isString(prefix) ? prefix : ''}${username}` }
     </QLink>
   ),
+
+  UserAvatarNoLink: ( { username, validFor, height } ) => (
+    <FittedImage 
+      src={ _makeAvatarImgLink(username, validFor) }
+      width='auto'
+      height={height || '3em'}
+      />
+  ),
   
   UserAvatar: ( { username, validFor, height } ) => (
     <QLink to={`/u/${username}`}> 

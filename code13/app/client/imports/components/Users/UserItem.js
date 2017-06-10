@@ -22,12 +22,11 @@ export default class UserItem extends React.Component {
   }
 
   handleClickUser = () => {
-    const { name } = this.props.user.profile
-    const uid = this.props.user._id
+    const { username, _id } = this.props.user
     if (this.props.handleClickUser)
-      this.props.handleClickUser(uid, name)
+      this.props.handleClickUser(_id, username)
     else
-      utilPushTo(this.context.urlLocation.query, `/u/${name}`)
+      utilPushTo(this.context.urlLocation.query, `/u/${username}`)
   }
 
   render() {
@@ -45,7 +44,7 @@ export default class UserItem extends React.Component {
           className={className}
           onClick={this.handleClickUser} >
         <Card.Content style={{textAlign: "center"}}>
-          <UX.UserAvatar username={username} height='6em'/>
+          <UX.UserAvatarNoLink username={username} height='6em'/>
         </Card.Content>
         <Card.Content style={{textAlign: "center"}}>
           <Card.Header>

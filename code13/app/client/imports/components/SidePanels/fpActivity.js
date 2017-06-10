@@ -1,17 +1,15 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Feed, Icon } from 'semantic-ui-react'
+import UX from '/client/imports/UX'
 import SpecialGlobals from '/imports/SpecialGlobals'
 import QLink from '/client/imports/routes/QLink'
-import { ActivityTypes, deleteActivityRecord } from '/imports/schemas/activity.js'
+import { ActivityTypes, deleteActivityRecord } from '/imports/schemas/activity'
 
 import { AssetKinds } from '/imports/schemas/assets'
 import { ChatChannels, makePresentedChannelName, parseChannelName, } from '/imports/schemas/chats'
 import { isSameUserId } from '/imports/schemas/users'
-
-import moment from 'moment'
-import { Feed, Icon } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
-import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 
 const _propTypes = {
   currUser:     PropTypes.object,             // Currently Logged in user. Can be null/undefined
@@ -82,7 +80,6 @@ const ActivityExtraDetail = ( { act} ) => {
 
 const _doDeleteActivity = activityId => deleteActivityRecord( activityId )
 
-
 const DeleteActivity = ( { act, currUser, isSuperAdmin } ) => (
   ( currUser && (isSameUserId(act.byUserId, currUser._id) || isSuperAdmin)) ?
     <span className='mgb-show-on-parent-hover' onClick={() => _doDeleteActivity(act._id)}>
@@ -93,46 +90,27 @@ const DeleteActivity = ( { act, currUser, isSuperAdmin } ) => (
     null
 )
 
-
 const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
-  const { byUserName, byUserId } = act
-  const ago = moment(act.timestamp).fromNow()   // TODO: Make reactive
+  const { byUserName, timestamp } = act
   const iconClass = ActivityTypes.getIconClass(act.activityType)
 
   return (
     <Feed.Event style={{borderBottom: "thin solid rgba(0,0,0,0.10)"}}>
 
-      <Feed.Label>
-        <QLink to={"/u/" + byUserName}>
-          {currUser && currUser._id == byUserId &&
-            <FittedImage 
-            src={makeCDNLink(currUser.profile.avatar)} 
-            width='auto'
-            height="3em"
-            />
-          }
-          {(!currUser || currUser._id != byUserId) &&
-            <FittedImage 
-            src={makeCDNLink(`/api/user/${byUserId}/avatar/60`, makeExpireTimestamp(SpecialGlobals.avatar.validFor))}
-            width='auto'
-            height="3em"
-            />
-          }
-        </QLink>
-      </Feed.Label>
+      <Feed.Label content={ <UX.UserAvatar username={byUserName} /> } />
 
       <Feed.Content>
 
         <Feed.Summary>
           <Feed.User as='div'>
-            <QLink to={"/u/" + byUserName}>{ byUserName }</QLink>
+            <UX.UserLink username={byUserName}/>
           </Feed.User>
-          <Feed.Date>{ago}</Feed.Date>
+          <UX.TimeAgo as={Feed.Date} time={timestamp}/>
           <DeleteActivity act={act} currUser={currUser}  isSuperAdmin={isSuperAdmin} />
         </Feed.Summary>
 
         <Feed.Meta>
-          <i name={iconClass} />&nbsp;{act.description}
+          <i className={iconClass} />&nbsp;{act.description}
         </Feed.Meta>
 
         <ActivityExtraDetail act={act} />

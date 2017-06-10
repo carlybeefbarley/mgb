@@ -9,7 +9,7 @@ const _propTypes = {
   userId:   PropTypes.string       // Can be null/undefined. It is used to indicate if anyone is logged in
 }
 
-const skillsList = [ 
+const skillsList = [
   { icon: 'code',        msg: 'Programming',  link: '/learn/code' },
   { icon: 'paint brush', msg: 'Pixel art',    link: '/learn/art' },
   { icon: 'music',       msg: 'Music & audio',link: '/learn/skills/audio' },
@@ -21,7 +21,7 @@ const skillsList = [
 const HomeSkillsColumn = () => (
   <Grid.Column className='animated fadeIn'>
     <Header as='h2' style={{ marginBottom: "1em" }}>Grow your <em>real</em> skill tree</Header>
-    <List inverted className="very relaxed">
+    <List relaxed='very' size='large'>
       {
         skillsList.map( (skill, idx) => (
           <List.Item key={idx} as={QLink} to={skill.link}>
@@ -32,9 +32,16 @@ const HomeSkillsColumn = () => (
       }
     </List>
     <br />
-    <QLink to={`/learn/skills`}>
-      <Button color='teal' size='large' content='Set skill goals' />
-    </QLink>
+    <Button
+      as={QLink}
+      to={`/learn/skills`}
+      fluid
+      color='teal'
+      size='large'
+      content='Set skill goals'
+      // prevent vertical stretching in the `stretched` column
+      style={{ flex: '0 0 auto' }}
+    />
   </Grid.Column>
 )
 

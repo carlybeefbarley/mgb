@@ -24,27 +24,30 @@ const HomeRoute = ( { currUser, respData, respIsRuleActive  } ) => {
 
   return (
     <div>
-      { _isIE && 
-        <div style={{color:'red', padding: '2px 8px'}}>
-          Internet Explorer is not supported. Please use another browser
-        </div> 
+      { _isIE &&
+      <div style={{ color: 'red', padding: '2px 8px' }}>
+        Internet Explorer is not supported. Please use another browser
+      </div>
       }
       <div className="hero">
         <Container>
-          <Segment basic padded>
-            <HomeHeroBanner username={username} userId={userId} />
-            { !respIsRuleActive('noColumns') && 
-              <Grid columns={columns} stretched style={{clear: 'both'}}>
-                <HomeSkillsColumn userId={userId}/>
-                <HomeProjectsBeingMadeColumn />
-                <HomeMeetFriendsColumn />
-              </Grid>
-            }
-            <Divider hidden/>
-          </Segment>
+          <HomeHeroBanner username={username} userId={userId} />
         </Container>
+        <Divider section hidden />
       </div>
-      
+      <Container>
+        <Segment basic padded>
+          { !respIsRuleActive( 'noColumns' ) &&
+          <Grid columns={columns} stretched style={{ clear: 'both' }}>
+            <HomeSkillsColumn userId={userId} />
+            <HomeProjectsBeingMadeColumn />
+            <HomeMeetFriendsColumn />
+          </Grid>
+          }
+          <Divider hidden />
+        </Segment>
+      </Container>
+
       <Footer />
     </div>
   )
@@ -62,7 +65,7 @@ HomeRoute.responsiveRules = {  // Note that this could also be a function that r
     maxWidth: 650,
     respData: { columns: 1 }
   },
-  'TwoColumn': {  
+  'TwoColumn': {
     minWidth: 651,
     maxWidth: 850,
     respData: { columns: 2 }

@@ -11,61 +11,62 @@ import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const HomeHeroBanner = ( { userId, username, respIsRuleActive } ) => {
   const isSmall = respIsRuleActive('small')
-  
+
   if (respIsRuleActive('impossible'))
-    return <Header as='h1' size='large' style={{fontSize: '1em', margin: '0.75em 0em 0.75em 0em'}} content='MGB'/>
+    return <Header as='h1' inverted size='large' style={{fontSize: '1em', margin: '0.75em 0em 0.75em 0em'}} content='MGB'/>
 
   return (
-    <Segment basic vertical>
-    <Divider hidden/>
-      <Grid.Row>
-        <Grid.Column>
-          <Image size='large' floated='right' src={makeCDNLink("/images/mascots/team.png")} />
-          <Header as='h1'>
-            <big>My Game Builder</big>
-            <Header.Subheader>
-              <p>
-                Make Games. Make Friends. Have Fun.
-              </p>
-              <p>
-                <QLink to='/roadmap'>Public BETA</QLink>
-              </p>
-            </Header.Subheader>
-          </Header>
-        { userId ?
-          <p style={{fontSize: '1.5em', maxWidth: '450px'}}>
-            Welcome back, {username}!
-            <br />
-            Last time you were working
-            <br />
-            on <em><RecentlyEditedAssetGET userId={userId} /></em>.
-            <br />
-            <QLink to={`/u/${username}/assets`}>
-              <Button color='teal' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em'  }} content='Keep going' />
-            </QLink>
-            <QLink to={`/learn`}>
-              <Button color='teal' size='huge' style={{ marginTop: '0.5em'}} content='Learn new skills' />
-            </QLink>
-          </p>
-          :
-          <p style={{ fontSize: '1.5em', maxWidth: '450px' }}>
-            Learn coding, design, team and biz skills - by making original games with friends
-            <br />
-            <QLink to={`/learn/getstarted`}>
-              <Button color='teal' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em' }} content='Get started' />
-            </QLink>
-            {/*
-            <QLink to={`/userBashes`}>
-              <Button color='teal' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em' }} content='User Bashes' />
-            </QLink>
-            */}
-            <QLink to={`/signup`}>
-              <Button color='yellow' size='huge' style={{ marginTop: '0.5em'}} content='Sign me up' />
-            </QLink>
-          </p>
-        }
-        </Grid.Column>
-      </Grid.Row>
+    <Segment basic>
+      <Grid>
+        <Grid.Row>
+          <Grid.Column>
+            <Image size='large' floated='right' src={makeCDNLink("/images/mascots/team.png")} />
+            <Header as='h1' inverted>
+              <big>My Game Builder</big>
+              <Header.Subheader>
+                <p>
+                  Make Games. Make Friends. Have Fun.
+                </p>
+                <p>
+                  <QLink to='/roadmap'>Public BETA</QLink>
+                </p>
+              </Header.Subheader>
+            </Header>
+          { userId ?
+            <p style={{ color: '#fff', fontSize: '1.5em', maxWidth: '450px'}}>
+              Welcome back, {username}!
+              <br />
+              Last time you were working
+              <br />
+              on <em><RecentlyEditedAssetGET userId={userId} /></em>.
+              <br />
+              <QLink to={`/u/${username}/assets`}>
+                <Button color='green' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em'  }} content='Keep going' />
+              </QLink>
+              <QLink to={`/learn`}>
+                <Button color='green' size='huge' style={{ marginTop: '0.5em'}} content='Learn new skills' />
+              </QLink>
+            </p>
+            :
+            <p style={{ color: '#fff', fontSize: '1.5em', maxWidth: '450px' }}>
+              Learn coding, design, team and biz skills - by making original games with friends
+              <br />
+              <QLink to={`/learn/getstarted`}>
+                <Button color='green' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em' }} content='Get started' />
+              </QLink>
+              {/*
+              <QLink to={`/userBashes`}>
+                <Button color='green' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em' }} content='User Bashes' />
+              </QLink>
+              */}
+              <QLink to={`/signup`}>
+                <Button color='yellow' size='huge' style={{ marginTop: '0.5em'}} content='Sign me up' />
+              </QLink>
+            </p>
+          }
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     </Segment>
   )
 }

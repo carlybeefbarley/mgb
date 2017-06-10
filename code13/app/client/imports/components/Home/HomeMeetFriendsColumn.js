@@ -11,9 +11,9 @@ import { userSorters } from '/imports/schemas/users'
 const HomeMeetFriendsColumnUI = ( { loading, userList }) => (
   <Grid.Column className='animated fadeIn'>
     <Header as='h2' style={{ marginBottom: '1em' }}>Meet creative friends</Header>
-    <List inverted className="very relaxed">
+    <List relaxed='very'>
       {
-        loading === false && 
+        loading === false &&
         userList.map( (person, idx) => (
           <List.Item key={idx} as={QLink} to={`/u/${person.username}`}>
             <Image verticalAlign='middle' style={{ height: 60, width: 60 }} src={person.profile.avatar} />
@@ -26,12 +26,10 @@ const HomeMeetFriendsColumnUI = ( { loading, userList }) => (
       }
     </List>
     <br />
-    <QLink to={`/users`}>
-      <Button color='teal' size='large' content='See more creators' />
-    </QLink>
+    <Button as={QLink} to={`/users`} fluid color='teal' size='large' content='See more creators' />
   </Grid.Column>
 )
-const HomeMeetFriendsColumn = createContainer ( 
+const HomeMeetFriendsColumn = createContainer (
   () => {
     const usersHandle = Meteor.subscribe("users.frontPageList")
     let findOpts = {

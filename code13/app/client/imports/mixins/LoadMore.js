@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react'
 import {mgbAjaxCached} from '../helpers/assetFetchers'
 
+import {Icon} from 'semantic-ui-react'
+
 import './loadMore.css'
 
 class LoadMore extends React.Component {
@@ -93,7 +95,7 @@ class LoadMore extends React.Component {
 
 
   render(){
-    return <div className="scrollToTop" onClick={(e) => {this.scrollToTop(e)}}>&#8679;</div>
+    return <Icon name="arrow circle up" className="scrollToTop" onClick={(e) => {this.scrollToTop(e)}}></Icon>
   }
 }
 

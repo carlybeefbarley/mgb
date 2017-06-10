@@ -10,7 +10,7 @@ export default class TouchController extends React.Component{
       const key = e.target.dataset.key || e.target.parentNode.dataset.key
       if(!key)
         return
-      
+
       e.preventDefault()
       e.stopPropagation()
     }

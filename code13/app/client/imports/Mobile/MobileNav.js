@@ -20,6 +20,86 @@ import {utilReplaceTo, utilPushTo} from '/client/imports/routes/QLink.js'
 import './MobileNav.css'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
+
+
+
+class SwipeableViews2 extends React.Component {
+
+  constructor(...a){
+    super(...a)
+    this.isScrolling = true
+  }
+
+  componentDidMount(){
+    const el = this.refs.mainContainer
+    el.addEventListener('scroll', this.onScroll, true)
+
+    if(this.props.index !== void(0)) {
+
+      const screenWidth = el.parentElement.offsetWidth
+      this.refs.mainContainer.scrollLeft = this.props.index * screenWidth
+    }
+  }
+
+  componentDidUpdate(){
+    if(this.props.index !== void(0)) {
+      const el = this.refs.mainContainer
+      const screenWidth = el.parentElement.offsetWidth
+      this.refs.mainContainer.scrollLeft = this.props.index * screenWidth
+    }
+  }
+
+  onScroll = (e) => {
+    console.log("scrolling...")
+    e.preventDefault()
+    this.isScrolling = true
+    this.scrollTimeout && window.clearTimeout(this.scrollTimeout)
+
+    this.scrollTimeout = window.setTimeout(() => {
+      this.isScrolling = false
+      if(!this.inputDown) {
+        this.onInputEnd()
+      }
+    }, 10)
+  }
+
+  onInputDown = () => {
+    this.inputDown = true
+  }
+
+  onInputEnd = () => {
+    this.inputDown = false
+    if(this.isScrolling)
+      return
+
+
+    const el = this.refs.mainContainer
+    const screenWidth = el.parentElement.offsetWidth
+
+    const rel = el.scrollLeft % screenWidth
+    const newScroll = (el.scrollLeft - rel) + (rel > screenWidth *0.5 ? screenWidth : 0)
+    const tab = Math.floor(newScroll / screenWidth)
+    el.scrollLeft = newScroll
+
+    setTimeout(() => {
+      this.props.onChangeIndex && this.props.onChangeIndex(tab)
+    }, 0)
+  }
+
+  render() {
+    return (<div
+      className='swipeable'
+      ref='mainContainer'
+      onTouchEnd={this.onInputEnd}
+      onMouseUp={this.onInputEnd}
+
+      onTouchStart={this.onInputDown}
+      onMouseDown={this.onInputDown}
+
+      // onScrollCapture={this.onScroll}
+    >{this.props.children}</div>)
+  }
+}
 const AllButtons = (p) => {
   return <div className="mobile-nav-all-buttons">
     {p.buttons
@@ -180,11 +260,11 @@ class MobileNav extends React.Component {
       $("#mobile-nav-button-" + index, this.refs.mobileNav).addClass("active")
 
       const route = this.state.location[index] || '/'
-      //if(this.state.lastRoute !== route){
+      if(this.state.lastRoute !== route){
         this._tmpView = null
         this.context.router.push(route)
         this.state.lastRoute = (this.state.location[index] || '/')
-     // }
+      }
     })
   }
 

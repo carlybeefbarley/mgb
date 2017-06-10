@@ -107,3 +107,40 @@ a.mobile-nav-item.item {
   margin: 5px;
   cursor: pointer;
 }
+
+
+.swipeable{
+  display: flex;
+  transform-origin: 0 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+.swipeable > * {
+  /* overflow: hidden; */
+  width: 100%;
+  /* display: none; */
+  min-width: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

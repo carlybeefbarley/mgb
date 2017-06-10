@@ -40,6 +40,7 @@ export default UserProfileRoute = React.createClass({
 
   propTypes: {
     query: PropTypes.object,
+    params: PropTypes.object,
     user: PropTypes.object,
     currUser: PropTypes.object,
     ownsProfile: PropTypes.bool
@@ -92,9 +93,9 @@ export default UserProfileRoute = React.createClass({
   },
 
   render: function() {
-    const { user, ownsProfile, currUser } = this.props
+    const { user, ownsProfile, currUser, params } = this.props
     if (!user) 
-      return <ThingNotFound type="User" />
+      return <ThingNotFound type='User' id={params.username} />
 
     return (
       <Segment basic>
@@ -151,7 +152,7 @@ export default UserProfileRoute = React.createClass({
   renderUserInfo: function(user, ownsProfile, width) {
     const { avatar, name, mgb1name, title, bio, focusMsg } = user.profile
     const editsDisabled = !ownsProfile || user.suIsBanned
-    const channelName = makeChannelName( { scopeGroupName: 'User', scopeId: this.props.params.username } )
+    const channelName = makeChannelName( { scopeGroupName: 'User', scopeId: name } )
 
     const firstMgb1name = (mgb1name && mgb1name.length>0 ) ? mgb1name.split(',')[0] : null
     return (

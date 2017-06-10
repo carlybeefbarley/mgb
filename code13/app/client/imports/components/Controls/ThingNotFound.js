@@ -16,7 +16,7 @@ const ThingNotFound = ( { type, id, defaultHead } ) => (
       list={[
         `${type} ${id ? `'${id}' `: ''} does not exist. Weird...`,
         `Maybe it was deleted?`,
-        `Also, names and Ids in URLs are case-sensitive, maybe that's the issue?`
+        `Names and Ids in URLs are case-sensitive - maybe that's the issue?`
       ]}
       />
   </Segment>

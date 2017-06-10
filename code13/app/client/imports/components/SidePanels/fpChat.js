@@ -206,11 +206,11 @@ const UndeleteChatMessage = ( { chat, currUser, isSuperAdmin} ) => (
     :
     null
 )
-
-const ChatMessage = ({ msg }) => {
+// Render a Chat message nicely using React
+const ChatMessage = ( { msg } ) => {
   let begin = 0
   let chunks = []
-  msg.replace( /❮[^❯]*❯/g, function(e, offset, str) {
+  msg.replace( /❮[^❯]*❯|@[a-zA-Z0-9]+/g, function(e, offset, str) {
     chunks.push( <span key={chunks.length}>{str.slice( begin, offset )}</span> )
     begin = offset + e.length
     const e2 = e.split( ':' )
@@ -229,7 +229,12 @@ const ChatMessage = ({ msg }) => {
       chunks.push( link )
       return e
     }
-    else
+    else if (e[0] === '@') {
+      const userName = e.slice( 1 )
+      chunks.push(<QLink key={chunks.length} to={`/u/${userName}`}>@{userName}</QLink>)
+      return e
+    }
+    else  
       return e
   } )
   chunks.push( <span key={chunks.length}>{msg.slice( begin )}</span> )

@@ -21,6 +21,8 @@ const _makeAvatarImgLink = ( username, validFor ) => (
     )
 )
 
+const _UserJoinedSty = { color: "rgb(0, 176, 224)" }
+
 const UX = {
 
   UserLink: ( { username, prefix } ) => (
@@ -58,6 +60,15 @@ const UX = {
     </span>  
   ),
 
+  UserWhenJoined: ( { when, as } ) => {
+    const Element = as || 'span'
+    return (
+      <Element style={_UserJoinedSty}>
+        Joined {moment(when).format('MMMM DD, YYYY')}
+      </Element>
+    )
+  },
+  
   TimeAgo: ( { when, as } ) => {
     const Element = as || 'span'
     return (

@@ -22,9 +22,10 @@ export default class UserItem extends React.Component {
   }
 
   handleClickUser = () => {
-    const { username, _id } = this.props.user
-    if (this.props.handleClickUser)
-      this.props.handleClickUser(_id, username)
+    const { user, handleClickUser } = this.props
+    const { username, _id } = user
+    if (handleClickUser)
+      handleClickUser(_id, username)
     else
       utilPushTo(this.context.urlLocation.query, `/u/${username}`)
   }
@@ -60,7 +61,7 @@ export default class UserItem extends React.Component {
             <div><Label size='small' color='purple' content='Deactivated Account' /></div>
           }
           <p>
-            <small style={{color:"rgb(0, 176, 224)"}}>Joined <UX.TimeMDY when={createdAt}/></small>
+            <UX.UserWhenJoined as='small' when={createdAt}/>
             <QLink query={{ _fp: `chat.${channelName}` }} style={{marginBottom: '6px'}}>
               <Icon name='chat' style={{marginLeft: "4px"}} />
             </QLink>

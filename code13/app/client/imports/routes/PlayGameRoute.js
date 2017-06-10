@@ -31,12 +31,12 @@ const _incrementPlayCount = _.debounce(
   SpecialGlobals.gamePlay.playCountDebounceMs
 )
 
-const _styleGameNavButtons = { float: 'right' }  
+const _styleGameNavButtons = { float: 'right' }
 
 const GameTypeDetail = ( { game, style } ) => {
   if (!game)
     return null
-  
+
   const linkToAsset = `/u/${game.dn_ownerName}/asset/${game._id}`
 
   if (isValidCodeGame(game))
@@ -46,7 +46,7 @@ const GameTypeDetail = ( { game, style } ) => {
           positioning='bottom right'
           trigger={(
             <QLink to={linkToAsset} style={style}>
-              <Label 
+              <Label
                 basic
                 style={style}
                 id="mgbjr-asset-edit-header-right-chat"
@@ -66,7 +66,7 @@ const GameTypeDetail = ( { game, style } ) => {
         positioning='bottom right'
         trigger={(
           <QLink to={linkToAsset} style={style}>
-            <Label 
+            <Label
               basic
               style={style}
               id="mgbjr-asset-edit-header-right-chat"
@@ -280,7 +280,7 @@ class PlayCodeGame extends React.Component {
 
 //         src='/api/asset/code/bundle/AXhwYgg93roEsLCBJ'>
 
-const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb }) => {
+const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb, availableWidth }) => {
   if (!_mapName || _mapName === '')
     return <ThingNotFound type='ActorGame' id='""'/>
 
@@ -289,6 +289,7 @@ const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb }) => {
 
   return (
     <Mage
+      availableWidth={availableWidth}
       ownerName={ownerName}
       startMapName={mapName}
       isPaused={false}
@@ -298,10 +299,10 @@ const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb }) => {
   )
 }
 
-const PlayGame = ({ game, user, incrementPlayCountCb }) => {
+const PlayGame = ({ game, user, incrementPlayCountCb, availableWidth }) => {
   if (!game.metadata)
     return (
-      <Message 
+      <Message
           warning
           content='This GameConfig Asset does not contain a game definition. Someone should edit it and fix that'/>
     )
@@ -319,7 +320,7 @@ const PlayGame = ({ game, user, incrementPlayCountCb }) => {
     case 'codeGame':
       if (!game.metadata.startCode || game.metadata.startCode === '')
         return (
-          <Message 
+          <Message
               warning
               content='This GameConfig Asset does not contain a link to the starting actorMap. Someone should edit it and fix that'/>
       )
@@ -332,19 +333,19 @@ const PlayGame = ({ game, user, incrementPlayCountCb }) => {
     case 'actorGame':
       if (!game.metadata.startActorMap || game.metadata.startActorMap === '')
         return (
-          <Message 
+          <Message
               warning
               content='This GameConfig Asset does not contain a link to the starting Game Code file. Someone should edit it and fix that'/>
       )
       return (
         <div>
           { helmet }
-          <PlayMageGame _mapName={game.metadata.startActorMap} owner={user} incrementPlayCountCb={incrementPlayCountCb}/>
+          <PlayMageGame _mapName={game.metadata.startActorMap} owner={user} incrementPlayCountCb={incrementPlayCountCb} availableWidth={availableWidth}/>
         </div>
       )
     default:
       return (
-        <Message 
+        <Message
             warning
             content='This GameConfig Asset does not contain a game type definition. Someone should edit it and fix that'/>
       )
@@ -456,7 +457,7 @@ export default PlayGameRoute = React.createClass({
         <small>&emsp;{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</small>
         <AssetChatDetail style={_styleGameNavButtons} hasUnreads={hazUnreadAssetChat} handleClick={this.handleChatClick}/>
         <GameTypeDetail game={game} style={_styleGameNavButtons} />
-        <PlayGame game={game} user={user} incrementPlayCountCb={this.incrementPlayCount}/>
+        <PlayGame game={game} user={user} incrementPlayCountCb={this.incrementPlayCount} availableWidth={this.props.availableWidth} />
       </Segment>
     )
   }

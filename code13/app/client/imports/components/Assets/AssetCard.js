@@ -3,6 +3,7 @@ import moment from 'moment'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { Card, Icon, Popup } from 'semantic-ui-react'
+import UX from '/client/imports/UX'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import { AssetKinds } from '/imports/schemas/assets'
 import { logActivity } from '/imports/schemas/activity'
@@ -13,7 +14,7 @@ import { showToast } from '/client/imports/routes/App'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
-import SpecialGlobals from '/imports/SpecialGlobals.js'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
@@ -193,7 +194,8 @@ export default AssetCard = React.createClass({
           {viewOpts.showMeta &&
             <Card.Meta>
               <div>
-                <Icon name='history' /><span>Updated {ago}</span>
+                <Icon name='history' />
+                <span>Updated <UX.TimeAgo when={asset.updatedAt}/></span>
               </div>
               <div style={{ color: numChildForks ? 'black' : null }}>
                 <Icon name='fork' color={hasParentFork ? 'blue' : null} />
@@ -213,7 +215,7 @@ export default AssetCard = React.createClass({
 
         </Card.Content>
 
-        {viewOpts.showExtra &&
+        { viewOpts.showExtra &&
           <Card.Content extra>
             <span
               style={{ color: assetKindColor }}
@@ -226,23 +228,9 @@ export default AssetCard = React.createClass({
                 asset.skillPath.length > 0 &&
                 <ChallengeState ownername={asset.dn_ownerName} asIcon={true} style={{marginLeft: '3px'}}/>}
             </span>
-            <QLink to={`/u/${asset.dn_ownerName}`} title='Asset Owner. Click to go to their profile page.'>
-              <div className='right floated author'>
-                {currUser &&
-                  currUser._id == asset.ownerId &&
-                  <img
-                    className='ui avatar image'
-                    src={makeCDNLink(currUser.profile.avatar, makeExpireTimestamp(SpecialGlobals.avatar.validFor))}
-                  />}
-                {(!currUser || currUser._id != asset.ownerId) &&
-                  <img
-                    className='ui avatar image'
-                    src={makeCDNLink(`/api/user/${asset.ownerId}/avatar/${SpecialGlobals.avatar.validFor}`, makeExpireTimestamp(SpecialGlobals.avatar.validFor))}
-                  />}
-                {ownerName || `#${asset.ownerId}`}
-              </div>
-            </QLink>
-          </Card.Content>}
+            <UX.UserAvatarName username={asset.dn_ownerName}/>
+          </Card.Content>
+        }
 
         {viewOpts.showFooter &&
           <div className='ui two small bottom attached icon buttons'>

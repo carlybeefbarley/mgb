@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
-import { Icon, Popup } from 'semantic-ui-react'
+import { Icon, Image, Popup } from 'semantic-ui-react'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import moment from 'moment'
 
@@ -68,7 +68,19 @@ const UX = {
       </Element>
     )
   },
-  
+
+  UserAvatarName: ( { username, validFor } ) => (
+    <QLink to={`/u/${username}`} altTo={`/u/${username}/projects`}>
+      <span className="right floated author">
+      <Image 
+          avatar
+          src={ _makeAvatarImgLink(username, validFor) }
+          />
+      <span>{username}</span>
+      </span>
+    </QLink>
+  ),
+
   TimeAgo: ( { when, as, style } ) => {
     const Element = as || 'span'
     return (

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from "react"
-import { Grid, Header, Card } from "semantic-ui-react"
+import { Grid, Header, Card } from 'semantic-ui-react'
 import { createContainer } from "meteor/react-meteor-data"
 import { Users } from "/imports/schemas"
 import UserItem from '/client/imports/components/Users/UserItem'
@@ -14,7 +14,7 @@ const UserColleaguesListUI = ( { wrap, loading, userList, narrowItem, handleClic
     <Grid.Row>
       <Header 
           as='h2'
-          content={<a>Colleagues <small>{userList ? userList.length : 0}</small></a>} />
+          content={<a>Colleagues <small>({userList ? userList.length : 0})</small></a>} />
       <Card.Group 
           className="relaxed" 
           style={wrap ? _wrapStyle : _nowrapStyle}
@@ -51,6 +51,15 @@ const UserColleaguesList = createContainer(props => {
   return {
     userList: _.sortBy(Users.find(selector).fetch(), u => _.toLower(u.username)),
     loading: !usersHandle.ready()
-  };
-}, UserColleaguesListUI);
-export default UserColleaguesList;
+  }
+}, UserColleaguesListUI)
+
+UserColleaguesList.propTypes = {
+  wrap:             PropTypes.bool,
+  projects:         PropTypes.array,
+  user:             PropTypes.object.isRequired,
+  narrowItem:       PropTypes.bool,
+  handleClickUser:  PropTypes.func
+}
+
+export default UserColleaguesList

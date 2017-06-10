@@ -1,25 +1,24 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import QLinkUser from '/client/imports/routes/QLinkUser';
-import { utilPushTo } from '/client/imports/routes/QLink';
-import validate from '/imports/schemas/validate';
-import InlineEdit from '/client/imports/components/Controls/InlineEdit';
-import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange';
-import WorkState from '/client/imports/components/Controls/WorkState';
-import { getProjectAvatarUrl } from '/client/imports/helpers/assetFetchers';
-import { Card, Icon } from 'semantic-ui-react';
-
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import { Card, Icon } from 'semantic-ui-react'
+import UX from '/client/imports/UX'
+import { utilPushTo } from '/client/imports/routes/QLink'
+import validate from '/imports/schemas/validate'
+import InlineEdit from '/client/imports/components/Controls/InlineEdit'
+import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
+import WorkState from '/client/imports/components/Controls/WorkState'
+import { getProjectAvatarUrl } from '/client/imports/helpers/assetFetchers'
 // This is a Project Card which is a card-format version of the Project information.
 // It is passed a project database object and it locally decides what fields to use/render within that structure.
 
 const ProjectCard = ( props, context ) => {
-  const { project, canEdit, handleFieldChanged } = props;
-  const linkTo = '/u/' + project.ownerName + '/projects/' + project.name;
+  const { project, canEdit, handleFieldChanged } = props
+  const linkTo = '/u/' + project.ownerName + '/projects/' + project.name
   const MemberStr = !project.memberIds || project.memberIds.length === 0
     ? '1 Member'
-    : project.memberIds.length + 1 + ' Members';
-  const numChildForks = _.isArray(project.forkChildren) ? project.forkChildren.length : 0;
-  const hasParentFork = _.isArray(project.forkParentChain) && project.forkParentChain.length > 0;
+    : project.memberIds.length + 1 + ' Members'
+  const numChildForks = _.isArray(project.forkChildren) ? project.forkChildren.length : 0
+  const hasParentFork = _.isArray(project.forkParentChain) && project.forkParentChain.length > 0
 
   return (
     <Card 
@@ -76,20 +75,20 @@ const ProjectCard = ( props, context ) => {
           <Icon name="sitemap" />
           Project
         </span>
-        <QLinkUser userName={project.ownerName} userId={project.ownerId} />
+        <UX.UserAvatarName username={project.ownerName}/>
       </Card.Content>
     </Card>
-  );
-};
+  )
+}
 
 ProjectCard.propTypes = {
   project: PropTypes.object.isRequired,
   canEdit: PropTypes.bool,
   handleFieldChanged: PropTypes.func
-};
+}
 
 ProjectCard.contextTypes = {
   urlLocation:  PropTypes.object
 }
 
-export default ProjectCard;
+export default ProjectCard

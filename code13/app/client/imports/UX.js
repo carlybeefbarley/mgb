@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
-import { Icon, Image, Popup } from 'semantic-ui-react'
+import { Button, Icon, Image, Popup } from 'semantic-ui-react'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import moment from 'moment'
 
@@ -23,6 +23,19 @@ const _makeAvatarImgLink = ( username, validFor ) => (
 const _makeMascotImgLink = mascotName => (
   makeCDNLink( `/images/mascots/${mascotName}.png` )
 )
+
+const _button2Sty = {
+  padding: '5px', 
+  width: '5em', 
+  height: '5em',
+  margin: '3.5px'
+}
+
+const _button2IconSty = {
+  marginLeft: 0, 
+  marginRight: 0, 
+  marginBottom: '12px'
+}
 
 const _UserJoinedSty = { color: "rgb(0, 176, 224)" }
 
@@ -109,6 +122,16 @@ const UX = {
       src={ _makeMascotImgLink(props.mascotName) }
       { ..._.omit(props, 'mascotName') }
       />
+  ),
+
+  /** A two-row button */
+  Button2: ( props ) => (
+    <Button 
+        { ..._.omit(props, 'underText') }
+        style={_button2Sty}
+        content={<div>{props.content}</div>}
+        icon={<Icon name={props.icon} size='large' style={_button2IconSty}/>}
+        />
   )
 
 }

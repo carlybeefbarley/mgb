@@ -268,24 +268,23 @@ export default UserProfileRoute = React.createClass({
 
                 </Item.Meta>
 
-                <Item.Extra>
-                  <Button.Group size='small' vertical>
-                    <QLink to={`/u/${name}/assets`} style={{marginBottom: '6px'}}>
-                      <Button size='small' icon='pencil' content='Assets' />
-                    </QLink>
-                    <QLink to={`/u/${name}/projects`} style={{marginBottom: '6px'}}>
-                      <Button size='small' icon='sitemap' content='Projects' />
-                    </QLink>
-                    <QLink to={`/u/${name}/games`} style={{marginBottom: '6px'}}>
-                      <Button size='small' icon='game' content='Games' />
-                    </QLink>
-                    <QLink query={{ _fp: `chat.${channelName}` }}  style={{marginBottom: '6px'}}>
-                      <Button size='small' icon='chat' content={`${user.username}'s Wall`} />
-                    </QLink>
-                  </Button.Group>
-                </Item.Extra>
               </Item.Content>
             </Item>
+
+            <div style={{clear: 'both', right: 'auto', left: 'auto'}}>
+              <QLink to={`/u/${name}/assets`} style={{marginBottom: '6px'}}>
+                <UX.Button2 basic icon='pencil' content='Assets' />
+              </QLink>
+              <QLink to={`/u/${name}/projects`} style={{marginBottom: '6px'}}>
+                <UX.Button2 basic icon='sitemap' content='Projects' />
+              </QLink>
+              <QLink to={`/u/${name}/games`} style={{marginBottom: '6px'}}>
+                <UX.Button2 basic icon='game' content='Games' />
+              </QLink>
+              <QLink query={{ _fp: `chat.${channelName}` }}  style={{marginBottom: '6px'}}>
+                <UX.Button2 basic icon='chat' content='Wall' />
+              </QLink>
+            </div>
           </Item.Group>
         </Segment>
       </Grid.Column>

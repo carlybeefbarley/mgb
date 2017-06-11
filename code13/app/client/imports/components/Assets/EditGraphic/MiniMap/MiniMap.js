@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { Button } from 'semantic-ui-react'
@@ -36,9 +37,9 @@ export default class MiniMap extends React.Component {
     this.ctx =  this.canvas.getContext('2d')
     // const wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
     // this.screenX = wrapper.parentNode.offsetWidth
-    if(this.props.height > this.props.editCanvasMaxHeight){
+    if (this.props.height > this.props.editCanvasMaxHeight)
       this.scale = this.props.editCanvasMaxHeight / this.props.height
-    }
+    
     this.forceUpdate()
   }
 
@@ -47,6 +48,7 @@ export default class MiniMap extends React.Component {
       this.redraw()
   }
 
+  /** Beware of react-anti-pattern. The parent is calling into this function!!! */ 
   redraw (editCanvas, w, h) {
     if (editCanvas) {
       this.backup = {
@@ -56,9 +58,9 @@ export default class MiniMap extends React.Component {
       }
     }
     else {
-      if (!this.backup.editCanvas) {
+      if (!this.backup.editCanvas)
         return null
-      }
+
       editCanvas = this.backup.editCanvas
       w = this.backup.w
       h = this.backup.h
@@ -66,11 +68,9 @@ export default class MiniMap extends React.Component {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     const cols = this.state.isTessellated ? 3 : 1 
     const rows = this.state.isTessellated ? 3 : 1 
-    for(let row=0; row<rows; row++){
-      for(let col=0; col<cols; col++){
+    for (let row=0; row<rows; row++)
+      for (let col=0; col<cols; col++)
         this.ctx.drawImage(editCanvas, w*col, h*row, w*this.scale, h*this.scale)
-      }
-    }
   }
 
   handleCloseClick = () => {
@@ -105,8 +105,10 @@ export default class MiniMap extends React.Component {
     this.screenY += this.dragStartY - e.clientY
     this.dragStartX = e.clientX
     this.dragStartY = e.clientY
-    this.forceUpdate()
+    this.throttledForceUpdate()
   }  
+
+  throttledForceUpdate = _.throttle(() => this.forceUpdate(), 100) 
 
   toggleTessellated = () => {
     this.setState({ isTessellated: !this.state.isTessellated })
@@ -142,9 +144,10 @@ export default class MiniMap extends React.Component {
             />
 
           <Button
-            title="Drag Window"
-            icon="move"
-            className="ui mini right floated icon button"
+            title='Drag Window'
+            icon='move'
+            size='mini'
+            floated='right'
             draggable={true}
             onDragStart={this.onDragStart}
             onDrag={this.onDrag}
@@ -153,16 +156,17 @@ export default class MiniMap extends React.Component {
             />
 
           <Button
-            title="Tessellated View"
-            icon="grid layout"
+            title='Tessellated View'
+            icon='grid layout'
             primary={this.state.isTessellated}
-            className="ui mini right floated icon button"
+            size='mini'
+            floated='right'
             onClick={this.toggleTessellated}
             />
         </div>
 
         <canvas 
-          ref={"canvas"}
+          ref='canvas'
           width={width}
           height={height}
           style={{float:"right"}}

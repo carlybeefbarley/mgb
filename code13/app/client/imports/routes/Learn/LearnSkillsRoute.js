@@ -2,17 +2,13 @@ import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
 import getStartedStyle from '../GetStarted.css'
-import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
+import { Card, Divider, Grid, Header, Icon, Label } from 'semantic-ui-react'
+import UX from '/client/imports/UX'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import sty from  './learnRoute.css'
 
-import sty from  './learnRoute.css';
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
-
-const cardStyle = {
-  color: "#2e2e2e"
-}
 
 const headerStyle = {
   marginTop: "0.15em",
@@ -47,12 +43,18 @@ const LearnSkillsRoute = ({ currUser }, context) => (
             key={idx}
             to={ _linkOverrides[area.tag] ? _linkOverrides[area.tag] : `/learn/skills/${area.tag}`}>
             <Card.Content>
-              <div className="learnThumbnail" style={{backgroundImage: "url(" + makeCDNLink( `/images/mascots/${area.mascot}.png` ) + ")"}}></div>
+              <div 
+                className="learnThumbnail" 
+                style={{ backgroundImage: `url("${UX.makeMascotImgLink(area.mascot)}")` }}
+                />
               <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.title}</Header>
               <p style={descStyle}>{area.desc}.</p>
-              { currUser && (
+              { !_linkOverrides[area.tag] &&
+                <Label basic color='orange' content='under construction during Beta'/>
+              }
+              { currUser &&
                 <SkillsMap skills={context.skills} skillPaths={[area.tag]} />
-              )}
+              }
             </Card.Content>
           </Card>
         ) ) }

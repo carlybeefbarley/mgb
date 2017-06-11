@@ -1,14 +1,13 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
-import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import SkillCountsLabel from '/client/imports/components/Skills/SkillCountsLabel'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import { Progress, Icon } from 'semantic-ui-react'
 import { stopCurrentTutorial } from '/client/imports/routes/App'
 import QLink from "/client/imports/routes/QLink"
 import { StartDefaultNextTutorial } from '/client/imports/routes/Learn/LearnGetStartedRoute'
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import UX from '/client/imports/UX'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -33,7 +32,6 @@ const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurren
   )
 )
 
-
 export default fpGoals = React.createClass({
 
   propTypes: {
@@ -50,12 +48,9 @@ export default fpGoals = React.createClass({
     skills:       PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
   },
 
-
   render: function () {
     const skillarea = 'code'    // temp hack
     const area = _.find(skillAreaItems, ['tag', skillarea] )
-    const skillNode = SkillNodes[skillarea]
-
     const { currUser, joyrideSteps, joyrideSkillPathTutorial, joyrideCurrentStepNum, joyrideOriginatingAssetId } = this.props
     const { skills } = this.context
 
@@ -69,7 +64,7 @@ export default fpGoals = React.createClass({
           <SkillCountsLabel skills={skills} />
         </h3>
         <p style={{fontSize: '1.25em'}}>
-          <img src={makeCDNLink("/images/mascots/bigguy.png")} style={{maxWidth: 70, float: 'left', marginRight: 15}} />
+          <img src={UX.makeMascotImgLink('bigguy')} style={{maxWidth: '70px', float: 'left'}} />
           <span style={{position: 'relative', top: 0}}>Your Learning quests</span>
         </p>
         { (!joyrideSteps || joyrideSteps.length === 0) && 

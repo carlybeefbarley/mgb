@@ -1,9 +1,8 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
-import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
-
+import { Divider, Grid, Card, Header, Icon } from 'semantic-ui-react'
+import UX from '/client/imports/UX'
 
 const jsItems = [
   {
@@ -44,32 +43,33 @@ const jsItems = [
   */
 ]
 
-const LearnCodeModifyRoute = ( { currUser }, context ) => {
-  return (
-    <Grid container columns='1'>
-      <Divider hidden />
-      <Grid.Column>
-        <Header as='h1'>
-          Fork and Modify some existing games
-          <Header.Subheader>Click on item to see the game's project page. You can then try the game, see how it is written and even fork + modify it as you wish</Header.Subheader>
-        </Header>
-      </Grid.Column>
-      <Grid.Column>
-        <Card.Group itemsPerRow={1} stackable className="skills">
-          { jsItems.map( (area, idx) => (
-            <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle}>
-              <Card.Content>
-                <Image floated='left' style={mascotStyle} src={makeCDNLink( `/images/mascots/${area.mascot}.png` )} />
-                <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
-                <p style={descStyle}>{area.desc}.</p>
-              </Card.Content>
-            </QLink>
-          ) ) }
-        </Card.Group>
-      </Grid.Column>
-    </Grid>
-  )
-}
+const LearnCodeModifyRoute = () => (
+  <Grid container columns='1'>
+    <Divider hidden />
+    <Grid.Column>
+      <Header as='h1'>
+        Fork and Modify some existing games
+        <Header.Subheader>Click on item to see the game's project page. You can then try the game, see how it is written and even fork + modify it as you wish</Header.Subheader>
+      </Header>
+    </Grid.Column>
+    <Grid.Column>
+      <Card.Group itemsPerRow={1} stackable className="skills">
+        { jsItems.map( (area, idx) => (
+          <QLink key={idx} to={area.link} className='card animated fadeIn' style={cardStyle}>
+            <Card.Content>
+              <UX.ImageMascot 
+                  floated='left' 
+                  style={mascotStyle} 
+                  mascotName={area.mascot} />
+              <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
+              <p style={descStyle}>{area.desc}.</p>
+            </Card.Content>
+          </QLink>
+        ) ) }
+      </Card.Group>
+    </Grid.Column>
+  </Grid>
+)
 
 export default LearnCodeModifyRoute
 

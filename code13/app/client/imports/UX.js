@@ -20,12 +20,16 @@ const _makeAvatarImgLink = ( username, validFor ) => (
       makeCDNLink(`/api/user/@${username}/avatar/`)
     )
 )
+const _makeMascotImgLink = mascotName => (
+  makeCDNLink( `/images/mascots/${mascotName}.png` )
+)
 
 const _UserJoinedSty = { color: "rgb(0, 176, 224)" }
 
 const UX = {
   makeAvatarImgLink: _makeAvatarImgLink,
-
+  makeMascotImgLink: _makeMascotImgLink,
+  
   UserLink: ( { username, prefix } ) => (
     <QLink to={`/u/${username}`}>
       { `${_.isString(prefix) ? prefix : ''}${username}` }
@@ -98,8 +102,14 @@ const UX = {
         {moment(when).format('MMMM DD, YYYY')}
       </Element>
     )
-  }
-  
+  },
+
+  ImageMascot: ( props ) => (
+    <Image 
+      src={ _makeMascotImgLink(props.mascotName) }
+      { ..._.omit(props, 'mascotName') }
+      />
+  )
 
 }
 

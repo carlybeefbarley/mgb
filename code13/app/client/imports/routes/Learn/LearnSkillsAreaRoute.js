@@ -1,13 +1,12 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
-import getStartedStyle from '../GetStarted.css'
-import { Segment, Header, Image, Icon } from 'semantic-ui-react'
+import { Segment, Header, Icon, Label } from 'semantic-ui-react'
+import UX from '/client/imports/UX'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -36,11 +35,21 @@ const LearnSkillsAreaRoute = ( { currUser, params }, context ) => {    //props.p
 
   return (
     <Segment basic padded style={{margin: '0 auto'}}>
-      <Image className='animated bounceInLeft' floated='left' style={mascotStyle} src={makeCDNLink(`/images/mascots/${area.mascot}.png`)} />
-      <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.mascotName}'s {area.title} Quests</Header>
+      <UX.ImageMascot
+        className='animated bounceInLeft' 
+        floated='left' 
+        style={mascotStyle} 
+        mascotName={area.mascot} />
+      <Header as='h2' style={headerStyle}>
+        <Icon name={area.icon} />&nbsp;{area.mascotName}'s {area.title} Quests
+      </Header>
       <p style={descStyle}>{area.desc}.</p>
-      <br />
-      <Header as='h4' content={`${area.title} Skill tutorials will be here soon!`} />
+      <p>
+        <Label size='huge' color='orange' content='Area not yet available' />
+      </p>
+      <Header as='h3' style={{clear: 'both'}}>
+        Planned topics include...
+      </Header>
       <ul>
         { _.map(skillNode, (v, k) => (k==='$meta' ? null : <li key={k}>{(v.$meta && v.$meta.name) ? v.$meta.name : k}</li>) ) }
       </ul>

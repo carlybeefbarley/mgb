@@ -13,7 +13,6 @@ import { logActivity } from '/imports/schemas/activity'
 // Note that this uses Meteor's Accounts.loggingIn() so it doesn't flash the Login/Sigup during user login
 export const getNavPanels = (currUser, showAll) => {
   const uname = currUser ? currUser.username : null
-  const mgb1name = currUser ? (currUser.profile.mgb1name || null) : null
   const isLoggingIn = Meteor.loggingIn()
   const showGuestOptions = (!isLoggingIn && !currUser) || showAll
   const showUserOptions = (!isLoggingIn && !!currUser) || showAll
@@ -55,6 +54,7 @@ export const getNavPanels = (currUser, showAll) => {
         name: "learn",
         explainClickAction: "Shortcut: Clicking here jumps to the Learning Paths page",
         icon: { name: "student" },
+        fHideForIconView: true,      // For top-level, items, use 
         hdr: "Learn",
         to: '/learn',
         menu: [
@@ -339,7 +339,7 @@ class NavPanel extends React.Component {
     const userAvatarSrc = _.get(currUser, 'profile.avatar', 'http://placehold.it/50')
 
     const navPanelItems = side => allNavPanels[side]
-      .filter(v => (v.name !== userMenuKey))
+      .filter(v => (v.name !== userMenuKey && (!useIcons || !v.fHideForIconView)))
       .map(v => (
         <NavPanelItem
           name={v.name}

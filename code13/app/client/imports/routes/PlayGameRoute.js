@@ -24,7 +24,7 @@ import AssetChatDetail from '/client/imports/components/Assets/AssetChatDetail'
 
 import elementResizeDetectorMaker  from 'element-resize-detector'
 
-import { getAssetHandlerWithContent2, makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
 
 const _incrementPlayCount = _.debounce(
   assetId => { Meteor.call('job.gamePlayStats.playGame', assetId) },

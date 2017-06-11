@@ -13,8 +13,6 @@ import ChallengeState from '/client/imports/components/Controls/ChallengeState'
 import { showToast } from '/client/imports/routes/App'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
-import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
-import SpecialGlobals from '/imports/SpecialGlobals'
 
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab

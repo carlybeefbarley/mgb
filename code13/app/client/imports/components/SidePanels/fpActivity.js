@@ -105,7 +105,7 @@ const RenderOneActivity = ( { act, currUser, isSuperAdmin } ) => {
           <Feed.User as='div'>
             <UX.UserLink username={byUserName}/>
           </Feed.User>
-          <UX.TimeAgo as={Feed.Date} time={timestamp}/>
+          <UX.TimeAgo as={Feed.Date} when={timestamp}/>
           <DeleteActivity act={act} currUser={currUser}  isSuperAdmin={isSuperAdmin} />
         </Feed.Summary>
 

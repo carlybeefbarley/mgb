@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import { Grid, Header, Popup, Button, Icon } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import sty from  './editGraphic.css'
-import ReactColor from 'react-color'        // http://casesandberg.github.io/react-color/
+import ReactColor from 'react-color'
 import Tools from './GraphicTools'
 
 import SpriteLayers from './Layers/SpriteLayers'
@@ -30,10 +30,8 @@ const MAX_GRAPHIC_FRAMES = 64 // TODO: Pass this into Importer, and also obey it
 const DEFAULT_GRAPHIC_WIDTH = 32
 const DEFAULT_GRAPHIC_HEIGHT = 32
 
-
 const THUMBNAIL_WIDTH = SpecialGlobals.thumbnail.width
 const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
-
 
 const MIN_ZOOM_FOR_GRIDLINES = 4
 
@@ -84,6 +82,7 @@ export default class EditGraphic extends React.Component {
     this.zoomLevels = [1, 2, 4, 6, 8, 10, 12, 14, 16]
     this.gridImg = null
 
+    this._toolActive = false
     this.userSkills = context.skills
 
     this.prevToolIdx = null // for undo/redo to set back previous tool
@@ -95,7 +94,7 @@ export default class EditGraphic extends React.Component {
       selectedLayerIdx: 0,
       isMiniMap:        true,
       selectedColors:   _selectedColors,
-      toolActive: false,
+      // toolActive: false, // Moved out of state by dgolds 6/11/2017 because it was causing re-renders but it has no impact to anything rendered
       toolChosen: this.findToolByLabelString("Pen"),
       selectRect: null,   // if asset area is selected then value {startX, startY, endX, endY}
       selectDimensions: { width: 0, height: 0 },
@@ -200,6 +199,35 @@ export default class EditGraphic extends React.Component {
     window.removeEventListener("paste", this.onpaste)
   }
 
+  // logObjDiff(ob1, ob2, msgContext) {
+  //   const allKeys = _.union(_.keys(ob1), _.keys(ob2))
+  //   _.forEach(allKeys, k => {
+  //     if (!_.isEqual(ob1[k], ob2[k]))
+  //       console.log(
+  //         `  Different: ${msgContext || 'ob'}.${k}`, 
+  //         `\n    P1:`, ob1[k] ? ob1[k].toString() : ob1[k], 
+  //         `\n    P2:`, ob2[k] ? ob2[k].toString() : ob2[k]
+  //       )
+  //   })
+  // }
+
+  // shouldComponentUpdate(nextProps, nextState) { 
+  //   if (!_.isEqual(this.state, nextState)) {
+  //     console.log("shouldComponentUpdate: YES because STATE change")
+  //     this.logObjDiff(this.state, nextState, 'state')
+  //     return true
+  //   }
+    
+  //   if (!_.isEqual(this.props, nextProps)) {
+  //     console.log("shouldComponentUpdate: YES because PROPS change")
+  //     this.logObjDiff(this.props, nextProps, 'props')
+  //     this.logObjDiff(this.props.asset, nextProps.asset, 'props.asset')
+  //     return true
+  //   }
+  //   console.log("shouldComponentUpdate: NO because no PROPS change")
+  //   return false
+  // }
+
   // there are some missing params for old assets being added here
   fixingOldAssets() {
     let autoFix = false
@@ -237,6 +265,7 @@ export default class EditGraphic extends React.Component {
   {
     let asset = this.props.asset
     if (!asset.hasOwnProperty("content2") || !asset.content2.hasOwnProperty('width')) {
+      // console.log("initDefaultContent2 - doing stuff")
       asset.content2 = {
         width: DEFAULT_GRAPHIC_WIDTH,
         height: DEFAULT_GRAPHIC_HEIGHT,
@@ -247,6 +276,10 @@ export default class EditGraphic extends React.Component {
         spriteData: [],
         animations: []
       }
+
+      recentMarker = "_graphic_init_" + Random.id()   // http://docs.meteor.com/packages/random.html
+      asset.content2.changeMarker = recentMarker
+      // console.log("initDefaultContent2... setting local and c2 Backwash recentMarker = " + recentMarker)      
     }
   }
 
@@ -290,20 +323,26 @@ export default class EditGraphic extends React.Component {
     if (recentMarker !== null && c2.changeMarker === recentMarker)
     {
       /* Do nothing.. */
-      // console.log("Backwash prevented by marker "+recentMarker)
+      // console.log("componentDidUpdate - BACKWASH prevented by marker "+recentMarker)
       // This is the data we just sent up.. So let's _not_ nuke any subsequent edits (i.e don't call loadAllPreviewsAsync())
       // TODO.. we may need a window of a few recentMarkers in case of slow updates. Maybe just hold back sends while there is a pending save?
     }
     else if (prevState.selectedFrameIdx !== this.state.selectedFrameIdx)
+    {
+      // console.log("componentDidUpdate - BACKWASH NOT prevented by marker "+recentMarker + " +frameChanged")
       this.updateFrameLayers()
+    }
     else
+    {
+      // console.log("componentDidUpdate - BACKWASH NOT prevented by marker "+recentMarker + " +sameFrame   [c2.changeMarker=",c2.changeMarker,"]")      
       this.loadAllPreviewsAsync()     // It wasn't the change we just sent, so apply the data
+    }
 
-    if(c2.doResaveTileset){
+    if (c2.doResaveTileset) {
       c2.doResaveTileset = false
       // minimum delay just to be sure that previewcanvases are drawn
       // this will affect edge case for graphic import
-      setTimeout( () => this.handleSave('Resave tilest'), 50)
+      setTimeout( () => this.handleSave('Resave tileset'), 50)
     }
   }
 
@@ -420,7 +459,7 @@ export default class EditGraphic extends React.Component {
     }
 
     // draw minimap
-    if(this.state.isMiniMap) 
+    if (this.state.isMiniMap && this.refs.miniMap) 
       this.refs.miniMap.redraw(this.editCanvas, w, h)
 
     this.drawGrid()
@@ -456,7 +495,7 @@ export default class EditGraphic extends React.Component {
       , x2: (selectRect.startX > selectRect.endX ? selectRect.startX : selectRect.endX) * self.state.editScale +0.5
       , y1: (selectRect.startY < selectRect.endY ? selectRect.startY : selectRect.endY) * self.state.editScale -0.5
       , y2: (selectRect.startY > selectRect.endY ? selectRect.startY : selectRect.endY) * self.state.editScale +0.5
-    };
+    }
 
     this.editCtx.lineWidth = 1
     this.editCtx.strokeStyle = '#000000'
@@ -605,7 +644,7 @@ export default class EditGraphic extends React.Component {
       },
 
       setPrevTool: function(){
-        if(self.prevToolIdx != null)
+        if (self.prevToolIdx != null)
           self.setState({ toolChosen: Tools[self.prevToolIdx] })
       },
 
@@ -686,6 +725,7 @@ export default class EditGraphic extends React.Component {
   zoomIn = () => {
     const i = this.zoomLevels.indexOf(this.state.editScale)
     if (i < this.zoomLevels.length-1) {
+      // console.log("zoomIn: setting recentMarker = null")
       recentMarker = null       // Since we now want to reload data for our new EditCanvas
       this.setState({ editScale: this.zoomLevels[i+1] })
     }
@@ -695,6 +735,7 @@ export default class EditGraphic extends React.Component {
     const i = this.zoomLevels.indexOf(this.state.editScale)
     if (i > 0) {
       recentMarker = null       // Since we now want to reload data for our new EditCanvas
+      // console.log("zoomIn: setting recentMarker = null")
       this.setState({ editScale: this.zoomLevels[i-1] })
     }
   }
@@ -809,7 +850,7 @@ export default class EditGraphic extends React.Component {
       this.doSaveStateForUndo(this.state.toolChosen.label)   // So that tools like eyedropper don't save and need undo
 
     if (this.state.toolChosen.supportsDrag === true)
-      this.setState({ toolActive: true })
+      this._toolActive = true
 
     this.state.toolChosen.handleMouseDown(this.collateDrawingToolEnv(event))
 
@@ -826,7 +867,7 @@ export default class EditGraphic extends React.Component {
   // This does two things: (1) Update SB, and (2) Call on to Tool handler
   handleMouseMove(event)
   {
-    const { editScale, selectedLayerIdx, toolActive, toolChosen } = this.state
+    const { editScale, selectedLayerIdx, toolChosen } = this.state
 
     // 1. Update statusBar
     const x = Math.floor(event.offsetX / editScale)
@@ -839,45 +880,45 @@ export default class EditGraphic extends React.Component {
     this.setStatusBarInfo(`Mouse at ${x},${y}`, `${colorCSSstring}&nbsp;&nbsp;Alpha=${d[3]}`, colorCSSstring)
 
     // 2. Tool api handoff
-    if (toolChosen !== null && ( toolActive === true || toolChosen.hasHover === true))
+    if (toolChosen !== null && ( this._toolActive === true || toolChosen.hasHover === true))
       toolChosen.handleMouseMove(this.collateDrawingToolEnv(event))
   }
 
 
   handleMouseUp(event)
   {
-    const { toolActive, toolChosen } = this.state
+    const { toolChosen } = this.state
 
-    if (toolChosen !== null && toolActive === true) {
+    if (toolChosen !== null && this._toolActive === true) {
       toolChosen.handleMouseUp(this.collateDrawingToolEnv(event))
       if (toolChosen.changesImage === true)
         this.handleSave(`Drawing`, false, false)
-      this.setState({ toolActive: false })
+      this._toolActive = false
     }
   }
 
   handleMouseLeave(event)
   {
-    const { toolActive, toolChosen } = this.state
+    const { toolChosen } = this.state
 
     this.setStatusBarInfo()
-    if (toolChosen !== null && toolActive === true && !settings_ignoreMouseLeave) {
+    if (toolChosen !== null && this._toolActive === true && !settings_ignoreMouseLeave) {
       toolChosen.handleMouseLeave(this.collateDrawingToolEnv(event))
       if (toolChosen.changesImage === true)
         this.handleSave(`Drawing`, false, false)
-      this.setState({ toolActive: false })
+      this._toolActive = false
     }
   }
 
   handleMouseEnter(event)
   {
-    const { toolActive, toolChosen } = this.state
+    const { toolChosen } = this.state
     this.setStatusBarInfo()
-    if (toolChosen !== null && toolActive === true && settings_ignoreMouseLeave && ((event.buttons & 1) === 0)) {
+    if (toolChosen !== null && this._toolActive === true && settings_ignoreMouseLeave && ((event.buttons & 1) === 0)) {
       toolChosen.handleMouseLeave(this.collateDrawingToolEnv(event))
       if (toolChosen.changesImage === true)
         this.handleSave(`Drawing`, false, false)
-      this.setState({ toolActive: false })
+      this._toolActive = false
     }
   }
 
@@ -1003,6 +1044,7 @@ export default class EditGraphic extends React.Component {
   {
     this.doSnapshotActivity(frameIndex)
     recentMarker = null       // Since we now want to reload data for our new EditCanvas
+    // console.log("handleSelectFrame: setting recentMarker = null")
     this.setState( { selectedFrameIdx: frameIndex}  )
 
     // for new frame clears preview canvases and update edit canvas
@@ -1156,6 +1198,7 @@ export default class EditGraphic extends React.Component {
       this.props.editDeniedReminder()
       return
     }
+    // console.log("handleSave(", changeText, ") -- dontSaveFrameData:", dontSaveFrameData, "  allowBackwash:", allowBackwash)
 
     // Make really sure we have the frameCanvasArrays up-to-date with the latest edits from all layers
     if (this.previewCanvasArray && !dontSaveFrameData)
@@ -1223,13 +1266,15 @@ export default class EditGraphic extends React.Component {
 
   saveChangedContent2(c2, thumbnail, changeText, allowBackwash = false)
   {
+    // console.log("saveChangedContent2(", changeText, ") --   allowBackwash:", allowBackwash)
+    
     // this will prevent small sync gap between parent and component:
     // noticeable: undo -> draw a line ( part of the line will be truncated )
     this.props.asset.content2 = c2
 
     recentMarker = allowBackwash ? null : "_graphic_" + Random.id()   // http://docs.meteor.com/packages/random.html
     c2.changeMarker = recentMarker
-    //console.log("Backwash marker = " + recentMarker)
+    // console.log("saveChangedContent2... setting local and c2 Backwash recentMarker = " + recentMarker)
     this.props.handleContentChange(c2, thumbnail, changeText)
     this.doSnapshotActivity()
   }
@@ -1483,16 +1528,6 @@ export default class EditGraphic extends React.Component {
         level: 2,
         simpleTool: true
       },
-      EraseFrame: {
-        label: "Erase Frame",
-        name: "toolEraseFrame",
-        tooltip: "Erase Frame",
-        disabled: false,
-        icon: "remove circle outline icon",
-        shortcut: 'Ctrl+Shift+E',
-        level: 2,
-        simpleTool: true
-      },
       Cut: {
         label: "Cut",
         name: "toolCutSelected",
@@ -1511,6 +1546,16 @@ export default class EditGraphic extends React.Component {
         icon: "copy icon",
         shortcut: 'Ctrl+C',
         level: 6,
+        simpleTool: true
+      },
+      EraseFrame: {
+        label: "Erase Frame",
+        name: "toolEraseFrame",
+        tooltip: "Erase Frame",
+        disabled: false,
+        icon: "remove circle outline icon",
+        shortcut: 'Ctrl+Shift+E',
+        level: 2,
         simpleTool: true
       },
       Import: {
@@ -1547,7 +1592,8 @@ export default class EditGraphic extends React.Component {
     }
 
     _.each(Tools, (tool) => {
-      if (tool.hideTool === true) return
+      if (tool.hideTool === true) 
+        return
 
       config.buttons.push({
         active: this.state.toolChosen === tool,

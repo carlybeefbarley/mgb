@@ -33,7 +33,6 @@
             "unix"
         ],
         "react/jsx-uses-vars": 2,
-        "no-invalid-this": 2,
         "nonblock-statement-body-position": [
             "error",
             "below"

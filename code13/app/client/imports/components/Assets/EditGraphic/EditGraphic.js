@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import { Grid, Header, Popup, Button, Icon } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import sty from  './editGraphic.css'
-import ReactColor from 'react-color'
+import { SketchPicker } from 'react-color'
 import Tools from './GraphicTools'
 
 import SpriteLayers from './Layers/SpriteLayers'
@@ -1682,10 +1682,11 @@ export default class EditGraphic extends React.Component {
               )}
             >
               <Header>Color Picker</Header>
-              <ReactColor
-                  type="sketch"
+              <SketchPicker
                   onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
                   color={this.state.selectedColors['fg'].rgb}
+                  presetColors={['#D0021B', '#F5A623', '#F8E71C', '#8B572A', '#7ED321', '#417505', '#BD10E0', '#9013FE', '#4A90E2', '#50E3C2', '#B8E986', '#000000', '#4A4A4A', '#9B9B9B', '#FFFFFF']}
+                  
               />
             </Popup>
 

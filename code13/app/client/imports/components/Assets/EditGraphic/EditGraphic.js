@@ -1043,7 +1043,7 @@ export default class EditGraphic extends React.Component {
 // it isn't a drawing tool (and that's what the plugin api is focused on)
 // Also, there is some funny handling for invalid colors from react-color
 
-  handleColorChangeComplete(colortype, chosenColor)
+  handleColorChangeComplete(colortype, chosenColor, defaultColor)
   {
     if (!chosenColor.hex)
       chosenColor.hex = `#${this.RGBToHex(chosenColor.rgb.r, chosenColor.rgb.g, chosenColor.rgb.b)}`
@@ -1064,8 +1064,35 @@ export default class EditGraphic extends React.Component {
 
     _selectedColors[colortype] = _.cloneDeep(chosenColor)
 
+    if(!defaultColor || defaultColor != 'defaultColor')
+      this.handleColorPreset(chosenColor)
+
     // So we have to fix up UI stuff. This is a bit of a hack for perf. See statusBarInfo()
     $('.mgbColorPickerIcon.icon').css( { color: chosenColor.hex})
+  }
+
+  handleColorPreset(newColor)
+  {
+    // console.log('new color preset', newColor.hex)
+    const max_colors = 16
+    const c2 = this.props.asset.content2
+    if(!c2.presetColors)
+      c2.presetColors = []
+    let idx = c2.presetColors.indexOf(newColor.hex)
+    // remove color for preset if already used
+    if(idx != -1){
+      c2.presetColors.splice(idx, 1)
+    }
+    else {
+      // remove last color to free up space for new color
+      if(c2.presetColors.length >= max_colors){
+        c2.presetColors.pop()
+      }
+    }
+    c2.presetColors.unshift(newColor.hex)
+    // console.log(c2.presetColors)
+    // this.props.asset.content2.presetColors = []
+    this.handleSave('Color change')
   }
 
 
@@ -1691,6 +1718,7 @@ export default class EditGraphic extends React.Component {
 
     const isSkillTutorialGraphic = asset && asset.skillPath && _.startsWith( asset.skillPath, 'art' )
     const column1Width = isSkillTutorialGraphic ? 8 : 16
+    const presetColors = c2.presetColors || ['#d0021b', '#f5a623', '#f8e71c', '#8b572a', '#7ed321', '#417505', '#bd10E0', '#9013fe', '#4a90e2', '#50e3c2', '#b8e986', '#000000', '#4a4a4a', '#9b9b9b', '#ffffff']
 
     // Make element
     return (
@@ -1718,7 +1746,7 @@ export default class EditGraphic extends React.Component {
               <SketchPicker
                   onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
                   color={this.state.selectedColors['fg'].rgb}
-                  presetColors={['#D0021B', '#F5A623', '#F8E71C', '#8B572A', '#7ED321', '#417505', '#BD10E0', '#9013FE', '#4A90E2', '#50E3C2', '#B8E986', '#000000', '#4A4A4A', '#9B9B9B', '#FFFFFF']}
+                  presetColors={presetColors}
                   
               />
             </Popup>

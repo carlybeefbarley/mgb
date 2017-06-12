@@ -10,7 +10,7 @@ const Footer = ( { respIsRuleActive, respData }) => (
         <div className="ui grid">
           <div className="seven wide column">
             <h4 className="ui inverted grey header" style={{fontSize: "1.15em"}}>Gain Skills</h4>
-            <p>Learn real world skills like Javascript and software design, but without boring <em>'do this, do that'</em> lessons. Learn by making, learn from friends, pay it forwardinverted .</p>
+            <p>Learn real world skills like Javascript and software design, but without boring <em>'do this, do that'</em> lessons. Learn by making, learn from friends, pay it forward.</p>
           </div>
           <div className="three wide column">
             <h4 className="ui inverted grey header" style={{fontSize: "1.15em"}}>Make Games</h4>

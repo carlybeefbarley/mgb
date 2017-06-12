@@ -1,214 +1,192 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import { Dropdown, Icon } from 'semantic-ui-react'
+import ReactDOM from 'react-dom'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
+import sty from  '../editGraphic.css'
 
-import sty from  '../editGraphic.css';
+const _layerCanvasStyle = {
+  maxWidth:  "256px", 
+  maxHeight: "256px", 
+  overflow:  "auto" 
+}
 
 export default class Layer extends React.Component {
 
-	constructor(props) {
-	    super(props)
+  static propTypes = {
+    idx:          PropTypes.number.isRequired,
+    layer:        PropTypes.object.isRequired,
+    layerCount:   PropTypes.number.isRequired,
+    frameNames:   PropTypes.array.isRequired,
+    width:        PropTypes.number.isRequired,
+    height:       PropTypes.number.isRequired,
+    copyLayerID:  PropTypes.number,
+    isSelected:   PropTypes.bool.isRequired,
+    selectedFrame: PropTypes.number.isRequired,
+    isCanvasLayersVisible: PropTypes.bool.isRequired,
 
-	    this.state = {
-	    	editName: false,
-	    }
-	}
+    selectLayer:   PropTypes.func.isRequired,
+    moveLayerUp:   PropTypes.func.isRequired,
+    moveLayerDown: PropTypes.func.isRequired,
+    copyLayer:     PropTypes.func.isRequired,
+    pasteLayer:    PropTypes.func.isRequired,
+    selectFrame:   PropTypes.func.isRequired,
+    deleteLayer:   PropTypes.func.isRequired,
+    handleSave:    PropTypes.func.isRequired,
 
-	toggleVisibility(){
-		this.props.layer.isHidden = !this.props.layer.isHidden;
-		this.props.handleSave('Layer visibility');
-	}
+    handleDragStart: PropTypes.func.isRequired,
+    handleDragEnd:   PropTypes.func.isRequired,
+  }
 
-	toggleLocking(){
-		this.props.layer.isLocked = !this.props.layer.isLocked;
-		this.props.handleSave('Layer locking');
-	}
+  state = {
+    editName: false
+  }
 
-	selectLayer(event){
-    let clickedDiv = event.target;
+  toggleVisibility = () => {
+    this.props.layer.isHidden = !this.props.layer.isHidden
+    this.props.handleSave('Layer visibility')
+  }
+
+  toggleLocking = () => {
+    // TODO: This operation has very high UX latency. Figure out why.
+    this.props.layer.isLocked = !this.props.layer.isLocked
+    this.props.handleSave('Layer locking')
+  }
+
+  selectLayer = event => {
+    const clickedDiv = event.target
     // don't invoke select if remove layer
-    if(clickedDiv.className.search('remove') !== -1){
-      return;
-    }
-    if(clickedDiv.firstChild && clickedDiv.firstChild.className && clickedDiv.firstChild.className.search('remove') !== -1){
-      return;
-    }
+    if (clickedDiv.className.search('remove') !== -1)
+      return
+    if (clickedDiv.firstChild && clickedDiv.firstChild.className && clickedDiv.firstChild.className.search('remove') !== -1)
+      return
 
-    this.props.selectLayer(this.props.idx);
-	}
-
-	selectFrame(frameID){
-		this.props.selectFrame(frameID);
-	}
-
-	editName(){
-		ReactDOM.findDOMNode(this.refs.nameInput).value = ReactDOM.findDOMNode(this.refs.nameText).textContent;
-		ReactDOM.findDOMNode(this.refs.nameInput).select();
-		ReactDOM.findDOMNode(this.refs.nameInput).focus();
-		this.setState({ editName: true });
-	}
-
-	changeName(event){
-		event.preventDefault();
-		this.setState({ editName: false });
-		this.props.layer.name = ReactDOM.findDOMNode(this.refs.nameInput).value;
-		this.props.handleSave('Changed layer name');
-	}
-
-  moveLayerUp(){
-    this.props.moveLayerUp(this.props.idx);
+    this.props.selectLayer(this.props.idx)
   }
 
-  moveLayerDown(){
-    this.props.moveLayerDown(this.props.idx);
+  selectFrame(frameID) {
+    this.props.selectFrame(frameID)
   }
 
-  copyLayer(){
-    this.props.copyLayer(this.props.idx);
+  editName = () => {
+    ReactDOM.findDOMNode(this.refs.nameInput).value = ReactDOM.findDOMNode(this.refs.nameText).textContent
+    ReactDOM.findDOMNode(this.refs.nameInput).select()
+    ReactDOM.findDOMNode(this.refs.nameInput).focus()
+    this.setState({ editName: true })
   }
 
-  pasteLayer(){
-    this.props.pasteLayer(this.props.idx);
+  changeName = (event) => {
+    event.preventDefault()
+    this.setState({ editName: false })
+    this.props.layer.name = ReactDOM.findDOMNode(this.refs.nameInput).value
+    this.props.handleSave('Changed layer name')
   }
 
-  deleteLayer(){
-    this.props.deleteLayer(this.props.idx);
-  }
+  moveLayerUp =   () => { this.props.moveLayerUp(this.props.idx)   }
+  moveLayerDown = () => { this.props.moveLayerDown(this.props.idx) }
+  copyLayer =     () => { this.props.copyLayer(this.props.idx)     }
+  pasteLayer =    () => { this.props.pasteLayer(this.props.idx)    }
+  deleteLayer =   () => { this.props.deleteLayer(this.props.idx)   }
 
   // Note: it's not possible to extend arrow methods - works same-ish as this.registerPreviewCanvas.bind(this)
   registerPreviewCanvas = (element) => {
-    if(element && !element.hasRegisteredDragStart){
+    if (element && !element.hasRegisteredDragStart) {
       element.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
-      element.hasRegisteredDragStart = true;
+      element.hasRegisteredDragStart = true
     }
   }
 
   render() {
+    const { 
+      width, height,
+      isSelected, selectedFrame, frameNames,
+      layer, idx, layerCount, copyLayerID, isCanvasLayersVisible,
+      handleDragStart, handleDragEnd
+    } = this.props
+
     return (
       <tr
-        className={this.props.isSelected ? "active" : ""}
-        onClick={this.selectLayer.bind(this)}
-        key={this.props.idx}
+        className={isSelected ? "active" : ""}
+        onClick={this.selectLayer}
+        key={idx}
         >
-          <td>
-          	<i
-          		className={"icon " + (this.props.layer.isHidden ? "hide" : "unhide" )}
-          		onClick={this.toggleVisibility.bind(this)}
-          	></i>
+          <td onClick={this.toggleVisibility} >
+            <Icon name={layer.isHidden ? 'hide' : 'unhide'} />
+          </td>
+          <td onClick={this.toggleLocking}>
+            <Icon name={layer.isLocked ? 'lock' : 'unlock' } />
+          </td>
+          <td onDoubleClick={this.editName} onSubmit={this.changeName}>
+            <div ref="nameText" className={this.state.editName ? "mgb-hidden" : "visible"}>{layer.name}</div>
+            <form className={"ui input " + (this.state.editName ? "visible" : "mgb-hidden")} ><input ref="nameInput" type="text" /></form>
           </td>
           <td>
-          	<i
-          		className={"icon " + (this.props.layer.isLocked ? "lock" : "unlock" )}
-          		onClick={this.toggleLocking.bind(this)}
-          	></i>
-          </td>
-          <td onDoubleClick={this.editName.bind(this)} onSubmit={this.changeName.bind(this)}>
-          	<div ref="nameText" className={this.state.editName ? "mgb-hidden" : "visible"}>{this.props.layer.name}</div>
-          	<form className={"ui input " + (this.state.editName ? "visible" : "mgb-hidden")} ><input ref="nameInput" type="text" /></form>
-          </td>
-          <td>
-            <div className="ui dropdown"
-                 ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } }
-              >
-              <i className="icon setting"></i>
-              <div className="menu">
-                <div onClick={this.moveLayerUp.bind(this)}
-                  className={"item " + (this.props.idx === 0 ? "disabled" : "") }>
-                  <i className="arrow up icon"></i>
-                  Move Up
-                </div>
-                <div onClick={this.moveLayerDown.bind(this)}
-                  className={"item " + (this.props.layerCount-1 === this.props.idx ? "disabled" : "")}>
-                  <i className="arrow down icon"></i>
-                  Move Down
-                </div>
-                <div className="divider"></div>
-                <div onClick={this.editName.bind(this)}
-                  className="item">
-                  <i className="edit icon"></i>
-                  Rename
-                </div>
-                <div className="divider"></div>
-                <div onClick={this.copyLayer.bind(this)}
-                  className={"item "}>
-                  <i className="copy icon"></i>
-                  Copy
-                </div>
-                <div onClick={this.pasteLayer.bind(this)}
-                  className={"item " + (this.props.copyLayerID === null ? "disabled" : "")}>
-                  <i className="paste icon"></i>
-                  Paste
-                </div>
-                <div className="divider"></div>
-                <div onClick={this.deleteLayer.bind(this)}
-                  className="item">
-                  <i className="remove icon"></i>
-                  Delete
-                </div>
-              </div>
-            </div>
+            <Dropdown className='upward' icon='setting'>
+              <Dropdown.Menu>
+                <Dropdown.Header content={`Layer #${idx+1}: "${layer.name}"`}/>
+                <Dropdown.Item content='Move Up' onClick={this.moveLayerUp} disabled={idx === 0} icon='arrow up' />
+                <Dropdown.Item
+                  onClick={this.moveLayerDown}
+                  disabled={layerCount-1 === idx}
+                  icon='arrow down' 
+                  content='Move Down' />
+                <Dropdown.Divider />
+                <Dropdown.Item
+                  onClick={this.editName}
+                  icon='edit' 
+                  content='Rename' />
+                <Dropdown.Divider />
+                <Dropdown.Item
+                  onClick={this.copyLayer}
+                  icon='copy' 
+                  content='Copy' />
+                <Dropdown.Item
+                  onClick={this.pasteLayer}
+                  disabled={copyLayerID === null}
+                  icon='paste' 
+                  content='Paste' />
+                <Dropdown.Divider />
+                <Dropdown.Item
+                  onClick={this.deleteLayer}
+                  icon='remove' 
+                  content='Delete' />
+              </Dropdown.Menu>
+            </Dropdown>
           </td>
           {
-            _.map(this.props.frameNames, (frameName, frameID) => {
-              const isActiveCell = this.props.isSelected && this.props.selectedFrame === frameID
+            _.map(frameNames, (frameName, frameID) => {
+              const isActiveCell = isSelected && selectedFrame === frameID
               return (
               <td onClick={this.selectFrame.bind(this, frameID)}
-                key={this.props.idx+"_"+frameID}
-                title={isActiveCell ? `This is the current edit focus: Layer "${this.props.layer.name}" of Frame #${this.props.selectedFrame+1}`: "click here to edit this frame/layer"}
+                key={`${idx}_${frameID}`}
+                title={isActiveCell ? `This is the current edit focus: Layer "${layer.name}" of Frame #${selectedFrame+1}`: "click here to edit this frame/layer"}
                 className={isActiveCell ? "selectable highlight" : "selectable"}
                 id={"mgb_edit_graphics_frame_cell_" + frameID}
                 >
-                {isActiveCell ? <div style={{textAlign: "center"}}><i className="ui check icon" /></div> : null}
+                {isActiveCell ? <div style={{textAlign: "center"}}><Icon name='check' /></div> : null}
               </td>)
             })
           }
           <td className="layerCanvas">
             <div
-              className={"ui image " + (this.props.isCanvasLayersVisible ? "" : "hidden") }
-              title={`Preview for Layer "${this.props.layer.name}" of Frame #${this.props.selectedFrame+1}`}
-              /* onDragStart={this.handlePreviewDragStart.bind(this, this.props.idx)} */
-              style={{"maxWidth": "256px", "maxHeight": "256px", "overflow": "auto" }}>
+              className={"ui image " + (isCanvasLayersVisible ? "" : "hidden") }
+              title={`Preview for Layer "${layer.name}" of Frame #${selectedFrame+1}`}
+              /* onDragStart={this.handlePreviewDragStart.bind(this, idx)} */
+              style={ _layerCanvasStyle}>
               <canvas
-                width={this.props.width}
-                height={this.props.height}
+                width={width}
+                height={height}
                 ref={this.registerPreviewCanvas}
                 draggable="true"
-                onDragStart={this.props.handleDragStart.bind(this, this.props.idx)}
-                onDragEnd={this.props.handleDragEnd.bind(this)}
+                onDragStart={handleDragStart.bind(this, idx)}
+                onDragEnd={handleDragEnd}
                 ></canvas>
             </div>
           </td>
           <td>
-            <i onClick={this.deleteLayer.bind(this)}
-              className="remove icon"></i>
+            <Icon onClick={this.deleteLayer} name='remove'/>
           </td>
       </tr>
-    );
+    )
   }
 }
-
-Layer.propTypes = {
-  idx: PropTypes.number.isRequired,
-  layer: PropTypes.object.isRequired,
-  layerCount: PropTypes.number.isRequired,
-  frameNames: PropTypes.array.isRequired,
-  selectedFrame: PropTypes.number.isRequired,
-  isSelected: PropTypes.bool.isRequired,
-  width: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
-  isCanvasLayersVisible: PropTypes.bool.isRequired,
-  copyLayerID: PropTypes.number,
-
-  selectLayer: PropTypes.func.isRequired,
-  moveLayerUp: PropTypes.func.isRequired,
-  moveLayerDown: PropTypes.func.isRequired,
-  copyLayer: PropTypes.func.isRequired,
-  pasteLayer: PropTypes.func.isRequired,
-  selectFrame: PropTypes.func.isRequired,
-  deleteLayer: PropTypes.func.isRequired,
-  handleSave: PropTypes.func.isRequired,
-
-  handleDragStart: PropTypes.func.isRequired,
-  handleDragEnd: PropTypes.func.isRequired,
-};

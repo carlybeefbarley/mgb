@@ -1,29 +1,19 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
-import { QLink, utilPushTo } from '../QLink'
+import sty from  './learnRoute.css'
+import { utilPushTo } from '../QLink'
 import { showToast } from '/client/imports/routes/App'
-import sty from  './learnRoute.css';
-import {
-  Button,
-  Divider,
-  Grid,
-  Card,
-  Header,
-  Icon,
-  Label,
-} from 'semantic-ui-react'
+import { Divider, Grid, Header, Label } from 'semantic-ui-react'
 import { logActivity } from '/imports/schemas/activity'
 import SkillLinkCard from '/client/imports/components/Learn/SkillLinkCard'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import SkillNodes, { countMaxUserSkills } from '/imports/Skills/SkillNodes/SkillNodes'
 import { getSkillNodeStatus, countCurrentUserSkills } from '/imports/schemas/skills'
-import { startSkillPathTutorial } from '/client/imports/routes/App'
 
 import { getAssetBySelector } from '/client/imports/helpers/assetFetchers'
 
 import { mgbAjax } from '/client/imports/helpers/assetFetchers'
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 

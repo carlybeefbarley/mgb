@@ -16,6 +16,86 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+    {
+      'timestamp': 'Mon Jun 12 2017 01:45:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4339'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Graphic editor tweaks',
+          'changeSummary': 'Graphic editor is faster; the disappearing-first-few-pixels bug has finally been resolved!',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Bio area on Profile is nicer. Mobile phone screen widths are now correct. Create New Asset in no-project is faster (and can no longer stall the asset edit loaders). ' ,
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+    {
+      'timestamp': 'Sat Jun 10 2017 19:39:54 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4328'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'flexpanel.chat',
+          'type': 'improvement',
+          'changeName': 'Chat @mentions are now profile links',
+          'changeSummary': 'Type a @username like @dgolds in chat and the message will render as a link to the user\'s profile',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'moderation.chat',
+          'type': 'improvement',
+          'changeName': 'Chat moderation warns about censored text instead of ***ing it',
+          'changeSummary': 'The swearjar system nows warns users about phrases rather than sharing the message with certain stuff bleeped out. This seems better.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'game.play',
+          'type': 'improvement',
+          'changeName': 'Touch controller overlay for actorMap games',
+          'changeSummary': 'On touch devices, we provide an optional overlay to use the games without a keypad/keyboard. This now resizes more sensibly than before.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.ui',
+          'type': 'improvement',
+          'changeName': 'UI cleanup (in progress)',
+          'changeSummary': 'Lightened the style for the main page area. FlexPanel area is next!   Re-arranged the user profile area a bit (but it still needs work).  Created a new, smaller userItem control and we use that now in some user lists (flexpanel, project members, colleagues etc).',
+          'otherUrls': [ ]
+        }
+
+      ]
+
+    },
+
+
 
     {
       'timestamp': 'Tue Jun 06 2017 04:45 GMT-0700 (PDT)',

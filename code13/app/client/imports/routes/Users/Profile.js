@@ -1,9 +1,10 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Segment, Header, Button, Grid, Item, Icon, Label, Popup } from 'semantic-ui-react'
+import UX from '/client/imports/UX'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import Helmet from 'react-helmet'
-import moment from 'moment'
 
 import mgb1 from '/client/imports/helpers/mgb1'
 import UserProjects from '/client/imports/components/Users/UserProjects'
@@ -30,7 +31,6 @@ import { makeChannelName} from '/imports/schemas/chats'
 import QLink from '../QLink'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
-import { Segment, Header, Button, Grid, Item, Icon, Label, Popup } from 'semantic-ui-react'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 
 const UserShowcase = () => ( null )    // TODO based on workState
@@ -40,6 +40,7 @@ export default UserProfileRoute = React.createClass({
 
   propTypes: {
     query: PropTypes.object,
+    params: PropTypes.object,
     user: PropTypes.object,
     currUser: PropTypes.object,
     ownsProfile: PropTypes.bool
@@ -92,9 +93,9 @@ export default UserProfileRoute = React.createClass({
   },
 
   render: function() {
-    const { user, ownsProfile, currUser } = this.props
+    const { user, ownsProfile, currUser, params } = this.props
     if (!user) 
-      return <ThingNotFound type="User" />
+      return <ThingNotFound type='User' id={params.username} />
 
     return (
       <Segment basic>
@@ -127,7 +128,7 @@ export default UserProfileRoute = React.createClass({
             <ActivityHeatmap user={user} className="eight wide column" />
           }
           { /* Users who currUser is projects with -owned and not owned use pubsub */ }
-          <UserColleaguesList user={user} projects={this.data.projects} />
+          <UserColleaguesList user={user} narrowItem={true} projects={this.data.projects} />
     
           { /* User Projects */ }
           <UserProjects user={user} width={16} projects={this.data.projects} />
@@ -151,7 +152,7 @@ export default UserProfileRoute = React.createClass({
   renderUserInfo: function(user, ownsProfile, width) {
     const { avatar, name, mgb1name, title, bio, focusMsg } = user.profile
     const editsDisabled = !ownsProfile || user.suIsBanned
-    const channelName = makeChannelName( { scopeGroupName: 'User', scopeId: this.props.params.username } )
+    const channelName = makeChannelName( { scopeGroupName: 'User', scopeId: name } )
 
     const firstMgb1name = (mgb1name && mgb1name.length>0 ) ? mgb1name.split(',')[0] : null
     return (
@@ -159,7 +160,6 @@ export default UserProfileRoute = React.createClass({
         <Segment>
           <Item.Group>
             <Item>
-
               <ImageShowOrChange
                 id='mgbjr-profile-avatar'
                 maxWidth="150px"
@@ -171,7 +171,7 @@ export default UserProfileRoute = React.createClass({
 
               <Item.Content style={{marginLeft: '8px'}}>
 
-                <Item.Header content={name} />
+                <Item.Header size='large' content={name} />
                 { user.suIsBanned &&
                   <div><Label size='small' color='red' content='Suspended Account' /></div>
                 }
@@ -179,6 +179,51 @@ export default UserProfileRoute = React.createClass({
                   <div><Label size='small' color='purple' content='Deactivated Account' /></div>
                 }
                 <Item.Meta>
+                  <div title="User's 'title'">
+                    <Icon name='left quote' color='blue' />
+                    <InlineEdit
+                      id='mgbjr-profile-userTitle-edit'
+                      validate={validate.userTitle}
+                      activeClassName="editing"
+                      placeholder='(no title)'
+                      text={title || ""}
+                      paramName="profile.title"
+                      change={this.handleProfileFieldChanged}
+                      isDisabled={editsDisabled} />
+                    <Icon name='right quote' color='blue' />
+                  </div>
+
+                  <p>
+                    <UX.UserWhenJoined as='small' when={user.createdAt}/>
+                  </p>
+
+                  <p>
+                    <b title="About yourself">Bio:</b>&nbsp;
+                    <InlineEdit
+                      id='mgbjr-profile-userBio-edit'
+                      validate={validate.userBio}
+                      activeClassName="editing"
+                      placeholder='(no description)'
+                      text={bio || ""}
+                      paramName="profile.bio"
+                      change={this.handleProfileFieldChanged}
+                      isDisabled={editsDisabled}
+                      />
+                  </p>
+                  <p>
+                    <b title="What you are working on right now. This will also show in the top bar as a reminder!">Focus:</b>&nbsp;
+                    <InlineEdit
+                      id='mgbjr-profile-focusMsg-edit'
+                      validate={validate.userFocusMsg}
+                      activeClassName="editing"
+                      placeholder='(no current focus)'
+                      text={focusMsg || ""}
+                      paramName="profile.focusMsg"
+                      change={this.handleProfileFieldChanged}
+                      isDisabled={editsDisabled}
+                      />
+                  </p>                
+
                   <p>
                     <b title="This is the user's name on the prior flash-based MGBv1 system. ">
                       MGB1 name:
@@ -220,75 +265,27 @@ export default UserProfileRoute = React.createClass({
                       </Popup>
                     }
                   </p>
+
                 </Item.Meta>
 
-                <Item.Description>
-                  <p>
-                    <b title="About yourself">Bio:</b>&nbsp;
-                    <InlineEdit
-                      id='mgbjr-profile-userBio-edit'
-                      validate={validate.userBio}
-                      activeClassName="editing"
-                      placeholder='(no description)'
-                      text={bio || ""}
-                      paramName="profile.bio"
-                      change={this.handleProfileFieldChanged}
-                      isDisabled={editsDisabled}
-                      />
-                  </p>
-                  <p>
-                  <b title="What you are working on right now. This will also show in the top bar as a reminder!">Focus:</b>&nbsp;
-                    <InlineEdit
-                      id='mgbjr-profile-focusMsg-edit'
-                      validate={validate.userFocusMsg}
-                      activeClassName="editing"
-                      placeholder='(no current focus)'
-                      text={focusMsg || ""}
-                      paramName="profile.focusMsg"
-                      change={this.handleProfileFieldChanged}
-                      isDisabled={editsDisabled}
-                      />
-                  </p>
-                </Item.Description>
-
-                <Item.Extra>
-                  <Button.Group size='small' vertical>
-                    <QLink to={`/u/${name}/assets`} style={{marginBottom: '6px'}}>
-                      <Button size='small' icon='pencil' content='Assets' />
-                    </QLink>
-                    <QLink to={`/u/${name}/projects`} style={{marginBottom: '6px'}}>
-                      <Button size='small' icon='sitemap' content='Projects' />
-                    </QLink>
-                    <QLink to={`/u/${name}/games`} style={{marginBottom: '6px'}}>
-                      <Button size='small' icon='game' content='Games' />
-                    </QLink>
-                    <QLink query={{ _fp: `chat.${channelName}` }}  style={{marginBottom: '6px'}}>
-                      <Button size='small' icon='chat' content={`${user.username}'s Wall`} />
-                    </QLink>
-                  </Button.Group>
-                </Item.Extra>
               </Item.Content>
             </Item>
-          </Item.Group>
 
-          <div title="User's 'title'">
-            <Icon name='left quote' color='blue' />
-            <InlineEdit
-              id='mgbjr-profile-userTitle-edit'
-              validate={validate.userTitle}
-              activeClassName="editing"
-              placeholder='(no title)'
-              text={title || ""}
-              paramName="profile.title"
-              change={this.handleProfileFieldChanged}
-              isDisabled={editsDisabled} />
-            <Icon name='right quote' color='blue' />
-          </div>
-          <p>
-            <em style={{color: "#888"}}>
-              <Icon name='clock' />Joined {moment(user.createdAt).format('MMMM DD, YYYY')}
-            </em>
-          </p>
+            <div style={{clear: 'both', right: 'auto', left: 'auto'}}>
+              <QLink to={`/u/${name}/assets`} style={{marginBottom: '6px'}}>
+                <UX.Button2 basic icon='pencil' content='Assets' />
+              </QLink>
+              <QLink to={`/u/${name}/projects`} style={{marginBottom: '6px'}}>
+                <UX.Button2 basic icon='sitemap' content='Projects' />
+              </QLink>
+              <QLink to={`/u/${name}/games`} style={{marginBottom: '6px'}}>
+                <UX.Button2 basic icon='game' content='Games' />
+              </QLink>
+              <QLink query={{ _fp: `chat.${channelName}` }}  style={{marginBottom: '6px'}}>
+                <UX.Button2 basic icon='chat' content='Wall' />
+              </QLink>
+            </div>
+          </Item.Group>
         </Segment>
       </Grid.Column>
     )

@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Dropdown, Popup } from 'semantic-ui-react'
+import UX from '/client/imports/UX'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
-import { Link } from 'react-router'
 import { Azzets, Projects } from '/imports/schemas'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import AssetList from '/client/imports/components/Assets/AssetList'
@@ -12,23 +12,41 @@ import AssetKindsSelector from '/client/imports/components/Assets/AssetKindsSele
 import { AssetKindKeys, assetMakeSelector, safeAssetKindStringSepChar, isAssetKindsStringComplete } from '/imports/schemas/assets'
 
 import AssetListChooseView from '/client/imports/components/Assets/AssetListChooseView'
-import { assetViewChoices, defaultAssetViewChoice } from '/client/imports/components/Assets/AssetCard'
+import { defaultAssetViewChoice } from '/client/imports/components/Assets/AssetCard'
 
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
-import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
-import SpecialGlobals from '/imports/SpecialGlobals.js'
-// This lets this flexPanel remember it's state!
+
+// This lets this flexPanel remember its recent state even beyond dismounts
 let _persistedState = null
 
-const _makeAvatarSrc = userId => makeCDNLink(`/api/user/${userId}/avatar/${SpecialGlobals.avatar.validFor}`, makeExpireTimestamp(SpecialGlobals.avatar.validFor))
 const _showFromAllValue = ':showFromAll:' // since colon is not allowed in Meteor _ids. Null wasnt working well as a value for 'all'
+
 const ShowFromWho = ( { value, currUser, otherUser, style, onChange }) => {
   const options = _.compact([
-    currUser  && { key: currUser._id, text: currUser.username,  value: currUser._id,  image: { avatar: true, src: _makeAvatarSrc(currUser._id) } },
+    currUser && { 
+      key: currUser._id, 
+      text: currUser.username,  
+      value: currUser._id,  
+      image: { 
+        avatar: true, 
+        src:  UX.makeAvatarImgLink(currUser.username) 
+      }
+    },
     // This is mostly working, but needs to handle the transition to a page where the user is no longer part of the page scope
-    (otherUser && currUser && otherUser._id !== currUser._id) && { key: otherUser._id, text: otherUser.username, value: otherUser._id, image: { avatar: true, src: _makeAvatarSrc(otherUser._id) } },
-    { text: 'All users', value: _showFromAllValue, icon: { size: 'large', name: 'users' } }
+    (otherUser && currUser && otherUser._id !== currUser._id) && { 
+      key: otherUser._id, 
+      text: otherUser.username, 
+      value: otherUser._id, 
+      image: { 
+        avatar: true, 
+        src: UX.makeAvatarImgLink(otherUser.username) 
+      } 
+    },
+    { text: 'All users', 
+      value: _showFromAllValue, 
+      icon: { size: 'large', name: 'users' } 
+    }
   ])
   return (
     <small>

@@ -13,7 +13,6 @@ import BrowseGamesRoute from './BrowseGamesRoute'
 import DashboardRoute from './Dashboard/DashboardRoute'
 
 import LearnRoute from './Learn/LearnRoute'
-import LearnGamesRoute from './Learn/LearnGamesRoute'
 import LearnSkillsRoute from './Learn/LearnSkillsRoute'
 import LearnSkillsAreaRoute from './Learn/LearnSkillsAreaRoute'
 import LearnGetStartedRoute from './Learn/LearnGetStartedRoute'
@@ -75,7 +74,6 @@ export function clientStartup() {
         <Route path="/learn" component={LearnRoute} />
         <Route path="/learn/skills" component={LearnSkillsRoute} />
         <Route path="/learn/skills/:skillarea" component={LearnSkillsAreaRoute} />
-        <Route path="/learn/games" component={LearnGamesRoute} />
         <Route path="/learn/getstarted" component={LearnGetStartedRoute} name='Get Started'/>
 
         <Route path="/learn/code" component={LearnCodeRoute} name='Programming'/>

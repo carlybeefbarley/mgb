@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Button, Modal, Icon, Message, Divider, Header } from 'semantic-ui-react'
 
-import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
+import { mgbAjax } from '/client/imports/helpers/assetFetchers'
 import SkillNodes, { isPhaserTutorial, getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo, utilShowChatPanelChannel } from "/client/imports/routes/QLink"
 import { learnSkill } from '/imports/schemas/skills'

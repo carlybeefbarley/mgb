@@ -65,6 +65,32 @@ Meteor.methods({
 
 
 
+Meteor.methods({
+  "Slack.Chats.censored": function(username, message, channel, censoredMsg) {
+
+    const infoUrl=`https://v2.mygamebuilder.com/u/${username}?_fp=chat.${channel}`
+    slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+      username: `MGBv2 @${username}`,
+      text: `Rejected CENSORED Message attempt by user <${infoUrl}|${username}> on channel <${infoUrl}|#${channel}>`,
+      attachments: [
+        {
+          fallback: `Message: '${message}'`,
+//        pretext: "Message",
+          color: "#D00000",
+          fields: [
+            {
+              "title": `Message on #${channel}`,
+              "value": `Original: '${message}' \nWould censor to: '${censoredMsg}'`,
+              "short": false            
+            }
+          ]
+        }
+      ]
+    })
+  }
+})
+
+
 
 Meteor.methods({
   "Slack.User.create": function(username, email) {

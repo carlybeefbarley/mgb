@@ -2,13 +2,12 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
 import { Popup, Breadcrumb, Icon, List } from 'semantic-ui-react'
+import UX from '/client/imports/UX'
 import { AssetKinds } from '/imports/schemas/assets'
-import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import UserItem from '/client/imports/components/Users/UserItem'
 
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
-import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 // The NavBar is the top row of the central column of the page (i.e. between the NavPanel column
 // on the left and the FlexPanel on the right).
@@ -122,7 +121,7 @@ const NavBarBreadcrumbUI = ( {
                     <img
                         className="ui avatar image"
                         style={{ width: '1.3em', height: '1.3em' }}
-                        src={makeCDNLink(`/api/user/${user._id}/avatar/${SpecialGlobals.avatar.validFor}`, makeExpireTimestamp(SpecialGlobals.avatar.validFor))}></img>
+                        src={UX.makeAvatarImgLink(usernameToShow)} />
                     )
                   }
                   {usernameToShow}&nbsp;

@@ -1,29 +1,15 @@
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
-import QLink from '../QLink'
+import sty from  './learnRoute.css'
 import getStartedStyle from '../GetStarted.css'
-import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
+import { Card, Divider, Grid, Header, Icon } from 'semantic-ui-react'
+import UX from '/client/imports/UX'
+import QLink from '../QLink'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
-
-import sty from  './learnRoute.css';
 
 const cardStyle = {
   color: "#2e2e2e"
 }
-
-// const mascotStyle = {
-//   // maxWidth: "8em",
-//   width: "8em",
-//   height: "10em",
-//   paddingRight: "0.5em",
-//   marginBottom: "0",
-//   float: "left",
-//   marginRight: "1em",
-//   backgroundPosition: "center center",
-//   backgroundRepeat: "no-repeat",
-//   backgroundSize: "contain"
-// }
 
 const headerStyle = {
   marginTop: "0.15em",
@@ -73,16 +59,6 @@ const learnTopLevelItems = [
    desc: 'Learn to make and modify some classic game types'
    },
    */
-  /*
-   {
-   mascot: 'team',
-   icon: 'help',
-   content: 'Ask for help',
-   link: '/learn',
-   query: { _fp: 'chat.G_MGBHELP_' },
-   desc: 'Ask and we shall answer'
-   },
-   */
 ]
 
 const LearnRoute = ({ currUser, params }, context) => (
@@ -96,12 +72,13 @@ const LearnRoute = ({ currUser, params }, context) => (
     </Grid.Column>
     <Grid.Column>
       <Card.Group itemsPerRow={1} stackable className="skills">
-        { learnTopLevelItems.map( (area, idx) => {
-          const imgStyle = { backgroundImage: "url(" + makeCDNLink( `/images/mascots/${area.mascot}.png` ) + ")" }
-          return (
+        { learnTopLevelItems.map( (area, idx) => (
             <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
               <Card.Content>
-                <div className="learnThumbnail" style={imgStyle}></div>
+                <div 
+                  className="learnThumbnail" 
+                  style={{ backgroundImage: `url("${UX.makeMascotImgLink(area.mascot)}")` }}
+                  />
                 <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
                 <p style={descStyle}>{area.desc}.</p>
                 { currUser && ('string' == (typeof area.skillnodeTopLevelTag)) && (
@@ -110,14 +87,14 @@ const LearnRoute = ({ currUser, params }, context) => (
 
               </Card.Content>
             </QLink>
-        )} )
+          ) )
         }
       </Card.Group>
     </Grid.Column>
     { currUser &&
     <Grid.Column>
       <QLink className='link' style={{ float: 'right' }} to='/learn' query={ { _fp: 'chat.G_MGBHELP_' } }>
-        <Icon name='help' />Ask for help...
+        Not sure what to do<Icon name='help' />&emsp;Ask us for help...&nbsp;<Icon name='chat' />
       </QLink>
     </Grid.Column>
     }

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Message, Segment } from 'semantic-ui-react'
 
@@ -24,9 +25,14 @@ const editElementsForKind = {
   'game':      { loader: () => import('./EditGame/EditGame') },
 }
 
+const _omitPropsForEditors = [ 
+  'availableWidth'     // No Editors currently do anything adaptive for size, so do not pass on
+  ]
+
 export default class AssetEdit extends React.Component
 {
   static propTypes = {
+    // The following are ALL sent onto the child Asset Editors
     asset:                    PropTypes.object.isRequired,    // The invoker of this component must ensure that there is a valid Asset object
     canEdit:                  PropTypes.bool.isRequired,      // The invoker provides
     currUser:                 PropTypes.object,               // Can be null/undefined. This is the currently Logged-in user (or null if not logged in)
@@ -36,9 +42,13 @@ export default class AssetEdit extends React.Component
     editDeniedReminder:       PropTypes.func.isRequired,      // Asset Editors call this to give User a UI warning that they do not have write access to the current asset
     getActivitySnapshots:     PropTypes.func.isRequired,      // Activity snapshots causes very heavy re-rendering
     hasUnsentSaves:           PropTypes.bool.isRequired,      // True if there are deferred saves yet to be sent. HOWEVER, even if sent, then server accept + server ack/nack can be pending - see asset.isUnconfirmedSave for the flag to indicate that 'changes are in flight' status
-    availableWidth:           PropTypes.number,               // Available screen width in pixels for editor
-    handleSaveNowRequest:     PropTypes.func.isRequired       // Asset Editor call this to request a flush now (but it does not wait or have a callback). An example of use for this: Flushing an ActorMap asset to play a game in the actorMap editor
+    handleSaveNowRequest:     PropTypes.func.isRequired,      // Asset Editor call this to request a flush now (but it does not wait or have a callback). An example of use for this: Flushing an ActorMap asset to play a game in the actorMap editor
+
+    // The following are NOT sent onto the child Asset Editors. See _omitPropsForEditors above
+    availableWidth:           PropTypes.number                // Available screen width in pixels for editor
   }
+
+  
 
   componentDidMount()
   {
@@ -53,11 +63,14 @@ export default class AssetEdit extends React.Component
     const { asset, currUser, availableWidth } = this.props
 
     // Fancy dynamic module loader enables in Meteor 1.5. Woot
-    const loadable = editElementsForKind[asset.kind]
+    var loadable = editElementsForKind[asset.kind]
     if (loadable.el === undefined)
     {
       loadable.el = null
-      loadable.loader().then( imp => { loadable.el = imp.default; this.forceUpdate() } )
+      loadable.loader().then( imp => { 
+        loadable.el = imp.default
+        this.forceUpdate() 
+      } )
     }
     if (loadable.el === null)
       return <Spinner loadingMsg={`Loading ${asset.kind} editor...`} />
@@ -85,7 +98,7 @@ export default class AssetEdit extends React.Component
         }
         { /* We must keep this in the DOM since it has state we don't want to lose during a temporary resize */ }
         <div style={ isTooSmall ? { display: 'none' } : undefined}>
-          <Element {...this.props}/>
+          <Element {..._.omit(this.props, _omitPropsForEditors) }/>
         </div>
       </div>
     )

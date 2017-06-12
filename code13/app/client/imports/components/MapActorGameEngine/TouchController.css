@@ -1,4 +1,4 @@
-#controller{
+#mgb-mage-touch-controller{
   font-size: 0.01vw;
   margin-bottom: 0px;
   position: fixed;
@@ -11,7 +11,7 @@
   transition: 0.5s;
 }
 
-#controller .button {
+#mgb-mage-touch-controller .button {
   position: absolute;
   width: 14em;
   height: 14em;
@@ -26,10 +26,10 @@
   transform-origin: center;
   box-shadow: inset 0 0 4em 0.8em rgb(140, 196, 196);
 }
-#controller .button.arrow {
+#mgb-mage-touch-controller .button.arrow {
   border-radius: 4em 4em 9em 9em;
 }
-#controller .button:after{
+#mgb-mage-touch-controller .button:after{
   font-size: 10em;
   position: relative;
   font-weight: bolder;
@@ -38,67 +38,67 @@
   color: white;
   text-shadow: 0 0 35px rgb(140, 196, 196);
 }
-#controller .button.arrow:after{
+#mgb-mage-touch-controller .button.arrow:after{
   content: "\2191";
   top: -0.2em;
 }
-#controller .button.up{
+#mgb-mage-touch-controller .button.up{
   bottom: 59%;
   left: 12em;
   z-index: 1;
 }
 
-#controller .button.left{
+#mgb-mage-touch-controller .button.left{
   bottom: 31%;
   left: 1em;
   transform: rotate(-90deg);
 }
 
-#controller .button.right{
+#mgb-mage-touch-controller .button.right{
   bottom: 31%;
   left: 23em;
   transform: rotate(90deg);
 }
 
-#controller .button.down{
+#mgb-mage-touch-controller .button.down{
   bottom: 3%;
   left: 12em;
   transform: rotate(180deg);
 }
-#controller .button.shoot {
+#mgb-mage-touch-controller .button.shoot {
   bottom: 35%;
   right: 1em;
 }
-#controller .button.shoot:after{
+#mgb-mage-touch-controller .button.shoot:after{
     content: "S"
 }
 
-#controller .button.melee {
+#mgb-mage-touch-controller .button.melee {
   bottom: 10%;
   right: 20em;
 }
-#controller .button.melee:after {
+#mgb-mage-touch-controller .button.melee:after {
   content: "M"
 }
 
-#controller .button.pause{
+#mgb-mage-touch-controller .button.pause{
   right: 22em;
   bottom: 80%;
   width: 16em;
   height: 7em;
 }
-#controller .button.pause:after {
+#mgb-mage-touch-controller .button.pause:after {
   content: "Pause";
   font-size: 3em;
 }
 
-#controller .button.inventory{
+#mgb-mage-touch-controller .button.inventory{
   left: 40em;
   bottom: 44%;
   width: 16em;
   height: 7em;
 }
-#controller .button.inventory:after {
+#mgb-mage-touch-controller .button.inventory:after {
   content: "Inventory";
   font-size: 3em;
 }

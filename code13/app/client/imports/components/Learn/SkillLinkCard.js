@@ -1,20 +1,10 @@
 import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
-import {
-  Button,
-  Card,
-  Grid,
-  Header,
-  Icon,
-  Label,
-  List,
-  Popup,
-  Progress,
-} from 'semantic-ui-react'
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { Button, Card, Grid, Header, Icon, Label, List, Popup, Progress, } from 'semantic-ui-react'
+import UX from '/client/imports/UX'
 import QLink from '/client/imports/routes/QLink'
 import { startSkillPathTutorial } from '/client/imports/routes/App'
-import SkillNodes, { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
+import { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -181,7 +171,7 @@ class SkillLinkCard extends Component {
             <Grid.Column style={imageColumnStyle} textAlign='center'>
               {completed
                 ? <Icon size={completed ? 'large' : 'big'} name='checkmark' color='green' style={{ margin: 'auto' }} />
-                : <img src={makeCDNLink( `/images/mascots/${mascot}.png` )} style={imageStyle} />
+                : <img src={UX.makeMascotImgLink( mascot )} style={imageStyle} />
               }
             </Grid.Column>
             <Grid.Column>

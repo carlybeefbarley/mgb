@@ -1,27 +1,32 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Header } from "semantic-ui-react"
+import { Header, Icon } from 'semantic-ui-react'
+import UX from '/client/imports/UX'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Activity } from '/imports/schemas'
-import moment from 'moment'
 
 const UserLovesListUI = ( { user, loveAct } ) => (
   <div>
-    <Header as="h2" content={`${user ? user.username : '???'}'s asset love history`}/>
+    <Header as="h2" content={<a><Icon fitted name='heart' color='red'/>{`${user ? user.username : '???'}'s recent loves`}</a>}/>
     { _.map(loveAct, a => (
       <div key={a._id} >
-        <span>You loved </span>
-        <QLink to={`/u/${a.byOwnerName}/asset/${a.toAssetId}`}>
+        <Icon name='heart' color='red'/>
+        <span>Loved </span>
+        <QLink to={`/u/${a.toOwnerName}/asset/${a.toAssetId}`}>
           {a.toAssetName}
         </QLink>
         <span> by </span>
-        <QLink to={`/u/${a.byOwnerName}`}>
+        <QLink to={`/u/${a.toOwnerName}`}>
           {a.toOwnerName}
         </QLink>
-        <small style={{color: '#c8c8c8'}}>&ensp;{moment(a.timestamp).fromNow()}</small>
+        &ensp;
+        <UX.TimeAgo as='small' style={{color: '#c8c8c8'}} when={a.timestamp} />
       </div>
       )
     ) }
+    { ( !loveAct || loveAct.length === 0 ) && 
+      <span>Nothing loved recently...</span>  
+    }
   </div>
 )
 

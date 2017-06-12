@@ -1,13 +1,10 @@
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
+import sty from  './learnRoute.css'
 import QLink from '../QLink'
-import { Divider, Grid, Card, Header, Image, Icon } from 'semantic-ui-react'
-
+import { Divider, Grid, Card, Header, Icon } from 'semantic-ui-react'
+import UX from '/client/imports/UX'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
-
-import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
-
-import sty from  './learnRoute.css';
 
 const learnCodeItems = [
   {
@@ -64,12 +61,13 @@ const LearnCodeRoute = ({ currUser, params }, context) => (
     </Grid.Column>
     <Grid.Column>
       <Card.Group itemsPerRow={1} stackable className="skills">
-        { learnCodeItems.map( (area, idx) => {
-          const imgStyle = { backgroundImage: "url(" + makeCDNLink( `/images/mascots/${area.mascot}.png` ) + ")" }
-          return (
+        { learnCodeItems.map( (area, idx) => (
             <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
               <Card.Content>
-                <div className="learnThumbnail" style={imgStyle}></div>
+                <div 
+                  className="learnThumbnail" 
+                  style={{ backgroundImage: `url("${UX.makeMascotImgLink(area.mascot)}")` }}
+                  />
                 <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
                 <p style={descStyle}>{area.desc}</p>
                 {area.skillPath && currUser && (
@@ -77,7 +75,7 @@ const LearnCodeRoute = ({ currUser, params }, context) => (
                 )}
               </Card.Content>
             </QLink>
-        ) } ) }
+        ) ) }
       </Card.Group>
     </Grid.Column>
   </Grid>
@@ -89,20 +87,8 @@ LearnCodeRoute.contextTypes = {
 
 export default LearnCodeRoute
 
-
 const cardStyle = {
   color: "#2e2e2e"
-}
-
-const mascotStyle = {
-  width: "8em",
-  height: "10em",
-  float: "left",
-  marginRight: "1em",
-  backgroundPosition: "center center",
-  backgroundRepeat: "no-repeat",
-  backgroundSize: "contain",
-  marginBottom: "0"
 }
 
 const headerStyle = {

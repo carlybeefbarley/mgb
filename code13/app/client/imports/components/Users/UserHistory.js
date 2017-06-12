@@ -21,7 +21,7 @@ const UserHistory = ( { user, width, borderless=false } ) => (
       :
       <Segment id="mgbjr-user-profile-history">
         <Header as='h2'>
-          <QLink to={`/u/${user.profile.name}/history`}>Activity</QLink>
+          <QLink to={`/u/${user.profile.name}/history`}>Recent Activity</QLink>
         </Header>
         <div style={{maxHeight: '20em', overflowY: 'auto'}}>
           <NavRecentGET

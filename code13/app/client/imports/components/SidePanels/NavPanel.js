@@ -13,12 +13,11 @@ import { logActivity } from '/imports/schemas/activity'
 // Note that this uses Meteor's Accounts.loggingIn() so it doesn't flash the Login/Sigup during user login
 export const getNavPanels = (currUser, showAll) => {
   const uname = currUser ? currUser.username : null
-  const mgb1name = currUser ? (currUser.profile.mgb1name || null) : null
   const isLoggingIn = Meteor.loggingIn()
   const showGuestOptions = (!isLoggingIn && !currUser) || showAll
   const showUserOptions = (!isLoggingIn && !!currUser) || showAll
 
-  return { 
+  return {
     left: [
       {
         name: 'mgb',                  // used for mgjr-np-{name}- id generation
@@ -55,6 +54,7 @@ export const getNavPanels = (currUser, showAll) => {
         name: "learn",
         explainClickAction: "Shortcut: Clicking here jumps to the Learning Paths page",
         icon: { name: "student" },
+        fHideForIconView: true,      // For top-level, items, use 
         hdr: "Learn",
         to: '/learn',
         menu: [
@@ -306,8 +306,8 @@ export const getNavPanels = (currUser, showAll) => {
   }
 }
 
-const _doLogout = () => 
-{  
+const _doLogout = () =>
+{
   const userName = Meteor.user().profile.name
   logActivity("user.logout",  `Logging out "${userName}"`, null, null)
 
@@ -326,7 +326,11 @@ class NavPanel extends React.Component {
 
   render() {
     const { currUser, navPanelAvailableWidth } = this.props
-    const menuStyle = { borderRadius: 0, marginBottom: 0, background: 'radial-gradient(circle farthest-side at right bottom,#8cc4c4 8%, #155f66 70%, #232929)'}
+    const menuStyle = {
+      borderRadius: 0,
+      marginBottom: 0,
+      background: 'rgb(20, 150, 160)',
+    }
     const useIcons = navPanelAvailableWidth < 600  // px
     const allNavPanels = getNavPanels(currUser, false)
 
@@ -335,26 +339,26 @@ class NavPanel extends React.Component {
     const userAvatarSrc = _.get(currUser, 'profile.avatar', 'http://placehold.it/50')
 
     const navPanelItems = side => allNavPanels[side]
-      .filter(v => (v.name !== userMenuKey))
+      .filter(v => (v.name !== userMenuKey && (!useIcons || !v.fHideForIconView)))
       .map(v => (
-        <NavPanelItem 
+        <NavPanelItem
           name={v.name}
-          openLeft={side==='right'} 
-          key={v.name} 
-          hdr={(useIcons || !v.hdr )? <Icon size='large' {...v.icon}/> : v.hdr} 
-          menu={v.menu} 
+          openLeft={side==='right'}
+          key={v.name}
+          hdr={(useIcons || !v.hdr )? <Icon size='large' {...v.icon}/> : v.hdr}
+          menu={v.menu}
           to={v.to}
           query={v.query}
           />))
 
     return (
-      <Menu inverted style={menuStyle} id='mgbjr-np'>
+      <Menu inverted borderless style={menuStyle} id='mgbjr-np'>
         { navPanelItems('left') }
 
         {/* The user menu, pushed to the right */}
         <Menu.Menu position='right'>
           { navPanelItems('right') }
-          { currUser && 
+          { currUser &&
             <NavPanelItem
               key='user'
               name='user'

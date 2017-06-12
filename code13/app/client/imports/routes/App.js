@@ -115,7 +115,7 @@ const fpFlexPanelContentWidthInPixels = 285   // The cool stuff
 
 // Toast and other warnings
 const _toastTypes = {
-  error:    { funcName: 'error',   hdr: 'Error',   delay: 5000 },
+  error:    { funcName: 'error',   hdr: 'Error',   delay: 7000 },
   warning:  { funcName: 'warning', hdr: 'Warning', delay: 4000 },
   info:     { funcName: 'info',    hdr: 'Info',    delay: 4000 },
   success:  { funcName: 'success', hdr: 'Success', delay: 4000 }

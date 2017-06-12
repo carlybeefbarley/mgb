@@ -175,6 +175,17 @@ body.dragging .accept-drop:hover{
   max-width: 230px;
 }
 
+.mgb-useritem-width-normal
+{
+  min-width: 230px;
+  max-width: 230px;
+}
+
+.mgb-useritem-width-narrow
+{
+  min-width: 118px;
+  max-width: 118px !important;
+}
 
 /***************************************
  *            MGB Toolbar              *

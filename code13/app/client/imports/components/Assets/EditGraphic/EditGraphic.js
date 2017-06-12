@@ -65,6 +65,8 @@ let _selectedColors = {
   fg:    { hex: "#000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
 }
 
+let _rememberedMiniMapViz = false
+
 const editCanvasMaxHeight = 600
 
 export default class EditGraphic extends React.Component {
@@ -92,7 +94,7 @@ export default class EditGraphic extends React.Component {
       showCheckeredBg:  false,
       showGrid:         true,
       selectedLayerIdx: 0,
-      isMiniMap:        true,
+      isMiniMap:        _rememberedMiniMapViz,
       selectedColors:   _selectedColors,
       // toolActive: false, // Moved out of state by dgolds 6/11/2017 because it was causing re-renders but it has no impact to anything rendered
       toolChosen: this.findToolByLabelString("Pen"),
@@ -1650,7 +1652,9 @@ export default class EditGraphic extends React.Component {
   }
 
   toggleMiniMap = () => {
-    this.setState({ isMiniMap: !this.state.isMiniMap })
+    const newVal = !this.state.isMiniMap
+    _rememberedMiniMapViz = newVal
+    this.setState({ isMiniMap: newVal })
   }
 
   render() {

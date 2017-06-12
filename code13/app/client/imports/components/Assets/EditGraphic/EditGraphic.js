@@ -65,6 +65,8 @@ let _selectedColors = {
   fg:    { hex: "#000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
 }
 
+let _rememberedMiniMapViz = false
+
 const editCanvasMaxHeight = 600
 
 export default class EditGraphic extends React.Component {
@@ -92,7 +94,7 @@ export default class EditGraphic extends React.Component {
       showCheckeredBg:  false,
       showGrid:         true,
       selectedLayerIdx: 0,
-      isMiniMap:        true,
+      isMiniMap:        _rememberedMiniMapViz,
       selectedColors:   this.getInitialColor(),
       // toolActive: false, // Moved out of state by dgolds 6/11/2017 because it was causing re-renders but it has no impact to anything rendered
       toolChosen: this.findToolByLabelString("Pen"),
@@ -480,6 +482,18 @@ export default class EditGraphic extends React.Component {
       this.refs.miniMap.redraw(this.editCanvas, w, h)
 
     this.drawGrid()
+  }
+
+  handleRefMiniMap = comp => {
+    if (comp)
+    {
+      // mounted
+      this.refs.miniMap = comp
+      const pc = this.previewCanvasArray[this.state.selectedLayerIdx]
+      this.refs.miniMap.redraw(this.editCanvas, pc.width, pc.height)
+    }
+    else
+      this.refs.miniMap = null
   }
 
   forceDraw ()
@@ -1028,7 +1042,8 @@ export default class EditGraphic extends React.Component {
 // Color picker handling. This doesn't go through the normal tool api for now since
 // it isn't a drawing tool (and that's what the plugin api is focused on)
 // Also, there is some funny handling for invalid colors from react-color
-  handleColorChangeComplete(colortype, chosenColor, defaultColor)
+
+  handleColorChangeComplete(colortype, chosenColor)
   {
     if (!chosenColor.hex)
       chosenColor.hex = `#${this.RGBToHex(chosenColor.rgb.r, chosenColor.rgb.g, chosenColor.rgb.b)}`
@@ -1049,36 +1064,8 @@ export default class EditGraphic extends React.Component {
 
     _selectedColors[colortype] = _.cloneDeep(chosenColor)
 
-    // console.log(this.props.asset.content2.presetColors, defaultColor)
-    if(!defaultColor || defaultColor != 'defaultColor')
-      this.handleColorPreset(chosenColor)
-
     // So we have to fix up UI stuff. This is a bit of a hack for perf. See statusBarInfo()
     $('.mgbColorPickerIcon.icon').css( { color: chosenColor.hex})
-  }
-
-  handleColorPreset(newColor)
-  {
-    // console.log('new color preset', newColor.hex)
-    const max_colors = 16
-    const c2 = this.props.asset.content2
-    if(!c2.presetColors)
-      c2.presetColors = []
-    let idx = c2.presetColors.indexOf(newColor.hex)
-    // remove color for preset if already used
-    if(idx != -1){
-      c2.presetColors.splice(idx, 1)
-    }
-    else {
-      // remove last color to free up space for new color
-      if(c2.presetColors.length >= max_colors){
-        c2.presetColors.pop()
-      }
-    }
-    c2.presetColors.unshift(newColor.hex)
-    // console.log(c2.presetColors)
-    // this.props.asset.content2.presetColors = []
-    this.handleSave('Color change')
   }
 
 
@@ -1682,7 +1669,9 @@ export default class EditGraphic extends React.Component {
   }
 
   toggleMiniMap = () => {
-    this.setState({ isMiniMap: !this.state.isMiniMap })
+    const newVal = !this.state.isMiniMap
+    _rememberedMiniMapViz = newVal
+    this.setState({ isMiniMap: newVal })
   }
 
   render() {
@@ -1702,7 +1691,6 @@ export default class EditGraphic extends React.Component {
 
     const isSkillTutorialGraphic = asset && asset.skillPath && _.startsWith( asset.skillPath, 'art' )
     const column1Width = isSkillTutorialGraphic ? 8 : 16
-    const presetColors = c2.presetColors || ['#d0021b', '#f5a623', '#f8e71c', '#8b572a', '#7ed321', '#417505', '#bd10E0', '#9013fe', '#4a90e2', '#50e3c2', '#b8e986', '#000000', '#4a4a4a', '#9b9b9b', '#ffffff']
 
     // Make element
     return (
@@ -1730,7 +1718,7 @@ export default class EditGraphic extends React.Component {
               <SketchPicker
                   onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
                   color={this.state.selectedColors['fg'].rgb}
-                  presetColors={presetColors}
+                  presetColors={['#D0021B', '#F5A623', '#F8E71C', '#8B572A', '#7ED321', '#417505', '#BD10E0', '#9013FE', '#4A90E2', '#50E3C2', '#B8E986', '#000000', '#4A4A4A', '#9B9B9B', '#FFFFFF']}
                   
               />
             </Popup>
@@ -1815,7 +1803,7 @@ export default class EditGraphic extends React.Component {
       
             <Popup
               trigger={<Button primary={this.state.isMiniMap} size='small' icon='map' content={'Minimap'}  onClick={this.toggleMiniMap} />}
-              content="Open minimap to see graphic asset in 1x scale"
+              content="Open minimap to see graphic asset at 1x scale"
               size='small'
               mouseEnterDelay={250}
               positioning='bottom left'/>
@@ -1904,9 +1892,9 @@ export default class EditGraphic extends React.Component {
 
                 {/*** MiniMap ***/}
                 {
-                  this.state.isMiniMap &&
+                  (this.state.isMiniMap && this.editCanvas) &&
                   <MiniMap
-                    ref       = {"miniMap"}
+                    ref       = {this.handleRefMiniMap}
                     width     = {c2.width}
                     height    = {c2.height}
                     toggleMiniMap       = {this.toggleMiniMap}

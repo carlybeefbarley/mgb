@@ -6,6 +6,7 @@ import EditUnknown from './EditUnknown'
 import AssetCard from './AssetCard'
 import Hotjar from '/client/imports/helpers/hotjar'
 import Spinner from '/client/imports/components/Nav/Spinner'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 
 // @stauzs - for Cordova you may need to have to do the imports like we used to.. im which case
@@ -48,10 +49,10 @@ export default class AssetEdit extends React.Component
     availableWidth:           PropTypes.number                // Available screen width in pixels for editor
   }
 
-  
-
   componentDidMount()
   {
+    joyrideCompleteTag(`mgbjr-CT-openAssetEditor-${this.props.asset.kind}`)
+
     // console.log(this.props.asset.kind)
     // trigger hotjar heatmap
     // for music and graphic editor setTimeout (because larger content2 size and loads slower)

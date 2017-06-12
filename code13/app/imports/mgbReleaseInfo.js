@@ -16,7 +16,36 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+    {
+      'timestamp': 'Mon Jun 12 2017 01:45:00 GMT-0700 (PDT)',
 
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4339'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Graphic editor tweaks',
+          'changeSummary': 'Graphic editor is faster; the disappearing-first-few-pixels bug has finally been resolved!',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Bio area on Profile is nicer. Mobile phone screen widths are now correct. Create New Asset in no-project is faster (and can no longer stall the asset edit loaders). ' ,
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
 
     {

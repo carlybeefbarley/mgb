@@ -13,7 +13,6 @@ import MiniMap from './MiniMap/MiniMap'
 
 import { snapshotActivity } from '/imports/schemas/activitySnapshots'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import ResizeImagePopup from './ResizeImagePopup'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
@@ -128,7 +127,8 @@ export default class EditGraphic extends React.Component {
 
     // animframe for updating selecting rectangle animation
     this._raf = () => {
-      if(this.state.selectRect) this.drawSelectRect(this.state.selectRect)
+      if (this.state.selectRect) 
+        this.drawSelectRect(this.state.selectRect)
       window.requestAnimationFrame(this._raf)
     }
     this._raf()
@@ -262,9 +262,9 @@ export default class EditGraphic extends React.Component {
       this.handleSave("Automatic fixing old assets")
   }
 
-  getInitialColor(){
+  getInitialColor() {
     const c2 = this.props.asset.content2
-    if(c2.presetColors && c2.presetColors.length > 0){
+    if (c2.presetColors && c2.presetColors.length > 0) {
       const hex = c2.presetColors[0]
       const rgb = {
         r: parseInt(hex.substring(1, 3), 16),
@@ -273,7 +273,7 @@ export default class EditGraphic extends React.Component {
         a: 1
       }
       // console.log(hex, rgb)
-      return { fg: {hex: hex, rgb: rgb} }
+      return { fg: { hex: hex, rgb: rgb } }
     }
     else
       return _selectedColors
@@ -549,7 +549,7 @@ export default class EditGraphic extends React.Component {
       let x = scaleRect.x1 - dashSize + timeOffset + i*dashSize*2
       let x2 = x+dashSize
       if (x < scaleRect.x1)
-        x = scaleRect.x1;
+        x = scaleRect.x1
       if (x2 > scaleRect.x2)
         x2 = scaleRect.x2
       drawLine(x, scaleRect.y1, x2, scaleRect.y1)
@@ -675,7 +675,7 @@ export default class EditGraphic extends React.Component {
       },
 
       setPrevTool: function(){
-        if (self.prevToolIdx != null)
+        if (self.prevToolIdx !== null)
           self.setState({ toolChosen: Tools[self.prevToolIdx] })
       },
 
@@ -1170,7 +1170,8 @@ export default class EditGraphic extends React.Component {
   }
 
   doTrimRedoStack() {
-    if (this.redoSteps.length > 20) this.redoSteps.shift()
+    if (this.redoSteps.length > 20) 
+      this.redoSteps.shift()
   }
 
   doSaveStateForRedo(changeInfoString) {
@@ -1211,8 +1212,8 @@ export default class EditGraphic extends React.Component {
       // Now force this into the DB and that will cause a re-render
       this.saveChangedContent2(c2, c2.frameData[0][0], "Undo changes", true)        // Allow Backwash from database to replace current viewed state
 
-      if(this.prevToolIdx != null)
-        this.setState({ toolChosen: Tools[this.prevToolIdx] })
+      if (this.prevToolIdx !== null)
+        this.setState( { toolChosen: Tools[this.prevToolIdx] } )
     }
   }
 
@@ -1231,7 +1232,7 @@ export default class EditGraphic extends React.Component {
       // Now force this into the DB and that will cause a re-render
       this.saveChangedContent2(c2, c2.frameData[0][0], "Redo changes", true)        // Allow Backwash from database to replace current viewed state
 
-      if(this.prevToolIdx != null)
+      if (this.prevToolIdx !== null)
         this.setState({ toolChosen: Tools[this.prevToolIdx] })
     }
   }
@@ -1375,7 +1376,7 @@ export default class EditGraphic extends React.Component {
   /// Allow Previews to put info in DataTransfer object so we can drag them around
   handlePreviewDragStart(idx, e) {
     // Target (this) element is the source node.
-    let dragSrcEl = e.target
+    //let dragSrcEl = e.target
 
     if (idx === -1)                         // The Edit Window does this
       idx = this.state.selectedLayerIdx
@@ -1562,8 +1563,7 @@ export default class EditGraphic extends React.Component {
   // This is used by render() so is frequently called.
   // It can therefore have values that are based on this, this.state, this.props etc
   generateToolbarActions() {
-    const simpleTools =
-    {
+    const simpleTools = {
       Undo: {
         label: "Undo",                    // Label shown
         name: "toolHandleUndo",           // function name in this class
@@ -1679,10 +1679,9 @@ export default class EditGraphic extends React.Component {
     const zoom = this.state.editScale
     if (zoom >= MIN_ZOOM_FOR_GRIDLINES && this.gridImg && this.state.showGrid) {
       const c2 = this.props.asset.content2
-      for(let col=0; col<c2.width; col++){
-        for(let row=0; row<c2.height; row++){
+      for (let col=0; col<c2.width; col++) {
+        for (let row=0; row<c2.height; row++)
           this.editCtx.drawImage(this.gridImg, zoom*col, zoom*row)
-        }
       }
     }
   }

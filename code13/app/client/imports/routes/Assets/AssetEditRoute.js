@@ -134,6 +134,7 @@ export default AssetEditRoute = React.createClass({
   checkForRedirect() {
     if (!this.props.user && !!this.data.asset) {
       // don't push - just replace #225 - back button not always work
+      console.log("AssetEditRoute - redirecting")      
       utilReplaceTo(this.context.urlLocation.query, "/u/" + this.data.asset.dn_ownerName + "/asset/" + this.data.asset._id)
     }
   },

@@ -66,7 +66,8 @@ export default AssetCreateNewRoute = React.createClass({
    * @param {string} projectOwnerName - if projectName is a nonEmpty string, should be a valid projectOwnerName
    */
   handleCreateAssetClickFromComponent(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName) {
-    if (!this.props.currUser) {
+    const { currUser } = this.props
+    if (!currUser) {
       showToast("You must be logged-in to create a new Asset", 'error')
       return
     }
@@ -77,8 +78,8 @@ export default AssetCreateNewRoute = React.createClass({
       text:         "",
       thumbnail:    "",
       content2:     {},
-      dn_ownerName: this.props.currUser.name,         // Will be replaced below if in another project
-
+      dn_ownerName: currUser.username,         // Will be replaced below if in another project
+      ownerId:      currUser._id,
       isCompleted:  false,
       isDeleted:    false,
       isPrivate:    false
@@ -92,13 +93,15 @@ export default AssetCreateNewRoute = React.createClass({
     Meteor.call('Azzets.create', newAsset, (error, result) => {
       if (error) {
         showToast("Failed to create new Asset because: " + error.reason, 'error')
-      } else {
+      }
+       else 
+      {
         newAsset._id = result             // So activity log will work
         logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset)
         joyrideCompleteTag(`mgbjr-CT-asset-create-new`)
         joyrideCompleteTag(`mgbjr-CT-asset-create-new-${newAsset.kind}`)
         // Now go to the new Asset
-        utilPushTo(this.context.urlLocation.query, `/u/${newAsset.dn_ownerNam}/asset/${result}`)
+        utilPushTo(this.context.urlLocation.query, `/u/${newAsset.dn_ownerName}/asset/${result}`)
       }
     })
   }

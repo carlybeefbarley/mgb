@@ -93,7 +93,7 @@ export default class EditGraphic extends React.Component {
       showGrid:         true,
       selectedLayerIdx: 0,
       isMiniMap:        true,
-      selectedColors:   _selectedColors,
+      selectedColors:   this.getInitialColor(),
       // toolActive: false, // Moved out of state by dgolds 6/11/2017 because it was causing re-renders but it has no impact to anything rendered
       toolChosen: this.findToolByLabelString("Pen"),
       selectRect: null,   // if asset area is selected then value {startX, startY, endX, endY}
@@ -171,7 +171,7 @@ export default class EditGraphic extends React.Component {
     }
     this.setStatusBarInfo()
 
-    this.handleColorChangeComplete('fg', _selectedColors.fg, 'defaultColor' )
+    this.handleColorChangeComplete('fg', this.getInitialColor().fg, 'defaultColor' )
 
     // Touch and Mouse events for Edit Canvas
     this.editCanvas.addEventListener('touchmove',     this.handleTouchMove.bind(this))
@@ -258,6 +258,23 @@ export default class EditGraphic extends React.Component {
 
     if (autoFix)
       this.handleSave("Automatic fixing old assets")
+  }
+
+  getInitialColor(){
+    const c2 = this.props.asset.content2
+    if(c2.presetColors && c2.presetColors.length > 0){
+      const hex = c2.presetColors[0]
+      const rgb = {
+        r: parseInt(hex.substring(1, 3), 16),
+        g: parseInt(hex.substring(3, 5), 16),
+        b: parseInt(hex.substring(5, 7), 16),
+        a: 1
+      }
+      // console.log(hex, rgb)
+      return { fg: {hex: hex, rgb: rgb} }
+    }
+    else
+      return _selectedColors
   }
 
 // TODO: DGOLDS to clean this up -- combine with mgb1ImportTiles etc

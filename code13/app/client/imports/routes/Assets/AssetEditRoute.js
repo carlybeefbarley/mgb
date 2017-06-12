@@ -65,7 +65,11 @@ const FLUSH_TIMER_INTERVAL_MS = 6000         // Milliseconds between timed flush
 // 3. Provide functions for sub components to call which will store the Asset
 // 4. (TODO) Provide "Leave hooks" for warning about unsaved work: https://github.com/reactjs/react-router/blob/master/docs/guides/ConfirmingNavigation.md
 
-
+// TODO: Simplify/cleanup the various overlapping ways of handling collisions
+  // asset.isUnconfirmedSave
+  // asset.updatedAt
+  // (ChildAssetEditor).props.hasUnsentSaves
+  // asset.content2.changeMarker  (only used by EditGraphic)
 
 // ALSO TODO: Add a 'editorLease' field.. This would contain a userid, sessionId and lease-until timestamp.
 // This SHOULD prevent edits from other users: BLUE editor field, and details of edit actions.  Field is disregarded if not present or is expired.

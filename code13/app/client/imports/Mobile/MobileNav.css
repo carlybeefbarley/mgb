@@ -90,6 +90,7 @@ a.mobile-nav-item.item {
   right: 0;
   z-index: 1;
 }
+/*
 .locationPopup .head:after{
   content: 'x';
   border-radius: 100%;
@@ -107,7 +108,7 @@ a.mobile-nav-item.item {
   margin: 5px;
   cursor: pointer;
 }
-
+*/
 
 .swipeable{
   display: flex;

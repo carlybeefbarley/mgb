@@ -1,5 +1,7 @@
 import React from 'react'
 import NavBar from '/client/imports/components/Nav/NavBar'
+import { Icon } from 'semantic-ui-react'
+
 
 class RouterWrap extends React.PureComponent {
 
@@ -20,7 +22,7 @@ class RouterWrap extends React.PureComponent {
     const p = this.props
     return (
       <div className="locationPopup" id="locationPopup">
-        <div className="head" onClick={this.onClose}></div>
+        <Icon window name="close" onClick={this.onClose} className="head big outline"/>
         {/*<NavBar {...p} currentlyEditingAssetInfo={p.state.currentlyEditingAssetInfo}/>*/}
         <div>{React.cloneElement(p.children, p)}</div>
       </div>

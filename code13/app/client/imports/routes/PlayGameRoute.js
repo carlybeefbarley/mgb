@@ -24,7 +24,7 @@ import AssetChatDetail from '/client/imports/components/Assets/AssetChatDetail'
 
 import elementResizeDetectorMaker  from 'element-resize-detector'
 
-import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
+import { getAssetHandlerWithContent2, makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 const _incrementPlayCount = _.debounce(
   assetId => { Meteor.call('job.gamePlayStats.playGame', assetId) },
@@ -84,8 +84,14 @@ const GameTypeDetail = ( { game, style } ) => {
 
 
 class PlayCodeGame extends React.Component {
-  shouldComponentUpdate() {
-    return false
+  constructor(...a){
+    super(...a)
+    this.state = {
+      isFullScreen: false
+    }
+  }
+  shouldComponentUpdate(newprops, newstate) {
+    return newstate.isFullScreen != this.state.isFullScreen
   }
 
   componentDidMount(){
@@ -154,7 +160,15 @@ class PlayCodeGame extends React.Component {
     const setScale = () => {
       const sx = gameWidth / width
       const sy = gameHeight / height
-      this.refs.iframe.style.transform = 'scale(' + Math.min(sx, sy) + ')'
+      const scale = Math.min(sx, sy)
+      this.refs.iframe.style.transform = 'scale(' + scale + ')'
+      if(scale < 1) {
+        const shift = (gameWidth - width * scale) * 0.5
+        if(shift > 0)
+          this.refs.iframe.style.marginLeft = shift + 'px'
+        else
+          this.refs.iframe.style.marginLeft = 0
+      }
     }
 
     if (width > gameWidth || height > gameHeight)
@@ -188,26 +202,41 @@ class PlayCodeGame extends React.Component {
    * Enables fullscreen on game's iframe
    * */
   fullscreen() {
+    this.setFsManually()
+    return
+
     // TODO: find out
     const rfs = this.refs.iframe.requestFullScreen
       || this.refs.iframe.webkitRequestFullScreen
       || this.refs.iframe.mozRequestFullScreen
       || this.refs.iframe.msRequestFullScreen
 
-    rfs && rfs.call(this.refs.iframe)
+    if(rfs)
+      rfs.call(this.refs.iframe)
+    else
+      this.setFsManually()
   }
 
+  setFsManually(){
+    this.setState({isFullScreen: true}, () => {
+      this.adjustIframeSize()
+    })
+  }
   /**
    * Checks if we can offer fullscreen functionality
    * */
   canDoFullScreen() {
+    return this.props.metadata.allowFullScreen
+
+    /*
+    is this dead already? 
     const { allowFullScreen } = this.props.metadata
     const rfs = document.body.requestFullScreen
       || document.body.webkitRequestFullScreen
       || document.body.mozRequestFullScreen
       || document.body.msRequestFullScreen
 
-    return allowFullScreen && rfs
+    return allowFullScreen && rfs*/
   }
 
   createConfig() {
@@ -267,7 +296,10 @@ class PlayCodeGame extends React.Component {
           name="PlayCodeGame"
           config={this.createConfig()}
           />
-        <div ref='wrapper' style={{overflow: 'hidden'}}>
+        <div ref='wrapper' style={
+          this.state.isFullScreen
+            ? {overflow: 'hidden', position: "absolute", left: 0, right: 0, top: 0, backgroundColor: '#fff'}
+            : {overflow: 'hidden'} }>
           <iframe
             key={ 0 }
             ref="iframe"

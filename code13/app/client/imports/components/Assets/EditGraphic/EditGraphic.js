@@ -68,6 +68,8 @@ let _rememberedMiniMapViz = false
 
 const editCanvasMaxHeight = 600
 
+const _defaultColors = ['#000000', '#804000', '#fe0000', '#fe6a00', '#ffd800', '#00ff01', '#545454', '#401f00', '#800001', '#803400', '#806b00', '#017f01', '#a8a8a8', '#01ffff', '#0094fe', '#0026ff', '#b100fe', '#ff006e', '#000080', '#017f7e', '#00497e', '#001280', '#590080', '#7f0037']
+
 export default class EditGraphic extends React.Component {
   // See AssetEdit.js for propTypes. That wrapper just passes them to us
 
@@ -127,7 +129,7 @@ export default class EditGraphic extends React.Component {
 
     // animframe for updating selecting rectangle animation
     this._raf = () => {
-      if (this.state.selectRect) 
+      if (this.state.selectRect)
         this.drawSelectRect(this.state.selectRect)
       window.requestAnimationFrame(this._raf)
     }
@@ -206,20 +208,20 @@ export default class EditGraphic extends React.Component {
   //   _.forEach(allKeys, k => {
   //     if (!_.isEqual(ob1[k], ob2[k]))
   //       console.log(
-  //         `  Different: ${msgContext || 'ob'}.${k}`, 
-  //         `\n    P1:`, ob1[k] ? ob1[k].toString() : ob1[k], 
+  //         `  Different: ${msgContext || 'ob'}.${k}`,
+  //         `\n    P1:`, ob1[k] ? ob1[k].toString() : ob1[k],
   //         `\n    P2:`, ob2[k] ? ob2[k].toString() : ob2[k]
   //       )
   //   })
   // }
 
-  // shouldComponentUpdate(nextProps, nextState) { 
+  // shouldComponentUpdate(nextProps, nextState) {
   //   if (!_.isEqual(this.state, nextState)) {
   //     console.log("shouldComponentUpdate: YES because STATE change")
   //     this.logObjDiff(this.state, nextState, 'state')
   //     return true
   //   }
-    
+
   //   if (!_.isEqual(this.props, nextProps)) {
   //     console.log("shouldComponentUpdate: YES because PROPS change")
   //     this.logObjDiff(this.props, nextProps, 'props')
@@ -298,7 +300,7 @@ export default class EditGraphic extends React.Component {
 
       recentMarker = "_graphic_init_" + Random.id()   // http://docs.meteor.com/packages/random.html
       asset.content2.changeMarker = recentMarker
-      // console.log("initDefaultContent2... setting local and c2 Backwash recentMarker = " + recentMarker)      
+      // console.log("initDefaultContent2... setting local and c2 Backwash recentMarker = " + recentMarker)
     }
   }
 
@@ -353,7 +355,7 @@ export default class EditGraphic extends React.Component {
     }
     else
     {
-      // console.log("componentDidUpdate - BACKWASH NOT prevented by marker "+recentMarker + " +sameFrame   [c2.changeMarker=",c2.changeMarker,"]")      
+      // console.log("componentDidUpdate - BACKWASH NOT prevented by marker "+recentMarker + " +sameFrame   [c2.changeMarker=",c2.changeMarker,"]")
       this.loadAllPreviewsAsync()     // It wasn't the change we just sent, so apply the data
     }
 
@@ -478,7 +480,7 @@ export default class EditGraphic extends React.Component {
     }
 
     // draw minimap
-    if (this.state.isMiniMap && this.refs.miniMap) 
+    if (this.state.isMiniMap && this.refs.miniMap)
       this.refs.miniMap.redraw(this.editCanvas, w, h)
 
     this.drawGrid()
@@ -1170,7 +1172,7 @@ export default class EditGraphic extends React.Component {
   }
 
   doTrimRedoStack() {
-    if (this.redoSteps.length > 20) 
+    if (this.redoSteps.length > 20)
       this.redoSteps.shift()
   }
 
@@ -1326,7 +1328,7 @@ export default class EditGraphic extends React.Component {
   saveChangedContent2(c2, thumbnail, changeText, allowBackwash = false)
   {
     // console.log("saveChangedContent2(", changeText, ") --   allowBackwash:", allowBackwash)
-    
+
     // this will prevent small sync gap between parent and component:
     // noticeable: undo -> draw a line ( part of the line will be truncated )
     this.props.asset.content2 = c2
@@ -1650,7 +1652,7 @@ export default class EditGraphic extends React.Component {
     }
 
     _.each(Tools, (tool) => {
-      if (tool.hideTool === true) 
+      if (tool.hideTool === true)
         return
 
       config.buttons.push({
@@ -1717,7 +1719,7 @@ export default class EditGraphic extends React.Component {
 
     const isSkillTutorialGraphic = asset && asset.skillPath && _.startsWith( asset.skillPath, 'art' )
     const column1Width = isSkillTutorialGraphic ? 8 : 16
-    const presetColors = c2.presetColors || ['#d0021b', '#f5a623', '#f8e71c', '#8b572a', '#7ed321', '#417505', '#bd10E0', '#9013fe', '#4a90e2', '#50e3c2', '#b8e986', '#000000', '#4a4a4a', '#9b9b9b', '#ffffff']
+    const presetColors = c2.presetColors || []
 
     // Make element
     return (
@@ -1746,7 +1748,7 @@ export default class EditGraphic extends React.Component {
                   onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
                   color={this.state.selectedColors['fg'].rgb}
                   presetColors={presetColors}
-                  
+
               />
             </Popup>
 
@@ -1827,7 +1829,7 @@ export default class EditGraphic extends React.Component {
                 size='tiny'
                 positioning='bottom left'/>
 
-      
+
             <Popup
               trigger={<Button primary={this.state.isMiniMap} size='small' icon='map' content={'Minimap'}  onClick={this.toggleMiniMap} />}
               content="Open minimap to see graphic asset at 1x scale"

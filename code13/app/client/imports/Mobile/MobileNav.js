@@ -173,7 +173,10 @@ const doLogout = () => {
 }
 
 const NotReady = () => (
-  <div>Work in progress</div>
+  <div>
+    <h1>Work in progress,</h1>
+    <h2>come back later</h2>
+  </div>
 )
 
 
@@ -212,9 +215,9 @@ class MobileNav extends React.Component {
     super()
     this.buttons = [
       'home',
-      'assets',
       'play',
       'chat',
+      'assets',
       'more',
 
       'profile',
@@ -427,7 +430,7 @@ class MobileNav extends React.Component {
     },
     assets: {
       title: "Assets",
-      Component: fpAssets, //BlankPage,
+      Component: NotReady, //fpAssets, //BlankPage,
       getProps: (mobileNav) => ({
         allowDrag: false,
         panelWidth: '0'

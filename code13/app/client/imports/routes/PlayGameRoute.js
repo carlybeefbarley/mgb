@@ -229,7 +229,7 @@ class PlayCodeGame extends React.Component {
     return this.props.metadata.allowFullScreen
 
     /*
-    is this dead already? 
+    is this dead already?
     const { allowFullScreen } = this.props.metadata
     const rfs = document.body.requestFullScreen
       || document.body.webkitRequestFullScreen

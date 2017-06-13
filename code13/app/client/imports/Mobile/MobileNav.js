@@ -20,25 +20,62 @@ import {utilReplaceTo, utilPushTo} from '/client/imports/routes/QLink.js'
 import './MobileNav.css'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
-
-
-
 class SwipeableViews2 extends React.Component {
 
   constructor(...a){
     super(...a)
     this.isScrolling = true
+    this.lastScroll = 0
   }
 
   componentDidMount(){
     const el = this.refs.mainContainer
-    el.addEventListener('scroll', this.onScroll, true)
+    el.addEventListener('scroll', this.onScroll, {
+      useCapture: true,
+      passive: false
+    })
+
+    /*
+
+     onTouchEnd={this.onInputEnd}
+     onMouseUp={this.onInputEnd}
+
+     onTouchStart={this.onInputDown}
+     onMouseDown={this.onInputDown}
+     */
+
+    el.addEventListener('touchstart', this.onInputDown, {
+      useCapture: true,
+      passive: false
+    })
+
+    el.addEventListener('mousedown', this.onInputDown, {
+      useCapture: true,
+      passive: false
+    })
+    el.addEventListener('touchend', this.onInputEnd, {
+      useCapture: true,
+      passive: false
+    })
+    el.addEventListener('mouseup', this.onInputEnd, {
+      useCapture: true,
+      passive: false
+    })
 
     if(this.props.index !== void(0)) {
 
       const screenWidth = el.parentElement.offsetWidth
       this.refs.mainContainer.scrollLeft = this.props.index * screenWidth
     }
+  }
+
+  componentWillUnmount(){
+    const el = this.refs.mainContainer
+    el.removeEventListener('scroll', this.onScroll)
+    el.removeEventListener('touchstart', this.onInputDown)
+    el.removeEventListener('mousedown', this.onInputDown)
+    el.removeEventListener('touchend', this.onInputEnd)
+    el.removeEventListener('mouseup', this.onInputEnd)
   }
 
   componentDidUpdate(){
@@ -50,30 +87,44 @@ class SwipeableViews2 extends React.Component {
   }
 
   onScroll = (e) => {
-    console.log("scrolling...")
-    e.preventDefault()
+    //console.log("scrolling...")
+    //e.preventDefault()
+    if(!this.inputDown){
+      this.refs.mainContainer.scrollLeft = this.lastScroll
+      e.preventDefault()
+      return
+    }
+
+
     this.isScrolling = true
     this.scrollTimeout && window.clearTimeout(this.scrollTimeout)
 
     this.scrollTimeout = window.setTimeout(() => {
       this.isScrolling = false
-      if(!this.inputDown) {
+      /*if(!this.inputDown) {
         this.onInputEnd()
-      }
+      }*/
     }, 10)
   }
 
-  onInputDown = () => {
+  onInputDown = (e) => {
+    //e.preventDefault()
     this.inputDown = true
   }
 
-  onInputEnd = () => {
+  onInputEnd = (e) => {
+    e.preventDefault()
     this.inputDown = false
-    if(this.isScrolling)
-      return
-
-
     const el = this.refs.mainContainer
+    this.lastScroll = el.scrollLeft
+    if(this.isScrolling) {
+
+      el.scrollLeft = el.scrollLeft + 1
+      return
+    }
+
+
+
     const screenWidth = el.parentElement.offsetWidth
 
     const rel = el.scrollLeft % screenWidth
@@ -90,16 +141,13 @@ class SwipeableViews2 extends React.Component {
     return (<div
       className='swipeable'
       ref='mainContainer'
-      onTouchEnd={this.onInputEnd}
-      onMouseUp={this.onInputEnd}
 
-      onTouchStart={this.onInputDown}
-      onMouseDown={this.onInputDown}
 
       // onScrollCapture={this.onScroll}
     >{this.props.children}</div>)
   }
 }
+
 const AllButtons = (p) => {
   return <div className="mobile-nav-all-buttons">
     {p.buttons
@@ -119,15 +167,19 @@ const AllButtons = (p) => {
   </div>
 }
 
-
 const doLogout = () => {
   Meteor.logout()
   window.location = '/'
 }
 
+const NotReady = () => (
+  <div>Work in progress</div>
+)
+
+
+
 // make use of this
 let cache = {}
-const LOAD_SCROLL_THRESHOLD = 100 // card has ~150px height
 /*
 * Profile
 * What's New
@@ -336,6 +388,8 @@ class MobileNav extends React.Component {
           {this.state.index === index && this.state.location[index] &&
             <RouterWrap {...this.props} onClose={() => {
               this.state.location[index] = null
+              // force Redraw
+              this.setState({location: this.state.location})
           }} location={this.state.location[index]} key={index * 10000} />
           }
           { tabView }

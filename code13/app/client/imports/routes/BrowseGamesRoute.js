@@ -123,7 +123,7 @@ class BrowseGamesRoute extends LoadMore {
     }
   }
 
-  handleSearchGo() {
+  handleSearchGo = () => {
     // TODO - disallow/escape search string
     const $button = $(this.refs.searchGoButton)
     $button.removeClass('orange')
@@ -134,7 +134,7 @@ class BrowseGamesRoute extends LoadMore {
    * Make it clear that the search icon needs to be pushed while editing the search box
    * I could do this with React, but didn't want to since search triggers a few changes already
    */
-  handleSearchNameBoxChanges() {
+  handleSearchNameBoxChanges = e => {
     // mark if the button needs to be pushed
     const qN = this.queryNormalized(this.props.location.query)
     const $button = $(this.refs.searchGoButton)
@@ -152,7 +152,7 @@ class BrowseGamesRoute extends LoadMore {
     window.removeEventListener('keydown', this.listenForEnter)
   }
 
-  listenForEnter(e) {
+  listenForEnter = (e) => {
     e = e || window.event
     if (e.keyCode === 13)
       this.handleSearchGo()

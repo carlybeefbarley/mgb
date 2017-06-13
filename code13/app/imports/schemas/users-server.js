@@ -2,6 +2,7 @@ import { Users } from '/imports/schemas'
 import { check } from 'meteor/check'
 import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 import { Mailgun } from '/imports/helpers/mailgun/mailgun'
+import { Accounts } from 'meteor/accounts-base'
 
 // This file is NOT included on the client
 
@@ -29,25 +30,28 @@ Meteor.methods({
 
   "User.sendSignUpEmail": function (email) {
     console.log('############## User.sendSignUpEmail...', email)
-    
-    var mailgun = new Mailgun()
+    console.log('userId', Meteor.userId())
 
-    // TODO how to get current domain to send it as a verify link?
-    // TODO actually verify email
-    var mailgunData = {
-      from: 'MyGameBuilder Team <info@mygamebuilder.com>',
-      to: email,
-      subject: 'Verify your email',
-      'o:tag': 'Signup email',
-      html: '<p>You have registered to MyGameBuilder. Please verify your email.</p><p><a href="https://v2.mygamebuilder.com">Click to Verify Email</a></p><br/><br/><br/><br/>'
-    }
+    // var mailgun = new Mailgun()
 
-    mailgun.request('POST', '/messages', mailgunData, function (error, body) {
-      if (error)
-        console.error(" User.sendSignUpEmail: Error: ", error)
-      else
-        console.log(" User.sendSignUpEmail: bodyResponse: ", body);
-    })
+    // // TODO how to get current domain to send it as a verify link?
+    // // TODO actually verify email
+    // var mailgunData = {
+    //   from: 'MyGameBuilder Team <info@mygamebuilder.com>',
+    //   to: email,
+    //   subject: 'Verify your email',
+    //   'o:tag': 'Signup email',
+    //   html: '<p>You have registered to MyGameBuilder. Please verify your email.</p><p><a href="https://v2.mygamebuilder.com">Click to Verify Email</a></p><br/><br/><br/><br/>'
+    // }
+
+    // mailgun.request('POST', '/messages', mailgunData, function (error, body) {
+    //   if (error)
+    //     console.error(" User.sendSignUpEmail: Error: ", error)
+    //   else
+    //     console.log(" User.sendSignUpEmail: bodyResponse: ", body);
+    // })
+
+    Accounts.sendVerificationEmail(Meteor.userId())
   },
 
   /**
@@ -62,7 +66,7 @@ Meteor.methods({
     console.log('[User.update.mgb1namesVerified]', count, userId, `Changed from '${u.profile.mgb1namesVerified}' to '${newMgb1namesVerified}'`)
     return count
   },
-  
+
     /**
    * RPC User.toggleBan
    * Currently only superAdmin can ban/unban an account. The idea is that the
@@ -76,16 +80,16 @@ Meteor.methods({
     console.log('[User.toggleBan]', count, userId, `NewValue=${newIsBanned}`)
     return count
   },
-  
+
   /**
    * RPC User.deactivateAccount
    * Only owning-User or superadmin can mark an account as de-activated
    */
   'User.deactivateAccount': function(userId) {
     const u = serverMethodHelper(userId)
-    if (this.userId !== userId) 
+    if (this.userId !== userId)
       checkMgb.checkUserIsSuperAdmin()
-    if (u.isDeactivated === true) 
+    if (u.isDeactivated === true)
       throw new Meteor.Error(500, `User #${userId} is already deactivated`)
     const count = Meteor.users.update( { _id: userId }, { $set: { isDeactivated: true } })
     console.log('[User.deactivateAccount]', count, userId)
@@ -94,16 +98,16 @@ Meteor.methods({
 
   /**
    * RPC User.reactivateAccount
-   * Currently only superAdmin can re-activate an account. We don't yet have a full 
+   * Currently only superAdmin can re-activate an account. We don't yet have a full
    * Deactivate/Reactivate user account flow, but this is done for now from fpSuperAdmin
    */
   'User.reactivateAccount': function(userId) {
     const u = serverMethodHelper(userId)
     checkMgb.checkUserIsSuperAdmin()
-    if (u.isDeactivated !== true) 
+    if (u.isDeactivated !== true)
       throw new Meteor.Error(500, `User #${userId} is not deActivated`)
     const count = Meteor.users.update( { _id: userId }, { $set: { isDeactivated: false } })
     console.log('[User.reactivateAccount]', count, userId)
     return count
-  }  
+  }
 })

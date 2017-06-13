@@ -61,7 +61,7 @@ let recentMarker = null  // See explanation above
 let _selectedColors = {
   // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
   // Note that the .hex value excludes the leading # so it is for example (white) 'ffffff'
-  fg:    { hex: "#000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
+  // fg:    { hex: "#000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
 }
 
 let _rememberedMiniMapViz = false
@@ -277,8 +277,24 @@ export default class EditGraphic extends React.Component {
       // console.log(hex, rgb)
       return { fg: { hex: hex, rgb: rgb } }
     }
-    else
-      return _selectedColors
+    else {
+      // returns offset in minutes to UTC
+      // value can be positive or negative
+      const offset = new Date().getTimezoneOffset()
+      let colorIdx = Math.round(offset/60) + 13 // from 1 to 24
+      // normalization if colorIds some weird number
+      if(colorIdx > 24 || colorIdx < 1)
+        colorIdx = Math.round(Math.random() * 23) + 1
+
+      const hex = _defaultColors[colorIdx-1]
+      const rgb = {
+        r: parseInt(hex.substring(1, 3), 16),
+        g: parseInt(hex.substring(3, 5), 16),
+        b: parseInt(hex.substring(5, 7), 16),
+        a: 1
+      }
+      return { fg: { hex: hex, rgb: rgb } }
+    }
   }
 
 // TODO: DGOLDS to clean this up -- combine with mgb1ImportTiles etc

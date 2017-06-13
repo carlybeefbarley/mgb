@@ -17,6 +17,37 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Mon Jun 12 2017 11:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4348'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Graphic editor - Color Palette',
+          'changeSummary': 'Color palette feature is coming. For now it has presets, but a way to change these will be available soon. ',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed the first-draw problem with the minimap. Made the last getting-started tutorial easier to follow. Fixed some typos.' ,
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Mon Jun 12 2017 01:45:00 GMT-0700 (PDT)',
 
       'id': {

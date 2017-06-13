@@ -471,7 +471,7 @@ class AssetHandler {
       }
 
       if (needUpdate) {
-        console.log("updateContent2() DOING full update")
+        // console.log("updateContent2() DOING full update")
         this.onChange && this.onChange()
       }
       else {

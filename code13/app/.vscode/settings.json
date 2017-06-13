@@ -7,6 +7,11 @@
     "**/tmp": true,
     ".meteor/**": true
   },
+  // indent-rainbow is nicer
+  "editor.renderIndentGuides": false,
+
+  "files.trimTrailingWhitespace": true,
+
   "eslint.autoFixOnSave": false,
   "editor.formatOnSave": false,
   // Fit code within this line limit

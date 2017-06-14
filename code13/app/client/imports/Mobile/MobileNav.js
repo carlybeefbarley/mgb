@@ -365,6 +365,7 @@ class MobileNav extends React.Component {
           .filter((bName, index) => !!MobileNav.availableButtons[bName] && index < max)
           .map(this.renderButton, this)
       }
+
     </div>
     return this._tmpButtons
   }
@@ -413,7 +414,7 @@ class MobileNav extends React.Component {
       id={"mobile-nav-button-" + index}
       onClick={() => this.onClick(b, index)}
     >
-      <Icon name={b.icon || 'question'} size='large'></Icon>
+      <Icon name={b.icon || 'question'} size='large' />
       <p>{b.title}</p>
     </span>
   }

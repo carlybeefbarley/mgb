@@ -7,11 +7,17 @@ import FittedImage from '/client/imports/components/Controls/FittedImage'
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 import { isValidCodeGame, isValidActorMapGame } from '/imports/schemas/assets'
 
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 const _cardStyle = { minWidth: '200px', maxWidth: '200px' }
 
 export const GameItem = ( { game, currUser } ) => (
-  <Card color={isValidCodeGame(game) ? 'green' : 'blue'} className='link' style={{overflow: 'hidden'}}>
+  <Card color={isValidCodeGame(game) ? 'green' : 'blue'} className='link' style={{
+    overflow: 'hidden',
+    width: 'auto',
+    minWidth: SpecialGlobals.thumbnail.width,
+    maxWidth: SpecialGlobals.thumbnail.width
+  }}>
     <QLink className='image' to={`/u/${game.dn_ownerName}/play/${game._id}`}>
       {Thumbnail.getLink(game)
         ? <FittedImage src={Thumbnail.getLink(game)}  />
@@ -42,7 +48,7 @@ export const GameItem = ( { game, currUser } ) => (
   </Card>
 )
 
-const _wrapStyle = { clear: 'both', flexWrap: 'wrap' }
+const _wrapStyle = { clear: 'both', flexWrap: 'wrap', justifyContent: 'space-around'}
 const _nowrapStyle = {
   clear: 'both',
   flexWrap: 'nowrap',

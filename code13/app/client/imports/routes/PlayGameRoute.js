@@ -91,7 +91,7 @@ class PlayCodeGame extends React.Component {
     }
   }
   shouldComponentUpdate(newprops, newstate) {
-    return newstate.isFullScreen != this.state.isFullScreen
+    return newstate.isFullScreen !== this.state.isFullScreen
   }
 
   componentDidMount(){
@@ -130,6 +130,8 @@ class PlayCodeGame extends React.Component {
   componentWillUnmount(){
     this.erd.removeListener(this.container, this.onresize)
 
+    this.exitFullScreen()
+
     /*
     window.removeEventListener('resize', this.onresize)
     clearTimeout(this.resizeTimeout)*/
@@ -147,14 +149,19 @@ class PlayCodeGame extends React.Component {
     const container = this.container
 
     const style = this.refs.wrapper.style
-    const outerBox = container.getBoundingClientRect()
+    const outerBox = this.state.isFullScreen
+      ? {width: window.innerWidth, height: window.innerHeight}
+      : container.getBoundingClientRect()
     const box = this.refs.wrapper.getBoundingClientRect()
+
+
 
     const gameWidth = outerBox.width - box.left * 2
     const gameHeight = outerBox.height - box.top
 
     style.height = gameHeight + 'px'
     style.width = gameWidth + 'px'
+    style.textAlign = "left"
 
     const {width, height} = this.props.metadata
     const setScale = () => {
@@ -166,12 +173,13 @@ class PlayCodeGame extends React.Component {
         const shift = (gameWidth - width * scale) * 0.5
         if(shift > 0)
           this.refs.iframe.style.marginLeft = shift + 'px'
-        else
+        else {
           this.refs.iframe.style.marginLeft = 0
+        }
       }
     }
 
-    if (width > gameWidth || height > gameHeight)
+    //if (width > gameWidth || height > gameHeight)
       setScale()
 
     if (this.props.metadata.allowFullScreen){
@@ -219,6 +227,14 @@ class PlayCodeGame extends React.Component {
 
   setFsManually(){
     this.setState({isFullScreen: true}, () => {
+      document.body.classList.add('fullscreen')
+      this.adjustIframeSize()
+    })
+  }
+
+  exitFullScreen = () => {
+    this.setState({isFullScreen: false}, () => {
+      document.body.classList.remove('fullscreen')
       this.adjustIframeSize()
     })
   }
@@ -272,8 +288,10 @@ class PlayCodeGame extends React.Component {
   render() {
     const { metadata, owner} = this.props
     const _codeName = metadata.startCode
-    let width = metadata.width || 800 // fallback for older games
-    let height = metadata.height || 600 // fallback for older games
+
+
+    let width = metadata.width ? metadata.width + 'px' : '100%' // fallback for older games
+    let height = metadata.height ? metadata.height + 'px' : '100%' // fallback for older games
 
     if (!_codeName || _codeName === '')
       return <ThingNotFound type='CodeGame' id='""'/>
@@ -298,18 +316,29 @@ class PlayCodeGame extends React.Component {
           />
         <div ref='wrapper' style={
           this.state.isFullScreen
-            ? {overflow: 'hidden', position: "absolute", left: 0, right: 0, top: 0, backgroundColor: '#fff'}
-            : {overflow: 'hidden'} }>
+            ? {overflow: 'hidden', textAlign: 'center', position: "fixed", left: 0, right: 0, top: 0, bottom: '-3.5em', backgroundColor: '#000'}
+            : {overflow: 'hidden', textAlign: 'center'} }>
           <iframe
             key={ 0 }
             ref="iframe"
             id="iFrame1"
-            style={{ minWidth: width + 'px', minHeight: height + 'px', borderStyle: 'none', transformOrigin: '0 0' }}
+            style={{ minWidth: width, minHeight: height, borderStyle: 'none', transformOrigin: '0 0' }}
             sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
             src={src}
             >
           </iframe>
         </div>
+        { this.state.isFullScreen &&
+          <Icon name="sidebar" size="big" className="burger"
+                color="white"
+                style={{
+                  position: 'absolute', right: 0, top: 0, color: 'white',
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  borderRadius: '0.1em'
+                }}
+                onClick={this.exitFullScreen}
+          />
+        }
       </div>
     )
   }

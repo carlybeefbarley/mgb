@@ -5,8 +5,8 @@ import { mjml2html } from 'mjml';
 Accounts.emailTemplates.siteName = "MyGameBuilder.com";
 
 // Accounts.emailTemplates.from = "MyGameBuilder Accounts Admin <accounts@devlapse.com>";
-// Accounts.emailTemplates.from = "MyGameBuilder Accounts Admin <no-reply@mycodebuilder.com>";
-Accounts.emailTemplates.from = "MyGameBuilder Accounts Admin <guntis@mightyfingers.com>";
+Accounts.emailTemplates.from = "MyGameBuilder Accounts Admin <no-reply@mycodebuilder.com>";
+// Accounts.emailTemplates.from = "MyGameBuilder Accounts Admin <guntis@mightyfingers.com>";
 
 Accounts.emailTemplates.resetPassword.subject = function (user) {
   return "Reset your email";

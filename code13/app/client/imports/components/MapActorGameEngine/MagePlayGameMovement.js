@@ -106,25 +106,54 @@ export default MagePlayGameMovement = {
       case MgbActor.alMovementType_None:
         break;
       case MgbActor.alMovementType_Random:
-        if (0 == enemyAA.stepCount || Math.random() < 0.1)
-          enemyAA.stepStyle = Math.floor(Math.random() * 4);								// Choose a direction
+        if (0 == enemyAA.stepCount || Math.random() < 0.1) {
+          var moves = [-1, 0, 1, 2, 3]
+          if (enemy.content2.databag.allchar.upYN === "0") 
+            moves.splice(moves.indexOf(0), 1)
+          if (enemy.content2.databag.allchar.rightYN === "0") 
+            moves.splice(moves.indexOf(1), 1)
+          if (enemy.content2.databag.allchar.downYN === "0") 
+            moves.splice(moves.indexOf(2), 1)
+          if (enemy.content2.databag.allchar.leftYN === "0") 
+            moves.splice(moves.indexOf(3), 1)  
+          if (moves.length == 1) 
+            break;
+          
+          enemyAA.stepStyle = moves[Math.floor(Math.random() * moves.length)];								// Choose a direction
+        }
         switch (enemyAA.stepStyle)
         {
-        case 0: 	enemyAA.y--;	break;			// North
-        case 1: 	enemyAA.x++;	break;			// East
-        case 2: 	enemyAA.y++;	break;			// South 			
-        case 3: 	enemyAA.x--;	break;			// West
+        case 0: // North	
+          enemyAA.y--;	
+          break;			
+        case 1: // East 	
+          enemyAA.x++;	
+          break;			
+        case 2: // South	
+          enemyAA.y++;	
+          break;			 			
+        case 3: // West	
+          enemyAA.x--;	
+          break;			
+        case -1: // No movement
+          break;
         }
         enemyAA.stepCount++;
         break;
       case MgbActor.alMovementType_ToPlayer:
         if (enemyAA.x < activeActors[AA_player_idx].x)
         {
+          if (enemy.content2.databag.allchar.rightYN === "0") 
+            break
+
           enemyAA.x++
           enemyAA.stepStyle = 1
         }
         else if (enemyAA.x > activeActors[AA_player_idx].x)
         {
+          if (enemy.content2.databag.allchar.leftYN === "0") 
+            break
+
           enemyAA.x--
           enemyAA.stepStyle = 3
         }
@@ -132,11 +161,17 @@ export default MagePlayGameMovement = {
         {
           if (enemyAA.y < activeActors[AA_player_idx].y)
           {
+            if (enemy.content2.databag.allchar.downYN === "0") 
+              break
+
             enemyAA.y++
             enemyAA.stepStyle = 2
           }	
           else if (enemyAA.y > activeActors[AA_player_idx].y)
           {
+            if (enemy.content2.databag.allchar.upYN === "0") 
+              break; 
+
             enemyAA.y--
             enemyAA.stepStyle = 0
           }
@@ -145,11 +180,17 @@ export default MagePlayGameMovement = {
       case MgbActor.alMovementType_FromPlayer:
         if (enemyAA.x < activeActors[AA_player_idx].x)
         {
+          if (enemy.content2.databag.allchar.rightYN === "0") 
+            break
+
           enemyAA.x--
           enemyAA.stepStyle = 1
         }
         else if (enemyAA.x > activeActors[AA_player_idx].x)
         {
+          if (enemy.content2.databag.allchar.leftYN === "0") 
+            break
+
           enemyAA.x++
           enemyAA.stepStyle = 3
         }
@@ -157,11 +198,17 @@ export default MagePlayGameMovement = {
         {
           if (enemyAA.y < activeActors[AA_player_idx].y)
           {
+            if (enemy.content2.databag.allchar.downYN === "0") 
+              break
+
             enemyAA.y--
             enemyAA.stepStyle = 2
           }
           else if (enemyAA.y > activeActors[AA_player_idx].y)
           {
+            if (enemy.content2.databag.allchar.upYN === "0") 
+              break
+            
             enemyAA.y++
             enemyAA.stepStyle = 0
           }

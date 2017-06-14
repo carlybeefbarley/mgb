@@ -11,13 +11,13 @@ export default MagePlayGameMovement = {
   {
     const { activeActors, AA_player_idx, G_player_action, map } = this
     var plyr = activeActors[AA_player_idx]
-    
+
     if (G_player_action.melee)
       this.startMeleeIfAllowed(plyr, true)
-    
+
     if (!plyr.inMelee())
     {
-      // These actions can only be happen if the player is *not* in the middle of melee. 
+      // These actions can only be happen if the player is *not* in the middle of melee.
       // TODO: Should we queue up the keyboard input anyway?
 
       if (G_player_action.shoot && this.actorCanShoot(AA_player_idx))
@@ -29,7 +29,7 @@ export default MagePlayGameMovement = {
       {
         plyr.y--
         plyr.stepStyle = 0
-      }	
+      }
       if ((stepStyleOverride == 2 || (stepStyleOverride == -1 && G_player_action.down)) && plyr.y >= 0)
       {
         plyr.y++
@@ -39,7 +39,7 @@ export default MagePlayGameMovement = {
       {
         plyr.x--
         plyr.stepStyle = 3
-      }	
+      }
       if ((stepStyleOverride == 1 || (stepStyleOverride == -1 && G_player_action.right)) && plyr.x < map.metadata.width)
       {
         plyr.x++
@@ -47,8 +47,8 @@ export default MagePlayGameMovement = {
       }
     }
   },
-  
-  
+
+
   // AAi is the index into activeActors[] for this enemy/item
   // stepStyleOverride is -1 for no override, or 0..3 for an override		// TODO
   calculateNewEnemyPosition: function(AAi, stepStyleOverride = -1)
@@ -57,7 +57,7 @@ export default MagePlayGameMovement = {
 
     var enemyAA = activeActors[AAi]
     var enemy = actors[enemyAA.ACidx]
-    
+
     if (enemyAA.isSliding)
     {
       if (enemyAA.isAShot && enemyAA.stepCount > enemyAA.shotRange)
@@ -70,7 +70,7 @@ export default MagePlayGameMovement = {
         {
         case 0: 	enemyAA.y--;	break;			// North
         case 1: 	enemyAA.x++;	break;			// East
-        case 2: 	enemyAA.y++;	break;			// South 			
+        case 2: 	enemyAA.y++;	break;			// South
         case 3: 	enemyAA.x--;	break;			// West
         }
         enemyAA.stepCount++;
@@ -83,7 +83,7 @@ export default MagePlayGameMovement = {
       {
       case 0: 	enemyAA.y--;	break;			// North
       case 1: 	enemyAA.x++;	break;			// East
-      case 2: 	enemyAA.y++;	break;			// South 			
+      case 2: 	enemyAA.y++;	break;			// South
       case 3: 	enemyAA.x--;	break;			// West
       }
       enemyAA.stepCount++;
@@ -92,11 +92,11 @@ export default MagePlayGameMovement = {
     {
       var t = MgbActor.intFromActorParam(enemy.content2.databag.npc.movementType)
       var aggroRange = MgbActor.intFromActorParam(enemy.content2.databag.npc.aggroRange)
-      var tilesFromPlayerSquared = Math.pow(enemyAA.x - activeActors[AA_player_idx].x, 2) + Math.pow(enemyAA.y - activeActors[AA_player_idx].y, 2) 
-      
+      var tilesFromPlayerSquared = Math.pow(enemyAA.x - activeActors[AA_player_idx].x, 2) + Math.pow(enemyAA.y - activeActors[AA_player_idx].y, 2)
+
       if (aggroRange)
       {
-        // This will become either alMovementType_Random or alMovementType_ToPlayer - depending on proximity. Range check using pythogras' theorem 
+        // This will become either alMovementType_Random or alMovementType_ToPlayer - depending on proximity. Range check using pythogras' theorem
         if (tilesFromPlayerSquared < Math.pow(aggroRange, 2))
           t = MgbActor.alMovementType_ToPlayer
       }
@@ -108,33 +108,33 @@ export default MagePlayGameMovement = {
       case MgbActor.alMovementType_Random:
         if (0 == enemyAA.stepCount || Math.random() < 0.1) {
           var moves = [-1, 0, 1, 2, 3]
-          if (enemy.content2.databag.allchar.upYN === "0") 
+          if (!MgbActor.intFromActorParam(enemy.content2.databag.allchar.upYN))
             moves.splice(moves.indexOf(0), 1)
-          if (enemy.content2.databag.allchar.rightYN === "0") 
+          if (!MgbActor.intFromActorParam(enemy.content2.databag.allchar.rightYN))
             moves.splice(moves.indexOf(1), 1)
-          if (enemy.content2.databag.allchar.downYN === "0") 
+          if (!MgbActor.intFromActorParam(enemy.content2.databag.allchar.downYN))
             moves.splice(moves.indexOf(2), 1)
-          if (enemy.content2.databag.allchar.leftYN === "0") 
-            moves.splice(moves.indexOf(3), 1)  
-          if (moves.length == 1) 
+          if (!MgbActor.intFromActorParam(enemy.content2.databag.allchar.leftYN))
+            moves.splice(moves.indexOf(3), 1)
+          if (moves.length == 1)
             break;
-          
+
           enemyAA.stepStyle = moves[Math.floor(Math.random() * moves.length)];								// Choose a direction
         }
         switch (enemyAA.stepStyle)
         {
-        case 0: // North	
-          enemyAA.y--;	
-          break;			
-        case 1: // East 	
-          enemyAA.x++;	
-          break;			
-        case 2: // South	
-          enemyAA.y++;	
-          break;			 			
-        case 3: // West	
-          enemyAA.x--;	
-          break;			
+        case 0: // North
+          enemyAA.y--;
+          break;
+        case 1: // East
+          enemyAA.x++;
+          break;
+        case 2: // South
+          enemyAA.y++;
+          break;
+        case 3: // West
+          enemyAA.x--;
+          break;
         case -1: // No movement
           break;
         }
@@ -143,7 +143,7 @@ export default MagePlayGameMovement = {
       case MgbActor.alMovementType_ToPlayer:
         if (enemyAA.x < activeActors[AA_player_idx].x)
         {
-          if (enemy.content2.databag.allchar.rightYN === "0") 
+          if (!MgbActor.intFromActorParam(enemy.content2.databag.allchar.rightYN))
             break
 
           enemyAA.x++
@@ -151,26 +151,26 @@ export default MagePlayGameMovement = {
         }
         else if (enemyAA.x > activeActors[AA_player_idx].x)
         {
-          if (enemy.content2.databag.allchar.leftYN === "0") 
+          if (!MgbActor.intFromActorParam(enemy.content2.databag.allchar.leftYN))
             break
 
           enemyAA.x--
           enemyAA.stepStyle = 3
         }
-        else 
+        else
         {
           if (enemyAA.y < activeActors[AA_player_idx].y)
           {
-            if (enemy.content2.databag.allchar.downYN === "0") 
+            if (!MgbActor.intFromActorParam(enemy.content2.databag.allchar.downYN))
               break
 
             enemyAA.y++
             enemyAA.stepStyle = 2
-          }	
+          }
           else if (enemyAA.y > activeActors[AA_player_idx].y)
           {
-            if (enemy.content2.databag.allchar.upYN === "0") 
-              break; 
+            if (!MgbActor.intFromActorParam(enemy.content2.databag.allchar.upYN))
+              break;
 
             enemyAA.y--
             enemyAA.stepStyle = 0
@@ -180,7 +180,7 @@ export default MagePlayGameMovement = {
       case MgbActor.alMovementType_FromPlayer:
         if (enemyAA.x < activeActors[AA_player_idx].x)
         {
-          if (enemy.content2.databag.allchar.rightYN === "0") 
+          if (!MgbActor.intFromActorParam(enemy.content2.databag.allchar.rightYN))
             break
 
           enemyAA.x--
@@ -188,17 +188,17 @@ export default MagePlayGameMovement = {
         }
         else if (enemyAA.x > activeActors[AA_player_idx].x)
         {
-          if (enemy.content2.databag.allchar.leftYN === "0") 
+          if (!MgbActor.intFromActorParam(enemy.content2.databag.allchar.leftYN))
             break
 
           enemyAA.x++
           enemyAA.stepStyle = 3
         }
-        else 
+        else
         {
           if (enemyAA.y < activeActors[AA_player_idx].y)
           {
-            if (enemy.content2.databag.allchar.downYN === "0") 
+            if (!MgbActor.intFromActorParam(enemy.content2.databag.allchar.downYN))
               break
 
             enemyAA.y--
@@ -206,18 +206,18 @@ export default MagePlayGameMovement = {
           }
           else if (enemyAA.y > activeActors[AA_player_idx].y)
           {
-            if (enemy.content2.databag.allchar.upYN === "0") 
+            if (!MgbActor.intFromActorParam(enemy.content2.databag.allchar.upYN))
               break
-            
+
             enemyAA.y++
             enemyAA.stepStyle = 0
           }
         }
         break
-      default: 
+      default:
         throw new Error("Unknown Actor MovementType in "+enemy.name);
       }
-      
+
       if (tilesFromPlayerSquared < 36)		// 36 = 6^2 - hardcoded but reasonable :)
       {
         var meleeDamage1 = MgbActor.intFromActorParam(enemy.content2.databag.allchar.meleeDamageToPlayerNum)
@@ -225,7 +225,7 @@ export default MagePlayGameMovement = {
         if (meleeDamage1 > 0 || meleeDamage2 > 0)
           this.startMeleeIfAllowed(enemyAA, false)
       }
-      
+
       if (this.actorCanShoot(AAi))
       {
         t = MgbActor.intFromActorParam(enemy.content2.databag.npc.shotAccuracyType)
@@ -238,7 +238,7 @@ export default MagePlayGameMovement = {
             shotStepStyle = 1
           else if ((enemyAA.x - activeActors[AA_player_idx].x) > 1)
             shotStepStyle = 3
-          else 
+          else
           {
             if ((enemyAA.y - activeActors[AA_player_idx].y) < -1)
               shotStepStyle = 2
@@ -249,7 +249,7 @@ export default MagePlayGameMovement = {
         this.actorCreateShot(AAi, shotStepStyle)
       }
     }
-    // TODO: Needs to be much smarter, also need to handle speed > 1			
+    // TODO: Needs to be much smarter, also need to handle speed > 1
   },
 
 
@@ -257,23 +257,23 @@ export default MagePlayGameMovement = {
   {
     const { actors, inventory, ownerName } = this
     if (!actor.inMelee() && actor.turnsBeforeMeleeReady == 0)
-    {	
+    {
       var ms = null
       actor.meleeStep = 0
       var ap = actors[actor.ACidx]
       if (isPlayer)
         ms = inventory.equipmentMeleeSoundOverride
-      MgbActor.playCannedSound((MgbActor.isSoundNonNull(ms) ? ms : ap.content2.databag.allchar.soundWhenMelee), ap.content2, ownerName)				
+      MgbActor.playCannedSound((MgbActor.isSoundNonNull(ms) ? ms : ap.content2.databag.allchar.soundWhenMelee), ap.content2, ownerName)
       return true
-    }		
+    }
     return false
   },
-  
+
   // Each layer is handled specially as follows:
   // 1. layerBackground is just held in the map.mapLayer[layerBackground] array of cells
   // 2. layerActive is held in the activeActors array
   // 3. layerForeground isn't checked - by convention it's just for visual effect
-  // Note that if the actor is the player and the obstruction is a pushable item, then we say not-obstructed.. 
+  // Note that if the actor is the player and the obstruction is a pushable item, then we say not-obstructed..
   //		...the tweening moves will resolve what action should occur
   checkIfActorObstructed: function(AAidxToCheck, checkActives = false)
   {
@@ -294,7 +294,7 @@ export default MagePlayGameMovement = {
 
         // 1. Check the background layer. These don't change so we can work out behavior by the generic actorCache[] properties
         if (backgroundBlockageMap.isEntityBlocked(x, y, (AA_player_idx == AAidxToCheck ? BlockageMap.ENTITY_PLAYER : BlockageMap.ENTITY_NPC)))
-          obstructed = true 
+          obstructed = true
 
         // 2. Check the activeActors. To do this we take advantage of the G_tic table
         if (checkActives && !obstructed)
@@ -315,13 +315,13 @@ export default MagePlayGameMovement = {
                 {
                   const aType =  MgbActor.intFromActorParam(ap.content2.databag.all.actorType)
                   // Does this thing obstruct a player? (Slidable blocks aren't obstructions...)
-                  if (	(itemAct == MgbActor.alItemActivationType_BlocksPlayer || 
+                  if (	(itemAct == MgbActor.alItemActivationType_BlocksPlayer ||
                         itemAct == MgbActor.alItemActivationType_BlocksPlayerAndNPC)
-                      && (!(aType == MgbActor.alActorType_NPC && 
+                      && (!(aType == MgbActor.alActorType_NPC &&
                           MgbActor.intFromActorParam(ap.content2.databag.itemOrNPC.destroyableYN) == 1 &&
                           MgbActor.intFromActorParam(aa_p.content2.databag.allchar.touchDamageToNPCorItemNum) > 0
                           ))
-                      && ((aType != MgbActor.alActorType_Item && [4, 5, 6, 7].indexOf(aType) === -1) || 
+                      && ((aType != MgbActor.alActorType_Item && [4, 5, 6, 7].indexOf(aType) === -1) ||
                         0 == MgbActor.intFromActorParam(ap.content2.databag.item.pushToSlideNum))
                     )
                     obstructed = true
@@ -355,7 +355,7 @@ export default MagePlayGameMovement = {
         }
       }
     }
-    
+
     return obstructed
   }
 

@@ -133,6 +133,10 @@ export default class Mage extends React.Component {
 
   handleSetInventoryVisibility = newVisibility => {
     this.setState( { isInventoryShowing: !!newVisibility } )
+    // unpause game after closing inventory
+    if (!this.state.activeNpcDialog && this.state.isInventoryShowing)
+      this._game.isPaused = false
+    return this.state.activeNpcDialog // to know if there is an active NPC dialog since this function gets called for toggle npc dialog
   }
 
   handleHideInventory = () => this.handleSetInventoryVisibility(false)

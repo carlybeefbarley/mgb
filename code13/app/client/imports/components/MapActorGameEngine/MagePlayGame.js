@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-// These imports are actually class extensions for the MagePlayGame class. 
+// These imports are actually class extensions for the MagePlayGame class.
 // See notes in constructor()
 
 import MagePlayGameNpc from './MagePlayGameNpc'
@@ -73,7 +73,7 @@ export default class MagePlayGame
     this.cancelAllSpawnedActorsForAutoRespawn()
 
     this.clearTicTable()					// TIC == "Things In Cell". Note that we need the main move routine to reset this when x/ and fromx/y change
-		
+
 		// Tweening state. Decisions about moves are made once per turn. A turn consists of multple 'tweens' that animate the turn.
     this.G_xMovePerTween = 0	                    // Player movement (horizontal) per tween this turn.
     this.G_yMovePerTween = 0                      // Player movement (vertical) per tween this turn.
@@ -99,21 +99,21 @@ export default class MagePlayGame
     this.G_gameOver = true							// Actually one of the conditions that causes the game loop to call endGame, but let's be sure :)
     this.playCleanupActiveLayer()
     this.playCleanupBackgroundLayer()
-    
+
     this.setGameStatusFn(0, "Game Over")
     this.setGameStatusFn(1)
     MgbMusic.stopMusic()
   }
-  
 
-  startGame(map, mapName, actors, graphics, 
-            transitionToNextMapFn, 
-            setGameStatusFn, 
-            showNpcMessageFn, 
+
+  startGame(map, mapName, actors, graphics,
+            transitionToNextMapFn,
+            setGameStatusFn,
+            showNpcMessageFn,
             toggleNpcDialogFn,
             handleForceInventoryUpdateFn,
-            keyCaptureElement) 
-  { 
+            keyCaptureElement)
+  {
     this.map = map
     this.map.name = mapName.indexOf(':') === -1 ? this.ownerName + ':' + mapName : mapName
     this.actors = actors
@@ -130,16 +130,16 @@ export default class MagePlayGame
     this.setGameStatusFn(1)
     this.hideNpcMessage()
 
-			
+
     this.playPrepareActiveLayer(map)
     this.playPrepareBackgroundLayer()
 
     // Set up and start Game events
-    this.enablePlayerControls(keyCaptureElement)    
+    this.enablePlayerControls(keyCaptureElement)
   }
 
-  logGameBug(msg) { 
-    console.error(msg) 
+  logGameBug(msg) {
+    console.error(msg)
   }
 
   scrollMapToSeePlayer(overrideX = -1, overrideY = -1) {
@@ -153,7 +153,7 @@ export default class MagePlayGame
     G_VSPdelta = 0
 
     var horizontalScrollPosition = this.container.scrollLeft
-    var verticalScrollPosition = this.container.scrollTop 
+    var verticalScrollPosition = this.container.scrollTop
     var maxHorizontalScrollPosition = this.container.scrollWidth - this.container.clientWidth
     var maxVerticalScrollPosition = this.container.scrollHeight - this.container.clientHeight
     var w = (this.map.metadata.width * MgbSystem.tileMinWidth) - maxHorizontalScrollPosition
@@ -169,9 +169,9 @@ export default class MagePlayGame
     var minHSP_toSeePlayer = ((sx+1+marginX) * MgbSystem.tileMinWidth) - w 				// Minimum Horizontal Scroll Position to see player
     var minVSP_toSeePlayer = ((sy+1+marginY) * MgbSystem.tileMinHeight) - h 			// Minimum Vertical Scroll Position to see player
 
-    if (minHSP_toSeePlayer > 0 && horizontalScrollPosition < minHSP_toSeePlayer)				
+    if (minHSP_toSeePlayer > 0 && horizontalScrollPosition < minHSP_toSeePlayer)
       G_HSPdelta = (minHSP_toSeePlayer - horizontalScrollPosition) / this.G_tweensPerTurn	// Scroll right if needed
-    if (minVSP_toSeePlayer > 0 && verticalScrollPosition < minVSP_toSeePlayer)				
+    if (minVSP_toSeePlayer > 0 && verticalScrollPosition < minVSP_toSeePlayer)
       G_VSPdelta = (minVSP_toSeePlayer - verticalScrollPosition) / this.G_tweensPerTurn		// Scroll down if needed
   }
 
@@ -185,8 +185,11 @@ export default class MagePlayGame
   {
     const newViz = !this.showingInventoryDialog
     this.showingInventoryDialog = newViz
-    this.toggleNpcDialogFn(newViz)
-    this.isPaused = newViz
+    const npcDialogIsActive = this.toggleNpcDialogFn(newViz)
+    if (npcDialogIsActive) // prevent unpause when toggling inventory during an active npc dialog
+      this.isPaused
+    else
+      this.isPaused = newViz
   }
 
   hideInventory()
@@ -198,7 +201,7 @@ export default class MagePlayGame
   }
 
   // This is a bit weird. It returns the NAME not the actor. TODO - rename for clarity
-  loadActorByName(actorName) 
+  loadActorByName(actorName)
   {
     const result = this.actors[actorName]
     if (!result)
@@ -207,7 +210,7 @@ export default class MagePlayGame
       debugger    // I think we are preloading all actors, but this is here to confirm
     }
     return actorName
-  } 
+  }
 
   onTickGameDo() {
     if (this.G_gameOver)
@@ -246,8 +249,8 @@ export default class MagePlayGame
 
           this.AA_player_idx = this.activeActors.length
           this.activeActors[this.AA_player_idx] = this.transitionPlayerAA
-          
-          this.container = document.getElementById("mgb-game-container") 
+
+          this.container = document.getElementById("mgb-game-container")
           this.scrollMapToSeePlayer()
 
           this.clearTicTable()
@@ -265,13 +268,13 @@ export default class MagePlayGame
       return
     }
 
-    
+
     const nowMS = (new Date()).getTime()
     if (!this._timeInASecond || nowMS >= this._timeInASecond)
     {
       this._timeInASecond = nowMS + 1000
       this.checkForGeneratedActorsThisSecond()
-    } 
+    }
 
     // Now for the real actions
     if (0 == this.G_tweenCount) {
@@ -279,10 +282,10 @@ export default class MagePlayGame
 
       this.askDeferredNpcQuestion()
 
-      // This is the first tween this turn - decide what to do this turn. 
+      // This is the first tween this turn - decide what to do this turn.
       // The remaining tweens for this turn will just animate what we decide now
 
-      // Check for player collision with an event square. 
+      // Check for player collision with an event square.
       // These only check against the player's top-left 32x32 pixel 'head'
       const plyr = this.activeActors[this.AA_player_idx]
       const plyrCell = this.cell(plyr.x, plyr.y)
@@ -298,7 +301,7 @@ export default class MagePlayGame
         }
       }
 
-      // Important, need to invalidate the collision detection cache. 
+      // Important, need to invalidate the collision detection cache.
       // In theory we could only do this if at least one thing moved, but that's unlikely so not worth the effort
       this.clearTicTable()
 
@@ -326,7 +329,7 @@ export default class MagePlayGame
                 var floorActorName = this.map.mapLayer[MgbMap.layerBackground][cellIndex]
                 floorActor = (floorActorName && floorActorName != '') ? this.actors[floorActorName]: null
                 if (floorActor && floorActor.content2 &&
-                  (MgbActor.intFromActorParam(floorActor.content2.databag.all.actorType) == MgbActor.alActorType_Item || 
+                  (MgbActor.intFromActorParam(floorActor.content2.databag.all.actorType) == MgbActor.alActorType_Item ||
                    [4, 5, 6, 7].indexOf(MgbActor.intFromActorParam(floorActor.content2.databag.all.actorType)) > -1) &&
                   (MgbActor.intFromActorParam(floorActor.content2.databag.item.itemActivationType) == MgbActor.alItemActivationType_CausesDamage ||
                     MgbActor.intFromActorParam(floorActor.content2.databag.item.itemActivationType) == MgbActor.alItemActivationType_PushesActors))
@@ -390,7 +393,7 @@ export default class MagePlayGame
                   var activation = MgbActor.intFromActorParam(hitThing_ap.content2.databag.item.itemActivationType)
 
                   if (this.activeActors[AAInCell].alive && AAInCell != AA) {
-                    // It's alive & not 'me'... 	
+                    // It's alive & not 'me'...
                     if (this.activeActors[AAInCell].type == MgbActor.alActorType_NPC) {
                       // Case 1: Player just collided with an NPC. This can spark a dialog
                       this.askNpcQuestion(this.activeActors[AAInCell], hitThing_ap)
@@ -530,7 +533,7 @@ export default class MagePlayGame
         case MgbActor.alActorType_Item: case 4: case 5: case 6: case 7:
           if (this.activeActors[AA].health <= 0)		// We don't check ap.content2.databag.itemOrNPC.destroyableYN here; that should be done in the damage routine. This way we can handle death/usage the same way
           {
-            // It dies... 
+            // It dies...
             this.activeActors[AA].health = 0;
             this.activeActors[AA].alive = false;
             this.activeActors[AA].dyingAnimationFrameCount = 1;			// TODO - need to distinguish usage from destruction
@@ -542,7 +545,7 @@ export default class MagePlayGame
             switch (this.activeActors[AA].creationCause) {
             case ActiveActor.CREATION_BY_MAP:
               if (MgbActor.intFromActorParam(ap.content2.databag.itemOrNPC.respawnOption) == MgbActor.alRespawnOption_Never && this.activeActors[AA].respawnId) {
-                // we need to know to persistently kill this piece based on it's original layer etc. 
+                // we need to know to persistently kill this piece based on it's original layer etc.
                 // We remember it's final coordinates since some respawn options need to know this
                 this.respawnMemory[this.activeActors[AA].respawnId] = { x: this.activeActors[AA].x, y: this.activeActors[AA].y }
               }
@@ -610,7 +613,7 @@ export default class MagePlayGame
           ", Time: " + timeStr, "You Win!")
       }
       else {
-        //debugger // alert sucks 
+        //debugger // alert sucks
         alert("G A M E   O V E R")
         // gee.completedVictory = false		// Change just one parameter...
       }
@@ -621,10 +624,10 @@ export default class MagePlayGame
   }
 
   timeStrSinceGameStarted() {
-    const nowMS = (new Date()).getTime()  
+    const nowMS = (new Date()).getTime()
     const secondsPaused = this.G_pausedTime % 60
-    const minutesPaused = Math.floor(this.G_pausedTime / 60) 
-    const secondsPlayed = Math.floor(nowMS - this.G_gameStartedAtMS) / 1000 - secondsPaused 
+    const minutesPaused = Math.floor(this.G_pausedTime / 60)
+    const secondsPlayed = Math.floor(nowMS - this.G_gameStartedAtMS) / 1000 - secondsPaused
     const minutesPlayed = Math.floor(secondsPlayed / 60) - minutesPaused
     const hoursPlayed = Math.floor(minutesPlayed / 60)
     let timeStr = ''

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Segment, Popup, Menu, Message, Header } from 'semantic-ui-react'
 import reactMixin from 'react-mixin'
+import QLink from '/client/imports/routes/QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 import { Azzets, Projects } from '/imports/schemas'
@@ -58,7 +59,7 @@ export default UserAssetListRoute = React.createClass({
     location: PropTypes.object      // We get this from react-router
   },
 
-  componentDidMount(){
+  componentDidMount() {
     this.hotjarSent = false
   },
 
@@ -94,7 +95,7 @@ export default UserAssetListRoute = React.createClass({
       newQ.limit = localStorage.getItem(_lsAssetLimitKey)
     }
     newQ.limit = _.clamp(newQ.limit, 10, SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit)
-      
+
 
     // query.project
     if (q.project)
@@ -341,9 +342,10 @@ export default UserAssetListRoute = React.createClass({
         <Segment style={ _contentsSegmentStyle } className='mgb-suir-plainSegment'>
         { /* Header controls - Create New, Size-select, order-select */ }
           <div style={ { marginBottom: '1em' } }>
-            <AssetCreateLink 
+            <AssetCreateLink
               assetKind={isOneKind ? qN.kinds : null}
               projectName={qN.project} />
+
             <AssetListSortBy chosenSortBy={qN.sort} handleChangeSortByClick={this.handleChangeSortByClick}/>
             <AssetListChooseView
                 sty={{ float: 'right', marginRight: '1em'}}
@@ -354,25 +356,32 @@ export default UserAssetListRoute = React.createClass({
                 chosenLimit={limit}
                 handleChangeLimitClick={this.handleChangeLimitClick} />
           </div>
+          { /* Make it really clear that we are showing Challenge Assets */
+          qN.showChallengeAssets === '1' &&
+            <Segment>
+              Showing Challenge Assets made during <QLink to='/learn/code'>tutorials</QLink>&emsp;
+              <AssetShowChallengeAssetsSelector showChallengeAssetsFlag={qN.showChallengeAssets} handleChangeFlag={this.handleChangeShowChallengeAssetsFlag} />
+            </Segment>
+          }
           { /* The Asset Cards */ }
           <div>
             { (!loading && qN.kinds === '') && (
-                <Message 
-                    style={{marginTop: '8em'}} 
-                    warning 
-                    icon='help circle' 
-                    header='Select one or more Asset kinds to be shown here' 
+                <Message
+                    style={{marginTop: '8em'}}
+                    warning
+                    icon='help circle'
+                    header='Select one or more Asset kinds to be shown here'
                     content='This list is empty because you have not selected any of the available Asset kinds to view' />
-              ) 
+              )
             }
             { (!loading && qN.kinds !== '' && assets.length === 0) && (
-                <Message 
-                    style={{marginTop: '8em'}} 
-                    warning 
-                    icon='help circle' 
-                    header='No assets match your search' 
+                <Message
+                    style={{marginTop: '8em'}}
+                    warning
+                    icon='help circle'
+                    header='No assets match your search'
                     content="Widen your search to see more assets, or create a new Asset using the 'Create New Asset' button above" />
-              ) 
+              )
             }
             { loading ? <div><Spinner /></div>
               :
@@ -387,7 +396,7 @@ export default UserAssetListRoute = React.createClass({
                 <Segment basic>
                   Reached maximum number of assets that can be listed here ({SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit}). Use the search filter options to display specific assets.
                 </Segment>
-              ) 
+              )
             }
           </div>
         </Segment>

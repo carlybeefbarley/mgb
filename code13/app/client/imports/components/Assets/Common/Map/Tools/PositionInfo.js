@@ -3,7 +3,7 @@ export default class PositionInfo extends React.Component {
 
   render () {
     return (
-      <div style={{position: 'fixed', bottom: 0}}>
+      <div style={this.props.infoStyle}>
         {this.props.getInfo()}
       </div>
     )
@@ -11,5 +11,6 @@ export default class PositionInfo extends React.Component {
 }
 
 PositionInfo.propTypes = {
-  getInfo: React.PropTypes.func.isRequired // callback which returns some sort of information
+  getInfo: React.PropTypes.func.isRequired, // callback which returns some sort of information
+  infoStyle: React.PropTypes.object // css to place inspect info
 }

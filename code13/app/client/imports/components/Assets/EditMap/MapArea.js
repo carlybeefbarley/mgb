@@ -72,7 +72,7 @@ export default class MapArea extends BaseMapArea {
         >
         {this.getNotification()}
         {this.renderMap()}
-        <PositionInfo getInfo={this.getInfo.bind(this)} ref='positionInfo' />
+        <PositionInfo getInfo={this.getInfo.bind(this)} infoStyle={{position: 'fixed', bottom: 0}} ref='positionInfo' />
       </div>
     )
   }

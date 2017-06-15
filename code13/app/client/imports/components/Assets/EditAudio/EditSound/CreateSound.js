@@ -67,11 +67,11 @@ export default class CreateSound extends React.Component {
 			// console.log(audioObject)
       this.sound.dataURI = audioObject.src
       this.playSound()
-    })		
+    })
 	}
 
 	playSound(){
-		setTimeout( () => { 
+		setTimeout( () => {
 	    let sound = new Audio()
 	    sound.src = this.sound.dataURI
 	    if(this.sound.dataURI.length > 100){ // check if dataUri is not corrupted. Sometimes jsfxr returns only part of uri
@@ -79,7 +79,7 @@ export default class CreateSound extends React.Component {
 	    } else {
 	    	this.wavesurfer.empty()
 	    }
-	    sound.play(); 
+	    sound.play();
   	}, 0);
 	}
 
@@ -102,7 +102,7 @@ export default class CreateSound extends React.Component {
 		} else {
 			this.props.importSound(null)
 		}
-		
+
 	}
 
 	resetSliders(){
@@ -115,8 +115,8 @@ export default class CreateSound extends React.Component {
 		let effectButtons = _.map(effects, (effect) => {
       return (
       	<div id={"mgbjr-editSound-createSound-button-"+effect} key={"effect_"+effect}>
-	      	<button 
-						className="ui fluid button small" 
+	      	<button
+						className="ui fluid button small"
 						onTouchEnd={this.gen.bind(this, effect)}
 						onMouseUp={this.gen.bind(this, effect)}>
 							{effect}
@@ -152,9 +152,9 @@ export default class CreateSound extends React.Component {
     let sliders = _.map(sliderParams, (param) => {
     	return (
     		<div key={"slider_"+param.id}>
-    			<input id={param.id} type="range" value={this.PARAMS[param.id]*1000} min={param.signed ? -1000 : 0} max="1000" 
+    			<input id={param.id} type="range" value={this.PARAMS[param.id]*1000} min={param.signed ? -1000 : 0} max="1000"
     			onChange={this.changeParam.bind(this, param.id)}
-    			onMouseUp={this.regenerateSound.bind(this)}
+    			onMouseUp={this.changeParam.bind(this, param.id)}
     			/> {param.title}<br/>
     		</div>
     	)
@@ -186,26 +186,26 @@ export default class CreateSound extends React.Component {
 						{sliders}
 						<div>&nbsp;</div>
 					</div>
-					
+
 					<div style={{float: "left", width: "30%"}}>
-						<button 
-							className="ui icon button massive" 
-							title="Play" 
+						<button
+							className="ui icon button massive"
+							title="Play"
 							onTouchEnd={this.regenerateSound.bind(this)}
 							onMouseUp={this.regenerateSound.bind(this)}>
 						  	<i className="play icon"></i>
 						</button>
-						<button 
-							id="mgbjr-editSound-createSound-save" 
-							className="ui icon button massive" 
+						<button
+							id="mgbjr-editSound-createSound-save"
+							className="ui icon button massive"
 							title="Save sound"
 							onTouchEnd={this.saveSound.bind(this)}
 							onMouseUp={this.saveSound.bind(this)}>
 						  	<i className="save icon"></i>
 						</button>
-						<button 
-							className="ui icon button massive" 
-							title="Reset sliders" 
+						<button
+							className="ui icon button massive"
+							title="Reset sliders"
 							onTouchEnd={this.resetSliders.bind(this)}
 							onMouseUp={this.resetSliders.bind(this)}>
 						  	<i className="erase icon"></i>
@@ -220,14 +220,14 @@ export default class CreateSound extends React.Component {
 
 						<div>
 							<div><b>Volume</b></div>
-		    			<input 
-								id="sound_vol" 
-								type="range" 
-								value={this.PARAMS.sound_vol*1000} 
-								min="0" 
-								max="1000" 
-		    				onChange={this.changeParam.bind(this, "sound_vol")} 
-		    				onMouseUp={this.regenerateSound.bind(this)}
+		    			<input
+								id="sound_vol"
+								type="range"
+								value={this.PARAMS.sound_vol*1000}
+								min="0"
+								max="1000"
+		    				onChange={this.changeParam.bind(this, "sound_vol")}
+		    				onMouseUp={this.changeParam.bind(this, "sound_vol")}
 		    			/>
 		    		</div>
 
@@ -237,7 +237,7 @@ export default class CreateSound extends React.Component {
 		    </div>
 		  </div>
 		);
-	}	
+	}
 }
 
 

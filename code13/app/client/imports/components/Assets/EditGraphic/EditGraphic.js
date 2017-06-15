@@ -1251,8 +1251,8 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  toolEraseFrame(){
-    if(confirm('Do you really want to erase whole frame?')){
+  toolEraseFrame() {
+    if (confirm('Do you really want to erase whole frame?')) {
       let w = this.props.asset.content2.width
       let h = this.props.asset.content2.height
 
@@ -1943,8 +1943,9 @@ export default class EditGraphic extends React.Component {
 
               {/*** Status Bar ***/}
               <div
-                className={`ui horizontal list ${this.state.showDrawingStatus ? '' : 'mgb-hidden'}`}
-                ref="statusBarDiv" style={{ marginBottom: '4px', marginTop: '1px', }}>
+                  className={`ui horizontal list ${this.state.showDrawingStatus ? '' : 'mgb-hidden'}`}
+                  ref="statusBarDiv"
+                  style={{ marginBottom: '4px', marginTop: '1px', whiteSpace: 'nowrap'}}>
                 <Popup
                   trigger={(
                     <div className="item">

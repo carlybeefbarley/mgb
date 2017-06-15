@@ -41,11 +41,13 @@ class EditGameForm extends BaseForm {
 
 
   render() {
+
     const isActorGame = _isActorGame(this.data)
     const isCodeGame  = _isCodeGame(this.data)
     const hasGameType = _hasGameType(this.data)
-    const touchControlSupportedFieldOptions = { boolIsTF: true, disabled: isActorGame }
 
+    const touchControlSupportedFieldOptions = { boolIsTF: true, disabled: isActorGame }
+    
     return (
       <div className='ui form'>
         {this.dropArea('Cover Graphic', 'coverGraphic', 'graphic', null, asset => {
@@ -82,21 +84,25 @@ class EditGameForm extends BaseForm {
             max: 1600
           }
         )}
+
+        { this.bool('Works in portrait', 'allowPortrait')}
+        { this.bool('Works in landscape', 'allowLandscape')}
+
         { isCodeGame && this.bool('Allow fullscreen', 'allowFullScreen')}
 
 
         { isActorGame && this.dropArea('Starting ActorMap', 'startActorMap', 'actormap' )}
 
         { hasGameType &&
-          <div>
-            <Divider />
-            <Header as='h4' content='Supported control schemes' />
-            { isActorGame && <Message compact info size='small' attached='bottom' content='ActorMap Games only support keyboard+mouse systems (currently)' /> }
-            { this.bool('Single touch / mouse', 'supportsTouchControl',        touchControlSupportedFieldOptions ) }
-            { this.bool('Multitouch',           'supportsMultiTouchControl',   touchControlSupportedFieldOptions ) }
-            { this.bool('Keyboard/keypad',      'supportsKeyControl',          touchControlSupportedFieldOptions ) }
-            { this.bool('Keyboard+mouse',       'supportsKeyPlusMouseControl', touchControlSupportedFieldOptions ) }
-          </div>
+        <div>
+          <Divider />
+          <Header as='h4' content='Supported control schemes' />
+          { isActorGame && <Message compact info size='small' attached='bottom' content='ActorMap Games only support keyboard+mouse systems (currently)' /> }
+          { this.bool('Single touch / mouse', 'supportsTouchControl',        touchControlSupportedFieldOptions ) }
+          { this.bool('Multitouch',           'supportsMultiTouchControl',   touchControlSupportedFieldOptions ) }
+          { this.bool('Keyboard/keypad',      'supportsKeyControl',          touchControlSupportedFieldOptions ) }
+          { this.bool('Keyboard+mouse',       'supportsKeyPlusMouseControl', touchControlSupportedFieldOptions ) }
+        </div>
         }
 
         <Divider />
@@ -105,6 +111,7 @@ class EditGameForm extends BaseForm {
 
       </div>
     )
+
   }
 }
 
@@ -117,6 +124,12 @@ export default class EditGame extends React.Component {
     handleContentChange:  PropTypes.func,
     editDeniedReminder:   PropTypes.func,
     activitySnapshots:    PropTypes.array               // can be null whilst loading
+  }
+
+  handleChange(){
+    const md = this.props.asset.metadata
+    console.log("ONCHANGE:", md)
+    this.handleSave()
   }
 
   handleSave(reason) {
@@ -141,7 +154,7 @@ export default class EditGame extends React.Component {
         <EditGameForm
             asset={asset}
             canEdit={canEdit}
-            onChange={this.handleSave.bind(this)}
+            onChange={this.handleChange.bind(this)}
             saveThumbnail={(d) => { handleContentChange(null, d, "Updating thumbnail") }} />
       </div>
     )

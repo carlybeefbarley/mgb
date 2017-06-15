@@ -65,8 +65,7 @@ export default class BaseForm extends React.Component {
         <label>{name}</label>
 
         <div className="ui toggle checkbox" ref={(b) => {$(b).checkbox()}} onClick={() => {
-          const val = fieldOptions.boolIsTF ? (!checked ? true : false) : (!checked ? '1' : '0')
-          this.data[key] = val
+          this.data[key] = fieldOptions.boolIsTF ? !checked : (!checked ? '1' : '0')
           this.props.onChange && this.props.onChange()
         }}>
           <input type="checkbox" name={key} tabIndex="0" className="mgb-hidden" ref="checkbox" checked={checked}

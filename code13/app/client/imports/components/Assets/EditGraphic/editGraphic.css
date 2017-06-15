@@ -66,9 +66,23 @@
 	text-align: center;
 }
 
-.zoomIcon {
-	padding-left: 7px !important;
-	padding-right: 7px !important;
+.TopToolBarRowIcon {
+	padding-left: 10px !important;
+	padding-right: 10px !important;
+}
+
+.zoomLeftIcon {
+	padding-left: 10px !important;
+	padding-right: 5px !important;
+}
+
+.zoomMiddleIcon {
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+}
+.zoomRightIcon {
+	padding-left: 5px !important;
+	padding-right: 10px !important;
 }
 
 .noMargin {

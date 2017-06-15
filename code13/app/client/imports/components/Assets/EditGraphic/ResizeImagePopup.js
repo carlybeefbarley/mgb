@@ -52,6 +52,7 @@ class ResizeImageDialog extends Component {
           (
             <Button
               id="mgbjr-EditGraphic-resizeButton"
+              className='TopToolBarRowIcon'
               content={`${initialWidth} x ${initialHeight}`}
             />
           )

@@ -143,7 +143,7 @@ export default class EditMap extends React.Component {
   }
 
   setInitialStateFromContent(){
-    if(Object.keys(this.props.asset.content2).length == 0){
+    if(Object.keys(this.props.asset.content2).length === 0){
       this.createNewMap()
       return;
     }

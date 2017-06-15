@@ -182,10 +182,10 @@ export default class MapArea extends React.Component {
     this.refs.mapElement.addEventListener('transitionend', onEnd)
   }
   componentWillReceiveProps (newprops) {
-    if(this.props.activeLayer != newprops.activeLayer){
+    if(this.props.activeLayer !== newprops.activeLayer){
       this.activateLayer(newprops.activeLayer)
     }
-    if(this.props.data.meta.options.preview != newprops.data.meta.options.preview){
+    if(this.props.data.meta.options.preview !== newprops.data.meta.options.preview){
       this.adjustPreview()
     }
   }
@@ -403,6 +403,16 @@ export default class MapArea extends React.Component {
       this.resetPreview()
   }
 
+  fitMap(direction = Camera.AUTO) {
+    this.lastEvent = null
+    const md = this.data
+
+    this.camera.fitMap(md.width * md.tilewidth, md.height * md.tileheight, direction)
+
+    if (this.options.preview)
+      this.resetPreview()
+  }
+
   resetPreview() {
 
     this.preview.x = DEFAULT_PREVIEW_ANGLE_X
@@ -611,12 +621,12 @@ export default class MapArea extends React.Component {
     if(e.buttons === void(0) && editMode === EditModes.view || (e.touches && e.touches.length > 1) ){
       this.moveCamera(e)
     }
-    else if (this.options.preview && (e.buttons == MOUSE_BUTTONS.middle))
+    else if (this.options.preview && (e.buttons === MOUSE_BUTTONS.middle))
       this.movePreview(e)
-    else if (e.buttons == MOUSE_BUTTONS.right
-              || e.buttons == MOUSE_BUTTONS.middle
-              || e.buttons == MOUSE_BUTTONS.right + MOUSE_BUTTONS.middle
-              || ( e.buttons == MOUSE_BUTTONS.left && editMode === EditModes.view )
+    else if (e.buttons === MOUSE_BUTTONS.right
+              || e.buttons === MOUSE_BUTTONS.middle
+              || e.buttons === MOUSE_BUTTONS.right + MOUSE_BUTTONS.middle
+              || ( e.buttons === MOUSE_BUTTONS.left && editMode === EditModes.view )
     )
     {
       this.moveCamera(e)
@@ -769,10 +779,10 @@ export default class MapArea extends React.Component {
   }
 
   // RAF calls this function
-  drawLayers () {
+  drawLayers (forceRedraw) {
     const now = Date.now()
     for (let i = 0; i < this.layers.length; i++)
-      this.layers[i]._draw(now)
+      this.layers[i]._draw(now, forceRedraw)
   }
   /* endof update stuff */
 
@@ -819,11 +829,7 @@ export default class MapArea extends React.Component {
   }
   // find out correct thumbnail size
   generatePreview() {
-    const canvas = document.createElement('canvas')
-    canvas.width = THUMBNAIL_WIDTH
-    canvas.height = THUMBNAIL_HEIGHT
-    const ctx = canvas.getContext('2d')
-    let ratio
+
 
     for (let i = 0; i < this.data.layers.length; i++) {
       const ld = this.data.layers[i]
@@ -833,10 +839,56 @@ export default class MapArea extends React.Component {
       const layer = this.getLayer(ld)
       if (!layer)
         continue
+
       const c = layer.refs.canvas
-      ratio = canvas.width / c.width
-      ctx.drawImage(c, 0, 0, c.width, c.height, 0, 0, canvas.width, c.height * ratio)
+      c.width = THUMBNAIL_WIDTH
+      c.height = THUMBNAIL_HEIGHT
     }
+
+    // store camera state
+    this.camera.stash()
+    this.camera._width = THUMBNAIL_WIDTH
+    this.camera._height = THUMBNAIL_HEIGHT
+    // adjust camera
+    this.fitMap()
+    // draw adjusted camera by force
+    this.drawLayers(true)
+
+    const canvas = document.createElement('canvas')
+    canvas.width = THUMBNAIL_WIDTH
+    canvas.height = THUMBNAIL_HEIGHT
+    const ctx = canvas.getContext('2d')
+
+
+    for (let i = 0; i < this.data.layers.length; i++) {
+      const ld = this.data.layers[i]
+      if (!ld.visible)
+        continue
+
+      const layer = this.getLayer(ld)
+      if (!layer)
+        continue
+
+      const c = layer.refs.canvas
+
+      // this has been copied directly from editGraphics - DRY
+      const wRatio = canvas.width / c.width
+      const hRatio = canvas.height / c.height
+      let ratio = wRatio < hRatio ? wRatio : hRatio
+      if (wRatio >= 1 && hRatio >= 1)
+        ratio = 1
+      const width = c.width * ratio
+      const height = c.height * ratio
+      const x = (canvas.width - width) / 2
+      const y = (canvas.height - height) / 2
+
+      ctx.drawImage(c, x, y, width, height)
+
+
+    }
+    // restore camera state
+    this.camera.pop()
+
     return canvas.toDataURL()
   }
 

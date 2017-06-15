@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import ReactDOM from 'react-dom'
 import QLink from '/client/imports/routes/QLink'
 
 import { getFeatureLevel } from '/imports/schemas/settings-client'
@@ -77,7 +76,7 @@ export default class Toolbar extends React.Component {
       let keyval = this.getKeyval(e)
       if (this.keyActions[keyval]) {
         const b = this.getButtonFromAction(this.keyActions[keyval].action)
-        
+
         if (!b || b.disabled)
           return
 
@@ -263,7 +262,7 @@ export default class Toolbar extends React.Component {
 
     if (b.component) {
       const ElComponent = b.component
-      return <ElComponent id={joyrideId} label={label} key={index} />
+      return <ElComponent id={joyrideId} label={label} button={b} key={index} />
     }
 
     const hidden = b.level > this.state.level ? " invisible" : ' isvisible' // isvisible because visible is reserved

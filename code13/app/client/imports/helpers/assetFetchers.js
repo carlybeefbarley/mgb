@@ -351,7 +351,7 @@ class AssetHandler {
     if (asset) {
       if (this.asset) {
         const etag = genetag(asset)
-        if (this.etag == etag) {
+        if (this.etag === etag) {
           // here we can silently update content2 without requesting new c2 from DB
           if (updateObj) {
             this.asset.content2 = updateObj.content2

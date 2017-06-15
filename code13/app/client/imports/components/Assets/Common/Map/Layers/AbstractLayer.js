@@ -123,10 +123,10 @@ export default class AbstractLayer extends React.Component {
       return
     }
     const b = this.props.camera
-    if (canvas.width != b.width) {
+    if (canvas.width !== b.width) {
       canvas.width = b.width
     }
-    if (canvas.height != b.height) {
+    if (canvas.height !== b.height) {
       canvas.height = b.height
     }
   }

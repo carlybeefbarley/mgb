@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { Button } from 'semantic-ui-react'
+import { Button, Segment } from 'semantic-ui-react'
 
 import sty from  '../editGraphic.css'
 
@@ -20,8 +20,8 @@ export default class MiniMap extends React.Component {
       isTessellated: false
     }
 
-    this.screenX = 0
-    this.screenY = 0 // px from bottom
+    this.screenX = 12 // px from right
+    this.screenY = 90 // px from top
 
     this.scale = 1
 
@@ -39,7 +39,7 @@ export default class MiniMap extends React.Component {
     // this.screenX = wrapper.parentNode.offsetWidth
     if (this.props.height > this.props.editCanvasMaxHeight)
       this.scale = this.props.editCanvasMaxHeight / this.props.height
-    
+
     this.forceUpdate()
   }
 
@@ -48,7 +48,7 @@ export default class MiniMap extends React.Component {
       this.redraw()
   }
 
-  /** Beware of react-anti-pattern. The parent is calling into this function!!! */ 
+  /** Beware of react-anti-pattern. The parent is calling into this function!!! */
   redraw (editCanvas, w, h) {
     if (editCanvas) {
       this.backup = {
@@ -66,8 +66,8 @@ export default class MiniMap extends React.Component {
       h = this.backup.h
     }
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    const cols = this.state.isTessellated ? 3 : 1 
-    const rows = this.state.isTessellated ? 3 : 1 
+    const cols = this.state.isTessellated ? 3 : 1
+    const rows = this.state.isTessellated ? 3 : 1
     for (let row=0; row<rows; row++)
       for (let col=0; col<cols; col++)
         this.ctx.drawImage(editCanvas, w*col, h*row, w*this.scale, h*this.scale)
@@ -90,7 +90,7 @@ export default class MiniMap extends React.Component {
       e = e.touches[0]
     this.dragStartX = e.clientX
     this.dragStartY = e.clientY
-  }  
+  }
 
   onDrag = (e) => {
     e.preventDefault()
@@ -102,13 +102,13 @@ export default class MiniMap extends React.Component {
 
     // this.screenX -= (this.dragStartX - e.clientX)
     this.screenX += this.dragStartX - e.clientX
-    this.screenY += this.dragStartY - e.clientY
+    this.screenY -= this.dragStartY - e.clientY
     this.dragStartX = e.clientX
     this.dragStartY = e.clientY
     this.throttledForceUpdate()
-  }  
+  }
 
-  throttledForceUpdate = _.throttle(() => this.forceUpdate(), 100) 
+  throttledForceUpdate = _.throttle(() => this.forceUpdate(), 100)
 
   toggleTessellated = () => {
     this.setState({ isTessellated: !this.state.isTessellated })
@@ -121,14 +121,14 @@ export default class MiniMap extends React.Component {
 
     const wrapStyle = {
       display: "block",
-      overflow: "auto",
+      overflow: "hidden",
       minWidth: "130px",
-      width: (this.props.width*multiplier)+"px",
+      width: (this.props.width*multiplier+2)+"px",
       padding: "0px",
-      position:  'relative',
+      position:  'absolute',
       // left: (this.screenX-200) + 'px',
       right: this.screenX+"px",
-      bottom: this.screenY + 'px',
+      top: this.screenY + 'px',
       float: "right"
     }
 
@@ -140,7 +140,7 @@ export default class MiniMap extends React.Component {
             icon='close'
             size='mini'
             floated='right'
-            onClick={this.handleCloseClick} 
+            onClick={this.handleCloseClick}
             />
 
           <Button
@@ -152,7 +152,7 @@ export default class MiniMap extends React.Component {
             onDragStart={this.onDragStart}
             onDrag={this.onDrag}
             onTouchStart={this.onDragStart}
-            onTouchMove={this.onDrag} 
+            onTouchMove={this.onDrag}
             />
 
           <Button
@@ -164,16 +164,20 @@ export default class MiniMap extends React.Component {
             onClick={this.toggleTessellated}
             />
         </div>
-
-        <canvas 
-          ref='canvas'
-          width={width}
-          height={height}
-          style={{float:"right"}}
-          >
-        </canvas>
+        <Segment style={{ float: 'right', clear: 'both', margin: 0, padding: 0, width:width, height:height}}>
+          <canvas
+            ref='canvas'
+            width={width}
+            height={height}
+            onDragStart={this.onDragStart}
+            onDrag={this.onDrag}
+            onTouchStart={this.onDragStart}
+            onTouchMove={this.onDrag}
+            >
+          </canvas>
+        </Segment>
 
       </div>
-    )  
+    )
   }
 }

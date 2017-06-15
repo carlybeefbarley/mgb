@@ -28,6 +28,8 @@ const _defaultGameAssetMetadata = {
   startActorMap:  '',
   playCount:      0,
   allowFullScreen: true,
+  allowPortrait: true,
+  allowLandscape: true,
   width: 800,
   height: 600
 }
@@ -47,7 +49,7 @@ class EditGameForm extends BaseForm {
     const hasGameType = _hasGameType(this.data)
 
     const touchControlSupportedFieldOptions = { boolIsTF: true, disabled: isActorGame }
-    
+
     return (
       <div className='ui form'>
         {this.dropArea('Cover Graphic', 'coverGraphic', 'graphic', null, asset => {
@@ -85,10 +87,13 @@ class EditGameForm extends BaseForm {
           }
         )}
 
-        { this.bool('Works in portrait', 'allowPortrait')}
-        { this.bool('Works in landscape', 'allowLandscape')}
+        <div>
+          <Divider />
+          { this.bool('Works in portrait', 'allowPortrait', {boolIsTF: true})}
+          { this.bool('Works in landscape', 'allowLandscape', {boolIsTF: true})}
+        </div>
 
-        { isCodeGame && this.bool('Allow fullscreen', 'allowFullScreen')}
+        { isCodeGame && this.bool('Allow fullscreen', 'allowFullScreen', {boolIsTF: true})}
 
 
         { isActorGame && this.dropArea('Starting ActorMap', 'startActorMap', 'actormap' )}
@@ -126,9 +131,18 @@ export default class EditGame extends React.Component {
     activitySnapshots:    PropTypes.array               // can be null whilst loading
   }
 
-  handleChange(){
+  handleChange(key){
     const md = this.props.asset.metadata
     console.log("ONCHANGE:", md)
+
+    // would be nice to actually know which on input has been changed
+    if(!md.allowLandscape && !md.allowPortrait){
+      if(key === 'allowPortrait')
+        md.allowLandscape = true
+      else
+        md.allowPortrait = true
+    }
+
     this.handleSave()
   }
 

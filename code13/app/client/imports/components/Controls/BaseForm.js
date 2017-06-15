@@ -59,6 +59,7 @@ export default class BaseForm extends React.Component {
   //    .boolIsTF:   if boolIsTF===true,  then these bools are represented as Boolean true and false;
   //                 if boolIsTF===false (or is undefined), then these bools are represented as '1' and '0'
   bool(name, key, fieldOptions = {}) {
+    // maybe boolIsTF - should be on by default - as it is expected value
     const checked = fieldOptions.boolIsTF ? this.data[key] : !!parseInt(this.data[key], 10)
     return (
       <div className={"inline fields" + (fieldOptions.disabled ? " disabled": "") }>
@@ -66,13 +67,14 @@ export default class BaseForm extends React.Component {
 
         <div className="ui toggle checkbox" ref={(b) => {$(b).checkbox()}} onClick={() => {
           this.data[key] = fieldOptions.boolIsTF ? !checked : (!checked ? '1' : '0')
-          this.props.onChange && this.props.onChange()
+          this.props.onChange && this.props.onChange(key)
         }}>
           <input type="checkbox" name={key} tabIndex="0" className="mgb-hidden" ref="checkbox" checked={checked}
                  onChange={(val) => {
-            this.data[key] = val
-            this.props.onChange && this.props.onChange()
-          }}/>
+                    this.data[key] = val
+                    this.props.onChange && this.props.onChange(key)
+                 }}
+          />
         </div>
       </div>
     )

@@ -17,6 +17,44 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Wed Jun 14 2017 22:30:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4373'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Graphic editor - Color palette changes',
+          'changeSummary': 'Color palette remembers last 24 selected/picked colors. Also, if you click the color icon, it will pin the color picker in place. Click it again to remove it. The color-hover picker still works as before. ',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.graphic',
+          'type': 'improvement',
+          'changeName': 'Graphic editor - Layout improvements',
+          'changeSummary': 'Rearranged tools and preview map to be a bit more space-efficient. There is an improved Drawing status line which can be hidden using the bullseye icon in the Views options. Also the preview map can be dragged around more of the screen area than before',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'More fixes for Actormap games and the actormap editor.' ,
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Mon Jun 12 2017 11:00:00 GMT-0700 (PDT)',
 
       'id': {
@@ -299,7 +337,7 @@ const mgbReleaseInfo = {
 
       // ,
       // Older history has been moved to ${olderHistoryPath} in order to reduce js size
-      // But at least the most recent should be in this file. 
+      // But at least the most recent should be in this file.
       // See notes in main_server.js for how to more to ${olderHistoryPath} as JSON
 
   ]

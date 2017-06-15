@@ -13,7 +13,6 @@ const ChallengeState = ( { ownername, asIcon, style } ) => (
         <Icon name='checked calendar' color='orange' style={style}/>
         :
         <Label
-            inverted
             color='orange'
             id="mgbjr-asset-edit-header-right-challenge"
             size='small'

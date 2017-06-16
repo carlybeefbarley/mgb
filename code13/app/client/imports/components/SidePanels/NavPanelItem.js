@@ -26,7 +26,6 @@ class NavPanelItem extends React.PureComponent {
   handleMouseEnter = () => this.setState({ open: true })
   handleMouseLeave = () => this.setState({ open: false })
   handleItemClick = (e, data) => {
-    console.log('HIC....data=', data)
     if (data && data['data-joyridecompletiontag'])
       joyrideCompleteTag(data['data-joyridecompletiontag'])
     this.setState({ open: false })

@@ -1562,14 +1562,14 @@ export default class EditCode extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     // this.changeTimeout - is set when user is typing
     const retval = !( this.changeTimeout || nextState._preventRenders || this.state.creatingBundle)
-    //console.log("Should update:", retval)
-    // && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
+    // manually check state properties that definitely will require redraw on change
     return retval
       || this.state.needsBundle !== nextState.needsBundle
       || this.state.hotReload !== nextState.hotReload
       || this.state.lastUndoRedo !== nextState.lastUndoRedo
       || this.state.isPlaying !== nextState.isPlaying
       || this.state.consoleMessages !== nextState.consoleMessages
+      || this.state.astReady !== nextState.astReady
   }
 
   codemirrorValueChanged(doc, change) {
@@ -2325,7 +2325,7 @@ export default class EditCode extends React.Component {
   tryTutorial() {
     if (!this._currentCodemirrorValue)
       return
-      
+
     const pj = TutorialMentor.parseJson(this._currentCodemirrorValue)
 
     if (pj.errorHintString)

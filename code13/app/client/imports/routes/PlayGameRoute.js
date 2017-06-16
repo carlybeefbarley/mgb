@@ -223,14 +223,11 @@ class PlayCodeGame extends React.Component {
       this.props.incrementPlayCountCb()
     }
   }
+
   /**
    * Enables fullscreen on game's iframe
    * */
   fullscreen() {
-    this.setFsManually()
-    return
-
-    // TODO: find out
     const rfs = this.refs.iframe.requestFullScreen
       || this.refs.iframe.webkitRequestFullScreen
       || this.refs.iframe.mozRequestFullScreen

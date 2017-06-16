@@ -56,9 +56,10 @@ export default class Layer extends React.Component {
   selectLayer = event => {
     const clickedDiv = event.target
     // don't invoke select if remove layer
-    if (clickedDiv.className.search('remove') !== -1)
+    // INSANITY: this relies on the icon name class !!! watch out
+    if (clickedDiv.className.search('trash') !== -1)
       return
-    if (clickedDiv.firstChild && clickedDiv.firstChild.className && clickedDiv.firstChild.className.search('remove') !== -1)
+    if (clickedDiv.firstChild && clickedDiv.firstChild.className && clickedDiv.firstChild.className.search('trash') !== -1)
       return
 
     this.props.selectLayer(this.props.idx)
@@ -148,7 +149,7 @@ export default class Layer extends React.Component {
                 <Dropdown.Divider />
                 <Dropdown.Item
                   onClick={this.deleteLayer}
-                  icon='remove'
+                  icon='trash'
                   content='Delete' />
               </Dropdown.Menu>
             </Dropdown>
@@ -184,7 +185,10 @@ export default class Layer extends React.Component {
             </div>
           </td>
           <td>
-            <Icon onClick={this.deleteLayer} name='trash'/>
+            <Icon
+              onClick={this.deleteLayer}
+                  // INSANITY: this.selectLayer() relies on the icon name class !!! watch out
+              name='trash'/>
           </td>
       </tr>
     )

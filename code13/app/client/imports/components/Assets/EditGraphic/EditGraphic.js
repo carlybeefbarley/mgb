@@ -491,8 +491,8 @@ export default class EditGraphic extends React.Component {
 
   updateEditCanvasFromSelectedPreviewCanvas()   // TODO(DGOLDS?): Do we still need the vendor-prefix smoothing flags?
   {
-    let w = this.previewCanvasArray[this.state.selectedLayerIdx].width
-    let h = this.previewCanvasArray[this.state.selectedLayerIdx].height
+    let w = this.previewCanvasArray[0].width
+    let h = this.previewCanvasArray[0].height
     let s = this.state.editScale
     let c2 = this.props.asset.content2
     this.editCtx.imageSmoothingEnabled = false
@@ -504,7 +504,7 @@ export default class EditGraphic extends React.Component {
 
     // draws all layers on edit canvas and layer canvas
     for (let i=this.previewCanvasArray.length-1; i>=0; i--) {
-      if (!this.props.asset.content2.layerParams[i].isHidden) {
+      if (this.props.asset.content2.layerParams[i] && !this.props.asset.content2.layerParams[i].isHidden) {
         this.editCtx.drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w*s, h*s)
         this.frameCtxArray[this.state.selectedFrameIdx].drawImage(this.previewCanvasArray[i], 0, 0, w, h, 0, 0, w, h)
       }
@@ -1042,10 +1042,7 @@ export default class EditGraphic extends React.Component {
 
     const layerIdx = this.state.selectedLayerIdx
     const layerParam = this.props.asset.content2.layerParams[layerIdx]
-    const layerCount = this.previewCanvasArray.length
-    const layerName = (layerParam.name && layerParam.name.length > 0) ?
-      layerParam.name : `Unnamed layer #${layerIdx+1}`
-    const layerMsg = (
+    const layerMsg = !layerParam ? '' : (
       (layerParam.isLocked ? '&emsp;<small class="ui small circular blue label" data-tooltip="Current layer is locked">&nbsp;<i class="ui lock icon"/><span>locked</span>&nbsp;</small>': "")
       + (layerParam.isHidden ? '&emsp;<small class="ui small circular red label" data-tooltip="Current layer is hidden">&nbsp;<i class="ui hide icon"/><span>hidden</span>&nbsp;</small>' : "")
     )
@@ -1752,7 +1749,7 @@ export default class EditGraphic extends React.Component {
     const layerIdx = this.state.selectedLayerIdx
     const layerParam = this.props.asset.content2.layerParams[layerIdx]
     const layerCount = this.previewCanvasArray ? this.previewCanvasArray.length : 0
-    const layerName = (layerParam.name && layerParam.name.length > 0) ?
+    const layerName = (layerParam && layerParam.name && layerParam.name.length > 0) ?
                         layerParam.name : `Unnamed layer #${layerIdx+1}`
 
 

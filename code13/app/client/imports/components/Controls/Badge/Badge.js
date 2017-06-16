@@ -14,7 +14,7 @@ const Badge = ( { name, forceSize } ) =>
       on='hover'
       size='small'
       inverted
-      positioning='bottom left'
+      position='bottom left'
       trigger={(
         <img 
           style={{ maxWidth: '64px', maxHeight: '64px', margin: '4px' }} 

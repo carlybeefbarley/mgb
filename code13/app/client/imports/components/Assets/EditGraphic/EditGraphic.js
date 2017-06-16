@@ -1778,7 +1778,7 @@ export default class EditGraphic extends React.Component {
                 :
                 <Popup
                     on='hover'
-                    positioning='bottom left'
+                    position='bottom left'
                     hoverable
                     hideOnScroll
                     mouseEnterDelay={250}
@@ -1820,7 +1820,7 @@ export default class EditGraphic extends React.Component {
                   mouseEnterDelay={250}
                   content="Click here or scroll/mousewheel over edit area to change zoom level."
                   size='tiny'
-                  positioning='bottom left'/>
+                  position='bottom left'/>
 
               <Popup
                   trigger={ (
@@ -1836,7 +1836,7 @@ export default class EditGraphic extends React.Component {
                   mouseEnterDelay={250}
                   content="Click here to reset zoom"
                   size='tiny'
-                  positioning='bottom left'/>
+                  position='bottom left'/>
 
 
               <Popup
@@ -1853,7 +1853,7 @@ export default class EditGraphic extends React.Component {
                   mouseEnterDelay={250}
                   content="Click here or scroll/mousewheel over edit area to change zoom level."
                   size='tiny'
-                  positioning='bottom left'/>
+                  position='bottom left'/>
 
               <Popup
                   wide
@@ -1890,7 +1890,7 @@ export default class EditGraphic extends React.Component {
                     </div>
                     )}
                   size='tiny'
-                  positioning='bottom left'/>
+                  position='bottom left'/>
               </Grid.Column>
             </Grid.Row>
             { /* Second Toolbar row */ }
@@ -1966,7 +1966,7 @@ export default class EditGraphic extends React.Component {
                       content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
                       size='small'
                       mouseEnterDelay={250}
-                      positioning='bottom left'/>
+                      position='bottom left'/>
                     &nbsp;
                     <Popup
                       trigger={(
@@ -1988,7 +1988,7 @@ export default class EditGraphic extends React.Component {
                       content="Click here or use the layers table to change the currently selected layer"
                       size='small'
                       mouseEnterDelay={250}
-                      positioning='bottom left'/>
+                      position='bottom left'/>
                     &nbsp;
 
                     <div className="item">

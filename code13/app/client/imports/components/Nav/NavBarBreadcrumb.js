@@ -49,7 +49,7 @@ const ProjectsSection = ( { usernameToShow, projectNames } ) =>
           trigger={section}
           on='hover'
           hoverable
-          positioning='bottom center'
+          position='bottom center'
           mouseEnterDelay={400} >
         <Popup.Header>
           List Assets in...
@@ -129,7 +129,7 @@ const NavBarBreadcrumbUI = ( {
               )}
               on='hover'
               hoverable
-              positioning='bottom center'
+              position='bottom center'
               mouseEnterDelay={500} >
             <Popup.Header>
               {<usernameToShow></usernameToShow>}
@@ -210,7 +210,7 @@ const NavBarBreadcrumbUI = ( {
           trigger={_sepTo}
           hoverable
           wide
-          positioning='bottom left'
+          position='bottom left'
           on='hover'
           onOpen={_handleRelatedAssetsPopupOpen}
           // size='small'

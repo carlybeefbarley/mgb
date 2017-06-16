@@ -7,7 +7,7 @@ const ChallengeState = ( { ownername, asIcon, style } ) => (
     size='small'
     on='hover'
     hoverable
-    positioning='bottom right'
+    position='bottom right'
     trigger={(
       asIcon ?
         <Icon name='checked calendar' color='orange' style={style}/>

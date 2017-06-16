@@ -12,7 +12,7 @@ import { showToast } from '/client/imports/routes/App'
 import Footer from '/client/imports/components/Footer/Footer'
 
 const ErrMsg = props => (
-  props.text ? <div style={{paddingTop: 0, marginTop: '-12px', marginBottom: '10px', color:'red'}}>{props.text}</div> : null 
+  props.text ? <div style={{paddingTop: 0, marginTop: '-12px', marginBottom: '10px', color:'red'}}>{props.text}</div> : null
 )
 
 export default SignupRoute = React.createClass({
@@ -21,7 +21,7 @@ export default SignupRoute = React.createClass({
     urlLocation: React.PropTypes.object
   },
 
-  getInitialState: function() {    
+  getInitialState: function() {
     return {
       errors:     {},
       isLoading:  false
@@ -36,7 +36,7 @@ export default SignupRoute = React.createClass({
 
   checkUserName: function (e) {
     if (e && e.target.value && e.target.value.length > 2 )
-      Meteor.call('AccountsHelp.userNameTaken', e.target.value, (err,r) => { 
+      Meteor.call('AccountsHelp.userNameTaken', e.target.value, (err,r) => {
         if (!err) {
           const msg = r ? `Username '${r}' has already been taken` : null
           const newErrState = Object.assign({}, this.state.errors, { username: msg } )
@@ -54,7 +54,7 @@ export default SignupRoute = React.createClass({
 
     const innerRender = () => (
       currUser ? <Message info content='You are logged in already!' /> : (
-        <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
+        <Form onChange={this.handleChange} onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
           <Form.Input type="email" label='Enter your email address (used for login)' name='email' placeholder='Email address' error={!!errors.email} />
           <ErrMsg text={errors.email} />
           <Form.Input onBlur={this.checkUserName} onChange={this.fixUsername} label='Choose a username (used for profile)' name='username' placeholder='New username (short, no spaces)'  error={!!errors.username} />
@@ -80,7 +80,7 @@ export default SignupRoute = React.createClass({
                 </Segment>
               </Grid.Column>
               <Grid.Column only='computer'>
-                <Image src='/images/mascots/team.png'/> 
+                <Image src='/images/mascots/team.png'/>
               </Grid.Column>
             </Grid>
           </Container>
@@ -90,10 +90,17 @@ export default SignupRoute = React.createClass({
     )
   },
 
-  handleSubmit: function(event, outerFormData) {
-    const formData = outerFormData.formData  // formData.formData as of SUIR v0.62.x.. See https://github.com/Semantic-Org/Semantic-UI-React/pull/951
+  handleChange: function(e) {
+    const { name, value } = e.target
+    this.setState( (prevState, props) => ({
+      formData: { ...prevState.formData, [name]: value }
+    }) )
+  },
+
+  handleSubmit: function(event) {
     event.preventDefault()
-    const { email, username, password } = formData  
+    const { formData } = this.state
+    const { email, username, password } = formData
     const errs = {}
 
     _.each('email,username,password'.split(','), k => {
@@ -119,14 +126,12 @@ export default SignupRoute = React.createClass({
     }, error => {
       if (error)
         this.setState( { isLoading: false, errors: { result: error.reason || 'Server Error while creating account' } } )
-      else 
+      else
       {
         Meteor.call('User.sendSignUpEmail', email)
         logActivity("user.join",  `New user "${username}"`, null, null)
-        stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial        
+        stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
         utilPushTo(this.context.urlLocation.query, '/learn/getstarted')
-        
-
 
         // analytics.identify(Meteor.user()._id, {
         //   name: Meteor.user().profile.name,

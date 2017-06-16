@@ -14,7 +14,7 @@ const AssetShowDeletedSelector = ( { showDeletedFlag, handleChangeFlag } ) => {
         size='small'
         trigger={button}
         on='hover'
-        positioning='bottom center'
+        position='bottom center'
         header='Show/hide deleted assets'
         content='Click here to show/hide assets that have been deleted'/>
   )

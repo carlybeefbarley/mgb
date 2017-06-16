@@ -15,7 +15,7 @@ const _makeTitle = (isStable, canEdit) =>
 const StableState = ( { isStable, canEdit, handleChange } ) => (
   <Popup
     size='small'
-    positioning='bottom right'
+    position='bottom right'
     trigger={(
       <Icon
         bordered

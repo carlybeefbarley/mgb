@@ -255,7 +255,7 @@ export default class ActorTileset extends React.Component {
                 inverted
                 trigger={<small>{numActorsthisLayer} of your {numActorsTotal} dragged-in Actors are compatible with this layer.</small>}
                 header={`Actors list for '${layerName}' layer`}
-                positioning='left center'
+                position='left center'
                 content="This box only displays Actors who have behavior types that work on the currently selected layer. For example, a 'player' Actor can only be used on the Active layer. Select a different layer above to see other actors."
                 />
             </div>

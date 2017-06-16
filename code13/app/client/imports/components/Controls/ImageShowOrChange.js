@@ -42,7 +42,7 @@ const ImageShowOrChange = ( { imageSrc, canEdit, canLinkToSrc, handleChange, hea
       size='small'
       inverted
       mouseEnterDelay={500}
-      positioning='bottom left'
+      position='bottom left'
       trigger={innerImg} >
       <Popup.Header>
         { header }

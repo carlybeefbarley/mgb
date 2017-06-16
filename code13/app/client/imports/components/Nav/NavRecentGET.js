@@ -70,7 +70,7 @@ export default NavRecentGET = React.createClass({
         item = (
           <Popup
             key={a._id}
-            positioning="right center">
+            position="right center">
             trigger={
             <QLink to={`/u/${a.byUserName}`} className="ui item">
               <i className={"ui " + ActivityTypes.getIconClass(a.activityType)} />
@@ -105,7 +105,7 @@ export default NavRecentGET = React.createClass({
         item = (
           <Popup
             key={a._id}
-            positioning="right center"
+            position="right center"
             trigger={(
               <QLink
                 to={linkTo}
@@ -125,7 +125,7 @@ export default NavRecentGET = React.createClass({
         item = (
           <Popup
             key={a._id}
-            positioning="right center"
+            position="right center"
             trigger={
               <QLink to={`/u/${a.byUserName}/projects`} className="ui item">
                 <i className={"ui " + ActivityTypes.getIconClass(a.activityType)} />

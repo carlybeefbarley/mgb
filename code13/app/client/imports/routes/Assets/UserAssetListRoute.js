@@ -305,7 +305,7 @@ export default UserAssetListRoute = React.createClass({
           <div style={{marginTop: '0.8em'}}>
             <Popup
                 trigger={(<small>Show asset kinds:</small>)}
-                positioning='right center'
+                position='right center'
                 size='mini'
                 content='Alt-click to multi-select'/>
             { isAllKinds || (

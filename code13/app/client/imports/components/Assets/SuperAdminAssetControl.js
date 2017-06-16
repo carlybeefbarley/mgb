@@ -20,7 +20,7 @@ const SuperAdminAssetControl = ( { asset, handleToggleBan } ) => {
               content={ labelText }
               />
         )}
-        positioning='bottom right' >
+        position='bottom right' >
         <Popup.Header>
           SuperAdmin Asset Control
         </Popup.Header>

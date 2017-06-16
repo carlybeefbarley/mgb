@@ -849,7 +849,7 @@ export default fpChat = React.createClass( {
               on='hover'
               size='small'
               hoverable
-              positioning='left center'
+              position='left center'
               trigger={(
                 <Icon
                     style={{ padding: '4px 0px 0px 16px' }}

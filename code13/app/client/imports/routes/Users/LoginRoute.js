@@ -11,7 +11,7 @@ import Footer from '/client/imports/components/Footer/Footer'
 import HomeRoute from '/client/imports/routes/Home'
 
 export default LoginRoute = React.createClass({
-  
+
   getInitialState: function()
   {
     return {
@@ -44,7 +44,7 @@ export default LoginRoute = React.createClass({
           <Container text>
             <Segment padded>
               <Header style={{color:'black'}} as='h2'>Log in</Header>
-              <Form onSubmit={this.handleSubmit} loading={isLoading} error={!!errorMsg}>
+              <Form onChange={this.handleChange} onSubmit={this.handleSubmit} loading={isLoading} error={!!errorMsg}>
                 <Form.Input type="email" label='email' name='email' placeholder='login using your email address' />
                 <Form.Input label='password' name='password' placeholder='enter your password' type='password'/>
                 <Message error
@@ -61,15 +61,22 @@ export default LoginRoute = React.createClass({
     )
   },
 
-  handleSubmit: function(e, formData) {
+  handleChange: function(e) {
+    const { name, value } = e.target
+    this.setState( (prevState, props) => ({
+      formData: { ...prevState.formData, [name]: value }
+    }) )
+  },
+
+  handleSubmit: function(e) {
     e.preventDefault()
-    const { email, password } = formData.formData  // formData.formData as of SUIR v0.62.x.. See https://github.com/Semantic-Org/Semantic-UI-React/pull/951
+    const { email, password } = this.state.formData
     this.setState( { isLoading: true, errorMsg: null } )
 
     Meteor.loginWithPassword(email.trim(), password, error => {
-      if (error) 
+      if (error)
         this.setState( { isLoading: false, errorMsg: error.reason } )
-      else 
+      else
       {
         var userName = Meteor.user().profile.name
         logActivity("user.login",  `Logging in "${userName}"`, null, null)

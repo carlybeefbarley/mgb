@@ -161,7 +161,7 @@ export default AssetCard = React.createClass({
             <Popup
               hoverable
               mouseEnterDelay={500}
-              positioning='left center'
+              position='left center'
               trigger={
                 (
                   <div style={{ flexDirection: 'column' }}>

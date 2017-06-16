@@ -244,7 +244,7 @@ export default fpAssets = React.createClass({
           <div style={{marginTop: '0.6em'}}>
             <Popup
                 trigger={(<small>Show asset kinds:</small>)}
-                positioning='right center'
+                position='right center'
                 size='mini'
                 content='Alt-click to multi-select'/>
             { isAllKinds || <small style={{float: 'right', fontWeight: 'bold', cursor: 'pointer'}} onClick={() => this.handleToggleKind('__all')}>(show all)</small> }

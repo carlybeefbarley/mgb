@@ -38,7 +38,7 @@ const ProjectForkGenerator = ( { project, isForkPending } ) => {
               content={<span style={{color: project.allowForks ? 'green' : null}}>{numChildren}</span>}
               />
         )}
-        positioning='bottom right' >
+        position='bottom right' >
         <Popup.Header>
           { numChildren ? `Project has been forked ${numChildren} time${numChildren==1?'':'s'}` : 'This Project has never been forked' }
         </Popup.Header>

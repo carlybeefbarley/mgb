@@ -6,9 +6,9 @@ import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import sty from  '../editGraphic.css'
 
 const _layerCanvasStyle = {
-  maxWidth:  "256px", 
-  maxHeight: "256px", 
-  overflow:  "auto" 
+  maxWidth:  "256px",
+  maxHeight: "256px",
+  overflow:  "auto"
 }
 
 export default class Layer extends React.Component {
@@ -97,7 +97,7 @@ export default class Layer extends React.Component {
   }
 
   render() {
-    const { 
+    const {
       width, height,
       isSelected, selectedFrame, frameNames,
       layer, idx, layerCount, copyLayerID, isCanvasLayersVisible,
@@ -128,27 +128,27 @@ export default class Layer extends React.Component {
                 <Dropdown.Item
                   onClick={this.moveLayerDown}
                   disabled={layerCount-1 === idx}
-                  icon='arrow down' 
+                  icon='arrow down'
                   content='Move Down' />
                 <Dropdown.Divider />
                 <Dropdown.Item
                   onClick={this.editName}
-                  icon='edit' 
+                  icon='edit'
                   content='Rename' />
                 <Dropdown.Divider />
                 <Dropdown.Item
                   onClick={this.copyLayer}
-                  icon='copy' 
+                  icon='copy'
                   content='Copy' />
                 <Dropdown.Item
                   onClick={this.pasteLayer}
                   disabled={copyLayerID === null}
-                  icon='paste' 
+                  icon='paste'
                   content='Paste' />
                 <Dropdown.Divider />
                 <Dropdown.Item
                   onClick={this.deleteLayer}
-                  icon='remove' 
+                  icon='remove'
                   content='Delete' />
               </Dropdown.Menu>
             </Dropdown>
@@ -184,7 +184,7 @@ export default class Layer extends React.Component {
             </div>
           </td>
           <td>
-            <Icon onClick={this.deleteLayer} name='remove'/>
+            <Icon onClick={this.deleteLayer} name='trash'/>
           </td>
       </tr>
     )

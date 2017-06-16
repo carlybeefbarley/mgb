@@ -384,7 +384,7 @@ export default class TileMapLayer extends AbstractLayer {
     this.drawInfo.v = this.ctrl.v
     this.drawInfo.h = this.ctrl.h
 
-    if (this.isMouseOver == true) {
+    if (this.isMouseOver === true) {
       this._highlightTiles()
     }
     this.drawSelection()
@@ -494,7 +494,8 @@ export default class TileMapLayer extends AbstractLayer {
     }
 
     this.ctx.drawImage(pal.image,
-      pal.x + ox, pal.y + oy, pal.w + ow, pal.h + oh,
+      pal.x + ox, pal.y + oy,
+      pal.w + ow, pal.h + oh,
       drawX, drawY,
       drawW, drawH
     )
@@ -814,10 +815,10 @@ edit[EditModes.fill] = function (e, up) {
         reachRight = false;
 
         // Go down until reach bottom
-        while(y++ < height  && (!tileGid[tilePos] || tileGid[tilePos] === 0)) {  
+        while(y++ < height  && (!tileGid[tilePos] || tileGid[tilePos] === 0)) {
           // Insert tile where empty
           if (!tileGid[tilePos] || tileGid[tilePos] === 0) {
-            this.insertTile(tilePos, col[0].gid) 
+            this.insertTile(tilePos, col[0].gid)
           }
 
           if(x >= 0) {
@@ -831,7 +832,7 @@ edit[EditModes.fill] = function (e, up) {
               reachLeft = false;
             }
           }
-        
+
           if(x < width) {
             if (!tileGid[tilePos+1] || tileGid[tilePos+1] === 0) {
               if(!reachRight) {
@@ -843,7 +844,7 @@ edit[EditModes.fill] = function (e, up) {
               reachRight = false;
             }
           }
-            
+
           tilePos += width;
         }
       }

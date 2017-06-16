@@ -15,7 +15,7 @@ const AssetShowStableSelector = ( { showStableFlag, handleChangeFlag } ) => {
         size='small'
         trigger={button}
         on='hover'
-        positioning='bottom center'
+        position='bottom center'
         header='Show/hide locked Assets'      
         content={ active ? 
                     "Currently showing ONLY 'Locked' Assets. Click here to ALSO show 'Unlocked' Assets" 

@@ -54,7 +54,7 @@ export const getNavPanels = (currUser, showAll) => {
         name: "learn",
         explainClickAction: "Shortcut: Clicking here jumps to the Learning Paths page",
         icon: { name: "student" },
-        fHideForIconView: true,      // For top-level, items, use 
+        fHideForIconView: true,      // For top-level, items, use
         hdr: "Learn",
         to: '/learn',
         menu: [
@@ -188,6 +188,15 @@ export const getNavPanels = (currUser, showAll) => {
             title: 'List my Assets',
             icon: 'pencil',
             content: 'List My Assets',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'listMyChallenge',
+            to: `/u/${uname}/assets`,
+            query: { 'showChallengeAssets': '1', 'view': 's' },
+            title: 'List my "Challenge Assets"',
+            icon: { name: 'checked calendar', color: 'orange' },
+            content: 'List My "Challenge Assets"',
           },
           {
             subcomponent: 'Item',

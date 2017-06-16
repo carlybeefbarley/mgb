@@ -15,7 +15,7 @@ const AssetShowChallengeAssetsSelector = ( { showChallengeAssetsFlag, handleChan
         size='small'
         trigger={button}
         on='hover'
-        positioning='bottom center'
+        position='bottom center'
         header='Show/hide Challenge Assets'
         content={
           active ? 

@@ -46,12 +46,13 @@ const _compactMsgSty = { maxWidth: '500px' }  // Message icon cancels compact pr
 const Preloader = ( { msg } ) => <Message style={_compactMsgSty} icon={<Icon name='circle notched' loading/>} content={`Preloading ${msg}`} />
 const MapLoadFailed = ( { err } ) => <Message style={_compactMsgSty} icon='warning sign' error content={err} />
 
+// assetName should be in owner:asset format and the owner should be resolved to the owner of that asset
 const _resolveOwner = (implicitOwnerName, assetName) => {
   const parts = assetName.split(':')
   const isImplicit = (parts.length === 1 || parts[0].includes('/'))
   return {
     ownerName: isImplicit ? implicitOwnerName : parts[0],
-    assetName: isImplicit ? assetName : assetName.slice(parts[0].length + 1)
+    assetName: isImplicit ? assetName : assetName.split(':').pop()
   }
 }
 const _mkMapUri = (ownerName, assetName) => {
@@ -132,6 +133,10 @@ export default class Mage extends React.Component {
 
   handleSetInventoryVisibility = newVisibility => {
     this.setState( { isInventoryShowing: !!newVisibility } )
+    // unpause game after closing inventory
+    if (!this.state.activeNpcDialog && this.state.isInventoryShowing)
+      this._game.isPaused = false
+    return this.state.activeNpcDialog // to know if there is an active NPC dialog since this function gets called for toggle npc dialog
   }
 
   handleHideInventory = () => this.handleSetInventoryVisibility(false)
@@ -274,7 +279,7 @@ export default class Mage extends React.Component {
     _.each(desiredGraphicNames, aName => {
       let gName = aName
       if (this._isFrameNamedGraphicAsset(aName)) {
-        gName = aName.split(' #')[0] // name without frame for fetching asset
+        gName = aName.split(" #")[0] // name without frame for fetching asset
       }
       if (!_.has(pendingGraphicLoads, aName) && !_.has(loadedGraphics, aName))
       {

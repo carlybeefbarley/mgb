@@ -243,7 +243,7 @@ export default UserProfileRoute = React.createClass({
                       <Popup
                         on='hover'
                         hoverable
-                        positioning='bottom right'
+                        position='bottom right'
                         trigger={<img className="ui avatar image" src={mgb1.getUserAvatarUrl(firstMgb1name)} />}
                         mouseEnterDelay={500}
                         >

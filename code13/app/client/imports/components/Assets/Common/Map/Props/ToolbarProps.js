@@ -1,6 +1,7 @@
 import LayerTypes from '../Tools/LayerTypes.js'
 import TileHelper from '../Helpers/TileHelper.js'
 import EditModes from '../Tools/EditModes.js'
+import Camera         from '../Camera'
 
 const TB = {
   togglePreviewState: function(){
@@ -42,7 +43,18 @@ const TB = {
     this.refs.map.resetCamera()
     this.setState({preview: this.options.preview})
   },
-
+  fitMap: function(){
+    this.refs.map.fitMap()
+    this.setState({preview: this.options.preview})
+  },
+  fitMapH: function(e){
+    this.refs.map.fitMap(Camera.HORIZONTAL)
+    this.setState({preview: this.options.preview})
+  },
+  fitMapV: function(e){
+    this.refs.map.fitMap(Camera.VERTICAL)
+    this.setState({preview: this.options.preview})
+  },
   undo: function(){
     this.doUndo()
   },

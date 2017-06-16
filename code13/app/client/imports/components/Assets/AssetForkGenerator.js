@@ -38,7 +38,7 @@ const AssetForkGenerator = ( { asset, canFork, isForkPending, doForkAsset } ) =>
               content={numChildren}
               />
         )}
-        positioning='bottom right' >
+        position='bottom right' >
         <Popup.Header>
           { numChildren ? `${numChildren} Forks` : 'Fork Asset' }
         </Popup.Header>

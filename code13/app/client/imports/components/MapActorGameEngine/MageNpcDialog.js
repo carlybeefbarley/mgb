@@ -4,7 +4,7 @@ import autobind from 'react-autobind'
 import { Segment, Icon, Label, Header, Popup } from 'semantic-ui-react'
 
 // MapActorGameEngine NPC Dialog
-// This will be used as a modal/popup, and is instantiated when the game needs it. 
+// This will be used as a modal/popup, and is instantiated when the game needs it.
 
 const _imgSty = { margin: 'auto 24px auto 24px' }
 
@@ -49,13 +49,13 @@ class MageNpcDialogText extends React.Component {
     {
       shownChars++
       // Double text speed; In the future, can make text speed an option the user can change
-      if (shownChars + 1 <= msg.length) 
+      if (shownChars + 1 <= msg.length)
         shownChars++
-      
+
       this.setState( { shownChars } )
       this._rafId = requestAnimationFrame(this.showNextChar_loopWithRAF)
     }
-    else 
+    else
       this._rafId = null
   }
 
@@ -77,7 +77,7 @@ const MageNpcDialog = ( { leftActor, message, choices, responseCallbackFn, graph
     <img style={_imgSty} src={actorImgSrc(leftActor, graphics) } />
     <Segment>
       <MageNpcDialogText message={message} />
-      { _.map(choices, (choice,idx) => (choice && 
+      { _.map(choices, (choice,idx) => (choice &&
           <div key={idx}>
             <Label onClick={() => responseCallbackFn(idx+1)}>
               {choice}
@@ -89,9 +89,9 @@ const MageNpcDialog = ( { leftActor, message, choices, responseCallbackFn, graph
     </Segment>
     <Popup
         trigger={
-          <Icon 
-              name='remove' 
-              className='right floated' 
+          <Icon
+              name='remove'
+              className='right floated'
               onClick={() => responseCallbackFn(0)}/>
         }
         content="Click here or press CTRL to close dialog"

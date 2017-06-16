@@ -64,7 +64,7 @@ export default MagePlayGameActiveLayers = {
               break;
             case MgbActor.alActorType_NPC:
             case MgbActor.alActorType_Player:
-              aa.moveSpeed = MgbActor.numberFromActorParam(databag.allchar.movementSpeedNum)
+              aa.moveSpeed = 1
               // no 'break' here: falling through to next clause on purpose...
             case MgbActor.alActorType_Item: case 4: case 5: case 6: case 7:
               var tp = this.graphics[databag.all.defaultGraphicName]

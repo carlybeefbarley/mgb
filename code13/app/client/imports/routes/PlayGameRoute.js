@@ -43,7 +43,7 @@ const GameTypeDetail = ( { game, style } ) => {
     return (
       <Popup
           size='small'
-          positioning='bottom right'
+          position='bottom right'
           trigger={(
             <QLink to={linkToAsset} style={style}>
               <Label
@@ -63,7 +63,7 @@ const GameTypeDetail = ( { game, style } ) => {
     return (
       <Popup
         size='small'
-        positioning='bottom right'
+        position='bottom right'
         trigger={(
           <QLink to={linkToAsset} style={style}>
             <Label

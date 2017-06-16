@@ -38,7 +38,7 @@ const WorkState = ( { workState, canEdit, size, popupPosition, handleChange, lab
   <Popup
       on='hover'
       hoverable={canEdit}    // So mouse-over popup keeps it visible for Edit for example
-      positioning={popupPosition}
+      position={popupPosition}
       trigger={(
         <span>
           <WorkStateIcon size={size} workState={workState} labelStyle={labelStyle} onIconClick={onIconClick}/>

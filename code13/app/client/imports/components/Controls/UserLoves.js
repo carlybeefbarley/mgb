@@ -23,7 +23,7 @@ const UserLovesUI = ( { seeLovers, userList, size, popupPosition, onIconClick, c
       on='hover'
       size='small'
       hoverable={true}    // So mouse-over popup keeps it visible for Edit for example
-      positioning={popupPosition}
+      position={popupPosition}
       trigger={(
         <span>
           <small>{asset.heartedBy_count} </small>

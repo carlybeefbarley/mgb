@@ -50,7 +50,7 @@ export default TaskApprove = React.createClass({
                 content='task'
                 />
           )}
-          positioning='bottom right' >
+          position='bottom right' >
           <Popup.Header>
             Approve task
           </Popup.Header>

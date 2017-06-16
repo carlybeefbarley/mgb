@@ -1,6 +1,6 @@
-import _ from "lodash";
-import React, { Component, PropTypes } from "react";
-import { Form, Popup, Button } from "semantic-ui-react";
+import _ from "lodash"
+import React, { Component, PropTypes } from "react"
+import { Form, Popup, Button } from "semantic-ui-react"
 
 class ResizeImageDialog extends Component {
   state = {
@@ -10,24 +10,23 @@ class ResizeImageDialog extends Component {
   };
 
   isTooLarge = () =>
-    this.state.newWidth > this.props.maxWidth ||
-      this.state.newHeight > this.props.maxHeight;
+    (this.state.newWidth > this.props.maxWidth || this.state.newHeight > this.props.maxHeight)
   isNotValid = () =>
-    this.state.newWidth < 1 || this.state.newHeight < 1 || this.isTooLarge();
-  handleChangeScaling = (e, { value }) => this.setState({ scaling: value });
+    this.state.newWidth < 1 || this.state.newHeight < 1 || this.isTooLarge()
+  handleChangeScaling = (e, { value }) => this.setState({ scaling: value })
   handleChangeWidth = (e, { value }) =>
-    this.setState({ newWidth: parseInt(value, 10) });
+    this.setState({ newWidth: parseInt(value, 10) })
   handleChangeHeight = (e, { value }) =>
-    this.setState({ newHeight: parseInt(value, 10) });
+    this.setState({ newHeight: parseInt(value, 10) })
 
   handleSubmit = e => {
-    e.preventDefault();
-    if (this.isNotValid()) 
-      return;
+    e.preventDefault()
+    if (this.isNotValid())
+      return
 
-    const { newWidth, newHeight, scaling } = this.state;
-    this.props.handleResize(newWidth, newHeight, scaling);
-  };
+    const { newWidth, newHeight, scaling } = this.state
+    this.props.handleResize(newWidth, newHeight, scaling)
+  }
 
   render() {
     const {
@@ -36,9 +35,9 @@ class ResizeImageDialog extends Component {
       maxWidth,
       maxHeight,
       scalingOptions
-    } = this.props;
-    const { newWidth, newHeight, scaling } = this.state;
-    const makeSticky = newWidth || newHeight;
+    } = this.props
+    const { newWidth, newHeight, scaling } = this.state
+    const makeSticky = newWidth || newHeight
 
     return (
       <Popup
@@ -48,12 +47,12 @@ class ResizeImageDialog extends Component {
         on="hover"
         closeOnPortalMouseLeave={!makeSticky}
         closeOnTriggerMouseLeave={!makeSticky}
-        positioning="bottom left"
+        position="bottom left"
         trigger={
           (
             <Button
-              size="small"
               id="mgbjr-EditGraphic-resizeButton"
+              className='TopToolBarRowIcon'
               content={`${initialWidth} x ${initialHeight}`}
             />
           )

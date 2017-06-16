@@ -1,5 +1,3 @@
-'use strict'
-
 const Camera = function (map) {
   this.map = map
   // backwards compatibility with older maps.. should be safe to remove in the future
@@ -17,7 +15,15 @@ const Camera = function (map) {
   this._zoom = map.options.camera.zoom
   this._lastx = 0
   this._lasty = 0
+  this.stashedState = []
+
+  // _width and _height are only used for thumbnail generation
+  this._width = 0
+  this._height = 0
 }
+Camera.AUTO = 0
+Camera.HORIZONTAL = 1
+Camera.VERTICAL = 2
 
 Camera.prototype = {
   set x(val) {
@@ -38,11 +44,15 @@ Camera.prototype = {
     return this._lasty - this._y
   },
   get width() {
+    if(this._width)
+      return this._width
     if (this.map.refs.mapElement)
       return this.map.refs.mapElement.offsetWidth
     return 100
   },
   get height() {
+    if(this._height)
+      return this._height
     if (this.map.refs.mapElement)
       return this.map.refs.mapElement.offsetHeight
     return 100
@@ -69,6 +79,48 @@ Camera.prototype = {
     this.x = 0
     this.y = 0
     this.zoom = 1
+  },
+
+  fitMap(width, height, direction = 0){
+    this.reset()
+    if(direction === Camera.HORIZONTAL){
+      this.zoom = this.width / width
+      this.y = 0.5 * (this.height - height*this.zoom) / this.zoom
+    }
+    else if(direction === Camera.VERTICAL){
+      this.zoom = this.height / height
+      this.x = 0.5 * (this.width - width*this.zoom) / this.zoom
+    }
+    else if(direction === Camera.AUTO){
+      const nw = this.width / width
+      const nh = this.height / height
+      if(nw < nh){
+        this.zoom = nw
+        this.y = 0.5 * (this.height - height*this.zoom) / this.zoom
+      }
+      else{
+        this.zoom =  nh
+        this.x = 0.5 * (this.width - width*this.zoom) / this.zoom
+      }
+    }
+  },
+
+  stash(){
+    // or simply assign / clone ???
+    this.stashedState.push({
+      x: this.x,
+      y: this.y,
+      zoom: this.zoom
+    })
+  },
+
+  pop(){
+    const p = this.stashedState.pop()
+    this.x = p.x
+    this.y = p.y
+    this._width = 0
+    this._height = 0
+    this.zoom = p.zoom
   }
 }
 

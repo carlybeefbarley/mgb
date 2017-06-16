@@ -7,16 +7,18 @@ const ChallengeState = ( { ownername, asIcon, style } ) => (
     size='small'
     on='hover'
     hoverable
-    positioning='bottom right'
+    position='bottom right'
     trigger={(
-      asIcon ? <Icon name='checked calendar' color='orange'  style={style}/> : 
-      <Label
-          basic
-          id="mgbjr-asset-edit-header-right-challenge"
-          size='small'
-          style={style}
-          icon={{ name: 'checked calendar', color: 'orange', fitted: true }}
-        />
+      asIcon ?
+        <Icon name='checked calendar' color='orange' style={style}/>
+        :
+        <Label
+            color='orange'
+            id="mgbjr-asset-edit-header-right-challenge"
+            size='small'
+            style={style}
+            icon={{ name: 'checked calendar', fitted: true, style: { marginRight: 0 } }}
+          />
     )} >
     <Popup.Header>
       Skills Challenge Asset

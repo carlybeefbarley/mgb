@@ -4,7 +4,7 @@ import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import { Dropdown } from 'semantic-ui-react'
 import _ from 'lodash'
 
-const _openLeftStyle = { left: 'auto', right: '0' } 
+const _openLeftStyle = { left: 'auto', right: '0' }
 class NavPanelItem extends React.PureComponent {
   static propTypes = {
     hdr: PropTypes.node,
@@ -25,9 +25,10 @@ class NavPanelItem extends React.PureComponent {
 
   handleMouseEnter = () => this.setState({ open: true })
   handleMouseLeave = () => this.setState({ open: false })
-  handleItemClick = e => { 
-    if (e.target.dataset && e.target.dataset.joyridecompletiontag)
-      joyrideCompleteTag(e.target.dataset.joyridecompletiontag)
+  handleItemClick = (e, data) => {
+    console.log('HIC....data=', data)
+    if (data && data['data-joyridecompletiontag'])
+      joyrideCompleteTag(data['data-joyridecompletiontag'])
     this.setState({ open: false })
   }
   handleDropdownClick = () => {
@@ -56,7 +57,7 @@ class NavPanelItem extends React.PureComponent {
             return React.createElement(Dropdown[subcomponent], {
               key: subcomponentProps.jrkey,
               "data-joyridecompletiontag": `mgbjr-CT-np-${name}-${subcomponentProps.jrkey}`,
-              id: `mgbjr-np-${name}-${subcomponentProps.jrkey}`,           
+              id: `mgbjr-np-${name}-${subcomponentProps.jrkey}`,
               as: QLink,
               onClick: this.handleItemClick,
               ...(_.omit(subcomponentProps, ['jrkey','explainClickAction'])),

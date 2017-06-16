@@ -1,0 +1,30 @@
+.rotate-screen {
+  position: fixed;
+  bottom: 0;
+  top: 50vh;
+  left: 40vw;
+  right: 0;
+  font-size: calc( 1.5vh + 1.5vw );
+  transform: translate(0, -11em);
+  transform-origin: 78% 15%;
+}
+
+.rotate-screen .mobile {
+  font-size: 20em;
+  position: absolute;
+  line-height: 1em;
+  width: 1em;
+  /* opacity: 0.5; */
+  height: 1em;
+}
+
+.rotate-screen .mobile.shadow {
+  transform: rotate(-90deg) translate(-28.5%, -28.5%);
+  color: grey;
+}
+
+.rotate-screen .repeat {
+  font-size: 7em;
+  position: absolute;
+  transform: translate(-38%, 87%);
+}

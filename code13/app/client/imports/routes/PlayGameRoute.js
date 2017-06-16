@@ -26,6 +26,8 @@ import elementResizeDetectorMaker  from 'element-resize-detector'
 
 import { getAssetHandlerWithContent2, makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
+import './playGame.css'
+
 const _incrementPlayCount = _.debounce(
   assetId => { Meteor.call('job.gamePlayStats.playGame', assetId) },
   SpecialGlobals.gamePlay.playCountDebounceMs
@@ -80,6 +82,21 @@ const GameTypeDetail = ( { game, style } ) => {
         />
   )
   return null
+}
+
+const RotateScreen = props => {
+  const style = {}
+  if('portrait' in props)
+    style.transform = 'rotate(90deg)'
+
+
+  return (
+    <div className='rotate-screen' style={style}>
+      <Icon name="mobile" className='shadow' />
+      <Icon name="mobile" />
+      <Icon name="repeat" className='share' />
+    </div>
+  )
 }
 
 
@@ -372,15 +389,26 @@ const PlayGame = ({ game, user, incrementPlayCountCb, availableWidth }) => {
           warning
           content='This GameConfig Asset does not contain a game definition. Someone should edit it and fix that'/>
     )
-    const helmet = (
-      <Helmet
-        title={`MGB: Play '${game.name}'`}
-        titleTemplate="%s"
-        meta={[
-            {"name": "My Game Builder", "content": ""}
-        ]} />
-    )
 
+  const helmet = (
+    <Helmet
+      title={`MGB: Play '${game.name}'`}
+      titleTemplate="%s"
+      meta={[
+          {"name": "My Game Builder", "content": ""}
+      ]} />
+  )
+
+  // landscape
+  if(window.innerHeight < window.innerWidth) {
+    if (!game.metadata.allowLandscape)
+      return <RotateScreen ladscape />
+  }
+  // portrait
+  if(window.innerWidth < window.innerHeight) {
+    if (!game.metadata.allowPortrait)
+      return <RotateScreen portrait />
+  }
 
   switch (game.metadata.gameType) {
     case 'codeGame':

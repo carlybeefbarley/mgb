@@ -80,6 +80,12 @@ Meteor.methods({
     })
 
     return count
+  },
+
+  "Skill.getSkills": function(userId) {
+    const result = Skills.find(userId).fetch()
+    // console.log('------------getSkill', result)
+    return result[0]
   }
 })
 

@@ -2221,6 +2221,17 @@ export default class EditCode extends React.Component {
     }
     else    // code...
     {
+      config.buttons.unshift({ name: 'separator' })
+      config.buttons.unshift( {
+        name:  'toggleHotReload',
+        label: 'Automatically reload game screen',
+        icon:  'refresh' + `${this.tools && this.mgb_c2_hasChanged ? ' red' : ''} ${!this.state.astReady ? ' animate rotate' : ''}`,
+        tooltip: (!this.state.astReady ? "Loading all required files...\n" : '') + 'Automatically reloads game screen when one of the imported scripts changes',
+        disabled: false,
+        active: this.props.asset.content2.hotReload,
+        level:    3,
+        shortcut: 'Ctrl+Alt+Shift+R'
+      })
       config.buttons.unshift( {
         name:     'handleStop',
         label:    'Stop Running',
@@ -2268,16 +2279,7 @@ export default class EditCode extends React.Component {
         level:    3,
         shortcut: 'Ctrl+Alt+Shift+B'
       })
-      config.buttons.push( {
-        name:  'toggleHotReload',
-        label: 'Automatically reload game screen',
-        icon:  'refresh' + `${this.tools && this.mgb_c2_hasChanged ? ' red' : ''} ${!this.state.astReady ? ' animate rotate' : ''}`,
-        tooltip: (!this.state.astReady ? "Loading all required files...\n" : '') + 'Automatically reloads game screen when one of the imported scripts changes',
-        disabled: false,
-        active: this.props.asset.content2.hotReload,
-        level:    3,
-        shortcut: 'Ctrl+Alt+Shift+R'
-      })
+
     }
     return config
   }

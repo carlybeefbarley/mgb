@@ -17,6 +17,32 @@ const mgbReleaseInfo = {
   'releases': [
 
 
+
+    {
+      'timestamp': 'Sun Jun 18 2017 10:30:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4395'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed a problem that was preventing forgot-password mail from sending. Improved the "Import Helper" in the Code Editor' ,
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
     {
       'timestamp': 'Sat Jun 17 2017 11:30:00 GMT-0700 (PDT)',
 

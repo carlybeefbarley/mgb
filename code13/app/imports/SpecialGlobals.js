@@ -50,17 +50,23 @@ export default SpecialGlobals = {
       {
         name: 'Phaser',
         import: 'phaser',
-        desc: 'A JavaScript library for building games'
+        desc: 'For making games',
+        landingPageUrl: '//phaser.io',
+        apiDocsPageUrl: '//photonstorm.github.io/phaser-ce/'
       },
       {
         name: 'React',
         import: 'react',
-        desc: 'A JavaScript library for building apps'
+        desc: 'For making apps',
+        landingPageUrl: '//facebook.github.io/react/',
+        apiDocsPageUrl: '//facebook.github.io/react/docs/introducing-jsx.html'
       },
       {
         name: '_',
         import: 'lodash',
-        desc: 'A general-purpose JavaScript library'
+        desc: 'Helpful extra functions',
+        landingPageUrl: '//lodash.com/',
+        apiDocsPageUrl: '//lodash.com/docs'
       }
     ]
   },

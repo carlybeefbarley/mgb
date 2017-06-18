@@ -5,14 +5,14 @@ import settings from '/imports/SpecialGlobals'
 
 export default class ImportHelperPanel extends React.Component {
   static propTypes = {
-    scripts:       PropTypes.array, // list of scripts
-    knownImports:  PropTypes.array, // list of known imports - won't show in the list
-    includeImport: PropTypes.func,  // callback to import script
-    assetName:     PropTypes.string
+    scripts:               PropTypes.array,            // list of scripts
+    knownImports:          PropTypes.array,            // list of known imports - won't show in the list
+    includeLocalImport:    PropTypes.func.isRequired,  // callback to import script
+    includeExternalImport: PropTypes.func.isRequired
   }
 
-  options = []  // TODO: move this to state. will have { text, description, value }
-  popular = []  // TODO: move this to state. will have { text, description, value }
+  options = []  // This is created when props update. Bit of an anti-pattern... { text, description, value }
+  popular = []  // This is created when props update. Bit of an anti-pattern... { text, description, value }
 
   constructor(...a) {
     super(...a)
@@ -21,74 +21,49 @@ export default class ImportHelperPanel extends React.Component {
     this.state = {
       showExpanded: savedState === null ? 0 : savedState
     }
-    this.updateProps(this.props)
+    this.updateOptionsFromProps(this.props)
   }
 
   handleHideShowClick = () => {
     const next = this.state.showExpanded ? 0 : 1
     localStorage.setItem("EditCodeImportHelperPanelExtended", next)
-    this.setState({"showExpanded": next})
+    this.setState( { "showExpanded": next } )
   }
 
   shouldComponentUpdate(newP, newS) {
-    if (this.state.showExpanded || newS.showExpanded) {
+    if (this.state.showExpanded || newS.showExpanded || !this.lastUpdate) {
       this.lastUpdate = Date.now()
       return true
     }
-    if (!this.lastUpdate) {
+    // don't update often than 1 sec  BUGBUG here
+    if (Date.now() - this.lastUpdate > 1000) {
       this.lastUpdate = Date.now()
-      return true
+      return !_.isEqual(this.state, newS) || !_.isEqual(this.props, newP)
     }
-    else {
-      // don't update often than 1 sec  BUGBUG here
-      if (Date.now() - this.lastUpdate > 1000) {
-        this.lastUpdate = Date.now()
-        return !_.isEqual(this.state, newS) || !_.isEqual(this.props, newP)
-      }
-      return false
-    }
+    return false
   }
 
-  componentWillReceiveProps(props) {
-    if (!_.isEqual(this.props, props))
-      this.updateProps(props)
+  componentWillReceiveProps(nextProps) {
+    if (!_.isEqual(this.props, nextProps))
+      this.updateOptionsFromProps(nextProps)
   }
 
-  updateProps(props) {
-    const checkIfImported = (s, global = false) => {
-      if (props.knownImports) {
-        const index = props.knownImports.findIndex( known => {
-          if (global)
-            return s.import === known.name
-          else
-            return s.text === known.name.substring(1)
-        } )
-        return index > -1
-      }
-      return false
-    }
-
-    const map = []
-    if (props.scripts) {
-      props.scripts.forEach(s => {
-        if (checkIfImported(s))
-          return
-        map.push({text: s.text, description: s.desc, value: s.text})
-      })
-      this.options = _.uniqWith(map, _.isEqual)
-    }
-
-    const libs = settings.editCode.popularLibs
-    this.popular = []
-    libs.forEach( (s, i) => {
-      if (checkIfImported(s, true))
-        return
-      this.popular.push({ text: s.name, description: s.desc, value: i})
-    })
+  updateOptionsFromProps( { knownImports, scripts } ) {
+    this.popular = _
+      .chain(settings.editCode.popularLibs)
+      .map( ( lib, idx ) => ( { label: lib.import, description: lib.desc, value: idx } ) )
+      .filter( lib => !_.some( knownImports, k => ( lib.label === k.name ) ) )
+      .uniqWith(_.isEqual)
+      .value()
+    this.options = _
+      .chain(scripts)
+      .filter( s => !_.some( knownImports, k => ( s.text === k.name.substring(1) ) ) )
+      .map(s => ( { "data-tooltip": "asdasdasd", label: s.text, description: s.desc, value: s.text } ) )
+      .uniqWith(_.isEqual)
+      .value()
   }
 
   render() {
-
     const { scripts, includeLocalImport, includeExternalImport } = this.props
     const { showExpanded } = this.state
 
@@ -107,7 +82,7 @@ export default class ImportHelperPanel extends React.Component {
 
         {!!showExpanded &&
         <div>
-          <Label className='left ribbon' content={<small>My Scripts</small>} />
+          <Label ribbon content={<small>My Scripts to <code>import</code></small>} />
 
           <div style={{margin: '5px 0'}}>
             <Dropdown
@@ -120,7 +95,7 @@ export default class ImportHelperPanel extends React.Component {
             />
           </div>
 
-          <Label className='left ribbon' content={<small>Popular modules</small>} />
+          <Label ribbon content={<small>Recommended JavaScript packages to <code>import</code></small>} />
 
           <div style={{margin: '5px 0'}}>
             <Dropdown
@@ -135,7 +110,7 @@ export default class ImportHelperPanel extends React.Component {
           <div>
             <small>
               <Icon name='info circle' color='black'/>
-              <span className="cm-s-eclipse">You can import other user assets:
+              <span className="cm-s-eclipse">You can <code className="cm-keyword">import</code> other user's assets, e.g:
                 <br />
                 <code>
                   <span className="cm-keyword">import</span>&nbsp;
@@ -164,7 +139,7 @@ export default class ImportHelperPanel extends React.Component {
         </div>
         }
         { !showExpanded &&
-         <Label color='blue' className='left ribbon' content={<small>Quick import</small>} />
+         <Label color='blue' ribbon content={<small><code>import</code> helper</small>} />
         }
       </Segment>
     )

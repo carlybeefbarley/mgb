@@ -149,9 +149,6 @@ export default class EditCode extends React.Component {
       undo: [],
       redo: []
     }
-
-    this.includeLocalImport = this.includeLocalImport.bind(this)
-    this.includeExternalImport = this.includeExternalImport.bind(this)
   }
 
 
@@ -2362,7 +2359,7 @@ export default class EditCode extends React.Component {
     return `import ${validJSName(val)} from '/${user ? user + ':' : ''}${val}'\n`
   }
 
-  includeLocalImport(val){
+  includeLocalImport = val => {
     if (!this.props.canEdit)
     {
       this.warnNoWriteAccess()
@@ -2371,10 +2368,10 @@ export default class EditCode extends React.Component {
     const imp = this.createImportString(val) + this.codeMirror.getValue()
 
     this.codeMirror.setValue(imp)
-    this.handleContentChange({src: imp})
+    this.handleContentChange( { src: imp } )
   }
 
-  includeExternalImport(val){
+  includeExternalImport = val => {
     if (!this.props.canEdit)
     {
       this.warnNoWriteAccess()
@@ -2383,7 +2380,7 @@ export default class EditCode extends React.Component {
     const imp = `import ${val.name} from '${val.import}'\n` + this.codeMirror.getValue()
 
     this.codeMirror.setValue(imp)
-    this.handleContentChange({src: imp})
+    this.handleContentChange( { src: imp } )
   }
 
   // TODO: add some sort of message to highlighted lines????

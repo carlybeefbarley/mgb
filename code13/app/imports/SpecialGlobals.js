@@ -50,17 +50,17 @@ export default SpecialGlobals = {
       {
         name: 'Phaser',
         import: 'phaser',
-        desc: 'A fast, free and fun open source framework for Canves and WebGL powered browser games.'
+        desc: 'A JavaScript library for building games'
       },
       {
         name: 'React',
         import: 'react',
-        desc: 'A JavaScript library for building user interfaces'
+        desc: 'A JavaScript library for building apps'
       },
       {
         name: '_',
         import: 'lodash',
-        desc: 'A modern JavaScript utility library delivering modularity, performance & extras.'
+        desc: 'A general-purpose JavaScript library'
       }
     ]
   },

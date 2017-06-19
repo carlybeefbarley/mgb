@@ -700,12 +700,36 @@ export default class MapArea extends React.Component {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')
       return
 
-    
-    // these should match with cases in the handleKeyUp
-    if([37, 38, 39, 40, 13].indexOf(e.which) > -1) {
-      e.stopPropagation()
-      e.preventDefault()
+    let needUpdate = false
+    switch (e.which) {
+      case 37: // left
+        this.camera.x += this.data.tilewidth * this.camera.zoom
+        needUpdate = true
+        e.stopPropagation()
+        e.preventDefault()
+        break
+      case 38: // top
+        this.camera.y += this.data.tileheight * this.camera.zoom
+        needUpdate = true
+        e.stopPropagation()
+        e.preventDefault()
+        break
+      case 39: // right
+        this.camera.x -= this.data.tilewidth * this.camera.zoom
+        needUpdate = true
+        e.stopPropagation()
+        e.preventDefault()
+        break
+      case 40: // down
+        this.camera.y -= this.data.tileheight * this.camera.zoom
+        needUpdate = true
+        e.stopPropagation()
+        e.preventDefault()
+        break
     }
+
+    if(needUpdate)
+      this.redraw()
   }
   handleKeyUp (e) {
     if (this.props.isPlaying)
@@ -716,23 +740,8 @@ export default class MapArea extends React.Component {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')
       return
 
+    // leave switch - as we may add more keys later
     switch (e.which) {
-      case 37: // left
-        this.camera.x += this.data.tilewidth * this.camera.zoom
-        update = true
-        break
-      case 38: // top
-        this.camera.y += this.data.tileheight * this.camera.zoom
-        update = true
-        break
-      case 39: // right
-        this.camera.x -= this.data.tilewidth * this.camera.zoom
-        update = true
-        break
-      case 40: // down
-        this.camera.y -= this.data.tileheight * this.camera.zoom
-        update = true
-        break
       case 13: // enter
         this.selectionToCollection()
         this.selection.clear()

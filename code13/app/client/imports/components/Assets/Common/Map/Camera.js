@@ -1,5 +1,8 @@
-const Camera = function (map) {
+import _ from 'lodash'
+const Camera = function (map, onChange) {
   this.map = map
+
+  this.onChange = _.debounce(onChange, 1000, {leading: false, trailing: true})
   // backwards compatibility with older maps.. should be safe to remove in the future
   if (!map.options.camera) {
     map.options.camera = {x: 0, y: 0, zoom: 1}
@@ -26,13 +29,21 @@ Camera.HORIZONTAL = 1
 Camera.VERTICAL = 2
 
 Camera.prototype = {
+
   set x(val) {
+    if(this._x === val)
+      return
+
     this.map.options.camera.x = val
     this._lastx = this._x
     this._x = val
+    this.onChange()
   },
   get x() {return this._x},
   set y(val) {
+    if(this._x === val)
+      return
+
     this.map.options.camera.y = val
     this._lasty = this._y
     this._y = val
@@ -40,6 +51,7 @@ Camera.prototype = {
   get movementX() {
     return this._lastx - this._x
   },
+
   get movementY() {
     return this._lasty - this._y
   },

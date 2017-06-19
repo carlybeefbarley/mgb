@@ -117,9 +117,8 @@ export default class EditMap extends React.Component {
   }
   set preventUpdates(v){
     this._preventUpdates = v
-    /*console.error(v ? "Preventing updates: STARTED" : "Preventing updates: STOPPED")
-    // failsafe
 
+    /*
     window.setTimeout(() => {
       // not sure how to debug this...
       if(this._preventUpdates) {
@@ -191,10 +190,14 @@ export default class EditMap extends React.Component {
   }
 
   get meta() {
-    // make sure we have options object - older maps don't have it
-    if(!this.mgb_content2.meta || !this.mgb_content2.meta.options){
-      this.mgb_content2.meta = {
-        options: {
+
+    if(!this.props.asset.metadata.options){
+      // try old version:
+      this.props.asset.metadata.options = this.mgb_content2.meta
+
+      // store new version
+      if(!this.props.asset.metadata.options){
+        this.props.asset.metadata.options = {
           // empty maps aren't visible without grid
           showGrid: 1,
           camera: { _x: 0, _y: 0, _zoom: 1 },
@@ -203,8 +206,15 @@ export default class EditMap extends React.Component {
           randomMode: false
         }
       }
+      if(this.props.asset.metadata.options.options){
+        this.props.asset.metadata.options = this.props.asset.metadata.options.options
+      }
+
     }
-    return this.mgb_content2.meta
+
+    return this.props.asset.metadata
+
+    // return this.mgb_content2.meta
   }
   get options() {
     return this.meta.options
@@ -346,6 +356,7 @@ export default class EditMap extends React.Component {
     // probably state should hold only props.options ?
     this.options.mode = mode
     this.setState({editMode: mode})
+    this.saveMeta()
   }
 
   handleSave (data, reason, thumbnail, skipUndo = false) {
@@ -360,10 +371,6 @@ export default class EditMap extends React.Component {
       this.setState({lastUpdated: Date.now()})
       return
     }
-    // isn't it too late to save for undo?
-    /*if(!skipUndo && !_.isEqual(this.lastSave, data)){
-      this.saveForUndo(reason)
-    }*/
     // make sure we have thumbnail
     if(!thumbnail && this.refs.map)
       this.refs.map.generatePreviewAndSaveIt(data, reason)
@@ -371,12 +378,16 @@ export default class EditMap extends React.Component {
       this.props.handleContentChange(data, thumbnail, reason)
 
     this.setState({lastUpdated: Date.now()})
+    this.saveMeta()
   }
 
   quickSave(reason = "noReason", skipUndo = true, thumbnail = null){
     return this.handleSave(this.mgb_content2, reason, thumbnail, skipUndo)
   }
 
+  saveMeta(){
+    this.props.handleMetadataChange(this.props.asset.metadata)
+  }
   // probably copy of data would be better to hold .. or not research strings vs objects
   // TODO(stauzs): research memory usage - strings vs JS objects
   copyData = (data) => {
@@ -410,7 +421,7 @@ export default class EditMap extends React.Component {
             addLayer={this.layerProps.addLayer}
             cache={this.cache}
             activeLayer={this.state.activeLayer}
-            highlightActiveLayer={c2.meta.highlightActiveLayer}
+            highlightActiveLayer={this.meta.highlightActiveLayer}
             canEdit={this.props.canEdit}
             options={this.options}
             data={c2}
@@ -421,7 +432,7 @@ export default class EditMap extends React.Component {
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}
-            options={c2.meta}
+            options={this.meta}
             activeLayer={this.state.activeLayer}
             />
           <br />

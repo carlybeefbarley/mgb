@@ -70,7 +70,7 @@ export default class MapArea extends React.Component {
     this.selection = new TileCollection()
     this.tmpSelection = new TileCollection()
 
-    this.camera = new Camera(this)
+    this.camera = new Camera(this, this.props.updateCameraPos)
     this.initialZoom = this.camera.zoom
 
 
@@ -107,7 +107,7 @@ export default class MapArea extends React.Component {
   }
 
   get options(){
-    return this.props.data.meta.options
+    return this.props.options
   }
 
   get palette() {
@@ -185,7 +185,7 @@ export default class MapArea extends React.Component {
     if(this.props.activeLayer !== newprops.activeLayer){
       this.activateLayer(newprops.activeLayer)
     }
-    if(this.props.data.meta.options.preview !== newprops.data.meta.options.preview){
+    if(this.props.options.preview !== newprops.options.preview){
       this.adjustPreview()
     }
   }

@@ -1,5 +1,5 @@
 "use strict"
-const update = require('react-addons-update')
+const reactUpdate = require('react-addons-update')
 
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
@@ -131,7 +131,10 @@ export default class EditCode extends React.Component {
       parsedTutorialData: null,   // null for not valid, or an object set by srcUpdate_AnalyzeTutorial()
 
       // handling game screen
-      isPopup: false
+      isPopup: false,
+
+      // this is set when we complete CodeMentor related queries - as then we will need to re-render CodeMentor components
+      lastAnalysisAtCursor: 0
     }
 
     this.hintWidgets = []
@@ -1534,7 +1537,7 @@ export default class EditCode extends React.Component {
           Object.assign(newState, {comment})
         })
         .then(() => {
-          this.setState(newState)
+          this.setState(Object.assign(newState, {lastAnalysisAtCursor: Date.now()}))
           // we have analysed source
           this.mgb_c2_hasChanged = false
         })
@@ -1567,6 +1570,7 @@ export default class EditCode extends React.Component {
       || this.state.isPlaying !== nextState.isPlaying
       || this.state.consoleMessages !== nextState.consoleMessages
       || this.state.astReady !== nextState.astReady
+      || this.state.lastAnalysisAtCursor !== nextState.lastAnalysisAtCursor
   }
 
   codemirrorValueChanged(doc, change) {
@@ -1600,7 +1604,7 @@ export default class EditCode extends React.Component {
 
   _consoleAdd(data) {
     // Using immutability helpers as described on https://facebook.github.io/react/docs/update.html
-    let newMessages = update(this.state.consoleMessages, {$push: [data]}).slice(-SpecialGlobals.editCode.messagesInConsole)
+    let newMessages = reactUpdate(this.state.consoleMessages, {$push: [data]}).slice(-SpecialGlobals.editCode.messagesInConsole)
     this.setState({consoleMessages: newMessages})
     // todo -  all the fancy stuff in https://github.com/WebKit/webkit/blob/master/Source/WebInspectorUI/UserInterface/Views/ConsoleMessageView.js
   }

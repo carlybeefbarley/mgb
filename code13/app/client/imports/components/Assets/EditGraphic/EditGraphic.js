@@ -2028,10 +2028,10 @@ export default class EditGraphic extends React.Component {
                   </div>
 
                 {/*** Drawing Canvas ***/}
-                <Grid.Row style={{"minHeight": "92px"}}>
+                <Grid.Row style={{"minHeight": '92px'}}>
 
-                  <Grid.Column style={{height: '100%'}} width={10}>
-                    <div style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": editCanvasMaxHeight+"px"}}
+                  <Grid.Column style={{height: '100%'}} >
+                    <div style={{ 'overflow': 'auto', maxWidth: 'calc(100vw - 32px)', 'maxHeight': editCanvasMaxHeight+'px'}}
                       onScroll={this.handleEditCanvasScroll}>
                       <canvas
                         id="mgb_edit_graphic_main_canvas"

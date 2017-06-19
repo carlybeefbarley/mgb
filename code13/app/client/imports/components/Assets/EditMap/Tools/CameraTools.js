@@ -12,13 +12,10 @@ const CameraTools = ({button}) => (
         <Dropdown.Item onClick={button.fitMap}>
           <Icon name='dropdown' />
           <span className='text'>Fit Map</span>
-          <Dropdown.Menu>
-            <Dropdown.Item onClick={e => {
-              e.stopPropagation(); button.fitMapH()
-            } }>Horizontally</Dropdown.Item>
-            <Dropdown.Item onClick={e => {
-              e.stopPropagation(); button.fitMapV()
-            } }>Vertically</Dropdown.Item>
+          <Dropdown.Menu onClick={e => e.stopPropagation() }>
+            <Dropdown.Item onClick={button.fitMap}>Best Fit</Dropdown.Item>
+            <Dropdown.Item onClick={button.fitMapH}>Horizontally</Dropdown.Item>
+            <Dropdown.Item onClick={button.fitMapV()}>Vertically</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown.Item>
       </Dropdown.Menu>

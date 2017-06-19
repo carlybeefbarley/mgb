@@ -58,7 +58,7 @@ export default class ImportHelperPanel extends React.Component {
     this.options = _
       .chain(scripts)
       .filter( s => !_.some( knownImports, k => ( s.text === k.name.substring(1) ) ) )
-      .map(s => ( { "data-tooltip": "asdasdasd", label: s.text, description: s.desc, value: s.text } ) )
+      .map(s => ( { label: s.text, description: s.desc, value: s.text } ) )
       .uniqWith(_.isEqual)
       .value()
   }

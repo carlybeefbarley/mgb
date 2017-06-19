@@ -51,7 +51,7 @@ let _selectedColors = {
   // fg:    { hex: "#000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
 }
 
-let _memoState_isMiniMap = true
+let _memoState_isMiniMap = false
 let _memoState_showDrawingStatus = true
 let _memoState_isColorPickerPinned = false
 

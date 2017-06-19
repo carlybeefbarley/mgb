@@ -90,7 +90,9 @@ export default class MapArea extends React.Component {
     this.globalKeyUp = (...args) => {
       this.handleKeyUp(...args)
     }
-
+    this.globalKeyDown = (...args) => {
+      this.handleKeyDown(...args)
+    }
     // prevent IE scrolling thingy
     this.globalIEScroll = (e) => {
       if (e.buttons == MOUSE_BUTTONS.middle) {
@@ -142,6 +144,7 @@ export default class MapArea extends React.Component {
 
     window.addEventListener('resize', this.globalResize, false)
     window.addEventListener('keyup', this.globalKeyUp, false)
+    window.addEventListener('keydown', this.globalKeyDown, false)
 
     this.touchMovePrevent = function(e){
       e.preventDefault()
@@ -166,6 +169,7 @@ export default class MapArea extends React.Component {
     window.removeEventListener('pointerup', this.globalMouseUp)
     window.removeEventListener('resize', this.globalResize)
     window.removeEventListener('keyup', this.globalKeyUp)
+    window.removeEventListener('keydown', this.globalKeyDown)
 
     this.refs.mapElement && this.refs.mapElement.removeEventListener("touchmove", this.touchMovePrevent )
     document.body.removeEventListener('mousedown', this.globalIEScroll)
@@ -692,13 +696,24 @@ export default class MapArea extends React.Component {
     this.props.updateScale(this.camera.zoom)
   }
 
+  handleKeyDown(e){
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')
+      return
+
+    
+    // these should match with cases in the handleKeyUp
+    if([37, 38, 39, 40, 13].indexOf(e.which) > -1) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+  }
   handleKeyUp (e) {
     if (this.props.isPlaying)
       return
 
     let update = false
     // don't steal events from inputs
-    if (e.target.tagName == 'INPUT')
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')
       return
 
     switch (e.which) {

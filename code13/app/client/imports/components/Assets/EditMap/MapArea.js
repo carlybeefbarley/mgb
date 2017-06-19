@@ -1,11 +1,6 @@
-import _ from 'lodash'
 import React from 'react'
 
 import BaseMapArea from '../Common/Map/BaseMapArea.js'
-
-import TileHelper from '../Common/Map/Helpers/TileHelper.js'
-import ObjectHelper from '../Common/Map/Helpers/ObjectHelper.js'
-
 import LayerTypes from '../Common/Map/Tools/LayerTypes.js'
 import PositionInfo from '../Common/Map/Tools/PositionInfo.js'
 
@@ -30,7 +25,7 @@ export default class MapArea extends BaseMapArea {
     const asset = DragNDropHelper.getAssetFromEvent(e)
     if (asset) {
       // TODO: use enums for asset types
-      if (asset.kind == 'graphic') {
+      if (asset.kind === 'graphic') {
         if(this.props.addLayer){
           const layer_data = this.props.addLayer(LayerTypes.image)
           this.onImageLayerDrop(e, layer_data)

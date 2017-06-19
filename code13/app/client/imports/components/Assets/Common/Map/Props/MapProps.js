@@ -36,6 +36,7 @@ export default {
     this.updateMapData(this.mgb_content2)
   },
   updateCameraPos(){
+    // console.log("Saving camera pos...")
     this.saveMeta()
   }
 }

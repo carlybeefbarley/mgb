@@ -2,7 +2,7 @@ import _ from 'lodash'
 const Camera = function (map, onChange) {
   this.map = map
 
-  this.onChange = _.debounce(onChange, 1000, {leading: false, trailing: true})
+  this.onChange = onChange
   // backwards compatibility with older maps.. should be safe to remove in the future
   if (!map.options.camera) {
     map.options.camera = {x: 0, y: 0, zoom: 1}
@@ -41,7 +41,7 @@ Camera.prototype = {
   },
   get x() {return this._x},
   set y(val) {
-    if(this._x === val)
+    if(this._y === val)
       return
 
     this.map.options.camera.y = val

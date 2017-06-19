@@ -312,6 +312,7 @@ body.dragging .accept-drop:hover{
   padding: 2px 20px;
   z-index: 1;
   top: 12px; /* move down as overflow hides top of */
+  transition: 1s;
 }
 
 .ui.card.animated.fadeIn:hover{

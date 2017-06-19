@@ -110,6 +110,8 @@ export default class EditMap extends React.Component {
     else{
       this.createNewMap()
     }
+
+    this.saveMeta = _.debounce(() => this._saveMeta(), 1000, {leading: false, trailing: true})
   }
 
   get preventUpdates(){
@@ -209,10 +211,16 @@ export default class EditMap extends React.Component {
       if(this.props.asset.metadata.options.options){
         this.props.asset.metadata.options = this.props.asset.metadata.options.options
       }
-
+      // TODO: uncomment this in the next deployment - otherwise local maps and staging / v2 maps will conflict
+      // delete this.mgb_content2.meta
     }
 
-    return this.props.asset.metadata
+    // Store once and do NOT update on remote changes -
+    if(!this.mgb_meta){
+      this.mgb_meta = this.props.asset.metadata
+    }
+
+    return this.mgb_meta
 
     // return this.mgb_content2.meta
   }
@@ -385,7 +393,7 @@ export default class EditMap extends React.Component {
     return this.handleSave(this.mgb_content2, reason, thumbnail, skipUndo)
   }
 
-  saveMeta(){
+  _saveMeta(){
     this.props.handleMetadataChange(this.props.asset.metadata)
   }
   // probably copy of data would be better to hold .. or not research strings vs objects
@@ -395,7 +403,7 @@ export default class EditMap extends React.Component {
   }
 
   renderLoading () {
-    return <div className="loading-notification">Working in background...</div>
+    return <div className="loading-notification" style={{opacity: 0}}>Working in background...</div>
   }
 
   render () {

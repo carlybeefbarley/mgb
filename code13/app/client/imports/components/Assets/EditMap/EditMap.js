@@ -402,8 +402,12 @@ export default class EditMap extends React.Component {
     return JSON.stringify(data)
   }
 
+  showLoading(elm){
+    if(elm)
+      setTimeout(() => elm.classList.add("show"), 5)
+  }
   renderLoading () {
-    return <div className="loading-notification" style={{opacity: 0}}>Working in background...</div>
+    return <div ref={this.showLoading} className="loading-notification" >Working in background...</div>
   }
 
   render () {

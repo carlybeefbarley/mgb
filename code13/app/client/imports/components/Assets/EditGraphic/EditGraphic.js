@@ -43,7 +43,6 @@ const settings_ignoreMouseLeave = true
 //   2. Status bar has some very dynamic data like mouse position, current color, etc. See sb_* functions
 
 
-
 // keeps data about selected color from previous graphic asset
 let _selectedColors = {
   // as defined by http://casesandberg.github.io/react-color/#api-onChangeComplete
@@ -51,7 +50,7 @@ let _selectedColors = {
   // fg:    { hex: "#000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
 }
 
-let _memoState_isMiniMap = false
+let _memoState_showMiniMap = false
 let _memoState_showDrawingStatus = true
 let _memoState_isColorPickerPinned = false
 
@@ -63,12 +62,12 @@ const _defaultColors = ['#000000', '#804000', '#fe0000', '#fe6a00', '#ffd800', '
 export default class EditGraphic extends React.Component {
   // See AssetEdit.js for propTypes. That wrapper just passes them to us
 
-  handleToggleGrid = () => this.setState( { showGrid: !this.state.showGrid} )
   handleToggleCheckeredBg = () => this.setState( { showCheckeredBg: !this.state.showCheckeredBg} )
   handleToggleDrawingStatus = () => {
     _memoState_showDrawingStatus = !this.state.showDrawingStatus
     this.setState( { showDrawingStatus: !this.state.showDrawingStatus } )
   }
+  handleToggleGrid = () => this.setState( { showGrid: !this.state.showGrid} )
 
   constructor(props, context) {
     super(props)
@@ -84,23 +83,28 @@ export default class EditGraphic extends React.Component {
 
     this.prevToolIdx = null // for undo/redo to set back previous tool
     this.state = {
-      editScale:        this.getDefaultScale(),        // Zoom scale of the Edit Canvas
-      selectedFrameIdx: 0,
+      // Changes in these values will get special handling in componentDidUpdate() since they will
+      // require an immediate redraw of the editing area via this.updateEditCanvasFromSelectedFrameLayers()
+      showGrid:             true,                       // show/Hide the Grid
+      selectedFrameIdx:     0,                          // DANGER DANGER (BUGBUG): Currently <SpriteLayers> uses this directly!
+      editScale:            this.getDefaultScale(),     // current Zoom scale of the Edit Canvas
 
-      showCheckeredBg:     false,
-      showGrid:            true,
-      showDrawingStatus:   _memoState_showDrawingStatus,
-      isColorPickerPinned: _memoState_isColorPickerPinned,
+      // The following state changes are fully handled by the normal render() path, so have no additional handling
+      showCheckeredBg:      false,
+      showMiniMap:          _memoState_showMiniMap,
+      showDrawingStatus:    _memoState_showDrawingStatus,
+      isColorPickerPinned:  _memoState_isColorPickerPinned,
+      selectedLayerIdx:     0,                          // DANGER DANGER (BUGBUG): Currently <SpriteLayers> uses this directly!
+      selectedColors:       this.getInitialColor(),
+      toolChosen:           this.findToolByLabelString("Pen"),
+      selectRect:           null,   // if asset area is selected then value {startX, startY, endX, endY}
+      selectDimensions:     { width: 0, height: 0 },
+      pasteCanvas:          null,           // if object cut or copied then {x, y, width, height, imgData}
+      scrollMode:           "Normal"        // This is the behavior of scrollOpearations when pasting
 
-      selectedLayerIdx: 0,
-      isMiniMap:        _memoState_isMiniMap,
-      selectedColors:   this.getInitialColor(),
+      // The following items were moved out of react-state because they are only used by jquery operations
+      // AND are triggered by non-render events (mouse/touch ops only)
       // toolActive: false, // Moved out of state by dgolds 6/11/2017 because it was causing re-renders but it has no impact to anything rendered
-      toolChosen: this.findToolByLabelString("Pen"),
-      selectRect: null,   // if asset area is selected then value {startX, startY, endX, endY}
-      selectDimensions: { width: 0, height: 0 },
-      pasteCanvas: null,     // if object cut or copied then {x, y, width, height, imgData}
-      scrollMode: "Normal"
     }
 
 
@@ -382,7 +386,9 @@ export default class EditGraphic extends React.Component {
     {
       // We optimize for the special case that the selectedFrame changed.
       // We want this to nbe fast because of animation previews for example
-      if (prevState.selectedFrameIdx !== this.state.selectedFrameIdx)
+      if (prevState.selectedFrameIdx !== this.state.selectedFrameIdx
+          || prevState.showGrid !== this.state.showGrid
+          || prevState.editScale !== this.state.editScale)
         this.updateEditCanvasFromSelectedFrameLayers()
     }
 
@@ -510,7 +516,7 @@ export default class EditGraphic extends React.Component {
     }
 
     // draw minimap
-    if (this.state.isMiniMap && this.refs.miniMap)
+    if (this.state.showMiniMap && this.refs.miniMap)
       this.refs.miniMap.redraw(this.editCanvas, w, h)
 
     this.drawGrid()
@@ -797,7 +803,7 @@ export default class EditGraphic extends React.Component {
     const i = this.zoomLevels.indexOf(this.state.editScale)
     if (i < this.zoomLevels.length-1) {
       // console.log("zoomIn: setting this.processedChangeMarker = null")
-      this.processedChangeMarker = null       // Since we now want to reload data for our new EditCanvas
+      // this.processedChangeMarker = null       // Since we now want to reload data for our new EditCanvas
       this.setState({ editScale: this.zoomLevels[i+1] })
     }
   }
@@ -805,7 +811,7 @@ export default class EditGraphic extends React.Component {
   zoomOut = () => {
     const i = this.zoomLevels.indexOf(this.state.editScale)
     if (i > 0) {
-      this.processedChangeMarker = null       // Since we now want to reload data for our new EditCanvas
+      // this.processedChangeMarker = null       // Since we now want to reload data for our new EditCanvas
       // console.log("zoomIn: setting this.processedChangeMarker = null")
       this.setState({ editScale: this.zoomLevels[i-1] })
     }
@@ -1712,7 +1718,7 @@ export default class EditGraphic extends React.Component {
   }
 
   setScrollMode(mode) {
-    this.setState({ scrollMode: mode})
+    this.setState( { scrollMode: mode } )
   }
 
   setPrevToolIdx(toolIdx){
@@ -1720,15 +1726,14 @@ export default class EditGraphic extends React.Component {
   }
 
   toggleMiniMap = () => {
-    const newVal = !this.state.isMiniMap
-    _memoState_isMiniMap = newVal
-    this.setState({ isMiniMap: newVal })
+    const newVal = !this.state.showMiniMap
+    _memoState_showMiniMap = newVal
+    this.setState( { showMiniMap: newVal } )
   }
 
-  handleCanvasScroll (e) {
-    if(this.refs.miniMap){
+  handleEditCanvasScroll = e => {
+    if (this.refs.miniMap)
       this.refs.miniMap.scroll(e.target.scrollTop, e.target.scrollLeft)
-    }
   }
 
   handleToggleColorPicker = () => {
@@ -1742,13 +1747,20 @@ export default class EditGraphic extends React.Component {
     this.initDefaultUndoStack()
 
     const { asset, currUser } = this.props
+    const {
+      editScale,
+      selectedColors, isColorPickerPinned,
+      selectedFrameIdx,
+      selectRect, selectDimensions, scrollMode,
+      showDrawingStatus, showMiniMap, showGrid, showCheckeredBg,
+      toolChosen } = this.state
+
     const c2 = asset.content2
-    const zoom = this.state.editScale
     const { actions, config } = this.generateToolbarActions()
 
     let imgEditorSty = {}
-    if (this.state.toolChosen)
-      imgEditorSty.cursor = this.state.toolChosen.editCursor
+    if (toolChosen)
+      imgEditorSty.cursor = toolChosen.editCursor
 
     const scrollModes = ["Normal", "Rotate", "Scale", "Flip"]
 
@@ -1760,11 +1772,10 @@ export default class EditGraphic extends React.Component {
 
 
     const isSkillTutorialGraphic = asset && asset.skillPath && _.startsWith( asset.skillPath, 'art' )
-    const column1Width = isSkillTutorialGraphic ? 8 : 16
     const colorPickerEl = (
       <SketchPicker
           onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
-          color={this.state.selectedColors['fg'].rgb}
+          color={selectedColors['fg'].rgb}
           presetColors={c2.presetColors || []}
       />
     )
@@ -1778,13 +1789,13 @@ export default class EditGraphic extends React.Component {
             { /* First Toolbar row */ }
             <Grid.Row style={{paddingBottom: '0.3em', whiteSpace: 'nowrap'}}>
               <Grid.Column>
-              { this.state.isColorPickerPinned ?
+              { isColorPickerPinned ?
               <Button
                   id='mgbjr-EditGraphic-colorPicker'
                   className='TopToolBarRowIcon'
-                  style={{ backgroundColor: this.state.selectedColors['fg'].hex }}
+                  style={{ backgroundColor: selectedColors['fg'].hex }}
                   onClick={this.handleToggleColorPicker}
-                  icon={{ name: 'block layout', style: { color: this.state.selectedColors['fg'].hex }}}
+                  icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex }}}
                 />
                 :
                 <Popup
@@ -1798,9 +1809,9 @@ export default class EditGraphic extends React.Component {
                       <Button
                         id='mgbjr-EditGraphic-colorPicker'
                         className='TopToolBarRowIcon'
-                        style={{ backgroundColor: this.state.selectedColors['fg'].hex }}
+                        style={{ backgroundColor: selectedColors['fg'].hex }}
                         onClick={this.handleToggleColorPicker}
-                        icon={{ name: 'block layout', style: { color: this.state.selectedColors['fg'].hex }}}
+                        icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex }}}
                       />
                     )}
                     header='Color Picker'
@@ -1839,7 +1850,7 @@ export default class EditGraphic extends React.Component {
                         style={{ cursor: 'pointer' }}
                         onClick={this.resetZoom}
                         className="ui button zoomMiddleIcon noMargin">
-                      {zoom}x
+                      {editScale}x
                     </span>
                   )}
                   on='hover'
@@ -1872,19 +1883,19 @@ export default class EditGraphic extends React.Component {
                     <span className="ui button TopToolBarRowIcon" id="mgbjr-editGraphic-toggleGrid">
                       <span>Views&emsp;</span>
                       <span style={{ cursor: 'pointer' }} onClick={this.handleToggleGrid}>
-                        <Icon name='grid layout' color={this.state.showGrid ? 'blue' : 'grey'}/>
+                        <Icon name='grid layout' color={showGrid ? 'blue' : 'grey'}/>
                       </span>
                       <span>&nbsp;</span>
                       <span style={{ cursor: 'pointer' }} onClick={this.handleToggleCheckeredBg}>
-                        <Icon name='clone' color={this.state.showCheckeredBg ? 'blue' : 'grey'}/>
+                        <Icon name='clone' color={showCheckeredBg ? 'blue' : 'grey'}/>
                       </span>
                       <span>&nbsp;</span>
                       <span style={{ cursor: 'pointer' }} onClick={this.toggleMiniMap}>
-                        <Icon name='tv' color={this.state.isMiniMap ? 'blue' : 'grey'}/>
+                        <Icon name='tv' color={showMiniMap ? 'blue' : 'grey'}/>
                       </span>
                       <span>&nbsp;</span>
                       <span style={{ cursor: 'pointer' }} onClick={this.handleToggleDrawingStatus}>
-                        <Icon name='bullseye' color={this.state.showDrawingStatus ? 'blue' : 'grey'}/>
+                        <Icon name='bullseye' color={showDrawingStatus ? 'blue' : 'grey'}/>
                       </span>
                     </span>
                   )}
@@ -1894,10 +1905,13 @@ export default class EditGraphic extends React.Component {
                   content={(
                     <div>
                       <Divider hidden/>
-                      <p><Icon color={this.state.showGrid ? 'blue' : 'grey'} name='grid layout' /> Show/Hide Gridlines (when zoom > {MIN_ZOOM_FOR_GRIDLINES-1}x)</p>
-                      <p><Icon color={this.state.showCheckeredBg ? 'blue' : 'grey'}name='clone' /> Show/Hide transparency checkerboard helper</p>
-                      <p><Icon color={this.state.isMiniMap ? 'blue' : 'grey'} name='tv' /> Show/Hide drawing preview at 1x scale</p>
-                      <p><Icon color={this.state.showDrawingStatus ? 'blue' : 'grey'} name='bullseye' /> Show/Hide drawing status bar info</p>
+                      <p>
+                        <Icon color={showGrid ? 'blue' : 'grey'} name='grid layout' /> Show/Hide Gridlines
+                        <span style={editScale >= MIN_ZOOM_FOR_GRIDLINES ? null: {color: 'red'}} > (shows when zoom > {MIN_ZOOM_FOR_GRIDLINES-1}x)</span>
+                      </p>
+                      <p><Icon color={showCheckeredBg ? 'blue' : 'grey'}name='clone' /> Show/Hide transparency checkerboard helper</p>
+                      <p><Icon color={showMiniMap ? 'blue' : 'grey'} name='tv' /> Show/Hide drawing preview at 1x scale</p>
+                      <p><Icon color={showDrawingStatus ? 'blue' : 'grey'} name='bullseye' /> Show/Hide drawing status bar info</p>
                     </div>
                     )}
                   size='tiny'
@@ -1920,9 +1934,9 @@ export default class EditGraphic extends React.Component {
             <Grid.Row style={{paddingTop: 0, paddingBottom: '0.25em', display: 'flex'}}>
 
               { /* A. Optional Color Picker & Palette */ }
-              { this.state.isColorPickerPinned &&
+              { isColorPickerPinned &&
                 <Grid.Column style={{ paddingRight: '1em', paddingTop: '0.5em'}}>
-                  { this.state.isColorPickerPinned && colorPickerEl}
+                  { isColorPickerPinned && colorPickerEl}
                 </Grid.Column>
               }
 
@@ -1932,7 +1946,7 @@ export default class EditGraphic extends React.Component {
                 <Grid.Column width={12}>
 
                   { /* Paste options - only shown when paste tool is active */ }
-                  { (this.state.toolChosen && this.state.toolChosen.label=="Paste") &&
+                  { (toolChosen && toolChosen.label=="Paste") &&
                     <div className="ui form">
                       <div className="inline fields">
                         <label>Scroll modifier:</label>
@@ -1941,7 +1955,7 @@ export default class EditGraphic extends React.Component {
                             <div key={mode} className="field">
                               <div className="ui radio checkbox" >
                                 <input type="radio" name={mode}
-                                checked={mode == this.state.scrollMode ? "checked" : ""}
+                                checked={mode == scrollMode ? "checked" : ""}
                                 onChange={this.setScrollMode.bind(this, mode)} />
                                 <label>{mode}</label>
                               </div>
@@ -1954,7 +1968,7 @@ export default class EditGraphic extends React.Component {
 
                   {/*** Status Bar ***/}
                   <div
-                      className={`ui horizontal list ${this.state.showDrawingStatus ? '' : 'mgb-hidden'}`}
+                      className={`ui horizontal list ${showDrawingStatus ? '' : 'mgb-hidden'}`}
                       ref="statusBarDiv"
                       style={{ marginBottom: '4px', marginTop: '1px', whiteSpace: 'nowrap'}}>
                     <Popup
@@ -1967,13 +1981,13 @@ export default class EditGraphic extends React.Component {
                                 onClick={this.handleGotoNextFrame}>
                               &nbsp;
                               <Icon name='spinner'/>
-                              <span>Frame {1+this.state.selectedFrameIdx}</span>
+                              <span>Frame {1+selectedFrameIdx}</span>
                               &nbsp;
                             </div>
                           </div>
                         </div>
                       )}
-                      header={`Frame #${1+this.state.selectedFrameIdx} of ${c2.frameNames.length}`}
+                      header={`Frame #${1+selectedFrameIdx} of ${c2.frameNames.length}`}
                       content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
                       size='small'
                       mouseEnterDelay={250}
@@ -2018,15 +2032,15 @@ export default class EditGraphic extends React.Component {
 
                   <Grid.Column style={{height: '100%'}} width={10}>
                     <div style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": editCanvasMaxHeight+"px"}}
-                      onScroll={this.handleCanvasScroll.bind(this)}>
+                      onScroll={this.handleEditCanvasScroll}>
                       <canvas
                         id="mgb_edit_graphic_main_canvas"
                         ref="editCanvas"
                         style={imgEditorSty}
-                        width={zoom * c2.width}
-                        height={zoom * c2.height}
+                        width={editScale * c2.width}
+                        height={editScale * c2.height}
                         className={(
-                          (this.state.showCheckeredBg ? 'mgbEditGraphicSty_checkeredBackground' : '')
+                          (showCheckeredBg ? 'mgbEditGraphicSty_checkeredBackground' : '')
                           + ' mgbEditGraphicSty_thinBorder'
                         )}
                         onDragOver={this.handleDragOverPreview.bind(this)}
@@ -2034,7 +2048,7 @@ export default class EditGraphic extends React.Component {
                       </canvas>
                       {/*** <canvas id="tilesetCanvas"></canvas> ***/}
                       <CanvasGrid
-                        scale={this.state.editScale}
+                        scale={editScale}
                         setGrid={this.setGrid}
                       />
 
@@ -2044,9 +2058,9 @@ export default class EditGraphic extends React.Component {
                 </Grid.Row>
 
                 { /* Selection size info while selection is active */ }
-                { this.state.selectRect &&
+                { selectRect &&
                   <div>
-                    Selected area:&emsp;width = {this.state.selectDimensions.width}&emsp;height = {this.state.selectDimensions.height}
+                    Selected area:&emsp;width = {selectDimensions.width}&emsp;height = {selectDimensions.height}
                   </div>
                 }
                 </Grid.Column>
@@ -2100,7 +2114,7 @@ export default class EditGraphic extends React.Component {
 
         {/*** MiniMap ***/}
         {
-          (this.state.isMiniMap && this.editCanvas) &&
+          (showMiniMap && this.editCanvas) &&
           <MiniMap
             ref       = {this.handleRefMiniMap}
             width     = {c2.width}
@@ -2110,7 +2124,7 @@ export default class EditGraphic extends React.Component {
             editCanvasHeight    = {this.editCanvas ? this.editCanvas.height : null}
             editCanvasMaxWidth  = {screen.width}
             editCanvasWidth     = {this.editCanvas ? this.editCanvas.width  : null}
-            editCanvasScale     = {this.state.editScale}
+            editCanvasScale     = {editScale}
           />
         }
 

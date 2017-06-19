@@ -837,12 +837,15 @@ export default class EditCode extends React.Component {
               `// Creates full MGB map with all visible layers\n// place this function in the create method` + '\n' +
               `const map = game.create.mgbMap('${draggedAsset.name}')`
 
-          this.codeMirror.replaceSelection( '\n' + loadMap + '\n')
+          this.codeMirror.replaceSelection( '\n' + loadMap + '\n', 'around')
+          this.codeMirror.execCommand('indentAuto')
+          // clear selection
+          this.codeMirror.setSelection(this.codeMirror.getCursor())
 
           const val = this.codeMirror.getValue()
-          if(val.indexOf('mgb-map-loader-extended') === -1){
+          if(val.indexOf('mgb-map-loader-extended') === -1)
             this.codeMirror.setValue(`import '/!vault:mgb-map-loader-extended'` + '\n' + val)
-          }
+
           return
 
         case 'sound':
@@ -867,7 +870,10 @@ export default class EditCode extends React.Component {
       if (code)
       {
         event.preventDefault()
-        this.codeMirror.replaceSelection( '\n' + code + '\n')
+        this.codeMirror.replaceSelection( '\n' + code + '\n', 'around')
+        this.codeMirror.execCommand('indentAuto')
+        // clear selection
+        this.codeMirror.setSelection(this.codeMirror.getCursor())
       }
     }
     else

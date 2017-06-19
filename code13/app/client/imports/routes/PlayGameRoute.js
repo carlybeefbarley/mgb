@@ -398,12 +398,12 @@ const PlayGame = ({ game, user, incrementPlayCountCb, availableWidth }) => {
 
   // landscape
   if(window.innerHeight < window.innerWidth) {
-    if (!game.metadata.allowLandscape)
+    if (!game.metadata.allowLandscape && game.metadata.allowPortrait)
       return <RotateScreen ladscape />
   }
   // portrait
   if(window.innerWidth < window.innerHeight) {
-    if (!game.metadata.allowPortrait)
+    if (!game.metadata.allowPortrait && game.metadata.allowLandscape)
       return <RotateScreen portrait />
   }
 

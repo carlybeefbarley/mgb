@@ -19,13 +19,17 @@ export default class MiniMap extends React.Component {
     width:          PropTypes.number.isRequired,
     height:         PropTypes.number.isRequired,
     editCanvasMaxHeight:  PropTypes.number.isRequired,
-    editCanvasHeight: PropTypes.number
+    editCanvasHeight:     PropTypes.number,
+    editCanvasMaxWidth:  PropTypes.number,
+    editCanvasWidth:     PropTypes.number,
+    editCanvasScale:     PropTypes.number.isRequired
   }
+
   constructor(props) {
     super(props)
 
     this.state = {
-      isTessellated: false
+      isTessellated: false,
     }
 
     this.screenX = 12 // px from right
@@ -38,15 +42,25 @@ export default class MiniMap extends React.Component {
       h: null,
       editCanvas: null
     }
+
+    this.visibleRect= {
+      offsetTop:  0,
+      offsetLeft: 0,
+      width:      0,
+      height:     0
+    }
   }
 
   componentDidMount () {
     this.canvas =  ReactDOM.findDOMNode(this.refs.canvas)
     this.ctx =  this.canvas.getContext('2d')
+    this.ctx.strokeStyle = "#ff0000"
     // const wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
     // this.screenX = wrapper.parentNode.offsetWidth
     if (this.props.height > this.props.editCanvasMaxHeight)
       this.scale = this.props.editCanvasMaxHeight / this.props.height
+
+    this.calculateVisibleRectDimensions()
 
     this.forceUpdate()
   }
@@ -54,6 +68,20 @@ export default class MiniMap extends React.Component {
   componentDidUpdate (prevProps, prevState) {
     if (this.state.isTessellated !== prevState.isTessellated)
       this.redraw()
+
+    // console.log(prevProps.editCanvasHeight, this.props.editCanvasHeight)
+    if(prevProps.editCanvasHeight != this.props.editCanvasHeight)
+      this.calculateVisibleRectDimensions()
+  }
+
+  calculateVisibleRectDimensions () {
+    if(this.props.editCanvasHeight){
+      const height = this.props.editCanvasMaxHeight > this.props.editCanvasHeight ? this.props.editCanvasHeight : this.props.editCanvasMaxHeight
+      this.visibleRect.height = height / this.props.editCanvasScale
+      const width = this.props.editCanvasMaxWidth > this.props.editCanvasWidth ? this.props.editCanvasWidth : this.props.editCanvasMaxWidth
+      this.visibleRect.width = width / this.props.editCanvasScale
+      this.redraw()
+    }
   }
 
   /** Beware of react-anti-pattern. The parent is calling into this function!!! */
@@ -79,14 +107,20 @@ export default class MiniMap extends React.Component {
     for (let row=0; row<rows; row++)
       for (let col=0; col<cols; col++)
         this.ctx.drawImage(editCanvas, w*col, h*row, w*this.scale, h*this.scale)
+
+    this.drawVisibleRect()
   }
 
   handleCloseClick = () => {
     this.props.toggleMiniMap()
   }
 
+  /* parent calling in this function */
   scroll = (offsetTop, offsetLeft) => {
-    console.log(offsetTop, offsetLeft)
+    this.visibleRect.offsetTop = offsetTop / this.props.editCanvasScale
+    this.visibleRect.offsetLeft = offsetLeft / this.props.editCanvasScale
+    // console.log('scroll', this.visibleRect)
+    this.redraw()
   }
 
   onDragStart = (e) => {
@@ -129,9 +163,8 @@ export default class MiniMap extends React.Component {
   drawVisibleRect () {
     // check if editCanvas is mounted (height is passed)
     if(this.props.editCanvasHeight){
-      if(this.props.editCanvasHeight > this.props.editCanvasMaxHeight){
-        console.log(this.props.editCanvasHeight)
-      }
+      const r = this.visibleRect
+      this.ctx.strokeRect(r.offsetLeft, r.offsetTop, r.width, r.height)
     }
   }
 
@@ -139,8 +172,6 @@ export default class MiniMap extends React.Component {
     const multiplier = this.state.isTessellated ? 3 : 1
     const width = this.props.width * multiplier * this.scale
     const height = this.props.height * multiplier * this.scale
-
-    this.drawVisibleRect()
 
     const wrapStyle = {
       display: "block",

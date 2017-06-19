@@ -2028,7 +2028,7 @@ export default class EditGraphic extends React.Component {
                   </div>
 
                 {/*** Drawing Canvas ***/}
-                <Grid.Row style={{"minHeight": '92px'}}>
+                <Grid.Row style={{ minHeight: '64px'}}>
 
                   <Grid.Column style={{height: '100%'}} >
                     <div style={{ 'overflow': 'auto', maxWidth: 'calc(100vw - 32px)', 'maxHeight': editCanvasMaxHeight+'px'}}

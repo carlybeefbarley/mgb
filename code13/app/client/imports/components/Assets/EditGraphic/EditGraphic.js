@@ -2108,7 +2108,7 @@ export default class EditGraphic extends React.Component {
             toggleMiniMap       = {this.toggleMiniMap}
             editCanvasMaxHeight = {editCanvasMaxHeight}
             editCanvasHeight    = {this.editCanvas ? this.editCanvas.height : null}
-            editCanvasMaxWidth  = {this.editCanvas ? this.editCanvas.width  : null}
+            editCanvasMaxWidth  = {screen.width}
             editCanvasWidth     = {this.editCanvas ? this.editCanvas.width  : null}
             editCanvasScale     = {this.state.editScale}
           />

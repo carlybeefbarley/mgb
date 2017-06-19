@@ -75,11 +75,13 @@ export default class MiniMap extends React.Component {
   }
 
   calculateVisibleRectDimensions () {
-    if(this.props.editCanvasHeight){
-      const height = this.props.editCanvasMaxHeight > this.props.editCanvasHeight ? this.props.editCanvasHeight : this.props.editCanvasMaxHeight
+    if(this.props.editCanvasHeight && this.backup.editCanvas){
+      const editCanvas = this.backup.editCanvas
+      const height = this.props.editCanvasMaxHeight > editCanvas.height ? editCanvas.height : this.props.editCanvasMaxHeight
       this.visibleRect.height = height / this.props.editCanvasScale
-      const width = this.props.editCanvasMaxWidth > this.props.editCanvasWidth ? this.props.editCanvasWidth : this.props.editCanvasMaxWidth
+      const width = this.props.editCanvasMaxWidth > editCanvas.width ? editCanvas.width : this.props.editCanvasMaxWidth
       this.visibleRect.width = width / this.props.editCanvasScale
+      // console.log(this.visibleRect.width,  width, this.props.editCanvasScale)
       this.redraw()
     }
   }

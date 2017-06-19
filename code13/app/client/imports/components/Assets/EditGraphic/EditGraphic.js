@@ -1303,6 +1303,8 @@ export default class EditGraphic extends React.Component {
       c2.spriteData = []
       for (let i = 0; i < this.frameCanvasArray.length; i++)
         c2.spriteData[i] = this.frameCanvasArray[i].toDataURL('image/png')
+
+      console.log(c2.spriteData.length, 'sprite data saved')
     }
 
     // tileset saving

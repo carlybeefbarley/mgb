@@ -50,6 +50,8 @@ export default class SpriteLayers extends React.Component {
     let newFrameName = "Frame " + (fN.length+1).toString()
     fN.push(newFrameName)
     this.props.content2.frameData.push([])
+    // small hack. we need to save actual spriteData frame count which depends from previewCanvases. And those are updated only after callback from server
+    this.props.content2.doResaveTileset = true
     this.handleSave('Append frame to graphic')
     this.forceUpdate()    // Force react to update.. needed since we need render() to create new canvasses
   }
@@ -217,13 +219,13 @@ export default class SpriteLayers extends React.Component {
     this.selectFrame(frameID)
     //
     if (!this._playLoopRange)
-      this._playLoopRange = { 
+      this._playLoopRange = {
         startIdx: endFrameID ? frameID-1 : 0,
         endIdx:   endFrameID ? endFrameID-1 : this.props.content2.frameNames.length -1,
         name:  animationName
       }
 
-    let nextFrameID = (frameID+1) 
+    let nextFrameID = (frameID+1)
     if (nextFrameID > this._playLoopRange.endIdx)
       nextFrameID = this._playLoopRange.startIdx
     let self = this

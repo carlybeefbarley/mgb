@@ -5,13 +5,21 @@ import { Button, Segment } from 'semantic-ui-react'
 
 import sty from  '../editGraphic.css'
 
+// TODO - for drawing visible area rectangle
+// check editCanvas height
+// compare to editCanvasMaxHeight so we know if we need to draw visible rectangle
+// compare editCanvas width to div width - if we need to draw visible rectangle
+// check if we can detect scrollbar offset
+// drag'n'drop visible area rect
+
 export default class MiniMap extends React.Component {
 
   static propTypes = {
     toggleMiniMap:  PropTypes.func.isRequired,
     width:          PropTypes.number.isRequired,
     height:         PropTypes.number.isRequired,
-    editCanvasMaxHeight:  PropTypes.number.isRequired
+    editCanvasMaxHeight:  PropTypes.number.isRequired,
+    editCanvasHeight: PropTypes.number
   }
   constructor(props) {
     super(props)
@@ -77,6 +85,10 @@ export default class MiniMap extends React.Component {
     this.props.toggleMiniMap()
   }
 
+  scroll = (offsetTop, offsetLeft) => {
+    console.log(offsetTop, offsetLeft)
+  }
+
   onDragStart = (e) => {
     // empty image so you don't see canvas element drag. Need to see only what is dragged inside canvas
     // don't do this on mobile devices
@@ -114,10 +126,21 @@ export default class MiniMap extends React.Component {
     this.setState({ isTessellated: !this.state.isTessellated })
   }
 
+  drawVisibleRect () {
+    // check if editCanvas is mounted (height is passed)
+    if(this.props.editCanvasHeight){
+      if(this.props.editCanvasHeight > this.props.editCanvasMaxHeight){
+        console.log(this.props.editCanvasHeight)
+      }
+    }
+  }
+
   render () {
     const multiplier = this.state.isTessellated ? 3 : 1
     const width = this.props.width * multiplier * this.scale
     const height = this.props.height * multiplier * this.scale
+
+    this.drawVisibleRect()
 
     const wrapStyle = {
       display: "block",

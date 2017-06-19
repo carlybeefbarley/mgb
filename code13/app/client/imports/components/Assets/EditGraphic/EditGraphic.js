@@ -51,7 +51,7 @@ let _selectedColors = {
   // fg:    { hex: "#000080", rgb: {r: 0, g: 0, b:128, a: 1} }    // Alpha = 0...1
 }
 
-let _memoState_isMiniMap = false
+let _memoState_isMiniMap = true
 let _memoState_showDrawingStatus = true
 let _memoState_isColorPickerPinned = false
 
@@ -174,7 +174,6 @@ export default class EditGraphic extends React.Component {
   // React Callback: componentDidMount()
   componentDidMount() {
     this.editCanvas =  ReactDOM.findDOMNode(this.refs.editCanvas)
-    this.miniMap =  ReactDOM.findDOMNode(this.refs.miniMap)
     this.editCtx = this.editCanvas.getContext('2d')
     this.editCtxImageData1x1 = this.editCtx.createImageData(1,1)
 
@@ -525,8 +524,9 @@ export default class EditGraphic extends React.Component {
       const pc = this.previewCanvasArray[this.state.selectedLayerIdx]
       this.refs.miniMap.redraw(this.editCanvas, pc.width, pc.height)
     }
-    else
+    else {
       this.refs.miniMap = null
+    }
   }
 
 
@@ -1725,6 +1725,12 @@ export default class EditGraphic extends React.Component {
     this.setState({ isMiniMap: newVal })
   }
 
+  handleCanvasScroll (e) {
+    if(this.refs.miniMap){
+      this.refs.miniMap.scroll(e.target.scrollTop, e.target.scrollLeft)
+    }
+  }
+
   handleToggleColorPicker = () => {
     const newVal = !this.state.isColorPickerPinned
     _memoState_isColorPickerPinned = newVal
@@ -2011,7 +2017,8 @@ export default class EditGraphic extends React.Component {
                 <Grid.Row style={{"minHeight": "92px"}}>
 
                   <Grid.Column style={{height: '100%'}} width={10}>
-                    <div style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": editCanvasMaxHeight+"px"}}>
+                    <div style={{ "overflow": "auto", /*"maxWidth": "600px",*/ "maxHeight": editCanvasMaxHeight+"px"}}
+                      onScroll={this.handleCanvasScroll.bind(this)}>
                       <canvas
                         id="mgb_edit_graphic_main_canvas"
                         ref="editCanvas"
@@ -2100,6 +2107,8 @@ export default class EditGraphic extends React.Component {
             height    = {c2.height}
             toggleMiniMap       = {this.toggleMiniMap}
             editCanvasMaxHeight = {editCanvasMaxHeight}
+            editCanvasHeight    = {this.editCanvas ? this.editCanvas.height : null}
+            parentDiv           = {this.editCanvas ? this.editCanvas.parentElement : null}
           />
         }
 

@@ -46,6 +46,12 @@ export default class TouchController extends React.Component {
 
           onMouseUp={e => this.handleInput(e, true)}
           onTouchEnd={e => this.handleInput(e, true)}
+           // allow long click - fix #551
+         onContextMenu={e => event => {
+           event.preventDefault()
+           event.stopPropagation()
+           return false;
+         }}
           style={{
             width: width + 'px',
             height: (width * 0.35) + 'px',

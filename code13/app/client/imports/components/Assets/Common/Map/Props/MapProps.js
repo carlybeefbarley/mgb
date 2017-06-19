@@ -26,6 +26,7 @@ export default {
   },
   updateScale(scale){
     this.setState({scale: scale})
+    this.saveMeta()
   },
   addImage(img){
     if(!this.mgb_content2.images){
@@ -33,5 +34,9 @@ export default {
     }
     this.mgb_content2.images.push(img)
     this.updateMapData(this.mgb_content2)
+  },
+  updateCameraPos(){
+    // console.log("Saving camera pos...")
+    this.saveMeta()
   }
 }

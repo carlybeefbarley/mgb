@@ -158,16 +158,6 @@ const TileHelper = {
       images: [],
       tileheight,
       tilewidth,
-      meta: {
-        options: {
-          // empty maps aren't visible without grid
-          showGrid: 1,
-          camera: { _x: 0, _y: 0, _zoom: 1 },
-          preview: false,
-          mode: 'stamp',
-          randomMode: false
-        }
-      },
       layers
     }
   },

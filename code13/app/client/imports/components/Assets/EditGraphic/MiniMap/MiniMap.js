@@ -5,19 +5,31 @@ import { Button, Segment } from 'semantic-ui-react'
 
 import sty from  '../editGraphic.css'
 
+// TODO - for drawing visible area rectangle
+// check editCanvas height
+// compare to editCanvasMaxHeight so we know if we need to draw visible rectangle
+// compare editCanvas width to div width - if we need to draw visible rectangle
+// check if we can detect scrollbar offset
+// drag'n'drop visible area rect
+
 export default class MiniMap extends React.Component {
 
   static propTypes = {
     toggleMiniMap:  PropTypes.func.isRequired,
     width:          PropTypes.number.isRequired,
     height:         PropTypes.number.isRequired,
-    editCanvasMaxHeight:  PropTypes.number.isRequired
+    editCanvasMaxHeight:  PropTypes.number.isRequired,
+    editCanvasHeight:     PropTypes.number,
+    editCanvasMaxWidth:  PropTypes.number,
+    editCanvasWidth:     PropTypes.number,
+    editCanvasScale:     PropTypes.number.isRequired
   }
+
   constructor(props) {
     super(props)
 
     this.state = {
-      isTessellated: false
+      isTessellated: false,
     }
 
     this.screenX = 12 // px from right
@@ -30,15 +42,25 @@ export default class MiniMap extends React.Component {
       h: null,
       editCanvas: null
     }
+
+    this.visibleRect= {
+      offsetTop:  0,
+      offsetLeft: 0,
+      width:      0,
+      height:     0
+    }
   }
 
   componentDidMount () {
     this.canvas =  ReactDOM.findDOMNode(this.refs.canvas)
     this.ctx =  this.canvas.getContext('2d')
+    this.ctx.strokeStyle = "#ff0000"
     // const wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
     // this.screenX = wrapper.parentNode.offsetWidth
     if (this.props.height > this.props.editCanvasMaxHeight)
       this.scale = this.props.editCanvasMaxHeight / this.props.height
+
+    this.calculateVisibleRectDimensions()
 
     this.forceUpdate()
   }
@@ -46,6 +68,22 @@ export default class MiniMap extends React.Component {
   componentDidUpdate (prevProps, prevState) {
     if (this.state.isTessellated !== prevState.isTessellated)
       this.redraw()
+
+    // console.log(prevProps.editCanvasHeight, this.props.editCanvasHeight)
+    if(prevProps.editCanvasHeight != this.props.editCanvasHeight)
+      this.calculateVisibleRectDimensions()
+  }
+
+  calculateVisibleRectDimensions () {
+    if(this.props.editCanvasHeight && this.backup.editCanvas){
+      const editCanvas = this.backup.editCanvas
+      const height = this.props.editCanvasMaxHeight > editCanvas.height ? editCanvas.height : this.props.editCanvasMaxHeight
+      this.visibleRect.height = height / this.props.editCanvasScale
+      const width = this.props.editCanvasMaxWidth > editCanvas.width ? editCanvas.width : this.props.editCanvasMaxWidth
+      this.visibleRect.width = width / this.props.editCanvasScale
+      // console.log(this.visibleRect.width,  width, this.props.editCanvasScale)
+      this.redraw()
+    }
   }
 
   /** Beware of react-anti-pattern. The parent is calling into this function!!! */
@@ -71,10 +109,20 @@ export default class MiniMap extends React.Component {
     for (let row=0; row<rows; row++)
       for (let col=0; col<cols; col++)
         this.ctx.drawImage(editCanvas, w*col, h*row, w*this.scale, h*this.scale)
+
+    this.drawVisibleRect()
   }
 
   handleCloseClick = () => {
     this.props.toggleMiniMap()
+  }
+
+  /* parent calling in this function */
+  scroll = (offsetTop, offsetLeft) => {
+    this.visibleRect.offsetTop = offsetTop / this.props.editCanvasScale
+    this.visibleRect.offsetLeft = offsetLeft / this.props.editCanvasScale
+    // console.log('scroll', this.visibleRect)
+    this.redraw()
   }
 
   onDragStart = (e) => {
@@ -112,6 +160,14 @@ export default class MiniMap extends React.Component {
 
   toggleTessellated = () => {
     this.setState({ isTessellated: !this.state.isTessellated })
+  }
+
+  drawVisibleRect () {
+    // check if editCanvas is mounted (height is passed)
+    if(this.props.editCanvasHeight){
+      const r = this.visibleRect
+      this.ctx.strokeRect(r.offsetLeft, r.offsetTop, r.width, r.height)
+    }
   }
 
   render () {

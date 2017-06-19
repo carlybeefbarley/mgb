@@ -50,17 +50,23 @@ const SpecialGlobals = {
       {
         name: 'Phaser',
         import: 'phaser',
-        desc: 'A fast, free and fun open source framework for Canves and WebGL powered browser games.'
+        desc: 'For making games',
+        landingPageUrl: '//phaser.io',
+        apiDocsPageUrl: '//photonstorm.github.io/phaser-ce/'
       },
       {
         name: 'React',
         import: 'react',
-        desc: 'A JavaScript library for building user interfaces'
+        desc: 'For making apps',
+        landingPageUrl: '//facebook.github.io/react/',
+        apiDocsPageUrl: '//facebook.github.io/react/docs/introducing-jsx.html'
       },
       {
         name: '_',
         import: 'lodash',
-        desc: 'A modern JavaScript utility library delivering modularity, performance & extras.'
+        desc: 'Helpful extra functions',
+        landingPageUrl: '//lodash.com/',
+        apiDocsPageUrl: '//lodash.com/docs'
       }
     ]
   },

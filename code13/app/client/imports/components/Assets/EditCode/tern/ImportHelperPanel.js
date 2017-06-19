@@ -1,152 +1,147 @@
-import React from 'react'
-import { Dropdown } from 'semantic-ui-react'
+import React, { PropTypes } from 'react'
+import { Dropdown, Segment, Label, Icon } from 'semantic-ui-react'
 import _ from 'lodash'
-import settings from '/imports/SpecialGlobals.js'
+import settings from '/imports/SpecialGlobals'
 
-
-export default class StringExtendedInfo extends React.Component {
+export default class ImportHelperPanel extends React.Component {
   static propTypes = {
-    scripts: React.PropTypes.array, // list of scripts
-    knownImports: React.PropTypes.array, // list of known imports - won't show in the list
-    includeImport: React.PropTypes.func, // callback to import script
-    assetName: React.PropTypes.string
+    scripts:               PropTypes.array,            // list of scripts
+    knownImports:          PropTypes.array,            // list of known imports - won't show in the list
+    includeLocalImport:    PropTypes.func.isRequired,  // callback to import script
+    includeExternalImport: PropTypes.func.isRequired
   }
-  constructor(...a){
+
+  options = []  // This is created when props update. Bit of an anti-pattern... { text, description, value }
+  popular = []  // This is created when props update. Bit of an anti-pattern... { text, description, value }
+
+  constructor(...a) {
     super(...a)
     const savedState = parseInt(localStorage.getItem("EditCodeImportHelperPanelExtended"), 10)
 
     this.state = {
       showExpanded: savedState === null ? 0 : savedState
     }
-    this.updateProps(this.props)
+    this.updateOptionsFromProps(this.props)
   }
-  handleHideShowClick(){
+
+  handleHideShowClick = () => {
     const next = this.state.showExpanded ? 0 : 1
     localStorage.setItem("EditCodeImportHelperPanelExtended", next)
-    this.setState({"showExpanded": next})
+    this.setState( { "showExpanded": next } )
   }
-  shouldComponentUpdate(newP, newS){
-    if(this.state.showExpanded || newS.showExpanded){
+
+  shouldComponentUpdate(newP, newS) {
+    if (this.state.showExpanded || newS.showExpanded || !this.lastUpdate) {
       this.lastUpdate = Date.now()
       return true
     }
-    if(!this.lastUpdate){
+    // don't update often than 1 sec  BUGBUG here
+    if (Date.now() - this.lastUpdate > 1000) {
       this.lastUpdate = Date.now()
-      return true
+      return !_.isEqual(this.state, newS) || !_.isEqual(this.props, newP)
     }
-    else {
-      // don't update often than 1 sec
-      if(Date.now() - this.lastUpdate > 1000) {
-        this.lastUpdate = Date.now()
-        return !_.isEqual(this.state, newS) || !_.isEqual(this.props, newP)
-      }
-      return false
-    }
+    return false
   }
-  componentWillReceiveProps(props){
-    if(!_.isEqual(this.props, props)){
-      this.updateProps(props)
-    }
+
+  componentWillReceiveProps(nextProps) {
+    if (!_.isEqual(this.props, nextProps))
+      this.updateOptionsFromProps(nextProps)
   }
-  updateProps(props){
-    const checkIfImported = (s, global = false) => {
-      if(props.knownImports){
-        const index = props.knownImports.findIndex( known => {
-          if(global){
-            return s.import === known.name
-          }
-          else{
-            return s.text == known.name.substring(1)
-          }
-        })
-        return index > -1
-      }
-      return false
-    }
 
-    const map = []
-    if(props.scripts) {
-      props.scripts.forEach(s => {
-        if (checkIfImported(s)) {
-          return
-        }
-        map.push({text: s.text, description: s.desc, value: s.text})
-      })
-      this.options = _.uniqWith(map, _.isEqual)
-    }
-
-    const libs = settings.editCode.popularLibs
-    this.popuplar = []
-    libs.forEach( (s, i) => {
-      if(checkIfImported(s, true)){
-        return
-      }
-      this.popuplar.push({ text: s.name, description: s.desc, value: i})
-    })
+  updateOptionsFromProps( { knownImports, scripts } ) {
+    this.popular = _
+      .chain(settings.editCode.popularLibs)
+      .map( ( lib, idx ) => ( { label: lib.import, description: lib.desc, value: idx } ) )
+      .filter( lib => !_.some( knownImports, k => ( lib.label === k.name ) ) )
+      .uniqWith(_.isEqual)
+      .value()
+    this.options = _
+      .chain(scripts)
+      .filter( s => !_.some( knownImports, k => ( s.text === k.name.substring(1) ) ) )
+      .map(s => ( { "data-tooltip": "asdasdasd", label: s.text, description: s.desc, value: s.text } ) )
+      .uniqWith(_.isEqual)
+      .value()
   }
 
   render() {
-    if(!this.props.scripts || !this.props.scripts.length)
+    const { scripts, includeLocalImport, includeExternalImport } = this.props
+    const { showExpanded } = this.state
+
+    if (!scripts || !scripts.length)
       return null
 
-    const {showExpanded} = this.state
-    return <div className="ui blue segment" style={{backgroundColor: "rgba(160,32,240,0.03)", color: "#2A00FF"}}>
+    return (
+      <Segment color='blue' style={{backgroundColor: "rgba(160,32,240,0.03)", color: "#2A00FF"}}>
 
-      <a className="ui blue right corner label" title={`Click to ${ showExpanded ? "hide" : "show" } import helper`}
-         onClick={() => this.handleHideShowClick()}
-        >
-        <i className={(!showExpanded ? "add circle " : "minus circle ")+ " icon"}></i>
-      </a>
+        <Label
+            color='blue'
+            corner='right'
+            title={`Click to ${ showExpanded ? "hide" : "show" } import helper`}
+            onClick={this.handleHideShowClick}
+            icon={showExpanded ? "minus circle" : "add circle"} />
 
-      {!!showExpanded &&
-      <div>
-        <a className="ui left ribbon label">
-          <small>My Scripts</small>
-        </a>
-        <div style={{margin: '5px 0'}}>
-          <Dropdown
-            fluid search selection
-            options={ this.options }
-            placeholder='Select script from a list to import it'
-            value=''
-            selectOnBlur={false}
-            onChange={ (a, b) => {
-              this.props.includeLocalImport(b.value)
-            }}
-          />
-        </div>
-        <a className="ui left ribbon label">
-          <small>Popular libraries</small>
-        </a>
-        <div style={{margin: '5px 0'}}>
-          <Dropdown
-            fluid search selection
-            options={ this.popuplar }
-            placeholder='Select script from a list to import it'
-            value=''
-            selectOnBlur={false}
-            onChange={ (a, b) => {
-              this.props.includeExternalImport(settings.editCode.popularLibs[b.value])
-            }}
+        {!!showExpanded &&
+        <div>
+          <Label ribbon content={<small>My Scripts to <code>import</code></small>} />
+
+          <div style={{margin: '5px 0'}}>
+            <Dropdown
+              fluid search selection
+              options={ this.options }
+              placeholder='Select script from list to import it'
+              value=''
+              selectOnBlur={false}
+              onChange={ (a, b) => { includeLocalImport(b.value) }}
             />
+          </div>
+
+          <Label ribbon content={<small>Recommended JavaScript packages to <code>import</code></small>} />
+
+          <div style={{margin: '5px 0'}}>
+            <Dropdown
+              fluid search selection
+              options={ this.popular }
+              placeholder='Select script from list to import it'
+              value=''
+              selectOnBlur={false}
+              onChange={ (a, b) => { includeExternalImport(settings.editCode.popularLibs[b.value]) }}
+              />
+          </div>
+          <div>
+            <small>
+              <Icon name='info circle' color='black'/>
+              <span className="cm-s-eclipse">You can <code className="cm-keyword">import</code> other user's assets, e.g:
+                <br />
+                <code>
+                  <span className="cm-keyword">import</span>&nbsp;
+                  <span className="cm-def">otherModule</span>&nbsp;
+                  <span className="cm-keyword">from</span>&nbsp;
+                  <span className="cm-string">'/!vault:CSSLoader'</span>
+                </code>
+              </span>
+            </small>
+          </div>
+          <div>
+            <small>
+              <Icon name='info circle' color='black'/>
+              <span className="cm-s-eclipse">
+                Hit Ctrl + Space to get list of user assets after typing '/username:'
+                <br />
+                <code>
+                  <span className="cm-keyword">import</span>&nbsp;
+                  <span className="cm-def">otherModule</span>&nbsp;
+                  <span className="cm-keyword">from</span>&nbsp;
+                  <span className="cm-string">'/!vault:<span className="blink">|</span>'</span>
+                </code>
+              </span>
+            </small>
+          </div>
         </div>
-        <div>
-          <small><i className="ui info circle icon black"></i><span className="cm-s-eclipse">You can import other user assets: <br />
-            <code><span className="cm-keyword">import</span> <span className="cm-def">otherModule</span> <span className="cm-keyword">from</span> <span className="cm-string">'/!vault:CSSLoader'</span>
-            </code>
-          </span></small>
-        </div>
-        <div>
-          <small><i className="ui info circle icon black"></i><span className="cm-s-eclipse">Hit Ctrl + Space to get list of user assets after typing '/name:' <br />
-            <code><span className="cm-keyword">import</span> <span className="cm-def">otherModule</span> <span className="cm-keyword">from</span> <span className="cm-string">'/!vault:<span className="blink">|</span>'</span>
-            </code>
-          </span></small>
-        </div>
-      </div>
         }
-      {!showExpanded && <a className="ui blue left ribbon label">
-        <small>Quick import</small>
-        </a>}
-    </div>
+        { !showExpanded &&
+         <Label color='blue' ribbon content={<small><code>import</code> helper</small>} />
+        }
+      </Segment>
+    )
   }
 }

@@ -93,14 +93,15 @@ export default class EditActorMap extends EditMap {
       this.preventUpdates = false
 
       // store old options - otherwise tools will auto switch and will piss off user
-      if(this.mgb_content2 && this.mgb_content2.meta) {
+      /*if(this.mgb_content2 && this.mgb_content2.meta) {
         const oldOptions = this.mgb_content2.meta.options
         this.mgb_content2 = d
         this.mgb_content2.meta.options = oldOptions
       }
-      else{
+      else{*/
+
         this.mgb_content2 = d
-      }
+      //}
       // or new Cache - if immutable is preferred - and need to force full cache update
       if(this.cache && this.cache.isReady()) {
         this.cache.update(d, () => {
@@ -283,7 +284,7 @@ export default class EditActorMap extends EditMap {
               isPlaying={isPlaying}
               cache={this.cache}
               activeLayer={activeLayer}
-              highlightActiveLayer={c2.meta.highlightActiveLayer}
+              highlightActiveLayer={this.meta.highlightActiveLayer}
               canEdit={this.props.canEdit}
               options={this.options}
               data={c2}
@@ -295,7 +296,7 @@ export default class EditActorMap extends EditMap {
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}
-            options={c2.meta}
+            options={this.meta}
             activeLayer={activeLayer}
             />
           <TileSet

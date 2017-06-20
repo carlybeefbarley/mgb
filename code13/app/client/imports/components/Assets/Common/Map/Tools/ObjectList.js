@@ -54,7 +54,7 @@ export default class ObjectList extends React.Component {
 
     const panels = [
       {
-        title: 'Object',
+        title: 'Object List',
         content: (
           <div>
             <Button.Group size='mini'>
@@ -74,7 +74,7 @@ export default class ObjectList extends React.Component {
 
   render () {
     const activeLayer = this.props.getActiveLayer()
-    if (!activeLayer || activeLayer.type != LayerTypes.object)
+    if (!activeLayer || activeLayer.type !== LayerTypes.object)
       return null
 
     const active = this.props.activeObject

@@ -441,7 +441,7 @@ export default class EditMap extends React.Component {
 
             ref='map' />
         </div>
-        <div className='six wide column'>
+        <div className='six wide column' style={/* scroll only side panel */{position: 'absolute', right: 0, top: 0, bottom: 0, overflow: 'auto'}}>
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}

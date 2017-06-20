@@ -216,7 +216,7 @@ class ReportChatMessage extends React.Component {
       <Popup
         on='click'
         size="tiny"
-        positioning='bottom right'
+        position='bottom right'
         trigger={(
           <Label
             circular
@@ -299,7 +299,7 @@ class ResolveReportChatMessage extends React.Component {
       <Popup
         on='click'
         size="tiny"
-        positioning='bottom right'
+        position='bottom right'
         trigger={(
           <Label
             circular

@@ -479,7 +479,7 @@ export default AssetEditRoute = React.createClass({
                 <Popup
                   on='click'
                   size="tiny"
-                  positioning='bottom right'
+                  position='bottom right'
                   trigger={(
                     <Label
                       circular

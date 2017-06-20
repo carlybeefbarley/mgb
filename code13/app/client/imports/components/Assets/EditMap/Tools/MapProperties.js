@@ -371,16 +371,23 @@ export default class extends React.Component {
   }
 
   render() {
-    const panels = [
-      mapProperties(this.props.map, this.onChangeMapSize, this.onChangeMapTileSize),
-      layerProperties(this.props.layer, this.onChangeLayer),
-      tilesetProperties(this.props.tileset, this.onChangeTilesetName, this.onChangeTileset),
-    ]
+    const panels = []
+
+    this.props.map && panels.push(mapProperties(this.props.map, this.onChangeMapSize, this.onChangeMapTileSize))
+    this.props.layer && panels.push(layerProperties(this.props.layer, this.onChangeLayer))
+    this.props.tileset && panels.push(tilesetProperties(this.props.tileset, this.onChangeTilesetName, this.onChangeTileset))
+
     const object = this.props.getActiveObject()
-    if (object)
+    if (object) {
+      // TODO - clean up
+      if(!object.mgb_properties)
+        object.mgb_properties = []
+
+
       panels.push(
         objectProperties(object, this.onChangeObjectStringValue, this.onChangeObjectNumbericValue, this.updateObjectProps)
       )
+    }
 
     return <Accordion panels={panels} styled/>
   }

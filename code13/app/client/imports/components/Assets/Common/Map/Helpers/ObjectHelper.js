@@ -141,7 +141,8 @@ const ObjectHelper = {
       'rotation': 0,
       'type': '',
       'visible': true,
-      'width': pal.w
+      'width': pal.w,
+      mgb_properties: []
     }
   },
 
@@ -155,7 +156,8 @@ const ObjectHelper = {
       'rotation': 0,
       'type': '',
       'visible': true,
-      'width': 32
+      'width': 32,
+      mgb_properties: []
     }
   },
 
@@ -168,7 +170,8 @@ const ObjectHelper = {
 
       'rotation': 0,
       'type': '',
-      'visible': true
+      'visible': true,
+      mgb_properties: []
     }
   },
   createEllipse: (id, x, y, width = 1 , height = 1 , name = '(unnamed elipse #' + id + ')') => {
@@ -189,11 +192,12 @@ const ObjectHelper = {
       }],
       'rotation': 0,
       'type': '',
-      'visible': true
+      'visible': true,
+      mgb_properties: []
     }
   },
   createGraphic(nameWithExt, dataUrl, cb = () => {}) {
-    name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
+    const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
 
     const img = new Image()
     img.onload = () => {
@@ -237,7 +241,7 @@ const ObjectHelper = {
   },
 
   drawEllipse: (ctx, x, y, w, h) => {
-    var kappa = 0.5522848,
+    const kappa = 0.5522848,
       ox = (w / 2) * kappa, // control point offset horizontal
       oy = (h / 2) * kappa, // control point offset vertical
       xe = x + w, // x-end

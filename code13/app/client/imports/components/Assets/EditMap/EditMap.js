@@ -52,6 +52,7 @@ import ObjectList from '../Common/Map/Tools/ObjectList.js'
 
 import LayerTool from './Tools/Layers.js'
 import Properties from './Tools/Properties.js'
+import MapProperties from './Tools/MapProperties.js'
 
 import Cache from '../Common/Map/Helpers/TileCache.js'
 import EditModes from '../Common/Map/Tools/EditModes.js'
@@ -447,8 +448,6 @@ export default class EditMap extends React.Component {
             options={this.meta}
             activeLayer={this.state.activeLayer}
             />
-          <br />
-
           <TileSet
             {...this.tilesetProps}
             palette={this.cache.tiles}
@@ -456,8 +455,8 @@ export default class EditMap extends React.Component {
             tilesets={c2.tilesets}
             options={this.options}
             />
-          <br />
-          <Properties
+
+          <MapProperties
             {...this.propertiesProps}
             data={this.mgb_content2}
 
@@ -469,8 +468,21 @@ export default class EditMap extends React.Component {
             }}
             tileset={c2.tilesets[this.state.activeTileset]}
             layer={c2.layers[this.state.activeLayer]}
-            />
-          <br />
+          />
+
+          {/*<Properties*/}
+            {/*{...this.propertiesProps}*/}
+            {/*data={this.mgb_content2}*/}
+
+            {/*map={{*/}
+              {/*width: c2.width,*/}
+              {/*height: c2.height,*/}
+              {/*tilewidth: c2.tilewidth,*/}
+              {/*tileheight: c2.tileheight*/}
+            {/*}}*/}
+            {/*tileset={c2.tilesets[this.state.activeTileset]}*/}
+            {/*layer={c2.layers[this.state.activeLayer]}*/}
+            {/*/>*/}
           <ObjectList
             {...this.objectListProps}
             activeObject={this.state.activeObject}

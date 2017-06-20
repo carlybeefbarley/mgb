@@ -434,7 +434,7 @@ export default class EditMap extends React.Component {
             addLayer={this.layerProps.addLayer}
             cache={this.cache}
             activeLayer={this.state.activeLayer}
-            highlightActiveLayer={this.meta.highlightActiveLayer}
+            highlightActiveLayer={this.options.highlightActiveLayer}
             canEdit={this.props.canEdit}
             options={this.options}
             data={c2}
@@ -445,7 +445,7 @@ export default class EditMap extends React.Component {
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}
-            options={this.meta}
+            options={this.options}
             activeLayer={this.state.activeLayer}
             />
           <TileSet

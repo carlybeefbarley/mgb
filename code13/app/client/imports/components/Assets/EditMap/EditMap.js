@@ -395,7 +395,7 @@ export default class EditMap extends React.Component {
   }
 
   _saveMeta(){
-    this.props.handleMetadataChange(this.props.asset.metadata)
+    this.props.handleMetadataChange(this.mgb_meta)
   }
   // probably copy of data would be better to hold .. or not research strings vs objects
   // TODO(stauzs): research memory usage - strings vs JS objects

@@ -19,6 +19,46 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Tue Jun 20 2017 15:30:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4428'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+
+        {
+          'featureTag': 'chat.flagging',
+          'type': 'feature',
+          'changeName': 'Flaging/Moderation for chats',
+          'changeSummary': 'There is now a hover-option in chats to flag a chat message for Moderator attention. The system will be expanded to assets, projects etc soon.' ,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'asset.map',
+          'type': 'improvement',
+          'changeName': 'Map Editor has an improved properties panel and scale-fit',
+          'changeSummary': 'The properties panel for the Map editor is easier to use now. The actiorMap and Map editors now have a scale-to-fit option.' ,
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed a bug @jaketor reported about graphic edit grid needing a redraw; Fixed some cases that prevented CodeMentor updating; Added visible area indicator to graphic edit preview.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+    {
       'timestamp': 'Sun Jun 18 2017 10:30:00 GMT-0700 (PDT)',
 
       'id': {

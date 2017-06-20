@@ -71,7 +71,7 @@ const UX = {
     // TODO: @dgolds to decvide on how to reference a specific message
     // Use cases - @mention, notifications, flagging etc/
     // Workitem #10xx to be filed on dgolds
-    <QLink to={`/?_fp=chat._TODO_`}>
+    <QLink query={{ _fp: 'chat' }}>
       Flagged Chat Id: {chatId}
     </QLink>
   ),

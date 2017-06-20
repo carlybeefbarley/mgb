@@ -215,27 +215,28 @@ class ReportChatMessage extends React.Component {
       <span className='mgb-show-on-parent-hover' >
       <Popup
         on='click'
-        size="tiny"
-        position='bottom right'
+        position='left center'
+        flowing
         trigger={(
           <Label
             circular
             basic
             size='mini'
-            icon={{name: 'warning circle', color: 'red', style: {marginRight: 0 } } }
+            icon={{name: 'warning', color: 'red', style: { marginRight: 0 } } }
             />
         )}
-        wide='very'
         >
         <Popup.Header>
-          Report this chat message?
+          Report this chat message to Moderator?
         </Popup.Header>
         <Popup.Content>
-          <Segment basic>
-            <Dropdown
+          <Form style={{minWidth: '25em'}}>
+            <Divider hidden />
+            <Form.Dropdown
               placeholder='Reason(s)'
               search
               fluid
+              header="Reason(s) for report:"
               multiple
               selection
               options={_.map(_.keys(FlagTypes), (k) => ({
@@ -244,21 +245,22 @@ class ReportChatMessage extends React.Component {
               onChange={ ( event, dropdown ) => { this.setState( {userSelectedTags: dropdown.value } ) } }
               />
             <Divider hidden />
-              <TextArea
+            <Form.TextArea
                 placeholder='Additional comments/concerns'
                 autoHeight
                 onChange={ ( event, textarea ) => { this.setState( {userComments: textarea.value} ) } }
                 />
             <Divider hidden />
-              <Button
-                as='div'
+            <Form.Button
                 floated='right'
+                primary
+                disabled={ !this.state.userSelectedTags.length || !this.state.userComments }
                 onClick={ () => _doReportEntity(chat._id, this.state.userSelectedTags, this.state.userComments )}
-                size='tiny'
+                size='small'
                 content='Report'
                 icon='warning circle'/>
               &nbsp;
-          </Segment>
+          </Form>
         </Popup.Content>
       </Popup>
       </span>

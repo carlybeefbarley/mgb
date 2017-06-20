@@ -152,7 +152,7 @@ export default AssetCard = React.createClass({
               <WorkState
               workState={asset.workState}
               size={viewOpts.showExtra ? null : 'small'}
-              canEdit={false} 
+              canEdit={false}
               />
             </span>}
 

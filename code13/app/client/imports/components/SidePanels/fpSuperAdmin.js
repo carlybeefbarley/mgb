@@ -4,7 +4,8 @@ import QLink from '/client/imports/routes/QLink'
 import { Button, Menu, Header, List, Segment } from 'semantic-ui-react'
 import { isSameUser } from '/imports/schemas/users'
 import moment from 'moment'
-
+import { Flags } from '/imports/schemas'
+import FlagsModerate from '/client/imports/components/Controls/FlagsModerate'
 
 const outlinkLi = (txt, url, key) => (
   <List.Item key={key}>
@@ -63,12 +64,12 @@ const LinkTabContent = () => (
 
 const UserAdmin = ( { user, extraUserInfo } ) => {
   if (!user)
-    return <div>Visit a page that has a user context</div> 
-    
+    return <div>Visit a page that has a user context</div>
+
   const usrLink = `/u/${user.username}`
   const mgb1Link = `${usrLink}/projects/import/mgb1`
 
-  return ( 
+  return (
     <div>
       <Header sub>Public Info: {user.username}</Header>
       <List bulleted>
@@ -106,24 +107,28 @@ const UserAdmin = ( { user, extraUserInfo } ) => {
         <List bulleted>
           { linkLi("usernames: "+_.join(extraUserInfo.ua.usernames, ', '), "/") }
           { _.map(extraUserInfo.u.emails, email => linkLi(
-              'email: ' + email.address + (email.verified ? ' (v)' : ' (!v)'), 
+              'email: ' + email.address + (email.verified ? ' (v)' : ' (!v)'),
               "mailto:" + email.address,
               email
               )
             )
           }
           { _.map(extraUserInfo.ua.ipAddresses, ipStr => linkLi('IP: ' + ipStr, "https://freegeoip.net/?q=" + ipStr, ipStr) ) }
-        </List> 
+        </List>
       }
     </div>
   )
 }
 
-/* TabularMenu is the actual tabbed admin menu. It will also get and inject extended user data 
+const ModeratorList = () => (
+  <FlagsModerate/>
+)
+
+/* TabularMenu is the actual tabbed admin menu. It will also get and inject extended user data
  * using an admin-only Meteor call so we can see email, IPs etc easily
  */
 class TabularMenu extends Component {
-  state = { 
+  state = {
     activeIndex: 0,
     extraUserInfo: null
   }
@@ -132,20 +137,22 @@ class TabularMenu extends Component {
     if (user)
     {
       this.setState( { extraUserInfo: null } )
+      //load more data here such as recent flagged items user meteor.call for now
+      //check out definition for below .call
       Meteor.call("User.su.analytics.info", user._id, (err, result) => {
         if (result && !err)
           this.setState( { extraUserInfo: result } )
       } )
     }
   }
-  
+
   componentWillMount() {
     if (this.props.user)
       this.getExtraUserInfo(this.props.user)
   }
 
   componentWillReceiveProps(nextProps) {
-    
+
     if (!isSameUser(this.props.user, nextProps.user))
       this.getExtraUserInfo(nextProps.user)
   }
@@ -155,9 +162,9 @@ class TabularMenu extends Component {
     const SelectedElement = this.props.items[this.state.activeIndex].el
     return (
       <div>
-        <Menu 
-          tabular 
-          activeIndex={this.state.activeIndex} 
+        <Menu
+          tabular
+          activeIndex={this.state.activeIndex}
           items={menuItems}
           attached='top'
           onItemClick={(ev, item) => { this.setState( { activeIndex: item.index} ) } }/>
@@ -171,7 +178,8 @@ class TabularMenu extends Component {
 
 const _items = [
   { name: 'User',    el: UserAdmin },
-  { name: 'Links',   el: LinkTabContent }
+  { name: 'Links',   el: LinkTabContent },
+  { name: 'Moderation', el: ModeratorList }
 ]
 
 
@@ -180,7 +188,7 @@ const _items = [
  */
 const fpSuperAdmin = ( { user, isSuperAdmin } ) => (
   isSuperAdmin ?
-   <TabularMenu items={_items} user={user}/> 
+   <TabularMenu items={_items} user={user}/>
    :
    <div>Not Yet Implemented</div>
 )

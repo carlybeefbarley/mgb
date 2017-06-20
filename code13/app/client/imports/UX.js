@@ -14,7 +14,7 @@ import moment from 'moment'
 // 4. Use shallow information about the main MGB schema types (e.g. know about user, not about details of map assets)
 
 const _makeAvatarImgLink = ( username, validFor ) => (
-  ( _.isNumber(validFor) ? 
+  ( _.isNumber(validFor) ?
       makeCDNLink(`/api/user/@${username}/avatar/${validFor}`, makeExpireTimestamp(validFor))
     :
       makeCDNLink(`/api/user/@${username}/avatar/`)
@@ -25,15 +25,15 @@ const _makeMascotImgLink = mascotName => (
 )
 
 const _button2Sty = {
-  padding: '5px', 
-  width: '5em', 
+  padding: '5px',
+  width: '5em',
   height: '5em',
   margin: '3.5px'
 }
 
 const _button2IconSty = {
-  marginLeft: 0, 
-  marginRight: 0, 
+  marginLeft: 0,
+  marginRight: 0,
   marginBottom: '12px'
 }
 
@@ -42,7 +42,7 @@ const _UserJoinedSty = { color: "rgb(0, 176, 224)" }
 const UX = {
   makeAvatarImgLink: _makeAvatarImgLink,
   makeMascotImgLink: _makeMascotImgLink,
-  
+
   UserLink: ( { username, prefix } ) => (
     <QLink to={`/u/${username}`}>
       { `${_.isString(prefix) ? prefix : ''}${username}` }
@@ -50,22 +50,40 @@ const UX = {
   ),
 
   UserAvatarNoLink: ( { username, validFor, height } ) => (
-    <FittedImage 
+    <FittedImage
       src={ _makeAvatarImgLink(username, validFor) }
       width='auto'
       height={height || '3em'}
       />
   ),
-  
+
   UserAvatar: ( { username, validFor, height } ) => (
-    <QLink to={`/u/${username}`}> 
-      <FittedImage 
+    <QLink to={`/u/${username}`}>
+      <FittedImage
         src={ _makeAvatarImgLink(username, validFor) }
         width='auto'
         height={height || '3em'}
         />
     </QLink>
   ),
+
+  LinkToChatId: ( { chatId } ) => (
+    // TODO: @dgolds to decvide on how to reference a specific message
+    // Use cases - @mention, notifications, flagging etc/
+    // Workitem #10xx to be filed on dgolds
+    <QLink to={`/?_fp=chat._TODO_`}>
+      Flagged Chat Id: {chatId}
+    </QLink>
+  ),
+
+  LinkToFlaggedEntity: ( { entityType, entityId } ) => {
+    if (entityType === 'Chats')
+      return <UX.LinkToChatId chatId={entityId} />
+    // TODO for assets
+    // TODO for projects
+    // TODO for users (naughty names!)
+    return <span>TODO</span>
+  },
 
   UserTitleSpan: ( { title } ) => (
     <span>
@@ -75,7 +93,7 @@ const UX = {
         &nbsp;
       </big>
       <Icon name="quote right" color='blue'/>
-    </span>  
+    </span>
   ),
 
   UserWhenJoined: ( { when, as } ) => {
@@ -90,7 +108,7 @@ const UX = {
   UserAvatarName: ( { username, validFor } ) => (
     <QLink to={`/u/${username}`} altTo={`/u/${username}/projects`}>
       <span className="right floated author">
-      <Image 
+      <Image
           avatar
           src={ _makeAvatarImgLink(username, validFor) }
           />
@@ -118,7 +136,7 @@ const UX = {
   },
 
   ImageMascot: ( props ) => (
-    <Image 
+    <Image
       src={ _makeMascotImgLink(props.mascotName) }
       { ..._.omit(props, 'mascotName') }
       />
@@ -126,7 +144,7 @@ const UX = {
 
   /** A two-row button */
   Button2: ( props ) => (
-    <Button 
+    <Button
         { ..._.omit(props, 'underText') }
         style={_button2Sty}
         content={<div>{props.content}</div>}

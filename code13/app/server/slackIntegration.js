@@ -14,7 +14,7 @@ const MUTE_ASSET_AND_PROJECT_CREATE_FOR_SPECIAL_USERS = 'tester,stauzs,dgolds,Bo
 
 function slackGenericNotify(slackWebhookUrl, data) {
 
-  if (DISABLE_SLACK_NOTIFICATIONS) 
+  if (DISABLE_SLACK_NOTIFICATIONS)
   {
     console.log("DISABLE_SLACK_NOTIFICATIONS set, preventing Slack Notifications")
     return
@@ -26,12 +26,12 @@ function slackGenericNotify(slackWebhookUrl, data) {
     headers: { 'Content-Type': 'application/json' },
     json: data
   }
-  
+
   function callback(error, response, body) {
-    if (!error) 
+    if (!error)
       console.log("Messaged Slack Webhook OK :", JSON.parse(JSON.stringify(body)))
-    else 
-      console.log('Error when messaging Slack Webhook: '+ error)    
+    else
+      console.log('Error when messaging Slack Webhook: '+ error)
   }
 
   request(options, callback)
@@ -54,7 +54,7 @@ Meteor.methods({
             {
               "title": `Message on #${channel}`,
               "value": message,
-              "short": false            
+              "short": false
             }
           ]
         }
@@ -81,7 +81,7 @@ Meteor.methods({
             {
               "title": `Message on #${channel}`,
               "value": `Original: '${message}' \nWould censor to: '${censoredMsg}'`,
-              "short": false            
+              "short": false
             }
           ]
         }

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Grid, Icon, Message } from 'semantic-ui-react'
+import { Grid, Icon, Message, Popup, Segment, Button, Dropdown, Label, Divider, TextArea } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
@@ -18,6 +18,9 @@ import { ActivitySnapshots, Activity } from '/imports/schemas'
 import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 import { makeAssetInfoFromAsset } from '/imports/schemas/assets/assets-client'
 import { showToast } from '/client/imports/routes/App'
+
+import { Azzets, Flags } from '/imports/schemas'
+import { FlagTypes } from '/imports/schemas/flags'
 
 import WorkState from '/client/imports/components/Controls/WorkState'
 import StableState from '/client/imports/components/Controls/StableState'
@@ -129,7 +132,7 @@ export default AssetEditRoute = React.createClass({
 
   contextTypes: {
     urlLocation: React.PropTypes.object,
-    skills: React.PropTypes.object 
+    skills: React.PropTypes.object
   },
 
 
@@ -138,7 +141,7 @@ export default AssetEditRoute = React.createClass({
   checkForRedirect() {
     if (!this.props.user && !!this.data.asset) {
       // don't push - just replace #225 - back button not always work
-      console.log("AssetEditRoute - redirecting")      
+      console.log("AssetEditRoute - redirecting")
       utilReplaceTo(this.context.urlLocation.query, "/u/" + this.data.asset.dn_ownerName + "/asset/" + this.data.asset._id)
     }
   },
@@ -330,6 +333,25 @@ export default AssetEditRoute = React.createClass({
 
     this.setState( { isForkPending: false } )
   },
+// add this back when we re-enable flagging
+  // _doReportEntity: function(flagTypes, comments){
+  //   const { asset } = this.data
+  //   if(!asset.suFlagId && this.props.currUser ){
+  //     const reportedEntity = {
+  //       table: "Azzets",
+  //       recordId: asset._id
+  //     }
+  //     const data = {
+  //       flagTypes: flagTypes,
+  //       comments: comments
+  //     }
+  //     Meteor.call("Flags.create", reportedEntity, data, (error, result) => {
+  //       if (error)
+  //         showToast(`Could not flag: ${error.reason}`, 'error')
+  //       // else say ok?
+  //     })
+  //   }
+  // },
 
   render: function() {
     if (this.data.loading)
@@ -442,14 +464,71 @@ export default AssetEditRoute = React.createClass({
               currUserProjects={currUserProjects}
               handleToggleProjectName={this.handleToggleProjectName} />
             { isSuperAdmin && asset.skillPath &&
-              <TaskApprove 
-                asset={asset} 
+              <TaskApprove
+                asset={asset}
                 ownerID={asset.ownerId}
                 handleTaskApprove={this.handleTaskApprove} />
             }
             { isSuperAdmin &&
               <SuperAdminAssetControl asset={asset} handleToggleBan={this.handleToggleBanState} />
             }
+
+            { /* COMING SOON:Asset flagging
+              (!asset.suFlagId && currUser) ?
+              <span className='mgb-show-on-parent-hover' >
+                <Popup
+                  on='click'
+                  size="tiny"
+                  positioning='bottom right'
+                  trigger={(
+                    <Label
+                      circular
+                      basic
+                      size='mini'
+                      icon={{name: 'warning circle', color: 'red' }}
+                      />
+                  )}
+                  wide='very'
+                  >
+                  <Popup.Header>
+                    Report this chat message?
+                  </Popup.Header>
+                  <Popup.Content>
+                    <Segment basic>
+                      <Dropdown
+                        placeholder='Reason(s)'
+                        search
+                        fluid
+                        multiple
+                        selection
+                        options={_.map(_.keys(FlagTypes), (k) => ({
+                          text: FlagTypes[k].displayName, value: k
+                        }))}
+                        onChange={ ( event, dropdown ) => { this.setState( {userSelectedTags: dropdown.value } ) } }
+                        />
+                      <Divider hidden />
+                        <TextArea
+                          placeholder='Additional comments/concerns'
+                          autoHeight
+                          onChange={ ( event, textarea ) => { this.setState( {userComments: textarea.value} ) } }
+                          />
+                      <Divider hidden />
+                        <Button
+                          as='div'
+                          floated='right'
+                          onClick={() => { this._doReportEntity( this.state.userSelectedTags, this.state.userComments )}}
+                          size='tiny'
+                          content='Report'
+                          icon='warning circle'/>
+                        &nbsp;
+                    </Segment>
+                  </Popup.Content>
+                </Popup>
+                </span>
+                  :
+                  null
+            */}
+
           </Grid.Column>
         }
 
@@ -782,13 +861,13 @@ export default AssetEditRoute = React.createClass({
       toChatChannelName: channelName
     }
 
-    if ( hasSkill ) 
+    if ( hasSkill )
     {
-      forgetSkill(skillPath, assetUserID) 
+      forgetSkill(skillPath, assetUserID)
       logActivity("task.disapprove",  `Disapproved Task`, null, asset)
       ChatSendMessageOnChannelName(channelName, 'Task disapproved')
     }
-    else 
+    else
     {
       learnSkill(skillPath, assetUserID)
       logActivity("task.approve",  `Approved Task`, null, asset)

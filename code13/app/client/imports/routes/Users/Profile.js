@@ -266,6 +266,7 @@ export default UserProfileRoute = React.createClass({
                     }
                   </p>
 
+
                 </Item.Meta>
 
               </Item.Content>

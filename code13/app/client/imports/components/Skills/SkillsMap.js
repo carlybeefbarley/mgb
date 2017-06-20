@@ -68,10 +68,10 @@ class SkillsMapNode extends React.Component {
 
           return (
             <div key={skillPath} className={classes} 
-          data-tooltip={(hasSkill && ownsProfile) ? "Warning: Unchecking means you must earn the skill again" : null} 
+              data-tooltip={(hasSkill && ownsProfile) ? "Warning: Unchecking means you must earn the skill again" : null} 
               data-inverted=""
-          onClick={(userCanManuallyClaimSkill || hasSkill) ? this.toggleSkill(skillPath) : null}
-              >
+              onClick={(userCanManuallyClaimSkill || hasSkill) ? this.toggleSkill(skillPath) : null}
+            >
               <Icon { ...iconProps } />
               {skillsModel.getFriendlyName( skillPath )}
             </div>

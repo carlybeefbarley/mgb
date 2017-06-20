@@ -1,7 +1,9 @@
 import React from 'react'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
-import {Accordion, Segment, Divider, Label} from 'semantic-ui-react'
+import {Accordion, Segment, Divider, Label, Button, Table} from 'semantic-ui-react'
 import validate from '/imports/schemas/validate'
+
+// TODO: replace InlineEdit with something better - editor input like ( e.g. in the blender/photoshop)
 
 // MOVE to validate ???
 const validateInteger = numLike => {
@@ -109,7 +111,7 @@ const layerProperties = ({name, width, height, x, y, type}, onChangeLayer) => ({
 })
 
 const tilesetProperties = ({name, tilewidth, tileheight, margin, spacing}, onChangeTilesetName, onChangeTileset) => ({
-  title:  name + " properties",
+  title: name + " properties",
   content: (
     <Segment.Group>
       <Segment>
@@ -157,8 +159,85 @@ const tilesetProperties = ({name, tilewidth, tileheight, margin, spacing}, onCha
   )
 })
 
-const objectProperties = ({width, height, x, y, name, type, visible, rotation}, changeString, changeNumber) => ({
-  title:  name + " properties",
+
+// TODO: add / handle property type - e.g. string / number etc
+class MoreProperties extends React.Component {
+
+  static propTypes = {
+    savedProps: React.PropTypes.array,
+    updateSavedProps: React.PropTypes.function
+  }
+
+  changeName(index, changes) {
+    const {savedProps} = this.props
+    savedProps[index].name = changes.name
+    this.props.updateSavedProps(savedProps)
+  }
+
+  changeValue(index, changes) {
+    const {savedProps} = this.props
+    savedProps[index].value = changes.value
+    this.props.updateSavedProps(savedProps)
+  }
+
+  removeKeyVal(index) {
+    this.props.savedProps.splice(index, 1)
+    this.props.updateSavedProps(this.props.savedProps)
+  }
+
+  render() {
+
+    const {savedProps} = this.props
+    const props = savedProps.map((p, index) => (
+
+        <Table.Row horizontal style={{padding: '0.1em', margin: '0.1em'}} key={index}>
+          <Table.Cell style={{padding: '0.2em 1em'}}>
+            <InlineEdit
+              change={this.changeName.bind(this, index)} text={p.name + ''} paramName="name"
+              validate={val => validate.notEmpty(val) && validate.lengthCap(val, 255)}
+            />
+          </Table.Cell>
+          <Table.Cell style={{padding: '0.2em 1em'}}>
+            <InlineEdit
+              change={this.changeValue.bind(this, index)} text={p.value + ''} paramName="value"
+              validate={val => validate.notEmpty(val) && validate.lengthCap(val, 255)}
+            />
+
+          </Table.Cell>
+          <Table.Cell style={{padding: '0.2em 1em'}} textAlign='right'>
+            <Button size='mini' compact  onClick={this.removeKeyVal.bind(this, index)}>x</Button>
+          </Table.Cell>
+        </Table.Row>
+      )
+    )
+
+    return (
+      <Segment>
+        <Table>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell>Name</Table.HeaderCell>
+              <Table.HeaderCell>Value</Table.HeaderCell>
+              <Table.HeaderCell/>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {props}
+          </Table.Body>
+        </Table>
+        <Button onClick={() => {
+          savedProps.push({name: 'unnamed', value: 'property'})
+          this.props.updateSavedProps(savedProps)
+        }}>Add Property</Button>
+      </Segment>
+    )
+  }
+}
+
+// mgb_properties - array<name:String, value:String>
+// properties - map<name:value> - we are rebuilding properties from mgb_properties
+const objectProperties = ({width, height, x, y, name, type, visible, rotation, mgb_properties, properties}, changeString, changeNumber, updateSavedProps) => ({
+  title: name + " properties",
   content: (
     <Segment.Group>
       <Segment>
@@ -218,8 +297,13 @@ const objectProperties = ({width, height, x, y, name, type, visible, rotation}, 
             validate={val => validate.lengthCap(val, 255)}
           />
         </Segment>
-
       </Segment.Group>
+
+      <MoreProperties
+        savedProps={mgb_properties}
+        tiledProps={properties}
+        updateSavedProps={updateSavedProps}
+      />
     </Segment.Group>
   )
 })
@@ -243,7 +327,7 @@ export default class extends React.Component {
   }
 
   onChangeLayer = changes => {
-    for(let i in changes){
+    for (let i in changes) {
       this.props.layer[i] = parseInt(changes[i], 10)
     }
     this.props.updateLayer(this.props.layer)
@@ -254,7 +338,7 @@ export default class extends React.Component {
     this.props.updateTileset(this.props.tileset)
   }
   onChangeTileset = changes => {
-    for(let i in changes){
+    for (let i in changes) {
       this.props.tileset[i] = parseInt(changes[i], 10)
     }
     this.props.updateTileset(this.props.tileset)
@@ -262,19 +346,29 @@ export default class extends React.Component {
 
   onChangeObjectStringValue = changes => {
     const object = this.props.getActiveObject()
-    for(let i in changes){
+    for (let i in changes) {
       object[i] = changes[i]
     }
     this.props.updateObject(object)
   }
   onChangeObjectNumbericValue = changes => {
     const object = this.props.getActiveObject()
-    for(let i in changes){
+    for (let i in changes) {
       object[i] = parseFloat(changes[i])
     }
     this.props.updateObject(object)
   }
 
+  updateObjectProps = newProps => {
+    const object = this.props.getActiveObject()
+    object.mgb_properties = newProps
+    object.properties = {}
+    for (let i = 0; i < newProps.length; i++) {
+      const p = newProps[i]
+      object.properties[p.name] = p.value
+    }
+    this.props.updateObject(object)
+  }
 
   render() {
     const panels = [
@@ -283,9 +377,9 @@ export default class extends React.Component {
       tilesetProperties(this.props.tileset, this.onChangeTilesetName, this.onChangeTileset),
     ]
     const object = this.props.getActiveObject()
-    if(object)
+    if (object)
       panels.push(
-        objectProperties(object, this.onChangeObjectStringValue, this.onChangeObjectNumbericValue)
+        objectProperties(object, this.onChangeObjectStringValue, this.onChangeObjectNumbericValue, this.updateObjectProps)
       )
 
     return <Accordion panels={panels} styled/>

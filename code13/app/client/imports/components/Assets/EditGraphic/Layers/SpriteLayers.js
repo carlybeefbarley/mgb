@@ -40,7 +40,7 @@ export default class SpriteLayers extends React.Component {
     /************************** FRAMES ******************************/
 
   selectFrame(frameID) {
-    this.props.EditGraphic.handleSelectFrame(frameID)
+    this.props.handleSelectFrame(frameID)
   }
 
   // Append frame at end of frame list
@@ -149,8 +149,8 @@ export default class SpriteLayers extends React.Component {
 
     c2.frameNames.splice(frameID, 1);
     c2.frameData.splice(frameID, 1);
-    if (this.props.EditGraphic.state.selectedFrameIdx > c2.frameNames.length-1)
-      this.props.EditGraphic.setState({ selectedFrameIdx: c2.frameNames.length-1 })
+    if (this.props.selectedFrameIdx > c2.frameNames.length-1)
+      this.props.handleSelectFrame( c2.frameNames.length-1 )
     this.props.forceDraw()
     this.handleSave('Delete frame', true)
   }
@@ -196,7 +196,7 @@ export default class SpriteLayers extends React.Component {
     this.setState({ isPlaying: isPlaying })
 
     if (isPlaying)
-      this.playAnimation(this.props.EditGraphic.state.selectedFrameIdx)
+      this.playAnimation(this.props.selectedFrameIdx)
     else
       this.cancelNextAnimationTimeout()
   }
@@ -237,7 +237,7 @@ export default class SpriteLayers extends React.Component {
   }
 
   stepFrame(isForward) {
-    let selectedID = this.props.EditGraphic.state.selectedFrameIdx
+    let selectedID = this.props.selectedFrameIdx
     let frameID = isForward ? selectedID+1 : selectedID-1
     if (frameID >= 0 && frameID < this.props.content2.frameNames.length)
       this.selectFrame(frameID)
@@ -411,7 +411,7 @@ export default class SpriteLayers extends React.Component {
   }
 
   selectLayer(layerID) {
-    this.props.EditGraphic.handleSelectLayer(layerID)     // TODO: Cleaner to just have a prop.callback for this
+    this.props.handleSelectLayer(layerID)     // TODO: Cleaner to just have a prop.callback for this
   }
 
   addLayer() {
@@ -461,8 +461,8 @@ export default class SpriteLayers extends React.Component {
 
     c2.layerParams.splice(layerID, 1)
     // change selectedLayer if it is last and beeing removed
-    if (this.props.EditGraphic.state.selectedLayerIdx > c2.layerParams.length-1)
-      this.props.EditGraphic.setState({ selectedLayerIdx: c2.layerParams.length-1 })
+    if (this.props.selectedLayerIdx > c2.layerParams.length-1)
+      this.props.handleSelectLayer( c2.layerParams.length-1 )
 
     for (let frameID=0; frameID<c2.frameNames.length; frameID++)
       c2.frameData[frameID].splice(layerID, 1)
@@ -560,8 +560,8 @@ export default class SpriteLayers extends React.Component {
         layer={layer}
         layerCount={c2.layerParams.length}
         frameNames={c2.frameNames}
-        selectedFrame={this.props.EditGraphic.state.selectedFrameIdx}
-        isSelected={this.props.EditGraphic.state.selectedLayerIdx === idx}
+        selectedFrame={this.props.selectedFrameIdx}
+        isSelected={this.props.selectedLayerIdx === idx}
         width={c2.width}
         height={c2.height}
         isCanvasLayersVisible={this.state.isCanvasLayersVisible}
@@ -849,7 +849,6 @@ SpriteLayers.propTypes = {
   getFrameData: PropTypes.func.isRequired, // used for drag and dopd frame on the main canvas
   getLayerData: PropTypes.func.isRequired, // used for drag and drop layer on the main canvas
 
-  EditGraphic: PropTypes.object,
   handleSave: PropTypes.func,
   forceDraw: PropTypes.func,
   forceUpdate: PropTypes.func,

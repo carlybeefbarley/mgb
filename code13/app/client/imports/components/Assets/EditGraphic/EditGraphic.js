@@ -1129,8 +1129,7 @@ export default class EditGraphic extends React.Component {
 
 // Add/Select/Remove etc animation frames
 
-  handleSelectFrame(frameIndex)
-  {
+  handleSelectFrame = (frameIndex) => {
     this.doSnapshotActivity(frameIndex)
     this.processedChangeMarker = null       // Since we now want to reload data for our new EditCanvas
     // console.log("handleSelectFrame: setting this.processedChangeMarker = null")
@@ -1145,7 +1144,7 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  handleSelectLayer(layerIndex) {
+  handleSelectLayer = (layerIndex) => {
     // this.doSnapshotActivity(layerIndex)
     this.setState( { selectedLayerIdx: layerIndex } )
 
@@ -2099,16 +2098,19 @@ export default class EditGraphic extends React.Component {
 
         <SpriteLayers
           content2={c2}
-          EditGraphic={this}
 
           hasPermission={this.hasPermission}
           handleSave={this.handleSave.bind(this)}
+          selectedFrameIdx={this.state.selectedFrameIdx}
+          selectedLayerIdx={this.state.selectedLayerIdx}
           // The following params are an anti-pattern for React.
           // TODO: Need to make this a normal flow instead
           forceDraw={this.forceDraw}
           forceUpdate={this.forceUpdateForLayers}
           getFrameData={ frameId => this.frameCanvasArray[frameId].toDataURL('image/png') }
           getLayerData={ layerId => (this.previewCanvasArray[layerId].toDataURL('image/png') ) }
+          handleSelectLayer={ this.handleSelectLayer }
+          handleSelectFrame={ this.handleSelectFrame }
         />
 
 

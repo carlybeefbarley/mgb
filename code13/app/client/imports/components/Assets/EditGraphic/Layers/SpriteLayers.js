@@ -26,7 +26,8 @@ export default class SpriteLayers extends React.Component {
       isCanvasLayersVisible: false,
       isPlaying: false,
       copyFrameID: null,
-      copyLayerID: null
+      copyLayerID: null,
+      isMinimized: true
     }
   }
 
@@ -545,6 +546,10 @@ export default class SpriteLayers extends React.Component {
     $(document.body).removeClass("dragging")
   }
 
+  toggleMinimize = () => {
+    this.setState({ isMinimized: !this.state.isMinimized })
+  }
+
 
   renderLayers() {
     const c2 = this.props.content2
@@ -583,7 +588,7 @@ export default class SpriteLayers extends React.Component {
 
     return (
       <div className="ui sixteen wide column">
-        <div className="row">
+        <div className="row" className={(this.state.isMinimized ? " mgb-hidden" : "")}>
           <div onClick={this.rewindFrames.bind(this, false)} className={buttonDivClass}>
             <i className="icon step backward"></i>
           </div>
@@ -613,6 +618,9 @@ export default class SpriteLayers extends React.Component {
           </div>
           <div className={"ui " + (this.state.isCanvasLayersVisible ? "primary" : "") + " right floated mini button"} onClick={this.toggleCanvasLayersVisibility.bind(this)}>
             <i className={"icon " + (this.state.isCanvasLayersVisible ? "unhide" : "hide" )}></i> Layers
+          </div>
+          <div onClick={this.toggleMinimize} className="ui right floated mini button">
+            <i className={"icon window minimize"}></i> Minimize
           </div>
         </div>
 
@@ -685,7 +693,7 @@ export default class SpriteLayers extends React.Component {
             </tr>
       {/* animations end */}
 
-            <tr>
+            <tr className={(this.state.isMinimized ? " mgb-hidden" : "")}>
               <th width="32px">
                   <i
                       className={"icon " + (this.state.allLayersHidden ? "hide" : "unhide" )}
@@ -778,8 +786,20 @@ export default class SpriteLayers extends React.Component {
             <tr className={"frameCanvases " + (this.state.isCanvasFramesVisible ? "" : "mgb-hidden")}>
               <th></th>
               <th></th>
-              <th></th>
-              <th></th>
+              <th>
+                <div
+                  className={(this.state.isMinimized ? "" : "mgb-hidden")}
+                  onClick={this.toggleMinimize} >
+                  <i className={"icon window maximize"}></i>
+                </div>
+              </th>
+              <th>
+                <div
+                  onClick={this.togglePlayAnimation.bind(this)}
+                  className={buttonDivClass + (this.state.isPlaying ? " black" : "") + (this.state.isMinimized ? "" : " mgb-hidden")}>
+                  <i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
+                </div>
+              </th>
               { // TODO: change from frameNames[] to frameData[] ?
                 _.map(c2.frameNames, (frameName, idx) => { return (
                   <th key={"thCanvas_"+idx}>
@@ -807,7 +827,7 @@ export default class SpriteLayers extends React.Component {
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className={(this.state.isMinimized ? " mgb-hidden" : "")}>
             { this.renderLayers() }
           </tbody>
         </table>

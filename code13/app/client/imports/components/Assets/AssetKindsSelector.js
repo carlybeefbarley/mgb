@@ -6,6 +6,7 @@ import { Icon, Menu } from 'semantic-ui-react'
 
 // UI Component to render menus to allow asset types to be selected
 
+const _iconStyle = { marginLeft: '1px', marginRight: '3px' }
 const AssetKindsSelector = ( { showCompact, kindsActive, handleToggleKindCallback } ) => {
   const baseSty = showCompact ? { padding: '3px 4px 3px 5px'} : {}
 
@@ -20,9 +21,9 @@ const AssetKindsSelector = ( { showCompact, kindsActive, handleToggleKindCallbac
     const color = AssetKinds.getColor(k)
     const icon = <Icon name={active ? 'checkmark box' : 'square outline'} />
     return (
-      <Menu.Item 
-          as='a' 
-          active={active} 
+      <Menu.Item
+          as='a'
+          active={active}
           color={color}
           id={`mgbjr-asset-search${showCompact ? '-flexPanel-':'-'}${name.toLowerCase()}`}
           key={k}
@@ -33,7 +34,7 @@ const AssetKindsSelector = ( { showCompact, kindsActive, handleToggleKindCallbac
             if (handleToggleKindCallback)
               handleToggleKindCallback(k, ev.altKey)
           }} >
-        <Icon color={AssetKinds.getColor(k)} name={AssetKinds.getIconName(k)} />
+        <Icon color={AssetKinds.getColor(k)} name={AssetKinds.getIconName(k)} style={_iconStyle}/>
         { !showCompact && <span>{icon} {name}</span> }
       </Menu.Item>
     )

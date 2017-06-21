@@ -24,28 +24,28 @@ const _showFromAllValue = ':showFromAll:' // since colon is not allowed in Meteo
 
 const ShowFromWho = ( { value, currUser, otherUser, style, onChange }) => {
   const options = _.compact([
-    currUser && { 
-      key: currUser._id, 
-      text: currUser.username,  
-      value: currUser._id,  
-      image: { 
-        avatar: true, 
-        src:  UX.makeAvatarImgLink(currUser.username) 
+    currUser && {
+      key: currUser._id,
+      text: currUser.username,
+      value: currUser._id,
+      image: {
+        avatar: true,
+        src:  UX.makeAvatarImgLink(currUser.username)
       }
     },
     // This is mostly working, but needs to handle the transition to a page where the user is no longer part of the page scope
-    (otherUser && currUser && otherUser._id !== currUser._id) && { 
-      key: otherUser._id, 
-      text: otherUser.username, 
-      value: otherUser._id, 
-      image: { 
-        avatar: true, 
-        src: UX.makeAvatarImgLink(otherUser.username) 
-      } 
+    (otherUser && currUser && otherUser._id !== currUser._id) && {
+      key: otherUser._id,
+      text: otherUser.username,
+      value: otherUser._id,
+      image: {
+        avatar: true,
+        src: UX.makeAvatarImgLink(otherUser.username)
+      }
     },
-    { text: 'All users', 
-      value: _showFromAllValue, 
-      icon: { size: 'large', name: 'users' } 
+    { text: 'All users',
+      value: _showFromAllValue,
+      icon: { size: 'large', name: 'users' }
     }
   ])
   return (
@@ -177,7 +177,11 @@ export default fpAssets = React.createClass({
   // This is the callback from AssetsKindSelector
   handleToggleKind(k, altKey)  { // k is the string for the AssetKindsKey to toggle existence of in the array
     let newKindsString
-    if (k === "__all")
+    const kindsStr = this.state.kindsActive
+    const kindsArray = (kindsStr === "" ) ? [] : kindsStr.split(safeAssetKindStringSepChar)
+    const isCurrentlOnlyKindBeingToggled = (kindsArray.length === 1 && kindsArray[0] === k)
+
+    if (k === '__all' || isCurrentlOnlyKindBeingToggled)
       newKindsString = AssetKindKeys.join(safeAssetKindStringSepChar)
     else if (!altKey)
       newKindsString = k          // Alt key means ONLY this kind - pretty simple - the string is the given kind
@@ -185,8 +189,6 @@ export default fpAssets = React.createClass({
     {
       // Alt key, so this is a toggle
       // Just toggle this key, keep the rest.. Also, handle the special case string for none and all
-      const kindsStr = this.state.kindsActive
-      const kindsArray = (kindsStr === "" ) ? [] : kindsStr.split(safeAssetKindStringSepChar)
       // Toggle it being there
       const newKindsArray =  _.indexOf(kindsArray,k) === -1 ? _.union(kindsArray,[k]) : _.without(kindsArray,k)
       newKindsString = newKindsArray.join(safeAssetKindStringSepChar)
@@ -241,18 +243,10 @@ export default fpAssets = React.createClass({
               id='mgbjr_fp_search_asset'
               onFinalChange={this.handleSearchGo} />
 
-          <div style={{marginTop: '0.6em'}}>
-            <Popup
-                trigger={(<small>Show asset kinds:</small>)}
-                position='right center'
-                size='mini'
-                content='Alt-click to multi-select'/>
-            { isAllKinds || <small style={{float: 'right', fontWeight: 'bold', cursor: 'pointer'}} onClick={() => this.handleToggleKind('__all')}>(show all)</small> }
-            <AssetKindsSelector
-                showCompact={true}
-                kindsActive={kindsActive}
-                handleToggleKindCallback={this.handleToggleKind} />
-          </div>
+          <AssetKindsSelector
+              showCompact={true}
+              kindsActive={kindsActive}
+              handleToggleKindCallback={this.handleToggleKind} />
 
         </div>
         <br></br>

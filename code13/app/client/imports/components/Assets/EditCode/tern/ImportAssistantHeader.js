@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react'
-import { Popup, Label } from 'semantic-ui-react'
+import { Divider, Label, Popup } from 'semantic-ui-react'
 import _ from 'lodash'
 import QLink from '/client/imports/routes/QLink'
 import settings from '/imports/SpecialGlobals'
 
 export default class ImportAssistantHeader extends React.Component {
   static propTypes = {
-    knownImports:          PropTypes.array            // list of known imports - won't show in the list
+    knownImports:          PropTypes.array            // list of known imports so we can display relevant buttons
   }
 
   render() {
@@ -19,6 +19,7 @@ export default class ImportAssistantHeader extends React.Component {
             if (!_.some(knownImports, ki => (ki.lib === lib.import)))
               return null
             const packageJsx = <strong><code>{lib.import}</code></strong>
+            const thisKi = _.find(knownImports, { lib: lib.import } )
 
             return (
               <Popup
@@ -40,10 +41,16 @@ export default class ImportAssistantHeader extends React.Component {
                 </Popup.Header>
                 <Popup.Content>
                   <p>{lib.descLong}</p>
-                  <p>{packageJsx} overview at <a href={lib.landingPageUrl} target='_blank'>{lib.landingPageUrl}</a></p>
-                  <p>{packageJsx} API docs at <a href={lib.apiDocsPageUrl} target='_blank'>{lib.apiDocsPageUrl}</a></p>
+                  <p>{packageJsx} overview at <a href={lib.landingPageUrl} target='_blank'><small>{lib.landingPageUrl}</small></a></p>
+                  <p>{packageJsx} API docs at <a href={lib.apiDocsPageUrl} target='_blank'><small>{lib.apiDocsPageUrl}</small></a></p>
                   { lib.tutorialsInternalLink &&
-                    <p>{packageJsx} MGB Tutorials at <QLink to={lib.tutorialsInternalLink}>{lib.tutorialsInternalLink}</QLink></p>
+                    <p>{packageJsx} MGB Tutorials at <QLink to={lib.tutorialsInternalLink}><small>{lib.tutorialsInternalLink}</small></QLink></p>
+                  }
+                  { (thisKi && thisKi.url) &&
+                    <div>
+                      <Divider/>
+                      <p><small>This {packageJsx} package is dynamically loaded from <a href={thisKi.url}>{thisKi.url}</a></small></p>
+                    </div>
                   }
                 </Popup.Content>
               </Popup>

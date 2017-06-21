@@ -176,3 +176,30 @@ Meteor.methods({
     })
   }
 })
+
+Meteor.methods({
+  "Slack.Flags.unresolved": function(entity, ownerUsername, reporterUsername, createdAt, entityType) {
+    let infoUrl = ''
+    if(entityType == 'Chats')
+      infoUrl=`https://v2.mygamebuilder.com/u/${ownerUsername}?_fp=chat.${entity.toChannelName}`
+
+    slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+      username: `MGBv2 @${ownerUsername}`,
+      text: `Flag created by user <${infoUrl}|${reporterUsername}> on ${createdAt.toString()} at ${infoUrl}`,
+//       attachments: [
+//         {
+//           fallback: `Message: '${message}'`,
+// //        pretext: "Message",
+//           color: "#D00000",
+//           fields: [
+//             {
+//               "title": `Message on #${channel}`,
+//               "value": `Original: '${message}' \nWould censor to: '${censoredMsg}'`,
+//               "short": false
+//             }
+//           ]
+//         }
+//       ]
+    })
+  }
+})

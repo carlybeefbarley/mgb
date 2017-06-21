@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Button, Comment, Divider, Form, Header, Icon, Modal, Input, Label, List, Popup, Segment, Dropdown, TextArea } from 'semantic-ui-react'
+import { Button, Comment, Divider, Form, Header, Icon, Input, Label, List, Popup } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 import { showToast } from '/client/imports/routes/App'
 import AssetCardGET from '/client/imports/components/Assets/AssetCardGET'
@@ -301,7 +301,7 @@ class ResolveReportChatMessage extends React.Component {
       <Popup
         on='click'
         size="tiny"
-        position='bottom right'
+        position='left center'
         trigger={(
           <Label
             circular
@@ -316,20 +316,25 @@ class ResolveReportChatMessage extends React.Component {
           Resolve this flag
         </Popup.Header>
         <Popup.Content>
-          <Segment basic>
+        <Form style={{minWidth: '25em'}}>
             <Divider hidden />
             Comments on the situation/why are you banning this or not?
-              <TextArea
+              <Form.TextArea
+                autoHeight
                 placeholder='Moderator comments'
                 onChange={ ( event, textarea ) => { this.setState( { modComments: textarea.value } ) } }
                 />
             <Divider hidden />
             Ban this permanently?
-          (the message will show up as deleted by admin)
+              <br/><em>
+              (the message will show up as deleted by moderator)
+              </em>
+            <Divider hidden />
             <Button.Group>
               <Button
               value={ true }
-              onClick={ () => _doResolveReportEntity(chat._id, true, this.state.modComments )}>
+              onClick={ () => _doResolveReportEntity(chat._id, true, this.state.modComments )}
+              negative>
               Yes Ban
               </Button>
             <Button.Or/>
@@ -341,7 +346,7 @@ class ResolveReportChatMessage extends React.Component {
               </Button>
             </Button.Group>
               &nbsp;
-          </Segment>
+          </Form>
         </Popup.Content>
       </Popup>
       </span>

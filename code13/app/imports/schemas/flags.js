@@ -309,7 +309,7 @@ if(Meteor.isServer){
 
       if(count !== 1)
         throw new Meteor.error(500, "Collection did not update")
-
+      Meteor.call("Slack.Flags.unresolved", entity, entityOwnerName, currUser.username, newFlagData.createdAt, newFlagData.entityType)
       return flagId
     },
 

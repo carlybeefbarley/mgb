@@ -1032,11 +1032,8 @@ export default fpChat = React.createClass( {
               hoverable
               position='left center'
               trigger={(
-                <Icon
-                    style={{ padding: '4px 0px 0px 16px' }}
-                    size='big'
-                    color='grey'
-                    name={presentedChannelIconName}/>
+                <Button active
+                    icon={presentedChannelIconName}/>
               )}
               >
               <Popup.Header>

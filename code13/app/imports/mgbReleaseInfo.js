@@ -17,6 +17,37 @@ const mgbReleaseInfo = {
   'releases': [
 
 
+    {
+      'timestamp': 'Wed Jun 21 2017 12:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4444'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+
+        {
+          'featureTag': 'asset.code',
+          'type': 'feature',
+          'changeName': 'Import Assistant',
+          'changeSummary': 'We revamped the Import Helper in the Code Editor and it\'s now a top-level assistant. It has collapsible help to explain what JS imports are, and it has a nifty auto-detect-and-explain tag for react, phaser and lodash package imports.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'flexpanel.asset',
+          'type': 'improvement',
+          'changeName': 'Asset flexpanel asset-kinds-selection',
+          'changeSummary': 'The Asset flexpanel has a nicer asset-kinds selection UI now. Less text, and proper toggles for on/off for filtering a single asset kind. alt-click to multi-select still works.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
     {
       'timestamp': 'Tue Jun 20 2017 15:30:00 GMT-0700 (PDT)',

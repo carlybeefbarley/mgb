@@ -27,7 +27,7 @@ export default class SpriteLayers extends React.Component {
       isPlaying: false,
       copyFrameID: null,
       copyLayerID: null,
-      isMinimized: false // TODO after finishing css this should be true by default
+      isMinimized: true
     }
   }
 
@@ -586,9 +586,8 @@ export default class SpriteLayers extends React.Component {
     const c2 = this.props.content2
     const buttonDivClass = "ui mini icon button"
 
-    // TODO for fixed layout -> style={{ position: "fixed", bottom: 0, paddingRight: "71px" }}
     return (
-      <div className="ui sixteen wide column">
+      <div className="ui sixteen wide column" style={{ position: "fixed", bottom: 0, paddingRight: "71px" }}>
         <div className="row" className={(this.state.isMinimized ? " mgb-hidden" : "")}>
           <div onClick={this.rewindFrames.bind(this, false)} className={buttonDivClass}>
             <i className="icon step backward"></i>

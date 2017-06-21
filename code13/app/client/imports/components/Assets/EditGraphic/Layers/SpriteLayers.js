@@ -620,9 +620,13 @@ export default class SpriteLayers extends React.Component {
           <div className={"ui " + (this.state.isCanvasLayersVisible ? "primary" : "") + " right floated mini button"} onClick={this.toggleCanvasLayersVisibility.bind(this)}>
             <i className={"icon " + (this.state.isCanvasLayersVisible ? "unhide" : "hide" )}></i> Layers
           </div>
-          <div onClick={this.toggleMinimize} className="ui right floated mini button">
-            <i className={"icon window minimize"}></i> Minimize
-          </div>
+          {  /* Disable ToggleMinimize for now since no way to undo it
+
+            <div onClick={this.toggleMinimize} className="ui right floated mini button">
+              <i className={"icon window minimize"}></i> Minimize
+            </div>
+            */
+          }
         </div>
 
         <table className="ui celled small padded table spriteLayersTable">

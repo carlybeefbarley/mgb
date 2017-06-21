@@ -30,11 +30,11 @@ export default SpecialGlobals = {
     validFor: 60 // seconds until we force avatar to refresh
   },
   thumbnail: {
-    width: 230,     // In px. See imn mgb.css for .mgb-projectcard-width and .mgb-assetcard-width
+    width: 230,     // In px. See in mgb.css for .mgb-projectcard-width and .mgb-assetcard-width
     height: 155,     // In px
     defaultExpiresDuration: 3600
   },
-  // in a case that observers will turn out too slow - we may change it to false - and then implement slow polling
+  // If observers will turn out too slow - we may change it to false - and then implement slow polling (@stauzs)
   allowObservers: true,
   editCode: {
     mgbMentorPrefix: 'MGB mentor:',
@@ -51,13 +51,16 @@ export default SpecialGlobals = {
         name: 'Phaser',
         import: 'phaser',
         desc: 'For making games',
+        descLong: 'Phaser is a good framework for making JavaScript games. It makes helps developers manage their game scenes, asset loaders, input devices, sound, and GPUs',
         landingPageUrl: '//phaser.io',
-        apiDocsPageUrl: '//photonstorm.github.io/phaser-ce/'
+        apiDocsPageUrl: '//photonstorm.github.io/phaser-ce/',
+        tutorialsInternalLink: '/learn/code/phaser'
       },
       {
         name: 'React',
         import: 'react',
         desc: 'For making apps',
+        descLong: 'React is a powerful but simple User Interface framework developed by Facebook and available as open source. It is very good for applications in JavaScript, or for games that have a more app-like UI such as "mastermind". This site is all written using the React framework!',
         landingPageUrl: '//facebook.github.io/react/',
         apiDocsPageUrl: '//facebook.github.io/react/docs/introducing-jsx.html'
       },
@@ -65,6 +68,7 @@ export default SpecialGlobals = {
         name: '_',
         import: 'lodash',
         desc: 'Helpful extra functions',
+        descLong: 'Lodash is a clone of another JavaScript library called "Underscore". They are usually seen in JavaScript programs doing stuff like _.map() or _.union(). Lodash provides a set of very helpful general purpose routines to compare and transform data or functions. Any time you write a loop of some kind to transform a data structure, there\'s probably a one or two line of lodash way to do it in a clearer way.. Once you get used to it :)',
         landingPageUrl: '//lodash.com/',
         apiDocsPageUrl: '//lodash.com/docs'
       }

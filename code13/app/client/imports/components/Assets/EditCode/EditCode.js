@@ -25,7 +25,7 @@ import CodeTutorials from './CodeTutorials'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
 
-import { Icon, Label } from 'semantic-ui-react'
+import { Icon } from 'semantic-ui-react'
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import ThumbnailWithInfo from '/client/imports/components/Assets/ThumbnailWithInfo'
@@ -51,13 +51,13 @@ import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js'
 import "codemirror/addon/tern/tern"
 import "codemirror/addon/comment/comment"
 
-import FunctionDescription from './tern/FunctionDescription.js'
-import ExpressionDescription from './tern/ExpressionDescription.js'
-import RefsAndDefDescription from './tern/RefsAndDefDescription.js'
-import TokenDescription from './tern/TokenDescription.js'
-import InvokingDescription from './tern/InvokingDescription.js'
+import FunctionDescription from './tern/FunctionDescription'
+import ExpressionDescription from './tern/ExpressionDescription'
+import RefsAndDefDescription from './tern/RefsAndDefDescription'
+import TokenDescription from './tern/TokenDescription'
+import InvokingDescription from './tern/InvokingDescription'
 import ImportHelperPanel from './tern/ImportHelperPanel'
-
+import ImportAssistantHeader from './tern/ImportAssistantHeader'
 import DebugASTview from './tern/DebugASTview.js'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
@@ -67,7 +67,7 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 const THUMBNAIL_WIDTH = SpecialGlobals.thumbnail.width
 const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
 
-import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes.js'
+import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes'
 
 let showDebugAST = false    // Handy thing while doing TERN dev work
 
@@ -2792,23 +2792,15 @@ export default class EditCode extends React.Component {
                 <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
                   <Icon name='dropdown' />Import Assistant
                   <span style={{float:'right'}}>
-                  { ( this.tools && ( this.mgb_c2_hasChanged || !this.state.astReady) ) &&
-                    <Icon
-                        name='refresh'
-                        size='small'
-                        color={this.mgb_c2_hasChanged ? 'red' : null}
-                        loading={this.state.astReady}
-                        />
-                  }
-                  {
-                    _.map(settings.editCode.popularLibs, lib => {
-                      var show = _.some(knownImports, ki => (ki.lib === lib.import))
-                      return show ?
-                        <Label key={lib.import} size='mini' basic color='green' content={lib.import} />
-                        :
-                        null
-                    })
-                  }
+                    { ( this.tools && ( this.mgb_c2_hasChanged || !this.state.astReady) ) &&
+                      <Icon
+                          name='refresh'
+                          size='small'
+                          color={this.mgb_c2_hasChanged ? 'red' : null}
+                          loading={this.state.astReady}
+                          />
+                    }
+                    <ImportAssistantHeader knownImports={knownImports} />
                   </span>
                 </span>
               </div>

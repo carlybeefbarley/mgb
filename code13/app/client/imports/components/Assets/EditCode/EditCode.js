@@ -2803,7 +2803,7 @@ export default class EditCode extends React.Component {
                       <Icon
                           name='refresh'
                           size='small'
-                          color={this.mgb_c2_hasChanged ? 'red' : null}
+                          color={this.mgb_c2_hasChanged ? 'orange' : null}
                           loading={this.state.astReady}
                           />
                     }

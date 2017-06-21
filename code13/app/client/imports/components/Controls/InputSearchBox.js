@@ -2,17 +2,22 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Input } from 'semantic-ui-react'
 
-// This is a variant of <Input> which provides a nice default searchIcon and show 
+// This is a variant of <Input> which provides a nice default searchIcon and show
 // the icon action area in orange if changes are pending (user needs to push enter or click search)
 
-const _propTypes = {    // These are applied to the class at the bottom of this file
-  value:       PropTypes.string.isRequired,  // The value.
-  className:          PropTypes.string,             // Additional classNames
-  style:              PropTypes.object,             // Optional style for <input> element
-  onFinalChange:      PropTypes.func.isRequired     // Callback param will be a string of length guaranteed to be in range 0...maxLen.
-}
 
 class InputSearchBox extends React.Component {
+
+
+  static propTypes = {    // These are applied to the class at the bottom of this file
+    placeholder:        PropTypes.string,             // The placeholder. Will be Search... if not specified
+    value:              PropTypes.string.isRequired,  // The value.
+    className:          PropTypes.string,             // Additional classNames
+    style:              PropTypes.object,             // Optional style for <input> element
+    onFinalChange:      PropTypes.func.isRequired     // Callback param will be a string of length guaranteed to be in range 0...maxLen.
+  }
+
+  state = { activeValue: '' }
 
   componentWillMount() {
     this.setState( { activeValue: this.props.value } )
@@ -22,8 +27,6 @@ class InputSearchBox extends React.Component {
     if (this.props.value !== nextProps.value)
       this.setState( { activeValue: nextProps.value } )
   }
-
-  state = { activeValue: '' }
 
   _onKeyUp = (event) => {
     if (event.key === "Enter")
@@ -37,25 +40,23 @@ class InputSearchBox extends React.Component {
   _onActionClick = () => { this.props.onFinalChange(this.state.activeValue) }
 
   render() {
-    const { value } = this.props
+    const { value, placeholder } = this.props
     const { activeValue } = this.state
     const actionColor = activeValue != value ? 'orange' : null
     return (
-      <Input 
-        placeholder='Search...'
+      <Input
+        placeholder={ placeholder || 'Search...' }
         { ..._.omit(this.props, ['onFinalChange','value']) }
         value={activeValue}
         onChange={ this._onInternalChange }
         onKeyUp={ this._onKeyUp }
-        action={ { 
-          icon: { name: 'search', fitted: true }, 
-          color: actionColor, 
+        action={ {
+          icon: { name: 'search', fitted: true },
+          color: actionColor,
           onClick: this._onActionClick
         }} />
     )
   }
 }
-
-InputSearchBox.propTypes = _propTypes
 
 export default InputSearchBox

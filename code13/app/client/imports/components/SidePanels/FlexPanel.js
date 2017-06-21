@@ -25,6 +25,7 @@ import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 
 import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
+const _flexPanelTitleHeaderIsHidden = true
 const flexPanelViews = [
   // default_level is defined in expectedToolbars.js (probably = 6)
   { tag: 'chat',      lev: 1,  name: 'chat',     icon: 'chat',       hdr: 'Chat',          el: fpChat,          superAdminOnly: false, mobileUI: true   },
@@ -269,7 +270,7 @@ export default FlexPanel = React.createClass({
 
     const panelScrollContainerStyle = {
       position:     'fixed',
-      top:          '50px',                /// TODO calculate this
+      top:          _flexPanelTitleHeaderIsHidden ? '0px' : '50px',                /// TODO calculate this
       bottom:       fpIsFooter ? '60px' : '0px',
       right:        fpIsFooter ? '0px'  : '60px',
       width:        '285px',
@@ -286,6 +287,7 @@ export default FlexPanel = React.createClass({
     }
 
     const flexHeaderStyle = {
+      display: _flexPanelTitleHeaderIsHidden ? 'none' : 'block',
       float: 'right',
       marginRight: fpIsFooter ? '0px' : '60px',
       width:        '285px',

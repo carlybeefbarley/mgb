@@ -1004,7 +1004,7 @@ export default fpChat = React.createClass( {
       <div>
         <label
           style={{ fontWeight: 'bold' } }>
-          Channel:
+          Chat channel:
         </label>
 
         <Input

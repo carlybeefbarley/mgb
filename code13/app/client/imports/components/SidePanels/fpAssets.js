@@ -26,7 +26,7 @@ const ShowFromWho = ( { value, currUser, otherUser, style, onChange }) => {
   const options = _.compact([
     currUser && {
       key: currUser._id,
-      text: currUser.username,
+      text: `Just ${currUser.username}'s Assets`,
       value: currUser._id,
       image: {
         avatar: true,
@@ -36,14 +36,14 @@ const ShowFromWho = ( { value, currUser, otherUser, style, onChange }) => {
     // This is mostly working, but needs to handle the transition to a page where the user is no longer part of the page scope
     (otherUser && currUser && otherUser._id !== currUser._id) && {
       key: otherUser._id,
-      text: otherUser.username,
+      text: `Just ${otherUser.username}'s Assets`,
       value: otherUser._id,
       image: {
         avatar: true,
         src: UX.makeAvatarImgLink(otherUser.username)
       }
     },
-    { text: 'All users',
+    { text: 'All users\' assets',
       value: _showFromAllValue,
       icon: { size: 'large', name: 'users' }
     }

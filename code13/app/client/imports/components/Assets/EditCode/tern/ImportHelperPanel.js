@@ -51,8 +51,9 @@ export default class ImportHelperPanel extends React.Component {
   updateOptionsFromProps( { knownImports, scripts } ) {
     this.popular = _
       .chain(settings.editCode.popularLibs)
-      .map( ( lib, idx ) => ( { label: lib.import, description: lib.desc, value: idx } ) )
-      .filter( lib => !_.some( knownImports, k => ( lib.label === k.name ) ) )
+      .map( ( lib, idx ) => ( { label: { content: lib.import, color: 'green', basic: true},
+        description: lib.desc, value: idx } ) )
+      .filter( lib => !_.some( knownImports, k => ( lib.label.content === k.name ) ) )
       .uniqWith(_.isEqual)
       .value()
     this.options = _
@@ -64,11 +65,8 @@ export default class ImportHelperPanel extends React.Component {
   }
 
   render() {
-    const { scripts, includeLocalImport, includeExternalImport } = this.props
+    const { includeLocalImport, includeExternalImport } = this.props
     const { showExpanded } = this.state
-
-    if (!scripts || !scripts.length)
-      return null
 
     return (
       <Segment color='blue' style={{backgroundColor: "rgba(160,32,240,0.03)", color: "#2A00FF"}}>
@@ -82,6 +80,20 @@ export default class ImportHelperPanel extends React.Component {
 
         {!!showExpanded &&
         <div>
+          <Label ribbon content={<small>Recommended JavaScript packages to <code>import</code></small>} />
+
+          <div style={{margin: '5px 0'}}>
+            <Dropdown
+              fluid search selection
+              options={ this.popular }
+              placeholder='Select package from list to import it'
+              value=''
+              selectOnBlur={false}
+              onChange={ (a, b) => { includeExternalImport(settings.editCode.popularLibs[b.value]) }}
+              />
+          </div>
+
+
           <Label ribbon content={<small>My Scripts to <code>import</code></small>} />
 
           <div style={{margin: '5px 0'}}>
@@ -95,18 +107,7 @@ export default class ImportHelperPanel extends React.Component {
             />
           </div>
 
-          <Label ribbon content={<small>Recommended JavaScript packages to <code>import</code></small>} />
 
-          <div style={{margin: '5px 0'}}>
-            <Dropdown
-              fluid search selection
-              options={ this.popular }
-              placeholder='Select script from list to import it'
-              value=''
-              selectOnBlur={false}
-              onChange={ (a, b) => { includeExternalImport(settings.editCode.popularLibs[b.value]) }}
-              />
-          </div>
           <div>
             <small>
               <Icon name='info circle' color='black'/>

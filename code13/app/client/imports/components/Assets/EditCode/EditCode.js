@@ -5,6 +5,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import TutorialMentor from './TutorialEditHelpers'
+import settings from '/imports/SpecialGlobals'
 
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import { showToast, addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
@@ -24,6 +25,7 @@ import CodeTutorials from './CodeTutorials'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
 
+import { Icon, Label } from 'semantic-ui-react'
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import ThumbnailWithInfo from '/client/imports/components/Assets/ThumbnailWithInfo'
@@ -54,7 +56,7 @@ import ExpressionDescription from './tern/ExpressionDescription.js'
 import RefsAndDefDescription from './tern/RefsAndDefDescription.js'
 import TokenDescription from './tern/TokenDescription.js'
 import InvokingDescription from './tern/InvokingDescription.js'
-import ImportHelperPanel from './tern/ImportHelperPanel.js'
+import ImportHelperPanel from './tern/ImportHelperPanel'
 
 import DebugASTview from './tern/DebugASTview.js'
 
@@ -2626,6 +2628,8 @@ export default class EditCode extends React.Component {
         isCodeTutorial = true
     }
 
+    const knownImports = this.tools ? this.tools.collectAvailableImportsForFile(asset.name) : []
+
     return (
       <div className="ui grid">
         { this.state.creatingBundle && <div className="loading-notification">Bundling source code...</div> }
@@ -2741,13 +2745,6 @@ export default class EditCode extends React.Component {
                     getNextToken={cb => this.getNextToken(cb)}
                     comment={this.state.comment}
                     />
-                  { this.state.astReady && this.props.canEdit &&
-                  <ImportHelperPanel
-                    scripts={this.state.userScripts}
-                    includeLocalImport={this.includeLocalImport}
-                    includeExternalImport={this.includeExternalImport}
-                    knownImports={this.tools.collectAvailableImportsForFile(this.props.asset.name)}
-                    /> }
                   <FunctionDescription
                     functionHelp={this.state.functionHelp}
                     functionArgPos={this.state.functionArgPos}
@@ -2790,21 +2787,39 @@ export default class EditCode extends React.Component {
               { docEmpty && !asset.isCompleted && !isCodeTutorial && !isChallenge &&
                 <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />
               }
-              { docEmpty && this.state.astReady && !asset.isCompleted &&
-                // Quick import for empty doc
+              { /* Import Assistant HEADER */ }
               <div className="title">
-                    <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
-                      <i className='dropdown icon' />Quick Module Import
-                    </span>
+                <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                  <Icon name='dropdown' />Import Assistant
+                  <span style={{float:'right'}}>
+                  { ( this.tools && ( this.mgb_c2_hasChanged || !this.state.astReady) ) &&
+                    <Icon
+                        name='refresh'
+                        size='small'
+                        color={this.mgb_c2_hasChanged ? 'red' : null}
+                        loading={this.state.astReady}
+                        />
+                  }
+                  {
+                    _.map(settings.editCode.popularLibs, lib => {
+                      var show = _.some(knownImports, ki => (ki.lib === lib.import))
+                      return show ?
+                        <Label key={lib.import} size='mini' basic color='green' content={lib.import} />
+                        :
+                        null
+                    })
+                  }
+                  </span>
+                </span>
               </div>
-              }
-              { docEmpty && this.state.astReady && this.props.canEdit &&
+
+              { this.state.astReady &&
               <div className="content">
                 <ImportHelperPanel
                   scripts={this.state.userScripts}
                   includeLocalImport={this.includeLocalImport}
                   includeExternalImport={this.includeExternalImport}
-                  knownImports={this.tools.collectAvailableImportsForFile(this.props.asset.name)}
+                  knownImports={knownImports}
                   />
                 </div>
                 }
@@ -2874,7 +2889,7 @@ export default class EditCode extends React.Component {
               { this.state.astReady && asset.kind === 'code' &&
                 <div id="mgbjr-EditCode-codeFlower" className="title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
-                    <i className='dropdown icon' />CodeFlower
+                    <i className='dropdown icon' />Code Flower
                   </span>
                 </div>
               }

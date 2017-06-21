@@ -822,7 +822,13 @@ export default class SpriteLayers extends React.Component {
                   </th>
                 )})
               }
-              <th></th>
+              <th>
+                <div className={"row" + (this.state.isMinimized ? "" : " mgb-hidden")} style={{marginLeft: "10px"}}>
+                  <a className="ui small label" onClick={this.addFrame.bind(this)}>
+                    <i className="add circle icon"></i> Add Frame
+                  </a>
+                </div>
+              </th>
               <th></th>
             </tr>
           </thead>

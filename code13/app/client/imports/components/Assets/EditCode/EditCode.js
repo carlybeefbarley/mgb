@@ -291,8 +291,7 @@ export default class EditCode extends React.Component {
     // allow toolbar keyboard shortcuts from codemirror text area
     codemirrorOptions.inputStyle == 'textarea' && this.codeMirror.display.input.textarea.classList.add('allow-toolbar-shortcuts')
 
-    this.updateDocName()
-    this.doFullUpdateOnContentChange()
+    this.updateDocName(true)
 
     this.codeMirror.on('change', this.codemirrorValueChanged.bind(this))
     this.codeMirror.on('cursorActivity', this.codeMirrorOnCursorActivity.bind(this, false))
@@ -492,7 +491,7 @@ export default class EditCode extends React.Component {
     // InstallMgbTernExtensions(tern)
   }
   // update file name - to correctly report 'part of'
-  updateDocName() {
+  updateDocName(updateDocumentAnyway) {
     // don't update doc name until all required assets are loaded.
     // tern won't update itself after loading new import - without changes to active document
     if (this.state.astReady && this.lastName !== this.props.asset.name) {
@@ -501,8 +500,16 @@ export default class EditCode extends React.Component {
         this.ternServer.delDoc(doc)
         this.ternServer.addDoc(this.props.asset.name, doc)
         this.lastName = this.props.asset.name
+
+        // we need to update all sources - to match new origin
+        this.doFullUpdateOnContentChange()
       }
     }
+    else if(updateDocumentAnyway)
+      this.doFullUpdateOnContentChange()
+
+
+
   }
 
   codeMirrorOnCursorActivity() {

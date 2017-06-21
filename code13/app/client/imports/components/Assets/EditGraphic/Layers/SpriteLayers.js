@@ -845,11 +845,13 @@ export default class SpriteLayers extends React.Component {
 SpriteLayers.propTypes = {
   content2: PropTypes.object.isRequired,
   hasPermission: PropTypes.func.isRequired,
-
-  getFrameData: PropTypes.func.isRequired, // used for drag and dopd frame on the main canvas
-  getLayerData: PropTypes.func.isRequired, // used for drag and drop layer on the main canvas
-
-  handleSave: PropTypes.func,
+  handleSave: PropTypes.func.isRequired,
+  selectedFrameIdx: PropTypes.number.isRequired,
+  selectedLayerIdx: PropTypes.number.isRequired,
   forceDraw: PropTypes.func,
   forceUpdate: PropTypes.func,
+  getFrameData: PropTypes.func.isRequired, // used for drag and dopd frame on the main canvas
+  getLayerData: PropTypes.func.isRequired, // used for drag and drop layer on the main canvas
+  handleSelectLayer: PropTypes.func.isRequired,
+  handleSelectFrame: PropTypes.func.isRequired,
 }

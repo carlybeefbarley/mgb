@@ -42,7 +42,7 @@ const flexPanelViews = [
   { tag: 'activity',  lev: 6,  name: 'activity', icon: 'lightning',  hdr: 'Activity',      el: fpActivity,      superAdminOnly: false, mobileUI: true   },
 
   // SuperAdmin-only:
-  { tag: 'super',     lev: 4,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',    el: fpSuperAdmin,    superAdminOnly: true, mobileUI: false  } // ALWAYS SuperAdmin
+  { tag: 'super',     lev: 4,  name: 'admin',    icon: 'red bomb',   hdr: 'SuperAdmin',    el: fpSuperAdmin,    superAdminOnly: true, mobileUI: true  } // ALWAYS SuperAdmin
 ]
 
 const menuItemIndicatorStyle = {

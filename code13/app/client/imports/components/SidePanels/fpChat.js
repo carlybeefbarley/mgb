@@ -916,7 +916,7 @@ export default fpChat = React.createClass( {
         <Form size='small'>
           <Form.Field id='mgbjr-fp-chat-messageInput' disabled={!canSend}>
             <Form.TextArea
-              rows="3"
+              rows={3}
               name='message' // this is to squelch form submit warning
               placeholder="your message..."
               value={messageValue}

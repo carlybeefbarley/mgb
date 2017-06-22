@@ -111,6 +111,7 @@ export default AssetEditRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
+    hideHeaders:      PropTypes.bool,        // If true, don't show any UI header stuff. like a Zen mode...
     params:           PropTypes.object,      // params.assetId is the ASSET id
     user:             PropTypes.object,
     currUser:         PropTypes.object,
@@ -357,7 +358,7 @@ export default AssetEditRoute = React.createClass({
     if (this.data.loading)
       return <Spinner loadingMsg='Loading Asset data' />
 
-    const { params, currUser, currUserProjects, availableWidth, hazUnreadAssetChat, isSuperAdmin } = this.props
+    const { params, currUser, currUserProjects, availableWidth, hazUnreadAssetChat, isSuperAdmin, hideHeaders } = this.props
     const { isForkPending, isDeletePending } = this.state
     const isTooSmall = availableWidth < 500
 
@@ -390,7 +391,7 @@ export default AssetEditRoute = React.createClass({
           meta={[ { "name": "Asset Editor", "content": "Assets" } ]}
         />
 
-        { !isTooSmall &&
+        { (!isTooSmall && !hideHeaders) &&
             <AssetPathDetail
               canEdit={canEd}
               isUnconfirmedSave={asset.isUnconfirmedSave}
@@ -405,7 +406,7 @@ export default AssetEditRoute = React.createClass({
               handleSaveNowRequest={this.handleSaveNowRequest} />
         }
 
-        { !isTooSmall &&
+        { (!isTooSmall && !hideHeaders) &&
           <Grid.Column width='8' textAlign='right' id="mgbjr-asset-edit-header-right">
             {
               // We use this.props.params.assetId since it is available sooner than the asset

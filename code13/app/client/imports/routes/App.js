@@ -92,6 +92,7 @@ export const startSkillPathTutorial = skillPath => {
 }
 
 
+
 // clearPriorPathsForJoyrideCompletionTags() is for making the Completion Tag thing
 //  work so it edge triggers only when pages are actually navigated to (rather than
 //  every update).
@@ -163,6 +164,9 @@ const AppUI = React.createClass({
     this._schedule_requestChatChannelTimestampsNow()
     registerDebugGlobal( 'app', this, __filename, 'The global App.js instance')
     _theAppInstance = this   // This is so we can expose a few things conveniently but safely, and without too much react.context stuff
+
+
+    window.addEventListener("keydown", this.handleKeyDown)
 
     if (window.performance) {
       // Gets the number of milliseconds since page load
@@ -286,6 +290,28 @@ const AppUI = React.createClass({
     window.setInterval(this.requestChatChannelTimestampsNow, CHAT_POLL_INTERVAL_MS)
   },
 
+  handleKeyDown(kev) {
+    if (kev.altKey && kev.shiftKey && kev.which === 72) // alt-shift-h
+    {
+      this.handleHideHeadersToggle()
+      kev.preventDefault()
+      kev.stopPropagation()
+    }
+  },
+
+  handleHideHeadersToggle: function()
+  {
+    const loc = this.props.location
+    const qp = urlMaker.queryParams("app_hideHeaders")
+    let newQ
+    if (loc.query[qp])
+      newQ = _.omit(loc.query, qp)
+    else
+      newQ = {...loc.query, [qp]:'1'}
+    browserHistory.push( {  ...loc,  query: newQ })
+  },
+
+
   // TODO: Make this throttled, called when relevant
   requestChatChannelTimestampsNow: function () {
     if (!this.props.currUser)
@@ -374,6 +400,7 @@ const AppUI = React.createClass({
     const { respData, respWidth, params, loading, currUser, user, currUserProjects, meteorStatus, sysvars } = this.props
     const { joyrideDebug, currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats } = this.state
     const { query } = this.props.location
+    const hideHeaders = Boolean(query[urlMaker.queryParams("app_hideHeaders")])
 
     if (!loading)
       this.configureTrackJs()
@@ -418,7 +445,7 @@ const AppUI = React.createClass({
     )
 
     return (
-      <div >
+      <div>
 
         <Helmet
           title="MGB"
@@ -466,29 +493,34 @@ const AppUI = React.createClass({
 
             <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id='mgb-jr-main-container'>
               <div style={mainPanelInnerDivSty}>
-                <NavPanel
-                  currUser={currUser}
-                  navPanelAvailableWidth={mainAreaAvailableWidth}
-                />
+                { !hideHeaders &&
+                  <NavPanel
+                    currUser={currUser}
+                    navPanelAvailableWidth={mainAreaAvailableWidth}
+                  />
+                }
                 <NetworkStatusMsg meteorStatus={meteorStatus} />
                 { currUser && currUser.suIsBanned &&
                   <Message error icon='ban' header='Your Account has been suspended by an Admin' list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']}/>
                 }
-                <NavBar
-                    currUser={currUser}
-                    user={user}
-                    location={this.props.location}
-                    name={this.props.routes[1].name}
-                    params={this.props.params}
-                    flexPanelWidth={flexPanelWidth}
-                    sysvars={sysvars}
-                    currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-                    />
+                { !hideHeaders &&
+                  <NavBar
+                      currUser={currUser}
+                      user={user}
+                      location={this.props.location}
+                      name={this.props.routes[1].name}
+                      params={this.props.params}
+                      flexPanelWidth={flexPanelWidth}
+                      sysvars={sysvars}
+                      currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+                      />
+                }
                 {
                   !loading && this.props.children && React.cloneElement(this.props.children, {
                     // Make below props available to all routes.
                     user: user,
                     currUser: currUser,
+                    hideHeaders: hideHeaders,
                     currUserProjects: currUserProjects,
                     hazUnreadAssetChat: hazUnreadAssetChat,
                     ownsProfile: ownsProfile,
@@ -773,7 +805,7 @@ const App = createContainer( ( { params, location } ) => {
   // activity? if useful..
   const flexPanelQueryValue = location.query[urlMaker.queryParams("app_flexPanel")]
   const getActivity = currUser || (flexPanelQueryValue === 'activity')
-  const handleActivity = getActivity ? Meteor.subscribe("activity.public.recent", SpecialGlobals.activity.activityHistoryLimit) : null 
+  const handleActivity = getActivity ? Meteor.subscribe("activity.public.recent", SpecialGlobals.activity.activityHistoryLimit) : null
 
   // projects stuff
   const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null

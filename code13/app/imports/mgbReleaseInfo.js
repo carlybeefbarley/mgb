@@ -18,12 +18,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Wed Jun 21 2017 12:00:00 GMT-0700 (PDT)',
+      'timestamp': 'Wed Jun 21 2017 17:00:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.2.0',
         'state': 'Beta',
-        'iteration': '4444'
+        'iteration': '4452'
       },
 
       'releaseManagement': {
@@ -44,6 +44,13 @@ const mgbReleaseInfo = {
           'type': 'improvement',
           'changeName': 'Asset flexpanel asset-kinds-selection',
           'changeSummary': 'The Asset flexpanel has a nicer asset-kinds selection UI now. Less text, and proper toggles for on/off for filtering a single asset kind. alt-click to multi-select still works.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed actormap play preview bug with arrow keys; improved Code EDitor Import Assistant more; removed Flexpanel headers for prettiness; Cleaned up BIO area in Profile.',
           'otherUrls': [ ]
         }
       ]

@@ -1,7 +1,9 @@
-import _ from 'lodash'
 import React from 'react'
 import { Label, Segment } from 'semantic-ui-react'
 import LayerControls from './LayerControls.js'
+import InlineEdit from '/client/imports/components/Controls/InlineEdit'
+import validate from '/imports/schemas/validate'
+
 
 export default class Layers extends React.Component {
 
@@ -16,6 +18,9 @@ export default class Layers extends React.Component {
     e.stopPropagation()
 
     this.props.toggleLayerVisibilty(layerId, !wasVisible)
+  }
+  renameLayer(layerId, changed){
+    this.props.renameLayer(layerId, changed.name)
   }
 
   render () {
@@ -32,14 +37,16 @@ export default class Layers extends React.Component {
         <div
           key={i}
           className={(i === active ? 'bold active' : 'item')}
-          onClick={this.handleClick.bind(this, i)}
           href='javascript:;'>
           <i className={className}
              onClick={this.showOrHideLayer.bind(this, i, data[i].visible)}></i>
-          <a href='javascript:;'>
+          <span>
             <i className={`ui ${i === active ? 'right caret' : ''} icon`} />
-            {data[i].name}
-          </a>
+            <InlineEdit
+              change={this.renameLayer.bind(this, i)} text={data[i].name + '-> here'} paramName="name"
+              validate={val => validate.notEmpty(val) && validate.lengthCap(val, 255)}
+            />
+          </span>
         </div>
       )
     }

@@ -1,3 +1,5 @@
+/* this -> EditMap instance */
+
 export default {
   getActiveObject () {
     if(!this.refs.map){

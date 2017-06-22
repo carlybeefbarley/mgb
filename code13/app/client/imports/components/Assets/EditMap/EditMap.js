@@ -458,7 +458,6 @@ export default class EditMap extends React.Component {
 
           <MapProperties
             {...this.propertiesProps}
-            data={this.mgb_content2}
 
             map={{
               width: c2.width,

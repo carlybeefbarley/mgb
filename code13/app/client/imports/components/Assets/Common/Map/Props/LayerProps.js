@@ -81,5 +81,12 @@ export default {
       content2: this.mgb_content2
     })
     //this.save('Highlight Active Layer')
+  },
+
+  renameLayer: function(id, newName){
+    const c2 = this.mgb_content2
+    const reason = 'Renamed layer ' + c2.layers[id].name + ' to ' + newName
+    c2.layers[id].name = newName
+    this.quickSave(reason)
   }
 }

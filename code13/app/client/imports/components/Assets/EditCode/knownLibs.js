@@ -5,6 +5,7 @@
 
 export default {
   common: {
+    // these will be loaded automatically
     defs: () => [
       '/lib/tern/defs/browser.json',
       '/lib/tern/defs/ecmascript.json',
@@ -48,6 +49,10 @@ export default {
     src: function (version) {
       version = version || "latest";
       return 'https://cdn.jsdelivr.net/lodash/' + version + '/lodash.js';
+    },
+    min: function (version) {
+      version = version || "latest";
+      return 'https://cdn.jsdelivr.net/lodash/' + version + '/lodash.min.js';
     },
     defs: () => ['/lib/tern/defs/lodash.json']
   }

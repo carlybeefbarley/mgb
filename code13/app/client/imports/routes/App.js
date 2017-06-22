@@ -492,10 +492,6 @@ const AppUI = React.createClass({
                     navPanelAvailableWidth={mainAreaAvailableWidth}
                   />
                 }
-                <NetworkStatusMsg meteorStatus={meteorStatus} />
-                { currUser && currUser.suIsBanned &&
-                  <Message error icon='ban' header='Your Account has been suspended by an Admin' list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']}/>
-                }
 
                 <span >
                   <Popup
@@ -521,6 +517,11 @@ const AppUI = React.createClass({
                     sysvars={sysvars}
                     currentlyEditingAssetInfo={currentlyEditingAssetInfo}
                     />
+
+                { currUser && currUser.suIsBanned &&
+                  <Message error icon='ban' header='Your Account has been suspended by an Admin' list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']}/>
+                }
+
                 {
                   !loading && this.props.children && React.cloneElement(this.props.children, {
                     // Make below props available to all routes.
@@ -540,6 +541,7 @@ const AppUI = React.createClass({
             </div>
 
           </div>
+          <NetworkStatusMsg meteorStatus={meteorStatus} />
           <NotificationContainer/> {/* This is for the top-right toast messages */}
       </div>
     )

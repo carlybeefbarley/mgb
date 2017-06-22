@@ -2289,7 +2289,7 @@ export default class EditCode extends React.Component {
         name:  'toggleBundling',
         label: 'Auto Bundle code',
         icon:  'travel',
-        tooltip: 'Before saving will merge all imports into single file',
+        tooltip: 'Automatically merge all imports into single file when saving. This is useful for the top-level file for a program which is made of multiple files',
         disabled: false,
         active: this.props.asset.content2.needsBundle,
         level:    3,

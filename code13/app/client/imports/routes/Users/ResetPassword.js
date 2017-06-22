@@ -66,7 +66,6 @@ export default ResetPasswordRoute = React.createClass({
   },
 
   handleSubmit: function(event) {
-    event.preventDefault()
     const { password } = this.state
 
     const why = validate.passwordWithReason(password)

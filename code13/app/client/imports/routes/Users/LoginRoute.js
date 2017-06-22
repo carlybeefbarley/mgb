@@ -69,7 +69,6 @@ export default LoginRoute = React.createClass({
   },
 
   handleSubmit: function(e) {
-    e.preventDefault()
     const { email, password } = this.state.formData
     this.setState( { isLoading: true, errorMsg: null } )
 

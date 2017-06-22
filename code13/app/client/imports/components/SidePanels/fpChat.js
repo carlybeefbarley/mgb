@@ -913,7 +913,7 @@ export default fpChat = React.createClass( {
           <span />
         </Comment.Group>
 
-        <Form size='small' onSubmit={e => e.preventDefault()}>
+        <Form size='small'>
           <Form.Field id='mgbjr-fp-chat-messageInput' disabled={!canSend}>
             <Form.TextArea
               rows="3"

@@ -262,6 +262,12 @@ const NavBarBreadcrumbUI = ( {
           </Popup.Content>
         </Popup>
       }
+
+
+      { /*  AssetName   */ }
+      { (assetId && currentlyEditingAssetInfo && !isPlay && currentlyEditingAssetInfo.name) &&
+        <em>{currentlyEditingAssetInfo.name}</em>
+      }
     </Breadcrumb>
   )
 }

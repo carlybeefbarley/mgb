@@ -696,7 +696,10 @@ export default class MapArea extends React.Component {
     this.props.updateScale(this.camera.zoom)
   }
 
-  handleKeyDown(e){
+  handleKeyDown(e) {
+    if (this.props.isPlaying)
+      return
+
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')
       return
 

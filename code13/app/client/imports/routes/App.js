@@ -253,6 +253,7 @@ const AppUI = React.createClass({
 
   getInitialState: function() {
     return {
+      hideHeaders:              false,         // Show/Hide NavPanel & Some other UI (like Asset Edit Header). This is a bit slow to do in the Navbar, so doing it here */
       // read/unread Chat status. Gathered up here since it used across app, especially for notifications and lists
       chatChannelTimestamps:    null,          // as defined by Chats.getLastMessageTimestamps RPC
       hazUnreadChats:           [],            // will contain Array of channel names with unread chats
@@ -301,14 +302,7 @@ const AppUI = React.createClass({
 
   handleHideHeadersToggle: function()
   {
-    const loc = this.props.location
-    const qp = urlMaker.queryParams("app_hideHeaders")
-    let newQ
-    if (loc.query[qp])
-      newQ = _.omit(loc.query, qp)
-    else
-      newQ = {...loc.query, [qp]:'1'}
-    browserHistory.push( {  ...loc,  query: newQ })
+     this.setState( { hideHeaders: !this.state.hideHeaders } )
   },
 
 
@@ -398,9 +392,8 @@ const AppUI = React.createClass({
 
   render() {
     const { respData, respWidth, params, loading, currUser, user, currUserProjects, meteorStatus, sysvars } = this.props
-    const { joyrideDebug, currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats } = this.state
+    const { joyrideDebug, currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats, hideHeaders } = this.state
     const { query } = this.props.location
-    const hideHeaders = Boolean(query[urlMaker.queryParams("app_hideHeaders")])
 
     if (!loading)
       this.configureTrackJs()
@@ -504,11 +497,12 @@ const AppUI = React.createClass({
                   <Message error icon='ban' header='Your Account has been suspended by an Admin' list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']}/>
                 }
 
-                <span style={{float: 'right', cursor: 'pointer'}}>
+                <span >
                   <Popup
                     size='small'
                     mouseEnterDelay={200}
                     trigger={<Icon
+                        style={{float: 'right', cursor: 'pointer', zIndex: '400'}}
                         color='blue'
                         onClick={this.handleHideHeadersToggle}
                         name={hideHeaders ? 'angle double down': 'angle double up'}/>
@@ -517,18 +511,16 @@ const AppUI = React.createClass({
                     content='Shortcut: [alt-shift-H]' />
                 </span>
 
-                { !hideHeaders &&
-                  <NavBar
-                      currUser={currUser}
-                      user={user}
-                      location={this.props.location}
-                      name={this.props.routes[1].name}
-                      params={this.props.params}
-                      flexPanelWidth={flexPanelWidth}
-                      sysvars={sysvars}
-                      currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-                      />
-                }
+                <NavBar
+                    currUser={currUser}
+                    user={user}
+                    location={this.props.location}
+                    name={this.props.routes[1].name}
+                    params={this.props.params}
+                    flexPanelWidth={flexPanelWidth}
+                    sysvars={sysvars}
+                    currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+                    />
                 {
                   !loading && this.props.children && React.cloneElement(this.props.children, {
                     // Make below props available to all routes.

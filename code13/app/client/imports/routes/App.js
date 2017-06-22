@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Message, Icon } from 'semantic-ui-react'
+import { Icon, Message, Popup } from 'semantic-ui-react'
 import { browserHistory } from 'react-router'
 import Helmet from "react-helmet"
 import { createContainer } from 'meteor/react-meteor-data'
@@ -503,6 +503,20 @@ const AppUI = React.createClass({
                 { currUser && currUser.suIsBanned &&
                   <Message error icon='ban' header='Your Account has been suspended by an Admin' list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']}/>
                 }
+
+                <span style={{float: 'right', cursor: 'pointer'}}>
+                  <Popup
+                    size='small'
+                    mouseEnterDelay={200}
+                    trigger={<Icon
+                        color='blue'
+                        onClick={this.handleHideHeadersToggle}
+                        name={hideHeaders ? 'angle double down': 'angle double up'}/>
+                    }
+                    header='Toggle headers'
+                    content='Shortcut: [alt-shift-H]' />
+                </span>
+
                 { !hideHeaders &&
                   <NavBar
                       currUser={currUser}

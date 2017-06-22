@@ -15,6 +15,37 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
 
   'releases': [
+//
+    {
+      'timestamp': 'Thu Jun 22 2017 16:40:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4465'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.layout',
+          'type': 'feature',
+          'changeName': 'Show/Hide header rows',
+          'changeSummary': 'There is now an easy way to maximize editing UI area. There is a small ︽ or ︾ icon at the top-right of the main page area. Click this, or use the alt-shift-H shortcut to hide/show the top rows of the UI.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'Improved network-offline message',
+          'changeSummary': 'It is now an overlay so there is less flicker during intermittent connection issues',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
 
     {

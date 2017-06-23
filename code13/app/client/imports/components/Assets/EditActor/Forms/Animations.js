@@ -1,13 +1,20 @@
 import _ from 'lodash'
 import React from 'react'
-import { Table, Accordion, Icon, Dimmer, Loader } from 'semantic-ui-react'
-
+import { Table, Accordion, Icon, Dimmer, Loader, Item, Button, Modal, Checkbox } from 'semantic-ui-react'
 import DropArea from '../../../Controls/DropArea.js'
 import SmallDD from '../../../Controls/SmallDD.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
 
 export default class Animations extends React.Component {
-  state = { serializedForm: {}, isLoading: false }
+
+  state = { 
+    serializedForm: {}, 
+    isLoading: false, // When loading graphic asset tileset info and frames
+    showModal: false, // When importing graphic frames
+    graphicFrameImports: [], // Data of frames to import; contains name and if frame is selected
+    animationIndex: 0 // Starting animation frame being changed
+  }
+
   get data() {
     return this.props.asset.content2.animationTable
   }
@@ -17,6 +24,16 @@ export default class Animations extends React.Component {
   handleSubmit = (e, serializedForm) => {   // TODO: How is this called?
     e.preventDefault()
     this.setState({ serializedForm })
+  }
+
+  handleGraphicFrameSelection(e, data) {
+    let frames = this.state.graphicFrameImports
+    if (!data.checked)
+      frames[data.value].checked = 0
+    else
+      frames[data.value].checked = 1
+
+    this.setState({graphicFrameImports: frames})
   }
 
   onChange = (e) => {   // TODO: How is this called?
@@ -29,34 +46,51 @@ export default class Animations extends React.Component {
   The frame numbers are parsed from the names in Mage.js to display the correct frame.
   The tileset API and MAGE use 0-based indexing. This uses 1-based indexing like the graphic editor.
   */
-  makeFrameNamedGraphicAsset(data, val, index) {
-    this.data[index].tileName = val + ' #1' // Asset that is dropped is frame 1
-    // Frame 2 and up until all frames are iterated or until it reaches an non-empty animation entry
-    for (i=1; i<data.tilecount; i++) {
-      if (this.data[index+i] && !this.data[index+i].tileName) {
-        let name = val + ' #' + (i+1)
+  
+  // Store graphic frames in graphicFrameImports
+  getGraphicFrames(data, val) {
+    let graphicFrames = []
+    for (let i=0; i<data.tilecount; i++) {
+      let name = val + ' #' + (i+1)
+      let frame = {name: name, checked: 1}
+      graphicFrames.push(frame)
+    }
+    this.setState({graphicFrameImports: graphicFrames})
+  }
+
+  // Change graphics based on selected frames from graphicFrameImports
+  changeGraphicFrames() {
+    let index = this.state.animationIndex
+    let frames = this.state.graphicFrameImports
+    for (let i=0; i<frames.length; i++) {
+      if (frames[i].checked) {
         this.data[index+i] = {
           "action": MgbActor.animationNames[index+i],
-          "tileName": name,
+          "tileName": frames[i].name,
           "frame": i,
           "effect": "no effect"
         }
       }
-      else
-        break
+      else 
+        index--
     }
+    this.setState({showModal: false, graphicFrameImports: [], animationIndex: 0})
+    this.props.onChange && this.props.onChange()
   }
 
   changeGraphic(index, val, asset) {
     this.data[index].tileName = val 
     this.data[index].frame = 0
+    this.setState({animationIndex: index})
 
     if (asset) {
       this.setState({isLoading: true})
 
       $.get('/api/asset/tileset-info/' + asset._id, (data) => {
-        if (data.tilecount > 1) 
-          this.makeFrameNamedGraphicAsset(data, val, index)
+        if (data.tilecount > 1) {
+          this.setState({showModal: true})
+          this.getGraphicFrames(data, val)
+        }
       })
       .done(() => {
         this.setState({isLoading: false})
@@ -146,6 +180,9 @@ export default class Animations extends React.Component {
   }
 
   render() {
+    let checkedCount = this.state.graphicFrameImports.length
+
+    // Animation accordions
     const aType = this.props.asset.content2.databag.all.actorType
     const animations = MgbActor.animationNames
     const rows = []
@@ -153,7 +190,6 @@ export default class Animations extends React.Component {
     let prevDirection = animations[0].split(' ')[1]
     let name = animations[0]
     let prevTitle = _.startsWith(name, 'face') ? 'move ' + name.split(' ')[1] : (name.split(' ').length > 2 ? name.split(' ')[0] + ' ' + name.split(' ')[1] : name.split(' ')[0])
-    let curr = 0
 
     for (let i=0; i<animations.length; i++) {
       name = animations[i]
@@ -212,8 +248,53 @@ export default class Animations extends React.Component {
         {
           this.state.isLoading && 
           <Dimmer active inverted>
-            <Loader style={{position: 'fixed', right: '345px', top: '50%', translate: "transform(-50%, -50%)"}} active inline size='large'>Loading</Loader>
+            <Loader style={{position: 'fixed', right: '345px', top: '50%', translate: "transform(-50%, -50%)"}} active inline size='large'>Loading frames...</Loader>
           </Dimmer>
+        }
+        {
+          this.state.showModal && 
+          <Modal defaultOpen
+            size="small" 
+            onUnmount={() => {this.setState({showModal: false, graphicFrameImports: [], animationIndex: 0})}} 
+          >
+            <Modal.Header>Import Graphic Frames</Modal.Header>
+            <Modal.Content>
+              <Item.Group divided>
+                {
+                _.map(this.state.graphicFrameImports, (frame, i) => {
+                  if (!frame.checked)
+                    checkedCount--
+
+                  return (
+                    <Item key={i}>
+                      <DropArea
+                        kind="graphic" 
+                        value={frame.name}
+                        frame={i} 
+                        asset={this.props.asset}
+                        isModalView={true}
+                      /> 
+                      <Checkbox 
+                        name={frame.name} 
+                        value={i}
+                        style={{position: 'absolute', right: '25px'}} 
+                        defaultChecked 
+                        onChange={(e, data) => {this.handleGraphicFrameSelection(e, data)}} 
+                      />
+                    </Item>
+                  )}
+                  )
+                }
+              </Item.Group>
+            </Modal.Content>
+            <Modal.Actions>
+              <Button primary 
+                disabled={!checkedCount} 
+                onClick={() => this.changeGraphicFrames()}>
+                Import Selected Frames
+              </Button>
+            </Modal.Actions>
+          </Modal> 
         }
         {
           rows.map((anim) => {

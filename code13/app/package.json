@@ -12,6 +12,7 @@
     "bcrypt": "^0.8.7",
     "blueimp-md5": "^2.3.0",
     "bufferutil": "^1.2.1",
+    "classnames": "^2.2.5",
     "codemirror": "^5.21.0",
     "d3": "^3.5.17",
     "data-uri-to-buffer": "0.0.4",

@@ -1,3 +1,4 @@
+import cx from 'classnames'
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Label } from 'semantic-ui-react'
@@ -22,8 +23,6 @@ import fpChat from './fpChat'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
-
-import style from './FlexPanel.css' // TODO(nico): get rid of this css
 
 const _flexPanelTitleHeaderIsHidden = true
 const flexPanelViews = [
@@ -164,22 +163,18 @@ export default FlexPanel = React.createClass({
       handleFlexPanelChange(fpViewTag)
   },
 
-  getFpButtonSpecialStyleForTag: function(tag) {
-    return {}       // wiggleActivity is done as a class, so it's not in this function. See render()
-  },
-
   getFpButtonSpecialClassForTag: function(tag) {
     const { joyrideSteps, hazUnreadChats } = this.props
     const { wiggleActivity } = this.state
 
     if (tag === 'chat' && hazUnreadChats.length > 0)
-      return ' animated swing '
+      return 'animated swing'
 
     if (tag === 'activity' && wiggleActivity)
-      return ' green animated swing '
+      return 'green animated swing'
 
     if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
-      return ' animated swing '
+      return 'animated swing'
 
     return ''
   },
@@ -220,7 +215,7 @@ export default FlexPanel = React.createClass({
       border:       'none',
       borderRadius: 0,
       marginBottom: 0,
-      backgroundColor: 'rgba(242, 242, 242, 1)'
+      background:   '#f3f4f5',
       //zIndex:       90    // Temp Hack - this forces onscreen controller to be behind controls
     }
     :
@@ -232,40 +227,27 @@ export default FlexPanel = React.createClass({
       marginLeft:   '0px',
       bottom:       '0px',
       width:        flexPanelWidth,
-      borderLeft:   '1px solid rgba(0, 0, 0, 0.1)',
-      backgroundColor: 'rgba(242, 242, 242, 1)'   //making this non-opaque solves the overlap issues on very narrow screens
+      background:   '#f3f4f5',
+      borderLeft:   '2px solid #ddd',
     }
 
     const miniNavClassNames = fpIsFooter
-      ? 'ui horizontal six item icon fluid menu'
-      : 'ui attached vertical horizontally fitted labeled icon menu'
+      ? 'ui borderless labeled icon bottom fixed six item fluid menu'
+      : 'ui borderless labeled icon right fixed vertical horizontally fitted menu'
     const miniNavStyle = fpIsFooter ?
     {
-      position:     'fixed',
-      bottom:       '0px',
-      left:         '0px',
-      right:        '0px',
       height:       '61px',
+      background:   '#e2e3e4',
       border:       'none',
-      borderTop:   '1px solid rgba(0, 0, 0, 0.1)',
-      borderRadius: 0,
-      marginBottom: 0,
-      backgroundColor: 'none',
+      boxShadow:    'none',
       zIndex:       300     // Temp Hack
-
     }
     :
     {// This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel
-      position:     'fixed',
-      top:          '0px',
-      bottom:       '0px',
-      right:        '0px',
       width:        '61px',
+      background:   '#e2e3e4',
       border:       'none',
-      borderLeft:   '1px solid rgba(0, 0, 0, 0.1)',
-      borderRadius: 0,
-      marginBottom: 0,
-      backgroundColor: 'none'
+      boxShadow:    'none',
     }
 
     const panelScrollContainerStyle = {
@@ -303,7 +285,7 @@ export default FlexPanel = React.createClass({
       joyrideCompleteTag(`mgbjr-CT-flexPanel-${flexPanelChoice.tag}-show`)
 
     return  (
-      <div className="basic segment mgbFlexPanel" style={panelStyle} id='mgbjr-flexPanelArea'>
+      <div className='mgbFlexPanel' style={panelStyle} id='mgbjr-flexPanelArea'>
         { flexPanelIsVisible &&
           <div>
 
@@ -345,7 +327,7 @@ export default FlexPanel = React.createClass({
         }
         <div id='mgbjr-flexPanelIcons' className={miniNavClassNames} style={miniNavStyle} >
           { flexPanelViews.map(v => {  /* TODO: WORK OUT HOW TO HANDLE 5 equally space buttons */
-            const active = this._viewTagMatchesPropSelectedViewTag(v.tag) ? " active selected " : ""
+            const active = this._viewTagMatchesPropSelectedViewTag(v.tag)
             if (isMobileUI && !v.mobileUI )
               return null
             if (v.lev > fpFeatureLevel && this.getFpButtonAutoShowForTag(v.tag) !== true)
@@ -355,19 +337,28 @@ export default FlexPanel = React.createClass({
             if (fpIsFooter && v.lev > 4)
               return null
 
-            const specialSty = this.getFpButtonSpecialStyleForTag(v.tag)
-            const specialClass = this.getFpButtonSpecialClassForTag(v.tag)
+            const itemClasses = cx(active && 'active selected', 'item')
+            const itemStyle = {
+              background: active ? '#f3f4f5' : undefined,
+              fontWeight: active ? 700 : 400,
+            }
+
+            const activeStyle = {
+              opacity: active ? 0.9 : 0.7
+            }
+
+            const iconClasses = cx(v.icon, this.getFpButtonSpecialClassForTag(v.tag), 'icon')
 
             return (
               <a
                 id={`mgbjr-flexPanelIcons-${v.tag}`}
                 key={v.tag}
-                style={specialSty}
-                className={active +  " item"}
+                style={itemStyle}
+                className={itemClasses}
                 title={v.name}
                 onClick={this.fpViewSelect.bind(this, v.tag)}>
-                <i className={v.icon + ' ' + specialClass + ' large icon'}></i>
-                { fpIsFooter ? null : v.name }
+                <i style={activeStyle} className={iconClasses} />
+                <span style={activeStyle}>{ fpIsFooter ? null : v.name }</span>
                 { this.getFpButtonExtraLabelForTag(v.tag) }
               </a>
             )

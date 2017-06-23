@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes} from 'react'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
-import { Button, Divider, Container, Segment } from 'semantic-ui-react'
+import { Button, Divider, Input } from 'semantic-ui-react'
 import { Users } from '/imports/schemas'
 import { userSorters } from '/imports/schemas/users'
 
@@ -106,18 +106,15 @@ export default UserListRoute = React.createClass({
     const Body = (
       <div className={containerClassName} style={killBordersStyle}>
         <div className={segClass} style={searchSegmentStyle}>
-          <div className="ui fluid action input">
-            <input  type="text"
-                    placeholder="Search users..."
-                    defaultValue={this.state.searchName}
-                    onChange={this.handleSearchNameBoxChanges}
-                    ref="searchNameInput"
-                    size="16"></input>
-            <button className="ui icon button" ref="searchGoButton" onClick={this.handleSearchGo}>
-              <i className="search icon"></i>
-            </button>
-          </div>
-          <br></br>
+          <Input
+            fluid
+            size='small'
+            placeholder="Search..."
+            defaultValue={this.state.searchName}
+            onChange={this.handleSearchNameBoxChanges}
+            ref="searchNameInput"
+            action={{ icon: 'search', ref: "searchGoButton", onClick: this.handleSearchGo }} />
+          <Divider hidden />
         </div>
 
         <div className={segClass} >

@@ -111,14 +111,15 @@ export default fpSettings = React.createClass({
     }
 
     return (
-      <Segment style={{overflow:'hidden'}}>
-        <Header as='h4' id='mgbjr-CurrentFeatureLevelsInFp' content='Current Feature Levels' />
-        <p>
-          Slide to enable advanced features
-        </p>
+      <div>
+        <Header
+          as='h3'
+          id='mgbjr-CurrentFeatureLevelsInFp'
+          content='Current Feature Levels'
+          subheader='Slide to enable advanced features' />
         { _.map(expectedToolbars.scopeNamesTunable, name => makeSlider(name)) }
         <button onClick={this.resetToDefaults} className='ui right floated mini active yellow button'>Reset to defaults</button>
-      </Segment>
+      </div>
     )
   }
 })

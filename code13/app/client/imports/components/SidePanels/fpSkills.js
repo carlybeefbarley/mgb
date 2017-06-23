@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react'
-import { Message, Icon } from 'semantic-ui-react'
+import { Button, Divider, Header, Message } from 'semantic-ui-react'
 
 import QLink from '/client/imports/routes/QLink'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
@@ -22,27 +22,27 @@ export default fpSkills = React.createClass({
     const { currUser } = this.props
     const { skills } = this.context
 
-    if (!currUser) 
+    if (!currUser)
       return <Message warning content='You must be logged in to see your skills status' />
 
     return (
       <div>
-        <QLink to={`/u/${currUser.username}/skilltree`}>
-          <h3 style={{marginTop: 0, marginBottom: 20}}>
-            {currUser.username}'s Skills
-            <SkillCountsLabel skills={skills} />
-          </h3>
-        </QLink>
-        <p>
-          <img src={UX.makeMascotImgLink('whale')} style={{maxWidth: '70px', float: 'left'}} />
+        <Header as='h3'>
+          <QLink to={`/u/${currUser.username}/skilltree`}>
+            My Skills
+          </QLink>
+          <SkillCountsLabel skills={skills} />
+        </Header>
+        <p style={{ overflow: 'hidden' }}>
+          <img src={UX.makeMascotImgLink('whale')} style={{ maxWidth: '70px', float: 'left' }} />
           This is your learning progress via tutorials, muted help, assessed tasks etc...
         </p>
 
         <SkillsMap expandable toggleable skills={skills} />
 
-        <QLink to='/learn/skills' style={{clear: 'both'}}>
-          <button className='ui button large fluid'><Icon name='refresh' />Learn skills</button>
-        </QLink>
+        <Divider hidden />
+
+        <Button as={QLink} to='/learn/skills' size='large' fluid icon='refresh' content='Learn skills' />
       </div>
     )
   }

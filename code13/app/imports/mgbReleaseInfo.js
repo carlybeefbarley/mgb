@@ -15,7 +15,31 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
 
   'releases': [
-//
+
+    {
+      'timestamp': 'Fri Jun 23 2017 13:30:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4470'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed bug that broke actorMap Layer editing. Fixed misplaced popup on Avatar edit prompt. Improved ActorMap animiation editor UI',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
     {
       'timestamp': 'Thu Jun 22 2017 16:40:00 GMT-0700 (PDT)',
 

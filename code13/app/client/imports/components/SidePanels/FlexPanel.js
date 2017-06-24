@@ -54,6 +54,30 @@ const menuItemIndicatorStyle = {
 const defaultPanelViewIndex = 0
 const DEFAULT_FLEXPANEL_FEATURELEVEL = expectedToolbars.getDefaultLevel('FlexPanel')
 
+class Indicator extends React.Component {
+  state = { classes: 'animated swing' }
+
+  componentDidMount () {
+    setTimeout(() => this.setState({ classes: 'animated swing' }), 0)
+  }
+
+  render () {
+    const { classes } = this.state
+    const { content } = this.props
+    return (
+      <Label
+        className={classes}
+        color='red'
+        empty={content === undefined}
+        size={content !== undefined ? 'mini' : null}
+        circular
+        content={content}
+        style={menuItemIndicatorStyle}
+      />
+    )
+  }
+}
+
 export default FlexPanel = React.createClass({
   mixins: [ReactMeteorData],
 
@@ -171,7 +195,7 @@ export default FlexPanel = React.createClass({
       return 'animated swing'
 
     if (tag === 'activity' && wiggleActivity)
-      return 'green animated swing'
+      return 'animated swing'
 
     if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
       return 'animated swing'
@@ -182,12 +206,16 @@ export default FlexPanel = React.createClass({
 
   getFpButtonExtraLabelForTag: function(tag) {
     const { joyrideSteps, hazUnreadChats } = this.props
+    const { wiggleActivity } = this.state
 
     if (tag === 'chat' && hazUnreadChats.length > 0)
-      return <Label color='red' size='mini' circular style={menuItemIndicatorStyle} content={hazUnreadChats.length} />
+      return <Indicator content={hazUnreadChats.length} />
 
     if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
-      return <Label color='orange' empty circular style={menuItemIndicatorStyle} />
+      return <Indicator />
+
+    if (tag === 'activity' && wiggleActivity)
+      return <Indicator />
 
     return null
   },
@@ -232,8 +260,8 @@ export default FlexPanel = React.createClass({
     }
 
     const miniNavClassNames = fpIsFooter
-      ? 'ui borderless labeled icon bottom fixed six item fluid menu'
-      : 'ui borderless labeled icon right fixed vertical horizontally fitted menu'
+      ? 'ui teal borderless labeled icon bottom fixed six item fluid menu'
+      : 'ui teal borderless labeled icon right fixed vertical horizontally fitted menu'
     const miniNavStyle = fpIsFooter ?
     {
       height:       '61px',
@@ -338,9 +366,14 @@ export default FlexPanel = React.createClass({
               return null
 
             const itemClasses = cx(active && 'active selected', 'item')
-            const itemStyle = {
-              background: active ? '#f3f4f5' : undefined,
-              fontWeight: active ? 700 : 400,
+            const itemStyle = active ? {
+              background: '#f3f4f5',
+              fontWeight: 700,
+              boxShadow:  fpIsFooter
+                            ? '0 0.5em 0.5em rgba(0, 0, 0, 0.2)'
+                            : '0.5em 0 0.5em rgba(0, 0, 0, 0.2)'
+            } : {
+              boxShadow: 'none',
             }
 
             const activeStyle = {

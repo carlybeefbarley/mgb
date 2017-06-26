@@ -455,7 +455,10 @@ export default class EditMap extends React.Component {
             activeTileset={this.state.activeTileset}
             tilesets={c2.tilesets}
             options={this.options}
-            />
+          ><MapProperties
+            {...this.propertiesProps}
+            tileset={c2.tilesets[this.state.activeTileset]}
+          /></TileSet>
 
           <MapProperties
             {...this.propertiesProps}
@@ -466,7 +469,7 @@ export default class EditMap extends React.Component {
               tilewidth: c2.tilewidth,
               tileheight: c2.tileheight
             }}
-            tileset={c2.tilesets[this.state.activeTileset]}
+            // tileset={c2.tilesets[this.state.activeTileset]}
             layer={c2.layers[this.state.activeLayer]}
           />
 

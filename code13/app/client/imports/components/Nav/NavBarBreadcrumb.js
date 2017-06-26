@@ -218,7 +218,7 @@ const NavBarBreadcrumbUI = (props) => {
             wide
             onOpen={_handleRelatedAssetsPopupOpen}
             position='bottom left'
-            trigger={<Icon name='large blue ellipsis horizontal' style={{ verticalAlign: 'top' }} />}
+            trigger={<Icon color='blue' size='large' name='ellipsis horizontal' style={{ verticalAlign: 'top' }} />}
           >
             <Popup.Header>
               Related Assets

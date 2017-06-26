@@ -241,12 +241,7 @@ export default AssetEditRoute = React.createClass({
     const asset = this.assetHandler.asset
     if (asset && this.props.handleSetCurrentlyEditingAssetInfo)
     {
-      const assetVerb = (
-        ( (this.canCurrUserEditThisAsset(asset) ? 'Edit' : 'View')
-          + (asset.isCompleted ? '  [locked asset]' : '')
-          + (asset.isDeleted ? '  [deleted asset]' : '')
-         )
-      )
+      const assetVerb = this.canCurrUserEditThisAsset(asset) ? 'Edit' : 'View'
       this.props.handleSetCurrentlyEditingAssetInfo( makeAssetInfoFromAsset(asset, assetVerb) )
     }
 

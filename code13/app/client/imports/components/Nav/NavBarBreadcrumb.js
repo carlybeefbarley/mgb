@@ -147,7 +147,7 @@ const NavBarBreadcrumbUI = (props) => {
       <QLink key='assets' to={`/u/${usernameToShow}/assets`}>Assets</QLink>
     ),
     //
-    // [ICON] Projects - from Asset's Project's list if on an asset-focused page (play, edit)
+    // [ICON] Projects - from Asset's Project's list if on a page that includes a project query (projects, assets)
     //
     usernameToShow && !assetId && queryProjectName && (
       // hey, this span is required!
@@ -156,9 +156,9 @@ const NavBarBreadcrumbUI = (props) => {
       </span>
     ),
     //
-    // [ICON] Projects - from Asset's Project's list
+    // [ICON] Projects - from Asset's Project's list if on an asset-focused page (play, edit)
     //
-    usernameToShow && assetId && (
+    usernameToShow && assetId && projectNames && projectNames.length > 0 && (
       // hey, this span is required!
       <span key='project-names'>
         <ProjectsSection usernameToShow={usernameToShow} projectNames={projectNames} />
@@ -206,10 +206,17 @@ const NavBarBreadcrumbUI = (props) => {
     //
     // AssetName
     //
-    (assetId && currentlyEditingAssetInfo && !isPlay && currentlyEditingAssetInfo.name) && (
+    (assetId && currentlyEditingAssetInfo && currentlyEditingAssetInfo.name) && (
       <span key='asset-name'>
-        <Icon name={_assetVerbIcons[assetVerb]} /> {currentlyEditingAssetInfo.name}
-        {' '}
+        <Icon name={_assetVerbIcons[assetVerb]} />
+        { currentlyEditingAssetInfo.isDeleted &&
+          <Icon name='trash' color='red' />
+        }
+        { currentlyEditingAssetInfo.isLocked &&
+          <Icon name='lock' color='blue' />
+        }
+        '{currentlyEditingAssetInfo.name}'
+        &ensp;
         {/* Popup for > Related */}
         {usernameToShow && (
           <Popup
@@ -218,7 +225,7 @@ const NavBarBreadcrumbUI = (props) => {
             wide
             onOpen={_handleRelatedAssetsPopupOpen}
             position='bottom left'
-            trigger={<Icon color='blue' size='large' name='ellipsis horizontal' style={{ verticalAlign: 'top' }} />}
+            trigger={<Icon color='blue' name='ellipsis horizontal' style={breadcrumbImageStyle} />}
           >
             <Popup.Header>
               Related Assets

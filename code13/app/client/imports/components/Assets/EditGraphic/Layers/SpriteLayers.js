@@ -8,6 +8,8 @@ import Layer from './Layer.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
+import sty from  '../editGraphic.css'
+
 // TODO - see if we can avoid forceUpdate() in addLayer() and addFrame()        [DG]
 // TODO - see if we can avoid using props.EditGraphic                           [DG]
 
@@ -582,8 +584,8 @@ export default class SpriteLayers extends React.Component {
     const buttonDivClass = "ui mini icon button"
 
     return (
-      <div className="" style={{ position: "fixed", bottom: 0, width: this.props.availableWidth+"px" }}>
-        <div className="row" className={(this.props.isMinimized ? " mgb-hidden" : "")}>
+      <div className={(this.props.isMinimized ? "mgb-minimized" : "mgb-maximized")} style={{ position: "fixed", bottom: 0, width: this.props.availableWidth+"px" }}>
+        <div className="row" className="animHeader">
           <div onClick={this.rewindFrames.bind(this, false)} className={buttonDivClass}>
             <i className="icon step backward"></i>
           </div>
@@ -685,7 +687,7 @@ export default class SpriteLayers extends React.Component {
             </tr>
       {/* animations end */}
 
-            <tr className={(this.props.isMinimized ? " mgb-hidden" : "")}>
+            <tr className="framesHeader">
               <th width="32px">
                   <i
                       className={"icon " + (this.state.allLayersHidden ? "hide" : "unhide" )}
@@ -782,7 +784,7 @@ export default class SpriteLayers extends React.Component {
               <th>
                 <div
                   onClick={this.togglePlayAnimation.bind(this)}
-                  className={buttonDivClass + (this.state.isPlaying ? " black" : "") + (this.props.isMinimized ? "" : " mgb-hidden")}>
+                  className={"miniPlay " + buttonDivClass + (this.state.isPlaying ? " black" : "")}>
                   <i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
                 </div>
               </th>
@@ -809,7 +811,7 @@ export default class SpriteLayers extends React.Component {
                 )})
               }
               <th>
-                <div className={"row" + (this.props.isMinimized ? "" : " mgb-hidden")} style={{marginLeft: "10px"}}>
+                <div className={"row miniAddFrames"} style={{marginLeft: "10px"}}>
                   <a className="ui small label" onClick={this.addFrame.bind(this)}>
                     <i className="add circle icon"></i> Add Frame
                   </a>
@@ -819,7 +821,7 @@ export default class SpriteLayers extends React.Component {
             </tr>
           </thead>
 
-          <tbody className={(this.props.isMinimized ? " mgb-hidden" : "")}>
+          <tbody className="layers">
             { this.renderLayers() }
           </tbody>
         </table>

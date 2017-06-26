@@ -363,7 +363,7 @@ const AppUI = React.createClass({
       this.setState({ currentlyEditingAssetInfo: assetInfo })
 
       // guntis - the only place where I can get asset type and send to analytics
-      if (assetInfo.assetVerb == 'View') {
+      if (_.startsWith(assetInfo.assetVerb, 'View') || _.startsWith(assetInfo.assetVerb, 'Edit')) {
         const path = '/asset/' + assetInfo.kind
         ga('set', 'page', path)
         ga('send', 'pageview', path)

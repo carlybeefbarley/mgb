@@ -2107,6 +2107,7 @@ export default class EditGraphic extends React.Component {
           content2={c2}
 
           isMinimized={!this.state.showAnimFrames}
+          availableWidth={this.props.availableWidth}
           hasPermission={this.hasPermission}
           handleSave={this.handleSave.bind(this)}
           selectedFrameIdx={this.state.selectedFrameIdx}

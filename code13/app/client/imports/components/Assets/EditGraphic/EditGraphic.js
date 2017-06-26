@@ -67,6 +67,7 @@ export default class EditGraphic extends React.Component {
     _memoState_showDrawingStatus = !this.state.showDrawingStatus
     this.setState( { showDrawingStatus: !this.state.showDrawingStatus } )
   }
+  handleToggleAnimFrames = () => this.setState({ showAnimFrames: !this.state.showAnimFrames })
   handleToggleGrid = () => this.setState( { showGrid: !this.state.showGrid} )
 
   constructor(props, context) {
@@ -95,6 +96,7 @@ export default class EditGraphic extends React.Component {
       showDrawingStatus:    _memoState_showDrawingStatus,
       isColorPickerPinned:  _memoState_isColorPickerPinned,
       selectedLayerIdx:     0,                          // DANGER DANGER (BUGBUG): Currently <SpriteLayers> uses this directly!
+      showAnimFrames:       false,          // show minimized or maximized frames & layers & animation
       selectedColors:       this.getInitialColor(),
       toolChosen:           this.findToolByLabelString("Pen"),
       selectRect:           null,   // if asset area is selected then value {startX, startY, endX, endY}
@@ -1896,6 +1898,10 @@ export default class EditGraphic extends React.Component {
                       <span style={{ cursor: 'pointer' }} onClick={this.handleToggleDrawingStatus}>
                         <Icon name='bullseye' color={showDrawingStatus ? 'blue' : 'grey'}/>
                       </span>
+                      <span>&nbsp;</span>
+                      <span style={{ cursor: 'pointer' }} onClick={this.handleToggleAnimFrames}>
+                        <Icon name='film' color={this.state.showAnimFrames ? 'blue' : 'grey'}/>
+                      </span>
                     </span>
                   )}
                   on='hover'
@@ -1911,6 +1917,7 @@ export default class EditGraphic extends React.Component {
                       <p><Icon color={showCheckeredBg ? 'blue' : 'grey'}name='clone' /> Show/Hide transparency checkerboard helper</p>
                       <p><Icon color={showMiniMap ? 'blue' : 'grey'} name='tv' /> Show/Hide drawing preview at 1x scale</p>
                       <p><Icon color={showDrawingStatus ? 'blue' : 'grey'} name='bullseye' /> Show/Hide drawing status bar info</p>
+                      <p><Icon color={this.state.showAnimFrames ? 'blue' : 'grey'} name='film' /> Minimize/Maximize frames and animations</p>
                     </div>
                     )}
                   size='tiny'
@@ -2099,6 +2106,7 @@ export default class EditGraphic extends React.Component {
         <SpriteLayers
           content2={c2}
 
+          isMinimized={!this.state.showAnimFrames}
           hasPermission={this.hasPermission}
           handleSave={this.handleSave.bind(this)}
           selectedFrameIdx={this.state.selectedFrameIdx}

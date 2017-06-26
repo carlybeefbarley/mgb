@@ -12,7 +12,7 @@ import WhatsNew from './WhatsNew'
 // alerts (new version, system-upgrade-in-process etc)
 
 const navBarStyle = {
-  padding:  '0.25em 0',
+  padding:  '0.25em',
 }
 
 const NavBar = React.createClass({

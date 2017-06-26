@@ -896,13 +896,33 @@ export default fpChat = React.createClass( {
    * @param {React.Component} MessageContextComponent - A react component that will be rendered to the left of the 'Send Message' Button as context for the message send
    */
   renderComments: function(MessageContextComponent) {
-    const { messageValue } = this.state
+    const { messageValue, view } = this.state
     const { currUser } = this.props
     const channelName = this._calculateActiveChannelName()
     const canSend = currUserCanSend( currUser, channelName )
+    const isOpen = view === 'comments'
+
+
+    const style = {
+      position:      'absolute',
+      overflow:      'auto',
+      margin:        '0 10px',
+      padding:       '0 8px 0 8px',
+      top:           '5em',
+      bottom:        '0.5em',
+      left:          '0',
+      right:         '0',
+      transition:    'transform 200ms, opacity 200ms',
+      transform:     isOpen ? 'translateY(0)' : 'translateY(-3em)',
+      background:    '#fff',
+      boxShadow:     '0 1px 4px rgba(0, 0, 0, 0.2)',
+      opacity:       +isOpen,
+      pointerEvents: isOpen ? 'all' : 'none',
+      zIndex:        '100',
+    }
 
     return (
-      <div>
+      <div style={style}>
         <Comment.Group className="small">
           { this.renderGetMoreMessages() }
           <div id='mgbjr-fp-chat-channel-messages'>
@@ -1002,54 +1022,58 @@ export default fpChat = React.createClass( {
 
     return (
       <div>
-        <Input
-          fluid
-          value={presentedChannelName}
-          readOnly
-          icon={presentedChannelIconName}
-          size='small'
-          id='mgbjr-fp-chat-channelDropdown'
-          iconPosition='left'
-          action={{
-            icon:    'dropdown',
-            onClick: this.handleToggleChannelSelector
-          }}
-          labelPosition='right'
-          onClick={this.handleToggleChannelSelector}
-        />
+        <div>
+          <Input
+            fluid
+            value={presentedChannelName}
+            readOnly
+            icon={presentedChannelIconName}
+            size='small'
+            id='mgbjr-fp-chat-channelDropdown'
+            iconPosition='left'
+            action={{
+              icon:    'dropdown',
+              onClick: this.handleToggleChannelSelector
+            }}
+            labelPosition='right'
+            onClick={this.handleToggleChannelSelector}
+          />
+        </div>
 
-        { this.renderChannelSelector() }
-        { view === 'comments' && this.renderComments( channelObj.scopeGroupName === 'Global' ? null :
-            <Popup
-              on='hover'
-              size='small'
-              hoverable
-              position='left center'
-              trigger={(
-                <Button active
-                    icon={presentedChannelIconName}/>
-              )}
-              >
-              <Popup.Header>
-                Public Chat Channel for this {channelObj.scopeGroupName }
-              </Popup.Header>
-              <Popup.Content>
-                <div style={{minWidth: '300px'}}>
-                  { channelObj.scopeGroupName === 'Asset' &&
-                      <AssetCardGET assetId={channelObj.scopeId} allowDrag={true} renderView='s' />
-                  }
-                  { channelObj.scopeGroupName === 'Project' &&
-                      <ProjectCardGET projectId={channelObj.scopeId} />
-                  }
-                  { channelObj.scopeGroupName === 'User' &&
-                      <span>User Wall for <QLink to={`/u/${channelObj.scopeId}`} >@{channelObj.scopeId}</QLink></span>
-                  }
+        <div>
+          { this.renderChannelSelector() }
+          { view === 'comments' && this.renderComments( channelObj.scopeGroupName === 'Global' ? null :
+              <Popup
+                on='hover'
+                size='small'
+                hoverable
+                position='left center'
+                trigger={(
+                  <Button active
+                      icon={presentedChannelIconName}/>
+                )}
+                >
+                <Popup.Header>
+                  Public Chat Channel for this {channelObj.scopeGroupName }
+                </Popup.Header>
+                <Popup.Content>
+                  <div style={{minWidth: '300px'}}>
+                    { channelObj.scopeGroupName === 'Asset' &&
+                        <AssetCardGET assetId={channelObj.scopeId} allowDrag={true} renderView='s' />
+                    }
+                    { channelObj.scopeGroupName === 'Project' &&
+                        <ProjectCardGET projectId={channelObj.scopeId} />
+                    }
+                    { channelObj.scopeGroupName === 'User' &&
+                        <span>User Wall for <QLink to={`/u/${channelObj.scopeId}`} >@{channelObj.scopeId}</QLink></span>
+                    }
 
-                </div>
-              </Popup.Content>
-            </Popup>
-          )
-        }
+                  </div>
+                </Popup.Content>
+              </Popup>
+            )
+          }
+        </div>
 
         <p ref="bottomOfMessageDiv">&nbsp;</p>
       </div>

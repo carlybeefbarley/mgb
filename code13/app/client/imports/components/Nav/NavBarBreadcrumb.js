@@ -200,9 +200,14 @@ const NavBarBreadcrumbUI = (props) => {
       <QLink key='learn-code' to={`/learn/code`}>Programming</QLink>
     ),
     //
-    // LearnCode ITEM
+    // LearnCode ITEM   [TODO: FIX THIS? seems to not ne working]
     //
     learnCodeItem && <span key='learn-code-item'>{_learnCodeItemHdrs[learnCodeItem]}</span>,
+    //
+    // Other low-context item (create asset, list users etc) ITEM
+    //
+    !learnCodeItem && !usernameToShow && !assetId && !isPlay &&
+    <span key='route-name-item'>{name}</span>,
     //
     // AssetName
     //
@@ -217,7 +222,7 @@ const NavBarBreadcrumbUI = (props) => {
         }
         '{currentlyEditingAssetInfo.name}'
         &ensp;
-        {/* Popup for > Related */}
+        {/* Popup for > Related [ TODO: MOVE THIS OUT OF ASSETNAME SO IT WORKS WITH ASSETBROWSE/PLAY ETC scenarios */}
         {usernameToShow && (
           <Popup
             on='hover'

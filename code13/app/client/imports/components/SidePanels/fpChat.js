@@ -146,8 +146,9 @@ import { isUserModerator } from '/imports/schemas/roles'
 const initialMessageLimit = 5
 const additionalMessageIncrement = 15
 
+const _noTopMarginSty = { marginTop: 0 }
 const MessageTopDivider = ({ id, children, content, title }) => (
-  <Divider id={id} horizontal title={title}>
+  <Divider id={id} horizontal title={title} style={_noTopMarginSty}>
     <Header color='grey' size='tiny'>
     {children || content}
     </Header>
@@ -906,7 +907,7 @@ export default fpChat = React.createClass( {
     const style = {
       position:      'absolute',
       overflow:      'auto',
-      margin:        '0 10px',
+      margin:        '0',
       padding:       '0 8px 0 8px',
       top:           '5em',
       bottom:        '0.5em',
@@ -914,10 +915,7 @@ export default fpChat = React.createClass( {
       right:         '0',
       transition:    'transform 200ms, opacity 200ms',
       transform:     isOpen ? 'translateY(0)' : 'translateY(-3em)',
-      background:    '#fff',
-      boxShadow:     '0 1px 4px rgba(0, 0, 0, 0.2)',
       opacity:       +isOpen,
-      pointerEvents: isOpen ? 'all' : 'none',
       zIndex:        '100',
     }
 

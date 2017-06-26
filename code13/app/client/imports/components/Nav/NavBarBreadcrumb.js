@@ -15,6 +15,14 @@ import { ReactMeteorData } from 'meteor/react-meteor-data'
 // The NavBarBreadcrumb contains a breadcrumb bar that is generated based on name, user and
 // params (assetId, projectId etc)
 
+const _handleRelatedAssetsPopupOpen = () => {
+  // wait for it to open, then focus it
+  setTimeout(() => {
+    const relatedInput = document.querySelector('#mgb-navbar-relatedassets')
+    relatedInput.focus()
+  })
+}
+
 const ProjectsSection = ({ usernameToShow, projectNames }) => {
   const firstProjectNameForAsset = _.isArray(projectNames) && projectNames[0]
   if (!usernameToShow || !firstProjectNameForAsset)
@@ -199,14 +207,64 @@ const NavBarBreadcrumbUI = (props) => {
     // AssetName
     //
     (assetId && currentlyEditingAssetInfo && !isPlay && currentlyEditingAssetInfo.name) && (
-      // hey, this span is required!
       <span key='asset-name'>
-        <Label
-          as='span'
-          icon={_assetVerbIcons[assetVerb]}
-          horizontal
-          content={currentlyEditingAssetInfo.name}
-        />
+        <Icon name={_assetVerbIcons[assetVerb]} /> {currentlyEditingAssetInfo.name}
+        {' '}
+        {/* Popup for > Related */}
+        {usernameToShow && (
+          <Popup
+            on='hover'
+            hoverable
+            wide
+            onOpen={_handleRelatedAssetsPopupOpen}
+            position='bottom left'
+            trigger={<Icon name='large blue ellipsis horizontal' style={{ verticalAlign: 'top' }} />}
+          >
+            <Popup.Header>
+              Related Assets
+            </Popup.Header>
+            <Popup.Content>
+              <Input
+                id='mgb-navbar-relatedassets' // so it can be focused on open
+                fluid
+                size='mini'
+                icon='search'
+                loading={relatedAssetsLoading}
+                placeholder='Related assets'
+                defaultValue={quickAssetSearch}
+                onChange={handleSearchNavKey}
+              />
+              <List
+                selection
+                style={{ maxHeight: '30em', width: '20em', overflowY: 'auto' }}
+                items={_.map(filteredRelatedAssets, a => ({
+                  key:     a._id,
+                  as:      QLink,
+                  to:      `/u/${a.dn_ownerName}/asset/${a._id}`,
+                  style:   { color: AssetKinds.getColor(a.kind) },
+                  icon:    { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
+                  content: currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
+                }))}
+              />
+              <div>
+                { contextualProjectName &&
+                <small>
+                  <span>Within </span>
+                  <QLink to={`/u/${user ? user.username : (currUser ? currUser.username : null)}/projects/${contextualProjectName}`}>
+                    <Icon name='sitemap' /><span>{contextualProjectName}</span>
+                  </QLink>
+                </small>
+                }
+                <QLink to='/assets/create' style={{ float: 'right' }}>
+                  <Icon.Group>
+                    <Icon color='green' name='pencil' />
+                    <Icon color='green' corner name='add' />
+                  </Icon.Group>
+                </QLink>
+              </div>
+            </Popup.Content>
+          </Popup>
+        )}
       </span>
     ),
   ]
@@ -223,60 +281,6 @@ const NavBarBreadcrumbUI = (props) => {
     <div style={{ display: 'inline-block' }}>
       <Breadcrumb icon='right angle' sections={sections} />
 
-      {/* Popup for > Related */}
-      {usernameToShow && (
-        <Popup
-          on='focus'
-          hoverable
-          wide
-          position='bottom left'
-          trigger={(
-            <Input
-              style={{ marginLeft: '1em' }}
-              size='mini'
-              icon='search'
-              loading={relatedAssetsLoading}
-              placeholder='Related assets'
-              defaultValue={quickAssetSearch}
-              onChange={handleSearchNavKey}
-            />
-          )}
-        >
-          <Popup.Header>
-            Related Assets
-          </Popup.Header>
-          <Popup.Content>
-            <List
-              selection
-              style={{ maxHeight: '30em', width: '20em', overflowY: 'auto' }}
-              items={_.map(filteredRelatedAssets, a => ({
-                key:     a._id,
-                as:      QLink,
-                to:      `/u/${a.dn_ownerName}/asset/${a._id}`,
-                style:   { color: AssetKinds.getColor(a.kind) },
-                icon:    { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
-                content: currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
-              }))}
-            />
-            <div>
-              { contextualProjectName &&
-              <small>
-                <span>Within </span>
-                <QLink to={`/u/${user ? user.username : (currUser ? currUser.username : null)}/projects/${contextualProjectName}`}>
-                  <Icon name='sitemap' /><span>{contextualProjectName}</span>
-                </QLink>
-              </small>
-              }
-              <QLink to='/assets/create' style={{ float: 'right' }}>
-                <Icon.Group>
-                  <Icon color='green' name='pencil' />
-                  <Icon color='green' corner name='add' />
-                </Icon.Group>
-              </QLink>
-            </div>
-          </Popup.Content>
-        </Popup>
-      )}
     </div>
   )
 }

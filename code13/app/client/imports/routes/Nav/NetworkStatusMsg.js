@@ -12,21 +12,24 @@ const mStatus = {
 }
 
 const _isNetworkOK = meteorStatus => (
-  _.includes([mStatus.CONNECTED, mStatus.CONNECTING], meteorStatus.status) && meteorStatus.retryCount === 0 
+  _.includes([mStatus.CONNECTED, mStatus.CONNECTING], meteorStatus.status) && meteorStatus.retryCount === 0
 )
- 
+
 const _doReconnect = () => Meteor.reconnect()
 
 const NetworkStatusMsg = ( { meteorStatus } ) => {
   if (_isNetworkOK(meteorStatus))
     return null
-    
-  const retryInSeconds = (mStatus.WAITING === meteorStatus.status) ? 
+
+  const retryInSeconds = (mStatus.WAITING === meteorStatus.status) ?
     Math.ceil((meteorStatus.retryTime - (new Date()).getTime())/1000) : 0
-  
+
   return (
-    <Segment basic padded> 
-      <Message error>
+    <Segment
+        raised
+        padded
+        style={{position: 'absolute', top: 80, left: 24, right: 24}}>
+      <Message error style={{ minHeight: '5em'}} >
         <Message.Header>
             Network offline: {meteorStatus.status}
             <Button floated='right' compact primary onClick={_doReconnect}>
@@ -34,14 +37,14 @@ const NetworkStatusMsg = ( { meteorStatus } ) => {
             </Button>
         </Message.Header>
 
-        { meteorStatus.retryCount > 0 &&
-          <Message.List>
+        { meteorStatus.retryCount > 1 &&
+          <Message.List style={{clear: 'both'}}>
             <Message.Item>
               Connection retries attempted: {meteorStatus.retryCount}
             </Message.Item>
-            { retryInSeconds > 0 &&
+            { retryInSeconds > 3 && // 3 seconds is good to damp some of the flicker for initial quick retries
               <Message.Item>
-                Retry Interval: {retryInSeconds} seconds
+                Auto-retry Interval: {retryInSeconds} seconds
               </Message.Item>
             }
             { (mStatus.FAILED === meteorStatus.status) &&

@@ -98,7 +98,6 @@ export default SignupRoute = React.createClass({
   },
 
   handleSubmit: function(event) {
-    event.preventDefault()
     const { formData } = this.state
     const { email, username, password } = formData
     const errs = {}

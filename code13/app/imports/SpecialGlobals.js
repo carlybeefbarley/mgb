@@ -51,7 +51,7 @@ export default SpecialGlobals = {
         name: 'Phaser',
         import: 'phaser',
         desc: 'For making games',
-        descLong: 'Phaser is a good framework for making JavaScript games. It makes helps developers manage their game scenes, asset loaders, input devices, sound, and GPUs',
+        descLong: 'Phaser is a good framework for making JavaScript games. It helps developers with game scenes, asset loaders, rendering, physics, input devices, sound, and more',
         landingPageUrl: '//phaser.io',
         apiDocsPageUrl: '//photonstorm.github.io/phaser-ce/',
         tutorialsInternalLink: '/learn/code/phaser'
@@ -60,7 +60,7 @@ export default SpecialGlobals = {
         name: 'React',
         import: 'react',
         desc: 'For making apps',
-        descLong: 'React is a powerful but simple User Interface framework developed by Facebook and available as open source. It is very good for applications in JavaScript, or for games that have a more app-like UI such as "mastermind". This site is all written using the React framework!',
+        descLong: 'React is a powerful but simple User Interface framework developed by Facebook and available as open source. It is very good for making applications in JavaScript, or for making games that have a more app-like UI such as "mastermind". This site is all written using React!',
         landingPageUrl: '//facebook.github.io/react/',
         apiDocsPageUrl: '//facebook.github.io/react/docs/introducing-jsx.html'
       },
@@ -68,7 +68,7 @@ export default SpecialGlobals = {
         name: '_',
         import: 'lodash',
         desc: 'Helpful extra functions',
-        descLong: 'Lodash is a clone of another JavaScript library called "Underscore". They are usually seen in JavaScript programs doing stuff like _.map() or _.union(). Lodash provides a set of very helpful general purpose routines to compare and transform data or functions. Any time you write a loop of some kind to transform a data structure, there\'s probably a one or two line of lodash way to do it in a clearer way.. Once you get used to it :)',
+        descLong: 'Lodash provides helpful general purpose routines to compare and transform data or functions. Any time you write a loop of some kind to transform a data structure, there\'s probably a way to do it more easily in one line of lodash... Once you get used to it :) Lodash is a variant of another similar JavaScript library called "Underscore". They are usually seen in JavaScript programs doing things like _.isString() or _.union(). ',
         landingPageUrl: '//lodash.com/',
         apiDocsPageUrl: '//lodash.com/docs'
       }

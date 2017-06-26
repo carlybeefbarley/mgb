@@ -146,15 +146,11 @@ import { isUserModerator } from '/imports/schemas/roles'
 const initialMessageLimit = 5
 const additionalMessageIncrement = 15
 
-const MessageTopDivider = ({ elementId, content, title }) => (
-  <Divider
-    id={elementId}
-    as={Header}
-    color='grey'
-    size='small'
-    horizontal
-    title={title}>
-    {content}
+const MessageTopDivider = ({ id, children, content, title }) => (
+  <Divider id={id} horizontal title={title}>
+    <Header color='grey' size='tiny'>
+    {children || content}
+    </Header>
   </Divider>
 )
 
@@ -574,7 +570,7 @@ export default fpChat = React.createClass( {
     if (!chats || chats.length === 0)
       return (
         <MessageTopDivider
-          elementId={elementId}
+          id={elementId}
           title='There are no messages or comments here yet'
           content='(no messages yet)' />
       )
@@ -582,26 +578,30 @@ export default fpChat = React.createClass( {
     if (chats.length < this.state.pastMessageLimit)
       return (
         <MessageTopDivider
-          elementId={elementId}
+          id={elementId}
           title={`There are no earlier available messages in this channel`}
           content='(start of topic)' />
       )
     if (chats.length >= chatParams.maxClientChatHistory)
       return (
         <MessageTopDivider
-          elementId={elementId}
+          id={elementId}
           title={`You may only go back ${chatParams.maxClientChatHistory} messages`}
           content='(history limit reached)' />
       )
 
     return (
-      <a
+      <MessageTopDivider
         id={elementId}
         title={`Currently showing most recent ${chats.length} messages. Click here to get up to ${additionalMessageIncrement} earlier messages`}
-        style={{ cursor: 'pointer' }}
-        onClick={this.doGetMoreMessages}>
-        Get earlier messages..
-      </a>
+        content={(
+          <a
+            style={{ cursor: 'pointer', textTransform: 'none' }}
+            onClick={this.doGetMoreMessages}>
+            <Icon name='history' style={{ margin: 0 }} /> Get older messages
+          </a>
+        )}
+      />
     )
   },
 
@@ -913,10 +913,10 @@ export default fpChat = React.createClass( {
           <span />
         </Comment.Group>
 
-        <Form size='small' onSubmit={e => e.preventDefault()}>
+        <Form size='small'>
           <Form.Field id='mgbjr-fp-chat-messageInput' disabled={!canSend}>
             <Form.TextArea
-              rows="3"
+              rows={3}
               name='message' // this is to squelch form submit warning
               placeholder="your message..."
               value={messageValue}
@@ -1002,11 +1002,6 @@ export default fpChat = React.createClass( {
 
     return (
       <div>
-        <label
-          style={{ fontWeight: 'bold' } }>
-          Channel:
-        </label>
-
         <Input
           fluid
           value={presentedChannelName}
@@ -1021,7 +1016,6 @@ export default fpChat = React.createClass( {
           }}
           labelPosition='right'
           onClick={this.handleToggleChannelSelector}
-          style={{ marginBottom: '0.5em', marginTop: '0.2em' }}
         />
 
         { this.renderChannelSelector() }

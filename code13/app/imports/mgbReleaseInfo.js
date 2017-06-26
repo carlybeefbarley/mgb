@@ -16,7 +16,100 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+    {
+      'timestamp': 'Fri Jun 23 2017 13:30:00 GMT-0700 (PDT)',
 
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4470'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed bug that broke actorMap Layer editing. Fixed misplaced popup on Avatar edit prompt. Improved ActorMap animiation editor UI',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
+      'timestamp': 'Thu Jun 22 2017 16:40:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4465'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.layout',
+          'type': 'feature',
+          'changeName': 'Show/Hide header rows',
+          'changeSummary': 'There is now an easy way to maximize editing UI area. There is a small ︽ or ︾ icon at the top-right of the main page area. Click this, or use the alt-shift-H shortcut to hide/show the top rows of the UI.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'Improved network-offline message',
+          'changeSummary': 'It is now an overlay so there is less flicker during intermittent connection issues',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+
+    {
+      'timestamp': 'Wed Jun 21 2017 17:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4452'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+
+        {
+          'featureTag': 'asset.code',
+          'type': 'feature',
+          'changeName': 'Import Assistant',
+          'changeSummary': 'We revamped the Import Helper in the Code Editor and it\'s now a top-level assistant. It has collapsible help to explain what JS imports are, and it has a nifty auto-detect-and-explain tag for react, phaser and lodash package imports.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'flexpanel.asset',
+          'type': 'improvement',
+          'changeName': 'Asset flexpanel asset-kinds-selection',
+          'changeSummary': 'The Asset flexpanel has a nicer asset-kinds selection UI now. Less text, and proper toggles for on/off for filtering a single asset kind. alt-click to multi-select still works.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Fixed actormap play preview bug with arrow keys; improved Code EDitor Import Assistant more; removed Flexpanel headers for prettiness; Cleaned up BIO area in Profile.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
 
     {
       'timestamp': 'Tue Jun 20 2017 15:30:00 GMT-0700 (PDT)',

@@ -63,7 +63,6 @@ export default ForgotPasswordRoute = React.createClass({
   },
 
   handleSubmit: function(event) {
-    event.preventDefault()
     const { email } = this.state
 
     const why = validate.emailWithReason(email)

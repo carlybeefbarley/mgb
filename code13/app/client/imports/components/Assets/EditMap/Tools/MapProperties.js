@@ -16,7 +16,7 @@ const validateNumber = numLike => {
 }
 const validateUInt = numLike => {
   const numParsed = parseInt(numLike, 10)
-  return !Number.isNaN(numParsed) && Number.isFinite(numParsed) && numParsed >= 0
+  return validateInteger(numParsed) && numParsed >= 0
 }
 
 const validateGreaterThanZero = numLike => {
@@ -48,14 +48,14 @@ const mapProperties = ({width, height, tilewidth, tileheight}, changeSize, chang
 
         <Segment.Group horizontal>
           <Segment>
-            <Label pointing='right'>TileWidth:</Label>
+            <Label pointing='right'>Tile Width:</Label>
             <InlineEdit
               change={changeTile} text={tilewidth + ''} paramName="tilewidth"
               validate={validateGreaterThanZero}
             />
           </Segment>
           <Segment>
-            <Label pointing='right'>TileHeight:</Label>
+            <Label pointing='right'>Tile Height:</Label>
             <InlineEdit
               change={changeTile} text={tileheight + ''} paramName="tileheight"
               validate={validateGreaterThanZero}
@@ -309,6 +309,14 @@ const objectProperties = ({width, height, x, y, name, type, visible, rotation, m
 })
 
 export default class extends React.Component {
+  static propTypes = {
+    map: React.PropTypes.object, // basic map data: {width, height, tilewidth, tileheight}
+    layer: React.PropTypes.object, // object representing Tiled Layer- http://doc.mapeditor.org/reference/tmx-map-format/#layer - content2.layers[active]
+    tileset: React.PropTypes.object, // object representing Tiled tileset - http://doc.mapeditor.org/reference/tmx-map-format/#tileset - content2.tilesets[active]
+
+    /// check out app/client/imports/components/Assets/Common/Map/Props/PropertiesProps.js - for related methods
+
+  }
   constructor(...p) {
     super(...p)
   }

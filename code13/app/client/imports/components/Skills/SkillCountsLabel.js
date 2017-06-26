@@ -6,9 +6,9 @@ import { maxSkillsCount } from '/imports/Skills/SkillNodes/SkillNodes'
 export default SkillCountsLabel = ( { skills } ) => {
   const mySkillCount = countCurrentUserSkills(skills)
   return (
-    <div className="ui label large right floated" style={{float: 'right', opacity: '0.75'}}>
+    <span className="ui label large right floated" style={{float: 'right', opacity: '0.75'}}>
       {mySkillCount} / {maxSkillsCount}&nbsp;&nbsp;
       <i className="check circle icon" style={{marginRight: 0}} />
-    </div>
+    </span>
   )
 }

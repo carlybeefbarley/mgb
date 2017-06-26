@@ -13,9 +13,9 @@ const _ANY_PROJECT_MITEMTXT = '(in any project)'
 
 const _makeCompoundProjectName = (ownerName, projectName) => (`${ownerName} : ${projectName}`)
 const _renderSelectionIcon = isActive => <Icon name='sitemap' disabled={!isActive} color={isActive ? 'green' : 'grey'} />
-const _makeProjectNameLabelToShow = (activeProjectObject, propProjectName) => 
+const _makeProjectNameLabelToShow = (activeProjectObject, propProjectName) =>
 {
-  if (activeProjectObject) 
+  if (activeProjectObject)
     return _makeCompoundProjectName(activeProjectObject.ownerName, activeProjectObject.name)
   if (propProjectName == _NO_PROJECT_PROJNAME)
     return _NO_PROJECT_LABELTXT
@@ -32,15 +32,15 @@ const _isSameProject = (chosenProjectObj, chosenProjectName, candidateProjectObj
 }
 
 const ProjectSelector = ( {
-  user, 
-  canEdit, 
-  availableProjects, 
-  showProjectsUserIsMemberOf, 
-  ProjectListLinkUrl, 
-  isUseCaseCreate, 
+  user,
+  canEdit,
+  availableProjects,
+  showProjectsUserIsMemberOf,
+  ProjectListLinkUrl,
+  isUseCaseCreate,
   chosenProjectObj,
   chosenProjectName,
-  handleChangeSelectedProjectName 
+  handleChangeSelectedProjectName
 } ) => {
   const ownedProjects = []
   const memberOfProjects = []
@@ -52,9 +52,9 @@ const ProjectSelector = ( {
   // Always show the 'No Project' scenario
   const isSelectionForNoProject = (!chosenProjectObj && chosenProjectName === _NO_PROJECT_PROJNAME)
   ownedProjects.push(
-    <Dropdown.Item 
+    <Dropdown.Item
       active={isSelectionForNoProject}
-      key="__none" 
+      key="__none"
       icon={ _renderSelectionIcon( isSelectionForNoProject ) }
       text={_NO_PROJECT_MITEMTXT}
       onClick={ () => handleChangeSelectedProjectName( _NO_PROJECT_PROJNAME, null, null )}/>
@@ -66,9 +66,9 @@ const ProjectSelector = ( {
     // Show "Any Project" if this is being used as  a Game/Asset view selector
     const isSelectionForAnyProject = (!chosenProjectObj && chosenProjectName === _ANY_PROJECT_PROJNAME)
     ownedProjects.push(
-      <Dropdown.Item 
+      <Dropdown.Item
         active={isSelectionForAnyProject}
-        key="__all" 
+        key="__all"
         icon={ _renderSelectionIcon( isSelectionForAnyProject ) }
         text={_ANY_PROJECT_MITEMTXT}
         onClick={ () => handleChangeSelectedProjectName( _ANY_PROJECT_PROJNAME, null, null ) }/>
@@ -90,14 +90,14 @@ const ProjectSelector = ( {
     }
     const isOwner = user && (project.ownerId === user._id)
     const entry = (
-      <Dropdown.Item 
-        active={isActive} 
-        value={project._id} 
+      <Dropdown.Item
+        active={isActive}
+        value={project._id}
         icon={ _renderSelectionIcon(isActive ) }
         key={project._id}
         text={ isOwner ? (project.name) : _makeCompoundProjectName(project.ownerName, project.name) }
         onClick={() => { handleChangeSelectedProjectName( project.name, project, _makeCompoundProjectName(project.ownerName, project.name) ) } }
-        /> 
+        />
     ) // TODO: Get rid of bind in onClick() above
     if (isOwner)
       ownedProjects.push( entry )
@@ -112,31 +112,32 @@ const ProjectSelector = ( {
   // Create the   |  In Project:  (ProjectSelect v)    |    UI
   const actualProjectObj = chosenProjectObj || NameMatchedProjectObject
   const projectLabelNameToShow = _makeProjectNameLabelToShow(
-    actualProjectObj, 
+    actualProjectObj,
     isUseCaseCreate ? _NO_PROJECT_PROJNAME : chosenProjectName
     )
   return (
-    <Dropdown 
-        style={{ marginTop: '1px', marginBottom: '3px'}} // inline is compact but has no top/bottom margins
-        inline
-        trigger={
-          <span>
+    <Dropdown
+      style={{ marginTop: '1px', marginBottom: '3px' }} // inline is compact but has no top/bottom margins
+      inline
+      trigger={
+        <span>
             <QLink to={actualProjectObj ? `/u/${actualProjectObj.ownerName}/projects/${actualProjectObj.name}` : `/u/${userName}/projects`}>
-              <Icon name='sitemap'/> 
+              <Icon color='grey' name='sitemap' />
             </QLink>
-            { projectLabelNameToShow }&ensp;
-          </span>} 
-        >
+          { projectLabelNameToShow }&ensp;
+          </span>
+      }
+    >
       <Dropdown.Menu>
         { ownedProjects }
         { showProjectsUserIsMemberOf && memberOfProjects }
         <Dropdown.Divider />
         { user &&
-          <Dropdown.Item>
-            <QLink className="ui item" to={ProjectListLinkUrl}>
-              { canEdit ? "Manage Projects" : "View Project List" }
-            </QLink>
-          </Dropdown.Item>
+        <Dropdown.Item>
+          <QLink className="ui item" to={ProjectListLinkUrl}>
+            { canEdit ? "Manage Projects" : "View Project List" }
+          </QLink>
+        </Dropdown.Item>
         }
       </Dropdown.Menu>
     </Dropdown>
@@ -145,7 +146,7 @@ const ProjectSelector = ( {
 
 ProjectSelector.propTypes = {
   showProjectsUserIsMemberOf:  PropTypes.bool,        // if True then also show MemberOf projects
-  canEdit:              PropTypes.bool,               // If true, then also offer a 'Manage Projects' 
+  canEdit:              PropTypes.bool,               // If true, then also offer a 'Manage Projects'
   user:                 PropTypes.object,             // User who we are selecting on behalf of. CAN BE NULL
   availableProjects:    PropTypes.array,              // Array of Projects for that user (owned & memberOf). See projects.js for schema. Can include owned or memberOf
   chosenProjectObj:     PropTypes.object,             // If provided, we use this instead of chosenProjectName. If null, we use the string
@@ -153,9 +154,9 @@ ProjectSelector.propTypes = {
   isUseCaseCreate:      PropTypes.bool.isRequired,    // If yes, then say 'no project' instead of 'any project'. Also, see notes below
 
    // Callback params will be (projectName, projObj, projectCompoundName)
-   // When isUseCaseCreate===true,  
+   // When isUseCaseCreate===true,
    //    'Create In No project' is indicated by { projectName: null, projObj: null, projectCompoundName: null }
-   // When isUseCaseCreate===false, 
+   // When isUseCaseCreate===false,
    //    'Assets in No project' is indicated by { projectName: null, projObj: null,  projectCompoundName: null }
    // ** 'Look in ALL projects' is indicated by { projectName: '',   projObj: null,  projectCompoundName: ''   }
 

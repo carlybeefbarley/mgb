@@ -367,7 +367,6 @@ export default UserAssetListRoute = React.createClass({
           <div>
             { (!loading && qN.kinds === '') && (
                 <Message
-                    style={{marginTop: '8em'}}
                     warning
                     icon='help circle'
                     header='Select one or more Asset kinds to be shown here'
@@ -376,7 +375,6 @@ export default UserAssetListRoute = React.createClass({
             }
             { (!loading && qN.kinds !== '' && assets.length === 0) && (
                 <Message
-                    style={{marginTop: '8em'}}
                     warning
                     icon='help circle'
                     header='No assets match your search'

@@ -104,7 +104,7 @@ export default class ArtTutorial extends React.Component {
           />
           <Button compact basic size='small' color='green' onClick={this.navigateToSkillsList} icon='up arrow' data-position='bottom right' data-tooltip="Go up to Tutorial list"/>
 
-          <Divider as={Header} style={{color:'grey'}} size='tiny' horizontal >{this.state.data.title}</Divider>
+          <Divider as={Header} color='grey' size='tiny' horizontal>{this.state.data.title}</Divider>
 
           { isCompleted && (
             <Message size='small' icon style={{paddingBottom: 0}}>

@@ -10,7 +10,7 @@ const Empty = <Menu.Item content='(none)' />
 const ChatIcon = ( { hazUnreadChats, projId }) => {
   const channelName = makeChannelName( { scopeGroupName: 'Project', scopeId: projId } )
   return !_.includes(hazUnreadChats, channelName) ? null : (
-    <QLink 
+    <QLink
         style={{ float: 'right' }}
         query={{ _fp: `chat.${channelName}` }} >
       <Icon name='chat' />
@@ -18,37 +18,37 @@ const ChatIcon = ( { hazUnreadChats, projId }) => {
   )
 }
 
-const ProjectMenu = ( { projects, ownedFlag, currUserId, hazUnreadChats } ) => 
+const ProjectMenu = ( { projects, ownedFlag, currUserId, hazUnreadChats } ) =>
 {
-  if (!projects || projects.length === 0) 
+  if (!projects || projects.length === 0)
     return Empty
 
   const wantedProjects = _.filter(projects, p => ( (p.ownerId === currUserId) === ownedFlag ))
   const retval = wantedProjects.length === 0 ? Empty : wantedProjects.map( p => (
     <Menu.Item key={p._id}>
       <WorkState workState={p.workState} canEdit={false}/>
-      { !ownedFlag && 
+      { !ownedFlag &&
           <span>
-            <QLink 
+            <QLink
               to={`/u/${p.ownerName}`}
               altTo={`/u/${p.ownerName}/projects`} >
               {p.ownerName}
             </QLink>
             { ' : ' }
-          </span> 
+          </span>
       }
       &ensp;
-      <QLink 
-          to={`/u/${p.ownerName}/projects/${p.name}`} 
-          altTo={`/u/${p.ownerName}/assets`} 
+      <QLink
+          to={`/u/${p.ownerName}/projects/${p.name}`}
+          altTo={`/u/${p.ownerName}/assets`}
           altQuery={{project:p.name}}
           title="click for project page; alt-click for project Assets" >
-        { p.name } 
+        { p.name }
       </QLink>
       <ChatIcon hazUnreadChats={hazUnreadChats} projId={p._id} />
     </Menu.Item>
   ))
-  return <Menu vertical fluid>{retval}</Menu>
+  return <Menu.Menu>{retval}</Menu.Menu>
 }
 
 const _propTypes = {
@@ -59,38 +59,36 @@ const _propTypes = {
 }
 
 const fpProjects = ( { currUser, currUserProjects, hazUnreadChats } ) => {
-  if (!currUser) 
+  if (!currUser)
     return <Message content="Not Logged in - no projects to show" />
 
   return (
-    <div className='animated fadeIn '>
+    <div>
       <div className='ui fluid vertical menu'>
         <QLink
-            to={`/u/${currUser.profile.name}/projects`} 
-            className="header item" 
-            title="Projects you are owner of">
+          to={`/u/${currUser.profile.name}/projects`}
+          className="header item"
+          title="Projects you are owner of">
           <Icon name='sitemap' /> My Owned Projects
         </QLink>
-
-        <ProjectMenu 
-            projects={currUserProjects} 
-            ownedFlag={true}
-            hazUnreadChats={hazUnreadChats}
-            currUserId={currUser._id}/>
+        <ProjectMenu
+          projects={currUserProjects}
+          ownedFlag={true}
+          hazUnreadChats={hazUnreadChats}
+          currUserId={currUser._id} />
       </div>
-  
       <div className='ui fluid vertical menu'>
-        <QLink 
-            to={`/u/${currUser.profile.name}/projects`} 
-            className="header item" 
-            title="Projects you are a member of">
+        <QLink
+          to={`/u/${currUser.profile.name}/projects`}
+          className="header item"
+          title="Projects you are a member of">
           <Icon color='grey' name='sitemap' /> Project Memberships
         </QLink>
-        <ProjectMenu 
-            projects={currUserProjects} 
-            ownedFlag={false}
-            hazUnreadChats={hazUnreadChats}
-            currUserId={currUser._id} />
+        <ProjectMenu
+          projects={currUserProjects}
+          ownedFlag={false}
+          hazUnreadChats={hazUnreadChats}
+          currUserId={currUser._id} />
       </div>
     </div>
   )

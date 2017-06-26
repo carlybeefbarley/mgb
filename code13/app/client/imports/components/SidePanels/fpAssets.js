@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Dropdown, Popup } from 'semantic-ui-react'
+import { Divider, Dropdown, Icon } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
@@ -22,7 +22,7 @@ let _persistedState = null
 
 const _showFromAllValue = ':showFromAll:' // since colon is not allowed in Meteor _ids. Null wasnt working well as a value for 'all'
 
-const ShowFromWho = ( { value, currUser, otherUser, style, onChange }) => {
+const ShowFromWho = ( { value, currUser, otherUser, onChange }) => {
   const options = _.compact([
     currUser && {
       key: currUser._id,
@@ -49,15 +49,13 @@ const ShowFromWho = ( { value, currUser, otherUser, style, onChange }) => {
     }
   ])
   return (
-    <small>
-      <Dropdown
-          inline
-          value={value}
-          style={{ color: 'grey', fontSize: '0.xem', ...style }} className='small'
-          options={options}
-          onChange={ (event, data) => { onChange(data.value) } }
-      />
-    </small>
+    <Dropdown
+      inline
+      value={value}
+      trigger={<span><Icon color='grey' name='users' /> { _.find(options, { value }).text }</span>}
+      options={options}
+      onChange={ (event, data) => { onChange( data.value ) } }
+    />
   )
 }
 
@@ -201,24 +199,33 @@ export default fpAssets = React.createClass({
     const { assets, userProjects, loading } = this.data       // list of assets provided via getMeteorData()
     const { user, currUser } = this.props
     const { view, kindsActive, searchName, project, projectName, showFromUserId } = this.state
-    const isAllKinds = isAssetKindsStringComplete(kindsActive)
     const effectiveUser = user || currUser
 
     return (
       <div>
         <div id="mgbjr-flexPanel-assets-search">
           <div>
-            <ShowFromWho
-                value={showFromUserId}
-                currUser={currUser}
-                otherUser={user === currUser ? null : user}
-                style={{float: 'left' }}
-                onChange={(selectedUserId) => { this.setState( { showFromUserId: selectedUserId} ) } }/>
+            <InputSearchBox
+              size='small'
+              fluid
+              value={searchName}
+              id='mgbjr_fp_search_asset'
+              onFinalChange={this.handleSearchGo} />
+            <AssetKindsSelector
+              showCompact
+              kindsActive={kindsActive}
+              handleToggleKindCallback={this.handleToggleKind} />
             <AssetListChooseView
-                sty={{float: 'right'}}
-                chosenView={view}
-                handleChangeViewClick={ newView => this.setState( { view: newView } ) } />
-            <div style={{clear: 'both'}}/>
+              sty={{ float: 'right' }}
+              chosenView={view}
+              handleChangeViewClick={ newView => this.setState( { view: newView } ) } />
+            <ShowFromWho
+              sty={{ float: 'left' }}
+              value={showFromUserId}
+              currUser={currUser}
+              otherUser={user === currUser ? null : user}
+              onChange={(selectedUserId) => { this.setState( { showFromUserId: selectedUserId } ) } } />
+            <div style={{ clear: 'both' }} />
           </div>
           { ((effectiveUser && userProjects) ?
               <ProjectSelector
@@ -235,21 +242,8 @@ export default fpAssets = React.createClass({
                   />
               : null )
           }
-
-          <InputSearchBox
-              size='small'
-              fluid
-              value={searchName}
-              id='mgbjr_fp_search_asset'
-              onFinalChange={this.handleSearchGo} />
-
-          <AssetKindsSelector
-              showCompact={true}
-              kindsActive={kindsActive}
-              handleToggleKindCallback={this.handleToggleKind} />
-
         </div>
-        <br></br>
+        <Divider />
         { loading ? <Spinner /> :
             <AssetList
               allowDrag={true}

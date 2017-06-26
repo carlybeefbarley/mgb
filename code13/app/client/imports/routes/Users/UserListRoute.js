@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import React, { PropTypes} from 'react'
 import reactMixin from 'react-mixin'
+import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
-import { Button, Divider, Input } from 'semantic-ui-react'
-import { Users } from '/imports/schemas'
+import { Button, Divider } from 'semantic-ui-react'
 import { userSorters } from '/imports/schemas/users'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
@@ -52,43 +52,16 @@ export default UserListRoute = React.createClass({
     return {
       users: Meteor.users.find(selector, findOpts).fetch(),
       loading: !handle.ready()
-    };
+    }
   },
 
-  componentDidMount() {
-    window.addEventListener('keydown', this.listenForEnter)
-  },
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.listenForEnter)
-  },
-
-  listenForEnter: function(e) {
-    e = e || window.event
-    if (e.keyCode === 13)
-      this.handleSearchGo()
-  },
-
-  handleSearchGo: function()
+  handleSearchGo: function(newSearchText)
   {
     // TODO: Changing the Users collection is causing the page to be redrawn. Find a way to avoid that. A cheesy way is to exclude the current user's record, but there may be something smarter to do
-    const $button = $(this.refs.searchGoButton)
-    $button.removeClass("orange")
-    this.setState( {searchName: this.refs.searchNameInput.value } )
+    this.setState( {searchName: newSearchText } )
   },
 
-  /**
-   * Make it clear that the search icon needs to be pushed while editing the search box
-   * I could do this with React, but didn't want to since search triggers a few changes already
-   */
-  handleSearchNameBoxChanges() {
-    // mark if the button needs to be pushed
-    const $button = $(this.refs.searchGoButton)
-    if  (this.refs.searchNameInput.value !== this.state.searchName)
-      $button.addClass("orange")
-    else
-      $button.removeClass("orange")
-  },
 
   // TODO: Pagination is simplistic. Needs work to append users instead of refreshing whole list
 
@@ -105,15 +78,15 @@ export default UserListRoute = React.createClass({
     const killBordersStyle = { borderStyle: "none", boxShadow: "none" }
     const Body = (
       <div className={containerClassName} style={killBordersStyle}>
-        <div className={segClass} style={searchSegmentStyle}>
-          <Input
-            fluid
-            size='small'
-            placeholder="Search..."
-            defaultValue={this.state.searchName}
-            onChange={this.handleSearchNameBoxChanges}
-            ref="searchNameInput"
-            action={{ icon: 'search', ref: "searchGoButton", onClick: this.handleSearchGo }} />
+        <div
+            className={segClass}
+            style={searchSegmentStyle}
+            id='mgbjr-user-search-searchStringInput'>
+          <InputSearchBox
+              size='small'
+              fluid
+              value={this.state.searchName}
+              onFinalChange={this.handleSearchGo} />
           <Divider hidden />
         </div>
 

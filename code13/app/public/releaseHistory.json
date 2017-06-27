@@ -1814,11 +1814,11 @@
           "otherUrls": [
             {
               "txt": "example-import",
-              "href": "https://mygamebuilder.com/u/stauzs/asset/hwqvbn8fyk729sKLE"
+              "href": "https://v2.mygamebuilder.com/u/stauzs/asset/hwqvbn8fyk729sKLE"
             },
             {
               "txt": "example-export",
-              "href": "https://mygamebuilder.com/u/stauzs/asset/WB28T8dcTQXZEh43j"
+              "href": "https://v2.mygamebuilder.com/u/stauzs/asset/WB28T8dcTQXZEh43j"
             }
           ]
         },
@@ -3646,7 +3646,7 @@
           "otherUrls": [
             {
               "txt": "JSX/React MGB Code example",
-              "href": "https://mygamebuilder.com/u/stauzs/asset/3bSLWyb3jDHbDqYCQ"
+              "href": "https://v2.mygamebuilder.com/u/stauzs/asset/3bSLWyb3jDHbDqYCQ"
             },
             {
               "txt": "ES6 New Features summary",
@@ -4242,7 +4242,7 @@
           "featureTag": "api.mgb1",
           "type": "feature",
           "changeName": "Api for MGBv1 assets",
-          "changeSummary": "New REST API for obtaining MGBv1 tiles as PNGs, and actor/map assets as JSON data. For example http://mygamebuilder.com/api/mgb1/map/.acey53/Club%20Penguin%20Agents%20Under%20Attack/HQ",
+          "changeSummary": "New REST API for obtaining MGBv1 tiles as PNGs, and actor/map assets as JSON data. For example http://v2.mygamebuilder.com/api/mgb1/map/.acey53/Club%20Penguin%20Agents%20Under%20Attack/HQ",
           "otherUrls": []
         }
       ]

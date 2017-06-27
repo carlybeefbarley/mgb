@@ -42,11 +42,7 @@ const allowedOrigins = [
   // dev version on test server
   'http://test.mygamebuilder.com:3000',
 
-  // main page (intended as of June 25 2017 )
-  'http://mygamebuilder.com',
-  'https://mygamebuilder.com',
-
-  // main page (this will eventually be replaced by //mygamebuilder.com)
+  // main page
   'http://v2.mygamebuilder.com',
   'https://v2.mygamebuilder.com',
 

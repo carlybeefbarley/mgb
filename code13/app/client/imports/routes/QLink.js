@@ -28,7 +28,7 @@ function createLocationDescriptor(to, _ref) {
 
 
 // BUGBUG/TODO: WARN when there are query params on the to: field
-//   e.g. http://mygamebuilder.com/user/iCyqxrbq8K9oLGx7h/project/i6b87vSCfEubkmhFf?_fp=activity&_np=nav then click 'View Project Assets'
+//   e.g. http://v2.mygamebuilder.com/user/iCyqxrbq8K9oLGx7h/project/i6b87vSCfEubkmhFf?_fp=activity&_np=nav then click 'View Project Assets'
 // The correct action for the caller is to have a query=object prop instead of using ?
 
 
@@ -238,10 +238,10 @@ export function utilPushTo(existingQuery, newTo, extraQueryParams = {})
 }
 
 /**
- * This is a replacement for browserHistory.replace(). Use this when you DO NOT
+ * This is a replacement for browserHistory.replace(). Use this when you DO NOT 
  * want to add an additional step into the browser history - for example from a redirect
  * See #225 for examples of cases that need to use this.
- *
+ * 
  * @param {Object} existingQuery from something like window.location.query.
  * It is parameterized here instead of just using window.location.query in order to
  * support a tab concept *within* an MGB page. Uses of window.location.query by the
@@ -272,7 +272,7 @@ export function utilShowFlexPanel(currentUrlLocation, newFpNavString)
 }
 
 /**
- *
+ * 
  * @param {*} currentUrlLocation from something like window.location
  * @param {*} chatChannelName as defined in chats:makeChannelName()
  */

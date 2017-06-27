@@ -201,6 +201,20 @@ export default fpAssets = React.createClass({
     const { view, kindsActive, searchName, project, projectName, showFromUserId } = this.state
     const effectiveUser = user || currUser
 
+
+
+    const style = {
+      position:      'absolute',
+      overflow:      'auto',
+      margin:        '0',
+      padding:       '0 8px 0 8px',
+      top:           '12em',
+      bottom:        '0.5em',
+      left:          '0',
+      right:         '0',
+      transition:    'transform 200ms, opacity 200ms',
+      zIndex:        '100',
+    }
     return (
       <div>
         <div id="mgbjr-flexPanel-assets-search">
@@ -245,12 +259,14 @@ export default fpAssets = React.createClass({
         </div>
         <Divider />
         { loading ? <Spinner /> :
+          <div style={style}>
             <AssetList
               allowDrag={true}
               fluid={true}
               renderView={view}
               assets={assets}
               currUser={currUser} />
+          </div>
         }
       </div>
     )

@@ -24,9 +24,12 @@
 
 /* frames view */
 #framesView {
-	position: fixed;
+	/*position: fixed;*/
+	position: absolute;
 	bottom: 0;
-	overflow-x: scroll;
+	/*overflow-x: scroll;*/
+	background-color: white;
+	overflow-y: visible;
 }
 
 .frameCanvases th {

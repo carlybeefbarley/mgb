@@ -36,7 +36,7 @@ const flexPanelViews = [
 // Experimental UI for mobile
 //{ tag: 'more',      lev: 8,  name: 'more',     icon: 'ellipsis horizontal', hdr: 'More', el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
   { tag: 'projects',  lev: 5,  name: 'projects', icon: 'sitemap',    hdr: 'Projects',      el: fpProjects,      superAdminOnly: false, mobileUI: false },
-  { tag: 'users',     lev: 6,  name: 'users',    icon: 'street view',hdr: 'Users',         el: fpUsers,         superAdminOnly: false, mobileUI: false },
+  { tag: 'users',     lev: 7,  name: 'users',    icon: 'street view',hdr: 'Users',         el: fpUsers,         superAdminOnly: false, mobileUI: false },
 //{ tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   hdr: 'Keys',          el: fpKeyboard,      superAdminOnly: false, mobileUI: false },
   { tag: 'activity',  lev: 6,  name: 'activity', icon: 'lightning',  hdr: 'Activity',      el: fpActivity,      superAdminOnly: false, mobileUI: true   },
 

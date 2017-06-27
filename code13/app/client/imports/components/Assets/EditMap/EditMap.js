@@ -448,17 +448,28 @@ export default class EditMap extends React.Component {
             layers={c2.layers}
             options={this.options}
             activeLayer={this.state.activeLayer}
+          >
+            <MapProperties
+              {...this.propertiesProps}
+              getActiveObject={() => null}
+              layer={c2.layers[this.state.activeLayer]}
             />
+          </LayerTool>
+
           <TileSet
             {...this.tilesetProps}
             palette={this.cache.tiles}
             activeTileset={this.state.activeTileset}
             tilesets={c2.tilesets}
             options={this.options}
-          ><MapProperties
-            {...this.propertiesProps}
-            tileset={c2.tilesets[this.state.activeTileset]}
-          /></TileSet>
+          >
+            <MapProperties
+              {...this.propertiesProps}
+              getActiveObject={() => null}
+              tileset={c2.tilesets[this.state.activeTileset]}
+            />
+          </TileSet>
+
 
           <MapProperties
             {...this.propertiesProps}
@@ -469,8 +480,6 @@ export default class EditMap extends React.Component {
               tilewidth: c2.tilewidth,
               tileheight: c2.tileheight
             }}
-            // tileset={c2.tilesets[this.state.activeTileset]}
-            layer={c2.layers[this.state.activeLayer]}
           />
 
           {/*<Properties*/}

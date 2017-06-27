@@ -69,6 +69,7 @@ export default class Layers extends React.Component {
             <List selection>
               {layers}
             </List>
+            {this.props.children}
           </div>
         )
       }

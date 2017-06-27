@@ -778,19 +778,20 @@ export default class SpriteLayers extends React.Component {
 
         {/** Previews for frames **/}
             <tr className={"frameCanvases " + (this.state.isCanvasFramesVisible ? "" : "mgb-hidden")}>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th>
+              <th className="minimizeHide"></th>
+              <th className="minimizeHide"></th>
+              <th className="minimizeHide"></th>
+              <th className="minimizeSmall">
                 <div
                   onClick={this.togglePlayAnimation.bind(this)}
-                  className={"miniPlay " + buttonDivClass + (this.state.isPlaying ? " black" : "")}>
+                  className={"miniPlay " + buttonDivClass + (this.state.isPlaying ? " black" : "")}
+                  style={{margin:'5px'}}>
                   <i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
                 </div>
               </th>
               { // TODO: change from frameNames[] to frameData[] ?
                 _.map(c2.frameNames, (frameName, idx) => { return (
-                  <th key={"thCanvas_"+idx}>
+                  <th key={"thCanvas_"+idx} width="32px">
                     <div  className="ui image "
                           // replace onClick wit mouseUp / touchEnd - to prevent conflict with mobile drag
                           onMouseUp={this.selectFrame.bind(this, idx)}
@@ -817,7 +818,7 @@ export default class SpriteLayers extends React.Component {
                   </a>
                 </div>
               </th>
-              <th></th>
+              <th className="minimizeHide"></th>
             </tr>
           </thead>
 

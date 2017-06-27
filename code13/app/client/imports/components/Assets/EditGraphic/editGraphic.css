@@ -92,21 +92,11 @@
 
 
 /* sprite layers minimized view */
-.mgb-minimized .animHeader {	display: none;
-}
-
-.mgb-minimized .framesHeader {
-  display: none;
-}
-
-.mgb-minimized .layers {
-  display: none;
-}
-
+.mgb-minimized .animHeader {	display: none; }
+.mgb-minimized .framesHeader {  display: none; }
+.mgb-minimized .layers {  display: none; }
 .mgb-minimized .animTR { display: none; }
-.mgb-maximized .miniPlay {
-  display: none;
-}
-.mgb-maximized .miniAddFrames {
-  display: none;
-}
+.mgb-minimized .minimizeHide { display: none; }
+.mgb-minimized .minimizeSmall { width: 32px; }
+.mgb-maximized .miniPlay {  display: none; }
+.mgb-maximized .miniAddFrames {  display: none; }

@@ -6,31 +6,31 @@ import AboutHeader from './AboutHeader'
 
 const RenderRoadmap = () => (
   <div>
-    <h2>Features planned for May 2017</h2>
+    <h2>Features planned for July 2017</h2>
     <ul>
-      <li>(<small>Rolling out - request enablement via chat</small>) Self-service MGBv1 asset migration (tiles, actors, maps)</li>
-      <li>(postponed) Direct Messages - we decided to prioritize wall first, especially since project chat provides group or 1:1 private chat</li>
-      <li>(done) Public Beta as of May 9th (yeah, we delayed it a week so we can do a soft ramp)</li>
+      <li>(@levithomason + team) UI Cleanup</li>
+      <li>(@Bouhm) ActorMap game improvements</li>
+      <li>(@leah) Moderation (Deep flagging & moderation features, including the Skills tracks for Community management)</li>
+      <li>(@stauzs) Mobile App (Focused on notification, chat and play)</li>
+      <li>(@guntis) Build a game with the MGB community (probably tower defense-ish)</li>
+      <li>(@DSeedman) Revamp the Badge system - define badges, get cleaned up art</li>
     </ul>
     <p>See the <QLink to='/whatsnew'>What's new</QLink> page for the lists of recent changes</p>
-    <h2>Features coming in 2017</h2>
+    <h2>Features coming later in 2017</h2>
     <ul>
       <li>Major Feature 'epics' which will each take a couple of months:</li>
       <ol>
-        <li>Moderation (Deep flagging & moderation features, including the Skills tracks for Community management)</li>
-        <li>Mobile App (Focussed on notification, chat and play)</li>
-        <li>Messenger integration (Messenger games etc)</li>
+        <li>MyCodeBuilder variant of the site + React-based Interface designer + tutorials</li>
         <li>Multiplayer game support (Save game, highscores, rooms, low-latency-multiplayer)</li>
-        <li>MCB (MyCodeBuilder) skin + Interface designer</li>
-        <li>Modularity (plugin interface for asset editors, asset tools, etc.. allowing MGB/MCB to be extended by the user community)</li>      
+        <li>Modularity (plugin interface for asset editors, asset tools, etc.. allowing MGB/MCB to be extended by the user community)</li>
       </ol>
       <li>Full forum-type functionality for the Chat system (topics, search etc)</li>
       <li>Asset management features</li>
       <ul>
+        <li>TODO/Issues system for user projects (probably as a Kanban-style tracker like Trello)</li>
         <li>Asset Tags & Tag search</li>
         <li>Stock/sample assets system</li>
         <li>Asset Versioning/Publishing system</li>
-        <li>TODO/Issues system for user projects (probably as a Kanban-style tracker)</li>
       </ul>
       <li>Help and Education systems</li>
       <ul>
@@ -48,8 +48,8 @@ const RenderRoadmap = () => (
         </ul>
       <li>New Asset types</li>
       <ul>
-        <li>Cutscene Editor</li>
         <li>Documents (and Cheat sheets. and presentations?)</li>
+        <li>Cutscene Editor</li>
       </ul>
       <li>Test reporting </li>
       <ul>
@@ -59,6 +59,7 @@ const RenderRoadmap = () => (
       </ul>
       <li>Account/Content flagging (content, accounts.. penalties like timeouts)</li>
       <li>MGB feature usage reporting</li>
+      <li>(postponed) Direct Messages - we decided to prioritize wall first, especially since project chat provides group or 1:1 private chat</li>
       <li>...We are also going to be working with the community on their thoughts on "monetization".. What advanced features they would feel are WORTH paying for, and what ways users might want to make payments to each other (asset stores etc). We are not going to nickel+dime and a HUGE amount of MGB's features will always be free. Feel free to come and chat to us about your thoughts.</li>
     </ul>
     Please make suggestions on our <a href="https://trello.com/b/Fg0EcntK/my-game-builder" target="_blank">Trello work proposals list</a>
@@ -73,7 +74,7 @@ export default RoadmapRoute = () => (
         <AboutHeader />
           <p>
             See the latest changes on the <QLink to="/whatsnew">What's New</QLink> page.
-          </p>          
+          </p>
         <RenderRoadmap />
       </Container>
     </Segment>
@@ -90,13 +91,13 @@ Cutscenes
 Documents (and Cheat sheets. and presentations?)
 Tagging
   project goals: ProjectGoal: [scratch/learn/jam/resume/showcase/product]
-Test reporting 
+Test reporting
   Playtest reporting
   Feature coverae reporting
   Code coverage
 MGB feature usage
 MGB plugin tools (graphic edit etc)
-MCB (MyCodeBuilder) skin + Interface designer / React Storybook / 
+MCB (MyCodeBuilder) skin + Interface designer / React Storybook /
 Javascript - Katas & Koans
 Quotas
 Tokens

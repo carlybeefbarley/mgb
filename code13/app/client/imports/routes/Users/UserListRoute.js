@@ -87,7 +87,6 @@ export default UserListRoute = React.createClass({
               fluid
               value={this.state.searchName}
               onFinalChange={this.handleSearchGo} />
-          <Divider hidden />
         </div>
 
         <div className={segClass} >

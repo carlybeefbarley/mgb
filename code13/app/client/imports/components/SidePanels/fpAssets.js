@@ -212,8 +212,7 @@ export default fpAssets = React.createClass({
       bottom:        '0.5em',
       left:          '0',
       right:         '0',
-      transition:    'transform 200ms, opacity 200ms',
-      zIndex:        '100',
+      transition:    'transform 200ms, opacity 200ms'
     }
     return (
       <div>

@@ -56,6 +56,10 @@
 
 }
 
+#framesView table th.active {
+	border: 1px solid #2185d0;
+}
+
 .animTR th {
 	/*background-color: transparent !important;*/
 	border-left: none !important;

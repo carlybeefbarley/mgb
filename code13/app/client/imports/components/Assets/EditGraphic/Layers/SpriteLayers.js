@@ -801,7 +801,7 @@ export default class SpriteLayers extends React.Component {
               </th>
               { // TODO: change from frameNames[] to frameData[] ?
                 _.map(c2.frameNames, (frameName, idx) => { return (
-                  <th key={"thCanvas_"+idx} width="32px">
+                  <th key={"thCanvas_"+idx} width="32px" className={(idx == this.props.selectedFrameIdx ? "active" : "")}>
                     <div  className="ui image "
                           // replace onClick wit mouseUp / touchEnd - to prevent conflict with mobile drag
                           onMouseUp={this.selectFrame.bind(this, idx)}

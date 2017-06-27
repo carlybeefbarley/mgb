@@ -1,7 +1,7 @@
 // selenium server
 this.server = 'http://hub-cloud.browserstack.com/wd/hub'
 // url to open
-this.url = "http://v2.mygamebuilder.com"
+this.url = "http://mygamebuilder.com"
 
 this.browser = {
   'browserName' : 'chrome',

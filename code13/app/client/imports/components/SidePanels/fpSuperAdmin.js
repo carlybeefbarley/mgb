@@ -27,7 +27,7 @@ const linkLi = (txt, url, key) => _.startsWith(url, '/') ? inlinkLi(txt,url, key
 
 const _getFlipsideUrl = () => {
   const l = window.location
-  const newHost = l.host.startsWith("localhost") ? "https://v2.mygamebuilder.com" : "http://localhost:3000"
+  const newHost = l.host.startsWith("localhost") ? "https://mygamebuilder.com" : "http://localhost:3000"
   return `${newHost}${l.pathname}${l.search}`
 }
 
@@ -54,7 +54,7 @@ const LinkTabContent = () => (
       { linkLi("Google Analytics (RT)", "https://analytics.google.com/analytics/web/?authuser=0#realtime/rt-overview/a82379171w121883491p127579308/%3F_r.dsa%3D1%26_.advseg%3D%26_.useg%3D%26_.sectionId%3D/") }
       { linkLi("Hotjar (Ux analytics)", "https://insights.hotjar.com/sites/446876/dashboard") }
       { linkLi("TrackJs (client errors)", "https://my.trackjs.com/messages") }
-      { linkLi("Galaxy (PaaS)", "https://galaxy.meteor.com/app/v2.mygamebuilder.com") }
+      { linkLi("Galaxy (PaaS)", "https://galaxy.meteor.com/app/mygamebuilder.com") }
       { linkLi("mLab telemetry", "https://mlab.com/realtime-dashboard?server=s-ds021730-a0") }
       { linkLi("mLab cluster", "https://mlab.com/clusters/rs-ds021730") }
     </List>

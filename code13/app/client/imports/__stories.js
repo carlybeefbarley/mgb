@@ -63,7 +63,7 @@ const CardExampleCard = ({ currUser }) => (
   </Card>
 );
 
-const makeCDNLink = url => 'http://v2.mygamebuilder.com/' + url;
+const makeCDNLink = url => 'http://mygamebuilder.com/' + url;
 const makeExpireTimestamp = t => "";
 
 
@@ -153,10 +153,10 @@ const UserItem = React.createClass({
           </p>
         </Card.Content>
         <Card.Content extra>
-          {/* 
-          {getBadgeN(0)} 
-          {getBadgeN(1)} 
-          {getBadgeN(2)} 
+          {/*
+          {getBadgeN(0)}
+          {getBadgeN(1)}
+          {getBadgeN(2)}
           {getBadgeN(3)}
           */}
         </Card.Content>

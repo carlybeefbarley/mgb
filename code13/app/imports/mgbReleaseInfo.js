@@ -17,6 +17,30 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Tue Jun 27 2017 13:50:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4505'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'dns',
+          'type': 'improvement',
+          'changeName': 'Move from //v2.mygamebuilder.com to //mygamebuilder.com',
+          'changeSummary': 'This could be bumpy!',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Mon Jun 26 2017 22:00:00 GMT-0700 (PDT)',
 
       'id': {

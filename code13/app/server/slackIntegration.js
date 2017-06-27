@@ -41,7 +41,7 @@ function slackGenericNotify(slackWebhookUrl, data) {
 Meteor.methods({
   "Slack.Chats.send": function(username, message, channel) {
 
-    const infoUrl=`https://v2.mygamebuilder.com/u/${username}?_fp=chat.${channel}`
+    const infoUrl=`https://mygamebuilder.com/u/${username}?_fp=chat.${channel}`
     slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
       username: `MGBv2 @${username}`,
       text: `Message from user <${infoUrl}|${username}> on channel <${infoUrl}|#${channel}>`,
@@ -68,7 +68,7 @@ Meteor.methods({
 Meteor.methods({
   "Slack.Chats.censored": function(username, message, channel, censoredMsg) {
 
-    const infoUrl=`https://v2.mygamebuilder.com/u/${username}?_fp=chat.${channel}`
+    const infoUrl=`https://mygamebuilder.com/u/${username}?_fp=chat.${channel}`
     slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
       username: `MGBv2 @${username}`,
       text: `Rejected CENSORED Message attempt by user <${infoUrl}|${username}> on channel <${infoUrl}|#${channel}>`,
@@ -95,7 +95,7 @@ Meteor.methods({
 Meteor.methods({
   "Slack.User.create": function(username, email) {
 
-    const userUrl=`https://v2.mygamebuilder.com/u/${username}`
+    const userUrl=`https://mygamebuilder.com/u/${username}`
     slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
       username: `MGBv2 @${username}`,
       icon_emoji: ':smile:',
@@ -107,8 +107,8 @@ Meteor.methods({
 Meteor.methods({
   "Slack.Assets.create": function(username, kind, assetname, docId) {
 
-    const userUrl=`https://v2.mygamebuilder.com/u/${username}`
-    const assetUrl=`https://v2.mygamebuilder.com/u/${username}/asset/${docId}`
+    const userUrl=`https://mygamebuilder.com/u/${username}`
+    const assetUrl=`https://mygamebuilder.com/u/${username}/asset/${docId}`
     const text=`New ${kind} Asset <${assetUrl}|${assetname}> created by user <${userUrl}|${username}>`
 
     if (MUTE_ASSET_CREATE_NOTIFICATIONS ||
@@ -126,8 +126,8 @@ Meteor.methods({
 
 Meteor.methods({
   "Slack.Projects.create": function(username, projectname, docId) {
-    const userUrl=`https://v2.mygamebuilder.com/u/${username}`
-    const projectUrl=`https://v2.mygamebuilder.com/u/${username}/project/${docId}`
+    const userUrl=`https://mygamebuilder.com/u/${username}`
+    const projectUrl=`https://mygamebuilder.com/u/${username}/project/${docId}`
     const text=`New Project <${projectUrl}|${projectname}> created by user <${userUrl}|${username}>`
     if (_.includes(MUTE_ASSET_AND_PROJECT_CREATE_FOR_SPECIAL_USERS, username))
       console.log(`Muted slack notify for user '${username}': '${text}`)
@@ -181,7 +181,7 @@ Meteor.methods({
   "Slack.Flags.unresolved": function(entity, ownerUsername, reporterUsername, createdAt, entityType) {
     let infoUrl = ''
     if(entityType == 'Chats')
-      infoUrl=`https://v2.mygamebuilder.com/u/${ownerUsername}?_fp=chat.${entity.toChannelName}`
+      infoUrl=`https://mygamebuilder.com/u/${ownerUsername}?_fp=chat.${entity.toChannelName}`
 
     slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
       username: `MGBv2 @${ownerUsername}`,

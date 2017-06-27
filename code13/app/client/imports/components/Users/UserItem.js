@@ -7,9 +7,9 @@ import { getAllBadgesForUser } from '/imports/schemas/badges'
 import { makeChannelName} from '/imports/schemas/chats'
 import QLink from '/client/imports/routes/QLink'
 // These can be rendered as attached segments so the caller can easily place/attach buttons around it
-// See http://v2.mygamebuilder.com/assetEdit/2Bot4CwduQRfRWBi6 for an example
+// See http://mygamebuilder.com/assetEdit/2Bot4CwduQRfRWBi6 for an example
 
-const _cardStyle = { textAlign: 'center' }  
+const _cardStyle = { textAlign: 'center' }
 
 export default class UserItem extends React.Component {
 

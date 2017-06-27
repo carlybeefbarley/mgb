@@ -41,7 +41,7 @@ Meteor.methods({
     //   to: email,
     //   subject: 'Verify your email',
     //   'o:tag': 'Signup email',
-    //   html: '<p>You have registered to MyGameBuilder. Please verify your email.</p><p><a href="https://v2.mygamebuilder.com">Click to Verify Email</a></p><br/><br/><br/><br/>'
+    //   html: '<p>You have registered to MyGameBuilder. Please verify your email.</p><p><a href="https://mygamebuilder.com">Click to Verify Email</a></p><br/><br/><br/><br/>'
     // }
 
     // mailgun.request('POST', '/messages', mailgunData, function (error, body) {

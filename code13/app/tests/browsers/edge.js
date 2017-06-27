@@ -1,6 +1,6 @@
 module.exports = {
   server: 'http://hub-cloud.browserstack.com/wd/hub',
-  url: "http://v2.mygamebuilder.com",
+  url: "http://mygamebuilder.com",
   browser: {
     'browserName' : 'Edge',
     'browserstack.user' : 'kasparsstauzs1',

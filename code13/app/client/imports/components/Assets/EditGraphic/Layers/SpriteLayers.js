@@ -14,7 +14,7 @@ import sty from  '../editGraphic.css'
 // TODO - see if we can avoid using props.EditGraphic                           [DG]
 
 const emptyPixel = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
-
+const _maxFrameDimension = 64
 
 export default class SpriteLayers extends React.Component {
 
@@ -583,6 +583,16 @@ export default class SpriteLayers extends React.Component {
     const c2 = this.props.content2
     const buttonDivClass = "ui mini icon button"
 
+    let frameWidth = c2.width
+    let frameHeight = c2.height
+
+    if(frameWidth > _maxFrameDimension || frameHeight > _maxFrameDimension){
+      maxDimension = frameWidth > frameHeight ? frameWidth : frameHeight
+      const scale = _maxFrameDimension / maxDimension
+      frameWidth *= scale
+      frameHeight *= scale
+    }
+
     return (
       <div id="framesView" className={(this.props.isMinimized ? "mgb-minimized" : "mgb-maximized")} style={{ width: this.props.availableWidth+"px" }}>
         <div className="row" className="animHeader">
@@ -796,11 +806,12 @@ export default class SpriteLayers extends React.Component {
                           // replace onClick wit mouseUp / touchEnd - to prevent conflict with mobile drag
                           onMouseUp={this.selectFrame.bind(this, idx)}
                           onTouchEnd={this.selectFrame.bind(this, idx)}
-                          style={{"maxWidth": "256px", "maxHeight": "256px", "width": `${c2.width}px`, "display": "block", "margin": "0px auto", "overflow": "auto" }}
+                          style={{"maxWidth": "256px", "maxHeight": "256px", "width": `${frameWidth}px`, "display": "block", "margin": "0px auto", "overflow": "auto" }}
                           title={`Preview for combined visible layers of Frame #${idx+1}`}>
                       <canvas
                         width={c2.width}
                         height={c2.height}
+                        style={{ width: frameWidth, height: frameHeight }}
 
                         onDragStart={this.handleDragStart.bind(this, idx)}
                         onDragEnd={this.handleDragEnd}

@@ -17,6 +17,30 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Mon Jun 26 2017 22:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4494'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'UI Cleanup',
+          'changeSummary': 'The Breadcrumb bar and the FlexPanels have received a UI cleanup, and colors have been tweaked further or reduced for clarity.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Fri Jun 23 2017 13:30:00 GMT-0700 (PDT)',
 
       'id': {

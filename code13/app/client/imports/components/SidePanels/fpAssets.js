@@ -208,7 +208,7 @@ export default fpAssets = React.createClass({
       overflow:      'auto',
       margin:        '0',
       padding:       '0 8px 0 8px',
-      top:           '12em',
+      top:           '11em',
       bottom:        '0.5em',
       left:          '0',
       right:         '0',
@@ -256,7 +256,6 @@ export default fpAssets = React.createClass({
               : null )
           }
         </div>
-        <Divider />
         { loading ? <Spinner /> :
           <div style={style}>
             <AssetList

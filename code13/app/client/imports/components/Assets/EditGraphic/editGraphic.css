@@ -91,9 +91,8 @@
 
 
 
-/* sprite layers */
-.mgb-minimized .animHeader {
-	display: none;
+/* sprite layers minimized view */
+.mgb-minimized .animHeader {	display: none;
 }
 
 .mgb-minimized .framesHeader {
@@ -104,10 +103,10 @@
   display: none;
 }
 
+.mgb-minimized .animTR { display: none; }
 .mgb-maximized .miniPlay {
   display: none;
 }
-
 .mgb-maximized .miniAddFrames {
   display: none;
 }

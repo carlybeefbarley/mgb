@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
 import WorkState from '/client/imports/components/Controls/WorkState'
-import { Menu, Icon, Message } from 'semantic-ui-react'
+import { Header, Icon, Menu, Message } from 'semantic-ui-react'
 import { makeChannelName } from '/imports/schemas/chats'
 
 const Empty = <Menu.Item content='(none)' />
@@ -64,32 +64,27 @@ const fpProjects = ( { currUser, currUserProjects, hazUnreadChats } ) => {
 
   return (
     <div>
-      <div className='ui fluid vertical menu'>
-        <QLink
-          to={`/u/${currUser.profile.name}/projects`}
-          className="header item"
-          title="Projects you are owner of">
-          <Icon name='sitemap' /> My Owned Projects
-        </QLink>
+      <QLink to={`/u/${currUser.profile.name}/projects`}>
+        <Header as='h3' content='My Projects'/>
+      </QLink>
+      <Menu fluid vertical text>
         <ProjectMenu
           projects={currUserProjects}
           ownedFlag={true}
           hazUnreadChats={hazUnreadChats}
           currUserId={currUser._id} />
-      </div>
-      <div className='ui fluid vertical menu'>
-        <QLink
-          to={`/u/${currUser.profile.name}/projects`}
-          className="header item"
-          title="Projects you are a member of">
-          <Icon color='grey' name='sitemap' /> Project Memberships
+      </Menu>
+
+      <Menu fluid vertical text>
+        <QLink to={`/u/${currUser.profile.name}/projects`}>
+          <Header as='h3' content='Project Memberships'/>
         </QLink>
         <ProjectMenu
           projects={currUserProjects}
           ownedFlag={false}
           hazUnreadChats={hazUnreadChats}
           currUserId={currUser._id} />
-      </div>
+      </Menu>
     </div>
   )
 }

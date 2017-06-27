@@ -584,7 +584,7 @@ export default class SpriteLayers extends React.Component {
     const buttonDivClass = "ui mini icon button"
 
     return (
-      <div className={(this.props.isMinimized ? "mgb-minimized" : "mgb-maximized")} style={{ position: "fixed", bottom: 0, width: this.props.availableWidth+"px" }}>
+      <div id="framesView" className={(this.props.isMinimized ? "mgb-minimized" : "mgb-maximized")} style={{ width: this.props.availableWidth+"px" }}>
         <div className="row" className="animHeader">
           <div onClick={this.rewindFrames.bind(this, false)} className={buttonDivClass}>
             <i className="icon step backward"></i>

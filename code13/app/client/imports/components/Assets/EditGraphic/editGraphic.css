@@ -21,6 +21,14 @@
 	display: none !important;
 }
 
+
+/* frames view */
+#framesView {
+	position: fixed;
+	bottom: 0;
+	overflow-x: scroll;
+}
+
 .frameCanvases th {
 	padding: 0 !important;
 }

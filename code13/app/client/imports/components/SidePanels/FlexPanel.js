@@ -229,7 +229,7 @@ export default FlexPanel = React.createClass({
   },
 
   render: function () {
-    const { flexPanelWidth, flexPanelIsVisible, handleFlexPanelToggle, fpIsFooter, hazUnreadChats } = this.props
+    const { currUserProjects, flexPanelWidth, flexPanelIsVisible, handleFlexPanelToggle, fpIsFooter, hazUnreadChats } = this.props
 
     const isMobileUI = fpIsFooter
     const fpFeatureLevel = this.data.fpFeatureLevel || DEFAULT_FLEXPANEL_FEATURELEVEL
@@ -354,7 +354,7 @@ export default FlexPanel = React.createClass({
           </div>
         }
         <div id='mgbjr-flexPanelIcons' className={miniNavClassNames} style={miniNavStyle} >
-          { flexPanelViews.map(v => {  /* TODO: WORK OUT HOW TO HANDLE 5 equally space buttons */
+          { flexPanelViews.map(v => {
             const active = this._viewTagMatchesPropSelectedViewTag(v.tag)
             if (isMobileUI && !v.mobileUI )
               return null
@@ -363,6 +363,8 @@ export default FlexPanel = React.createClass({
             if (v.superAdminOnly && !this.props.isSuperAdmin)
               return null
             if (fpIsFooter && v.lev > 4)
+              return null
+            if (v.tag === 'projects' && (!currUserProjects || !currUserProjects.length))
               return null
 
             const itemClasses = cx(active && 'active selected', 'item')

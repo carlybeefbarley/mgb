@@ -52,6 +52,7 @@ import ObjectList from '../Common/Map/Tools/ObjectList.js'
 
 import LayerTool from './Tools/Layers.js'
 import Properties from './Tools/Properties.js'
+import MapProperties from './Tools/MapProperties.js'
 
 import Cache from '../Common/Map/Helpers/TileCache.js'
 import EditModes from '../Common/Map/Tools/EditModes.js'
@@ -394,7 +395,8 @@ export default class EditMap extends React.Component {
   }
 
   _saveMeta(){
-    this.props.handleMetadataChange(this.props.asset.metadata)
+    if(this.props.canEdit)
+      this.props.handleMetadataChange(this.mgb_meta)
   }
   // probably copy of data would be better to hold .. or not research strings vs objects
   // TODO(stauzs): research memory usage - strings vs JS objects
@@ -433,21 +435,26 @@ export default class EditMap extends React.Component {
             addLayer={this.layerProps.addLayer}
             cache={this.cache}
             activeLayer={this.state.activeLayer}
-            highlightActiveLayer={this.meta.highlightActiveLayer}
+            highlightActiveLayer={this.options.highlightActiveLayer}
             canEdit={this.props.canEdit}
             options={this.options}
             data={c2}
 
             ref='map' />
         </div>
-        <div className='six wide column'>
+        <div className='six wide column' style={/* scroll only side panel */{position: 'absolute', right: 0, top: 0, bottom: 0, overflow: 'auto'}}>
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}
-            options={this.meta}
+            options={this.options}
             activeLayer={this.state.activeLayer}
+          >
+            <MapProperties
+              {...this.propertiesProps}
+              getActiveObject={() => null}
+              layer={c2.layers[this.state.activeLayer]}
             />
-          <br />
+          </LayerTool>
 
           <TileSet
             {...this.tilesetProps}
@@ -455,11 +462,17 @@ export default class EditMap extends React.Component {
             activeTileset={this.state.activeTileset}
             tilesets={c2.tilesets}
             options={this.options}
+          >
+            <MapProperties
+              {...this.propertiesProps}
+              getActiveObject={() => null}
+              tileset={c2.tilesets[this.state.activeTileset]}
             />
-          <br />
-          <Properties
+          </TileSet>
+
+
+          <MapProperties
             {...this.propertiesProps}
-            data={this.mgb_content2}
 
             map={{
               width: c2.width,
@@ -467,10 +480,21 @@ export default class EditMap extends React.Component {
               tilewidth: c2.tilewidth,
               tileheight: c2.tileheight
             }}
-            tileset={c2.tilesets[this.state.activeTileset]}
-            layer={c2.layers[this.state.activeLayer]}
-            />
-          <br />
+          />
+
+          {/*<Properties*/}
+            {/*{...this.propertiesProps}*/}
+            {/*data={this.mgb_content2}*/}
+
+            {/*map={{*/}
+              {/*width: c2.width,*/}
+              {/*height: c2.height,*/}
+              {/*tilewidth: c2.tilewidth,*/}
+              {/*tileheight: c2.tileheight*/}
+            {/*}}*/}
+            {/*tileset={c2.tilesets[this.state.activeTileset]}*/}
+            {/*layer={c2.layers[this.state.activeLayer]}*/}
+            {/*/>*/}
           <ObjectList
             {...this.objectListProps}
             activeObject={this.state.activeObject}

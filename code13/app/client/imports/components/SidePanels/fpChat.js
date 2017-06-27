@@ -9,8 +9,9 @@ import ProjectCardGET from '/client/imports/components/Projects/ProjectCardGET'
 import { isSameUserId } from '/imports/schemas/users'
 
 import reactMixin from 'react-mixin'
+import { Chats, Azzets, Flags } from '/imports/schemas'
+import { FlagTypes } from '/imports/schemas/flags'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
-import { Chats, Azzets } from '/imports/schemas'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import {
   getLastReadTimestampForChannel,
@@ -35,7 +36,7 @@ import {
   makePresentedChannelName,
   makePresentedChannelIconName
 } from '/imports/schemas/chats'
-import SpecialGlobals from '/imports/SpecialGlobals.js'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 const unreadChannelIndicatorStyle = {
   marginLeft:   '0.3em',
@@ -44,6 +45,7 @@ const unreadChannelIndicatorStyle = {
 }
 
 import moment from 'moment'
+import { isUserModerator } from '/imports/schemas/roles'
 
 /* TODOs for planned chat work
 
@@ -144,15 +146,12 @@ import moment from 'moment'
 const initialMessageLimit = 5
 const additionalMessageIncrement = 15
 
-const MessageTopDivider = ({ elementId, content, title }) => (
-  <Divider
-    id={elementId}
-    as={Header}
-    color='grey'
-    size='small'
-    horizontal
-    title={title}>
-    {content}
+const _noTopMarginSty = { marginTop: 0 }
+const MessageTopDivider = ({ id, children, content, title }) => (
+  <Divider id={id} horizontal title={title} style={_noTopMarginSty}>
+    <Header color='grey' size='tiny'>
+    {children || content}
+    </Header>
   </Divider>
 )
 
@@ -176,17 +175,188 @@ const _getAssetNameIfAvailable = (assetId, chatChannelTimestamp) => {
 // Some magic for encoding and expanding asset links that are dragged in.
 const _encodeAssetInMsg = asset => `❮${asset.dn_ownerName}:${asset._id}:${asset.name}❯`      // See https://en.wikipedia.org/wiki/Dingbat#Unicode ❮  U276E , U276F  ❯
 
+
 const _doDeleteMessage = chatId => deleteChatRecord( chatId )
+
 
 const _isCurrUsersWall = (chat, currUser) => {
   const channelInfo = parseChannelName(chat.toChannelName)
   return (currUser.username === channelInfo.scopeId && channelInfo.scopeGroupName === 'User')
 }
+//flagType is an array, comments is a string, id is a string
+const _doReportEntity = (chatId, flagTypes, comments) => {
+  const reportedEntity = {
+    table: "Chats",
+    recordId: chatId
+  }
+  const data = {
+    flagTypes: flagTypes,
+    comments: comments
+  }
+  Meteor.call("Flags.create", reportedEntity, data, (error, result) => {
+    if (error)
+      showToast(`Could not flag: ${error.reason}`, 'error')
+      // else say ok?
+  })
+}
+class ReportChatMessage extends React.Component {
+  state = {
+    userSelectedTags: [],
+    userComments: ""
+  }
+
+  render () {
+    const { currUser, chat } = this.props
+    return (
+    (currUser && !chat.suFlagId && !(chat.suIsBanned === true)) &&
+      <span className='mgb-show-on-parent-hover' >
+      <Popup
+        on='click'
+        position='left center'
+        flowing
+        trigger={(
+          <Label
+            circular
+            basic
+            size='mini'
+            icon={{name: 'warning', color: 'red', style: { marginRight: 0 } } }
+            />
+        )}
+        >
+        <Popup.Header>
+          Report this chat message to Moderator?
+        </Popup.Header>
+        <Popup.Content>
+          <Form style={{minWidth: '25em'}}>
+            <Divider hidden />
+            <Form.Dropdown
+              placeholder='Reason(s)'
+              search
+              fluid
+              header="Reason(s) for report:"
+              multiple
+              selection
+              options={_.map(_.keys(FlagTypes), (k) => ({
+                text: FlagTypes[k].displayName, value: k
+              }))}
+              onChange={ ( event, dropdown ) => { this.setState( {userSelectedTags: dropdown.value } ) } }
+              />
+            <Divider hidden />
+            <Form.TextArea
+                placeholder='Additional comments/concerns'
+                autoHeight
+                onChange={ ( event, textarea ) => { this.setState( {userComments: textarea.value} ) } }
+                />
+            <Divider hidden />
+            <Form.Button
+                floated='right'
+                primary
+                disabled={ !this.state.userSelectedTags.length || !this.state.userComments }
+                onClick={ () => _doReportEntity(chat._id, this.state.userSelectedTags, this.state.userComments )}
+                size='small'
+                content='Report'
+                icon='warning circle'/>
+              &nbsp;
+          </Form>
+        </Popup.Content>
+      </Popup>
+      </span>
+    )
+  }
+}
+
+const _doResolveReportEntity = (chatId, wasPermBanned, comments) => {
+  const reportedEntity = {
+    table: "Chats",
+    recordId: chatId
+  }
+  const data = {
+    wasPermBanned: wasPermBanned,
+    comments: comments
+  }
+  Meteor.call("Flags.resolve", reportedEntity, data, (error, result) => {
+    if (error)
+      showToast(`Could not resolve flag: ${error.reason}`, 'error')
+    else
+      console.log("Flags.resolve said ok")
+      // else say ok?
+  })
+}
+
+class ResolveReportChatMessage extends React.Component {
+
+  state = {
+    modComments: ""
+  }
+
+  render () {
+    const { currUser, chat, isSuperAdmin } = this.props
+
+    return (
+      (isSuperAdmin && currUser && chat.suFlagId ) ?
+      <span className='mgb-show-on-parent-hover' >
+      <Popup
+        on='click'
+        size="tiny"
+        position='left center'
+        trigger={(
+          <Label
+            circular
+            basic
+            size='mini'
+            icon={{name: 'help circle', color: 'blue', style: {marginRight: 0 }  }}
+            />
+        )}
+        wide='very'
+        >
+        <Popup.Header>
+          Resolve this flag
+        </Popup.Header>
+        <Popup.Content>
+        <Form style={{minWidth: '25em'}}>
+            <Divider hidden />
+            Comments on the situation/why are you banning this or not?
+              <Form.TextArea
+                autoHeight
+                placeholder='Moderator comments'
+                onChange={ ( event, textarea ) => { this.setState( { modComments: textarea.value } ) } }
+                />
+            <Divider hidden />
+            Ban this permanently?
+              <br/><em>
+              (the message will show up as deleted by moderator)
+              </em>
+            <Divider hidden />
+            <Button.Group>
+              <Button
+              value={ true }
+              onClick={ () => _doResolveReportEntity(chat._id, true, this.state.modComments )}
+              negative>
+              Yes Ban
+              </Button>
+            <Button.Or/>
+              <Button
+              value={ false }
+              onClick={ () => _doResolveReportEntity(chat._id, false, this.state.modComments )}
+              positive>
+              Don't Ban
+              </Button>
+            </Button.Group>
+              &nbsp;
+          </Form>
+        </Popup.Content>
+      </Popup>
+      </span>
+        :
+        null
+    )
+  }
+}
 
 const DeleteChatMessage = ( { chat, currUser, isSuperAdmin } ) => (
   ( (currUser &&
-     (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin  || _isCurrUsersWall(chat, currUser))) &&
-     !chat.isDeleted
+    (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin  || _isCurrUsersWall(chat, currUser))) &&
+    !chat.isDeleted
     ) ?
     <span className='mgb-show-on-parent-hover' onClick={() => _doDeleteMessage(chat._id)}>
       &nbsp;
@@ -234,7 +404,7 @@ const ChatMessage = ( { msg } ) => {
       chunks.push(<QLink key={chunks.length} to={`/u/${userName}`}>@{userName}</QLink>)
       return e
     }
-    else  
+    else
       return e
   } )
   chunks.push( <span key={chunks.length}>{msg.slice( begin )}</span> )
@@ -401,7 +571,7 @@ const fpChat = React.createClass( {
     if (!chats || chats.length === 0)
       return (
         <MessageTopDivider
-          elementId={elementId}
+          id={elementId}
           title='There are no messages or comments here yet'
           content='(no messages yet)' />
       )
@@ -409,26 +579,30 @@ const fpChat = React.createClass( {
     if (chats.length < this.state.pastMessageLimit)
       return (
         <MessageTopDivider
-          elementId={elementId}
+          id={elementId}
           title={`There are no earlier available messages in this channel`}
           content='(start of topic)' />
       )
     if (chats.length >= chatParams.maxClientChatHistory)
       return (
         <MessageTopDivider
-          elementId={elementId}
+          id={elementId}
           title={`You may only go back ${chatParams.maxClientChatHistory} messages`}
           content='(history limit reached)' />
       )
 
     return (
-      <a
+      <MessageTopDivider
         id={elementId}
         title={`Currently showing most recent ${chats.length} messages. Click here to get up to ${additionalMessageIncrement} earlier messages`}
-        style={{ cursor: 'pointer' }}
-        onClick={this.doGetMoreMessages}>
-        Get earlier messages..
-      </a>
+        content={(
+          <a
+            style={{ cursor: 'pointer', textTransform: 'none' }}
+            onClick={this.doGetMoreMessages}>
+            <Icon name='history' style={{ margin: 0 }} /> Get older messages
+          </a>
+        )}
+      />
     )
   },
 
@@ -443,30 +617,38 @@ const fpChat = React.createClass( {
     const {isSuperAdmin} = this.props
     const absTime = moment( c.createdAt ).format( 'MMMM Do YYYY, h:mm:ss a' )
     const currUser = Meteor.user()
-
+    //const isModerator = isUserModerator(currUser)
     return (
-      <Comment key={c._id}>
-        <QLink to={to} className="avatar">
-          {currUser && currUser._id == c.byUserId &&
-          <img src={makeCDNLink( currUser.profile.avatar )} style={{ maxHeight: "3em" }}></img>
-          }
-          {(!currUser || currUser._id !== c.byUserId) &&
-          <img src={makeCDNLink( `/api/user/${c.byUserId}/avatar/${SpecialGlobals.avatar.validFor}`, makeExpireTimestamp( SpecialGlobals.avatar.validFor ) )}
-               style={{ maxHeight: "3em" }}></img>
-          }
-        </QLink>
-        <Comment.Content>
-          <Comment.Author as={QLink} to={to}>{c.byUserName}</Comment.Author>
-          <Comment.Metadata>
-            <div title={absTime}>{ago}</div>
-            <DeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
-            <UndeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
-          </Comment.Metadata>
-          <Comment.Text>
-            <ChatMessage msg={c.isDeleted ? '(deleted)' : c.message} />&nbsp;
-          </Comment.Text>
-        </Comment.Content>
-      </Comment>
+        <Comment key={c._id}>
+          <QLink to={to} className="avatar">
+            {currUser && currUser._id == c.byUserId &&
+            <img src={makeCDNLink( currUser.profile.avatar )} style={{ maxHeight: "3em" }}></img>
+            }
+            {(!currUser || currUser._id !== c.byUserId) &&
+            <img src={makeCDNLink( `/api/user/${c.byUserId}/avatar/${SpecialGlobals.avatar.validFor}`, makeExpireTimestamp( SpecialGlobals.avatar.validFor ) )}
+                style={{ maxHeight: "3em" }}></img>
+            }
+          </QLink>
+          <Comment.Content>
+            <Comment.Author as={QLink} to={to}>{c.byUserName}</Comment.Author>
+            <Comment.Metadata>
+              <div title={absTime}>{ago}</div>
+              {(!( c.suIsBanned === true) && !(c.suFlagId ) ) &&
+              <DeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
+              }
+              <UndeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
+              <ReportChatMessage chat={c} currUser={currUser} />
+              <ResolveReportChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
+            </Comment.Metadata>
+            <Comment.Text>
+            {(c.suFlagId && !c.suIsBanned) ?
+              <span>(flagged, waiting review)</span> :
+              <ChatMessage msg={c.isDeleted ? '(deleted)' : c.message}/>
+            }
+              &nbsp;
+            </Comment.Text>
+          </Comment.Content>
+        </Comment>
     )
   },
 
@@ -715,13 +897,30 @@ const fpChat = React.createClass( {
    * @param {React.Component} MessageContextComponent - A react component that will be rendered to the left of the 'Send Message' Button as context for the message send
    */
   renderComments: function(MessageContextComponent) {
-    const { messageValue } = this.state
+    const { messageValue, view } = this.state
     const { currUser } = this.props
     const channelName = this._calculateActiveChannelName()
     const canSend = currUserCanSend( currUser, channelName )
+    const isOpen = view === 'comments'
+
+
+    const style = {
+      position:      'absolute',
+      overflow:      'auto',
+      margin:        '0',
+      padding:       '0 8px 0 8px',
+      top:           '5em',
+      bottom:        '0.5em',
+      left:          '0',
+      right:         '0',
+      transition:    'transform 200ms, opacity 200ms',
+      transform:     isOpen ? 'translateY(0)' : 'translateY(-3em)',
+      opacity:       +isOpen,
+      zIndex:        '100',
+    }
 
     return (
-      <div>
+      <div style={style}>
         <Comment.Group className="small">
           { this.renderGetMoreMessages() }
           <div id='mgbjr-fp-chat-channel-messages'>
@@ -732,10 +931,10 @@ const fpChat = React.createClass( {
           <span />
         </Comment.Group>
 
-        <Form size='small' onSubmit={e => e.preventDefault()}>
+        <Form size='small'>
           <Form.Field id='mgbjr-fp-chat-messageInput' disabled={!canSend}>
             <Form.TextArea
-              rows="3"
+              rows={3}
               name='message' // this is to squelch form submit warning
               placeholder="your message..."
               value={messageValue}
@@ -821,63 +1020,58 @@ const fpChat = React.createClass( {
 
     return (
       <div>
-        <label
-          style={{ fontWeight: 'bold' } }>
-          Channel:
-        </label>
+        <div>
+          <Input
+            fluid
+            value={presentedChannelName}
+            readOnly
+            icon={presentedChannelIconName}
+            size='small'
+            id='mgbjr-fp-chat-channelDropdown'
+            iconPosition='left'
+            action={{
+              icon:    'dropdown',
+              onClick: this.handleToggleChannelSelector
+            }}
+            labelPosition='right'
+            onClick={this.handleToggleChannelSelector}
+          />
+        </div>
 
-        <Input
-          fluid
-          value={presentedChannelName}
-          readOnly
-          icon={presentedChannelIconName}
-          size='small'
-          id='mgbjr-fp-chat-channelDropdown'
-          iconPosition='left'
-          action={{
-            icon:    'dropdown',
-            onClick: this.handleToggleChannelSelector
-          }}
-          labelPosition='right'
-          onClick={this.handleToggleChannelSelector}
-          style={{ marginBottom: '0.5em', marginTop: '0.2em' }}
-        />
+        <div>
+          { this.renderChannelSelector() }
+          { view === 'comments' && this.renderComments( channelObj.scopeGroupName === 'Global' ? null :
+              <Popup
+                on='hover'
+                size='small'
+                hoverable
+                position='left center'
+                trigger={(
+                  <Button active
+                      icon={presentedChannelIconName}/>
+                )}
+                >
+                <Popup.Header>
+                  Public Chat Channel for this {channelObj.scopeGroupName }
+                </Popup.Header>
+                <Popup.Content>
+                  <div style={{minWidth: '300px'}}>
+                    { channelObj.scopeGroupName === 'Asset' &&
+                        <AssetCardGET assetId={channelObj.scopeId} allowDrag={true} renderView='s' />
+                    }
+                    { channelObj.scopeGroupName === 'Project' &&
+                        <ProjectCardGET projectId={channelObj.scopeId} />
+                    }
+                    { channelObj.scopeGroupName === 'User' &&
+                        <span>User Wall for <QLink to={`/u/${channelObj.scopeId}`} >@{channelObj.scopeId}</QLink></span>
+                    }
 
-        { this.renderChannelSelector() }
-        { view === 'comments' && this.renderComments( channelObj.scopeGroupName === 'Global' ? null :
-            <Popup
-              on='hover'
-              size='small'
-              hoverable
-              position='left center'
-              trigger={(
-                <Icon
-                    style={{ padding: '4px 0px 0px 16px' }}
-                    size='big'
-                    color='grey'
-                    name={presentedChannelIconName}/>
-              )}
-              >
-              <Popup.Header>
-                Public Chat Channel for this {channelObj.scopeGroupName }
-              </Popup.Header>
-              <Popup.Content>
-                <div style={{minWidth: '300px'}}>
-                  { channelObj.scopeGroupName === 'Asset' &&
-                      <AssetCardGET assetId={channelObj.scopeId} allowDrag={true} renderView='s' />
-                  }
-                  { channelObj.scopeGroupName === 'Project' &&
-                      <ProjectCardGET projectId={channelObj.scopeId} />
-                  }
-                  { channelObj.scopeGroupName === 'User' &&
-                      <span>User Wall for <QLink to={`/u/${channelObj.scopeId}`} >@{channelObj.scopeId}</QLink></span>
-                  }
-
-                </div>
-              </Popup.Content>
-            </Popup>
-          )
-        }
+                  </div>
+                </Popup.Content>
+              </Popup>
+            )
+          }
+        </div>
 
         <p ref="bottomOfMessageDiv">&nbsp;</p>
       </div>

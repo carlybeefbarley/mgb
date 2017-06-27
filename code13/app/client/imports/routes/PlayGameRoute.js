@@ -160,7 +160,7 @@ class PlayCodeGame extends React.Component {
   adjustIframeSize() {
     // fullscreen - don't adjust anything
     // TODO: debug case without ref...
-    if (!this.refs.iframe || this.refs.iframe.offsetHeight === window.innerHeight)
+    if (!this.refs.iframe)
       return
 
     const container = this.container
@@ -173,8 +173,17 @@ class PlayCodeGame extends React.Component {
 
 
 
-    const gameWidth = outerBox.width - box.left * 2
-    const gameHeight = outerBox.height - box.top
+    let gameWidth = outerBox.width - box.left * 2
+    let gameHeight = outerBox.height - box.top
+
+
+    // this happens when iframe is in fullscreen mode
+    // TODO: this looks more like an fullscreen API browser specific exploit
+    // TODO: find a better way to scale game into fullScreen mode
+    if(gameWidth < 0 || gameHeight < 0) {
+      gameWidth = this.refs.iframe.offsetWidth
+      gameHeight = this.refs.iframe.offsetHeight
+    }
 
     style.height = gameHeight + 'px'
     style.width = gameWidth + 'px'
@@ -185,6 +194,10 @@ class PlayCodeGame extends React.Component {
       const sx = gameWidth / width
       const sy = gameHeight / height
       const scale = Math.min(sx, sy)
+      // this happens when iframe is in fullscreen mode
+      if(scale < 0)
+        return
+
       this.refs.iframe.style.transform = 'scale(' + scale + ')'
       if(scale < 1) {
         const shift = (gameWidth - width * scale) * 0.5
@@ -202,11 +215,16 @@ class PlayCodeGame extends React.Component {
     if (this.props.metadata.allowFullScreen){
       this.fsListener = () => {
         // this means that iframe is in fullscreen mode!!!
-        if (this.refs.iframe.offsetHeight === window.innerHeight)
-          this.refs.iframe.style.transform = 'scale(1)'
-        else
-          setScale()
+        if (this.refs.iframe.offsetHeight === window.innerHeight) {
+          //this.refs.iframe.style.transform = 'scale(1)'
+        }
+        else {
+          //setScale()
+          this.exitFullScreen()
+        }
       }
+
+
       this.refs.iframe.onwebkitfullscreenchange = this.fsListener
       this.refs.iframe.onmozfullscreenchange = this.fsListener
       this.refs.iframe.onmsfullscreenchange = this.fsListener
@@ -228,6 +246,10 @@ class PlayCodeGame extends React.Component {
    * Enables fullscreen on game's iframe
    * */
   fullscreen() {
+      this.setFsManually()
+  }
+
+  setFsManually(){
     const rfs = this.refs.iframe.requestFullScreen
       || this.refs.iframe.webkitRequestFullScreen
       || this.refs.iframe.mozRequestFullScreen
@@ -235,11 +257,7 @@ class PlayCodeGame extends React.Component {
 
     if(rfs)
       rfs.call(this.refs.iframe)
-    else
-      this.setFsManually()
-  }
 
-  setFsManually(){
     this.setState({isFullScreen: true}, () => {
       document.body.classList.add('fullscreen')
       this.adjustIframeSize()

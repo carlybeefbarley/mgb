@@ -1,6 +1,3 @@
-import LayerTypes from '../Tools/LayerTypes.js'
-import TileHelper from '../Helpers/TileHelper.js'
-
 export default {
   handleSave(reason){
     this.quickSave(reason, false, this.refs.map.generatePreview())
@@ -25,7 +22,7 @@ export default {
     const objects = activeLayer.data.objects
 
     const msg = objects[index].visible  ? 'Hide object' : 'Reveal object'
-    
+
     objects[index].visible = !objects[index].visible
     this.quickSave(msg)
   },

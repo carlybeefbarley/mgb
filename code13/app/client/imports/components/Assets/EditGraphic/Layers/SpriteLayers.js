@@ -27,7 +27,8 @@ export default class SpriteLayers extends React.Component {
       isCanvasLayersVisible: false,
       isPlaying: false,
       copyFrameID: null,
-      copyLayerID: null
+      copyLayerID: null,
+      isMinimized: false // TODO after finishing css this should be true by default
     }
   }
 
@@ -40,7 +41,7 @@ export default class SpriteLayers extends React.Component {
     /************************** FRAMES ******************************/
 
   selectFrame(frameID) {
-    this.props.EditGraphic.handleSelectFrame(frameID)
+    this.props.handleSelectFrame(frameID)
   }
 
   // Append frame at end of frame list
@@ -149,8 +150,8 @@ export default class SpriteLayers extends React.Component {
 
     c2.frameNames.splice(frameID, 1);
     c2.frameData.splice(frameID, 1);
-    if (this.props.EditGraphic.state.selectedFrameIdx > c2.frameNames.length-1)
-      this.props.EditGraphic.setState({ selectedFrameIdx: c2.frameNames.length-1 })
+    if (this.props.selectedFrameIdx > c2.frameNames.length-1)
+      this.props.handleSelectFrame( c2.frameNames.length-1 )
     this.props.forceDraw()
     this.handleSave('Delete frame', true)
   }
@@ -196,7 +197,7 @@ export default class SpriteLayers extends React.Component {
     this.setState({ isPlaying: isPlaying })
 
     if (isPlaying)
-      this.playAnimation(this.props.EditGraphic.state.selectedFrameIdx)
+      this.playAnimation(this.props.selectedFrameIdx)
     else
       this.cancelNextAnimationTimeout()
   }
@@ -237,7 +238,7 @@ export default class SpriteLayers extends React.Component {
   }
 
   stepFrame(isForward) {
-    let selectedID = this.props.EditGraphic.state.selectedFrameIdx
+    let selectedID = this.props.selectedFrameIdx
     let frameID = isForward ? selectedID+1 : selectedID-1
     if (frameID >= 0 && frameID < this.props.content2.frameNames.length)
       this.selectFrame(frameID)
@@ -411,7 +412,7 @@ export default class SpriteLayers extends React.Component {
   }
 
   selectLayer(layerID) {
-    this.props.EditGraphic.handleSelectLayer(layerID)     // TODO: Cleaner to just have a prop.callback for this
+    this.props.handleSelectLayer(layerID)     // TODO: Cleaner to just have a prop.callback for this
   }
 
   addLayer() {
@@ -461,8 +462,8 @@ export default class SpriteLayers extends React.Component {
 
     c2.layerParams.splice(layerID, 1)
     // change selectedLayer if it is last and beeing removed
-    if (this.props.EditGraphic.state.selectedLayerIdx > c2.layerParams.length-1)
-      this.props.EditGraphic.setState({ selectedLayerIdx: c2.layerParams.length-1 })
+    if (this.props.selectedLayerIdx > c2.layerParams.length-1)
+      this.props.handleSelectLayer( c2.layerParams.length-1 )
 
     for (let frameID=0; frameID<c2.frameNames.length; frameID++)
       c2.frameData[frameID].splice(layerID, 1)
@@ -546,6 +547,10 @@ export default class SpriteLayers extends React.Component {
     $(document.body).removeClass("dragging")
   }
 
+  toggleMinimize = () => {
+    this.setState({ isMinimized: !this.state.isMinimized })
+  }
+
 
   renderLayers() {
     const c2 = this.props.content2
@@ -556,8 +561,8 @@ export default class SpriteLayers extends React.Component {
         layer={layer}
         layerCount={c2.layerParams.length}
         frameNames={c2.frameNames}
-        selectedFrame={this.props.EditGraphic.state.selectedFrameIdx}
-        isSelected={this.props.EditGraphic.state.selectedLayerIdx === idx}
+        selectedFrame={this.props.selectedFrameIdx}
+        isSelected={this.props.selectedLayerIdx === idx}
         width={c2.width}
         height={c2.height}
         isCanvasLayersVisible={this.state.isCanvasLayersVisible}
@@ -640,9 +645,10 @@ export default class SpriteLayers extends React.Component {
       )
     }
 
+    // TODO for fixed layout -> style={{ position: "fixed", bottom: 0, paddingRight: "71px" }}
     return (
       <div className="ui sixteen wide column">
-        <div className="row">
+        <div className="row" className={(this.state.isMinimized ? " mgb-hidden" : "")}>
           <div onClick={this.rewindFrames.bind(this, false)} className={buttonDivClass}>
             <i className="icon step backward"></i>
           </div>
@@ -673,6 +679,13 @@ export default class SpriteLayers extends React.Component {
           <div className={"ui " + (this.state.isCanvasLayersVisible ? "primary" : "") + " right floated mini button"} onClick={this.toggleCanvasLayersVisibility.bind(this)}>
             <i className={"icon " + (this.state.isCanvasLayersVisible ? "unhide" : "hide" )}></i> Layers
           </div>
+          {  /* Disable ToggleMinimize for now since no way to undo it
+
+            <div onClick={this.toggleMinimize} className="ui right floated mini button">
+              <i className={"icon window minimize"}></i> Minimize
+            </div>
+            */
+          }
         </div>
 
         <table className="ui celled small padded table spriteLayersTable">
@@ -744,7 +757,7 @@ export default class SpriteLayers extends React.Component {
             </tr>
       {/* animations end */}
 
-            <tr>
+            <tr className={(this.state.isMinimized ? " mgb-hidden" : "")}>
               <th width="32px">
                   <i
                       className={"icon " + (this.state.allLayersHidden ? "hide" : "unhide" )}
@@ -837,8 +850,20 @@ export default class SpriteLayers extends React.Component {
             <tr className={"frameCanvases " + (this.state.isCanvasFramesVisible ? "" : "mgb-hidden")}>
               <th></th>
               <th></th>
-              <th></th>
-              <th></th>
+              <th>
+                <div
+                  className={(this.state.isMinimized ? "" : "mgb-hidden")}
+                  onClick={this.toggleMinimize} >
+                  <i className={"icon window maximize"}></i>
+                </div>
+              </th>
+              <th>
+                <div
+                  onClick={this.togglePlayAnimation.bind(this)}
+                  className={buttonDivClass + (this.state.isPlaying ? " black" : "") + (this.state.isMinimized ? "" : " mgb-hidden")}>
+                  <i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
+                </div>
+              </th>
               { // TODO: change from frameNames[] to frameData[] ?
                 _.map(c2.frameNames, (frameName, idx) => { return (
                   <th key={"thCanvas_"+idx}>
@@ -861,12 +886,18 @@ export default class SpriteLayers extends React.Component {
                   </th>
                 )})
               }
-              <th></th>
+              <th>
+                <div className={"row" + (this.state.isMinimized ? "" : " mgb-hidden")} style={{marginLeft: "10px"}}>
+                  <a className="ui small label" onClick={this.addFrame.bind(this)}>
+                    <i className="add circle icon"></i> Add Frame
+                  </a>
+                </div>
+              </th>
               <th></th>
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className={(this.state.isMinimized ? " mgb-hidden" : "")}>
             { this.renderLayers() }
           </tbody>
         </table>
@@ -878,13 +909,14 @@ export default class SpriteLayers extends React.Component {
 SpriteLayers.propTypes = {
   content2: PropTypes.object.isRequired,
   hasPermission: PropTypes.func.isRequired,
-
-  getFrameData: PropTypes.func.isRequired, // used for drag and dopd frame on the main canvas
-  getLayerData: PropTypes.func.isRequired, // used for drag and drop layer on the main canvas
-
-  EditGraphic: PropTypes.object,
-  handleSave: PropTypes.func,
+  handleSave: PropTypes.func.isRequired,
+  selectedFrameIdx: PropTypes.number.isRequired,
+  selectedLayerIdx: PropTypes.number.isRequired,
   forceDraw: PropTypes.func,
   forceUpdate: PropTypes.func,
+  getFrameData: PropTypes.func.isRequired, // used for drag and dopd frame on the main canvas
+  getLayerData: PropTypes.func.isRequired, // used for drag and drop layer on the main canvas
+  handleSelectLayer: PropTypes.func.isRequired,
+  handleSelectFrame: PropTypes.func.isRequired,
   isMobileView: PropTypes.bool
 }

@@ -37,9 +37,8 @@ export default class TileSet extends React.Component {
     window.addEventListener('mouseup', this.onMouseUp)
     window.addEventListener('touchend', this.onMouseUp)
 
-    if(this.refs.canvas){
+    if(this.refs.canvas)
       this.refs.canvas.addEventListener("touchstart", this.onMouseDown)
-    }
   }
 
   componentWillUnmount () {
@@ -49,13 +48,13 @@ export default class TileSet extends React.Component {
     window.removeEventListener('mouseup', this.onMouseUp)
     window.removeEventListener('touchend', this.onMouseUp)
 
-    if(this.refs.canvas){
+    if(this.refs.canvas)
       this.refs.canvas.removeEventListener("touchstart", this.onMouseDown)
-    }
 
-    if(this.refs.modal){
+
+    if(this.refs.modal)
       $(this.refs.modal).remove()
-    }
+
   }
 
   componentDidUpdate(){
@@ -358,6 +357,7 @@ export default class TileSet extends React.Component {
             >
           </canvas>
         </div>
+        {this.props.children}
       </div>
     )
   }

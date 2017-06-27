@@ -1,7 +1,7 @@
 /*
  this is reviewed and adjusted SourceTools for current requirements
  */
-import knownLibs from "./knownLibs.js"
+import knownLibs from "./knownLibs"
 import {observeAsset, mgbAjax, makeCDNLink, genetag} from "/client/imports/helpers/assetFetchers"
 import getCDNWorker from '/client/imports/helpers/CDNWorker'
 import SpecialGlobals from '/imports/SpecialGlobals'
@@ -205,10 +205,10 @@ export default class SourceTools extends EventEmitter {
     }
     // this object will contain all necessary info about script
     // we need to push it only after all other imported files from this file are resolved to maintain correct order
-    const toAdd = Object.assign(this.findCollected(filename) || {name: filename}, additionalProps)
+    const toAdd = Object.assign(this.findCollected(filename) || {name: filename, origin: []}, additionalProps)
     // partial calls don't know origin - so leave as is
     if (origin)
-      toAdd.origin = origin
+      toAdd.origin.push(origin)
 
     return this.transpile(filename, src)
       .then(data => {
@@ -248,13 +248,18 @@ export default class SourceTools extends EventEmitter {
    * @returns {Array.<T>}
    */
   collectAvailableImportsForFile(filename) {
+
+    // in the tern VFS all files starts with /
+    if(filename.indexOf('/') !== 0)
+      filename = '/' + filename
+
     return this.collectedSources.filter(script => {
-      // after renaming asset script name won't match asset name
-      // only main script don't have origin
-      if (script.name !== filename && !script.origin) {
+      // !!!!! after renaming asset script name won't match asset name
+      // only main script don't have origin - as an extra check after renaming
+      if (script.name === filename || !script.origin)
         return false
-      }
-      return script.name !== filename && script.origin.indexOf(filename) > -1
+
+      return script.origin.indexOf(filename) === 0
     })
   }
   /**

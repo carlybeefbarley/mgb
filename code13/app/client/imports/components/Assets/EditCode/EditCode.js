@@ -5,6 +5,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import TutorialMentor from './TutorialEditHelpers'
+import settings from '/imports/SpecialGlobals'
 
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import { showToast, addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
@@ -24,6 +25,7 @@ import CodeTutorials from './CodeTutorials'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
 
+import { Icon } from 'semantic-ui-react'
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import ThumbnailWithInfo from '/client/imports/components/Assets/ThumbnailWithInfo'
@@ -49,13 +51,13 @@ import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js'
 import "codemirror/addon/tern/tern"
 import "codemirror/addon/comment/comment"
 
-import FunctionDescription from './tern/FunctionDescription.js'
-import ExpressionDescription from './tern/ExpressionDescription.js'
-import RefsAndDefDescription from './tern/RefsAndDefDescription.js'
-import TokenDescription from './tern/TokenDescription.js'
-import InvokingDescription from './tern/InvokingDescription.js'
-import ImportHelperPanel from './tern/ImportHelperPanel.js'
-
+import FunctionDescription from './tern/FunctionDescription'
+import ExpressionDescription from './tern/ExpressionDescription'
+import RefsAndDefDescription from './tern/RefsAndDefDescription'
+import TokenDescription from './tern/TokenDescription'
+import InvokingDescription from './tern/InvokingDescription'
+import ImportHelperPanel from './tern/ImportHelperPanel'
+import ImportAssistantHeader from './tern/ImportAssistantHeader'
 import DebugASTview from './tern/DebugASTview.js'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
@@ -65,7 +67,7 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 const THUMBNAIL_WIDTH = SpecialGlobals.thumbnail.width
 const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
 
-import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes.js'
+import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes'
 
 let showDebugAST = false    // Handy thing while doing TERN dev work
 
@@ -289,8 +291,7 @@ export default class EditCode extends React.Component {
     // allow toolbar keyboard shortcuts from codemirror text area
     codemirrorOptions.inputStyle == 'textarea' && this.codeMirror.display.input.textarea.classList.add('allow-toolbar-shortcuts')
 
-    this.updateDocName()
-    this.doFullUpdateOnContentChange()
+    this.updateDocName(true)
 
     this.codeMirror.on('change', this.codemirrorValueChanged.bind(this))
     this.codeMirror.on('cursorActivity', this.codeMirrorOnCursorActivity.bind(this, false))
@@ -490,7 +491,7 @@ export default class EditCode extends React.Component {
     // InstallMgbTernExtensions(tern)
   }
   // update file name - to correctly report 'part of'
-  updateDocName() {
+  updateDocName(updateDocumentAnyway) {
     // don't update doc name until all required assets are loaded.
     // tern won't update itself after loading new import - without changes to active document
     if (this.state.astReady && this.lastName !== this.props.asset.name) {
@@ -499,8 +500,16 @@ export default class EditCode extends React.Component {
         this.ternServer.delDoc(doc)
         this.ternServer.addDoc(this.props.asset.name, doc)
         this.lastName = this.props.asset.name
+
+        // we need to update all sources - to match new origin
+        this.doFullUpdateOnContentChange()
       }
     }
+    else if(updateDocumentAnyway)
+      this.doFullUpdateOnContentChange()
+
+
+
   }
 
   codeMirrorOnCursorActivity() {
@@ -2280,7 +2289,7 @@ export default class EditCode extends React.Component {
         name:  'toggleBundling',
         label: 'Auto Bundle code',
         icon:  'travel',
-        tooltip: 'Before saving will merge all imports into single file',
+        tooltip: 'Automatically merge all imports into single file when saving. This is useful for the top-level file for a program which is made of multiple files',
         disabled: false,
         active: this.props.asset.content2.needsBundle,
         level:    3,
@@ -2626,6 +2635,8 @@ export default class EditCode extends React.Component {
         isCodeTutorial = true
     }
 
+    const knownImports = this.tools ? this.tools.collectAvailableImportsForFile(asset.name) : []
+
     return (
       <div className="ui grid">
         { this.state.creatingBundle && <div className="loading-notification">Bundling source code...</div> }
@@ -2741,13 +2752,6 @@ export default class EditCode extends React.Component {
                     getNextToken={cb => this.getNextToken(cb)}
                     comment={this.state.comment}
                     />
-                  { this.state.astReady && this.props.canEdit &&
-                  <ImportHelperPanel
-                    scripts={this.state.userScripts}
-                    includeLocalImport={this.includeLocalImport}
-                    includeExternalImport={this.includeExternalImport}
-                    knownImports={this.tools.collectAvailableImportsForFile(this.props.asset.name)}
-                    /> }
                   <FunctionDescription
                     functionHelp={this.state.functionHelp}
                     functionArgPos={this.state.functionArgPos}
@@ -2790,21 +2794,31 @@ export default class EditCode extends React.Component {
               { docEmpty && !asset.isCompleted && !isCodeTutorial && !isChallenge &&
                 <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />
               }
-              { docEmpty && this.state.astReady && !asset.isCompleted &&
-                // Quick import for empty doc
+              { /* Import Assistant HEADER */ }
               <div className="title">
-                    <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
-                      <i className='dropdown icon' />Quick Module Import
-                    </span>
+                <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                  <Icon name='dropdown' />Import Assistant
+                  <span style={{float:'right'}}>
+                    { ( this.tools && ( this.mgb_c2_hasChanged || !this.state.astReady) ) &&
+                      <Icon
+                          name='refresh'
+                          size='small'
+                          color={this.mgb_c2_hasChanged ? 'orange' : null}
+                          loading={this.state.astReady}
+                          />
+                    }
+                    <ImportAssistantHeader knownImports={knownImports} />
+                  </span>
+                </span>
               </div>
-              }
-              { docEmpty && this.state.astReady && this.props.canEdit &&
+
+              { this.state.astReady &&
               <div className="content">
                 <ImportHelperPanel
                   scripts={this.state.userScripts}
                   includeLocalImport={this.includeLocalImport}
                   includeExternalImport={this.includeExternalImport}
-                  knownImports={this.tools.collectAvailableImportsForFile(this.props.asset.name)}
+                  knownImports={knownImports}
                   />
                 </div>
                 }
@@ -2874,7 +2888,7 @@ export default class EditCode extends React.Component {
               { this.state.astReady && asset.kind === 'code' &&
                 <div id="mgbjr-EditCode-codeFlower" className="title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
-                    <i className='dropdown icon' />CodeFlower
+                    <i className='dropdown icon' />Code Flower
                   </span>
                 </div>
               }

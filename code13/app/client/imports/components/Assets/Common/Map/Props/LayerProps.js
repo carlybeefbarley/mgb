@@ -23,13 +23,13 @@ export default {
 
     // TODO: check for duplicate names..
     let ls
-    if (type == LayerTypes.tile) {
+    if (type === LayerTypes.tile) {
       ls = TileHelper.genLayer(c2.width, c2.height, Prefixes.tileLayer + (lss.length + 1))
     }
-    else if (type == LayerTypes.image) {
+    else if (type === LayerTypes.image) {
       ls = TileHelper.genImageLayer(Prefixes.imageLayer + (lss.length + 1))
     }
-    else if (type == LayerTypes.object) {
+    else if (type === LayerTypes.object) {
       ls = TileHelper.genObjectLayer(Prefixes.objectLayer + (lss.length + 1))
     }
     lss.push(ls)
@@ -76,11 +76,17 @@ export default {
   },
 
   highlightActiveLayerToggle: function(){
-    const meta = this.mgb_content2.meta
-    meta.highlightActiveLayer = !meta.highlightActiveLayer
+    this.options.highlightActiveLayer = !this.options.highlightActiveLayer
     this.setState({
       content2: this.mgb_content2
     })
     //this.save('Highlight Active Layer')
+  },
+
+  renameLayer: function(id, newName){
+    const c2 = this.mgb_content2
+    const reason = 'Renamed layer ' + c2.layers[id].name + ' to ' + newName
+    c2.layers[id].name = newName
+    this.quickSave(reason)
   }
 }

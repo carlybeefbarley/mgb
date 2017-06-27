@@ -12,7 +12,7 @@ const _maxAssetNameLength = 64
 //    #   since... it is used to denote graphic frame number in Actor Editor
 //    ?   since... this could look string on a URI using our /api/asset/png/USERNAME/ASSETNAME?frame=4
 //                 URL format and would be a bit confusing / bug-prone when escaped
-//    {   since... we may want the option to have assetName-based apis that could instead have a 
+//    {   since... we may want the option to have assetName-based apis that could instead have a
 //                 richer JSON-encoded data instead
 //    *   since it is just going to make wild card search stupidly annoying
 const _validAssetNameRegex = /^[a-zA-Z0-9_\-. \(\)\!\~\;\'\<\>\@\&]*$/
@@ -22,7 +22,7 @@ const _validAssetNameRegex = /^[a-zA-Z0-9_\-. \(\)\!\~\;\'\<\>\@\&]*$/
 const _validProjectNameRegex = /^[a-zA-Z0-9_\-. \(\)\&']*$/
 // This is a little tighter than Asset Name since it seems it can be..
 
-var _listInvalidChars = (text, StringAllowedRegex) => (
+const _listInvalidChars = (text, StringAllowedRegex) => (
   _.uniq(_.filter(text, c => ( !StringAllowedRegex.test(c) ) ) )
 )
 
@@ -140,6 +140,10 @@ const validate = {
       return `Your username is too short. It must be at least ${_minUsernameLength} characters long`
 
     return null
+  },
+
+  notEmpty: function(value){
+    return !!(value + '')
   }
 }
 

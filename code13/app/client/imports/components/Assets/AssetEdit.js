@@ -26,9 +26,8 @@ const editElementsForKind = {
   'game':      { loader: () => import('./EditGame/EditGame') },
 }
 
-const _omitPropsForEditors = [
-  // guntis -> need this for editGraphic fixed frames panel
-  // 'availableWidth'     // No Editors currently do anything adaptive for size, so do not pass on
+const _omitPropsForEditors = [ 
+  'availableWidth'     // No Editors currently do anything adaptive for size, so do not pass on
   ]
 
 export default class AssetEdit extends React.Component
@@ -69,9 +68,9 @@ export default class AssetEdit extends React.Component
     if (loadable.el === undefined)
     {
       loadable.el = null
-      loadable.loader().then( imp => {
+      loadable.loader().then( imp => { 
         loadable.el = imp.default
-        this.forceUpdate()
+        this.forceUpdate() 
       } )
     }
     if (loadable.el === null)

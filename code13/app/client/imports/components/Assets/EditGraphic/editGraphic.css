@@ -88,26 +88,3 @@
 .noMargin {
 	margin: 0 !important;
 }
-
-
-
-/* sprite layers */
-.mgb-minimized .animHeader {
-	display: none;
-}
-
-.mgb-minimized .framesHeader {
-  display: none;
-}
-
-.mgb-minimized .layers {
-  display: none;
-}
-
-.mgb-maximized .miniPlay {
-  display: none;
-}
-
-.mgb-maximized .miniAddFrames {
-  display: none;
-}

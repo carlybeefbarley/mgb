@@ -24,10 +24,6 @@
 
 /* frames view */
 #framesView {
-	/*position: fixed;*/
-	position: absolute;
-	bottom: 0;
-	/*overflow-x: scroll;*/
 	background-color: white;
 	overflow-y: visible;
 }
@@ -61,7 +57,6 @@
 }
 
 .animTR th {
-	/*background-color: transparent !important;*/
 	border-left: none !important;
 	border-right: none !important;
 }

@@ -1,0 +1,62 @@
+; Domain: mygamebuilder.com
+; Exported (y-m-d hh:mm:ss): 2017-06-27 13:12:12
+;
+; This file is intended for use for informational and archival
+; purposes ONLY and MUST be edited before use on a production
+; DNS server.
+;
+; In particular, you must update the SOA record with the correct
+; authoritative name server and contact e-mail address information,
+; and add the correct NS records for the name servers which will
+; be authoritative for this domain.
+;
+; For further information, please consult the BIND documentation
+; located on the following website:
+;
+; http://www.isc.org/
+;
+; And RFC 1035:
+;
+; http://www.ietf.org/rfc/rfc1035.txt
+;
+; Please note that we do NOT offer technical support for any use
+; of this zone data, the BIND name server, or any other third-
+; party DNS software.
+;
+; Use at your own risk.
+
+; SOA Record
+mygamebuilder.com.	3600	IN	SOA	ns51.domaincontrol.com.	dns.jomax.net (
+				2017050217
+				28800
+				7200
+				604800
+				3600
+				)
+
+; A Records
+test	3600	IN	A	34.199.16.223
+@	3600	IN	A	50.18.54.95
+
+; CNAME Records
+hivewiki	3600	IN	CNAME	ec2-75-101-166-192.compute-1.amazonaws.com
+www	3600	IN	CNAME	@
+landing	3600	IN	CNAME	d2kxgvllkqfw9u.cloudfront.net
+email.mailgun	3600	IN	CNAME	mailgun.org
+v2	3600	IN	CNAME	galaxy-ingress.meteor.com
+ftp	3600	IN	CNAME	@
+staging	3600	IN	CNAME	galaxy-ingress.meteor.com
+_domainconnect	3600	IN	CNAME	_domainconnect.gd.domaincontrol.com
+
+; MX Records
+mailgun	3600	IN	MX	10	mxa.mailgun.org
+mailgun	3600	IN	MX	10	mxb.mailgun.org
+
+; TXT Records
+pic._domainkey.mailgun	3600	IN	TXT	"k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDAawuqMNnHOsyIJ113R/aI8wmeboSoVs0wwfpIECg0hOaX+/jp93//qYIY2EA/vh+IoIsI/juwmbXFBXyWhtWDd19Nuckirx2DC7dWP9QVHKqgs9pfyKtdVCBzyP6A5QyxFH664XcEafRYsT7GDbOKCzZL44UbKOtuB5IcYoI+SwIDAQAB"
+_amazonses.test	3600	IN	TXT	"9pYk3GjnTDqzI1MehA8C4mNub66tVw3UEEb4Zp4usWA="
+mailgun	3600	IN	TXT	"v=spf1 include:mailgun.org ~all"
+
+; NS Records
+@	3600	IN	NS	ns51.domaincontrol.com
+@	3600	IN	NS	ns52.domaincontrol.com

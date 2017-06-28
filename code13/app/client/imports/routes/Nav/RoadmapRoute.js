@@ -12,6 +12,7 @@ const RenderRoadmap = () => (
       <li>(@Bouhm) ActorMap game improvements</li>
       <li>(@leah) Moderation (Deep flagging & moderation features, including the Skills tracks for Community management)</li>
       <li>(@stauzs) Mobile App (Focused on notification, chat and play)</li>
+      <li>(@guntis) Dashboard</li>
       <li>(@guntis) Build a game with the MGB community (probably tower defense-ish)</li>
       <li>(@DSeedman) Revamp the Badge system - define badges, get cleaned up art</li>
     </ul>

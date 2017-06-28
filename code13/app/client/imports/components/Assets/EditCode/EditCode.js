@@ -808,23 +808,23 @@ export default class EditCode extends React.Component {
 
       const scrollInfo = this.codeMirror.getScrollInfo()
 
-      //console.log("Scroll:", scrollInfo)
       DragNDropHelper.preventDefault(event)
-      // change cursor style to indicate drop???
+      // TODO: discuss - change cursor style to indicate drop???
       cm.focus()
+
       // move cursor to exact drop location
       const cur = cm.getCursor()
       const coords = cm.coordsChar({left: event.clientX, top: event.clientY}, "window")
       cur.ch = coords.ch
       cur.line = coords.line
-      // workaround - force codemirror to really update cursor - when moving happens on the same line
-      if(cur.line === coords.line){
+
+      // workaround - force codemirror to really update cursor - when moving happens on the same line but different char
+      if(cur.line === coords.line)
         cm.setCursor({line: 0, ch: 0})
-      }
 
       cm.setCursor(coords)
 
-      // we need to scroll back to correct position - fix #1041
+      // we need to scroll back to correct position - fix #1041 (CM doesn't do that automatically)
       cm.scrollTo(null, scrollInfo.top)
     }
   }

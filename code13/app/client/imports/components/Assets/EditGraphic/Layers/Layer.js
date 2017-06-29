@@ -107,11 +107,11 @@ export default class Layer extends React.Component {
 
     return (
       <tr
-        className={isSelected ? "active" : ""}
+        className={(isSelected ? "active" : "") + " layer"+idx}
         onClick={this.selectLayer}
         key={idx}
         >
-          <td onClick={this.toggleVisibility} >
+          <td onClick={this.toggleVisibility} className={"hide"+idx}>
             <Icon name={layer.isHidden ? 'hide' : 'unhide'} />
           </td>
           <td onClick={this.toggleLocking}>

@@ -284,7 +284,7 @@ export default class EditActorMap extends EditMap {
               isPlaying={isPlaying}
               cache={this.cache}
               activeLayer={activeLayer}
-              highlightActiveLayer={this.meta.highlightActiveLayer}
+              highlightActiveLayer={this.options.highlightActiveLayer}
               canEdit={this.props.canEdit}
               options={this.options}
               data={c2}
@@ -296,7 +296,7 @@ export default class EditActorMap extends EditMap {
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}
-            options={this.meta}
+            options={this.options}
             activeLayer={activeLayer}
             />
           <TileSet

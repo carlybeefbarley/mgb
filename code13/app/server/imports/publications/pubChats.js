@@ -17,7 +17,8 @@ const fieldsChatPublic = {
   toOwnerName: 1,
   message: 1,
   isDeleted: 1,
-  suFlagId: 1
+  suFlagId: 1,
+  suIsBanned: 1
 }
 
 Meteor.publish('chats.channelName', function(toChannelName, limit=20) {
@@ -40,7 +41,7 @@ Meteor.publish('chats.channelName', function(toChannelName, limit=20) {
 
   case 'User':
     break   // For now make these publicly readable. Maybe tighten up later
-  
+
   case 'DirectMessage':
   default:
     console.log(`Unhandled scopeGroupName ${channelObj.scopeGroupName} in chats.channelName`)
@@ -50,10 +51,10 @@ Meteor.publish('chats.channelName', function(toChannelName, limit=20) {
     limit = chatParams.maxClientChatHistory
 
   let selector = { toChannelName: toChannelName }
-  let options =  { 
-    limit: limit, 
+  let options =  {
+    limit: limit,
     sort: { createdAt: -1 },
-    fields: fieldsChatPublic 
+    fields: fieldsChatPublic
   }
 
   return Chats.find(selector, options)

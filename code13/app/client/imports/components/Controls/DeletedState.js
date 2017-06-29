@@ -4,7 +4,7 @@ import { Popup, Icon } from 'semantic-ui-react'
 const DeletedState = ( { isDeleted, canEdit, handleChange, operationPending } ) => (
   <Popup
     size='small'
-    positioning='bottom right'
+    position='bottom right'
     trigger={(
       <Icon
         bordered

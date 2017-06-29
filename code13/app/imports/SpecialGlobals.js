@@ -30,11 +30,11 @@ export default SpecialGlobals = {
     validFor: 60 // seconds until we force avatar to refresh
   },
   thumbnail: {
-    width: 230,     // In px. See imn mgb.css for .mgb-projectcard-width and .mgb-assetcard-width
+    width: 230,     // In px. See in mgb.css for .mgb-projectcard-width and .mgb-assetcard-width
     height: 155,     // In px
     defaultExpiresDuration: 3600
   },
-  // in a case that observers will turn out too slow - we may change it to false - and then implement slow polling
+  // If observers will turn out too slow - we may change it to false - and then implement slow polling (@stauzs)
   allowObservers: true,
   editCode: {
     mgbMentorPrefix: 'MGB mentor:',
@@ -50,17 +50,27 @@ export default SpecialGlobals = {
       {
         name: 'Phaser',
         import: 'phaser',
-        desc: 'A fast, free and fun open source framework for Canves and WebGL powered browser games.'
+        desc: 'For making games',
+        descLong: 'Phaser is a good framework for making JavaScript games. It helps developers with game scenes, asset loaders, rendering, physics, input devices, sound, and more',
+        landingPageUrl: '//phaser.io',
+        apiDocsPageUrl: '//photonstorm.github.io/phaser-ce/',
+        tutorialsInternalLink: '/learn/code/phaser'
       },
       {
         name: 'React',
         import: 'react',
-        desc: 'A JavaScript library for building user interfaces'
+        desc: 'For making apps',
+        descLong: 'React is a powerful but simple User Interface framework developed by Facebook and available as open source. It is very good for making applications in JavaScript, or for making games that have a more app-like UI such as "mastermind". This site is all written using React!',
+        landingPageUrl: '//facebook.github.io/react/',
+        apiDocsPageUrl: '//facebook.github.io/react/docs/introducing-jsx.html'
       },
       {
         name: '_',
         import: 'lodash',
-        desc: 'A modern JavaScript utility library delivering modularity, performance & extras.'
+        desc: 'Helpful extra functions',
+        descLong: 'Lodash provides helpful general purpose routines to compare and transform data or functions. Any time you write a loop of some kind to transform a data structure, there\'s probably a way to do it more easily in one line of lodash... Once you get used to it :) Lodash is a variant of another similar JavaScript library called "Underscore". They are usually seen in JavaScript programs doing things like _.isString() or _.union(). ',
+        landingPageUrl: '//lodash.com/',
+        apiDocsPageUrl: '//lodash.com/docs'
       }
     ]
   },

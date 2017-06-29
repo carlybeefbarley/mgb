@@ -144,7 +144,7 @@ export default ProjectMembershipEditorV2 = React.createClass({
       <Popup
           on='hover'
           hoverable={canEdit}    // So mouse-over popup keeps it visible for Edit for example
-          positioning='bottom right'
+          position='bottom right'
           trigger={(
             <span>  { /* This span wrap is needed it seems for a popup trigger if the trigger is a stateless function with no this. context. @levi? */}
               <ProjectMembershipSummary

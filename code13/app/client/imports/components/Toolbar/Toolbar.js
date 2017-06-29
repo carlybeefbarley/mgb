@@ -286,7 +286,7 @@ export default class Toolbar extends React.Component {
         </Button>)}
         key={index}
         header={b.label}
-        positioning='top center'
+        position='top center'
         content={b.tooltip + (b.shortcut ? " [" + b.shortcut + "]" : '')}
       />
     )

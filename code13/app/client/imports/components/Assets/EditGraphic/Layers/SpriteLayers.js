@@ -8,11 +8,13 @@ import Layer from './Layer.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
+import sty from  '../editGraphic.css'
+
 // TODO - see if we can avoid forceUpdate() in addLayer() and addFrame()        [DG]
 // TODO - see if we can avoid using props.EditGraphic                           [DG]
 
 const emptyPixel = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
-
+const _maxFrameDimension = 64
 
 export default class SpriteLayers extends React.Component {
 
@@ -39,7 +41,7 @@ export default class SpriteLayers extends React.Component {
     /************************** FRAMES ******************************/
 
   selectFrame(frameID) {
-    this.props.EditGraphic.handleSelectFrame(frameID)
+    this.props.handleSelectFrame(frameID)
   }
 
   // Append frame at end of frame list
@@ -50,6 +52,8 @@ export default class SpriteLayers extends React.Component {
     let newFrameName = "Frame " + (fN.length+1).toString()
     fN.push(newFrameName)
     this.props.content2.frameData.push([])
+    // small hack. we need to save actual spriteData frame count which depends from previewCanvases. And those are updated only after callback from server
+    this.props.content2.doResaveTileset = true
     this.handleSave('Append frame to graphic')
     this.forceUpdate()    // Force react to update.. needed since we need render() to create new canvasses
   }
@@ -146,8 +150,8 @@ export default class SpriteLayers extends React.Component {
 
     c2.frameNames.splice(frameID, 1);
     c2.frameData.splice(frameID, 1);
-    if (this.props.EditGraphic.state.selectedFrameIdx > c2.frameNames.length-1)
-      this.props.EditGraphic.setState({ selectedFrameIdx: c2.frameNames.length-1 })
+    if (this.props.selectedFrameIdx > c2.frameNames.length-1)
+      this.props.handleSelectFrame( c2.frameNames.length-1 )
     this.props.forceDraw()
     this.handleSave('Delete frame', true)
   }
@@ -193,7 +197,7 @@ export default class SpriteLayers extends React.Component {
     this.setState({ isPlaying: isPlaying })
 
     if (isPlaying)
-      this.playAnimation(this.props.EditGraphic.state.selectedFrameIdx)
+      this.playAnimation(this.props.selectedFrameIdx)
     else
       this.cancelNextAnimationTimeout()
   }
@@ -217,13 +221,13 @@ export default class SpriteLayers extends React.Component {
     this.selectFrame(frameID)
     //
     if (!this._playLoopRange)
-      this._playLoopRange = { 
+      this._playLoopRange = {
         startIdx: endFrameID ? frameID-1 : 0,
         endIdx:   endFrameID ? endFrameID-1 : this.props.content2.frameNames.length -1,
         name:  animationName
       }
 
-    let nextFrameID = (frameID+1) 
+    let nextFrameID = (frameID+1)
     if (nextFrameID > this._playLoopRange.endIdx)
       nextFrameID = this._playLoopRange.startIdx
     let self = this
@@ -234,7 +238,7 @@ export default class SpriteLayers extends React.Component {
   }
 
   stepFrame(isForward) {
-    let selectedID = this.props.EditGraphic.state.selectedFrameIdx
+    let selectedID = this.props.selectedFrameIdx
     let frameID = isForward ? selectedID+1 : selectedID-1
     if (frameID >= 0 && frameID < this.props.content2.frameNames.length)
       this.selectFrame(frameID)
@@ -408,7 +412,7 @@ export default class SpriteLayers extends React.Component {
   }
 
   selectLayer(layerID) {
-    this.props.EditGraphic.handleSelectLayer(layerID)     // TODO: Cleaner to just have a prop.callback for this
+    this.props.handleSelectLayer(layerID)     // TODO: Cleaner to just have a prop.callback for this
   }
 
   addLayer() {
@@ -458,8 +462,8 @@ export default class SpriteLayers extends React.Component {
 
     c2.layerParams.splice(layerID, 1)
     // change selectedLayer if it is last and beeing removed
-    if (this.props.EditGraphic.state.selectedLayerIdx > c2.layerParams.length-1)
-      this.props.EditGraphic.setState({ selectedLayerIdx: c2.layerParams.length-1 })
+    if (this.props.selectedLayerIdx > c2.layerParams.length-1)
+      this.props.handleSelectLayer( c2.layerParams.length-1 )
 
     for (let frameID=0; frameID<c2.frameNames.length; frameID++)
       c2.frameData[frameID].splice(layerID, 1)
@@ -553,8 +557,8 @@ export default class SpriteLayers extends React.Component {
         layer={layer}
         layerCount={c2.layerParams.length}
         frameNames={c2.frameNames}
-        selectedFrame={this.props.EditGraphic.state.selectedFrameIdx}
-        isSelected={this.props.EditGraphic.state.selectedLayerIdx === idx}
+        selectedFrame={this.props.selectedFrameIdx}
+        isSelected={this.props.selectedLayerIdx === idx}
         width={c2.width}
         height={c2.height}
         isCanvasLayersVisible={this.state.isCanvasLayersVisible}
@@ -579,9 +583,19 @@ export default class SpriteLayers extends React.Component {
     const c2 = this.props.content2
     const buttonDivClass = "ui mini icon button"
 
+    let frameWidth = c2.width
+    let frameHeight = c2.height
+
+    if(frameWidth > _maxFrameDimension || frameHeight > _maxFrameDimension){
+      maxDimension = frameWidth > frameHeight ? frameWidth : frameHeight
+      const scale = _maxFrameDimension / maxDimension
+      frameWidth *= scale
+      frameHeight *= scale
+    }
+
     return (
-      <div className="ui sixteen wide column">
-        <div className="row">
+      <div id="framesView" className={(this.props.isMinimized ? "mgb-minimized" : "mgb-maximized")} style={{ width: this.props.availableWidth+"px" }}>
+        <div className="row" className="animHeader">
           <div onClick={this.rewindFrames.bind(this, false)} className={buttonDivClass}>
             <i className="icon step backward"></i>
           </div>
@@ -683,7 +697,7 @@ export default class SpriteLayers extends React.Component {
             </tr>
       {/* animations end */}
 
-            <tr>
+            <tr className="framesHeader">
               <th width="32px">
                   <i
                       className={"icon " + (this.state.allLayersHidden ? "hide" : "unhide" )}
@@ -774,22 +788,30 @@ export default class SpriteLayers extends React.Component {
 
         {/** Previews for frames **/}
             <tr className={"frameCanvases " + (this.state.isCanvasFramesVisible ? "" : "mgb-hidden")}>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
+              <th className="minimizeHide"></th>
+              <th className="minimizeHide"></th>
+              <th className="minimizeHide"></th>
+              <th className="minimizeSmall">
+                <div
+                  onClick={this.togglePlayAnimation.bind(this)}
+                  className={"miniPlay " + buttonDivClass + (this.state.isPlaying ? " black" : "")}
+                  style={{margin:'5px'}}>
+                  <i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
+                </div>
+              </th>
               { // TODO: change from frameNames[] to frameData[] ?
                 _.map(c2.frameNames, (frameName, idx) => { return (
-                  <th key={"thCanvas_"+idx}>
+                  <th key={"thCanvas_"+idx} width="32px" className={(idx == this.props.selectedFrameIdx ? "active" : "")}>
                     <div  className="ui image "
                           // replace onClick wit mouseUp / touchEnd - to prevent conflict with mobile drag
                           onMouseUp={this.selectFrame.bind(this, idx)}
                           onTouchEnd={this.selectFrame.bind(this, idx)}
-                          style={{"maxWidth": "256px", "maxHeight": "256px", "width": `${c2.width}px`, "display": "block", "margin": "0px auto", "overflow": "auto" }}
+                          style={{"maxWidth": "256px", "maxHeight": "256px", "width": `${frameWidth}px`, "display": "block", "margin": "0px auto", "overflow": "auto" }}
                           title={`Preview for combined visible layers of Frame #${idx+1}`}>
                       <canvas
                         width={c2.width}
                         height={c2.height}
+                        style={{ width: frameWidth, height: frameHeight }}
 
                         onDragStart={this.handleDragStart.bind(this, idx)}
                         onDragEnd={this.handleDragEnd}
@@ -800,12 +822,18 @@ export default class SpriteLayers extends React.Component {
                   </th>
                 )})
               }
-              <th></th>
-              <th></th>
+              <th>
+                <div className={"row miniAddFrames"} style={{marginLeft: "10px"}}>
+                  <a className="ui small label" onClick={this.addFrame.bind(this)}>
+                    <i className="add circle icon"></i> Add Frame
+                  </a>
+                </div>
+              </th>
+              <th className="minimizeHide"></th>
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className="layers">
             { this.renderLayers() }
           </tbody>
         </table>
@@ -817,12 +845,13 @@ export default class SpriteLayers extends React.Component {
 SpriteLayers.propTypes = {
   content2: PropTypes.object.isRequired,
   hasPermission: PropTypes.func.isRequired,
-
-  getFrameData: PropTypes.func.isRequired, // used for drag and dopd frame on the main canvas
-  getLayerData: PropTypes.func.isRequired, // used for drag and drop layer on the main canvas
-
-  EditGraphic: PropTypes.object,
-  handleSave: PropTypes.func,
+  handleSave: PropTypes.func.isRequired,
+  selectedFrameIdx: PropTypes.number.isRequired,
+  selectedLayerIdx: PropTypes.number.isRequired,
   forceDraw: PropTypes.func,
   forceUpdate: PropTypes.func,
+  getFrameData: PropTypes.func.isRequired, // used for drag and dopd frame on the main canvas
+  getLayerData: PropTypes.func.isRequired, // used for drag and drop layer on the main canvas
+  handleSelectLayer: PropTypes.func.isRequired,
+  handleSelectFrame: PropTypes.func.isRequired,
 }

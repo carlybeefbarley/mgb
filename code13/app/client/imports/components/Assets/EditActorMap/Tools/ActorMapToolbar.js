@@ -6,6 +6,9 @@ import LayerTypes from '../../Common/Map/Tools/LayerTypes'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import Properties from './ActorMapProperties'
 
+
+import CameraTools from '../../Common/Map/Tools/CameraTools'
+
 export default class MapToolbar extends React.Component {
 
   render() {
@@ -80,6 +83,7 @@ export default class MapToolbar extends React.Component {
           level: 7,
           disabled
         },
+        /*
         {
           name: 'resetCamera',
           icon: 'crosshairs',
@@ -89,6 +93,15 @@ export default class MapToolbar extends React.Component {
           disabled,
           level: 6,
           shortcut: 'Ctrl+Alt+R'
+        },
+        */
+        {
+          component: CameraTools,
+          iconText: `${(this.props.options.camera.zoom * 100).toFixed(1)}%`,
+          resetCamera: this.props.resetCamera,
+          fitMap: this.props.fitMap,
+          fitMapH: this.props.fitMapH,
+          fitMapV: this.props.fitMapV,
         },
         {
           name: 'zoomOut',

@@ -15,7 +15,7 @@ const ProjectsShowForkableSelector = ( { showForkable, handleChangeFlag } ) => {
         size='small'
         trigger={button}
         on='hover'
-        positioning='bottom left'
+        position='bottom left'
         header='Show/hide forkable Projects'      
         content={ active ? 
                     "Currently showing ONLY 'Forkable' Projects. Click here to ALSO show non-forkable Projects" 

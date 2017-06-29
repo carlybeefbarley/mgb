@@ -228,7 +228,7 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
     // make sure we don't break http / https
     const root_host = __meteor_runtime_config__.ROOT_URL.split("//").pop()
     if(isLocal && !root_host.startsWith(window.location.host) && !root_host.startsWith("localhost")){
-      return mgbAjax(__meteor_runtime_config__.ROOT_URL + uri, callback, asset, onRequestOpen)
+      return mgbAjax(cdnLink, callback, asset, onRequestOpen)
     }
   }
 
@@ -238,7 +238,6 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
   if (onRequestOpen)
     onRequestOpen(client)
 
-  client.send()
   client.onload = function () {
     // ajax will return 200 even for 304 Not Modified
     if (this.status >= 200 && this.status < 300)
@@ -261,6 +260,9 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
     }
     callback(e, this.statusText)
   }
+
+  client.send()
+
 }
 
 /** Class representing an AssetHandler. */

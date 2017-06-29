@@ -47,7 +47,7 @@ const AssetHistoryDetail = ( { asset, assetActivity, currUser } ) => {
     <Popup 
         wide='very' 
         hoverable 
-        positioning='bottom right'
+        position='bottom right'
         trigger={TriggerElement} 
         size='tiny'>
       <Popup.Header>

@@ -85,7 +85,7 @@ class SkillLinkCard extends Component {
             Show Completed
           </Button>
         )}
-        positioning='left center'
+        position='left center'
         hoverable
         open={showPopup}
         closeOnTriggerBlur={false}

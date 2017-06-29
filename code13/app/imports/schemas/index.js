@@ -6,6 +6,7 @@ export const Users = Meteor.users
 
 export const Chats = new Mongo.Collection('chats')
 export const Azzets = new Mongo.Collection('azzets')         // Because 'Assets' is a special global for Meteor.
+export const Flags = new Mongo.Collection('flags')
 export const Skills = new Mongo.Collection('skills')
 export const Sysvars = new Mongo.Collection('sysvars')
 export const Projects = new Mongo.Collection('projects')

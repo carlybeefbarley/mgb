@@ -45,8 +45,7 @@ export default ActorHelper = {
         height: data.height,
       },
       meta: {
-        tilesets: data.tilesets,
-        options: data.meta.options
+        tilesets: data.tilesets
       }
     };
 
@@ -222,7 +221,7 @@ export default ActorHelper = {
       dd.layers.push(layer)
       if (data.meta) {
         dd.tilesets = data.meta.tilesets
-        dd.meta.options = data.meta.options
+        // dd.meta.options = data.meta.options
       }
       cb(dd)
     }, onChange, onRemovedActor)

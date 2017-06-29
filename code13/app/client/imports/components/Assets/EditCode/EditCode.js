@@ -1,10 +1,11 @@
 "use strict"
-const update = require('react-addons-update')
+const reactUpdate = require('react-addons-update')
 
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import TutorialMentor from './TutorialEditHelpers'
+import settings from '/imports/SpecialGlobals'
 
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import { showToast, addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
@@ -24,6 +25,7 @@ import CodeTutorials from './CodeTutorials'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
 
+import { Icon } from 'semantic-ui-react'
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import ThumbnailWithInfo from '/client/imports/components/Assets/ThumbnailWithInfo'
@@ -49,13 +51,13 @@ import JsonDocsFinder from './tern/Defs/JsonDocsFinder.js'
 import "codemirror/addon/tern/tern"
 import "codemirror/addon/comment/comment"
 
-import FunctionDescription from './tern/FunctionDescription.js'
-import ExpressionDescription from './tern/ExpressionDescription.js'
-import RefsAndDefDescription from './tern/RefsAndDefDescription.js'
-import TokenDescription from './tern/TokenDescription.js'
-import InvokingDescription from './tern/InvokingDescription.js'
-import ImportHelperPanel from './tern/ImportHelperPanel.js'
-
+import FunctionDescription from './tern/FunctionDescription'
+import ExpressionDescription from './tern/ExpressionDescription'
+import RefsAndDefDescription from './tern/RefsAndDefDescription'
+import TokenDescription from './tern/TokenDescription'
+import InvokingDescription from './tern/InvokingDescription'
+import ImportHelperPanel from './tern/ImportHelperPanel'
+import ImportAssistantHeader from './tern/ImportAssistantHeader'
 import DebugASTview from './tern/DebugASTview.js'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
@@ -65,7 +67,7 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 const THUMBNAIL_WIDTH = SpecialGlobals.thumbnail.width
 const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
 
-import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes.js'
+import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes'
 
 let showDebugAST = false    // Handy thing while doing TERN dev work
 
@@ -131,7 +133,10 @@ export default class EditCode extends React.Component {
       parsedTutorialData: null,   // null for not valid, or an object set by srcUpdate_AnalyzeTutorial()
 
       // handling game screen
-      isPopup: false
+      isPopup: false,
+
+      // this is set when we complete CodeMentor related queries - as then we will need to re-render CodeMentor components
+      lastAnalysisAtCursor: 0
     }
 
     this.hintWidgets = []
@@ -149,9 +154,6 @@ export default class EditCode extends React.Component {
       undo: [],
       redo: []
     }
-
-    this.includeLocalImport = this.includeLocalImport.bind(this)
-    this.includeExternalImport = this.includeExternalImport.bind(this)
   }
 
 
@@ -289,8 +291,7 @@ export default class EditCode extends React.Component {
     // allow toolbar keyboard shortcuts from codemirror text area
     codemirrorOptions.inputStyle == 'textarea' && this.codeMirror.display.input.textarea.classList.add('allow-toolbar-shortcuts')
 
-    this.updateDocName()
-    this.doFullUpdateOnContentChange()
+    this.updateDocName(true)
 
     this.codeMirror.on('change', this.codemirrorValueChanged.bind(this))
     this.codeMirror.on('cursorActivity', this.codeMirrorOnCursorActivity.bind(this, false))
@@ -490,7 +491,7 @@ export default class EditCode extends React.Component {
     // InstallMgbTernExtensions(tern)
   }
   // update file name - to correctly report 'part of'
-  updateDocName() {
+  updateDocName(updateDocumentAnyway) {
     // don't update doc name until all required assets are loaded.
     // tern won't update itself after loading new import - without changes to active document
     if (this.state.astReady && this.lastName !== this.props.asset.name) {
@@ -499,8 +500,16 @@ export default class EditCode extends React.Component {
         this.ternServer.delDoc(doc)
         this.ternServer.addDoc(this.props.asset.name, doc)
         this.lastName = this.props.asset.name
+
+        // we need to update all sources - to match new origin
+        this.doFullUpdateOnContentChange()
       }
     }
+    else if(updateDocumentAnyway)
+      this.doFullUpdateOnContentChange()
+
+
+
   }
 
   codeMirrorOnCursorActivity() {
@@ -796,20 +805,27 @@ export default class EditCode extends React.Component {
 
 
     if (this.props.canEdit) {
+
+      const scrollInfo = this.codeMirror.getScrollInfo()
+
       DragNDropHelper.preventDefault(event)
-      // change cursor style to indicate drop???
+      // TODO: discuss - change cursor style to indicate drop???
       cm.focus()
+
       // move cursor to exact drop location
       const cur = cm.getCursor()
       const coords = cm.coordsChar({left: event.clientX, top: event.clientY}, "window")
       cur.ch = coords.ch
       cur.line = coords.line
-      // workaround - force codemirror to really update cursor - when moving happens on the same line
-      if(cur.line == coords.line){
+
+      // workaround - force codemirror to really update cursor - when moving happens on the same line but different char
+      if(cur.line === coords.line)
         cm.setCursor({line: 0, ch: 0})
-      }
 
       cm.setCursor(coords)
+
+      // we need to scroll back to correct position - fix #1041 (CM doesn't do that automatically)
+      cm.scrollTo(null, scrollInfo.top)
     }
   }
 
@@ -837,12 +853,15 @@ export default class EditCode extends React.Component {
               `// Creates full MGB map with all visible layers\n// place this function in the create method` + '\n' +
               `const map = game.create.mgbMap('${draggedAsset.name}')`
 
-          this.codeMirror.replaceSelection( '\n' + loadMap + '\n')
+          this.codeMirror.replaceSelection( '\n' + loadMap + '\n', 'around')
+          this.codeMirror.execCommand('indentAuto')
+          // clear selection
+          this.codeMirror.setSelection(this.codeMirror.getCursor())
 
           const val = this.codeMirror.getValue()
-          if(val.indexOf('mgb-map-loader-extended') === -1){
+          if(val.indexOf('mgb-map-loader-extended') === -1)
             this.codeMirror.setValue(`import '/!vault:mgb-map-loader-extended'` + '\n' + val)
-          }
+
           return
 
         case 'sound':
@@ -867,7 +886,10 @@ export default class EditCode extends React.Component {
       if (code)
       {
         event.preventDefault()
-        this.codeMirror.replaceSelection( '\n' + code + '\n')
+        this.codeMirror.replaceSelection( '\n' + code + '\n', 'around')
+        this.codeMirror.execCommand('indentAuto')
+        // clear selection
+        this.codeMirror.setSelection(this.codeMirror.getCursor())
       }
     }
     else
@@ -1537,7 +1559,7 @@ export default class EditCode extends React.Component {
           Object.assign(newState, {comment})
         })
         .then(() => {
-          this.setState(newState)
+          this.setState(Object.assign(newState, {lastAnalysisAtCursor: Date.now()}))
           // we have analysed source
           this.mgb_c2_hasChanged = false
         })
@@ -1562,14 +1584,15 @@ export default class EditCode extends React.Component {
   shouldComponentUpdate(nextProps, nextState) {
     // this.changeTimeout - is set when user is typing
     const retval = !( this.changeTimeout || nextState._preventRenders || this.state.creatingBundle)
-    //console.log("Should update:", retval)
-    // && !(_.isEqual(nextProps, this.props) && _.isEqual(nextState, this.state))
+    // manually check state properties that definitely will require redraw on change
     return retval
       || this.state.needsBundle !== nextState.needsBundle
       || this.state.hotReload !== nextState.hotReload
       || this.state.lastUndoRedo !== nextState.lastUndoRedo
       || this.state.isPlaying !== nextState.isPlaying
       || this.state.consoleMessages !== nextState.consoleMessages
+      || this.state.astReady !== nextState.astReady
+      || this.state.lastAnalysisAtCursor !== nextState.lastAnalysisAtCursor
   }
 
   codemirrorValueChanged(doc, change) {
@@ -1603,7 +1626,7 @@ export default class EditCode extends React.Component {
 
   _consoleAdd(data) {
     // Using immutability helpers as described on https://facebook.github.io/react/docs/update.html
-    let newMessages = update(this.state.consoleMessages, {$push: [data]}).slice(-SpecialGlobals.editCode.messagesInConsole)
+    let newMessages = reactUpdate(this.state.consoleMessages, {$push: [data]}).slice(-SpecialGlobals.editCode.messagesInConsole)
     this.setState({consoleMessages: newMessages})
     // todo -  all the fancy stuff in https://github.com/WebKit/webkit/blob/master/Source/WebInspectorUI/UserInterface/Views/ConsoleMessageView.js
   }
@@ -2221,6 +2244,17 @@ export default class EditCode extends React.Component {
     }
     else    // code...
     {
+      config.buttons.unshift({ name: 'separator' })
+      config.buttons.unshift( {
+        name:  'toggleHotReload',
+        label: 'Automatically reload game screen',
+        icon:  'refresh' + `${this.tools && this.mgb_c2_hasChanged ? ' red' : ''} ${!this.state.astReady ? ' animate rotate' : ''}`,
+        tooltip: (!this.state.astReady ? "Loading all required files...\n" : '') + 'Automatically reloads game screen when one of the imported scripts changes',
+        disabled: false,
+        active: this.props.asset.content2.hotReload,
+        level:    3,
+        shortcut: 'Ctrl+Alt+Shift+R'
+      })
       config.buttons.unshift( {
         name:     'handleStop',
         label:    'Stop Running',
@@ -2262,22 +2296,13 @@ export default class EditCode extends React.Component {
         name:  'toggleBundling',
         label: 'Auto Bundle code',
         icon:  'travel',
-        tooltip: 'Before saving will merge all imports into single file',
+        tooltip: 'Automatically merge all imports into single file when saving. This is useful for the top-level file for a program which is made of multiple files',
         disabled: false,
         active: this.props.asset.content2.needsBundle,
         level:    3,
         shortcut: 'Ctrl+Alt+Shift+B'
       })
-      config.buttons.push( {
-        name:  'toggleHotReload',
-        label: 'Automatically reload game screen',
-        icon:  'refresh' + `${this.tools && this.mgb_c2_hasChanged ? ' red' : ''} ${!this.state.astReady ? ' animate rotate' : ''}`,
-        tooltip: (!this.state.astReady ? "Loading all required files...\n" : '') + 'Automatically reloads game screen when one of the imported scripts changes',
-        disabled: false,
-        active: this.props.asset.content2.hotReload,
-        level:    3,
-        shortcut: 'Ctrl+Alt+Shift+R'
-      })
+
     }
     return config
   }
@@ -2325,7 +2350,7 @@ export default class EditCode extends React.Component {
   tryTutorial() {
     if (!this._currentCodemirrorValue)
       return
-      
+
     const pj = TutorialMentor.parseJson(this._currentCodemirrorValue)
 
     if (pj.errorHintString)
@@ -2360,7 +2385,7 @@ export default class EditCode extends React.Component {
     return `import ${validJSName(val)} from '/${user ? user + ':' : ''}${val}'\n`
   }
 
-  includeLocalImport(val){
+  includeLocalImport = val => {
     if (!this.props.canEdit)
     {
       this.warnNoWriteAccess()
@@ -2369,10 +2394,10 @@ export default class EditCode extends React.Component {
     const imp = this.createImportString(val) + this.codeMirror.getValue()
 
     this.codeMirror.setValue(imp)
-    this.handleContentChange({src: imp})
+    this.handleContentChange( { src: imp } )
   }
 
-  includeExternalImport(val){
+  includeExternalImport = val => {
     if (!this.props.canEdit)
     {
       this.warnNoWriteAccess()
@@ -2381,7 +2406,7 @@ export default class EditCode extends React.Component {
     const imp = `import ${val.name} from '${val.import}'\n` + this.codeMirror.getValue()
 
     this.codeMirror.setValue(imp)
-    this.handleContentChange({src: imp})
+    this.handleContentChange( { src: imp } )
   }
 
   // TODO: add some sort of message to highlighted lines????
@@ -2617,6 +2642,8 @@ export default class EditCode extends React.Component {
         isCodeTutorial = true
     }
 
+    const knownImports = this.tools ? this.tools.collectAvailableImportsForFile(asset.name) : []
+
     return (
       <div className="ui grid">
         { this.state.creatingBundle && <div className="loading-notification">Bundling source code...</div> }
@@ -2732,13 +2759,6 @@ export default class EditCode extends React.Component {
                     getNextToken={cb => this.getNextToken(cb)}
                     comment={this.state.comment}
                     />
-                  { this.state.astReady && this.props.canEdit &&
-                  <ImportHelperPanel
-                    scripts={this.state.userScripts}
-                    includeLocalImport={this.includeLocalImport}
-                    includeExternalImport={this.includeExternalImport}
-                    knownImports={this.tools.collectAvailableImportsForFile(this.props.asset.name)}
-                    /> }
                   <FunctionDescription
                     functionHelp={this.state.functionHelp}
                     functionArgPos={this.state.functionArgPos}
@@ -2781,21 +2801,31 @@ export default class EditCode extends React.Component {
               { docEmpty && !asset.isCompleted && !isCodeTutorial && !isChallenge &&
                 <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />
               }
-              { docEmpty && this.state.astReady && !asset.isCompleted &&
-                // Quick import for empty doc
+              { /* Import Assistant HEADER */ }
               <div className="title">
-                    <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
-                      <i className='dropdown icon' />Quick Module Import
-                    </span>
+                <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
+                  <Icon name='dropdown' />Import Assistant
+                  <span style={{float:'right'}}>
+                    { ( this.tools && ( this.mgb_c2_hasChanged || !this.state.astReady) ) &&
+                      <Icon
+                          name='refresh'
+                          size='small'
+                          color={this.mgb_c2_hasChanged ? 'orange' : null}
+                          loading={this.state.astReady}
+                          />
+                    }
+                    <ImportAssistantHeader knownImports={knownImports} />
+                  </span>
+                </span>
               </div>
-              }
-              { docEmpty && this.state.astReady && this.props.canEdit &&
+
+              { this.state.astReady &&
               <div className="content">
                 <ImportHelperPanel
                   scripts={this.state.userScripts}
                   includeLocalImport={this.includeLocalImport}
                   includeExternalImport={this.includeExternalImport}
-                  knownImports={this.tools.collectAvailableImportsForFile(this.props.asset.name)}
+                  knownImports={knownImports}
                   />
                 </div>
                 }
@@ -2865,7 +2895,7 @@ export default class EditCode extends React.Component {
               { this.state.astReady && asset.kind === 'code' &&
                 <div id="mgbjr-EditCode-codeFlower" className="title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap'}} >
-                    <i className='dropdown icon' />CodeFlower
+                    <i className='dropdown icon' />Code Flower
                   </span>
                 </div>
               }

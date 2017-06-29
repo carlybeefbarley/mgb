@@ -22,8 +22,11 @@ export default class DropArea extends React.Component {
     ids: PropTypes.object, // map with [value] = asset._id - to track renamed assets
     asset: PropTypes.object, // Asset assigned to this dropArea
     onChange: PropTypes.function, // callback
-    text: PropTypes.string // alternative text to display
- }
+    text: PropTypes.strings, // alternative text to display
+    isModalView: PropTypes.bool
+    
+  }
+  
   static subscriptions = {} // key = owner:name / value subscription
   get data() {
     return this.props.value
@@ -232,8 +235,27 @@ export default class DropArea extends React.Component {
     )
   }
 
+  renderModalView() {
+    const asset = this.state.asset || this.getAsset() || this.state.badAsset
+    if (!asset)
+      return
+
+    const frame = this.getFrame(this.props.frame)
+    const imgLink = frame === 0 ? Thumbnail.getLink(asset) : `/api/asset/png/${asset._id}?frame=${frame}`
+
+    return (
+      <div style={{verticalAlign: 'middle'}}>
+        <img className='mgb-pixelated' style={{maxHeight: "64px", float: 'left'}} src={imgLink}/>
+        <div style={{marginLeft: '10px', float: 'left'}}>{asset.name} {this.props.value && <i>({this.props.value})</i>}</div>
+      </div>
+    )
+  }
+
   render() {
     const asset = this.getAsset()
+  
+    if (this.props.isModalView)
+      return this.renderModalView()
 
     return (
       <div

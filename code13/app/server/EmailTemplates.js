@@ -36,4 +36,20 @@ Accounts.emailTemplates.resetPassword.html = function (user, url) {
         </mj-body>
       </mjml>
     `).html
-};
+}
+
+Accounts.emailTemplates.verifyEmail.html = function(user, url) {
+  return mjml2html(`
+    <mjml>
+      <mj-body>
+        <mj-container background-color="#f8f3ea">
+          <mj-section background-color="#fff">
+            <mj-column width="100%">
+              <mj-text>Thank you for your registration. Please <a href="' + url + '">verify your e-mail</a>!</mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-container>
+      </mj-body>
+    </mjml>
+  `).html
+}

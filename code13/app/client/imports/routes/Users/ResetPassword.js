@@ -35,7 +35,14 @@ export default ResetPasswordRoute = React.createClass({
 
       return (
         <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
-          <Form.Input label='Enter your new password' name='password' placeholder='Password' type='password'  error={!!errors.password} />
+          <Form.Input
+            label='Enter your new password'
+            name='password'
+            placeholder='Password'
+            onChange={this.handlePasswordChange}
+            type='password'
+            error={!!errors.password}
+          />
           <ErrMsg text={errors.password} />
           <ErrMsg text={errors.result} />
           <Form.Button>Submit</Form.Button>
@@ -45,7 +52,7 @@ export default ResetPasswordRoute = React.createClass({
 
     return (
       <Container text>
-      <br></br>
+        <br></br>
         <Segment padded>
           <Header as='h2'>Reset your password</Header>
           { innerRender() }
@@ -54,9 +61,12 @@ export default ResetPasswordRoute = React.createClass({
     )
   },
 
-  handleSubmit: function(event, formData) {
-    event.preventDefault()
-    const { password } = formData.formData  // formData.formData as of SUIR v0.62.x.. See https://github.com/Semantic-Org/Semantic-UI-React/pull/951
+  handlePasswordChange: function(e, { value }) {
+    this.setState( (prevState, props) => ({ password: value }) )
+  },
+
+  handleSubmit: function(event) {
+    const { password } = this.state
 
     const why = validate.passwordWithReason(password)
     this.setState( { errors: why ? { password: why } : {} } )
@@ -65,11 +75,11 @@ export default ResetPasswordRoute = React.createClass({
 
     this.setState( { isLoading: true } )
     Accounts.resetPassword(this.props.params.token, password, error => {
-      if (error) 
+      if (error)
         this.setState( { isLoading: false, errors: { result: error.reason  || 'Server Error while resetting password for account' } } )
-      else 
+      else
       {
-        // This is going to cause an auto-login to happen very quickly, and that will also regenerate this React control, so we 
+        // This is going to cause an auto-login to happen very quickly, and that will also regenerate this React control, so we
         // Have to do some strange stuff now
         showToast("Password reset was successful", 'success')
         utilPushTo(this.context.urlLocation.query, "/")

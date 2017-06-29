@@ -42,14 +42,14 @@ const ImageShowOrChange = ( { imageSrc, canEdit, canLinkToSrc, handleChange, hea
       size='small'
       inverted
       mouseEnterDelay={500}
-      positioning='bottom left'
+      position='bottom center'
       trigger={innerImg} >
       <Popup.Header>
         { header }
       </Popup.Header>
       <Popup.Content>
         { canEdit ?
-          <span>Drag an MGB Graphic Asset here to change the chosen image. </span>
+          <span>You can set this image by dragging an MGB Graphic Asset from the 'Assets panel' to here. </span>
           :
           <span>You do not have permission to change this. </span>
         }

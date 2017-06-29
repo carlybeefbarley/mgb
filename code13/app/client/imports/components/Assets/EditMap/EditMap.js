@@ -52,6 +52,7 @@ import ObjectList from '../Common/Map/Tools/ObjectList.js'
 
 import LayerTool from './Tools/Layers.js'
 import Properties from './Tools/Properties.js'
+import MapProperties from './Tools/MapProperties.js'
 
 import Cache from '../Common/Map/Helpers/TileCache.js'
 import EditModes from '../Common/Map/Tools/EditModes.js'
@@ -110,6 +111,8 @@ export default class EditMap extends React.Component {
     else{
       this.createNewMap()
     }
+
+    this.saveMeta = _.debounce(() => this._saveMeta(), 1000, {leading: false, trailing: true})
   }
 
   get preventUpdates(){
@@ -117,9 +120,8 @@ export default class EditMap extends React.Component {
   }
   set preventUpdates(v){
     this._preventUpdates = v
-    /*console.error(v ? "Preventing updates: STARTED" : "Preventing updates: STOPPED")
-    // failsafe
 
+    /*
     window.setTimeout(() => {
       // not sure how to debug this...
       if(this._preventUpdates) {
@@ -191,10 +193,14 @@ export default class EditMap extends React.Component {
   }
 
   get meta() {
-    // make sure we have options object - older maps don't have it
-    if(!this.mgb_content2.meta || !this.mgb_content2.meta.options){
-      this.mgb_content2.meta = {
-        options: {
+
+    if(!this.props.asset.metadata.options){
+      // try old version:
+      this.props.asset.metadata.options = this.mgb_content2.meta
+
+      // store new version
+      if(!this.props.asset.metadata.options){
+        this.props.asset.metadata.options = {
           // empty maps aren't visible without grid
           showGrid: 1,
           camera: { _x: 0, _y: 0, _zoom: 1 },
@@ -203,8 +209,21 @@ export default class EditMap extends React.Component {
           randomMode: false
         }
       }
+      if(this.props.asset.metadata.options.options){
+        this.props.asset.metadata.options = this.props.asset.metadata.options.options
+      }
+      // TODO: uncomment this in the next deployment - otherwise local maps and staging / v2 maps will conflict
+      // delete this.mgb_content2.meta
     }
-    return this.mgb_content2.meta
+
+    // Store once and do NOT update on remote changes -
+    if(!this.mgb_meta){
+      this.mgb_meta = this.props.asset.metadata
+    }
+
+    return this.mgb_meta
+
+    // return this.mgb_content2.meta
   }
   get options() {
     return this.meta.options
@@ -346,6 +365,7 @@ export default class EditMap extends React.Component {
     // probably state should hold only props.options ?
     this.options.mode = mode
     this.setState({editMode: mode})
+    this.saveMeta()
   }
 
   handleSave (data, reason, thumbnail, skipUndo = false) {
@@ -360,10 +380,6 @@ export default class EditMap extends React.Component {
       this.setState({lastUpdated: Date.now()})
       return
     }
-    // isn't it too late to save for undo?
-    /*if(!skipUndo && !_.isEqual(this.lastSave, data)){
-      this.saveForUndo(reason)
-    }*/
     // make sure we have thumbnail
     if(!thumbnail && this.refs.map)
       this.refs.map.generatePreviewAndSaveIt(data, reason)
@@ -371,20 +387,29 @@ export default class EditMap extends React.Component {
       this.props.handleContentChange(data, thumbnail, reason)
 
     this.setState({lastUpdated: Date.now()})
+    this.saveMeta()
   }
 
   quickSave(reason = "noReason", skipUndo = true, thumbnail = null){
     return this.handleSave(this.mgb_content2, reason, thumbnail, skipUndo)
   }
 
+  _saveMeta(){
+    if(this.props.canEdit)
+      this.props.handleMetadataChange(this.mgb_meta)
+  }
   // probably copy of data would be better to hold .. or not research strings vs objects
   // TODO(stauzs): research memory usage - strings vs JS objects
   copyData = (data) => {
     return JSON.stringify(data)
   }
 
+  showLoading(elm){
+    if(elm)
+      setTimeout(() => elm.classList.add("show"), 5)
+  }
   renderLoading () {
-    return <div className="loading-notification">Working in background...</div>
+    return <div ref={this.showLoading} className="loading-notification" >Working in background...</div>
   }
 
   render () {
@@ -410,21 +435,26 @@ export default class EditMap extends React.Component {
             addLayer={this.layerProps.addLayer}
             cache={this.cache}
             activeLayer={this.state.activeLayer}
-            highlightActiveLayer={c2.meta.highlightActiveLayer}
+            highlightActiveLayer={this.options.highlightActiveLayer}
             canEdit={this.props.canEdit}
             options={this.options}
             data={c2}
 
             ref='map' />
         </div>
-        <div className='six wide column'>
+        <div className='six wide column' style={/* scroll only side panel */{position: 'absolute', right: 0, top: 0, bottom: 0, overflow: 'auto'}}>
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}
-            options={c2.meta}
+            options={this.options}
             activeLayer={this.state.activeLayer}
+          >
+            <MapProperties
+              {...this.propertiesProps}
+              getActiveObject={() => null}
+              layer={c2.layers[this.state.activeLayer]}
             />
-          <br />
+          </LayerTool>
 
           <TileSet
             {...this.tilesetProps}
@@ -432,11 +462,17 @@ export default class EditMap extends React.Component {
             activeTileset={this.state.activeTileset}
             tilesets={c2.tilesets}
             options={this.options}
+          >
+            <MapProperties
+              {...this.propertiesProps}
+              getActiveObject={() => null}
+              tileset={c2.tilesets[this.state.activeTileset]}
             />
-          <br />
-          <Properties
+          </TileSet>
+
+
+          <MapProperties
             {...this.propertiesProps}
-            data={this.mgb_content2}
 
             map={{
               width: c2.width,
@@ -444,10 +480,21 @@ export default class EditMap extends React.Component {
               tilewidth: c2.tilewidth,
               tileheight: c2.tileheight
             }}
-            tileset={c2.tilesets[this.state.activeTileset]}
-            layer={c2.layers[this.state.activeLayer]}
-            />
-          <br />
+          />
+
+          {/*<Properties*/}
+            {/*{...this.propertiesProps}*/}
+            {/*data={this.mgb_content2}*/}
+
+            {/*map={{*/}
+              {/*width: c2.width,*/}
+              {/*height: c2.height,*/}
+              {/*tilewidth: c2.tilewidth,*/}
+              {/*tileheight: c2.tileheight*/}
+            {/*}}*/}
+            {/*tileset={c2.tilesets[this.state.activeTileset]}*/}
+            {/*layer={c2.layers[this.state.activeLayer]}*/}
+            {/*/>*/}
           <ObjectList
             {...this.objectListProps}
             activeObject={this.state.activeObject}

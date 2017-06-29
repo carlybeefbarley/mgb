@@ -61,7 +61,7 @@ export default class Properties extends React.Component {
       }
     }
 
-    var p = o.mgb_properties;
+    const p = o.mgb_properties;
     for (let i = 0; i < p.length; i++) {
       o.properties[p[i].name] = p[i].value
     }
@@ -232,11 +232,13 @@ export default class Properties extends React.Component {
             content: {
               width: {
                 _type: Otito.type.number,
-                head: 'Width in tiles'
+                head: 'Width in tiles',
+                needsConfirmation: true,
               },
               height: {
                 _type: Otito.type.number,
-                head: 'Height in tiles'
+                head: 'Height in tiles',
+                needsConfirmation: true,
               }
             }
           },
@@ -247,11 +249,13 @@ export default class Properties extends React.Component {
             content: {
               x: {
                 _type: Otito.type.number,
-                head: 'Horzontal offset'
+                head: 'Horzontal offset',
+                needsConfirmation: true,
               },
               y: {
                 _type: Otito.type.number,
-                head: 'Vertical offset'
+                head: 'Vertical offset',
+                needsConfirmation: true,
               }
             }
           }
@@ -281,26 +285,24 @@ export default class Properties extends React.Component {
                 _type: Otito.type.int,
                 head: 'Tile width',
                 min: 1,
-                // return false to discard new value
-                onchange: function (input, otito) {
-                  if (!input.value) {
-                    return false
-                  }
-                }
+                needsConfirmation: true
               },
               tileheight: {
                 _type: Otito.type.int,
                 head: 'Tile height',
-                min: 1
+                min: 1,
+                needsConfirmation: true
               },
               margin: {
                 _type: Otito.type.int,
                 head: 'Margin',
+                needsConfirmation: true,
                 min: 0
               },
               spacing: {
                 _type: Otito.type.int,
                 head: 'Spacing',
+                needsConfirmation: true,
                 min: 0
               }
             }

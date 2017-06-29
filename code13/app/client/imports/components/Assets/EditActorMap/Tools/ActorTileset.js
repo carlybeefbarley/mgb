@@ -13,7 +13,7 @@ import QLink from '/client/imports/routes/QLink'
 const _tilesetHintText = 'Drag & Drop Actor assets here so they can be used on Map'
 const TilesetDropHintMsg = () => (
   <span>
-    <QLink style={{cursor: 'pointer'}} query={{ _fp: 'assets' }} >Drag</QLink> &amp; Drop Actor assets here so they can be used on Map
+    <QLink style={{cursor: 'pointer'}} query={{ _fp: 'assets' }} >Drag</QLink> &amp; drop Actors here so they may be used on your ActorMap
   </span>
 )
 
@@ -222,7 +222,7 @@ export default class ActorTileset extends React.Component {
       <Segment id="mgbjr-MapTools-actors" style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
         <Label attached='top'>
           { isEventLayer ? 'Actors' : `${layerName} Actors`}
-          { !isEventLayer && 
+          { !isEventLayer &&
             <Icon
                 size='large'
                 name='trash'
@@ -255,7 +255,7 @@ export default class ActorTileset extends React.Component {
                 inverted
                 trigger={<small>{numActorsthisLayer} of your {numActorsTotal} dragged-in Actors are compatible with this layer.</small>}
                 header={`Actors list for '${layerName}' layer`}
-                positioning='left center'
+                position='left center'
                 content="This box only displays Actors who have behavior types that work on the currently selected layer. For example, a 'player' Actor can only be used on the Active layer. Select a different layer above to see other actors."
                 />
             </div>

@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillCountsLabel from '/client/imports/components/Skills/SkillCountsLabel'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-import { Progress, Icon } from 'semantic-ui-react'
+import { Button, Divider, Header, Progress } from 'semantic-ui-react'
 import { stopCurrentTutorial } from '/client/imports/routes/App'
 import QLink from "/client/imports/routes/QLink"
 import { StartDefaultNextTutorial } from '/client/imports/routes/Learn/LearnGetStartedRoute'
@@ -23,7 +23,7 @@ const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurren
       </div>
       <div className="extra content">
         <Progress size='small' color='green' percent={Math.round((100*(1+joyrideCurrentStepNum)) / (joyrideSteps.length) )} style={{marginBottom: '0.256em'}} />
-        { joyrideOriginatingAssetId && 
+        { joyrideOriginatingAssetId &&
           <QLink to={`/u/${joyrideOriginatingAssetId.ownerName}/asset/${joyrideOriginatingAssetId.id}`} style={{float: 'left'}} >Edit Tutorial</QLink>
         }
         <a style={{float: 'right'}} onClick={stopCurrentTutorial}>Stop Tutorial</a>
@@ -59,25 +59,24 @@ export default fpGoals = React.createClass({
 
     return (
       <div>
-        <h3 style={{marginTop: 0, marginBottom: 20}}>
+        <Header as='h3'>
           {area.mascotName}'s Quests
           <SkillCountsLabel skills={skills} />
-        </h3>
-        <p style={{fontSize: '1.25em'}}>
-          <img src={UX.makeMascotImgLink('bigguy')} style={{maxWidth: '70px', float: 'left'}} />
-          <span style={{position: 'relative', top: 0}}>Your Learning quests</span>
+        </Header>
+        <p style={{ overflow: 'hidden' }}>
+          <img src={UX.makeMascotImgLink('bigguy')} style={{ maxWidth: '70px', float: 'left' }} />
+          Your Learning quests
         </p>
-        { (!joyrideSteps || joyrideSteps.length === 0) && 
+        { (!joyrideSteps || joyrideSteps.length === 0) &&
           <StartDefaultNextTutorial currUser={currUser} userSkills={skills}  />
         }
-        <JoyrideSummary 
-            joyrideSteps={joyrideSteps} 
+        <JoyrideSummary
+            joyrideSteps={joyrideSteps}
             joyrideSkillPathTutorial={joyrideSkillPathTutorial}
             joyrideCurrentStepNum={joyrideCurrentStepNum}
             joyrideOriginatingAssetId={joyrideOriginatingAssetId} />
-        <QLink to='/learn'>
-          <button className="ui button large fluid"><Icon name='refresh' />Get more tasks</button>
-        </QLink>
+        <Divider hidden clearing />
+        <Button as={QLink} to='/learn' size="large" fluid icon='refresh' content='Get more tasks' />
       </div>
     )
   }

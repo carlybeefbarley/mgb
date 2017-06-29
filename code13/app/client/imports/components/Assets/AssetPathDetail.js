@@ -20,7 +20,7 @@ const SaveStatus = ( { lastUpdated, isUnconfirmedSave, hasUnsentSaves } ) => {
     <Popup
         size='tiny'
         inverted
-        positioning='bottom left'
+        position='bottom left'
         trigger={<small style={{ color: 'grey' }} id={!hasUnsentSaves && !isUnconfirmedSave ? 'mgbjr-changes-saved' : 'mgbjr-saving-changes'}>{msg[0]}</small>} >
       <Popup.Header>
         {msg[1]}
@@ -44,7 +44,7 @@ const AssetKindExplainer = ( { kind, ownerName } ) => {
     )}
     size='tiny'
     inverted
-    positioning='bottom left'
+    position='bottom left'
     header={`This is a '${ak.name}' Asset`}
     content={ak.description} />
   )

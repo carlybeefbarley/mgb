@@ -70,7 +70,7 @@ export default class MapArea extends React.Component {
     this.selection = new TileCollection()
     this.tmpSelection = new TileCollection()
 
-    this.camera = new Camera(this)
+    this.camera = new Camera(this, this.props.updateCameraPos)
     this.initialZoom = this.camera.zoom
 
 
@@ -90,7 +90,9 @@ export default class MapArea extends React.Component {
     this.globalKeyUp = (...args) => {
       this.handleKeyUp(...args)
     }
-
+    this.globalKeyDown = (...args) => {
+      this.handleKeyDown(...args)
+    }
     // prevent IE scrolling thingy
     this.globalIEScroll = (e) => {
       if (e.buttons == MOUSE_BUTTONS.middle) {
@@ -107,7 +109,7 @@ export default class MapArea extends React.Component {
   }
 
   get options(){
-    return this.props.data.meta.options
+    return this.props.options
   }
 
   get palette() {
@@ -142,6 +144,7 @@ export default class MapArea extends React.Component {
 
     window.addEventListener('resize', this.globalResize, false)
     window.addEventListener('keyup', this.globalKeyUp, false)
+    window.addEventListener('keydown', this.globalKeyDown, false)
 
     this.touchMovePrevent = function(e){
       e.preventDefault()
@@ -166,6 +169,7 @@ export default class MapArea extends React.Component {
     window.removeEventListener('pointerup', this.globalMouseUp)
     window.removeEventListener('resize', this.globalResize)
     window.removeEventListener('keyup', this.globalKeyUp)
+    window.removeEventListener('keydown', this.globalKeyDown)
 
     this.refs.mapElement && this.refs.mapElement.removeEventListener("touchmove", this.touchMovePrevent )
     document.body.removeEventListener('mousedown', this.globalIEScroll)
@@ -185,7 +189,7 @@ export default class MapArea extends React.Component {
     if(this.props.activeLayer !== newprops.activeLayer){
       this.activateLayer(newprops.activeLayer)
     }
-    if(this.props.data.meta.options.preview !== newprops.data.meta.options.preview){
+    if(this.props.options.preview !== newprops.options.preview){
       this.adjustPreview()
     }
   }
@@ -692,32 +696,55 @@ export default class MapArea extends React.Component {
     this.props.updateScale(this.camera.zoom)
   }
 
+  handleKeyDown(e) {
+    if (this.props.isPlaying)
+      return
+
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')
+      return
+
+    let needUpdate = false
+    switch (e.which) {
+      case 37: // left
+        this.camera.x += this.data.tilewidth * this.camera.zoom
+        needUpdate = true
+        e.stopPropagation()
+        e.preventDefault()
+        break
+      case 38: // top
+        this.camera.y += this.data.tileheight * this.camera.zoom
+        needUpdate = true
+        e.stopPropagation()
+        e.preventDefault()
+        break
+      case 39: // right
+        this.camera.x -= this.data.tilewidth * this.camera.zoom
+        needUpdate = true
+        e.stopPropagation()
+        e.preventDefault()
+        break
+      case 40: // down
+        this.camera.y -= this.data.tileheight * this.camera.zoom
+        needUpdate = true
+        e.stopPropagation()
+        e.preventDefault()
+        break
+    }
+
+    if(needUpdate)
+      this.redraw()
+  }
   handleKeyUp (e) {
     if (this.props.isPlaying)
       return
 
     let update = false
     // don't steal events from inputs
-    if (e.target.tagName == 'INPUT')
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')
       return
 
+    // leave switch - as we may add more keys later
     switch (e.which) {
-      case 37: // left
-        this.camera.x += this.data.tilewidth * this.camera.zoom
-        update = true
-        break
-      case 38: // top
-        this.camera.y += this.data.tileheight * this.camera.zoom
-        update = true
-        break
-      case 39: // right
-        this.camera.x -= this.data.tilewidth * this.camera.zoom
-        update = true
-        break
-      case 40: // down
-        this.camera.y -= this.data.tileheight * this.camera.zoom
-        update = true
-        break
       case 13: // enter
         this.selectionToCollection()
         this.selection.clear()

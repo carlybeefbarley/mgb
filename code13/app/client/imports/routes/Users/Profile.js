@@ -94,7 +94,7 @@ export default UserProfileRoute = React.createClass({
 
   render: function() {
     const { user, ownsProfile, currUser, params } = this.props
-    if (!user) 
+    if (!user)
       return <ThingNotFound type='User' id={params.username} />
 
     return (
@@ -111,7 +111,7 @@ export default UserProfileRoute = React.createClass({
           { this.renderUserInfo(user, ownsProfile, 8) }
 
           { /* User History ("Activity") */ }
-          <UserHistory user={user} width={8}/>     
+          <UserHistory user={user} width={8}/>
 
           { /* User Badges */ }
           <UserProfileBadgeList user={user} className="sixteen wide column" />
@@ -129,11 +129,11 @@ export default UserProfileRoute = React.createClass({
           }
           { /* Users who currUser is projects with -owned and not owned use pubsub */ }
           <UserColleaguesList user={user} narrowItem={true} projects={this.data.projects} />
-    
+
           { /* User Projects */ }
           <UserProjects user={user} width={16} projects={this.data.projects} />
 
-          
+
           { /* User Skills */ }
           <Grid.Column width={16} id="mgbjr-profile-skills">
             <Header as='h2'>
@@ -156,120 +156,114 @@ export default UserProfileRoute = React.createClass({
 
     const firstMgb1name = (mgb1name && mgb1name.length>0 ) ? mgb1name.split(',')[0] : null
     return (
-      <Grid.Column width={width} id="mgbjr-profile-bioDiv">
+      <Grid.Column width={width} id="mgbjr-profile-bioDiv" style={{textAlign: 'center'}}>
         <Segment>
-          <Item.Group>
-            <Item>
-              <ImageShowOrChange
-                id='mgbjr-profile-avatar'
-                maxWidth="150px"
-                imageSrc={avatar}
-                header='User Avatar'
-                canEdit={ownsProfile}
-                canLinkToSrc={true}
-                handleChange={(newUrl) => this.handleProfileFieldChanged( { "profile.avatar": newUrl }) } />
+          <ImageShowOrChange
+            id='mgbjr-profile-avatar'
+            maxHeight="6em"
+            maxWidth='auto'
+            imageSrc={avatar}
+            header='User Avatar'
+            canEdit={ownsProfile}
+            canLinkToSrc={true}
+            handleChange={(newUrl) => this.handleProfileFieldChanged( { "profile.avatar": newUrl }) } />
 
-              <Item.Content style={{marginLeft: '8px'}}>
 
-                <Item.Header size='large' content={name} />
-                { user.suIsBanned &&
-                  <div><Label size='small' color='red' content='Suspended Account' /></div>
+            <Header style={{marginTop: 0, marginBottom: '8px'}} size='large' content={name} />
+            { user.suIsBanned &&
+              <div><Label size='small' color='red' content='Suspended Account' /></div>
+            }
+            { user.isDeactivated &&
+              <div><Label size='small' color='purple' content='Deactivated Account' /></div>
+            }
+              <div title="User's 'title'">
+                <Icon name='left quote' color='blue' />
+                <InlineEdit
+                  id='mgbjr-profile-userTitle-edit'
+                  validate={validate.userTitle}
+                  activeClassName="editing"
+                  placeholder='(no title)'
+                  text={title || ""}
+                  paramName="profile.title"
+                  change={this.handleProfileFieldChanged}
+                  isDisabled={editsDisabled} />
+                <Icon name='right quote' color='blue' />
+              </div>
+
+              <p>
+                <UX.UserWhenJoined as='small' when={user.createdAt}/>
+              </p>
+
+              <p>
+                <b title="About yourself">Bio:</b>&nbsp;
+                <InlineEdit
+                  id='mgbjr-profile-userBio-edit'
+                  validate={validate.userBio}
+                  activeClassName="editing"
+                  placeholder='(no description)'
+                  text={bio || ""}
+                  paramName="profile.bio"
+                  change={this.handleProfileFieldChanged}
+                  isDisabled={editsDisabled}
+                  />
+              </p>
+              <p>
+                <b title="What you are working on right now. This will also show in the top bar as a reminder!">Focus:</b>&nbsp;
+                <InlineEdit
+                  id='mgbjr-profile-focusMsg-edit'
+                  validate={validate.userFocusMsg}
+                  activeClassName="editing"
+                  placeholder='(no current focus)'
+                  text={focusMsg || ""}
+                  paramName="profile.focusMsg"
+                  change={this.handleProfileFieldChanged}
+                  isDisabled={editsDisabled}
+                  />
+              </p>
+
+              <p>
+                <b title="This is the user's name on the prior flash-based MGBv1 system. ">
+                  MGB1 name:
+                </b>
+                &nbsp;
+                <InlineEdit
+                  id='mgbjr-profile-mgb1name-edit'
+                  validate={validate.mgb1name}
+                  activeClassName="editing"
+                  placeholder='(not provided)'
+                  text={mgb1name || ""}
+                  paramName="profile.mgb1name"
+                  change={this.handleProfileFieldChanged}
+                  isDisabled={editsDisabled}
+                  />
+                &nbsp;
+
+                { _.isString(mgb1name) && mgb1name.length > 0 &&
+                  <Popup
+                    on='hover'
+                    hoverable
+                    position='bottom right'
+                    trigger={<img className="ui avatar image" src={mgb1.getUserAvatarUrl(firstMgb1name)} />}
+                    mouseEnterDelay={500}
+                    >
+                    <Popup.Header>
+                      Legacy 'MGBv1' account
+                    </Popup.Header>
+                    <Popup.Content>
+                      <div>Prior account in the legacy Flash-based 'MGB1' system from 2007:</div>
+                      <br/>
+                      <a className="mini image"  href={mgb1.getEditPageUrl(firstMgb1name)} target="_blank">
+                        <img
+                          className="ui centered image bordered"
+                          style={{ maxWidth: "64px", maxHeight: "64px" }}
+                          src={mgb1.getUserAvatarUrl(firstMgb1name)} />
+                      </a>
+                      <br/>
+                      <QLink to={`/u/${user.username}/projects/import/mgb1`}>MGBv1 Project Importer...</QLink>
+                    </Popup.Content>
+                  </Popup>
                 }
-                { user.isDeactivated &&
-                  <div><Label size='small' color='purple' content='Deactivated Account' /></div>
-                }
-                <Item.Meta>
-                  <div title="User's 'title'">
-                    <Icon name='left quote' color='blue' />
-                    <InlineEdit
-                      id='mgbjr-profile-userTitle-edit'
-                      validate={validate.userTitle}
-                      activeClassName="editing"
-                      placeholder='(no title)'
-                      text={title || ""}
-                      paramName="profile.title"
-                      change={this.handleProfileFieldChanged}
-                      isDisabled={editsDisabled} />
-                    <Icon name='right quote' color='blue' />
-                  </div>
-
-                  <p>
-                    <UX.UserWhenJoined as='small' when={user.createdAt}/>
-                  </p>
-
-                  <p>
-                    <b title="About yourself">Bio:</b>&nbsp;
-                    <InlineEdit
-                      id='mgbjr-profile-userBio-edit'
-                      validate={validate.userBio}
-                      activeClassName="editing"
-                      placeholder='(no description)'
-                      text={bio || ""}
-                      paramName="profile.bio"
-                      change={this.handleProfileFieldChanged}
-                      isDisabled={editsDisabled}
-                      />
-                  </p>
-                  <p>
-                    <b title="What you are working on right now. This will also show in the top bar as a reminder!">Focus:</b>&nbsp;
-                    <InlineEdit
-                      id='mgbjr-profile-focusMsg-edit'
-                      validate={validate.userFocusMsg}
-                      activeClassName="editing"
-                      placeholder='(no current focus)'
-                      text={focusMsg || ""}
-                      paramName="profile.focusMsg"
-                      change={this.handleProfileFieldChanged}
-                      isDisabled={editsDisabled}
-                      />
-                  </p>                
-
-                  <p>
-                    <b title="This is the user's name on the prior flash-based MGBv1 system. ">
-                      MGB1 name:
-                    </b>&nbsp;
-                  <InlineEdit
-                    id='mgbjr-profile-mgb1name-edit'
-                    validate={validate.mgb1name}
-                    activeClassName="editing"
-                    placeholder='(not provided)'
-                    text={mgb1name || ""}
-                    paramName="profile.mgb1name"
-                    change={this.handleProfileFieldChanged}
-                    isDisabled={editsDisabled}
-                    />
-                    
-                    { _.isString(mgb1name) && mgb1name.length > 0 && 
-                      <Popup
-                        on='hover'
-                        hoverable
-                        positioning='bottom right'
-                        trigger={<img className="ui avatar image" src={mgb1.getUserAvatarUrl(firstMgb1name)} />}
-                        mouseEnterDelay={500}
-                        >
-                        <Popup.Header>
-                          Legacy 'MGBv1' account
-                        </Popup.Header>
-                        <Popup.Content>
-                          <div>Prior account in the legacy Flash-based 'MGB1' system from 2007:</div>
-                          <br/>
-                          <a className="mini image"  href={mgb1.getEditPageUrl(firstMgb1name)} target="_blank">
-                            <img  
-                              className="ui centered image bordered" 
-                              style={{ maxWidth: "64px", maxHeight: "64px" }}
-                              src={mgb1.getUserAvatarUrl(firstMgb1name)} />
-                          </a>
-                          <br/>
-                          <QLink to={`/u/${user.username}/projects/import/mgb1`}>MGBv1 Project Importer...</QLink>
-                        </Popup.Content>
-                      </Popup>
-                    }
-                  </p>
-
-                </Item.Meta>
-
-              </Item.Content>
-            </Item>
+              </p>
 
             <div style={{clear: 'both', right: 'auto', left: 'auto'}}>
               <QLink to={`/u/${name}/assets`} style={{marginBottom: '6px'}}>
@@ -285,7 +279,6 @@ export default UserProfileRoute = React.createClass({
                 <UX.Button2 basic icon='chat' content='Wall' />
               </QLink>
             </div>
-          </Item.Group>
         </Segment>
       </Grid.Column>
     )

@@ -152,7 +152,7 @@ export default AssetCard = React.createClass({
               <WorkState
               workState={asset.workState}
               size={viewOpts.showExtra ? null : 'small'}
-              canEdit={false} 
+              canEdit={false}
               />
             </span>}
 
@@ -161,7 +161,7 @@ export default AssetCard = React.createClass({
             <Popup
               hoverable
               mouseEnterDelay={500}
-              positioning='left center'
+              position='left center'
               trigger={
                 (
                   <div style={{ flexDirection: 'column' }}>

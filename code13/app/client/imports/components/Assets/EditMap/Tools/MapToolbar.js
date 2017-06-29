@@ -4,7 +4,7 @@ import React from 'react'
 import EditModes from '../../Common/Map/Tools/EditModes'
 import LayerTypes from '../../Common/Map/Tools/LayerTypes'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
-import CameraTools from './CameraTools'
+import CameraTools from '../../Common/Map/Tools/CameraTools'
 
 export default class MapToolbar extends React.Component {
 
@@ -120,7 +120,7 @@ export default class MapToolbar extends React.Component {
           tooltip: 'Random Mode - picks one tile from the selection',
           level: 11
         },
-        {
+        /*{
           name: 'terrain',
           icon: 'world terrain',
           active: this.props.options.mode === EditModes.terrain,
@@ -129,7 +129,7 @@ export default class MapToolbar extends React.Component {
           tooltip: 'Create advanced Terrains - not implemented :(',
           level: 26,
           shortcut: 'T'
-        },
+        },*/
         {
           name: 'fill',
           icon: 'theme fill',

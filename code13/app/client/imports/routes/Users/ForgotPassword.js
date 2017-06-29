@@ -30,7 +30,12 @@ export default ForgotPasswordRoute = React.createClass({
 
       return (
         <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
-          <Form.Input label='Enter your email to reset your password' name='email' placeholder='Email address' error={!!errors.email} type="email" />
+          <Form.Input
+            label='Enter your email to reset your password'
+            placeholder='Email address'
+            onChange={this.handleEmailChange}
+            error={!!errors.email} type="email"
+          />
           <ErrMsg text={errors.email} />
           <ErrMsg text={errors.result} />
           <Form.Button color='teal'>Request reset</Form.Button>
@@ -53,11 +58,12 @@ export default ForgotPasswordRoute = React.createClass({
     )
   },
 
-  handleSubmit: function(event, formData) {
-    // console.log(this.testTemplate())
+  handleEmailChange: function(e, { value }) {
+    this.setState( (prevState, props) => ({ email: value }) )
+  },
 
-    event.preventDefault()
-    const { email } = formData.formData  // formData.formData as of SUIR v0.62.x.. See https://github.com/Semantic-Org/Semantic-UI-React/pull/951
+  handleSubmit: function(event) {
+    const { email } = this.state
 
     const why = validate.emailWithReason(email)
     this.setState( { errors: why ? { password: why } : {} } )
@@ -68,7 +74,7 @@ export default ForgotPasswordRoute = React.createClass({
     Accounts.forgotPassword( { email }, error => {
       if (error)
         this.setState( { isLoading: false, errors: { result: error.reason || 'Server Error while requesting password-reset email for account' } } )
-      else 
+      else
         this.setState( { isLoading: false, errors: {}, isComplete: true } )
     })
   }

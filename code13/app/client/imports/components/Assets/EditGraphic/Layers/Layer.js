@@ -6,9 +6,9 @@ import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import sty from  '../editGraphic.css'
 
 const _layerCanvasStyle = {
-  maxWidth:  "256px", 
-  maxHeight: "256px", 
-  overflow:  "auto" 
+  maxWidth:  "256px",
+  maxHeight: "256px",
+  overflow:  "auto"
 }
 
 export default class Layer extends React.Component {
@@ -56,9 +56,10 @@ export default class Layer extends React.Component {
   selectLayer = event => {
     const clickedDiv = event.target
     // don't invoke select if remove layer
-    if (clickedDiv.className.search('remove') !== -1)
+    // INSANITY: this relies on the icon name class !!! watch out
+    if (clickedDiv.className.search('trash') !== -1)
       return
-    if (clickedDiv.firstChild && clickedDiv.firstChild.className && clickedDiv.firstChild.className.search('remove') !== -1)
+    if (clickedDiv.firstChild && clickedDiv.firstChild.className && clickedDiv.firstChild.className.search('trash') !== -1)
       return
 
     this.props.selectLayer(this.props.idx)
@@ -97,7 +98,7 @@ export default class Layer extends React.Component {
   }
 
   render() {
-    const { 
+    const {
       width, height,
       isSelected, selectedFrame, frameNames,
       layer, idx, layerCount, copyLayerID, isCanvasLayersVisible,
@@ -128,27 +129,27 @@ export default class Layer extends React.Component {
                 <Dropdown.Item
                   onClick={this.moveLayerDown}
                   disabled={layerCount-1 === idx}
-                  icon='arrow down' 
+                  icon='arrow down'
                   content='Move Down' />
                 <Dropdown.Divider />
                 <Dropdown.Item
                   onClick={this.editName}
-                  icon='edit' 
+                  icon='edit'
                   content='Rename' />
                 <Dropdown.Divider />
                 <Dropdown.Item
                   onClick={this.copyLayer}
-                  icon='copy' 
+                  icon='copy'
                   content='Copy' />
                 <Dropdown.Item
                   onClick={this.pasteLayer}
                   disabled={copyLayerID === null}
-                  icon='paste' 
+                  icon='paste'
                   content='Paste' />
                 <Dropdown.Divider />
                 <Dropdown.Item
                   onClick={this.deleteLayer}
-                  icon='remove' 
+                  icon='trash'
                   content='Delete' />
               </Dropdown.Menu>
             </Dropdown>
@@ -184,7 +185,10 @@ export default class Layer extends React.Component {
             </div>
           </td>
           <td>
-            <Icon onClick={this.deleteLayer} name='remove'/>
+            <Icon
+              onClick={this.deleteLayer}
+                  // INSANITY: this.selectLayer() relies on the icon name class !!! watch out
+              name='trash'/>
           </td>
       </tr>
     )

@@ -38,3 +38,10 @@ export function canUserEditAssetIfUnlocked(asset, projects, user) {
 export function isUserSuperAdmin(user) {
   return doesUserHaveRole(user, roleSuperAdmin)
 }
+
+export function isUserModerator(user) {
+  // For now, enable a specific API so we can start using this
+  // access check.
+  // TODO@dgolds implement a way to assign moderators
+  return isUserSuperAdmin(user, roleSuperAdmin)
+}

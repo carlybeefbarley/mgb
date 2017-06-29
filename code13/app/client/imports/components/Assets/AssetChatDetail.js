@@ -10,7 +10,7 @@ const _menuItemIndicatorStyle = {
 const AssetChatDetail = ( { hasUnreads, handleClick, style } ) => (
   <Popup
     size='small'
-    positioning='bottom right'
+    position='bottom right'
     trigger={(
       <Label 
         basic

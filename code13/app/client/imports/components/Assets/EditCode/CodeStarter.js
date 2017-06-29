@@ -16,7 +16,7 @@ const CodeStarter = ( { asset, handlePasteCode } ) => (
             <Popup 
                 key={item.label}
                 size='small'
-                positioning='left center'
+                position='left center'
                 trigger={(
                   <List.Item
                       style={{ textAlign: 'center' }}

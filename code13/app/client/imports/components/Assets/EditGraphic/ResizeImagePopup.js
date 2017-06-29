@@ -47,7 +47,7 @@ class ResizeImageDialog extends Component {
         on="hover"
         closeOnPortalMouseLeave={!makeSticky}
         closeOnTriggerMouseLeave={!makeSticky}
-        positioning="bottom left"
+        position="bottom left"
         trigger={
           (
             <Button

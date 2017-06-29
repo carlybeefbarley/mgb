@@ -31,6 +31,8 @@ import { createInitialUserAnalytics, uaNoteUserIp, uaNoteUsername } from '/serve
 import '/imports/schemas/badges'
 import '/imports/schemas/badges-server'
 
+import '/imports/schemas/flags'
+
 // Import rules and publications
 import '/imports/schemas/denyRules'
 import '/server/imports/publications'

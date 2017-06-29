@@ -4,6 +4,8 @@ import { GameItem } from '/client/imports/components/Assets/GameAsset/GameItems'
 import { Header, Divider, Message } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
+import FullScreenExitPosition from './FullScreenExitPosition.js'
+
 import './editGame.css'
 
 const _gameTypes = {
@@ -91,10 +93,23 @@ class EditGameForm extends BaseForm {
           <Divider />
           { this.bool('Works in portrait', 'allowPortrait', {boolIsTF: true})}
           { this.bool('Works in landscape', 'allowLandscape', {boolIsTF: true})}
+          <Divider />
+
         </div>
 
         { isCodeGame && this.bool('Allow fullscreen', 'allowFullScreen', {boolIsTF: true})}
-
+        { this.data.allowFullScreen &&
+          <div className="inline fields">
+            <label>Exit FullScreen button position</label>
+            <FullScreenExitPosition
+              value={this.data.fullScreenPosition}
+              onChange={val => {
+                this.data.fullScreenPosition = val
+                this.props.onChange && this.props.onChange()
+              }}
+            />
+          </div>
+        }
 
         { isActorGame && this.dropArea('Starting ActorMap', 'startActorMap', 'actormap' )}
 

@@ -22,7 +22,7 @@ export default class FullScreenExitPosition extends React.Component {
     const val = this.props.value || 'top right'
 
     return (
-      <div className="fs-exit-pos-container" onClick={e => this.props.onChange(e.target.dataset.value)}>
+      <div className="fs-exit-pos-container" onClick={e => e.target.dataset.value && e.target.dataset.value !== val && this.props.onChange(e.target.dataset.value)}>
         {
           _.map(this.options, (v, k) => {
             return <div className={v + (val === v ? ' primary' : '') + ' ui button'} data-value={v}></div>

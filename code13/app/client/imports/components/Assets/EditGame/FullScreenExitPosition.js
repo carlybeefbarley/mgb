@@ -9,7 +9,7 @@ export default class FullScreenExitPosition extends React.Component {
     'top right': 'top right',
 
     'middle left':'middle left',
-    'middle center':'middle center',
+    // 'middle center':'middle center',
     'middle right': 'middle right',
 
     'bottom left':'bottom left',

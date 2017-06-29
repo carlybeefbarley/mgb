@@ -17,13 +17,14 @@ rm -rf .meteor/local/bundler-cache/
 rm -rf .meteor/local/cordova-build/www/application/
 
 
-
+server='http://test.mygamebuilder.com'
+server='http://192.168.8.100:3000'
 
 # For Windows
 if [[ "$OSTYPE" == "msys" ]]; then
-  meteor.bat run android-device --mobile-server http://test.mygamebuilder.com $@
+  meteor.bat run android-device --mobile-server $server $@
 else
-  meteor run android-device --mobile-server http://test.mygamebuilder.com $@
+  meteor run android-device --mobile-server $server $@
 fi
 )
 

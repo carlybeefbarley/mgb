@@ -1,6 +1,6 @@
 App.info({
   "id": "com.mygamebuilder.mobile.app",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "name": "MGB"
 });
 App.accessRule('http://*');

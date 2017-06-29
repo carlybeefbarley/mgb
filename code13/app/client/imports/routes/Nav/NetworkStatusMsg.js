@@ -28,7 +28,7 @@ const NetworkStatusMsg = ( { meteorStatus } ) => {
     <Segment
         raised
         padded
-        style={{position: 'absolute', top: 80, left: 24, right: 24}}>
+        style={{position: 'absolute', top: 80, left: 24, right: 24, zIndex: 1}}>
       <Message error style={{ minHeight: '5em'}} >
         <Message.Header>
             Network offline: {meteorStatus.status}

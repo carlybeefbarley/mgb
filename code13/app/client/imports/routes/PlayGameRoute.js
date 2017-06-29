@@ -250,13 +250,15 @@ class PlayCodeGame extends React.Component {
   }
 
   setFsManually(){
+    /*
+    Don't open iframe in the fullScreen on mobile - we are already fully sized
     const rfs = this.refs.iframe.requestFullScreen
       || this.refs.iframe.webkitRequestFullScreen
       || this.refs.iframe.mozRequestFullScreen
       || this.refs.iframe.msRequestFullScreen
 
     if(rfs)
-      rfs.call(this.refs.iframe)
+      rfs.call(this.refs.iframe)*/
 
     this.setState({isFullScreen: true}, () => {
       document.body.classList.add('fullscreen')
@@ -275,16 +277,6 @@ class PlayCodeGame extends React.Component {
    * */
   canDoFullScreen() {
     return this.props.metadata.allowFullScreen
-
-    /*
-    is this dead already?
-    const { allowFullScreen } = this.props.metadata
-    const rfs = document.body.requestFullScreen
-      || document.body.webkitRequestFullScreen
-      || document.body.mozRequestFullScreen
-      || document.body.msRequestFullScreen
-
-    return allowFullScreen && rfs*/
   }
 
   createConfig() {

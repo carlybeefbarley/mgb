@@ -80,6 +80,8 @@ const TB = {
 
   eraser: function(){
     TB.enableMode.call(this, EditModes.eraser)
+    this.refs.map.clearSelection()
+    
     const activeLayer = this.refs.map.getActiveLayer()
     activeLayer.deleteSelection && activeLayer.deleteSelection()
   },

@@ -303,7 +303,7 @@ export default class TileSet extends React.Component {
   }
 
   onMouseMove = (e) => {
-    if(e.target != this.refs.canvas){
+    if(e.target !== this.refs.canvas){
       return
     }
     if (this.mouseRightDown) {

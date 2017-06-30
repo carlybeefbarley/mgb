@@ -32,6 +32,7 @@ const _isSameProject = (chosenProjectObj, chosenProjectName, candidateProjectObj
 }
 
 const ProjectSelector = ( {
+  id,
   user,
   canEdit,
   availableProjects,
@@ -117,6 +118,7 @@ const ProjectSelector = ( {
     )
   return (
     <Dropdown
+      id={id}
       style={{ marginTop: '1px', marginBottom: '3px' }} // inline is compact but has no top/bottom margins
       inline
       trigger={

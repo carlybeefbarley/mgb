@@ -11,7 +11,7 @@ const _wrapKey = key => `%${key}%`
 const _looksLikeMacroKey = key => (_.isString(key) && key.length > 2 && key.search(/^%.*%$/) !== -1)
 const _fullStepField = null     // This is returned in notFoundMacros[].field results for a step macro
 
-/* These enable Tutorial steps to be written using macros:   e.g. 
+/* These enable Tutorial steps to be written using macros:   e.g.
 
   {
     "steps": [
@@ -69,7 +69,7 @@ const _mkNavPanelMacros = () => {
     })
 
   }
- 
+
   _.each(np.left,  dd => parseDropdown(dd, 'right'))
   _.each(np.right, dd => parseDropdown(dd, 'left'))
 
@@ -116,23 +116,68 @@ const _mkFpDescribe = ( fpname, icon, describeText ) => (
 )
 
 // Helper which makes a Create New Asset <Kind> stepMacro: e.g. _mkCreateAsset( 'music' )
-const _mkCreateAsset = kind => (
+const _mkCreateAsset = kind => ([
   {
-    key: _wrapKey(`create-asset-${kind}`),
-    hint: `${_.upperCase(kind)} asset created`,
-    desc: `Step for awaiting creation of a ${_.upperCase(kind)} Asset`,
+    key: _wrapKey(`create-asset-${kind}-select-kind`),
+    hint: `New ${_.upperCase(kind)} asset kind selected`,
+    desc: `Step for selecting a new ${_.upperCase(kind)} Asset`,
+    newVal:
+      {
+        "title": `Select a ${_.upperCase(kind)} Asset kind`,
+        "text": `Select the ${_.upperCase(kind)} asset kind. You cannot change the kind once it is created.`,
+        "selector": "#mgbjr-create-asset-select-kinds",
+        "showStepOverlay": false,
+        "awaitCompletionTag": `mgbjr-CT-create-asset-select-kind-${kind}`,
+        "position": "right",
+        "style": "%inverted%"
+      }
+  },
+  {
+    key: _wrapKey(`create-asset-${kind}-set-name`),
+    hint: `New ${_.upperCase(kind)} asset name set`,
+    desc: `Step for selecting a new ${_.upperCase(kind)} Asset`,
+    newVal:
+      {
+        "title": `Enter a ${_.upperCase(kind)} Asset name`,
+        "text": `Type in a name. You can always change it later.`,
+        "selector": "#mgbjr-create-asset-name",
+        "showStepOverlay": false,
+        "awaitCompletionTag": `mgbjr-CT-create-asset-name`,
+        "position": "right",
+        "style": "%inverted%"
+      }
+  },
+  {
+    key: _wrapKey(`create-asset-${kind}-select-project`),
+    hint: `New ${_.upperCase(kind)} asset project selected`,
+    desc: `Step for selecting a new ${_.upperCase(kind)} Asset`,
+    newVal:
+      {
+        "title": `Select a ${_.upperCase(kind)} Asset project`,
+        "text": `Projects let you group assets together. This is optional and can be changed later.  Select "no project" to skip this step.`,
+        "selector": "#mgbjr-create-asset-project",
+        "showStepOverlay": false,
+        "awaitCompletionTag": `mgbjr-CT-create-asset-project`,
+        "position": "right",
+        "style": "%inverted%"
+      }
+  },
+  {
+    key: _wrapKey(`create-asset-${kind}-create-button`),
+    hint: `New ${_.upperCase(kind)} asset kind selected`,
+    desc: `Step for selecting a new ${_.upperCase(kind)} Asset`,
     newVal:
     {
       "title": `Create a ${_.upperCase(kind)} Asset`,
-      "text": `First, type in a name for the asset above.<br></br>Second.. Select the ${_.upperCase(kind)} asset kind above.<br></br>Third... Click on the 'Create Asset' button to the left here`,
+      "text": `Great, now create the asset.`,
       "selector": "#mgbjr-create-asset-button",
       "showStepOverlay": false,
-      "awaitCompletionTag": `mgbjr-CT-asset-create-new-${kind}`,
+      "awaitCompletionTag": `mgbjr-CT-create-asset-${kind}-do-create`,
       "position": "right",
-      "style": "%inverted%" 
+      "style": "%inverted%"
     }
-  }
-)
+  },
+])
 
 
 const stepMacros = [
@@ -196,7 +241,7 @@ const stepMacros = [
       "position": "top"
     }
   },
-  
+
   {
     key: _wrapKey('flexPanel'),
     hint: `Find FlexPanel`,
@@ -205,7 +250,7 @@ const stepMacros = [
     {
       "title": `The FlexPanel area`,
       "text": `This stack of icons on the right-hand side is called the <em>FlexPanel</em>. These panels have useful context while you are working on other assets`,
-      "selector": "#mgbjr-flexPanelIcons",
+      "selector": "#mgbjr-flexPanelArea",  // This was previously mgbjr-flexPanelIcons but that is fixed and narrow so tooltip can't always show
       "showStepOverlay": true,
       "position": "left"
     }
@@ -246,15 +291,15 @@ const stepMacros = [
   _mkFpDescribe( 'network',  'signal',      'If you lose network or server connectivity, this provides some info and a way to force a reconnect'),
   _mkFpDescribe( 'keys',     'keyboard',    'This doesn\'t really work yet, but it will be a way to learn and modify keyboard shortcuts' ),
 
-  _mkCreateAsset( 'graphic'  ),
-  _mkCreateAsset( 'actor'    ),
-  _mkCreateAsset( 'actorMap' ),
-  _mkCreateAsset( 'map'      ),
-  _mkCreateAsset( 'code'     ),
-  _mkCreateAsset( 'sound'    ),
-  _mkCreateAsset( 'music'    ),
-  _mkCreateAsset( 'game'     ),
-  _mkCreateAsset( 'tutorial' ),
+  ..._mkCreateAsset( 'graphic'  ),
+  ..._mkCreateAsset( 'actor'    ),
+  ..._mkCreateAsset( 'actormap' ),
+  ..._mkCreateAsset( 'map'      ),
+  ..._mkCreateAsset( 'code'     ),
+  ..._mkCreateAsset( 'sound'    ),
+  ..._mkCreateAsset( 'music'    ),
+  ..._mkCreateAsset( 'game'     ),
+  ..._mkCreateAsset( 'tutorial' ),
 
   // This is a special/sneaky one that is used in some tutorials to award a badge. The actual award is done server side based on some criteria
   {
@@ -361,14 +406,14 @@ export const transformStep = step =>
   {
     const m = _.find(stepMacros, { key: step } )
     if (!m)
-      return { 
-        newStep: step, 
-        notFoundMacros: { key: _fullStepField, val: step }  //return key=null for  
+      return {
+        newStep: step,
+        notFoundMacros: { key: _fullStepField, val: step }  //return key=null for
       }
     step = m.newVal
     // Now continue processing the step so we can allow the pre-defined steps to use field macros
   }
-  
+
   const newStep = _.mapValues(step, (v, k) =>
   {
     if (!_looksLikeMacroKey(v))

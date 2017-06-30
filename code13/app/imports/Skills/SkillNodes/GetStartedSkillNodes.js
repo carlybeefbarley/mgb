@@ -22,12 +22,12 @@ export default {
     $meta: {
       name:           'Profile',
       description:    'Add avatars and other info to your profile',
-      sequence:       'avatar,badges,bio,quickTour'
+      sequence:       'avatar,badges,bio'
     },
     avatar:           C.E,
     badges:           C.E,
-    bio:              C.E,
-    quickTour:        C.E
+    bio:              C.E
+//    quickTour:        C.E
   },
 
   chat: {
@@ -93,7 +93,7 @@ export default {
     createObjects:   C.E,
     createShot:      C.E,
     createActorMap:  C.E,
-    useActorMap:     C.E,   
+    useActorMap:     C.E,
   //  learnMore:       C.E
   },
 

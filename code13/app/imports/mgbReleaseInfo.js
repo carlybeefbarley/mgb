@@ -17,6 +17,30 @@ const mgbReleaseInfo = {
   'releases': [
 
     {
+      'timestamp': 'Fri Jun 30 2017 21:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4535'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'UI Improvements',
+          'changeSummary': 'The create-asset UI has been cleaned up and the tutorials for it have been simplified. We have some new spam-flagging features. Graphic Editor has a small and big mode for the frame viewer. Actor Editor has an improved animations editor UI.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Mon Jun 26 2017 22:00:00 GMT-0700 (PDT)',
 
       'id': {

@@ -26,9 +26,11 @@ import elementResizeDetectorMaker  from 'element-resize-detector'
 
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
 
+// TODO: The debounce / throttle needs to move to the server really
 const _incrementPlayCount = _.debounce(
   assetId => { Meteor.call('job.gamePlayStats.playGame', assetId) },
-  SpecialGlobals.gamePlay.playCountDebounceMs
+  SpecialGlobals.gamePlay.playCountDebounceMs,
+  { leading: true } // So the play count increases immediately
 )
 
 const _styleGameNavButtons = { float: 'right' }

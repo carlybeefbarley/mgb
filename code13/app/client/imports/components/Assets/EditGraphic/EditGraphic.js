@@ -1291,12 +1291,12 @@ export default class EditGraphic extends React.Component {
     }
     // console.log("handleSave(", changeText, ") -- dontSaveFrameData:", dontSaveFrameData, "  allowBackwash:", allowBackwash)
 
+    const asset = this.props.asset
+    let c2 = asset.content2
+
     // Make really sure we have the frameCanvasArrays up-to-date with the latest edits from all layers
     if (this.previewCanvasArray && !dontSaveFrameData)
       this.updateEditCanvasFromSelectedPreviewCanvas()
-
-    const asset = this.props.asset
-    let c2 = asset.content2
 
     if (this.previewCanvasArray && !dontSaveFrameData)
     { // hack for automatic checking and saving old assets to new
@@ -1577,7 +1577,7 @@ export default class EditGraphic extends React.Component {
     c2.layerParams = [ {name: "Layer 1", isHidden: false, isLocked: false} ]
     c2.animations = []
 
-    this.handleSave("Import tileset", false, true)   // DG - added allowBackwash = true so we get and process the redraw immediately
+    this.handleSave("Import tileset", true, true)   // DG - added allowBackwash = true so we get and process the redraw immediately
     let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
     $(importPopup).modal('hide')
     this.setState({ editScale: this.getDefaultScale() })
@@ -2093,7 +2093,6 @@ export default class EditGraphic extends React.Component {
         {/*** GraphicImport ***/}
         <div className="ui modal" ref="graphicImportPopup">
           <GraphicImport
-            EditGraphic={this}
             importTileset={this.importTileset}
             maxTileWidth={MAX_BITMAP_WIDTH}
             maxTileHeight={MAX_BITMAP_WIDTH}

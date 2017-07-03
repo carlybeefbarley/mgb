@@ -51,7 +51,7 @@ export default SpecialGlobals = {
         name: 'Phaser',
         import: 'phaser',
         desc: 'For making games',
-        descLong: 'Phaser is a good framework for making JavaScript games. It helps developers with game scenes, asset loaders, rendering, physics, input devices, sound, and more',
+        descLong: 'Phaser is a good framework for making 2D games in Javascript. It helps developers with game scenes, asset loaders, rendering, physics, input devices, sound, and more',
         landingPageUrl: '//phaser.io',
         apiDocsPageUrl: '//photonstorm.github.io/phaser-ce/',
         tutorialsInternalLink: '/learn/code/phaser'

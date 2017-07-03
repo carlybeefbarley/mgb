@@ -4,7 +4,7 @@ import { GameItem } from '/client/imports/components/Assets/GameAsset/GameItems'
 import { Header, Divider, Message } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
-import FullScreenExitPosition from './FullScreenExitPosition.js'
+import FullScreenExitPosition from './FullScreenExitPosition'
 
 import './editGame.css'
 
@@ -148,8 +148,6 @@ export default class EditGame extends React.Component {
 
   handleChange(key){
     const md = this.props.asset.metadata
-    console.log("ONCHANGE:", md)
-
     // would be nice to actually know which on input has been changed
     if(!md.allowLandscape && !md.allowPortrait){
       if(key === 'allowPortrait')

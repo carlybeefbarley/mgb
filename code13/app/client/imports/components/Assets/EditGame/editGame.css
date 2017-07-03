@@ -53,3 +53,9 @@
   border-top-left-radius: 2em;
 }
 
+.fs-exit-pos-container .top.center,.fs-exit-pos-container .bottom.center {
+  height: 3.5em;
+}
+.fs-exit-pos-container .middle.left,.fs-exit-pos-container .middle.right {
+  width: 3.5em;
+}

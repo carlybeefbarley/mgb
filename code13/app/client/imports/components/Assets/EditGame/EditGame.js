@@ -4,6 +4,8 @@ import { GameItem } from '/client/imports/components/Assets/GameAsset/GameItems'
 import { Header, Divider, Message } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
+import { isUserSuperAdmin } from '/imports/schemas/roles'
+
 import FullScreenExitPosition from './FullScreenExitPosition'
 
 import './editGame.css'
@@ -50,6 +52,8 @@ class EditGameForm extends BaseForm {
     const isCodeGame  = _isCodeGame(this.data)
     const hasGameType = _hasGameType(this.data)
 
+    const isAdmin = isUserSuperAdmin(Meteor.user())
+
     const touchControlSupportedFieldOptions = { boolIsTF: true, disabled: isActorGame }
 
     return (
@@ -89,16 +93,16 @@ class EditGameForm extends BaseForm {
           }
         )}
 
-        <div>
+        { isAdmin && <div>
           <Divider />
           { this.bool('Works in portrait', 'allowPortrait', {boolIsTF: true})}
           { this.bool('Works in landscape', 'allowLandscape', {boolIsTF: true})}
           <Divider />
 
-        </div>
+        </div>}
 
         { isCodeGame && this.bool('Allow fullscreen', 'allowFullScreen', {boolIsTF: true})}
-        { this.data.allowFullScreen &&
+        { this.data.allowFullScreen && isAdmin && 
           <div className="inline fields">
             <label>Exit FullScreen button position</label>
             <FullScreenExitPosition

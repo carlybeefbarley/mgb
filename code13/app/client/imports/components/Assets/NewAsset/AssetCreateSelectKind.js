@@ -1,87 +1,88 @@
 import React, { PropTypes } from 'react'
 import { AssetKinds, AssetKindKeys } from '/imports/schemas/assets'
 import { doesUserHaveRole } from '/imports/schemas/roles'
-import { Button, Icon, Container } from 'semantic-ui-react'
+import { Button, Icon } from 'semantic-ui-react'
 
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
-
 export default AssetCreateSelectKind = React.createClass({
   propTypes: {
-    handleSelectAsset:    PropTypes.func.isRequired,    // Callback function to create the asset, and is expected to navigate to the new page. 
-                                                        //   Params are (assetKindKey, newAssetNameString). The newAssetNameString can be ""
-    currUser:             PropTypes.object,             // Currently logged in user (if any)
-    selectedKind:         PropTypes.string
+    onChangeAsset: PropTypes.func.isRequired,    // Callback function to create the asset, and is expected to navigate to the new page.
+                                                     //   Params are (assetKindKey, newAssetNameString). The newAssetNameString can be ""
+    currUser:          PropTypes.object,             // Currently logged in user (if any)
+    selectedKind:      PropTypes.string
   },
 
-  getInitialState: () => ({ showMoreInfo: false}),
+  getInitialState: () => ({ showMoreInfo: false }),
 
-  render: function() {
-    const { handleSelectAsset, currUser, selectedKind } = this.props
+  getDefaultProps: () => ({ selectedKind: AssetKindKeys[0] }),
+
+  handleShowMoreLessClick() {
+    const { showMoreInfo } = this.state
+
+    this.setState({ showMoreInfo: !showMoreInfo })
+    joyrideCompleteTag(`mgbjr-CT-create-asset-kindinfo-${showMoreInfo ? 'less' : 'more'}`)
+  },
+
+  render: function () {
+    const { onChangeAsset, currUser, selectedKind } = this.props
     const { showMoreInfo } = this.state
     const activeAK = selectedKind ? AssetKinds[selectedKind] : null
 
     const ExplanationToggler = (
-      <a 
-          onClick={ () => {
-            this.setState( { showMoreInfo: !showMoreInfo } )
-            joyrideCompleteTag(`mgbjr-CT-create-asset-kindinfo-${showMoreInfo ? 'less' : 'more'}`)
-          }}>
-        <small id='mgbjr-create-asset-morelesskindinfo'>
-          { showMoreInfo ? 'less...' : 'more...' }
-        </small>
+      <a onClick={this.handleShowMoreLessClick}>
+        <span id='mgbjr-create-asset-morelesskindinfo'>
+          { showMoreInfo ? 'less' : 'more' }...
+        </span>
       </a>
     )
 
     return (
       <div id='mgbjr-create-asset-select-kinds'>
-        { AssetKindKeys.map((k) => {
+        {AssetKindKeys.map((k) => {
           const ak = AssetKinds[k]
           const isActive = (k === selectedKind)
-          const elemId=`mgbjr-create-asset-select-kind-${k}`
-          let sty = { width: "7em", margin: "0.5em" }
-          if (ak.requiresUserRole)
-          {
+          const elemId = `mgbjr-create-asset-select-kind-${k}`
+          const sty = { width: "7em", margin: "0 1em 1em 0" }
+          if (ak.requiresUserRole) {
             if (!doesUserHaveRole(currUser, ak.requiresUserRole))
               return null // Don't show
             if (!isActive)
-              sty.backgroundColor = "rgba(0,0,255,0.05)"    // Blue for the special ones 
+              sty.backgroundColor = "rgba(0,0,255,0.05)"    // Blue for the special ones
           }
 
           return (
-            <Button icon 
-                id={elemId}
-                basic={!isActive}
-                key={k} 
-                color={ak.color}
-                style={sty} 
-                onClick={ () => { 
-                  joyrideCompleteTag(`mgbjr-CT-create-asset-select-kind-${k}`)
-                  handleSelectAsset(k)
-                } }>
-              <Icon size='large' name={ak.icon}  />
+            <Button
+              icon
+              id={elemId}
+              basic={!isActive}
+              key={k}
+              color={ak.color}
+              style={sty}
+              onClick={() => {
+                joyrideCompleteTag(`mgbjr-CT-create-asset-select-kind-${k}`)
+                onChangeAsset(k)
+              }}>
+              <Icon size='large' name={ak.icon} />
               <p style={{ marginTop: "5px" }}>{ak.name}</p>
             </Button>
           )
-        })
-      }
+        })}
 
-      { activeAK && (
-        <div>
-          <p> 
-            { activeAK.description }&ensp;
-            { showMoreInfo || ExplanationToggler }           
-          </p>
-          { showMoreInfo &&  
+        { activeAK && (
+          <div style={{ opacity: 0.5 }}>
             <p>
-              <em>
-                { activeAK.explanation } &ensp; { ExplanationToggler } 
-              </em>
+              { activeAK.description }&ensp;
+              { showMoreInfo || ExplanationToggler }
             </p>
-          }
-        </div>
-      )}
-      
+            { showMoreInfo &&
+            <p>
+              { activeAK.explanation } &ensp; { ExplanationToggler }
+            </p>
+            }
+          </div>
+        )}
+
       </div>
     )
   }

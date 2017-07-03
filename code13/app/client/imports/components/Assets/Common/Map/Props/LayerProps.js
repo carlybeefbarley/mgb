@@ -80,7 +80,6 @@ export default {
     this.setState({
       content2: this.mgb_content2
     })
-    //this.save('Highlight Active Layer')
   },
 
   renameLayer: function(id, newName){

@@ -623,7 +623,7 @@ export default class SpriteLayers extends React.Component {
           <div className={"ui " + (this.state.isCanvasFramesVisible ? "primary" : "") + " right floated mini button"} onClick={this.toggleCanvasFramesVisibility.bind(this)}>
             <i className={"icon " + (this.state.isCanvasFramesVisible ? "unhide" : "hide" )}></i> Frames
           </div>
-          <div className={"ui " + (this.state.isCanvasLayersVisible ? "primary" : "") + " right floated mini button"} onClick={this.toggleCanvasLayersVisibility.bind(this)}>
+          <div id="mgb_edit_graphic_toggleLayerVisibility" className={"ui " + (this.state.isCanvasLayersVisible ? "primary" : "") + " right floated mini button"} onClick={this.toggleCanvasLayersVisibility.bind(this)}>
             <i className={"icon " + (this.state.isCanvasLayersVisible ? "unhide" : "hide" )}></i> Layers
           </div>
         </div>
@@ -709,14 +709,14 @@ export default class SpriteLayers extends React.Component {
                   onClick={this.toggleAllLocking.bind(this)} />
               </th>
               <th width="180px">
-                  <a className="ui small label" onClick={this.addLayer.bind(this)}>
+                  <a id="mgb_edit_graphics_add_layer" className="ui small label" onClick={this.addLayer.bind(this)}>
                       <i className="add circle icon"></i> Add Layer
                   </a>
               </th>
               <th width="32px"></th>
               { /* Tools drop down */
                 _.map(c2.frameNames, (frameName, idx) => { return (
-                  <th key={"th_"+idx} width="32px" className="frameTH">
+                  <th key={"th_"+idx} width="32px" className={"frameTH "+"frame"+idx}>
                     <div className="ui dropdown"
                         ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } }
                         id={"mgb_edit_graphics_frame_options_" + idx}

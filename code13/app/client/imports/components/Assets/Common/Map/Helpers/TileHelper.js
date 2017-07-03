@@ -9,6 +9,7 @@ export const ROTATE = {
 }
 
 const ANIMATION_UPDATE_DEFAULT_INTERVAL = 10000
+const AUTO_GUESS_WHEN_AT_LEAST_ROWS = 5
 
 const TileHelper = {
   FLIPPED_HORIZONTALLY_FLAG: 0x80000000,
@@ -52,7 +53,7 @@ const TileHelper = {
       anim = tileInfo.animation[i]
       tot += anim.duration
       if (tot >= relDelta) {
-        if (anim.tileid != tileId) {
+        if (anim.tileid !== tileId) {
           let gid = anim.tileid + pal.ts.firstgid
           retval.nextUpdate = tot - relDelta
           retval.pal = palette[gid]
@@ -90,6 +91,25 @@ const TileHelper = {
     return ret
   },
 
+  /*
+    we have 2 types of spacing - tileset itself ( as image ) can have spacing and atm tileset at the side panel has 1 px spacing
+    margin - blank space (in pixels) around tiles
+    spacing - blank space (in pixels) between tiles
+    http://doc.mapeditor.org/reference/tmx-map-format/#tileset
+    mmmmmmmmm
+    mTsTsTsTm
+    mTsTsTsTm
+    mTsTsTsTm
+    mTsTsTsTm
+    mmmmmmmmm
+  */
+  getColumns: (tileset) => {
+    return ( (tileset.imagewidth - tileset.margin * 2) - tileset.tilewidth) / (tileset.tilewidth + tileset.spacing) + 1
+  },
+  getRows: (tileset) => {
+    return ( (tileset.imageheight -  - tileset.margin * 2) - tileset.tileheight) / (tileset.tileheight + tileset.spacing) + 1
+  },
+
   getTileCoordsRel: (x, y, tilewidth, tileheight, spacing = 0 , ret = {x: 0, y: 0}) => {
     ret.x = Math.floor(x / (tilewidth + spacing))
     ret.y = Math.floor(y / (tileheight + spacing))
@@ -99,23 +119,25 @@ const TileHelper = {
   getTilesetWidth: (tileset, spacing = 1) => {
     tileset.tilewidth = tileset.tilewidth || 32
     tileset.tileheight = tileset.tileheight || 32
-    tileset.columns = tileset.imagewidth / tileset.tilewidth
+    tileset.columns = TileHelper.getColumns(tileset)
 
-    return tileset.columns * (tileset.tilewidth + spacing)
+    return (tileset.columns - 1) * (tileset.tilewidth + spacing) + tileset.tilewidth
   },
 
   getTilesetHeight: (tileset, spacing = 1) => {
     tileset.tilewidth = tileset.tilewidth || 32
     tileset.tileheight = tileset.tileheight || 32
-    tileset.columns = tileset.imagewidth / tileset.tilewidth
-    tileset.tilecount = tileset.columns * tileset.imageheight / tileset.tileheight
+    tileset.columns = TileHelper.getColumns(tileset)
+
+    const rows = TileHelper.getRows(tileset)
+    tileset.tilecount = tileset.columns * rows
 
     return (tileset.tilecount / tileset.columns) * (spacing + tileset.tileheight) - spacing
   },
   /* helpers */
   normalizePath: (raw) => {
     let val = raw
-    if (raw.indexOf(location.origin) == 0) {
+    if (raw.indexOf(location.origin) === 0) {
       val = val.substr(location.origin.length)
     }
     return val
@@ -215,13 +237,14 @@ const TileHelper = {
     let columns = (imagewidth - extraPixels) / tilewidth
     let rows = (imageheight - (imageheight % tileheight)) / tileheight
 
-    if (margin != -1) {
-      if (spacing == -1) {
+    if (margin !== -1) {
+      if (spacing === -1) {
         spacing = 0
       }
     }
 
-    const autoGuess = spacing == -1 || (tilewidth == imagewidth && imagewidth > map.tilewidth * 5)
+    // @stauzs in the past - what is 5 here?
+    const autoGuess = spacing === -1 || (tilewidth === imagewidth && imagewidth > map.tilewidth * AUTO_GUESS_WHEN_AT_LEAST_ROWS)
 
     // guess spacing and margin - should give wow! effect to users :)
     if (autoGuess) {
@@ -266,7 +289,7 @@ const TileHelper = {
       }
     }
 
-    if (margin == -1) {
+    if (margin === -1) {
       if ((imagewidth % tilewidth) % 2) {
         margin = (imagewidth % tilewidth) / 2
       }
@@ -310,7 +333,7 @@ const TileHelper = {
           }
         }
       }
-      else if(layer.type == LayerTypes.object){
+      else if(layer.type === LayerTypes.object){
         for(let j=0; j<layer.objects.length; j++){
           const tile = layer.objects[j];
           if(typeof(tile) !== "object"){

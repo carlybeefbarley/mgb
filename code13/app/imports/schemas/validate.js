@@ -4,6 +4,7 @@ const _maxUsernameLength = 12
 const _minUsernameLength = 3
 
 const _maxAssetNameLength = 64
+const _minAssetNameLength = 1
 
 // Valid ASSET name regex
 // The REALLY important ones to exclude are
@@ -87,7 +88,9 @@ const validate = {
   },
 
   assetName: function(text) {
-    return validate.lengthCap(text, _maxAssetNameLength) && _validAssetNameRegex.test(text)
+    return text.length >= _minAssetNameLength
+      && validate.lengthCap(text, _maxAssetNameLength)
+      && _validAssetNameRegex.test(text)
   },
 
   assetDescription: function(text) {
@@ -95,21 +98,16 @@ const validate = {
   },
 
   assetNameWithReason: function(text) {
-    const isValid = validate.assetName(text)
-    if (isValid)
-      return null
-    // else return some error string
-
     if (text.length > _maxAssetNameLength)
-      return `That Asset name is too long. The maximum length is ${_maxAssetNameLength} characters`
+      return `That Asset name is too long. The maximum length is ${_maxAssetNameLength} characters.`
 
-    if (text.length > _maxAssetNameLength)
-      return `That Asset name is too long. The maximum length is ${_maxAssetNameLength} characters`
+    if (text.length < _minAssetNameLength)
+      return `That Asset name is too short. The minimum length is ${_minAssetNameLength} characters.`
 
     if (!_validAssetNameRegex.test(text))
-      return `That Asset name contains invalid characters... ${_listInvalidChars(text,_validAssetNameRegex).join(' ')}`
+      return `That Asset name contains invalid characters... ${_listInvalidChars(text, _validAssetNameRegex).join(' ')}`
 
-    return 'That Asset name is not valid'  // Catch-all
+    return null
   },
 
   // These functions return null for ok, or a string with a reason why they fail

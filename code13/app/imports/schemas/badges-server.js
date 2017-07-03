@@ -5,31 +5,31 @@ import { isUserSuperAdmin } from '/imports/schemas/roles'
 
 
 
-// Dear Maintainers: 
+// Dear Maintainers:
   // This file must be imported by main_server.js so that the Meteor method can be registered
   // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-// This is some server-side code that does badge awards for User accounts 
-// It primarily creates the following server-side-only Meteor.call: 
-//    "User.refreshBadgeStatus" ..which takes no params. It will typically be called 
+// This is some server-side code that does badge awards for User accounts
+// It primarily creates the following server-side-only Meteor.call:
+//    "User.refreshBadgeStatus" ..which takes no params. It will typically be called
 // during a tutorial using the %refreshBadgeStatus% macro, or at other times using the call directly
 // (for example once a qualifying action has been completed)
 
 // It's here so we can make it harder for people to just call 'add badge' for their account:
-// The api intentionally doesn't say what badge to add (that would be far too easy to hack); instead 
-// this server code shall check for pre-conditions being met and then award those badges if not yet met. 
+// The api intentionally doesn't say what badge to add (that would be far too easy to hack); instead
+// this server code shall check for pre-conditions being met and then award those badges if not yet met.
 
 
 // This structure defines rules for awarding badges based on specific tutorials being completed
 //   newBadgeName: Must be a key that satisfies _validateBadgeKeyArray() in badges.js
 //   requiredSkills
 const _skillBasedBadges = [
-  { 
+  {
     newBadgeName:   'hasAvatar',
     requiredSkills: ['getStarted.profile.avatar']
-    // This case should ideally also test for an avatar.. but it's ok, since 
+    // This case should ideally also test for an avatar.. but it's ok, since
     //   that avatar does have an awaitCompletionTag:
-    //    user.profile.avatar && user.profile.avatar.length > 0 && retval.push("hasAvatar")   
+    //    user.profile.avatar && user.profile.avatar.length > 0 && retval.push("hasAvatar")
     //// TODO: Fix this - it's wrong since we always do the gravatar hash on account create. Doh!
 
   }
@@ -48,7 +48,7 @@ const _nameBasedBadges = [
 
   {
     newBadgeName: 'mgb2AlphaTester',
-    usernames:    'Puupuls,dgolds,stauzs,guntis,leah,Supergirl,stanchion,LunarRaid,hawke,Viveiros,jazeps,avaragado,triptych,sleepysort,hertlen,collectordx,skadwaz,jaketor,Fantasythief,Nemopolymer,rabbidpony'.split(',')
+    usernames:    'Puupuls,legacyDev,dgolds,stauzs,guntis,leah,Supergirl,stanchion,LunarRaid,hawke,Viveiros,jazeps,avaragado,triptych,sleepysort,hertlen,collectordx,skadwaz,jaketor,Fantasythief,Nemopolymer,rabbidpony'.split(',')
   }
 ]
 
@@ -86,7 +86,7 @@ const _doRefreshBadgeStatus = user => {
       {
 //        console.log(`User '${user.username}' does not have '${nbb.newBadgeName}' badge, so awarding it!`)
         const count = Meteor.users.update(
-          user._id, 
+          user._id,
           {
             $addToSet: { 'badges': nbb.newBadgeName },
             $set:      { updatedAt: now }
@@ -98,7 +98,7 @@ const _doRefreshBadgeStatus = user => {
       }
     }
   })
-  
+
   // 1. Skill-based awards
   const skills = Skills.findOne(user._id)
   _.each(_skillBasedBadges, sbb => {
@@ -109,7 +109,7 @@ const _doRefreshBadgeStatus = user => {
       {
         console.log(`User '${user.username}' does not have '${sbb.newBadgeName}' badge, so awarding it!`)
         const count = Meteor.users.update(
-          user._id, 
+          user._id,
           {
             $addToSet: { 'badges': sbb.newBadgeName },
             $set:      { updatedAt: now }
@@ -130,7 +130,7 @@ const _doRefreshBadgeStatus = user => {
       {
 //      console.log(`User '${user.username}' does not have '${fbb.newBadgeName}' badge, so awarding it!`)
         const count = Meteor.users.update(
-          user._id, 
+          user._id,
           {
             $addToSet: { 'badges': fbb.newBadgeName },
             $set:      { updatedAt: now }
@@ -147,17 +147,17 @@ const _doRefreshBadgeStatus = user => {
 
   if (newBadgeKeys.length > 0)
   {
-    const allBadges = (_.isArray(user.badges) && user.badges.length > 0) ? 
+    const allBadges = (_.isArray(user.badges) && user.badges.length > 0) ?
       _.union(user.badges, newBadgeKeys) : newBadgeKeys
-    const count = Meteor.users.update( 
-      user._id, 
+    const count = Meteor.users.update(
+      user._id,
       {
-        $set: { 
+        $set: {
           'badges_count': allBadges.length,
-          updatedAt:      now 
+          updatedAt:      now
         }
       } )
-      console.log(count, user.username, allBadges.length, allBadges.join(','))  
+      console.log(count, user.username, allBadges.length, allBadges.join(','))
   }
 
   // OK, return the array of newly-granted badge keys
@@ -171,7 +171,7 @@ Meteor.methods({
   // ,
   // "User.refreshAllUserBadges": function() {   // e.g. call with   Meteor.call("User.refreshAllUserBadges")
   //   console.log("---User.refreshAllUserBadges-start---")
-  //   Meteor.users.find( ).forEach(function(u) { _doRefreshBadgeStatus(u) } ) 
+  //   Meteor.users.find( ).forEach(function(u) { _doRefreshBadgeStatus(u) } )
   //   console.log("---User.refreshAllUserBadges-done---")
   // }
 })

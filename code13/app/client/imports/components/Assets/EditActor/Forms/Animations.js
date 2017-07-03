@@ -7,12 +7,13 @@ import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor
 
 export default class Animations extends React.Component {
 
-  state = { 
-    serializedForm: {}, 
+  state = {
+    serializedForm: {},
     isLoading: false, // When loading graphic asset tileset info and frames
     showModal: false, // When importing graphic frames
     graphicFrameImports: [], // Data of frames to import; contains name and if frame is selected
-    animationIndex: 0 // Starting animation frame being changed
+    animationIndex: 0, // Starting animation frame being changed
+    lastEffectChange: ""
   }
 
   get data() {
@@ -36,6 +37,43 @@ export default class Animations extends React.Component {
     this.setState({graphicFrameImports: frames})
   }
 
+  handleClearAll(animTitle) {
+    _.forEach(Object.keys(this.refs), frame => {
+      if (_.startsWith(frame, animTitle))
+        this.refs[frame].handleRemove()
+    })
+  }
+
+  handleApplyEffects(index, animTitle) {
+    if (!this.state.lastEffectChange)
+      return
+
+    let count = 0
+    if (_.startsWith(animTitle, "move"))
+      count = 5
+    else if (_.startsWith(animTitle, "melee"))
+      count = 8
+    else if (_.startsWith(animTitle, "stationary"))
+      count = 16
+
+    // Get indices of animation frames in the animation group
+    // index is the index of the animation frame in the data array of all animation frames
+    // i is the index of the last frame for the animation group animTitle
+    // frameIndex is the index of the current frame relative to the animaton group
+    let frameIndex = _.parseInt(this.data[index].action.split(" ").pop())
+
+    if (_.startsWith(this.data[index].action, "step")) // face + step 1, 2, 3, 4
+      frameIndex++
+    else if (!_.isInteger(frameIndex)) // All animations except 'face ___' have a frame number in action
+      frameIndex = 1
+
+    for (let i=1; i<=count; i++)
+      this.data[i + index - frameIndex].effect = this.state.lastEffectChange
+
+    this.forceUpdate()
+    this.props.onChange && this.props.onChange()
+  }
+
   onChange = (e) => {   // TODO: How is this called?
     console.log("Form has changed")
   }
@@ -46,7 +84,7 @@ export default class Animations extends React.Component {
   The frame numbers are parsed from the names in Mage.js to display the correct frame.
   The tileset API and MAGE use 0-based indexing. This uses 1-based indexing like the graphic editor.
   */
-  
+
   // Store graphic frames in graphicFrameImports
   getGraphicFrames(data, val) {
     let graphicFrames = []
@@ -71,7 +109,7 @@ export default class Animations extends React.Component {
           "effect": "no effect"
         }
       }
-      else 
+      else
         index--
     }
     this.setState({showModal: false, graphicFrameImports: [], animationIndex: 0})
@@ -79,7 +117,7 @@ export default class Animations extends React.Component {
   }
 
   changeGraphic(index, val, asset) {
-    this.data[index].tileName = val 
+    this.data[index].tileName = val
     this.data[index].frame = 0
     this.setState({animationIndex: index})
 
@@ -101,80 +139,89 @@ export default class Animations extends React.Component {
   }
 
   changeEffect(index, val) {
+    this.setState({lastEffectChange: val})
+
     this.data[index].effect = val
+
     this.forceUpdate()
     this.props.onChange && this.props.onChange()
   }
-  
-  renderContent(animations, i) {
+
+  renderContent(animations, animTitle, i) {
     return (
       <Table.Row style={!this.props.canEdit ? {pointerEvents: 'none'} : {}} key={i}>
         <Table.Cell>{animations[i]}</Table.Cell>
         <Table.Cell>
-          <DropArea 
-            kind="graphic" 
+          <DropArea
+            kind="graphic"
             value={this.data[i].tileName}
-            frame={this.data[i].frame} 
-            effect={this.data[i].effect} 
+            frame={this.data[i].frame}
+            effect={this.data[i].effect}
             asset={this.props.asset}
             isLoading={this.state.isLoading}
             onChange={this.changeGraphic.bind(this, i)}
+            ref={animTitle + " " + i}
           />
         </Table.Cell>
         <Table.Cell style={{overflow: 'visible'}}>
-          <SmallDD options={MgbActor.animationEffectNames} value={this.data[i].effect} onChange={this.changeEffect.bind(this, i)} />
+          <SmallDD  options={MgbActor.animationEffectNames} value={this.data[i].effect} onChange={this.changeEffect.bind(this, i)} />
         </Table.Cell>
       </Table.Row>
     )
   }
 
-  renderAccordion(animTable, prevTitle, i) {
+  renderAccordion(animTable, animTitle, i) {
+    if (animTitle !== "stationary west")
+      i--
+
     return (
       <div key={i}>
-        {
-          prevTitle === 'stationary'
-          ?
-          <Accordion exclusive={false} defaultActiveIndex={0} styled fluid>
-            <Accordion.Title active={true}>
-              {prevTitle}
-            </Accordion.Title>
-            <Accordion.Content active={true}>
-              <Table fixed celled compact definition>
-                <Table.Header fullWidth>
-                  <Table.Row>
-                    <Table.HeaderCell>Animation Frame</Table.HeaderCell>
-                    <Table.HeaderCell width={8}>Graphic</Table.HeaderCell>
-                    <Table.HeaderCell>Orientation</Table.HeaderCell>
-                  </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                  {_.map(animTable, content => { return content })}
-                </Table.Body>
-              </Table>
-            </Accordion.Content>
-          </Accordion>
-          :
-          <Accordion exclusive={false} defaultActiveIndex={0} styled fluid>
-            <Accordion.Title>
-              <Icon name='dropdown' />
-              {prevTitle}
-            </Accordion.Title>
-            <Accordion.Content>
-              <Table fixed celled compact definition>
-                <Table.Header fullWidth>
-                  <Table.Row>
-                    <Table.HeaderCell>Animation Frame</Table.HeaderCell>
-                    <Table.HeaderCell width={8}>Graphic</Table.HeaderCell>
-                    <Table.HeaderCell>Orientation</Table.HeaderCell>
-                  </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                  {_.map(animTable, content => { return content })}
-                </Table.Body>
-              </Table>
-            </Accordion.Content>
-          </Accordion>
-        }
+        <Accordion styled fluid
+          exclusive={animTitle === "stationary"}
+          defaultActiveIndex={0}
+        >
+          <Accordion.Title>
+            <Icon name='dropdown' />
+            {animTitle}
+          </Accordion.Title>
+          <Accordion.Content>
+            <Table fixed celled compact definition>
+              <Table.Header fullWidth>
+                <Table.Row>
+                  <Table.HeaderCell>Animation Frame</Table.HeaderCell>
+                  <Table.HeaderCell width={8}>
+                    Graphic
+                    <Button compact
+                      size="mini"
+                      floated='right'
+                      onClick={() => this.handleClearAll(animTitle)}
+                    >
+                      Clear All
+                  </Button>
+                  </Table.HeaderCell>
+                  <Table.HeaderCell style={{position:'relative'}}>
+                    Orientation
+                    <Button compact
+                      size="mini"
+                      floated='right'
+                      onClick={() => this.handleApplyEffects(i, animTitle)}
+                    >
+                      Apply to All
+                    </Button>
+                    {this.state.lastEffectChange &&
+                      <span style={{position:'absolute',bottom:'-3px',right:'10px',fontSize:'8px',color:'grey'}}>
+                        Effect: {this.state.lastEffectChange}
+                      </span>
+                    }
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {animTable}
+              </Table.Body>
+            </Table>
+          </Accordion.Content>
+        </Accordion>
       </div>
     )
   }
@@ -186,10 +233,10 @@ export default class Animations extends React.Component {
     const aType = this.props.asset.content2.databag.all.actorType
     const animations = MgbActor.animationNames
     const rows = []
-    let animTable = [] 
+    let animTable = []
     let prevDirection = animations[0].split(' ')[1]
     let name = animations[0]
-    let prevTitle = _.startsWith(name, 'face') ? 'move ' + name.split(' ')[1] : (name.split(' ').length > 2 ? name.split(' ')[0] + ' ' + name.split(' ')[1] : name.split(' ')[0])
+    let animTitle = _.startsWith(name, 'face') ? 'move ' + name.split(' ')[1] : (name.split(' ').length > 2 ? name.split(' ')[0] + ' ' + name.split(' ')[1] : name.split(' ')[0])
 
     for (let i=0; i<animations.length; i++) {
       name = animations[i]
@@ -207,55 +254,57 @@ export default class Animations extends React.Component {
         !(aType === '3' && (_.startsWith(name, 'stationary') || _.startsWith(name, 'melee'))) && // Filter out non-movement for Shot
         !(['2', '4', '5', '6', '7'].indexOf(aType) > -1 && (!_.startsWith(name, 'stationary') || name.split(' ').length !== 2)) // Filter out non-stationary for Item/Wall/Floor/Scenery
       ) {
-        // Group animations by direction 
+        // Group animations by direction
         if (
-          (['2', '4', '5', '6', '7'].indexOf(aType) === -1 && name.includes(prevDirection)) || 
+          (['2', '4', '5', '6', '7'].indexOf(aType) === -1 && name.includes(prevDirection)) ||
           (['2', '4', '5', '6', '7'].indexOf(aType) > -1  && _.startsWith(name, 'stationary') && name.split(' ').length === 2) || // Don't use prevDirection if only stationary animations
           i+1 === animations.length
         ) {
-          animTable.push(this.renderContent(animations, i)) 
+          if (['2', '4', '5', '6', '7'].indexOf(aType) !== -1)
+            animTitle = "stationary"
+
+          animTable.push(this.renderContent(animations, animTitle, i))
           // Fencepost
-          if (i+1 === animations.length) {
-            rows.push(this.renderAccordion(animTable, prevTitle, i))
-          }
-        } 
+          if (i+1 === animations.length)
+            rows.push(this.renderAccordion(animTable, animTitle, i))
+        }
         // Put animation group for current direction in accordion
-        else 
+        else
         {
           if (animTable.length > 0)
-            rows.push(this.renderAccordion(animTable, prevTitle, i))
+            rows.push(this.renderAccordion(animTable, animTitle, i))
 
           // Content for next direction
           prevDirection = name.split(' ')[1] // get direction from animation name which is the 2nd part of string (action direction frameNum)
-          prevTitle = _.startsWith(name, 'face') ? 'move ' + name.split(' ')[1] : (name.split(' ').length > 2 ? name.split(' ')[0] + ' ' + name.split(' ')[1] : name.split(' ')[0])
+          animTitle = _.startsWith(name, 'face') ? 'move ' + name.split(' ')[1] : (name.split(' ').length > 2 ? name.split(' ')[0] + ' ' + name.split(' ')[1] : name.split(' ')[0])
           animTable = []
-          
-          animTable.push(this.renderContent(animations, i)) 
+
+          animTable.push(this.renderContent(animations, animTitle, i))
         }
       }
       else if (animTable.length > 0) {
         if (['2', '4', '5', '6', '7'].indexOf(aType) > -1)
           rows.push(this.renderAccordion(animTable, 'stationary', i))
-        else 
-          rows.push(this.renderAccordion(animTable, prevTitle, i))
+        else
+          rows.push(this.renderAccordion(animTable, animTitle, i))
 
         animTable = []
       }
-    } 
+    }
 
     return (
       <div style={{position: 'relative'}}>
         {
-          this.state.isLoading && 
+          this.state.isLoading &&
           <Dimmer active inverted>
             <Loader style={{position: 'fixed', right: '345px', top: '50%', translate: "transform(-50%, -50%)"}} active inline size='large'>Loading frames...</Loader>
           </Dimmer>
         }
         {
-          this.state.showModal && 
+          this.state.showModal &&
           <Modal defaultOpen
-            size="small" 
-            onUnmount={() => {this.setState({showModal: false, graphicFrameImports: [], animationIndex: 0})}} 
+            size="small"
+            onUnmount={() => {this.setState({showModal: false, graphicFrameImports: [], animationIndex: 0})}}
           >
             <Modal.Header>Import Graphic Frames</Modal.Header>
             <Modal.Content>
@@ -268,18 +317,18 @@ export default class Animations extends React.Component {
                   return (
                     <Item key={i}>
                       <DropArea
-                        kind="graphic" 
+                        kind="graphic"
                         value={frame.name}
-                        frame={i} 
+                        frame={i}
                         asset={this.props.asset}
                         isModalView={true}
-                      /> 
-                      <Checkbox 
-                        name={frame.name} 
+                      />
+                      <Checkbox
+                        name={frame.name}
                         value={i}
-                        style={{position: 'absolute', right: '25px'}} 
-                        defaultChecked 
-                        onChange={(e, data) => {this.handleGraphicFrameSelection(e, data)}} 
+                        style={{position: 'absolute', right: '25px'}}
+                        defaultChecked
+                        onChange={(e, data) => {this.handleGraphicFrameSelection(e, data)}}
                       />
                     </Item>
                   )}
@@ -288,13 +337,13 @@ export default class Animations extends React.Component {
               </Item.Group>
             </Modal.Content>
             <Modal.Actions>
-              <Button primary 
-                disabled={!checkedCount} 
+              <Button primary
+                disabled={!checkedCount}
                 onClick={() => this.changeGraphicFrames()}>
                 Import Selected Frames
               </Button>
             </Modal.Actions>
-          </Modal> 
+          </Modal>
         }
         {
           rows.map((anim) => {

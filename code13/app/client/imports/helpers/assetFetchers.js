@@ -232,7 +232,7 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
     }
   }
 
-  const usingCDN = uri == cdnLink
+  const usingCDN = uri === cdnLink
   client.open('GET', cdnLink)
 
   if (onRequestOpen)

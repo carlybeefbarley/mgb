@@ -59,7 +59,7 @@ Meteor.methods({
       return new Meteor.Error(404, `Source Project '${sourceProject.ownerName}:${opts.sourceProjectName}' contains no Assets. Cannot fork empty project`)
 
 
-    // Initial validations seem ok. So 'unblock' to allow other Meteor.call() requests for this client 
+    // Initial validations seem ok. So 'unblock' to allow other Meteor.call() requests for this client
     // since it may take a while.. Otherwise other functions like chat will be disabled during the fork work
     this.unblock()
 
@@ -161,6 +161,11 @@ Meteor.methods({
 
     console.log(`  [Azzets.fork]  "${srcAsset.name}... Owner=${username}`)
 
+    if (srcAsset.suFlagId)
+      throw new Meteor.Error(401, "Cannot fork flagged asset")
+
+    if (srcAsset.suIsBanned ===true)
+      throw new Meteor.Error(401, "Cannot fork banned asset")
     // 2. Create, Fixup and store the new forked asset
     const dstAsset = _.omit(srcAsset, '_id')
     dstAsset.updatedAt = now
@@ -168,7 +173,7 @@ Meteor.methods({
     dstAsset.projectNames = []
     dstAsset.heartedBy = []
     dstAsset.heartedBy_count = 0
-    
+
     dstAsset.name = opts.newAssetName || (dstAsset.name + ` (fork_${now.toTimeString().slice(0,2)+'_'+now.toTimeString().slice(3,5)})`)
     if (!dstAsset.forkParentChain)
       dstAsset.forkParentChain = []

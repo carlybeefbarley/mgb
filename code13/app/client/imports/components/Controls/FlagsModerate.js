@@ -13,7 +13,10 @@ const FlagsModerateUI = ( { loading, flagsList } ) => (
             <Segment key={idx}>
                 <List>
                     <List.Item>
-                        <UX.LinkToFlaggedEntity entityType={flag.entityType} entityId={flag.entityId}/>
+                        <UX.LinkToFlaggedEntity
+                        entityType={flag.entityType}
+                        ownerUsername={flag.ownerUserName}
+                        entityId={flag.entityId}/>
                     </List.Item>
                     <List.Item>
                         Created: <UX.TimeAgo when={flag.createdAt} />

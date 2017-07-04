@@ -286,25 +286,6 @@ Meteor.methods({
     return docId
   },
 
-  "Azzets.changeAssetBan": function(docId, newBool) {
-    checkMgb.checkUserIsSuperAdmin()
-    check(docId, String)
-    check(newBool, Boolean)
-    const sel = { _id: docId }
-    const changedData = {
-      updatedAt: new Date(),
-      isUnconfirmedSave: this.isSimulation,
-      suIsBanned: newBool
-    }
-
-    const count = Azzets.update(sel, { $set: changedData } )
-
-    if (Meteor.isServer)
-      console.log(`  [Azzets.changeAssetBan]  (${count}) #${docId}  New=${newBool}`)
-
-    return count
-  },
-
   "Azzets.toggleHeart": function(docId, userId) {
     checkIsLoggedInAndNotSuspended()
     check(docId, String)
@@ -315,7 +296,7 @@ Meteor.methods({
     const asset = Azzets.findOne(selector, { fields: { heartedBy: 1, heartedBy_count: 1 } })
     if (!asset)
       throw new Meteor.Error(404, 'Asset Id does not exist')
-    const currUserLoves = _.includes(asset.heartedBy, userId) 
+    const currUserLoves = _.includes(asset.heartedBy, userId)
     var newHeartedBy;
     if (!currUserLoves)
       newHeartedBy = _.union(asset.heartedBy, [userId])
@@ -335,7 +316,7 @@ Meteor.methods({
 
     return {'count': count, 'newLoveState': !currUserLoves}
   },
-  
+
 
   // This does not allow changes to the su* fields. It is much simpler
   // and more robust to handle those cases in a simpler, privileged path instead of
@@ -391,7 +372,12 @@ Meteor.methods({
     if(Meteor.isServer) {
       // access DB only after data check
       // get real asset and check if user can REALLY edit asset
-      const asset = Azzets.findOne(selector, {fields: {ownerId: 1, projectNames: 1, isCompleted: 1}})
+      const asset = Azzets.findOne(selector, {fields: {ownerId: 1, projectNames: 1, isCompleted: 1, suFlagId: 1, suIsBanned: 1 }})
+      if (asset.suFlagId)
+        throw new Meteor.Error(401, "Cannot edit flagged asset")
+      if (asset.suIsBanned === true)
+        throw new Meteor.Error(401, "Cannot edit banned asset")
+
       const userProjects = Projects.find(projectMakeSelector(this.userId), {fields: {name: 1, ownerId: 1}}).fetch()
       if (!canUserEditAssetIfUnlocked(asset, userProjects, Meteor.user()))
         throw new Meteor.Error(401, "You don't have permission to edit this asset. canUserEditAsset:failed")

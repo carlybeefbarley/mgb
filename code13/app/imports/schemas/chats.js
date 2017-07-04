@@ -440,6 +440,11 @@ const _scopeGroupCharToIconNames = {
 export const makePresentedChannelIconName = channelName => _scopeGroupCharToIconNames[channelName[0]]
 
 
+/**
+ * The completion callback is a meteor Callback. See "Chats.send" for
+ * the code that generates the return values. It includes
+ * info such as  { chatId, chatTimestamp }
+ */
 export function ChatSendMessageOnChannelName( channelName, msg, completionCallback)
 {
   if (!msg || msg.length < 1)

@@ -511,6 +511,9 @@ export default fpChat = React.createClass( {
     // There are some tasks to do the first time a comments/chat list has been rendered for a particular channel
     if (this.state.view === 'comments' && !this.data.loading) {
       const channelName = this._calculateActiveChannelName()
+      // Make sure _previousChannelName is updated so async things
+      // like setLastReadTimestampForChannel() below will update the correct channel
+      _previousChannelName = channelName
       // Maybe mark channel as read. This uses setLastReadTimestampForChannel()
       // which will do no work if the value has not changed
       if (this.data.chats && this.data.chats.length > 0) {
@@ -556,8 +559,9 @@ export default fpChat = React.createClass( {
         showToast( "Cannot send message because: " + error.reason, 'error' )
       else {
         this.setState( { messageValue: '' } )
-        if (channelObj.scopeGroupName === 'Global' || channelObj.scopeGroupName === 'User')
-          logActivity( 'user.message', `Sent a message on ${presentedChannelName}`, null, null, { toChatChannelName: channelName } ) //
+        setLastReadTimestampForChannel( this.context.settings, channelName, result.chatTimestamp )
+        if (channelObj.scopeGroupName === 'Global' || channelObj.scopeGroupName === 'User' || channelObj.scopeGroupName === 'Asset')
+          logActivity( 'user.message', `Sent a message on ${presentedChannelName}`, null, null, { toChatChannelName: channelName } )
       }
     } )
   },

@@ -98,6 +98,7 @@ export default SpecialGlobals = {
   },
 
   settings: {
+    // If this is non-zero, need to change code in settings-client.js
     settingsSaveDebounceMs: 0           // Should be small - less than a second, because there is a race when page nav happens because of getMeteorData() in App.js
   },
 

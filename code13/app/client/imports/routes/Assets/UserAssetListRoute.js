@@ -20,6 +20,7 @@ import AssetListChooseView from '/client/imports/components/Assets/AssetListChoo
 import AssetListChooseLimit from '/client/imports/components/Assets/AssetListChooseLimit'
 import { assetViewChoices, defaultAssetViewChoice } from '/client/imports/components/Assets/AssetCard'
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
+import { defaultProjectSorter } from '/imports/schemas/projects'
 import { WorkStateMultiSelect } from '/client/imports/components/Controls/WorkState'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import { browserHistory } from 'react-router'
@@ -200,7 +201,7 @@ export default UserAssetListRoute = React.createClass({
     }
     return {
       assets: Azzets.find(assetSelector, {sort: assetSorter}).fetch(),      // Note that the subscription we used excludes the content2 field which can get quite large
-      projects: userId ? Projects.find(selectorForProjects).fetch() : null, // Can be null
+      projects: userId ? Projects.find(selectorForProjects, { sort: defaultProjectSorter }).fetch() : null, // Can be null
       loading: !handleForAssets.ready()
     }
   },

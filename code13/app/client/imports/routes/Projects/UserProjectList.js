@@ -7,7 +7,7 @@ import { browserHistory } from 'react-router'
 import Spinner from '/client/imports/components/Nav/Spinner'
 
 import { Projects } from '/imports/schemas'
-import { projectMakeSelector, projectSorters } from '/imports/schemas/projects'
+import { defaultProjectSorterName, projectMakeSelector, projectSorters } from '/imports/schemas/projects'
 import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
 import { WorkStateMultiSelect } from '/client/imports/components/Controls/WorkState'
 import ProjectsShowForkableSelector from './ProjectsShowForkableSelector'
@@ -16,10 +16,10 @@ import CreateProjectLinkButton from '/client/imports/components/Projects/NewProj
 
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = {
-  searchName: "",               // Empty string means match all (more convenient than null for input box)
-  sort: "edited",               // Should be one of the keys of projectSorters{}
-  hidews: '0',                  // hide WorkStates using a bitmask. Bit on = workstate[bitIndex] should be hidden
-  showForkable: "0"             // showForkable only
+  searchName: "",                 // Empty string means match all (more convenient than null for input box)
+  sort: defaultProjectSorterName, // Should be one of the keys of projectSorters{}
+  hidews: '0',                    // hide WorkStates using a bitmask. Bit on = workstate[bitIndex] should be hidden
+  showForkable: "0"               // showForkable only
 }
 
 const _contentsSegmentStyle = { minHeight: '600px' }
@@ -196,10 +196,10 @@ class UserProjectListUI extends React.PureComponent {
 
 export default UserProjectList = createContainer( ({ user, location }) => {
   const userId = user ? user._id : null
-  let findOpts = {
-    sort:   projectSorters["edited"]
-  }
   const qN = _queryNormalized(location.query)
+  let findOpts = {
+    sort:   projectSorters[qN.sort]
+  }
   const showOnlyForkable = (qN.showForkable === '1')
   const handleForProjects = Meteor.subscribe("projects.search", userId, qN.searchName, showOnlyForkable, qN.hidews)
   const projectSelector = projectMakeSelector(userId, qN.searchName, showOnlyForkable, qN.hidews)

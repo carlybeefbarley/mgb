@@ -328,11 +328,17 @@ export function projectMakeSelector(
   return sel
 }
 
+
+// MongoDB sorters for Projects collection
 export const projectSorters = {
-  "edited": { updatedAt: -1},
-  "name":   { name: 1 },
-  "createdNewest": { createdAt: -1 }
+  "edited":         { updatedAt: -1 },
+  "name":           { name: 1 },
+  "createdNewest":  { createdAt: -1 }
 }
+
+// Make some handy shortcuts for defaults
+export const defaultProjectSorterName = 'createdNewest'
+export const defaultProjectSorter = projectSorters[defaultProjectSorterName]
 
 /**
  * This is used by the Front Page hero list. It's kind of lame
@@ -421,7 +427,7 @@ Meteor.methods({
     checkMgb.projectName(data.name)
     checkMgb.projectDescription(data.description)
     const username = Meteor.user().profile.name
-    
+
     // Note that this check will also run on the client, but could potentially fail to
     // find a conflict (since the client's subscription might not include all the user's
     // projects.. but that's ok since the check will run again on the server and that
@@ -432,12 +438,12 @@ Meteor.methods({
       if (numProjectsOwnedByUser >= _calcMaxOwnedProjectsAllowed(Meteor.user()))
         throw new Meteor.Error(401, 'Max number of projects reached')
     }
-    
+
     const existingProject = Projects.findOne( { ownerId: this.userId, name: data.name } )
     if (existingProject)
       throw new Meteor.Error(403, `Project ${username}:${data.name} already exists. Try again with a different name`)
 
- 
+
     // Note: forkParentChain and forkChildren were added on 2/19/2017 so earlier
     // projects do not have them. For consistency, I have chose to NOT add
     // them at create-time even to new Projects created after this date.
@@ -528,10 +534,10 @@ Meteor.methods({
       throw new Meteor.Error(404, 'Project Id does not exist')
     if(userId === project.ownerId)
       throw new Meteor.Error(404, 'Project owner may not leave the project')
-    var newData = { 
+    var newData = {
       memberIds: _.without(project.memberIds, userId),
       updatedAt: new Date()
-    }   
+    }
     const count = Projects.update(selector, { $set: newData } )
     if (Meteor.isServer)
       console.log(`  [Projects.leave]  (${count}) #${projectId} '${project.name}'`)

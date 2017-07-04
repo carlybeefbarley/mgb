@@ -20,7 +20,7 @@ import { Users, Activity, Projects, Settings, Sysvars, Skills } from '/imports/s
 import { isSameUser } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
-import { projectMakeSelector } from '/imports/schemas/projects'
+import { projectMakeSelector, defaultProjectSorter } from '/imports/schemas/projects'
 
 import NavBar from '/client/imports/components/Nav/NavBar'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
@@ -810,7 +810,8 @@ const App = createContainer(({ params, location }) => {
   return {
     currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
 
-    currUserProjects: handleForProjects ? Projects.find(projectSelector).fetch() : [],
+    currUserProjects: !handleForProjects ? [] :
+                        Projects.find(projectSelector, { sort: defaultProjectSorter } ).fetch(),
     user:             pathUserName ? Meteor.users.findOne({ "profile.name": pathUserName }) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
     activity:         getActivity ? Activity.find({}, { sort: { timestamp: -1 } }).fetch() : [],     // Activity for any user
     settings:         G_localSettings,

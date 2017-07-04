@@ -6,23 +6,24 @@ import { calculateProjectAccessRightsForAsset, getColorNameForProjectAccess, get
 
 // This is a compact editor for membership
 
-const ProjectMembershipSummary = (props) => {
-  const { currUserId, asset, currUserProjects } = props
+
+// <ProjectMembershipSummary/> is a label that acts as the trigger for the popup
+const ProjectMembershipSummary = ( { currUserId, asset, currUserProjects } ) => {
   if (!asset)
     return null
 
-  const projectsTable = _.sortBy(calculateProjectAccessRightsForAsset(currUserId, asset, currUserProjects), (p) => (_.toLower(p.projectName)))
+  const projectsTable = calculateProjectAccessRightsForAsset(currUserId, asset, currUserProjects)
   const hasProjects = projectsTable ? projectsTable.length > 0 : false
 
   const projectsTableAsJsx = (    // This will be the colored text in the box. For better UX, maybe this should be a count?
     <span>
     {
       _.map(projectsTable, (p,idx) => (
-        <QLink 
+        <QLink
             to={`/u/${asset.dn_ownerName}/assets`}
             query={{project:p.projectName}}
             altTo={`/u/${asset.dn_ownerName}/projects`}
-            key={idx} 
+            key={idx}
             style={{color: getColorNameForProjectAccess(p)}}>
           { p.projectName + (idx === projectsTable.length-1 ? "" : ", ") }
         </QLink>
@@ -32,10 +33,10 @@ const ProjectMembershipSummary = (props) => {
   )
 
   return (
-    <Label 
-        size='small' 
-        basic 
-        color={asset.isDeleted ? 'red' : null} 
+    <Label
+        size='small'
+        basic
+        color={asset.isDeleted ? 'red' : null}
         title='Projects to which this asset belongs' style={{borderRadius: '0px'}}>
         <Icon name='sitemap' />
         { (!hasProjects ? "(none)" : projectsTableAsJsx ) }
@@ -61,23 +62,26 @@ const ProjectMembershipPopup = (props) => {
   let choices = []
   // If I am owner, then show all possible projects and switch state for each
   if (asset.ownerId === currUserId)
-  { 
+  {
     // Current user is Asset owner, so show all possible projects and switch state for each
     choices.push( makeHdrEl('h1', "My projects with this asset"))
-    _.each(_.sortBy(currUserProjects, (p) => (_.toLower(p.name))), (p,idx) => {
+    _.each( currUserProjects, (p,idx) => {
       const isAssetPartOfProject = _.includes(asset.projectNames, p.name)
       if (p.ownerId === currUserId)
         choices.push(
-          <a  className={`ui fluid ${isAssetPartOfProject ? "green" : ""} label`} 
+          <Label
+              as='a'
+              className='fluid'
+              color={isAssetPartOfProject ? 'green' : null}
               style={labelSty}
-              key={"MyProj"+idx} 
+              key={"MyProj"+idx}
               onClick={ () => (canEdit && handleToggleProjectName && handleToggleProjectName(p.name)) }>
-              <i className="ui sitemap icon" />
-              {p.name}
-              <div className="detail">
-                <i className={`ui ${isAssetPartOfProject ? "black checkmark" : ""} icon`}></i>
-              </div>
-          </a>
+            <Icon name='sitemap' />
+            {p.name}
+            <Label.Detail>
+              <Icon name={isAssetPartOfProject ? 'checkmark' : null} />
+            </Label.Detail>
+          </Label>
         )
     })
   }
@@ -87,20 +91,20 @@ const ProjectMembershipPopup = (props) => {
     const projectsTable = calculateProjectAccessRightsForAsset(currUserId, asset, currUserProjects)
     const makeRow = (p, idx) => {
       choices.push (
-        <QLink 
+        <QLink
             to={`/u/${asset.dn_ownerName}/assets`}
             query={{project:p.name}}
             altTo={`/u/${asset.dn_ownerName}/projects`}
-            className={"ui fluid "+ getColorNameForProjectAccess(p) + " label"} 
+            className={"ui fluid "+ getColorNameForProjectAccess(p) + " label"}
             style={labelSty}
             title={ getMsgForProjectAccess(p) }
-            data-value={p.projectName} 
+            data-value={p.projectName}
             key={(p.isCurrUserProjectMember ? "MemberOf" : "NotMyProj")+idx} >
-            <i className="ui sitemap icon" />
-            '{p.projectName}'
-            <div className="detail">
-              <i className={`ui ${p.isCurrUserProjectMember ? "black checkmark" : ""} icon`}></i>
-            </div>
+          <Icon name='sitemap' />
+          {p.projectName}
+          <Label.Detail>
+            <Icon name={p.isCurrUserProjectMember  ? 'checkmark' : null} />
+          </Label.Detail>
         </QLink>
       )
     }
@@ -123,9 +127,13 @@ const ProjectMembershipPopup = (props) => {
       choices.push(makeHdrEl('h3', `Asset is not in any projects`))
     else
       choices.unshift(makeHdrEl('h0', `${asset.dn_ownerName}'s Projects containing this Asset`))
-  } 
+  }
 
-  return <div style={{maxHeight: '400px', overflow: 'scroll'}}>{choices}</div>
+  return (
+    <div style={{maxHeight: '500px', overflow: 'scroll'}}>
+      {choices}
+    </div>
+  )
 }
 
 export default ProjectMembershipEditorV2 = React.createClass({
@@ -136,7 +144,7 @@ export default ProjectMembershipEditorV2 = React.createClass({
     handleToggleProjectName: PropTypes.func,         // Will be passed the name of the projectName to add/remove for the owner
     canEdit: PropTypes.bool                          // Can be false
   },
-  
+
   render: function() {
     const { currUserId, asset, currUserProjects, canEdit, handleToggleProjectName } = this.props
 

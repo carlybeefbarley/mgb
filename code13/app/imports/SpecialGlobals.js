@@ -106,11 +106,14 @@ export default SpecialGlobals = {
     tutorialAccount:         '!vault',
     tutorialAssetNamePrefix: 'tutorials.'
   },
-  quotas: {
-    defaultNumMembersAllowedInProject: 5,
-    SUdefaultNumMembersAllowedInProject: 99,
-    defaultNumOfOwnedProjectsAllowed: 10,
-    SUdefaultNumOfOwnedProjectsAllowed: 99
-  }
 
+  quotas: {
+    // Project limits: max members in project
+    defaultNumMembersAllowedInProject:    10,      // For normal users
+    SUdefaultNumMembersAllowedInProject:  99,     // For admin accounts
+
+    // Project limits: max projects owned by an account
+    defaultNumOfOwnedProjectsAllowed:     10,     // For normal accounts
+    SUdefaultNumOfOwnedProjectsAllowed:   99      // For admin accounts
+  }
 }

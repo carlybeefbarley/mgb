@@ -81,17 +81,27 @@ export const StartDefaultNextTutorial = ( { currUser, userSkills } ) => {
     return <OfferLoginTutorial />
   const nextTutorialSkillPath = _calcDefaultNextTutorialSkillPath(currUser, userSkills)
   if (!nextTutorialSkillPath)
-    return <Button icon='checkmark' labelPosition='left' color='green' size='big' floated='right' content='You completed "Getting Started" !' />
+    return (
+      <Button
+          color='green'
+          style={{margin: '0.5em'}}
+          size='big'
+          floated='right' >
+        <Icon name='checkmark' />
+        "Get Started" completed!
+      </Button>
+    )
 
   return (
     <Button
-      color='yellow'
-      active
-      floated='right'
-      onClick={() => { _handleStartDefaultNextTutorial( currUser, userSkills ) } }
-      icon='student'
-      content='Start next...'
-    />
+        color='yellow'
+        active
+        style={{margin: '0.5em'}}
+        floated='right'
+        onClick={() => { _handleStartDefaultNextTutorial( currUser, userSkills ) } } >
+      <Icon name='student' />
+      Start next...
+    </Button>
   )
 }
 

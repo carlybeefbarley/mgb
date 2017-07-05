@@ -56,7 +56,7 @@ export const ActivityTypes = {
   "user.message":      { icon: "green chat",       pri:  9,  description: "User sent a public message" }, // Should also include toChatChannelName
   "user.awardedSkill": { icon: "green student",    pri:  7,  description: "User was awarded a skill" },
   "user.learnedSkill": { icon: "student",          pri:  9,  description: "User learned a skill" },
-  //"user.earnBadge":    { icon: "green trophy",     pri:  6,  description: "User earned a badge" },
+  "user.earnBadge":    { icon: "green trophy",     pri:  6,  description: "User earned a badge" },
 
   "asset.create":      { icon: "green plus",       pri: 10,  description: "Create new asset" },
   "asset.fork.from":   { icon: "blue fork",        pri: 10,  description: "Forked new asset from this asset" },

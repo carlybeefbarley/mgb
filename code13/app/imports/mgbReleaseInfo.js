@@ -18,12 +18,12 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Wed July 5 2017 11:00:00 GMT-0700 (PDT)',
+      'timestamp': 'Wed July 5 2017 16:20:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.2.0',
         'state': 'Beta',
-        'iteration': '4555'
+        'iteration': '4557'
       },
 
       'releaseManagement': {
@@ -49,7 +49,7 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'The "Next tutorial" button for the Get Started tutorials now updates when those tutorials have all been completed; the network-offline message has been tweaked a bit; All project lists are now consistently sorted by most-recently-created-first; Fixed some chat-notification bugs; Fixed some code-import bugs; Fixed a playsCount bug',
+          'changeSummary': 'The "Next tutorial" button for the Get Started tutorials now updates when those tutorials have all been completed; the network-offline message has been tweaked a bit; All project lists are now consistently sorted by most-recently-created-first; Fixed some chat-notification bugs; Fixed some code-import bugs; Fixed a playsCount bug; Make the Graphic Editor\' frames-menu more discoverable.',
           'otherUrls': [ ]
         }
       ]

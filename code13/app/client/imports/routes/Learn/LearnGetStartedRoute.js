@@ -29,7 +29,7 @@ const OfferLoginTutorial = () => (
 )
 
 const _gsSkillNodeName = 'getStarted'
-const _maxGsSkillCount = countMaxUserSkills( _gsSkillNodeName + '.' )   
+const _maxGsSkillCount = countMaxUserSkills( _gsSkillNodeName + '.' )
 const gsSkills = SkillNodes[_gsSkillNodeName]    // shorthand
 const gsItems = [
   { node: gsSkills.profile, mascot: 'arcade_player' },
@@ -55,7 +55,7 @@ ProgressLabel.propTypes = {
   subSkillTotal: PropTypes.number
 }
 
-const _handleStartDefaultNextTutorial = (currUser, userSkills) => {
+const _calcDefaultNextTutorialSkillPath = (currUser, userSkills) => {
   var skillPath = null
   _.each( gsItems, (area) => {
     const { key } = area.node.$meta
@@ -65,22 +65,35 @@ const _handleStartDefaultNextTutorial = (currUser, userSkills) => {
       return false
     }
   } )
-  if (skillPath)
-    startSkillPathTutorial( skillPath )
+  return skillPath
 }
 
-export const StartDefaultNextTutorial = ({ currUser, userSkills }) => (
-  !currUser ? <OfferLoginTutorial /> : (
-      <button
-        className="ui active yellow right floated button"
-        onClick={() => {
-          _handleStartDefaultNextTutorial( currUser, userSkills )
-        } }>
-        <Icon name='student' />
-        Start next...
-      </button>
-    )
-)
+const _handleStartDefaultNextTutorial = (currUser, userSkills) => {
+  var skillPath = _calcDefaultNextTutorialSkillPath(currUser, userSkills)
+  if (skillPath)
+    startSkillPathTutorial( skillPath )
+  else
+    console.log('That was the last skill')
+}
+
+export const StartDefaultNextTutorial = ( { currUser, userSkills } ) => {
+  if (!currUser)
+    return <OfferLoginTutorial />
+  const nextTutorialSkillPath = _calcDefaultNextTutorialSkillPath(currUser, userSkills)
+  if (!nextTutorialSkillPath)
+    return <Button icon='checkmark' labelPosition='left' color='green' size='big' floated='right' content='You completed "Getting Started" !' />
+
+  return (
+    <Button
+      color='yellow'
+      active
+      floated='right'
+      onClick={() => { _handleStartDefaultNextTutorial( currUser, userSkills ) } }
+      icon='student'
+      content='Start next...'
+    />
+  )
+}
 
 const LearnGetStartedRoute = ({ currUser }, context) => {
   const numGsSkills = (countCurrentUserSkills( context.skills, _gsSkillNodeName + '.' ) || 0)

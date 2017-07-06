@@ -219,8 +219,8 @@ class PlayCodeGame extends React.Component {
           icon: 'refresh',
           tooltip: 'Restart game',
           disabled: false,
-          level: 1,
-          shortcut: 'Alt+R'
+          level: 1
+//          shortcut: 'Alt+R'   // Restart keypress can't be done reliably because game can take focus. Fix #958 because this is nice-to-have but confusing
         }
       ]
     }
@@ -232,8 +232,8 @@ class PlayCodeGame extends React.Component {
         icon: 'television',
         tooltip: 'Run game in Fullscreen',
         disabled: false,
-        level: 1,
-        shortcut: 'Alt+F'
+        level: 1
+//          shortcut: 'Alt+F'   // Full-screen keypress can't be done reliably because game can take focus. Fix #958 because this is nice-to-have but confusing
       })
     }
 

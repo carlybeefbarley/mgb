@@ -51,7 +51,7 @@ export default SpecialGlobals = {
         name: 'Phaser',
         import: 'phaser',
         desc: 'For making games',
-        descLong: 'Phaser is a good framework for making JavaScript games. It helps developers with game scenes, asset loaders, rendering, physics, input devices, sound, and more',
+        descLong: 'Phaser is a good framework for making 2D games in Javascript. It helps developers with game scenes, asset loaders, rendering, physics, input devices, sound, and more',
         landingPageUrl: '//phaser.io',
         apiDocsPageUrl: '//photonstorm.github.io/phaser-ce/',
         tutorialsInternalLink: '/learn/code/phaser'
@@ -98,6 +98,7 @@ export default SpecialGlobals = {
   },
 
   settings: {
+    // If this is non-zero, need to change code in settings-client.js
     settingsSaveDebounceMs: 0           // Should be small - less than a second, because there is a race when page nav happens because of getMeteorData() in App.js
   },
 
@@ -105,11 +106,14 @@ export default SpecialGlobals = {
     tutorialAccount:         '!vault',
     tutorialAssetNamePrefix: 'tutorials.'
   },
-  quotas: {
-    defaultNumMembersAllowedInProject: 5,
-    SUdefaultNumMembersAllowedInProject: 99,
-    defaultNumOfOwnedProjectsAllowed: 10,
-    SUdefaultNumOfOwnedProjectsAllowed: 99
-  }
 
+  quotas: {
+    // Project limits: max members in project
+    defaultNumMembersAllowedInProject:    10,      // For normal users
+    SUdefaultNumMembersAllowedInProject:  99,     // For admin accounts
+
+    // Project limits: max projects owned by an account
+    defaultNumOfOwnedProjectsAllowed:     10,     // For normal accounts
+    SUdefaultNumOfOwnedProjectsAllowed:   99      // For admin accounts
+  }
 }

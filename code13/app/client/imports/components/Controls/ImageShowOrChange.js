@@ -66,7 +66,7 @@ const ImageShowOrChange = ( { imageSrc, canEdit, canLinkToSrc, handleChange, hea
 ImageShowOrChange.propTypes = {
   header:       PropTypes.string.isRequired,    // e.g "Project Avatar"
   imageSrc:     PropTypes.string,               // A string which will be passed to img.src. Can be null
-  canEdit:      PropTypes.bool.isRequired,      // True if this should be able to accept changes via Drag
+  canEdit:      PropTypes.bool,                 // True if this should be able to accept changes via Drag LR--not required anymore b/c causes console spew w/ logged out user
   canLinkToSrc: PropTypes.bool.isRequired,      // True if this should be a QLink to the image (or image editor)
   handleChange: PropTypes.func,                 // Function callback - takes (newUrlString, assetIdString) as params
   maxWidth:     PropTypes.string,               // for example "120px"

@@ -9,8 +9,7 @@ import ProjectCardGET from '/client/imports/components/Projects/ProjectCardGET'
 import { isSameUserId } from '/imports/schemas/users'
 
 import reactMixin from 'react-mixin'
-import { Chats, Azzets, Flags } from '/imports/schemas'
-import { FlagTypes } from '/imports/schemas/flags'
+import { Chats, Azzets } from '/imports/schemas'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import {
@@ -46,6 +45,9 @@ const unreadChannelIndicatorStyle = {
 
 import moment from 'moment'
 import { isUserModerator } from '/imports/schemas/roles'
+
+import FlagEntity from '/client/imports/components/Controls/FlagEntityUI'
+import ResolveReportEntity from '/client/imports/components/Controls/FlagResolve'
 
 /* TODOs for planned chat work
 
@@ -182,175 +184,6 @@ const _doDeleteMessage = chatId => deleteChatRecord( chatId )
 const _isCurrUsersWall = (chat, currUser) => {
   const channelInfo = parseChannelName(chat.toChannelName)
   return (currUser.username === channelInfo.scopeId && channelInfo.scopeGroupName === 'User')
-}
-//flagType is an array, comments is a string, id is a string
-const _doReportEntity = (chatId, flagTypes, comments) => {
-  const reportedEntity = {
-    table: "Chats",
-    recordId: chatId
-  }
-  const data = {
-    flagTypes: flagTypes,
-    comments: comments
-  }
-  Meteor.call("Flags.create", reportedEntity, data, (error, result) => {
-    if (error)
-      showToast(`Could not flag: ${error.reason}`, 'error')
-      // else say ok?
-  })
-}
-class ReportChatMessage extends React.Component {
-  state = {
-    userSelectedTags: [],
-    userComments: ""
-  }
-
-  render () {
-    const { currUser, chat } = this.props
-    return (
-    (currUser && !chat.suFlagId && !(chat.suIsBanned === true)) &&
-      <span className='mgb-show-on-parent-hover' >
-      <Popup
-        on='click'
-        position='left center'
-        flowing
-        trigger={(
-          <Label
-            circular
-            basic
-            size='mini'
-            icon={{name: 'warning', color: 'red', style: { marginRight: 0 } } }
-            />
-        )}
-        >
-        <Popup.Header>
-          Report this chat message to Moderator?
-        </Popup.Header>
-        <Popup.Content>
-          <Form style={{minWidth: '25em'}}>
-            <Divider hidden />
-            <Form.Dropdown
-              placeholder='Reason(s)'
-              search
-              fluid
-              header="Reason(s) for report:"
-              multiple
-              selection
-              options={_.map(_.keys(FlagTypes), (k) => ({
-                text: FlagTypes[k].displayName, value: k
-              }))}
-              onChange={ ( event, dropdown ) => { this.setState( {userSelectedTags: dropdown.value } ) } }
-              />
-            <Divider hidden />
-            <Form.TextArea
-                placeholder='Additional comments/concerns'
-                autoHeight
-                onChange={ ( event, textarea ) => { this.setState( {userComments: textarea.value} ) } }
-                />
-            <Divider hidden />
-            <Form.Button
-                floated='right'
-                primary
-                disabled={ !this.state.userSelectedTags.length || !this.state.userComments }
-                onClick={ () => _doReportEntity(chat._id, this.state.userSelectedTags, this.state.userComments )}
-                size='small'
-                content='Report'
-                icon='warning circle'/>
-              &nbsp;
-          </Form>
-        </Popup.Content>
-      </Popup>
-      </span>
-    )
-  }
-}
-
-const _doResolveReportEntity = (chatId, wasPermBanned, comments) => {
-  const reportedEntity = {
-    table: "Chats",
-    recordId: chatId
-  }
-  const data = {
-    wasPermBanned: wasPermBanned,
-    comments: comments
-  }
-  Meteor.call("Flags.resolve", reportedEntity, data, (error, result) => {
-    if (error)
-      showToast(`Could not resolve flag: ${error.reason}`, 'error')
-    else
-      console.log("Flags.resolve said ok")
-      // else say ok?
-  })
-}
-
-class ResolveReportChatMessage extends React.Component {
-
-  state = {
-    modComments: ""
-  }
-
-  render () {
-    const { currUser, chat, isSuperAdmin } = this.props
-
-    return (
-      (isSuperAdmin && currUser && chat.suFlagId ) ?
-      <span className='mgb-show-on-parent-hover' >
-      <Popup
-        on='click'
-        size="tiny"
-        position='left center'
-        trigger={(
-          <Label
-            circular
-            basic
-            size='mini'
-            icon={{name: 'help circle', color: 'blue', style: {marginRight: 0 }  }}
-            />
-        )}
-        wide='very'
-        >
-        <Popup.Header>
-          Resolve this flag
-        </Popup.Header>
-        <Popup.Content>
-        <Form style={{minWidth: '25em'}}>
-            <Divider hidden />
-            Comments on the situation/why are you banning this or not?
-              <Form.TextArea
-                autoHeight
-                placeholder='Moderator comments'
-                onChange={ ( event, textarea ) => { this.setState( { modComments: textarea.value } ) } }
-                />
-            <Divider hidden />
-            Ban this permanently?
-              <br/><em>
-              (the message will show up as deleted by moderator)
-              </em>
-            <Divider hidden />
-            <Button.Group>
-              <Button
-              value={ true }
-              onClick={ () => _doResolveReportEntity(chat._id, true, this.state.modComments )}
-              negative>
-              Yes Ban
-              </Button>
-            <Button.Or/>
-              <Button
-              value={ false }
-              onClick={ () => _doResolveReportEntity(chat._id, false, this.state.modComments )}
-              positive>
-              Don't Ban
-              </Button>
-            </Button.Group>
-              &nbsp;
-          </Form>
-        </Popup.Content>
-      </Popup>
-      </span>
-        :
-        null
-    )
-  }
 }
 
 const DeleteChatMessage = ( { chat, currUser, isSuperAdmin } ) => (
@@ -511,6 +344,9 @@ export default fpChat = React.createClass( {
     // There are some tasks to do the first time a comments/chat list has been rendered for a particular channel
     if (this.state.view === 'comments' && !this.data.loading) {
       const channelName = this._calculateActiveChannelName()
+      // Make sure _previousChannelName is updated so async things
+      // like setLastReadTimestampForChannel() below will update the correct channel
+      _previousChannelName = channelName
       // Maybe mark channel as read. This uses setLastReadTimestampForChannel()
       // which will do no work if the value has not changed
       if (this.data.chats && this.data.chats.length > 0) {
@@ -556,8 +392,9 @@ export default fpChat = React.createClass( {
         showToast( "Cannot send message because: " + error.reason, 'error' )
       else {
         this.setState( { messageValue: '' } )
-        if (channelObj.scopeGroupName === 'Global' || channelObj.scopeGroupName === 'User')
-          logActivity( 'user.message', `Sent a message on ${presentedChannelName}`, null, null, { toChatChannelName: channelName } ) //
+        setLastReadTimestampForChannel( this.context.settings, channelName, result.chatTimestamp )
+        if (channelObj.scopeGroupName === 'Global' || channelObj.scopeGroupName === 'User' || channelObj.scopeGroupName === 'Asset')
+          logActivity( 'user.message', `Sent a message on ${presentedChannelName}`, null, null, { toChatChannelName: channelName } )
       }
     } )
   },
@@ -637,8 +474,18 @@ export default fpChat = React.createClass( {
               <DeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
               }
               <UndeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
-              <ReportChatMessage chat={c} currUser={currUser} />
-              <ResolveReportChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
+              <FlagEntity
+                entity={c}
+                currUser={currUser}
+                tableCollection={"Chats"}
+              />
+            {isSuperAdmin &&
+            <ResolveReportEntity
+              entity={c}
+              currUser={currUser}
+              tableCollection={"Chats"}
+              isSuperAdmin={isSuperAdmin}
+            />}
             </Comment.Metadata>
             <Comment.Text>
             {(c.suFlagId && !c.suIsBanned) ?

@@ -721,7 +721,7 @@ export default class SpriteLayers extends React.Component {
                         ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } }
                         id={"mgb_edit_graphics_frame_options_" + idx}
                       >
-                      {idx+1}
+                      <span className='ui circular label'>{idx+1}</span>
                       <div className="ui vertical menu">
                         <div className="header item">
                           Frame #{idx+1}

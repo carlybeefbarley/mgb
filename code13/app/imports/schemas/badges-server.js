@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { hasMultipleSkills } from './skills'
 import { Skills, Projects } from '/imports/schemas'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
-
+import { logActivity } from '/imports/schemas/activity'
 
 
 // Dear Maintainers:
@@ -144,6 +144,14 @@ const _doRefreshBadgeStatus = user => {
   })
   // TODO: more...
 
+  _.forEach(_.uniq(newBadgeKeys), bk => {
+    logActivity(
+      'user.earnBadge',
+      `earned the '${bk}' badge`,
+      null, null,
+      { override_byUser: user }
+    )
+  })
 
   if (newBadgeKeys.length > 0)
   {

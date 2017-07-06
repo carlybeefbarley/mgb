@@ -2527,7 +2527,7 @@ export default class EditCode extends React.Component {
 
     // assume that we have only name here
     if(pieces.length === 1)
-      pieces.unshift(this.props.currUser.username)
+      pieces.unshift(this.props.asset.dn_ownerName)
 
     // check if this is API link
     if(pieces.length > 1 && pieces[0] === 'api' && pieces[1] === 'asset' ){

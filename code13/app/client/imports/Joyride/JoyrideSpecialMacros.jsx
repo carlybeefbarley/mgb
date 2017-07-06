@@ -27,7 +27,7 @@ const _fullStepField = null     // This is returned in notFoundMacros[].field re
 // Helper which makes an array of NavPanel stepMacro: e.g. _mkNp( 'learn', 'student' )
 const _mkNavPanelMacros = () => {
 
-  const np = getNavPanels(null, true) // this gets the complete set so we can extract what we want
+  const np = getNavPanels(Meteor.user(), true) // this gets the complete set so we can extract what we want
   const retval = []
   const parseDropdown = (dd, position) => {
     const ddUpName = _.upperFirst(dd.name)
@@ -42,6 +42,7 @@ const _mkNavPanelMacros = () => {
         "text": dd.explainClickAction,
         "selector": `#mgbjr-np-${dd.name}`,
         "showStepOverlay": true,
+        "skipIfUrlAt": dd.to,
         "awaitCompletionTag": `mgbjr-CT-np-${dd.name}`,
         "position": position,
         "style": "%inverted%"
@@ -60,6 +61,7 @@ const _mkNavPanelMacros = () => {
           "text": `Hover on the <div style='border: 1px solid dimgrey' class='ui small black compact button'>${ddUpName}</div> menu,<br></br> then click the <div class='ui small label'>${smText}</div> option`,
           "selector": `#mgbjr-np-${dd.name}-${item.jrkey},#mgbjr-np-${dd.name}`,  // Note the  comma  which allows multiple selectors, in descending preference
           "showStepOverlay": true,
+          "skipIfUrlAt": item.to,
           "awaitCompletionTag": `mgbjr-CT-np-${dd.name}-${item.jrkey}`,
           "position": position,
           "style": "%inverted%"
@@ -179,142 +181,154 @@ const _mkCreateAsset = kind => ([
   },
 ])
 
-
-const stepMacros = [
-  {
-    key: _wrapKey('complete'),
-    hint: `Tutorial completed`,
-    desc: `Tutorial completed, Show GoalsFP to start next`,
-    newVal:
+const makeStepMacros = () => {
+  const stepMacros = [
     {
-      "title": `Great! You completed the tutorial`,
-      "text": `You can start the next tutorial from the Goals FlexPanel at any time`,
-      "selector": "#mgbjr-flexPanelIcons-goals",
-      "preparePage": 'openFlexPanel:goals',
-      "showStepOverlay": true,
-      "position": "left",
-      "style": "%green%"    // Note that full Step Macros can still use per-field macros :)
-    }
-  },
-
-  {
-    key: _wrapKey('complete2'),
-    hint: `Tutorial completed`,
-    desc: `Tutorial completed, explain how to start next using FP`,
-    newVal:
-    {
-      "title": `Great! You completed the tutorial`,
-      "text": `You can start the next tutorial from the Goals FlexPanel at any time`,
-      "selector": "#mgbjr-flexPanelIcons-goals",
-      "showStepOverlay": true,
-      "position": "left",
-      "style": "%green%"
-    }
-  },
-
-  {
-    key: _wrapKey('completeLearnPhaserTut'),
-    hint: `Tutorial completed`,
-    desc: `Tutorial completed, go to /learn/code/phaser for next`,
-    newVal:
-    {
-      "title": `Great! You completed the tutorial`,
-      "text": `You can start the next tutorial from the Goals FlexPanel at any time`,
-      "selector": "#mgbjr-flexPanelIcons-goals",
-      "preparePage": 'navToRelativeUrl:/learn/code/phaser',
-      "showStepOverlay": true,
-      "position": "left",
-      "style": "%green%"
-    }
-  },
-
-  {
-    key: _wrapKey('MOCK'),
-    hint: `Mock/placeholder step`,
-    desc: `A Mock step that is handy as a placeholder when making a tutorial`,
-    newVal:
-    {
-      "title": `MOCK STEP. Placeholder - Does nothing`,
-      "text": `Lorem ipsum hocus pocus testing 1 2 3 Ground Control To Major Tom. Kthxbye`,
-      "selector": "body",
-      "showStepOverlay": false,
-      "position": "top"
-    }
-  },
-
-  {
-    key: _wrapKey('flexPanel'),
-    hint: `Find FlexPanel`,
-    desc: `Step for finding the FlexPanel`,
-    newVal:
-    {
-      "title": `The FlexPanel area`,
-      "text": `This stack of icons on the right-hand side is called the <em>FlexPanel</em>. These panels have useful context while you are working on other assets`,
-      "selector": "#mgbjr-flexPanelArea",  // This was previously mgbjr-flexPanelIcons but that is fixed and narrow so tooltip can't always show
-      "showStepOverlay": true,
-      "position": "left"
-    }
-  },
-
-  {
-    key: _wrapKey('navPanel'),
-    hint: `Find Top Menu NavPanel`,
-    desc: `Step for finding the Top Menu NavPanel`,
-    newVal:
-    {
-      "title": `The page header`,
-      "text": `This header has direct links and submenus to navigate this site`,
-      "selector": "#mgbjr-np",
-      "showStepOverlay": true,
-      "position": "bottom"
-    }
-  },
-
-  ..._mkNavPanelMacros(),
-
-  _mkFp( 'activity', 'lightning'    ),
-  _mkFp( 'goals',    'student'      ),
-  _mkFp( 'assets',   'pencil'       ),
-  _mkFp( 'chat',     'chat'         ),
-  _mkFp( 'options',  'options'      ),
-  _mkFp( 'skills',   'plus circle'  ),
-  _mkFp( 'users',    'street view'  ),
-  _mkFp( 'network',  'signal'       ),
-  _mkFp( 'keys',     'keyboard'     ),
-  _mkFpDescribe( 'activity', 'lightning',   'This activity feed lets you see what people are working on'   ),
-  _mkFpDescribe( 'goals',    'student',     'You can track, start/stop or resume your tutorials from here' ),
-  _mkFpDescribe( 'assets',   'pencil',      'This lets you find assets, load them, or drag them into other assets - for example dragging a Graphic to a Map' ),
-  _mkFpDescribe( 'chat',     'chat',        'The Chat FlexPanel allows you to chat with other users of the site, while still doing other work' ),
-  _mkFpDescribe( 'options',  'options',     'This lets you enable advanced fetures that are initially hidden for new users' ),
-  _mkFpDescribe( 'skills',   'plus circle', 'This lets you track your learning skills'),
-  _mkFpDescribe( 'users',    'street view', 'This is a quick way to search for other users. It doesn\'t do much yet...' ),
-  _mkFpDescribe( 'network',  'signal',      'If you lose network or server connectivity, this provides some info and a way to force a reconnect'),
-  _mkFpDescribe( 'keys',     'keyboard',    'This doesn\'t really work yet, but it will be a way to learn and modify keyboard shortcuts' ),
-
-  ..._mkCreateAsset( 'graphic'  ),
-  ..._mkCreateAsset( 'actor'    ),
-  ..._mkCreateAsset( 'actormap' ),
-  ..._mkCreateAsset( 'map'      ),
-  ..._mkCreateAsset( 'code'     ),
-  ..._mkCreateAsset( 'sound'    ),
-  ..._mkCreateAsset( 'music'    ),
-  ..._mkCreateAsset( 'game'     ),
-  ..._mkCreateAsset( 'tutorial' ),
-
-  // This is a special/sneaky one that is used in some tutorials to award a badge. The actual award is done server side based on some criteria
-  {
-    key: _wrapKey('refreshBadgeStatus'),
-    hint: `Refresh Badge Status`,
-    desc: `Tells the server to check now to see if recent user actions should be rewarded with a badge`,
-    newVal:
-    {
-      "preparePage": 'refreshBadgeStatus',
-      "title": "Waving magic wand...",
-      "text": "See your new Badge?",
-      "position": "top-left"
+      key: _wrapKey('complete'),
+      hint: `Tutorial completed`,
+      desc: `Tutorial completed, Show GoalsFP to start next`,
+      newVal:
+      {
+        "title": `Great! You completed the tutorial`,
+        "text": `You can start the next tutorial from the Goals FlexPanel at any time`,
+        "selector": "#mgbjr-flexPanelIcons-goals",
+        "preparePage": 'openFlexPanel:goals',
+        "showStepOverlay": true,
+        "position": "left",
+        "style": "%green%"    // Note that full Step Macros can still use per-field macros :)
+      }
     },
+
+    {
+      key: _wrapKey('complete2'),
+      hint: `Tutorial completed`,
+      desc: `Tutorial completed, explain how to start next using FP`,
+      newVal:
+      {
+        "title": `Great! You completed the tutorial`,
+        "text": `You can start the next tutorial from the Goals FlexPanel at any time`,
+        "selector": "#mgbjr-flexPanelIcons-goals",
+        "showStepOverlay": true,
+        "position": "left",
+        "style": "%green%"
+      }
+    },
+
+    {
+      key: _wrapKey('completeLearnPhaserTut'),
+      hint: `Tutorial completed`,
+      desc: `Tutorial completed, go to /learn/code/phaser for next`,
+      newVal:
+      {
+        "title": `Great! You completed the tutorial`,
+        "text": `You can start the next tutorial from the Goals FlexPanel at any time`,
+        "selector": "#mgbjr-flexPanelIcons-goals",
+        "preparePage": 'navToRelativeUrl:/learn/code/phaser',
+        "showStepOverlay": true,
+        "position": "left",
+        "style": "%green%"
+      }
+    },
+
+    {
+      key: _wrapKey('MOCK'),
+      hint: `Mock/placeholder step`,
+      desc: `A Mock step that is handy as a placeholder when making a tutorial`,
+      newVal:
+      {
+        "title": `MOCK STEP. Placeholder - Does nothing`,
+        "text": `Lorem ipsum hocus pocus testing 1 2 3 Ground Control To Major Tom. Kthxbye`,
+        "selector": "body",
+        "showStepOverlay": false,
+        "position": "top"
+      }
+    },
+
+    {
+      key: _wrapKey('flexPanel'),
+      hint: `Find FlexPanel`,
+      desc: `Step for finding the FlexPanel`,
+      newVal:
+      {
+        "title": `The FlexPanel area`,
+        "text": `This stack of icons on the right-hand side is called the <em>FlexPanel</em>. These panels have useful context while you are working on other assets`,
+        "selector": "#mgbjr-flexPanelArea",  // This was previously mgbjr-flexPanelIcons but that is fixed and narrow so tooltip can't always show
+        "showStepOverlay": true,
+        "position": "left"
+      }
+    },
+
+    {
+      key: _wrapKey('navPanel'),
+      hint: `Find Top Menu NavPanel`,
+      desc: `Step for finding the Top Menu NavPanel`,
+      newVal:
+      {
+        "title": `The page header`,
+        "text": `This header has direct links and submenus to navigate this site`,
+        "selector": "#mgbjr-np",
+        "showStepOverlay": true,
+        "position": "bottom"
+      }
+    },
+
+    ..._mkNavPanelMacros(),
+
+    _mkFp( 'activity', 'lightning'    ),
+    _mkFp( 'goals',    'student'      ),
+    _mkFp( 'assets',   'pencil'       ),
+    _mkFp( 'chat',     'chat'         ),
+    _mkFp( 'options',  'options'      ),
+    _mkFp( 'skills',   'plus circle'  ),
+    _mkFp( 'users',    'street view'  ),
+    _mkFp( 'network',  'signal'       ),
+    _mkFp( 'keys',     'keyboard'     ),
+    _mkFpDescribe( 'activity', 'lightning',   'This activity feed lets you see what people are working on'   ),
+    _mkFpDescribe( 'goals',    'student',     'You can track, start/stop or resume your tutorials from here' ),
+    _mkFpDescribe( 'assets',   'pencil',      'This lets you find assets, load them, or drag them into other assets - for example dragging a Graphic to a Map' ),
+    _mkFpDescribe( 'chat',     'chat',        'The Chat FlexPanel allows you to chat with other users of the site, while still doing other work' ),
+    _mkFpDescribe( 'options',  'options',     'This lets you enable advanced fetures that are initially hidden for new users' ),
+    _mkFpDescribe( 'skills',   'plus circle', 'This lets you track your learning skills'),
+    _mkFpDescribe( 'users',    'street view', 'This is a quick way to search for other users. It doesn\'t do much yet...' ),
+    _mkFpDescribe( 'network',  'signal',      'If you lose network or server connectivity, this provides some info and a way to force a reconnect'),
+    _mkFpDescribe( 'keys',     'keyboard',    'This doesn\'t really work yet, but it will be a way to learn and modify keyboard shortcuts' ),
+
+    ..._mkCreateAsset( 'graphic'  ),
+    ..._mkCreateAsset( 'actor'    ),
+    ..._mkCreateAsset( 'actormap' ),
+    ..._mkCreateAsset( 'map'      ),
+    ..._mkCreateAsset( 'code'     ),
+    ..._mkCreateAsset( 'sound'    ),
+    ..._mkCreateAsset( 'music'    ),
+    ..._mkCreateAsset( 'game'     ),
+    ..._mkCreateAsset( 'tutorial' ),
+
+    // This is a special/sneaky one that is used in some tutorials to award a badge. The actual award is done server side based on some criteria
+    {
+      key: _wrapKey('refreshBadgeStatus'),
+      hint: `Refresh Badge Status`,
+      desc: `Tells the server to check now to see if recent user actions should be rewarded with a badge`,
+      newVal:
+      {
+        "preparePage": 'refreshBadgeStatus',
+        "title": "Waving magic wand...",
+        "text": "See your new Badge?",
+        "position": "top-left"
+      },
+    }
+  ]
+  return stepMacros
+}
+
+let _stepMacros = makeStepMacros()
+
+Tracker.autorun(function() {
+  if (Meteor.userId()) {
+    // do something when they've just logged in.
+    _stepMacros = makeStepMacros()
+    //console.log("makeStepMacros for user: ", Meteor.userId())
   }
-]
+})
 
 const usefulColors = {
   yellowish: 'rgba(148, 191, 22, 0.32)',
@@ -335,7 +349,7 @@ const propertyMacros = [
       "backgroundColor": "rgba(0, 96, 0, 1)",
       "color": "#fff",
       "mainColor": "#fbbd08",
-      "skip": { "color": "#f04" },
+      "skip": { "color": "#804" },
       "hole": { "backgroundColor": usefulColors.whiteTint }
     }
   },
@@ -348,7 +362,7 @@ const propertyMacros = [
       "backgroundColor": "rgba(0, 96, 0, 1)",
       "color": "#fff",
       "mainColor": "#fbbd08",
-      "skip": { "color": "#f04" },
+      "skip": { "color": "#f48" },
       "hole": { "backgroundColor": usefulColors.whiteTint }
     }
   },
@@ -362,7 +376,7 @@ const propertyMacros = [
       "backgroundColor": "rgba(15, 15, 15, 0.8)",
       "color": "#fff",
       "mainColor": "#ff4456",
-      "skip": { "color": "#ff4456" },
+      "skip": { "color": "#804456" },
       "hole": { "backgroundColor": usefulColors.whiteTint },
       "boxShadow": "0px 0px 20px #fff"
     }
@@ -377,7 +391,7 @@ const propertyMacros = [
       "backgroundColor": "rgba(0, 96, 0, 1)",
       "color": "#fff",
       "mainColor": "#fbbd08",
-      "skip": { "color": "#f04" },
+      "skip": { "color": "#f48" },
       "hole": { "backgroundColor": usefulColors.yellowish }
     }
   },
@@ -404,7 +418,7 @@ export const transformStep = step =>
 
   if (_.isString(step))
   {
-    const m = _.find(stepMacros, { key: step } )
+    const m = _.find(_stepMacros, { key: step } )
     if (!m)
       return {
         newStep: step,
@@ -430,11 +444,11 @@ export const transformStep = step =>
 }
 
 
-// Munge the stepMacros list to expose what would be interesting for a semanticUI <Dropdown options={}/> control
+// Munge the _stepMacros list to expose what would be interesting for a semanticUI <Dropdown options={}/> control
 // e.g. Array of { text: text_to_show_user_on_left, description: extra_but_faded_info_for_user, value: %key% } objects
-export const stepKeyOptionsForDropdown = _.map( stepMacros, s => ( { text: s.key, description: s.hint, value: s.key } ) )
+export const stepKeyOptionsForDropdown = _.map( _stepMacros, s => ( { text: s.key, description: s.hint, value: s.key } ) )
 
-export const autocompleteOptions = _.map(stepMacros, s => ({
+export const autocompleteOptions = _.map(_stepMacros, s => ({
   desc: s.desc,
   text: s.key
 }))

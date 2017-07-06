@@ -37,7 +37,7 @@ class ProjectsBeingMadeGetUI extends React.Component {
   render() {
     const { chosenClassName, loading, projects } = this.props
 
-    if (loading) 
+    if (loading)
       return <Spinner />
 
     return (
@@ -53,8 +53,8 @@ class ProjectsBeingMadeGetUI extends React.Component {
                   {p.name}
                 </Header>
                 <p>
-                  <Icon color='grey' name='user' />
-                  { membersStr(p.memberIds) }
+                  { (p.memberIds && p.memberIds.length > 0) && <Icon color='grey' name='user' /> }
+                  { (p.memberIds && p.memberIds.length > 0) ? membersStr(p.memberIds) : ' ' }
                 </p>
               </div>
             </List.Item>
@@ -66,8 +66,8 @@ class ProjectsBeingMadeGetUI extends React.Component {
 }
 
 
-export default ProjectsBeingMadeGET = createContainer( 
-  ( { numEntries } ) => {    
+export default ProjectsBeingMadeGET = createContainer(
+  ( { numEntries } ) => {
     const handleForProjects = Meteor.subscribe('projects.frontPageList', numEntries)
     const projectSelector = projectMakeFrontPageListSelector()
     const projectFindOptions =  { limit: numEntries, sort: { updatedAt: -1 } }

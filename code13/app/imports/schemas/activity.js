@@ -11,16 +11,16 @@ import { isSameUserId } from '/imports/schemas/users'
 const _activityIntervalMs = 1000 * 60 * 5   /// 5 minute interval on the activity de-deplicator. TODO: Move to SpecialGlobals.js?
 
 var schema = {
-  
+
   _id: String,            // ID of this activity
 
   timestamp: Date,
   activityType: String,   // This is a lookup into a compile-time event Info
   priority: Number,       // 1 = highest.  Used for filtering signal:noise
- 
+
   description: String,    // A description field
   thumbnail: String,      // A few activities will have a graphic - this is it
-  
+
   // Identifiers for who did the activity
   byUserName: String,     // UserName (not ID)
   byUserId: String,       // OK, _this_ one is the ID
@@ -54,6 +54,9 @@ export const ActivityTypes = {
   "user.changeFocus":  { icon: "green alarm",      pri:  9,  description: "User changed their focus" },
   "user.clearFocus":   { icon: "grey alarm",       pri:  9,  description: "User cleared their focus" },
   "user.message":      { icon: "green chat",       pri:  9,  description: "User sent a public message" }, // Should also include toChatChannelName
+  "user.awardedSkill": { icon: "green student",    pri:  7,  description: "User was awarded a skill" },
+  "user.learnedSkill": { icon: "student",          pri:  9,  description: "User learned a skill" },
+  "user.earnBadge":    { icon: "green trophy",     pri:  6,  description: "User earned a badge" },
 
   "asset.create":      { icon: "green plus",       pri: 10,  description: "Create new asset" },
   "asset.fork.from":   { icon: "blue fork",        pri: 10,  description: "Forked new asset from this asset" },
@@ -66,7 +69,7 @@ export const ActivityTypes = {
   "asset.unstable":    { icon: "grey unlock",      pri: 6,   description: "Asset marked as Unlocked" },
   "asset.workState":   { icon: "orange checkmark", pri: 6,   description: "Asset workState changed" },
 
-  "asset.rename":      { icon: "write",            pri: 11,  description: "Rename asset" },  
+  "asset.rename":      { icon: "write",            pri: 11,  description: "Rename asset" },
   "asset.delete":      { icon: "red trash",        pri: 12,  description: "Delete asset" },
   "asset.license":     { icon: "law",              pri: 11,  description: "Asset license changed" },
   "asset.project":     { icon: "folder sitemap",   pri: 12,  description: "Change Asset's project" },
@@ -94,14 +97,29 @@ export const ActivityTypes = {
 
 Meteor.methods({
 
-  "Activity.log": function(data) {
-    
-    if (!this.userId) 
+  "Activity.log": function(
+    data,               // Proposed Activity record
+    override_byUser     // If admin, the user _id and username we want to force so we can do log-on-behalf-of
+) {
+
+    if (!this.userId)
       throw new Meteor.Error(401, "Login required")
 
     data.timestamp = new Date()
-    data.byUserId = Meteor.userId()    // We re-assert it is correct on server in case client is hacked
-    
+
+    if (_.isPlainObject(override_byUser))
+    {
+      if (!isUserSuperAdmin(Meteor.user()))
+        throw new Meteor.Error(401, 'Only admins/mods can log Activity on behalf of others')
+      data.byUserId = override_byUser._id
+      data.byUserName = override_byUser.username
+    }
+    else {
+      // We re-assert it is correct on server in case muggle client tried to forge it
+      data.byUserId = Meteor.userId()
+      data.byUserName = Meteor.user().username
+    }
+
     if (Meteor.isServer)
     {
       // TODO: Make sure user id info looks legit. Don't trust client
@@ -115,7 +133,7 @@ Meteor.methods({
       data.byIpAddress = ''
       data.byGeo = ''
     }
-    
+
     check(data, _.omit(schema, '_id'))
 
     var docId = Activity.insert(data)
@@ -125,8 +143,8 @@ Meteor.methods({
   },
 
   "Activity.delete": function(activityId) {
-    
-    if (!this.userId) 
+
+    if (!this.userId)
       throw new Meteor.Error(401, "Login required")
 
     check(activityId, String)
@@ -142,18 +160,22 @@ Meteor.methods({
 
     if (Meteor.isServer)
       console.log(`  [Activity.delete]  #${activityId}  by: ${act.byUserName}`)
-    
+
     return nRemoved
   }
 })
 
 var priorLog   // The prior activity that was logged - for simplistic de-dupe purposes
 
-// Helper function to invoke a logActivity function. If called from client it has a VERY 
+// Helper function to invoke a logActivity function. If called from client it has a VERY
 // limited co-allesce capability for duplicate activities.
-// Support otherData fields such as { toChatChannelName }
+// Support otherData fields such as
+// {
+//   toChatChannelName
+//   override_byUser      Only usable by admin users - use .username and ._id to override byUser___
+// }
 export function logActivity(activityType, description, thumbnail, asset, otherData = {}) {
- 
+
   const user = Meteor.user()
 
   if (!user)
@@ -162,14 +184,14 @@ export function logActivity(activityType, description, thumbnail, asset, otherDa
     return
   }
 
-  const username = user.profile.name  
+  const username = user.profile.name
   var logData = {
     "activityType":         activityType, // One of the keys of the ActivityTypes object defined above
     "priority":             ActivityTypes.getPri(activityType),
 
     "timestamp":            new Date(),             // We do it here also so it will be in the priorLog data
-    
-    "description":          description || "",  
+
+    "description":          description || "",
     "thumbnail":            thumbnail || "",        // TODO - use this in future as a cheap versioning technique?
 
     // Identifiers for the user/team that initiated the activity
@@ -177,33 +199,41 @@ export function logActivity(activityType, description, thumbnail, asset, otherDa
     byTeamName:             "",                 // TODO - server will also validate
 
     // Identifers for target of the activity
-    toProjectName:          (asset && asset.projectName ?  asset.projectName : ""), 
+    toProjectName:          (asset && asset.projectName ?  asset.projectName : ""),
     toOwnerName:            (asset && asset.dn_ownerName ?  asset.dn_ownerName : ""),
-    toOwnerId:              (asset && asset.ownerId ? asset.ownerId : ""),    
+    toOwnerId:              (asset && asset.ownerId ? asset.ownerId : ""),
     toAssetId:              (asset && asset._id ? asset._id : ""),
     toAssetName:            (asset && asset.name ? asset.name : ""),
-    toAssetKind:            (asset && asset.kind ? asset.kind : "")    
+    toAssetKind:            (asset && asset.kind ? asset.kind : "")
   }
   if (otherData.toChatChannelName)
     logData.toChatChannelName = otherData.toChatChannelName
 
+  if (_.isPlainObject(otherData.override_byUser))
+  {
+    if (!isUserSuperAdmin(Meteor.user()))
+      throw new Meteor.Error(401, 'Only admins/mods can log Activity on behalf of others')
+    logData.byUserName = otherData.override_byUser.username
+    logData.byUserId = otherData.override_byUser.username
+  }
+
   let fSkipLog = false
 
-  if (priorLog && !Meteor.isServer && 
+  if (priorLog && !Meteor.isServer &&
       priorLog.activityType === logData.activityType &&
       logData.timestamp - priorLog.timestamp < _activityIntervalMs &&
       //priorLog.description === logData.description &&  // This can be a bit noisy for edit.
       priorLog.toAssetId === logData.toAssetId)
     fSkipLog = true
-  
+
   if (!priorLog || !fSkipLog)
     priorLog = logData  // Only do on skip or no-prior, otherwise the priorLog.timestamp will keep updating.
-  
+
   if (!fSkipLog)
-    Meteor.call('Activity.log', logData, (err, res) => {
+    Meteor.call('Activity.log', logData, otherData.override_byUser, (err, res) => {
       if (err)
         console.log("Could not log Activity: ", err.reason)
-    }) 
+    })
 }
 
 export function deleteActivityRecord(activityId) {

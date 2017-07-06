@@ -10,7 +10,7 @@ import { logActivity } from '/imports/schemas/activity'
 
 
 const UserLoveIcon = ( { size, onIconClick, currUserLoves } ) => (
-  <Icon 
+  <Icon
       name={ currUserLoves ? 'heart' : 'empty heart' }
       size={size}
       onClick={onIconClick}
@@ -27,20 +27,20 @@ const UserLovesUI = ( { seeLovers, userList, size, popupPosition, onIconClick, c
       trigger={(
         <span>
           <small>{asset.heartedBy_count} </small>
-          <UserLoveIcon 
-              currUserLoves={currUserLoves} 
-              size={size} 
-              onIconClick={onIconClick}/>
+          <UserLoveIcon
+              currUserLoves={currUserLoves}
+              size={size}
+              onIconClick={(!(asset.suIsBanned === true) && !asset.suFlagId) ? onIconClick : null}/>
         </span>
       )} >
-      { seeLovers && 
+      { seeLovers &&
         <Popup.Header>
           Users who love this
         </Popup.Header>
       }
       <Popup.Content>
-        { seeLovers ? 
-            ( userList.length > 0 ? 
+        { seeLovers ?
+            ( userList.length > 0 ?
                 userList.map((person, idx) => (
                   <div key={idx} >
                       <QLink to={`/u/${person.username}`}>
@@ -51,7 +51,7 @@ const UserLovesUI = ( { seeLovers, userList, size, popupPosition, onIconClick, c
               :
                 <span>(none yet)</span>
             )
-          : 
+          :
             <QLink to={`/u/${asset.dn_ownerName}/asset/${asset._id}`}>
                 {asset.heartedBy ? asset.heartedBy.length : 0} love{asset.heartedBy_count !== 1 ? 's' : ''}
             </QLink>
@@ -84,7 +84,7 @@ const UserLoves = createContainer (props => {
   const doGetUsernames = (seeLovers && hasHearts)
 
   // Only do this query if the asset has some Hearts
-  /// ... AND if seeLovers == true ? 
+  /// ... AND if seeLovers == true ?
   const usersHandle = doGetUsernames ? Meteor.subscribe("users.getByIdList", heartedByIds) : null
 
   return {

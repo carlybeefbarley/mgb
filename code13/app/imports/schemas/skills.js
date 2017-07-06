@@ -2,7 +2,7 @@ import _ from 'lodash'
 import SkillNodes, { makeSlashSeparatedSkillKey, makeTutorialsFindSelector } from '/imports/Skills/SkillNodes/SkillNodes.js'
 import { Azzets, Skills } from '/imports/schemas'
 import { isUserSuperAdmin } from './roles'
-
+import { logActivity } from '/imports/schemas/activity'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -24,7 +24,8 @@ const skillBasis = {
 
 Meteor.methods({
   "Skill.learn": function(dottedSkillKey, userID, basis = skillBasis.SELF_CLAIMED) {
-    console.log(dottedSkillKey, userID, basis)
+    //console.log(dottedSkillKey, userID, basis)
+    let awardedSkill = false
     if (!this.userId)
       throw new Meteor.Error(401, "Login required")
 
@@ -34,13 +35,14 @@ Meteor.methods({
     if (userID)
     {
       // if userID passed then it means that admin is giving a skill to user
-      basis = skillBasis.MGB_MEASURED
       // superAdmin check
       if (!isUserSuperAdmin(Meteor.user()))
-        return false
+        throw new Meteor.Error(401, 'Only admins/mods can award skills to others')
+      basis = skillBasis.MGB_MEASURED
+      awardedSkill = true
     }
 
-    // id userID is passed then admin is givin skill for another user
+    // if userID is passed then admin is giving skill for another user
     userID = userID || this.userId
 
     const slashSeparatedSkillKey = makeSlashSeparatedSkillKey(dottedSkillKey)
@@ -49,6 +51,30 @@ Meteor.methods({
       $addToSet: { [slashSeparatedSkillKey]: basis },
       $set:      { updatedAt: new Date() }
     })
+
+    if (Meteor.isServer)
+    {
+      if (count)
+      {
+        if (awardedSkill)
+        {
+          const userRecord = Meteor.users.findOne( { _id: userID }, { fields: { username: 1, _id: 1 } } )
+          logActivity(
+            'user.awardedSkill',
+            `was awarded the '${dottedSkillKey}' skill by @${Meteor.user().username}`,
+            null, null,
+            { override_byUser: userRecord }
+          )
+        }
+        else
+        {
+          logActivity(
+            'user.learnedSkill',
+            `learned skill '${dottedSkillKey}'`
+          )
+        }
+      }
+    }
 
     return count
   },
@@ -62,7 +88,7 @@ Meteor.methods({
 
     if (userID)
     {
-      // if userID passed then it means that admin is remofing a skill from user
+      // if userID passed then it means that admin is removing a skill from user
       basis = skillBasis.MGB_MEASURED
       // superAdmin check
       if (!isUserSuperAdmin(Meteor.user()))
@@ -78,6 +104,8 @@ Meteor.methods({
       $pullAll:  { [slashSeparatedSkillKey]: [ basis ] },
       $set:      { updatedAt: new Date() }
     })
+
+    // Note that we don't announce skill removals
 
     return count
   }

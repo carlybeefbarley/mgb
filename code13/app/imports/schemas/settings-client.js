@@ -4,13 +4,13 @@
 import _ from 'lodash'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 
-// 
+//
 // SETTINGS GROUP NAMES - FOR DATABASE keys
 // ..Do NOT change these strings - they are keys into the Settings Table for feature groups
 //
 
 // Settings Group Name: Toolbar Feature Levels
-const _GROUP_FEATURELEVELS = 'fLevels'            
+const _GROUP_FEATURELEVELS = 'fLevels'
 
 // Settings Group Name: Toolbar Re-arrangement by user
 // const _GROUP_TOOLBARS      = 'toolbars' //No longer used as of Jan 2017.
@@ -23,25 +23,25 @@ const _GROUP_CHAT_SETTINGS = 'chatSettings'
 const _GROUP_CHAT_SETTINGS_SUBKEY_PINNED_CHANNELNAMES = 'chatPinnedChannelNames'
 
 
-// 
+//
 // Internal helper functions
-// 
+//
 
 
 /**
- * Check a settings keyPart isn't going to cause hell. 
+ * Check a settings keyPart isn't going to cause hell.
  * For example it must not have a '.' in it settingsKey.
- * This doesn't return an error, it just does a console.error() so 
+ * This doesn't return an error, it just does a console.error() so
  * we will notice during development
  */
-const _validKeyRegex = /^[^\.]*/ 
+const _validKeyRegex = /^[^\.]*/
 const _checkKeyIsValid = settingsKey => {
   if (!_validKeyRegex.test(settingsKey))
     console.error(`Settings client encountered invalid settingsKey '${settingsKey}'`)
 }
 
 // This can return null if there is no settings object, OR if there is no key defined yet
-const _getSettingType = (settingsGroupName, settingsObj, subKey) => 
+const _getSettingType = (settingsGroupName, settingsObj, subKey) =>
 {
   if (!settingsObj)
     return null
@@ -52,29 +52,30 @@ const _getSettingType = (settingsGroupName, settingsObj, subKey) =>
   return group ? group[subKey] : null
 }
 
-const _saveSettingsNow = (settingsObj) => { 
+const _saveSettingsNow = (settingsObj) => {
   const asObj = _.omit(settingsObj.all(), [ '_id', 'updatedAt'])
-  Meteor.call('Settings.save', asObj) 
+  Meteor.call('Settings.save', asObj)
 }
-const _debouncedSaveSettings = _.debounce(_saveSettingsNow, SpecialGlobals.settings.settingsSaveDebounceMs)
+const _debouncedSaveSettings = _saveSettingsNow //_.debounce(_saveSettingsNow, SpecialGlobals.settings.settingsSaveDebounceMs)
 
-const _setSettingType = (settingsGroupName, settingsObj, subKey, value) => 
+const _setSettingType = (settingsGroupName, settingsObj, subKey, value) =>
 {
   if (!settingsObj)
     return
 
-  _checkKeyIsValid(subKey)    
+  _checkKeyIsValid(subKey)
 
   const storedValue = _getSettingType(settingsGroupName, settingsObj, subKey)
 
-  // Not in particular that _.isEqual is needed for reliably handling date comparisons.  See http://stackoverflow.com/questions/492994/compare-two-dates-with-javascript 
+  // Not in particular that _.isEqual is needed for reliably handling date comparisons.  See http://stackoverflow.com/questions/492994/compare-two-dates-with-javascript
   if (!_.isEqual(storedValue, value))
   {
+    //console.log("DO_____SET______", settingsGroupName, subKey)
     const group = settingsObj.get(settingsGroupName) || {}
     group[subKey] = value
     settingsObj.set(settingsGroupName, group)    // ReactiveDict
     if (settingsObj.keys._id)
-      _debouncedSaveSettings(settingsObj)      
+      _debouncedSaveSettings(settingsObj)
   }
 }
 
@@ -94,7 +95,7 @@ const _resetSettingsGroup = (settingsGroupName, settingsObj) => {
 
 // 1. Feature Levels
 
-// 
+//
 /**
  * get the feature level for this feature (typically a toolbar name, but also used for things like flexPanel)
  * @export
@@ -119,7 +120,7 @@ export function setFeatureLevel(settingsObj, featureKey, level) {
 }
 
 /**
- * 
+ *
  * Special funtion to erase the settings group, thus reverting to defaults
  * @export
  * @param {any} settingsObj
@@ -131,7 +132,7 @@ export function resetAllFeatureLevelsToDefaults(settingsObj) {
 
 // 2. Last read-status on various Chat channels
 
-// 
+//
 /**
  * get the feature level for this feature (typically a toolbar name, but also used for things like flexPanel)
  * @export
@@ -162,14 +163,14 @@ export function setLastReadTimestampForChannel(settingsObj, channelName, timesta
 /**
  * get the list of Pinned Channels
  * @param {ReactiveDict} settingsObj - must be the global Meteor-reactive Settings object
- * @returns {Array} ordered Array of channelName strings as defined by chats.makeChannelName(). 
+ * @returns {Array} ordered Array of channelName strings as defined by chats.makeChannelName().
  *          This will never be null or undefined; an empty list will be []
  */
 export function getPinnedChannelNames(settingsObj)
 {
   return _getSettingType(
-    _GROUP_CHAT_SETTINGS, 
-    settingsObj, 
+    _GROUP_CHAT_SETTINGS,
+    settingsObj,
     _GROUP_CHAT_SETTINGS_SUBKEY_PINNED_CHANNELNAMES
   ) || []
 }
@@ -178,8 +179,8 @@ export function getPinnedChannelNames(settingsObj)
 /**
  * get the list of Pinned Channels
  * @param {ReactiveDict} settingsObj - must be the global Meteor-reactive Settings object
- * @param {channelNamesArray} ordered Array of channelName strings as defined by 
- *          chats.makeChannelName(). This list is exactly like the list returned by 
+ * @param {channelNamesArray} ordered Array of channelName strings as defined by
+ *          chats.makeChannelName(). This list is exactly like the list returned by
  *          getPinnedChannelNames(). If the passed in value is null or undefined, an error
  *          will be logged and the setting will not be set, but there is no error value/return
  */
@@ -192,8 +193,8 @@ export function setPinnedChannelNames(settingsObj, channelNamesArray)
   }
 
   _setSettingType(
-    _GROUP_CHAT_SETTINGS, 
-    settingsObj, 
+    _GROUP_CHAT_SETTINGS,
+    settingsObj,
     _GROUP_CHAT_SETTINGS_SUBKEY_PINNED_CHANNELNAMES,
     channelNamesArray
   )
@@ -202,7 +203,7 @@ export function setPinnedChannelNames(settingsObj, channelNamesArray)
 /**
  * Toggle on/off a pinned channelName in the pinned channelNames settings
  * @param {ReactiveDict} settingsObj - must be the global Meteor-reactive Settings object
- * @param {*} channelName. A channelName string as defined by chats.makeChannelName(). 
+ * @param {*} channelName. A channelName string as defined by chats.makeChannelName().
  */
 export function togglePinnedChannelName(settingsObj, channelName)
 {

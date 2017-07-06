@@ -76,10 +76,20 @@ const UX = {
     </QLink>
   ),
 
-  LinkToFlaggedEntity: ( { entityType, entityId } ) => {
+  LinkToAsset: ( { assetId, ownerUsername } ) => (
+    <QLink to={`/u/${ownerUsername}/asset/${assetId}`}>
+    Flagged Asset Id: {assetId}
+    </QLink>
+  ),
+
+  LinkToFlaggedEntity: ( { entityType, entityId, ownerUsername } ) => {
     if (entityType === 'Chats')
       return <UX.LinkToChatId chatId={entityId} />
-    // TODO for assets
+    if(entityType === 'Azzets'){
+      return <UX.LinkToAsset
+      assetId={entityId}
+      entityType={entityType}
+      ownerUsername={ownerUsername} />}
     // TODO for projects
     // TODO for users (naughty names!)
     return <span>TODO</span>

@@ -160,7 +160,7 @@ class BrowseGamesRoute extends LoadMore {
 
   render() {
     const { games, projects } = this.data         // list of Game Assets provided via getMeteorData()
-    const loading = this.data.loading || this.state.loading || this._loadMoreState.isLoading
+    const loading = this.isLoading
     const { currUser, user, ownsProfile, location } = this.props
     const name = user ? user.profile.name : ''
     const qN = this.queryNormalized(location.query)

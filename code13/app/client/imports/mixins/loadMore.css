@@ -1,4 +1,4 @@
-.ui.basic.padded.segment i.scrollToTop {
+i.scrollToTop {
   transition-duration: 0.2s;
   opacity: 0;
   position: fixed;
@@ -17,11 +17,11 @@
   /*color: white;*/
   transition-timing-function: cubic-bezier(1, 0.01, 1, 1);
 }
-.ui.basic.padded.segment.scrollback i.scrollToTop {
-  transform: translateX(-150%) scale(1);
-  display: block;
-  opacity: 1;
-  transition-duration: 0.2s;
+.scrollback i.scrollToTop {
+  transform: translateX(-150%) scale(1) !important;
+  display: block !important;
+  opacity: 1 !important;
+  transition-duration: 0.2s !important;
 }
 .scrollback .scrollToTop:after{
   content: "back to top";

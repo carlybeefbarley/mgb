@@ -431,7 +431,7 @@ class MobileNav extends React.Component {
     },
     assets: {
       title: "Assets",
-      Component: NotReady, //fpAssets, //BlankPage,
+      Component: fpAssets, //BlankPage,
       getProps: (mobileNav) => ({
         allowDrag: false,
         panelWidth: '0'

@@ -36,7 +36,7 @@ import TaskApprove from '/client/imports/components/Assets/TaskApprove'
 
 import { makeChannelName, ChatSendMessageOnChannelName } from '/imports/schemas/chats'
 
-
+import urlMaker from '/client/imports/routes/urlMaker'
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
@@ -110,7 +110,7 @@ export default AssetEditRoute = React.createClass({
 
   propTypes: {
     hideHeaders:      PropTypes.bool,        // If true, don't show any UI header stuff. like a Zen mode...
-    params:           PropTypes.object,      // params.assetId is the ASSET id
+    params:           PropTypes.object,      // params.assetId is the ASSET id; params._xed tells <AssetEdit> to load any experimental editors
     user:             PropTypes.object,
     currUser:         PropTypes.object,
     currUserProjects: PropTypes.array,       // Both Owned and memberOf. Check ownerName / ownerId fields to know which
@@ -335,7 +335,6 @@ export default AssetEditRoute = React.createClass({
     const { params, currUser, currUserProjects, availableWidth, hazUnreadAssetChat, isSuperAdmin, hideHeaders } = this.props
     const { isForkPending, isDeletePending } = this.state
     const isTooSmall = availableWidth < 500
-
     let asset = Object.assign( {}, this.data.asset )        // One Asset provided via getMeteorData()
     if (!this.data.asset)
       return <ThingNotFound type='Asset' id={params.assetId} />
@@ -492,6 +491,7 @@ export default AssetEditRoute = React.createClass({
               canEdit={canEd}
               availableWidth={availableWidth}
               currUser={currUser}
+              useExperimentalEditors={this.context.urlLocation.query[urlMaker.queryParams("app_experimentalEditors")]}
               handleContentChange={this.deferContentChange}
               handleMetadataChange={this.handleMetadataChange}
               handleDescriptionChange={this.handleAssetDescriptionChange}

@@ -246,17 +246,18 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
   const client = new XMLHttpRequest()
   const cdnLink = makeCDNLink(uri, etag)
 
+  const usingCDN = uri === cdnLink
+
   const isLocal = uri.startsWith('/') && !uri.startsWith('//')
 
   if(__meteor_runtime_config__ && __meteor_runtime_config__.ROOT_URL){
     // make sure we don't break http / https
     const root_host = __meteor_runtime_config__.ROOT_URL.split("//").pop()
-    if(isLocal && !root_host.startsWith(window.location.host) && !root_host.startsWith("localhost")){
+    if(isLocal && !usingCDN && !root_host.startsWith(window.location.host) && !root_host.startsWith("localhost")){
       return mgbAjax(cdnLink, callback, asset, onRequestOpen)
     }
   }
 
-  const usingCDN = uri === cdnLink
   client.open('GET', cdnLink)
 
   if (onRequestOpen)

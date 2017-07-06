@@ -4,7 +4,7 @@ import { Link, browserHistory } from 'react-router'
 import urlMaker from './urlMaker'
 import { clearPriorPathsForJoyrideCompletionTags } from '/client/imports/routes/App'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-import SpecialGlobals from '/imports/SpecialGlobals'
+import is from 'is_js'
 
 // TODO   Implement some  <QLink nav="..."> cases to clean up code
 
@@ -17,15 +17,11 @@ function isModifiedEvent(event) {
 }
 
 function createLocationDescriptor(to, _ref) {
-  var query = _ref.query;
-  var hash = _ref.hash;
-  var state = _ref.state;
+  const {query, hash, state} = _ref
+  if (query || hash || state)
+    return { pathname: to, query: query, hash: hash, state: state }
 
-  if (query || hash || state) {
-    return { pathname: to, query: query, hash: hash, state: state };
-  }
-
-  return to;
+  return to
 }
 
 
@@ -119,7 +115,7 @@ export default QLink = React.createClass({
     // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
     clearPriorPathsForJoyrideCompletionTags()
 
-    if (SpecialGlobals.isMobile) {
+    if (is.mobile()) {
       if(!this.context.tabs){
         console.log("WHERE is TABS reference???")
         return

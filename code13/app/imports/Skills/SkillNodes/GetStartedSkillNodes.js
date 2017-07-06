@@ -46,12 +46,12 @@ export default {
     $meta: {
       name:           'Play',
       description:    'Find games to play here',
-      sequence:       'playOneGame,gamesImade,continueAgame'
+      sequence:       'playOneGame'
     },
     playOneGame:      C.E,
-    gamesImade:       { ...C.E, $meta: { ...C.E.$meta, name: 'Games I Made' } },
+      // gamesImade:       { ...C.E, $meta: { ...C.E.$meta, name: 'Games I Made' } },
     // Not yet implemented as a feature.. this will just say 'coming soon' for now
-    continueAgame:    { ...C.E, $meta: { ...C.E.$meta, name: 'Continue A Game'} }
+      // continueAgame:    { ...C.E, $meta: { ...C.E.$meta, name: 'Continue A Game'} }
   },
 
   assetsBasics: {

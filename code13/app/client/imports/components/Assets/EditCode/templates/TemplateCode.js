@@ -3,7 +3,7 @@ export const templateCode = [
   { label: "PhaserJS: Basic outline",
     description: "Empty functions for a PhaserJS game with preload(), create() and render()",
     code: `// Start to make a Phaser game.
-import 'phaser@2.4.6'
+import Phaser from 'phaser'
 const game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', {
   preload: preload,
   create: create,
@@ -44,7 +44,7 @@ function render() {
     description: "PhaserJs base template with player character that can move and jump",
     code: `// Start to make a Phaser game.
 
-import 'phaser'
+import Phaser from 'phaser'
 // Create the Phaser Game.
 //
 const game = new Phaser.Game(
@@ -137,7 +137,7 @@ const game = new Phaser.Game(800, 600, Phaser.AUTO, document.body, {
     // replace {userName} with map owner name
     // replace {mapName} with map name
     this.game.load.mgbMap('initialMap', '/{userName}/{mapName}')
-    
+
     // this tells Phaser.ScaleManager to show all world on a single screen
     this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL
   },
@@ -152,14 +152,14 @@ const game = new Phaser.Game(800, 600, Phaser.AUTO, document.body, {
     */
     // create and put it on the screen
     const mgbMap = this.game.create.mgbMap('initialMap')
-    
+
     // determine map size in the pixels
     const mapWidthInPx =  mgbMap.data.width * mgbMap.data.tilewidth
     const mapHeightInPx =  mgbMap.data.height* mgbMap.data.tileheight
-    
+
     // set world bounds to match map size
     this.game.world.setBounds(0, 0, mapWidthInPx, mapHeightInPx)
-    
+
     // adjust game size - to fit map on the screen
     this.game.scale.setGameSize(mapWidthInPx, mapHeightInPx)
   }

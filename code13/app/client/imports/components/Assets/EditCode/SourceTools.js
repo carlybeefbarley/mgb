@@ -473,7 +473,9 @@ export default class SourceTools extends EventEmitter {
         this.loadImportedFile('/' + key, null, true)
           .then(data => this._collectAndTranspile(data.url, data.data))
           .then(() => {
-            this.emit("change", this.subscriptions[key].getAsset())
+            // guard here as async function - can be called even after component has been unmounted
+            if (this.subscriptions[key])
+              this.emit("change", this.subscriptions[key].getAsset())
           })
       }
 

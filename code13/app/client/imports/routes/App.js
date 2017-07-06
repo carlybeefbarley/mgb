@@ -37,6 +37,9 @@ import { getLastReadTimestampForChannel, getPinnedChannelNames } from '/imports/
 
 // https://www.npmjs.com/package/react-notifications
 import { NotificationContainer, NotificationManager } from 'react-notifications'
+
+import is from 'is_js'
+
 // Note css is in /client/notifications.css
 // Note - also, we copied the fonts this requires to public/fonts/notification.*
 
@@ -434,7 +437,7 @@ const AppUI = React.createClass({
       )
     )
 
-    const isMobile = SpecialGlobals.isMobile
+    const isMobile = is.mobile()
     return (
       <div>
         <Helmet

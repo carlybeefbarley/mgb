@@ -63,11 +63,12 @@ class Indicator extends React.Component {
 
   render () {
     const { classes } = this.state
-    const { content } = this.props
+    const { content, title } = this.props
     return (
       <Label
         className={classes}
         color='red'
+        title={title}
         empty={content === undefined}
         size={content !== undefined ? 'mini' : null}
         circular
@@ -209,10 +210,10 @@ export default FlexPanel = React.createClass({
     const { wiggleActivity } = this.state
 
     if (tag === 'chat' && hazUnreadChats.length > 0)
-      return <Indicator content={hazUnreadChats.length} />
+      return <Indicator title={`Channels: ${hazUnreadChats.join(', ')}`} content={hazUnreadChats.length} />
 
     if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
-      return <Indicator />
+      return <Indicator title={`${joyrideSteps.length} steps in tutorial`} />
 
     if (tag === 'activity' && wiggleActivity)
       return <Indicator />

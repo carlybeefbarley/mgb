@@ -13,21 +13,26 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 // add an     el: ComponentName field to the list below and use the static imports we used to do
 // before this new dynamic import() cuteness
 
+
+// Any with an _xed suffix are only enabled when the URL includes _xed=(some non-nullstring)
+
 const editElementsForKind = {
-  'graphic':   { loader: () => import('./EditGraphic/EditGraphic') },
-  'tutorial':  { loader: () => import('./EditCode/EditCode') },
-  'code':      { loader: () => import('./EditCode/EditCode') },
-  'map':       { loader: () => import('./EditMap/EditMap') },
-  'actormap':  { loader: () => import('./EditActorMap/EditActorMap') },
-  'actor':     { loader: () => import('./EditActor/EditActor') },
-  'doc':       { loader: () => import('./EditDoc/EditDoc') },
-  'sound':     { loader: () => import('./EditAudio/EditSound/EditSound') },
-  'music':     { loader: () => import('./EditAudio/EditMusic/EditMusic') },
-  'game':      { loader: () => import('./EditGame/EditGame') },
+  'graphic':      { loader: () => import('./EditGraphic/EditGraphic') },
+  'graphic_xed':  { loader: () => import('./EditGraphic2/EditGraphic') },
+  'tutorial':     { loader: () => import('./EditCode/EditCode') },
+  'code':         { loader: () => import('./EditCode/EditCode') },
+  'map':          { loader: () => import('./EditMap/EditMap') },
+  'actormap':     { loader: () => import('./EditActorMap/EditActorMap') },
+  'actor':        { loader: () => import('./EditActor/EditActor') },
+  'doc':          { loader: () => import('./EditDoc/EditDoc') },
+  'sound':        { loader: () => import('./EditAudio/EditSound/EditSound') },
+  'music':        { loader: () => import('./EditAudio/EditMusic/EditMusic') },
+  'game':         { loader: () => import('./EditGame/EditGame') },
 }
 
-const _omitPropsForEditors = [ 
-  'availableWidth'     // No Editors currently do anything adaptive for size, so do not pass on
+const _omitPropsForEditors = [
+  // guntis -> need this for editGraphic fixed frames panel
+  // 'availableWidth'     // No Editors currently do anything adaptive for size, so do not pass on
   ]
 
 export default class AssetEdit extends React.Component
@@ -45,8 +50,11 @@ export default class AssetEdit extends React.Component
     hasUnsentSaves:           PropTypes.bool.isRequired,      // True if there are deferred saves yet to be sent. HOWEVER, even if sent, then server accept + server ack/nack can be pending - see asset.isUnconfirmedSave for the flag to indicate that 'changes are in flight' status
     handleSaveNowRequest:     PropTypes.func.isRequired,      // Asset Editor call this to request a flush now (but it does not wait or have a callback). An example of use for this: Flushing an ActorMap asset to play a game in the actorMap editor
 
+    availableWidth:           PropTypes.number,               // Available screen width in pixels for editor
+    useExperimentalEditors:   PropTypes.string                // Can be undefined. This is the raw _xed= param from url
+
     // The following are NOT sent onto the child Asset Editors. See _omitPropsForEditors above
-    availableWidth:           PropTypes.number                // Available screen width in pixels for editor
+      // NONE AT THIS TIME
   }
 
   componentDidMount()
@@ -61,20 +69,24 @@ export default class AssetEdit extends React.Component
 
   render()
   {
-    const { asset, currUser, availableWidth } = this.props
+    const { asset, currUser, availableWidth, useExperimentalEditors } = this.props
+
+    let dynamicEditorCompKey = `${asset.kind}`
+    if (useExperimentalEditors && _.has(editElementsForKind, dynamicEditorCompKey+'_xed'))
+      dynamicEditorCompKey += '_xed'
 
     // Fancy dynamic module loader enables in Meteor 1.5. Woot
-    var loadable = editElementsForKind[asset.kind]
+    var loadable = editElementsForKind[dynamicEditorCompKey]
     if (loadable.el === undefined)
     {
       loadable.el = null
-      loadable.loader().then( imp => { 
+      loadable.loader().then( imp => {
         loadable.el = imp.default
-        this.forceUpdate() 
+        this.forceUpdate()
       } )
     }
     if (loadable.el === null)
-      return <Spinner loadingMsg={`Loading ${asset.kind} editor...`} />
+      return <Spinner loadingMsg={`Loading ${dynamicEditorCompKey} editor...`} />
 
     const Element = loadable.el || EditUnknown
     const isTooSmall = availableWidth < 500

@@ -53,8 +53,8 @@ class ProjectsBeingMadeGetUI extends React.Component {
                   {p.name}
                 </Header>
                 <p>
-                  <Icon color='grey' name='user' />
-                  { membersStr(p.memberIds) }
+                  { (p.memberIds && p.memberIds.length > 0) && <Icon color='grey' name='user' /> }
+                  { (p.memberIds && p.memberIds.length > 0) ? membersStr(p.memberIds) : ' ' }
                 </p>
               </div>
             </List.Item>

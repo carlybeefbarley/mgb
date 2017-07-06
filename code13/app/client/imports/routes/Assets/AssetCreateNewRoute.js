@@ -3,7 +3,6 @@ import React, { PropTypes } from 'react'
 import { showToast } from '/client/imports/routes/App'
 import Helmet from 'react-helmet'
 import AssetCreateNew from '/client/imports/components/Assets/NewAsset/AssetCreateNew'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { logActivity } from '/imports/schemas/activity'
 
 import { utilPushTo } from '/client/imports/routes/QLink'
@@ -20,7 +19,7 @@ export default AssetCreateNewRoute = React.createClass({
     params: PropTypes.object,           // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /assets
     user: PropTypes.object,             // Maybe absent if route is /assets
     currUser: PropTypes.object,         // Currently Logged in user
-    currUserProjects: PropTypes.array, 
+    currUserProjects: PropTypes.array,
     ownsProfile: PropTypes.bool,
     location: PropTypes.object          // We get this from react-router
   },
@@ -45,7 +44,7 @@ export default AssetCreateNewRoute = React.createClass({
           ]}
         />
         <Container>
-          <AssetCreateNew 
+          <AssetCreateNew
               handleCreateAssetClick={this.handleCreateAssetClickFromComponent}
               currUser={this.props.currUser}
               currUserProjects={this.props.currUserProjects}
@@ -57,8 +56,8 @@ export default AssetCreateNewRoute = React.createClass({
   },
 
   /**
-   * 
-   * 
+   *
+   *
    * @param {string} assetKindKey - must be one of assetKindKey
    * @param {string} assetName - string. Can be "" but that is discouraged
    * @param {string} projectName - can be "" or null/undefined; those values indicate No Project
@@ -94,12 +93,10 @@ export default AssetCreateNewRoute = React.createClass({
       if (error) {
         showToast("Failed to create new Asset because: " + error.reason, 'error')
       }
-       else 
+       else
       {
         newAsset._id = result             // So activity log will work
         logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset)
-        joyrideCompleteTag(`mgbjr-CT-asset-create-new`)
-        joyrideCompleteTag(`mgbjr-CT-asset-create-new-${newAsset.kind}`)
         // Now go to the new Asset
         utilPushTo(this.context.urlLocation.query, `/u/${newAsset.dn_ownerName}/asset/${result}`)
       }

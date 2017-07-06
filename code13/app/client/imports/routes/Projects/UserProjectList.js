@@ -7,7 +7,7 @@ import { browserHistory } from 'react-router'
 import Spinner from '/client/imports/components/Nav/Spinner'
 
 import { Projects } from '/imports/schemas'
-import { projectMakeSelector, projectSorters } from '/imports/schemas/projects'
+import { defaultProjectSorterName, projectMakeSelector, projectSorters } from '/imports/schemas/projects'
 import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
 import { WorkStateMultiSelect } from '/client/imports/components/Controls/WorkState'
 import ProjectsShowForkableSelector from './ProjectsShowForkableSelector'
@@ -16,10 +16,10 @@ import CreateProjectLinkButton from '/client/imports/components/Projects/NewProj
 
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = {
-  searchName: "",               // Empty string means match all (more convenient than null for input box)
-  sort: "edited",               // Should be one of the keys of projectSorters{}
-  hidews: '0',                  // hide WorkStates using a bitmask. Bit on = workstate[bitIndex] should be hidden
-  showForkable: "0"             // showForkable only
+  searchName: "",                 // Empty string means match all (more convenient than null for input box)
+  sort: defaultProjectSorterName, // Should be one of the keys of projectSorters{}
+  hidews: '0',                    // hide WorkStates using a bitmask. Bit on = workstate[bitIndex] should be hidden
+  showForkable: "0"               // showForkable only
 }
 
 const _contentsSegmentStyle = { minHeight: '600px' }
@@ -74,17 +74,17 @@ const ProjectsAsCards = ( { projects, ownedFlag, user } ) => {
     return Empty
 
   var count = 0
-      
+
   const retval = (
     <Card.Group>
       { projects.map( project => {
         const isOwner = (user && project.ownerId === user._id)
-        if (isOwner === ownedFlag || !user) 
+        if (isOwner === ownedFlag || !user)
         {
           count++
           return (
-            <ProjectCard 
-                project={project} 
+            <ProjectCard
+                project={project}
                 canEdit={false}
                 canLinkToSrc={false}
                 key={project._id} />
@@ -107,7 +107,7 @@ class UserProjectListUI extends React.PureComponent {
     loading: PropTypes.bool,
     projects: PropTypes.array
   }
-  
+
   /** helper Function for updating just a query string with react router
   */
   _updateLocationQuery = queryModifier => {
@@ -120,10 +120,10 @@ class UserProjectListUI extends React.PureComponent {
 
   handleSearchGo = newSearchText => this._updateLocationQuery( { searchName: newSearchText } )
 
-  handleChangeShowForkableFlag = newValue => this._updateLocationQuery( { showForkable: newValue } ) 
+  handleChangeShowForkableFlag = newValue => this._updateLocationQuery( { showForkable: newValue } )
 
   handleChangeWorkstateHideMask = newValue => this._updateLocationQuery( { hidews: String(newValue) } )
-  
+
   render() {
     const { user, currUser, location, loading, projects } = this.props
     const ownerName = user ? user.profile.name : 'all users'
@@ -161,18 +161,18 @@ class UserProjectListUI extends React.PureComponent {
 
         <Segment style={ _contentsSegmentStyle } className='mgb-suir-plainSegment'>
 
-        { user ? 
+        { user ?
           <div>
             <Header as='h2'>Projects owned by {ownerName}</Header>
             <CreateProjectLinkButton currUser={currUser} />
             <p />
-            { loading ? <Spinner/> : 
+            { loading ? <Spinner/> :
               <ProjectsAsCards projects={projects} ownedFlag={true} user={user} />
             }
             <br />
             <Divider />
             <Header as='h2'>Projects {ownerName} is a member of</Header>
-            { loading ? <Spinner/> : 
+            { loading ? <Spinner/> :
               <ProjectsAsCards projects={projects} ownedFlag={false} user={user} />
             }
           </div>
@@ -180,7 +180,7 @@ class UserProjectListUI extends React.PureComponent {
           <div>
             <CreateProjectLinkButton currUser={currUser} />
             <p />
-            { loading ? <Spinner/> : 
+            { loading ? <Spinner/> :
               <ProjectsAsCards projects={projects} ownedFlag={false} user={null} />
             }
             <br />
@@ -196,14 +196,14 @@ class UserProjectListUI extends React.PureComponent {
 
 export default UserProjectList = createContainer( ({ user, location }) => {
   const userId = user ? user._id : null
-  let findOpts = {
-    sort:   projectSorters["createdNewest"]
-  }
   const qN = _queryNormalized(location.query)
+  let findOpts = {
+    sort:   projectSorters[qN.sort]
+  }
   const showOnlyForkable = (qN.showForkable === '1')
   const handleForProjects = Meteor.subscribe("projects.search", userId, qN.searchName, showOnlyForkable, qN.hidews)
   const projectSelector = projectMakeSelector(userId, qN.searchName, showOnlyForkable, qN.hidews)
-  
+
   return {
     projects: Projects.find(projectSelector, findOpts).fetch(),
     loading: !handleForProjects.ready()

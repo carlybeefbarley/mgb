@@ -23,21 +23,21 @@ Meteor.publish('projects.frontPageList', function (limitCount=5) {
 })
 
 
-Meteor.publish('projects.search', 
+Meteor.publish('projects.search',
   function (
     userId,                       // can be null
     nameSearch,                   // can be null
     showOnlyForkable = false,
     hideWorkstateMask=0,          // As defined for use by assetMakeSelector()
-    ) 
+    )
   {
     const selector = projectMakeSelector(
-      userId, 
+      userId,
       nameSearch,
       showOnlyForkable,
       hideWorkstateMask,
-      {sort: {"createdAt": -1}})
-  
+      {sort: {"updatedAt": -1}})
+
     return Projects.find(selector)
   }
 )

@@ -111,6 +111,9 @@ const SkillNodes = {
   // and they are indicated below in a comment:
   getStarted: GetStartedSkillNodes,     // Has specific client UI in LearnGetStartedRoute.js so NOT in skillsAreas.js
   code:       CodeSkillNodes,
+//math
+//physics
+//computerScience
   art:        ArtSkillNodes,
   design:     DesignSkillNodes,
   audio:      AudioSkillNodes,

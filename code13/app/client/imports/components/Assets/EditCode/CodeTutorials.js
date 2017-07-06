@@ -46,7 +46,7 @@ export default class CodeTutorials extends React.Component {
     mgbAjax(`/api/asset/code/!vault/`+prefix+`.`+this.skillName, (err, listStr) => {
       if (err)
         console.log('error', err)
-      else 
+      else
         this.setState({ data: JSON.parse(listStr) })
     })
   }
@@ -54,7 +54,7 @@ export default class CodeTutorials extends React.Component {
   stepNext = () => {
     const step = this.state.step + 1
     if (step < this.state.data.steps.length) {
-      this.setState({ step: step }) 
+      this.setState({ step: step })
       this.resetCode(step)
     }
     else
@@ -65,13 +65,13 @@ export default class CodeTutorials extends React.Component {
   stepBack = () => {
     if (this.state.step > 0) {
       const step = this.state.step - 1
-      this.setState({ step: step }) 
+      this.setState({ step: step })
       this.resetCode(step)
     }
   }
 
   submitTask = () => {
-    const { currUser, assetId, skillPath } = this.props 
+    const { currUser, assetId, skillPath } = this.props
     const url = `❮${currUser.username}:${assetId}❯`
     ChatSendMessageOnChannelName('G_MGBHELP_', 'Please check my Phaser task ' + url + ` for '${getFriendlyName(skillPath)}'`)
     _openHelpChat()
@@ -113,29 +113,29 @@ export default class CodeTutorials extends React.Component {
         {
           this.skillNode.$meta.isTask &&
           <Button compact
-              size='small' 
-              color='green' 
+              size='small'
+              color='green'
               disabled={!this.props.isOwner}
               onClick={this.submitTask} content='Submit task' />
         }
         {
           !this.isPhaserTutorial &&
           <Button compact
-              size='small' 
-              color='green' 
-              onClick={this.stepBack} 
-              icon='backward' 
-              content='Back' 
+              size='small'
+              color='green'
+              onClick={this.stepBack}
+              icon='backward'
+              content='Back'
               disabled={this.state.step === 0 || isCompleted} />
         }
         {
           !this.skillNode.$meta.isTask &&
           <Button compact
-              size='small' 
-              color='green' 
-              onClick={this.stepNext} 
-              icon='forward' 
-              content={isLastStep ? 'Finish' : 'Next'} 
+              size='small'
+              color={isLastStep ? 'blue' : 'green'}
+              onClick={this.stepNext}
+              icon={isLastStep ? 'check' : 'forward'}
+              content={isLastStep ? 'Finish' : 'Next'}
               disabled={isCompleted}/>
         }
 
@@ -152,7 +152,7 @@ export default class CodeTutorials extends React.Component {
                 <Message.Header>
                   Completed...
                 </Message.Header>
-                <Button 
+                <Button
                     positive
                     compact
                     size='small'
@@ -165,17 +165,18 @@ export default class CodeTutorials extends React.Component {
             </Message>
           )
         }
-        
-        <div style={{marginTop: '0.5em'}} dangerouslySetInnerHTML={{ __html: description}} />
-        
-        { 
-          totalSteps > 0 && 
-          <div style={{float: 'right', color: '#aaa'}}><small>Step #{1+this.state.step} of {totalSteps}</small></div>
+
+
+        {
+          totalSteps > 0 &&
+          <div style={{color: '#aaa'}}><small>Step #{1+this.state.step} of {totalSteps}</small></div>
         }
 
+        <div style={{marginTop: '0.5em'}} dangerouslySetInnerHTML={{ __html: description}} />
+
         { isTaskSubmitted && (
-            <Modal 
-                closeOnDocumentClick={true} 
+            <Modal
+                closeOnDocumentClick={true}
                 closeOnRootNodeClick={false}
                 defaultOpen >
               <Modal.Header>
@@ -186,7 +187,7 @@ export default class CodeTutorials extends React.Component {
                 Your task has been submitted for review. One of the moderators will look at it soon.
               </Modal.Content>
               <Modal.Actions>
-                <Button 
+                <Button
                     positive
                     content='Tutorial List'
                     onClick={ this.navigateToSkillsList } />

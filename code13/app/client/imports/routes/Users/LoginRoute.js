@@ -31,9 +31,9 @@ export default LoginRoute = React.createClass({
     if (currUser)
       return (
         <div>
-          <Segment basic>
-            <Message info content='You are logged in already!' />
-          </Segment>
+          <div>
+            <Message style={{textAlign: 'center'}} info content='You are logged in already!' />
+          </div>
           <HomeRoute {...this.props} />
         </div>
       )

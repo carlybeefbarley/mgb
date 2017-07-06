@@ -22,12 +22,12 @@ export default {
     $meta: {
       name:           'Profile',
       description:    'Add avatars and other info to your profile',
-      sequence:       'avatar,badges,bio,quickTour'
+      sequence:       'avatar,badges,bio'
     },
     avatar:           C.E,
     badges:           C.E,
-    bio:              C.E,
-    quickTour:        C.E
+    bio:              C.E
+//    quickTour:        C.E
   },
 
   chat: {
@@ -46,12 +46,12 @@ export default {
     $meta: {
       name:           'Play',
       description:    'Find games to play here',
-      sequence:       'playOneGame,gamesImade,continueAgame'
+      sequence:       'playOneGame'
     },
     playOneGame:      C.E,
-    gamesImade:       { ...C.E, $meta: { ...C.E.$meta, name: 'Games I Made' } },
+      // gamesImade:       { ...C.E, $meta: { ...C.E.$meta, name: 'Games I Made' } },
     // Not yet implemented as a feature.. this will just say 'coming soon' for now
-    continueAgame:    { ...C.E, $meta: { ...C.E.$meta, name: 'Continue A Game'} }
+      // continueAgame:    { ...C.E, $meta: { ...C.E.$meta, name: 'Continue A Game'} }
   },
 
   assetsBasics: {
@@ -93,7 +93,7 @@ export default {
     createObjects:   C.E,
     createShot:      C.E,
     createActorMap:  C.E,
-    useActorMap:     C.E,   
+    useActorMap:     C.E,
   //  learnMore:       C.E
   },
 

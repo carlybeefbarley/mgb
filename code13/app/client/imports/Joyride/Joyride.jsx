@@ -530,7 +530,15 @@ export default class Joyride extends React.Component {
   toggleTooltip(showAsToolTip, index, action) {
     const { callback, completeCallback, steps, preparePageHandler } = this.props
     let newIndex = (index !== undefined ? index : this.state.index)
-    const step = steps[newIndex]
+    let step = steps[newIndex]
+
+    // if (step && step.skipIfUrlAt)
+    //   console.log(`....'${step.skipIfUrlAt}':    '${window.location.pathname}'`)
+    while (step && _.isString(step.skipIfUrlAt) && step.skipIfUrlAt === window.location.pathname)
+    {
+      newIndex++
+      step = steps[newIndex]
+    }
 
     // Note that the listeners.handleTransience() timer will call this
     // function frequently when  (this.state.stepIsWaiting === true)

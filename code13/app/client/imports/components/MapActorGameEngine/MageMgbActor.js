@@ -41,9 +41,9 @@ const MgbActor = {
   // these sounds should be stored in the sound fields of actor.content2.databag.** as `[builtin]:${soundName}`
   alCannedSoundsList: [
     "none",
-    "Arrow1",	"Arrow2", 
+    "Arrow1",	"Arrow2",
     "Beep1", 	"Beep2", 	"Beep3",	"Beep4",
-    "Bounce1", 	"Bounce2",	"Bounce3",	
+    "Bounce1", 	"Bounce2",	"Bounce3",
     "Burp1",	"Burp2",
     "Chime1",
     "Chomp1",	"Chomp2",
@@ -58,31 +58,31 @@ const MgbActor = {
   ],
 
 
-  alMovementType:             [ "No automatic movement", 
-                                "Moves randomly", 
-                                "Moves towards player", 
+  alMovementType:             [ "No automatic movement",
+                                "Moves randomly",
+                                "Moves towards player",
                                 "Moves away from player" ],
   alMovementType_None:        0,
   alMovementType_Random:      1,
   alMovementType_ToPlayer:    2,
   alMovementType_FromPlayer:  3,
-  
+
   alTouchDamageCases: [
-    "When overlapping target", 
-    "When facing target", 
-    "When adjacent to target" 
+    "When overlapping target",
+    "When facing target",
+    "When adjacent to target"
   ],
 
   alTouchDamageCases_WhenOverlapped:        0,
   alTouchDamageCases_WhenFacingAndAdjacent: 1,
   alTouchDamageCases_WhenAdjacent:          2,
-  
+
   alItemActivation: [
-    "inactive", 
-    "Blocks Player", "Blocks NPC", "Blocks Player+NPC", 
-    "Player picks up, uses later", 
-    "Player picks up, uses immediately", 
-    "Player uses, but leaves item", 
+    "inactive",
+    "Blocks Player", "Blocks NPC", "Blocks Player+NPC",
+    "Player picks up, uses later",
+    "Player picks up, uses immediately",
+    "Player uses, but leaves item",
     "Player shoots item to use it",
     "Pushes actors in a direction",
     "Floor that causes damage"
@@ -100,11 +100,11 @@ const MgbActor = {
 
   alVisualEffect: [
     "none",
-    "glow", 
-    "fade-out", 
+    "glow",
+    "fade-out",
     "explode"
   ],
-        
+
   alItemPushesActorType: ["Up", "Right", "Down", "Left", "Onwards", "Backwards", "Random"],
   alItemPushesActorType_up:        0,
   alItemPushesActorType_right:     1,
@@ -155,7 +155,7 @@ const MgbActor = {
     "step north 2",
     "step north 3",
     "step north 4",
-    
+
     // 5 - 9
     "face east",
     "step east 1",
@@ -176,7 +176,7 @@ const MgbActor = {
     "step west 2",
     "step west 3",
     "step west 4",
-    
+
     // 20 - 35
     "stationary 1",
     "stationary 2",
@@ -305,7 +305,7 @@ const MgbActor = {
     "stationary west 13",
     "stationary west 14",
     "stationary west 15",
-    "stationary west 16", 
+    "stationary west 16"
   ],
   loadSounds: function(actor, oName, callback) {
     if (!MgbActor._loadedSounds)
@@ -321,7 +321,7 @@ const MgbActor = {
           _.includes(actor.databag.all.soundWhenHarmed, ':') ? actor.databag.all.soundWhenHarmed : oName + ':' + actor.databag.all.soundWhenHarmed,
           _.includes(actor.databag.all.soundWhenHealed, ':') ? actor.databag.all.soundWhenHealed : oName + ':' + actor.databag.all.soundWhenHealed,
           _.includes(actor.databag.all.soundWhenKilled, ':') ? actor.databag.all.soundWhenKilled : oName + ':' + actor.databag.all.soundWhenKilled,
-          _.includes(actor.databag.allchar.soundWhenMelee, ':') ? actor.databag.allchar.soundWhenMelee : oName + ':' + actor.databag.allchar.soundWhenMelee, 
+          _.includes(actor.databag.allchar.soundWhenMelee, ':') ? actor.databag.allchar.soundWhenMelee : oName + ':' + actor.databag.allchar.soundWhenMelee,
           _.includes(actor.databag.allchar.soundWhenShooting, ':') ? actor.databag.allchar.soundWhenShooting : oName + ':' + actor.databag.allchar.soundWhenShooting,
           _.includes(actor.databag.item.equippedNewMeleeSound, ':') ? actor.databag.item.equippedNewMeleeSound : oName + ':' + actor.databag.item.equippedNewMeleeSound,
           _.includes(actor.databag.item.equippedNewShotSound, ':') ? actor.databag.item.equippedNewShotSound : oName + ':' + actor.databag.item.equippedNewShotSound
@@ -367,11 +367,11 @@ const MgbActor = {
     }
   },
 
-  getAnimationIndex: function(	
-    actorPiece, 
+  getAnimationIndex: function(
+    actorPiece,
     currentStepStyle, 					// -1 means stationary. 0...3 Mean north/east/south/west. If -1, we use priorstepStyle to work out the direction the actor should be facing
-    priorStepStyle, 
-    tweenCount, 
+    priorStepStyle,
+    tweenCount,
     meleeStep = -1     				  // If in Melee, this is 0..7, stating which melee Animation step to use. This then chooses a melee animation (if there is one) depending on the direction - it can return "", unlike the non-melee use of this function. Note that -1 == ActiveActor.MELEESTEP_NOT_IN_MELEE
   )
   {
@@ -389,7 +389,7 @@ const MgbActor = {
       case 0:	// North
         animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_NORTH + frame
         break
-      case 1: // East 
+      case 1: // East
         animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_EAST + frame
         break
       case 2:	// South
@@ -401,13 +401,13 @@ const MgbActor = {
       case -1: // stationary
         switch (priorStepStyle)
         {
-        case -1: 
+        case -1:
           animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary
           break
         case 0:	// North
           animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_NORTH + frame_Stationary
           break
-        case 1: // East 
+        case 1: // East
           animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_EAST + frame_Stationary
           break
         case 2:	// South
@@ -415,14 +415,14 @@ const MgbActor = {
           break
         case 3:	// West
           animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_WEST + frame_Stationary
-          break 
+          break
         }
-        
+
         if (!MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex)) {
           animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary // Try non-directional stationary animation
-          if (MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex)) 
+          if (MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex))
             break
-          else 
+          else
             for (i = 1; i < 16; i++) {
               idx = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + i
               if (MgbActor.isAnimationTableIndexValid(actorPiece, idx)) {
@@ -434,24 +434,24 @@ const MgbActor = {
             if (!hasStationaryAnyDirection) {
               switch (priorStepStyle)
               {
-              case -1: 
+              case -1:
                 animationTableIndex = -1
                 break
               case 0:	// North
                 animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_NORTH
                 break
-              case 1: // East 
+              case 1: // East
                 animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_EAST
                 break
               case 2:	// South
-                animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_SOUTH 
+                animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_SOUTH
                 break
               case 3:	// West
                 animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_FACE_WEST
-                break 
+                break
               }
             }
-        }    
+        }
         break
       }
     }
@@ -467,7 +467,7 @@ const MgbActor = {
       case 0:	// North
         animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_NORTH + meleeStep
         break
-      case 1: // East 
+      case 1: // East
         animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_MELEE_EAST + meleeStep
         break
       case 2:	// South
@@ -480,12 +480,12 @@ const MgbActor = {
       // Now, is there actually an animation here? If not, then revert back
       const animTableEntry = actorPiece.animationTable[animationTableIndex]
       if (!animTableEntry || animTableEntry.tileName === null || animTableEntry.tileName === '')
-        animationTableIndex = -1 
+        animationTableIndex = -1
     }
     return animationTableIndex
   },
 
-  isAnimationTableIndexValid: function(actorPiece, animationTableIndex)		// i.e. non-empty and correctly formed 
+  isAnimationTableIndexValid: function(actorPiece, animationTableIndex)		// i.e. non-empty and correctly formed
   {
     var ate = actorPiece.animationTable[animationTableIndex]		// Animation Table Entry
     return ate && ((ate.effect !== "no effect" && ate.effect !== '') || (ate.tileName !== ''))

@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillCountsLabel from '/client/imports/components/Skills/SkillCountsLabel'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-import { Button, Divider, Header, Progress } from 'semantic-ui-react'
+import { Button, Divider, Header, List, Progress } from 'semantic-ui-react'
 import { stopCurrentTutorial } from '/client/imports/routes/App'
 import QLink from "/client/imports/routes/QLink"
 import { StartDefaultNextTutorial } from '/client/imports/routes/Learn/LearnGetStartedRoute'
@@ -17,9 +17,15 @@ const JoyrideSummary = ( { joyrideSteps, joyrideSkillPathTutorial, joyrideCurren
       <div className="content">
         { /* <i className="right floated code icon" /> */ }
         <div className="header">{joyrideSteps[0].heading || joyrideSkillPathTutorial || "Current Tutorial..."}</div>
-        <ol className="ui list">
-          { joyrideSteps.map( (s, idx) => <li key={idx} className={ idx >= joyrideCurrentStepNum ? 'active' : 'complete'}>{s.title || `Step ${idx}`}</li> ) }
-        </ol>
+        <List ordered>
+          { joyrideSteps.map( (s, idx) => (
+            <List.Item
+              key={idx}
+              style={{ textDecoration: idx >= joyrideCurrentStepNum ? 'none' : 'line-through'}}
+              content={s.title || `Step ${idx}`}
+            />
+          ) ) }
+        </List>
       </div>
       <div className="extra content">
         <Progress size='small' color='green' percent={Math.round((100*(1+joyrideCurrentStepNum)) / (joyrideSteps.length) )} style={{marginBottom: '0.256em'}} />

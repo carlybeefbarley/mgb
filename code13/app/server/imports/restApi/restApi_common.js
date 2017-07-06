@@ -1,4 +1,4 @@
-import { RestApi, emptyPixel, red64x64halfOpacity } from './restApi'
+import { RestApi, emptyPixel, red64x64halfOpacity, grey64x64halfOpacity } from './restApi'
 import { Azzets }  from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
 import { genAPIreturn } from '/server/imports/helpers/generators'
@@ -64,25 +64,35 @@ RestApi.addRoute('asset/id/:user/:name', {authRequired: false}, {
   }
 })
 
+const _replaceThumbnailIfAppropriate = (api, asset) => {
+  if (asset && (asset.suIsBanned===true))
+    return genAPIreturn(api, asset, () => dataUriToBuffer(red64x64halfOpacity), { 'Content-Type': 'image/png' } )
+  if (asset && (asset.suFlagId))
+    return genAPIreturn(api, asset, () => dataUriToBuffer(grey64x64halfOpacity), { 'Content-Type': 'image/png' } )
+  return null
+}
+
 // Get any kind of asset's Thumbnail *as* a PNG
 RestApi.addRoute('asset/thumbnail/png/:id', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne(this.urlParams.id)
-    if (asset && asset.suIsBanned)
-      return genAPIreturn(this, asset, () => dataUriToBuffer(red64x64halfOpacity), { 'Content-Type': 'image/png' } )
-    return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ), {
-      'Content-Type': 'image/png'
-    })
+    return (
+      _replaceThumbnailIfAppropriate(this, asset) ||
+      genAPIreturn(
+        this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ),
+        { 'Content-Type': 'image/png' })
+    )
   }
 })
 RestApi.addRoute('asset/thumbnail/png/:user/:name', {authRequired: false}, {
   get: function () {
     var asset = Azzets.findOne({name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false})
-    if (asset && asset.suIsBanned)
-      return genAPIreturn(this, asset, () => dataUriToBuffer(red64x64halfOpacity), { 'Content-Type': 'image/png' } )
-    return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ?  asset.thumbnail : emptyPixel ), {
-      'Content-Type': 'image/png'
-    })
+    return (
+      _replaceThumbnailIfAppropriate( this, asset) ||
+      genAPIreturn(
+        this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ),
+        { 'Content-Type': 'image/png' })
+    )
   }
 })
 
@@ -90,12 +100,13 @@ RestApi.addRoute('asset/cached-thumbnail/png/:expires/:id', {authRequired: false
   get: function () {
     const asset = Azzets.findOne(this.urlParams.id)
     const expires = this.urlParams.expires || 30
-    if (asset && asset.suIsBanned)
-      return genAPIreturn(this, asset, () => dataUriToBuffer(red64x64halfOpacity), { 'Content-Type': 'image/png' } )
-    return genAPIreturn(this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ), {
-      'Content-Type': 'image/png',
-      'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`
-    })
+    return (
+      _replaceThumbnailIfAppropriate(this, asset) ||
+      genAPIreturn(
+        this, asset, () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel ),
+        { 'Content-Type': 'image/png',
+          'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}` })
+    )
   }
 })
 

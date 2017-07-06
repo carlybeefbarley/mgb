@@ -13,10 +13,10 @@ import { isUserSuperAdmin, isUserModerator } from '/imports/schemas/roles'
 
         //0a: send flagger notification yes we recieved your feedback/input k thx
         //     it is awaiting review.
-        //0b: user cannot flag their own items
+        //0b: user cannot flag their own items TODO
         //0c: cannot flag item with suFLagid exist
         //0d: cannot flag suisbanned == true item
-        //0e: it create a flag record upon flgaggin (see schema for deets)
+        //0e: it create a flag record upon flagging (see schema for deets)
         //0f: the id of the new record is put in suFlagId of new entity
         //0g: is okay to flag item where isDeleted == true
 
@@ -34,7 +34,7 @@ import { isUserSuperAdmin, isUserModerator } from '/imports/schemas/roles'
 
 //    2) Prevent any change to the item EXCEPT removal of flag by Moderator
 //       (ensure this with code in the server RPCs)
-//      2a) cannot fork asset where suFlagId exist
+//      2a) cannot fork asset where suFlagId or suIsBanned exist
 //      2b) if project fork start will fail forking flagged assets in proj
 
 //    3) A Moderator can review flagged entities. These can be discovered
@@ -67,6 +67,17 @@ import { isUserSuperAdmin, isUserModerator } from '/imports/schemas/roles'
 //     6a: in the event that it was banned we want it to render the content
 //        but the content is then replaced with some kind of graphic
 //        X(some greyed out image) or message.
+//    Asset specific:
+//        1) could be a bad name
+//        2) could be a bad description
+///       3) could be bad content
+//        4) apis can pull info now so if we doctor the front end it may not be sufficient
+//      Assets: we we save the whole entity to the flag
+//        we change only te text field to be (Banned by moderator)
+        // in restApi_common we change the content type to be an image that is red square
+        // in all the view asset card places
+        // only the owner can see the asset they also see a box of text saying that it was banned/flagged
+        //
 //     6b: we will not let the user see a list of their banned shit because
 //         we will send them a notification/warning instead
 //     6c: asset forking prohibited on tems where suIsbanned == true
@@ -170,7 +181,7 @@ export const flagsSchema = {
   //isTempBannedDateEnd:           optional(Date)     // better to be in /app/server/imports/user-analytics.js ?
 }
 
-const _parseTableNameToTable = (tableNameString) => {
+export const _parseTableNameToTable = (tableNameString) => {
   if(tableNameString === "Chats"){
     const chatEntity = {
       tableCollection: Chats,
@@ -179,7 +190,7 @@ const _parseTableNameToTable = (tableNameString) => {
     }
     return chatEntity
   }
-  else if(tableNameString === "Assets"){
+  else if(tableNameString === "Azzets"){
     const assetEntity = {
       tableCollection: Azzets,
       ownerIdKey: "ownerId",
@@ -199,29 +210,6 @@ const _parseTableNameToTable = (tableNameString) => {
   return null
 }
 ///for each entity need to get owner ID because names in schemas are different
-const _parseTableDataForBannedEntity = (tableCollection) => {
-  if(tableCollection === Chats){
-    const tableData = {
-
-    }
-    return tableData
-  }
-  else if(tableCollection === Azzets){
-//    find subtable!!
-    const tableData = {
-
-    }
-    return tableData
-  }
-  else if(tableCollection === Projects){
-
-    const tableData = {
-
-    }
-    return tableData
-  }
-  return null
-}
 
 //why do i write "percieved"? the internet allows for quite a lot of anonimity, I believe that even someon who is "mistaken"
 // in another's identity is still at fault of using discriminatory words, images, videos, references.
@@ -235,6 +223,9 @@ const _parseTableDataForBannedEntity = (tableCollection) => {
 export const FlagTypes = {
   "abuse.bullying":         {displayName: "bullying",     description: "User was intentionally harassing one or more other users with the intention to socially isolate/humiliate."},
   "abuse.profane":          {displayName: "inappropriate/profane", description: "User was intentionally using/enabling actions, slurs, images, videos, or references that are considered inappropriate/vulgar according to MGB community rules."},
+  "spam.advert":            {displayName: "spam advertising", description: "Actions, messages, images, videos, or references that are considered spam/promotional according to MGB community rules."},
+  "spam.porno":             {displayName: "spam pornographic", description: "Actions, messages, images, videos, or references that are considered spam/pornogrpahic according to MGB community rules."},
+  "spam.malware":           {displayName: "spam malware/phishing", description: "Actions, messages, images, videos, or references that are considered spam/malware according to MGB community rules."},
   "abuse.sexualHarassment": {displayName: "Sexual harrasment",     description: "User was intentionally using/enabling actions, slurs, images, videos, or references of a sexual nature intended to cause harm/discomfort"},
   "abuse.ageInappropriate": {displayName: "Age inappropriate",     description: "User intentionally or failed to censor/properly label actions, words, videos, images, games, references that would be considered for inappropriate for youth under 18 years of age."},
   "discrimination.racial":  {displayName: "Racist/discrimination", description: "User was intentionally using/enabling actions, slurs, images, videos, or references that would harm/isolate users based upon racial identity/percieved race."},
@@ -258,7 +249,8 @@ if(Meteor.isServer){
       //data = {
       //   flagTypes: [string],
       //   comments: string
-      // }
+      console.log(reportedEntity)
+      console.log(data)
       const currUser = Meteor.user()
       check(reportedEntity, Object)
       check(reportedEntity.table, String)
@@ -284,6 +276,8 @@ if(Meteor.isServer){
       //parse info for the different table fields for ownerId and ownerName
       const entityOwnerId = entity[tableInfo.ownerIdKey]
       const entityOwnerName = entity[tableInfo.ownerNameKey]
+      if(entityOwnerId === currUser._id)
+        throw new Meteor.Error(401, "You cannot flag your own content")
 
       const newFlagData = {
         flagTypes: data.flagTypes,
@@ -304,7 +298,7 @@ if(Meteor.isServer){
         updatedAt: new Date(),
         suFlagId: flagId
       }
-
+      //add situation for if tableData to add tableData
       const count = TableCollection.update(selector, {$set: changedData})
 
       if(count !== 1)
@@ -363,6 +357,15 @@ if(Meteor.isServer){
         if(TableCollection === Chats){
           entityChangedData.prvBannedMessage = entity.message
           entityChangedData.message = "(Deleted by moderator)"
+        }
+        if(TableCollection === Azzets){
+          //we did save entire asset into reportedEntity field of flag- line 373
+          //restApi_common.js is where asset card rendering for banned assets is handled line 68
+          //saving whole asset allows for retrieval
+          entityChangedData.text = "(Deleted by moderator)"
+          //TODO: in future we may need to clean up asset name also
+          //or begin using profanity filter on asset names
+
         }
         TableCollection.update(
           {_id: reportedEntity.recordId}, {$set: entityChangedData }

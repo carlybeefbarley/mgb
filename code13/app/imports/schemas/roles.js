@@ -26,7 +26,8 @@ export function doesUserHaveRole(user, roleStr) {
 export function canUserEditAssetIfUnlocked(asset, projects, user) {
   if (!user || !asset)
     return false
-
+  if (asset.suFlagId || asset.suIsBanned===true)
+    return false
   if ( isSameUserId(asset.ownerId, user._id) || ( fAllowSuperAdminToEditAnything && user.isSuperAdmin ))
     return true   // Owner can always edit
 

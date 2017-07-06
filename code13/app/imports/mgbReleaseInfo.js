@@ -16,6 +16,68 @@ const mgbReleaseInfo = {
 
   'releases': [
 
+
+    {
+      'timestamp': 'Wed July 5 2017 16:20:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4557'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'Asset flagging and banning',
+          'type': 'feature',
+          'changeName': 'Users may now flag assets that do not conform to our Terms of Service',
+          'changeSummary': 'Assets now have the same flag/moderation features that Chats gained last week.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'Activity for skills and badges',
+          'type': 'improvement',
+          'changeName': 'Activity updates for Badges and skills',
+          'changeSummary': 'There were some items missing from the Activity stream - skills gained and badges earned. These have been added. The activity FlexPanel is still "noisy" since it does not yet support filtering. Activity filtering, notifications, and Dashboard will arrive by mid July.',
+          'otherUrls': [ ]
+        },
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'The "Next tutorial" button for the Get Started tutorials now updates when those tutorials have all been completed; the network-offline message has been tweaked a bit; All project lists are now consistently sorted by most-recently-created-first; Fixed some chat-notification bugs; Fixed some code-import bugs; Fixed a playsCount bug; Make the Graphic Editor\' frames-menu more discoverable.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+    {
+      'timestamp': 'Fri Jun 30 2017 21:00:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4535'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+        {
+          'featureTag': 'nav.layout',
+          'type': 'improvement',
+          'changeName': 'UI Improvements',
+          'changeSummary': 'The create-asset UI has been cleaned up and the tutorials for it have been simplified. We have some new spam-flagging features. Graphic Editor has a small and big mode for the frame viewer. Actor Editor has an improved animations editor UI.',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
     {
       'timestamp': 'Mon Jun 26 2017 22:00:00 GMT-0700 (PDT)',
 

@@ -24,9 +24,9 @@ export default class DropArea extends React.Component {
     onChange: PropTypes.function, // callback
     text: PropTypes.strings, // alternative text to display
     isModalView: PropTypes.bool
-    
+
   }
-  
+
   static subscriptions = {} // key = owner:name / value subscription
   get data() {
     return this.props.value
@@ -128,7 +128,15 @@ export default class DropArea extends React.Component {
     this.props.onChange && this.props.onChange(name, this.state.asset)
   }
 
-
+  handleRemove() {
+    this.props.value = ""
+    this.setState(
+      {asset: null, badAsset: null }, () => {
+        this.props.value = ""
+        this.saveChanges()
+      }
+    )
+  }
   /**
    * Gets asset related to this drop area
    */
@@ -253,7 +261,7 @@ export default class DropArea extends React.Component {
 
   render() {
     const asset = this.getAsset()
-  
+
     if (this.props.isModalView)
       return this.renderModalView()
 
@@ -271,15 +279,7 @@ export default class DropArea extends React.Component {
         >
 
         {!asset && !this.state.badAsset ? (this.props.text || this.props.value || `Drop Asset (${this.props.kind || "any"}) here!`) :
-          <i className="floated right ui icon remove" onClick={()=>{
-              this.props.value = ""
-              this.setState(
-                {asset: null, badAsset: null }, () => {
-                  this.props.value = ""
-                  this.saveChanges()
-                }
-              )
-            }}
+          <i className="floated right ui icon remove" onClick={()=>this.handleRemove()}
             style={{
               position: "absolute",
               right: "-5px",

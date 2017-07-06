@@ -9,11 +9,13 @@ import Layer from './Layer.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
+import sty from  '../editGraphic.css'
+
 // TODO - see if we can avoid forceUpdate() in addLayer() and addFrame()        [DG]
 // TODO - see if we can avoid using props.EditGraphic                           [DG]
 
 const emptyPixel = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
-
+const _maxFrameDimension = 64
 
 export default class SpriteLayers extends React.Component {
 
@@ -27,8 +29,7 @@ export default class SpriteLayers extends React.Component {
       isCanvasLayersVisible: false,
       isPlaying: false,
       copyFrameID: null,
-      copyLayerID: null,
-      isMinimized: false // TODO after finishing css this should be true by default
+      copyLayerID: null
     }
   }
 
@@ -547,10 +548,6 @@ export default class SpriteLayers extends React.Component {
     $(document.body).removeClass("dragging")
   }
 
-  toggleMinimize = () => {
-    this.setState({ isMinimized: !this.state.isMinimized })
-  }
-
 
   renderLayers() {
     const c2 = this.props.content2
@@ -586,6 +583,16 @@ export default class SpriteLayers extends React.Component {
   render() {
     const c2 = this.props.content2
     const buttonDivClass = "ui mini icon button"
+
+    let frameWidth = c2.width
+    let frameHeight = c2.height
+
+    if(frameWidth > _maxFrameDimension || frameHeight > _maxFrameDimension){
+      maxDimension = frameWidth > frameHeight ? frameWidth : frameHeight
+      const scale = _maxFrameDimension / maxDimension
+      frameWidth *= scale
+      frameHeight *= scale
+    }
 
     if (this.props.isMobileView) {
       return (
@@ -647,8 +654,8 @@ export default class SpriteLayers extends React.Component {
 
     // TODO for fixed layout -> style={{ position: "fixed", bottom: 0, paddingRight: "71px" }}
     return (
-      <div className="ui sixteen wide column">
-        <div className="row" className={(this.state.isMinimized ? " mgb-hidden" : "")}>
+      <div id="framesView" className={(this.props.isMinimized ? "mgb-minimized" : "mgb-maximized")} style={{ width: this.props.availableWidth+"px" }}>
+        <div className="row" className="animHeader">
           <div onClick={this.rewindFrames.bind(this, false)} className={buttonDivClass}>
             <i className="icon step backward"></i>
           </div>
@@ -676,16 +683,9 @@ export default class SpriteLayers extends React.Component {
           <div className={"ui " + (this.state.isCanvasFramesVisible ? "primary" : "") + " right floated mini button"} onClick={this.toggleCanvasFramesVisibility.bind(this)}>
             <i className={"icon " + (this.state.isCanvasFramesVisible ? "unhide" : "hide" )}></i> Frames
           </div>
-          <div className={"ui " + (this.state.isCanvasLayersVisible ? "primary" : "") + " right floated mini button"} onClick={this.toggleCanvasLayersVisibility.bind(this)}>
+          <div id="mgb_edit_graphic_toggleLayerVisibility" className={"ui " + (this.state.isCanvasLayersVisible ? "primary" : "") + " right floated mini button"} onClick={this.toggleCanvasLayersVisibility.bind(this)}>
             <i className={"icon " + (this.state.isCanvasLayersVisible ? "unhide" : "hide" )}></i> Layers
           </div>
-          {  /* Disable ToggleMinimize for now since no way to undo it
-
-            <div onClick={this.toggleMinimize} className="ui right floated mini button">
-              <i className={"icon window minimize"}></i> Minimize
-            </div>
-            */
-          }
         </div>
 
         <table className="ui celled small padded table spriteLayersTable">
@@ -757,7 +757,7 @@ export default class SpriteLayers extends React.Component {
             </tr>
       {/* animations end */}
 
-            <tr className={(this.state.isMinimized ? " mgb-hidden" : "")}>
+            <tr className="framesHeader">
               <th width="32px">
                   <i
                       className={"icon " + (this.state.allLayersHidden ? "hide" : "unhide" )}
@@ -769,19 +769,19 @@ export default class SpriteLayers extends React.Component {
                   onClick={this.toggleAllLocking.bind(this)} />
               </th>
               <th width="180px">
-                  <a className="ui small label" onClick={this.addLayer.bind(this)}>
+                  <a id="mgb_edit_graphics_add_layer" className="ui small label" onClick={this.addLayer.bind(this)}>
                       <i className="add circle icon"></i> Add Layer
                   </a>
               </th>
               <th width="32px"></th>
               { /* Tools drop down */
                 _.map(c2.frameNames, (frameName, idx) => { return (
-                  <th key={"th_"+idx} width="32px" className="frameTH">
+                  <th key={"th_"+idx} width="32px" className={"frameTH "+"frame"+idx}>
                     <div className="ui dropdown"
                         ref={ (c) => { c && $(ReactDOM.findDOMNode(c)).dropdown({on: 'hover', direction: 'upward'}) } }
                         id={"mgb_edit_graphics_frame_options_" + idx}
                       >
-                      {idx+1}
+                      <span className='ui circular label'>{idx+1}</span>
                       <div className="ui vertical menu">
                         <div className="header item">
                           Frame #{idx+1}
@@ -848,34 +848,30 @@ export default class SpriteLayers extends React.Component {
 
         {/** Previews for frames **/}
             <tr className={"frameCanvases " + (this.state.isCanvasFramesVisible ? "" : "mgb-hidden")}>
-              <th></th>
-              <th></th>
-              <th>
-                <div
-                  className={(this.state.isMinimized ? "" : "mgb-hidden")}
-                  onClick={this.toggleMinimize} >
-                  <i className={"icon window maximize"}></i>
-                </div>
-              </th>
-              <th>
+              <th className="minimizeHide"></th>
+              <th className="minimizeHide"></th>
+              <th className="minimizeHide"></th>
+              <th className="minimizeSmall">
                 <div
                   onClick={this.togglePlayAnimation.bind(this)}
-                  className={buttonDivClass + (this.state.isPlaying ? " black" : "") + (this.state.isMinimized ? "" : " mgb-hidden")}>
+                  className={"miniPlay " + buttonDivClass + (this.state.isPlaying ? " black" : "")}
+                  style={{margin:'5px'}}>
                   <i className={"icon " + (this.state.isPlaying ? "pause" : "play" )}></i>
                 </div>
               </th>
               { // TODO: change from frameNames[] to frameData[] ?
                 _.map(c2.frameNames, (frameName, idx) => { return (
-                  <th key={"thCanvas_"+idx}>
+                  <th key={"thCanvas_"+idx} width="32px" className={(idx == this.props.selectedFrameIdx ? "active" : "")}>
                     <div  className="ui image "
                           // replace onClick wit mouseUp / touchEnd - to prevent conflict with mobile drag
                           onMouseUp={this.selectFrame.bind(this, idx)}
                           onTouchEnd={this.selectFrame.bind(this, idx)}
-                          style={{"maxWidth": "256px", "maxHeight": "256px", "width": `${c2.width}px`, "display": "block", "margin": "0px auto", "overflow": "auto" }}
+                          style={{"maxWidth": "256px", "maxHeight": "256px", "width": `${frameWidth}px`, "display": "block", "margin": "0px auto", "overflow": "auto" }}
                           title={`Preview for combined visible layers of Frame #${idx+1}`}>
                       <canvas
                         width={c2.width}
                         height={c2.height}
+                        style={{ width: frameWidth, height: frameHeight }}
 
                         onDragStart={this.handleDragStart.bind(this, idx)}
                         onDragEnd={this.handleDragEnd}
@@ -887,17 +883,17 @@ export default class SpriteLayers extends React.Component {
                 )})
               }
               <th>
-                <div className={"row" + (this.state.isMinimized ? "" : " mgb-hidden")} style={{marginLeft: "10px"}}>
+                <div className={"row miniAddFrames"} style={{marginLeft: "10px"}}>
                   <a className="ui small label" onClick={this.addFrame.bind(this)}>
                     <i className="add circle icon"></i> Add Frame
                   </a>
                 </div>
               </th>
-              <th></th>
+              <th className="minimizeHide"></th>
             </tr>
           </thead>
 
-          <tbody className={(this.state.isMinimized ? " mgb-hidden" : "")}>
+          <tbody className="layers">
             { this.renderLayers() }
           </tbody>
         </table>

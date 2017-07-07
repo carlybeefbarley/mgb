@@ -300,8 +300,6 @@ window.onload = function() {
             imports[key] = true
           }
           else{
-            // source.name === key
-
             //e.g.:  import localKey from 'key'
             // first for babel includes (with default support) another one for commonJS includes
             if(!imports[key])
@@ -340,11 +338,15 @@ window.onload = function() {
 
   window.addEventListener('message', function (e) {
     mainWindow = e.source;
+    // ignore completely self made messages - as we are only posting messages from code editor window
+    if(mainWindow === window)
+      return
+
     if(commands[e.data.mgbCommand]){
       commands[e.data.mgbCommand](e)
     }
     else{
-      console.error("Unknown command received: ["+ e.data.mgbCommand +']')
+      console.warn("Unknown command received: ["+ e.data.mgbCommand +']')
     }
   })
 }

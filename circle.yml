@@ -1,0 +1,8 @@
+general:
+  build_dir: code13/app
+
+machine:
+  timezone:
+    America/Los_Angeles
+  node:
+    version: 8.1.2

@@ -4,6 +4,10 @@ import { GameItem } from '/client/imports/components/Assets/GameAsset/GameItems'
 import { Header, Divider, Message } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
+import { isUserSuperAdmin } from '/imports/schemas/roles'
+
+import FullScreenExitPosition from './FullScreenExitPosition'
+
 import './editGame.css'
 
 const _gameTypes = {
@@ -28,6 +32,8 @@ const _defaultGameAssetMetadata = {
   startActorMap:  '',
   playCount:      0,
   allowFullScreen: true,
+  allowPortrait: true,
+  allowLandscape: true,
   width: 800,
   height: 600
 }
@@ -41,9 +47,13 @@ class EditGameForm extends BaseForm {
 
 
   render() {
+
     const isActorGame = _isActorGame(this.data)
     const isCodeGame  = _isCodeGame(this.data)
     const hasGameType = _hasGameType(this.data)
+
+    const isAdmin = isUserSuperAdmin(Meteor.user())
+
     const touchControlSupportedFieldOptions = { boolIsTF: true, disabled: isActorGame }
 
     return (
@@ -82,21 +92,41 @@ class EditGameForm extends BaseForm {
             max: 1600
           }
         )}
-        { isCodeGame && this.bool('Allow fullscreen', 'allowFullScreen')}
 
+        { isAdmin && <div>
+          <Divider />
+          { this.bool('Works in portrait', 'allowPortrait', {boolIsTF: true})}
+          { this.bool('Works in landscape', 'allowLandscape', {boolIsTF: true})}
+          <Divider />
+
+        </div>}
+
+        { isCodeGame && this.bool('Allow fullscreen', 'allowFullScreen', {boolIsTF: true})}
+        { this.data.allowFullScreen && isAdmin && 
+          <div className="inline fields">
+            <label>Exit FullScreen button position</label>
+            <FullScreenExitPosition
+              value={this.data.fullScreenPosition}
+              onChange={val => {
+                this.data.fullScreenPosition = val
+                this.props.onChange && this.props.onChange()
+              }}
+            />
+          </div>
+        }
 
         { isActorGame && this.dropArea('Starting ActorMap', 'startActorMap', 'actormap' )}
 
         { hasGameType &&
-          <div>
-            <Divider />
-            <Header as='h4' content='Supported control schemes' />
-            { isActorGame && <Message compact info size='small' attached='bottom' content='ActorMap Games only support keyboard+mouse systems (currently)' /> }
-            { this.bool('Single touch / mouse', 'supportsTouchControl',        touchControlSupportedFieldOptions ) }
-            { this.bool('Multitouch',           'supportsMultiTouchControl',   touchControlSupportedFieldOptions ) }
-            { this.bool('Keyboard/keypad',      'supportsKeyControl',          touchControlSupportedFieldOptions ) }
-            { this.bool('Keyboard+mouse',       'supportsKeyPlusMouseControl', touchControlSupportedFieldOptions ) }
-          </div>
+        <div>
+          <Divider />
+          <Header as='h4' content='Supported control schemes' />
+          { isActorGame && <Message compact info size='small' attached='bottom' content='ActorMap Games only support keyboard+mouse systems (currently)' /> }
+          { this.bool('Single touch / mouse', 'supportsTouchControl',        touchControlSupportedFieldOptions ) }
+          { this.bool('Multitouch',           'supportsMultiTouchControl',   touchControlSupportedFieldOptions ) }
+          { this.bool('Keyboard/keypad',      'supportsKeyControl',          touchControlSupportedFieldOptions ) }
+          { this.bool('Keyboard+mouse',       'supportsKeyPlusMouseControl', touchControlSupportedFieldOptions ) }
+        </div>
         }
 
         <Divider />
@@ -105,6 +135,7 @@ class EditGameForm extends BaseForm {
 
       </div>
     )
+
   }
 }
 
@@ -117,6 +148,19 @@ export default class EditGame extends React.Component {
     handleContentChange:  PropTypes.func,
     editDeniedReminder:   PropTypes.func,
     activitySnapshots:    PropTypes.array               // can be null whilst loading
+  }
+
+  handleChange(key){
+    const md = this.props.asset.metadata
+    // would be nice to actually know which on input has been changed
+    if(!md.allowLandscape && !md.allowPortrait){
+      if(key === 'allowPortrait')
+        md.allowLandscape = true
+      else
+        md.allowPortrait = true
+    }
+
+    this.handleSave()
   }
 
   handleSave(reason) {
@@ -141,7 +185,7 @@ export default class EditGame extends React.Component {
         <EditGameForm
             asset={asset}
             canEdit={canEdit}
-            onChange={this.handleSave.bind(this)}
+            onChange={this.handleChange.bind(this)}
             saveThumbnail={(d) => { handleContentChange(null, d, "Updating thumbnail") }} />
       </div>
     )

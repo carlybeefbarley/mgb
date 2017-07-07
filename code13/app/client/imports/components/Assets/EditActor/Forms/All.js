@@ -1,11 +1,12 @@
 import _ from 'lodash'
 import React from 'react'
-
 import BaseForm from '../../../Controls/BaseForm.js'
 import actorOptions from '../../Common/ActorOptions.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+// import templates from '../TemplateDiffs.js'
+// import getDefaultActor from '../getDefaultActor.js'
 
 
 export default class All extends BaseForm {
@@ -13,7 +14,37 @@ export default class All extends BaseForm {
   get data() {
     return this.props.asset.content2.databag.all
   }
-  
+
+  /*
+  // Should other data be reset?
+  // reload correct template
+  handleChangeActorType = (databag) => {
+    const idx = Number.parseInt(databag.all.actorType)
+    const tpl = [
+      "alTemplatePlayer",
+      "alTemplateFriend",
+      "alTemplateEnemy",
+      "alTemplateShot",
+      "alTemplateScenery",
+      "alTemplateItem",
+      "alTemplateSolidObject",
+      "alTemplateFloor"
+    ]
+    // force defaults
+    this.props.asset.content2 = getDefaultActor()
+    const t = templates[tpl[idx]]
+    const merge = (a, b) => {     // Is this different from things like _.merge or Object.Assign()
+      for (let i in a) {
+        if (typeof b[i] == "object")
+          merge(a[i], b[i])
+        else
+          b[i] = a[i]
+      }
+    }
+    merge(t, databag)
+  }
+  */
+
   render() {
     const soundOptions = { options: MgbActor.alCannedSoundsList.map( s => ( { text: '[builtin]:'+s, value: '[builtin]:'+s } ) ) }
     // Handle limiting InitialHealth < initialMaxHealthNum
@@ -29,13 +60,13 @@ export default class All extends BaseForm {
     return (
     <div style={!this.props.canEdit ? {pointerEvents: 'none'} : {}} className="ui form">
           {this.options(
-            "Actor Type", 
-            'actorType', 
+            "Actor Type",
+            'actorType',
             _.pickBy(actorOptions.actorType, (val, key) => {return key !== 'Item, Wall, or Scenery'}),
             {},
             "mgbjr-edit-actor-actorType",
             "mgbjr-CT-edit-actor-actorType",
-            () => { 
+            () => {
               // Set correct itemActivationType when actorType is changed
               switch(parseInt(databag.all.actorType)) {
                 case 4:

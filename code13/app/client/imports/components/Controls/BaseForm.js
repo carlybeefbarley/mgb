@@ -46,9 +46,9 @@ export default class BaseForm extends React.Component {
         <SmallDD options={options} onChange={(val) => {
           this.data[key] = val
           this.props.onChange && this.props.onChange()
-          if (mgbjrCT) {
+          if (mgbjrCT)
             joyrideCompleteTag(mgbjrCT + val)
-          }
+
         }} {...fieldOptions} value={val}/>
       </div>
     )

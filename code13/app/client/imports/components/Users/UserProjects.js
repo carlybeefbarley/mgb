@@ -1,15 +1,13 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Card, Grid, Header, Segment } from 'semantic-ui-react'
+import { Card, Grid, Header } from 'semantic-ui-react'
 import ProjectCard from '/client/imports/components/Projects/ProjectCard'
 import QLink from '/client/imports/routes/QLink'
-
-const Empty = <Segment basic >No projects</Segment>
 
 const _wrapStyle = { clear: 'both', flexWrap: 'wrap' }
 const _nowrapStyle = { clear: 'both', flexWrap: 'nowrap', overflowX: 'auto', overflowY: 'hidden', marginBottom: '1em' }
 
-const SomeProjects = ( { user, projects, width,  ownedFlag, wrap, hdr } ) => {
+const SomeProjects = ( { user, projects, width, ownedFlag, wrap, hdr } ) => {
   const comps = _.compact(projects.map( p => {
     const isOwner = (p.ownerId === user._id)
     return (isOwner !== ownedFlag) ? null : (
@@ -17,13 +15,16 @@ const SomeProjects = ( { user, projects, width,  ownedFlag, wrap, hdr } ) => {
     )
   }))
 
+  if (comps.length === 0)
+    return null
+
   return (
     <Grid.Row width={width}>
       <Header as="h2">
         <QLink to={`/u/${user.profile.name}/projects`}>{hdr} <small>({comps.length})</small></QLink>
       </Header>
       <Card.Group style={wrap ? _wrapStyle : _nowrapStyle}>
-        { comps.length ? comps : Empty }
+        { comps }
       </Card.Group>
     </Grid.Row>
   )
@@ -35,6 +36,7 @@ const _variants = [
 ]
 
 const UserProjects = ( props ) => (
+  (!props.projects || props.projects.length === 0) ? null :
   <Grid.Column width={props.width}>
     { _.map( _variants, v => ( <SomeProjects key={v.hdr} {...props} {...v}/> ))  }
   </Grid.Column>

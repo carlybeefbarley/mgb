@@ -27,9 +27,9 @@ const buttonSty = { width: '220px', marginTop: '2px', marginBottom: '2px'}
 const ProjectChatButton = ( { projId }) => {
   const channelName = makeChannelName( { scopeGroupName: 'Project', scopeId: projId } )
   return (
-    <QLink 
-        style={buttonSty} 
-        query={{ _fp: `chat.${channelName}` }} 
+    <QLink
+        style={buttonSty}
+        query={{ _fp: `chat.${channelName}` }}
         className='ui small primary button' >
       <Icon name='chat' />
       View Project Team Chat
@@ -50,8 +50,8 @@ export default ProjectOverview = React.createClass({
     // setTimeou just to be sure that everything is loaded
     setTimeout( () => Hotjar('trigger', 'project-overview', this.props.currUser), 200)
   },
-  
-  getInitialState: () => ({ 
+
+  getInitialState: () => ({
     showAddUserSearch:            false,       // True if user search box is to be shown
     isForkPending:                false,       // True if a fork operation is pending
     isDeletePending:              false,       // True if a delete project operation is pending
@@ -59,7 +59,7 @@ export default ProjectOverview = React.createClass({
     compoundNameOfDeletedProject: null,        // Used for User feedback after deleting project. using Compound name for full clarity
     confirmDeleteNum:             -1           // If >=0 then it indicates how many assets will be deleted. Used to flag 2-stage DELETE PROJECT
   }),
-  
+
   getMeteorData: function() {
     const { projectId, projectName } = this.props.params
     const { user } = this.props
@@ -77,7 +77,7 @@ export default ProjectOverview = React.createClass({
     return Boolean(
       !this.data.loading &&
       this.data.project &&
-      this.props.currUser && 
+      this.props.currUser &&
       ( this.data.project.ownerId === this.props.currUser._id || isUserSuperAdmin(this.props.currUser) )
     )
   },
@@ -129,20 +129,20 @@ export default ProjectOverview = React.createClass({
         />
 
         <Grid.Column style={{ minWidth: '250px', maxWidth: '250px' }}>
-          <ProjectCard 
-              project={project} 
+          <ProjectCard
+              project={project}
               owner={this.props.user}
               canEdit={canEdit}
               handleFieldChanged={this.handleFieldChanged} />
-          <QLink 
+          <QLink
               id='mgbjr-project-overview-assets'
-              to={`/u/${project.ownerName}/assets`} 
-              style={buttonSty} 
-              query={{project:project.name}} 
+              to={`/u/${project.ownerName}/assets`}
+              style={buttonSty}
+              query={{project:project.name}}
               className='ui small primary button' >
             View Project Assets
           </QLink>
-          {isPartOfTeam && 
+          {isPartOfTeam &&
           <ProjectChatButton projId={project._id}/>
           }
 
@@ -150,21 +150,21 @@ export default ProjectOverview = React.createClass({
           <Segment secondary compact style={{ width: '220px' }}>
             <Header content='Project Forking'/>
             <span style={{float: 'right'}}>
-              <ProjectForkGenerator 
+              <ProjectForkGenerator
                   project={project}
                   isForkPending={this.state.isForkPending}
                   />
             </span>
             <div style={{ padding: '2px 2px 8px 2px' }}>
-              <Checkbox 
+              <Checkbox
                   disabled={!canEdit}
-                  checked={!!project.allowForks} 
+                  checked={!!project.allowForks}
                   onChange={ () => this.handleFieldChanged( { allowForks: !project.allowForks } ) }
-                  label='Allow forks' 
+                  label='Allow forks'
                   title="Project Owner may allow other users to fork this Project and it's Assets"/>
 
             </div>
-            <Popup 
+            <Popup
                 inverted
                 wide='very'
                 on='click'
@@ -173,7 +173,7 @@ export default ProjectOverview = React.createClass({
                     fluid
                     id='mgbjr-project-overview-fork'
                     disabled={!project.allowForks || !currUser}
-                    size='small' 
+                    size='small'
                     content={this.state.isForkPending ? 'Forking project...' : 'Fork Project'}/>
                 )} >
               { this.state.isForkPending ? ( <div>Forking... please wait..</div> ) : (
@@ -182,39 +182,40 @@ export default ProjectOverview = React.createClass({
                   <div className="ui small fluid action input" style={{ minWidth: '300px' }}>
                     <input  type="text"
                             id="mgbjr-fork-project-name-input"
-                            placeholder="New Project name" 
-                            defaultValue={project.name + ' (fork)'} 
+                            placeholder="New Project name"
+                            defaultValue={project.name + ' (fork)'}
                             ref="forkNameInput"
                             size="22"></input>
                     <Button icon='fork' ref="forkGoButton" onClick={this.handleForkGo}/>
                   </div>
                 </div>
-                ) 
+                )
               }
             </Popup>
           </Segment>
-                  
-          { this.renderRenameDeleteProject() } 
+
+          { this.renderRenameDeleteProject() }
         </Grid.Column>
-        
+
         <Grid.Column>
-          <Header as="h3" >Games in this Project</Header>
+
           <Segment basic>
-            <GamesAvailableGET 
+            <GamesAvailableGET
+                header={<Header as="h3" >Games in this Project</Header>}
                 currUser={currUser}
                 scopeToUserId={project.ownerId}
                 scopeToProjectName={project.name}
                 />
           </Segment>
-          
-          <QLink 
+
+          <QLink
               id='mgbjr-project-overview-assets'
-              to={`/u/${project.ownerName}/assets`} 
+              to={`/u/${project.ownerName}/assets`}
               query={{project:project.name}} >
             <Header as="h3" >Project Assets</Header>
           </QLink>
           <Segment basic>
-            <AssetsAvailableGET 
+            <AssetsAvailableGET
                 scopeToUserId={project.ownerId}
                 scopeToProjectName={project.name}
             />
@@ -222,10 +223,10 @@ export default ProjectOverview = React.createClass({
 
           <Header as="h3" >{`Project Members (${project.memberIds.length} of ${isUserSuperAdmin(currUser) ? SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject : SpecialGlobals.quotas.defaultNumMembersAllowedInProject})`}</Header>
           <Segment basic>
-            Project Members may create, edit or delete Assets in this Project &nbsp;        
-            <ProjectMembersGET 
-                project={project} 
-                enableRemoveButton={canEdit} 
+            Project Members may create, edit or delete Assets in this Project &nbsp;
+            <ProjectMembersGET
+                project={project}
+                enableRemoveButton={canEdit}
                 enableLeaveButton={currUser ? currUser._id : null}
                 handleRemove={this.handleRemoveMemberFromProject}
                 handleLeave={this.handleMemberLeaveFromProject}
@@ -238,7 +239,7 @@ export default ProjectOverview = React.createClass({
       </Grid>
     )
   },
-  
+
   handleForkGo()
   {
     const newProjName = this.refs.forkNameInput.value
@@ -274,7 +275,7 @@ export default ProjectOverview = React.createClass({
     }
 
     var project = this.data.project
-    var newData = { memberIds: _.union(project.memberIds, [userId])}   
+    var newData = { memberIds: _.union(project.memberIds, [userId])}
     Meteor.call('Projects.update', project._id, newData, (error, result) => {
       if (error)
         showToast(`Could not add member ${userName} to project ${project.name}`, 'error')
@@ -282,7 +283,7 @@ export default ProjectOverview = React.createClass({
         logActivity("project.addMember",  `Add Member ${userName} to project ${project.name}`)
     })
   },
-  
+
   handleRemoveMemberFromProject: function (userId, userName) {
     if (this.state.isDeletePending)
     {
@@ -291,12 +292,12 @@ export default ProjectOverview = React.createClass({
     }
 
     var project = this.data.project
-    var newData = { memberIds: _.without(project.memberIds, userId)}   
+    var newData = { memberIds: _.without(project.memberIds, userId)}
 
     Meteor.call('Projects.update', project._id, newData, (error, result) => {
-      if (error) 
+      if (error)
         showToast(`Could not remove member ${userName} from project ${project.name}`, 'error')
-      else 
+      else
         logActivity("project.removeMember",  `Removed Member ${userName} from project ${project.name}`);
     })
   },
@@ -304,9 +305,9 @@ export default ProjectOverview = React.createClass({
   handleMemberLeaveFromProject: function (userId, userName) {
     var project = this.data.project
     Meteor.call('Projects.leave', project._id, userId, (error, result) => {
-      if (error) 
+      if (error)
         showToast(`Member ${userName} could not leave project ${project.name}`, 'error')
-      else 
+      else
         logActivity("project.leaveMember",  `Member ${userName} left from project ${project.name}`)
     })
   },
@@ -318,12 +319,12 @@ export default ProjectOverview = React.createClass({
     const { project } = this.data
 
     Meteor.call('Projects.update', project._id, changeObj, (error) => {
-      if (error) 
+      if (error)
         showToast(`Could not update project: ${error.reason}`, 'error')
-      else 
+      else
       {
        // Go through all the keys, log completion tags for each
-        _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-project-set-field-${k}`))     
+        _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-project-set-field-${k}`))
       }
     })
   },
@@ -334,7 +335,7 @@ export default ProjectOverview = React.createClass({
       if (error)
         showToast(`Could not count Number of Assets in Project '${name}: ${error.reason}`, 'error')
       else
-        this.setState( { confirmDeleteNum: result } ) 
+        this.setState( { confirmDeleteNum: result } )
     })
   },
 
@@ -361,9 +362,9 @@ export default ProjectOverview = React.createClass({
       }
     })
   },
-  
+
   // TODO - Activity - filter for project / user.  Maybe have a Project-related Activity Page
-  
+
   renderRenameDeleteProject: function()
   {
     const { isDeleteComplete, isDeletePending, confirmDeleteNum } = this.state
@@ -371,17 +372,17 @@ export default ProjectOverview = React.createClass({
 
     if (!canEdit)
       return null
-    
+
     return (
       <Segment secondary compact style={{width: '220px'}}>
         <Header>Manage Project</Header>
         <div style={{padding: '2px'}}>
-          <Button 
+          <Button
             fluid
             icon='edit'
             size='small'
             content='Rename'
-            disabled={isDeleteComplete || isDeletePending} 
+            disabled={isDeleteComplete || isDeletePending}
             onClick={ () => { showToast('Rename Project has not yet been implemented..', 'warning')}} />
         </div>
         <div style={{ padding: '2px' }}>
@@ -389,20 +390,20 @@ export default ProjectOverview = React.createClass({
             fluid
             icon={confirmDeleteNum < 0 ? <Icon color='red' name='trash'/> : null}
             size='small'
-            disabled={isDeleteComplete || isDeletePending} 
-            content={confirmDeleteNum < 0 ? 'Delete' : `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`} 
+            disabled={isDeleteComplete || isDeletePending}
+            content={confirmDeleteNum < 0 ? 'Delete' : `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`}
             color={confirmDeleteNum < 0 ? null : 'red' }
             onClick={confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject } />
         </div>
 
-        { isDeletePending && 
+        { isDeletePending &&
           <Message icon size='mini'>
             <Icon name='circle notched' loading />
             <Message.Content>
               <Message.Header>Deleting Project</Message.Header>
               Please wait while we make sure it's really deleted...
             </Message.Content>
-          </Message>        
+          </Message>
         }
       </Segment>
     )
@@ -410,29 +411,29 @@ export default ProjectOverview = React.createClass({
 
   renderAddPeople: function()
   {
-    if (!this.canEdit()) 
+    if (!this.canEdit())
       return null
-      
+
     const project = this.data.project
-    const relevantUserIds = [ project.ownerId, ...project.memberIds]   
-    const active = this.state.showAddUserSearch 
-    
+    const relevantUserIds = [ project.ownerId, ...project.memberIds]
+    const active = this.state.showAddUserSearch
+
     return (
       <Segment secondary compact={!active} >
-        <Button 
-            color="green" 
-            icon="add user" 
-            content="Add Members" 
+        <Button
+            color="green"
+            icon="add user"
+            content="Add Members"
             disabled={this.state.isDeletePending}
             active={active}
             onClick={ () => { this.setState({showAddUserSearch: !active})}} />
-        { !active ? null : 
-            <UserListRoute 
+        { !active ? null :
+            <UserListRoute
                 handleClickUser={this.handleClickUser}
                 initialLimit={20}
                 excludeUserIdsArray={relevantUserIds}
                 renderVertical={true} />
-         }              
+         }
       </Segment>
     )
   }

@@ -18,6 +18,31 @@ const mgbReleaseInfo = {
 
 
     {
+      'timestamp': 'Sat July 8 2017 15:30:00 GMT-0700 (PDT)',
+
+      'id': {
+        'ver': '0.2.0',
+        'state': 'Beta',
+        'iteration': '4583'
+      },
+
+      'releaseManagement': {
+        'eng': 'dgolds'
+      },
+
+      'changes': [
+
+        {
+          'featureTag': 'bugfix',
+          'type': 'bugfix',
+          'changeName': 'A bunch of bugfixes/tweaks',
+          'changeSummary': 'Cleaned up and simplified some tutorials based on user feedback. Fix some obscure bugs. Hide some sections in user profile if there is no content (projects, friends etc).',
+          'otherUrls': [ ]
+        }
+      ]
+    },
+
+    {
       'timestamp': 'Wed July 5 2017 16:20:00 GMT-0700 (PDT)',
 
       'id': {

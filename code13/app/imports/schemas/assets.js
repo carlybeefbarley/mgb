@@ -17,6 +17,7 @@ import { canUserEditAssetIfUnlocked } from '/imports/schemas/roles'
 
 import { projectMakeSelector } from './projects'
 
+
 const optional = Match.Optional
 
 var schema = {
@@ -255,6 +256,8 @@ Meteor.methods({
       data.text = _.trim(data.text)
       checkMgb.assetDescription(data.text)
     }
+    if(Meteor.isServer)
+      Meteor.call("Azzets.Name.isProfane", data.name)
 
     data.createdAt = data.createdAt || now    // -- useful for asset import from MGB1
     data.updatedAt = now

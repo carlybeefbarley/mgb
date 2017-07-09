@@ -1,5 +1,4 @@
 import _ from 'lodash'
-
 const _maxUsernameLength = 12
 const _minUsernameLength = 3
 

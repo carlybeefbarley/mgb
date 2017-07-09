@@ -73,6 +73,7 @@ export default ChatMessagesView = React.createClass( {
   propTypes: {
     channelName:      PropTypes.string.isRequired,
     pastMessageLimit: PropTypes.number.isRequired,
+    handleExtendMessageLimit: PropTypes.func.isRequired,  // Call this with new desired pastMessageLimit
     MessageContextComponent: PropTypes.node           // - A react component that will be rendered to the left of the 'Send Message' Button as context for the message send
   },
 
@@ -113,6 +114,7 @@ export default ChatMessagesView = React.createClass( {
 
   renderGetMoreMessages() {
     const { chats } = this.data
+    const { pastMessageLimit } = this.props
     const elementId = 'mgbjr-fp-chat-channel-get-earlier-messages'
     if (this.data.loading)
       return <p id={elementId}>loading...</p>
@@ -125,7 +127,7 @@ export default ChatMessagesView = React.createClass( {
           content='(no messages yet)' />
       )
 
-    if (chats.length < this.state.pastMessageLimit)
+    if (chats.length < pastMessageLimit)
       return (
         <MessageTopDivider
           id={elementId}
@@ -184,8 +186,8 @@ export default ChatMessagesView = React.createClass( {
 
 
   doGetMoreMessages() {
-    const newMessageLimit = Math.min( chatParams.maxClientChatHistory, this.state.pastMessageLimit + additionalMessageIncrement )
-    this.setState( { pastMessageLimit: newMessageLimit } )
+    const newMessageLimit = Math.min( chatParams.maxClientChatHistory, this.props.pastMessageLimit + additionalMessageIncrement )
+    this.props.handleExtendMessageLimit( newMessageLimit )
   },
 
 

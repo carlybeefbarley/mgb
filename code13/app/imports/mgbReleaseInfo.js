@@ -18,7 +18,7 @@ const mgbReleaseInfo = {
 
 
     {
-      'timestamp': 'Sat July 8 2017 15:30:00 GMT-0700 (PDT)',
+      'timestamp': 'Sun July 9 2017 00:05:00 GMT-0700 (PDT)',
 
       'id': {
         'ver': '0.2.0',
@@ -36,7 +36,7 @@ const mgbReleaseInfo = {
           'featureTag': 'bugfix',
           'type': 'bugfix',
           'changeName': 'A bunch of bugfixes/tweaks',
-          'changeSummary': 'Cleaned up and simplified some tutorials based on user feedback. Fix some obscure bugs. Hide some sections in user profile if there is no content (projects, friends etc).',
+          'changeSummary': 'Fix "get Older messages" for chat; Prevent profanity in asset names; Cleaned up and simplified some tutorials based on user feedback. Fix some obscure bugs. Hide some sections in user profile if there is no content (projects, friends etc).',
           'otherUrls': [ ]
         }
       ]

@@ -560,6 +560,7 @@ export default fpChat = React.createClass( {
             <ChatMessagesView
                 currUser={currUser}
                 pastMessageLimit={pastMessageLimit}
+                handleExtendMessageLimit={newLimit => { this.setState( { pastMessageLimit: newLimit } ) } }
                 channelName={channelName}
                 MessageContextComponent={
                   channelObj.scopeGroupName === 'Global' ? null : (

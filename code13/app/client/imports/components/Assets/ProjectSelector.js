@@ -82,9 +82,8 @@ const ProjectSelector = ({
     const isActive = _isSameProject(chosenProjectObj, chosenProjectName, project)
     if (isActive && !chosenProjectObj) {
       if (NameMatchedProjectObject) {
-        debugger
-        console.error(
-          'BUG: ProjectSelector() cannot handle ProjectName collisions when used with the projectName Interface. Check calling Element',
+        throw new Error(
+          'ProjectSelector() cannot handle ProjectName collisions when used with the projectName Interface. Check calling Element',
         )
       }
       NameMatchedProjectObject = project

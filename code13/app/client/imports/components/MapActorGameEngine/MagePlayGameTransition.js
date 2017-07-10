@@ -6,13 +6,13 @@ import MgbSystem from './MageMgbSystem'
 export default (MagePlayGameTransition = {
   /**
    * transitionToNewMap()
-   * 
+   *
    * @param {String} userName
    * @param {String} projectName
    * @param {String} newmapname
    * @param {int} newX
    * @param {int} newY
-   * 
+   *
    * @memberOf MagePlayGame
    */
   transitionToNewMap(userName, projectName, newMapName, newX, newY) {
@@ -29,13 +29,11 @@ export default (MagePlayGameTransition = {
   },
 
   resetTransitionState() {
-    debugger // DO WE NEED THIS?
-    this.transitionInProgress = false
+    this.isTransitionInProgress = false
     this.transitionNewX = 0
     this.transitionNewY = 0
     this.transitionPlayerAA = null
     this.transitionStateWaitingForActorLoadRequests = false
-    //     this.isTransitionInProgress = false  ??
   },
 
   transitionResourcesHaveLoaded(newMapData) {
@@ -46,7 +44,7 @@ export default (MagePlayGameTransition = {
     // Note we do NOT set this.isTransitionInProgress = false  -- that is done in TranitionTick()
   },
 
-  /* 
+  /*
   // When debugging, the function gets called but does not run
   // Called on 'Tick' by game loop if transitioning to new map (isTransitionInProgress == true)
   transitionTick()
@@ -82,8 +80,8 @@ export default (MagePlayGameTransition = {
 
       this.AA_player_idx = this.activeActors.length
       this.activeActors[this.AA_player_idx] = this.transitionPlayerAA
-      
-      this.container = document.getElementById("mgb-game-container") 
+
+      this.container = document.getElementById("mgb-game-container")
       this.scrollMapToSeePlayer()
 
       this.clearTicTable()

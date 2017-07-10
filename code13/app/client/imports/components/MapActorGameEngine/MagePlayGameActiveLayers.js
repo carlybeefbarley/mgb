@@ -161,7 +161,7 @@ export default (MagePlayGameActiveLayers = {
   respawnRequiredActorsForMap: function() {
     // See the complementary code in playSpawnNewActor()
     if (this.respawnMemoryAutoRespawningActors[this.map.name]) {
-      debugger // step through first time
+      throw new Error('@dgolds 10/12/16 debugger: step through first time')
       var a = this.respawnMemoryAutoRespawningActors[this.map.name]
       for (var i in a) {
         var ob = a[i]

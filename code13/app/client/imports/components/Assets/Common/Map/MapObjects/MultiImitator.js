@@ -196,9 +196,6 @@ export default class MultiImitator {
       }
     }
 
-    if (minx == Infinity) {
-      debugger
-    }
     this._x = minx
     this._y = miny
     this._width = maxx - minx

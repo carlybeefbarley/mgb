@@ -313,9 +313,6 @@ export default (ActorHelper = {
       if (loaded === actors.length) {
         cb()
       }
-      if (loaded > actors.length) {
-        debugger
-      }
     }
 
     for (let i = 0; i < actors.length; i++) {

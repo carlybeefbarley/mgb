@@ -19,8 +19,7 @@
 
 const _validateLevel = level => {
   if (level < 0 || level > 4 || !Number.isInteger(level)) {
-    console.error('Unexpected SkillNode Level ', level)
-    debugger
+    throw new Error('@dgolds 12/14/16 debugger: Unexpected SkillNode Level ' + level)
   }
 }
 

@@ -201,8 +201,7 @@ export default class MagePlayGame {
   loadActorByName(actorName) {
     const result = this.actors[actorName]
     if (!result) {
-      console.log(`actor was not preloaded: ${actorName}`)
-      debugger // I think we are preloading all actors, but this is here to confirm
+      throw new Error(`Actor was not preloaded: ${actorName}`)
     }
     return actorName
   }

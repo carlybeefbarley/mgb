@@ -676,9 +676,9 @@ const AppUI = React.createClass({
           break
 
         case 'openVaultAssetByName':
-          debugger // TODO @@@@@ need to actually get id fromname
-          utilPushTo(null, `/u/!vault/asset/${actParam}`)
-          break
+          // utilPushTo(null, `/u/!vault/asset/${actParam}`)
+          // break
+          throw new Error('@dgolds 2/5/17 debugger: TODO @@@@@ need to actually get id from name')
 
         case 'navToRelativeUrl':
           utilPushTo(null, actParam)

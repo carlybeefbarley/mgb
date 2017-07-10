@@ -275,10 +275,9 @@ export const makeTutorialAssetPathFromSkillPath = (skillPath, partNumber = 0) =>
   if (partNumber > 0) {
     // This is part of the namespace design for the SKILLS_MODEL_TRIFECTA, but isn't actually used yet.
     // Let's make sure it doesn't get called and used by mistake before we are ready.
-    console.error(
+    throw new Error(
       `PREMATURE! makeTutorialAssetPathFromSkillPath(${skillPath}, ${partNumber}) is not expecting a partNumber > 0 YET. Are you from the future?`,
     )
-    debugger
   }
 
   if (!isSkillKeyValid(skillPath)) {

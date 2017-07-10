@@ -291,8 +291,8 @@ export default class Mage extends React.Component {
       loadedGraphics[aName]._image = new Image()
       loadedGraphics[aName]._image.onload = (e, err) => {
         if (err) {
-          console.log('error loading ImageData for ' + aName, err)
-          debugger
+          err.message = `error loading ImageData for ${aName}: ${err.message}`
+          throw err
         }
       }
       let frame = 0
@@ -445,7 +445,7 @@ export default class Mage extends React.Component {
       this._startMapLoaded(data)
     } else {
       failedMaps[nextMapName] = data
-      debugger // TODO - stop game, no map.
+      throw new Error('@dgolds 10/13/16 debugger: TODO - stop game, no map.')
     }
     const newIsPreloadingStrValue = pendingMapLoads.length > 0 ? 'actors' : null ///  TODO - handle pending tiles
     this.setState({ pendingMapLoads, loadedMaps, failedMaps, isPreloadingStr: newIsPreloadingStrValue })

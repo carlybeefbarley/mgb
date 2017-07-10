@@ -13,7 +13,7 @@ import CodeGamesSkillNodes from './CodeGamesSkillNodes'
 // Some shorthands to save space and time for common nodes
 // Enabled Leaf Node, Learning Level = 0..4 (0 = beginner). See CommonSkillNodes.js for info
 
-export default {
+const CodeSkillNodes = {
   $meta: {
     name: 'Coding',
     description: 'Represents coding skills',
@@ -283,3 +283,5 @@ export default {
     },
   },
 }
+
+export default CodeSkillNodes

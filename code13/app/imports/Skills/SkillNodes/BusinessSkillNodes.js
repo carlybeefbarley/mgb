@@ -6,7 +6,7 @@ import C from './CommonSkillNodes.js'
 
 // The paths for these skills are related the .skillNodes properties of the helpInfo Object defined in TokenDescription.js
 
-export default {
+const BusinessSkilNodes = {
   $meta: {
     name: 'Business',
     description: 'Represents business, monetization and project management skills',
@@ -20,3 +20,5 @@ export default {
   },
   projectManagement: C.E,
 }
+
+export default BusinessSkilNodes

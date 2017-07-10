@@ -3,7 +3,7 @@ import C from './CommonSkillNodes'
 // skillnodes for game tutorials
 // skillnodes are connected with /public/codeTutorials.json . Link is a key of node: "mole1", "digger"
 
-export default {
+const CodeGameSkillNodes = {
   $meta: {
     name: 'Game tutorials',
     description:
@@ -55,3 +55,5 @@ export default {
     },
   },
 }
+
+export default CodeGameSkillNodes

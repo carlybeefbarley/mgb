@@ -2,7 +2,7 @@
 // at least put it here and reference it from here so we understand the extent of
 // this code smell in our codebase :)
 
-export default (SpecialGlobals = {
+const SpecialGlobals = {
   activity: {
     activityHistoryLimit: 20,
   },
@@ -117,4 +117,6 @@ export default (SpecialGlobals = {
     defaultNumOfOwnedProjectsAllowed: 10, // For normal accounts
     SUdefaultNumOfOwnedProjectsAllowed: 99, // For admin accounts
   },
-})
+}
+
+export default SpecialGlobals

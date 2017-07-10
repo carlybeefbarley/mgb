@@ -6,7 +6,7 @@ import C from './CommonSkillNodes.js'
 
 // The paths for these skills are related the .skillNodes properties of the helpInfo Object defined in TokenDescription.js
 
-export default {
+const LegalSkillNodes = {
   $meta: {
     name: 'Legal',
     description: 'Represents intellectual property and other legal topics',
@@ -28,3 +28,5 @@ export default {
     incomeTax: C.E,
   },
 }
+
+export default LegalSkillNodes

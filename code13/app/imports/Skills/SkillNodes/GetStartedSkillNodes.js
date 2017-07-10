@@ -11,7 +11,7 @@ import C from './CommonSkillNodes.js'
 //    Check you didn't break a skill-based badge when removing/renaming skills
 // b) For paranoia, each section has a 'sequence'.. check that always matches any
 //    changes in the names of child nodes for skills
-export default {
+const GetStartedSkillNodes = {
   $meta: {
     name: 'Get Started',
     description: 'Represents basic MGB usage skills - set up your profile, play a game, find friends, etc',
@@ -137,3 +137,5 @@ export default {
   //   ask:                 C.E
   // }
 }
+
+export default GetStartedSkillNodes

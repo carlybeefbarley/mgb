@@ -4,7 +4,7 @@ import C from './CommonSkillNodes'
 // https://github.com/freeCodeCamp/freeCodeCamp/blob/staging/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json
 // See https://github.com/freeCodeCamp/freeCodeCamp/blob/staging/LICENSE.md for the license of that content
 
-export default {
+const CodeBasicsSkillNodes = {
   $meta: {
     name: 'JavaScript programming basics',
     description: 'Click on an item and explore it',
@@ -842,3 +842,5 @@ export default {
     },
   },
 }
+
+export default CodeBasicsSkillNodes

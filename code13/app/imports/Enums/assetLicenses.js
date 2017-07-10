@@ -4,7 +4,7 @@ const _mkOsUrl = license => `https://opensource.org/licenses/${license}`
 const _mkCcUrl = license => `https://creativecommons.org/licenses/${license}/`
 const _mkCcButton = button => `https://licensebuttons.net/l/${button}`
 
-export default (assetLicenses = {
+const assetLicenses = {
   'Apache-2.0': {
     name: `Apache License 2.0`,
     url: _mkOsUrl('Apache-2.0'),
@@ -80,6 +80,8 @@ export default (assetLicenses = {
     tldrLegal: 'https://tldrlegal.com',
     summary: `The license has not yet been set. DO NOT SUBMIT COPYRIGHTED WORK WITHOUT PERMISSION.`,
   },
-})
+}
+
+export default assetLicenses
 
 export const defaultAssetLicense = 'MIT'

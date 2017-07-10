@@ -8,7 +8,7 @@ const API_SERVERS = [
   Meteor.absoluteUrl(),
 ]
 
-export default {
+const cache = {
   API_SERVERS: API_SERVERS,
   cleanHeader: 'nocache',
   cacheServerHeader: 'x-cache-server',
@@ -93,3 +93,5 @@ export default {
     })
   },
 }
+
+export default cache

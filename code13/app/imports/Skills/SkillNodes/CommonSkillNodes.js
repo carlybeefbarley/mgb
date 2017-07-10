@@ -23,7 +23,7 @@ const _validateLevel = level => {
   }
 }
 
-export default {
+const CommonSkillNodes = {
   make(...a) {
     return Object.assign({}, ...a)
   },
@@ -70,3 +70,5 @@ export default {
     }
   },
 }
+
+export default CommonSkillNodes

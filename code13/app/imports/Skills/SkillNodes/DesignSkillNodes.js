@@ -3,7 +3,7 @@ import C from './CommonSkillNodes.js'
 // These will be inserted into { design: ___ }
 // The paths for these skills are related the .skillNodes properties of the helpInfo Object defined in TokenDescription.js
 // @hawke Here's a test comment for implementation purposes.
-export default {
+const DesignSkillNodes = {
   $meta: {
     name: 'Design',
     description: 'Represents game and level design skills',
@@ -177,3 +177,5 @@ export default {
     // @stanchion.. others?
   },
 }
+
+export default DesignSkillNodes

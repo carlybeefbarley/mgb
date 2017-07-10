@@ -4,7 +4,7 @@ import C from './CommonSkillNodes.js'
 
 // The paths for these skills are related the .skillNodes properties of the helpInfo Object defined in TokenDescription.js
 
-export default {
+const WritingSkillNodes = {
   $meta: {
     name: 'Writing',
     description: 'Represents writing skills - plot, character, narrative, dialog etc',
@@ -31,3 +31,5 @@ export default {
     Notes: C.E,
   },
 }
+
+export default WritingSkillNodes

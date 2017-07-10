@@ -5,7 +5,7 @@ import MgbActor from './MageMgbActor'
 import BlockageMap from './MageBlockageMap'
 
 // need to handle gameActions
-export default (MagePlayGameMovement = {
+const MagePlayGameMovement = {
   calculateNewPlayerPosition: function(stepStyleOverride) {
     const { activeActors, AA_player_idx, G_player_action, map } = this
     var plyr = activeActors[AA_player_idx]
@@ -340,4 +340,6 @@ export default (MagePlayGameMovement = {
 
     return obstructed
   },
-})
+}
+
+export default MagePlayGameMovement

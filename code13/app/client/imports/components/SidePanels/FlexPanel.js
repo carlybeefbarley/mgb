@@ -159,7 +159,7 @@ class Indicator extends React.Component {
   }
 }
 
-export default (FlexPanel = React.createClass({
+const FlexPanel = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -476,4 +476,6 @@ export default (FlexPanel = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default FlexPanel

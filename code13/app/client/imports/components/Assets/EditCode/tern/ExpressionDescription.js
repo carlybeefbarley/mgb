@@ -7,7 +7,7 @@ function makeFriendlyName(name, eName) {
   else return name ? name : 'Unknown'
 }
 
-export default (ExpressionDescription = React.createClass({
+const ExpressionDescription = React.createClass({
   propTypes: {
     expressionTypeInfo: PropTypes.object, // Has the data from a TernJS typeInfo request on an expression
   },
@@ -95,4 +95,6 @@ export default (ExpressionDescription = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default ExpressionDescription

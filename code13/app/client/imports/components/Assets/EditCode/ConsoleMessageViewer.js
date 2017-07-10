@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import moment from 'moment'
 
-export default (ConsoleMessageViewer = React.createClass({
+const ConsoleMessageViewer = React.createClass({
   propTypes: {
     messages: PropTypes.array, // of { mgbCmd: , data: }
     gotoLinehandler: PropTypes.func,
@@ -111,4 +111,6 @@ export default (ConsoleMessageViewer = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default ConsoleMessageViewer

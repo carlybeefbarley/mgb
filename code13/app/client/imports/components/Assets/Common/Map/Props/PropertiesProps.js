@@ -1,6 +1,6 @@
 /* this -> EditMap instance */
 
-export default {
+const PropertiesProps = {
   getActiveObject() {
     if (!this.refs.map) {
       return null
@@ -37,3 +37,5 @@ export default {
     this.quickSave(reason)
   },
 }
+
+export default PropertiesProps

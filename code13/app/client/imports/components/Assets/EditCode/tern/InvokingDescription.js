@@ -6,7 +6,7 @@ import React from 'react'
  * @param typeDescription.name - name of the token type (e.g. Array / Object)
  *        typeDescription.def - related definitions as defined in the def files (e.g. public/lib/tern/defs/ecma5.json#Array)
  */
-export default (ExpressionDescription = ({ typeDescription }) => {
+const ExpressionDescription = ({ typeDescription }) => {
   if (!typeDescription || !typeDescription.def) {
     return null
   }
@@ -44,4 +44,6 @@ export default (ExpressionDescription = ({ typeDescription }) => {
         </p>}
     </div>
   )
-})
+}
+
+export default ExpressionDescription

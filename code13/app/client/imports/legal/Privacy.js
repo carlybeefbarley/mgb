@@ -74,7 +74,7 @@ const LegalSection = props =>
     </Table>
   </div>
 
-export default (Privacy = () =>
+const Privacy = () =>
   <div>
     <Container>
       <LegalSection banner="Privacy Policy">
@@ -298,4 +298,6 @@ export default (Privacy = () =>
       </p>
     </Container>
     <Footer />
-  </div>)
+  </div>
+
+export default Privacy

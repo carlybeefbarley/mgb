@@ -69,7 +69,7 @@ class ProjectsBeingMadeGetUI extends React.Component {
   }
 }
 
-export default (ProjectsBeingMadeGET = createContainer(({ numEntries }) => {
+const ProjectsBeingMadeGET = createContainer(({ numEntries }) => {
   const handleForProjects = Meteor.subscribe('projects.frontPageList', numEntries)
   const projectSelector = projectMakeFrontPageListSelector()
   const projectFindOptions = { limit: numEntries, sort: { updatedAt: -1 } }
@@ -77,4 +77,6 @@ export default (ProjectsBeingMadeGET = createContainer(({ numEntries }) => {
     projects: Projects.find(projectSelector, projectFindOptions).fetch(),
     loading: !handleForProjects.ready(),
   }
-}, ProjectsBeingMadeGetUI))
+}, ProjectsBeingMadeGetUI)
+
+export default ProjectsBeingMadeGET

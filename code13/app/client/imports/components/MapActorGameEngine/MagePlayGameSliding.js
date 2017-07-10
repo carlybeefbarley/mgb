@@ -3,7 +3,7 @@ import MgbSystem from './MageMgbSystem'
 // This code will be incoportaed by MagePlayGame.js so that it becomes part of the MagePlayGame class
 // This file contains the part of the class that is primarily focussed on the Sliding behaviors
 
-export default (MagePlayGameSliding = {
+const MagePlayGameSliding = {
   playPushItemToStartSliding: function(AA_pusher_idx, AA_item_idx) {
     // 0. Some shortcuts
     const { activeActors, map, G_tweensPerTurn, G_tweenCount } = this
@@ -76,4 +76,6 @@ export default (MagePlayGameSliding = {
     aai.renderY = aai.y * MgbSystem.tileMinHeight
     if (aai.isAShot) this.destroyShot(aai)
   },
-})
+}
+
+export default MagePlayGameSliding

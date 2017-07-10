@@ -1,6 +1,6 @@
 import { mgbAjax } from '/client/imports/helpers/assetFetchers'
 
-export default (JsonDocsFinder = {
+const JsonDocsFinder = {
   // Note 'this' will be 'DocsPhaser'
 
   _jsonDocCache: {},
@@ -127,4 +127,6 @@ export default (JsonDocsFinder = {
     if (nArray.length > 1) return nArray[0] + '.' + nArray[1]
     else return null
   },
-})
+}
+
+export default JsonDocsFinder

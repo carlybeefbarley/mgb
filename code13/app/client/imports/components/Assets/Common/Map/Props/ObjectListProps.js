@@ -1,4 +1,4 @@
-export default {
+const ObjectListProps = {
   handleSave(reason) {
     this.quickSave(reason, false, this.refs.map.generatePreview())
   },
@@ -37,3 +37,5 @@ export default {
     this.refs.map.removeObject()
   },
 }
+
+export default ObjectListProps

@@ -3,7 +3,7 @@ import d3 from 'd3'
 import SpecialGlobals from '/imports/SpecialGlobals'
 const config = SpecialGlobals.codeFlower
 
-export default (CodeFlower = function(selector, w, h, options) {
+const CodeFlower = function(selector, w, h, options) {
   this.w = w
   this.h = h
   // test has 600px
@@ -49,7 +49,7 @@ export default (CodeFlower = function(selector, w, h, options) {
       return ret
     })
     .size([w, h])
-})
+}
 CodeFlower.prototype.getNodeSize = function(d) {
   const defaultSize = 7 * this.aspect
   const maxSize = 27 * this.aspect
@@ -363,3 +363,5 @@ line.link {
 
 `
 }
+
+export default CodeFlower

@@ -5,7 +5,7 @@ import { Message, Icon } from 'semantic-ui-react'
 
 // The Create Project link is always in context of a user since only a user can create a project in their account.
 
-export default (ProjectCreateNew = React.createClass({
+const ProjectCreateNew = React.createClass({
   propTypes: {
     placeholderName: PropTypes.string.isRequired, // Note that a default is provided below
     handleCreateProjectClick: PropTypes.func.isRequired, // Callback function to create the project, and is expected to navigate to the new page. Params are (projectKindKey, newProjectNameString). The newProjectNameString can be ""
@@ -25,10 +25,10 @@ export default (ProjectCreateNew = React.createClass({
   },
 
   /**
-   * 
-   * 
+   *
+   *
    * @param {any} pName
-   * @returns {Boolean} 
+   * @returns {Boolean}
    */
   isProjectNameInUseByCurrUser: function(pName) {
     const { currUser } = this.props
@@ -124,4 +124,6 @@ export default (ProjectCreateNew = React.createClass({
     this.setState({ buttonActionPending: true })
     this.props.handleCreateProjectClick(this.state.newProjectName)
   },
-}))
+})
+
+export default ProjectCreateNew

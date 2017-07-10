@@ -55,7 +55,7 @@ const JoyrideSummary = ({
         </div>
       </div>
 
-export default (fpGoals = React.createClass({
+const fpGoals = React.createClass({
   propTypes: {
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
     user: PropTypes.object, // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
@@ -107,7 +107,9 @@ export default (fpGoals = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default fpGoals
 
 // <h3 style={{marginTop: 0, marginBottom: 20}}>
 //   {area.mascotName}'s Quests

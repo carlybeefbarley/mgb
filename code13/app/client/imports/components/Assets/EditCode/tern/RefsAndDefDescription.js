@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 
-export default (RefsAndDefDescription = React.createClass({
+const RefsAndDefDescription = React.createClass({
   propTypes: {
     refsInfo: PropTypes.object, // This is the data from ternServer REFS request
     defInfo: PropTypes.object, // This is the data from ternServer DEFINITION request, plus 'definitionText'
@@ -90,4 +90,6 @@ export default (RefsAndDefDescription = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default RefsAndDefDescription

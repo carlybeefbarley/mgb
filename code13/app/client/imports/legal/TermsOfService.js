@@ -88,7 +88,7 @@ const LegalSection = props =>
   </div>
 const DBAJ = () => <span>Don't be annoying or malicious</span> // Don't be a jerk'
 
-export default (TermsOfService = () =>
+const TermsOfService = () =>
   <div>
     <Container>
       <LegalSection banner="Terms of Service">
@@ -924,4 +924,6 @@ export default (TermsOfService = () =>
       </p>
     </Container>
     <Footer />
-  </div>)
+  </div>
+
+export default TermsOfService

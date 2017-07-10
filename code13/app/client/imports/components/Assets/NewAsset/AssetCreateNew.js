@@ -16,7 +16,7 @@ const formStyle = {
   margin: 'auto',
 }
 
-export default (AssetCreateNew = React.createClass({
+const AssetCreateNew = React.createClass({
   propTypes: {
     suggestedParams: PropTypes.object, // projectName,assetName,assetKind
     currUser: PropTypes.object, // currently logged in user (if any)
@@ -216,4 +216,6 @@ export default (AssetCreateNew = React.createClass({
       </Form>
     )
   },
-}))
+})
+
+export default AssetCreateNew

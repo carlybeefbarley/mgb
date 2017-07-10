@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 
-export default (FunctionDescription = React.createClass({
+const FunctionDescription = React.createClass({
   propTypes: {
     functionHelp: PropTypes.object, // This is the data from ternServer.cachedArgHints
     functionArgPos: PropTypes.number, // -1 means not valid since not in a call
@@ -183,4 +183,6 @@ export default (FunctionDescription = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default FunctionDescription

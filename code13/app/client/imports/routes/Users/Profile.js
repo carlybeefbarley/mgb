@@ -34,7 +34,7 @@ import Hotjar from '/client/imports/helpers/hotjar.js'
 
 const UserShowcase = () => null // TODO based on workState
 
-export default (UserProfileRoute = React.createClass({
+const UserProfileRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -269,4 +269,6 @@ export default (UserProfileRoute = React.createClass({
       </Grid.Column>
     )
   },
-}))
+})
+
+export default UserProfileRoute

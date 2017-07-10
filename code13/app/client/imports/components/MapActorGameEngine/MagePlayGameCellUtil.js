@@ -1,7 +1,7 @@
 // This code will be incoporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
 // This file contains the part of the class that is primarily focussed on cell-realted utilities
 
-export default (MagePlayGameCellUtil = {
+const MagePlayGameCellUtil = {
   cell(x, y) {
     if (x > this.map.metadata.width || y > this.map.metadata.height)
       throw new Error('Invalid coordinates for map')
@@ -9,8 +9,8 @@ export default (MagePlayGameCellUtil = {
   },
 
   /**
-   * 
-   * 
+   *
+   *
    * @param {Array} cellList
    * @param {ActiveActor} actor
    * @param {int} stepStyle
@@ -50,8 +50,8 @@ export default (MagePlayGameCellUtil = {
   },
 
   /**
-   * 
-   * 
+   *
+   *
    * @param {Array} cellList
    * @param {any} x
    * @param {any} y
@@ -60,4 +60,6 @@ export default (MagePlayGameCellUtil = {
     var cellIndex = this.cell(x, y, true)
     if (cellIndex != -1) cellList.push(cellIndex)
   },
-})
+}
+
+export default MagePlayGameCellUtil

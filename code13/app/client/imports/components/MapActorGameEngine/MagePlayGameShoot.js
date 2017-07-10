@@ -3,7 +3,7 @@ import MgbActor from './MageMgbActor'
 // This code will be incoporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
 // This file contains the part of the class that is primarily focussed on the Shooting behaviors
 
-export default (MagePlayGameShoot = {
+const MagePlayGameShoot = {
   actorCanShoot: function(aa_idx) {
     const { activeActors, AA_player_idx, inventory } = this
     var rateBonus = aa_idx == AA_player_idx ? inventory.equipmentShotRateBonus : 0
@@ -88,4 +88,6 @@ export default (MagePlayGameShoot = {
     shot._image = null
     if (shot.actorWhoFiredShot != -1) activeActors[shot.actorWhoFiredShot].currentActiveShots-- // FIXME: Small issue here: What if the actor had since died and been respawned - fix by new code when actor dies - set all it's shots to be unowned (shot.actorWhoFiredShot = -1)
   },
-})
+}
+
+export default MagePlayGameShoot

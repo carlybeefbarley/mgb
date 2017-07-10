@@ -2,7 +2,7 @@ import _ from 'lodash'
 import TileHelper from '../Helpers/TileHelper.js'
 import EditModes from '../Tools/EditModes.js'
 
-export default {
+const TilesetProps = {
   // tileset -> map proxy - don't need to change state
   clearActiveSelection: function() {
     this.refs.map.clearActiveSelection()
@@ -145,3 +145,5 @@ export default {
     this.setState({ isLoading: true })
   },
 }
+
+export default TilesetProps

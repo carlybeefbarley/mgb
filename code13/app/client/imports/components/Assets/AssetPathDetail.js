@@ -72,7 +72,7 @@ const AssetKindExplainer = ({ kind, ownerName }) => {
   )
 }
 
-export default (AssetPathDetail = React.createClass({
+const AssetPathDetail = React.createClass({
   propTypes: {
     canEdit: PropTypes.bool.isRequired, // True iff the user can edit this file
     ownerName: PropTypes.string.isRequired, // Asset.dn_ownerName (as a string)
@@ -148,4 +148,6 @@ export default (AssetPathDetail = React.createClass({
       </Grid.Column>
     )
   },
-}))
+})
+
+export default AssetPathDetail

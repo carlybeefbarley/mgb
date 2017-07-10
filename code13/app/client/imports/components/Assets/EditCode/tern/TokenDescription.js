@@ -1667,7 +1667,7 @@ function urlLink(urlString) {
   )
 }
 
-export default (TokenDescription = React.createClass({
+const TokenDescription = React.createClass({
   propTypes: {
     currentToken: PropTypes.object,
     comment: PropTypes.object, // info about comment - if any
@@ -1829,4 +1829,6 @@ export default (TokenDescription = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default TokenDescription

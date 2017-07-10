@@ -1,4 +1,4 @@
-export default {
+const ActorOptions = {
   itemActivationType: {
     Inactive: '0',
     'Blocks Player': '1',
@@ -31,3 +31,5 @@ export default {
     Appear: '2',
   },
 }
+
+export default ActorOptions

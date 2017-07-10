@@ -8,7 +8,7 @@ import UX from '/client/imports/UX'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-export default (fpSkills = React.createClass({
+const fpSkills = React.createClass({
   propTypes: {
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
   },
@@ -42,4 +42,6 @@ export default (fpSkills = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default fpSkills

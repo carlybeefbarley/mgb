@@ -6,7 +6,7 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 
 import ImportGraphic from '/client/imports/components/Import/ImportGraphic'
 
-export default (ImportRoute = React.createClass({
+const ImportRoute = React.createClass({
   propTypes: {
     params: PropTypes.object, // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /assets
     user: PropTypes.object, // Maybe absent if route is /assets
@@ -80,4 +80,6 @@ export default (ImportRoute = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default ImportRoute

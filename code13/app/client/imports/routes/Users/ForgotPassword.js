@@ -8,7 +8,7 @@ const ErrMsg = props => {
   return props.text ? <Message error color="red" content={props.text} /> : null
 }
 
-export default (ForgotPasswordRoute = React.createClass({
+const ForgotPasswordRoute = React.createClass({
   getInitialState: function() {
     return {
       errors: {},
@@ -93,4 +93,6 @@ export default (ForgotPasswordRoute = React.createClass({
       else this.setState({ isLoading: false, errors: {}, isComplete: true })
     })
   },
-}))
+})
+
+export default ForgotPasswordRoute

@@ -72,7 +72,7 @@ const ShowFromWho = ({ value, currUser, otherUser, onChange }) => {
   )
 }
 
-export default (fpAssets = React.createClass({
+const fpAssets = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -276,4 +276,6 @@ export default (fpAssets = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default fpAssets

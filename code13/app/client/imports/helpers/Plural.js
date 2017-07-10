@@ -1,4 +1,4 @@
-export default (Plural = {
+const Plural = {
   numStr: function(number, str, suffix = 's') {
     return `${number} ${str}${number === 1 ? '' : suffix}`
   },
@@ -8,4 +8,6 @@ export default (Plural = {
     }
     return `${str}${number === 1 ? '' : suffix}: `
   },
-})
+}
+
+export default Plural

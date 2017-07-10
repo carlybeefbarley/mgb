@@ -5,7 +5,7 @@ const Prefixes = {
   imageLayer: 'Image Layer ',
   objectLayer: 'Object Layer ',
 }
-export default {
+const LayerProps = {
   setActiveLayer: function(id) {
     this.setState({ activeLayer: id })
   },
@@ -86,3 +86,5 @@ export default {
     this.quickSave(reason)
   },
 }
+
+export default LayerProps

@@ -138,7 +138,7 @@ const ProjectMembershipPopup = props => {
   )
 }
 
-export default (ProjectMembershipEditorV2 = React.createClass({
+const ProjectMembershipEditorV2 = React.createClass({
   propTypes: {
     currUserId: PropTypes.string, // Can be null (No user logged in)
     asset: PropTypes.object, // Can be null (Asset not yet loaded)
@@ -177,4 +177,6 @@ export default (ProjectMembershipEditorV2 = React.createClass({
       </Popup>
     )
   },
-}))
+})
+
+export default ProjectMembershipEditorV2

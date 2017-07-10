@@ -174,7 +174,7 @@ class UserProjectListUI extends React.PureComponent {
 
 // TODO: Fix problem when an invalid user is in the path. Maybe fix that at the app.js level?
 
-export default (UserProjectList = createContainer(({ user, location }) => {
+const UserProjectList = createContainer(({ user, location }) => {
   const userId = user ? user._id : null
   const qN = _queryNormalized(location.query)
   let findOpts = {
@@ -194,4 +194,6 @@ export default (UserProjectList = createContainer(({ user, location }) => {
     projects: Projects.find(projectSelector, findOpts).fetch(),
     loading: !handleForProjects.ready(),
   }
-}, UserProjectListUI))
+}, UserProjectListUI)
+
+export default UserProjectList

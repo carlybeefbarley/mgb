@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 
 // TODO: use full list from view-source:https://codemirror.net/demo/search.html
 
-export default (KeyBindings = React.createClass({
+const KeyBindings = React.createClass({
   propTypes: {
     commandContext: PropTypes.string,
   },
@@ -32,7 +32,9 @@ export default (KeyBindings = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default KeyBindings
 
 export const keysDB = [
   {

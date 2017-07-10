@@ -10,7 +10,7 @@ const ErrMsg = props => {
   return props.text ? <Message error color="red" content={props.text} /> : null
 }
 
-export default (ResetPasswordRoute = React.createClass({
+const ResetPasswordRoute = React.createClass({
   propTypes: {
     params: PropTypes.object,
   },
@@ -95,4 +95,6 @@ export default (ResetPasswordRoute = React.createClass({
       }
     })
   },
-}))
+})
+
+export default ResetPasswordRoute

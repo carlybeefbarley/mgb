@@ -33,7 +33,7 @@ const ProjectChatButton = ({ projId }) => {
   )
 }
 
-export default (ProjectOverview = React.createClass({
+const ProjectOverview = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -420,4 +420,6 @@ export default (ProjectOverview = React.createClass({
       </Segment>
     )
   },
-}))
+})
+
+export default ProjectOverview

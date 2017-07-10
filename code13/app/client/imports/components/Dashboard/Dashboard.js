@@ -11,7 +11,7 @@ const _numAssetsToGet = 6
  * For currentUser, get most recent _numAssetsToGet assets of kind _assetKindsToGet
  * and then pass onto wrapped component (DashboardUI)
  */
-export default (Dashboard = createContainer(({ currUser }) => {
+const Dashboard = createContainer(({ currUser }) => {
   if (!currUser) return <span>Not Logged In...</span>
 
   const handleForAssets = Meteor.subscribe(
@@ -32,4 +32,6 @@ export default (Dashboard = createContainer(({ currUser }) => {
     assets: Azzets.find(assetSelector, { sort: assetSorter, limit: _numAssetsToGet }).fetch(),
     loading: !handleForAssets.ready(),
   }
-}, DashboardUI))
+}, DashboardUI)
+
+export default Dashboard

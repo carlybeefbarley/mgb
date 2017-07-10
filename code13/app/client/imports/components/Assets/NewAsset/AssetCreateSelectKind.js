@@ -5,7 +5,7 @@ import { Button, Icon } from 'semantic-ui-react'
 
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
-export default (AssetCreateSelectKind = React.createClass({
+const AssetCreateSelectKind = React.createClass({
   propTypes: {
     onChangeAsset: PropTypes.func.isRequired, // Callback function to create the asset, and is expected to navigate to the new page.
     //   Params are (assetKindKey, newAssetNameString). The newAssetNameString can be ""
@@ -84,4 +84,6 @@ export default (AssetCreateSelectKind = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default AssetCreateSelectKind

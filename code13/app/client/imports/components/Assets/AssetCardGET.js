@@ -6,11 +6,13 @@ import { Azzets } from '/imports/schemas'
 const AssetCardLoading = props =>
   props.loading ? <div>Loading Asset Info...</div> : <AssetCard {...props} />
 
-export default (AssetCardGET = createContainer(({ assetId }) => {
+const AssetCardGET = createContainer(({ assetId }) => {
   const handle = Meteor.subscribe('assets.public.byId', assetId)
 
   return {
     asset: Azzets.findOne(assetId),
     loading: !handle.ready(),
   }
-}, AssetCardLoading))
+}, AssetCardLoading)
+
+export default AssetCardGET

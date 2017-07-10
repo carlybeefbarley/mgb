@@ -28,7 +28,7 @@ const _sliderStyle = {
   marginLeft: '2px',
 }
 
-export default (fpSettings = React.createClass({
+const fpSettings = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -144,4 +144,6 @@ export default (fpSettings = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default fpSettings

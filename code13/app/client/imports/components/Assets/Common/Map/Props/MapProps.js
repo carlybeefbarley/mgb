@@ -1,4 +1,4 @@
-export default {
+const MapProps = {
   saveThumbnail(data, reason, thumbnail) {
     this.handleSave(data, reason, thumbnail)
     //this.props.handleContentChange(null, thumbnail, "")
@@ -40,3 +40,5 @@ export default {
     this.saveMeta()
   },
 }
+
+export default MapProps

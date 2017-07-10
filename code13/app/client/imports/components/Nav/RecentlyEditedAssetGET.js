@@ -3,7 +3,7 @@ import QLink from '/client/imports/routes/QLink'
 import { Activity } from '/imports/schemas'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
-export default (RecentlyEditedAssetGET = React.createClass({
+const RecentlyEditedAssetGET = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -47,4 +47,6 @@ export default (RecentlyEditedAssetGET = React.createClass({
       </QLink>
     )
   },
-}))
+})
+
+export default RecentlyEditedAssetGET

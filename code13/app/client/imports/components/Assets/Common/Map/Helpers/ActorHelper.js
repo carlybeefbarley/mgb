@@ -23,7 +23,7 @@ const EVENT_LAYER = SpecialGlobals.actorMap.eventLayerId
 // v1 - map format used by MGB_v1 (modified to fit MGB_v2 needs) - layers contain names
 // v2 - TMX format - layers contain tile global ids
 
-export default (ActorHelper = {
+const ActorHelper = {
   TILES_IN_ACTIONS: SpecialGlobals.actorMap.actionsInImage,
   errorTypes: {
     MISSING_IMAGE: 'missing image',
@@ -482,4 +482,6 @@ export default (ActorHelper = {
     ActorHelper.errors.push({ actor: name, error: ActorHelper.errorTypes.UNKNOWN_ACTION })
     console.error(`Unknown eventName '${name}' in actorMap`)
   },
-})
+}
+
+export default ActorHelper

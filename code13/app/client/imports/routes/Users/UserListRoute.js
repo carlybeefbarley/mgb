@@ -8,7 +8,7 @@ import { userSorters } from '/imports/schemas/users'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import UserList from '/client/imports/components/Users/UserList'
 
-export default (UserListRoute = React.createClass({
+const UserListRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -104,4 +104,6 @@ export default (UserListRoute = React.createClass({
   handleLoadMore() {
     this.setState({ userLimit: this.state.userLimit + 20 })
   },
-}))
+})
+
+export default UserListRoute

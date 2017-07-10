@@ -34,7 +34,7 @@ AssetItems.propTypes = {
   assets: PropTypes.array, // an array of game assets
 }
 
-export default (AssetsAvailableGET = React.createClass({
+const AssetsAvailableGET = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -76,4 +76,6 @@ export default (AssetsAvailableGET = React.createClass({
     // In profile, vertically stacked list view fits better than card view
     return loading ? <Spinner /> : <AssetItems assets={assets} wrap={false} />
   },
-}))
+})
+
+export default AssetsAvailableGET

@@ -10,7 +10,7 @@ import { showToast } from '/client/imports/routes/App'
 import Footer from '/client/imports/components/Footer/Footer'
 import HomeRoute from '/client/imports/routes/Home'
 
-export default (LoginRoute = React.createClass({
+const LoginRoute = React.createClass({
   getInitialState: function() {
     return {
       errorMsg: null,
@@ -104,4 +104,6 @@ export default (LoginRoute = React.createClass({
       }
     })
   },
-}))
+})
+
+export default LoginRoute

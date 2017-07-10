@@ -1,6 +1,6 @@
 import ReactTestUtils from 'react-addons-test-utils'
 const DRAG_THRESHOLD = 10
-export default {
+const dragAndDropSimulator = {
   simulateDragAndDrop: (src, target) => {
     const initalEventData = {
       dataTransfer: {
@@ -124,3 +124,5 @@ export default {
     e.target.addEventListener('touchend', cleanUp)
   },
 }
+
+export default dragAndDropSimulator

@@ -20,7 +20,7 @@ const queryDefaults = {
   showStable: '0', // Should be '0' or '1'  -- as a string
 }
 
-export default (BrowseGamesRoute = React.createClass({
+const BrowseGamesRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -35,9 +35,9 @@ export default (BrowseGamesRoute = React.createClass({
     urlLocation: React.PropTypes.object,
   },
 
-  /** 
+  /**
    * queryNormalized() takes a location query that comes in via the browser url.
-   *   Any missing or invalid params are replaced by defaults 
+   *   Any missing or invalid params are replaced by defaults
    *   The result is a data structure that can be used without need for range/validity checking
    * @param q typically this.props.location.query  -  from react-router
   */
@@ -55,7 +55,7 @@ export default (BrowseGamesRoute = React.createClass({
     return newQ
   },
 
-  /**  Returns the given query EXCEPT for keys that match a key/value pair in queryDefaults array 
+  /**  Returns the given query EXCEPT for keys that match a key/value pair in queryDefaults array
   */
 
   _stripQueryOfDefaults: function(queryObj) {
@@ -71,7 +71,7 @@ export default (BrowseGamesRoute = React.createClass({
     browserHistory.push(Object.assign({}, loc, { query: newQ }))
   },
 
-  /** 
+  /**
    * Always get the Assets stuff.
    * Optionally get the Project info - if this is a user-scoped view
    */
@@ -114,7 +114,7 @@ export default (BrowseGamesRoute = React.createClass({
     this._updateLocationQuery({ searchName: this.refs.searchNameInput.value })
   },
 
-  /** 
+  /**
    * Make it clear that the search icon needs to be pushed while editing the search box
    * I could do this with React, but didn't want to since search triggers a few changes already
    */
@@ -177,10 +177,10 @@ export default (BrowseGamesRoute = React.createClass({
           &emsp;
         </div>
 
-        {/* Show only locked games.. ? 
+        {/* Show only locked games.. ?
             <div style={{ float: 'right' }}>
-              <AssetShowStableSelector 
-                  showStableFlag={qN.showStable} 
+              <AssetShowStableSelector
+                  showStableFlag={qN.showStable}
                   handleChangeFlag={v => this._updateLocationQuery( { showStable: v } ) } />
             </div>
             */}
@@ -211,4 +211,6 @@ export default (BrowseGamesRoute = React.createClass({
       </Segment>
     )
   },
-}))
+})
+
+export default BrowseGamesRoute

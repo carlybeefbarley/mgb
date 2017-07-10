@@ -7,7 +7,7 @@ const UserLink = ({ u }) =>
     @{u}
   </QLink>
 
-export default () =>
+const AboutHeader = () =>
   <Segment raised padded>
     <Header>
       MyGameBuilder is now in public BETA
@@ -38,3 +38,5 @@ export default () =>
       </List.Item>
     </List>
   </Segment>
+
+export default AboutHeader

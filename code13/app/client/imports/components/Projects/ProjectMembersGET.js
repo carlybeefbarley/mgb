@@ -18,7 +18,7 @@ const _buttonStyle = {
 
 // ...GET - because this is a component that GETs it's own data via getMeteorData() callback
 
-export default (ProjectMembersGET = React.createClass({
+const ProjectMembersGET = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -87,4 +87,6 @@ export default (ProjectMembersGET = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default ProjectMembersGET

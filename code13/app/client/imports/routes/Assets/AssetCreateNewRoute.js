@@ -8,7 +8,7 @@ import Hotjar from '/client/imports/helpers/hotjar.js'
 // Default params we will accept in ? params on url
 const suggestedParamNames = 'projectName,assetName,assetKind'.split(',')
 
-export default (AssetCreateNewRoute = React.createClass({
+const AssetCreateNewRoute = React.createClass({
   propTypes: {
     params: PropTypes.object, // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /assets
     user: PropTypes.object, // Maybe absent if route is /assets
@@ -37,4 +37,6 @@ export default (AssetCreateNewRoute = React.createClass({
       </Segment>
     )
   },
-}))
+})
+
+export default AssetCreateNewRoute

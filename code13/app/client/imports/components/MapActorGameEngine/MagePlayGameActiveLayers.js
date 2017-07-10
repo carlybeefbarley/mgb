@@ -7,7 +7,7 @@ import ActiveActor from './MageActiveActorClass'
 // This code will be incoporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
 // This file contains the part of the class that is primarily focussed on the Active Layers.
 
-export default (MagePlayGameActiveLayers = {
+const MagePlayGameActiveLayers = {
   // playPrepareActiveLayer - called when a game starts on a map - create individual bitmaps for the active elements
   //
   // Effects:
@@ -334,4 +334,6 @@ export default (MagePlayGameActiveLayers = {
       }
     }
   },
-})
+}
+
+export default MagePlayGameActiveLayers

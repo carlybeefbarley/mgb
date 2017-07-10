@@ -37,7 +37,7 @@ function createLocationDescriptor(to, _ref) {
 //
 // 1. Any app-wide query params that should be preserved (see urlMaker.getCrossAppQueryParams() )
 
-export default (QLink = React.createClass({
+const QLink = React.createClass({
   // propTypes are same as from node_modules/react-router/es6/Link.js
   propTypes: {
     //  to:                   PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,   // The click href
@@ -148,7 +148,9 @@ export default (QLink = React.createClass({
       </span>,
     )
   },
-}))
+})
+
+export default QLink
 
 // This is from https://www.sitepoint.com/get-url-parameters-with-javascript/
 function _getDefaultUrlQueryParams() {
@@ -235,10 +237,10 @@ export function utilPushTo(existingQuery, newTo, extraQueryParams = {}) {
 }
 
 /**
- * This is a replacement for browserHistory.replace(). Use this when you DO NOT 
+ * This is a replacement for browserHistory.replace(). Use this when you DO NOT
  * want to add an additional step into the browser history - for example from a redirect
  * See #225 for examples of cases that need to use this.
- * 
+ *
  * @param {Object} existingQuery from something like window.location.query.
  * It is parameterized here instead of just using window.location.query in order to
  * support a tab concept *within* an MGB page. Uses of window.location.query by the
@@ -268,7 +270,7 @@ export function utilShowFlexPanel(currentUrlLocation, newFpNavString) {
 }
 
 /**
- * 
+ *
  * @param {*} currentUrlLocation from something like window.location
  * @param {*} chatChannelName as defined in chats:makeChannelName()
  */

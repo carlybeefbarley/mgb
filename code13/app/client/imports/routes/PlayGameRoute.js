@@ -372,7 +372,7 @@ const PlayGame = ({ game, user, incrementPlayCountCb, availableWidth }) => {
   }
 }
 
-export default (PlayGameRoute = React.createClass({
+const PlayGameRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -485,4 +485,6 @@ export default (PlayGameRoute = React.createClass({
       </Segment>
     )
   },
-}))
+})
+
+export default PlayGameRoute

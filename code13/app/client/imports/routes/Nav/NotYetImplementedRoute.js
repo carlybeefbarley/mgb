@@ -4,7 +4,7 @@ import QLink from '../QLink'
 import Footer from '/client/imports/components/Footer/Footer'
 import { Segment, Header, Container, Button, Message, Divider } from 'semantic-ui-react'
 
-export default (NotYetImplementedRoute = ({ currUser, params }) =>
+const NotYetImplementedRoute = ({ currUser, params }) =>
   <div>
     <Segment className="vertical masthead center aligned">
       <Container text>
@@ -28,4 +28,6 @@ export default (NotYetImplementedRoute = ({ currUser, params }) =>
       </Container>
     </Segment>
     <Footer />
-  </div>)
+  </div>
+
+export default NotYetImplementedRoute

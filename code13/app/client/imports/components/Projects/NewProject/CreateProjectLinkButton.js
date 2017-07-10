@@ -4,7 +4,7 @@ import QLink from '/client/imports/routes/QLink'
 
 // The Create Project link is always in context of a user since only a user can create a project in their account.
 
-export default (CreateProjectLinkButton = React.createClass({
+const CreateProjectLinkButton = React.createClass({
   PropTypes: {
     currUser: PropTypes.object, // Currently Logged in user. Can be null
   },
@@ -24,4 +24,6 @@ export default (CreateProjectLinkButton = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default CreateProjectLinkButton

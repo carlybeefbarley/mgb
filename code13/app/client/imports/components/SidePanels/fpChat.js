@@ -151,7 +151,7 @@ const _getAssetNameIfAvailable = (assetId, chatChannelTimestamp) => {
 // TODO: Push this up to flexPanel.js? or have flexPanel.js provide an optional 'recent state' prop?
 let _previousChannelName = null // This should be null or a name known to succeed with isChannelNameValid()
 
-export default (fpChat = React.createClass({
+const fpChat = React.createClass({
   propTypes: {
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
     currUserProjects: PropTypes.array, // Projects list for currently logged in user
@@ -600,4 +600,6 @@ export default (fpChat = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default fpChat

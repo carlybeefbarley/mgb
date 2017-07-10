@@ -18,7 +18,7 @@ const ErrMsg = props =>
       </div>
     : null
 
-export default (SignupRoute = React.createClass({
+const SignupRoute = React.createClass({
   contextTypes: {
     urlLocation: React.PropTypes.object,
   },
@@ -176,4 +176,6 @@ export default (SignupRoute = React.createClass({
       },
     )
   },
-}))
+})
+
+export default SignupRoute

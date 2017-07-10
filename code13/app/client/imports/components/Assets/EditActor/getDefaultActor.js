@@ -1,4 +1,4 @@
-export default () => {
+const getDefaultActor = () => {
   return {
     databag: {
       all: {
@@ -785,3 +785,5 @@ export default () => {
     ],
   }
 }
+
+export default getDefaultActor

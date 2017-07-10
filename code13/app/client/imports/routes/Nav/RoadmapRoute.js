@@ -85,7 +85,7 @@ const RenderRoadmap = () =>
     </a>
   </div>
 
-export default (RoadmapRoute = () =>
+const RoadmapRoute = () =>
   <div>
     <Segment basic>
       <Container>
@@ -100,7 +100,9 @@ export default (RoadmapRoute = () =>
       </Container>
     </Segment>
     <Footer />
-  </div>)
+  </div>
+
+export default RoadmapRoute
 
 /* More stuff to add to displayed roadmap in future *
 

@@ -12,7 +12,7 @@ class ActorCollision {
   }
 }
 
-export default (MagePlayGameCollision = {
+const MagePlayGameCollision = {
   // Return value is a list of activeArray[] indexes that have ActorCollision items
   // Note that the array would include collision (A,B) but not (B,A)
   // Important #1:  The returned array is arranged so that if the collision involves
@@ -151,11 +151,11 @@ export default (MagePlayGameCollision = {
          //It is iterating over the overlapping area,
          //across the x then y the,
          //checking if the pixels are on top of this.
-         
+
          //What is special is that it increments by incX or incY,
          //allowing it to quickly jump across the image in large increments
          //rather then slowly going pixel by pixel.
-         
+
          //This makes it more likely to find a colliding pixel early.
 
         // Work out the increments,
@@ -425,4 +425,6 @@ export default (MagePlayGameCollision = {
       }
     }
   },
-})
+}
+
+export default MagePlayGameCollision

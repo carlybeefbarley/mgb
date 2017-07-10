@@ -9,7 +9,7 @@ import { Azzets } from '/imports/schemas'
  * Note that this Component will return null while loading, or if there are no games.
  * This allows the container to decide whether to show a header etc for it
  */
-export default (GamesAvailableGET = React.createClass({
+const GamesAvailableGet = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -57,4 +57,6 @@ export default (GamesAvailableGET = React.createClass({
           <GameItems currUser={currUser} games={games} wrap={false} />
         </div>
   },
-}))
+})
+
+export default GamesAvailableGet

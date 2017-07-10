@@ -30,7 +30,7 @@ const _icons = {
 const _getIconForChangeType = (ct, size) =>
   <Icon size={size} color={_icons[ct].color} name={_icons[ct].name} />
 
-export default (WhatsNewRoute = React.createClass({
+const WhatsNewRoute = React.createClass({
   propTypes: {
     currUser: PropTypes.object, // Can be null (if user is not logged in)
   },
@@ -60,8 +60,8 @@ export default (WhatsNewRoute = React.createClass({
     this.handleUserSawNews(this.latestRelTimestamp())
   },
 
-  /** This is called when the WhatsNew popup has been clicked and shown. 
-   *  We are to note the current timestamp of the latest release in the user profile 
+  /** This is called when the WhatsNew popup has been clicked and shown.
+   *  We are to note the current timestamp of the latest release in the user profile
    */
   handleUserSawNews: function(latestNewsTimestampSeen) {
     let currUser = this.props.currUser
@@ -218,4 +218,6 @@ export default (WhatsNewRoute = React.createClass({
       </Item.Group>
     )
   },
-}))
+})
+
+export default WhatsNewRoute

@@ -1,9 +1,9 @@
 import MgbActor from './MageMgbActor'
 
-export default (MagePlayGameDisplay = {
+const MagePlayGameDisplay = {
   /**
-   * 
-   * 
+   *
+   *
    * @param {int} AA
    */
   chooseActiveActorDisplayTile(AA) {
@@ -84,4 +84,6 @@ export default (MagePlayGameDisplay = {
     }
     return graphics._image
   },
-})
+}
+
+export default MagePlayGameDisplay

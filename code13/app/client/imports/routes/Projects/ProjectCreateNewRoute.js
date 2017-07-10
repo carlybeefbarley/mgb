@@ -9,7 +9,7 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
-export default (ProjectCreateNewRoute = React.createClass({
+const ProjectCreateNewRoute = React.createClass({
   propTypes: {
     user: PropTypes.object, // Maybe absent if route is /assets
     currUser: PropTypes.object, // Currently Logged in user
@@ -65,4 +65,6 @@ export default (ProjectCreateNewRoute = React.createClass({
       }
     })
   },
-}))
+})
+
+export default ProjectCreateNewRoute

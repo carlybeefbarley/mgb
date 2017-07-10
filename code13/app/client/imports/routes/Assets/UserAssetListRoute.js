@@ -54,7 +54,7 @@ const _filterSegmentStyle = { ..._contentsSegmentStyle, minWidth: '220px', maxWi
 const _lsAssetViewKey = 'asset-view'
 const _lsAssetLimitKey = 'asset-limit-num'
 
-export default (UserAssetListRoute = React.createClass({
+const UserAssetListRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -415,4 +415,6 @@ export default (UserAssetListRoute = React.createClass({
       </Segment.Group>
     )
   },
-}))
+})
+
+export default UserAssetListRoute

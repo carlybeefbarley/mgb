@@ -7,7 +7,7 @@ import Helmet from 'react-helmet'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import Spinner from '/client/imports/components/Nav/Spinner'
 
-export default (SkillTreeRoute = React.createClass({
+const SkillTreeRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -73,4 +73,6 @@ export default (SkillTreeRoute = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default SkillTreeRoute

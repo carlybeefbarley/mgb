@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 //import Inspector from 'react-inspector'
 
-export default (DebugASTview = React.createClass({
+const DebugASTview = React.createClass({
   propTypes: {
     atCursorMemberParentRequestResponse: PropTypes.object,
   },
@@ -39,4 +39,6 @@ export default (DebugASTview = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default DebugASTview

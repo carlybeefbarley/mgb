@@ -5,7 +5,7 @@ import ActiveActor from './MageActiveActorClass'
 // This code will be incoporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
 // This file contains the part of the class that is primarily focussed on Items and their behaviors
 
-export default (MagePlayGameItem = {
+const MagePlayGameItem = {
   useItemOnPlayer(itemAA) {
     const { actors, activeActors } = this
     var itemAP = actors[activeActors[itemAA].ACidx]
@@ -92,8 +92,8 @@ export default (MagePlayGameItem = {
   },
 
   /**
-   * 
-   * 
+   *
+   *
    * @param {int} AAindexOfActorWhoIsDroppingAnItem
    * @param {int} preferredDirection - As a 'stepstyle'
    * @param {Boolean} [CheckActiveLayer=false] - Need to explicitly ask for the Active layer to be checked
@@ -120,8 +120,8 @@ export default (MagePlayGameItem = {
   },
 
   /**
-   * 
-   * 
+   *
+   *
    * @param {int} x
    * @param {int} y
    * @param {int} w
@@ -156,8 +156,8 @@ export default (MagePlayGameItem = {
   },
 
   /**
-   * 
-   * 
+   *
+   *
    * @param {int} x
    * @param {int} y
    * @param {Boolean} CheckActiveLayer
@@ -194,4 +194,6 @@ export default (MagePlayGameItem = {
 
     return obstructed
   },
-})
+}
+
+export default MagePlayGameItem

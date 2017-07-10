@@ -5,7 +5,7 @@ import styles from './CalendarHeatmapStyles.css'
 
 // See https://www.npmjs.com/package/react-calendar-heatmap for the control being used for this
 
-export default (CalendarHeatmapStyled = React.createClass({
+const CalendarHeatmapStyled = React.createClass({
   render: function() {
     return (
       <CalendarHeatmap
@@ -19,4 +19,6 @@ export default (CalendarHeatmapStyled = React.createClass({
       />
     )
   },
-}))
+})
+
+export default CalendarHeatmapStyled

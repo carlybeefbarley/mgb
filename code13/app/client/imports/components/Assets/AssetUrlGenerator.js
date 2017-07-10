@@ -49,7 +49,7 @@ const _generateUrlOptions = asset => {
   return retval
 }
 
-export default (AssetUrlGenerator = props => {
+const AssetUrlGenerator = props => {
   const { asset, showBordered } = props
   // Build the list of 'Create New Asset' Menu choices
   let urlOptions = _generateUrlOptions(asset)
@@ -74,9 +74,11 @@ export default (AssetUrlGenerator = props => {
       </div>
     </div>
   )
-})
+}
 
 AssetUrlGenerator.propTypes = {
   asset: PropTypes.object,
   showBordered: PropTypes.bool,
 }
+
+export default AssetUrlGenerator

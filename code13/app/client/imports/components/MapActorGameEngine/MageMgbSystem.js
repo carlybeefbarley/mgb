@@ -1,7 +1,7 @@
 import _ from 'lodash'
 // Constants/functions related to the overall MGB MapActor Game Engine
 
-export default (MgbSystem = {
+const MgbSystem = {
   tileMinWidth: 32,
   tileMinHeight: 32,
   tileMaxWidth: 128,
@@ -27,4 +27,6 @@ export default (MgbSystem = {
     })
     return result
   },
-})
+}
+
+export default MgbSystem

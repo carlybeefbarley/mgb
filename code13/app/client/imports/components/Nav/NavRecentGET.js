@@ -15,7 +15,7 @@ function capitalizeFirstLetter(string) {
 
 // GET - because this is a component that GETs it's own data via getMeteorData() callback
 
-export default (NavRecentGET = React.createClass({
+const NavRecentGET = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -195,4 +195,6 @@ export default (NavRecentGET = React.createClass({
       </div>
     )
   },
-}))
+})
+
+export default NavRecentGET

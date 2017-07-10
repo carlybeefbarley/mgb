@@ -4,7 +4,7 @@ import { browserHistory } from 'react-router'
 
 // TODO.. 1. Fix this so it works again
 // TODO.. 2. change to use   utilPushTo(this.context.urlLocation.query, ...) instead of browserHistory.push()
-export default (SocialAuth = React.createClass({
+const SocialAuth = React.createClass({
   propTypes: {
     type: React.PropTypes.string,
   },
@@ -74,4 +74,6 @@ export default (SocialAuth = React.createClass({
       }
     })
   },
-}))
+})
+
+export default SocialAuth

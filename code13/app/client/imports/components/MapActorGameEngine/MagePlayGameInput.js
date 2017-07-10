@@ -6,7 +6,7 @@ import MgbActor from './MageMgbActor'
 
 const _actions = 'up,down,left,right,shift,push,melee,shoot,jump,inventory,npcmessage'.split(',')
 
-export default (MagePlayGameInput = {
+const MagePlayGameInput = {
   clearPlayerKeys() {
     _.each(_actions, a => {
       this.G_player_action[a] = false
@@ -113,4 +113,6 @@ export default (MagePlayGameInput = {
       }
     }
   },
-})
+}
+
+export default MagePlayGameInput

@@ -1,7 +1,7 @@
 // This code will be incorporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
 // This file contains the part of the class that deals with the TIC structure - TIC means Things In Cell
 
-export default (MagePlayGameTIC = {
+const MagePlayGameTIC = {
   clearTicTable: function() // FIXME - needs to sort into larger cells - maybe MgbSystem.tileMax{Width/Height}
   {
     this.G_tic = null
@@ -50,4 +50,6 @@ export default (MagePlayGameTIC = {
       }
     }
   },
-})
+}
+
+export default MagePlayGameTIC

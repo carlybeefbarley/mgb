@@ -3,7 +3,7 @@
 // import Defs_phaser from "./tern/Defs/DefsPhaser";
 // import DefsLodash from "./tern/Defs/DefsLodash";
 
-export default {
+const knownLibs = {
   common: {
     // these will be loaded automatically
     defs: () => [
@@ -57,3 +57,5 @@ export default {
     defs: () => ['/lib/tern/defs/lodash.json'],
   },
 }
+
+export default knownLibs

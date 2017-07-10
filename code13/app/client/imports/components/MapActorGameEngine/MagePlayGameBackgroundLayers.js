@@ -6,7 +6,7 @@ import MgbMap from './MageMgbMap'
 // This code will be incoporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
 // This file contains the part of the class that is primarily focussed on the BACKGROUND Layers
 
-export default (MagePlayGameBackgroundLayers = {
+const MagePlayGameBackgroundLayers = {
   playPrepareBackgroundLayer: function() {
     const { backgroundBlockageMap } = this
     backgroundBlockageMap.reset(this.map.metadata.width, this.map.metadata.height)
@@ -55,4 +55,6 @@ export default (MagePlayGameBackgroundLayers = {
   playCleanupBackgroundLayer: function() {
     if (this.backgroundBlockageMap) this.backgroundBlockageMap.reset(1, 1)
   },
-})
+}
+
+export default MagePlayGameBackgroundLayers

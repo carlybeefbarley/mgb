@@ -104,7 +104,7 @@ const _makeTitle = (kind, hasUnsentSaves, isUnconfirmedSave, assetName) => {
   return `${assetKindName}: ${unsavedMarker}'${assetName || '(unnamed)'}'`
 }
 
-export default (AssetEditRoute = React.createClass({
+const AssetEditRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -834,7 +834,9 @@ export default (AssetEditRoute = React.createClass({
       ChatSendMessageOnChannelName(channelName, 'Task approved')
     }
   },
-}))
+})
+
+export default AssetEditRoute
 
 function _makeUpdateObj(content2Object, thumbnail) {
   let updateObj = {}

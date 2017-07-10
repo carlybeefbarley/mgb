@@ -1,6 +1,6 @@
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
-export default (Hotjar = (action, codeSnippet, currUser) => {
+const Hotjar = (action, codeSnippet, currUser) => {
   // console.log('superAdmin', isUserSuperAdmin(currUser))
 
   // don't send hotjar heatmap if superadmin or localhost
@@ -9,7 +9,9 @@ export default (Hotjar = (action, codeSnippet, currUser) => {
       window.hj(action, codeSnippet)
     }
   }
-})
+}
+
+export default Hotjar
 
 export const InitHotjar = currUser => {
   if (!isUserSuperAdmin(currUser) && location.hostname != 'localhost') {

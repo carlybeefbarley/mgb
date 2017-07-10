@@ -10,11 +10,7 @@
   "bugs": {
     "url": "https://github.com/devlapse/mgb/issues"
   },
-  "keywords": [
-    "game",
-    "ide",
-    "web"
-  ],
+  "keywords": ["game", "ide", "web"],
   "license": "SEE LICENSE IN LICENSE.md",
   "homepage": "https://github.com/devlapse/mgb#readme",
   "main": "app.js",
@@ -29,9 +25,7 @@
   "postcss": {
     "plugins": {
       "autoprefixer": {
-        "browsers": [
-          "last 2 versions"
-        ]
+        "browsers": ["last 2 versions"]
       }
     }
   },

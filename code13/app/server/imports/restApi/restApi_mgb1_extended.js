@@ -1,7 +1,6 @@
 import { RestApi } from './restApi'
 
-
-// THESE ONES ARE NOT CURRENTLY USED.. parking here since it was hard 
+// THESE ONES ARE NOT CURRENTLY USED.. parking here since it was hard
 // work to get right and MIGHT be useful in future
 
 /****

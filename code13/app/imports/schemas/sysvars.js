@@ -1,5 +1,3 @@
-
-
 import { Sysvars } from '/imports/schemas'
 
 // This is a set of reactive global parameters for a deployment.
@@ -11,9 +9,9 @@ import { Sysvars } from '/imports/schemas'
 export const defaultDeploymentName = 'prod00'
 
 var schema = {
-  _id:                    String,
-  deploymentName:         String,       // This is the key to show which deployment is using this data. For now the only & first one will be the value of defaultDeploymentName
-  deploymentVersion:      String,       // Of the format returned by mgbReleaseInfo.getCurrentReleaseVersionString(). Used to indicate when a deployment is rolling out.
+  _id: String,
+  deploymentName: String, // This is the key to show which deployment is using this data. For now the only & first one will be the value of defaultDeploymentName
+  deploymentVersion: String, // Of the format returned by mgbReleaseInfo.getCurrentReleaseVersionString(). Used to indicate when a deployment is rolling out.
 
   // Future examples of thing we will do with this:
   // safetyValveModeActive:  String,       // if null or undefined, then not in SafetyValve mode. If non-null, (including '') then the value is a human-readable string describing the safety valve reason (e.g. sudden user spike)
@@ -32,12 +30,11 @@ var schema = {
 
 */
 
-if (Meteor.isServer)
-{
+if (Meteor.isServer) {
   Meteor.MGB_UPDATE_SYSVARS_FOR_DEPLOY = () => {
-    var Sysvars=require('/imports/schemas').Sysvars
-    var thisRel=require('/imports/mgbReleaseInfo').getCurrentReleaseVersionString()
-    var thisDeploymentName = require('/imports/schemas/sysvars').defaultDeploymentName  
-    Sysvars.update( { deploymentName: thisDeploymentName }, { $set: { deploymentVersion: thisRel} } )     
+    var Sysvars = require('/imports/schemas').Sysvars
+    var thisRel = require('/imports/mgbReleaseInfo').getCurrentReleaseVersionString()
+    var thisDeploymentName = require('/imports/schemas/sysvars').defaultDeploymentName
+    Sysvars.update({ deploymentName: thisDeploymentName }, { $set: { deploymentVersion: thisRel } })
   }
 }

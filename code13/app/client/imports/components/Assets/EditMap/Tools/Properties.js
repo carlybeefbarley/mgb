@@ -4,17 +4,16 @@ import React from 'react'
 import Otito from '/client/imports/helpers/Otito.js'
 
 export default class Properties extends React.Component {
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.ready = 0
     this.settings = null
   }
-  componentDidMount () {
-    $('.ui.accordion')
-      .accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger'} })
+  componentDidMount() {
+    $('.ui.accordion').accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger' } })
     this.runOnReady()
   }
-  componentDidUpdate () {
+  componentDidUpdate() {
     if (this.settings) {
       this.settings.map.update(this.props.map)
       this.settings.layer.update(this.props.layer)
@@ -27,309 +26,321 @@ export default class Properties extends React.Component {
       }
     }
   }
-  get map () {
+  get map() {
     return this.props.map
   }
 
-  get activeObject () {
+  get activeObject() {
     return this.props.getActiveObject()
   }
-  updateObject(obj){
-    if(!obj){
+  updateObject(obj) {
+    if (!obj) {
       return
     }
-    const o = obj.orig ? obj.orig : obj;
+    const o = obj.orig ? obj.orig : obj
     if (!o.mgb_properties) {
       o.mgb_properties = []
-      if(o.properties){
-        for(let i in o.properties){
+      if (o.properties) {
+        for (let i in o.properties) {
           o.mgb_properties.push({
             name: i,
-            value: o.properties[i]
+            value: o.properties[i],
           })
         }
       }
     }
     if (!o.properties) {
       o.properties = {}
-    }
-    else{
-      for(let i in o.properties){
-        if(!o.mgb_properties.find(n => n.name === i)){
+    } else {
+      for (let i in o.properties) {
+        if (!o.mgb_properties.find(n => n.name === i)) {
           delete o.properties[i]
         }
       }
     }
 
-    const p = o.mgb_properties;
+    const p = o.mgb_properties
     for (let i = 0; i < p.length; i++) {
       o.properties[p[i].name] = p[i].value
     }
 
     return o
   }
-  runOnReady () {
+  runOnReady() {
     this.settings = {}
     this.updateObject(this.activeObject)
-    this.settings.object = new Otito(this.activeObject, {
-      Object: {
-        _type: Otito.type.folder,
-        contentClassName: 'ui content two column stackable grid',
-        content: {
-          width: {
-            _type: Otito.type.number,
-            head: 'width',
-            min: 1
-          },
-          height: {
-            _type: Otito.type.number,
-            head: 'height',
-            min: 1
-          },
-          x: {
-            _type: Otito.type.number
-          },
-          y: {
-            _type: Otito.type.number
-          },
-          name: {
-            _type: Otito.type.string
-          },
-          type: {
-            _type: Otito.type.string
-          },
-          visible: {
-            _type: Otito.type.bool
-          },
-          rotation: {
-            _type: Otito.type.number
-          },
-          mgb_properties: {
-            /*get head(){
+    this.settings.object = new Otito(
+      this.activeObject,
+      {
+        Object: {
+          _type: Otito.type.folder,
+          contentClassName: 'ui content two column stackable grid',
+          content: {
+            width: {
+              _type: Otito.type.number,
+              head: 'width',
+              min: 1,
+            },
+            height: {
+              _type: Otito.type.number,
+              head: 'height',
+              min: 1,
+            },
+            x: {
+              _type: Otito.type.number,
+            },
+            y: {
+              _type: Otito.type.number,
+            },
+            name: {
+              _type: Otito.type.string,
+            },
+            type: {
+              _type: Otito.type.string,
+            },
+            visible: {
+              _type: Otito.type.bool,
+            },
+            rotation: {
+              _type: Otito.type.number,
+            },
+            mgb_properties: {
+              /*get head(){
               debugger;
               return "Properties"
             },
             set head(x){
               debugger;
             },*/
-            head: "Properties",
-            _type: Otito.type.array,
-            onchange: () => {
-              //console.log("change!!!")
-            },
-            array: {
-              name: {
-                _type: Otito.type.text,
-                onchange: (input, otito) => {
-                  this.updateObject(otito.parent.object)
-                }
+              head: 'Properties',
+              _type: Otito.type.array,
+              onchange: () => {
+                //console.log("change!!!")
               },
-              value: {
-                _type: Otito.type.text,
-                onchange: (input, otito) => {
-                  this.updateObject(otito.parent.object)
-                }
-              }
-            }
-          }
-        }
-      }
-    }, () => {
-      this.props.updateObject(this.settings.object.object)
-    })
+              array: {
+                name: {
+                  _type: Otito.type.text,
+                  onchange: (input, otito) => {
+                    this.updateObject(otito.parent.object)
+                  },
+                },
+                value: {
+                  _type: Otito.type.text,
+                  onchange: (input, otito) => {
+                    this.updateObject(otito.parent.object)
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      () => {
+        this.props.updateObject(this.settings.object.object)
+      },
+    )
     this.settings.object.append(this.refs.object)
 
-    this.settings.map = new Otito(this.props.map, {
-      Map: {
-        _type: Otito.type.folder,
-        contentClassName: 'ui content two column stackable grid',
-        title: 'Hello world!',
-        content: {
-          width: {
-            _type: Otito.type.number,
-            head: 'width',
-            min: 1,
-            needsConfirmation: true,
-            onchange: (input) => {
-              if (!input.value)
-                input.value = 1
-              this.props.resize(this.settings.map.object)
-            }
-          },
-          height: {
-            _type: Otito.type.number,
-            head: 'height',
-            min: 1,
-            needsConfirmation: true,
-            onchange: (input) => {
-              if (!input.value)
-                input.value = 1
-              this.props.resize(this.settings.map.object)
-            }
-          },
-          tile: {
-            _type: Otito.type.folder,
-            className: 'active',
-            contentClassName: 'ui content two column stackable grid',
-            content: {
-              tilewidth: {
-                _type: Otito.type.int,
-                head: 'width',
-                min: 1,
-                needsConfirmation: true,
-                onchange: (input) => {
-                  if (!input.value)
-                    input.value = 1
-                  this.props.changeTileSize(this.settings.map.object)
-                }
+    this.settings.map = new Otito(
+      this.props.map,
+      {
+        Map: {
+          _type: Otito.type.folder,
+          contentClassName: 'ui content two column stackable grid',
+          title: 'Hello world!',
+          content: {
+            width: {
+              _type: Otito.type.number,
+              head: 'width',
+              min: 1,
+              needsConfirmation: true,
+              onchange: input => {
+                if (!input.value) input.value = 1
+                this.props.resize(this.settings.map.object)
               },
-              tileheight: {
-                _type: Otito.type.int,
-                head: 'height',
-                min: 1,
-                needsConfirmation: true,
-                onchange: (input) => {
-                  if (!input.value)
-                    input.value = 1
-                  this.props.changeTileSize(this.settings.map.object)
-                }
-              }
-            }
-          }
-        }
-      }
-    }, (...args) => {
-      //this.props.updateMap(this.settings.map.object)
-    })
+            },
+            height: {
+              _type: Otito.type.number,
+              head: 'height',
+              min: 1,
+              needsConfirmation: true,
+              onchange: input => {
+                if (!input.value) input.value = 1
+                this.props.resize(this.settings.map.object)
+              },
+            },
+            tile: {
+              _type: Otito.type.folder,
+              className: 'active',
+              contentClassName: 'ui content two column stackable grid',
+              content: {
+                tilewidth: {
+                  _type: Otito.type.int,
+                  head: 'width',
+                  min: 1,
+                  needsConfirmation: true,
+                  onchange: input => {
+                    if (!input.value) input.value = 1
+                    this.props.changeTileSize(this.settings.map.object)
+                  },
+                },
+                tileheight: {
+                  _type: Otito.type.int,
+                  head: 'height',
+                  min: 1,
+                  needsConfirmation: true,
+                  onchange: input => {
+                    if (!input.value) input.value = 1
+                    this.props.changeTileSize(this.settings.map.object)
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      (...args) => {
+        //this.props.updateMap(this.settings.map.object)
+      },
+    )
     this.settings.map.append(this.refs.map)
 
-    this.settings.layer = new Otito(this.props.layer, {
-      Layer: {
-        _type: Otito.type.folder,
-        contentClassName: 'ui content one column stackable grid',
-        content: {
-          name: {
-            _type: Otito.type.text,
-            _className: 'fluid'
-          },
-          tiledrawdirection: {
-            _type: Otito.type.hidden,
-            head: 'TileDraw',
-            value: 'rightup',
-            className: 'ui dropdown fluid',
-            list: {
-              'rightdown': 'Right Down',
-              'rightup': 'Right Up',
-              'leftdown': 'Left Down',
-              'leftup': 'Left Up'
+    this.settings.layer = new Otito(
+      this.props.layer,
+      {
+        Layer: {
+          _type: Otito.type.folder,
+          contentClassName: 'ui content one column stackable grid',
+          content: {
+            name: {
+              _type: Otito.type.text,
+              _className: 'fluid',
             },
-            _className: 'fluid' // fluid ui dropdown
-          },
-          Size: {
-            _type: 'folder',
-            contentClassName: 'ui content two column stackable grid',
-            head: 'Size',
-            content: {
-              width: {
-                _type: Otito.type.number,
-                head: 'Width in tiles',
-                needsConfirmation: true,
+            tiledrawdirection: {
+              _type: Otito.type.hidden,
+              head: 'TileDraw',
+              value: 'rightup',
+              className: 'ui dropdown fluid',
+              list: {
+                rightdown: 'Right Down',
+                rightup: 'Right Up',
+                leftdown: 'Left Down',
+                leftup: 'Left Up',
               },
-              height: {
-                _type: Otito.type.number,
-                head: 'Height in tiles',
-                needsConfirmation: true,
-              }
-            }
-          },
-          Offset: {
-            _type: 'folder',
-            contentClassName: 'ui content two column stackable grid',
-            head: 'Offsets',
-            content: {
-              x: {
-                _type: Otito.type.number,
-                head: 'Horzontal offset',
-                needsConfirmation: true,
+              _className: 'fluid', // fluid ui dropdown
+            },
+            Size: {
+              _type: 'folder',
+              contentClassName: 'ui content two column stackable grid',
+              head: 'Size',
+              content: {
+                width: {
+                  _type: Otito.type.number,
+                  head: 'Width in tiles',
+                  needsConfirmation: true,
+                },
+                height: {
+                  _type: Otito.type.number,
+                  head: 'Height in tiles',
+                  needsConfirmation: true,
+                },
               },
-              y: {
-                _type: Otito.type.number,
-                head: 'Vertical offset',
-                needsConfirmation: true,
-              }
-            }
-          }
-        }
-      }
-    }, () => {
-      this.props.updateLayer(this.settings.layer.object)
-    })
+            },
+            Offset: {
+              _type: 'folder',
+              contentClassName: 'ui content two column stackable grid',
+              head: 'Offsets',
+              content: {
+                x: {
+                  _type: Otito.type.number,
+                  head: 'Horzontal offset',
+                  needsConfirmation: true,
+                },
+                y: {
+                  _type: Otito.type.number,
+                  head: 'Vertical offset',
+                  needsConfirmation: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      () => {
+        this.props.updateLayer(this.settings.layer.object)
+      },
+    )
     this.settings.layer.append(this.refs.layer)
 
-    this.settings.tileset = new Otito(this.props.tileset, {
-      Tileset: {
-        _type: 'folder',
-        contentClassName: 'ui content',
-        content: {
-          name: {
-            _head: 'Name',
-            _type: Otito.type.text,
-            _className: 'fluid'
+    this.settings.tileset = new Otito(
+      this.props.tileset,
+      {
+        Tileset: {
+          _type: 'folder',
+          contentClassName: 'ui content',
+          content: {
+            name: {
+              _head: 'Name',
+              _type: Otito.type.text,
+              _className: 'fluid',
+            },
+            Tiling: {
+              _type: 'folder',
+              head: 'Tiling',
+              contentClassName: 'ui content two column stackable grid',
+              content: {
+                tilewidth: {
+                  _type: Otito.type.int,
+                  head: 'Tile width',
+                  min: 1,
+                  needsConfirmation: true,
+                },
+                tileheight: {
+                  _type: Otito.type.int,
+                  head: 'Tile height',
+                  min: 1,
+                  needsConfirmation: true,
+                },
+                margin: {
+                  _type: Otito.type.int,
+                  head: 'Margin',
+                  needsConfirmation: true,
+                  min: 0,
+                },
+                spacing: {
+                  _type: Otito.type.int,
+                  head: 'Spacing',
+                  needsConfirmation: true,
+                  min: 0,
+                },
+              },
+            },
           },
-          Tiling: {
-            _type: 'folder',
-            head: 'Tiling',
-            contentClassName: 'ui content two column stackable grid',
-            content: {
-              tilewidth: {
-                _type: Otito.type.int,
-                head: 'Tile width',
-                min: 1,
-                needsConfirmation: true
-              },
-              tileheight: {
-                _type: Otito.type.int,
-                head: 'Tile height',
-                min: 1,
-                needsConfirmation: true
-              },
-              margin: {
-                _type: Otito.type.int,
-                head: 'Margin',
-                needsConfirmation: true,
-                min: 0
-              },
-              spacing: {
-                _type: Otito.type.int,
-                head: 'Spacing',
-                needsConfirmation: true,
-                min: 0
-              }
-            }
-          }
-
-        }
-      }
-    }, () => {
-      this.props.updateTileset(this.settings.tileset.object)
-    })
+        },
+      },
+      () => {
+        this.props.updateTileset(this.settings.tileset.object)
+      },
+    )
     this.settings.tileset.append(this.refs.tileset)
     $(this.refs.holder).find('select').dropdown()
   }
-  handleClick (layerNum) {}
-  render () {
-    const object = <div ref='object' style={{ display: this.activeObject ? 'block' : 'none' }}></div>
+  handleClick(layerNum) {}
+  render() {
+    const object = <div ref="object" style={{ display: this.activeObject ? 'block' : 'none' }} />
     return (
-      <div className='mgbAccordionScroller'>
-        <div className='ui fluid styled accordion'>
-          <div className='active title'>
-            <span className='explicittrigger'><i className='dropdown icon'></i> Properties</span>
+      <div className="mgbAccordionScroller">
+        <div className="ui fluid styled accordion">
+          <div className="active title">
+            <span className="explicittrigger">
+              <i className="dropdown icon" /> Properties
+            </span>
           </div>
-          <div className='active content menu' ref='holder'>
+          <div className="active content menu" ref="holder">
             {object}
-            <div ref='tileset'></div>
-            <div ref='layer'></div>
-            <div ref='map'></div>
+            <div ref="tileset" />
+            <div ref="layer" />
+            <div ref="map" />
           </div>
         </div>
       </div>

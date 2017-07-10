@@ -3,8 +3,7 @@ import MgbSystem from './MageMgbSystem'
 // This code will be incoporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
 // This file contains the part of the class that is primarily focussed on transitioning between maps
 
-export default MagePlayGameTransition = {
-
+export default (MagePlayGameTransition = {
   /**
    * transitionToNewMap()
    * 
@@ -16,8 +15,7 @@ export default MagePlayGameTransition = {
    * 
    * @memberOf MagePlayGame
    */
-  transitionToNewMap(userName, projectName, newMapName, newX, newY)
-  {
+  transitionToNewMap(userName, projectName, newMapName, newX, newY) {
     this.transitionPlayerAA = this.activeActors[this.AA_player_idx]
     this.playCleanupActiveLayer()
     this.playCleanupBackgroundLayer()
@@ -40,12 +38,12 @@ export default MagePlayGameTransition = {
     //     this.isTransitionInProgress = false  ??
   },
 
-  transitionResourcesHaveLoaded(newMapData)
-  {
+  transitionResourcesHaveLoaded(newMapData) {
     this.map = newMapData
-    this.map.name = newMapData.name.indexOf(':') === -1 ? this.ownerName + ':' + newMapData.name : newMapData.name
+    this.map.name =
+      newMapData.name.indexOf(':') === -1 ? this.ownerName + ':' + newMapData.name : newMapData.name
     this.transitionStateWaitingForActorLoadRequests = false
-    // Note we do NOT set this.isTransitionInProgress = false  -- that is done in TranitionTick()  
+    // Note we do NOT set this.isTransitionInProgress = false  -- that is done in TranitionTick()
   },
 
   /* 
@@ -95,4 +93,4 @@ export default MagePlayGameTransition = {
     }
   }
   */
-}
+})

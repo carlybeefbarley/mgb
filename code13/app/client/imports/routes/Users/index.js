@@ -17,5 +17,5 @@ export default {
   UserHistoryRoute,
   ResetPassword,
   ForgotPassword,
-  SkillTreeRoute
+  SkillTreeRoute,
 }

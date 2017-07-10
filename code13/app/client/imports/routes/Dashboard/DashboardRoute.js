@@ -6,7 +6,7 @@ import SlidingCardList from '/client/imports/components/Controls/SlidingCardList
 import Dashboard from '/client/imports/components/Dashboard/Dashboard.js'
 
 const dbrProps = {
-  foo: 'bar' 
+  foo: 'bar',
 }
 
 const DashboardRoute = props =>
@@ -14,7 +14,6 @@ const DashboardRoute = props =>
   !props.currUser ? <Message content="Not logged in" /> : <Dashboard {...props} />
 
 export default DashboardRoute
-
 
 // Instead of the faked width I need something like https://css-tricks.com/pure-css-horizontal-scrolling/
 

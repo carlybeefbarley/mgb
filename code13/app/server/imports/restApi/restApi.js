@@ -6,16 +6,18 @@ import { genAPIreturn } from '/server/imports/helpers/generators'
 // Note that Restivus's default url prefix is /api
 const options = {
   useDefaultAuth: true,
-  prettyJson: true
+  prettyJson: true,
 }
 
 export const RestApi = new Restivus(options)
 
 // Return an empty image if there's no thumbnail yet. This is a transparent 1x1 GIF from https://css-tricks.com/snippets/html/base64-encode-of-1x1px-transparent-gif/
-export const emptyPixel = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" //1x1GIF
+export const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' //1x1GIF
 
-export const red64x64halfOpacity="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAY0lEQVR42u3QAREAAAQEsJdcdHI4W4TVJJ3HSoAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECLhvAUBsX8GVkqJPAAAAAElFTkSuQmCC"
-export const grey64x64halfOpacity="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDIJfcHLY1xh5IQG6nKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAN5AkZBhS2TJQAAAABJRU5ErkJggg=="
+export const red64x64halfOpacity =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAY0lEQVR42u3QAREAAAQEsJdcdHI4W4TVJJ3HSoAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECLhvAUBsX8GVkqJPAAAAAElFTkSuQmCC'
+export const grey64x64halfOpacity =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDIJfcHLY1xh5IQG6nKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAN5AkZBhS2TJQAAAABJRU5ErkJggg=='
 
 // TODO: use enums instead of strings for asset kinds
 
@@ -30,7 +32,6 @@ export const grey64x64halfOpacity="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgA
     return {servers: cache.API_SERVERS, date: Date.now(), headers: this.request.headers}
   }
 })*/
-
 
 // TODO: cache + invalidate cache
 // TODO: check hidden layers
@@ -151,4 +152,3 @@ RestApi.addRoute('asset/tileset/:id', {authRequired: false}, {
   }
 });
 */
-

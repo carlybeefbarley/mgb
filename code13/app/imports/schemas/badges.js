@@ -3,28 +3,27 @@ import _ from 'lodash'
 // Helper functions for Badges. These mostly require a user object from users.js
 //  getAllBadgesForUser(user) gets list of user's badges (returns array of keys into badgeList)
 
-
 export const badgeList = {
-//mgb1veteran:      [ "v2/anvil.png",               'MGB1 Veteran' ],
-  mgbAdmin:         [ "maris_design/pro/winner.png",'MGB Administrator' ],
-  hasAvatar:        [ "Has Avatar.png",             'Made an Avatar' ],
-  mgb2AlphaTester:  [ "v2/beginner/bugfinder.png",  "Active Alpha Tester" ],
-  mgb1namesVerified: [ "maris_design/beginner/necromancer.png", "Verified MGBv1 veteran"],
-  mgb1namesImported: [ "maris_design/pro/necromancer.png", "Imported an MGBv1 game"],
+  //mgb1veteran:      [ "v2/anvil.png",               'MGB1 Veteran' ],
+  mgbAdmin: ['maris_design/pro/winner.png', 'MGB Administrator'],
+  hasAvatar: ['Has Avatar.png', 'Made an Avatar'],
+  mgb2AlphaTester: ['v2/beginner/bugfinder.png', 'Active Alpha Tester'],
+  mgb1namesVerified: ['maris_design/beginner/necromancer.png', 'Verified MGBv1 veteran'],
+  mgb1namesImported: ['maris_design/pro/necromancer.png', 'Imported an MGBv1 game'],
 
-//hourOfMap:        [ 'v2/beginner/hourofmap.png',  'Hour+ of Mapping' ],
-//hourOfCode:       [ 'v2/beginner/hourofcode.png', 'Hour+ of Coding' ],
-  hourOfDrawing:    [ 'v2/beginner/hourofdrawing.png', 'Hour+ of Drawing' ],
-  hourOfSound:      [ 'v2/beginner/hourofsound.png', 'Hour+ of Sound Making' ],
+  //hourOfMap:        [ 'v2/beginner/hourofmap.png',  'Hour+ of Mapping' ],
+  //hourOfCode:       [ 'v2/beginner/hourofcode.png', 'Hour+ of Coding' ],
+  hourOfDrawing: ['v2/beginner/hourofdrawing.png', 'Hour+ of Drawing'],
+  hourOfSound: ['v2/beginner/hourofsound.png', 'Hour+ of Sound Making'],
 
-  tenHours:         [ 'v2/beginner/tenhours.png',    'Ten Hours+ of Building' ],
+  tenHours: ['v2/beginner/tenhours.png', 'Ten Hours+ of Building'],
 
-  guruCode:         [ 'v2/guru/code.png',           'Official MGB Code Guru'],
-  guruMusic:        [ 'v2/guru/music.png',          'Official MGB Music Guru'],
-//  guruArt:          [ 'v2/guru/art.png',            'Official MGB Art Guru'],  // Don't currently have art for this. Ironic!
+  guruCode: ['v2/guru/code.png', 'Official MGB Code Guru'],
+  guruMusic: ['v2/guru/music.png', 'Official MGB Music Guru'],
+  //  guruArt:          [ 'v2/guru/art.png',            'Official MGB Art Guru'],  // Don't currently have art for this. Ironic!
 
   // This is a special case just to make it easier to generate some UI consistently
-  _blankBadge:      [ "Empty Badge slot.png",       "Space for another badge" ]
+  _blankBadge: ['Empty Badge slot.png', 'Space for another badge'],
 }
 
 const _validUserBadgeNames = _.without(_.keys(badgeList), '_blankBadge')
@@ -38,7 +37,6 @@ export const getAllBadgesForUser = user => {
 
   return userBadges
 }
-
 
 /**
  * hasBadge()

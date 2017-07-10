@@ -19,8 +19,7 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { showToast } from '/client/imports/routes/App'
 
 export default class EditMusic extends React.Component {
-
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     // console.log(props.asset.content2)
@@ -36,48 +35,43 @@ export default class EditMusic extends React.Component {
       viewWidth: 500, // temporary width
       trackWidth: pxPerSecond * props.asset.content2.duration + 1, // changing depending on props.duration
       canvasHeight: 128,
-      pxPerSecond: pxPerSecond, // defines width of canvass 
-      waveColor: '#4dd2ff', 
+      pxPerSecond: pxPerSecond, // defines width of canvass
+      waveColor: '#4dd2ff',
       isDrag: false,
       isSelecting: false,
       selectData: null,
       pasteData: null,
       isPaste: false,
     }
-
-
   }
 
-  componentDidMount () {
+  componentDidMount() {
     // popups references
     this.importMusicPopup = ReactDOM.findDOMNode(this.refs.importMusicPopup)
     this.musicStockPopup = ReactDOM.findDOMNode(this.refs.musicStockPopup)
     this.generateMusicPopup = ReactDOM.findDOMNode(this.refs.generateMusicPopup)
     this.generate8bitPopup = ReactDOM.findDOMNode(this.refs.generate8bitPopup)
 
-    $(this.importMusicPopup)
-      .modal('setting', {
-        onHide: () => {
-          this.stopPopupAudio()
-        }
-      })
+    $(this.importMusicPopup).modal('setting', {
+      onHide: () => {
+        this.stopPopupAudio()
+      },
+    })
 
-    $(this.generateMusicPopup)
-      .modal('setting', {
-        onHide: () => {
-          this.stopPopupAudio()
-        }
-      })
+    $(this.generateMusicPopup).modal('setting', {
+      onHide: () => {
+        this.stopPopupAudio()
+      },
+    })
 
-    $(this.generate8bitPopup)
-      .modal('setting', {
-        onHide: () => {
-          this.stopPopupAudio()
-        }
-      })
+    $(this.generate8bitPopup).modal('setting', {
+      onHide: () => {
+        this.stopPopupAudio()
+      },
+    })
 
     this.converter = new AudioConverter(this.audioCtx)
-    this.refs.previewComponent.loadDataUri( this.props.asset.content2.dataUri )
+    this.refs.previewComponent.loadDataUri(this.props.asset.content2.dataUri)
     this.setState({ viewWidth: ReactDOM.findDOMNode(this.refs.channelList).offsetWidth - 200 })
 
     this.cursor = ReactDOM.findDOMNode(this.refs.cursor)
@@ -92,7 +86,7 @@ export default class EditMusic extends React.Component {
     this._raf()
   }
 
-  componentDidUpdate (prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     // console.log('did update')
     if (prevProps.asset.content2.channels) {
       // channel deleted
@@ -106,13 +100,13 @@ export default class EditMusic extends React.Component {
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this._raf = () => {}
     this.stopMusic()
   }
 
   // checks if all channel are loaded and sets flag to true. After that each newly added channel is automatically merged
-  mountChannel () {
+  mountChannel() {
     if (this.areChannelsMounted) {
       this.mergeChannels()
     }
@@ -123,16 +117,16 @@ export default class EditMusic extends React.Component {
     }
   }
 
-  unMountChannel () {
+  unMountChannel() {
     this.callChildren('drawWave')
     this.mergeChannels()
   }
 
-  openImportPopup () {
+  openImportPopup() {
     $(this.importMusicPopup).modal('show')
   }
 
-  importMusic (audioObject, saveText) {
+  importMusic(audioObject, saveText) {
     if (!this.hasPermission()) {
       showToast("You don't have write access to this Asset", 'error')
       return false
@@ -153,33 +147,32 @@ export default class EditMusic extends React.Component {
     joyrideCompleteTag('mgbjr-CT-editMusic-music-imported')
   }
 
-  stopPopupAudio () {
-    // console.log("stop popup audio")  
-    if(this.refs.importMusic) this.refs.importMusic.stopMusic()
-    if(this.refs.generateMusic) this.refs.generateMusic.stop()
-    if(this.refs.generate8bit) this.refs.generate8bit.stop()
+  stopPopupAudio() {
+    // console.log("stop popup audio")
+    if (this.refs.importMusic) this.refs.importMusic.stopMusic()
+    if (this.refs.generateMusic) this.refs.generateMusic.stop()
+    if (this.refs.generate8bit) this.refs.generate8bit.stop()
   }
 
-  openStockPopup () {
+  openStockPopup() {
     $(this.musicStockPopup).modal('show')
   }
 
-  openGeneratePopup () {
+  openGeneratePopup() {
     $(this.generateMusicPopup).modal('show')
     joyrideCompleteTag('mgbjr-CT-editMusic-generateMetal-invoke')
-
   }
 
-  open8bitPopup () {
+  open8bitPopup() {
     $(this.generate8bitPopup).modal('show')
     joyrideCompleteTag('mgbjr-CT-editMusic-generate8bit-invoke')
   }
 
-  getFromStock (audioObject) {
+  getFromStock(audioObject) {
     console.log(audioObject)
   }
 
-  togglePlayMusic () {
+  togglePlayMusic() {
     if (this.state.isPlaying) {
       this.audioCtx.suspend()
     } else {
@@ -189,7 +182,7 @@ export default class EditMusic extends React.Component {
     this.setState({ isPlaying: !this.state.isPlaying })
   }
 
-  stopMusic () {
+  stopMusic() {
     this.setState({ isPlaying: false })
     this.audioCtx.suspend()
     this.songTime = 0
@@ -198,40 +191,40 @@ export default class EditMusic extends React.Component {
     this.audioCtx.suspend()
   }
 
-  setAudioTime (newTime) {
+  setAudioTime(newTime) {
     this.songTime = newTime
     this.callChildren('initAudio', [this.songTime])
-    if(this.state.isPlaying) this.audioCtx.resume()
+    if (this.state.isPlaying) this.audioCtx.resume()
     else this.updateCursor()
   }
 
-  saveChannel (channel) {
+  saveChannel(channel) {
     console.log('save channel')
     this.callChildren('initAudio', [this.songTime])
-    if(this.state.isPlaying) this.audioCtx.resume()
+    if (this.state.isPlaying) this.audioCtx.resume()
     // updates channel, merge rest of channels and saves to db
     let c2 = _.cloneDeep(this.props.asset.content2)
-    let nr = _.findIndex(c2.channels, (a) => a.id == channel.id)
+    let nr = _.findIndex(c2.channels, a => a.id == channel.id)
     c2.channels[nr] = channel
     this.mergeChannels(c2)
     console.log('channel saved')
   }
 
-  toggleLoop () {
+  toggleLoop() {
     this.setState({ isLoop: !this.state.isLoop })
   }
 
-  callChildren (func, args) {
+  callChildren(func, args) {
     let c2 = this.props.asset.content2
     if (!c2.channels) return
     if (!args) args = []
     c2.channels.forEach((channel, id) => {
-      if(!this.refs['channel' + channel.id]) return false
+      if (!this.refs['channel' + channel.id]) return false
       this.refs['channel' + channel.id][func](...args)
     })
   }
 
-  mergeChannels (c2, saveText="Merge channels") {
+  mergeChannels(c2, saveText = 'Merge channels') {
     if (!c2) c2 = _.cloneDeep(this.props.asset.content2)
 
     let bufferList = []
@@ -245,14 +238,14 @@ export default class EditMusic extends React.Component {
     let buffer = this.converter.mergeBuffers(bufferList, c2.duration)
     this.refs.previewComponent.loadBuffer(buffer)
 
-    this.converter.bufferToDataUri(buffer, (dataUri) => {
+    this.converter.bufferToDataUri(buffer, dataUri => {
       // console.log(dataUri)
       c2.dataUri = dataUri
       this.handleSave(saveText, c2)
     })
   }
 
-  updateTimer () {
+  updateTimer() {
     if (this.state.isPlaying) {
       const ms = Date.now()
       // const deltaTime = (date - this.splitTime) * this.speed
@@ -264,25 +257,25 @@ export default class EditMusic extends React.Component {
         if (this.state.isLoop) this.togglePlayMusic()
       }
       this.updateCursor()
-      if(this.refs.previewComponent) this.refs.previewComponent.update(this.songTime)
+      if (this.refs.previewComponent) this.refs.previewComponent.update(this.songTime)
     }
   }
 
-  updateCursor () {
+  updateCursor() {
     const x = this.cursorOffsetX + this.state.pxPerSecond * this.songTime / 1000
     this.cursor.style.left = x + 'px'
   }
 
-  hasPermission () {
+  hasPermission() {
     if (!this.props.canEdit) {
       // this.props.editDeniedReminder()
       return false
-    }else {
+    } else {
       return true
     }
   }
 
-  handleSave (saveText, c2) {
+  handleSave(saveText, c2) {
     if (!this.hasPermission()) {
       showToast("You don't have write access to this Asset", 'error')
       return false
@@ -294,12 +287,12 @@ export default class EditMusic extends React.Component {
     this.props.handleContentChange(c2, thumbnail, saveText)
   }
 
-  changeDuration (newDuration) {
+  changeDuration(newDuration) {
     let c2 = _.cloneDeep(this.props.asset.content2)
     c2.duration = newDuration
     // this.handleSave('Change duration', c2)
-    this.mergeChannels(c2, "Change duration")
-    this.doSaveStateForUndo('Change duration')    
+    this.mergeChannels(c2, 'Change duration')
+    this.doSaveStateForUndo('Change duration')
   }
 
   // updateCanvasLength () {
@@ -309,110 +302,115 @@ export default class EditMusic extends React.Component {
   //   this.callChildren("drawWave")
   // }
 
-  zoom (zoomIn) { // boolean zoomIn or zoomOut
+  zoom(zoomIn) {
+    // boolean zoomIn or zoomOut
     let i = this.zoomLevels.indexOf(this.state.pxPerSecond)
     // zooming in
-    if(zoomIn && i < this.zoomLevels.length-1){
+    if (zoomIn && i < this.zoomLevels.length - 1) {
       i++
-      this.setState({ pxPerSecond: this.zoomLevels[i]})
-    }
-    // zooming out
-    else if(!zoomIn && i > 0){
+      this.setState({ pxPerSecond: this.zoomLevels[i] })
+    } else if (!zoomIn && i > 0) {
+      // zooming out
       i--
       this.setState({ pxPerSecond: this.zoomLevels[i] })
     }
   }
 
-  setViewOffset (seconds) {
+  setViewOffset(seconds) {
     this.refs.timelineComponent.setViewOffset(seconds)
-    this.callChildren("setViewOffset", [seconds])
+    this.callChildren('setViewOffset', [seconds])
   }
 
-  clearSelection () {
+  clearSelection() {
     let c2 = this.props.asset.content2
-    if(this.state.isSelecting && c2.channels){  // unselect all selections
-      c2.channels.forEach((channel) => {
-        this.refs["channel"+channel.id].clearSelect()
+    if (this.state.isSelecting && c2.channels) {
+      // unselect all selections
+      c2.channels.forEach(channel => {
+        this.refs['channel' + channel.id].clearSelect()
       })
       this.setState({ selectData: null })
     }
   }
 
-  setSelected (channelID, selectStart, selectDuration) { // in sec
+  setSelected(channelID, selectStart, selectDuration) {
+    // in sec
     this.setState({
       selectData: {
         channelID: channelID,
         selectStart: selectStart,
         selectDuration: selectDuration,
-      }
+      },
     })
 
     let c2 = this.props.asset.content2
-    c2.channels.forEach((channel) => {
-      if(channel.id !== channelID){
-        this.refs["channel"+channel.id].clearSelect()
+    c2.channels.forEach(channel => {
+      if (channel.id !== channelID) {
+        this.refs['channel' + channel.id].clearSelect()
       }
     })
   }
 
-  cutSelected () {
-    if(!this.state.selectData){
-      console.log("Something wrong with selecting")
+  cutSelected() {
+    if (!this.state.selectData) {
+      console.log('Something wrong with selecting')
       return
     }
 
     this.copySelected()
     const sData = this.state.selectData
-    this.refs["channel"+sData.channelID].clearBufferPart(sData.selectStart, sData.selectDuration)
-    this.doSaveStateForUndo("Cut selected")
+    this.refs['channel' + sData.channelID].clearBufferPart(sData.selectStart, sData.selectDuration)
+    this.doSaveStateForUndo('Cut selected')
   }
 
-  copySelected () {
-    if(!this.state.selectData){
-      console.log("Something wrong with selecting")
+  copySelected() {
+    if (!this.state.selectData) {
+      console.log('Something wrong with selecting')
       return
     }
 
     const sData = this.state.selectData
-    const selectBuffer = this.refs["channel"+sData.channelID].getSelectBuffer(sData.selectStart, sData.selectDuration)
+    const selectBuffer = this.refs['channel' + sData.channelID].getSelectBuffer(
+      sData.selectStart,
+      sData.selectDuration,
+    )
     this.setState({ pasteData: selectBuffer })
   }
 
-  eraseSelected () {
-    if(!this.state.selectData){
-      console.log("Something wrong with selecting")
+  eraseSelected() {
+    if (!this.state.selectData) {
+      console.log('Something wrong with selecting')
       return
     }
 
     const sData = this.state.selectData
-    this.refs["channel"+sData.channelID].eraseBufferPart(sData.selectStart, sData.selectDuration)
-    this.doSaveStateForUndo("Erase selected")
+    this.refs['channel' + sData.channelID].eraseBufferPart(sData.selectStart, sData.selectDuration)
+    this.doSaveStateForUndo('Erase selected')
   }
 
-  selectableButtons (button) {
+  selectableButtons(button) {
     this.clearSelection()
     let newState = {}
     const buttonArr = ['isDrag', 'isSelecting', 'isPaste']
-    buttonArr.forEach((key) => {
+    buttonArr.forEach(key => {
       newState[key] = key === button ? !this.state[key] : false
     })
     this.setState(newState)
   }
 
-  addChannel (dataUri, c2) {
+  addChannel(dataUri, c2) {
     if (!c2) c2 = _.cloneDeep(this.props.asset.content2)
     if (!c2.channels) c2.channels = []
     c2.channels.push({
       id: Date.now(),
       title: 'Channel ' + c2.channels.length,
       volume: 0.75,
-      dataUri: dataUri
+      dataUri: dataUri,
     })
     this.handleSave('Add channel', c2)
     this.doSaveStateForUndo('Add channel')
   }
 
-  deleteChannel (channelID) {
+  deleteChannel(channelID) {
     let c2 = _.cloneDeep(this.props.asset.content2)
     c2.channels.splice(channelID, 1)
     // this.mergeChannels(c2)
@@ -421,44 +419,38 @@ export default class EditMusic extends React.Component {
   }
 
   // useful for undo and redo
-  forceDraw (newC2) 
-  {
+  forceDraw(newC2) {
     let channels = this.props.asset.content2.channels
-    if(newC2.channels.length != channels.length)
-      return false
+    if (newC2.channels.length != channels.length) return false
 
     channels.forEach((channel, id) => {
       this.refs['channel' + channel.id].forceDraw(newC2.channels[id])
     })
   }
 
-  handleUndo()
-  {
-    if (this.undoSteps.length > 0)
-    {
+  handleUndo() {
+    if (this.undoSteps.length > 0) {
       let zombie = this.undoSteps.pop()
       let c2 = zombie.savedContent2
 
-      this.doSaveStateForRedo("Redo changes")
-      this.handleSave("Undo changes", c2)
+      this.doSaveStateForRedo('Redo changes')
+      this.handleSave('Undo changes', c2)
       this.forceDraw(c2)
     }
   }
 
   handleRedo() {
-    if (this.redoSteps.length > 0)
-    {
+    if (this.redoSteps.length > 0) {
       let zombie = this.redoSteps.pop()
       let c2 = zombie.savedContent2
 
-      this.doSaveStateForUndo("Undo changes")
-      this.handleSave("Redo changes", c2)
+      this.doSaveStateForUndo('Undo changes')
+      this.handleSave('Redo changes', c2)
       this.forceDraw(c2)
     }
   }
 
-  initDefaultUndoStack()
-  {
+  initDefaultUndoStack() {
     // undoSteps will be an array of
     //   {
     //      when:           Date.now() of when it was added to the stack
@@ -470,33 +462,27 @@ export default class EditMusic extends React.Component {
     //
     // Oldest items will be at index=0 in array
 
-    if (this.hasOwnProperty("undoSteps") === false)
-      this.undoSteps = []
+    if (this.hasOwnProperty('undoSteps') === false) this.undoSteps = []
 
-    if (this.hasOwnProperty("redoSteps") === false)
-      this.redoSteps = []
+    if (this.hasOwnProperty('redoSteps') === false) this.redoSteps = []
   }
 
-  doMakeUndoStackEntry(changeInfoString)
-  {
+  doMakeUndoStackEntry(changeInfoString) {
     return {
       when: Date.now(),
-      byUserName: "usernameTODO",        // TODO
-      byUserContext: "someMachineTODO",  // TODO
+      byUserName: 'usernameTODO', // TODO
+      byUserContext: 'someMachineTODO', // TODO
       changeInfo: changeInfoString,
-      savedContent2: _.cloneDeep(this.props.asset.content2)
+      savedContent2: _.cloneDeep(this.props.asset.content2),
     }
   }
 
-  doTrimUndoStack()
-  {
+  doTrimUndoStack() {
     let u = this.undoSteps
-    if (u.length > 20)
-      u.shift()         // Remove 0th element (which is the oldest)
+    if (u.length > 20) u.shift() // Remove 0th element (which is the oldest)
   }
 
-  doSaveStateForUndo(changeInfoString)
-  {
+  doSaveStateForUndo(changeInfoString) {
     this.doTrimUndoStack()
     this.undoSteps.push(this.doMakeUndoStackEntry(changeInfoString))
   }
@@ -510,12 +496,10 @@ export default class EditMusic extends React.Component {
     this.redoSteps.push(this.doMakeUndoStackEntry(changeInfoString))
   }
 
-  renderChannels () {
+  renderChannels() {
     let c2 = this.props.asset.content2
     if (!c2.channels) {
-      return (<div>
-                No channels added...
-              </div>)
+      return <div>No channels added...</div>
     }
 
     return c2.channels.map((channel, nr) => {
@@ -535,7 +519,6 @@ export default class EditMusic extends React.Component {
           isSelecting={this.state.isSelecting}
           isPaste={this.state.isPaste}
           pasteData={this.state.pasteData}
-
           handleSave={this.handleSave.bind(this)}
           doSaveStateForUndo={this.doSaveStateForUndo.bind(this)}
           saveChannel={this.saveChannel.bind(this)}
@@ -544,22 +527,27 @@ export default class EditMusic extends React.Component {
           mountChannel={this.mountChannel.bind(this)}
           setSelected={this.setSelected.bind(this)}
         />
-      )})
+      )
+    })
   }
 
-  render () {
+  render() {
     this.initDefaultUndoStack()
     let c2 = this.props.asset.content2
     let zoomInd = this.zoomLevels.indexOf(this.state.pxPerSecond)
 
     return (
-      <div className='ui grid'>
-        <div className='ui sixteen wide column'>
-          <BrowserCompat context='edit.music' />
+      <div className="ui grid">
+        <div className="ui sixteen wide column">
+          <BrowserCompat context="edit.music" />
           {/*** button row ***/}
-          <div className='row'>
-            <button className='ui small icon button' title='Import sound from your computer' onClick={this.openImportPopup.bind(this)}>
-              <i className='add square icon'></i> Import
+          <div className="row">
+            <button
+              className="ui small icon button"
+              title="Import sound from your computer"
+              onClick={this.openImportPopup.bind(this)}
+            >
+              <i className="add square icon" /> Import
             </button>
             {/*
               <button className="ui small icon button"
@@ -568,36 +556,38 @@ export default class EditMusic extends React.Component {
                 <i className="folder icon"></i> Stock [not ready]
               </button>
             */}
-            <button 
+            <button
               id="mgbjr-musicEditor-generateMetal-button"
-              className='ui small icon button' title='Generate music (Currently only creates Heavy Metal.. More music styles to follow :)' 
-              onClick={this.openGeneratePopup.bind(this)}>
-              <i className='options icon'></i> Generate metal music
+              className="ui small icon button"
+              title="Generate music (Currently only creates Heavy Metal.. More music styles to follow :)"
+              onClick={this.openGeneratePopup.bind(this)}
+            >
+              <i className="options icon" /> Generate metal music
             </button>
-            <button 
+            <button
               id="mgbjr-musicEditor-generate8bit-button"
-              className='ui small icon button' title='Generate music (Currently only creates 8bit music.. More music styles to follow :)' 
-              onClick={this.open8bitPopup.bind(this)}>
-              <i className='options icon'></i> Generate 8bit music
+              className="ui small icon button"
+              title="Generate music (Currently only creates 8bit music.. More music styles to follow :)"
+              onClick={this.open8bitPopup.bind(this)}
+            >
+              <i className="options icon" /> Generate 8bit music
             </button>
 
-            <div className='ui small labeled input' title='Audio duration'>
-              <div className='ui label'>
-                Duration
-              </div>
+            <div className="ui small labeled input" title="Audio duration">
+              <div className="ui label">Duration</div>
               <NumberInput
                 className="ui small input"
                 min={1}
                 max={999}
-                style={{width: "6em"}}
+                style={{ width: '6em' }}
                 value={c2.duration ? Math.floor(c2.duration) : 1}
-                onFinalChange={(num) => {this.changeDuration(num)} }
+                onFinalChange={num => {
+                  this.changeDuration(num)
+                }}
               />
             </div>
-
           </div>
-          <div className='content'>
-
+          <div className="content">
             <Preview
               ref="previewComponent"
               audioCtx={this.audioCtx}
@@ -606,11 +596,9 @@ export default class EditMusic extends React.Component {
               pxPerSecond={this.state.pxPerSecond}
               viewWidth={this.state.viewWidth}
               setViewOffset={this.setViewOffset.bind(this)}
-
             />
-            
-            <div className='channelsHeader'>
 
+            <div className="channelsHeader">
               <AudioToolbar
                 isPlaying={this.state.isPlaying}
                 selectData={this.state.selectData}
@@ -618,11 +606,9 @@ export default class EditMusic extends React.Component {
                 isLoop={this.state.isLoop}
                 undoSteps={this.undoSteps}
                 redoSteps={this.redoSteps}
-
                 isDrag={this.state.isDrag}
                 isSelecting={this.state.isSelecting}
                 isPaste={this.state.isPaste}
-
                 addChannel={this.addChannel.bind(this)}
                 togglePlayMusic={this.togglePlayMusic.bind(this)}
                 stopMusic={this.stopMusic.bind(this)}
@@ -637,39 +623,33 @@ export default class EditMusic extends React.Component {
                 hasPermission={this.hasPermission.bind(this)}
               />
 
+              <div className="controls" />
 
-              <div className='controls'>
-              </div>
-              
               <Timeline
                 ref="timelineComponent"
                 duration={c2.duration}
                 viewWidth={this.state.viewWidth}
                 pxPerSecond={this.state.pxPerSecond}
               />
-
             </div>
-            <div className='channelList' ref="channelList">
-              <div ref='cursor' className='cursor' style={{ left: this.cursorOffsetX + 'px' }}></div>
+            <div className="channelList" ref="channelList">
+              <div ref="cursor" className="cursor" style={{ left: this.cursorOffsetX + 'px' }} />
               {this.renderChannels()}
             </div>
           </div>
         </div>
         {/*** POPUPS ***/}
-        <div className='ui modal' ref='importMusicPopup'>
-          <ImportMusic ref='importMusic' importMusic={this.importMusic.bind(this)} />
+        <div className="ui modal" ref="importMusicPopup">
+          <ImportMusic ref="importMusic" importMusic={this.importMusic.bind(this)} />
         </div>
-        <div className='ui modal' ref='musicStockPopup'>
+        <div className="ui modal" ref="musicStockPopup">
           <MusicStock importMusic={this.importMusic.bind(this)} />
         </div>
-        <div className='ui modal generateMusicPopup' 
-          ref='generateMusicPopup'>
-          <GenerateMusic ref='generateMusic' importMusic={this.importMusic.bind(this)} />
+        <div className="ui modal generateMusicPopup" ref="generateMusicPopup">
+          <GenerateMusic ref="generateMusic" importMusic={this.importMusic.bind(this)} />
         </div>
-        <div
-          className='ui modal generate8bitPopup' 
-          ref='generate8bitPopup'  style={{minWidth:"860px"}}>
-          <Generate8bit ref='generate8bit' importMusic={this.importMusic.bind(this)} />
+        <div className="ui modal generate8bitPopup" ref="generate8bitPopup" style={{ minWidth: '860px' }}>
+          <Generate8bit ref="generate8bit" importMusic={this.importMusic.bind(this)} />
         </div>
       </div>
     )

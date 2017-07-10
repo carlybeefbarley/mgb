@@ -1,140 +1,139 @@
 import LayerTypes from '../Tools/LayerTypes.js'
 import TileHelper from '../Helpers/TileHelper.js'
 import EditModes from '../Tools/EditModes.js'
-import Camera         from '../Camera'
+import Camera from '../Camera'
 
 const TB = {
-  togglePreviewState: function(){
+  togglePreviewState: function() {
     this.options.preview = !this.options.preview
-    this.setState({preview: this.options.preview})
+    this.setState({ preview: this.options.preview })
   },
 
-  play: function(){
-    if (!this.state.isPlaying)
-      this.props.handleSaveNowRequest()
-    this.setState({isPlaying: !this.state.isPlaying})
+  play: function() {
+    if (!this.state.isPlaying) this.props.handleSaveNowRequest()
+    this.setState({ isPlaying: !this.state.isPlaying })
   },
 
-  getActiveLayer: function(){
+  getActiveLayer: function() {
     const c2 = this.mgb_content2
     return c2.layers[this.state.activeLayer]
   },
 
-  save: function(){
-    this.quickSave("Manual save call")
+  save: function() {
+    this.quickSave('Manual save call')
   },
 
-  enableMode: function(mode){
+  enableMode: function(mode) {
     // this is EditMap Scope
     this.enableMode(mode)
   },
 
-  toggleRandomMode: function(){
+  toggleRandomMode: function() {
     this.options.randomMode = !this.options.randomMode
-    this.setState({randomMode: this.options.randomMode})
+    this.setState({ randomMode: this.options.randomMode })
   },
 
-  preview: function(){
+  preview: function() {
     this.options.preview = !this.options.preview
-    this.setState({preview: this.options.preview})
+    this.setState({ preview: this.options.preview })
   },
 
-  resetCamera: function(){
+  resetCamera: function() {
     this.refs.map.resetCamera()
-    this.setState({preview: this.options.preview})
+    this.setState({ preview: this.options.preview })
   },
-  fitMap: function(){
+  fitMap: function() {
     this.refs.map.fitMap()
-    this.setState({preview: this.options.preview})
+    this.setState({ preview: this.options.preview })
   },
-  fitMapH: function(e){
+  fitMapH: function(e) {
     this.refs.map.fitMap(Camera.HORIZONTAL)
-    this.setState({preview: this.options.preview})
+    this.setState({ preview: this.options.preview })
   },
-  fitMapV: function(e){
+  fitMapV: function(e) {
     this.refs.map.fitMap(Camera.VERTICAL)
-    this.setState({preview: this.options.preview})
+    this.setState({ preview: this.options.preview })
   },
-  undo: function(){
+  undo: function() {
     this.doUndo()
   },
 
-  redo: function(){
+  redo: function() {
     this.doRedo()
   },
-  view: function(){
+  view: function() {
     this.refs.map.clearSelection()
     TB.enableMode.call(this, EditModes.view)
   },
-  stamp: function(){
+  stamp: function() {
     TB.enableMode.call(this, EditModes.stamp)
   },
 
-  terrain: function(){
+  terrain: function() {
     TB.enableMode.call(this, EditModes.terrain)
   },
 
-  fill: function(){
+  fill: function() {
     TB.enableMode.call(this, EditModes.fill)
   },
 
-  eraser: function(){
+  eraser: function() {
     TB.enableMode.call(this, EditModes.eraser)
     this.refs.map.clearSelection()
-    
+
     const activeLayer = this.refs.map.getActiveLayer()
     activeLayer.deleteSelection && activeLayer.deleteSelection()
   },
 
-  drawRectangle: function(){
+  drawRectangle: function() {
     TB.enableMode.call(this, EditModes.drawRectangle)
   },
 
-  drawEllipse: function(){
+  drawEllipse: function() {
     TB.enableMode.call(this, EditModes.drawEllipse)
   },
 
-  drawShape: function(){
+  drawShape: function() {
     TB.enableMode.call(this, EditModes.drawShape)
   },
 
-  rectangle: function(){
+  rectangle: function() {
     TB.enableMode.call(this, EditModes.rectangle)
   },
 
-  wand: function(){
+  wand: function() {
     TB.enableMode.call(this, EditModes.wand)
   },
 
-  picker: function(){
+  picker: function() {
     TB.enableMode.call(this, EditModes.picker)
   },
 
-  clearSelection: function(){
+  clearSelection: function() {
     this.refs.map.clearSelection()
   },
 
-  togglePolygon: function(){
+  togglePolygon: function() {
     const l = this.refs.map.getActiveLayer()
     if (!l || !l.toggleFill) {
-      return;
+      return
     }
     l.toggleFill()
     this.saveForUndo('Toggle Fill')
   },
 
-  rotateClockwise: function(){
+  rotateClockwise: function() {
     TB.rotate.call(this, true)
   },
 
-  rotateCounterClockwise: function(){
+  rotateCounterClockwise: function() {
     TB.rotate.call(this, false)
   },
 
   rotate(cw) {
     const l = this.refs.map.getActiveLayer()
     if (!l || !l.rotate) {
-      return;
+      return
     }
     if (cw) {
       l.rotate()
@@ -143,33 +142,33 @@ const TB = {
     }
   },
 
-  flip: function(){
+  flip: function() {
     const l = this.refs.map.getActiveLayer()
     if (!l || !l.flip) {
-      return;
+      return
     }
     l.flip()
   },
 
-  showGridToggle: function(){
+  showGridToggle: function() {
     this.options.showGrid = !this.options.showGrid
-    this.setState({showGrid: this.options.showGrid})
+    this.setState({ showGrid: this.options.showGrid })
   },
 
-  toggleCtrlModifier: function(){
+  toggleCtrlModifier: function() {
     this.options.ctrlModifier = !this.options.ctrlModifier
-    this.setState({ctrlModifier: this.options.ctrlModifier})
+    this.setState({ ctrlModifier: this.options.ctrlModifier })
   },
 
-  zoomIn: function(){
+  zoomIn: function() {
     this.refs.map && this.refs.map.zoomIn()
-    this.refs.toolbar && this.refs.toolbar.setState({zoomLevel: this.options.camera.zoom})
+    this.refs.toolbar && this.refs.toolbar.setState({ zoomLevel: this.options.camera.zoom })
   },
 
-  zoomOut: function(){
+  zoomOut: function() {
     this.refs.map && this.refs.map.zoomOut()
-    this.refs.toolbar && this.refs.toolbar.setState({zoomLevel: this.options.camera.zoom})
-  }
+    this.refs.toolbar && this.refs.toolbar.setState({ zoomLevel: this.options.camera.zoom })
+  },
 }
 
 export default TB

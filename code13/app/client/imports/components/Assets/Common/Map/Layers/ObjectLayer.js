@@ -17,10 +17,10 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 const FLIPPED_HORIZONTALLY_FLAG = TileHelper.FLIPPED_HORIZONTALLY_FLAG
 const FLIPPED_VERTICALLY_FLAG = TileHelper.FLIPPED_VERTICALLY_FLAG
 const FLIPPED_DIAGONALLY_FLAG = TileHelper.FLIPPED_DIAGONALLY_FLAG
-const TO_DEGREES = (Math.PI / 180)
+const TO_DEGREES = Math.PI / 180
 
 export default class ObjectLayer extends AbstractLayer {
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.drawDebug = false
     this._pickedObject = -1
@@ -37,7 +37,10 @@ export default class ObjectLayer extends AbstractLayer {
     this.highlightedObject = null
 
     this.selectionBox = {
-      x: 0, y: 0, width: 0, height: 1
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 1,
     }
 
     this.selection = new MultiImitator(this)
@@ -51,118 +54,110 @@ export default class ObjectLayer extends AbstractLayer {
     this.startPosY = 0
   }
 
-  get pickedObject () {
+  get pickedObject() {
     if (this.shapeBoxes[this._pickedObject]) {
       return this.shapeBoxes[this._pickedObject]
     }
     return this.data.objects[this._pickedObject]
   }
 
-  get highlightedObject(){
-    if(!this._highlightedObject)
-      return null
-
+  get highlightedObject() {
+    if (!this._highlightedObject) return null
 
     const tmp = this.data.objects.find(a => a.id === this._highlightedObject.id)
-    if(!tmp) {
+    if (!tmp) {
       this.data.objects.push(this._highlightedObject)
-      console.log("Added new tmp object: ", this.data.objects)
-    }
-    else
-      this._highlightedObject = tmp
+      console.log('Added new tmp object: ', this.data.objects)
+    } else this._highlightedObject = tmp
 
     return this._highlightedObject
   }
 
-  set highlightedObject(val){
+  set highlightedObject(val) {
     this._highlightedObject = val
   }
 
-  getInfo () {
+  getInfo() {
     let info
     if (this.info > -1) {
       const o = this.data.objects[this.info]
-      info = o ? (o.name || `(unnamed ${this.getObjectType(o)})`) : ''
+      info = o ? o.name || `(unnamed ${this.getObjectType(o)})` : ''
     }
     return (
       <div>
         <div>
-          { this.data.name + ' Layer' }
+          {this.data.name + ' Layer'}
         </div>
         <div>
           {info}
         </div>
       </div>
     )
-
   }
 
-  getObjectType (o) {
+  getObjectType(o) {
     if (o.gid) {
       return 'tile'
-    }
-    else if (o.orig) {
+    } else if (o.orig) {
       if (o.orig.polyline) {
         return 'polyline'
-      }else {
+      } else {
         return 'polygon'
       }
-    }
-    else if (o.ellipse) {
+    } else if (o.ellipse) {
       if (o.width == o.height) {
         return 'circle'
       }
       return 'ellipse'
-    }else {
+    } else {
       return 'rectangle'
     }
   }
 
-  setPickedObjectSlow (id) {
+  setPickedObjectSlow(id) {
     this._pickedObject = id
     this.props.setPickedObject(id)
   }
-  getPickedObject () {
+  getPickedObject() {
     return this._pickedObject
   }
-  updateClonedObject () {
+  updateClonedObject() {
     if (this.selection.length) {
       this.clonedObject = this.selection.toBox()
-    }
-    else if (this.pickedObject instanceof Imitator) {
+    } else if (this.pickedObject instanceof Imitator) {
       this.clonedObject = new Imitator(_.cloneDeep(this.pickedObject.orig))
-    }else {
+    } else {
       this.clonedObject = Object.assign({}, this.pickedObject)
     }
   }
   // this gets called when layer is activated
-  activate () {
+  activate() {
     if (!this.activeMode) {
       this.props.setEditMode(EditModes.rectangle)
     }
     super.activate()
   }
 
-  getMaxId () {
+  getMaxId() {
     let d
     let maxId = 1
     for (let i = 0; i < this.data.objects.length; i++) {
       d = this.data.objects[i]
       if (d.id > maxId) {
         maxId = d.id + 1
-      }else {
+      } else {
         maxId++
       }
     }
     return maxId
   }
-  pickObject (e) {
+  pickObject(e) {
     const ret = this.queryObject(e)
     this.setPickedObjectSlow(ret)
     return ret
   }
 
-  queryObject (e) {
+  queryObject(e) {
     let obj
     const x = TileHelper.getOffsetX(e) / this.camera.zoom - this.camera.x
     const y = TileHelper.getOffsetY(e) / this.camera.zoom - this.camera.y
@@ -176,8 +171,7 @@ export default class ObjectLayer extends AbstractLayer {
           ret = i
           break
         }
-      }
-      else if (obj.polyline || obj.polygon) {
+      } else if (obj.polyline || obj.polygon) {
         this.shapeBoxes[i] = new Imitator(obj)
         const imit = this.shapeBoxes[i]
 
@@ -185,7 +179,7 @@ export default class ObjectLayer extends AbstractLayer {
           ret = i
           break
         }
-      }else {
+      } else {
         if (ObjectHelper.PointvsAABB(obj, x, y)) {
           ret = i
           break
@@ -195,10 +189,10 @@ export default class ObjectLayer extends AbstractLayer {
     return ret
   }
 
-  selectObject (obj) {
-    this.setPickedObjectSlow( this.data.objects.indexOf(obj) )
+  selectObject(obj) {
+    this.setPickedObjectSlow(this.data.objects.indexOf(obj))
   }
-  selectObjects (box) {
+  selectObjects(box) {
     let ret = 0
     this.selection.clear()
     for (let i = 0; i < this.data.objects.length; i++) {
@@ -230,12 +224,12 @@ export default class ObjectLayer extends AbstractLayer {
     return ret
   }
 
-  removeObject(){
+  removeObject() {
     this.props.saveForUndo('Delete Object')
     if (this.pickedObject) {
       this.deleteObject(this.pickedObject.orig ? this.pickedObject.orig : this.pickedObject)
     }
-    this.selection.forEach((o) => {
+    this.selection.forEach(o => {
       let x = o
       if (o instanceof Imitator) {
         x = o.orig
@@ -246,23 +240,23 @@ export default class ObjectLayer extends AbstractLayer {
     this.clearSelection(true)
 
     // removed selected objects
-    this.props.handleSave("Deleted Some Objects")
+    this.props.handleSave('Deleted Some Objects')
     this.draw()
   }
   /* Events */
-  handleMouseMove (ep) {
+  handleMouseMove(ep) {
     const e = ep.nativeEvent ? ep.nativeEvent : ep
     super.handleMouseMove(e)
 
-    if(e.target !== this.refs.canvas){
+    if (e.target !== this.refs.canvas) {
       return
     }
 
     this.info = this.queryObject(e)
     if (!this.mouseDown) {
       this.handles.setActive(
-        (this.mouseX / this.camera.zoom - this.camera.x),
-        (this.mouseY / this.camera.zoom - this.camera.y)
+        this.mouseX / this.camera.zoom - this.camera.x,
+        this.mouseY / this.camera.zoom - this.camera.y,
       )
     }
 
@@ -272,16 +266,13 @@ export default class ObjectLayer extends AbstractLayer {
       this.draw()
     }
   }
-  handleMouseDown (ep) {
+  handleMouseDown(ep) {
     const e = ep.nativeEvent ? ep.nativeEvent : ep
 
     // TODO (stauzs): fix - move camera and object at the same time
     super.handleMouseDown(e)
     const prevHandle = this.handles.activeHandle
-    this.handles.setActive(
-      this.pointerPosX,
-      this.pointerPosY
-    )
+    this.handles.setActive(this.pointerPosX, this.pointerPosY)
     // is same handle?
     if (prevHandle && prevHandle == this.handles.activeHandle) {
       this.handles.lock()
@@ -306,8 +297,8 @@ export default class ObjectLayer extends AbstractLayer {
       this.mouseDown = false
     }
   }
-  handleMouseUp (ep) {
-    if(ep.target != this.refs.canvas){
+  handleMouseUp(ep) {
+    if (ep.target != this.refs.canvas) {
       return
     }
     const e = ep.nativeEvent ? ep.nativeEvent : ep
@@ -322,13 +313,13 @@ export default class ObjectLayer extends AbstractLayer {
       this.draw()
     }
   }
-  onMouseLeave () {
+  onMouseLeave() {
     if (this.highlightedObject) {
       this.deleteObject(this.highlightedObject)
       this.highlightedObject = null
     }
   }
-  onKeyUp (e) {
+  onKeyUp(e) {
     // don't steal events from input fields
     // TODO: this repeats at least in 2 places.. Create Helper - DRY!!!! :)
     if (['INPUT', 'SELECT', 'TEXTAREA'].indexOf(e.target.tagName) > -1) {
@@ -343,11 +334,11 @@ export default class ObjectLayer extends AbstractLayer {
       this.props.saveForUndo('Paste')
       let minx = Infinity
       let miny = Infinity
-      this.copy.forEach((data) => {
+      this.copy.forEach(data => {
         minx = Math.min(data.x, minx)
         miny = Math.min(data.y, miny)
       })
-      this.copy.forEach((data) => {
+      this.copy.forEach(data => {
         const n = _.cloneDeep(data.obj)
         n.id = this.getMaxId()
         n.x = data.x + this.mouseInWorldX - minx
@@ -364,12 +355,12 @@ export default class ObjectLayer extends AbstractLayer {
 
     const copy = () => {
       this.copy.length = 0
-      const saveCopy = (obj) => {
-        const toSave = (obj.orig ? obj.orig : obj)
+      const saveCopy = obj => {
+        const toSave = obj.orig ? obj.orig : obj
         this.copy.push({
           obj: toSave,
           x: toSave.x - this.mouseInWorldX,
-          y: toSave.y - this.mouseInWorldY
+          y: toSave.y - this.mouseInWorldY,
         })
       }
       if (this.pickedObject) {
@@ -404,43 +395,18 @@ export default class ObjectLayer extends AbstractLayer {
   }
   /* End of Events */
 
-  updateHandles (obj) {
+  updateHandles(obj) {
     // tile
     if (obj.gid) {
-      this.handles.update(
-        obj.x,
-        obj.y - obj.height,
-        obj.width,
-        obj.height,
-        obj.rotation,
-        obj.x,
-        obj.y
-      )
-    }
-    else if (obj instanceof Imitator) {
-      this.handles.update(
-        obj.x,
-        obj.y,
-        obj.width,
-        obj.height,
-        obj.rotation,
-        obj.orig.x,
-        obj.orig.y
-      )
-    }
-    else if (true) { /// ???
-      this.handles.update(
-        obj.x,
-        obj.y,
-        obj.width,
-        obj.height,
-        obj.rotation,
-        obj.x,
-        obj.y
-      )
+      this.handles.update(obj.x, obj.y - obj.height, obj.width, obj.height, obj.rotation, obj.x, obj.y)
+    } else if (obj instanceof Imitator) {
+      this.handles.update(obj.x, obj.y, obj.width, obj.height, obj.rotation, obj.orig.x, obj.orig.y)
+    } else if (true) {
+      /// ???
+      this.handles.update(obj.x, obj.y, obj.width, obj.height, obj.rotation, obj.x, obj.y)
     }
   }
-  clearSelection (alsoSelectedObjects = false) {
+  clearSelection(alsoSelectedObjects = false) {
     this.handles.clearActive()
     if (alsoSelectedObjects) {
       this.selection.clear()
@@ -450,7 +416,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.draw()
   }
 
-  deleteObject (obj) {
+  deleteObject(obj) {
     const index = this.data.objects.indexOf(obj)
     if (index > -1) {
       delete this.shapeBoxes[index]
@@ -458,46 +424,44 @@ export default class ObjectLayer extends AbstractLayer {
       this.clearCache()
     }
   }
-  rotateObject (rotation, object = this.pickedObject) {
+  rotateObject(rotation, object = this.pickedObject) {
     const angle = rotation * Math.PI / 180
     ObjectHelper.rotateObject(object, angle)
     this.draw()
   }
-  toggleFill () {
+  toggleFill() {
     this.props.saveForUndo('Toggle shape fill')
 
     //selection.selection
-    for(let i=0; i<this.selection.selection.length; i++) {
+    for (let i = 0; i < this.selection.selection.length; i++) {
       this._toggleFill(this.selection.selection[i])
     }
 
-    if(this.pickedObject){
+    if (this.pickedObject) {
       this._toggleFill(this.pickedObject)
     }
 
     this.props.handleSave('Toggle shape fill')
     this.draw()
   }
-  _toggleFill(obj){
+  _toggleFill(obj) {
     if (obj && obj.orig) {
       if (obj.orig.polyline) {
         obj.orig.polygon = obj.orig.polyline
         delete obj.orig.polyline
-
-      }
-      else if (obj.orig.polygon) {
+      } else if (obj.orig.polygon) {
         obj.orig.polyline = obj.orig.polygon
         delete obj.orig.polygon
       }
     }
   }
-  setPickedObject (obj, index) {
+  setPickedObject(obj, index) {
     this.setPickedObjectSlow(index)
     // TODO: make this more automatic
     if (obj.polygon || obj.polyline) {
       if (this.shapeBoxes[index]) {
         this.shapeBoxes[index].update(obj)
-      }else {
+      } else {
         this.shapeBoxes[index] = new Imitator(obj)
       }
     }
@@ -505,22 +469,22 @@ export default class ObjectLayer extends AbstractLayer {
     this.draw()
     this.highlightSelected()
   }
-  clearCache () {
-    Object.keys(this.shapeBoxes).forEach((k) => {
+  clearCache() {
+    Object.keys(this.shapeBoxes).forEach(k => {
       delete this.shapeBoxes[k]
     })
     this.draw()
   }
 
   /* DRAWING methods */
-  _draw (now, force = false) {
+  _draw(now, force = false) {
     this.now = now
-    if ( !force && this.nextDraw > now ) {
+    if (!force && this.nextDraw > now) {
       return
     }
 
     this.ctx.clearRect(0, 0, this.camera.width, this.camera.height)
-    if(!this.isVisible){
+    if (!this.isVisible) {
       return
     }
     // force refresh after a while
@@ -547,18 +511,15 @@ export default class ObjectLayer extends AbstractLayer {
       // draw tile
       if (o.gid) {
         this.drawTile(o)
-      }
-      else if (o.orig) {
+      } else if (o.orig) {
         if (o.orig.polyline) {
           this.drawPolyline(o.orig)
-        }else {
+        } else {
           this.drawPolyline(o.orig, true)
         }
-      }
-      else if (o.ellipse) {
+      } else if (o.ellipse) {
         this.drawEllipse(o)
-      }
-      else if (true) {
+      } else if (true) {
         this.drawRectangle(o)
       }
     }
@@ -566,13 +527,11 @@ export default class ObjectLayer extends AbstractLayer {
     this.highlightSelected()
   }
 
-  drawTile (obj) {
-    const gid = obj.gid & (~(FLIPPED_HORIZONTALLY_FLAG |
-      FLIPPED_VERTICALLY_FLAG |
-      FLIPPED_DIAGONALLY_FLAG))
+  drawTile(obj) {
+    const gid = obj.gid & ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG)
 
-    const flipX = (obj.gid & FLIPPED_HORIZONTALLY_FLAG ? -1 : 1)
-    const flipY = (obj.gid & FLIPPED_VERTICALLY_FLAG ? -1 : 1)
+    const flipX = obj.gid & FLIPPED_HORIZONTALLY_FLAG ? -1 : 1
+    const flipY = obj.gid & FLIPPED_VERTICALLY_FLAG ? -1 : 1
     let pal = this.props.palette[gid]
     // images might be not loaded
     if (!pal || !pal.image) {
@@ -580,7 +539,7 @@ export default class ObjectLayer extends AbstractLayer {
     }
 
     const anInfo = TileHelper.getAnimationTileInfo(pal, this.props.palette, this.now)
-    if(anInfo){
+    if (anInfo) {
       pal = anInfo.pal
       this.queueDraw(anInfo.nextUpdate)
     }
@@ -594,12 +553,11 @@ export default class ObjectLayer extends AbstractLayer {
     if (this.options.mgb_tiledrawdirection && this.options.mgb_tiledrawdirection !== 'rightup') {
       if (this.options.mgb_tiledrawdirection == 'leftdown') {
         x -= w
-      }
-      else if (this.options.mgb_tiledrawdirection == 'leftup') {
+      } else if (this.options.mgb_tiledrawdirection == 'leftup') {
         x -= w
         y -= h
       }
-    }else {
+    } else {
       y -= h
     }
 
@@ -632,7 +590,7 @@ export default class ObjectLayer extends AbstractLayer {
     }
     this.ctx.restore()
   }
-  drawRectangle (obj) {
+  drawRectangle(obj) {
     const cam = this.camera
     let x = (cam.x + obj.x) * cam.zoom
     let y = (cam.y + obj.y) * cam.zoom
@@ -654,7 +612,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.ctx.strokeRect(0.5, 0.5, w, h)
     this.ctx.restore()
   }
-  drawEllipse (obj) {
+  drawEllipse(obj) {
     const cam = this.camera
     let x = (cam.x + obj.x) * cam.zoom
     let y = (cam.y + obj.y) * cam.zoom
@@ -677,7 +635,7 @@ export default class ObjectLayer extends AbstractLayer {
     // this.ctx.strokeRect(0.5, 0.5, w, h)
     this.ctx.restore()
   }
-  drawPolyline (o) {
+  drawPolyline(o) {
     const cam = this.camera
     let x = (cam.x + o.x) * cam.zoom
     let y = (cam.y + o.y) * cam.zoom
@@ -712,9 +670,9 @@ export default class ObjectLayer extends AbstractLayer {
     this.ctx.restore()
   }
   // this one is drawing on the grid layer - as overlay
-  highlightSelected () {
+  highlightSelected() {
     const grid = this.props.getOverlay()
-    if(grid) {
+    if (grid) {
       grid.draw()
       let obj = this.pickedObject
 
@@ -725,7 +683,7 @@ export default class ObjectLayer extends AbstractLayer {
           (this.selectionBox.x + cam.x) * cam.zoom,
           (this.selectionBox.y + cam.y) * cam.zoom,
           this.selectionBox.width * cam.zoom,
-          this.selectionBox.height * cam.zoom
+          this.selectionBox.height * cam.zoom,
         )
       }
 
@@ -741,15 +699,17 @@ export default class ObjectLayer extends AbstractLayer {
     }
   }
 
-/* END of DRAWING methods */
+  /* END of DRAWING methods */
 }
 
 // TODO: move these to separate file
-let obj, endPoint, pointCache = {x: 0, y: 0}
+let obj,
+  endPoint,
+  pointCache = { x: 0, y: 0 }
 const edit = {}
-edit.clear = function(){
+edit.clear = function() {
   // this is for touch input - finalize shape drawing
-  if(obj && obj.polyline) {
+  if (obj && obj.polyline) {
     //obj.polyline.pop()
     this.setPickedObject(obj, this.data.objects.length - 1)
     this.props.handleSave('Drawing lines')
@@ -757,7 +717,7 @@ edit.clear = function(){
     endPoint = null
   }
 }
-edit[EditModes.drawRectangle] = function (e) {
+edit[EditModes.drawRectangle] = function(e) {
   if (e.type == 'mousedown' || e.type == 'touchstart') {
     if ((e.buttons & 0x2) == 0x2) {
       return
@@ -800,7 +760,7 @@ edit[EditModes.drawRectangle] = function (e) {
     obj.height = Math.round(obj.height / th) * th
   }
 }
-edit[EditModes.drawEllipse] = function (e) {
+edit[EditModes.drawEllipse] = function(e) {
   if (e.type == 'mousedown' || e.type == 'touchstart') {
     if ((e.buttons & 0x2) == 0x2) {
       return
@@ -842,7 +802,7 @@ edit[EditModes.drawEllipse] = function (e) {
     obj.height = Math.round(obj.height / th) * th || th
   }
 }
-edit[EditModes.drawShape] = function (e) {
+edit[EditModes.drawShape] = function(e) {
   if (e.type == 'mousedown' || e.type == 'touchstart') {
     if (!obj) {
       if ((e.buttons & 0x2) == 0x2) {
@@ -859,18 +819,18 @@ edit[EditModes.drawShape] = function (e) {
       this.props.saveForUndo('Draw Shape')
       this.data.objects.push(obj)
       // first point is always at 0,0
-      endPoint = {x: 0, y: 0}
+      endPoint = { x: 0, y: 0 }
       pointCache.x = 0
       pointCache.y = 0
       obj.polyline.push(endPoint)
       return
-    }else {
+    } else {
       // are buttons FLAGS?
       if ((e.buttons & 0x2) == 0x2) {
         edit.clear.call(this)
         return
-      }else {
-        endPoint = {x: endPoint.x, y: endPoint.y}
+      } else {
+        endPoint = { x: endPoint.x, y: endPoint.y }
         obj.polyline.push(endPoint)
       }
     }
@@ -894,7 +854,7 @@ edit[EditModes.drawShape] = function (e) {
   }
 }
 
-edit[EditModes.stamp] = function (e) {
+edit[EditModes.stamp] = function(e) {
   const col = this.props.getCollection()
   if (!col.length || e.target !== this.refs.canvas) {
     return
@@ -905,7 +865,7 @@ edit[EditModes.stamp] = function (e) {
   const th = this.props.mapData.tileheight
   const cam = this.camera
   let x = e.offsetX / cam.zoom - cam.x
-  let y = (e.offsetY + pal.h*cam.zoom) / cam.zoom - cam.y
+  let y = (e.offsetY + pal.h * cam.zoom) / cam.zoom - cam.y
 
   if (this.isCtrlKey(e)) {
     x = Math.floor(x / tw) * tw
@@ -913,10 +873,7 @@ edit[EditModes.stamp] = function (e) {
   }
 
   if (!this.highlightedObject) {
-    this.highlightedObject = ObjectHelper.createTileObject(
-      pal, this.getMaxId(),
-      x, y
-    )
+    this.highlightedObject = ObjectHelper.createTileObject(pal, this.getMaxId(), x, y)
     this.highlightedObject.tmp = true
     this.clearCache()
   }
@@ -929,7 +886,7 @@ edit[EditModes.stamp] = function (e) {
     // now add back and save new state
     this.data.objects.push(this._highlightedObject)
     delete this._highlightedObject.tmp
-    this.props.handleSave("Added Tile Object")
+    this.props.handleSave('Added Tile Object')
 
     // next loop will create new highlighted object
     this.highlightedObject = null
@@ -941,14 +898,14 @@ edit[EditModes.stamp] = function (e) {
 }
 
 // TODO(stauzs): rework this and clean up
-let phase = 0; // 0 - selecting; 1 - moving
-edit[EditModes.rectangle] = function (e) {
+let phase = 0 // 0 - selecting; 1 - moving
+edit[EditModes.rectangle] = function(e) {
   if ((e.buttons & 0x2) === 0x2) {
     return
   }
 
-  let dx = (this.pointerMovementX / this.camera.zoom)
-  let dy = (this.pointerMovementY / this.camera.zoom)
+  let dx = this.pointerMovementX / this.camera.zoom
+  let dy = this.pointerMovementY / this.camera.zoom
 
   const nx = this.startPosX + this.movementX
   const ny = this.startPosY + this.movementY
@@ -960,14 +917,14 @@ edit[EditModes.rectangle] = function (e) {
       let selCount = this.selectObjects(obj)
       if (selCount > 0) {
         phase = 1
-      }else {
+      } else {
         phase = 0
       }
 
       if (selCount === 1 && this.pickedObject) {
         this.startPosX = this.pickedObject.x
         this.startPosY = this.pickedObject.y
-      }else {
+      } else {
         this.clearSelection()
       }
       // invalidate
@@ -982,8 +939,7 @@ edit[EditModes.rectangle] = function (e) {
     this.updateClonedObject()
   }
 
-  if (e.type == 'mousedown' || e.type == 'touchstart' ) {
-
+  if (e.type == 'mousedown' || e.type == 'touchstart') {
     if (!this.handles.activeHandle) {
       this.draw()
       this.mouseDown = true
@@ -993,7 +949,7 @@ edit[EditModes.rectangle] = function (e) {
         if (!this.selection.length) {
           this.startPosX = this.pickedObject.x
           this.startPosY = this.pickedObject.y
-        }else {
+        } else {
           this.setPickedObjectSlow(-1)
           this.startPosX = this.selection.x
           this.startPosY = this.selection.y
@@ -1008,14 +964,12 @@ edit[EditModes.rectangle] = function (e) {
       obj.x = this.pointerPosX
       obj.y = this.pointerPosY
       return
-    }
-    else{
+    } else {
       phase && this.props.saveForUndo('Edit Object')
     }
   }
 
   if (this.mouseDown && phase == 1) {
-
     if (this.handles.activeHandle) {
       this.handles.moveActiveHandle(dx, dy, this.clonedObject)
       let selected = this.selection.length < 2 ? this.pickedObject : this.selection
@@ -1026,16 +980,18 @@ edit[EditModes.rectangle] = function (e) {
           if (selected != this.selection) {
             selected.x = Math.round(this.clonedObject.x / tw) * tw
             selected.y = Math.round(this.clonedObject.y / th) * th
-          }else {
+          } else {
           }
-        }else {
+        } else {
           if (selected != this.selection) {
-            const newRotation = Math.round(this.clonedObject.rotation / SpecialGlobals.map.objectRotationStep) * SpecialGlobals.map.objectRotationStep
+            const newRotation =
+              Math.round(this.clonedObject.rotation / SpecialGlobals.map.objectRotationStep) *
+              SpecialGlobals.map.objectRotationStep
             this.rotateObject(newRotation, selected)
           }
         }
-      }else {
-        if(this.clonedObject) {
+      } else {
+        if (this.clonedObject) {
           if (this.handles.activeHandleType != 9) {
             selected.height = this.clonedObject.height
             selected.width = this.clonedObject.width

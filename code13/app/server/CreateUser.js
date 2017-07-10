@@ -4,48 +4,41 @@ import validate from '/imports/schemas/validate'
 // This is all server-only code
 
 Meteor.methods({
-
   'AccountsHelp.userNameTaken': function(username) {
     const u = Accounts.findUserByUsername(username)
     return u ? u.username : null
-  }
-
+  },
 })
 
-Accounts.validateNewUser(function (user) {
-
+Accounts.validateNewUser(function(user) {
   if (!user.emails || !_.isArray(user.emails) || user.emails.length === 0)
-    throw new Meteor.Error(403, "Server response: new user emails array is invalid")
+    throw new Meteor.Error(403, 'Server response: new user emails array is invalid')
 
   console.log(`  [validateNewUser]  ..  name=${user.username}   email=${user.emails[0].address}`)
-  
-  if (!user.username || user.username.length < 3)
-    throw new Meteor.Error(403, "Username must have at least 3 characters")
-    
-  if (user.profile.name !== user.username)
-    throw new Meteor.Error(403, "Internal error: Mismatched username and profile.name")
 
-  _.each(user.emails, emailEntry => { 
+  if (!user.username || user.username.length < 3)
+    throw new Meteor.Error(403, 'Username must have at least 3 characters')
+
+  if (user.profile.name !== user.username)
+    throw new Meteor.Error(403, 'Internal error: Mismatched username and profile.name')
+
+  _.each(user.emails, emailEntry => {
     const r = validate.emailWithReason(emailEntry.address)
-    if (r)
-      throw new Meteor.Error(403, `Server response: ${r}`)
+    if (r) throw new Meteor.Error(403, `Server response: ${r}`)
   })
 
   console.log(`  [validateNewUser]  OK  name=${user.username}   email=${user.emails[0].address} `)
 
   try {
-    if (Meteor.isProduction)
-      Meteor.call('Slack.User.create', user.username, user.emails[0].address)
-  }  
-  catch (err) {
-    console.log("  validateNewUser]  failed to call Slack: ", err.toString())
+    if (Meteor.isProduction) Meteor.call('Slack.User.create', user.username, user.emails[0].address)
+  } catch (err) {
+    console.log('  validateNewUser]  failed to call Slack: ', err.toString())
   }
 
   return true
 })
 
-
-Accounts.onCreateUser(function (options, user) {
+Accounts.onCreateUser(function(options, user) {
   console.log(`  [CreateUser]  ${user.username}   email: ${user.emails[0].address}`)
 
   if (user.services.twitter) {
@@ -59,7 +52,8 @@ Accounts.onCreateUser(function (options, user) {
 
   if (user.services.facebook) {
     if (options.profile) {
-      options.profile.avatar = "http://graph.facebook.com/" + user.services.facebook.id + "/picture/?width=50&height=50"
+      options.profile.avatar =
+        'http://graph.facebook.com/' + user.services.facebook.id + '/picture/?width=50&height=50'
       user.profile = options.profile
       user.profile.images = user.profile.images || []
       user.profile.images.push(options.profile.avatar)
@@ -67,7 +61,7 @@ Accounts.onCreateUser(function (options, user) {
 
     if (user.services.facebook.email) {
       user.emails = user.emails || []
-      user.emails.push( { address: user.services.facebook.email, verified: true } )
+      user.emails.push({ address: user.services.facebook.email, verified: true })
     }
   }
 
@@ -81,13 +75,12 @@ Accounts.onCreateUser(function (options, user) {
 
     if (user.services.google.email) {
       user.emails = user.emails || []
-      user.emails.push( { address: user.services.google.email, verified: true } )
+      user.emails.push({ address: user.services.google.email, verified: true })
     }
   }
 
   if (user.services.password) {
-    if (options.profile)
-    {
+    if (options.profile) {
       // Extra checks for validity like is done in Meteor.call("User.updateProfile")" ?
       user.profile = options.profile
     }

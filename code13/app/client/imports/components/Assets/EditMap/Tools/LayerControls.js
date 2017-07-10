@@ -4,7 +4,6 @@ import LayerTypes from '../../Common/Map/Tools/LayerTypes.js'
 import { Button, Dropdown } from 'semantic-ui-react'
 
 export default class LayerControls extends React.Component {
-
   get options() {
     return this.props.options
   }
@@ -46,35 +45,30 @@ export default class LayerControls extends React.Component {
 
     return (
       <div style={{ position: 'relative', top: '-10px' }}>
-        <Button.Group size='mini' title='New Layer'>
-          <Dropdown button icon='add' className='icon'>
+        <Button.Group size="mini" title="New Layer">
+          <Dropdown button icon="add" className="icon">
             <Dropdown.Menu>
               {_.map(items, item => <Dropdown.Item key={item.value} {...item} />)}
             </Dropdown.Menu>
           </Dropdown>
-          <Button icon='lightbulb'
-                  primary={this.options.highlightActiveLayer}
-                  onClick={highlightActiveLayerToggle}
-                  title='Highlight Active layer' />
-        </Button.Group>
-        {' '}
-        <Button.Group size='mini'>
           <Button
-            icon='angle up'
+            icon="lightbulb"
+            primary={this.options.highlightActiveLayer}
+            onClick={highlightActiveLayerToggle}
+            title="Highlight Active layer"
+          />
+        </Button.Group>{' '}
+        <Button.Group size="mini">
+          <Button
+            icon="angle up"
             disabled={activeLayer >= layers.length - 1}
             onClick={raiseLayer}
-            title='Raise Layer'
+            title="Raise Layer"
           />
-          <Button
-            icon='angle down'
-            disabled={activeLayer <= 0}
-            onClick={lowerLayer}
-            title='Lower Layer'
-          />
-        </Button.Group>
-        {' '}
-        <Button.Group size='mini' title='Remove Active Layer' className='right floated'>
-          {layers.length > 1 && <Button icon='trash' onClick={removeLayer} />}
+          <Button icon="angle down" disabled={activeLayer <= 0} onClick={lowerLayer} title="Lower Layer" />
+        </Button.Group>{' '}
+        <Button.Group size="mini" title="Remove Active Layer" className="right floated">
+          {layers.length > 1 && <Button icon="trash" onClick={removeLayer} />}
         </Button.Group>
       </div>
     )

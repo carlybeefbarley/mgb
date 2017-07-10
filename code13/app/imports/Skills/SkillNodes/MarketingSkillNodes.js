@@ -8,13 +8,13 @@ import C from './CommonSkillNodes.js'
 
 export default {
   $meta: {
-    name:           'Marketing',
-    description:    'Represents publicity and brand/awareness-building skills',
+    name: 'Marketing',
+    description: 'Represents publicity and brand/awareness-building skills',
   },
-  customer:         C.E,
-  requirements:     C.E,
-  competitors:      C.E,
-  brand:            C.E,
-  reach:            C.E,
-  growth:           C.E
+  customer: C.E,
+  requirements: C.E,
+  competitors: C.E,
+  brand: C.E,
+  reach: C.E,
+  growth: C.E,
 }

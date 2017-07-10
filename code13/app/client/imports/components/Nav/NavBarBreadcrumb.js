@@ -25,38 +25,37 @@ const _handleRelatedAssetsPopupOpen = () => {
 
 const ProjectsSection = ({ usernameToShow, projectNames }) => {
   const firstProjectNameForAsset = _.isArray(projectNames) && projectNames[0]
-  if (!usernameToShow || !firstProjectNameForAsset)
-    return null
+  if (!usernameToShow || !firstProjectNameForAsset) return null
 
   const section = (
     <QLink
-      className='section'
+      className="section"
       to={`/u/${usernameToShow}/assets`}
-      query={{ project: firstProjectNameForAsset }}>
-      <Icon name='sitemap' />{firstProjectNameForAsset}&nbsp;
+      query={{ project: firstProjectNameForAsset }}
+    >
+      <Icon name="sitemap" />
+      {firstProjectNameForAsset}&nbsp;
     </QLink>
   )
 
-  if (projectNames.length === 1)
-    return section
+  if (projectNames.length === 1) return section
 
   // Else it's going to need a Popup to show the other options
   return (
     <Popup
       trigger={section}
-      on='hover'
+      on="hover"
       hoverable
-      position='bottom center'
-      header='List Assets in...'
-      content={_.map(projectNames, projectName => (
+      position="bottom center"
+      header="List Assets in..."
+      content={_.map(projectNames, projectName =>
         <div key={projectName} style={{ margin: '0.25em' }}>
-          <QLink
-            to={`/u/${usernameToShow}/assets`}
-            query={{ project: projectName }}>
-            <Icon name='sitemap' />{projectName}
+          <QLink to={`/u/${usernameToShow}/assets`} query={{ project: projectName }}>
+            <Icon name="sitemap" />
+            {projectName}
           </QLink>
-        </div>
-      ))}
+        </div>,
+      )}
       mouseEnterDelay={400}
     />
   )
@@ -65,24 +64,23 @@ const ProjectsSection = ({ usernameToShow, projectNames }) => {
 const _learnCodeItemHdrs = {
   basics: 'JavaScript basics',
   phaser: 'GameDev Concepts',
-  games:  'GameDev Tutorials',
+  games: 'GameDev Tutorials',
 }
 
 const _assetVerbIcons = {
   undefined: 'question',
-  View:      'eye',
-  Edit:      'pencil',
-  Play:      'gamepad',
+  View: 'eye',
+  Edit: 'pencil',
+  Play: 'gamepad',
 }
 
 // For all images in the breadcrumb
 const breadcrumbImageStyle = { height: '1em', verticalAlign: 'middle' }
 
-const BreadcrumbImage = ({ style, ...rest }) => (
+const BreadcrumbImage = ({ style, ...rest }) =>
   <img {...rest} style={{ ...breadcrumbImageStyle, ...style }} />
-)
 
-const NavBarBreadcrumbUI = (props) => {
+const NavBarBreadcrumbUI = props => {
   const {
     name,
     user,
@@ -94,7 +92,7 @@ const NavBarBreadcrumbUI = (props) => {
     relatedAssetsLoading,
     contextualProjectName,
     quickAssetSearch,
-    handleSearchNavKey
+    handleSearchNavKey,
   } = props
   const { query, pathname } = location
   const assetId = params && params.assetId
@@ -106,9 +104,9 @@ const NavBarBreadcrumbUI = (props) => {
   const usernameToShow = user ? user.profile.name : params.username
   const { kind, assetVerb, projectNames } = currentlyEditingAssetInfo
   const kindName = AssetKinds.getName(kind)
-  const isPlay = (assetVerb === 'Play')   // A bit of a hack while we decide if this is a good UX
-  const isLearn = (pathname && pathname.startsWith('/learn'))
-  const isAssets = (name === 'Assets')
+  const isPlay = assetVerb === 'Play' // A bit of a hack while we decide if this is a good UX
+  const isLearn = pathname && pathname.startsWith('/learn')
+  const isAssets = name === 'Assets'
   const assetNameQuickNavRegex = new RegExp('^.*' + quickAssetSearch, 'i')
   const filteredRelatedAssets = _.filter(relatedAssets, a => assetNameQuickNavRegex.test(a.name))
 
@@ -116,133 +114,151 @@ const NavBarBreadcrumbUI = (props) => {
     //
     // Home
     //
-    <QLink to='/' key='home'>
-      <img src='/images/logos/mgb/big/icon_01.png' style={breadcrumbImageStyle} />
+    <QLink to="/" key="home">
+      <img src="/images/logos/mgb/big/icon_01.png" style={breadcrumbImageStyle} />
     </QLink>,
     //
     // User
     //
-    usernameToShow && (
+    usernameToShow &&
       // hey, this span is required!
-      <span key='username'>
+      <span key="username">
         <Popup
-          trigger={(
+          trigger={
             <QLink to={`/u/${usernameToShow}`}>
               {user && <BreadcrumbImage src={UX.makeAvatarImgLink(usernameToShow)} />} {usernameToShow}
             </QLink>
-          )}
-          on='hover'
+          }
+          on="hover"
           hoverable
-          position='bottom center'
+          position="bottom center"
           header={usernameToShow}
           content={user && <UserItem user={user} />}
           mouseEnterDelay={500}
         />
-      </span>
-    ),
+      </span>,
     //
     // Assets - inserted if on an Asset-focused page (play, edit)
     //
-    usernameToShow && (isAssets || assetId) && !isPlay && (
-      <QLink key='assets' to={`/u/${usernameToShow}/assets`}>Assets</QLink>
-    ),
+    usernameToShow &&
+      (isAssets || assetId) &&
+      !isPlay &&
+      <QLink key="assets" to={`/u/${usernameToShow}/assets`}>
+        Assets
+      </QLink>,
     //
     // [ICON] Projects - from Asset's Project's list if on a page that includes a project query (projects, assets)
     //
-    usernameToShow && !assetId && queryProjectName && (
+    usernameToShow &&
+      !assetId &&
+      queryProjectName &&
       // hey, this span is required!
-      <span key='query-project-name'>
+      <span key="query-project-name">
         <ProjectsSection usernameToShow={usernameToShow} projectNames={[queryProjectName]} />
-      </span>
-    ),
+      </span>,
     //
     // [ICON] Projects - from Asset's Project's list if on an asset-focused page (play, edit)
     //
-    usernameToShow && assetId && projectNames && projectNames.length > 0 && (
+    usernameToShow &&
+      assetId &&
+      projectNames &&
+      projectNames.length > 0 &&
       // hey, this span is required!
-      <span key='project-names'>
+      <span key="project-names">
         <ProjectsSection usernameToShow={usernameToShow} projectNames={projectNames} />
-      </span>
-    ),
+      </span>,
     //
     // [ICON] AssetKind
     //
-    usernameToShow && assetId && kind && !isPlay && (
+    usernameToShow &&
+      assetId &&
+      kind &&
+      !isPlay &&
       <QLink
-        key='asset-kind'
+        key="asset-kind"
         to={`/u/${usernameToShow}/assets`}
-        query={{ kinds: kind, ...(projectNames ? { project: projectNames[0] } : {} ) }}>
-        { kindName }
-      </QLink>
-    ),
+        query={{ kinds: kind, ...(projectNames ? { project: projectNames[0] } : {}) }}
+      >
+        {kindName}
+      </QLink>,
     //
     // Projects
     //
-    usernameToShow && isProjectOnPath && (
-      <QLink key='username-projects' to={`/u/${usernameToShow}/projects`}>Projects</QLink>
-    ),
+    usernameToShow &&
+      isProjectOnPath &&
+      <QLink key="username-projects" to={`/u/${usernameToShow}/projects`}>
+        Projects
+      </QLink>,
     //
     // Learn
     //
-    isLearn && (
-      <QLink key='learn' to={`/learn`}>Learn</QLink>
-    ),
+    isLearn &&
+      <QLink key="learn" to={`/learn`}>
+        Learn
+      </QLink>,
     //
     // Skills
     //
-    pathname && pathname.startsWith('/learn/skills') && (
-      <QLink key='skils' to={`/learn/skills`}>Skills</QLink>
-    ),
+    pathname &&
+      pathname.startsWith('/learn/skills') &&
+      <QLink key="skils" to={`/learn/skills`}>
+        Skills
+      </QLink>,
     //
     // Code
     //
-    pathname && pathname.startsWith('/learn/code/') && (
-      <QLink key='learn-code' to={`/learn/code`}>Programming</QLink>
-    ),
+    pathname &&
+      pathname.startsWith('/learn/code/') &&
+      <QLink key="learn-code" to={`/learn/code`}>
+        Programming
+      </QLink>,
     //
     // LearnCode ITEM   [TODO: FIX THIS? seems to not ne working]
     //
-    learnCodeItem && <span key='learn-code-item'>{_learnCodeItemHdrs[learnCodeItem]}</span>,
+    learnCodeItem &&
+      <span key="learn-code-item">
+        {_learnCodeItemHdrs[learnCodeItem]}
+      </span>,
     //
     // Other low-context item (create asset, list users etc) ITEM
     //
-    !learnCodeItem && !usernameToShow && !assetId && !isPlay &&
-    <span key='route-name-item'>{name}</span>,
+    !learnCodeItem &&
+      !usernameToShow &&
+      !assetId &&
+      !isPlay &&
+      <span key="route-name-item">
+        {name}
+      </span>,
     //
     // AssetName
     //
-    (assetId && currentlyEditingAssetInfo && currentlyEditingAssetInfo.name) && (
-      <span key='asset-name'>
+    assetId &&
+      currentlyEditingAssetInfo &&
+      currentlyEditingAssetInfo.name &&
+      <span key="asset-name">
         <Icon name={_assetVerbIcons[assetVerb]} />
-        { currentlyEditingAssetInfo.isDeleted &&
-          <Icon name='trash' color='red' />
-        }
-        { currentlyEditingAssetInfo.isLocked &&
-          <Icon name='lock' color='blue' />
-        }
-        '{currentlyEditingAssetInfo.name}'
-        &ensp;
+        {currentlyEditingAssetInfo.isDeleted && <Icon name="trash" color="red" />}
+        {currentlyEditingAssetInfo.isLocked && <Icon name="lock" color="blue" />}
+        '{currentlyEditingAssetInfo.name}' &ensp;
         {/* Popup for > Related [ TODO: MOVE THIS OUT OF ASSETNAME SO IT WORKS WITH ASSETBROWSE/PLAY ETC scenarios */}
-        {usernameToShow && (
+        {usernameToShow &&
           <Popup
-            on='hover'
+            on="hover"
             hoverable
             wide
             onOpen={_handleRelatedAssetsPopupOpen}
-            position='bottom left'
-            trigger={<Icon color='blue' name='ellipsis horizontal' style={breadcrumbImageStyle} />}
+            position="bottom left"
+            trigger={<Icon color="blue" name="ellipsis horizontal" style={breadcrumbImageStyle} />}
           >
-            <Popup.Header>
-              Related Assets
-            </Popup.Header>
+            <Popup.Header>Related Assets</Popup.Header>
             <Popup.Content>
               <Input
-                id='mgb-navbar-relatedassets' // so it can be focused on open
+                id="mgb-navbar-relatedassets" // so it can be focused on open
                 fluid
-                size='mini'
-                icon='search'
+                size="mini"
+                icon="search"
                 loading={relatedAssetsLoading}
-                placeholder='Related assets'
+                placeholder="Related assets"
                 defaultValue={quickAssetSearch}
                 onChange={handleSearchNavKey}
               />
@@ -250,35 +266,40 @@ const NavBarBreadcrumbUI = (props) => {
                 selection
                 style={{ maxHeight: '30em', width: '20em', overflowY: 'auto' }}
                 items={_.map(filteredRelatedAssets, a => ({
-                  key:     a._id,
-                  as:      QLink,
-                  to:      `/u/${a.dn_ownerName}/asset/${a._id}`,
-                  style:   { color: AssetKinds.getColor(a.kind) },
-                  icon:    { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
-                  content: currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
+                  key: a._id,
+                  as: QLink,
+                  to: `/u/${a.dn_ownerName}/asset/${a._id}`,
+                  style: { color: AssetKinds.getColor(a.kind) },
+                  icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
+                  content:
+                    currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
                 }))}
               />
               <div>
-                { contextualProjectName &&
-                <small>
-                  <span>Within </span>
-                  <QLink to={`/u/${user ? user.username : (currUser ? currUser.username : null)}/projects/${contextualProjectName}`}>
-                    <Icon name='sitemap' /><span>{contextualProjectName}</span>
-                  </QLink>
-                </small>
-                }
-                <QLink to='/assets/create' style={{ float: 'right' }}>
+                {contextualProjectName &&
+                  <small>
+                    <span>Within </span>
+                    <QLink
+                      to={`/u/${user
+                        ? user.username
+                        : currUser ? currUser.username : null}/projects/${contextualProjectName}`}
+                    >
+                      <Icon name="sitemap" />
+                      <span>
+                        {contextualProjectName}
+                      </span>
+                    </QLink>
+                  </small>}
+                <QLink to="/assets/create" style={{ float: 'right' }}>
                   <Icon.Group>
-                    <Icon color='green' name='pencil' />
-                    <Icon color='green' corner name='add' />
+                    <Icon color="green" name="pencil" />
+                    <Icon color="green" corner name="add" />
                   </Icon.Group>
                 </QLink>
               </div>
             </Popup.Content>
-          </Popup>
-        )}
-      </span>
-    ),
+          </Popup>}
+      </span>,
   ]
     .filter(elm => {
       // filter out falsey breadcrumb sections
@@ -286,24 +307,27 @@ const NavBarBreadcrumbUI = (props) => {
     })
     .map(elm => {
       // add section wrapper
-      return <div key={elm.key} className='section'>{elm}</div>
+      return (
+        <div key={elm.key} className="section">
+          {elm}
+        </div>
+      )
     })
 
   return (
     <div style={{ display: 'inline-block' }}>
-      <Breadcrumb icon='right angle' sections={sections} />
-
+      <Breadcrumb icon="right angle" sections={sections} />
     </div>
   )
 }
 
 NavBarBreadcrumbUI.propTypes = {
-  params:                    PropTypes.object.isRequired,      // The :params from /imports/routes/index.js via App.js. See there for description of params
-  user:                      PropTypes.object,                 // If there is a :id user id  or :username on the path, this is the user record for it
-  currUser:                  PropTypes.object,                 // Currently logged in user.. or null if not logged in.
-  name:                      PropTypes.string,                 // Page title to show in NavBar breadcrumb
-  location:                  PropTypes.object,                 // basically windows.location, but via this.props.location from App.js (from React Router)
-  currentlyEditingAssetInfo: PropTypes.object.isRequired// An object with some info about the currently edited Asset - as defined in App.js' this.state
+  params: PropTypes.object.isRequired, // The :params from /imports/routes/index.js via App.js. See there for description of params
+  user: PropTypes.object, // If there is a :id user id  or :username on the path, this is the user record for it
+  currUser: PropTypes.object, // Currently logged in user.. or null if not logged in.
+  name: PropTypes.string, // Page title to show in NavBar breadcrumb
+  location: PropTypes.object, // basically windows.location, but via this.props.location from App.js (from React Router)
+  currentlyEditingAssetInfo: PropTypes.object.isRequired, // An object with some info about the currently edited Asset - as defined in App.js' this.state
 }
 
 const NameInfoAzzets = new Meteor.Collection('NameInfoAzzets')
@@ -313,7 +337,7 @@ const NavBarBreadcrumb = React.createClass({
 
   getInitialState() {
     return {
-      quickAssetSearch: ''
+      quickAssetSearch: '',
     }
   },
 
@@ -321,30 +345,29 @@ const NavBarBreadcrumb = React.createClass({
     const { location, currentlyEditingAssetInfo, params } = this.props
     const { query } = location
     const { projectNames } = currentlyEditingAssetInfo
-    return projectNames && projectNames.length > 0 ? projectNames[0] : (
-      // Else is it a query?
-      query && query.project && query.project.length > 1
-        ? query.project
-        : params.projectName || null
-    )
+    return projectNames && projectNames.length > 0
+      ? projectNames[0]
+      : // Else is it a query?
+        query && query.project && query.project.length > 1 ? query.project : params.projectName || null
   },
 
   getMeteorData() {
     const { user, currUser } = this.props
     const { quickAssetSearch } = this.state
-    const handleForAssets = Meteor.subscribe('assets.public.nameInfo.query',
-      user ? user._id : (currUser ? currUser._id : null),
-      null,   // assetKinds=all
-      quickAssetSearch,   // Search for string in name
+    const handleForAssets = Meteor.subscribe(
+      'assets.public.nameInfo.query',
+      user ? user._id : currUser ? currUser._id : null,
+      null, // assetKinds=all
+      quickAssetSearch, // Search for string in name
       this._getContextualProjectName(),
       false,
       false,
       'edited', // Sort by recently edited
-      (user || currUser) ? 50 : 10, // Just a few if not logged in and no context
+      user || currUser ? 50 : 10, // Just a few if not logged in and no context
     )
     return {
       relatedAssetsLoading: !handleForAssets.ready(),
-      relatedAssets:        NameInfoAzzets.find().fetch()
+      relatedAssets: NameInfoAzzets.find().fetch(),
     }
   },
 
@@ -355,14 +378,14 @@ const NavBarBreadcrumb = React.createClass({
   render() {
     return (
       <NavBarBreadcrumbUI
-        {...(this.props)}
+        {...this.props}
         {...this.data}
         {...this.state}
         contextualProjectName={this._getContextualProjectName()}
         handleSearchNavKey={this.handleSearchNavKey}
       />
     )
-  }
+  },
 })
 
 export default NavBarBreadcrumb

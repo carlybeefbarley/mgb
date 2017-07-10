@@ -1,9 +1,9 @@
-const webdriver = require('selenium-webdriver');
+const webdriver = require('selenium-webdriver')
 const Key = webdriver.Key
 
 //const By = webdriver.By
 //const until = webdriver.until
-const SeleniumHelper = require("../helpers/selenium.js")
+const SeleniumHelper = require('../helpers/selenium.js')
 
 const EMAIL = 'tester@example.com'
 const PASSWORD = 'tester1'
@@ -12,30 +12,30 @@ const buttons = {
   // if avatar is visible login will be threated as successful
   avatar: '#mgbjr-np-user-avatar',
   login: '#mgbjr-np-login',
-  submitLoginForm: 'form button.ui.button'
+  submitLoginForm: 'form button.ui.button',
 }
 
 const inputs = {
-  email: "input[name=email]",
-  password: "input[name=password]"
+  email: 'input[name=email]',
+  password: 'input[name=password]',
 }
 
-module.exports = (browser) => {
+module.exports = browser => {
   const sel = SeleniumHelper(browser)
 
   // return function so procedure can be used directly as callback
-  return (done) => {
+  return done => {
     // wait for React root element
-    sel.css("#root")
-    console.log("ROOT selected!")
+    sel.css('#root')
+    console.log('ROOT selected!')
     // already logged in ?
     sel.exists(buttons.avatar, (e, found) => {
       if (found) {
-        console.log("Already logged in!")
+        console.log('Already logged in!')
         sel.done(done)
         return
       }
-      console.log("Trying to log in..!")
+      console.log('Trying to log in..!')
       // and check again - just in case we are logged in already
       sel.css(buttons.login).click()
       // clear input - because chrome tends to save forms
@@ -52,13 +52,12 @@ module.exports = (browser) => {
       //sel.wait(100)
       //sel.takeScreenShot('scr/isLogged.png')
 
-
       sel.untilVisible(buttons.avatar, 3000)
       sel.exists(buttons.avatar, e => {
         if (e) {
-          console.log("LOGIN FAILED!", e)
+          console.log('LOGIN FAILED!', e)
           sel.takeScreenShot('scr/NOTLoggedIn.png', () => {
-            throw(e)
+            throw e
           })
           sel.done(done)
           return
@@ -66,7 +65,6 @@ module.exports = (browser) => {
         sel.takeScreenShot('scr/LoggedIn.png')
         sel.done(done)
       })
-
     })
   }
 }

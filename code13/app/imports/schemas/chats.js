@@ -43,16 +43,16 @@ const _scopeGroupCharToFriendlyNames = {
   P: 'Project',
   A: 'Asset',
   U: 'User',
-  D: 'DirectMessage'
+  D: 'DirectMessage',
 }
 const _scopeGroupScopeFriendlyNamesToChars = _.invert(_scopeGroupCharToFriendlyNames)
 
 const _validChannelNameScopeChars = _.keys(_scopeGroupCharToFriendlyNames)
 const _validChannelNameScopeFriendlyNames = _.keys(_scopeGroupScopeFriendlyNamesToChars)
 const _validChannelPartSeparatorChar = '_'
-const _validChannelNamePrefixes = _.map(_validChannelNameScopeChars, c => c+_validChannelPartSeparatorChar) // ['G:', 'P:' etc]
+const _validChannelNamePrefixes = _.map(_validChannelNameScopeChars, c => c + _validChannelPartSeparatorChar) // ['G:', 'P:' etc]
 const _validChannelNameSuffix = _validChannelPartSeparatorChar
-const _validDmIdSeparatorChar = '+'  // TODO: Check + is ok
+const _validDmIdSeparatorChar = '+' // TODO: Check + is ok
 
 /**
  * This checks the channel name is in the correct format, but does not validate
@@ -60,29 +60,28 @@ const _validDmIdSeparatorChar = '+'  // TODO: Check + is ok
  *
  * @param {String} channelName
  */
-export const isChannelNameWellFormed = channelName => (
+export const isChannelNameWellFormed = channelName =>
   _.isString(channelName) &&
-  channelName.length > 4 &&     // X:?: is absolute minimum possible channelName format
-  _.includes(_validChannelNamePrefixes, channelName.slice(0,2)) &&
+  channelName.length > 4 && // X:?: is absolute minimum possible channelName format
+  _.includes(_validChannelNamePrefixes, channelName.slice(0, 2)) &&
   _.last(channelName) === _validChannelNameSuffix
-)
 
 export function isChannelNameValid(channelName) {
   // TODO - some more checks on validity of scopeIds etc
   return isChannelNameWellFormed(channelName)
 }
-const _isValidScopeGroupName = scopeGroupName => _.includes(_validChannelNameScopeFriendlyNames, scopeGroupName)
+const _isValidScopeGroupName = scopeGroupName =>
+  _.includes(_validChannelNameScopeFriendlyNames, scopeGroupName)
 
-const _isChannelObjWellFormed = ( params ) => {
+const _isChannelObjWellFormed = params => {
   const { scopeGroupName, scopeId, dmUid1, dmUid2 } = params
-  if (!_.isString(scopeGroupName) || !_isValidScopeGroupName(scopeGroupName))
-    return false
-  if (dmUid1 || dmUid2)
-  {
-    if (!_.isString(dmUid1) || !_.isString(dmUid2) || dmUid1.length < 16 || dmUid2.length < 16 )
-      return false
-  }
-  else if (!_.isString(scopeId) || scopeId.length < 2) // let's have at least two charaters, even for global ones guys :)
+  if (!_.isString(scopeGroupName) || !_isValidScopeGroupName(scopeGroupName)) return false
+  if (dmUid1 || dmUid2) {
+    if (!_.isString(dmUid1) || !_.isString(dmUid2) || dmUid1.length < 16 || dmUid2.length < 16) return false
+  } else if (
+    !_.isString(scopeId) ||
+    scopeId.length < 2 // let's have at least two charaters, even for global ones guys :)
+  )
     return false
   // still here? sounds cool guys
   return true
@@ -122,8 +121,7 @@ could be used as a message-thread within DMs
  * @returns { channelName, _scopeChar, scopeGroupName, scopeId, dmUid1, dmUid2, _topic }
  */
 export const parseChannelName = channelName => {
-  if (!isChannelNameWellFormed(channelName))
-    return null
+  if (!isChannelNameWellFormed(channelName)) return null
   const [_scopeChar, scopeId, _topic] = channelName.split(_validChannelPartSeparatorChar)
   const scopeGroupName = _scopeGroupCharToFriendlyNames[_scopeChar]
   const [dmUid1, dmUid2] = _scopeChar === 'D' ? _.split(scopeId, _validDmIdSeparatorChar) : [null, null]
@@ -134,9 +132,9 @@ export const parseChannelName = channelName => {
     scopeId,
     dmUid1,
     dmUid2,
-    _topic }
+    _topic,
+  }
 }
-
 
 /**
  * makeChannelName()
@@ -147,18 +145,18 @@ export const parseChannelName = channelName => {
  * @param {Object} params
  * @returns {string}
  */
-export const makeChannelName = ( params ) => {
-  if (!_isChannelObjWellFormed( params ))
-    return null
+export const makeChannelName = params => {
+  if (!_isChannelObjWellFormed(params)) return null
   const { scopeGroupName, scopeId, dmUid1, dmUid2 } = params
   const cNprefix = _scopeGroupScopeFriendlyNamesToChars[scopeGroupName] + _validChannelPartSeparatorChar
-  const encodedScopeId = (scopeGroupName !== _scopeGroupCharToFriendlyNames.D) ? scopeId :
-            ( dmUid1 < dmUid2 ? dmUid1 + _validDmIdSeparatorChar + dmUid2
-            : dmUid2 + _validDmIdSeparatorChar + dmUid1
-            )
+  const encodedScopeId =
+    scopeGroupName !== _scopeGroupCharToFriendlyNames.D
+      ? scopeId
+      : dmUid1 < dmUid2
+        ? dmUid1 + _validDmIdSeparatorChar + dmUid2
+        : dmUid2 + _validDmIdSeparatorChar + dmUid1
   return cNprefix + encodedScopeId + _validChannelNameSuffix
 }
-
 
 /*
 
@@ -211,82 +209,79 @@ To check read/unread situations, each User has some objects to support this chat
 
 ******/
 
-
-
-const optional = Match.Optional       // Note that Optional does NOT permit null!
+const optional = Match.Optional // Note that Optional does NOT permit null!
 
 export const chatsSchema = {
-  _id:           String,              // ID of this chat message
+  _id: String, // ID of this chat message
 
-  createdAt:     Date,                // When created
-  updatedAt:     Date,                // We may allow edit in future. This will be same is createdAt for messages that have not been edited
-
+  createdAt: Date, // When created
+  updatedAt: Date, // We may allow edit in future. This will be same is createdAt for messages that have not been edited
 
   // Identifiers for who sent the chat (always provided)
-  byUserName:    String,              // UserName (not ID)
-  byUserId:      String,              // OK, _this_ one is the ID
+  byUserName: String, // UserName (not ID)
+  byUserId: String, // OK, _this_ one is the ID
 
   // Identifers for scope of the action
-  toChannelName: String,              // A channelName generated
-                                      // by makeChannelName() according to it's described constraints
+  toChannelName: String, // A channelName generated
+  // by makeChannelName() according to it's described constraints
 
-  toAssetId:     optional(String),    // If it is an asset-scoped chat - or undefined if not asset-scoped
-  toAssetName:   optional(String),    // Asset's name If it is an asset-scoped chat (duplicated here for speed, but can be stale. Handy to track if the asset got renamed)
-  toOwnerId:     optional(String),    // Owner's user ID if @person. Only one @person...
-  toOwnerName:   optional(String),    // Owner's user NAME if @person (duplicated here for speed, but can be stale if we ever support user rename)
+  toAssetId: optional(String), // If it is an asset-scoped chat - or undefined if not asset-scoped
+  toAssetName: optional(String), // Asset's name If it is an asset-scoped chat (duplicated here for speed, but can be stale. Handy to track if the asset got renamed)
+  toOwnerId: optional(String), // Owner's user ID if @person. Only one @person...
+  toOwnerName: optional(String), // Owner's user NAME if @person (duplicated here for speed, but can be stale if we ever support user rename)
 
   // the actual chat information
-  message:       String,              // The actual message
+  message: String, // The actual message
 
   // other special states
-  isDeleted:    optional(Boolean),    // If true then show as '(deleted)'
+  isDeleted: optional(Boolean), // If true then show as '(deleted)'
 
   // if superadmin deletes a chat message it is saved in this field and text is replaced with deleted by admin and user cannot reenable
   prvBannedMessage: optional(String),
 
   // The su fields can only be changed by a superAdmin User.. They typically relate to workflows or system counts
-  suFlagId:       optional(String),      // non-null / non-empty if there is a Flag record for this message (See Flags.js)
-  suIsBanned:     optional(Boolean),     // Optional. If true, then this chat has been banned. See suFlagId for the flagging workflow
+  suFlagId: optional(String), // non-null / non-empty if there is a Flag record for this message (See Flags.js)
+  suIsBanned: optional(Boolean), // Optional. If true, then this chat has been banned. See suFlagId for the flagging workflow
 }
 
 export const ChatPosters = {
-  SUPERADMIN: "@@superAdmin",
-  ACTIVEUSER: "@@activeUser"
+  SUPERADMIN: '@@superAdmin',
+  ACTIVEUSER: '@@activeUser',
 }
 
 // TODO: Rename this as PublicChatChannels
 export const ChatChannels = {
   GENERAL: {
-    name:         "general",      // name is the Presented name, but not a key
-    channelName:  makeChannelName( { scopeGroupName: 'Global', scopeId: 'GENERAL' } ),
-    icon:         "hashtag",
-    poster:       ChatPosters.ACTIVEUSER,
-    description:  "General suggestions, discussions and questions related to MGB",
-    subscopes:    {}
+    name: 'general', // name is the Presented name, but not a key
+    channelName: makeChannelName({ scopeGroupName: 'Global', scopeId: 'GENERAL' }),
+    icon: 'hashtag',
+    poster: ChatPosters.ACTIVEUSER,
+    description: 'General suggestions, discussions and questions related to MGB',
+    subscopes: {},
   },
   MGBBUGS: {
-    name:         "mgb-bugs",
-    channelName:  makeChannelName( { scopeGroupName: 'Global', scopeId: 'MGBBUGS' } ),
-    icon:         "hashtag",
-    poster:       ChatPosters.ACTIVEUSER,
-    description:  "Discussions about potential bugs and fixes in MGB",
-    subscopes:    {}
+    name: 'mgb-bugs',
+    channelName: makeChannelName({ scopeGroupName: 'Global', scopeId: 'MGBBUGS' }),
+    icon: 'hashtag',
+    poster: ChatPosters.ACTIVEUSER,
+    description: 'Discussions about potential bugs and fixes in MGB',
+    subscopes: {},
   },
   MGBHELP: {
-    name:         "mgb-help",
-    channelName:  makeChannelName( { scopeGroupName: 'Global', scopeId: 'MGBHELP' } ),
-    icon:         "hashtag",
-    poster:       ChatPosters.ACTIVEUSER,
-    description:  "Ask for help in how to use the MGB site",
-    subscopes:    {}
+    name: 'mgb-help',
+    channelName: makeChannelName({ scopeGroupName: 'Global', scopeId: 'MGBHELP' }),
+    icon: 'hashtag',
+    poster: ChatPosters.ACTIVEUSER,
+    description: 'Ask for help in how to use the MGB site',
+    subscopes: {},
   },
   RANDOM: {
-    name:         "random",
-    icon:         "hashtag",
-    channelName:  makeChannelName( { scopeGroupName: 'Global', scopeId: 'RANDOM' } ),
-    poster:       ChatPosters.ACTIVEUSER,
-    description:  "Off-topic discussions not related to MGB",
-    subscopes:    {}
+    name: 'random',
+    icon: 'hashtag',
+    channelName: makeChannelName({ scopeGroupName: 'Global', scopeId: 'RANDOM' }),
+    poster: ChatPosters.ACTIVEUSER,
+    description: 'Off-topic discussions not related to MGB',
+    subscopes: {},
   },
   // ANNOUNCE: {
   //   name:         "mgb-announce",
@@ -297,28 +292,24 @@ export const ChatChannels = {
   //   subscopes:    {}
   // },
 
-  getIconClass: function (key) { return (ChatChannels.hasOwnProperty(key) ? ChatChannels[key].icon : "warning sign") + " icon"},
-  sortedKeys: [
-    "GENERAL",
-    "MGBBUGS",
-    "MGBHELP",
-    "RANDOM"  ]
+  getIconClass: function(key) {
+    return (ChatChannels.hasOwnProperty(key) ? ChatChannels[key].icon : 'warning sign') + ' icon'
+  },
+  sortedKeys: ['GENERAL', 'MGBBUGS', 'MGBHELP', 'RANDOM'],
 }
 
 // TODO: Move to SpecialGlobals.js
 export const chatParams = {
-  maxChatMessageTextLen: 220,     // Maximum number of chars in a single message
-  maxClientChatHistory:  200,     // Maximum number of historical messages to send back to client
-  defaultChannelName:    ChatChannels['GENERAL'].channelName
+  maxChatMessageTextLen: 220, // Maximum number of chars in a single message
+  maxClientChatHistory: 200, // Maximum number of historical messages to send back to client
+  defaultChannelName: ChatChannels['GENERAL'].channelName,
 }
-
 
 function _userIsSuperAdmin(currUser) {
   let isSuperAdmin = false
   if (currUser && currUser.permissions) {
-    currUser.permissions.map((perm) => {
-      if (perm.roles[0] === "super-admin")
-        isSuperAdmin = true
+    currUser.permissions.map(perm => {
+      if (perm.roles[0] === 'super-admin') isSuperAdmin = true
     })
   }
   return isSuperAdmin
@@ -336,51 +327,44 @@ function _userIsSuperAdmin(currUser) {
  */
 export function currUserCanSend(currUser, channelName) {
   const channelObj = parseChannelName(channelName)
-  if (!channelObj)
-    return false          // Can't parse it..
-  if (channelObj.scopeGroupName === 'Global')
-  {
+  if (!channelObj) return false // Can't parse it..
+  if (channelObj.scopeGroupName === 'Global') {
     const chatChannel = ChatChannels[channelObj.scopeId]
-    if (!chatChannel || !chatChannel.poster)
-      return false          // No posters record -> no sends allowed (fail securely)
+    if (!chatChannel || !chatChannel.poster) return false // No posters record -> no sends allowed (fail securely)
 
     const validPoster = chatChannel.poster
-    switch (validPoster)
-    {
-    case ChatPosters.SUPERADMIN:
-      return _userIsSuperAdmin(currUser)
-    case ChatPosters.ACTIVEUSER:
-      return !!currUser
-    default:
-      console.trace("Unknown Permission requirement message posting: ", validPoster)
-      return false
+    switch (validPoster) {
+      case ChatPosters.SUPERADMIN:
+        return _userIsSuperAdmin(currUser)
+      case ChatPosters.ACTIVEUSER:
+        return !!currUser
+      default:
+        console.trace('Unknown Permission requirement message posting: ', validPoster)
+        return false
     }
   }
-  if (channelObj.scopeGroupName === 'Project')
-    return true // This is because the client isn't meant to see inaccessible Project chat anyway, so keep this simple
+  if (channelObj.scopeGroupName === 'Project') return true // This is because the client isn't meant to see inaccessible Project chat anyway, so keep this simple
 
-  if (channelObj.scopeGroupName === 'Asset')
-    return true // We may tighten this up later
-  if(channelObj.scopeGroupName === 'User')
-    return true
+  if (channelObj.scopeGroupName === 'Asset') return true // We may tighten this up later
+  if (channelObj.scopeGroupName === 'User') return true
 
-  console.log("TODO: [User/DM]-chat currUserCanSend()")
+  console.log('TODO: [User/DM]-chat currUserCanSend()')
   return false
 }
 
 // Version of lodash/underscore on server doesn't have _.findKey :(
 function __findKey(obj, predicate) {
-  let keys = _.keys(obj), key
+  let keys = _.keys(obj),
+    key
   for (let i = 0, length = keys.length; i < length; i++) {
     key = keys[i]
-    if (predicate(obj[key], key, obj))
-      return key
+    if (predicate(obj[key], key, obj)) return key
   }
   return null
 }
 
 export function getChannelKeyFromName(cName) {
-  return __findKey(ChatChannels, c => (c.name === cName) )
+  return __findKey(ChatChannels, c => c.name === cName)
 }
 
 /**
@@ -402,26 +386,23 @@ export function getChannelKeyFromName(cName) {
  */
 export function makePresentedChannelName(channelName, objectName) {
   const channelObj = parseChannelName(channelName)
-  if (!channelObj)
-    return `(Unknown Channel: '${channelName}')`          // Can't parse it..
-  switch (channelObj.scopeGroupName)
-  {
-  case 'Global':
-    var chatChannel = ChatChannels[channelObj.scopeId]
-    if (!chatChannel)
-      return `(Unknown GlobalChannel: '${channelName}')`
-    return chatChannel.name
+  if (!channelObj) return `(Unknown Channel: '${channelName}')` // Can't parse it..
+  switch (channelObj.scopeGroupName) {
+    case 'Global':
+      var chatChannel = ChatChannels[channelObj.scopeId]
+      if (!chatChannel) return `(Unknown GlobalChannel: '${channelName}')`
+      return chatChannel.name
     // break
-  case 'Project':
-    return `${objectName} - Member chat`
-  case 'Asset':
-    return `${objectName} - Asset Chat`
-  case 'User':
-    return `${objectName} - User Wall`
-  case 'DirectMessage':
-    return 'DirectMessage '
-  default:
-    console.trace("Unexpected ChatScope in channelName=",channelName)
+    case 'Project':
+      return `${objectName} - Member chat`
+    case 'Asset':
+      return `${objectName} - Asset Chat`
+    case 'User':
+      return `${objectName} - User Wall`
+    case 'DirectMessage':
+      return 'DirectMessage '
+    default:
+      console.trace('Unexpected ChatScope in channelName=', channelName)
   }
 }
 
@@ -429,8 +410,8 @@ const _scopeGroupCharToIconNames = {
   G: 'hashtag',
   P: 'sitemap',
   A: 'pencil',
-  U: 'user',  // Note that slack uses circle.. good options here would be 'user outline' and 'user'
-  D: 'comments outline'
+  U: 'user', // Note that slack uses circle.. good options here would be 'user outline' and 'user'
+  D: 'comments outline',
 }
 
 /**
@@ -439,22 +420,21 @@ const _scopeGroupCharToIconNames = {
  */
 export const makePresentedChannelIconName = channelName => _scopeGroupCharToIconNames[channelName[0]]
 
-
 /**
  * The completion callback is a meteor Callback. See "Chats.send" for
  * the code that generates the return values. It includes
  * info such as  { chatId, chatTimestamp }
  */
-export function ChatSendMessageOnChannelName( channelName, msg, completionCallback)
-{
-  if (!msg || msg.length < 1)
-  {
-    completionCallback( { reason: "Message empty" }, null)
+export function ChatSendMessageOnChannelName(channelName, msg, completionCallback) {
+  if (!msg || msg.length < 1) {
+    completionCallback({ reason: 'Message empty' }, null)
     return false
   }
-  if (msg.length > chatParams.maxChatMessageTextLen)
-  {
-    completionCallback( { reason: ("Message too long. Max length is " + chatParams.maxChatMessageTextLen) }, null)
+  if (msg.length > chatParams.maxChatMessageTextLen) {
+    completionCallback(
+      { reason: 'Message too long. Max length is ' + chatParams.maxChatMessageTextLen },
+      null,
+    )
     return false
   }
 
@@ -469,9 +449,9 @@ export function ChatSendMessageOnChannelName( channelName, msg, completionCallba
 }
 
 export function deleteChatRecord(chatId) {
-  Meteor.call( "Chat.delete", chatId )
+  Meteor.call('Chat.delete', chatId)
 }
 
-export function restoreChatRecord(chatId){
-  Meteor.call ( "Chat.restore", chatId )
+export function restoreChatRecord(chatId) {
+  Meteor.call('Chat.restore', chatId)
 }

@@ -1,4 +1,3 @@
-
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 // Common Skill Node helpers
@@ -15,25 +14,26 @@
 //   $meta.$name          - Name
 //   $meta.$description   - Description
 //   $meta.requires       - requires some other skill block first (string with comma separated paths).. e.g .basics, or ..basics
-//   $meta.requireOneOf   - requires just ONE of the other skill block first 
+//   $meta.requireOneOf   - requires just ONE of the other skill block first
 //   $meta.unlock         - unlocks some subsequent skill block
 
 const _validateLevel = level => {
-  if (level < 0 || level > 4 || !Number.isInteger(level))
-  {
-    console.error("Unexpected SkillNode Level ", level)
+  if (level < 0 || level > 4 || !Number.isInteger(level)) {
+    console.error('Unexpected SkillNode Level ', level)
     debugger
   }
 }
 
 export default {
   make(...a) {
-    return Object.assign({}, ...a);
+    return Object.assign({}, ...a)
   },
 
   meta(o, ...a) {
     let ret = o
-    a.forEach((o) => { ret = Object.assign(ret, o.$meta) })     // Could use _.assign() or _.defaults
+    a.forEach(o => {
+      ret = Object.assign(ret, o.$meta)
+    }) // Could use _.assign() or _.defaults
     return { $meta: ret }
   },
 
@@ -41,21 +41,22 @@ export default {
   get E() {
     return {
       $meta: {
-        enabled:   1,
-        level:     0,   // By default
-        isLeaf:    1
-      }
+        enabled: 1,
+        level: 0, // By default
+        isLeaf: 1,
+      },
     }
   },
 
-  En: function(level = 0) {  // Note that 0 will be turned into 1.. the levels go from 1 to 4
+  En: function(level = 0) {
+    // Note that 0 will be turned into 1.. the levels go from 1 to 4
     _validateLevel(level)
     return {
       $meta: {
-        enabled:  1,
-        level:    level,
-        isLeaf:  1
-      }
+        enabled: 1,
+        level: level,
+        isLeaf: 1,
+      },
     }
   },
 
@@ -63,10 +64,10 @@ export default {
   get D() {
     return {
       $meta: {
-        enabled:  0,
-        level:    0,
-        isLeaf:   1
-      }
+        enabled: 0,
+        level: 0,
+        isLeaf: 1,
+      },
     }
-  }
+  },
 }

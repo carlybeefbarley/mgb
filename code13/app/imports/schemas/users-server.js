@@ -16,8 +16,7 @@ const serverMethodHelper = userId => {
   checkIsLoggedInAndNotSuspended()
   const sel = { _id: userId }
   const u = Meteor.users.findOne(sel)
-  if (!u)
-    throw new Meteor.Error(404, `User #${userId} not found`)
+  if (!u) throw new Meteor.Error(404, `User #${userId} not found`)
   return u
 }
 
@@ -27,8 +26,7 @@ const serverMethodHelper = userId => {
 // },
 
 Meteor.methods({
-
-  "User.sendSignUpEmail": function (email) {
+  'User.sendSignUpEmail': function(email) {
     console.log('############## User.sendSignUpEmail...', email)
     console.log('userId', Meteor.userId())
 
@@ -62,12 +60,20 @@ Meteor.methods({
     const u = serverMethodHelper(userId)
     check(newMgb1namesVerified, String)
     checkMgb.checkUserIsSuperAdmin()
-    const count = Meteor.users.update( { _id: userId } , { $set: { 'profile.mgb1namesVerified': newMgb1namesVerified } })
-    console.log('[User.update.mgb1namesVerified]', count, userId, `Changed from '${u.profile.mgb1namesVerified}' to '${newMgb1namesVerified}'`)
+    const count = Meteor.users.update(
+      { _id: userId },
+      { $set: { 'profile.mgb1namesVerified': newMgb1namesVerified } },
+    )
+    console.log(
+      '[User.update.mgb1namesVerified]',
+      count,
+      userId,
+      `Changed from '${u.profile.mgb1namesVerified}' to '${newMgb1namesVerified}'`,
+    )
     return count
   },
 
-    /**
+  /**
    * RPC User.toggleBan
    * Currently only superAdmin can ban/unban an account. The idea is that the
    * discussion with the banned user would happen via email for now.
@@ -76,7 +82,7 @@ Meteor.methods({
     const u = serverMethodHelper(userId)
     checkMgb.checkUserIsSuperAdmin()
     const newIsBanned = !u.suIsBanned
-    const count = Meteor.users.update( { _id: userId } , { $set: { suIsBanned: newIsBanned } })
+    const count = Meteor.users.update({ _id: userId }, { $set: { suIsBanned: newIsBanned } })
     console.log('[User.toggleBan]', count, userId, `NewValue=${newIsBanned}`)
     return count
   },
@@ -87,11 +93,9 @@ Meteor.methods({
    */
   'User.deactivateAccount': function(userId) {
     const u = serverMethodHelper(userId)
-    if (this.userId !== userId)
-      checkMgb.checkUserIsSuperAdmin()
-    if (u.isDeactivated === true)
-      throw new Meteor.Error(500, `User #${userId} is already deactivated`)
-    const count = Meteor.users.update( { _id: userId }, { $set: { isDeactivated: true } })
+    if (this.userId !== userId) checkMgb.checkUserIsSuperAdmin()
+    if (u.isDeactivated === true) throw new Meteor.Error(500, `User #${userId} is already deactivated`)
+    const count = Meteor.users.update({ _id: userId }, { $set: { isDeactivated: true } })
     console.log('[User.deactivateAccount]', count, userId)
     return count
   },
@@ -104,10 +108,9 @@ Meteor.methods({
   'User.reactivateAccount': function(userId) {
     const u = serverMethodHelper(userId)
     checkMgb.checkUserIsSuperAdmin()
-    if (u.isDeactivated !== true)
-      throw new Meteor.Error(500, `User #${userId} is not deActivated`)
-    const count = Meteor.users.update( { _id: userId }, { $set: { isDeactivated: false } })
+    if (u.isDeactivated !== true) throw new Meteor.Error(500, `User #${userId} is not deActivated`)
+    const count = Meteor.users.update({ _id: userId }, { $set: { isDeactivated: false } })
     console.log('[User.reactivateAccount]', count, userId)
     return count
-  }
+  },
 })

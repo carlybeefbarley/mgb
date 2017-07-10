@@ -1,12 +1,13 @@
-const webdriver = require('selenium-webdriver');
+const webdriver = require('selenium-webdriver')
 const until = webdriver.until
 
 const error = () => {
-  throw new Error("Failed to get message")
+  throw new Error('Failed to get message')
 }
-module.exports = (browser) => {
+module.exports = browser => {
   return (expectedMessage, done) => {
-    browser.wait(until.alertIsPresent(), 10000)
+    browser
+      .wait(until.alertIsPresent(), 10000)
       .then(() => {
         return browser.switchTo().alert()
       }, error)
@@ -16,7 +17,7 @@ module.exports = (browser) => {
         return text
       }, error)
       .then(text => {
-        console.log("GOT text from alert", text)
+        console.log('GOT text from alert', text)
         if (text !== expectedMessage) {
           throw new Error(`Expected: '${expectedMessage}' - got: '${text}'`)
         }
@@ -24,5 +25,3 @@ module.exports = (browser) => {
       }, error)
   }
 }
-
-

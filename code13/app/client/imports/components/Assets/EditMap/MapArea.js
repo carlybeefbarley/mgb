@@ -7,12 +7,12 @@ import PositionInfo from '../Common/Map/Tools/PositionInfo.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 
 export default class MapArea extends BaseMapArea {
-  get data () {
+  get data() {
     return this.props.data
   }
 
   /* events */
-  importFromDrop (e) {
+  importFromDrop(e) {
     const layer = this.getActiveLayer()
     if (layer && layer.onDrop) {
       // layer by it's own can handle drop
@@ -26,7 +26,7 @@ export default class MapArea extends BaseMapArea {
     if (asset) {
       // TODO: use enums for asset types
       if (asset.kind === 'graphic') {
-        if(this.props.addLayer){
+        if (this.props.addLayer) {
           const layer_data = this.props.addLayer(LayerTypes.image)
           this.onImageLayerDrop(e, layer_data)
         }
@@ -35,12 +35,12 @@ export default class MapArea extends BaseMapArea {
     }
 
     // FileList object.
-    const files = e.dataTransfer.files;
+    const files = e.dataTransfer.files
     // file has been dropped
     if (files.length) {
       Array.prototype.forEach.call(files, (file, i) => {
         const reader = new FileReader()
-        reader.onload = (e) => {
+        reader.onload = e => {
           const ext = file.name.split('.').pop().toLowerCase()
           const method = 'handleFileByExt_' + ext
           if (this[method]) {
@@ -52,22 +52,26 @@ export default class MapArea extends BaseMapArea {
     }
   }
 
-  render () {
+  render() {
     return (
       <div
         className={
-          this.props.highlightActiveLayer
-            ? 'tilemap-wrapper highlight-active-layer'
-            : 'tilemap-wrapper'
+          this.props.highlightActiveLayer ? 'tilemap-wrapper highlight-active-layer' : 'tilemap-wrapper'
         }
         onDragOver={this.prepareForDrag.bind(this)}
         onDrop={this.importFromDrop.bind(this)}
         onWheel={this.handleOnWheel.bind(this)}
-        onMouseMove={() => {this.refs.positionInfo && this.refs.positionInfo.forceUpdate() }}
-        >
+        onMouseMove={() => {
+          this.refs.positionInfo && this.refs.positionInfo.forceUpdate()
+        }}
+      >
         {this.getNotification()}
         {this.renderMap()}
-        <PositionInfo getInfo={this.getInfo.bind(this)} infoStyle={{position: 'fixed', bottom: 0}} ref='positionInfo' />
+        <PositionInfo
+          getInfo={this.getInfo.bind(this)}
+          infoStyle={{ position: 'fixed', bottom: 0 }}
+          ref="positionInfo"
+        />
       </div>
     )
   }

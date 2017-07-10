@@ -9,20 +9,18 @@ import _ from 'lodash'
  * @returns String - converted value
  */
 const doFix = (str, oldOwner, newOwner, assets) => {
-
   // DropArea import: owner:assetName
   if (str.startsWith(`${oldOwner}:`)) {
     const assetName = str.substring(oldOwner.length + 1)
-    if (_.find(assets, (a) => a.name === assetName)) {
+    if (_.find(assets, a => a.name === assetName)) {
       return newOwner + ':' + assetName
     }
   }
 
-
   // map references: /api/asset/png/stauzs/simple.sample.graphics
   if (str.startsWith(`/api/asset/png/${oldOwner}/`)) {
-    const assetName = str.substring((`/api/asset/png/${oldOwner}/`).length)
-    if (_.find(assets, (a) => a.name === assetName)) {
+    const assetName = str.substring(`/api/asset/png/${oldOwner}/`.length)
+    if (_.find(assets, a => a.name === assetName)) {
       return `/api/asset/png/${newOwner}/${assetName}`
     }
   }
@@ -30,14 +28,13 @@ const doFix = (str, oldOwner, newOwner, assets) => {
   // TODO: DRY ? this and above is copy-pasta
   // map tileset: /api/asset/tileset/stauzs/simple.sample.graphics
   if (str.startsWith(`/api/asset/tileset/${oldOwner}/`)) {
-    const assetName = str.substring((`/api/asset/tileset/${oldOwner}/`).length)
-    if (_.find(assets, (a) => a.name === assetName)) {
+    const assetName = str.substring(`/api/asset/tileset/${oldOwner}/`.length)
+    if (_.find(assets, a => a.name === assetName)) {
       return `/api/asset/tileset/${newOwner}/${assetName}`
     }
   }
   return str
 }
-
 
 /**
  * Fixes parts where asset is referenced as string: owner:name
@@ -62,9 +59,7 @@ const quickAndDirtyFix = (objToFix, oldOwner, newOwner, assets) => {
         console.log(`FIXED: ${i} ${objToFix[i]} => ${tmp}`)
         objToFix[i] = tmp
       }
-    }
-    else if (type == 'object')
-      quickAndDirtyFix(objToFix[i], oldOwner, newOwner, assets)
+    } else if (type == 'object') quickAndDirtyFix(objToFix[i], oldOwner, newOwner, assets)
   }
 }
 
@@ -93,10 +88,9 @@ const fixCodeAsset = (c2, oldOwner, newOwner, assets) => {
     // remove last quote
     const importName = trimmed.substring(0, trimmed.length - 1)
 
-
     // B: owner:name
     if (importName.indexOf(':') > -1) {
-      const parts = importName.split(":")
+      const parts = importName.split(':')
       if (parts[0] === oldOwner) {
         // NOTICE: real asset name is in the parts[1]
         if (_.find(assets, a => a.name === parts[1])) {
@@ -130,7 +124,7 @@ export const doFixupAssetReferences = (asset, oldOwner, newOwner, projectAssets)
     case 'tutorial':
     case 'sound':
     case 'music':
-      break  // These have no references to other assets
+      break // These have no references to other assets
     case 'actor':
     case 'actormap':
     case 'map':

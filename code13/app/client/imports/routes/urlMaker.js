@@ -19,38 +19,31 @@ import _ from 'lodash'
 
 let _appRouter = undefined // Set in setKnownRoutes()
 
-
 var _queryParamMap = {
   // APP queryGroup queries are defined at the App.js/Nav.js level and should be preserved when going to a new page within MGB
-  "_fp":  { qGroup: "APP",  symbolName: "app_flexPanel" },
-  "_xed": { qGroup: "APP",  symbolName: "app_experimentalEditors" }
+  _fp: { qGroup: 'APP', symbolName: 'app_flexPanel' },
+  _xed: { qGroup: 'APP', symbolName: 'app_experimentalEditors' },
 }
 
 const urlMaker = {
+  disableQueryParamPrefix: '-', // Character used for disabling effects of a query param. Use by _np, _fp etc
 
-  disableQueryParamPrefix: "-",    // Character used for disabling effects of a query param. Use by _np, _fp etc
-
-  isQueryEnabled(queryValue)
-  {
+  isQueryEnabled(queryValue) {
     return !!(queryValue && !queryValue.startsWith(urlMaker.disableQueryParamPrefix))
   },
 
-  enableQuery(queryValue, defaultValue)
-  {
+  enableQuery(queryValue, defaultValue) {
     // Empty -> Enabled(default)
-    if (!queryValue)
-      return defaultValue
+    if (!queryValue) return defaultValue
 
     // Disabled -> Enabled
-    if (!urlMaker.isQueryEnabled(queryValue))
-      return queryValue.slice(urlMaker.disableQueryParamPrefix.length)
+    if (!urlMaker.isQueryEnabled(queryValue)) return queryValue.slice(urlMaker.disableQueryParamPrefix.length)
 
     // Enabled -> (same)
     return queryValue
   },
 
-  disableQuery(queryValue, defaultValue)
-  {
+  disableQuery(queryValue, defaultValue) {
     // Enabled -> Disabled (ie. disableQueryParamPrefix+queryValue or null if it is the default)
     if (urlMaker.isQueryEnabled(queryValue))
       return queryValue === defaultValue ? null : urlMaker.disableQueryParamPrefix + queryValue
@@ -60,23 +53,22 @@ const urlMaker = {
     return queryValue
   },
 
-  setKnownRoutes(router)
-  {
+  setKnownRoutes(router) {
     _appRouter = router
   },
-
 
   /** Returns only the query objects with keys that match this queryGroup
    * @param query   An Object of querykey: queryvalue pairs
    * @param qGroup  A string with the queryGroup name, for example "APP". See _queryParamMap for definitions
    */
-  getQueryParamsMatchingQueryGroup: function(query, qGroup, excludedSymbolName)
-  {
-    return _.pickBy(query, (val, key) => (
-      _queryParamMap[key] &&
-      _queryParamMap[key].qGroup === qGroup &&
-      (!excludedSymbolName || excludedSymbolName !== _queryParamMap[key].symbolName)
-      ))
+  getQueryParamsMatchingQueryGroup: function(query, qGroup, excludedSymbolName) {
+    return _.pickBy(
+      query,
+      (val, key) =>
+        _queryParamMap[key] &&
+        _queryParamMap[key].qGroup === qGroup &&
+        (!excludedSymbolName || excludedSymbolName !== _queryParamMap[key].symbolName),
+    )
   },
 
   /** This is used to preserve any cross-app query params
@@ -86,40 +78,41 @@ const urlMaker = {
    * @returns {array}
    */
   getCrossAppQueryParams: function(query, excludedSymbolName = null) {
-    return this.getQueryParamsMatchingQueryGroup(query, "APP", excludedSymbolName)
+    return this.getQueryParamsMatchingQueryGroup(query, 'APP', excludedSymbolName)
   },
 
   /** This function checks that the query parameter is known (by symbolName) and returns the short form */
   queryParams: function(symbolName) {
     const queryParamKey = _.findKey(_queryParamMap, ['symbolName', symbolName])
-    if (!queryParamKey)
-    {
+    if (!queryParamKey) {
       console.trace(`Unknown queryParam "${symbolName}" passed to urlMaker`)
       return symbolName
     }
     return queryParamKey
   },
 
-  pathTo: function(stableName)  // and other arguments for params
-  {
-    if (stableName === "/")
-      return "/"    // Just handle this specially so we don't complicate parsing with this special case
+  pathTo: function(
+    stableName, // and other arguments for params
+  ) {
+    if (stableName === '/') return '/' // Just handle this specially so we don't complicate parsing with this special case
 
     // TODO: Validate this is a known path by looking in _appRouter for paths other than *
     //  ...<CODE CODE CODE>...
 
-
     let argPos = 1
 
-    let parts = stableName.split("/")
-    let mangledParts = parts.map(p => { return p[0] === ":" ? arguments[argPos++] : p})
+    let parts = stableName.split('/')
+    let mangledParts = parts.map(p => {
+      return p[0] === ':' ? arguments[argPos++] : p
+    })
 
     if (argPos !== arguments.length)
-      console.trace(`Mismatched number of arguments for pathTo(${stableName}). Expected ${argPos}, was provided ${arguments.length}`)
+      console.trace(
+        `Mismatched number of arguments for pathTo(${stableName}). Expected ${argPos}, was provided ${arguments.length}`,
+      )
 
-    return mangledParts.join("/")
-  }
-
+    return mangledParts.join('/')
+  },
 }
 
 export default urlMaker

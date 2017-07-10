@@ -8,23 +8,23 @@ import C from './CommonSkillNodes.js'
 
 export default {
   $meta: {
-    name:           'Legal',
-    description:    'Represents intellectual property and other legal topics',
+    name: 'Legal',
+    description: 'Represents intellectual property and other legal topics',
   },
   intellectualProperty: {
-    copyright:        C.E,
-    license:          C.E,
-    patents:          C.E,
-    publicDomain:     C.E,
-    fairUse:          C.E
+    copyright: C.E,
+    license: C.E,
+    patents: C.E,
+    publicDomain: C.E,
+    fairUse: C.E,
   },
   contracts: {
-    workForHire:      C.E,
-    keyTerms:         C.E,
-    jurisdiction:     C.E
+    workForHire: C.E,
+    keyTerms: C.E,
+    jurisdiction: C.E,
   },
   tax: {
-    salesTax:         C.E,
-    incomeTax:        C.E
-  }
+    salesTax: C.E,
+    incomeTax: C.E,
+  },
 }

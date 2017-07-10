@@ -1,11 +1,10 @@
 // REST api for MGBv2
 
 // This file should be imported by /server/main_server.js
-// REST API.  
+// REST API.
 
 // These should match the paths defined in
 //       AssetUrlGenerator.js
-
 
 import '/server/imports/restApi/restApi.js'
 import '/server/imports/restApi/restApi_actor.js'

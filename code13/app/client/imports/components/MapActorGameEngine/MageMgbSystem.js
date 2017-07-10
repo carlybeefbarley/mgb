@@ -1,23 +1,30 @@
 import _ from 'lodash'
 // Constants/functions related to the overall MGB MapActor Game Engine
 
-export default MgbSystem = {
-  tileMinWidth:  32,
+export default (MgbSystem = {
+  tileMinWidth: 32,
   tileMinHeight: 32,
-  tileMaxWidth:  128,
+  tileMaxWidth: 128,
   tileMaxHeight: 128,
 
-  gameFonts: [ "titlefont", "abscissa", "bradybunch", "geosanslight", "argorpriht", "ellianarellespath", "illegaledding" ],
+  gameFonts: [
+    'titlefont',
+    'abscissa',
+    'bradybunch',
+    'geosanslight',
+    'argorpriht',
+    'ellianarellespath',
+    'illegaledding',
+  ],
 
-  parseEventCommand: function (str) {
-    const [ cmd, params ] = str.split(': ')
+  parseEventCommand: function(str) {
+    const [cmd, params] = str.split(': ')
     const p2 = params.split(',').sort()
     let result = { command: cmd }
-    _.each(p2, p => { 
+    _.each(p2, p => {
       const [k, v] = p.trim().split('=')
       result[k] = v
     })
     return result
-  }
-
-}
+  },
+})

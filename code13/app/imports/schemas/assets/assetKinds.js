@@ -1,7 +1,5 @@
-
-// Asset Kind - list of supported AssetKinds and various strings, icons etc related to each Asset Kind. 
+// Asset Kind - list of supported AssetKinds and various strings, icons etc related to each Asset Kind.
 //              This is mostly extra information and visual content that the UI will use
-
 
 // NOTE: It is intended that modules would import { AssetKinds } via   ../assets.js
 //   There are some more handy manipulators defined in assets.js such as AssetKindKeysALL etc
@@ -9,12 +7,10 @@
 import { roleSuperAdmin } from '/imports/schemas/roles'
 
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
-// color is a standard semantic color list 
+// color is a standard semantic color list
 //   (red, orange, yellow, olive, green, teal, blue, violet, purple, pink, brown, grey, black
 
-
-const UAKerr = "Unknown Asset Kind"     // An error message string used a few places in this file.
-
+const UAKerr = 'Unknown Asset Kind' // An error message string used a few places in this file.
 
 export const AssetKinds = {
   // "palette": {
@@ -27,50 +23,53 @@ export const AssetKinds = {
   //   description: "Color palette",
   //   explanation: 'Not yet implemented'
   // },
-  "graphic": {
-    name: "Graphic",
+  graphic: {
+    name: 'Graphic',
     selfPlural: false,
     disable: false,
-    longName: "Graphic",
-    icon: "image",
-    color: "orange",
+    longName: 'Graphic',
+    icon: 'image',
+    color: 'orange',
     requiresUserRole: null,
-    description: "Graphic Assets are pixel art that will be used in a game",
-    explanation: 'A Graphic asset can be a simple image frame. It can also contain animations or TileMaps. Graphics can hold multiple animation frames, and can even be constructed using multiple layers for easier editing. Graphic Assets are used for all game art - game characters, backgrounds, map tiles etc'
+    description: 'Graphic Assets are pixel art that will be used in a game',
+    explanation:
+      'A Graphic asset can be a simple image frame. It can also contain animations or TileMaps. Graphics can hold multiple animation frames, and can even be constructed using multiple layers for easier editing. Graphic Assets are used for all game art - game characters, backgrounds, map tiles etc',
   },
-  "actor": {
-    name: "Actor",
+  actor: {
+    name: 'Actor',
     selfPlural: false,
     disable: false,
-    longName: "Actor",
-    icon: "child",
-    color: "teal",
+    longName: 'Actor',
+    icon: 'child',
+    color: 'teal',
     requiresUserRole: null,
-    description: "Actors define Game behaviors without you having to write any code. Put them on ActorMaps",
-    explanation: 'Actors provide sets of rules you can modify in order to make the behaviors you want - player, NPC, item, bullet, trap, healthpack, etc. You define them using the Actor Editor, then place them on a special kind of map called an ActorMap (using the ActorMap Editor) in order to create complete games'
+    description: 'Actors define Game behaviors without you having to write any code. Put them on ActorMaps',
+    explanation:
+      'Actors provide sets of rules you can modify in order to make the behaviors you want - player, NPC, item, bullet, trap, healthpack, etc. You define them using the Actor Editor, then place them on a special kind of map called an ActorMap (using the ActorMap Editor) in order to create complete games',
   },
-  "actormap": {
-    name: "ActorMap",
+  actormap: {
+    name: 'ActorMap',
     selfPlural: false,
     disable: false,
-    longName: "Map using Actors - makes games without coding",
-    icon: "map",
-    color: "blue",
+    longName: 'Map using Actors - makes games without coding',
+    icon: 'map',
+    color: 'blue',
     requiresUserRole: null,
     description: 'ActorMaps are games / game-levels that use Actors instead of code. Put Actors on ActorMaps',
-    explanation: 'You can place Actors on background, middle and foreground layers of an ActorMap, and instantly play the game you are designing without needing to write any code. You can also link maps using the Effects layer of the ActorMap in order to make large multi-level games'
-
+    explanation:
+      'You can place Actors on background, middle and foreground layers of an ActorMap, and instantly play the game you are designing without needing to write any code. You can also link maps using the Effects layer of the ActorMap in order to make large multi-level games',
   },
-  "map": {
-    name: "Map",
+  map: {
+    name: 'Map',
     selfPlural: false,
     disable: false,
-    longName: "Game Level Map (TMX style for game coding)",
-    icon: "map outline",
-    color: "olive",
+    longName: 'Game Level Map (TMX style for game coding)',
+    icon: 'map outline',
+    color: 'olive',
     requiresUserRole: null,
-    description: "Maps are used to make game levels in games that you are coding.",
-    explanation: 'Maps are used by Code to make games. if you don\'t want to try coding yet, you can make games using Actors and ActorMaps instead. For those who know about 2D Map formats, this is a TMX-style map editor that can import and export TMX/JSON maps. Very awesome!'
+    description: 'Maps are used to make game levels in games that you are coding.',
+    explanation:
+      "Maps are used by Code to make games. if you don't want to try coding yet, you can make games using Actors and ActorMaps instead. For those who know about 2D Map formats, this is a TMX-style map editor that can import and export TMX/JSON maps. Very awesome!",
   },
   // "physics": {
   //   name: "Physics",
@@ -80,18 +79,18 @@ export const AssetKinds = {
   //   icon: "rocket",
   //   requiresUserRole: null,
   //   description: "Physics configuration",
-  //   explanation: 'Not yet implemented'    
+  //   explanation: 'Not yet implemented'
   // },
-  "doc": {
-    name: "Doc",
+  doc: {
+    name: 'Doc',
     selfPlural: false,
-    disable: true,              // Disabled 9/23/2016 by dgolds
-    longName: "Document",
-    icon: "file text outline",
-    color: "grey",
-    requiresUserRole: roleSuperAdmin,    
-    description: "Text Document",
-    explanation: 'Not yet implemented'    
+    disable: true, // Disabled 9/23/2016 by dgolds
+    longName: 'Document',
+    icon: 'file text outline',
+    color: 'grey',
+    requiresUserRole: roleSuperAdmin,
+    description: 'Text Document',
+    explanation: 'Not yet implemented',
   },
   // "cheatsheet": {
   //   name: "Cheatsheet",
@@ -101,7 +100,7 @@ export const AssetKinds = {
   //   icon: "student",
   //   requiresUserRole: null,
   //   description: "Cheat Sheet to help remember useful stuff",
-  //   explanation: 'Not yet implemented'    
+  //   explanation: 'Not yet implemented'
   // },
   // "cutscene": {
   //   name: "Cutscene",
@@ -111,62 +110,67 @@ export const AssetKinds = {
   //   icon: "file video outline",
   //   requiresUserRole: null,
   //   description: "Cut scene used in a game",
-  //   explanation: 'Not yet implemented'    
+  //   explanation: 'Not yet implemented'
   // },
-  "sound": {
-    name: "Sound",
+  sound: {
+    name: 'Sound',
     selfPlural: true,
     disable: false,
-    longName: "Sound",
-    icon: "volume up",
-    color: "pink",
+    longName: 'Sound',
+    icon: 'volume up',
+    color: 'pink',
     requiresUserRole: null,
-    description: "Sound Effects for use in games",
-    explanation: 'You can create or import sound effects for your games. You can make your game play these sounds by attaching them to Actors in the Actor Editor, or by writing your own custom Code for your games'
+    description: 'Sound Effects for use in games',
+    explanation:
+      'You can create or import sound effects for your games. You can make your game play these sounds by attaching them to Actors in the Actor Editor, or by writing your own custom Code for your games',
   },
-  "music": {
-    name: "Music",
+  music: {
+    name: 'Music',
     selfPlural: true,
     disable: false,
-    longName: "Music",
-    icon: "music",
-    color: "blue",
-    description: "Background Music for use in games",
-    explanation: 'You can create or import Music for your games. You can make your game play this music by attaching Music Events to an ActorMap, or by writing your own custom Code for your games'
+    longName: 'Music',
+    icon: 'music',
+    color: 'blue',
+    description: 'Background Music for use in games',
+    explanation:
+      'You can create or import Music for your games. You can make your game play this music by attaching Music Events to an ActorMap, or by writing your own custom Code for your games',
   },
-  "code": {
-    name: "Code",
+  code: {
+    name: 'Code',
     selfPlural: true,
     disable: false,
-    longName: "Code Script",
-    icon: "code",
-    color: "green",
+    longName: 'Code Script',
+    icon: 'code',
+    color: 'green',
     requiresUserRole: null,
-    description: "Code is Source code script used to make your game",
-    explanation: "Code is written in the 'Javascript 2015' programming language. You can use Assets such as Graphics, Sound, Music, Map... and also other 'imported' code/modules/packages to make your game.", 
+    description: 'Code is Source code script used to make your game',
+    explanation:
+      "Code is written in the 'Javascript 2015' programming language. You can use Assets such as Graphics, Sound, Music, Map... and also other 'imported' code/modules/packages to make your game.",
   },
-  "game": {
-    name: "GameConfig",
+  game: {
+    name: 'GameConfig',
     selfPlural: false,
     disable: false,
-    longName: "Game definition",
-    icon: "gamepad",
-    color: "brown",
+    longName: 'Game definition',
+    icon: 'gamepad',
+    color: 'brown',
     requiresUserRole: null,
-    description: "Game rules, start location, and play statistics",
-    explanation: 'The GameConfig Asset lets you choose options for your game, and specify which ActorMap or Code Asset is the start of the game. GameConfig Assets are also used to publish your game so others can find it, and to store play information such as play counts, analytics, high scores, game saves etc.'
+    description: 'Game rules, start location, and play statistics',
+    explanation:
+      'The GameConfig Asset lets you choose options for your game, and specify which ActorMap or Code Asset is the start of the game. GameConfig Assets are also used to publish your game so others can find it, and to store play information such as play counts, analytics, high scores, game saves etc.',
   },
-  "tutorial": {
-    name: "Tutorial",
+  tutorial: {
+    name: 'Tutorial',
     selfPlural: false,
     disable: false,
-    longName: "Tutorial definition",
-    icon: "student",
-    color: "black",
+    longName: 'Tutorial definition',
+    icon: 'student',
+    color: 'black',
     requiresUserRole: null,
-    description: "The tutorials that you use in MGB are defined in Tutorial Assets",
-    explanation: 'Tutorials in MGB are JSON files. You can see how the built-in tutorials work, or make your own to share'
-  },  
+    description: 'The tutorials that you use in MGB are defined in Tutorial Assets',
+    explanation:
+      'Tutorials in MGB are JSON files. You can see how the built-in tutorials work, or make your own to share',
+  },
   // PURGED FROM DB 9/24/2016
   // "_mgbui": {
   //   name: "MGB UI",
@@ -174,7 +178,7 @@ export const AssetKinds = {
   //   disable: true,      // Disabled 9/23/2016 by dgolds since we now have stardust!
   //   longName: "MGB UI Mockup",
   //   icon: "code",
-  //   requiresUserRole: roleSuperAdmin,    
+  //   requiresUserRole: roleSuperAdmin,
   //   description: "(MGB Dev Team Only) MGB UI Prototyping tool"
   // },
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
@@ -182,24 +186,26 @@ export const AssetKinds = {
     return AssetKinds.hasOwnProperty(key)
   },
   getIconClass: function(key) {
-    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign") + " icon"
+    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : 'warning sign') + ' icon'
   },
   getIconName: function(key) {
-    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : "warning sign")
+    return AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : 'warning sign'
   },
   getColor: function(key) {
-    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].color : "pink")
+    return AssetKinds.hasOwnProperty(key) ? AssetKinds[key].color : 'pink'
   },
   getLongName: function(key) {
-    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : UAKerr)
+    return AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : UAKerr
   },
   getDescription: function(key) {
-    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].description : UAKerr)
+    return AssetKinds.hasOwnProperty(key) ? AssetKinds[key].description : UAKerr
   },
   getName: function(key) {
-    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name : UAKerr)
+    return AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name : UAKerr
   },
   getNamePlural: function(key) {
-    return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name + (AssetKinds[key].selfPlural ? "" : "s") : UAKerr)
-  }
+    return AssetKinds.hasOwnProperty(key)
+      ? AssetKinds[key].name + (AssetKinds[key].selfPlural ? '' : 's')
+      : UAKerr
+  },
 }

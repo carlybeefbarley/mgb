@@ -1,15 +1,14 @@
 {
-    "compilerOptions": {
-        "target": "ES6",
-        "allowSyntheticDefaultImports": true
-
-    },
-    "exclude": [
-        "./.meteor",
-        "./typings/main.d.ts",
-        "./typings/main",
-        "./node_modules",
-        "./client/lib/semantic-ui",
-        "./public"            // Lots of doc files in here. Need to subdivide more
-    ]
+  "compilerOptions": {
+    "target": "ES6",
+    "allowSyntheticDefaultImports": true
+  },
+  "exclude": [
+    "./.meteor",
+    "./typings/main.d.ts",
+    "./typings/main",
+    "./node_modules",
+    "./client/lib/semantic-ui",
+    "./public"
+  ]
 }

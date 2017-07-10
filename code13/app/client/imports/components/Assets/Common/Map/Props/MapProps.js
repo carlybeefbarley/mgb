@@ -1,42 +1,42 @@
 export default {
-  saveThumbnail(data, reason, thumbnail){
+  saveThumbnail(data, reason, thumbnail) {
     this.handleSave(data, reason, thumbnail)
     //this.props.handleContentChange(null, thumbnail, "")
   },
-  handleSave(reason){
+  handleSave(reason) {
     this.quickSave(reason, false, this.refs.map.generatePreview())
   },
-  saveForUndo(reason, skipRedo){
+  saveForUndo(reason, skipRedo) {
     this.saveForUndo(reason, skipRedo)
   },
-  getMode(){
+  getMode() {
     return this.options.mode
   },
-  setMode(mode){
+  setMode(mode) {
     this.enableMode(mode)
   },
-  setPickedObject(index){
-    this.setState({activeObject: index})
+  setPickedObject(index) {
+    this.setState({ activeObject: index })
   },
-  getCtrlModifier(){
+  getCtrlModifier() {
     return this.options.ctrlModifier
   },
-  updateMapData(data){
+  updateMapData(data) {
     this.updateMapData(data)
   },
-  updateScale(scale){
-    this.setState({scale: scale})
+  updateScale(scale) {
+    this.setState({ scale: scale })
     this.saveMeta()
   },
-  addImage(img){
-    if(!this.mgb_content2.images){
+  addImage(img) {
+    if (!this.mgb_content2.images) {
       this.mgb_content2.images = []
     }
     this.mgb_content2.images.push(img)
     this.updateMapData(this.mgb_content2)
   },
-  updateCameraPos(){
+  updateCameraPos() {
     // console.log("Saving camera pos...")
     this.saveMeta()
-  }
+  },
 }

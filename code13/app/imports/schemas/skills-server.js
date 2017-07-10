@@ -4,20 +4,18 @@
 import { Skills } from '/imports/schemas'
 
 export function createInitialSkills(userId) {
-  if (!Meteor.isServer || !userId) 
-    return
+  if (!Meteor.isServer || !userId) return
 
   const skills = Skills.findOne(userId)
-  if (skills)
-  {
+  if (skills) {
     console.log(`Skills object already exists for #${userId}`)
-    return  // No need to create one
+    return // No need to create one
   }
 
   // Ok, so let's create an empty skills object..
   let data = {
-    _id:        userId,   // Skills._id is SAME as User._id 
-    updatedAt:  new Date()
+    _id: userId, // Skills._id is SAME as User._id
+    updatedAt: new Date(),
   }
 
   let docId = Skills.insert(data)

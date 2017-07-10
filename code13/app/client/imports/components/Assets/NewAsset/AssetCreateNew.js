@@ -13,37 +13,37 @@ import { showToast } from '/client/imports/routes/App'
 
 const formStyle = {
   maxWidth: '40em',
-  margin:   'auto',
+  margin: 'auto',
 }
 
-export default AssetCreateNew = React.createClass({
+export default (AssetCreateNew = React.createClass({
   propTypes: {
-    suggestedParams:        PropTypes.object,                 // projectName,assetName,assetKind
-    currUser:               PropTypes.object,                 // currently logged in user (if any)
-    currUserProjects:       PropTypes.array                   // Projects list for currently logged in user
+    suggestedParams: PropTypes.object, // projectName,assetName,assetKind
+    currUser: PropTypes.object, // currently logged in user (if any)
+    currUserProjects: PropTypes.array, // Projects list for currently logged in user
   },
 
-  getInitialState () {
+  getInitialState() {
     const { currUserProjects, suggestedParams } = this.props
     const { projectName, assetName, assetKind } = suggestedParams
     return {
-      isNamePristine:      true, // whether or not the form has had changes made
-      selectedProject:     _.find(currUserProjects, { name: projectName }) || null,          // Project Object or Null
-      buttonActionPending: false,     // True after the button has been pushed. so it doesn't get pushed twice
-      selectedKind:        AssetKinds.isValidKey(assetKind) ? assetKind : '',
-      newAssetName:        assetName || ''                // "" or a valid assetName string
+      isNamePristine: true, // whether or not the form has had changes made
+      selectedProject: _.find(currUserProjects, { name: projectName }) || null, // Project Object or Null
+      buttonActionPending: false, // True after the button has been pushed. so it doesn't get pushed twice
+      selectedKind: AssetKinds.isValidKey(assetKind) ? assetKind : '',
+      newAssetName: assetName || '', // "" or a valid assetName string
     }
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object
+    urlLocation: React.PropTypes.object,
   },
 
   componentDidMount() {
     ReactDOM.findDOMNode(this.refs.inputAssetName).focus()
   },
 
-    /**
+  /**
    *
    *
    * @param {string} assetKindKey - must be one of assetKindKey
@@ -52,26 +52,32 @@ export default AssetCreateNew = React.createClass({
    * @param {string} projectOwnerId - if projectName is a nonEmpty string, should be a valid projectOwnerId
    * @param {string} projectOwnerName - if projectName is a nonEmpty string, should be a valid projectOwnerName
    */
-  handleCreateAssetClickFromComponent(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName) {
+  handleCreateAssetClickFromComponent(
+    assetKindKey,
+    assetName,
+    projectName,
+    projectOwnerId,
+    projectOwnerName,
+  ) {
     const { currUser } = this.props
     if (!currUser) {
-      showToast("You must be logged-in to create a new Asset", 'error')
+      showToast('You must be logged-in to create a new Asset', 'error')
       return
     }
 
     let newAsset = {
-      name:         assetName,
-      kind:         assetKindKey,
-      text:         "",
-      thumbnail:    "",
-      content2:     {},
-      dn_ownerName: currUser.username,         // Will be replaced below if in another project
-      ownerId:      currUser._id,
-      isCompleted:  false,
-      isDeleted:    false,
-      isPrivate:    false
+      name: assetName,
+      kind: assetKindKey,
+      text: '',
+      thumbnail: '',
+      content2: {},
+      dn_ownerName: currUser.username, // Will be replaced below if in another project
+      ownerId: currUser._id,
+      isCompleted: false,
+      isDeleted: false,
+      isPrivate: false,
     }
-    if (projectName && projectName !== "") {
+    if (projectName && projectName !== '') {
       newAsset.projectNames = [projectName]
       newAsset.dn_ownerName = projectOwnerName
       newAsset.ownerId = projectOwnerId
@@ -79,13 +85,11 @@ export default AssetCreateNew = React.createClass({
 
     Meteor.call('Azzets.create', newAsset, (error, result) => {
       if (error) {
-        showToast("Failed to create new Asset because: " + error.reason, 'error')
-        this.setState( { buttonActionPending: false } )
-      }
-      else
-      {
-        newAsset._id = result             // So activity log will work
-        logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset)
+        showToast('Failed to create new Asset because: ' + error.reason, 'error')
+        this.setState({ buttonActionPending: false })
+      } else {
+        newAsset._id = result // So activity log will work
+        logActivity('asset.create', `Create ${assetKindKey}`, null, newAsset)
         // Now go to the new Asset
         utilPushTo(this.context.urlLocation.query, `/u/${newAsset.dn_ownerName}/asset/${result}`)
       }
@@ -93,45 +97,57 @@ export default AssetCreateNew = React.createClass({
   },
 
   handleChangeAssetKind(assetKindKey) {
-    this.setState({
-      selectedKind: assetKindKey
-    }, () => {
-      joyrideCompleteTag(`mgbjr-CT-create-asset-select-kind-${assetKindKey}`)
-      if (this.refs.inputAssetName)
-        this.refs.inputAssetName.focus()
-    })
+    this.setState(
+      {
+        selectedKind: assetKindKey,
+      },
+      () => {
+        joyrideCompleteTag(`mgbjr-CT-create-asset-select-kind-${assetKindKey}`)
+        if (this.refs.inputAssetName) this.refs.inputAssetName.focus()
+      },
+    )
   },
 
-  handleChangeName (e) {
-    this.setState({
-      isNamePristine: false,
-      newAssetName:   e.target.value,
-    }, () => {
-      joyrideCompleteTag(`mgbjr-CT-create-asset-name`)
-    })
+  handleChangeName(e) {
+    this.setState(
+      {
+        isNamePristine: false,
+        newAssetName: e.target.value,
+      },
+      () => {
+        joyrideCompleteTag(`mgbjr-CT-create-asset-name`)
+      },
+    )
   },
 
-  handleChangeSelectedProjectName (selectedProjName, selectedProject) {
-    this.setState({
-      selectedProject
-    }, () => {
-      joyrideCompleteTag(`mgbjr-CT-create-asset-project`)
-    })
+  handleChangeSelectedProjectName(selectedProjName, selectedProject) {
+    this.setState(
+      {
+        selectedProject,
+      },
+      () => {
+        joyrideCompleteTag(`mgbjr-CT-create-asset-project`)
+      },
+    )
   },
 
   handleCreateAssetClick() {
     const { selectedKind, newAssetName, selectedProject } = this.state
-    this.setState({
-      buttonActionPending: true
-    },() => {
-      joyrideCompleteTag(`mgbjr-CT-create-asset-${selectedKind}-do-create`)
-    })
+    this.setState(
+      {
+        buttonActionPending: true,
+      },
+      () => {
+        joyrideCompleteTag(`mgbjr-CT-create-asset-${selectedKind}-do-create`)
+      },
+    )
     this.handleCreateAssetClickFromComponent(
       selectedKind,
       newAssetName,
       selectedProject ? selectedProject.name : null,
       selectedProject ? selectedProject.ownerId : null,
-      selectedProject ? selectedProject.ownerName : null)
+      selectedProject ? selectedProject.ownerName : null,
+    )
   },
 
   render() {
@@ -141,13 +157,13 @@ export default AssetCreateNew = React.createClass({
     const assetNameErrText = validate.assetNameWithReason(newAssetName)
     const isKindValid = !!selectedKind
     const isFormValid = isKindValid && isAssetNameValid
-    const chosenKindStr = isKindValid ? AssetKinds[selectedKind].name : "Asset"
-    const chosenNameStr = isAssetNameValid ? `"${newAssetName}"` : ""
+    const chosenKindStr = isKindValid ? AssetKinds[selectedKind].name : 'Asset'
+    const chosenNameStr = isAssetNameValid ? `"${newAssetName}"` : ''
     const isButtonDisabled = this.state.buttonActionPending || !isFormValid
 
     return (
       <Form style={formStyle}>
-        <Header as='h2' content='Create New Asset' />
+        <Header as="h2" content="Create New Asset" />
         <Form.Field required>
           <label>Kind</label>
           <AssetCreateSelectKind
@@ -162,12 +178,14 @@ export default AssetCreateNew = React.createClass({
           <Input
             id="mgbjr-create-asset-name"
             ref="inputAssetName"
-            placeholder='Asset name'
+            placeholder="Asset name"
             value={newAssetName}
             onChange={this.handleChangeName}
             fluid
           />
-          {!isNamePristine && !!assetNameErrText && <Label basic pointing color='red' content={assetNameErrText} />}
+          {!isNamePristine &&
+            !!assetNameErrText &&
+            <Label basic pointing color="red" content={assetNameErrText} />}
         </Form.Field>
 
         <Form.Field>
@@ -198,4 +216,4 @@ export default AssetCreateNew = React.createClass({
       </Form>
     )
   },
-})
+}))

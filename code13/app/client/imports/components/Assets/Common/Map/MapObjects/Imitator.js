@@ -3,49 +3,49 @@
 import ObjectHelper from '../Helpers/ObjectHelper.js'
 
 export default class Imitator {
-  constructor (obj) {
+  constructor(obj) {
     this.update(obj)
   }
 
-  get x () {
+  get x() {
     return this.orig.x + this.minx
   }
-  set x (v) {
+  set x(v) {
     this.orig.x = v - this.minx
   }
 
-  get y () {
+  get y() {
     return this.orig.y + this.miny
   }
-  set y (v) {
+  set y(v) {
     this.orig.y = v - this.miny
   }
 
-  set visible (v) {
+  set visible(v) {
     this.orig.visible = v
   }
 
-  get visible () {
+  get visible() {
     return this.orig.visible
   }
-  set name (v) {
+  set name(v) {
     this.orig.name = v
   }
-  get name () {
+  get name() {
     return this.orig.name
   }
 
-  set type (v) {
+  set type(v) {
     this.orig.type = v
   }
-  get type () {
+  get type() {
     return this.orig.type
   }
 
-  get width () {
+  get width() {
     return this.maxx - this.minx
   }
-  set width (v) {
+  set width(v) {
     const prop = v / this.width
     for (let i = 0; i < this.lines.length; i++) {
       const l = this.lines[i]
@@ -71,10 +71,10 @@ export default class Imitator {
     this.update()
   }
 
-  get height () {
+  get height() {
     return this.maxy - this.miny
   }
-  set height (v) {
+  set height(v) {
     const prop = v / this.height
     for (let i = 0; i < this.lines.length; i++) {
       const l = this.lines[i]
@@ -99,11 +99,13 @@ export default class Imitator {
     this.update()
   }
 
-  update (obj = this.orig) {
+  update(obj = this.orig) {
     const lines = obj.polyline || obj.polygon
 
-    let minx = lines[0].x, maxx = lines[0].x,
-      miny = lines[0].y, maxy = lines[0].y
+    let minx = lines[0].x,
+      maxx = lines[0].x,
+      miny = lines[0].y,
+      maxy = lines[0].y
 
     for (let j = 0; j < lines.length; j++) {
       minx = Math.min(lines[j].x, minx)
@@ -121,14 +123,14 @@ export default class Imitator {
     this.orig = obj
   }
 
-  get rotation () {
+  get rotation() {
     return this.orig.rotation
   }
-  set rotation (val) {
+  set rotation(val) {
     this.orig.rotation = val
   }
 
-  get angle () {
+  get angle() {
     return this.orig.rotation * Math.PI / 180
   }
 }

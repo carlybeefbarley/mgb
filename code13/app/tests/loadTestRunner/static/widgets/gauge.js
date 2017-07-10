@@ -1,9 +1,9 @@
 {
   ml.Gauge = class Gauge {
-    constructor(color1 = 'red', color2 = 'yellow', className = ''){
+    constructor(color1 = 'red', color2 = 'yellow', className = '') {
       this.widget = document.createElement('div')
       this.widget.classList.add('gauge')
-      if(className){
+      if (className) {
         this.widget.classList.add(className)
       }
 
@@ -17,10 +17,10 @@
       this.left.classList.add('left')
 
       this.center = this.widget.appendChild(document.createElement('div'))
-      this.center.classList.add("center")
+      this.center.classList.add('center')
 
       this.shading = this.widget.appendChild(document.createElement('div'))
-      this.shading.classList.add("shading")
+      this.shading.classList.add('shading')
 
       this.text = this.center.appendChild(document.createElement('span'))
 
@@ -33,11 +33,11 @@
       this.progress(0)
     }
 
-    show(parent){
+    show(parent) {
       parent.appendChild(this.widget)
     }
 
-    progress(proc){
+    progress(proc) {
       proc = Math.max(0, Math.min(100, proc))
       this.text.innerHTML = proc.toFixed(2) + '%'
       const val = proc * 360 / 100
@@ -45,13 +45,11 @@
         this.left.style.opacity = 0
         this.right.style.transform = `rotate(${val}deg)`
         this.left.style.transform = `rotate(180deg)`
-      }
-      else {
+      } else {
         this.left.style.opacity = 1
         this.right.style.transform = `rotate(180deg)`
         this.left.style.transform = `rotate(${val}deg)`
       }
-
     }
   }
 }

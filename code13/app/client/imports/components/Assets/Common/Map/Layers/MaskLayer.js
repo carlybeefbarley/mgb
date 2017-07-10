@@ -3,14 +3,13 @@ import React from 'react'
 import TileHelper from '../Helpers/TileHelper.js'
 import LayerTypes from '../Tools/LayerTypes.js'
 
-
 export default class MaskLayer extends React.Component {
   /* lifecycle functions */
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.ctx = null
   }
-  componentDidMount () {
+  componentDidMount() {
     const mask = this.refs.mask
     this.ctx = mask.getContext('2d')
     this.adjustCanvas()
@@ -19,7 +18,7 @@ export default class MaskLayer extends React.Component {
   }
 
   // align grid to active layer in preview mode
-  shouldComponentUpdate () {
+  shouldComponentUpdate() {
     const map = this.props.map
     if (!map.options.preview) {
       this.refs.layer.style['transform'] = ''
@@ -32,7 +31,7 @@ export default class MaskLayer extends React.Component {
     return false
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const index = this.props.map.layers.indexOf(this)
     if (index > -1) {
       this.props.map.layers.splice(index, 1)
@@ -41,7 +40,7 @@ export default class MaskLayer extends React.Component {
   }
 
   /* endof lifecycle functions */
-  adjustCanvas () {
+  adjustCanvas() {
     const mask = this.refs.mask
 
     const w = mask.parentElement.offsetWidth
@@ -52,30 +51,34 @@ export default class MaskLayer extends React.Component {
     this.alignToLayer()
   }
 
-  alignToLayer () {
-    if(this.props.layer && this.props.layer.refs.layer) {
+  alignToLayer() {
+    if (this.props.layer && this.props.layer.refs.layer) {
       this.refs.layer.style['transform'] = this.props.layer.refs.layer.style['transform']
       this.refs.layer.style['z-index'] = this.props.layer.refs.layer.style['z-index']
     }
   }
 
-  draw () {
+  draw() {
     this.adjustCanvas()
     this.drawMask()
   }
 
   // Draw darker mask outside of active map area that covers the grid
-  drawMask () {
+  drawMask() {
     const camera = this.props.map.camera
     const data = this.props.map.data
 
-    let tilelayer = null, tw, th
+    let tilelayer = null,
+      tw,
+      th
     if (this.props.layer && LayerTypes.isTilemapLayer(this.props.layer.type)) {
       tilelayer = this.props.layer.data
-      tw = tilelayer.width; th = tilelayer.height
-    }else {
-      tw = data.width; th = data.height
-      tilelayer = {x: 0, y: 0}
+      tw = tilelayer.width
+      th = tilelayer.height
+    } else {
+      tw = data.width
+      th = data.height
+      tilelayer = { x: 0, y: 0 }
     }
 
     const startx = 0.5 + (camera.x + tilelayer.x) * camera.zoom
@@ -112,15 +115,13 @@ export default class MaskLayer extends React.Component {
     this.ctx.stroke()
   }
 
-  render () {
+  render() {
     const style = Object.assign({}, this.props.style)
     style.zIndex = 2
-    return (<div
-              className='tilemap-layer no-events grid-layer'
-              data-name='Mask'
-              ref='layer'
-              style={style} >
-              <canvas ref='mask'></canvas>
-            </div>)
+    return (
+      <div className="tilemap-layer no-events grid-layer" data-name="Mask" ref="layer" style={style}>
+        <canvas ref="mask" />
+      </div>
+    )
   }
 }

@@ -4,52 +4,46 @@
 
 export default {
   // basic
-  alTemplateScenery:      {}, // this is base template as defined in getDefaultActor.js
+  alTemplateScenery: {}, // this is base template as defined in getDefaultActor.js
 
   alTemplatePlayer: {
-    "all": { "actorType":"0" },
-    "allchar": { "movementSpeedNum":"1" },
-    "item": { "itemActivationType":"3" },
-    "itemOrNPC": { "destroyableYN":"1" }
+    all: { actorType: '0' },
+    allchar: { movementSpeedNum: '1' },
+    item: { itemActivationType: '3' },
+    itemOrNPC: { destroyableYN: '1' },
   },
 
-  alTemplateEnemy:
-  {
-    "all": { "actorType":"1" },
-    "allchar": { "movementSpeedNum":"1" },
-    "item": { "itemActivationType":"3" },
-    "itemOrNPC": { "destroyableYN":"1" },
-    "npc": { "movementType":"1" }
+  alTemplateEnemy: {
+    all: { actorType: '1' },
+    allchar: { movementSpeedNum: '1' },
+    item: { itemActivationType: '3' },
+    itemOrNPC: { destroyableYN: '1' },
+    npc: { movementType: '1' },
   },
 
-  alTemplateFriend:
-  {
-    "all": { "actorType":"1" },
-    "item": { "itemActivationType":"3" }
+  alTemplateFriend: {
+    all: { actorType: '1' },
+    item: { itemActivationType: '3' },
   },
 
-  alTemplateSolidObject:
-  {
-    "all": { "actorType":"6" },
-    "item": { "itemActivationType":"3" }
+  alTemplateSolidObject: {
+    all: { actorType: '6' },
+    item: { itemActivationType: '3' },
   },
 
-  alTemplateFloor:
-  {
-    "all": { "actorType":"7" },
-    "item": { "itemActivationType":"0" }
+  alTemplateFloor: {
+    all: { actorType: '7' },
+    item: { itemActivationType: '0' },
   },
 
-  alTemplateItem:
-  {
-    "all": { "actorType":"5" },
-    "item": { "itemActivationType":"5" }
+  alTemplateItem: {
+    all: { actorType: '5' },
+    item: { itemActivationType: '5' },
   },
 
-  alTemplateShot:
-  {
-    "all": { "actorType":"3" },
-    "item": { "itemActivationType":"0" }
+  alTemplateShot: {
+    all: { actorType: '3' },
+    item: { itemActivationType: '0' },
   },
 
   /*

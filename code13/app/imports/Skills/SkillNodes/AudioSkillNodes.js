@@ -8,16 +8,16 @@ import C from './CommonSkillNodes.js'
 
 export default {
   $meta: {
-    name:           'Audio',
-    description:    'Represents music and sound skills',
+    name: 'Audio',
+    description: 'Represents music and sound skills',
   },
   music: {
-    ambient:        C.E,
-    intense:        C.E,
-    loops:          C.E
+    ambient: C.E,
+    intense: C.E,
+    loops: C.E,
   },
   fx: {
-    jsfxr:          C.E,
-    loops:          C.E
-  } 
+    jsfxr: C.E,
+    loops: C.E,
+  },
 }

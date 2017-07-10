@@ -8,12 +8,12 @@ import C from './CommonSkillNodes.js'
 
 export default {
   $meta: {
-    name:           'Analytics',
-    description:    'Represents pixel art and animation skills',
+    name: 'Analytics',
+    description: 'Represents pixel art and animation skills',
   },
-  
-  metrics:          C.E,
-  bouncerate:       C.E,
-  engagement:       C.E,
-  conversion:       C.E
+
+  metrics: C.E,
+  bouncerate: C.E,
+  engagement: C.E,
+  conversion: C.E,
 }

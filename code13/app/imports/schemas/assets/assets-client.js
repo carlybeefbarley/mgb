@@ -9,11 +9,11 @@
  * @param {object} asset
  * @param {string} assetVerb.. e.g 'View', 'Edit', 'Play' etc
  */
-export const makeAssetInfoFromAsset = (asset, assetVerb) => ( {
+export const makeAssetInfoFromAsset = (asset, assetVerb) => ({
   kind: asset.kind,
   name: asset.name,
   assetVerb: assetVerb,
   isDeleted: asset.isDeleted,
   isLocked: asset.isCompleted,
-  projectNames: asset.projectNames || []
+  projectNames: asset.projectNames || [],
 })

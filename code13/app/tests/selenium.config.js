@@ -12,7 +12,7 @@ module.exports = {
       //'local.chrome'
     ],
     // add here some tests to skip
-    skip: []
+    skip: [],
   },
   tests: {
     // if this is filled - only those tests will be tested
@@ -21,18 +21,18 @@ module.exports = {
       // 'login.test.js', // - all other tests includes login
       //'adjust.settings.test.js',
 
-       //'code.load.import.test.js',
+      //'code.load.import.test.js',
 
-       'code.bundler.test.js', //not working on Phantom
-       //'code.mentor.test.js', //not working on Phantom
-       //'code.update.test.js', //not working on Phantom
+      'code.bundler.test.js', //not working on Phantom
+      //'code.mentor.test.js', //not working on Phantom
+      //'code.update.test.js', //not working on Phantom
 
-       //'graphic.test.js',
-       //'map.simple.test.js'
+      //'graphic.test.js',
+      //'map.simple.test.js'
 
       // 'api.test.js'
     ],
     // add here some tests to skip
-    skip: ["login.test.js"] // skip login test as other tests logs in user anyway
-  }
+    skip: ['login.test.js'], // skip login test as other tests logs in user anyway
+  },
 }

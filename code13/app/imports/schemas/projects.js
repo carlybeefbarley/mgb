@@ -13,9 +13,9 @@ import SpecialGlobals from '/imports/SpecialGlobals.js'
 // The 'projects' concept is a BIG DEAL in MGB, so get ready for a big-ass comment explaining it
 // all. Got a coffee? You may need one :)
 
- // This will explain how Users, Assets, and access-rights are connected;  how we can avoid
- // Ux complexity; how we enable very high scale/performance;  and how we design-out many kinds of
- // data-model-corruption so they cannot exist in the system.  Ok, here goes:
+// This will explain how Users, Assets, and access-rights are connected;  how we can avoid
+// Ux complexity; how we enable very high scale/performance;  and how we design-out many kinds of
+// data-model-corruption so they cannot exist in the system.  Ok, here goes:
 
 //
 // PART A: BACKGROUND and CONCEPTS
@@ -56,7 +56,6 @@ import SpecialGlobals from '/imports/SpecialGlobals.js'
 //
 // Thus we _definitely_ want to make sure access-right checks on the servers for assets/projects/rights
 // will avoid joins, OR (at the least) do them in a way that is reduced to at most a single cacheable lookup.
-
 
 // CHOSEN DESIGN DIRECTION (meeting above goals)
 //
@@ -262,8 +261,8 @@ const schema = {
   createdAt: Date,
   updatedAt: Date,
 
-  ownerId:   String,          // owner user id
-  ownerName: String,          // owner user name (DENORMALIZED)
+  ownerId: String, // owner user id
+  ownerName: String, // owner user name (DENORMALIZED)
 
   // Various flags
   allowForks: Boolean,
@@ -271,20 +270,19 @@ const schema = {
   // Fork information (similar to approach used on assets)
   // These fields are not present on a project unless created as part
   // of a project-fork operation
-  forkChildren:    optional(Array),   // Array of peer direct children
-  forkParentChain: optional(Array),   // Array of parent forks
+  forkChildren: optional(Array), // Array of peer direct children
+  forkParentChain: optional(Array), // Array of parent forks
 
   // mgb1Import Info IF this project was imported from MGB1. NOT Changeable once set
-  mgb1: optional(Object),     // { mgb1username: String, mgb1ProjectName: String, importInitiator: String(mgb2username), importProgress: String }
+  mgb1: optional(Object), // { mgb1username: String, mgb1ProjectName: String, importInitiator: String(mgb2username), importProgress: String }
 
   // the actual project information
-  name: String,               // Project Name (scoped to owner). Case sensitive
-  description: String,        // A description field
-  workState: String,          // A value matching a key from workStates.js
-  memberIds: [String],        // Array of memberIds (User._id keys)
-  avatarAssetId: String       // Asset that will be used as the avatar for this project (should be of kind=graphic)
+  name: String, // Project Name (scoped to owner). Case sensitive
+  description: String, // A description field
+  workState: String, // A value matching a key from workStates.js
+  memberIds: [String], // Array of memberIds (User._id keys)
+  avatarAssetId: String, // Asset that will be used as the avatar for this project (should be of kind=graphic)
 }
-
 
 // Helper functions
 
@@ -295,45 +293,31 @@ const schema = {
  * @param {String} userId. If provided, then filter to only select projects owmned by or joined by userId. If null/undefined, then this selector will *not* filter for ownership/membership.
  * @returns {Object} A MongoDB selector to find projects that userId is owner OR member of
  */
-export function projectMakeSelector(
-  userId,
-  nameSearch,
-  showOnlyForkable = false,
-  hideWorkstateMask = 0)
-{
+export function projectMakeSelector(userId, nameSearch, showOnlyForkable = false, hideWorkstateMask = 0) {
   const sel = {}
 
-  if (userId)
-    sel['$or'] = [
-      { ownerId: userId },
-      { memberIds: { $in: [userId]} }
-    ]
+  if (userId) sel['$or'] = [{ ownerId: userId }, { memberIds: { $in: [userId] } }]
 
+  if (showOnlyForkable) sel.allowForks = true
 
-  if (showOnlyForkable)
-    sel.allowForks = true
-
-  if (hideWorkstateMask > 0)
-  {
+  if (hideWorkstateMask > 0) {
     const wsNamesToLookFor = makeWorkstateNamesArray(hideWorkstateMask)
-    sel["workState"] = { "$in": wsNamesToLookFor}
+    sel['workState'] = { $in: wsNamesToLookFor }
   }
 
-  if (nameSearch && nameSearch.length > 0)
-  {
+  if (nameSearch && nameSearch.length > 0) {
     // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
-    sel["name"]= {$regex: new RegExp("^.*" + nameSearch, 'i')}
+    sel['name'] = { $regex: new RegExp('^.*' + nameSearch, 'i') }
   }
 
   return sel
 }
 
-
 // MongoDB sorters for Projects collection
 export const projectSorters = {
-  "edited":         { updatedAt: -1 },
-  "name":           { name: 1 },
-  "createdNewest":  { createdAt: -1 }
+  edited: { updatedAt: -1 },
+  name: { name: 1 },
+  createdNewest: { createdAt: -1 },
 }
 
 // Make some handy shortcuts for defaults
@@ -346,8 +330,7 @@ export const defaultProjectSorter = projectSorters[defaultProjectSorterName]
  * @export
  * @returns  {Object} A MongoDB selector to find projects to put on the front page
  */
-export function projectMakeFrontPageListSelector()
-{
+export function projectMakeFrontPageListSelector() {
   return { workState: bestWorkStateName }
 }
 
@@ -359,59 +342,59 @@ export function projectMakeFrontPageListSelector()
  * @returns {Array} of projectName,isCurrUserProjectOwner,isCurrUserProjectMember
  */
 export function calculateProjectAccessRightsForAsset(currUserId, asset, currUsersProjects = []) {
-  if (!asset)
-    return null
+  if (!asset) return null
 
-  return _.map( asset.projectNames, (pName) => (
-    {
-      projectName: pName,
-      isCurrUserProjectOwner:  asset.ownerId === currUserId,    // Pretty simple logic for this given that it's our axiom
-      isCurrUserProjectMember: _.some(currUsersProjects, usrProj => (
-        ( usrProj.name === pName &&  usrProj.ownerId === asset.ownerId ) &&
-        _.includes(usrProj.memberIds, currUserId)
-      ))
-    }
-  ))
+  return _.map(asset.projectNames, pName => ({
+    projectName: pName,
+    isCurrUserProjectOwner: asset.ownerId === currUserId, // Pretty simple logic for this given that it's our axiom
+    isCurrUserProjectMember: _.some(
+      currUsersProjects,
+      usrProj =>
+        usrProj.name === pName &&
+        usrProj.ownerId === asset.ownerId &&
+        _.includes(usrProj.memberIds, currUserId),
+    ),
+  }))
 }
 
-const OWNED_COLOR = "green"
-const MEMBER_COLOR = "blue"
-const NOACCESS_COLOR = "grey"
+const OWNED_COLOR = 'green'
+const MEMBER_COLOR = 'blue'
+const NOACCESS_COLOR = 'grey'
 
 /**
  * This is a helper for visuals. It uses the ProjectTableEntries returned from calculateProjectAccessRightsForAsset() above
  * It returns a css color string, e.g. "red"
  */
-export const getColorNameForProjectAccess = pte => (
-  pte.isCurrUserProjectOwner ? OWNED_COLOR :
-    (pte.isCurrUserProjectMember ? MEMBER_COLOR : NOACCESS_COLOR)
-)
+export const getColorNameForProjectAccess = pte =>
+  pte.isCurrUserProjectOwner ? OWNED_COLOR : pte.isCurrUserProjectMember ? MEMBER_COLOR : NOACCESS_COLOR
 
-const OWNED_MSG = "owner"
-const MEMBER_MSG = "member"
-const NOACCESS_MSG = "no access"
+const OWNED_MSG = 'owner'
+const MEMBER_MSG = 'member'
+const NOACCESS_MSG = 'no access'
 
 /**
  * This is a helper for visuals. It uses the ProjectTableEntries returned from calculateProjectAccessRightsForAsset() above
  * It returns a css color string, e.g. "red"
  */
-export const getMsgForProjectAccess = pte => (
-  pte.isCurrUserProjectOwner ? OWNED_MSG :
-    (pte.isCurrUserProjectMember ? MEMBER_MSG : NOACCESS_MSG)
-)
+export const getMsgForProjectAccess = pte =>
+  pte.isCurrUserProjectOwner ? OWNED_MSG : pte.isCurrUserProjectMember ? MEMBER_MSG : NOACCESS_MSG
 
-export const getProjectAvatarUrl = (p, expires = 3600) => (
+export const getProjectAvatarUrl = (p, expires = 3600) =>
   p.avatarAssetId.length
     ? `/api/asset/cached-thumbnail/png/${expires}/${p.avatarAssetId}`
     : '/images/wireframe/image.png'
-)
 
-const _calcMaxNumMembersAllowedInProject = (user) => isUserSuperAdmin(user) ? SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject : SpecialGlobals.quotas.defaultNumMembersAllowedInProject
+const _calcMaxNumMembersAllowedInProject = user =>
+  isUserSuperAdmin(user)
+    ? SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject
+    : SpecialGlobals.quotas.defaultNumMembersAllowedInProject
 
-const _calcMaxOwnedProjectsAllowed = (user) => isUserSuperAdmin(user) ? SpecialGlobals.quotas.SUdefaultNumOfOwnedProjectsAllowed : SpecialGlobals.quotas.defaultNumOfOwnedProjectsAllowed
+const _calcMaxOwnedProjectsAllowed = user =>
+  isUserSuperAdmin(user)
+    ? SpecialGlobals.quotas.SUdefaultNumOfOwnedProjectsAllowed
+    : SpecialGlobals.quotas.defaultNumOfOwnedProjectsAllowed
 
 Meteor.methods({
-
   //
   // PROJECT CREATE
   //
@@ -420,8 +403,7 @@ Meteor.methods({
    *  @param data.name           Name of Project. Must be unique for
    *  @param data.description    Description field
    */
-  "Projects.create": function(data) {
-
+  'Projects.create': function(data) {
     // 0. Perform Input/User Validations
     checkIsLoggedInAndNotSuspended()
     checkMgb.projectName(data.name)
@@ -432,17 +414,18 @@ Meteor.methods({
     // find a conflict (since the client's subscription might not include all the user's
     // projects.. but that's ok since the check will run again on the server and that
     // will definitely have access to all records
-    if (Meteor.isServer)
-  {
-      const numProjectsOwnedByUser = Projects.find( { ownerId: this.userId } ).count()
+    if (Meteor.isServer) {
+      const numProjectsOwnedByUser = Projects.find({ ownerId: this.userId }).count()
       if (numProjectsOwnedByUser >= _calcMaxOwnedProjectsAllowed(Meteor.user()))
         throw new Meteor.Error(401, 'Max number of projects reached')
     }
 
-    const existingProject = Projects.findOne( { ownerId: this.userId, name: data.name } )
+    const existingProject = Projects.findOne({ ownerId: this.userId, name: data.name })
     if (existingProject)
-      throw new Meteor.Error(403, `Project ${username}:${data.name} already exists. Try again with a different name`)
-
+      throw new Meteor.Error(
+        403,
+        `Project ${username}:${data.name} already exists. Try again with a different name`,
+      )
 
     // Note: forkParentChain and forkChildren were added on 2/19/2017 so earlier
     // projects do not have them. For consistency, I have chose to NOT add
@@ -450,9 +433,8 @@ Meteor.methods({
     // These two array fields (forkParentChain and forkChildren) will instead
     // be created when needed by the ProjectFork Meteor call RPC
 
-      // TODO: disallow forkChildren[] and forkParent[] if this comes from the client.
-      //       Note that the server-side ForkAsset RPC *will* need to set forkParent[]
-
+    // TODO: disallow forkChildren[] and forkParent[] if this comes from the client.
+    //       Note that the server-side ForkAsset RPC *will* need to set forkParent[]
 
     // 1. Create new Project record and store in Collection
     const now = new Date()
@@ -463,8 +445,7 @@ Meteor.methods({
     data.workState = defaultWorkStateName
     data.allowForks = false
     data.memberIds = []
-    if (!_.isString(data.avatarAssetId))
-      data.avatarAssetId = ''
+    if (!_.isString(data.avatarAssetId)) data.avatarAssetId = ''
 
     check(data, _.omit(schema, '_id'))
     let docId = Projects.insert(data)
@@ -481,22 +462,22 @@ Meteor.methods({
   // PROJECT UPDATE
   //
 
-  "Projects.update": function(docId, data) {
+  'Projects.update': function(docId, data) {
     // 0. Perform Input/User Validations
     checkIsLoggedInAndNotSuspended()
     check(docId, String)
     const currUser = Meteor.user()
-    if (data.description)
-      checkMgb.projectDescription(data.description)
+    if (data.description) checkMgb.projectDescription(data.description)
     // Load ownerId and name of existing record to make sure current user is the owner
     const selector = { _id: docId }
-    const existingProjectRecord = Projects.findOne( selector, { fields: { ownerId: 1, name: 1, memberIds: 1 } } )
-    if (!existingProjectRecord)
-      throw new Meteor.Error(404, 'Project Id does not exist')
+    const existingProjectRecord = Projects.findOne(selector, {
+      fields: { ownerId: 1, name: 1, memberIds: 1 },
+    })
+    if (!existingProjectRecord) throw new Meteor.Error(404, 'Project Id does not exist')
     if (existingProjectRecord.ownerId !== this.userId && !isUserSuperAdmin(currUser))
       throw new Meteor.Error(401, "You don't have permission to edit this")
-    if (data.memberIds && data.memberIds.length > _calcMaxNumMembersAllowedInProject(currUser) )
-      throw new Meteor.Error(401, "You have exceeded the maximum number of members allowed")
+    if (data.memberIds && data.memberIds.length > _calcMaxNumMembersAllowedInProject(currUser))
+      throw new Meteor.Error(401, 'You have exceeded the maximum number of members allowed')
 
     // 1. Create new Project record and store in Collection
     const now = new Date()
@@ -506,44 +487,40 @@ Meteor.methods({
     // allow forkChildren[] and forkParent[] to be updated via this method since it can be
     // invoked from the client
     check(data, {
-      updatedAt:     schema.updatedAt,
-      name:          optional(schema.name),
-      description:   optional(schema.description),
-      workState:     optional(schema.workState),
-      allowForks:    optional(schema.allowForks),
-      memberIds:     optional(schema.memberIds),
-      avatarAssetId: optional(schema.avatarAssetId)
+      updatedAt: schema.updatedAt,
+      name: optional(schema.name),
+      description: optional(schema.description),
+      workState: optional(schema.workState),
+      allowForks: optional(schema.allowForks),
+      memberIds: optional(schema.memberIds),
+      avatarAssetId: optional(schema.avatarAssetId),
     })
 
-    const count = Projects.update(selector, { $set: data } )
+    const count = Projects.update(selector, { $set: data })
     if (Meteor.isServer)
       console.log(`  [Projects.update]  (${count}) #${docId} '${existingProjectRecord.name}'`)
 
     return count
   },
-  "Projects.leave": function(projectId, userId) {
+  'Projects.leave': function(projectId, userId) {
     checkIsLoggedInAndNotSuspended()
     check(projectId, String)
     check(userId, String)
-    if(userId !== this.userId)
-      throw new Meteor.Error(404, 'User Id does not match current user Id')
+    if (userId !== this.userId) throw new Meteor.Error(404, 'User Id does not match current user Id')
 
-    const selector = {_id: projectId}
+    const selector = { _id: projectId }
     const project = Projects.findOne(selector, { fields: { memberIds: 1, ownerId: 1, name: 1 } })
-    if (!project)
-      throw new Meteor.Error(404, 'Project Id does not exist')
-    if(userId === project.ownerId)
-      throw new Meteor.Error(404, 'Project owner may not leave the project')
+    if (!project) throw new Meteor.Error(404, 'Project Id does not exist')
+    if (userId === project.ownerId) throw new Meteor.Error(404, 'Project owner may not leave the project')
     var newData = {
       memberIds: _.without(project.memberIds, userId),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }
-    const count = Projects.update(selector, { $set: newData } )
-    if (Meteor.isServer)
-      console.log(`  [Projects.leave]  (${count}) #${projectId} '${project.name}'`)
+    const count = Projects.update(selector, { $set: newData })
+    if (Meteor.isServer) console.log(`  [Projects.leave]  (${count}) #${projectId} '${project.name}'`)
 
     return count
-  }
+  },
 
   //
   // PROJECT FORK
@@ -552,5 +529,4 @@ Meteor.methods({
   // Method "Project.Azzets.fork". It is there since it must perform many asset-related
   // operations during the fork operations.
   //
-
 })

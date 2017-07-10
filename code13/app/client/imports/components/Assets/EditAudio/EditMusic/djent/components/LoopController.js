@@ -1,17 +1,15 @@
-import React, { Component } from 'react';
-import Switch from './Switch';
+import React, { Component } from 'react'
+import Switch from './Switch'
 
-const LoopController = (props) => {
-    const inputProps = {
-        id: 'loop',
-        label: 'Loop',
-        isActive: props.isLooping,
-        onChange: () => props.actions.updateIsLooping(!props.isLooping),
-    }
+const LoopController = props => {
+  const inputProps = {
+    id: 'loop',
+    label: 'Loop',
+    isActive: props.isLooping,
+    onChange: () => props.actions.updateIsLooping(!props.isLooping),
+  }
 
-    return (
-        <Switch { ...inputProps } />
-    );
+  return <Switch {...inputProps} />
 }
 
-export default LoopController;
+export default LoopController

@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import styles from '../home.css'
-import sty from  './learnRoute.css'
+import sty from './learnRoute.css'
 import QLink from '../QLink'
 import { Divider, Grid, Card, Header, Icon } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
@@ -17,7 +17,7 @@ const learnCodeItems = [
     skillnodeTopLevelTag: 'getStarted',
     desc: `Learn the basics of the Javascript programming language. 
     This covers the core programming language concepts necessary to write a game: variables, arrays, loops, functions, etc.
-    If you already know these, you can proceed to the next section instead...`
+    If you already know these, you can proceed to the next section instead...`,
   },
   {
     mascot: 'phaserLogo',
@@ -27,7 +27,7 @@ const learnCodeItems = [
     skillPath: 'code.js.phaser',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `'Phaser' is a very popular game programming library written in JavaScript. These tutorials explain what Phaser is, and demonstrate how to use it to handle graphics, sound, maps, physics etc in your games.`
+    desc: `'Phaser' is a very popular game programming library written in JavaScript. These tutorials explain what Phaser is, and demonstrate how to use it to handle graphics, sound, maps, physics etc in your games.`,
   },
   {
     mascot: 'mole',
@@ -37,7 +37,7 @@ const learnCodeItems = [
     skillPath: 'code.js.games',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `These walkthoughs will show you how to create a game using your new PhaserJS game-dev skills.`
+    desc: `These walkthoughs will show you how to create a game using your new PhaserJS game-dev skills.`,
   },
   {
     mascot: 'arcade_player',
@@ -46,57 +46,66 @@ const learnCodeItems = [
     link: '/learn/code/modify',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `We provide some working games that you can fork (copy) and change as you wish.`
+    desc: `We provide some working games that you can fork (copy) and change as you wish.`,
   },
 ]
 
-const LearnCodeRoute = ({ currUser, params }, context) => (
-  <Grid container columns='1'>
+const LearnCodeRoute = ({ currUser, params }, context) =>
+  <Grid container columns="1">
     <Divider hidden />
     <Grid.Column>
-      <Header as='h1'>
+      <Header as="h1">
         Learn Programming
         <Header.Subheader>With JavaScript and Phaser</Header.Subheader>
       </Header>
     </Grid.Column>
     <Grid.Column>
       <Card.Group itemsPerRow={1} stackable className="skills">
-        { learnCodeItems.map( (area, idx) => (
-            <QLink key={idx} className='card animated fadeIn' style={cardStyle} to={area.link} query={area.query}>
-              <Card.Content>
-                <div 
-                  className="learnThumbnail" 
-                  style={{ backgroundImage: `url("${UX.makeMascotImgLink(area.mascot)}")` }}
-                  />
-                <Header as='h2' style={headerStyle}><Icon name={area.icon} />&nbsp;{area.content}</Header>
-                <p style={descStyle}>{area.desc}</p>
-                {area.skillPath && currUser && (
-                  <SkillsMap skills={context.skills} skillPaths={[area.skillPath]} />
-                )}
-              </Card.Content>
-            </QLink>
-        ) ) }
+        {learnCodeItems.map((area, idx) =>
+          <QLink
+            key={idx}
+            className="card animated fadeIn"
+            style={cardStyle}
+            to={area.link}
+            query={area.query}
+          >
+            <Card.Content>
+              <div
+                className="learnThumbnail"
+                style={{ backgroundImage: `url("${UX.makeMascotImgLink(area.mascot)}")` }}
+              />
+              <Header as="h2" style={headerStyle}>
+                <Icon name={area.icon} />&nbsp;{area.content}
+              </Header>
+              <p style={descStyle}>
+                {area.desc}
+              </p>
+              {area.skillPath &&
+                currUser &&
+                <SkillsMap skills={context.skills} skillPaths={[area.skillPath]} />}
+            </Card.Content>
+          </QLink>,
+        )}
       </Card.Group>
     </Grid.Column>
   </Grid>
-)
 
 LearnCodeRoute.contextTypes = {
-  skills: PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
+  skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)
 }
 
 export default LearnCodeRoute
 
 const cardStyle = {
-  color: "#2e2e2e"
+  color: '#2e2e2e',
 }
 
 const headerStyle = {
-  marginTop: "0.15em",
-  marginBottom: "0.4em"
+  marginTop: '0.15em',
+  marginBottom: '0.4em',
 }
 
 const descStyle = {
-  fontSize: "1.25em",
-  lineHeight: "1.5em"
+  fontSize: '1.25em',
+  lineHeight: '1.5em',
 }

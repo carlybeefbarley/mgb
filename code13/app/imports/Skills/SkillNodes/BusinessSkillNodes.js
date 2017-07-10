@@ -8,15 +8,15 @@ import C from './CommonSkillNodes.js'
 
 export default {
   $meta: {
-    name:           'Business',
-    description:    'Represents business, monetization and project management skills',
+    name: 'Business',
+    description: 'Represents business, monetization and project management skills',
   },
   monetization: {
-    freemium:         C.E,
-    upsell:           C.E,
-    consumables:      C.E,
-    subscriptions:    C.E,
-    ads:              C.E
+    freemium: C.E,
+    upsell: C.E,
+    consumables: C.E,
+    subscriptions: C.E,
+    ads: C.E,
   },
-  projectManagement:  C.E
+  projectManagement: C.E,
 }

@@ -13,67 +13,67 @@ import C from './CommonSkillNodes.js'
 //    changes in the names of child nodes for skills
 export default {
   $meta: {
-    name:           'Get Started',
-    description:    'Represents basic MGB usage skills - set up your profile, play a game, find friends, etc',
-    sequence:       'profile,chat,play,assetsBasics,projects,nonCodeGame'
+    name: 'Get Started',
+    description: 'Represents basic MGB usage skills - set up your profile, play a game, find friends, etc',
+    sequence: 'profile,chat,play,assetsBasics,projects,nonCodeGame',
   },
 
   profile: {
     $meta: {
-      name:           'Profile',
-      description:    'Add avatars and other info to your profile',
-      sequence:       'avatar,badges,bio'
+      name: 'Profile',
+      description: 'Add avatars and other info to your profile',
+      sequence: 'avatar,badges,bio',
     },
-    avatar:           C.E,
-    badges:           C.E,
-    bio:              C.E
-//    quickTour:        C.E
+    avatar: C.E,
+    badges: C.E,
+    bio: C.E,
+    //    quickTour:        C.E
   },
 
   chat: {
     $meta: {
-      name:           'Chat',
-      description:    'Learn to use chat and say Hi',
-      sequence:       'chatFlexPanel,assetChat'
+      name: 'Chat',
+      description: 'Learn to use chat and say Hi',
+      sequence: 'chatFlexPanel,assetChat',
     },
-    chatFlexPanel:    C.E,  // Public chat - show flexPanels, change channel, say Hi on Random
-//  chatAtMention:    C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
-//  privateChat:      C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
-    assetChat:        C.E   // Actually this is asset and project chat
+    chatFlexPanel: C.E, // Public chat - show flexPanels, change channel, say Hi on Random
+    //  chatAtMention:    C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
+    //  privateChat:      C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
+    assetChat: C.E, // Actually this is asset and project chat
   },
 
   play: {
     $meta: {
-      name:           'Play',
-      description:    'Find games to play here',
-      sequence:       'playOneGame'
+      name: 'Play',
+      description: 'Find games to play here',
+      sequence: 'playOneGame',
     },
-    playOneGame:      C.E,
-      // gamesImade:       { ...C.E, $meta: { ...C.E.$meta, name: 'Games I Made' } },
+    playOneGame: C.E,
+    // gamesImade:       { ...C.E, $meta: { ...C.E.$meta, name: 'Games I Made' } },
     // Not yet implemented as a feature.. this will just say 'coming soon' for now
-      // continueAgame:    { ...C.E, $meta: { ...C.E.$meta, name: 'Continue A Game'} }
+    // continueAgame:    { ...C.E, $meta: { ...C.E.$meta, name: 'Continue A Game'} }
   },
 
   assetsBasics: {
     $meta: {
-      name:           'Assets',
-      description:    'Find, create and work with Game Assets',
-      sequence:       'findAssets,createAssets,assetProperties,searchAssets'
+      name: 'Assets',
+      description: 'Find, create and work with Game Assets',
+      sequence: 'findAssets,createAssets,assetProperties,searchAssets',
     },
-    findAssets:       C.E,
-    createAssets:     C.E,
-    assetProperties:  C.E,
-    searchAssets:     C.E
+    findAssets: C.E,
+    createAssets: C.E,
+    assetProperties: C.E,
+    searchAssets: C.E,
   },
 
   projects: {
     $meta: {
-      name:           'Projects',
-      description:    'Set up Projects and Teams',
+      name: 'Projects',
+      description: 'Set up Projects and Teams',
     },
-    createProject:         C.E,
-    createAssetInProject:  C.E,
-    projectAvatar:         C.E,
+    createProject: C.E,
+    createAssetInProject: C.E,
+    projectAvatar: C.E,
     // projectMembers:        C.E,
     // changeProjectForAsset: C.E,
     // projectsCanOverlap:    C.E,
@@ -82,23 +82,23 @@ export default {
 
   nonCodeGame: {
     $meta: {
-      name:           'Simple non-code game',
-      description:    'A simple game using Actors instead of Code',
-      sequence:       'createGraphic,createActor,createPlayer,createNPC,createObjects,createShot,createActorMap,useActorMap'
+      name: 'Simple non-code game',
+      description: 'A simple game using Actors instead of Code',
+      sequence:
+        'createGraphic,createActor,createPlayer,createNPC,createObjects,createShot,createActorMap,useActorMap',
     },
-    createGraphic:   C.E,
-    createActor:     C.E,
-    createPlayer:    C.E,
-    createNPC:       C.E,
-    createObjects:   C.E,
-    createShot:      C.E,
-    createActorMap:  C.E,
-    useActorMap:     C.E,
-  //  learnMore:       C.E
+    createGraphic: C.E,
+    createActor: C.E,
+    createPlayer: C.E,
+    createNPC: C.E,
+    createObjects: C.E,
+    createShot: C.E,
+    createActorMap: C.E,
+    useActorMap: C.E,
+    //  learnMore:       C.E
   },
 
   // These probably should not be in GetStarted
-
 
   // codeGame: {
   //   $meta: {
@@ -112,8 +112,6 @@ export default {
   //   stopGame:        C.E,
   //   codeMentor:      C.E
   // },
-
-
 
   // assetsAdvanced: {
   //   $meta: {

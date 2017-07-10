@@ -4,7 +4,7 @@ import badWords from './config/profanity.json'
 
 var path = require('path')
 
-export default (swearjar = {
+const swearjar = {
   _badWords: badWords,
 
   scan: function(text, callback) {
@@ -71,4 +71,6 @@ export default (swearjar = {
   setBadWords: function(badWords) {
     this._badWords = badWords || {}
   },
-})
+}
+
+export default swearjar

@@ -2,7 +2,39 @@
   "name": "mgb",
   "version": "0.1.0",
   "description": "My Game Builder",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/devlapse/mgb.git"
+  },
+  "author": "David Golds",
+  "bugs": {
+    "url": "https://github.com/devlapse/mgb/issues"
+  },
+  "keywords": [
+    "game",
+    "ide",
+    "web"
+  ],
+  "license": "SEE LICENSE IN LICENSE.md",
+  "homepage": "https://github.com/devlapse/mgb#readme",
   "main": "app.js",
+  "scripts": {
+    "eslint": "echo \"linting...\" && eslint --fix \"**/*.js?(x)\" --ignore-pattern \".meteor/**\" --ignore-pattern \"**/lib/**\" --ignore-pattern \"public/phaser/**\"",
+    "lint": "npm run --silent prettier && npm run --silent eslint",
+    "prettier": "prettier --semi false --print-width 110 --single-quote --trailing-comma all --write \"**/*.js?(x|on)\" \"!.meteor/**\" \"!**/lib/**\" \"!public/phaser/**\"",
+    "start": "sh ./go.sh",
+    "storybook": "start-storybook -p 9001 -s ./.meteor/local/build/programs/web.browser/app,./.meteor/local/build/programs/web.browser -c .storybook",
+    "withDB": "MONGO_URL=mongodb://mgbapp:tiNmhsp1@ds021730-a0.mlab.com:21730,ds021730-a1.mlab.com:21730/mgb2_clus001?replicaSet=rs-ds021730 meteor"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {
+        "browsers": [
+          "last 2 versions"
+        ]
+      }
+    }
+  },
   "dependencies": {
     "acorn": "^4.0.13",
     "audiobuffer-to-wav": "^1.0.0",
@@ -62,49 +94,16 @@
     "@kadira/storybook": "^2.35.3",
     "@types/lodash": "^4.14.67",
     "autoprefixer": "^6.7.7",
-    "babel-eslint": "^6.1.2",
+    "babel-eslint": "^7.2.3",
     "babel-root-slash-import": "^1.1.0",
-    "eslint": "^3.19.0",
+    "eslint": "^4.2.0",
+    "eslint-config-prettier": "^2.3.0",
+    "eslint-plugin-prettier": "^2.1.2",
     "eslint-plugin-react": "^6.10.3",
     "mocha": "^3.4.2",
     "mocha-parallel": "^0.1.0",
     "mocha.parallel": "^0.15.2",
+    "prettier": "github:prettier/prettier",
     "selenium-webdriver": "^3.4.0"
-  },
-  "oldDependencies": {
-    "jimp": "^0.2.24",
-    "redux": "^3.5.2",
-    "redux-logger": "^2.6.1",
-    "redux-thunk": "^2.1.0"
-  },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {
-        "browsers": [
-          "last 2 versions"
-        ]
-      }
-    }
-  },
-  "scripts": {
-    "test": "echo \"No test specified\" && exit 0",
-    "start": "sh ./go.sh",
-    "withDB": "MONGO_URL=mongodb://mgbapp:tiNmhsp1@ds021730-a0.mlab.com:21730,ds021730-a1.mlab.com:21730/mgb2_clus001?replicaSet=rs-ds021730 meteor",
-    "storybook": "start-storybook -p 9001 -s ./.meteor/local/build/programs/web.browser/app,./.meteor/local/build/programs/web.browser -c .storybook"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/devlapse/mgb.git"
-  },
-  "keywords": [
-    "game",
-    "ide",
-    "web"
-  ],
-  "author": "David Golds",
-  "license": "SEE LICENSE IN LICENSE.md",
-  "bugs": {
-    "url": "https://github.com/devlapse/mgb/issues"
-  },
-  "homepage": "https://github.com/devlapse/mgb#readme"
+  }
 }

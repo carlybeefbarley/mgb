@@ -14,7 +14,7 @@ const HomeHeroBanner = ( { userId, username } ) => (
   <Segment basic style={{minWidth: '140px'}}>
     <Grid>
       <Grid.Row>
-        {is.mobile()
+        {is.mobile() && false 
           ?
           <Grid.Column style={{textAlign: 'center'}}>
             <Image size='medium' floated='right' src={UX.makeMascotImgLink('team')} />

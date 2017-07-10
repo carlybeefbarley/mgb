@@ -22,7 +22,9 @@ function createLocationDescriptor(to, _ref) {
   var state = _ref.state;
 
   if (query || hash || state) {
-    return { pathname: to, query: query, hash: hash, state: state };
+    return { pathname: to, query: query, hash: hash, state: state, toString: function(){
+      return this.pathname + (this.query ? '?' + _.map(this.query, (v, k) => decodeURIComponent(k + '=' + v) ).join("&") : '' ) + (this.hash ? '#' + this.hash : '')
+    } };
   }
 
   return to;
@@ -224,6 +226,13 @@ function _getDefaultUrlQueryParams()
   return obj
 }
 
+
+export function utilMakeLocation(existingQuery, newTo, extraQueryParams = {})
+{
+  const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery || _getDefaultUrlQueryParams())
+  return createLocationDescriptor(newTo, { query: Object.assign( {}, appScopedQuery, extraQueryParams) } )
+}
+
 /**
  * This is a replacement for browserHistory.push(). Use this when you want to add an
  * additional step into the browser history
@@ -239,9 +248,7 @@ function _getDefaultUrlQueryParams()
  */
 export function utilPushTo(existingQuery, newTo, extraQueryParams = {})
 {
-  const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery || _getDefaultUrlQueryParams())
-  const location = createLocationDescriptor(newTo, { query: Object.assign( {}, appScopedQuery, extraQueryParams) } )
-
+  const location = utilMakeLocation(existingQuery, newTo, extraQueryParams)
   // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
   clearPriorPathsForJoyrideCompletionTags()
 
@@ -280,6 +287,16 @@ export function utilReplaceTo(existingQuery, newTo, extraQueryParams = {})
 export function utilShowFlexPanel(currentUrlLocation, newFpNavString)
 {
   utilPushTo(currentUrlLocation.query, currentUrlLocation.pathname, { _fp: newFpNavString } )
+}
+/**
+ * Similar to utilLinkToChatPanelChannel
+ * @param currentUrlLocation from something like window.location
+ * @param newFpNavString as defined in chats:makeChannelName()
+ * @returns {String} - location which will show flex panel open
+ */
+export function utilLinkToChatPanelChannel(currentUrlLocation, chatChannelName){
+  const location = utilMakeLocation(currentUrlLocation.query, currentUrlLocation.pathname, { _fp: 'chat.' + chatChannelName } )
+  return location.toString()
 }
 
 /**

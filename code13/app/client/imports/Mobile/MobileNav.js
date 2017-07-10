@@ -1,3 +1,14 @@
+/*
+README:
+  this module wraps up navigation for mobile version.
+  it is resposonsible for tab and bottom button rendering
+
+
+
+
+ */
+
+
 import React from 'react'
 import {Grid, Sidebar, Segment, Button, Menu, Image, Icon, Header} from 'semantic-ui-react'
 
@@ -17,18 +28,22 @@ import NavBar from '/client/imports/components/Nav/NavBar'
 
 import {utilReplaceTo, utilPushTo} from '/client/imports/routes/QLink.js'
 
-import './MobileNav.css'
 import SpecialGlobals from '/imports/SpecialGlobals'
+
+import {Link, browserHistory} from 'react-router'
+
+import './MobileNav.css'
+
 
 class SwipeableViews2 extends React.Component {
 
-  constructor(...a){
+  constructor(...a) {
     super(...a)
     this.isScrolling = true
     this.lastScroll = 0
   }
 
-  componentDidMount(){
+  componentDidMount() {
     const el = this.refs.mainContainer
     el.addEventListener('scroll', this.onScroll, {
       useCapture: true,
@@ -62,14 +77,14 @@ class SwipeableViews2 extends React.Component {
       passive: false
     })
 
-    if(this.props.index !== void(0)) {
+    if (this.props.index !== void(0)) {
 
       const screenWidth = el.parentElement.offsetWidth
       this.refs.mainContainer.scrollLeft = this.props.index * screenWidth
     }
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     const el = this.refs.mainContainer
     el.removeEventListener('scroll', this.onScroll)
     el.removeEventListener('touchstart', this.onInputDown)
@@ -78,8 +93,8 @@ class SwipeableViews2 extends React.Component {
     el.removeEventListener('mouseup', this.onInputEnd)
   }
 
-  componentDidUpdate(){
-    if(this.props.index !== void(0)) {
+  componentDidUpdate() {
+    if (this.props.index !== void(0)) {
       const el = this.refs.mainContainer
       const screenWidth = el.parentElement.offsetWidth
       this.refs.mainContainer.scrollLeft = this.props.index * screenWidth
@@ -89,7 +104,7 @@ class SwipeableViews2 extends React.Component {
   onScroll = (e) => {
     //console.log("scrolling...")
     //e.preventDefault()
-    if(!this.inputDown){
+    if (!this.inputDown) {
       this.refs.mainContainer.scrollLeft = this.lastScroll
       e.preventDefault()
       return
@@ -102,8 +117,8 @@ class SwipeableViews2 extends React.Component {
     this.scrollTimeout = window.setTimeout(() => {
       this.isScrolling = false
       /*if(!this.inputDown) {
-        this.onInputEnd()
-      }*/
+       this.onInputEnd()
+       }*/
     }, 10)
   }
 
@@ -117,18 +132,17 @@ class SwipeableViews2 extends React.Component {
     this.inputDown = false
     const el = this.refs.mainContainer
     this.lastScroll = el.scrollLeft
-    if(this.isScrolling) {
+    if (this.isScrolling) {
 
       el.scrollLeft = el.scrollLeft + 1
       return
     }
 
 
-
     const screenWidth = el.parentElement.offsetWidth
 
     const rel = el.scrollLeft % screenWidth
-    const newScroll = (el.scrollLeft - rel) + (rel > screenWidth *0.5 ? screenWidth : 0)
+    const newScroll = (el.scrollLeft - rel) + (rel > screenWidth * 0.5 ? screenWidth : 0)
     const tab = Math.floor(newScroll / screenWidth)
     el.scrollLeft = newScroll
 
@@ -180,35 +194,34 @@ const NotReady = () => (
 )
 
 
-
 // make use of this
 let cache = {}
 /*
-* Profile
-* What's New
-* Roadmap
-*
-* Users
-* Feed
-* Dailies
-*
-* Badges
-* Projects
-* Competitions
-*
-* Send Feedback
-* Notifications
-* Learn
-*
-* Help
-* Settings
-* Log Out
-*
-* */
+ * Profile
+ * What's New
+ * Roadmap
+ *
+ * Users
+ * Feed
+ * Dailies
+ *
+ * Badges
+ * Projects
+ * Competitions
+ *
+ * Send Feedback
+ * Notifications
+ * Learn
+ *
+ * Help
+ * Settings
+ * Log Out
+ *
+ * */
 
 class MobileNav extends React.Component {
   static contextTypes = {
-    router:  React.PropTypes.object
+    router: React.PropTypes.object
   }
 
   constructor() {
@@ -241,10 +254,10 @@ class MobileNav extends React.Component {
       'logout',
     ]
     this.state = cache.state || {
-      index: 0,
-      location: {},
-      maxItems: {}
-    }
+        index: 0,
+        location: {},
+        maxItems: {}
+      }
 
     this.cache = {
       views: [],
@@ -255,7 +268,7 @@ class MobileNav extends React.Component {
     this.handleChangeIndex = this.handleChangeIndex.bind(this)
   }
 
-  setState(newState, callback = null){
+  setState(newState, callback = null) {
     super.setState(newState, () => {
       cache.state = this.state
       callback && callback()
@@ -277,7 +290,7 @@ class MobileNav extends React.Component {
   }
 
   // todo...
-  shouldComponentUpdate(nextProps, nextState){
+  shouldComponentUpdate(nextProps, nextState) {
     return true
   }
 
@@ -285,36 +298,43 @@ class MobileNav extends React.Component {
    console.log("PROPS:", this.props.location.pathname, this.props)
    }*/
 
-  setLocation(location, tab){
-    if(tab !== -1) {
-      if(tab)
-        this.handleChangeIndex(tab)
-
-
-      this.state.location[this.state.index] = location
+  setLocation(location, tab) {
+    console.log("setLocation Location:", location)
+    if (tab !== -1) {
+      if (tab) {
+        this.handleChangeIndex(tab, location)
+        return
+      }
+      const index = tab && tab !== -1 ? tab : this.state.index
+      this.state.location[index] = location
     }
 
     this.setState({location: this.state.location, time: Date.now()})
-    this.context.router.push(location)
+
+    if (typeof location === 'string')
+      this.context.router.push(location)
+    else
+      browserHistory.push(location)
   }
 
   onClick(button, index) {
     this.handleChangeIndex(index)
   }
 
-  onClickMoreContent(button, index){
+  onClickMoreContent(button, index) {
     button.action && button.action(this)
   }
 
-  handleChangeIndex(index) {
+  handleChangeIndex(index, location) {
     console.log("Setting state index to:", index)
     this.setState({index}, () => {
       // this is here because this is much faster than react re-rendering
       $(".mobile-nav-button.active", this.refs.mobileNav).removeClass("active")
       $("#mobile-nav-button-" + index, this.refs.mobileNav).addClass("active")
 
-      const route = this.state.location[index] || '/'
-      if(this.state.lastRoute !== route){
+      const route = location || this.state.location[index] || '/?_fp=chat.A_NDe2wYSgj9piosiqG_'
+
+      if (this.state.lastRoute !== route) {
         this.context.router.push(route)
         this.state.lastRoute = (this.state.location[index] || '/')
       }
@@ -367,15 +387,15 @@ class MobileNav extends React.Component {
 
   renderView() {
     const max = this.getMaxItems()
-    for(let i=0; i<max; i++){
-      if(i !== this.state.index && this.cache.views[i])
+    for (let i = 0; i < max; i++) {
+      if (i !== this.state.index && this.cache.views[i])
         continue
 
       const index = i
       const bName = this.buttons[index]
       let tabView = null
 
-      if(!this.state.location[index]) {
+      if (!this.state.location[index]) {
         const b = MobileNav.availableButtons[bName]
         const props = b.getProps ? b.getProps(this) : null
         tabView = <b.Component title={bName} isMobile={true} {...this.props} {...props} />
@@ -385,13 +405,13 @@ class MobileNav extends React.Component {
         <div key={index}>
           {/*{bName} + {this.state.index}*/}
           {this.state.index === index && this.state.location[index] &&
-            <RouterWrap {...this.props} onClose={() => {
-              console.log("Closing router wrap..")
-              this.state.location[index] = null
-              // force Redraw
-              this.context.router.push('/')
-              this.setState({location: this.state.location})
-          }} location={this.state.location[index]} key={index * 10000} />
+          <RouterWrap {...this.props} onClose={() => {
+            console.log("Closing router wrap..")
+            this.state.location[index] = null
+            // force Redraw
+            this.context.router.push('/')
+            this.setState({location: this.state.location})
+          }} location={this.state.location[index]} key={index * 10000}/>
           }
           { tabView }
         </div>
@@ -411,7 +431,7 @@ class MobileNav extends React.Component {
       id={"mobile-nav-button-" + index}
       onClick={() => this.onClick(b, index)}
     >
-      <Icon name={b.icon || 'question'} size='large' />
+      <Icon name={b.icon || 'question'} size='large'/>
       <p>{b.title}</p>
     </span>
   }
@@ -444,15 +464,39 @@ class MobileNav extends React.Component {
     chat: {
       title: "Chat",
       Component: fpChat, // BlankPage,
-      getProps: (mobileNav) => ({
-        panelWidth: '0',
-        // TODO: save and restore
-        subNavParam: '',
-        handleChangeSubNavParam: function (newSubNavParamStr) {
-          localStorage.setItem("chat:subNavParam", newSubNavParamStr)
-          mobileNav.forceUpdate()
+      getProps: (mobileNav) => {
+
+        let subNav = (mobileNav.props.location && mobileNav.props.location.query) ? mobileNav.props.location.query._fp : ''
+        // bug bug in the location query
+        // workaround - try to get correct query manually
+        // TODO: debug - why location.query is not parsed sometimes
+        if(!subNav){
+          const parts = mobileNav.props.location.pathname.split('?')
+          if(parts.length > 0) {
+            const query = {}
+            parts.pop().split('&').forEach(val => {
+              const cp = val.split('=')
+              query[cp[0]] = cp[1]
+            })
+            console.error("DEBUG me: Manually found query:", query)
+            subNav = query._fp
+          }
         }
-      }),
+
+
+        const subNavParam = (subNav ? subNav.split('.') : []).length > 0 ? subNav.split('.').pop() : ''
+
+        return {
+          panelWidth: 0,
+          // TODO: save and restore
+          subNavParam: subNavParam || localStorage.getItem("chat:subNavParam") || 'A_NDe2wYSgj9piosiqG_',
+          handleChangeSubNavParam: function (newSubNavParamStr) {
+            console.log('handleChangeSubNavParam', newSubNavParamStr)
+            localStorage.setItem("chat:subNavParam", newSubNavParamStr)
+            mobileNav.forceUpdate()
+          }
+        }
+      },
       icon: 'chat'
     },
     more: {
@@ -468,7 +512,7 @@ class MobileNav extends React.Component {
     profile: {
       title: "Profile",
       action: (mobnav) => {
-        if(Meteor.user())
+        if (Meteor.user())
           mobnav.setLocation(`/u/${Meteor.user().username}`)
         else
           mobnav.setLocation(`/login`)
@@ -517,7 +561,7 @@ class MobileNav extends React.Component {
       title: 'Badges',
       icon: 'star',
       action: (mobnav) => {
-        if(Meteor.user())
+        if (Meteor.user())
           mobnav.setLocation(`/u/${Meteor.user().username}/badges`)
         else
           mobnav.setLocation(`/login`)

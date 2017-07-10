@@ -9,7 +9,7 @@ import Helmet from 'react-helmet'
 
 import { makeChannelName} from '/imports/schemas/chats'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-import { utilShowChatPanelChannel } from '/client/imports/routes/QLink'
+import { utilShowChatPanelChannel, utilLinkToChatPanelChannel } from '/client/imports/routes/QLink'
 import { isValidCodeGame, isValidActorMapGame } from '/imports/schemas/assets'
 
 import { makeAssetInfoFromAsset } from '/imports/schemas/assets/assets-client'
@@ -127,22 +127,6 @@ class PlayCodeGame extends React.Component {
       strategy: "scroll" //<- For ultra performance.
     })
     this.erd.listenTo(this.container, this.onresize)
-
-    /*
-    TODO: techdebt - Compare this to erd - and if erd is REALLY better then remove commented code below
-
-     // slowly check container size and adjust game size if size has changed
-    let savedBox = container.getBoundingClientRect()
-    const checkResize = () => {
-      const outerBox = container.getBoundingClientRect()
-      if(savedBox.width != outerBox.width || savedBox.height != outerBox.height)
-         this.onresize()
-      savedBox = outerBox
-      this.resizeTimeout = setTimeout(checkResize, 1000)
-    }
-    window.addEventListener('resize', this.onresize)
-    checkResize()
-    */
   }
 
   // cleanup
@@ -540,6 +524,11 @@ export default PlayGameRoute = React.createClass({
     joyrideCompleteTag('mgbjr-CT-asset-play-game-show-chat')
     utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
+  makeLinkToChat(){
+    const channelName = makeChannelName( { scopeGroupName: 'Asset', scopeId: this.props.params.assetId } )
+    joyrideCompleteTag('mgbjr-CT-asset-play-game-show-chat')
+    return utilLinkToChatPanelChannel(this.context.urlLocation, channelName)
+  },
 
   render: function () {
     if (this.data.loading)
@@ -558,7 +547,12 @@ export default PlayGameRoute = React.createClass({
             </QLink>
           </Header>
         <small>&emsp;{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</small>
-        <AssetChatDetail style={_styleGameNavButtons} hasUnreads={hazUnreadAssetChat} handleClick={this.handleChatClick}/>
+        <AssetChatDetail
+          style={_styleGameNavButtons}
+          hasUnreads={hazUnreadAssetChat}
+          handleClick={this.handleChatClick}
+          to={this.makeLinkToChat()}
+        />
         <GameTypeDetail game={game} style={_styleGameNavButtons} />
         <PlayGame game={game} user={user} incrementPlayCountCb={this.incrementPlayCount} availableWidth={this.props.availableWidth} />
       </Segment>

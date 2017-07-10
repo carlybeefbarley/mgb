@@ -214,10 +214,10 @@ const AppUI = React.createClass({
     let trackPage = null
 
     // TODO users routeName returns 'users' instead of '/users'
-    if (_.indexOf(['/', '/games', 'users'], routeName) != -1)
+    if (_.indexOf(['/', '/games', 'users'], routeName) !== -1)
       trackPage = routeName
 
-    else if (pathName == '/')
+    else if (pathName === '/')
       trackPage = '/'
 
     else if (_.startsWith(routeName, '/learn'))
@@ -249,12 +249,10 @@ const AppUI = React.createClass({
 
   getInitialState() {
     return {
-      activityHistoryLimit: 11,
-
       hideHeaders:           false,         // Show/Hide NavPanel & Some other UI (like Asset Edit Header). This is a bit slow to do in the Navbar, so doing it here */
       // read/unread Chat status. Gathered up here since it used across app, especially for notifications and lists
-      chatChannelTimestamps:    null,          // as defined by Chats.getLastMessageTimestamps RPC
-      hazUnreadChats:           [],            // will contain Array of channel names with unread chats
+      chatChannelTimestamps: null,          // as defined by Chats.getLastMessageTimestamps RPC
+      hazUnreadChats:        [],            // will contain Array of channel names with unread chats
       // hazUnreadChats is a subset of the data in chatChannelTimestamps, but simplified - just an
       // Array of chat channelNames that have at least one unread message. Note that Global ChatChannels
       // are treated a little specially - if you have never visited a particular global channel you will
@@ -307,8 +305,8 @@ const AppUI = React.createClass({
     if (!this.props.currUser)
       return
 
-    const {settings, currUser, currUserProjects} = this.props
-    const {assetId} = this.props.params
+    const { settings, currUser, currUserProjects } = this.props
+    const { assetId } = this.props.params
 
     // 0. Make the list of channels we are interested in:
     //       Global, relevantProjects, currentAsset, pinnedChannels.
@@ -318,12 +316,12 @@ const AppUI = React.createClass({
 
     const chanArray = _.concat(
       [makeChannelName({ scopeGroupName: 'User', scopeId: currUser.username })],
-      _.map(ChatChannels.sortedKeys, k => makeChannelName({scopeGroupName: 'Global', scopeId: k})),
-      _.map(currUserProjects, p => makeChannelName({scopeGroupName: 'Project', scopeId: p._id})),
+      _.map(ChatChannels.sortedKeys, k => makeChannelName({ scopeGroupName: 'Global', scopeId: k })),
+      _.map(currUserProjects, p => makeChannelName({ scopeGroupName: 'Project', scopeId: p._id })),
       getPinnedChannelNames(settings)
     )
     if (assetId)
-      chanArray.push(makeChannelName({scopeGroupName: 'Asset', scopeId: assetId}))
+      chanArray.push(makeChannelName({ scopeGroupName: 'Asset', scopeId: assetId }))
 
     // 1. Now ask the server for the last message timestamps for these channels
     Meteor.call('Chats.getLastMessageTimestamps', chanArray, (error, chatChannelTimestamps) => {
@@ -344,7 +342,7 @@ const AppUI = React.createClass({
             hazUnreadChats.push(channelName)
         })
         if (!_.isEqual(hazUnreadChats, this.state.hazUnreadChats) || !_.isEqual(chatChannelTimestamps, this.state.chatChannelTimestamps))
-          this.setState({chatChannelTimestamps, hazUnreadChats})
+          this.setState({ chatChannelTimestamps, hazUnreadChats })
       }
     })
   },
@@ -371,7 +369,7 @@ const AppUI = React.createClass({
   handleSetCurrentlyEditingAssetInfo(assetInfo) {
     if (!_.isEqual(this.state.currentlyEditingAssetInfo, assetInfo)) {
       // See comments in getInitialState() for explanation
-      this.setState({currentlyEditingAssetInfo: assetInfo})
+      this.setState({ currentlyEditingAssetInfo: assetInfo })
 
       // guntis - the only place where I can get asset type and send to analytics
       if (_.startsWith(assetInfo.assetVerb, 'View') || _.startsWith(assetInfo.assetVerb, 'Edit')) {
@@ -383,17 +381,15 @@ const AppUI = React.createClass({
   },
 
   render() {
-    const { respData, respWidth, params, loading, currUser, user, currUserProjects, meteorStatus,sysvars  } = this.props
+    const { respData, respWidth, params, loading, currUser, user, currUserProjects, meteorStatus, sysvars } = this.props
     const { joyrideDebug, currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats, hideHeaders } = this.state
     const { query } = this.props.location
 
     if (!loading)
       this.configureTrackJs()
 
-
     if(loading)
       return null
-
 
     // The Flex Panel is for communications and common quick searches in a right hand margin
     //   (or fixed footer for Phone-size PortraitUI)
@@ -403,8 +399,6 @@ const AppUI = React.createClass({
     const flexPanelWidth = showFlexPanel ? flexPanelWidthWhenExpanded : respData.fpReservedRightSidebarWidth
 
     const mainAreaAvailableWidth = respWidth - parseInt(flexPanelWidth)
-
-    const isNetworkFailure = !_.includes(['connected', 'connecting'], this.props.meteorStatus.status)
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
@@ -433,7 +427,7 @@ const AppUI = React.createClass({
       params.assetId &&
       _.includes(
         hazUnreadChats,
-        makeChannelName({scopeGroupName: 'Asset', scopeId: params.assetId})
+        makeChannelName({ scopeGroupName: 'Asset', scopeId: params.assetId })
       )
     )
 
@@ -459,7 +453,7 @@ const AppUI = React.createClass({
           callback={this.handleJoyrideCallback}
           preparePageHandler={this.joyridePreparePageHandler}
           assetId={params.assetId}
-          debug={joyrideDebug}/>
+          debug={joyrideDebug} />
 
         { !isMobile &&
         <div>
@@ -510,20 +504,20 @@ const AppUI = React.createClass({
             <Message error
                      icon='ban'
                      header='Your Account has been suspended by an Admin'
-                     list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']}/>
+                     list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']} />
             }
 
             {
               !loading && this.props.children && React.cloneElement(this.props.children, {
                 // Make below props available to all routes.
-                user: user,
-                currUser: currUser,
-                hideHeaders: hideHeaders,
-                currUserProjects: currUserProjects,
-                hazUnreadAssetChat: hazUnreadAssetChat,
-                ownsProfile: ownsProfile,
-                isSuperAdmin: isSuperAdmin,
-                availableWidth: mainAreaAvailableWidth,
+                user:                               user,
+                currUser:                           currUser,
+                hideHeaders:                        hideHeaders,
+                currUserProjects:                   currUserProjects,
+                hazUnreadAssetChat:                 hazUnreadAssetChat,
+                ownsProfile:                        ownsProfile,
+                isSuperAdmin:                       isSuperAdmin,
+                availableWidth:                     mainAreaAvailableWidth,
                 handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
                 isTopLevelRoute: true // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
               })
@@ -568,39 +562,36 @@ const AppUI = React.createClass({
   /**
    * This will show/hide the Flex Panel
    */
-  handleFlexPanelToggle()
-  {
+  handleFlexPanelToggle() {
     const loc = this.props.location
     const qp = urlMaker.queryParams("app_flexPanel")
     let newQ
     if (loc.query[qp])
       newQ = _.omit(loc.query, qp)
     else
-      newQ = {...loc.query, [qp]:NavPanel.getDefaultPanelViewTag()}   //TODO: Wrong tag!?
-    browserHistory.push( {  ...loc,  query: newQ })
+      newQ = { ...loc.query, [qp]: NavPanel.getDefaultPanelViewTag() }   //TODO: Wrong tag!?
+    browserHistory.push({ ...loc, query: newQ })
   },
 
-  closeFlexPanel()
-  {
+  closeFlexPanel() {
     const loc = this.props.location
     const qp = urlMaker.queryParams("app_flexPanel")
     if (loc.query[qp]) {
       const newQ = _.omit(loc.query, qp)
-      browserHistory.push( {  ...loc,  query: newQ })
+      browserHistory.push({ ...loc, query: newQ })
     }
   },
 
   /**
    * @param newFpView {String} the string that will be used for _fp=panel.submparam eg. "chat", or "chat.G_GENERAL_" or "assets" etc
    */
-  handleFlexPanelChange(newFpView)
-  {
+  handleFlexPanelChange(newFpView) {
     const qp = urlMaker.queryParams("app_flexPanel")
 
     const queryModifier = { [qp]: newFpView }
     const loc = this.props.location
-    const newQ = {...loc.query, ...queryModifier }
-    browserHistory.push( {  ...loc,  query: newQ })
+    const newQ = { ...loc.query, ...queryModifier }
+    browserHistory.push({ ...loc, query: newQ })
   },
 
   //
@@ -608,7 +599,7 @@ const AppUI = React.createClass({
   //
   startSkillPathTutorial(skillPath) {
     const tutPath = makeTutorialAssetPathFromSkillPath(skillPath, 0)
-    this.addJoyrideSteps(tutPath, {replace: true, skillPath: skillPath})
+    this.addJoyrideSteps(tutPath, { replace: true, skillPath: skillPath })
   },
 
   handleCompletedSkillTutorial(tutorialSkillPath) {
@@ -689,10 +680,10 @@ const AppUI = React.createClass({
   handleJoyrideCallback(func) {
     if (func.type === 'finished') {
       // console.log('finished tutorial...', this.state.joyrideSkillPathTutorial)
-          //analytics.track('startTutorial', {
-          //  title: this.state.joyrideSkillPathTutorial
-          //  , category: "Tutorials"
-          //})
+      // analytics.track('startTutorial', {
+      //   title: this.state.joyrideSkillPathTutorial
+      //   , category: "Tutorials"
+      // })
       if (this.state.joyrideSkillPathTutorial && func.skipped === false)
         this.handleCompletedSkillTutorial(this.state.joyrideSkillPathTutorial)
       this.setState(
@@ -704,7 +695,7 @@ const AppUI = React.createClass({
         }
       )
     } else if (func.type === 'step:after') {
-      this.setState({joyrideCurrentStepNum: func.newIndex})
+      this.setState({ joyrideCurrentStepNum: func.newIndex })
     }
   },
   joyrideHandlers: {
@@ -799,15 +790,14 @@ const AppUI = React.createClass({
 
 })
 
-const App = createContainer(({ params , location}) => {
-  console.log('app location:', location)
+const App = createContainer(({ params, location }) => {
   const pathUserName = params.username      // This is the username (profile.name) on the url /u/xxxx/...
   const pathUserId = params.id              // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
   const currUser = Meteor.user()
   const currUserId = currUser && currUser._id
   const handleForUser = pathUserName
-                            ?Meteor.subscribe("user.byName", pathUserName)
-                          : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
+    ? Meteor.subscribe("user.byName", pathUserName)
+    : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
   const handleForSysvars = Meteor.subscribe('sysvars')
 
   // skills stuff
@@ -817,10 +807,11 @@ const App = createContainer(({ params , location}) => {
   // settings stuff
   const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
   const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
-// activity? if useful..
+
+  // activity? if useful..
   const flexPanelQueryValue = location.query[urlMaker.queryParams("app_flexPanel")]
   const getActivity = currUser || (flexPanelQueryValue === 'activity')
-  const handleActivity = getActivity ?Meteor.subscribe("activity.public.recent", SpecialGlobals.activity. activityHistoryLimit ) : null
+  const handleActivity = getActivity ? Meteor.subscribe("activity.public.recent", SpecialGlobals.activity.activityHistoryLimit) : null
 
   // projects stuff
   const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null
@@ -862,16 +853,17 @@ const App = createContainer(({ params , location}) => {
   return {
     currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
 
-    currUserProjects: !handleForProjects ? [] :Projects.find(projectSelector, { sort: defaultProjectSorter }).fetch() ,
+    currUserProjects: !handleForProjects ? [] :
+                        Projects.find(projectSelector, { sort: defaultProjectSorter } ).fetch(),
     user:             pathUserName ? Meteor.users.findOne({ "profile.name": pathUserName }) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
-    activity:         getActivity ?Activity.find({}, { sort: { timestamp: -1 } }).fetch() : [],     // Activity for any user
+    activity:         getActivity ? Activity.find({}, { sort: { timestamp: -1 } }).fetch() : [],     // Activity for any user
     settings:         G_localSettings,
     meteorStatus:     Meteor.status(),
     skills:           currUser ? Skills.findOne(currUserId) : null,
     sysvars:          Sysvars.findOne(),
     loading:          !handleForUser.ready() ||
                       !handleForSysvars.ready() ||
-                      !(!handleActivity ||handleActivity.ready()  ) ||
+                      !(!handleActivity || handleActivity.ready()) ||
                       !projectsReady ||
                       !settingsReady ||
                       !skillsReady
@@ -883,7 +875,7 @@ App.responsiveRules = {
     maxWidth: 420,
     respData: {
       footerTabMajorNav:           true,        // |__| flexPanel as footer
-      fpReservedFooterHeight: '60px',
+      fpReservedFooterHeight:      '60px',
       fpReservedRightSidebarWidth: '0px'
     }
   },

@@ -21,7 +21,7 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 
 const optional = Match.Optional
 
-const schema = {
+var schema = {
   _id: String,
 
   createdAt:    Date,      // Must be set when created and never changed
@@ -134,7 +134,7 @@ export const isAssetKindsStringComplete = ks => ks.split(safeAssetKindStringSepC
 export function assetMakeSelector(
                       userId,
                       selectedAssetKinds,
-                      searchName,
+                      nameSearch,
                       projectName=null,   // '_' means 'not in a project'.   null means In any/all projects
                       showDeleted=false,
                       showStable=false,
@@ -173,10 +173,10 @@ else
     selector["workState"] = { "$in": wsNamesToLookFor}
   }
 
-  if (searchName && searchName.length > 0)
+  if (nameSearch && nameSearch.length > 0)
   {
     // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
-    selector["name"]= {$regex: new RegExp("^.*" + searchName, 'i')}
+    selector["name"]= {$regex: new RegExp("^.*" + nameSearch, 'i')}
   }
 
   return selector
@@ -251,8 +251,6 @@ export const loadAssets = ({
                            }
   ) => {
 
-  console.log("Load assets: userID: ",userId)
-
   const actualLimit = _.clamp(limit, 1, SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit)
   const selector = assetMakeSelector(userId,
     kind,
@@ -262,9 +260,6 @@ export const loadAssets = ({
     showStable,
     hideWorkstateMask,
     showChallengeAssets)
-
-
-
 
   const assetSorter = sort ? allSorters[sort] : allSorters["edited"]
   const findOpts = {

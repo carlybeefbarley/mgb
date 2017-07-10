@@ -14,6 +14,8 @@ import { showToast } from '/client/imports/routes/App'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
+import MOUSE_BUTTONS from '/client/imports/mouseButtons'
+
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
 
@@ -338,7 +340,7 @@ export default AssetCard = React.createClass({
     const asset = this.props.asset
     const url = '/u/' + asset.dn_ownerName + '/asset/' + asset._id
     // middle click - mouseUp reports buttons == 0; button == 1
-    if (e.buttons == 4 || e.button == 1)
+    if (e.buttons == MOUSE_BUTTONS.middle || e.button == 1)
       window.open(url + (window.location.search ? window.location.search : ''))
     else
       utilPushTo(this.context.urlLocation.query, url)

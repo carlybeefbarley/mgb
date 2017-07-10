@@ -17,16 +17,9 @@ import Plural         from '/client/imports/helpers/Plural'
 
 import { showToast } from '/client/imports/routes/App'
 
-import SpecialGlobals from '/imports/SpecialGlobals.js'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
-const MOUSE_BUTTONS = {
-  none: 0,     //  No button or un-initialized
-  left: 1,     //  Left button
-  right: 2,    //  Right button
-  middle: 4,   //  Wheel button or middle button
-  back: 8,     //  4th button (typically the "Browser Back" button)
-  forward: 16  //  5th button (typically the "Browser Forward" button)
-}
+import MOUSE_BUTTONS from '/client/imports/mouseButtons'
 
 import './EditMap.css'
 

@@ -1,11 +1,9 @@
 import _ from 'lodash'
-
 import React, { PropTypes } from 'react'
 import Helmet from 'react-helmet'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { browserHistory } from 'react-router'
-
 import { Segment, Message } from 'semantic-ui-react'
 import Spinner from '/client/imports/components/Nav/Spinner'
 
@@ -89,6 +87,7 @@ class BrowseGamesRoute extends LoadMore {
     return this.props.limit || queryDefaults.limit
   }
 
+  // something like: app/server/imports/restApi/restApi_assets.js:24
   getQueryParams(userId = (this.props.user && this.props.user._id) ? this.props.user._id : null){
     const qN = this.queryNormalized(this.props.location.query)
     qN.userId = userId
@@ -158,9 +157,14 @@ class BrowseGamesRoute extends LoadMore {
       this.handleSearchGo()
   }
 
+  isLoading(){
+    return super.isLoading() && (!this.data.loading && this.data.games.length > 0)
+  }
+
   render() {
     const { games, projects } = this.data         // list of Game Assets provided via getMeteorData()
-    const loading = this.isLoading
+    const loading = this.isLoading()
+
     const { currUser, user, ownsProfile, location } = this.props
     const name = user ? user.profile.name : ''
     const qN = this.queryNormalized(location.query)
@@ -173,7 +177,6 @@ class BrowseGamesRoute extends LoadMore {
 
           <div className="ui large header" style={{ float: 'left' }}>
             { user ? <span><a>{name}</a>'s Games</span> : 'Public Games' }
-
           </div>
           <AssetListSortBy
               chosenSortBy={qN.sort}
@@ -219,7 +222,7 @@ class BrowseGamesRoute extends LoadMore {
           </div>
         }
 
-        { !loading && games.length === 0 &&
+        { games.length === 0 && (!loading || !this.data.loading) &&
           <Message
               style={{marginTop: '8em'}}
               warning
@@ -228,10 +231,10 @@ class BrowseGamesRoute extends LoadMore {
               content='Widen your search to see more games' />
           }
 
-        { games.length &&
+        { games.length !== 0 &&
           <GameItems currUser={currUser} wrap={true} games={games.concat(this._loadMoreState.data)} /> }
 
-        { loading &&
+        { (loading || this.data.loading) &&
           <Spinner /> }
 
 

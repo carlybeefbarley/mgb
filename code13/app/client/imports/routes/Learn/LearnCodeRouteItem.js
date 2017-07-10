@@ -45,7 +45,7 @@ export const StartJsGamesRoute = (learnItem, name, currUser, newTab) => {
     }
     else        // asset doesn't exist. create one.
     {
-      const prefix = learnItem == 'basics' ? 'challenges' : learnItem
+      const prefix = learnItem === 'basics' ? 'challenges' : learnItem
 
       // xhr to get code
       mgbAjax(`/api/asset/code/!vault/`+prefix+`.`+name, (err, str) => {
@@ -54,7 +54,7 @@ export const StartJsGamesRoute = (learnItem, name, currUser, newTab) => {
         else {
 
           let code = JSON.parse(str)
-          if (learnItem == 'basics')
+          if (learnItem === 'basics')
             code = code.code.join( '\n' )
           else
             code = code.steps[0].code

@@ -4,7 +4,7 @@ import { Card } from 'semantic-ui-react'
 import { isSameUserId } from '/imports/schemas/users'
 
 const AssetList = ( { currUser, assets, ...rest }) => (
-  <Card.Group style={{margin: 0}}>
+  <Card.Group>
     {
       assets.map((asset) => (
         <AssetCard

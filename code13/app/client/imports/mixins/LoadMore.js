@@ -28,7 +28,7 @@ class LoadMore extends React.Component {
   }
 
   // always show loading indicator on the bottom of the page
-  get isLoading(){
+  isLoading(){
     return !this._loadMoreState.allLoaded //(this.data && this.data.loading) || (this.state && this.state.loading) || (this._loadMoreState.isLoading)
   }
 

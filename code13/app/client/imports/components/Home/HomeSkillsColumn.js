@@ -6,8 +6,7 @@ import { Grid, Header, List, Icon, Button } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 
 const _propTypes = {
-  userId:   PropTypes.string,       // Can be null/undefined. It is used to indicate if anyone is logged in
-  isMobile: PropTypes.bool
+  userId:   PropTypes.string       // Can be null/undefined. It is used to indicate if anyone is logged in
 }
 
 const skillsList = [

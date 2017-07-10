@@ -247,7 +247,8 @@ class MobileNav extends React.Component {
     }
 
     this.cache = {
-      views: []
+      views: [],
+      prevLocation: []
     }
     this.tabs = {}
 
@@ -291,8 +292,6 @@ class MobileNav extends React.Component {
 
 
       this.state.location[this.state.index] = location
-      // clear view - as we will need to re-render it completely
-      this._tmpView = null
     }
 
     this.setState({location: this.state.location, time: Date.now()})
@@ -316,7 +315,6 @@ class MobileNav extends React.Component {
 
       const route = this.state.location[index] || '/'
       if(this.state.lastRoute !== route){
-        this._tmpView = null
         this.context.router.push(route)
         this.state.lastRoute = (this.state.location[index] || '/')
       }
@@ -325,9 +323,6 @@ class MobileNav extends React.Component {
 
   getMaxItems() {
     return 5
-    // or return 4 always ?
-    console.log("MAX items:", window.innerWidth / 70)
-    return Math.floor(window.innerWidth / 70) - 1
   }
 
   render() {
@@ -391,8 +386,10 @@ class MobileNav extends React.Component {
           {/*{bName} + {this.state.index}*/}
           {this.state.index === index && this.state.location[index] &&
             <RouterWrap {...this.props} onClose={() => {
+              console.log("Closing router wrap..")
               this.state.location[index] = null
               // force Redraw
+              this.context.router.push('/')
               this.setState({location: this.state.location})
           }} location={this.state.location[index]} key={index * 10000} />
           }

@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Callum from './Callum'
 
-import {Router, Route, browserHistory} from 'react-router'
+import { Router, Route, browserHistory } from 'react-router'
 import urlMaker from './urlMaker'
 
 import App from './App'
@@ -142,7 +142,7 @@ export function clientStartup() {
       </Route>
     </Router>
 
-  registerDebugGlobal('router', router, __filename, 'TopLevel react-router instance')
+  registerDebugGlobal( 'router', router, __filename, 'TopLevel react-router instance')
   urlMaker.setKnownRoutes(router)
   return router
 }

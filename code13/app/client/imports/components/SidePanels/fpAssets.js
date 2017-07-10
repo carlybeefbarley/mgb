@@ -1,23 +1,18 @@
 import _ from 'lodash'
-import React, {PropTypes} from 'react'
-import {Divider, Dropdown, Icon} from 'semantic-ui-react'
+import React, { PropTypes } from 'react'
+import { Divider, Dropdown, Icon } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import reactMixin from 'react-mixin'
-import {ReactMeteorData} from 'meteor/react-meteor-data'
-import {Azzets, Projects} from '/imports/schemas'
+import { ReactMeteorData } from 'meteor/react-meteor-data'
+import { Azzets, Projects } from '/imports/schemas'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import AssetList from '/client/imports/components/Assets/AssetList'
 
 import AssetKindsSelector from '/client/imports/components/Assets/AssetKindsSelector.js'
-import {
-  AssetKindKeys,
-  assetMakeSelector,
-  safeAssetKindStringSepChar,
-  isAssetKindsStringComplete
-} from '/imports/schemas/assets'
+import { AssetKindKeys, assetMakeSelector, safeAssetKindStringSepChar, isAssetKindsStringComplete } from '/imports/schemas/assets'
 
 import AssetListChooseView from '/client/imports/components/Assets/AssetListChooseView'
-import {defaultAssetViewChoice} from '/client/imports/components/Assets/AssetCard'
+import { defaultAssetViewChoice } from '/client/imports/components/Assets/AssetCard'
 
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
@@ -30,7 +25,7 @@ let _persistedState = null
 
 const _showFromAllValue = ':showFromAll:' // since colon is not allowed in Meteor _ids. Null wasnt working well as a value for 'all'
 
-const ShowFromWho = ({value, currUser, otherUser, onChange}) => {
+const ShowFromWho = ( { value, currUser, otherUser, onChange }) => {
   const options = _.compact([
     currUser && {
       key: currUser._id,
@@ -38,7 +33,7 @@ const ShowFromWho = ({value, currUser, otherUser, onChange}) => {
       value: currUser._id,
       image: {
         avatar: true,
-        src: UX.makeAvatarImgLink(currUser.username)
+        src:  UX.makeAvatarImgLink(currUser.username)
       }
     },
     // This is mostly working, but needs to handle the transition to a page where the user is no longer part of the page scope
@@ -51,25 +46,22 @@ const ShowFromWho = ({value, currUser, otherUser, onChange}) => {
         src: UX.makeAvatarImgLink(otherUser.username)
       }
     },
-    {
-      text: 'All users\' assets',
+    { text: 'All users\' assets',
       value: _showFromAllValue,
-      icon: {size: 'large', name: 'users'}
+      icon: { size: 'large', name: 'users' }
     }
   ])
   return (
     <Dropdown
       inline
       value={value}
-      trigger={<span><Icon color='grey' name='users'/> { _.find(options, {value}).text }</span>}
+      trigger={<span><Icon color='grey' name='users' /> { _.find(options, { value }).text }</span>}
       options={options}
-      onChange={ (event, data) => {
-        onChange(data.value)
-      } }
+      onChange={ (event, data) => { onChange( data.value ) } }
     />
   )
 }
-// this creates global fpAsset variable
+
 class fpAssets extends LoadMore {
 
   static propTypes = {
@@ -98,6 +90,7 @@ class fpAssets extends LoadMore {
     return this.props.limit || 5
   }
 
+  // something like: app/server/imports/restApi/restApi_assets.js:24
   getQueryParams() {
     const {project, kindsActive, showFromUserId, searchName, projectName} = this.state
     return {
@@ -192,7 +185,7 @@ class fpAssets extends LoadMore {
     }
   }
 
-  handleSearchGo(newSearchText) {
+  handleSearchGo = (newSearchText) => {
     this.loadMoreReset()
     this.setState({searchName: newSearchText})
   }
@@ -203,7 +196,7 @@ class fpAssets extends LoadMore {
   }
 
   // This is the callback from AssetsKindSelector
-  handleToggleKind(k, altKey) { // k is the string for the AssetKindsKey to toggle existence of in the array
+  handleToggleKind = (k, altKey) => { // k is the string for the AssetKindsKey to toggle existence of in the array
     let newKindsString
 
     const kindsStr = this.state.kindsActive
@@ -232,7 +225,7 @@ class fpAssets extends LoadMore {
     const {user, currUser} = this.props
     const {view, kindsActive, searchName, project, projectName, showFromUserId} = this.state
     const effectiveUser = user || currUser
-    const loading = this.isLoading
+    const loading = this.isLoading()
 
     const style = {
       position: 'absolute',

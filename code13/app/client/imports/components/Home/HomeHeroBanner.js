@@ -8,11 +8,14 @@ import RecentlyEditedAssetGET from '/client/imports/components/Nav/RecentlyEdite
 
 import UX from '/client/imports/UX'
 
-const HomeHeroBanner = ( { userId, username, isMobile } ) => (
+import is from 'is_js'
+
+const HomeHeroBanner = ( { userId, username } ) => (
   <Segment basic style={{minWidth: '140px'}}>
     <Grid>
       <Grid.Row>
-        {isMobile ?
+        {is.mobile()
+          ?
           <Grid.Column style={{textAlign: 'center'}}>
             <Image size='medium' floated='right' src={makeCDNLink("/images/mascots/team.png")} />
             <Header as='h1' style={{fontSize: '2.5em'}}>
@@ -21,41 +24,42 @@ const HomeHeroBanner = ( { userId, username, isMobile } ) => (
                 Make Games. Make Friends. Have Fun.
               </Header.Subheader>
             </Header>
-        { userId ?
-          <div style={{fontSize: '1.5em', maxWidth: '390px'}}>
-            Welcome back, {username}!
-            <span style={{}}>
-              <br />
-              Last time you were working on <br />
-              <em><RecentlyEditedAssetGET userId={userId} /></em>.
-            </span>
-            <div style={{display: 'flex', justifyContent: 'center', marginTop: '1em'}}>
-              <QLink to={`/u/${username}/assets`}>
-                <Button color='teal' size='medium' content='Keep going' />
-              </QLink>
-              <QLink to={`/learn`}>
-                <Button color='teal' size='medium' content='Learn new skills' />
-              </QLink>
+          { userId
+            ?
+            <div style={{fontSize: '1.5em', maxWidth: '390px'}}>
+              Welcome back, {username}!
+              <span style={{}}>
+                <br />
+                Last time you were working on <br />
+                <em><RecentlyEditedAssetGET userId={userId} /></em>.
+              </span>
+              <div style={{display: 'flex', justifyContent: 'center', marginTop: '1em'}}>
+                <QLink to={`/u/${username}/assets`}>
+                  <Button color='teal' size='medium' content='Keep going' />
+                </QLink>
+                <QLink to={`/learn`}>
+                  <Button color='teal' size='medium' content='Learn new skills' />
+                </QLink>
+              </div>
             </div>
-          </div>
-          :
-          <p style={{ fontSize: '1em', maxWidth: '390px' }}>
-            Learn coding, design, team and biz skills - by making original games with friends
-            <br />
-            <QLink to={`/learn/getstarted`}>
-              <Button color='teal' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em' }} content='Get started' />
-            </QLink>
-            {/*
-            <QLink to={`/userBashes`}>
-              <Button color='teal' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em' }} content='User Bashes' />
-            </QLink>
-            */}
-            <QLink to={`/signup`}>
-              <Button color='yellow' size='huge' style={{ marginTop: '0.5em'}} content='Sign me up' />
-            </QLink>
-          </p>
-        }
-        </Grid.Column>
+            :
+            <p style={{ fontSize: '1em', maxWidth: '390px' }}>
+              Learn coding, design, team and biz skills - by making original games with friends
+              <br />
+              <QLink to={`/learn/getstarted`}>
+                <Button color='teal' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em' }} content='Get started' />
+              </QLink>
+              {/*
+              <QLink to={`/userBashes`}>
+                <Button color='teal' size='huge' style={{ marginTop: '1.5em', marginRight: '0.5em' }} content='User Bashes' />
+              </QLink>
+              */}
+              <QLink to={`/signup`}>
+                <Button color='yellow' size='huge' style={{ marginTop: '0.5em'}} content='Sign me up' />
+              </QLink>
+            </p>
+          }
+          </Grid.Column>
         :
         <Grid.Column>
           <Image size='large' floated='right' src={UX.makeMascotImgLink('team')} />

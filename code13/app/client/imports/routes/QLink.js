@@ -17,11 +17,15 @@ function isModifiedEvent(event) {
 }
 
 function createLocationDescriptor(to, _ref) {
-  const {query, hash, state} = _ref
-  if (query || hash || state)
-    return { pathname: to, query: query, hash: hash, state: state }
+  var query = _ref.query;
+  var hash = _ref.hash;
+  var state = _ref.state;
 
-  return to
+  if (query || hash || state) {
+    return { pathname: to, query: query, hash: hash, state: state };
+  }
+
+  return to;
 }
 
 
@@ -116,12 +120,9 @@ export default QLink = React.createClass({
     clearPriorPathsForJoyrideCompletionTags()
 
     if (is.mobile()) {
-      if(!this.context.tabs){
-        console.log("WHERE is TABS reference???")
+      if(!this.context.tabs)
         return
-      }
       this.context.tabs.setLocation(location, this.props.tab)
-      // mobile will handle
     }
     else
       this.context.router.push(location)

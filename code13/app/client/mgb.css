@@ -1,4 +1,5 @@
-*{
+/* prevent whole page becoming blue on touch */
+* {
   -webkit-tap-highlight-color: transparent;
 }
 .ui.sidebar {

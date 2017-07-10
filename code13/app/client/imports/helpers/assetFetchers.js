@@ -47,14 +47,13 @@ export const makeCDNLink = (uri, etagOrHash = null, prefixDomainAlways = false) 
     return
   }
 
-  const conf = window.__meteor_runtime_config__ ? __meteor_runtime_config__ : null
+  const conf = window.__meteor_runtime_config__ ? __meteor_runtime_config__ : {}
 
   // received
   if(uri.indexOf('hash=') > 0) {
     //console.error("Already hashed link!", uri)
     return uri
   }
-
   // don't cache at all
   if (uri.startsWith("/api")  && !etagOrHash)
     return CDN_DOMAIN
@@ -66,14 +65,14 @@ export const makeCDNLink = (uri, etagOrHash = null, prefixDomainAlways = false) 
       )
 
   // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource
-  const hash = etagOrHash != null ? etagOrHash : (conf ? conf.autoupdateVersion : Date.now())
+  const hash = etagOrHash != null ? etagOrHash : (conf.autoupdateVersion ? conf.autoupdateVersion : Date.now())
 
   if (uri.startsWith("/") && !uri.startsWith("//")){
     if(CDN_DOMAIN){
       return `//${CDN_DOMAIN}${uri}?hash=${hash}`
     }
     else{
-      if(conf && conf.ROOT_URL){
+      if(conf.ROOT_URL){
         // make sure we don't break http / https
         const root_host = conf.ROOT_URL.split("//").pop()
         if( (!root_host.startsWith(window.location.host) && !root_host.startsWith("localhost")) || prefixDomainAlways){
@@ -92,6 +91,7 @@ export const makeExpireThumbnailLink = (assetOrId, maxAge = SpecialGlobals.thumb
     ? makeCDNLink(`/api/asset/cached-thumbnail/png/${maxAge}/${assetOrId}`, makeExpireTimestamp(maxAge))
     // if we know asset - we can use etag to get updated version - which will be also updated when asset changes
     : makeCDNLink(`/api/asset/thumbnail/png/${assetOrId._id}`, genetag(assetOrId))
+
 }
 /**
  * Generates CDN link to Graphic Asset
@@ -105,6 +105,7 @@ export const makeGraphicAPILink = (assetOrId, maxAge = SpecialGlobals.thumbnail.
     ? makeCDNLink(`/api/asset/png/${assetOrId}`, makeExpireTimestamp(maxAge))
     // if we know asset - we can use etag to get updated version - which will be also updated when asset changes
     : makeCDNLink(`/api/asset/png/${assetOrId._id}`, genetag(assetOrId))
+
 }
 
 // lastDiff is used to generate cached which expires in the X amount of seconds
@@ -214,8 +215,6 @@ export const getAssetBySelector = (selector, onReady) => {
     })
   }, 0)
 }
-
-
 
 // fetchAssetByUri() will fetch Asset by uri via ajax - returns Promise
 export const fetchAssetByUri = (uri) => {

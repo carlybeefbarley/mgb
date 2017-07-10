@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Portal } from 'semantic-ui-react'
+import {Portal} from 'semantic-ui-react'
 
 import './TouchController.css'
 
@@ -44,7 +44,7 @@ export default class TouchController extends React.Component {
     const key = e.target.dataset.key || e.target.parentNode.dataset.key
     const which = parseInt(e.target.dataset.which || e.target.parentNode.dataset.which, 10)
 
-    if (!key) {
+    if(!key){
       // fix: #670 - probably too annoying - as it allows to click through gamepad's body
       const t = e.target
       t.style.pointerEvents = 'none'

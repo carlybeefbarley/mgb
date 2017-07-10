@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Header, Icon } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
+import QLink from '/client/imports/routes/QLink'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Activity } from '/imports/schemas'
 

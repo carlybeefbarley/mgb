@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Badge from '/client/imports/components/Controls/Badge/Badge'
-import { getAllBadgesForUser } from '/imports/schemas/badges'
 import QLink from '/client/imports/routes/QLink'
+import { getAllBadgesForUser } from '/imports/schemas/badges'
 
 import { Header } from 'semantic-ui-react'
 

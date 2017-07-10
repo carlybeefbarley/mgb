@@ -2,6 +2,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import React, { PropTypes } from 'react'
 import { Popup, Label, Button, Icon, Segment } from 'semantic-ui-react'
+import QLink from '/client/imports/routes/QLink'
 
 const AssetForkGenerator = ({ asset, canFork, isForkPending, doForkAsset }) => {
   const numChildren = _.isArray(asset.forkChildren) ? asset.forkChildren.length : 0

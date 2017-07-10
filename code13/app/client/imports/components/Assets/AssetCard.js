@@ -38,7 +38,7 @@ const _preventOnMouseUpClickSteal = e => {
 
 export const defaultAssetViewChoice = 'm'
 
-export default (AssetCard = React.createClass({
+const AssetCard = React.createClass({
   propTypes: {
     classNames: PropTypes.string, // Null, or string with extra classnames
     showFooter: PropTypes.bool, // If false, hide the 4-button footer
@@ -332,4 +332,6 @@ export default (AssetCard = React.createClass({
       window.open(url + (window.location.search ? window.location.search : ''))
     else utilPushTo(this.context.urlLocation.query, url)
   },
-}))
+})
+
+export default AssetCard

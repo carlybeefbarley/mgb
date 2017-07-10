@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
-import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/GamesAvailableGET'
 import { Header, Grid } from 'semantic-ui-react'
+import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/GamesAvailableGET'
+import QLink from '/client/imports/routes/QLink'
 
 export const UserProfileGamesList = ({ user, width, currUser }) => {
   return (

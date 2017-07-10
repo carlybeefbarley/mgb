@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react'
 import { Card, Segment } from 'semantic-ui-react'
 import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
+import AssetCard from '/client/imports/components/Assets/AssetCard'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import { assetMakeSelector, assetSorters } from '/imports/schemas/assets'
 

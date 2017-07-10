@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import moment from 'moment'
 import { Popup, Icon, Label } from 'semantic-ui-react'
+import QLink from '/client/imports/routes/QLink'
 
 // This is the VIEWERS ui that shows other active viewers using the activitySnapshots DB
 

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import React, { PropTypes } from 'react'
 import { Popup, Label, Icon, Segment } from 'semantic-ui-react'
+import QLink from '/client/imports/routes/QLink'
 
 const ProjectForkGenerator = ({ project, isForkPending }) => {
   const numChildren = _.isArray(project.forkChildren) ? project.forkChildren.length : 0

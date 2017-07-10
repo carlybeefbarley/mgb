@@ -33,7 +33,7 @@ fakeAppRouteProps.handleSetCurrentlyEditingAssetInfo = action('Invoked handleSet
 // storiesOf('DashBoard', module)
 //   .add('Dashboard', () => <DashboardRoute {...fakeAppRouteProps}/>)
 
-import { Card, Header, Image, Icon } from 'semantic-ui-react'
+import { Card, Header, Image, Icon, Label } from 'semantic-ui-react'
 
 const CardExampleCard = ({ currUser }) =>
   <Card>
@@ -145,10 +145,10 @@ const UserItem = React.createClass({
           </p>
         </Card.Content>
         <Card.Content extra>
-          {/* 
-          {getBadgeN(0)} 
-          {getBadgeN(1)} 
-          {getBadgeN(2)} 
+          {/*
+          {getBadgeN(0)}
+          {getBadgeN(1)}
+          {getBadgeN(2)}
           {getBadgeN(3)}
           */}
         </Card.Content>

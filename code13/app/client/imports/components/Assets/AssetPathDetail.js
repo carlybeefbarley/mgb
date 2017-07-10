@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react'
 import { AssetKinds } from '/imports/schemas/assets'
 import validate from '/imports/schemas/validate'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
+import QLink from '/client/imports/routes/QLink'
 import { Icon, Popup, Grid } from 'semantic-ui-react'
 import moment from 'moment'
 

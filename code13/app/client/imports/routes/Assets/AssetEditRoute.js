@@ -2,7 +2,6 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Grid, Icon, Message } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
-import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 import Spinner from '/client/imports/components/Nav/Spinner'

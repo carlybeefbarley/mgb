@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Segment, Popup, Menu, Message, Header } from 'semantic-ui-react'
-import reactMixin from 'react-mixin'
 import QLink from '/client/imports/routes/QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 

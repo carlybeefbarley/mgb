@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Segment, Header, Icon } from 'semantic-ui-react'
-import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { expectedToolbars } from '/client/imports/components/Toolbar/expectedToolbars'
 import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'

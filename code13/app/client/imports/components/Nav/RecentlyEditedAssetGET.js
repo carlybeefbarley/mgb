@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
 import { Activity } from '/imports/schemas'
-import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 export default (RecentlyEditedAssetGET = React.createClass({

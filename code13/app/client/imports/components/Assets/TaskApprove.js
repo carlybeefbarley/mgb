@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react'
 import { Popup, Label, Button, Segment } from 'semantic-ui-react'
 import { Skills } from '/imports/schemas'
-import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 export default (TaskApprove = React.createClass({

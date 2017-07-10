@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import reactMixin from 'react-mixin'
 import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { Button, Divider } from 'semantic-ui-react'

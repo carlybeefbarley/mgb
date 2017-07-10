@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react'
-import reactMixin from 'react-mixin'
 import { Segment, Header } from 'semantic-ui-react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { Skills } from '/imports/schemas'

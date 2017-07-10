@@ -2,7 +2,6 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Segment, Header, Button, Grid, Item, Icon, Label, Popup } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
-import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import Helmet from 'react-helmet'
 

@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Helmet from 'react-helmet'
-import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { browserHistory } from 'react-router'
 import { Segment, Message } from 'semantic-ui-react'

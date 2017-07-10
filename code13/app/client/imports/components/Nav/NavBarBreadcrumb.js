@@ -6,7 +6,6 @@ import UX from '/client/imports/UX'
 import { AssetKinds } from '/imports/schemas/assets'
 import UserItem from '/client/imports/components/Users/UserItem'
 
-import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 // The NavBar is the top row of the central column of the page (i.e. between the NavPanel column

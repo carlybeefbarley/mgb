@@ -17,7 +17,7 @@ const HomeHeroBanner = ( { userId, username } ) => (
         {is.mobile()
           ?
           <Grid.Column style={{textAlign: 'center'}}>
-            <Image size='medium' floated='right' src={makeCDNLink("/images/mascots/team.png")} />
+            <Image size='medium' floated='right' src={UX.makeMascotImgLink('team')} />
             <Header as='h1' style={{fontSize: '2.5em'}}>
               My Game Builder
               <Header.Subheader style={{fontSize: '16px'}}>

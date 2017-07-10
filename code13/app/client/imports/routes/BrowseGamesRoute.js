@@ -158,7 +158,7 @@ class BrowseGamesRoute extends LoadMore {
   }
 
   isLoading(){
-    return super.isLoading() && (!this.data.loading && this.data.games.length > 0)
+    return (super.isLoading() && this.data.games.length !== 0) || this.data.loading
   }
 
   render() {
@@ -222,7 +222,7 @@ class BrowseGamesRoute extends LoadMore {
           </div>
         }
 
-        { games.length === 0 && (!loading || !this.data.loading) &&
+        { !loading && games.length === 0 &&
           <Message
               style={{marginTop: '8em'}}
               warning

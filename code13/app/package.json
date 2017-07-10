@@ -89,7 +89,7 @@
     }
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"No test specified\" && exit 0",
     "start": "sh ./go.sh",
     "withDB": "MONGO_URL=mongodb://mgbapp:tiNmhsp1@ds021730-a0.mlab.com:21730,ds021730-a1.mlab.com:21730/mgb2_clus001?replicaSet=rs-ds021730 meteor",
     "storybook": "start-storybook -p 9001 -s ./.meteor/local/build/programs/web.browser/app,./.meteor/local/build/programs/web.browser -c .storybook"

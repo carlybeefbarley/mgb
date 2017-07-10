@@ -1,11 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { showToast } from '/client/imports/routes/App'
 import Helmet from 'react-helmet'
 import AssetCreateNew from '/client/imports/components/Assets/NewAsset/AssetCreateNew'
-import { logActivity } from '/imports/schemas/activity'
-
-import { utilPushTo } from '/client/imports/routes/QLink'
 import { Container, Segment } from 'semantic-ui-react'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 
@@ -29,10 +25,6 @@ export default AssetCreateNewRoute = React.createClass({
     setTimeout( () => Hotjar('trigger', 'asset-create-new', this.props.currUser), 200)
   },
 
-  contextTypes: {
-    urlLocation: React.PropTypes.object
-  },
-
   render: function() {
 
     return (
@@ -45,7 +37,6 @@ export default AssetCreateNewRoute = React.createClass({
         />
         <Container>
           <AssetCreateNew
-              handleCreateAssetClick={this.handleCreateAssetClickFromComponent}
               currUser={this.props.currUser}
               currUserProjects={this.props.currUserProjects}
               suggestedParams={_.pick(this.props.location.query, suggestedParamNames)}
@@ -53,53 +44,5 @@ export default AssetCreateNewRoute = React.createClass({
         </Container>
       </Segment>
     )
-  },
-
-  /**
-   *
-   *
-   * @param {string} assetKindKey - must be one of assetKindKey
-   * @param {string} assetName - string. Can be "" but that is discouraged
-   * @param {string} projectName - can be "" or null/undefined; those values indicate No Project
-   * @param {string} projectOwnerId - if projectName is a nonEmpty string, should be a valid projectOwnerId
-   * @param {string} projectOwnerName - if projectName is a nonEmpty string, should be a valid projectOwnerName
-   */
-  handleCreateAssetClickFromComponent(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName) {
-    const { currUser } = this.props
-    if (!currUser) {
-      showToast("You must be logged-in to create a new Asset", 'error')
-      return
-    }
-
-    let newAsset = {
-      name:         assetName,
-      kind:         assetKindKey,
-      text:         "",
-      thumbnail:    "",
-      content2:     {},
-      dn_ownerName: currUser.username,         // Will be replaced below if in another project
-      ownerId:      currUser._id,
-      isCompleted:  false,
-      isDeleted:    false,
-      isPrivate:    false
-    }
-    if (projectName && projectName !== "") {
-      newAsset.projectNames = [projectName]
-      newAsset.dn_ownerName = projectOwnerName
-      newAsset.ownerId = projectOwnerId
-    }
-
-    Meteor.call('Azzets.create', newAsset, (error, result) => {
-      if (error) {
-        showToast("Failed to create new Asset because: " + error.reason, 'error')
-      }
-       else
-      {
-        newAsset._id = result             // So activity log will work
-        logActivity("asset.create",  `Create ${assetKindKey}`, null, newAsset)
-        // Now go to the new Asset
-        utilPushTo(this.context.urlLocation.query, `/u/${newAsset.dn_ownerName}/asset/${result}`)
-      }
-    })
   }
 })

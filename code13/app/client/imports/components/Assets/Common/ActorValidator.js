@@ -36,10 +36,11 @@ const validator = {
       && databag.item.pushToSlideNum == 0
   },
   isValidForActive: (databag) => {
-    if(!databag){
+    if(!databag){ 
       return false
     }
-    return databag.all.actorType == options.actorType['Player']
+    return databag.all.actorType != options.actorType['Shot']
+      && databag.all.actorType == options.actorType['Player']
       || databag.all.actorType == options.actorType['Non-Player Character (NPC)']
       || validator.hasConditionalBehavior(databag)
       || validator.hasKey(databag)
@@ -68,9 +69,12 @@ const validator = {
     if(!databag){
       return false
     }
+    const hasConditionalBehavior = validator.hasConditionalBehavior(databag)
+
     return (databag.all.actorType == options.actorType['Item, Wall, or Scenery'] || databag.all.actorType == options.actorType['Scenery'])
       && databag.all.actorType !== options.actorType['Floor'] // To prioritize use of Scenery in FG
       && databag.item.itemActivationType == options.itemActivationType['Inactive']
+      && !hasConditionalBehavior
   }
 }
 

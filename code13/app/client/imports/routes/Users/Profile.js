@@ -114,11 +114,10 @@ export default UserProfileRoute = React.createClass({
           <UserHistory user={user} width={8}/>
 
           { /* User Badges */ }
-          <UserProfileBadgeList user={user} className="sixteen wide column" />
+          <UserProfileBadgeList ownsProfile={ownsProfile} user={user} className="sixteen wide column" />
 
           { /* User Games */ }
           <UserProfileGamesList currUser={currUser} user={user} width={16}/>
-
 
           { /* User Showcase (TODO) */ }
           <UserShowcase user={user} />
@@ -127,12 +126,11 @@ export default UserProfileRoute = React.createClass({
           { false &&
             <ActivityHeatmap user={user} className="eight wide column" />
           }
-          { /* Users who currUser is projects with -owned and not owned use pubsub */ }
+          { /* Users who currUser is projects with -owned and -not-owned use pubsub */ }
           <UserColleaguesList user={user} narrowItem={true} projects={this.data.projects} />
 
           { /* User Projects */ }
           <UserProjects user={user} width={16} projects={this.data.projects} />
-
 
           { /* User Skills */ }
           <Grid.Column width={16} id="mgbjr-profile-skills">

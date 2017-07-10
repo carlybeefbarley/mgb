@@ -326,7 +326,7 @@ const AppUI = React.createClass({
     // http://docs.trackjs.com/tracker/tips#include-user-id-version-and-session
     const doTrack = () => {
       const ver = mgbReleaseInfo.releases[0].id
-      trackJs.configure({
+      window.trackJs.configure({
         userId: Meteor.user() ? Meteor.user().profile.name : '(NotLoggedIntoMgb)',
         version: `${ver.ver} ${ver.state} ${ver.iteration}`,
         sessionId: Meteor.default_connection._lastSessionId,

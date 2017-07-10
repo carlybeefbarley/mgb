@@ -1,5 +1,5 @@
 {
-  ml.Gauge = class Gauge {
+  window.ml.Gauge = class Gauge {
     constructor(color1 = 'red', color2 = 'yellow', className = '') {
       this.widget = document.createElement('div')
       this.widget.classList.add('gauge')

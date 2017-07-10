@@ -1,5 +1,5 @@
 require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js'], () => {
-  const TestCase = (ml.TestCase = class {
+  const TestCase = (window.ml.TestCase = class {
     constructor(data, restart) {
       TestCase.cases.push(this)
 
@@ -49,7 +49,7 @@ require(['https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min
 
       this.chartData = { labels: [], datasets: [] }
 
-      this.chart = new Chart(this.canvas, {
+      this.chart = new window.Chart(this.canvas, {
         type: 'line', // 'bar'
         fill: false,
         options: {

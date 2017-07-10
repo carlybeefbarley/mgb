@@ -831,7 +831,7 @@ Otito.selfTest = () => {
 
   window.x = new Otito(test, metatest)
   window.x.append(document.body)
-  x.html.className = 'main'
+  window.x.html.className = 'main'
 
   window.x.update()
 }

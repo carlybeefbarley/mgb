@@ -1,5 +1,5 @@
 {
-  ml.Info = class {
+  window.ml.Info = class {
     constructor() {
       this.widget = document.createElement('div')
       this.widget.classList.add('info')

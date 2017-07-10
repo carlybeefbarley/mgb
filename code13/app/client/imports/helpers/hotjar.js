@@ -5,8 +5,8 @@ export default (Hotjar = (action, codeSnippet, currUser) => {
 
   // don't send hotjar heatmap if superadmin or localhost
   if (!isUserSuperAdmin(currUser) && location.hostname != 'localhost') {
-    if (typeof hj === 'function') {
-      hj(action, codeSnippet)
+    if (typeof window.hj === 'function') {
+      window.hj(action, codeSnippet)
     }
   }
 })

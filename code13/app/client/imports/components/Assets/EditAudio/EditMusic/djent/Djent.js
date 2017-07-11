@@ -19,6 +19,7 @@ import presets from './utils/presets'
 import { getActiveSoundsFromHitTypes } from './utils/instruments'
 import { getPresetData, getPresetFromData, handleGoogleAPI } from './utils/short-urls'
 import { getAllowedLengthsFromSequence } from './utils/sequences'
+import { confineToRange } from './utils/tools'
 
 import defaultInstruments from './utils/default-instruments'
 import defaultLengths from './utils/defaultLengths'

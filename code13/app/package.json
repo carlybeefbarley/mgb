@@ -19,6 +19,7 @@
     "lint": "npm run --silent prettier && npm run --silent eslint",
     "prettier": "prettier --semi false --print-width 110 --single-quote --trailing-comma all --write \"**/*.js?(x|on)\" \"!.meteor/**\" \"!**/lib/**\" \"!public/phaser/**\"",
     "start": "sh ./go.sh",
+    "test": "npm run lint",
     "storybook": "start-storybook -p 9001 -s ./.meteor/local/build/programs/web.browser/app,./.meteor/local/build/programs/web.browser -c .storybook",
     "withDB": "MONGO_URL=mongodb://mgbapp:tiNmhsp1@ds021730-a0.mlab.com:21730,ds021730-a1.mlab.com:21730/mgb2_clus001?replicaSet=rs-ds021730 meteor"
   },

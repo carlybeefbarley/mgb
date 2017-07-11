@@ -471,15 +471,8 @@ class MobileNav extends React.Component {
       title: "Chat",
       Component: fpChat, // BlankPage,
       getProps: (mobileNav) => {
-
-        let subNav =  (mobileNav.props.location && mobileNav.props.location.query) ? mobileNav.props.location.query._fp : ''
-        // bug bug in the location query
-        // workaround - try to get correct query manually
-        // TODO: debug - why location.query is not parsed sometimes
-        if(!subNav) {
-          subNav = parseQuery(mobileNav.props.location.pathname)._fp
-          subNav && console.error("bug bug - Parsed out SubNav manually from location.. ")
-        }
+        // manually parse channel
+        const subNav =  (mobileNav.props.location && mobileNav.props.location.query) ? mobileNav.props.location.query._fp : ''
         const subNavParam = (subNav ? subNav.split('.') : []).length > 0 ? subNav.split('.').pop() : ''
         return {
           panelWidth: '0',

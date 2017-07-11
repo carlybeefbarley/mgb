@@ -48,6 +48,7 @@ import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 import { InitHotjar } from '/client/imports/helpers/hotjar.js'
 
 import MobileNav from '../Mobile/MobileNav'
+import Spinner from "../components/Nav/Spinner";
 let G_localSettings = new ReactiveDict()
 
 // This works because <App> is the first Route in /app/client/imports/routes
@@ -389,7 +390,7 @@ const AppUI = React.createClass({
       this.configureTrackJs()
 
     if(loading)
-      return null
+      return <div><h1 style={{textAlign: 'center'}}>LOADING...</h1><Spinner /><br /></div>
 
     // The Flex Panel is for communications and common quick searches in a right hand margin
     //   (or fixed footer for Phone-size PortraitUI)

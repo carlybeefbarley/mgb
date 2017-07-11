@@ -114,7 +114,7 @@ class MobileNav extends React.Component {
         maxItems: {}
       }
 
-    this.cache = {
+    this.cache = cache.cache || {
       views: [],
       location: []
     }
@@ -257,23 +257,30 @@ class MobileNav extends React.Component {
         const props = b.getProps ? b.getProps(this) : null
         tabView = <b.Component title={bName} isMobile={true} {...this.props} {...props} />
       }
-
+      console.log("Rendering tab no", index)
       this.cache.views[i] = (
         <div key={index}>
           {/*{bName} + {this.state.index}*/}
           {this.state.index === index && this.state.location[index] &&
-          <RouterWrap {...this.props} onClose={() => {
-            console.log("Closing router wrap..")
-            this.state.location[index] = null
-            // force Redraw
-            this.context.router.push('/')
-            this.setState({location: this.state.location})
-          }} location={this.state.location[index]} key={index * 10000}/>
+            <RouterWrap
+              {...this.props}
+              onClose={() => {
+                console.log("Closing router wrap..")
+                this.state.location[index] = null
+                // force Redraw
+                this.context.router.push('/')
+                this.setState({location: this.state.location})
+              }}
+              location={this.state.location[index]}
+              key={index * 10000}
+            />
           }
           { tabView }
         </div>
       )
     }
+
+    cache.cache = this.cache
     return this.cache.views
   }
 

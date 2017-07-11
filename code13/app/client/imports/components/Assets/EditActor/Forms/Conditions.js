@@ -13,7 +13,7 @@ export default class All extends BaseForm {
         <span>
           'Conditions' make an actor appear or disappear, depending on how many other actors are on the map.
         </span>
-        <div style={{ height: '50vh' }} className="allInline">
+        <div className="allInline">
           {this.options('', 'appearIf', actorOptions.appearIf)}
           {this.data.appearIf != '0' && <span>if</span>}
           {this.data.appearIf != '0' && this.text('', 'appearCount', 'number')}

@@ -193,7 +193,7 @@ function Note(channel, key, start, end, vol) {
   }
 }
 
-function GetFreq(key) {
+export function GetFreq(key) {
   return Math.pow(Math.pow(2, 1 / 12), key - 49) * 440
 } //A key of 49 corresponds to a frequency of 440.
 

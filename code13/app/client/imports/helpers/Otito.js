@@ -568,15 +568,9 @@ Otito.prototype = {
   _getInputType: function(meta) {
     switch (meta._type) {
       case Otito.type.textarea:
-        {
-          return 'textarea'
-        }
-        break
+        return 'textarea'
       case Otito.type.list:
-        {
-          return 'select'
-        }
-        break
+        return 'select'
     }
     return 'input'
   },
@@ -586,117 +580,99 @@ Otito.prototype = {
     switch (meta._type) {
       case Otito.type.bool:
       case Otito.type.boolean:
-        {
-          input = document.createElement('input')
-          input.type = 'checkbox'
-          input.setValue = function(val) {
-            this.checked = val
-            this.value = this.checked
-          }
+        input = document.createElement('input')
+        input.type = 'checkbox'
+        input.setValue = function(val) {
+          this.checked = val
+          this.value = this.checked
         }
         break
       case Otito.type.float:
       case Otito.type.number:
       case Otito.type.int:
       case Otito.type.uint:
-        {
-          input = document.createElement('input')
-          if (meta.min) {
-            input.min = meta.min
-          }
-          if (meta.max) {
-            input.max = meta.max
-          }
-          if (meta.step) {
-            input.step = meta.step
-          }
-          input.type = 'number'
+        input = document.createElement('input')
+        if (meta.min) {
+          input.min = meta.min
         }
+        if (meta.max) {
+          input.max = meta.max
+        }
+        if (meta.step) {
+          input.step = meta.step
+        }
+        input.type = 'number'
         break
       case Otito.type.text:
       case Otito.type.string:
-        {
-          input = document.createElement('input')
-        }
+        input = document.createElement('input')
         break
       case Otito.type.textarea:
-        {
-          input = document.createElement('textarea')
-        }
+        input = document.createElement('textarea')
         break
       case Otito.type.link:
-        {
-          input = document.createElement('a')
-          input.onclick = function(e) {
-            meta.action(that, that.parent, e)
-          }
-          input.innerHTML = meta.label || JSON.stringify(meta)
+        input = document.createElement('a')
+        input.onclick = function(e) {
+          meta.action(that, that.parent, e)
         }
+        input.innerHTML = meta.label || JSON.stringify(meta)
         break
 
       case Otito.type.upload:
-        {
-          input = document.createElement('input')
-          input.type = 'file'
-          if (meta.accept) {
-            input.setAttribute('accept', meta.accept)
-          }
-          input.onchange = function(e) {
+        input = document.createElement('input')
+        input.type = 'file'
+        if (meta.accept) {
+          input.setAttribute('accept', meta.accept)
+        }
+        input.onchange = function(e) {
+          meta.action(that, that.parent, e)
+        }
+        input.setValue = function(val, e) {
+          if (e) {
             meta.action(that, that.parent, e)
-          }
-          input.setValue = function(val, e) {
-            if (e) {
-              meta.action(that, that.parent, e)
-            } else {
-              this.value = ''
-            }
+          } else {
+            this.value = ''
           }
         }
         break
       case Otito.type.color:
-        {
-          input = document.createElement('input')
-          input.type = 'color'
-        }
+        input = document.createElement('input')
+        input.type = 'color'
         break
       case Otito.type.list:
-        {
-          input = document.createElement('select')
-          var opt, item
-          if (Array.isArray(meta.list)) {
-            for (i = 0; i < meta.list.length; i++) {
-              opt = document.createElement('option')
-              item = meta.list[i]
-              if (typeof item != 'object') {
-                opt.innerHTML = item
-                opt.value = item
+        input = document.createElement('select')
+        var opt, item
+        if (Array.isArray(meta.list)) {
+          for (i = 0; i < meta.list.length; i++) {
+            opt = document.createElement('option')
+            item = meta.list[i]
+            if (typeof item != 'object') {
+              opt.innerHTML = item
+              opt.value = item
+            } else {
+              if (item.value != void 0 && item.label != void 0) {
+                opt.innerHTML = item.label
+                opt.value = item.value
               } else {
-                if (item.value != void 0 && item.label != void 0) {
-                  opt.innerHTML = item.label
-                  opt.value = item.value
-                } else {
-                  var keys = Object.keys(item)
-                  opt.value = item[keys[0]]
-                  opt.innerHTMl = keys[0]
-                }
+                var keys = Object.keys(item)
+                opt.value = item[keys[0]]
+                opt.innerHTMl = keys[0]
               }
-              input.appendChild(opt)
             }
-          } else {
-            for (k in meta.list) {
-              opt = document.createElement('option')
-              opt.innerHTML = meta.list[k]
-              opt.value = k
-              input.appendChild(opt)
-            }
+            input.appendChild(opt)
+          }
+        } else {
+          for (k in meta.list) {
+            opt = document.createElement('option')
+            opt.innerHTML = meta.list[k]
+            opt.value = k
+            input.appendChild(opt)
           }
         }
         break
       default:
-        {
-          input = input = document.createElement('input')
-          input.type = meta._type
-        }
+        input = input = document.createElement('input')
+        input.type = meta._type
         break
     }
 

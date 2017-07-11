@@ -183,10 +183,8 @@ export default class MagePlayGame {
     const newViz = !this.showingInventoryDialog
     this.showingInventoryDialog = newViz
     const npcDialogIsActive = this.toggleNpcDialogFn(newViz)
-    if (
-      npcDialogIsActive // prevent unpause when toggling inventory during an active npc dialog
-    )
-      this.isPaused
+    // prevent unpause when toggling inventory during an active npc dialog
+    if (npcDialogIsActive) this.isPaused
     else this.isPaused = newViz
   }
 

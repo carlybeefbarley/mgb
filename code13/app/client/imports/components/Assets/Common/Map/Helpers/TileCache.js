@@ -186,31 +186,30 @@ export default class TileCache {
     })
     loadImage(Date.now())
 
-    return
-    // image is loading or loaded
-    if (!force && this.images[src] !== void 0) {
-      return
-    }
-    const img = new Image()
-    this.images[src] = img
-    this.toLoad++
-    img.onload = () => {
-      this.loaded++
-      if (this.toLoad == this.loaded) {
-        this._onReady()
-      }
-    }
-    img.onerror = () => {
-      img.onload()
-      delete this.images[src]
-      // TODO(stauzs): push errors - or load nice fallback image
-    }
-    img.src = src
-    /*
-    useful for debug
-    img.style.zIndex = 99999
-    img.style.position = "relative"
-    document.body.appendChild(img)
-    */
+    // // image is loading or loaded
+    // if (!force && this.images[src] !== void 0) {
+    //   return
+    // }
+    // const img = new Image()
+    // this.images[src] = img
+    // this.toLoad++
+    // img.onload = () => {
+    //   this.loaded++
+    //   if (this.toLoad == this.loaded) {
+    //     this._onReady()
+    //   }
+    // }
+    // img.onerror = () => {
+    //   img.onload()
+    //   delete this.images[src]
+    //   // TODO(stauzs): push errors - or load nice fallback image
+    // }
+    // img.src = src
+    // /*
+    // useful for debug
+    // img.style.zIndex = 99999
+    // img.style.position = "relative"
+    // document.body.appendChild(img)
+    // */
   }
 }

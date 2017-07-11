@@ -27,13 +27,12 @@ if (typeof Meteor !== 'undefined') {
 }
 
 function run2() {
-  return
-  describe('Testing', function() {
-    before('Locking async tests', function() {})
-    it('Should pass', function(done) {
-      done()
-    })
-  })
+  // describe('Testing', function() {
+  //   before('Locking async tests', function() {})
+  //   it('Should pass', function(done) {
+  //     done()
+  //   })
+  // })
 }
 
 function runTest() {

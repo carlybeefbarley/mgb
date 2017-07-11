@@ -1,16 +1,16 @@
 /*
-README:
-  this module wraps up navigation for mobile version.
-  it is responsible for tab and bottom button rendering
+ README:
+ this module wraps up navigation for mobile version.
+ it is responsible for tab and bottom button rendering
 
-  Tabs are made as independent components which loads desired component
-    (e.g. HOC wrapper around real component)
+ Tabs are made as independent components which loads desired component
+ (e.g. HOC wrapper around real component)
 
-  All links should be handled by QLink (otherwise they simply won't work)
-    links will open RouterWrap component - which loads url in the popup
-    if tab param is given to the QLink component
-      then it will load that link in the tab specified instead of routerWrap
-      (see TAB at the bottom of this file for available tabs)
+ All links should be handled by QLink (otherwise they simply won't work)
+ links will open RouterWrap component - which loads url in the popup
+ if tab param is given to the QLink component
+ then it will load that link in the tab specified instead of routerWrap
+ (see TAB at the bottom of this file for available tabs)
 
 
  */
@@ -56,7 +56,7 @@ const AllButtons = (p) => (<div className="mobile-nav-all-buttons">
       </a>
     })
   }
-  </div>)
+</div>)
 
 
 const doLogout = () => {
@@ -180,7 +180,7 @@ class MobileNav extends React.Component {
   }
 
   handleChangeIndex(index, currentIndex, location) {
-    if(location)
+    if (location)
       this.cache.location[index] = location
 
     this.setState({index}, () => {
@@ -324,7 +324,7 @@ class MobileNav extends React.Component {
       Component: fpChat, // BlankPage,
       getProps: (mobileNav) => {
         // manually parse channel
-        const subNav =  (mobileNav.props.location && mobileNav.props.location.query) ? mobileNav.props.location.query._fp : ''
+        const subNav = (mobileNav.props.location && mobileNav.props.location.query) ? mobileNav.props.location.query._fp : ''
         const subNavParam = (subNav ? subNav.split('.') : []).length > 0 ? subNav.split('.').pop() : ''
         return {
           panelWidth: '0',
@@ -332,7 +332,7 @@ class MobileNav extends React.Component {
           subNavParam: subNavParam || localStorage.getItem("chat:subNavParam") || 'A_NDe2wYSgj9piosiqG_',
           handleChangeSubNavParam: function (newSubNavParamStr) {
             localStorage.setItem("chat:subNavParam", newSubNavParamStr)
-            utilPushTo(mobileNav.context.location, mobileNav.context.location, {'_fp': 'chat.'+newSubNavParamStr})
+            utilPushTo(mobileNav.context.location, mobileNav.context.location, {'_fp': 'chat.' + newSubNavParamStr})
             mobileNav.forceUpdate()
           }
         }
@@ -474,9 +474,9 @@ class MobileNav extends React.Component {
 
 export default MobileNav
 export const TAB = {
-  HOME:   0,
-  PLAY:   1,
-  CHAT:   2,
+  HOME: 0,
+  PLAY: 1,
+  CHAT: 2,
   ASSETS: 3,
-  MORE:   4
+  MORE: 4
 }

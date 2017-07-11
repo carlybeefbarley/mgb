@@ -573,7 +573,7 @@ class MobileNav extends React.Component {
       title: 'Competitions',
       icon: 'winner',
       action: (mobnav) => {
-        alert('Competitions are not implemented...')
+        //alert('Competitions are not implemented...')
         mobnav.setLocation(`/competitions`)
       },
     },
@@ -613,8 +613,9 @@ class MobileNav extends React.Component {
     settings: {
       title: 'Settings',
       icon: 'setting',
+      Component: HomeRoute, ///HomeWrap,
       action: (mobnav) => {
-        alert('TODO: load settings')
+        mobnav.setLocation(`/mobile/settings`)
       },
     },
     logout: {

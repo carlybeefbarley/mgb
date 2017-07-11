@@ -39,6 +39,8 @@ import Privacy from '/client/imports/legal/Privacy'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
+import fpSettings from '/client/imports/components/SidePanels/fpSettings'
+
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
 // Route matching: https://github.com/reactjs/react-router/blob/master/docs/guides/RouteMatching.md
@@ -136,6 +138,8 @@ export function clientStartup() {
 
         <Route path='/legal/tos' component={TermsOfService} name='Terms Of Service' />
         <Route path='/legal/privacy' component={Privacy} name='Privacy Policy' />
+
+        <Route path='/mobile/settings' component={fpSettings} name='Settings' />
 
         <Route path="/notyetimplemented/:featureName" component={NotYetImplementedRoute} name="Coming Soon!.."/>
         <Route path="*" component={NotFoundRoute} name="Page Not Found"/>

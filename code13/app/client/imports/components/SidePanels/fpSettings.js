@@ -31,8 +31,8 @@ export default fpSettings = React.createClass({
   propTypes: {
     currUser:                 PropTypes.object,             // Currently Logged in user. Can be null/undefined
     user:                     PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:               PropTypes.string.isRequired,  // Typically something like "200px".
-    currentlyEditingAssetInfo: PropTypes.object.isRequired  // An object with some info about the currently edited Asset - as defined in App.js' this.state
+    currentlyEditingAssetInfo: PropTypes.object,            // An object with some info about the currently edited Asset - as defined in App.js' this.state
+    panelWidth:               PropTypes.string.isRequired   // Typically something like "200px".
   },
 
   contextTypes: {
@@ -65,11 +65,14 @@ export default fpSettings = React.createClass({
   render: function () {
 
     const makeSlider = (name) => {
+
+      const kind = this.props.currentlyEditingAssetInfo ? this.props.currentlyEditingAssetInfo.kind : null
+
       const maxVal = expectedToolbars.getMaxLevel(name)
       const defaultLevel = expectedToolbars.getDefaultLevel(name)
       const actualLevel = this.getLevelValFromSettings(name) || defaultLevel
       const friendlyName = expectedToolbars.getFriendlyName(name)
-      const isHighlighted = expectedToolbars.getIsUsedForAssetKind(name, this.props.currentlyEditingAssetInfo.kind)
+      const isHighlighted = expectedToolbars.getIsUsedForAssetKind(name, kind)
       const outerSty = { padding: '0.35em 0.15em', marginLeft: '0.1em', marginRight: '0.85em',  marginBottom: '1.35em' }
       if (isHighlighted)
         outerSty.backgroundColor = _highlightRelevantAreasColor

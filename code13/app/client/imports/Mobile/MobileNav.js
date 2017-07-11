@@ -486,8 +486,6 @@ class MobileNav extends React.Component {
           // TODO: save and restore
           subNavParam: subNavParam || localStorage.getItem("chat:subNavParam") || 'A_NDe2wYSgj9piosiqG_',
           handleChangeSubNavParam: function (newSubNavParamStr) {
-            debugger;
-            console.log('handleChangeSubNavParam', newSubNavParamStr)
             localStorage.setItem("chat:subNavParam", newSubNavParamStr)
             utilPushTo(mobileNav.context.location, mobileNav.context.location, {'_fp': 'chat.'+newSubNavParamStr})
             mobileNav.forceUpdate()

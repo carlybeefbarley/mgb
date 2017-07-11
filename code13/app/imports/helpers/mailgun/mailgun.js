@@ -32,17 +32,12 @@ export function Mailgun() {
   this.port = options.port || 443
   this.retry = options.retry || 1
 
-  if (options.proxy) {
-    this.proxy = options.proxy
-  }
-
   this.options = {
     host: this.host,
     endpoint: this.endpoint,
     protocol: this.protocol,
     port: this.port,
     auth: this.auth,
-    proxy: this.proxy,
     timeout: this.timeout,
     retry: this.retry,
   }

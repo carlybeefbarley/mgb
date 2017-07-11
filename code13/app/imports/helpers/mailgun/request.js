@@ -1,6 +1,5 @@
 import https from 'https'
 import http from 'http'
-// import proxy from 'proxy-agent'
 import qs from 'querystring'
 import fs from 'fs'
 import Stream from 'stream'
@@ -26,7 +25,6 @@ export function Request(options) {
   this.port = options.port
   this.endpoint = options.endpoint
   this.auth = options.auth
-  this.proxy = options.proxy
   this.timeout = options.timeout
   this.retry = options.retry || 1
 }
@@ -73,7 +71,6 @@ Request.prototype._request = function(method, resource, data, fn) {
     method: method,
     headers: this.headers,
     auth: this.auth,
-    agent: this.proxy ? proxy(this.proxy, true) : false,
     timeout: this.timeout,
   }
 

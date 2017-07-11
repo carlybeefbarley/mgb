@@ -39,8 +39,8 @@ const MagePlayGameTIC = {
     cY += aa.renderOffsetCellsHeight
 
     // Loop is to account for cellSpanX,Y
-    for (var x1 = 0; x1 < cX && x + x1 < mW; x1++) {
-      for (var y1 = 0; y1 < cY && y + y1 < mH; y1++) {
+    for (let x1 = 0; x1 < cX && x + x1 < mW; x1++) {
+      for (let y1 = 0; y1 < cY && y + y1 < mH; y1++) {
         if (x + x1 >= 0 && y + y1 >= 0) {
           // Check if cell is in bounds. Note that we don't need to check for the bottom/right edges since that bound is covered by the the loop guards.
           var cell = x + x1 + (y + y1) * mW

@@ -98,30 +98,30 @@ export default class Generate8bit extends React.Component {
     bpm = 1 / (bpm / 120)
     var duration = song.bars * song.secperbar * bpm //duration of the song in seconds
     var data = []
-    for (var t = 0; t < Math.round(this.sampleRate * duration); t++) {
+    for (let t = 0; t < Math.round(this.sampleRate * duration); t++) {
       data[t] = 0
     }
 
-    for (var i in song.Channels) {
-      channel = song.Channels[i]
-      instrument = channel.instrument
-      for (var n in channel.notes) {
-        note = channel.notes[n]
+    for (let i in song.Channels) {
+      const channel = song.Channels[i]
+      const instrument = channel.instrument
+      for (let n in channel.notes) {
+        const note = channel.notes[n]
         // console.log(note.vol)
         var ns = Math.floor(note.start * this.sampleRate * bpm)
         var ne = Math.floor(note.end * this.sampleRate * bpm)
-        for (var t = ns; t < ne; t += downsample) {
-          var thisdata = instrument.generator(Math.floor(t), note.key / 88, ns, ne) * note.vol
-          for (var d = 0; d < downsample; d++) {
-            data[Math.floor(t) + d] += thisdata
+        for (let t2 = ns; t2 < ne; t2 += downsample) {
+          var thisdata = instrument.generator(Math.floor(t2), note.key / 88, ns, ne) * note.vol
+          for (let d = 0; d < downsample; d++) {
+            data[Math.floor(t2) + d] += thisdata
           }
           //data[Math.floor(t)]+=instrument.generator(Math.floor(t),note.key/88,ns,ne)*note.vol;
         }
       }
     }
 
-    for (t in data) {
-      data[t] = Math.min(Math.round(data[t] / song.Channels.length * this.maxval / 4), this.maxval)
+    for (let t2 in data) {
+      data[t2] = Math.min(Math.round(data[t2] / song.Channels.length * this.maxval / 4), this.maxval)
     }
 
     this.drawNotes(song, bpm, duration)

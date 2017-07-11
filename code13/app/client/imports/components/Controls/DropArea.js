@@ -37,7 +37,7 @@ export default class DropArea extends React.Component {
     if (this.props.value) {
       const parts = this.props.value.split(':')
       let name = parts.pop()
-      if (/(\#\d+)$/.test(name) && this.props.kind === 'graphic') name = name.split(' #')[0]
+      if (/(#\d+)$/.test(name) && this.props.kind === 'graphic') name = name.split(' #')[0]
       const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
       this.startSubscription(owner, name)
     }
@@ -146,7 +146,7 @@ export default class DropArea extends React.Component {
     if (this.props.value) {
       const parts = this.props.value.split(':')
       let name = parts.pop()
-      if (/(\#\d+)$/.test(name) && this.props.kind === 'graphic') name = name.split(' #')[0]
+      if (/(#\d+)$/.test(name) && this.props.kind === 'graphic') name = name.split(' #')[0]
 
       const owner = parts.length > 0 ? parts.pop() : this.props.asset.dn_ownerName
       if (owner == '[builtin]') return

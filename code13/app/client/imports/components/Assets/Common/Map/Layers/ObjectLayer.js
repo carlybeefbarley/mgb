@@ -401,7 +401,7 @@ export default class ObjectLayer extends AbstractLayer {
       this.handles.update(obj.x, obj.y - obj.height, obj.width, obj.height, obj.rotation, obj.x, obj.y)
     } else if (obj instanceof Imitator) {
       this.handles.update(obj.x, obj.y, obj.width, obj.height, obj.rotation, obj.orig.x, obj.orig.y)
-    } else if (true) {
+    } else {
       /// ???
       this.handles.update(obj.x, obj.y, obj.width, obj.height, obj.rotation, obj.x, obj.y)
     }
@@ -519,7 +519,7 @@ export default class ObjectLayer extends AbstractLayer {
         }
       } else if (o.ellipse) {
         this.drawEllipse(o)
-      } else if (true) {
+      } else {
         this.drawRectangle(o)
       }
     }
@@ -980,7 +980,6 @@ edit[EditModes.rectangle] = function(e) {
           if (selected != this.selection) {
             selected.x = Math.round(this.clonedObject.x / tw) * tw
             selected.y = Math.round(this.clonedObject.y / th) * th
-          } else {
           }
         } else {
           if (selected != this.selection) {
@@ -1000,7 +999,6 @@ edit[EditModes.rectangle] = function(e) {
             if (selected != this.selection) {
               selected.x = this.clonedObject.x
               selected.y = this.clonedObject.y
-            } else {
             }
           } else {
             if (selected != this.selection) {

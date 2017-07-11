@@ -88,7 +88,7 @@ const getSubSkills = learnItem => {
   // else {
   const subSkills = [] // array of learnItem subskills
   const skillsObject = SkillNodes.code.js[learnItem]
-  for (var key in skillsObject) {
+  for (let key in skillsObject) {
     if (skillsObject.hasOwnProperty(key) && key != '$meta') {
       let skill = _.cloneDeep(skillsObject[key]['$meta'])
       skill.idx = key

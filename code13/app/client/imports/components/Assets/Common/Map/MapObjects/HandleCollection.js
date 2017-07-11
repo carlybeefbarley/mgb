@@ -226,7 +226,7 @@ export default class HandleCollection {
 
     // TODO: add pivot point e.g. 50% of left & right would do 50% smaller changes to left and 50% smaller changes to right
     switch (type) {
-      case ROTATE:
+      case ROTATE: {
         const h = this.handles[ROTATE]
         h.x += udx
         h.y += udy
@@ -240,8 +240,8 @@ export default class HandleCollection {
         // this will rotate around middle point
         ObjectHelper.rotateObject(obj, an)
         break
-
-      case BOTTOM:
+      }
+      case BOTTOM: {
         // this is same fro NON tile as for tile TOP
         if (!obj.gid) {
           obj.height += dy
@@ -252,9 +252,8 @@ export default class HandleCollection {
         obj.y += dy * Math.cos(obj.rotation * FROM_DEGREES)
         obj.height += dy
         break
-
-      case TOP:
-        //
+      }
+      case TOP: {
         if (!obj.gid) {
           obj.x -= dy * Math.sin(obj.rotation * FROM_DEGREES)
           obj.y += dy * Math.cos(obj.rotation * FROM_DEGREES)
@@ -264,16 +263,17 @@ export default class HandleCollection {
 
         obj.height -= dy
         break
-
-      case LEFT:
+      }
+      case LEFT: {
         obj.x += dx * Math.cos(obj.rotation * FROM_DEGREES)
         obj.y += dx * Math.sin(obj.rotation * FROM_DEGREES)
         obj.width -= dx
         break
-
-      case RIGHT:
+      }
+      case RIGHT: {
         obj.width += dx
         break
+      }
     }
   }
 

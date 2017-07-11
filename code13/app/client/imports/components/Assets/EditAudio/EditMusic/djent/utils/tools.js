@@ -3,7 +3,7 @@ import deepExtend from 'deep-extend'
 const arraySelector = selector => Array.from(document.querySelectorAll(selector))
 
 const repeat = (simsNeeded, fn) => {
-  for (var i = simsNeeded - 1, x = 0; i >= 0; i--) {
+  for (let i = simsNeeded - 1, x = 0; i >= 0; i--) {
     fn(simsNeeded, x)
     x++
   }
@@ -73,7 +73,7 @@ const parseQueryString = (url = window.location.href) =>
       }, {})
 
 const getHashQueryParam = (param, url = window.location.hash) => {
-  const paramPart1 = url.split(`${param}\=`)[1]
+  const paramPart1 = url.split(`${param}=`)[1]
   if (!paramPart1) return ''
 
   return paramPart1.split('&')[0]

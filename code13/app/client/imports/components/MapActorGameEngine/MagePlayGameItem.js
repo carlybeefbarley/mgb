@@ -109,7 +109,7 @@ const MagePlayGameItem = {
     var aa = activeActors[AAindexOfActorWhoIsDroppingAnItem]
     var goodPoint = null
 
-    for (var d = 0; d < 4; d++) {
+    for (let d = 0; d < 4; d++) {
       var r = this._nextPoint(aa.x, aa.y, aa.cellSpanX, aa.cellSpanY, d)
       if (false === this._isObstructedForThisDrop(r.x, r.y, CheckActiveLayer)) {
         if (d == preferredDirection) return r
@@ -186,7 +186,7 @@ const MagePlayGameItem = {
     // 2. Check actives
 
     if (CheckActiveLayer && !obstructed) {
-      for (var AA = 0; AA < activeActors.length && !obstructed; AA++) {
+      for (let AA = 0; AA < activeActors.length && !obstructed; AA++) {
         var actor = activeActors[AA]
         if (actor.alive && actor.x == x && actor.y == y) obstructed = true
       }

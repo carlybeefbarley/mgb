@@ -409,7 +409,9 @@ export default class SpriteLayers extends React.Component {
     c2.layerParams.push({ name: newLayerName, isHidden: false, isLocked: false })
     let fD = c2.frameData
     let lN = this.props.content2.layerParams
-    for (let i; i < fD.length; i++) fD[i][lN.length - 1] = emptypixel // BUGBUG? What is lN?    let lN = this.props.content2.layerParams
+    for (let i; i < fD.length; i++) {
+      fD[i][lN.length - 1] = emptyPixel // BUGBUG? What is lN? let lN = this.props.content2.layerParams
+    }
 
     this.props.forceUpdate() // Force react to update.. needed since some of this state was direct (not via React.state/React.props)
     this.handleSave('Add layer to graphic')
@@ -567,7 +569,7 @@ export default class SpriteLayers extends React.Component {
     let frameHeight = c2.height
 
     if (frameWidth > _maxFrameDimension || frameHeight > _maxFrameDimension) {
-      maxDimension = frameWidth > frameHeight ? frameWidth : frameHeight
+      const maxDimension = frameWidth > frameHeight ? frameWidth : frameHeight
       const scale = _maxFrameDimension / maxDimension
       frameWidth *= scale
       frameHeight *= scale
@@ -579,7 +581,7 @@ export default class SpriteLayers extends React.Component {
         className={this.props.isMinimized ? 'mgb-minimized' : 'mgb-maximized'}
         style={{ width: this.props.availableWidth + 'px' }}
       >
-        <div className="row" className="animHeader">
+        <div className="animHeader row">
           <div onClick={this.rewindFrames.bind(this, false)} className={buttonDivClass}>
             <i className="icon step backward" />
           </div>

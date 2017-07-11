@@ -24,9 +24,6 @@ class ThumbnailWithInfo extends React.Component {
   }
 
   render() {
-    if (this.props.showDimensions) {
-    }
-
     return (
       <div style={{ textAlign: 'center' }}>
         <Thumbnail {...this.props} />

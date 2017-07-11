@@ -120,7 +120,7 @@ function isSpecialParam(paramKey) {
 Request.prototype.prepareData = function(data) {
   var params = {}
 
-  for (var key in data) {
+  for (let key in data) {
     if (key !== 'attachment' && key !== 'inline' && isOk(data[key])) {
       var value = getDataValue(key, data[key])
       if (isOk(value)) {
@@ -138,12 +138,21 @@ Request.prototype.prepareFormData = function(data) {
   this.form = new FormData()
   var self = this
 
-  for (var key in data) {
+  function appendKey(key, element) {
+    if (isOk(element)) {
+      var value = getDataValue(key, element)
+      if (isOk(value)) {
+        self.form.append(key, value)
+      }
+    }
+  }
+
+  for (let key in data) {
     var obj = data[key]
     if (isOk(obj)) {
       if (key === 'attachment' || key === 'inline') {
         if (Array.isArray(obj)) {
-          for (var i = 0; i < obj.length; i++) {
+          for (let i = 0; i < obj.length; i++) {
             this.handleAttachmentObject(key, obj[i])
           }
         } else {
@@ -152,16 +161,7 @@ Request.prototype.prepareFormData = function(data) {
       } else if (key === 'message') {
         this.handleMimeObject(key, obj)
       } else if (Array.isArray(obj)) {
-        function appendKey(element) {
-          if (isOk(element)) {
-            var value = getDataValue(key, element)
-            if (isOk(value)) {
-              self.form.append(key, value)
-            }
-          }
-        }
-
-        obj.forEach(appendKey)
+        obj.forEach(element => appendKey(key, element))
       } else {
         var value = getDataValue(key, obj)
         if (isOk(value)) {

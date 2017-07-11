@@ -33,39 +33,39 @@ export default class Inventory {
 
   /**
    * get
-   * 
+   *
    * @param {String} name
    * @returns {InventoryItem}
-   * 
+   *
    * @memberOf Inventory
    */
   get(name) {
-    for (var i = 0; i < this._invArray.length; i++) {
+    for (let i = 0; i < this._invArray.length; i++) {
       if (this._invArray[i] && this._invArray[i].name == name) return this._invArray[i]
     }
     return null
   }
 
   /**
-   * 
-   * 
+   *
+   *
    * @param {String} name
    * @returns {int}   -1 == Not Found
-   * 
+   *
    * @memberOf Inventory
    */
   _getIdx(name) {
-    for (var i = 0; i < this._invArray.length; i++)
+    for (let i = 0; i < this._invArray.length; i++)
       if (this._invArray[i] && this._invArray[i].name == name) return i
     return -1
   }
 
   /**
    * add
-   * 
+   *
    * @param {InventoryItem} item
    * @returns {void}
-   * 
+   *
    * @memberOf Inventory
    */
   add(item) {
@@ -84,13 +84,13 @@ export default class Inventory {
 
   //
   /**
-   * equip will handle the 'slot' type automatically. If there's another item already equipped in the same slot, that will be unequipped 
+   * equip will handle the 'slot' type automatically. If there's another item already equipped in the same slot, that will be unequipped
    * parameter 'state' says it move to equipped state (true) or unequipped (false)
-   * 
+   *
    * @param {InventoryItem} item
    * @param {Boolean} [state=true]
    * @returns {InventoryItem}
-   * 
+   *
    * @memberOf Inventory
    */
   equip(item, state = true) {
@@ -105,7 +105,7 @@ export default class Inventory {
       if (state && (found.equipSlot || found.autoEquippable)) {
         // We should go through now and unequip any other items that were already equipped in this slot
 
-        for (var i = 0; i < this._invArray.length; i++) {
+        for (let i = 0; i < this._invArray.length; i++) {
           if (this._invArray[i]) {
             var maybeItemInSameSlot = this._invArray[i]
             if (maybeItemInSameSlot.equipped == true && maybeItemInSameSlot.name != found.name) {
@@ -132,12 +132,12 @@ export default class Inventory {
   } // Return value is any item that was consequently unequipped
 
   /**
-   * 
-   * 
+   *
+   *
    * @param {String} itemName
    * @param {int} [count=1]
    * @returns {Boolean} return true if the item was present and removed
-   * 
+   *
    * @memberOf Inventory
    */
   removeByName(itemName, count) {
@@ -156,12 +156,12 @@ export default class Inventory {
   }
 
   /**
-   * 
-   * 
+   *
+   *
    * @param {InventoryItem} item
    * @param {int} [count=1]
    * @returns {Boolean} return true if the item was present and removed
-   * 
+   *
    * @memberOf Inventory
    */
   remove(item, count = 1) {
@@ -169,9 +169,9 @@ export default class Inventory {
   }
 
   /**
-   * 
-   * 
-   * 
+   *
+   *
+   *
    * @memberOf Inventory
    */
   _recalculateEquipmentEffects() {
@@ -189,7 +189,7 @@ export default class Inventory {
     equipEffects.meleeSound = null
 
     let autoEquippedItemProcessed = false
-    for (var i = 0; i < _invArray.length; i++) {
+    for (let i = 0; i < _invArray.length; i++) {
       if (_invArray[i]) {
         var item = _invArray[i]
         if (item.equipped) {

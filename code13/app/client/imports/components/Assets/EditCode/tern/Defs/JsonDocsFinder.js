@@ -6,10 +6,12 @@ const JsonDocsFinder = {
   _jsonDocCache: {},
 
   _makeDocUrl: function(req) {
+    let ver
+    let file
     switch (req.frameworkName) {
       case 'phaser':
-        let ver = req.frameworkVersion || '2.4.6'
-        let file = this._getClassNameFromOneName(req.symbol)
+        ver = req.frameworkVersion || '2.4.6'
+        file = this._getClassNameFromOneName(req.symbol)
         return `/${req.frameworkName}/${ver}/docgen/output/${file}.json`
 
       case 'lodash':

@@ -302,7 +302,7 @@ export const makeTutorialsFindSelector = dottedSkillKey => {
   const fullKeyPrefix = SpecialGlobals.skillsModelTrifecta.tutorialAssetNamePrefix + dottedSkillKey
   // replace . with \.
   const escapedKey = fullKeyPrefix.replace(/\./g, '\\.')
-  const regexToBuild = `^${escapedKey}\.[0-9][0-9]$`
+  const regexToBuild = `^${escapedKey}\\.[0-9][0-9]$`
   const reg = new RegExp(regexToBuild, 'i')
   return {
     kind: 'tutorial',

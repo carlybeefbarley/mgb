@@ -15,10 +15,10 @@ const _minAssetNameLength = 1
 //    {   since... we may want the option to have assetName-based apis that could instead have a
 //                 richer JSON-encoded data instead
 //    *   since it is just going to make wild card search stupidly annoying
-const _validAssetNameRegex = /^[a-zA-Z0-9_\-. \(\)\!\~\;\'\<\>\@\&]*$/
+const _validAssetNameRegex = /^[a-zA-Z0-9_\-. ()!~;'<>@&]*$/
 
 // Valid PROJECT name regex
-const _validProjectNameRegex = /^[a-zA-Z0-9_\-. \(\)\&']*$/
+const _validProjectNameRegex = /^[a-zA-Z0-9_\-. ()&']*$/
 // This is a little tighter than Asset Name since it seems it can be..
 
 const _listInvalidChars = (text, StringAllowedRegex) =>

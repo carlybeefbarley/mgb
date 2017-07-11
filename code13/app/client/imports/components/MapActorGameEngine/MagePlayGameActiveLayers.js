@@ -27,8 +27,8 @@ const MagePlayGameActiveLayers = {
     const mapName = map.name.indexOf(':') === -1 ? this.ownerName + ':' + map.name : map.name
 
     // Instantiate instances of the Actors using the map data
-    for (var y = 0; y < map.metadata.height; y++) {
-      for (var x = 0; x < map.metadata.width; x++) {
+    for (let y = 0; y < map.metadata.height; y++) {
+      for (let x = 0; x < map.metadata.width; x++) {
         var actorName = map.mapLayer[layer][this.cell(x, y)]
         if (null != actorName) {
           var ap = this.actors[actorName]
@@ -127,7 +127,7 @@ const MagePlayGameActiveLayers = {
     this.respawnRequiredActorsForMap()
 
     // Now find the player
-    for (var AA = 0; AA < this.activeActors.length; AA++) {
+    for (let AA = 0; AA < this.activeActors.length; AA++) {
       if (MgbActor.alActorType_Player == this.activeActors[AA].type) {
         // This is the player, so make a note...
         this.AA_player_idx = AA
@@ -153,7 +153,7 @@ const MagePlayGameActiveLayers = {
   // playCleanupActiveLayer - called when a game ends on a map - undo what playPrepareActiveLayer did
   playCleanupActiveLayer: function() {
     if (this.activeActors) {
-      for (var AA = 0; AA < this.activeActors.length; AA++) this.activeActors[AA] = null
+      for (let AA = 0; AA < this.activeActors.length; AA++) this.activeActors[AA] = null
     }
     this.activeActors = []
   },
@@ -162,11 +162,11 @@ const MagePlayGameActiveLayers = {
     // See the complementary code in playSpawnNewActor()
     if (this.respawnMemoryAutoRespawningActors[this.map.name]) {
       throw new Error('@dgolds 10/12/16 debugger: step through first time')
-      var a = this.respawnMemoryAutoRespawningActors[this.map.name]
-      for (var i in a) {
-        var ob = a[i]
-        if (ob.actorname) this.playSpawnNewActor(ob.actorname, ob.x, ob.y, false, true, i)
-      }
+      // var a = this.respawnMemoryAutoRespawningActors[this.map.name]
+      // for (let i in a) {
+      //   var ob = a[i]
+      //   if (ob.actorname) this.playSpawnNewActor(ob.actorname, ob.x, ob.y, false, true, i)
+      // }
     }
   },
 
@@ -182,7 +182,7 @@ const MagePlayGameActiveLayers = {
     let thisAAidx = this.activeActors.length
     if (recycle) {
       // We want to look for a dead item to reuse. NOTE - don't re-use items that have conditions - they may just be dormant
-      for (var j = 0; j < this.activeActors.length; j++) {
+      for (let j = 0; j < this.activeActors.length; j++) {
         if (
           this.activeActors[j].alive == false &&
           this.activeActors[j].dyingAnimationFrameCount == 0 &&
@@ -273,7 +273,7 @@ const MagePlayGameActiveLayers = {
   checkForGeneratedActorsThisSecond: function() {
     const { activeActors, G_tweenCount } = this
 
-    for (var AA = 0; AA < activeActors.length; AA++) {
+    for (let AA = 0; AA < activeActors.length; AA++) {
       var actor = activeActors[AA]
       if (actor.alive && actor.birthTweenCount != G_tweenCount) {
         var ap = this.actors[actor.ACidx]
@@ -305,7 +305,7 @@ const MagePlayGameActiveLayers = {
     // First, count how many of each actor are on screen ('alive')
     var ach = [] // Actor Count Hash
     var aalen = activeActors.length
-    for (var AAi = 0; AAi < aalen; AAi++) {
+    for (let AAi = 0; AAi < aalen; AAi++) {
       if (activeActors[AAi].alive) {
         var name = activeActors[AAi].ACidx.split(':').pop()
         ach[name] = ach[name] ? ach[name] + 1 : 1
@@ -313,7 +313,7 @@ const MagePlayGameActiveLayers = {
     }
 
     // Now, if any have 'conditions', apply them
-    for (AAi = 0; AAi < aalen; AAi++) {
+    for (let AAi = 0; AAi < aalen; AAi++) {
       var aa = activeActors[AAi]
       var ap = actors[aa.ACidx]
       var conditionsActor = ap.content2.databag.itemOrNPC.conditionsActor

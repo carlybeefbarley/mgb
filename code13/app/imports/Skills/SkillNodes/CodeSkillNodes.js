@@ -257,7 +257,7 @@ const CodeSkillNodes = {
   regex: {
     $meta: {
       name: 'Regular expressions',
-      description: `Javascript (and most programming languages) use 'regular expressions' to search for patterns within text strings.  A (slightly scary) example is ^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$ which tests if a string appears to be a valid email address.`,
+      description: `Javascript (and most programming languages) use 'regular expressions' to search for patterns within text strings.  A (slightly scary) example is ^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$ which tests if a string appears to be a valid email address.`,
     },
     basics: {
       literals: C.En(1), // letters, numbers some symbols like @

@@ -545,7 +545,7 @@ const helpInfo = [
 
     syntax: `property in objectName
 ..or...
-for (x in obj)`,
+for (let x in obj)`,
     help:
       'If used in an expression, the in operator returns true if the specified property is in the specified object',
     help2:
@@ -1166,7 +1166,7 @@ while (condition);`,
     origin: 'ecma5', // Note that we have covered   'in'   above since it has dual contexts
     skillNodes: _skl + 'control-flow.for',
     help: '"for" loops are a convenient way to loop through sequences and objects. There are a few forms:',
-    syntax: `for (variable in object) {...
+    syntax: `for (let variable in object) {...
 }
 ...or...
 for ([initialization]; [condition]; [final-expression])
@@ -1186,7 +1186,7 @@ for ([initialization]; [condition]; [final-expression])
     ts: 'of',
     origin: 'ecma6',
     skillNodes: _skl + 'control-flow.of',
-    syntax: `for (variable of iterable) {
+    syntax: `for (let variable of iterable) {
   statement
 }`,
     help: '"for" loops are a convenient way to loop through sequences and objects. There are a few forms:',

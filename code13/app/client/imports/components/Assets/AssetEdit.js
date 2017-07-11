@@ -96,10 +96,10 @@ export default class AssetEdit extends React.Component {
             <AssetCard
               asset={asset}
               currUser={currUser}
-              fluid={true}
+              fluid
               canEdit={false}
               showEditButton={false}
-              allowDrag={true}
+              allowDrag
               renderView="l"
             />
           </Segment>}

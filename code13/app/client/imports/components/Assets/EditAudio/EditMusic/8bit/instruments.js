@@ -39,7 +39,7 @@ function PianoInstrument(params) {
 
     var s = params.melodyNoteCount
 
-    for (var i = 0; i < s * 2; i++) {
+    for (let i = 0; i < s * 2; i++) {
       let delay = (Math.random() < 0.4) * (Math.floor(Math.random() * 3) * (1 / 2))
       delay = (Math.random() < params.delay) * (Math.floor(Math.random() * 3) * (1 / 4))
       if (Math.random() > params.noteProbability)
@@ -57,8 +57,7 @@ function PianoInstrument(params) {
         )
     }
 
-    var tmpNotes = clone(this.notes)
-    tmpNotes.forEach(function(note, i) {
+    clone(this.notes).forEach(function(note, i) {
       self.addNote(0, note.key + v1, note.start + 2, note.end + 2)
       self.addNote(0, note.key + v2, note.start + 4, note.end + 4)
       self.addNote(0, note.key + v3, note.start + 6, note.end + 6)
@@ -68,12 +67,12 @@ function PianoInstrument(params) {
     this.addNote(0, 49 + v + v2, 4, 6, 0.5)
     this.addNote(0, 49 + v + v3, 6, 8, 0.5)
 
-    var tmpNotes = clone(this.notes)
-    tmpNotes.forEach(function(note, i) {
-      if (note.start < 2) var p = 49 + v
-      else if (note.start < 4) var p = 49 + v + v1
-      else if (note.start < 6) var p = 49 + v + v2
-      else if (note.start < 8) var p = 49 + v + v3
+    clone(this.notes).forEach(function(note, i) {
+      let p
+      if (note.start < 2) p = 49 + v
+      else if (note.start < 4) p = 49 + v + v1
+      else if (note.start < 6) p = 49 + v + v2
+      else if (note.start < 8) p = 49 + v + v3
       if (Math.random() > 0.5) {
         p -= vv
         if (Math.random() > 0.5) p -= 3
@@ -84,8 +83,7 @@ function PianoInstrument(params) {
       if (Math.random() > 0.5) self.beatNotes.push(new Note(2, p, note.start, note.end, note.vol / 2))
     })
 
-    var tmpNotes = clone(this.notes)
-    tmpNotes.forEach(function(note, i) {
+    clone(this.notes).forEach(function(note, i) {
       //duplicate everything to a second bar
       self.addNote(0, note.key, note.start + 8, note.end + 8, note.vol)
       if (params.enchance) self.addNote(0, note.key + 12, note.start + 8, note.end + 0.375 + 8, note.vol / 2)
@@ -117,11 +115,8 @@ function NoiseInstrument() {
   }
 
   this.generateNotes = function() {
-    for (
-      i = 0;
-      i < 8;
-      i += 2 //drum beat
-    ) {
+    //drum beat
+    for (let i = 0; i < 8; i += 2) {
       this.addNote(1, 49, i, i + 1 / 8)
       this.addNote(1, 49, i + 1 / 4, i + 1 / 4 + 1 / 16)
       this.addNote(1, 49, i + 1 / 2, i + 1 / 2 + 1 / 4)
@@ -141,7 +136,7 @@ function NoiseInstrument() {
       self.addNote(1, note.key, note.start + 8, note.end + 8, note.vol)
     })
 
-    for (i = 8; i < 16; i += 0.5) {
+    for (let i = 8; i < 16; i += 0.5) {
       //more hit-hat on the second bar
       this.addNote(1, 49 - 24, i + 1 / 4, i + 1 / 4 + 1 / 8, 2)
     }
@@ -178,7 +173,7 @@ function SinWaveInstrument(beatNotes, params) {
     var v = Math.floor(Math.random() * 4) - 2
 
     if (params.isBass) {
-      for (i = 8; i < 16; i += 0.5) {
+      for (let i = 8; i < 16; i += 0.5) {
         //more hit-hat on the second bar
         this.addNote(2, 65, i, i + 1 / 8, params.bassVolume) //plus some beat
       }
@@ -205,7 +200,7 @@ function GetFreq(key) {
 function clone(obj) {
   if (null == obj || 'object' != typeof obj) return obj
   var copy = obj.constructor()
-  for (var attr in obj) {
+  for (let attr in obj) {
     if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr]
   }
   return copy

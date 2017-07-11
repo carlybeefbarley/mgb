@@ -35,14 +35,14 @@ const MagePlayGameCollision = {
     var i = 0,
       j = 0
     var AA2 = 0
-    for (var cell = 0; cell < G_tic.length; cell++) {
+    for (let cell = 0; cell < G_tic.length; cell++) {
       if (G_tic[cell] && G_tic[cell].length > 1) {
-        for (i = 0; i < G_tic[cell].length; i++) {
+        for (let i = 0; i < G_tic[cell].length; i++) {
           var AA1 = G_tic[cell][i]
           var a1 = activeActors[AA1]
           if (a1.alive) {
             // First build an approximate list using the activeActors table. We'll use the bitmap x/y so this maps to user experience
-            for (j = i; j < G_tic[cell].length; j++) {
+            for (let j = i; j < G_tic[cell].length; j++) {
               AA2 = G_tic[cell][j]
               var a2 = activeActors[AA2]
               if (a2.alive && AA1 < AA2) {
@@ -78,7 +78,7 @@ const MagePlayGameCollision = {
       hits.sort((a, b) => this.sortOnChoice(a, b)) // TODO - find cheaper way to do this? Array.sort seems to bind
       var hits2 = new Array()
       hits2[0] = hits[0]
-      for (i = 1; i < hits.length; i++) {
+      for (let i = 1; i < hits.length; i++) {
         if (hits[i].AA1 != hits2[hits2.length - 1].AA1 || hits[i].AA2 != hits2[hits2.length - 1].AA2)
           hits2.push(hits[i])
       }
@@ -203,7 +203,7 @@ const MagePlayGameCollision = {
     const { actors, activeActors, AA_player_idx, inventory, ownerName } = this
     var hits = this.playFindAACollisions()
 
-    for (var hidx = 0; hidx < hits.length; hidx++) {
+    for (let hidx = 0; hidx < hits.length; hidx++) {
       var aa1_idx = hits[hidx].AA1
       var aa1 = activeActors[aa1_idx]
       var ap1 = actors[activeActors[hits[hidx].AA1].ACidx]
@@ -344,7 +344,7 @@ const MagePlayGameCollision = {
         }
       } else {
         // Item-or-NPC/Item-or-NPC collisions
-        for (var iteration = 0; iteration < 2; iteration++) {
+        for (let iteration = 0; iteration < 2; iteration++) {
           // We'll do this twice - once for AA1's effects on AA2, then we'll flip AA1/AA2 and do it again
           if (iteration) {
             // 2nd time through, let's swap - note that these assignments are flipped on purpose

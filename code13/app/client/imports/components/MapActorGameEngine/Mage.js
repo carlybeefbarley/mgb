@@ -253,7 +253,7 @@ export default class Mage extends React.Component {
 
   // Check if name has " #frameNumber"
   _isFrameNamedGraphicAsset(name) {
-    return /(\#\d+)$/.test(name)
+    return /(#\d+)$/.test(name)
   }
 
   // Get frame number from name

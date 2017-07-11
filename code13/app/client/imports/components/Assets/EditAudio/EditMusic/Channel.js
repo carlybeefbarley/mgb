@@ -186,7 +186,7 @@ export default class Channel extends React.Component {
     // let count = 0
     const y = this.props.canvasHeight / 2
     for (let i = startX; i < endX; i++) {
-      for (var j = 0; j < subChunk; j++) {
+      for (let j = 0; j < subChunk; j++) {
         const val = channelData[i * chunk + j * subChunkVal]
         // const x = i+j*(1/subChunk)
         const x = i + this.sample.offsetX - viewOffsetX
@@ -238,7 +238,7 @@ export default class Channel extends React.Component {
     var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
     var ab = new ArrayBuffer(byteString.length)
     var ia = new Uint8Array(ab)
-    for (var i = 0; i < byteString.length; i++) {
+    for (let i = 0; i < byteString.length; i++) {
       ia[i] = byteString.charCodeAt(i)
     }
     var blob = new Blob([ab], { type: mimeString })
@@ -345,7 +345,7 @@ export default class Channel extends React.Component {
       this.pasteCtx.globalAlpha = 0.4
       const y = this.props.canvasHeight / 2
       for (let i = 0; i < sampleWidth; i++) {
-        for (var j = 0; j < subChunk; j++) {
+        for (let j = 0; j < subChunk; j++) {
           const val = this.props.pasteData[i * chunk + j * subChunkVal]
           const x = i + startX
           this.pasteCtx.beginPath()
@@ -380,8 +380,7 @@ export default class Channel extends React.Component {
       // console.log(this.sample.delay, this.sample.duration, pasteDelay, pasteDuration, startTime, endTime)
 
       // no need for new audioBuffer because pasted in existing sample
-      if (this.sample.delay <= startTime && this.sample.delay + this.sample.duration >= endTime) {
-      } else {
+      if (!(this.sample.delay <= startTime && this.sample.delay + this.sample.duration >= endTime)) {
         // paste wave is outside existing sample, need for new audioBuffer
         const bufferLength = Math.round(this.props.audioCtx.sampleRate * (endTime - startTime))
         this.buffer = this.props.audioCtx.createBuffer(1, bufferLength, this.props.audioCtx.sampleRate)
@@ -494,15 +493,15 @@ export default class Channel extends React.Component {
         <div className="controls chn">
           {channel.title}
           {/*<div>
-            <input
-              type='range'
-              value={channel.volume}
-              min='0'
-              max='1'
-              step='0.05'
-              onChange={this.changeVolume.bind(this)} /> Volume
-            <br/>
-          </div>*/}
+           <input
+           type='range'
+           value={channel.volume}
+           min='0'
+           max='1'
+           step='0.05'
+           onChange={this.changeVolume.bind(this)} /> Volume
+           <br/>
+           </div>*/}
           <VolumeSlider volume={channel.volume} changeVolume={this.changeVolume.bind(this)} />
           <buton className="ui mini icon button" onClick={this.deleteChannel.bind(this)}>
             <i className="remove icon" />

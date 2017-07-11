@@ -60,7 +60,7 @@ const UndeleteChatMessage = ({ chat, currUser, isSuperAdmin }) =>
       </span>
     : null
 
-export default (ChatMessagesView = React.createClass({
+const ChatMessagesView = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
@@ -198,16 +198,16 @@ export default (ChatMessagesView = React.createClass({
       <Comment key={c._id}>
         <QLink to={to} className="avatar">
           {currUser &&
-          currUser._id == c.byUserId &&
-          <img src={makeCDNLink(currUser.profile.avatar)} style={{ maxHeight: '3em' }} />}
+            currUser._id == c.byUserId &&
+            <img src={makeCDNLink(currUser.profile.avatar)} style={{ maxHeight: '3em' }} />}
           {(!currUser || currUser._id !== c.byUserId) &&
-          <img
-            src={makeCDNLink(
-              `/api/user/${c.byUserId}/avatar/${SpecialGlobals.avatar.validFor}`,
-              makeExpireTimestamp(SpecialGlobals.avatar.validFor),
-            )}
-            style={{ maxHeight: '3em' }}
-          />}
+            <img
+              src={makeCDNLink(
+                `/api/user/${c.byUserId}/avatar/${SpecialGlobals.avatar.validFor}`,
+                makeExpireTimestamp(SpecialGlobals.avatar.validFor),
+              )}
+              style={{ maxHeight: '3em' }}
+            />}
         </QLink>
         <Comment.Content>
           <Comment.Author as={QLink} to={to}>
@@ -218,17 +218,17 @@ export default (ChatMessagesView = React.createClass({
               {ago}
             </div>
             {!(c.suIsBanned === true) &&
-            !c.suFlagId &&
-            <DeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />}
+              !c.suFlagId &&
+              <DeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />}
             <UndeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
             <FlagEntity entity={c} currUser={currUser} tableCollection={'Chats'} />
             {isSuperAdmin &&
-            <ResolveReportEntity
-              entity={c}
-              currUser={currUser}
-              tableCollection={'Chats'}
-              isSuperAdmin={isSuperAdmin}
-            />}
+              <ResolveReportEntity
+                entity={c}
+                currUser={currUser}
+                tableCollection={'Chats'}
+                isSuperAdmin={isSuperAdmin}
+              />}
           </Comment.Metadata>
           <Comment.Text>
             {c.suFlagId && !c.suIsBanned
@@ -283,7 +283,7 @@ export default (ChatMessagesView = React.createClass({
           {this.renderGetMoreMessages()}
           <div id="mgbjr-fp-chat-channel-messages">
             {// Always have at least one div so we will be robust with a '#mgbjr-fp-chat-channel-messages div:first' css selector for tutorials
-              this.data.chats ? this.data.chats.map(this.renderMessage) : <div />}
+            this.data.chats ? this.data.chats.map(this.renderMessage) : <div />}
           </div>
           <span />
         </Comment.Group>
@@ -325,4 +325,6 @@ export default (ChatMessagesView = React.createClass({
   handleMessageKeyUp: function(e) {
     if (e.keyCode === 13 && e.ctrlKey) this.doSendMessage()
   },
-}))
+})
+
+export default ChatMessagesView

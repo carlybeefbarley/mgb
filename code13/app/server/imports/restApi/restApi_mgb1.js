@@ -220,12 +220,12 @@ RestApi.addRoute(
       offset += 4
       jsonData.maxLayers = maxLayers
       jsonData.mapLayer = []
-      for (var layer = 0; layer < maxLayers; layer++) {
+      for (let layer = 0; layer < maxLayers; layer++) {
         jsonData.mapLayer[layer] = []
         var layerLen = b.readInt32BE(offset)
         offset += 4
 
-        for (var i = 0; i < layerLen; i++) {
+        for (let i = 0; i < layerLen; i++) {
           var strLen = b.readInt16BE(offset)
           offset += 2
           if (strLen > 0) {

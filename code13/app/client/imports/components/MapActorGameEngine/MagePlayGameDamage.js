@@ -5,7 +5,7 @@ const MagePlayGameDamage = {
     this.generateTicTable()
     const { actors, activeActors, G_tic, AA_player_idx } = this
     // Calculate moves (watch out for obstructions)
-    for (var AA = 0; AA < activeActors.length; AA++) {
+    for (let AA = 0; AA < activeActors.length; AA++) {
       const actor = activeActors[AA]
       const ap = actors[actor.ACidx]
       const touchDamageToNpcOrItem = MgbActor.intFromActorParam(

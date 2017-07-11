@@ -10,7 +10,7 @@ var Otito = function(obj, meta, cb = void 0, options = Otito.options, parent = v
 
   if (options && options != Otito.options) {
     this.options = Object.create(Otito.options)
-    for (var i in options) {
+    for (let i in options) {
       this.options[i] = options[i]
     }
   }
@@ -146,7 +146,7 @@ Otito.prototype = {
 
     var keys = Object.keys(obj[meta])
     var submeta, key
-    for (var i = 0; i < keys.length; i++) {
+    for (let i = 0; i < keys.length; i++) {
       key = keys[i]
       if (key == '_type' || key == '_make' || key == 'head') {
         break
@@ -185,7 +185,7 @@ Otito.prototype = {
 
     var keys = Object.keys(this.meta)
     var meta, key, f, i
-    for (i = 0; i < keys.length; i++) {
+    for (let i = 0; i < keys.length; i++) {
       key = keys[i]
 
       // definition key
@@ -260,7 +260,7 @@ Otito.prototype = {
     }
 
     var next = 0
-    for (i = 0; i < keys.length; i++) {
+    for (let i = 0; i < keys.length; i++) {
       key = keys[i]
       f = this.record[key]
       if (!f) {
@@ -307,7 +307,7 @@ Otito.prototype = {
       rec,
       del
     this._normalizeMeta(this.meta, 'array')
-    for (i = 0; i < this.object.length; i++) {
+    for (let i = 0; i < this.object.length; i++) {
       rec = this._updateObjectRecord(
         this.meta.array,
         i,
@@ -643,7 +643,7 @@ Otito.prototype = {
         input = document.createElement('select')
         var opt, item
         if (Array.isArray(meta.list)) {
-          for (i = 0; i < meta.list.length; i++) {
+          for (let i = 0; i < meta.list.length; i++) {
             opt = document.createElement('option')
             item = meta.list[i]
             if (typeof item != 'object') {
@@ -662,7 +662,7 @@ Otito.prototype = {
             input.appendChild(opt)
           }
         } else {
-          for (k in meta.list) {
+          for (let k in meta.list) {
             opt = document.createElement('option')
             opt.innerHTML = meta.list[k]
             opt.value = k
@@ -683,8 +683,8 @@ Otito.prototype = {
     wrapper.input = input
 
     wrapper.meta = {}
-    for (var k in meta) {
-      wrapper.meta[k] = meta[k]
+    for (let l in meta) {
+      wrapper.meta[l] = meta[l]
     }
 
     if (meta.className) {
@@ -752,7 +752,7 @@ Otito.prototype = {
     }
     var out = {},
       type
-    for (var i in meta) {
+    for (let i in meta) {
       type = meta[i]._type
       if (type == void 0) {
         out[i] = this._objectFromMeta(meta[i])
@@ -771,7 +771,7 @@ Otito.prototype = {
   },
   _cleanup: function() {
     var rec
-    for (var i in this._meta) {
+    for (let i in this._meta) {
       if (this.meta[i] == void 0) {
         rec = this.record[i]
         if (rec && rec.body) {

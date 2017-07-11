@@ -42,8 +42,8 @@ const MagePlayGameCellUtil = {
         y = actor.y
         h = actor.cellSpanY
     }
-    for (var i = x; i < x + w; i++) {
-      for (var j = y; j < y + h; j++) {
+    for (let i = x; i < x + w; i++) {
+      for (let j = y; j < y + h; j++) {
         this.addValidCellToCellList(cellList, i, j)
       }
     }

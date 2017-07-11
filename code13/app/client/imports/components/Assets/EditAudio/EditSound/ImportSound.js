@@ -85,7 +85,7 @@ export default class ImportSound extends React.Component {
         // console.log(channelData)
 
         let samples = new Int16Array(channelData.length)
-        for (var i = 0; i < channelData.length; i++) {
+        for (let i = 0; i < channelData.length; i++) {
           let n = channelData[i]
           let v = n < 0 ? n * 32768 : n * 32767
           samples[i] = Math.round(v)

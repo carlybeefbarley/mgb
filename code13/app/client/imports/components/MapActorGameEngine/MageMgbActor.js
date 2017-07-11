@@ -397,7 +397,7 @@ const MgbActor = {
   playCannedSound: function(_soundName, actor, oName) {
     if (!_soundName) return
 
-    const soundName = _soundName.replace(/^\[builtin\]\:/, '') // We will handle missing [builtin]: for now
+    const soundName = _soundName.replace(/^\[builtin]:/, '') // We will handle missing [builtin]: for now
 
     if (!MgbActor._loadedSounds || !_.includes(MgbActor._loadedSounds, _soundName))
       MgbActor.loadSounds(actor, oName)
@@ -458,8 +458,8 @@ const MgbActor = {
             animationTableIndex = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + frame_Stationary // Try non-directional stationary animation
             if (MgbActor.isAnimationTableIndexValid(actorPiece, animationTableIndex)) break
             else
-              for (i = 1; i < 16; i++) {
-                idx = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + i
+              for (let i = 1; i < 16; i++) {
+                const idx = MgbActor.ANIMATION_INDEX_BASE_STATIONARY_ANYDIRECTION + i
                 if (MgbActor.isAnimationTableIndexValid(actorPiece, idx)) {
                   hasStationaryAnyDirection = true
                   break

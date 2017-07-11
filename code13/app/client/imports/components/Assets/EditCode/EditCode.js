@@ -674,7 +674,9 @@ export default class EditCode extends React.Component {
 
         try {
           this.setState({ userScripts: JSON.parse(listStr) })
-        } catch (e) {}
+        } catch (e) {
+          // no op
+        }
         cb && cb()
       })
     }
@@ -818,7 +820,7 @@ export default class EditCode extends React.Component {
             url = `/api/asset/png/${draggedAsset.dn_ownerName}/${draggedAsset.name}`
             code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.image( '${draggedAsset.name}', '${url}' )`
             break
-          case 'map':
+          case 'map': {
             event.preventDefault()
 
             let loadMap =
@@ -840,7 +842,7 @@ export default class EditCode extends React.Component {
               this.codeMirror.setValue(`import '/!vault:mgb-map-loader-extended'` + '\n' + val)
 
             return
-
+          }
           case 'sound':
           case 'music':
             url = `/api/asset/${draggedAsset.kind}/${draggedAsset.dn_ownerName}/${draggedAsset.name}/${draggedAsset.kind}.mp3`
@@ -966,7 +968,7 @@ export default class EditCode extends React.Component {
     //  let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)/g
     // TODO: split regexp for each case
     // load.mgbMap - as create takes in key (it may or may not be id) - not sure about this
-    let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)|(load\.mgbMap)\s*\(\s*["'`]([A-Za-z0-9]+)["'`]\s*(,\s*["'`]\.\/([A-Za-z0-9\/]+)["'`])*\s*\)/g
+    let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)|(load\.mgbMap)\s*\(\s*["'`]([A-Za-z0-9]+)["'`]\s*(,\s*["'`]\.\/([A-Za-z0-9/]+)["'`])*\s*\)/g
     let matches = []
     let match
     while ((match = re.exec(lineText))) {
@@ -1077,7 +1079,7 @@ export default class EditCode extends React.Component {
       this.errorMessageCache = {}
     }
 
-    for (var i = 0; i < errors.length; ++i) this.showError(errors[i], clear)
+    for (let i = 0; i < errors.length; ++i) this.showError(errors[i], clear)
   }
 
   showError(err, clear) {
@@ -2274,7 +2276,7 @@ export default class EditCode extends React.Component {
     const cm = this.codeMirror
 
     cm.operation(() => {
-      for (var l = cm.firstLine(); l <= cm.lastLine(); ++l)
+      for (let l = cm.firstLine(); l <= cm.lastLine(); ++l)
         cm.foldCode({ line: l, ch: 0 }, null, this.mgb_code_folded ? 'unfold' : 'fold')
 
       this.mgb_code_folded = !this.mgb_code_folded

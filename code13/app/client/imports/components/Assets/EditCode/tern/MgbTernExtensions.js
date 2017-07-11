@@ -31,13 +31,13 @@ function isStringAround(node, start, end) {
 // Copied from tern/lib/tern.js since it was simple and not exported
 // TODO - can I get these from tern object?
 function pointInProp(objNode, point) {
-  for (var i = 0; i < objNode.properties.length; i++) {
+  for (let i = 0; i < objNode.properties.length; i++) {
     var curProp = objNode.properties[i]
     if (curProp.key.start <= point && curProp.key.end >= point) return curProp
   }
 }
 
-/** 
+/**
  * @params  tern  The TERN global to be extended
  */
 export default function InstallMgbTernExtensions(tern) {

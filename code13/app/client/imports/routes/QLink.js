@@ -168,7 +168,7 @@ function _getDefaultUrlQueryParams() {
     // split our query string into its component parts
     var arr = queryString.split('&')
 
-    for (var i = 0; i < arr.length; i++) {
+    for (let i = 0; i < arr.length; i++) {
       // separate the keys and the values
       var a = arr[i].split('=')
 

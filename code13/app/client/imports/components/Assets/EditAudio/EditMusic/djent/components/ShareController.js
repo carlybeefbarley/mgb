@@ -58,7 +58,7 @@ class ShareController extends Component {
   }
 
   getShortURL = url => {
-    return gapi.client.urlshortener.url
+    return window.gapi.client.urlshortener.url
       .insert({ longUrl: url })
       .then(response => response.result.id, reason => (console.error || console.log).call(console, reason))
   }

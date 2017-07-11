@@ -32,7 +32,7 @@ const _GROUP_CHAT_SETTINGS_SUBKEY_PINNED_CHANNELNAMES = 'chatPinnedChannelNames'
  * This doesn't return an error, it just does a console.error() so
  * we will notice during development
  */
-const _validKeyRegex = /^[^\.]*/
+const _validKeyRegex = /^[^.]*/
 const _checkKeyIsValid = settingsKey => {
   if (!_validKeyRegex.test(settingsKey))
     console.error(`Settings client encountered invalid settingsKey '${settingsKey}'`)

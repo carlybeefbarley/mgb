@@ -53,9 +53,9 @@ import { roundToXPlaces } from '../utils/tools'
     var counter = 0
 
     // All available octaves
-    for (var i = -1; i <= 9; i++) {
-      for (var j in allNotes) {
-        for (var k in allNotes[j]) {
+    for (let i = -1; i <= 9; i++) {
+      for (let j in allNotes) {
+        for (let k in allNotes[j]) {
           MidiWriter.constants.notes[allNotes[j][k] + i] = counter
         }
 
@@ -83,7 +83,7 @@ import { roundToXPlaces } from '../utils/tools'
    */
   MidiWriter.Track.prototype.addEvent = function(event) {
     if (Array.isArray(event)) {
-      for (var i in event) {
+      for (let i in event) {
         this.data = this.data.concat(event[i].data)
         this.size = MidiWriter.numberToBytes(this.data.length, 4) // 4 bytes long
         this.events.push(event[i])
@@ -108,17 +108,15 @@ import { roundToXPlaces } from '../utils/tools'
   MidiWriter.Track.prototype.setTimeSignature = function(
     numerator,
     denominator,
-    midiclockspertick,
-    notespermidiclock,
+    midiclockspertick = 24,
+    notespermidiclock = 8,
   ) {
     var event = new MidiWriter.MetaEvent({ data: [MidiWriter.constants.META_TIME_SIGNATURE_ID] })
     event.data.push(0x04) // Size
     event.data = event.data.concat(MidiWriter.numberToBytes(numerator, 1)) // Numerator, 1 bytes
     var _denominator = denominator < 4 ? denominator - 1 : Math.sqrt(denominator) // Denominator is expressed as pow of 2
     event.data = event.data.concat(MidiWriter.numberToBytes(_denominator, 1)) // Denominator, 1 bytes
-    var midiclockspertick = midiclockspertick || 24
     event.data = event.data.concat(MidiWriter.numberToBytes(midiclockspertick, 1)) // MIDI Clocks per tick, 1 bytes
-    var notespermidiclock = notespermidiclock || 8
     event.data = event.data.concat(MidiWriter.numberToBytes(notespermidiclock, 1)) // Number of 1/32 notes per MIDI clocks, 1 bytes
     return this.addEvent(event)
   }
@@ -269,15 +267,15 @@ import { roundToXPlaces } from '../utils/tools'
 
     // fields.pitch could be an array of pitches.
     // If so create note events for each and apply the same duration.
-    var noteOn, noteOff
+    let noteOn, noteOff, i, j
     if (Array.isArray(this.pitch)) {
       // By default this is a chord if it's an array of notes that requires one NoteOnEvent.
       // If this.sequential === true then it's a sequential string of notes that requires separate NoteOnEvents.
       if (!this.sequential) {
         // Handle repeat
-        for (var j = 0; j < this.repeat; j++) {
+        for (j = 0; j < this.repeat; j++) {
           // Note on
-          for (var i in this.pitch) {
+          for (i in this.pitch) {
             if (i == 0) {
               noteOn = new MidiWriter.NoteOnEvent({
                 data: MidiWriter.numberToVariableLength(restDuration).concat([
@@ -298,7 +296,7 @@ import { roundToXPlaces } from '../utils/tools'
           }
 
           // Note off
-          for (var i in this.pitch) {
+          for (i in this.pitch) {
             if (i == 0) {
               noteOff = new MidiWriter.NoteOffEvent({
                 data: MidiWriter.numberToVariableLength(tickDuration).concat([
@@ -320,8 +318,8 @@ import { roundToXPlaces } from '../utils/tools'
         }
       } else {
         // Handle repeat
-        for (var j = 0; j < this.repeat; j++) {
-          for (var i in this.pitch) {
+        for (j = 0; j < this.repeat; j++) {
+          for (i in this.pitch) {
             // restDuration only applies to first note
             if (i > 0) {
               restDuration = 0
@@ -458,7 +456,7 @@ import { roundToXPlaces } from '../utils/tools'
     )
 
     // Track chunks
-    for (var i in tracks) {
+    for (let i in tracks) {
       tracks[i].addEvent(new MidiWriter.MetaEvent({ data: MidiWriter.constants.META_END_OF_TRACK_ID }))
       this.data.push(tracks[i])
     }
@@ -472,7 +470,7 @@ import { roundToXPlaces } from '../utils/tools'
     var build = []
 
     // Data consists of chunks which consists of data
-    for (var i in this.data) {
+    for (let i in this.data) {
       build = build.concat(this.data[i].type)
       build = build.concat(this.data[i].size)
       build = build.concat(this.data[i].data)
@@ -556,7 +554,7 @@ import { roundToXPlaces } from '../utils/tools'
     var hex = ''
     var stringResult
 
-    for (var i in bytes) {
+    for (let i in bytes) {
       stringResult = bytes[i].toString(16)
 
       // ensure string is 2 chars
@@ -611,7 +609,7 @@ import { roundToXPlaces } from '../utils/tools'
    */
   MidiWriter.stringToBytes = function(string) {
     var bytes = []
-    for (var i = 0; i < string.length; i++) {
+    for (let i = 0; i < string.length; i++) {
       bytes.push(string[i].charCodeAt(0))
     }
 

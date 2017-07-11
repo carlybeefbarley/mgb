@@ -261,8 +261,8 @@ const MagePlayGameMovement = {
     var mW = map.metadata.width
     var mH = map.metadata.height
 
-    for (var x = aa.x; x < cX && x < mW && obstructed == false; x++) {
-      for (var y = aa.y; y < cY && y < mH && obstructed == false; y++) {
+    for (let x = aa.x; x < cX && x < mW && obstructed == false; x++) {
+      for (let y = aa.y; y < cY && y < mH && obstructed == false; y++) {
         var cellToCheck = this.cell(x, y) // put this in a var to eliminate multiple lookups.
 
         // 1. Check the background layer. These don't change so we can work out behavior by the generic actorCache[] properties
@@ -279,7 +279,7 @@ const MagePlayGameMovement = {
         if (checkActives && !obstructed) {
           if (!this.G_tic) this.generateTicTable() // Positions have changed enough that we have to update the tic table
           if (this.G_tic[cellToCheck] && this.G_tic[cellToCheck].length > 0) {
-            for (var i = 0; i < this.G_tic[cellToCheck].length && !obstructed; i++) {
+            for (let i = 0; i < this.G_tic[cellToCheck].length && !obstructed; i++) {
               var AAInCell = this.G_tic[cellToCheck][i]
               var ACidx = activeActors[AAInCell].ACidx
               var ap = actors[ACidx]

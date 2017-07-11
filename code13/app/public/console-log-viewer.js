@@ -79,7 +79,7 @@ var ConsoleLogViewer = (function() {
       document.getElementById('debug_console_messages').innerHTML = _items.join('<br>')
     } else {
       var minimized = []
-      for (var i = Math.max(0, _items.length - 3), leni = _items.length; i < leni; i++)
+      for (let i = Math.max(0, _items.length - 3), leni = _items.length; i < leni; i++)
         minimized.push(_items[i])
       document.getElementById('debug_console_messages').innerHTML = minimized.join('<br>')
     }
@@ -144,8 +144,8 @@ var ConsoleLogViewer = (function() {
         ? 'bottom-aligned'
         : 'top-aligned'
     var scripts = window.document.getElementsByTagName('script')
-    for (var i = 0; i < scripts.length; i++) {
-      script = scripts[i]
+    for (let i = 0; i < scripts.length; i++) {
+      var script = scripts[i]
       if (typeof script !== 'undefined' && typeof script.src !== 'undefined') {
         if (script.src.indexOf('console-log-viewer.js') !== -1) {
           if (script.src.indexOf('console_at_bottom=true') !== -1) {

@@ -38,7 +38,7 @@ const swearjar = {
     var scorecard = {}
 
     this.scan(text, function(word, index, categories) {
-      for (var i = 0; i < categories.length; i += 1) {
+      for (let i = 0; i < categories.length; i += 1) {
         var cat = categories[i]
 
         if (cat in scorecard) {

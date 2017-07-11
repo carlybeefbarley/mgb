@@ -36,7 +36,7 @@ function floodfill(x, y, fillcolor, ctx, width, height, tolerance) {
         me > (e += 4) &&
         pixelCompareAndSet(e, targetcolor, fillcolor, data, length, tolerance)
       ); //go right until edge hit
-      for (var j = w; j < e; j += 4) {
+      for (let j = w; j < e; j += 4) {
         if (j - w2 >= 0 && pixelCompare(j - w2, targetcolor, fillcolor, data, length, tolerance))
           Q.push(j - w2) //queue y-1
         if (j + w2 < length && pixelCompare(j + w2, targetcolor, fillcolor, data, length, tolerance))

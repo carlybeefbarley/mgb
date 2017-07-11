@@ -3,7 +3,7 @@ var FastBase64 = {
   encLookup: [],
 
   Init: function() {
-    for (var i = 0; i < 4096; i++) {
+    for (let i = 0; i < 4096; i++) {
       this.encLookup[i] = this.chars[i >> 6] + this.chars[i & 0x3f]
     }
   },
@@ -13,7 +13,7 @@ var FastBase64 = {
     var dst = ''
     var i = 0
     while (len > 2) {
-      n = (src[i] << 16) | (src[i + 1] << 8) | src[i + 2]
+      const n = (src[i] << 16) | (src[i + 1] << 8) | src[i + 2]
       dst += this.encLookup[n >> 12] + this.encLookup[n & 0xfff]
       len -= 3
       i += 3
@@ -71,7 +71,7 @@ var RIFFWAVE = function(data) {
     var r = []
     var j = 0
     var len = data.length
-    for (var i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       r[j++] = data[i] & 0xff
       r[j++] = (data[i] >> 8) & 0xff
     }

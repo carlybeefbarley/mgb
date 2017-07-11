@@ -65,7 +65,7 @@ var bitsToNum = function(ba) {
 
 var byteToBitArr = function(bite) {
   var a = []
-  for (var i = 7; i >= 0; i--) {
+  for (let i = 7; i >= 0; i--) {
     a.push(!!(bite & (1 << i)))
   }
   return a
@@ -91,7 +91,7 @@ var Stream = function(data) {
 
   this.readBytes = function(n) {
     var bytes = []
-    for (var i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
       bytes.push(this.readByte())
     }
     return bytes
@@ -99,7 +99,7 @@ var Stream = function(data) {
 
   this.read = function(n) {
     var s = ''
-    for (var i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
       s += String.fromCharCode(this.readByte())
     }
     return s
@@ -117,7 +117,7 @@ var lzwDecode = function(minCodeSize, data) {
   var pos = 0 // Maybe this streaming thing should be merged with the Stream?
   var readCode = function(size) {
     var code = 0
-    for (var i = 0; i < size; i++) {
+    for (let i = 0; i < size; i++) {
       if (data.charCodeAt(pos >> 3) & (1 << (pos & 7))) {
         code |= 1 << i
       }
@@ -138,7 +138,7 @@ var lzwDecode = function(minCodeSize, data) {
   var clear = function() {
     dict = []
     codeSize = minCodeSize + 1
-    for (var i = 0; i < clearCode; i++) {
+    for (let i = 0; i < clearCode; i++) {
       dict[i] = [i]
     }
     dict[clearCode] = []
@@ -187,7 +187,7 @@ var parseGIF = function(st, handler) {
   var parseCT = function(entries) {
     // Each entry is 3 bytes, for RGB.
     var ct = []
-    for (var i = 0; i < entries; i++) {
+    for (let i = 0; i < entries; i++) {
       ct.push(st.readBytes(3))
     }
     return ct
@@ -330,8 +330,8 @@ var parseGIF = function(st, handler) {
       var steps = [8, 8, 4, 2]
 
       var fromRow = 0
-      for (var pass = 0; pass < 4; pass++) {
-        for (var toRow = offsets[pass]; toRow < rows; toRow += steps[pass]) {
+      for (let pass = 0; pass < 4; pass++) {
+        for (let toRow = offsets[pass]; toRow < rows; toRow += steps[pass]) {
           cpRow(toRow, fromRow)
           fromRow++
         }
@@ -409,7 +409,7 @@ var GifParser = function(opts) {
     c_w: null,
     c_h: null,
   }
-  for (var i in opts) {
+  for (let i in opts) {
     options[i] = opts[i]
   }
 
@@ -637,7 +637,7 @@ var GifParser = function(opts) {
         }
         // emulating response field for IE9
         if (!('response' in this)) {
-          this.response = new VBArray(this.responseText).toArray().map(String.fromCharCode).join('')
+          this.response = new window.VBArray(this.responseText).toArray().map(String.fromCharCode).join('')
         }
         var data = this.response
         if (data.toString().indexOf('ArrayBuffer') > 0) {

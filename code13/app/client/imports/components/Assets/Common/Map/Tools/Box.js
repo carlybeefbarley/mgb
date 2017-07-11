@@ -2,7 +2,7 @@
 // this is my cheat sheet :)
 // not used in code - just for reference on Math transformations
 // took out from dirty rectangles engine
-Box = function(xi, yi, xa, ya) {
+const Box = function(xi, yi, xa, ya) {
   this.xmin = xi || 0
   this.ymin = yi || 0
 

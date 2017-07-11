@@ -10,8 +10,8 @@ const MagePlayGameBackgroundLayers = {
   playPrepareBackgroundLayer: function() {
     const { backgroundBlockageMap } = this
     backgroundBlockageMap.reset(this.map.metadata.width, this.map.metadata.height)
-    for (var y = 0; y < this.map.metadata.height; y++) {
-      for (var x = 0; x < this.map.metadata.width; x++) {
+    for (let y = 0; y < this.map.metadata.height; y++) {
+      for (let x = 0; x < this.map.metadata.width; x++) {
         const cellToCheck = this.cell(x, y)
         const ACidx = this.map.mapLayer[MgbMap.layerBackground][cellToCheck]
         if (ACidx) {

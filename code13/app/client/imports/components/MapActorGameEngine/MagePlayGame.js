@@ -148,8 +148,8 @@ export default class MagePlayGame {
     var sx = overrideX == -1 ? this.activeActors[this.AA_player_idx].x : overrideX
     var sy = overrideY == -1 ? this.activeActors[this.AA_player_idx].y : overrideY
 
-    G_HSPdelta = 0
-    G_VSPdelta = 0
+    this.G_HSPdelta = 0
+    this.G_VSPdelta = 0
 
     var horizontalScrollPosition = this.container.scrollLeft
     var verticalScrollPosition = this.container.scrollTop
@@ -161,17 +161,17 @@ export default class MagePlayGame {
     var maxVSP_toSeePlayer = (sy - marginY) * MgbSystem.tileMinHeight // Maximum Vertical Scroll Position to see player
 
     if (horizontalScrollPosition > maxHSP_toSeePlayer)
-      G_HSPdelta = (maxHSP_toSeePlayer - horizontalScrollPosition) / this.G_tweensPerTurn // Scroll left if needed
+      this.G_HSPdelta = (maxHSP_toSeePlayer - horizontalScrollPosition) / this.G_tweensPerTurn // Scroll left if needed
     if (verticalScrollPosition > maxVSP_toSeePlayer)
-      G_VSPdelta = (maxVSP_toSeePlayer - verticalScrollPosition) / this.G_tweensPerTurn // Scroll up if needed
+      this.G_VSPdelta = (maxVSP_toSeePlayer - verticalScrollPosition) / this.G_tweensPerTurn // Scroll up if needed
 
     var minHSP_toSeePlayer = (sx + 1 + marginX) * MgbSystem.tileMinWidth - w // Minimum Horizontal Scroll Position to see player
     var minVSP_toSeePlayer = (sy + 1 + marginY) * MgbSystem.tileMinHeight - h // Minimum Vertical Scroll Position to see player
 
     if (minHSP_toSeePlayer > 0 && horizontalScrollPosition < minHSP_toSeePlayer)
-      G_HSPdelta = (minHSP_toSeePlayer - horizontalScrollPosition) / this.G_tweensPerTurn // Scroll right if needed
+      this.G_HSPdelta = (minHSP_toSeePlayer - horizontalScrollPosition) / this.G_tweensPerTurn // Scroll right if needed
     if (minVSP_toSeePlayer > 0 && verticalScrollPosition < minVSP_toSeePlayer)
-      G_VSPdelta = (minVSP_toSeePlayer - verticalScrollPosition) / this.G_tweensPerTurn // Scroll down if needed
+      this.G_VSPdelta = (minVSP_toSeePlayer - verticalScrollPosition) / this.G_tweensPerTurn // Scroll down if needed
   }
 
   doPauseGame() {
@@ -243,7 +243,7 @@ export default class MagePlayGame {
         this.scrollMapToSeePlayer()
 
         this.clearTicTable()
-        // G_tweenCount = 0
+        // this.G_tweenCount = 0
         this.isTransitionInProgress = false
         this.clearPlayerKeys()
       }
@@ -298,7 +298,7 @@ export default class MagePlayGame {
       this.checkForTouchDamageAtStartOfTween()
 
       // Calculate moves (watch out for obstructions)
-      for (var AA = 0; AA < this.activeActors.length; AA++) {
+      for (let AA = 0; AA < this.activeActors.length; AA++) {
         var actor = this.activeActors[AA]
         var aa_p = this.actors[actor.ACidx]
 
@@ -312,8 +312,8 @@ export default class MagePlayGame {
           // Some blocks on the BACKGROUND layer can affect direction - ice, conveyer belts, pushers... Let's look for these
           let floorActor = null // this will be the actor that is on the background layer
           // We need an x/y loop so we check each cell that the current actor is on
-          for (var pushX = 0; pushX < actor.cellSpanX; pushX++) {
-            for (var pushY = 0; pushY < actor.cellSpanY; pushY++) {
+          for (let pushX = 0; pushX < actor.cellSpanX; pushX++) {
+            for (let pushY = 0; pushY < actor.cellSpanY; pushY++) {
               var cellIndex = this.cell(actor.x + pushX, actor.y + pushY, true)
               if (cellIndex >= 0) {
                 var floorActorName = this.map.mapLayer[MgbMap.layerBackground][cellIndex]
@@ -399,7 +399,7 @@ export default class MagePlayGame {
               // Who did we just bump into? Did they want to say or do something?
               if (this.G_tic === null) this.generateTicTable()
               if (this.G_tic[cellToCheck] && this.G_tic[cellToCheck].length > 0) {
-                for (var i = 0; i < this.G_tic[cellToCheck].length; i++) {
+                for (let i = 0; i < this.G_tic[cellToCheck].length; i++) {
                   var AAInCell = this.G_tic[cellToCheck][i]
                   var ACidx = this.activeActors[AAInCell].ACidx
                   var hitThing_ap = this.actors[ACidx]
@@ -455,7 +455,7 @@ export default class MagePlayGame {
                 // Check Squish effect
                 if (this.G_tic == null) this.generateTicTable()
                 if (this.G_tic[cellToCheck] && this.G_tic[cellToCheck].length > 0) {
-                  for (i = 0; i < this.G_tic[cellToCheck].length; i++) {
+                  for (let i = 0; i < this.G_tic[cellToCheck].length; i++) {
                     AAInCell = this.G_tic[cellToCheck][i]
                     ACidx = this.activeActors[AAInCell].ACidx
                     hitThing_ap = this.actors[ACidx]
@@ -499,7 +499,7 @@ export default class MagePlayGame {
     }
 
     // Now, for this tween, move each Actor a little bit
-    for (AA = 0; AA < this.activeActors.length; AA++) {
+    for (let AA = 0; AA < this.activeActors.length; AA++) {
       if (this.activeActors[AA].alive) {
         this.chooseActiveActorDisplayTile(AA) // Switch bitmap if necessary
         // Move by tweened amount
@@ -516,12 +516,12 @@ export default class MagePlayGame {
     this.playProcessAACollisions()
 
     // Update scroll position (by tweened amount) if this is the player
-    if (G_VSPdelta) this.container.scrollTop += G_VSPdelta
-    if (G_HSPdelta) this.container.scrollLeft += G_HSPdelta
+    if (this.G_VSPdelta) this.container.scrollTop += this.G_VSPdelta
+    if (this.G_HSPdelta) this.container.scrollLeft += this.G_HSPdelta
 
     // Housekeeping for end-of-turn
     // TODO: Kill & recycle dead enemies
-    for (AA = 0; AA < this.activeActors.length; AA++) {
+    for (let AA = 0; AA < this.activeActors.length; AA++) {
       if (this.activeActors[AA].alive) {
         var ap = this.actors[this.activeActors[AA].ACidx]
 

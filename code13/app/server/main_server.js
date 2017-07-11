@@ -2,7 +2,7 @@ import { setUpCloudFront } from './cloudfront/CreateCloudfront'
 
 import { Users } from '../imports/schemas'
 
-import { getCurrentReleaseVersionString }  from '/imports/mgbReleaseInfo'
+import { getCurrentReleaseVersionString } from '/imports/mgbReleaseInfo'
 
 // Import all server-side schema stubs in order to register their Meteor.call() methods
 import '/imports/schemas/users'
@@ -50,14 +50,15 @@ import { createUsers } from './fixtures'
 // sets up cloudfront CDN
 setUpCloudFront()
 
-if (!Users.find().fetch().length)
-  createUsers()
+if (!Users.find().fetch().length) createUsers()
 
-function userHasLoggedIn(loginInfo)
-{
+function userHasLoggedIn(loginInfo) {
   const u = loginInfo.user
   // loginInfo params.. see http://docs.meteor.com/api/accounts-multi.html#AccountsServer-validateLoginAttempt
-  console.log(`Login: '${u.profile.name}' (${loginInfo.type})   uid:${u._id}   IP: ${loginInfo.connection.clientAddress}`)
+  console.log(
+    `Login: '${u.profile.name}' (${loginInfo.type})   uid:${u._id}   IP: ${loginInfo.connection
+      .clientAddress}`,
+  )
   createInitialSkills(u._id)
   createInitialSettings(u._id)
   createInitialUserAnalytics(u._id)
@@ -67,66 +68,64 @@ function userHasLoggedIn(loginInfo)
 }
 
 // This gets registered with http://docs.meteor.com/api/accounts-multi.html#AccountsServer-validateLoginAttempt
-function userLoginAttempt(attemptInfo)
-{
+function userLoginAttempt(attemptInfo) {
   const { user } = attemptInfo
-  if (user)
-  {
+  if (user) {
     if (user.isDeactivated)
-      throw new Meteor.Error(401, `User Account '${user.username}' is deactivated. Contact an Admin to have your account reactivated`)
+      throw new Meteor.Error(
+        401,
+        `User Account '${user.username}' is deactivated. Contact an Admin to have your account reactivated`,
+      )
     // Note that suspended users (suIsBanned) are still allowed to log in but their
     // rights are very limited
   }
   return true
 }
 
-Meteor.startup(function () {
-
-  if (Meteor.isProduction)
-    Meteor.call('Slack.MGB.productionStartup')
+Meteor.startup(function() {
+  if (Meteor.isProduction) Meteor.call('Slack.MGB.productionStartup')
 
   Accounts.onLogin(userHasLoggedIn)
   Accounts.validateLoginAttempt(userLoginAttempt)
 
   //sets up keys for social logins
   ServiceConfiguration.configurations.upsert(
-    { service: "google" },
+    { service: 'google' },
     {
       $set: {
         clientId: Meteor.settings.googleClientID,
-        loginStyle: "popup",
-        secret: Meteor.settings.googleSecret
-      }
-    }
+        loginStyle: 'popup',
+        secret: Meteor.settings.googleSecret,
+      },
+    },
   )
 
   ServiceConfiguration.configurations.upsert(
-    { service: "facebook" },
+    { service: 'facebook' },
     {
       $set: {
         appId: Meteor.settings.facebookClientID,
-        loginStyle: "popup",
-        secret: Meteor.settings.facebookSecret
-      }
-    }
+        loginStyle: 'popup',
+        secret: Meteor.settings.facebookSecret,
+      },
+    },
   )
 
   ServiceConfiguration.configurations.upsert(
-    { service: "twitter" },
+    { service: 'twitter' },
     {
       $set: {
         consumerKey: Meteor.settings.twitterClientID,
-        loginStyle: "popup",
-        secret: Meteor.settings.twitterSecret
-      }
-    }
+        loginStyle: 'popup',
+        secret: Meteor.settings.twitterSecret,
+      },
+    },
   )
-
 })
 
 // smoke test that these are present
-Npm.require;
-Assets;
+Npm.require
+Assets
 
 console.log(`
   MGBv2 server running ${Meteor.release}
@@ -136,10 +135,9 @@ console.log(`
 
   Meteor.absoluteUrl: ${Meteor.absoluteUrl('')}
   Entry point: main_server.js
-  `
-)
+  `)
 
 // In order to create move more of the version history JSON out of the compiled codebase..
-  // var fs = require('fs')
-  // var mgbReleaseInfo = require('/imports/mgbReleaseInfo').default
-  // fs.writeFile('../../../../../tmpRelHistory.json', JSON.stringify(mgbReleaseInfo, null, 2))
+// var fs = require('fs')
+// var mgbReleaseInfo = require('/imports/mgbReleaseInfo').default
+// fs.writeFile('../../../../../tmpRelHistory.json', JSON.stringify(mgbReleaseInfo, null, 2))

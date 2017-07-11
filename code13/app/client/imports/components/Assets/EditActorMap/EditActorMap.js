@@ -24,8 +24,8 @@ import MapProps from '../Common/Map/Props/MapProps.js'
 import ToolbarProps from '../Common/Map/Props/ToolbarProps.js'
 import PropertiesProps from '../Common/Map/Props/PropertiesProps.js'
 
-import PlayForm from "./Modals/PlayForm.js"
-import MusicForm from "./Modals/MusicForm.js"
+import PlayForm from './Modals/PlayForm.js'
+import MusicForm from './Modals/MusicForm.js'
 
 import EditMap from '../EditMap/EditMap.js'
 import ActorMapErrorResolver from './ActorMapErrorResolver.js'
@@ -34,17 +34,17 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 export default class EditActorMap extends EditMap {
   static propTypes = {
-    asset: PropTypes.object,    // asset to be changed
-    currUser: PropTypes.object  // current user
+    asset: PropTypes.object, // asset to be changed
+    currUser: PropTypes.object, // current user
   }
 
-  constructor(...a){
+  constructor(...a) {
     super(...a)
-    registerDebugGlobal( 'ActorHelper', ActorHelper, __filename, 'ActorHelper of ActorMap editor')
+    registerDebugGlobal('ActorHelper', ActorHelper, __filename, 'ActorHelper of ActorMap editor')
   }
 
-  setInitialStateFromContent(){
-    this.v1_to_v2(this.props, (mapData) => {
+  setInitialStateFromContent() {
+    this.v1_to_v2(this.props, mapData => {
       this.mgb_content2 = mapData
 
       this.state.editMode = this.options.mode
@@ -53,43 +53,43 @@ export default class EditActorMap extends EditMap {
       this.state.jumpData = {
         map: '',
         x: 0,
-        y: 0
+        y: 0,
       }
       this.state.musicData = {
-        music: ''
+        music: '',
       }
 
       // stores tiles and images
       this.cache = new Cache(this.mgb_content2, () => {
         // is cache still present?
-        this.cache && this.setState({isLoading:  false})
-        if(Object.keys(this.props.asset.content2).length === 0){
-          this.quickSave("Empty map")
+        this.cache && this.setState({ isLoading: false })
+        if (Object.keys(this.props.asset.content2).length === 0) {
+          this.quickSave('Empty map')
         }
       })
     })
   }
-  createNewMap(){
-
-  }
-  componentWillReceiveProps(newp){
-    if(!newp.asset.content2){
+  createNewMap() {}
+  componentWillReceiveProps(newp) {
+    if (!newp.asset.content2) {
       return
     }
     // ignore older assets - and ignore empty content2 (content2 is empty for new maps)
-    if(!_.isEqual(this.props.asset.content2, newp.asset.content2)){
+    if (!_.isEqual(this.props.asset.content2, newp.asset.content2)) {
       // we don't need to update cache on every React update - because of observers in the TileCache and ActorHelper
-      this.setState({isLoading: true})
-      this.cache && this.cache.isReady() && this.cache.update(this.mgb_content2, () => {
-        this.setState({isLoading: false})
-        this.updateMap(newp)
-      })
+      this.setState({ isLoading: true })
+      this.cache &&
+        this.cache.isReady() &&
+        this.cache.update(this.mgb_content2, () => {
+          this.setState({ isLoading: false })
+          this.updateMap(newp)
+        })
     }
   }
 
-  updateMap(props = this.props){
-    this.setState({isLoading: true})
-    this.v1_to_v2(props, (d) => {
+  updateMap(props = this.props) {
+    this.setState({ isLoading: true })
+    this.v1_to_v2(props, d => {
       this.preventUpdates = false
 
       // store old options - otherwise tools will auto switch and will piss off user
@@ -100,63 +100,66 @@ export default class EditActorMap extends EditMap {
       }
       else{*/
 
-        this.mgb_content2 = d
+      this.mgb_content2 = d
       //}
       // or new Cache - if immutable is preferred - and need to force full cache update
-      if(this.cache && this.cache.isReady()) {
+      if (this.cache && this.cache.isReady()) {
         this.cache.update(d, () => {
-          this.cache && this.setState({isLoading: false})
+          this.cache && this.setState({ isLoading: false })
         })
-      }
-      else{
-        this.setState({isLoading: false})
+      } else {
+        this.setState({ isLoading: false })
       }
     })
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     // ActorHelper.clearCache()
     super.componentWillUnmount()
     ActorHelper.cleanUp()
   }
 
-
-  v1_to_v2(props, cb, c2 = props.asset.content2){
+  v1_to_v2(props, cb, c2 = props.asset.content2) {
     const names = {
       map: props.asset.name,
-      user: props.asset.dn_ownerName
+      user: props.asset.dn_ownerName,
     }
-    ActorHelper.v1_to_v2(c2, names, (mapData) => {
-      const errors = ActorHelper.getErrors()
-      if(errors.length){
-        this.setState({errors, isLoading: false})
-        return
-      }
-      cb && cb(mapData)
-    }, (id, changes) => {
-      //console.log("changed:", changes)
-      // TODO: probably we should do something here if map contains errors
-      if(this.state.errors && this.state.errors.length){
-        ActorHelper.cleanUp()
-        this.setInitialStateFromContent()
-        return
-      }
-      this.saveForUndo("External actor change")
-      this.updateMap()
-    }, this.tilesetProps.removeTileset)
+    ActorHelper.v1_to_v2(
+      c2,
+      names,
+      mapData => {
+        const errors = ActorHelper.getErrors()
+        if (errors.length) {
+          this.setState({ errors, isLoading: false })
+          return
+        }
+        cb && cb(mapData)
+      },
+      (id, changes) => {
+        //console.log("changed:", changes)
+        // TODO: probably we should do something here if map contains errors
+        if (this.state.errors && this.state.errors.length) {
+          ActorHelper.cleanUp()
+          this.setInitialStateFromContent()
+          return
+        }
+        this.saveForUndo('External actor change')
+        this.updateMap()
+      },
+      this.tilesetProps.removeTileset,
+    )
   }
 
-  handleSave (data, reason, thumbnail, skipUndo = false) {
+  handleSave(data, reason, thumbnail, skipUndo = false) {
     this.preventUpdates = false
 
     // can be already unmounted - as called by async function
-    if(!this.cache)
-      return
+    if (!this.cache) return
 
     // remove loading - which is set after adding new Actor
-    this.setState({isLoading: false})
+    this.setState({ isLoading: false })
 
-    if(!this.props.canEdit){
+    if (!this.props.canEdit) {
       this.props.editDeniedReminder()
       return
     }
@@ -168,33 +171,38 @@ export default class EditActorMap extends EditMap {
       this.saveForUndo(reason)
     }*/
 
-
     // make sure we always have nice looking thumbnail
-    if(!thumbnail && this.refs.map)
-      this.refs.map.generatePreviewAndSaveIt(data, reason)
-    else{
+    if (!thumbnail && this.refs.map) this.refs.map.generatePreviewAndSaveIt(data, reason)
+    else {
       const toSave = ActorHelper.v2_to_v1(data)
       this.props.handleContentChange(toSave, thumbnail, reason)
     }
   }
 
   showModal = (action, cb) => {
-    $(this.refs[action]).modal({
-      size: "small",
-      detachable: false,
-      context: this.refs.container,
-      onApprove: () => {
-        cb(this.state[action+"Data"])
-      }
-    }).modal("show")
+    $(this.refs[action])
+      .modal({
+        size: 'small',
+        detachable: false,
+        context: this.refs.container,
+        onApprove: () => {
+          cb(this.state[action + 'Data'])
+        },
+      })
+      .modal('show')
   }
 
-  renderPlayModal(){
+  renderPlayModal() {
     return (
-      <div className="ui modal" ref="jump" style={{position: "absolute"}}>
+      <div className="ui modal" ref="jump" style={{ position: 'absolute' }}>
         <div className="header">Add Jump Event</div>
         <div className="content">
-          <PlayForm asset={this.state.jumpData} onChange={(v) => {this.setState({event: this.state.jumpData})}}/>
+          <PlayForm
+            asset={this.state.jumpData}
+            onChange={v => {
+              this.setState({ event: this.state.jumpData })
+            }}
+          />
         </div>
         <div className="actions">
           <div className="ui approve button">Approve</div>
@@ -206,10 +214,15 @@ export default class EditActorMap extends EditMap {
 
   renderMusicModal() {
     return (
-      <div className="ui modal" ref="music" style={{position: "absolute"}}>
+      <div className="ui modal" ref="music" style={{ position: 'absolute' }}>
         <div className="header">Add Music Event</div>
         <div className="content">
-          <MusicForm asset={this.state.musicData} onChange={ () => {this.setState( { event: this.state.musicData } ) } }/>
+          <MusicForm
+            asset={this.state.musicData}
+            onChange={() => {
+              this.setState({ event: this.state.musicData })
+            }}
+          />
         </div>
         <div className="actions">
           <div className="ui approve button">Confirm</div>
@@ -220,63 +233,69 @@ export default class EditActorMap extends EditMap {
   }
 
   togglePlayState() {
-    this.setState( { isPlaying: !this.state.isPlaying } )
+    this.setState({ isPlaying: !this.state.isPlaying })
   }
 
-  render () {
-
-    if(this.state.errors && this.state.errors.length > 0)
-      return <ActorMapErrorResolver errors={this.state.errors} content2={this.props.asset.content2} callback={(c2) => {
-        ActorHelper.cleanUp()
-        this.setInitialStateFromContent()
-       }}/>
+  render() {
+    if (this.state.errors && this.state.errors.length > 0)
+      return (
+        <ActorMapErrorResolver
+          errors={this.state.errors}
+          content2={this.props.asset.content2}
+          callback={c2 => {
+            ActorHelper.cleanUp()
+            this.setInitialStateFromContent()
+          }}
+        />
+      )
 
     // this stuff is required for proper functionality
-    if (!this.mgb_content2 || !this.cache)
-      return this.renderLoading()
+    if (!this.mgb_content2 || !this.cache) return this.renderLoading()
 
     const { isLoading, isPlaying, activeLayer, activeTileset } = this.state
 
     const c2 = this.mgb_content2
 
     return (
-      <div className='ui grid' ref="container" style={{flexWrap: 'nowrap'}}>
-        { isLoading && this.renderLoading() }
+      <div className="ui grid" ref="container" style={{ flexWrap: 'nowrap' }}>
+        {isLoading && this.renderLoading()}
         {this.renderPlayModal()}
         {this.renderMusicModal()}
 
-        <div className={ (isPlaying ? 'sixteen' : 'thirteen') + ' wide column'}>
-          <div style={{display: 'flex', alignItems: 'center'}}>
-            <div style={{float: 'left'}}>
+        <div className={(isPlaying ? 'sixteen' : 'thirteen') + ' wide column'}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ float: 'left' }}>
               <MapToolbar
                 {...this.toolbarProps}
                 isPlaying={isPlaying}
                 options={this.options}
                 undoSteps={this.mgb_undo}
                 redoSteps={this.mgb_redo}
-
                 ref="toolbar"
               />
             </div>
-            <div style={{float: 'right'}}>
-              <div style={{float: 'left', marginLeft: '5px'}}>
-                <Properties {...this.propertiesProps} data={{
-                  width: c2.width,
-                  height: c2.height
-                }}/>
+            <div style={{ float: 'right' }}>
+              <div style={{ float: 'left', marginLeft: '5px' }}>
+                <Properties
+                  {...this.propertiesProps}
+                  data={{
+                    width: c2.width,
+                    height: c2.height,
+                  }}
+                />
               </div>
-              <div style={{float: 'left', marginLeft: '5px'}}>
+              <div style={{ float: 'left', marginLeft: '5px' }}>
                 <EventTool
                   {...this.tilesetProps}
                   palette={this.cache.tiles}
                   activeTileset={activeTileset}
                   tilesets={c2.tilesets}
                   options={this.options}
-                  />
+                />
               </div>
             </div>
           </div>
-          <div style={{ clear: 'both', overflow:'hidden'}}>
+          <div style={{ clear: 'both', overflow: 'hidden' }}>
             <ActorMapArea
               {...this.mapProps}
               showModal={this.showModal}
@@ -289,23 +308,27 @@ export default class EditActorMap extends EditMap {
               options={this.options}
               data={c2}
               asset={this.props.asset}
-              ref='map' />
+              ref="map"
+            />
           </div>
         </div>
-        <div className={'three wide '+ (isPlaying ? 'mgb-hidden' : '') + ' column'} style={{display: 'flex', flexDirection: 'column', minWidth: '175px'}}>
+        <div
+          className={'three wide ' + (isPlaying ? 'mgb-hidden' : '') + ' column'}
+          style={{ display: 'flex', flexDirection: 'column', minWidth: '175px' }}
+        >
           <LayerTool
             {...this.layerProps}
             layers={c2.layers}
             options={this.options}
             activeLayer={activeLayer}
-            />
+          />
           <TileSet
             {...this.tilesetProps}
             palette={this.cache.tiles}
             activeTileset={activeTileset}
             tilesets={c2.tilesets}
             options={this.options}
-            />
+          />
         </div>
       </div>
     )

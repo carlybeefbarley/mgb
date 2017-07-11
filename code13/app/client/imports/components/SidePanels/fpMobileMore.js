@@ -1,11 +1,11 @@
-import React from "react"
-import { Grid, Icon, Header } from "semantic-ui-react"
+import React from 'react'
+import { Grid, Icon, Header } from 'semantic-ui-react'
 
-const rowStyle={ paddingTop: '10px', paddingBottom: '0px' }
+const rowStyle = { paddingTop: '10px', paddingBottom: '0px' }
 
-const fpMobileMore = () => (
+const fpMobileMore = () =>
   <div>
-    <Grid columns={3} style={{paddingTop: '16px'}}>
+    <Grid columns={3} style={{ paddingTop: '16px' }}>
       <Grid.Row style={rowStyle}>
         <Grid.Column>
           <Header as="h4" icon>
@@ -26,7 +26,6 @@ const fpMobileMore = () => (
           </Header>
         </Grid.Column>
       </Grid.Row>
-
 
       <Grid.Row style={rowStyle}>
         <Grid.Column>
@@ -49,8 +48,6 @@ const fpMobileMore = () => (
         </Grid.Column>
       </Grid.Row>
 
-
-
       <Grid.Row style={rowStyle}>
         <Grid.Column>
           <Header as="h4" icon>
@@ -71,7 +68,6 @@ const fpMobileMore = () => (
           </Header>
         </Grid.Column>
       </Grid.Row>
-
 
       <Grid.Row style={rowStyle}>
         <Grid.Column>
@@ -95,6 +91,5 @@ const fpMobileMore = () => (
       </Grid.Row>
     </Grid>
   </div>
-);
 
-export default fpMobileMore;
+export default fpMobileMore

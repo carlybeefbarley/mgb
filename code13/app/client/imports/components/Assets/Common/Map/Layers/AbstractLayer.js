@@ -11,8 +11,8 @@ import Camera from '../Camera.js'
 
 export default class AbstractLayer extends React.Component {
   static propTypes = {
-    isActive: React.PropTypes.bool.isRequired,  // is this an active layer?
-    data: React.PropTypes.object.isRequired,    // layer data
+    isActive: React.PropTypes.bool.isRequired, // is this an active layer?
+    data: React.PropTypes.object.isRequired, // layer data
 
     camera: React.PropTypes.instanceOf(Camera).isRequired,
 
@@ -21,30 +21,30 @@ export default class AbstractLayer extends React.Component {
   }
 
   /* lifecycle functions */
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
 
     this.ctx = null
     this.mouseDown = false
     this._isVisible = false
-    this._mup = (e) => {
+    this._mup = e => {
       if (this.props.isActive) {
         this.handleMouseUp(e)
       }
     }
-    this._mov = (e) => {
+    this._mov = e => {
       if (this.props.isActive) {
         this.handleMouseMove(e)
       }
     }
-    this._kup = (e) => {
+    this._kup = e => {
       if (this.props.isActive) {
         this._onKeyUp(e)
       }
     }
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.adjustCanvas()
     const canvas = this.refs.canvas
     this.ctx = canvas.getContext('2d')
@@ -61,7 +61,7 @@ export default class AbstractLayer extends React.Component {
     this._isVisible = true
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     window.removeEventListener('mouseup', this._mup)
     window.removeEventListener('touchstart', this._mup)
 
@@ -72,34 +72,34 @@ export default class AbstractLayer extends React.Component {
     this._isVisible = false
   }
   // this layer has been selected
-  activate () {
+  activate() {
     if (this.activeMode) {
       this.props.setEditMode(this.activeMode)
     }
   }
 
   // this layer has been deselected - called before another layer activate
-  deactivate () {
+  deactivate() {
     //this.activeMode = this.props.getEditMode()
   }
   /* endof lifecycle functions */
 
-  get options () {
+  get options() {
     return this.props.data
   }
-  get data () {
+  get data() {
     return this.props.data
   }
 
-  get type(){
+  get type() {
     return this.data.type
   }
   // same as type - in assets we are using kind - so it might be more intuitive for other ppl
-  get kind(){
+  get kind() {
     return this.data.type
   }
   // camera sets correct offsets when rendering bounds etc
-  get camera () {
+  get camera() {
     //return this.props.camera
     if (!this._camera) {
       this._camera = Object.create(this.props.camera)
@@ -109,17 +109,17 @@ export default class AbstractLayer extends React.Component {
     this._camera.zoom = this.props.camera.zoom
     return this._camera
   }
-  get isVisible(){
+  get isVisible() {
     return this._isVisible && this.options.visible
   }
 
-  getInfo () {
-    return 'Please set info! Override getInfo@' + this.constructor.name;
+  getInfo() {
+    return 'Please set info! Override getInfo@' + this.constructor.name
   }
 
-  adjustCanvas () {
+  adjustCanvas() {
     const canvas = this.refs.canvas
-    if(!canvas){
+    if (!canvas) {
       return
     }
     const b = this.props.camera
@@ -131,23 +131,23 @@ export default class AbstractLayer extends React.Component {
     }
   }
 
-  queueDraw (timeout) {
+  queueDraw(timeout) {
     if (this.nextDraw <= this.now || this.nextDraw > this.now + timeout) {
       this.nextDraw = this.now + timeout
     }
-    if(this.isDirtySelection){
+    if (this.isDirtySelection) {
       this.nextDraw = 0
     }
   }
-  draw () {
+  draw() {
     this.nextDraw = 0
   }
 
   // abstract
-  _draw (timestamp) {}
+  _draw(timestamp) {}
 
   /* events */
-  handleMouseUp (e) {
+  handleMouseUp(e) {
     this.mouseDown = false
 
     this.movementX = 0
@@ -156,17 +156,16 @@ export default class AbstractLayer extends React.Component {
     this.mouseX = TileHelper.getOffsetX(e)
     this.mouseY = TileHelper.getOffsetY(e)
 
-    this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
-    this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
+    this.mouseInWorldX = this.mouseX / this.camera.zoom - this.camera.x
+    this.mouseInWorldY = this.mouseY / this.camera.zoom - this.camera.y
 
     this.pointerPosX = this.mouseInWorldX
     this.pointerPosY = this.mouseInWorldY
 
     this.pointerMovementX = 0
     this.pointerMovementY = 0
-
   }
-  handleMouseDown (e) {
+  handleMouseDown(e) {
     this.mouseDown = true
 
     this.movementX = 0
@@ -175,8 +174,8 @@ export default class AbstractLayer extends React.Component {
     this.mouseX = TileHelper.getOffsetX(e)
     this.mouseY = TileHelper.getOffsetY(e)
 
-    this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
-    this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
+    this.mouseInWorldX = this.mouseX / this.camera.zoom - this.camera.x
+    this.mouseInWorldY = this.mouseY / this.camera.zoom - this.camera.y
 
     this.pointerPosX = this.mouseInWorldX
     this.pointerPosY = this.mouseInWorldY
@@ -190,10 +189,9 @@ export default class AbstractLayer extends React.Component {
       return false
     }
   }
-  handleMouseMove (e) {
+  handleMouseMove(e) {
     const ox = TileHelper.getOffsetX(e)
     const oy = TileHelper.getOffsetY(e)
-
 
     this.pointerMovementX = ox - this.mouseX
     this.pointerMovementY = oy - this.mouseY
@@ -201,36 +199,40 @@ export default class AbstractLayer extends React.Component {
     this.mouseX = ox
     this.mouseY = oy
 
-
-    this.mouseInWorldX = (this.mouseX / this.camera.zoom - this.camera.x)
-    this.mouseInWorldY = (this.mouseY / this.camera.zoom - this.camera.y)
+    this.mouseInWorldX = this.mouseX / this.camera.zoom - this.camera.x
+    this.mouseInWorldY = this.mouseY / this.camera.zoom - this.camera.y
 
     if (this.mouseDown) {
-      this.movementX += (this.pointerMovementX / this.camera.zoom)
-      this.movementY += (this.pointerMovementY / this.camera.zoom)
+      this.movementX += this.pointerMovementX / this.camera.zoom
+      this.movementY += this.pointerMovementY / this.camera.zoom
     }
   }
 
-  _onKeyUp (e) {
+  _onKeyUp(e) {
     if (this.props.isActive) {
       this.onKeyUp && this.onKeyUp(e)
     }
   }
 
-  isCtrlKey(e){
+  isCtrlKey(e) {
     return this.props.getCtrlModifier() || (e && e.ctrlKey)
   }
 
-  render () {
-    return (<div ref='layer' className={this.props.isActive ? 'tilemap-layer' : 'tilemap-layer no-events'} data-name={this.props.data.name}>
-              <canvas
-                ref='canvas'
-                onMouseDown={this.handleMouseDown.bind(this)}
-                onTouchStart={this.handleMouseDown.bind(this)}
-                onMouseLeave={this.onMouseLeave.bind(this)}
-                style={{ display: 'block' }}>
-              </canvas>
-            </div>)
+  render() {
+    return (
+      <div
+        ref="layer"
+        className={this.props.isActive ? 'tilemap-layer' : 'tilemap-layer no-events'}
+        data-name={this.props.data.name}
+      >
+        <canvas
+          ref="canvas"
+          onMouseDown={this.handleMouseDown.bind(this)}
+          onTouchStart={this.handleMouseDown.bind(this)}
+          onMouseLeave={this.onMouseLeave.bind(this)}
+          style={{ display: 'block' }}
+        />
+      </div>
+    )
   }
-
 }

@@ -7,12 +7,11 @@ import FittedImage from '/client/imports/components/Controls/FittedImage'
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 import { isValidCodeGame, isValidActorMapGame } from '/imports/schemas/assets'
 
-
 const _cardStyle = { minWidth: '200px', maxWidth: '200px' }
 
-export const GameItem = ( { game, currUser } ) => (
-  <Card color={isValidCodeGame(game) ? 'green' : 'blue'} className='link' style={_cardStyle}>
-    <QLink className='image' to={`/u/${game.dn_ownerName}/play/${game._id}`}>
+export const GameItem = ({ game, currUser }) =>
+  <Card color={isValidCodeGame(game) ? 'green' : 'blue'} className="link" style={_cardStyle}>
+    <QLink className="image" to={`/u/${game.dn_ownerName}/play/${game._id}`}>
       {Thumbnail.getLink(game)
         ? <FittedImage src={Thumbnail.getLink(game)} />
         : <div style={{ display: 'block', height: '140px' }} />}
@@ -23,48 +22,45 @@ export const GameItem = ( { game, currUser } ) => (
           color: 'black',
           textOverflow: 'ellipsis',
           overflow: 'hidden',
-          whiteSpace: 'nowrap'
+          whiteSpace: 'nowrap',
         }}
       >
         {game.name}
       </p>
       <p>
-        <span>{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</span>
-        <span style={{float: 'right'}}>
-          <UserLoves
-              size='small'
-              currUser={currUser}
-              asset={game}
-              seeLovers={false} />
+        <span>
+          {((game.metadata && game.metadata.playCount) || 0) + ' Plays'}
+        </span>
+        <span style={{ float: 'right' }}>
+          <UserLoves size="small" currUser={currUser} asset={game} seeLovers={false} />
         </span>
       </p>
     </Card.Content>
   </Card>
-)
 
 const _wrapStyle = { clear: 'both', flexWrap: 'wrap' }
 const _nowrapStyle = {
   clear: 'both',
   flexWrap: 'nowrap',
   overflowX: 'auto',
-  overflowY: 'hidden'
+  overflowY: 'hidden',
 }
 
-const GameItems = ( { games, wrap, currUser } ) => (
+const GameItems = ({ games, wrap, currUser }) =>
   <Card.Group style={wrap ? _wrapStyle : _nowrapStyle}>
-    { (!games || games.length === 0) &&
-      <Segment basic>No matching games</Segment>
-    }
-    { games.map(g => ( (isValidCodeGame(g) || isValidActorMapGame(g)) ? 
-        <GameItem currUser={currUser} game={g} key={g._id} /> : null ))
-    }    
+    {(!games || games.length === 0) && <Segment basic>No matching games</Segment>}
+    {games.map(
+      g =>
+        isValidCodeGame(g) || isValidActorMapGame(g)
+          ? <GameItem currUser={currUser} game={g} key={g._id} />
+          : null,
+    )}
   </Card.Group>
-)
 
 GameItems.propTypes = {
-  currUser: PropTypes.object,     // Currently Logged in user. Can be null
-  games:    PropTypes.array,      // an array of game assets
-  wrap:     PropTypes.bool        // if false, then lay this out as a flexWrap:nowrap scrolling row
+  currUser: PropTypes.object, // Currently Logged in user. Can be null
+  games: PropTypes.array, // an array of game assets
+  wrap: PropTypes.bool, // if false, then lay this out as a flexWrap:nowrap scrolling row
 }
 
 export default GameItems

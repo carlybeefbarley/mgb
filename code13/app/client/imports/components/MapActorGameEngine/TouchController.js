@@ -5,9 +5,9 @@ import './TouchController.css'
 
 export default class TouchController extends React.Component {
   static propTypes = {
-    availableWidth: React.PropTypes.number // available horizontal space
+    availableWidth: React.PropTypes.number, // available horizontal space
   }
-  componentDidMount(){
+  componentDidMount() {
     this.node = ReactDOM.findDOMNode(this)
 
     // delay opacity for nice (arguably) CSS animation
@@ -15,11 +15,11 @@ export default class TouchController extends React.Component {
       this.node.style.opacity = 0.5
     }, 100)
   }
-  handleInput(e, up){
+  handleInput(e, up) {
     const key = e.target.dataset.key || e.target.parentNode.dataset.key
     const which = parseInt(e.target.dataset.which || e.target.parentNode.dataset.which, 10)
 
-    if(!key){
+    if (!key) {
       // fix: #670 - probably too annoying - as it allows to click through gamepad's body
       const t = e.target
       t.style.pointerEvents = 'none'
@@ -28,7 +28,7 @@ export default class TouchController extends React.Component {
       }, 0)
       return
     }
-    const ev = new KeyboardEvent(up ? "keyup": "keydown", {which, key})
+    const ev = new KeyboardEvent(up ? 'keyup' : 'keydown', { which, key })
     // older chrome requires these to be set directly
     ev.which = which
     ev.key = key
@@ -36,38 +36,38 @@ export default class TouchController extends React.Component {
     e.preventDefault()
     e.stopPropagation()
   }
-  render(){
-
+  render() {
     const width = this.props.availableWidth || window.innerWidth
     return (
-      <div className="ui icon game" id="mgb-mage-touch-controller"
-          onMouseDown={e => this.handleInput(e, false)}
-          onTouchStart={e => this.handleInput(e, false)}
+      <div
+        className="ui icon game"
+        id="mgb-mage-touch-controller"
+        onMouseDown={e => this.handleInput(e, false)}
+        onTouchStart={e => this.handleInput(e, false)}
+        onMouseUp={e => this.handleInput(e, true)}
+        onTouchEnd={e => this.handleInput(e, true)}
+        // allow long click - fix #551
+        onContextMenu={e => event => {
+          event.preventDefault()
+          event.stopPropagation()
+          return false
+        }}
+        style={{
+          width: width + 'px',
+          height: width * 0.35 + 'px',
+          fontSize: width * 0.0001 + 'px',
+        }}
+      >
+        <div className="button arrow up" data-key="ArrowUp" data-which="38" />
+        <div className="button arrow left" data-key="ArrowLeft" data-which="37" />
+        <div className="button arrow right" data-key="ArrowRight" data-which="39" />
+        <div className="button arrow down" data-key="ArrowDown" data-which="40" />
 
-          onMouseUp={e => this.handleInput(e, true)}
-          onTouchEnd={e => this.handleInput(e, true)}
-           // allow long click - fix #551
-         onContextMenu={e => event => {
-           event.preventDefault()
-           event.stopPropagation()
-           return false;
-         }}
-          style={{
-            width: width + 'px',
-            height: (width * 0.35) + 'px',
-            fontSize: (width * 0.0001) + 'px'
-          }}
-        >
-        <div className="button arrow up" data-key="ArrowUp" data-which="38"></div>
-        <div className="button arrow left" data-key="ArrowLeft" data-which="37"></div>
-        <div className="button arrow right" data-key="ArrowRight" data-which="39"></div>
-        <div className="button arrow down" data-key="ArrowDown" data-which="40"></div>
+        <div className="button shoot" data-key="Enter" data-which="13" />
+        <div className="button melee" data-key="m" data-which="77" />
 
-        <div className="button shoot" data-key="Enter" data-which="13"></div>
-        <div className="button melee" data-key="m" data-which="77"></div>
-
-        <div className="button pause" data-key="Control" data-which="17"></div>
-        <div className="button inventory" data-key="i" data-which="73"></div>
+        <div className="button pause" data-key="Control" data-which="17" />
+        <div className="button inventory" data-key="i" data-which="73" />
       </div>
     )
   }

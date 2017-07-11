@@ -7,10 +7,25 @@ const LoginLinks = props => {
   const sty = { paddingBottom: '0.7em' }
 
   return (
-    <Container fluid textAlign='right' style={{marginTop: '1em'}} >
-      { showLogin  && <div style={sty}><QLink to='/login'>Already have an account?  <u>Log In</u></QLink></div> }
-      { showSignup && <div style={sty}><QLink to='/signup'>Not a member yet?  <u>Sign up now!</u></QLink></div> }
-      { showForgot && <div style={sty}><QLink to='/forgot-password'><u>Forgot password?</u></QLink></div> }
+    <Container fluid textAlign="right" style={{ marginTop: '1em' }}>
+      {showLogin &&
+        <div style={sty}>
+          <QLink to="/login">
+            Already have an account? <u>Log In</u>
+          </QLink>
+        </div>}
+      {showSignup &&
+        <div style={sty}>
+          <QLink to="/signup">
+            Not a member yet? <u>Sign up now!</u>
+          </QLink>
+        </div>}
+      {showForgot &&
+        <div style={sty}>
+          <QLink to="/forgot-password">
+            <u>Forgot password?</u>
+          </QLink>
+        </div>}
     </Container>
   )
 }
@@ -18,7 +33,7 @@ const LoginLinks = props => {
 LoginLinks.propTypes = {
   showLogin: PropTypes.bool,
   showSignup: PropTypes.bool,
-  showForgot: PropTypes.bool
+  showForgot: PropTypes.bool,
 }
 
 export default LoginLinks

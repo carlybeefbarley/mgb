@@ -1,4 +1,3 @@
-
 import React from 'react'
 
 import { Routes } from '/client/imports/routes'
@@ -18,7 +17,7 @@ import { Tracker } from 'meteor/tracker'
 // otherwise, it will only fire touch events
 // On touch enabled devices, ensure the cursor is a pointer so click events fire
 if ('ontouchstart' in document.documentElement) {
-  document.body.style.cursor = 'pointer';
+  document.body.style.cursor = 'pointer'
 }
 
 // import Perf from "react-addons-perf"
@@ -27,11 +26,10 @@ if ('ontouchstart' in document.documentElement) {
 
 // prevent nasty Meteor error catching - which breaks break on exception functionality
 if (Meteor.isDevelopment) {
-  Tracker.Computation.prototype._recompute = function () {
+  Tracker.Computation.prototype._recompute = function() {
     this._recomputing = true
     try {
-      if (this._needsRecompute())
-        this._compute()
+      if (this._needsRecompute()) this._compute()
     } finally {
       this._recomputing = false
     }

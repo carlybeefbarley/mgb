@@ -3,14 +3,13 @@ import React from 'react'
 import TileHelper from '../Helpers/TileHelper.js'
 import LayerTypes from '../Tools/LayerTypes.js'
 
-
 export default class GridLayer extends React.Component {
   /* lifecycle functions */
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.ctx = null
   }
-  componentDidMount () {
+  componentDidMount() {
     const canvas = this.refs.canvas
     this.ctx = canvas.getContext('2d')
     this.ctx.imageSmoothingEnabled = false
@@ -19,7 +18,7 @@ export default class GridLayer extends React.Component {
     this.alignToLayer()
   }
   // align grid to active layer in preview mode
-  shouldComponentUpdate () {
+  shouldComponentUpdate() {
     const map = this.props.map
     if (!map.options.preview) {
       this.refs.layer.style['transform'] = ''
@@ -31,7 +30,7 @@ export default class GridLayer extends React.Component {
     this.alignToLayer()
     return false
   }
-  componentWillUnmount () {
+  componentWillUnmount() {
     const index = this.props.map.layers.indexOf(this)
     if (index > -1) {
       this.props.map.layers.splice(index, 1)
@@ -39,7 +38,7 @@ export default class GridLayer extends React.Component {
     document.body.removeEventListener('mouseup', this._mup)
   }
   /* endof lifecycle functions */
-  adjustCanvas () {
+  adjustCanvas() {
     const canvas = this.refs.canvas
     //const $el = $(canvas.parentElement)
 
@@ -52,22 +51,21 @@ export default class GridLayer extends React.Component {
     this.alignToLayer()
   }
 
-  alignToLayer () {
-    if(this.props.layer && this.props.layer.refs.layer) {
+  alignToLayer() {
+    if (this.props.layer && this.props.layer.refs.layer) {
       this.refs.layer.style['transform'] = this.props.layer.refs.layer.style['transform']
       this.refs.layer.style['z-index'] = this.props.layer.refs.layer.style['z-index']
     }
   }
 
-  draw () {
+  draw() {
     this.adjustCanvas()
     if (this.props.map.options.showGrid) {
       this.drawGrid()
     }
   }
 
-  drawGrid () {
-
+  drawGrid() {
     // this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
     const camera = this.props.map.camera
     if (this.ctx.setLineDash) {
@@ -76,14 +74,14 @@ export default class GridLayer extends React.Component {
     const data = this.props.map.data
     this.ctx.beginPath()
 
-    const offsetX = camera.x % data.tilewidth * camera.zoom
-    const offsetY = camera.y % data.tileheight * camera.zoom
-    
+    const offsetX = (camera.x % data.tilewidth) * camera.zoom
+    const offsetY = (camera.y % data.tileheight) * camera.zoom
+
     // vertical lines
     let i = 0
     const width = Math.ceil(this.ctx.canvas.width / data.tilewidth)
     let tmp = 0
-    let tot = Math.ceil(width / camera.zoom);
+    let tot = Math.ceil(width / camera.zoom)
 
     for (; i <= tot; i++) {
       tmp = i * data.tilewidth * camera.zoom + 0.5 + offsetX
@@ -96,7 +94,7 @@ export default class GridLayer extends React.Component {
     // horizontal lines
     i = 0
     const height = Math.ceil(this.ctx.canvas.height / data.tileheight)
-    tot = Math.ceil(height / camera.zoom);
+    tot = Math.ceil(height / camera.zoom)
     for (; i <= tot; i++) {
       tmp = i * data.tileheight * camera.zoom + 0.5 + offsetY
       this.ctx.moveTo(-data.tilewidth + offsetX, tmp)
@@ -109,13 +107,11 @@ export default class GridLayer extends React.Component {
     this.ctx.stroke()
   }
 
-  render () {
-    return (<div
-              className='tilemap-layer no-events grid-layer'
-              data-name='Grid'
-              ref='layer'
-              style={{zIndex: 2}}>
-              <canvas ref='canvas' style={{ display: 'block' }}></canvas>
-            </div>)
+  render() {
+    return (
+      <div className="tilemap-layer no-events grid-layer" data-name="Grid" ref="layer" style={{ zIndex: 2 }}>
+        <canvas ref="canvas" style={{ display: 'block' }} />
+      </div>
+    )
   }
 }

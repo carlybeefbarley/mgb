@@ -6,18 +6,20 @@ import C from './CommonSkillNodes.js'
 
 // The paths for these skills are related the .skillNodes properties of the helpInfo Object defined in TokenDescription.js
 
-export default {
+const AudioSkillNodes = {
   $meta: {
-    name:           'Audio',
-    description:    'Represents music and sound skills',
+    name: 'Audio',
+    description: 'Represents music and sound skills',
   },
   music: {
-    ambient:        C.E,
-    intense:        C.E,
-    loops:          C.E
+    ambient: C.E,
+    intense: C.E,
+    loops: C.E,
   },
   fx: {
-    jsfxr:          C.E,
-    loops:          C.E
-  } 
+    jsfxr: C.E,
+    loops: C.E,
+  },
 }
+
+export default AudioSkillNodes

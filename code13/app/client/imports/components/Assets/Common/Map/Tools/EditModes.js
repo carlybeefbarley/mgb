@@ -15,6 +15,6 @@ const EditModes = {
   // object tools
   drawRectangle: 'drawRectangle',
   drawEllipse: 'drawEllipse',
-  drawShape: 'drawShape'
+  drawShape: 'drawShape',
 }
 export default EditModes

@@ -17,36 +17,29 @@ Meteor.publish('projects.byUserId', function(userId, showOnlyForkable = false) {
   return Projects.find(selector)
 })
 
-Meteor.publish('projects.frontPageList', function (limitCount=5) {
+Meteor.publish('projects.frontPageList', function(limitCount = 5) {
   const selector = projectMakeFrontPageListSelector()
-  return Projects.find(selector, { limit: limitCount, sort: {updatedAt: -1} } )
+  return Projects.find(selector, { limit: limitCount, sort: { updatedAt: -1 } })
 })
 
+Meteor.publish('projects.search', function(
+  userId, // can be null
+  nameSearch, // can be null
+  showOnlyForkable = false,
+  hideWorkstateMask = 0, // As defined for use by assetMakeSelector()
+) {
+  const selector = projectMakeSelector(userId, nameSearch, showOnlyForkable, hideWorkstateMask, {
+    sort: { updatedAt: -1 },
+  })
 
-Meteor.publish('projects.search',
-  function (
-    userId,                       // can be null
-    nameSearch,                   // can be null
-    showOnlyForkable = false,
-    hideWorkstateMask=0,          // As defined for use by assetMakeSelector()
-    )
-  {
-    const selector = projectMakeSelector(
-      userId,
-      nameSearch,
-      showOnlyForkable,
-      hideWorkstateMask,
-      {sort: {"updatedAt": -1}})
-
-    return Projects.find(selector)
-  }
-)
+  return Projects.find(selector)
+})
 
 //
 //    PROJECTS Indexes
 //
 
-Projects._ensureIndex({"updatedAt": -1})
-Projects._ensureIndex({"workState": -1})
-Projects._ensureIndex({"workState": 1, "updatedAt": -1})
-Projects._ensureIndex({"ownerId": 1, "name": 1})
+Projects._ensureIndex({ updatedAt: -1 })
+Projects._ensureIndex({ workState: -1 })
+Projects._ensureIndex({ workState: 1, updatedAt: -1 })
+Projects._ensureIndex({ ownerId: 1, name: 1 })

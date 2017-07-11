@@ -6,7 +6,6 @@ const Mocha = require('mocha')
 const Reporter = require('../../reporters/benchmark')
 
 class TestRunner {
-
   start(name, port = 4000) {
     this.runTest(name, port)
   }
@@ -14,22 +13,22 @@ class TestRunner {
   runTest(name, port) {
     // console.log("running test: "+name)
     const mocha = new Mocha({
-      timeout: 120000
+      timeout: 120000,
     })
     const testFileName = __dirname + '/../loadTests/loadTest.js'
     global.testInfo = {
-      browser: startBrowser('local.phantom', {server: 'http://127.0.0.1:' + port}),
-      test: name
+      browser: startBrowser('local.phantom', { server: 'http://127.0.0.1:' + port }),
+      test: name,
     }
     mocha.addFile(testFileName)
 
-    mocha.reporter(Reporter).run(function (failures) {
+    mocha.reporter(Reporter).run(function(failures) {
       const report = []
       global.report.forEach(t => {
         report.push({
           title: t.title,
           duration: t.duration,
-          state: t.state
+          state: t.state,
         })
       })
       process.send && process.send(JSON.stringify(report))

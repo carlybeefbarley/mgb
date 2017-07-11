@@ -1,29 +1,29 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
-import InputBox from './InputBox';
+import InputBox from './InputBox'
 
 class BPMController extends Component {
-    shouldComponentUpdate = (nextProps) => nextProps.bpm !== this.props.bpm;
+  shouldComponentUpdate = nextProps => nextProps.bpm !== this.props.bpm
 
-    onBPMChange = (event) => {
-        const bpm = parseFloat(event.target.value);
-        this.props.actions.updateBPM(bpm);
+  onBPMChange = event => {
+    const bpm = parseFloat(event.target.value)
+    this.props.actions.updateBPM(bpm)
+  }
+
+  render = () => {
+    const props = {
+      id: 'bpm',
+      label: 'BPM (50 - 300)',
+      type: 'number',
+      defaultValue: this.props.bpm,
+      onChange: this.onBPMChange,
+      step: 5,
+      min: 50,
+      max: 300,
     }
 
-    render = () => {
-        const props = {
-            id: 'bpm',
-            label: 'BPM (50 - 300)',
-            type: 'number',
-            defaultValue: this.props.bpm,
-            onChange: this.onBPMChange,
-            step: 5,
-            min: 50,
-            max: 300,
-        }
-
-        return <InputBox { ...props } />
-    }
+    return <InputBox {...props} />
+  }
 }
 
-export default BPMController;
+export default BPMController

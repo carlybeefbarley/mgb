@@ -7,5 +7,5 @@ export default {
   UserAssetListRoute,
   AssetEditRoute,
   AssetCreateNewRoute,
-  AssetEditRedirect
+  AssetEditRedirect,
 }

@@ -4,14 +4,13 @@ import React from 'react'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
 
 export default class ActorMapProperties extends React.Component {
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
   }
 
-  componentDidMount () {
-  }
+  componentDidMount() {}
 
-  render () {
+  render() {
     return (
       <div id="mgbjr-MapTools-properties">
         <div className="ui small labeled input">
@@ -22,10 +21,12 @@ export default class ActorMapProperties extends React.Component {
             className="ui small input"
             min={1}
             max={300}
-            style={{width: "6em"}}
+            style={{ width: '6em' }}
             value={this.props.data.width}
-            onFinalChange={(num) => {this.props.resize({width: num, height: this.props.data.height})} }
-            />
+            onFinalChange={num => {
+              this.props.resize({ width: num, height: this.props.data.height })
+            }}
+          />
         </div>
 
         <span>&nbsp;&nbsp;</span>
@@ -37,10 +38,12 @@ export default class ActorMapProperties extends React.Component {
             className="ui small input"
             min={1}
             max={300}
-            style={{width: "6em"}}
+            style={{ width: '6em' }}
             value={this.props.data.height}
-            onFinalChange={(num) => {this.props.resize({width: this.props.data.width, height: num})} }
-            />
+            onFinalChange={num => {
+              this.props.resize({ width: this.props.data.width, height: num })
+            }}
+          />
         </div>
       </div>
     )

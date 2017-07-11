@@ -1,26 +1,22 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
 
-import CalendarHeatmapStyled from '/client/imports/components/Controls/CalendarHeatmap/CalendarHeatmapStyled';
+import CalendarHeatmapStyled from '/client/imports/components/Controls/CalendarHeatmap/CalendarHeatmapStyled'
 
-export default ActivityHeatmap = React.createClass({
-
+const ActivityHeatmap = React.createClass({
   propTypes: {
     user: PropTypes.object,
-    className: PropTypes.string
+    className: PropTypes.string,
   },
-  
 
   render: function() {
     const { user } = this.props
 
-    if (!user)
-      return null
-        
+    if (!user) return null
+
     return (
       <div className={this.props.className}>
-        <h2 style={{display: "inline-block"}}>Activity</h2>&emsp;<em style={{color: "red"}}>(fake data for now)</em>
-
+        <h2 style={{ display: 'inline-block' }}>Activity</h2>&emsp;<em style={{ color: 'red' }}>(fake data for now)</em>
         <CalendarHeatmapStyled
           endDate={new Date()}
           numDays={180}
@@ -28,11 +24,13 @@ export default ActivityHeatmap = React.createClass({
             { date: '2016-07-01', count: 1 },
             { date: '2016-07-22', count: 3 },
             { date: '2016-07-22', count: 3 },
-            { date: '2016-07-16', count: 6 }
-            // ...and so on 
+            { date: '2016-07-16', count: 6 },
+            // ...and so on
           ]}
         />
       </div>
     )
-  }
+  },
 })
+
+export default ActivityHeatmap

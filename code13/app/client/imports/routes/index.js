@@ -57,11 +57,10 @@ import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 // We also export it for potential future use by some of the fast-build variants like storybook...
 export function clientStartup() {
-  const router =
+  const router = (
     <Router history={browserHistory}>
       <Route component={App}>
-
-        <Route path='/u/:username/play/:assetId' component={PlayGameRoute} name='Play Game' />
+        <Route path="/u/:username/play/:assetId" component={PlayGameRoute} name="Play Game" />
 
         <Route path="/" component={Home} />
         <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />
@@ -69,17 +68,16 @@ export function clientStartup() {
 
         <Route path="/dashboard" component={DashboardRoute} name="Dashboard" />
 
-
         <Route path="/learn" component={LearnRoute} />
         <Route path="/learn/skills" component={LearnSkillsRoute} />
         <Route path="/learn/skills/:skillarea" component={LearnSkillsAreaRoute} />
-        <Route path="/learn/getstarted" component={LearnGetStartedRoute} name='Get Started'/>
+        <Route path="/learn/getstarted" component={LearnGetStartedRoute} name="Get Started" />
 
-        <Route path="/learn/code" component={LearnCodeRoute} name='Programming'/>
-        <Route path="/learn/code/modify" component={LearnCodeModifyRoute} name='Modify Games'/>
-        <Route path="/learn/code/:item" component={LearnCodeRouteItem}/>
+        <Route path="/learn/code" component={LearnCodeRoute} name="Programming" />
+        <Route path="/learn/code/modify" component={LearnCodeModifyRoute} name="Modify Games" />
+        <Route path="/learn/code/:item" component={LearnCodeRouteItem} />
 
-        <Route path="/learn/art" component={LearnArtRoute} name='Pixel Art'/>
+        <Route path="/learn/art" component={LearnArtRoute} name="Pixel Art" />
 
         <Route path="/games" component={BrowseGamesRoute} name="Browse Games" />
         <Route path="/u/:username/games" component={BrowseGamesRoute} name="Games" />
@@ -93,8 +91,8 @@ export function clientStartup() {
 
         <Route path="u/:username/import" component={Import} />
 
-        <Route path="user/:id" component={Users.Profile} name="Profile"/>
-        <Route path="u/:username" component={Users.Profile} name="Profile"/>
+        <Route path="user/:id" component={Users.Profile} name="Profile" />
+        <Route path="u/:username" component={Users.Profile} name="Profile" />
 
         <Route path="user/:id/assets" component={Azzets.UserAssetListRoute} name="Assets" />
         <Route path="u/:username/assets" component={Azzets.UserAssetListRoute} name="Assets" />
@@ -105,13 +103,37 @@ export function clientStartup() {
         <Route path="user/:id/projects" component={Projects.UserProjectList} name="Projects" />
         <Route path="u/:username/projects" component={Projects.UserProjectList} name="Projects" />
 
-        <Route path="user/:id/projects/create" component={Projects.ProjectCreateNewRoute} name="Create New Project" />
-        <Route path="u/:username/projects/create" component={Projects.ProjectCreateNewRoute} name="Create New Project" />
-        <Route path="u/:username/projects/import/MGB1" component={Projects.ProjectImportMgb1Route} name="Import MGBv1 Project" />
+        <Route
+          path="user/:id/projects/create"
+          component={Projects.ProjectCreateNewRoute}
+          name="Create New Project"
+        />
+        <Route
+          path="u/:username/projects/create"
+          component={Projects.ProjectCreateNewRoute}
+          name="Create New Project"
+        />
+        <Route
+          path="u/:username/projects/import/MGB1"
+          component={Projects.ProjectImportMgb1Route}
+          name="Import MGBv1 Project"
+        />
 
-        <Route path="user/:id/project/:projectId" component={Projects.ProjectOverview} name="Project Details" />
-        <Route path="u/:username/projects/:projectName" component={Projects.ProjectOverview} name="Project Details" />
-        <Route path="u/:username/project/:projectId" component={Projects.ProjectOverview} name="Project Details" />
+        <Route
+          path="user/:id/project/:projectId"
+          component={Projects.ProjectOverview}
+          name="Project Details"
+        />
+        <Route
+          path="u/:username/projects/:projectName"
+          component={Projects.ProjectOverview}
+          name="Project Details"
+        />
+        <Route
+          path="u/:username/project/:projectId"
+          component={Projects.ProjectOverview}
+          name="Project Details"
+        />
 
         <Route path="user/:id/history" component={Users.UserHistoryRoute} name="History" />
         <Route path="u/:username/history" component={Users.UserHistoryRoute} name="History" />
@@ -126,27 +148,44 @@ export function clientStartup() {
         <Route path="assets" component={Azzets.UserAssetListRoute} name="Search All Assets" />
         <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
 
-        <Route path="assetEdit/:assetId" component={Azzets.AssetEditRoute} name="Edit Asset (finding owner...)" />
-        <Route path="assetEdit/:kind/:user/:name" component={Azzets.AssetEditRedirect} name="Edit Asset (finding owner...)" />
-        <Route path="assetEdit/:user/:name" component={Azzets.AssetEditRedirect} name="Edit Asset (finding owner...)" />
+        <Route
+          path="assetEdit/:assetId"
+          component={Azzets.AssetEditRoute}
+          name="Edit Asset (finding owner...)"
+        />
+        <Route
+          path="assetEdit/:kind/:user/:name"
+          component={Azzets.AssetEditRedirect}
+          name="Edit Asset (finding owner...)"
+        />
+        <Route
+          path="assetEdit/:user/:name"
+          component={Azzets.AssetEditRedirect}
+          name="Edit Asset (finding owner...)"
+        />
 
         <Route path="user/:id/skilltree" component={Users.SkillTreeRoute} name="Skills" />
         <Route path="u/:username/skilltree" component={Users.SkillTreeRoute} name="Skills" />
 
-        <Route path='/legal/tos' component={TermsOfService} name='Terms Of Service' />
-        <Route path='/legal/privacy' component={Privacy} name='Privacy Policy' />
+        <Route path="/legal/tos" component={TermsOfService} name="Terms Of Service" />
+        <Route path="/legal/privacy" component={Privacy} name="Privacy Policy" />
 
-        <Route path="/notyetimplemented/:featureName" component={NotYetImplementedRoute} name="Coming Soon!.."/>
-        <Route path="*" component={NotFoundRoute} name="Page Not Found"/>
+        <Route
+          path="/notyetimplemented/:featureName"
+          component={NotYetImplementedRoute}
+          name="Coming Soon!.."
+        />
+        <Route path="*" component={NotFoundRoute} name="Page Not Found" />
       </Route>
     </Router>
+  )
 
-  registerDebugGlobal( 'router', router, __filename, 'TopLevel react-router instance')
+  registerDebugGlobal('router', router, __filename, 'TopLevel react-router instance')
   urlMaker.setKnownRoutes(router)
   return router
 }
 
-Meteor.startup(function () {
+Meteor.startup(function() {
   const router = clientStartup()
   ReactDOM.render(router, document.getElementById('root'))
 })

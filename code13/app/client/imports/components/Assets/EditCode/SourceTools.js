@@ -1,8 +1,8 @@
 /*
  this is reviewed and adjusted SourceTools for current requirements
  */
-import knownLibs from "./knownLibs"
-import {observeAsset, mgbAjax, makeCDNLink, genetag} from "/client/imports/helpers/assetFetchers"
+import knownLibs from './knownLibs'
+import { observeAsset, mgbAjax, makeCDNLink, genetag } from '/client/imports/helpers/assetFetchers'
 import getCDNWorker from '/client/imports/helpers/CDNWorker'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
@@ -17,26 +17,25 @@ import { EventEmitter } from 'events'
  * @returns {String}
  */
 const getModuleServer = (lib, version = 'latest') => {
-  const parts = lib.split("@")
+  const parts = lib.split('@')
   if (parts.length === 1) {
     return `https://cdn.jsdelivr.net/${lib}/${version}/${lib}.min.js`
-  }
-  else {
+  } else {
     const name = parts[0]
     return `https://cdn.jsdelivr.net/${name}/${parts[1]}/${name}.min.js`
   }
 }
 
 const ERROR = {
-  SOURCE_NOT_FOUND: "W-ST-001", // warning - sourcetools - errnum -- atm only matters first letter: W(warning) E(error)
-  MULTIPLE_SOURCES: "W-ST-002",
-  UNREACHABLE_EXTERNAL_SOURCE: "W-ST-003",
+  SOURCE_NOT_FOUND: 'W-ST-001', // warning - sourcetools - errnum -- atm only matters first letter: W(warning) E(error)
+  MULTIPLE_SOURCES: 'W-ST-002',
+  UNREACHABLE_EXTERNAL_SOURCE: 'W-ST-003',
   // if same file is included - then export default won't work as expected - so show error
-  RECURSION_DETECTED: "E-ST-004",
+  RECURSION_DETECTED: 'E-ST-004',
   // if imported files will have recursion - usually everything will work fine.
   // But we still need to notify user that some unexpected behavior can happen
   // e.g. when imported resource is requested directly (not in the some function)
-  WARN_RECURSION_DETECTED: "W-ST-005"
+  WARN_RECURSION_DETECTED: 'W-ST-005',
 }
 
 /**
@@ -56,8 +55,7 @@ export default class SourceTools extends EventEmitter {
     this.tern = tern
     this.asset = asset
 
-    this.babelWorker = getCDNWorker("/lib/workers/BabelWorker.js")
-
+    this.babelWorker = getCDNWorker('/lib/workers/BabelWorker.js')
 
     this.cachedBundle = ''
     this.cachedAndMinfiedBundle = ''
@@ -78,7 +76,6 @@ export default class SourceTools extends EventEmitter {
 
     // map<importName, origin> - used to track down recursion
     this.pending = {}
-
   }
 
   /**
@@ -118,12 +115,11 @@ export default class SourceTools extends EventEmitter {
     // wait.... if in progress
     // we need only last call to be completed.. we will reject any previous calls and start last one
 
-    if(this.inProgress){
-      if(this.inProgress > started)
-        return Promise.reject() // bail out
+    if (this.inProgress) {
+      if (this.inProgress > started) return Promise.reject() // bail out
 
       this.shouldCancelASAP = true
-      return new Promise( resolve => {
+      return new Promise(resolve => {
         setTimeout(() => {
           resolve(this.collectAndTranspile(filename, src, started))
         }, 1000)
@@ -136,13 +132,13 @@ export default class SourceTools extends EventEmitter {
     this.tmpSubscriptions = this.subscriptions
     this.subscriptions = {}
 
-    return this._collectAndTranspile(filename, src)
-      .then(() => {
+    return this._collectAndTranspile(filename, src).then(
+      () => {
         // clean up pending scripts
         this.pending = {}
-        subs.forEach((key) => {
+        subs.forEach(key => {
           if (!this.subscriptions[key]) {
-            console.log("Closing old SUB:", key)
+            console.log('Closing old SUB:', key)
             this.tmpSubscriptions[key].subscription.stop()
             this.tern.server.delFile('/' + key)
             delete this.transpileCache['/' + key]
@@ -150,10 +146,11 @@ export default class SourceTools extends EventEmitter {
         })
         this.tmpSubscriptions = {}
         this.inProgress = 0
-      }, (e) => {
-        console.log("Cancelled..", e)
+      },
+      e => {
+        console.log('Cancelled..', e)
         this.inProgress = 0
-      }
+      },
     )
   }
 
@@ -161,10 +158,10 @@ export default class SourceTools extends EventEmitter {
    * checks if we should reject promise becasue of newer request
    * @param reject
    */
-  checkCancel(reject){
-    if(this.shouldCancelASAP) {
+  checkCancel(reject) {
+    if (this.shouldCancelASAP) {
       this.shouldCancelASAP = false
-      reject("Canceling previous running job...")
+      reject('Canceling previous running job...')
     }
   }
   /**
@@ -184,11 +181,10 @@ export default class SourceTools extends EventEmitter {
    */
   _collectAndTranspile(filename, src, origin = null, additionalProps = null) {
     if (this.pending[filename] && !this.transpileCache[filename]) {
-
       this.emit('error', {
-        reason: "Recursion: " + filename,
+        reason: 'Recursion: ' + filename,
         evidence: filename,
-        code: ERROR.WARN_RECURSION_DETECTED
+        code: ERROR.WARN_RECURSION_DETECTED,
       })
       return Promise.resolve()
     }
@@ -197,18 +193,20 @@ export default class SourceTools extends EventEmitter {
     // referring itself...
     if (filename === origin) {
       this.emit('error', {
-        reason: "Recursion: " + filename,
+        reason: 'Recursion: ' + filename,
         evidence: filename,
-        code: ERROR.RECURSION_DETECTED
+        code: ERROR.RECURSION_DETECTED,
       })
       return Promise.resolve()
     }
     // this object will contain all necessary info about script
     // we need to push it only after all other imported files from this file are resolved to maintain correct order
-    const toAdd = Object.assign(this.findCollected(filename) || {name: filename, origin: []}, additionalProps)
+    const toAdd = Object.assign(
+      this.findCollected(filename) || { name: filename, origin: [] },
+      additionalProps,
+    )
     // partial calls don't know origin - so leave as is
-    if (origin)
-      toAdd.origin.push(origin)
+    if (origin) toAdd.origin.push(origin)
 
     return this.transpile(filename, src)
       .then(data => {
@@ -218,10 +216,12 @@ export default class SourceTools extends EventEmitter {
         imports.forEach(imp => {
           // ignore empty urls
           if (imp.url.trim())
-            promises.push(this.loadImportedFile(imp.url, {
-              filename: imp.url,
-              referrer: additionalProps ? additionalProps.referrer : null
-            }))
+            promises.push(
+              this.loadImportedFile(imp.url, {
+                filename: imp.url,
+                referrer: additionalProps ? additionalProps.referrer : null,
+              }),
+            )
         })
         return Promise.all(promises)
       })
@@ -238,8 +238,7 @@ export default class SourceTools extends EventEmitter {
             this.collectedSources.push(toAdd)
           }
         })
-      }
-    )
+      })
   }
 
   /**
@@ -248,16 +247,13 @@ export default class SourceTools extends EventEmitter {
    * @returns {Array.<T>}
    */
   collectAvailableImportsForFile(filename) {
-
     // in the tern VFS all files starts with /
-    if(filename.indexOf('/') !== 0)
-      filename = '/' + filename
+    if (filename.indexOf('/') !== 0) filename = '/' + filename
 
     return this.collectedSources.filter(script => {
       // !!!!! after renaming asset script name won't match asset name
       // only main script don't have origin - as an extra check after renaming
-      if (script.name === filename || !script.origin)
-        return false
+      if (script.name === filename || !script.origin) return false
 
       return script.origin.indexOf(filename) === 0
     })
@@ -280,7 +276,6 @@ export default class SourceTools extends EventEmitter {
     return this.collectedSources.find(s => s.name === filename)
   }
 
-
   /**
    * Converts import to URL and loads it: there are 3 cases:
    *    global import e.g. phase / react / jquery
@@ -299,8 +294,7 @@ export default class SourceTools extends EventEmitter {
     additionalProps = additionalProps || {}
 
     // remove leading . from filename - old imports has one
-    if (filename.indexOf('.') === 0)
-      filename = filename.substring(1, filename.length)
+    if (filename.indexOf('.') === 0) filename = filename.substring(1, filename.length)
 
     const parts = SourceTools.getLibAndVersion(filename)
     // simple import e.g. 'phaser', 'jquery'
@@ -308,76 +302,76 @@ export default class SourceTools extends EventEmitter {
       // load knowLib - e.g. phaser
       const lib = knownLibs[parts[0]]
       if (lib) {
-        return this.load(lib.src ? lib.src(parts[1]) : getModuleServer(parts[0], parts[1]), null,
+        return this.load(
+          lib.src ? lib.src(parts[1]) : getModuleServer(parts[0], parts[1]),
+          null,
           Object.assign(additionalProps, {
             useGlobal: lib.useGlobal,
             isExternalFile: true,
             lib: parts[0],
-            version: parts[1]
-          })
-        )
-          .then(info => {
-            if (lib.defs)
-              this.loadDefs(lib.defs())
-            else
-              this.addFileToTern(filename, info.data)
-            return info
-          })
-      }
-      // unknown lib - e.g. jquery
-      else {
-        return this.load(getModuleServer(parts[0], parts[1]), null,
+            version: parts[1],
+          }),
+        ).then(info => {
+          if (lib.defs) this.loadDefs(lib.defs())
+          else this.addFileToTern(filename, info.data)
+          return info
+        })
+      } else {
+        // unknown lib - e.g. jquery
+        return this.load(
+          getModuleServer(parts[0], parts[1]),
+          null,
           Object.assign(additionalProps, {
             lib: parts[0],
-            version: parts[1]
-          })
-        )
-          .then(info => {
-            this.addFileToTern(filename, info.data)
-            return info
-          })
+            version: parts[1],
+          }),
+        ).then(info => {
+          this.addFileToTern(filename, info.data)
+          return info
+        })
       }
-    }
-    // load local file
-    else if (!SourceTools.isExternalFile(filename)) {
+    } else if (!SourceTools.isExternalFile(filename)) {
+      // load local file
       const ref = additionalProps.referrer || this.asset.dn_ownerName
       const parts = SourceTools.getUserAndName(filename, ref)
-      return this.startObserver(parts)
-        .then(asset => {
-          // TODO: what to do without asset????
-          const url = makeCDNLink(`/api/asset/code/${parts.join('/')}`, genetag(asset))
-          const es5src = makeCDNLink(`/api/asset/code/es5/${parts.join('/')}`, genetag(asset))
-          // try to get e5 source from asset
-          // TODO: store in the asset meta info - as we only need to verify if asset has es5 available
-          return this.load(es5src, asset).then(es5 => {
-
-            return this.load(url, asset, Object.assign(additionalProps, {
+      return this.startObserver(parts).then(asset => {
+        // TODO: what to do without asset????
+        const url = makeCDNLink(`/api/asset/code/${parts.join('/')}`, genetag(asset))
+        const es5src = makeCDNLink(`/api/asset/code/es5/${parts.join('/')}`, genetag(asset))
+        // try to get e5 source from asset
+        // TODO: store in the asset meta info - as we only need to verify if asset has es5 available
+        return this.load(es5src, asset).then(es5 => {
+          return this.load(
+            url,
+            asset,
+            Object.assign(additionalProps, {
               referrer: asset ? asset.dn_ownerName : ref,
               isExternalFile: !!(es5 && es5.data && es5.data.trim()),
               url: es5src,
               lib: parts[0],
-              version: parts[1]
-            }), ignoreCache)
-              .then(info => {
-                this.addFileToTern(filename, info.data)
-                return info
-              })
-
+              version: parts[1],
+            }),
+            ignoreCache,
+          ).then(info => {
+            this.addFileToTern(filename, info.data)
+            return info
           })
-
         })
-    }
-    // should be full url
-    else {
-      return this.load(filename, null, Object.assign(additionalProps, {
-        isExternalFile: true,
-        lib: parts[0],
-        version: parts[1]
-      }))
-        .then(info => {
-          this.addFileToTern(filename, info.data)
-          return info
-        })
+      })
+    } else {
+      // should be full url
+      return this.load(
+        filename,
+        null,
+        Object.assign(additionalProps, {
+          isExternalFile: true,
+          lib: parts[0],
+          version: parts[1],
+        }),
+      ).then(info => {
+        this.addFileToTern(filename, info.data)
+        return info
+      })
     }
   }
 
@@ -386,20 +380,18 @@ export default class SourceTools extends EventEmitter {
    * @param filename
    * @param src
    */
-  addFileToTern(filename, src){
+  addFileToTern(filename, src) {
     const prev = this.transpileCache[filename]
-    if(this.transpileCache[filename]){
-      if(prev.src === src){
+    if (this.transpileCache[filename]) {
+      if (prev.src === src) {
         /// console.log("Already added to tern server... skipping")
         return
       }
     }
-    if(src.length < SpecialGlobals.editCode.maxFileSizeForAST) {
+    if (src.length < SpecialGlobals.editCode.maxFileSizeForAST) {
       this.tern.server.addFile(filename, src, true)
       //console.log("Added file", filename, (src.length / 1024).toFixed(2) + "KB")
-    }
-    else
-      console.log(`File ${filename} is too big (${(src.length / 1024).toFixed(2)}KB )!`)
+    } else console.log(`File ${filename} is too big (${(src.length / 1024).toFixed(2)}KB )!`)
   }
   /**
    * Starts observing asset
@@ -417,15 +409,13 @@ export default class SourceTools extends EventEmitter {
     if (this.subscriptions[key] && !this.subscriptions[key].stopped()) {
       if (this.subscriptions[key].ready()) {
         return Promise.resolve(this.subscriptions[key].getAsset())
-      }
-      else {
-        return new Promise( (resolve, reject) => {
-            this.checkCancel(reject)
-            setTimeout(() => {
-              return this.startObserver(parts).then(asset => resolve(asset))
-            }, 300)
-          }
-        )
+      } else {
+        return new Promise((resolve, reject) => {
+          this.checkCancel(reject)
+          setTimeout(() => {
+            return this.startObserver(parts).then(asset => resolve(asset))
+          }, 300)
+        })
       }
     }
 
@@ -435,27 +425,25 @@ export default class SourceTools extends EventEmitter {
 
       const onReady = () => {
         // if subscription cannot be found - it has been moved for cleanup - restore it
-        if (!this.subscriptions[key])
-          this.subscriptions[key] = this.tmpSubscriptions[key]
+        if (!this.subscriptions[key]) this.subscriptions[key] = this.tmpSubscriptions[key]
 
         // not sure why this gets lost - probably tmpSubscriptions also is undefined.. as has been closed at some point
-        if (!this.subscriptions[key])
-          return resolve()
+        if (!this.subscriptions[key]) return resolve()
 
         const assets = this.subscriptions[key].getAssets()
         if (assets.length > 1) {
           this.emit('error', {
-            reason: "Multiple candidates found for: /" + key,
+            reason: 'Multiple candidates found for: /' + key,
             evidence: '/' + key,
-            code: ERROR.MULTIPLE_SOURCES
+            code: ERROR.MULTIPLE_SOURCES,
           })
         }
 
         if (!assets.length) {
           this.emit('error', {
-            reason: "Unable to load: /" + key,
+            reason: 'Unable to load: /' + key,
             evidence: '/' + key,
-            code: ERROR.SOURCE_NOT_FOUND
+            code: ERROR.SOURCE_NOT_FOUND,
           })
           resolve()
           return
@@ -474,19 +462,21 @@ export default class SourceTools extends EventEmitter {
           .then(data => this._collectAndTranspile(data.url, data.data))
           .then(() => {
             // guard here as async function - can be called even after component has been unmounted
-            if (this.subscriptions[key])
-              this.emit("change", this.subscriptions[key].getAsset())
+            if (this.subscriptions[key]) this.emit('change', this.subscriptions[key].getAsset())
           })
       }
 
-      this.subscriptions[key] = observeAsset({
-        dn_ownerName: owner,
-        name: name,
-        kind: AssetKindEnum.code,
-        isDeleted: false
-      }, onReady, onChange)
+      this.subscriptions[key] = observeAsset(
+        {
+          dn_ownerName: owner,
+          name: name,
+          kind: AssetKindEnum.code,
+          isDeleted: false,
+        },
+        onReady,
+        onChange,
+      )
     })
-
   }
 
   /**
@@ -505,16 +495,16 @@ export default class SourceTools extends EventEmitter {
       return Promise.resolve(this.transpileCache[filename].data)
 
     if (SourceTools.isExternalFile(filename) || SourceTools.isGlobalImport(filename)) {
-      const fakeBabelResponse = {data: {modules: {imports: [], exports: {specifiers: []}}}, code: src}
-      this.transpileCache[filename] = {src, data: fakeBabelResponse}
+      const fakeBabelResponse = { data: { modules: { imports: [], exports: { specifiers: [] } } }, code: src }
+      this.transpileCache[filename] = { src, data: fakeBabelResponse }
       return Promise.resolve(fakeBabelResponse)
     }
     return new Promise((resolve, reject) => {
       this.checkCancel(reject)
       const runBabelJob = () => {
         // TODO: spawn extra workers?
-        this.babelWorker.onmessage = (m) => {
-          this.transpileCache[filename] = {src, data: m.data}
+        this.babelWorker.onmessage = m => {
+          this.transpileCache[filename] = { src, data: m.data }
           // prevent extra calls
           this.babelWorker.onmessage = null
           this.babelWorker.isBusy = false
@@ -524,13 +514,10 @@ export default class SourceTools extends EventEmitter {
         this.babelWorker.postMessage([filename, src])
       }
       const checkBabelStatus = () => {
-        if (this.babelWorker.isBusy)
-          setTimeout(checkBabelStatus, 100)
-        else
-          runBabelJob()
+        if (this.babelWorker.isBusy) setTimeout(checkBabelStatus, 100)
+        else runBabelJob()
       }
       checkBabelStatus()
-
     })
   }
 
@@ -547,54 +534,47 @@ export default class SourceTools extends EventEmitter {
    * @returns {Promise.<String>} - resolves with bundle string
    */
   createBundle() {
-    return this.collectSources()
-      .then((sources) => {
+    return this.collectSources().then(sources => {
+      // check sources and skip bundling if ALL sources are empty
+      // empty means ';' - because of babel transforms
+      let canSkipBundling = true
+      for (let i = 0; i < sources.length; i++) {
+        const code = sources[i].code
+        if (code && code !== ';') {
+          canSkipBundling = false
+          break
+        }
+      }
+      if (canSkipBundling) {
+        this.cachedBundle = ''
+        this._hasSourceChanged = false
+        return
+      }
 
-        // check sources and skip bundling if ALL sources are empty
-        // empty means ';' - because of babel transforms
-        let canSkipBundling = true
-        for (let i = 0; i < sources.length; i++) {
-          const code = sources[i].code
-          if (code && code !== ";") {
-            canSkipBundling = false
-            break
+      // only phaser is global atm
+      const externalGlobal = []
+      const externalLocal = []
+      for (let i = 0; i < sources.length; i++) {
+        const source = sources[i]
+        if (source.isExternalFile) {
+          // only lib should be used here
+          const name = source.lib || source.name
+          const lib = knownLibs[name]
+          const url = lib && lib.min ? lib.min(source.version) : source.url
+
+          const localKey = source.url.split('/').pop().split('.').shift()
+          const partial = {
+            url: url,
+            localName: source.localName,
+            name: source.name,
+            localKey: localKey,
+            key: source.key,
           }
+          source.useGlobal ? externalGlobal.push(partial) : externalLocal.push(partial)
         }
-        if (canSkipBundling) {
-          this.cachedBundle = ''
-          this._hasSourceChanged = false
-          return
-        }
+      }
 
-        // only phaser is global atm
-        const externalGlobal = []
-        const externalLocal = []
-        for (let i = 0; i < sources.length; i++) {
-          const source = sources[i]
-          if (source.isExternalFile) {
-            // only lib should be used here
-            const name = source.lib || source.name
-            const lib = knownLibs[name]
-            const url = lib && lib.min
-              ? lib.min(source.version)
-              : source.url
-
-            const localKey = source.url.split("/").pop().split(".").shift()
-            const partial = {
-              url: url,
-              localName: source.localName,
-              name: source.name,
-              localKey: localKey,
-              key: source.key
-            }
-            source.useGlobal
-              ? externalGlobal.push(partial)
-              : externalLocal.push(partial)
-          }
-        }
-
-        let allInOneBundle =
-          `
+      let allInOneBundle = `
 (function(){
 
 var imports = {};
@@ -673,54 +653,74 @@ loadGlobalLibs(globalLibs)
 
 main = function(){
 `
-        const imports = {}
-        for (let i in sources) {
-          const source = sources[i]
-          if (source.isExternalFile) {
-            continue
-          }
-
-          const key = source.name.split("@").shift();
-          const localKeyWithExt = key.split("/").pop()
-          const localKey = localKeyWithExt.split(".").shift().split(":").pop()
-
-          allInOneBundle += "window.module = {exports: {}};window.exports = window.module.exports;\n" +
-            source.code + ";\n"
-
-          if (!imports[key])
-            allInOneBundle += "\n" + 'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-          if (!imports[key+'.js'])
-            allInOneBundle += "\n" + 'imports["' + key + '.js"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-          if (!imports[localKey])
-            allInOneBundle += "\n" + 'imports["' + localKey + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-          if (source.localName && !imports[source.localName])
-            allInOneBundle += "\n" + 'imports["' + source.localName + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-          if (source.name && !imports[source.name])
-            allInOneBundle += "\n" + 'imports["' + source.name + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+      const imports = {}
+      for (let i in sources) {
+        const source = sources[i]
+        if (source.isExternalFile) {
+          continue
         }
 
-        allInOneBundle += "\n" + "}})(); "
-        // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
+        const key = source.name.split('@').shift()
+        const localKeyWithExt = key.split('/').pop()
+        const localKey = localKeyWithExt.split('.').shift().split(':').pop()
 
-        if (this.cachedBundle === allInOneBundle) {
-          this._hasSourceChanged = false
-          return this.cachedAndMinfiedBundle || this.cachedBundle
-        }
+        allInOneBundle +=
+          'window.module = {exports: {}};window.exports = window.module.exports;\n' + source.code + ';\n'
 
-        this.cachedBundle = allInOneBundle
+        if (!imports[key])
+          allInOneBundle +=
+            '\n' +
+            'imports["' +
+            key +
+            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
 
-        // uncomment to get readable version of es5 code
-        //return  this.cachedBundle
-        return this.transpileAndMinify("bundled_" + this.asset.name, allInOneBundle).then((code) => {
-          this.cachedAndMinfiedBundle = code
-          this._hasSourceChanged = false
-          return this.cachedAndMinfiedBundle
-        })
+        if (!imports[key + '.js'])
+          allInOneBundle +=
+            '\n' +
+            'imports["' +
+            key +
+            '.js"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+
+        if (!imports[localKey])
+          allInOneBundle +=
+            '\n' +
+            'imports["' +
+            localKey +
+            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+
+        if (source.localName && !imports[source.localName])
+          allInOneBundle +=
+            '\n' +
+            'imports["' +
+            source.localName +
+            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+
+        if (source.name && !imports[source.name])
+          allInOneBundle +=
+            '\n' +
+            'imports["' +
+            source.name +
+            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+      }
+
+      allInOneBundle += '\n' + '}})(); '
+      // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
+
+      if (this.cachedBundle === allInOneBundle) {
+        this._hasSourceChanged = false
+        return this.cachedAndMinfiedBundle || this.cachedBundle
+      }
+
+      this.cachedBundle = allInOneBundle
+
+      // uncomment to get readable version of es5 code
+      //return  this.cachedBundle
+      return this.transpileAndMinify('bundled_' + this.asset.name, allInOneBundle).then(code => {
+        this.cachedAndMinfiedBundle = code
+        this._hasSourceChanged = false
+        return this.cachedAndMinfiedBundle
       })
+    })
   }
 
   /**
@@ -729,23 +729,26 @@ main = function(){
    * @param codeToTranspile - ES6 code
    * @returns {Promise}
    */
-  transpileAndMinify(name, codeToTranspile){
-    name = name  + '.js'
+  transpileAndMinify(name, codeToTranspile) {
+    name = name + '.js'
     return new Promise(resolve => {
-      const worker = getCDNWorker("/lib/workers/BabelWorker.js")
-      worker.onmessage = (e) => {
+      const worker = getCDNWorker('/lib/workers/BabelWorker.js')
+      worker.onmessage = e => {
         worker.terminate()
         resolve(e.data.code)
       }
-      worker.postMessage([name, codeToTranspile, {
-        compact: true,
-        minified: true,
-        comments: false,
-        ast: false,
-        retainLines: false
-      }])
+      worker.postMessage([
+        name,
+        codeToTranspile,
+        {
+          compact: true,
+          minified: true,
+          comments: false,
+          ast: false,
+          retainLines: false,
+        },
+      ])
     })
-
   }
 
   /**
@@ -757,28 +760,30 @@ main = function(){
    * @returns {Promise.<{url, data +additionalProps}>}
    */
   load(url, asset = null, additionalProps = null, ignoreCache = false) {
-
     return new Promise((resolve, reject) => {
       this.checkCancel(reject)
       if (!ignoreCache && this.loadedFilesAndDefs[url])
-        resolve(Object.assign({url, data: this.loadedFilesAndDefs[url]}, additionalProps))
+        resolve(Object.assign({ url, data: this.loadedFilesAndDefs[url] }, additionalProps))
 
-      mgbAjax(url, (err, data) => {
-        if (err) {
-          console.log("FAILED TO LOAD:", err, additionalProps)
-          const filename = additionalProps ? (additionalProps.filename || url) : url
-          this.emit('error', {
-            reason: "Unable to load: " + filename,
-            evidence: filename,
-            code: ERROR.SOURCE_NOT_FOUND
-          })
-        }
-        this.loadedFilesAndDefs[url] = data || ''
-        resolve(Object.assign({url, data}, additionalProps))
-      }, asset)
+      mgbAjax(
+        url,
+        (err, data) => {
+          if (err) {
+            console.log('FAILED TO LOAD:', err, additionalProps)
+            const filename = additionalProps ? additionalProps.filename || url : url
+            this.emit('error', {
+              reason: 'Unable to load: ' + filename,
+              evidence: filename,
+              code: ERROR.SOURCE_NOT_FOUND,
+            })
+          }
+          this.loadedFilesAndDefs[url] = data || ''
+          resolve(Object.assign({ url, data }, additionalProps))
+        },
+        asset,
+      )
     })
   }
-
 
   /**
    * Loads definition files defined in the knownLibs
@@ -787,8 +792,7 @@ main = function(){
    */
   loadDefs(defs) {
     const promises = []
-    for (let i = 0; i < defs.length; i++)
-      promises.push(this.loadSingleDef(defs[i]))
+    for (let i = 0; i < defs.length; i++) promises.push(this.loadSingleDef(defs[i]))
 
     return Promise.all(promises)
   }
@@ -826,9 +830,8 @@ main = function(){
    * @param url - source location
    * @returns {boolean}
    */
-  static
-  isExternalFile(url) {
-    return url.indexOf("http:") === 0 || url.indexOf("https:") === 0 || url.indexOf("//") === 0
+  static isExternalFile(url) {
+    return url.indexOf('http:') === 0 || url.indexOf('https:') === 0 || url.indexOf('//') === 0
   }
 
   /**
@@ -836,10 +839,8 @@ main = function(){
    * @param url
    * @returns {boolean}
    */
-  static
-  isGlobalImport(url) {
-    if (url.indexOf('.') === 0)
-      url = url.substring(1, url.length)
+  static isGlobalImport(url) {
+    if (url.indexOf('.') === 0) url = url.substring(1, url.length)
     return url.indexOf('/') !== 0 && url.indexOf('http:') !== 0 && url.indexOf('https:') !== 0
   }
 
@@ -849,8 +850,7 @@ main = function(){
    * @param defaultUser - default user
    * @returns {String[]}
    */
-  static
-  getUserAndName(filename, defaultUser) {
+  static getUserAndName(filename, defaultUser) {
     // older imports have format './myLib'
     if (filename.indexOf('./') === 0) {
       filename = filename.substring(2, filename.length)
@@ -860,12 +860,9 @@ main = function(){
       filename = filename.substring(1, filename.length)
     }
     const parts = filename.split(':')
-    if (parts.length > 1)
-      return parts
-    else if (defaultUser)
-      return [defaultUser, parts[0]]
-    else
-      throw new Error("defaultUser is missing!!!")
+    if (parts.length > 1) return parts
+    else if (defaultUser) return [defaultUser, parts[0]]
+    else throw new Error('defaultUser is missing!!!')
   }
 
   /**
@@ -873,8 +870,7 @@ main = function(){
    * @param filename
    * @returns {String[]}
    */
-  static
-  getLibAndVersion(filename) {
+  static getLibAndVersion(filename) {
     const parts = filename.split('@')
     if (parts.length > 1) {
       return parts
@@ -887,10 +883,9 @@ main = function(){
    * @param babelAST
    * @returns String[]} - array with imported files
    */
-  static
-  parseImport(babelAST) {
-    let imp;
-    const ret = [];
+  static parseImport(babelAST) {
+    let imp
+    const ret = []
 
     imp = babelAST.data.modules.imports
     for (let i = 0; i < imp.length; i++) {
@@ -901,7 +896,7 @@ main = function(){
       }
       ret.push({
         url: im.join('.'),
-        name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null
+        name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null,
       })
     }
 
@@ -909,15 +904,14 @@ main = function(){
     imp = babelAST.data.modules.exports.specifiers
     for (let i = 0; i < imp.length; i++) {
       const source = imp[i].source
-      if (source && imp[i].kind === "external") {
+      if (source && imp[i].kind === 'external') {
         const im = source.split('.')
 
-        if (source.indexOf('/') === 0 && source.indexOf('//') !== 0)
-          im.pop()
+        if (source.indexOf('/') === 0 && source.indexOf('//') !== 0) im.pop()
 
         ret.push({
           url: im.join('.'),
-          name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null
+          name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null,
         })
       }
     }

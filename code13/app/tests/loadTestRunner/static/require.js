@@ -16,9 +16,13 @@
         return
       }
       const src = toLoad[0]
-      const scripts = document.head.getElementsByTagName("script")
+      const scripts = document.head.getElementsByTagName('script')
       const loading = Array.prototype.find.call(scripts, s => {
-        return s.src === src || s.src.substring(window.location.origin.length - 1) === src || s.src.substring(window.location.origin.length) === src
+        return (
+          s.src === src ||
+          s.src.substring(window.location.origin.length - 1) === src ||
+          s.src.substring(window.location.origin.length) === src
+        )
       })
       if (loading) {
         if (!loading.loaded) {
@@ -27,8 +31,7 @@
             onload()
             load()
           }
-        }
-        else {
+        } else {
           setTimeout(load, 0)
         }
         return
@@ -37,7 +40,7 @@
       script.onload = () => {
         script.loaded = true
         const idx = toLoad.findIndex(s => s === src)
-        if(idx > -1) toLoad.splice(idx, 1)
+        if (idx > -1) toLoad.splice(idx, 1)
         setTimeout(load, 0)
       }
       script.src = src

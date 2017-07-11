@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
-import { Button, Card, Grid, Header, Icon, Label, List, Popup, Progress, } from 'semantic-ui-react'
+import { Button, Card, Grid, Header, Icon, Label, List, Popup, Progress } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import QLink from '/client/imports/routes/QLink'
 import { startSkillPathTutorial } from '/client/imports/routes/App'
@@ -24,68 +24,73 @@ class SkillLinkCard extends Component {
     completed: PropTypes.bool,
     started: PropTypes.bool,
     skillPath: PropTypes.string,
-    childSkills: PropTypes.arrayOf( PropTypes.string ),
-    learnedSkills: PropTypes.arrayOf( PropTypes.string ),
-    todoSkills: PropTypes.arrayOf( PropTypes.string ),
-    handleDoItAgainClick: PropTypes.func
+    childSkills: PropTypes.arrayOf(PropTypes.string),
+    learnedSkills: PropTypes.arrayOf(PropTypes.string),
+    todoSkills: PropTypes.arrayOf(PropTypes.string),
+    handleDoItAgainClick: PropTypes.func,
   }
 
   state = {}
 
   isCompleted = () => {
     const { completed, todoSkills } = this.props
-    return !_.isNil( completed ) ? completed : _.get( todoSkills, 'length' ) === 0
+    return !_.isNil(completed) ? completed : _.get(todoSkills, 'length') === 0
   }
 
   isStarted = () => {
     const { started, learnedSkills } = this.props
-    return !_.isNil( started ) ? started : _.get( learnedSkills, 'length' ) > 0
+    return !_.isNil(started) ? started : _.get(learnedSkills, 'length') > 0
   }
 
   handleClick = () => {
     const { skillPath, todoSkills, disabled, to } = this.props
 
     // cards with links already have a path, skip on to
-    if (!!to || disabled || this.isCompleted())
-      return
+    if (!!to || disabled || this.isCompleted()) return
 
-    startSkillPathTutorial( skillPath + '.' + todoSkills[0] )
+    startSkillPathTutorial(skillPath + '.' + todoSkills[0])
   }
 
-  handleMouseEnter = () => this.setState( { isHovering: true } )
-  handleMouseLeave = () => this.setState( { isHovering: false } )
+  handleMouseEnter = () => this.setState({ isHovering: true })
+  handleMouseLeave = () => this.setState({ isHovering: false })
 
-  handlePopupOpen = () => this.setState( { showPopup: true } )
-  handlePopupClose = () => this.setState( { showPopup: false } )
+  handlePopupOpen = () => this.setState({ showPopup: true })
+  handlePopupClose = () => this.setState({ showPopup: false })
 
   handleDoItAgainClick(skillPath) {
-    this.setState( { isHovering: false, showPopup: false } )
-    startSkillPathTutorial( skillPath )
+    this.setState({ isHovering: false, showPopup: false })
+    startSkillPathTutorial(skillPath)
   }
 
   renderProgressBar = () => {
     const { childSkills, learnedSkills } = this.props
-    if (this.isCompleted() || !this.isStarted() || _.isEmpty( childSkills ) || _.isEmpty( learnedSkills ))
+    if (this.isCompleted() || !this.isStarted() || _.isEmpty(childSkills) || _.isEmpty(learnedSkills))
       return null
 
-    return <Progress active size='tiny' color='yellow' percent={Math.round(100 * learnedSkills.length / childSkills.length)} />
+    return (
+      <Progress
+        active
+        size="tiny"
+        color="yellow"
+        percent={Math.round(100 * learnedSkills.length / childSkills.length)}
+      />
+    )
   }
 
   renderShowCompleted = () => {
     const { user, childSkills, skillPath } = this.props
     const { isHovering, showPopup } = this.state
 
-    if (_.isEmpty( childSkills ) || !this.isCompleted())
-      return
+    if (_.isEmpty(childSkills) || !this.isCompleted()) return
 
     return (
       <Popup
-        trigger={(
-          <Button basic floated='right' style={{ transition: 'opacity 0.2s', opacity: +!!isHovering }}>
+        trigger={
+          <Button basic floated="right" style={{ transition: 'opacity 0.2s', opacity: +!!isHovering }}>
             Show Completed
           </Button>
-        )}
-        position='left center'
+        }
+        position="left center"
         hoverable
         open={showPopup}
         closeOnTriggerBlur={false}
@@ -94,44 +99,37 @@ class SkillLinkCard extends Component {
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
       >
-        <Header sub dividing textAlign='center'>Do it again</Header>
+        <Header sub dividing textAlign="center">
+          Do it again
+        </Header>
         <List selection>
-          {_.map( childSkills, skillLeafKey => (
-            <List.Item 
-              key={skillLeafKey} 
-              onClick={ (e) => {
+          {_.map(childSkills, skillLeafKey =>
+            <List.Item
+              key={skillLeafKey}
+              onClick={e => {
                 if (this.props.handleDoItAgainClick) {
-                  this.props.handleDoItAgainClick(e, skillPath + '.' + skillLeafKey, user) 
-                  this.setState( { isHovering: false, showPopup: false } )
-                } 
-                else {
-                  this.handleDoItAgainClick( skillPath + '.' + skillLeafKey )
-                } 
+                  this.props.handleDoItAgainClick(e, skillPath + '.' + skillLeafKey, user)
+                  this.setState({ isHovering: false, showPopup: false })
+                } else {
+                  this.handleDoItAgainClick(skillPath + '.' + skillLeafKey)
+                }
               }}
             >
-              <Icon name='refresh' />
+              <Icon name="refresh" />
               <List.Content>
-                <List.Header as='a'>
-                  {getFriendlyName( skillPath + '.' + skillLeafKey )}
+                <List.Header as="a">
+                  {getFriendlyName(skillPath + '.' + skillLeafKey)}
                 </List.Header>
               </List.Content>
-            </List.Item>
-          ) )}
+            </List.Item>,
+          )}
         </List>
       </Popup>
     )
   }
 
   render() {
-    const {
-      to,
-      mascot,
-      name,
-      description,
-      disabled,
-      childSkills,
-      learnedSkills,
-    } = this.props
+    const { to, mascot, name, description, disabled, childSkills, learnedSkills } = this.props
 
     const completed = this.isCompleted()
     const started = this.isStarted()
@@ -148,7 +146,7 @@ class SkillLinkCard extends Component {
 
     const unhandledProps = _.pick(
       this.props,
-      _.difference( _.keys( this.props ), _.keys( SkillLinkCard.propTypes ) )
+      _.difference(_.keys(this.props), _.keys(SkillLinkCard.propTypes)),
     )
     return (
       <Card
@@ -167,34 +165,38 @@ class SkillLinkCard extends Component {
         onTouchEnd={this.props.onTouchEnd}
       >
         <Card.Content>
-          <Grid columns='equal' verticalAlign='middle'>
-            <Grid.Column style={imageColumnStyle} textAlign='center'>
+          <Grid columns="equal" verticalAlign="middle">
+            <Grid.Column style={imageColumnStyle} textAlign="center">
               {completed
-                ? <Icon size={completed ? 'large' : 'big'} name='checkmark' color='green' style={{ margin: 'auto' }} />
-                : <img src={UX.makeMascotImgLink( mascot )} style={imageStyle} />
-              }
+                ? <Icon
+                    size={completed ? 'large' : 'big'}
+                    name="checkmark"
+                    color="green"
+                    style={{ margin: 'auto' }}
+                  />
+                : <img src={UX.makeMascotImgLink(mascot)} style={imageStyle} />}
             </Grid.Column>
             <Grid.Column>
               <Header as={completed ? 'h2' : 'h1'}>
                 {name}
-                {!completed && <Header.Subheader>{description}.</Header.Subheader>}
+                {!completed &&
+                  <Header.Subheader>
+                    {description}.
+                  </Header.Subheader>}
               </Header>
             </Grid.Column>
-            {!disabled && (
-              <Grid.Column width={started ? 6 : 4} textAlign='right'>
+            {!disabled &&
+              <Grid.Column width={started ? 6 : 4} textAlign="right">
                 {completed
                   ? this.renderShowCompleted()
-                  : (
-                    <Label
+                  : <Label
                       basic={!started}
-                      size='big'
+                      size="big"
                       color={started ? 'yellow' : 'grey'}
                       content={started ? 'Continue' : 'Start'}
                       detail={started ? `${learnedSkills.length} / ${childSkills.length}` : null}
-                    />
-                  )}
-              </Grid.Column>
-            )}
+                    />}
+              </Grid.Column>}
           </Grid>
         </Card.Content>
 

@@ -2,22 +2,17 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 
-
-
 export default class Timeline extends React.Component {
-
-  constructor (props) {
+  constructor(props) {
     super(props)
     // console.log(props)
 
-    this.state = {
-
-    }
+    this.state = {}
 
     this.viewOffsetX = 0
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.timelineCanvas = ReactDOM.findDOMNode(this.refs.timeline)
     this.timelineCtx = this.timelineCanvas.getContext('2d')
     this.timelineDiv = ReactDOM.findDOMNode(this.refs.timelineDiv)
@@ -25,16 +20,16 @@ export default class Timeline extends React.Component {
     this.draw()
   }
 
-  componentDidUpdate (prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     this.draw()
   }
 
-  setViewOffset (viewOffset) {
+  setViewOffset(viewOffset) {
     this.viewOffsetX = viewOffset * this.props.pxPerSecond
     this.draw()
   }
 
-  draw () {
+  draw() {
     this.timelineCtx.clearRect(0, 0, this.props.viewWidth, 50)
     if (!this.props.duration) return
     let count = Math.floor(this.props.duration) + 1
@@ -52,12 +47,11 @@ export default class Timeline extends React.Component {
     this.timelineCtx.restore()
   }
 
-  render () {
+  render() {
     return (
-      <div className='timeline' ref="timelineDiv">
-        <canvas ref='timeline' width={this.props.viewWidth} height='50px'></canvas>
+      <div className="timeline" ref="timelineDiv">
+        <canvas ref="timeline" width={this.props.viewWidth} height="50px" />
       </div>
-
     )
   }
 }

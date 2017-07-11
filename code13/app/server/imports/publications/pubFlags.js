@@ -5,13 +5,12 @@ import { Flags } from '/imports/schemas'
 //
 //TODO add resolvedAT to index
 Meteor.publish('flagged.recent.unresolved', function() {
-  let selector = { resolvedAt: {$exists: false} }
-  let options = {sort: {createdAt: -1}}
+  let selector = { resolvedAt: { $exists: false } }
+  let options = { sort: { createdAt: -1 } }
 
   return Flags.find(selector, options)
 })
 
-
 //
 //Flags Indexes
-Flags._ensureIndex( { "createdAt": -1 } )
+Flags._ensureIndex({ createdAt: -1 })

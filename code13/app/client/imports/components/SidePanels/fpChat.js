@@ -10,7 +10,7 @@ import { Azzets } from '/imports/schemas'
 import {
   getLastReadTimestampForChannel,
   getPinnedChannelNames,
-  togglePinnedChannelName
+  togglePinnedChannelName,
 } from '/imports/schemas/settings-client'
 
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -21,19 +21,16 @@ import {
   isChannelNameValid,
   chatParams,
   makePresentedChannelName,
-  makePresentedChannelIconName
+  makePresentedChannelIconName,
 } from '/imports/schemas/chats'
 
 const unreadChannelIndicatorStyle = {
-  marginLeft:   '0.3em',
+  marginLeft: '0.3em',
   marginBottom: '0.9em',
-  fontSize:     '0.5rem',
+  fontSize: '0.5rem',
 }
 
 const initialMessageLimit = 5
-
-
-
 
 /* TODOs for planned chat work
 
@@ -133,104 +130,104 @@ const initialMessageLimit = 5
 
  */
 
-
-
 /**
  * This is a server-supported solution for getting the AssetNames for
  * pinned Asset Chat channels. See how RPC "Chats.getLastMessageTimestamps" helps out here
  * @param {String} assetId
  */
 const _getAssetNameIfAvailable = (assetId, chatChannelTimestamp) => {
-
   // Hopefully it is in chatChannelTimestamps as returned by RPC Chats.getLastMessageTimestamps
 
   if (chatChannelTimestamp && chatChannelTimestamp.assetInfo && chatChannelTimestamp.assetInfo.name)
-    return chatChannelTimestamp.assetInfo.name  // Sweet!
+    return chatChannelTimestamp.assetInfo.name // Sweet!
 
   // ok, let's see what we've got here.. Maybe we don't have the info we need yet from the server
-  const a = Azzets.findOne( assetId )
+  const a = Azzets.findOne(assetId)
   return a ? a.name : 'Asset #' + assetId
 }
-
 
 // This is a simple way to remember the channel key for the flexPanel since there is exactly one of these.
 // Users got annoyed when they always went back to the default channel
 // TODO: Push this up to flexPanel.js? or have flexPanel.js provide an optional 'recent state' prop?
 let _previousChannelName = null // This should be null or a name known to succeed with isChannelNameValid()
 
-export default fpChat = React.createClass( {
+const fpChat = React.createClass({
   propTypes: {
-    currUser:                        PropTypes.object,             // Currently Logged in user. Can be null/undefined
-    currUserProjects:                PropTypes.array,              // Projects list for currently logged in user
-    user:                            PropTypes.object,             // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    panelWidth:                      PropTypes.string.isRequired,  // Typically something like "200px".
-    isSuperAdmin:                    PropTypes.bool.isRequired,    // Yes if one of core engineering team. Show extra stuff
-    subNavParam:                     PropTypes.string.isRequired,  // "" or a string that defines the sub-nav within this FlexPanel
-    handleChangeSubNavParam:         PropTypes.func.isRequired,    // Call this back with the SubNav string (queryParam ?fp=___.subnavStr) to change it
+    currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
+    currUserProjects: PropTypes.array, // Projects list for currently logged in user
+    user: PropTypes.object, // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
+    panelWidth: PropTypes.string.isRequired, // Typically something like "200px".
+    isSuperAdmin: PropTypes.bool.isRequired, // Yes if one of core engineering team. Show extra stuff
+    subNavParam: PropTypes.string.isRequired, // "" or a string that defines the sub-nav within this FlexPanel
+    handleChangeSubNavParam: PropTypes.func.isRequired, // Call this back with the SubNav string (queryParam ?fp=___.subnavStr) to change it
     // chat stuff
-    chatChannelTimestamps:           PropTypes.array,              // as defined by Chats.getLastMessageTimestamps RPC
-    requestChatChannelTimestampsNow: PropTypes.func.isRequired,   // It does what it says on the box. Used by fpChat
-    hazUnreadChats:                  PropTypes.array               // As defined in App.js:state
+    chatChannelTimestamps: PropTypes.array, // as defined by Chats.getLastMessageTimestamps RPC
+    requestChatChannelTimestampsNow: PropTypes.func.isRequired, // It does what it says on the box. Used by fpChat
+    hazUnreadChats: PropTypes.array, // As defined in App.js:state
   },
 
   // Settings context needed for get/setLastReadTimestampForChannel and the pin/unpin list
   contextTypes: {
-    settings: PropTypes.object
+    settings: PropTypes.object,
   },
 
   _calculateActiveChannelName: function() {
-    const { subNavParam } = this.props  // empty string means "default"
-    const channelName = subNavParam   // So this should be something like 'G_MGBBUGS_'.. i.e. a key into ChatChannels{}
-    return isChannelNameValid( channelName ) ? channelName : _previousChannelName || chatParams.defaultChannelName
+    const { subNavParam } = this.props // empty string means "default"
+    const channelName = subNavParam // So this should be something like 'G_MGBBUGS_'.. i.e. a key into ChatChannels{}
+    return isChannelNameValid(channelName)
+      ? channelName
+      : _previousChannelName || chatParams.defaultChannelName
   },
 
   getInitialState: function() {
     return {
-      view:                                'comments',           // Exactly one of ['comments', 'channels']
-      pendingCommentsRenderForChannelName: '*',                  // Very explicit way to edge-detect to trigger code on first
-                                                                 // render of a specific chat channel (for handling read/unread
-                                                                 // transitions etc). If null, there is nothing pending.
-                                                                 // If '*' then render on whatever the next channelName is.
-                                                                 // if any-other-string, then we are waiting for that specific channelName
-      pastMessageLimit:                    initialMessageLimit
+      view: 'comments', // Exactly one of ['comments', 'channels']
+      pendingCommentsRenderForChannelName: '*', // Very explicit way to edge-detect to trigger code on first
+      // render of a specific chat channel (for handling read/unread
+      // transitions etc). If null, there is nothing pending.
+      // If '*' then render on whatever the next channelName is.
+      // if any-other-string, then we are waiting for that specific channelName
+      pastMessageLimit: initialMessageLimit,
     }
   },
 
   changeChannel: function(selectedChannelName) {
-    joyrideCompleteTag( `mgbjr-CT-fp-chat-channel-select-${selectedChannelName}` )
-    if (selectedChannelName && selectedChannelName.length > 0 && selectedChannelName !== this._calculateActiveChannelName()) {
+    joyrideCompleteTag(`mgbjr-CT-fp-chat-channel-select-${selectedChannelName}`)
+    if (
+      selectedChannelName &&
+      selectedChannelName.length > 0 &&
+      selectedChannelName !== this._calculateActiveChannelName()
+    ) {
       _previousChannelName = selectedChannelName
-      this.setState( {
-        pastMessageLimit:                    initialMessageLimit,
-        pendingCommentsRenderForChannelName: selectedChannelName
-      } )
-      this.props.handleChangeSubNavParam( selectedChannelName )
+      this.setState({
+        pastMessageLimit: initialMessageLimit,
+        pendingCommentsRenderForChannelName: selectedChannelName,
+      })
+      this.props.handleChangeSubNavParam(selectedChannelName)
     }
   },
 
   handleChatChannelChange: function(newChannelName) {
-    this.changeChannel( newChannelName )
-    this.setState( { view: 'comments' } )
+    this.changeChannel(newChannelName)
+    this.setState({ view: 'comments' })
   },
 
   handleDocumentKeyDown: function(e) {
-    if (e.keyCode === 27 && this.state.view === 'channels')
-      this.setState( { view: 'comments' } )
+    if (e.keyCode === 27 && this.state.view === 'channels') this.setState({ view: 'comments' })
   },
 
   handleDocumentClick: function() {
-    if (this.state.view === 'channels')
-      this.setState( { view: 'comments' } )
+    if (this.state.view === 'channels') this.setState({ view: 'comments' })
   },
 
   componentWillMount: function() {
-    document.addEventListener( 'keydown', this.handleDocumentKeyDown )
-    document.addEventListener( 'click', this.handleDocumentClick )
+    document.addEventListener('keydown', this.handleDocumentKeyDown)
+    document.addEventListener('click', this.handleDocumentClick)
   },
 
   componentWillUnmount: function() {
-    document.removeEventListener( 'keydown', this.handleDocumentKeyDown )
-    document.removeEventListener( 'click', this.handleDocumentClick )
+    document.removeEventListener('keydown', this.handleDocumentKeyDown)
+    document.removeEventListener('click', this.handleDocumentClick)
   },
 
   componentDidUpdate: function() {
@@ -243,18 +240,21 @@ export default fpChat = React.createClass( {
       _previousChannelName = channelName
 
       if (pendingCommentsRenderForChannelName) {
-        if (pendingCommentsRenderForChannelName === channelName || '*' === pendingCommentsRenderForChannelName) {
+        if (
+          pendingCommentsRenderForChannelName === channelName ||
+          '*' === pendingCommentsRenderForChannelName
+        ) {
           // OK, let's do stuff!
 
           // 0. First, note that we have done this stuff (so we don't redo it)
-          this.setState( { pendingCommentsRenderForChannelName: null } )
+          this.setState({ pendingCommentsRenderForChannelName: null })
 
           // 1. Refresh the chat notifications
           this.props.requestChatChannelTimestampsNow()
 
           // 2. Maybe scroll last message into view
           if (this.state.pastMessageLimit <= initialMessageLimit && this.state.view === 'comments')
-            this.refs.bottomOfMessageDiv.scrollIntoView( false )
+            this.refs.bottomOfMessageDiv.scrollIntoView(false)
         }
       }
     }
@@ -266,24 +266,22 @@ export default fpChat = React.createClass( {
     e.nativeEvent.stopImmediatePropagation()
     const { view } = this.state
 
-    this.setState( { view: view === 'comments' ? 'channels' : 'comments' } )
+    this.setState({ view: view === 'comments' ? 'channels' : 'comments' })
   },
 
   doesChannelHaveUnreads: function(channelName, channelTimestamps) {
-    const latestForChannel = _.find( channelTimestamps, { _id: channelName } )
-    if (!latestForChannel)
-      return false
+    const latestForChannel = _.find(channelTimestamps, { _id: channelName })
+    if (!latestForChannel) return false
 
-    const lastReadByUser = getLastReadTimestampForChannel( this.context.settings, channelName )
+    const lastReadByUser = getLastReadTimestampForChannel(this.context.settings, channelName)
 
     return !lastReadByUser || latestForChannel.lastCreatedAt.getTime() > lastReadByUser.getTime()
   },
 
   renderUnreadChannelIndicator: function(channelName, channelTimeStamps) {
-    if (!this.doesChannelHaveUnreads( channelName, channelTimeStamps ))
-      return null
+    if (!this.doesChannelHaveUnreads(channelName, channelTimeStamps)) return null
 
-    return <Label empty circular color='red' size='mini' style={unreadChannelIndicatorStyle} />
+    return <Label empty circular color="red" size="mini" style={unreadChannelIndicatorStyle} />
   },
 
   /** Render the channel chooser list. This is shown when this.state.view == 'channels'
@@ -293,49 +291,52 @@ export default fpChat = React.createClass( {
     const { view } = this.state
     const { currUser, currUserProjects, chatChannelTimestamps } = this.props
     const { settings } = this.context
-    const wallChannelName = currUser ? makeChannelName( { scopeGroupName: 'User', scopeId: currUser.username } ) : null
+    const wallChannelName = currUser
+      ? makeChannelName({ scopeGroupName: 'User', scopeId: currUser.username })
+      : null
 
     // My Wall
-    const myWall = ( !currUser ? null :
-      <List selection>
-        <List.Item>
-          <List.Header disabled style={{ textAlign: 'center' }}>My Wall</List.Header>
-        </List.Item>
-        <List.Item
-          onClick={() => this.handleChatChannelChange( wallChannelName )}
-          title='My Wall'
-        >
-          <Icon name='user' />
-          <List.Content>
-            {makePresentedChannelName( wallChannelName, currUser.username )}
-            {this.renderUnreadChannelIndicator( wallChannelName, chatChannelTimestamps )}
-          </List.Content>
-        </List.Item>
-      </List>
-    )
+    const myWall = !currUser
+      ? null
+      : <List selection>
+          <List.Item>
+            <List.Header disabled style={{ textAlign: 'center' }}>
+              My Wall
+            </List.Header>
+          </List.Item>
+          <List.Item onClick={() => this.handleChatChannelChange(wallChannelName)} title="My Wall">
+            <Icon name="user" />
+            <List.Content>
+              {makePresentedChannelName(wallChannelName, currUser.username)}
+              {this.renderUnreadChannelIndicator(wallChannelName, chatChannelTimestamps)}
+            </List.Content>
+          </List.Item>
+        </List>
 
     // PUBLIC (GLOBAL) CHANNELS
     const publicChannels = (
       <List selection>
         <List.Item>
-          <List.Header disabled style={{ textAlign: 'center' }}>Public Channels</List.Header>
+          <List.Header disabled style={{ textAlign: 'center' }}>
+            Public Channels
+          </List.Header>
         </List.Item>
-        {ChatChannels.sortedKeys.map( k => {
+        {ChatChannels.sortedKeys.map(k => {
           const chan = ChatChannels[k]
           return (
             <List.Item
               key={k}
-              onClick={() => this.handleChatChannelChange( chan.channelName )}
+              onClick={() => this.handleChatChannelChange(chan.channelName)}
               title={chan.description}
             >
               <Icon name={chan.icon} />
               <List.Content>
-                {makePresentedChannelName( chan.channelName )}
-                {this.renderUnreadChannelIndicator( chan.channelName, chatChannelTimestamps )}
+                {makePresentedChannelName(chan.channelName)}
+                {this.renderUnreadChannelIndicator(chan.channelName, chatChannelTimestamps)}
               </List.Content>
             </List.Item>
           )
-        } )}
+        })}
       </List>
     )
 
@@ -370,109 +371,109 @@ export default fpChat = React.createClass( {
     const projectChannels = (
       <List selection>
         <List.Item>
-          <List.Header disabled style={{ textAlign: 'center' }}>Project Channels</List.Header>
+          <List.Header disabled style={{ textAlign: 'center' }}>
+            Project Channels
+          </List.Header>
         </List.Item>
-        {
-          _.sortBy(
-            currUserProjects, p => (currUser && p.ownerId === currUser._id ? '' : p.ownerName)
-          ).map( project => {
-            const isOwner = (currUser && project.ownerId === currUser._id)
-            const channelName = makeChannelName( { scopeGroupName: 'Project', scopeId: project._id } )
-            return (
-              <List.Item key={project._id} onClick={() => this.handleChatChannelChange( channelName )}>
-                <Icon
-                  title={`Navigate to ${isOwner ? 'your' : 'their'} project`}
-                  as={QLink}
-                  elOverride='i'
-                  to={`/u/${project.ownerName}/projects/${project.name}`}
-                  name='sitemap'
-                  color={isOwner ? 'green' : 'blue' }
-                  onClick={e => e.nativeEvent.stopImmediatePropagation()}
-                />
-                <List.Content title='Select Channel'>
-                  { !isOwner && project.ownerName + ' : ' }
-                  { project.name }
-                  {this.renderUnreadChannelIndicator( channelName, chatChannelTimestamps )}
-                </List.Content>
-              </List.Item>
-            )
-          } )
-        }
+        {_.sortBy(
+          currUserProjects,
+          p => (currUser && p.ownerId === currUser._id ? '' : p.ownerName),
+        ).map(project => {
+          const isOwner = currUser && project.ownerId === currUser._id
+          const channelName = makeChannelName({ scopeGroupName: 'Project', scopeId: project._id })
+          return (
+            <List.Item key={project._id} onClick={() => this.handleChatChannelChange(channelName)}>
+              <Icon
+                title={`Navigate to ${isOwner ? 'your' : 'their'} project`}
+                as={QLink}
+                elOverride="i"
+                to={`/u/${project.ownerName}/projects/${project.name}`}
+                name="sitemap"
+                color={isOwner ? 'green' : 'blue'}
+                onClick={e => e.nativeEvent.stopImmediatePropagation()}
+              />
+              <List.Content title="Select Channel">
+                {!isOwner && project.ownerName + ' : '}
+                {project.name}
+                {this.renderUnreadChannelIndicator(channelName, chatChannelTimestamps)}
+              </List.Content>
+            </List.Item>
+          )
+        })}
       </List>
     )
 
     // ASSET CHANNELS
-    const pinnedChannelNames = getPinnedChannelNames( settings )
-    const assetChannelObjects = _
-      .chain( [this.props.subNavParam] )      // Current channel at top of this list
-      .concat( pinnedChannelNames )           // Add the other pinned Channels
-      .uniq()                                 // Remove dupes
-      .map( parseChannelName )                // parse channelName to channelObject
-      .filter( { scopeGroupName: 'Asset' } )  // We only want the Asset channels for this list
+    const pinnedChannelNames = getPinnedChannelNames(settings)
+    const assetChannelObjects = _.chain([this.props.subNavParam]) // Current channel at top of this list
+      .concat(pinnedChannelNames) // Add the other pinned Channels
+      .uniq() // Remove dupes
+      .map(parseChannelName) // parse channelName to channelObject
+      .filter({ scopeGroupName: 'Asset' }) // We only want the Asset channels for this list
       .value()
 
     const assetChannels = (
       <List selection>
         <List.Item>
-          <List.Header disabled style={{ textAlign: 'center' }}>Asset Channels</List.Header>
+          <List.Header disabled style={{ textAlign: 'center' }}>
+            Asset Channels
+          </List.Header>
         </List.Item>
 
-        { _.map( assetChannelObjects, aco => (
-          <List.Item
-            key={aco.channelName}
-            onClick={() => this.handleChatChannelChange( aco.channelName )}>
-              <Icon
-                title={`View/Edit Asset`}
-                as={QLink}
-                elOverride='i'
-                to={`/assetEdit/${aco.scopeId}`}
-                name='pencil'
-                color='blue'
-                onClick={e => e.nativeEvent.stopImmediatePropagation()}
-              />
+        {_.map(assetChannelObjects, aco =>
+          <List.Item key={aco.channelName} onClick={() => this.handleChatChannelChange(aco.channelName)}>
+            <Icon
+              title={`View/Edit Asset`}
+              as={QLink}
+              elOverride="i"
+              to={`/assetEdit/${aco.scopeId}`}
+              name="pencil"
+              color="blue"
+              onClick={e => e.nativeEvent.stopImmediatePropagation()}
+            />
             <List.Content>
               <Icon
-                name='pin'
-                color={ _.includes( pinnedChannelNames, aco.channelName ) ? 'green' : 'grey' }
+                name="pin"
+                color={_.includes(pinnedChannelNames, aco.channelName) ? 'green' : 'grey'}
                 onClick={e => {
-                  togglePinnedChannelName( settings, aco.channelName )
+                  togglePinnedChannelName(settings, aco.channelName)
                   e.stopPropagation()
                   e.preventDefault()
-                } }
-                style={{ position: 'absolute', right: '1em' }} />
-              { /* !isAssetOwner && assetOwnerName + ' : ' */ }
-              { _getAssetNameIfAvailable( aco.scopeId, _.find( chatChannelTimestamps, { _id: aco.channelName } ) ) }
-              {this.renderUnreadChannelIndicator( aco.channelName, chatChannelTimestamps )}
+                }}
+                style={{ position: 'absolute', right: '1em' }}
+              />
+              {/* !isAssetOwner && assetOwnerName + ' : ' */}
+              {_getAssetNameIfAvailable(aco.scopeId, _.find(chatChannelTimestamps, { _id: aco.channelName }))}
+              {this.renderUnreadChannelIndicator(aco.channelName, chatChannelTimestamps)}
             </List.Content>
-          </List.Item>
-        ) ) }
+          </List.Item>,
+        )}
 
         <List.Item>
           <List.Content>
             Pin an 'Asset Chat' channel here to enable chat notifications for that Asset
           </List.Content>
         </List.Item>
-
       </List>
     )
 
     const isOpen = view === 'channels'
 
     const style = {
-      position:      'absolute',
-      overflow:      'auto',
-      margin:        '0 10px',
-      top:           '5em',
-      bottom:        '0.5em',
-      left:          '0',
-      right:         '0',
-      transition:    'transform 200ms, opacity 200ms',
-      transform:     isOpen ? 'translateY(0)' : 'translateY(-3em)',
-      background:    '#fff',
-      boxShadow:     '0 1px 4px rgba(0, 0, 0, 0.2)',
-      opacity:       +isOpen,
+      position: 'absolute',
+      overflow: 'auto',
+      margin: '0 10px',
+      top: '5em',
+      bottom: '0.5em',
+      left: '0',
+      right: '0',
+      transition: 'transform 200ms, opacity 200ms',
+      transform: isOpen ? 'translateY(0)' : 'translateY(-3em)',
+      background: '#fff',
+      boxShadow: '0 1px 4px rgba(0, 0, 0, 0.2)',
+      opacity: +isOpen,
       pointerEvents: isOpen ? 'all' : 'none',
-      zIndex:        '100',
+      zIndex: '100',
     }
 
     return (
@@ -496,16 +497,15 @@ export default fpChat = React.createClass( {
    * @returns {String} something like project.name or asset.name or user.name
    */
   findObjectNameForChannelName: function(channelName) {
-    const channelObj = parseChannelName( channelName )
+    const channelObj = parseChannelName(channelName)
 
     // Global channels are a special case since they are a fixed mapping in chats.js
-    if (channelObj.scopeGroupName === 'Global')
-      return null // these are handled directly in makePresentedChannelName() which is what we are generating this data for
+    if (channelObj.scopeGroupName === 'Global') return null // these are handled directly in makePresentedChannelName() which is what we are generating this data for
 
     // map project_id to project.name
     if (channelObj.scopeGroupName === 'Project') {
       const { currUserProjects } = this.props
-      const proj = _.find( currUserProjects, { _id: channelObj.scopeId } )
+      const proj = _.find(currUserProjects, { _id: channelObj.scopeId })
       return proj ? proj.name : `Project Chat #${channelObj.scopeId}`
     }
 
@@ -513,15 +513,16 @@ export default fpChat = React.createClass( {
     if (channelObj.scopeGroupName === 'Asset')
       return _getAssetNameIfAvailable(
         channelObj.scopeId,
-        _.find( this.props.chatChannelTimestamps, { _id: channelName } )
+        _.find(this.props.chatChannelTimestamps, { _id: channelName }),
       )
 
     // user wall - no mapping required: scopeID for wall posts is the user id (for user friendlines, and user rename is unsupported currently and may never be)
-    if (channelObj.scopeGroupName === 'User')
-      return `User "${channelObj.scopeId}"`
+    if (channelObj.scopeGroupName === 'User') return `User "${channelObj.scopeId}"`
 
     // Catch-all error to remind us that we forgot to write this when adding a new channel time (DMs etc)
-    console.error( `findObjectNameForChannelName() has a ScopeGroupName (${channelObj.scopeGroupName}) that is not in user context. #investigate#` )
+    console.error(
+      `findObjectNameForChannelName() has a ScopeGroupName (${channelObj.scopeGroupName}) that is not in user context. #investigate#`,
+    )
     return 'TODO'
   },
 
@@ -529,10 +530,10 @@ export default fpChat = React.createClass( {
     const { currUser } = this.props
     const { view, pastMessageLimit } = this.state
     const channelName = this._calculateActiveChannelName()
-    const channelObj = parseChannelName( channelName )
-    const objName = this.findObjectNameForChannelName( channelName )
-    const presentedChannelName = makePresentedChannelName( channelName, objName )
-    const presentedChannelIconName = makePresentedChannelIconName( channelName )
+    const channelObj = parseChannelName(channelName)
+    const objName = this.findObjectNameForChannelName(channelName)
+    const presentedChannelName = makePresentedChannelName(channelName, objName)
+    const presentedChannelIconName = makePresentedChannelIconName(channelName)
 
     return (
       <div>
@@ -542,64 +543,63 @@ export default fpChat = React.createClass( {
             value={presentedChannelName}
             readOnly
             icon={presentedChannelIconName}
-            size='small'
-            id='mgbjr-fp-chat-channelDropdown'
-            iconPosition='left'
+            size="small"
+            id="mgbjr-fp-chat-channelDropdown"
+            iconPosition="left"
             action={{
-              icon:    'dropdown',
-              onClick: this.handleToggleChannelSelector
+              icon: 'dropdown',
+              onClick: this.handleToggleChannelSelector,
             }}
-            labelPosition='right'
+            labelPosition="right"
             onClick={this.handleToggleChannelSelector}
           />
         </div>
 
         <div>
-          { this.renderChannelSelector() }
-          { view === 'comments' && (
+          {this.renderChannelSelector()}
+          {view === 'comments' &&
             <ChatMessagesView
-                currUser={currUser}
-                pastMessageLimit={pastMessageLimit}
-                handleExtendMessageLimit={newLimit => { this.setState( { pastMessageLimit: newLimit } ) } }
-                channelName={channelName}
-                MessageContextComponent={
-                  channelObj.scopeGroupName === 'Global' ? null : (
-                    <Popup
-                      on='hover'
-                      size='small'
+              currUser={currUser}
+              pastMessageLimit={pastMessageLimit}
+              handleExtendMessageLimit={newLimit => {
+                this.setState({ pastMessageLimit: newLimit })
+              }}
+              channelName={channelName}
+              MessageContextComponent={
+                channelObj.scopeGroupName === 'Global'
+                  ? null
+                  : <Popup
+                      on="hover"
+                      size="small"
                       hoverable
-                      position='left center'
-                      trigger={(
-                        <Button active
-                            icon={presentedChannelIconName}/>
-                      )}
-                      >
+                      position="left center"
+                      trigger={<Button active icon={presentedChannelIconName} />}
+                    >
                       <Popup.Header>
-                        Public Chat Channel for this {channelObj.scopeGroupName }
+                        Public Chat Channel for this {channelObj.scopeGroupName}
                       </Popup.Header>
                       <Popup.Content>
-                        <div style={{minWidth: '300px'}}>
-                          { channelObj.scopeGroupName === 'Asset' &&
-                              <AssetCardGET assetId={channelObj.scopeId} allowDrag={true} renderView='s' />
-                          }
-                          { channelObj.scopeGroupName === 'Project' &&
-                              <ProjectCardGET projectId={channelObj.scopeId} />
-                          }
-                          { channelObj.scopeGroupName === 'User' &&
-                              <span>User Wall for <QLink to={`/u/${channelObj.scopeId}`} >@{channelObj.scopeId}</QLink></span>
-                          }
-
+                        <div style={{ minWidth: '300px' }}>
+                          {channelObj.scopeGroupName === 'Asset' &&
+                            <AssetCardGET assetId={channelObj.scopeId} allowDrag renderView="s" />}
+                          {channelObj.scopeGroupName === 'Project' &&
+                            <ProjectCardGET projectId={channelObj.scopeId} />}
+                          {channelObj.scopeGroupName === 'User' &&
+                            <span>
+                              User Wall for{' '}
+                              <QLink to={`/u/${channelObj.scopeId}`}>@{channelObj.scopeId}</QLink>
+                            </span>}
                         </div>
                       </Popup.Content>
                     </Popup>
-                  )
-                }
-            />
-          ) }
+              }
+            />}
         </div>
 
         <p ref="bottomOfMessageDiv">&nbsp;</p>
       </div>
     )
-  }
-} )
+  },
+})
+
+export default fpChat

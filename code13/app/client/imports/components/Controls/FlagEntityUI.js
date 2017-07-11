@@ -7,115 +7,117 @@ import { showToast } from '/client/imports/routes/App'
 class FlagEntity extends React.Component {
   state = {
     userSelectedTags: [],
-    userComments: ""
+    userComments: '',
   }
 
   static propTypes = {
-    tableCollection:  PropTypes.string.isRequired,
-    entity:           PropTypes.object.isRequired,
-    currUser:         PropTypes.object
+    tableCollection: PropTypes.string.isRequired,
+    entity: PropTypes.object.isRequired,
+    currUser: PropTypes.object,
   }
-  render () {
+  render() {
     const { currUser, tableCollection, entity } = this.props
-    const entityInfo =_parseTableNameToTable(tableCollection)
+    const entityInfo = _parseTableNameToTable(tableCollection)
     const entityOwnerId = entity[entityInfo.ownerIdKey]
     return (
-      (currUser && !entity.suFlagId && !(entity.suIsBanned === true) && (currUser._id !== entityOwnerId)) &&
-              <span className={tableCollection === "Chats" ? 'mgb-show-on-parent-hover' : null}>
-                <Popup
-                  on='click'
-                  size="tiny"
-                  position='bottom right'
-                  trigger={(
-                    <Label
-                      circular
-                      basic
-                      size='mini'
-                      icon={{ name: 'warning', color: 'red', style: {marginRight: 0 } }}
-                      />
+      currUser &&
+      !entity.suFlagId &&
+      !(entity.suIsBanned === true) &&
+      currUser._id !== entityOwnerId &&
+      <span className={tableCollection === 'Chats' ? 'mgb-show-on-parent-hover' : null}>
+        <Popup
+          on="click"
+          size="tiny"
+          position="bottom right"
+          trigger={
+            <Label
+              circular
+              basic
+              size="mini"
+              icon={{ name: 'warning', color: 'red', style: { marginRight: 0 } }}
+            />
+          }
+          wide="very"
+        >
+          <Popup.Header>
+            Report this {tableCollection === 'Azzets' ? 'Asset' : 'Chat'}
+          </Popup.Header>
+          <Popup.Content>
+            <Segment basic>
+              <Dropdown
+                placeholder="Reason(s)"
+                search
+                fluid
+                multiple
+                selection
+                options={_.map(_.keys(FlagTypes), k => ({
+                  text: FlagTypes[k].displayName,
+                  value: k,
+                }))}
+                onChange={(event, dropdown) => {
+                  this.setState({ userSelectedTags: dropdown.value })
+                }}
+              />
+              <Divider hidden />
+              <TextArea
+                placeholder="Additional comments/concerns"
+                autoHeight
+                onChange={(event, textarea) => {
+                  this.setState({ userComments: textarea.value })
+                }}
+              />
+              <Divider hidden />
+              <Button
+                as="div"
+                floated="right"
+                onClick={() =>
+                  _doReportEntity(
+                    currUser,
+                    entity,
+                    tableCollection,
+                    this.state.userSelectedTags,
+                    this.state.userComments,
                   )}
-                  wide='very'
-                  >
-                  <Popup.Header>
-                    Report this {tableCollection === "Azzets" ? "Asset" : "Chat"}
-                  </Popup.Header>
-                  <Popup.Content>
-                    <Segment basic>
-                      <Dropdown
-                        placeholder='Reason(s)'
-                        search
-                        fluid
-                        multiple
-                        selection
-                        options={_.map(_.keys(FlagTypes), (k) => ({
-                          text: FlagTypes[k].displayName, value: k
-                        }))}
-                        onChange={ ( event, dropdown ) => { this.setState( {userSelectedTags: dropdown.value } ) } }
-                        />
-                      <Divider hidden />
-                        <TextArea
-                          placeholder='Additional comments/concerns'
-                          autoHeight
-                          onChange={ ( event, textarea ) => { this.setState( {userComments: textarea.value} ) } }
-                          />
-                      <Divider hidden />
-                        <Button
-                          as='div'
-                          floated='right'
-                          onClick={() => _doReportEntity(
-                            currUser,
-                            entity,
-                            tableCollection,
-                            this.state.userSelectedTags,
-                            this.state.userComments
-                            ) }
-                          size='small'
-                          content='Report'
-                          icon='warning'/>
-                        &nbsp;
-                    </Segment>
-                  </Popup.Content>
-                </Popup>
-              </span>
-    )}
+                size="small"
+                content="Report"
+                icon="warning"
+              />
+              &nbsp;
+            </Segment>
+          </Popup.Content>
+        </Popup>
+      </span>
+    )
+  }
 }
 
 const _doReportEntity = (currUser, entity, tableCollection, selectedTags, userComments) => {
   let reportedEntity = {}
   let data = {}
-  if(!entity.suFlagId && currUser ){
-
-    if(tableCollection === "Chats"){
+  if (!entity.suFlagId && currUser) {
+    if (tableCollection === 'Chats') {
       reportedEntity = {
-        table: "Chats",
-        recordId: entity._id
+        table: 'Chats',
+        recordId: entity._id,
       }
       data = {
         flagTypes: selectedTags,
-        comments: userComments
+        comments: userComments,
       }
-    }
-    else if(tableCollection === "Azzets"){
+    } else if (tableCollection === 'Azzets') {
       reportedEntity = {
-        table: "Azzets",
-        recordId: entity._id
+        table: 'Azzets',
+        recordId: entity._id,
       }
       data = {
         flagTypes: selectedTags,
-        comments: userComments
+        comments: userComments,
       }
     }
   }
-  Meteor.call(
-    "Flags.create",
-    reportedEntity,
-    data,
-    (error, result) => {
-      if (error)
-        showToast(`Could not flag: ${error.reason}`, 'error')
-      else
-        showToast('Flagged successfully', 'success')
-    }
-)
+  Meteor.call('Flags.create', reportedEntity, data, (error, result) => {
+    if (error) showToast(`Could not flag: ${error.reason}`, 'error')
+    else showToast('Flagged successfully', 'success')
+  })
 }
 export default FlagEntity

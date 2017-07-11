@@ -13,15 +13,14 @@ export { genetag }
 
 const PartialAzzets = new Meteor.Collection('PartialAzzets')
 
-const ALLOW_OBSERVERS = SpecialGlobals.allowObservers  // Big hammer to disable it if we hit a scalability crunch (or could make it user-specific or sysvar)
+const ALLOW_OBSERVERS = SpecialGlobals.allowObservers // Big hammer to disable it if we hit a scalability crunch (or could make it user-specific or sysvar)
 const MAX_CACHED_ASSETHANDLERS = 10 // Max # of AssetHandlers that will be cached
 
 // CDN_DOMAIN will be set at startup. See createCloudFront.js for the magic
-let CDN_DOMAIN = ""
+let CDN_DOMAIN = ''
 Meteor.startup(() => {
-  Meteor.call("CDN.domain", (err, cdnDomain) => {
-    if (!err)
-      CDN_DOMAIN = cdnDomain
+  Meteor.call('CDN.domain', (err, cdnDomain) => {
+    if (!err) CDN_DOMAIN = cdnDomain
     /*
     // for CDN debugging only
     else
@@ -41,49 +40,55 @@ export const getCDNDomain = () => CDN_DOMAIN
  * @returns {String}
  */
 export const makeCDNLink = (uri, etagOrHash = null, prefixDomainAlways = false) => {
-  if (uri === undefined){
+  if (uri === undefined) {
     //throw new Error("UriIsNotDefined!")
-    console.error("makeCDNLink - missing uri") // error for stack trace
+    console.error('makeCDNLink - missing uri') // error for stack trace
     return
   }
 
   // received
-  if(uri.indexOf('hash=') > 0) {
+  if (uri.indexOf('hash=') > 0) {
     //console.error("Already hashed link!", uri)
     return uri
   }
   // don't cache at all
-  if (uri.startsWith("/api")  && !etagOrHash)
-    return CDN_DOMAIN ? `//${CDN_DOMAIN}${uri}` : uri
+  if (uri.startsWith('/api') && !etagOrHash) return CDN_DOMAIN ? `//${CDN_DOMAIN}${uri}` : uri
 
   // if etag is not preset, then we will use Meteor autoupdateVersion - so we don't end up with outdated resource
-  const hash = etagOrHash != null ? etagOrHash : (__meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now())
+  const hash =
+    etagOrHash != null
+      ? etagOrHash
+      : __meteor_runtime_config__ ? __meteor_runtime_config__.autoupdateVersion : Date.now()
 
-  if (uri.startsWith("/") && !uri.startsWith("//")){
-    if(CDN_DOMAIN){
+  if (uri.startsWith('/') && !uri.startsWith('//')) {
+    if (CDN_DOMAIN) {
       return `//${CDN_DOMAIN}${uri}?hash=${hash}`
-    }
-    else{
-      if(__meteor_runtime_config__ && __meteor_runtime_config__.ROOT_URL){
+    } else {
+      if (__meteor_runtime_config__ && __meteor_runtime_config__.ROOT_URL) {
         // make sure we don't break http / https
-        const root_host = __meteor_runtime_config__.ROOT_URL.split("//").pop()
-        if( (!root_host.startsWith(window.location.host) && !root_host.startsWith("localhost")) || prefixDomainAlways){
+        const root_host = __meteor_runtime_config__.ROOT_URL.split('//').pop()
+        if (
+          (!root_host.startsWith(window.location.host) && !root_host.startsWith('localhost')) ||
+          prefixDomainAlways
+        ) {
           return `${__meteor_runtime_config__.ROOT_URL}${uri}?hash=${hash}`
         }
       }
     }
-    return CDN_DOMAIN ? (`//${CDN_DOMAIN}${uri}?hash=${hash}`) : (uri + `?hash=${hash}`)
+    return CDN_DOMAIN ? `//${CDN_DOMAIN}${uri}?hash=${hash}` : uri + `?hash=${hash}`
   }
 
   return uri
 }
 
-export const makeExpireThumbnailLink = (assetOrId, maxAge = SpecialGlobals.thumbnail.defaultExpiresDuration ) => {
+export const makeExpireThumbnailLink = (
+  assetOrId,
+  maxAge = SpecialGlobals.thumbnail.defaultExpiresDuration,
+) => {
   return typeof assetOrId === 'string'
     ? makeCDNLink(`/api/asset/cached-thumbnail/png/${maxAge}/${assetOrId}`, makeExpireTimestamp(maxAge))
-    // if we know asset - we can use etag to get updated version - which will be also updated when asset changes
-    : makeCDNLink(`/api/asset/thumbnail/png/${assetOrId._id}`, genetag(assetOrId))
-
+    : // if we know asset - we can use etag to get updated version - which will be also updated when asset changes
+      makeCDNLink(`/api/asset/thumbnail/png/${assetOrId._id}`, genetag(assetOrId))
 }
 /**
  * Generates CDN link to Graphic Asset
@@ -95,11 +100,9 @@ export const makeExpireThumbnailLink = (assetOrId, maxAge = SpecialGlobals.thumb
 export const makeGraphicAPILink = (assetOrId, maxAge = SpecialGlobals.thumbnail.defaultExpiresDuration) => {
   return typeof assetOrId === 'string'
     ? makeCDNLink(`/api/asset/png/${assetOrId}`, makeExpireTimestamp(maxAge))
-    // if we know asset - we can use etag to get updated version - which will be also updated when asset changes
-    : makeCDNLink(`/api/asset/png/${assetOrId._id}`, genetag(assetOrId))
-
+    : // if we know asset - we can use etag to get updated version - which will be also updated when asset changes
+      makeCDNLink(`/api/asset/png/${assetOrId._id}`, genetag(assetOrId))
 }
-
 
 // This syncTime function is to help warn when a server and client have
 // very different times.  Otherwise, it can be a confusing debug!
@@ -107,18 +110,20 @@ export const makeGraphicAPILink = (assetOrId, maxAge = SpecialGlobals.thumbnail.
 let lastDiff = 10 * 365 * 24 * 60 * 60 * 1000 // 10 years
 const syncTime = () => {
   const emitted = Date.now()
-  Meteor.call('syncTime', {now: emitted}, (err, date) => {
+  Meteor.call('syncTime', { now: emitted }, (err, date) => {
     lastDiff = Date.now() - date.now
-    console.log(`[Timeslip check: Server->Client Diff = ${lastDiff}ms; Client->Server Diff = ${date.diff} ms]`)
+    console.log(
+      `[Timeslip check: Server->Client Diff = ${lastDiff}ms; Client->Server Diff = ${date.diff} ms]`,
+    )
   })
 }
 // Wait for 5 (arbitrary) seconds after Meteor.startup() calls us.. Might be better to wait for a connection
 // but that's more client-side work than is worthwhile for this
-Meteor.startup( () => window.setTimeout(syncTime, 5000 ) )
+Meteor.startup(() => window.setTimeout(syncTime, 5000))
 
 // use this to allow client NOT pull resources every time
 // will return timestamp with next expire datetime
-export const makeExpireTimestamp = (maxAge) => {
+export const makeExpireTimestamp = maxAge => {
   // TODO(@stauzs): we need server time here - this will work only for short periods of time !!!!
   // See https://github.com/mizzao/meteor-timesync
   const now = Date.now() - lastDiff
@@ -130,15 +135,13 @@ export const makeExpireTimestamp = (maxAge) => {
   // actually it can return different earlier for the first and second call,
   // but all next calls will get same value for next 10 seconds
   const maxAgeMS = maxAge * 1000
-  return now - (now % (maxAgeMS)) + maxAgeMS
+  return now - now % maxAgeMS + maxAgeMS
 }
 
 // project avatar url prefixed with CDN host
-export const getProjectAvatarUrl = (p, expires = 60) => (
+export const getProjectAvatarUrl = (p, expires = 60) =>
   // etag here is hardcoded - because we will receive asset which will stay very short period of time (1-60) minutes
   makeCDNLink(getProjectAvatarUrlBasic(p, expires), makeExpireTimestamp(SpecialGlobals.avatar.validFor))
-)
-
 
 // used by maps - to get notifications about image changes
 // used by edit code - to get notification about imported source changes
@@ -150,31 +153,29 @@ export const observeAsset = (selector, onReady, onChange = onReady, cachedObserv
   let onReadyCalled = false
   let stopped = false
   const observable = cachedObservable || {
-      observer: null,
-      getAssets: () => cursor.fetch(),
-      getAsset: () => {
-        const assets = cursor.fetch()
-        if(assets.length > 0){
-          return assets[0]
-        }
-        // throw error instead ????
-        return null
-      },
-      subscription: null,
-      ready: () => onReadyCalled && !stopped,
-      stopped: () => stopped
+    observer: null,
+    getAssets: () => cursor.fetch(),
+    getAsset: () => {
+      const assets = cursor.fetch()
+      if (assets.length > 0) {
+        return assets[0]
+      }
+      // throw error instead ????
+      return null
+    },
+    subscription: null,
+    ready: () => onReadyCalled && !stopped,
+    stopped: () => stopped,
   }
-  observable.subscription = Meteor.subscribe("assets.public.partial.bySelector", selector, {
+  observable.subscription = Meteor.subscribe('assets.public.partial.bySelector', selector, {
     onStop: () => {
       observable.observer && observable.observer.stop()
       // Something internally in Meteor makes subscription stop even before it's ready
       // ..this is caused by subscriptions called in ReactGetMeteorData() - as they
       // automatically gets closed. Another fix is to remove from stack Meteor.subscribe..:( (DG says NO NO NO!)
       // TODO(@dgolds):See if there is another approach?
-      if(!onReadyCalled)
-        observeAsset(selector, onReady, onChange, observable)
-      else
-        stopped = true
+      if (!onReadyCalled) observeAsset(selector, onReady, onChange, observable)
+      else stopped = true
     },
     onReady: () => {
       onReadyCalled = true
@@ -182,12 +183,14 @@ export const observeAsset = (selector, onReady, onChange = onReady, cachedObserv
         observable.observer = cursor.observeChanges({
           changed: (id, changes) => {
             onChange(id, changes)
-          }
+          },
         })
       }
       onReady && onReady()
     },
-    onError: (...args) => { console.log(" AssetFetcher:observe:observable:onError:", selector, ...args) }
+    onError: (...args) => {
+      console.log(' AssetFetcher:observe:observable:onError:', selector, ...args)
+    },
   })
   return observable
 }
@@ -195,39 +198,42 @@ export const observeAsset = (selector, onReady, onChange = onReady, cachedObserv
 export const getAssetBySelector = (selector, onReady) => {
   // get meteor data issue
   setTimeout(() => {
-    const sub = Meteor.subscribe("assets.public.partial.bySelector", selector, {
+    const sub = Meteor.subscribe('assets.public.partial.bySelector', selector, {
       onReady: () => {
         const assets = PartialAzzets.find(selector).fetch()
         sub.stop()
-        if (assets && assets.length)
-          return onReady(assets[0])
+        if (assets && assets.length) return onReady(assets[0])
 
         onReady(null)
-      }
+      },
     })
   }, 0)
 }
 
 // fetchAssetByUri() will fetch Asset by uri via ajax - returns Promise
-export const fetchAssetByUri = (uri) => {
-  return new Promise(function (resolve, reject) {
-    mgbAjax(uri, (err, content) => {
-      err ? reject(err) : resolve(content)
-    }, null)
+export const fetchAssetByUri = uri => {
+  return new Promise(function(resolve, reject) {
+    mgbAjax(
+      uri,
+      (err, content) => {
+        err ? reject(err) : resolve(content)
+      },
+      null,
+    )
   })
 }
 
 export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
-  const etag = (asset && typeof asset === "object") ? genetag(asset) : null
+  const etag = asset && typeof asset === 'object' ? genetag(asset) : null
   const client = new XMLHttpRequest()
   const cdnLink = makeCDNLink(uri, etag)
 
   const isLocal = uri.startsWith('/') && !uri.startsWith('//')
 
-  if(__meteor_runtime_config__ && __meteor_runtime_config__.ROOT_URL){
+  if (__meteor_runtime_config__ && __meteor_runtime_config__.ROOT_URL) {
     // make sure we don't break http / https
-    const root_host = __meteor_runtime_config__.ROOT_URL.split("//").pop()
-    if(isLocal && !root_host.startsWith(window.location.host) && !root_host.startsWith("localhost")){
+    const root_host = __meteor_runtime_config__.ROOT_URL.split('//').pop()
+    if (isLocal && !root_host.startsWith(window.location.host) && !root_host.startsWith('localhost')) {
       return mgbAjax(cdnLink, callback, asset, onRequestOpen)
     }
   }
@@ -235,26 +241,24 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
   const usingCDN = uri === cdnLink
   client.open('GET', cdnLink)
 
-  if (onRequestOpen)
-    onRequestOpen(client)
+  if (onRequestOpen) onRequestOpen(client)
 
-  client.onload = function () {
+  client.onload = function() {
     // ajax will return 200 even for 304 Not Modified
-    if (this.status >= 200 && this.status < 300)
-      callback(null, this.response, client)
+    if (this.status >= 200 && this.status < 300) callback(null, this.response, client)
     else {
       // try link without CDN
       if (usingCDN && isLocal) {
-        console.log("CDN failed - trying local uri:", uri)
+        console.log('CDN failed - trying local uri:', uri)
         mgbAjax(window.location.origin + uri, callback, asset, onRequestOpen)
         return
       }
       callback(this.status, this.response, client)
     }
   }
-  client.onerror = function (e) {
+  client.onerror = function(e) {
     if (usingCDN && isLocal) {
-      console.log("CDN failed - trying local uri")
+      console.log('CDN failed - trying local uri')
       mgbAjax(window.location.origin + uri, callback, asset, onRequestOpen)
       return
     }
@@ -262,7 +266,6 @@ export const mgbAjax = (uri, callback, asset = null, onRequestOpen = null) => {
   }
 
   client.send()
-
 }
 
 /** Class representing an AssetHandler. */
@@ -274,7 +277,7 @@ class AssetHandler {
    */
   constructor(assetId, onChange) {
     this.id = assetId
-    this.onChange = onChange  // TODO: Needs default for undefined? otherwise we have undefined/null which can cause errors if truthy comparisons aren't precise
+    this.onChange = onChange // TODO: Needs default for undefined? otherwise we have undefined/null which can cause errors if truthy comparisons aren't precise
 
     this.asset = null
     this.isReady = false
@@ -284,8 +287,7 @@ class AssetHandler {
    * Stop subscription - call this on component unmount
    */
   stop() {
-    if (this.subscription)
-      this.subscription.stop()
+    if (this.subscription) this.subscription.stop()
   }
   /**
    * Is assetHandler ready - similar to Meteor subscription ready()
@@ -302,7 +304,7 @@ class AssetHandler {
   /**
    * is assetDeleted?
    */
-  get isDeleted(){
+  get isDeleted() {
     return this.isReady && this.asset
   }
 
@@ -312,14 +314,13 @@ class AssetHandler {
    * @param {function} onChange - Overwrite previous onChange callback
    */
   updateAsset(onChange = null) {
-    if (onChange)
-      this.onChange = onChange
+    if (onChange) this.onChange = onChange
 
     const asset = Azzets.findOne(this.id)
     // TODO: figure out what to do if we don't have asset in the DB - is it on it's way? or is it deleted?
-    if(!asset){
-      if(this.isReady){
-        console.log("Asset is deleted!!!!")
+    if (!asset) {
+      if (this.isReady) {
+        console.log('Asset is deleted!!!!')
       }
       return
     }
@@ -327,8 +328,7 @@ class AssetHandler {
     asset.content2 = this.asset ? this.asset.content2 : null
 
     const etag = genetag(asset)
-    if (this.etag !== etag && !asset.content2)
-      this.etag = etag
+    if (this.etag !== etag && !asset.content2) this.etag = etag
 
     this.asset = asset
   }
@@ -341,8 +341,7 @@ class AssetHandler {
    * assetHandler will try to update content2 from this object if etags will match
    */
   update(onChange = null, updateObj = null) {
-    if (onChange)
-      this.onChange = onChange
+    if (onChange) this.onChange = onChange
 
     const asset = Azzets.findOne(this.id)
 
@@ -367,7 +366,9 @@ class AssetHandler {
 
       // update content2 if there is one
       if (this.asset) {
-        this.asset.content2 = updateObj ? updateObj.content2 : (this.asset.content2 ? this.asset.content2 : oldC2)
+        this.asset.content2 = updateObj
+          ? updateObj.content2
+          : this.asset.content2 ? this.asset.content2 : oldC2
         this.etag = genetag(this.asset)
       }
     }
@@ -375,13 +376,11 @@ class AssetHandler {
     // user that has modified asset will have updateObj
     if (updateObj) {
       this.asset.content2 = updateObj.content2
-    }
-    // viewer won't
-    else
+    } else
+      // viewer won't
       this.updateContent2(updateObj)
 
-    if (this.subscription)
-      this._onReady(updateObj)
+    if (this.subscription) this._onReady(updateObj)
     else {
       // without timeout subscription will end automatically right after it starts (ReactMeteorData.getMeteorData is responsible for that),
       // but we want to keep subscription active as long as user is checking out asset
@@ -390,23 +389,23 @@ class AssetHandler {
       // getMeteorData is calling forceUpdate internally and it's called before render
       window.setTimeout(() => {
         // we still need latest asset fromDB
-        this.subscription = Meteor.subscribe("assets.public.byId", this.id, {
+        this.subscription = Meteor.subscribe('assets.public.byId', this.id, {
           // onReady is called multiple times
           onReady: () => {
             // TODO: figure out what to do if we don't have asset in the DB - is it on it's way? or is it deleted?
             this._onReady(updateObj)
 
             const asset = Azzets.findOne(this.id)
-            if(!asset){
-              console.log("Asset has been deleted")
+            if (!asset) {
+              console.log('Asset has been deleted')
               this.onChange && this.onChange()
             }
           },
           // onStop is called multiple times and then immediately is fired onReady again
           onStop: () => {
-            console.log("Stopped Meteor subscription for", this.id)
+            console.log('Stopped Meteor subscription for', this.id)
             this.subscription = null
-          }
+          },
         })
       }, 0)
     }
@@ -418,8 +417,7 @@ class AssetHandler {
    */
   updateContent2(updateObj) {
     const asset = Azzets.findOne(this.id)
-    if (!asset)
-      return
+    if (!asset) return
 
     if (updateObj) {
       this.asset.content2 = updateObj.content2
@@ -427,35 +425,37 @@ class AssetHandler {
       return
     }
 
-    mgbAjax(asset.c2location || `/api/asset/content2/${this.id}`, (err, data) => {
-      if (err) {
-        console.log("updateContent2: Failed to retrieve c2 for asset with id: ", this.id, err)
-        return
-      }
-      const c2 = JSON.parse(data)
-      const oldC2 = this.asset ? this.asset.content2 : null
-      this.isReady = true
+    mgbAjax(
+      asset.c2location || `/api/asset/content2/${this.id}`,
+      (err, data) => {
+        if (err) {
+          console.log('updateContent2: Failed to retrieve c2 for asset with id: ', this.id, err)
+          return
+        }
+        const c2 = JSON.parse(data)
+        const oldC2 = this.asset ? this.asset.content2 : null
+        this.isReady = true
 
-      let needUpdate = false
-      if (!oldC2 || !_.isEqual(c2, oldC2)) {
-        this.asset = asset
-        this.asset.content2 = c2
-        needUpdate = true
-      }
-      else if (!_.isEqual(asset, this.asset)) {
-        this.asset = asset
-        this.asset.content2 = oldC2
-        needUpdate = true
-      }
+        let needUpdate = false
+        if (!oldC2 || !_.isEqual(c2, oldC2)) {
+          this.asset = asset
+          this.asset.content2 = c2
+          needUpdate = true
+        } else if (!_.isEqual(asset, this.asset)) {
+          this.asset = asset
+          this.asset.content2 = oldC2
+          needUpdate = true
+        }
 
-      if (needUpdate) {
-        // console.log("updateContent2() DOING full update")
-        this.onChange && this.onChange()
-      }
-      else {
-        console.log("updateContent2() Sources are equal.. preventing update!")
-      }
-    }, asset)
+        if (needUpdate) {
+          // console.log("updateContent2() DOING full update")
+          this.onChange && this.onChange()
+        } else {
+          console.log('updateContent2() Sources are equal.. preventing update!')
+        }
+      },
+      asset,
+    )
   }
   /**
    * this function is called after Meteor subscription becomes ready - or if subscription is already present, then it will be called immediately
@@ -469,13 +469,11 @@ class AssetHandler {
     let oldC2 = this.asset ? this.asset.content2 : null
     const asset = Azzets.findOne(this.id)
     // asset has been deleted???
-    if (!asset)
-      return
+    if (!asset) return
 
     if (this.asset) {
       const etag = genetag(asset)
-      if (this.etag == etag)
-        return
+      if (this.etag == etag) return
     }
 
     this.asset = asset
@@ -502,10 +500,8 @@ export const getAssetHandlerWithContent2 = (id, onChange, forceFullUpdate = fals
   //
   if (handler) {
     handler.lastAccessed = Date.now()
-    if (!forceFullUpdate)
-      handler.update(onChange)
-    else
-      handler.updateAsset(onChange)
+    if (!forceFullUpdate) handler.update(onChange)
+    else handler.updateAsset(onChange)
     return handler
   }
   // keep only MAX_CACHED_ASSETHANDLERS assets in memory (e.g. 10)

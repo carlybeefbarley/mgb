@@ -3,21 +3,19 @@ import MgbSystem from './MageMgbSystem'
 // This code will be incoporated by MagePlayGame.js so that it becomes part of the MagePlayGame class
 // This file contains the part of the class that is primarily focussed on transitioning between maps
 
-export default MagePlayGameTransition = {
-
+const MagePlayGameTransition = {
   /**
    * transitionToNewMap()
-   * 
+   *
    * @param {String} userName
    * @param {String} projectName
    * @param {String} newmapname
    * @param {int} newX
    * @param {int} newY
-   * 
+   *
    * @memberOf MagePlayGame
    */
-  transitionToNewMap(userName, projectName, newMapName, newX, newY)
-  {
+  transitionToNewMap(userName, projectName, newMapName, newX, newY) {
     this.transitionPlayerAA = this.activeActors[this.AA_player_idx]
     this.playCleanupActiveLayer()
     this.playCleanupBackgroundLayer()
@@ -31,24 +29,22 @@ export default MagePlayGameTransition = {
   },
 
   resetTransitionState() {
-    debugger // DO WE NEED THIS?
-    this.transitionInProgress = false
+    this.isTransitionInProgress = false
     this.transitionNewX = 0
     this.transitionNewY = 0
     this.transitionPlayerAA = null
     this.transitionStateWaitingForActorLoadRequests = false
-    //     this.isTransitionInProgress = false  ??
   },
 
-  transitionResourcesHaveLoaded(newMapData)
-  {
+  transitionResourcesHaveLoaded(newMapData) {
     this.map = newMapData
-    this.map.name = newMapData.name.indexOf(':') === -1 ? this.ownerName + ':' + newMapData.name : newMapData.name
+    this.map.name =
+      newMapData.name.indexOf(':') === -1 ? this.ownerName + ':' + newMapData.name : newMapData.name
     this.transitionStateWaitingForActorLoadRequests = false
-    // Note we do NOT set this.isTransitionInProgress = false  -- that is done in TranitionTick()  
+    // Note we do NOT set this.isTransitionInProgress = false  -- that is done in TranitionTick()
   },
 
-  /* 
+  /*
   // When debugging, the function gets called but does not run
   // Called on 'Tick' by game loop if transitioning to new map (isTransitionInProgress == true)
   transitionTick()
@@ -84,8 +80,8 @@ export default MagePlayGameTransition = {
 
       this.AA_player_idx = this.activeActors.length
       this.activeActors[this.AA_player_idx] = this.transitionPlayerAA
-      
-      this.container = document.getElementById("mgb-game-container") 
+
+      this.container = document.getElementById("mgb-game-container")
       this.scrollMapToSeePlayer()
 
       this.clearTicTable()
@@ -96,3 +92,5 @@ export default MagePlayGameTransition = {
   }
   */
 }
+
+export default MagePlayGameTransition

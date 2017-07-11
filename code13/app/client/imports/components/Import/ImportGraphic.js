@@ -6,23 +6,21 @@ import ReactDOM from 'react-dom'
 
 import UploadForm from './UploadForm.js'
 import UploadList from './UploadList.js'
-import sty from  './import.css'
+import sty from './import.css'
 
-const STATUS_EMPTY = "empty"
-const STATUS_DRAGGED_OVER = "draggedOver"
-const STATUS_UPLOADING = "uploading"        // TODO: Confirm with @shmicikus that this was not an intended state (it is never used)
-const STATUS_UPLOADED = "uploaded"
+const STATUS_EMPTY = 'empty'
+const STATUS_DRAGGED_OVER = 'draggedOver'
+const STATUS_UPLOADING = 'uploading' // TODO: Confirm with @shmicikus that this was not an intended state (it is never used)
+const STATUS_UPLOADED = 'uploaded'
 
 export default class ImportGraphic extends React.Component {
-
   constructor(props) {
     super(props)
 
     this.state = {
-      status: STATUS_EMPTY,     // STATUS_EMPTY or STATUS_DRAGGED_OVER or STATUS_UPLOADING or STATUS_UPLOADED 
+      status: STATUS_EMPTY, // STATUS_EMPTY or STATUS_DRAGGED_OVER or STATUS_UPLOADING or STATUS_UPLOADED
       graphics: [],
     }
-
   }
 
   onDragOver(event) {
@@ -46,7 +44,7 @@ export default class ImportGraphic extends React.Component {
     this.isCompleted = isCompleted
 
     const items = event.dataTransfer.items
-    for (let i=0; i<items.length; i++) {
+    for (let i = 0; i < items.length; i++) {
       // webkitGetAsEntry is where the magic happens
       const item = items[i].webkitGetAsEntry()
       if (item) {
@@ -56,7 +54,7 @@ export default class ImportGraphic extends React.Component {
 
     const self = this
     function traverseFileTree(item, path) {
-      path = path || ""
+      path = path || ''
       if (item.isFile) {
         item.file(function(file) {
           // console.log("File:", path + file.name)
@@ -66,23 +64,23 @@ export default class ImportGraphic extends React.Component {
         // Get folder contents
         const dirReader = item.createReader()
         dirReader.readEntries(function(entries) {
-          for (let i=0; i<entries.length; i++) {
-            traverseFileTree(entries[i], path + item.name + "/")
+          for (let i = 0; i < entries.length; i++) {
+            traverseFileTree(entries[i], path + item.name + '/')
           }
         })
       }
     }
   }
 
-  readFileUri (file, assetType, path, prefix) {
-    const fileName = (prefix+path+file.name).replace(/\//gi, '.')
+  readFileUri(file, assetType, path, prefix) {
+    const fileName = (prefix + path + file.name).replace(/\//gi, '.')
     const reader = new FileReader()
 
     console.log(assetType)
 
-    switch(assetType){
+    switch (assetType) {
       case 'graphic':
-        reader.onload = (e) => {
+        reader.onload = e => {
           // console.log(e.target.result)
           const dataUri = e.target.result
 
@@ -92,34 +90,34 @@ export default class ImportGraphic extends React.Component {
             this.saveGraphic(tmpImg, fileName, assetType)
           }
           tmpImg.src = dataUri
-          
+
           // this.setState({ status: STATUS_UPLOADED })
         }
         reader.readAsDataURL(file)
         break
 
       case 'code':
-        reader.onload = (e) => {
+        reader.onload = e => {
           this.saveGraphic(e.target.result, fileName, assetType)
         }
         reader.readAsText(file)
         break
-      }
+    }
   }
 
-  saveGraphic(imgObject, fileName, assetType){
+  saveGraphic(imgObject, fileName, assetType) {
     let content2 = {}
     let thumbnail = null
-    switch (assetType){
+    switch (assetType) {
       case 'graphic':
         content2 = {
           dataUri: imgObject.src,
           width: imgObject.width,
           height: imgObject.height,
-          layerParams: [{name:"Layer 1", isHidden: false, isLocked: false}],
-          frameNames: ["Frame 1"],
-          frameData: [ [ imgObject.src ] ],
-          spriteData: [ imgObject.src ],
+          layerParams: [{ name: 'Layer 1', isHidden: false, isLocked: false }],
+          frameNames: ['Frame 1'],
+          frameData: [[imgObject.src]],
+          spriteData: [imgObject.src],
           tileset: imgObject.src,
           cols: 1,
           rows: 1,
@@ -127,7 +125,7 @@ export default class ImportGraphic extends React.Component {
           animations: [],
         }
 
-        thumbnail = this.createThumbnail(imgObject) 
+        thumbnail = this.createThumbnail(imgObject)
         // console.log(thumbnail)
         break
       case 'code':
@@ -160,18 +158,17 @@ export default class ImportGraphic extends React.Component {
     })
     // TODO remake status so it shows also uploading status
     this.setState({ graphics: graphics, status: STATUS_UPLOADED })
-
   }
 
-  createThumbnail(imgObject){
-    const tmpCanvas = document.createElement("canvas")
+  createThumbnail(imgObject) {
+    const tmpCanvas = document.createElement('canvas')
     const tmpCtx = tmpCanvas.getContext('2d')
     tmpCanvas.width = 290
     tmpCanvas.height = 150
     const wRatio = tmpCanvas.width / imgObject.width
     const hRatio = tmpCanvas.height / imgObject.height
     let ratio = wRatio < hRatio ? wRatio : hRatio
-    if(wRatio >= 1 && hRatio >= 1) ratio = 1
+    if (wRatio >= 1 && hRatio >= 1) ratio = 1
     const width = imgObject.width * ratio
     const height = imgObject.height * ratio
     const x = (tmpCanvas.width - width) / 2
@@ -181,11 +178,11 @@ export default class ImportGraphic extends React.Component {
     return tmpCanvas.toDataURL('image/png')
   }
 
-  clearImport(){
+  clearImport() {
     this.setState({ graphics: [], status: STATUS_EMPTY })
   }
 
-  render(){
+  render() {
     return (
       <div>
         <UploadForm
@@ -203,11 +200,9 @@ export default class ImportGraphic extends React.Component {
           clearImport={this.clearImport.bind(this)}
         />
       </div>
-      
     )
   }
 }
-
 
 ImportGraphic.propTypes = {
   currUser: PropTypes.object,

@@ -6,26 +6,34 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 
 import ImportGraphic from '/client/imports/components/Import/ImportGraphic'
 
-
-export default ImportRoute = React.createClass({
-
+const ImportRoute = React.createClass({
   propTypes: {
-    params: PropTypes.object,           // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /assets
-    user: PropTypes.object,             // Maybe absent if route is /assets
-    currUser: PropTypes.object,         // Currently Logged in user
-    currUserProjects: PropTypes.array, 
+    params: PropTypes.object, // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /assets
+    user: PropTypes.object, // Maybe absent if route is /assets
+    currUser: PropTypes.object, // Currently Logged in user
+    currUserProjects: PropTypes.array,
     ownsProfile: PropTypes.bool,
-    location: PropTypes.object          // We get this from react-router
+    location: PropTypes.object, // We get this from react-router
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object
+    urlLocation: React.PropTypes.object,
   },
 
-  createAsset: function(assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName, content2, thumbnail, assetLicense, workState, isCompleted) {
-    
+  createAsset: function(
+    assetKindKey,
+    assetName,
+    projectName,
+    projectOwnerId,
+    projectOwnerName,
+    content2,
+    thumbnail,
+    assetLicense,
+    workState,
+    isCompleted,
+  ) {
     if (!this.props.currUser) {
-      showToast("You must be logged-in to create a new Asset", 'error')
+      showToast('You must be logged-in to create a new Asset', 'error')
       return
     }
 
@@ -36,13 +44,13 @@ export default ImportRoute = React.createClass({
       workState: workState,
       thumbnail: thumbnail,
       content2: content2,
-      dn_ownerName: this.props.currUser.username,         // Will be replaced below if in another project
+      dn_ownerName: this.props.currUser.username, // Will be replaced below if in another project
 
       isCompleted: isCompleted,
-      isDeleted:   false,
-      isPrivate:   false
+      isDeleted: false,
+      isPrivate: false,
     }
-    if (projectName && projectName !== "") {
+    if (projectName && projectName !== '') {
       newAsset.projectNames = [projectName]
       newAsset.dn_ownerName = projectOwnerName
       newAsset.ownerId = projectOwnerId
@@ -52,19 +60,19 @@ export default ImportRoute = React.createClass({
 
     Meteor.call('Azzets.create', newAsset, (error, result) => {
       if (error) {
-        showToast("cannot create Asset because: " + error.reason, 'error')
+        showToast('cannot create Asset because: ' + error.reason, 'error')
       } else {
-        newAsset._id = result             // So activity log will work
-        logActivity("asset.create",  `Bulk import ${assetKindKey}`, null, newAsset)
+        newAsset._id = result // So activity log will work
+        logActivity('asset.create', `Bulk import ${assetKindKey}`, null, newAsset)
       }
     })
   },
 
-  render: function(){
+  render: function() {
     return (
       <div>
         <h1>Bulk Import</h1>
-        <ImportGraphic 
+        <ImportGraphic
           currUser={this.props.currUser}
           currUserProjects={this.props.currUserProjects}
           createAsset={this.createAsset}
@@ -72,5 +80,6 @@ export default ImportRoute = React.createClass({
       </div>
     )
   },
-
 })
+
+export default ImportRoute

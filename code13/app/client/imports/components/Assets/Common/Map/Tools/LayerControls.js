@@ -14,13 +14,14 @@ export default class LayerControls extends React.Component {
     return (
       <div style={{ position: 'relative', top: '-10px' }}>
         <Button
-          size='mini'
+          size="mini"
           icon
-          color='blue'
+          color="blue"
           inverted={this.options.highlightActiveLayer}
           onClick={this.props.highlightActiveLayerToggle}
-          title='Highlight Active layer'>
-          <Icon name='idea' /> Highlight active
+          title="Highlight Active layer"
+        >
+          <Icon name="idea" /> Highlight active
         </Button>
       </div>
     )

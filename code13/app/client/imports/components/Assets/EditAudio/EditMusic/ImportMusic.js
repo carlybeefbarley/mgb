@@ -2,97 +2,96 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { showToast } from '/client/imports/routes/App'
 
-import sty from  './editMusic.css'
+import sty from './editMusic.css'
 import WaveSurfer from '../lib/WaveSurfer.js'
 import lamejs from '../lib/lame.all.js'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
 export default class ImportMusic extends React.Component {
-
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
-      status: "empty" // empty, draggedOver, uploading, uploaded
-      , playerStatus: "empty" // empty, play, pause
+      status: 'empty', // empty, draggedOver, uploading, uploaded
+      playerStatus: 'empty', // empty, play, pause
     }
 
     const fileFormats = ['mp3', 'wav', 'ogg', 'mp4', 'mpeg']
     this.supportedFormats = []
     const audio = new Audio()
-    fileFormats.forEach( format => {
-      if(audio.canPlayType('audio/'+format)){
+    fileFormats.forEach(format => {
+      if (audio.canPlayType('audio/' + format)) {
         this.supportedFormats.push(format)
       }
     })
     // console.log(this.supportedFormats)
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.wavesurfer = WaveSurfer.create({
-        container: '#importMusicPlayer'
-        , waveColor: '#4dd2ff'
-        , progressColor: '#01a2d9'
+      container: '#importMusicPlayer',
+      waveColor: '#4dd2ff',
+      progressColor: '#01a2d9',
     })
-    var self = this;
-    this.wavesurfer.on('finish', function () {
-      self.wavesurfer.stop();
-      self.setState({ playerStatus: "pause" })
-    });
+    var self = this
+    this.wavesurfer.on('finish', function() {
+      self.wavesurfer.stop()
+      self.setState({ playerStatus: 'pause' })
+    })
   }
 
-  onDragOver(event){
-    event.stopPropagation();
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
-    this.setState({ status: "draggedOver" });
+  onDragOver(event) {
+    event.stopPropagation()
+    event.preventDefault()
+    event.dataTransfer.dropEffect = 'copy'
+    this.setState({ status: 'draggedOver' })
   }
 
-  onDragLeave(event){
-    this.setState({ status: "empty" });
+  onDragLeave(event) {
+    this.setState({ status: 'empty' })
   }
 
-  onDrop(event){
+  onDrop(event) {
     event.stopPropagation()
     event.preventDefault()
 
-    const files = event.dataTransfer.files;
-    if(files.length > 0){
+    const files = event.dataTransfer.files
+    if (files.length > 0) {
       const file = files[0]
       const maxUpload = SpecialGlobals.assets.maxUploadSize
-      const maxUploadMB = (maxUpload/1024/1024).toFixed(1)
+      const maxUploadMB = (maxUpload / 1024 / 1024).toFixed(1)
       // console.log(file, maxUpload)
       if (file.size > maxUpload) {
-        showToast("You can't upload a file more than "+maxUploadMB+" MB", 'error')
-        this.setState({ status: "empty" })
+        showToast("You can't upload a file more than " + maxUploadMB + ' MB', 'error')
+        this.setState({ status: 'empty' })
         return
       }
-      if (file.type === "audio/wav") {
-        this.loadWav(file)  // read as arraybuffer and encode to mp3
+      if (file.type === 'audio/wav') {
+        this.loadWav(file) // read as arraybuffer and encode to mp3
       } else {
-        this.loadEncoded(file)  // read as dataUrl
+        this.loadEncoded(file) // read as dataUrl
       }
     }
   }
 
-  loadWav(file){
+  loadWav(file) {
     let reader = new FileReader()
-    reader.onload = (e) => {
+    reader.onload = e => {
       let audioData = e.target.result
       let audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-      audioCtx.decodeAudioData(audioData, (audioBuffer) => {
+      audioCtx.decodeAudioData(audioData, audioBuffer => {
         var channelData = audioBuffer.getChannelData(0)
         // console.log(channelData)
 
-        let samples = new Int16Array(channelData.length);
-        for(var i=0; i<channelData.length; i++){
-            let n = channelData[i]
-            let v = n < 0 ? n * 32768 : n * 32767
-            samples[i] = Math.round(v)
+        let samples = new Int16Array(channelData.length)
+        for (let i = 0; i < channelData.length; i++) {
+          let n = channelData[i]
+          let v = n < 0 ? n * 32768 : n * 32767
+          samples[i] = Math.round(v)
         }
 
-        lamejs.encodeMono(1, audioBuffer.sampleRate, samples, (audioObject) => {
-          this.setState({ status: "uploaded" })
+        lamejs.encodeMono(1, audioBuffer.sampleRate, samples, audioObject => {
+          this.setState({ status: 'uploaded' })
           this.audioLoaded(audioObject)
         })
       })
@@ -100,18 +99,19 @@ export default class ImportMusic extends React.Component {
     reader.readAsArrayBuffer(file)
   }
 
-  loadEncoded(file){
+  loadEncoded(file) {
     let reader = new FileReader()
-    reader.onload = (ev) => {
+    reader.onload = ev => {
       let audioData = ev.target.result
 
       let tmpMusic = new Audio()
-      tmpMusic.oncanplaythrough = (e) => { // music is uploaded to browser
-        this.setState({ status: "uploaded" })
-        if(tmpMusic.src.startsWith("data:audio/")){
+      tmpMusic.oncanplaythrough = e => {
+        // music is uploaded to browser
+        this.setState({ status: 'uploaded' })
+        if (tmpMusic.src.startsWith('data:audio/')) {
           this.audioLoaded(tmpMusic)
         } else {
-          console.warn("Data type is not audio!")
+          console.warn('Data type is not audio!')
         }
       }
       tmpMusic.src = audioData
@@ -119,76 +119,90 @@ export default class ImportMusic extends React.Component {
     reader.readAsDataURL(file)
   }
 
-  audioLoaded(musicObject){
-    this.musicObject = musicObject;
-    this.wavesurfer.load(musicObject.src);
+  audioLoaded(musicObject) {
+    this.musicObject = musicObject
+    this.wavesurfer.load(musicObject.src)
   }
 
-  togglePlayMusic(){
-    if(this.state.playerStatus === "play"){
-      this.wavesurfer.pause();
-      this.setState({ playerStatus: "pause" })
+  togglePlayMusic() {
+    if (this.state.playerStatus === 'play') {
+      this.wavesurfer.pause()
+      this.setState({ playerStatus: 'pause' })
     } else {
-      this.wavesurfer.play();
-      this.setState({ playerStatus: "play" })
+      this.wavesurfer.play()
+      this.setState({ playerStatus: 'play' })
     }
   }
 
-  stopMusic(){
-    this.wavesurfer.play()  // stopping unplayed audio causes error
+  stopMusic() {
+    this.wavesurfer.play() // stopping unplayed audio causes error
     this.wavesurfer.stop()
-    this.setState({ playerStatus: "pause" })
+    this.setState({ playerStatus: 'pause' })
   }
 
-  clearAll(){
-    if(this.wavesurfer.isPlaying()) this.wavesurfer.stop();
-    this.wavesurfer.empty();
-    this.setState({ status: "empty", playerStatus: "empty" })
+  clearAll() {
+    if (this.wavesurfer.isPlaying()) this.wavesurfer.stop()
+    this.wavesurfer.empty()
+    this.setState({ status: 'empty', playerStatus: 'empty' })
   }
 
-  finishImport(){
+  finishImport() {
     // console.log(this.wavesurfer);
-    this.props.importMusic(this.musicObject, "Imported music")
+    this.props.importMusic(this.musicObject, 'Imported music')
   }
 
-  render(){
+  render() {
     return (
       <div className="content">
-
         {/*** upload form ***/}
-        <div className={"uploadForm " + (this.state.status === "uploaded" ? "mgb-hidden " : " ") + (this.state.status === "draggedOver" ? "draggedOver" : "")}
+        <div
+          className={
+            'uploadForm ' +
+            (this.state.status === 'uploaded' ? 'mgb-hidden ' : ' ') +
+            (this.state.status === 'draggedOver' ? 'draggedOver' : '')
+          }
           onDragOver={this.onDragOver.bind(this)}
           onDragLeave={this.onDragLeave.bind(this)}
-          onDrop={this.onDrop.bind(this)}>
-            <br/><br/><br/><br/><br/>
-            <h2>Drop music file here!</h2>
-            <p>Supported formats: {this.supportedFormats.join(", ")}</p>
-            <br/><br/><br/><br/><br/>
+          onDrop={this.onDrop.bind(this)}
+        >
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <h2>Drop music file here!</h2>
+          <p>
+            Supported formats: {this.supportedFormats.join(', ')}
+          </p>
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
         </div>
 
-      {/*** uploaded music ***/}
-        <div className={this.state.status === "uploaded" ? "" : "mgb-hidden"}>
+        {/*** uploaded music ***/}
+        <div className={this.state.status === 'uploaded' ? '' : 'mgb-hidden'}>
           <div className="row">
             <button className="ui icon button small" onClick={this.togglePlayMusic.bind(this)}>
-              <i className={"icon " + (this.state.playerStatus === "play" ? "pause" : "play")}></i>
+              <i className={'icon ' + (this.state.playerStatus === 'play' ? 'pause' : 'play')} />
             </button>
             <button className="ui icon button small" onClick={this.stopMusic.bind(this)}>
-              <i className={"icon stop"}></i>
+              <i className={'icon stop'} />
             </button>
             <span>&nbsp;&nbsp;&nbsp;</span>
             <button onClick={this.finishImport.bind(this)} className="ui small labeled icon button">
-              <i className="icon small save"></i>Save
+              <i className="icon small save" />Save
             </button>
             <button onClick={this.clearAll.bind(this)} className="ui small labeled icon button">
-              <i className="icon small remove circle"></i>Clear All
+              <i className="icon small remove circle" />Clear All
             </button>
           </div>
-          <div className="ui divider"></div>
+          <div className="ui divider" />
 
-          <div id="importMusicPlayer"></div>
+          <div id="importMusicPlayer" />
         </div>
-
       </div>
-    );
+    )
   }
 }

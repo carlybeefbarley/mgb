@@ -1,40 +1,41 @@
 /* this -> EditMap instance */
 
-export default {
-  getActiveObject () {
-    if(!this.refs.map){
+const PropertiesProps = {
+  getActiveObject() {
+    if (!this.refs.map) {
       return null
     }
     const l = this.refs.map.getActiveLayer()
-    if (l && l.pickedObject)
-      return l.pickedObject
+    if (l && l.pickedObject) return l.pickedObject
     return null
   },
-  resize(data){
+  resize(data) {
     this.refs.map.resize(data)
-    this.quickSave("Resize Map")
+    this.quickSave('Resize Map')
   },
-  updateTileset(data){
-    const reason = "Changed Tileset properties"
+  updateTileset(data) {
+    const reason = 'Changed Tileset properties'
     this.saveForUndo(reason)
     this.mgb_content2.tilesets[this.state.activeTileset] = data
     this.quickSave(reason)
   },
-  updateLayer(data){
-    const reason = "Changed Layer properties"
+  updateLayer(data) {
+    const reason = 'Changed Layer properties'
     this.saveForUndo(reason)
     this.mgb_content2.layers[this.state.activeLayer] = data
     this.quickSave(reason)
   },
   // data contains reference to object - only saving is needed
-  updateObject(data){
+  updateObject(data) {
     this.quickSave(`Changed ${data.name} Properties`)
   },
-  changeTileSize(data){
-    const reason = "Changed Layer properties"
+  changeTileSize(data) {
+    const reason = 'Changed Layer properties'
     this.saveForUndo(reason)
     this.mgb_content2.tilewidth = data.tilewidth
     this.mgb_content2.tileheight = data.tileheight
     this.quickSave(reason)
-  }
+  },
 }
+
+export default PropertiesProps

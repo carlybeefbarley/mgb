@@ -1,24 +1,24 @@
 var Mocha = require('mocha')
 
 class MyReporter extends Mocha.reporters.Base {
-  constructor(runner){
+  constructor(runner) {
     super(runner)
     global.report = []
-    const report = global.report;
+    const report = global.report
 
-    console.log("Custom reporter started!")
+    console.log('Custom reporter started!')
     var passes = 0
     var failures = 0
     let total = 0
 
-    runner.on('test', (test) => {
+    runner.on('test', test => {
       test.started = Date.now()
     })
     /*runner.on('test', (test) => {
       test.started = Date.now()
     })*/
 
-    runner.on('pass', function(test){
+    runner.on('pass', function(test) {
       test.duration = Date.now() - test.started
       passes++
       report.push(test)
@@ -26,7 +26,7 @@ class MyReporter extends Mocha.reporters.Base {
       total += test.duration
     })
 
-    runner.on('fail', function(test, err){
+    runner.on('fail', function(test, err) {
       test.duration = Date.now() - test.started
       report.push(test)
       failures++
@@ -34,7 +34,7 @@ class MyReporter extends Mocha.reporters.Base {
       total += test.duration
     })
 
-    runner.on('end', function(){
+    runner.on('end', function() {
       //console.log(`end: ${passes}/${passes + failures} in ${total}ms`)
     })
   }

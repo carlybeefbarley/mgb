@@ -1,13 +1,12 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import reactMixin from 'react-mixin'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import Helmet from 'react-helmet'
 
-import { makeChannelName} from '/imports/schemas/chats'
+import { makeChannelName } from '/imports/schemas/chats'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import { isValidCodeGame, isValidActorMapGame } from '/imports/schemas/assets'
@@ -22,86 +21,89 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import AssetChatDetail from '/client/imports/components/Assets/AssetChatDetail'
 
-import elementResizeDetectorMaker  from 'element-resize-detector'
+import elementResizeDetectorMaker from 'element-resize-detector'
 
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
 
 // TODO: The debounce / throttle needs to move to the server really
 const _incrementPlayCount = _.debounce(
-  assetId => { Meteor.call('job.gamePlayStats.playGame', assetId) },
+  assetId => {
+    Meteor.call('job.gamePlayStats.playGame', assetId)
+  },
   SpecialGlobals.gamePlay.playCountDebounceMs,
-  { leading: true } // So the play count increases immediately
+  { leading: true }, // So the play count increases immediately
 )
 
 const _styleGameNavButtons = { float: 'right' }
 
-const GameTypeDetail = ( { game, style } ) => {
-  if (!game)
-    return null
+const GameTypeDetail = ({ game, style }) => {
+  if (!game) return null
 
   const linkToAsset = `/u/${game.dn_ownerName}/asset/${game._id}`
 
   if (isValidCodeGame(game))
     return (
       <Popup
-          size='small'
-          position='bottom right'
-          trigger={(
-            <QLink to={linkToAsset} style={style}>
-              <Label
-                basic
-                style={style}
-                id="mgbjr-asset-edit-header-right-chat"
-                size='small'
-                icon={{ name: 'code', style: { marginRight: 0 } }}
-                />
-            </QLink>
-          )}
-          header='Code-based Game'
-          content='This game is written in JavaScript. Click the icon above to open the game configuration file.'
-          />
-    )
-  if (isValidActorMapGame)
-    return (
-      <Popup
-        size='small'
-        position='bottom right'
-        trigger={(
+        size="small"
+        position="bottom right"
+        trigger={
           <QLink to={linkToAsset} style={style}>
             <Label
               basic
               style={style}
               id="mgbjr-asset-edit-header-right-chat"
-              size='small'
-              icon={{ name: 'map', color: 'blue', style: { marginRight: 0 } }}
-              />
+              size="small"
+              icon={{ name: 'code', style: { marginRight: 0 } }}
+            />
           </QLink>
-        )}
-        header='ActorMap-based Game'
-        content='This game has no custom JavaScript code; instead it has been made using Actors and ActorMaps. Click the icon above to open the game configuration file.'
-        />
-  )
+        }
+        header="Code-based Game"
+        content="This game is written in JavaScript. Click the icon above to open the game configuration file."
+      />
+    )
+  if (isValidActorMapGame)
+    return (
+      <Popup
+        size="small"
+        position="bottom right"
+        trigger={
+          <QLink to={linkToAsset} style={style}>
+            <Label
+              basic
+              style={style}
+              id="mgbjr-asset-edit-header-right-chat"
+              size="small"
+              icon={{ name: 'map', color: 'blue', style: { marginRight: 0 } }}
+            />
+          </QLink>
+        }
+        header="ActorMap-based Game"
+        content="This game has no custom JavaScript code; instead it has been made using Actors and ActorMaps. Click the icon above to open the game configuration file."
+      />
+    )
   return null
 }
-
 
 class PlayCodeGame extends React.Component {
   shouldComponentUpdate() {
     return false
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.container = document.getElementById('mgb-jr-main-container')
-    if (!this.container)
-      throw(new Error("Main container cannot be found."))
+    if (!this.container) throw new Error('Main container cannot be found.')
 
     this.adjustIframeSize()
-    this.onresize = _.debounce( () => {
-      this.adjustIframeSize()
-    }, 16, {leading: false, trailing: true})
+    this.onresize = _.debounce(
+      () => {
+        this.adjustIframeSize()
+      },
+      16,
+      { leading: false, trailing: true },
+    )
 
     this.erd = elementResizeDetectorMaker({
-      strategy: "scroll" //<- For ultra performance.
+      strategy: 'scroll', //<- For ultra performance.
     })
     this.erd.listenTo(this.container, this.onresize)
 
@@ -123,7 +125,7 @@ class PlayCodeGame extends React.Component {
   }
 
   // cleanup
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.erd.removeListener(this.container, this.onresize)
 
     /*
@@ -136,8 +138,7 @@ class PlayCodeGame extends React.Component {
    * */
   adjustIframeSize() {
     // fullscreen - don't adjust anything
-    if (this.refs.iframe.offsetHeight === window.innerHeight)
-      return
+    if (this.refs.iframe.offsetHeight === window.innerHeight) return
 
     const container = this.container
 
@@ -150,23 +151,21 @@ class PlayCodeGame extends React.Component {
     style.height = gameHeight + 'px'
     style.width = gameWidth + 'px'
 
-    const {width, height} = this.props.metadata
+    const { width, height } = this.props.metadata
     const setScale = () => {
       const sx = gameWidth / width
       const sy = gameHeight / height
       this.refs.iframe.style.transform = 'scale(' + Math.min(sx, sy) + ')'
     }
 
-    if (width > gameWidth || height > gameHeight)
-      setScale()
+    if (width > gameWidth || height > gameHeight) setScale()
 
-    if (this.props.metadata.allowFullScreen){
+    if (this.props.metadata.allowFullScreen) {
       this.fsListener = () => {
         // this means that iframe is in fullscreen mode!!!
         if (this.refs.iframe.offsetHeight === window.innerHeight)
           this.refs.iframe.style.transform = 'scale(1)'
-        else
-          setScale()
+        else setScale()
       }
       this.refs.iframe.onwebkitfullscreenchange = this.fsListener
       this.refs.iframe.onmozfullscreenchange = this.fsListener
@@ -180,7 +179,7 @@ class PlayCodeGame extends React.Component {
   restart() {
     if (this.refs.iframe) {
       // jquery only for cross browser support
-      $(this.refs.iframe).attr("src", this.refs.iframe.src)
+      $(this.refs.iframe).attr('src', this.refs.iframe.src)
       this.props.incrementPlayCountCb()
     }
   }
@@ -189,10 +188,11 @@ class PlayCodeGame extends React.Component {
    * */
   fullscreen() {
     // TODO: find out
-    const rfs = this.refs.iframe.requestFullScreen
-      || this.refs.iframe.webkitRequestFullScreen
-      || this.refs.iframe.mozRequestFullScreen
-      || this.refs.iframe.msRequestFullScreen
+    const rfs =
+      this.refs.iframe.requestFullScreen ||
+      this.refs.iframe.webkitRequestFullScreen ||
+      this.refs.iframe.mozRequestFullScreen ||
+      this.refs.iframe.msRequestFullScreen
 
     rfs && rfs.call(this.refs.iframe)
   }
@@ -202,10 +202,11 @@ class PlayCodeGame extends React.Component {
    * */
   canDoFullScreen() {
     const { allowFullScreen } = this.props.metadata
-    const rfs = document.body.requestFullScreen
-      || document.body.webkitRequestFullScreen
-      || document.body.mozRequestFullScreen
-      || document.body.msRequestFullScreen
+    const rfs =
+      document.body.requestFullScreen ||
+      document.body.webkitRequestFullScreen ||
+      document.body.mozRequestFullScreen ||
+      document.body.msRequestFullScreen
 
     return allowFullScreen && rfs
   }
@@ -219,10 +220,10 @@ class PlayCodeGame extends React.Component {
           icon: 'refresh',
           tooltip: 'Restart game',
           disabled: false,
-          level: 1
-//          shortcut: 'Alt+R'   // Restart keypress can't be done reliably because game can take focus. Fix #958 because this is nice-to-have but confusing
-        }
-      ]
+          level: 1,
+          //          shortcut: 'Alt+R'   // Restart keypress can't be done reliably because game can take focus. Fix #958 because this is nice-to-have but confusing
+        },
+      ],
     }
 
     if (this.canDoFullScreen()) {
@@ -232,8 +233,8 @@ class PlayCodeGame extends React.Component {
         icon: 'television',
         tooltip: 'Run game in Fullscreen',
         disabled: false,
-        level: 1
-//          shortcut: 'Alt+F'   // Full-screen keypress can't be done reliably because game can take focus. Fix #958 because this is nice-to-have but confusing
+        level: 1,
+        //          shortcut: 'Alt+F'   // Full-screen keypress can't be done reliably because game can take focus. Fix #958 because this is nice-to-have but confusing
       })
     }
 
@@ -241,39 +242,47 @@ class PlayCodeGame extends React.Component {
   }
 
   render() {
-    const { metadata, owner} = this.props
+    const { metadata, owner } = this.props
     const _codeName = metadata.startCode
     let width = metadata.width || 800 // fallback for older games
     let height = metadata.height || 600 // fallback for older games
 
-    if (!_codeName || _codeName === '')
-      return <ThingNotFound type='CodeGame' id='""'/>
+    if (!_codeName || _codeName === '') return <ThingNotFound type="CodeGame" id="&quot;&quot;" />
 
-    const origin = window.location.origin || window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '')
+    const origin =
+      window.location.origin ||
+      window.location.protocol +
+        '//' +
+        window.location.hostname +
+        (window.location.port ? ':' + window.location.port : '')
     const colonPlace = _codeName.search(':')
-    const [ ownerName, codeName ] = colonPlace == -1 ? [owner.profile.name, _codeName] : [_codeName.slice(0, colonPlace), _codeName.slice(colonPlace + 1)]
+    const [ownerName, codeName] =
+      colonPlace == -1
+        ? [owner.profile.name, _codeName]
+        : [_codeName.slice(0, colonPlace), _codeName.slice(colonPlace + 1)]
 
     // recover on missing asset
-    const src = metadata._ids && metadata._ids.startCode
-              ? `/api/asset/code/bundle/cdn/${metadata._ids.startCode}/${ownerName}/${codeName}?origin=${origin}`
-              : `/api/asset/code/bundle/cdn/${ownerName}/${codeName}?origin=${origin}`
+    const src =
+      metadata._ids && metadata._ids.startCode
+        ? `/api/asset/code/bundle/cdn/${metadata._ids.startCode}/${ownerName}/${codeName}?origin=${origin}`
+        : `/api/asset/code/bundle/cdn/${ownerName}/${codeName}?origin=${origin}`
     return (
       <div>
-        <Toolbar
-          actions={this}
-          name="PlayCodeGame"
-          config={this.createConfig()}
-          />
-        <div ref='wrapper' style={{overflow: 'hidden'}}>
+        <Toolbar actions={this} name="PlayCodeGame" config={this.createConfig()} />
+        <div ref="wrapper" style={{ overflow: 'hidden' }}>
           <iframe
-            key={ 0 }
+            key={0}
             ref="iframe"
             id="iFrame1"
-            style={{ minWidth: width + 'px', minHeight: height + 'px', borderStyle: 'none', transformOrigin: '0 0' }}
-            sandbox='allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock'
+            style={{
+              minWidth: width + 'px',
+              minHeight: height + 'px',
+              borderStyle: 'none',
+              transformOrigin: '0 0',
+            }}
+            sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock"
             src={src}
-            >
-          </iframe>
+          />
         </div>
       </div>
     )
@@ -283,11 +292,13 @@ class PlayCodeGame extends React.Component {
 //         src='/api/asset/code/bundle/AXhwYgg93roEsLCBJ'>
 
 const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb, availableWidth }) => {
-  if (!_mapName || _mapName === '')
-    return <ThingNotFound type='ActorGame' id='""'/>
+  if (!_mapName || _mapName === '') return <ThingNotFound type="ActorGame" id="&quot;&quot;" />
 
   const colonPlace = _mapName.search(':')
-  const [ ownerName, mapName ] = colonPlace == -1 ? [owner.profile.name, _mapName] : [_mapName.slice(0, colonPlace), _mapName.slice(colonPlace + 1)]
+  const [ownerName, mapName] =
+    colonPlace == -1
+      ? [owner.profile.name, _mapName]
+      : [_mapName.slice(0, colonPlace), _mapName.slice(colonPlace + 1)]
 
   return (
     <Mage
@@ -296,8 +307,8 @@ const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb, availableWidth })
       startMapName={mapName}
       isPaused={false}
       playCountIncFn={incrementPlayCountCb}
-      fetchAssetByUri={ uri => fetchAssetByUri(uri) }
-      />
+      fetchAssetByUri={uri => fetchAssetByUri(uri)}
+    />
   )
 }
 
@@ -305,162 +316,175 @@ const PlayGame = ({ game, user, incrementPlayCountCb, availableWidth }) => {
   if (!game.metadata)
     return (
       <Message
-          warning
-          content='This GameConfig Asset does not contain a game definition. Someone should edit it and fix that'/>
+        warning
+        content="This GameConfig Asset does not contain a game definition. Someone should edit it and fix that"
+      />
     )
-    const helmet = (
-      <Helmet
-        title={`MGB: Play '${game.name}'`}
-        titleTemplate="%s"
-        meta={[
-            {"name": "My Game Builder", "content": ""}
-        ]} />
-    )
-
+  const helmet = (
+    <Helmet
+      title={`MGB: Play '${game.name}'`}
+      titleTemplate="%s"
+      meta={[{ name: 'My Game Builder', content: '' }]}
+    />
+  )
 
   switch (game.metadata.gameType) {
     case 'codeGame':
       if (!game.metadata.startCode || game.metadata.startCode === '')
         return (
           <Message
-              warning
-              content='This GameConfig Asset does not contain a link to the starting actorMap. Someone should edit it and fix that'/>
-      )
+            warning
+            content="This GameConfig Asset does not contain a link to the starting actorMap. Someone should edit it and fix that"
+          />
+        )
       return (
         <div>
-          { helmet }
-          <PlayCodeGame metadata={game.metadata} owner={user} incrementPlayCountCb={incrementPlayCountCb}/>
+          {helmet}
+          <PlayCodeGame metadata={game.metadata} owner={user} incrementPlayCountCb={incrementPlayCountCb} />
         </div>
       )
     case 'actorGame':
       if (!game.metadata.startActorMap || game.metadata.startActorMap === '')
         return (
           <Message
-              warning
-              content='This GameConfig Asset does not contain a link to the starting Game Code file. Someone should edit it and fix that'/>
-      )
+            warning
+            content="This GameConfig Asset does not contain a link to the starting Game Code file. Someone should edit it and fix that"
+          />
+        )
       return (
         <div>
-          { helmet }
-          <PlayMageGame _mapName={game.metadata.startActorMap} owner={user} incrementPlayCountCb={incrementPlayCountCb} availableWidth={availableWidth}/>
+          {helmet}
+          <PlayMageGame
+            _mapName={game.metadata.startActorMap}
+            owner={user}
+            incrementPlayCountCb={incrementPlayCountCb}
+            availableWidth={availableWidth}
+          />
         </div>
       )
     default:
       return (
         <Message
-            warning
-            content='This GameConfig Asset does not contain a game type definition. Someone should edit it and fix that'/>
+          warning
+          content="This GameConfig Asset does not contain a game type definition. Someone should edit it and fix that"
+        />
       )
   }
 }
 
-
-export default PlayGameRoute = React.createClass({
+const PlayGameRoute = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    params:           PropTypes.object,      // params.assetId is the ASSET id
-    user:             PropTypes.object,
+    params: PropTypes.object, // params.assetId is the ASSET id
+    user: PropTypes.object,
     hazUnreadAssetChat: PropTypes.bool,
     // currUser:         PropTypes.object,
     // currUserProjects: PropTypes.array,       // Both Owned and memberOf. Check ownerName / ownerId fields to know which
     // isSuperAdmin:     PropTypes.bool,
     // ownsProfile:      PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
-    handleSetCurrentlyEditingAssetInfo: PropTypes.func    // We should call this to set/clear current asset kind
+    handleSetCurrentlyEditingAssetInfo: PropTypes.func, // We should call this to set/clear current asset kind
   },
 
-  getMeteorData: function () {
+  getMeteorData: function() {
     const { params } = this.props
     const { assetId } = params
-    const assetHandler = this.assetHandler = getAssetHandlerWithContent2(assetId, () => {
-      if (this.assetHandler)
-        this.forceUpdate()
-    })
+    const assetHandler = (this.assetHandler = getAssetHandlerWithContent2(assetId, () => {
+      if (this.assetHandler) this.forceUpdate()
+    }))
 
-    if (this.assetHandler)
-    {
+    if (this.assetHandler) {
       const { handleSetCurrentlyEditingAssetInfo } = this.props
       const { asset } = this.assetHandler
-      if (asset && handleSetCurrentlyEditingAssetInfo)
-      {
-        const assetInfo = makeAssetInfoFromAsset( asset, 'Play' )
-        handleSetCurrentlyEditingAssetInfo( assetInfo )
+      if (asset && handleSetCurrentlyEditingAssetInfo) {
+        const assetInfo = makeAssetInfoFromAsset(asset, 'Play')
+        handleSetCurrentlyEditingAssetInfo(assetInfo)
       }
     }
 
     return {
-      get asset(){
+      get asset() {
         return assetHandler.asset
       },
-      get loading(){
+      get loading() {
         return !assetHandler.isReady
-      }
+      },
     }
   },
 
-  incrementPlayCount: function () {
-    const game = this.data.asset      // One Asset provided via getMeteorData()
-    if (game && game._id)
-      _incrementPlayCount(game._id)
+  incrementPlayCount: function() {
+    const game = this.data.asset // One Asset provided via getMeteorData()
+    if (game && game._id) _incrementPlayCount(game._id)
   },
 
   //
   checkForImplicitIncrementPlayCount() {
-    const game = this.data.asset      // One Asset provided via getMeteorData()
+    const game = this.data.asset // One Asset provided via getMeteorData()
     if (game && game._id && game.metadata.gameType === 'codeGame' && !this.autoUpdateHasBeenHandled) {
       this.incrementPlayCount()
       this.autoUpdateHasBeenHandled = true
     }
   },
 
-  componentDidMount: function () {
+  componentDidMount: function() {
     this.checkForImplicitIncrementPlayCount()
   },
 
-  componentWillUnmount: function () {
+  componentWillUnmount: function() {
     if (this.assetHandler) {
       this.assetHandler.stop()
       this.assetHandler = null
       // Clear Asset kind status for parent App
-      if (this.props.handleSetCurrentlyEditingAssetInfo)
-        this.props.handleSetCurrentlyEditingAssetInfo( {} )
+      if (this.props.handleSetCurrentlyEditingAssetInfo) this.props.handleSetCurrentlyEditingAssetInfo({})
     }
   },
   contextTypes: {
-    urlLocation: React.PropTypes.object
+    urlLocation: React.PropTypes.object,
   },
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     this.checkForImplicitIncrementPlayCount()
   },
 
   handleChatClick() {
-    const channelName = makeChannelName( { scopeGroupName: 'Asset', scopeId: this.props.params.assetId } )
+    const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: this.props.params.assetId })
     joyrideCompleteTag('mgbjr-CT-asset-play-game-show-chat')
     utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
 
-  render: function () {
-    if (this.data.loading)
-      return <Spinner />
+  render: function() {
+    if (this.data.loading) return <Spinner />
 
-    if (!this.data.asset)
-      return <ThingNotFound type='GameConfig Asset' id={params.assetId}/>
+    if (!this.data.asset) return <ThingNotFound type="GameConfig Asset" id={params.assetId} />
     const { params, user, hazUnreadAssetChat } = this.props
-    const game = this.data.asset      // One Asset provided via getMeteorData()
+    const game = this.data.asset // One Asset provided via getMeteorData()
 
     return (
-      <Segment basic padded style={{ paddingTop: 0, paddingBottom: 0}}>
-          <Header as='span'>
-            <QLink to={`/u/${game.dn_ownerName}/asset/${game._id}`}>
-              <Icon name='game'/>{game.name}
-            </QLink>
-          </Header>
-        <small>&emsp;{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</small>
-        <AssetChatDetail style={_styleGameNavButtons} hasUnreads={hazUnreadAssetChat} handleClick={this.handleChatClick}/>
+      <Segment basic padded style={{ paddingTop: 0, paddingBottom: 0 }}>
+        <Header as="span">
+          <QLink to={`/u/${game.dn_ownerName}/asset/${game._id}`}>
+            <Icon name="game" />
+            {game.name}
+          </QLink>
+        </Header>
+        <small>
+          &emsp;{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}
+        </small>
+        <AssetChatDetail
+          style={_styleGameNavButtons}
+          hasUnreads={hazUnreadAssetChat}
+          handleClick={this.handleChatClick}
+        />
         <GameTypeDetail game={game} style={_styleGameNavButtons} />
-        <PlayGame game={game} user={user} incrementPlayCountCb={this.incrementPlayCount} availableWidth={this.props.availableWidth} />
+        <PlayGame
+          game={game}
+          user={user}
+          incrementPlayCountCb={this.incrementPlayCount}
+          availableWidth={this.props.availableWidth}
+        />
       </Segment>
     )
-  }
+  },
 })
+
+export default PlayGameRoute

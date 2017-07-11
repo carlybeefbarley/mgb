@@ -1,18 +1,18 @@
-const webdriver = require('selenium-webdriver');
+const webdriver = require('selenium-webdriver')
 const Key = webdriver.Key
 
-const SeleniumHelper = require("../helpers/selenium.js")
+const SeleniumHelper = require('../helpers/selenium.js')
 const el = {
   // TODO: add ids in the code - so we can use better selectors
-  deleteButton: '.trash.outline.bordered.icon'
+  deleteButton: '.trash.outline.bordered.icon',
 }
-module.exports = (browser) => {
+module.exports = browser => {
   const sel = SeleniumHelper(browser)
 
   // return function so procedure can be used directly as callback
-  return (done) => {
+  return done => {
     // wait for React root element
-    sel.css("#root")
+    sel.css('#root')
 
     // TODO: check if we are in the asset view
 

@@ -6,49 +6,51 @@ import C from './CommonSkillNodes.js'
 
 // The paths for these skills are related the .skillNodes properties of the helpInfo Object defined in TokenDescription.js
 
-export default {
+const ArtSkillNodes = {
   $meta: {
-    name:           'Art',
-    description:    'Represents pixel art and animation skills',
+    name: 'Art',
+    description: 'Represents pixel art and animation skills',
   },
 
-  'lineArt': {
+  lineArt: {
     $meta: {
-      name:           'Line Art',
-      description:    'Basics of creating line art.',
+      name: 'Line Art',
+      description: 'Basics of creating line art.',
     },
-    'linesAndCurves':     C.En(0),
-    'antiAliasing':       C.En(2)
+    linesAndCurves: C.En(0),
+    antiAliasing: C.En(2),
   },
 
-  'colors': {
+  colors: {
     $meta: {
-      name:           'Colors',
-      description:    'Creating and applying an appropriate color palette for your art.',
+      name: 'Colors',
+      description: 'Creating and applying an appropriate color palette for your art.',
     },
-    'HSV':          C.En(0),
-    'colorPalette': C.En(1),
-    'colorRamps':   C.En(2)
+    HSV: C.En(0),
+    colorPalette: C.En(1),
+    colorRamps: C.En(2),
   },
 
-  'shadesAndTextures': {
+  shadesAndTextures: {
     $meta: {
-      name:           'Shades and Textures',
-      description:    'Shading and adding textures to your art.',
+      name: 'Shades and Textures',
+      description: 'Shading and adding textures to your art.',
     },
-    'shadowAndLight': C.En(0),
-    'dithering':      C.En(2),
-    'textures':       C.En(3)
+    shadowAndLight: C.En(0),
+    dithering: C.En(2),
+    textures: C.En(3),
   },
 
-  'gameSprites': {
+  gameSprites: {
     $meta: {
-      name:           'Game Sprites',
-      description:    'Designing and creating sprite with the game in mind.',
+      name: 'Game Sprites',
+      description: 'Designing and creating sprite with the game in mind.',
     },
-    perspectives:     C.En(3),
-    characterDesign:  C.En(1),
-    animations:       C.En(2),
-    tiling:           C.En(2)
+    perspectives: C.En(3),
+    characterDesign: C.En(1),
+    animations: C.En(2),
+    tiling: C.En(2),
   },
 }
+
+export default ArtSkillNodes

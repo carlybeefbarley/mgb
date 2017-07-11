@@ -2,8 +2,7 @@ import React from 'react'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
 
 export default class AudioToolbar extends React.Component {
-
-  constructor (props) {
+  constructor(props) {
     super(props)
   }
 
@@ -23,11 +22,11 @@ export default class AudioToolbar extends React.Component {
     this.props.toggleLoop()
   }
 
-  handleUndo(){
+  handleUndo() {
     this.props.handleUndo()
   }
 
-  handleRedo(){
+  handleRedo() {
     this.props.handleRedo()
   }
 
@@ -39,33 +38,33 @@ export default class AudioToolbar extends React.Component {
     this.props.zoom(false)
   }
 
-  drag () {
-    this.props.selectableButtons("isDrag")
+  drag() {
+    this.props.selectableButtons('isDrag')
   }
 
-  select () {
-    this.props.selectableButtons("isSelecting")
+  select() {
+    this.props.selectableButtons('isSelecting')
   }
 
-  eraseSelected () {
+  eraseSelected() {
     this.props.eraseSelected()
   }
 
-  cutSelected () {
+  cutSelected() {
     this.props.cutSelected()
   }
 
-  copySelected () {
+  copySelected() {
     this.props.copySelected()
   }
 
-  pasteSelected () {
-    this.props.selectableButtons("isPaste")
+  pasteSelected() {
+    this.props.selectableButtons('isPaste')
   }
 
-  render () {
+  render() {
     const config = {
-//      level: 3,  -- This is now in expectedToolbars.getDefaultLevel
+      //      level: 3,  -- This is now in expectedToolbars.getDefaultLevel
       buttons: [
         {
           name: 'addChannel',
@@ -75,78 +74,78 @@ export default class AudioToolbar extends React.Component {
           level: 1,
         },
         {
-          name: 'separator'
+          name: 'separator',
         },
         {
           name: 'togglePlay',
-          label: this.props.isPlaying ? "Pause" : "Play",
-          icon:  this.props.isPlaying ? "pause" : "play",
+          label: this.props.isPlaying ? 'Pause' : 'Play',
+          icon: this.props.isPlaying ? 'pause' : 'play',
           tooltip: 'Play/pause',
           level: 1,
         },
         {
           name: 'stopAudio',
           label: 'Stop',
-          icon:  'stop',
+          icon: 'stop',
           tooltip: 'Stop',
           level: 1,
         },
         {
           name: 'toggleLoop',
           label: 'Loop',
-          icon:  this.props.isLoop ? 'toggle on' : 'toggle off',
+          icon: this.props.isLoop ? 'toggle on' : 'toggle off',
           tooltip: 'Loop audio',
           level: 1,
         },
         // loop component
         // duration component
         {
-          name: 'separator'
+          name: 'separator',
         },
         {
-          label: "Undo",                    
-          name: "handleUndo",           
-          tooltip: "Undo",                  
-          iconText: this.props.undoSteps.length,  
-          disabled: !this.props.undoSteps.length, 
-          icon: "undo icon",                
-          // shortcut: 'Ctrl+Z',              
-          level: 2, 
+          label: 'Undo',
+          name: 'handleUndo',
+          tooltip: 'Undo',
+          iconText: this.props.undoSteps.length,
+          disabled: !this.props.undoSteps.length,
+          icon: 'undo icon',
+          // shortcut: 'Ctrl+Z',
+          level: 2,
         },
         {
-         label: "Redo",
-          name: "handleRedo",
-          tooltip: "Redo",
+          label: 'Redo',
+          name: 'handleRedo',
+          tooltip: 'Redo',
           iconText: this.props.redoSteps.length,
           disabled: !this.props.redoSteps.length,
-          icon: "undo flip icon",
+          icon: 'undo flip icon',
           // shortcut: 'Ctrl+Shift+Z',
           level: 2,
         },
         {
-          name: 'separator'
+          name: 'separator',
         },
         {
           name: 'zoomIn',
           label: 'Zoom In',
-          icon:  'zoom',
+          icon: 'zoom',
           tooltip: 'Zoom In',
           level: 3,
         },
         {
           name: 'zoomOut',
           label: 'Zoom Out',
-          icon:  'zoom out',
+          icon: 'zoom out',
           tooltip: 'Zoom Out',
           level: 3,
         },
         {
-          name: 'separator'
+          name: 'separator',
         },
         {
           name: 'drag',
           label: 'Drag',
-          icon:  'hand paper',
+          icon: 'hand paper',
           tooltip: 'Drag sample',
           level: 5,
           disabled: !this.props.hasPermission(),
@@ -155,7 +154,7 @@ export default class AudioToolbar extends React.Component {
         {
           name: 'select',
           label: 'Select',
-          icon:  'crosshairs',
+          icon: 'crosshairs',
           tooltip: 'Select',
           level: 5,
           active: this.props.isSelecting,
@@ -164,7 +163,7 @@ export default class AudioToolbar extends React.Component {
         {
           name: 'eraseSelected',
           label: 'Erase',
-          icon:  'eraser',
+          icon: 'eraser',
           tooltip: 'Erase selected area',
           level: 5,
           disabled: !this.props.selectData || !this.props.hasPermission(),
@@ -172,7 +171,7 @@ export default class AudioToolbar extends React.Component {
         {
           name: 'cutSelected',
           label: 'Cut',
-          icon:  'cut',
+          icon: 'cut',
           tooltip: 'Cut selected area',
           level: 5,
           disabled: !this.props.selectData || !this.props.hasPermission(),
@@ -180,7 +179,7 @@ export default class AudioToolbar extends React.Component {
         {
           name: 'copySelected',
           label: 'Copy',
-          icon:  'copy',
+          icon: 'copy',
           tooltip: 'Copy selected area',
           level: 5,
           disabled: !this.props.selectData || !this.props.hasPermission(),
@@ -188,20 +187,15 @@ export default class AudioToolbar extends React.Component {
         {
           name: 'pasteSelected',
           label: 'Paste',
-          icon:  'paste',
+          icon: 'paste',
           tooltip: 'Paste audio sample',
           level: 5,
           disabled: !this.props.pasteData || !this.props.hasPermission(),
           active: this.props.isPaste,
         },
-      ]
+      ],
     }
 
-    return <Toolbar
-      actions={this}
-      config={config}
-      className='map-tools'
-      name='AudioTools' />
+    return <Toolbar actions={this} config={config} className="map-tools" name="AudioTools" />
   }
-
 }

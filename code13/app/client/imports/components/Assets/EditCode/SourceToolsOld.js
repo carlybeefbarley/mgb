@@ -1,18 +1,17 @@
-"use strict"
-import knownLibs from "./knownLibs.js"
-import {observeAsset, mgbAjax, makeCDNLink} from "/client/imports/helpers/assetFetchers"
-import {AssetKindEnum} from '/imports/schemas/assets'
+'use strict'
+import knownLibs from './knownLibs.js'
+import { observeAsset, mgbAjax, makeCDNLink } from '/client/imports/helpers/assetFetchers'
+import { AssetKindEnum } from '/imports/schemas/assets'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
 import getCDNWorker from '/client/imports/helpers/CDNWorker'
 
 // serving modules from...
 const getModuleServer = (lib, version = 'latest') => {
-  const parts = lib.split("@")
-  if(parts.length === 1){
+  const parts = lib.split('@')
+  if (parts.length === 1) {
     return `https://cdn.jsdelivr.net/${lib}/${version}/${lib}.min.js`
-  }
-  else{
+  } else {
     const name = parts[0]
     return `https://cdn.jsdelivr.net/${name}/${parts[1]}/${name}.min.js`
   }
@@ -28,17 +27,16 @@ const UPDATE_DELAY = 0.5 * 1000 // 500ms
 const MAX_ACCEPTABLE_SOURCE_SIZE = SpecialGlobals.editCode.maxFileSizeForAST // 1024 * 100 // 100 KB
 
 const ERROR = {
-  SOURCE_NOT_FOUND: "W-ST-001", // warning - sourcetools - errnum -- atm only matters first letter: W(warning) E(error)
-  MULTIPLE_SOURCES: "W-ST-002",
-  UNREACHABLE_EXTERNAL_SOURCE: "W-ST-003",
+  SOURCE_NOT_FOUND: 'W-ST-001', // warning - sourcetools - errnum -- atm only matters first letter: W(warning) E(error)
+  MULTIPLE_SOURCES: 'W-ST-002',
+  UNREACHABLE_EXTERNAL_SOURCE: 'W-ST-003',
   // if same file is included - then export default won't work as expected - so show error
-  RECURSION_DETECTED:  "E-ST-004",
+  RECURSION_DETECTED: 'E-ST-004',
   // if imported files will have recursion - usually everything will work fine.
   // But we still need to notify user that some unexpected bahaviour can happen
   // e.g. when imported resource is requested directly (not in the some function)
-  WARN_RECURSION_DETECTED: "W-ST-005"
+  WARN_RECURSION_DETECTED: 'W-ST-005',
 }
-
 
 export default class SourceTools {
   // here are sources loaded from CDN
@@ -53,7 +51,7 @@ export default class SourceTools {
     //
     this.asset_id = asset_id
     this.tern = ternServer
-    this.babelWorker = getCDNWorker("/lib/workers/BabelWorker.js")
+    this.babelWorker = getCDNWorker('/lib/workers/BabelWorker.js')
 
     // all collected sources in the order of inclusion
     this.collectedSources = []
@@ -81,7 +79,7 @@ export default class SourceTools {
     // caches last action - to prevent intensive updates in a case when external lib(s) is intensively updating and triggering updates
     this._lastActionSrc = ''
     // store entry point filename - usually will bet automatically set to asset name
-    this.mainJS = "main.js"
+    this.mainJS = 'main.js'
 
     // callback which gets executed if error has encountered
     this.errorCBs = []
@@ -106,19 +104,19 @@ export default class SourceTools {
   }
 
   // error related methods - used in the edit code - to show nice errors - e.g. recursion
-  onError(cb){
+  onError(cb) {
     this.errorCBs.push(cb)
   }
-  getErrors(){
+  getErrors() {
     const ret = []
-    for(let i in this.errors){
+    for (let i in this.errors) {
       ret.push(this.errors[i])
     }
     return ret
   }
-  setError(err){
+  setError(err) {
     this.errors[err.code] = err
-    this.errorCBs.forEach((c) => {
+    this.errorCBs.forEach(c => {
       c(err)
     })
   }
@@ -134,17 +132,16 @@ export default class SourceTools {
     }
 
     if (!force) {
-      if ((this.inProgress && !this._firstTime) || (this._lastActionSrc === srcText)) {
-        this.delayed = (force) => {
+      if ((this.inProgress && !this._firstTime) || this._lastActionSrc === srcText) {
+        this.delayed = force => {
           // this may never be called if new sources will come in
           this.collectAndTranspile(srcText, filename, callback, force)
         }
         this.timeout = window.setTimeout(this.delayed, UPDATE_DELAY)
         return
       }
-    }
-    else if (this.inProgress) {
-      console.log("This never should happen - Debug ASAP!")
+    } else if (this.inProgress) {
+      console.log('This never should happen - Debug ASAP!')
     }
 
     // clean up old errors
@@ -160,18 +157,23 @@ export default class SourceTools {
     // this.collectedSources.length = 0
 
     this.inProgress = true
-    this._collectAndTranspile(srcText, filename, () => {
-      if (this.isDestroyed) return
-      // force tern to update arg hint cache as we may have loaded new files / defs / docs
-      callback && callback(this.collectedSources)
-      this.inProgress = false
-    }, this.mainJS)
+    this._collectAndTranspile(
+      srcText,
+      filename,
+      () => {
+        if (this.isDestroyed) return
+        // force tern to update arg hint cache as we may have loaded new files / defs / docs
+        callback && callback(this.collectedSources)
+        this.inProgress = false
+      },
+      this.mainJS,
+    )
   }
   // calls callback with collected sources
   collectSources(cb) {
     if (this.isDestroyed) return
     // wait for first action...
-    if(this._firstTime){
+    if (this._firstTime) {
       window.setTimeout(() => {
         this.collectSources(cb)
       }, 100)
@@ -210,24 +212,24 @@ export default class SourceTools {
     this.errors = null
 
     this.cleanup()
-    for(let i=0; i<this.collectedSources.length; i++){
-     this.tern.server.delFile(this.collectedSources[i].name)
+    for (let i = 0; i < this.collectedSources.length; i++) {
+      this.tern.server.delFile(this.collectedSources[i].name)
     }
   }
 
   // clean up old data
-  cleanup(){
+  cleanup() {
     this.removeTranspiled(this.mainJS)
-    this.collectedSources.length = 0;
+    this.collectedSources.length = 0
   }
 
   // collects info about script
   collectScript(name, source, cb, localName = name, force = false, origin = null) {
     if (this.isDestroyed) return
     // skip transpiled and compiled and empty scripts
-    if (!name || !source.code || (!force && this.isAlreadyTranspiled(name)) ) {
+    if (!name || !source.code || (!force && this.isAlreadyTranspiled(name))) {
       cb && cb()
-      return;
+      return
     }
 
     const lib = SourceTools.getKnowLib(name)
@@ -235,11 +237,10 @@ export default class SourceTools {
     source.name = name
     source.localName = localName
     source.isExternalFile = SourceTools.isExternalFile(source.url)
-    if(origin){
-      if(!source.origin){
+    if (origin) {
+      if (!source.origin) {
         source.origin = [origin]
-      }
-      else if(source.origin.indexOf(origin) === -1){
+      } else if (source.origin.indexOf(origin) === -1) {
         source.origin.push(origin)
       }
     }
@@ -247,8 +248,7 @@ export default class SourceTools {
     // MGB assets will have cache.. remote won't
     if (!source.isExternalFile) {
       this.addDefsOrFile(name, this.transpileCache[name].src, true)
-    }
-    else {
+    } else {
       this.addDefsOrFile(name, source.code)
     }
 
@@ -259,37 +259,35 @@ export default class SourceTools {
   addDefsOrFile(filename, code, replace = false) {
     if (this.isDestroyed) return
     // skip added defs and files
-    if(this.loadedFilesAndDefs[filename]){
+    if (this.loadedFilesAndDefs[filename]) {
       return
     }
 
     const lib = SourceTools.getKnowLib(filename)
     if (lib && lib.defs) {
       this.loadDefs(lib.defs())
-    }
-    else {
+    } else {
       // TODO: debug: sometimes code isn't defined at all
       if (!code) {
         return
       }
       if (code.length < MAX_ACCEPTABLE_SOURCE_SIZE) {
-        if(!replace){
+        if (!replace) {
           this.loadedFilesAndDefs[filename] = true
         }
         /*const cleanFileName = filename.startsWith("./") ? filename.substr(2) : (
           filename.startsWith("/") && !filename.startsWith('//') ? filename.substr(1) : filename)*/
         this.tern.server.addFile(filename, code, replace)
         this.tern.cachedArgHints = null
-      }
-      else {
+      } else {
         console.log(`${filename} is too big [${code.length} bytes] and no defs defined`)
       }
     }
   }
   // adds script to the collection - user has added import
-  collectSource(source){
+  collectSource(source) {
     const oldSource = this.isAlreadyTranspiled(source.name)
-    if(oldSource){
+    if (oldSource) {
       oldSource.code = source.code
       oldSource.useGlobal = source.useGlobal
       oldSource.localName = source.localName
@@ -317,20 +315,19 @@ export default class SourceTools {
       setTimeout(() => {
         this.updateNow(cb)
       }, 1000)
-      return;
+      return
     }
 
     // call manually pending changes
     if (this.timeout) {
       // this will trigger in progress and waiting will start again
-      window.clearTimeout(this.timeout);
-      this.timeout = 0;
+      window.clearTimeout(this.timeout)
+      this.timeout = 0
 
-      this.delayed(true);
-      this.updateNow(cb);
-    }
-    // already on the latest version, yay!
-    else
+      this.delayed(true)
+      this.updateNow(cb)
+    } else
+      // already on the latest version, yay!
       cb()
   }
 
@@ -338,13 +335,13 @@ export default class SourceTools {
   _collectAndTranspile(srcText, filename, callback, force, origin) {
     if (this.isDestroyed) return
     this.pendingChanges[filename] = true
-    const compiled = !force && this.isAlreadyTranspiled(filename);
+    const compiled = !force && this.isAlreadyTranspiled(filename)
     if (compiled) {
       callback && callback(compiled.code)
       return
     }
     this._hasSourceChanged = true
-    this.transform(srcText, filename, (output) => {
+    this.transform(srcText, filename, output => {
       var imports = SourceTools.parseImport(output)
       var cb
       if (callback) {
@@ -360,31 +357,33 @@ export default class SourceTools {
         if (imports.length) {
           const imp = imports.shift()
           // TODO: find out how to resolve this - if ever possible
-          if(this.pendingChanges[imp.src]){
-            this.setError({reason: "Recursion detected: " + filename, evidence: filename, code: ERROR.WARN_RECURSION_DETECTED})
+          if (this.pendingChanges[imp.src]) {
+            this.setError({
+              reason: 'Recursion detected: ' + filename,
+              evidence: filename,
+              code: ERROR.WARN_RECURSION_DETECTED,
+            })
             //this.setError({reason: "Recursion detected: " + filename, evidence: filename, code: ERROR.RECURSION_DETECTED})
             load()
             return
           }
           this.loadFromCache(imp.src, load, imp.name, filename)
-        }
-        else {
-          this.collectScript(filename, {code: output.code, url: filename}, cb, null, force, origin)
+        } else {
+          this.collectScript(filename, { code: output.code, url: filename }, cb, null, force, origin)
           delete this.pendingChanges[filename]
         }
       }
       load()
     })
-
   }
   // transforms code from ES6 to ES5 + skips external libs
   transform(srcText, filename, cb) {
     if (this.isDestroyed) return
-    let code = '';
+    let code = ''
     if (!SourceTools.isExternalFile(filename)) {
-      code = srcText;
+      code = srcText
     }
-    this.transpile(filename, code, cb);
+    this.transpile(filename, code, cb)
   }
   // real transpilation is happening here
   transpile(filename, src, cb) {
@@ -398,20 +397,20 @@ export default class SourceTools {
       }
     }
     //
-    if(this.babelWorker.isBusy){
+    if (this.babelWorker.isBusy) {
       // debugger
       // racing condition - usually happens when one is working on the main file and second on the file included by the main file..
       // it should be safe to ignore direct request - as main file will pull in dependency anyway
       return
     }
     // TODO: spawn extra workers?
-    this.babelWorker.onmessage = (m) => {
-      this.transpileCache[filename] = {src, data: m.data}
+    this.babelWorker.onmessage = m => {
+      this.transpileCache[filename] = { src, data: m.data }
       // prevent extra calls
       this.babelWorker.onmessage = null
       this.babelWorker.isBusy = false
       cb(m.data)
-    };
+    }
     this.babelWorker.isBusy = filename
     this.babelWorker.postMessage([filename, src])
   }
@@ -442,50 +441,68 @@ export default class SourceTools {
       return
     }
     // load external file and cache - so we can skip loading next time
-    SourceTools.loadImport(url, (source, error) => {
-      if(error){
-        this.setError(error)
-      }
-      // we got destroyed while loading import... nothing to do here anymore
-      if(!this.cache){
-        return
-      }
-      this.cache[urlFinalPart] = source
-      this.collectScript(urlFinalPart, source, cb, localName, false, origin)
-    }, urlFinalPart)
+    SourceTools.loadImport(
+      url,
+      (source, error) => {
+        if (error) {
+          this.setError(error)
+        }
+        // we got destroyed while loading import... nothing to do here anymore
+        if (!this.cache) {
+          return
+        }
+        this.cache[urlFinalPart] = source
+        this.collectScript(urlFinalPart, source, cb, localName, false, origin)
+      },
+      urlFinalPart,
+    )
   }
 
   // loads and observes imported MGB code asset for changes
-  loadAndObserveLocalFile(url, urlFinalPart, cb, origin){
+  loadAndObserveLocalFile(url, urlFinalPart, cb, origin) {
     // import './stauzs:asset_name'
-    const parts = urlFinalPart.split("/").pop().split(":")
+    const parts = urlFinalPart.split('/').pop().split(':')
     const name = parts.pop()
     const owner = parts.length > 0 ? parts.pop() : this.owner
     const assetUrl = `/api/asset/code/${owner}/${name}`
 
     const getSourceAndTranspile = (err, assets) => {
-      if(assets.length > 1){
-        this.setError({reason: "Multiple candidates found for " + urlFinalPart, evidence: urlFinalPart, code: ERROR.MULTIPLE_SOURCES})
+      if (assets.length > 1) {
+        this.setError({
+          reason: 'Multiple candidates found for ' + urlFinalPart,
+          evidence: urlFinalPart,
+          code: ERROR.MULTIPLE_SOURCES,
+        })
       }
       const asset = assets[0]
       if (asset) {
-        mgbAjax(assetUrl, (err, content) => {
-            if(err){
-              this.setError({reason: "Unable to load: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.SOURCE_NOT_FOUND})
+        mgbAjax(
+          assetUrl,
+          (err, content) => {
+            if (err) {
+              this.setError({
+                reason: 'Unable to load: ' + urlFinalPart,
+                evidence: urlFinalPart,
+                code: ERROR.SOURCE_NOT_FOUND,
+              })
               return
             }
             this._collectAndTranspile(content, urlFinalPart, cb, true, origin)
-          }, asset
+          },
+          asset,
         )
-      }
-      else {
+      } else {
         // TODO somewhere in the callstack get line number and pass to this function - atm EditCode is guessing lines by evidence string
-        this.setError({reason: "Unable to locate: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.SOURCE_NOT_FOUND})
-        cb("")
+        this.setError({
+          reason: 'Unable to locate: ' + urlFinalPart,
+          evidence: urlFinalPart,
+          code: ERROR.SOURCE_NOT_FOUND,
+        })
+        cb('')
       }
     }
     // asset resource identifier
-    const ari = url ; //+ '/' + urlFinalPart
+    const ari = url //+ '/' + urlFinalPart
     // already subscribed and observing
     // TODO: this can be skipped - but requires to check all edge cases - e.g. first time load / file removed and then added again etc
     // atm this seems pretty quick
@@ -497,16 +514,20 @@ export default class SourceTools {
 
     const onReady = () => {
       const assets = this.subscriptions[ari].getAssets()
-      if(!assets.length){
+      if (!assets.length) {
         // we still need to call getSourceAndTranspile - so loaded files match requested files
         getSourceAndTranspile(null, [])
         return
       }
 
       // if this is main file - only requested in different format
-      if(this.asset_id === assets[0]._id){
+      if (this.asset_id === assets[0]._id) {
         //this.subscriptions[ari].subscription.stop()
-        this.setError({reason: "Recursion detected: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.RECURSION_DETECTED})
+        this.setError({
+          reason: 'Recursion detected: ' + urlFinalPart,
+          evidence: urlFinalPart,
+          code: ERROR.RECURSION_DETECTED,
+        })
         this.subscriptions[ari].subscription.stop()
         getSourceAndTranspile(null, [])
         return
@@ -516,58 +537,64 @@ export default class SourceTools {
     }
     // on Change we should check if there is already something happening.. as it can be called at any time
     const onChange = () => {
-      console.log("External file has changed!", ari)
-      if(this.inProgress){
+      console.log('External file has changed!', ari)
+      if (this.inProgress) {
         return
       }
       const assets = this.subscriptions[ari].getAssets()
       // if this is main file - only requested in different format
-      if(this.asset_id === assets[0]._id){
-        this.setError({reason: "Recursion detected: " + urlFinalPart, evidence: urlFinalPart, code: ERROR.RECURSION_DETECTED})
+      if (this.asset_id === assets[0]._id) {
+        this.setError({
+          reason: 'Recursion detected: ' + urlFinalPart,
+          evidence: urlFinalPart,
+          code: ERROR.RECURSION_DETECTED,
+        })
         return
       }
       getSourceAndTranspile(null, assets)
     }
 
     // from now on only observe asset and update tern on changes only
-    this.subscriptions[ari] = observeAsset({
-      dn_ownerName: owner,
-      name: name,
-      kind: AssetKindEnum.code,
-      isDeleted: false
-    }, onReady, onChange)
+    this.subscriptions[ari] = observeAsset(
+      {
+        dn_ownerName: owner,
+        name: name,
+        kind: AssetKindEnum.code,
+        isDeleted: false,
+      },
+      onReady,
+      onChange,
+    )
   }
   // expose private variable - EditCode uses this
-  hasChanged(){
+  hasChanged() {
     return this._hasSourceChanged
   }
 
   // includes only local MGB code in the bundle - leave CDN untouched
-  createBundle(cb){
+  createBundle(cb) {
     if (this.isDestroyed) return
     if (!this._hasSourceChanged) {
       cb(this.cachedBundle, true)
       return
     }
-    this.collectSources((sources) => {
+    this.collectSources(sources => {
       // check sources and skip bundling if ALL sources are empty
       // empty means ';' - because of babel transforms
       let canSkipBundling = true
-      for (let i =0; i < sources.length; i++) {
+      for (let i = 0; i < sources.length; i++) {
         const code = sources[i].code
-        if(code && code !== ";"){
+        if (code && code !== ';') {
           canSkipBundling = false
           break
         }
       }
-      if(canSkipBundling){
+      if (canSkipBundling) {
         this.cachedBundle = ''
         this._hasSourceChanged = false
         cb('')
         return
       }
-
-
 
       // only phaser is global atm
       const externalGlobal = []
@@ -575,16 +602,19 @@ export default class SourceTools {
       for (let i in sources) {
         const source = sources[i]
         if (source.isExternalFile) {
-          const localKey = source.url.split("/").pop().split(".").shift()
-          const partial = {url: source.url, localName: source.localName, name: source.name, localKey: localKey, key: source.key}
-          source.useGlobal
-            ? externalGlobal.push(partial)
-            : externalLocal.push(partial)
+          const localKey = source.url.split('/').pop().split('.').shift()
+          const partial = {
+            url: source.url,
+            localName: source.localName,
+            name: source.name,
+            localKey: localKey,
+            key: source.key,
+          }
+          source.useGlobal ? externalGlobal.push(partial) : externalLocal.push(partial)
         }
       }
 
-      let allInOneBundle =
-`
+      let allInOneBundle = `
 (function(){
 
 var imports = {};
@@ -660,31 +690,47 @@ main = function(){
       const imports = {}
       for (let i in sources) {
         const source = sources[i]
-        if(source.isExternalFile){
+        if (source.isExternalFile) {
           continue
         }
 
-        const key = source.name.split("@").shift();
-        const localKeyWithExt = key.split("/").pop()
-        const localKey = localKeyWithExt.split(".").shift().split(":").pop()
+        const key = source.name.split('@').shift()
+        const localKeyWithExt = key.split('/').pop()
+        const localKey = localKeyWithExt.split('.').shift().split(':').pop()
 
-        allInOneBundle += "window.module = {exports: {}};window.exports = window.module.exports;\n" +
-          source.code + ";\n"
+        allInOneBundle +=
+          'window.module = {exports: {}};window.exports = window.module.exports;\n' + source.code + ';\n'
 
-        if(!imports[key])
-          allInOneBundle += "\n" + 'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+        if (!imports[key])
+          allInOneBundle +=
+            '\n' +
+            'imports["' +
+            key +
+            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
 
-        if(!imports[localKey])
-          allInOneBundle += "\n" + 'imports["' + localKey + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+        if (!imports[localKey])
+          allInOneBundle +=
+            '\n' +
+            'imports["' +
+            localKey +
+            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
 
         if (source.localName && !imports[source.localName])
-          allInOneBundle += "\n" + 'imports["' + source.localName + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+          allInOneBundle +=
+            '\n' +
+            'imports["' +
+            source.localName +
+            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
 
         if (source.name && !imports[source.name])
-          allInOneBundle += "\n" + 'imports["' + source.name + '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+          allInOneBundle +=
+            '\n' +
+            'imports["' +
+            source.name +
+            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
       }
 
-      allInOneBundle += "\n" + "}})(); "
+      allInOneBundle += '\n' + '}})(); '
       // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
       /*const worker = new Worker("/lib/BabelWorker.js")
       worker.onmessage = (e) => {
@@ -699,11 +745,10 @@ main = function(){
         retainLines: false
       }])*/
 
-      if(this.cachedBundle === allInOneBundle){
+      if (this.cachedBundle === allInOneBundle) {
         this._hasSourceChanged = false
         cb(this.cachedBundle, true)
-      }
-      else{
+      } else {
         cb(allInOneBundle)
         this.cachedBundle = allInOneBundle
         this._hasSourceChanged = false
@@ -728,21 +773,20 @@ main = function(){
     }
   }
 
-  loadCommonDefs(){
+  loadCommonDefs() {
     this.loadDefs(knownLibs.common.defs())
   }
 
-  collectImportsForFile(name){
+  collectImportsForFile(name) {
     return this.collectedSources.filter(script => {
       // after renaming asset script name won't match asset name
       // only main script don't have origin
-      if(script.name != name && !script.origin){
+      if (script.name != name && !script.origin) {
         return false
       }
       return script.name != name && script.origin.indexOf(name) > -1
     })
   }
-
 
   // includes all files in the on big bundle file - not used atm
   createBundle_commonJS(cb) {
@@ -751,7 +795,7 @@ main = function(){
       cb(this.cachedBundle, true)
       return
     }
-    this.collectSources((sources) => {
+    this.collectSources(sources => {
       let allInOneBundle = `
 (function(){
   var imports = {};
@@ -770,74 +814,80 @@ main = function(){
     return (window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)])
   };`
       for (let i in sources) {
-        const key = sources[i].name.split("@").shift();
+        const key = sources[i].name.split('@').shift()
 
         if (sources[i].useGlobal) {
-          allInOneBundle += "\n" + 'delete window.exports; delete window.module; '
+          allInOneBundle += '\n' + 'delete window.exports; delete window.module; '
+        } else {
+          allInOneBundle += '\n' + 'window.module = {exports: {}};window.exports = window.module.exports; '
         }
-        else {
-          allInOneBundle += "\n" + 'window.module = {exports: {}};window.exports = window.module.exports; '
-        }
-        allInOneBundle += sources[i].code + "; "
+        allInOneBundle += sources[i].code + '; '
 
         if (sources[i].useGlobal) {
-          allInOneBundle += "\n" + 'imports["' + sources[i].name + '"] = true; '
-        }
-        else {
+          allInOneBundle += '\n' + 'imports["' + sources[i].name + '"] = true; '
+        } else {
           allInOneBundle +=
-            "\n" + 'imports["' + key + '"] = (window.exports === window.module.export ? window.exports : window.module.exports)';
+            '\n' +
+            'imports["' +
+            key +
+            '"] = (window.exports === window.module.export ? window.exports : window.module.exports)'
           if (sources[i].name) {
-            allInOneBundle += "\n" + 'imports["' + sources[i].name + '"] = window.module.exports;'
+            allInOneBundle += '\n' + 'imports["' + sources[i].name + '"] = window.module.exports;'
           }
         }
       }
 
-      allInOneBundle += "\n" + "})(); "
+      allInOneBundle += '\n' + '})(); '
 
       // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
-      const worker = getCDNWorker("/lib/workers/BabelWorker.js")
-      worker.onmessage = (e) => {
+      const worker = getCDNWorker('/lib/workers/BabelWorker.js')
+      worker.onmessage = e => {
         cb(e.data.code)
         worker.terminate()
       }
-      worker.postMessage(["bundled_" + this.mainJS, allInOneBundle, {
-        compact: true,
-        minified: true,
-        comments: false,
-        ast: false,
-        retainLines: false
-      }])
+      worker.postMessage([
+        'bundled_' + this.mainJS,
+        allInOneBundle,
+        {
+          compact: true,
+          minified: true,
+          comments: false,
+          ast: false,
+          retainLines: false,
+        },
+      ])
       this.cachedBundle = allInOneBundle
       this._hasSourceChanged = false
     })
   }
 
-
   static isExternalFile(url) {
-    return !(url.indexOf("http") !== 0 && url.indexOf("//") !== 0)
+    return !(url.indexOf('http') !== 0 && url.indexOf('//') !== 0)
   }
 
   // gets imported / exported sources from babel response
   static parseImport(babel) {
-    let imp;
-    const ret = [];
+    let imp
+    const ret = []
 
     imp = babel.data.modules.imports
     for (let i = 0; i < imp.length; i++) {
-      ret.indexOf(imp[i].source) === -1 && ret.push({
-        src: imp[i].source,
-        name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null
-      })
+      ret.indexOf(imp[i].source) === -1 &&
+        ret.push({
+          src: imp[i].source,
+          name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null,
+        })
     }
 
     // also add export from 'externalSource'
     imp = babel.data.modules.exports.specifiers
     for (let i = 0; i < imp.length; i++) {
-      if (imp[i].kind == "external" && imp[i].source) {
-        ret.indexOf(imp[i].source) === -1 && ret.push({
-          src: imp[i].source,
-          name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null
-        })
+      if (imp[i].kind == 'external' && imp[i].source) {
+        ret.indexOf(imp[i].source) === -1 &&
+          ret.push({
+            src: imp[i].source,
+            name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null,
+          })
       }
     }
 
@@ -848,13 +898,13 @@ main = function(){
   static resolveUrl(urlFinalPart, asset_id) {
     var lib = SourceTools.getKnowLib(urlFinalPart)
     if (lib) {
-      return lib.src(lib.ver);
+      return lib.src(lib.ver)
     }
     // import X from '/asset name' or import X from '/user/asset name'
-    if (urlFinalPart.startsWith("./") ) {
+    if (urlFinalPart.startsWith('./')) {
       return '/api/asset/code/' + asset_id
     }
-    if(urlFinalPart.startsWith("/") && urlFinalPart.indexOf("//") === -1){
+    if (urlFinalPart.startsWith('/') && urlFinalPart.indexOf('//') === -1) {
       return '/api/asset/code' + urlFinalPart
     }
     // import X from 'react' OR
@@ -880,34 +930,45 @@ main = function(){
     }
     if (SourceTools.cached404[url]) {
       //console.error("Failed to load script: [" + url + "]", cached404[url])
-      cb("", {reason: "Failed to include external source: " + urlFinalPart + " ("+SourceTools.cached404[url]+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})
-      return;
+      cb('', {
+        reason:
+          'Failed to include external source: ' + urlFinalPart + ' (' + SourceTools.cached404[url] + ')',
+        evidence: urlFinalPart,
+        code: ERROR.UNREACHABLE_EXTERNAL_SOURCE,
+      })
+      return
     }
 
     mgbAjax(url, (err, src, httpRequest) => {
-      if(err){
+      if (err) {
         SourceTools.cached404[url] = httpRequest.status
-        cb({code: "", url}, {reason: "Failed to include external source: " + urlFinalPart + " ("+httpRequest.status+")", evidence: urlFinalPart, code: ERROR.UNREACHABLE_EXTERNAL_SOURCE})
-      }
-      else{
+        cb(
+          { code: '', url },
+          {
+            reason: 'Failed to include external source: ' + urlFinalPart + ' (' + httpRequest.status + ')',
+            evidence: urlFinalPart,
+            code: ERROR.UNREACHABLE_EXTERNAL_SOURCE,
+          },
+        )
+      } else {
         SourceTools.tmpCache[url] = src
         window.setTimeout(() => {
           delete SourceTools.tmpCache[url]
         }, INVALIDATE_CACHE_TIMEOUT)
-        cb({code: src, url})
+        cb({ code: src, url })
       }
     })
   }
 
   // extracts short name from CDN link lib@ver.js => lib
   static getShortName(fullUrl) {
-    var name = fullUrl.split("/").pop().split("@").shift().split(".").shift();
-    return name;
+    var name = fullUrl.split('/').pop().split('@').shift().split('.').shift()
+    return name
   }
 
   // check if we already have info about library - e.g. defs / cdn location etc
   static getKnowLib(urlFinalPart) {
-    var parts = urlFinalPart.split("@")
+    var parts = urlFinalPart.split('@')
     var name = parts[0]
     var ver = parts[1]
     var lib = knownLibs[name]

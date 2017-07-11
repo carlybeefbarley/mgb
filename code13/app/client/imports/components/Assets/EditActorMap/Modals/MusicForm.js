@@ -4,20 +4,20 @@ import BaseForm from '../../../Controls/BaseForm.js'
 import MgbMusic from '/client/imports/components/MapActorGameEngine/MageMgbMusic.js'
 
 export default class ModalForm extends BaseForm {
-  get data(){
+  get data() {
     return this.props.asset
   }
-  render(){
-    if(!this.data){
+  render() {
+    if (!this.data) {
       return null
     }
     const musicOptions = {
-      options: MgbMusic.musicList.map( s => ( { text: '[builtin]:'+s, value: '[builtin]:'+s } ) ),
-      title: "Predefined music"
+      options: MgbMusic.musicList.map(s => ({ text: '[builtin]:' + s, value: '[builtin]:' + s })),
+      title: 'Predefined music',
     }
-    return(
+    return (
       <div>
-        {this.dropArea("Music", "music", "music", musicOptions)}
+        {this.dropArea('Music', 'music', 'music', musicOptions)}
       </div>
     )
   }

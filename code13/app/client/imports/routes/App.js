@@ -2,13 +2,13 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Icon, Message, Popup } from 'semantic-ui-react'
 import { browserHistory } from 'react-router'
-import Helmet from "react-helmet"
+import Helmet from 'react-helmet'
 import { createContainer } from 'meteor/react-meteor-data'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
-import { utilPushTo } from "/client/imports/routes/QLink"
+import { utilPushTo } from '/client/imports/routes/QLink'
 
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
@@ -62,19 +62,17 @@ let analyticsLoggedInSendFlag = true
 let hotjarInitFlag = true
 
 // for now, until we have push notifications for chat
-const CHAT_POLL_INITIAL_MS = (3 * 1000)
-const CHAT_POLL_INTERVAL_MS = (12 * 1000)
+const CHAT_POLL_INITIAL_MS = 3 * 1000
+const CHAT_POLL_INTERVAL_MS = 12 * 1000
 
 // Tutorial/Joyride infrastructure support
 
 export const stopCurrentTutorial = () => {
-  if (_theAppInstance)
-    _theAppInstance.addJoyrideSteps.call(_theAppInstance, [], { replace: true })
+  if (_theAppInstance) _theAppInstance.addJoyrideSteps.call(_theAppInstance, [], { replace: true })
 }
 
 export const addJoyrideSteps = (steps, opts) => {
-  if (_theAppInstance)
-    _theAppInstance.addJoyrideSteps.call(_theAppInstance, steps, opts)
+  if (_theAppInstance) _theAppInstance.addJoyrideSteps.call(_theAppInstance, steps, opts)
 }
 
 export const joyrideDebugEnable = joyrideDebug => {
@@ -85,8 +83,7 @@ export const joyrideDebugEnable = joyrideDebug => {
 }
 
 export const startSkillPathTutorial = skillPath => {
-  if (_theAppInstance)
-    _theAppInstance.startSkillPathTutorial.call(_theAppInstance, skillPath)
+  if (_theAppInstance) _theAppInstance.startSkillPathTutorial.call(_theAppInstance, skillPath)
 }
 
 // clearPriorPathsForJoyrideCompletionTags() is for making the Completion Tag thing
@@ -103,18 +100,18 @@ export const clearPriorPathsForJoyrideCompletionTags = () => {
 }
 
 // General utils
-const px = someNumber => (`${someNumber}px`)
+const px = someNumber => `${someNumber}px`
 
 // FlexPanel numbers
-const fpIconColumnWidthInPixels = 60          // The Column of Icons
-const fpFlexPanelContentWidthInPixels = 285   // The cool stuff
+const fpIconColumnWidthInPixels = 60 // The Column of Icons
+const fpFlexPanelContentWidthInPixels = 285 // The cool stuff
 
 // Toast and other warnings
 const _toastTypes = {
-  error:   { funcName: 'error', hdr: 'Error', delay: 7000 },
+  error: { funcName: 'error', hdr: 'Error', delay: 7000 },
   warning: { funcName: 'warning', hdr: 'Warning', delay: 4000 },
-  info:    { funcName: 'info', hdr: 'Info', delay: 4000 },
-  success: { funcName: 'success', hdr: 'Success', delay: 4000 }
+  info: { funcName: 'info', hdr: 'Info', delay: 4000 },
+  success: { funcName: 'success', hdr: 'Success', delay: 4000 },
 }
 
 /**
@@ -124,41 +121,40 @@ const _toastTypes = {
  */
 export const showToast = (content, type = 'success') => {
   const useType = _toastTypes[type] || _toastTypes['success']
-  if (content)
-    NotificationManager[useType.funcName](content, useType.hdr, useType.delay)
+  if (content) NotificationManager[useType.funcName](content, useType.hdr, useType.delay)
   return useType.delay
 }
 
 const AppUI = React.createClass({
   propTypes: {
-    params:   PropTypes.object,
-    query:    PropTypes.object,
-    routes:   PropTypes.array,
+    params: PropTypes.object,
+    query: PropTypes.object,
+    routes: PropTypes.array,
     location: PropTypes.object,
-    children: PropTypes.object
+    children: PropTypes.object,
   },
 
   childContextTypes: {
     urlLocation: PropTypes.object,
-    settings:    PropTypes.object,
-    skills:      PropTypes.object
+    settings: PropTypes.object,
+    skills: PropTypes.object,
   },
 
   getChildContext() {
     // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See https://github.com/facebook/react/issues/2517
     return {
       urlLocation: this.props.location,
-      settings:    this.props.settings,  // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
-      skills:      this.props.skills     // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
+      settings: this.props.settings, // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
+      skills: this.props.skills, // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
     }
   },
 
   componentDidMount() {
     this._schedule_requestChatChannelTimestampsNow()
     registerDebugGlobal('app', this, __filename, 'The global App.js instance')
-    _theAppInstance = this   // This is so we can expose a few things conveniently but safely, and without too much react.context stuff
+    _theAppInstance = this // This is so we can expose a few things conveniently but safely, and without too much react.context stuff
 
-    window.addEventListener("keydown", this.handleKeyDown)
+    window.addEventListener('keydown', this.handleKeyDown)
 
     if (window.performance) {
       // Gets the number of milliseconds since page load
@@ -171,14 +167,12 @@ const AppUI = React.createClass({
     const pagepath = getPagepathFromProps(this.props)
 
     // Fire Completion Tags for the Joyride/Tutorial system. Make sure we only fire when the path has changed, not on every page update
-    const newRouterPath = `mgbjr-CT-app-router-path-${pagepath}`                           // e.g. /u/:username
-    if (newRouterPath !== this._priorRouterPath)
-      joyrideCompleteTag(newRouterPath)
+    const newRouterPath = `mgbjr-CT-app-router-path-${pagepath}` // e.g. /u/:username
+    if (newRouterPath !== this._priorRouterPath) joyrideCompleteTag(newRouterPath)
     this._priorRouterPath = newRouterPath
 
-    const newLocationPath = `mgbjr-CT-app-location-path-${this.props.location.pathname}`   // e.g. /u/dgolds   -- will exclude search/query params
-    if (newLocationPath !== this._priorLocationPath)
-      joyrideCompleteTag(newLocationPath)
+    const newLocationPath = `mgbjr-CT-app-location-path-${this.props.location.pathname}` // e.g. /u/dgolds   -- will exclude search/query params
+    if (newLocationPath !== this._priorLocationPath) joyrideCompleteTag(newLocationPath)
     this._priorLocationPath = newLocationPath
 
     // Handle transition from empty to non-empty joyride and start the joyride/tutorial
@@ -205,30 +199,20 @@ const AppUI = React.createClass({
     let trackPage = null
 
     // TODO users routeName returns 'users' instead of '/users'
-    if (_.indexOf(['/', '/games', 'users'], routeName) != -1)
-      trackPage = routeName
-
-    else if (pathName == '/')
-      trackPage = '/'
-
+    if (_.indexOf(['/', '/games', 'users'], routeName) != -1) trackPage = routeName
+    else if (pathName == '/') trackPage = '/'
     else if (_.startsWith(routeName, '/learn'))
-    // if routeName starts with learn then add all routeName to log
+      // if routeName starts with learn then add all routeName to log
       trackPage = routeName
-
     else if (nextProps.params.projectId || nextProps.params.projectName)
-    // if params has projectId or projectName then we know that it's project details page
+      // if params has projectId or projectName then we know that it's project details page
       trackPage = '/projectDetails'
-
     else if (nextProps.params.assetId) {
       // don't track here because we don't know asset type
       // do it in handleSetCurrentlyEditingAssetInfo()
-    }
-
-    else if (_.indexOf(['Games', 'Profile', 'Badges', 'Skills', 'Projects', 'Assets'], pageName) != -1)
+    } else if (_.indexOf(['Games', 'Profile', 'Badges', 'Skills', 'Projects', 'Assets'], pageName) != -1)
       trackPage = '/' + pageName.toLowerCase()
-
-    else
-      trackPage = pathName  // for any other untracked page
+    else trackPage = pathName // for any other untracked page
 
     if (trackPage) {
       // console.log('#################### ->', trackPage)
@@ -240,10 +224,10 @@ const AppUI = React.createClass({
 
   getInitialState() {
     return {
-      hideHeaders:           false,         // Show/Hide NavPanel & Some other UI (like Asset Edit Header). This is a bit slow to do in the Navbar, so doing it here */
+      hideHeaders: false, // Show/Hide NavPanel & Some other UI (like Asset Edit Header). This is a bit slow to do in the Navbar, so doing it here */
       // read/unread Chat status. Gathered up here since it used across app, especially for notifications and lists
-      chatChannelTimestamps: null,          // as defined by Chats.getLastMessageTimestamps RPC
-      hazUnreadChats:        [],            // will contain Array of channel names with unread chats
+      chatChannelTimestamps: null, // as defined by Chats.getLastMessageTimestamps RPC
+      hazUnreadChats: [], // will contain Array of channel names with unread chats
       // hazUnreadChats is a subset of the data in chatChannelTimestamps, but simplified - just an
       // Array of chat channelNames that have at least one unread message. Note that Global ChatChannels
       // are treated a little specially - if you have never visited a particular global channel you will
@@ -257,17 +241,17 @@ const AppUI = React.createClass({
         // The AssetEditRoute component is currently the only component expected to set this
         //  value, since that is the layer in the container hierarchy that actually loads
         // assets for the AssetEditors
-        kind:         null,       // null or a string which is a one of assets:AssetKindKeys
-        canEdit:      false,   // true or false. True iff editing an Asset _and_ user has edit permission
-        projectNames: []  // Empty array, or array of strings for project names as described in assets.js
+        kind: null, // null or a string which is a one of assets:AssetKindKeys
+        canEdit: false, // true or false. True iff editing an Asset _and_ user has edit permission
+        projectNames: [], // Empty array, or array of strings for project names as described in assets.js
       },
 
       // For react-joyride
-      joyrideSteps:              [],
-      joyrideSkillPathTutorial:  null,      // String with skillPath (e.g code.js.foo) IFF it was started by startSkillPathTutorial -- i.e. it is an OFFICIAL SKILL TUTORIAL
-      joyrideCurrentStepNum:     0,            // integer with cuurent step number (valid IFF there are steps defined)
-      joyrideOriginatingAssetId: null,     // Used to support nice EditTutorial button in fpGoals ONLY. Null, or, if set, an object: origAsset: { ownerName: asset.dn_ownerName, id: asset._id }. THIS IS NOT USED FOR LOAD, JUST FOR OTHER UI TO ENABLE A EDIT-TUTORIAL BUTTON
-      joyrideDebug:              false
+      joyrideSteps: [],
+      joyrideSkillPathTutorial: null, // String with skillPath (e.g code.js.foo) IFF it was started by startSkillPathTutorial -- i.e. it is an OFFICIAL SKILL TUTORIAL
+      joyrideCurrentStepNum: 0, // integer with cuurent step number (valid IFF there are steps defined)
+      joyrideOriginatingAssetId: null, // Used to support nice EditTutorial button in fpGoals ONLY. Null, or, if set, an object: origAsset: { ownerName: asset.dn_ownerName, id: asset._id }. THIS IS NOT USED FOR LOAD, JUST FOR OTHER UI TO ENABLE A EDIT-TUTORIAL BUTTON
+      joyrideDebug: false,
     }
   },
 
@@ -279,8 +263,8 @@ const AppUI = React.createClass({
   },
 
   handleKeyDown(kev) {
-    if (kev.altKey && kev.shiftKey && kev.which === 72) // alt-shift-h
-    {
+    if (kev.altKey && kev.shiftKey && kev.which === 72) {
+      // alt-shift-h
       this.handleHideHeadersToggle()
       kev.preventDefault()
       kev.stopPropagation()
@@ -293,8 +277,7 @@ const AppUI = React.createClass({
 
   // TODO: Make this throttled, called when relevant
   requestChatChannelTimestampsNow() {
-    if (!this.props.currUser)
-      return
+    if (!this.props.currUser) return
 
     const { settings, currUser, currUserProjects } = this.props
     const { assetId } = this.props.params
@@ -309,15 +292,13 @@ const AppUI = React.createClass({
       [makeChannelName({ scopeGroupName: 'User', scopeId: currUser.username })],
       _.map(ChatChannels.sortedKeys, k => makeChannelName({ scopeGroupName: 'Global', scopeId: k })),
       _.map(currUserProjects, p => makeChannelName({ scopeGroupName: 'Project', scopeId: p._id })),
-      getPinnedChannelNames(settings)
+      getPinnedChannelNames(settings),
     )
-    if (assetId)
-      chanArray.push(makeChannelName({ scopeGroupName: 'Asset', scopeId: assetId }))
+    if (assetId) chanArray.push(makeChannelName({ scopeGroupName: 'Asset', scopeId: assetId }))
 
     // 1. Now ask the server for the last message timestamps for these channels
     Meteor.call('Chats.getLastMessageTimestamps', chanArray, (error, chatChannelTimestamps) => {
-      if (error)
-        console.log('unable to invoke Chats.getLastMessageTimestamps()', error)
+      if (error) console.log('unable to invoke Chats.getLastMessageTimestamps()', error)
       else {
         // 2. Now process that list for easy consumption (and store results in state.hazUnreadChats and state.chatChannelTimestamps)
         let hazUnreadChats = []
@@ -326,13 +307,15 @@ const AppUI = React.createClass({
           const lastReadByUser = getLastReadTimestampForChannel(settings, channelName)
           const channelObj = parseChannelName(channelName)
           cct._hazUnreads = Boolean(
-            (channelObj && channelObj.scopeGroupName !== 'Global' && !lastReadByUser) // Non-global chat groups that user has access to but has not looked at
-            || (lastReadByUser && cct.lastCreatedAt.getTime() > lastReadByUser.getTime())   // Any chat channel user has looked at but has more recent messages
+            (channelObj && channelObj.scopeGroupName !== 'Global' && !lastReadByUser) || // Non-global chat groups that user has access to but has not looked at
+              (lastReadByUser && cct.lastCreatedAt.getTime() > lastReadByUser.getTime()), // Any chat channel user has looked at but has more recent messages
           )
-          if (cct._hazUnreads)
-            hazUnreadChats.push(channelName)
+          if (cct._hazUnreads) hazUnreadChats.push(channelName)
         })
-        if (!_.isEqual(hazUnreadChats, this.state.hazUnreadChats) || !_.isEqual(chatChannelTimestamps, this.state.chatChannelTimestamps))
+        if (
+          !_.isEqual(hazUnreadChats, this.state.hazUnreadChats) ||
+          !_.isEqual(chatChannelTimestamps, this.state.chatChannelTimestamps)
+        )
           this.setState({ chatChannelTimestamps, hazUnreadChats })
       }
     })
@@ -343,17 +326,16 @@ const AppUI = React.createClass({
     // http://docs.trackjs.com/tracker/tips#include-user-id-version-and-session
     const doTrack = () => {
       const ver = mgbReleaseInfo.releases[0].id
-      trackJs.configure({
-        userId:    (Meteor.user() ? Meteor.user().profile.name : "(NotLoggedIntoMgb)"),
-        version:   `${ver.ver} ${ver.state} ${ver.iteration}`,
-        sessionId: Meteor.default_connection._lastSessionId
+      window.trackJs.configure({
+        userId: Meteor.user() ? Meteor.user().profile.name : '(NotLoggedIntoMgb)',
+        version: `${ver.ver} ${ver.state} ${ver.iteration}`,
+        sessionId: Meteor.default_connection._lastSessionId,
       })
     }
-    if (window.trackJs)
-      doTrack()
+    if (window.trackJs) doTrack()
     else {
-      console.log("[tjfallback]")  // so it's easier to know when this is happening
-      $.getScript(makeCDNLink("/lib/t-r-a-c-k-e-r.js"), doTrack)   // fallback to local version because of AdBlocks etc
+      console.log('[tjfallback]') // so it's easier to know when this is happening
+      $.getScript(makeCDNLink('/lib/t-r-a-c-k-e-r.js'), doTrack) // fallback to local version because of AdBlocks etc
     }
   },
 
@@ -372,37 +354,54 @@ const AppUI = React.createClass({
   },
 
   render() {
-    const { respData, respWidth, params, loading, currUser, user, currUserProjects, meteorStatus, sysvars } = this.props
-    const { joyrideDebug, currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats, hideHeaders } = this.state
+    const {
+      respData,
+      respWidth,
+      params,
+      loading,
+      currUser,
+      user,
+      currUserProjects,
+      meteorStatus,
+      sysvars,
+    } = this.props
+    const {
+      joyrideDebug,
+      currentlyEditingAssetInfo,
+      chatChannelTimestamps,
+      hazUnreadChats,
+      hideHeaders,
+    } = this.state
     const { query } = this.props.location
 
-    if (!loading)
-      this.configureTrackJs()
+    if (!loading) this.configureTrackJs()
 
     // The Flex Panel is for communications and common quick searches in a right hand margin
     //   (or fixed footer for Phone-size PortraitUI)
-    const flexPanelQueryValue = query[urlMaker.queryParams("app_flexPanel")]
-    const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== "-"
-    const flexPanelWidthWhenExpanded = respData.fpReservedRightSidebarWidth ? px(fpIconColumnWidthInPixels + fpFlexPanelContentWidthInPixels) : px(fpFlexPanelContentWidthInPixels)
+    const flexPanelQueryValue = query[urlMaker.queryParams('app_flexPanel')]
+    const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== '-'
+    const flexPanelWidthWhenExpanded = respData.fpReservedRightSidebarWidth
+      ? px(fpIconColumnWidthInPixels + fpFlexPanelContentWidthInPixels)
+      : px(fpFlexPanelContentWidthInPixels)
     const flexPanelWidth = showFlexPanel ? flexPanelWidthWhenExpanded : respData.fpReservedRightSidebarWidth
 
     const mainAreaAvailableWidth = respWidth - parseInt(flexPanelWidth)
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
-      position:     "fixed",
-      top:          0,
-      bottom:       respData.fpReservedFooterHeight,
-      left:         0,
-      right:        flexPanelWidth,
+      position: 'fixed',
+      top: 0,
+      bottom: respData.fpReservedFooterHeight,
+      left: 0,
+      right: flexPanelWidth,
       marginBottom: '0px',
       // background:   'radial-gradient(100% 100% at center bottom, #555, #333)',
-      overflow:     "auto" // 'scroll' - this will make very ugly scrollbars on firefox
+      overflow: 'auto', // 'scroll' - this will make very ugly scrollbars on firefox
     }
 
     const mainPanelInnerDivSty = {
       padding: '0px',
-      height:  "auto"
+      height: 'auto',
     }
 
     //Check permissions of current user for super-admin,
@@ -411,37 +410,31 @@ const AppUI = React.createClass({
     const isSuperAdmin = isUserSuperAdmin(currUser)
     const ownsProfile = isSameUser(currUser, user)
 
-    const hazUnreadAssetChat = (
+    const hazUnreadAssetChat =
       params.assetId &&
-      _.includes(
-        hazUnreadChats,
-        makeChannelName({ scopeGroupName: 'Asset', scopeId: params.assetId })
-      )
-    )
+      _.includes(hazUnreadChats, makeChannelName({ scopeGroupName: 'Asset', scopeId: params.assetId }))
 
     return (
       <div>
         <Helmet
           title="MGB"
           titleTemplate="%s"
-          meta={[
-            { "name": "My Game Builder", "content": "MyGameBuilder" }
-          ]}
+          meta={[{ name: 'My Game Builder', content: 'MyGameBuilder' }]}
         />
         <Joyride
           ref="joyride"
           steps={this.state.joyrideSteps}
-          showOverlay={true}
+          showOverlay
           disableOverlay={false}
-          showSkipButton={true}
+          showSkipButton
           tooltipOffset={0}
-          showStepsProgress={true}
+          showStepsProgress
           type="continuous"
           callback={this.handleJoyrideCallback}
           preparePageHandler={this.joyridePreparePageHandler}
           assetId={params.assetId}
-          debug={joyrideDebug} />
-
+          debug={joyrideDebug}
+        />
         <div>
           <FlexPanel
             fpIsFooter={!!respData.footerTabMajorNav}
@@ -465,13 +458,8 @@ const AppUI = React.createClass({
             currentlyEditingAssetInfo={currentlyEditingAssetInfo}
           />
 
-          <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id='mgb-jr-main-container'>
-            { !hideHeaders &&
-            <NavPanel
-              currUser={currUser}
-              navPanelAvailableWidth={mainAreaAvailableWidth}
-            />
-            }
+          <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id="mgb-jr-main-container">
+            {!hideHeaders && <NavPanel currUser={currUser} navPanelAvailableWidth={mainAreaAvailableWidth} />}
 
             <NavBar
               currUser={currUser}
@@ -486,28 +474,34 @@ const AppUI = React.createClass({
               currentlyEditingAssetInfo={currentlyEditingAssetInfo}
             />
 
-            { currUser && currUser.suIsBanned &&
-            <Message error
-                     icon='ban'
-                     header='Your Account has been suspended by an Admin'
-                     list={['You may not edit Assets or Projects', 'You may not send Chat messages', 'Check your email for details']} />
-            }
+            {currUser &&
+              currUser.suIsBanned &&
+              <Message
+                error
+                icon="ban"
+                header="Your Account has been suspended by an Admin"
+                list={[
+                  'You may not edit Assets or Projects',
+                  'You may not send Chat messages',
+                  'Check your email for details',
+                ]}
+              />}
 
-            {
-              !loading && this.props.children && React.cloneElement(this.props.children, {
+            {!loading &&
+              this.props.children &&
+              React.cloneElement(this.props.children, {
                 // Make below props available to all routes.
-                user:                               user,
-                currUser:                           currUser,
-                hideHeaders:                        hideHeaders,
-                currUserProjects:                   currUserProjects,
-                hazUnreadAssetChat:                 hazUnreadAssetChat,
-                ownsProfile:                        ownsProfile,
-                isSuperAdmin:                       isSuperAdmin,
-                availableWidth:                     mainAreaAvailableWidth,
+                user: user,
+                currUser: currUser,
+                hideHeaders: hideHeaders,
+                currUserProjects: currUserProjects,
+                hazUnreadAssetChat: hazUnreadAssetChat,
+                ownsProfile: ownsProfile,
+                isSuperAdmin: isSuperAdmin,
+                availableWidth: mainAreaAvailableWidth,
                 handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
-                isTopLevelRoute:                    true // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
-              })
-            }
+                isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
+              })}
           </div>
         </div>
         <NetworkStatusMsg meteorStatus={meteorStatus} />
@@ -521,18 +515,16 @@ const AppUI = React.createClass({
    */
   handleFlexPanelToggle() {
     const loc = this.props.location
-    const qp = urlMaker.queryParams("app_flexPanel")
+    const qp = urlMaker.queryParams('app_flexPanel')
     let newQ
-    if (loc.query[qp])
-      newQ = _.omit(loc.query, qp)
-    else
-      newQ = { ...loc.query, [qp]: NavPanel.getDefaultPanelViewTag() }   //TODO: Wrong tag!?
+    if (loc.query[qp]) newQ = _.omit(loc.query, qp)
+    else newQ = { ...loc.query, [qp]: NavPanel.getDefaultPanelViewTag() } //TODO: Wrong tag!?
     browserHistory.push({ ...loc, query: newQ })
   },
 
   closeFlexPanel() {
     const loc = this.props.location
-    const qp = urlMaker.queryParams("app_flexPanel")
+    const qp = urlMaker.queryParams('app_flexPanel')
     if (loc.query[qp]) {
       const newQ = _.omit(loc.query, qp)
       browserHistory.push({ ...loc, query: newQ })
@@ -543,7 +535,7 @@ const AppUI = React.createClass({
    * @param newFpView {String} the string that will be used for _fp=panel.submparam eg. "chat", or "chat.G_GENERAL_" or "assets" etc
    */
   handleFlexPanelChange(newFpView) {
-    const qp = urlMaker.queryParams("app_flexPanel")
+    const qp = urlMaker.queryParams('app_flexPanel')
 
     const queryModifier = { [qp]: newFpView }
     const loc = this.props.location
@@ -585,15 +577,14 @@ const AppUI = React.createClass({
 
     if (_.isString(steps)) {
       // We interpret this as an asset id, e.g cDutAafswYtN5tmRi, and we expect some JSON..
-      const codeUrl = '/api/asset/tutorial/' + ( steps.startsWith(':') ? '!vault' + steps : steps)
+      const codeUrl = '/api/asset/tutorial/' + (steps.startsWith(':') ? '!vault' + steps : steps)
       console.log(`Loading tutorial: '${steps}' from ${codeUrl}`)
       fetchAssetByUri(codeUrl)
         .then(data => {
           let loadedSteps = null
           try {
             loadedSteps = JSON.parse(data)
-          }
-          catch (err) {
+          } catch (err) {
             const msg = `Unable to parse JSON for tutorial at '${codeUrl}: ${err.toString()}`
             showToast(msg, 'error')
             console.error(msg)
@@ -614,21 +605,17 @@ const AppUI = React.createClass({
       return
     }
 
-    if (!Array.isArray(steps))
-      steps = [steps]
+    if (!Array.isArray(steps)) steps = [steps]
 
-    if (!joyride || (steps.length === 0 && !opts.replace))
-      return false
+    if (!joyride || (steps.length === 0 && !opts.replace)) return false
 
     const parsedSteps = joyride.parseSteps(steps)
 
-    this.setState(function (currentState) {
+    this.setState(function(currentState) {
       currentState.joyrideSteps = opts.replace ? parsedSteps : currentState.joyrideSteps.concat(parsedSteps)
       currentState.joyrideSkillPathTutorial = opts.skillPath || null
-      if (opts.replace)
-        currentState.joyrideCurrentStepNum = 0
-      if (opts.origAssetId)
-        currentState.joyrideOriginatingAssetId = opts.origAssetId  // Just to enable a nice edit Tutorial button in fpGoals
+      if (opts.replace) currentState.joyrideCurrentStepNum = 0
+      if (opts.origAssetId) currentState.joyrideOriginatingAssetId = opts.origAssetId // Just to enable a nice edit Tutorial button in fpGoals
 
       return currentState
     })
@@ -643,40 +630,37 @@ const AppUI = React.createClass({
       // })
       if (this.state.joyrideSkillPathTutorial && func.skipped === false)
         this.handleCompletedSkillTutorial(this.state.joyrideSkillPathTutorial)
-      this.setState(
-        {
-          joyrideSteps:              [],
-          joyrideSkillPathTutorial:  null,
-          joyrideCurrentStepNum:     0,
-          joyrideOriginatingAssetId: null
-        }
-      )
+      this.setState({
+        joyrideSteps: [],
+        joyrideSkillPathTutorial: null,
+        joyrideCurrentStepNum: 0,
+        joyrideOriginatingAssetId: null,
+      })
     } else if (func.type === 'step:after') {
       this.setState({ joyrideCurrentStepNum: func.newIndex })
     }
   },
   joyrideHandlers: {
     // !!! these functions must not refer to this or do other funny stuff !!!
-    openAsset:     (type, user, name) => {
+    openAsset: (type, user, name) => {
       // TODO: get location query ???? - or location query should be handled by QLink?
       utilPushTo(null, `/assetEdit/${type}/${user}/${name}`)
     },
     highlightCode: (from, to) => {
-      const evt = new Event("mgbjr-highlight-code")
+      const evt = new Event('mgbjr-highlight-code')
       evt.data = { from, to }
       window.dispatchEvent(evt)
-    }
+    },
   },
   // return null for no error, or a string with errors
   joyridePreparePageHandler(actionsString) {
     const errors = []
-    if (!actionsString || actionsString === '')
-      return
+    if (!actionsString || actionsString === '') return
 
     // The preparePage string can have multiple actions, each are separated by a comma character
     actionsString.split(',').forEach(act => {
       // defined above in
-      const params = act.split(":")
+      const params = act.split(':')
       const action = params.shift()
       if (this.joyrideHandlers[action]) {
         this.joyrideHandlers[action].apply(null, params)
@@ -692,9 +676,9 @@ const AppUI = React.createClass({
           break
 
         case 'openVaultAssetByName':
-          debugger// TODO @@@@@ need to actually get id fromname
-          utilPushTo(null, `/u/!vault/asset/${actParam}`)
-          break
+          // utilPushTo(null, `/u/!vault/asset/${actParam}`)
+          // break
+          throw new Error('@dgolds 2/5/17 debugger: TODO @@@@@ need to actually get id from name')
 
         case 'navToRelativeUrl':
           utilPushTo(null, actParam)
@@ -717,22 +701,21 @@ const AppUI = React.createClass({
           break
 
         case 'closeNavPanel':
-          console.error("joyridePreparePageHandler(closeNavPanel) has been deprecated. Tutorial should be simplified")
+          console.error(
+            'joyridePreparePageHandler(closeNavPanel) has been deprecated. Tutorial should be simplified',
+          )
           break
 
         case 'highlightCode':
-          console.log("Highlight code", actParam)
+          console.log('Highlight code', actParam)
           break
 
         case 'refreshBadgeStatus':
           Meteor.call('User.refreshBadgeStatus', (err, result) => {
-            if (err)
-              console.log('User.refreshBadgeStatus error', err)
+            if (err) console.log('User.refreshBadgeStatus error', err)
             else {
-              if (!result || result.length === 0)
-                console.log(`No New badges awarded`)
-              else
-                showToast(`New badges awarded: ${result.join(', ')} `)
+              if (!result || result.length === 0) console.log(`No New badges awarded`)
+              else showToast(`New badges awarded: ${result.join(', ')} `)
             }
           })
           break
@@ -743,35 +726,36 @@ const AppUI = React.createClass({
     })
 
     return errors.length === 0 ? null : errors.join('; ') + '.'
-  }
-
+  },
 })
 
 const App = createContainer(({ params, location }) => {
-  const pathUserName = params.username      // This is the username (profile.name) on the url /u/xxxx/...
-  const pathUserId = params.id              // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
+  const pathUserName = params.username // This is the username (profile.name) on the url /u/xxxx/...
+  const pathUserId = params.id // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
   const currUser = Meteor.user()
   const currUserId = currUser && currUser._id
-  const handleForUser = pathUserName ?
-    Meteor.subscribe("user.byName", pathUserName)
-    : Meteor.subscribe("user", pathUserId)   // LEGACY ROUTES
+  const handleForUser = pathUserName
+    ? Meteor.subscribe('user.byName', pathUserName)
+    : Meteor.subscribe('user', pathUserId) // LEGACY ROUTES
   const handleForSysvars = Meteor.subscribe('sysvars')
 
   // skills stuff
-  const handleForSkills = currUserId ? Meteor.subscribe("skills.userId", currUserId) : null
+  const handleForSkills = currUserId ? Meteor.subscribe('skills.userId', currUserId) : null
   const skillsReady = handleForSkills === null ? true : handleForSkills.ready()
 
   // settings stuff
-  const handleForSettings = currUserId ? Meteor.subscribe("settings.userId", currUserId) : null
+  const handleForSettings = currUserId ? Meteor.subscribe('settings.userId', currUserId) : null
   const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
 
   // activity? if useful..
-  const flexPanelQueryValue = location.query[urlMaker.queryParams("app_flexPanel")]
-  const getActivity = currUser || (flexPanelQueryValue === 'activity')
-  const handleActivity = getActivity ? Meteor.subscribe("activity.public.recent", SpecialGlobals.activity.activityHistoryLimit) : null
+  const flexPanelQueryValue = location.query[urlMaker.queryParams('app_flexPanel')]
+  const getActivity = currUser || flexPanelQueryValue === 'activity'
+  const handleActivity = getActivity
+    ? Meteor.subscribe('activity.public.recent', SpecialGlobals.activity.activityHistoryLimit)
+    : null
 
   // projects stuff
-  const handleForProjects = currUserId ? Meteor.subscribe("projects.byUserId", currUserId) : null
+  const handleForProjects = currUserId ? Meteor.subscribe('projects.byUserId', currUserId) : null
   const projectsReady = handleForProjects === null ? true : handleForProjects.ready()
   const projectSelector = projectMakeSelector(currUserId)
 
@@ -794,8 +778,7 @@ const App = createContainer(({ params, location }) => {
     // dimension1 = user id dimension (trick google to show individual id's)
     ga('set', 'dimension1', currUser._id)
     // superAdmin or tester user - need to filter them out in reports
-    if (isUserSuperAdmin(currUser) || currUser._id == 'AJ8jrFjxSYJATzscA')
-      ga('set', 'dimension2', 'admin')
+    if (isUserSuperAdmin(currUser) || currUser._id == 'AJ8jrFjxSYJATzscA') ga('set', 'dimension2', 'admin')
 
     // tell google that this is user and all session need to connect to this data point
     ga('set', 'userId', currUser._id)
@@ -808,42 +791,46 @@ const App = createContainer(({ params, location }) => {
   }
 
   return {
-    currUser: currUser ? currUser : null,                 // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
+    currUser: currUser ? currUser : null, // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
 
-    currUserProjects: !handleForProjects ? [] :
-                        Projects.find(projectSelector, { sort: defaultProjectSorter } ).fetch(),
-    user:             pathUserName ? Meteor.users.findOne({ "profile.name": pathUserName }) : Meteor.users.findOne(pathUserId),   // User on the url /user/xxx/...
-    activity:         getActivity ? Activity.find({}, { sort: { timestamp: -1 } }).fetch() : [],     // Activity for any user
-    settings:         G_localSettings,
-    meteorStatus:     Meteor.status(),
-    skills:           currUser ? Skills.findOne(currUserId) : null,
-    sysvars:          Sysvars.findOne(),
-    loading:          !handleForUser.ready() ||
-                      !handleForSysvars.ready() ||
-                      !(!handleActivity || handleActivity.ready()) ||
-                      !projectsReady ||
-                      !settingsReady ||
-                      !skillsReady
+    currUserProjects: !handleForProjects
+      ? []
+      : Projects.find(projectSelector, { sort: defaultProjectSorter }).fetch(),
+    user: pathUserName
+      ? Meteor.users.findOne({ 'profile.name': pathUserName })
+      : Meteor.users.findOne(pathUserId), // User on the url /user/xxx/...
+    activity: getActivity ? Activity.find({}, { sort: { timestamp: -1 } }).fetch() : [], // Activity for any user
+    settings: G_localSettings,
+    meteorStatus: Meteor.status(),
+    skills: currUser ? Skills.findOne(currUserId) : null,
+    sysvars: Sysvars.findOne(),
+    loading:
+      !handleForUser.ready() ||
+      !handleForSysvars.ready() ||
+      !(!handleActivity || handleActivity.ready()) ||
+      !projectsReady ||
+      !settingsReady ||
+      !skillsReady,
   }
 }, AppUI)
 
 App.responsiveRules = {
-  'portraitPhoneUI': {
+  portraitPhoneUI: {
     maxWidth: 420,
     respData: {
-      footerTabMajorNav:           true,        // |__| flexPanel as footer
-      fpReservedFooterHeight:      '60px',
-      fpReservedRightSidebarWidth: '0px'
-    }
+      footerTabMajorNav: true, // |__| flexPanel as footer
+      fpReservedFooterHeight: '60px',
+      fpReservedRightSidebarWidth: '0px',
+    },
   },
-  'desktopUI':       {
+  desktopUI: {
     minWidth: 421,
     respData: {
-      footerTabMajorNav:           false,        //  flexPanel as right sidebar =|
-      fpReservedFooterHeight:      '0px',
-      fpReservedRightSidebarWidth: px(fpIconColumnWidthInPixels)
-    }
-  }
+      footerTabMajorNav: false, //  flexPanel as right sidebar =|
+      fpReservedFooterHeight: '0px',
+      fpReservedRightSidebarWidth: px(fpIconColumnWidthInPixels),
+    },
+  },
 }
 
 import ResponsiveComponent from '/client/imports/ResponsiveComponent'

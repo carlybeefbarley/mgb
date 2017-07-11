@@ -27,7 +27,7 @@ export default class InlineEdit extends React.Component {
     staticElement: React.PropTypes.string,
     tabIndex: React.PropTypes.number,
     isDisabled: React.PropTypes.bool,
-    editing: React.PropTypes.bool
+    editing: React.PropTypes.bool,
   }
 
   static defaultProps = {
@@ -37,7 +37,7 @@ export default class InlineEdit extends React.Component {
     staticElement: 'span',
     tabIndex: 0,
     isDisabled: false,
-    editing: false
+    editing: false,
   }
 
   state = {
@@ -52,15 +52,12 @@ export default class InlineEdit extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const isTextChanged = (nextProps.text !== this.props.text)
-    const isEditingChanged = (nextProps.editing !== this.props.editing)
+    const isTextChanged = nextProps.text !== this.props.text
+    const isEditingChanged = nextProps.editing !== this.props.editing
     let nextState = {}
-    if (isTextChanged) 
-      nextState.text = nextProps.text
-    if (isEditingChanged)
-      nextState.editing = nextProps.editing
-    if (isTextChanged || isEditingChanged)
-      this.setState(nextState)
+    if (isTextChanged) nextState.text = nextProps.text
+    if (isEditingChanged) nextState.editing = nextProps.editing
+    if (isTextChanged || isEditingChanged) this.setState(nextState)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -68,69 +65,71 @@ export default class InlineEdit extends React.Component {
     if (this.state.editing && !prevState.editing) {
       inputElem.focus()
       selectInputText(inputElem)
-    } else if (this.state.editing && prevProps.text != this.props.text)
-      this.finishEditing()
+    } else if (this.state.editing && prevProps.text != this.props.text) this.finishEditing()
   }
 
-  startEditing = (e) => {
-    if (this.props.stopPropagation)
-      e.stopPropagation()
-    this.setState({editing: true, text: this.props.text})
+  startEditing = e => {
+    if (this.props.stopPropagation) e.stopPropagation()
+    this.setState({ editing: true, text: this.props.text })
   }
 
   finishEditing = () => {
-    if (this.isInputValid(this.state.text) && this.props.text != this.state.text)
-      this.commitEditing()
-    else if (this.props.text === this.state.text || !this.isInputValid(this.state.text))
-      this.cancelEditing()
+    if (this.isInputValid(this.state.text) && this.props.text != this.state.text) this.commitEditing()
+    else if (this.props.text === this.state.text || !this.isInputValid(this.state.text)) this.cancelEditing()
   }
 
   cancelEditing = () => {
-    this.setState({editing: false, text: this.props.text})
+    this.setState({ editing: false, text: this.props.text })
   }
 
   commitEditing = () => {
-    this.setState( {editing: false, text: this.state.text} )
+    this.setState({ editing: false, text: this.state.text })
     let newProp = {}
     newProp[this.props.paramName] = this.state.text
     this.props.change(newProp)
   }
 
-  clickWhenEditing = (e) => {
-    if (this.props.stopPropagation)
-      e.stopPropagation()
+  clickWhenEditing = e => {
+    if (this.props.stopPropagation) e.stopPropagation()
   }
 
-  isInputValid = (text) => {
-    return (text.length >= this.state.minLength && text.length <= this.state.maxLength)
+  isInputValid = text => {
+    return text.length >= this.state.minLength && text.length <= this.state.maxLength
   }
 
-  keyDown = (event) => {
-    if (event.keyCode === 13) 
-      this.finishEditing()
-    else if (event.keyCode === 27)
-      this.cancelEditing()
+  keyDown = event => {
+    if (event.keyCode === 13) this.finishEditing()
+    else if (event.keyCode === 27) this.cancelEditing()
   }
 
-  textChanged = (event) => {
+  textChanged = event => {
     this.setState({
-      text: event.target.value.trim()
+      text: event.target.value.trim(),
     })
   }
 
-  render () {
-    const { activeClassName, className, editingElement, isDisabled, placeholder, style, staticElement, tabIndex } = this.props
+  render() {
+    const {
+      activeClassName,
+      className,
+      editingElement,
+      isDisabled,
+      placeholder,
+      style,
+      staticElement,
+      tabIndex,
+    } = this.props
     const { text, editing } = this.state
 
     if (isDisabled) {
       const Element = staticElement
       return (
-        <Element className={className} style={style} >
-          { text || placeholder}
+        <Element className={className} style={style}>
+          {text || placeholder}
         </Element>
       )
-    } 
-    
+    }
+
     if (!editing) {
       const Element = staticElement
       return (
@@ -138,12 +137,13 @@ export default class InlineEdit extends React.Component {
           className={className}
           onClick={this.startEditing}
           tabIndex={tabIndex}
-          style={ { ...style, cursor: 'pointer' }} >
-          { text || placeholder }
+          style={{ ...style, cursor: 'pointer' }}
+        >
+          {text || placeholder}
         </Element>
       )
     }
-      
+
     const Element = editingElement
     const isValid = this.isInputValid(text)
     return (
@@ -155,8 +155,9 @@ export default class InlineEdit extends React.Component {
         placeholder={placeholder}
         defaultValue={this.state.text}
         onChange={this.textChanged}
-        style={ { ...style, color: (isValid ? null : 'red') } } 
-        ref="input" />
+        style={{ ...style, color: isValid ? null : 'red' }}
+        ref="input"
+      />
     )
   }
 }

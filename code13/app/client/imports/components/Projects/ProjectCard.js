@@ -11,34 +11,43 @@ import { getProjectAvatarUrl } from '/client/imports/helpers/assetFetchers'
 // This is a Project Card which is a card-format version of the Project information.
 // It is passed a project database object and it locally decides what fields to use/render within that structure.
 
-const ProjectCard = ( props, context ) => {
+const ProjectCard = (props, context) => {
   const { project, canEdit, handleFieldChanged } = props
   const linkTo = '/u/' + project.ownerName + '/projects/' + project.name
-  const MemberStr = !project.memberIds || project.memberIds.length === 0
-    ? '1 Member'
-    : project.memberIds.length + 1 + ' Members'
+  const MemberStr =
+    !project.memberIds || project.memberIds.length === 0
+      ? '1 Member'
+      : project.memberIds.length + 1 + ' Members'
   const numChildForks = _.isArray(project.forkChildren) ? project.forkChildren.length : 0
   const hasParentFork = _.isArray(project.forkParentChain) && project.forkParentChain.length > 0
 
   return (
-    <Card 
-      key={project._id} 
+    <Card
+      key={project._id}
       className="animated fadeIn mgb-projectcard-width"
-      onClick={() => utilPushTo(context.urlLocation.query, linkTo)}>
-
+      onClick={() => utilPushTo(context.urlLocation.query, linkTo)}
+    >
       <ImageShowOrChange
         imageSrc={getProjectAvatarUrl(project)}
-        header='Project Avatar'
+        header="Project Avatar"
         canEdit={canEdit}
         canLinkToSrc={canEdit}
-        handleChange={!handleFieldChanged ? undefined : ((newUrl, avatarId) => handleFieldChanged({ avatarAssetId: avatarId } )) }
+        handleChange={
+          !handleFieldChanged
+            ? undefined
+            : (newUrl, avatarId) => handleFieldChanged({ avatarAssetId: avatarId })
+        }
       />
 
       <Card.Content>
         <span style={{ float: 'right' }}>
           <WorkState
             workState={project.workState}
-            handleChange={!handleFieldChanged ? undefined : (newWorkState => handleFieldChanged({ workState: newWorkState } )) }
+            handleChange={
+              !handleFieldChanged
+                ? undefined
+                : newWorkState => handleFieldChanged({ workState: newWorkState })
+            }
             canEdit={canEdit}
           />
         </span>
@@ -48,11 +57,15 @@ const ProjectCard = ( props, context ) => {
         <Card.Meta>
           <div>
             <Icon name="users" />
-            <span>{MemberStr}</span>
+            <span>
+              {MemberStr}
+            </span>
           </div>
           <div style={{ color: numChildForks ? 'black' : null }}>
             <Icon name="fork" color={hasParentFork ? 'blue' : null} />
-            <span style={{ color: project.allowForks ? 'green' : null }}>{numChildForks} Forks</span>
+            <span style={{ color: project.allowForks ? 'green' : null }}>
+              {numChildForks} Forks
+            </span>
           </div>
         </Card.Meta>
 
@@ -75,7 +88,7 @@ const ProjectCard = ( props, context ) => {
           <Icon name="sitemap" />
           Project
         </span>
-        <UX.UserAvatarName username={project.ownerName}/>
+        <UX.UserAvatarName username={project.ownerName} />
       </Card.Content>
     </Card>
   )
@@ -84,11 +97,11 @@ const ProjectCard = ( props, context ) => {
 ProjectCard.propTypes = {
   project: PropTypes.object.isRequired,
   canEdit: PropTypes.bool,
-  handleFieldChanged: PropTypes.func
+  handleFieldChanged: PropTypes.func,
 }
 
 ProjectCard.contextTypes = {
-  urlLocation:  PropTypes.object
+  urlLocation: PropTypes.object,
 }
 
 export default ProjectCard

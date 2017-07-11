@@ -7,42 +7,38 @@ import { badgeList } from '/imports/schemas/badges'
 import { Header, Container, Segment, Item } from 'semantic-ui-react'
 import { createContainer } from 'meteor/react-meteor-data'
 
-const BadgeHoldersListUI = ( { params, loading, holders } ) => {
-
-  if (loading)
-    return null
-  if (!holders)
-    return <span>none</span>
+const BadgeHoldersListUI = ({ params, loading, holders }) => {
+  if (loading) return null
+  if (!holders) return <span>none</span>
 
   const { badgename } = params
   const badgeInfo = badgeList[badgename]
 
   return (
-    <Container text> 
+    <Container text>
       <Segment basic padded>
-
         <Helmet
-            title={`Badge Holders: ${badgename}`}
-            meta={[ {"name": "Badge Holders", "content": "Badge Holders"} ]} />
-            
-        <Header as='h2'>
+          title={`Badge Holders: ${badgename}`}
+          meta={[{ name: 'Badge Holders', content: 'Badge Holders' }]}
+        />
+
+        <Header as="h2">
           {`${badgeInfo[1]} - ${holders.length} badge holders`}
         </Header>
 
         <Item.Group divided>
-          { _.map(holders, u => (
+          {_.map(holders, u =>
             <Item key={u._id} as={QLink} to={`/u/${u.username}`}>
-              <Item.Image as={Badge} name={badgename}/>
+              <Item.Image as={Badge} name={badgename} />
               <Item.Content>
-                <br></br>
+                <br />
                 <Item.Header>
-                  { u.username }
+                  {u.username}
                 </Item.Header>
               </Item.Content>
-            </Item>
-          ))}
+            </Item>,
+          )}
         </Item.Group>
-
       </Segment>
       <small>Only showing top 20 users</small>
     </Container>
@@ -50,19 +46,17 @@ const BadgeHoldersListUI = ( { params, loading, holders } ) => {
 }
 
 BadgeHoldersListUI.propTypes = {
-  user:  PropTypes.object
+  user: PropTypes.object,
 }
 
-const BadgeHoldersListRoute = createContainer(( { params } ) => {
-    
+const BadgeHoldersListRoute = createContainer(({ params }) => {
   const { badgename } = params
-  const handle = Meteor.subscribe("users.badge.holders", badgename)
+  const handle = Meteor.subscribe('users.badge.holders', badgename)
 
   return {
     loading: !handle.ready(),
-    holders: Meteor.users.find( { badges: { $in: [badgename]} }, { sort: { badges_count: -1 } }).fetch()
+    holders: Meteor.users.find({ badges: { $in: [badgename] } }, { sort: { badges_count: -1 } }).fetch(),
   }
-  
 }, BadgeHoldersListUI)
 
 export default BadgeHoldersListRoute

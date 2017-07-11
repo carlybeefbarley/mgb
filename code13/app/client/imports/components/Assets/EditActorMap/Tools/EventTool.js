@@ -4,41 +4,49 @@ import React from 'react'
 import { Dropdown } from 'semantic-ui-react'
 import Tileset from '../../Common/Map/Tools/TileSet.js'
 
-
 export default class EventTool extends Tileset {
-
-  get tileset(){
+  get tileset() {
     return this.props.tilesets[0]
   }
 
   onMouseDown(e) {
     super.onMouseDown(e)
-    this.props.setActiveLayerByName("Events")
+    this.props.setActiveLayerByName('Events')
   }
 
-  renderContent () {
+  renderContent() {
     return (
       <canvas
-        ref='canvas'
+        ref="canvas"
         onMouseDown={this.onMouseDown.bind(this)}
         onMouseUp={this.onMouseUp.bind(this)}
-        onMouseMove={e => { this.onMouseMove(e.nativeEvent) } }
+        onMouseMove={e => {
+          this.onMouseMove(e.nativeEvent)
+        }}
         onMouseLeave={this.onMouseLeave.bind(this)}
-        onContextMenu={e => { e.preventDefault(); return false; } } >
-      </canvas>
+        onContextMenu={e => {
+          e.preventDefault()
+          return false
+        }}
+      />
     )
   }
 
-  render () {
+  render() {
     const ts = this.tileset
     // actions don't have actor..
-    if (!ts.actor)
-      ts.actor = {}
+    if (!ts.actor) ts.actor = {}
 
     return (
-      <Dropdown simple labeled text="Events" id="mgbjr-MapTools-events" className='tilesets icon small ui button'>
+      <Dropdown
+        simple
+        labeled
+        text="Events"
+        id="mgbjr-MapTools-events"
+        className="tilesets icon small ui button"
+      >
         <Dropdown.Menu>
-          { this.renderContent() }
+          {this.renderContent()}
         </Dropdown.Menu>
       </Dropdown>
     )

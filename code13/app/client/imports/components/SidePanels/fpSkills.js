@@ -8,29 +8,25 @@ import UX from '/client/imports/UX'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-export default fpSkills = React.createClass({
-
+const fpSkills = React.createClass({
   propTypes: {
-    currUser: PropTypes.object             // Currently Logged in user. Can be null/undefined
+    currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
   },
 
   contextTypes: {
-    skills: PropTypes.object       // skills for currently loggedIn user (not necessarily the props.user user)
+    skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)
   },
 
-  render: function () {
+  render: function() {
     const { currUser } = this.props
     const { skills } = this.context
 
-    if (!currUser)
-      return <Message warning content='You must be logged in to see your skills status' />
+    if (!currUser) return <Message warning content="You must be logged in to see your skills status" />
 
     return (
       <div>
-        <Header as='h3'>
-          <QLink to={`/u/${currUser.username}/skilltree`}>
-            My Skills
-          </QLink>
+        <Header as="h3">
+          <QLink to={`/u/${currUser.username}/skilltree`}>My Skills</QLink>
           <SkillCountsLabel skills={skills} />
         </Header>
         <p style={{ overflow: 'hidden' }}>
@@ -42,8 +38,10 @@ export default fpSkills = React.createClass({
 
         <Divider hidden />
 
-        <Button as={QLink} to='/learn/skills' size='large' fluid icon='refresh' content='Learn skills' />
+        <Button as={QLink} to="/learn/skills" size="large" fluid icon="refresh" content="Learn skills" />
       </div>
     )
-  }
+  },
 })
+
+export default fpSkills

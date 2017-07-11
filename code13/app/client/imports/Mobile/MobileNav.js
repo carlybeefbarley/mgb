@@ -1,9 +1,16 @@
 /*
 README:
   this module wraps up navigation for mobile version.
-  it is resposonsible for tab and bottom button rendering
+  it is responsible for tab and bottom button rendering
 
+  Tabs are made as independent components which loads desired component
+    (e.g. HOC wrapper around real component)
 
+  All links should be handled by QLink (otherwise they simply won't work)
+    links will open RouterWrap component - which loads url in the popup
+    if tab param is given to the QLink component
+      then it will load that link in the tab specified instead of routerWrap
+      (see TAB at the bottom of this file for available tabs)
 
 
  */
@@ -24,164 +31,33 @@ import fpChat from '../components/SidePanels/fpChat'
 
 import RouterWrap from './RouterWrap'
 
-import NavBar from '/client/imports/components/Nav/NavBar'
-
 import {utilReplaceTo, utilPushTo} from '/client/imports/routes/QLink'
-
-import SpecialGlobals from '/imports/SpecialGlobals'
-
-import parseQuery from '/imports/helpers/queryParser'
 
 import {Link, browserHistory} from 'react-router'
 
 import './MobileNav.css'
 
+const NUMBER_OF_BUTTONS_IN_THE_BOTTOM_NAVIGATION = 5
 
-class SwipeableViews2 extends React.Component {
-
-  constructor(...a) {
-    super(...a)
-    this.isScrolling = true
-    this.lastScroll = 0
-  }
-
-  componentDidMount() {
-    const el = this.refs.mainContainer
-    el.addEventListener('scroll', this.onScroll, {
-      useCapture: true,
-      passive: false
+const AllButtons = (p) => (<div className="mobile-nav-all-buttons">
+  {p.buttons
+    .filter((bName, index) => !!MobileNav.availableButtons[bName] && index >= p.from && index < p.to)
+    .map((bName, index) => {
+      const b = MobileNav.availableButtons[bName]
+      return <a
+        className="mobile-nav-item item"
+        name={bName}
+        key={index}
+        onClick={() => p.mobileNav.onClickMoreContent(b, index)}
+        style={{color: b.disabled ? 'grey' : ''}}
+      >
+        <Icon name={b.icon || 'question'} size='large'/>
+        <p>{b.title}</p>
+      </a>
     })
-
-    /*
-
-     onTouchEnd={this.onInputEnd}
-     onMouseUp={this.onInputEnd}
-
-     onTouchStart={this.onInputDown}
-     onMouseDown={this.onInputDown}
-     */
-
-    el.addEventListener('touchstart', this.onInputDown, {
-      useCapture: true,
-      passive: false
-    })
-
-    el.addEventListener('mousedown', this.onInputDown, {
-      useCapture: true,
-      passive: false
-    })
-    el.addEventListener('touchend', this.onInputEnd, {
-      useCapture: true,
-      passive: false
-    })
-    el.addEventListener('mouseup', this.onInputEnd, {
-      useCapture: true,
-      passive: false
-    })
-
-    if (this.props.index !== void(0)) {
-
-      const screenWidth = el.parentElement.offsetWidth
-      this.refs.mainContainer.scrollLeft = this.props.index * screenWidth
-    }
   }
+  </div>)
 
-  componentWillUnmount() {
-    const el = this.refs.mainContainer
-    el.removeEventListener('scroll', this.onScroll)
-    el.removeEventListener('touchstart', this.onInputDown)
-    el.removeEventListener('mousedown', this.onInputDown)
-    el.removeEventListener('touchend', this.onInputEnd)
-    el.removeEventListener('mouseup', this.onInputEnd)
-  }
-
-  componentDidUpdate() {
-    if (this.props.index !== void(0)) {
-      const el = this.refs.mainContainer
-      const screenWidth = el.parentElement.offsetWidth
-      this.refs.mainContainer.scrollLeft = this.props.index * screenWidth
-    }
-  }
-
-  onScroll = (e) => {
-    //console.log("scrolling...")
-    //e.preventDefault()
-    if (!this.inputDown) {
-      this.refs.mainContainer.scrollLeft = this.lastScroll
-      e.preventDefault()
-      return
-    }
-
-
-    this.isScrolling = true
-    this.scrollTimeout && window.clearTimeout(this.scrollTimeout)
-
-    this.scrollTimeout = window.setTimeout(() => {
-      this.isScrolling = false
-      /*if(!this.inputDown) {
-       this.onInputEnd()
-       }*/
-    }, 10)
-  }
-
-  onInputDown = (e) => {
-    //e.preventDefault()
-    this.inputDown = true
-  }
-
-  onInputEnd = (e) => {
-    e.preventDefault()
-    this.inputDown = false
-    const el = this.refs.mainContainer
-    this.lastScroll = el.scrollLeft
-    if (this.isScrolling) {
-
-      el.scrollLeft = el.scrollLeft + 1
-      return
-    }
-
-
-    const screenWidth = el.parentElement.offsetWidth
-
-    const rel = el.scrollLeft % screenWidth
-    const newScroll = (el.scrollLeft - rel) + (rel > screenWidth * 0.5 ? screenWidth : 0)
-    const tab = Math.floor(newScroll / screenWidth)
-    el.scrollLeft = newScroll
-
-    setTimeout(() => {
-      this.props.onChangeIndex && this.props.onChangeIndex(tab)
-    }, 0)
-  }
-
-  render() {
-    return (<div
-      className='swipeable'
-      ref='mainContainer'
-
-
-      // onScrollCapture={this.onScroll}
-    >{this.props.children}</div>)
-  }
-}
-
-const AllButtons = (p) => {
-  return <div className="mobile-nav-all-buttons">
-    {p.buttons
-      .filter((bName, index) => !!MobileNav.availableButtons[bName] && index >= p.from && index < p.to)
-      .map((bName, index) => {
-        const b = MobileNav.availableButtons[bName]
-        return <a
-          className="mobile-nav-item item"
-          name={bName}
-          key={index}
-          onClick={() => p.mobileNav.onClickMoreContent(b, index)}
-        >
-          <Icon name={b.icon || 'question'} size='large'></Icon>
-          <p>{b.title}</p>
-        </a>
-      })}
-  </div>
-}
 
 const doLogout = () => {
   Meteor.logout()
@@ -189,7 +65,7 @@ const doLogout = () => {
 }
 
 const NotReady = () => (
-  <div>
+  <div style={{textAlign: 'center'}}>
     <h1>Work in progress,</h1>
     <h2>come back later</h2>
   </div>
@@ -198,29 +74,6 @@ const NotReady = () => (
 
 // make use of this
 let cache = {}
-/*
- * Profile
- * What's New
- * Roadmap
- *
- * Users
- * Feed
- * Dailies
- *
- * Badges
- * Projects
- * Competitions
- *
- * Send Feedback
- * Notifications
- * Learn
- *
- * Help
- * Settings
- * Log Out
- *
- * */
-
 class MobileNav extends React.Component {
   static contextTypes = {
     router: React.PropTypes.object
@@ -291,7 +144,6 @@ class MobileNav extends React.Component {
     this.erd.removeListener(document.body, this.onresize)
   }
 
-  // todo...
   shouldComponentUpdate(nextProps, nextState) {
     return true
   }
@@ -331,9 +183,9 @@ class MobileNav extends React.Component {
     if(location)
       this.cache.location[index] = location
 
-    console.log("Setting state index to:", index, location)
     this.setState({index}, () => {
       // this is here because this is much faster than react re-rendering
+      // seems that slow re-rendering is caused by meteor get data - not React itself
       $(".mobile-nav-button.active", this.refs.mobileNav).removeClass("active")
       $("#mobile-nav-button-" + index, this.refs.mobileNav).addClass("active")
 
@@ -347,7 +199,7 @@ class MobileNav extends React.Component {
   }
 
   getMaxItems() {
-    return 5
+    return NUMBER_OF_BUTTONS_IN_THE_BOTTOM_NAVIGATION
   }
 
   render() {
@@ -532,17 +384,18 @@ class MobileNav extends React.Component {
     feed: {
       title: "Feed",
       action: (mobnav) => {
-        alert('Feed is not implemented!')
+        mobnav.setLocation(`/mobile/feed`)
       },
-      icon: 'feed'
+      icon: 'feed',
+      disabled: true
     },
     dailies: {
       title: 'Dailies',
       icon: 'exclamation',
       action: (mobnav) => {
-        alert('Dailies not implemented...')
-        mobnav.setLocation(`/dailies`)
+        mobnav.setLocation(`/mobile/dailies`)
       },
+      disabled: true
     },
 
     badges: {
@@ -566,33 +419,35 @@ class MobileNav extends React.Component {
       title: 'Competitions',
       icon: 'winner',
       action: (mobnav) => {
-        //alert('Competitions are not implemented...')
-        mobnav.setLocation(`/competitions`)
+        mobnav.setLocation(`/mobile/competitions`)
       },
+      disabled: true
     },
 
     feedback: {
       title: 'Feedback',
       icon: 'mail outline',
       action: (mobnav) => {
-        alert('Feedback is not implemented...')
-        mobnav.setLocation(`/feedback`)
+        // alert('Feedback is not implemented...')
+        mobnav.setLocation(`/mobile/feedback`)
       },
+      disabled: true
     },
     notifications: {
       title: 'Notifications',
       icon: 'bell outline',
       action: (mobnav) => {
-        alert('Notifications are not implemented...')
-        mobnav.setLocation(`/notifications`)
+        // alert('Notifications are not implemented...')
+        mobnav.setLocation(`/mobile/notifications`)
       },
+      disabled: true
     },
     learn: {
       title: 'Learn',
+      icon: 'graduation',
       action: (mobnav) => {
         mobnav.setLocation(`/learn`)
-      },
-      icon: 'graduation'
+      }
     },
 
     help: {
@@ -600,13 +455,11 @@ class MobileNav extends React.Component {
       icon: 'question',
       action: (mobnav) => {
         mobnav.handleChangeIndex(TAB.CHAT, 0, '?_fp=chat.G_MGBHELP_')
-        //alert('TODO: open chat tab -> help channel')
       },
     },
     settings: {
       title: 'Settings',
       icon: 'setting',
-      Component: HomeRoute, ///HomeWrap,
       action: (mobnav) => {
         mobnav.setLocation(`/mobile/settings`)
       },
@@ -620,12 +473,6 @@ class MobileNav extends React.Component {
 }
 
 export default MobileNav
-
-/*      'home',
- 'play',
- 'chat',
- 'assets',
- 'more',*/
 export const TAB = {
   HOME:   0,
   PLAY:   1,

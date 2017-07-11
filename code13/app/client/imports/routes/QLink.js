@@ -137,7 +137,7 @@ export default QLink = React.createClass({
   render: function () {
     const p = this.props
     const chosenEl = p.elOverride ? p.elOverride : Link
-    const pClean = _.omit(p, ["elOverride", "altTo", "altQuery"])
+    const pClean = _.omit(p, ["elOverride", "altTo", "altQuery", "tab"])
 
     if (!p.nav)
       return React.createElement(chosenEl, Object.assign({}, pClean, { onClick: this.handleClick }))

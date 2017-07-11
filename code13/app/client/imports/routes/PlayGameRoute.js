@@ -26,6 +26,8 @@ import elementResizeDetectorMaker  from 'element-resize-detector'
 
 import { getAssetHandlerWithContent2, makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
+import { TAB } from '/client/imports/Mobile/MobileNav'
+
 import './playGame.css'
 
 // TODO: The debounce / throttle needs to move to the server really
@@ -525,9 +527,7 @@ export default PlayGameRoute = React.createClass({
     utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
   makeLinkToChat(){
-    const channelName = makeChannelName( { scopeGroupName: 'Asset', scopeId: this.props.params.assetId } )
-    joyrideCompleteTag('mgbjr-CT-asset-play-game-show-chat')
-    return utilLinkToChatPanelChannel(this.context.urlLocation, channelName)
+    return makeChannelName( { scopeGroupName: 'Asset', scopeId: this.props.params.assetId } )
   },
 
   render: function () {
@@ -551,7 +551,8 @@ export default PlayGameRoute = React.createClass({
           style={_styleGameNavButtons}
           hasUnreads={hazUnreadAssetChat}
           handleClick={this.handleChatClick}
-          to={this.makeLinkToChat()}
+          query={{_fp: this.makeLinkToChat()}}
+          tab={TAB.CHAT}
         />
         <GameTypeDetail game={game} style={_styleGameNavButtons} />
         <PlayGame game={game} user={user} incrementPlayCountCb={this.incrementPlayCount} availableWidth={this.props.availableWidth} />

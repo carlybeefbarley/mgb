@@ -32,6 +32,8 @@ import QLink from '../QLink'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import Hotjar from '/client/imports/helpers/hotjar.js'
+import { TAB } from '/client/imports/Mobile/MobileNav'
+
 
 const UserShowcase = () => ( null )    // TODO based on workState
 
@@ -273,7 +275,7 @@ export default UserProfileRoute = React.createClass({
               <QLink to={`/u/${name}/games`} style={{marginBottom: '6px'}}>
                 <UX.Button2 basic icon='game' content='Games' />
               </QLink>
-              <QLink query={{ _fp: `chat.${channelName}` }}  style={{marginBottom: '6px'}}>
+              <QLink query={{ _fp: `chat.${channelName}` }} tab={TAB.CHAT} style={{marginBottom: '6px'}}>
                 <UX.Button2 basic icon='chat' content='Wall' />
               </QLink>
             </div>

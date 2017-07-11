@@ -5,6 +5,8 @@ import { Button, Icon, Image, Popup } from 'semantic-ui-react'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import moment from 'moment'
 
+import { TAB } from '/client/imports/Mobile/MobileNav'
+
 // >>>  import UX from '/client/imports/UX'
 
 // These UiAtoms are SUIR-based UI elements that are
@@ -71,7 +73,7 @@ const UX = {
     // TODO: @dgolds to decvide on how to reference a specific message
     // Use cases - @mention, notifications, flagging etc/
     // Workitem #10xx to be filed on dgolds
-    <QLink query={{ _fp: 'chat' }}>
+    <QLink query={{ _fp: 'chat' }} tab={TAB.CHAT}>
       Flagged Chat Id: {chatId}
     </QLink>
   ),

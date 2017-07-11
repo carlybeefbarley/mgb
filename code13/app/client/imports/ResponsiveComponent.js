@@ -27,12 +27,15 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
 
     handleResize() {
       const wrapper = this.wrapper
+      if(!wrapper)
+        return
+
       const { activeRules, respData } = this.matchRules(wrapper.clientWidth, wrapper.clientHeight)
-      this.setState({ 
-        loaded:        true, 
-        debounced:     false, 
-        width:         wrapper.clientWidth, 
-        height:        wrapper.clientHeight, 
+      this.setState({
+        loaded:        true,
+        debounced:     false,
+        width:         wrapper.clientWidth,
+        height:        wrapper.clientHeight,
         activeRules,
         respData
       })
@@ -51,7 +54,7 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
         var minHeight = ruleValue.minHeight || 0
         var maxHeight = ruleValue.maxHeight || 99999
 
-        if ( (ruleValue.minWidth || ruleValue.maxWidth) && (newWidth >= minWidth && newWidth <= maxWidth) 
+        if ( (ruleValue.minWidth || ruleValue.maxWidth) && (newWidth >= minWidth && newWidth <= maxWidth)
           || ( ruleValue.minHeight || ruleValue.maxHeight) && (newHeight >= minHeight && newHeight <= maxHeight) )
         {
           activeRules.push(ruleName)
@@ -71,8 +74,8 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
 
     shouldComponentUpdate(nextProps, nextState) {
       return (
-        !this.state.loaded || 
-        !_.isEqual(this.state.activeRules, nextState.activeRules) || 
+        !this.state.loaded ||
+        !_.isEqual(this.state.activeRules, nextState.activeRules) ||
         nextState.debounced === true
       )
     }
@@ -94,15 +97,15 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
       }
 
       return (
-        <div 
-            ref={ wrapper => (this.wrapper = wrapper) } 
+        <div
+            ref={ wrapper => (this.wrapper = wrapper) }
             style={{ ...styles.wrapper, ...wrapperStyles }}>
           <div
               ref={ component => (this.component = component) }
               className={ classNames }
               style={{ ...styles.component, ...componentStyles }} >
-            { !loaded || width <= 0 ? null : 
-              <Component 
+            { !loaded || width <= 0 ? null :
+              <Component
                   {...this.props }
                   respWidth={ width }
                   respHeight={ height }
@@ -133,13 +136,13 @@ const HomeRoute = ( { respActiveRules, respIsRuleActive } ) => {
 }
 
 HomeRoute.responsiveRules = {  // Note that this could also be a function that returns this kind of object
-  'small': {  
+  'small': {
     // 'small' is a responsiveRule name. When the conditions are met,
-    //  the inner Components's respActiveRules property (array) will contain 
-    //  this string.  Also, the wrapper div will gain the className rrc-small 
+    //  the inner Components's respActiveRules property (array) will contain
+    //  this string.  Also, the wrapper div will gain the className rrc-small
     //  The rrc- prefix stands for ResponsiveRuleClass- so it is easier to debug
     minWidth: 0,      // Values are in pixels, and ranges are inclusive. minWidth=0 is default
-    maxWidth: 500     // maxWidth=99999 is default 
+    maxWidth: 500     // maxWidth=99999 is default
   },
   'medium': {
     minWidth: 400,

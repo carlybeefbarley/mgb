@@ -7,7 +7,7 @@ const _menuItemIndicatorStyle = {
   textShadow: '-1px -1px 0 rgba(0,0,0,0), 1px -1px 0 rgba(0,0,0,0), -1px 1px 0 rgba(0,0,0,0), 1px 1px 0 rgba(0,0,0,0)'
 }
 
-const AssetChatDetail = ({hasUnreads, handleClick, style, to}) => (
+const AssetChatDetail = ({hasUnreads, handleClick, style, query, tab}) => (
   <Popup
     size='small'
     position='bottom right'
@@ -19,7 +19,7 @@ const AssetChatDetail = ({hasUnreads, handleClick, style, to}) => (
         size='small'
       >
         <Icon.Group >
-          <QLink to={to} tab={2}>
+          <QLink query={query} tab={tab}>
             <Icon
               name='chat'
               style={hasUnreads ? null : {marginRight: 0} }

@@ -26,9 +26,11 @@ import RouterWrap from './RouterWrap'
 
 import NavBar from '/client/imports/components/Nav/NavBar'
 
-import {utilReplaceTo, utilPushTo} from '/client/imports/routes/QLink.js'
+import {utilReplaceTo, utilPushTo} from '/client/imports/routes/QLink'
 
 import SpecialGlobals from '/imports/SpecialGlobals'
+
+import parseQuery from '/imports/helpers/queryParser'
 
 import {Link, browserHistory} from 'react-router'
 
@@ -261,7 +263,7 @@ class MobileNav extends React.Component {
 
     this.cache = {
       views: [],
-      prevLocation: []
+      location: []
     }
     this.tabs = {}
 
@@ -302,7 +304,7 @@ class MobileNav extends React.Component {
     console.log("setLocation Location:", location)
     if (tab !== -1) {
       if (tab) {
-        this.handleChangeIndex(tab, location)
+        this.handleChangeIndex(tab, this.state.index, location)
         return
       }
       const index = tab && tab !== -1 ? tab : this.state.index
@@ -318,21 +320,24 @@ class MobileNav extends React.Component {
   }
 
   onClick(button, index) {
-    this.handleChangeIndex(index)
+    this.handleChangeIndex(index, this.state.index)
   }
 
   onClickMoreContent(button, index) {
     button.action && button.action(this)
   }
 
-  handleChangeIndex(index, location) {
-    console.log("Setting state index to:", index)
+  handleChangeIndex(index, currentIndex, location) {
+    if(location)
+      this.cache.location[index] = location
+
+    console.log("Setting state index to:", index, location)
     this.setState({index}, () => {
       // this is here because this is much faster than react re-rendering
       $(".mobile-nav-button.active", this.refs.mobileNav).removeClass("active")
       $("#mobile-nav-button-" + index, this.refs.mobileNav).addClass("active")
 
-      const route = location || this.state.location[index] || '/?_fp=chat.A_NDe2wYSgj9piosiqG_'
+      const route = location || this.state.location[index] || this.cache.location[index] || '/'
 
       if (this.state.lastRoute !== route) {
         this.context.router.push(route)
@@ -462,37 +467,29 @@ class MobileNav extends React.Component {
       icon: 'game'
     },
     chat: {
+      data: {},
       title: "Chat",
       Component: fpChat, // BlankPage,
       getProps: (mobileNav) => {
 
-        let subNav = (mobileNav.props.location && mobileNav.props.location.query) ? mobileNav.props.location.query._fp : ''
+        let subNav =  (mobileNav.props.location && mobileNav.props.location.query) ? mobileNav.props.location.query._fp : ''
         // bug bug in the location query
         // workaround - try to get correct query manually
         // TODO: debug - why location.query is not parsed sometimes
-        if(!subNav){
-          const parts = mobileNav.props.location.pathname.split('?')
-          if(parts.length > 0) {
-            const query = {}
-            parts.pop().split('&').forEach(val => {
-              const cp = val.split('=')
-              query[cp[0]] = cp[1]
-            })
-            console.error("DEBUG me: Manually found query:", query)
-            subNav = query._fp
-          }
+        if(!subNav) {
+          subNav = parseQuery(mobileNav.props.location.pathname)._fp
+          subNav && console.error("bug bug - Parsed out SubNav manually from location.. ")
         }
-
-
         const subNavParam = (subNav ? subNav.split('.') : []).length > 0 ? subNav.split('.').pop() : ''
-
         return {
-          panelWidth: 0,
+          panelWidth: '0',
           // TODO: save and restore
           subNavParam: subNavParam || localStorage.getItem("chat:subNavParam") || 'A_NDe2wYSgj9piosiqG_',
           handleChangeSubNavParam: function (newSubNavParamStr) {
+            debugger;
             console.log('handleChangeSubNavParam', newSubNavParamStr)
             localStorage.setItem("chat:subNavParam", newSubNavParamStr)
+            utilPushTo(mobileNav.context.location, mobileNav.context.location, {'_fp': 'chat.'+newSubNavParamStr})
             mobileNav.forceUpdate()
           }
         }
@@ -611,7 +608,8 @@ class MobileNav extends React.Component {
       title: 'Help',
       icon: 'question',
       action: (mobnav) => {
-        alert('TODO: open chat tab -> help channel')
+        mobnav.handleChangeIndex(TAB.CHAT, 0, '?_fp=chat.G_MGBHELP_')
+        //alert('TODO: open chat tab -> help channel')
       },
     },
     settings: {
@@ -630,3 +628,16 @@ class MobileNav extends React.Component {
 }
 
 export default MobileNav
+
+/*      'home',
+ 'play',
+ 'chat',
+ 'assets',
+ 'more',*/
+export const TAB = {
+  HOME:   0,
+  PLAY:   1,
+  CHAT:   2,
+  ASSETS: 3,
+  MORE:   4
+}

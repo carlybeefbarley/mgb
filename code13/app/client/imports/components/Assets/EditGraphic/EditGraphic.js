@@ -936,7 +936,7 @@ export default class EditGraphic extends React.Component {
 
     if (event.which && event.which == 3) {
       const moveTool = this.findToolByLabelString('Move')
-      this.state.toolChosen = moveTool
+      this.setState({ toolChosen: moveTool })
       event.preventDefault()
     }
 
@@ -1112,8 +1112,12 @@ export default class EditGraphic extends React.Component {
       chosenColor = this._recentValidColor || { hex: '#800000', rgb: { r: 128, g: 0, b: 0, a: 1 } }
     }
     // See http://casesandberg.github.io/react-color/#api-onChangeComplete
-    this.state.selectedColors[colortype] = chosenColor
-    this.setState({ selectedColors: this.state.selectedColors }) // Won't trigger redraw because React does shallow compare? Fast but not the 'react-way'
+    this.setState({
+      selectedColors: {
+        ...this.state.selectedColors,
+        [colortype]: chosenColor,
+      },
+    })
 
     _selectedColors[colortype] = _.cloneDeep(chosenColor)
 

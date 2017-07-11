@@ -162,9 +162,11 @@ export default class EditMap extends React.Component {
     this.mgb_content2 = _.cloneDeep(this.props.asset.content2)
 
     // restore last edit mode ???
-    this.state.editMode = this.options.mode
-    this.state.randomMode = this.options.randomMode
-    this.state.showGrid = this.options.showGrid
+    this.setState(() => ({
+      editMode: this.options.mode,
+      randomMode: this.options.randomMode,
+      showGrid: this.options.showGrid,
+    }))
   }
 
   createNewMap() {

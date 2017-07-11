@@ -224,6 +224,16 @@ export default class DropArea extends React.Component {
     return frame
   }
 
+  handleOptionClick = val => {
+    this.props.value = val
+    this.setState({ asset: null })
+    // Play sound when selecting
+    if (name === 'Builtin samples' && MgbActor.alCannedSoundsList.includes(val)) {
+      MgbActor.playCannedSound(val)
+    }
+    this.props.onChange && this.props.onChange(val)
+  }
+
   renderOptions() {
     const name = this.props.title || 'Builtin samples'
     const options = this.props.options
@@ -232,18 +242,7 @@ export default class DropArea extends React.Component {
         <label>
           {name}
         </label>
-        <SmallDD
-          options={options}
-          onChange={val => {
-            this.props.value = val
-            this.state.asset = null
-            // Play sound when selecting
-            if (name === 'Builtin samples' && MgbActor.alCannedSoundsList.includes(val))
-              MgbActor.playCannedSound(val)
-            this.props.onChange && this.props.onChange(val)
-          }}
-          value={this.props.value}
-        />
+        <SmallDD options={options} onChange={this.handleOptionClick} value={this.props.value} />
       </div>
     )
   }

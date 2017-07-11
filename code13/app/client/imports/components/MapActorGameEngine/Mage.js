@@ -388,7 +388,13 @@ export default class Mage extends React.Component {
 
   _startMapLoaded(activeMap) {
     const { startMapName } = this.props
-    if (!this.state.loadedMaps[startMapName]) this.state.loadedMaps[startMapName] = activeMap // Store it for next time
+    if (!this.state.loadedMaps[startMapName])
+      this.setState({
+        loadedMaps: {
+          ...this.state.loadedMaps,
+          [startMapName]: activeMap, // Store it for next time
+        },
+      })
     const actorNames = _.filter(
       _.union(activeMap.mapLayer[0], activeMap.mapLayer[1], activeMap.mapLayer[2]),
       a => a && a !== '',

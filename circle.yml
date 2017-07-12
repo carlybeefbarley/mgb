@@ -6,3 +6,17 @@ machine:
     America/Los_Angeles
   node:
     version: 8.1.2
+
+dependencies:
+  cache_directories:
+    - ~/.meteor
+  pre:
+    - meteor || curl https://install.meteor.com | /bin/sh
+  post:
+   - meteor --version
+
+deployment:
+  staging:
+    branch: master
+    commands:
+      - ./stage.sh

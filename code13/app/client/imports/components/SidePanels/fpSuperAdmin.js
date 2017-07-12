@@ -68,7 +68,8 @@ const LinkTabContent = () =>
       {linkLi('mLab cluster', 'https://mlab.com/clusters/rs-ds021730')}
     </List>
     <p>
-      {Meteor.settings.public.MGB_GIT_BRANCH} @ cc={Meteor.settings.public.MGB_GIT_BRANCH_COMMIT_COUNT}
+      {Meteor.settings.public.MGB_GIT_BRANCH} @ commit count={Meteor.settings.public.MGB_GIT_BRANCH_COMMIT_COUNT}{' '}
+      ({Meteor.settings.public.MGB_GIT_DESCRIBE})
     </p>
   </div>
 

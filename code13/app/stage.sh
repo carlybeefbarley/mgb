@@ -55,8 +55,8 @@ fi
 # Get session
 # Use current user or load from METEOR_SESSION_FILE_CONTENT
 #
-if meteor_user=$(meteor whoami > /dev/null 2>&1); then
-  echo "... logged in as $meteor_user"
+if meteor_user=$(meteor whoami 2> /dev/null); then
+  echo "... logged in as: $meteor_user"
 elif [[ -n $METEOR_SESSION_FILE_CONTENT ]]; then
   echo "... using METEOR_SESSION_FILE $METEOR_SESSION_FILE_CONTENT"
   echo "$METEOR_SESSION_FILE_CONTENT" > meteor_session.json
@@ -75,4 +75,4 @@ fi
 # Deploy
 #
 echo "... deploying"
-echo "DEPLOY_HOSTNAME=galaxy.meteor.com meteor deploy staging.mygamebuilder.com --settings settings.staging.generated.json"
+DEPLOY_HOSTNAME=galaxy.meteor.com meteor deploy staging.mygamebuilder.com --settings settings.staging.generated.json

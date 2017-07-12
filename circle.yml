@@ -19,4 +19,4 @@ deployment:
   staging:
     branch: master
     commands:
-      - cd code13/app && . ./stage.sh
+      - cd mgb/code13/app && . ./stage.sh

@@ -14,7 +14,6 @@ import CommunitySkillNodes from './CommunitySkillNodes'
 import MarketingSkillNodes from './MarketingSkillNodes'
 import GetStartedSkillNodes from './GetStartedSkillNodes'
 
-
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 // A) THE SKILLS MODEL TRIFECTA... OVERVIEW
@@ -109,41 +108,39 @@ const SkillNodes = {
   // NOTE THAT EACH OF THESE MUST HAVE A MATCHING ITEM IN SkillAreas.js if it is part of the
   // general skills courses. There are some specific exceptions that have their own top-level UI
   // and they are indicated below in a comment:
-  getStarted: GetStartedSkillNodes,     // Has specific client UI in LearnGetStartedRoute.js so NOT in skillsAreas.js
-  code:       CodeSkillNodes,
-//math
-//physics
-//computerScience
-  art:        ArtSkillNodes,
-  design:     DesignSkillNodes,
-  audio:      AudioSkillNodes,
-  analytics:  AnalyticsSkillNodes,
-  writing:    WritingSkillNodes,
-  marketing:  MarketingSkillNodes,
-  community:  CommunitySkillNodes,
-  legal:      LegalSkillNodes,
-  business:   BusinessSkillNodes,
+  getStarted: GetStartedSkillNodes, // Has specific client UI in LearnGetStartedRoute.js so NOT in skillsAreas.js
+  code: CodeSkillNodes,
+  //math
+  //physics
+  //computerScience
+  art: ArtSkillNodes,
+  design: DesignSkillNodes,
+  audio: AudioSkillNodes,
+  analytics: AnalyticsSkillNodes,
+  writing: WritingSkillNodes,
+  marketing: MarketingSkillNodes,
+  community: CommunitySkillNodes,
+  legal: LegalSkillNodes,
+  business: BusinessSkillNodes,
 
   $meta: {
-    map: {}
-  }
+    map: {},
+  },
 }
 // injection test example
-  // SkillNodes["code.js.basics.xxx"] = C.E
-  // SkillNodes["code.js.basics.group"] = {
-  //   a: C.E,
-  //   b: C.E,
-  //   c: C.D
-  // }
+// SkillNodes["code.js.basics.xxx"] = C.E
+// SkillNodes["code.js.basics.group"] = {
+//   a: C.E,
+//   b: C.E,
+//   c: C.D
+// }
 
 const normalizeKey = (location, key) => {
-  if (!key)
-    return []
+  if (!key) return []
 
-  const keys = key.split(",")
-  return keys.map((key) => {
-    if (key.substring(0, 1) != ".")
-      return key
+  const keys = key.split(',')
+  return keys.map(key => {
+    if (key.substring(0, 1) != '.') return key
 
     const ka = location.split('.')
     const ra = key.split('.')
@@ -152,25 +149,22 @@ const normalizeKey = (location, key) => {
         ka.pop()
         ra.shift()
         i--
-      }
-      else
-        break
+      } else break
     }
     return ka.join('.') + '.' + ra.join('.')
   })
 }
 // convert keys with . to tree structure
-const fixKeys = (nodes) => {
-  for(let i in nodes){
-    if(i.indexOf(".") > -1){
-      const parts = i.split(".")
+const fixKeys = nodes => {
+  for (let i in nodes) {
+    if (i.indexOf('.') > -1) {
+      const parts = i.split('.')
       const oldi = i
 
       let n = nodes
       let key = parts.pop()
-      parts.forEach((p) => {
-        if (!n[p])
-          n[p] = {}
+      parts.forEach(p => {
+        if (!n[p]) n[p] = {}
         n = n[p]
       })
       n[key] = nodes[oldi]
@@ -185,19 +179,17 @@ const buildMap = (nodes, key = '') => {
   // final node
   for (let i in nodes) {
     // skip meta
-    if (i == "$meta")
-      continue
+    if (i == '$meta') continue
 
     let node = nodes[i]
     const nextKey = key ? key + '.' + i : i
 
     if (!node) {
-      console.error("FAILED to locate node:", key, "["+nextKey+"]")
+      console.error('FAILED to locate node:', key, '[' + nextKey + ']')
       continue
     }
 
-    if (!node.$meta)
-      node.$meta = {}
+    if (!node.$meta) node.$meta = {}
 
     node.$meta.key = nextKey
     SkillNodes.$meta.map[nextKey] = node
@@ -205,8 +197,7 @@ const buildMap = (nodes, key = '') => {
     node.$meta.requires = normalizeKey(nextKey, node.$meta.requires)
     node.$meta.unlocks = normalizeKey(nextKey, node.$meta.unlocks)
 
-    if (!nodes.$meta.isLeaf)
-      buildMap(node, nextKey)
+    if (!nodes.$meta.isLeaf) buildMap(node, nextKey)
   }
 }
 
@@ -214,19 +205,15 @@ const resolveUnlocksAndRequires = () => {
   const map = SkillNodes.$meta.map
   for (let i in map) {
     if (map[i].$meta.requires) {
-      map[i].$meta.requires.forEach((k) => {
-        if (!map[k])
-          console.error(`Cannot resolve 'require' for ${i}:`, k)
-        else
-          map[k].$meta.unlocks.push(i)
+      map[i].$meta.requires.forEach(k => {
+        if (!map[k]) console.error(`Cannot resolve 'require' for ${i}:`, k)
+        else map[k].$meta.unlocks.push(i)
       })
     }
     if (map[i].$meta.unlocks) {
-      map[i].$meta.unlocks.forEach((k) => {
-        if (!map[k])
-          console.error(`Cannot resolve 'require' for ${i}:`, k)
-        else
-          map[k].$meta.requires.push(i)
+      map[i].$meta.unlocks.forEach(k => {
+        if (!map[k]) console.error(`Cannot resolve 'require' for ${i}:`, k)
+        else map[k].$meta.requires.push(i)
       })
     }
   }
@@ -234,7 +221,6 @@ const resolveUnlocksAndRequires = () => {
 
 buildMap(SkillNodes)
 resolveUnlocksAndRequires()
-
 
 export default SkillNodes
 
@@ -247,24 +233,25 @@ export default SkillNodes
  * @param {string} [dotttedSkillPrefix=null] Optional prefix in dotted form.. e.g. getStarted.
  * @returns {Number}
  */
-export function countMaxUserSkills(dotttedSkillPrefix = null)
-{
+export function countMaxUserSkills(dotttedSkillPrefix = null) {
   let count = 0
   _.each(SkillNodes.$meta.map, (node, sk) => {
-    if ( node.$meta && node.$meta.isLeaf === 1 &&
-        (dotttedSkillPrefix === null || sk.startsWith(dotttedSkillPrefix) )
+    if (
+      node.$meta &&
+      node.$meta.isLeaf === 1 &&
+      (dotttedSkillPrefix === null || sk.startsWith(dotttedSkillPrefix))
     )
       count++
   })
   return count
 }
 
-
 export const maxSkillsCount = countMaxUserSkills()
 
 // MongoDB field names can't have dots in. See https://docs.mongodb.com/manual/core/document/#field-names
 export const makeSlashSeparatedSkillKey = dottedSkillKey => dottedSkillKey.replace(/\./g, '/')
-export const makeDottedSkillKey = slashSeparatedSkillKey => (slashSeparatedSkillKey ? slashSeparatedSkillKey.replace(/\//g, '.') : null)
+export const makeDottedSkillKey = slashSeparatedSkillKey =>
+  slashSeparatedSkillKey ? slashSeparatedSkillKey.replace(/\//g, '.') : null
 
 export const isSkillKeyValid = skillPath => {
   const dottedSkillKey = makeDottedSkillKey(skillPath)
@@ -278,79 +265,80 @@ export const isSkillKeyValid = skillPath => {
 //   partNumber must be integer from 0..99 inclusive. Default value is 0 if not provided.
 
 export const makeTutorialAssetPathFromSkillPath = (skillPath, partNumber = 0) => {
-  if (!Number.isInteger(partNumber) || partNumber < 0 || partNumber > 99)
-  {
-    console.error(`makeTutorialAssetPathFromSkillPath(${skillPath}, ${partNumber}) error: partNumber=${partNumber} is not valid, must be integer from 0 to 99.`)
+  if (!Number.isInteger(partNumber) || partNumber < 0 || partNumber > 99) {
+    console.error(
+      `makeTutorialAssetPathFromSkillPath(${skillPath}, ${partNumber}) error: partNumber=${partNumber} is not valid, must be integer from 0 to 99.`,
+    )
     return null
   }
 
-  if (partNumber > 0)
-  {
+  if (partNumber > 0) {
     // This is part of the namespace design for the SKILLS_MODEL_TRIFECTA, but isn't actually used yet.
     // Let's make sure it doesn't get called and used by mistake before we are ready.
-    console.error(`PREMATURE! makeTutorialAssetPathFromSkillPath(${skillPath}, ${partNumber}) is not expecting a partNumber > 0 YET. Are you from the future?`)
-    debugger
+    throw new Error(
+      `PREMATURE! makeTutorialAssetPathFromSkillPath(${skillPath}, ${partNumber}) is not expecting a partNumber > 0 YET. Are you from the future?`,
+    )
   }
 
-
-  if (!isSkillKeyValid(skillPath))
-  {
-    console.error(`makeTutorialAssetPathFromSkillPath(${skillPath}) error: isSkillKeyValid() failed validation`)
+  if (!isSkillKeyValid(skillPath)) {
+    console.error(
+      `makeTutorialAssetPathFromSkillPath(${skillPath}) error: isSkillKeyValid() failed validation`,
+    )
     return null
   }
 
   const dottedSkillKey = makeDottedSkillKey(skillPath)
-  const partNumberPaddedStr = ('00'+partNumber).slice(-2)
-  const retVal = `${SpecialGlobals.skillsModelTrifecta.tutorialAccount}:${SpecialGlobals.skillsModelTrifecta.tutorialAssetNamePrefix}${dottedSkillKey}.${partNumberPaddedStr}`
+  const partNumberPaddedStr = ('00' + partNumber).slice(-2)
+  const retVal = `${SpecialGlobals.skillsModelTrifecta.tutorialAccount}:${SpecialGlobals.skillsModelTrifecta
+    .tutorialAssetNamePrefix}${dottedSkillKey}.${partNumberPaddedStr}`
   console.log(`makeTutorialAssetPathFromSkillPath(${skillPath}, ${partNumber}) => '${retVal}'`)
 
   return retVal
 }
 
-export const makeTutorialsFindSelector = dottedSkillKey =>
-{
-  if (!dottedSkillKey)
-    return null
+export const makeTutorialsFindSelector = dottedSkillKey => {
+  if (!dottedSkillKey) return null
 
   const fullKeyPrefix = SpecialGlobals.skillsModelTrifecta.tutorialAssetNamePrefix + dottedSkillKey
   // replace . with \.
   const escapedKey = fullKeyPrefix.replace(/\./g, '\\.')
-  const regexToBuild = `^${escapedKey}\.[0-9][0-9]$`
+  const regexToBuild = `^${escapedKey}\\.[0-9][0-9]$`
   const reg = new RegExp(regexToBuild, 'i')
   return {
-    kind:         'tutorial',
-    name:         { $regex: reg },
-    isDeleted:    false,
-    dn_ownerName: SpecialGlobals.skillsModelTrifecta.tutorialAccount
+    kind: 'tutorial',
+    name: { $regex: reg },
+    isDeleted: false,
+    dn_ownerName: SpecialGlobals.skillsModelTrifecta.tutorialAccount,
   }
 }
 
-export const getNode = skillPath => Object.freeze( ({ ...SkillNodes.$meta.map[skillPath] }) )
+export const getNode = skillPath => Object.freeze({ ...SkillNodes.$meta.map[skillPath] })
 export const getPath = skillNode => skillNode.$meta.key
 
-export const getParentPath = skillPath => _.initial( skillPath.split( '.' ) ).join( '.' )
+export const getParentPath = skillPath => _.initial(skillPath.split('.')).join('.')
 
-export const isRootPath = skillPath => !_.includes( skillPath, '.' ) && !!getNode( skillPath )
-export const isLeafPath = skillPath => !!getNode( skillPath ).$meta.isLeaf
-export const isLeafNode = skillPath => !isRootPath( skillPath )
+export const isRootPath = skillPath => !_.includes(skillPath, '.') && !!getNode(skillPath)
+export const isLeafPath = skillPath => !!getNode(skillPath).$meta.isLeaf
+export const isLeafNode = skillPath => !isRootPath(skillPath)
 
 export const getChildPaths = skillPath => {
-  return Object.keys( getNode( skillPath ) )
-    .filter( key => !_.startsWith( key, '$' ) )
-    .map( key => ([skillPath, key].join( '.' )) )
+  return Object.keys(getNode(skillPath))
+    .filter(key => !_.startsWith(key, '$'))
+    .map(key => [skillPath, key].join('.'))
 }
 
-export const getParentNode = skillPath => getNode( getParentPath( skillPath ) )
-export const getChildNodes = skillPath => getChildPaths( skillPath ).map( getNode )
+export const getParentNode = skillPath => getNode(getParentPath(skillPath))
+export const getChildNodes = skillPath => getChildPaths(skillPath).map(getNode)
 
 export const getFriendlyName = skillPath => {
-  return _.get( getNode( skillPath ), '$meta.name' ) || _.startCase( _.last( skillPath.split( '.' ) ) )
+  return _.get(getNode(skillPath), '$meta.name') || _.startCase(_.last(skillPath.split('.')))
 }
 
-export const isPathChallenge = (skillPath) => _.startsWith( skillPath, 'code.js.basics' )
+export const isPathChallenge = skillPath => _.startsWith(skillPath, 'code.js.basics')
 
-export const isPathCodeTutorial = (skillPath) => _.startsWith( skillPath, 'code.js.games' ) || _.startsWith( skillPath, 'code.js.phaser' )
+export const isPathCodeTutorial = skillPath =>
+  _.startsWith(skillPath, 'code.js.games') || _.startsWith(skillPath, 'code.js.phaser')
 
-export const isPhaserTutorial = (skillPath) => _.startsWith( skillPath, 'code.js.phaser' )
+export const isPhaserTutorial = skillPath => _.startsWith(skillPath, 'code.js.phaser')
 
-export const isArtTutorial = (skillPath) => _.startsWith( skillPath, 'art' )
+export const isArtTutorial = skillPath => _.startsWith(skillPath, 'art')

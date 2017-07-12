@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import React from 'react'
-import {Modal, Segment, Grid} from 'semantic-ui-react'
-import {joyrideCompleteTag} from '/client/imports/Joyride/Joyride'
-import {snapshotActivity} from '/imports/schemas/activitySnapshots.js'
-import {makeCDNLink} from '/client/imports/helpers/assetFetchers'
+import { Modal, Segment, Grid } from 'semantic-ui-react'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
+import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 import './EditActor.css'
 import getDefaultActor from './getDefaultActor.js'
@@ -32,7 +32,7 @@ export default class EditActor extends React.Component {
 
   doSnapshotActivity() {
     let passiveAction = {
-      isActor: true // This could in future have info such as which layer is being edited, but not needed yet
+      isActor: true, // This could in future have info such as which layer is being edited, but not needed yet
     }
     snapshotActivity(this.props.asset, passiveAction)
   }
@@ -42,7 +42,7 @@ export default class EditActor extends React.Component {
   }
 
   handleSave(reason, thumbnail) {
-    if(!this.props.canEdit){
+    if (!this.props.canEdit) {
       this.props.editDeniedReminder()
       return
     }
@@ -50,51 +50,61 @@ export default class EditActor extends React.Component {
   }
 
   getTabs(databag) {
-    const _makeContent = Element => (
+    const _makeContent = Element =>
       <Element
-          asset={this.props.asset}
-          onChange={this.handleSave.bind(this)}
-          saveThumbnail={ d => this.handleSave(null, d, "Updating thumbnail") }
-          saveText={ text => this.props.handleDescriptionChange(text)} 
-          canEdit={this.props.canEdit} />
-    )
+        asset={this.props.asset}
+        onChange={this.handleSave.bind(this)}
+        saveThumbnail={d => this.handleSave(null, d, 'Updating thumbnail')}
+        saveText={text => this.props.handleDescriptionChange(text)}
+        canEdit={this.props.canEdit}
+      />
 
-    const _mkDisabled = actorTypesArray => _.some(actorTypesArray, at => databag.all.actorType === actorOptions.actorType[at])
+    const _mkDisabled = actorTypesArray =>
+      _.some(actorTypesArray, at => databag.all.actorType === actorOptions.actorType[at])
 
     const allTabs = [
       {
-        tab: "All",
-        content: _makeContent(FormsAll)
+        tab: 'All',
+        content: _makeContent(FormsAll),
       },
       {
-        tab: "Animations",
-        content: _makeContent(Animations) },
-      {
-        tab: "Character Behavior",
-        disabled: _mkDisabled( ['Item, Wall, or Scenery', 'Item', 'Solid Object', 'Floor', 'Scenery', 'Shot'] ),
-        content: _makeContent(CharacterBehavior)
+        tab: 'Animations',
+        content: _makeContent(Animations),
       },
       {
-        tab: "NPC Behavior",
-        disabled: _mkDisabled( ['Player', 'Item, Wall, or Scenery', 'Item', 'Solid Object', 'Floor', 'Scenery', 'Shot'] ),
-        content: _makeContent(NPCBehavior)
+        tab: 'Character Behavior',
+        disabled: _mkDisabled(['Item, Wall, or Scenery', 'Item', 'Solid Object', 'Floor', 'Scenery', 'Shot']),
+        content: _makeContent(CharacterBehavior),
       },
       {
-        tab: "Object Behavior",
-        disabled: _mkDisabled( ['Player', 'Non-Player Character (NPC)', 'Scenery', 'Shot'] ),
-        content: _makeContent(ObjectBehavior)
+        tab: 'NPC Behavior',
+        disabled: _mkDisabled([
+          'Player',
+          'Item, Wall, or Scenery',
+          'Item',
+          'Solid Object',
+          'Floor',
+          'Scenery',
+          'Shot',
+        ]),
+        content: _makeContent(NPCBehavior),
       },
       {
-        tab: "Destruction / Spawning",
-        disabled: _mkDisabled( ['Player', 'Shot'] ),
-        content: _makeContent(Spawning)
+        tab: 'Object Behavior',
+        disabled: _mkDisabled(['Player', 'Non-Player Character (NPC)', 'Scenery', 'Shot']),
+        content: _makeContent(ObjectBehavior),
+      },
+      {
+        tab: 'Destruction / Spawning',
+        disabled: _mkDisabled(['Player', 'Shot']),
+        content: _makeContent(Spawning),
       },
 
       {
-        tab: "Conditions",
-        disabled: _mkDisabled( ['Player', 'Shot'] ),
-        content: _makeContent(Conditions)
-      }
+        tab: 'Conditions',
+        disabled: _mkDisabled(['Player', 'Shot']),
+        content: _makeContent(Conditions),
+      },
     ]
 
     return allTabs
@@ -106,28 +116,34 @@ export default class EditActor extends React.Component {
         <Grid.Row>
           <Grid.Column width={8}>
             <Segment
-              style={{height: "100px", verticalAlign: "middle", cursor: "pointer", overflow: "hidden"}}
+              style={{ height: '100px', verticalAlign: 'middle', cursor: 'pointer', overflow: 'hidden' }}
               id="mgbjr-create-actor-blank"
               onClick={() => joyrideCompleteTag(`mgbjr-CT-create-actor-object`)}
-              data-template="alTemplateScenery">
+              data-template="alTemplateScenery"
+            >
               <img
-                style={{float: 'left', paddingRight: '10px'}}
-                src={makeCDNLink('/images/newActor/blank.png')}/>
-              <b>Blank</b><br/>
-              A blank template with no effects or behaviors. Used as scenery in the background
-              or foreground layer
+                style={{ float: 'left', paddingRight: '10px' }}
+                src={makeCDNLink('/images/newActor/blank.png')}
+              />
+              <b>Blank</b>
+              <br />
+              A blank template with no effects or behaviors. Used as scenery in the background or foreground
+              layer
             </Segment>
           </Grid.Column>
           <Grid.Column width={8}>
             <Segment
-              style={{height: "100px", verticalAlign: "middle", cursor: "pointer", overflow: "hidden"}}
+              style={{ height: '100px', verticalAlign: 'middle', cursor: 'pointer', overflow: 'hidden' }}
               id="mgbjr-create-actor-player"
               onClick={() => joyrideCompleteTag(`mgbjr-CT-create-actor-player`)}
-              data-template="alTemplatePlayer">
+              data-template="alTemplatePlayer"
+            >
               <img
-                style={{float: 'left', paddingRight: '10px'}}
-                src={makeCDNLink('/images/newActor/player.png')}/>
-              <b>Player</b><br/>
+                style={{ float: 'left', paddingRight: '10px' }}
+                src={makeCDNLink('/images/newActor/player.png')}
+              />
+              <b>Player</b>
+              <br />
               The Player's character
             </Segment>
           </Grid.Column>
@@ -135,27 +151,33 @@ export default class EditActor extends React.Component {
         <Grid.Row>
           <Grid.Column width={8}>
             <Segment
-              style={{height: "100px", verticalAlign: "middle", cursor: "pointer", overflow: "hidden"}}
+              style={{ height: '100px', verticalAlign: 'middle', cursor: 'pointer', overflow: 'hidden' }}
               id="mgbjr-create-actor-enemy"
               onClick={() => joyrideCompleteTag(`mgbjr-CT-create-actor-NPC`)}
-              data-template="alTemplateEnemy">
+              data-template="alTemplateEnemy"
+            >
               <img
-                style={{float: 'left', paddingRight: '10px'}}
-                src={makeCDNLink("/images/newActor/enemy.png")}/>
-              <b>Enemy</b><br/>
+                style={{ float: 'left', paddingRight: '10px' }}
+                src={makeCDNLink('/images/newActor/enemy.png')}
+              />
+              <b>Enemy</b>
+              <br />
               Hostile NPCs that can harm the Player
             </Segment>
           </Grid.Column>
           <Grid.Column width={8}>
             <Segment
-              style={{height: "100px", verticalAlign: "middle", cursor: "pointer", overflow: "hidden"}}
+              style={{ height: '100px', verticalAlign: 'middle', cursor: 'pointer', overflow: 'hidden' }}
               id="mgbjr-create-actor-friend"
               onClick={() => joyrideCompleteTag(`mgbjr-CT-create-actor-NPC`)}
-              data-template="alTemplateFriend">
+              data-template="alTemplateFriend"
+            >
               <img
-                style={{float: 'left', paddingRight: '10px'}}
-                src={makeCDNLink("/images/newActor/friend.png")}/>
-              <b>Friend</b><br/>
+                style={{ float: 'left', paddingRight: '10px' }}
+                src={makeCDNLink('/images/newActor/friend.png')}
+              />
+              <b>Friend</b>
+              <br />
               Friendly NPCs that can help the Player
             </Segment>
           </Grid.Column>
@@ -163,57 +185,69 @@ export default class EditActor extends React.Component {
         <Grid.Row>
           <Grid.Column width={8}>
             <Segment
-              style={{height: "100px", verticalAlign: "middle", cursor: "pointer", overflow: "hidden"}}
+              style={{ height: '100px', verticalAlign: 'middle', cursor: 'pointer', overflow: 'hidden' }}
               id="mgbjr-create-actor-floor"
               onClick={() => joyrideCompleteTag(`mgbjr-CT-create-actor-object`)}
-              data-template="alTemplateFloor">
+              data-template="alTemplateFloor"
+            >
               <img
-                style={{float: 'left', paddingRight: '10px'}}
-                src={makeCDNLink("/images/newActor/floor.png")}/>
-              <b>Floor</b><br/>
-              A floor tile that can have some effect including sliding, pushing, or
-              damaging/healing the Player when stepped on
+                style={{ float: 'left', paddingRight: '10px' }}
+                src={makeCDNLink('/images/newActor/floor.png')}
+              />
+              <b>Floor</b>
+              <br />
+              A floor tile that can have some effect including sliding, pushing, or damaging/healing the
+              Player when stepped on
             </Segment>
           </Grid.Column>
           <Grid.Column width={8}>
             <Segment
-              style={{height: "100px", verticalAlign: "middle", cursor: "pointer", overflow: "hidden"}}
+              style={{ height: '100px', verticalAlign: 'middle', cursor: 'pointer', overflow: 'hidden' }}
               id="mgbjr-create-actor-solidObject"
               onClick={() => joyrideCompleteTag(`mgbjr-CT-create-actor-object`)}
-              data-template="alTemplateSolidObject">
+              data-template="alTemplateSolidObject"
+            >
               <img
-                style={{float: 'left', paddingRight: '10px'}}
-                src={makeCDNLink("/images/newActor/solidobject.png")}/>
-              <b>Solid Object</b><br/>
-              A solid object or wall that obstructs the Player and/or NPCs. Can have effects
-              to be moveable by the Player or accessible with the use of an Item
+                style={{ float: 'left', paddingRight: '10px' }}
+                src={makeCDNLink('/images/newActor/solidobject.png')}
+              />
+              <b>Solid Object</b>
+              <br />
+              A solid object or wall that obstructs the Player and/or NPCs. Can have effects to be moveable by
+              the Player or accessible with the use of an Item
             </Segment>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
           <Grid.Column width={8}>
             <Segment
-              style={{height: "100px", verticalAlign: "middle", cursor: "pointer", overflow: "hidden"}}
+              style={{ height: '100px', verticalAlign: 'middle', cursor: 'pointer', overflow: 'hidden' }}
               id="mgbjr-create-actor-item"
               onClick={() => joyrideCompleteTag(`mgbjr-CT-create-actor-object`)}
-              data-template="alTemplateItem">
+              data-template="alTemplateItem"
+            >
               <img
-                style={{ float: 'left', paddingRight: '10px'}}
-                src={makeCDNLink("/images/newActor/item.png")}/>
-              <b>Item</b><br/>
+                style={{ float: 'left', paddingRight: '10px' }}
+                src={makeCDNLink('/images/newActor/item.png')}
+              />
+              <b>Item</b>
+              <br />
               An item that can be picked up or used right away with some effect
             </Segment>
           </Grid.Column>
           <Grid.Column width={8}>
             <Segment
-              style={{height: "100px", verticalAlign: "middle", cursor: "pointer", overflow: "hidden"}}
+              style={{ height: '100px', verticalAlign: 'middle', cursor: 'pointer', overflow: 'hidden' }}
               id="mgbjr-create-actor-shot"
               onClick={() => joyrideCompleteTag(`mgbjr-CT-create-actor-shot`)}
-              data-template="alTemplateShot">
+              data-template="alTemplateShot"
+            >
               <img
-                style={{float: 'left', paddingRight: '10px'}}
-                src={makeCDNLink("/images/newActor/projectile.png")}/>
-              <b>Shot</b><br/>
+                style={{ float: 'left', paddingRight: '10px' }}
+                src={makeCDNLink('/images/newActor/projectile.png')}
+              />
+              <b>Shot</b>
+              <br />
               A projectile that can be fired by the Player or NPC
             </Segment>
           </Grid.Column>
@@ -534,8 +568,8 @@ export default class EditActor extends React.Component {
       this.templateSelected = true
       const templateName = e.target.dataset.template
       this.loadTemplate(templateName)
-      this.props.handleDescriptionChange("Created from Template: " + templateName.replace(/^alTemplate/, ''))
-      this.handleSave("Initial Template selected")
+      this.props.handleDescriptionChange('Created from Template: ' + templateName.replace(/^alTemplate/, ''))
+      this.handleSave('Initial Template selected')
       joyrideCompleteTag(`mgbjr-CT-create-actor-any`)
     }
   }
@@ -544,12 +578,11 @@ export default class EditActor extends React.Component {
     this.props.asset.content2 = getDefaultActor()
     const t = templates[tpl]
     const d = this.props.asset.content2.databag
-    const merge = (a, b) => {     // Is this different from things like _.merge or Object.Assign()
+    const merge = (a, b) => {
+      // Is this different from things like _.merge or Object.Assign()
       for (let i in a) {
-        if (typeof b[i] == "object")
-          merge(a[i], b[i])
-        else
-          b[i] = a[i]
+        if (typeof b[i] == 'object') merge(a[i], b[i])
+        else b[i] = a[i]
       }
     }
     merge(t, d)
@@ -557,17 +590,16 @@ export default class EditActor extends React.Component {
   }
   loadDefaultTemplate() {
     // force defaults
-    const templateName = "alTemplateScenery"
+    const templateName = 'alTemplateScenery'
     this.props.asset.content2 = getDefaultActor()
     const t = templates[templateName]
     const d = this.props.asset.content2.databag
-    
-    const merge = (a, b) => {     // Is this different from things like _.merge or Object.Assign()
+
+    const merge = (a, b) => {
+      // Is this different from things like _.merge or Object.Assign()
       for (let i in a) {
-        if (typeof b[i] == "object")
-          merge(a[i], b[i])
-        else
-          b[i] = a[i]
+        if (typeof b[i] == 'object') merge(a[i], b[i])
+        else b[i] = a[i]
       }
     }
     merge(t, d)
@@ -576,39 +608,46 @@ export default class EditActor extends React.Component {
   }
   render() {
     const { asset } = this.props
-    if (!asset)
-      return null
+    if (!asset) return null
     const databag = asset.content2.databag
-    const LayerValid = ( {layerName, isValid } ) => (isValid ? <strong>{layerName}: Yes&emsp;</strong> : <em style={{color: 'grey'}}>{layerName}: No&emsp;</em>)
+    const LayerValid = ({ layerName, isValid }) =>
+      isValid
+        ? <strong>
+            {layerName}: Yes&emsp;
+          </strong>
+        : <em style={{ color: 'grey' }}>
+            {layerName}: No&emsp;
+          </em>
 
     return (
-      <div className='ui grid edit-actor'>
-        <b title='This Actor can work on the following Layers of an ActorMap'>ActorMap Layers:</b>
+      <div className="ui grid edit-actor">
+        <b title="This Actor can work on the following Layers of an ActorMap">ActorMap Layers:</b>
         <div id="mgbjr-edit-actor-layerValid">
-          <LayerValid layerName='Background' isValid={ActorValidator.isValidForBG(databag)} />
-          <LayerValid layerName='Active'     isValid={ActorValidator.isValidForActive(databag)} />
-          <LayerValid layerName='Foreground' isValid={ActorValidator.isValidForFG(databag)} />
+          <LayerValid layerName="Background" isValid={ActorValidator.isValidForBG(databag)} />
+          <LayerValid layerName="Active" isValid={ActorValidator.isValidForActive(databag)} />
+          <LayerValid layerName="Foreground" isValid={ActorValidator.isValidForFG(databag)} />
         </div>
-        {
-          !databag && !this.closeModal && 
-          <Modal defaultOpen 
-            closeOnDocumentClick={false} 
-            closeOnDimmerClick={true} 
-            onUnmount={() => {if (!this.templateSelected) this.loadDefaultTemplate()}} 
-            onClick={(e)=>{
-              this.handleTemplateClick(e) 
-            }}>
+        {!databag &&
+          !this.closeModal &&
+          <Modal
+            defaultOpen
+            closeOnDocumentClick={false}
+            closeOnDimmerClick
+            onUnmount={() => {
+              if (!this.templateSelected) this.loadDefaultTemplate()
+            }}
+            onClick={e => {
+              this.handleTemplateClick(e)
+            }}
+          >
             <Modal.Header>
               Choose a template for the type of Actor, then modify the detailed options in the Actor Editor
             </Modal.Header>
             <Modal.Content className="edit-actor">
               {this.getTemplates()}
             </Modal.Content>
-          </Modal>
-        }
-        { databag && 
-          <Tabs tabs={this.getTabs(databag)}/>
-        }
+          </Modal>}
+        {databag && <Tabs tabs={this.getTabs(databag)} />}
       </div>
     )
   }

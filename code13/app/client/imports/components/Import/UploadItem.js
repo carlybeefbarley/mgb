@@ -7,13 +7,12 @@ import ReactDOM from 'react-dom'
 // import sty from  './import.css'
 
 export default class UploadItem extends React.Component {
-
-  render (){
+  render() {
     const graphic = this.props.graphic
     return (
       <div>
         <img src={graphic.thumbnail} />
-        {graphic.fileName} 
+        {graphic.fileName}
       </div>
     )
   }

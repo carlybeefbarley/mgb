@@ -1,7 +1,7 @@
 App.info({
-  "id": "com.mygamebuilder.mobile.app",
-  "version": "0.0.7",
-  "name": "MGB"
+  'id': 'com.mygamebuilder.mobile.app',
+  'version': '0.0.8',
+  'name': 'MGB'
 });
 App.accessRule('http://*');
 App.accessRule('https://*');

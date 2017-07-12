@@ -6,14 +6,16 @@ import C from './CommonSkillNodes.js'
 
 // The paths for these skills are related the .skillNodes properties of the helpInfo Object defined in TokenDescription.js
 
-export default {
+const AnalyticsSkillNodes = {
   $meta: {
-    name:           'Analytics',
-    description:    'Represents pixel art and animation skills',
+    name: 'Analytics',
+    description: 'Represents pixel art and animation skills',
   },
-  
-  metrics:          C.E,
-  bouncerate:       C.E,
-  engagement:       C.E,
-  conversion:       C.E
+
+  metrics: C.E,
+  bouncerate: C.E,
+  engagement: C.E,
+  conversion: C.E,
 }
+
+export default AnalyticsSkillNodes

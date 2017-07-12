@@ -1,7 +1,7 @@
 export const templateCode = [
-
-  { label: "PhaserJS: Basic outline",
-    description: "Empty functions for a PhaserJS game with preload(), create() and render()",
+  {
+    label: 'PhaserJS: Basic outline',
+    description: 'Empty functions for a PhaserJS game with preload(), create() and render()',
     code: `// Start to make a Phaser game.
 import Phaser from 'phaser'
 const game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', {
@@ -37,11 +37,12 @@ function update() {
 
 function render() {
 
-}`
+}`,
   },
 
-  { label: "PhaserJS: Moving player",
-    description: "PhaserJs base template with player character that can move and jump",
+  {
+    label: 'PhaserJS: Moving player',
+    description: 'PhaserJs base template with player character that can move and jump',
     code: `// Start to make a Phaser game.
 
 import Phaser from 'phaser'
@@ -115,14 +116,13 @@ function render()
 {
   // We don't need to do anything special here for this demo yet since
   // the object we created includes the needed logic to draw it
-}`
+}`,
   },
 
   {
-    label: "PhaserJS: Load MGB Map in Phaser",
-    description: "Load a MGB Map into a Phaser Game",
-    code:
-`
+    label: 'PhaserJS: Load MGB Map in Phaser',
+    description: 'Load a MGB Map into a Phaser Game',
+    code: `
 
 import Phaser from 'phaser'
 
@@ -166,13 +166,12 @@ const game = new Phaser.Game(800, 600, Phaser.AUTO, document.body, {
 })
 // allow to take screenshots in the WebGL mode
 game.preserveDrawingBuffer = true;
-`
+`,
   },
   {
-    label: "React: Class-based React Component",
-    description: "Empty Component filled with commented lifecycle methods - ready for export",
-    code:
-`//https://facebook.github.io/react/docs/reusable-components.html#es6-classes
+    label: 'React: Class-based React Component',
+    description: 'Empty Component filled with commented lifecycle methods - ready for export',
+    code: `//https://facebook.github.io/react/docs/reusable-components.html#es6-classes
 //https://facebook.github.io/react/docs/component-specs.html
 
 import React from "react"
@@ -282,14 +281,13 @@ export default class extends React.Component {
     )
   }
 }
-`
+`,
   },
 
   {
-    label: "React: Simple Class Component",
-    description: "Empty Component - ready for export",
-    code:
-`import React from "react"
+    label: 'React: Simple Class Component',
+    description: 'Empty Component - ready for export',
+    code: `import React from "react"
 export default class extends React.Component {
 
   static defaultProps = {
@@ -315,6 +313,6 @@ export default class extends React.Component {
     return <div>Hello {this.props.name}!</div>
   }
 }
-`
-  }
+`,
+  },
 ]

@@ -6,7 +6,6 @@
 // These should match the paths defined in
 //       AssetUrlGenerator.js
 
-
 import '/server/imports/restApi/restApi.js'
 import '/server/imports/restApi/restApi_actor.js'
 import '/server/imports/restApi/restApi_avatar.js'

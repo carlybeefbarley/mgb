@@ -6,15 +6,17 @@ import C from './CommonSkillNodes.js'
 
 // The paths for these skills are related the .skillNodes properties of the helpInfo Object defined in TokenDescription.js
 
-export default {
+const CommunitySkillNodes = {
   $meta: {
-    name:           'Community',
-    description:    'Represents Community growth and management skills',
+    name: 'Community',
+    description: 'Represents Community growth and management skills',
   },
-  betas:            C.E,
-  feedback:         C.E,
-  support:          C.E,
-  issues:           C.E,
-  trolls:           C.E,
-  playtesting:      C.E
+  betas: C.E,
+  feedback: C.E,
+  support: C.E,
+  issues: C.E,
+  trolls: C.E,
+  playtesting: C.E,
 }
+
+export default CommunitySkillNodes

@@ -4,13 +4,12 @@ const testInfo = global.testInfo
 const test = require(`../../tests/${testInfo.test}.test`)
 const browser = testInfo.browser
 
-describe("Preparing: ", function () {
+describe('Preparing: ', function() {
   common.start(browser)
 })
-describe("Running actual Tests: ", function () {
+describe('Running actual Tests: ', function() {
   test(() => browser)
 })
-describe("Cleaning up: ", function () {
+describe('Cleaning up: ', function() {
   common.cleanUp(browser)
 })
-

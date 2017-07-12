@@ -13,15 +13,15 @@ export default class TileCache {
 
     this.errors = []
 
-    this.toLoad = 0;
-    this.loaded = 0;
+    this.toLoad = 0
+    this.loaded = 0
 
     this.updateStack = []
 
     this.update(data, onReady)
   }
 
-  getErrors(){
+  getErrors() {
     // TODO: make user friendly error message.. probably not here but on higher level..
     return this.errors
   }
@@ -35,7 +35,6 @@ export default class TileCache {
   }
 
   _onReady() {
-
     window.setTimeout(() => {
       this.onReady && this.onReady()
       this.inProgress = false
@@ -43,13 +42,12 @@ export default class TileCache {
     }, 0)
   }
 
-  update(data, onReady){
+  update(data, onReady) {
     this.updateStack.push([data, onReady])
     this._doNextUpdate()
   }
-  _doNextUpdate(){
-    if(!this.inProgress && this.updateStack.length)
-      this._update.apply(this, this.updateStack.shift())
+  _doNextUpdate() {
+    if (!this.inProgress && this.updateStack.length) this._update.apply(this, this.updateStack.shift())
   }
   // TODO(stauzs): implement lazy cache - return old cache and in background update to new version - when ready - callback
   _update(data = this.data, onReady = null) {
@@ -71,7 +69,7 @@ export default class TileCache {
   // check for images appended directly on layer
   // TODO(stauzs): check also for tiles - TMX allows to append image to tile directly
   updateLayers(data) {
-    const layers = data.layers;
+    const layers = data.layers
     for (let i = 0; i < layers.length; i++) {
       if (layers[i].image) {
         this._loadImage(layers[i].image)
@@ -80,14 +78,13 @@ export default class TileCache {
   }
 
   updateImages(data) {
-    const images = data.images;
+    const images = data.images
     if (!images) {
       return
     }
     for (let i in images) {
       this._loadImage(images[i])
     }
-
   }
 
   updateTilesets(data) {
@@ -100,7 +97,15 @@ export default class TileCache {
 
       this._loadImage(ts.image)
       for (let j = 0; j < ts.tilecount; j++) {
-        TileHelper.getTilePosWithOffsets(j, Math.floor((ts.imagewidth + ts.spacing) / ts.tilewidth), ts.tilewidth, ts.tileheight, ts.margin, ts.spacing, pos)
+        TileHelper.getTilePosWithOffsets(
+          j,
+          Math.floor((ts.imagewidth + ts.spacing) / ts.tilewidth),
+          ts.tilewidth,
+          ts.tileheight,
+          ts.margin,
+          ts.spacing,
+          pos,
+        )
         const gid = ts.firstgid + j
 
         const tileInfo = {
@@ -113,7 +118,7 @@ export default class TileCache {
           h: ts.tileheight,
           x: pos.x,
           y: pos.y,
-          ts: ts
+          ts: ts,
         }
 
         this.tiles[gid] = tileInfo
@@ -122,15 +127,15 @@ export default class TileCache {
   }
 
   _loadImage(src, force = false) {
-    const id = src.split("/").pop()
+    const id = src.split('/').pop()
     // already observing changes
     if (this.observers[src]) {
       return
     }
 
-    const loadImage = (preventCache) => {
+    const loadImage = preventCache => {
       const img = new Image()
-      img.crossOrigin="anonymous"
+      img.crossOrigin = 'anonymous'
       this.toLoad++
       img.onload = () => {
         this.loaded++
@@ -141,20 +146,19 @@ export default class TileCache {
       }
       img.onerror = () => {
         // try to fix image
-        if (!src.startsWith("./") && !src.startsWith("/")) {
+        if (!src.startsWith('./') && !src.startsWith('/')) {
           const name = src.substr(0, src.lastIndexOf('.')) || src
           src = `/api/asset/png/${Meteor.user().username}/${name}`
           img.onerror = () => {
             delete this.images[src]
             this.errors.push(src)
-            img.src = makeCDNLink("/images/error.png")
+            img.src = makeCDNLink('/images/error.png')
           }
           img.src = makeCDNLink(`/api/asset/png/${Meteor.user().username}/${name}`)
-        }
-        else {
+        } else {
           // load missing image
           this.errors.push(src)
-          img.src = makeCDNLink("/images/error.png")
+          img.src = makeCDNLink('/images/error.png')
         }
 
         // TODO(stauzs): push errors - or load nice fallback image
@@ -163,15 +167,15 @@ export default class TileCache {
     }
 
     let toObserve = id
-    if (src.startsWith("/api/asset/png/")) {
-      const fpart = src.split("/")
+    if (src.startsWith('/api/asset/png/')) {
+      const fpart = src.split('/')
       // user / name
       if (fpart.length == 6) {
         toObserve = {
           name: fpart.pop(),
           dn_ownerName: fpart.pop(),
           isDeleted: false,
-          kind: AssetKindEnum.graphic
+          kind: AssetKindEnum.graphic,
         }
       }
     }
@@ -182,31 +186,30 @@ export default class TileCache {
     })
     loadImage(Date.now())
 
-    return
-    // image is loading or loaded
-    if (!force && this.images[src] !== void (0)) {
-      return
-    }
-    const img = new Image()
-    this.images[src] = img
-    this.toLoad++
-    img.onload = () => {
-      this.loaded++
-      if (this.toLoad == this.loaded) {
-        this._onReady()
-      }
-    }
-    img.onerror = () => {
-      img.onload()
-      delete this.images[src]
-      // TODO(stauzs): push errors - or load nice fallback image
-    }
-    img.src = src
-    /*
-    useful for debug
-    img.style.zIndex = 99999
-    img.style.position = "relative"
-    document.body.appendChild(img)
-    */
+    // // image is loading or loaded
+    // if (!force && this.images[src] !== void 0) {
+    //   return
+    // }
+    // const img = new Image()
+    // this.images[src] = img
+    // this.toLoad++
+    // img.onload = () => {
+    //   this.loaded++
+    //   if (this.toLoad == this.loaded) {
+    //     this._onReady()
+    //   }
+    // }
+    // img.onerror = () => {
+    //   img.onload()
+    //   delete this.images[src]
+    //   // TODO(stauzs): push errors - or load nice fallback image
+    // }
+    // img.src = src
+    // /*
+    // useful for debug
+    // img.style.zIndex = 99999
+    // img.style.position = "relative"
+    // document.body.appendChild(img)
+    // */
   }
 }

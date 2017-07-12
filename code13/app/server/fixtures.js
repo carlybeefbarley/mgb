@@ -10,32 +10,33 @@ export function createUsers() {
       email: 'super@admin.com',
       roles: roleSuperAdmin,
       teamId: '!system',
-      teamName: '!system'
-    }
+      teamName: '!system',
+    },
   ]
 
-  _.each(users, function (user) {
+  _.each(users, function(user) {
     let id
 
     id = Accounts.createUser({
       email: user.email,
       username: user.name,
-      password: "apple1",     // TODO: make this something a bit safer
+      password: 'apple1', // TODO: make this something a bit safer
       profile: {
-        name: user.name
-      }
+        name: user.name,
+      },
     })
 
     Meteor.users.update(id, {
       $set: {
-        permissions: [  // See roles.js
+        permissions: [
+          // See roles.js
           {
             teamId: user.teamId,
             teamName: user.teamName,
-            roles: [user.roles]
-          }
-        ]
-      }
+            roles: [user.roles],
+          },
+        ],
+      },
     })
     console.log(id + ' Admin user created')
   })

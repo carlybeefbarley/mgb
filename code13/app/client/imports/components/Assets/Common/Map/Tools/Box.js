@@ -2,7 +2,7 @@
 // this is my cheat sheet :)
 // not used in code - just for reference on Math transformations
 // took out from dirty rectangles engine
-Box = function (xi, yi, xa, ya) {
+const Box = function(xi, yi, xa, ya) {
   this.xmin = xi || 0
   this.ymin = yi || 0
 
@@ -44,21 +44,21 @@ Box.prototype = {
     this.move(val, this.y)
   },
 
-  vsBox: function (box) {
+  vsBox: function(box) {
     return !(this.xmax < box.xmin || this.ymax < box.ymin || this.xmin > box.xmax || this.ymin > box.ymax)
   },
-  vsBoxBorder: function (box) {
+  vsBoxBorder: function(box) {
     return !(this.xmax <= box.xmin || this.ymax <= box.ymin || this.xmin >= box.xmax || this.ymin >= box.ymax)
   },
-  vsPoint: function (x, y) {
+  vsPoint: function(x, y) {
     return !(this.xmax < x || this.ymax < y || this.xmin > x || this.ymin > y)
   },
 
-  isValid: function () {
-    return (this.xmax > this.xmin && this.ymax > this.ymin)
+  isValid: function() {
+    return this.xmax > this.xmin && this.ymax > this.ymin
   },
 
-  add: function (xi, yi, xa, ya) {
+  add: function(xi, yi, xa, ya) {
     if (this.xmin > xi) {
       this.xmin = xi
     }
@@ -75,7 +75,7 @@ Box.prototype = {
     }
   },
 
-  substract: function (xi, yi, xa, ya) {
+  substract: function(xi, yi, xa, ya) {
     this.xmin -= xi
     this.ymin -= yi
 
@@ -83,7 +83,7 @@ Box.prototype = {
     this.ymax -= ya
   },
 
-  merge: function (box, mergeBox) {
+  merge: function(box, mergeBox) {
     mergeBox.xmin = this.xmin < box.xmin ? this.xmin : box.xmin
     mergeBox.ymin = this.ymin < box.ymin ? this.ymin : box.ymin
     mergeBox.xmax = this.xmax > box.xmax ? this.xmax : box.xmax
@@ -92,7 +92,7 @@ Box.prototype = {
     return mergeBox
   },
 
-  move: function (x, y) {
+  move: function(x, y) {
     var w = this.width
     var h = this.height
 
@@ -103,15 +103,15 @@ Box.prototype = {
     this.ymax = y + h
   },
 
-  clone: function () {
+  clone: function() {
     return new Box(this.xmin, this.ymin, this.xmax, this.ymax)
   },
 
-  isInsideBox: function (box) {
+  isInsideBox: function(box) {
     return !(this.xmin < box.xmin || this.ymin < box.ymin || this.xmax > box.xmax || this.ymax > box.ymax)
   },
 
-  update: function (xi, yi, xa, ya) {
+  update: function(xi, yi, xa, ya) {
     this.xmin = xi
     this.ymin = yi
 
@@ -120,7 +120,7 @@ Box.prototype = {
     return this
   },
 
-  diff: function (box, dest) {
+  diff: function(box, dest) {
     var xmin = this.xmin > box.xmin ? this.xmin : box.xmin
     var ymin = this.ymin > box.ymin ? this.ymin : box.ymin
 
@@ -130,12 +130,17 @@ Box.prototype = {
     return dest.update(xmin, ymin, xmax, ymax)
   },
 
-  debug: function (ctx, cam) {
+  debug: function(ctx, cam) {
     this.fill(ctx, cam)
-    ctx.strokeRect(this.xmin + 1 - cam.x, this.ymin + 1 - cam.y, this.xmax - this.xmin - 2, this.ymax - this.ymin - 2)
+    ctx.strokeRect(
+      this.xmin + 1 - cam.x,
+      this.ymin + 1 - cam.y,
+      this.xmax - this.xmin - 2,
+      this.ymax - this.ymin - 2,
+    )
   },
 
-  reset: function () {
+  reset: function() {
     this.xmin = 0
     this.ymin = 0
 
@@ -143,11 +148,11 @@ Box.prototype = {
     this.ymax = 0
   },
 
-  stroke: function (ctx) {
+  stroke: function(ctx) {
     ctx.strokeRect(this.xmin, this.ymin, this.xmax - this.xmin, this.ymax - this.ymin)
   },
 
-  fill: function (ctx, cam) {
+  fill: function(ctx, cam) {
     ctx.beginPath()
     ctx.moveTo(this.xmin - cam.x, this.ymin - cam.y)
     ctx.lineTo(this.xmax - cam.x, this.ymin - cam.y)
@@ -156,19 +161,19 @@ Box.prototype = {
     ctx.lineTo(this.xmin - cam.x, this.ymin - cam.y)
     ctx.fill()
 
-  // ctx.fillRect(this.xmin, this.ymin, this.xmax - this.xmin, this.ymax - this.ymin)
+    // ctx.fillRect(this.xmin, this.ymin, this.xmax - this.xmin, this.ymax - this.ymin)
   },
 
-  rpx: function (sin, cos, x, y, cx, cy) {
+  rpx: function(sin, cos, x, y, cx, cy) {
     return (x - cx) * cos - (y - cy) * sin + cx
   },
 
-  rpy: function (sin, cos, x, y, cx, cy) {
+  rpy: function(sin, cos, x, y, cx, cy) {
     return (y - cy) * cos + (x - cx) * sin + cy
   },
 
-  rotate: function (angle, cx, cy) {
-    if (cx == void (0)) {
+  rotate: function(angle, cx, cy) {
+    if (cx == void 0) {
       cx = this.xmin + this.width * 0.5
       cy = this.ymin + this.height * 0.5
     }
@@ -193,7 +198,7 @@ Box.prototype = {
     this.ymax = Math.ceil(Math.max(y1, y2, y3, y4))
   },
 
-  scale: function (scale) {
+  scale: function(scale) {
     var w = this.width
     var h = this.height
 
@@ -203,37 +208,37 @@ Box.prototype = {
     this.resize(w * scale, h * scale)
   },
 
-  resize: function (width, height) {
+  resize: function(width, height) {
     this.xmax = this.xmin + width
     this.ymax = this.ymin + height
   },
 
-  toSquareMax: function () {
+  toSquareMax: function() {
     if (this.xmax - this.xmin < this.ymax - this.ymin) {
       this.resize(this.ymax - this.ymin, this.ymax - this.ymin)
-    }else {
+    } else {
       this.resize(this.xmax - this.xmin, this.xmax - this.xmin)
     }
   },
 
-  inherit: function (box) {
+  inherit: function(box) {
     this.xmin = box.xmin
     this.ymin = box.ymin
     this.xmax = box.xmax
     this.ymax = box.ymax
   },
 
-  round: function () {
+  round: function() {
     this.xmin = Math.round(this.xmin)
     this.ymin = Math.round(this.ymin)
     this.xmax = Math.round(this.xmax)
     this.ymax = Math.round(this.ymax)
   },
 
-  ceil: function () {
+  ceil: function() {
     this.xmin = Math.floor(this.xmin)
     this.ymin = Math.floor(this.ymin)
     this.xmax = Math.ceil(this.xmax)
     this.ymax = Math.ceil(this.ymax)
-  }
+  },
 }

@@ -1,26 +1,28 @@
 import _ from 'lodash'
-import React  from 'react'
-import elementResizeDetectorMaker  from 'element-resize-detector'
+import React from 'react'
+import elementResizeDetectorMaker from 'element-resize-detector'
 
 let _erd
 const _ResponsiveRulesClassPrefix = 'rrc-'
-export default function (Component, wrapperStyles = {}, componentStyles = {}) {
+export default function(Component, wrapperStyles = {}, componentStyles = {}) {
   class ResponsiveComponent extends React.Component {
     constructor() {
       super()
-      if(!_erd){
-        _erd = elementResizeDetectorMaker({ strategy: "scroll" })
+      if (!_erd) {
+        _erd = elementResizeDetectorMaker({ strategy: 'scroll' })
       }
       this.state = {
-        loaded:       false,
-        width:        0,
-        height:       0,
-        activeRules:  [],
-        respData:     {},
-        debounced:    true
+        loaded: false,
+        width: 0,
+        height: 0,
+        activeRules: [],
+        respData: {},
+        debounced: true,
       }
 
-      this.debounce = _.debounce(function () { this.setState({ debounced: true }) }, 100)
+      this.debounce = _.debounce(function() {
+        this.setState({ debounced: true })
+      }, 100)
       this.handleResize = this.handleResize.bind(this)
       this.isRuleActive = this.isRuleActive.bind(this)
     }
@@ -32,18 +34,18 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
 
       const { activeRules, respData } = this.matchRules(wrapper.clientWidth, wrapper.clientHeight)
       this.setState({
-        loaded:        true,
-        debounced:     false,
-        width:         wrapper.clientWidth,
-        height:        wrapper.clientHeight,
+        loaded: true,
+        debounced: false,
+        width: wrapper.clientWidth,
+        height: wrapper.clientHeight,
         activeRules,
-        respData
+        respData,
       })
       this.debounce()
     }
 
     matchRules(newWidth, newHeight) {
-      const rr = Component.responsiveRules  // Can be undefined/null, function returning object, or object
+      const rr = Component.responsiveRules // Can be undefined/null, function returning object, or object
       const responsiveRules = _.isFunction(rr) ? rr() : rr
       var activeRules = []
       var respData = {}
@@ -54,12 +56,11 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
         var minHeight = ruleValue.minHeight || 0
         var maxHeight = ruleValue.maxHeight || 99999
 
-        if ( (ruleValue.minWidth || ruleValue.maxWidth) && (newWidth >= minWidth && newWidth <= maxWidth)
-          || ( ruleValue.minHeight || ruleValue.maxHeight) && (newHeight >= minHeight && newHeight <= maxHeight) )
-        {
+        if ( ((ruleValue.minWidth || ruleValue.maxWidth) && (newWidth >= minWidth && newWidth <= maxWidth) ) ||
+          ( ( ruleValue.minHeight || ruleValue.maxHeight) && (newHeight >= minHeight && newHeight <= maxHeight) )
+        ){
           activeRules.push(ruleName)
-          if (_.isPlainObject(ruleValue.respData))
-            Object.assign(respData, ruleValue.respData)
+          if (_.isPlainObject(ruleValue.respData)) Object.assign(respData, ruleValue.respData)
         }
       })
 
@@ -68,8 +69,7 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
 
     componentDidMount() {
       _erd.listenTo(this.component, this.handleResize)
-      if (!this.state.loaded)
-        this.handleResize()
+      if (!this.state.loaded) this.handleResize()
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -90,10 +90,10 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
 
     render() {
       const { width, height, activeRules, respData, loaded } = this.state
-      const classNames = _.join(_.map(activeRules, rn => (_ResponsiveRulesClassPrefix+rn)), ' ')
+      const classNames = _.join(_.map(activeRules, rn => _ResponsiveRulesClassPrefix + rn), ' ')
       const styles = {
-        wrapper:   { height: '100%', position: 'relative' },
-        component: { height: '100%' }
+        wrapper: { height: '100%', position: 'relative' },
+        component: { height: '100%' },
       }
 
       return (
@@ -103,17 +103,18 @@ export default function (Component, wrapperStyles = {}, componentStyles = {}) {
           <div
               ref={ component => (this.component = component) }
               className={ classNames }
-              style={{ ...styles.component, ...componentStyles }} >
-            { !loaded || width <= 0 ? null :
-              <Component
+              style={{ ...styles.component, ...componentStyles }}
+          >  { !loaded || width <= 0 ? null
+              :<Component
                   {...this.props }
                   respWidth={ width }
                   respHeight={ height }
                   respActiveRules={ activeRules }
                   respData={ respData }
-                  respDebug={ <div>Width: {width}px    activeRules: [ { activeRules && activeRules.join(',') } ]  respData: { JSON.stringify(respData) }</div> }
-                  respIsRuleActive={ this.isRuleActive }/>
-            }
+                  respDebug={ <div>Width: {width}px    activeRules: [ { activeRules && activeRules.join(',') } ]  respData: { ' '}
+                      {JSON.stringify(respData) }</div> }
+                  respIsRuleActive={ this.isRuleActive }
+            />}
           </div>
         </div>
       )

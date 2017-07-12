@@ -1,11 +1,10 @@
 import { RestApi } from './restApi'
 
-
-// THESE ONES ARE NOT CURRENTLY USED.. parking here since it was hard 
+// THESE ONES ARE NOT CURRENTLY USED.. parking here since it was hard
 // work to get right and MIGHT be useful in future
 
 /****
- * 
+ *
 // These are the APIs for extracting information from the legacy MGBv1 site
 
 import AWS from 'aws-sdk'
@@ -13,7 +12,7 @@ import pako from 'pako'
 import xml2js from 'xml2js'
 
 
-// AWS config for MGB1 S3 buckets  ** secrets ** #insecure# ?? 
+// AWS config for MGB1 S3 buckets  ** secrets ** #insecure# ??
 const aws_s3_region = 'us-east-1'       // US-East-1 is the 'global' site for S3
 AWS.config.update({accessKeyId: '104QCDA4V07YPPSVBKG2', secretAccessKey: 'QB65XLlJzlQ4w8ifWhkhv/a48ayihIS9k8v7CSPn'});
 
@@ -26,12 +25,12 @@ function _makeNameMap(layers)
   var idx = 1
   _.each(layers, (l,levelIdx) => {
     levelIdx < 3 && _.each(l, cell => {
-      if (cell !== "" && !r[cell]) { 
+      if (cell !== "" && !r[cell]) {
         r[cell] = idx
         arr[idx] = cell
         idx++
       }
-    }) 
+    })
   })
   return { toIdx: r, toName: arr}
 }
@@ -85,7 +84,7 @@ RestApi.addRoute('mgb1/map2/:account/:project/:name', {authRequired: false}, {
       var layerLen = b.readInt32BE(offset)
       offset += 4
 
-      for (var i = 0; i < layerLen; i++)
+      for (let i = 0; i < layerLen; i++)
       {
         var strLen = b.readInt16BE(offset)
         offset += 2
@@ -99,7 +98,7 @@ RestApi.addRoute('mgb1/map2/:account/:project/:name', {authRequired: false}, {
           jsonData.mapLayer[layer].push("")
       }
     }
-   
+
     const mgb1LayerNames=["Background", "Active", "Foreground", "Event"]
     var nameMap = _makeNameMap(jsonData.mapLayer)
     jsonData.metadata = response.Metadata
@@ -120,13 +119,13 @@ RestApi.addRoute('mgb1/map2/:account/:project/:name', {authRequired: false}, {
       nextobjectid: nameMap.toName.length,
 
       // Will fill these in below...
-      tilesets:     [],                 
+      tilesets:     [],
       layers:       [],
       images:       {}
     }
 
     // Now do tilesets[] and images{}
-    for (var a = 1; a < nameMap.toName.length; a++)
+    for (let a = 1; a < nameMap.toName.length; a++)
     {
       var aname = nameMap.toName[a]       // actor Name
       if (aname !== "")
@@ -149,7 +148,7 @@ RestApi.addRoute('mgb1/map2/:account/:project/:name', {authRequired: false}, {
     }
 
     // Now do layers[]
-    for (var idx = 0; idx < jsonData.mapLayer.length - 1; idx++) {
+    for (let idx = 0; idx < jsonData.mapLayer.length - 1; idx++) {
       var l = jsonData.mapLayer[idx]
       var layer = {
         name: mgb1LayerNames[idx],
@@ -163,17 +162,17 @@ RestApi.addRoute('mgb1/map2/:account/:project/:name', {authRequired: false}, {
         mgb_tiledrawdirection: "rightdown",   // Tile assumes 'rightup' but mgbv1 does rightdown. ***NOTE*** This is NON STANDARD for Tiled Maps
         data: []
       }
-      _.each(l, cell => { layer.data.push(cell === "" ? 0 : nameMap.toIdx[cell]) } ) 
+      _.each(l, cell => { layer.data.push(cell === "" ? 0 : nameMap.toIdx[cell]) } )
       r.layers.push(layer)
     }
-    
+
     // Now return it
     return {
       statusCode: 200,    // just for now...
       body: r,
       headers: {
         'Content-Type': 'application/json'
-        // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200 
+        // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
       }
     }
   }

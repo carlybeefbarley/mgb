@@ -4,26 +4,34 @@ import QLink from '/client/imports/routes/QLink'
 import { Segment, Container, Header, Icon } from 'semantic-ui-react'
 import AboutHeader from './AboutHeader'
 
-const RenderRoadmap = () => (
+const RenderRoadmap = () =>
   <div>
     <h2>Features planned for July 2017</h2>
     <ul>
       <li>(@levithomason + team) UI Cleanup</li>
       <li>(@Bouhm) ActorMap game improvements</li>
-      <li>(@leah) Moderation (Deep flagging & moderation features, including the Skills tracks for Community management)</li>
+      <li>
+        (@leah) Moderation (Deep flagging & moderation features, including the Skills tracks for Community
+        management)
+      </li>
       <li>(@stauzs) Mobile App (Focused on notification, chat and play)</li>
       <li>(@guntis) Dashboard</li>
       <li>(@guntis) Build a game with the MGB community (probably tower defense-ish)</li>
       <li>(@DSeedman) Revamp the Badge system - define badges, get cleaned up art</li>
     </ul>
-    <p>See the <QLink to='/whatsnew'>What's new</QLink> page for the lists of recent changes</p>
+    <p>
+      See the <QLink to="/whatsnew">What's new</QLink> page for the lists of recent changes
+    </p>
     <h2>Features coming later in 2017</h2>
     <ul>
       <li>Major Feature 'epics' which will each take a couple of months:</li>
       <ol>
         <li>MyCodeBuilder variant of the site + React-based Interface designer + tutorials</li>
         <li>Multiplayer game support (Save game, highscores, rooms, low-latency-multiplayer)</li>
-        <li>Modularity (plugin interface for asset editors, asset tools, etc.. allowing MGB/MCB to be extended by the user community)</li>
+        <li>
+          Modularity (plugin interface for asset editors, asset tools, etc.. allowing MGB/MCB to be extended
+          by the user community)
+        </li>
       </ol>
       <li>Full forum-type functionality for the Chat system (topics, search etc)</li>
       <li>Asset management features</li>
@@ -41,12 +49,12 @@ const RenderRoadmap = () => (
         <li>Javascript - Katas & Koans</li>
       </ul>
       <li>Project features:</li>
-        <ul>
-          <li>Project Tags & Tag search</li>
-          <li>Improved Game Discovery, Management and Analytics</li>
-          <li>Project rename</li>
-          <li>Project goals: ProjectGoal: [scratch/learn/jam/resume/showcase/product]</li>
-        </ul>
+      <ul>
+        <li>Project Tags & Tag search</li>
+        <li>Improved Game Discovery, Management and Analytics</li>
+        <li>Project rename</li>
+        <li>Project goals: ProjectGoal: [scratch/learn/jam/resume/showcase/product]</li>
+      </ul>
       <li>New Asset types</li>
       <ul>
         <li>Documents (and Cheat sheets. and presentations?)</li>
@@ -60,28 +68,41 @@ const RenderRoadmap = () => (
       </ul>
       <li>Account/Content flagging (content, accounts.. penalties like timeouts)</li>
       <li>MGB feature usage reporting</li>
-      <li>(postponed) Direct Messages - we decided to prioritize wall first, especially since project chat provides group or 1:1 private chat</li>
-      <li>...We are also going to be working with the community on their thoughts on "monetization".. What advanced features they would feel are WORTH paying for, and what ways users might want to make payments to each other (asset stores etc). We are not going to nickel+dime and a HUGE amount of MGB's features will always be free. Feel free to come and chat to us about your thoughts.</li>
+      <li>
+        (postponed) Direct Messages - we decided to prioritize wall first, especially since project chat
+        provides group or 1:1 private chat
+      </li>
+      <li>
+        ...We are also going to be working with the community on their thoughts on "monetization".. What
+        advanced features they would feel are WORTH paying for, and what ways users might want to make
+        payments to each other (asset stores etc). We are not going to nickel+dime and a HUGE amount of MGB's
+        features will always be free. Feel free to come and chat to us about your thoughts.
+      </li>
     </ul>
-    Please make suggestions on our <a href="https://trello.com/b/Fg0EcntK/my-game-builder" target="_blank">Trello work proposals list</a>
+    Please make suggestions on our{' '}
+    <a href="https://trello.com/b/Fg0EcntK/my-game-builder" target="_blank">
+      Trello work proposals list
+    </a>
   </div>
-)
 
-export default RoadmapRoute = () => (
+const RoadmapRoute = () =>
   <div>
     <Segment basic>
       <Container>
-        <Header as='h2'><Icon name='info circle' />Roadmap</Header>
+        <Header as="h2">
+          <Icon name="info circle" />Roadmap
+        </Header>
         <AboutHeader />
-          <p>
-            See the latest changes on the <QLink to="/whatsnew">What's New</QLink> page.
-          </p>
+        <p>
+          See the latest changes on the <QLink to="/whatsnew">What's New</QLink> page.
+        </p>
         <RenderRoadmap />
       </Container>
     </Segment>
     <Footer />
   </div>
-)
+
+export default RoadmapRoute
 
 /* More stuff to add to displayed roadmap in future *
 

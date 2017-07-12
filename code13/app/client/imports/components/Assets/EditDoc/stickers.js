@@ -1,6 +1,4 @@
-import { fromJS } from 'immutable';
-
-
+import { fromJS } from 'immutable'
 
 const stickers = fromJS({
   data: {
@@ -29,6 +27,6 @@ const stickers = fromJS({
       url: 'https://www.draft-js-plugins.com/images/unicorn-3.png',
     },
   },
-});
+})
 
-export default stickers;
+export default stickers

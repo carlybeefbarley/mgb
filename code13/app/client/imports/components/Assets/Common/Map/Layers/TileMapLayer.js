@@ -10,21 +10,24 @@ import TileHelper from './../Helpers/TileHelper.js'
 
 import BaseMapArea from '../BaseMapArea.js'
 
-import Plural         from '/client/imports/helpers/Plural'
+import Plural from '/client/imports/helpers/Plural'
 
 export default class TileMapLayer extends AbstractLayer {
-  static propTypes = Object.assign({
+  static propTypes = Object.assign(
+    {
       clearSelection: React.PropTypes.func.isRequired, // cleans map selection
       clearTmpSelection: React.PropTypes.func.isRequired, // cleans temporary selection buffer
-    }, AbstractLayer.propTypes)
+    },
+    AbstractLayer.propTypes,
+  )
 
   static drawDirection = {
-    rightup: "rightup",
-    leftdown: "leftdown",
-    leftup: "leftup",
-    rightdown: "rightdown"
+    rightup: 'rightup',
+    leftdown: 'leftdown',
+    leftup: 'leftup',
+    rightdown: 'rightdown',
   }
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.ctx = null
     this.prevTile = null
@@ -42,54 +45,54 @@ export default class TileMapLayer extends AbstractLayer {
     this.drawInfo = {
       v: 1,
       h: 1,
-      d: 0
+      d: 0,
     }
     // this holds tile transformations
     this.ctrl = {
       v: 1,
       h: 1,
-      d: 0
+      d: 0,
     }
     this.now = 0 // _draw will set this timestamp
     this._mup = this.handleMouseUp.bind(this)
 
     this.lastEvent = null // store here last mouse event for furtherRef
-    this.lastOffset = {x: 0, y: 0} // firefox loses offsets from event - so store repeately
+    this.lastOffset = { x: 0, y: 0 } // firefox loses offsets from event - so store repeately
   }
-  componentDidMount (...args) {
+  componentDidMount(...args) {
     super.componentDidMount(...args)
     this.drawTiles()
   }
 
-  componentWillUnmount (...args) {
+  componentWillUnmount(...args) {
     super.componentWillUnmount(...args)
   }
 
   /* endof lifecycle functions */
 
-  increaseSizeToTop(pos){
+  increaseSizeToTop(pos) {
     this.props.getLayers().forEach(l => {
       l._increaseSizeToTop && l._increaseSizeToTop(pos)
     })
   }
-  _increaseSizeToTop (pos) {
+  _increaseSizeToTop(pos) {
     this.options.y -= this.props.mapData.tileheight
     for (let i = 0; i < this.options.width; i++) {
       this.options.data.unshift(0)
     }
     this.options.height++
     // adjust map to biggest layer
-    if(this.props.mapData.height < this.options.height){
+    if (this.props.mapData.height < this.options.height) {
       this.props.mapData.height = this.options.height
     }
   }
 
-  increaseSizeToRight(pos){
+  increaseSizeToRight(pos) {
     this.props.getLayers().forEach(l => {
       l._increaseSizeToRight && l._increaseSizeToRight(pos)
     })
   }
-  _increaseSizeToRight (pos) {
+  _increaseSizeToRight(pos) {
     // one step at the time..
     // this method will be called more - if necessary
     // reverse as first splice will resize array
@@ -98,34 +101,34 @@ export default class TileMapLayer extends AbstractLayer {
     }
     this.options.width++
     // adjust map to biggest layer
-    if(this.props.mapData.width < this.options.width){
+    if (this.props.mapData.width < this.options.width) {
       this.props.mapData.width = this.options.width
     }
   }
 
-  increaseSizeToBottom(pos){
+  increaseSizeToBottom(pos) {
     this.props.getLayers().forEach(l => {
       l._increaseSizeToBottom && l._increaseSizeToBottom(pos)
     })
   }
 
-  _increaseSizeToBottom (pos) {
+  _increaseSizeToBottom(pos) {
     for (let i = 0; i < this.options.width; i++) {
       this.options.data.push(0)
     }
     this.options.height++
     // adjust map to biggest layer
-    if(this.props.mapData.height < this.options.height){
+    if (this.props.mapData.height < this.options.height) {
       this.props.mapData.height = this.options.height
     }
   }
 
-  increaseSizeToLeft(pos){
+  increaseSizeToLeft(pos) {
     this.props.getLayers().forEach(l => {
       l._increaseSizeToLeft && l._increaseSizeToLeft(pos)
     })
   }
-  _increaseSizeToLeft (pos) {
+  _increaseSizeToLeft(pos) {
     this.options.x -= this.props.mapData.tilewidth
     // reverse as first splice will resize array
     for (let i = this.options.height - 1; i > -1; i--) {
@@ -133,58 +136,58 @@ export default class TileMapLayer extends AbstractLayer {
     }
     this.options.width++
     // adjust map to biggest layer
-    if(this.props.mapData.width < this.options.width){
+    if (this.props.mapData.width < this.options.width) {
       this.props.mapData.width = this.options.width
     }
   }
 
   // this only tells renderer to draw in the rotated position
-  rotate () {
+  rotate() {
     // this.ctrl.h = this.ctrl.h > 0 ? -1 : 1
     this.ctrl.d = !this.ctrl.d
 
     if (this.ctrl.h == 1 && this.ctrl.v == 1) {
       this.ctrl.h = -1
-    }else {
+    } else {
       if (this.ctrl.v == 1) {
         this.ctrl.v = -1
-      }else {
+      } else {
         if (this.ctrl.h == -1) {
           this.ctrl.h = 1
-        }else {
+        } else {
           this.ctrl.v = 1
         }
       }
     }
   }
-  rotateBack () {
+  rotateBack() {
     // this.ctrl.h = this.ctrl.h > 0 ? -1 : 1
     this.ctrl.d = !this.ctrl.d
 
     if (this.ctrl.h == 1 && this.ctrl.v == 1) {
       this.ctrl.v = -1
-    }else {
+    } else {
       if (this.ctrl.h == 1) {
         this.ctrl.h = -1
-      }else {
+      } else {
         if (this.ctrl.v == -1) {
           this.ctrl.v = 1
-        }else {
+        } else {
           this.ctrl.h = 1
         }
       }
     }
   }
-  resetRotation () {
+  resetRotation() {
     this.ctrl.d = false
     this.ctrl.h = 1
     this.ctrl.v = 1
   }
-  flip () {
+  flip() {
     this.ctrl.h = this.ctrl.h > 0 ? -1 : 1
   }
 
-  fixRotation (id) {
+  fixRotation(id) {
     if (this.ctrl.h == -1) {
       this.options.data[id] |= TileHelper.FLIPPED_HORIZONTALLY_FLAG
     }
@@ -195,7 +198,7 @@ export default class TileMapLayer extends AbstractLayer {
       this.options.data[id] |= TileHelper.FLIPPED_DIAGONALLY_FLAG
     }
   }
-  tileWithRotation (id) {
+  tileWithRotation(id) {
     let ret = id
     if (this.ctrl.h == -1) {
       ret |= TileHelper.FLIPPED_HORIZONTALLY_FLAG
@@ -209,7 +212,7 @@ export default class TileMapLayer extends AbstractLayer {
     return ret
   }
 
-  getTilePosInfo (e) {
+  getTilePosInfo(e) {
     const pos = new TileSelection()
     const props = this.props
 
@@ -217,38 +220,42 @@ export default class TileMapLayer extends AbstractLayer {
     const oy = TileHelper.getOffsetY(e)
 
     pos.updateFromPos(
-      (ox / this.camera.zoom - this.camera.x) ,
-      (oy / this.camera.zoom - this.camera.y) ,
-      props.mapData.tilewidth, props.mapData.tileheight, 0
+      ox / this.camera.zoom - this.camera.x,
+      oy / this.camera.zoom - this.camera.y,
+      props.mapData.tilewidth,
+      props.mapData.tileheight,
+      0,
     )
     pos.getRawId(this.options.width)
     pos.gid = this.options.data[pos.id]
     return pos
   }
-  getInfo () {
+  getInfo() {
     let st = ''
     const col = this.props.getCollection()
-    col && col.forEach((t) => {
-      st += ', ' + t.gid
-    })
+    col &&
+      col.forEach(t => {
+        st += ', ' + t.gid
+      })
     st = st.substr(2)
 
-    const info =
-      this.tilePosInfo
-        ?
-        (
+    const info = this.tilePosInfo
+      ? this.tilePosInfo.gid
+        ? ' (' +
+          this.tilePosInfo.x +
+          ', ' +
+          this.tilePosInfo.y +
+          '): ' +
+          'id: ' +
+          this.tilePosInfo.id +
+          ', gid: ' +
           this.tilePosInfo.gid
-            ?
-          ' (' + this.tilePosInfo.x + ', ' + this.tilePosInfo.y + '): ' + 'id: ' + this.tilePosInfo.id + ', gid: ' + this.tilePosInfo.gid
-            :
-          ' (' + this.tilePosInfo.x + ', ' + this.tilePosInfo.y + '): ' + 'id: ' + this.tilePosInfo.id
-        )
-        :
-        ''
+        : ' (' + this.tilePosInfo.x + ', ' + this.tilePosInfo.y + '): ' + 'id: ' + this.tilePosInfo.id
+      : ''
     return (
       <div>
         <div>
-          <strong>{ this.data.name }</strong>: { info }
+          <strong>{this.data.name}</strong>: {info}
         </div>
         <div>
           {Plural.numStr2(col.length, 'Selected Tile')}
@@ -258,7 +265,7 @@ export default class TileMapLayer extends AbstractLayer {
     )
   }
 
-  selectRectangle (pos) {
+  selectRectangle(pos) {
     if (!this.startingTilePos) {
       this.props.addFirstToSelection(new TileSelection(pos))
       return
@@ -268,14 +275,14 @@ export default class TileMapLayer extends AbstractLayer {
     if (this.startingTilePos.x < pos.x) {
       startx = this.startingTilePos.x
       endx = pos.x
-    }else {
+    } else {
       startx = pos.x
       endx = this.startingTilePos.x
     }
     if (this.startingTilePos.y < pos.y) {
       starty = this.startingTilePos.y
       endy = pos.y
-    }else {
+    } else {
       starty = pos.y
       endy = this.startingTilePos.y
     }
@@ -300,21 +307,21 @@ export default class TileMapLayer extends AbstractLayer {
 
   // large maps are still slow on movement..
   // dirty rectalngles (in our case dirty tiles :) are great for super fast map movement
-  draw () {
+  draw() {
     this.nextDraw = this.now
   }
-  drawTiles () {
+  drawTiles() {
     this.draw()
   }
 
-  _draw (now, force) {
+  _draw(now, force) {
     this.now = now
-    if ( !force && this.nextDraw > now ) {
+    if (!force && this.nextDraw > now) {
       return
     }
 
     this.ctx.clearRect(0, 0, this.camera.width, this.camera.height)
-    if(!this.isVisible){
+    if (!this.isVisible) {
       return
     }
     const ts = this.props.data
@@ -326,11 +333,10 @@ export default class TileMapLayer extends AbstractLayer {
       return
     }
 
-
     this.queueDraw(this.drawInterval)
 
-    const widthInTiles = Math.ceil((this.ctx.canvas.width / camera.zoom) / mapData.tilewidth)
-    const heightInTiles = Math.ceil((this.ctx.canvas.height / camera.zoom) / mapData.tileheight)
+    const widthInTiles = Math.ceil(this.ctx.canvas.width / camera.zoom / mapData.tilewidth)
+    const heightInTiles = Math.ceil(this.ctx.canvas.height / camera.zoom / mapData.tileheight)
 
     let skipy = Math.floor(-camera.y / mapData.tileheight) // debug + 2
     let endy = skipy + heightInTiles + 1 // +1 as last line of tiles
@@ -348,33 +354,46 @@ export default class TileMapLayer extends AbstractLayer {
     endy += heightInTiles
 
     // map starts with 0, 0 - pointless to check negative indices
-    if (skipx < 0) {skipx = 0}
-    if (skipy < 0) {skipy = 0}
-
+    if (skipx < 0) {
+      skipx = 0
+    }
+    if (skipy < 0) {
+      skipy = 0
+    }
 
     // map ends at with this.options.width, height - pointless to check further
-    if (endx > this.options.width){ endx = this.options.width}
-    if (endy > this.options.height){ endy = this.options.height}
+    if (endx > this.options.width) {
+      endx = this.options.width
+    }
+    if (endy > this.options.height) {
+      endy = this.options.height
+    }
 
-    let i = 0, tileId, pal
-    const pos = {x: 0, y: 0}
+    let i = 0,
+      tileId,
+      pal
+    const pos = { x: 0, y: 0 }
 
     for (let y = skipy; y < endy; y++) {
       for (let x = skipx; x < endx; x++) {
         i = x + y * this.options.width
         // skip empty tiles
-        if (i<0 || !d[i]) {
+        if (i < 0 || !d[i]) {
           continue
         }
         TileHelper.getTilePosRel(i, this.options.width, mapData.tilewidth, mapData.tileheight, pos)
-        tileId = d[i] & (~(TileHelper.FLIPPED_HORIZONTALLY_FLAG |
-          TileHelper.FLIPPED_VERTICALLY_FLAG |
-          TileHelper.FLIPPED_DIAGONALLY_FLAG))
+        tileId =
+          d[i] &
+          ~(
+            TileHelper.FLIPPED_HORIZONTALLY_FLAG |
+            TileHelper.FLIPPED_VERTICALLY_FLAG |
+            TileHelper.FLIPPED_DIAGONALLY_FLAG
+          )
         pal = palette[tileId]
         if (pal) {
-          this.drawInfo.h = (d[i] & TileHelper.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
-          this.drawInfo.v = (d[i] & TileHelper.FLIPPED_VERTICALLY_FLAG) ? -1 : 1
-          this.drawInfo.d = (d[i] & TileHelper.FLIPPED_DIAGONALLY_FLAG)
+          this.drawInfo.h = d[i] & TileHelper.FLIPPED_HORIZONTALLY_FLAG ? -1 : 1
+          this.drawInfo.v = d[i] & TileHelper.FLIPPED_VERTICALLY_FLAG ? -1 : 1
+          this.drawInfo.d = d[i] & TileHelper.FLIPPED_DIAGONALLY_FLAG
           this.drawTile(pal, pos)
         }
       }
@@ -391,8 +410,8 @@ export default class TileMapLayer extends AbstractLayer {
     this.drawSelection(true)
   }
 
-  drawTile (pal, pos, spacing, clear) {
-    if(!pal.image){
+  drawTile(pal, pos, spacing, clear) {
+    if (!pal.image) {
       return
     }
     // don't use default values as babel will generate code which v8 fails to optimize (bail out) (arguments.split...)
@@ -402,7 +421,7 @@ export default class TileMapLayer extends AbstractLayer {
 
     // special tileset cases - currently only animation
     const anInfo = TileHelper.getAnimationTileInfo(pal, this.props.palette)
-    if(anInfo){
+    if (anInfo) {
       pal = anInfo.pal
       this.queueDraw(anInfo.nextUpdate)
     }
@@ -414,37 +433,37 @@ export default class TileMapLayer extends AbstractLayer {
     let drawW = pal.w * camera.zoom
     let drawH = pal.h * camera.zoom
 
-    if (this.options.mgb_tiledrawdirection && this.options.mgb_tiledrawdirection !== TileMapLayer.drawDirection.rightup) {
+    if (
+      this.options.mgb_tiledrawdirection &&
+      this.options.mgb_tiledrawdirection !== TileMapLayer.drawDirection.rightup
+    ) {
       if (this.options.mgb_tiledrawdirection == TileMapLayer.drawDirection.leftdown) {
-        drawX -= (drawW - props.mapData.tilewidth * camera.zoom)
+        drawX -= drawW - props.mapData.tilewidth * camera.zoom
+      } else if (this.options.mgb_tiledrawdirection == TileMapLayer.drawDirection.leftup) {
+        drawX -= drawW - props.mapData.tilewidth * camera.zoom
+        drawY -= drawH - props.mapData.tileheight * camera.zoom
+      } else if (this.options.mgb_tiledrawdirection == TileMapLayer.drawDirection.rightdown) {
+        // default browser canvas - do nothing
       }
-      else if (this.options.mgb_tiledrawdirection == TileMapLayer.drawDirection.leftup) {
-        drawX -= (drawW - props.mapData.tilewidth * camera.zoom)
-        drawY -= (drawH - props.mapData.tileheight * camera.zoom)
-      }
-      // default browser canvas - do nothing
-      else if (this.options.mgb_tiledrawdirection == TileMapLayer.drawDirection.rightdown) {
-      }
-    }
-    // default for tiled is: right up
-    else {
-      drawY -= (drawH - props.mapData.tileheight * camera.zoom)
+    } else {
+      // default for tiled is: right up
+      drawY -= drawH - props.mapData.tileheight * camera.zoom
     }
 
     if (clear) {
       // are we still using this
-      console.trace("Clear requested")
-      this.ctx.clearRect(
-        drawX, drawY,
-        pal.w, pal.h
-      )
+      console.trace('Clear requested')
+      this.ctx.clearRect(drawX, drawY, pal.w, pal.h)
     }
 
-    const needTransform = this.drawInfo.d || this.drawInfo.h !== this.drawInfo.v !== 1
+    const needTransform = this.drawInfo.d || (this.drawInfo.h !== this.drawInfo.v) !== 1
     // apply offsets as drawing out of bounds greatly reduces performance
-    let ox = 0, oy = 0, ow = 0, oh = 0
+    let ox = 0,
+      oy = 0,
+      ow = 0,
+      oh = 0
 
-    if(needTransform) {
+    if (needTransform) {
       // TODO: apply matrix directly???
       this.ctx.save()
       const tx = drawX + drawW * 0.5
@@ -456,21 +475,18 @@ export default class TileMapLayer extends AbstractLayer {
         // there should be more elegant way to rotate / flip tile
         this.ctx.rotate(-Math.PI * 0.5 * this.drawInfo.h * this.drawInfo.v)
         this.ctx.scale(this.drawInfo.h * -1, this.drawInfo.v)
-      }
-      else {
+      } else {
         this.ctx.scale(this.drawInfo.h, this.drawInfo.v)
       }
       this.ctx.translate(-tx, -ty)
-    }
-    // TODO: find correct offsets for transformed tiles
-    // atm only non-transformed tiles will benefit of this optimisation
-    else{
+    } else {
+      // TODO: find correct offsets for transformed tiles
+      // atm only non-transformed tiles will benefit of this optimisation
       // '+' instead of '-' as drawX is negative (--)
-      if(drawX < 0){
+      if (drawX < 0) {
         drawW += drawX
-        if(drawW < 0){
-          if(needTransform)
-            this.ctx.restore()
+        if (drawW < 0) {
+          if (needTransform) this.ctx.restore()
           return
         }
         ox -= drawX
@@ -479,11 +495,10 @@ export default class TileMapLayer extends AbstractLayer {
         drawX = 0
       }
 
-      if(drawY < 0){
+      if (drawY < 0) {
         drawH += drawY
-        if(drawH < 0){
-          if(needTransform)
-            this.ctx.restore()
+        if (drawH < 0) {
+          if (needTransform) this.ctx.restore()
           return
         }
         oy -= drawY
@@ -493,51 +508,49 @@ export default class TileMapLayer extends AbstractLayer {
       }
     }
 
-    this.ctx.drawImage(pal.image,
-      pal.x + ox, pal.y + oy,
-      pal.w + ow, pal.h + oh,
-      drawX, drawY,
-      drawW, drawH
-    )
+    this.ctx.drawImage(pal.image, pal.x + ox, pal.y + oy, pal.w + ow, pal.h + oh, drawX, drawY, drawW, drawH)
 
-    if(needTransform)
-      this.ctx.restore()
+    if (needTransform) this.ctx.restore()
   }
 
   // drawTiles will call this
-  _highlightTiles (off = this.lastOffset) {
+  _highlightTiles(off = this.lastOffset) {
     const palette = this.props.palette
     const camera = this.camera
     const layer = this.options
     const props = this.props
     const spacing = 0
 
-
     const pos = {
       x: 0,
       y: 0,
       id: 0,
-      outOfBounds: false
+      outOfBounds: false,
     }
 
-    TileHelper.getTileCoordsRel(off.x / camera.zoom - camera.x, off.y / camera.zoom - camera.y, props.mapData.tilewidth, props.mapData.tileheight, 0, pos)
+    TileHelper.getTileCoordsRel(
+      off.x / camera.zoom - camera.x,
+      off.y / camera.zoom - camera.y,
+      props.mapData.tilewidth,
+      props.mapData.tileheight,
+      0,
+      pos,
+    )
 
     if (pos.x >= layer.width) {
       pos.outOfBounds = true
-    }
-    else if (pos.x < 0) {
+    } else if (pos.x < 0) {
       pos.outOfBounds = true
     }
     if (pos.y > layer.height) {
       pos.outOfBounds = true
-    }
-    else if (pos.y < 0) {
+    } else if (pos.y < 0) {
       pos.outOfBounds = true
     }
     pos.id = pos.x + pos.y * layer.width
 
-    let sel, pal;
-    const col = this.props.getCollection();
+    let sel, pal
+    const col = this.props.getCollection()
 
     if (this.props.options.randomMode) {
       sel = col.random()
@@ -550,8 +563,7 @@ export default class TileMapLayer extends AbstractLayer {
         }
       }
       this.highlightTile(pos, 'rgba(0,0,255,0.3)')
-    }
-    else if (col.length) {
+    } else if (col.length) {
       this.ctx.globalAlpha = 0.6
       const tpos = new TileSelection(pos)
       let ox = col[0].x
@@ -573,9 +585,10 @@ export default class TileMapLayer extends AbstractLayer {
           this.drawInfo.v = (gid & TileHelper.FLIPPED_VERTICALLY_FLAG  ) ? -1 : 1
           this.drawInfo.d = (gid & TileHelper.FLIPPED_DIAGONALLY_FLAG  )
         }*/
-        gid &= (~(TileHelper.FLIPPED_HORIZONTALLY_FLAG |
+        gid &= ~(
+          TileHelper.FLIPPED_HORIZONTALLY_FLAG |
           TileMapLayer.FLIPPED_VERTICALLY_FLAG |
-          TileMapLayer.FLIPPED_DIAGONALLY_FLAG)
+          TileMapLayer.FLIPPED_DIAGONALLY_FLAG
         )
 
         pal = palette[gid]
@@ -589,43 +602,40 @@ export default class TileMapLayer extends AbstractLayer {
     }
     this.prevTile = pos
   }
-  highlightTile (pos, fillStyle) {
+  highlightTile(pos, fillStyle) {
     const props = this.props
     const camera = this.camera
     const spacing = 0
     // make little bit smaller highlight - while zooming - alpha bleeds out a little bit
     let drawX = (pos.x * (props.mapData.tilewidth + spacing) + camera.x) * camera.zoom
-    let drawY = (pos.y * (props.mapData.tileheight +spacing) + camera.y) * camera.zoom + 0.5
+    let drawY = (pos.y * (props.mapData.tileheight + spacing) + camera.y) * camera.zoom + 0.5
 
     let drawW = props.mapData.tilewidth * camera.zoom
     let drawH = props.mapData.tileheight * camera.zoom
 
     if (this.options.mgb_tiledrawdirection && this.options.mgb_tiledrawdirection !== 'rightup') {
       if (this.options.mgb_tiledrawdirection == 'leftdown') {
-        drawX -= (drawW - props.mapData.tilewidth * camera.zoom)
+        drawX -= drawW - props.mapData.tilewidth * camera.zoom
+      } else if (this.options.mgb_tiledrawdirection == 'leftup') {
+        drawX -= drawW - props.mapData.tilewidth * camera.zoom
+        drawY -= drawH - props.mapData.tileheight * camera.zoom
+      } else if (this.options.mgb_tiledrawdirection == 'rightdown') {
+        // default browser canvas - do nothing
       }
-      else if (this.options.mgb_tiledrawdirection == 'leftup') {
-        drawX -= (drawW - props.mapData.tilewidth * camera.zoom)
-        drawY -= (drawH - props.mapData.tileheight * camera.zoom)
-      }
-      // default browser canvas - do nothing
-      else if (this.options.mgb_tiledrawdirection == 'rightdown') {
-      }
-    }
-    // default for tiled is: right up
-    else {
-      drawY -= (drawH - props.mapData.tileheight * camera.zoom)
+    } else {
+      // default for tiled is: right up
+      drawY -= drawH - props.mapData.tileheight * camera.zoom
     }
 
     if (!fillStyle) {
       this.ctx.clearRect(drawX, drawY, drawW, drawH)
-    }else {
+    } else {
       this.ctx.fillStyle = fillStyle
       this.ctx.fillRect(drawX + 0.5, drawY + 0.5, drawW - 1, drawH - 1)
     }
   }
 
-  drawSelection (tmp) {
+  drawSelection(tmp) {
     if (!this.props.isActive) {
       return
     }
@@ -634,18 +644,21 @@ export default class TileMapLayer extends AbstractLayer {
 
     for (let i = 0; i < toDraw.length; i++) {
       const sel = toDraw[i]
-      if (!sel)
-        continue
+      if (!sel) continue
 
-      let gid = sel.gid & (~(TileHelper.FLIPPED_HORIZONTALLY_FLAG |
-        TileHelper.FLIPPED_VERTICALLY_FLAG |
-        TileHelper.FLIPPED_DIAGONALLY_FLAG))
+      let gid =
+        sel.gid &
+        ~(
+          TileHelper.FLIPPED_HORIZONTALLY_FLAG |
+          TileHelper.FLIPPED_VERTICALLY_FLAG |
+          TileHelper.FLIPPED_DIAGONALLY_FLAG
+        )
 
       const pal = palette[gid]
       if (pal) {
-        this.drawInfo.h = (sel.gid & TileHelper.FLIPPED_HORIZONTALLY_FLAG) ? -1 : 1
-        this.drawInfo.v = (sel.gid & TileHelper.FLIPPED_VERTICALLY_FLAG) ? -1 : 1
-        this.drawInfo.d = (sel.gid & TileHelper.FLIPPED_DIAGONALLY_FLAG)
+        this.drawInfo.h = sel.gid & TileHelper.FLIPPED_HORIZONTALLY_FLAG ? -1 : 1
+        this.drawInfo.v = sel.gid & TileHelper.FLIPPED_VERTICALLY_FLAG ? -1 : 1
+        this.drawInfo.d = sel.gid & TileHelper.FLIPPED_DIAGONALLY_FLAG
 
         this.ctx.globalAlpha = 0.5
         this.drawTile(pal, sel)
@@ -656,9 +669,9 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
   /* events */
-  handleMouseDown (e) {
+  handleMouseDown(e) {
     // multitouch handles mapArea - camera stuff
-    if(e.touches && e.touches.length > 1){
+    if (e.touches && e.touches.length > 1) {
       return
     }
 
@@ -670,7 +683,7 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
   // this should be triggered on window instead of main element
-  handleMouseUp (e) {
+  handleMouseUp(e) {
     // 0 - mouse / undefined - touch
     if (e.button) {
       return
@@ -680,10 +693,10 @@ export default class TileMapLayer extends AbstractLayer {
     this.mouseDown = false
     if (e.target == this.refs.canvas) {
       // touchend is not reporting coords
-      if(nat.type !== "touchend"){
+      if (nat.type !== 'touchend') {
         this.lastEvent = nat
-        this.lastOffset.x = TileHelper.getOffsetX(nat);
-        this.lastOffset.y = TileHelper.getOffsetY(nat);
+        this.lastOffset.x = TileHelper.getOffsetX(nat)
+        this.lastOffset.y = TileHelper.getOffsetY(nat)
       }
       if (!this.options.visible) {
         return
@@ -692,18 +705,18 @@ export default class TileMapLayer extends AbstractLayer {
       if (edit[this.props.getEditMode()]) {
         edit[this.props.getEditMode()].call(this, nat, true)
         this.draw()
-      }else {
+      } else {
         edit.debug.call(this, nat, true)
       }
     }
   }
-  handleMouseMove (e) {
+  handleMouseMove(e) {
     const nat = e.nativeEvent ? e.nativeEvent : e
     if (nat.target !== this.refs.canvas) {
       return
     }
     // multitouch handles mapArea - camera stuff
-    if(e.touches && e.touches.length > 1){
+    if (e.touches && e.touches.length > 1) {
       return
     }
 
@@ -721,12 +734,12 @@ export default class TileMapLayer extends AbstractLayer {
     if (edit[this.props.getEditMode()]) {
       edit[this.props.getEditMode()].call(this, nat)
       this.draw()
-    }else {
+    } else {
       edit.debug.call(this, nat)
     }
   }
-  onMouseLeave (e) {
-    this.lastEvent = null;
+  onMouseLeave(e) {
+    this.lastEvent = null
     this.isMouseOver = false
     this.props.clearTmpSelection()
     //this.lastEvent = nat
@@ -737,7 +750,7 @@ export default class TileMapLayer extends AbstractLayer {
     this.drawTiles()
   }
 
-  onKeyUp (e) {
+  onKeyUp(e) {
     const w = e.which
 
     if (w == 46) {
@@ -747,16 +760,15 @@ export default class TileMapLayer extends AbstractLayer {
   }
   /* end of events */
 
-  insertTile(id, gid){
+  insertTile(id, gid) {
     this.options.data[id] = gid
     // this makes filling tiles slow - as full update will start on changes
     // this.props.handleSave('Inserting Tiles')
   }
 
-  deleteSelection(){
+  deleteSelection() {
     const sel = this.props.getSelection()
-    if (!sel.length)
-      return
+    if (!sel.length) return
     for (let i = 0; i < sel.length; i++) {
       this.data.data[sel[i].id] = 0
     }
@@ -766,14 +778,14 @@ export default class TileMapLayer extends AbstractLayer {
 
 /* !!! this - in this scope is instance of tilemap layer (above) */
 const edit = {
-  debug: function (e, mouseUp) {
+  debug: function(e, mouseUp) {
     //const pos = this.getTilePosInfo(e)
     //pos.gid = this.options.data[pos.id]
-  }
+  },
 }
 // Using fill algorithm from http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/
 // TODO: Smarter fill/magic wand tools that place assets by size instead of filling every tile
-edit[EditModes.fill] = function (e, up) {
+edit[EditModes.fill] = function(e, up) {
   // For now only use this algorithm for ActorMap functionality
   if (!this.props.options.randomMode && this.props.getCollection().length === 1) {
     const col = this.props.getCollection()
@@ -798,54 +810,52 @@ edit[EditModes.fill] = function (e, up) {
     if (up) {
       this.props.saveForUndo('Fill tilemap')
 
-      while(tileStack.length) {
-        var newPos, x, y, tilePos, reachLeft, reachRight;
-        newPos = tileStack.pop();
-        x = newPos[0];
-        y = newPos[1];
+      while (tileStack.length) {
+        var newPos, x, y, tilePos, reachLeft, reachRight
+        newPos = tileStack.pop()
+        x = newPos[0]
+        y = newPos[1]
         tilePos = y * width + x
 
         // Go up until reach top
-        while(y-- >= 0  && (!tileGid[tilePos] || tileGid[tilePos] === 0)) {
-          tilePos -= width;
+        while (y-- >= 0 && (!tileGid[tilePos] || tileGid[tilePos] === 0)) {
+          tilePos -= width
         }
-        tilePos += width;
-        ++y;
-        reachLeft = false;
-        reachRight = false;
+        tilePos += width
+        ++y
+        reachLeft = false
+        reachRight = false
 
         // Go down until reach bottom
-        while(y++ < height  && (!tileGid[tilePos] || tileGid[tilePos] === 0)) {
+        while (y++ < height && (!tileGid[tilePos] || tileGid[tilePos] === 0)) {
           // Insert tile where empty
           if (!tileGid[tilePos] || tileGid[tilePos] === 0) {
             this.insertTile(tilePos, col[0].gid)
           }
 
-          if(x >= 0) {
-            if (!tileGid[tilePos-1] || tileGid[tilePos-1] === 0) {
-              if(!reachLeft) {
-                tileStack.push([x - 1, y]);
-                reachLeft = true;
+          if (x >= 0) {
+            if (!tileGid[tilePos - 1] || tileGid[tilePos - 1] === 0) {
+              if (!reachLeft) {
+                tileStack.push([x - 1, y])
+                reachLeft = true
               }
-            }
-            else if(reachLeft) {
-              reachLeft = false;
+            } else if (reachLeft) {
+              reachLeft = false
             }
           }
 
-          if(x < width) {
-            if (!tileGid[tilePos+1] || tileGid[tilePos+1] === 0) {
-              if(!reachRight) {
-                tileStack.push([x + 1, y]);
-                reachRight = true;
+          if (x < width) {
+            if (!tileGid[tilePos + 1] || tileGid[tilePos + 1] === 0) {
+              if (!reachRight) {
+                tileStack.push([x + 1, y])
+                reachRight = true
               }
-            }
-            else if(reachRight) {
-              reachRight = false;
+            } else if (reachRight) {
+              reachRight = false
             }
           }
 
-          tilePos += width;
+          tilePos += width
         }
       }
       this.props.handleSave('Filling up')
@@ -856,7 +866,7 @@ edit[EditModes.fill] = function (e, up) {
       //this.props.handleSave('Filling up')
       return
     }
-  // Original fill
+    // Original fill
   } else {
     const temp = this.props.getTmpSelection()
     const sel = this.props.getSelection()
@@ -923,10 +933,10 @@ edit[EditModes.fill] = function (e, up) {
       datay = arr[(temp[i].y + miny) % arr.length]
       if (this.props.options.randomMode) {
         ins.gid = col.random().gid
-      }else {
+      } else {
         // non rect selection
         const tmpTile = datay[(temp[i].x + minx) % datay.length]
-        if(tmpTile){
+        if (tmpTile) {
           ins.gid = tmpTile.gid
         }
       }
@@ -940,18 +950,18 @@ edit[EditModes.fill] = function (e, up) {
   }
 }
 
-edit[EditModes.stamp] = function (e, up, saveUndo = true) {
+edit[EditModes.stamp] = function(e, up, saveUndo = true) {
   if (e.type != 'mousedown') {
     saveUndo = false
   }
 
-  if (e.type == 'mouseup' || e.type == 'touchend'){
+  if (e.type == 'mouseup' || e.type == 'touchend') {
     this.props.handleSave('Inserting Tiles')
     return
   }
 
   // it can be multitouch
-  if(e.type == "touchstart"){
+  if (e.type == 'touchstart') {
     return
   }
 
@@ -960,7 +970,7 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
       this.props.swapOutSelection()
       this.props.selectionToCollection()
       this.props.clearSelection()
-    }else {
+    } else {
       edit[EditModes.rectangle].call(this, e, up)
     }
     return
@@ -995,10 +1005,9 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
     if (sel.length > 0) {
       if (sel.indexOfId(pos.id) > -1) {
         saveUndo && this.props.saveForUndo('Add Random Tile')
-        this.insertTile(pos.id, ts.gid);
+        this.insertTile(pos.id, ts.gid)
       }
-    }
-    else {
+    } else {
       // updating same tile - safe to skip
       if (this.props.data.data[pos.id] == ts.gid) {
         return
@@ -1027,7 +1036,7 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
       }
       saveUndo && this.props.saveForUndo('Update Tile No: ' + pos.id)
 
-      this.insertTile(pos.id, ts.gid);
+      this.insertTile(pos.id, ts.gid)
       //this.options.data[pos.id] = ts.gid
     }
     return
@@ -1085,7 +1094,7 @@ edit[EditModes.stamp] = function (e, up, saveUndo = true) {
 
 // Eraser is actually stamp with gid = 0 - could be reused
 // only stamp can resize map.. eraser shouldn't
-edit[EditModes.eraser] = function (e, up, saveUndo = true) {
+edit[EditModes.eraser] = function(e, up, saveUndo = true) {
   if (!this.mouseDown && !up) {
     return
   }
@@ -1111,44 +1120,39 @@ edit[EditModes.eraser] = function (e, up, saveUndo = true) {
       //this.props.saveForUndo('Delete tile')
       this.insertTile(pos.id, 0)
     }
-  }
-  else {
+  } else {
     //this.props.saveForUndo('Delete tile')
     this.insertTile(pos.id, 0)
   }
 }
 /* selections */
-edit[EditModes.rectangle] = function (e, mouseUp) {
+edit[EditModes.rectangle] = function(e, mouseUp) {
   if (mouseUp || e.type == 'touchend') {
     if (!e.shiftKey && !e.ctrlKey) {
       this.props.clearSelection()
     }
     if (e.shiftKey && e.ctrlKey) {
       this.props.keepDiffInSelection()
-    }
-    else if (e.ctrlKey) {
+    } else if (e.ctrlKey) {
       this.props.removeFromSelection()
-    }else {
+    } else {
       this.props.swapOutSelection()
     }
     return
   }
 
-
   const pos = this.getTilePosInfo(e)
   pos.gid = this.options.data[pos.id]
-
 
   const tmp = this.props.getTmpSelection()
   if (e.type == 'mousedown' || e.type == 'touchstart') {
     this.startingTilePos = new TileSelection(pos)
     if (tmp.length) {
       this.selectRectangle(pos)
-    }else {
+    } else {
       tmp.clear()
     }
-  }
-  else if (this.mouseDown) {
+  } else if (this.mouseDown) {
     tmp.clear()
     this.selectRectangle(pos)
   }
@@ -1156,11 +1160,10 @@ edit[EditModes.rectangle] = function (e, mouseUp) {
   this.isDirtySelection = false
 }
 
-let previousType = ""
-edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection()) {
-
+let previousType = ''
+edit[EditModes.wand] = function(e, up, collection = this.props.getTmpSelection()) {
   // avoid virtual mouse events
-  if(previousType == "touchend" && (e.type == "mousemove" || e.type == "mousedown" || e.type == "mouseup")){
+  if (previousType == 'touchend' && (e.type == 'mousemove' || e.type == 'mousedown' || e.type == 'mouseup')) {
     return
   }
   previousType = e.type
@@ -1188,11 +1191,11 @@ edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection(
   let check = 0
 
   const done = () => {
-    while(buff.length){
+    while (buff.length) {
       collection.pushUniquePos(buff.pop())
     }
   }
-  const isUnique = (p) => {
+  const isUnique = p => {
     for (let i = 0; i < buff.length; i++) {
       if (buff[i].id == p.id) {
         return false
@@ -1205,7 +1208,7 @@ edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection(
     }
     return true
   }
-  const addToFrontier = (p) => {
+  const addToFrontier = p => {
     if (p.x >= 0 && p.x < this.options.width && p.y >= 0 && p.y < this.options.height) {
       if ((pos.gid == p.gid || (!pos.gid && p.gid == 0) || (!p.gid && pos.gid == 0)) && isUnique(p)) {
         frontier.push(p)
@@ -1261,9 +1264,9 @@ edit[EditModes.wand] = function (e, up, collection = this.props.getTmpSelection(
   }
   this.isDirtySelection = false
 }
-edit[EditModes.picker] = function (e, up) {
+edit[EditModes.picker] = function(e, up) {
   // avoid virtual mouse events
-  if(previousType == "touchend" && (e.type == "mousemove" || e.type == "mousedown" || e.type == "mouseup")){
+  if (previousType == 'touchend' && (e.type == 'mousemove' || e.type == 'mousedown' || e.type == 'mouseup')) {
     return
   }
   previousType = e.type
@@ -1274,10 +1277,9 @@ edit[EditModes.picker] = function (e, up) {
     }
     if (e.shiftKey && e.ctrlKey) {
       this.props.keepDiffInSelection()
-    }
-    else if (e.ctrlKey) {
+    } else if (e.ctrlKey) {
       this.props.removeFromSelection()
-    }else {
+    } else {
       this.props.swapOutSelection()
     }
     return

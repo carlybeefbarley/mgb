@@ -3,54 +3,57 @@ import C from './CommonSkillNodes'
 // skillnodes for game tutorials
 // skillnodes are connected with /public/codeTutorials.json . Link is a key of node: "mole1", "digger"
 
-export default {
+const CodeGameSkillNodes = {
   $meta: {
-    name:           'Game tutorials',
-    description:    'These walkthoughs will show you how to create a game using your new PhaserJS game-dev skills. For each game there is a first tutorial that shows how to code the minimal \'base\' of a game. Subsequent tutorials then add more features to that base.'
+    name: 'Game tutorials',
+    description:
+      "These walkthoughs will show you how to create a game using your new PhaserJS game-dev skills. For each game there is a first tutorial that shows how to code the minimal 'base' of a game. Subsequent tutorials then add more features to that base.",
   },
-  'mole1': {
+  mole1: {
     $meta: {
       name: 'Whack a Mole 1: Base',
       icon: 'code',
       description: `First game from series`,
-      "subsection": "Whack-a-Mole",
-      ...(C.E.$meta)
-    }
+      subsection: 'Whack-a-Mole',
+      ...C.E.$meta,
+    },
   },
-  'mole2': {
+  mole2: {
     $meta: {
       name: 'Whack a Mole 2: Animations',
       icon: 'code',
       description: `Second game from series`,
-      "subsection": "Whack-a-Mole",
-      ...(C.E.$meta)
-    }
-  },  
-  'mole3': {
+      subsection: 'Whack-a-Mole',
+      ...C.E.$meta,
+    },
+  },
+  mole3: {
     $meta: {
       name: 'Whack a Mole 3: Speedup',
       icon: 'code',
       description: `Third game from series`,
-      "subsection": "Whack-a-Mole",
-      ...(C.E.$meta)
-    }
-  }, 
-  'mole4': {
+      subsection: 'Whack-a-Mole',
+      ...C.E.$meta,
+    },
+  },
+  mole4: {
     $meta: {
       name: 'Whack a Mole 4: Menus',
       icon: 'code',
       description: `Fourth game from series`,
-      "subsection": "Whack-a-Mole",
-      ...(C.E.$meta)
-    }
-  },  
-  'digger': {
+      subsection: 'Whack-a-Mole',
+      ...C.E.$meta,
+    },
+  },
+  digger: {
     $meta: {
       name: 'Digger',
       icon: 'code',
       description: `Mining and collecting resources`,
-      "subsection": "Digger",
-      ...(C.E.$meta)
-    }
-  }
+      subsection: 'Digger',
+      ...C.E.$meta,
+    },
+  },
 }
+
+export default CodeGameSkillNodes

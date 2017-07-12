@@ -1,7 +1,6 @@
 import https from 'https'
 import http from 'http'
-// import proxy from 'proxy-agent'
-import qs from  'querystring'
+import qs from 'querystring'
 import fs from 'fs'
 import Stream from 'stream'
 const Readable = Stream.Readable
@@ -14,61 +13,55 @@ import promisifyCall from 'promisify-call'
 // import debug = Npm.require('debug')('mailgun-js');
 import debug from 'debug'
 
-function noop () {
-};
+function noop() {}
 
 function isOk(i) {
-  return typeof i !== 'undefined' && i !== null;
+  return typeof i !== 'undefined' && i !== null
 }
 
-export function Request (options) {
-  this.host = options.host;
-  this.protocol = options.protocol;
-  this.port = options.port;
-  this.endpoint = options.endpoint;
-  this.auth = options.auth;
-  this.proxy = options.proxy;
-  this.timeout = options.timeout;
-  this.retry = options.retry || 1;
+export function Request(options) {
+  this.host = options.host
+  this.protocol = options.protocol
+  this.port = options.port
+  this.endpoint = options.endpoint
+  this.auth = options.auth
+  this.timeout = options.timeout
+  this.retry = options.retry || 1
 }
 
-Request.prototype._request = function (method, resource, data, fn) {
-  var self = this;
+Request.prototype._request = function(method, resource, data, fn) {
+  var self = this
 
-  var path = ''.concat(this.endpoint, resource);
+  var path = ''.concat(this.endpoint, resource)
 
-  var params = this.prepareData(data);
+  var params = this.prepareData(data)
 
-  this.payload = '';
+  this.payload = ''
 
-  var isMIME = path.indexOf('/messages.mime') >= 0;
+  var isMIME = path.indexOf('/messages.mime') >= 0
 
-  this.headers = {};
+  this.headers = {}
   if (method === 'GET' || method === 'DELETE') {
-    this.payload = qs.stringify(params);
-    if (this.payload) path = path.concat('?', this.payload);
-  }
-  else {
-    this.headers['Content-Type'] = isMIME ? 'multipart/form-data' : 'application/x-www-form-urlencoded';
+    this.payload = qs.stringify(params)
+    if (this.payload) path = path.concat('?', this.payload)
+  } else {
+    this.headers['Content-Type'] = isMIME ? 'multipart/form-data' : 'application/x-www-form-urlencoded'
 
     if (params && (params.attachment || params.inline || (isMIME && params.message))) {
-      this.prepareFormData(params);
-    }
-    else {
-      this.payload = qs.stringify(params);
-      var length = this.payload ? Buffer.byteLength(this.payload) : 0;
-      this.headers['Content-Length'] = length;
+      this.prepareFormData(params)
+    } else {
+      this.payload = qs.stringify(params)
+      var length = this.payload ? Buffer.byteLength(this.payload) : 0
+      this.headers['Content-Length'] = length
     }
   }
 
   // check for MIME is true in case of messages GET
-  if (method === 'GET' &&
-    path.indexOf('/messages') >= 0 &&
-    params && params.MIME === true) {
-    this.headers.Accept = 'message/rfc2822';
+  if (method === 'GET' && path.indexOf('/messages') >= 0 && params && params.MIME === true) {
+    this.headers.Accept = 'message/rfc2822'
   }
 
-  debug('%s %s', method, path);
+  debug('%s %s', method, path)
 
   var opts = {
     hostname: this.host,
@@ -78,161 +71,157 @@ Request.prototype._request = function (method, resource, data, fn) {
     method: method,
     headers: this.headers,
     auth: this.auth,
-    agent: this.proxy ? proxy(this.proxy, true) : false,
-    timeout: this.timeout
-  };
+    timeout: this.timeout,
+  }
 
   if (this.retry > 1) {
-    retry(this.retry, function (retryCb) {
-      self.callback = retryCb;
-      self.performRequest(opts);
-    }, fn);
-  }
-  else {
-    this.callback = fn;
-    this.performRequest(opts);
+    retry(
+      this.retry,
+      function(retryCb) {
+        self.callback = retryCb
+        self.performRequest(opts)
+      },
+      fn,
+    )
+  } else {
+    this.callback = fn
+    this.performRequest(opts)
   }
 }
 
-Request.prototype.request = function (method, resource, data, fn) {
+Request.prototype.request = function(method, resource, data, fn) {
   if (typeof data === 'function' && !fn) {
-    fn = data;
-    data = {};
+    fn = data
+    data = {}
   }
 
   if (!data) {
     data = {}
   }
 
-  return promisifyCall(this, this._request, method, resource, data, fn);
-};
+  return promisifyCall(this, this._request, method, resource, data, fn)
+}
 
 function getDataValue(key, input) {
-  if (isSpecialParam(key) && (typeof input === 'object')) {
-    return JSON.stringify(input);
-  }
-  else if (typeof input === 'number' || typeof input === 'boolean') {
-    return input.toString();
-  }
-  else {
-    return input;
+  if (isSpecialParam(key) && typeof input === 'object') {
+    return JSON.stringify(input)
+  } else if (typeof input === 'number' || typeof input === 'boolean') {
+    return input.toString()
+  } else {
+    return input
   }
 }
 
 function isSpecialParam(paramKey) {
-  var key = paramKey.toLowerCase();
-  return ((key === 'vars' || key === 'members' || key === 'recipient-variables') || (key.indexOf('v:') === 0));
+  var key = paramKey.toLowerCase()
+  return key === 'vars' || key === 'members' || key === 'recipient-variables' || key.indexOf('v:') === 0
 }
 
-Request.prototype.prepareData = function (data) {
-  var params = {};
+Request.prototype.prepareData = function(data) {
+  var params = {}
 
-  for (var key in data) {
+  for (let key in data) {
     if (key !== 'attachment' && key !== 'inline' && isOk(data[key])) {
-      var value = getDataValue(key, data[key]);
-      if(isOk(value)) {
-        params[key] = value;
+      var value = getDataValue(key, data[key])
+      if (isOk(value)) {
+        params[key] = value
       }
-    }
-    else {
-      params[key] = data[key];
+    } else {
+      params[key] = data[key]
     }
   }
 
-  return params;
-};
+  return params
+}
 
-Request.prototype.prepareFormData = function (data) {
-  this.form = new FormData();
-  var self = this;
+Request.prototype.prepareFormData = function(data) {
+  this.form = new FormData()
+  var self = this
 
-  for (var key in data) {
-    var obj = data[key];
-    if(isOk(obj)) {
+  function appendKey(key, element) {
+    if (isOk(element)) {
+      var value = getDataValue(key, element)
+      if (isOk(value)) {
+        self.form.append(key, value)
+      }
+    }
+  }
+
+  for (let key in data) {
+    var obj = data[key]
+    if (isOk(obj)) {
       if (key === 'attachment' || key === 'inline') {
         if (Array.isArray(obj)) {
-          for (var i = 0; i < obj.length; i++) {
-            this.handleAttachmentObject(key, obj[i]);
+          for (let i = 0; i < obj.length; i++) {
+            this.handleAttachmentObject(key, obj[i])
           }
+        } else {
+          this.handleAttachmentObject(key, obj)
         }
-        else {
-          this.handleAttachmentObject(key, obj);
-        }
-      }
-      else if (key === 'message') {
-        this.handleMimeObject(key, obj);
-      }
-      else if (Array.isArray(obj)) {
-        function appendKey(element) {
-          if(isOk(element)) {
-            var value = getDataValue(key, element);
-            if(isOk(value)) {
-              self.form.append(key, value);
-            }
-          }
-        }
-
-        obj.forEach(appendKey);
-      }
-      else {
-        var value = getDataValue(key, obj);
-        if(isOk(value)) {
-          this.form.append(key, value);
+      } else if (key === 'message') {
+        this.handleMimeObject(key, obj)
+      } else if (Array.isArray(obj)) {
+        obj.forEach(element => appendKey(key, element))
+      } else {
+        var value = getDataValue(key, obj)
+        if (isOk(value)) {
+          this.form.append(key, value)
         }
       }
     }
   }
 
-  this.headers = this.form.getHeaders();
-};
+  this.headers = this.form.getHeaders()
+}
 
-Request.prototype.handleMimeObject = function (key, obj) {
-  var self = this;
+Request.prototype.handleMimeObject = function(key, obj) {
+  var self = this
   if (typeof obj === 'string') {
     if (fs.existsSync(obj) && fs.statSync(obj).isFile()) {
-      self.form.append('message', fs.createReadStream(obj));
-    }
-    else {
+      self.form.append('message', fs.createReadStream(obj))
+    } else {
       self.form.append('message', new Buffer(obj), {
         filename: 'message.mime',
         contentType: 'message/rfc822',
-        knownLength: obj.length
-      });
+        knownLength: obj.length,
+      })
     }
+  } else if (obj instanceof Readable) {
+    self.form.append('message', obj)
   }
-  else if (obj instanceof Readable) {
-    self.form.append('message', obj);
-  }
-};
+}
 
-Request.prototype.handleAttachmentObject = function (key, obj) {
-  if (!this.form) this.form = new FormData();
+Request.prototype.handleAttachmentObject = function(key, obj) {
+  if (!this.form) this.form = new FormData()
 
   if (Buffer.isBuffer(obj)) {
-    debug('appending buffer to form data. key: %s', key);
+    debug('appending buffer to form data. key: %s', key)
     this.form.append(key, obj, {
-      filename: 'file'
-    });
-  }
-  else if (typeof obj === 'string') {
-    debug('appending stream to form data. key: %s obj: %s', key, obj);
-    this.form.append(key, fs.createReadStream(obj));
-  } else if ((typeof obj === 'object') && (obj.readable === true)) {
-    debug('appending readable stream to form data. key: %s obj: %s', key, obj);
-    this.form.append(key, obj);
-  } else if ((typeof obj === 'object') && (obj instanceof Attachment)) {
-    var attachmentType = obj.getType();
+      filename: 'file',
+    })
+  } else if (typeof obj === 'string') {
+    debug('appending stream to form data. key: %s obj: %s', key, obj)
+    this.form.append(key, fs.createReadStream(obj))
+  } else if (typeof obj === 'object' && obj.readable === true) {
+    debug('appending readable stream to form data. key: %s obj: %s', key, obj)
+    this.form.append(key, obj)
+  } else if (typeof obj === 'object' && obj instanceof Attachment) {
+    var attachmentType = obj.getType()
     if (attachmentType === 'path') {
-      debug('appending attachment stream to form data. key: %s data: %s filename: %s', key, obj.data, obj.filename);
+      debug(
+        'appending attachment stream to form data. key: %s data: %s filename: %s',
+        key,
+        obj.data,
+        obj.filename,
+      )
       this.form.append(key, fs.createReadStream(obj.data), {
-        filename: obj.filename || 'attached file'
-      });
-    }
-    else if (attachmentType === 'buffer') {
-      debug('appending attachment buffer to form data. key: %s filename: %s', key, obj.filename);
+        filename: obj.filename || 'attached file',
+      })
+    } else if (attachmentType === 'buffer') {
+      debug('appending attachment buffer to form data. key: %s filename: %s', key, obj.filename)
       var formOpts = {
-        filename: obj.filename || 'attached file'
-      };
+        filename: obj.filename || 'attached file',
+      }
 
       if (obj.contentType) {
         formOpts.contentType = obj.contentType
@@ -242,116 +231,115 @@ Request.prototype.handleAttachmentObject = function (key, obj) {
         formOpts.knownLength = obj.knownLength
       }
 
-      this.form.append(key, obj.data, formOpts);
-    }
-    else if (attachmentType === 'stream') {
+      this.form.append(key, obj.data, formOpts)
+    } else if (attachmentType === 'stream') {
       if (obj.knownLength && obj.contentType) {
-        debug('appending attachment stream to form data. key: %s filename: %s', key, obj.filename);
+        debug('appending attachment stream to form data. key: %s filename: %s', key, obj.filename)
 
         this.form.append(key, obj.data, {
           filename: obj.filename || 'attached file',
           contentType: obj.contentType,
-          knownLength: obj.knownLength
-        });
-      }
-      else {
-        debug('missing content type or length for attachment stream. key: %s', key);
+          knownLength: obj.knownLength,
+        })
+      } else {
+        debug('missing content type or length for attachment stream. key: %s', key)
       }
     }
+  } else {
+    debug('unknown attachment type. key: %s', key)
   }
-  else {
-    debug('unknown attachment type. key: %s', key);
-  }
-};
+}
 
-Request.prototype.handleResponse = function (res) {
-  var self = this;
-  var chunks = '';
-  var error;
+Request.prototype.handleResponse = function(res) {
+  var self = this
+  var chunks = ''
+  var error
 
-  res.on('data', function (chunk) {
-    chunks += chunk;
-  });
+  res.on('data', function(chunk) {
+    chunks += chunk
+  })
 
-  res.on('error', function (err) {
-    error = err;
-  });
+  res.on('error', function(err) {
+    error = err
+  })
 
-  res.on('end', function () {
-    var body;
+  res.on('end', function() {
+    var body
 
-    debug('response status code: %s content type: %s error: %s', res.statusCode, res.headers['content-type'], error);
+    debug(
+      'response status code: %s content type: %s error: %s',
+      res.statusCode,
+      res.headers['content-type'],
+      error,
+    )
 
     // FIXME: An ugly hack to overcome invalid response type in mailgun api (see http://bit.ly/1eF30fU).
     // We skip content-type validation for 'campaings' endpoint assuming it is JSON.
-    var skipContentTypeCheck = res.req && res.req.path && res.req.path.match(/\/campaigns/);
-    var isJSON = res.headers['content-type'] && res.headers['content-type'].indexOf('application/json') >= 0;
+    var skipContentTypeCheck = res.req && res.req.path && res.req.path.match(/\/campaigns/)
+    var isJSON = res.headers['content-type'] && res.headers['content-type'].indexOf('application/json') >= 0
     if (chunks && !error && (skipContentTypeCheck || isJSON)) {
       try {
-        body = JSON.parse(chunks);
+        body = JSON.parse(chunks)
       } catch (e) {
-        error = e;
+        error = e
       }
     }
 
     if (process.env.DEBUG_MAILGUN_FORCE_RETRY) {
-      error = new Error('Force retry error');
-      delete process.env.DEBUG_MAILGUN_FORCE_RETRY;
+      error = new Error('Force retry error')
+      delete process.env.DEBUG_MAILGUN_FORCE_RETRY
     }
 
     if (!error && res.statusCode !== 200) {
-      var msg = body ? body.message || body.response : body || chunks || res.statusMessage;
-      error = new Error(msg);
-      error.statusCode = res.statusCode;
+      var msg = body ? body.message || body.response : body || chunks || res.statusMessage
+      error = new Error(msg)
+      error.statusCode = res.statusCode
     }
 
-    return self.callback(error, body);
-  });
-};
+    return self.callback(error, body)
+  })
+}
 
-Request.prototype.performRequest = function (options) {
-  var self = this;
-  var method = options.method;
+Request.prototype.performRequest = function(options) {
+  var self = this
+  var method = options.method
 
   if (this.form && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
-
-    this.form.submit(options, function (err, res) {
+    this.form.submit(options, function(err, res) {
       if (err) {
-        return self.callback(err);
+        return self.callback(err)
       }
 
-      return self.handleResponse(res);
-    });
-  }
-  else {
-    var req;
+      return self.handleResponse(res)
+    })
+  } else {
+    var req
 
     if (options.protocol === 'http:') {
-      req = http.request(options, function (res) {
-        return self.handleResponse(res);
-      });
-    }
-    else {
-      req = https.request(options, function (res) {
-        return self.handleResponse(res);
-      });
+      req = http.request(options, function(res) {
+        return self.handleResponse(res)
+      })
+    } else {
+      req = https.request(options, function(res) {
+        return self.handleResponse(res)
+      })
     }
 
     if (options.timeout) {
-      req.setTimeout(options.timeout, function () {
+      req.setTimeout(options.timeout, function() {
         // timeout occurs
-        req.abort();
-      });
+        req.abort()
+      })
     }
 
-    req.on('error', function (e) {
-      return self.callback(e);
-    });
+    req.on('error', function(e) {
+      return self.callback(e)
+    })
 
     if (this.payload && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
-      req.write(this.payload);
+      req.write(this.payload)
     }
 
-    req.end();
+    req.end()
   }
-};
+}

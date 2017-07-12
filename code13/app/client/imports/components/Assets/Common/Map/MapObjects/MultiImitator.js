@@ -2,7 +2,7 @@
 import ObjectHelper from '../Helpers/ObjectHelper.js'
 // This object imitates Multiple Objects as one big rectangle
 export default class MultiImitator {
-  constructor (layer) {
+  constructor(layer) {
     // we need layer - as layer contains transformations
     this.layer = layer
     this._x = 0
@@ -13,15 +13,15 @@ export default class MultiImitator {
     this.selection = []
   }
 
-  get x () {
+  get x() {
     return this._x
   }
-  set x (v) {
+  set x(v) {
     const diff = v - this._x
     if (!diff) {
       return
     }
-    this.forEach((o) => {
+    this.forEach(o => {
       let dx = diff
       let dy = 0
       /*if(o.rotation) {
@@ -38,15 +38,15 @@ export default class MultiImitator {
     this.update()
   }
 
-  get y () {
+  get y() {
     return this._y
   }
-  set y (v) {
+  set y(v) {
     const diff = v - this._y
     if (!diff) {
       return
     }
-    this.forEach((o) => {
+    this.forEach(o => {
       let dx = 0
       let dy = diff
       /*if(o.rotation) {
@@ -63,109 +63,109 @@ export default class MultiImitator {
     this.update()
   }
 
-  get width () {
+  get width() {
     return this._width
   }
-  set width (v) {
+  set width(v) {
     // disable for now at it needs to be redone
-    return
-    const diff = v - this._width
-    if (!diff) {
-      return
-    }
-    this.forEach((o) => {
-      o.width += diff * 2
-      o.height += diff * 2
-      // o.x += diff
-      // o.y += diff
-      // below are sort of nicer resize - but it needs extra work for rotated objects - e.g. for objects upside down
-      let dx = diff
-      let dy = 0
-      if (o.rotation) {
-        const angle = o.rotation * ObjectHelper.TO_RADIANS
-        const sin = Math.sin(angle)
-        const cos = Math.cos(angle)
-
-        dx = ObjectHelper.rpx(sin, cos, diff, diff, 0, 0)
-        dy = ObjectHelper.rpy(sin, cos, diff, diff, 0, 0)
-      }
-      if (dx != diff) {
-        console.log('DX:', dx, diff)
-      }
-      o.x += 2 * dx
-      o.y += 2 * dx
-    })
-    this._width = v
-  // this.update()
-  // this._height += diff
+    //
+    // const diff = v - this._width
+    // if (!diff) {
+    //   return
+    // }
+    // this.forEach(o => {
+    //   o.width += diff * 2
+    //   o.height += diff * 2
+    //   // o.x += diff
+    //   // o.y += diff
+    //   // below are sort of nicer resize - but it needs extra work for rotated objects - e.g. for objects upside down
+    //   let dx = diff
+    //   let dy = 0
+    //   if (o.rotation) {
+    //     const angle = o.rotation * ObjectHelper.TO_RADIANS
+    //     const sin = Math.sin(angle)
+    //     const cos = Math.cos(angle)
+    //
+    //     dx = ObjectHelper.rpx(sin, cos, diff, diff, 0, 0)
+    //     dy = ObjectHelper.rpy(sin, cos, diff, diff, 0, 0)
+    //   }
+    //   if (dx != diff) {
+    //     console.log('DX:', dx, diff)
+    //   }
+    //   o.x += 2 * dx
+    //   o.y += 2 * dx
+    // })
+    // this._width = v
+    // this.update()
+    // this._height += diff
   }
 
-  get height () {
+  get height() {
     return this._height
   }
-  set height (v) {
+  set height(v) {
     // disable for now at it needs to be redone
-    return
-    const diff = v - this._height
-    if (!diff) {
-      return
-    }
-    this.forEach((o) => {
-      o.width += diff * 2
-      o.height += diff * 2
-      o.x -= diff
-      o.y -= diff
-    /*
-    let dx = 0
-    let dy = diff
-    if(o.rotation) {
-      const angle = -o.rotation * ObjectHelper.TO_RADIANS
-      const sin = Math.sin(angle)
-      const cos = Math.cos(angle)
-
-      dx = ObjectHelper.rpx(sin, cos, 0, diff, 0, 0)
-      dy = ObjectHelper.rpy(sin, cos, 0, diff, 0, 0)
-    }
-    o.width += dx
-    o.height += dy
-    */
-    })
-    this._height = v
-  // this.update()
+    //
+    // const diff = v - this._height
+    // if (!diff) {
+    //   return
+    // }
+    // this.forEach(o => {
+    //   o.width += diff * 2
+    //   o.height += diff * 2
+    //   o.x -= diff
+    //   o.y -= diff
+    //   /*
+    // let dx = 0
+    // let dy = diff
+    // if(o.rotation) {
+    //   const angle = -o.rotation * ObjectHelper.TO_RADIANS
+    //   const sin = Math.sin(angle)
+    //   const cos = Math.cos(angle)
+    //
+    //   dx = ObjectHelper.rpx(sin, cos, 0, diff, 0, 0)
+    //   dy = ObjectHelper.rpy(sin, cos, 0, diff, 0, 0)
+    // }
+    // o.width += dx
+    // o.height += dy
+    // */
+    // })
+    // this._height = v
+    // this.update()
   }
 
-  get length () {
+  get length() {
     return this.selection.length
   }
 
-  forEach (cb) {
+  forEach(cb) {
     this.selection.forEach(cb)
   }
-  add (o) {
+  add(o) {
     if (this.selection.indexOf(o) == -1) {
       this.selection.push(o)
     }
     this.update()
   }
-  remove (o) {
+  remove(o) {
     const index = this.selection.indexOf(o)
     if (index > -1) {
       this.selection.splice(index, 1)
     }
     this.update()
   }
-  first () {
+  first() {
     if (this.selection.length) {
       return this.selection[0]
     }
   }
 
-  clear () {
+  clear() {
     this.selection.length = 0
     this.update()
   }
 
-  update () {
+  update() {
     const obj = this.selection
     if (!obj.length) {
       this._x = this._y = this._width = this._height = 0
@@ -196,32 +196,29 @@ export default class MultiImitator {
       }
     }
 
-    if (minx == Infinity) {
-      debugger
-    }
     this._x = minx
     this._y = miny
     this._width = maxx - minx
     this._height = maxy - miny
   }
 
-  get rotation () {
+  get rotation() {
     return 0
   }
-  set rotation (val) {}
+  set rotation(val) {}
 
-  toBox () {
+  toBox() {
     this.update()
     return {
       x: this.x,
       y: this.y,
       width: this.width,
       height: this.height,
-      rotation: 0
+      rotation: 0,
     }
   }
 
-  empty () {
+  empty() {
     return !this.selection.length
   }
 }

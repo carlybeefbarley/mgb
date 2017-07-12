@@ -3,21 +3,21 @@ import SelectedTile from './SelectedTile.js'
 
 // for some reason babel don't want to extend Array.....
 export default class TileCollection {
-  constructor (...args) {
+  constructor(...args) {
     Array.call(this, ...args)
   }
 }
 
 TileCollection.prototype = Object.create(Array.prototype)
 
-TileCollection.prototype.pushUnique = function (id) {
+TileCollection.prototype.pushUnique = function(id) {
   if (this.indexOf(id) === -1) {
     return this.push(id)
   }
   return this.length
 }
 
-TileCollection.prototype.pushUniquePos = function (tp) {
+TileCollection.prototype.pushUniquePos = function(tp) {
   for (let i = 0; i < this.length; i++) {
     if (this[i].isEqual(tp)) {
       return this.length
@@ -25,7 +25,7 @@ TileCollection.prototype.pushUniquePos = function (tp) {
   }
   return this.push(tp)
 }
-TileCollection.prototype.removeByPos = function (tp) {
+TileCollection.prototype.removeByPos = function(tp) {
   for (let i = 0; i < this.length; i++) {
     if (this[i].isEqual(tp)) {
       this.splice(i, 1)
@@ -35,7 +35,7 @@ TileCollection.prototype.removeByPos = function (tp) {
   return this.length
 }
 
-TileCollection.prototype.pushUniquePosOrRemove = function (tp) {
+TileCollection.prototype.pushUniquePosOrRemove = function(tp) {
   for (let i = 0; i < this.length; i++) {
     if (this[i].isEqual(tp)) {
       this.splice(i, 1)
@@ -44,35 +44,35 @@ TileCollection.prototype.pushUniquePosOrRemove = function (tp) {
   }
   return this.push(tp)
 }
-TileCollection.prototype.remove = function (tileSelection) {
+TileCollection.prototype.remove = function(tileSelection) {
   const index = this.indexOf(tileSelection)
   if (index > -1) {
     return this.splice(index, 1)
   }
   return null
 }
-TileCollection.prototype.pushOrRemove = function (tileSelection) {
+TileCollection.prototype.pushOrRemove = function(tileSelection) {
   const index = this.indexOf(tileSelection)
   if (index === -1) {
     return this.push(tileSelection)
-  }else {
+  } else {
     return this.remove(tileSelection)
   }
 }
 
-TileCollection.prototype.clear = function () {
+TileCollection.prototype.clear = function() {
   this.length = 0
 }
 
-TileCollection.prototype.random = function () {
+TileCollection.prototype.random = function() {
   return this[Math.floor(Math.random() * this.length)]
 }
 
-TileCollection.prototype.indexOf = function (another) {
+TileCollection.prototype.indexOf = function(another) {
   return this.indexOfGid(another.gid)
 }
 
-TileCollection.prototype.indexOfGid = function (gid) {
+TileCollection.prototype.indexOfGid = function(gid) {
   let index = -1
   for (let i = 0; i < this.length; i++) {
     if (this[i].gid == gid) {
@@ -82,7 +82,7 @@ TileCollection.prototype.indexOfGid = function (gid) {
   }
   return index
 }
-TileCollection.prototype.indexOfId = function (id) {
+TileCollection.prototype.indexOfId = function(id) {
   let index = -1
   for (let i = 0; i < this.length; i++) {
     if (this[i].id == id) {
@@ -92,10 +92,10 @@ TileCollection.prototype.indexOfId = function (id) {
   }
   return index
 }
-TileCollection.prototype.debug = function () {
+TileCollection.prototype.debug = function() {
   console.log(this.x, this.y, this.gid)
 }
-TileCollection.prototype.to2DimArray = function () {
+TileCollection.prototype.to2DimArray = function() {
   const ret = []
   for (let i = 0; i < this.length; i++) {
     if (!ret[this[i].y]) {

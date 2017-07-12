@@ -1,11 +1,10 @@
-module.exports = (browser) => {
+module.exports = browser => {
   // this will throw exception on IE
-  return ( ) => {
+  return () => {
     try {
-      const log = browser.manage().logs().get("browser")
+      const log = browser.manage().logs().get('browser')
       return log.value
-    }
-    catch(e){
+    } catch (e) {
       return []
     }
   }

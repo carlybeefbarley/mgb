@@ -13,32 +13,30 @@ import isStream from 'is-stream'
  *                knownLength - the known length of the data. Should be passed in if using stream for data
  * @constructor
  */
-export function Attachment (options) {
-  var data = options.data;
+export function Attachment(options) {
+  var data = options.data
 
   if (data) {
     if (typeof data === 'string' || Buffer.isBuffer(data) || isStream(data)) {
-      this.data = data;
+      this.data = data
     }
   }
 
-  this.filename = options.filename;
-  this.contentType = options.contentType;
-  this.knownLength = options.knownLength;
-};
+  this.filename = options.filename
+  this.contentType = options.contentType
+  this.knownLength = options.knownLength
+}
 
-Attachment.prototype.getType = function () {
+Attachment.prototype.getType = function() {
   if (this.data) {
     if (typeof this.data === 'string') {
-      return 'path';
-    }
-    else if (Buffer.isBuffer(this.data)) {
-      return 'buffer';
-    }
-    else if (isStream(this.data)) {
-      return 'stream';
+      return 'path'
+    } else if (Buffer.isBuffer(this.data)) {
+      return 'buffer'
+    } else if (isStream(this.data)) {
+      return 'stream'
     }
   }
 
-  return 'unknown';
-};
+  return 'unknown'
+}

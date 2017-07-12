@@ -9,7 +9,9 @@ const makeCodeBundle = (asset, origin) => {
   const { bundle } = asset.content2
   // reload page after 1 second - as bundle may be on the way to the server
   // target _blank - because we are loading iframe from CDN + we don't want to allow game navigate to another page leaving MGB
-  const extraMessage = !!bundle ? '' : `
+  const extraMessage = bundle
+    ? ''
+    : `
 <h2 style='padding:0.5em'>The distribution bundle for this game has not yet been created</h2>
 <p style='padding-left:2em'>You can create the bundle using the 'run code full screen' or 'bundle code' tools in the <a href='${origin}/u/${asset.dn_ownerName}/asset/${asset._id}' target="_blank" >MGB Code Editor</a>.</p>
 <script>window.setTimeout(function(){window.location.reload()}, 2000)</script>

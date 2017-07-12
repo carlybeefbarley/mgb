@@ -1,4 +1,4 @@
-import { fromJS } from 'immutable';
+import { fromJS } from 'immutable'
 
 const mentions = fromJS([
   {
@@ -15,8 +15,7 @@ const mentions = fromJS([
     name: 'stanchion',
     link: 'https://twitter.com/stanchion',
     avatar: 'http://www.gravatar.com/avatar/1b3e88d9f94a9708c628494773003ac3?s=50&d=mm',
-  }
-]);
+  },
+])
 
-
-export default mentions;
+export default mentions

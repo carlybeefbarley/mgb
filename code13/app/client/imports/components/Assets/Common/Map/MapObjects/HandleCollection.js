@@ -5,30 +5,31 @@ import ObjectHelper from '../Helpers/ObjectHelper.js'
   + 1 extra handle for a pivot point
  */
 const PI2 = Math.PI * 2
-const FROM_DEGREES = (Math.PI / 180)
+const FROM_DEGREES = Math.PI / 180
 const FROM_RADIANS = 1 / FROM_DEGREES
 class Handle {
-  constructor (x, y) {
+  constructor(x, y) {
     this.radius = 3
     this.update(x, y)
   }
-  update (x, y) {
-    this.x = x; this.y = y
+  update(x, y) {
+    this.x = x
+    this.y = y
   }
-  draw (ctx, camera, active = false) {
+  draw(ctx, camera, active = false) {
     ctx.beginPath()
 
     if (active) {
       ctx.fillStyle = 'rgba(255,0,0,1)'
       ctx.arc((this.x + camera.x) * camera.zoom, (this.y + camera.y) * camera.zoom, this.radius * 2, 0, PI2)
       ctx.fill()
-    }else {
+    } else {
       ctx.fillStyle = 'rgba(255,0,0,0.5)'
       ctx.arc((this.x + camera.x) * camera.zoom, (this.y + camera.y) * camera.zoom, this.radius, 0, PI2)
       ctx.stroke()
     }
   }
-  rotate (angle, pivotX, pivotY) {
+  rotate(angle, pivotX, pivotY) {
     const cos = Math.cos(angle)
     const sin = Math.sin(angle)
     const x = ObjectHelper.rpx(sin, cos, this.x, this.y, pivotX, pivotY)
@@ -36,7 +37,7 @@ class Handle {
     this.x = x
     this.y = y
   }
-  vsPoint (x, y) {
+  vsPoint(x, y) {
     return Math.abs(this.x - x) < this.radius && Math.abs(this.y - y) < this.radius
   }
 }
@@ -56,7 +57,7 @@ const PIVOT = 10
 
 // this will update for every object...
 export default class HandleCollection {
-  constructor (x, y, width, height) {
+  constructor(x, y, width, height) {
     this.handles = []
     this.action = 'resize'
     this.activeHandle = null
@@ -69,7 +70,7 @@ export default class HandleCollection {
   }
 
   // make box compatible
-  get x () {
+  get x() {
     let min = Infinity
     for (let i = 0; i < CENTER; i++) {
       if (this.handles[i].x < min) {
@@ -78,7 +79,7 @@ export default class HandleCollection {
     }
     return min
   }
-  get y () {
+  get y() {
     let min = Infinity
     for (let i = 0; i < CENTER; i++) {
       if (this.handles[i].y < min) {
@@ -88,7 +89,7 @@ export default class HandleCollection {
     return min
   }
 
-  get width () {
+  get width() {
     let max = -Infinity
     let min = Infinity
     for (let i = 0; i < CENTER; i++) {
@@ -102,7 +103,7 @@ export default class HandleCollection {
     return max - min
   }
 
-  get height () {
+  get height() {
     let max = -Infinity
     let min = Infinity
     for (let i = 0; i < CENTER; i++) {
@@ -116,16 +117,16 @@ export default class HandleCollection {
     return max - min
   }
 
-  debug () {
+  debug() {
     // console.log(this.x, this.y, this.width, this.height)
   }
-  lock () {
+  lock() {
     this.isLocked = true
   }
-  unlock () {
+  unlock() {
     this.isLocked = false
   }
-  update (x, y, width, height, angleDegrees, px, py) {
+  update(x, y, width, height, angleDegrees, px, py) {
     const angle = angleDegrees * FROM_DEGREES
     const h = this.handles
 
@@ -171,7 +172,7 @@ export default class HandleCollection {
     }
   }
 
-  draw (ctx, camera) {
+  draw(ctx, camera) {
     for (let i = 0; i < this.handles.length; i++) {
       // skip center handle - as it don't have any functionality atm
       if (i == CENTER) {
@@ -189,7 +190,7 @@ export default class HandleCollection {
     }
   }
   // idea behind this is to move points around and then figure what has changed
-  moveActiveHandle (udx, udy, obj, type = this.activeHandleType) {
+  moveActiveHandle(udx, udy, obj, type = this.activeHandleType) {
     if (!udx && !udy) {
       return
     }
@@ -225,7 +226,7 @@ export default class HandleCollection {
 
     // TODO: add pivot point e.g. 50% of left & right would do 50% smaller changes to left and 50% smaller changes to right
     switch (type) {
-      case ROTATE:
+      case ROTATE: {
         const h = this.handles[ROTATE]
         h.x += udx
         h.y += udy
@@ -239,8 +240,8 @@ export default class HandleCollection {
         // this will rotate around middle point
         ObjectHelper.rotateObject(obj, an)
         break
-
-      case BOTTOM:
+      }
+      case BOTTOM: {
         // this is same fro NON tile as for tile TOP
         if (!obj.gid) {
           obj.height += dy
@@ -251,9 +252,8 @@ export default class HandleCollection {
         obj.y += dy * Math.cos(obj.rotation * FROM_DEGREES)
         obj.height += dy
         break
-
-      case TOP:
-        //
+      }
+      case TOP: {
         if (!obj.gid) {
           obj.x -= dy * Math.sin(obj.rotation * FROM_DEGREES)
           obj.y += dy * Math.cos(obj.rotation * FROM_DEGREES)
@@ -263,16 +263,17 @@ export default class HandleCollection {
 
         obj.height -= dy
         break
-
-      case LEFT:
+      }
+      case LEFT: {
         obj.x += dx * Math.cos(obj.rotation * FROM_DEGREES)
         obj.y += dx * Math.sin(obj.rotation * FROM_DEGREES)
         obj.width -= dx
         break
-
-      case RIGHT:
+      }
+      case RIGHT: {
         obj.width += dx
         break
+      }
     }
   }
 
@@ -280,7 +281,7 @@ export default class HandleCollection {
     switch
   }*/
 
-  setActive (x, y) {
+  setActive(x, y) {
     this.activeHandle = null
     this.activeHandleType = -1
     for (let i = 0; i < this.handles.length; i++) {
@@ -292,7 +293,7 @@ export default class HandleCollection {
     }
     return false
   }
-  clearActive () {
+  clearActive() {
     this.activeHandle = null
     this.activeHandleType = -1
   }

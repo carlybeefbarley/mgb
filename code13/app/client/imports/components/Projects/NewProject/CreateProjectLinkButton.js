@@ -1,21 +1,20 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import QLink from '/client/imports/routes/QLink';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import QLink from '/client/imports/routes/QLink'
 
-// The Create Project link is always in context of a user since only a user can create a project in their account. 
+// The Create Project link is always in context of a user since only a user can create a project in their account.
 
-export default CreateProjectLinkButton = React.createClass({
+const CreateProjectLinkButton = React.createClass({
   PropTypes: {
-    currUser: PropTypes.object            // Currently Logged in user. Can be null
+    currUser: PropTypes.object, // Currently Logged in user. Can be null
   },
 
   render: function() {
     const { currUser } = this.props
 
-    if (!currUser)
-      return null
+    if (!currUser) return null
 
-    const to=`/u/${currUser.profile.name}/projects/create`
+    const to = `/u/${currUser.profile.name}/projects/create`
 
     return (
       <div className="ui green tiny button">
@@ -24,6 +23,7 @@ export default CreateProjectLinkButton = React.createClass({
         </QLink>
       </div>
     )
-  }
-
+  },
 })
+
+export default CreateProjectLinkButton

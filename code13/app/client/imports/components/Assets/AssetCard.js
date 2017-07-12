@@ -20,19 +20,29 @@ import UserLoves from '/client/imports/components/Controls/UserLoves'
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
 
 export const assetViewChoices = {
-  s: { showFooter: false, showWorkstate: true, showMeta: false, showExtra: false, showImg: false, tightRows: true },
+  s: {
+    showFooter: false,
+    showWorkstate: true,
+    showMeta: false,
+    showExtra: false,
+    showImg: false,
+    tightRows: true,
+  },
   m: { showFooter: false, showWorkstate: true, showMeta: false, showExtra: true, showImg: true },
   l: { showFooter: false, showWorkstate: true, showMeta: true, showExtra: true, showImg: true },
-  xl: { showFooter: true, showWorkstate: true, showMeta: true, showExtra: true, showImg: true }
+  xl: { showFooter: true, showWorkstate: true, showMeta: true, showExtra: true, showImg: true },
 }
 
-const _preventOnMouseUpClickSteal= e => { e.preventDefault(); e.stopPropagation() }
+const _preventOnMouseUpClickSteal = e => {
+  e.preventDefault()
+  e.stopPropagation()
+}
 
 export const defaultAssetViewChoice = 'm'
 
-export default AssetCard = React.createClass({
+const AssetCard = React.createClass({
   propTypes: {
-    classNames: PropTypes.string,  // Null, or string with extra classnames
+    classNames: PropTypes.string, // Null, or string with extra classnames
     showFooter: PropTypes.bool, // If false, hide the 4-button footer
     fluid: PropTypes.bool, // If true then this is a fluid (full width) card.
     asset: PropTypes.object,
@@ -40,44 +50,42 @@ export default AssetCard = React.createClass({
     currUser: PropTypes.object, // currently Logged In user (not always provided)
     canEdit: PropTypes.bool, // Whether changes (like stable, delete etc) are allowed. Can be false
     renderView: PropTypes.string, // One of null/undefined  OR  one of the keys of AssetCard.assetViewChoices
-    allowDrag: PropTypes.bool.isRequired // True if drag is allowed
+    allowDrag: PropTypes.bool.isRequired, // True if drag is allowed
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object
+    urlLocation: React.PropTypes.object,
   },
 
-  getDefaultProps: function () {
+  getDefaultProps: function() {
     return {
       canEdit: false,
-      renderView: defaultAssetViewChoice
+      renderView: defaultAssetViewChoice,
     }
   },
 
-  componentDidMount()
-  {
+  componentDidMount() {
     // this is here because React makes passive event listeners and it's not
     // possible to prevent default from passive event listener
     this.dragSurface = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
     if(this.props.allowDrag)
-      this.dragSurface.addEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
-
+      this.dragSurface.addEventListener('touchstart', DragNDropHelper.startSyntheticDrag)
   },
-  componentWillUnmount(){
+  componentWillUnmount() {
     // See comment in componentDidMount() and #478
     if(this.props.allowDrag)
-      this.dragSurface.removeEventListener("touchstart", DragNDropHelper.startSyntheticDrag)
+      this.dragSurface.removeEventListener('touchstart', DragNDropHelper.startSyntheticDrag)
   },
 
-  startDrag (e) {
+  startDrag(e) {
     const { asset } = this.props
     const url = `/api/asset/png/${asset._id}`
     // IE supports only text.. so - encode everything in the "text"
-    e.dataTransfer.setData( 'text', JSON.stringify({ link: url, asset: asset }) )
+    e.dataTransfer.setData('text', JSON.stringify({ link: url, asset: asset }))
     $(document.body).addClass('dragging') // this is in mgb.css
   },
 
-  endDrag (e) {
+  endDrag(e) {
     //const { asset } = this.props
     //console.log(`AssetCard stopDrag(${asset ? asset._id : 'null?'})..`)
     $(document.body).removeClass('dragging') // this is in mgb.css
@@ -95,9 +103,8 @@ export default AssetCard = React.createClass({
     }
   },
 
-  render () {
-    if (!this.props.asset)
-      return null
+  render() {
+    if (!this.props.asset) return null
 
     const { renderView, asset, fluid, canEdit, classNames, ownersProjects } = this.props
     const assetKindIcon = AssetKinds.getIconName(asset.kind)
@@ -144,15 +151,9 @@ export default AssetCard = React.createClass({
         key={asset._id}
         className={`${classNames ? classNames : ''} animated fadeIn link`}
       >
-
-      <div ref='thumbnailCanvas'>
-        { viewOpts.showImg &&
-          <Thumbnail
-            constrainHeight='155px'
-            asset={asset}
-          />
-        }
-      </div>
+        <div ref="thumbnailCanvas">
+          {viewOpts.showImg && <Thumbnail constrainHeight="155px" asset={asset} />}
+        </div>
 
         <Card.Content>
           {viewOpts.showWorkstate &&
@@ -166,38 +167,35 @@ export default AssetCard = React.createClass({
                 />
               </span>
               <WorkState
-              workState={asset.workState}
-              size={viewOpts.showExtra ? null : 'small'}
-              canEdit={false}
+                workState={asset.workState}
+                size={viewOpts.showExtra ? null : 'small'}
+                canEdit={false}
               />
             </span>}
 
-          { !viewOpts.showExtra &&
+          {!viewOpts.showExtra &&
             // This is used for SMALL sizes. It has a popup to show the Medium one!
             <Popup
               hoverable
               mouseEnterDelay={500}
-              position='left center'
+              position="left center"
               trigger={
-                (
-                  <div style={{ flexDirection: 'column' }}>
-                  { /* Asset Kind Icon */ }
-                    <Icon
-                      style={{ float: 'left', marginRight: '12px' }}
-                      color={assetKindColor}
-                      size='large'
-                      name={assetKindIcon}
-                    />
-                    {shownAssetName}
-                  </div>
-                )
+                <div style={{ flexDirection: 'column' }}>
+                  {/* Asset Kind Icon */}
+                  <Icon
+                    style={{ float: 'left', marginRight: '12px' }}
+                    color={assetKindColor}
+                    size="large"
+                    name={assetKindIcon}
+                  />
+                  {shownAssetName}
+                </div>
               }
             >
               <div style={{ width: '200px' }}>
                 <AssetCard {...{ ...this.props, renderView: 'm' }} />
               </div>
-            </Popup>
-          }
+            </Popup>}
 
           {viewOpts.showExtra &&
             <Card.Header
@@ -208,28 +206,37 @@ export default AssetCard = React.createClass({
           {viewOpts.showMeta &&
             <Card.Meta>
               <div>
-                <Icon name='history' />
-                <span>Updated <UX.TimeAgo when={asset.updatedAt}/></span>
+                <Icon name="history" />
+                <span>
+                  Updated <UX.TimeAgo when={asset.updatedAt} />
+                </span>
               </div>
               <div style={{ color: numChildForks ? 'black' : null }}>
-                <Icon name='fork' color={hasParentFork ? 'blue' : null} />
-                <span>{numChildForks} Forks</span>
+                <Icon name="fork" color={hasParentFork ? 'blue' : null} />
+                <span>
+                  {numChildForks} Forks
+                </span>
               </div>
               {editProjects}
             </Card.Meta>}
 
           {viewOpts.showMeta &&
             (asset.text && asset.text !== '') &&
-            <Card.Description content={<small>{asset.text}</small>} />}
+            <Card.Description
+              content={
+                <small>
+                  {asset.text}
+                </small>
+              }
+            />}
 
           {asset.isDeleted &&
-            <div className='ui massive red corner label'>
+            <div className="ui massive red corner label">
               <span style={{ fontSize: '10px', paddingLeft: '10px' }}>DELETED</span>
             </div>}
-
         </Card.Content>
 
-        { viewOpts.showExtra &&
+        {viewOpts.showExtra &&
           <Card.Content extra>
             <span
               style={{ color: assetKindColor }}
@@ -240,31 +247,36 @@ export default AssetCard = React.createClass({
               {assetKindName}
               {asset.skillPath &&
                 asset.skillPath.length > 0 &&
-                <ChallengeState ownername={asset.dn_ownerName} asIcon={true} style={{marginLeft: '3px'}}/>}
+                <ChallengeState ownername={asset.dn_ownerName} asIcon style={{ marginLeft: '3px' }} />}
             </span>
-            <UX.UserAvatarName username={asset.dn_ownerName}/>
-          </Card.Content>
-        }
+            <UX.UserAvatarName username={asset.dn_ownerName} />
+          </Card.Content>}
 
         {viewOpts.showFooter &&
-          <div className='ui two small bottom attached icon buttons'>
+          <div className="ui two small bottom attached icon buttons">
             <div
-              className={(canEdit ? '' : 'disabled ') + 'ui ' + (asset.isCompleted ? 'blue' : '') + ' compact button'}
+              className={
+                (canEdit ? '' : 'disabled ') + 'ui ' + (asset.isCompleted ? 'blue' : '') + ' compact button'
+              }
               style={veryCompactButtonStyle}
               onMouseUp={this.handleCompletedClick}
               onTouchEnd={this.handleCompletedClick}
             >
               <Icon name={asset.isCompleted ? 'lock' : 'unlock'} />
-              <small>&nbsp;{asset.isCompleted ? 'Locked' : 'Unlocked'}</small>
+              <small>
+                &nbsp;{asset.isCompleted ? 'Locked' : 'Unlocked'}
+              </small>
             </div>
             <div
-              className={( canEdit && !asset.isCompleted ? '' : 'disabled ') + 'ui compact button'}
+              className={(canEdit && !asset.isCompleted ? '' : 'disabled ') + 'ui compact button'}
               style={veryCompactButtonStyle}
               onMouseUp={this.handleDeleteClick}
               onTouchEnd={this.handleDeleteClick}
             >
-              {asset.isDeleted ? null : <Icon color='red' name='trash' />}
-              <small>&nbsp;{asset.isDeleted ? 'Undelete' : 'Delete'}</small>
+              {asset.isDeleted ? null : <Icon color="red" name="trash" />}
+              <small>
+                &nbsp;{asset.isDeleted ? 'Undelete' : 'Delete'}
+              </small>
             </div>
           </div>}
       </Card>
@@ -276,67 +288,61 @@ export default AssetCard = React.createClass({
    *
    * @param {any} err
    */
-  _handleMeteorErrResp (err) {
-    if (err)
-      showToast(err.reason, 'error')
+  _handleMeteorErrResp(err) {
+    if (err) showToast(err.reason, 'error')
   },
 
-  handleChangeChosenProjectNames (newChosenProjectNamesArray) {
+  handleChangeChosenProjectNames(newChosenProjectNamesArray) {
     newChosenProjectNamesArray.sort()
     Meteor.call(
       'Azzets.update',
       this.props.asset._id,
       this.props.canEdit,
       { projectNames: newChosenProjectNamesArray },
-      this._handleMeteorErrResp
+      this._handleMeteorErrResp,
     )
 
     let projectsString = newChosenProjectNamesArray.join(', ')
     logActivity('asset.project', `now in projects ${projectsString}`, null, this.props.asset)
   },
 
-  handleDeleteClick (e) {
+  handleDeleteClick(e) {
     let newIsDeletedState = !this.props.asset.isDeleted
     Meteor.call(
       'Azzets.update',
       this.props.asset._id,
       this.props.canEdit,
       { isDeleted: newIsDeletedState },
-      this._handleMeteorErrResp
+      this._handleMeteorErrResp,
     )
 
-    if (newIsDeletedState)
-      logActivity('asset.delete', 'Delete asset', null, this.props.asset)
-    else
-      logActivity('asset.undelete', 'Undelete asset', null, this.props.asset)
+    if (newIsDeletedState) logActivity('asset.delete', 'Delete asset', null, this.props.asset)
+    else logActivity('asset.undelete', 'Undelete asset', null, this.props.asset)
 
     e.preventDefault()
     e.stopPropagation()
   },
 
-  handleCompletedClick (e) {
+  handleCompletedClick(e) {
     let newIsCompletedStatus = !this.props.asset.isCompleted
     Meteor.call(
       'Azzets.update',
       this.props.asset._id,
       this.props.canEdit,
       { isCompleted: newIsCompletedStatus },
-      this._handleMeteorErrResp
+      this._handleMeteorErrResp,
     )
 
-    if (newIsCompletedStatus)
-      logActivity('asset.stable', 'Mark asset as stable', null, this.props.asset)
-    else
-      logActivity('asset.unstable', 'Mark asset as unstable', null, this.props.asset)
+    if (newIsCompletedStatus) logActivity('asset.stable', 'Mark asset as stable', null, this.props.asset)
+    else logActivity('asset.unstable', 'Mark asset as unstable', null, this.props.asset)
 
     e.preventDefault()
     e.stopPropagation()
   },
 
-  handleEditClick (e) {
+  handleEditClick(e) {
     if(this.touchHasMoved)
       return
-
     const asset = this.props.asset
     const url = '/u/' + asset.dn_ownerName + '/asset/' + asset._id
     // middle click - mouseUp reports buttons == 0; button == 1
@@ -353,3 +359,5 @@ export default AssetCard = React.createClass({
     this.touchHasMoved = false
   }
 })
+
+export default AssetCard

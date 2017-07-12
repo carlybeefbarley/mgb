@@ -6,11 +6,9 @@ import LayerTypes from '../../Common/Map/Tools/LayerTypes'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import Properties from './ActorMapProperties'
 
-
 import CameraTools from '../../Common/Map/Tools/CameraTools'
 
 export default class MapToolbar extends React.Component {
-
   render() {
     // older maps don't have default mode
     if (!this.props.options.mode) {
@@ -30,27 +28,29 @@ export default class MapToolbar extends React.Component {
           tooltip: 'Save the map (auto save is ON)',
           level: 1,
           disabled,
-          shortcut: 'Ctrl+S' // Is it OK to override browsers save page?
+          shortcut: 'Ctrl+S', // Is it OK to override browsers save page?
         },
         {
           name: 'play',
           icon: this.props.isPlaying ? 'stop' : 'play',
           label: 'Play',
-          tooltip: this.props.isPlaying  ? 'Stop playing / Return to map editing' : 'Play this map',
+          tooltip: this.props.isPlaying ? 'Stop playing / Return to map editing' : 'Play this map',
           level: 1,
-          shortcut: 'Ctrl+Enter'
+          shortcut: 'Ctrl+Enter',
         },
         {
-          name: 'separator'
+          name: 'separator',
         },
         {
           name: 'undo',
           label: 'Undo',
-          iconText: (this.props.undoSteps.length ? ' ' + this.props.undoSteps.length : ''),
+          iconText: this.props.undoSteps.length ? ' ' + this.props.undoSteps.length : '',
           disabled: !this.props.undoSteps.length || disabled,
-          tooltip: 'Undo last action' + (_.last(this.props.undoSteps) ? ': ' + _.last(this.props.undoSteps).reason : ''),
+          tooltip:
+            'Undo last action' +
+            (_.last(this.props.undoSteps) ? ': ' + _.last(this.props.undoSteps).reason : ''),
           level: 2,
-          shortcut: 'Ctrl+Z'
+          shortcut: 'Ctrl+Z',
         },
         {
           name: 'redo',
@@ -59,10 +59,10 @@ export default class MapToolbar extends React.Component {
           disabled: !this.props.redoSteps.length || disabled,
           tooltip: 'Redo previous action',
           level: 2,
-          shortcut: 'Ctrl+Shift+Z'
+          shortcut: 'Ctrl+Shift+Z',
         },
         {
-          name: 'separator'
+          name: 'separator',
         },
         {
           name: 'showGridToggle',
@@ -72,16 +72,17 @@ export default class MapToolbar extends React.Component {
           level: 3,
           active: this.props.options.showGrid,
           shortcut: 'Alt+G',
-          disabled
+          disabled,
         },
         {
           name: 'zoomIn',
           icon: 'zoom in',
           label: 'Zoom in map',
-          tooltip: 'Click here or SHIFT + mousewheel over map area to change zoom level. Use mousewheel to scroll if the zoom is too large',
+          tooltip:
+            'Click here or SHIFT + mousewheel over map area to change zoom level. Use mousewheel to scroll if the zoom is too large',
           shortcut: 'Shift+PLUS',
           level: 7,
-          disabled
+          disabled,
         },
         /*
         {
@@ -107,10 +108,11 @@ export default class MapToolbar extends React.Component {
           name: 'zoomOut',
           icon: 'zoom out',
           label: 'Zoom out map',
-          tooltip: 'Click here or SHIFT + mousewheel over map area to change zoom level. Use mousewheel to scroll if the zoom is too large',
+          tooltip:
+            'Click here or SHIFT + mousewheel over map area to change zoom level. Use mousewheel to scroll if the zoom is too large',
           shortcut: 'Shift+MINUS',
           level: 7,
-          disabled
+          disabled,
         },
         {
           name: 'preview',
@@ -120,10 +122,10 @@ export default class MapToolbar extends React.Component {
           disabled,
           tooltip: 'Separate and pivot map layers in 3D view. Use center-click+drag mouse to spin map',
           level: 9,
-          shortcut: 'Ctrl+Alt+P'
+          shortcut: 'Ctrl+Alt+P',
         },
         {
-          name: 'separator'
+          name: 'separator',
         },
         {
           name: 'view',
@@ -132,7 +134,7 @@ export default class MapToolbar extends React.Component {
           label: 'View',
           tooltip: 'Allows to scroll map in the mobile mode',
           level: 1,
-          shortcut: 'V'
+          shortcut: 'V',
         },
         {
           name: 'stamp',
@@ -142,32 +144,32 @@ export default class MapToolbar extends React.Component {
           label: 'Stamp',
           tooltip: 'Stamp tiles on the map',
           level: 1,
-          shortcut: 'S'
+          shortcut: 'S',
         },
         {
           name: 'fill',
           icon: 'theme fill',
           label: 'Fill',
           active: this.props.options.mode == EditModes.fill,
-          disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
+          disabled: !layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying,
           tooltip: 'Fill Map or Selection with selected tile(s)',
           level: 6,
-          shortcut: 'F'
+          shortcut: 'F',
         },
         {
-          name: 'separator'
+          name: 'separator',
         },
         {
           name: 'eraser',
           label: 'Eraser',
           active: this.props.options.mode == EditModes.eraser,
           tooltip: 'Delete tile - or use [Ctrl + click] to quickly access this tool',
-          disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
+          disabled: !layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying,
           level: 1,
-          shortcut: 'E'
+          shortcut: 'E',
         },
         {
-          name: 'separator'
+          name: 'separator',
         },
         {
           name: 'rectangle',
@@ -177,7 +179,7 @@ export default class MapToolbar extends React.Component {
           disabled,
           tooltip: 'Rectangle Selection Tool',
           level: 3,
-          shortcut: 'Ctrl + Shift + R'
+          shortcut: 'Ctrl + Shift + R',
         },
         {
           name: 'wand',
@@ -185,8 +187,8 @@ export default class MapToolbar extends React.Component {
           active: this.props.options.mode == EditModes.wand,
           label: 'Magic Wand',
           tooltip: 'Magic Wand selection - Select adjacent tiles with same ID',
-          disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
-          level: 12
+          disabled: !layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying,
+          level: 12,
         },
         {
           name: 'picker',
@@ -194,8 +196,8 @@ export default class MapToolbar extends React.Component {
           icon: 'qrcode picker',
           label: 'Tile Picker',
           tooltip: 'Tile Picker - Select all tiles with same ID',
-          disabled: (!layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying),
-          level: 13
+          disabled: !layer || !LayerTypes.isTilemapLayer(layer.type) || this.props.isPlaying,
+          level: 13,
         },
         {
           name: 'clearSelection',
@@ -203,16 +205,11 @@ export default class MapToolbar extends React.Component {
           label: 'Clear Selection',
           tooltip: 'Clear selected tiles and/or objects',
           level: 4,
-          disabled
-        }
-      ]
+          disabled,
+        },
+      ],
     }
 
-    return <Toolbar
-      actions={this.props}
-      config={config}
-      className='map-tools'
-      name='MapTools'/>
+    return <Toolbar actions={this.props} config={config} className="map-tools" name="MapTools" />
   }
-
 }

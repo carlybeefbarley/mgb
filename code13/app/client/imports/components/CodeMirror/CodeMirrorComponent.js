@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
 
 // Import CodeMirror and its various dependencies.
 //   This is not as simple as it might sound...
@@ -11,36 +11,35 @@ import React, { PropTypes } from 'react';
 //    globals like 'utils' and 'event', and that confuses node/meteor greatly.
 //
 // Things get even more complicated once TERN (the code analysis system use for autocomplete smarts)
-import CodeMirror from 'codemirror';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/mode/jsx/jsx';
-import 'codemirror/mode/css/css';
-import 'codemirror/mode/htmlmixed/htmlmixed';
-import 'codemirror/addon/hint/show-hint';
-import 'codemirror/addon/edit/closebrackets';
-import 'codemirror/addon/selection/active-line';
-import 'codemirror/addon/edit/matchbrackets';
+import CodeMirror from 'codemirror'
+import 'codemirror/mode/javascript/javascript'
+import 'codemirror/mode/jsx/jsx'
+import 'codemirror/mode/css/css'
+import 'codemirror/mode/htmlmixed/htmlmixed'
+import 'codemirror/addon/hint/show-hint'
+import 'codemirror/addon/edit/closebrackets'
+import 'codemirror/addon/selection/active-line'
+import 'codemirror/addon/edit/matchbrackets'
 
-import 'codemirror/addon/fold/foldcode';
-import 'codemirror/addon/fold/foldgutter';
-import 'codemirror/addon/fold/brace-fold';
-import 'codemirror/addon/fold/comment-fold';
-import 'codemirror/addon/fold/xml-fold';
-import 'codemirror/addon/lint/lint';
+import 'codemirror/addon/fold/foldcode'
+import 'codemirror/addon/fold/foldgutter'
+import 'codemirror/addon/fold/brace-fold'
+import 'codemirror/addon/fold/comment-fold'
+import 'codemirror/addon/fold/xml-fold'
+import 'codemirror/addon/lint/lint'
 // import 'codemirror/addon/lint/javascript-lint';
-import 'codemirror/addon/lint/json-lint';
-import 'codemirror/addon/display/placeholder';
-import 'codemirror/addon/search/jump-to-line';
-import 'codemirror/addon/dialog/dialog';
-import 'codemirror/addon/scroll/annotatescrollbar';
-import 'codemirror/addon/search/matchesonscrollbar';
-import 'codemirror/addon/search/searchcursor';
-import 'codemirror/addon/search/search';
+import 'codemirror/addon/lint/json-lint'
+import 'codemirror/addon/display/placeholder'
+import 'codemirror/addon/search/jump-to-line'
+import 'codemirror/addon/dialog/dialog'
+import 'codemirror/addon/scroll/annotatescrollbar'
+import 'codemirror/addon/search/matchesonscrollbar'
+import 'codemirror/addon/search/searchcursor'
+import 'codemirror/addon/search/search'
 
 // Not used yet
 // import 'codemirror/addon/edit/closetag';
 // import 'codemirror/addon/fold/xml-fold';
 // import 'codemirror/addon/fold/markdown-fold';
 
-
-export default CodeMirror;
+export default CodeMirror

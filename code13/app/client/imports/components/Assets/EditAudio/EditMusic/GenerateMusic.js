@@ -1,31 +1,27 @@
-import _ from 'lodash';
-import React, { PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
+import ReactDOM from 'react-dom'
 
-import Djent from './djent/Djent.js';
+import Djent from './djent/Djent.js'
 
 export default class GenerateMusic extends React.Component {
+  constructor(props) {
+    super(props)
+  }
 
-	constructor(props) {
-  	super(props);
+  importAudio(audioObject) {
+    this.props.importMusic(audioObject, 'Generated music')
+  }
 
-	}
-
-	importAudio(audioObject){
-		this.props.importMusic(audioObject, "Generated music")
-	}
-
-  stop(){
+  stop() {
     this.refs.djent.stop()
   }
 
-	render(){
-		return (
-			<div className="content">
-				<Djent ref="djent"
-					importAudio={ this.importAudio.bind(this) }
-				/>
-	    </div>
-		)
-	}	
+  render() {
+    return (
+      <div className="content">
+        <Djent ref="djent" importAudio={this.importAudio.bind(this)} />
+      </div>
+    )
+  }
 }

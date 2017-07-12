@@ -1,7 +1,7 @@
 export const templateTutorial = [
-  
-  { label: "Simple Tutorial",
-    description: "Simple Tutorial with just 4 basic steps",
+  {
+    label: 'Simple Tutorial',
+    description: 'Simple Tutorial with just 4 basic steps',
     code: `{
   "steps": [
     {
@@ -19,7 +19,6 @@ export const templateTutorial = [
     },
     "%complete%"
   ]
-}`
-  }
-
+}`,
+  },
 ]

@@ -11,52 +11,52 @@ import { Icon, Menu } from 'semantic-ui-react'
 
 export default class ProjectMembershipEditor extends React.Component {
   static propTypes = {
-    availableProjectNamesArray:     PropTypes.array,        // Array of all possible project names
-    chosenProjectNames:             PropTypes.array,        // Array of chosen project names
-    handleChangeChosenProjectNames: PropTypes.func,         // Will be passed a new array
-    canEdit:                        PropTypes.bool          // Can be false if read-only
+    availableProjectNamesArray: PropTypes.array, // Array of all possible project names
+    chosenProjectNames: PropTypes.array, // Array of chosen project names
+    handleChangeChosenProjectNames: PropTypes.func, // Will be passed a new array
+    canEdit: PropTypes.bool, // Can be false if read-only
   }
 
   render() {
     const { canEdit, chosenProjectNames, availableProjectNamesArray } = this.props
-    const projectNames = "In projects: " + (chosenProjectNames.length === 0 ? "none" : chosenProjectNames.join(", ") )
+    const projectNames =
+      'In projects: ' + (chosenProjectNames.length === 0 ? 'none' : chosenProjectNames.join(', '))
 
     if (!canEdit || !availableProjectNamesArray || availableProjectNamesArray.length === 0)
       return (
         <div>
-          <Icon name="sitemap"/> {projectNames}
+          <Icon name="sitemap" /> {projectNames}
         </div>
       )
 
     // OK, so we can edit! Let's do this! ...  Create the  | (edit) > |      UI
     return (
       <div>
-        <Icon name='sitemap'/> {projectNames}
+        <Icon name="sitemap" /> {projectNames}
         <div className="ui simple dropdown item">
-          <Icon name='dropdown'/>
+          <Icon name="dropdown" />
           <Menu>
-            { availableProjectNamesArray.map(k => {
+            {availableProjectNamesArray.map(k => {
               const inList = _.includes(chosenProjectNames, k)
               return (
                 <Menu.Item
-                    active={inList}
-                    data-value={k}
-                    key={k}
-                    onClick={() => this.handleToggleProjectName(k)}>
+                  active={inList}
+                  data-value={k}
+                  key={k}
+                  onClick={() => this.handleToggleProjectName(k)}
+                >
                   <Icon name={inList ? 'toggle on' : 'toggle off'} />&nbsp;{k}
                 </Menu.Item>
               )
-            } ) }
+            })}
           </Menu>
         </div>
       </div>
     )
   }
 
-  handleToggleProjectName = pName =>
-  {
+  handleToggleProjectName = pName => {
     if (this.props.handleChangeChosenProjectNames)
-      this.props.handleChangeChosenProjectNames( _.xor(this.props.chosenProjectNames, [pName]))
+      this.props.handleChangeChosenProjectNames(_.xor(this.props.chosenProjectNames, [pName]))
   }
-
 }

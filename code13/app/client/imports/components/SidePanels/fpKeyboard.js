@@ -7,12 +7,10 @@ import KeyBindings from '/client/imports/components/Skills/Keybindings'
 //       https://github.com/zzarcon/react-keypress   (kinda simple)
 //       https://github.com/avocode/react-shortcuts  (a real keypress manager)
 
-const fpKeyboard = (props) => (
-  <KeyBindings commandContext="editor.text." currUser={props.currUser} />
-)
+const fpKeyboard = props => <KeyBindings commandContext="editor.text." currUser={props.currUser} />
 
 fpKeyboard.propTypes = {
-  currUser:  PropTypes.object           // Currently Logged in user. Can be null/undefined
+  currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
 }
 
 export default fpKeyboard

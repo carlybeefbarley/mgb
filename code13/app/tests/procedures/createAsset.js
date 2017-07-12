@@ -1,7 +1,7 @@
-const webdriver = require('selenium-webdriver');
+const webdriver = require('selenium-webdriver')
 const Key = webdriver.Key
 
-const SeleniumHelper = require("../helpers/selenium.js")
+const SeleniumHelper = require('../helpers/selenium.js')
 const el = {
   goToAssets: '#mgbjr-np-assets',
   newAsset: '#mgbjr-create-new-asset',
@@ -10,15 +10,15 @@ const el = {
   createBtn: '#mgbjr-create-asset-button',
   shouldAppear: type => `a[href="/u/tester/assets?kinds=${type}"]`,
   cmLine: '.CodeMirror-activeline',
-  navPanelCreate: '#mgbjr-navPanelIcons-create'
+  navPanelCreate: '#mgbjr-navPanelIcons-create',
 }
-module.exports = (browser) => {
+module.exports = browser => {
   const sel = SeleniumHelper(browser)
 
   // return function so procedure can be used directly as callback
   return (type, done) => {
     // wait for React root element
-    sel.css("#root")
+    sel.css('#root')
 
     sel.css(el.goToAssets).click()
     sel.css(el.newAsset).click()
@@ -33,13 +33,13 @@ module.exports = (browser) => {
   }
 }
 module.exports.assetType = {
-  graphic: "graphic",
-  actor: "actor",
-  actormap: "actormap",
-  map: "map",
-  code: "code",
-  sound: "sound",
-  music: "music",
-  game: "game",
-  tutorial: "tutorial"
+  graphic: 'graphic',
+  actor: 'actor',
+  actormap: 'actormap',
+  map: 'map',
+  code: 'code',
+  sound: 'sound',
+  music: 'music',
+  game: 'game',
+  tutorial: 'tutorial',
 }

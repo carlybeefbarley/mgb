@@ -18,43 +18,39 @@ const fieldsChatPublic = {
   message: 1,
   isDeleted: 1,
   suFlagId: 1,
-  suIsBanned: 1
+  suIsBanned: 1,
 }
 
-Meteor.publish('chats.channelName', function(toChannelName, limit=20) {
-
+Meteor.publish('chats.channelName', function(toChannelName, limit = 20) {
   const channelObj = parseChannelName(toChannelName)
   // Access check for publication of channels
-  switch (channelObj.scopeGroupName)
-  {
-  case 'Global':
-    // Everyone can read these
-    break
+  switch (channelObj.scopeGroupName) {
+    case 'Global':
+      // Everyone can read these
+      break
 
-  case 'Project':
-    if (!lookupIsUseridInProject(this.userId, channelObj.scopeId))
-      return this.ready()
-    break
+    case 'Project':
+      if (!lookupIsUseridInProject(this.userId, channelObj.scopeId)) return this.ready()
+      break
 
-  case 'Asset':
-    break   // For now make these publicly readable. Maybe tighten up later
+    case 'Asset':
+      break // For now make these publicly readable. Maybe tighten up later
 
-  case 'User':
-    break   // For now make these publicly readable. Maybe tighten up later
+    case 'User':
+      break // For now make these publicly readable. Maybe tighten up later
 
-  case 'DirectMessage':
-  default:
-    console.log(`Unhandled scopeGroupName ${channelObj.scopeGroupName} in chats.channelName`)
+    case 'DirectMessage':
+    default:
+      console.log(`Unhandled scopeGroupName ${channelObj.scopeGroupName} in chats.channelName`)
   }
 
-  if (limit > chatParams.maxClientChatHistory)
-    limit = chatParams.maxClientChatHistory
+  if (limit > chatParams.maxClientChatHistory) limit = chatParams.maxClientChatHistory
 
   let selector = { toChannelName: toChannelName }
-  let options =  {
+  let options = {
     limit: limit,
     sort: { createdAt: -1 },
-    fields: fieldsChatPublic
+    fields: fieldsChatPublic,
   }
 
   return Chats.find(selector, options)
@@ -64,4 +60,4 @@ Meteor.publish('chats.channelName', function(toChannelName, limit=20) {
 //    CHAT Indexes
 //
 
-Chats._ensureIndex( { "toChannelName": 1, "createdAt": -1 } )
+Chats._ensureIndex({ toChannelName: 1, createdAt: -1 })

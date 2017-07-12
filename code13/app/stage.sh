@@ -47,7 +47,7 @@ sed "s/__MGB_GIT_DESCRIBE__WILL_GO_HERE__/${git_describe}/;" | \
 sed 's/v2.mygamebuilder.com/staging.mygamebuilder.com/g' > settings.staging.generated.json
 
 if [[ ! -f settings.staging.generated.json ]]; then
-  echo "No generated staging file..."
+  echo "No generated staging file"
   exit 1
 fi
 
@@ -57,7 +57,11 @@ fi
 #
 if meteor_user=$(meteor whoami > /dev/null 2>&1); then
   echo "... logged in as $meteor_user"
-elif [[ -z $METEOR_SESSION_FILE_CONTENT ]]; then
+elif [ -n ${METEOR_SESSION_FILE_CONTENT} ]; then
+  echo "... using METEOR_SESSION_FILE $METEOR_SESSION_FILE_CONTENT"
+  echo "$METEOR_SESSION_FILE_CONTENT" > meteor_session.json
+  METEOR_SESSION_FILE=meteor_session.json
+else
   echo ""
   echo "You must log in or create a session file, see:"
   echo "  https://docs.meteor.com/commandline.html#meteorloginlogout"
@@ -65,14 +69,10 @@ elif [[ -z $METEOR_SESSION_FILE_CONTENT ]]; then
   echo "If using a session file, set METEOR_SESSION_FILE_CONTENT to its contents."
   echo "This script will create the session file from that variable."
   exit 1
-else
-  echo "... using METEOR_SESSION_FILE $METEOR_SESSION_FILE_CONTENT"
-  echo "$METEOR_SESSION_FILE_CONTENT" > meteor_session.json
-  METEOR_SESSION_FILE=meteor_session.json
 fi
 
 #
 # Deploy
 #
 echo "... deploying"
-DEPLOY_HOSTNAME=galaxy.meteor.com meteor deploy staging.mygamebuilder.com --settings settings.staging.generated.json
+echo "DEPLOY_HOSTNAME=galaxy.meteor.com meteor deploy staging.mygamebuilder.com --settings settings.staging.generated.json"

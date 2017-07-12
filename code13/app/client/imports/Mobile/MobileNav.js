@@ -61,7 +61,9 @@ const AllButtons = (p) => (<div className="mobile-nav-all-buttons">
 
 const doLogout = () => {
   Meteor.logout()
-  window.location = '/'
+  window.setTimeout(() => {
+    window.location = '/'
+  }, 100)
 }
 
 const NotReady = () => (
@@ -419,7 +421,10 @@ class MobileNav extends React.Component {
       title: 'Projects',
       icon: 'sitemap',
       action: (mobnav) => {
-        mobnav.setLocation(`/u/${Meteor.user().username}/projects`)
+        if (Meteor.user())
+          mobnav.setLocation(`/u/${Meteor.user().username}/projects`)
+        else
+          mobnav.setLocation(`/login`)
       },
     },
     competitions: {

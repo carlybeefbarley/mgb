@@ -198,7 +198,7 @@ class PlayCodeGame extends React.Component {
         }
       }
     }
-
+    setScale()
     //if (width > gameWidth || height > gameHeight) setScale()
 
     if (this.props.metadata.allowFullScreen) {
@@ -206,9 +206,9 @@ class PlayCodeGame extends React.Component {
         // this means that iframe is in fullscreen mode!!!
         if (this.refs.iframe.offsetHeight === window.innerHeight){
           //this.refs.iframe.style.transform = 'scale(1)'
-        }else
-          {
-          //setScale()this.exitFullScreen()
+        }
+        else {
+          this.exitFullScreen()
         }
       }
 
@@ -265,8 +265,7 @@ class PlayCodeGame extends React.Component {
    * Checks if we can offer fullscreen functionality
    * */
   canDoFullScreen() {
-    return this.props.metadata
-    . allowFullScreen
+    return this.props.metadata.allowFullScreen
   }
 
   createConfig() {
@@ -279,9 +278,8 @@ class PlayCodeGame extends React.Component {
           tooltip: 'Restart game',
           disabled: false,
           level: 1,
-          //          shortcut: 'Alt+R'   // Restart keypress can't be done reliably because game can take focus. Fix #958 because this is nice-to-have but confusing
-        },
-      ],
+        }
+      ]
     }
 
     if (this.canDoFullScreen()) {
@@ -292,7 +290,6 @@ class PlayCodeGame extends React.Component {
         tooltip: 'Run game in Fullscreen',
         disabled: false,
         level: 1,
-        //          shortcut: 'Alt+F'   // Full-screen keypress can't be done reliably because game can take focus. Fix #958 because this is nice-to-have but confusing
       })
     }
 
@@ -307,7 +304,8 @@ class PlayCodeGame extends React.Component {
     let width = metadata.width ? metadata.width + 'px' : '100%' // fallback for older games
     let height = metadata.height ? metadata.height + 'px' : '100%' // fallback for older games
 
-    if (!_codeName || _codeName === '') return <ThingNotFound type="CodeGame" id="&quot;&quot;" />
+    if (!_codeName || _codeName === '')
+      return <ThingNotFound type="CodeGame" id='""'/>
 
     const origin =
       window.location.origin ||

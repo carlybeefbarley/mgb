@@ -16,7 +16,7 @@ import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 import Spinner from '/client/imports/components/Nav/Spinner'
 
 import LoadMore from '/client/imports/mixins/LoadMore'
-
+import QLink from '/client/imports/routes/QLink'
 
 
 // Default values for url?query - i.e. the this.props.location.query keys

@@ -60,7 +60,7 @@ if meteor_user=$(meteor whoami 2> /dev/null); then
 elif [[ -n $METEOR_SESSION_FILE_CONTENT ]]; then
   echo "... using METEOR_SESSION_FILE $METEOR_SESSION_FILE_CONTENT"
   echo "$METEOR_SESSION_FILE_CONTENT" > meteor_session.json
-  METEOR_SESSION_FILE=meteor_session.json
+  export METEOR_SESSION_FILE=meteor_session.json
 else
   echo ""
   echo "You must log in or create a session file, see:"

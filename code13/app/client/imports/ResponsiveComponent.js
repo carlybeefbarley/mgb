@@ -29,8 +29,7 @@ export default function(Component, wrapperStyles = {}, componentStyles = {}) {
 
     handleResize() {
       const wrapper = this.wrapper
-      if(!wrapper)
-        return
+      if (!wrapper) return
 
       const { activeRules, respData } = this.matchRules(wrapper.clientWidth, wrapper.clientHeight)
       this.setState({
@@ -56,9 +55,10 @@ export default function(Component, wrapperStyles = {}, componentStyles = {}) {
         var minHeight = ruleValue.minHeight || 0
         var maxHeight = ruleValue.maxHeight || 99999
 
-        if ( ((ruleValue.minWidth || ruleValue.maxWidth) && (newWidth >= minWidth && newWidth <= maxWidth) ) ||
-          ( ( ruleValue.minHeight || ruleValue.maxHeight) && (newHeight >= minHeight && newHeight <= maxHeight) )
-        ){
+        if (
+          ((ruleValue.minWidth || ruleValue.maxWidth) && (newWidth >= minWidth && newWidth <= maxWidth)) ||
+          ((ruleValue.minHeight || ruleValue.maxHeight) && (newHeight >= minHeight && newHeight <= maxHeight))
+        ) {
           activeRules.push(ruleName)
           if (_.isPlainObject(ruleValue.respData)) Object.assign(respData, ruleValue.respData)
         }
@@ -97,24 +97,29 @@ export default function(Component, wrapperStyles = {}, componentStyles = {}) {
       }
 
       return (
-        <div
-            ref={ wrapper => (this.wrapper = wrapper) }
-            style={{ ...styles.wrapper, ...wrapperStyles }}>
+        <div ref={wrapper => (this.wrapper = wrapper)} style={{ ...styles.wrapper, ...wrapperStyles }}>
           <div
-              ref={ component => (this.component = component) }
-              className={ classNames }
-              style={{ ...styles.component, ...componentStyles }}
-          >  { !loaded || width <= 0 ? null
-              :<Component
-                  {...this.props }
-                  respWidth={ width }
-                  respHeight={ height }
-                  respActiveRules={ activeRules }
-                  respData={ respData }
-                  respDebug={ <div>Width: {width}px    activeRules: [ { activeRules && activeRules.join(',') } ]  respData: { ' '}
-                      {JSON.stringify(respData) }</div> }
-                  respIsRuleActive={ this.isRuleActive }
-            />}
+            ref={component => (this.component = component)}
+            className={classNames}
+            style={{ ...styles.component, ...componentStyles }}
+          >
+            {' '}
+            {!loaded || width <= 0
+              ? null
+              : <Component
+                  {...this.props}
+                  respWidth={width}
+                  respHeight={height}
+                  respActiveRules={activeRules}
+                  respData={respData}
+                  respDebug={
+                    <div>
+                      Width: {width}px activeRules: [ {activeRules && activeRules.join(',')} ] respData: {' '}
+                      {JSON.stringify(respData)}
+                    </div>
+                  }
+                  respIsRuleActive={this.isRuleActive}
+                />}
           </div>
         </div>
       )

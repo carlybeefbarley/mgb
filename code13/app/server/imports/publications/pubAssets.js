@@ -20,22 +20,27 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 Meteor.publish('assets.public', function(
   userId,
   selectedAssetKinds,
-  searchName,                   // TODO: cleanse the nameSearch RegExp. Issue is regex vs text index. See notes in _ensureIndex() below.
-  projectName=null,
-  showDeleted=false,
-  showStable=false,
-  assetSortType=undefined,      // null/undefined or one of the keys of allSorters{}
-  limitCount=SpecialGlobals.assets.mainAssetsListDefaultLimit,
-  hideWorkstateMask=0,          // As defined for use by assetMakeSelector()
-  showChallengeAssets=false
-)
-{
+  searchName, // TODO: cleanse the nameSearch RegExp. Issue is regex vs text index. See notes in _ensureIndex() below.
+  projectName = null,
+  showDeleted = false,
+  showStable = false,
+  assetSortType = undefined, // null/undefined or one of the keys of allSorters{}
+  limitCount = SpecialGlobals.assets.mainAssetsListDefaultLimit,
+  hideWorkstateMask = 0, // As defined for use by assetMakeSelector()
+  showChallengeAssets = false,
+) {
   return loadAssets({
     userId,
     kind: selectedAssetKinds,
     limit: limitCount,
     sort: assetSortType,
-    searchName, projectName, showDeleted, showStable, hideWorkstateMask, showChallengeAssets})
+    searchName,
+    projectName,
+    showDeleted,
+    showStable,
+    hideWorkstateMask,
+    showChallengeAssets,
+  })
 })
 
 // Observe assets only -

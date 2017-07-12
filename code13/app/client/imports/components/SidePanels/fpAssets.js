@@ -24,7 +24,6 @@ import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
 
 import LoadMore from '/client/imports/mixins/LoadMore'
 
-
 // This lets this flexPanel remember its recent state even beyond dismounts
 let _persistedState = null
 
@@ -77,27 +76,27 @@ const ShowFromWho = ({ value, currUser, otherUser, onChange }) => {
 }
 
 class fpAssets extends LoadMore {
-
-  staticpropTypes= {
-    currUser: PropTypes.object,             // Currently Logged in user. Can be null/undefined
-    user: PropTypes.object,             // User object for context we are navigating to in main page. Can be null/undefined. Can be same as currUser, or different user
-    currUserProjects: PropTypes.array,              // Projects list for currently logged in user
-    activity: PropTypes.array.isRequired,   // An activity Stream passed down from the App and passed on to interested compinents
+  staticpropTypes = {
+    currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
+    user: PropTypes.object, // User object for context we are navigating to in main page. Can be null/undefined. Can be same as currUser, or different user
+    currUserProjects: PropTypes.array, // Projects list for currently logged in user
+    activity: PropTypes.array.isRequired, // An activity Stream passed down from the App and passed on to interested compinents
     panelWidth: PropTypes.string.isRequired, // Typically something like "200px".
-    allowDrag: PropTypes.bool                // Enable drag and drop ?}
+    allowDrag: PropTypes.bool, // Enable drag and drop ?}
   }
 
   constructor(...a) {
     super(...a)
     this.state = {
-    searchName:       '',
-    showFromUserId:   _showFromAllValue,
-    view:             defaultAssetViewChoice, // Large. See assetViewChoices for explanation.
-    kindsActive:      AssetKindKeys.join(safeAssetKindStringSepChar),
+      searchName: '',
+      showFromUserId: _showFromAllValue,
+      view: defaultAssetViewChoice, // Large. See assetViewChoices for explanation.
+      kindsActive: AssetKindKeys.join(safeAssetKindStringSepChar),
 
-    project:          null,                                 // This will be a project OBJECT,not just a string. See projects.js
-    projectName:      ProjectSelector.ANY_PROJECT_PROJNAME , // projectName has some special values to disambiguate the cases of 'all' and 'none'
-  } }
+      project: null, // This will be a project OBJECT,not just a string. See projects.js
+      projectName: ProjectSelector.ANY_PROJECT_PROJNAME, // projectName has some special values to disambiguate the cases of 'all' and 'none'
+    }
+  }
 
   getLimit() {
     return this.props.limit || 5
@@ -105,15 +104,15 @@ class fpAssets extends LoadMore {
 
   // something like: app/server/imports/restApi/restApi_assets.js:24
   getQueryParams() {
-    const {project, kindsActive, showFromUserId, searchName, projectName} = this.state
+    const { project, kindsActive, showFromUserId, searchName, projectName } = this.state
     return {
-      userId: project ? project.ownerId : (showFromUserId === _showFromAllValue ? null : showFromUserId),
-      kind: kindsActive === "" ? null : kindsActive.split(safeAssetKindStringSepChar),
+      userId: project ? project.ownerId : showFromUserId === _showFromAllValue ? null : showFromUserId,
+      kind: kindsActive === '' ? null : kindsActive.split(safeAssetKindStringSepChar),
       searchName,
       project: project ? project.name : projectName,
       showDeleted: false,
       showStable: false,
-      limit: this.getLimit()
+      limit: this.getLimit(),
     }
   }
 
@@ -121,8 +120,12 @@ class fpAssets extends LoadMore {
     if (_persistedState) {
       this.setState(_persistedState)
       // There's a corner case where the secondary user's stuff was being shown, but now isn't in the url
-      if ( ! ( _persistedState.showFromUserId === _showFromAllValue || (this.props.currUser && this.props.currUser._id === _persistedState.showFromUserId)) )
-      {
+      if (
+        !(
+          _persistedState.showFromUserId === _showFromAllValue ||
+          (this.props.currUser && this.props.currUser._id === _persistedState.showFromUserId)
+        )
+      ) {
         // ok. so not just the simple show-all or show-me cases... think more...
         if (!this.props.user || this.props.user._id !== _persistedState.showFromUserId) {
           this.setState({ showFromUserId: _showFromAllValue }) // debatable if the deafult would be me or all, but all is simpler
@@ -139,8 +142,8 @@ class fpAssets extends LoadMore {
     ) {
       // and it isn't the current user
       if (!nextProps.user)
-        this.setState({showFromUserId: nextProps.currUser ? nextProps.currUser._id : _showFromAllValue})
-      else this.setState({showFromUserId: nextProps.user._id})
+        this.setState({ showFromUserId: nextProps.currUser ? nextProps.currUser._id : _showFromAllValue })
+      else this.setState({ showFromUserId: nextProps.user._id })
     }
   }
 
@@ -155,10 +158,10 @@ class fpAssets extends LoadMore {
   getMeteorData() {
     // Much of this is copied from UserAssetListRoute - repeats.. needs cleanup
 
-    const {user, currUser, currUserProjects} = this.props
+    const { user, currUser, currUserProjects } = this.props
     const currUserId = currUser ? currUser._id : null
     const userId = user && user._id ? user._id : null
-    const isPageShowingCurrUser = (currUserId === userId) && userId !== null
+    const isPageShowingCurrUser = currUserId === userId && userId !== null
 
     const q = this.getQueryParams(userId)
     const handleForAssets = Meteor.subscribe(
@@ -167,46 +170,46 @@ class fpAssets extends LoadMore {
       q.kind, // kindsArray,
       q.searchName,
       q.project, //qProjectName,         // Project Name.
-      false,                // Show Only Deleted
-      false,                // Show only Stable
-      undefined,            // Use default sort order
-      this.getLimit()                    // Limit
+      false, // Show Only Deleted
+      false, // Show only Stable
+      undefined, // Use default sort order
+      this.getLimit(), // Limit
     )
     const assetSorter = { updatedAt: -1 }
     let assetSelector = assetMakeSelector(
       q.userId,
       q.kind, //kindsArray,
       q.searchName,
-      q.project //qProjectName
-    )  // TODO: Bit of a gap here... username.projectname
+      q.project, //qProjectName
+    ) // TODO: Bit of a gap here... username.projectname
 
     // Load projects if it's not the current user
-    const handleForProjects = userId && !isPageShowingCurrUser
-      ? Meteor.subscribe('projects.byUserId', userId)
-      : null
+    const handleForProjects =
+      userId && !isPageShowingCurrUser ? Meteor.subscribe('projects.byUserId', userId) : null
     const selectorForProjects = {
-      $or: [{ownerId: q.userId}, {memberIds: {$in: [q.userId] }}],
+      $or: [{ ownerId: q.userId }, { memberIds: { $in: [q.userId] } }],
     }
 
     return {
-      assets: Azzets.find(assetSelector, {sort: assetSorter, limit: 5}).fetch(),          // Note that the subscription we used excludes the content2 field which can get quite large
+      assets: Azzets.find(assetSelector, { sort: assetSorter, limit: 5 }).fetch(), // Note that the subscription we used excludes the content2 field which can get quite large
       userProjects: userId ? Projects.find(selectorForProjects).fetch() : currUserProjects, // Can be null
       loading: !handleForAssets.ready() || (handleForProjects !== null && !handleForProjects.ready()),
     }
   }
 
-  handleSearchGo = (newSearchText) => {
+  handleSearchGo = newSearchText => {
     this.loadMoreReset()
-    this.setState({searchName: newSearchText})
+    this.setState({ searchName: newSearchText })
   }
 
   handleChangeSelectedProjectName = (pName, projObj) => {
     this.loadMoreReset()
-    this.setState({projectName: pName, project: projObj})
+    this.setState({ projectName: pName, project: projObj })
   }
 
   // This is the callback from AssetsKindSelector
-  handleToggleKind= (k, altKey) => { // k is the string for the AssetKindsKey to toggle existence of in the array
+  handleToggleKind = (k, altKey) => {
+    // k is the string for the AssetKindsKey to toggle existence of in the array
     let newKindsString
 
     const kindsStr = this.state.kindsActive
@@ -215,28 +218,28 @@ class fpAssets extends LoadMore {
 
     if (k === '__all' || isCurrentlOnlyKindBeingToggled)
       newKindsString = AssetKindKeys.join(safeAssetKindStringSepChar)
-    else if (!altKey)
-      newKindsString = k
-    else {      // Alt key means ONLY this kind - pretty simple - the string is the given kind
+    else if (!altKey) newKindsString = k
+    else {
+      // Alt key means ONLY this kind - pretty simple - the string is the given kind
 
       // Alt key, so this is a toggle
       // Just toggle this key, keep the rest.. Also, handle the special case string for none and all
       // Toggle it being there
-      const newKindsArray =  _.indexOf(kindsArray,k) === -1 ? _.union(kindsArray,[k]) : _.without(kindsArray,k)
+      const newKindsArray =
+        _.indexOf(kindsArray, k) === -1 ? _.union(kindsArray, [k]) : _.without(kindsArray, k)
       newKindsString = newKindsArray.join(safeAssetKindStringSepChar)
     }
 
     this.loadMoreReset()
     // Finally, special case the empty and full situations
-    this.setState({kindsActive: newKindsString})
+    this.setState({ kindsActive: newKindsString })
   }
 
-  render () {
-    const { assets, userProjects } = this.data       // list of assets provided via getMeteorData()
+  render() {
+    const { assets, userProjects } = this.data // list of assets provided via getMeteorData()
     const { user, currUser } = this.props
     const { view, kindsActive, searchName, project, projectName, showFromUserId } = this.state
     const effectiveUser = user || currUser
-
 
     const loading = this.isLoading()
     const style = {
@@ -259,51 +262,55 @@ class fpAssets extends LoadMore {
               fluid
               value={searchName}
               id="mgbjr_fp_search_asset"
-              onFinalChange={this.handleSearchGo} />
+              onFinalChange={this.handleSearchGo}
+            />
             <AssetKindsSelector
               showCompact
               kindsActive={kindsActive}
-              handleToggleKindCallback={this.handleToggleKind} />
+              handleToggleKindCallback={this.handleToggleKind}
+            />
             <AssetListChooseView
-              sty={{float: 'right'}}
+              sty={{ float: 'right' }}
               chosenView={view}
-              handleChangeViewClick={ newView => this.setState( { view: newView } ) } />
+              handleChangeViewClick={newView => this.setState({ view: newView })}
+            />
             <ShowFromWho
-              sty={{float: 'left'}}
+              sty={{ float: 'left' }}
               value={showFromUserId}
               currUser={currUser}
               otherUser={user === currUser ? null : user}
-              onChange={selectedUserId => { this.setState( { showFromUserId: selectedUserId } ) } } />
+              onChange={selectedUserId => {
+                this.setState({ showFromUserId: selectedUserId })
+              }}
+            />
             <div style={{ clear: 'both' }} />
           </div>
-          { effectiveUser && userProjects
-              ?<ProjectSelector
-                  key="fpProjectSelector" // don't conflict with asset project selector
-                  canEdit={false}
-                  user={effectiveUser}
-                  isUseCaseCreate={false}
-                  handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
-                  availableProjects={userProjects}
-                  ProjectListLinkUrl={'/u/' + effectiveUser.profile.name + '/projects'}
-                  showProjectsUserIsMemberOf
-                  chosenProjectObj={project}
-                  chosenProjectName={projectName}
-                  />
-              : null
-          }
+          {effectiveUser && userProjects
+            ? <ProjectSelector
+                key="fpProjectSelector" // don't conflict with asset project selector
+                canEdit={false}
+                user={effectiveUser}
+                isUseCaseCreate={false}
+                handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
+                availableProjects={userProjects}
+                ProjectListLinkUrl={'/u/' + effectiveUser.profile.name + '/projects'}
+                showProjectsUserIsMemberOf
+                chosenProjectObj={project}
+                chosenProjectName={projectName}
+              />
+            : null}
         </div>
 
         <div style={style} onScroll={this.onScroll}>
           <AssetList
             allowDrag={this.props.allowDrag}
-            fluid={true}
+            fluid
             renderView={view}
             assets={assets.concat(this._loadMoreState.data)}
             currUser={currUser}
-
           />
 
-          { loading && <Spinner />}
+          {loading && <Spinner />}
 
           {super.render()}
         </div>

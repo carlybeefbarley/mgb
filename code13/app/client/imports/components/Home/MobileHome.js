@@ -13,42 +13,39 @@ import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 import Login from '/client/imports/routes/Users/LoginRoute.js'
 
-const MobileHome = ({currUser}) => {
-  const username = currUser ? currUser.profile.name : "guest"
+const MobileHome = ({ currUser }) => {
+  const username = currUser ? currUser.profile.name : 'guest'
   const userId = currUser ? currUser._id : null
   return (
     <div>
-    {!userId
-      ?
-      <div className="hero">
-        <div className="ui container">
-          <Image size='large' src={makeCDNLink("/images/mascots/team.png")} />
-          <Login />
-        </div>
-      </div>
-      :
-      <div>
-        <div className="hero">
-          <div className="ui container">
-            <HomeHeroBanner username={username} userId={userId}/>
+      {!userId
+        ? <div className="hero">
+            <div className="ui container">
+              <Image size="large" src={makeCDNLink('/images/mascots/team.png')} />
+              <Login />
+            </div>
           </div>
-        </div>
-        <div className="ui container" style={{paddingTop: "2.5em", paddingBottom: "2em"}}>
-          <Grid padded>
-            <Grid.Row>
-              <UserHistory user={currUser} width={16} borderless={true}/>
-              {/***
+        : <div>
+            <div className="hero">
+              <div className="ui container">
+                <HomeHeroBanner username={username} userId={userId} />
+              </div>
+            </div>
+            <div className="ui container" style={{ paddingTop: '2.5em', paddingBottom: '2em' }}>
+              <Grid padded>
+                <Grid.Row>
+                  <UserHistory user={currUser} width={16} borderless />
+                  {/***
               <Header as='h2'>
                 <QLink to={`/u/${username}/skilltree`}>Skills</QLink>
               </Header>
               <SkillTreeRoute user={currUser}/>
               ***/}
-            </Grid.Row>
-          </Grid>
-        </div>
-      </div>
-    }
-  </div>
+                </Grid.Row>
+              </Grid>
+            </div>
+          </div>}
+    </div>
   )
 }
 

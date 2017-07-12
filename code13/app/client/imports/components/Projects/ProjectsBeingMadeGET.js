@@ -38,7 +38,7 @@ class ProjectsBeingMadeGetUI extends React.Component {
     if (loading) return <Spinner />
 
     return (
-      <div className={chosenClassName} style={{overflow: 'hidden'}}>
+      <div className={chosenClassName} style={{ overflow: 'hidden' }}>
         {!projects.length
           ? '(none)'
           : projects.map((p, idx) =>
@@ -69,16 +69,14 @@ class ProjectsBeingMadeGetUI extends React.Component {
   }
 }
 
-
-const ProjectsBeingMadeGET = createContainer(
-  ( { numEntries } ) => {
-    const handleForProjects = Meteor.subscribe('projects.frontPageList', numEntries)
-    const projectSelector = projectMakeFrontPageListSelector()
-    const projectFindOptions =  { limit: numEntries, sort: { updatedAt: -1 } }
-    return {
-      projects: Projects.find(projectSelector, projectFindOptions).fetch(),
-      loading: !handleForProjects.ready(),
-    }
-  }, ProjectsBeingMadeGetUI)
+const ProjectsBeingMadeGET = createContainer(({ numEntries }) => {
+  const handleForProjects = Meteor.subscribe('projects.frontPageList', numEntries)
+  const projectSelector = projectMakeFrontPageListSelector()
+  const projectFindOptions = { limit: numEntries, sort: { updatedAt: -1 } }
+  return {
+    projects: Projects.find(projectSelector, projectFindOptions).fetch(),
+    loading: !handleForProjects.ready(),
+  }
+}, ProjectsBeingMadeGetUI)
 
 export default ProjectsBeingMadeGET

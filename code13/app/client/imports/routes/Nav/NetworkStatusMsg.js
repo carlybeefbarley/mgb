@@ -26,10 +26,11 @@ const NetworkStatusMsg = ({ meteorStatus }) => {
 
   return (
     <Segment
-        raised
-        padded
-        style={{position: 'absolute', top: 80, left: 24, right: 24, maxWidth: '80em', zIndex: 1}}>
-      <Message error style={{ minHeight: '5em'}} >
+      raised
+      padded
+      style={{ position: 'absolute', top: 80, left: 24, right: 24, maxWidth: '80em', zIndex: 1 }}
+    >
+      <Message error style={{ minHeight: '5em' }}>
         <Message.Header>
           Network offline: {meteorStatus.status}
           <Button floated="right" compact primary onClick={_doReconnect}>

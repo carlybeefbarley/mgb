@@ -67,17 +67,20 @@ const fpSettings = React.createClass({
 
   render: function() {
     const makeSlider = name => {
-
       const kind = this.props.currentlyEditingAssetInfo ? this.props.currentlyEditingAssetInfo.kind : null
       const maxVal = expectedToolbars.getMaxLevel(name)
       const defaultLevel = expectedToolbars.getDefaultLevel(name)
       const actualLevel = this.getLevelValFromSettings(name) || defaultLevel
       const friendlyName = expectedToolbars.getFriendlyName(name)
       const isHighlighted = expectedToolbars.getIsUsedForAssetKind(name, kind)
-      const outerSty = { padding: '0.35em 0.15em', marginLeft: '0.1em', marginRight: '0.85em',  marginBottom: '1.35em'}
+      const outerSty = {
+        padding: '0.35em 0.15em',
+        marginLeft: '0.1em',
+        marginRight: '0.85em',
+        marginBottom: '1.35em',
+      }
 
-      if (isHighlighted)
-        outerSty.backgroundColor = _highlightRelevantAreasColor
+      if (isHighlighted) outerSty.backgroundColor = _highlightRelevantAreasColor
       return (
         <div key={name} style={outerSty}>
           <Icon

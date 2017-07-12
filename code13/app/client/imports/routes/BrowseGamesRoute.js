@@ -18,7 +18,6 @@ import Spinner from '/client/imports/components/Nav/Spinner'
 import LoadMore from '/client/imports/mixins/LoadMore'
 import QLink from '/client/imports/routes/QLink'
 
-
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = {
   project: ProjectSelector.ANY_PROJECT_PROJNAME,
@@ -29,18 +28,16 @@ const queryDefaults = {
 }
 
 class BrowseGamesRoute extends LoadMore {
-
   static propTypes = {
     params: PropTypes.object, // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /games
     user: PropTypes.object, // Maybe absent if route is /games
     currUser: PropTypes.object, // Currently Logged in user. Can be null
     ownsProfile: PropTypes.bool,
-    location: PropTypes.object     , // We get this from react-router
-  limit: PropTypes.number,        // Items to load
-
+    location: PropTypes.object, // We get this from react-router
+    limit: PropTypes.number, // Items to load
   }
 
-  staticcontextTypes= {
+  staticcontextTypes = {
     urlLocation: React.PropTypes.object,
   }
 
@@ -50,7 +47,7 @@ class BrowseGamesRoute extends LoadMore {
    *   The result is a data structure that can be used without need for range/validity checking
    * @param q typically this.props.location.query  -  from react-router
   */
-  queryNormalized (q) {
+  queryNormalized(q) {
     // Start with defaults
     let newQ = _.clone(queryDefaults)
 
@@ -66,7 +63,7 @@ class BrowseGamesRoute extends LoadMore {
   /**  Returns the given query EXCEPT for keys that match a key/value pair in queryDefaults array
   */
 
-  _stripQueryOfDefaults (queryObj) {
+  _stripQueryOfDefaults(queryObj) {
     return _.omitBy(queryObj, (val, key) => queryDefaults.hasOwnProperty(key) && queryDefaults[key] === val)
   }
   /** helper Function for updating just a query string with react router
@@ -75,18 +72,18 @@ class BrowseGamesRoute extends LoadMore {
     const loc = this.props.location
     const newQ = this._stripQueryOfDefaults(Object.assign({}, loc.query, queryModifier))
     // This is browserHistory.push and NOT utilPushTo() since we are staying on the same page
-    browserHistory.push( Object.assign( {}, loc, { query: newQ } ) )
+    browserHistory.push(Object.assign({}, loc, { query: newQ }))
 
-  // reset all previously loaded data
+    // reset all previously loaded data
     this.loadMoreReset()
   }
 
-  getLimit(){
+  getLimit() {
     return this.props.limit || queryDefaults.limit
   }
 
   // something like: app/server/imports/restApi/restApi_assets.js:24
-  getQueryParams(userId = (this.props.user && this.props.user._id) ? this.props.user._id : null){
+  getQueryParams(userId = this.props.user && this.props.user._id ? this.props.user._id : null) {
     const qN = this.queryNormalized(this.props.location.query)
     qN.userId = userId
     qN.kind = ['game']
@@ -99,22 +96,38 @@ class BrowseGamesRoute extends LoadMore {
    * Always get the Assets stuff.
    * Optionally get the Project info - if this is a user-scoped view
    */
-  getMeteorData () {
-    const userId = (this.props.user && this.props.user._id) ? this.props.user._id : null
+  getMeteorData() {
+    const userId = this.props.user && this.props.user._id ? this.props.user._id : null
     const qN = this.getQueryParams(userId)
 
-    const handleForGames = Meteor.subscribe( "assets.public", qN.userId, qN.kind, qN.searchName, qN.project, qN.showDeleted, qN.showStable, qN.sort, qN.limit )
+    const handleForGames = Meteor.subscribe(
+      'assets.public',
+      qN.userId,
+      qN.kind,
+      qN.searchName,
+      qN.project,
+      qN.showDeleted,
+      qN.showStable,
+      qN.sort,
+      qN.limit,
+    )
     const gamesSorter = gameSorters[qN.sort]
-    const gamesSelector = assetMakeSelector(qN.userId, qN.kind, qN.searchName, qN.project, qN.showDeleted, qN.showStable)
+    const gamesSelector = assetMakeSelector(
+      qN.userId,
+      qN.kind,
+      qN.searchName,
+      qN.project,
+      qN.showDeleted,
+      qN.showStable,
+    )
 
     // handleForProjects is not used, but subscription is
-    const handleForProjects = qN.userId ? Meteor.subscribe("projects.byUserId", qN.userId) : null
-    const selectorForProjects = { '$or': [ { ownerId: qN.userId }, { memberIds: { $in: [qN.userId] } } ] }
-
+    const handleForProjects = qN.userId ? Meteor.subscribe('projects.byUserId', qN.userId) : null
+    const selectorForProjects = { $or: [{ ownerId: qN.userId }, { memberIds: { $in: [qN.userId] } }] }
 
     this.src = `/api/assets`
     return {
-      games: Azzets.find(gamesSelector, { sort: Object.assign(gamesSorter, {name: 1}) }).fetch(), // Note that the subscription we used excludes the content2 field which can get quite large
+      games: Azzets.find(gamesSelector, { sort: Object.assign(gamesSorter, { name: 1 }) }).fetch(), // Note that the subscription we used excludes the content2 field which can get quite large
       projects: userId ? Projects.find(selectorForProjects).fetch() : null, // Can be null
       loading: !handleForGames.ready(),
     }
@@ -146,12 +159,12 @@ class BrowseGamesRoute extends LoadMore {
     window.removeEventListener('keydown', this.listenForEnter)
   }
 
-  listenForEnter = (e) => {
+  listenForEnter = e => {
     e = e || window.event
     if (e.keyCode === 13) this.handleSearchGo()
   }
 
-  isLoading(){
+  isLoading() {
     return (super.isLoading() && this.data.games.length !== 0) || this.data.loading
   }
 
@@ -163,36 +176,44 @@ class BrowseGamesRoute extends LoadMore {
     const qN = this.queryNormalized(location.query)
 
     return (
-      <Segment basic padded style={{height: "100%", overflow: "auto"}} onScroll={this.onScroll}>
+      <Segment basic padded style={{ height: '100%', overflow: 'auto' }} onScroll={this.onScroll}>
         <Helmet title="Browse Games" meta={[{ name: 'Browse stable games', content: 'List of Games' }]} />
 
-          <div className="ui large header" style={{ float: 'left' }}>
-            { user ? <span><a>{name}</a>'s Games</span> : 'Public Games' }
-          </div>
+        <div className="ui large header" style={{ float: 'left' }}>
+          {user
+            ? <span>
+                <a>{name}</a>'s Games
+              </span>
+            : 'Public Games'}
+        </div>
 
-          <AssetListSortBy
-              chosenSortBy={qN.sort}
-              handleChangeSortByClick={v => this._updateLocationQuery( { sort: v } ) } />
+        <AssetListSortBy
+          chosenSortBy={qN.sort}
+          handleChangeSortByClick={v => this._updateLocationQuery({ sort: v })}
+        />
 
-          <div className='ui action input' style={{display: 'block', clear: 'both'}}>
-            {user && <QLink to="/games" tab={-1} style={{float: "left", padding: "0.4em 0"}}>All games</QLink>}
-            <div style={{float: "right"}}>
+        <div className="ui action input" style={{ display: 'block', clear: 'both' }}>
+          {user &&
+            <QLink to="/games" tab={-1} style={{ float: 'left', padding: '0.4em 0' }}>
+              All games
+            </QLink>}
+          <div style={{ float: 'right' }}>
             <input
-                type='text'
-                placeholder='Search...'
-                defaultValue={qN.searchName}
-                onChange={this.handleSearchNameBoxChanges}
-                ref='searchNameInput'
-                size='16' />
-            <button className='ui icon button' ref='searchGoButton' onClick={this.handleSearchGo}>
+              type="text"
+              placeholder="Search..."
+              defaultValue={qN.searchName}
+              onChange={this.handleSearchNameBoxChanges}
+              ref="searchNameInput"
+              size="16"
+            />
+            <button className="ui icon button" ref="searchGoButton" onClick={this.handleSearchGo}>
               <i className="search icon" />
             </button>
             &emsp;
-            </div>
           </div>
+        </div>
 
-          {
-            /* Show only locked games.. ?
+        {/* Show only locked games.. ?
             <div style={{ float: 'right' }}>
               <AssetShowStableSelector
                   showStableFlag={qN.showStable}
@@ -213,21 +234,19 @@ class BrowseGamesRoute extends LoadMore {
             />
           </div>}
 
-        { !loading && games.length === 0 &&
+        {!loading &&
+          games.length === 0 &&
           <Message
-              style={{marginTop: '8em'}}
-              warning
-              icon="help circle"
-              header="No games match your search"
-              content="Widen your search to see more games"
+            style={{ marginTop: '8em' }}
+            warning
+            icon="help circle"
+            header="No games match your search"
+            content="Widen your search to see more games"
           />}
-        { games.length !== 0 &&
-            <GameItems currUser={currUser} wrap games={games.concat(this._loadMoreState.data)} />
-        }
+        {games.length !== 0 &&
+          <GameItems currUser={currUser} wrap games={games.concat(this._loadMoreState.data)} />}
 
-        { (loading || this.data.loading) &&
-          <Spinner /> }
-
+        {(loading || this.data.loading) && <Spinner />}
 
         {super.render()}
       </Segment>

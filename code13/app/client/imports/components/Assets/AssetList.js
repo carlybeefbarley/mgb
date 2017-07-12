@@ -5,15 +5,14 @@ import { isSameUserId } from '/imports/schemas/users'
 
 const AssetList = ({ currUser, assets, ...rest }) =>
   <Card.Group>
-    {
-      assets.map(asset =>
-        <AssetCard
-          canEdit={currUser && isSameUserId(asset.ownerId, currUser._id) }
-          currUser={currUser}
-          asset={asset}
-          key={asset._id}
-          showEditButton
-          {...rest}
+    {assets.map(asset =>
+      <AssetCard
+        canEdit={currUser && isSameUserId(asset.ownerId, currUser._id)}
+        currUser={currUser}
+        asset={asset}
+        key={asset._id}
+        showEditButton
+        {...rest}
       />,
     )}
   </Card.Group>

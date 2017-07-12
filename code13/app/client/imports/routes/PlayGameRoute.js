@@ -90,25 +90,22 @@ const GameTypeDetail = ({ game, style }) => {
 
 const RotateScreen = props => {
   const style = {}
-  if('portrait' in props)
-    style.transform = 'rotate(90deg)'
-
+  if ('portrait' in props) style.transform = 'rotate(90deg)'
 
   return (
-    <div className='rotate-screen' style={style}>
-      <Icon name="mobile" className='shadow' />
+    <div className="rotate-screen" style={style}>
+      <Icon name="mobile" className="shadow" />
       <Icon name="mobile" />
-      <Icon name="repeat" className='share' />
+      <Icon name="repeat" className="share" />
     </div>
   )
 }
 
-
 class PlayCodeGame extends React.Component {
-  constructor(...a){
+  constructor(...a) {
     super(...a)
     this.state = {
-      isFullScreen: false
+      isFullScreen: false,
     }
   }
   shouldComponentUpdate(newprops, newstate) {
@@ -116,7 +113,9 @@ class PlayCodeGame extends React.Component {
   }
 
   componentDidMount() {
-    this.container = document.getElementById('locationPopup') /* mobile */ || document.getElementById('mgb-jr-main-container')
+    this.container =
+      document.getElementById('locationPopup') /* mobile */ ||
+      document.getElementById('mgb-jr-main-container')
     if (!this.container) throw new Error('Main container cannot be found.')
 
     this.adjustIframeSize()
@@ -157,27 +156,24 @@ class PlayCodeGame extends React.Component {
 
     const style = this.refs.wrapper.style
     const outerBox = this.state.isFullScreen
-      ? {width: window.innerWidth, height: window.innerHeight}
+      ? { width: window.innerWidth, height: window.innerHeight }
       : container.getBoundingClientRect()
     const box = this.refs.wrapper.getBoundingClientRect()
-
-
 
     let gameWidth = outerBox.width - box.left * 2
     let gameHeight = outerBox.height - box.top
 
-
     // this happens when iframe is in fullscreen mode
     // TODO: this looks more like an fullscreen API browser specific exploit
     // TODO: find a better way to scale game into fullScreen mode
-    if(gameWidth < 0 || gameHeight < 0) {
+    if (gameWidth < 0 || gameHeight < 0) {
       gameWidth = this.refs.iframe.offsetWidth
       gameHeight = this.refs.iframe.offsetHeight
     }
 
     style.height = gameHeight + 'px'
     style.width = gameWidth + 'px'
-    style.textAlign = "left"
+    style.textAlign = 'left'
 
     const { width, height } = this.props.metadata
     const setScale = () => {
@@ -185,14 +181,12 @@ class PlayCodeGame extends React.Component {
       const sy = gameHeight / height
       const scale = Math.min(sx, sy)
       // this happens when iframe is in fullscreen mode
-      if(scale < 0)
-        return
+      if (scale < 0) return
 
       this.refs.iframe.style.transform = 'scale(' + scale + ')'
-      if(scale < 1) {
+      if (scale < 1) {
         const shift = (gameWidth - width * scale) * 0.5
-        if(shift > 0)
-          this.refs.iframe.style.marginLeft = shift + 'px'
+        if (shift > 0) this.refs.iframe.style.marginLeft = shift + 'px'
         else {
           this.refs.iframe.style.marginLeft = 0
         }
@@ -204,14 +198,12 @@ class PlayCodeGame extends React.Component {
     if (this.props.metadata.allowFullScreen) {
       this.fsListener = () => {
         // this means that iframe is in fullscreen mode!!!
-        if (this.refs.iframe.offsetHeight === window.innerHeight){
+        if (this.refs.iframe.offsetHeight === window.innerHeight) {
           //this.refs.iframe.style.transform = 'scale(1)'
-        }
-        else {
+        } else {
           this.exitFullScreen()
         }
       }
-
 
       this.refs.iframe.onwebkitfullscreenchange = this.fsListener
       this.refs.iframe.onmozfullscreenchange = this.fsListener
@@ -234,10 +226,10 @@ class PlayCodeGame extends React.Component {
    * Enables fullscreen on game's iframe
    * */
   fullscreen() {
-      this.setFsManually()
+    this.setFsManually()
   }
 
-  setFsManually(){
+  setFsManually() {
     /*
     Don't open iframe in the fullScreen on mobile - we are already fully sized
     const rfs =
@@ -249,14 +241,14 @@ class PlayCodeGame extends React.Component {
     if(rfs)
       rfs.call(this.refs.iframe)*/
 
-    this.setState({isFullScreen: true}, () => {
+    this.setState({ isFullScreen: true }, () => {
       document.body.classList.add('fullscreen')
       this.adjustIframeSize()
     })
   }
 
   exitFullScreen = () => {
-    this.setState({isFullScreen: false}, () => {
+    this.setState({ isFullScreen: false }, () => {
       document.body.classList.remove('fullscreen')
       this.adjustIframeSize()
     })
@@ -278,8 +270,8 @@ class PlayCodeGame extends React.Component {
           tooltip: 'Restart game',
           disabled: false,
           level: 1,
-        }
-      ]
+        },
+      ],
     }
 
     if (this.canDoFullScreen()) {
@@ -300,12 +292,10 @@ class PlayCodeGame extends React.Component {
     const { metadata, owner } = this.props
     const _codeName = metadata.startCode
 
-
     let width = metadata.width ? metadata.width + 'px' : '100%' // fallback for older games
     let height = metadata.height ? metadata.height + 'px' : '100%' // fallback for older games
 
-    if (!_codeName || _codeName === '')
-      return <ThingNotFound type="CodeGame" id='""'/>
+    if (!_codeName || _codeName === '') return <ThingNotFound type="CodeGame" id="&quot;&quot;" />
 
     const origin =
       window.location.origin ||
@@ -320,20 +310,33 @@ class PlayCodeGame extends React.Component {
         : [_codeName.slice(0, colonPlace), _codeName.slice(colonPlace + 1)]
 
     // recover on missing asset
-    const src =makeCDNLink( metadata._ids && metadata._ids.startCode
-              ? `/api/asset/code/bundle/cdn/${metadata._ids.startCode}/${ownerName}/${codeName}?origin=${origin}`
-              : `/api/asset/code/bundle/cdn/${ownerName}/${codeName}?origin=${origin}`, null, true
-                )
+    const src = makeCDNLink(
+      metadata._ids && metadata._ids.startCode
+        ? `/api/asset/code/bundle/cdn/${metadata._ids.startCode}/${ownerName}/${codeName}?origin=${origin}`
+        : `/api/asset/code/bundle/cdn/${ownerName}/${codeName}?origin=${origin}`,
+      null,
+      true,
+    )
     return (
       <div>
-        <Toolbar
-          actions={this}
-          name="PlayCodeGame"
-          config={this.createConfig()}
-          />
-        <div ref="wrapper" style={this.state.isFullScreen
-            ?{overflow: 'hidden', textAlign: 'center', position: "fixed", left: 0, right: 0, top: 0, bottom: '-3.5em', backgroundColor: '#000'}
-            : {overflow: 'hidden', textAlign: 'center'}}>
+        <Toolbar actions={this} name="PlayCodeGame" config={this.createConfig()} />
+        <div
+          ref="wrapper"
+          style={
+            this.state.isFullScreen
+              ? {
+                  overflow: 'hidden',
+                  textAlign: 'center',
+                  position: 'fixed',
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: '-3.5em',
+                  backgroundColor: '#000',
+                }
+              : { overflow: 'hidden', textAlign: 'center' }
+          }
+        >
           <iframe
             key={0}
             ref="iframe"
@@ -348,17 +351,22 @@ class PlayCodeGame extends React.Component {
             src={src}
           />
         </div>
-        { this.state.isFullScreen &&
-          <Icon name="sidebar" size="big" className="burger"
-                color="white"
-                style={{
-                  position: 'absolute', right: 0, top: 0, color: 'white',
-                  backgroundColor: 'rgba(0,0,0,0.5)',
-                  borderRadius: '0.1em'
-                }}
-                onClick={this.exitFullScreen}
-          />
-        }
+        {this.state.isFullScreen &&
+          <Icon
+            name="sidebar"
+            size="big"
+            className="burger"
+            color="white"
+            style={{
+              position: 'absolute',
+              right: 0,
+              top: 0,
+              color: 'white',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              borderRadius: '0.1em',
+            }}
+            onClick={this.exitFullScreen}
+          />}
       </div>
     )
   }
@@ -395,23 +403,20 @@ const PlayGame = ({ game, user, incrementPlayCountCb, availableWidth }) => {
         content="This GameConfig Asset does not contain a game definition. Someone should edit it and fix that"
       />
     )
-    const helmet = (
-      <Helmet
-        title={`MGB: Play '${game.name}'`}
-        titleTemplate="%s"
-        meta={[
-            {name: 'My Game Builder', content: '' }]}
-         />
-    )
-// landscape
-  if(window.innerHeight < window.innerWidth) {
-    if (!game.metadata.allowLandscape && game.metadata.allowPortrait)
-      return <RotateScreen ladscape />
+  const helmet = (
+    <Helmet
+      title={`MGB: Play '${game.name}'`}
+      titleTemplate="%s"
+      meta={[{ name: 'My Game Builder', content: '' }]}
+    />
+  )
+  // landscape
+  if (window.innerHeight < window.innerWidth) {
+    if (!game.metadata.allowLandscape && game.metadata.allowPortrait) return <RotateScreen ladscape />
   }
   // portrait
-  if(window.innerWidth < window.innerHeight) {
-    if (!game.metadata.allowPortrait && game.metadata.allowLandscape)
-      return <RotateScreen portrait />
+  if (window.innerWidth < window.innerHeight) {
+    if (!game.metadata.allowPortrait && game.metadata.allowLandscape) return <RotateScreen portrait />
   }
 
   switch (game.metadata.gameType) {
@@ -537,8 +542,8 @@ const PlayGameRoute = React.createClass({
     joyrideCompleteTag('mgbjr-CT-asset-play-game-show-chat')
     utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
-  makeLinkToChat(){
-    return makeChannelName( { scopeGroupName: 'Asset', scopeId: this.props.params.assetId } )
+  makeLinkToChat() {
+    return makeChannelName({ scopeGroupName: 'Asset', scopeId: this.props.params.assetId })
   },
 
   render: function() {
@@ -549,15 +554,23 @@ const PlayGameRoute = React.createClass({
     const game = this.data.asset // One Asset provided via getMeteorData()
 
     return (
-      <Segment basic padded style={{ paddingTop: 0, paddingBottom: 0}}>
-          <Header as="span">
-            <QLink to={`/u/${game.dn_ownerName}/asset/${game._id}`}>
-              <Icon name="game"/>{game.name}
-            </QLink>
-          </Header>
-        <small>&emsp;{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</small>
-        <AssetChatDetail style={_styleGameNavButtons} hasUnreads={hazUnreadAssetChat} handleClick={this.handleChatClick}query={{_fp: this.makeLinkToChat()}}
-          tab={TAB.CHAT}/>
+      <Segment basic padded style={{ paddingTop: 0, paddingBottom: 0 }}>
+        <Header as="span">
+          <QLink to={`/u/${game.dn_ownerName}/asset/${game._id}`}>
+            <Icon name="game" />
+            {game.name}
+          </QLink>
+        </Header>
+        <small>
+          &emsp;{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}
+        </small>
+        <AssetChatDetail
+          style={_styleGameNavButtons}
+          hasUnreads={hazUnreadAssetChat}
+          handleClick={this.handleChatClick}
+          query={{ _fp: this.makeLinkToChat() }}
+          tab={TAB.CHAT}
+        />
         <GameTypeDetail game={game} style={_styleGameNavButtons} />
         <PlayGame
           game={game}

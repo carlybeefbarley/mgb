@@ -74,7 +74,7 @@ const CHAT_POLL_INTERVAL_MS = 12 * 1000
 // Tutorial/Joyride infrastructure support
 
 export const stopCurrentTutorial = () => {
-  if (_theAppInstance) _theAppInstance.addJoyrideSteps.call(_theAppInstance, [], {replace: true})
+  if (_theAppInstance) _theAppInstance.addJoyrideSteps.call(_theAppInstance, [], { replace: true })
 }
 
 export const addJoyrideSteps = (steps, opts) => {
@@ -144,18 +144,19 @@ const AppUI = React.createClass({
     urlLocation: PropTypes.object,
     settings: PropTypes.object,
     skills: PropTypes.object,
-    tabs:       PropTypes.object,
+    tabs: PropTypes.object,
   },
 
   getChildContext() {
-
     const self = this
     // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See https://github.com/facebook/react/issues/2517
     return {
       urlLocation: this.props.location,
-      settings:    this.props.settings,  // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
-      skills:      this.props.skills    , // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props// keep reference to mobile nav updated
-      get tabs() { return self.refs.mobileNav }
+      settings: this.props.settings, // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
+      skills: this.props.skills, // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props// keep reference to mobile nav updated
+      get tabs() {
+        return self.refs.mobileNav
+      },
     }
   },
 
@@ -386,8 +387,14 @@ const AppUI = React.createClass({
 
     if (!loading) this.configureTrackJs()
 
-    if(loading)
-      return <div><h1 style={{textAlign: 'center'}}>LOADING...</h1><Spinner /><br /></div>
+    if (loading)
+      return (
+        <div>
+          <h1 style={{ textAlign: 'center' }}>LOADING...</h1>
+          <Spinner />
+          <br />
+        </div>
+      )
 
     // The Flex Panel is for communications and common quick searches in a right hand margin
     //   (or fixed footer for Phone-size PortraitUI)
@@ -449,85 +456,82 @@ const AppUI = React.createClass({
           assetId={params.assetId}
           debug={joyrideDebug}
         />
-        { !isMobile &&
-        <div>
-          <FlexPanel
-            fpIsFooter={!!respData.footerTabMajorNav}
-            joyrideSteps={this.state.joyrideSteps}
-            joyrideSkillPathTutorial={this.state.joyrideSkillPathTutorial}
-            joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
-            joyrideOriginatingAssetId={this.state.joyrideOriginatingAssetId}
-            currUser={currUser}
-            chatChannelTimestamps={chatChannelTimestamps}
-            hazUnreadChats={hazUnreadChats}
-            requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
-            currUserProjects={currUserProjects}
-            user={user}
-            selectedViewTag={flexPanelQueryValue}
-            handleFlexPanelToggle={this.handleFlexPanelToggle}
-            handleFlexPanelChange={this.handleFlexPanelChange}
-            flexPanelWidth={flexPanelWidth}
-            flexPanelIsVisible={showFlexPanel}
-            activity={this.props.activity}
-            isSuperAdmin={isSuperAdmin}
-            currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-          />
-
-          <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id="mgb-jr-main-container">
-            {!hideHeaders && <NavPanel currUser={currUser} navPanelAvailableWidth={mainAreaAvailableWidth} />}
-
-            <NavBar
+        {!isMobile &&
+          <div>
+            <FlexPanel
+              fpIsFooter={!!respData.footerTabMajorNav}
+              joyrideSteps={this.state.joyrideSteps}
+              joyrideSkillPathTutorial={this.state.joyrideSkillPathTutorial}
+              joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
+              joyrideOriginatingAssetId={this.state.joyrideOriginatingAssetId}
               currUser={currUser}
+              chatChannelTimestamps={chatChannelTimestamps}
+              hazUnreadChats={hazUnreadChats}
+              requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
+              currUserProjects={currUserProjects}
               user={user}
-              location={this.props.location}
-              name={this.props.routes[1].name}
-              params={this.props.params}
+              selectedViewTag={flexPanelQueryValue}
+              handleFlexPanelToggle={this.handleFlexPanelToggle}
+              handleFlexPanelChange={this.handleFlexPanelChange}
               flexPanelWidth={flexPanelWidth}
-              hideHeaders={hideHeaders}
-              onToggleHeaders={this.handleHideHeadersToggle}
-              sysvars={sysvars}
+              flexPanelIsVisible={showFlexPanel}
+              activity={this.props.activity}
+              isSuperAdmin={isSuperAdmin}
               currentlyEditingAssetInfo={currentlyEditingAssetInfo}
             />
 
-            {currUser &&
-              currUser.suIsBanned &&
-              <Message
-                error
-                icon="ban"
-                header="Your Account has been suspended by an Admin"
-                list={[
-                  'You may not edit Assets or Projects',
-                  'You may not send Chat messages',
-                  'Check your email for details',
-                ]}
-              />}
+            <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id="mgb-jr-main-container">
+              {!hideHeaders &&
+                <NavPanel currUser={currUser} navPanelAvailableWidth={mainAreaAvailableWidth} />}
 
-            {!loading &&
-              this.props.children &&
-              React.cloneElement(this.props.children, {
-                // Make below props available to all routes.
-                user: user,
-                currUser: currUser,
-                hideHeaders: hideHeaders,
-                currUserProjects: currUserProjects,
-                hazUnreadAssetChat: hazUnreadAssetChat,
-                ownsProfile: ownsProfile,
-                isSuperAdmin: isSuperAdmin,
-                availableWidth: mainAreaAvailableWidth,
-                handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
-                isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
-              })}
-          </div>
-        </div>
-        }
+              <NavBar
+                currUser={currUser}
+                user={user}
+                location={this.props.location}
+                name={this.props.routes[1].name}
+                params={this.props.params}
+                flexPanelWidth={flexPanelWidth}
+                hideHeaders={hideHeaders}
+                onToggleHeaders={this.handleHideHeadersToggle}
+                sysvars={sysvars}
+                currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+              />
 
+              {currUser &&
+                currUser.suIsBanned &&
+                <Message
+                  error
+                  icon="ban"
+                  header="Your Account has been suspended by an Admin"
+                  list={[
+                    'You may not edit Assets or Projects',
+                    'You may not send Chat messages',
+                    'Check your email for details',
+                  ]}
+                />}
+
+              {!loading &&
+                this.props.children &&
+                React.cloneElement(this.props.children, {
+                  // Make below props available to all routes.
+                  user: user,
+                  currUser: currUser,
+                  hideHeaders: hideHeaders,
+                  currUserProjects: currUserProjects,
+                  hazUnreadAssetChat: hazUnreadAssetChat,
+                  ownsProfile: ownsProfile,
+                  isSuperAdmin: isSuperAdmin,
+                  availableWidth: mainAreaAvailableWidth,
+                  handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
+                  isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
+                })}
+            </div>
+          </div>}
         <NetworkStatusMsg meteorStatus={meteorStatus} />
         <NotificationContainer /> {/* This is for the top-right toast messages */}
-
-
-        {
-          !loading && isMobile &&
-          <div id='mgb-jr-main-container'>
+        {!loading &&
+          isMobile &&
+          <div id="mgb-jr-main-container">
             <MobileNav
               ref="mobileNav"
               {...this.props}
@@ -541,16 +545,14 @@ const AppUI = React.createClass({
               isSuperAdmin={isSuperAdmin}
               availableWidth={mainAreaAvailableWidth}
               handleSetCurrentlyEditingAssetInfo={this.handleSetCurrentlyEditingAssetInfo}
-              isTopLevelRoute={true}// Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
+              isTopLevelRoute // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
               chatChannelTimestamps={chatChannelTimestamps}
               hazUnreadChats={hazUnreadChats}
               requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
               selectedViewTag={flexPanelQueryValue}
             />
-          </div>
-        }
-
-        </div>
+          </div>}
+      </div>
     )
   },
 

@@ -3,23 +3,33 @@ import { RestApi } from './restApi'
 import { loadAssets } from '/imports/schemas/assets'
 import { genAPIreturn } from '/server/imports/helpers/generators'
 
+import { Azzets } from '/imports/schemas'
 
 // mainly used for autocomplete in the codeEditor, but can be used also for something else
-RestApi.addRoute('assets/:kind/:owner/', {authRequired: false}, {
-  get: function () {
-    const assets = Azzets.find({
-      dn_ownerName: this.urlParams.owner,
-      kind: this.urlParams.kind,
-      name: new RegExp('^'+this.queryParams.query, 'i'),
-      isDeleted: false
-    }, {
-      fields: {name: 1, text: 1}
-    })
-    return genAPIreturn(this, null, () => assets.map(a => {
-      return {text: a.name, desc: a.text, id: a._id}
-    }))
-  }
-})
+RestApi.addRoute(
+  'assets/:kind/:owner/',
+  { authRequired: false },
+  {
+    get: function() {
+      const assets = Azzets.find(
+        {
+          dn_ownerName: this.urlParams.owner,
+          kind: this.urlParams.kind,
+          name: new RegExp('^' + this.queryParams.query, 'i'),
+          isDeleted: false,
+        },
+        {
+          fields: { name: 1, text: 1 },
+        },
+      )
+      return genAPIreturn(this, null, () =>
+        assets.map(a => {
+          return { text: a.name, desc: a.text, id: a._id }
+        }),
+      )
+    },
+  },
+)
 
 // props - decoded JSON string with some (or all) props defined in the loadAssets arguments:
 /*
@@ -38,14 +48,17 @@ RestApi.addRoute('assets/:kind/:owner/', {authRequired: false}, {
  }
 
  */
-RestApi.addRoute('assets/:props', {authRequired: false}, {
-  get: function () {
-
-    //return props
-    return genAPIreturn(this, null, () => {
-      const props = JSON.parse(decodeURIComponent(this.urlParams.props))
-      const retval =  loadAssets(props)
-      return retval.fetch()
-    })
-  }
-})
+RestApi.addRoute(
+  'assets/:props',
+  { authRequired: false },
+  {
+    get: function() {
+      //return props
+      return genAPIreturn(this, null, () => {
+        const props = JSON.parse(decodeURIComponent(this.urlParams.props))
+        const retval = loadAssets(props)
+        return retval.fetch()
+      })
+    },
+  },
+)

@@ -33,7 +33,6 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 import { TAB } from '/client/imports/Mobile/MobileNav'
 
-
 const UserShowcase = () => null // TODO based on workState
 
 const UserProfileRoute = React.createClass({
@@ -253,20 +252,20 @@ const UserProfileRoute = React.createClass({
               </Popup>}
           </p>
 
-            <div style={{clear: 'both', right: 'auto', left: 'auto'}}>
-              <QLink to={`/u/${name}/assets`} style={{marginBottom: '6px'}}>
-                <UX.Button2 basic icon="pencil" content="Assets" />
-              </QLink>
-              <QLink to={`/u/${name}/projects`} style={{marginBottom: '6px'}}>
-                <UX.Button2 basic icon="sitemap" content="Projects" />
-              </QLink>
-              <QLink to={`/u/${name}/games`} style={{marginBottom: '6px'}}>
-                <UX.Button2 basic icon="game" content="Games" />
-              </QLink>
-              <QLink query={{ _fp: `chat.${channelName}` }}  tab={TAB.CHAT}style={{marginBottom: '6px'}}>
-                <UX.Button2 basic icon="chat" content="Wall" />
-              </QLink>
-            </div>
+          <div style={{ clear: 'both', right: 'auto', left: 'auto' }}>
+            <QLink to={`/u/${name}/assets`} style={{ marginBottom: '6px' }}>
+              <UX.Button2 basic icon="pencil" content="Assets" />
+            </QLink>
+            <QLink to={`/u/${name}/projects`} style={{ marginBottom: '6px' }}>
+              <UX.Button2 basic icon="sitemap" content="Projects" />
+            </QLink>
+            <QLink to={`/u/${name}/games`} style={{ marginBottom: '6px' }}>
+              <UX.Button2 basic icon="game" content="Games" />
+            </QLink>
+            <QLink query={{ _fp: `chat.${channelName}` }} tab={TAB.CHAT} style={{ marginBottom: '6px' }}>
+              <UX.Button2 basic icon="chat" content="Wall" />
+            </QLink>
+          </div>
         </Segment>
       </Grid.Column>
     )

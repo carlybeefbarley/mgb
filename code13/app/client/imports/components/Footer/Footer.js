@@ -2,7 +2,6 @@ import React from 'react'
 import ResponsiveComponent from '/client/imports/ResponsiveComponent'
 import QLink from '/client/imports/routes/QLink'
 
-
 const Footer = ({ respIsRuleActive, respData }) =>
   <div className="ui large inverted grey padded vertical segment">
     <div className="ui section" />

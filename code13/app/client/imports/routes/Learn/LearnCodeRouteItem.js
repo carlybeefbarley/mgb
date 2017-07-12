@@ -36,12 +36,13 @@ export const StartJsGamesRoute = (learnItem, name, currUser, newTab) => {
 
   // check if asset exists
   getAssetBySelector(newAsset, (asset, err) => {
-    if (asset) { // asset exists. open it.
+    if (asset) {
+      // asset exists. open it.
 
       const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
       openUrl(url, newTab)
-    }
-    else  {      // asset doesn't exist. create one.
+    } else {
+      // asset doesn't exist. create one.
 
       const prefix = learnItem === 'basics' ? 'challenges' : learnItem
 

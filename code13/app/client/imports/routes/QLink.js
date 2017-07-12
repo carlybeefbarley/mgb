@@ -22,9 +22,19 @@ function createLocationDescriptor(to, _ref) {
   var state = _ref.state
 
   if (query || hash || state) {
-    return { pathname: to, query: query, hash: hash, state: state, toString: function(){
-      return this.pathname + (this.query ? '?' + _.map(this.query, (v, k) => decodeURIComponent(k + '=' + v) ).join("&") : '' ) + (this.hash ? '#' + this.hash : '')
-    } }
+    return {
+      pathname: to,
+      query: query,
+      hash: hash,
+      state: state,
+      toString: function() {
+        return (
+          this.pathname +
+          (this.query ? '?' + _.map(this.query, (v, k) => decodeURIComponent(k + '=' + v)).join('&') : '') +
+          (this.hash ? '#' + this.hash : '')
+        )
+      },
+    }
   }
 
   return to
@@ -68,7 +78,7 @@ const QLink = React.createClass({
 
   contextTypes: {
     urlLocation: React.PropTypes.object,
-    router:  React.PropTypes.object,
+    router: React.PropTypes.object,
     tabs: React.PropTypes.object,
   },
 
@@ -120,22 +130,18 @@ const QLink = React.createClass({
     clearPriorPathsForJoyrideCompletionTags()
 
     if (is.mobile()) {
-      if(!this.context.tabs)
-        return
+      if (!this.context.tabs) return
       this.context.tabs.setLocation(location, this.props.tab)
-    }
-    else
-      this.context.router.push(location)
+    } else this.context.router.push(location)
 
     event.preventDefault() // Stop Link.handleClick from doing anything further
     event.stopPropagation()
-
   },
 
   render: function() {
     const p = this.props
     const chosenEl = p.elOverride ? p.elOverride : Link
-    const pClean = _.omit(p, ["elOverride", "altTo", "altQuery"])
+    const pClean = _.omit(p, ['elOverride', 'altTo', 'altQuery'])
 
     if (!p.nav) return React.createElement(chosenEl, Object.assign({}, pClean, { onClick: this.handleClick }))
 
@@ -224,11 +230,9 @@ function _getDefaultUrlQueryParams() {
   return obj
 }
 
-
-export function utilMakeLocation(existingQuery, newTo, extraQueryParams = {})
-{
+export function utilMakeLocation(existingQuery, newTo, extraQueryParams = {}) {
   const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery || _getDefaultUrlQueryParams())
-  return createLocationDescriptor(newTo, { query: Object.assign( {}, appScopedQuery, extraQueryParams) } )
+  return createLocationDescriptor(newTo, { query: Object.assign({}, appScopedQuery, extraQueryParams) })
 }
 
 /**
@@ -244,10 +248,11 @@ export function utilMakeLocation(existingQuery, newTo, extraQueryParams = {})
  * @param {string} newTo newUrl to go to
  * @param {Object} [extraQueryParams={}] extra query params to apply
  */
-export function utilPushTo(existingQuery, newTo, extraQueryParams = {})
-{
+export function utilPushTo(existingQuery, newTo, extraQueryParams = {}) {
   const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery || _getDefaultUrlQueryParams())
-  const location = createLocationDescriptor(newTo, { query: Object.assign( {}, appScopedQuery, extraQueryParams) } )
+  const location = createLocationDescriptor(newTo, {
+    query: Object.assign({}, appScopedQuery, extraQueryParams),
+  })
 
   // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
   clearPriorPathsForJoyrideCompletionTags()
@@ -293,8 +298,10 @@ export function utilShowFlexPanel(currentUrlLocation, newFpNavString) {
  * @param newFpNavString as defined in chats:makeChannelName()
  * @returns {String} - location which will show flex panel open
  */
-export function utilLinkToChatPanelChannel(currentUrlLocation, chatChannelName){
-  const location = utilMakeLocation(currentUrlLocation.query, currentUrlLocation.pathname, { _fp: 'chat.' + chatChannelName } )
+export function utilLinkToChatPanelChannel(currentUrlLocation, chatChannelName) {
+  const location = utilMakeLocation(currentUrlLocation.query, currentUrlLocation.pathname, {
+    _fp: 'chat.' + chatChannelName,
+  })
   return location.toString()
 }
 

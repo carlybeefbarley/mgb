@@ -175,7 +175,7 @@ export function clientStartup() {
         <Route path="/legal/tos" component={TermsOfService} name="Terms Of Service" />
         <Route path="/legal/privacy" component={Privacy} name="Privacy Policy" />
 
-        <Route path='/mobile/settings' component={fpSettings} name='Settings' />
+        <Route path="/mobile/settings" component={fpSettings} name="Settings" />
 
         <Route
           path="/notyetimplemented/:featureName"
@@ -183,11 +183,7 @@ export function clientStartup() {
           name="Coming Soon!.."
         />
 
-        <Route
-          path="/test"
-          component={Test}
-          name="TEST ROUTE!"
-        />
+        <Route path="/test" component={Test} name="TEST ROUTE!" />
         <Route path="*" component={NotFoundRoute} name="Page Not Found" />
       </Route>
     </Router>

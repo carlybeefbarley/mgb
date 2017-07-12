@@ -226,39 +226,39 @@ export const isValidActorMapGame = g =>
  * @param {Integer} [hideWorkstateMask = 0] - ????????
  */
 export const loadAssets = ({
-                             userId,
-                             kind,
-                             searchName,                   // TODO: cleanse the nameSearch RegExp. Issue is regex vs text index. See notes in _ensureIndex() below.
-                             limit = SpecialGlobals.assets.mainAssetsListDefaultLimit,
-                             page = 1,
-                             projectName = null,
-                             showDeleted = false,
-                             showStable = false,
-                             sort = undefined,      // null/undefined or one of the keys of allSorters{}
-                             showChallengeAssets = false,
-                             hideWorkstateMask = 0,          // As defined for use by assetMakeSelector()
-                           }
-  ) => {
-
+  userId,
+  kind,
+  searchName, // TODO: cleanse the nameSearch RegExp. Issue is regex vs text index. See notes in _ensureIndex() below.
+  limit = SpecialGlobals.assets.mainAssetsListDefaultLimit,
+  page = 1,
+  projectName = null,
+  showDeleted = false,
+  showStable = false,
+  sort = undefined, // null/undefined or one of the keys of allSorters{}
+  showChallengeAssets = false,
+  hideWorkstateMask = 0, // As defined for use by assetMakeSelector()
+}) => {
   const actualLimit = _.clamp(limit, 1, SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit)
-  const selector = assetMakeSelector(userId,
+  const selector = assetMakeSelector(
+    userId,
     kind,
     searchName,
     projectName,
     showDeleted,
     showStable,
     hideWorkstateMask,
-    showChallengeAssets)
+    showChallengeAssets,
+  )
 
-  const assetSorter = sort ? allSorters[sort] : allSorters["edited"]
+  const assetSorter = sort ? allSorters[sort] : allSorters['edited']
   const findOpts = {
     fields: { content2: 0, thumbnail: 0 },
-    sort:  Object.assign(assetSorter, {name: 1}), // always sort by name if we have multiple items with same sorting outcome
+    sort: Object.assign(assetSorter, { name: 1 }), // always sort by name if we have multiple items with same sorting outcome
     limit: actualLimit,
-    skip: page > 0 ? (page-1) * actualLimit : 0
+    skip: page > 0 ? (page - 1) * actualLimit : 0,
   }
 
-  return Azzets.find(selector, findOpts )
+  return Azzets.find(selector, findOpts)
 }
 
 Meteor.methods({

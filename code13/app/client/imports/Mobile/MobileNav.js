@@ -15,9 +15,8 @@
 
  */
 
-
 import React from 'react'
-import {Grid, Sidebar, Segment, Button, Menu, Image, Icon, Header} from 'semantic-ui-react'
+import { Grid, Sidebar, Segment, Button, Menu, Image, Icon, Header } from 'semantic-ui-react'
 
 import SwipeableViews from 'react-swipeable-views'
 import elementResizeDetectorMaker from 'element-resize-detector'
@@ -31,33 +30,36 @@ import fpChat from '../components/SidePanels/fpChat'
 
 import RouterWrap from './RouterWrap'
 
-import {utilReplaceTo, utilPushTo} from '/client/imports/routes/QLink'
+import { utilReplaceTo, utilPushTo } from '/client/imports/routes/QLink'
 
-import {Link, browserHistory} from 'react-router'
+import { Link, browserHistory } from 'react-router'
 
 import './MobileNav.css'
 
 const NUMBER_OF_BUTTONS_IN_THE_BOTTOM_NAVIGATION = 5
 
-const AllButtons = (p) => (<div className="mobile-nav-all-buttons">
-  {p.buttons
-    .filter((bName, index) => !!MobileNav.availableButtons[bName] && index >= p.from && index < p.to)
-    .map((bName, index) => {
-      const b = MobileNav.availableButtons[bName]
-      return <a
-        className="mobile-nav-item item"
-        name={bName}
-        key={index}
-        onClick={() => p.mobileNav.onClickMoreContent(b, index)}
-        style={{color: b.disabled ? 'grey' : ''}}
-      >
-        <Icon name={b.icon || 'question'} size='large'/>
-        <p>{b.title}</p>
-      </a>
-    })
-  }
-</div>)
-
+const AllButtons = p =>
+  <div className="mobile-nav-all-buttons">
+    {p.buttons
+      .filter((bName, index) => !!MobileNav.availableButtons[bName] && index >= p.from && index < p.to)
+      .map((bName, index) => {
+        const b = MobileNav.availableButtons[bName]
+        return (
+          <a
+            className="mobile-nav-item item"
+            name={bName}
+            key={index}
+            onClick={() => p.mobileNav.onClickMoreContent(b, index)}
+            style={{ color: b.disabled ? 'grey' : '' }}
+          >
+            <Icon name={b.icon || 'question'} size="large" />
+            <p>
+              {b.title}
+            </p>
+          </a>
+        )
+      })}
+  </div>
 
 const doLogout = () => {
   Meteor.logout()
@@ -66,19 +68,17 @@ const doLogout = () => {
   }, 100)
 }
 
-const NotReady = () => (
-  <div style={{textAlign: 'center'}}>
+const NotReady = () =>
+  <div style={{ textAlign: 'center' }}>
     <h1>Work in progress,</h1>
     <h2>come back later</h2>
   </div>
-)
-
 
 // make use of this
 let cache = {}
 class MobileNav extends React.Component {
   static contextTypes = {
-    router: React.PropTypes.object
+    router: React.PropTypes.object,
   }
 
   constructor() {
@@ -111,14 +111,14 @@ class MobileNav extends React.Component {
       'logout',
     ]
     this.state = cache.state || {
-        index: 0,
-        location: {},
-        maxItems: {}
-      }
+      index: 0,
+      location: {},
+      maxItems: {},
+    }
 
     this.cache = cache.cache || {
       views: [],
-      location: []
+      location: [],
     }
     this.tabs = {}
 
@@ -134,7 +134,7 @@ class MobileNav extends React.Component {
 
   componentDidMount() {
     this.erd = elementResizeDetectorMaker({
-      strategy: "scroll" //<- For ultra performance.
+      strategy: 'scroll', //<- For ultra performance.
     })
     this.onresize = () => {
       this.forceUpdate()
@@ -155,22 +155,22 @@ class MobileNav extends React.Component {
    }*/
 
   setLocation(location, tab) {
-    console.log("setLocation Location:", location)
+    console.log('setLocation Location:', location)
+    const stateLocation = this.state.location
+
     if (tab !== -1) {
       if (tab) {
         this.handleChangeIndex(tab, this.state.index, location)
         return
       }
       const index = tab && tab !== -1 ? tab : this.state.index
-      this.state.location[index] = location
+      stateLocation[index] = location
     }
 
-    this.setState({location: this.state.location, time: Date.now()})
+    this.setState({ location: stateLocation, time: Date.now() })
 
-    if (typeof location === 'string')
-      this.context.router.push(location)
-    else
-      browserHistory.push(location)
+    if (typeof location === 'string') this.context.router.push(location)
+    else browserHistory.push(location)
   }
 
   onClick(button, index) {
@@ -182,20 +182,19 @@ class MobileNav extends React.Component {
   }
 
   handleChangeIndex(index, currentIndex, location) {
-    if (location)
-      this.cache.location[index] = location
+    if (location) this.cache.location[index] = location
 
-    this.setState({index}, () => {
+    this.setState({ index }, () => {
       // this is here because this is much faster than react re-rendering
       // seems that slow re-rendering is caused by meteor get data - not React itself
-      $(".mobile-nav-button.active", this.refs.mobileNav).removeClass("active")
-      $("#mobile-nav-button-" + index, this.refs.mobileNav).addClass("active")
+      $('.mobile-nav-button.active', this.refs.mobileNav).removeClass('active')
+      $('#mobile-nav-button-' + index, this.refs.mobileNav).addClass('active')
 
       const route = location || this.state.location[index] || this.cache.location[index] || '/'
 
-      if (this.state.lastRoute !== route) {
+      if (cache.lastRoute !== route) {
         this.context.router.push(route)
-        this.state.lastRoute = (this.state.location[index] || '/')
+        cache.lastRoute = this.state.location[index] || '/'
       }
     })
   }
@@ -206,19 +205,15 @@ class MobileNav extends React.Component {
 
   render() {
     return (
-      <div className='mobile-nav-main' ref="mobileNav">
-
+      <div className="mobile-nav-main" ref="mobileNav">
         <SwipeableViews
           index={this.state.index}
           ref="swipeable"
           animateTransitions={false}
-          style={{zIndex: 9}}
-
+          style={{ zIndex: 9 }}
           onChangeIndex={this.handleChangeIndex}
         >
-          {
-            this.renderView()
-          }
+          {this.renderView()}
         </SwipeableViews>
 
         {this.renderButtons()}
@@ -227,28 +222,23 @@ class MobileNav extends React.Component {
   }
 
   renderButtons() {
-
-    if (this._tmpButtons)
-      return this._tmpButtons
-
+    if (this._tmpButtons) return this._tmpButtons
 
     const max = this.getMaxItems()
-    this._tmpButtons = <div className="mobile-nav">
-      {
-        this.buttons
+    this._tmpButtons = (
+      <div className="mobile-nav">
+        {this.buttons
           .filter((bName, index) => !!MobileNav.availableButtons[bName] && index < max)
-          .map(this.renderButton, this)
-      }
-
-    </div>
+          .map(this.renderButton, this)}
+      </div>
+    )
     return this._tmpButtons
   }
 
   renderView() {
     const max = this.getMaxItems()
     for (let i = 0; i < max; i++) {
-      if (i !== this.state.index && this.cache.views[i])
-        continue
+      if (i !== this.state.index && this.cache.views[i]) continue
 
       const index = i
       const bName = this.buttons[index]
@@ -257,27 +247,28 @@ class MobileNav extends React.Component {
       if (!this.state.location[index]) {
         const b = MobileNav.availableButtons[bName]
         const props = b.getProps ? b.getProps(this) : null
-        tabView = <b.Component title={bName} isMobile={true} {...this.props} {...props} />
+        tabView = <b.Component title={bName} isMobile {...this.props} {...props} />
       }
-      console.log("Rendering tab no", index)
+      console.log('Rendering tab no', index)
       this.cache.views[i] = (
         <div key={index}>
           {/*{bName} + {this.state.index}*/}
-          {this.state.index === index && this.state.location[index] &&
+          {this.state.index === index &&
+            this.state.location[index] &&
             <RouterWrap
               {...this.props}
               onClose={() => {
-                console.log("Closing router wrap..")
-                this.state.location[index] = null
+                console.log('Closing router wrap..')
+                const stateLocation = this.state.location
+                stateLocation[index] = null
                 // force Redraw
                 this.context.router.push('/')
-                this.setState({location: this.state.location})
+                this.setState({ location: stateLocation })
               }}
               location={this.state.location[index]}
               key={index * 10000}
-            />
-          }
-          { tabView }
+            />}
+          {tabView}
         </div>
       )
     }
@@ -290,197 +281,197 @@ class MobileNav extends React.Component {
     const b = MobileNav.availableButtons[bName]
     // a - leaves :hover on PC and that makes to appear as there would be
     // multiple active tabs
-    return <span
-      className={'mobile-nav-button item' + (index === this.state.index ? ' active' : '')}
-      name={bName}
-      key={index}
-      id={"mobile-nav-button-" + index}
-      onClick={() => this.onClick(b, index)}
-    >
-      <Icon name={b.icon || 'question'} size='large'/>
-      <p>{b.title}</p>
-    </span>
+    return (
+      <span
+        className={'mobile-nav-button item' + (index === this.state.index ? ' active' : '')}
+        name={bName}
+        key={index}
+        id={'mobile-nav-button-' + index}
+        onClick={() => this.onClick(b, index)}
+      >
+        <Icon name={b.icon || 'question'} size="large" />
+        <p>
+          {b.title}
+        </p>
+      </span>
+    )
   }
-
 
   static availableButtons = {
     home: {
       title: 'Home',
       Component: HomeRoute, ///HomeWrap,
-      getProps: (mobileNav) => ({
-        flexPanelWidth: '0'
+      getProps: mobileNav => ({
+        flexPanelWidth: '0',
       }),
-      icon: 'home'
+      icon: 'home',
     },
     assets: {
-      title: "Assets",
+      title: 'Assets',
       Component: fpAssets, //BlankPage,
-      getProps: (mobileNav) => ({
+      getProps: mobileNav => ({
         allowDrag: false,
-        panelWidth: '0'
+        panelWidth: '0',
       }),
-      icon: 'search'
+      icon: 'search',
     },
     play: {
-      title: "Play",
+      title: 'Play',
       Component: BrowseGamesRoute,
 
-      icon: 'game'
+      icon: 'game',
     },
     chat: {
       data: {},
-      title: "Chat",
+      title: 'Chat',
       Component: fpChat, // BlankPage,
-      getProps: (mobileNav) => {
+      getProps: mobileNav => {
         // manually parse channel
-        const subNav = (mobileNav.props.location && mobileNav.props.location.query) ? mobileNav.props.location.query._fp : ''
+        const subNav =
+          mobileNav.props.location && mobileNav.props.location.query ? mobileNav.props.location.query._fp : ''
         const subNavParam = (subNav ? subNav.split('.') : []).length > 0 ? subNav.split('.').pop() : ''
         return {
           panelWidth: '0',
           // TODO: save and restore
-          subNavParam: subNavParam || localStorage.getItem("chat:subNavParam") || 'A_NDe2wYSgj9piosiqG_',
-          handleChangeSubNavParam: function (newSubNavParamStr) {
-            localStorage.setItem("chat:subNavParam", newSubNavParamStr)
-            utilPushTo(mobileNav.context.location, mobileNav.context.location, {'_fp': 'chat.' + newSubNavParamStr})
+          subNavParam: subNavParam || localStorage.getItem('chat:subNavParam') || 'A_NDe2wYSgj9piosiqG_',
+          handleChangeSubNavParam: function(newSubNavParamStr) {
+            localStorage.setItem('chat:subNavParam', newSubNavParamStr)
+            utilPushTo(mobileNav.context.location, mobileNav.context.location, {
+              _fp: 'chat.' + newSubNavParamStr,
+            })
             mobileNav.forceUpdate()
-          }
+          },
         }
       },
-      icon: 'chat'
+      icon: 'chat',
     },
     more: {
       title: 'More',
       icon: 'horizontal ellipsis',
       Component: AllButtons,
-      getProps: (mobileNav) => {
-        return {buttons: mobileNav.buttons, mobileNav: mobileNav, from: 5, to: Infinity}
-      }
+      getProps: mobileNav => {
+        return { buttons: mobileNav.buttons, mobileNav: mobileNav, from: 5, to: Infinity }
+      },
     },
 
     // TODO: use some sort of map / names for routes instead of hardcoded strings?
     profile: {
-      title: "Profile",
-      action: (mobnav) => {
-        if (Meteor.user())
-          mobnav.setLocation(`/u/${Meteor.user().username}`)
-        else
-          mobnav.setLocation(`/login`)
+      title: 'Profile',
+      action: mobnav => {
+        if (Meteor.user()) mobnav.setLocation(`/u/${Meteor.user().username}`)
+        else mobnav.setLocation(`/login`)
       },
-      icon: 'user'
+      icon: 'user',
     },
     news: {
       title: "What's new",
-      action: (mobnav) => {
+      action: mobnav => {
         mobnav.setLocation(`/whatsnew`)
       },
-      icon: 'bullhorn'
+      icon: 'bullhorn',
     },
     roadmap: {
-      title: "Roadmap",
-      action: (mobnav) => {
+      title: 'Roadmap',
+      action: mobnav => {
         mobnav.setLocation(`/roadmap`)
       },
-      icon: 'map'
+      icon: 'map',
     },
 
     users: {
       title: 'Users',
       icon: 'users',
-      action: (mobnav) => {
+      action: mobnav => {
         mobnav.setLocation(`/users`)
       },
     },
     feed: {
-      title: "Feed",
-      action: (mobnav) => {
+      title: 'Feed',
+      action: mobnav => {
         mobnav.setLocation(`/mobile/feed`)
       },
       icon: 'feed',
-      disabled: true
+      disabled: true,
     },
     dailies: {
       title: 'Dailies',
       icon: 'exclamation',
-      action: (mobnav) => {
+      action: mobnav => {
         mobnav.setLocation(`/mobile/dailies`)
       },
-      disabled: true
+      disabled: true,
     },
 
     badges: {
       title: 'Badges',
       icon: 'star',
-      action: (mobnav) => {
-        if (Meteor.user())
-          mobnav.setLocation(`/u/${Meteor.user().username}/badges`)
-        else
-          mobnav.setLocation(`/login`)
+      action: mobnav => {
+        if (Meteor.user()) mobnav.setLocation(`/u/${Meteor.user().username}/badges`)
+        else mobnav.setLocation(`/login`)
       },
     },
     projects: {
       title: 'Projects',
       icon: 'sitemap',
-      action: (mobnav) => {
-        if (Meteor.user())
-          mobnav.setLocation(`/u/${Meteor.user().username}/projects`)
-        else
-          mobnav.setLocation(`/login`)
+      action: mobnav => {
+        if (Meteor.user()) mobnav.setLocation(`/u/${Meteor.user().username}/projects`)
+        else mobnav.setLocation(`/login`)
       },
     },
     competitions: {
       title: 'Competitions',
       icon: 'winner',
-      action: (mobnav) => {
+      action: mobnav => {
         mobnav.setLocation(`/mobile/competitions`)
       },
-      disabled: true
+      disabled: true,
     },
 
     feedback: {
       title: 'Feedback',
       icon: 'mail outline',
-      action: (mobnav) => {
+      action: mobnav => {
         // alert('Feedback is not implemented...')
         mobnav.setLocation(`/mobile/feedback`)
       },
-      disabled: true
+      disabled: true,
     },
     notifications: {
       title: 'Notifications',
       icon: 'bell outline',
-      action: (mobnav) => {
+      action: mobnav => {
         // alert('Notifications are not implemented...')
         mobnav.setLocation(`/mobile/notifications`)
       },
-      disabled: true
+      disabled: true,
     },
     learn: {
       title: 'Learn',
       icon: 'graduation',
-      action: (mobnav) => {
+      action: mobnav => {
         mobnav.setLocation(`/learn`)
-      }
+      },
     },
 
     help: {
       title: 'Help',
       icon: 'question',
-      action: (mobnav) => {
+      action: mobnav => {
         mobnav.handleChangeIndex(TAB.CHAT, 0, '?_fp=chat.G_MGBHELP_')
       },
     },
     settings: {
       title: 'Settings',
       icon: 'setting',
-      action: (mobnav) => {
+      action: mobnav => {
         mobnav.setLocation(`/mobile/settings`)
       },
     },
     logout: {
       title: 'Log Out',
       icon: 'log out',
-      action: doLogout
-    }
+      action: doLogout,
+    },
   }
 }
 
@@ -490,5 +481,5 @@ export const TAB = {
   PLAY: 1,
   CHAT: 2,
   ASSETS: 3,
-  MORE: 4
+  MORE: 4,
 }

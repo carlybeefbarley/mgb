@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Button, Divider, Grid, Icon, Popup } from 'semantic-ui-react'
+import { Button, Divider, Grid, Icon, Popup, Header } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import sty from './editGraphic.css'
 import { SketchPicker } from 'react-color'
@@ -19,6 +19,8 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 import ArtTutorial from './ArtTutorials'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
+
+import ReactColor from 'react-color'
 
 import { makeExpireThumbnailLink } from '/client/imports/helpers/assetFetchers'
 
@@ -372,8 +374,7 @@ export default class EditGraphic extends React.Component {
     else if (scale < 1) scale = 1
     else if (scale === 3) scale = 2
 
-    if (this.props.availableWidth < MOBILE_WIDTH)
-      scale = 10
+    if (this.props.availableWidth < MOBILE_WIDTH) scale = 10
 
     // add +1 to zoomLevel (based on hotjar screen recordings and heatmaps)
     let i = this.zoomLevels.indexOf(scale)
@@ -1695,7 +1696,7 @@ export default class EditGraphic extends React.Component {
   }
 
   renderMobileView() {
-    this.initDefaultContent2()      // The NewAsset code is lazy, so add base content here
+    this.initDefaultContent2() // The NewAsset code is lazy, so add base content here
     this.initDefaultUndoStack()
 
     const { asset, currUser } = this.props
@@ -1703,126 +1704,130 @@ export default class EditGraphic extends React.Component {
     const zoom = this.state.editScale
     const { actions, config } = this.generateToolbarActions()
 
-    let imgEditorSty = {width: "100%", height: "100%"}
-    if (this.state.toolChosen)
-      imgEditorSty.cursor = this.state.toolChosen.editCursor
+    let imgEditorSty = { width: '100%', height: '100%' }
+    if (this.state.toolChosen) imgEditorSty.cursor = this.state.toolChosen.editCursor
 
-    const scrollModes = ["Normal", "Rotate", "Scale", "Flip"]
+    const scrollModes = ['Normal', 'Rotate', 'Scale', 'Flip']
 
     return (
       <Grid>
         {/***  Central Column is for Edit and other wide stuff  ***/}
-        <Grid.Row style={{padding: 0}}>
-          <div style={{display: 'flex', alignItems: 'center', overflow: 'auto'}}>
+        <Grid.Row style={{ padding: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', overflow: 'auto' }}>
             <Popup
-              on='hover'
-              positioning='bottom left'
+              on="hover"
+              positioning="bottom left"
               hoverable
               hideOnScroll
               mouseEnterDelay={250}
               id="mgbjr-EditGraphic-colorPicker-body"
-              trigger={(
+              trigger={
                 <Button
-                  size='big'
-                  id='mgbjr-EditGraphic-colorPicker'
+                  size="big"
+                  id="mgbjr-EditGraphic-colorPicker"
                   style={{ backgroundColor: this.state.selectedColors['fg'].hex }}
-                  icon={{ name: 'block layout', style: { color: this.state.selectedColors['fg'].hex }}}
+                  icon={{ name: 'block layout', style: { color: this.state.selectedColors['fg'].hex } }}
                 />
-              )}
+              }
             >
               <Header>Color Picker</Header>
               <ReactColor
                 type="sketch"
                 onChangeComplete={this.handleColorChangeComplete.bind(this, 'fg')}
                 color={this.state.selectedColors['fg'].rgb}
-                style={{minWidth: "100vw", maxHeight: "100%"}}
+                style={{ minWidth: '100vw', maxHeight: '100%' }}
               />
             </Popup>
 
-            <Toolbar nowrap={true} actions={actions} config={config} name="EditGraphic" />
+            <Toolbar nowrap actions={actions} config={config} name="EditGraphic" />
 
-            <Popup id="mgbjr-editGraphic-changeCanvasZoom"
-                   trigger={(
-                     <div style={{whiteSpace: 'nowrap'}}>
-                       <Button compact icon size='big' onClick={this.zoomIn}>
-                         <Icon name='zoom in'/>
-                       </Button>
-                       <Button compact icon size='big' onClick={this.zoomOut}>
-                         <Icon name='zoom out'/>
-                       </Button>
-                     </div>
-                   )}
-                   on='hover'
-                   header='Zoom'
-                   mouseEnterDelay={250}
-                   content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too big"
-                   size='tiny'
-                   positioning='bottom left'
+            <Popup
+              id="mgbjr-editGraphic-changeCanvasZoom"
+              trigger={
+                <div style={{ whiteSpace: 'nowrap' }}>
+                  <Button compact icon size="big" onClick={this.zoomIn}>
+                    <Icon name="zoom in" />
+                  </Button>
+                  <Button compact icon size="big" onClick={this.zoomOut}>
+                    <Icon name="zoom out" />
+                  </Button>
+                </div>
+              }
+              on="hover"
+              header="Zoom"
+              mouseEnterDelay={250}
+              content="Click here or SHIFT+mousewheel over edit area to change zoom level. Use mousewheel to scroll if the zoom is too big"
+              size="tiny"
+              positioning="bottom left"
             />
           </div>
 
-          <div className={"ui form " + (this.state.toolChosen && this.state.toolChosen.label=="Paste" ? "" : "mgb-hidden")}>
+          <div
+            className={
+              'ui form ' +
+              (this.state.toolChosen && this.state.toolChosen.label == 'Paste' ? '' : 'mgb-hidden')
+            }
+          >
             <div className="inline fields">
               <label>Scroll modes</label>
-              {
-                scrollModes.map( (mode) => (
-                  <div key={mode} className="field">
-                    <div className="ui radio checkbox" >
-                      <input type="radio" name={mode}
-                             checked={mode == this.state.scrollMode ? "checked" : ""}
-                             onChange={this.setScrollMode.bind(this, mode)} />
-                      <label>{mode}</label>
-                    </div>
+              {scrollModes.map(mode =>
+                <div key={mode} className="field">
+                  <div className="ui radio checkbox">
+                    <input
+                      type="radio"
+                      name={mode}
+                      checked={mode == this.state.scrollMode ? 'checked' : ''}
+                      onChange={this.setScrollMode.bind(this, mode)}
+                    />
+                    <label>
+                      {mode}
+                    </label>
                   </div>
-                ))
-              }
+                </div>,
+              )}
             </div>
           </div>
         </Grid.Row>
-        <Grid.Row style={{padding: 0}}>
+        <Grid.Row style={{ padding: 0 }}>
           {/*** Drawing Canvas ***/}
           {!asset.skillPath &&
-          <Grid.Row style={{width: "100%", height: "100%"}}>
-            <Grid.Column style={{height: '100%'}} width={10}>
-              <div style={{ "overflow": "hidden", /*"maxWidth": "600px",*/ "maxHeight": "600px"}}>
-                <canvas
-                  ref="editCanvas"
-                  style={imgEditorSty}
-                  width={zoom * c2.width}
-                  height={zoom * c2.height}
-                  className={(
-                  (this.state.showCheckeredBg ? 'mgbEditGraphicSty_checkeredBackground' : '')
-                  + ' mgbEditGraphicSty_thinBorder')}
-                  id="mgb_edit_graphic_main_canvas"
-                  onDragOver={this.handleDragOverPreview.bind(this)}
-                  onDrop={this.handleDropPreview.bind(this,-1)}
-                >
-                </canvas>
-                {/*** <canvas id="tilesetCanvas"></canvas> ***/}
-                <CanvasGrid
-                  scale={this.state.editScale}
-                  setGrid={this.setGrid}
-                />
-              </div>
-            </Grid.Column>
-          </Grid.Row>
-          }
+            <Grid.Row style={{ width: '100%', height: '100%' }}>
+              <Grid.Column style={{ height: '100%' }} width={10}>
+                <div style={{ overflow: 'hidden', /*"maxWidth": "600px",*/ maxHeight: '600px' }}>
+                  <canvas
+                    ref="editCanvas"
+                    style={imgEditorSty}
+                    width={zoom * c2.width}
+                    height={zoom * c2.height}
+                    className={
+                      (this.state.showCheckeredBg ? 'mgbEditGraphicSty_checkeredBackground' : '') +
+                      ' mgbEditGraphicSty_thinBorder'
+                    }
+                    id="mgb_edit_graphic_main_canvas"
+                    onDragOver={this.handleDragOverPreview.bind(this)}
+                    onDrop={this.handleDropPreview.bind(this, -1)}
+                  />
+                  {/*** <canvas id="tilesetCanvas"></canvas> ***/}
+                  <CanvasGrid scale={this.state.editScale} setGrid={this.setGrid} />
+                </div>
+              </Grid.Column>
+            </Grid.Row>}
 
           {/*** Art Mentor ***/}
-          {asset.skillPath && _.startsWith( asset.skillPath, 'art' ) &&
-          <ArtTutorial
-            style       =     { { backgroundColor: 'rgba(0,255,0,0.02)' } }
-            isOwner     =     { currUser && currUser._id === asset.ownerId }
-            active      =     { asset.skillPath ? true : false}
-            skillPath   =     { asset.skillPath }
-            currUser    =     { this.props.currUser }
-            userSkills  =     { this.userSkills }
-            assetId     =     { asset._id }
-          />
-          }
+          {asset.skillPath &&
+            _.startsWith(asset.skillPath, 'art') &&
+            <ArtTutorial
+              style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+              isOwner={currUser && currUser._id === asset.ownerId}
+              active={asset.skillPath ? true : false}
+              skillPath={asset.skillPath}
+              currUser={this.props.currUser}
+              userSkills={this.userSkills}
+              assetId={asset._id}
+            />}
         </Grid.Row>
 
-        <Grid.Row style={{padding: 0}}>
+        <Grid.Row style={{ padding: 0 }}>
           {/*** GraphicImport ***/}
           <div className="ui modal" ref="graphicImportPopup">
             <GraphicImport
@@ -1838,16 +1843,14 @@ export default class EditGraphic extends React.Component {
           <SpriteLayers
             content2={c2}
             EditGraphic={this}
-
             hasPermission={this.hasPermission}
             handleSave={this.handleSave.bind(this)}
             forceDraw={this.forceDraw.bind(this)}
             forceUpdate={this.forceUpdate.bind(this)}
-            getFrameData={ frameId => this.frameCanvasArray[frameId].toDataURL('image/png') }
-            getLayerData={ layerId => (this.previewCanvasArray[layerId].toDataURL('image/png') ) }
-
-            isMobileView={true}
-            style={{ margin: 0, width: '100%'}}
+            getFrameData={frameId => this.frameCanvasArray[frameId].toDataURL('image/png')}
+            getLayerData={layerId => this.previewCanvasArray[layerId].toDataURL('image/png')}
+            isMobileView
+            style={{ margin: 0, width: '100%' }}
           />
         </Grid.Row>
       </Grid>

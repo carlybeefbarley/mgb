@@ -68,12 +68,12 @@ const AssetCard = React.createClass({
     // this is here because React makes passive event listeners and it's not
     // possible to prevent default from passive event listener
     this.dragSurface = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
-    if(this.props.allowDrag)
+    if (this.props.allowDrag)
       this.dragSurface.addEventListener('touchstart', DragNDropHelper.startSyntheticDrag)
   },
   componentWillUnmount() {
     // See comment in componentDidMount() and #478
-    if(this.props.allowDrag)
+    if (this.props.allowDrag)
       this.dragSurface.removeEventListener('touchstart', DragNDropHelper.startSyntheticDrag)
   },
 
@@ -91,15 +91,14 @@ const AssetCard = React.createClass({
     $(document.body).removeClass('dragging') // this is in mgb.css
   },
 
-  getDropProps(){
-    if(!this.props.allowDrag)
-      return {}
+  getDropProps() {
+    if (!this.props.allowDrag) return {}
     return {
       onDragStart: this.startDrag,
       onDragEnd: this.endDrag,
-    // draggable must be explicitly set if element is not user-input, img, or link... see
-    // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/draggable
-      draggable: 'draggable'
+      // draggable must be explicitly set if element is not user-input, img, or link... see
+      // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/draggable
+      draggable: 'draggable',
     }
   },
 
@@ -147,7 +146,6 @@ const AssetCard = React.createClass({
         onTouchStart={this.handleTouchStart}
         onTouchMove={this.handleTouchMove}
         {...dropProps}
-
         key={asset._id}
         className={`${classNames ? classNames : ''} animated fadeIn link`}
       >
@@ -341,23 +339,21 @@ const AssetCard = React.createClass({
   },
 
   handleEditClick(e) {
-    if(this.touchHasMoved)
-      return
+    if (this.touchHasMoved) return
     const asset = this.props.asset
     const url = '/u/' + asset.dn_ownerName + '/asset/' + asset._id
     // middle click - mouseUp reports buttons == 0; button == 1
     if (e.buttons == MOUSE_BUTTONS.middle || e.button == 1)
       window.open(url + (window.location.search ? window.location.search : ''))
-    else
-      utilPushTo(this.context.urlLocation.query, url)
+    else utilPushTo(this.context.urlLocation.query, url)
   },
 
-  handleTouchMove(){
+  handleTouchMove() {
     this.touchHasMoved = true
   },
-  handleTouchStart(){
+  handleTouchStart() {
     this.touchHasMoved = false
-  }
+  },
 })
 
 export default AssetCard

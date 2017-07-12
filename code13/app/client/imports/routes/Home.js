@@ -18,7 +18,7 @@ const _propTypes = {
 
 const _isIE = detectIE()
 
-const HomeRoute = ( { currUser, respData, respIsRuleActive  , isMobile} ) => {
+const HomeRoute = ({ currUser, respData, respIsRuleActive, isMobile }) => {
   const username = currUser ? currUser.profile.name : 'guest'
   const userId = currUser ? currUser._id : null
   const columns = respData.columns || 3

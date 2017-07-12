@@ -7,19 +7,18 @@ import FittedImage from '/client/imports/components/Controls/FittedImage'
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 import { isValidCodeGame, isValidActorMapGame } from '/imports/schemas/assets'
 
-
 import is from 'is_js'
 
 import SpecialGlobals from '/imports/SpecialGlobals'
 
 const _cardStyle = is.mobile()
-                    ? { minWidth: '200px', maxWidth: '200px' }
-                    : {
-                        overflow: 'hidden',
-                        width: 'auto',
-                        minWidth: SpecialGlobals.thumbnail.width,
-                        maxWidth: SpecialGlobals.thumbnail.width
-                      }
+  ? { minWidth: '200px', maxWidth: '200px' }
+  : {
+      overflow: 'hidden',
+      width: 'auto',
+      minWidth: SpecialGlobals.thumbnail.width,
+      maxWidth: SpecialGlobals.thumbnail.width,
+    }
 export const GameItem = ({ game, currUser }) =>
   <Card color={isValidCodeGame(game) ? 'green' : 'blue'} className="link" style={_cardStyle}>
     <QLink className="image" to={`/u/${game.dn_ownerName}/play/${game._id}`}>
@@ -36,9 +35,11 @@ export const GameItem = ({ game, currUser }) =>
           whiteSpace: 'nowrap',
         }}
       >
-        {game.name} {
-          currUser !== game.dn_ownerName &&
-          <span>(by <QLink to={`/u/${game.dn_ownerName}/`}>{game.dn_ownerName}</QLink>)</span>}
+        {game.name}{' '}
+        {currUser !== game.dn_ownerName &&
+          <span>
+            (by <QLink to={`/u/${game.dn_ownerName}/`}>{game.dn_ownerName}</QLink>)
+          </span>}
       </p>
       <p>
         <span>
@@ -51,7 +52,7 @@ export const GameItem = ({ game, currUser }) =>
     </Card.Content>
   </Card>
 
-const _wrapStyle = { clear: 'both', flexWrap: 'wrap', justifyContent: 'space-around'}
+const _wrapStyle = { clear: 'both', flexWrap: 'wrap', justifyContent: 'space-around' }
 const _nowrapStyle = {
   clear: 'both',
   flexWrap: 'nowrap',
@@ -61,8 +62,7 @@ const _nowrapStyle = {
 
 const GameItems = ({ games, wrap, currUser }) =>
   <Card.Group itemsPerRow={1} style={wrap ? _wrapStyle : _nowrapStyle}>
-    {(!games || games.length === 0) &&
-      <Segment basic>No matching games</Segment>}
+    {(!games || games.length === 0) && <Segment basic>No matching games</Segment>}
     {games.map(
       g =>
         isValidCodeGame(g) || isValidActorMapGame(g)

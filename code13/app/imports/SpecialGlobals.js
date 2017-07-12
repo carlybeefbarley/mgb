@@ -2,7 +2,6 @@
 // at least put it here and reference it from here so we understand the extent of
 // this code smell in our codebase :)
 
-
 const SpecialGlobals = {
   activity: {
     activityHistoryLimit: 20,

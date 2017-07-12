@@ -231,4 +231,3 @@ RestApi.addRoute(
     },
   },
 )
-

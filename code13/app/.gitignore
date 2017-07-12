@@ -3,4 +3,5 @@ node_modules
 .idea
 *.tmp
 settings.staging.generated.json
+meteor_session.json
 .directory

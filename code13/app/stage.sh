@@ -4,7 +4,7 @@
 # Ensure git is ready, fetch before making comparisons
 #
 if [[ -n $(git status --porcelain) ]]; then
-  echo "Commit or stash you changes before deploying"
+  echo "Commit or stash your changes before deploying"
   exit 1
 else
   echo "... working directory is clean"
@@ -72,7 +72,7 @@ else
 fi
 
 #
-# Release
+# Deploy
 #
 echo "... deploying"
 DEPLOY_HOSTNAME=galaxy.meteor.com meteor deploy staging.mygamebuilder.com --settings settings.staging.generated.json

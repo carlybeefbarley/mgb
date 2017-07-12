@@ -57,7 +57,7 @@ fi
 #
 if meteor_user=$(meteor whoami > /dev/null 2>&1); then
   echo "... logged in as $meteor_user"
-elif [ -n ${METEOR_SESSION_FILE_CONTENT} ]; then
+elif [[ -n $METEOR_SESSION_FILE_CONTENT ]]; then
   echo "... using METEOR_SESSION_FILE $METEOR_SESSION_FILE_CONTENT"
   echo "$METEOR_SESSION_FILE_CONTENT" > meteor_session.json
   METEOR_SESSION_FILE=meteor_session.json

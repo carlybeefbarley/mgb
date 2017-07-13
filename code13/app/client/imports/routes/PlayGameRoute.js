@@ -29,6 +29,10 @@ import { TAB } from '/client/imports/Mobile/MobileNav'
 
 import './playGame.css'
 
+// this css contains position styles / top / left / right etc..
+import '/client/imports/components/Assets/EditGame/position.css'
+
+
 // TODO: The debounce / throttle needs to move to the server really
 const _incrementPlayCount = _.debounce(
   assetId => {
@@ -352,21 +356,20 @@ class PlayCodeGame extends React.Component {
           />
         </div>
         {this.state.isFullScreen &&
+          <div className="fs-exit-pos-container">
           <Icon
             name="sidebar"
             size="big"
-            className="burger"
-            color="white"
+            className={'burger' + this.props.metadata.fullScreenPosition ? ' ' + this.props.metadata.fullScreenPosition : ''}
             style={{
               position: 'absolute',
-              right: 0,
-              top: 0,
               color: 'white',
               backgroundColor: 'rgba(0,0,0,0.5)',
               borderRadius: '0.1em',
             }}
             onClick={this.exitFullScreen}
-          />}
+          />
+          </div>}
       </div>
     )
   }

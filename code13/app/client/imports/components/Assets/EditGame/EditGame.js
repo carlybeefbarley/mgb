@@ -9,6 +9,7 @@ import { isUserSuperAdmin } from '/imports/schemas/roles'
 import FullScreenExitPosition from './FullScreenExitPosition'
 
 import './editGame.css'
+import './position.css'
 
 const _gameTypes = {
   'ActorMap Game (no code)': 'actorGame',

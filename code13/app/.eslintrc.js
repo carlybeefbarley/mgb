@@ -9,7 +9,7 @@ module.exports = {
     sourceType: 'module',
   },
   extends: ['eslint:recommended', 'plugin:react/recommended', 'prettier'],
-  plugins: ['prettier', 'react'],
+  plugins: ['json', 'prettier', 'react'],
   env: {
     browser: true,
     meteor: true,

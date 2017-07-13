@@ -92,6 +92,7 @@
     "babel-root-slash-import": "^1.1.0",
     "eslint": "^4.2.0",
     "eslint-config-prettier": "^2.3.0",
+    "eslint-plugin-json": "^1.2.0",
     "eslint-plugin-prettier": "^2.1.2",
     "eslint-plugin-react": "^6.10.3",
     "mocha": "^3.4.2",

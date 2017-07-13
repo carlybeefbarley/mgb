@@ -107,25 +107,26 @@ const MagePlayGameNpc = {
     if (take && take == '') take = null // just normalizing "" to null
     if (take) {
       if (takeCount <= 0) takeCount = 1 // <1 isn't valid, minimum is 1
-
+      
       var item = inventory.get(take)
+      var itemName = take.split(':').pop()
       if (!item || item.count < takeCount) {
-        if (takeCount === 1) say = `You don't have the ${take} to give me.`
-        else say = `You don't have enough ${take} to give me. I want ${takeCount}.`
+        if (takeCount === 1) say = `You don't have the ${itemName} to give me.`
+        else say = `You don't have enough ${itemName} to give me. I want ${takeCount}.`
         drop = null
         stayYN = 1
       } else {
         switch (takeType) {
           case MgbActor.alNpcTakeType_Take:
             if (false == inventory.removeByName(take, takeCount)) {
-              say = "You don't have the " + take + ' to give me...'
+              say = "You don't have the " + itemName + ' to give me...'
               drop = null
               stayYN = 1
             }
             break
           case MgbActor.alNpcTakeType_Require:
             if (null == inventory.get(take)) {
-              say = "You don't have the " + take + ' with you...'
+              say = "You don't have the " + itemName + ' with you...'
               drop = null
               stayYN = 1
             }

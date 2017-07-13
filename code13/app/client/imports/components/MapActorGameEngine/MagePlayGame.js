@@ -422,7 +422,8 @@ export default class MagePlayGame {
                       var key = hitThing_ap.content2.databag.item.keyForThisDoor
                       if (key && key !== '') {
                         // yup, there's a key. Next question - does the player have it?
-                        var keyItem = this.inventory.get(key)
+                        var keyName = key.split(':').pop()
+                        var keyItem = this.inventory.get(keyName)
                         if (keyItem) {
                           var keyDestroyed =
                             1 ==
@@ -433,8 +434,8 @@ export default class MagePlayGame {
                           this.setGameStatusFn(
                             1,
                             keyDestroyed
-                              ? 'You use your ' + key + ' to pass'
-                              : 'Since you are carrying the ' + key + ' you are able to pass through',
+                              ? 'You use your ' + keyName + ' to pass'
+                              : 'Since you are carrying the ' + keyName + ' you are able to pass through',
                           )
                           if (keyDestroyed) this.inventory.remove(keyItem)
                           this.activeActors[AAInCell].health = 0 /// This triggers all the usual spawn stuff

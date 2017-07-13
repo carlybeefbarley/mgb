@@ -1,8 +1,12 @@
 App.info({
   id: 'com.mygamebuilder.mobile.app',
-  version: '0.0.8',
+  version: '0.0.9',
   name: 'MGB',
 })
+App.configurePlugin('phonegap-plugin-push', {
+  SENDER_ID: '12341234'
+})
+
 App.accessRule('http://*')
 App.accessRule('https://*')
 // fix connection to the server was unsuccessful

@@ -1,3 +1,6 @@
+import '../imports/Push'
+
+
 import { setUpCloudFront } from './cloudfront/CreateCloudfront'
 
 import { Users } from '../imports/schemas'

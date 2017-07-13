@@ -33,8 +33,8 @@ dispatch:mocha
 practicalmeteor:mocha
 semantic:ui
 email@1.2.1
-crosswalk@1.7.1
 meteorhacks:aggregate
 juliancwirko:postcss
 less@2.7.9
 dynamic-import
+raix:push

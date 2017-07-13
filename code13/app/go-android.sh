@@ -1,5 +1,40 @@
 #!/bin/bash
 
+if [ $# -lt 1 ]; then
+echo "You must specify release type:"
+echo "Available options:"
+echo "  local - mobile app will try to connect to local server in the same network"
+echo "          probably you should specify server also e.g.: "
+echo "          ./goAndroid.sh local --mobile-server='http://192.168.1.2:3000'"
+echo ""
+echo "  test - mobile app will connect to test server"
+echo ""
+echo "  release - mobile app will connect to v2.mygamebuilder.com (NOT WORKING - needs mobile branch to be merged into master)"
+echo ""
+echo "Or you can manually specify mobile server:"
+echo "./goAndroid.sh local --mobile-server='http://staging.mygamebuilder.com'"
+exit 1
+fi
+
+server='http://test.mygamebuilder.com'
+server='http://192.168.8.100:3000'
+
+case "$1" in
+  'local')
+    server='http://192.168.8.100:3000'
+    ;;
+  'test')
+    server='http://test.mygamebuilder.com'
+    ;;
+  'release')
+    server='http://v2.mygamebuilder.com'
+    ;;
+esac
+
+if [ $# -lt 2 ]; then
+  args="--mobile-server=${server}"
+fi
+
 (
 #if [ `uname` != 'Darwin' ]; then
   cd ../misc
@@ -17,14 +52,13 @@ rm -rf .meteor/local/bundler-cache/
 rm -rf .meteor/local/cordova-build/www/application/
 
 
-server='http://test.mygamebuilder.com'
-server='http://192.168.8.100:3000'
+
 
 # For Windows
 if [[ "$OSTYPE" == "msys" ]]; then
-  meteor.bat run android-device --mobile-server $server $@
+  meteor.bat run android-device $args ${@:2}
 else
-  meteor run android-device --mobile-server $server $@
+  meteor run android-device $args ${@:2}
 fi
 )
 

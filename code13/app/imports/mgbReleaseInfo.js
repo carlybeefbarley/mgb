@@ -15,6 +15,29 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Fri Jul 14 2017 08:40:00 GMT-0700 (PDT)',
+
+      id: {
+        ver: '0.2.1',
+        state: 'Beta',
+        iteration: '4622',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'Linted and refactored the codebase. Fixed many missing links and components.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Sun July 9 2017 00:20:00 GMT-0700 (PDT)',
 
       id: {

@@ -55,4 +55,6 @@
     margin-left: 165px;
 }
 
-
+.ui .form {
+    min-height: 50vh;
+}

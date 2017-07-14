@@ -99,7 +99,7 @@ export default class ObjectBehavior extends BaseForm {
             'Enter the number of points of damage this item applies or heals. For example, if this was a healing item, and the number here was 5, it would heal by 5 points. If this was a harming item, and the number was 10, it would inflict 10 damage points',
           max: 100,
         })}
-        {this.text('Increase Max Health', 'healOrHarmWhenUsedNum', 'number', {
+        {this.text('Increase Max Health', 'increasesMaxHealthNum', 'number', {
           title: 'Enter the number of points of extra max health this item gives.',
           min: -1000,
           max: 1000,
@@ -312,7 +312,7 @@ export default class ObjectBehavior extends BaseForm {
       behaviorOptions = <div className="ui message ">This ActorType doesn't use this set of options</div>
 
     return (
-      <div style={{ height: '50vh' }}>
+      <div>
         {behaviorOptions ? behaviorOptions : this.renderAll()}
       </div>
     )

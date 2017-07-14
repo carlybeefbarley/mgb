@@ -50,12 +50,12 @@ const GamesAvailableGet = React.createClass({
   render: function() {
     const { loading, games } = this.data
     const { currUser, header } = this.props
-    return loading || games.length === 0
-      ? null
-      : <div>
-          {header}
-          <GameItems currUser={currUser} games={games} wrap={false} />
-        </div>
+    return loading || games.length === 0 ? null : (
+      <div>
+        {header}
+        <GameItems currUser={currUser} games={games} wrap={false} />
+      </div>
+    )
   },
 })
 

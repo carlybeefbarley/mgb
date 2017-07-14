@@ -86,7 +86,7 @@ export default class ActorMapArea extends BaseMapArea {
                 '):'}
             </b>
             <br />
-            {actor.actor.databag &&
+            {actor.actor.databag && (
               <span>
                 <span style={{ fontSize: '11px' }}>
                   &ensp;<b>Actor: </b>
@@ -99,11 +99,13 @@ export default class ActorMapArea extends BaseMapArea {
                     return type === actor.actor.databag.all.actorType
                   })}
                 </span>
-              </span>}
-            {actor.name === 'Actions' &&
+              </span>
+            )}
+            {actor.name === 'Actions' && (
               <span style={{ fontSize: '11px' }}>
                 &ensp;<b>Type: </b>Map Event
-              </span>}
+              </span>
+            )}
             {i + 1 < count && <div style={{ height: '11px' }} />}
           </div>
         }
@@ -278,9 +280,11 @@ export default class ActorMapArea extends BaseMapArea {
     return (
       <div
         className={
-          this.props.highlightActiveLayer
-            ? 'tilemap-wrapper highlight-active-layer mode-' + this.props.getMode()
-            : 'tilemap-wrapper mode-' + this.props.getMode()
+          this.props.highlightActiveLayer ? (
+            'tilemap-wrapper highlight-active-layer mode-' + this.props.getMode()
+          ) : (
+            'tilemap-wrapper mode-' + this.props.getMode()
+          )
         }
         onWheel={this.handleOnWheel.bind(this)}
       >

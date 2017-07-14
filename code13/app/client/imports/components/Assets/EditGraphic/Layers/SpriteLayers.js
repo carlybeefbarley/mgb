@@ -534,7 +534,7 @@ export default class SpriteLayers extends React.Component {
 
   renderLayers() {
     const c2 = this.props.content2
-    return c2.layerParams.map((layer, idx) =>
+    return c2.layerParams.map((layer, idx) => (
       <Layer
         key={idx}
         idx={idx}
@@ -557,8 +557,8 @@ export default class SpriteLayers extends React.Component {
         handleSave={this.handleSave.bind(this)}
         handleDragStart={this.handleDragStartForLayer.bind(this)}
         handleDragEnd={this.handleDragEnd}
-      />,
-    )
+      />
+    ))
   }
 
   render() {
@@ -654,64 +654,66 @@ export default class SpriteLayers extends React.Component {
                       >
                         {item.name}
                       </span>
-                      {item.name
-                        ? <div className="ui menu">
-                            <div className="item">
-                              <div className="ui input">
-                                <span className="text">Animation Name:&ensp;</span>
-                                <input
-                                  type="text"
-                                  value={item.name}
-                                  onChange={this.renameAnimation.bind(this, item.animID)}
-                                />
-                              </div>
-                            </div>
-
-                            <div className="item">
-                              <div className="ui input">
-                                <span className="text">From:&ensp;</span>
-                                <input
-                                  onChange={this.changeAnimStart.bind(this, item.animID)}
-                                  type="number"
-                                  value={item.startFrame}
-                                  min="1"
-                                  max={c2.frameNames.length}
-                                />
-                                <span className="text">&nbsp;To:&nbsp;</span>
-                                <input
-                                  onChange={this.changeAnimEnd.bind(this, item.animID)}
-                                  type="number"
-                                  value={item.endFrame}
-                                  min="1"
-                                  max={c2.frameNames.length}
-                                />
-                              </div>
-                            </div>
-
-                            <div className="item">
-                              <div className="ui input">
-                                <span className="text">FPS:&ensp;</span>
-                                <input
-                                  type="number"
-                                  value={item.fps}
-                                  min="1"
-                                  max="60"
-                                  onChange={this.changeAnimFPS.bind(this, item.animID)}
-                                />
-                              </div>
-                            </div>
-
-                            <div className="divide" />
-
-                            <div
-                              className="item"
-                              onClick={this.deleteAnimation.bind(this, item.animID)}
-                              title="Deletes the Animation data, but not the frames."
-                            >
-                              <i className="remove icon" />Delete Animation
+                      {item.name ? (
+                        <div className="ui menu">
+                          <div className="item">
+                            <div className="ui input">
+                              <span className="text">Animation Name:&ensp;</span>
+                              <input
+                                type="text"
+                                value={item.name}
+                                onChange={this.renameAnimation.bind(this, item.animID)}
+                              />
                             </div>
                           </div>
-                        : ''}
+
+                          <div className="item">
+                            <div className="ui input">
+                              <span className="text">From:&ensp;</span>
+                              <input
+                                onChange={this.changeAnimStart.bind(this, item.animID)}
+                                type="number"
+                                value={item.startFrame}
+                                min="1"
+                                max={c2.frameNames.length}
+                              />
+                              <span className="text">&nbsp;To:&nbsp;</span>
+                              <input
+                                onChange={this.changeAnimEnd.bind(this, item.animID)}
+                                type="number"
+                                value={item.endFrame}
+                                min="1"
+                                max={c2.frameNames.length}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="item">
+                            <div className="ui input">
+                              <span className="text">FPS:&ensp;</span>
+                              <input
+                                type="number"
+                                value={item.fps}
+                                min="1"
+                                max="60"
+                                onChange={this.changeAnimFPS.bind(this, item.animID)}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="divide" />
+
+                          <div
+                            className="item"
+                            onClick={this.deleteAnimation.bind(this, item.animID)}
+                            title="Deletes the Animation data, but not the frames."
+                          >
+                            <i className="remove icon" />Delete Animation
+                          </div>
+                        </div>
+                      ) : (
+                        ''
+                      )}
                     </div>
                   </th>
                 )
@@ -755,13 +757,9 @@ export default class SpriteLayers extends React.Component {
                       }}
                       id={'mgb_edit_graphics_frame_options_' + idx}
                     >
-                      <span className="ui circular label">
-                        {idx + 1}
-                      </span>
+                      <span className="ui circular label">{idx + 1}</span>
                       <div className="ui vertical menu">
-                        <div className="header item">
-                          Frame #{idx + 1}
-                        </div>
+                        <div className="header item">Frame #{idx + 1}</div>
                         <div onClick={this.insertFrameAfter.bind(this, idx, true)} className="item">
                           <i className="add circle icon" />
                           Duplicate Frame
@@ -897,9 +895,7 @@ export default class SpriteLayers extends React.Component {
             </tr>
           </thead>
 
-          <tbody className="layers">
-            {this.renderLayers()}
-          </tbody>
+          <tbody className="layers">{this.renderLayers()}</tbody>
         </table>
       </div>
     )

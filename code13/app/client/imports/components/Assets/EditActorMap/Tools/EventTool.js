@@ -45,9 +45,7 @@ export default class EventTool extends Tileset {
         id="mgbjr-MapTools-events"
         className="tilesets icon small ui button"
       >
-        <Dropdown.Menu>
-          {this.renderContent()}
-        </Dropdown.Menu>
+        <Dropdown.Menu>{this.renderContent()}</Dropdown.Menu>
       </Dropdown>
     )
   }

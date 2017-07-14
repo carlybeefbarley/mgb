@@ -23,70 +23,69 @@ class FlagEntity extends React.Component {
       currUser &&
       !entity.suFlagId &&
       !(entity.suIsBanned === true) &&
-      currUser._id !== entityOwnerId &&
-      <span className={tableCollection === 'Chats' ? 'mgb-show-on-parent-hover' : null}>
-        <Popup
-          on="click"
-          size="tiny"
-          position="bottom right"
-          trigger={
-            <Label
-              circular
-              basic
-              size="mini"
-              icon={{ name: 'warning', color: 'red', style: { marginRight: 0 } }}
-            />
-          }
-          wide="very"
-        >
-          <Popup.Header>
-            Report this {tableCollection === 'Azzets' ? 'Asset' : 'Chat'}
-          </Popup.Header>
-          <Popup.Content>
-            <Segment basic>
-              <Dropdown
-                placeholder="Reason(s)"
-                search
-                fluid
-                multiple
-                selection
-                options={_.map(_.keys(FlagTypes), k => ({
-                  text: FlagTypes[k].displayName,
-                  value: k,
-                }))}
-                onChange={(event, dropdown) => {
-                  this.setState({ userSelectedTags: dropdown.value })
-                }}
+      currUser._id !== entityOwnerId && (
+        <span className={tableCollection === 'Chats' ? 'mgb-show-on-parent-hover' : null}>
+          <Popup
+            on="click"
+            size="tiny"
+            position="bottom right"
+            trigger={
+              <Label
+                circular
+                basic
+                size="mini"
+                icon={{ name: 'warning', color: 'red', style: { marginRight: 0 } }}
               />
-              <Divider hidden />
-              <TextArea
-                placeholder="Additional comments/concerns"
-                autoHeight
-                onChange={(event, textarea) => {
-                  this.setState({ userComments: textarea.value })
-                }}
-              />
-              <Divider hidden />
-              <Button
-                as="div"
-                floated="right"
-                onClick={() =>
-                  _doReportEntity(
-                    currUser,
-                    entity,
-                    tableCollection,
-                    this.state.userSelectedTags,
-                    this.state.userComments,
-                  )}
-                size="small"
-                content="Report"
-                icon="warning"
-              />
-              &nbsp;
-            </Segment>
-          </Popup.Content>
-        </Popup>
-      </span>
+            }
+            wide="very"
+          >
+            <Popup.Header>Report this {tableCollection === 'Azzets' ? 'Asset' : 'Chat'}</Popup.Header>
+            <Popup.Content>
+              <Segment basic>
+                <Dropdown
+                  placeholder="Reason(s)"
+                  search
+                  fluid
+                  multiple
+                  selection
+                  options={_.map(_.keys(FlagTypes), k => ({
+                    text: FlagTypes[k].displayName,
+                    value: k,
+                  }))}
+                  onChange={(event, dropdown) => {
+                    this.setState({ userSelectedTags: dropdown.value })
+                  }}
+                />
+                <Divider hidden />
+                <TextArea
+                  placeholder="Additional comments/concerns"
+                  autoHeight
+                  onChange={(event, textarea) => {
+                    this.setState({ userComments: textarea.value })
+                  }}
+                />
+                <Divider hidden />
+                <Button
+                  as="div"
+                  floated="right"
+                  onClick={() =>
+                    _doReportEntity(
+                      currUser,
+                      entity,
+                      tableCollection,
+                      this.state.userSelectedTags,
+                      this.state.userComments,
+                    )}
+                  size="small"
+                  content="Report"
+                  icon="warning"
+                />
+                &nbsp;
+              </Segment>
+            </Popup.Content>
+          </Popup>
+        </span>
+      )
     )
   }
 }

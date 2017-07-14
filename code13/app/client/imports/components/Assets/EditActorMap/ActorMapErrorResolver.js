@@ -11,7 +11,7 @@ export default class extends React.Component {
     content2: React.PropTypes.object.isRequired, // reference to content2
   }
   errorHandlers = {
-    [ActorHelper.errorTypes.MISSING_ACTOR]: (err, i) =>
+    [ActorHelper.errorTypes.MISSING_ACTOR]: (err, i) => (
       <Segment key={i} as="div">
         <Container>
           <Icon color="orange" size="large" name="warning sign" />Unable to locate actor <em>{err.actor}</em>
@@ -69,7 +69,8 @@ export default class extends React.Component {
             />
           </Segment>
         </Segment.Group>
-      </Segment>,
+      </Segment>
+    ),
     [ActorHelper.errorTypes.MISSING_IMAGE]: (err, i) => {
       const parts = err.actor.split(':')
       const name = parts.pop()
@@ -83,9 +84,7 @@ export default class extends React.Component {
           </Container>
           <Segment>
             <QLink to={`/assetEdit/actor/${user}/${name}`}>
-              <Button color="blue">
-                Edit Actor {err.actor}
-              </Button>
+              <Button color="blue">Edit Actor {err.actor}</Button>
             </QLink>
           </Segment>
         </Segment>

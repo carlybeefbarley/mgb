@@ -7,7 +7,7 @@ import style from './WorkState.css'
 // Note that this is a Stateless function:
 //   See https://facebook.github.io/react/docs/reusable-components.html
 
-export const WorkStateIcon = ({ workState, size, onIconClick, labelStyle }) =>
+export const WorkStateIcon = ({ workState, size, onIconClick, labelStyle }) => (
   <Icon
     name={workStateIcons[workState]}
     circular
@@ -17,11 +17,12 @@ export const WorkStateIcon = ({ workState, size, onIconClick, labelStyle }) =>
     onClick={onIconClick}
     className={`mgb-workstate-${workState}`}
   />
+)
 
 const _hiddenWorkstateStyle = { opacity: 0.1 }
-export const WorkStateMultiSelect = ({ style, hideMask, handleChangeMask }) =>
+export const WorkStateMultiSelect = ({ style, hideMask, handleChangeMask }) => (
   <div style={style}>
-    {_.map(workStateNames, (workState, idx) =>
+    {_.map(workStateNames, (workState, idx) => (
       <WorkState
         key={workState}
         workState={workState}
@@ -29,11 +30,12 @@ export const WorkStateMultiSelect = ({ style, hideMask, handleChangeMask }) =>
         // Note that in JavaScript, & is logical-and
         labelStyle={(1 << idx) & hideMask ? _hiddenWorkstateStyle : null}
         onIconClick={() => handleChangeMask(hideMask ^ (1 << idx))}
-      />,
-    )}
+      />
+    ))}
   </div>
+)
 
-const WorkState = ({ workState, canEdit, size, popupPosition, handleChange, labelStyle, onIconClick }) =>
+const WorkState = ({ workState, canEdit, size, popupPosition, handleChange, labelStyle, onIconClick }) => (
   <Popup
     on="hover"
     hoverable={canEdit} // So mouse-over popup keeps it visible for Edit for example
@@ -50,24 +52,24 @@ const WorkState = ({ workState, canEdit, size, popupPosition, handleChange, labe
         {_.map(
           workStateNames,
           name =>
-            (canEdit || name == workState) &&
-            <List.Item
-              key={name}
-              active={name == workState}
-              onClick={e => {
-                e.preventDefault()
-                canEdit && handleChange && handleChange(name)
-              }}
-            >
-              <WorkStateIcon size="large" workState={name} />
-              <List.Content verticalAlign="middle">
-                &nbsp;{name}
-              </List.Content>
-            </List.Item>,
+            (canEdit || name == workState) && (
+              <List.Item
+                key={name}
+                active={name == workState}
+                onClick={e => {
+                  e.preventDefault()
+                  canEdit && handleChange && handleChange(name)
+                }}
+              >
+                <WorkStateIcon size="large" workState={name} />
+                <List.Content verticalAlign="middle">&nbsp;{name}</List.Content>
+              </List.Item>
+            ),
         )}
       </List>
     </div>
   </Popup>
+)
 
 WorkState.propTypes = {
   workState: PropTypes.string.isRequired, // E.g  "unknown"

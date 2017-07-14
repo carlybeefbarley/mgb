@@ -254,26 +254,28 @@ const fpAssets = React.createClass({
             />
             <div style={{ clear: 'both' }} />
           </div>
-          {effectiveUser && userProjects
-            ? <ProjectSelector
-                key="fpProjectSelector" // don't conflict with asset project selector
-                canEdit={false}
-                user={effectiveUser}
-                isUseCaseCreate={false}
-                handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
-                availableProjects={userProjects}
-                ProjectListLinkUrl={'/u/' + effectiveUser.profile.name + '/projects'}
-                showProjectsUserIsMemberOf
-                chosenProjectObj={project}
-                chosenProjectName={projectName}
-              />
-            : null}
+          {effectiveUser && userProjects ? (
+            <ProjectSelector
+              key="fpProjectSelector" // don't conflict with asset project selector
+              canEdit={false}
+              user={effectiveUser}
+              isUseCaseCreate={false}
+              handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
+              availableProjects={userProjects}
+              ProjectListLinkUrl={'/u/' + effectiveUser.profile.name + '/projects'}
+              showProjectsUserIsMemberOf
+              chosenProjectObj={project}
+              chosenProjectName={projectName}
+            />
+          ) : null}
         </div>
-        {loading
-          ? <Spinner />
-          : <div style={style}>
-              <AssetList allowDrag fluid renderView={view} assets={assets} currUser={currUser} />
-            </div>}
+        {loading ? (
+          <Spinner />
+        ) : (
+          <div style={style}>
+            <AssetList allowDrag fluid renderView={view} assets={assets} currUser={currUser} />
+          </div>
+        )}
       </div>
     )
   },

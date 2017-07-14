@@ -85,12 +85,8 @@ export default class ObjectLayer extends AbstractLayer {
     }
     return (
       <div>
-        <div>
-          {this.data.name + ' Layer'}
-        </div>
-        <div>
-          {info}
-        </div>
+        <div>{this.data.name + ' Layer'}</div>
+        <div>{info}</div>
       </div>
     )
   }

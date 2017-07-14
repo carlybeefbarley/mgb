@@ -89,17 +89,18 @@ class EditGameForm extends BaseForm {
             max: 1600,
           })}
 
-        {isAdmin &&
+        {isAdmin && (
           <div>
             <Divider />
             {this.bool('Works in portrait', 'allowPortrait', { boolIsTF: true })}
             {this.bool('Works in landscape', 'allowLandscape', { boolIsTF: true })}
             <Divider />
-          </div>}
+          </div>
+        )}
 
         {isCodeGame && this.bool('Allow fullscreen', 'allowFullScreen', { boolIsTF: true })}
         {this.data.allowFullScreen &&
-          isAdmin &&
+        isAdmin && (
           <div className="inline fields">
             <label>Exit FullScreen button position</label>
             <FullScreenExitPosition
@@ -109,27 +110,30 @@ class EditGameForm extends BaseForm {
                 this.props.onChange && this.props.onChange()
               }}
             />
-          </div>}
+          </div>
+        )}
 
         {isActorGame && this.dropArea('Starting ActorMap', 'startActorMap', 'actormap')}
 
-        {hasGameType &&
+        {hasGameType && (
           <div>
             <Divider />
             <Header as="h4" content="Supported control schemes" />
-            {isActorGame &&
+            {isActorGame && (
               <Message
                 compact
                 info
                 size="small"
                 attached="bottom"
                 content="ActorMap Games only support keyboard+mouse systems (currently)"
-              />}
+              />
+            )}
             {this.bool('Single touch / mouse', 'supportsTouchControl', touchControlSupportedFieldOptions)}
             {this.bool('Multitouch', 'supportsMultiTouchControl', touchControlSupportedFieldOptions)}
             {this.bool('Keyboard/keypad', 'supportsKeyControl', touchControlSupportedFieldOptions)}
             {this.bool('Keyboard+mouse', 'supportsKeyPlusMouseControl', touchControlSupportedFieldOptions)}
-          </div>}
+          </div>
+        )}
 
         <Divider />
         <Header as="h4" content="Statistics" />

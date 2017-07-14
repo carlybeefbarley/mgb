@@ -1416,14 +1416,14 @@ export { import1 as name1, import2 as name2, …, nameN } from …;`,
 ] // end helpInfo
 
 function warnForHelp(helpItem) {
-  return !(helpItem && helpItem.origin === 'ecma6')
-    ? null
-    : <small>
-        '<code>{helpItem.ts}</code>' introduced in{' '}
-        <a href={xlinks.ecma6} target="_blank">
-          EcmaScript 6
-        </a>
-      </small>
+  return !(helpItem && helpItem.origin === 'ecma6') ? null : (
+    <small>
+      '<code>{helpItem.ts}</code>' introduced in{' '}
+      <a href={xlinks.ecma6} target="_blank">
+        EcmaScript 6
+      </a>
+    </small>
+  )
   /*  <div className="ui small label" style={{color: "red"}}>
       <i className="ui circle warning icon"></i>
       <small>'<code>{helpItem.ts}</code>' is an <a href={xlinks.ecma6} target="_blank">EcmaScript 6</a> feature, but MGB only supports
@@ -1491,9 +1491,7 @@ function specialHandlerComment(tokenStr, tokenDescriptionComponent) {
   if (str.startsWith(SpecialGlobals.editCode.mgbMentorPrefix))
     return (
       <div>
-        <p>
-          {str.substring(SpecialGlobals.editCode.mgbMentorPrefix.length).trim()}
-        </p>
+        <p>{str.substring(SpecialGlobals.editCode.mgbMentorPrefix.length).trim()}</p>
       </div>
     )
 
@@ -1583,9 +1581,7 @@ function specialHandlerGlobalVariable(str) {
       <p>
         This is a use of the variable{' '}
         <strong>
-          <code>
-            {str}
-          </code>
+          <code>{str}</code>
         </strong>{' '}
         which appears to be a <strong>GLOBAL</strong> variable
       </p>
@@ -1610,9 +1606,7 @@ function specialHandlerLocalVariable(str) {
       <p>
         This is a use of the variable{' '}
         <strong>
-          <code>
-            {str}
-          </code>
+          <code>{str}</code>
         </strong>{' '}
         which appears to be a <strong>LOCAL</strong> variable
       </p>
@@ -1660,9 +1654,7 @@ function urlLink(urlString) {
   // TODO remove stuff after ?
   return (
     <a href={urlString} target="_blank">
-      <small>
-        {_.last(urlString.split('/'))}
-      </small>
+      <small>{_.last(urlString.split('/'))}</small>
     </a>
   )
 }
@@ -1745,9 +1737,7 @@ const TokenDescription = React.createClass({
         advices.push(
           <p key={advices.length} style={{ margin: 0 }}>
             <i className="ui info circle icon" />
-            <small style={{ fontSize: '85%' }}>
-              {help.advices[i]}
-            </small>
+            <small style={{ fontSize: '85%' }}>{help.advices[i]}</small>
           </p>,
         )
       }
@@ -1756,15 +1746,12 @@ const TokenDescription = React.createClass({
     return (
       <div className="ui purple segment" style={{ backgroundColor: 'rgba(160,32,240,0.03)' }}>
         <a className="ui purple left ribbon label">
-          <small>
-            {tokenTypeToDisplay}
-          </small>
-          {showStringInTitle &&
+          <small>{tokenTypeToDisplay}</small>
+          {showStringInTitle && (
             <code>
-              <b>
-                &nbsp;&nbsp;{tsTrunc}
-              </b>
-            </code>}
+              <b>&nbsp;&nbsp;{tsTrunc}</b>
+            </code>
+          )}
         </a>
         <a
           className="ui purple right corner label"
@@ -1778,54 +1765,44 @@ const TokenDescription = React.createClass({
         <p />
 
         {showExpanded &&
-          (specialHandler
-            ? specialHandler.renderFn(ts, this)
-            : <div>
-                {help && warnForHelp(help)}
-                {help &&
-                  help.help &&
-                  <p>
-                    {help.help}
-                  </p>}
-                {help &&
-                  help.syntax &&
-                  <pre>
-                    <small>
-                      {help.syntax}
-                    </small>
-                  </pre>}
+          (specialHandler ? (
+            specialHandler.renderFn(ts, this)
+          ) : (
+            <div>
+              {help && warnForHelp(help)}
+              {help && help.help && <p>{help.help}</p>}
+              {help &&
+              help.syntax && (
+                <pre>
+                  <small>{help.syntax}</small>
+                </pre>
+              )}
 
-                {help &&
-                  help.advice &&
-                  <p>
-                    <i className="ui info circle icon" />
-                    <small>
-                      {help.advice}
-                    </small>
-                  </p>}
-                {help &&
-                  help.advice2 &&
-                  <p>
-                    <i className="ui info circle icon" />
-                    <small>
-                      {help.advice2}
-                    </small>
-                  </p>}
-                {advices.length > 0 && advices}
-                {help &&
-                  help.url &&
-                  <p>
-                    {urlLink(help.url)}
-                    {help.url2 &&
-                      <span>
-                        , {urlLink(help.url2)}
-                      </span>}
-                    {help.url3 &&
-                      <span>
-                        , {urlLink(help.url3)}
-                      </span>}
-                  </p>}
-              </div>)}
+              {help &&
+              help.advice && (
+                <p>
+                  <i className="ui info circle icon" />
+                  <small>{help.advice}</small>
+                </p>
+              )}
+              {help &&
+              help.advice2 && (
+                <p>
+                  <i className="ui info circle icon" />
+                  <small>{help.advice2}</small>
+                </p>
+              )}
+              {advices.length > 0 && advices}
+              {help &&
+              help.url && (
+                <p>
+                  {urlLink(help.url)}
+                  {help.url2 && <span>, {urlLink(help.url2)}</span>}
+                  {help.url3 && <span>, {urlLink(help.url3)}</span>}
+                </p>
+              )}
+            </div>
+          ))}
       </div>
     )
   },

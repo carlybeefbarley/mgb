@@ -13,7 +13,7 @@ const _makeQuery = (assetKind, projectName, assetName) => {
   return retval
 }
 
-const AssetCreateLink = ({ assetKind, projectName, assetName, label, classNames }) =>
+const AssetCreateLink = ({ assetKind, projectName, assetName, label, classNames }) => (
   <QLink
     className={`ui compact ${classNames || ' '} green button`}
     to="/assets/create"
@@ -22,6 +22,7 @@ const AssetCreateLink = ({ assetKind, projectName, assetName, label, classNames 
   >
     {label || 'Create New Asset'}
   </QLink>
+)
 
 AssetCreateLink.PropTypes = {
   assetKind: PropTypes.string,

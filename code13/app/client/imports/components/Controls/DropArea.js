@@ -195,11 +195,7 @@ export default class DropArea extends React.Component {
       <QLink to={`/u/${asset.dn_ownerName}/asset/${asset._id}`}>
         <img className="mgb-pixelated" style={{ maxHeight: '50px', transform }} src={imgLink} />
         <div>
-          {asset.name}{' '}
-          {this.props.value &&
-            <i>
-              ({this.props.value})
-            </i>}
+          {asset.name} {this.props.value && <i>({this.props.value})</i>}
         </div>
       </QLink>
     )
@@ -239,9 +235,7 @@ export default class DropArea extends React.Component {
     const options = this.props.options
     return (
       <div className="inline fields">
-        <label>
-          {name}
-        </label>
+        <label>{name}</label>
         <SmallDD options={options} onChange={this.handleOptionClick} value={this.props.value} />
       </div>
     )
@@ -258,11 +252,7 @@ export default class DropArea extends React.Component {
       <div style={{ verticalAlign: 'middle' }}>
         <img className="mgb-pixelated" style={{ maxHeight: '64px', float: 'left' }} src={imgLink} />
         <div style={{ marginLeft: '10px', float: 'left' }}>
-          {asset.name}{' '}
-          {this.props.value &&
-            <i>
-              ({this.props.value})
-            </i>}
+          {asset.name} {this.props.value && <i>({this.props.value})</i>}
         </div>
       </div>
     )
@@ -289,22 +279,25 @@ export default class DropArea extends React.Component {
           this.handleDrop(e)
         }}
       >
-        {!asset && !this.state.badAsset
-          ? this.props.text || this.props.value || `Drop Asset (${this.props.kind || 'any'}) here!`
-          : <i
-              className="floated right ui icon remove"
-              onClick={() => this.handleRemove()}
-              style={{
-                position: 'absolute',
-                right: '-5px',
-                top: '3px',
-                cursor: 'pointer',
-              }}
-            />}
-        {this.state.badAsset &&
+        {!asset && !this.state.badAsset ? (
+          this.props.text || this.props.value || `Drop Asset (${this.props.kind || 'any'}) here!`
+        ) : (
+          <i
+            className="floated right ui icon remove"
+            onClick={() => this.handleRemove()}
+            style={{
+              position: 'absolute',
+              right: '-5px',
+              top: '3px',
+              cursor: 'pointer',
+            }}
+          />
+        )}
+        {this.state.badAsset && (
           <b>
             Invalid asset kind: expected [{this.props.kind}] got: [{this.state.badAsset.kind}]
-          </b>}
+          </b>
+        )}
         {this.createAssetView()}
         {this.props.options && this.renderOptions()}
       </div>

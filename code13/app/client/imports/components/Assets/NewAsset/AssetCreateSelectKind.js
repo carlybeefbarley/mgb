@@ -31,9 +31,7 @@ const AssetCreateSelectKind = React.createClass({
 
     const ExplanationToggler = (
       <a onClick={this.handleShowMoreLessClick}>
-        <span id="mgbjr-create-asset-morelesskindinfo">
-          {showMoreInfo ? 'less' : 'more'}...
-        </span>
+        <span id="mgbjr-create-asset-morelesskindinfo">{showMoreInfo ? 'less' : 'more'}...</span>
       </a>
     )
 
@@ -63,24 +61,24 @@ const AssetCreateSelectKind = React.createClass({
               }}
             >
               <Icon size="large" name={ak.icon} />
-              <p style={{ marginTop: '5px' }}>
-                {ak.name}
-              </p>
+              <p style={{ marginTop: '5px' }}>{ak.name}</p>
             </Button>
           )
         })}
 
-        {activeAK &&
+        {activeAK && (
           <div style={{ opacity: 0.5 }}>
             <p>
               {activeAK.description}&ensp;
               {showMoreInfo || ExplanationToggler}
             </p>
-            {showMoreInfo &&
+            {showMoreInfo && (
               <p>
                 {activeAK.explanation} &ensp; {ExplanationToggler}
-              </p>}
-          </div>}
+              </p>
+            )}
+          </div>
+        )}
       </div>
     )
   },

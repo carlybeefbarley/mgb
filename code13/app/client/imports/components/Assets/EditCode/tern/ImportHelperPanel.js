@@ -70,7 +70,7 @@ export default class ImportHelperPanel extends React.Component {
 
     return (
       <Segment color="blue" style={{ backgroundColor: 'rgba(160,32,240,0.03)', color: '#2A00FF' }}>
-        {!!showExpanded &&
+        {!!showExpanded && (
           <p style={{ color: '#333' }}>
             The{' '}
             <a href="https://github.com/lukehoban/es6features#readme" target="_blank">
@@ -82,7 +82,8 @@ export default class ImportHelperPanel extends React.Component {
             statement is used to import JavaScript functions, objects or primitives that have been{' '}
             <code>export</code>ed from another code file or package. This UI tool helps new users import
             useful packages, or from code they have written.
-          </p>}
+          </p>
+        )}
         <Label
           color="blue"
           corner="right"

@@ -467,9 +467,7 @@ const PlayGameRoute = React.createClass({
             {game.name}
           </QLink>
         </Header>
-        <small>
-          &emsp;{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}
-        </small>
+        <small>&emsp;{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</small>
         <AssetChatDetail
           style={_styleGameNavButtons}
           hasUnreads={hazUnreadAssetChat}

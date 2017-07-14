@@ -51,14 +51,14 @@ const ConsoleMessageViewer = React.createClass({
         fontSize: '10px',
       }
       $.extend(s, fmt[fn].style)
-      let atLine = !msg.line
-        ? null
-        : <span>
-            {msg.url ? msg.url + ':' : ''}{' '}
-            <a onClick={this.invokeGotoLinehandler.bind(this, msg)} style={{ cursor: 'pointer' }}>
-              [line {msg.line}]{' '}
-            </a>
-          </span>
+      let atLine = !msg.line ? null : (
+        <span>
+          {msg.url ? msg.url + ':' : ''}{' '}
+          <a onClick={this.invokeGotoLinehandler.bind(this, msg)} style={{ cursor: 'pointer' }}>
+            [line {msg.line}]{' '}
+          </a>
+        </span>
+      )
       let icon = <i className={`ui ${fmt[fn].icon} icon`} />
       let time = moment(msg.timestamp).format('h:mm:ss a')
       return (
@@ -88,13 +88,14 @@ const ConsoleMessageViewer = React.createClass({
         <div className="header">
           Latest Console output from program
           {messages.length > 0 &&
-            clearConsoleHandler &&
+          clearConsoleHandler && (
             <i
               style={{ float: 'right' }}
               className="ui trash outline icon"
               title="clear console"
               onClick={clearConsoleHandler}
-            />}
+            />
+          )}
         </div>
         <div
           className="message-container"

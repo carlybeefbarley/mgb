@@ -5,12 +5,13 @@ import UserItem from './UserItem'
 
 const sortByNumBadgesFn = u => (u.badges ? -u.badges.length : 0)
 
-const UserList = ({ users, narrowItem, handleClickUser }) =>
+const UserList = ({ users, narrowItem, handleClickUser }) => (
   <Card.Group>
-    {_.map(_.sortBy(users, sortByNumBadgesFn), user =>
-      <UserItem key={user._id} user={user} narrowItem={narrowItem} handleClickUser={handleClickUser} />,
-    )}
+    {_.map(_.sortBy(users, sortByNumBadgesFn), user => (
+      <UserItem key={user._id} user={user} narrowItem={narrowItem} handleClickUser={handleClickUser} />
+    ))}
   </Card.Group>
+)
 
 UserList.propTypes = {
   users: PropTypes.array, // Array of Users objects to be rendered

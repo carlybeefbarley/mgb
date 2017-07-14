@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { saveAsWAVFile, saveAsMIDIFile } from '../utils/save'
 import { buildMidiDataURIFromInstruments } from '../utils/midi'
 
-const ExportModal = ({ actions }) =>
+const ExportModal = ({ actions }) => (
   <div className="u-flex-row u-flex-wrap">
     <p className="txt-error u-txt-small u-mb05">
       Warning: Exporting MIDI is experimental, you may encounter some&nbsp;innacuracies.
@@ -31,6 +31,7 @@ const ExportModal = ({ actions }) =>
       </button>
     </div>
   </div>
+)
 
 class ExportController extends Component {
   saveMIDI = () => saveAsMIDIFile(buildMidiDataURIFromInstruments(this.props.instruments, this.props.bpm))
@@ -49,10 +50,11 @@ class ExportController extends Component {
     // this.props.actions.enableModal({ content, isCloseable: true, title: 'Export Riff' });
   }
 
-  render = () =>
+  render = () => (
     <button className="button-primary" onClick={this.launchExportModal} disabled={!this.props.currentBuffer}>
       Save Riff
     </button>
+  )
 }
 
 export default ExportController

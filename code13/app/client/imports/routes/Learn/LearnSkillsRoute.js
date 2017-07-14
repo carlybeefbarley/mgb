@@ -26,7 +26,7 @@ const _linkOverrides = {
   art: '/learn/art', // WIP
 }
 
-const LearnSkillsRoute = ({ currUser }, context) =>
+const LearnSkillsRoute = ({ currUser }, context) => (
   <Grid container columns="1">
     <Divider hidden />
     <Grid.Column>
@@ -37,7 +37,7 @@ const LearnSkillsRoute = ({ currUser }, context) =>
     </Grid.Column>
     <Grid.Column>
       <Card.Group itemsPerRow={1} stackable className="skills">
-        {skillAreaItems.map((area, idx) =>
+        {skillAreaItems.map((area, idx) => (
           <Card
             as={QLink}
             key={idx}
@@ -51,18 +51,18 @@ const LearnSkillsRoute = ({ currUser }, context) =>
               <Header as="h2" style={headerStyle}>
                 <Icon name={area.icon} />&nbsp;{area.title}
               </Header>
-              <p style={descStyle}>
-                {area.desc}.
-              </p>
-              {!_linkOverrides[area.tag] &&
-                <Label basic color="orange" content="under construction during Beta" />}
+              <p style={descStyle}>{area.desc}.</p>
+              {!_linkOverrides[area.tag] && (
+                <Label basic color="orange" content="under construction during Beta" />
+              )}
               {currUser && <SkillsMap skills={context.skills} skillPaths={[area.tag]} />}
             </Card.Content>
-          </Card>,
-        )}
+          </Card>
+        ))}
       </Card.Group>
     </Grid.Column>
   </Grid>
+)
 
 LearnSkillsRoute.contextTypes = {
   skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)

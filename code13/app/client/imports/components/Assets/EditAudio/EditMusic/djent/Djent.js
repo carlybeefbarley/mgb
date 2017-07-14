@@ -373,9 +373,7 @@ export default class Djent extends Component {
                 </Panel>
 
                 <div style={{ clear: 'both' }}>&nbsp;</div>
-                <Panel>
-                  {beats}
-                </Panel>
+                <Panel>{beats}</Panel>
               </div>
 
               <div style={{ clear: 'both' }}>&nbsp;</div>

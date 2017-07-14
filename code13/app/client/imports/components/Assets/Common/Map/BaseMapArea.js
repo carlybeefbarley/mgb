@@ -874,9 +874,9 @@ export default class MapArea extends React.Component {
   }
 
   getNotification() {
-    return this.data.width * this.data.height > 100000
-      ? <div>This map is larger than our recommended size - so editing may be slower than normal!</div>
-      : null
+    return this.data.width * this.data.height > 100000 ? (
+      <div>This map is larger than our recommended size - so editing may be slower than normal!</div>
+    ) : null
   }
 
   addLayerRef(id, layer) {

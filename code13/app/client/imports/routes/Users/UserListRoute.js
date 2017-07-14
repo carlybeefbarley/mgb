@@ -87,16 +87,19 @@ const UserListRoute = React.createClass({
 
         <Divider hidden />
 
-        {this.data.loading
-          ? <Spinner />
-          : <div>
-              <UserList users={filteredUsers} handleClickUser={handleClickUser} narrowItem={narrowItem} />
-              <Divider hidden />
-              {filteredUsers.length === this.state.userLimit &&
-                <Button onClick={this.handleLoadMore}>
-                  Showing first {filteredUsers.length} matching users. Click to load more...
-                </Button>}
-            </div>}
+        {this.data.loading ? (
+          <Spinner />
+        ) : (
+          <div>
+            <UserList users={filteredUsers} handleClickUser={handleClickUser} narrowItem={narrowItem} />
+            <Divider hidden />
+            {filteredUsers.length === this.state.userLimit && (
+              <Button onClick={this.handleLoadMore}>
+                Showing first {filteredUsers.length} matching users. Click to load more...
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     )
   },

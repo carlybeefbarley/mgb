@@ -143,9 +143,7 @@ const QLink = React.createClass({
     return React.createElement(
       chosenEl,
       Object.assign({}, pClean, { to: newTo, onClick: this.handleClick }),
-      <span>
-        {newText}
-      </span>,
+      <span>{newText}</span>,
     )
   },
 })

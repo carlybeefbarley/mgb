@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 
-const FittedImage = ({ src, height = '140px', width, ...rest }) =>
+const FittedImage = ({ src, height = '140px', width, ...rest }) => (
   // This is <div> instead of <img> so that it won't have the border that chrome puts on if src has no content
   <div
     className="mgb-pixelated"
@@ -12,5 +12,6 @@ const FittedImage = ({ src, height = '140px', width, ...rest }) =>
     }}
     {...rest}
   />
+)
 
 export default FittedImage

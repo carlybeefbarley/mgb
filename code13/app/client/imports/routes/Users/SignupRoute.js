@@ -12,11 +12,9 @@ import { showToast } from '/client/imports/routes/App'
 import Footer from '/client/imports/components/Footer/Footer'
 
 const ErrMsg = props =>
-  props.text
-    ? <div style={{ paddingTop: 0, marginTop: '-12px', marginBottom: '10px', color: 'red' }}>
-        {props.text}
-      </div>
-    : null
+  props.text ? (
+    <div style={{ paddingTop: 0, marginTop: '-12px', marginBottom: '10px', color: 'red' }}>{props.text}</div>
+  ) : null
 
 const SignupRoute = React.createClass({
   contextTypes: {
@@ -54,43 +52,45 @@ const SignupRoute = React.createClass({
     // and at https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion#The_autocomplete_attribute_and_login_fields
 
     const innerRender = () =>
-      currUser
-        ? <Message info content="You are logged in already!" />
-        : <Form
-            onChange={this.handleChange}
-            onSubmit={this.handleSubmit}
-            loading={isLoading}
-            error={_.keys(errors).length > 0}
-          >
-            <Form.Input
-              type="email"
-              label="Enter your email address (used for login)"
-              name="email"
-              placeholder="Email address"
-              error={!!errors.email}
-            />
-            <ErrMsg text={errors.email} />
-            <Form.Input
-              onBlur={this.checkUserName}
-              onChange={this.fixUsername}
-              label="Choose a username (used for profile)"
-              name="username"
-              placeholder="New username (short, no spaces)"
-              error={!!errors.username}
-            />
-            <ErrMsg text={errors.username} />
-            <Form.Input
-              label="Choose a Password"
-              name="password"
-              placeholder="New password"
-              type="password"
-              error={!!errors.password}
-              autoComplete="new-password"
-            />
-            <ErrMsg text={errors.password} />
-            <ErrMsg text={errors.result} />
-            <Form.Button color="teal">Create Account</Form.Button>
-          </Form>
+      currUser ? (
+        <Message info content="You are logged in already!" />
+      ) : (
+        <Form
+          onChange={this.handleChange}
+          onSubmit={this.handleSubmit}
+          loading={isLoading}
+          error={_.keys(errors).length > 0}
+        >
+          <Form.Input
+            type="email"
+            label="Enter your email address (used for login)"
+            name="email"
+            placeholder="Email address"
+            error={!!errors.email}
+          />
+          <ErrMsg text={errors.email} />
+          <Form.Input
+            onBlur={this.checkUserName}
+            onChange={this.fixUsername}
+            label="Choose a username (used for profile)"
+            name="username"
+            placeholder="New username (short, no spaces)"
+            error={!!errors.username}
+          />
+          <ErrMsg text={errors.username} />
+          <Form.Input
+            label="Choose a Password"
+            name="password"
+            placeholder="New password"
+            type="password"
+            error={!!errors.password}
+            autoComplete="new-password"
+          />
+          <ErrMsg text={errors.password} />
+          <ErrMsg text={errors.result} />
+          <Form.Button color="teal">Create Account</Form.Button>
+        </Form>
+      )
 
     return (
       <div>

@@ -223,33 +223,34 @@ export default class CodeChallenges extends React.Component {
           data-tooltip="Go up to Challenges list"
         />
 
-        {this.state.error &&
+        {this.state.error && (
           <Segment inverted color="red" size="mini" secondary>
             <Icon name="warning sign" />
             {this.state.error}
-          </Segment>}
+          </Segment>
+        )}
 
-        {this.state.console &&
-          <Divider as={Header} color="grey" size="tiny" horizontal content="Console output" />}
+        {this.state.console && (
+          <Divider as={Header} color="grey" size="tiny" horizontal content="Console output" />
+        )}
 
-        {this.state.console &&
+        {this.state.console && (
           <Segment inverted color="black" size="mini" secondary>
             {this.state.console}
-          </Segment>}
+          </Segment>
+        )}
 
         {this.state.results &&
-          this.state.results.length > 0 &&
+        this.state.results.length > 0 && (
           <Divider as={Header} {..._smallTopMarginSty} color="grey" size="tiny" horizontal>
             <span>
               Test Results&ensp;
-              {latestTestTimeStr &&
-                <small style={{ color: '#bbb' }}>
-                  @{latestTestTimeStr}
-                </small>}
+              {latestTestTimeStr && <small style={{ color: '#bbb' }}>@{latestTestTimeStr}</small>}
             </span>
-          </Divider>}
+          </Divider>
+        )}
         <List verticalAlign="middle">
-          {this.state.results.map((result, i) =>
+          {this.state.results.map((result, i) => (
             <List.Item key={i} className="animated fadeIn">
               <List.Icon
                 size="large"
@@ -259,11 +260,11 @@ export default class CodeChallenges extends React.Component {
               <List.Content>
                 <span dangerouslySetInnerHTML={{ __html: _.replace(result.message, /^message: /, '') }} />
               </List.Content>
-            </List.Item>,
-          )}
+            </List.Item>
+          ))}
         </List>
 
-        {showAllTestsCompletedMessage &&
+        {showAllTestsCompletedMessage && (
           <Message size="small" icon style={{ paddingBottom: 0 }}>
             <Icon color="green" name="check circle" />
             <Message.Content>
@@ -282,7 +283,8 @@ export default class CodeChallenges extends React.Component {
                 onClick={this.nextChallenge}
               />
             </Message.Content>
-          </Message>}
+          </Message>
+        )}
 
         {/*  Challenge Instructions Header  */}
         <Divider
@@ -296,17 +298,18 @@ export default class CodeChallenges extends React.Component {
 
         {fullBannerText && <Header sub content={fullBannerText} {..._smallTopMarginSty} />}
 
-        {description.map((text, i) =>
-          <div key={i} {..._smallTopMarginSty} dangerouslySetInnerHTML={{ __html: text }} />,
-        )}
+        {description.map((text, i) => (
+          <div key={i} {..._smallTopMarginSty} dangerouslySetInnerHTML={{ __html: text }} />
+        ))}
 
-        {instructions.length > 0 &&
+        {instructions.length > 0 && (
           <Segment stacked color="green">
             <Header sub content="Challenge Goal" />
-            {instructions.map((text, i) =>
-              <div key={i} {..._smallTopMarginSty} dangerouslySetInnerHTML={{ __html: text }} />,
-            )}
-          </Segment>}
+            {instructions.map((text, i) => (
+              <div key={i} {..._smallTopMarginSty} dangerouslySetInnerHTML={{ __html: text }} />
+            ))}
+          </Segment>
+        )}
 
         <Popup
           trigger={

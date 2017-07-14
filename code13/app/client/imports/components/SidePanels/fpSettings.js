@@ -120,9 +120,7 @@ const fpSettings = React.createClass({
                 max={maxVal}
                 id={'mgbjr-input-level-slider-' + name}
               />
-              <small>
-                &emsp;{maxVal}
-              </small>
+              <small>&emsp;{maxVal}</small>
             </span>
           </div>
         </div>

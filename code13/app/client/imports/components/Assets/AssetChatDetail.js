@@ -8,7 +8,7 @@ const _menuItemIndicatorStyle = {
     '-1px -1px 0 rgba(0,0,0,0), 1px -1px 0 rgba(0,0,0,0), -1px 1px 0 rgba(0,0,0,0), 1px 1px 0 rgba(0,0,0,0)',
 }
 
-const AssetChatDetail = ({ hasUnreads, handleClick, style }) =>
+const AssetChatDetail = ({ hasUnreads, handleClick, style }) => (
   <Popup
     size="small"
     position="bottom right"
@@ -16,8 +16,9 @@ const AssetChatDetail = ({ hasUnreads, handleClick, style }) =>
       <Label basic style={style} id="mgbjr-asset-edit-header-right-chat" size="small">
         <Icon.Group>
           <Icon name="chat" style={hasUnreads ? null : { marginRight: 0 }} onClick={handleClick} />
-          {hasUnreads &&
-            <Icon corner color="red" size="mini" name="circle" style={_menuItemIndicatorStyle} />}
+          {hasUnreads && (
+            <Icon corner color="red" size="mini" name="circle" style={_menuItemIndicatorStyle} />
+          )}
         </Icon.Group>
       </Label>
     }
@@ -26,6 +27,7 @@ const AssetChatDetail = ({ hasUnreads, handleClick, style }) =>
       ? ' There are unread messages on this Asset you have not seen'
       : ''}`}
   />
+)
 
 AssetChatDetail.propTypes = {
   hasUnreads: PropTypes.bool.isRequired, // True if there are unread messages

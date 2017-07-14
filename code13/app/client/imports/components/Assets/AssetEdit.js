@@ -85,7 +85,7 @@ export default class AssetEdit extends React.Component {
     const isTooSmall = availableWidth < 500
     return (
       <div style={{ minWidth: '250px' }}>
-        {isTooSmall &&
+        {isTooSmall && (
           <Segment basic>
             <Message
               warning
@@ -102,7 +102,8 @@ export default class AssetEdit extends React.Component {
               allowDrag
               renderView="l"
             />
-          </Segment>}
+          </Segment>
+        )}
         {/* We must keep this in the DOM since it has state we don't want to lose during a temporary resize */}
         <div style={isTooSmall ? { display: 'none' } : undefined}>
           <Element {..._.omit(this.props, _omitPropsForEditors)} />

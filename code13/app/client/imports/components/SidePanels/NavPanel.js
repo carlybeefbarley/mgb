@@ -264,11 +264,7 @@ export const getNavPanels = (currUser, showAll) => {
           showUserOptions && {
             subcomponent: 'Header',
             jrkey: 'username',
-            content: (
-              <Header style={{ paddingLeft: '1.2em' }}>
-                {uname}
-              </Header>
-            ),
+            content: <Header style={{ paddingLeft: '1.2em' }}>{uname}</Header>,
           },
           showUserOptions && {
             subcomponent: 'Item',
@@ -352,7 +348,7 @@ class NavPanel extends React.Component {
     const navPanelItems = side =>
       allNavPanels[side]
         .filter(v => v.name !== userMenuKey && (!useIcons || !v.fHideForIconView))
-        .map(v =>
+        .map(v => (
           <NavPanelItem
             name={v.name}
             openLeft={side === 'right'}
@@ -361,8 +357,8 @@ class NavPanel extends React.Component {
             menu={v.menu}
             to={v.to}
             query={v.query}
-          />,
-        )
+          />
+        ))
 
     return (
       <Menu inverted borderless style={menuStyle} id="mgbjr-np">
@@ -371,7 +367,7 @@ class NavPanel extends React.Component {
         {/* The user menu, pushed to the right */}
         <Menu.Menu position="right">
           {navPanelItems('right')}
-          {currUser &&
+          {currUser && (
             <NavPanelItem
               key="user"
               name="user"
@@ -379,7 +375,8 @@ class NavPanel extends React.Component {
               hdr={<Image id="mgbjr-np-user-avatar" centered avatar src={userAvatarSrc} />}
               menu={userMenu.menu}
               to={userMenu.to}
-            />}
+            />
+          )}
         </Menu.Menu>
       </Menu>
     )

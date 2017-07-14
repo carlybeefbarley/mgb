@@ -140,7 +140,7 @@ const AssetCard = React.createClass({
         </div>
 
         <Card.Content>
-          {viewOpts.showWorkstate &&
+          {viewOpts.showWorkstate && (
             <span style={{ float: 'right' }}>
               <span onMouseUp={_preventOnMouseUpClickSteal}>
                 <UserLoves
@@ -155,9 +155,10 @@ const AssetCard = React.createClass({
                 size={viewOpts.showExtra ? null : 'small'}
                 canEdit={false}
               />
-            </span>}
+            </span>
+          )}
 
-          {!viewOpts.showExtra &&
+          {!viewOpts.showExtra && (
             // This is used for SMALL sizes. It has a popup to show the Medium one!
             <Popup
               hoverable
@@ -179,15 +180,17 @@ const AssetCard = React.createClass({
               <div style={{ width: '200px' }}>
                 <AssetCard {...{ ...this.props, renderView: 'm' }} />
               </div>
-            </Popup>}
+            </Popup>
+          )}
 
-          {viewOpts.showExtra &&
+          {viewOpts.showExtra && (
             <Card.Header
               content={shownAssetName}
               style={{ marginRight: '2em', overflowWrap: 'break-word' }}
-            />}
+            />
+          )}
 
-          {viewOpts.showMeta &&
+          {viewOpts.showMeta && (
             <Card.Meta>
               <div>
                 <Icon name="history" />
@@ -197,30 +200,23 @@ const AssetCard = React.createClass({
               </div>
               <div style={{ color: numChildForks ? 'black' : null }}>
                 <Icon name="fork" color={hasParentFork ? 'blue' : null} />
-                <span>
-                  {numChildForks} Forks
-                </span>
+                <span>{numChildForks} Forks</span>
               </div>
               {editProjects}
-            </Card.Meta>}
+            </Card.Meta>
+          )}
 
           {viewOpts.showMeta &&
-            (asset.text && asset.text !== '') &&
-            <Card.Description
-              content={
-                <small>
-                  {asset.text}
-                </small>
-              }
-            />}
+          (asset.text && asset.text !== '') && <Card.Description content={<small>{asset.text}</small>} />}
 
-          {asset.isDeleted &&
+          {asset.isDeleted && (
             <div className="ui massive red corner label">
               <span style={{ fontSize: '10px', paddingLeft: '10px' }}>DELETED</span>
-            </div>}
+            </div>
+          )}
         </Card.Content>
 
-        {viewOpts.showExtra &&
+        {viewOpts.showExtra && (
           <Card.Content extra>
             <span
               style={{ color: assetKindColor }}
@@ -230,13 +226,15 @@ const AssetCard = React.createClass({
               <Icon color={assetKindColor} name={assetKindIcon} />
               {assetKindName}
               {asset.skillPath &&
-                asset.skillPath.length > 0 &&
-                <ChallengeState ownername={asset.dn_ownerName} asIcon style={{ marginLeft: '3px' }} />}
+              asset.skillPath.length > 0 && (
+                <ChallengeState ownername={asset.dn_ownerName} asIcon style={{ marginLeft: '3px' }} />
+              )}
             </span>
             <UX.UserAvatarName username={asset.dn_ownerName} />
-          </Card.Content>}
+          </Card.Content>
+        )}
 
-        {viewOpts.showFooter &&
+        {viewOpts.showFooter && (
           <div className="ui two small bottom attached icon buttons">
             <div
               className={
@@ -247,9 +245,7 @@ const AssetCard = React.createClass({
               onTouchEnd={this.handleCompletedClick}
             >
               <Icon name={asset.isCompleted ? 'lock' : 'unlock'} />
-              <small>
-                &nbsp;{asset.isCompleted ? 'Locked' : 'Unlocked'}
-              </small>
+              <small>&nbsp;{asset.isCompleted ? 'Locked' : 'Unlocked'}</small>
             </div>
             <div
               className={(canEdit && !asset.isCompleted ? '' : 'disabled ') + 'ui compact button'}
@@ -258,11 +254,10 @@ const AssetCard = React.createClass({
               onTouchEnd={this.handleDeleteClick}
             >
               {asset.isDeleted ? null : <Icon color="red" name="trash" />}
-              <small>
-                &nbsp;{asset.isDeleted ? 'Undelete' : 'Delete'}
-              </small>
+              <small>&nbsp;{asset.isDeleted ? 'Undelete' : 'Delete'}</small>
             </div>
-          </div>}
+          </div>
+        )}
       </Card>
     )
   },

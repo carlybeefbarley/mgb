@@ -8,10 +8,11 @@ import { Users } from '/imports/schemas'
 import { showToast } from '/client/imports/routes/App'
 import { logActivity } from '/imports/schemas/activity'
 
-const UserLoveIcon = ({ size, onIconClick, currUserLoves }) =>
+const UserLoveIcon = ({ size, onIconClick, currUserLoves }) => (
   <Icon name={currUserLoves ? 'heart' : 'empty heart'} size={size} onClick={onIconClick} color="red" />
+)
 
-const UserLovesUI = ({ seeLovers, userList, size, popupPosition, onIconClick, currUserLoves, asset }) =>
+const UserLovesUI = ({ seeLovers, userList, size, popupPosition, onIconClick, currUserLoves, asset }) => (
   <Popup
     on="hover"
     size="small"
@@ -19,9 +20,7 @@ const UserLovesUI = ({ seeLovers, userList, size, popupPosition, onIconClick, cu
     position={popupPosition}
     trigger={
       <span>
-        <small>
-          {asset.heartedBy_count}{' '}
-        </small>
+        <small>{asset.heartedBy_count} </small>
         <UserLoveIcon
           currUserLoves={currUserLoves}
           size={size}
@@ -32,23 +31,24 @@ const UserLovesUI = ({ seeLovers, userList, size, popupPosition, onIconClick, cu
   >
     {seeLovers && <Popup.Header>Users who love this</Popup.Header>}
     <Popup.Content>
-      {seeLovers
-        ? userList.length > 0
-          ? userList.map((person, idx) =>
-              <div key={idx}>
-                <QLink to={`/u/${person.username}`}>
-                  <p>
-                    {person.username}
-                  </p>
-                </QLink>
-              </div>,
-            )
-          : <span>(none yet)</span>
-        : <QLink to={`/u/${asset.dn_ownerName}/asset/${asset._id}`}>
-            {asset.heartedBy ? asset.heartedBy.length : 0} love{asset.heartedBy_count !== 1 ? 's' : ''}
-          </QLink>}
+      {seeLovers ? userList.length > 0 ? (
+        userList.map((person, idx) => (
+          <div key={idx}>
+            <QLink to={`/u/${person.username}`}>
+              <p>{person.username}</p>
+            </QLink>
+          </div>
+        ))
+      ) : (
+        <span>(none yet)</span>
+      ) : (
+        <QLink to={`/u/${asset.dn_ownerName}/asset/${asset._id}`}>
+          {asset.heartedBy ? asset.heartedBy.length : 0} love{asset.heartedBy_count !== 1 ? 's' : ''}
+        </QLink>
+      )}
     </Popup.Content>
   </Popup>
+)
 
 UserLovesUI.propTypes = {
   popupPosition: PropTypes.string.isRequired,

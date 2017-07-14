@@ -374,9 +374,7 @@ export default class TileSet extends React.Component {
         onClick={this.selectTileset.bind(this, index, tileset)}
         key={index}
       >
-        <span className="tileset-title-list-item">
-          {title}
-        </span>
+        <span className="tileset-title-list-item">{title}</span>
       </a>
     )
   }
@@ -394,9 +392,7 @@ export default class TileSet extends React.Component {
         }}
       >
         <img src={makeCDNLink(tileset.image, makeExpireTimestamp(30))} />
-        <span className="tilesetPreviewTitle">
-          {tileset.name}
-        </span>
+        <span className="tilesetPreviewTitle">{tileset.name}</span>
       </div>
     )
   }
@@ -490,9 +486,7 @@ export default class TileSet extends React.Component {
               >
                 {ts.name} {ts.imagewidth + 'x' + ts.imageheight}
               </span>
-              <div className="floating ui tiny green label">
-                {this.props.tilesets.length}
-              </div>
+              <div className="floating ui tiny green label">{this.props.tilesets.length}</div>
               <div className="menu" style={{ maxHeight: '295px', overflow: 'auto', maxWidth: '50px' }}>
                 {tilesets}
               </div>

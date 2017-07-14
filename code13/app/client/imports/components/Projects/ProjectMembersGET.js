@@ -44,28 +44,28 @@ const ProjectMembersGET = React.createClass({
   renderMembers() {
     const { enableLeaveButton, enableRemoveButton } = this.props
 
-    return _.map(this.data.users, user =>
+    return _.map(this.data.users, user => (
       <Segment basic key={user._id} style={{ marginTop: 0 }}>
         <UserItem narrowItem user={user} style={{ paddingBottom: 0 }} />
         <div className="ui bottom attached buttons">
-          {enableLeaveButton && enableLeaveButton === user._id
-            ? <Button
-                style={_buttonStyle}
-                onClick={this.handleLeave.bind(this, user)}
-                icon={{ name: 'sign out', color: 'red' }}
-                content="Leave"
-              />
-            : enableRemoveButton
-              ? <Button
-                  style={_buttonStyle}
-                  onClick={this.handleRemove.bind(this, user)}
-                  icon={{ name: 'remove', color: 'red' }}
-                  content="Remove"
-                />
-              : null}
+          {enableLeaveButton && enableLeaveButton === user._id ? (
+            <Button
+              style={_buttonStyle}
+              onClick={this.handleLeave.bind(this, user)}
+              icon={{ name: 'sign out', color: 'red' }}
+              content="Leave"
+            />
+          ) : enableRemoveButton ? (
+            <Button
+              style={_buttonStyle}
+              onClick={this.handleRemove.bind(this, user)}
+              icon={{ name: 'remove', color: 'red' }}
+              content="Remove"
+            />
+          ) : null}
         </div>
-      </Segment>,
-    )
+      </Segment>
+    ))
   },
 
   handleRemove: function(user) {
@@ -81,11 +81,7 @@ const ProjectMembersGET = React.createClass({
   render: function() {
     if (this.data.loading) return null
 
-    return (
-      <div style={_nowrapStyle}>
-        {this.renderMembers()}
-      </div>
-    )
+    return <div style={_nowrapStyle}>{this.renderMembers()}</div>
   },
 })
 

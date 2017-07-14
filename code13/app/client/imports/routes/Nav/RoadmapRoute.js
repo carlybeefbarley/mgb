@@ -4,7 +4,7 @@ import QLink from '/client/imports/routes/QLink'
 import { Segment, Container, Header, Icon } from 'semantic-ui-react'
 import AboutHeader from './AboutHeader'
 
-const RenderRoadmap = () =>
+const RenderRoadmap = () => (
   <div>
     <h2>Features planned for July 2017</h2>
     <ul>
@@ -84,8 +84,9 @@ const RenderRoadmap = () =>
       Trello work proposals list
     </a>
   </div>
+)
 
-const RoadmapRoute = () =>
+const RoadmapRoute = () => (
   <div>
     <Segment basic>
       <Container>
@@ -101,6 +102,7 @@ const RoadmapRoute = () =>
     </Segment>
     <Footer />
   </div>
+)
 
 export default RoadmapRoute
 

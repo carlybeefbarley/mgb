@@ -171,9 +171,7 @@ export default class ImportSound extends React.Component {
           <br />
           <br />
           <h2>Drop sound file here!</h2>
-          <p>
-            Supported formats: {this.supportedFormats.join(', ')}
-          </p>
+          <p>Supported formats: {this.supportedFormats.join(', ')}</p>
           <br />
           <br />
           <br />

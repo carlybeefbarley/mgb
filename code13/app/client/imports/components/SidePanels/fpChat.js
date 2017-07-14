@@ -296,22 +296,22 @@ const fpChat = React.createClass({
       : null
 
     // My Wall
-    const myWall = !currUser
-      ? null
-      : <List selection>
-          <List.Item>
-            <List.Header disabled style={{ textAlign: 'center' }}>
-              My Wall
-            </List.Header>
-          </List.Item>
-          <List.Item onClick={() => this.handleChatChannelChange(wallChannelName)} title="My Wall">
-            <Icon name="user" />
-            <List.Content>
-              {makePresentedChannelName(wallChannelName, currUser.username)}
-              {this.renderUnreadChannelIndicator(wallChannelName, chatChannelTimestamps)}
-            </List.Content>
-          </List.Item>
-        </List>
+    const myWall = !currUser ? null : (
+      <List selection>
+        <List.Item>
+          <List.Header disabled style={{ textAlign: 'center' }}>
+            My Wall
+          </List.Header>
+        </List.Item>
+        <List.Item onClick={() => this.handleChatChannelChange(wallChannelName)} title="My Wall">
+          <Icon name="user" />
+          <List.Content>
+            {makePresentedChannelName(wallChannelName, currUser.username)}
+            {this.renderUnreadChannelIndicator(wallChannelName, chatChannelTimestamps)}
+          </List.Content>
+        </List.Item>
+      </List>
+    )
 
     // PUBLIC (GLOBAL) CHANNELS
     const publicChannels = (
@@ -420,7 +420,7 @@ const fpChat = React.createClass({
           </List.Header>
         </List.Item>
 
-        {_.map(assetChannelObjects, aco =>
+        {_.map(assetChannelObjects, aco => (
           <List.Item key={aco.channelName} onClick={() => this.handleChatChannelChange(aco.channelName)}>
             <Icon
               title={`View/Edit Asset`}
@@ -446,8 +446,8 @@ const fpChat = React.createClass({
               {_getAssetNameIfAvailable(aco.scopeId, _.find(chatChannelTimestamps, { _id: aco.channelName }))}
               {this.renderUnreadChannelIndicator(aco.channelName, chatChannelTimestamps)}
             </List.Content>
-          </List.Item>,
-        )}
+          </List.Item>
+        ))}
 
         <List.Item>
           <List.Content>
@@ -557,7 +557,7 @@ const fpChat = React.createClass({
 
         <div>
           {this.renderChannelSelector()}
-          {view === 'comments' &&
+          {view === 'comments' && (
             <ChatMessagesView
               currUser={currUser}
               pastMessageLimit={pastMessageLimit}
@@ -566,34 +566,35 @@ const fpChat = React.createClass({
               }}
               channelName={channelName}
               MessageContextComponent={
-                channelObj.scopeGroupName === 'Global'
-                  ? null
-                  : <Popup
-                      on="hover"
-                      size="small"
-                      hoverable
-                      position="left center"
-                      trigger={<Button active icon={presentedChannelIconName} />}
-                    >
-                      <Popup.Header>
-                        Public Chat Channel for this {channelObj.scopeGroupName}
-                      </Popup.Header>
-                      <Popup.Content>
-                        <div style={{ minWidth: '300px' }}>
-                          {channelObj.scopeGroupName === 'Asset' &&
-                            <AssetCardGET assetId={channelObj.scopeId} allowDrag renderView="s" />}
-                          {channelObj.scopeGroupName === 'Project' &&
-                            <ProjectCardGET projectId={channelObj.scopeId} />}
-                          {channelObj.scopeGroupName === 'User' &&
-                            <span>
-                              User Wall for{' '}
-                              <QLink to={`/u/${channelObj.scopeId}`}>@{channelObj.scopeId}</QLink>
-                            </span>}
-                        </div>
-                      </Popup.Content>
-                    </Popup>
+                channelObj.scopeGroupName === 'Global' ? null : (
+                  <Popup
+                    on="hover"
+                    size="small"
+                    hoverable
+                    position="left center"
+                    trigger={<Button active icon={presentedChannelIconName} />}
+                  >
+                    <Popup.Header>Public Chat Channel for this {channelObj.scopeGroupName}</Popup.Header>
+                    <Popup.Content>
+                      <div style={{ minWidth: '300px' }}>
+                        {channelObj.scopeGroupName === 'Asset' && (
+                          <AssetCardGET assetId={channelObj.scopeId} allowDrag renderView="s" />
+                        )}
+                        {channelObj.scopeGroupName === 'Project' && (
+                          <ProjectCardGET projectId={channelObj.scopeId} />
+                        )}
+                        {channelObj.scopeGroupName === 'User' && (
+                          <span>
+                            User Wall for <QLink to={`/u/${channelObj.scopeId}`}>@{channelObj.scopeId}</QLink>
+                          </span>
+                        )}
+                      </div>
+                    </Popup.Content>
+                  </Popup>
+                )
               }
-            />}
+            />
+          )}
         </div>
 
         <p ref="bottomOfMessageDiv">&nbsp;</p>

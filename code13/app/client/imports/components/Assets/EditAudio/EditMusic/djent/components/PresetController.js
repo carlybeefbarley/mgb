@@ -13,11 +13,11 @@ class PresetController extends Component {
 
   render = () => {
     const activePreset = presets.find(preset => preset.id === this.props.activePresetID)
-    const presetItems = presets.map((preset, i) =>
+    const presetItems = presets.map((preset, i) => (
       <option value={preset.id} key={i}>
         {preset.description || preset.id}
-      </option>,
-    )
+      </option>
+    ))
 
     if (!activePreset)
       presetItems.push(

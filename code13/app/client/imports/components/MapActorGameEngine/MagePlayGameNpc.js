@@ -107,7 +107,7 @@ const MagePlayGameNpc = {
     if (take && take == '') take = null // just normalizing "" to null
     if (take) {
       if (takeCount <= 0) takeCount = 1 // <1 isn't valid, minimum is 1
-      
+
       var item = inventory.get(take)
       var itemName = take.split(':').pop()
       if (!item || item.count < takeCount) {

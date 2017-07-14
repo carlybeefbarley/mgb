@@ -283,18 +283,18 @@ const UserAssetListRoute = React.createClass({
 
         <Segment style={_filterSegmentStyle} className="mgb-suir-plainSegment">
           <Header as="h2" content={pageTitle} />
-          {user
-            ? <ProjectSelector
-                id="mgbjr-asset-search-projectSelector"
-                canEdit={ownsProfile}
-                user={user}
-                isUseCaseCreate={false}
-                handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
-                availableProjects={projects}
-                ProjectListLinkUrl={'/u/' + user.profile.name + '/projects'}
-                chosenProjectName={qN.project}
-              />
-            : null}
+          {user ? (
+            <ProjectSelector
+              id="mgbjr-asset-search-projectSelector"
+              canEdit={ownsProfile}
+              user={user}
+              isUseCaseCreate={false}
+              handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
+              availableProjects={projects}
+              ProjectListLinkUrl={'/u/' + user.profile.name + '/projects'}
+              chosenProjectName={qN.project}
+            />
+          ) : null}
 
           <div id="mgbjr-asset-search-searchStringInput">
             <InputSearchBox size="small" fluid value={qN.searchName} onFinalChange={this.handleSearchGo} />
@@ -307,7 +307,7 @@ const UserAssetListRoute = React.createClass({
               size="mini"
               content="Alt-click to multi-select"
             />
-            {isAllKinds ||
+            {isAllKinds || (
               <small
                 id="mgbjr-asset-search-kind-select-allKinds"
                 style={{ float: 'right', fontWeight: 'bold', cursor: 'pointer' }}
@@ -317,7 +317,8 @@ const UserAssetListRoute = React.createClass({
                 }}
               >
                 (show all)
-              </small>}
+              </small>
+            )}
             <AssetKindsSelector kindsActive={qN.kinds} handleToggleKindCallback={this.handleToggleKind} />
           </div>
 
@@ -366,50 +367,56 @@ const UserAssetListRoute = React.createClass({
             />
           </div>
           {/* Make it really clear that we are showing Challenge Assets */
-          qN.showChallengeAssets === '1' &&
+          qN.showChallengeAssets === '1' && (
             <Segment>
               Showing Challenge Assets made during <QLink to="/learn/code">tutorials</QLink>&emsp;
               <AssetShowChallengeAssetsSelector
                 showChallengeAssetsFlag={qN.showChallengeAssets}
                 handleChangeFlag={this.handleChangeShowChallengeAssetsFlag}
               />
-            </Segment>}
+            </Segment>
+          )}
           {/* The Asset Cards */}
           <div>
             {!loading &&
-              qN.kinds === '' &&
+            qN.kinds === '' && (
               <Message
                 warning
                 icon="help circle"
                 header="Select one or more Asset kinds to be shown here"
                 content="This list is empty because you have not selected any of the available Asset kinds to view"
-              />}
+              />
+            )}
             {!loading &&
-              qN.kinds !== '' &&
-              assets.length === 0 &&
+            qN.kinds !== '' &&
+            assets.length === 0 && (
               <Message
                 warning
                 icon="help circle"
                 header="No assets match your search"
                 content="Widen your search to see more assets, or create a new Asset using the 'Create New Asset' button above"
-              />}
-            {loading
-              ? <div>
-                  <Spinner />
-                </div>
-              : <AssetList
-                  allowDrag
-                  assets={assets}
-                  renderView={view}
-                  currUser={currUser}
-                  ownersProjects={projects}
-                />}
+              />
+            )}
+            {loading ? (
+              <div>
+                <Spinner />
+              </div>
+            ) : (
+              <AssetList
+                allowDrag
+                assets={assets}
+                renderView={view}
+                currUser={currUser}
+                ownersProjects={projects}
+              />
+            )}
             {!loading &&
-              assets.length >= SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit &&
+            assets.length >= SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit && (
               <Segment basic>
                 Reached maximum number of assets that can be listed here ({SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit}).
                 Use the search filter options to display specific assets.
-              </Segment>}
+              </Segment>
+            )}
           </div>
         </Segment>
       </Segment.Group>

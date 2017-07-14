@@ -27,9 +27,7 @@ class InputBox extends Component {
 
     return (
       <div className={'ui labeled input ' + (rightFloated ? 'right floated' : '')}>
-        <div className="ui label">
-          {label}
-        </div>
+        <div className="ui label">{label}</div>
         <input name={id} ref="input" {...inputProps} />
       </div>
     )

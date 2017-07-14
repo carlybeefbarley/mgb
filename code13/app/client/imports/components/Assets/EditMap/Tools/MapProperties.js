@@ -79,7 +79,7 @@ const layerProperties = ({ name, width, height, x, y, type }, onChangeLayer) => 
   title: name + ' properties',
   content: (
     <Segment.Group>
-      {type === 'tilelayer' &&
+      {type === 'tilelayer' && (
         <Segment.Group horizontal>
           <Segment>
             <Label pointing="right">Width:</Label>
@@ -99,7 +99,8 @@ const layerProperties = ({ name, width, height, x, y, type }, onChangeLayer) => 
               validate={validateGreaterThanZero}
             />
           </Segment>
-        </Segment.Group>}
+        </Segment.Group>
+      )}
       <Segment.Group horizontal>
         <Segment>
           <Label pointing="right">Offset x:</Label>
@@ -203,7 +204,7 @@ class MoreProperties extends React.Component {
 
   render() {
     const { savedProps } = this.props
-    const props = savedProps.map((p, index) =>
+    const props = savedProps.map((p, index) => (
       <Table.Row horizontal style={{ padding: '0.1em', margin: '0.1em' }} key={index}>
         <Table.Cell style={{ padding: '0.2em 1em' }}>
           <InlineEdit
@@ -226,8 +227,8 @@ class MoreProperties extends React.Component {
             x
           </Button>
         </Table.Cell>
-      </Table.Row>,
-    )
+      </Table.Row>
+    ))
 
     return (
       <Segment>
@@ -239,9 +240,7 @@ class MoreProperties extends React.Component {
               <Table.HeaderCell />
             </Table.Row>
           </Table.Header>
-          <Table.Body>
-            {props}
-          </Table.Body>
+          <Table.Body>{props}</Table.Body>
         </Table>
         <Button
           onClick={() => {

@@ -34,20 +34,23 @@ const NetworkStatusMsg = ({ meteorStatus }) => {
           </Button>
         </Message.Header>
 
-        {meteorStatus.retryCount > 1 &&
+        {meteorStatus.retryCount > 1 && (
           <Message.List style={{ clear: 'both' }}>
-            <Message.Item>
-              Connection retries attempted: {meteorStatus.retryCount}
-            </Message.Item>
-            {retryInSeconds > 3 && // 3 seconds is good to damp some of the flicker for initial quick retries
+            <Message.Item>Connection retries attempted: {meteorStatus.retryCount}</Message.Item>
+            {retryInSeconds > 3 && (
               <Message.Item>
-                Auto-retry Interval: {retryInSeconds} seconds
-              </Message.Item>}
-            {mStatus.FAILED === meteorStatus.status &&
-              <Message.Item>
-                Connection Failed reason: "{meteorStatus.reason}"
-              </Message.Item>}
-          </Message.List>}
+                Auto-retry Interval:{' '}
+                {
+                  retryInSeconds // 3 seconds is good to damp some of the flicker for initial quick retries
+                }{' '}
+                seconds
+              </Message.Item>
+            )}
+            {mStatus.FAILED === meteorStatus.status && (
+              <Message.Item>Connection Failed reason: "{meteorStatus.reason}"</Message.Item>
+            )}
+          </Message.List>
+        )}
       </Message>
     </Segment>
   )

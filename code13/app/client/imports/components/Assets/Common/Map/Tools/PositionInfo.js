@@ -1,11 +1,7 @@
 import React from 'react'
 export default class PositionInfo extends React.Component {
   render() {
-    return (
-      <div style={this.props.infoStyle}>
-        {this.props.getInfo()}
-      </div>
-    )
+    return <div style={this.props.infoStyle}>{this.props.getInfo()}</div>
   }
 }
 

@@ -9,12 +9,14 @@ import { isValidCodeGame, isValidActorMapGame } from '/imports/schemas/assets'
 
 const _cardStyle = { minWidth: '200px', maxWidth: '200px' }
 
-export const GameItem = ({ game, currUser }) =>
+export const GameItem = ({ game, currUser }) => (
   <Card color={isValidCodeGame(game) ? 'green' : 'blue'} className="link" style={_cardStyle}>
     <QLink className="image" to={`/u/${game.dn_ownerName}/play/${game._id}`}>
-      {Thumbnail.getLink(game)
-        ? <FittedImage src={Thumbnail.getLink(game)} />
-        : <div style={{ display: 'block', height: '140px' }} />}
+      {Thumbnail.getLink(game) ? (
+        <FittedImage src={Thumbnail.getLink(game)} />
+      ) : (
+        <div style={{ display: 'block', height: '140px' }} />
+      )}
     </QLink>
     <Card.Content extra>
       <p
@@ -28,15 +30,14 @@ export const GameItem = ({ game, currUser }) =>
         {game.name}
       </p>
       <p>
-        <span>
-          {((game.metadata && game.metadata.playCount) || 0) + ' Plays'}
-        </span>
+        <span>{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</span>
         <span style={{ float: 'right' }}>
           <UserLoves size="small" currUser={currUser} asset={game} seeLovers={false} />
         </span>
       </p>
     </Card.Content>
   </Card>
+)
 
 const _wrapStyle = { clear: 'both', flexWrap: 'wrap' }
 const _nowrapStyle = {
@@ -46,16 +47,17 @@ const _nowrapStyle = {
   overflowY: 'hidden',
 }
 
-const GameItems = ({ games, wrap, currUser }) =>
+const GameItems = ({ games, wrap, currUser }) => (
   <Card.Group style={wrap ? _wrapStyle : _nowrapStyle}>
     {(!games || games.length === 0) && <Segment basic>No matching games</Segment>}
     {games.map(
       g =>
-        isValidCodeGame(g) || isValidActorMapGame(g)
-          ? <GameItem currUser={currUser} game={g} key={g._id} />
-          : null,
+        isValidCodeGame(g) || isValidActorMapGame(g) ? (
+          <GameItem currUser={currUser} game={g} key={g._id} />
+        ) : null,
     )}
   </Card.Group>
+)
 
 GameItems.propTypes = {
   currUser: PropTypes.object, // Currently Logged in user. Can be null

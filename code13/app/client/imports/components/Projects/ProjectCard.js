@@ -34,9 +34,11 @@ const ProjectCard = (props, context) => {
           canEdit={canEdit}
           canLinkToSrc={canEdit}
           handleChange={
-            !handleFieldChanged
-              ? undefined
-              : (newUrl, avatarId) => handleFieldChanged({ avatarAssetId: avatarId })
+            !handleFieldChanged ? (
+              undefined
+            ) : (
+              (newUrl, avatarId) => handleFieldChanged({ avatarAssetId: avatarId })
+            )
           }
         />
       </Card.Content>
@@ -45,9 +47,11 @@ const ProjectCard = (props, context) => {
           <WorkState
             workState={project.workState}
             handleChange={
-              !handleFieldChanged
-                ? undefined
-                : newWorkState => handleFieldChanged({ workState: newWorkState })
+              !handleFieldChanged ? (
+                undefined
+              ) : (
+                newWorkState => handleFieldChanged({ workState: newWorkState })
+              )
             }
             canEdit={canEdit}
           />
@@ -58,15 +62,11 @@ const ProjectCard = (props, context) => {
         <Card.Meta>
           <div>
             <Icon name="users" />
-            <span>
-              {MemberStr}
-            </span>
+            <span>{MemberStr}</span>
           </div>
           <div style={{ color: numChildForks ? 'black' : null }}>
             <Icon name="fork" color={hasParentFork ? 'blue' : null} />
-            <span style={{ color: project.allowForks ? 'green' : null }}>
-              {numChildForks} Forks
-            </span>
+            <span style={{ color: project.allowForks ? 'green' : null }}>{numChildForks} Forks</span>
           </div>
         </Card.Meta>
 

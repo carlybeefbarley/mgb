@@ -12,13 +12,14 @@ import { startSkillPathTutorial } from '/client/imports/routes/App'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-const OfferLoginTutorial = () =>
+const OfferLoginTutorial = () => (
   <QLink to="/signup">
     <Button floated="right">
       <Icon name="sign in" />
       Log In or Sign Up
     </Button>
   </QLink>
+)
 
 const _gsSkillNodeName = 'getStarted'
 const _maxGsSkillCount = countMaxUserSkills(_gsSkillNodeName + '.')
@@ -36,10 +37,11 @@ const gsItems = [
 ]
 
 // This is the   1 / n    box at the top-right of each skill box
-const ProgressLabel = ({ subSkillsComplete, subSkillTotal }) =>
+const ProgressLabel = ({ subSkillsComplete, subSkillTotal }) => (
   <Label attached="top right">
     {subSkillsComplete} / {subSkillTotal}
   </Label>
+)
 
 ProgressLabel.propTypes = {
   subSkillsComplete: PropTypes.number,
@@ -116,13 +118,14 @@ const LearnGetStartedRoute = ({ currUser }, context) => {
          so it is sort-of hard0coded here
          since it has no skill tutorials to revisit, we hide it on completion
          */}
-        {!currUser &&
+        {!currUser && (
           <SkillLinkCard
             to="/signup"
             mascot="flyingcat"
             name="Log In / Sign Up"
             description="You must be logged in to use these tutorials"
-          />}
+          />
+        )}
 
         {gsItems.map(area => {
           const skillStatus = getSkillNodeStatus(currUser, context.skills, area.node.$meta.key)

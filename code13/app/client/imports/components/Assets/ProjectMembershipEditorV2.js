@@ -19,7 +19,7 @@ const ProjectMembershipSummary = ({ currUserId, asset, currUserProjects }) => {
 
   const projectsTableAsJsx = ( // This will be the colored text in the box. For better UX, maybe this should be a count?
     <span>
-      {_.map(projectsTable, (p, idx) =>
+      {_.map(projectsTable, (p, idx) => (
         <QLink
           to={`/u/${asset.dn_ownerName}/assets`}
           query={{ project: p.projectName }}
@@ -28,8 +28,8 @@ const ProjectMembershipSummary = ({ currUserId, asset, currUserProjects }) => {
           style={{ color: getColorNameForProjectAccess(p) }}
         >
           {p.projectName + (idx === projectsTable.length - 1 ? '' : ', ')}
-        </QLink>,
-      )}
+        </QLink>
+      ))}
     </span>
   )
 
@@ -58,12 +58,11 @@ const ProjectMembershipPopup = props => {
   const { currUserId, asset, currUserProjects, canEdit, handleToggleProjectName } = props
   if (!asset) return null
 
-  const makeHdrEl = (key, msg) =>
+  const makeHdrEl = (key, msg) => (
     <div key={key} className="ui left aligned header">
-      <small>
-        {msg}
-      </small>
+      <small>{msg}</small>
     </div>
+  )
   const labelSty = { marginBottom: '4px' }
   let choices = []
   // If I am owner, then show all possible projects and switch state for each
@@ -131,11 +130,7 @@ const ProjectMembershipPopup = props => {
     else choices.unshift(makeHdrEl('h0', `${asset.dn_ownerName}'s Projects containing this Asset`))
   }
 
-  return (
-    <div style={{ maxHeight: '500px', overflow: 'scroll' }}>
-      {choices}
-    </div>
-  )
+  return <div style={{ maxHeight: '500px', overflow: 'scroll' }}>{choices}</div>
 }
 
 const ProjectMembershipEditorV2 = React.createClass({

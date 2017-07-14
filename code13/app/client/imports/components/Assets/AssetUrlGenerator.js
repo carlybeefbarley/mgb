@@ -54,11 +54,11 @@ const AssetUrlGenerator = props => {
   // Build the list of 'Create New Asset' Menu choices
   let urlOptions = _generateUrlOptions(asset)
 
-  let choices = urlOptions.map(opt =>
+  let choices = urlOptions.map(opt => (
     <a className="item" href={opt.url} target="_blank" data-value={opt.url} key={opt.msg}>
       URL to get asset {opt.msg}
-    </a>,
-  )
+    </a>
+  ))
 
   return (
     <div className="ui simple dropdown item">

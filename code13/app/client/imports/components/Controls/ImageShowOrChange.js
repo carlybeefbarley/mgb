@@ -43,15 +43,15 @@ const ImageShowOrChange = ({
 
   const imgPopup = (
     <Popup on="hover" size="small" inverted mouseEnterDelay={500} position="bottom center" trigger={innerImg}>
-      <Popup.Header>
-        {header}
-      </Popup.Header>
+      <Popup.Header>{header}</Popup.Header>
       <Popup.Content>
-        {canEdit
-          ? <span>
-              You can set this image by dragging an MGB Graphic Asset from the 'Assets panel' to here.{' '}
-            </span>
-          : <span>You do not have permission to change this. </span>}
+        {canEdit ? (
+          <span>
+            You can set this image by dragging an MGB Graphic Asset from the 'Assets panel' to here.{' '}
+          </span>
+        ) : (
+          <span>You do not have permission to change this. </span>
+        )}
         {canLinkToSrc && avatarAssetId && <span>You can click the Image to view/edit the Graphic Asset</span>}
       </Popup.Content>
     </Popup>

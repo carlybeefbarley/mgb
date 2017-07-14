@@ -1,6 +1,6 @@
 import React from 'react'
 
-const IOSWarning = props =>
+const IOSWarning = props => (
   <div>
     <h2 className="title-primary">It looks like you&apos;re using iOS...</h2>
     <p>Due to a bug in safari, iOS is currently unsupported :&nbsp;(</p>
@@ -12,5 +12,6 @@ const IOSWarning = props =>
       Continue
     </button>
   </div>
+)
 
 export default IOSWarning

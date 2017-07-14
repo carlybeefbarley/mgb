@@ -24,78 +24,74 @@ const AssetLicense = ({ license, popupPosition, handleChange, canEdit }) => {
         trigger={
           <Label basic size="small" style={{ borderRadius: '0px' }}>
             <Icon name="law" />
-            <small>
-              {actualLicense}
-            </small>
+            <small>{actualLicense}</small>
           </Label>
         }
       >
         <Header textAlign="left">
           <small>License for this Asset</small>
         </Header>
-        {!canEdit
-          ? <div>
-              <p>
+        {!canEdit ? (
+          <div>
+            <p>
+              <a href={assetLicenses[actualLicense].url} target="_blank">
+                {assetLicenses[actualLicense].name}
+              </a>
+            </p>
+            <Label color="black">
+              <Icon name="law" />
+              <small>{actualLicense}</small>
+            </Label>
+            <p>
+              <br />
+              Non-legal summary of license:
+              <br />
+              <small style={{ color: 'grey' }}>{assetLicenses[actualLicense].summary}</small>
+            </p>
+            <p>
+              <small>
                 <a href={assetLicenses[actualLicense].url} target="_blank">
-                  {assetLicenses[actualLicense].name}
+                  See the full license for the exact terms
                 </a>
-              </p>
-              <Label color="black">
-                <Icon name="law" />
-                <small>
-                  {actualLicense}
-                </small>
-              </Label>
-              <p>
-                <br />
-                Non-legal summary of license:
-                <br />
-                <small style={{ color: 'grey' }}>{assetLicenses[actualLicense].summary}</small>
-              </p>
-              <p>
-                <small>
-                  <a href={assetLicenses[actualLicense].url} target="_blank">
-                    See the full license for the exact terms
+              </small>
+            </p>
+          </div>
+        ) : (
+          <List selection>
+            {_.map(_.keys(assetLicenses), key => (
+              <List.Item
+                key={key}
+                title={assetLicenses[key].summary}
+                style={_labelSty}
+                className={`left aligned fluid ${key === actualLicense ? 'active' : ''}`}
+              >
+                <List.Content floated="right">
+                  <a href={assetLicenses[key].url} target="_blank">
+                    <Icon name="external" style={{ paddingTop: '0.25em' }} />
                   </a>
-                </small>
-              </p>
-            </div>
-          : <List selection>
-              {_.map(_.keys(assetLicenses), key =>
-                <List.Item
-                  key={key}
-                  title={assetLicenses[key].summary}
-                  style={_labelSty}
-                  className={`left aligned fluid ${key === actualLicense ? 'active' : ''}`}
+                </List.Content>
+                <List.Content
+                  style={{ paddingRight: '2em' }}
+                  onClick={e => {
+                    e.preventDefault()
+                    canEdit && handleChange && handleChange(key)
+                  }}
                 >
-                  <List.Content floated="right">
-                    <a href={assetLicenses[key].url} target="_blank">
-                      <Icon name="external" style={{ paddingTop: '0.25em' }} />
-                    </a>
-                  </List.Content>
-                  <List.Content
-                    style={{ paddingRight: '2em' }}
-                    onClick={e => {
-                      e.preventDefault()
-                      canEdit && handleChange && handleChange(key)
-                    }}
+                  <Label
+                    basic={key !== actualLicense}
+                    color={key === actualLicense ? 'black' : null}
+                    style={{ width: '9em' }}
                   >
-                    <Label
-                      basic={key !== actualLicense}
-                      color={key === actualLicense ? 'black' : null}
-                      style={{ width: '9em' }}
-                    >
-                      <Icon name="law" />
-                      <small>
-                        {key}
-                      </small>
-                    </Label>
-                    &nbsp;&nbsp;
-                    <small>{assetLicenses[key].name}</small>
-                  </List.Content>
-                </List.Item>,
-              )}
-            </List>}
+                    <Icon name="law" />
+                    <small>{key}</small>
+                  </Label>
+                  &nbsp;&nbsp;
+                  <small>{assetLicenses[key].name}</small>
+                </List.Content>
+              </List.Item>
+            ))}
+          </List>
+        )}
       </Popup>
     </span>
   )

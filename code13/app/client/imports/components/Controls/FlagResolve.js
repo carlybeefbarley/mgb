@@ -13,64 +13,64 @@ class ResolveReportEntity extends React.Component {
   render() {
     const { currUser, entity, isSuperAdmin, className, tableCollection } = this.props
 
-    return isSuperAdmin && currUser && entity.suFlagId
-      ? <span className={className}>
-          <Popup
-            on="click"
-            size="tiny"
-            position="left center"
-            trigger={
-              <Label
-                circular
-                basic
-                size="mini"
-                icon={{ name: 'help circle', color: 'blue', style: { marginRight: 0 } }}
+    return isSuperAdmin && currUser && entity.suFlagId ? (
+      <span className={className}>
+        <Popup
+          on="click"
+          size="tiny"
+          position="left center"
+          trigger={
+            <Label
+              circular
+              basic
+              size="mini"
+              icon={{ name: 'help circle', color: 'blue', style: { marginRight: 0 } }}
+            />
+          }
+          wide="very"
+        >
+          <Popup.Header>Resolve this flag</Popup.Header>
+          <Popup.Content>
+            <Form style={{ minWidth: '25em' }}>
+              <Divider hidden />
+              Comments on the situation/why are you banning this or not?
+              <Form.TextArea
+                autoHeight
+                placeholder="Moderator comments"
+                onChange={(event, textarea) => {
+                  this.setState({ modComments: textarea.value })
+                }}
               />
-            }
-            wide="very"
-          >
-            <Popup.Header>Resolve this flag</Popup.Header>
-            <Popup.Content>
-              <Form style={{ minWidth: '25em' }}>
-                <Divider hidden />
-                Comments on the situation/why are you banning this or not?
-                <Form.TextArea
-                  autoHeight
-                  placeholder="Moderator comments"
-                  onChange={(event, textarea) => {
-                    this.setState({ modComments: textarea.value })
-                  }}
-                />
-                <Divider hidden />
-                Ban this permanently?
-                <br />
-                <em>(the {tableCollection} will show up as deleted by moderator)</em>
-                <Divider hidden />
-                <Button.Group>
-                  <Button
-                    value
-                    onClick={() =>
-                      _doResolveReportEntity(entity._id, true, this.state.modComments, tableCollection)}
-                    negative
-                  >
-                    Yes Ban
-                  </Button>
-                  <Button.Or />
-                  <Button
-                    value={false}
-                    onClick={() =>
-                      _doResolveReportEntity(entity._id, false, this.state.modComments, tableCollection)}
-                    positive
-                  >
-                    Don't Ban
-                  </Button>
-                </Button.Group>
-                &nbsp;
-              </Form>
-            </Popup.Content>
-          </Popup>
-        </span>
-      : null
+              <Divider hidden />
+              Ban this permanently?
+              <br />
+              <em>(the {tableCollection} will show up as deleted by moderator)</em>
+              <Divider hidden />
+              <Button.Group>
+                <Button
+                  value
+                  onClick={() =>
+                    _doResolveReportEntity(entity._id, true, this.state.modComments, tableCollection)}
+                  negative
+                >
+                  Yes Ban
+                </Button>
+                <Button.Or />
+                <Button
+                  value={false}
+                  onClick={() =>
+                    _doResolveReportEntity(entity._id, false, this.state.modComments, tableCollection)}
+                  positive
+                >
+                  Don't Ban
+                </Button>
+              </Button.Group>
+              &nbsp;
+            </Form>
+          </Popup.Content>
+        </Popup>
+      </span>
+    ) : null
   }
 }
 

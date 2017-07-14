@@ -49,21 +49,24 @@ export default class UserItem extends React.Component {
           </Card.Content>
           <Card.Content>
             <Header size="small" content={username} />
-            {suIsBanned &&
+            {suIsBanned && (
               <div>
                 <Label size="small" color="red" content="Suspended" />
-              </div>}
-            {isDeactivated &&
+              </div>
+            )}
+            {isDeactivated && (
               <div>
                 <Label size="small" color="purple" content="Deactivated" />
-              </div>}
+              </div>
+            )}
           </Card.Content>
         </Card>
       )
 
     const badgesForUser = getAllBadgesForUser(user)
-    const getBadgeN = idx =>
+    const getBadgeN = idx => (
       <Badge forceSize={32} name={idx < badgesForUser.length ? badgesForUser[idx] : '_blankBadge'} />
+    )
 
     return (
       <Card
@@ -85,14 +88,16 @@ export default class UserItem extends React.Component {
               <Icon link color="blue" name="chat" style={{ marginLeft: '4px' }} />
             </QLink>
           </Card.Meta>
-          {suIsBanned &&
+          {suIsBanned && (
             <div>
               <Label size="small" color="red" content="Suspended Account" />
-            </div>}
-          {isDeactivated &&
+            </div>
+          )}
+          {isDeactivated && (
             <div>
               <Label size="small" color="purple" content="Deactivated Account" />
-            </div>}
+            </div>
+          )}
         </Card.Content>
         <Card.Content extra>
           {getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)}

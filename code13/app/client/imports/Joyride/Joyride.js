@@ -795,12 +795,7 @@ export default class Joyride extends React.Component {
           if (steps[state.index + 1]) {
             if (showStepsProgress) {
               let next = locale.next
-              if (typeof locale.next === 'string')
-                next = (
-                  <span>
-                    {locale.next}
-                  </span>
-                )
+              if (typeof locale.next === 'string') next = <span>{locale.next}</span>
               buttons.primary = (
                 <span>
                   {next} <span>{`${state.index + 1}/${steps.length}`}</span>
@@ -862,10 +857,6 @@ export default class Joyride extends React.Component {
       component = this.createComponent()
     }
 
-    return (
-      <div className="joyride">
-        {component}
-      </div>
-    )
+    return <div className="joyride">{component}</div>
   }
 }

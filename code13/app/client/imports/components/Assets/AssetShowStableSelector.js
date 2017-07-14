@@ -15,9 +15,11 @@ const AssetShowStableSelector = ({ showStableFlag, handleChangeFlag }) => {
       position="bottom center"
       header="Show/hide locked Assets"
       content={
-        active
-          ? "Currently showing ONLY 'Locked' Assets. Click here to ALSO show 'Unlocked' Assets"
-          : "Currently showing 'Locked' AND 'Unlocked' Assets. Click here to ONLY show 'Locked' Assets"
+        active ? (
+          "Currently showing ONLY 'Locked' Assets. Click here to ALSO show 'Unlocked' Assets"
+        ) : (
+          "Currently showing 'Locked' AND 'Unlocked' Assets. Click here to ONLY show 'Locked' Assets"
+        )
       }
     />
   )

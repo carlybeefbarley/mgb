@@ -46,7 +46,7 @@ const ProjectMembersGET = React.createClass({
 
     return _.map(this.data.users, user =>
       <Segment basic key={user._id} style={{ marginTop: 0 }}>
-        <UserItem narrowItem renderAttached user={user} style={{ paddingBottom: 0 }} />
+        <UserItem narrowItem user={user} style={{ paddingBottom: 0 }} />
         <div className="ui bottom attached buttons">
           {enableLeaveButton && enableLeaveButton === user._id
             ? <Button

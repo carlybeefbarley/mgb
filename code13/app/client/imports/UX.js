@@ -33,8 +33,6 @@ const _button2IconSty = {
   marginBottom: '12px',
 }
 
-const _UserJoinedSty = { color: 'rgb(0, 176, 224)' }
-
 const UX = {
   makeAvatarImgLink: _makeAvatarImgLink,
   makeMascotImgLink: _makeMascotImgLink,
@@ -75,20 +73,16 @@ const UX = {
     return <span>TODO</span>
   },
 
-  UserTitleSpan: ({ title }) =>
+  UserTitle: ({ title }) =>
     <span>
-      <Icon name="quote left" color="blue" />
-      <big>
-        {title || '(no title)'}
-        &nbsp;
-      </big>
-      <Icon name="quote right" color="blue" />
+      <Icon fitted size="small" name="quote left" />
+      {title || '(no title)'} <Icon fitted size="small" name="quote right" />
     </span>,
 
   UserWhenJoined: ({ when, as }) => {
     const Element = as || 'span'
     return (
-      <Element style={_UserJoinedSty}>
+      <Element>
         Joined {moment(when).format('MMMM DD, YYYY')}
       </Element>
     )

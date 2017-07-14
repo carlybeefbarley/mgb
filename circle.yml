@@ -18,8 +18,6 @@ dependencies:
     - meteor || curl https://install.meteor.com | /bin/sh
   override:
     - yarn
-  post:
-   - meteor --version
 
 test:
   override:

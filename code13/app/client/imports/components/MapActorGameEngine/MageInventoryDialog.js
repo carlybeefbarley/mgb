@@ -103,7 +103,7 @@ export default class MageInventoryDialog extends React.Component {
             </p>
           </Popup.Content>
         </Popup>
-        <Segment raised>
+        <Segment>
           <SelectedItem
             item={selectedIdx === -1 ? null : itemsToShow[selectedIdx]}
             loadedGraphics={graphics}

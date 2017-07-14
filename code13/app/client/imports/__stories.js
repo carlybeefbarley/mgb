@@ -67,7 +67,6 @@ const UserItem = React.createClass({
     user: PropTypes.object.isRequired,
     handleClickUser: PropTypes.func, // If provided, call this with the userId instead of going to the user Profile Page
     narrowItem: PropTypes.bool, // if true, this is narrow format (e.g flexPanel)
-    renderAttached: PropTypes.bool, // if true, then render attached
   },
 
   render: function() {
@@ -91,7 +90,6 @@ const UserItem = React.createClass({
     // avatar here comes directly from mgb server - as we need it to be up to date always (mgb server will still handle etag - if not changed)
     // return (
     //   <Segment
-    //       raised={!renderAttached}
     //       attached={renderAttached}
     //       onClick={this.handleClickUser} >
     //     <Header size='large' content={name}/>
@@ -109,7 +107,7 @@ const UserItem = React.createClass({
     // )
 
     return (
-      <Card raised={!renderAttached} attached={renderAttached} onClick={this.handleClickUser}>
+      <Card attached={renderAttached} onClick={this.handleClickUser}>
         <Card.Content />
         <Card.Content>
           <img

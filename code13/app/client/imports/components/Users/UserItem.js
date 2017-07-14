@@ -16,7 +16,6 @@ export default class UserItem extends React.Component {
     user: PropTypes.object.isRequired,
     handleClickUser: PropTypes.func, // If provided, call this with the userId instead of going to the user Profile Page
     narrowItem: PropTypes.bool, // if true, this is narrow format (e.g flexPanel)
-    renderAttached: PropTypes.bool, // if true, then render attached
   }
 
   static contextTypes = {
@@ -31,7 +30,7 @@ export default class UserItem extends React.Component {
   }
 
   render() {
-    const { user, renderAttached, narrowItem, style } = this.props
+    const { user, narrowItem, style } = this.props
     const { profile, createdAt, suIsBanned, isDeactivated, username } = user
     const { title } = profile
     const channelName = makeChannelName({ scopeGroupName: 'User', scopeId: this.props.user.username })
@@ -42,7 +41,6 @@ export default class UserItem extends React.Component {
       return (
         <Card
           style={{ ...style, ..._cardStyle }}
-          raised={!renderAttached}
           className="mgb-useritem-width-narrow"
           onClick={this.handleClickUser}
         >
@@ -72,7 +70,6 @@ export default class UserItem extends React.Component {
     return (
       <Card
         style={{ ...style, ..._cardStyle }}
-        raised={!renderAttached}
         className="mgb-useritem-width-normal"
         onClick={this.handleClickUser}
       >

@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment'
 import React, { PropTypes } from 'react'
-import ReactDOM from 'react-dom'
 import { Card, Icon, Popup } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
@@ -65,7 +64,7 @@ const AssetCard = React.createClass({
   componentDidMount() {
     // this is here because React makes passive event listeners and it's not
     // possible to prevent default from passive event listener
-    this.dragSurface = ReactDOM.findDOMNode(this.refs.thumbnailCanvas)
+    this.dragSurface = this.refs.thumbnailCanvas
     this.dragSurface.addEventListener('touchstart', DragNDropHelper.startSyntheticDrag)
   },
   componentWillUnmount() {
@@ -135,7 +134,8 @@ const AssetCard = React.createClass({
         draggable
         className={`${classNames ? classNames : ''} animated fadeIn link`}
       >
-        <div ref="thumbnailCanvas">
+        {/* className here because Card.Content is functional and doesn't support no refs */}
+        <div className="content" ref="thumbnailCanvas">
           {viewOpts.showImg && <Thumbnail constrainHeight="155px" asset={asset} />}
         </div>
 

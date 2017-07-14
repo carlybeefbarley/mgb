@@ -163,8 +163,8 @@ const UserProfileRoute = React.createClass({
             <div>
               <Label size="small" color="purple" content="Deactivated Account" />
             </div>}
-          <div title="User's 'title'">
-            <Icon name="left quote" color="blue" />
+          <div title="User's 'title'" style={{ opacity: 0.5 }}>
+            <Icon size="small" name="quote left" />
             <InlineEdit
               id="mgbjr-profile-userTitle-edit"
               validate={validate.userTitle}
@@ -175,11 +175,11 @@ const UserProfileRoute = React.createClass({
               change={this.handleProfileFieldChanged}
               isDisabled={editsDisabled}
             />
-            <Icon name="right quote" color="blue" />
+            <Icon size="small" name="quote right" />
           </div>
 
           <p>
-            <UX.UserWhenJoined as="small" when={user.createdAt} />
+            <UX.UserWhenJoined when={user.createdAt} />
           </p>
 
           <p>

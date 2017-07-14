@@ -27,18 +27,19 @@ const ProjectCard = (props, context) => {
       className="animated fadeIn mgb-projectcard-width"
       onClick={() => utilPushTo(context.urlLocation.query, linkTo)}
     >
-      <ImageShowOrChange
-        imageSrc={getProjectAvatarUrl(project)}
-        header="Project Avatar"
-        canEdit={canEdit}
-        canLinkToSrc={canEdit}
-        handleChange={
-          !handleFieldChanged
-            ? undefined
-            : (newUrl, avatarId) => handleFieldChanged({ avatarAssetId: avatarId })
-        }
-      />
-
+      <Card.Content>
+        <ImageShowOrChange
+          imageSrc={getProjectAvatarUrl(project)}
+          header="Project Avatar"
+          canEdit={canEdit}
+          canLinkToSrc={canEdit}
+          handleChange={
+            !handleFieldChanged
+              ? undefined
+              : (newUrl, avatarId) => handleFieldChanged({ avatarAssetId: avatarId })
+          }
+        />
+      </Card.Content>
       <Card.Content>
         <span style={{ float: 'right' }}>
           <WorkState

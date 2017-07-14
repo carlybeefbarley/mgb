@@ -11,9 +11,9 @@ const Badge = ({ name, forceSize }) => {
   return (
     <Popup
       on="hover"
-      size="small"
+      size="mini"
       inverted
-      position="bottom left"
+      position="bottom center"
       trigger={
         <img
           style={{ maxWidth: '64px', maxHeight: '64px', margin: '4px' }}
@@ -22,7 +22,7 @@ const Badge = ({ name, forceSize }) => {
           {...size}
         />
       }
-      header={title}
+      content={title}
     />
   )
 }

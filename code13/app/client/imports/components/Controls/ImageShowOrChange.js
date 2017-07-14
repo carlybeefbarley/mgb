@@ -39,7 +39,7 @@ const ImageShowOrChange = ({
 
   if (canLinkToSrc) propsImgContainer.to = avatarAssetId ? `/assetEdit/${avatarAssetId}` : imageSrcToUse
 
-  const innerImg = <FittedImage src={imageSrcToUse} height={maxHeight} width={maxWidth} />
+  const innerImg = <FittedImage src={imageSrcToUse} height={maxHeight} />
 
   const imgPopup = (
     <Popup on="hover" size="small" inverted mouseEnterDelay={500} position="bottom center" trigger={innerImg}>

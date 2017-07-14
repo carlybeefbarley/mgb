@@ -48,9 +48,7 @@ export default class UserItem extends React.Component {
             <UX.UserAvatarNoLink username={username} height="4em" />
           </Card.Content>
           <Card.Content>
-            <Card.Header>
-              <Header size="small" content={username} />
-            </Card.Header>
+            <Header size="small" content={username} />
             {suIsBanned &&
               <div>
                 <Label size="small" color="red" content="Suspended" />
@@ -77,11 +75,15 @@ export default class UserItem extends React.Component {
           <UX.UserAvatarNoLink username={username} height="6em" />
         </Card.Content>
         <Card.Content>
-          <Card.Header>
-            <Header size="large" content={username} />
-          </Card.Header>
+          <Header size="large" content={username} />
           <Card.Meta>
-            <UX.UserTitleSpan title={title} />
+            <UX.UserTitle title={title} />
+          </Card.Meta>
+          <Card.Meta>
+            <UX.UserWhenJoined when={createdAt} />
+            <QLink query={{ _fp: `chat.${channelName}` }} style={{ marginBottom: '6px' }}>
+              <Icon link color="blue" name="chat" style={{ marginLeft: '4px' }} />
+            </QLink>
           </Card.Meta>
           {suIsBanned &&
             <div>
@@ -91,12 +93,6 @@ export default class UserItem extends React.Component {
             <div>
               <Label size="small" color="purple" content="Deactivated Account" />
             </div>}
-          <p>
-            <UX.UserWhenJoined as="small" when={createdAt} />
-            <QLink query={{ _fp: `chat.${channelName}` }} style={{ marginBottom: '6px' }}>
-              <Icon name="chat" style={{ marginLeft: '4px' }} />
-            </QLink>
-          </p>
         </Card.Content>
         <Card.Content extra>
           {getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)}

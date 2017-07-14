@@ -2,6 +2,9 @@ general:
   build_dir: code13/app
 
 machine:
+  environment:
+    # because we override deps, we need to add npm bin to PATH manually
+    PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
   timezone:
     America/Los_Angeles
   node:
@@ -9,11 +12,18 @@ machine:
 
 dependencies:
   cache_directories:
+    - ~/.cache/yarn
     - ~/.meteor
   pre:
     - meteor || curl https://install.meteor.com | /bin/sh
+  override:
+    - yarn
   post:
    - meteor --version
+
+test:
+  override:
+    - yarn test
 
 deployment:
   staging:

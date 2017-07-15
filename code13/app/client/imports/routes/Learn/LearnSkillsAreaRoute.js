@@ -44,9 +44,7 @@ const LearnSkillsAreaRoute = ({ currUser, params }, context) => {
       <Header as="h2" style={headerStyle}>
         <Icon name={area.icon} />&nbsp;{area.mascotName}'s {area.title} Quests
       </Header>
-      <p style={descStyle}>
-        {area.desc}.
-      </p>
+      <p style={descStyle}>{area.desc}.</p>
       <p>
         <Label size="huge" color="orange" content="Area not yet available" />
       </p>
@@ -56,12 +54,7 @@ const LearnSkillsAreaRoute = ({ currUser, params }, context) => {
       <ul>
         {_.map(
           skillNode,
-          (v, k) =>
-            k === '$meta'
-              ? null
-              : <li key={k}>
-                  {v.$meta && v.$meta.name ? v.$meta.name : k}
-                </li>,
+          (v, k) => (k === '$meta' ? null : <li key={k}>{v.$meta && v.$meta.name ? v.$meta.name : k}</li>),
         )}
       </ul>
       {currUser && <SkillsMap skills={context.skills} expandable toggleable skillPaths={[area.tag]} />}

@@ -2,22 +2,24 @@ import React from 'react'
 import { Popup, Label, Icon } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 
-const ChallengeState = ({ ownername, asIcon, style }) =>
+const ChallengeState = ({ ownername, asIcon, style }) => (
   <Popup
     size="small"
     on="hover"
     hoverable
     position="bottom right"
     trigger={
-      asIcon
-        ? <Icon name="checked calendar" color="orange" style={style} />
-        : <Label
-            color="orange"
-            id="mgbjr-asset-edit-header-right-challenge"
-            size="small"
-            style={style}
-            icon={{ name: 'checked calendar', fitted: true, style: { marginRight: 0 } }}
-          />
+      asIcon ? (
+        <Icon name="checked calendar" color="orange" style={style} />
+      ) : (
+        <Label
+          color="orange"
+          id="mgbjr-asset-edit-header-right-challenge"
+          size="small"
+          style={style}
+          icon={{ name: 'checked calendar', fitted: true, style: { marginRight: 0 } }}
+        />
+      )
     }
   >
     <Popup.Header>Skills Challenge Asset</Popup.Header>
@@ -36,5 +38,6 @@ const ChallengeState = ({ ownername, asIcon, style }) =>
       </div>
     </Popup.Content>
   </Popup>
+)
 
 export default ChallengeState

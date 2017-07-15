@@ -195,9 +195,7 @@ export default class SoundStock extends React.Component {
 
         <div className="ui divider" />
 
-        <div>
-          {soundItems}
-        </div>
+        <div>{soundItems}</div>
         <div>&nbsp;</div>
       </div>
     )

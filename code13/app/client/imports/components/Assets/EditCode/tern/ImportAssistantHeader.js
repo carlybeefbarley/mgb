@@ -18,9 +18,7 @@ export default class ImportAssistantHeader extends React.Component {
           if (!_.some(knownImports, ki => ki.lib === lib.import)) return null
           const packageJsx = (
             <strong>
-              <code>
-                {lib.import}
-              </code>
+              <code>{lib.import}</code>
             </strong>
           )
           const thisKi = _.find(knownImports, { lib: lib.import })
@@ -35,40 +33,31 @@ export default class ImportAssistantHeader extends React.Component {
               mouseEnterDelay={50}
               trigger={<Label basic size="mini" color="green" content={lib.import} />}
             >
-              <Popup.Header>
-                Imported Package: {packageJsx}
-              </Popup.Header>
+              <Popup.Header>Imported Package: {packageJsx}</Popup.Header>
               <Popup.Content>
-                <p>
-                  {lib.descLong}
-                </p>
+                <p>{lib.descLong}</p>
                 <p>
                   {packageJsx} overview at{' '}
                   <a href={lib.landingPageUrl} target="_blank">
-                    <small>
-                      {lib.landingPageUrl}
-                    </small>
+                    <small>{lib.landingPageUrl}</small>
                   </a>
                 </p>
                 <p>
                   {packageJsx} API docs at{' '}
                   <a href={lib.apiDocsPageUrl} target="_blank">
-                    <small>
-                      {lib.apiDocsPageUrl}
-                    </small>
+                    <small>{lib.apiDocsPageUrl}</small>
                   </a>
                 </p>
-                {lib.tutorialsInternalLink &&
+                {lib.tutorialsInternalLink && (
                   <p>
                     {packageJsx} MGB Tutorials at{' '}
                     <QLink to={lib.tutorialsInternalLink}>
-                      <small>
-                        {lib.tutorialsInternalLink}
-                      </small>
+                      <small>{lib.tutorialsInternalLink}</small>
                     </QLink>
-                  </p>}
+                  </p>
+                )}
                 {thisKi &&
-                  thisKi.url &&
+                thisKi.url && (
                   <div>
                     <Divider />
                     <p>
@@ -77,7 +66,8 @@ export default class ImportAssistantHeader extends React.Component {
                         <a href={thisKi.url}>{thisKi.url}</a>
                       </small>
                     </p>
-                  </div>}
+                  </div>
+                )}
               </Popup.Content>
             </Popup>
           )

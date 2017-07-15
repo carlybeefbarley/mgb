@@ -3,7 +3,7 @@ import { Grid, Icon, Header } from 'semantic-ui-react'
 
 const rowStyle = { paddingTop: '10px', paddingBottom: '0px' }
 
-const fpMobileMore = () =>
+const fpMobileMore = () => (
   <div>
     <Grid columns={3} style={{ paddingTop: '16px' }}>
       <Grid.Row style={rowStyle}>
@@ -91,5 +91,6 @@ const fpMobileMore = () =>
       </Grid.Row>
     </Grid>
   </div>
+)
 
 export default fpMobileMore

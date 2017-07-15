@@ -5,6 +5,7 @@
 #
 if [[ -n $(git status --porcelain) ]]; then
   echo "Commit or stash your changes before deploying"
+  git status --porcelain
   exit 1
 else
   echo "... working directory is clean"

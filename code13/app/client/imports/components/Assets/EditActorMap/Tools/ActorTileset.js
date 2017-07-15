@@ -11,13 +11,14 @@ import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetF
 import QLink from '/client/imports/routes/QLink'
 
 const _tilesetHintText = 'Drag & Drop Actor assets here so they can be used on Map'
-const TilesetDropHintMsg = () =>
+const TilesetDropHintMsg = () => (
   <span>
     <QLink style={{ cursor: 'pointer' }} query={{ _fp: 'assets' }}>
       Drag
     </QLink>{' '}
     &amp; drop Actors here so they may be used on your ActorMap
   </span>
+)
 
 export default class ActorTileset extends React.Component {
   componentWillMount() {
@@ -133,7 +134,7 @@ export default class ActorTileset extends React.Component {
   }
 
   genTilesetImage(index, isActive, tileset) {
-    const FittedImage = ({ src, height = '80px', ...rest }) =>
+    const FittedImage = ({ src, height = '80px', ...rest }) => (
       // This is <div> instead of <img> so that it won't have the border that chrome puts on if src has no content
       <div
         className="mgb-pixelated"
@@ -144,6 +145,7 @@ export default class ActorTileset extends React.Component {
         }}
         {...rest}
       />
+    )
     const types = ['Player', 'Non-Playable Character (NPC)', 'Item, Wall, or Scenery']
     const tsName = tileset.name.indexOf(':') === -1 ? tileset.name : tileset.name.split(':').pop()
     const title = `${tsName} (${tileset.imagewidth}x${tileset.imageheight})\n${types[
@@ -184,11 +186,7 @@ export default class ActorTileset extends React.Component {
             maxHeight: '1.5em',
           }}
         >
-          {
-            <p style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-              {tsName}
-            </p>
-          }
+          {<p style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{tsName}</p>}
         </Label>
       </Grid.Column>
     )
@@ -242,51 +240,54 @@ export default class ActorTileset extends React.Component {
       >
         <Label attached="top">
           {isEventLayer ? 'Actors' : `${layerName} Actors`}
-          {!isEventLayer &&
+          {!isEventLayer && (
             <Icon
               size="large"
               name="trash"
               onClick={this.removeTileset}
               style={{ position: 'absolute', top: '5px', right: '-5px', cursor: 'pointer' }}
               title="Remove selected Actor from this ActorMap"
-            />}
+            />
+          )}
         </Label>
-        {isEventLayer
-          ? <div
-              className="actor-disabled-hint"
-              style={{ width: '100%', opacity: 1, backgroundColor: '#e8e8e8' }}
-            >
-              <p className="title active" style={{ color: 'black', borderTop: 'none', paddingTop: 0 }}>
-                You cannot use Actors in the Events layer. Use the Events Tool instead for setting Music and
-                Warp .
-              </p>
+        {isEventLayer ? (
+          <div
+            className="actor-disabled-hint"
+            style={{ width: '100%', opacity: 1, backgroundColor: '#e8e8e8' }}
+          >
+            <p className="title active" style={{ color: 'black', borderTop: 'none', paddingTop: 0 }}>
+              You cannot use Actors in the Events layer. Use the Events Tool instead for setting Music and
+              Warp .
+            </p>
+          </div>
+        ) : (
+          <div
+            className="active content tilesets accept-drop"
+            data-drop-text={_tilesetHintText}
+            onDrop={this.onDropOnLayer.bind(this)}
+            onDragOver={DragNDropHelper.preventDefault}
+            style={{ flex: '1 1 auto', height: '0px', maxHeight: '100%', overflowY: 'auto' }}
+          >
+            {this.renderActors(1)}
+            <div>
+              <Popup
+                on="hover"
+                mouseEnterDelay={800}
+                size="small"
+                inverted
+                trigger={
+                  <small>
+                    {numActorsthisLayer} of your {numActorsTotal} dragged-in Actors are compatible with this
+                    layer.
+                  </small>
+                }
+                header={`Actors list for '${layerName}' layer`}
+                position="left center"
+                content="This box only displays Actors who have behavior types that work on the currently selected layer. For example, a 'player' Actor can only be used on the Active layer. Select a different layer above to see other actors."
+              />
             </div>
-          : <div
-              className="active content tilesets accept-drop"
-              data-drop-text={_tilesetHintText}
-              onDrop={this.onDropOnLayer.bind(this)}
-              onDragOver={DragNDropHelper.preventDefault}
-              style={{ flex: '1 1 auto', height: '0px', maxHeight: '100%', overflowY: 'auto' }}
-            >
-              {this.renderActors(1)}
-              <div>
-                <Popup
-                  on="hover"
-                  mouseEnterDelay={800}
-                  size="small"
-                  inverted
-                  trigger={
-                    <small>
-                      {numActorsthisLayer} of your {numActorsTotal} dragged-in Actors are compatible with this
-                      layer.
-                    </small>
-                  }
-                  header={`Actors list for '${layerName}' layer`}
-                  position="left center"
-                  content="This box only displays Actors who have behavior types that work on the currently selected layer. For example, a 'player' Actor can only be used on the Active layer. Select a different layer above to see other actors."
-                />
-              </div>
-            </div>}
+          </div>
+        )}
       </Segment>
     )
   }

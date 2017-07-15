@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import Helmet from 'react-helmet'
 import { Segment, Message } from 'semantic-ui-react'
 
-const ThingNotFound = ({ type, id, defaultHead }) =>
+const ThingNotFound = ({ type, id, defaultHead }) => (
   <Segment padded>
     {defaultHead && <Helmet title={`MGB: ${type} not found`} meta={[{ name: `MGB`, content: type }]} />}
     <Message
@@ -16,6 +16,7 @@ const ThingNotFound = ({ type, id, defaultHead }) =>
       ]}
     />
   </Segment>
+)
 
 ThingNotFound.propTypes = {
   defaultHead: PropTypes.bool, // if true, provide a default <head> tag (we use react-helmet)

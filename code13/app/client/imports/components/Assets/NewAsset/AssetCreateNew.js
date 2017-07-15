@@ -184,8 +184,7 @@ const AssetCreateNew = React.createClass({
             fluid
           />
           {!isNamePristine &&
-            !!assetNameErrText &&
-            <Label basic pointing color="red" content={assetNameErrText} />}
+          !!assetNameErrText && <Label basic pointing color="red" content={assetNameErrText} />}
         </Form.Field>
 
         <Form.Field>

@@ -16,19 +16,21 @@ const _nowrapStyle = {
   overflowY: 'hidden',
 }
 
-const AssetItems = ({ assets }) =>
+const AssetItems = ({ assets }) => (
   <Card.Group style={_nowrapStyle}>
     {(!assets || assets.length === 0) && <Segment basic>No assets yet</Segment>}
     {_.map(assets, a => <AssetCard classNames="mgb-assetcard-width" allowDrag asset={a} key={a._id} />)}
     {assets &&
-      assets.length > 0 &&
+    assets.length > 0 && (
       <div
         data-tooltip={`Only the ${_showLimit} most recently edited assets are shown here`}
         style={{ minWidth: '8em', textAlign: 'center', margin: 'auto' }}
       >
         . . .
-      </div>}
+      </div>
+    )}
   </Card.Group>
+)
 
 AssetItems.propTypes = {
   assets: PropTypes.array, // an array of game assets

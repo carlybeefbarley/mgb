@@ -5,11 +5,11 @@ import { templateTutorial } from './templates/TemplateTutorial.js'
 
 const _templateKind = asset => (asset.kind === 'tutorial' ? templateTutorial : templateCode)
 
-const CodeStarter = ({ asset, handlePasteCode }) =>
+const CodeStarter = ({ asset, handlePasteCode }) => (
   <div className="active content">
     No code yet... Start typing, or choose a starter template:
     <List divided selection>
-      {_templateKind(asset).map(item =>
+      {_templateKind(asset).map(item => (
         <Popup
           key={item.label}
           size="small"
@@ -25,10 +25,11 @@ const CodeStarter = ({ asset, handlePasteCode }) =>
           }
           header={item.label}
           content={item.description}
-        />,
-      )}
+        />
+      ))}
     </List>
   </div>
+)
 
 CodeStarter.propTypes = {
   asset: PropTypes.object.isRequired, // An asset, expected to be a code-style asset (kind='code' or kind='tutorial')

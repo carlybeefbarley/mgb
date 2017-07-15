@@ -7,23 +7,21 @@ import moment from 'moment'
 import { Flags } from '/imports/schemas'
 import FlagsModerate from '/client/imports/components/Controls/FlagsModerate'
 
-const outlinkLi = (txt, url, key) =>
+const outlinkLi = (txt, url, key) => (
   <List.Item key={key}>
     <a target="_blank" href={url}>
-      <small>
-        {txt}
-      </small>
+      <small>{txt}</small>
     </a>
   </List.Item>
+)
 
-const inlinkLi = (txt, url, key) =>
+const inlinkLi = (txt, url, key) => (
   <List.Item key={key}>
     <QLink to={url}>
-      <small>
-        {txt}
-      </small>
+      <small>{txt}</small>
     </QLink>
   </List.Item>
+)
 
 const linkLi = (txt, url, key) =>
   _.startsWith(url, '/') ? inlinkLi(txt, url, key) : outlinkLi(txt, url, key)
@@ -34,7 +32,7 @@ const _getFlipsideUrl = () => {
   return `${newHost}${l.pathname}${l.search}`
 }
 
-const LinkTabContent = () =>
+const LinkTabContent = () => (
   <div>
     <Header sub>Dev Quicklinks</Header>
     <List bulleted>
@@ -72,6 +70,7 @@ const LinkTabContent = () =>
       ({Meteor.settings.public.MGB_GIT_DESCRIBE})
     </p>
   </div>
+)
 
 const UserAdmin = ({ user, extraUserInfo }) => {
   if (!user) return <div>Visit a page that has a user context</div>
@@ -81,9 +80,7 @@ const UserAdmin = ({ user, extraUserInfo }) => {
 
   return (
     <div>
-      <Header sub>
-        Public Info: {user.username}
-      </Header>
+      <Header sub>Public Info: {user.username}</Header>
       <List bulleted>
         {linkLi(`UserId: ${user._id}`)}
         {linkLi(`Roles: ${user.permissions ? _.join(user.permissions[0].roles, ',') : 'none'}`, usrLink)}
@@ -117,7 +114,7 @@ const UserAdmin = ({ user, extraUserInfo }) => {
       </Button.Group>
 
       <Header sub>Admin-only user Info</Header>
-      {extraUserInfo &&
+      {extraUserInfo && (
         <List bulleted>
           {linkLi('usernames: ' + _.join(extraUserInfo.ua.usernames, ', '), '/')}
           {_.map(extraUserInfo.u.emails, email =>
@@ -130,7 +127,8 @@ const UserAdmin = ({ user, extraUserInfo }) => {
           {_.map(extraUserInfo.ua.ipAddresses, ipStr =>
             linkLi('IP: ' + ipStr, 'https://freegeoip.net/?q=' + ipStr, ipStr),
           )}
-        </List>}
+        </List>
+      )}
     </div>
   )
 }

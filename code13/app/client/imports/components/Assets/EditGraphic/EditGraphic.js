@@ -1719,33 +1719,35 @@ export default class EditGraphic extends React.Component {
             {/* First Toolbar row */}
             <Grid.Row style={{ paddingBottom: '0.3em', whiteSpace: 'nowrap' }}>
               <Grid.Column>
-                {isColorPickerPinned
-                  ? <Button
-                      id="mgbjr-EditGraphic-colorPicker"
-                      className="TopToolBarRowIcon"
-                      style={{ backgroundColor: selectedColors['fg'].hex }}
-                      onClick={this.handleToggleColorPicker}
-                      icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex } }}
-                    />
-                  : <Popup
-                      on="hover"
-                      position="bottom left"
-                      hoverable
-                      hideOnScroll
-                      mouseEnterDelay={250}
-                      id="mgbjr-EditGraphic-colorPicker-body"
-                      trigger={
-                        <Button
-                          id="mgbjr-EditGraphic-colorPicker"
-                          className="TopToolBarRowIcon"
-                          style={{ backgroundColor: selectedColors['fg'].hex }}
-                          onClick={this.handleToggleColorPicker}
-                          icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex } }}
-                        />
-                      }
-                      header="Color Picker"
-                      content={colorPickerEl}
-                    />}
+                {isColorPickerPinned ? (
+                  <Button
+                    id="mgbjr-EditGraphic-colorPicker"
+                    className="TopToolBarRowIcon"
+                    style={{ backgroundColor: selectedColors['fg'].hex }}
+                    onClick={this.handleToggleColorPicker}
+                    icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex } }}
+                  />
+                ) : (
+                  <Popup
+                    on="hover"
+                    position="bottom left"
+                    hoverable
+                    hideOnScroll
+                    mouseEnterDelay={250}
+                    id="mgbjr-EditGraphic-colorPicker-body"
+                    trigger={
+                      <Button
+                        id="mgbjr-EditGraphic-colorPicker"
+                        className="TopToolBarRowIcon"
+                        style={{ backgroundColor: selectedColors['fg'].hex }}
+                        onClick={this.handleToggleColorPicker}
+                        icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex } }}
+                      />
+                    }
+                    header="Color Picker"
+                    content={colorPickerEl}
+                  />
+                )}
 
                 <ResizeImagePopup
                   initialWidth={c2.width}
@@ -1890,10 +1892,11 @@ export default class EditGraphic extends React.Component {
             {/* 2nd 'row' is for potentially multiple columns */}
             <Grid.Row style={{ paddingTop: 0, paddingBottom: '0.25em', display: 'flex' }}>
               {/* A. Optional Color Picker & Palette */}
-              {isColorPickerPinned &&
+              {isColorPickerPinned && (
                 <Grid.Column style={{ paddingRight: '1em', paddingTop: '0.5em' }}>
                   {isColorPickerPinned && colorPickerEl}
-                </Grid.Column>}
+                </Grid.Column>
+              )}
 
               {/* B. Main Drawing area and tools */}
               <Grid.Column>
@@ -1901,11 +1904,11 @@ export default class EditGraphic extends React.Component {
                   <Grid.Column width={12}>
                     {/* Paste options - only shown when paste tool is active */}
                     {toolChosen &&
-                      toolChosen.label == 'Paste' &&
+                    toolChosen.label == 'Paste' && (
                       <div className="ui form">
                         <div className="inline fields">
                           <label>Scroll modifier:</label>
-                          {scrollModes.map(mode =>
+                          {scrollModes.map(mode => (
                             <div key={mode} className="field">
                               <div className="ui radio checkbox">
                                 <input
@@ -1914,14 +1917,13 @@ export default class EditGraphic extends React.Component {
                                   checked={mode == scrollMode ? 'checked' : ''}
                                   onChange={this.setScrollMode.bind(this, mode)}
                                 />
-                                <label>
-                                  {mode}
-                                </label>
+                                <label>{mode}</label>
                               </div>
-                            </div>,
-                          )}
+                            </div>
+                          ))}
                         </div>
-                      </div>}
+                      </div>
+                    )}
 
                     {/*** Status Bar ***/}
                     <div
@@ -2019,18 +2021,19 @@ export default class EditGraphic extends React.Component {
                     </Grid.Row>
 
                     {/* Selection size info while selection is active */}
-                    {selectRect &&
+                    {selectRect && (
                       <div>
                         Selected area:&emsp;width = {selectDimensions.width}&emsp;height ={' '}
                         {selectDimensions.height}
-                      </div>}
+                      </div>
+                    )}
                   </Grid.Column>
                 </Grid.Row>
               </Grid.Column>
             </Grid.Row>
           </Grid.Column>
           {/* Art Mentor Column */}
-          {isSkillTutorialGraphic &&
+          {isSkillTutorialGraphic && (
             <ArtTutorial
               style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
               isOwner={currUser && currUser._id === asset.ownerId}
@@ -2041,7 +2044,8 @@ export default class EditGraphic extends React.Component {
               assetId={asset._id}
               frameData={c2.frameData}
               handleSelectFrame={frame => this.handleSelectFrame(frame)}
-            />}
+            />
+          )}
         </Grid.Row>
 
         {/*** GraphicImport ***/}
@@ -2075,7 +2079,7 @@ export default class EditGraphic extends React.Component {
 
         {/*** MiniMap ***/}
         {showMiniMap &&
-          this.refs.editCanvas &&
+        this.refs.editCanvas && (
           <MiniMap
             ref={this.handleRefMiniMap}
             width={c2.width}
@@ -2086,7 +2090,8 @@ export default class EditGraphic extends React.Component {
             editCanvasMaxWidth={screen.width}
             editCanvasWidth={this.refs.editCanvas ? this.refs.editCanvas.width : null}
             editCanvasScale={editScale}
-          />}
+          />
+        )}
       </Grid>
     )
   }

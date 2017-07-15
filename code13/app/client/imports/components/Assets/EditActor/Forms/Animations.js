@@ -144,9 +144,7 @@ export default class Animations extends React.Component {
   renderContent(animations, animTitle, i) {
     return (
       <Table.Row style={!this.props.canEdit ? { pointerEvents: 'none' } : {}} key={i}>
-        <Table.Cell>
-          {animations[i]}
-        </Table.Cell>
+        <Table.Cell>{animations[i]}</Table.Cell>
         <Table.Cell>
           <DropArea
             kind="graphic"
@@ -206,7 +204,7 @@ export default class Animations extends React.Component {
                     >
                       Apply to All
                     </Button>
-                    {this.state.lastEffectChange &&
+                    {this.state.lastEffectChange && (
                       <span
                         style={{
                           position: 'absolute',
@@ -217,13 +215,12 @@ export default class Animations extends React.Component {
                         }}
                       >
                         Effect: {this.state.lastEffectChange}
-                      </span>}
+                      </span>
+                    )}
                   </Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
-              <Table.Body>
-                {animTable}
-              </Table.Body>
+              <Table.Body>{animTable}</Table.Body>
             </Table>
           </Accordion.Content>
         </Accordion>
@@ -304,7 +301,7 @@ export default class Animations extends React.Component {
 
     return (
       <div style={{ position: 'relative' }}>
-        {this.state.isLoading &&
+        {this.state.isLoading && (
           <Dimmer active inverted>
             <Loader
               style={{ position: 'fixed', right: '345px', top: '50%', translate: 'transform(-50%, -50%)' }}
@@ -314,8 +311,9 @@ export default class Animations extends React.Component {
             >
               Loading frames...
             </Loader>
-          </Dimmer>}
-        {this.state.showModal &&
+          </Dimmer>
+        )}
+        {this.state.showModal && (
           <Modal
             defaultOpen
             size="small"
@@ -357,7 +355,8 @@ export default class Animations extends React.Component {
                 Import Selected Frames
               </Button>
             </Modal.Actions>
-          </Modal>}
+          </Modal>
+        )}
         {rows.map(anim => {
           return anim
         })}

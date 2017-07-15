@@ -475,7 +475,7 @@ const AppUI = React.createClass({
             />
 
             {currUser &&
-              currUser.suIsBanned &&
+            currUser.suIsBanned && (
               <Message
                 error
                 icon="ban"
@@ -485,7 +485,8 @@ const AppUI = React.createClass({
                   'You may not send Chat messages',
                   'Check your email for details',
                 ]}
-              />}
+              />
+            )}
 
             {!loading &&
               this.props.children &&

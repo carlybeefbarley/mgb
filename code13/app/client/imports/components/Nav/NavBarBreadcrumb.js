@@ -47,14 +47,14 @@ const ProjectsSection = ({ usernameToShow, projectNames }) => {
       hoverable
       position="bottom center"
       header="List Assets in..."
-      content={_.map(projectNames, projectName =>
+      content={_.map(projectNames, projectName => (
         <div key={projectName} style={{ margin: '0.25em' }}>
           <QLink to={`/u/${usernameToShow}/assets`} query={{ project: projectName }}>
             <Icon name="sitemap" />
             {projectName}
           </QLink>
-        </div>,
-      )}
+        </div>
+      ))}
       mouseEnterDelay={400}
     />
   )
@@ -76,8 +76,9 @@ const _assetVerbIcons = {
 // For all images in the breadcrumb
 const breadcrumbImageStyle = { height: '1em', verticalAlign: 'middle' }
 
-const BreadcrumbImage = ({ style, ...rest }) =>
+const BreadcrumbImage = ({ style, ...rest }) => (
   <img {...rest} style={{ ...breadcrumbImageStyle, ...style }} />
+)
 
 const NavBarBreadcrumbUI = props => {
   const {
@@ -119,7 +120,7 @@ const NavBarBreadcrumbUI = props => {
     //
     // User
     //
-    usernameToShow &&
+    usernameToShow && (
       // hey, this span is required!
       <span key="username">
         <Popup
@@ -135,112 +136,112 @@ const NavBarBreadcrumbUI = props => {
           content={user && <UserItem user={user} />}
           mouseEnterDelay={500}
         />
-      </span>,
+      </span>
+    ),
     //
     // Assets - inserted if on an Asset-focused page (play, edit)
     //
     usernameToShow &&
-      (isAssets || assetId) &&
-      !isPlay &&
+    (isAssets || assetId) &&
+    !isPlay && (
       <QLink key="assets" to={`/u/${usernameToShow}/assets`}>
         Assets
-      </QLink>,
+      </QLink>
+    ),
     //
     // [ICON] Projects - from Asset's Project's list if on a page that includes a project query (projects, assets)
     //
     usernameToShow &&
-      !assetId &&
-      queryProjectName &&
+    !assetId &&
+    queryProjectName && (
       // hey, this span is required!
       <span key="query-project-name">
         <ProjectsSection usernameToShow={usernameToShow} projectNames={[queryProjectName]} />
-      </span>,
+      </span>
+    ),
     //
     // [ICON] Projects - from Asset's Project's list if on an asset-focused page (play, edit)
     //
     usernameToShow &&
-      assetId &&
-      projectNames &&
-      projectNames.length > 0 &&
+    assetId &&
+    projectNames &&
+    projectNames.length > 0 && (
       // hey, this span is required!
       <span key="project-names">
         <ProjectsSection usernameToShow={usernameToShow} projectNames={projectNames} />
-      </span>,
+      </span>
+    ),
     //
     // [ICON] AssetKind
     //
     usernameToShow &&
-      assetId &&
-      kind &&
-      !isPlay &&
+    assetId &&
+    kind &&
+    !isPlay && (
       <QLink
         key="asset-kind"
         to={`/u/${usernameToShow}/assets`}
         query={{ kinds: kind, ...(projectNames ? { project: projectNames[0] } : {}) }}
       >
         {kindName}
-      </QLink>,
+      </QLink>
+    ),
     //
     // Projects
     //
     usernameToShow &&
-      isProjectOnPath &&
+    isProjectOnPath && (
       <QLink key="username-projects" to={`/u/${usernameToShow}/projects`}>
         Projects
-      </QLink>,
+      </QLink>
+    ),
     //
     // Learn
     //
-    isLearn &&
+    isLearn && (
       <QLink key="learn" to={`/learn`}>
         Learn
-      </QLink>,
+      </QLink>
+    ),
     //
     // Skills
     //
     pathname &&
-      pathname.startsWith('/learn/skills') &&
+    pathname.startsWith('/learn/skills') && (
       <QLink key="skils" to={`/learn/skills`}>
         Skills
-      </QLink>,
+      </QLink>
+    ),
     //
     // Code
     //
     pathname &&
-      pathname.startsWith('/learn/code/') &&
+    pathname.startsWith('/learn/code/') && (
       <QLink key="learn-code" to={`/learn/code`}>
         Programming
-      </QLink>,
+      </QLink>
+    ),
     //
     // LearnCode ITEM   [TODO: FIX THIS? seems to not ne working]
     //
-    learnCodeItem &&
-      <span key="learn-code-item">
-        {_learnCodeItemHdrs[learnCodeItem]}
-      </span>,
+    learnCodeItem && <span key="learn-code-item">{_learnCodeItemHdrs[learnCodeItem]}</span>,
     //
     // Other low-context item (create asset, list users etc) ITEM
     //
-    !learnCodeItem &&
-      !usernameToShow &&
-      !assetId &&
-      !isPlay &&
-      <span key="route-name-item">
-        {name}
-      </span>,
+    !learnCodeItem && !usernameToShow && !assetId && !isPlay && <span key="route-name-item">{name}</span>,
     //
     // AssetName
     //
     assetId &&
-      currentlyEditingAssetInfo &&
-      currentlyEditingAssetInfo.name &&
+    currentlyEditingAssetInfo &&
+    currentlyEditingAssetInfo.name && (
       <span key="asset-name">
         <Icon name={_assetVerbIcons[assetVerb]} />
         {currentlyEditingAssetInfo.isDeleted && <Icon name="trash" color="red" />}
         {currentlyEditingAssetInfo.isLocked && <Icon name="lock" color="blue" />}
         '{currentlyEditingAssetInfo.name}' &ensp;
         {/* Popup for > Related [ TODO: MOVE THIS OUT OF ASSETNAME SO IT WORKS WITH ASSETBROWSE/PLAY ETC scenarios */}
-        {usernameToShow &&
+        {usernameToShow && (
           <Popup
             on="hover"
             hoverable
@@ -275,7 +276,7 @@ const NavBarBreadcrumbUI = props => {
                 }))}
               />
               <div>
-                {contextualProjectName &&
+                {contextualProjectName && (
                   <small>
                     <span>Within </span>
                     <QLink
@@ -284,11 +285,10 @@ const NavBarBreadcrumbUI = props => {
                         : currUser ? currUser.username : null}/projects/${contextualProjectName}`}
                     >
                       <Icon name="sitemap" />
-                      <span>
-                        {contextualProjectName}
-                      </span>
+                      <span>{contextualProjectName}</span>
                     </QLink>
-                  </small>}
+                  </small>
+                )}
                 <QLink to="/assets/create" style={{ float: 'right' }}>
                   <Icon.Group>
                     <Icon color="green" name="pencil" />
@@ -297,8 +297,10 @@ const NavBarBreadcrumbUI = props => {
                 </QLink>
               </div>
             </Popup.Content>
-          </Popup>}
-      </span>,
+          </Popup>
+        )}
+      </span>
+    ),
   ]
     .filter(elm => {
       // filter out falsey breadcrumb sections

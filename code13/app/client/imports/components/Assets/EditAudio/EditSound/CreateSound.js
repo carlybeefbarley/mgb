@@ -179,9 +179,7 @@ export default class CreateSound extends React.Component {
               id={shape}
               checked={this.PARAMS.wave_type === nr ? 'checked' : ''}
             />
-            <label>
-              {shape}
-            </label>
+            <label>{shape}</label>
           </div>
         </div>
       )
@@ -190,9 +188,7 @@ export default class CreateSound extends React.Component {
     return (
       <div className="content">
         <div className="grid">
-          <div style={{ float: 'left', width: '25%' }}>
-            {effectButtons}
-          </div>
+          <div style={{ float: 'left', width: '25%' }}>{effectButtons}</div>
 
           <div style={{ float: 'left', width: '37%', paddingLeft: '20px' }}>
             {sliders}

@@ -155,16 +155,18 @@ const UserProfileRoute = React.createClass({
           />
 
           <Header style={{ marginTop: 0, marginBottom: '8px' }} size="large" content={name} />
-          {user.suIsBanned &&
+          {user.suIsBanned && (
             <div>
               <Label size="small" color="red" content="Suspended Account" />
-            </div>}
-          {user.isDeactivated &&
+            </div>
+          )}
+          {user.isDeactivated && (
             <div>
               <Label size="small" color="purple" content="Deactivated Account" />
-            </div>}
-          <div title="User's 'title'">
-            <Icon name="left quote" color="blue" />
+            </div>
+          )}
+          <div title="User's 'title'" style={{ opacity: 0.5 }}>
+            <Icon size="small" name="quote left" />
             <InlineEdit
               id="mgbjr-profile-userTitle-edit"
               validate={validate.userTitle}
@@ -175,11 +177,11 @@ const UserProfileRoute = React.createClass({
               change={this.handleProfileFieldChanged}
               isDisabled={editsDisabled}
             />
-            <Icon name="right quote" color="blue" />
+            <Icon size="small" name="quote right" />
           </div>
 
           <p>
-            <UX.UserWhenJoined as="small" when={user.createdAt} />
+            <UX.UserWhenJoined when={user.createdAt} />
           </p>
 
           <p>
@@ -226,7 +228,7 @@ const UserProfileRoute = React.createClass({
             />
             &nbsp;
             {_.isString(mgb1name) &&
-              mgb1name.length > 0 &&
+            mgb1name.length > 0 && (
               <Popup
                 on="hover"
                 hoverable
@@ -248,7 +250,8 @@ const UserProfileRoute = React.createClass({
                   <br />
                   <QLink to={`/u/${user.username}/projects/import/mgb1`}>MGBv1 Project Importer...</QLink>
                 </Popup.Content>
-              </Popup>}
+              </Popup>
+            )}
           </p>
 
           <div style={{ clear: 'both', right: 'auto', left: 'auto' }}>

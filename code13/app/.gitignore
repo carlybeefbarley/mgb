@@ -6,3 +6,4 @@ package-lock.json
 settings.staging.generated.json
 meteor_session.json
 .directory
+.yarn-cache

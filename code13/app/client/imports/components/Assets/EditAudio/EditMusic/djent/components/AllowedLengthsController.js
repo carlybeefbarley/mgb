@@ -19,7 +19,7 @@ class AllowedLengthsController extends Component {
 
     // console.log(notePanelProps)
 
-    const lengths = allowedLengths.map((length, i) =>
+    const lengths = allowedLengths.map((length, i) => (
       <div
         style={{
           width: '150px',
@@ -33,14 +33,10 @@ class AllowedLengthsController extends Component {
         key={i}
       >
         <NotePanel length={length} {...notePanelProps} />
-      </div>,
-    )
-
-    return (
-      <div className="row">
-        {lengths}
       </div>
-    )
+    ))
+
+    return <div className="row">{lengths}</div>
   }
 }
 

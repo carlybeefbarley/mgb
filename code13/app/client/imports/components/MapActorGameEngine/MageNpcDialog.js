@@ -55,18 +55,14 @@ class MageNpcDialogText extends React.Component {
 
     return (
       <Header as="h4">
-        <span>
-          {message.slice(0, this.state.shownChars)}
-        </span>
-        <span style={{ opacity: 0.1 }}>
-          {message.slice(this.state.shownChars)}
-        </span>
+        <span>{message.slice(0, this.state.shownChars)}</span>
+        <span style={{ opacity: 0.1 }}>{message.slice(this.state.shownChars)}</span>
       </Header>
     )
   }
 }
 
-const MageNpcDialog = ({ leftActor, message, choices, responseCallbackFn, graphics }) =>
+const MageNpcDialog = ({ leftActor, message, choices, responseCallbackFn, graphics }) => (
   <Segment.Group horizontal>
     <img style={_imgSty} src={actorImgSrc(leftActor, graphics)} />
     <Segment>
@@ -74,12 +70,11 @@ const MageNpcDialog = ({ leftActor, message, choices, responseCallbackFn, graphi
       {_.map(
         choices,
         (choice, idx) =>
-          choice &&
-          <div key={idx}>
-            <Label onClick={() => responseCallbackFn(idx + 1)}>
-              {choice}
-            </Label>
-          </div>,
+          choice && (
+            <div key={idx}>
+              <Label onClick={() => responseCallbackFn(idx + 1)}>{choice}</Label>
+            </div>
+          ),
       )}
     </Segment>
     <Popup
@@ -87,6 +82,7 @@ const MageNpcDialog = ({ leftActor, message, choices, responseCallbackFn, graphi
       content="Click here or press CTRL to close dialog"
     />
   </Segment.Group>
+)
 
 MageNpcDialog.propTypes = {
   message: PropTypes.string,

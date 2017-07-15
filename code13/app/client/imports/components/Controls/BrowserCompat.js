@@ -76,9 +76,7 @@ export default class BrowserCompat extends React.Component {
       <div className="ui small floating negative icon message" style={{ margin: '1em' }}>
         <i className="warning sign icon" />
         <div className="content">
-          <div className="header">
-            {msg}
-          </div>
+          <div className="header">{msg}</div>
           <p>
             For best results we recommend you use the{' '}
             <a href="https://www.google.com/chrome/">Google Chrome</a> browser.

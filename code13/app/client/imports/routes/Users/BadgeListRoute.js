@@ -18,19 +18,17 @@ const BadgeListRoute = ({ user }) => {
         <Header as="h2" content={`${user.username} has ${badgesForUser.length} badges`} />
 
         <Item.Group divided>
-          {badgesForUser.map(val =>
+          {badgesForUser.map(val => (
             <Item key={val}>
               <QLink to={`/badge/${val}`}>
                 <Item.Image as={Badge} name={val} key={val} />
               </QLink>
               <Item.Content>
                 <br />
-                <Item.Header>
-                  &emsp;{badgeList[val] ? badgeList[val][1] : val}
-                </Item.Header>
+                <Item.Header>&emsp;{badgeList[val] ? badgeList[val][1] : val}</Item.Header>
               </Item.Content>
-            </Item>,
-          )}
+            </Item>
+          ))}
         </Item.Group>
       </Segment>
     </Container>

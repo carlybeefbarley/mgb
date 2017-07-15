@@ -141,31 +141,25 @@ class UserProjectListUI extends React.PureComponent {
         </Segment>
 
         <Segment style={_contentsSegmentStyle} className="mgb-suir-plainSegment">
-          {user
-            ? <div>
-                <Header as="h2">
-                  Projects owned by {ownerName}
-                </Header>
-                <CreateProjectLinkButton currUser={currUser} />
-                <p />
-                {loading ? <Spinner /> : <ProjectsAsCards projects={projects} ownedFlag user={user} />}
-                <br />
-                <Divider />
-                <Header as="h2">
-                  Projects {ownerName} is a member of
-                </Header>
-                {loading
-                  ? <Spinner />
-                  : <ProjectsAsCards projects={projects} ownedFlag={false} user={user} />}
-              </div>
-            : <div>
-                <CreateProjectLinkButton currUser={currUser} />
-                <p />
-                {loading
-                  ? <Spinner />
-                  : <ProjectsAsCards projects={projects} ownedFlag={false} user={null} />}
-                <br />
-              </div>}
+          {user ? (
+            <div>
+              <Header as="h2">Projects owned by {ownerName}</Header>
+              <CreateProjectLinkButton currUser={currUser} />
+              <p />
+              {loading ? <Spinner /> : <ProjectsAsCards projects={projects} ownedFlag user={user} />}
+              <br />
+              <Divider />
+              <Header as="h2">Projects {ownerName} is a member of</Header>
+              {loading ? <Spinner /> : <ProjectsAsCards projects={projects} ownedFlag={false} user={user} />}
+            </div>
+          ) : (
+            <div>
+              <CreateProjectLinkButton currUser={currUser} />
+              <p />
+              {loading ? <Spinner /> : <ProjectsAsCards projects={projects} ownedFlag={false} user={null} />}
+              <br />
+            </div>
+          )}
         </Segment>
       </Segment.Group>
     )

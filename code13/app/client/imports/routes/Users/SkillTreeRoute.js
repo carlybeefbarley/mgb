@@ -45,10 +45,11 @@ const SkillTreeRoute = React.createClass({
     const isAdmin = isUserSuperAdmin(Meteor.user())
     return (
       <div className={isTopLevelRoute ? 'ui basic padded segment' : null}>
-        {isTopLevelRoute &&
-          <Helmet title="Skill Tree" meta={[{ name: 'description', content: 'SkillTree' }]} />}
+        {isTopLevelRoute && (
+          <Helmet title="Skill Tree" meta={[{ name: 'description', content: 'SkillTree' }]} />
+        )}
         {isTopLevelRoute && <Header as="h2" content="Skills" />}
-        {isTopLevelRoute &&
+        {isTopLevelRoute && (
           <Segment>
             <p>
               The Skill Bars below represent your progress on learning certain Skills. Skills will
@@ -60,16 +61,19 @@ const SkillTreeRoute = React.createClass({
               This system allows MGB to present appropriate help and tutorials to you based on your level, and
               for you to track your progress in these Skill areas.
             </p>
-          </Segment>}
-        {this.data.loading
-          ? <Spinner />
-          : <SkillsMap
-              skills={userSkills}
-              expandable
-              toggleable={ownsProfile}
-              userCanManuallyClaimSkill={ownsProfile && isAdmin}
-              ownsProfile={ownsProfile}
-            />}
+          </Segment>
+        )}
+        {this.data.loading ? (
+          <Spinner />
+        ) : (
+          <SkillsMap
+            skills={userSkills}
+            expandable
+            toggleable={ownsProfile}
+            userCanManuallyClaimSkill={ownsProfile && isAdmin}
+            ownsProfile={ownsProfile}
+          />
+        )}
       </div>
     )
   },

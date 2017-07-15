@@ -179,18 +179,20 @@ export default class Layer extends React.Component {
               onClick={this.selectFrame.bind(this, frameID)}
               key={`${idx}_${frameID}`}
               title={
-                isActiveCell
-                  ? `This is the current edit focus: Layer "${layer.name}" of Frame #${selectedFrame + 1}`
-                  : 'click here to edit this frame/layer'
+                isActiveCell ? (
+                  `This is the current edit focus: Layer "${layer.name}" of Frame #${selectedFrame + 1}`
+                ) : (
+                  'click here to edit this frame/layer'
+                )
               }
               className={isActiveCell ? 'selectable highlight' : 'selectable'}
               id={'mgb_edit_graphics_frame_cell_' + frameID}
             >
-              {isActiveCell
-                ? <div style={{ textAlign: 'center' }}>
-                    <Icon name="check" />
-                  </div>
-                : null}
+              {isActiveCell ? (
+                <div style={{ textAlign: 'center' }}>
+                  <Icon name="check" />
+                </div>
+              ) : null}
             </td>
           )
         })}

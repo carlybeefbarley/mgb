@@ -116,11 +116,9 @@ const LearnCodeRouteItem = (params, context) => {
         <Grid.Column>
           <Header as="h1">
             {getSkillTitle(learnItem)}
-            <Header.Subheader>
-              {getSkillDescription(learnItem)}
-            </Header.Subheader>
+            <Header.Subheader>{getSkillDescription(learnItem)}</Header.Subheader>
           </Header>
-          {currUser &&
+          {currUser && (
             <div style={{ clear: 'both' }}>
               <SkillsMap
                 skills={context.skills}
@@ -128,10 +126,11 @@ const LearnCodeRouteItem = (params, context) => {
                 toggleable
                 skillPaths={['code.js.' + learnItem]}
               />
-            </div>}
+            </div>
+          )}
         </Grid.Column>
         <Grid.Column>
-          {_.map(_.keys(bySubsection), subkey =>
+          {_.map(_.keys(bySubsection), subkey => (
             <Segment padded piled key={subkey}>
               <Header as="h3" content={subkey} />
               <List size="large" relaxed="very" link className="skills">
@@ -152,8 +151,8 @@ const LearnCodeRouteItem = (params, context) => {
                   )
                 })}
               </List>
-            </Segment>,
-          )}
+            </Segment>
+          ))}
         </Grid.Column>
       </Grid>
     )

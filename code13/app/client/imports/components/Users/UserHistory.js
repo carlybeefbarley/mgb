@@ -3,7 +3,7 @@ import { Grid, Header, Segment } from 'semantic-ui-react'
 import NavRecentGET from '/client/imports/components/Nav/NavRecentGET'
 import QLink from '/client/imports/routes/QLink'
 
-const UserHistory = ({ user, width }) =>
+const UserHistory = ({ user, width }) => (
   <Grid.Column width={width}>
     <Segment id="mgbjr-user-profile-history">
       <Header as="h2">
@@ -14,6 +14,7 @@ const UserHistory = ({ user, width }) =>
       </div>
     </Segment>
   </Grid.Column>
+)
 
 UserHistory.propTypes = {
   user: PropTypes.object.isRequired,

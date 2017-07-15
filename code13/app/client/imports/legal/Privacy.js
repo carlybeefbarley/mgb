@@ -16,40 +16,16 @@ const assetTerm = 'Asset'
 const companyName = 'MyCodeBuilder'
 
 // Unsure why, but SUIR Table wasn't working so...
-const Table = props =>
-  <table className="ui two column celled table">
-    {props.children}
-  </table>
-Table.Header = props =>
-  <thead>
-    {props.children}
-  </thead>
-Table.HeaderCell = props =>
-  <th>
-    {props.children}
-  </th>
-Table.HeaderCellL = props =>
-  <th className="ten wide">
-    {props.children}
-  </th>
-Table.HeaderCellR = props =>
-  <th className="six wide">
-    {props.children}
-  </th>
-Table.Row = props =>
-  <tr>
-    {props.children}
-  </tr>
-Table.Body = props =>
-  <tbody>
-    {props.children}
-  </tbody>
-Table.Data = props =>
-  <td>
-    {props.children}
-  </td>
+const Table = props => <table className="ui two column celled table">{props.children}</table>
+Table.Header = props => <thead>{props.children}</thead>
+Table.HeaderCell = props => <th>{props.children}</th>
+Table.HeaderCellL = props => <th className="ten wide">{props.children}</th>
+Table.HeaderCellR = props => <th className="six wide">{props.children}</th>
+Table.Row = props => <tr>{props.children}</tr>
+Table.Body = props => <tbody>{props.children}</tbody>
+Table.Data = props => <td>{props.children}</td>
 
-const LegalTableHeader = () =>
+const LegalTableHeader = () => (
   <Table.Header>
     <Table.Row>
       <Table.HeaderCellL>Official legally binding terms</Table.HeaderCellL>
@@ -58,23 +34,20 @@ const LegalTableHeader = () =>
       </Table.HeaderCellR>
     </Table.Row>
   </Table.Header>
+)
 
-const LegalSection = props =>
+const LegalSection = props => (
   <div>
     <Header as="h3" content={props.banner} style={{ marginTop: '2em' }} />
-    {props.extraText &&
-      <p>
-        {props.extraText}
-      </p>}
+    {props.extraText && <p>{props.extraText}</p>}
     <Table>
       <LegalTableHeader />
-      <Table.Body>
-        {props.children}
-      </Table.Body>
+      <Table.Body>{props.children}</Table.Body>
     </Table>
   </div>
+)
 
-const Privacy = () =>
+const Privacy = () => (
   <div>
     <Container>
       <LegalSection banner="Privacy Policy">
@@ -293,11 +266,10 @@ const Privacy = () =>
         </Table.Row>
       </LegalSection>
       <br />
-      <p>
-        This privacy policy was last updated at {lastUpdateDate}
-      </p>
+      <p>This privacy policy was last updated at {lastUpdateDate}</p>
     </Container>
     <Footer />
   </div>
+)
 
 export default Privacy

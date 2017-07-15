@@ -45,11 +45,7 @@ class NavPanelItem extends React.PureComponent {
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
         onClick={this.handleDropdownClick}
-        trigger={
-          <span>
-            {hdr}
-          </span>
-        }
+        trigger={<span>{hdr}</span>}
         icon={null}
         open={open}
         style={style}

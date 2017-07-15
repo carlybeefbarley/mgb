@@ -43,7 +43,7 @@ const jsItems = [
   */
 ]
 
-const LearnCodeModifyRoute = () =>
+const LearnCodeModifyRoute = () => (
   <Grid container columns="1">
     <Divider hidden />
     <Grid.Column>
@@ -57,22 +57,21 @@ const LearnCodeModifyRoute = () =>
     </Grid.Column>
     <Grid.Column>
       <Card.Group itemsPerRow={1} stackable className="skills">
-        {jsItems.map((area, idx) =>
+        {jsItems.map((area, idx) => (
           <QLink key={idx} to={area.link} className="card animated fadeIn" style={cardStyle}>
             <Card.Content>
               <UX.ImageMascot floated="left" style={mascotStyle} mascotName={area.mascot} />
               <Header as="h2" style={headerStyle}>
                 <Icon name={area.icon} />&nbsp;{area.content}
               </Header>
-              <p style={descStyle}>
-                {area.desc}.
-              </p>
+              <p style={descStyle}>{area.desc}.</p>
             </Card.Content>
-          </QLink>,
-        )}
+          </QLink>
+        ))}
       </Card.Group>
     </Grid.Column>
   </Grid>
+)
 
 export default LearnCodeModifyRoute
 

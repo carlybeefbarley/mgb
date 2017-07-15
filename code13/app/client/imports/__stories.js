@@ -35,21 +35,15 @@ fakeAppRouteProps.handleSetCurrentlyEditingAssetInfo = action('Invoked handleSet
 
 import { Card, Header, Image, Icon, Label } from 'semantic-ui-react'
 
-const CardExampleCard = ({ currUser }) =>
+const CardExampleCard = ({ currUser }) => (
   <Card>
     <Image src="/images/mascots/bigguy.png" />
     <Card.Content>
-      <Card.Header>
-        {currUser ? currUser.username : 'NONAME'}
-      </Card.Header>
+      <Card.Header>{currUser ? currUser.username : 'NONAME'}</Card.Header>
       <Card.Meta>
-        <span className="date">
-          {currUser ? moment(currUser.createdAt).fromNow() : 'NODATE'}
-        </span>
+        <span className="date">{currUser ? moment(currUser.createdAt).fromNow() : 'NODATE'}</span>
       </Card.Meta>
-      <Card.Description>
-        {currUser.profile.bio}
-      </Card.Description>
+      <Card.Description>{currUser.profile.bio}</Card.Description>
     </Card.Content>
     <Card.Content extra>
       <a>
@@ -58,6 +52,7 @@ const CardExampleCard = ({ currUser }) =>
       </a>
     </Card.Content>
   </Card>
+)
 
 const makeCDNLink = url => 'http://v2.mygamebuilder.com/' + url
 const makeExpireTimestamp = t => ''
@@ -67,7 +62,6 @@ const UserItem = React.createClass({
     user: PropTypes.object.isRequired,
     handleClickUser: PropTypes.func, // If provided, call this with the userId instead of going to the user Profile Page
     narrowItem: PropTypes.bool, // if true, this is narrow format (e.g flexPanel)
-    renderAttached: PropTypes.bool, // if true, then render attached
   },
 
   render: function() {
@@ -91,7 +85,6 @@ const UserItem = React.createClass({
     // avatar here comes directly from mgb server - as we need it to be up to date always (mgb server will still handle etag - if not changed)
     // return (
     //   <Segment
-    //       raised={!renderAttached}
     //       attached={renderAttached}
     //       onClick={this.handleClickUser} >
     //     <Header size='large' content={name}/>
@@ -109,7 +102,7 @@ const UserItem = React.createClass({
     // )
 
     return (
-      <Card raised={!renderAttached} attached={renderAttached} onClick={this.handleClickUser}>
+      <Card attached={renderAttached} onClick={this.handleClickUser}>
         <Card.Content />
         <Card.Content>
           <img
@@ -121,27 +114,19 @@ const UserItem = React.createClass({
           <Card.Header>
             <Header size="large" content={name} />
           </Card.Header>
-          <Card.Meta>
-            {narrowItem
-              ? <small>
-                  {titleSpan}
-                </small>
-              : <big>
-                  {titleSpan}
-                </big>}
-          </Card.Meta>
-          {suIsBanned &&
+          <Card.Meta>{narrowItem ? <small>{titleSpan}</small> : <big>{titleSpan}</big>}</Card.Meta>
+          {suIsBanned && (
             <div>
               <Label size="small" color="red" content="Suspended Account" />
-            </div>}
-          {isDeactivated &&
+            </div>
+          )}
+          {isDeactivated && (
             <div>
               <Label size="small" color="purple" content="Deactivated Account" />
-            </div>}
+            </div>
+          )}
           <p>
-            <small style={{ color: 'rgb(0, 176, 224)' }}>
-              Joined {createdAtFmt}
-            </small>
+            <small style={{ color: 'rgb(0, 176, 224)' }}>Joined {createdAtFmt}</small>
           </p>
         </Card.Content>
         <Card.Content extra>
@@ -159,17 +144,17 @@ const UserItem = React.createClass({
 
 storiesOf('Examples', module)
   .add('Card', () => <CardExampleCard currUser={fakeAppRouteProps.currUser} />)
-  .add('UserItem Narrow', () =>
+  .add('UserItem Narrow', () => (
     <UserItem
       user={fakeAppRouteProps.currUser}
       handleClickUser={action('Invoked handleSetCurrentlyEditingAssetInfo')}
       narrowItem
-    />,
-  )
-  .add('UserItem Wide', () =>
+    />
+  ))
+  .add('UserItem Wide', () => (
     <UserItem
       user={fakeAppRouteProps.currUser}
       handleClickUser={action('Invoked handleSetCurrentlyEditingAssetInfo')}
       narrowItem={false}
-    />,
-  )
+    />
+  ))

@@ -13,22 +13,20 @@ const SelectedItem = props => {
   return (
     <Item.Group style={{ height: '6.5em' }}>
       <Item>
-        {item
-          ? <Item.Image
-              size="tiny"
-              src={itemImgSrc(item, loadedGraphics)}
-              style={{ width: 'auto', maxWidth: '10em' }}
-            />
-          : <p style={{ color: 'grey' }}>(Nothing selected)</p>}
+        {item ? (
+          <Item.Image
+            size="tiny"
+            src={itemImgSrc(item, loadedGraphics)}
+            style={{ width: 'auto', maxWidth: '10em' }}
+          />
+        ) : (
+          <p style={{ color: 'grey' }}>(Nothing selected)</p>
+        )}
 
-        {item &&
+        {item && (
           <Item.Content>
-            <Item.Header>
-              {item.description}
-            </Item.Header>
-            <Item.Description>
-              {item.equipDescription}
-            </Item.Description>
+            <Item.Header>{item.description}</Item.Header>
+            <Item.Description>{item.equipDescription}</Item.Description>
             <Item.Extra>
               <Button
                 size="small"
@@ -55,7 +53,8 @@ const SelectedItem = props => {
                 onClick={() => itemActionFn('DESTROY', item)}
               />
             </Item.Extra>
-          </Item.Content>}
+          </Item.Content>
+        )}
       </Item>
     </Item.Group>
   )
@@ -103,7 +102,7 @@ export default class MageInventoryDialog extends React.Component {
             </p>
           </Popup.Content>
         </Popup>
-        <Segment raised>
+        <Segment>
           <SelectedItem
             item={selectedIdx === -1 ? null : itemsToShow[selectedIdx]}
             loadedGraphics={graphics}
@@ -124,19 +123,20 @@ export default class MageInventoryDialog extends React.Component {
           </Menu>
 
           <Segment attached="bottom">
-            {_.map(itemsToShow, (item, idx) =>
+            {_.map(itemsToShow, (item, idx) => (
               <Image
                 key={idx}
                 size="tiny"
                 bordered={idx === selectedIdx}
                 onClick={() => this.setState({ [selectionKey]: idx })}
                 src={itemImgSrc(item, graphics)}
-              />,
-            )}
-            {(!itemsToShow || itemsToShow.length === 0) &&
+              />
+            ))}
+            {(!itemsToShow || itemsToShow.length === 0) && (
               <p style={{ color: 'grey' }}>
                 {isEquipment ? '(No items equipped)' : '(No unequipped items in inventory)'}
-              </p>}
+              </p>
+            )}
           </Segment>
         </Segment>
       </Segment>

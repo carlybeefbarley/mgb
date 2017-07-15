@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ShareBox = props =>
+const ShareBox = props => (
   <div>
     <h2 className="title-primary">Share this URL:</h2>
     <input
@@ -11,5 +11,6 @@ const ShareBox = props =>
       readOnly
     />
   </div>
+)
 
 export default ShareBox

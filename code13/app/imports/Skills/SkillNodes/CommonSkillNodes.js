@@ -17,6 +17,7 @@
 //   $meta.requireOneOf   - requires just ONE of the other skill block first
 //   $meta.unlock         - unlocks some subsequent skill block
 
+import _ from 'lodash'
 const _validateLevel = level => {
   if (level < 0 || level > 4 || !Number.isInteger(level)) {
     throw new Error('@dgolds 12/14/16 debugger: Unexpected SkillNode Level ' + level)
@@ -47,16 +48,18 @@ const CommonSkillNodes = {
     }
   },
 
-  En: function(level = 0) {
+  En: function(level = 0, name) {
     // Note that 0 will be turned into 1.. the levels go from 1 to 4
     _validateLevel(level)
-    return {
+    const retval = {
       $meta: {
         enabled: 1,
         level: level,
         isLeaf: 1,
       },
     }
+    if (_.isString(name)) retval.$meta.name = name
+    return retval
   },
 
   // disabled node

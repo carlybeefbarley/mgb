@@ -93,7 +93,7 @@ const UserProfileRoute = React.createClass({
       <Segment basic>
         <Grid padded stackable stretched>
           <Helmet
-            title={user.profile.name}
+            title={`MGB: @${user.username}`}
             meta={[{ name: 'description', content: user.profile.name + "'s profile" }]}
           />
 

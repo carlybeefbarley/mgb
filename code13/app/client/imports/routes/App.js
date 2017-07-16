@@ -11,7 +11,7 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 import { utilPushTo } from '/client/imports/routes/QLink'
 
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
+import joyrideStyles from '/client/imports/Joyride/react-joyride-compiled.css'
 
 import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
 import { hasSkill, learnSkill } from '/imports/schemas/skills'

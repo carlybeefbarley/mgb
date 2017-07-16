@@ -5,6 +5,7 @@ const DeletedState = ({ isDeleted, canEdit, handleChange, operationPending }) =>
   <Popup
     size="small"
     position="bottom right"
+    mouseEnterDelay={500}
     trigger={
       <Icon
         bordered

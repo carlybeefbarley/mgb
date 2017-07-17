@@ -1,7 +1,5 @@
 import '../imports/Push'
 
-
-
 import React from 'react'
 
 import { Routes } from '/client/imports/routes'

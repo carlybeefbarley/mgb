@@ -30,7 +30,7 @@ TODO:
   * clear notification - e.g. slack removes (hides) notification if message has been read from another device
  */
 
-if(!Meteor.isServer) {
+if (!Meteor.isServer) {
   Push.Configure({
     android: {
       senderID: 418128596047,
@@ -38,20 +38,18 @@ if(!Meteor.isServer) {
       badge: true,
       sound: true,
       vibrate: true,
-      clearNotifications: true
+      clearNotifications: true,
       // icon: '',
       // iconColor: ''
     },
     ios: {
       alert: true,
       badge: true,
-      sound: true
-    }
-  });
-}
-else{
+      sound: true,
+    },
+  })
+} else {
   Push.Configure({
-
     //ios stuff
     /*
     apn: {
@@ -64,8 +62,9 @@ else{
     */
     // google stuff
     gcm: {
-      apiKey: 'AAAAYVpoDE8:APA91bGqKMh6x9DFX61-Q9okdQCvWb0Si_44vy-wmkJalzRFA4aMHYs6CO0MwJzG_kK39IrRrKjHG6QR4iiuGfNRDOfxY9ejoUhi8hE1qyqlxfitncrw47HwhsEdedFiJ-uS6iBKs7D_',
-      projectNumber: 418128596047
+      apiKey:
+        'AAAAYVpoDE8:APA91bGqKMh6x9DFX61-Q9okdQCvWb0Si_44vy-wmkJalzRFA4aMHYs6CO0MwJzG_kK39IrRrKjHG6QR4iiuGfNRDOfxY9ejoUhi8hE1qyqlxfitncrw47HwhsEdedFiJ-uS6iBKs7D_',
+      projectNumber: 418128596047,
     },
     production: false,
     sound: true,
@@ -75,21 +74,18 @@ else{
     // sendInterval: 15000, Configurable interval between sending
     // sendBatchSize: 1, Configurable number of notifications to send per batch
     // keepNotifications: false,
-  });
+  })
 }
-
 
 Push.debug = true
 Meteor.startup(() => {
-  Push.addListener('error', err => console.log("Push error:", err))
-  Push.addListener('token', (token) => console.log('token received: ' + JSON.stringify(token)))
+  Push.addListener('error', err => console.log('Push error:', err))
+  Push.addListener('token', token => console.log('token received: ' + JSON.stringify(token)))
 })
-
-
 
 Meteor.methods({
   serverNotification: (title, text) => {
-    console.log("Pushing to clients:", title, text)
+    console.log('Pushing to clients:', title, text)
     Push.send({
       title,
       text,

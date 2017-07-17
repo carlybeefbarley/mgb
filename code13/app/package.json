@@ -10,7 +10,11 @@
   "bugs": {
     "url": "https://github.com/devlapse/mgb/issues"
   },
-  "keywords": ["game", "ide", "web"],
+  "keywords": [
+    "game",
+    "ide",
+    "web"
+  ],
   "license": "SEE LICENSE IN LICENSE.md",
   "homepage": "https://github.com/devlapse/mgb#readme",
   "main": "app.js",
@@ -26,7 +30,9 @@
   "postcss": {
     "plugins": {
       "autoprefixer": {
-        "browsers": ["last 2 versions"]
+        "browsers": [
+          "last 2 versions"
+        ]
       }
     }
   },
@@ -74,6 +80,7 @@
     "react-dom": "^15.6.1",
     "react-helmet": "^3.1.0",
     "react-joyride": "^1.10.0",
+    "react-mixin": "^3.0.5",
     "react-notifications": "^1.4.2",
     "react-redux": "^4.4.8",
     "react-router": "^2.6.0",

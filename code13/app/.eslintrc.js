@@ -1,3 +1,5 @@
+const prettierConfig = require('./prettier.config')
+
 module.exports = {
   parser: 'babel-eslint',
   parserOptions: {
@@ -29,16 +31,7 @@ module.exports = {
     'no-fallthrough': 'off',
     'no-unused-expressions': 'off',
     'no-unused-vars': 'off',
-    // TODO - enable once we install prettier from a release and not GH
-    // 'prettier/prettier': [
-    //   'error',
-    //   {
-    //     semi: false,
-    //     printWidth: 110,
-    //     singleQuote: true,
-    //     trailingComma: 'all',
-    //   },
-    // ],
+    'prettier/prettier': ['error', prettierConfig],
     'react/display-name': 'off',
     'react/jsx-boolean-value': 'error',
     'react/jsx-no-comment-textnodes': 'off',

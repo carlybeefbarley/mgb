@@ -2,7 +2,7 @@
 (
 supervisor > /dev/null
 if [ $? != "0" ]; then
-cd && sudo npm install supervisor
+cd && sudo yarn add supervisor
 fi
 )
 

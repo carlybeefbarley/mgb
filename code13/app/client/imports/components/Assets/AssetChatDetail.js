@@ -12,6 +12,7 @@ const AssetChatDetail = ({ hasUnreads, handleClick, style }) => (
   <Popup
     size="small"
     position="bottom right"
+    mouseEnterDelay={500}
     trigger={
       <Label basic style={style} id="mgbjr-asset-edit-header-right-chat" size="small">
         <Icon.Group>

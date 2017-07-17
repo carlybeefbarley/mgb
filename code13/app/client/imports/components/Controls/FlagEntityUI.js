@@ -39,7 +39,9 @@ class FlagEntity extends React.Component {
             }
             wide="very"
           >
-            <Popup.Header>Report this {tableCollection === 'Azzets' ? 'Asset' : 'Chat'}</Popup.Header>
+            <Popup.Header>
+              Report this {tableCollection === 'Azzets' ? 'Asset' : 'Message'} to Moderator
+            </Popup.Header>
             <Popup.Content>
               <Segment basic>
                 <Dropdown

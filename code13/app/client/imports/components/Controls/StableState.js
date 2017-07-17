@@ -14,6 +14,7 @@ const StableState = ({ isStable, canEdit, handleChange }) => (
   <Popup
     size="small"
     position="bottom right"
+    mouseEnterDelay={500}
     trigger={
       <Icon
         bordered

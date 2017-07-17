@@ -83,10 +83,7 @@ const UX = {
 
   UserWhenJoined: ({ when, as }) => {
     const Element = as || 'span'
-    return
-      <Element >
-        Joined {moment(when).format('MMMM DD, YYYY')}
-      </Element>
+    return <Element >Joined {moment(when).format('MMMM DD, YYYY')}</Element>
 
   },
 

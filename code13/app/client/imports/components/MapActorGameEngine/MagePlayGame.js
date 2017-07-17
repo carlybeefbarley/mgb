@@ -513,6 +513,15 @@ export default class MagePlayGame {
       }
     }
 
+    // Update player power
+    if (
+      this.activeActors[this.AA_player_idx].activePower != MgbActor.alGainPowerType_None && 
+      this.activeActors[this.AA_player_idx].activePowerUntilGetTime < new Date().getTime()
+    ) {
+      this.activeActors[this.AA_player_idx].activePower = MgbActor.alGainPowerType_None
+      this.activeActors[this.AA_player_idx].activePowerUntilGetTime = 0
+    }
+
     // Now, for this tween, check for post-move collisions between *alive* actors- item/enemy/player touch events
     this.playProcessAACollisions()
 
@@ -648,7 +657,7 @@ export default class MagePlayGame {
       this.activeActors[this.AA_player_idx].activePower &&
       this.activeActors[this.AA_player_idx].activePowerUntilGetTime >= nowMS
     )
-      ps = '  Active Power = ' + MgbActor.alGainPower[this.activeActors[this.AA_player_idx].activePower]
+      ps = ' | Active Power = ' + MgbActor.alGainPower[this.activeActors[this.AA_player_idx].activePower]
 
     const timeStr = this.timeStrSinceGameStarted()
 
@@ -663,9 +672,9 @@ export default class MagePlayGame {
         mhs +
         '  |  Score ' +
         this.activeActors[this.AA_player_idx].score +
-        ps +
         '  |  Time ' +
-        timeStr,
+        timeStr + 
+        ps,
     )
 
     if (this.G_gameOver) {

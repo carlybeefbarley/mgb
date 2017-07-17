@@ -50,8 +50,8 @@ export default class ObjectBehavior extends BaseForm {
 
         {this.text('Shot damage bonus', 'equippedNewShotDamageBonusNum', 'number', {
           title: 'When equipped, increase base shot damage by this amount',
-          min: -1000,
-          max: 1000,
+          min: -10000,
+          max: 10000,
         })}
 
         {this.text('Shot rate bonus', 'equippedNewShotRateBonusNum', 'number', {
@@ -72,8 +72,8 @@ export default class ObjectBehavior extends BaseForm {
         {this.text('Melee Damage Bonus', 'equippedNewMeleeDamageBonusNum', 'number', {
           title:
             'When equipped, Increase Melee damage by this number of points. You can also have a negative value - that this item reduces damage - for example a weapon might be fast but reduce base damage',
-          min: -100,
-          max: 100,
+          min: -10000,
+          max: 10000,
         })}
         {this.dropArea('New Melee sound', 'equippedNewMeleeSound', 'sound', {
           options: soundOptions,
@@ -98,12 +98,13 @@ export default class ObjectBehavior extends BaseForm {
         {this.text('Heal (or harm) when used', 'healOrHarmWhenUsedNum', 'number', {
           title:
             'Enter the number of points of damage this item applies or heals. For example, if this was a healing item, and the number here was 5, it would heal by 5 points. If this was a harming item, and the number was 10, it would inflict 10 damage points',
-          max: 100,
+          min: -10000,
+          max: 10000,
         })}
         {this.text('Increase Max Health', 'increasesMaxHealthNum', 'number', {
           title: 'Enter the number of points of extra max health this item gives.',
-          min: -1000,
-          max: 1000,
+          min: -10000,
+          max: 10000,
         })}
         {/*this.bool("Gain an Extra Life when used", 'gainExtraLifeYN')  //  ENABLE THIS LINE ONCE WE IMPLEMENT LIVES */}
         {this.text('Score (or lose points) when used', 'gainOrLosePointsNum', 'number')}
@@ -115,7 +116,7 @@ export default class ObjectBehavior extends BaseForm {
         {this.data.gainPowerType == '1' &&
           this.text('Gain the power for', 'gainPowerSecondsNum', 'number', {
             title: 'seconds',
-            max: 30,
+            max: 60,
           })}
       </div>
     )
@@ -147,7 +148,8 @@ export default class ObjectBehavior extends BaseForm {
         {this.text('Heal (or harm) when used', 'healOrHarmWhenUsedNum', 'number', {
           title:
             'Enter the number of points of damage this item applies or heals. For example, if this was a healing item, and the number here was 5, it would heal by 5 points. If this was a harming item, and the number was 10, it would inflict 10 damage points',
-          max: 100,
+          min: -10000,
+          max: 10000,
         })}
       </div>
     )
@@ -171,8 +173,8 @@ export default class ObjectBehavior extends BaseForm {
 
         {(this.data.itemActivationType == '4' ||
           this.data.itemActivationType == '5' ||
-          this.data.itemActivationType == '6' ||
-          this.data.itemActivationType == '7') &&
+          this.data.itemActivationType == '6') &&
+          // this.data.itemActivationType == '7') 
           this.showPickableOptions()}
       </div>
     )

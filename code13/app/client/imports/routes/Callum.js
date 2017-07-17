@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Grid, Sidebar, Segment, Button, Menu, Image, Icon, Header } from 'semantic-ui-react'
 import SwipeableViews from 'react-swipeable-views'
 
-const GridExamplePadded = () =>
+const GridExamplePadded = () => (
   <div>
     <Grid columns={3} padded>
       <Grid.Row>
@@ -111,6 +111,7 @@ const GridExamplePadded = () =>
       </Grid.Row>
     </Grid>
   </div>
+)
 
 const styles = {
   slide: {
@@ -154,7 +155,7 @@ class SidebarBottomOverlay extends Component {
     return (
       <div>
         {this.state.showButtons && <GridExamplePadded />}
-        {!this.state.showButtons &&
+        {!this.state.showButtons && (
           <div>
             <SwipeableViews index={index} onChangeIndex={this.handleChangeIndex}>
               <div style={Object.assign({}, styles.slide, styles.slide1)}>slide n°1</div>
@@ -184,7 +185,8 @@ class SidebarBottomOverlay extends Component {
                 </Segment>
               </Sidebar.Pusher>
             </Sidebar.Pushable>
-          </div>}
+          </div>
+        )}
         <Button onClick={() => this.setState({ showButtons: !this.state.showButtons })}>...</Button>
       </div>
     )

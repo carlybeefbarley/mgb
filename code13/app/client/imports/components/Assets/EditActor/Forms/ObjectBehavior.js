@@ -312,10 +312,6 @@ export default class ObjectBehavior extends BaseForm {
     else if (this.props.asset.content2.databag.all.actorType === actorOptions.actorType['Scenery'])
       behaviorOptions = <div className="ui message ">This ActorType doesn't use this set of options</div>
 
-    return
-      <div >
-        {behaviorOptions ? behaviorOptions : this.renderAll()}
-      </div>
-
+    return <div>{behaviorOptions ? behaviorOptions : this.renderAll()}</div>
   }
 }

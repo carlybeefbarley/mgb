@@ -147,11 +147,8 @@ const FunctionDescription = React.createClass({
             </small>
           </p>
         )}
-        {doc &&
-          <p>
-            {doc}
-          </p>}
-        {url &&(
+        {doc && <p>{doc}</p>}
+        {url && (
           <p>
             <a href={url}>
               <small>{url}</small>

@@ -326,18 +326,20 @@ class PlayCodeGame extends React.Component {
         <div
           ref="wrapper"
           style={
-            this.state.isFullScreen
-              ? {
-                  overflow: 'hidden',
-                  textAlign: 'center',
-                  position: 'fixed',
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  bottom: '-3.5em',
-                  backgroundColor: '#000',
-                }
-              : { overflow: 'hidden', textAlign: 'center' }
+            this.state.isFullScreen ? (
+              {
+                overflow: 'hidden',
+                textAlign: 'center',
+                position: 'fixed',
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: '-3.5em',
+                backgroundColor: '#000',
+              }
+            ) : (
+              { overflow: 'hidden', textAlign: 'center' }
+            )
           }
         >
           <iframe
@@ -354,15 +356,17 @@ class PlayCodeGame extends React.Component {
             src={src}
           />
         </div>
-        {this.state.isFullScreen &&
+        {this.state.isFullScreen && (
           <div className="fs-exit-pos-container">
             <Icon
               name="sidebar"
               size="big"
               className={
-                'burger' + this.props.metadata.fullScreenPosition
-                  ? ' ' + this.props.metadata.fullScreenPosition
-                  : ''
+                'burger' + this.props.metadata.fullScreenPosition ? (
+                  ' ' + this.props.metadata.fullScreenPosition
+                ) : (
+                  ''
+                )
               }
               style={{
                 position: 'absolute',
@@ -372,7 +376,8 @@ class PlayCodeGame extends React.Component {
               }}
               onClick={this.exitFullScreen}
             />
-          </div>}
+          </div>
+        )}
       </div>
     )
   }

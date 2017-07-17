@@ -195,10 +195,11 @@ class BrowseGamesRoute extends LoadMore {
         />
 
         <div className="ui action input" style={{ display: 'block', clear: 'both' }}>
-          {user &&
+          {user && (
             <QLink to="/games" tab={-1} style={{ float: 'left', padding: '0.4em 0' }}>
               All games
-            </QLink>}
+            </QLink>
+          )}
           <div style={{ float: 'right' }}>
             <input
               type="text"
@@ -247,8 +248,9 @@ class BrowseGamesRoute extends LoadMore {
             content="Widen your search to see more games"
           />
         )}
-        {games.length !== 0 &&
-          <GameItems currUser={currUser} wrap games={games.concat(this._loadMoreState.data)} />}
+        {games.length !== 0 && (
+          <GameItems currUser={currUser} wrap games={games.concat(this._loadMoreState.data)} />
+        )}
 
         {(loading || this.data.loading) && <Spinner />}
 

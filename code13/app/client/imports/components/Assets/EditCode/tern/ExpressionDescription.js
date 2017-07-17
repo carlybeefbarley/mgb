@@ -75,16 +75,11 @@ const ExpressionDescription = React.createClass({
         )}
         {origin && (
           <p>
-            <small>
-              Part of '{origin}'
-            </small>
+            <small>Part of '{origin}'</small>
           </p>
         )}
-        {docToDisplay &&
-          <p style={{ whiteSpace: 'pre-line' }}>
-            {docToDisplay}
-          </p>}
-        {url &&(
+        {docToDisplay && <p style={{ whiteSpace: 'pre-line' }}>{docToDisplay}</p>}
+        {url && (
           <p>
             <a target="_blank" href={url}>
               <small>{url}</small>

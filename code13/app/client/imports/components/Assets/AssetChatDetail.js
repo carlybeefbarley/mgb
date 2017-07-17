@@ -21,7 +21,7 @@ const AssetChatDetail = ({ hasUnreads, handleClick, style, query, tab }) => (
             <Icon name="chat" style={hasUnreads ? null : { marginRight: 0 }} />
             {hasUnreads && (
               <Icon corner color="red" size="mini" name="circle" style={_menuItemIndicatorStyle} />
-          )}
+            )}
           </QLink>
         </Icon.Group>
       </Label>

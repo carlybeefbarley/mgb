@@ -18,33 +18,35 @@ const MobileHome = ({ currUser }) => {
   const userId = currUser ? currUser._id : null
   return (
     <div>
-      {!userId
-        ? <div className="hero">
+      {!userId ? (
+        <div className="hero">
+          <div className="ui container">
+            <Image size="large" src={makeCDNLink('/images/mascots/team.png')} />
+            <Login />
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div className="hero">
             <div className="ui container">
-              <Image size="large" src={makeCDNLink('/images/mascots/team.png')} />
-              <Login />
+              <HomeHeroBanner username={username} userId={userId} />
             </div>
           </div>
-        : <div>
-            <div className="hero">
-              <div className="ui container">
-                <HomeHeroBanner username={username} userId={userId} />
-              </div>
-            </div>
-            <div className="ui container" style={{ paddingTop: '2.5em', paddingBottom: '2em' }}>
-              <Grid padded>
-                <Grid.Row>
-                  <UserHistory user={currUser} width={16} borderless />
-                  {/***
+          <div className="ui container" style={{ paddingTop: '2.5em', paddingBottom: '2em' }}>
+            <Grid padded>
+              <Grid.Row>
+                <UserHistory user={currUser} width={16} borderless />
+                {/***
               <Header as='h2'>
                 <QLink to={`/u/${username}/skilltree`}>Skills</QLink>
               </Header>
               <SkillTreeRoute user={currUser}/>
               ***/}
-                </Grid.Row>
-              </Grid>
-            </div>
-          </div>}
+              </Grid.Row>
+            </Grid>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

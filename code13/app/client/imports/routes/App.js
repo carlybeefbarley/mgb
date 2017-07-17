@@ -456,7 +456,7 @@ const AppUI = React.createClass({
           assetId={params.assetId}
           debug={joyrideDebug}
         />
-        {!isMobile &&
+        {!isMobile && (
           <div>
             <FlexPanel
               fpIsFooter={!!respData.footerTabMajorNav}
@@ -481,8 +481,9 @@ const AppUI = React.createClass({
             />
 
             <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id="mgb-jr-main-container">
-              {!hideHeaders &&
-                <NavPanel currUser={currUser} navPanelAvailableWidth={mainAreaAvailableWidth} />}
+              {!hideHeaders && (
+                <NavPanel currUser={currUser} navPanelAvailableWidth={mainAreaAvailableWidth} />
+              )}
 
               <NavBar
                 currUser={currUser}
@@ -497,18 +498,19 @@ const AppUI = React.createClass({
                 currentlyEditingAssetInfo={currentlyEditingAssetInfo}
               />
 
-            {currUser &&
-              currUser.suIsBanned &&(
-              <Message
-                error
-                icon="ban"
-                header="Your Account has been suspended by an Admin"
-                list={[
-                  'You may not edit Assets or Projects',
-                  'You may not send Chat messages',
-                  'Check your email for details',
-                ]}
-              />)}
+              {currUser &&
+              currUser.suIsBanned && (
+                <Message
+                  error
+                  icon="ban"
+                  header="Your Account has been suspended by an Admin"
+                  list={[
+                    'You may not edit Assets or Projects',
+                    'You may not send Chat messages',
+                    'Check your email for details',
+                  ]}
+                />
+              )}
 
               {!loading &&
                 this.props.children &&
@@ -526,11 +528,12 @@ const AppUI = React.createClass({
                   isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
                 })}
             </div>
-          </div>}
+          </div>
+        )}
         <NetworkStatusMsg meteorStatus={meteorStatus} />
         <NotificationContainer /> {/* This is for the top-right toast messages */}
         {!loading &&
-          isMobile &&
+        isMobile && (
           <div id="mgb-jr-main-container">
             <MobileNav
               ref="mobileNav"
@@ -551,7 +554,8 @@ const AppUI = React.createClass({
               requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
               selectedViewTag={flexPanelQueryValue}
             />
-          </div>}
+          </div>
+        )}
       </div>
     )
   },

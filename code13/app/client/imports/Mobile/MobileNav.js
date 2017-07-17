@@ -38,7 +38,7 @@ import './MobileNav.css'
 
 const NUMBER_OF_BUTTONS_IN_THE_BOTTOM_NAVIGATION = 5
 
-const AllButtons = p =>
+const AllButtons = p => (
   <div className="mobile-nav-all-buttons">
     {p.buttons
       .filter((bName, index) => !!MobileNav.availableButtons[bName] && index >= p.from && index < p.to)
@@ -58,6 +58,7 @@ const AllButtons = p =>
         )
       })}
   </div>
+)
 
 const doLogout = () => {
   Meteor.logout()
@@ -66,11 +67,12 @@ const doLogout = () => {
   }, 100)
 }
 
-const NotReady = () =>
+const NotReady = () => (
   <div style={{ textAlign: 'center' }}>
     <h1>Work in progress,</h1>
     <h2>come back later</h2>
   </div>
+)
 
 // make use of this
 let cache = {}
@@ -252,7 +254,7 @@ class MobileNav extends React.Component {
         <div key={index}>
           {/*{bName} + {this.state.index}*/}
           {this.state.index === index &&
-            this.state.location[index] &&
+          this.state.location[index] && (
             <RouterWrap
               {...this.props}
               onClose={() => {
@@ -265,7 +267,8 @@ class MobileNav extends React.Component {
               }}
               location={this.state.location[index]}
               key={index * 10000}
-            />}
+            />
+          )}
           {tabView}
         </div>
       )

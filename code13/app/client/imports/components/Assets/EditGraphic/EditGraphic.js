@@ -1731,7 +1731,7 @@ export default class EditGraphic extends React.Component {
           >
             <div className="inline fields">
               <label>Scroll modes</label>
-              {scrollModes.map(mode =>
+              {scrollModes.map(mode => (
                 <div key={mode} className="field">
                   <div className="ui radio checkbox">
                     <input
@@ -1742,14 +1742,14 @@ export default class EditGraphic extends React.Component {
                     />
                     <label>{mode}</label>
                   </div>
-                </div>,
-              )}
+                </div>
+              ))}
             </div>
           </div>
         </Grid.Row>
         <Grid.Row style={{ padding: 0 }}>
           {/*** Drawing Canvas ***/}
-          {!asset.skillPath &&
+          {!asset.skillPath && (
             <Grid.Row style={{ width: '100%', height: '100%' }}>
               <Grid.Column style={{ height: '100%' }} width={10}>
                 <div style={{ overflow: 'hidden', /*"maxWidth": "600px",*/ maxHeight: '600px' }}>
@@ -1770,11 +1770,12 @@ export default class EditGraphic extends React.Component {
                   <CanvasGrid scale={this.state.editScale} setGrid={this.setGrid} />
                 </div>
               </Grid.Column>
-            </Grid.Row>}
+            </Grid.Row>
+          )}
 
           {/*** Art Mentor ***/}
           {asset.skillPath &&
-            _.startsWith(asset.skillPath, 'art') &&
+          _.startsWith(asset.skillPath, 'art') && (
             <ArtTutorial
               style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
               isOwner={currUser && currUser._id === asset.ownerId}
@@ -1783,7 +1784,8 @@ export default class EditGraphic extends React.Component {
               currUser={this.props.currUser}
               userSkills={this.userSkills}
               assetId={asset._id}
-            />}
+            />
+          )}
         </Grid.Row>
 
         <Grid.Row style={{ padding: 0 }}>

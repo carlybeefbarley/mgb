@@ -57,7 +57,9 @@ const UX = {
     // TODO: @dgolds to decvide on how to reference a specific message
     // Use cases - @mention, notifications, flagging etc/
     // Workitem #10xx to be filed on dgolds
-    <QLink query={{ _fp: 'chat' }} tab={TAB.CHAT}>Flagged Chat Id: {chatId}</QLink>
+    <QLink query={{ _fp: 'chat' }} tab={TAB.CHAT}>
+      Flagged Chat Id: {chatId}
+    </QLink>
   ),
 
   LinkToAsset: ({ assetId, ownerUsername }) => (
@@ -83,8 +85,7 @@ const UX = {
 
   UserWhenJoined: ({ when, as }) => {
     const Element = as || 'span'
-    return <Element >Joined {moment(when).format('MMMM DD, YYYY')}</Element>
-
+    return <Element>Joined {moment(when).format('MMMM DD, YYYY')}</Element>
   },
 
   UserAvatarName: ({ username, validFor }) => (

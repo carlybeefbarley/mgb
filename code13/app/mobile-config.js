@@ -8,9 +8,8 @@ App.configurePlugin('phonegap-plugin-push', {
   SENDER_ID: '418128596047',
 })
 
-App.accessRule("*", {type: 'navigation'})
-App.accessRule("*")
-
+App.accessRule('http://*')
+App.accessRule('https://*')
 // fix connection to the server was unsuccessful
 App.setPreference('LoadUrlTimeoutValue', 60000, 'android')
 

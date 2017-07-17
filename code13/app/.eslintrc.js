@@ -22,6 +22,7 @@ module.exports = {
     ga: false,
     Meteor: false,
     Restivus: false,
+    Push: false,
   },
   rules: {
     'no-console': 'off',

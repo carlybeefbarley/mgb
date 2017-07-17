@@ -45,8 +45,21 @@ Status so far:
   - added seamless fullscreen for code games
   
   - fixed screen controller related issues (Portal ftw) 
-    Particulary position: static and swipeable views don't work together nicely 
+    Particulary position: fixed and swipeable views don't work together nicely
+    (alternatively it's possible to set transform: translateX(0) css rule to the parent node)
     
   - added native Push notifications as a proof of concept - as this is native feature
     and can't be tested directly from mobile chrome - new apk needs to be build on every
     small change - this is time consuming 
+
+
+Troubleshooting:
+----
+  - 99% of the time issues will be cache related - 
+    before spending hours of googling or tearing out all your hair - 
+    remove .meteor folder completely and run ```git checkout .meteor```
+    to fetch clean version. 
+    Some common cases when I hit cache related issue without realising it: 
+    - it just worked and now it isn't
+    - build fails after an update
+    - infinite loading in the mobile app, but works fine when connect through mobile chrome

@@ -1,6 +1,8 @@
 //import Push from 'phonegap-plugin-push' - this does not work
 /*
 
+ This is basic setup for server push notifications - proof of concept (works on android only). More work needs to be done before use it in the production. see TODOs
+
 Basic usage:
   from terminal:
 
@@ -17,7 +19,6 @@ Basic usage:
 # Meteor.call("serverNotification", "Hello", "world")
 
 
-This is basic setup for server push notifications (works on android):
 more info here:
   * https://github.com/raix/push
   * https://medium.com/@acarabott/meteor-native-ios-push-notifications-heroku-raix-push-cordova-213f486c4e6d
@@ -25,8 +26,8 @@ more info here:
 
 TODO:
   * certs for ios: https://github.com/raix/push/wiki/raix:push-Newbie-Manual
-  * icons for notifications
-
+  * icons/badges for notifications
+  * clear notification - e.g. slack removes (hides) notification if message has been read from another device
  */
 
 if(!Meteor.isServer) {
@@ -76,19 +77,19 @@ else{
     // keepNotifications: false,
   });
 }
+
+
 Push.debug = true
-//Meteor.startup(() => {
-  Push.addListener('error', function(err) {
-    console.log("Push error:", err);
-  });
+Meteor.startup(() => {
+  Push.addListener('error', err => console.log("Push error:", err))
   Push.addListener('token', (token) => console.log('token received: ' + JSON.stringify(token)))
-//})
+})
 
 
 
 Meteor.methods({
   serverNotification: (title, text) => {
-    console.log("PUSH:", title, text)
+    console.log("Pushing to clients:", title, text)
     Push.send({
       title,
       text,

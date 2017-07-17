@@ -3,14 +3,13 @@ App.info({
   version: '0.0.9',
   name: 'MGB',
 })
-/*
+
 App.configurePlugin('phonegap-plugin-push', {
   SENDER_ID: '418128596047',
 })
-*/
 
-App.accessRule('http://*')
-App.accessRule('https://*')
+App.accessRule("*", {type: 'navigation'})
+App.accessRule("*")
 
 // fix connection to the server was unsuccessful
 App.setPreference('LoadUrlTimeoutValue', 60000, 'android')

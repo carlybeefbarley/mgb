@@ -22,10 +22,10 @@ server='http://192.168.8.102:3000'
 case "$1" in
   'local')
     #try to guess
-    server=http://`ip route get 8.8.8.8 | tr -s ' ' | cut -d' ' -f7`:3000
-    if [ "$server" == "" ]; then
-      server='http://192.168.8.100:3000'
-    fi
+    #server=http://`ip route get 8.8.8.8 | tr -s ' ' | cut -d' ' -f7`:3000
+    #if [ "$server" == "" ]; then
+      server='http://192.168.8.102:3000'
+    #fi
     ;;
   'test')
     server='http://test.mygamebuilder.com'
@@ -58,7 +58,7 @@ rm -rf .meteor/local/bundler-cache/
 rm -rf .meteor/local/cordova-build/www/application/
 
 
-echo "Starting app with args: $args"
+echo "Starting app with args: $args ${@:2}"
 
 # For Windows
 if [[ "$OSTYPE" == "msys" ]]; then

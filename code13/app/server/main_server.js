@@ -1,4 +1,4 @@
-//import '../imports/Push'
+import '../imports/Push'
 
 import { setUpCloudFront } from './cloudfront/CreateCloudfront'
 

@@ -97,7 +97,7 @@ export default class ObjectBehavior extends BaseForm {
 
         {this.text('Heal (or harm) when used', 'healOrHarmWhenUsedNum', 'number', {
           title:
-            'Enter the number of points of damage this item applies or heals. For example, if this was a healing item, and the number here was 5, it would heal by 5 points. If this was a harming item, and the number was 10, it would inflict 10 damage points',
+            'Positive numbers heal and negative numbers harm',
           min: -10000,
           max: 10000,
         })}
@@ -147,7 +147,7 @@ export default class ObjectBehavior extends BaseForm {
       <div>
         {this.text('Heal (or harm) when used', 'healOrHarmWhenUsedNum', 'number', {
           title:
-            'Enter the number of points of damage this item applies or heals. For example, if this was a healing item, and the number here was 5, it would heal by 5 points. If this was a harming item, and the number was 10, it would inflict 10 damage points',
+            'Positive numbers heal and negative numbers harm',
           min: -10000,
           max: 10000,
         })}

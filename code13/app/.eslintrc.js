@@ -41,7 +41,11 @@ module.exports = {
     // ],
     'react/display-name': 'off',
     'react/jsx-boolean-value': 'error',
+    'react/jsx-no-comment-textnodes': 'off',
+    'react/no-deprecated': 'off',
+    'react/no-string-refs': 'off',
     'react/no-find-dom-node': 'off',
+    'react/no-unescaped-entities': 'off',
     'react/prop-types': 'off',
   },
 }

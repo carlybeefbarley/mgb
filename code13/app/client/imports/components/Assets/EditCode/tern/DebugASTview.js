@@ -16,12 +16,7 @@ const DebugASTview = React.createClass({
     let d = this.props.atCursorMemberParentRequestResponse.data
 
     if (d.isProperty) {
-      if (d.objType && d.objType.types && d.objType.types[0])
-        return (
-          <p>
-            ***{d.objType.types[0].name}***
-          </p>
-        )
+      if (d.objType && d.objType.types && d.objType.types[0]) return <p>***{d.objType.types[0].name}***</p>
     } else return null
   },
 

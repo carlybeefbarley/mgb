@@ -77,9 +77,7 @@ const LearnCodeRoute = ({ currUser, params }, context) =>
               <Header as="h2" style={headerStyle}>
                 <Icon name={area.icon} />&nbsp;{area.content}
               </Header>
-              <p style={descStyle}>
-                {area.desc}
-              </p>
+              <p style={descStyle}>{area.desc}</p>
               {area.skillPath &&
                 currUser &&
                 <SkillsMap skills={context.skills} skillPaths={[area.skillPath]} />}

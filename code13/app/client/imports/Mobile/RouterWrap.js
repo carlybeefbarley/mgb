@@ -19,9 +19,7 @@ class RouterWrap extends React.PureComponent {
     return (
       <div className="locationPopup" id="locationPopup">
         <Icon name="window close" onClick={this.onClose} className="head big outline" />
-        <div>
-          {React.cloneElement(p.children, p)}
-        </div>
+        <div>{React.cloneElement(p.children, p)}</div>
       </div>
     )
   }

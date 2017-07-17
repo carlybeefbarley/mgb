@@ -29,38 +29,14 @@ const companyNameInc = 'MyCodeBuilder, Inc.'
 const companyAddress = 'Seattle, WA, 98105'
 
 // Unsure why, but stardust Table isn't working so...
-const Table = props =>
-  <table className="ui two column celled table">
-    {props.children}
-  </table>
-Table.Header = props =>
-  <thead>
-    {props.children}
-  </thead>
-Table.HeaderCell = props =>
-  <th>
-    {props.children}
-  </th>
-Table.HeaderCellL = props =>
-  <th className="ten wide">
-    {props.children}
-  </th>
-Table.HeaderCellR = props =>
-  <th className="six wide">
-    {props.children}
-  </th>
-Table.Row = props =>
-  <tr>
-    {props.children}
-  </tr>
-Table.Body = props =>
-  <tbody>
-    {props.children}
-  </tbody>
-Table.Data = props =>
-  <td>
-    {props.children}
-  </td>
+const Table = props => <table className="ui two column celled table">{props.children}</table>
+Table.Header = props => <thead>{props.children}</thead>
+Table.HeaderCell = props => <th>{props.children}</th>
+Table.HeaderCellL = props => <th className="ten wide">{props.children}</th>
+Table.HeaderCellR = props => <th className="six wide">{props.children}</th>
+Table.Row = props => <tr>{props.children}</tr>
+Table.Body = props => <tbody>{props.children}</tbody>
+Table.Data = props => <td>{props.children}</td>
 
 const LegalTableHeader = () =>
   <Table.Header>
@@ -75,15 +51,10 @@ const LegalTableHeader = () =>
 const LegalSection = props =>
   <div>
     <Header as="h3" content={props.banner} style={{ marginTop: '2em' }} />
-    {props.extraText &&
-      <p>
-        {props.extraText}
-      </p>}
+    {props.extraText && <p>{props.extraText}</p>}
     <Table>
       <LegalTableHeader />
-      <Table.Body>
-        {props.children}
-      </Table.Body>
+      <Table.Body>{props.children}</Table.Body>
     </Table>
   </div>
 const DBAJ = () => <span>Don't be annoying or malicious</span> // Don't be a jerk'
@@ -156,9 +127,7 @@ const TermsOfService = () =>
             title, and interest in and to the&ensp;
             {thisSiteName_Site}, including all intellectual property rights therein.
           </Table.Data>
-          <Table.Data>
-            Don't copy {thisSiteName} itself.
-          </Table.Data>
+          <Table.Data>Don't copy {thisSiteName} itself.</Table.Data>
         </Table.Row>
       </LegalSection>
 
@@ -193,9 +162,7 @@ const TermsOfService = () =>
             paid to you with respect to the Content that you submit, post, transmit or otherwise make
             available through the Services.
           </Table.Data>
-          <Table.Data>
-            People don't have to pay you to use the things you make on {thisSiteName}.
-          </Table.Data>
+          <Table.Data>People don't have to pay you to use the things you make on {thisSiteName}.</Table.Data>
         </Table.Row>
         <Table.Row>
           <Table.Data>
@@ -608,9 +575,7 @@ const TermsOfService = () =>
 
       <LegalSection banner="Cancellation and Termination">
         <Table.Row>
-          <Table.Data>
-            You can ask to cancel your account by messaging us at {supportEmail}
-          </Table.Data>
+          <Table.Data>You can ask to cancel your account by messaging us at {supportEmail}</Table.Data>
           <Table.Data>
             If you don't want a {thisSiteName} account anymore, it's up to you to ask us to delete it. You
             can't yet do it directly from the site (while we are in Beta) but email us at {supportEmail} and
@@ -919,9 +884,7 @@ const TermsOfService = () =>
         </Table.Row>
       </LegalSection>
       <br />
-      <p>
-        These Terms of Service were last updated at {lastUpdateDate}
-      </p>
+      <p>These Terms of Service were last updated at {lastUpdateDate}</p>
     </Container>
     <Footer />
   </div>

@@ -66,9 +66,7 @@ export default class ObjectList extends React.Component {
               {lower}
             </Button.Group>
             {remove}
-            <List selection>
-              {content}
-            </List>
+            <List selection>{content}</List>
           </div>
         ),
       },

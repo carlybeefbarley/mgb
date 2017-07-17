@@ -2,10 +2,7 @@ import React from 'react'
 import { Segment, Header, List, Message, Icon } from 'semantic-ui-react'
 import QLink from '../QLink'
 
-const UserLink = ({ u }) =>
-  <QLink to={`/u/${u}`}>
-    @{u}
-  </QLink>
+const UserLink = ({ u }) => <QLink to={`/u/${u}`}>@{u}</QLink>
 
 const AboutHeader = () =>
   <Segment raised padded>

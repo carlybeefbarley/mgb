@@ -22,9 +22,7 @@ class Visualiser extends Component {
           color="#1b8a94"
           amplified
         />
-        <span className={`visualiser__msg`}>
-          {this.props.pretext}
-        </span>
+        <span className={`visualiser__msg`}>{this.props.pretext}</span>
       </div>
     )
   }

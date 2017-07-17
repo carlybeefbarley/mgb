@@ -254,12 +254,7 @@ export default class JoyrideTooltip extends React.Component {
       output.main = (
         <div className="joyride-tooltip__main" dangerouslySetInnerHTML={{ __html: step.text || '' }} />
       )
-    else
-      output.main = (
-        <div className="joyride-tooltip__main">
-          {step.text}
-        </div>
-      )
+    else output.main = <div className="joyride-tooltip__main">{step.text}</div>
 
     if (buttons.secondary)
       output.secondary = (

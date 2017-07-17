@@ -30,9 +30,7 @@ const SomeProjects = ({ user, projects, width, ownedFlag, wrap, hdr }) => {
           {hdr} <small>({comps.length})</small>
         </QLink>
       </Header>
-      <Card.Group style={wrap ? _wrapStyle : _nowrapStyle}>
-        {comps}
-      </Card.Group>
+      <Card.Group style={wrap ? _wrapStyle : _nowrapStyle}>{comps}</Card.Group>
     </Grid.Row>
   )
 }

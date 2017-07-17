@@ -64,9 +64,7 @@ const LearnCodeModifyRoute = () =>
               <Header as="h2" style={headerStyle}>
                 <Icon name={area.icon} />&nbsp;{area.content}
               </Header>
-              <p style={descStyle}>
-                {area.desc}.
-              </p>
+              <p style={descStyle}>{area.desc}.</p>
             </Card.Content>
           </QLink>,
         )}

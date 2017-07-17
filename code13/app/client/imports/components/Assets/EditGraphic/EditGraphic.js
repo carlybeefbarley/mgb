@@ -1779,9 +1779,7 @@ export default class EditGraphic extends React.Component {
                       checked={mode == this.state.scrollMode ? 'checked' : ''}
                       onChange={this.setScrollMode.bind(this, mode)}
                     />
-                    <label>
-                      {mode}
-                    </label>
+                    <label>{mode}</label>
                   </div>
                 </div>,
               )}
@@ -2121,9 +2119,7 @@ export default class EditGraphic extends React.Component {
                                   checked={mode == scrollMode ? 'checked' : ''}
                                   onChange={this.setScrollMode.bind(this, mode)}
                                 />
-                                <label>
-                                  {mode}
-                                </label>
+                                <label>{mode}</label>
                               </div>
                             </div>,
                           )}

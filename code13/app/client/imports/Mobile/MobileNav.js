@@ -53,9 +53,7 @@ const AllButtons = p =>
             style={{ color: b.disabled ? 'grey' : '' }}
           >
             <Icon name={b.icon || 'question'} size="large" />
-            <p>
-              {b.title}
-            </p>
+            <p>{b.title}</p>
           </a>
         )
       })}
@@ -290,9 +288,7 @@ class MobileNav extends React.Component {
         onClick={() => this.onClick(b, index)}
       >
         <Icon name={b.icon || 'question'} size="large" />
-        <p>
-          {b.title}
-        </p>
+        <p>{b.title}</p>
       </span>
     )
   }

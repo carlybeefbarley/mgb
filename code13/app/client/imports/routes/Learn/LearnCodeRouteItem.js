@@ -118,9 +118,7 @@ const LearnCodeRouteItem = (params, context) => {
         <Grid.Column>
           <Header as="h1">
             {getSkillTitle(learnItem)}
-            <Header.Subheader>
-              {getSkillDescription(learnItem)}
-            </Header.Subheader>
+            <Header.Subheader>{getSkillDescription(learnItem)}</Header.Subheader>
           </Header>
           {currUser &&
             <div style={{ clear: 'both' }}>

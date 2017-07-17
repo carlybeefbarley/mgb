@@ -15,10 +15,6 @@ export default class ModalForm extends BaseForm {
       options: MgbMusic.musicList.map(s => ({ text: '[builtin]:' + s, value: '[builtin]:' + s })),
       title: 'Predefined music',
     }
-    return (
-      <div>
-        {this.dropArea('Music', 'music', 'music', musicOptions)}
-      </div>
-    )
+    return <div>{this.dropArea('Music', 'music', 'music', musicOptions)}</div>
   }
 }

@@ -25,11 +25,7 @@ const FunctionDescription = React.createClass({
           : <thead>
               <tr>
                 {hdrs.map((h, colIdx) => {
-                  return (
-                    <th key={colIdx}>
-                      {h}
-                    </th>
-                  )
+                  return <th key={colIdx}>{h}</th>
                 })}
               </tr>
             </thead>}
@@ -46,13 +42,7 @@ const FunctionDescription = React.createClass({
               <tr key={rowIdx} className={highlightRow === rowIdx ? 'active' : ''}>
                 {fields.map((fieldName, colIdx) => {
                   return (
-                    <td key={colIdx}>
-                      {fieldName === '#'
-                        ? rowIdx + 1
-                        : <code>
-                            {rowData[fieldName]}
-                          </code>}
-                    </td>
+                    <td key={colIdx}>{fieldName === '#' ? rowIdx + 1 : <code>{rowData[fieldName]}</code>}</td>
                   )
                 })}
               </tr>,
@@ -112,9 +102,7 @@ const FunctionDescription = React.createClass({
             This <i>function</i> will return data of type:{' '}
           </span>
           {fh.type.rettype
-            ? <code style={{ whiteSpace: 'pre' }}>
-                {this.beautifyType(fh.type.rettype)}
-              </code>
+            ? <code style={{ whiteSpace: 'pre' }}>{this.beautifyType(fh.type.rettype)}</code>
             : <span>
                 <code>null</code> <small style={colorGrey}>(the function does not return a value)</small>
               </span>}
@@ -151,23 +139,16 @@ const FunctionDescription = React.createClass({
         {knownTernBug}
         {name &&
           <p>
-            <code>
-              {name}()
-            </code>
+            <code>{name}()</code>
             <small>
               <br />Part of '{origin}'
             </small>
           </p>}
-        {doc &&
-          <p>
-            {doc}
-          </p>}
+        {doc && <p>{doc}</p>}
         {url &&
           <p>
             <a href={url}>
-              <small>
-                {url}
-              </small>
+              <small>{url}</small>
             </a>
           </p>}
         {retInfoHelpText}

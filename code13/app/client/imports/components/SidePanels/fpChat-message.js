@@ -9,11 +9,7 @@ const ChatMessage = ({ msg }) => {
   let begin = 0
   let chunks = []
   msg.replace(/❮[^❯]*❯|@[a-zA-Z0-9]+/g, function(e, offset, str) {
-    chunks.push(
-      <span key={chunks.length}>
-        {str.slice(begin, offset)}
-      </span>,
-    )
+    chunks.push(<span key={chunks.length}>{str.slice(begin, offset)}</span>)
     begin = offset + e.length
     const e2 = e.split(':')
     if (e2.length === 3) {
@@ -47,16 +43,8 @@ const ChatMessage = ({ msg }) => {
       return e
     } else return e
   })
-  chunks.push(
-    <span key={chunks.length}>
-      {msg.slice(begin)}
-    </span>,
-  )
-  return (
-    <span>
-      {chunks}
-    </span>
-  )
+  chunks.push(<span key={chunks.length}>{msg.slice(begin)}</span>)
+  return <span>{chunks}</span>
 }
 
 ChatMessage.propTypes = {

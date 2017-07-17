@@ -12,10 +12,7 @@ const hasTodoSty = { color: 'blue' }
 const StepSummary = ({ rawStep, parsedStep, stepErrors }) => {
   return (
     <List.Item>
-      {_.isString(rawStep) &&
-        <span style={isMacroStepSty}>
-          [{rawStep}]&nbsp;
-        </span>}
+      {_.isString(rawStep) && <span style={isMacroStepSty}>[{rawStep}]&nbsp;</span>}
       {_.has(parsedStep, 'TODO') &&
         <small style={hasTodoSty}>
           [TODO: {parsedStep.TODO}] <br />

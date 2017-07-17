@@ -612,12 +612,8 @@ export default class EditActor extends React.Component {
     const databag = asset.content2.databag
     const LayerValid = ({ layerName, isValid }) =>
       isValid
-        ? <strong>
-            {layerName}: Yes&emsp;
-          </strong>
-        : <em style={{ color: 'grey' }}>
-            {layerName}: No&emsp;
-          </em>
+        ? <strong>{layerName}: Yes&emsp;</strong>
+        : <em style={{ color: 'grey' }}>{layerName}: No&emsp;</em>
 
     return (
       <div className="ui grid edit-actor">
@@ -643,9 +639,7 @@ export default class EditActor extends React.Component {
             <Modal.Header>
               Choose a template for the type of Actor, then modify the detailed options in the Actor Editor
             </Modal.Header>
-            <Modal.Content className="edit-actor">
-              {this.getTemplates()}
-            </Modal.Content>
+            <Modal.Content className="edit-actor">{this.getTemplates()}</Modal.Content>
           </Modal>}
         {databag && <Tabs tabs={this.getTabs(databag)} />}
       </div>

@@ -184,11 +184,7 @@ export default class ActorTileset extends React.Component {
             maxHeight: '1.5em',
           }}
         >
-          {
-            <p style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-              {tsName}
-            </p>
-          }
+          {<p style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{tsName}</p>}
         </Label>
       </Grid.Column>
     )

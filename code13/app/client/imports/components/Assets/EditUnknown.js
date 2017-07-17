@@ -6,9 +6,7 @@ const EditUnknown = props =>
       Edit {props.asset.kind} '{props.asset.name}'
     </h3>
     <p>
-      <a className="ui red label">
-        Editor for Asset type '{props.asset.kind}' is not yet implemented.
-      </a>
+      <a className="ui red label">Editor for Asset type '{props.asset.kind}' is not yet implemented.</a>
     </p>
     <p>If you are seeing this, there's probably some cool new Asset type being tested by the devs! Oooh!</p>
   </div>

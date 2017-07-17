@@ -43,9 +43,7 @@ const ImageShowOrChange = ({
 
   const imgPopup = (
     <Popup on="hover" size="small" inverted mouseEnterDelay={500} position="bottom center" trigger={innerImg}>
-      <Popup.Header>
-        {header}
-      </Popup.Header>
+      <Popup.Header>{header}</Popup.Header>
       <Popup.Content>
         {canEdit
           ? <span>

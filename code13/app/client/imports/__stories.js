@@ -39,17 +39,11 @@ const CardExampleCard = ({ currUser }) =>
   <Card>
     <Image src="/images/mascots/bigguy.png" />
     <Card.Content>
-      <Card.Header>
-        {currUser ? currUser.username : 'NONAME'}
-      </Card.Header>
+      <Card.Header>{currUser ? currUser.username : 'NONAME'}</Card.Header>
       <Card.Meta>
-        <span className="date">
-          {currUser ? moment(currUser.createdAt).fromNow() : 'NODATE'}
-        </span>
+        <span className="date">{currUser ? moment(currUser.createdAt).fromNow() : 'NODATE'}</span>
       </Card.Meta>
-      <Card.Description>
-        {currUser.profile.bio}
-      </Card.Description>
+      <Card.Description>{currUser.profile.bio}</Card.Description>
     </Card.Content>
     <Card.Content extra>
       <a>
@@ -121,15 +115,7 @@ const UserItem = React.createClass({
           <Card.Header>
             <Header size="large" content={name} />
           </Card.Header>
-          <Card.Meta>
-            {narrowItem
-              ? <small>
-                  {titleSpan}
-                </small>
-              : <big>
-                  {titleSpan}
-                </big>}
-          </Card.Meta>
+          <Card.Meta>{narrowItem ? <small>{titleSpan}</small> : <big>{titleSpan}</big>}</Card.Meta>
           {suIsBanned &&
             <div>
               <Label size="small" color="red" content="Suspended Account" />
@@ -139,9 +125,7 @@ const UserItem = React.createClass({
               <Label size="small" color="purple" content="Deactivated Account" />
             </div>}
           <p>
-            <small style={{ color: 'rgb(0, 176, 224)' }}>
-              Joined {createdAtFmt}
-            </small>
+            <small style={{ color: 'rgb(0, 176, 224)' }}>Joined {createdAtFmt}</small>
           </p>
         </Card.Content>
         <Card.Content extra>

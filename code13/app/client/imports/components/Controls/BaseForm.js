@@ -41,9 +41,7 @@ export default class BaseForm extends React.Component {
         className={'inline fields' + (fieldOptions.disabled ? ' disabled' : '')}
         title={fieldOptions && fieldOptions.title}
       >
-        <label>
-          {name}
-        </label>
+        <label>{name}</label>
         <SmallDD
           options={options}
           onChange={val => {
@@ -67,9 +65,7 @@ export default class BaseForm extends React.Component {
     const checked = fieldOptions.boolIsTF ? this.data[key] : !!parseInt(this.data[key], 10)
     return (
       <div className={'inline fields' + (fieldOptions.disabled ? ' disabled' : '')}>
-        <label>
-          {name}
-        </label>
+        <label>{name}</label>
 
         <div
           className="ui toggle checkbox"
@@ -104,9 +100,7 @@ export default class BaseForm extends React.Component {
         className={'inline fields' + (fieldOptions.disabled ? ' disabled' : '')}
         title={fieldOptions && fieldOptions.title}
       >
-        <label>
-          {name}
-        </label>
+        <label>{name}</label>
         <input
           {...fieldOptions}
           placeholder={name}
@@ -149,9 +143,7 @@ export default class BaseForm extends React.Component {
         className={'inline fields' + (fieldOptions.disabled ? ' disabled' : '')}
         title={fieldOptions && fieldOptions.title}
       >
-        <label>
-          {name}
-        </label>
+        <label>{name}</label>
         <textarea
           rows="3"
           onChange={e => {
@@ -176,9 +168,7 @@ export default class BaseForm extends React.Component {
         className={'inline fields' + (fieldOptions.disabled ? ' disabled' : '')}
         title={fieldOptions && fieldOptions.title}
       >
-        <label>
-          {name}
-        </label>
+        <label>{name}</label>
         <DropArea
           kind={kind}
           {...fieldOptions}

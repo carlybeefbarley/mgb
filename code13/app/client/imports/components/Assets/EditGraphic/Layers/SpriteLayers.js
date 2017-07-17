@@ -639,9 +639,7 @@ export default class SpriteLayers extends React.Component {
               </tr>
             </thead>
 
-            <tbody>
-              {this.renderLayers()}
-            </tbody>
+            <tbody>{this.renderLayers()}</tbody>
           </table>
         </div>
       )
@@ -828,13 +826,9 @@ export default class SpriteLayers extends React.Component {
                       }}
                       id={'mgb_edit_graphics_frame_options_' + idx}
                     >
-                      <span className="ui circular label">
-                        {idx + 1}
-                      </span>
+                      <span className="ui circular label">{idx + 1}</span>
                       <div className="ui vertical menu">
-                        <div className="header item">
-                          Frame #{idx + 1}
-                        </div>
+                        <div className="header item">Frame #{idx + 1}</div>
                         <div onClick={this.insertFrameAfter.bind(this, idx, true)} className="item">
                           <i className="add circle icon" />
                           Duplicate Frame
@@ -970,9 +964,7 @@ export default class SpriteLayers extends React.Component {
             </tr>
           </thead>
 
-          <tbody className="layers">
-            {this.renderLayers()}
-          </tbody>
+          <tbody className="layers">{this.renderLayers()}</tbody>
         </table>
       </div>
     )

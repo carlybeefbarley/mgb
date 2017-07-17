@@ -10,18 +10,14 @@ import FlagsModerate from '/client/imports/components/Controls/FlagsModerate'
 const outlinkLi = (txt, url, key) =>
   <List.Item key={key}>
     <a target="_blank" href={url}>
-      <small>
-        {txt}
-      </small>
+      <small>{txt}</small>
     </a>
   </List.Item>
 
 const inlinkLi = (txt, url, key) =>
   <List.Item key={key}>
     <QLink to={url}>
-      <small>
-        {txt}
-      </small>
+      <small>{txt}</small>
     </QLink>
   </List.Item>
 
@@ -80,9 +76,7 @@ const UserAdmin = ({ user, extraUserInfo }) => {
 
   return (
     <div>
-      <Header sub>
-        Public Info: {user.username}
-      </Header>
+      <Header sub>Public Info: {user.username}</Header>
       <List bulleted>
         {linkLi(`UserId: ${user._id}`)}
         {linkLi(`Roles: ${user.permissions ? _.join(user.permissions[0].roles, ',') : 'none'}`, usrLink)}

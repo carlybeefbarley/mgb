@@ -8,11 +8,7 @@ const _menuOpenLeftSty = { left: 'auto', right: '0' } // Magic from levithomason
 const AssetListChooseView = ({ chosenView, handleChangeViewClick, sty }) =>
   <Dropdown
     inline
-    trigger={
-      <small>
-        {chosenView.toUpperCase()}
-      </small>
-    }
+    trigger={<small>{chosenView.toUpperCase()}</small>}
     id="mgbjr-asset-search-viewFormatChooser"
     style={{ ...{ color: 'grey' }, ...sty }}
     title="View Assets as.."
@@ -24,11 +20,7 @@ const AssetListChooseView = ({ chosenView, handleChangeViewClick, sty }) =>
             active={k === chosenView}
             value={k}
             key={k}
-            content={
-              <small>
-                {k.toUpperCase()}
-              </small>
-            }
+            content={<small>{k.toUpperCase()}</small>}
             onClick={() => {
               handleChangeViewClick(k)
             }}

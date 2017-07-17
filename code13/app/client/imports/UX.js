@@ -42,9 +42,7 @@ const UX = {
   makeMascotImgLink: _makeMascotImgLink,
 
   UserLink: ({ username, prefix }) =>
-    <QLink to={`/u/${username}`}>
-      {`${_.isString(prefix) ? prefix : ''}${username}`}
-    </QLink>,
+    <QLink to={`/u/${username}`}>{`${_.isString(prefix) ? prefix : ''}${username}`}</QLink>,
 
   UserAvatarNoLink: ({ username, validFor, height }) =>
     <FittedImage src={_makeAvatarImgLink(username, validFor)} width="auto" height={height || '3em'} />,
@@ -63,9 +61,7 @@ const UX = {
     </QLink>,
 
   LinkToAsset: ({ assetId, ownerUsername }) =>
-    <QLink to={`/u/${ownerUsername}/asset/${assetId}`}>
-      Flagged Asset Id: {assetId}
-    </QLink>,
+    <QLink to={`/u/${ownerUsername}/asset/${assetId}`}>Flagged Asset Id: {assetId}</QLink>,
 
   LinkToFlaggedEntity: ({ entityType, entityId, ownerUsername }) => {
     if (entityType === 'Chats') return <UX.LinkToChatId chatId={entityId} />
@@ -89,39 +85,25 @@ const UX = {
 
   UserWhenJoined: ({ when, as }) => {
     const Element = as || 'span'
-    return (
-      <Element style={_UserJoinedSty}>
-        Joined {moment(when).format('MMMM DD, YYYY')}
-      </Element>
-    )
+    return <Element style={_UserJoinedSty}>Joined {moment(when).format('MMMM DD, YYYY')}</Element>
   },
 
   UserAvatarName: ({ username, validFor }) =>
     <QLink to={`/u/${username}`} altTo={`/u/${username}/projects`}>
       <span className="right floated author">
         <Image avatar src={_makeAvatarImgLink(username, validFor)} />
-        <span>
-          {username}
-        </span>
+        <span>{username}</span>
       </span>
     </QLink>,
 
   TimeAgo: ({ when, as, style }) => {
     const Element = as || 'span'
-    return (
-      <Element style={style}>
-        {moment(when).fromNow()}
-      </Element>
-    )
+    return <Element style={style}>{moment(when).fromNow()}</Element>
   },
 
   TimeMDY: ({ when, as }) => {
     const Element = as || 'span'
-    return (
-      <Element>
-        {moment(when).format('MMMM DD, YYYY')}
-      </Element>
-    )
+    return <Element>{moment(when).format('MMMM DD, YYYY')}</Element>
   },
 
   ImageMascot: props => <Image src={_makeMascotImgLink(props.mascotName)} {..._.omit(props, 'mascotName')} />,
@@ -131,11 +113,7 @@ const UX = {
     <Button
       {..._.omit(props, 'underText')}
       style={_button2Sty}
-      content={
-        <div>
-          {props.content}
-        </div>
-      }
+      content={<div>{props.content}</div>}
       icon={<Icon name={props.icon} size="large" style={_button2IconSty} />}
     />,
 }

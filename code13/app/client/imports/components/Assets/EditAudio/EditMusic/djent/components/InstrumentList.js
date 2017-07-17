@@ -87,11 +87,7 @@ export default class InstrumentList extends Component {
       )
     })
 
-    return (
-      <div>
-        {instrumentViews}
-      </div>
-    )
+    return <div>{instrumentViews}</div>
   }
 }
 

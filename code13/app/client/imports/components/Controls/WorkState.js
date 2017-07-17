@@ -60,9 +60,7 @@ const WorkState = ({ workState, canEdit, size, popupPosition, handleChange, labe
               }}
             >
               <WorkStateIcon size="large" workState={name} />
-              <List.Content verticalAlign="middle">
-                &nbsp;{name}
-              </List.Content>
+              <List.Content verticalAlign="middle">&nbsp;{name}</List.Content>
             </List.Item>,
         )}
       </List>

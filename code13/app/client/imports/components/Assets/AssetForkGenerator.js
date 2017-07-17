@@ -15,9 +15,7 @@ const AssetForkGenerator = ({ asset, canFork, isForkPending, doForkAsset }) => {
           &nbsp;<QLink to={`/u/${f.forkedByUserName}`}>{f.forkedByUserName}</QLink>
           {' : '}
           <QLink to={`/u/${f.forkedByUserName}/asset/${f.assetId}`}>
-            <small style={{ color: 'blue' }}>
-              {f.assetId}
-            </small>
+            <small style={{ color: 'blue' }}>{f.assetId}</small>
           </QLink>
           <small style={{ color: '#c8c8c8' }}>&ensp;{ago}</small>
         </div>
@@ -42,9 +40,7 @@ const AssetForkGenerator = ({ asset, canFork, isForkPending, doForkAsset }) => {
       }
       position="bottom right"
     >
-      <Popup.Header>
-        {numChildren ? `${numChildren} Forks` : 'Fork Asset'}
-      </Popup.Header>
+      <Popup.Header>{numChildren ? `${numChildren} Forks` : 'Fork Asset'}</Popup.Header>
       <Popup.Content>
         <Segment basic>
           Forks are copies of an existing Asset where the 'parent-to-child' chain is tracked.
@@ -73,18 +69,12 @@ const AssetForkGenerator = ({ asset, canFork, isForkPending, doForkAsset }) => {
                   _.map(asset.forkParentChain, (fp, idx) =>
                     <div key={fp.forkDate} style={{ paddingLeft: `${(fpLen - idx) * 4 + 4}px` }}>
                       {idx === fpLen - 1 ? '' : '...'}
-                      <QLink to={`/u/${fp.parentOwnerName}`}>
-                        {fp.parentOwnerName}
-                      </QLink>
+                      <QLink to={`/u/${fp.parentOwnerName}`}>{fp.parentOwnerName}</QLink>
                       {' : '}
                       <QLink to={`/u/${fp.parentOwnerName}/asset/${fp.parentId}`}>
-                        <span style={{ color: 'blue' }}>
-                          {fp.parentAssetName}
-                        </span>
+                        <span style={{ color: 'blue' }}>{fp.parentAssetName}</span>
                       </QLink>
-                      <small style={{ color: '#c8c8c8' }}>
-                        &ensp;{moment(fp.forkDate).fromNow()}
-                      </small>
+                      <small style={{ color: '#c8c8c8' }}>&ensp;{moment(fp.forkDate).fromNow()}</small>
                     </div>,
                   ),
                 )}

@@ -264,11 +264,7 @@ export const getNavPanels = (currUser, showAll) => {
           showUserOptions && {
             subcomponent: 'Header',
             jrkey: 'username',
-            content: (
-              <Header style={{ paddingLeft: '1.2em' }}>
-                {uname}
-              </Header>
-            ),
+            content: <Header style={{ paddingLeft: '1.2em' }}>{uname}</Header>,
           },
           showUserOptions && {
             subcomponent: 'Item',

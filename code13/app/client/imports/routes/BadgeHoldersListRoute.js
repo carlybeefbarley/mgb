@@ -22,9 +22,7 @@ const BadgeHoldersListUI = ({ params, loading, holders }) => {
           meta={[{ name: 'Badge Holders', content: 'Badge Holders' }]}
         />
 
-        <Header as="h2">
-          {`${badgeInfo[1]} - ${holders.length} badge holders`}
-        </Header>
+        <Header as="h2">{`${badgeInfo[1]} - ${holders.length} badge holders`}</Header>
 
         <Item.Group divided>
           {_.map(holders, u =>
@@ -32,9 +30,7 @@ const BadgeHoldersListUI = ({ params, loading, holders }) => {
               <Item.Image as={Badge} name={badgename} />
               <Item.Content>
                 <br />
-                <Item.Header>
-                  {u.username}
-                </Item.Header>
+                <Item.Header>{u.username}</Item.Header>
               </Item.Content>
             </Item>,
           )}

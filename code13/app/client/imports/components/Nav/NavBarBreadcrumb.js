@@ -214,20 +214,11 @@ const NavBarBreadcrumbUI = props => {
     //
     // LearnCode ITEM   [TODO: FIX THIS? seems to not ne working]
     //
-    learnCodeItem &&
-      <span key="learn-code-item">
-        {_learnCodeItemHdrs[learnCodeItem]}
-      </span>,
+    learnCodeItem && <span key="learn-code-item">{_learnCodeItemHdrs[learnCodeItem]}</span>,
     //
     // Other low-context item (create asset, list users etc) ITEM
     //
-    !learnCodeItem &&
-      !usernameToShow &&
-      !assetId &&
-      !isPlay &&
-      <span key="route-name-item">
-        {name}
-      </span>,
+    !learnCodeItem && !usernameToShow && !assetId && !isPlay && <span key="route-name-item">{name}</span>,
     //
     // AssetName
     //
@@ -284,9 +275,7 @@ const NavBarBreadcrumbUI = props => {
                         : currUser ? currUser.username : null}/projects/${contextualProjectName}`}
                     >
                       <Icon name="sitemap" />
-                      <span>
-                        {contextualProjectName}
-                      </span>
+                      <span>{contextualProjectName}</span>
                     </QLink>
                   </small>}
                 <QLink to="/assets/create" style={{ float: 'right' }}>

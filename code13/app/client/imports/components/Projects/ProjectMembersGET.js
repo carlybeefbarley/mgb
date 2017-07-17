@@ -81,11 +81,7 @@ const ProjectMembersGET = React.createClass({
   render: function() {
     if (this.data.loading) return null
 
-    return (
-      <div style={_nowrapStyle}>
-        {this.renderMembers()}
-      </div>
-    )
+    return <div style={_nowrapStyle}>{this.renderMembers()}</div>
   },
 })
 

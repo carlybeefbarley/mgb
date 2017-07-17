@@ -403,9 +403,7 @@ const FlexPanel = React.createClass({
             <div style={panelScrollContainerStyle}>
               <div style={panelInnerStyle}>
                 {!ElementFP
-                  ? <div className="ui fluid label">
-                      TODO: {flexPanelHdr} FlexPanel
-                    </div>
+                  ? <div className="ui fluid label">TODO: {flexPanelHdr} FlexPanel</div>
                   : <ElementFP
                       currUser={this.props.currUser}
                       currUserProjects={this.props.currUserProjects}
@@ -465,9 +463,7 @@ const FlexPanel = React.createClass({
                 onClick={this.fpViewSelect.bind(this, v.tag)}
               >
                 <i style={activeStyle} className={iconClasses} />
-                <span style={activeStyle}>
-                  {fpIsFooter ? null : v.name}
-                </span>
+                <span style={activeStyle}>{fpIsFooter ? null : v.name}</span>
                 {this.getFpButtonExtraLabelForTag(v.tag)}
               </a>
             )

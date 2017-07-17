@@ -27,23 +27,14 @@ const FlagsModerateUI = ({ loading, flagsList }) =>
             <List.Item>
               Flagged by: <UX.UserLink username={flag.reporterUserName} />
             </List.Item>
-            <List.Item>
-              Type of entity: {flag.entityType}
-            </List.Item>
+            <List.Item>Type of entity: {flag.entityType}</List.Item>
             <List.Item>
               List of flag types:
               <List bulleted>
-                {flag.flagTypes &&
-                  flag.flagTypes.map((type, idx) =>
-                    <List.Item key={idx}>
-                      {type}
-                    </List.Item>,
-                  )}
+                {flag.flagTypes && flag.flagTypes.map((type, idx) => <List.Item key={idx}>{type}</List.Item>)}
               </List>
             </List.Item>
-            <List.Item>
-              Reporter comments: "{flag.reporterComments}"
-            </List.Item>
+            <List.Item>Reporter comments: "{flag.reporterComments}"</List.Item>
           </List>
         </Segment>,
       )}

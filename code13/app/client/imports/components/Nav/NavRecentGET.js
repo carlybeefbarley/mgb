@@ -64,9 +64,7 @@ const NavRecentGET = React.createClass({
         (isSnapshot ? 'Viewed' : ActivityTypes.getDescription(a.activityType)) + ' - ' + mTime.fromNow() // TODO: Make reactive
       const basicDataElement = (
         <div>
-          <small>
-            {ago}
-          </small>
+          <small>{ago}</small>
         </div>
       )
       let item = null
@@ -101,15 +99,11 @@ const NavRecentGET = React.createClass({
               {assetKindCap}: {a.toAssetName}
             </p>
             <small>
-              <p>
-                {ago}
-              </p>
+              <p>{ago}</p>
             </small>
             <img style={{ maxWidth: '240px' }} src={assetThumbnailUrl} />
             <small>
-              <p>
-                Owner: {a.toOwnerName}
-              </p>
+              <p>Owner: {a.toOwnerName}</p>
             </small>
           </div>
         )

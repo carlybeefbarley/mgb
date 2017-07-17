@@ -83,9 +83,7 @@ export default class extends React.Component {
           </Container>
           <Segment>
             <QLink to={`/assetEdit/actor/${user}/${name}`}>
-              <Button color="blue">
-                Edit Actor {err.actor}
-              </Button>
+              <Button color="blue">Edit Actor {err.actor}</Button>
             </QLink>
           </Segment>
         </Segment>

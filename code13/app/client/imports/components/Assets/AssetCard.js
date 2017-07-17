@@ -211,22 +211,14 @@ const AssetCard = React.createClass({
               </div>
               <div style={{ color: numChildForks ? 'black' : null }}>
                 <Icon name="fork" color={hasParentFork ? 'blue' : null} />
-                <span>
-                  {numChildForks} Forks
-                </span>
+                <span>{numChildForks} Forks</span>
               </div>
               {editProjects}
             </Card.Meta>}
 
           {viewOpts.showMeta &&
             (asset.text && asset.text !== '') &&
-            <Card.Description
-              content={
-                <small>
-                  {asset.text}
-                </small>
-              }
-            />}
+            <Card.Description content={<small>{asset.text}</small>} />}
 
           {asset.isDeleted &&
             <div className="ui massive red corner label">
@@ -261,9 +253,7 @@ const AssetCard = React.createClass({
               onTouchEnd={this.handleCompletedClick}
             >
               <Icon name={asset.isCompleted ? 'lock' : 'unlock'} />
-              <small>
-                &nbsp;{asset.isCompleted ? 'Locked' : 'Unlocked'}
-              </small>
+              <small>&nbsp;{asset.isCompleted ? 'Locked' : 'Unlocked'}</small>
             </div>
             <div
               className={(canEdit && !asset.isCompleted ? '' : 'disabled ') + 'ui compact button'}
@@ -272,9 +262,7 @@ const AssetCard = React.createClass({
               onTouchEnd={this.handleDeleteClick}
             >
               {asset.isDeleted ? null : <Icon color="red" name="trash" />}
-              <small>
-                &nbsp;{asset.isDeleted ? 'Undelete' : 'Delete'}
-              </small>
+              <small>&nbsp;{asset.isDeleted ? 'Undelete' : 'Delete'}</small>
             </div>
           </div>}
       </Card>

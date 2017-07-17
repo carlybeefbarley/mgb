@@ -23,12 +23,8 @@ const SelectedItem = props => {
 
         {item &&
           <Item.Content>
-            <Item.Header>
-              {item.description}
-            </Item.Header>
-            <Item.Description>
-              {item.equipDescription}
-            </Item.Description>
+            <Item.Header>{item.description}</Item.Header>
+            <Item.Description>{item.equipDescription}</Item.Description>
             <Item.Extra>
               <Button
                 size="small"

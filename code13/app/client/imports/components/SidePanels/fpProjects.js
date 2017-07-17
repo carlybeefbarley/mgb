@@ -45,11 +45,7 @@ const ProjectMenu = ({ projects, ownedFlag, currUserId, hazUnreadChats }) => {
             <ChatIcon hazUnreadChats={hazUnreadChats} projId={p._id} />
           </Menu.Item>,
         )
-  return (
-    <Menu.Menu>
-      {retval}
-    </Menu.Menu>
-  )
+  return <Menu.Menu>{retval}</Menu.Menu>
 }
 
 const _propTypes = {

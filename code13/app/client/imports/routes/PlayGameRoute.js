@@ -32,7 +32,6 @@ import './playGame.css'
 // this css contains position styles / top / left / right etc..
 import '/client/imports/components/Assets/EditGame/position.css'
 
-
 // TODO: The debounce / throttle needs to move to the server really
 const _incrementPlayCount = _.debounce(
   assetId => {
@@ -357,18 +356,22 @@ class PlayCodeGame extends React.Component {
         </div>
         {this.state.isFullScreen &&
           <div className="fs-exit-pos-container">
-          <Icon
-            name="sidebar"
-            size="big"
-            className={'burger' + this.props.metadata.fullScreenPosition ? ' ' + this.props.metadata.fullScreenPosition : ''}
-            style={{
-              position: 'absolute',
-              color: 'white',
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              borderRadius: '0.1em',
-            }}
-            onClick={this.exitFullScreen}
-          />
+            <Icon
+              name="sidebar"
+              size="big"
+              className={
+                'burger' + this.props.metadata.fullScreenPosition
+                  ? ' ' + this.props.metadata.fullScreenPosition
+                  : ''
+              }
+              style={{
+                position: 'absolute',
+                color: 'white',
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                borderRadius: '0.1em',
+              }}
+              onClick={this.exitFullScreen}
+            />
           </div>}
       </div>
     )
@@ -564,9 +567,7 @@ const PlayGameRoute = React.createClass({
             {game.name}
           </QLink>
         </Header>
-        <small>
-          &emsp;{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}
-        </small>
+        <small>&emsp;{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</small>
         <AssetChatDetail
           style={_styleGameNavButtons}
           hasUnreads={hazUnreadAssetChat}

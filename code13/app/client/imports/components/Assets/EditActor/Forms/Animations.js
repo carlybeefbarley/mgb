@@ -144,9 +144,7 @@ export default class Animations extends React.Component {
   renderContent(animations, animTitle, i) {
     return (
       <Table.Row style={!this.props.canEdit ? { pointerEvents: 'none' } : {}} key={i}>
-        <Table.Cell>
-          {animations[i]}
-        </Table.Cell>
+        <Table.Cell>{animations[i]}</Table.Cell>
         <Table.Cell>
           <DropArea
             kind="graphic"
@@ -221,9 +219,7 @@ export default class Animations extends React.Component {
                   </Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
-              <Table.Body>
-                {animTable}
-              </Table.Body>
+              <Table.Body>{animTable}</Table.Body>
             </Table>
           </Accordion.Content>
         </Accordion>

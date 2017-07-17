@@ -46,9 +46,7 @@ export default class Layers extends React.Component {
                   paramName="name"
                   validate={val => validate.notEmpty(val) && validate.lengthCap(val, 255)}
                 />
-              : <span>
-                  {data[i].name}
-                </span>}
+              : <span>{data[i].name}</span>}
 
             <small style={{ float: 'right' }}>
               ({_.findKey(LayerTypes, kv => kv === data[i].type)} layer)
@@ -64,9 +62,7 @@ export default class Layers extends React.Component {
         content: (
           <div>
             <LayerControls {...this.props} />
-            <List selection>
-              {layers}
-            </List>
+            <List selection>{layers}</List>
             {this.props.children}
           </div>
         ),

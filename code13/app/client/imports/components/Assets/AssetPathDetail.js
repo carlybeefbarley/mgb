@@ -39,16 +39,10 @@ const SaveStatus = ({ lastUpdated, isUnconfirmedSave, hasUnsentSaves }) => {
         </small>
       }
     >
-      <Popup.Header>
-        {msg[1]}
-      </Popup.Header>
+      <Popup.Header>{msg[1]}</Popup.Header>
       <Popup.Content>
-        <div>
-          {msg[2]}
-        </div>
-        <small style={{ color: 'grey', float: 'right' }}>
-          Last updated {moment(lastUpdated).fromNow()}
-        </small>
+        <div>{msg[2]}</div>
+        <small style={{ color: 'grey', float: 'right' }}>Last updated {moment(lastUpdated).fromNow()}</small>
       </Popup.Content>
     </Popup>
   )

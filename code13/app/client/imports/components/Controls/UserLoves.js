@@ -19,9 +19,7 @@ const UserLovesUI = ({ seeLovers, userList, size, popupPosition, onIconClick, cu
     position={popupPosition}
     trigger={
       <span>
-        <small>
-          {asset.heartedBy_count}{' '}
-        </small>
+        <small>{asset.heartedBy_count} </small>
         <UserLoveIcon
           currUserLoves={currUserLoves}
           size={size}
@@ -37,9 +35,7 @@ const UserLovesUI = ({ seeLovers, userList, size, popupPosition, onIconClick, cu
           ? userList.map((person, idx) =>
               <div key={idx}>
                 <QLink to={`/u/${person.username}`}>
-                  <p>
-                    {person.username}
-                  </p>
+                  <p>{person.username}</p>
                 </QLink>
               </div>,
             )

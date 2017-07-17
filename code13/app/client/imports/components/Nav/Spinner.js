@@ -23,9 +23,7 @@ export default class Spinner extends Component {
       ? null
       : <Segment basic className="animated fadeIn" style={{ minHeight: '15em' }}>
           <div className={`ui ${hide ? '' : 'active'} inverted dimmer`}>
-            <div className="ui text indeterminate loader">
-              {this.props.loadingMsg || 'Loading'}
-            </div>
+            <div className="ui text indeterminate loader">{this.props.loadingMsg || 'Loading'}</div>
           </div>
           <p />
         </Segment>

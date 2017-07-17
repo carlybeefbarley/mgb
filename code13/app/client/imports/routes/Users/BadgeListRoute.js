@@ -25,9 +25,7 @@ const BadgeListRoute = ({ user }) => {
               </QLink>
               <Item.Content>
                 <br />
-                <Item.Header>
-                  &emsp;{badgeList[val] ? badgeList[val][1] : val}
-                </Item.Header>
+                <Item.Header>&emsp;{badgeList[val] ? badgeList[val][1] : val}</Item.Header>
               </Item.Content>
             </Item>,
           )}

@@ -13,9 +13,7 @@ const KeyBindings = React.createClass({
         <div className="ui horizontal label" style={{ width: '5em' }}>
           {v2.pcKey}
         </div>
-        <small>
-          {v2.description}
-        </small>
+        <small>{v2.description}</small>
       </a>,
     )
   },

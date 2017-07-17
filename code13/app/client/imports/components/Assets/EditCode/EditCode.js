@@ -2647,9 +2647,7 @@ export default class EditCode extends React.Component {
                     />
                     {stringReferences &&
                       stringReferences.length > 0 &&
-                      <div className="ui divided selection list">
-                        {stringReferences}
-                      </div>}
+                      <div className="ui divided selection list">{stringReferences}</div>}
                   </div>}
 
                 {isChallenge &&
@@ -2746,9 +2744,7 @@ export default class EditCode extends React.Component {
 
                     {stringReferences &&
                       stringReferences.length > 0 &&
-                      <div className="ui divided selection list">
-                        {stringReferences}
-                      </div>}
+                      <div className="ui divided selection list">{stringReferences}</div>}
                   </div>}
 
                 {docEmpty &&

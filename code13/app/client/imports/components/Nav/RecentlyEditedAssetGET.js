@@ -41,11 +41,7 @@ const RecentlyEditedAssetGET = React.createClass({
     if (!activity) return nothin
 
     const to = `/u/${activity.toOwnerName}/asset/${activity.toAssetId}`
-    return (
-      <QLink to={to}>
-        {activity.toAssetName}
-      </QLink>
-    )
+    return <QLink to={to}>{activity.toAssetName}</QLink>
   },
 })
 

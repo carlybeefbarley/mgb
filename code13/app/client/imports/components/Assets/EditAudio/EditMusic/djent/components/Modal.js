@@ -10,9 +10,7 @@ class Modal extends Component {
   render = () => {
     const title = this.props.title
       ? <div className="panel panel--dark">
-          <div className="group-padding-x group-padding-y">
-            {this.props.title}
-          </div>
+          <div className="group-padding-x group-padding-y">{this.props.title}</div>
         </div>
       : null
 
@@ -33,9 +31,7 @@ class Modal extends Component {
           {title}
           <div className="panel">
             {closeButton}
-            <div className="group-padding-x group-padding-y">
-              {this.props.content}
-            </div>
+            <div className="group-padding-x group-padding-y">{this.props.content}</div>
           </div>
         </div>
       </div>

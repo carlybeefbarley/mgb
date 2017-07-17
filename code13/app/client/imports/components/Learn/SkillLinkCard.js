@@ -117,9 +117,7 @@ class SkillLinkCard extends Component {
             >
               <Icon name="refresh" />
               <List.Content>
-                <List.Header as="a">
-                  {getFriendlyName(skillPath + '.' + skillLeafKey)}
-                </List.Header>
+                <List.Header as="a">{getFriendlyName(skillPath + '.' + skillLeafKey)}</List.Header>
               </List.Content>
             </List.Item>,
           )}
@@ -179,10 +177,7 @@ class SkillLinkCard extends Component {
             <Grid.Column>
               <Header as={completed ? 'h2' : 'h1'}>
                 {name}
-                {!completed &&
-                  <Header.Subheader>
-                    {description}.
-                  </Header.Subheader>}
+                {!completed && <Header.Subheader>{description}.</Header.Subheader>}
               </Header>
             </Grid.Column>
             {!disabled &&

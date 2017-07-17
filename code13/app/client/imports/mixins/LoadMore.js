@@ -88,11 +88,7 @@ class LoadMore extends React.Component {
   }
 
   renderDebug() {
-    return (
-      <pre>
-        {JSON.stringify(this._loadMoreState, null, '\t')}
-      </pre>
-    )
+    return <pre>{JSON.stringify(this._loadMoreState, null, '\t')}</pre>
   }
 
   render() {

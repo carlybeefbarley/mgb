@@ -42,9 +42,7 @@ export const GameItem = ({ game, currUser }) =>
           </span>}
       </p>
       <p>
-        <span>
-          {((game.metadata && game.metadata.playCount) || 0) + ' Plays'}
-        </span>
+        <span>{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</span>
         <span style={{ float: 'right' }}>
           <UserLoves size="small" currUser={currUser} asset={game} seeLovers={false} />
         </span>

@@ -214,9 +214,7 @@ const ChatMessagesView = React.createClass({
             {c.byUserName}
           </Comment.Author>
           <Comment.Metadata>
-            <div title={absTime}>
-              {ago}
-            </div>
+            <div title={absTime}>{ago}</div>
             {!(c.suIsBanned === true) &&
               !c.suFlagId &&
               <DeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />}

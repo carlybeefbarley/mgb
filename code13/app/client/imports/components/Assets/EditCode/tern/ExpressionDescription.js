@@ -61,9 +61,7 @@ const ExpressionDescription = React.createClass({
           </span>{' '}
           <code>
             {exprName}
-            <span style={colorGrey}>
-              {isFn}
-            </span>
+            <span style={colorGrey}>{isFn}</span>
           </code>
         </div>
         <span style={colorGrey}>Name:</span> <code>{name || exprName}</code>
@@ -76,20 +74,13 @@ const ExpressionDescription = React.createClass({
           </span>}
         {origin &&
           <p>
-            <small>
-              Part of '{origin}'
-            </small>
+            <small>Part of '{origin}'</small>
           </p>}
-        {docToDisplay &&
-          <p style={{ whiteSpace: 'pre-line' }}>
-            {docToDisplay}
-          </p>}
+        {docToDisplay && <p style={{ whiteSpace: 'pre-line' }}>{docToDisplay}</p>}
         {url &&
           <p>
             <a target="_blank" href={url}>
-              <small>
-                {url}
-              </small>
+              <small>{url}</small>
             </a>
           </p>}
       </div>

@@ -55,9 +55,7 @@ export default class Tabs extends React.Component {
 
     return (
       <div style={{ width: '100%', marginTop: '0.75em' }}>
-        <div className="tabs ui top attached tabular menu">
-          {tabsJsx}
-        </div>
+        <div className="tabs ui top attached tabular menu">{tabsJsx}</div>
         <div className="content" style={{ padding: '10px' }}>
           {content}
         </div>

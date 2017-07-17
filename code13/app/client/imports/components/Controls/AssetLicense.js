@@ -24,9 +24,7 @@ const AssetLicense = ({ license, popupPosition, handleChange, canEdit }) => {
         trigger={
           <Label basic size="small" style={{ borderRadius: '0px' }}>
             <Icon name="law" />
-            <small>
-              {actualLicense}
-            </small>
+            <small>{actualLicense}</small>
           </Label>
         }
       >
@@ -42,9 +40,7 @@ const AssetLicense = ({ license, popupPosition, handleChange, canEdit }) => {
               </p>
               <Label color="black">
                 <Icon name="law" />
-                <small>
-                  {actualLicense}
-                </small>
+                <small>{actualLicense}</small>
               </Label>
               <p>
                 <br />
@@ -86,9 +82,7 @@ const AssetLicense = ({ license, popupPosition, handleChange, canEdit }) => {
                       style={{ width: '9em' }}
                     >
                       <Icon name="law" />
-                      <small>
-                        {key}
-                      </small>
+                      <small>{key}</small>
                     </Label>
                     &nbsp;&nbsp;
                     <small>{assetLicenses[key].name}</small>

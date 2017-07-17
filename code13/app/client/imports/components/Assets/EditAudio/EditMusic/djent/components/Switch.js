@@ -28,9 +28,7 @@ class Switch extends Component {
           checked={this.props.isActive ? 'checked' : ''}
           onChange={this.props.onChange}
         />
-        <label>
-          {label}
-        </label>
+        <label>{label}</label>
       </div>
     )
   }

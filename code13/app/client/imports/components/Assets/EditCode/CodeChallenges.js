@@ -242,10 +242,7 @@ export default class CodeChallenges extends React.Component {
           <Divider as={Header} {..._smallTopMarginSty} color="grey" size="tiny" horizontal>
             <span>
               Test Results&ensp;
-              {latestTestTimeStr &&
-                <small style={{ color: '#bbb' }}>
-                  @{latestTestTimeStr}
-                </small>}
+              {latestTestTimeStr && <small style={{ color: '#bbb' }}>@{latestTestTimeStr}</small>}
             </span>
           </Divider>}
         <List verticalAlign="middle">

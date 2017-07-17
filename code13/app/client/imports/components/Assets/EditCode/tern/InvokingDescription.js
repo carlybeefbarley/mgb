@@ -18,9 +18,7 @@ const ExpressionDescription = ({ typeDescription }) => {
   return (
     <div className="ui yellow segment" style={{ backgroundColor: 'rgba(255,255,0,0.03)' }}>
       <a className="ui yellow left ribbon label">
-        <code>
-          {name}
-        </code>
+        <code>{name}</code>
       </a>
       <a className="ui yellow right corner label">
         <i className="help icon" />
@@ -30,16 +28,11 @@ const ExpressionDescription = ({ typeDescription }) => {
           Invoking <code>{name}</code>
         </span>
       </div>
-      {docToDisplay &&
-        <p style={{ whiteSpace: 'pre-line' }}>
-          {docToDisplay}
-        </p>}
+      {docToDisplay && <p style={{ whiteSpace: 'pre-line' }}>{docToDisplay}</p>}
       {url &&
         <p>
           <a target="_blank" href={url}>
-            <small>
-              {url}
-            </small>
+            <small>{url}</small>
           </a>
         </p>}
     </div>

@@ -312,11 +312,7 @@ class SoundController extends Component {
 
     return (
       <div>
-        {this.state.error
-          ? <p className="txt-error">
-              {this.state.error}
-            </p>
-          : null}
+        {this.state.error ? <p className="txt-error">{this.state.error}</p> : null}
         <div className="row">
           <button
             id="mgbjr-editMusic-generateMetal-generate-button"

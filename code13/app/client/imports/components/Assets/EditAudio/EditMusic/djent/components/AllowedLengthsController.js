@@ -36,11 +36,7 @@ class AllowedLengthsController extends Component {
       </div>,
     )
 
-    return (
-      <div className="row">
-        {lengths}
-      </div>
-    )
+    return <div className="row">{lengths}</div>
   }
 }
 

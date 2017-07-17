@@ -55,12 +55,8 @@ class MageNpcDialogText extends React.Component {
 
     return (
       <Header as="h4">
-        <span>
-          {message.slice(0, this.state.shownChars)}
-        </span>
-        <span style={{ opacity: 0.1 }}>
-          {message.slice(this.state.shownChars)}
-        </span>
+        <span>{message.slice(0, this.state.shownChars)}</span>
+        <span style={{ opacity: 0.1 }}>{message.slice(this.state.shownChars)}</span>
       </Header>
     )
   }
@@ -76,9 +72,7 @@ const MageNpcDialog = ({ leftActor, message, choices, responseCallbackFn, graphi
         (choice, idx) =>
           choice &&
           <div key={idx}>
-            <Label onClick={() => responseCallbackFn(idx + 1)}>
-              {choice}
-            </Label>
+            <Label onClick={() => responseCallbackFn(idx + 1)}>{choice}</Label>
           </div>,
       )}
     </Segment>

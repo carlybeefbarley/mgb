@@ -38,9 +38,7 @@ const RefsAndDefDescription = React.createClass({
             </span>{' '}
             <code>
               {exprName}
-              <span style={colorGrey}>
-                {isFn}
-              </span>
+              <span style={colorGrey}>{isFn}</span>
             </code>
           </div>}
         {otherRefs === 1
@@ -62,17 +60,13 @@ const RefsAndDefDescription = React.createClass({
             The variable{' '}
             <code>
               {exprName}
-              <span style={colorGrey}>
-                {isFn}
-              </span>
+              <span style={colorGrey}>{isFn}</span>
             </code>{' '}
             is defined on line {def.start.line + 1}.<br />
             {def.definitionText &&
               <span style={{ color: 'blue' }}>
                 <code>
-                  <small>
-                    {def.definitionText}
-                  </small>
+                  <small>{def.definitionText}</small>
                 </code>
                 <br />
               </span>}
@@ -83,9 +77,7 @@ const RefsAndDefDescription = React.createClass({
         {origin &&
           origin != '[doc]' &&
           <p>
-            <small>
-              Part of '{origin}'
-            </small>
+            <small>Part of '{origin}'</small>
           </p>}
       </div>
     )

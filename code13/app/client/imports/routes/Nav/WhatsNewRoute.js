@@ -122,9 +122,7 @@ const WhatsNewRoute = React.createClass({
       <Grid columns={2} padded relaxed divided className="equal height">
         <Grid.Column>
           <Header as="h4" content="MGB updates" />
-          <div style={{ maxHeight: '800px', overflowY: 'scroll' }}>
-            {this.renderNewsMgbVersionsColumn()}
-          </div>
+          <div style={{ maxHeight: '800px', overflowY: 'scroll' }}>{this.renderNewsMgbVersionsColumn()}</div>
         </Grid.Column>
         <Grid.Column>
           <Header as="h4">
@@ -159,9 +157,7 @@ const WhatsNewRoute = React.createClass({
                     <ReleaseId releaseId={r.id} />
                   </small>
                 </Item.Header>
-                <Item.Meta>
-                  {ago}
-                </Item.Meta>
+                <Item.Meta>{ago}</Item.Meta>
                 <Item.Description>
                   <List>
                     {r.changes.map((c, idx) =>
@@ -191,14 +187,10 @@ const WhatsNewRoute = React.createClass({
               {_getIconForChangeType(c.type, 'large')}&emsp;
               <Item.Content>
                 <Item.Header>
-                  <small>
-                    {c.changeName}
-                  </small>
+                  <small>{c.changeName}</small>
                 </Item.Header>
                 <Item.Meta>
-                  <p>
-                    {c.changeSummary}
-                  </p>
+                  <p>{c.changeSummary}</p>
                   {c.otherUrls && c.otherUrls.length && c.otherUrls.length > 0
                     ? <ul>
                         {c.otherUrls.map((u, idx) =>

@@ -25,14 +25,10 @@ const AssetHistoryDetail = ({ asset, assetActivity, currUser }) => {
 
     return (
       <div key={a._id}>
-        <QLink to={`/u/${a.byUserName}`}>
-          {a.byUserName}
-        </QLink>
+        <QLink to={`/u/${a.byUserName}`}>{a.byUserName}</QLink>
         {' : '}
         {a.description}
-        <small style={{ color: '#c8c8c8' }}>
-          &ensp;{ago}
-        </small>
+        <small style={{ color: '#c8c8c8' }}>&ensp;{ago}</small>
       </div>
     )
   })
@@ -43,27 +39,17 @@ const AssetHistoryDetail = ({ asset, assetActivity, currUser }) => {
   const TriggerElement = (
     <Label size="small" basic>
       <Icon name="lightning" color={highlightClass} />
-      <span style={{ color: highlightClass }}>
-        {changesCount}
-      </span>
+      <span style={{ color: highlightClass }}>{changesCount}</span>
     </Label>
   )
 
   return (
     <Popup wide="very" hoverable position="bottom right" trigger={TriggerElement} size="tiny">
-      <Popup.Header>
-        {changesCount} changes
-      </Popup.Header>
+      <Popup.Header>{changesCount} changes</Popup.Header>
       <Popup.Content>
-        <div>
-          Asset created: {moment(asset.createdAt).fromNow()}
-        </div>
-        <div>
-          Last update: {moment(asset.updatedAt).fromNow()}
-        </div>
-        <div style={{ maxHeight: '400px', overflow: 'scroll' }}>
-          {changes}
-        </div>
+        <div>Asset created: {moment(asset.createdAt).fromNow()}</div>
+        <div>Last update: {moment(asset.updatedAt).fromNow()}</div>
+        <div style={{ maxHeight: '400px', overflow: 'scroll' }}>{changes}</div>
       </Popup.Content>
     </Popup>
   )

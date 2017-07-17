@@ -10,11 +10,7 @@ const _menuOpenLeftSty = { left: 'auto', right: '0' } // Magic from levithomason
 const AssetListSortBy = ({ chosenSortBy, handleChangeSortByClick }) =>
   <Dropdown
     inline
-    trigger={
-      <span>
-        {chosenSortBy}
-      </span>
-    }
+    trigger={<span>{chosenSortBy}</span>}
     id="mgbjr-asset-search-orderChooser"
     style={{ float: 'right', color: 'grey' }}
     title="Sort Assets By.."
@@ -25,11 +21,7 @@ const AssetListSortBy = ({ chosenSortBy, handleChangeSortByClick }) =>
           active={k === chosenSortBy}
           value={k}
           key={k}
-          content={
-            <span>
-              {k}
-            </span>
-          }
+          content={<span>{k}</span>}
           onClick={() => handleChangeSortByClick(k)}
         />,
       )}

@@ -1491,9 +1491,7 @@ function specialHandlerComment(tokenStr, tokenDescriptionComponent) {
   if (str.startsWith(SpecialGlobals.editCode.mgbMentorPrefix))
     return (
       <div>
-        <p>
-          {str.substring(SpecialGlobals.editCode.mgbMentorPrefix.length).trim()}
-        </p>
+        <p>{str.substring(SpecialGlobals.editCode.mgbMentorPrefix.length).trim()}</p>
       </div>
     )
 
@@ -1583,9 +1581,7 @@ function specialHandlerGlobalVariable(str) {
       <p>
         This is a use of the variable{' '}
         <strong>
-          <code>
-            {str}
-          </code>
+          <code>{str}</code>
         </strong>{' '}
         which appears to be a <strong>GLOBAL</strong> variable
       </p>
@@ -1610,9 +1606,7 @@ function specialHandlerLocalVariable(str) {
       <p>
         This is a use of the variable{' '}
         <strong>
-          <code>
-            {str}
-          </code>
+          <code>{str}</code>
         </strong>{' '}
         which appears to be a <strong>LOCAL</strong> variable
       </p>
@@ -1660,9 +1654,7 @@ function urlLink(urlString) {
   // TODO remove stuff after ?
   return (
     <a href={urlString} target="_blank">
-      <small>
-        {_.last(urlString.split('/'))}
-      </small>
+      <small>{_.last(urlString.split('/'))}</small>
     </a>
   )
 }
@@ -1745,9 +1737,7 @@ const TokenDescription = React.createClass({
         advices.push(
           <p key={advices.length} style={{ margin: 0 }}>
             <i className="ui info circle icon" />
-            <small style={{ fontSize: '85%' }}>
-              {help.advices[i]}
-            </small>
+            <small style={{ fontSize: '85%' }}>{help.advices[i]}</small>
           </p>,
         )
       }
@@ -1756,14 +1746,10 @@ const TokenDescription = React.createClass({
     return (
       <div className="ui purple segment" style={{ backgroundColor: 'rgba(160,32,240,0.03)' }}>
         <a className="ui purple left ribbon label">
-          <small>
-            {tokenTypeToDisplay}
-          </small>
+          <small>{tokenTypeToDisplay}</small>
           {showStringInTitle &&
             <code>
-              <b>
-                &nbsp;&nbsp;{tsTrunc}
-              </b>
+              <b>&nbsp;&nbsp;{tsTrunc}</b>
             </code>}
         </a>
         <a
@@ -1782,48 +1768,32 @@ const TokenDescription = React.createClass({
             ? specialHandler.renderFn(ts, this)
             : <div>
                 {help && warnForHelp(help)}
-                {help &&
-                  help.help &&
-                  <p>
-                    {help.help}
-                  </p>}
+                {help && help.help && <p>{help.help}</p>}
                 {help &&
                   help.syntax &&
                   <pre>
-                    <small>
-                      {help.syntax}
-                    </small>
+                    <small>{help.syntax}</small>
                   </pre>}
 
                 {help &&
                   help.advice &&
                   <p>
                     <i className="ui info circle icon" />
-                    <small>
-                      {help.advice}
-                    </small>
+                    <small>{help.advice}</small>
                   </p>}
                 {help &&
                   help.advice2 &&
                   <p>
                     <i className="ui info circle icon" />
-                    <small>
-                      {help.advice2}
-                    </small>
+                    <small>{help.advice2}</small>
                   </p>}
                 {advices.length > 0 && advices}
                 {help &&
                   help.url &&
                   <p>
                     {urlLink(help.url)}
-                    {help.url2 &&
-                      <span>
-                        , {urlLink(help.url2)}
-                      </span>}
-                    {help.url3 &&
-                      <span>
-                        , {urlLink(help.url3)}
-                      </span>}
+                    {help.url2 && <span>, {urlLink(help.url2)}</span>}
+                    {help.url3 && <span>, {urlLink(help.url3)}</span>}
                   </p>}
               </div>)}
       </div>

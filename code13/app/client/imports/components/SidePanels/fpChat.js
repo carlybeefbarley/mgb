@@ -575,9 +575,7 @@ const fpChat = React.createClass({
                       position="left center"
                       trigger={<Button active icon={presentedChannelIconName} />}
                     >
-                      <Popup.Header>
-                        Public Chat Channel for this {channelObj.scopeGroupName}
-                      </Popup.Header>
+                      <Popup.Header>Public Chat Channel for this {channelObj.scopeGroupName}</Popup.Header>
                       <Popup.Content>
                         <div style={{ minWidth: '300px' }}>
                           {channelObj.scopeGroupName === 'Asset' &&

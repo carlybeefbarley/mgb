@@ -8,11 +8,7 @@ const _assetLimitChoices = [25, 50, 100, 150, 200]
 const AssetListChooseLimit = ({ chosenLimit, handleChangeLimitClick, sty }) =>
   <Dropdown
     inline
-    trigger={
-      <small>
-        {chosenLimit}
-      </small>
-    }
+    trigger={<small>{chosenLimit}</small>}
     id="mgbjr-asset-search-limitChooser"
     style={{ ...{ color: 'grey' }, ...sty }}
     title="Max number of Assets to list.."
@@ -23,11 +19,7 @@ const AssetListChooseLimit = ({ chosenLimit, handleChangeLimitClick, sty }) =>
           active={lim === chosenLimit}
           value={lim}
           key={lim}
-          content={
-            <small>
-              {lim}
-            </small>
-          }
+          content={<small>{lim}</small>}
           onClick={() => {
             handleChangeLimitClick(lim)
           }}

@@ -60,9 +60,7 @@ const ProjectMembershipPopup = props => {
 
   const makeHdrEl = (key, msg) =>
     <div key={key} className="ui left aligned header">
-      <small>
-        {msg}
-      </small>
+      <small>{msg}</small>
     </div>
   const labelSty = { marginBottom: '4px' }
   let choices = []
@@ -131,11 +129,7 @@ const ProjectMembershipPopup = props => {
     else choices.unshift(makeHdrEl('h0', `${asset.dn_ownerName}'s Projects containing this Asset`))
   }
 
-  return (
-    <div style={{ maxHeight: '500px', overflow: 'scroll' }}>
-      {choices}
-    </div>
-  )
+  return <div style={{ maxHeight: '500px', overflow: 'scroll' }}>{choices}</div>
 }
 
 const ProjectMembershipEditorV2 = React.createClass({

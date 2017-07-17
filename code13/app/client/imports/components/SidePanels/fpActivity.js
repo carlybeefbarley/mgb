@@ -25,9 +25,7 @@ const ActivityExtraDetail = ({ act }) => {
     return (
       <Feed.Extra text>
         <Icon name="chat" />
-        <QLink query={{ _fp: `chat.${chan.channelName}` }}>
-          #{chan.name}
-        </QLink>
+        <QLink query={{ _fp: `chat.${chan.channelName}` }}>#{chan.name}</QLink>
       </Feed.Extra>
     )
   }
@@ -40,9 +38,7 @@ const ActivityExtraDetail = ({ act }) => {
     return (
       <Feed.Extra text>
         <Icon name="chat" />
-        <QLink query={{ _fp: `chat.${chName}` }}>
-          #{friendlyName}
-        </QLink>
+        <QLink query={{ _fp: `chat.${chName}` }}>#{friendlyName}</QLink>
       </Feed.Extra>
     )
   }

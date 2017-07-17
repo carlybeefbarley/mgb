@@ -239,9 +239,7 @@ class MoreProperties extends React.Component {
               <Table.HeaderCell />
             </Table.Row>
           </Table.Header>
-          <Table.Body>
-            {props}
-          </Table.Body>
+          <Table.Body>{props}</Table.Body>
         </Table>
         <Button
           onClick={() => {

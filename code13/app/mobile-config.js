@@ -3,18 +3,22 @@ App.info({
   version: '0.0.9',
   name: 'MGB',
 })
+/*
 App.configurePlugin('phonegap-plugin-push', {
-  SENDER_ID: '12341234'
+  SENDER_ID: '418128596047',
 })
+*/
 
 App.accessRule('http://*')
 App.accessRule('https://*')
+
 // fix connection to the server was unsuccessful
 App.setPreference('LoadUrlTimeoutValue', 60000, 'android')
 
 App.setPreference('StatusBarOverlaysWebView', 'false')
 App.setPreference('StatusBarBackgroundColor', '#000000')
 App.setPreference('FullScreen', 'true')
+
 /*
  iphone (60x60)
  iphone_2x (120x120)
@@ -34,7 +38,7 @@ App.setPreference('FullScreen', 'true')
  android_xxxhdpi (192x192)
  */
 App.icons({
-  iphone: 'public/images/favicons/favicon-60.png',
+  // iphone: 'public/images/favicons/favicon-60.png', - deprecated
   iphone_2x: 'public/images/favicons/favicon-120.png',
   iphone_3x: 'public/images/favicons/favicon-180.png',
   ipad: 'public/images/favicons/favicon-76.png',

@@ -153,9 +153,7 @@ class ProjectImportMgb1RouteUI extends React.Component {
         <Segment raised>
           <ExplanationMessage />
           <Segment>
-            <Header sub>
-              MGB1 account status for @{username} in MGBv2
-            </Header>
+            <Header sub>MGB1 account status for @{username} in MGBv2</Header>
             <List>
               <List.Item>
                 Self-claimed MGB1 names:

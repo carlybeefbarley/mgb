@@ -143,17 +143,13 @@ class UserProjectListUI extends React.PureComponent {
         <Segment style={_contentsSegmentStyle} className="mgb-suir-plainSegment">
           {user
             ? <div>
-                <Header as="h2">
-                  Projects owned by {ownerName}
-                </Header>
+                <Header as="h2">Projects owned by {ownerName}</Header>
                 <CreateProjectLinkButton currUser={currUser} />
                 <p />
                 {loading ? <Spinner /> : <ProjectsAsCards projects={projects} ownedFlag user={user} />}
                 <br />
                 <Divider />
-                <Header as="h2">
-                  Projects {ownerName} is a member of
-                </Header>
+                <Header as="h2">Projects {ownerName} is a member of</Header>
                 {loading
                   ? <Spinner />
                   : <ProjectsAsCards projects={projects} ownedFlag={false} user={user} />}

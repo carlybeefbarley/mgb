@@ -51,9 +51,7 @@ const LearnSkillsRoute = ({ currUser }, context) =>
               <Header as="h2" style={headerStyle}>
                 <Icon name={area.icon} />&nbsp;{area.title}
               </Header>
-              <p style={descStyle}>
-                {area.desc}.
-              </p>
+              <p style={descStyle}>{area.desc}.</p>
               {!_linkOverrides[area.tag] &&
                 <Label basic color="orange" content="under construction during Beta" />}
               {currUser && <SkillsMap skills={context.skills} skillPaths={[area.tag]} />}

@@ -230,9 +230,7 @@ const ProjectOverview = React.createClass({
               handleLeave={this.handleMemberLeaveFromProject}
             />
           </Segment>
-          <Segment basic>
-            {this.renderAddPeople()}
-          </Segment>
+          <Segment basic>{this.renderAddPeople()}</Segment>
         </Grid.Column>
       </Grid>
     )

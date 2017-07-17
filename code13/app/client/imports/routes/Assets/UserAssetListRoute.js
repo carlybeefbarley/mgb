@@ -66,7 +66,7 @@ const UserAssetListRoute = React.createClass({
   },
 
   componentDidMount() {
-    this.hotjarSent = false
+    this.hotjarFlag = true
   },
 
   /**
@@ -75,7 +75,7 @@ const UserAssetListRoute = React.createClass({
    *   The result is a data structure that can be used without need for range/validity checking
    * @param q typically this.props.location.query  -  from react-router
   */
-  queryNormalized: function(q = {}) {
+  queryNormalized: function (q = {}) {
     // Start with defaults
     let newQ = _.clone(queryDefaults)
 
@@ -133,8 +133,8 @@ const UserAssetListRoute = React.createClass({
 
   /**  Returns the given query EXCEPT for keys that match a key/value pair in queryDefaults array
   */
-  _stripQueryOfDefaults: function(queryObj) {
-    var strippedQ = _.omitBy(queryObj, function(val, key) {
+  _stripQueryOfDefaults: function (queryObj) {
+    var strippedQ = _.omitBy(queryObj, function (val, key) {
       let retval = queryDefaults.hasOwnProperty(key) && queryDefaults[key] === val
       return retval
     })
@@ -155,7 +155,7 @@ const UserAssetListRoute = React.createClass({
    * Always get the Assets stuff.
    * Optionally get the Project info - if this is a user-scoped view
    */
-  getMeteorData: function() {
+  getMeteorData: function () {
     const userId = this.props.user && this.props.user._id ? this.props.user._id : null
     const qN = this.queryNormalized(this.props.location.query)
     let handleForAssets = Meteor.subscribe(
@@ -271,8 +271,9 @@ const UserAssetListRoute = React.createClass({
     const pageTitle = user ? `${name}'s Assets` : 'Public Assets'
 
     // need to send hotjar when we have assets and only once
-    if (!this.hotjarSent && this.data.assets.length > 0) {
-      this.hotjarSent = true
+    if (this.hotjarFlag && !loading && this.data.assets.length > 0) {
+      // console.log('assetList', this.data.assets.length, loading)
+      this.hotjarFlag = false
       // setTimeout just to be sure that everything is loaded and rendered
       setTimeout(() => Hotjar('trigger', 'user-asset-list', currUser), 200)
     }
@@ -367,56 +368,56 @@ const UserAssetListRoute = React.createClass({
             />
           </div>
           {/* Make it really clear that we are showing Challenge Assets */
-          qN.showChallengeAssets === '1' && (
-            <Segment>
-              Showing Challenge Assets made during <QLink to="/learn/code">tutorials</QLink>&emsp;
+            qN.showChallengeAssets === '1' && (
+              <Segment>
+                Showing Challenge Assets made during <QLink to="/learn/code">tutorials</QLink>&emsp;
               <AssetShowChallengeAssetsSelector
-                showChallengeAssetsFlag={qN.showChallengeAssets}
-                handleChangeFlag={this.handleChangeShowChallengeAssetsFlag}
-              />
-            </Segment>
-          )}
+                  showChallengeAssetsFlag={qN.showChallengeAssets}
+                  handleChangeFlag={this.handleChangeShowChallengeAssetsFlag}
+                />
+              </Segment>
+            )}
           {/* The Asset Cards */}
           <div>
             {!loading &&
-            qN.kinds === '' && (
-              <Message
-                warning
-                icon="help circle"
-                header="Select one or more Asset kinds to be shown here"
-                content="This list is empty because you have not selected any of the available Asset kinds to view"
-              />
-            )}
+              qN.kinds === '' && (
+                <Message
+                  warning
+                  icon="help circle"
+                  header="Select one or more Asset kinds to be shown here"
+                  content="This list is empty because you have not selected any of the available Asset kinds to view"
+                />
+              )}
             {!loading &&
-            qN.kinds !== '' &&
-            assets.length === 0 && (
-              <Message
-                warning
-                icon="help circle"
-                header="No assets match your search"
-                content="Widen your search to see more assets, or create a new Asset using the 'Create New Asset' button above"
-              />
-            )}
+              qN.kinds !== '' &&
+              assets.length === 0 && (
+                <Message
+                  warning
+                  icon="help circle"
+                  header="No assets match your search"
+                  content="Widen your search to see more assets, or create a new Asset using the 'Create New Asset' button above"
+                />
+              )}
             {loading ? (
               <div>
                 <Spinner />
               </div>
             ) : (
-              <AssetList
-                allowDrag
-                assets={assets}
-                renderView={view}
-                currUser={currUser}
-                ownersProjects={projects}
-              />
-            )}
+                <AssetList
+                  allowDrag
+                  assets={assets}
+                  renderView={view}
+                  currUser={currUser}
+                  ownersProjects={projects}
+                />
+              )}
             {!loading &&
-            assets.length >= SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit && (
-              <Segment basic>
-                Reached maximum number of assets that can be listed here ({SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit}).
+              assets.length >= SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit && (
+                <Segment basic>
+                  Reached maximum number of assets that can be listed here ({SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit}).
                 Use the search filter options to display specific assets.
               </Segment>
-            )}
+              )}
           </div>
         </Segment>
       </Segment.Group>

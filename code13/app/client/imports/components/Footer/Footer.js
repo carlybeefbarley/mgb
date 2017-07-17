@@ -2,10 +2,10 @@ import React from 'react'
 import ResponsiveComponent from '/client/imports/ResponsiveComponent'
 import QLink from '/client/imports/routes/QLink'
 
-const Footer = ({ respIsRuleActive, respData }) =>
+const Footer = ({ respIsRuleActive, respData }) => (
   <div className="ui large inverted grey padded vertical segment">
     <div className="ui section" />
-    {respIsRuleActive('showCallsToAction') &&
+    {respIsRuleActive('showCallsToAction') && (
       <div className="ui left aligned container">
         <div className="ui grid">
           <div className="seven wide column">
@@ -59,7 +59,8 @@ const Footer = ({ respIsRuleActive, respData }) =>
         </div>
         <div className="ui hidden divider" />
         <br />
-      </div>}
+      </div>
+    )}
 
     <div className="ui section" />
     <div className="ui left aligned container">
@@ -79,6 +80,7 @@ const Footer = ({ respIsRuleActive, respData }) =>
       </div>
     </div>
   </div>
+)
 
 Footer.responsiveRules = {
   showCallsToAction: {

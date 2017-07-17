@@ -41,9 +41,11 @@ const ProjectForkGenerator = ({ project, isForkPending }) => {
       position="bottom right"
     >
       <Popup.Header>
-        {numChildren
-          ? `Project has been forked ${numChildren} time${numChildren == 1 ? '' : 's'}`
-          : 'This Project has never been forked'}
+        {numChildren ? (
+          `Project has been forked ${numChildren} time${numChildren == 1 ? '' : 's'}`
+        ) : (
+          'This Project has never been forked'
+        )}
       </Popup.Header>
       <Popup.Content>
         <Segment basic>
@@ -51,29 +53,31 @@ const ProjectForkGenerator = ({ project, isForkPending }) => {
           'parent-to-child' chain is tracked.
         </Segment>
 
-        {fpLen === 0
-          ? <div>
-              <b>Originally created Content</b>
-              <div>&emsp;Not forked from another Project within this system</div>
+        {fpLen === 0 ? (
+          <div>
+            <b>Originally created Content</b>
+            <div>&emsp;Not forked from another Project within this system</div>
+          </div>
+        ) : (
+          <div>
+            <b>Forked from Project:</b>
+            <div>
+              {_.reverse(
+                _.map(project.forkParentChain, (fp, idx) => (
+                  <div key={fp.forkDate} style={{ paddingLeft: `${(fpLen - idx) * 4 + 4}px` }}>
+                    {idx === fpLen - 1 ? '' : '...'}
+                    <QLink to={`/u/${fp.parentOwnerName}`}>{fp.parentOwnerName}</QLink>
+                    {' : '}
+                    <QLink to={`/u/${fp.parentOwnerName}/project/${fp.parentId}`}>
+                      <span style={{ color: 'blue' }}>{fp.parentProjectName}</span>
+                    </QLink>
+                    <small style={{ color: '#c8c8c8' }}>&ensp;{moment(fp.forkDate).fromNow()}</small>
+                  </div>
+                )),
+              )}
             </div>
-          : <div>
-              <b>Forked from Project:</b>
-              <div>
-                {_.reverse(
-                  _.map(project.forkParentChain, (fp, idx) =>
-                    <div key={fp.forkDate} style={{ paddingLeft: `${(fpLen - idx) * 4 + 4}px` }}>
-                      {idx === fpLen - 1 ? '' : '...'}
-                      <QLink to={`/u/${fp.parentOwnerName}`}>{fp.parentOwnerName}</QLink>
-                      {' : '}
-                      <QLink to={`/u/${fp.parentOwnerName}/project/${fp.parentId}`}>
-                        <span style={{ color: 'blue' }}>{fp.parentProjectName}</span>
-                      </QLink>
-                      <small style={{ color: '#c8c8c8' }}>&ensp;{moment(fp.forkDate).fromNow()}</small>
-                    </div>,
-                  ),
-                )}
-              </div>
-            </div>}
+          </div>
+        )}
         <div style={{ marginTop: '1em', maxHeight: '200px', overflow: 'scroll' }}>
           <b>
             <Icon name="fork" />

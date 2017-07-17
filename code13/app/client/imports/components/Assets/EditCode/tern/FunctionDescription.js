@@ -20,15 +20,15 @@ const FunctionDescription = React.createClass({
     // TODO: add extra description for the rest/spread arguments ... (three dots)
     return (
       <table className="ui very compact small celled table">
-        {!hdrs
-          ? null
-          : <thead>
-              <tr>
-                {hdrs.map((h, colIdx) => {
-                  return <th key={colIdx}>{h}</th>
-                })}
-              </tr>
-            </thead>}
+        {!hdrs ? null : (
+          <thead>
+            <tr>
+              {hdrs.map((h, colIdx) => {
+                return <th key={colIdx}>{h}</th>
+              })}
+            </tr>
+          </thead>
+        )}
         <tbody>
           {data.map((rowData, rowIdx) => {
             // TODO: We also have 'InlineHelp" -- maybe use this as a bolded version?
@@ -46,14 +46,14 @@ const FunctionDescription = React.createClass({
                   )
                 })}
               </tr>,
-              highlightRow === rowIdx && !!paramHelp
-                ? <tr>
-                    <td className="active" colSpan={3}>
-                      {paramHelp}
-                      <br />
-                    </td>
-                  </tr>
-                : null,
+              highlightRow === rowIdx && !!paramHelp ? (
+                <tr>
+                  <td className="active" colSpan={3}>
+                    {paramHelp}
+                    <br />
+                  </td>
+                </tr>
+              ) : null,
             ]
           })}
         </tbody>
@@ -101,11 +101,13 @@ const FunctionDescription = React.createClass({
           <span style={colorGrey}>
             This <i>function</i> will return data of type:{' '}
           </span>
-          {fh.type.rettype
-            ? <code style={{ whiteSpace: 'pre' }}>{this.beautifyType(fh.type.rettype)}</code>
-            : <span>
-                <code>null</code> <small style={colorGrey}>(the function does not return a value)</small>
-              </span>}
+          {fh.type.rettype ? (
+            <code style={{ whiteSpace: 'pre' }}>{this.beautifyType(fh.type.rettype)}</code>
+          ) : (
+            <span>
+              <code>null</code> <small style={colorGrey}>(the function does not return a value)</small>
+            </span>
+          )}
         </span>
       )
 
@@ -119,14 +121,14 @@ const FunctionDescription = React.createClass({
       )
 
     let knownTernBug =
-      typeof fh.start === 'number'
-        ? <a
-            href="https://github.com/codemirror/CodeMirror/issues/3934"
-            className="ui compact negative message"
-          >
-            MGB ISSUE: Non-patched codemirror/tern giving wrong start data
-          </a>
-        : null
+      typeof fh.start === 'number' ? (
+        <a
+          href="https://github.com/codemirror/CodeMirror/issues/3934"
+          className="ui compact negative message"
+        >
+          MGB ISSUE: Non-patched codemirror/tern giving wrong start data
+        </a>
+      ) : null
 
     return (
       <div className="ui blue segment" style={{ backgroundColor: 'rgba(0,0,255,0.03)' }}>
@@ -137,30 +139,37 @@ const FunctionDescription = React.createClass({
           <code>{fh.name}()</code>
         </div>
         {knownTernBug}
-        {name &&
+        {name && (
           <p>
             <code>{name}()</code>
             <small>
               <br />Part of '{origin}'
             </small>
+          </p>
+        )}
+        {doc &&
+          <p>
+            {doc}
           </p>}
-        {doc && <p>{doc}</p>}
-        {url &&
+        {url &&(
           <p>
             <a href={url}>
               <small>{url}</small>
             </a>
-          </p>}
+          </p>
+        )}
         {retInfoHelpText}
         {inheritanceInfoHelpText}
-        {fh.type.args.length === 0
-          ? <div className="ui content">(function takes no parameters)</div>
-          : this.makeTable(
-              ['Parameter position', 'Parameter name', 'Parameter type'],
-              ['#', 'name', 'type'],
-              fh.type.args,
-              argPos,
-            )}
+        {fh.type.args.length === 0 ? (
+          <div className="ui content">(function takes no parameters)</div>
+        ) : (
+          this.makeTable(
+            ['Parameter position', 'Parameter name', 'Parameter type'],
+            ['#', 'name', 'type'],
+            fh.type.args,
+            argPos,
+          )
+        )}
       </div>
     )
   },

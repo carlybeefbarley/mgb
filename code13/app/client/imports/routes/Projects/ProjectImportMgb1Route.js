@@ -164,7 +164,7 @@ class ProjectImportMgb1RouteUI extends React.Component {
                 <MgbUserNames names={mgb1vnamesArray} validationNamesList={mgb1cnamesArray} />
               </List.Item>
             </List>
-            {isSuperAdmin &&
+            {isSuperAdmin && (
               <Segment raised color="red">
                 <Icon color="red" name="bomb" />
                 <span data-tooltip="Comma-separated names, no spaces">
@@ -179,9 +179,10 @@ class ProjectImportMgb1RouteUI extends React.Component {
                   change={this.handleProfileFieldChanged}
                   isDisabled={false}
                 />
-              </Segment>}
+              </Segment>
+            )}
           </Segment>
-          {_.map(mgb1vnamesArray, mgb1vname =>
+          {_.map(mgb1vnamesArray, mgb1vname => (
             <Segment key={mgb1vname}>
               <Header as="h3">
                 <img className="ui avatar image" style={_6pxSpcSty} src={mgb1.getUserAvatarUrl(mgb1vname)} />
@@ -189,7 +190,7 @@ class ProjectImportMgb1RouteUI extends React.Component {
               </Header>
               {loadingUserProjects && <p>Loading...</p>}
               <List>
-                {_.map(mgb1Projects[mgb1vname], mgb1pName =>
+                {_.map(mgb1Projects[mgb1vname], mgb1pName => (
                   <List.Item key={mgb1pName}>
                     <List.Content>
                       <Button
@@ -214,7 +215,7 @@ class ProjectImportMgb1RouteUI extends React.Component {
                         user={user}
                         userProjects={userProjects}
                       />
-                      {confirmPendingForProjectName === `${mgb1vname}@@${mgb1pName}` &&
+                      {confirmPendingForProjectName === `${mgb1vname}@@${mgb1pName}` && (
                         <div style={{ padding: '8px' }}>
                           <span>Asset Prefix: </span>
                           <Input
@@ -245,13 +246,14 @@ class ProjectImportMgb1RouteUI extends React.Component {
                                 this.state.assetPrefix,
                               )}
                           />
-                        </div>}
+                        </div>
+                      )}
                     </List.Content>
-                  </List.Item>,
-                )}
+                  </List.Item>
+                ))}
               </List>
-            </Segment>,
-          )}
+            </Segment>
+          ))}
         </Segment>
       </Segment>
     )
@@ -263,29 +265,31 @@ class ProjectImportMgb1RouteUI extends React.Component {
 // They are factored out here in order to keep the main code above a bit cleaner
 //
 
-const MgbUserNames = ({ names, validationNamesList }) =>
+const MgbUserNames = ({ names, validationNamesList }) => (
   <div>
-    {names
-      ? _.map(names, uname =>
-          <div key={uname}>
-            {validationNamesList &&
-              <Icon
-                style={_6pxSpcSty}
-                name={_.includes(validationNamesList, uname) ? 'check' : 'question'}
-              />}
-            <img className="ui avatar image" style={_6pxSpcSty} src={mgb1.getUserAvatarUrl(uname)} />
-            {uname}
-          </div>,
-        )
-      : <small>(none)</small>}
+    {names ? (
+      _.map(names, uname => (
+        <div key={uname}>
+          {validationNamesList && (
+            <Icon style={_6pxSpcSty} name={_.includes(validationNamesList, uname) ? 'check' : 'question'} />
+          )}
+          <img className="ui avatar image" style={_6pxSpcSty} src={mgb1.getUserAvatarUrl(uname)} />
+          {uname}
+        </div>
+      ))
+    ) : (
+      <small>(none)</small>
+    )}
   </div>
+)
 
-const ChatPanelRef = () =>
+const ChatPanelRef = () => (
   <QLink query={{ _fp: 'chat' }}>
     <Icon name="chat" />chat panel
   </QLink>
+)
 
-const ExplanationMessage = () =>
+const ExplanationMessage = () => (
   <Message info icon>
     <Icon name="space shuttle" />
     <Message.Content>
@@ -310,6 +314,7 @@ const ExplanationMessage = () =>
       </ol>
     </Message.Content>
   </Message>
+)
 
 const RelatedMgb2projects = ({ user, userProjects, mgb1Username, mgb1Projectname }) => {
   if (!user || !userProjects || userProjects.length === 0) return null
@@ -322,7 +327,7 @@ const RelatedMgb2projects = ({ user, userProjects, mgb1Username, mgb1Projectname
 
   return (
     <div>
-      {_.map(relatedProjects, p =>
+      {_.map(relatedProjects, p => (
         <Segment key={p._id} attached>
           Imported as <QLink to={`/u/${p.ownerName}/projects/${p.name}`}>{p.name}</QLink>.&emsp; Progress:{' '}
           <small>{p.mgb1.importProgress}</small>.&emsp;
@@ -333,8 +338,8 @@ const RelatedMgb2projects = ({ user, userProjects, mgb1Username, mgb1Projectname
             classNames="small right floated"
             label="Create gameConfig Asset"
           />
-        </Segment>,
-      )}
+        </Segment>
+      ))}
     </div>
   )
 }

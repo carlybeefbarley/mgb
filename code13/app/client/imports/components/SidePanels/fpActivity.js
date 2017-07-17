@@ -76,12 +76,12 @@ const ActivityExtraDetail = ({ act }) => {
 const _doDeleteActivity = activityId => deleteActivityRecord(activityId)
 
 const DeleteActivity = ({ act, currUser, isSuperAdmin }) =>
-  currUser && (isSameUserId(act.byUserId, currUser._id) || isSuperAdmin)
-    ? <span className="mgb-show-on-parent-hover" onClick={() => _doDeleteActivity(act._id)}>
-        &nbsp;
-        <Icon color="red" circular link name="delete" />
-      </span>
-    : null
+  currUser && (isSameUserId(act.byUserId, currUser._id) || isSuperAdmin) ? (
+    <span className="mgb-show-on-parent-hover" onClick={() => _doDeleteActivity(act._id)}>
+      &nbsp;
+      <Icon color="red" circular link name="delete" />
+    </span>
+  ) : null
 
 const RenderOneActivity = ({ act, currUser, isSuperAdmin }) => {
   const { byUserName, timestamp } = act
@@ -110,13 +110,14 @@ const RenderOneActivity = ({ act, currUser, isSuperAdmin }) => {
   )
 }
 
-const fpActivity = ({ activity, currUser, isSuperAdmin }) =>
+const fpActivity = ({ activity, currUser, isSuperAdmin }) => (
   <Feed size="small">
     {_.map(
       _.slice(activity, 0, SpecialGlobals.activity.activityHistoryLimit), // beyond the activityHistoryLimit it gets polluted with ones loaded for userProfile stuff and that looks like no-one used it for ages.. hence slice.
       act => <RenderOneActivity act={act} key={act._id} currUser={currUser} isSuperAdmin={isSuperAdmin} />,
     )}
   </Feed>
+)
 
 fpActivity.propTypes = _propTypes
 export default fpActivity

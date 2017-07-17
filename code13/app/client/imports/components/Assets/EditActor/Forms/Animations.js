@@ -204,7 +204,7 @@ export default class Animations extends React.Component {
                     >
                       Apply to All
                     </Button>
-                    {this.state.lastEffectChange &&
+                    {this.state.lastEffectChange && (
                       <span
                         style={{
                           position: 'absolute',
@@ -215,7 +215,8 @@ export default class Animations extends React.Component {
                         }}
                       >
                         Effect: {this.state.lastEffectChange}
-                      </span>}
+                      </span>
+                    )}
                   </Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
@@ -300,7 +301,7 @@ export default class Animations extends React.Component {
 
     return (
       <div style={{ position: 'relative' }}>
-        {this.state.isLoading &&
+        {this.state.isLoading && (
           <Dimmer active inverted>
             <Loader
               style={{ position: 'fixed', right: '345px', top: '50%', translate: 'transform(-50%, -50%)' }}
@@ -310,8 +311,9 @@ export default class Animations extends React.Component {
             >
               Loading frames...
             </Loader>
-          </Dimmer>}
-        {this.state.showModal &&
+          </Dimmer>
+        )}
+        {this.state.showModal && (
           <Modal
             defaultOpen
             size="small"
@@ -353,7 +355,8 @@ export default class Animations extends React.Component {
                 Import Selected Frames
               </Button>
             </Modal.Actions>
-          </Modal>}
+          </Modal>
+        )}
         {rows.map(anim => {
           return anim
         })}

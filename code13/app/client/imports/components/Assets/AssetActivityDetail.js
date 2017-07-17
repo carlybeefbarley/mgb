@@ -24,9 +24,11 @@ const AssetActivityDetail = ({ activitySnapshots, currUser }) => {
 
     return (
       <p key={a._id}>
-        {isPseudoUser
-          ? <small>{a.byUserName}</small>
-          : <QLink to={`/u/${a.byUserName}`}>{a.byUserName}</QLink>}
+        {isPseudoUser ? (
+          <small>{a.byUserName}</small>
+        ) : (
+          <QLink to={`/u/${a.byUserName}`}>{a.byUserName}</QLink>
+        )}
         {detail2}
         <small style={{ color: '#c8c8c8' }}>&ensp;{ago}</small>
       </p>

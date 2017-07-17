@@ -51,7 +51,6 @@ import TileSet from '../Common/Map/Tools/TileSet.js'
 import ObjectList from '../Common/Map/Tools/ObjectList.js'
 
 import LayerTool from './Tools/Layers.js'
-import Properties from './Tools/Properties.js'
 import MapProperties from './Tools/MapProperties.js'
 
 import Cache from '../Common/Map/Helpers/TileCache.js'

@@ -9,11 +9,11 @@ const Empty = <Menu.Item content="(none)" />
 
 const ChatIcon = ({ hazUnreadChats, projId }) => {
   const channelName = makeChannelName({ scopeGroupName: 'Project', scopeId: projId })
-  return !_.includes(hazUnreadChats, channelName)
-    ? null
-    : <QLink style={{ float: 'right' }} query={{ _fp: `chat.${channelName}` }}>
-        <Icon name="chat" />
-      </QLink>
+  return !_.includes(hazUnreadChats, channelName) ? null : (
+    <QLink style={{ float: 'right' }} query={{ _fp: `chat.${channelName}` }}>
+      <Icon name="chat" />
+    </QLink>
+  )
 }
 
 const ProjectMenu = ({ projects, ownedFlag, currUserId, hazUnreadChats }) => {
@@ -23,16 +23,17 @@ const ProjectMenu = ({ projects, ownedFlag, currUserId, hazUnreadChats }) => {
   const retval =
     wantedProjects.length === 0
       ? Empty
-      : wantedProjects.map(p =>
+      : wantedProjects.map(p => (
           <Menu.Item key={p._id}>
             <WorkState workState={p.workState} canEdit={false} />
-            {!ownedFlag &&
+            {!ownedFlag && (
               <span>
                 <QLink to={`/u/${p.ownerName}`} altTo={`/u/${p.ownerName}/projects`}>
                   {p.ownerName}
                 </QLink>
                 {' : '}
-              </span>}
+              </span>
+            )}
             &ensp;
             <QLink
               to={`/u/${p.ownerName}/projects/${p.name}`}
@@ -43,8 +44,8 @@ const ProjectMenu = ({ projects, ownedFlag, currUserId, hazUnreadChats }) => {
               {p.name}
             </QLink>
             <ChatIcon hazUnreadChats={hazUnreadChats} projId={p._id} />
-          </Menu.Item>,
-        )
+          </Menu.Item>
+        ))
   return <Menu.Menu>{retval}</Menu.Menu>
 }
 

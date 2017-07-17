@@ -180,11 +180,13 @@ class BrowseGamesRoute extends LoadMore {
         <Helmet title="Browse Games" meta={[{ name: 'Browse stable games', content: 'List of Games' }]} />
 
         <div className="ui large header" style={{ float: 'left' }}>
-          {user
-            ? <span>
-                <a>{name}</a>'s Games
-              </span>
-            : 'Public Games'}
+          {user ? (
+            <span>
+              <a>{name}</a>'s Games
+            </span>
+          ) : (
+            'Public Games'
+          )}
         </div>
 
         <AssetListSortBy
@@ -221,7 +223,7 @@ class BrowseGamesRoute extends LoadMore {
             </div>
             */}
 
-        {user &&
+        {user && (
           <div style={{ clear: 'both' }}>
             <ProjectSelector
               canEdit={ownsProfile}
@@ -232,17 +234,19 @@ class BrowseGamesRoute extends LoadMore {
               ProjectListLinkUrl={'/u/' + user.profile.name + '/projects'}
               chosenProjectName={qN.project}
             />
-          </div>}
+          </div>
+        )}
 
         {!loading &&
-          games.length === 0 &&
+        games.length === 0 && (
           <Message
             style={{ marginTop: '8em' }}
             warning
             icon="help circle"
             header="No games match your search"
             content="Widen your search to see more games"
-          />}
+          />
+        )}
         {games.length !== 0 &&
           <GameItems currUser={currUser} wrap games={games.concat(this._loadMoreState.data)} />}
 

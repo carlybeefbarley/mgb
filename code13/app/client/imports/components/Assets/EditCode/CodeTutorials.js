@@ -112,7 +112,7 @@ export default class CodeTutorials extends React.Component {
         className={'content ' + (this.props.active ? 'active' : '')}
         style={this.props.style}
       >
-        {this.skillNode.$meta.isTask &&
+        {this.skillNode.$meta.isTask && (
           <Button
             compact
             size="small"
@@ -120,8 +120,9 @@ export default class CodeTutorials extends React.Component {
             disabled={!this.props.isOwner}
             onClick={this.submitTask}
             content="Submit task"
-          />}
-        {!this.isPhaserTutorial &&
+          />
+        )}
+        {!this.isPhaserTutorial && (
           <Button
             compact
             size="small"
@@ -130,8 +131,9 @@ export default class CodeTutorials extends React.Component {
             icon="backward"
             content="Back"
             disabled={this.state.step === 0 || isCompleted}
-          />}
-        {!this.skillNode.$meta.isTask &&
+          />
+        )}
+        {!this.skillNode.$meta.isTask && (
           <Button
             compact
             size="small"
@@ -140,7 +142,8 @@ export default class CodeTutorials extends React.Component {
             icon={isLastStep ? 'check' : 'forward'}
             content={isLastStep ? 'Finish' : 'Next'}
             disabled={isCompleted}
-          />}
+          />
+        )}
 
         <Button
           compact
@@ -180,7 +183,7 @@ export default class CodeTutorials extends React.Component {
           content={getFriendlyName(this.props.skillPath)}
         />
 
-        {isCompleted &&
+        {isCompleted && (
           <Message size="small" icon style={{ paddingBottom: 0 }}>
             <Icon color="green" name="check circle" />
             <Message.Content>
@@ -196,18 +199,20 @@ export default class CodeTutorials extends React.Component {
                 onClick={this.navigateToSkillsList}
               />
             </Message.Content>
-          </Message>}
+          </Message>
+        )}
 
-        {totalSteps > 0 &&
+        {totalSteps > 0 && (
           <div style={{ color: '#aaa' }}>
             <small>
               Step #{1 + this.state.step} of {totalSteps}
             </small>
-          </div>}
+          </div>
+        )}
 
         <div style={{ marginTop: '0.5em' }} dangerouslySetInnerHTML={{ __html: description }} />
 
-        {isTaskSubmitted &&
+        {isTaskSubmitted && (
           <Modal closeOnDocumentClick closeOnRootNodeClick={false} defaultOpen>
             <Modal.Header>
               <Icon size="big" color="green" name="check circle" />
@@ -219,7 +224,8 @@ export default class CodeTutorials extends React.Component {
             <Modal.Actions>
               <Button positive content="Tutorial List" onClick={this.navigateToSkillsList} />
             </Modal.Actions>
-          </Modal>}
+          </Modal>
+        )}
       </div>
     )
   }

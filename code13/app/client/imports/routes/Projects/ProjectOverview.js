@@ -174,22 +174,24 @@ const ProjectOverview = React.createClass({
                 />
               }
             >
-              {this.state.isForkPending
-                ? <div>Forking... please wait..</div>
-                : <div>
-                    <Header as="h4" content="Name for new Forked project" />
-                    <div className="ui small fluid action input" style={{ minWidth: '300px' }}>
-                      <input
-                        type="text"
-                        id="mgbjr-fork-project-name-input"
-                        placeholder="New Project name"
-                        defaultValue={project.name + ' (fork)'}
-                        ref="forkNameInput"
-                        size="22"
-                      />
-                      <Button icon="fork" ref="forkGoButton" onClick={this.handleForkGo} />
-                    </div>
-                  </div>}
+              {this.state.isForkPending ? (
+                <div>Forking... please wait..</div>
+              ) : (
+                <div>
+                  <Header as="h4" content="Name for new Forked project" />
+                  <div className="ui small fluid action input" style={{ minWidth: '300px' }}>
+                    <input
+                      type="text"
+                      id="mgbjr-fork-project-name-input"
+                      placeholder="New Project name"
+                      defaultValue={project.name + ' (fork)'}
+                      ref="forkNameInput"
+                      size="22"
+                    />
+                    <Button icon="fork" ref="forkGoButton" onClick={this.handleForkGo} />
+                  </div>
+                </div>
+              )}
             </Popup>
           </Segment>
 
@@ -376,14 +378,15 @@ const ProjectOverview = React.createClass({
           />
         </div>
 
-        {isDeletePending &&
+        {isDeletePending && (
           <Message icon size="mini">
             <Icon name="circle notched" loading />
             <Message.Content>
               <Message.Header>Deleting Project</Message.Header>
               Please wait while we make sure it's really deleted...
             </Message.Content>
-          </Message>}
+          </Message>
+        )}
       </Segment>
     )
   },
@@ -407,14 +410,14 @@ const ProjectOverview = React.createClass({
             this.setState({ showAddUserSearch: !active })
           }}
         />
-        {!active
-          ? null
-          : <UserListRoute
-              handleClickUser={this.handleClickUser}
-              initialLimit={20}
-              excludeUserIdsArray={relevantUserIds}
-              renderVertical
-            />}
+        {!active ? null : (
+          <UserListRoute
+            handleClickUser={this.handleClickUser}
+            initialLimit={20}
+            excludeUserIdsArray={relevantUserIds}
+            renderVertical
+          />
+        )}
       </Segment>
     )
   },

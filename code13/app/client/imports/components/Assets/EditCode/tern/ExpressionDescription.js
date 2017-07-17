@@ -66,23 +66,31 @@ const ExpressionDescription = React.createClass({
         </div>
         <span style={colorGrey}>Name:</span> <code>{name || exprName}</code>
         <br />
-        {type !== '?' &&
+        {type !== '?' && (
           <span>
             <span style={colorGrey}>Type:</span>{' '}
             <code style={{ whiteSpace: 'pre-wrap' }}>{typeFriendly}</code>
             <br />
-          </span>}
-        {origin &&
+          </span>
+        )}
+        {origin && (
           <p>
-            <small>Part of '{origin}'</small>
+            <small>
+              Part of '{origin}'
+            </small>
+          </p>
+        )}
+        {docToDisplay &&
+          <p style={{ whiteSpace: 'pre-line' }}>
+            {docToDisplay}
           </p>}
-        {docToDisplay && <p style={{ whiteSpace: 'pre-line' }}>{docToDisplay}</p>}
-        {url &&
+        {url &&(
           <p>
             <a target="_blank" href={url}>
               <small>{url}</small>
             </a>
-          </p>}
+          </p>
+        )}
       </div>
     )
   },

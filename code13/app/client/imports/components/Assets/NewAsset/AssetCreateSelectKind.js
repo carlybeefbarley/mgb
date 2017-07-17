@@ -66,17 +66,19 @@ const AssetCreateSelectKind = React.createClass({
           )
         })}
 
-        {activeAK &&
+        {activeAK && (
           <div style={{ opacity: 0.5 }}>
             <p>
               {activeAK.description}&ensp;
               {showMoreInfo || ExplanationToggler}
             </p>
-            {showMoreInfo &&
+            {showMoreInfo && (
               <p>
                 {activeAK.explanation} &ensp; {ExplanationToggler}
-              </p>}
-          </div>}
+              </p>
+            )}
+          </div>
+        )}
       </div>
     )
   },

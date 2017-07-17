@@ -112,7 +112,7 @@ export default class ArtTutorial extends React.Component {
             {this.state.data.title}
           </Divider>
 
-          {isCompleted &&
+          {isCompleted && (
             <Message size="small" icon style={{ paddingBottom: 0 }}>
               <Icon color="green" name="check circle" />
               <Message.Content>
@@ -127,7 +127,8 @@ export default class ArtTutorial extends React.Component {
                   onClick={this.navigateToSkillsList}
                 />
               </Message.Content>
-            </Message>}
+            </Message>
+          )}
           <Segment style={{ marginBottom: 0 }} basic textAlign="center">
             <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row' }}>
               {_.map(images, (img, i) => {

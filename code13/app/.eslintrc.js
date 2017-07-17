@@ -8,8 +8,8 @@ module.exports = {
     },
     sourceType: 'module',
   },
-  extends: ['eslint:recommended', 'plugin:react/recommended', 'prettier'],
-  plugins: ['prettier', 'react'],
+  extends: ['eslint:recommended', 'plugin:react/recommended', 'prettier', 'prettier/react'],
+  plugins: ['json', 'prettier', 'react'],
   env: {
     browser: true,
     meteor: true,
@@ -30,15 +30,16 @@ module.exports = {
     'no-fallthrough': 'off',
     'no-unused-expressions': 'off',
     'no-unused-vars': 'off',
-    'prettier/prettier': [
-      'error',
-      {
-        semi: false,
-        printWidth: 110,
-        singleQuote: true,
-        trailingComma: 'all',
-      },
-    ],
+    // TODO - enable once we install prettier from a release and not GH
+    // 'prettier/prettier': [
+    //   'error',
+    //   {
+    //     semi: false,
+    //     printWidth: 110,
+    //     singleQuote: true,
+    //     trailingComma: 'all',
+    //   },
+    // ],
     'react/display-name': 'off',
     'react/jsx-boolean-value': 'error',
     'react/no-find-dom-node': 'off',

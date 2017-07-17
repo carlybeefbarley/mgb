@@ -6,15 +6,17 @@ import { getAllBadgesForUser } from '/imports/schemas/badges'
 
 import { Header } from 'semantic-ui-react'
 
-const NoBadgesMsg = ({ ownsProfile }) =>
+const NoBadgesMsg = ({ ownsProfile }) => (
   <span>
     No badges yet.
-    {ownsProfile &&
+    {ownsProfile && (
       <span>
         {' '}
         Earn your first badge by trying the <QLink to="/learn/getStarted">Get Started</QLink> tutorials!
-      </span>}
+      </span>
+    )}
   </span>
+)
 
 const UserProfileBadgeList = ({ ownsProfile, user, className }) => {
   if (!user) return null

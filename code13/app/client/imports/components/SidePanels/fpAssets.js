@@ -246,7 +246,8 @@ class fpAssets extends LoadMore {
       position: 'absolute',
       overflow: 'auto',
       margin: '0',
-      padding: '0 8px 0 8px',
+      // keep padding on all sides to prevent shadow clipping on asset card hover
+      padding: '8px',
       top: '11em',
       bottom: '0.5em',
       left: '0',
@@ -285,22 +286,21 @@ class fpAssets extends LoadMore {
             />
             <div style={{ clear: 'both' }} />
           </div>
-          {effectiveUser && userProjects
-            ? <ProjectSelector
-                key="fpProjectSelector" // don't conflict with asset project selector
-                canEdit={false}
-                user={effectiveUser}
-                isUseCaseCreate={false}
-                handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
-                availableProjects={userProjects}
-                ProjectListLinkUrl={'/u/' + effectiveUser.profile.name + '/projects'}
-                showProjectsUserIsMemberOf
-                chosenProjectObj={project}
-                chosenProjectName={projectName}
-              />
-            : null}
+          {effectiveUser && userProjects ? (
+            <ProjectSelector
+              key="fpProjectSelector" // don't conflict with asset project selector
+              canEdit={false}
+              user={effectiveUser}
+              isUseCaseCreate={false}
+              handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
+              availableProjects={userProjects}
+              ProjectListLinkUrl={'/u/' + effectiveUser.profile.name + '/projects'}
+              showProjectsUserIsMemberOf
+              chosenProjectObj={project}
+              chosenProjectName={projectName}
+            />
+          ) : null}
         </div>
-
         <div style={style} onScroll={this.onScroll}>
           <AssetList
             allowDrag={this.props.allowDrag}

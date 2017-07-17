@@ -57,29 +57,31 @@ const AssetForkGenerator = ({ asset, canFork, isForkPending, doForkAsset }) => {
           />
         </Segment>
 
-        {fpLen === 0
-          ? <div>
-              <b>Originally created Content</b>
-              <div>&emsp;Not forked from another Asset within this system</div>
+        {fpLen === 0 ? (
+          <div>
+            <b>Originally created Content</b>
+            <div>&emsp;Not forked from another Asset within this system</div>
+          </div>
+        ) : (
+          <div>
+            <b>Forked from:</b>
+            <div>
+              {_.reverse(
+                _.map(asset.forkParentChain, (fp, idx) => (
+                  <div key={fp.forkDate} style={{ paddingLeft: `${(fpLen - idx) * 4 + 4}px` }}>
+                    {idx === fpLen - 1 ? '' : '...'}
+                    <QLink to={`/u/${fp.parentOwnerName}`}>{fp.parentOwnerName}</QLink>
+                    {' : '}
+                    <QLink to={`/u/${fp.parentOwnerName}/asset/${fp.parentId}`}>
+                      <span style={{ color: 'blue' }}>{fp.parentAssetName}</span>
+                    </QLink>
+                    <small style={{ color: '#c8c8c8' }}>&ensp;{moment(fp.forkDate).fromNow()}</small>
+                  </div>
+                )),
+              )}
             </div>
-          : <div>
-              <b>Forked from:</b>
-              <div>
-                {_.reverse(
-                  _.map(asset.forkParentChain, (fp, idx) =>
-                    <div key={fp.forkDate} style={{ paddingLeft: `${(fpLen - idx) * 4 + 4}px` }}>
-                      {idx === fpLen - 1 ? '' : '...'}
-                      <QLink to={`/u/${fp.parentOwnerName}`}>{fp.parentOwnerName}</QLink>
-                      {' : '}
-                      <QLink to={`/u/${fp.parentOwnerName}/asset/${fp.parentId}`}>
-                        <span style={{ color: 'blue' }}>{fp.parentAssetName}</span>
-                      </QLink>
-                      <small style={{ color: '#c8c8c8' }}>&ensp;{moment(fp.forkDate).fromNow()}</small>
-                    </div>,
-                  ),
-                )}
-              </div>
-            </div>}
+          </div>
+        )}
         <div style={{ marginTop: '1em', maxHeight: '200px', overflow: 'scroll' }}>
           <b>
             <Icon name="fork" />

@@ -23,7 +23,7 @@ class FlagEntity extends React.Component {
       currUser &&
       !entity.suFlagId &&
       !(entity.suIsBanned === true) &&
-      currUser._id !== entityOwnerId &&
+      currUser._id !== entityOwnerId &&(
       <span className={tableCollection === 'Chats' ? 'mgb-show-on-parent-hover' : null}>
         <Popup
           on="click"
@@ -39,7 +39,9 @@ class FlagEntity extends React.Component {
           }
           wide="very"
         >
-          <Popup.Header>Report this {tableCollection === 'Azzets' ? 'Asset' : 'Chat'}</Popup.Header>
+          <Popup.Header>
+            Report this {tableCollection === 'Azzets' ? 'Asset' : 'Message'} to Moderator
+          </Popup.Header>
           <Popup.Content>
             <Segment basic>
               <Dropdown
@@ -84,7 +86,7 @@ class FlagEntity extends React.Component {
             </Segment>
           </Popup.Content>
         </Popup>
-      </span>
+      </span>)
     )
   }
 }

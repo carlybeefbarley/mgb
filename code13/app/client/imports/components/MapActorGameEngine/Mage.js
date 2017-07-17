@@ -41,12 +41,13 @@ const _overlayStyle = {
 let _haveShownInstructionsOnceSinceStart = false // We show this once per app load.
 
 const _compactMsgSty = { maxWidth: '500px' } // Message icon cancels compact prop, so need a style
-const Preloader = ({ msg }) =>
+const Preloader = ({ msg }) => (
   <Message
     style={_compactMsgSty}
     icon={<Icon name="circle notched" loading />}
     content={`Preloading ${msg}`}
   />
+)
 const MapLoadFailed = ({ err }) => <Message style={_compactMsgSty} icon="warning sign" error content={err} />
 
 // assetName should be in owner:asset format and the owner should be resolved to the owner of that asset
@@ -513,22 +514,24 @@ export default class Mage extends React.Component {
     return (
       <div>
         {this.state.showTouchControls && <TouchController availableWidth={this.props.availableWidth} />}
-        {!this.props.hideButtons &&
+        {!this.props.hideButtons && (
           <div style={{ marginBottom: '5px', marginTop: '5px', zIndex: 1, position: 'relative' }}>
-            {showPlayButton
-              ? <Button
-                  disabled={isPreloading || isPlaying}
-                  color="green"
-                  icon="play"
-                  content="Play"
-                  onClick={() => this.handlePlay()}
-                />
-              : <Button
-                  disabled={isPreloading || !isPlaying}
-                  icon="stop"
-                  content="Stop"
-                  onClick={() => this.handleStop()}
-                />}
+            {showPlayButton ? (
+              <Button
+                disabled={isPreloading || isPlaying}
+                color="green"
+                icon="play"
+                content="Play"
+                onClick={() => this.handlePlay()}
+              />
+            ) : (
+              <Button
+                disabled={isPreloading || !isPlaying}
+                icon="stop"
+                content="Stop"
+                onClick={() => this.handleStop()}
+              />
+            )}
             <Popup
               wide="very"
               trigger={<Button icon="keyboard" content="Controls" />}
@@ -561,18 +564,20 @@ export default class Mage extends React.Component {
                 </Segment>
               </Popup.Content>
             </Popup>
-            {isTouchDevice &&
+            {isTouchDevice && (
               <Button
                 disabled={isPreloading}
                 icon="game"
                 content={`${this.state.showTouchControls ? 'Hide' : 'Show'} Screen Controller`}
                 onClick={() => this.handleTouchControls()}
-              />}
-          </div>}
+              />
+            )}
+          </div>
+        )}
         {isPreloading && <Preloader msg={isPreloadingStr} />}
         {mapLoadError && <MapLoadFailed err={mapLoadError} />}
 
-        {isGameShowing &&
+        {isGameShowing && (
           <div>
             <span
               ref={c => {
@@ -595,9 +600,9 @@ export default class Mage extends React.Component {
               cellsHigh={activeMap.metadata.height}
             />
 
-            {isAnOverlayShowing &&
+            {isAnOverlayShowing && (
               <div style={_overlayStyle}>
-                {!!activeNpcDialog &&
+                {!!activeNpcDialog && (
                   <MageNpcDialog
                     ref={c => {
                       this._npcDialog = c
@@ -610,17 +615,21 @@ export default class Mage extends React.Component {
                     responseCallbackFn={choiceNum => {
                       activeNpcDialog.responseCallbackFn(choiceNum)
                     }}
-                  />}
+                  />
+                )}
 
-                {!!isInventoryShowing &&
+                {!!isInventoryShowing && (
                   <MageInventoryDialog
                     inventory={this._game.inventory}
                     hideMe={this.handleHideInventory}
                     graphics={this.state.loadedGraphics}
                     itemActionFn={(action, item) => this.handleInventoryAction(action, item)}
-                  />}
-              </div>}
-          </div>}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     )
   }

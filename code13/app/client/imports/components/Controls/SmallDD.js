@@ -38,22 +38,24 @@ export default class SmallDD extends React.Component {
       <div
         className="ui fluid selection dropdown"
         onMouseOver={
-          this.state.hasTriggered
-            ? null
-            : e => {
-                //console.log("initialized dropdown!!", $(e.target).closest(".selection.dropdown"))
-                $(e.target).closest('.selection.dropdown').dropdown()
-                this.setState({ hasTriggered: true })
-              }
+          this.state.hasTriggered ? null : (
+            e => {
+              //console.log("initialized dropdown!!", $(e.target).closest(".selection.dropdown"))
+              $(e.target).closest('.selection.dropdown').dropdown()
+              this.setState({ hasTriggered: true })
+            }
+          )
         }
       >
         <input type="hidden" name="country" value="0" />
         <i className="dropdown icon" />
-        {this.props.value != void 0
-          ? <div id="dd-text" className="text">
-              {active && active.text}
-            </div>
-          : <div className="default text">Select...</div>}
+        {this.props.value != void 0 ? (
+          <div id="dd-text" className="text">
+            {active && active.text}
+          </div>
+        ) : (
+          <div className="default text">Select...</div>
+        )}
         <div className="menu" ref="menu">
           {this.state.hasTriggered && items}
         </div>

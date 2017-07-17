@@ -70,23 +70,24 @@ class ResizeImageDialog extends Component {
             </Form.Group>
             <Form.Group inline>
               <label>Image Scaling </label>
-              {_.map(scalingOptions, s =>
+              {_.map(scalingOptions, s => (
                 <Form.Radio
                   key={s}
                   label={s}
                   value={s}
                   checked={scaling === s}
                   onChange={this.handleChangeScaling}
-                />,
-              )}
+                />
+              ))}
             </Form.Group>
             <Form.Button disabled={this.isNotValid()} onClick={this.handleSubmit}>
               Resize
             </Form.Button>
-            {this.isTooLarge() &&
+            {this.isTooLarge() && (
               <small style={{ float: 'right' }}>
                 Max size is {maxWidth}x{maxHeight}
-              </small>}
+              </small>
+            )}
           </Form>
         </Popup.Content>
       </Popup>

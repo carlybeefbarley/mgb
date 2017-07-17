@@ -19,9 +19,11 @@ const AssetShowChallengeAssetsSelector = ({ showChallengeAssetsFlag, handleChang
       position="bottom center"
       header="Show/hide Challenge Assets"
       content={
-        active
-          ? 'Currently only showing Assets created by Skill Challenge Tutorials. Click to show normally-created Assets instead'
-          : 'Currently only showing normally-created Assets. Click to show Assets created by Skill Challenges instead'
+        active ? (
+          'Currently only showing Assets created by Skill Challenge Tutorials. Click to show normally-created Assets instead'
+        ) : (
+          'Currently only showing normally-created Assets. Click to show Assets created by Skill Challenges instead'
+        )
       }
     />
   )

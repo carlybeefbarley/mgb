@@ -6,7 +6,7 @@ import QLink from '/client/imports/routes/QLink'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Activity } from '/imports/schemas'
 
-const UserLovesListUI = ({ user, loveAct }) =>
+const UserLovesListUI = ({ user, loveAct }) => (
   <div>
     <Header
       as="h2"
@@ -17,7 +17,7 @@ const UserLovesListUI = ({ user, loveAct }) =>
         </a>
       }
     />
-    {_.map(loveAct, a =>
+    {_.map(loveAct, a => (
       <div key={a._id}>
         <Icon name="heart" color="red" />
         <span>Loved </span>
@@ -26,10 +26,11 @@ const UserLovesListUI = ({ user, loveAct }) =>
         <QLink to={`/u/${a.toOwnerName}`}>{a.toOwnerName}</QLink>
         &ensp;
         <UX.TimeAgo as="small" style={{ color: '#c8c8c8' }} when={a.timestamp} />
-      </div>,
-    )}
+      </div>
+    ))}
     {(!loveAct || loveAct.length === 0) && <span>Nothing loved recently...</span>}
   </div>
+)
 
 UserLovesListUI.PropTypes = {
   user: PropTypes.object,

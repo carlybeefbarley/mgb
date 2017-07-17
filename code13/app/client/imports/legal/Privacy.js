@@ -25,7 +25,7 @@ Table.Row = props => <tr>{props.children}</tr>
 Table.Body = props => <tbody>{props.children}</tbody>
 Table.Data = props => <td>{props.children}</td>
 
-const LegalTableHeader = () =>
+const LegalTableHeader = () => (
   <Table.Header>
     <Table.Row>
       <Table.HeaderCellL>Official legally binding terms</Table.HeaderCellL>
@@ -34,8 +34,9 @@ const LegalTableHeader = () =>
       </Table.HeaderCellR>
     </Table.Row>
   </Table.Header>
+)
 
-const LegalSection = props =>
+const LegalSection = props => (
   <div>
     <Header as="h3" content={props.banner} style={{ marginTop: '2em' }} />
     {props.extraText && <p>{props.extraText}</p>}
@@ -44,8 +45,9 @@ const LegalSection = props =>
       <Table.Body>{props.children}</Table.Body>
     </Table>
   </div>
+)
 
-const Privacy = () =>
+const Privacy = () => (
   <div>
     <Container>
       <LegalSection banner="Privacy Policy">
@@ -268,5 +270,6 @@ const Privacy = () =>
     </Container>
     <Footer />
   </div>
+)
 
 export default Privacy

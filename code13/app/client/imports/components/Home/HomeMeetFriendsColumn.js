@@ -9,14 +9,14 @@ import { createContainer } from 'meteor/react-meteor-data'
 import { Users } from '/imports/schemas'
 import { userSorters } from '/imports/schemas/users'
 
-const HomeMeetFriendsColumnUI = ({ loading, userList }) =>
+const HomeMeetFriendsColumnUI = ({ loading, userList }) => (
   <Grid.Column className="animated fadeIn">
     <Header as="h2" style={{ marginBottom: '1em' }}>
       Meet creative friends
     </Header>
     <List relaxed="very">
       {loading === false &&
-        userList.map((person, idx) =>
+        userList.map((person, idx) => (
           <List.Item key={idx} as={QLink} to={`/u/${person.username}`}>
             <List.Content floated="left" style={{ minWidth: '90px' }}>
               <UX.UserAvatarNoLink username={person.username} height="60px" />
@@ -28,12 +28,13 @@ const HomeMeetFriendsColumnUI = ({ loading, userList }) =>
                 {person.badges ? person.badges.length : 0} badges
               </p>
             </List.Content>
-          </List.Item>,
-        )}
+          </List.Item>
+        ))}
     </List>
     <br />
     <Button as={QLink} to={`/users`} fluid color="teal" size="large" content="See more creators" />
   </Grid.Column>
+)
 const HomeMeetFriendsColumn = createContainer(() => {
   const usersHandle = Meteor.subscribe('users.frontPageList')
   let findOpts = {

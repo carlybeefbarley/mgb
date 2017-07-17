@@ -27,10 +27,11 @@ class ThumbnailWithInfo extends React.Component {
     return (
       <div style={{ textAlign: 'center' }}>
         <Thumbnail {...this.props} />
-        {this.state.dimensions &&
+        {this.state.dimensions && (
           <span>
             {this.state.dimensions.width}x{this.state.dimensions.height}
-          </span>}
+          </span>
+        )}
       </div>
     )
   }

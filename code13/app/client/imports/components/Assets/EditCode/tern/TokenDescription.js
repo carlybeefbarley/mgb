@@ -1416,14 +1416,14 @@ export { import1 as name1, import2 as name2, …, nameN } from …;`,
 ] // end helpInfo
 
 function warnForHelp(helpItem) {
-  return !(helpItem && helpItem.origin === 'ecma6')
-    ? null
-    : <small>
-        '<code>{helpItem.ts}</code>' introduced in{' '}
-        <a href={xlinks.ecma6} target="_blank">
-          EcmaScript 6
-        </a>
-      </small>
+  return !(helpItem && helpItem.origin === 'ecma6') ? null : (
+    <small>
+      '<code>{helpItem.ts}</code>' introduced in{' '}
+      <a href={xlinks.ecma6} target="_blank">
+        EcmaScript 6
+      </a>
+    </small>
+  )
   /*  <div className="ui small label" style={{color: "red"}}>
       <i className="ui circle warning icon"></i>
       <small>'<code>{helpItem.ts}</code>' is an <a href={xlinks.ecma6} target="_blank">EcmaScript 6</a> feature, but MGB only supports
@@ -1747,10 +1747,11 @@ const TokenDescription = React.createClass({
       <div className="ui purple segment" style={{ backgroundColor: 'rgba(160,32,240,0.03)' }}>
         <a className="ui purple left ribbon label">
           <small>{tokenTypeToDisplay}</small>
-          {showStringInTitle &&
+          {showStringInTitle && (
             <code>
               <b>&nbsp;&nbsp;{tsTrunc}</b>
-            </code>}
+            </code>
+          )}
         </a>
         <a
           className="ui purple right corner label"
@@ -1764,38 +1765,44 @@ const TokenDescription = React.createClass({
         <p />
 
         {showExpanded &&
-          (specialHandler
-            ? specialHandler.renderFn(ts, this)
-            : <div>
-                {help && warnForHelp(help)}
-                {help && help.help && <p>{help.help}</p>}
-                {help &&
-                  help.syntax &&
-                  <pre>
-                    <small>{help.syntax}</small>
-                  </pre>}
+          (specialHandler ? (
+            specialHandler.renderFn(ts, this)
+          ) : (
+            <div>
+              {help && warnForHelp(help)}
+              {help && help.help && <p>{help.help}</p>}
+              {help &&
+              help.syntax && (
+                <pre>
+                  <small>{help.syntax}</small>
+                </pre>
+              )}
 
-                {help &&
-                  help.advice &&
-                  <p>
-                    <i className="ui info circle icon" />
-                    <small>{help.advice}</small>
-                  </p>}
-                {help &&
-                  help.advice2 &&
-                  <p>
-                    <i className="ui info circle icon" />
-                    <small>{help.advice2}</small>
-                  </p>}
-                {advices.length > 0 && advices}
-                {help &&
-                  help.url &&
-                  <p>
-                    {urlLink(help.url)}
-                    {help.url2 && <span>, {urlLink(help.url2)}</span>}
-                    {help.url3 && <span>, {urlLink(help.url3)}</span>}
-                  </p>}
-              </div>)}
+              {help &&
+              help.advice && (
+                <p>
+                  <i className="ui info circle icon" />
+                  <small>{help.advice}</small>
+                </p>
+              )}
+              {help &&
+              help.advice2 && (
+                <p>
+                  <i className="ui info circle icon" />
+                  <small>{help.advice2}</small>
+                </p>
+              )}
+              {advices.length > 0 && advices}
+              {help &&
+              help.url && (
+                <p>
+                  {urlLink(help.url)}
+                  {help.url2 && <span>, {urlLink(help.url2)}</span>}
+                  {help.url3 && <span>, {urlLink(help.url3)}</span>}
+                </p>
+              )}
+            </div>
+          ))}
       </div>
     )
   },

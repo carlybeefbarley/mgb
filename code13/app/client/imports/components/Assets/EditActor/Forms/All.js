@@ -100,11 +100,6 @@ export default class All extends BaseForm {
           max: 10000,
           title: 'This is the highest health the actor can have. The value 0 means there is no limit',
         })}
-
-        {this.dropArea('Sound When Harmed', 'soundWhenHarmed', 'sound', soundOptions)}
-        {this.dropArea('Sound When Healed', 'soundWhenHealed', 'sound', soundOptions)}
-        {this.dropArea('Sound When Killed', 'soundWhenKilled', 'sound', soundOptions)}
-
         {this.dropArea('Graphic', 'defaultGraphicName', 'graphic', null, asset => {
           if (asset) {
             const canvas = document.createElement('canvas')
@@ -123,6 +118,9 @@ export default class All extends BaseForm {
             img.src = Thumbnail.getLink(asset)
           }
         })}
+        {this.dropArea('Sound When Harmed', 'soundWhenHarmed', 'sound', soundOptions)}
+        {this.dropArea('Sound When Healed', 'soundWhenHealed', 'sound', soundOptions)}
+        {this.dropArea('Sound When Killed', 'soundWhenKilled', 'sound', soundOptions)}
       </div>
     )
   }

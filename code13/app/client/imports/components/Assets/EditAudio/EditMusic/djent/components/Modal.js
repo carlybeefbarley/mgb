@@ -8,17 +8,17 @@ class Modal extends Component {
   }
 
   render = () => {
-    const title = this.props.title
-      ? <div className="panel panel--dark">
-          <div className="group-padding-x group-padding-y">{this.props.title}</div>
-        </div>
-      : null
+    const title = this.props.title ? (
+      <div className="panel panel--dark">
+        <div className="group-padding-x group-padding-y">{this.props.title}</div>
+      </div>
+    ) : null
 
-    const closeButton = this.props.isCloseable
-      ? <div className="modal__close-button" onClick={this.closeModal}>
-          &times;
-        </div>
-      : null
+    const closeButton = this.props.isCloseable ? (
+      <div className="modal__close-button" onClick={this.closeModal}>
+        &times;
+      </div>
+    ) : null
 
     return (
       <div

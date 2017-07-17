@@ -1,10 +1,11 @@
 import React, { PropTypes } from 'react'
 import { Popup, Icon } from 'semantic-ui-react'
 
-const DeletedState = ({ isDeleted, canEdit, handleChange, operationPending }) =>
+const DeletedState = ({ isDeleted, canEdit, handleChange, operationPending }) => (
   <Popup
     size="small"
     position="bottom right"
+    mouseEnterDelay={500}
     trigger={
       <Icon
         bordered
@@ -18,11 +19,14 @@ const DeletedState = ({ isDeleted, canEdit, handleChange, operationPending }) =>
     }
     header={isDeleted ? 'Undelete Asset' : 'Delete Asset'}
     content={
-      isDeleted
-        ? "This asset has been deleted, but hasn't yet been purged. Click to Undelete it now"
-        : "Click to delete this asset. It's ok, you will have a few days to undelete it if you need it again."
+      isDeleted ? (
+        "This asset has been deleted, but hasn't yet been purged. Click to Undelete it now"
+      ) : (
+        "Click to delete this asset. It's ok, you will have a few days to undelete it if you need it again."
+      )
     }
   />
+)
 
 DeletedState.propTypes = {
   isDeleted: PropTypes.bool.isRequired, // Current deleted state of the asset

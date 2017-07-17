@@ -104,22 +104,22 @@ export default function(Component, wrapperStyles = {}, componentStyles = {}) {
             style={{ ...styles.component, ...componentStyles }}
           >
             {' '}
-            {!loaded || width <= 0
-              ? null
-              : <Component
-                  {...this.props}
-                  respWidth={width}
-                  respHeight={height}
-                  respActiveRules={activeRules}
-                  respData={respData}
-                  respDebug={
-                    <div>
-                      Width: {width}px activeRules: [ {activeRules && activeRules.join(',')} ] respData: {' '}
-                      {JSON.stringify(respData)}
-                    </div>
-                  }
-                  respIsRuleActive={this.isRuleActive}
-                />}
+            {!loaded || width <= 0 ? null : (
+              <Component
+                {...this.props}
+                respWidth={width}
+                respHeight={height}
+                respActiveRules={activeRules}
+                respData={respData}
+                respDebug={
+                  <div>
+                    Width: {width}px activeRules: [ {activeRules && activeRules.join(',')} ] respData: {' '}
+                    {JSON.stringify(respData)}
+                  </div>
+                }
+                respIsRuleActive={this.isRuleActive}
+              />
+            )}
           </div>
         </div>
       )

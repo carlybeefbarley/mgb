@@ -10,7 +10,7 @@ export default class ActorControls extends React.Component {
     return (
       <div className="ui mini">
         <div className="ui icon buttons mini" style={{ position: 'relative', top: '-10px' }} />
-        {this.props.activeTileset > 0 &&
+        {this.props.activeTileset > 0 && (
           <div
             className="ui icon buttons right floated mini"
             title="Remove Actor"
@@ -19,7 +19,8 @@ export default class ActorControls extends React.Component {
             <button className="ui icon button" onClick={this.removeTileset}>
               <i className="remove icon" />
             </button>
-          </div>}
+          </div>
+        )}
       </div>
     )
   }

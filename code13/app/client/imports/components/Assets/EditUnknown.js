@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 
-const EditUnknown = props =>
+const EditUnknown = props => (
   <div className="ui segment inverted">
     <h3>
       Edit {props.asset.kind} '{props.asset.name}'
@@ -10,6 +10,7 @@ const EditUnknown = props =>
     </p>
     <p>If you are seeing this, there's probably some cool new Asset type being tested by the devs! Oooh!</p>
   </div>
+)
 
 EditUnknown.propTypes = {
   asset: PropTypes.object,

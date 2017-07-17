@@ -16,7 +16,6 @@ export default class UserItem extends React.Component {
     user: PropTypes.object.isRequired,
     handleClickUser: PropTypes.func, // If provided, call this with the userId instead of going to the user Profile Page
     narrowItem: PropTypes.bool, // if true, this is narrow format (e.g flexPanel)
-    renderAttached: PropTypes.bool, // if true, then render attached
   }
 
   static contextTypes = {
@@ -31,7 +30,7 @@ export default class UserItem extends React.Component {
   }
 
   render() {
-    const { user, renderAttached, narrowItem, style } = this.props
+    const { user, narrowItem, style } = this.props
     const { profile, createdAt, suIsBanned, isDeactivated, username } = user
     const { title } = profile
     const channelName = makeChannelName({ scopeGroupName: 'User', scopeId: this.props.user.username })
@@ -42,7 +41,6 @@ export default class UserItem extends React.Component {
       return (
         <Card
           style={{ ...style, ..._cardStyle }}
-          raised={!renderAttached}
           className="mgb-useritem-width-narrow"
           onClick={this.handleClickUser}
         >
@@ -50,29 +48,29 @@ export default class UserItem extends React.Component {
             <UX.UserAvatarNoLink username={username} height="4em" />
           </Card.Content>
           <Card.Content>
-            <Card.Header>
-              <Header size="small" content={username} />
-            </Card.Header>
-            {suIsBanned &&
+            <Header size="small" content={username} />
+            {suIsBanned && (
               <div>
                 <Label size="small" color="red" content="Suspended" />
-              </div>}
-            {isDeactivated &&
+              </div>
+            )}
+            {isDeactivated && (
               <div>
                 <Label size="small" color="purple" content="Deactivated" />
-              </div>}
+              </div>
+            )}
           </Card.Content>
         </Card>
       )
 
     const badgesForUser = getAllBadgesForUser(user)
-    const getBadgeN = idx =>
+    const getBadgeN = idx => (
       <Badge forceSize={32} name={idx < badgesForUser.length ? badgesForUser[idx] : '_blankBadge'} />
+    )
 
     return (
       <Card
         style={{ ...style, ..._cardStyle }}
-        raised={!renderAttached}
         className="mgb-useritem-width-normal"
         onClick={this.handleClickUser}
       >
@@ -80,26 +78,26 @@ export default class UserItem extends React.Component {
           <UX.UserAvatarNoLink username={username} height="6em" />
         </Card.Content>
         <Card.Content>
-          <Card.Header>
-            <Header size="large" content={username} />
-          </Card.Header>
+          <Header size="large" content={username} />
           <Card.Meta>
-            <UX.UserTitleSpan title={title} />
+            <UX.UserTitle title={title} />
           </Card.Meta>
-          {suIsBanned &&
+          <Card.Meta>
+            <UX.UserWhenJoined when={createdAt} />
+            <QLink query={{ _fp: `chat.${channelName}` }} style={{ marginBottom: '6px' }}>
+              <Icon link color="blue" name="chat" style={{ marginLeft: '4px' }} />
+            </QLink>
+          </Card.Meta>
+          {suIsBanned && (
             <div>
               <Label size="small" color="red" content="Suspended Account" />
-            </div>}
-          {isDeactivated &&
+            </div>
+          )}
+          {isDeactivated && (
             <div>
               <Label size="small" color="purple" content="Deactivated Account" />
-            </div>}
-          <p>
-            <UX.UserWhenJoined as="small" when={createdAt} />
-            <QLink query={{ _fp: `chat.${channelName}` }} style={{ marginBottom: '6px' }}>
-              <Icon name="chat" style={{ marginLeft: '4px' }} />
-            </QLink>
-          </p>
+            </div>
+          )}
         </Card.Content>
         <Card.Content extra>
           {getBadgeN(0)} {getBadgeN(1)} {getBadgeN(2)} {getBadgeN(3)}

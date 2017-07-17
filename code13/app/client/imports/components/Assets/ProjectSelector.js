@@ -12,8 +12,9 @@ const _ANY_PROJECT_LABELTXT = 'In any Project'
 const _ANY_PROJECT_MITEMTXT = '(in any project)'
 
 const _makeCompoundProjectName = (ownerName, projectName) => `${ownerName} : ${projectName}`
-const _renderSelectionIcon = isActive =>
+const _renderSelectionIcon = isActive => (
   <Icon name="sitemap" disabled={!isActive} color={isActive ? 'green' : 'grey'} />
+)
 const _makeProjectNameLabelToShow = (activeProjectObject, propProjectName) => {
   if (activeProjectObject)
     return _makeCompoundProjectName(activeProjectObject.ownerName, activeProjectObject.name)
@@ -130,9 +131,11 @@ const ProjectSelector = ({
         <span>
           <QLink
             to={
-              actualProjectObj
-                ? `/u/${actualProjectObj.ownerName}/projects/${actualProjectObj.name}`
-                : `/u/${userName}/projects`
+              actualProjectObj ? (
+                `/u/${actualProjectObj.ownerName}/projects/${actualProjectObj.name}`
+              ) : (
+                `/u/${userName}/projects`
+              )
             }
           >
             <Icon color="grey" name="sitemap" />
@@ -145,12 +148,13 @@ const ProjectSelector = ({
         {ownedProjects}
         {showProjectsUserIsMemberOf && memberOfProjects}
         <Dropdown.Divider />
-        {user &&
+        {user && (
           <Dropdown.Item>
             <QLink className="ui item" to={ProjectListLinkUrl}>
               {canEdit ? 'Manage Projects' : 'View Project List'}
             </QLink>
-          </Dropdown.Item>}
+          </Dropdown.Item>
+        )}
       </Dropdown.Menu>
     </Dropdown>
   )

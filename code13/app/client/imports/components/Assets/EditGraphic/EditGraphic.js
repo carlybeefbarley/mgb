@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Button, Divider, Grid, Icon, Popup, Header } from 'semantic-ui-react'
+import { Button, Divider, Grid, Icon, Modal, Popup, Header } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import sty from './editGraphic.css'
 import { SketchPicker } from 'react-color'
@@ -202,8 +202,7 @@ export default class EditGraphic extends React.Component {
 
   // React Callback: componentDidMount()
   componentDidMount() {
-    this.editCanvas = ReactDOM.findDOMNode(this.refs.editCanvas)
-    this.editCtx = this.editCanvas.getContext('2d')
+    this.editCtx = this.refs.editCanvas.getContext('2d')
     this.editCtxImageData1x1 = this.editCtx.createImageData(1, 1)
 
     this.getPreviewCanvasReferences()
@@ -211,27 +210,27 @@ export default class EditGraphic extends React.Component {
 
     // Initialize Status bar
     this._statusBar = {
-      outer: $(ReactDOM.findDOMNode(this.refs.statusBarDiv)),
-      mouseAtText: $(ReactDOM.findDOMNode(this.refs.statusBarMouseAtText)),
-      colorAtText: $(ReactDOM.findDOMNode(this.refs.statusBarColorAtText)),
-      colorAtIcon: $(ReactDOM.findDOMNode(this.refs.statusBarColorAtIcon)),
+      outer: this.refs.statusBarDiv,
+      mouseAtText: this.refs.statusBarMouseAtText,
+      colorAtText: this.refs.statusBarColorAtText,
+      colorAtIcon: this.refs.statusBarColorAtIcon,
     }
     this.setStatusBarInfo()
 
     this.handleColorChangeComplete('fg', this.getInitialColor().fg, 'defaultColor')
 
     // Touch and Mouse events for Edit Canvas
-    this.editCanvas.addEventListener('touchmove', this.handleTouchMove.bind(this))
-    this.editCanvas.addEventListener('touchstart', this.handleTouchStart.bind(this))
-    this.editCanvas.addEventListener('touchend', this.handleTouchEnd.bind(this))
-    this.editCanvas.addEventListener('touchcancel', this.handleTouchCancel.bind(this))
-    this.editCanvas.addEventListener('wheel', this.handleMouseWheel.bind(this))
-    this.editCanvas.addEventListener('mousemove', this.handleMouseMove.bind(this))
-    this.editCanvas.addEventListener('mousedown', this.handleMouseDown.bind(this))
-    this.editCanvas.addEventListener('mouseup', this.handleMouseUp.bind(this))
-    this.editCanvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this))
-    this.editCanvas.addEventListener('mouseenter', this.handleMouseEnter.bind(this))
-    this.editCanvas.addEventListener('contextmenu', this.handleContextMenu.bind(this))
+    this.refs.editCanvas.addEventListener('touchmove', this.handleTouchMove.bind(this))
+    this.refs.editCanvas.addEventListener('touchstart', this.handleTouchStart.bind(this))
+    this.refs.editCanvas.addEventListener('touchend', this.handleTouchEnd.bind(this))
+    this.refs.editCanvas.addEventListener('touchcancel', this.handleTouchCancel.bind(this))
+    this.refs.editCanvas.addEventListener('wheel', this.handleMouseWheel.bind(this))
+    this.refs.editCanvas.addEventListener('mousemove', this.handleMouseMove.bind(this))
+    this.refs.editCanvas.addEventListener('mousedown', this.handleMouseDown.bind(this))
+    this.refs.editCanvas.addEventListener('mouseup', this.handleMouseUp.bind(this))
+    this.refs.editCanvas.addEventListener('mouseleave', this.handleMouseLeave.bind(this))
+    this.refs.editCanvas.addEventListener('mouseenter', this.handleMouseEnter.bind(this))
+    this.refs.editCanvas.addEventListener('contextmenu', this.handleContextMenu.bind(this))
 
     this.doSnapshotActivity()
 
@@ -245,35 +244,6 @@ export default class EditGraphic extends React.Component {
   componentWillUnmount() {
     window.removeEventListener('paste', this.onpaste)
   }
-
-  // logObjDiff(ob1, ob2, msgContext) {
-  //   const allKeys = _.union(_.keys(ob1), _.keys(ob2))
-  //   _.forEach(allKeys, k => {
-  //     if (!_.isEqual(ob1[k], ob2[k]))
-  //       console.log(
-  //         `  Different: ${msgContext || 'ob'}.${k}`,
-  //         `\n    P1:`, ob1[k] ? ob1[k].toString() : ob1[k],
-  //         `\n    P2:`, ob2[k] ? ob2[k].toString() : ob2[k]
-  //       )
-  //   })
-  // }
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   if (!_.isEqual(this.state, nextState)) {
-  //     console.log("shouldComponentUpdate: YES because STATE change")
-  //     this.logObjDiff(this.state, nextState, 'state')
-  //     return true
-  //   }
-
-  //   if (!_.isEqual(this.props, nextProps)) {
-  //     console.log("shouldComponentUpdate: YES because PROPS change")
-  //     this.logObjDiff(this.props, nextProps, 'props')
-  //     this.logObjDiff(this.props.asset, nextProps.asset, 'props.asset')
-  //     return true
-  //   }
-  //   console.log("shouldComponentUpdate: NO because no PROPS change")
-  //   return false
-  // }
 
   // there are some missing params for old assets being added here
   fixingOldAssets() {
@@ -416,8 +386,8 @@ export default class EditGraphic extends React.Component {
     this.setStatusBarInfo()
   }
 
-  /** Stash references to the preview canvases after initial render and subsequent renders
-   *
+  /**
+   * Stash references to the preview canvases after initial render and subsequent renders
    */
   getPreviewCanvasReferences() {
     let asset = this.props.asset
@@ -429,7 +399,7 @@ export default class EditGraphic extends React.Component {
     this.previewCtxArray = [] // 2d drawing context for the animation frame
     this.previewCtxImageData1x1Array = [] // Used for painting quickly to each preview frame
 
-    this.previewCanvasArray = $('.spriteLayersTable td').find('canvas').get()
+    this.previewCanvasArray = document.querySelectorAll('.spriteLayersTable td canvas')
     for (let i = 0; i < c2.layerParams.length; i++) {
       this.previewCtxArray[i] = this.previewCanvasArray[i].getContext('2d')
       this.previewCtxImageData1x1Array[i] = this.previewCtxArray[i].createImageData(1, 1)
@@ -439,7 +409,7 @@ export default class EditGraphic extends React.Component {
     this.frameCtxArray = []
     this.frameCtxImageData1x1Array = []
 
-    this.frameCanvasArray = $('.spriteLayersTable th').find('canvas').get()
+    this.frameCanvasArray = document.querySelectorAll('.spriteLayersTable th canvas')
     for (let i = 0; i < c2.frameNames.length; i++) {
       this.frameCtxArray[i] = this.frameCanvasArray[i].getContext('2d')
       this.frameCtxImageData1x1Array[i] = this.frameCtxArray[i].createImageData(1, 1)
@@ -511,7 +481,7 @@ export default class EditGraphic extends React.Component {
     this.editCtx.mozImageSmoothingEnabled = false
     this.editCtx.webkitImageSmoothingEnabled = false // Needed for Safari, even though Chrome complains about it
     this.editCtx.msImageSmoothingEnabled = false
-    this.editCtx.clearRect(0, 0, this.editCanvas.width, this.editCanvas.height)
+    this.editCtx.clearRect(0, 0, this.refs.editCanvas.width, this.refs.editCanvas.height)
     this.frameCtxArray[this.state.selectedFrameIdx].clearRect(0, 0, c2.width, c2.height)
 
     // draws all layers on edit canvas and layer canvas
@@ -533,7 +503,7 @@ export default class EditGraphic extends React.Component {
     }
 
     // draw minimap
-    if (this.state.showMiniMap && this.refs.miniMap) this.refs.miniMap.redraw(this.editCanvas, w, h)
+    if (this.state.showMiniMap && this.refs.miniMap) this.refs.miniMap.redraw(this.refs.editCanvas, w, h)
 
     this.drawGrid()
   } // TODO(DGOLDS?): Do we still need the vendor-prefix smoothing flags?
@@ -543,7 +513,7 @@ export default class EditGraphic extends React.Component {
       // mounted
       this.refs.miniMap = comp
       const pc = this.previewCanvasArray[this.state.selectedLayerIdx]
-      this.refs.miniMap.redraw(this.editCanvas, pc.width, pc.height)
+      this.refs.miniMap.redraw(this.refs.editCanvas, pc.width, pc.height)
     } else {
       this.refs.miniMap = null
     }
@@ -854,7 +824,7 @@ export default class EditGraphic extends React.Component {
             shiftKey: touch.shiftKey,
           },
     )
-    this.editCanvas.dispatchEvent(mouseEvent)
+    this.refs.editCanvas.dispatchEvent(mouseEvent)
     touchEvent.preventDefault()
   }
 
@@ -1049,9 +1019,9 @@ export default class EditGraphic extends React.Component {
   setStatusBarWarning(warningText = '') {
     const sb = this._statusBar
 
-    sb.colorAtText.html('')
-    sb.colorAtIcon.css({ color: 'rgba(0,0,0,0)' })
-    sb.mouseAtText.text(warningText)
+    sb.colorAtText.innerHTML = ''
+    sb.colorAtIcon.style.color = 'rgba(0,0,0,0)'
+    sb.mouseAtText.innerText = warningText
   }
 
   setStatusBarInfo(mouseAtText = '', colorAtText = '', colorCSSstring = 'rgba(0,0,0,0)') {
@@ -1067,11 +1037,9 @@ export default class EditGraphic extends React.Component {
         (layerParam.isHidden
           ? '&emsp;<small class="ui small circular red label" data-tooltip="Current layer is hidden">&nbsp;<i class="ui hide icon"/><span>hidden</span>&nbsp;</small>'
           : '')
-    sb.colorAtIcon.css({ color: colorCSSstring })
-    sb.mouseAtText.html(layerMsg)
-    sb.colorAtText.html(
-      mouseAtText && mouseAtText.length > 0 ? `<code>${colorAtText}&emsp;at&emsp;${mouseAtText}</code>` : '',
-    )
+    sb.colorAtIcon.style.color = colorCSSstring
+    sb.mouseAtText.innerHTML = layerMsg
+    sb.colorAtText.innerHTML = mouseAtText ? `<code>${colorAtText}&emsp;at&emsp;${mouseAtText}</code>` : ''
   }
 
   RGBToHex(r, g, b) {
@@ -1128,9 +1096,6 @@ export default class EditGraphic extends React.Component {
     _selectedColors[colortype] = _.cloneDeep(chosenColor)
 
     if (!defaultColor || defaultColor !== 'defaultColor') this.handleColorPreset(chosenColor)
-
-    // So we have to fix up UI stuff. This is a bit of a hack for perf. See statusBarInfo()
-    $('.mgbColorPickerIcon.icon').css({ color: chosenColor.hex })
   }
 
   handleColorPreset(newColor) {
@@ -1524,10 +1489,8 @@ export default class EditGraphic extends React.Component {
     img.src = url // is the data URL because called
   }
 
-  toolOpenImportPopup() {
-    const importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
-    $(importPopup).modal('show')
-  }
+  toolOpenImportPopup = () => this.setState({ showGraphicImportPopup: true })
+  toolCloseImportPopup = () => this.setState({ showGraphicImportPopup: false })
 
   // This is passed to the <GraphicImport> Control so the tiles can be imported
   importTileset = (tileWidth, tileHeight, imgDataArr, thumbCanvas) => {
@@ -1550,9 +1513,7 @@ export default class EditGraphic extends React.Component {
     c2.animations = []
 
     this.handleSave('Import tileset', true, true) // DG - added allowBackwash = true so we get and process the redraw immediately
-    let importPopup = ReactDOM.findDOMNode(this.refs.graphicImportPopup)
-    $(importPopup).modal('hide')
-    this.setState({ editScale: this.getDefaultScale() })
+    this.setState({ editScale: this.getDefaultScale(), showGraphicImportPopup: false })
 
     // hack, but because of whole EditGraphic architecture
     // we need to create tileset, but frame canvases are not yet drawn
@@ -1924,33 +1885,35 @@ export default class EditGraphic extends React.Component {
             {/* First Toolbar row */}
             <Grid.Row style={{ paddingBottom: '0.3em', whiteSpace: 'nowrap' }}>
               <Grid.Column>
-                {isColorPickerPinned
-                  ? <Button
-                      id="mgbjr-EditGraphic-colorPicker"
-                      className="TopToolBarRowIcon"
-                      style={{ backgroundColor: selectedColors['fg'].hex }}
-                      onClick={this.handleToggleColorPicker}
-                      icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex } }}
-                    />
-                  : <Popup
-                      on="hover"
-                      position="bottom left"
-                      hoverable
-                      hideOnScroll
-                      mouseEnterDelay={250}
-                      id="mgbjr-EditGraphic-colorPicker-body"
-                      trigger={
-                        <Button
-                          id="mgbjr-EditGraphic-colorPicker"
-                          className="TopToolBarRowIcon"
-                          style={{ backgroundColor: selectedColors['fg'].hex }}
-                          onClick={this.handleToggleColorPicker}
-                          icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex } }}
-                        />
-                      }
-                      header="Color Picker"
-                      content={colorPickerEl}
-                    />}
+                {isColorPickerPinned ? (
+                  <Button
+                    id="mgbjr-EditGraphic-colorPicker"
+                    className="TopToolBarRowIcon"
+                    style={{ backgroundColor: selectedColors['fg'].hex }}
+                    onClick={this.handleToggleColorPicker}
+                    icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex } }}
+                  />
+                ) : (
+                  <Popup
+                    on="hover"
+                    position="bottom left"
+                    hoverable
+                    hideOnScroll
+                    mouseEnterDelay={250}
+                    id="mgbjr-EditGraphic-colorPicker-body"
+                    trigger={
+                      <Button
+                        id="mgbjr-EditGraphic-colorPicker"
+                        className="TopToolBarRowIcon"
+                        style={{ backgroundColor: selectedColors['fg'].hex }}
+                        onClick={this.handleToggleColorPicker}
+                        icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex } }}
+                      />
+                    }
+                    header="Color Picker"
+                    content={colorPickerEl}
+                  />
+                )}
 
                 <ResizeImagePopup
                   initialWidth={c2.width}
@@ -2095,10 +2058,11 @@ export default class EditGraphic extends React.Component {
             {/* 2nd 'row' is for potentially multiple columns */}
             <Grid.Row style={{ paddingTop: 0, paddingBottom: '0.25em', display: 'flex' }}>
               {/* A. Optional Color Picker & Palette */}
-              {isColorPickerPinned &&
+              {isColorPickerPinned && (
                 <Grid.Column style={{ paddingRight: '1em', paddingTop: '0.5em' }}>
                   {isColorPickerPinned && colorPickerEl}
-                </Grid.Column>}
+                </Grid.Column>
+              )}
 
               {/* B. Main Drawing area and tools */}
               <Grid.Column>
@@ -2106,11 +2070,11 @@ export default class EditGraphic extends React.Component {
                   <Grid.Column width={12}>
                     {/* Paste options - only shown when paste tool is active */}
                     {toolChosen &&
-                      toolChosen.label == 'Paste' &&
+                    toolChosen.label == 'Paste' && (
                       <div className="ui form">
                         <div className="inline fields">
                           <label>Scroll modifier:</label>
-                          {scrollModes.map(mode =>
+                          {scrollModes.map(mode => (
                             <div key={mode} className="field">
                               <div className="ui radio checkbox">
                                 <input
@@ -2121,10 +2085,11 @@ export default class EditGraphic extends React.Component {
                                 />
                                 <label>{mode}</label>
                               </div>
-                            </div>,
-                          )}
+                            </div>
+                          ))}
                         </div>
-                      </div>}
+                      </div>
+                    )}
 
                     {/*** Status Bar ***/}
                     <div
@@ -2222,18 +2187,19 @@ export default class EditGraphic extends React.Component {
                     </Grid.Row>
 
                     {/* Selection size info while selection is active */}
-                    {selectRect &&
+                    {selectRect && (
                       <div>
                         Selected area:&emsp;width = {selectDimensions.width}&emsp;height ={' '}
                         {selectDimensions.height}
-                      </div>}
+                      </div>
+                    )}
                   </Grid.Column>
                 </Grid.Row>
               </Grid.Column>
             </Grid.Row>
           </Grid.Column>
           {/* Art Mentor Column */}
-          {isSkillTutorialGraphic &&
+          {isSkillTutorialGraphic && (
             <ArtTutorial
               style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
               isOwner={currUser && currUser._id === asset.ownerId}
@@ -2244,17 +2210,18 @@ export default class EditGraphic extends React.Component {
               assetId={asset._id}
               frameData={c2.frameData}
               handleSelectFrame={frame => this.handleSelectFrame(frame)}
-            />}
+            />
+          )}
         </Grid.Row>
 
         {/*** GraphicImport ***/}
-        <div className="ui modal" ref="graphicImportPopup">
+        <Modal open={this.state.showGraphicImportPopup} onClose={this.toolCloseImportPopup}>
           <GraphicImport
             importTileset={this.importTileset}
             maxTileWidth={MAX_BITMAP_WIDTH}
             maxTileHeight={MAX_BITMAP_WIDTH}
           />
-        </div>
+        </Modal>
 
         {/*** SpriteLayers ***/}
 
@@ -2278,18 +2245,19 @@ export default class EditGraphic extends React.Component {
 
         {/*** MiniMap ***/}
         {showMiniMap &&
-          this.editCanvas &&
+        this.refs.editCanvas && (
           <MiniMap
             ref={this.handleRefMiniMap}
             width={c2.width}
             height={c2.height}
             toggleMiniMap={this.toggleMiniMap}
             editCanvasMaxHeight={editCanvasMaxHeight}
-            editCanvasHeight={this.editCanvas ? this.editCanvas.height : null}
+            editCanvasHeight={this.refs.editCanvas ? this.refs.editCanvas.height : null}
             editCanvasMaxWidth={screen.width}
-            editCanvasWidth={this.editCanvas ? this.editCanvas.width : null}
+            editCanvasWidth={this.refs.editCanvas ? this.refs.editCanvas.width : null}
             editCanvasScale={editScale}
-          />}
+          />
+        )}
       </Grid>
     )
   }

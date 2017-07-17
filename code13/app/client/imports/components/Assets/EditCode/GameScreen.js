@@ -243,7 +243,7 @@ export default class GameScreen extends React.Component {
         style={wrapStyle}
       >
         {isPopup &&
-          isPlaying &&
+        isPlaying && (
           <div style={_popopButtonsRowStyle}>
             <Button title="Close" icon="close" size="mini" floated="right" onClick={this.handleCloseClick} />
 
@@ -267,7 +267,8 @@ export default class GameScreen extends React.Component {
             >
               <Icon name="move" />
             </button>
-          </div>}
+          </div>
+        )}
         <div style={{ overflow: 'auto', position: 'absolute', width: '100%', height: '100%' }}>
           <iframe
             style={{

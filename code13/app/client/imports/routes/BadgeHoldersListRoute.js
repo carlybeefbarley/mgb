@@ -25,15 +25,15 @@ const BadgeHoldersListUI = ({ params, loading, holders }) => {
         <Header as="h2">{`${badgeInfo[1]} - ${holders.length} badge holders`}</Header>
 
         <Item.Group divided>
-          {_.map(holders, u =>
+          {_.map(holders, u => (
             <Item key={u._id} as={QLink} to={`/u/${u.username}`}>
               <Item.Image as={Badge} name={badgename} />
               <Item.Content>
                 <br />
                 <Item.Header>{u.username}</Item.Header>
               </Item.Content>
-            </Item>,
-          )}
+            </Item>
+          ))}
         </Item.Group>
       </Segment>
       <small>Only showing top 20 users</small>

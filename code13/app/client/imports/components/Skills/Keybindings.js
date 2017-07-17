@@ -8,14 +8,14 @@ const KeyBindings = React.createClass({
   },
 
   makeList: function(cmdContext) {
-    return keysDB.filter(v => v.command.startsWith(cmdContext)).map(v2 =>
+    return keysDB.filter(v => v.command.startsWith(cmdContext)).map(v2 => (
       <a className="item" key={v2.command}>
         <div className="ui horizontal label" style={{ width: '5em' }}>
           {v2.pcKey}
         </div>
         <small>{v2.description}</small>
-      </a>,
-    )
+      </a>
+    ))
   },
 
   render: function() {

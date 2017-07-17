@@ -386,7 +386,7 @@ const FlexPanel = React.createClass({
 
     return (
       <div className="mgbFlexPanel" style={panelStyle} id="mgbjr-flexPanelArea">
-        {flexPanelIsVisible &&
+        {flexPanelIsVisible && (
           <div>
             <div className="flex header" style={flexHeaderStyle}>
               <span className="title">
@@ -402,29 +402,32 @@ const FlexPanel = React.createClass({
 
             <div style={panelScrollContainerStyle}>
               <div style={panelInnerStyle}>
-                {!ElementFP
-                  ? <div className="ui fluid label">TODO: {flexPanelHdr} FlexPanel</div>
-                  : <ElementFP
-                      currUser={this.props.currUser}
-                      currUserProjects={this.props.currUserProjects}
-                      user={this.props.user}
-                      chatChannelTimestamps={this.props.chatChannelTimestamps}
-                      hazUnreadChats={hazUnreadChats}
-                      requestChatChannelTimestampsNow={this.props.requestChatChannelTimestampsNow}
-                      joyrideSteps={this.props.joyrideSteps}
-                      joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
-                      joyrideOriginatingAssetId={this.props.joyrideOriginatingAssetId}
-                      joyrideCurrentStepNum={this.props.joyrideCurrentStepNum}
-                      activity={this.props.activity}
-                      panelWidth={this.props.flexPanelWidth}
-                      isSuperAdmin={this.props.isSuperAdmin}
-                      currentlyEditingAssetInfo={this.props.currentlyEditingAssetInfo}
-                      subNavParam={this.getSubNavParam()}
-                      handleChangeSubNavParam={this.handleChangeSubNavParam}
-                    />}
+                {!ElementFP ? (
+                  <div className="ui fluid label">TODO: {flexPanelHdr} FlexPanel</div>
+                ) : (
+                  <ElementFP
+                    currUser={this.props.currUser}
+                    currUserProjects={this.props.currUserProjects}
+                    user={this.props.user}
+                    chatChannelTimestamps={this.props.chatChannelTimestamps}
+                    hazUnreadChats={hazUnreadChats}
+                    requestChatChannelTimestampsNow={this.props.requestChatChannelTimestampsNow}
+                    joyrideSteps={this.props.joyrideSteps}
+                    joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
+                    joyrideOriginatingAssetId={this.props.joyrideOriginatingAssetId}
+                    joyrideCurrentStepNum={this.props.joyrideCurrentStepNum}
+                    activity={this.props.activity}
+                    panelWidth={this.props.flexPanelWidth}
+                    isSuperAdmin={this.props.isSuperAdmin}
+                    currentlyEditingAssetInfo={this.props.currentlyEditingAssetInfo}
+                    subNavParam={this.getSubNavParam()}
+                    handleChangeSubNavParam={this.handleChangeSubNavParam}
+                  />
+                )}
               </div>
             </div>
-          </div>}
+          </div>
+        )}
         <div id="mgbjr-flexPanelIcons" className={miniNavClassNames} style={miniNavStyle}>
           {flexPanelViews.map(v => {
             const active = this._viewTagMatchesPropSelectedViewTag(v.tag)

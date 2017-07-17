@@ -2,11 +2,15 @@ import _ from 'lodash'
 import request from 'request'
 import os from 'os' // Node OS import for os.hostname()
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
-// Server side webhook
 
-// The following was defined by dgolds who has config rights for the devlapse.slack.com account:
+// Server side webhooks to Slack:
+
+// The following were defined by dgolds who has config rights for the devlapse.slack.com
+// account at https://devlapse.slack.com/services/
 const mgb_slack_eng__webhookUrl_mgb_community =
   'https://hooks.slack.com/services/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'
+const mgb_slack_eng__webhookUrl_mgb_deploys =
+  'https://hooks.slack.com/services/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'
 
 const DISABLE_SLACK_NOTIFICATIONS = false
 
@@ -65,6 +69,7 @@ Meteor.methods({
     const infoUrl = `https://v2.mygamebuilder.com/u/${username}?_fp=chat.${channel}`
     slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
       username: `MGBv2 @${username}`,
+      icon_emoji: ':bangbang:',
       text: `Rejected CENSORED Message attempt by user <${infoUrl}|${username}> on channel <${infoUrl}|#${channel}>`,
       attachments: [
         {
@@ -134,7 +139,7 @@ Meteor.methods({
 Meteor.methods({
   'Slack.Cloudfront.notification': function(message, isBad) {
     if (Meteor.isProduction) {
-      slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+      slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_deploys, {
         username: `MGBv2 Cloudfront bot`,
         icon_emoji: isBad ? ':cyclone:' : ':cloud:',
         text: message,
@@ -161,7 +166,7 @@ Meteor.methods({
   TotalMem=${os.totalmem() / (1024 * 1024 * 1024)}GB
   OS=${os.platform()}-${os.release()}
 ]`
-    slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+    slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_deploys, {
       username: `(MGBv2 DEPLOYMENT ENGINEER)`,
       icon_emoji: ':airplane_departure:',
       text: `MGB PRODUCTION DEPLOYMENT STARTUP ${configDumpMsg}`,
@@ -180,6 +185,7 @@ Meteor.methods({
 
     slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
       username: `MGBv2 @${ownerUsername}`,
+      icon_emoji: ':ok:',
       text: `Flag created by user <${infoUrl}|${reporterUsername}> on ${createdAt.toString()} at ${infoUrl}`,
       //       attachments: [
       //         {

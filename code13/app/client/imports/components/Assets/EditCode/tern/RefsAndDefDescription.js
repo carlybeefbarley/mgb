@@ -31,7 +31,7 @@ const RefsAndDefDescription = React.createClass({
 
     return (
       <div className="ui orange segment" style={{ backgroundColor: 'rgba(255, 165, 0, 0.06)' }}>
-        {exprName &&
+        {exprName && (
           <div className="ui header">
             <span style={colorGrey}>
               References and Definition of <i>Expression</i>
@@ -40,22 +40,25 @@ const RefsAndDefDescription = React.createClass({
               {exprName}
               <span style={colorGrey}>{isFn}</span>
             </code>
-          </div>}
-        {otherRefs === 1
-          ? <p>
-              There is 1 other reference to this variable/property.<br />
-              <span style={colorGrey}>
-                <small>Press CTRL-S to highlight it</small>
-              </span>
-            </p>
-          : <p>
-              There are {otherRefs} other references to this variable/property.<br />
-              <span style={colorGrey}>
-                <small>Press CTRL-S to highlight them</small>
-              </span>
-            </p>}
+          </div>
+        )}
+        {otherRefs === 1 ? (
+          <p>
+            There is 1 other reference to this variable/property.<br />
+            <span style={colorGrey}>
+              <small>Press CTRL-S to highlight it</small>
+            </span>
+          </p>
+        ) : (
+          <p>
+            There are {otherRefs} other references to this variable/property.<br />
+            <span style={colorGrey}>
+              <small>Press CTRL-S to highlight them</small>
+            </span>
+          </p>
+        )}
         {def &&
-          def.start &&
+        def.start && (
           <p>
             The variable{' '}
             <code>
@@ -63,22 +66,25 @@ const RefsAndDefDescription = React.createClass({
               <span style={colorGrey}>{isFn}</span>
             </code>{' '}
             is defined on line {def.start.line + 1}.<br />
-            {def.definitionText &&
+            {def.definitionText && (
               <span style={{ color: 'blue' }}>
                 <code>
                   <small>{def.definitionText}</small>
                 </code>
                 <br />
-              </span>}
+              </span>
+            )}
             <span style={colorGrey}>
               <small>Press CTRL-B to jump there, and you can use Alt-, to jump back again</small>
             </span>
-          </p>}
+          </p>
+        )}
         {origin &&
-          origin != '[doc]' &&
+        origin != '[doc]' && (
           <p>
             <small>Part of '{origin}'</small>
-          </p>}
+          </p>
+        )}
       </div>
     )
   },

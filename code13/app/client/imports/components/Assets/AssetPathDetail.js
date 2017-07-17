@@ -117,12 +117,13 @@ const AssetPathDetail = React.createClass({
             isDisabled={!canEdit}
           />
 
-          {canEdit &&
+          {canEdit && (
             <SaveStatus
               lastUpdated={lastUpdated}
               isUnconfirmedSave={isUnconfirmedSave}
               hasUnsentSaves={hasUnsentSaves}
-            />}
+            />
+          )}
         </Grid.Row>
 
         <Grid.Row>

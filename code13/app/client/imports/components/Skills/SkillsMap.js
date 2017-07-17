@@ -127,16 +127,17 @@ class SkillsMapNode extends React.Component {
             {skillsModel.getFriendlyName(skillPath)}
           </div>
           <div className="cells">
-            {_.times(totalSkills, i =>
-              <div key={i} className={[completedSkills > i ? 'active' : '', 'cell'].join(' ')} />,
-            )}
+            {_.times(totalSkills, i => (
+              <div key={i} className={[completedSkills > i ? 'active' : '', 'cell'].join(' ')} />
+            ))}
           </div>
         </div>
-        {isExpanded &&
+        {isExpanded && (
           <div className="content">
             {this.renderChildLeaves(childLeaves)}
             {!_.isEmpty(childTrees) && childTrees.map(this.renderChildTree)}
-          </div>}
+          </div>
+        )}
       </div>
     )
   }
@@ -169,7 +170,7 @@ export default class SkillsMap extends React.Component {
 
     return (
       <div className="mgb-skillsmap-container">
-        {_.map(skillPaths, skillPath =>
+        {_.map(skillPaths, skillPath => (
           <SkillsMapNode
             key={skillPath}
             userCanManuallyClaimSkill={userCanManuallyClaimSkill}
@@ -178,8 +179,8 @@ export default class SkillsMap extends React.Component {
             skills={skills}
             skillPath={skillPath}
             ownsProfile={ownsProfile}
-          />,
-        )}
+          />
+        ))}
       </div>
     )
   }

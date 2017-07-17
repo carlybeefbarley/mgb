@@ -13,13 +13,14 @@ const _releaseStateSymbols = {
   beta: 'β',
 }
 
-const ReleaseId = ({ releaseId }) =>
+const ReleaseId = ({ releaseId }) => (
   <span title={`${releaseId.state} #${releaseId.iteration}`}>
     <i>
       Release {_releaseStateSymbols[releaseId.state] || releaseId.state}
       {releaseId.iteration}
     </i>
   </span>
+)
 
 const _icons = {
   feature: { color: 'green', name: 'plus' },
@@ -27,8 +28,9 @@ const _icons = {
   bugfix: { color: 'red', name: 'bug' },
   removed: { color: 'red', name: 'remove' },
 }
-const _getIconForChangeType = (ct, size) =>
+const _getIconForChangeType = (ct, size) => (
   <Icon size={size} color={_icons[ct].color} name={_icons[ct].name} />
+)
 
 const WhatsNewRoute = React.createClass({
   propTypes: {
@@ -160,9 +162,9 @@ const WhatsNewRoute = React.createClass({
                 <Item.Meta>{ago}</Item.Meta>
                 <Item.Description>
                   <List>
-                    {r.changes.map((c, idx) =>
-                      <List.Item key={idx} icon={_getIconForChangeType(c.type)} description={c.changeName} />,
-                    )}
+                    {r.changes.map((c, idx) => (
+                      <List.Item key={idx} icon={_getIconForChangeType(c.type)} description={c.changeName} />
+                    ))}
                     <br />
                   </List>
                 </Item.Description>
@@ -191,17 +193,17 @@ const WhatsNewRoute = React.createClass({
                 </Item.Header>
                 <Item.Meta>
                   <p>{c.changeSummary}</p>
-                  {c.otherUrls && c.otherUrls.length && c.otherUrls.length > 0
-                    ? <ul>
-                        {c.otherUrls.map((u, idx) =>
-                          <li key={idx}>
-                            <a href={u.href} key={idx} target="_blank">
-                              {u.txt}
-                            </a>
-                          </li>,
-                        )}
-                      </ul>
-                    : null}
+                  {c.otherUrls && c.otherUrls.length && c.otherUrls.length > 0 ? (
+                    <ul>
+                      {c.otherUrls.map((u, idx) => (
+                        <li key={idx}>
+                          <a href={u.href} key={idx} target="_blank">
+                            {u.txt}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </Item.Meta>
               </Item.Content>
             </Item>

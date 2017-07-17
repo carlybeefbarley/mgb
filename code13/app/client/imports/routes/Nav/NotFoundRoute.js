@@ -4,7 +4,7 @@ import QLink from '../QLink'
 import Footer from '/client/imports/components/Footer/Footer'
 import { Segment, Header, Container, Button, Message, Divider } from 'semantic-ui-react'
 
-const NotFoundRoute = ({ currUser }) =>
+const NotFoundRoute = ({ currUser }) => (
   <div>
     <Segment className="vertical masthead center aligned">
       <Container text>
@@ -17,15 +17,19 @@ const NotFoundRoute = ({ currUser }) =>
           content="How did you even get here!?"
         />
         <Divider clearing />
-        {currUser
-          ? <QLink to={`/u/${currUser.profile.name}/assets`}>
-              <Button size="huge" primary content="Keep Going" icon="right arrow" />
-            </QLink>
-          : <QLink to="/learn/getStarted">
-              <Button size="huge" primary content="Get Started" icon="right arrow" />
-            </QLink>}
+        {currUser ? (
+          <QLink to={`/u/${currUser.profile.name}/assets`}>
+            <Button size="huge" primary content="Keep Going" icon="right arrow" />
+          </QLink>
+        ) : (
+          <QLink to="/learn/getStarted">
+            <Button size="huge" primary content="Get Started" icon="right arrow" />
+          </QLink>
+        )}
       </Container>
     </Segment>
     <Footer />
   </div>
+)
+
 export default NotFoundRoute

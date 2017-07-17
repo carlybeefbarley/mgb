@@ -52,6 +52,10 @@ const UserListRoute = React.createClass({
     }
   },
 
+  handleLoadMore() {
+    this.setState({ userLimit: this.state.userLimit + 20 })
+  },
+
   handleSearchGo: function(newSearchText) {
     // TODO: Changing the Users collection is causing the page to be redrawn. Find a way to avoid that. A cheesy way is to exclude the current user's record, but there may be something smarter to do
     this.setState({ searchName: newSearchText })
@@ -67,42 +71,37 @@ const UserListRoute = React.createClass({
         })
       : this.data.users
 
-    const containerClassName = renderVertical ? '' : 'ui segments'
-    const searchSegmentStyle = renderVertical ? {} : { minWidth: '220px', maxWidth: '220px' } // TODO(@dgolds): Move magic number to special globals or pass down?
+    const containerClasses = !renderVertical ? 'ui basic segment' : ''
+    const searchInputStyle = renderVertical ? {} : { minWidth: '220px', maxWidth: '220px' } // TODO(@dgolds): Move magic number to special globals or pass down?
     const narrowItem = !!renderVertical
-    const segClass = renderVertical ? '' : 'ui basic segment'
-    const killBordersStyle = { borderStyle: 'none', boxShadow: 'none' }
-    const Body = (
-      <div className={containerClassName} style={killBordersStyle}>
-        <div className={segClass} style={searchSegmentStyle} id="mgbjr-user-search-searchStringInput">
-          <InputSearchBox
-            size="small"
-            fluid
-            value={this.state.searchName}
-            onFinalChange={this.handleSearchGo}
-          />
-        </div>
+    return (
+      <div className={containerClasses}>
+        <InputSearchBox
+          id="mgbjr-user-search-searchStringInput"
+          style={searchInputStyle}
+          size="small"
+          fluid
+          value={this.state.searchName}
+          onFinalChange={this.handleSearchGo}
+        />
 
-        <div className={segClass}>
-          {this.data.loading
-            ? <Spinner />
-            : <div>
-                <UserList users={filteredUsers} handleClickUser={handleClickUser} narrowItem={narrowItem} />
-                <Divider hidden />
-                {filteredUsers.length === this.state.userLimit &&
-                  <Button onClick={this.handleLoadMore}>
-                    Showing first {filteredUsers.length} matching users. Click to load more...
-                  </Button>}
-              </div>}
-        </div>
+        <Divider hidden />
+
+        {this.data.loading ? (
+          <Spinner />
+        ) : (
+          <div>
+            <UserList users={filteredUsers} handleClickUser={handleClickUser} narrowItem={narrowItem} />
+            <Divider hidden />
+            {filteredUsers.length === this.state.userLimit && (
+              <Button onClick={this.handleLoadMore}>
+                Showing first {filteredUsers.length} matching users. Click to load more...
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     )
-
-    return Body
-  },
-
-  handleLoadMore() {
-    this.setState({ userLimit: this.state.userLimit + 20 })
   },
 })
 

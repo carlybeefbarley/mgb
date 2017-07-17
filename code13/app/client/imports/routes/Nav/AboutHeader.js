@@ -4,7 +4,7 @@ import QLink from '../QLink'
 
 const UserLink = ({ u }) => <QLink to={`/u/${u}`}>@{u}</QLink>
 
-const AboutHeader = () =>
+const AboutHeader = () => (
   <Segment raised padded>
     <Header>
       MyGameBuilder is now in public BETA
@@ -35,5 +35,6 @@ const AboutHeader = () =>
       </List.Item>
     </List>
   </Segment>
+)
 
 export default AboutHeader

@@ -179,11 +179,12 @@ const NavRecentGET = React.createClass({
     return (
       <div className={'ui fluid ' + inverted + ' vertical menu'} style={menuSty}>
         <div className="item">
-          {isNp &&
+          {isNp && (
             <h3 className={'ui ' + inverted + 'header'} style={{ textAlign: 'center' }}>
               <i className="history icon" />
               History
-            </h3>}
+            </h3>
+          )}
         </div>
         {this.renderMergedActivities()}
       </div>

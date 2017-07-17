@@ -6,19 +6,20 @@ import getStartedStyle from '../GetStarted.css'
 import { Button, Divider, Grid, Header, Icon, Label } from 'semantic-ui-react'
 import SkillLinkCard from '/client/imports/components/Learn/SkillLinkCard'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
-import SkillNodes, { countMaxUserSkills } from '/imports/Skills/SkillNodes/SkillNodes'
+import SkillNodes, { countMaxUserSkills, getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
 import { getSkillNodeStatus, countCurrentUserSkills } from '/imports/schemas/skills'
 import { startSkillPathTutorial } from '/client/imports/routes/App'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-const OfferLoginTutorial = () =>
+const OfferLoginTutorial = () => (
   <QLink to="/signup">
     <Button floated="right">
       <Icon name="sign in" />
       Log In or Sign Up
     </Button>
   </QLink>
+)
 
 const _gsSkillNodeName = 'getStarted'
 const _maxGsSkillCount = countMaxUserSkills(_gsSkillNodeName + '.')
@@ -36,10 +37,11 @@ const gsItems = [
 ]
 
 // This is the   1 / n    box at the top-right of each skill box
-const ProgressLabel = ({ subSkillsComplete, subSkillTotal }) =>
+const ProgressLabel = ({ subSkillsComplete, subSkillTotal }) => (
   <Label attached="top right">
     {subSkillsComplete} / {subSkillTotal}
   </Label>
+)
 
 ProgressLabel.propTypes = {
   subSkillsComplete: PropTypes.number,
@@ -75,6 +77,7 @@ export const StartDefaultNextTutorial = ({ currUser, userSkills }) => {
         "Get Started" completed!
       </Button>
     )
+  const nextTutName = getFriendlyName(nextTutorialSkillPath)
 
   return (
     <Button
@@ -87,7 +90,7 @@ export const StartDefaultNextTutorial = ({ currUser, userSkills }) => {
       }}
     >
       <Icon name="student" />
-      Start next...
+      {nextTutName ? `Next: ${nextTutName}` : 'Start next...'}
     </Button>
   )
 }
@@ -116,13 +119,14 @@ const LearnGetStartedRoute = ({ currUser }, context) => {
          so it is sort-of hard0coded here
          since it has no skill tutorials to revisit, we hide it on completion
          */}
-        {!currUser &&
+        {!currUser && (
           <SkillLinkCard
             to="/signup"
             mascot="flyingcat"
             name="Log In / Sign Up"
             description="You must be logged in to use these tutorials"
-          />}
+          />
+        )}
 
         {gsItems.map(area => {
           const skillStatus = getSkillNodeStatus(currUser, context.skills, area.node.$meta.key)

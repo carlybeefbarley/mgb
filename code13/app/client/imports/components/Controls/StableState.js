@@ -10,10 +10,11 @@ const _makeTitle = (isStable, canEdit) => {
   return 'This asset is Unlocked. The Asset owner may choose to Lock it to prevent any edits'
 }
 
-const StableState = ({ isStable, canEdit, handleChange }) =>
+const StableState = ({ isStable, canEdit, handleChange }) => (
   <Popup
     size="small"
     position="bottom right"
+    mouseEnterDelay={500}
     trigger={
       <Icon
         bordered
@@ -28,6 +29,7 @@ const StableState = ({ isStable, canEdit, handleChange }) =>
     header={isStable ? 'Unlock Asset' : 'Lock Asset'}
     content={_makeTitle(isStable, canEdit)}
   />
+)
 
 StableState.propTypes = {
   isStable: PropTypes.bool.isRequired, // Current isStable state of the asset

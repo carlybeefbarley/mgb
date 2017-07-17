@@ -28,10 +28,11 @@ const HomeRoute = ({ currUser, respData, respIsRuleActive, isMobile }) => {
   }
   return (
     <div>
-      {_isIE &&
+      {_isIE && (
         <div style={{ color: 'red', padding: '2px 8px' }}>
           Internet Explorer is not supported. Please use another browser
-        </div>}
+        </div>
+      )}
       <div className="hero">
         <Container>
           <HomeHeroBanner username={username} userId={userId} />
@@ -40,12 +41,13 @@ const HomeRoute = ({ currUser, respData, respIsRuleActive, isMobile }) => {
       </div>
       <Container>
         <Segment basic padded>
-          {!respIsRuleActive('noColumns') &&
+          {!respIsRuleActive('noColumns') && (
             <Grid columns={columns} stretched style={{ clear: 'both' }}>
               <HomeSkillsColumn userId={userId} />
               <HomeProjectsBeingMadeColumn />
               <HomeMeetFriendsColumn />
-            </Grid>}
+            </Grid>
+          )}
           <Divider hidden />
         </Segment>
       </Container>

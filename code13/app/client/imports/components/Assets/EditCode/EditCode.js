@@ -2629,15 +2629,16 @@ export default class EditCode extends React.Component {
             <div className="mgbAccordionScroller" style={fullSize}>
               <div className="ui fluid styled accordion">
                 {!docEmpty &&
-                  asset.kind === 'tutorial' &&
+                asset.kind === 'tutorial' && (
                   // Current Line/Selection helper (header)
                   <div className="active title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                       <i className="dropdown icon" />Tutorial Mentor
                     </span>
-                  </div>}
+                  </div>
+                )}
                 {!docEmpty &&
-                asset.kind === 'tutorial' && // TUTORIAL Current Line/Selection helper (body)
+                asset.kind === 'tutorial' && ( // TUTORIAL Current Line/Selection helper (body)
                   <div className="active content">
                     <TutorialMentor
                       tryTutorial={() => this.tryTutorial()}
@@ -2646,11 +2647,13 @@ export default class EditCode extends React.Component {
                       insertCodeCallback={canEdit ? newCodeStr => this.insertTextAtCursor(newCodeStr) : null}
                     />
                     {stringReferences &&
-                      stringReferences.length > 0 &&
-                      <div className="ui divided selection list">{stringReferences}</div>}
-                  </div>}
+                    stringReferences.length > 0 && (
+                      <div className="ui divided selection list">{stringReferences}</div>
+                    )}
+                  </div>
+                )}
 
-                {isChallenge &&
+                {isChallenge && (
                   <div
                     className="title active"
                     style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
@@ -2659,9 +2662,10 @@ export default class EditCode extends React.Component {
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                       <i className="dropdown icon" />Code Challenges
                     </span>
-                  </div>}
+                  </div>
+                )}
 
-                {isChallenge &&
+                {isChallenge && (
                   <CodeChallenges
                     style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
                     active={asset.skillPath ? true : false}
@@ -2669,9 +2673,10 @@ export default class EditCode extends React.Component {
                     codeMirror={this.codeMirror}
                     currUser={this.props.currUser}
                     userSkills={this.userSkills}
-                  />}
+                  />
+                )}
 
-                {isCodeTutorial &&
+                {isCodeTutorial && (
                   <div
                     className="title active"
                     style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
@@ -2680,9 +2685,10 @@ export default class EditCode extends React.Component {
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                       <i className="dropdown icon" />Code Tutorials
                     </span>
-                  </div>}
+                  </div>
+                )}
 
-                {isCodeTutorial &&
+                {isCodeTutorial && (
                   <CodeTutorials
                     style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
                     isOwner={currUser && currUser._id === asset.ownerId}
@@ -2694,10 +2700,11 @@ export default class EditCode extends React.Component {
                     quickSave={this.quickSave.bind(this)}
                     highlightLines={this.highlightLines.bind(this)}
                     assetId={asset._id}
-                  />}
+                  />
+                )}
 
                 {!docEmpty &&
-                  asset.kind === 'code' &&
+                asset.kind === 'code' && (
                   // Current Line/Selection helper (header)
                   <div
                     id="mgbjr-EditCode-codeMentor"
@@ -2706,9 +2713,10 @@ export default class EditCode extends React.Component {
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                       <i className="dropdown icon" />Code Mentor
                     </span>
-                  </div>}
+                  </div>
+                )}
                 {!docEmpty &&
-                  asset.kind === 'code' &&
+                asset.kind === 'code' && (
                   // Current Line/Selection helper (body)
                   // optimise: don't render if accordeon is closed
                   <div className={'content ' + (asset.skillPath ? '' : 'active')}>
@@ -2726,13 +2734,15 @@ export default class EditCode extends React.Component {
                     />
 
                     {this.state.atCursorTypeRequestResponse.data &&
-                      this.state.atCursorTypeRequestResponse.data.exprName &&
+                    this.state.atCursorTypeRequestResponse.data.exprName && (
                       <ExpressionDescription
                         expressionTypeInfo={this.state.atCursorTypeRequestResponse.data}
-                      />}
+                      />
+                    )}
                     {(!this.state.atCursorTypeRequestResponse.data ||
-                      !this.state.atCursorTypeRequestResponse.data.exprName) &&
-                      <InvokingDescription typeDescription={this.state.atCursorTypeDescription} />}
+                      !this.state.atCursorTypeRequestResponse.data.exprName) && (
+                      <InvokingDescription typeDescription={this.state.atCursorTypeDescription} />
+                    )}
 
                     <RefsAndDefDescription
                       refsInfo={this.state.atCursorRefRequestResponse.data}
@@ -2743,44 +2753,47 @@ export default class EditCode extends React.Component {
                     {this.renderDebugAST()}
 
                     {stringReferences &&
-                      stringReferences.length > 0 &&
-                      <div className="ui divided selection list">{stringReferences}</div>}
-                  </div>}
+                    stringReferences.length > 0 && (
+                      <div className="ui divided selection list">{stringReferences}</div>
+                    )}
+                  </div>
+                )}
 
                 {docEmpty &&
-                  !asset.isCompleted &&
-                  !isCodeTutorial &&
-                  !isChallenge &&
+                !asset.isCompleted &&
+                !isCodeTutorial &&
+                !isChallenge && (
                   // Clean sheet helper!
                   <div className="active title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                       <i className="dropdown icon" />Code Starter
                     </span>
-                  </div>}
+                  </div>
+                )}
                 {docEmpty &&
-                  !asset.isCompleted &&
-                  !isCodeTutorial &&
-                  !isChallenge &&
-                  <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />}
+                !asset.isCompleted &&
+                !isCodeTutorial &&
+                !isChallenge && <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />}
                 {/* Import Assistant HEADER */}
                 <div className="title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                     <Icon name="dropdown" />Import Assistant
                     <span style={{ float: 'right' }}>
                       {this.tools &&
-                        (this.mgb_c2_hasChanged || !this.state.astReady) &&
+                      (this.mgb_c2_hasChanged || !this.state.astReady) && (
                         <Icon
                           name="refresh"
                           size="small"
                           color={this.mgb_c2_hasChanged ? 'orange' : null}
                           loading={this.state.astReady}
-                        />}
+                        />
+                      )}
                       <ImportAssistantHeader knownImports={knownImports} />
                     </span>
                   </span>
                 </div>
 
-                {this.state.astReady &&
+                {this.state.astReady && (
                   <div className="content">
                     <ImportHelperPanel
                       scripts={this.state.userScripts}
@@ -2788,31 +2801,34 @@ export default class EditCode extends React.Component {
                       includeExternalImport={this.includeExternalImport}
                       knownImports={knownImports}
                     />
-                  </div>}
+                  </div>
+                )}
                 {!docEmpty &&
-                  asset.kind === 'code' &&
+                asset.kind === 'code' && (
                   // Code run/stop (header)
                   <div className="title" id="mgbjr-EditCode-codeRunner">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                       <i className="dropdown icon" />Code Runner
                     </span>
-                  </div>}
+                  </div>
+                )}
                 {!docEmpty &&
-                  asset.kind === 'code' &&
+                asset.kind === 'code' && (
                   // Code run/stop (body)
                   <div className="content">
                     <span style={{ float: 'right', marginTop: '-19px', position: 'relative' }}>
                       {isPlaying &&
-                        this.props.canEdit &&
+                      this.props.canEdit && (
                         <a
                           className={'ui tiny icon button'}
                           onClick={this.handleScreenshotIFrame.bind(this)}
                           title="This will set the Asset preview Thumbnail image to be a screenshot of the first <canvas> element in the page, *IF* your code has created one..."
                         >
                           <i className="save icon" />
-                        </a>}
+                        </a>
+                      )}
                       {!isPlaying &&
-                        this.state.astReady &&
+                      this.state.astReady && (
                         <a
                           className="ui tiny icon button"
                           title="Click here to start the program running"
@@ -2820,8 +2836,9 @@ export default class EditCode extends React.Component {
                           onClick={this.handleRun.bind(this)}
                         >
                           <i className="play icon" />&emsp;Run
-                        </a>}
-                      {isPlaying &&
+                        </a>
+                      )}
+                      {isPlaying && (
                         <a
                           className="ui tiny icon button"
                           title="Click here to stop the running program"
@@ -2829,16 +2846,18 @@ export default class EditCode extends React.Component {
                           onClick={this.handleStop.bind(this)}
                         >
                           <i className={'stop icon'} />&emsp;Stop
-                        </a>}
-                      {isPlaying &&
+                        </a>
+                      )}
+                      {isPlaying && (
                         <a
                           className={`ui tiny ${isPopup ? 'active' : ''} icon button`}
                           title="Popout the code-run area so it can be moved around the screen"
                           onClick={this.handleGamePopup.bind(this)}
                         >
                           <i className={'external icon'} />&emsp;Popout
-                        </a>}
-                      {!this.hasErrors &&
+                        </a>
+                      )}
+                      {!this.hasErrors && (
                         <span
                           className={
                             this.state.creatingBundle && this.props.canEdit ? 'ui button labeled' : ''
@@ -2852,7 +2871,8 @@ export default class EditCode extends React.Component {
                           >
                             <i className="external icon" />&emsp;Full&nbsp;
                           </a>
-                        </span>}
+                        </span>
+                      )}
                     </span>
                     {!isPopup && gameScreen}
 
@@ -2861,16 +2881,18 @@ export default class EditCode extends React.Component {
                       gotoLinehandler={this.gotoLineHandler.bind(this)}
                       clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
                     />
-                  </div>}
+                  </div>
+                )}
                 {this.state.astReady &&
-                  asset.kind === 'code' &&
+                asset.kind === 'code' && (
                   <div id="mgbjr-EditCode-codeFlower" className="title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                       <i className="dropdown icon" />Code Flower
                     </span>
-                  </div>}
+                  </div>
+                )}
                 {this.state.astReady &&
-                  asset.kind === 'code' &&
+                asset.kind === 'code' && (
                   <div className="content">
                     {/* this.props.canEdit && this.state.astReady &&
                    <a className={"ui right floated mini icon button"} onClick={this.drawAstFlower.bind(this)}
@@ -2880,7 +2902,7 @@ export default class EditCode extends React.Component {
                    */}
                     <span style={{ float: 'right', marginTop: '-28px', position: 'relative' }}>
                       {this.state.astFlowerReady &&
-                        this.props.canEdit &&
+                      this.props.canEdit && (
                         <a
                           className="ui tiny icon button"
                           onClick={() => {
@@ -2889,7 +2911,8 @@ export default class EditCode extends React.Component {
                           title="Save the currently displayed CodeFlower as the Code Asset preview 'thumbnail' image for this asset"
                         >
                           <i className="save icon" />
-                        </a>}
+                        </a>
+                      )}
                       <a
                         className="ui tiny icon button"
                         onClick={this.drawAstFlowerForThumbnail.bind(this, asset._id)}
@@ -2906,7 +2929,8 @@ export default class EditCode extends React.Component {
                       </a>&nbsp;
                     </span>
                     <div id="codeflower" ref="codeflower" />
-                  </div>}
+                  </div>
+                )}
               </div>
             </div>
           </div>

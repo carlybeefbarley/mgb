@@ -39,14 +39,17 @@ export default class Layers extends React.Component {
             onClick={e => this.showOrHideLayer(e, i, data[i].visible)}
           />
           <List.Content style={{ width: '100%' }}>
-            {i === active
-              ? <InlineEdit
+            {i === active? (
+               <InlineEdit
                   change={this.renameLayer.bind(this, i)}
                   text={data[i].name ? data[i].name : '(unnamed)'}
                   paramName="name"
                   validate={val => validate.notEmpty(val) && validate.lengthCap(val, 255)}
                 />
-              : <span>{data[i].name}</span>}
+             ) : (
+              <span>
+                  {data[i].name}
+                </span>)}
 
             <small style={{ float: 'right' }}>
               ({_.findKey(LayerTypes, kv => kv === data[i].type)} layer)

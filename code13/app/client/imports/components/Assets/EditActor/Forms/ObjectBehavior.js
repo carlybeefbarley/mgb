@@ -18,11 +18,12 @@ export default class ObjectBehavior extends BaseForm {
     return (
       <div>
         <hr />
-        {this.data.equippedNewActorGraphics &&
+        {this.data.equippedNewActorGraphics && (
           <span style={{ color: '#A91313' }}>
             Note: It is recommended that items that can change the player's appearance should use the same
             slot name. This is because only one equipped item can only change how the player looks.
-          </span>}
+          </span>
+        )}
         {this.text('Equipment slot', 'inventoryEquipSlot', 'text', {
           title:
             "Enter a string such as 'weapon' or 'right hand'. The player can only equip one item of any 'slot' at a time",
@@ -99,7 +100,7 @@ export default class ObjectBehavior extends BaseForm {
             'Enter the number of points of damage this item applies or heals. For example, if this was a healing item, and the number here was 5, it would heal by 5 points. If this was a harming item, and the number was 10, it would inflict 10 damage points',
           max: 100,
         })}
-        {this.text('Increase Max Health', 'healOrHarmWhenUsedNum', 'number', {
+        {this.text('Increase Max Health', 'increasesMaxHealthNum', 'number', {
           title: 'Enter the number of points of extra max health this item gives.',
           min: -1000,
           max: 1000,
@@ -311,6 +312,10 @@ export default class ObjectBehavior extends BaseForm {
     else if (this.props.asset.content2.databag.all.actorType === actorOptions.actorType['Scenery'])
       behaviorOptions = <div className="ui message ">This ActorType doesn't use this set of options</div>
 
-    return <div style={{ height: '50vh' }}>{behaviorOptions ? behaviorOptions : this.renderAll()}</div>
+    return
+      <div >
+        {behaviorOptions ? behaviorOptions : this.renderAll()}
+      </div>
+
   }
 }

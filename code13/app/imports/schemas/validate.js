@@ -127,8 +127,7 @@ const validate = {
   },
 
   usernameWithReason: function(value) {
-    if (value.search(/^[A-Za-z0-9_]+$/) < 0)
-      return 'Only letters, digits and underscores are allowed in usernames'
+    if (value.search(/^[A-Za-z0-9]+$/) < 0) return 'Only letters and digits are allowed in usernames'
     if (value.length > _maxUsernameLength)
       return `Your username is too long. The maximum length is ${_maxUsernameLength} characters`
     if (value.length < _minUsernameLength)

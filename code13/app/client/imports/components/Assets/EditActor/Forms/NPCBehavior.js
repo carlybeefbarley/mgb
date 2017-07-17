@@ -94,10 +94,11 @@ export default class NPCBehavior extends BaseForm {
         </span>
         <hr />
         <div id="mgbjr-edit-actor-tab-NPCBehavior-dialogue">
-          {this.props.asset.content2.databag.itemOrNPC.destroyableYN &&
+          {this.props.asset.content2.databag.itemOrNPC.destroyableYN && (
             <span style={{ color: '#A91313' }}>
               Note: Players can't talk to NPCs that they can do 'touch damage' to
-            </span>}
+            </span>
+          )}
 
           <span onChange={() => joyrideCompleteTag(`mgbjr-CT-edit-actor-tab-NPCBehavior-dialogue`)}>
             {this.textArea('Greeting when player meets', 'talkText', {
@@ -107,7 +108,7 @@ export default class NPCBehavior extends BaseForm {
           </span>
 
           {this.data.talkText &&
-            this.data.talkText.length > 0 &&
+          this.data.talkText.length > 0 && (
             <div>
               {this.options(
                 'Font for message',
@@ -138,7 +139,8 @@ export default class NPCBehavior extends BaseForm {
                 <legend>Response option #3</legend>
                 {this.createResponses(3)}
               </fieldset>
-            </div>}
+            </div>
+          )}
         </div>
       </div>
     )

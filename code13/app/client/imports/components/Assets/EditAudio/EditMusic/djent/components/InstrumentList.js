@@ -56,7 +56,7 @@ export default class InstrumentList extends Component {
               key={index}
             >
               <ul className="sound-list">
-                {sounds.map((sound, i) =>
+                {sounds.map((sound, i) => (
                   <li
                     id={sound.id}
                     data-parent-id={instrument.id}
@@ -65,8 +65,8 @@ export default class InstrumentList extends Component {
                     key={i}
                   >
                     {sound.description || sound.id}
-                  </li>,
-                )}
+                  </li>
+                ))}
               </ul>
             </Expandable>
           )
@@ -91,7 +91,7 @@ export default class InstrumentList extends Component {
   }
 }
 
-const InstrumentSettingsPane = ({ instrument, actions }) =>
+const InstrumentSettingsPane = ({ instrument, actions }) => (
   <div>
     <div className="u-mb1">
       <PitchController
@@ -102,3 +102,4 @@ const InstrumentSettingsPane = ({ instrument, actions }) =>
     </div>
     {/* <button className="button-primary button-primary--small button-primary--positive" onClick={ actions.disableModal } >Continue</button> */}
   </div>
+)

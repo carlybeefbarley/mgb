@@ -18,20 +18,20 @@ const skillsList = [
   { icon: 'line chart', msg: 'Analytics', link: '/learn/skills/analytics' },
 ]
 
-const HomeSkillsColumn = () =>
+const HomeSkillsColumn = () => (
   <Grid.Column className="animated fadeIn">
     <Header as="h2" style={{ marginBottom: '1em' }}>
       Grow your <em>real</em> skill tree
     </Header>
     <List relaxed="very" size="large">
-      {skillsList.map((skill, idx) =>
+      {skillsList.map((skill, idx) => (
         <List.Item key={idx} as={QLink} to={skill.link}>
           <Icon name={skill.icon} size="large" />
           <Header className="content" as="h3">
             {skill.msg}
           </Header>
-        </List.Item>,
-      )}
+        </List.Item>
+      ))}
     </List>
     <br />
     <Button
@@ -45,6 +45,7 @@ const HomeSkillsColumn = () =>
       style={{ flex: '0 0 auto' }}
     />
   </Grid.Column>
+)
 
 HomeSkillsColumn.propTypes = _propTypes
 export default HomeSkillsColumn

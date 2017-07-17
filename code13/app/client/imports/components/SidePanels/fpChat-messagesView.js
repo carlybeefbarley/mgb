@@ -30,12 +30,13 @@ import {
 const additionalMessageIncrement = 15
 const _noTopMarginSty = { marginTop: 0 }
 
-const MessageTopDivider = ({ id, children, content, title }) =>
+const MessageTopDivider = ({ id, children, content, title }) => (
   <Divider id={id} horizontal title={title} style={_noTopMarginSty}>
     <Header color="grey" size="tiny">
       {children || content}
     </Header>
   </Divider>
+)
 
 const _isCurrUsersWall = (chat, currUser) => {
   const channelInfo = parseChannelName(chat.toChannelName)
@@ -45,20 +46,20 @@ const _isCurrUsersWall = (chat, currUser) => {
 const DeleteChatMessage = ({ chat, currUser, isSuperAdmin }) =>
   currUser &&
   (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin || _isCurrUsersWall(chat, currUser)) &&
-  !chat.isDeleted
-    ? <span className="mgb-show-on-parent-hover" onClick={() => deleteChatRecord(chat._id)}>
-        &nbsp;
-        <Icon color="red" circular link name="delete" />
-      </span>
-    : null
+  !chat.isDeleted ? (
+    <span className="mgb-show-on-parent-hover" onClick={() => deleteChatRecord(chat._id)}>
+      &nbsp;
+      <Icon color="red" circular link name="delete" />
+    </span>
+  ) : null
 
 const UndeleteChatMessage = ({ chat, currUser, isSuperAdmin }) =>
-  currUser && (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin) && chat.isDeleted
-    ? <span className="mgb-show-on-parent-hover" onClick={() => restoreChatRecord(chat._id)}>
-        &nbsp;
-        <Icon color="blue" circular link name="undo" />
-      </span>
-    : null
+  currUser && (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin) && chat.isDeleted ? (
+    <span className="mgb-show-on-parent-hover" onClick={() => restoreChatRecord(chat._id)}>
+      &nbsp;
+      <Icon color="blue" circular link name="undo" />
+    </span>
+  ) : null
 
 const ChatMessagesView = React.createClass({
   mixins: [ReactMeteorData],
@@ -198,16 +199,18 @@ const ChatMessagesView = React.createClass({
       <Comment key={c._id}>
         <QLink to={to} className="avatar">
           {currUser &&
-            currUser._id == c.byUserId &&
-            <img src={makeCDNLink(currUser.profile.avatar)} style={{ maxHeight: '3em' }} />}
-          {(!currUser || currUser._id !== c.byUserId) &&
+          currUser._id == c.byUserId && (
+            <img src={makeCDNLink(currUser.profile.avatar)} style={{ maxHeight: '3em' }} />
+          )}
+          {(!currUser || currUser._id !== c.byUserId) && (
             <img
               src={makeCDNLink(
                 `/api/user/${c.byUserId}/avatar/${SpecialGlobals.avatar.validFor}`,
                 makeExpireTimestamp(SpecialGlobals.avatar.validFor),
               )}
               style={{ maxHeight: '3em' }}
-            />}
+            />
+          )}
         </QLink>
         <Comment.Content>
           <Comment.Author as={QLink} to={to}>
@@ -216,22 +219,24 @@ const ChatMessagesView = React.createClass({
           <Comment.Metadata>
             <div title={absTime}>{ago}</div>
             {!(c.suIsBanned === true) &&
-              !c.suFlagId &&
-              <DeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />}
+            !c.suFlagId && <DeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />}
             <UndeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
             <FlagEntity entity={c} currUser={currUser} tableCollection={'Chats'} />
-            {isSuperAdmin &&
+            {isSuperAdmin && (
               <ResolveReportEntity
                 entity={c}
                 currUser={currUser}
                 tableCollection={'Chats'}
                 isSuperAdmin={isSuperAdmin}
-              />}
+              />
+            )}
           </Comment.Metadata>
           <Comment.Text>
-            {c.suFlagId && !c.suIsBanned
-              ? <span>(flagged, waiting review)</span>
-              : <ChatMessage msg={c.isDeleted ? '(deleted)' : c.message} />}
+            {c.suFlagId && !c.suIsBanned ? (
+              <span>(flagged, waiting review)</span>
+            ) : (
+              <ChatMessage msg={c.isDeleted ? '(deleted)' : c.message} />
+            )}
             &nbsp;
           </Comment.Text>
         </Comment.Content>

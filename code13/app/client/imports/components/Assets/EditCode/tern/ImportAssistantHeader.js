@@ -48,15 +48,16 @@ export default class ImportAssistantHeader extends React.Component {
                     <small>{lib.apiDocsPageUrl}</small>
                   </a>
                 </p>
-                {lib.tutorialsInternalLink &&
+                {lib.tutorialsInternalLink && (
                   <p>
                     {packageJsx} MGB Tutorials at{' '}
                     <QLink to={lib.tutorialsInternalLink}>
                       <small>{lib.tutorialsInternalLink}</small>
                     </QLink>
-                  </p>}
+                  </p>
+                )}
                 {thisKi &&
-                  thisKi.url &&
+                thisKi.url && (
                   <div>
                     <Divider />
                     <p>
@@ -65,7 +66,8 @@ export default class ImportAssistantHeader extends React.Component {
                         <a href={thisKi.url}>{thisKi.url}</a>
                       </small>
                     </p>
-                  </div>}
+                  </div>
+                )}
               </Popup.Content>
             </Popup>
           )

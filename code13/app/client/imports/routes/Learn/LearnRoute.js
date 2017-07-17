@@ -61,7 +61,7 @@ const learnTopLevelItems = [
    */
 ]
 
-const LearnRoute = ({ currUser, params }, context) =>
+const LearnRoute = ({ currUser, params }, context) => (
   <Grid container columns="1">
     <Divider hidden />
     <Grid.Column>
@@ -72,7 +72,7 @@ const LearnRoute = ({ currUser, params }, context) =>
     </Grid.Column>
     <Grid.Column>
       <Card.Group itemsPerRow={1} stackable className="skills">
-        {learnTopLevelItems.map((area, idx) =>
+        {learnTopLevelItems.map((area, idx) => (
           <QLink
             key={idx}
             className="card animated fadeIn"
@@ -90,25 +90,28 @@ const LearnRoute = ({ currUser, params }, context) =>
               </Header>
               <p style={descStyle}>{area.desc}.</p>
               {currUser &&
-                'string' == typeof area.skillnodeTopLevelTag &&
+              'string' == typeof area.skillnodeTopLevelTag && (
                 <SkillsMap
                   skills={context.skills}
                   expandable
                   toggleable
                   skillPaths={[area.skillnodeTopLevelTag]}
-                />}
+                />
+              )}
             </Card.Content>
-          </QLink>,
-        )}
+          </QLink>
+        ))}
       </Card.Group>
     </Grid.Column>
-    {currUser &&
+    {currUser && (
       <Grid.Column>
         <QLink className="link" style={{ float: 'right' }} to="/learn" query={{ _fp: 'chat.G_MGBHELP_' }}>
           Not sure what to do<Icon name="help" />&emsp;Ask us for help...&nbsp;<Icon name="chat" />
         </QLink>
-      </Grid.Column>}
+      </Grid.Column>
+    )}
   </Grid>
+)
 
 LearnRoute.contextTypes = {
   skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)

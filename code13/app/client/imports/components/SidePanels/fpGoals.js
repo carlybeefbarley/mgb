@@ -17,43 +17,44 @@ const JoyrideSummary = ({
   joyrideCurrentStepNum,
   joyrideOriginatingAssetId,
 }) =>
-  !joyrideSteps || !joyrideSteps.length
-    ? null
-    : <div className="ui fluid card course">
-        <div className="content">
-          {/* <i className="right floated code icon" /> */}
-          <div className="header">
-            {joyrideSteps[0].heading || joyrideSkillPathTutorial || 'Current Tutorial...'}
-          </div>
-          <List ordered>
-            {joyrideSteps.map((s, idx) =>
-              <List.Item
-                key={idx}
-                style={{ textDecoration: idx >= joyrideCurrentStepNum ? 'none' : 'line-through' }}
-                content={s.title || `Step ${idx}`}
-              />,
-            )}
-          </List>
+  !joyrideSteps || !joyrideSteps.length ? null : (
+    <div className="ui fluid card course">
+      <div className="content">
+        {/* <i className="right floated code icon" /> */}
+        <div className="header">
+          {joyrideSteps[0].heading || joyrideSkillPathTutorial || 'Current Tutorial...'}
         </div>
-        <div className="extra content">
-          <Progress
-            size="small"
-            color="green"
-            percent={Math.round(100 * (1 + joyrideCurrentStepNum) / joyrideSteps.length)}
-            style={{ marginBottom: '0.256em' }}
-          />
-          {joyrideOriginatingAssetId &&
-            <QLink
-              to={`/u/${joyrideOriginatingAssetId.ownerName}/asset/${joyrideOriginatingAssetId.id}`}
-              style={{ float: 'left' }}
-            >
-              Edit Tutorial
-            </QLink>}
-          <a style={{ float: 'right' }} onClick={stopCurrentTutorial}>
-            Stop Tutorial
-          </a>
-        </div>
+        <List ordered>
+          {joyrideSteps.map((s, idx) => (
+            <List.Item
+              key={idx}
+              style={{ textDecoration: idx >= joyrideCurrentStepNum ? 'none' : 'line-through' }}
+              content={s.title || `Step ${idx}`}
+            />
+          ))}
+        </List>
       </div>
+      <div className="extra content">
+        <Progress
+          size="small"
+          color="green"
+          percent={Math.round(100 * (1 + joyrideCurrentStepNum) / joyrideSteps.length)}
+          style={{ marginBottom: '0.256em' }}
+        />
+        {joyrideOriginatingAssetId && (
+          <QLink
+            to={`/u/${joyrideOriginatingAssetId.ownerName}/asset/${joyrideOriginatingAssetId.id}`}
+            style={{ float: 'left' }}
+          >
+            Edit Tutorial
+          </QLink>
+        )}
+        <a style={{ float: 'right' }} onClick={stopCurrentTutorial}>
+          Stop Tutorial
+        </a>
+      </div>
+    </div>
+  )
 
 const fpGoals = React.createClass({
   propTypes: {
@@ -94,8 +95,9 @@ const fpGoals = React.createClass({
           <img src={UX.makeMascotImgLink('bigguy')} style={{ maxWidth: '70px', float: 'left' }} />
           Your Learning quests
         </p>
-        {(!joyrideSteps || joyrideSteps.length === 0) &&
-          <StartDefaultNextTutorial currUser={currUser} userSkills={skills} />}
+        {(!joyrideSteps || joyrideSteps.length === 0) && (
+          <StartDefaultNextTutorial currUser={currUser} userSkills={skills} />
+        )}
         <JoyrideSummary
           joyrideSteps={joyrideSteps}
           joyrideSkillPathTutorial={joyrideSkillPathTutorial}

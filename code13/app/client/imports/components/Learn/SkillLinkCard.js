@@ -103,7 +103,7 @@ class SkillLinkCard extends Component {
           Do it again
         </Header>
         <List selection>
-          {_.map(childSkills, skillLeafKey =>
+          {_.map(childSkills, skillLeafKey => (
             <List.Item
               key={skillLeafKey}
               onClick={e => {
@@ -119,8 +119,8 @@ class SkillLinkCard extends Component {
               <List.Content>
                 <List.Header as="a">{getFriendlyName(skillPath + '.' + skillLeafKey)}</List.Header>
               </List.Content>
-            </List.Item>,
-          )}
+            </List.Item>
+          ))}
         </List>
       </Popup>
     )
@@ -165,14 +165,16 @@ class SkillLinkCard extends Component {
         <Card.Content>
           <Grid columns="equal" verticalAlign="middle">
             <Grid.Column style={imageColumnStyle} textAlign="center">
-              {completed
-                ? <Icon
-                    size={completed ? 'large' : 'big'}
-                    name="checkmark"
-                    color="green"
-                    style={{ margin: 'auto' }}
-                  />
-                : <img src={UX.makeMascotImgLink(mascot)} style={imageStyle} />}
+              {completed ? (
+                <Icon
+                  size={completed ? 'large' : 'big'}
+                  name="checkmark"
+                  color="green"
+                  style={{ margin: 'auto' }}
+                />
+              ) : (
+                <img src={UX.makeMascotImgLink(mascot)} style={imageStyle} />
+              )}
             </Grid.Column>
             <Grid.Column>
               <Header as={completed ? 'h2' : 'h1'}>
@@ -180,18 +182,21 @@ class SkillLinkCard extends Component {
                 {!completed && <Header.Subheader>{description}.</Header.Subheader>}
               </Header>
             </Grid.Column>
-            {!disabled &&
+            {!disabled && (
               <Grid.Column width={started ? 6 : 4} textAlign="right">
-                {completed
-                  ? this.renderShowCompleted()
-                  : <Label
-                      basic={!started}
-                      size="big"
-                      color={started ? 'yellow' : 'grey'}
-                      content={started ? 'Continue' : 'Start'}
-                      detail={started ? `${learnedSkills.length} / ${childSkills.length}` : null}
-                    />}
-              </Grid.Column>}
+                {completed ? (
+                  this.renderShowCompleted()
+                ) : (
+                  <Label
+                    basic={!started}
+                    size="big"
+                    color={started ? 'yellow' : 'grey'}
+                    content={started ? 'Continue' : 'Start'}
+                    detail={started ? `${learnedSkills.length} / ${childSkills.length}` : null}
+                  />
+                )}
+              </Grid.Column>
+            )}
           </Grid>
         </Card.Content>
 

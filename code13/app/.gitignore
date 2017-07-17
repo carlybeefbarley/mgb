@@ -1,6 +1,9 @@
 dump
 node_modules
+package-lock.json
 .idea
 *.tmp
 settings.staging.generated.json
+meteor_session.json
 .directory
+.yarn-cache

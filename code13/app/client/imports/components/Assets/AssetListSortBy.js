@@ -7,7 +7,7 @@ const _choiceOptions = _.keys(assetSorters)
 
 const _menuOpenLeftSty = { left: 'auto', right: '0' } // Magic from levithomason
 
-const AssetListSortBy = ({ chosenSortBy, handleChangeSortByClick }) =>
+const AssetListSortBy = ({ chosenSortBy, handleChangeSortByClick }) => (
   <Dropdown
     inline
     trigger={<span>{chosenSortBy}</span>}
@@ -16,17 +16,18 @@ const AssetListSortBy = ({ chosenSortBy, handleChangeSortByClick }) =>
     title="Sort Assets By.."
   >
     <Dropdown.Menu style={_menuOpenLeftSty}>
-      {_choiceOptions.map(k =>
+      {_choiceOptions.map(k => (
         <Dropdown.Item
           active={k === chosenSortBy}
           value={k}
           key={k}
           content={<span>{k}</span>}
           onClick={() => handleChangeSortByClick(k)}
-        />,
-      )}
+        />
+      ))}
     </Dropdown.Menu>
   </Dropdown>
+)
 
 AssetListSortBy.propTypes = {
   chosenSortBy: PropTypes.string,

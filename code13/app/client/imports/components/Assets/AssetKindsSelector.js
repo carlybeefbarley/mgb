@@ -34,10 +34,11 @@ const AssetKindsSelector = ({ showCompact, kindsActive, handleToggleKindCallback
           name={AssetKinds.getIconName(k)}
           style={_iconStyle}
         />
-        {!showCompact &&
+        {!showCompact && (
           <span>
             {icon} {name}
-          </span>}
+          </span>
+        )}
       </Menu.Item>
     )
   })

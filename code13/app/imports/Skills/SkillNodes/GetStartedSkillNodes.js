@@ -14,19 +14,19 @@ import C from './CommonSkillNodes.js'
 const GetStartedSkillNodes = {
   $meta: {
     name: 'Get Started',
-    description: 'Represents basic MGB usage skills - set up your profile, play a game, find friends, etc',
+    description: 'Basic MGB usage skills - set up your profile, play a game, make a non-code game, etc',
     sequence: 'profile,chat,play,assetsBasics,projects,nonCodeGame',
   },
 
   profile: {
     $meta: {
       name: 'Profile',
-      description: 'Add avatars and other info to your profile',
-      sequence: 'avatar,badges,bio',
+      description: 'Add Avatars and other info to your profile',
+      sequence: 'avatar,badges',
     },
-    avatar: C.E,
-    badges: C.E,
-    bio: C.E,
+    avatar: C.En(0, 'Make your Avatar'),
+    badges: C.En(0, 'Earn a badge!'),
+    //    bio: C.E
     //    quickTour:        C.E
   },
 
@@ -36,10 +36,10 @@ const GetStartedSkillNodes = {
       description: 'Learn to use chat and say Hi',
       sequence: 'chatFlexPanel,assetChat',
     },
-    chatFlexPanel: C.E, // Public chat - show flexPanels, change channel, say Hi on Random
+    chatFlexPanel: C.En(0, 'The Chat Panel'), // Public chat - show flexPanels, change channel, say Hi on Random
     //  chatAtMention:    C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
     //  privateChat:      C.E,  // Not yet implemented as a feature.. this will just say 'coming soon'
-    assetChat: C.E, // Actually this is asset and project chat
+    assetChat: C.En(0, 'Asset Chat'), // Actually this is Asset and Project chat
   },
 
   play: {
@@ -48,7 +48,7 @@ const GetStartedSkillNodes = {
       description: 'Find games to play here',
       sequence: 'playOneGame',
     },
-    playOneGame: C.E,
+    playOneGame: C.En(0, 'Playtime!'),
     // gamesImade:       { ...C.E, $meta: { ...C.E.$meta, name: 'Games I Made' } },
     // Not yet implemented as a feature.. this will just say 'coming soon' for now
     // continueAgame:    { ...C.E, $meta: { ...C.E.$meta, name: 'Continue A Game'} }
@@ -58,12 +58,12 @@ const GetStartedSkillNodes = {
     $meta: {
       name: 'Assets',
       description: 'Find, create and work with Game Assets',
-      sequence: 'findAssets,createAssets,assetProperties,searchAssets',
+      sequence: 'createAssets,assetProperties',
     },
-    findAssets: C.E,
-    createAssets: C.E,
-    assetProperties: C.E,
-    searchAssets: C.E,
+    //    findAssets: C.En(0, 'See some game Assets'),
+    createAssets: C.En(0, 'Make some noise!'),
+    assetProperties: C.En(0, 'Asset properties'),
+    //    searchAssets: C.E
   },
 
   projects: {
@@ -73,7 +73,7 @@ const GetStartedSkillNodes = {
     },
     createProject: C.E,
     createAssetInProject: C.E,
-    projectAvatar: C.E,
+    // projectAvatar: C.E
     // projectMembers:        C.E,
     // changeProjectForAsset: C.E,
     // projectsCanOverlap:    C.E,

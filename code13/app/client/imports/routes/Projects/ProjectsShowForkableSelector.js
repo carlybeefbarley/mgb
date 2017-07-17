@@ -19,9 +19,11 @@ const ProjectsShowForkableSelector = ({ showForkable, handleChangeFlag }) => {
       position="bottom left"
       header="Show/hide forkable Projects"
       content={
-        active
-          ? "Currently showing ONLY 'Forkable' Projects. Click here to ALSO show non-forkable Projects"
-          : "Currently showing 'Forkable' AND 'non-Forkable' Projects. Click here to ONLY show 'Forkable' Projects"
+        active ? (
+          "Currently showing ONLY 'Forkable' Projects. Click here to ALSO show non-forkable Projects"
+        ) : (
+          "Currently showing 'Forkable' AND 'non-Forkable' Projects. Click here to ONLY show 'Forkable' Projects"
+        )
       }
     />
   )

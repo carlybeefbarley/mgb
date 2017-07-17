@@ -80,7 +80,7 @@ const ProjectCreateNew = React.createClass({
           </p>
         </div>
 
-        {currUser &&
+        {currUser && (
           <div className="ui padded segment" id="mgbjr-project-create-new-input-name">
             <h4 className="ui header">Enter a name for your new Project</h4>
             <div className="ui items">
@@ -96,13 +96,15 @@ const ProjectCreateNew = React.createClass({
               </div>
             </div>
             {inUse &&
-              !this.state.buttonActionPending &&
+            !this.state.buttonActionPending && (
               <p>
                 <Icon name="warning sign" />&emsp;You already own a Project with that Name
-              </p>}
-          </div>}
+              </p>
+            )}
+          </div>
+        )}
 
-        {currUser &&
+        {currUser && (
           <div title={createButtonTooltip}>
             <div
               className={createButtonClassName}
@@ -112,10 +114,12 @@ const ProjectCreateNew = React.createClass({
               Create New Project {chosenNameStr}
               <i className="right chevron icon" />
             </div>
-          </div>}
+          </div>
+        )}
 
-        {!currUser &&
-          <Message icon="warning sign" warning content="You must be logged in to create a Project" />}
+        {!currUser && (
+          <Message icon="warning sign" warning content="You must be logged in to create a Project" />
+        )}
       </div>
     )
   },

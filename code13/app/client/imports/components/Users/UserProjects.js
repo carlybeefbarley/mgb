@@ -41,11 +41,11 @@ const _variants = [
 ]
 
 const UserProjects = props =>
-  !props.projects || props.projects.length === 0
-    ? null
-    : <Grid.Column width={props.width}>
-        {_.map(_variants, v => <SomeProjects key={v.hdr} {...props} {...v} />)}
-      </Grid.Column>
+  !props.projects || props.projects.length === 0 ? null : (
+    <Grid.Column width={props.width}>
+      {_.map(_variants, v => <SomeProjects key={v.hdr} {...props} {...v} />)}
+    </Grid.Column>
+  )
 
 UserProjects.propTypes = {
   user: PropTypes.object.isRequired,

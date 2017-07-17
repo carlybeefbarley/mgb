@@ -273,11 +273,12 @@ export default class JoyrideTooltip extends React.Component {
 
     output.tooltipComponent = (
       <div className={opts.classes.join(' ')} style={styles.tooltip} data-target={step.selector}>
-        {disableArrow ||
+        {disableArrow || (
           <div
             className={`joyride-tooltip__triangle joyride-tooltip__triangle-${opts.positionClass}`}
             style={styles.arrow}
-          />}
+          />
+        )}
         <a
           href="#"
           data-tooltip="Minimize tutorial step to Beacon" // Semantic-UI CSS magic: http://semantic-ui.com/modules/popup.html#tooltip
@@ -299,7 +300,7 @@ export default class JoyrideTooltip extends React.Component {
         <div className="joyride-tooltip__footer">
           {output.skip}
           {output.secondary}
-          {buttons.primary &&
+          {buttons.primary && (
             <a
               href="#"
               className="joyride-tooltip__button joyride-tooltip__button--primary"
@@ -308,7 +309,8 @@ export default class JoyrideTooltip extends React.Component {
               onClick={onClick}
             >
               {buttons.primary}
-            </a>}
+            </a>
+          )}
         </div>
       </div>
     )

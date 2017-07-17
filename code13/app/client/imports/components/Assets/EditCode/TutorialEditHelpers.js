@@ -13,24 +13,29 @@ const StepSummary = ({ rawStep, parsedStep, stepErrors }) => {
   return (
     <List.Item>
       {_.isString(rawStep) && <span style={isMacroStepSty}>[{rawStep}]&nbsp;</span>}
-      {_.has(parsedStep, 'TODO') &&
+      {_.has(parsedStep, 'TODO') && (
         <small style={hasTodoSty}>
           [TODO: {parsedStep.TODO}] <br />
-        </small>}
+        </small>
+      )}
       {rawStep.title ||
         parsedStep.title ||
-        (_.isString(parsedStep)
-          ? <span style={errorSty}>Unknown Macro</span>
-          : '(Missing title: field in step)')}
-      {stepErrors && stepErrors.length > 0
-        ? <List.List>
-            {_.map(stepErrors, (e, idx) =>
-              <List.Item key={idx} style={errorSty}>
-                Error: "{e.key}" : {e.val}
-              </List.Item>,
-            )}
-          </List.List>
-        : <br />}
+        (_.isString(parsedStep) ? (
+          <span style={errorSty}>Unknown Macro</span>
+        ) : (
+          '(Missing title: field in step)'
+        ))}
+      {stepErrors && stepErrors.length > 0 ? (
+        <List.List>
+          {_.map(stepErrors, (e, idx) => (
+            <List.Item key={idx} style={errorSty}>
+              Error: "{e.key}" : {e.val}
+            </List.Item>
+          ))}
+        </List.List>
+      ) : (
+        <br />
+      )}
     </List.Item>
   )
 }
@@ -40,17 +45,18 @@ const StepSummary = ({ rawStep, parsedStep, stepErrors }) => {
 // I might reconsider the UI wisdom of this in future :)
 let _recentSelectedStepMacroKey = '%complete%'
 
-const StepHelp = ({ insertCodeCallback }) =>
+const StepHelp = ({ insertCodeCallback }) => (
   <div style={{ marginTop: '2em' }}>
     <Header as="h3">
       Step macro lookup:
-      {insertCodeCallback &&
+      {insertCodeCallback && (
         <Label
           content="insert"
           onClick={() => insertCodeCallback(`"${_recentSelectedStepMacroKey}"`)}
           style={{ float: 'right' }}
           icon="chevron circle left"
-        />}
+        />
+      )}
     </Header>
     <Dropdown
       fluid
@@ -63,6 +69,7 @@ const StepHelp = ({ insertCodeCallback }) =>
       }}
     />
   </div>
+)
 
 const TutSummary = props => {
   const pj = props.parsedTutorialData
@@ -115,14 +122,14 @@ const TutSummary = props => {
       {/* List Tutorial Steps */}
       <Header as="h4">Tutorial steps:</Header>
       <List ordered>
-        {_.map(pj.data.steps, (s, idx) =>
+        {_.map(pj.data.steps, (s, idx) => (
           <StepSummary
             key={idx}
             rawStep={s}
             parsedStep={steps2.newSteps[idx]}
             stepErrors={steps2.errors[idx]}
-          />,
-        )}
+          />
+        ))}
       </List>
     </Segment>
   )

@@ -29,12 +29,13 @@ const ExpressionDescription = ({ typeDescription }) => {
         </span>
       </div>
       {docToDisplay && <p style={{ whiteSpace: 'pre-line' }}>{docToDisplay}</p>}
-      {url &&
+      {url && (
         <p>
           <a target="_blank" href={url}>
             <small>{url}</small>
           </a>
-        </p>}
+        </p>
+      )}
     </div>
   )
 }

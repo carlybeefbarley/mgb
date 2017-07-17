@@ -371,7 +371,7 @@ const AssetEditRoute = React.createClass({
         />
 
         {!isTooSmall &&
-          !hideHeaders &&
+        !hideHeaders && (
           <AssetPathDetail
             canEdit={canEd}
             isUnconfirmedSave={asset.isUnconfirmedSave}
@@ -384,10 +384,11 @@ const AssetEditRoute = React.createClass({
             handleNameChange={this.handleAssetNameChange}
             handleDescriptionChange={this.handleAssetDescriptionChange}
             handleSaveNowRequest={this.handleSaveNowRequest}
-          />}
+          />
+        )}
 
         {!isTooSmall &&
-          !hideHeaders &&
+        !hideHeaders && (
           <Grid.Column width="8" textAlign="right" id="mgbjr-asset-edit-header-right">
             {
               // We use this.props.params.assetId since it is available sooner than the asset
@@ -427,8 +428,7 @@ const AssetEditRoute = React.createClass({
             />
             <AssetHistoryDetail asset={asset} currUser={currUser} assetActivity={this.data.assetActivity} />
             {asset.skillPath &&
-              asset.skillPath.length > 0 &&
-              <ChallengeState ownername={asset.dn_ownerName} />}
+            asset.skillPath.length > 0 && <ChallengeState ownername={asset.dn_ownerName} />}
             <AssetForkGenerator
               asset={asset}
               canFork={currUser !== null}
@@ -443,23 +443,22 @@ const AssetEditRoute = React.createClass({
               handleToggleProjectName={this.handleToggleProjectName}
             />
             {isSuperAdmin &&
-              asset.skillPath &&
-              <TaskApprove
-                asset={asset}
-                ownerID={asset.ownerId}
-                handleTaskApprove={this.handleTaskApprove}
-              />}
+            asset.skillPath && (
+              <TaskApprove asset={asset} ownerID={asset.ownerId} handleTaskApprove={this.handleTaskApprove} />
+            )}
             <FlagEntity entity={asset} currUser={currUser} tableCollection={'Azzets'} className={null} />
-            {isSuperAdmin &&
+            {isSuperAdmin && (
               <ResolveReportEntity
                 entity={asset}
                 currUser={currUser}
                 tableCollection={'Azzets'}
                 isSuperAdmin={isSuperAdmin}
                 className={null}
-              />}
-          </Grid.Column>}
-        {asset.suIsBanned === true &&
+              />
+            )}
+          </Grid.Column>
+        )}
+        {asset.suIsBanned === true && (
           <Grid.Column width={16}>
             <Message
               error
@@ -471,8 +470,9 @@ const AssetEditRoute = React.createClass({
                 'Only Moderators and the Asset owner can view the banned content',
               ]}
             />
-          </Grid.Column>}
-        {asset.suFlagId &&
+          </Grid.Column>
+        )}
+        {asset.suFlagId && (
           <Grid.Column width={16}>
             <Message
               error
@@ -484,9 +484,10 @@ const AssetEditRoute = React.createClass({
                 'Only Moderators and the Asset owner can view the flagged content',
               ]}
             />
-          </Grid.Column>}
+          </Grid.Column>
+        )}
 
-        {((!(asset.suIsBanned === true) && !asset.suFlagId) || isOwner || isSuperAdmin) &&
+        {((!(asset.suIsBanned === true) && !asset.suFlagId) || isOwner || isSuperAdmin) && (
           <Grid.Column
             width="16"
             style={{ overflow: 'auto' /* restore overflow for editors - as we disabled it above ???? */ }}
@@ -508,7 +509,8 @@ const AssetEditRoute = React.createClass({
               hasUnsentSaves={hasUnsentSaves}
               handleSaveNowRequest={this.handleSaveNowRequest}
             />
-          </Grid.Column>}
+          </Grid.Column>
+        )}
       </Grid>
     )
   },

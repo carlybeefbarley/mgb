@@ -205,16 +205,18 @@ export default class Toolbar extends React.Component {
         {_.map(
           this.props.config.buttons,
           (b, i) =>
-            b.name == 'separator'
-              ? <span style={{ width: '2px' }} key={i}>
-                  {' '}
-                </span>
-              : <Button.Group key={i} style={{ marginRight: '0px', marginBottom: '2px', marginTop: '2px' }}>
-                  {this._renderButton(b, i)}
-                </Button.Group>,
+            b.name == 'separator' ? (
+              <span style={{ width: '2px' }} key={i}>
+                {' '}
+              </span>
+            ) : (
+              <Button.Group key={i} style={{ marginRight: '0px', marginBottom: '2px', marginTop: '2px' }}>
+                {this._renderButton(b, i)}
+              </Button.Group>
+            ),
         )}
 
-        {this.state.level < this.maxLevel - 1 &&
+        {this.state.level < this.maxLevel - 1 && (
           <QLink query={{ _fp: 'settings' }}>
             <Popup
               trigger={
@@ -231,7 +233,8 @@ export default class Toolbar extends React.Component {
               header="More Tools"
               content="Click here to enable additional tools in Settings"
             />
-          </QLink>}
+          </QLink>
+        )}
       </div>
     )
   }

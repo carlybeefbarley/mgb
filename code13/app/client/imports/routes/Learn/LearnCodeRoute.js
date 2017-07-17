@@ -50,7 +50,7 @@ const learnCodeItems = [
   },
 ]
 
-const LearnCodeRoute = ({ currUser, params }, context) =>
+const LearnCodeRoute = ({ currUser, params }, context) => (
   <Grid container columns="1">
     <Divider hidden />
     <Grid.Column>
@@ -61,7 +61,7 @@ const LearnCodeRoute = ({ currUser, params }, context) =>
     </Grid.Column>
     <Grid.Column>
       <Card.Group itemsPerRow={1} stackable className="skills">
-        {learnCodeItems.map((area, idx) =>
+        {learnCodeItems.map((area, idx) => (
           <QLink
             key={idx}
             className="card animated fadeIn"
@@ -79,14 +79,14 @@ const LearnCodeRoute = ({ currUser, params }, context) =>
               </Header>
               <p style={descStyle}>{area.desc}</p>
               {area.skillPath &&
-                currUser &&
-                <SkillsMap skills={context.skills} skillPaths={[area.skillPath]} />}
+              currUser && <SkillsMap skills={context.skills} skillPaths={[area.skillPath]} />}
             </Card.Content>
-          </QLink>,
-        )}
+          </QLink>
+        ))}
       </Card.Group>
     </Grid.Column>
   </Grid>
+)
 
 LearnCodeRoute.contextTypes = {
   skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)

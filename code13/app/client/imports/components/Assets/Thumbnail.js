@@ -11,12 +11,13 @@ const Thumbnail = ({
   expires = SpecialGlobals.thumbnail.defaultExpiresDuration,
   asset,
   assetId,
-}) =>
+}) => (
   <FittedImage
     src={Thumbnail.getLink(asset || assetId, expires)}
     title={`${title} (CacheExpire = ${expires} seconds)`}
     height={constrainHeight}
   />
+)
 
 Thumbnail.propTypes = {
   constrainHeight: PropTypes.string, // in a css format, preferably with px or em, e.g. '150px'.

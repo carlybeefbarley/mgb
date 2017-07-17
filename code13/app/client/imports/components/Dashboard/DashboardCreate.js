@@ -21,14 +21,15 @@ export default class DashboardCreate extends React.Component {
             <Segment>
               <b>Filtered assets</b>
               <br />
-              {assets &&
+              {assets && (
                 <AssetList
                   allowDrag
                   fluid={false}
                   renderView={defaultAssetViewChoice}
                   assets={assets}
                   currUser={currUser}
-                />}
+                />
+              )}
             </Segment>
           </Grid.Column>
           <Grid.Column width={4}>

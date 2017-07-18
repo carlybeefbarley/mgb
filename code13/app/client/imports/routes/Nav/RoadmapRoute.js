@@ -80,7 +80,7 @@ const RenderRoadmap = () => (
       </li>
     </ul>
     Please make suggestions on our{' '}
-    <a href="https://trello.com/b/Fg0EcntK/my-game-builder" target="_blank">
+    <a href="https://trello.com/b/Fg0EcntK/my-game-builder" target="_blank" rel="noopener noreferrer">
       Trello work proposals list
     </a>
   </div>

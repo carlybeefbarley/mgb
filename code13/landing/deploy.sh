@@ -13,16 +13,16 @@ export AWS_S3_LANDINGPAGE_BUCKETNAME="landing.mygamebuilder.com"
 # CloudFront Distribution for http://landing.mygamebuilder.com
 
 export AWS_S3_LANDINGPAGE_CLOUDFRONT_DISTRIBUTIONID="E2FKDU47P960M9"
-npm run awspredeploy
-npm run awsdeploy
+yarn run awspredeploy
+yarn run awsdeploy
 
 # CloudFront Distribution for http://build.games
 export AWS_S3_LANDINGPAGE_CLOUDFRONT_DISTRIBUTIONID="E3QW36VHKDBE06"
-npm run awspredeploy
-npm run awsdeploy
+yarn run awspredeploy
+yarn run awsdeploy
 
 # CloudFront Distribution for http://mycodebuilder.com
 export AWS_S3_LANDINGPAGE_CLOUDFRONT_DISTRIBUTIONID="E2XZU0ZPCFTF6S"
-npm run awspredeploy
-npm run awsdeploy
+yarn run awspredeploy
+yarn run awsdeploy
 

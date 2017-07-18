@@ -13,7 +13,7 @@ git_describe=$(git describe --always)
 #
 # Generate Settings
 #
-rm settings.staging.generated.json
+rm -f settings.staging.generated.json
 
 sed < settings.json \
 "s/__MGB_GIT_BRANCH__WILL_GO_HERE__/${git_branch//\//\\/}/" | \

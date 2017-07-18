@@ -1,11 +1,11 @@
 sending emails:
 
 $ cd code13/massemail/sender
-$ npm install
+$ yarn
 $ node send.js
 
 
 get logs:
 $ cd code13/massemail/logs
-$ npm install
+$ yarn
 $ node getLogs.js

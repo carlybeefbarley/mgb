@@ -27,7 +27,7 @@ exit 0
 	cd tmp
 	git clone lodash
 	cd lodash
-	npm install jsdoc
+	yarn add jsdoc
 	node ./node_modules/jsdoc/jsdoc.js -t ./node_modules/jsdoc/templates/haruki/ -d console lodash.js  > ../../app/public/lodash.jsdoc.json
 )
 

@@ -15,11 +15,11 @@
   "homepage": "https://github.com/devlapse/mgb#readme",
   "main": "app.js",
   "scripts": {
-    "eslint": "echo \"linting...\" && eslint --fix \"**/*.js?(x)\" --ignore-pattern \".meteor/**\" --ignore-pattern \"**/lib/**\" --ignore-pattern \"public/phaser/**\" --ignore-pattern \".yarn-cache/**\"",
-    "lint": "npm run --silent prettier && npm run --silent eslint",
-    "prettier": "prettier --semi false --print-width 110 --single-quote --trailing-comma all --write \"**/*.js?(x|on)\" \"!.meteor/**\" \"!**/lib/**\" \"!public/phaser/**\" \"!.yarn-cache/**\"",
+    "preinstall": "which use-yarn && use-yarn || true",
+    "lint": "node lint.js",
     "start": "sh ./go.sh",
-    "test": "npm run lint",
+    "start:empty": "meteor",
+    "test": "yarn run lint",
     "storybook": "start-storybook -p 9001 -s ./.meteor/local/build/programs/web.browser/app,./.meteor/local/build/programs/web.browser -c .storybook",
     "withDB": "MONGO_URL=mongodb://mgbapp:tiNmhsp1@ds021730-a0.mlab.com:21730,ds021730-a1.mlab.com:21730/mgb2_clus001?replicaSet=rs-ds021730 meteor"
   },
@@ -97,11 +97,12 @@
     "eslint-config-prettier": "^2.3.0",
     "eslint-plugin-json": "^1.2.0",
     "eslint-plugin-prettier": "^2.1.2",
-    "eslint-plugin-react": "^6.10.3",
+    "eslint-plugin-react": "^7.1.0",
     "mocha": "^3.4.2",
     "mocha-parallel": "^0.1.0",
     "mocha.parallel": "^0.15.2",
-    "prettier": "github:prettier/prettier",
-    "selenium-webdriver": "^3.4.0"
+    "prettier": "github:prettier/prettier#02639da9a9a31133ae85b047d565c00fe16fc052",
+    "selenium-webdriver": "^3.4.0",
+    "use-yarn": "^1.0.1"
   }
 }

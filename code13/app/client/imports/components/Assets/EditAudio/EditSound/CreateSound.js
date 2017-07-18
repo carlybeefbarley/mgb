@@ -62,7 +62,6 @@ export default class CreateSound extends React.Component {
   regenerateSound() {
     this.sound = new SFXR.SoundEffect(this.PARAMS).generate()
     lamejs.encodeMono(1, this.sound.header.sampleRate, this.sound.samples, audioObject => {
-      // console.log(audioObject)
       this.sound.dataURI = audioObject.src
       this.playSound()
       this.setState({ canPlay: true })
@@ -70,20 +69,18 @@ export default class CreateSound extends React.Component {
   }
 
   playSound() {
-    // setTimeout(() => {
-      let sound = new Audio()
-      sound.oncanplaythrough = (event) => {
-        sound.play()
-      }
-      sound.src = this.sound.dataURI
-      sound.load()
-      if (this.sound.dataURI.length > 100) {
-        // check if dataUri is not corrupted. Sometimes jsfxr returns only part of uri
-        this.wavesurfer.load(this.sound.dataURI)
-      } else {
-        this.wavesurfer.empty()
-      }
-    // }, 0)
+    let sound = new Audio()
+    sound.oncanplaythrough = (event) => {
+      sound.play()
+    }
+    sound.src = this.sound.dataURI
+    sound.load()
+    if (this.sound.dataURI.length > 100) {
+      // check if dataUri is not corrupted. Sometimes jsfxr returns only part of uri
+      this.wavesurfer.load(this.sound.dataURI)
+    } else {
+      this.wavesurfer.empty()
+    }
   }
 
   changeParam(paramID, event) {

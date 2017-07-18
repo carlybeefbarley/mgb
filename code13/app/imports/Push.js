@@ -1,7 +1,6 @@
-//import Push from 'phonegap-plugin-push' - this does not work
 /*
 
- This is basic setup for server push notifications - proof of concept (works on android only). More work needs to be done before use it in the production. see TODOs
+This is basic setup for server push notifications - proof of concept (works on android only). More work needs to be done before use it in the production. see TODOs
 
 Basic usage:
   from terminal:
@@ -22,6 +21,9 @@ Basic usage:
 more info here:
   * https://github.com/raix/push
   * https://medium.com/@acarabott/meteor-native-ios-push-notifications-heroku-raix-push-cordova-213f486c4e6d
+
+To send notification open console (either dev tools or meteor)
+`Meteor.call("serverNotification", "Hello", "world")`
 
 
 TODO:

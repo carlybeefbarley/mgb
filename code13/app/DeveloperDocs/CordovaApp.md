@@ -48,9 +48,17 @@ Status so far:
     Particulary position: fixed and swipeable views don't work together nicely
     (alternatively it's possible to set transform: translateX(0) css rule to the parent node)
     
-  - added native Push notifications as a proof of concept - as this is native feature
-    and can't be tested directly from mobile chrome - new apk needs to be build on every
-    small change - this is time consuming 
+  - added native Push notifications as a proof of concept (see: app/imports/Push.js to get started) -
+    as this is native feature and can't be tested directly from mobile chrome -
+    new apk needs to be build on every small change - this is time consuming.
+    You can test push notifications from console by executing:
+    `Meteor.call("serverNotification", "Hello", "world")`
+    
+  - added load on scroll functionality to the game list and asset list -
+    this loads rest of the games / assets through the api - 
+    it's also possible to tune up thresholds - when to start loading and limit assets / per chunk
+    
+  - added icons
 
 
 Troubleshooting:
@@ -78,7 +86,7 @@ Building and debugging:
         - local - connects to dev pc through local network
         - test - connects to test server (test.mygamebuilder.com)
         - custom - `./go-android.sh local --mobile-server=http://ip_addr_or_domain:port`
-  - IOS:
+  - iOS:
     - There are 2 options:
       - run on the external device directly `./go-ios.sh`
       - run in the xcode's emulator: `./go-xcode.sh`

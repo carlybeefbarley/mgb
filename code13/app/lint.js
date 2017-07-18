@@ -17,10 +17,7 @@ try {
     ...include.map(glob => `"${glob}"`),
     ...ignore.map(glob => `--ignore-pattern "${glob}"`),
   ])
-
-}
-
-// TODO: @levithomason fix this somehow.. seems meteor startup gets wrong path in the runNPMCommand
-catch(e){
-  console.log("Meteor build sideffect", e)
+} catch (e) {
+  // TODO: @levithomason fix this somehow.. seems meteor startup gets wrong path in the runNPMCommand
+  console.log('Meteor build sideffect', e)
 }

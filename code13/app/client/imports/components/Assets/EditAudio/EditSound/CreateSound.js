@@ -26,6 +26,7 @@ export default class CreateSound extends React.Component {
     this.state = {
       paramsUpdated: new Date().getTime(), // this.PARAMS is actual object in sfxr lib and paramsUpdated is just flag to trigger UI updates
       playerStatus: 'empty', // empty, play, pause
+      canPlay: false
     }
   }
 
@@ -64,6 +65,7 @@ export default class CreateSound extends React.Component {
       // console.log(audioObject)
       this.sound.dataURI = audioObject.src
       this.playSound()
+      this.setState({ canPlay: true })
     })
   }
 
@@ -201,7 +203,8 @@ export default class CreateSound extends React.Component {
             <button
               className="ui icon button massive"
               title="Play"
-              onMouseUp={this.regenerateSound.bind(this)}
+              onMouseUp={this.playSound.bind(this)}
+              disabled={ !this.state.canPlay }
             >
               <i className="play icon" />
             </button>

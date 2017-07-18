@@ -19,6 +19,7 @@ try {
   ])
 
 }
+
 // TODO: @levithomason fix this somehow.. seems meteor startup gets wrong path in the runNPMCommand
 catch(e){
   console.log("Meteor build sideffect", e)

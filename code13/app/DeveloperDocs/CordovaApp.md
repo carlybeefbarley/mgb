@@ -63,3 +63,22 @@ Troubleshooting:
     - it just worked and now it isn't
     - build fails after an update
     - infinite loading in the mobile app, but works fine when connect through mobile chrome
+
+
+Building and debugging:
+----
+  - Android:
+    - if you are on osX - chekc out `./android-on-osx.md`
+    - To build debug apk you will need to connect android device or emulator.
+    - After connecting device execute `./go-android.sh` - apk will be located in the:
+  `app/.meteor/local/cordova-build/platforms/android/build/outputs/apk/android-armv7-debug.apk`
+      - to connect device run adb
+      - if `adb` is not in the path - `cd ../misc` `. ./setupAndroid`
+      - it's possible to build apk which connects to different server - atm supported only:
+        - local - connects to dev pc through local network
+        - test - connects to test server (test.mygamebuilder.com)
+        - custom - `./go-android.sh local --mobile-server=http://ip_addr_or_domain:port`
+  - IOS:
+    - There are 2 options:
+      - run on the external device directly `./go-ios.sh`
+      - run in the xcode's emulator: `./go-xcode.sh`

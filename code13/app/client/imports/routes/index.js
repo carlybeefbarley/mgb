@@ -179,7 +179,7 @@ export function clientStartup() {
           component={NotYetImplementedRoute}
           name="Coming Soon!.."
         />
-        
+
         <Route path="*" component={NotFoundRoute} name="Page Not Found" />
       </Route>
     </Router>

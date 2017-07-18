@@ -19,9 +19,9 @@ rm -rf .meteor/local/cordova-build/platforms/android/build/outputs/apk/
 
 # For Windows
 if [[ "$OSTYPE" == "msys" ]]; then
-  meteor.bat build ../bundle --server http://test.mygamebuilder.com --mobile-server http://test.mygamebuilder.com
+  meteor.bat build ../bundle --server http://test.mygamebuilder.com
 else
-  meteor build ../bundle --server http://test.mygamebuilder.com --mobile-server http://test.mygamebuilder.com
+  meteor build ../bundle --server http://test.mygamebuilder.com
 fi
 )
 

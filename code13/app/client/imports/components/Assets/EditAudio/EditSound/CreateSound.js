@@ -68,17 +68,20 @@ export default class CreateSound extends React.Component {
   }
 
   playSound() {
-    setTimeout(() => {
+    // setTimeout(() => {
       let sound = new Audio()
+      sound.oncanplaythrough = (event) => {
+        sound.play()
+      }
       sound.src = this.sound.dataURI
+      sound.load()
       if (this.sound.dataURI.length > 100) {
         // check if dataUri is not corrupted. Sometimes jsfxr returns only part of uri
         this.wavesurfer.load(this.sound.dataURI)
       } else {
         this.wavesurfer.empty()
       }
-      sound.play()
-    }, 0)
+    // }, 0)
   }
 
   changeParam(paramID, event) {
@@ -115,7 +118,6 @@ export default class CreateSound extends React.Component {
         <div id={'mgbjr-editSound-createSound-button-' + effect} key={'effect_' + effect}>
           <button
             className="ui fluid button small"
-            onTouchEnd={this.gen.bind(this, effect)}
             onMouseUp={this.gen.bind(this, effect)}
           >
             {effect}
@@ -199,7 +201,6 @@ export default class CreateSound extends React.Component {
             <button
               className="ui icon button massive"
               title="Play"
-              onTouchEnd={this.regenerateSound.bind(this)}
               onMouseUp={this.regenerateSound.bind(this)}
             >
               <i className="play icon" />
@@ -208,7 +209,6 @@ export default class CreateSound extends React.Component {
               id="mgbjr-editSound-createSound-save"
               className="ui icon button massive"
               title="Save sound"
-              onTouchEnd={this.saveSound.bind(this)}
               onMouseUp={this.saveSound.bind(this)}
             >
               <i className="save icon" />
@@ -216,7 +216,6 @@ export default class CreateSound extends React.Component {
             <button
               className="ui icon button massive"
               title="Reset sliders"
-              onTouchEnd={this.resetSliders.bind(this)}
               onMouseUp={this.resetSliders.bind(this)}
             >
               <i className="erase icon" />

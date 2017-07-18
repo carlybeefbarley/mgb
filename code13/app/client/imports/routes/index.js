@@ -179,8 +179,7 @@ export function clientStartup() {
           component={NotYetImplementedRoute}
           name="Coming Soon!.."
         />
-
-        <Route path="/test" component={Test} name="TEST ROUTE!" />
+        
         <Route path="*" component={NotFoundRoute} name="Page Not Found" />
       </Route>
     </Router>

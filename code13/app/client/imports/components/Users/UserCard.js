@@ -48,7 +48,7 @@ export default class UserCard extends React.Component {
             <UX.UserAvatarNoLink username={username} height="4em" />
           </Card.Content>
           <Card.Content>
-            <Header size="small" content={username} />
+            <Card.Header title={username} content={username} />
             {suIsBanned && (
               <div>
                 <Label size="small" color="red" content="Suspended" />

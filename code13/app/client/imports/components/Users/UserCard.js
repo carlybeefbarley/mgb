@@ -11,7 +11,7 @@ import QLink from '/client/imports/routes/QLink'
 
 const _cardStyle = { textAlign: 'center' }
 
-export default class UserItem extends React.Component {
+export default class UserCard extends React.Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
     handleClickUser: PropTypes.func, // If provided, call this with the userId instead of going to the user Profile Page

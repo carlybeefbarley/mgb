@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { Button, Icon, Segment } from 'semantic-ui-react'
 import React, { PropTypes } from 'react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
-import UserItem from '../Users/UserItem'
+import UserCard from '../Users/UserCard'
 
 const _nowrapStyle = {
   display: 'flex',
@@ -13,7 +13,7 @@ const _nowrapStyle = {
 }
 
 const _buttonStyle = {
-  width: '116px', // This should match the narrow UserItem width
+  width: '116px', // This should match the narrow UserCard width
 }
 
 // ...GET - because this is a component that GETs it's own data via getMeteorData() callback
@@ -46,7 +46,7 @@ const ProjectMembersGET = React.createClass({
 
     return _.map(this.data.users, user => (
       <Segment basic key={user._id} style={{ marginTop: 0 }}>
-        <UserItem narrowItem user={user} style={{ paddingBottom: 0 }} />
+        <UserCard narrowItem user={user} style={{ paddingBottom: 0 }} />
         <div className="ui bottom attached buttons">
           {enableLeaveButton && enableLeaveButton === user._id ? (
             <Button

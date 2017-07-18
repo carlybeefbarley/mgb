@@ -57,7 +57,7 @@ const CardExampleCard = ({ currUser }) => (
 const makeCDNLink = url => 'http://v2.mygamebuilder.com/' + url
 const makeExpireTimestamp = t => ''
 
-const UserItem = React.createClass({
+const UserCard = React.createClass({
   propTypes: {
     user: PropTypes.object.isRequired,
     handleClickUser: PropTypes.func, // If provided, call this with the userId instead of going to the user Profile Page
@@ -144,15 +144,15 @@ const UserItem = React.createClass({
 
 storiesOf('Examples', module)
   .add('Card', () => <CardExampleCard currUser={fakeAppRouteProps.currUser} />)
-  .add('UserItem Narrow', () => (
-    <UserItem
+  .add('UserCard Narrow', () => (
+    <UserCard
       user={fakeAppRouteProps.currUser}
       handleClickUser={action('Invoked handleSetCurrentlyEditingAssetInfo')}
       narrowItem
     />
   ))
-  .add('UserItem Wide', () => (
-    <UserItem
+  .add('UserCard Wide', () => (
+    <UserCard
       user={fakeAppRouteProps.currUser}
       handleClickUser={action('Invoked handleSetCurrentlyEditingAssetInfo')}
       narrowItem={false}

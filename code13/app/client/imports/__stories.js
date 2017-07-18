@@ -12,7 +12,7 @@ import moment from 'moment'
 // It is for devs:
 //    Run the usual meteor build in one shell (go.sh etc)
 //    Run storybook in another shell as follows:
-//        npm run storybook
+//        yarn run storybook
 //        (open browser window to port suggested, for example http://localhost:9001)
 
 // This is useful for mocking the data for the ___Route.js components that get

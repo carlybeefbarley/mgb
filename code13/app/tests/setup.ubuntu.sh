@@ -3,8 +3,7 @@
 # scp -r -i ~/aws-free.pem /home/kaspars/Projects/mgb/code13/app/tests ubuntu@ec2-54-196-36-137.compute-1.amazonaws.com:~/mgb
 
 # install npm
-sudo apt-get install npm -y
-npm install npm
+sudo apt-get install yarn -y
 
 # phantom depends on fontconfig - but npm don't include it - bug?
 sudo apt-get install fontconfig -y
@@ -20,7 +19,7 @@ export NVM_DIR="$HOME/.nvm"
 nvm install node
 
 # install dependencies
-npm install
+yarn
 
 # create service - move to separate file and copy instead of creating at runtime?
 sudo bash -c 'cat << EOF > /etc/systemd/system/mgb-test-slave.service

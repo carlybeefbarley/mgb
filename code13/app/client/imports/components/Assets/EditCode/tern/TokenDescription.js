@@ -1356,28 +1356,28 @@ export { import1 as name1, import2 as name2, …, nameN } from …;`,
       </span>
     ),
     advices: [
-      <span className="cm-s-eclipse">
+      <span key="your-assets" className="cm-s-eclipse">
         your own assets:{' '}
         <code>
           <span className="cm-keyword">import</span> <span className="cm-def">myModule</span>{' '}
           <span className="cm-keyword">from</span> <span className="cm-string">'/moduleName'</span>
         </code>
       </span>,
-      <span className="cm-s-eclipse">
+      <span key="other-assets" className="cm-s-eclipse">
         other user asset:{' '}
         <code>
           <span className="cm-keyword">import</span> <span className="cm-def">otherModule</span>{' '}
           <span className="cm-keyword">from</span> <span className="cm-string">'/!vault:CSSLoader'</span>
         </code>
       </span>,
-      <span className="cm-s-eclipse">
+      <span key="common-libraries" className="cm-s-eclipse">
         common libraries:{' '}
         <code>
           <span className="cm-keyword">import</span> <span className="cm-def">$</span>{' '}
           <span className="cm-keyword">from</span> <span className="cm-string">'jquery'</span>
         </code>
       </span>,
-      <span className="cm-s-eclipse">
+      <span key="external-libraries" className="cm-s-eclipse">
         external libraries:{' '}
         <code>
           <span className="cm-keyword">import</span> <span className="cm-def">three</span>{' '}
@@ -1385,7 +1385,7 @@ export { import1 as name1, import2 as name2, …, nameN } from …;`,
           <span className="cm-string">'https://cdn.jsdelivr.net/threejs/0.0.0-r74/three.min.js'</span>
         </code>
       </span>,
-      <span>
+      <span key="more-examples">
         More examples: <a href="/u/!vault/asset/ePJGm7q78tbvWB4Co">/!vault:importExamples</a>
       </span>,
     ],

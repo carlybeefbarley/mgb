@@ -16,7 +16,7 @@
   "main": "app.js",
   "scripts": {
     "preinstall": "which use-yarn && use-yarn || true",
-    "lint": "node lint.js",
+    "lint": "sh ./lint.sh",
     "start": "sh ./go.sh",
     "start:empty": "meteor",
     "test": "yarn run lint",

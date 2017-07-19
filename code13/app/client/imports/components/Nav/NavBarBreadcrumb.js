@@ -81,7 +81,7 @@ const BreadcrumbImage = ({ style, ...rest }) => (
 )
 
 const getFilteredAssets = (relatedAssets, quickAssetSearch) => {
-  const assetNameQuickNavRegex = new RegExp('^.*' +  _.escapeRegExp(quickAssetSearch), 'i')
+  const assetNameQuickNavRegex = new RegExp('^.*' + _.escapeRegExp(quickAssetSearch), 'i')
   return _.filter(relatedAssets, a => assetNameQuickNavRegex.test(a.name))
 }
 
@@ -346,7 +346,7 @@ const NavBarBreadcrumbUI = props => {
         {usernameToShow && (
           <Modal
             dimmer={false}
-            size='mini'
+            size="mini"
             closeOnDocumentClick
             open={quickNavIsOpen}
             onOpen={_handleRelatedAssetsPopupOpen}
@@ -393,6 +393,7 @@ const NameInfoAzzets = new Meteor.Collection('NameInfoAzzets')
 const NavBarBreadcrumb = React.createClass({
   mixins: [ReactMeteorData],
 
+  listenOn: 'keydown',
 
   componentDidMount() {
     window.addEventListener(this.listenOn, this.handleDocumentKeyDown, true)
@@ -401,7 +402,6 @@ const NavBarBreadcrumb = React.createClass({
     window.removeEventListener(this.listenOn, this.handleDocumentKeyDown)
   },
 
-  listenOn: 'keydown',
   handleDocumentKeyDown(e) {
     let shouldPrevent = false
     // TODO: get constants for keycodes probably they should be here: app/client/imports/components/Skills/Keybindings.js
@@ -418,10 +418,13 @@ const NavBarBreadcrumb = React.createClass({
 
       // enter
       if (e.which === 13 && selectedAsset) {
-        this.setState({ quickNavIsOpen: false, quickAssetSearch: '' }, () => {
+        // clean up and load new asset
+        this.setState({ quickNavIsOpen: false, quickAssetSearch: '', activeItem: 0 }, () => {
           if (selectedAsset._id && selectedAsset._id !== (this.props.params ? this.props.params.assetId : ''))
             openAssetById(selectedAsset._id)
         })
+        // return here as nothing more needs to be done
+        return
       } else if (e.which === 40) {
         // down
         nextItemMaybe++
@@ -429,6 +432,8 @@ const NavBarBreadcrumb = React.createClass({
       } else if (e.which === 38) {
         // up
         nextItemMaybe--
+        // wrap from top to bottom
+        if (nextItemMaybe < 0) nextItemMaybe = filteredAssets.length - 1
         // we still need to eat event
         shouldPrevent = true
       }
@@ -438,11 +443,7 @@ const NavBarBreadcrumb = React.createClass({
       // + also wraps selection around on arrows
       if (nextItemMaybe >= filteredAssets.length) nextItemMaybe = 0
 
-      // wrap from top to bottom
-      if (nextItemMaybe < 0) nextItemMaybe = filteredAssets.length - 1
-
-      if(nextItemMaybe !== this.state.activeItem)
-        this.setState({activeItem: nextItemMaybe})
+      if (nextItemMaybe !== this.state.activeItem) this.setState({ activeItem: nextItemMaybe })
     }
 
     if (shouldPrevent) {

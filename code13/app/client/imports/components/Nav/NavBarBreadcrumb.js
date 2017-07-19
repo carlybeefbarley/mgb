@@ -328,9 +328,8 @@ const NavBarBreadcrumbUI = props => {
           <Popup
             on="hover"
             wide
-            // make sure we don't show both related assets at the same time
+            // make sure we don't show both related assets at the same time - undefined needed for the trigger on hover
             open={quickNavIsOpen ? false : undefined}
-            // open={quickNavIsOpen ? quickNavIsOpen : undefined}
             onOpen={() => {
               onRelatedAssetNavOpen()
               _handleRelatedAssetsPopupOpen()
@@ -345,8 +344,8 @@ const NavBarBreadcrumbUI = props => {
         )}
         {usernameToShow && (
           <Modal
-            // dimmer={false}
-            open={quickNavIsOpen ? quickNavIsOpen : undefined}
+            // TODO: make dimmer invisible
+            open={quickNavIsOpen}
             onOpen={_handleRelatedAssetsPopupOpen}
             onClose={onQuickNavClose}
           >
@@ -392,52 +391,46 @@ const NavBarBreadcrumb = React.createClass({
   mixins: [ReactMeteorData],
 
   componentDidMount() {
-    window.addEventListener(
-      'keydown',
-      (this.quickOpenListener = e => {
-        let shouldPrevent = false
-        if (e.which === 'O'.charCodeAt(0) && (e.ctrlKey || e.metaKey)) {
-          this.setState({ quickNavIsOpen: true }, _handleRelatedAssetsPopupOpen)
-          shouldPrevent = true
-        }
-
-        if (this.state.quickNavIsOpen || this.state.relatedAssetNavIsOpen) {
-          const filteredAssets = getFilteredAssets(this.data.relatedAssets, this.state.quickAssetSearch)
-          // enter
-          if (e.which === 13 && filteredAssets[this.state.activeItem]) {
-            this.setState({ quickNavIsOpen: false, quickAssetSearch: '' }, () => {
-              const asset = filteredAssets[this.state.activeItem]
-              if (asset._id && asset._id !== (this.props.params ? this.props.params.assetId : ''))
-                openAssetById(asset._id)
-            })
-          } else if (e.which === 40) {
-            // up
-            this.setState({ activeItem: ++this.state.activeItem })
-            shouldPrevent = true
-          } else if (e.which === 38) {
-            // down
-            if (this.state.activeItem > 0) {
-              this.setState({ activeItem: --this.state.activeItem })
-            }
-            // we still need to eat event
-            shouldPrevent = true
-          }
-          // esc - Modal does this already
-          //else if (e.which === 27)
-          // this.setState({quickNavIsOpen: false})
-
-          if (this.state.activeItem >= filteredAssets.length) this.setState({ activeItem: 0 })
-        }
-
-        if (shouldPrevent) {
-          e.preventDefault()
-          e.stopPropagation()
-        }
-      }),
-      true,
-    )
+    window.addEventListener( 'keydown',  this.quickOpenListener, true)
   },
 
+  quickOpenListener(e){
+    let shouldPrevent = false
+    if (e.which === 'O'.charCodeAt(0) && (e.ctrlKey || e.metaKey)) {
+      this.setState({quickNavIsOpen: true}, _handleRelatedAssetsPopupOpen)
+      shouldPrevent = true
+    }
+
+    if (this.state.quickNavIsOpen || this.state.relatedAssetNavIsOpen) {
+      const filteredAssets = getFilteredAssets(this.data.relatedAssets, this.state.quickAssetSearch)
+      // enter
+      if (e.which === 13 && filteredAssets[this.state.activeItem]) {
+        this.setState({quickNavIsOpen: false, quickAssetSearch: ''}, () => {
+          const asset = filteredAssets[this.state.activeItem]
+          if (asset._id && asset._id !== (this.props.params ? this.props.params.assetId : ''))
+            openAssetById(asset._id)
+        })
+      } else if (e.which === 40) {
+        // up
+        this.setState({activeItem: ++this.state.activeItem})
+        shouldPrevent = true
+      } else if (e.which === 38) {
+        // down
+        if (this.state.activeItem > 0)
+          this.setState({activeItem: --this.state.activeItem})
+        // we still need to eat event
+        shouldPrevent = true
+      }
+      // Modal will call onClose automatically - so no esc key handling here
+
+      if (this.state.activeItem >= filteredAssets.length) this.setState({activeItem: 0})
+    }
+
+    if (shouldPrevent) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+  },
   componentWillUnmount() {
     window.removeEventListener('keyup', this.quickOpenListener)
   },

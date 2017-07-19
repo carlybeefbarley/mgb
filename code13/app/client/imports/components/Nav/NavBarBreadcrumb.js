@@ -4,7 +4,7 @@ import QLink from '/client/imports/routes/QLink'
 import { Popup, Breadcrumb, Icon, Input, Label, List } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import { AssetKinds } from '/imports/schemas/assets'
-import UserItem from '/client/imports/components/Users/UserItem'
+import UserCard from '/client/imports/components/Users/UserCard'
 
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
@@ -133,7 +133,7 @@ const NavBarBreadcrumbUI = props => {
           hoverable
           position="bottom center"
           header={usernameToShow}
-          content={user && <UserItem user={user} />}
+          content={user && <UserCard user={user} />}
           mouseEnterDelay={500}
         />
       </span>

@@ -13,17 +13,25 @@ import { getProjectAvatarUrl } from '/client/imports/helpers/assetFetchers'
 
 const ProjectCard = (props, context) => {
   const { project, canEdit, handleFieldChanged } = props
-  const linkTo = '/u/' + project.ownerName + '/projects/' + project.name
-  const MemberStr =
-    !project.memberIds || project.memberIds.length === 0
-      ? '1 Member'
-      : project.memberIds.length + 1 + ' Members'
-  const numChildForks = _.isArray(project.forkChildren) ? project.forkChildren.length : 0
-  const hasParentFork = _.isArray(project.forkParentChain) && project.forkParentChain.length > 0
+  const {
+    _id,
+    allowForks,
+    description,
+    forkChildren,
+    forkParentChain,
+    memberIds,
+    name,
+    ownerName,
+    workState,
+  } = project
+  const linkTo = '/u/' + ownerName + '/projects/' + name
+  const MemberStr = !memberIds || memberIds.length === 0 ? '1 Member' : memberIds.length + 1 + ' Members'
+  const numChildForks = _.isArray(forkChildren) ? forkChildren.length : 0
+  const hasParentFork = _.isArray(forkParentChain) && forkParentChain.length > 0
 
   return (
     <Card
-      key={project._id}
+      key={_id}
       className="animated fadeIn mgb-projectcard-width"
       onClick={() => utilPushTo(context.urlLocation.query, linkTo)}
     >
@@ -45,7 +53,7 @@ const ProjectCard = (props, context) => {
       <Card.Content>
         <span style={{ float: 'right' }}>
           <WorkState
-            workState={project.workState}
+            workState={workState}
             handleChange={
               !handleFieldChanged ? (
                 undefined
@@ -57,7 +65,7 @@ const ProjectCard = (props, context) => {
           />
         </span>
 
-        <Card.Header content={project.name} style={{ marginRight: '2em', overflowWrap: 'break-word' }} />
+        <Card.Header title={name} content={name} />
 
         <Card.Meta>
           <div>
@@ -66,7 +74,7 @@ const ProjectCard = (props, context) => {
           </div>
           <div style={{ color: numChildForks ? 'black' : null }}>
             <Icon name="fork" color={hasParentFork ? 'blue' : null} />
-            <span style={{ color: project.allowForks ? 'green' : null }}>{numChildForks} Forks</span>
+            <span style={{ color: allowForks ? 'green' : null }}>{numChildForks} Forks</span>
           </div>
         </Card.Meta>
 
@@ -75,7 +83,7 @@ const ProjectCard = (props, context) => {
             <InlineEdit
               validate={validate.projectDescription}
               activeClassName="editing"
-              text={project.description || '(no description)'}
+              text={description || '(no description)'}
               paramName="description"
               change={data => handleFieldChanged({ ...data })}
               isDisabled={!canEdit}
@@ -89,7 +97,7 @@ const ProjectCard = (props, context) => {
           <Icon name="sitemap" />
           Project
         </span>
-        <UX.UserAvatarName username={project.ownerName} />
+        <UX.UserAvatarName username={ownerName} />
       </Card.Content>
     </Card>
   )

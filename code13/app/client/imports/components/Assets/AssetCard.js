@@ -183,12 +183,7 @@ const AssetCard = React.createClass({
             </Popup>
           )}
 
-          {viewOpts.showExtra && (
-            <Card.Header
-              content={shownAssetName}
-              style={{ marginRight: '2em', overflowWrap: 'break-word' }}
-            />
-          )}
+          {viewOpts.showExtra && <Card.Header title={shownAssetName} content={shownAssetName} />}
 
           {viewOpts.showMeta && (
             <Card.Meta>

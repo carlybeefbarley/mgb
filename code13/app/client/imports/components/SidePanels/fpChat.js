@@ -294,6 +294,7 @@ const fpChat = React.createClass({
     const wallChannelName = currUser
       ? makeChannelName({ scopeGroupName: 'User', scopeId: currUser.username })
       : null
+    const isOpen = view === 'channels'
 
     // My Wall
     const myWall = !currUser ? null : (
@@ -315,7 +316,7 @@ const fpChat = React.createClass({
 
     // PUBLIC (GLOBAL) CHANNELS
     const publicChannels = (
-      <List selection>
+      <List selection className={`mgbjr-chat-channel-select-public-${isOpen ? 'open' : 'closed'}`}>
         <List.Item>
           <List.Header disabled style={{ textAlign: 'center' }}>
             Public Channels
@@ -456,8 +457,6 @@ const fpChat = React.createClass({
         </List.Item>
       </List>
     )
-
-    const isOpen = view === 'channels'
 
     const style = {
       position: 'absolute',

@@ -15,6 +15,37 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Tue Jul 18 2017 17:30:00 GMT-0700 (PDT)',
+
+      id: {
+        ver: '0.2.1',
+        state: 'Beta',
+        iteration: '4655',
+      },
+
+      releaseManagement: {
+        eng: 'dgolds',
+      },
+
+      changes: [
+        {
+          featureTag: 'tutorials.getStarted',
+          type: 'improvement',
+          changeName: 'Getting Started tutorials',
+          changeSummary: 'The "getting started" tutorials have been streamlined further. ',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary:
+            'Fixed some issues with Items in ActorMap games. More build automation. Improved chat tutorial.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Fri Jul 14 2017 08:40:00 GMT-0700 (PDT)',
 
       id: {

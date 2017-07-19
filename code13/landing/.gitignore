@@ -1,2 +1,4 @@
 dist/
 node_modules/
+.yarn-cache/
+package-lock.json

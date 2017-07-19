@@ -2,7 +2,7 @@
 (
 if [ ! -d ../app/node_modules/acorn/dist ]; then
   cd app
-  meteor npm install acorn
+  meteor yarn add acorn
   cd ..
 fi
 
@@ -12,7 +12,7 @@ cp -a ../app/node_modules/acorn/dist/* ../app/public/lib/acorn
 
 if [ ! -d ../app/node_modules/tern/lib ]; then
   cd app
-  meteor npm install tern
+  meteor yarn add tern
   cd ..
 fi
 

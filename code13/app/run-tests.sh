@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 export QT_QPA_PLATFORM=''
 java -jar ~/bin/selenium-* > /dev/null &
 

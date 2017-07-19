@@ -132,4 +132,11 @@ export const keysDB = [
     command: 'editor.text.commentToggle',
     description: 'Toggle comment at selected line(s)',
   },
+
+  {
+    macKey: 'Cmd-O',
+    pcKey: 'Ctrl-O',
+    command: 'editor.commands.openQuickNav',
+    description: 'Open Quick Nav panel'
+  },
 ]

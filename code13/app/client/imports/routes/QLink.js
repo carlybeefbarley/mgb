@@ -210,6 +210,14 @@ function _getDefaultUrlQueryParams() {
 }
 
 /**
+ * Opens asset by given id
+ * @param assetId
+ */
+export const openAssetById = (assetId) => {
+  utilPushTo(null, '/assetEdit/' + assetId)
+}
+
+/**
  * This is a replacement for browserHistory.push(). Use this when you want to add an
  * additional step into the browser history
  *

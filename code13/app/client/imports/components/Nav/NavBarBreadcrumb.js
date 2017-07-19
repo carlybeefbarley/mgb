@@ -81,7 +81,7 @@ const BreadcrumbImage = ({ style, ...rest }) => (
 )
 
 const getFilteredAssets = (relatedAssets, quickAssetSearch) => {
-  const assetNameQuickNavRegex = new RegExp('^.*' + quickAssetSearch, 'i')
+  const assetNameQuickNavRegex = new RegExp('^.*' +  _.escapeRegExp(quickAssetSearch), 'i')
   return _.filter(relatedAssets, a => assetNameQuickNavRegex.test(a.name))
 }
 
@@ -109,7 +109,7 @@ const RelatedAssets = ({
     />
     <List
       selection
-      style={{ maxHeight: '30em', width: '20em', overflowY: 'auto' }}
+      style={{ maxHeight: '30em', overflowY: 'auto' }}
       items={_.map(filteredRelatedAssets, (a, index) => ({
         key: a._id,
         as: QLink,
@@ -328,6 +328,7 @@ const NavBarBreadcrumbUI = props => {
           <Popup
             on="hover"
             wide
+            hoverable
             // make sure we don't show both related assets at the same time - undefined needed for the trigger on hover
             open={quickNavIsOpen ? false : undefined}
             onOpen={() => {
@@ -344,7 +345,9 @@ const NavBarBreadcrumbUI = props => {
         )}
         {usernameToShow && (
           <Modal
-            // TODO: make dimmer invisible
+            dimmer={false}
+            size='mini'
+            closeOnDocumentClick
             open={quickNavIsOpen}
             onOpen={_handleRelatedAssetsPopupOpen}
             onClose={onQuickNavClose}
@@ -390,48 +393,62 @@ const NameInfoAzzets = new Meteor.Collection('NameInfoAzzets')
 const NavBarBreadcrumb = React.createClass({
   mixins: [ReactMeteorData],
 
+
   componentDidMount() {
-    window.addEventListener('keydown', this.quickOpenListener, true)
+    window.addEventListener(this.listenOn, this.handleDocumentKeyDown, true)
+  },
+  componentWillUnmount() {
+    window.removeEventListener(this.listenOn, this.handleDocumentKeyDown)
   },
 
-  quickOpenListener(e) {
+  listenOn: 'keydown',
+  handleDocumentKeyDown(e) {
     let shouldPrevent = false
-    if (e.which === 'O'.charCodeAt(0) && (e.ctrlKey || e.metaKey)) {
+    // TODO: get constants for keycodes probably they should be here: app/client/imports/components/Skills/Keybindings.js
+    // Ctrl (Cmd) + o (O)
+    if (!this.state.quickNavIsOpen && e.which === 79 && (e.ctrlKey || e.metaKey)) {
       this.setState({ quickNavIsOpen: true }, _handleRelatedAssetsPopupOpen)
       shouldPrevent = true
     }
 
     if (this.state.quickNavIsOpen || this.state.relatedAssetNavIsOpen) {
       const filteredAssets = getFilteredAssets(this.data.relatedAssets, this.state.quickAssetSearch)
+      const selectedAsset = filteredAssets[this.state.activeItem]
+      let nextItemMaybe = this.state.activeItem
+
       // enter
-      if (e.which === 13 && filteredAssets[this.state.activeItem]) {
+      if (e.which === 13 && selectedAsset) {
         this.setState({ quickNavIsOpen: false, quickAssetSearch: '' }, () => {
-          const asset = filteredAssets[this.state.activeItem]
-          if (asset._id && asset._id !== (this.props.params ? this.props.params.assetId : ''))
-            openAssetById(asset._id)
+          if (selectedAsset._id && selectedAsset._id !== (this.props.params ? this.props.params.assetId : ''))
+            openAssetById(selectedAsset._id)
         })
       } else if (e.which === 40) {
-        // up
-        this.setState({ activeItem: ++this.state.activeItem })
+        // down
+        nextItemMaybe++
         shouldPrevent = true
       } else if (e.which === 38) {
-        // down
-        if (this.state.activeItem > 0) this.setState({ activeItem: --this.state.activeItem })
+        // up
+        nextItemMaybe--
         // we still need to eat event
         shouldPrevent = true
       }
       // Modal will call onClose automatically - so no esc key handling here
 
-      if (this.state.activeItem >= filteredAssets.length) this.setState({ activeItem: 0 })
+      // check if list is long enough to contain selected item (search reduces list)
+      // + also wraps selection around on arrows
+      if (nextItemMaybe >= filteredAssets.length) nextItemMaybe = 0
+
+      // wrap from top to bottom
+      if (nextItemMaybe < 0) nextItemMaybe = filteredAssets.length - 1
+
+      if(nextItemMaybe !== this.state.activeItem)
+        this.setState({activeItem: nextItemMaybe})
     }
 
     if (shouldPrevent) {
       e.preventDefault()
       e.stopPropagation()
     }
-  },
-  componentWillUnmount() {
-    window.removeEventListener('keyup', this.quickOpenListener)
   },
 
   getInitialState() {

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import QLink, {openAssetById} from '/client/imports/routes/QLink'
+import QLink, { openAssetById } from '/client/imports/routes/QLink'
 import { Popup, Modal, Header, Breadcrumb, Icon, Input, Label, List } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import { AssetKinds } from '/imports/schemas/assets'
@@ -86,16 +86,16 @@ const getFilteredAssets = (relatedAssets, quickAssetSearch) => {
 }
 
 const RelatedAssets = ({
-                         relatedAssetsLoading,
-                         quickAssetSearch,
-                         handleSearchNavKey,
-                         filteredRelatedAssets,
-                         currUser,
-                         user,
-                         contextualProjectName,
-                         activeItem,
-                         assetId
-                      }) => (
+  relatedAssetsLoading,
+  quickAssetSearch,
+  handleSearchNavKey,
+  filteredRelatedAssets,
+  currUser,
+  user,
+  contextualProjectName,
+  activeItem,
+  assetId,
+}) => (
   <div>
     <Input
       id="mgb-navbar-relatedassets" // so it can be focused on open
@@ -109,14 +109,14 @@ const RelatedAssets = ({
     />
     <List
       selection
-      style={{maxHeight: '30em', width: '20em', overflowY: 'auto'}}
+      style={{ maxHeight: '30em', width: '20em', overflowY: 'auto' }}
       items={_.map(filteredRelatedAssets, (a, index) => ({
         key: a._id,
         as: QLink,
         to: `/u/${a.dn_ownerName}/asset/${a._id}`,
-        active: (activeItem === index),
-        style: {color: AssetKinds.getColor(a.kind)},
-        icon: {name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind)},
+        active: activeItem === index,
+        style: { color: AssetKinds.getColor(a.kind) },
+        icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
         content: currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
       }))}
     />
@@ -129,15 +129,15 @@ const RelatedAssets = ({
               ? user.username
               : currUser ? currUser.username : null}/projects/${contextualProjectName}`}
           >
-            <Icon name="sitemap"/>
+            <Icon name="sitemap" />
             <span>{contextualProjectName}</span>
           </QLink>
         </small>
       )}
-      <QLink to="/assets/create" style={{float: 'right'}}>
+      <QLink to="/assets/create" style={{ float: 'right' }}>
         <Icon.Group>
-          <Icon color="green" name="pencil"/>
-          <Icon color="green" corner name="add"/>
+          <Icon color="green" name="pencil" />
+          <Icon color="green" corner name="add" />
         </Icon.Group>
       </QLink>
     </div>
@@ -176,8 +176,8 @@ const NavBarBreadcrumbUI = props => {
   const isAssets = name === 'Assets'
   const filteredRelatedAssets = getFilteredAssets(relatedAssets, quickAssetSearch)
 
-  const relatedAssetsComponent = usernameToShow
-    ? <RelatedAssets
+  const relatedAssetsComponent = usernameToShow ? (
+    <RelatedAssets
       {...{
         relatedAssetsLoading,
         quickAssetSearch,
@@ -186,9 +186,10 @@ const NavBarBreadcrumbUI = props => {
         currUser,
         user,
         contextualProjectName,
-        activeItem
+        activeItem,
       }}
-    /> : null
+    />
+  ) : null
 
   const sections = [
     //
@@ -332,10 +333,8 @@ const NavBarBreadcrumbUI = props => {
             position="bottom left"
             trigger={<Icon color="blue" name="ellipsis horizontal" style={breadcrumbImageStyle} />}
           >
-            <Header content='Related Assets' subheader='ctrl + o' />
-            <Popup.Content>
-              {relatedAssetsComponent}
-            </Popup.Content>
+            <Header content="Related Assets" subheader="ctrl + o" />
+            <Popup.Content>{relatedAssetsComponent}</Popup.Content>
           </Popup>
         )}
         {usernameToShow && (
@@ -346,9 +345,7 @@ const NavBarBreadcrumbUI = props => {
             onClose={() => onRelatedAssetsClose && onRelatedAssetsClose()}
           >
             <Modal.Header>Related Assets</Modal.Header>
-            <Modal.Content>
-              {relatedAssetsComponent}
-            </Modal.Content>
+            <Modal.Content>{relatedAssetsComponent}</Modal.Content>
           </Modal>
         )}
       </span>
@@ -388,54 +385,51 @@ const NameInfoAzzets = new Meteor.Collection('NameInfoAzzets')
 const NavBarBreadcrumb = React.createClass({
   mixins: [ReactMeteorData],
 
-
-  componentDidMount(){
-    window.addEventListener("keydown", this.quickOpenListener = (e) => {
-      let shouldPrevent = false
-      if(e.which === 'O'.charCodeAt(0) && (e.ctrlKey || e.metaKey) ) {
-        this.setState({quickNavIsOpen: true}, _handleRelatedAssetsPopupOpen)
-        shouldPrevent = true
-      }
-
-
-      if(this.state.quickNavIsOpen) {
-        const filteredAssets = getFilteredAssets(this.data.relatedAssets, this.state.quickAssetSearch)
-        // enter
-        if(e.which === 13 && filteredAssets[this.state.activeItem]) {
-          this.setState({quickNavIsOpen: false, quickAssetSearch: ''}, () => {
-            const asset = filteredAssets[this.state.activeItem]
-            if(asset._id && asset._id !== (this.props.params ? this.props.params.assetId : ''))
-              openAssetById(asset._id)
-          })
-        }
-        // up
-        else if (e.which === 40) {
-          this.setState({activeItem: ++this.state.activeItem})
+  componentDidMount() {
+    window.addEventListener(
+      'keydown',
+      (this.quickOpenListener = e => {
+        let shouldPrevent = false
+        if (e.which === 'O'.charCodeAt(0) && (e.ctrlKey || e.metaKey)) {
+          this.setState({ quickNavIsOpen: true }, _handleRelatedAssetsPopupOpen)
           shouldPrevent = true
         }
-        // down
-        else if (e.which === 38 && this.state.activeItem > 0) {
-          this.setState({activeItem: --this.state.activeItem})
-          shouldPrevent = true
+
+        if (this.state.quickNavIsOpen) {
+          const filteredAssets = getFilteredAssets(this.data.relatedAssets, this.state.quickAssetSearch)
+          // enter
+          if (e.which === 13 && filteredAssets[this.state.activeItem]) {
+            this.setState({ quickNavIsOpen: false, quickAssetSearch: '' }, () => {
+              const asset = filteredAssets[this.state.activeItem]
+              if (asset._id && asset._id !== (this.props.params ? this.props.params.assetId : ''))
+                openAssetById(asset._id)
+            })
+          } else if (e.which === 40) {
+            // up
+            this.setState({ activeItem: ++this.state.activeItem })
+            shouldPrevent = true
+          } else if (e.which === 38 && this.state.activeItem > 0) {
+            // down
+            this.setState({ activeItem: --this.state.activeItem })
+            shouldPrevent = true
+          }
+          // esc - Modal does this already
+          //else if (e.which === 27)
+          // this.setState({quickNavIsOpen: false})
+
+          if (this.state.activeItem >= filteredAssets.length) this.setState({ activeItem: 0 })
         }
-        // esc - Modal does this already
-        //else if (e.which === 27)
-        // this.setState({quickNavIsOpen: false})
 
-
-        if(this.state.activeItem >= filteredAssets.length)
-          this.setState({activeItem: 0})
-
-      }
-
-      if(shouldPrevent){
-        e.preventDefault()
-        e.stopPropagation()
-      }
-    }, true)
+        if (shouldPrevent) {
+          e.preventDefault()
+          e.stopPropagation()
+        }
+      }),
+      true,
+    )
   },
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     window.removeEventListener('keyup', this.quickOpenListener)
   },
 
@@ -443,7 +437,7 @@ const NavBarBreadcrumb = React.createClass({
     return {
       quickAssetSearch: '',
       activeItem: 0,
-      quickNavIsOpen: false
+      quickNavIsOpen: false,
     }
   },
 
@@ -489,10 +483,7 @@ const NavBarBreadcrumb = React.createClass({
         {...this.state}
         contextualProjectName={this._getContextualProjectName()}
         handleSearchNavKey={this.handleSearchNavKey}
-        onRelatedAssetsClose={() => {
-          this.setState({quickNavIsOpen: false})
-          console.log("CLose...")
-        }}
+        onRelatedAssetsClose={() => this.setState({ quickNavIsOpen: false })}
       />
     )
   },

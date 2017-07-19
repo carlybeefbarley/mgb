@@ -213,7 +213,7 @@ function _getDefaultUrlQueryParams() {
  * Opens asset by given id
  * @param assetId
  */
-export const openAssetById = (assetId) => {
+export const openAssetById = assetId => {
   utilPushTo(null, '/assetEdit/' + assetId)
 }
 

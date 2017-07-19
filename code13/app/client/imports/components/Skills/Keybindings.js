@@ -137,6 +137,6 @@ export const keysDB = [
     macKey: 'Cmd-O',
     pcKey: 'Ctrl-O',
     command: 'editor.commands.openQuickNav',
-    description: 'Open Quick Nav panel'
+    description: 'Open Quick Nav panel',
   },
 ]

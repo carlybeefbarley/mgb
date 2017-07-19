@@ -7,6 +7,7 @@ import urlMaker from './urlMaker'
 import App from './App'
 import Home from './Home'
 import Import from './Import'
+import ForumRoute from './Forum'
 import PlayGameRoute from './PlayGameRoute'
 import BrowseGamesRoute from './BrowseGamesRoute'
 import DashboardRoute from './Dashboard/DashboardRoute'
@@ -67,6 +68,8 @@ export function clientStartup() {
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />
 
         <Route path="/dashboard" component={DashboardRoute} name="Dashboard" />
+
+        <Route path="forum" component={ForumRoute} />
 
         <Route path="/learn" component={LearnRoute} />
         <Route path="/learn/skills" component={LearnSkillsRoute} />

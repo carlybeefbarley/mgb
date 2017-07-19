@@ -23,9 +23,10 @@ You should be ready to [develop](#develop) on the app now.
 Start the app and open `http://localhost:3000`. Live reload is enabled but slow.
 
 ```
-yarn start               # Start the app
-yarn test                # Runs tests
-yarn run start:empty     # Test the app with an empty local database
+yarn test             # Runs tests
+yarn lint             # Format, fix, and lint code
+yarn start            # Start the app with the production DB
+yarn start:empty      # Start the app with an empty local DB
 ```
 
 ### Windows Setup

@@ -159,7 +159,9 @@ const NavBarBreadcrumbUI = props => {
     handleSearchNavKey,
     quickNavIsOpen,
     activeItem,
-    onRelatedAssetsClose,
+    onQuickNavClose,
+    onRelatedAssetNavOpen,
+    onRelatedAssetNavClose,
   } = props
   const { query, pathname } = location
   const assetId = params && params.assetId
@@ -329,7 +331,11 @@ const NavBarBreadcrumbUI = props => {
             // make sure we don't show both related assets at the same time
             open={quickNavIsOpen ? false : undefined}
             // open={quickNavIsOpen ? quickNavIsOpen : undefined}
-            onOpen={_handleRelatedAssetsPopupOpen}
+            onOpen={() => {
+              onRelatedAssetNavOpen()
+              _handleRelatedAssetsPopupOpen()
+            }}
+            onClose={onRelatedAssetNavClose}
             position="bottom left"
             trigger={<Icon color="blue" name="ellipsis horizontal" style={breadcrumbImageStyle} />}
           >
@@ -342,7 +348,7 @@ const NavBarBreadcrumbUI = props => {
             // dimmer={false}
             open={quickNavIsOpen ? quickNavIsOpen : undefined}
             onOpen={_handleRelatedAssetsPopupOpen}
-            onClose={() => onRelatedAssetsClose && onRelatedAssetsClose()}
+            onClose={onQuickNavClose}
           >
             <Modal.Header>Related Assets</Modal.Header>
             <Modal.Content>{relatedAssetsComponent}</Modal.Content>
@@ -395,7 +401,7 @@ const NavBarBreadcrumb = React.createClass({
           shouldPrevent = true
         }
 
-        if (this.state.quickNavIsOpen) {
+        if (this.state.quickNavIsOpen || this.state.relatedAssetNavIsOpen) {
           const filteredAssets = getFilteredAssets(this.data.relatedAssets, this.state.quickAssetSearch)
           // enter
           if (e.which === 13 && filteredAssets[this.state.activeItem]) {
@@ -408,9 +414,12 @@ const NavBarBreadcrumb = React.createClass({
             // up
             this.setState({ activeItem: ++this.state.activeItem })
             shouldPrevent = true
-          } else if (e.which === 38 && this.state.activeItem > 0) {
+          } else if (e.which === 38) {
             // down
-            this.setState({ activeItem: --this.state.activeItem })
+            if (this.state.activeItem > 0) {
+              this.setState({ activeItem: --this.state.activeItem })
+            }
+            // we still need to eat event
             shouldPrevent = true
           }
           // esc - Modal does this already
@@ -436,8 +445,9 @@ const NavBarBreadcrumb = React.createClass({
   getInitialState() {
     return {
       quickAssetSearch: '',
-      activeItem: 0,
-      quickNavIsOpen: false,
+      activeItem: 0, // number in the list
+      quickNavIsOpen: false, // is quick nav modal is open
+      relatedAssetNavIsOpen: false, // is small popup is open
     }
   },
 
@@ -474,7 +484,15 @@ const NavBarBreadcrumb = React.createClass({
   handleSearchNavKey(e) {
     this.setState({ quickAssetSearch: e.target.value })
   },
-
+  handleQuickNavClose(e) {
+    this.setState({ quickNavIsOpen: false })
+  },
+  handleRelatedAssetNavOpen(e) {
+    this.setState({ relatedAssetNavIsOpen: true })
+  },
+  handleRelatedAssetNavClose(e) {
+    this.setState({ relatedAssetNavIsOpen: false })
+  },
   render() {
     return (
       <NavBarBreadcrumbUI
@@ -483,7 +501,9 @@ const NavBarBreadcrumb = React.createClass({
         {...this.state}
         contextualProjectName={this._getContextualProjectName()}
         handleSearchNavKey={this.handleSearchNavKey}
-        onRelatedAssetsClose={() => this.setState({ quickNavIsOpen: false })}
+        onQuickNavClose={this.handleQuickNavClose}
+        onRelatedAssetNavOpen={this.handleRelatedAssetNavOpen}
+        onRelatedAssetNavClose={this.handleRelatedAssetNavClose}
       />
     )
   },

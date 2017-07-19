@@ -439,17 +439,25 @@ const NavBarBreadcrumb = React.createClass({
       }
       // Modal will call onClose automatically - so no esc key handling here
 
-      // check if list is long enough to contain selected item (search reduces list)
-      // + also wraps selection around on arrows
-      if (nextItemMaybe >= filteredAssets.length) nextItemMaybe = 0
-
-      if (nextItemMaybe !== this.state.activeItem) this.setState({ activeItem: nextItemMaybe })
+      this.checkAndSetActiveItem(nextItemMaybe, filteredAssets)
     }
 
     if (shouldPrevent) {
       e.preventDefault()
       e.stopPropagation()
     }
+  },
+
+  /**
+   * Checks if nextItemMaybe is valid against filtered asset list - if it's not resets activeItem to 0
+   * This is triggered by arrow key to wrap up and search action to make sure we are in the allowed range
+   * @param nextItemMaybe - nextItemCandidate
+   * @param filteredAssets - filtered asset list
+   */
+  checkAndSetActiveItem(nextItemMaybe, filteredAssets) {
+    if (nextItemMaybe >= filteredAssets.length) nextItemMaybe = 0
+
+    if (nextItemMaybe !== this.state.activeItem) this.setState({ activeItem: nextItemMaybe })
   },
 
   getInitialState() {
@@ -492,7 +500,13 @@ const NavBarBreadcrumb = React.createClass({
   },
 
   handleSearchNavKey(e) {
-    this.setState({ quickAssetSearch: e.target.value })
+    this.setState({ quickAssetSearch: e.target.value }, () => {
+      // make sure we always have proper selection
+      this.checkAndSetActiveItem(
+        this.state.activeItem,
+        getFilteredAssets(this.data.relatedAssets, this.state.quickAssetSearch),
+      )
+    })
   },
   handleQuickNavClose(e) {
     this.setState({ quickNavIsOpen: false })

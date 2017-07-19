@@ -16,8 +16,8 @@
   "main": "app.js",
   "scripts": {
     "preinstall": "which use-yarn && use-yarn || true",
-    "lint": "sh ./lint.sh",
-    "start": "sh ./go.sh",
+    "lint": "bash ./lint.sh",
+    "start": "bash ./go.sh",
     "start:empty": "meteor",
     "test": "yarn run lint",
     "storybook": "start-storybook -p 9001 -s ./.meteor/local/build/programs/web.browser/app,./.meteor/local/build/programs/web.browser -c .storybook",

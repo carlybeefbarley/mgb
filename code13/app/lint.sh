@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 PATH=$PATH:./node_modules/.bin
 glob="**/*.js?(on|x)"

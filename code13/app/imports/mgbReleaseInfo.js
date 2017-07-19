@@ -15,12 +15,12 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
-      timestamp: 'Mon Jul 17 2017 16:30:00 GMT-0700 (PDT)',
+      timestamp: 'Tue Jul 18 2017 17:30:00 GMT-0700 (PDT)',
 
       id: {
         ver: '0.2.1',
         state: 'Beta',
-        iteration: '4643',
+        iteration: '4655',
       },
 
       releaseManagement: {
@@ -39,7 +39,8 @@ const mgbReleaseInfo = {
           featureTag: 'bugfix',
           type: 'bugfix',
           changeName: 'A bunch of bugfixes/tweaks',
-          changeSummary: 'Fixed some issues with Items in ActorMap games. ',
+          changeSummary:
+            'Fixed some issues with Items in ActorMap games. More build automation. Improved chat tutorial.',
           otherUrls: [],
         },
       ],

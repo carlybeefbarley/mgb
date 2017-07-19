@@ -391,13 +391,13 @@ const NavBarBreadcrumb = React.createClass({
   mixins: [ReactMeteorData],
 
   componentDidMount() {
-    window.addEventListener( 'keydown',  this.quickOpenListener, true)
+    window.addEventListener('keydown', this.quickOpenListener, true)
   },
 
-  quickOpenListener(e){
+  quickOpenListener(e) {
     let shouldPrevent = false
     if (e.which === 'O'.charCodeAt(0) && (e.ctrlKey || e.metaKey)) {
-      this.setState({quickNavIsOpen: true}, _handleRelatedAssetsPopupOpen)
+      this.setState({ quickNavIsOpen: true }, _handleRelatedAssetsPopupOpen)
       shouldPrevent = true
     }
 
@@ -405,25 +405,24 @@ const NavBarBreadcrumb = React.createClass({
       const filteredAssets = getFilteredAssets(this.data.relatedAssets, this.state.quickAssetSearch)
       // enter
       if (e.which === 13 && filteredAssets[this.state.activeItem]) {
-        this.setState({quickNavIsOpen: false, quickAssetSearch: ''}, () => {
+        this.setState({ quickNavIsOpen: false, quickAssetSearch: '' }, () => {
           const asset = filteredAssets[this.state.activeItem]
           if (asset._id && asset._id !== (this.props.params ? this.props.params.assetId : ''))
             openAssetById(asset._id)
         })
       } else if (e.which === 40) {
         // up
-        this.setState({activeItem: ++this.state.activeItem})
+        this.setState({ activeItem: ++this.state.activeItem })
         shouldPrevent = true
       } else if (e.which === 38) {
         // down
-        if (this.state.activeItem > 0)
-          this.setState({activeItem: --this.state.activeItem})
+        if (this.state.activeItem > 0) this.setState({ activeItem: --this.state.activeItem })
         // we still need to eat event
         shouldPrevent = true
       }
       // Modal will call onClose automatically - so no esc key handling here
 
-      if (this.state.activeItem >= filteredAssets.length) this.setState({activeItem: 0})
+      if (this.state.activeItem >= filteredAssets.length) this.setState({ activeItem: 0 })
     }
 
     if (shouldPrevent) {

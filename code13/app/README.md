@@ -1,29 +1,49 @@
-# Instructions for Building on Windows
+# My Game Builder
 
-Pre-requisites
+This is the user facing application for My Game Builder.
 
-1. Windows 10
+## Setup
 
-1. Install Nodejs from https://nodejs.org/en/    We use the LTS, which at time of writing is v6.9.4 LTS
+### Prerequisites
 
-1. Install Meteor from https://www.meteor.com/install    At time of writing, this is Meteor 1.4
+1. Yarn from https://yarnpkg.com/en/docs/install (`v0.27.5` or later)
+1. Node.js from https://nodejs.org/en (`v6.9.4` or later)
+1. Meteor from https://www.meteor.com/install (use `v1.5`).
 
-1. AS ADMINISTRATOR, run      npm install --global --production windows-build-tools
+### Dependencies
 
-1. In this directory (code13/app)   run     npm install
+1. Make sure you're in `code13/app`
+1. Run `yarn` to install dependencies
+1. Widows users, skip to [Windows Setup](#windows-setup)
 
-1. Check that it is working with a blank local database by running in this directory:     meteor
+You should be ready to [develop](#develop) on the app now.
 
-1. If it seems to start ok, open a browser window to   http://localhost:3000
+## Development
 
-1. To run the go.sh script which connects to the real databases, you need to add .bat to the line in the go.sh sctript that starts meteor: 
+Start the app and open `http://localhost:3000`. Live reload is enabled but slow.
 
-In go.sh
-  meteor.bat -p 0.0.0.0:3000 $@
+```
+yarn test             # Runs tests
+yarn lint             # Format, fix, and lint code
+yarn start            # Start the app with the production DB
+yarn start:empty      # Start the app with an empty local DB
+```
 
-then run it from Powershell as...
+### Windows Setup
 
-  sh go.sh
+1. Ensure you're on Windows 10
+1. AS ADMINISTRATOR, run `yarn add --global --production windows-build-tools`
+1. To run the `go.sh` script which connects to the real databases, you need to add `.bat` to the line in the `go.sh` script that starts `meteor`: 
 
-  (if this doesn't work, try installing Github Desktop from https://desktop.github.com/, then 
-  use the 'GIT Shell' Windwos 'Program' it installs)
+    In `go.sh`:
+    ```
+    meteor.bat -p 0.0.0.0:3000 $@
+    ```
+
+    then start the app from Powershell:
+    ```
+    yarn start
+    ```
+
+>If this doesn't work, try installing Github Desktop from https://desktop.github.com.
+>Then, use the 'GIT Shell' Windows 'Program' it installs.

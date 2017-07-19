@@ -316,6 +316,7 @@ export default class CodeChallenges extends React.Component {
             <a
               href="https://github.com/freeCodeCamp/freeCodeCamp/blob/staging/LICENSE.md"
               target="_blank"
+              rel="noopener noreferrer"
               style={{ color: '#bbb', float: 'right' }}
             >
               <small>(based on FreeCodeCamp.com content)</small>

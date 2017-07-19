@@ -73,7 +73,11 @@ export default class ImportHelperPanel extends React.Component {
         {!!showExpanded && (
           <p style={{ color: '#333' }}>
             The{' '}
-            <a href="https://github.com/lukehoban/es6features#readme" target="_blank">
+            <a
+              href="https://github.com/lukehoban/es6features#readme"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               ES6
             </a>{' '}
             <strong>

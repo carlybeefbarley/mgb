@@ -4,11 +4,12 @@
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
+    "preinstall": "which use-yarn && use-yarn || true",
     "build": "gulp clean build",
     "start": "nodemon -w gulpfile.js -w package.json node_modules/.bin/gulp",
-    "predeploy": "cross-env BASE_URL=/mgb/ npm run build --silent",
+    "predeploy": "cross-env BASE_URL=/mgb/ yarn run build --silent",
     "deploy": "gh-pages -d dist",
-    "awspredeploy": "cross-env BASE_URL= npm run build --silent",
+    "awspredeploy": "cross-env BASE_URL= yarn run build --silent",
     "awsdeploy": "gulp awspublish"
   },
   "author": "",
@@ -36,6 +37,7 @@
     "gulp-util": "^3.0.8",
     "nodemon": "^1.11.0",
     "run-sequence": "~1.2.2",
-    "through2": "^2.0.3"
+    "through2": "^2.0.3",
+    "use-yarn": "^1.0.1"
   }
 }

@@ -13,8 +13,8 @@ Run a meteor build before starting the landing page. The landing page uses asset
 Then:
 
     $ cd code13/landing
-    $ npm install
-    $ npm start
+    $ yarn
+    $ yarn start
 
 Hack on `/src`, the site is rebuilt and reloaded automatically.
 
@@ -28,7 +28,7 @@ HTML, JS, and LESS can use `{{ ENV_VAR }}` notation to interpolate system enviro
 <img href="{{ BASE_URL }}/img/foo.png">
 ```
 ```bash
-$ BASE_URL=/other/site/ npm run build
+$ BASE_URL=/other/site/ yarn run build
 ```
 ```html
 <base href="/other/site/">
@@ -49,7 +49,7 @@ This will automatically copy the `team.png` asset to the landing's `dist/` direc
 Runs a fresh build and deploys to the `gh-pages` branch, for now:
 
 ```
-$ npm run deploy
+$ yarn run deploy
 ```
 
 [1]: https://devlapse.github.io/mgb/

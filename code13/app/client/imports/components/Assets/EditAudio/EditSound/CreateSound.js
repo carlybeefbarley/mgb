@@ -26,7 +26,7 @@ export default class CreateSound extends React.Component {
     this.state = {
       paramsUpdated: new Date().getTime(), // this.PARAMS is actual object in sfxr lib and paramsUpdated is just flag to trigger UI updates
       playerStatus: 'empty', // empty, play, pause
-      canPlay: false
+      canPlay: false,
     }
   }
 
@@ -70,7 +70,7 @@ export default class CreateSound extends React.Component {
 
   playSound() {
     let sound = new Audio()
-    sound.oncanplaythrough = (event) => {
+    sound.oncanplaythrough = event => {
       sound.play()
     }
     sound.src = this.sound.dataURI
@@ -115,10 +115,7 @@ export default class CreateSound extends React.Component {
     let effectButtons = _.map(effects, effect => {
       return (
         <div id={'mgbjr-editSound-createSound-button-' + effect} key={'effect_' + effect}>
-          <button
-            className="ui fluid button small"
-            onMouseUp={this.gen.bind(this, effect)}
-          >
+          <button className="ui fluid button small" onMouseUp={this.gen.bind(this, effect)}>
             {effect}
           </button>
         </div>
@@ -201,7 +198,7 @@ export default class CreateSound extends React.Component {
               className="ui icon button massive"
               title="Play"
               onMouseUp={this.playSound.bind(this)}
-              disabled={ !this.state.canPlay }
+              disabled={!this.state.canPlay}
             >
               <i className="play icon" />
             </button>

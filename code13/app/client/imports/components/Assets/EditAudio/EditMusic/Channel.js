@@ -477,7 +477,7 @@ export default class Channel extends React.Component {
   changeVolume(volume) {
     this.props.doSaveStateForUndo('Volume change')
     this.props.channel.volume = volume
-    if(this.gainNode) this.gainNode.gain.value = volume
+    if (this.gainNode) this.gainNode.gain.value = volume
     this.props.saveChannel(this.props.channel)
   }
 

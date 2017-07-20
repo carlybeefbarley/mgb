@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import QLink, { openAssetById } from '/client/imports/routes/QLink'
-import { Popup, Modal, Header, Breadcrumb, Icon, Input, Label, List } from 'semantic-ui-react'
+import { Button, Popup, Modal, Header, Breadcrumb, Icon, Input, Label, List } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import { AssetKinds } from '/imports/schemas/assets'
 import UserCard from '/client/imports/components/Users/UserCard'
@@ -66,13 +66,6 @@ const _learnCodeItemHdrs = {
   games: 'GameDev Tutorials',
 }
 
-const _assetVerbIcons = {
-  undefined: 'question',
-  View: 'eye',
-  Edit: 'pencil',
-  Play: 'gamepad',
-}
-
 // For all images in the breadcrumb
 const breadcrumbImageStyle = { height: '1em', verticalAlign: 'middle' }
 
@@ -109,7 +102,7 @@ const RelatedAssets = ({
     />
     <List
       selection
-      style={{ maxHeight: '30em', overflowY: 'auto' }}
+      style={{ maxHeight: '30em', minWidth: '18em', overflowY: 'auto' }}
       items={_.map(filteredRelatedAssets, (a, index) => ({
         key: a._id,
         as: QLink,
@@ -122,7 +115,7 @@ const RelatedAssets = ({
     />
     <div>
       {contextualProjectName && (
-        <small>
+        <span>
           <span>Within </span>
           <QLink
             to={`/u/${user
@@ -132,14 +125,18 @@ const RelatedAssets = ({
             <Icon name="sitemap" />
             <span>{contextualProjectName}</span>
           </QLink>
-        </small>
+        </span>
       )}
-      <QLink to="/assets/create" style={{ float: 'right' }}>
-        <Icon.Group>
-          <Icon color="green" name="pencil" />
-          <Icon color="green" corner name="add" />
-        </Icon.Group>
-      </QLink>
+      <Button
+        as={QLink}
+        to="/assets/create"
+        compact
+        floated="right"
+        size="mini"
+        color="green"
+        icon="pencil"
+        content="Create new"
+      />
     </div>
   </div>
 )
@@ -319,15 +316,25 @@ const NavBarBreadcrumbUI = props => {
     currentlyEditingAssetInfo &&
     currentlyEditingAssetInfo.name && (
       <span key="asset-name">
-        <Icon name={_assetVerbIcons[assetVerb]} />
         {currentlyEditingAssetInfo.isDeleted && <Icon name="trash" color="red" />}
         {currentlyEditingAssetInfo.isLocked && <Icon name="lock" color="blue" />}
-        '{currentlyEditingAssetInfo.name}' &ensp;
+        <span
+          style={{
+            color: currentlyEditingAssetInfo.isDeleted
+              ? 'red'
+              : currentlyEditingAssetInfo.isLocked ? 'blue' : null,
+          }}
+        >
+          {currentlyEditingAssetInfo.name}
+        </span>
+        &nbsp;
+        {assetVerb && <span style={{ opacity: 0.5 }}>({assetVerb})</span>}
+        &emsp;
         {/* Popup for > Related [ TODO: MOVE THIS OUT OF ASSETNAME SO IT WORKS WITH ASSETBROWSE/PLAY ETC scenarios */}
         {usernameToShow && (
           <Popup
             on="hover"
-            wide
+            wide="very"
             hoverable
             // make sure we don't show both related assets at the same time - undefined needed for the trigger on hover
             open={quickNavIsOpen ? false : undefined}
@@ -337,9 +344,9 @@ const NavBarBreadcrumbUI = props => {
             }}
             onClose={onRelatedAssetNavClose}
             position="bottom left"
-            trigger={<Icon color="blue" name="ellipsis horizontal" style={breadcrumbImageStyle} />}
+            trigger={<Icon fitted color="blue" name="double angle right" />}
           >
-            <Header content="Related Assets" subheader="ctrl + o" />
+            <Header content="Related Assets" subheader="[Ctrl + O]" />
             <Popup.Content>{relatedAssetsComponent}</Popup.Content>
           </Popup>
         )}

@@ -7,11 +7,15 @@ const getMapData = partialAsset => {
     fields: {
       _id: 0,
       content2: 1,
-      // map editor stores (WAS storing - deprecated, but old maps may still have some )some info in the meta - e.g. camera position / active tool etc
-      'content2.meta': 0,
     },
   })
-  return asset ? asset.content2 : null
+  // Projection cannot have a mix of inclusion and exclusion
+  if(asset){
+    // old assets have content2.meta - we need to remove it - to be compatible with tiled standard
+    delete asset.content2.meta
+    return asset.content2
+  }
+  else return null
 }
 
 const getMapAssetByUserName = function() {

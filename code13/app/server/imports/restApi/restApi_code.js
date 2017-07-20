@@ -1,15 +1,36 @@
-import { RestApi } from './restApi'
+import { RestApi, getContent2, getFullAsset, updatedOnlyField } from './restApi'
 import { Azzets } from '/imports/schemas'
 import makeCodeBundle from '/imports/helpers/makeCodeBundle'
 import { genAPIreturn, assetToCdn } from '/server/imports/helpers/generators'
 
+const makeBundleFields = { fields: { _id: 0, dn_ownerName: 1, name: 1, 'content2.bundle': 1 } }
+const c2srcFieldOnly = { fields: { 'content2.src': 1, _id: 0 } }
+const c2es5FieldOnly = { fields: { 'content2.es5': 1, _id: 0 } }
+const updateAndNameFields = { fields: { _id: 1, updatedAt: 1, name: 1 } }
+
 function _makeBundle(api, asset) {
-  return genAPIreturn(api, asset, () => (asset ? makeCodeBundle(asset, api.queryParams.origin) : null), {
-    'Content-Type': 'text/html',
-    'file-name': asset ? asset.name : api.urlParams.name,
-  })
+  return genAPIreturn(
+    api,
+    asset,
+    partialAsset => {
+      const asset = Azzets.findOne(partialAsset._id, makeBundleFields)
+      return asset ? makeCodeBundle(asset, api.queryParams.origin) : null
+    },
+    {
+      'Content-Type': 'text/html',
+      'file-name': asset ? asset.name : api.urlParams.name || '',
+    },
+  )
 }
 
+const getSrc = partialAsset => {
+  const asset = Azzets.findOne(partialAsset._id, c2srcFieldOnly)
+  return partialAsset && asset && asset.content2 ? asset.content2.src || '' : null
+}
+const getEs5 = partialAsset => {
+  const asset = Azzets.findOne(partialAsset._id, c2es5FieldOnly)
+  return partialAsset && asset && asset.content2 ? asset.content2.es5 || '' : null
+}
 // get tutorial by id OR by ownerName:assetName. See addJoyrideSteps() for use case.
 RestApi.addRoute(
   'asset/tutorial/:id',
@@ -17,11 +38,16 @@ RestApi.addRoute(
   {
     get: function() {
       const idParts = this.urlParams.id.split(':')
+
       const asset =
         idParts.length === 2
-          ? Azzets.findOne({ dn_ownerName: idParts[0], name: idParts[1], isDeleted: false, kind: 'tutorial' }) // owner:name
-          : Azzets.findOne(this.urlParams.id)
-      return genAPIreturn(this, asset, asset ? asset.content2.src || '' : null, {
+          ? Azzets.findOne(
+              { dn_ownerName: idParts[0], name: idParts[1], isDeleted: false, kind: 'tutorial' },
+              updateAndNameFields,
+            ) // owner:name
+          : Azzets.findOne(this.urlParams.id, updateAndNameFields)
+
+      return genAPIreturn(this, asset, getSrc, {
         'Content-Type': 'text/plain',
         'file-name': asset ? asset.name : this.urlParams.name,
       })
@@ -35,8 +61,8 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne(this.urlParams.id)
-      return genAPIreturn(this, asset, asset ? asset.content2.src || '' : null, {
+      const asset = Azzets.findOne(this.urlParams.id, updateAndNameFields)
+      return genAPIreturn(this, asset, getSrc, {
         'Content-Type': 'text/plain',
         'file-name': asset ? asset.name : this.urlParams.name,
       })
@@ -52,21 +78,22 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne({
-        dn_ownerName: this.urlParams.owner,
-        name: this.urlParams.name,
-        kind: 'code',
-        isDeleted: false,
-      })
+      const asset = Azzets.findOne(
+        {
+          dn_ownerName: this.urlParams.owner,
+          name: this.urlParams.name,
+          kind: 'code',
+          isDeleted: false,
+        },
+        updateAndNameFields,
+      )
 
       // this can be cached - probably no-go - need better solution (or adjust cloudfront headers)
       // nice trick to respond browser with his accepted type - e.g. css
       let contentType = 'text/plain'
-      if (this.request.headers.accept) {
-        contentType = this.request.headers.accept.split(',').shift()
-      }
+      if (this.request.headers.accept) contentType = this.request.headers.accept.split(',').shift()
 
-      return genAPIreturn(this, asset, asset ? asset.content2.src || '' : null, {
+      return genAPIreturn(this, asset, getSrc, {
         'Content-Type': contentType,
         'file-name': asset ? asset.name : this.urlParams.name,
       })
@@ -79,7 +106,7 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne(this.urlParams.id)
+      const asset = Azzets.findOne(this.urlParams.id, updateAndNameFields)
       return _makeBundle(this, asset)
     },
   },
@@ -90,7 +117,7 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne(this.urlParams.id, { fields: { _id: 1, updatedAt: 1 } })
+      const asset = Azzets.findOne(this.urlParams.id, updateAndNameFields)
       return assetToCdn(this, asset, '/api/asset/code/bundle/' + this.urlParams.id)
     },
   },
@@ -114,7 +141,7 @@ RestApi.addRoute(
             },
           ],
         },
-        { fields: { _id: 1, updatedAt: 1 } },
+        updateAndNameFields,
       )
       return assetToCdn(this, asset, '/api/asset/code/bundle/' + asset._id)
     },
@@ -127,12 +154,15 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne({
-        dn_ownerName: this.urlParams.username,
-        name: this.urlParams.codename,
-        isDeleted: false,
-        kind: 'code',
-      })
+      const asset = Azzets.findOne(
+        {
+          dn_ownerName: this.urlParams.username,
+          name: this.urlParams.codename,
+          isDeleted: false,
+          kind: 'code',
+        },
+        updateAndNameFields,
+      )
       return _makeBundle(this, asset)
     },
   },
@@ -143,17 +173,20 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne({
-        dn_ownerName: this.urlParams.username,
-        name: this.urlParams.codename,
-        isDeleted: false,
-        kind: 'code',
-      })
+      const asset = Azzets.findOne(
+        {
+          dn_ownerName: this.urlParams.username,
+          name: this.urlParams.codename,
+          isDeleted: false,
+          kind: 'code',
+        },
+        updateAndNameFields,
+      )
       let contentType = 'text/plain'
       if (this.request.headers.accept) {
         contentType = this.request.headers.accept.split(',').shift()
       }
-      return genAPIreturn(this, asset, asset ? asset.content2.es5 || '' : null, {
+      return genAPIreturn(this, asset, getEs5, {
         'Content-Type': contentType,
         'file-name': asset ? asset.name : this.urlParams.name,
       })
@@ -173,9 +206,7 @@ RestApi.addRoute(
           isDeleted: false,
           kind: 'code',
         },
-        {
-          fields: { updatedAt: 1 },
-        },
+        updatedOnlyField,
       )
       return assetToCdn(
         this,

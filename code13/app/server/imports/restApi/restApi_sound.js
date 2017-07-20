@@ -1,23 +1,26 @@
-import { RestApi } from './restApi'
+import { RestApi, err404, audioHeader, updatedOnlyField } from './restApi'
 import { Azzets } from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
 import { genAPIreturn } from '/server/imports/helpers/generators'
 
+const audioResponseFields = { fields: { 'content2.dataUri': 1 } }
+
 const makeAudioResponse = (api, asset) => {
-  if (asset) {
-    if (asset.content2 && asset.content2.dataUri) {
-      const regex = /^data:.+\/(.+);base64,(.*)$/
-      const matches = asset.content2.dataUri.substring(0, 100).match(regex)
-      const extension = matches[1]
-      return genAPIreturn(api, asset, () => dataUriToBuffer(asset.content2.dataUri), {
-        'Content-Type': 'audio/' + extension,
-      })
-    } else {
-      return genAPIreturn(api, asset, '', {
-        'Content-Type': 'audio/mp3',
-      })
-    }
-  } else return { statusCode: 404 }
+  return genAPIreturn(
+    api,
+    asset,
+    partialAsset => {
+      const asset = Azzets.findOne(partialAsset._id, audioResponseFields)
+      if (!asset) return err404
+
+      if (asset.content2 && asset.content2.dataUri) {
+        return dataUriToBuffer(asset.content2.dataUri)
+      } else {
+        return ''
+      }
+    },
+    audioHeader,
+  )
 }
 
 // get sound by id
@@ -26,7 +29,7 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne(this.urlParams.id)
+      const asset = Azzets.findOne(this.urlParams.id, updatedOnlyField)
       return makeAudioResponse(this, asset)
     },
   },
@@ -37,12 +40,15 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne({
-        kind: 'sound',
-        name: this.urlParams.name,
-        dn_ownerName: this.urlParams.user,
-        isDeleted: false,
-      })
+      const asset = Azzets.findOne(
+        {
+          kind: 'sound',
+          name: this.urlParams.name,
+          dn_ownerName: this.urlParams.user,
+          isDeleted: false,
+        },
+        updatedOnlyField,
+      )
       return makeAudioResponse(this, asset)
     },
   },

@@ -1,7 +1,13 @@
-import { RestApi } from './restApi'
+import { RestApi, updatedOnlyField, err404, audioHeader } from './restApi'
 import { Azzets } from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
 import { genAPIreturn } from '/server/imports/helpers/generators'
+
+const audioFields = { fields: { _id: 0, 'content2.dataUri': 1 } }
+const makeAudioResponse = partialAsset => {
+  const asset = Azzets.findOne(partialAsset._id, audioFields)
+  return dataUriToBuffer(asset.content2.dataUri)
+}
 
 // get music by id
 RestApi.addRoute(
@@ -10,17 +16,11 @@ RestApi.addRoute(
   {
     get: function() {
       'use strict'
-      const asset = Azzets.findOne(this.urlParams.id)
+      const asset = Azzets.findOne(this.urlParams.id, updatedOnlyField)
 
-      if (asset) {
-        const regex = /^data:.+\/(.+);base64,(.*)$/
-        const matches = asset.content2.dataUri.substring(0, 100).match(regex)
-        const extension = matches[1]
+      if (!asset) return err404
 
-        return genAPIreturn(this, asset, () => dataUriToBuffer(asset.content2.dataUri), {
-          'Content-Type': 'audio/' + extension,
-        })
-      } else return { statusCode: 404 }
+      return genAPIreturn(this, asset, makeAudioResponse, audioHeader)
     },
   },
 )
@@ -31,22 +31,18 @@ RestApi.addRoute(
   {
     get: function() {
       'use strict'
-      const asset = Azzets.findOne({
-        kind: 'music',
-        name: this.urlParams.name,
-        dn_ownerName: this.urlParams.user,
-        isDeleted: false,
-      })
+      const asset = Azzets.findOne(
+        {
+          kind: 'music',
+          name: this.urlParams.name,
+          dn_ownerName: this.urlParams.user,
+          isDeleted: false,
+        },
+        updatedOnlyField,
+      )
+      if (!asset) return err404
 
-      if (asset) {
-        const regex = /^data:.+\/(.+);base64,(.*)$/
-        const matches = asset.content2.dataUri.substring(0, 100).match(regex)
-        const extension = matches[1]
-
-        return genAPIreturn(this, asset, () => dataUriToBuffer(asset.content2.dataUri), {
-          'Content-Type': 'audio/' + extension,
-        })
-      } else return { statusCode: 404 }
+      return genAPIreturn(this, asset, makeAudioResponse, audioHeader)
     },
   },
 )

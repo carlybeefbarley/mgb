@@ -1,7 +1,18 @@
-import { RestApi, emptyPixel, red64x64halfOpacity, grey64x64halfOpacity } from './restApi'
+import {
+  RestApi,
+  emptyPixel,
+  emptyPixelBuffer,
+  red64x64halfOpacity,
+  grey64x64halfOpacity,
+  updatedOnlyField,
+  idOnlyField,
+  getContent2,
+} from './restApi'
 import { Azzets } from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
 import { genAPIreturn } from '/server/imports/helpers/generators'
+
+import _ from 'lodash'
 
 RestApi.addRoute(
   'error',
@@ -29,14 +40,27 @@ RestApi.addRoute(
     },
   },
 )
+
+const getFullAsset = function() {
+  const asset = Azzets.findOne(this.urlParams.id, { fields: { _id: 1, updatedAt: 1 } })
+  return genAPIreturn(this, asset, partialAsset => {
+    return Azzets.findOne(partialAsset._id)
+  })
+}
+
 RestApi.addRoute(
   'asset/:id',
   { authRequired: false },
   {
-    get: function() {
-      var asset = Azzets.findOne(this.urlParams.id)
-      return genAPIreturn(this, asset)
-    },
+    get: getFullAsset,
+  },
+)
+
+RestApi.addRoute(
+  'asset/full/:user/:name',
+  { authRequired: false },
+  {
+    get: getFullAsset,
   },
 )
 
@@ -45,23 +69,8 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      var asset = Azzets.findOne(this.urlParams.id, { content2: 1 })
-      return genAPIreturn(this, asset, asset ? asset.content2 : {})
-    },
-  },
-)
-
-RestApi.addRoute(
-  'asset/full/:user/:name',
-  { authRequired: false },
-  {
-    get: function() {
-      var asset = Azzets.findOne({
-        name: this.urlParams.name,
-        dn_ownerName: this.urlParams.user,
-        isDeleted: false,
-      })
-      return genAPIreturn(this, asset)
+      const asset = Azzets.findOne(this.urlParams.id, updatedOnlyField)
+      return genAPIreturn(this, asset, getContent2)
     },
   },
 )
@@ -71,21 +80,12 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      var asset = Azzets.findOne(this.urlParams.id)
-      const src = asset.content2.src ? asset.content2.src : asset.content2
-      return genAPIreturn(this, asset, () => (asset ? JSON.parse(src) : null))
-    },
-  },
-)
-
-// This is only for testing purposes ..
-RestApi.addRoute(
-  'asset/raw/:id',
-  { authRequired: false },
-  {
-    get: function() {
-      var asset = Azzets.findOne(this.urlParams.id)
-      return genAPIreturn(this, asset)
+      const asset = Azzets.findOne(this.urlParams.id, updatedOnlyField)
+      return genAPIreturn(this, asset, partialAsset => {
+        const asset = Azzets.findOne(partialAsset._id, { _id: 0, content2: 1 })
+        const src = asset.content2.src ? asset.content2.src : asset.content2
+        return asset ? JSON.parse(src) : null
+      })
     },
   },
 )
@@ -96,9 +96,9 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      var asset = Azzets.findOne(
+      const asset = Azzets.findOne(
         { name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false },
-        { fields: { _id: 1 } },
+        idOnlyField,
       )
       return genAPIreturn(this, asset, asset ? asset._id : null)
     },
@@ -117,22 +117,29 @@ const _replaceThumbnailIfAppropriate = (api, asset) => {
   return null
 }
 
+const getThumbnailFromAsset = function(api, asset, extraHeaders) {
+  return (
+    _replaceThumbnailIfAppropriate(api, asset) ||
+    genAPIreturn(
+      api,
+      asset,
+      partialAsset => {
+        const asset = Azzets.findOne(partialAsset._id, { fields: { _id: 0, thumbnail: 1 } })
+        return asset && asset.thumbnail ? dataUriToBuffer(asset.thumbnail) : emptyPixelBuffer
+      },
+      Object.assign({ 'Content-Type': 'image/png' }, extraHeaders),
+    )
+  )
+}
+
+const thumbnailProjectionFields = { fields: { suIsBanned: 1, suFlagId: 1, updatedAt: 1 } }
 // Get any kind of asset's Thumbnail *as* a PNG
 RestApi.addRoute(
   'asset/thumbnail/png/:id',
   { authRequired: false },
   {
     get: function() {
-      var asset = Azzets.findOne(this.urlParams.id)
-      return (
-        _replaceThumbnailIfAppropriate(this, asset) ||
-        genAPIreturn(
-          this,
-          asset,
-          () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel),
-          { 'Content-Type': 'image/png' },
-        )
-      )
+      return getThumbnailFromAsset(this, Azzets.findOne(this.urlParams.id, thumbnailProjectionFields))
     },
   },
 )
@@ -141,19 +148,16 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      var asset = Azzets.findOne({
-        name: this.urlParams.name,
-        dn_ownerName: this.urlParams.user,
-        isDeleted: false,
-      })
-      return (
-        _replaceThumbnailIfAppropriate(this, asset) ||
-        genAPIreturn(
-          this,
-          asset,
-          () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel),
-          { 'Content-Type': 'image/png' },
-        )
+      return getThumbnailFromAsset(
+        this,
+        Azzets.findOne(
+          {
+            name: this.urlParams.name,
+            dn_ownerName: this.urlParams.user,
+            isDeleted: false,
+          },
+          thumbnailProjectionFields,
+        ),
       )
     },
   },
@@ -164,20 +168,11 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne(this.urlParams.id)
+      const asset = Azzets.findOne(this.urlParams.id, thumbnailProjectionFields)
       const expires = this.urlParams.expires || 30
-      return (
-        _replaceThumbnailIfAppropriate(this, asset) ||
-        genAPIreturn(
-          this,
-          asset,
-          () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel),
-          {
-            'Content-Type': 'image/png',
-            'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`,
-          },
-        )
-      )
+      return getThumbnailFromAsset(this, asset, {
+        'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`,
+      })
     },
   },
 )
@@ -187,22 +182,20 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne({
-        name: this.urlParams.name,
-        kind: this.urlParams.kind,
-        dn_ownerName: this.urlParams.user,
-        isDeleted: false,
-      })
-      const expires = this.urlParams.expires || 30
-      return genAPIreturn(
-        this,
-        asset,
-        () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel),
+      const asset = Azzets.findOne(
         {
-          'Content-Type': 'image/png',
-          'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`,
+          name: this.urlParams.name,
+          kind: this.urlParams.kind,
+          dn_ownerName: this.urlParams.user,
+          isDeleted: false,
         },
+        thumbnailProjectionFields,
       )
+
+      const expires = this.urlParams.expires || 30
+      return getThumbnailFromAsset(this, asset, {
+        'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`,
+      })
     },
   },
 )
@@ -213,21 +206,18 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne({
-        name: this.urlParams.name,
-        dn_ownerName: this.urlParams.user,
-        isDeleted: false,
-      })
-      const expires = this.urlParams.expires || 30
-      return genAPIreturn(
-        this,
-        asset,
-        () => dataUriToBuffer(asset && asset.thumbnail ? asset.thumbnail : emptyPixel),
+      const asset = Azzets.findOne(
         {
-          'Content-Type': 'image/png',
-          'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`,
+          name: this.urlParams.name,
+          dn_ownerName: this.urlParams.user,
+          isDeleted: false,
         },
+        thumbnailProjectionFields,
       )
+      const expires = this.urlParams.expires || 30
+      return getThumbnailFromAsset(this, asset, {
+        'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`,
+      })
     },
   },
 )
@@ -242,18 +232,14 @@ RestApi.addRoute(
         {
           dn_ownerName: this.urlParams.owner,
           kind: this.urlParams.kind,
-          name: new RegExp('^' + this.queryParams.query, 'i'),
+          name: new RegExp('^' + _.escapeRegExp(this.queryParams.query), 'i'),
           isDeleted: false,
         },
         {
           fields: { name: 1, text: 1 },
         },
       )
-      return genAPIreturn(this, null, () =>
-        assets.map(a => {
-          return { text: a.name, desc: a.text, id: a._id }
-        }),
-      )
+      return genAPIreturn(this, null, () => assets.map(a => ({ text: a.name, desc: a.text, id: a._id })))
     },
   },
 )

@@ -10,12 +10,11 @@ const getMapData = partialAsset => {
     },
   })
   // Projection cannot have a mix of inclusion and exclusion
-  if(asset){
+  if (asset) {
     // old assets have content2.meta - we need to remove it - to be compatible with tiled standard
     delete asset.content2.meta
     return asset.content2
-  }
-  else return null
+  } else return null
 }
 
 const getMapAssetByUserName = function() {

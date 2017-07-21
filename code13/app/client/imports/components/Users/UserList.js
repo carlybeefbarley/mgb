@@ -1,14 +1,12 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Card } from 'semantic-ui-react'
-import UserItem from './UserItem'
-
-const sortByNumBadgesFn = u => (u.badges ? -u.badges.length : 0)
+import UserCard from './UserCard'
 
 const UserList = ({ users, narrowItem, handleClickUser }) => (
   <Card.Group>
-    {_.map(_.sortBy(users, sortByNumBadgesFn), user => (
-      <UserItem key={user._id} user={user} narrowItem={narrowItem} handleClickUser={handleClickUser} />
+    {_.map(users, user => (
+      <UserCard key={user._id} user={user} narrowItem={narrowItem} handleClickUser={handleClickUser} />
     ))}
   </Card.Group>
 )

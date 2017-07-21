@@ -11,7 +11,7 @@ import QLink from '/client/imports/routes/QLink'
 
 const _cardStyle = { textAlign: 'center' }
 
-export default class UserItem extends React.Component {
+export default class UserCard extends React.Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
     handleClickUser: PropTypes.func, // If provided, call this with the userId instead of going to the user Profile Page
@@ -48,7 +48,7 @@ export default class UserItem extends React.Component {
             <UX.UserAvatarNoLink username={username} height="4em" />
           </Card.Content>
           <Card.Content>
-            <Header size="small" content={username} />
+            <Card.Header title={username} content={username} />
             {suIsBanned && (
               <div>
                 <Label size="small" color="red" content="Suspended" />

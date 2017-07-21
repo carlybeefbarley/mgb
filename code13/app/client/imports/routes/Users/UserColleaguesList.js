@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import { Grid, Header, Card } from 'semantic-ui-react'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Users } from '/imports/schemas'
-import UserItem from '/client/imports/components/Users/UserItem'
+import UserCard from '/client/imports/components/Users/UserCard'
 
 const _wrapStyle = { clear: 'both', flexWrap: 'wrap' }
 const _nowrapStyle = {
@@ -29,7 +29,7 @@ const UserColleaguesListUI = ({ wrap, loading, userList, narrowItem, handleClick
         <Card.Group className="relaxed" style={wrap ? _wrapStyle : _nowrapStyle}>
           {loading === false &&
             userList.map((person, idx) => (
-              <UserItem
+              <UserCard
                 key={idx}
                 user={person}
                 narrowItem={narrowItem}

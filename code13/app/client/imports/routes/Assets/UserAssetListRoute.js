@@ -66,7 +66,7 @@ const UserAssetListRoute = React.createClass({
   },
 
   componentDidMount() {
-    this.hotjarSent = false
+    this.hotjarFlag = true
   },
 
   /**
@@ -271,8 +271,9 @@ const UserAssetListRoute = React.createClass({
     const pageTitle = user ? `${name}'s Assets` : 'Public Assets'
 
     // need to send hotjar when we have assets and only once
-    if (!this.hotjarSent && this.data.assets.length > 0) {
-      this.hotjarSent = true
+    if (this.hotjarFlag && !loading && this.data.assets.length > 0) {
+      // console.log('assetList', this.data.assets.length, loading)
+      this.hotjarFlag = false
       // setTimeout just to be sure that everything is loaded and rendered
       setTimeout(() => Hotjar('trigger', 'user-asset-list', currUser), 200)
     }

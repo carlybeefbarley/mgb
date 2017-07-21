@@ -412,8 +412,8 @@ const ProjectOverview = React.createClass({
         />
         {!active ? null : (
           <UserListRoute
+            location={this.props.location}
             handleClickUser={this.handleClickUser}
-            initialLimit={20}
             excludeUserIdsArray={relevantUserIds}
             renderVertical
           />

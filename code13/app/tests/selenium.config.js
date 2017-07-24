@@ -23,14 +23,14 @@ module.exports = {
 
       //'code.load.import.test.js',
 
-      'code.bundler.test.js', //not working on Phantom
+      // 'code.bundler.test.js', //not working on Phantom
       //'code.mentor.test.js', //not working on Phantom
       //'code.update.test.js', //not working on Phantom
 
       //'graphic.test.js',
       //'map.simple.test.js'
 
-      // 'api.test.js'
+      'api.test.js',
     ],
     // add here some tests to skip
     skip: ['login.test.js'], // skip login test as other tests logs in user anyway

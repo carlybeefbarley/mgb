@@ -5,14 +5,18 @@ import {
   red64x64halfOpacity,
   grey64x64halfOpacity,
   updatedOnlyField,
-  idOnlyField,
   getContent2,
+  err404,
 } from './restApi'
 import { Azzets } from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
 import { genAPIreturn } from '/server/imports/helpers/generators'
 
 import _ from 'lodash'
+
+/*
+* TODO: most of these routes are not used directly - needs cleanup
+* */
 
 RestApi.addRoute(
   'error',
@@ -41,8 +45,9 @@ RestApi.addRoute(
   },
 )
 
-const getFullAsset = function() {
-  const asset = Azzets.findOne(this.urlParams.id, { fields: { _id: 1, updatedAt: 1 } })
+const getFullAsset = function(selector) {
+  const asset = Azzets.findOne(selector, { fields: { _id: 1, updatedAt: 1 } })
+  if (!asset) return err404
   return genAPIreturn(this, asset, partialAsset => {
     return Azzets.findOne(partialAsset._id)
   })
@@ -52,7 +57,9 @@ RestApi.addRoute(
   'asset/:id',
   { authRequired: false },
   {
-    get: getFullAsset,
+    get: function() {
+      return getFullAsset.call(this, this.urlParams.id)
+    },
   },
 )
 
@@ -60,7 +67,13 @@ RestApi.addRoute(
   'asset/full/:user/:name',
   { authRequired: false },
   {
-    get: getFullAsset,
+    get: function() {
+      return getFullAsset.call(this, {
+        name: this.urlParams.name,
+        dn_ownerName: this.urlParams.user,
+        isDeleted: false,
+      })
+    },
   },
 )
 
@@ -75,6 +88,7 @@ RestApi.addRoute(
   },
 )
 
+// this route is not used???
 RestApi.addRoute(
   'asset/json/:id',
   { authRequired: false },
@@ -84,7 +98,7 @@ RestApi.addRoute(
       return genAPIreturn(this, asset, partialAsset => {
         const asset = Azzets.findOne(partialAsset._id, { _id: 0, content2: 1 })
         const src = asset.content2.src ? asset.content2.src : asset.content2
-        return asset ? JSON.parse(src) : null
+        return asset ? src : null
       })
     },
   },
@@ -98,7 +112,7 @@ RestApi.addRoute(
     get: function() {
       const asset = Azzets.findOne(
         { name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false },
-        idOnlyField,
+        updatedOnlyField,
       )
       return genAPIreturn(this, asset, asset ? asset._id : null)
     },

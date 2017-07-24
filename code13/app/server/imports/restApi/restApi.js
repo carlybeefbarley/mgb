@@ -24,7 +24,6 @@ export const grey64x64halfOpacity =
 
 // this actually gets _id also which is needed
 export const updatedOnlyField = { fields: { updatedAt: 1 } }
-export const idOnlyField = { fields: { _id: 1 } }
 export const content2onlyField = { fields: { _id: 0, content2: 1 } }
 
 export const err404 = { statusCode: 404, body: {} } // body required to correctly show 404 not found header

@@ -36,6 +36,11 @@ const LinkTabContent = () => (
   <div>
     <Header sub>Dev Quicklinks</Header>
     <List bulleted>
+      <List.Item>
+        <QLink to="/users" query={{ sort: 'createdNewest', limit: 100 }}>
+          <small>Newest users</small>
+        </QLink>
+      </List.Item>
       {linkLi('localhost/v2 flipside', _getFlipsideUrl())}
       {linkLi('Slack', 'https://devlapse.slack.com/messages/mgb-dev')}
       {linkLi('Github', 'https://github.com/devlapse/mgb')}

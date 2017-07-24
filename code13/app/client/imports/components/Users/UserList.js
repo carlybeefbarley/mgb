@@ -3,11 +3,9 @@ import React, { PropTypes } from 'react'
 import { Card } from 'semantic-ui-react'
 import UserCard from './UserCard'
 
-const sortByNumBadgesFn = u => (u.badges ? -u.badges.length : 0)
-
 const UserList = ({ users, narrowItem, handleClickUser }) => (
   <Card.Group>
-    {_.map(_.sortBy(users, sortByNumBadgesFn), user => (
+    {_.map(users, user => (
       <UserCard key={user._id} user={user} narrowItem={narrowItem} handleClickUser={handleClickUser} />
     ))}
   </Card.Group>

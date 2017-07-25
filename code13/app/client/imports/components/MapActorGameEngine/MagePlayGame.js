@@ -515,7 +515,7 @@ export default class MagePlayGame {
 
     // Update player power
     if (
-      this.activeActors[this.AA_player_idx].activePower != MgbActor.alGainPowerType_None && 
+      this.activeActors[this.AA_player_idx].activePower != MgbActor.alGainPowerType_None &&
       this.activeActors[this.AA_player_idx].activePowerUntilGetTime < new Date().getTime()
     ) {
       this.activeActors[this.AA_player_idx].activePower = MgbActor.alGainPowerType_None
@@ -673,7 +673,7 @@ export default class MagePlayGame {
         '  |  Score ' +
         this.activeActors[this.AA_player_idx].score +
         '  |  Time ' +
-        timeStr + 
+        timeStr +
         ps,
     )
 

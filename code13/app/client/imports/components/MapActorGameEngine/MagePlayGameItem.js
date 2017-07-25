@@ -41,21 +41,11 @@ const MagePlayGameItem = {
       activeActors[AA_player_idx].health += heal
       ap = actors[activeActors[AA_player_idx].ACidx]
       if (heal > 0) {
-        MgbActor.playCannedSound(
-          ap.content2.databag.all.soundWhenHealed,
-          ap.content2,
-          ownerName,
-        )
-      }
-      else {
+        MgbActor.playCannedSound(ap.content2.databag.all.soundWhenHealed, ap.content2, ownerName)
+      } else {
         if (playHarmedSound) {
-          MgbActor.playCannedSound(
-            ap.content2.databag.all.soundWhenHarmed,
-            ap.content2,
-            ownerName,
-          )
+          MgbActor.playCannedSound(ap.content2.databag.all.soundWhenHarmed, ap.content2, ownerName)
         }
-
       }
       // TODO: ap1.content2.databag.all.visualEffectWhenHarmedType
       // TODO: Player's content2.databag.all.visualEffectWhenHarmedType / content2.databag.all.visualEffectWhenHealedType

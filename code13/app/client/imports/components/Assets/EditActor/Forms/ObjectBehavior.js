@@ -96,8 +96,7 @@ export default class ObjectBehavior extends BaseForm {
         {this.textArea('Display a message when picked up', 'useText')}
 
         {this.text('Heal (or harm) when used', 'healOrHarmWhenUsedNum', 'number', {
-          title:
-            'Positive numbers heal and negative numbers harm',
+          title: 'Positive numbers heal and negative numbers harm',
           min: -10000,
           max: 10000,
         })}
@@ -146,8 +145,7 @@ export default class ObjectBehavior extends BaseForm {
     return (
       <div>
         {this.text('Heal (or harm) when used', 'healOrHarmWhenUsedNum', 'number', {
-          title:
-            'Positive numbers heal and negative numbers harm',
+          title: 'Positive numbers heal and negative numbers harm',
           min: -10000,
           max: 10000,
         })}
@@ -174,7 +172,7 @@ export default class ObjectBehavior extends BaseForm {
         {(this.data.itemActivationType == '4' ||
           this.data.itemActivationType == '5' ||
           this.data.itemActivationType == '6') &&
-          // this.data.itemActivationType == '7') 
+          // this.data.itemActivationType == '7')
           this.showPickableOptions()}
       </div>
     )

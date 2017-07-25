@@ -1,10 +1,11 @@
 // This helper is related to asset caching.
-// This genetag method will generate an ETAG in the format:
-// asset._id + ixqmbvi1
-//    where the suffix is dependent on the updatedAt field of the asset as defined in assets.js
 /**
- *
- * @param asset - partial asset {_id: {String}, updatedAt: {Date}}
+ * @typedef {{_id: String, updatedAt: Date}} AssetEtagPart
+ */
+/**
+ * generates an ETAG in the format: asset._id + hashed_timestamp
+ * where the suffix is dependent on the updatedAt field of the asset as defined in assets.js
+ * @param asset {{_id: String, updatedAt: (Date|String)}} - partial asset
  * @returns {String}
  */
 export const genetag = asset => {

@@ -26,6 +26,7 @@ export default class CreateSound extends React.Component {
     this.state = {
       paramsUpdated: new Date().getTime(), // this.PARAMS is actual object in sfxr lib and paramsUpdated is just flag to trigger UI updates
       playerStatus: 'empty', // empty, play, pause
+      canPlay: false,
     }
   }
 
@@ -61,24 +62,25 @@ export default class CreateSound extends React.Component {
   regenerateSound() {
     this.sound = new SFXR.SoundEffect(this.PARAMS).generate()
     lamejs.encodeMono(1, this.sound.header.sampleRate, this.sound.samples, audioObject => {
-      // console.log(audioObject)
       this.sound.dataURI = audioObject.src
       this.playSound()
+      this.setState({ canPlay: true })
     })
   }
 
   playSound() {
-    setTimeout(() => {
-      let sound = new Audio()
-      sound.src = this.sound.dataURI
-      if (this.sound.dataURI.length > 100) {
-        // check if dataUri is not corrupted. Sometimes jsfxr returns only part of uri
-        this.wavesurfer.load(this.sound.dataURI)
-      } else {
-        this.wavesurfer.empty()
-      }
+    let sound = new Audio()
+    sound.oncanplaythrough = event => {
       sound.play()
-    }, 0)
+    }
+    sound.src = this.sound.dataURI
+    sound.load()
+    if (this.sound.dataURI.length > 100) {
+      // check if dataUri is not corrupted. Sometimes jsfxr returns only part of uri
+      this.wavesurfer.load(this.sound.dataURI)
+    } else {
+      this.wavesurfer.empty()
+    }
   }
 
   changeParam(paramID, event) {
@@ -113,11 +115,7 @@ export default class CreateSound extends React.Component {
     let effectButtons = _.map(effects, effect => {
       return (
         <div id={'mgbjr-editSound-createSound-button-' + effect} key={'effect_' + effect}>
-          <button
-            className="ui fluid button small"
-            onTouchEnd={this.gen.bind(this, effect)}
-            onMouseUp={this.gen.bind(this, effect)}
-          >
+          <button className="ui fluid button small" onMouseUp={this.gen.bind(this, effect)}>
             {effect}
           </button>
         </div>
@@ -199,8 +197,8 @@ export default class CreateSound extends React.Component {
             <button
               className="ui icon button massive"
               title="Play"
-              onTouchEnd={this.regenerateSound.bind(this)}
-              onMouseUp={this.regenerateSound.bind(this)}
+              onMouseUp={this.playSound.bind(this)}
+              disabled={!this.state.canPlay}
             >
               <i className="play icon" />
             </button>
@@ -208,7 +206,6 @@ export default class CreateSound extends React.Component {
               id="mgbjr-editSound-createSound-save"
               className="ui icon button massive"
               title="Save sound"
-              onTouchEnd={this.saveSound.bind(this)}
               onMouseUp={this.saveSound.bind(this)}
             >
               <i className="save icon" />
@@ -216,7 +213,6 @@ export default class CreateSound extends React.Component {
             <button
               className="ui icon button massive"
               title="Reset sliders"
-              onTouchEnd={this.resetSliders.bind(this)}
               onMouseUp={this.resetSliders.bind(this)}
             >
               <i className="erase icon" />

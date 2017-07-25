@@ -903,7 +903,7 @@ export default class MapArea extends React.Component {
             options={this.props.options}
             getLayers={this.getLayers.bind(this)}
             palette={this.palette}
-            isActive={this.props.activeLayer == i}
+            isActive={this.props.activeLayer === i}
             camera={this.camera}
             startTime={this.startTime}
             getEditMode={() => this.props.getMode()}
@@ -946,6 +946,7 @@ export default class MapArea extends React.Component {
             // object layer draws selection shapes on the grid - as it's always on top
             getOverlay={() => this.refs.grid}
             key={i}
+            index={i}
             ref={this.addLayerRef.bind(this, i)}
           />,
         )

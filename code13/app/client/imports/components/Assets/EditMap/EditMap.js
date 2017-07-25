@@ -140,8 +140,13 @@ export default class EditMap extends React.Component {
     return this.refs.map.generatePreview()
   }
 
+  isMapBroken() {
+    const c2 = this.props.asset.content2
+
+    return !Object.keys(c2).length || typeof c2.layers !== 'object'
+  }
   setInitialStateFromContent() {
-    if (Object.keys(this.props.asset.content2).length === 0) {
+    if (this.isMapBroken()) {
       this.createNewMap()
       return
     }

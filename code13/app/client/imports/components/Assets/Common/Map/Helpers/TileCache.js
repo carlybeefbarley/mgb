@@ -61,7 +61,7 @@ export default class TileCache {
     this.updateTilesets(data)
 
     // this should trigger only if there is no loading images or all images come from cache
-    if (this.toLoad == this.loaded) {
+    if (this.toLoad === this.loaded) {
       this._onReady()
     }
   }

@@ -367,8 +367,9 @@ export default class EditGraphic extends React.Component {
         prevState.selectedFrameIdx !== this.state.selectedFrameIdx ||
         prevState.showGrid !== this.state.showGrid ||
         prevState.editScale !== this.state.editScale
-      )
+      ) {
         this.updateEditCanvasFromSelectedFrameLayers()
+      }
     }
 
     if (c2.doResaveTileset) {
@@ -410,60 +411,70 @@ export default class EditGraphic extends React.Component {
     }
   }
 
-  // Note that this HAS to use Image.onload so it will complete asynchronously.
-  // TODO(DGOLDS): Add an on-complete callback including a timeout handler to support better error handling and avoid races
-  loadAllPreviewsAsync() {
+  loadAllPreviewsAsync(frameID = 0) {
     let c2 = this.props.asset.content2
     let frameCount = c2.frameNames.length
-    let layerCount = c2.layerParams.length
 
-    for (let frameID = 0; frameID < frameCount; frameID++) {
-      this.frameCtxArray[frameID].clearRect(0, 0, c2.width, c2.height)
-      for (let layerID = layerCount - 1; layerID >= 0; layerID--) this.loadAssetAsync(frameID, layerID)
-    }
-    setTimeout(() => this.updateEditCanvasFromSelectedPreviewCanvas(), 0)
-  }
-
-  loadAssetAsync(frameID, layerID) {
-    let c2 = this.props.asset.content2
-    if (!c2.frameData[frameID] || !c2.frameData[frameID][layerID]) {
-      // manage empty frameData cases
-      // console.log('empty framedata', frameID, layerID)
-      if (frameID === this.state.selectedFrameIdx)
-        this.previewCtxArray[layerID].clearRect(0, 0, c2.width, c2.height)
-      return
-    }
-    let dataURI = c2.frameData[frameID][layerID]
-    // if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
-    if (dataURI !== undefined && dataURI.startsWith('data:image/')) {
-      var _img = new Image()
-      _img.frameID = frameID // hack so in onload() we know which frame is loaded
-      _img.layerID = layerID // hack so in onload() we know which layer is loaded
-      let self = this
-      _img.onload = function(e) {
-        let loadedImage = e.target
-        if (loadedImage.frameID === self.state.selectedFrameIdx) {
-          self.previewCtxArray[loadedImage.layerID].clearRect(0, 0, c2.width, c2.height)
-          self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0)
-        }
-        if (!c2.layerParams[loadedImage.layerID].isHidden) {
-          let frame = self.frameCtxArray[loadedImage.frameID]
-          if (frame) frame.drawImage(loadedImage, 0, 0) // There seems to be a race condition that means frame is sometime null.
-        }
-      }
-      _img.src = dataURI
+    // no more loops. Recursion to be sure for all weird edge cases that all images are loaded
+    if (frameID < frameCount - 1) {
+      this.loadLayersAssetAsync(frameID, () => this.loadAllPreviewsAsync(frameID + 1))
     } else {
-      // TODO: May need some error indication here
-      console.trace('Unrecognized dataURI for Asset#', this.props.asset._id)
-      this.updateEditCanvasFromSelectedPreviewCanvas()
+      this.loadLayersAssetAsync(frameID, () => this.updateEditCanvasFromSelectedPreviewCanvas())
     }
   }
 
   updateEditCanvasFromSelectedFrameLayers() {
+    this.loadLayersAssetAsync(this.state.selectedFrameIdx, () => {
+      this.updateEditCanvasFromSelectedPreviewCanvas()
+    })
+  }
+
+  loadLayersAssetAsync(frameID, callback) {
     let c2 = this.props.asset.content2
-    let frameData = c2.frameData[this.state.selectedFrameIdx]
-    for (let i = frameData.length - 1; i >= 0; i--) this.loadAssetAsync(this.state.selectedFrameIdx, i)
-    setTimeout(() => this.updateEditCanvasFromSelectedPreviewCanvas(), 0)
+    let frameData = c2.frameData[frameID]
+    let loadedCount = 0
+
+    if (frameData.length == 0) callback()
+
+    for (let i = frameData.length - 1; i >= 0; i--) {
+      let layerID = i
+
+      if (!c2.frameData[frameID] || !c2.frameData[frameID][layerID]) {
+        // manage empty frameData cases
+        if (frameID === this.state.selectedFrameIdx)
+          this.previewCtxArray[layerID].clearRect(0, 0, c2.width, c2.height)
+        loadedCount++
+        if (loadedCount >= frameData.length) callback()
+        continue
+      }
+      let dataURI = c2.frameData[frameID][layerID]
+      // if (dataURI !== undefined && dataURI.startsWith("data:image/png;base64,")) {
+      if (dataURI !== undefined && dataURI.startsWith('data:image/')) {
+        var _img = new Image()
+        _img.frameID = frameID // hack so in onload() we know which frame is loaded
+        _img.layerID = layerID // hack so in onload() we know which layer is loaded
+        let self = this
+        _img.onload = function(e) {
+          let loadedImage = e.target
+          if (loadedImage.frameID === self.state.selectedFrameIdx) {
+            self.previewCtxArray[loadedImage.layerID].clearRect(0, 0, c2.width, c2.height)
+            self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0)
+          }
+          if (!c2.layerParams[loadedImage.layerID].isHidden) {
+            let frame = self.frameCtxArray[loadedImage.frameID]
+            if (frame) frame.drawImage(loadedImage, 0, 0) // There seems to be a race condition that means frame is sometime null.
+          }
+
+          loadedCount++
+          if (loadedCount >= frameData.length) callback()
+        }
+        _img.src = dataURI
+      } else {
+        // TODO: May need some error indication here
+        console.trace('Unrecognized dataURI for Asset#', this.props.asset._id)
+        this.updateEditCanvasFromSelectedPreviewCanvas()
+      }
+    }
   }
 
   updateEditCanvasFromSelectedPreviewCanvas() {
@@ -1104,15 +1115,14 @@ export default class EditGraphic extends React.Component {
     this.doSnapshotActivity(frameIndex)
     this.processedChangeMarker = null // Since we now want to reload data for our new EditCanvas
     // console.log("handleSelectFrame: setting this.processedChangeMarker = null")
-    this.setState({ selectedFrameIdx: frameIndex })
-
-    // for new frame clears preview canvases and update edit canvas
-    let c2 = this.props.asset.content2
-    if (c2.frameData[frameIndex].length === 0) {
-      for (let i = 0; i < this.previewCtxArray.length; i++)
-        this.previewCtxArray[i].clearRect(0, 0, c2.width, c2.height)
-      this.updateEditCanvasFromSelectedPreviewCanvas()
-    }
+    this.setState({ selectedFrameIdx: frameIndex }, () => {
+      // for new frame clears preview canvases and update edit canvas
+      const c2 = this.props.asset.content2
+      if (c2.frameData[this.state.selectedFrameIdx].length === 0) {
+        for (let i = 0; i < this.previewCtxArray.length; i++)
+          this.previewCtxArray[i].clearRect(0, 0, c2.width, c2.height)
+      }
+    })
   }
 
   handleSelectLayer = layerIndex => {

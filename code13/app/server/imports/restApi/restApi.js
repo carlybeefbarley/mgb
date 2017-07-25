@@ -1,7 +1,7 @@
 // !!! important when adding new api endpoint add it also to tests/tests/api.test.js
 
 import { Azzets } from '/imports/schemas'
-import { genAPIreturn } from '/server/imports/helpers/generators'
+import dataUriToBuffer from 'data-uri-to-buffer'
 
 // Note that Restivus's default url prefix is /api
 const options = {
@@ -11,13 +11,50 @@ const options = {
 
 export const RestApi = new Restivus(options)
 
+/*--------- some freq used constants ---------------*/
+
 // Return an empty image if there's no thumbnail yet. This is a transparent 1x1 GIF from https://css-tricks.com/snippets/html/base64-encode-of-1x1px-transparent-gif/
 export const emptyPixel = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' //1x1GIF
+export const emptyPixelBuffer = dataUriToBuffer(emptyPixel)
 
 export const red64x64halfOpacity =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAY0lEQVR42u3QAREAAAQEsJdcdHI4W4TVJJ3HSoAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECLhvAUBsX8GVkqJPAAAAAElFTkSuQmCC'
 export const grey64x64halfOpacity =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDIJfcHLY1xh5IQG6nKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAN5AkZBhS2TJQAAAABJRU5ErkJggg=='
+
+// this actually gets _id also which is needed
+export const etagFields = { fields: { _id: 1, updatedAt: 1 } }
+export const content2onlyField = { fields: { _id: 0, content2: 1 } }
+
+export const err404 = { statusCode: 404, body: {} } // body required to correctly show 404 not found header
+
+export const audioHeader = { 'Content-Type': 'audio/mp3' }
+
+// TODO: check if this has any performance impact - $in vs {$ne: true} and index usage
+export const assetAccessibleProps = {
+  isDeleted: false,
+  isFlagged: { $in: [null, false] } /* isFlagged: false */,
+}
+
+/**
+ * gets assets content2
+ * @param partialAsset {AssetEtagPart} - partialAsset should contain at least _id and updatedAt
+ */
+export const getContent2 = partialAsset => {
+  if (!partialAsset) return null
+
+  const asset = Azzets.findOne(partialAsset._id, content2onlyField)
+  return asset ? asset.content2 : null
+}
+/**
+ * gets full asset from partial asset
+ * @param partialAsset {AssetEtagPart} - partialAsset should contain at least _id and updatedAt
+ */
+export const getFullAsset = partialAsset => {
+  if (!partialAsset) return null
+
+  return Azzets.findOne(partialAsset._id)
+}
 
 // TODO: use enums instead of strings for asset kinds
 

@@ -1,4 +1,4 @@
-import { RestApi } from './restApi'
+import { RestApi, getContent2, getFullAsset, etagFields, err404, assetAccessibleProps } from './restApi'
 import { Azzets } from '/imports/schemas'
 import { genAPIreturn } from '/server/imports/helpers/generators'
 
@@ -7,8 +7,9 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne(this.urlParams.id)
-      return genAPIreturn(this, asset, asset ? asset.content2 : null)
+      const asset = Azzets.findOne(this.urlParams.id, etagFields)
+      if (!asset) return err404
+      return genAPIreturn(this, asset, getContent2)
     },
   },
 )
@@ -17,13 +18,19 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne({
-        kind: 'actor',
-        name: this.urlParams.name,
-        dn_ownerName: this.urlParams.user,
-        isDeleted: false,
-      })
-      return genAPIreturn(this, asset, asset ? asset.content2 : null)
+      const asset = Azzets.findOne(
+        Object.assign(
+          {
+            kind: 'actor',
+            name: this.urlParams.name,
+            dn_ownerName: this.urlParams.user,
+          },
+          assetAccessibleProps,
+        ),
+        etagFields,
+      )
+      if (!asset) return err404
+      return genAPIreturn(this, asset, getContent2)
     },
   },
 )
@@ -33,13 +40,19 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      var asset = Azzets.findOne({
-        name: this.urlParams.name,
-        kind: 'actor',
-        dn_ownerName: this.urlParams.user,
-        isDeleted: false,
-      })
-      return genAPIreturn(this, asset)
+      const asset = Azzets.findOne(
+        Object.assign(
+          {
+            kind: 'actor',
+            name: this.urlParams.name,
+            dn_ownerName: this.urlParams.user,
+          },
+          assetAccessibleProps,
+        ),
+        etagFields,
+      )
+      if (!asset) return err404
+      return genAPIreturn(this, asset, getFullAsset)
     },
   },
 )

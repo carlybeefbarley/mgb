@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 # this file will setup brand new ubuntu ami - used for template for other slaves
 # you still need to create default ubuntu instance manually
 # this script can be used to update slave directly (but it's not it main purpose)
@@ -15,11 +15,11 @@ awsUri=$1
 awsCert=$2
 cert=$3
 
-if [ ! -f $cert ]; then
+if [ ! -f "$cert" ]; then
   echo "Cannot find master certificate! "$cert
   exit 1
 fi
-if [ ! -f $awsCert ]; then
+if [ ! -f "$awsCert" ]; then
   echo "Cannot aws certificate! "$aws
   exit 1
 fi
@@ -28,7 +28,7 @@ echo ">>>> copying master certificate to instance"
 scp -i $awsCert $cert ubuntu@${awsUri}:~/master.pem
 
 echo ">>>> executing update script on instance"
-ssh -i $awsCert ubuntu@${awsUri} 'bash -s' < ${DIR}/updateSlave.sh
+ssh -i $awsCert ubuntu@${awsUri} 'sh -s' < ${DIR}/updateSlave.sh
 
 echo ">>>> executing setup script on instance"
 ssh -i $awsCert ubuntu@${awsUri} <<'ENDSSH'

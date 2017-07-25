@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 set -e
 
 source assert-pristine-git.sh
@@ -21,7 +21,7 @@ sed "s/__MGB_GIT_BRANCH_COMMIT_COUNT__WILL_GO_HERE__/${git_commit_count}/; " | \
 sed "s/__MGB_GIT_DESCRIBE__WILL_GO_HERE__/${git_describe}/;" | \
 sed 's/v2.mygamebuilder.com/staging.mygamebuilder.com/g' > settings.staging.generated.json
 
-if [[ ! -f settings.staging.generated.json ]]; then
+if [ ! -f settings.staging.generated.json ]; then
   echo "No generated staging file"
   exit 1
 fi
@@ -32,7 +32,7 @@ fi
 #
 if meteor_user=$(meteor whoami 2> /dev/null); then
   echo "... logged in as: $meteor_user"
-elif [[ -n $METEOR_SESSION_FILE_CONTENT ]]; then
+elif [ -n "$METEOR_SESSION_FILE_CONTENT" ]; then
   echo "... using METEOR_SESSION_FILE $METEOR_SESSION_FILE_CONTENT"
   echo "$METEOR_SESSION_FILE_CONTENT" > meteor_session.json
   export METEOR_SESSION_FILE=meteor_session.json

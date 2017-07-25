@@ -795,7 +795,10 @@ const edit = {
 // TODO: Smarter fill/magic wand tools that place assets by size instead of filling every tile
 edit[EditModes.fill] = function(e, up) {
   // For now only use this algorithm for ActorMap functionality
-  if (!this.props.options.randomMode && this.props.getCollection().length === 1) {
+  // TODO: this should be in the edit[WAND] - as this function was meant to replace selection
+  // Actormaps uses new Fill algorithm
+  if (this.props.useNewFillAlgorithm && this.props.options.randomMode && this.props.getCollection().length === 1) {
+
     const col = this.props.getCollection()
     const temp = this.props.getSelection()
     const tileGid = this.options.data

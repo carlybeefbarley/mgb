@@ -130,6 +130,7 @@ const RelatedAssets = ({
       <Button
         as={QLink}
         to="/assets/create"
+        query={{ projectName: contextualProjectName }}
         compact
         floated="right"
         size="mini"

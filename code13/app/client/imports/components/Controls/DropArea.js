@@ -221,11 +221,12 @@ export default class DropArea extends React.Component {
   }
 
   handleOptionClick = val => {
-    this.props.value = val
     this.setState({ asset: null })
+    const name = this.props.title || 'Builtin samples'
+
     // Play sound when selecting
-    if (name === 'Builtin samples' && MgbActor.alCannedSoundsList.includes(val)) {
-      MgbActor.playCannedSound(val)
+    if (name === 'Builtin samples' && MgbActor.alCannedSoundsList.includes(val.split(':').pop())) {
+      MgbActor.previewCannedSound(val)
     }
     this.props.onChange && this.props.onChange(val)
   }

@@ -31,14 +31,23 @@ const MagePlayGameItem = {
     }
 
     var heal = MgbActor.intFromActorParam(itemAP.content2.databag.item.healOrHarmWhenUsedNum)
+    var playHarmedSound = true
     if (heal) {
+      if (heal < 0 && activeActors[AA_player_idx].activePower == MgbActor.alGainPowerType_Invulnerable) {
+        heal = 0
+        playHarmedSound = false
+      }
+
       activeActors[AA_player_idx].health += heal
       ap = actors[activeActors[AA_player_idx].ACidx]
-      MgbActor.playCannedSound(
-        heal > 0 ? ap.content2.databag.all.soundWhenHealed : ap.content2.databag.all.soundWhenHarmed,
-        ap.content2,
-        ownerName,
-      ) // TODO: ap1.content2.databag.all.visualEffectWhenHarmedType
+      if (heal > 0) {
+        MgbActor.playCannedSound(ap.content2.databag.all.soundWhenHealed, ap.content2, ownerName)
+      } else {
+        if (playHarmedSound) {
+          MgbActor.playCannedSound(ap.content2.databag.all.soundWhenHarmed, ap.content2, ownerName)
+        }
+      }
+      // TODO: ap1.content2.databag.all.visualEffectWhenHarmedType
       // TODO: Player's content2.databag.all.visualEffectWhenHarmedType / content2.databag.all.visualEffectWhenHealedType
     }
     if (1 == MgbActor.intFromActorParam(itemAP.content2.databag.item.gainExtraLifeYN)) {

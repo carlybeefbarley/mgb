@@ -407,6 +407,20 @@ const MgbActor = {
     }
   },
 
+  // Preview sound when selecting in editor, only builtin sounds
+  previewCannedSound: function(_soundName) {
+    if (!_soundName) return
+
+    const soundName = _soundName.split(':').pop()
+
+    if (soundName !== 'none') {
+      const sound = document.createElement('audio')
+      sound.src = '/audio/builtinForActors/' + soundName + '.wav'
+      sound.volume = 0.5 // Half volume
+      sound && sound.play()
+    }
+  },
+
   getAnimationIndex: function(
     actorPiece,
     currentStepStyle, // -1 means stationary. 0...3 Mean north/east/south/west. If -1, we use priorstepStyle to work out the direction the actor should be facing

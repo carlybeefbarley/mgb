@@ -1,11 +1,6 @@
-'use strict'
-import _ from 'lodash'
 import React from 'react'
 import TileHelper from '../Helpers/TileHelper.js'
-import SelectedTile from '../Tools/SelectedTile.js'
-import EditModes from '../Tools/EditModes.js'
-import TileCollection from '../Tools/TileCollection.js'
-import LayerTypes from '../Tools/LayerTypes.js'
+import cx from 'classnames'
 
 import Camera from '../Camera.js'
 
@@ -219,13 +214,14 @@ export default class AbstractLayer extends React.Component {
   }
 
   render() {
+    const { data, index, isActive } = this.props
+    const { type } = this.data
+
+    const classes = cx('tilemap-layer', type, { ' no-events': isActive })
+    const style = { zIndex: index }
+
     return (
-      <div
-        ref="layer"
-        className={'tilemap-layer ' + this.data.type + (this.props.isActive ? '' : ' no-events')}
-        data-name={this.props.data.name}
-        style={{ zIndex: this.props.index }}
-      >
+      <div ref="layer" className={classes} data-name={data.name} style={style}>
         <canvas
           ref="canvas"
           onMouseDown={this.handleMouseDown.bind(this)}

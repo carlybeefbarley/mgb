@@ -54,7 +54,20 @@ export default class MaskLayer extends React.Component {
   alignToLayer() {
     if (this.props.layer && this.props.layer.refs.layer) {
       this.refs.layer.style['transform'] = this.props.layer.refs.layer.style['transform']
-      this.refs.layer.style['z-index'] = this.props.layer.refs.layer.style['z-index']
+
+      // keep bounds behind map
+      if(this.props.layer.data.type === LayerTypes.object) {
+        const zIndex = parseInt(this.props.layer.refs.layer.style['z-index'], 10)
+        if(isNaN(zIndex)){
+          this.props.layer.refs.layer.style['z-index'] = 1
+        }
+        else{
+          this.refs.layer.style['z-index'] = zIndex - 1
+        }
+      }
+      else {
+        this.refs.layer.style['z-index'] = this.props.layer.refs.layer.style['z-index']
+      }
     }
   }
 

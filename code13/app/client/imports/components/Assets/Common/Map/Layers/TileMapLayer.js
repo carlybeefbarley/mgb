@@ -753,8 +753,10 @@ export default class TileMapLayer extends AbstractLayer {
   onKeyUp(e) {
     const w = e.which
 
-    if (w == 46) {
-      this.deleteSelection()
+    if (w === 46) {
+      const numRemoved = this.deleteSelection()
+      if(numRemoved)
+        this.props.handleSave(`Deleted ${Plural.numStr(numRemoved, 'tile')}`)
     }
     this.draw()
   }
@@ -766,13 +768,20 @@ export default class TileMapLayer extends AbstractLayer {
     // this.props.handleSave('Inserting Tiles')
   }
 
+  /**
+   * deletes selected tiles
+   * @returns {Integer} removed count
+   */
   deleteSelection() {
     const sel = this.props.getSelection()
-    if (!sel.length) return
+    const retval = sel.length
+    if (!retval) return retval
+
     for (let i = 0; i < sel.length; i++) {
       this.data.data[sel[i].id] = 0
     }
     sel.clear()
+    return retval
   }
 }
 
@@ -794,7 +803,7 @@ edit[EditModes.fill] = function(e, up) {
     const width = this.options.width
     const height = this.options.height
     const pos = this.getTilePosInfo(e)
-    var tileStack = [[pos.x, pos.y]]
+    const tileStack = [[pos.x, pos.y]]
 
     if (!col.length) {
       return
@@ -811,7 +820,7 @@ edit[EditModes.fill] = function(e, up) {
       this.props.saveForUndo('Fill tilemap')
 
       while (tileStack.length) {
-        var newPos, x, y, tilePos, reachLeft, reachRight
+        let newPos, x, y, tilePos, reachLeft, reachRight
         newPos = tileStack.pop()
         x = newPos[0]
         y = newPos[1]

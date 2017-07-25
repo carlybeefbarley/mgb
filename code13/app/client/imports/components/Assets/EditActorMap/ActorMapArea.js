@@ -164,7 +164,7 @@ export default class ActorMapArea extends BaseMapArea {
         layers.push(
           <LayerComponent
             {...this.props}
-            useNewFillAlgorithm={true}
+            useNewFillAlgorithm
             data={data.layers[i]}
             mapData={data}
             options={this.props.options}

@@ -1,10 +1,10 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 set -e
 
 PATH=$PATH:./node_modules/.bin
 glob="**/*.js?(on|x)"
 
-if [[ "$CI" == "true" ]]; then
+if [ "$CI" == "true" ]; then
   prettier --config ./.prettierrc.js --list-different "$glob"
   eslint "$glob"
 else

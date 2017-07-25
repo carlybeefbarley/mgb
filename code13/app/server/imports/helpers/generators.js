@@ -37,21 +37,29 @@ export const assetToCdn = (api, asset, uri) => {
   }
 }
 
-// this will return only not-modified header if browser already has resource in the cache (based on etag)
-// It's good idea to pass body as function so heavy value calculations can be omitted if asset is not changed
-// e.g. transforming music using byteArray to base64 string
-const getBodyContent = body => {
-  const retval = typeof body == 'function' ? body() : body
+const getBodyContent = (body, asset) => {
+  const retval = typeof body === 'function' ? body(asset) : body
   // if resp body will be empty ('') - then restivus will send headers as body - seems like a bug
   if (!retval) {
     return '\n'
   }
   return retval
 }
-
+/**
+ * @callback genAPICallback
+ * @param asset {AssetEtagPart}
+ */
+/**
+ * Wraps up standard API return and makes use of etag in a CDN friendly way
+ * @param api {Restivus} - reference to rest Restivus API instance
+ * @param asset {AssetEtagPart} - _id and udatedAt from asset
+ * @param body {(Object|String|genAPICallback)} - response body - or callback (recommended) which returns body
+ * @param headers {Object} - additional headers to pass with the response
+ * @returns {Object} - API response - either not changed or full body
+ */
 export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
-  // default 404
-  if (body === void 0 || body == null) {
+  // default 404 - need '' (empty string) here to be ignored
+  if (body === void 0 || body === null) {
     return {
       statusCode: 404,
       body: {},
@@ -60,7 +68,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   if (!asset) {
     return {
       headers: headers,
-      body: getBodyContent(body),
+      body: getBodyContent(body, asset),
     }
   }
   // some fallback mechanism
@@ -100,7 +108,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
         )
 
   // check if client already have cached resource
-  if (api.request.headers['if-none-match'] == etag) {
+  if (api.request.headers['if-none-match'] === etag) {
     api.response.writeHead(304, newHeaders)
     api.response.end()
     api.done()
@@ -110,6 +118,6 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   // return full response with etag
   return {
     headers: newHeaders,
-    body: getBodyContent(body),
+    body: getBodyContent(body, asset),
   }
 }

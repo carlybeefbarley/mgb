@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 (
 if [ ! -d ../app/node_modules/acorn/dist ]; then
   cd app

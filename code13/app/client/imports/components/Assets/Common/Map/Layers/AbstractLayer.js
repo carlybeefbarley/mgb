@@ -222,9 +222,9 @@ export default class AbstractLayer extends React.Component {
     return (
       <div
         ref="layer"
-        className={'tilemap-layer ' + this.data.type + (this.props.isActive ? '' : ' no-events') }
+        className={'tilemap-layer ' + this.data.type + (this.props.isActive ? '' : ' no-events')}
         data-name={this.props.data.name}
-        style={{zIndex: this.props.index}}
+        style={{ zIndex: this.props.index }}
       >
         <canvas
           ref="canvas"

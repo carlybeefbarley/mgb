@@ -755,8 +755,7 @@ export default class TileMapLayer extends AbstractLayer {
 
     if (w === 46) {
       const numRemoved = this.deleteSelection()
-      if(numRemoved)
-        this.props.handleSave(`Deleted ${Plural.numStr(numRemoved, 'tile')}`)
+      if (numRemoved) this.props.handleSave(`Deleted ${Plural.numStr(numRemoved, 'tile')}`)
     }
     this.draw()
   }

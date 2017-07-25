@@ -23,12 +23,18 @@ export const grey64x64halfOpacity =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAAPUlEQVR42u3OMQEAAAgDIJfcHLY1xh5IQG6nKgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLtwAN5AkZBhS2TJQAAAABJRU5ErkJggg=='
 
 // this actually gets _id also which is needed
-export const updatedOnlyField = { fields: { updatedAt: 1 } }
+export const etagFields = { fields: { _id: 1, updatedAt: 1 } }
 export const content2onlyField = { fields: { _id: 0, content2: 1 } }
 
 export const err404 = { statusCode: 404, body: {} } // body required to correctly show 404 not found header
 
 export const audioHeader = { 'Content-Type': 'audio/mp3' }
+
+// TODO: check if this has any performance impact - $in vs {$ne: true} and index usage
+export const assetAccessibleProps = {
+  isDeleted: false,
+  isFlagged: { $in: [null, false] } /* isFlagged: false */,
+}
 
 /**
  * gets assets content2

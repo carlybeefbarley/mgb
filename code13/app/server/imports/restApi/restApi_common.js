@@ -4,9 +4,10 @@ import {
   emptyPixelBuffer,
   red64x64halfOpacity,
   grey64x64halfOpacity,
-  updatedOnlyField,
+  etagFields,
   getContent2,
   err404,
+  assetAccessibleProps,
 } from './restApi'
 import { Azzets } from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
@@ -68,11 +69,16 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      return getFullAsset.call(this, {
-        name: this.urlParams.name,
-        dn_ownerName: this.urlParams.user,
-        isDeleted: false,
-      })
+      return getFullAsset.call(
+        this,
+        Object.assign(
+          {
+            name: this.urlParams.name,
+            dn_ownerName: this.urlParams.user,
+          },
+          assetAccessibleProps,
+        ),
+      )
     },
   },
 )
@@ -82,7 +88,7 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne(this.urlParams.id, updatedOnlyField)
+      const asset = Azzets.findOne(this.urlParams.id, etagFields)
       return genAPIreturn(this, asset, getContent2)
     },
   },
@@ -94,7 +100,7 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne(this.urlParams.id, updatedOnlyField)
+      const asset = Azzets.findOne(this.urlParams.id, etagFields)
       return genAPIreturn(this, asset, partialAsset => {
         const asset = Azzets.findOne(partialAsset._id, { _id: 0, content2: 1 })
         const src = asset.content2.src ? asset.content2.src : asset.content2
@@ -111,8 +117,14 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(
-        { name: this.urlParams.name, dn_ownerName: this.urlParams.user, isDeleted: false },
-        updatedOnlyField,
+        Object.assign(
+          {
+            name: this.urlParams.name,
+            dn_ownerName: this.urlParams.user,
+          },
+          assetAccessibleProps,
+        ),
+        etagFields,
       )
       return genAPIreturn(this, asset, asset ? asset._id : null)
     },
@@ -165,11 +177,13 @@ RestApi.addRoute(
       return getThumbnailFromAsset(
         this,
         Azzets.findOne(
-          {
-            name: this.urlParams.name,
-            dn_ownerName: this.urlParams.user,
-            isDeleted: false,
-          },
+          Object.assign(
+            {
+              name: this.urlParams.name,
+              dn_ownerName: this.urlParams.user,
+            },
+            assetAccessibleProps,
+          ),
           thumbnailProjectionFields,
         ),
       )
@@ -197,12 +211,14 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(
-        {
-          name: this.urlParams.name,
-          kind: this.urlParams.kind,
-          dn_ownerName: this.urlParams.user,
-          isDeleted: false,
-        },
+        Object.assign(
+          {
+            name: this.urlParams.name,
+            kind: this.urlParams.kind,
+            dn_ownerName: this.urlParams.user,
+          },
+          assetAccessibleProps,
+        ),
         thumbnailProjectionFields,
       )
 
@@ -221,11 +237,13 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(
-        {
-          name: this.urlParams.name,
-          dn_ownerName: this.urlParams.user,
-          isDeleted: false,
-        },
+        Object.assign(
+          {
+            name: this.urlParams.name,
+            dn_ownerName: this.urlParams.user,
+          },
+          assetAccessibleProps,
+        ),
         thumbnailProjectionFields,
       )
       const expires = this.urlParams.expires || 30
@@ -243,12 +261,14 @@ RestApi.addRoute(
   {
     get: function() {
       const assets = Azzets.find(
-        {
-          dn_ownerName: this.urlParams.owner,
-          kind: this.urlParams.kind,
-          name: new RegExp('^' + _.escapeRegExp(this.queryParams.query), 'i'),
-          isDeleted: false,
-        },
+        Object.assign(
+          {
+            dn_ownerName: this.urlParams.owner,
+            kind: this.urlParams.kind,
+            name: new RegExp('^' + _.escapeRegExp(this.queryParams.query), 'i'),
+          },
+          assetAccessibleProps,
+        ),
         {
           fields: { name: 1, text: 1 },
         },

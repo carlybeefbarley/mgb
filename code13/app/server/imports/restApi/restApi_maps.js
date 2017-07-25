@@ -1,4 +1,4 @@
-import { RestApi, updatedOnlyField, content2onlyField, err404 } from './restApi'
+import { RestApi, etagFields, content2onlyField, err404, assetAccessibleProps } from './restApi'
 import { Azzets } from '/imports/schemas'
 import { genAPIreturn } from '/server/imports/helpers/generators'
 
@@ -19,13 +19,15 @@ const getMapData = partialAsset => {
 
 const getMapAssetByUserName = function(kind = 'map') {
   const asset = Azzets.findOne(
-    {
-      name: this.urlParams.name,
-      dn_ownerName: this.urlParams.user,
-      kind: kind,
-      isDeleted: false,
-    },
-    updatedOnlyField,
+    Object.assign(
+      {
+        name: this.urlParams.name,
+        dn_ownerName: this.urlParams.user,
+        kind: kind,
+      },
+      assetAccessibleProps,
+    ),
+    etagFields,
   )
   if (!asset) return err404
   return genAPIreturn(this, asset, getMapData)
@@ -36,7 +38,7 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne(this.urlParams.id, updatedOnlyField)
+      const asset = Azzets.findOne(this.urlParams.id, etagFields)
       if (!asset) return err404
       return genAPIreturn(this, asset, getMapData)
     },

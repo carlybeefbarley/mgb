@@ -1,4 +1,4 @@
-import { RestApi, getContent2, getFullAsset, updatedOnlyField } from './restApi'
+import { RestApi, getContent2, getFullAsset, etagFields, assetAccessibleProps } from './restApi'
 import { Azzets } from '/imports/schemas'
 import makeCodeBundle from '/imports/helpers/makeCodeBundle'
 import { genAPIreturn, assetToCdn } from '/server/imports/helpers/generators'
@@ -42,7 +42,14 @@ RestApi.addRoute(
       const asset =
         idParts.length === 2
           ? Azzets.findOne(
-              { dn_ownerName: idParts[0], name: idParts[1], isDeleted: false, kind: 'tutorial' },
+              Object.assign(
+                {
+                  dn_ownerName: idParts[0],
+                  name: idParts[1],
+                  kind: 'tutorial',
+                },
+                assetAccessibleProps,
+              ),
               updateAndNameFields,
             ) // owner:name
           : Azzets.findOne(this.urlParams.id, updateAndNameFields)
@@ -79,12 +86,14 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(
-        {
-          dn_ownerName: this.urlParams.owner,
-          name: this.urlParams.name,
-          kind: 'code',
-          isDeleted: false,
-        },
+        Object.assign(
+          {
+            dn_ownerName: this.urlParams.owner,
+            name: this.urlParams.name,
+            kind: 'code',
+          },
+          assetAccessibleProps,
+        ),
         updateAndNameFields,
       )
 
@@ -132,13 +141,20 @@ RestApi.addRoute(
       const asset = Azzets.findOne(
         {
           $or: [
-            { _id: this.urlParams.id, isDeleted: false },
-            {
-              dn_ownerName: this.urlParams.username,
-              name: this.urlParams.codename,
-              isDeleted: false,
-              kind: 'code',
-            },
+            Object.assign(
+              {
+                _id: this.urlParams.id,
+              },
+              assetAccessibleProps,
+            ),
+            Object.assign(
+              {
+                dn_ownerName: this.urlParams.username,
+                name: this.urlParams.codename,
+                kind: 'code',
+              },
+              assetAccessibleProps,
+            ),
           ],
         },
         updateAndNameFields,
@@ -155,12 +171,14 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(
-        {
-          dn_ownerName: this.urlParams.username,
-          name: this.urlParams.codename,
-          isDeleted: false,
-          kind: 'code',
-        },
+        Object.assign(
+          {
+            dn_ownerName: this.urlParams.username,
+            name: this.urlParams.codename,
+            kind: 'code',
+          },
+          assetAccessibleProps,
+        ),
         updateAndNameFields,
       )
       return _makeBundle(this, asset)
@@ -174,12 +192,14 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(
-        {
-          dn_ownerName: this.urlParams.username,
-          name: this.urlParams.codename,
-          isDeleted: false,
-          kind: 'code',
-        },
+        Object.assign(
+          {
+            dn_ownerName: this.urlParams.username,
+            name: this.urlParams.codename,
+            kind: 'code',
+          },
+          assetAccessibleProps,
+        ),
         updateAndNameFields,
       )
       let contentType = 'text/plain'
@@ -200,13 +220,15 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(
-        {
-          dn_ownerName: this.urlParams.username,
-          name: this.urlParams.codename,
-          isDeleted: false,
-          kind: 'code',
-        },
-        updatedOnlyField,
+        Object.assign(
+          {
+            dn_ownerName: this.urlParams.username,
+            name: this.urlParams.codename,
+            kind: 'code',
+          },
+          assetAccessibleProps,
+        ),
+        etagFields,
       )
       return assetToCdn(
         this,

@@ -1,4 +1,4 @@
-import { RestApi, updatedOnlyField, err404, audioHeader } from './restApi'
+import { RestApi, etagFields, err404, audioHeader, assetAccessibleProps } from './restApi'
 import { Azzets } from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
 import { genAPIreturn } from '/server/imports/helpers/generators'
@@ -15,8 +15,7 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      'use strict'
-      const asset = Azzets.findOne(this.urlParams.id, updatedOnlyField)
+      const asset = Azzets.findOne(this.urlParams.id, etagFields)
 
       if (!asset) return err404
 
@@ -30,15 +29,16 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      'use strict'
       const asset = Azzets.findOne(
-        {
-          kind: 'music',
-          name: this.urlParams.name,
-          dn_ownerName: this.urlParams.user,
-          isDeleted: false,
-        },
-        updatedOnlyField,
+        Object.assign(
+          {
+            kind: 'music',
+            name: this.urlParams.name,
+            dn_ownerName: this.urlParams.user,
+          },
+          assetAccessibleProps,
+        ),
+        etagFields,
       )
       if (!asset) return err404
 

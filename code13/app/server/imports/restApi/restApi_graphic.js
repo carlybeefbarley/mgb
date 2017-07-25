@@ -1,4 +1,4 @@
-import { RestApi, emptyPixel, updatedOnlyField, err404 } from './restApi'
+import { RestApi, emptyPixel, etagFields, err404, assetAccessibleProps } from './restApi'
 import { Azzets } from '/imports/schemas'
 import dataUriToBuffer from 'data-uri-to-buffer'
 import { genAPIreturn } from '/server/imports/helpers/generators'
@@ -35,7 +35,7 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne(this.urlParams.id, updatedOnlyField)
+      const asset = Azzets.findOne(this.urlParams.id, etagFields)
       if (!asset) return err404
 
       return genAPIreturn(
@@ -57,13 +57,15 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(
-        {
-          kind: 'graphic',
-          name: this.urlParams.name,
-          dn_ownerName: this.urlParams.user,
-          isDeleted: false,
-        },
-        updatedOnlyField,
+        Object.assign(
+          {
+            kind: 'graphic',
+            name: this.urlParams.name,
+            dn_ownerName: this.urlParams.user,
+          },
+          assetAccessibleProps,
+        ),
+        etagFields,
       )
       if (!asset) return err404
 
@@ -86,13 +88,15 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(
-        {
-          name: this.urlParams.name,
-          kind: 'graphic',
-          dn_ownerName: this.urlParams.user,
-          isDeleted: false,
-        },
-        updatedOnlyField,
+        Object.assign(
+          {
+            name: this.urlParams.name,
+            kind: 'graphic',
+            dn_ownerName: this.urlParams.user,
+          },
+          assetAccessibleProps,
+        ),
+        etagFields,
       )
       if (!asset) return err404
 
@@ -108,7 +112,7 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne(this.urlParams.id, updatedOnlyField)
+      const asset = Azzets.findOne(this.urlParams.id, etagFields)
       if (!asset) return err404
 
       /* Example...
@@ -183,7 +187,7 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      const asset = Azzets.findOne(this.urlParams.id, updatedOnlyField)
+      const asset = Azzets.findOne(this.urlParams.id, etagFields)
       return genAPIreturn(
         this,
         asset,
@@ -211,13 +215,15 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(
-        {
-          name: this.urlParams.name,
-          dn_ownerName: this.urlParams.user,
-          kind: 'graphic',
-          isDeleted: false,
-        },
-        updatedOnlyField,
+        Object.assign(
+          {
+            name: this.urlParams.name,
+            dn_ownerName: this.urlParams.user,
+            kind: 'graphic',
+          },
+          assetAccessibleProps,
+        ),
+        etagFields,
       )
 
       return genAPIreturn(

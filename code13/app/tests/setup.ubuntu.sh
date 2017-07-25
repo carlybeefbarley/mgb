@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 # usage: copy this file and certificate to remote server
 # scp -r -i ~/aws-free.pem /home/kaspars/Projects/mgb/code13/app/tests ubuntu@ec2-54-196-36-137.compute-1.amazonaws.com:~/mgb
 
@@ -9,7 +9,7 @@ sudo apt-get install yarn -y
 sudo apt-get install fontconfig -y
 
 # install nvm - node version manager
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | sh
 
 # update PATH - so nvm is available
 export NVM_DIR="$HOME/.nvm"
@@ -22,7 +22,7 @@ nvm install node
 yarn
 
 # create service - move to separate file and copy instead of creating at runtime?
-sudo bash -c 'cat << EOF > /etc/systemd/system/mgb-test-slave.service
+sudo sh -c 'cat << EOF > /etc/systemd/system/mgb-test-slave.service
 [Unit]
 Description=MGB Test Slave
 After=network.target

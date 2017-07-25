@@ -1,6 +1,6 @@
 /**
  * creates single file html document from asset code bundle
- * @param asset - code asset
+ * @param asset ({dn_ownerName, name, content2}) - code asset
  * @param origin - host with protocol and optionally port (e.g. http://example.com:8081) where to redirect user if bundle is not present (while using CDN host by default will be cloudfront host) {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLHyperlinkElementUtils/origin}
  * @returns {String}
  */

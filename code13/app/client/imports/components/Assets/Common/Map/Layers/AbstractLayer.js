@@ -217,7 +217,7 @@ export default class AbstractLayer extends React.Component {
     const { data, index, isActive } = this.props
     const { type } = this.data
 
-    const classes = cx('tilemap-layer', type, { ' no-events': isActive })
+    const classes = cx('tilemap-layer', type, { 'no-events': !isActive })
     const style = { zIndex: index }
 
     return (

@@ -40,8 +40,8 @@ export default class EventTool extends Tileset {
     return (
       <Dropdown
         simple
-        labeled
-        text="Events"
+        disabled={!this.props.isEnabled}
+        text="Events&nbsp;"
         id="mgbjr-MapTools-events"
         className="tilesets icon small ui button"
       >

@@ -288,6 +288,7 @@ export default class EditActorMap extends EditMap {
                 <EventTool
                   {...this.tilesetProps}
                   palette={this.cache.tiles}
+                  isEnabled={c2 && c2.layers[activeLayer].name === 'Events'}
                   activeTileset={activeTileset}
                   tilesets={c2.tilesets}
                   options={this.options}

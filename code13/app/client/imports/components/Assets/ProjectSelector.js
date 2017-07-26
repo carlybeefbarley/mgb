@@ -79,7 +79,7 @@ const ProjectSelector = ({
   //   ownedProjects.push( <Dropdown.Item content={<small>({userName} owns no Projects yet)</small>}/> )
 
   // Build the list of 'View Project' Menu choices of OWNED and MEMBER projects
-  _.each(availableProjects, project => {
+  _.each(_.sortBy(availableProjects, ap => -ap.createdAt), project => {
     const isActive = _isSameProject(chosenProjectObj, chosenProjectName, project)
     if (isActive && !chosenProjectObj) {
       if (NameMatchedProjectObject) {

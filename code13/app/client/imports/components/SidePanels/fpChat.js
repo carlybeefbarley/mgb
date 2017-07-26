@@ -526,7 +526,7 @@ const fpChat = React.createClass({
   },
 
   render: function() {
-    const { currUser } = this.props
+    const { currUser, isSuperAdmin } = this.props
     const { view, pastMessageLimit } = this.state
     const channelName = this._calculateActiveChannelName()
     const channelObj = parseChannelName(channelName)
@@ -560,6 +560,7 @@ const fpChat = React.createClass({
             <ChatMessagesView
               currUser={currUser}
               pastMessageLimit={pastMessageLimit}
+              isSuperAdmin={isSuperAdmin}
               handleExtendMessageLimit={newLimit => {
                 this.setState({ pastMessageLimit: newLimit })
               }}

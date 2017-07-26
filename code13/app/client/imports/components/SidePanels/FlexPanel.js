@@ -189,6 +189,7 @@ const FlexPanel = React.createClass({
 
   contextTypes: {
     settings: PropTypes.object, // Used so some panels can be hidden by user
+    urlLocation: PropTypes.object,
   },
 
   statics: {
@@ -422,6 +423,7 @@ const FlexPanel = React.createClass({
                     currentlyEditingAssetInfo={this.props.currentlyEditingAssetInfo}
                     subNavParam={this.getSubNavParam()}
                     handleChangeSubNavParam={this.handleChangeSubNavParam}
+                    location={this.context.urlLocation}
                   />
                 )}
               </div>

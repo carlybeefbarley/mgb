@@ -345,6 +345,11 @@ class AssetHandler {
 
     const asset = Azzets.findOne(this.id)
 
+    if (asset && updateObj && updateObj.assetId && this.id !== updateObj.assetId) {
+      console.error('AssetFetchers update() detected stale write attempt')
+      return
+    }
+
     // save previous content2
     let oldC2 = this.asset ? this.asset.content2 : null
 

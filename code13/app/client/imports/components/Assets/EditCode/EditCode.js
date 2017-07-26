@@ -1877,6 +1877,10 @@ export default class EditCode extends React.Component {
     }
   }
   createBundle(cb) {
+    if (!this.isActive) {
+      console.log('not creating bundle since not active')
+      return
+    }
     if (this.props.asset.kind == 'tutorial') {
       return
     }
@@ -1958,8 +1962,19 @@ export default class EditCode extends React.Component {
 
       this.doFullUpdateOnContentChange(errors => {
         // it's not possible to create useful bundle with errors in the code - just save
+        console.log('doFullUpdateOnContentChange() callback [A]: error', errors)
         if (errors.length || !this.props.asset.content2.needsBundle) {
+          console.log('doFullUpdateOnContentChange() callback [B]')
+          if (!this.isActive) {
+            console.log('Discarding bundle ERRORS to prevent overwrite')
+            return
+          }
           this.tools.transpileAndMinify('/' + this.props.asset.name, c2.src).then(es5 => {
+            console.log('doFullUpdateOnContentChange() callback [C]. isActive = ', this.isActive)
+            if (!this.isActive) {
+              console.log('Discarding transpileAndMinify ERRORS to prevent overwrite')
+              return
+            }
             c2.es5 = es5
             this.lastSavedValue = c2.src
             this.props.handleContentChange(c2, thumbnail, reason)
@@ -1975,10 +1990,10 @@ export default class EditCode extends React.Component {
 
     this.changeTimeout = window.setTimeout(this.changeTimeoutFn, CHANGES_DELAY_TIMEOUT)
   }
-  // this can be called even after component unmount.. or another asset has been loaded
+  // this can be called even AFTER component unmount.. or another asset has been loaded
   // make sure we don't overwrite another source
   handleContentChangeAsync(c2, thumbnail, reason) {
-    // is this safe to use it here?
+    // is this safe to use it here? Don't call handleContentChange() if we have unmounted
     if (this.isActive) {
       this.lastSavedValue = c2.src
       this.props.handleContentChange(c2, thumbnail, reason)

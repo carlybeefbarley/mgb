@@ -571,7 +571,7 @@ const AssetEditRoute = React.createClass({
     this.forceUpdate() // YUCK, but I think I have to, coz I can't put a deferral data structure in this.state. TODO.. revisit this soon
   },
 
-  // Note that can be called directly by the Sub-components.
+  // Note that this can be called directly by the Sub-components.
   // Primary use case is user hits 'save now' button, or 'play now'
   handleSaveNowRequest: function() {
     console.log('User request: Save deferred changes now')
@@ -642,7 +642,10 @@ const AssetEditRoute = React.createClass({
       }
     })
     if (content2Object) {
-      this.data.update(updateObj)
+      if (this.data.asset && this.data.asset._id && this.data.asset._id !== assetId) {
+        console.error('_doSendDeferredChangeNow() Detected overdue asset save. NOT Updating current asset.')
+        this.m_deferredSaveObj = null
+      } else this.data.update(updateObj)
     }
     logActivity('asset.edit', changeText, null, this.data.asset || { _id: assetId })
   },

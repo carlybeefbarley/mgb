@@ -15,6 +15,31 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Wed Jul 26 2017 13:20:00 GMT-0700 (PDT)',
+
+      id: {
+        ver: '0.2.1',
+        state: 'Beta',
+        iteration: '4746',
+      },
+
+      releaseManagement: {
+        eng: 'dgolds',
+      },
+
+      changes: [
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary:
+            "It's been a week of lots of bugfixes and code cleanups. Lots and lots of little changes and fixes around the editors, and improvements for switching between assets",
+          otherUrls: [],
+        },
+      ],
+    },
+
+    {
       timestamp: 'Tue Jul 18 2017 17:30:00 GMT-0700 (PDT)',
 
       id: {

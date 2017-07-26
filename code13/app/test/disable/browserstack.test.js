@@ -27,7 +27,7 @@ if (shouldRun) {
 function prepareRun() {
   let testsAdded = false
   // this is required because otherwise mocha will automatically exit
-  describe('Selenium tests', function() {
+  describe('Selenium tests sadasd', function() {
     before(function(done) {
       if (!testsAdded) {
         testsAdded = true

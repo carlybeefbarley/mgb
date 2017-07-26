@@ -30,6 +30,8 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
+      if (!asset) return err404
+
       return makeAudioResponse(this, asset)
     },
   },
@@ -51,6 +53,8 @@ RestApi.addRoute(
         ),
         etagFields,
       )
+      if (!asset) return err404
+
       return makeAudioResponse(this, asset)
     },
   },

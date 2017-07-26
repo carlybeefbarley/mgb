@@ -89,6 +89,8 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
+      if (!asset) return err404
+
       return genAPIreturn(this, asset, getContent2)
     },
   },
@@ -101,6 +103,8 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
+      if (!asset) return err404
+
       return genAPIreturn(this, asset, partialAsset => {
         const asset = Azzets.findOne(partialAsset._id, { _id: 0, content2: 1 })
         const src = asset.content2.src ? asset.content2.src : asset.content2
@@ -126,6 +130,8 @@ RestApi.addRoute(
         ),
         etagFields,
       )
+      if (!asset) return err404
+
       return genAPIreturn(this, asset, asset ? asset._id : null)
     },
   },
@@ -165,7 +171,9 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      return getThumbnailFromAsset(this, Azzets.findOne(this.urlParams.id, thumbnailProjectionFields))
+      const asset = Azzets.findOne(this.urlParams.id, thumbnailProjectionFields)
+      if (!asset) return err404
+      return getThumbnailFromAsset(this, asset)
     },
   },
 )
@@ -174,19 +182,19 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get: function() {
-      return getThumbnailFromAsset(
-        this,
-        Azzets.findOne(
-          Object.assign(
-            {
-              name: this.urlParams.name,
-              dn_ownerName: this.urlParams.user,
-            },
-            assetAccessibleProps,
-          ),
-          thumbnailProjectionFields,
+      const asset = Azzets.findOne(
+        Object.assign(
+          {
+            name: this.urlParams.name,
+            dn_ownerName: this.urlParams.user,
+          },
+          assetAccessibleProps,
         ),
+        thumbnailProjectionFields,
       )
+
+      if (!asset) return err404
+      return getThumbnailFromAsset(this, asset)
     },
   },
 )
@@ -197,6 +205,7 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(this.urlParams.id, thumbnailProjectionFields)
+      if (!asset) return err404
       const expires = this.urlParams.expires || 30
       return getThumbnailFromAsset(this, asset, {
         'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`,
@@ -221,7 +230,7 @@ RestApi.addRoute(
         ),
         thumbnailProjectionFields,
       )
-
+      if (!asset) return err404
       const expires = this.urlParams.expires || 30
       return getThumbnailFromAsset(this, asset, {
         'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`,
@@ -246,6 +255,9 @@ RestApi.addRoute(
         ),
         thumbnailProjectionFields,
       )
+
+      if (!asset) return err404
+
       const expires = this.urlParams.expires || 30
       return getThumbnailFromAsset(this, asset, {
         'Cache-Control': `public, max-age=${expires}, s-maxage=${expires}`,

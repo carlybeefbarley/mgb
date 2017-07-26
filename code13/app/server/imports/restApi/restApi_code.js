@@ -1,4 +1,4 @@
-import { RestApi, getContent2, getFullAsset, etagFields, assetAccessibleProps } from './restApi'
+import { RestApi, getContent2, getFullAsset, etagFields, assetAccessibleProps, err404 } from './restApi'
 import { Azzets } from '/imports/schemas'
 import makeCodeBundle from '/imports/helpers/makeCodeBundle'
 import { genAPIreturn, assetToCdn } from '/server/imports/helpers/generators'
@@ -53,6 +53,7 @@ RestApi.addRoute(
               updateAndNameFields,
             ) // owner:name
           : Azzets.findOne(this.urlParams.id, updateAndNameFields)
+      if (!asset) return err404
 
       return genAPIreturn(this, asset, getSrc, {
         'Content-Type': 'text/plain',
@@ -69,6 +70,8 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(this.urlParams.id, updateAndNameFields)
+      if (!asset) return err404
+
       return genAPIreturn(this, asset, getSrc, {
         'Content-Type': 'text/plain',
         'file-name': asset ? asset.name : this.urlParams.name,
@@ -96,6 +99,7 @@ RestApi.addRoute(
         ),
         updateAndNameFields,
       )
+      if (!asset) return err404
 
       // this can be cached - probably no-go - need better solution (or adjust cloudfront headers)
       // nice trick to respond browser with his accepted type - e.g. css
@@ -116,6 +120,8 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(this.urlParams.id, updateAndNameFields)
+      if (!asset) return err404
+
       return _makeBundle(this, asset)
     },
   },
@@ -127,6 +133,8 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(this.urlParams.id, updateAndNameFields)
+      if (!asset) return err404
+
       return assetToCdn(this, asset, '/api/asset/code/bundle/' + this.urlParams.id)
     },
   },
@@ -159,6 +167,8 @@ RestApi.addRoute(
         },
         updateAndNameFields,
       )
+      if (!asset) return err404
+
       return assetToCdn(this, asset, '/api/asset/code/bundle/' + asset._id)
     },
   },
@@ -181,6 +191,8 @@ RestApi.addRoute(
         ),
         updateAndNameFields,
       )
+      if (!asset) return err404
+
       return _makeBundle(this, asset)
     },
   },
@@ -202,6 +214,8 @@ RestApi.addRoute(
         ),
         updateAndNameFields,
       )
+      if (!asset) return err404
+
       let contentType = 'text/plain'
       if (this.request.headers.accept) {
         contentType = this.request.headers.accept.split(',').shift()
@@ -230,6 +244,8 @@ RestApi.addRoute(
         ),
         etagFields,
       )
+      if (!asset) return err404
+
       return assetToCdn(
         this,
         asset,

@@ -344,6 +344,7 @@ const NavBarBreadcrumbUI = props => {
               _handleRelatedAssetsPopupOpen()
             }}
             onClose={onRelatedAssetNavClose}
+            onUnmount={onRelatedAssetNavClose}
             position="bottom left"
             trigger={<Icon fitted color="blue" name="double angle right" />}
           >
@@ -359,6 +360,7 @@ const NavBarBreadcrumbUI = props => {
             open={quickNavIsOpen}
             onOpen={_handleRelatedAssetsPopupOpen}
             onClose={onQuickNavClose}
+            onUnmount={onQuickNavClose}
           >
             <Modal.Header>Related Assets</Modal.Header>
             <Modal.Content>{relatedAssetsComponent}</Modal.Content>

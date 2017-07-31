@@ -241,7 +241,7 @@ window.onload = function() {
     }, 500)
   }
 
-  const commands = {
+  var commands = {
     ping: function(e){
       mainWindow.postMessage(_isAlive, e.origin);
     },
@@ -336,7 +336,7 @@ window.onload = function() {
     }
   }
 
-  window.addEventListener('message', function (e) {
+  var handleMessage = function (e) {
     mainWindow = e.source;
     // ignore completely self made messages - as we are only posting messages from code editor window
     if(mainWindow === window)
@@ -348,5 +348,11 @@ window.onload = function() {
     else{
       console.warn("Unknown command received: ["+ e.data.mgbCommand +']')
     }
-  })
+  }
+  window.addEventListener('message', handleMessage)
+
+  window.onbeforeunload = function(){
+    // remove listener - otherwise there ir race condition as old iframe (this) tend to respond to messages after unload has been requested
+    window.removeEventListener('message', handleMessage )
+  }
 }

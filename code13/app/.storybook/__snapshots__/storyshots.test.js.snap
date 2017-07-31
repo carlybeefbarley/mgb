@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots EditorToolItem Default 1`] = `
+<button
+  className="ui tiny compact icon button"
+  disabled={undefined}
+  onClick={[Function]}
+  style={
+    Object {
+      "height": "4rem",
+      "margin": "0",
+      "paddingLeft": "0",
+      "paddingRight": "0",
+      "textAlign": "center",
+      "width": "5rem",
+    }
+  }
+  tabIndex={undefined}
+>
+  <i
+    aria-hidden="true"
+    className="pencil large icon"
+  />
+  <span
+    style={
+      Object {
+        "display": "block",
+        "fontWeight": "normal",
+        "margin": "0.75em 0 0",
+      }
+    }
+  >
+    Pencil
+  </span>
+</button>
+`;
+
+exports[`Storyshots EditorToolItem Icon only 1`] = `
+<button
+  className="ui tiny compact icon button"
+  disabled={undefined}
+  onClick={[Function]}
+  style={
+    Object {
+      "margin": "0",
+      "textAlign": "center",
+    }
+  }
+  tabIndex={undefined}
+>
+  <i
+    aria-hidden="true"
+    className="pencil large icon"
+  />
+</button>
+`;

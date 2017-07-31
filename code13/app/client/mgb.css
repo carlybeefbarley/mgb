@@ -191,13 +191,6 @@ body.dragging .accept-drop:hover{
   z-index: 1;
 }
 
-.mgb-toolbar .vertical{
-  width: 100%;
-}
-.mgb-toolbar .vertical *{
-  width: 100%;
-}
-
 .invisible{
   opacity: 0;
   display: none !important;

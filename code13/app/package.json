@@ -58,6 +58,7 @@
     "nested-property": "0.0.7",
     "pako": "^1.0.5",
     "promisify-call": "^2.0.4",
+    "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-addons-create-fragment": "^15.6.0",
     "react-addons-css-transition-group": "^15.6.0",

@@ -1,0 +1,78 @@
+/*
+  Flaticon icon font: Flaticon
+  Creation date: 07/07/2017 08:01
+*/
+
+@font-face {
+  font-family: "Flaticon";
+  src: url(fonts/Flaticon.eot);
+  src: url(fonts/Flaticon.eot?#iefix) format("embedded-opentype"),
+       url(fonts/Flaticon.woff) format("woff"),
+       url(fonts/Flaticon.ttf) format("truetype"),
+       url(fonts/Flaticon.svg#Flaticon) format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url(fonts/Flaticon.svg#Flaticon) format("svg");
+  }
+}
+
+[class^="fi-"]:before, [class*=" fi-"]:before,
+[class^="fi-"]:after, [class*=" fi-"]:after {
+  font-family: Flaticon;
+}
+
+.fi-design:before { content: "\f100"; }
+.fi-computer:before { content: "\f101"; }
+.fi-triangular-ruler:before { content: "\f102"; }
+.fi-tetrahedron:before { content: "\f103"; }
+.fi-sprayer:before { content: "\f104"; }
+.fi-sphere:before { content: "\f105"; }
+.fi-selection:before { content: "\f106"; }
+.fi-nodes-1:before { content: "\f107"; }
+.fi-ruler:before { content: "\f108"; }
+.fi-pen:before { content: "\f109"; }
+.fi-rgb:before { content: "\f10a"; }
+.fi-reflection-1:before { content: "\f10b"; }
+.fi-reflection:before { content: "\f10c"; }
+.fi-pencil:before { content: "\f10d"; }
+.fi-pencil-ruler:before { content: "\f10e"; }
+.fi-pen-tool:before { content: "\f10f"; }
+.fi-paper-cutter:before { content: "\f110"; }
+.fi-paint-roller:before { content: "\f111"; }
+.fi-paint-bucket:before { content: "\f112"; }
+.fi-paint-brush:before { content: "\f113"; }
+.fi-minus-front:before { content: "\f114"; }
+.fi-magic-wand:before { content: "\f115"; }
+.fi-layers:before { content: "\f116"; }
+.fi-intersection:before { content: "\f117"; }
+.fi-highlighter:before { content: "\f118"; }
+.fi-guides:before { content: "\f119"; }
+.fi-feather:before { content: "\f11a"; }
+.fi-eyedropper:before { content: "\f11b"; }
+.fi-exclude:before { content: "\f11c"; }
+.fi-eraser:before { content: "\f11d"; }
+.fi-pencil-case:before { content: "\f11e"; }
+.fi-cylinder:before { content: "\f11f"; }
+.fi-cube-1:before { content: "\f120"; }
+.fi-crop:before { content: "\f121"; }
+.fi-cone:before { content: "\f122"; }
+.fi-color-palette:before { content: "\f123"; }
+.fi-palette:before { content: "\f124"; }
+.fi-brush:before { content: "\f125"; }
+.fi-nodes:before { content: "\f126"; }
+.fi-artboard:before { content: "\f127"; }
+.fi-align-8:before { content: "\f128"; }
+.fi-align-7:before { content: "\f129"; }
+.fi-align-6:before { content: "\f12a"; }
+.fi-align-5:before { content: "\f12b"; }
+.fi-align-4:before { content: "\f12c"; }
+.fi-align-3:before { content: "\f12d"; }
+.fi-align-2:before { content: "\f12e"; }
+.fi-align-1:before { content: "\f12f"; }
+.fi-align:before { content: "\f130"; }
+.fi-cube:before { content: "\f131"; }

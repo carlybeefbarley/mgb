@@ -19,6 +19,7 @@ var cloudfront = require("gulp-cloudfront");
 // ============================================================
 process.env.BASE_URL = process.env.BASE_URL || ''
 process.env.MGB_URL = process.env.MGB_URL || 'https://v2.mygamebuilder.com/'
+process.env.CDN_URL = process.env.CDN_URL || 'https://d1d15nbexzn633.cloudfront.net/'
 
 const makePath = (...paths) => paths.join( '/' ).replace( /\/\//g, '/' )
 const srcPath = (...paths) => makePath( 'src', ...paths )

@@ -188,6 +188,8 @@ RestApi.addRoute(
   {
     get: function() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
+      if (!asset) return err404
+
       return genAPIreturn(
         this,
         asset,
@@ -225,6 +227,7 @@ RestApi.addRoute(
         ),
         etagFields,
       )
+      if (!asset) return err404
 
       return genAPIreturn(
         this,

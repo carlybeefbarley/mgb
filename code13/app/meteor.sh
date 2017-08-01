@@ -1,3 +1,7 @@
 #!/usr/bin/env sh
 
-[ "$OS" == "Windows_NT" ] && meteor.bat $@ || meteor $@
+if [ "$OS" == "Windows_NT" ]; then
+  meteor.bat $@
+else
+  meteor $@
+fi

@@ -121,14 +121,7 @@ const AssetCreateNew = React.createClass({
   },
 
   handleChangeSelectedProjectName(selectedProjName, selectedProject) {
-    this.setState(
-      {
-        selectedProject,
-      },
-      () => {
-        joyrideCompleteTag(`mgbjr-CT-create-asset-project`)
-      },
-    )
+    this.setState({ selectedProject })
   },
 
   handleCreateAssetClick() {

@@ -35,7 +35,7 @@ const _mkNavPanelMacros = () => {
       hint: `${_.upperFirst(dd.name)} Menu`,
       desc: `Step for clicking the ${ddUpName} Menu`,
       newVal: {
-        title: `Click the '${ddUpName}' menu header`,
+        title: `Click the ${ddUpName} menu header`,
         text: dd.explainClickAction,
         selector: `#mgbjr-np-${dd.name}`,
         showStepOverlay: true,
@@ -51,9 +51,9 @@ const _mkNavPanelMacros = () => {
       retval.push({
         key: _wrapKey(`np-${dd.name}-${item.jrkey}`),
         hint: `${_.upperFirst(smText)} Menu`,
-        desc: `Step for finding the '${smText}' menu`,
+        desc: `Step for finding the ${smText} menu`,
         newVal: {
-          title: `Go to the '${smText}' page:`,
+          title: `Go to the ${smText} page:`,
           text: `Hover on the <div style='border: 1px solid dimgrey' class='ui small black compact button'>${ddUpName}</div> menu,<br></br> then click the <div class='ui small label'>${smText}</div> option`,
           selector: `#mgbjr-np-${dd.name}-${item.jrkey},#mgbjr-np-${dd.name}`, // Note the  comma  which allows multiple selectors, in descending preference
           showStepOverlay: true,
@@ -78,10 +78,8 @@ const _mkFp = (fpname, icon) => ({
   hint: `${_.upperFirst(fpname)} FlexPanel`,
   desc: `Step for finding the ${_.upperFirst(fpname)} FlexPanel`,
   newVal: {
-    title: `The '${_.upperFirst(fpname)}' FlexPanel`,
-    text: `Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(
-      fpname,
-    )} button here`,
+    title: `The ${fpname.toUpperCase()} FlexPanel`,
+    text: `Click on the  <i class='ui inverted bordered ${icon} icon'></i> <strong>${fpname.toUpperCase()}</strong> button here`,
     selector: `#mgbjr-flexPanelIcons-${fpname}`,
     showStepOverlay: true,
     awaitCompletionTag: `mgbjr-CT-flexPanel-${fpname}-show`,
@@ -93,13 +91,11 @@ const _mkFp = (fpname, icon) => ({
 // Helper which makes a FlexPanel Descrine stepMacro: e.g. _mkNp( 'learn', 'student', 'some text' ) is %fp-learn-describe%
 const _mkFpDescribe = (fpname, icon, describeText) => ({
   key: _wrapKey(`fp-${fpname}-describe`),
-  hint: `${_.upperFirst(fpname)} FlexPanel`,
-  desc: `Step for finding the ${_.upperFirst(fpname)} FlexPanel`,
+  hint: `${fpname.toUpperCase()} FlexPanel`,
+  desc: `Step for finding the <strong>${fpname.toUpperCase()}</strong> FlexPanel`,
   newVal: {
-    title: `The '${_.upperFirst(fpname)}' FlexPanel`,
-    text: `${describeText}. <br></br>Click on the  <i class='ui inverted bordered ${icon} icon'></i> ${_.upperCase(
-      fpname,
-    )} button here to show this Panel`,
+    title: `The ${fpname.toUpperCase()} FlexPanel`,
+    text: `${describeText}. <br></br>Click on the  <i class='ui inverted bordered ${icon} icon'></i> <strong>${fpname.toUpperCase()}</strong> button here to show this Panel`,
     selector: `#mgbjr-flexPanelIcons-${fpname}`,
     showStepOverlay: true,
     awaitCompletionTag: `mgbjr-CT-flexPanel-${fpname}-show`,
@@ -112,12 +108,12 @@ const _mkFpDescribe = (fpname, icon, describeText) => ({
 const _mkCreateAsset = kind => [
   {
     key: _wrapKey(`create-asset-${kind}-select-kind`),
-    hint: `New ${_.upperCase(kind)} asset kind selected`,
-    desc: `Step for selecting a new ${_.upperCase(kind)} Asset`,
+    hint: `New ${kind.toUpperCase()} asset kind selected`,
+    desc: `Step for selecting a new <strong>${kind.toUpperCase()}</strong> Asset`,
     newVal: {
-      title: `Select a ${_.upperCase(kind)} Asset kind`,
-      text: `Select the ${_.upperCase(kind)} asset kind. You cannot change the kind once it is created.`,
-      selector: '#mgbjr-create-asset-select-kinds',
+      title: `Select the ${kind.toUpperCase()} Asset kind`,
+      text: `Select the <strong>${kind.toUpperCase()}</strong> asset kind. You cannot change the kind once it is created.`,
+      selector: `#mgbjr-create-asset-select-kind-${kind}`,
       showStepOverlay: false,
       awaitCompletionTag: `mgbjr-CT-create-asset-select-kind-${kind}`,
       position: 'right',
@@ -126,10 +122,10 @@ const _mkCreateAsset = kind => [
   },
   {
     key: _wrapKey(`create-asset-${kind}-set-name`),
-    hint: `New ${_.upperCase(kind)} asset name set`,
-    desc: `Step for selecting a new ${_.upperCase(kind)} Asset`,
+    hint: `New ${kind} asset name set`,
+    desc: `Step for selecting a new <strong>${kind.toUpperCase()}</strong> Asset`,
     newVal: {
-      title: `Enter a ${_.upperCase(kind)} Asset name`,
+      title: `Enter a ${kind.toUpperCase()} Asset name`,
       text: `Type in a name. You can always change it later.`,
       selector: '#mgbjr-create-asset-name',
       showStepOverlay: false,
@@ -140,24 +136,22 @@ const _mkCreateAsset = kind => [
   },
   {
     key: _wrapKey(`create-asset-${kind}-select-project`),
-    hint: `New ${_.upperCase(kind)} asset project selected`,
-    desc: `Step for selecting a new ${_.upperCase(kind)} Asset`,
+    hint: `New ${kind.toUpperCase()} asset project selected`,
+    desc: `Step for selecting a new <strong>${kind.toUpperCase()}</strong> Asset`,
     newVal: {
-      title: `Select a ${_.upperCase(kind)} Asset project`,
-      text: `Projects let you group assets together. This is optional and can be changed later.  Select "no project" to skip this step.`,
+      title: `Optionally select a project`,
+      text: `Projects let you group assets together. This is optional and can be changed later.`,
       selector: '#mgbjr-create-asset-project',
       showStepOverlay: false,
-      awaitCompletionTag: `mgbjr-CT-create-asset-project`,
       position: 'right',
-      style: '%inverted%',
     },
   },
   {
     key: _wrapKey(`create-asset-${kind}-create-button`),
-    hint: `New ${_.upperCase(kind)} asset kind selected`,
-    desc: `Step for selecting a new ${_.upperCase(kind)} Asset`,
+    hint: `New ${kind.toUpperCase()} asset kind selected`,
+    desc: `Step for selecting a new <strong>${kind.toUpperCase()}</strong> Asset`,
     newVal: {
-      title: `Create a ${_.upperCase(kind)} Asset`,
+      title: `Create your ${kind.toUpperCase()} Asset`,
       text: `Great, now create the asset.`,
       selector: '#mgbjr-create-asset-button',
       showStepOverlay: false,

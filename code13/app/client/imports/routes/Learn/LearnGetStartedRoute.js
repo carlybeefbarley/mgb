@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import styles from '../home.css'
 import QLink from '../QLink'
 import getStartedStyle from '../GetStarted.css'
-import { Button, Divider, Grid, Header, Icon, Label } from 'semantic-ui-react'
+import { Button, Divider, Grid, Header, Icon, Label, Message } from 'semantic-ui-react'
 import SkillLinkCard from '/client/imports/components/Learn/SkillLinkCard'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import SkillNodes, { countMaxUserSkills, getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
@@ -50,14 +50,16 @@ ProgressLabel.propTypes = {
 
 const _calcDefaultNextTutorialSkillPath = (currUser, userSkills) => {
   var skillPath = null
-  _.each(gsItems, area => {
+  for (var i = 0; i < gsItems.length; i += 1) {
+    const area = gsItems[i]
     const { key } = area.node.$meta
     const skillStatus = getSkillNodeStatus(currUser, userSkills, key)
     if (skillStatus.todoSkills.length !== 0) {
       skillPath = key + '.' + skillStatus.todoSkills[0]
-      return false
+      break
     }
-  })
+  }
+
   return skillPath
 }
 
@@ -72,19 +74,23 @@ export const StartDefaultNextTutorial = ({ currUser, userSkills }) => {
   const nextTutorialSkillPath = _calcDefaultNextTutorialSkillPath(currUser, userSkills)
   if (!nextTutorialSkillPath)
     return (
-      <Button color="green" style={{ margin: '0.5em' }} size="big" floated="right">
-        <Icon name="checkmark" />
-        "Get Started" completed!
-      </Button>
+      <Message
+        success
+        icon="checkmark box"
+        header="Hooray!"
+        className="animated tada"
+        content="You've completed all the skills in this section.  Start a new tutorial to continue."
+      />
     )
   const nextTutName = getFriendlyName(nextTutorialSkillPath)
 
   return (
     <Button
+      className="animated pulse"
       color="yellow"
       active
-      style={{ margin: '0.5em' }}
-      floated="right"
+      size="large"
+      fluid
       onClick={() => {
         _handleStartDefaultNextTutorial(currUser, userSkills)
       }}
@@ -106,7 +112,6 @@ const LearnGetStartedRoute = ({ currUser }, context) => {
           Get Started
           <Header.Subheader>
             Learn to use this site - set up your profile, play a game, find friends, etc
-            <StartDefaultNextTutorial currUser={currUser} userSkills={context.skills} />
           </Header.Subheader>
         </Header>
         <ProgressLabel subSkillsComplete={numGsSkills} subSkillTotal={_maxGsSkillCount} />

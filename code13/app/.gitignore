@@ -7,3 +7,4 @@ settings.staging.generated.json
 meteor_session.json
 .directory
 .yarn-cache
+yarn-error.log

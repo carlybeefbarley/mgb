@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Storyshots __Examples__ Actions 1`] = `
+<div
+  className="ui text container"
+>
+  <p>
+    Stories can log actions. Open the "Action Logger" panel and click the button.
+  </p>
+  <button
+    className="ui button"
+    disabled={undefined}
+    onClick={[Function]}
+    tabIndex={undefined}
+  >
+    Log Action
+  </button>
+</div>
+`;
+
+exports[`Storyshots __Examples__ Knobs 1`] = `
+<div
+  className="ui text container"
+>
+  <p>
+    Knobs make your story interactive. It is a good practice to make a "knob" for each prop you are showing the story for.
+  </p>
+  <p>
+    Open the "Knobs" panel and try it out.
+  </p>
+  <div
+    className="ui segment"
+  >
+    <button
+      className="ui button"
+      disabled={undefined}
+      onClick={[Function]}
+      tabIndex={undefined}
+    >
+      Click Me
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Storyshots __Examples__ Links 1`] = `
+<div
+  className="ui text container"
+>
+  <p>
+    Stories can link to other stories.
+  </p>
+  <button
+    className="ui icon primary left labeled button"
+    disabled={undefined}
+    onClick={[Function]}
+    tabIndex={undefined}
+  >
+    <i
+      aria-hidden="true"
+      className="level up icon"
+    />
+    Go to 'Knobs'
+  </button>
+</div>
+`;

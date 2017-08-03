@@ -17,6 +17,7 @@ module.exports = {
     meteor: true,
     node: true,
     es6: true,
+    jest: true,
   },
   globals: {
     __meteor_runtime_config__: false,

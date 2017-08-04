@@ -3,6 +3,7 @@
 import _ from 'lodash'
 import { Projects, Azzets } from '/imports/schemas'
 import { check } from 'meteor/check'
+import { isUserSuperAdmin } from './roles'
 import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 import { logActivity } from './activity'
 
@@ -11,7 +12,7 @@ import { logActivity } from './activity'
 if (!Meteor.isServer) console.error('projects-server.js should not be on client')
 
 /**
- * 
+ *
  * This does a DB lookup on the server to see if the user has project access
  * @export
  * @param {String} userId
@@ -43,7 +44,10 @@ Meteor.methods({
     if (!project) throw new Meteor.Error(404, `Project #${projectId} not found `)
 
     console.log('  Found project:', project.name, project._id)
-    if (project.ownerId !== this.userId) throw new Meteor.Error(401, 'Not Project owner')
+    if (project.ownerId !== this.userId) {
+      if (isUserSuperAdmin(Meteor.user())) console.log("Allowing SuperAdmin to delete another user's project")
+      else throw new Meteor.Error(401, 'Not Project owner')
+    }
 
     if (project.memberIds && project.memberIds.length > 0)
       throw new Meteor.Error(401, `Project still has members`)

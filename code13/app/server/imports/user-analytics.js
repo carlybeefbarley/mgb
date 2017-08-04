@@ -1,5 +1,5 @@
 /* global Mongo, Meteor */
-
+import _ from 'lodash'
 import { checkMgb } from '/imports/schemas/checkMgb'
 
 // This file contains the code to update the MongoDB user_analytics record.
@@ -23,12 +23,21 @@ import { checkMgb } from '/imports/schemas/checkMgb'
 
 const UserAnalytics = new Mongo.Collection('user_analytics')
 
+export const eradicateReasons = {
+  spammer: 'spammer',
+  testAccount: 'testAccount',
+}
+
 var schema = {
   // ID of this settings object.
   // THIS WILL BE EQUAL TO THE ID OF THE USER - simplest way to ensure and manage a 1:1 mapping of user:user-analytics
   _id: String,
 
-  ipAddresses: Array,
+  eradicatedAt: Date, // Optional. If it exists, then it was eradicated.
+  eradicatedByUsername: String, // Optional. It it exists, the username (not id) who eradicated it
+  eradicatedReason: String, // Optional. It it exists, then one of the eradicateReason{} KEYS
+
+  ipAddresses: Array, // Array of strings, e.g. [ "1.2.3.4", "12.12.11.10" ]
   referrers: Array,
   usernames: Array,
 }
@@ -43,7 +52,7 @@ export const uaNoteUserReferrer = (userId, referrer) =>
   UserAnalytics.update({ _id: userId }, { $addToSet: { referrers: referrer } })
 
 /** Used by main_server to lazily create this record if it does not already exist
- * 
+ *
  */
 export function createInitialUserAnalytics(userId) {
   if (!Meteor.isServer || !userId) return
@@ -80,3 +89,31 @@ Meteor.methods({
     }
   },
 })
+
+export function markUserAnalyticsAsEradicated(userId, reasonKey) {
+  console.log('markUserAnalyticsAsEradicated(): ', { userId, reasonKey })
+  if (!Meteor.isServer || !userId) return
+  checkMgb.checkUserIsSuperAdmin()
+  checkMgb.userId(userId)
+
+  if (!_.has(eradicateReasons, reasonKey)) {
+    console.log('markUserAnalyticsAsEradicated: invalid reason:', reasonKey)
+    return
+  }
+
+  const ua = UserAnalytics.findOne(userId)
+  if (!ua) {
+    console.log(`UserAnalytics object does not exist for #${userId}`)
+    return
+  }
+
+  // Ok, so let's create an empty settings object..
+  let data = {
+    eradicatedAt: Date.now(),
+    eradicatedByUsername: Meteor.user().username,
+    eradicatedReason: reasonKey,
+  }
+
+  const updateCount = UserAnalytics.update({ _id: userId }, data)
+  return updateCount
+}

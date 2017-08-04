@@ -101,6 +101,19 @@ Meteor.methods({
 })
 
 Meteor.methods({
+  'Slack.User.eradicated': function(username, infoObject) {
+    const userUrl = `https://v2.mygamebuilder.com/u/${username}`
+    slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+      username: `MGBv2 @${username}`,
+      icon_emoji: ':gun:',
+      text: `@${Meteor.user().username} eradicated user <${userUrl}|${username}> (${JSON.stringify(
+        infoObject,
+      )})`,
+    })
+  },
+})
+
+Meteor.methods({
   'Slack.Assets.create': function(username, kind, assetname, docId) {
     const userUrl = `https://v2.mygamebuilder.com/u/${username}`
     const assetUrl = `https://v2.mygamebuilder.com/u/${username}/asset/${docId}`

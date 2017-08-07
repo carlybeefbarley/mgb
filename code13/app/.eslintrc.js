@@ -31,7 +31,7 @@ module.exports = {
     'no-constant-condition': ['error', { checkLoops: false }],
     'no-fallthrough': 'off',
     'no-unused-expressions': 'off',
-    'no-unused-vars': 'off',
+    'no-unused-vars': 'warn',
     'prettier/prettier': ['error', prettierConfig],
     'react/display-name': 'off',
     'react/jsx-boolean-value': 'error',

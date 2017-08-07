@@ -20,7 +20,7 @@ import SourceTools from './SourceTools'
 import CodeFlower from './CodeFlowerModded'
 import GameScreen from './GameScreen'
 import CodeStarter from './CodeStarter'
-import CodeChallenges from './CodeChallenges'
+import CodeChallenges from './CodeChallenges/CodeChallenges'
 import CodeTutorials from './CodeTutorials'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
@@ -135,6 +135,9 @@ export default class EditCode extends React.Component {
 
       // this is set when we complete CodeMentor related queries - as then we will need to re-render CodeMentor components
       lastAnalysisAtCursor: 0,
+
+      // indicates when to run code challenge
+      runChallengeDate: null,
     }
 
     this.hintWidgets = []
@@ -152,6 +155,10 @@ export default class EditCode extends React.Component {
       undo: [],
       redo: [],
     }
+
+    // indicates if code is challenge and/or tutorial
+    this.isChallenge = false
+    this.isCodeTutorial = false
   }
 
   handleJsBeautify() {
@@ -1796,6 +1803,13 @@ export default class EditCode extends React.Component {
 
   /** Start the code running! */
   handleRun() {
+    // exception for code challenges
+    // instead of standard iframe it runs CodeChallege component which has it's own iframe
+    if (this.isChallenge) {
+      this.setState({ runChallengeDate: Date.now() })
+      return false // don't need to execute further as CodeChallenges have all need functionality
+    }
+
     // always make sure we are running latest sources and not stacking them
     if (this.state.isPlaying) this.handleStop()
 
@@ -2601,11 +2615,9 @@ export default class EditCode extends React.Component {
       />
     )
 
-    let isChallenge = false
-    let isCodeTutorial = false
     if (asset.skillPath && asset.kind === 'code') {
-      if (isPathChallenge(asset.skillPath)) isChallenge = true
-      else if (isPathCodeTutorial(asset.skillPath)) isCodeTutorial = true
+      if (isPathChallenge(asset.skillPath)) this.isChallenge = true
+      else if (isPathCodeTutorial(asset.skillPath)) this.isCodeTutorial = true
     }
 
     const knownImports = this.tools ? this.tools.collectAvailableImportsForFile(asset.name) : []
@@ -2668,7 +2680,7 @@ export default class EditCode extends React.Component {
                   </div>
                 )}
 
-                {isChallenge && (
+                {this.isChallenge && (
                   <div
                     className="title active"
                     style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
@@ -2680,7 +2692,7 @@ export default class EditCode extends React.Component {
                   </div>
                 )}
 
-                {isChallenge && (
+                {this.isChallenge && (
                   <CodeChallenges
                     style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
                     active={asset.skillPath ? true : false}
@@ -2688,10 +2700,11 @@ export default class EditCode extends React.Component {
                     codeMirror={this.codeMirror}
                     currUser={this.props.currUser}
                     userSkills={this.userSkills}
+                    runChallengeDate={this.state.runChallengeDate}
                   />
                 )}
 
-                {isCodeTutorial && (
+                {this.isCodeTutorial && (
                   <div
                     className="title active"
                     style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
@@ -2703,7 +2716,7 @@ export default class EditCode extends React.Component {
                   </div>
                 )}
 
-                {isCodeTutorial && (
+                {this.isCodeTutorial && (
                   <CodeTutorials
                     style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
                     isOwner={currUser && currUser._id === asset.ownerId}
@@ -2776,8 +2789,8 @@ export default class EditCode extends React.Component {
 
                 {docEmpty &&
                 !asset.isCompleted &&
-                !isCodeTutorial &&
-                !isChallenge && (
+                !this.isCodeTutorial &&
+                !this.isChallenge && (
                   // Clean sheet helper!
                   <div className="active title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
@@ -2787,8 +2800,8 @@ export default class EditCode extends React.Component {
                 )}
                 {docEmpty &&
                 !asset.isCompleted &&
-                !isCodeTutorial &&
-                !isChallenge && <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />}
+                !this.isCodeTutorial &&
+                !this.isChallenge && <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />}
                 {/* Import Assistant HEADER */}
                 <div className="title">
                   <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>

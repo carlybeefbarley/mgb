@@ -3,13 +3,20 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { Button, Message, Icon, List, Segment, Popup, Divider, Header } from 'semantic-ui-react'
 
+import OutputError from './OutputError'
+import OutputConsole from './OutputConsole'
+import ChallengeInstructions from './ChallengeInstructions'
+import CodeCredits from './CodeCredits'
+import ChallengeCompleted from './ChallengeCompleted'
+import ChallengeResults from './ChallengeResults'
+
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import SkillNodes, { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import { learnSkill, hasSkill } from '/imports/schemas/skills'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
 
-import './editcode.css'
+import '../editcode.css'
 
 // We expect SkillNodes for this scenario to contain the following:
 //  $meta.tests
@@ -17,8 +24,6 @@ import './editcode.css'
 //  $meta.description
 const _jsBasicsSkillsRootPath = 'code.js.basics'
 const _jsBasicsSkillsRootNode = SkillNodes.$meta.map[_jsBasicsSkillsRootPath]
-
-const _smallTopMarginSty = { style: { marginTop: '0.5em' } }
 
 // This file is communicating with a test page hosted in an iFrame.
 // The params related to it are in this structure for maintainability:
@@ -40,6 +45,7 @@ export default class CodeChallenges extends React.Component {
     codeMirror: PropTypes.object,
     active: PropTypes.bool,
     style: PropTypes.object,
+    runChallengeDate: PropTypes.number,
   }
 
   constructor(props) {
@@ -51,6 +57,7 @@ export default class CodeChallenges extends React.Component {
       pendingLoadNextSkill: false, // True when next skill is loading.. better experience for slow networks
       results: [], // Array of results we get back from the iFrame that runs the tests
       testCount: 0, // how many times user run this test
+      testsLoading: false, // loading state between post message to iframe and receiving response
       latestTest: null, // indicates latest test date
       error: null, // get back from iFrame if it has some syntax error
       console: null, // get back from iFrame console.log messages
@@ -62,6 +69,14 @@ export default class CodeChallenges extends React.Component {
       if (err) console.log('error', err)
       else this.setState({ data: JSON.parse(listStr) })
     })
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    // parent component runs challenge Tests
+    // when to run is indicated by Date.now() if they don't match then run tests
+    if (this.props.runChallengeDate && prevProps.runChallengeDate !== this.props.runChallengeDate) {
+      this.runTests()
+    }
   }
 
   componentDidMount() {
@@ -94,6 +109,7 @@ export default class CodeChallenges extends React.Component {
         this.successPopup()
       }
     }
+    this.setState({ testsLoading: false })
   }
 
   successPopup() {
@@ -103,12 +119,13 @@ export default class CodeChallenges extends React.Component {
   }
 
   runTests = () => {
+    // tests executing at the moment. Disable to run it twice
+    if (this.state.testsLoading) return false
+
     if (
       !this.state.data.tests // data not yet loaded from CDN
     )
       return false
-    // const head = this.skillNode.$meta.head
-    // const tail = this.skillNode.$meta.tail
     const head = this.state.data.head || []
     const tail = this.state.data.tail || []
     const message = {
@@ -116,8 +133,10 @@ export default class CodeChallenges extends React.Component {
       tests: this.state.data.tests,
       head: head.join('\n'),
       tail: tail.join('\n'),
+      importException: this.state.data.importException,
     }
     this.iFrame.contentWindow.postMessage(message, '*')
+    this.setState({ testsLoading: true })
   }
 
   resetCode = () => {
@@ -192,6 +211,7 @@ export default class CodeChallenges extends React.Component {
           onClick={this.runTests}
           icon="play"
           content="Run tests"
+          loading={this.state.testsLoading}
         />
         <Button
           compact
@@ -223,110 +243,25 @@ export default class CodeChallenges extends React.Component {
           data-tooltip="Go up to Challenges list"
         />
 
-        {this.state.error && (
-          <Segment inverted color="red" size="mini" secondary>
-            <Icon name="warning sign" />
-            {this.state.error}
-          </Segment>
-        )}
+        <OutputError error={this.state.error} />
 
-        {this.state.console && (
-          <Divider as={Header} color="grey" size="tiny" horizontal content="Console output" />
-        )}
+        <OutputConsole console={this.state.console} />
 
-        {this.state.console && (
-          <Segment inverted color="black" size="mini" secondary>
-            {this.state.console}
-          </Segment>
-        )}
+        <ChallengeResults results={this.state.results} latestTestTimeStr={latestTestTimeStr} />
 
-        {this.state.results &&
-        this.state.results.length > 0 && (
-          <Divider as={Header} {..._smallTopMarginSty} color="grey" size="tiny" horizontal>
-            <span>
-              Test Results&ensp;
-              {latestTestTimeStr && <small style={{ color: '#bbb' }}>@{latestTestTimeStr}</small>}
-            </span>
-          </Divider>
-        )}
-        <List verticalAlign="middle">
-          {this.state.results.map((result, i) => (
-            <List.Item key={i} className="animated fadeIn">
-              <List.Icon
-                size="large"
-                name={`circle ${result.success ? 'check' : 'minus'}`}
-                color={result.success ? 'green' : 'red'}
-              />
-              <List.Content>
-                <span dangerouslySetInnerHTML={{ __html: _.replace(result.message, /^message: /, '') }} />
-              </List.Content>
-            </List.Item>
-          ))}
-        </List>
-
-        {showAllTestsCompletedMessage && (
-          <Message size="small" icon style={{ paddingBottom: 0 }}>
-            <Icon color="green" name="check circle" />
-            <Message.Content>
-              <Message.Header>Success</Message.Header>
-              <Button
-                positive
-                compact
-                size="small"
-                content="Start next challenge"
-                disabled={this.state.pendingLoadNextSkill}
-                icon={
-                  this.state.pendingLoadNextSkill ? { loading: true, name: 'circle notched' } : 'right arrow'
-                }
-                labelPosition="right"
-                {..._smallTopMarginSty}
-                onClick={this.nextChallenge}
-              />
-            </Message.Content>
-          </Message>
-        )}
-
-        {/*  Challenge Instructions Header  */}
-        <Divider
-          as={Header}
-          {..._smallTopMarginSty}
-          color="grey"
-          size="tiny"
-          horizontal
-          content="Challenge Instructions"
+        <ChallengeCompleted
+          show={showAllTestsCompletedMessage}
+          loading={this.state.pendingLoadNextSkill}
+          onStartNext={this.nextChallenge}
         />
 
-        {fullBannerText && <Header sub content={fullBannerText} {..._smallTopMarginSty} />}
-
-        {description.map((text, i) => (
-          <div key={i} {..._smallTopMarginSty} dangerouslySetInnerHTML={{ __html: text }} />
-        ))}
-
-        {instructions.length > 0 && (
-          <Segment stacked color="green">
-            <Header sub content="Challenge Goal" />
-            {instructions.map((text, i) => (
-              <div key={i} {..._smallTopMarginSty} dangerouslySetInnerHTML={{ __html: text }} />
-            ))}
-          </Segment>
-        )}
-
-        <Popup
-          trigger={
-            <a
-              href="https://github.com/freeCodeCamp/freeCodeCamp/blob/staging/LICENSE.md"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: '#bbb', float: 'right' }}
-            >
-              <small>(based on FreeCodeCamp.com content)</small>
-            </a>
-          }
-          position="left center"
-          inverted
-          size="mini"
-          content="This Code Challenge is based on FreeCodeCamp content. Click for details"
+        <ChallengeInstructions
+          instructions={instructions}
+          description={description}
+          fullBannerText={fullBannerText}
         />
+
+        <CodeCredits />
 
         <iframe
           style={_runFrameConfig.style}

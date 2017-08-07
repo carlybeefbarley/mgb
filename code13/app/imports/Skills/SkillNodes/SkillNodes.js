@@ -334,7 +334,13 @@ export const getFriendlyName = skillPath => {
   return _.get(getNode(skillPath), '$meta.name') || _.startCase(_.last(skillPath.split('.')))
 }
 
-export const isPathChallenge = skillPath => _.startsWith(skillPath, 'code.js.basics')
+// this string indicates if a path is code challenge
+const _challengeStrArray = ['basics', 'intro', 'advanced']
+
+export const isStringChallenge = str => _.includes(_challengeStrArray, str)
+
+export const isPathChallenge = skillPath =>
+  _.some(_challengeStrArray, str => _.startsWith(skillPath, 'code.js.' + str))
 
 export const isPathCodeTutorial = skillPath =>
   _.startsWith(skillPath, 'code.js.games') || _.startsWith(skillPath, 'code.js.phaser')

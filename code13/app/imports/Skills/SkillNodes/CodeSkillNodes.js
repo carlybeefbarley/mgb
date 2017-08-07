@@ -1,7 +1,8 @@
 import C from './CommonSkillNodes'
 
 import CodePhaserSkillNodes from './CodePhaserSkillNodes'
-import CodeBasicsSkillNodes from './CodeBasicsSkillNodes'
+import CodeIntroSkillNodes from './CodeIntroSkillNodes'
+import CodeAdvancedSkillNodes from './CodeAdvancedSkillNodes'
 import CodeGamesSkillNodes from './CodeGamesSkillNodes'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
@@ -227,9 +228,10 @@ const CodeSkillNodes = {
       },
     },
 
-    basics: CodeBasicsSkillNodes,
+    intro: CodeIntroSkillNodes,
     phaser: CodePhaserSkillNodes,
     games: CodeGamesSkillNodes,
+    advanced: CodeAdvancedSkillNodes,
 
     react: {
       $meta: {

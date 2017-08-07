@@ -11,11 +11,11 @@ const learnCodeItems = [
     mascot: 'bigguy',
     icon: 'code',
     content: 'Basics of programming',
-    link: '/learn/code/basics',
-    skillPath: 'code.js.basics',
+    link: '/learn/code/intro',
+    skillPath: 'code.js.intro',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `Learn the basics of the Javascript programming language. 
+    desc: `Learn the basics of the Javascript programming language.
     This covers the core programming language concepts necessary to write a game: variables, arrays, loops, functions, etc.
     If you already know these, you can proceed to the next section instead...`,
   },
@@ -47,6 +47,17 @@ const learnCodeItems = [
     query: null,
     skillnodeTopLevelTag: 'getStarted',
     desc: `We provide some working games that you can fork (copy) and change as you wish.`,
+  },
+  {
+    mascot: 'javascript-logo',
+    icon: 'code',
+    content: 'Advanced JavaScript',
+    link: '/learn/code/advanced',
+    skillPath: 'code.js.advanced',
+    query: null,
+    skillnodeTopLevelTag: 'getStarted',
+    desc: `Learn the advanced part of Javascript.
+    This covers more sophisticated concepts which you don't necessarily need to understand right at beginning of developing game. But it is always good to build your developer expertise.`,
   },
 ]
 

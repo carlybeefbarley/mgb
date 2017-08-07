@@ -11,10 +11,10 @@ import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
 
 import { getAssetBySelector } from '/client/imports/helpers/assetFetchers'
-
 import { mgbAjax } from '/client/imports/helpers/assetFetchers'
+import { isStringChallenge } from '/imports/Skills/SkillNodes/SkillNodes'
 
-const learnItems = ['basics', 'phaser', 'games']
+const learnItems = ['basics', 'intro', 'phaser', 'games', 'advanced']
 
 const handleClick = (e, learnItem, idx, currUser) => {
   const newTab = e.buttons == 4 || e.button == 1
@@ -42,14 +42,14 @@ export const StartJsGamesRoute = (learnItem, name, currUser, newTab) => {
       openUrl(url, newTab)
     } else {
       // asset doesn't exist. create one.
-      const prefix = learnItem == 'basics' ? 'challenges' : learnItem
+      const prefix = isStringChallenge(learnItem) ? 'challenges' : learnItem
 
       // xhr to get code
       mgbAjax(`/api/asset/code/!vault/` + prefix + `.` + name, (err, str) => {
         if (err) console.log('error', err)
         else {
           let code = JSON.parse(str)
-          if (learnItem == 'basics') code = code.code.join('\n')
+          if (isStringChallenge(learnItem)) code = code.code.join('\n')
           else code = code.steps[0].code
 
           newAsset.skillPath = 'code.js.' + learnItem + '.' + name

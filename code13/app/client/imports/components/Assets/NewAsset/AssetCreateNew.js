@@ -126,7 +126,7 @@ const AssetCreateNew = React.createClass({
       },
       () => {
         joyrideCompleteTag(`mgbjr-CT-create-asset-project`)
-        if (this.refs.inputAssetName){
+        if (this.refs.inputAssetName) {
           this.refs.inputAssetName.focus()
         }
       },
@@ -152,8 +152,8 @@ const AssetCreateNew = React.createClass({
     )
   },
 
-  handleInputDown(e){
-    if(e.which === 13 || e.key === 'Enter'){
+  handleInputDown(e) {
+    if (e.which === 13 || e.key === 'Enter') {
       e.stopPropagation()
       e.preventDefault()
       this.handleCreateAssetClick()
@@ -203,13 +203,15 @@ const AssetCreateNew = React.createClass({
           <Input
             id="mgbjr-create-asset-name"
             ref="inputAssetName"
-            onFocus={(e) => e.target.select()}
+            onFocus={e => e.target.select()}
             placeholder="Asset name"
-            value={newAssetName
-              ? newAssetName
-              : ( this.state.selectedProject
-                  ? this.state.selectedProject.name + '.'
-                  : ''
+            value={
+              newAssetName ? (
+                newAssetName
+              ) : this.state.selectedProject ? (
+                this.state.selectedProject.name + '.'
+              ) : (
+                ''
               )
             }
             onKeyDown={this.handleInputDown}

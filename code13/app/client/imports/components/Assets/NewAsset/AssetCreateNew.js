@@ -103,7 +103,6 @@ const AssetCreateNew = React.createClass({
       },
       () => {
         joyrideCompleteTag(`mgbjr-CT-create-asset-select-kind-${assetKindKey}`)
-        if (this.refs.inputAssetName) this.refs.inputAssetName.focus()
       },
     )
   },
@@ -121,7 +120,17 @@ const AssetCreateNew = React.createClass({
   },
 
   handleChangeSelectedProjectName(selectedProjName, selectedProject) {
-    this.setState({ selectedProject })
+    this.setState(
+      {
+        selectedProject,
+      },
+      () => {
+        joyrideCompleteTag(`mgbjr-CT-create-asset-project`)
+        if (this.refs.inputAssetName){
+          this.refs.inputAssetName.focus()
+        }
+      },
+    )
   },
 
   handleCreateAssetClick() {
@@ -141,6 +150,14 @@ const AssetCreateNew = React.createClass({
       selectedProject ? selectedProject.ownerId : null,
       selectedProject ? selectedProject.ownerName : null,
     )
+  },
+
+  handleInputDown(e){
+    if(e.which === 13 || e.key === 'Enter'){
+      e.stopPropagation()
+      e.preventDefault()
+      this.handleCreateAssetClick()
+    }
   },
 
   render() {
@@ -166,20 +183,6 @@ const AssetCreateNew = React.createClass({
           />
         </Form.Field>
 
-        <Form.Field required error={!isNamePristine && !!assetNameErrText}>
-          <label>Name</label>
-          <Input
-            id="mgbjr-create-asset-name"
-            ref="inputAssetName"
-            placeholder="Asset name"
-            value={newAssetName}
-            onChange={this.handleChangeName}
-            fluid
-          />
-          {!isNamePristine &&
-          !!assetNameErrText && <Label basic pointing color="red" content={assetNameErrText} />}
-        </Form.Field>
-
         <Form.Field>
           <label>Project (optional)</label>
           <ProjectSelector
@@ -193,6 +196,28 @@ const AssetCreateNew = React.createClass({
             ProjectListLinkUrl={currUser && `/u/${currUser.profile.name}/projects`}
             chosenProjectObj={this.state.selectedProject}
           />
+        </Form.Field>
+
+        <Form.Field required error={!isNamePristine && !!assetNameErrText}>
+          <label>Name</label>
+          <Input
+            id="mgbjr-create-asset-name"
+            ref="inputAssetName"
+            onFocus={(e) => e.target.select()}
+            placeholder="Asset name"
+            value={newAssetName
+              ? newAssetName
+              : ( this.state.selectedProject
+                  ? this.state.selectedProject.name + '.'
+                  : ''
+              )
+            }
+            onKeyDown={this.handleInputDown}
+            onChange={this.handleChangeName}
+            fluid
+          />
+          {!isNamePristine &&
+          !!assetNameErrText && <Label basic pointing color="red" content={assetNameErrText} />}
         </Form.Field>
 
         <Form.Field>

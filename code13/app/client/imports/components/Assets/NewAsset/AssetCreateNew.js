@@ -121,9 +121,8 @@ const AssetCreateNew = React.createClass({
 
   handleChangeSelectedProjectName(selectedProjName, selectedProject) {
     this.setState({ selectedProject }, () => {
-        this.refs.inputAssetName && this.refs.inputAssetName.focus()
-      }
-    )
+      this.refs.inputAssetName && this.refs.inputAssetName.focus()
+    })
   },
 
   handleCreateAssetClick() {

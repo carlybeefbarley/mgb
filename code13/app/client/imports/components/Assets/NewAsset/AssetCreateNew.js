@@ -120,16 +120,9 @@ const AssetCreateNew = React.createClass({
   },
 
   handleChangeSelectedProjectName(selectedProjName, selectedProject) {
-    this.setState(
-      {
-        selectedProject,
-      },
-      () => {
-        joyrideCompleteTag(`mgbjr-CT-create-asset-project`)
-        if (this.refs.inputAssetName) {
-          this.refs.inputAssetName.focus()
-        }
-      },
+    this.setState({ selectedProject }, () => {
+        this.refs.inputAssetName && this.refs.inputAssetName.focus()
+      }
     )
   },
 

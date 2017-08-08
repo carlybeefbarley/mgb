@@ -362,8 +362,11 @@ window.onload = function() {
   }
   window.addEventListener('message', handleMessage)
 
-  window.onbeforeunload = function(){
+  window.addEventListener('beforeunload', function() {
     // remove listener - otherwise there ir race condition as old iframe (this) tend to respond to messages after unload has been requested
-    window.removeEventListener('message', handleMessage )
-  }
+    window.removeEventListener('message', handleMessage)
+    mainWindow.postMessage({
+      mgbCmd: "mgbClosed"
+    }, "*")
+  })
 }

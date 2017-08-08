@@ -95,6 +95,15 @@ export default class GameScreen extends React.Component {
       mgbSetIframeReady: function() {
         this._isIframeReady = true
       },
+      mgbClosed: function(){
+        window.setTimeout(() => {
+          if(this.mgb.popup.closed){
+            this.mgb.popup = null
+            this.setState({ fullScreen: false })
+          }
+        }, 1000)
+
+      }
     }
 
     // iframe can be closed, but still receive something
@@ -114,7 +123,12 @@ export default class GameScreen extends React.Component {
 
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
   postMessage(messageObject) {
-    if (messageObject.mgbCommand === 'startRun') this.setState({ isHidden: false })
+    if (messageObject.mgbCommand === 'startRun') {
+      this.setState({isHidden: false})
+      if(this.mgb.popup)
+        this.mgb.popup.focus()
+
+    }
     this.getReference()
     this.iFrameWindow.contentWindow.postMessage(messageObject, '*')
   }
@@ -191,30 +205,13 @@ export default class GameScreen extends React.Component {
     //this.wrapper.style.bottom = this.screenY + "px"
   }
 
-  onUnload = () => {
-    // clear old interval
-    window.clearInterval(this.mgb.popupinterval)
-
-    // wait to make sure window is really closed - not simply reloaded
-    const waitForUnload = () => {
-      if (!this.mgb.popup || (this.mgb.popup && this.mgb.popup.closed)) {
-        console.log('popup closed!')
-        this.mgb.popup = null
-        this.setState({ fullScreen: false })
-        window.clearInterval(this.mgb.popupinterval)
-        this.mgb.popupReloaded = false
-      }
-    }
-    this.mgb.popupinterval = window.setInterval(waitForUnload, 100)
-  }
   popup() {
     if (!this.mgb.popup) {
       this.mgb.popup = window.open(
-        '/codeEditSandbox.html',
+        makeCDNLink('/codeEditSandbox.html'),
         'edit-code-sandbox',
         'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=640',
       )
-      this.mgb.popup.addEventListener('beforeunload', this.onUnload)
     }
 
     this.mgb.popup.focus()

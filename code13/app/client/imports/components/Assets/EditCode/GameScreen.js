@@ -95,15 +95,14 @@ export default class GameScreen extends React.Component {
       mgbSetIframeReady: function() {
         this._isIframeReady = true
       },
-      mgbClosed: function(){
+      mgbClosed: function() {
         window.setTimeout(() => {
-          if(this.mgb.popup.closed){
+          if (this.mgb.popup.closed) {
             this.mgb.popup = null
             this.setState({ fullScreen: false })
           }
         }, 1000)
-
-      }
+      },
     }
 
     // iframe can be closed, but still receive something
@@ -124,10 +123,8 @@ export default class GameScreen extends React.Component {
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
   postMessage(messageObject) {
     if (messageObject.mgbCommand === 'startRun') {
-      this.setState({isHidden: false})
-      if(this.mgb.popup)
-        this.mgb.popup.focus()
-
+      this.setState({ isHidden: false })
+      if (this.mgb.popup) this.mgb.popup.focus()
     }
     this.getReference()
     this.iFrameWindow.contentWindow.postMessage(messageObject, '*')

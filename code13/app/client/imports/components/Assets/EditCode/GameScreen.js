@@ -191,13 +191,13 @@ export default class GameScreen extends React.Component {
     //this.wrapper.style.bottom = this.screenY + "px"
   }
 
-  onUnload =  () => {
+  onUnload = () => {
     // clear old interval
     window.clearInterval(this.mgb.popupinterval)
 
     // wait to make sure window is really closed - not simply reloaded
     const waitForUnload = () => {
-      if ( !this.mgb.popup || (this.mgb.popup && this.mgb.popup.closed) ) {
+      if (!this.mgb.popup || (this.mgb.popup && this.mgb.popup.closed)) {
         console.log('popup closed!')
         this.mgb.popup = null
         this.setState({ fullScreen: false })
@@ -222,8 +222,7 @@ export default class GameScreen extends React.Component {
   }
   render() {
     // we have opened popup - so we can hide everything else
-    if (this.mgb.popup)
-      return null
+    if (this.mgb.popup) return null
 
     const { isPopup, isPlaying } = this.props
     const { isHidden, isMinimized } = this.state

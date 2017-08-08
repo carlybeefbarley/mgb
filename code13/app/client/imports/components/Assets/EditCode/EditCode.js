@@ -1788,7 +1788,7 @@ export default class EditCode extends React.Component {
     img.src = url
   }
 
-  postToIFrame(cmd, data) {
+  postToIFrame(cmd, data = {}) {
     if (this.state.isPlaying) {
       data.mgbCommand = cmd
       this._postMessageToIFrame(data)
@@ -1856,7 +1856,7 @@ export default class EditCode extends React.Component {
   }
 
   handleStop() {
-    this.refs.gameScreen && this.refs.gameScreen.stop()
+    this.postToIFrame('stop')
     this.setState({
       gameRenderIterationKey: this.state.gameRenderIterationKey + 1, // or this.iFrameWindow.contentWindow.location.reload() ?
       isPlaying: false,
@@ -1928,6 +1928,11 @@ export default class EditCode extends React.Component {
 
   handleGamePopup() {
     this.setState({ isPopup: !this.state.isPopup })
+    this.handleRun()
+  }
+
+  handleGamePopout() {
+    this.refs.gameScreen && this.refs.gameScreen.popup()
     this.handleRun()
   }
 
@@ -2445,7 +2450,7 @@ export default class EditCode extends React.Component {
     // TODO.. something useful with token.state?
     if (token && token.type === 'string' && this.state.userScripts && this.state.userScripts.length > 0) {
       let string = this.cleanTokenString(token.string)
-      if (string.startsWith('/') && !string.startsWith('//')) {
+      if (string.startsWith('/') && !string.startsWith('//') && string.length > 1) {
         string = string.substring(1)
         const parts = this.getImportStringParts(string)
         const { kind, owner, name } = parts
@@ -2885,6 +2890,15 @@ export default class EditCode extends React.Component {
                           <i className={'external icon'} />&emsp;Popout
                         </a>
                       )}
+                      {isPlaying && (
+                        <a
+                          className={`ui tiny ${isPopup ? 'active' : ''} icon button`}
+                          title="Open Game screen in the window"
+                          onClick={this.handleGamePopout.bind(this)}
+                        >
+                          <i className={'external icon'} />&emsp;Full&nbsp;
+                        </a>
+                      )}
                       {!this.hasErrors && (
                         <span
                           className={
@@ -2897,7 +2911,7 @@ export default class EditCode extends React.Component {
                             title="Click here to start running your program in a different browser tab"
                             onClick={this.handleFullScreen.bind(this, asset._id)}
                           >
-                            <i className="external icon" />&emsp;Full&nbsp;
+                            <i className="external icon" />&emsp;Bundle&nbsp;
                           </a>
                         </span>
                       )}

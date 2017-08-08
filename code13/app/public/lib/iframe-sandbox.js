@@ -139,7 +139,7 @@ window.onload = function() {
             }
           }
           var fromWhence = _getCaller()
-          window.parent.postMessage( {
+          mainWindow.postMessage({
             args: args,
             mgbCmd: "mgbConsoleMsg",
             consoleFn: stableName,
@@ -155,7 +155,7 @@ window.onload = function() {
   window.originalWindowOnerror = window.onerror
   window.onerror = function(message, url, lineNumber) {
     errorCount++
-    window.parent.postMessage( {
+    mainWindow.postMessage({
       args: [message],      // TODO: A stringify to handle the stuff that can't be xferred. See https://github.com/jsbin/jsbin/blob/master/public/js/vendor/stringify.js
       mgbCmd: "mgbConsoleMsg",
       consoleFn: 'windowOnerror',
@@ -231,7 +231,7 @@ window.onload = function() {
 
   function sendSizeUpdate(){
     window.setTimeout(function () {
-      window.parent.postMessage( {
+      mainWindow.postMessage({
         mgbCmd: "mgbAdjustIframe",
         size: {
           width: document.body.scrollWidth,
@@ -241,15 +241,21 @@ window.onload = function() {
     }, 500)
   }
 
+
+  var isRunning = false;
   var commands = {
-    ping: function(e){
-      mainWindow.postMessage(_isAlive, e.origin);
+    ping: function (e) {
+      mainWindow.postMessage(_isAlive, e.origin)
     },
-    screenshotCanvas: function(e){
-      const desiredHeight = e.data.recommendedHeight || 150;
-      const gameCanvas = document.getElementsByTagName ('canvas').item(0);
-      if (gameCanvas)
-      {
+    stop: function(e){
+      window.location.reload()
+      window.removeEventListener('message', handleMessage)
+      isRunning = false
+    },
+    screenshotCanvas: function (e) {
+      var desiredHeight = e.data.recommendedHeight || 150
+      var gameCanvas = document.getElementsByTagName('canvas').item(0)
+      if (gameCanvas) {
         // use the height the caller suggested
         var scaleMult = desiredHeight/gameCanvas.height;
         // Take a 50% size screenshot
@@ -263,7 +269,7 @@ window.onload = function() {
         thumbCtx.drawImage(gameCanvas, 0, 0, w, h)
 
         var asDataUrl = thumbCanvas.toDataURL('image/png')
-        window.parent.postMessage( {
+        mainWindow.postMessage({
           mgbCmd: "mgbScreenshotCanvasResponse",
           pngDataUrl: asDataUrl
         }, "*");
@@ -271,7 +277,12 @@ window.onload = function() {
       else
         console.log("No <canvas> element to screenshot")
     },
-    startRun: function(e){
+    startRun: function (e) {
+      if(isRunning){
+        console.log("Already running - stop before running")
+        return
+      }
+      isRunning = true
       mgbHostMessageContext.msgSource = e.source
       mgbHostMessageContext.msgOrigin = e.origin
       var sources = e.data.sourcesToRun
@@ -329,8 +340,8 @@ window.onload = function() {
     requestSizeUpdate: function(){
       sendSizeUpdate()
     },
-    approveIsReady: function(){
-      window.parent.postMessage({
+    approveIsReady: function () {
+      mainWindow.postMessage({
         mgbCmd: "mgbSetIframeReady"
       }, "*")
     }
@@ -339,7 +350,7 @@ window.onload = function() {
   var handleMessage = function (e) {
     mainWindow = e.source;
     // ignore completely self made messages - as we are only posting messages from code editor window
-    if(mainWindow === window)
+    if (mainWindow === window)
       return
 
     if(commands[e.data.mgbCommand]){

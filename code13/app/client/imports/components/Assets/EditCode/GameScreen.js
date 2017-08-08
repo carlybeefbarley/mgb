@@ -49,18 +49,16 @@ export default class GameScreen extends React.Component {
   componentDidMount() {
     this.getReference()
   }
-  componentWillUnmount(){
+  componentWillUnmount() {
     popup && popup.close()
   }
 
   componentDidUpdate(prevProps, prevState) {
     this.getReference()
-    if (!prevProps.isPlaying && this.props.isPlaying && this.state.isMinimized)
-      this.handleMinimizeClick()
+    if (!prevProps.isPlaying && this.props.isPlaying && this.state.isMinimized) this.handleMinimizeClick()
 
     // this is not working as expected
-    if(!this.state.fullScreen && popup)
-      popup.close()
+    if (!this.state.fullScreen && popup) popup.close()
   }
 
   componentWillReceiveProps(props) {
@@ -70,12 +68,10 @@ export default class GameScreen extends React.Component {
   getReference() {
     // TODO - change to use the ref={ c => { codestuff } } pattern that is now recommended.
     //        This will also help with the TODO in EditCode:_handle_iFrameMessageReceiver
-    this.iFrameWindow = (this.state.fullScreen && popup)
-      ? { contentWindow: popup }
-      : ReactDOM.findDOMNode(this.refs.iFrame1)
+    this.iFrameWindow =
+      this.state.fullScreen && popup ? { contentWindow: popup } : ReactDOM.findDOMNode(this.refs.iFrame1)
 
     this.wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
-
   }
 
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
@@ -111,7 +107,7 @@ export default class GameScreen extends React.Component {
         window.setTimeout(() => {
           // popup can be closed earlier
           if (popup && popup.closed) {
-            this.setState({ fullScreen: false }, () => popup = null)
+            this.setState({ fullScreen: false }, () => (popup = null))
           }
         }, 100) // 1 sec should be enough to make sure window has been closed
       },
@@ -136,11 +132,9 @@ export default class GameScreen extends React.Component {
   postMessage(messageObject) {
     if (messageObject.mgbCommand === 'startRun') {
       this.setState({ isHidden: false })
-      if (popup){
-        if(this.state.fullScreen)
-          popup.focus()
-        else
-          popup.close()
+      if (popup) {
+        if (this.state.fullScreen) popup.focus()
+        else popup.close()
       }
     }
     this.getReference()
@@ -232,7 +226,6 @@ export default class GameScreen extends React.Component {
     //this.wrapper.style.right = this.screenX + "px"
     //this.wrapper.style.bottom = this.screenY + "px"
   }
-
 
   render() {
     // we have opened popup - so we can hide everything else

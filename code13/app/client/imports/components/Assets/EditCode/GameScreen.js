@@ -18,6 +18,9 @@ const _popopButtonsRowStyle = {
   backgroundColor: 'inherit',
 }
 
+// keep popup between instances
+let popup = null
+
 export default class GameScreen extends React.Component {
   static propTypes = {
     isPlaying: PropTypes.bool,
@@ -41,17 +44,23 @@ export default class GameScreen extends React.Component {
     this.screenX = 0
     this.screenY = 0 // px from bottom
     this._isIframeReady = false
-
-    this.mgb = {}
   }
 
   componentDidMount() {
     this.getReference()
   }
+  componentWillUnmount(){
+    popup && popup.close()
+  }
 
   componentDidUpdate(prevProps, prevState) {
     this.getReference()
-    if (!prevProps.isPlaying && this.props.isPlaying && this.state.isMinimized) this.handleMinimizeClick()
+    if (!prevProps.isPlaying && this.props.isPlaying && this.state.isMinimized)
+      this.handleMinimizeClick()
+
+    // this is not working as expected
+    if(!this.state.fullScreen && popup)
+      popup.close()
   }
 
   componentWillReceiveProps(props) {
@@ -61,11 +70,12 @@ export default class GameScreen extends React.Component {
   getReference() {
     // TODO - change to use the ref={ c => { codestuff } } pattern that is now recommended.
     //        This will also help with the TODO in EditCode:_handle_iFrameMessageReceiver
-    this.iFrameWindow = this.state.fullScreen
-      ? { contentWindow: this.mgb.popup }
+    this.iFrameWindow = (this.state.fullScreen && popup)
+      ? { contentWindow: popup }
       : ReactDOM.findDOMNode(this.refs.iFrame1)
 
     this.wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
+
   }
 
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
@@ -96,12 +106,14 @@ export default class GameScreen extends React.Component {
         this._isIframeReady = true
       },
       mgbClosed: function() {
+        // timeout here because we cannot access popup directly when serving from CDN
+        // and therefore we don't almost any control over popup
         window.setTimeout(() => {
-          if (this.mgb.popup.closed) {
-            this.mgb.popup = null
-            this.setState({ fullScreen: false })
+          // popup can be closed earlier
+          if (popup && popup.closed) {
+            this.setState({ fullScreen: false }, () => popup = null)
           }
-        }, 1000)
+        }, 100) // 1 sec should be enough to make sure window has been closed
       },
     }
 
@@ -124,10 +136,29 @@ export default class GameScreen extends React.Component {
   postMessage(messageObject) {
     if (messageObject.mgbCommand === 'startRun') {
       this.setState({ isHidden: false })
-      if (this.mgb.popup) this.mgb.popup.focus()
+      if (popup){
+        if(this.state.fullScreen)
+          popup.focus()
+        else
+          popup.close()
+      }
     }
     this.getReference()
     this.iFrameWindow.contentWindow.postMessage(messageObject, '*')
+  }
+
+  // BEWARE!!! EditCode.js is going to reach-in and call this!!!
+  popup() {
+    if (!popup || popup.closed) {
+      popup = window.open(
+        makeCDNLink('/codeEditSandbox.html'),
+        'edit-code-sandbox',
+        'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=640',
+      )
+    }
+
+    popup.focus()
+    this.setState({ fullScreen: true })
   }
 
   // click handlers for Buttons on this component when in the props.isPopup==true state
@@ -202,21 +233,10 @@ export default class GameScreen extends React.Component {
     //this.wrapper.style.bottom = this.screenY + "px"
   }
 
-  popup() {
-    if (!this.mgb.popup) {
-      this.mgb.popup = window.open(
-        makeCDNLink('/codeEditSandbox.html'),
-        'edit-code-sandbox',
-        'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=640',
-      )
-    }
 
-    this.mgb.popup.focus()
-    this.setState({ fullScreen: true })
-  }
   render() {
     // we have opened popup - so we can hide everything else
-    if (this.mgb.popup) return null
+    if (this.state.fullScreen || this.state.isMinimized) return null
 
     const { isPopup, isPlaying } = this.props
     const { isHidden, isMinimized } = this.state

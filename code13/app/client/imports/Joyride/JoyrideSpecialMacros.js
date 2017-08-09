@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import React from 'react'
 import { getNavPanels } from '/client/imports/components/SidePanels/NavPanel'
 
 // This code is used by the Joyride/Tutorial systems to make it easier to write tutorials.
@@ -434,7 +435,12 @@ export const transformStep = step => {
 // e.g. Array of { text: text_to_show_user_on_left, description: extra_but_faded_info_for_user, value: %key% } objects
 export const stepKeyOptionsForDropdown = _.map(_stepMacros, s => ({
   text: s.key,
-  description: s.hint,
+  content: (
+    <div>
+      {s.key}
+      <div style={{ opacity: 0.5 }}>{s.hint}</div>
+    </div>
+  ),
   value: s.key,
 }))
 

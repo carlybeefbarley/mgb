@@ -121,13 +121,13 @@ const validate = {
   },
 
   emailWithReason: function(text) {
-    if (text.search(/[^\s@]+@[^\s@]+\.[^\s@]+/) < 0) return "Doesn't look like a valid email"
+    if (!text || !/\S+@\S+\.\S+/.test(text)) return "Doesn't look like a valid email"
 
     return null
   },
 
   usernameWithReason: function(value) {
-    if (value.search(/^[A-Za-z0-9]+$/) < 0) return 'Only letters and digits are allowed in usernames'
+    if (/([^\w]|_)/.test(value)) return 'Only letters and digits are allowed in usernames'
     if (value.length > _maxUsernameLength)
       return `Your username is too long. The maximum length is ${_maxUsernameLength} characters`
     if (value.length < _minUsernameLength)

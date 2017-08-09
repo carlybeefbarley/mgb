@@ -50,4 +50,6 @@ fi
 # Deploy
 #
 echo "... deploying"
-DEPLOY_HOSTNAME=galaxy.meteor.com meteor deploy staging.mygamebuilder.com --settings settings.staging.generated.json
+export DEPLOY_HOSTNAME=galaxy.meteor.com
+export NODE_ENV=production
+meteor deploy staging.mygamebuilder.com --settings settings.staging.generated.json

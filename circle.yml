@@ -15,7 +15,7 @@ dependencies:
     - ~/.cache/yarn
     - ~/.meteor
   pre:
-    - meteor || curl https://install.meteor.com | /bin/sh
+    - curl https://install.meteor.com?release=1.5.1 | /bin/sh
   override:
     - yarn
 

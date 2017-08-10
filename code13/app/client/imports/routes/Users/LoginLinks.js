@@ -1,35 +1,27 @@
 import React, { PropTypes } from 'react'
 import QLink from '../QLink'
-import { Container } from 'semantic-ui-react'
 
 const LoginLinks = props => {
   const { showLogin, showSignup, showForgot } = props
-  const sty = { paddingBottom: '0.7em' }
 
   return (
-    <Container fluid textAlign="right" style={{ marginTop: '1em' }}>
+    <div style={{ textAlign: 'center' }}>
       {showLogin && (
-        <div style={sty}>
-          <QLink to="/login">
-            Already have an account? <u>Log In</u>
-          </QLink>
-        </div>
+        <p>
+          <QLink to="/login">Already have an account? Log In.</QLink>
+        </p>
       )}
       {showSignup && (
-        <div style={sty}>
-          <QLink to="/signup">
-            Not a member yet? <u>Sign up now!</u>
-          </QLink>
-        </div>
+        <p>
+          <QLink to="/signup">Not a member? Sign up!</QLink>
+        </p>
       )}
       {showForgot && (
-        <div style={sty}>
-          <QLink to="/forgot-password">
-            <u>Forgot password?</u>
-          </QLink>
-        </div>
+        <p>
+          <QLink to="/forgot-password">Forgot password?</QLink>
+        </p>
       )}
-    </Container>
+    </div>
   )
 }
 

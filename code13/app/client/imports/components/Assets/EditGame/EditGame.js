@@ -36,6 +36,7 @@ const _defaultGameAssetMetadata = {
   allowLandscape: true,
   width: 800,
   height: 600,
+  isMobileFriendly: true,
 }
 
 class EditGameForm extends BaseForm {
@@ -92,8 +93,15 @@ class EditGameForm extends BaseForm {
         {isAdmin && (
           <div>
             <Divider />
-            {this.bool('Works in portrait', 'allowPortrait', { boolIsTF: true })}
-            {this.bool('Works in landscape', 'allowLandscape', { boolIsTF: true })}
+            {this.bool('This game can be played on the mobile devices', 'isMobileFriendly', {
+              boolIsTF: true,
+            })}
+            {this.data.isMobileFriendly && (
+              <div>
+                {this.bool('Works in portrait', 'allowPortrait', { boolIsTF: true })}
+                {this.bool('Works in landscape', 'allowLandscape', { boolIsTF: true })}
+              </div>
+            )}
             <Divider />
           </div>
         )}

@@ -64,8 +64,8 @@ const StepHelp = ({ insertCodeCallback }) => (
       selection
       options={stepKeyOptionsForDropdown}
       placeholder="Step Tag Lookup"
-      onChange={(a, b) => {
-        _recentSelectedStepMacroKey = b.value
+      onChange={(event, data) => {
+        _recentSelectedStepMacroKey = data.value
       }}
     />
   </div>

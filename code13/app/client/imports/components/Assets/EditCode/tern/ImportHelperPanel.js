@@ -14,14 +14,19 @@ export default class ImportHelperPanel extends React.Component {
   options = [] // This is created when props update. Bit of an anti-pattern... { text, description, value }
   popular = [] // This is created when props update. Bit of an anti-pattern... { text, description, value }
 
-  constructor(...a) {
-    super(...a)
+  constructor(props, ...a) {
+    super(props, ...a)
     const savedState = parseInt(localStorage.getItem('EditCodeImportHelperPanelExtended'), 10)
 
     this.state = {
       showExpanded: savedState === null ? 0 : savedState,
     }
-    this.updateOptionsFromProps(this.props)
+    // since update in this component is very slow - we will handle update manually - as there are only 2 reasons to update:
+    // 1. we added or removed import
+    // 2. import array has changed from props
+    this.mgb = { shouldUpdate: true }
+
+    this.updateOptionsFromProps(props)
   }
 
   handleHideShowClick = () => {
@@ -31,16 +36,7 @@ export default class ImportHelperPanel extends React.Component {
   }
 
   shouldComponentUpdate(newP, newS) {
-    if (this.state.showExpanded || newS.showExpanded || !this.lastUpdate) {
-      this.lastUpdate = Date.now()
-      return true
-    }
-    // don't update often than 1 sec  BUGBUG here
-    if (Date.now() - this.lastUpdate > 1000) {
-      this.lastUpdate = Date.now()
-      return !_.isEqual(this.state, newS) || !_.isEqual(this.props, newP)
-    }
-    return false
+    return this.mgb.shouldUpdate
   }
 
   componentWillReceiveProps(nextProps) {
@@ -49,19 +45,28 @@ export default class ImportHelperPanel extends React.Component {
 
   updateOptionsFromProps({ knownImports, scripts }) {
     this.popular = _.chain(settings.editCode.popularLibs)
+      .filter(lib => !_.some(knownImports, k => lib.import === k.name))
       .map((lib, idx) => ({
-        label: { content: lib.import, color: 'green', basic: true },
+        content: <Label content={lib.import} color="green" basic />,
         description: lib.desc,
-        value: idx,
+        value: lib.import,
+        text: lib.import,
       }))
-      .filter(lib => !_.some(knownImports, k => lib.label.content === k.name))
       .uniqWith(_.isEqual)
       .value()
+
     this.options = _.chain(scripts)
       .filter(s => !_.some(knownImports, k => s.text === k.name.substring(1)))
-      .map(s => ({ label: s.text, description: s.desc, value: s.text }))
+      .map(s => ({
+        content: <Label>{s.text}</Label>,
+        text: s.text,
+        description: s.desc,
+        value: s.text,
+      }))
       .uniqWith(_.isEqual)
       .value()
+
+    this.mgb.shouldUpdate = true
   }
 
   render() {
@@ -114,8 +119,20 @@ export default class ImportHelperPanel extends React.Component {
             placeholder="Select a package to import"
             value=""
             selectOnBlur={false}
-            onChange={(a, b) => {
-              includeExternalImport(settings.editCode.popularLibs[b.value])
+            onChange={(e, data) => {
+              // on change can be called from mouse event - which is OK
+              // but it also can be called from keyboard arrow - we need to ignore arrows and rest events except enter
+              // otherwise we will be adding scripts to the source on every key press
+              if (e.which === 13 || e.key === 'Enter' || e.type === 'click') {
+                const lib = settings.editCode.popularLibs.find(l => l.import === data.value)
+                _.remove(this.popular, { value: data.value })
+                includeExternalImport(lib)
+                // mark our list as dirty - as we just manually removed item
+                this.mgb.shouldUpdate = true
+
+                // force redraw manually removed item until new array with sources will kick in
+                this.setState({ nextUpdate: Date.now() })
+              }
             }}
           />
         </div>
@@ -138,8 +155,13 @@ export default class ImportHelperPanel extends React.Component {
             placeholder="Select Code to import"
             value=""
             selectOnBlur={false}
-            onChange={(a, b) => {
-              includeLocalImport(b.value)
+            onChange={(e, data) => {
+              if (e.which === 13 || e.key === 'Enter' || e.type === 'click') {
+                _.remove(this.options, { value: data.value })
+                includeLocalImport(data.value)
+                this.mgb.shouldUpdate = true
+                this.setState({ nextUpdate: Date.now() })
+              }
             }}
           />
         </div>

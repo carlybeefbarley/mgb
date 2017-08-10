@@ -67,10 +67,7 @@ export default class GameScreen extends React.Component {
   getReference() {
     // TODO - change to use the ref={ c => { codestuff } } pattern that is now recommended.
     //        This will also help with the TODO in EditCode:_handle_iFrameMessageReceiver
-    this.iFrameWindow =
-      this.state.fullScreen && popup
-        ? { contentWindow: popup }
-        : this.refs.iFrame1
+    this.iFrameWindow = this.state.fullScreen && popup ? { contentWindow: popup } : this.refs.iFrame1
 
     this.wrapper = this.refs.wrapper
   }
@@ -147,19 +144,16 @@ export default class GameScreen extends React.Component {
       if (popup) {
         if (this.state.fullScreen) popup.focus()
         else popup.close()
-      }
-      else if(this.state.fullScreen){
+      } else if (this.state.fullScreen) {
         // reopen popup as it got closed before (e.g. user clicked stop button)
         this.popup()
       }
-    }
-    // messageObject.closePopup comes from user input on stop button
-    // otherwise we are simply reloading game
-    else if (messageObject.mgbCommand === 'stop' && messageObject && messageObject.closePopup) {
+    } else if (messageObject.mgbCommand === 'stop' && messageObject && messageObject.closePopup) {
+      // messageObject.closePopup comes from user input on stop button
+      // otherwise we are simply reloading game
       popup && popup.close()
-    }
-    else if(messageObject.mgbCommand === 'approveIsReady'){
-      if((!popup || popup.closed) && this.state.fullScreen){
+    } else if (messageObject.mgbCommand === 'approveIsReady') {
+      if ((!popup || popup.closed) && this.state.fullScreen) {
         // reopen popup as it got closed before (e.g. user clicked stop button)
         this.popup()
       }
@@ -195,8 +189,7 @@ export default class GameScreen extends React.Component {
 
   // this function will tell sandbox to send back message with iframe size
   requestAdjustIframe() {
-    if(this.props.isPlaying)
-      this.postMessage({ mgbCommand: 'requestSizeUpdate' })
+    if (this.props.isPlaying) this.postMessage({ mgbCommand: 'requestSizeUpdate' })
   }
 
   // adjust iFrame size. This is initiated by an event

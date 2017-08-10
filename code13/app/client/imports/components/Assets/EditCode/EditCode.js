@@ -3,7 +3,7 @@ const reactUpdate = require('react-addons-update')
 
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Icon, Button  } from 'semantic-ui-react'
+import { Icon, Button } from 'semantic-ui-react'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import TutorialMentor from './TutorialEditHelpers'
@@ -1853,7 +1853,7 @@ export default class EditCode extends React.Component {
     $('.ui.accordion').accordion('open', idx)
   }
 
-  handleStop = (options) => {
+  handleStop = options => {
     this.postToIFrame('stop', options)
     this.setState({
       gameRenderIterationKey: this.state.gameRenderIterationKey + 1, // or this.iFrameWindow.contentWindow.location.reload() ?
@@ -1863,7 +1863,7 @@ export default class EditCode extends React.Component {
   }
 
   handleStopClick = () => {
-    this.handleStop({closePopup: true})
+    this.handleStop({ closePopup: true })
   }
 
   handleFullScreen = () => {
@@ -2867,63 +2867,63 @@ export default class EditCode extends React.Component {
                       {!isPlaying &&
                       this.state.astReady && (
                         <Button
-                          as='a'
+                          as="a"
                           icon
                           onClick={this.handleRun}
-                          size='tiny'
+                          size="tiny"
                           title="Click here to start the program running"
                           id="mgb-EditCode-start-button"
                         >
-                          <Icon name='play' /> Run
+                          <Icon name="play" /> Run
                         </Button>
                       )}
                       {isPlaying && (
                         <Button
-                          as='a'
+                          as="a"
                           icon
                           onClick={this.handleStopClick}
-                          size='tiny'
+                          size="tiny"
                           title="Click here to stop the running program"
                           id="mgb-EditCode-stop-button"
                         >
-                          <Icon name='stop' /> Stop
+                          <Icon name="stop" /> Stop
                         </Button>
                       )}
                       {isPlaying && (
                         <Button
-                          as='a'
+                          as="a"
                           active={isPopup}
                           icon
                           onClick={this.handleGamePopup}
-                          size='tiny'
+                          size="tiny"
                           id="mgb-EditCode-popup-button"
                           title="Popout the code-run area so it can be moved around the screen"
                         >
-                          <Icon name='external' /> Popout
+                          <Icon name="external" /> Popout
                         </Button>
                       )}
                       {isPlaying && (
                         <Button
-                          as='a'
+                          as="a"
                           icon
                           onClick={this.handleGamePopout}
-                          size='tiny'
+                          size="tiny"
                           title="Open Game screen in the window"
                           id="mgb-EditCode-popup-button"
                         >
-                          <Icon name='external' /> Full
+                          <Icon name="external" /> Full
                         </Button>
                       )}
                       {!this.hasErrors && (
                         <Button
-                          as='a'
+                          as="a"
                           icon
                           onClick={this.handleFullScreen}
-                          size='tiny'
+                          size="tiny"
                           title="Click here to start running your program in a different browser tab"
                           id="mgb-EditCode-full-screen-button"
                         >
-                          <Icon name='external' /> Bundle
+                          <Icon name="external" /> Bundle
                         </Button>
                       )}
                     </span>

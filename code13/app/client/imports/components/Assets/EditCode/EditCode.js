@@ -25,7 +25,7 @@ import CodeTutorials from './CodeTutorials'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
 
-import { Icon } from 'semantic-ui-react'
+import { Icon, Segment } from 'semantic-ui-react'
 
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import ThumbnailWithInfo from '/client/imports/components/Assets/ThumbnailWithInfo'
@@ -63,6 +63,8 @@ import DebugASTview from './tern/DebugASTview.js'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import SpecialGlobals from '/imports/SpecialGlobals'
+
+import { getKnownExtension } from '/client/imports/helpers/extensions'
 
 const THUMBNAIL_WIDTH = SpecialGlobals.thumbnail.width
 const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
@@ -178,12 +180,18 @@ export default class EditCode extends React.Component {
   }
 
   componentDidMount() {
+    this.mgb_mode =
+      this.props.asset.kind === 'tutorial'
+        ? 'application/json'
+        : // guard is inside getKnownExtension as requested per: https://github.com/devlapse/mgb/pull/1221#discussion_r130507613
+          getKnownExtension(this.props.asset.name, 'jsx')
+
     // Debounce the codeMirrorUpdateHints() function - only once
     this.codeMirrorUpdateHintsDebounced = _.debounce(this.codeMirrorUpdateHints, 100, true)
 
     this.updateUserScripts()
     // previous debounce eats up changes
-    // CHANGES_DELAY_TIMEOUT - improves typing speed significantly on the price of responsiviness of CodeMentor
+    // CHANGES_DELAY_TIMEOUT - improves typing speed significantly on the price of responsiveness of CodeMentor
     // CodeMentor is affected here only on content change
     // codeMirrorUpdateHintsDebounced is responsible for simple code browsing
     this.codeMirrorUpdateHintsChanged = _.debounce(
@@ -215,12 +223,10 @@ export default class EditCode extends React.Component {
     // Semantic-UI item setup (Accordion etc)
     $('.ui.accordion').accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger' } })
 
-    this.startTernServer()
     // CodeMirror setup
     const textareaNode = this.refs.textarea
-    let codemirrorOptions = {
-      mode: this.props.asset.kind === 'tutorial' ? 'application/json' : 'jsx',
-      //json: this.props.asset.kind === 'tutorial',
+    const codemirrorOptions = {
+      mode: this.mgb_mode,
       inputStyle: 'textarea', // contentEditable is another option - but input on tablet then sux
       // change theme for read only?
       theme: 'eclipse',
@@ -350,6 +356,8 @@ export default class EditCode extends React.Component {
     this.mgb_cache = {}
 
     this.highlightedLines = []
+
+    if (this.mgb_mode === 'jsx') this.startTernServer()
 
     const c2 = this.props.asset.content2
     this.setState({
@@ -556,7 +564,9 @@ export default class EditCode extends React.Component {
     // we could use specific keywords for tutorial
     if (this.props.asset.kind === 'tutorial') {
       return TutorialMentor.showHint(cm, CodeMirror)
-    } else if (this.props.canEdit && this.state.currentToken) {
+    } else if (this.mgb_mode !== 'jsx') {
+      return this.codeMirror.execCommand('autocomplete')
+    } else if (this.props.canEdit && this.state.currentToken && this.mgb_mode === 'jsx') {
       if (this.state.currentToken.type === 'comment') return CodeMirror.Pass
       if (this.state.currentToken.type === 'string') {
         return this.showUserAssetHint(cm, CodeMirror, this.state.currentToken)
@@ -1035,7 +1045,7 @@ export default class EditCode extends React.Component {
   }
 
   runJSHintWorker(code, cb) {
-    if (this.props.asset.kind === 'tutorial') return
+    if (this.props.asset.kind === 'tutorial' || this.mgb_mode !== 'jsx') return
 
     // terminate old busy worker - as jshint can take a lot time on huge scripts
     if (this.jshintWorker && this.jshintWorker.isBusy) {
@@ -1518,7 +1528,7 @@ export default class EditCode extends React.Component {
     this.srcUpdate_CleanSheetCase()
     this.srcUpdate_LookForMgbAssets()
     this.srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged)
-    if (asset.kind === 'code') {
+    if (asset.kind === 'code' && this.mgb_mode === 'jsx') {
       // collect new state properties and set state on full resolve
       const newState = { _preventRenders: false }
       this.srcUpdate_GetInfoForCurrentFunction()
@@ -1895,7 +1905,7 @@ export default class EditCode extends React.Component {
       console.log('not creating bundle since not active')
       return
     }
-    if (this.props.asset.kind == 'tutorial') {
+    if (this.props.asset.kind == 'tutorial' || this.mgb_mode !== 'jsx') {
       return
     }
 
@@ -1967,7 +1977,7 @@ export default class EditCode extends React.Component {
     this.changeTimeoutFn = () => {
       // prevent asset changes to older one because of user activity forced update
       // sencond handle change will overwrite deferred save
-      if (this.props.asset.kind === 'tutorial') {
+      if (this.props.asset.kind === 'tutorial' || this.mgb_mode !== 'jsx') {
         this.changeTimeout = 0
         this.lastSavedValue = c2.src
         this.props.handleContentChange(c2, thumbnail, reason)
@@ -2141,16 +2151,6 @@ export default class EditCode extends React.Component {
         },
         { name: 'separator' },
         {
-          name: 'toolToggleInfoPane',
-          label: 'Info Panels',
-          icon: 'resize horizontal',
-          tooltip: 'Resize Info Pane',
-          disabled: false,
-          level: 1,
-          shortcut: 'Ctrl+I',
-        },
-        { name: 'separator' },
-        {
           name: 'goBack',
           icon: 'arrow left',
           level: 2,
@@ -2208,6 +2208,15 @@ export default class EditCode extends React.Component {
           shortcut: 'Ctrl+Shift+\\',
         },
         { name: 'separator' },
+        {
+          name: 'toolToggleInfoPane',
+          label: 'Info Panels',
+          icon: 'resize horizontal',
+          tooltip: 'Resize Info Pane',
+          disabled: false,
+          level: 1,
+          shortcut: 'Ctrl+I',
+        },
       ],
     }
 
@@ -2230,7 +2239,17 @@ export default class EditCode extends React.Component {
         level: 1,
         shortcut: 'Ctrl+T',
       })
-    } else {
+      config.buttons.push({ name: 'separator' })
+      config.buttons.push({
+        name: 'toolToggleInfoPane',
+        label: 'Info Panels',
+        icon: 'resize horizontal',
+        tooltip: 'Resize Info Pane',
+        disabled: false,
+        level: 1,
+        shortcut: 'Ctrl+I',
+      })
+    } else if (this.mgb_mode === 'jsx') {
       // code...
       config.buttons.unshift({ name: 'separator' })
       config.buttons.unshift({
@@ -2296,6 +2315,27 @@ export default class EditCode extends React.Component {
         active: this.props.asset.content2.needsBundle,
         level: 3,
         shortcut: 'Ctrl+Alt+Shift+B',
+      })
+    } else {
+      // css and maybe something else in the future ( e.g. html ? )
+      config.buttons.push({ name: 'separator' })
+      config.buttons.push({
+        name: 'toolCommentFade',
+        label: 'Fade Comments',
+        icon: 'grey sticky note',
+        tooltip: 'Fade Comments so you can focus on code',
+        disabled: false,
+        level: 3,
+        shortcut: 'Ctrl+Alt+F',
+      })
+      config.buttons.push({
+        name: 'toolCommentUnFade',
+        label: 'UnFade Comments',
+        icon: 'sticky note',
+        tooltip: 'UnFade comments so you can see them again',
+        disabled: false,
+        level: 3,
+        shortcut: 'Ctrl+Alt+Shift+F',
       })
     }
     return config
@@ -2743,8 +2783,29 @@ export default class EditCode extends React.Component {
                     </span>
                   </div>
                 )}
+                {this.mgb_mode === 'css' && (
+                  <div className="ui divided selection list active">
+                    <Segment>
+                      <p>
+                        This asset is treated as Cascading Style Sheets (CSS) file - because of the{' '}
+                        <em>css</em> extension in the filename
+                      </p>
+                      <p>
+                        You can find more about CSS in the{' '}
+                        <a
+                          href="https://developer.mozilla.org/en-US/docs/Web/CSS"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          MDN Web Docs / Web / CSS
+                        </a>{' '}
+                      </p>
+                    </Segment>
+                  </div>
+                )}
                 {!docEmpty &&
-                asset.kind === 'code' && (
+                asset.kind === 'code' &&
+                this.mgb_mode === 'jsx' && (
                   // Current Line/Selection helper (body)
                   // optimise: don't render if accordeon is closed
                   <div className={'content ' + (asset.skillPath ? '' : 'active')}>
@@ -2790,7 +2851,8 @@ export default class EditCode extends React.Component {
                 {docEmpty &&
                 !asset.isCompleted &&
                 !this.isCodeTutorial &&
-                !this.isChallenge && (
+                !this.isChallenge &&
+                this.mgb_mode === 'jsx' && (
                   // Clean sheet helper!
                   <div className="active title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
@@ -2801,26 +2863,35 @@ export default class EditCode extends React.Component {
                 {docEmpty &&
                 !asset.isCompleted &&
                 !this.isCodeTutorial &&
-                !this.isChallenge && <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />}
-                {/* Import Assistant HEADER */}
-                <div className="title">
-                  <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
-                    <Icon name="dropdown" />Import Assistant
-                    <span style={{ float: 'right' }}>
-                      {this.tools &&
-                      (this.mgb_c2_hasChanged || !this.state.astReady) && (
-                        <Icon
-                          name="refresh"
-                          size="small"
-                          color={this.mgb_c2_hasChanged ? 'orange' : null}
-                          loading={this.state.astReady}
-                        />
-                      )}
-                      <ImportAssistantHeader knownImports={knownImports} />
-                    </span>
-                  </span>
-                </div>
+                !this.isChallenge &&
+                this.mgb_mode === 'jsx' && (
+                  <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />
+                )}
 
+                {/* Import Assistant HEADER */}
+                {canEdit &&
+                !asset.isCompleted &&
+                !this.isCodeTutorial &&
+                !this.isChallenge &&
+                this.mgb_mode === 'jsx' && (
+                  <div className="title">
+                    <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
+                      <Icon name="dropdown" />Import Assistant
+                      <span style={{ float: 'right' }}>
+                        {this.tools &&
+                        (this.mgb_c2_hasChanged || !this.state.astReady) && (
+                          <Icon
+                            name="refresh"
+                            size="small"
+                            color={this.mgb_c2_hasChanged ? 'orange' : null}
+                            loading={this.state.astReady}
+                          />
+                        )}
+                        <ImportAssistantHeader knownImports={knownImports} />
+                      </span>
+                    </span>
+                  </div>
+                )}
                 {this.state.astReady && (
                   <div className="content">
                     <ImportHelperPanel
@@ -2832,7 +2903,8 @@ export default class EditCode extends React.Component {
                   </div>
                 )}
                 {!docEmpty &&
-                asset.kind === 'code' && (
+                asset.kind === 'code' &&
+                this.mgb_mode === 'jsx' && (
                   // Code run/stop (header)
                   <div className="title" id="mgbjr-EditCode-codeRunner">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
@@ -2841,7 +2913,8 @@ export default class EditCode extends React.Component {
                   </div>
                 )}
                 {!docEmpty &&
-                asset.kind === 'code' && (
+                asset.kind === 'code' &&
+                this.mgb_mode === 'jsx' && (
                   // Code run/stop (body)
                   <div className="content">
                     <span style={{ float: 'right', marginTop: '-19px', position: 'relative' }}>
@@ -2912,7 +2985,8 @@ export default class EditCode extends React.Component {
                   </div>
                 )}
                 {this.state.astReady &&
-                asset.kind === 'code' && (
+                asset.kind === 'code' &&
+                this.mgb_mode === 'jsx' && (
                   <div id="mgbjr-EditCode-codeFlower" className="title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                       <i className="dropdown icon" />Code Flower
@@ -2920,7 +2994,8 @@ export default class EditCode extends React.Component {
                   </div>
                 )}
                 {this.state.astReady &&
-                asset.kind === 'code' && (
+                asset.kind === 'code' &&
+                this.mgb_mode === 'jsx' && (
                   <div className="content">
                     {/* this.props.canEdit && this.state.astReady &&
                    <a className={"ui right floated mini icon button"} onClick={this.drawAstFlower.bind(this)}

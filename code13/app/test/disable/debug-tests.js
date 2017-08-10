@@ -13,7 +13,6 @@ let parallel = function(...args) {
   return describe(...args)
 }
 
-let isMeteor = false
 // from this file all the magic will begin
 if (typeof Meteor !== 'undefined') {
   if (Meteor.isTest) {
@@ -35,28 +34,28 @@ function run2() {
   // })
 }
 
-function runTest() {
-  describe('Setting time limit to 120 seconds', function() {
-    this.timeout(120 * 1000)
-    parallel('Another file: First sample test', function() {
-      //
-      it('will pass', function(done) {
-        setTimeout(done, 2000)
-      })
-
-      it('will pass also only quicker', function(done) {
-        setTimeout(done, 1000)
-      })
-
-      it('will pass also but last', function(done) {
-        setTimeout(done, 3100)
-      })
-    })
-
-    parallel('Another file: Second async test', function() {
-      it('will pass also only quicker', function(done) {
-        setTimeout(done, 1000)
-      })
-    })
-  })
-}
+// function runTest() {
+//   describe('Setting time limit to 120 seconds', function() {
+//     this.timeout(120 * 1000)
+//     parallel('Another file: First sample test', function() {
+//       //
+//       it('will pass', function(done) {
+//         setTimeout(done, 2000)
+//       })
+//
+//       it('will pass also only quicker', function(done) {
+//         setTimeout(done, 1000)
+//       })
+//
+//       it('will pass also but last', function(done) {
+//         setTimeout(done, 3100)
+//       })
+//     })
+//
+//     parallel('Another file: Second async test', function() {
+//       it('will pass also only quicker', function(done) {
+//         setTimeout(done, 1000)
+//       })
+//     })
+//   })
+// }

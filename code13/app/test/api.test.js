@@ -13,7 +13,7 @@ const getLocal = uri => {
 
 describe('Running API tests', function() {
   this.timeout(10 * 1000)
-  this.slow(1 * 1000)
+  this.slow(1000)
 
   // make sure errors are working... don't delete this
   /*it('test http server', function(){
@@ -64,14 +64,14 @@ describe('Running API tests', function() {
   it('Actor Map APIs', function() {
     // actormaps don't have access by id, but this id matches same asset used to access by name
     // leave it for the sake of clarity
-    const id = 'iTbZbw4bwHS9nNL3G'
+    // const id = 'iTbZbw4bwHS9nNL3G'
     const name = 'stauzs/tests.actormap'
     return getLocal('/api/asset/actormap/' + name)
   })
   it('Empty Actor Map APIs', function() {
     // actormaps don't have access by id, but this id matches same asset used to access by name
     // leave it for the sake of clarity
-    const id = 'M8Qy75L5xyoYQYeh6'
+    // const id = 'M8Qy75L5xyoYQYeh6'
     const name = 'stauzs/EmptyActorMap'
     return getLocal('/api/asset/actormap/' + name)
   })
@@ -140,13 +140,13 @@ describe('Running API tests', function() {
 
   it('Tutorial APIs', function() {
     const id = 'Lbq3czHhanrawJJfJ'
-    const name = 'stauzs/test.tutorial'
+    // const name = 'stauzs/test.tutorial'
     const idLike = 'stauzs:test.tutorial'
     return getLocal('/api/asset/tutorial/' + id).then(() => getLocal('/api/asset/tutorial/' + idLike))
   })
   it('Empty Tutorial APIs', function() {
     const id = 'AHKcgRZBDJDgsL4jT'
-    const name = 'stauzs/EmptyTutorial'
+    // const name = 'stauzs/EmptyTutorial'
     const idLike = 'stauzs:EmptyTutorial'
     return getLocal('/api/asset/tutorial/' + id).then(() => getLocal('/api/asset/tutorial/' + idLike))
   })

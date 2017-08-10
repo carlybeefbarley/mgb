@@ -190,11 +190,10 @@ Meteor.methods({
 Meteor.methods({
   'Slack.Flags.unresolved': function(entity, ownerUsername, reporterUsername, createdAt, entityType) {
     let infoUrl = ''
-    let userUrl = ''
     if (entityType == 'Chats')
       infoUrl = `https://v2.mygamebuilder.com/u/${ownerUsername}?_fp=chat.${entity.toChannelName}`
-    if (entityType == 'Azzets') userUrl = `https://v2.mygamebuilder.com/u/${ownerUsername}`
-    infoUrl = `https://v2.mygamebuilder.com/u/${ownerUsername}/asset/${entity._id}`
+    if (entityType == 'Azzets')
+      infoUrl = `https://v2.mygamebuilder.com/u/${ownerUsername}/asset/${entity._id}`
 
     slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
       username: `MGBv2 @${ownerUsername}`,

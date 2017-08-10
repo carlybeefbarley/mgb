@@ -35,7 +35,7 @@ class MyReporter extends Mocha.reporters.Base {
     })
 
     runner.on('end', function() {
-      //console.log(`end: ${passes}/${passes + failures} in ${total}ms`)
+      console.log(`end: ${passes}/${passes + failures} in ${total}ms`)
     })
   }
 }

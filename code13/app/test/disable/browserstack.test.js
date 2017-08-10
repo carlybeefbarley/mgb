@@ -1,20 +1,20 @@
 let npm,
-  parallel,
+  // parallel,
   shouldRun = false
 if (typeof Meteor !== 'undefined') {
   if (Meteor.isTest) {
     shouldRun = true
     npm = Npm
     //
-    parallel = function(...args) {
-      return describe(...args)
-    }
+    // parallel = function(...args) {
+    //   return describe(...args)
+    // }
   }
 } else {
   shouldRun = true
   npm = { require: require }
   // TODO: for unknown reason mocha.parallel makes Meteor server to crash after 2nd parallel test
-  parallel = npm.require('mocha.parallel')
+  // parallel = npm.require('mocha.parallel')
 }
 const fs = npm.require('fs')
 const testWorkingDirectory = process.env.PWD + '/tests/'

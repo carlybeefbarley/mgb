@@ -3,4 +3,7 @@ module.exports = {
     mocha: true,
     phantomjs: true,
   },
+  rules: {
+    'no-unused-vars': 'off'
+  }
 }

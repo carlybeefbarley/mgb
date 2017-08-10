@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import swearjar from '/server/imports/swearjar/swearjar'
 
 Meteor.methods({

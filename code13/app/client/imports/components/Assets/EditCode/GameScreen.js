@@ -26,7 +26,6 @@ export default class GameScreen extends React.Component {
     isPlaying: PropTypes.bool,
     isPopup: PropTypes.bool,
     asset: PropTypes.object,
-    gameRenderIterationKey: PropTypes.number,
 
     handleStop: PropTypes.func.isRequired,
     handleContentChange: PropTypes.func.isRequired,
@@ -323,9 +322,7 @@ export default class GameScreen extends React.Component {
             style={{
               display: this.state.isMinimized ? 'none' : 'block',
               minWidth: '100%',
-              // minHeight: window.innerHeight * SpecialGlobals.editCode.popup.maxHeight
             }}
-            // key={ this.props.gameRenderIterationKey }
             ref="iFrame1"
             sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock"
             src={makeCDNLink('/codeEditSandbox.html')}

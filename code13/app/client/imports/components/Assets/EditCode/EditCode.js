@@ -111,7 +111,6 @@ export default class EditCode extends React.Component {
     this.state = {
       _preventRenders: false, // We use this as a way to batch updates.
       consoleMessages: [],
-      gameRenderIterationKey: 0,
       isPlaying: false,
       previewAssetIdsArray: [], // Array of { id: assetIdString, kind: assetKindString } e.g. { id: "asdxzi87q", kind: "graphic" }
 
@@ -1856,7 +1855,6 @@ export default class EditCode extends React.Component {
   handleStop = options => {
     this.postToIFrame('stop', options)
     this.setState({
-      gameRenderIterationKey: this.state.gameRenderIterationKey + 1, // or this.iFrameWindow.contentWindow.location.reload() ?
       isPlaying: false,
     })
     window.removeEventListener('message', this.bound_handle_iFrameMessageReceiver)
@@ -2618,7 +2616,6 @@ export default class EditCode extends React.Component {
         isPlaying={this.state.isPlaying}
         asset={this.props.asset}
         consoleAdd={this._consoleAdd.bind(this)}
-        gameRenderIterationKey={this.state.gameRenderIterationKey}
         handleContentChange={this.handleContentChange.bind(this)}
         handleStop={this.handleGamePopup}
       />

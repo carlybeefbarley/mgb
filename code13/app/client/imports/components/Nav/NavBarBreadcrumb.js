@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import QLink, { openAssetById } from '/client/imports/routes/QLink'
+import QLink, { openAssetById, utilPushTo } from '/client/imports/routes/QLink'
 import { Button, Popup, Modal, Header, Breadcrumb, Icon, Input, Label, List } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import { AssetKinds } from '/imports/schemas/assets'
@@ -18,7 +18,7 @@ const _handleRelatedAssetsPopupOpen = () => {
   // wait for it to open, then focus it
   setTimeout(() => {
     const relatedInput = document.querySelector('#mgb-navbar-relatedassets')
-    relatedInput.focus()
+    relatedInput && relatedInput.focus()
   })
 }
 
@@ -136,7 +136,7 @@ const RelatedAssets = ({
         size="mini"
         color="green"
         icon="pencil"
-        content="Create new"
+        content="Create new [Ctrl + Alt + N]"
       />
     </div>
   </div>
@@ -427,7 +427,7 @@ const NavBarBreadcrumb = React.createClass({
       let nextItemMaybe = this.state.activeItem
 
       // enter
-      if (e.which === 13 && selectedAsset) {
+      if ((e.which === 13 || e.key === 'Enter') && selectedAsset) {
         // clean up and load new asset
         this.setState({ quickNavIsOpen: false, quickAssetSearch: '', activeItem: 0 }, () => {
           if (selectedAsset._id && selectedAsset._id !== (this.props.params ? this.props.params.assetId : ''))
@@ -445,6 +445,11 @@ const NavBarBreadcrumb = React.createClass({
         // wrap from top to bottom
         if (nextItemMaybe < 0) nextItemMaybe = filteredAssets.length - 1
         // we still need to eat event
+        shouldPrevent = true
+      } else if ((e.which === 78 || e.which === 192) && (e.ctrlKey || e.metaKey) && e.altKey) {
+        // we add which === 192 here as osx meta modifies the which value
+        // N + ctrl + alt
+        utilPushTo(null, '/assets/create', { projectName: this._getContextualProjectName() })
         shouldPrevent = true
       }
       // Modal will call onClose automatically - so no esc key handling here

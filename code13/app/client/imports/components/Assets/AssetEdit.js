@@ -7,6 +7,7 @@ import AssetCard from './AssetCard'
 import Hotjar from '/client/imports/helpers/hotjar'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { getKnownExtension } from '/client/imports/helpers/extensions'
 
 // @stauzs - for Cordova you may need to have to do the imports like we used to.. im which case
 // add an     el: ComponentName field to the list below and use the static imports we used to do
@@ -83,6 +84,11 @@ export default class AssetEdit extends React.Component {
 
     const Element = loadable.el || EditUnknown
     const isTooSmall = availableWidth < 500
+
+    // this is special case for the EditCode which can handle asset differently depending on extension
+    // basically this forces new instance of EditCode if asset type (by extension) has been changed (on asset rename)
+    const key = asset._id + getKnownExtension(asset.name)
+
     return (
       <div style={{ minWidth: '250px' }}>
         {isTooSmall && (
@@ -106,7 +112,7 @@ export default class AssetEdit extends React.Component {
         )}
         {/* We must keep this in the DOM since it has state we don't want to lose during a temporary resize */}
         <div style={isTooSmall ? { display: 'none' } : undefined}>
-          <Element {..._.omit(this.props, _omitPropsForEditors)} />
+          <Element {..._.omit(this.props, _omitPropsForEditors)} key={key} />
         </div>
       </div>
     )

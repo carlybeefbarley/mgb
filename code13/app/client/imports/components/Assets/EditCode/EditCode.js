@@ -3,9 +3,10 @@ const reactUpdate = require('react-addons-update')
 
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Icon, Button  } from 'semantic-ui-react'
+
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import TutorialMentor from './TutorialEditHelpers'
-import settings from '/imports/SpecialGlobals'
 
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import { showToast, addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
@@ -25,9 +26,6 @@ import CodeTutorials from './CodeTutorials'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
 
-import { Icon } from 'semantic-ui-react'
-
-import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import ThumbnailWithInfo from '/client/imports/components/Assets/ThumbnailWithInfo'
 
 import getCDNWorker from '/client/imports/helpers/CDNWorker'
@@ -1802,7 +1800,7 @@ export default class EditCode extends React.Component {
   }
 
   /** Start the code running! */
-  handleRun() {
+  handleRun = () => {
     // exception for code challenges
     // instead of standard iframe it runs CodeChallege component which has it's own iframe
     if (this.isChallenge) {
@@ -1855,15 +1853,21 @@ export default class EditCode extends React.Component {
     $('.ui.accordion').accordion('open', idx)
   }
 
-  handleStop() {
-    this.postToIFrame('stop')
+  handleStop = (options) => {
+    this.postToIFrame('stop', options)
     this.setState({
       gameRenderIterationKey: this.state.gameRenderIterationKey + 1, // or this.iFrameWindow.contentWindow.location.reload() ?
       isPlaying: false,
     })
     window.removeEventListener('message', this.bound_handle_iFrameMessageReceiver)
   }
-  handleFullScreen(id = this.props.asset._id) {
+
+  handleStopClick = () => {
+    this.handleStop({closePopup: true})
+  }
+
+  handleFullScreen = () => {
+    const id = this.props.asset._id
     if (this.props.canEdit) {
       // use this so we can get favicon
       // TODO: change iframe manipulations to messages - to use CDN link to blank page
@@ -1926,12 +1930,12 @@ export default class EditCode extends React.Component {
     })
   }
 
-  handleGamePopup() {
+  handleGamePopup = () => {
     this.setState({ isPopup: !this.state.isPopup })
     this.handleRun()
   }
 
-  handleGamePopout() {
+  handleGamePopout = () => {
     this.refs.gameScreen && this.refs.gameScreen.popup()
     this.handleRun()
   }
@@ -2255,7 +2259,7 @@ export default class EditCode extends React.Component {
         shortcut: 'Ctrl+Alt+Shift+R',
       })
       config.buttons.unshift({
-        name: 'handleStop',
+        name: 'handleStopClick',
         label: 'Stop Running',
         icon: 'stop',
         tooltip: 'Stop Running',
@@ -2616,7 +2620,7 @@ export default class EditCode extends React.Component {
         consoleAdd={this._consoleAdd.bind(this)}
         gameRenderIterationKey={this.state.gameRenderIterationKey}
         handleContentChange={this.handleContentChange.bind(this)}
-        handleStop={this.handleGamePopup.bind(this)}
+        handleStop={this.handleGamePopup}
       />
     )
 
@@ -2862,58 +2866,65 @@ export default class EditCode extends React.Component {
                       )}
                       {!isPlaying &&
                       this.state.astReady && (
-                        <a
-                          className="ui tiny icon button"
+                        <Button
+                          as='a'
+                          icon
+                          onClick={this.handleRun}
+                          size='tiny'
                           title="Click here to start the program running"
                           id="mgb-EditCode-start-button"
-                          onClick={this.handleRun.bind(this)}
                         >
-                          <i className="play icon" />&emsp;Run
-                        </a>
+                          <Icon name='play' /> Run
+                        </Button>
                       )}
                       {isPlaying && (
-                        <a
-                          className="ui tiny icon button"
+                        <Button
+                          as='a'
+                          icon
+                          onClick={this.handleStopClick}
+                          size='tiny'
                           title="Click here to stop the running program"
                           id="mgb-EditCode-stop-button"
-                          onClick={this.handleStop.bind(this)}
                         >
-                          <i className={'stop icon'} />&emsp;Stop
-                        </a>
+                          <Icon name='stop' /> Stop
+                        </Button>
                       )}
                       {isPlaying && (
-                        <a
-                          className={`ui tiny ${isPopup ? 'active' : ''} icon button`}
+                        <Button
+                          as='a'
+                          active={isPopup}
+                          icon
+                          onClick={this.handleGamePopup}
+                          size='tiny'
+                          id="mgb-EditCode-popup-button"
                           title="Popout the code-run area so it can be moved around the screen"
-                          onClick={this.handleGamePopup.bind(this)}
                         >
-                          <i className={'external icon'} />&emsp;Popout
-                        </a>
+                          <Icon name='external' /> Popout
+                        </Button>
                       )}
                       {isPlaying && (
-                        <a
-                          className={`ui tiny ${isPopup ? 'active' : ''} icon button`}
+                        <Button
+                          as='a'
+                          icon
+                          onClick={this.handleGamePopout}
+                          size='tiny'
                           title="Open Game screen in the window"
-                          onClick={this.handleGamePopout.bind(this)}
+                          id="mgb-EditCode-popup-button"
                         >
-                          <i className={'external icon'} />&emsp;Full&nbsp;
-                        </a>
+                          <Icon name='external' /> Full
+                        </Button>
                       )}
                       {!this.hasErrors && (
-                        <span
-                          className={
-                            this.state.creatingBundle && this.props.canEdit ? 'ui button labeled' : ''
-                          }
+                        <Button
+                          as='a'
+                          icon
+                          onClick={this.handleFullScreen}
+                          size='tiny'
+                          title="Click here to start running your program in a different browser tab"
+                          id="mgb-EditCode-full-screen-button"
                         >
-                          <a
-                            className="ui tiny icon button full-screen"
-                            id="mgb-EditCode-full-screen-button"
-                            title="Click here to start running your program in a different browser tab"
-                            onClick={this.handleFullScreen.bind(this, asset._id)}
-                          >
-                            <i className="external icon" />&emsp;Bundle&nbsp;
-                          </a>
-                        </span>
+                          <Icon name='external' /> Bundle
+                        </Button>
                       )}
                     </span>
                     {!isPopup && gameScreen}

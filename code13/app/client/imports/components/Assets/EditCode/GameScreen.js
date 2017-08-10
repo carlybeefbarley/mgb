@@ -57,7 +57,6 @@ export default class GameScreen extends React.Component {
     this.getReference()
     if (!prevProps.isPlaying && this.props.isPlaying && this.state.isMinimized) this.handleMinimizeClick()
 
-    // this is not working as expected
     if (!this.state.fullScreen && popup) popup.close()
   }
 
@@ -69,9 +68,11 @@ export default class GameScreen extends React.Component {
     // TODO - change to use the ref={ c => { codestuff } } pattern that is now recommended.
     //        This will also help with the TODO in EditCode:_handle_iFrameMessageReceiver
     this.iFrameWindow =
-      this.state.fullScreen && popup ? { contentWindow: popup } : ReactDOM.findDOMNode(this.refs.iFrame1)
+      this.state.fullScreen && popup
+        ? { contentWindow: popup }
+        : this.refs.iFrame1
 
-    this.wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
+    this.wrapper = this.refs.wrapper
   }
 
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
@@ -102,14 +103,23 @@ export default class GameScreen extends React.Component {
         this._isIframeReady = true
       },
       mgbClosed: function() {
-        // timeout here because we cannot access popup directly when serving from CDN
+        // interval here because we cannot access popup directly when serving from CDN
         // and therefore we don't almost any control over popup
-        window.setTimeout(() => {
+        // unload on popup can be called in 2 separate occasions:
+        // 1. when it's closed (we are observing this)
+        // 2. when it gets reloaded (we are ignoring this - but event will fire anyway
+        // so this loop will continue to run until popup window gets closed eventually
+
+        // cleanup just in a case if we were already listening for close
+        window.clearInterval(this.onClosePopupObeserverInterval)
+        const observePopup = () => {
           // popup can be closed earlier
           if (popup && popup.closed) {
             this.setState({ fullScreen: false }, () => (popup = null))
+            window.clearInterval(this.onClosePopupObeserverInterval)
           }
-        }, 100) // 1 sec should be enough to make sure window has been closed
+        }
+        this.onClosePopupObeserverInterval = window.setInterval(observePopup, 100)
       },
     }
 
@@ -119,6 +129,8 @@ export default class GameScreen extends React.Component {
     if (this.iFrameWindow && data.hasOwnProperty('mgbCmd') && commands[data.mgbCmd])
       commands[data.mgbCmd].call(this, data)
   }
+  // see handle message mgbClosed why this interval is here
+  onClosePopupObeserverInterval = 0
 
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
   isIframeReady() {
@@ -135,6 +147,21 @@ export default class GameScreen extends React.Component {
       if (popup) {
         if (this.state.fullScreen) popup.focus()
         else popup.close()
+      }
+      else if(this.state.fullScreen){
+        // reopen popup as it got closed before (e.g. user clicked stop button)
+        this.popup()
+      }
+    }
+    // messageObject.closePopup comes from user input on stop button
+    // otherwise we are simply reloading game
+    else if (messageObject.mgbCommand === 'stop' && messageObject && messageObject.closePopup) {
+      popup && popup.close()
+    }
+    else if(messageObject.mgbCommand === 'approveIsReady'){
+      if((!popup || popup.closed) && this.state.fullScreen){
+        // reopen popup as it got closed before (e.g. user clicked stop button)
+        this.popup()
       }
     }
     this.getReference()
@@ -168,7 +195,8 @@ export default class GameScreen extends React.Component {
 
   // this function will tell sandbox to send back message with iframe size
   requestAdjustIframe() {
-    this.postMessage({ mgbCommand: 'requestSizeUpdate' })
+    if(this.props.isPlaying)
+      this.postMessage({ mgbCommand: 'requestSizeUpdate' })
   }
 
   // adjust iFrame size. This is initiated by an event

@@ -34,7 +34,7 @@ function encodeMono(channels, sampleRate, samples, callback){
     const reader = new FileReader()
     reader.onload = (e) => {
         let dataUri = e.target.result
-        tmpMusic = new Audio()
+        const tmpMusic = new Audio()
         tmpMusic.oncanplaythrough = (event) => {
             callback(tmpMusic)
         }

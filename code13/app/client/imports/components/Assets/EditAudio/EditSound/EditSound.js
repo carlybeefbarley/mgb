@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import ReactDOM from 'react-dom'
+import { Modal, Button, Icon } from 'semantic-ui-react'
 
 import ImportSound from './ImportSound.js'
 import SoundStock from './SoundStock.js'
@@ -17,6 +17,8 @@ export default class EditSound extends React.Component {
 
     this.state = {
       playerStatus: 'pause',
+      isImportModal: false,
+      isCreateModal: false,
     }
   }
 
@@ -35,11 +37,6 @@ export default class EditSound extends React.Component {
 
     this.soundCanvas = $('#soundPlayer canvas')[0]
     this.soundCtx = this.soundCanvas.getContext('2d')
-
-    // popups references
-    this.importSoundPopup = ReactDOM.findDOMNode(this.refs.importSoundPopup)
-    this.createSoundPopup = ReactDOM.findDOMNode(this.refs.createSoundPopup)
-    this.soundStockPopup = ReactDOM.findDOMNode(this.refs.soundStockPopup)
 
     let c2 = this.props.asset.content2
     if (c2.dataUri) {
@@ -71,24 +68,9 @@ export default class EditSound extends React.Component {
       c2.duration = soundObject.duration
       this.saveText = saveText
     }
-
-    $(this.importSoundPopup).modal('hide')
-    $(this.createSoundPopup).modal('hide')
-    $(this.soundStockPopup).modal('hide')
+    this.setState({ isCreateModal: false })
+    this.setState({ isImportModal: false })
     joyrideCompleteTag('mgbjr-CT-editSound-sound-imported')
-  }
-
-  openImportPopup() {
-    $(this.importSoundPopup).modal('show')
-  }
-
-  openStockPopup() {
-    $(this.soundStockPopup).modal('show')
-  }
-
-  openCreateSoundPopup() {
-    $(this.createSoundPopup).modal('show')
-    joyrideCompleteTag('mgbjr-CT-editSound-createSound-invoke')
   }
 
   togglePlaySound() {
@@ -126,37 +108,50 @@ export default class EditSound extends React.Component {
     this.props.handleContentChange(c2, previewCanvas.toDataURL('image/png'), this.saveText)
   }
 
+  openCreateModal = () => {
+    this.setState({ isCreateModal: true })
+    joyrideCompleteTag('mgbjr-CT-editSound-createSound-invoke')
+  }
+
   render() {
     return (
       <div className="ui grid">
         <div className="ui sixteen wide column">
           <BrowserCompat context="edit.sound" />
 
-          {/*** button row ***/}
-          <div className="row">
-            <button
-              className="ui small icon button"
-              id="mgbjr-EditSound-importSound"
-              title="Import sound from your computer"
-              onClick={this.openImportPopup.bind(this)}
+          <div>
+            {/*** button row ***/}
+            <Modal
+              open={this.state.isImportModal}
+              closeOnDimmerClick
+              onClose={() => this.setState({ isImportModal: false })}
+              trigger={
+                <Button
+                  onClick={() => this.setState({ isImportModal: true })}
+                  size="small"
+                  id="mgbjr-EditSound-importSound"
+                >
+                  <Icon name="add square" />
+                  Import
+                </Button>
+              }
             >
-              <i className="add square icon" /> Import
-            </button>
+              <ImportSound importSound={this.importSound.bind(this)} />
+            </Modal>
 
-            {/*<button className="ui small icon button"
-              title="Get sound from stock"
-              onClick={this.openStockPopup.bind(this)}>
-              <i className="folder icon"></i> Stock [not ready]
-            </button>*/}
-
-            <button
-              className="ui small icon button"
-              id="mgbjr-EditSound-createSound"
-              title="Create sound with effect generator"
-              onClick={this.openCreateSoundPopup.bind(this)}
+            <Modal
+              open={this.state.isCreateModal}
+              closeOnDimmerClick
+              onClose={() => this.setState({ isCreateModal: false })}
+              trigger={
+                <Button onClick={this.openCreateModal} size="small" id="mgbjr-EditSound-createSound">
+                  <Icon name="options" />
+                  Create
+                </Button>
+              }
             >
-              <i className="options icon" /> Create
-            </button>
+              <CreateSound importSound={this.importSound.bind(this)} />
+            </Modal>
           </div>
 
           <div className="content">
@@ -175,19 +170,6 @@ export default class EditSound extends React.Component {
             </div>
           </div>
           <div id="previewDiv" style={{ width: '280px', height: '128px', visibility: 'hidden' }} />
-        </div>
-
-        {/*** POPUPS ***/}
-        <div className="ui modal" ref="importSoundPopup">
-          <ImportSound importSound={this.importSound.bind(this)} />
-        </div>
-
-        <div className="ui modal" ref="soundStockPopup">
-          <SoundStock importSound={this.importSound.bind(this)} />
-        </div>
-
-        <div className="ui modal" ref="createSoundPopup">
-          <CreateSound importSound={this.importSound.bind(this)} />
         </div>
       </div>
     )

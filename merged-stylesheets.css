@@ -3075,7 +3075,7 @@ body {
   padding: 0px;
   overflow-x: hidden;
   min-width: 320px;
-  background: #f2f2f2;
+  background: #f3f4f5;
   font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
   font-size: 14px;
   line-height: 1.4285em;
@@ -10537,9 +10537,9 @@ User Global Variables for MGB site
   line-height: 1;
   height: 0em;
   font-weight: bold;
-  text-transform: uppercase;
+  text-transform: none;
   letter-spacing: 0.05em;
-  color: rgba(0, 0, 0, 0.85);
+  color: #767676;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -32297,6 +32297,14 @@ User Global Variables for MGB site
          Site Overrides
 *******************************/
 
+.ui.segment:not(.piled):not(.stacked) {
+  border: none;
+}
+
+.ui.segment:not(.piled):not(.raised):not(.stacked) {
+  box-shadow: none;
+}
+
 /* Collections */
 
 /*
@@ -47720,7 +47728,7 @@ User Global Variables for MGB site
 .ui.cards > .card > .content > .header,
 .ui.card > .content > .header {
   display: block;
-  margin: 0em 0em 0.2em 0em;
+  margin: '';
   font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
   color: rgba(0, 0, 0, 0.85);
 }
@@ -47730,8 +47738,8 @@ User Global Variables for MGB site
 .ui.cards > .card > .content > .header:not(.ui),
 .ui.card > .content > .header:not(.ui) {
   font-weight: bold;
-  font-size: 1em;
-  margin-top: -0.21425em;
+  font-size: 1.071rem;
+  margin-top: 0.25em;
   line-height: 1.2857em;
 }
 
@@ -48056,8 +48064,8 @@ a.ui.card:hover,
   z-index: 5;
   background: #ffffff;
   border: none;
-  box-shadow: 0px 1px 3px 0px #bcbdbd, 0px 0px 0px 0px #d4d4d5;
-  transform: translateY(-3px);
+  box-shadow: 0px 2px 8px 0px #bcbdbd, 0px 0px 0px 0px #d4d4d5;
+  transform: translateY(-1px);
 }
 
 /*-------------------
@@ -48075,7 +48083,7 @@ a.ui.card:hover,
 .ui.red.cards > .card:hover,
 .ui.cards > .red.card:hover,
 .ui.red.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #d01919, 0px 1px 3px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #d01919, 0px 2px 8px 0px #bcbdbd;
 }
 
 /* Orange */
@@ -48089,7 +48097,7 @@ a.ui.card:hover,
 .ui.orange.cards > .card:hover,
 .ui.cards > .orange.card:hover,
 .ui.orange.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #f26202, 0px 1px 3px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #f26202, 0px 2px 8px 0px #bcbdbd;
 }
 
 /* Yellow */
@@ -48103,7 +48111,7 @@ a.ui.card:hover,
 .ui.yellow.cards > .card:hover,
 .ui.cards > .yellow.card:hover,
 .ui.yellow.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #eaae00, 0px 1px 3px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #eaae00, 0px 2px 8px 0px #bcbdbd;
 }
 
 /* Olive */
@@ -48117,7 +48125,7 @@ a.ui.card:hover,
 .ui.olive.cards > .card:hover,
 .ui.cards > .olive.card:hover,
 .ui.olive.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #a7bd0d, 0px 1px 3px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #a7bd0d, 0px 2px 8px 0px #bcbdbd;
 }
 
 /* Green */
@@ -48131,7 +48139,7 @@ a.ui.card:hover,
 .ui.green.cards > .card:hover,
 .ui.cards > .green.card:hover,
 .ui.green.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #16ab39, 0px 1px 3px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #16ab39, 0px 2px 8px 0px #bcbdbd;
 }
 
 /* Teal */
@@ -48145,7 +48153,7 @@ a.ui.card:hover,
 .ui.teal.cards > .card:hover,
 .ui.cards > .teal.card:hover,
 .ui.teal.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #009c95, 0px 1px 3px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #009c95, 0px 2px 8px 0px #bcbdbd;
 }
 
 /* Blue */
@@ -48159,7 +48167,7 @@ a.ui.card:hover,
 .ui.blue.cards > .card:hover,
 .ui.cards > .blue.card:hover,
 .ui.blue.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #1678c2, 0px 1px 3px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #1678c2, 0px 2px 8px 0px #bcbdbd;
 }
 
 /* Violet */
@@ -48173,7 +48181,7 @@ a.ui.card:hover,
 .ui.violet.cards > .card:hover,
 .ui.cards > .violet.card:hover,
 .ui.violet.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #5829bb, 0px 1px 3px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #5829bb, 0px 2px 8px 0px #bcbdbd;
 }
 
 /* Purple */
@@ -48187,7 +48195,7 @@ a.ui.card:hover,
 .ui.purple.cards > .card:hover,
 .ui.cards > .purple.card:hover,
 .ui.purple.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #9627ba, 0px 1px 3px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #9627ba, 0px 2px 8px 0px #bcbdbd;
 }
 
 /* Pink */
@@ -48201,7 +48209,7 @@ a.ui.card:hover,
 .ui.pink.cards > .card:hover,
 .ui.cards > .pink.card:hover,
 .ui.pink.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #e61a8d, 0px 1px 3px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #e61a8d, 0px 2px 8px 0px #bcbdbd;
 }
 
 /* Brown */
@@ -48215,7 +48223,7 @@ a.ui.card:hover,
 .ui.brown.cards > .card:hover,
 .ui.cards > .brown.card:hover,
 .ui.brown.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #975b33, 0px 1px 3px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #975b33, 0px 2px 8px 0px #bcbdbd;
 }
 
 /* Grey */
@@ -48229,7 +48237,7 @@ a.ui.card:hover,
 .ui.grey.cards > .card:hover,
 .ui.cards > .grey.card:hover,
 .ui.grey.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #838383, 0px 1px 3px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #838383, 0px 2px 8px 0px #bcbdbd;
 }
 
 /* Black */
@@ -48243,7 +48251,7 @@ a.ui.card:hover,
 .ui.black.cards > .card:hover,
 .ui.cards > .black.card:hover,
 .ui.black.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #27292a, 0px 1px 3px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #27292a, 0px 2px 8px 0px #bcbdbd;
 }
 
 /*--------------
@@ -48612,6 +48620,11 @@ a.ui.card:hover,
 /*******************************
     User Variable Overrides
 *******************************/
+
+.ui.cards > .card > .content > .header:not(.ui),
+.ui.card > .content > .header:not(.ui) {
+  word-break: break-word;
+}
 
 /*
   DO NOT MODIFY - This file has been generated and will be regenerated
@@ -75903,46 +75916,6 @@ span.CodeMirror-selectedtext {
   width: .8em;
 }
 
-.Resizer {
-  box-sizing: border-box;
-  background: #000;
-  opacity: .2;
-  z-index: 1;
-  background-clip: padding-box;
-}
-
-.Resizer:hover {
-  transition: all 2s ease;
-}
-
-.Resizer.horizontal {
-  height: 11px;
-  margin: -5px 0;
-  border-top: 5px solid rgba(255, 255, 255, 0);
-  border-bottom: 5px solid rgba(255, 255, 255, 0);
-  cursor: row-resize;
-  width: 100%;
-}
-
-.Resizer.horizontal:hover {
-  border-top: 5px solid rgba(0, 0, 0, 0.5);
-  border-bottom: 5px solid rgba(0, 0, 0, 0.5);
-}
-
-.Resizer.vertical {
-  width: 11px;
-  margin: 0 10px;
-  border-left: 5px solid rgba(255, 255, 255, 0);
-  border-right: 5px solid rgba(255, 255, 255, 0);
-  cursor: col-resize;
-  height: 100%;
-}
-
-.Resizer.vertical:hover {
-  border-left: 5px solid rgba(0, 0, 0, 0.5);
-  border-right: 5px solid rgba(0, 0, 0, 0.5);
-}
-
 .ui.sidebar {
   overflow: visible !important;
   z-index: 1000 !important;
@@ -76006,6 +75979,17 @@ body.dragging .accept-drop:after {
 
 body.dragging .accept-drop:hover {
   background-color: rgba(255,255,255,0.9);
+}
+
+.mgb-keycap-button {
+  background-color: whitesmoke;
+  border: 1px solid lightgrey;
+  border-radius: 3px;
+  padding: 1px 3px 1px 3px;
+  display: inline-block;
+  min-width: 1.5em;
+  text-align: center;
+  box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2),0 0 0 2px #ffffff inset;
 }
 
 /***************************************
@@ -76121,6 +76105,16 @@ body.dragging .accept-drop:hover {
 .mgb-projectcard-width {
   min-width: 230px;
   max-width: 230px;
+}
+
+.mgb-useritem-width-normal {
+  min-width: 230px;
+  max-width: 230px;
+}
+
+.mgb-useritem-width-narrow {
+  min-width: 118px;
+  max-width: 118px !important;
 }
 
 /***************************************
@@ -76270,6 +76264,12 @@ body.dragging .accept-drop:hover {
   z-index: 1;
   top: 12px;
   /* move down as overflow hides top of */
+  transition: 1s;
+  opacity: 0;
+}
+
+.loading-notification.show {
+  opacity: 1;
 }
 
 .ui.card.animated.fadeIn:hover {

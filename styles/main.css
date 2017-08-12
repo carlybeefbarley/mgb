@@ -148,11 +148,12 @@ video {
 .mgb-video video,
 .mgb-video::before,
 .mgb-video::after {
-  will-change: opacity, transform, filter;
-  transition: opacity 0.5s, transform 0.5s, filter 0.5s;
+  will-change: opacity, transform;
+  transition: opacity 0.5s, transform 0.5s;
   transition-timing-function: cubic-bezier(0.3, 1, 0.7, 1);
 }
 .mgb-video video {
+  background: #000;
   position: absolute;
   transform: scale3d(1.05, 1.05, 1);
 }
@@ -239,6 +240,7 @@ video {
   left: 0;
   right: 0;
   bottom: 0;
+  box-shadow: 0 5px 0 10px rgba(0, 0, 0, 0.05);
 }
 .mgb-piled-container .mgb-piled-section {
   margin: 1em -1em;

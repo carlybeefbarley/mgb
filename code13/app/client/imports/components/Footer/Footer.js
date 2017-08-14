@@ -61,7 +61,6 @@ const Footer = ({ respIsRuleActive, respData }) => (
       </div>
     )}
 
-    <div className="ui section" />
     <div className="ui left aligned container">
       <div className={`ui inverted grey small ${respData.legalListDirection} relaxed divided link list`}>
         <a className="item" href="#">

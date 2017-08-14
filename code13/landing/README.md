@@ -12,12 +12,13 @@ Run a meteor build before starting the landing page. The landing page uses asset
 
 Then:
 
-    $ cd code13/landing
-    $ yarn
-    $ yarn start
+```
+$ cd code13/landing
+$ yarn
+$ yarn start
+```
 
 Hack on `/src`, the site is rebuilt and reloaded automatically.
-
 
 ## Interpolation
 
@@ -46,17 +47,11 @@ This will automatically copy the `team.png` asset to the landing's `dist/` direc
 
 ## Deploying
 
-Runs a fresh build and deploys to the `gh-pages` branch, for now:
+Each deploy runs a fresh build prior to deploying.
 
 ```
-$ yarn run deploy
+$ yarn deploy:staging       # Deploys to `gh-pages` site
+$ yarn deploy:production    # Deploys to all production domains
 ```
 
 [1]: https://devlapse.github.io/mgb/
-
-
-Deploy to https://build.games 
-
-```
-$ sh deploy.sh
-```

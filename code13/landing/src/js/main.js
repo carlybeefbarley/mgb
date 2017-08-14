@@ -1,70 +1,106 @@
-window.addEventListener( 'load', function () {
+window.addEventListener('load', function() {
   // ----------------------------------------
   // Utils
   // ----------------------------------------
-  function throttle (func) {
+  function throttle(func) {
     var isThrottled = false
 
-    return function throttledFunc () {
+    return function throttledFunc() {
       if (isThrottled) return
 
       func()
       isThrottled = true
-      requestAnimationFrame( function () { isThrottled = false } )
+      requestAnimationFrame(function() { isThrottled = false })
     }
   }
+
+  // ----------------------------------------
+  // Videos
+  // ----------------------------------------
+  function createVideo(src) {
+    var $video = document.createElement('video')
+    $video.setAttribute('controls', true)
+    $video.setAttribute('loop', true)
+    $video.setAttribute('src', src)
+
+    $video.addEventListener('click', function(e) {
+      $video.paused ? $video.play() : $video.pause()
+    })
+
+    return $video
+  }
+
+  // lazy loads and auto -loop-play videos on click
+  document.querySelectorAll('.mgb-video').forEach(function($wrapper) {
+    $wrapper.addEventListener('click', function() {
+      var src = $wrapper.getAttribute('data-video-src')
+      var $video = createVideo(src)
+
+      $wrapper.appendChild($video)
+
+      // let the browser settle before invoking css transitions
+      setTimeout(function() {
+        $wrapper.classList.add('mgb-video-initialized')
+        $video.play()
+      }, 100)
+    }, {
+      once: true,
+    })
+  })
 
   // ----------------------------------------
   // Hotjar
   // ----------------------------------------
-  function initHotjar(){
-    (function(h,o,t,j,a,r){
-        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-        h._hjSettings={hjid:446876,hjsv:5};
-        a=o.getElementsByTagName('head')[0];
-        r=o.createElement('script');r.async=1;
-        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-        a.appendChild(r);
-    })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=')
+  function initHotjar() {
+    (function(h, o, t, j, a, r) {
+      h.hj = h.hj || function() {(h.hj.q = h.hj.q || []).push(arguments)}
+      h._hjSettings = { hjid: 446876, hjsv: 5 }
+      a = o.getElementsByTagName('head')[0]
+      r = o.createElement('script')
+      r.async = 1
+      r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv
+      a.appendChild(r)
+    })(window, document, '//static.hotjar.com/c/hotjar-', '.js?sv=')
   }
-  setTimeout(initHotjar, 200)  
+
+  setTimeout(initHotjar, 200)
 
   // ----------------------------------------
   // For Everyone Tabs
   // ----------------------------------------
-  var $forEveryoneMenus = document.querySelectorAll( '.mgb-for-everyone-menu' )
-  var $forEveryoneMain = document.querySelector( '.mgb-for-everyone-main' )
-  var $forEveryoneSecondary = document.querySelector( '.mgb-for-everyone-secondary' )
-  var $forEveryoneDivider = document.querySelector( '.mgb-for-everyone-divider' )
+  var $forEveryoneMenus = document.querySelectorAll('.mgb-for-everyone-menu')
+  var $forEveryoneMain = document.querySelector('.mgb-for-everyone-main')
+  var $forEveryoneSecondary = document.querySelector('.mgb-for-everyone-secondary')
+  var $forEveryoneDivider = document.querySelector('.mgb-for-everyone-divider')
   var tabs = {
-    Students:    {
-      main:      $forEveryoneMain.innerText,
-      secondary: $forEveryoneSecondary.innerText
+    Students: {
+      main: $forEveryoneMain.innerText,
+      secondary: $forEveryoneSecondary.innerText,
     },
-    Parents:     {
-      main:      "We love helping game <em>players</em> become game <em>builders</em> - and we have helped many so far.",
-      secondary: "We provide all-in-one tools & training that let kids develop real skills & confidence within a safe, encouraging community.",
+    Parents: {
+      main: 'We love helping game <em>players</em> become game <em>builders</em>.',
+      secondary: 'We provide all-in-one tools and training that let kids develop real skills and confidence within a safe and encouraging community.',
     },
     GameJammers: {
-      main:      "Integrated editors/importers for graphic/map/sound/music so you can focus on gameplay. No toolchain+git side-quests!",
-      secondary: "Frictionless workflows, but <strong>not</strong> a toy. ES6+modules code/IDE; Multi-frame/layer graphic editor; TMX Map editor; JSFXR synths; and more."
+      main: 'Integrated editors and importers for graphics, maps, sounds, and music so you can focus on gameplay.',
+      secondary: 'Frictionless workflows, but <strong>not</strong> a toy. Use ES6 with modules, code with an IDE, multi-frame and multi-layer graphic editor, TMX map editor, JSFXR synths, and more.',
     },
-    Artists:     {
-      main:      "You can draw/paint/compose/write?... but coding sounds like hell to you?",
-      secondary: "Great! Come find some crazy coder-types to work with. Combine your talents and make games in a team."
+    Artists: {
+      main: 'Can you draw, paint, compose, and write but coding sounds like hell to you?',
+      secondary: 'Great! Come find some crazy coder-types to work with. Combine your talents and make games in a team.',
     },
-    Teachers:    {
-      main:      "MGB is ideal for enrichment. It supports a progressive and self-supporting learning model for age 13+",
+    Teachers: {
+      main: 'MGB is ideal for enrichment. It supports a progressive and self-supporting learning model for ages 13+.',
       // Point your students to our tutorials, then go get a nice cup of tea & have a break. You deserve it!
-      secondary: "Our core team and extended community will explain and debug problems, live, within the system. We foster a pay-it-forward learning culture."
+      secondary: 'Our core team and extended community will explain and debug problems, live, within the system. We foster a pay-it-forward learning culture.',
     },
-    Trolls:      {
-      main:      "HAHA we lied... <strong>NO TROLLS ALLOWED</strong>",
-      secondary: "Seriously, we have <strong>ZERO</strong> tolerance for <strong>any</strong> kind of negativity, abuse, disrespect or discrimination. We are eagle-eyed and quick to ban."
-    }
+    Trolls: {
+      main: 'HAHA we lied... <strong>NO TROLLS ALLOWED</strong>.',
+      secondary: 'Seriously, we have <strong>ZERO</strong> tolerance for <strong>any</strong> kind of negativity, abuse, disrespect or discrimination. We are eagle-eyed and quick to ban.',
+    },
   }
 
-  var handleForEveryoneMenuClick = function handleClick (e) {
+  var handleForEveryoneMenuClick = function handleClick(e) {
     var activeTab = tabs[e.target.innerText]
 
     if (!activeTab) {
@@ -76,32 +112,32 @@ window.addEventListener( 'load', function () {
     $forEveryoneSecondary.innerHTML = activeTab.secondary
 
     // set active item
-    $forEveryoneMenus.forEach( function ($menu) {
-      var $items = $menu.querySelectorAll( '.item' )
-      $items.forEach( function ($item) {
-        $item.classList.remove( 'active' )
-      } )
-      $menu.addEventListener( 'click', handleForEveryoneMenuClick )
-    } )
+    $forEveryoneMenus.forEach(function($menu) {
+      var $items = $menu.querySelectorAll('.item')
+      $items.forEach(function($item) {
+        $item.classList.remove('active')
+      })
+      $menu.addEventListener('click', handleForEveryoneMenuClick)
+    })
 
-    e.target.classList.add( 'active' )
+    e.target.classList.add('active')
   }
 
-  $forEveryoneMenus.forEach( function (menu) {
-    menu.addEventListener( 'click', handleForEveryoneMenuClick )
-  } )
+  $forEveryoneMenus.forEach(function(menu) {
+    menu.addEventListener('click', handleForEveryoneMenuClick)
+  })
 
-  var updateForEveryoneResponsiveMenu = function updateForEveryoneResponsiveMenu (e) {
+  var updateForEveryoneResponsiveMenu = function updateForEveryoneResponsiveMenu(e) {
     if (window.outerWidth >= 768) {
-      $forEveryoneMenus.forEach( function (elm) {
-        elm.classList.remove( 'three', 'item' )
-      } )
-      $forEveryoneDivider.classList.add( 'hidden' )
+      $forEveryoneMenus.forEach(function(elm) {
+        elm.classList.remove('three', 'item')
+      })
+      $forEveryoneDivider.classList.add('hidden')
     } else {
-      $forEveryoneMenus.forEach( function (elm) {
-        elm.classList.add( 'three', 'item' )
-      } )
-      $forEveryoneDivider.classList.remove( 'hidden' )
+      $forEveryoneMenus.forEach(function(elm) {
+        elm.classList.add('three', 'item')
+      })
+      $forEveryoneDivider.classList.remove('hidden')
     }
   }
 
@@ -112,38 +148,37 @@ window.addEventListener( 'load', function () {
   // Main Menu
   // ----------------------------------------
 
-  var $menu = document.querySelector( '.mgb-main-menu' )
-  var $heroCaption = document.querySelector( '.mgb-hero-caption' )
-  var $menuSignupButton = $menu.querySelector( '.mgb-menu-signup-button' )
+  var $menu = document.querySelector('.mgb-main-menu')
+  var $heroCaption = document.querySelector('.mgb-hero-caption')
 
-  var setMenuTransparency = throttle( function (e) {
+  var setMenuTransparency = throttle(function(e) {
     var menuRect = $menu.getBoundingClientRect()
     var heroCaptionRect = $heroCaption.getBoundingClientRect()
 
     // how far faded in the menu is, according to its scroll position
-    const inRatio = Math.min( 100, Math.max( 0, 100 - (heroCaptionRect.bottom - menuRect.bottom) ) ) / 100
+    var inRatio = Math.min(100, Math.max(0, 100 - (heroCaptionRect.bottom - menuRect.bottom))) / 100
 
     $menu.style.background = 'rgba(20, 150, 160, ' + inRatio + ')'
     $menu.style.boxShadow = '0 ' + inRatio * 5 + 'px ' + inRatio * 10 + 'px rgba(0, 0, 0, ' + inRatio * 0.25 + ')'
     $heroCaption.style.opacity = (heroCaptionRect.bottom / heroCaptionRect.height)
-  } )
+  })
 
   // set initial transparency
   setMenuTransparency()
 
   // update on scroll/resize
-  document.addEventListener( 'scroll', setMenuTransparency )
+  document.addEventListener('scroll', setMenuTransparency)
 
   // ----------------------------------------
   // Handle Resize
   // ----------------------------------------
 
-  var handleWindowResize = function handleWindowResize (e) {
-    setMenuTransparency( e )
-    updateForEveryoneResponsiveMenu( e )
+  var handleWindowResize = function handleWindowResize(e) {
+    setMenuTransparency(e)
+    updateForEveryoneResponsiveMenu(e)
   }
 
-  window.addEventListener( 'resize', handleWindowResize )
+  window.addEventListener('resize', handleWindowResize)
 
   console.log(
     '%cHello Curious hacker-type people who like to look under the hood!\n' +
@@ -170,4 +205,4 @@ window.addEventListener( 'load', function () {
     '\nQ: I want to know more!\nA: Come chat with us in-system, or tweet to @dgolds\n ^^^ GLHF ^^^\n',
     'color: #5c2197' // http://bada55.io ftw
   )
-} )
+})

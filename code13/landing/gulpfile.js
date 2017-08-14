@@ -36,7 +36,7 @@ const paths = {
     dest: distPath(),
   },
   images: {
-    src:  srcPath( '**/*.{jpg,png,gif}' ),
+    src:  srcPath( '**/*.{jpg,png,gif,webm}' ),
     dest: distPath(),
   },
   js:     {

@@ -19,28 +19,15 @@
     background-image: linear-gradient(90deg, mix(#FFF, @barColor, 30), mix(#FFF, @barColor, 30) 1px, @barColor 1px, @barColor);
     background-size: (100% / @complete) 100%;
   }
-
-  &:hover {
-    background-image: linear-gradient(90deg, #FFF, #FFF 1px, #DDD 1px, #DDD);
-    .label {
-      color: @textHoverColor;
-      background-image: linear-gradient(90deg, mix(#FFF, @barHoverColor), mix(#FFF, @barHoverColor) 1px, @barHoverColor 1px, @barHoverColor);
-    }
-  }
-}
-.mgb-skill-coming-soon {
-  color: #777;
-  text-transform: none;
 }
 
 .mgb-mock-skillsmap {
+  cursor: default;
   user-select: none;
   padding: 0.25em;
   background: #FFF;
-  border-radius: 0.2em;
   line-height: 1;
   .bar {
-    cursor: pointer;
     margin-bottom: 0.125em;
     background-repeat: repeat-x;
     .label {

@@ -7,10 +7,9 @@
     "preinstall": "which use-yarn && use-yarn || true",
     "build": "gulp clean build",
     "start": "nodemon -w gulpfile.js -w package.json node_modules/.bin/gulp",
-    "predeploy": "cross-env BASE_URL=/mgb/ yarn run build --silent",
-    "deploy": "gh-pages -d dist",
-    "awspredeploy": "cross-env BASE_URL= yarn run build --silent",
-    "awsdeploy": "gulp awspublish"
+    "deploy:staging": "cross-env BASE_URL=/mgb/ yarn run build --silent && gh-pages -d dist",
+    "deploy:production": "sh ./deploy.sh",
+    "awsdeploy": "cross-env BASE_URL= yarn run build --silent && gulp awspublish"
   },
   "author": "",
   "license": "ISC",

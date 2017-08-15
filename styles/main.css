@@ -1,3 +1,204 @@
+/*
+  DO NOT MODIFY - This file has been generated and will be regenerated
+  Semantic UI v2.2.6
+*/
+/*******************************
+         Site Settings
+*******************************/
+/*-------------------
+       Fonts
+--------------------*/
+/*-------------------
+      Base Sizes
+--------------------*/
+/* This is the single variable that controls them all */
+/* The size of page text  */
+/*-------------------
+    Border Radius
+--------------------*/
+/* See Power-user section below
+   for explanation of @px variables
+*/
+/*-------------------
+    Brand Colors
+--------------------*/
+/*--------------
+  Page Heading
+---------------*/
+/*--------------
+   Form Input
+---------------*/
+/* This adjusts the default form input across all elements */
+/* Input Text Color */
+/* Line Height Default For Inputs in Browser */
+/*-------------------
+    Focused Input
+--------------------*/
+/* Used on inputs, textarea etc */
+/* Used on dropdowns, other larger blocks */
+/*-------------------
+        Sizes
+--------------------*/
+/*
+  Sizes are all expressed in terms of 14px/em (default em)
+  This ensures these "ratios" remain constant despite changes in EM
+*/
+/*-------------------
+        Page
+--------------------*/
+/*-------------------
+      Paragraph
+--------------------*/
+/*-------------------
+       Links
+--------------------*/
+/*-------------------
+  Highlighted Text
+--------------------*/
+/*-------------------
+       Loader
+--------------------*/
+/*-------------------
+        Grid
+--------------------*/
+/*-------------------
+     Transitions
+--------------------*/
+/*-------------------
+     Breakpoints
+--------------------*/
+/*-------------------
+      Site Colors
+--------------------*/
+/*---  Colors  ---*/
+/*---  Light Colors  ---*/
+/*---   Neutrals  ---*/
+/*--- Colored Backgrounds ---*/
+/*--- Colored Headers ---*/
+/*--- Colored Text ---*/
+/*--- Colored Border ---*/
+/*-------------------
+     Alpha Colors
+--------------------*/
+/*-------------------
+       Accents
+--------------------*/
+/* Differentiating Neutrals */
+/* Differentiating Layers */
+/*******************************
+           Power-User
+*******************************/
+/*-------------------
+    Emotive Colors
+--------------------*/
+/* Positive */
+/* Negative */
+/* Info */
+/* Warning */
+/*-------------------
+        Paths
+--------------------*/
+/* For source only. Modified in gulp for dist */
+/*-------------------
+       Em Sizes
+--------------------*/
+/*
+  This rounds @size values to the closest pixel then expresses that value in (r)em.
+  This ensures all size values round to exact pixels
+*/
+/* em */
+/* rem */
+/*-------------------
+       Icons
+--------------------*/
+/* Maximum Glyph Width of Icon */
+/*-------------------
+     Neutral Text
+--------------------*/
+/*-------------------
+     Brand Colors
+--------------------*/
+/*-------------------
+      Borders
+--------------------*/
+/*-------------------
+    Derived Values
+--------------------*/
+/* Loaders Position Offset */
+/* Rendered Scrollbar Width */
+/* Maximum Single Character Glyph Width, aka Capital "W" */
+/* Used to match floats with text */
+/* Header Spacing */
+/* Minimum Mobile Width */
+/* Positive / Negative Dupes */
+/* Responsive */
+/*-------------------
+  Exact Pixel Values
+--------------------*/
+/*
+  These are used to specify exact pixel values in em
+  for things like borders that remain constantly
+  sized as emSize adjusts
+
+  Since there are many more sizes than names for sizes,
+  these are named by their original pixel values.
+
+*/
+/* Columns */
+/*******************************
+             States
+*******************************/
+/*-------------------
+      Disabled
+--------------------*/
+/*-------------------
+        Hover
+--------------------*/
+/*---  Shadows  ---*/
+/*---  Colors  ---*/
+/*---  Emotive  ---*/
+/*---  Brand   ---*/
+/*---  Dark Tones  ---*/
+/*---  Light Tones  ---*/
+/*-------------------
+        Focus
+--------------------*/
+/*---  Colors  ---*/
+/*---  Emotive  ---*/
+/*---  Brand   ---*/
+/*---  Dark Tones  ---*/
+/*---  Light Tones  ---*/
+/*-------------------
+    Down (:active)
+--------------------*/
+/*---  Colors  ---*/
+/*---  Emotive  ---*/
+/*---  Brand   ---*/
+/*---  Dark Tones  ---*/
+/*---  Light Tones  ---*/
+/*-------------------
+        Active
+--------------------*/
+/*---  Colors  ---*/
+/*---  Emotive  ---*/
+/*---  Brand   ---*/
+/*---  Dark Tones  ---*/
+/*---  Light Tones  ---*/
+/*********************************
+User Global Variables for MGB site
+*********************************/
+/*-------------------
+       Fonts
+--------------------*/
+/*-------------------
+    Border Radius
+--------------------*/
+/* See Power-user section below
+   for explanation of @px variables
+*/
+/*-------------------
+        Page
+--------------------*/
 .mgb-mock-skillsmap {
   cursor: default;
   -webkit-user-select: none;
@@ -16,8 +217,20 @@
   padding: 0.3em 0.6em;
   white-space: nowrap;
   font-weight: bold;
-  font-size: 0.8em;
+  font-size: 0.8rem;
   text-transform: uppercase;
+}
+@media only screen and (max-width: 992px) {
+  .mgb-mock-skillsmap .bar .label {
+    padding: 0.2em 0.5em;
+    font-size: 0.75rem;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .mgb-mock-skillsmap .bar .label {
+    padding: 0.2em 0.25em;
+    font-size: 0.7rem;
+  }
 }
 .mgb-mock-skillsmap .bar.getStarted {
   background-image: linear-gradient(90deg, #FFF, #FFF 1px, #EEE 1px, #EEE);
@@ -129,10 +342,7 @@
   background-image: linear-gradient(90deg, #c1c8d4, #c1c8d4 1px, #a6b1c2 1px, #a6b1c2);
   background-size: 33.33333333% 100%;
 }
-video {
-  width: 100%;
-}
-.mgb-video {
+.mgb-lazy {
   position: relative;
   display: -ms-flexbox;
   display: flex;
@@ -140,88 +350,136 @@ video {
       align-items: center;
   -ms-flex-pack: center;
       justify-content: center;
-  cursor: pointer;
-  background: #000;
   overflow: hidden;
 }
-.mgb-video img,
-.mgb-video video,
-.mgb-video::before,
-.mgb-video::after {
+.mgb-lazy::before {
+  content: '\f04b';
+  position: absolute;
+  margin: auto;
+  font-size: 8vh;
+  width: 8vh;
+  height: 8vh;
+  line-height: 1;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  font-family: 'Icons';
+  color: #FFF;
+  text-shadow: 0 0 4rem rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 1;
+}
+.mgb-lazy::before,
+.mgb-lazy img,
+.mgb-lazy .mgb-lazy-media {
   will-change: opacity, transform;
   transition: opacity 0.5s, transform 0.5s;
   transition-timing-function: cubic-bezier(0.3, 1, 0.7, 1);
 }
-.mgb-video video {
-  background: #000;
-  position: absolute;
-  transform: scale3d(1.05, 1.05, 1);
+.mgb-lazy img {
+  position: relative;
+  max-width: 100%;
+  cursor: pointer;
+  opacity: 1;
+  z-index: 0;
 }
-.mgb-video.mgb-video-initialized video {
+.mgb-lazy .ui.loader {
+  z-index: 1 !important;
+}
+.mgb-lazy .mgb-lazy-media {
+  position: absolute;
+  margin: auto;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  opacity: 0;
+  max-width: 100%;
+  transform: scale3d(1.05, 1.05, 1);
+  z-index: 2;
+}
+.mgb-lazy:hover::before {
+  transform: scale3d(1.1, 1.1, 1);
+}
+.mgb-lazy.mgb-lazy-initialized::before {
+  opacity: 0;
+  pointer-events: none;
+}
+.mgb-lazy.mgb-lazy-initialized img {
+  filter: blur(1px);
+  transform: scale(1.025);
+  opacity: 0.5;
+}
+.mgb-lazy.mgb-lazy-initialized .mgb-lazy-media {
   opacity: 1;
   transform: scale3d(1, 1, 1);
 }
-.mgb-video.mgb-video-initialized img {
-  opacity: 0.35;
-  filter: blur(3px);
-  transform: scale(1.025);
-  pointer-events: none;
+/***************************************
+ *   Responsive Vertical Whitespace    *
+ ***************************************/
+section:not(:first-of-type) {
+  padding-top: 10vh;
 }
-.mgb-video:not(.mgb-video-initialized) video {
-  opacity: 0;
-  pointer-events: none;
+section:not(:last-child),
+.ui.container:not(:last-child) {
+  padding-bottom: 10vh;
 }
-.mgb-video:not(.mgb-video-initialized)::before {
-  content: '';
-  position: absolute;
-  background: #000;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  opacity: 0.2;
-  pointer-events: none;
+.ui.container + .ui.container {
+  padding-top: 10vh;
 }
-.mgb-video:not(.mgb-video-initialized)::after {
-  font-family: 'Icons';
-  content: "\f04b";
-  position: absolute;
-  font-size: 5rem;
-  line-height: 1;
-  color: #FFF;
-  opacity: 1;
-  z-index: 2;
-  pointer-events: none;
-  text-shadow: 0 0 3rem rgba(0, 0, 0, 0.5);
+.ui.section.divider:not(.fitted) {
+  margin: 8vh 0;
 }
-.mgb-video:not(.mgb-video-initialized):hover::before {
-  opacity: 0;
-}
-.mgb-video:not(.mgb-video-initialized):hover::after {
-  opacity: 1;
-  transform: scale3d(1.2, 1.2, 1);
+.ui.divider:not(.fitted) {
+  margin: 4vh 0;
 }
 /***************************************
  *                Hero                 *
  ***************************************/
 .mgb-hero {
   background: radial-gradient(#00BECC, #2B7277);
+  padding-top: 60px;
 }
 .mgb-hero .mgb-hero-caption {
   text-align: center;
-  padding: 6em 0 3em;
+  padding: 3vh 0;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
 }
 .mgb-hero .mgb-hero-caption .ui.header {
-  font-size: 3rem;
-  margin: 0;
+  font-size: 2.5rem;
+  margin: 0 0 0.25vh;
 }
 .mgb-hero .mgb-hero-caption .mgb-lead {
-  font-size: 2rem;
+  font-size: 1.5rem;
+  margin: 0;
+  padding: 0 0.3em;
   color: #FFF;
-  padding-left: 0.3em;
-  padding-right: 0.3em;
   font-weight: 300;
-  margin-bottom: 21px;
+}
+@media only screen and (min-width: 768px) {
+  .mgb-hero .mgb-hero-caption .ui.header {
+    font-size: 3rem;
+  }
+  .mgb-hero .mgb-hero-caption .mgb-lead {
+    font-size: 2rem;
+  }
+}
+@media only screen and (min-width: 992px) {
+  .mgb-hero .mgb-hero-caption .ui.header {
+    font-size: 3.5rem;
+  }
+  .mgb-hero .mgb-hero-caption .mgb-lead {
+    font-size: 2.25rem;
+  }
+}
+@media only screen and (min-width: 1200px) {
+  .mgb-hero .mgb-hero-caption .ui.header {
+    font-size: 4rem;
+  }
+  .mgb-hero .mgb-hero-caption .mgb-lead {
+    font-size: 3rem;
+  }
 }
 /***************************************
  *            Piled Section            *
@@ -233,17 +491,16 @@ video {
    * Game
    */
 }
-.mgb-piled-container .mgb-piled-panel,
-.mgb-piled-container .mgb-piled-section {
+.mgb-piled-container .mgb-piled-panel {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  box-shadow: 0 5px 0 10px rgba(0, 0, 0, 0.05);
 }
-.mgb-piled-container .mgb-piled-section {
-  margin: 1em -1em;
+.mgb-piled-container .mgb-piled-panel {
+  margin: 0 -0.5rem;
+  box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.1);
 }
 .mgb-piled-container .mgb-piled-panel.back {
   background: #F4E285;
@@ -252,133 +509,81 @@ video {
 .mgb-piled-container .mgb-piled-panel.middle {
   background: #F4A259;
   /* Note that rotateY(5deg) caused layer/zindex issues on Chrome on iOS */
-  transform: perspective(5000px) rotateY(0) skewY(1deg) scale(0.98);
+  transform: perspective(5000px) rotateY(0) skewY(1deg) scale(0.99);
 }
 .mgb-piled-container .mgb-piled-panel.front {
-  /* Note that rotateY(-2deg) caused layer/zindex issues on Chrome on iOS */
   background: #BC4B51;
-  transform: perspective(3000px) rotateY(0) skewY(-0.5deg) scale(0.97);
+  /* Note that rotateY(-2deg) caused layer/zindex issues on Chrome on iOS */
+  transform: perspective(3000px) rotateY(0) skewY(-0.5deg) scale(0.98);
 }
-.mgb-piled-container .mgb-game {
-  text-align: center;
-  height: 292px;
-  min-height: 100%;
-  width: 1px;
-  min-width: 100%;
+.mgb-piled-container .mgb-games {
+  display: -ms-flexbox;
+  display: flex;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding: 0 3vw;
 }
-.mgb-piled-container .mgb-game iframe,
-.mgb-piled-container .mgb-game img {
-  border: none;
-}
-.mgb-piled-container .mgb-game-iframe {
-  height: 292px;
-  min-height: 100%;
-  width: 1px;
-  min-width: 100%;
+.mgb-piled-container .mgb-games .mgb-game {
+  position: relative;
+  max-width: 800px;
+  border: 1px solid #000;
+  background: #333;
+  margin: -1rem auto;
+  box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.1);
 }
 /***************************************
- *            Main Bullets             *
+ *               Videos                *
  ***************************************/
-.mgb-bullets {
-  padding: 2em 0;
-  background: #483C46;
+.mgb-videos {
+  background: #333;
   text-align: center;
 }
 /***************************************
  *             Alternating             *
  ***************************************/
 .mgb-alternating {
-  padding: 3em 0;
   background: radial-gradient(#00BECC, #2B7277);
+  overflow: hidden;
 }
 .mgb-alternating .mgb-alternating-media {
+  position: relative;
+  width: 78%;
+  float: right;
   box-shadow: 0 0 0 0.5em rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+.mgb-alternating .mgb-alternating-mascot {
+  position: absolute;
+  max-width: 30%;
+  max-height: 90%;
+  top: 5%;
+  left: 0;
+  bottom: 0;
+  margin: auto;
+}
+.mgb-alternating .mgb-alternate-right .mgb-alternating-media {
+  float: left;
+}
+.mgb-alternating .mgb-alternate-right .mgb-alternating-mascot {
+  left: auto;
+  right: 0;
+}
+/***************************************
+ *           For Everyone              *
+ ***************************************/
+.mgb-for-everyone-main {
+  min-height: 4rem;
+}
+.mgb-for-everyone-secondary {
+  min-height: 10rem;
+  text-align: left;
 }
 /***************************************
  *               Footer                *
  ***************************************/
 footer {
-  padding: 4em 0 2em;
+  padding: 10vh 0 5vh;
   background: #373E40;
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.9em;
-}
-.mgb-for-everyone-main {
-  font-size: 1.2em;
-}
-/***************************************
- *          Media Query Sizes          *
- ***************************************/
-@media (max-width: 767px) {
-  .mgb-game-column {
-    width: calc(100vw - 180px) !important;
-    height: calc( 100vw / 2.16 ) !important;
-    margin-right: auto !important;
-    margin-left: auto !important;
-  }
-  .mgb-game,
-  .mgb-game-iframe {
-    margin-right: auto;
-    margin-left: auto;
-  }
-  .mgb-hero-left-column {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .mgb-hero-right-column {
-    text-align: center;
-    margin-right: auto;
-    margin-left: auto;
-  }
-}
-@media (min-width: 768px) and (max-width: 1139px) {
-  .mgb-game {
-    margin-right: auto;
-    margin-left: auto;
-  }
-  .mgb-hero-left-column {
-    padding-left: 2em !important;
-    text-align: left;
-    min-width: 200px;
-    max-width: 200px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .mgb-hero-right-column {
-    text-align: left;
-    min-width: 200px;
-    max-width: 200px;
-    margin-right: auto;
-    margin-left: auto;
-  }
-}
-@media (min-width: 1140px) {
-  .mgb-game {
-    margin-right: auto;
-    margin-left: auto;
-  }
-  .mgb-game-column {
-    max-width: 680px;
-  }
-  .mgb-hero-left-column {
-    text-align: left;
-    min-width: 200px;
-    max-width: 200px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .mgb-hero-right-column {
-    text-align: left;
-    min-width: 200px;
-    max-width: 200px;
-    margin-right: auto;
-    margin-left: auto;
-  }
-}
-@media (max-width: 500px) {
-  .mgb-game,
-  .mgb-game-iframe {
-    max-height: 200px;
-  }
 }

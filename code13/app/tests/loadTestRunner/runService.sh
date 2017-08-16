@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
+set -e
+
 (
 supervisor > /dev/null
 if [ $? != "0" ]; then

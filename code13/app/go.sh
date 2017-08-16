@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -e
 
 # if you get a ENFILES error on MacOS, then see instructions at https://gist.github.com/abernix/a7619b07b687bb97ab573b0dc30928a0
 (

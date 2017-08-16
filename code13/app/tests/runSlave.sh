@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
+set -e
+
 (
 # this is required so we can access latest node provided by nvm
 export NVM_DIR="$HOME/.nvm"

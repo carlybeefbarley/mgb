@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
+set -e
+
 # usage: copy this file and certificate to remote server
 # scp -r -i ~/aws-free.pem /home/kaspars/Projects/mgb/code13/app/tests ubuntu@ec2-54-196-36-137.compute-1.amazonaws.com:~/mgb
 

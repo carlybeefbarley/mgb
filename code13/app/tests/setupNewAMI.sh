@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
+set -e
+
 # this file will setup brand new ubuntu ami - used for template for other slaves
 # you still need to create default ubuntu instance manually
 # this script can be used to update slave directly (but it's not it main purpose)

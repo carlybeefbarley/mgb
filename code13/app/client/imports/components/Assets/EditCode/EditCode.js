@@ -1966,9 +1966,11 @@ export default class EditCode extends React.Component {
       this.props.handleContentChange(c2, thumbnail, reason)
       return
     }
-
-    c2.needsBundle = this.props.asset.content2.needsBundle
-    c2.hotReload = this.props.asset.content2.hotReload
+    const origContent = this.props.asset.content2
+    c2.needsBundle = origContent.needsBundle
+    c2.hotReload = origContent.hotReload
+    // save old bundle if we don't need to rebuild
+    if (!c2.needsBundle) c2.bundle = origContent.bundle
 
     //props trigger forceUpdate - so delay changes a little bit - on very fast changes
     if (this.changeTimeout) {

@@ -196,14 +196,14 @@ gulp.task('build', (cb) => {
 })
 
 gulp.task('build:fonts', () => {
-  return gulp.src(paths.fonts.src)
+  gulp.src(paths.fonts.src)
     .pipe(g.plumber())
     .pipe(gulp.dest(paths.fonts.dest))
     .pipe(g.connect.reload())
 })
 
 gulp.task('build:html', () => {
-  return gulp.src(paths.html.src)
+  gulp.src(paths.html.src)
     .pipe(g.plumber())
     .pipe(copyUsedMeteorAssets())
     .pipe(interpolateEnvVars())
@@ -213,7 +213,7 @@ gulp.task('build:html', () => {
 })
 
 gulp.task('build:images', () => {
-  return gulp.src(paths.images.src)
+  gulp.src(paths.images.src)
     .pipe(g.plumber())
     .pipe(g.imagemin())
     .pipe(gulp.dest(paths.images.dest))
@@ -221,7 +221,7 @@ gulp.task('build:images', () => {
 })
 
 gulp.task('build:js', () => {
-  return gulp.src(paths.js.src)
+  gulp.src(paths.js.src)
     .pipe(g.plumber())
     .pipe(interpolateEnvVars())
     .pipe(g.uglify(uglifyOpts))
@@ -230,7 +230,7 @@ gulp.task('build:js', () => {
 })
 
 gulp.task('build:styles', () => {
-  return gulp.src(paths.styles.src)
+  gulp.src(paths.styles.src)
     .pipe(g.plumber())
     .pipe(interpolateEnvVars())
     .pipe(g.less())

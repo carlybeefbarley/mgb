@@ -54116,7 +54116,7 @@ User Global Variables for MGB site
 .ui.statistic > .label {
   font-family: 'Lato', 'Helvetica Neue', Arial, Helvetica, sans-serif;
   font-size: 1em;
-  font-weight: lighter;
+  font-weight: bold;
   color: rgba(0, 0, 0, 0.87);
   text-transform: uppercase;
   text-align: center;

@@ -22,7 +22,7 @@ const BadgeHoldersListUI = ({ params, loading, holders }) => {
           meta={[{ name: 'Badge Holders', content: 'Badge Holders' }]}
         />
 
-        <Header as="h2">{`${badgeInfo[1]} - ${holders.length} badge holders`}</Header>
+        <Header as="h2">{`${badgeInfo.descr} - ${holders.length} badge holders`}</Header>
 
         <Item.Group divided>
           {_.map(holders, u => (

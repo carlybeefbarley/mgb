@@ -138,6 +138,14 @@ export const hasMultipleSkills = (skillsObj, dottedSkillKeysArray) => {
   return _.every(dottedSkillKeysArray, sk => hasSkill(skillsObj, sk))
 }
 
+export const hasSkillCount = (skillsObj, skillPath, requiredCount) => {
+  let totalCount = 0
+  _.forIn(skillsObj, (val, key) => {
+    if (_.startsWith(key, skillPath)) totalCount++
+  })
+  return totalCount >= requiredCount
+}
+
 export const learnSkill = (dottedSkillKey, userID) => {
   Meteor.call('Skill.learn', dottedSkillKey, userID, (err, result) => {
     console.log(`${result} Skill learned: '${dottedSkillKey}'. Err=`, err)

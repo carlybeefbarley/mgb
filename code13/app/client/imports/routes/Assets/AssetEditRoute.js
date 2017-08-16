@@ -30,6 +30,7 @@ import AssetChatDetail from '/client/imports/components/Assets/AssetChatDetail'
 import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail'
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
+import EditTime from '/client/imports/components/Assets/EditTime'
 
 import TaskApprove from '/client/imports/components/Assets/TaskApprove'
 
@@ -395,6 +396,7 @@ const AssetEditRoute = React.createClass({
               // TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
             }
             {this.state.isForkRevertPending && <Icon name="fork" loading />}
+            <EditTime currUser={this.props.currUser} kind={asset.kind} lastUpdated={asset.updatedAt} />
             <UserLoves currUser={currUser} asset={asset} size="small" seeLovers />
             <WorkState
               workState={asset.workState}

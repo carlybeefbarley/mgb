@@ -33,6 +33,7 @@ const schema = {
   },
   badges: optional([]), // Empty.. or array of badge names (see badges.js)
   badges_count: optional(Number), // Number of badges
+  edit_time: optional(Object), // time spent in each of asset editors
   permissions: {
     // TODO: Actually this is modelled as an array of team/??/perm stuff. Look at fixtures for the super-admin example. Needs cleaning up.
     roles: optional([String]), // See in App.js for 'super-admin' handling
@@ -123,6 +124,19 @@ Meteor.methods({
 
     if (Meteor.isServer) console.log('[User.updateProfile]', count, docId)
     return count
+  },
+
+  'User.addEditTime': function(editType, timeSec) {
+    checkIsLoggedInAndNotSuspended()
+    const editors = ['graphic', 'code', 'map', 'actor', 'actormap', 'sound', 'music']
+    // add to time max 60sec per request
+    if (_.includes(editors, editType) && timeSec <= 60) {
+      const user = Meteor.user()
+      const edit_time = _.isEmpty(user.edit_time) ? {} : user.edit_time
+      if (!edit_time[editType]) edit_time[editType] = 0
+      edit_time[editType] += timeSec
+      Meteor.users.update({ _id: Meteor.userId() }, { $set: { edit_time: edit_time } })
+    }
   },
 })
 

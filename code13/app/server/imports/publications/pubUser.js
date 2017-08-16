@@ -19,6 +19,7 @@ const fieldsUserPublic = {
   createdAt: 1,
   badges: 1,
   badges_count: 1,
+  edit_time: 1,
   suIsBanned: 1,
   isDeactivated: 1,
 }

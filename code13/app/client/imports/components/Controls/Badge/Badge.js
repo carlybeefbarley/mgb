@@ -5,8 +5,8 @@ import { Popup } from 'semantic-ui-react'
 
 const Badge = ({ name, forceSize }) => {
   const badge = badgeList[name] || ['Unknown.png', `Badge "${name} not recognised`]
-  const imgUrl = makeCDNLink('/images/badges/' + badge[0])
-  const title = badge[1]
+  const imgUrl = makeCDNLink('/images/badges/' + badge.img)
+  const title = badge.descr
   const size = forceSize ? { width: `${forceSize}px`, height: `${forceSize}px` } : {}
   return (
     <Popup

@@ -557,6 +557,17 @@ const AppUI = React.createClass({
     if (!hasSkill(tutorialSkillPath)) {
       showToast(`Tutorial Completed, Skill '${tutorialSkillPath}' gained`)
       learnSkill(tutorialSkillPath)
+
+      // because we don't want award badge now, but wait for next tutorial
+      if (tutorialSkillPath != 'getStarted.profile.avatar') {
+        Meteor.call('User.refreshBadgeStatus', (err, result) => {
+          if (err) console.log('User.refreshBadgeStatus error', err)
+          else {
+            if (!result || result.length === 0) console.log(`No New badges awarded`)
+            else showToast(`New badges awarded: ${result.join(', ')} `)
+          }
+        })
+      }
     }
   },
 

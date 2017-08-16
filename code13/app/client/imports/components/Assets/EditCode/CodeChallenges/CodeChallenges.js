@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { Button, Message, Icon, List, Segment, Popup, Divider, Header } from 'semantic-ui-react'
+import { Button } from 'semantic-ui-react'
 
 import OutputError from './OutputError'
 import OutputConsole from './OutputConsole'
@@ -15,6 +15,7 @@ import SkillNodes, { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNod
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import { learnSkill, hasSkill } from '/imports/schemas/skills'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
+import { showToast } from '/client/imports/routes/App'
 
 import '../editcode.css'
 
@@ -116,6 +117,13 @@ export default class CodeChallenges extends React.Component {
     // TODO show notification for user
     learnSkill(this.props.skillPath)
     this.setState({ showAllTestsCompletedMessage: true })
+    Meteor.call('User.refreshBadgeStatus', (err, result) => {
+      if (err) console.log('User.refreshBadgeStatus error', err)
+      else {
+        if (!result || result.length === 0) console.log(`No New badges awarded`)
+        else showToast(`New badges awarded: ${result.join(', ')} `)
+      }
+    })
   }
 
   runTests = () => {

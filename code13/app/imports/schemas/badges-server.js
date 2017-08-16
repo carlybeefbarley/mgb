@@ -1,8 +1,9 @@
 import _ from 'lodash'
-import { hasMultipleSkills } from './skills'
+import { hasMultipleSkills, hasSkillCount } from './skills'
 import { Skills, Projects } from '/imports/schemas'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 import { logActivity } from '/imports/schemas/activity'
+import { badgeList } from '/imports/schemas/badges'
 
 // Dear Maintainers:
 // This file must be imported by main_server.js so that the Meteor method can be registered
@@ -23,28 +24,206 @@ import { logActivity } from '/imports/schemas/activity'
 //   requiredSkills
 const _skillBasedBadges = [
   {
-    newBadgeName: 'hasAvatar',
+    newBadgeName: badgeList.hasAvatar.name,
     requiredSkills: ['getStarted.profile.avatar'],
     // This case should ideally also test for an avatar.. but it's ok, since
     //   that avatar does have an awaitCompletionTag:
     //    user.profile.avatar && user.profile.avatar.length > 0 && retval.push("hasAvatar")
     //// TODO: Fix this - it's wrong since we always do the gravatar hash on account create. Doh!
   },
+  {
+    newBadgeName: badgeList.getStartedChat.name,
+    requiredSkills: ['getStarted.chat.chatFlexPanel'],
+  },
+  {
+    newBadgeName: badgeList.getStartedAsset.name,
+    requiredSkills: ['getStarted.assetsBasics.createAssets'],
+  },
+  {
+    newBadgeName: badgeList.getStartedProject.name,
+    requiredSkills: ['getStarted.profile.createProject'],
+  },
+  {
+    newBadgeName: badgeList.getStartedAll.name,
+    requiredSkills: ['getStarted.nonCodeGame.useActorMap'],
+  },
+]
+
+const _skillCountBasedBadges = [
+  {
+    newBadgeName: badgeList.codeBasicsBronze.name,
+    requiredCount: 3,
+    skillPath: 'code/js/intro',
+  },
+  {
+    newBadgeName: badgeList.codeBasicsSilver.name,
+    requiredCount: 15,
+    skillPath: 'code/js/intro',
+  },
+  {
+    newBadgeName: badgeList.codeBasicsGold.name,
+    requiredCount: 54,
+    skillPath: 'code/js/intro',
+  },
+  {
+    newBadgeName: badgeList.codeAdvancedBronze.name,
+    requiredCount: 3,
+    skillPath: 'code/js/advanced',
+  },
+  {
+    newBadgeName: badgeList.codeAdvancedSilver.name,
+    requiredCount: 15,
+    skillPath: 'code/js/advanced',
+  },
+  {
+    newBadgeName: badgeList.codeAdvancedGold.name,
+    requiredCount: 40,
+    skillPath: 'code/js/advanced',
+  },
+  {
+    newBadgeName: badgeList.codePhaserBronze.name,
+    requiredCount: 3,
+    skillPath: 'code/js/phaser',
+  },
+  {
+    newBadgeName: badgeList.codePhaserSilver.name,
+    requiredCount: 9,
+    skillPath: 'code/js/phaser',
+  },
+  {
+    newBadgeName: badgeList.codePhaserGold.name,
+    requiredCount: 24,
+    skillPath: 'code/js/phaser',
+  },
+
+  {
+    newBadgeName: badgeList.artBronze.name,
+    requiredCount: 2,
+    skillPath: 'art/',
+  },
+  {
+    newBadgeName: badgeList.artSilver.name,
+    requiredCount: 6,
+    skillPath: 'art/',
+  },
+  {
+    newBadgeName: badgeList.artGold.name,
+    requiredCount: 12,
+    skillPath: 'art/',
+  },
+]
+
+const _timeBasedBadges = [
+  {
+    newBadgeName: badgeList.useGraphicEditorBronze.name,
+    timeSec: 2 * 60,
+    editType: 'graphic',
+  },
+  {
+    newBadgeName: badgeList.useGraphicEditorSilver.name,
+    timeSec: 60 * 60,
+    editType: 'graphic',
+  },
+  {
+    newBadgeName: badgeList.useGraphicEditorGold.name,
+    timeSec: 10 * 60 * 60,
+    editType: 'graphic',
+  },
+  {
+    newBadgeName: badgeList.useCodeEditorBronze.name,
+    timeSec: 2 * 60,
+    editType: 'code',
+  },
+  {
+    newBadgeName: badgeList.useCodeEditorSilver.name,
+    timeSec: 60 * 60,
+    editType: 'code',
+  },
+  {
+    newBadgeName: badgeList.useCodeEditorGold.name,
+    timeSec: 10 * 60 * 60,
+    editType: 'code',
+  },
+  {
+    newBadgeName: badgeList.useMapEditorBronze.name,
+    timeSec: 2 * 60,
+    editType: 'map',
+  },
+  {
+    newBadgeName: badgeList.useMapEditorSilver.name,
+    timeSec: 60 * 60,
+    editType: 'map',
+  },
+  {
+    newBadgeName: badgeList.useMapEditorGold.name,
+    timeSec: 10 * 60 * 60,
+    editType: 'map',
+  },
+  {
+    newBadgeName: badgeList.useActorEditorBronze.name,
+    timeSec: 2 * 60,
+    editType: 'actor',
+  },
+  {
+    newBadgeName: badgeList.useActorEditorSilver.name,
+    timeSec: 60 * 60,
+    editType: 'actor',
+  },
+  {
+    newBadgeName: badgeList.useActorEditorGold.name,
+    timeSec: 10 * 60 * 60,
+    editType: 'actor',
+  },
+  {
+    newBadgeName: badgeList.useActormapEditorBronze.name,
+    timeSec: 2 * 60,
+    editType: 'actormap',
+  },
+  {
+    newBadgeName: badgeList.useActormapEditorSilver.name,
+    timeSec: 60 * 60,
+    editType: 'actormap',
+  },
+  {
+    newBadgeName: badgeList.useActormapEditorGold.name,
+    timeSec: 10 * 60 * 60,
+    editType: 'actormap',
+  },
+  {
+    newBadgeName: badgeList.useSoundEditorBronze.name,
+    timeSec: 2 * 60,
+    editType: 'sound',
+  },
+  {
+    newBadgeName: badgeList.useSoundEditorSilver.name,
+    timeSec: 60 * 60,
+    editType: 'sound',
+  },
+  {
+    newBadgeName: badgeList.useSoundEditorGold.name,
+    timeSec: 10 * 60 * 60,
+    editType: 'sound',
+  },
+  {
+    newBadgeName: badgeList.useMusicEditorBronze.name,
+    timeSec: 2 * 60,
+    editType: 'music',
+  },
+  {
+    newBadgeName: badgeList.useMusicEditorSilver.name,
+    timeSec: 60 * 60,
+    editType: 'music',
+  },
+  {
+    newBadgeName: badgeList.useMusicEditorGold.name,
+    timeSec: 10 * 60 * 60,
+    editType: 'music',
+  },
 ]
 
 const _nameBasedBadges = [
   {
-    newBadgeName: 'guruMusic',
-    usernames: 'dgolds,guntis'.split(','),
-  },
-
-  {
-    newBadgeName: 'guruCode',
-    usernames: 'dgolds,stauzs,guntis'.split(','),
-  },
-
-  {
-    newBadgeName: 'mgb2AlphaTester',
+    newBadgeName: badgeList.mgb2AlphaTester.name,
     usernames: 'Puupuls,legacyDev,dgolds,stauzs,guntis,leah,Supergirl,stanchion,LunarRaid,hawke,Viveiros,jazeps,avaragado,triptych,sleepysort,hertlen,collectordx,skadwaz,jaketor,Fantasythief,Nemopolymer,rabbidpony'.split(
       ',',
     ),
@@ -53,19 +232,19 @@ const _nameBasedBadges = [
 
 const _functionBasedBadges = [
   {
-    newBadgeName: 'mgbAdmin',
+    newBadgeName: badgeList.mgbAdmin.name,
     func: isUserSuperAdmin, // a function that takes a user-record as a parameter, and returns true if badge should be granted
   },
   {
-    newBadgeName: 'hasAvatar',
+    newBadgeName: badgeList.hasAvatar.name,
     func: user => _.startsWith(user.profile.avatar, '/api/asset'),
   },
   {
-    newBadgeName: 'mgb1namesVerified',
+    newBadgeName: badgeList.mgb1namesVerified.name,
     func: user => _.isString(user.profile.mgb1namesVerified) && user.profile.mgb1namesVerified.length > 0,
   },
   {
-    newBadgeName: 'mgb1namesImported',
+    newBadgeName: badgeList.mgb1namesImported.name,
     func: user => Projects.find({ ownerId: user._id, mgb1: { $exists: true } }).count() > 0,
   },
 ]
@@ -80,16 +259,7 @@ const _doRefreshBadgeStatus = user => {
   _.each(_nameBasedBadges, nbb => {
     if (_.includes(nbb.usernames, user.username)) {
       if (!_.includes(user.badges, nbb.newBadgeName)) {
-        //        console.log(`User '${user.username}' does not have '${nbb.newBadgeName}' badge, so awarding it!`)
-        const count = Meteor.users.update(user._id, {
-          $addToSet: { badges: nbb.newBadgeName },
-          $set: { updatedAt: now },
-        })
-        console.log(`Name-based Badge Awarded -  update returned count=${count}`)
-        if (
-          count === 1 // Note that this will be the case at least because of the $set: updatedAt
-        )
-          newBadgeKeys.push(nbb.newBadgeName)
+        _awardBadge('Name-based', nbb.newBadgeName, newBadgeKeys, user)
       }
     }
   })
@@ -98,20 +268,31 @@ const _doRefreshBadgeStatus = user => {
   const skills = Skills.findOne(user._id)
   _.each(_skillBasedBadges, sbb => {
     if (hasMultipleSkills(skills, sbb.requiredSkills)) {
-      //      console.log(`User '${user.username}' meets Skill requirements for BADGE '${sbb.newBadgeName}'`)
       if (!_.includes(user.badges, sbb.newBadgeName)) {
-        console.log(`User '${user.username}' does not have '${sbb.newBadgeName}' badge, so awarding it!`)
-        const count = Meteor.users.update(user._id, {
-          $addToSet: { badges: sbb.newBadgeName },
-          $set: { updatedAt: now },
-        })
-        console.log(
-          `Skill-based Badge '${sbb.newBadgeName}' award to '@${user.username}': Mongo Update returned count=${count}`,
-        )
-        if (
-          count === 1 // Note that this will be the case at least because of the $set: updatedAt
-        )
-          newBadgeKeys.push(sbb.newBadgeName)
+        _awardBadge('Skill-based', sbb.newBadgeName, newBadgeKeys, user)
+      }
+    }
+  })
+
+  // Skill count awards
+  _.each(_skillCountBasedBadges, scbb => {
+    if (hasSkillCount(skills, scbb.skillPath, scbb.requiredCount)) {
+      if (!_.includes(user.badges, scbb.newBadgeName)) {
+        _awardBadge('Skill-count-based', scbb.newBadgeName, newBadgeKeys, user)
+      }
+    }
+  })
+
+  const editTimeSpent = (editTime, editType, timeSec) => {
+    if (_.isEmpty(editTime) || !editTime[editType]) return false
+    return editTime[editType] >= timeSec
+  }
+
+  // Time based awards
+  _.each(_timeBasedBadges, tbb => {
+    if (!_.includes(user.badges, tbb.newBadgeName)) {
+      if (editTimeSpent(user.edit_time, tbb.editType, tbb.timeSec)) {
+        _awardBadge('Time-based', tbb.newBadgeName, newBadgeKeys, user)
       }
     }
   })
@@ -120,18 +301,7 @@ const _doRefreshBadgeStatus = user => {
   _.each(_functionBasedBadges, fbb => {
     if (fbb.func(user)) {
       if (!_.includes(user.badges, fbb.newBadgeName)) {
-        //      console.log(`User '${user.username}' does not have '${fbb.newBadgeName}' badge, so awarding it!`)
-        const count = Meteor.users.update(user._id, {
-          $addToSet: { badges: fbb.newBadgeName },
-          $set: { updatedAt: now },
-        })
-        console.log(
-          `Function-based Badge '${fbb.newBadgeName}' award to '@${user.username}': Mongo Update returned count=${count}`,
-        )
-        if (
-          count === 1 // Note that this will be the case at least because of the $set: updatedAt
-        )
-          newBadgeKeys.push(fbb.newBadgeName)
+        _awardBadge('Function-based', fbb.newBadgeName, newBadgeKeys, user)
       }
     }
   })
@@ -155,6 +325,28 @@ const _doRefreshBadgeStatus = user => {
 
   // OK, return the array of newly-granted badge keys
   return newBadgeKeys
+}
+
+const _awardBadge = (type, newBadgeName, newBadgeKeys, user) => {
+  console.log(`User '${user.username}' does not have '${newBadgeName}' badge, so awarding it!`)
+  // guntis - this return error, but badge is still added
+  /*
+      error:401
+      errorType:
+      "Meteor.Error"
+      message:"Only admins/mods can log Activity on behalf of others [401]"
+    */
+  const count = Meteor.users.update(user._id, {
+    $addToSet: { badges: newBadgeName },
+    $set: { updatedAt: Date.now() },
+  })
+  console.log(
+    `${type} Badge '${newBadgeName}' award to '@${user.username}': Mongo Update returned count=${count}`,
+  )
+  if (
+    count === 1 // Note that this will be the case at least because of the $set: updatedAt
+  )
+    newBadgeKeys.push(newBadgeName)
 }
 
 Meteor.methods({

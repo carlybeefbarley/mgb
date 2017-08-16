@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 set -e
 
+echo "====================================================="
+echo "DEPLOY PRODUCTION"
+echo "====================================================="
+
 sh ./confirm-app-build.sh
 
 # See some related info at https://medium.com/@willmorgan/moving-a-static-website-to-aws-s3-cloudfront-with-https-1fdd95563106
@@ -13,7 +17,7 @@ deploy_to_cloudfront() {
   gulp awspublish
 }
 
-yarn run build --silent
+yarn build --silent
 
 # CloudFront Distribution for http://landing.mygamebuilder.com
 deploy_to_cloudfront "E2FKDU47P960M9"

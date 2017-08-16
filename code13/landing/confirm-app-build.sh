@@ -13,8 +13,7 @@ confirm_app_build() {
 
   if [ "$answer" == "no" ]; then
     echo ""
-    echo "  BEFORE DEPLOY:"
-    echo ""
+    echo "  Before Deploy:"
     echo "    1) cd to /app"
     echo "    2) start the app (builds assets)"
     echo "    3) stop the app  (don't run during deploy)"
@@ -25,11 +24,12 @@ confirm_app_build() {
     exit 1
   fi
 
+  echo "  Please answer 'yes' or 'no'."
   confirm_app_build
 }
 
 echo ""
-echo "  HEADS UP!"
+echo "  Heads Up!"
 echo "  The landing page requires assets from '/app/.meteor'"
 echo ""
 

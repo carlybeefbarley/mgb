@@ -7,7 +7,7 @@
     "preinstall": "which use-yarn && use-yarn || true",
     "build": "gulp clean build",
     "start": "gulp",
-    "deploy": "yarn run deploy:staging && yarn run deploy:production",
+    "deploy": "yarn deploy:staging --silent && yarn deploy:production --silent ",
     "deploy:staging": "sh ./deploy-staging.sh",
     "deploy:production": "sh ./deploy-production.sh"
   },

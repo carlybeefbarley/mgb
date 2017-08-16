@@ -15,33 +15,77 @@ window.addEventListener('load', function() {
   }
 
   // ----------------------------------------
-  // Videos
+  // Lazy
   // ----------------------------------------
-  function createVideo(src) {
-    var $video = document.createElement('video')
-    $video.setAttribute('controls', true)
-    $video.setAttribute('loop', true)
-    $video.setAttribute('src', src)
+  function createLazyMedia($lazy) {
+    var tag = $lazy.getAttribute('data-lazy-tag')
+    var $media = document.createElement(tag)
 
-    $video.addEventListener('click', function(e) {
-      $video.paused ? $video.play() : $video.pause()
-    })
+    // copy all data-lazy-* attrs to lazy loaded element
+    for (var i = $lazy.attributes.length - 1; i >= 0; i--) {
+      var attr = $lazy.attributes[i]
+      if (/data-lazy-(?!tag)/.test(attr.name)) {
+        $media.setAttribute(attr.name.replace('data-lazy-', ''), attr.value)
+      }
+    }
 
-    return $video
+    $media.classList.add('mgb-lazy-media')
+
+    //
+    // Lazy Videos
+    //
+    var isVideo = $media instanceof HTMLVideoElement
+      && typeof $media.play === 'function'
+      && typeof $media.pause === 'function'
+      && typeof $media.paused === 'boolean'
+
+    if (isVideo) {
+      $media.setAttribute('controls', true)
+      $media.setAttribute('loop', true)
+      $media.setAttribute('autoplay', true)
+      $media.style.cursor = 'pointer'
+      $media.addEventListener('click', function(e) {
+        $media.paused ? $media.play() : $media.pause()
+      })
+    }
+
+    //
+    // Lazy Iframes
+    //
+    var isIframe = $media instanceof HTMLIFrameElement
+
+    if (isIframe) {
+      // fill parent container mobile/desktop chrome/safari compatible
+      $media.style.width = '0'
+      $media.style.minWidth = '100%'
+      $media.style.maxWidth = '100%'
+      $media.style.height = '100%'
+      // remove iframe borders
+      $media.style.border = 'none'
+    }
+    return $media
   }
 
   // lazy loads and auto -loop-play videos on click
-  document.querySelectorAll('.mgb-video').forEach(function($wrapper) {
-    $wrapper.addEventListener('click', function() {
-      var src = $wrapper.getAttribute('data-video-src')
-      var $video = createVideo(src)
+  document.querySelectorAll('.mgb-lazy').forEach(function($lazy) {
+    var $cover = $lazy.querySelector('img')
 
-      $wrapper.appendChild($video)
+    $cover.addEventListener('click', function() {
+      var $media = createLazyMedia($lazy)
+      $lazy.appendChild($media)
+
+      // the lazy media may take a moment to appear
+      // add a loader in the zIndex layer beneath the media
+      var $loader = document.createElement('div')
+      $loader.setAttribute('class', 'ui inverted active loader')
+      $lazy.appendChild($loader)
 
       // let the browser settle before invoking css transitions
       setTimeout(function() {
-        $wrapper.classList.add('mgb-video-initialized')
-        $video.play()
+        $lazy.classList.add('mgb-lazy-initialized')
+
+        // autoplay doesn't work on mobile devices
+        if ($media.play) $media.play()
       }, 100)
     }, {
       once: true,
@@ -51,19 +95,21 @@ window.addEventListener('load', function() {
   // ----------------------------------------
   // Hotjar
   // ----------------------------------------
-  function initHotjar() {
-    (function(h, o, t, j, a, r) {
-      h.hj = h.hj || function() {(h.hj.q = h.hj.q || []).push(arguments)}
-      h._hjSettings = { hjid: 446876, hjsv: 5 }
-      a = o.getElementsByTagName('head')[0]
-      r = o.createElement('script')
-      r.async = 1
-      r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv
-      a.appendChild(r)
-    })(window, document, '//static.hotjar.com/c/hotjar-', '.js?sv=')
-  }
+  if (location.hostname !== 'localhost') {
+    function initHotjar() {
+      (function(h, o, t, j, a, r) {
+        h.hj = h.hj || function() {(h.hj.q = h.hj.q || []).push(arguments)}
+        h._hjSettings = { hjid: 446876, hjsv: 5 }
+        a = o.getElementsByTagName('head')[0]
+        r = o.createElement('script')
+        r.async = 1
+        r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv
+        a.appendChild(r)
+      })(window, document, '//static.hotjar.com/c/hotjar-', '.js?sv=')
+    }
 
-  setTimeout(initHotjar, 200)
+    setTimeout(initHotjar, 200)
+  }
 
   // ----------------------------------------
   // For Everyone Tabs
@@ -78,24 +124,24 @@ window.addEventListener('load', function() {
       secondary: $forEveryoneSecondary.innerText,
     },
     Parents: {
-      main: 'We love helping game <em>players</em> become game <em>builders</em>.',
+      main: 'We turn game <em>players</em> into game <em>builders</em>',
       secondary: 'We provide all-in-one tools and training that let kids develop real skills and confidence within a safe and encouraging community.',
     },
     GameJammers: {
-      main: 'Integrated editors and importers for graphics, maps, sounds, and music so you can focus on gameplay.',
-      secondary: 'Frictionless workflows, but <strong>not</strong> a toy. Use ES6 with modules, code with an IDE, multi-frame and multi-layer graphic editor, TMX map editor, JSFXR synths, and more.',
+      main: 'Focus on gameplay',
+      secondary: 'Integrated editors and importers for graphics, maps, sounds, and music. Frictionless workflows, but <strong>not</strong> a toy. Use ES6 with modules, code with an IDE, multi-frame and multi-layer graphic editor, TMX map editor, JSFXR synths, and more.',
     },
     Artists: {
-      main: 'Can you draw, paint, compose, and write but coding sounds like hell to you?',
+      main: 'You draw, paint, compose, write... but coding sound like hell?',
       secondary: 'Great! Come find some crazy coder-types to work with. Combine your talents and make games in a team.',
     },
     Teachers: {
-      main: 'MGB is ideal for enrichment. It supports a progressive and self-supporting learning model for ages 13+.',
+      main: 'MGB is for enrichment',
       // Point your students to our tutorials, then go get a nice cup of tea & have a break. You deserve it!
-      secondary: 'Our core team and extended community will explain and debug problems, live, within the system. We foster a pay-it-forward learning culture.',
+      secondary: 'We support a progressive and self-supporting learning model for ages 13+.  Our core team and extended community will explain and debug problems, live, within the system. We foster a pay-it-forward learning culture.',
     },
     Trolls: {
-      main: 'HAHA we lied... <strong>NO TROLLS ALLOWED</strong>.',
+      main: 'HAHA we lied... <strong>NO TROLLS ALLOWED</strong>',
       secondary: 'Seriously, we have <strong>ZERO</strong> tolerance for <strong>any</strong> kind of negativity, abuse, disrespect or discrimination. We are eagle-eyed and quick to ban.',
     },
   }
@@ -156,11 +202,12 @@ window.addEventListener('load', function() {
     var heroCaptionRect = $heroCaption.getBoundingClientRect()
 
     // how far faded in the menu is, according to its scroll position
-    var inRatio = Math.min(100, Math.max(0, 100 - (heroCaptionRect.bottom - menuRect.bottom))) / 100
+    var menuFadeInRatio = Math.min(100, Math.max(0, window.scrollY * 1.5)) / 100
 
-    $menu.style.background = 'rgba(20, 150, 160, ' + inRatio + ')'
-    $menu.style.boxShadow = '0 ' + inRatio * 5 + 'px ' + inRatio * 10 + 'px rgba(0, 0, 0, ' + inRatio * 0.25 + ')'
-    $heroCaption.style.opacity = (heroCaptionRect.bottom / heroCaptionRect.height)
+    $menu.style.background = 'rgba(20, 150, 160, ' + menuFadeInRatio + ')'
+    $menu.style.boxShadow = [
+      '0 ', menuFadeInRatio * 5, 'px ', menuFadeInRatio * 10, 'px rgba(0, 0, 0, ', menuFadeInRatio * 0.25, ')',
+    ].join('')
   })
 
   // set initial transparency

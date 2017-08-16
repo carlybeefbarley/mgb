@@ -1,0 +1,90 @@
+@import '../mixins';
+
+//
+// Zero state
+//
+.mgb-lazy {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  // Play icon
+  &::before {
+    content: '\f04b';
+    position: absolute;
+    margin: auto;
+    font-size: 8vh;
+    width: 8vh;
+    height: 8vh;
+    line-height: 1;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    font-family: 'Icons';
+    color: #FFF;
+    text-shadow: 0 0 4rem rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &::before,
+  img,
+  .mgb-lazy-media {
+    will-change: opacity, transform;
+    transition: opacity 0.5s, transform 0.5s;
+    transition-timing-function: cubic-bezier(0.3, 1, 0.7, 1);
+  }
+
+  img {
+    position: relative;
+    max-width: 100%;
+    cursor: pointer; // cover image is clicked to lazy load media
+    opacity: 1;
+    z-index: 0;
+  }
+
+  .ui.loader {
+    z-index: 1 !important;
+  }
+
+  .mgb-lazy-media {
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    opacity: 0;
+    max-width: 100%;
+    transform: scale3d(1.05, 1.05, 1);
+    z-index: 2;
+  }
+
+  &:hover {
+    &::before {
+      transform: scale3d(1.1, 1.1, 1);
+    }
+  }
+}
+
+//
+// Initialized
+//
+.mgb-lazy.mgb-lazy-initialized {
+  &::before {
+    opacity: 0;
+    pointer-events: none;
+  }
+  img {
+    filter: blur(1px);
+    transform: scale(1.025);
+    opacity: 0.5;
+  }
+  .mgb-lazy-media {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+  }
+}

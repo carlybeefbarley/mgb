@@ -6,7 +6,7 @@
   "scripts": {
     "preinstall": "which use-yarn && use-yarn || true",
     "build": "gulp clean build",
-    "start": "nodemon -w gulpfile.js -w package.json node_modules/.bin/gulp",
+    "start": "gulp",
     "deploy:staging": "cross-env BASE_URL=/mgb/ yarn run build --silent && gh-pages -d dist",
     "deploy:production": "sh ./deploy.sh",
     "awsdeploy": "cross-env BASE_URL= yarn run build --silent && gulp awspublish"
@@ -34,7 +34,6 @@
     "gulp-rev-all": "^0.9.7",
     "gulp-uglify": "^2.1.2",
     "gulp-util": "^3.0.8",
-    "nodemon": "^1.11.0",
     "run-sequence": "~1.2.2",
     "through2": "^2.0.3",
     "use-yarn": "^1.0.1"

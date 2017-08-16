@@ -45,40 +45,31 @@
   </div>
 
   <!-- PILED SECTION -->
-  <div class="mgb-piled-container">
-    <div class="mgb-piled-section">
+  <div class="ui container">
+    <div class="mgb-piled-container">
       <div class="mgb-piled-panel back"></div>
       <div class="mgb-piled-panel middle"></div>
       <div class="mgb-piled-panel front"></div>
-    </div>
-    <!--
-    TODO leave this, it is a guide to place the stacked color panels
-    <div style="position: absolute; top: 0;right: 0;bottom: 0;left: 0;border:2px solid black;"></div>
-    -->
-    <div class="ui stackable equal width grid">
-      <div class="column mgb-hero-left-column">
-      </div>
-      <div class="column mgb-game-column">
-        <!-- GAME -->
+
+      <!-- GAME -->
+      <div class="mgb-games">
         <div class="mgb-game">
-          <!--<img class="ui image" src="{{ BASE_URL }}/img/game-placeholder.jpg" />-->
-          <iframe
-            class="mgb-game-iframe"
-            scrolling="no"
-            src="{{ CDN_URL }}api/asset/code/bundle/hHncMnhmS7f5Mb5qa"
-          ></iframe>
+          <div
+            class="mgb-lazy"
+            data-lazy-tag="iframe"
+            data-lazy-scrolling="no"
+            data-lazy-src="{{ CDN_URL }}api/asset/code/bundle/hHncMnhmS7f5Mb5qa"
+          >
+            <img src="{{ BASE_URL }}/img/game-placeholder.jpg" alt="Actor Map Editor" />
+          </div>
         </div>
       </div>
-      <div class="column mgb-hero-right-column">
-      </div>
     </div>
-  </div>
-</section>
 
-<!-- BULLETS -->
-<section class="mgb-bullets">
-  <div class="ui container">
-    <div class="ui very padded very relaxed equal width stackable center aligned divided grid">
+    <div class="ui hidden divider"></div>
+
+    <!-- BULLETS -->
+    <div class="ui equal width stackable center aligned divided grid">
       <div class="column">
         <h3 class="ui icon inverted header">
           <i class="hand paper icon"></i>
@@ -114,59 +105,59 @@
       </div>
     </div>
   </div>
+</section>
 
-  <div class="ui hidden section divider"></div>
-
+<!-- VIDEOS -->
+<section class="mgb-videos">
   <div class="ui container">
-    <div class="ui center aligned equal width stackable padded grid">
-      <div class="column">
+    <div class="ui equal width grid">
+      <div class="eight wide computer sixteen wide tablet column">
         <h1 class="ui inverted header">
           <em>Non-code</em> Games
           <span class="sub header">
-            Use "Actors" to build games without writing any code
+            Use Actors to build games without writing any code
           </span>
         </h1>
-        <div class="mgb-video" data-video-src="{{ BASE_URL }}/img/actormapEditor.webm">
-          <img
-            class="ui image"
-            src="{{ BASE_URL }}/img/actormapEditor-cover.png"
-            alt="Actor Map Editor"
-          />
+        <div class="mgb-lazy" data-lazy-tag="video" data-lazy-src="{{ BASE_URL }}/img/actormapEditor.webm">
+          <img src="{{ BASE_URL }}/img/actormapEditor-cover.png" alt="Actor Map Editor" />
         </div>
       </div>
-      <div class="column">
+      <div class="mobile only tablet only column">
+        <div class="ui divider"></div>
+      </div>
+      <div class="eight wide computer sixteen wide tablet column">
         <h1 class="ui inverted header">
           <em>Code</em> Games
           <span class="sub header">
             Use our full featured code editor to write games
           </span>
         </h1>
-        <div class="mgb-video" data-video-src="{{ BASE_URL }}/img/codeEditor.webm">
-          <img
-            class="ui image"
-            src="{{ BASE_URL }}/img/codeEditor-cover.png"
-            alt="Code Editor"
-          />
+        <div class="mgb-lazy" data-lazy-tag="video" data-lazy-src="{{ BASE_URL }}/img/codeEditor.webm">
+          <img src="{{ BASE_URL }}/img/codeEditor-cover.png" alt="Code Editor" />
         </div>
       </div>
     </div>
   </div>
-
-  <div class="ui hidden section divider"></div>
 </section>
 
 <!-- ALTERNATING -->
 <section class="mgb-alternating">
-  <div class="ui hidden section divider"></div>
-
   <div class="ui container">
     <!-- SKILLS -->
-    <div class="ui padded equal middle aligned width stackable grid">
-      <div class="three wide column">
-        <img class="ui small image" src="~/app/images/mascots/duck.png" alt="Duck" >
+    <div class="ui middle aligned equal width stackable mobile vertically reversed grid mgb-alternate-right">
+      <div class="seven wide computer six wide tablet column">
+        <h2 class="ui inverted header">
+          Grow your <em>real</em> skills tree
+          <span class="sub header">
+            Learn all the skills you need to make and sell real games.
+            Gain coding, design, team and business skills through real experiences with others.
+          </span>
+        </h2>
+        <a class="ui big green fluid button" href="{{ MGB_URL }}learn/getstarted" target="_blank">
+          Start Learning
+        </a>
       </div>
-      <div class="seven wide column">
-        <!-- Mock SkillsMap -->
+      <div class="nine wide computer ten wide tablet column">
         <div class="mgb-mock-skillsmap mgb-alternating-media">
           <div class="bar getStarted">
             <div class="label"><i class="small plus icon"></i>Get Started</div>
@@ -202,28 +193,24 @@
             <div class="label"><i class="small plus icon"></i>Business</div>
           </div>
         </div>
-      </div>
-      <div class="six wide column">
-        <h2 class="ui inverted header">
-          Grow your <em>real</em> skills tree
-          <span class="sub header">
-            Learn all the skills you need to make and sell real games.
-            Gain coding, design, team and business skills through real experiences with others.
-          </span>
-        </h2>
-        <a class="ui big green fluid button" href="{{ MGB_URL }}learn/getstarted" target="_blank">
-          Start Learning
-        </a>
+        <img
+          style="transform: scaleX(-1)"
+          class="mgb-alternating-mascot"
+          src="~/app/images/mascots/duck.png"
+          alt="Duck"
+        >
       </div>
     </div>
 
-    <div class="ui hidden section divider"></div>
     <div class="ui section divider"></div>
-    <div class="ui hidden section divider"></div>
 
     <!-- TUTORIALS -->
-    <div class="ui padded middle aligned equal width stackable grid">
-      <div class="seven wide right aligned column">
+    <div class="ui middle aligned equal width stackable grid">
+      <div class="nine wide computer ten wide tablet column">
+        <img class="mgb-alternating-media ui image" src="{{ BASE_URL }}/img/tutorials_1200x720.png" >
+        <img class="mgb-alternating-mascot" src="~/app/images/mascots/bigguy.png" alt="Duck" >
+      </div>
+      <div class="seven wide computer six wide tablet column">
         <h2 class="ui inverted header">
           Best tutorials you've ever seen
           <span class="sub header">
@@ -232,27 +219,13 @@
         </h2>
         <a class="ui big green fluid button" href="{{ MGB_URL }}learn/getstarted" target="_blank">Try it</a>
       </div>
-      <div class="six wide column">
-        <img class="mgb-alternating-media ui image" src="{{ BASE_URL }}/img/tutorials_1200x720.png" >
-      </div>
-      <div class="three wide column">
-        <img class="ui small image" src="~/app/images/mascots/bigguy.png" alt="Duck" >
-      </div>
     </div>
 
-    <div class="ui hidden section divider"></div>
     <div class="ui section divider"></div>
-    <div class="ui hidden section divider"></div>
 
     <!-- BADGES -->
-    <div class="ui padded middle aligned equal width stackable grid">
-      <div class="three wide column">
-        <img class="ui small image" src="~/app/images/mascots/ideaguy.png" alt="Duck" >
-      </div>
-      <div class="six wide column">
-        <img class="mgb-alternating-media ui image" src="{{ BASE_URL }}/img/profile.png" >
-      </div>
-      <div class="seven wide column">
+    <div class="ui middle aligned equal width stackable mobile vertically reversed grid mgb-alternate-right">
+      <div class="seven wide computer six wide tablet column">
         <h2 class="ui inverted header">
           Join and grow within our community
           <span class="sub header">
@@ -260,51 +233,59 @@
             Earn skill badges as you progress from beginner to guru.
           </span>
         </h2>
-        <a class="ui big green fluid button" href="{{ MGB_URL }}learn/getstarted" target="_blank">Earn
-          Badges</a>
+        <a class="ui big green fluid button" href="{{ MGB_URL }}learn/getstarted" target="_blank">
+          Earn Badges
+        </a>
+      </div>
+      <div class="nine wide computer ten wide tablet column">
+        <img class="mgb-alternating-media ui image" src="{{ BASE_URL }}/img/profile.png" >
+        <img class="mgb-alternating-mascot" src="~/app/images/mascots/ideaguy.png" alt="Duck" >
       </div>
     </div>
   </div>
-  <div class="ui hidden section divider"></div>
 </section>
 
 <section>
-  <div class="ui hidden section divider"></div>
-  <h1 class="ui center aligned icon header">
-    <img class="ui medium image" src="~/app/images/mascots/team.png" />
-    <span class="content">For everyone</span>
-  </h1>
-  <div class="ui one column center aligned padded grid">
-    <div class="column">
-      <div class="ui compact secondary menu mgb-for-everyone-menu">
-        <a class="item active">Students</a>
-        <a class="item">Parents</a>
-        <a class="item">GameJammers</a>
+  <div class="ui text container">
+    <h1 class="ui center aligned icon header">
+      <img class="ui medium image" src="~/app/images/mascots/team.png" />
+      <span class="content">For Everyone</span>
+    </h1>
+    <div class="ui segment">
+      <div class="ui one column center aligned grid">
+        <div class="column">
+          <div class="ui compact secondary menu mgb-for-everyone-menu">
+            <a class="item active">Students</a>
+            <a class="item">Parents</a>
+            <a class="item">GameJammers</a>
+          </div>
+          <div class="ui compact secondary menu mgb-for-everyone-menu">
+            <a class="item">Artists</a>
+            <a class="item">Teachers</a>
+            <a class="item">Trolls</a>
+          </div>
+          <div class="ui fitted hidden divider mgb-for-everyone-divider"></div>
+        </div>
+        <div class="column">
+          <div class="ui header">
+            <span class="mgb-for-everyone-main">
+              Have a great game idea? We'll help you make it!
+            </span>
+          </div>
+          <p class="sub header mgb-for-everyone-secondary">
+            Start by making Actor-based games <em>without</em> code.
+            Later, code deeper games using JavaScript if you want to.
+          </p>
+        </div>
       </div>
-      <div class="ui compact secondary menu mgb-for-everyone-menu">
-        <a class="item">Artists</a>
-        <a class="item">Teachers</a>
-        <a class="item">Trolls</a>
-      </div>
-      <div class="ui fitted hidden divider mgb-for-everyone-divider"></div>
-    </div>
-    <div class="column">
-      <p class="mgb-for-everyone-main">
-        Have a great idea for a game? Sign up and start making it with us. We'll help!
-      </p>
-      <p class="mgb-for-everyone-secondary">
-        Start by making Actor-based games <em>without</em> code.
-        Later, code deeper games using JavaScript if you want to.
-      </p>
     </div>
   </div>
-  <div class="ui hidden section divider"></div>
 </section>
 
 <!-- FOOTER -->
 <footer>
   <div class="ui container">
-    <div class="ui equal width grid">
+    <div class="ui equal width stackable grid">
       <div class="eight wide column">
         <h4 class="ui inverted header">
           Gain Skills
@@ -338,18 +319,20 @@
       </div>
     </div>
 
-    <div class="ui hidden section divider"></div>
-    <div class="ui hidden section divider"></div>
 
-    <div class="ui equal width grid">
+    <div class="ui equal width stackable grid">
       <div class="eight wide column">
         Copyright ©2017 MyCodeBuilder Inc. All Rights Reserved.
       </div>
       <div class="column">
-        <div class="ui small inverted divided very relaxed horizontal link list">
-          <a class="item" href="{{ MGB_URL }}legal/tos" target="_blank">Terms and Conditions</a>
-          <a class="item" href="{{ MGB_URL }}legal/privacy" target="_blank">Privacy Policy</a>
-          <a class="item" href="mailto:david@mycodebuilder.com">Contact Us</a>
+        <div class="ui equal width grid">
+          <div class="column">
+            <div class="ui small inverted horizontal divided link list">
+              <a class="item" href="{{ MGB_URL }}legal/tos" target="_blank">Terms and Conditions</a>
+              <a class="item" href="{{ MGB_URL }}legal/privacy" target="_blank">Privacy Policy</a>
+              <a class="item" href="mailto:david@mycodebuilder.com">Contact Us</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -374,7 +357,5 @@
   ga('create', 'UA-82379171-2', 'auto')
   ga('send', 'pageview')
 </script>
-
-
 </body>
 </html>

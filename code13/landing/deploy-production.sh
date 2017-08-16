@@ -19,11 +19,17 @@ deploy_to_cloudfront() {
 
 yarn build --silent
 
-# CloudFront Distribution for http://landing.mygamebuilder.com
+echo ""
+echo "  Deploying to http://landing.mygamebuilder.com"
+echo ""
 deploy_to_cloudfront "E2FKDU47P960M9"
 
-# CloudFront Distribution for http://build.games
+echo ""
+echo "  Deploying to http://build.games"
+echo ""
 deploy_to_cloudfront "E3QW36VHKDBE06"
 
-# CloudFront Distribution for http://mycodebuilder.com
+echo ""
+echo "  Deploying to http://mycodebuilder.com"
+echo ""
 deploy_to_cloudfront "E2XZU0ZPCFTF6S"

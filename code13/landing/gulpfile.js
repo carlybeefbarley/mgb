@@ -143,7 +143,7 @@ gulp.task('awspublish', function() {
     },
     accessKeyId: AWS_ACCESS_KEY_ID,
     secretAccessKey: AWS_SECRET_ACCESS_KEY,
-    DISTRIBUTION_ID: AWS_CLOUDFRONT_DISTRIBUTION_ID,
+    distributionId: AWS_CLOUDFRONT_DISTRIBUTION_ID,
     region: 'us-east-1',
   }
 

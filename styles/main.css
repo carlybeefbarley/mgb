@@ -443,12 +443,12 @@ section:not(:last-child),
 }
 .mgb-hero .mgb-hero-caption {
   text-align: center;
-  padding: 3vh 0;
+  padding: 5vh 0 8vh 0;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
 }
 .mgb-hero .mgb-hero-caption .ui.header {
   font-size: 2.5rem;
-  margin: 0 0 0.25vh;
+  margin: 0 0 1vh;
 }
 .mgb-hero .mgb-hero-caption .mgb-lead {
   font-size: 1.5rem;

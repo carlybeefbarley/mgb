@@ -44,6 +44,7 @@ window.addEventListener('load', function() {
       $media.setAttribute('loop', true)
       $media.setAttribute('autoplay', true)
       $media.style.cursor = 'pointer'
+      $media.style.background = '#000'
       $media.addEventListener('click', function(e) {
         $media.paused ? $media.play() : $media.pause()
       })

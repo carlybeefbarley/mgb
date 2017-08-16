@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 set -e
 
+sh ./confirm-app-build.sh
+
 # See some related info at https://medium.com/@willmorgan/moving-a-static-website-to-aws-s3-cloudfront-with-https-1fdd95563106
 
 deploy_to_cloudfront() {

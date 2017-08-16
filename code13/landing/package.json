@@ -8,7 +8,7 @@
     "build": "gulp clean build",
     "start": "gulp",
     "deploy": "yarn run deploy:staging && yarn run deploy:production",
-    "deploy:staging": "cross-env BASE_URL=/mgb/ yarn run build --silent && gh-pages -d dist",
+    "deploy:staging": "sh ./deploy-staging.sh",
     "deploy:production": "sh ./deploy-production.sh"
   },
   "author": "",

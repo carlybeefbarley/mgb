@@ -50,6 +50,7 @@ This will automatically copy the `team.png` asset to the landing's `dist/` direc
 Each deploy runs a fresh build prior to deploying.
 
 ```
+$ yarn deploy               # Deploys to staging and production
 $ yarn deploy:staging       # Deploys to `gh-pages` site
 $ yarn deploy:production    # Deploys to all production domains
 ```

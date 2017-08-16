@@ -7,9 +7,9 @@
     "preinstall": "which use-yarn && use-yarn || true",
     "build": "gulp clean build",
     "start": "gulp",
+    "deploy": "yarn run deploy:staging && yarn run deploy:production",
     "deploy:staging": "cross-env BASE_URL=/mgb/ yarn run build --silent && gh-pages -d dist",
-    "deploy:production": "sh ./deploy.sh",
-    "awsdeploy": "cross-env BASE_URL= yarn run build --silent && gulp awspublish"
+    "deploy:production": "sh ./deploy-production.sh"
   },
   "author": "",
   "license": "ISC",

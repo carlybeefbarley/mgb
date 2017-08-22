@@ -153,8 +153,11 @@ gulp.task('awspublish', function() {
   return gulp
     .src('dist/**')
     .pipe(g.revAll.revision())
-    .pipe(g.awspublish.gzip())
+    // don't gzip videos, S3 doesn't serve them with the right encoding headers by default
+    // this is a shortcut since we'll be moving all videos to youtube anyway
+    .pipe(g.if(file => !/.*\.webm$/.test(file.path), g.awspublish.gzip()))
     .pipe(publisher.publish(headers))
+    .pipe(publisher.sync())
     .pipe(publisher.cache())
     .pipe(g.awspublish.reporter())
     .pipe(g.cloudfront(aws))

@@ -154,8 +154,8 @@ export const setUpCloudFront = function() {
           },
           QueryString: true /* required - this will affect update to new sources - e.g. meteor uses hash=xxxxxx */,
           Headers: {
-            Quantity: 1 /* required - send all headers to origin ?? or none */,
-            Items: ['Origin'],
+            Quantity: 2, /* required - send all headers to origin ?? or none */
+            Items: ['Origin', 'Accept'],
           },
           QueryStringCacheKeys: {
             Quantity: 0 /* required */,

@@ -23,7 +23,7 @@ export const getNavPanels = (currUser, showAll) => {
         name: 'mgb', // used for mgjr-np-{name}- id generation
         icon: { name: 'home' },
         explainClickAction: 'Shortcut: Clicking here jumps to the Home Page',
-        hdr: (
+        header: (
           <Menu.Item className="borderless" color="black" style={{ padding: '0px 8px' }}>
             <img src="/images/logos/mgb/medium/03.png" style={{ width: 130 }} />
           </Menu.Item>
@@ -55,7 +55,7 @@ export const getNavPanels = (currUser, showAll) => {
         explainClickAction: 'Shortcut: Clicking here jumps to the Learning Paths page',
         icon: { name: 'student' },
         fHideForIconView: true, // For top-level, items, use
-        hdr: 'Learn',
+        header: 'Learn',
         to: '/learn',
         menu: [
           /*
@@ -103,7 +103,7 @@ export const getNavPanels = (currUser, showAll) => {
         name: 'play',
         explainClickAction: 'Shortcut: Clicking here jumps to the list of playable games',
         icon: { name: 'game' },
-        hdr: 'Play',
+        header: 'Play',
         to: '/games',
         menu: [
           {
@@ -136,7 +136,7 @@ export const getNavPanels = (currUser, showAll) => {
         name: 'meet',
         explainClickAction: 'Shortcut: Clicking here jumps to the User search page',
         icon: { name: 'street view' },
-        hdr: 'Meet',
+        header: 'Meet',
         to: '/users',
         menu: [
           {
@@ -178,7 +178,7 @@ export const getNavPanels = (currUser, showAll) => {
         name: 'assets',
         explainClickAction: 'Shortcut: Clicking here jumps to the list of your Assets',
         icon: { name: 'pencil' },
-        hdr: 'Assets',
+        header: 'Assets',
         to: uname ? `/u/${uname}/assets` : '/assets',
         menu: [
           {
@@ -212,7 +212,7 @@ export const getNavPanels = (currUser, showAll) => {
         name: 'projects',
         explainClickAction: 'Shortcut: Clicking here jumps to the list of your Projects',
         icon: { name: 'sitemap' },
-        hdr: 'Projects',
+        header: 'Projects',
         to: `/u/${uname}/projects`,
         menu: _.compact([
           showUserOptions && {
@@ -240,7 +240,7 @@ export const getNavPanels = (currUser, showAll) => {
       },
       showGuestOptions && {
         name: 'login',
-        hdr: 'Log in',
+        header: 'Log in',
         icon: { name: 'sign in' },
         style: { padding: '4px 16px' },
         menu: null,
@@ -248,7 +248,7 @@ export const getNavPanels = (currUser, showAll) => {
       },
       showGuestOptions && {
         name: 'signup',
-        hdr: <Button color="yellow" content="Sign Up" />, // Button here will grow the height of the NavPanel but that's ok for not-logged in case IMHO
+        header: <Button color="yellow" content="Sign Up" />, // Button here will grow the height of the NavPanel but that's ok for not-logged in case IMHO
         icon: { name: 'signup' },
         style: { padding: '4px 16px' },
         menu: null,
@@ -258,7 +258,7 @@ export const getNavPanels = (currUser, showAll) => {
         name: 'user',
         explainClickAction: 'Shortcut: Clicking here jumps to your Profile Page', // if logged in, and this is used by tutorials, so that's ok
         icon: { name: 'user' },
-        hdr: 'Login',
+        header: 'Login',
         to: uname ? `/u/${uname}` : '/signup',
         menu: _.compact([
           showUserOptions && {
@@ -354,7 +354,7 @@ class NavPanel extends React.Component {
             name={v.name}
             openLeft={side === 'right'}
             key={v.name}
-            hdr={useIcons || !v.hdr ? <Icon size="large" {...v.icon} /> : v.hdr}
+            header={useIcons || !v.header ? <Icon size="large" {...v.icon} /> : v.header}
             menu={v.menu}
             to={v.to}
             query={v.query}
@@ -373,7 +373,7 @@ class NavPanel extends React.Component {
               key="user"
               name="user"
               style={_isLoggedInSty}
-              hdr={<Image id="mgbjr-np-user-avatar" centered avatar src={userAvatarSrc} />}
+              header={<Image id="mgbjr-np-user-avatar" centered avatar src={userAvatarSrc} />}
               menu={userMenu.menu}
               to={userMenu.to}
             />

@@ -46,7 +46,7 @@ const ProjectSelector = ({
   const userName = user ? user.profile.name : 'guest'
   let NameMatchedProjectObject = null // This is for the less-good use of this Component that just uses projectNames, and not objects
 
-  ownedProjects.push(<Dropdown.Header key="__ownedHdr" content={`Projects owned by ${userName}`} />)
+  ownedProjects.push(<Dropdown.Header key="__ownedHeader" content={`Projects owned by ${userName}`} />)
 
   // Always show the 'No Project' scenario
   const isSelectionForNoProject = !chosenProjectObj && chosenProjectName === _NO_PROJECT_PROJNAME
@@ -113,7 +113,7 @@ const ProjectSelector = ({
   // Prepend a header to the member-of list if it is non-empty
   if (memberOfProjects.length > 0)
     memberOfProjects.unshift(
-      <Dropdown.Header key="__memberHdr" content={`Projects ${userName} is a Member of`} />,
+      <Dropdown.Header key="__memberHeader" content={`Projects ${userName} is a Member of`} />,
     )
 
   // Create the   |  In Project:  (ProjectSelect v)    |    UI

@@ -58,7 +58,7 @@ const ProjectMembershipPopup = props => {
   const { currUserId, asset, currUserProjects, canEdit, handleToggleProjectName } = props
   if (!asset) return null
 
-  const makeHdrEl = (key, msg) => (
+  const makeHeaderEl = (key, msg) => (
     <div key={key} className="ui left aligned header">
       <small>{msg}</small>
     </div>
@@ -68,7 +68,7 @@ const ProjectMembershipPopup = props => {
   // If I am owner, then show all possible projects and switch state for each
   if (asset.ownerId === currUserId) {
     // Current user is Asset owner, so show all possible projects and switch state for each
-    choices.push(makeHdrEl('h1', 'My projects with this asset'))
+    choices.push(makeHeaderEl('h1', 'My projects with this asset'))
     _.each(currUserProjects, (p, idx) => {
       const isAssetPartOfProject = _.includes(asset.projectNames, p.name)
       if (p.ownerId === currUserId)
@@ -115,19 +115,19 @@ const ProjectMembershipPopup = props => {
 
     const amMember = _.filter(projectsTable, p => p.isCurrUserProjectMember)
     if (amMember.length > 0) {
-      choices.push(makeHdrEl('h1', `Member of:`))
+      choices.push(makeHeaderEl('h1', `Member of:`))
       _.each(amMember, makeRow)
     }
 
     const amNotMember = _.filter(projectsTable, p => !p.isCurrUserProjectMember)
     if (amNotMember.length > 0) {
-      choices.push(makeHdrEl('h2', `Not a Member:`))
+      choices.push(makeHeaderEl('h2', `Not a Member:`))
       _.each(amNotMember, makeRow)
     }
 
     if (amNotMember.length === 0 && amMember.length === 0)
-      choices.push(makeHdrEl('h3', `Asset is not in any projects`))
-    else choices.unshift(makeHdrEl('h0', `${asset.dn_ownerName}'s Projects containing this Asset`))
+      choices.push(makeHeaderEl('h3', `Asset is not in any projects`))
+    else choices.unshift(makeHeaderEl('h0', `${asset.dn_ownerName}'s Projects containing this Asset`))
   }
 
   return <div style={{ maxHeight: '500px', overflow: 'scroll' }}>{choices}</div>

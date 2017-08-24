@@ -13,7 +13,7 @@ const _nowrapStyle = {
   marginBottom: '1em',
 }
 
-const SomeProjects = ({ user, projects, width, ownedFlag, wrap, hdr }) => {
+const SomeProjects = ({ user, projects, width, ownedFlag, wrap, header }) => {
   const comps = _.compact(
     projects.map(p => {
       const isOwner = p.ownerId === user._id
@@ -27,7 +27,7 @@ const SomeProjects = ({ user, projects, width, ownedFlag, wrap, hdr }) => {
     <Grid.Row width={width}>
       <Header as="h2">
         <QLink to={`/u/${user.profile.name}/projects`}>
-          {hdr} <small>({comps.length})</small>
+          {header} <small>({comps.length})</small>
         </QLink>
       </Header>
       <Card.Group style={wrap ? _wrapStyle : _nowrapStyle}>{comps}</Card.Group>
@@ -36,14 +36,14 @@ const SomeProjects = ({ user, projects, width, ownedFlag, wrap, hdr }) => {
 }
 
 const _variants = [
-  { ownedFlag: true, hdr: 'Owned Projects' },
-  { ownedFlag: false, hdr: 'Project Memberships' },
+  { ownedFlag: true, header: 'Owned Projects' },
+  { ownedFlag: false, header: 'Project Memberships' },
 ]
 
 const UserProjects = props =>
   !props.projects || props.projects.length === 0 ? null : (
     <Grid.Column width={props.width}>
-      {_.map(_variants, v => <SomeProjects key={v.hdr} {...props} {...v} />)}
+      {_.map(_variants, v => <SomeProjects key={v.header} {...props} {...v} />)}
     </Grid.Column>
   )
 

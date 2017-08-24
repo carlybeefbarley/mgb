@@ -106,10 +106,10 @@ const fpFlexPanelContentWidthInPixels = 285 // The cool stuff
 
 // Toast and other warnings
 const _toastTypes = {
-  error: { funcName: 'error', hdr: 'Error', delay: 7000 },
-  warning: { funcName: 'warning', hdr: 'Warning', delay: 4000 },
-  info: { funcName: 'info', hdr: 'Info', delay: 4000 },
-  success: { funcName: 'success', hdr: 'Success', delay: 4000 },
+  error: { funcName: 'error', header: 'Error', delay: 7000 },
+  warning: { funcName: 'warning', header: 'Warning', delay: 4000 },
+  info: { funcName: 'info', header: 'Info', delay: 4000 },
+  success: { funcName: 'success', header: 'Success', delay: 4000 },
 }
 
 /**
@@ -119,7 +119,7 @@ const _toastTypes = {
  */
 export const showToast = (content, type = 'success') => {
   const useType = _toastTypes[type] || _toastTypes['success']
-  if (content) NotificationManager[useType.funcName](content, useType.hdr, useType.delay)
+  if (content) NotificationManager[useType.funcName](content, useType.header, useType.delay)
   return useType.delay
 }
 

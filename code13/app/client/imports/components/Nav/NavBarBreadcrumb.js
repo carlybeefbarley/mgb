@@ -60,7 +60,7 @@ const ProjectsSection = ({ usernameToShow, projectNames }) => {
   )
 }
 
-const _learnCodeItemHdrs = {
+const _learnCodeItemHeaders = {
   basics: 'JavaScript basics',
   phaser: 'GameDev Concepts',
   games: 'GameDev Tutorials',
@@ -305,7 +305,7 @@ const NavBarBreadcrumbUI = props => {
     //
     // LearnCode ITEM   [TODO: FIX THIS? seems to not ne working]
     //
-    learnCodeItem && <span key="learn-code-item">{_learnCodeItemHdrs[learnCodeItem]}</span>,
+    learnCodeItem && <span key="learn-code-item">{_learnCodeItemHeaders[learnCodeItem]}</span>,
     //
     // Other low-context item (create asset, list users etc) ITEM
     //

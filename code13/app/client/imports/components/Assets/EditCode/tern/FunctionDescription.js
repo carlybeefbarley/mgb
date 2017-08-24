@@ -10,20 +10,20 @@ const FunctionDescription = React.createClass({
   },
 
   /** Make A Table
- * @param {array} hdrs - Array of Column Header strings to be displayed (or null)
+ * @param {array} headers - Array of Column Header strings to be displayed (or null)
  * @param {array} fields - Array of field names to match headers. "#" means 'display row number (1=first)'
  * @param {array} data - Array of objects (maybe) containing specified fields
  * @param {number} highlightRow - 0-based row index to highlight
  */
-  makeTable(hdrs, fields, data, highlightRow = undefined) {
+  makeTable(headers, fields, data, highlightRow = undefined) {
     let m = this.props.helpDocJsonMethodInfo
     // TODO: add extra description for the rest/spread arguments ... (three dots)
     return (
       <table className="ui very compact small celled table">
-        {!hdrs ? null : (
+        {!headers ? null : (
           <thead>
             <tr>
-              {hdrs.map((h, colIdx) => {
+              {headers.map((h, colIdx) => {
                 return <th key={colIdx}>{h}</th>
               })}
             </tr>

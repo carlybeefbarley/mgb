@@ -7,7 +7,7 @@ import _ from 'lodash'
 const _openLeftStyle = { left: 'auto', right: '0' }
 class NavPanelItem extends React.PureComponent {
   static propTypes = {
-    hdr: PropTypes.node,
+    header: PropTypes.node,
     name: PropTypes.string.isRequired, // Used for generating mgbjr-id-${name}-.. parts of joyride tags
     openLeft: PropTypes.bool,
     menu: PropTypes.arrayOf(
@@ -35,7 +35,7 @@ class NavPanelItem extends React.PureComponent {
   }
 
   render() {
-    const { hdr, name, menu, style, openLeft } = this.props
+    const { header, name, menu, style, openLeft } = this.props
     const { open } = this.state
 
     return (
@@ -45,7 +45,7 @@ class NavPanelItem extends React.PureComponent {
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
         onClick={this.handleDropdownClick}
-        trigger={<span>{hdr}</span>}
+        trigger={<span>{header}</span>}
         icon={null}
         open={open}
         style={style}

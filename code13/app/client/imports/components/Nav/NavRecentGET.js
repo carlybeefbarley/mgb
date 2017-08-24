@@ -154,12 +154,12 @@ const NavRecentGET = React.createClass({
 
     var retvalJsx = []
 
-    const hdrSty = isNp ? {} : { marginTop: '8px' }
+    const headerSty = isNp ? {} : { marginTop: '8px' }
     _.each(['justNow/Just Now', 'today/Today', 'older/Before today'], v => {
       const [k, txt] = v.split('/')
       if (retval[k].length > 0)
         retvalJsx.push(
-          <div className="header item" style={hdrSty} key={'_H' + k}>
+          <div className="header item" style={headerSty} key={'_H' + k}>
             {txt}
           </div>,
           <div className="menu" key={'_M' + k}>

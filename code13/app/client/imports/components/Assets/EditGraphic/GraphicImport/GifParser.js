@@ -204,25 +204,25 @@ var parseGIF = function(st, handler) {
   }
 
   var parseHeader = function() {
-    var hdr = {}
-    hdr.sig = st.read(3)
-    hdr.ver = st.read(3)
-    if (hdr.sig !== 'GIF') throw new Error('Not a GIF file.') // XXX: This should probably be handled more nicely.
-    hdr.width = st.readUnsigned()
-    hdr.height = st.readUnsigned()
+    var header = {}
+    header.sig = st.read(3)
+    header.ver = st.read(3)
+    if (header.sig !== 'GIF') throw new Error('Not a GIF file.') // XXX: This should probably be handled more nicely.
+    header.width = st.readUnsigned()
+    header.height = st.readUnsigned()
 
     var bits = byteToBitArr(st.readByte())
-    hdr.gctFlag = bits.shift()
-    hdr.colorRes = bitsToNum(bits.splice(0, 3))
-    hdr.sorted = bits.shift()
-    hdr.gctSize = bitsToNum(bits.splice(0, 3))
+    header.gctFlag = bits.shift()
+    header.colorRes = bitsToNum(bits.splice(0, 3))
+    header.sorted = bits.shift()
+    header.gctSize = bitsToNum(bits.splice(0, 3))
 
-    hdr.bgColor = st.readByte()
-    hdr.pixelAspectRatio = st.readByte() // if not 0, aspectRatio = (pixelAspectRatio + 15) / 64
-    if (hdr.gctFlag) {
-      hdr.gct = parseCT(1 << (hdr.gctSize + 1))
+    header.bgColor = st.readByte()
+    header.pixelAspectRatio = st.readByte() // if not 0, aspectRatio = (pixelAspectRatio + 15) / 64
+    if (header.gctFlag) {
+      header.gct = parseCT(1 << (header.gctSize + 1))
     }
-    handler.hdr && handler.hdr(hdr)
+    handler.header && handler.header(header)
   }
 
   var parseExt = function(block) {
@@ -414,7 +414,7 @@ var GifParser = function(opts) {
   }
 
   var stream
-  var hdr
+  var header
 
   var loadError = null
   var loading = false
@@ -461,9 +461,9 @@ var GifParser = function(opts) {
     tmpCanvas.getContext('2d').setTransform(1, 0, 0, 1, 0, 0)
   }
 
-  var doHdr = function(_hdr) {
-    hdr = _hdr
-    setSizes(hdr.width, hdr.height)
+  var doHeader = function(_header) {
+    header = _header
+    setSizes(header.width, header.height)
   }
 
   var doGCE = function(gce) {
@@ -478,7 +478,7 @@ var GifParser = function(opts) {
   var pushFrame = function() {
     if (!frame) return
     frames.push({
-      data: frame.getImageData(0, 0, hdr.width, hdr.height),
+      data: frame.getImageData(0, 0, header.width, header.height),
       delay: delay,
     })
     // frameOffsets.push({ x: 0, y: 0 });
@@ -490,7 +490,7 @@ var GifParser = function(opts) {
     var currIdx = frames.length
 
     //ct = color table, gct = global color table
-    var ct = img.lctFlag ? img.lct : hdr.gct // TODO: What if neither exists?
+    var ct = img.lctFlag ? img.lct : header.gct // TODO: What if neither exists?
 
     /*
         Disposal method indicates the way in which the graphic is to
@@ -566,7 +566,7 @@ var GifParser = function(opts) {
   }
 
   var handler = {
-    hdr: withProgress(doHdr),
+    header: withProgress(doHeader),
     gce: withProgress(doGCE),
     com: withProgress(doNothing),
     // I guess that's all for now.
@@ -579,8 +579,8 @@ var GifParser = function(opts) {
       pushFrame()
       doDecodeProgress(false)
       if (!(options.c_w && options.c_h)) {
-        canvas.width = hdr.width * get_canvas_scale()
-        canvas.height = hdr.height * get_canvas_scale()
+        canvas.width = header.width * get_canvas_scale()
+        canvas.height = header.height * get_canvas_scale()
       }
       loading = false
       if (load_callback) {

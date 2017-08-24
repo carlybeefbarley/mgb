@@ -31,7 +31,7 @@ const flexPanelViews = [
     lev: 1,
     name: 'chat',
     icon: 'chat',
-    hdr: 'Chat',
+    header: 'Chat',
     el: fpChat,
     superAdminOnly: false,
     mobileUI: true,
@@ -41,7 +41,7 @@ const flexPanelViews = [
     lev: 1,
     name: 'assets',
     icon: 'pencil',
-    hdr: 'Assets',
+    header: 'Assets',
     el: fpAssets,
     superAdminOnly: false,
     mobileUI: true,
@@ -51,7 +51,7 @@ const flexPanelViews = [
     lev: 1,
     name: 'goals',
     icon: 'student',
-    hdr: 'Goals',
+    header: 'Goals',
     el: fpGoals,
     superAdminOnly: false,
     mobileUI: false,
@@ -61,7 +61,7 @@ const flexPanelViews = [
     lev: 2,
     name: 'skills',
     icon: 'plus circle',
-    hdr: 'Skills',
+    header: 'Skills',
     el: fpSkills,
     superAdminOnly: false,
     mobileUI: false,
@@ -71,20 +71,20 @@ const flexPanelViews = [
     lev: 3,
     name: 'settings',
     icon: 'settings',
-    hdr: 'Settings',
+    header: 'Settings',
     el: fpSettings,
     superAdminOnly: false,
     mobileUI: false,
   },
 
   // Experimental UI for mobile
-  //{ tag: 'more',      lev: 8,  name: 'more',     icon: 'ellipsis horizontal', hdr: 'More', el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
+  //{ tag: 'more',      lev: 8,  name: 'more',     icon: 'ellipsis horizontal', header: 'More', el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
   {
     tag: 'projects',
     lev: 5,
     name: 'projects',
     icon: 'sitemap',
-    hdr: 'Projects',
+    header: 'Projects',
     el: fpProjects,
     superAdminOnly: false,
     mobileUI: false,
@@ -94,18 +94,18 @@ const flexPanelViews = [
     lev: 7,
     name: 'users',
     icon: 'street view',
-    hdr: 'Users',
+    header: 'Users',
     el: fpUsers,
     superAdminOnly: false,
     mobileUI: false,
   },
-  //{ tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   hdr: 'Keys',          el: fpKeyboard,      superAdminOnly: false, mobileUI: false },
+  //{ tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   header: 'Keys',          el: fpKeyboard,      superAdminOnly: false, mobileUI: false },
   {
     tag: 'activity',
     lev: 6,
     name: 'activity',
     icon: 'lightning',
-    hdr: 'Activity',
+    header: 'Activity',
     el: fpActivity,
     superAdminOnly: false,
     mobileUI: true,
@@ -117,7 +117,7 @@ const flexPanelViews = [
     lev: 4,
     name: 'admin',
     icon: 'red bomb',
-    hdr: 'SuperAdmin',
+    header: 'SuperAdmin',
     el: fpSuperAdmin,
     superAdminOnly: true,
     mobileUI: true,
@@ -378,7 +378,7 @@ const FlexPanel = React.createClass({
     }
 
     const flexPanelChoice = this._getSelectedFlexPanelChoice()
-    const flexPanelHdr = flexPanelChoice.hdr
+    const flexPanelHeader = flexPanelChoice.header
     const flexPanelIcon = flexPanelChoice.icon
     const ElementFP = !this.props.isSuperAdmin && flexPanelChoice.superAdminOnly ? null : flexPanelChoice.el
 
@@ -391,7 +391,7 @@ const FlexPanel = React.createClass({
           <div>
             <div className="flex header" style={flexHeaderStyle}>
               <span className="title">
-                <i className={flexPanelIcon + ' icon'} />&nbsp;&nbsp;{flexPanelHdr}
+                <i className={flexPanelIcon + ' icon'} />&nbsp;&nbsp;{flexPanelHeader}
               </span>
               <span
                 style={{ float: 'right', cursor: 'pointer', padding: '3px' }}
@@ -404,7 +404,7 @@ const FlexPanel = React.createClass({
             <div style={panelScrollContainerStyle}>
               <div style={panelInnerStyle}>
                 {!ElementFP ? (
-                  <div className="ui fluid label">TODO: {flexPanelHdr} FlexPanel</div>
+                  <div className="ui fluid label">TODO: {flexPanelHeader} FlexPanel</div>
                 ) : (
                   <ElementFP
                     currUser={this.props.currUser}

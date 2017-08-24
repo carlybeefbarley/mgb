@@ -1,0 +1,58 @@
+version: 2
+jobs:
+  build:
+
+    docker:
+      - image: circleci/node:8.1.2
+
+    environment:
+      TZ: "/usr/share/zoneinfo/America/Los_Angeles"
+
+    steps:
+      - checkout
+
+      - run:
+          name: Update yarn
+          command: |
+            # remove default yarn
+            sudo rm -rf $(dirname $(which yarn))/yarn*
+            # download latest
+            rm -rf ~/.yarn
+            curl -o- -L https://yarnpkg.com/install.sh | bash
+            echo 'export PATH="${PATH}:${HOME}/.yarn/bin"' >> $BASH_ENV
+
+      # because we don't invoke npm (yarn), we need to add npm bin to PATH manually
+      - run:
+          name: Add npm bin to PATH
+          command: echo 'export PATH="${PATH}:$(npm bin)"' >> $BASH_ENV
+          working_directory: code13/app
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "code13/app/yarn.lock" }}
+            - v1-dependencies
+
+      - run:
+          name: Install dependencies
+          command: yarn
+          working_directory: code13/app
+
+      - save_cache:
+          key: v1-dependencies-{{ checksum "code13/app/yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+            - .yarn-cache
+            - node_modules
+
+      - run:
+          name: Test
+          command: yarn ci
+          working_directory: code13/app
+
+      # Deploy staging
+      - deploy:
+          name: Maybe deploy staging
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              sh ./stage.sh
+            fi

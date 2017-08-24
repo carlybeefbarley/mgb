@@ -18,7 +18,7 @@ export QT_QPA_PLATFORM=""
 phantomjs --version # show phantom version - more usable than hidden errors
 exitCode=$?
 # install phantomjs if none has been found
-if [ $exitCode == "127" ]; then
+if [ $exitCode = "127" ]; then
   echo 'Phantom not found - installing...'
   $DIR/installPhantom.sh
 fi

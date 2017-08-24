@@ -22,8 +22,10 @@
     "ci": "yarn lint && yarn jest",
     "test": "jest --config jest.config.js",
     "test:watch": "yarn jest -- --watchAll",
-    "storybook": "start-storybook -p 9001 -s ./.meteor/local/build/programs/web.browser/app,./.meteor/local/build/programs/web.browser -c .storybook",
-    "withDB": "MONGO_URL=mongodb://mgbapp:tiNmhsp1@ds021730-a0.mlab.com:21730,ds021730-a1.mlab.com:21730/mgb2_clus001?replicaSet=rs-ds021730 meteor"
+    "storybook":
+      "start-storybook -p 9001 -s ./.meteor/local/build/programs/web.browser/app,./.meteor/local/build/programs/web.browser -c .storybook",
+    "withDB":
+      "MONGO_URL=mongodb://mgbapp:tiNmhsp1@ds021730-a0.mlab.com:21730,ds021730-a1.mlab.com:21730/mgb2_clus001?replicaSet=rs-ds021730 meteor"
   },
   "postcss": {
     "plugins": {
@@ -109,7 +111,7 @@
     "mocha": "^3.4.2",
     "mocha-parallel": "^0.1.0",
     "mocha.parallel": "^0.15.2",
-    "prettier": "github:prettier/prettier#02639da9a9a31133ae85b047d565c00fe16fc052",
+    "prettier": "github:prettier/prettier#5c539b06a477995c588aaf03a4662a4ad8c68c20",
     "react-test-renderer": "^15.6.1",
     "selenium-webdriver": "^3.4.0",
     "use-yarn": "^1.0.1"

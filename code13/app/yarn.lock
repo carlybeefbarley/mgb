@@ -1309,9 +1309,9 @@ babel@^6.1.18:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel/-/babel-6.23.0.tgz#d0d1e7d803e974765beea3232d4e153c0efb90f4"
 
-babylon@7.0.0-beta.13:
-  version "7.0.0-beta.13"
-  resolved "https://registry.yarnpkg.com/babylon/-/babylon-7.0.0-beta.13.tgz#12425c1bfd9498be419021ed36b43fe4f0289c0a"
+babylon@7.0.0-beta.17:
+  version "7.0.0-beta.17"
+  resolved "https://registry.yarnpkg.com/babylon/-/babylon-7.0.0-beta.17.tgz#2aad4d6764f409dfb3ac216d855dc93d70d37911"
 
 babylon@^6.17.0, babylon@^6.17.2, babylon@^6.17.4:
   version "6.17.4"
@@ -1898,19 +1898,7 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
-cosmiconfig@2.1.3:
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/cosmiconfig/-/cosmiconfig-2.1.3.tgz#952771eb0dddc1cb3fa2f6fbe51a522e93b3ee0a"
-  dependencies:
-    is-directory "^0.3.1"
-    js-yaml "^3.4.3"
-    minimist "^1.2.0"
-    object-assign "^4.1.0"
-    os-homedir "^1.0.1"
-    parse-json "^2.2.0"
-    require-from-string "^1.1.0"
-
-cosmiconfig@^2.1.0, cosmiconfig@^2.1.1:
+cosmiconfig@2.2.2, cosmiconfig@^2.1.0, cosmiconfig@^2.1.1:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/cosmiconfig/-/cosmiconfig-2.2.2.tgz#6173cebd56fac042c1f4390edf7af6c07c7cb892"
   dependencies:
@@ -2926,9 +2914,9 @@ flatten@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.2.tgz#dae46a9d78fbe25292258cc1e780a41d95c03782"
 
-flow-parser@0.47.0:
-  version "0.47.0"
-  resolved "https://registry.yarnpkg.com/flow-parser/-/flow-parser-0.47.0.tgz#c57d35ff19bb40fb0f07222298e58cd4afa8a59a"
+flow-parser@0.51.0:
+  version "0.51.0"
+  resolved "https://registry.yarnpkg.com/flow-parser/-/flow-parser-0.51.0.tgz#e1c0ceb6f802ba21d16c2fda8e42c824f40f4684"
 
 follow-redirects@^1.2.3:
   version "1.2.4"
@@ -4117,10 +4105,6 @@ json-stable-stringify@^1.0.1:
 json-stringify-safe@^5.0.1, json-stringify-safe@~5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/json-stringify-safe/-/json-stringify-safe-5.0.1.tgz#1296a2d58fd45f19a0f6ce01d65701e2c735b6eb"
-
-json-to-ast@2.0.0-alpha1.2:
-  version "2.0.0-alpha1.2"
-  resolved "https://registry.yarnpkg.com/json-to-ast/-/json-to-ast-2.0.0-alpha1.2.tgz#fe27fd89eb639eca1e01f578e79d46ee36e238e8"
 
 json3@3.3.2:
   version "3.3.2"
@@ -5802,24 +5786,23 @@ preserve@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/preserve/-/preserve-0.2.0.tgz#815ed1f6ebc65926f865b310c0713bcb3315ce4b"
 
-"prettier@github:prettier/prettier#02639da9a9a31133ae85b047d565c00fe16fc052":
+"prettier@github:prettier/prettier#5c539b06a477995c588aaf03a4662a4ad8c68c20":
   version "1.5.3"
-  resolved "https://codeload.github.com/prettier/prettier/tar.gz/02639da9a9a31133ae85b047d565c00fe16fc052"
+  resolved "https://codeload.github.com/prettier/prettier/tar.gz/5c539b06a477995c588aaf03a4662a4ad8c68c20"
   dependencies:
     babel-code-frame "7.0.0-alpha.12"
-    babylon "7.0.0-beta.13"
+    babylon "7.0.0-beta.17"
     chalk "2.0.1"
-    cosmiconfig "2.1.3"
+    cosmiconfig "2.2.2"
     dashify "0.2.2"
     diff "3.2.0"
     esutils "2.0.2"
-    flow-parser "0.47.0"
+    flow-parser "0.51.0"
     get-stream "3.0.0"
     globby "^6.1.0"
     graphql "0.10.1"
     ignore "^3.3.3"
     jest-validate "20.0.3"
-    json-to-ast "2.0.0-alpha1.2"
     minimatch "3.0.4"
     minimist "1.2.0"
     parse5 "3.0.2"
@@ -5831,7 +5814,7 @@ preserve@^0.2.0:
     postcss-values-parser "git://github.com/shellscape/postcss-values-parser.git#5e351360479116f3fe309602cdd15b0a233bc29f"
     strip-bom "3.0.0"
     typescript "2.5.0-dev.20170617"
-    typescript-eslint-parser "git://github.com/eslint/typescript-eslint-parser.git#7c38401aa1452e6cc493151b8ab3a591e4d5e74a"
+    typescript-eslint-parser "git://github.com/eslint/typescript-eslint-parser.git#65b019ba9a10475af30e664ce38e550c21acdedd"
 
 pretty-format@^20.0.3:
   version "20.0.3"
@@ -7247,9 +7230,9 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-"typescript-eslint-parser@git://github.com/eslint/typescript-eslint-parser.git#7c38401aa1452e6cc493151b8ab3a591e4d5e74a":
-  version "4.0.0"
-  resolved "git://github.com/eslint/typescript-eslint-parser.git#7c38401aa1452e6cc493151b8ab3a591e4d5e74a"
+"typescript-eslint-parser@git://github.com/eslint/typescript-eslint-parser.git#65b019ba9a10475af30e664ce38e550c21acdedd":
+  version "6.0.1"
+  resolved "git://github.com/eslint/typescript-eslint-parser.git#65b019ba9a10475af30e664ce38e550c21acdedd"
   dependencies:
     lodash.unescape "4.0.1"
     semver "5.3.0"

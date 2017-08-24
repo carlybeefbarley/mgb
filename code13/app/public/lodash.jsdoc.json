@@ -9,7 +9,8 @@
       "fires": "",
       "constructor": {
         "name": "_",
-        "description": "Creates a `lodash` object which wraps `value` to enable implicit method\nchain sequences. Methods that operate on and return arrays, collections,\nand functions can be chained together. Methods that retrieve a single value\nor may return a primitive value will automatically end the chain sequence\nand return the unwrapped value. Otherwise, the value must be unwrapped\nwith `_#value`.\n\nExplicit chain sequences, which must be unwrapped with `_#value`, may be\nenabled using `_.chain`.\n\nThe execution of chained methods is lazy, that is, it's deferred until\n`_#value` is implicitly or explicitly called.\n\nLazy evaluation allows several methods to support shortcut fusion.\nShortcut fusion is an optimization to merge iteratee calls; this avoids\nthe creation of intermediate arrays and can greatly reduce the number of\niteratee executions. Sections of a chain sequence qualify for shortcut\nfusion if the section is applied to an array of at least `200` elements\nand any iteratees accept only one argument. The heuristic for whether a\nsection qualifies for shortcut fusion is subject to change.\n\nChaining is supported in custom builds as long as the `_#value` method is\ndirectly or indirectly included in the build.\n\nIn addition to lodash methods, wrappers have `Array` and `String` methods.\n\nThe wrapper `Array` methods are:\n`concat`, `join`, `pop`, `push`, `shift`, `sort`, `splice`, and `unshift`\n\nThe wrapper `String` methods are:\n`replace` and `split`\n\nThe wrapper methods that support shortcut fusion are:\n`at`, `compact`, `drop`, `dropRight`, `dropWhile`, `filter`, `find`,\n`findLast`, `head`, `initial`, `last`, `map`, `reject`, `reverse`, `slice`,\n`tail`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `toArray`\n\nThe chainable wrapper methods are:\n`after`, `ary`, `assign`, `assignIn`, `assignInWith`, `assignWith`, `at`,\n`before`, `bind`, `bindAll`, `bindKey`, `castArray`, `chain`, `chunk`,\n`commit`, `compact`, `concat`, `conforms`, `constant`, `countBy`, `create`,\n`curry`, `debounce`, `defaults`, `defaultsDeep`, `defer`, `delay`,\n`difference`, `differenceBy`, `differenceWith`, `drop`, `dropRight`,\n`dropRightWhile`, `dropWhile`, `extend`, `extendWith`, `fill`, `filter`,\n`flatMap`, `flatMapDeep`, `flatMapDepth`, `flatten`, `flattenDeep`,\n`flattenDepth`, `flip`, `flow`, `flowRight`, `fromPairs`, `functions`,\n`functionsIn`, `groupBy`, `initial`, `intersection`, `intersectionBy`,\n`intersectionWith`, `invert`, `invertBy`, `invokeMap`, `iteratee`, `keyBy`,\n`keys`, `keysIn`, `map`, `mapKeys`, `mapValues`, `matches`, `matchesProperty`,\n`memoize`, `merge`, `mergeWith`, `method`, `methodOf`, `mixin`, `negate`,\n`nthArg`, `omit`, `omitBy`, `once`, `orderBy`, `over`, `overArgs`,\n`overEvery`, `overSome`, `partial`, `partialRight`, `partition`, `pick`,\n`pickBy`, `plant`, `property`, `propertyOf`, `pull`, `pullAll`, `pullAllBy`,\n`pullAllWith`, `pullAt`, `push`, `range`, `rangeRight`, `rearg`, `reject`,\n`remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`,\n`slice`, `sort`, `sortBy`, `splice`, `spread`, `tail`, `take`, `takeRight`,\n`takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`, `toArray`,\n`toPairs`, `toPairsIn`, `toPath`, `toPlainObject`, `transform`, `unary`,\n`union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`, `uniqWith`, `unset`,\n`unshift`, `unzip`, `unzipWith`, `update`, `updateWith`, `values`,\n`valuesIn`, `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`,\n`zipObject`, `zipObjectDeep`, and `zipWith`\n\nThe wrapper methods that are **not** chainable by default are:\n`add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,\n`cloneDeep`, `cloneDeepWith`, `cloneWith`, `deburr`, `divide`, `each`,\n`eachRight`, `endsWith`, `eq`, `escape`, `escapeRegExp`, `every`, `find`,\n`findIndex`, `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `first`,\n`floor`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,\n`forOwnRight`, `get`, `gt`, `gte`, `has`, `hasIn`, `head`, `identity`,\n`includes`, `indexOf`, `inRange`, `invoke`, `isArguments`, `isArray`,\n`isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`, `isBuffer`,\n`isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`, `isError`,\n`isFinite`, `isFunction`, `isInteger`, `isLength`, `isMap`, `isMatch`,\n`isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,\n`isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,\n`isSet`, `isString`, `isUndefined`, `isTypedArray`, `isWeakMap`, `isWeakSet`,\n`join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`, `lowerFirst`,\n`lt`, `lte`, `max`, `maxBy`, `mean`, `meanBy`, `min`, `minBy`, `multiply`,\n`noConflict`, `noop`, `now`, `nth`, `pad`, `padEnd`, `padStart`, `parseInt`,\n`pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,\n`runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,\n`sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,\n`startsWith`, `subtract`, `sum`, `sumBy`, `template`, `times`, `toInteger`,\n`toJSON`, `toLength`, `toLower`, `toNumber`, `toSafeInteger`, `toString`,\n`toUpper`, `trim`, `trimEnd`, `trimStart`, `truncate`, `unescape`,\n`uniqueId`, `upperCase`, `upperFirst`, `value`, and `words`",
+        "description":
+          "Creates a `lodash` object which wraps `value` to enable implicit method\nchain sequences. Methods that operate on and return arrays, collections,\nand functions can be chained together. Methods that retrieve a single value\nor may return a primitive value will automatically end the chain sequence\nand return the unwrapped value. Otherwise, the value must be unwrapped\nwith `_#value`.\n\nExplicit chain sequences, which must be unwrapped with `_#value`, may be\nenabled using `_.chain`.\n\nThe execution of chained methods is lazy, that is, it's deferred until\n`_#value` is implicitly or explicitly called.\n\nLazy evaluation allows several methods to support shortcut fusion.\nShortcut fusion is an optimization to merge iteratee calls; this avoids\nthe creation of intermediate arrays and can greatly reduce the number of\niteratee executions. Sections of a chain sequence qualify for shortcut\nfusion if the section is applied to an array of at least `200` elements\nand any iteratees accept only one argument. The heuristic for whether a\nsection qualifies for shortcut fusion is subject to change.\n\nChaining is supported in custom builds as long as the `_#value` method is\ndirectly or indirectly included in the build.\n\nIn addition to lodash methods, wrappers have `Array` and `String` methods.\n\nThe wrapper `Array` methods are:\n`concat`, `join`, `pop`, `push`, `shift`, `sort`, `splice`, and `unshift`\n\nThe wrapper `String` methods are:\n`replace` and `split`\n\nThe wrapper methods that support shortcut fusion are:\n`at`, `compact`, `drop`, `dropRight`, `dropWhile`, `filter`, `find`,\n`findLast`, `head`, `initial`, `last`, `map`, `reject`, `reverse`, `slice`,\n`tail`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, and `toArray`\n\nThe chainable wrapper methods are:\n`after`, `ary`, `assign`, `assignIn`, `assignInWith`, `assignWith`, `at`,\n`before`, `bind`, `bindAll`, `bindKey`, `castArray`, `chain`, `chunk`,\n`commit`, `compact`, `concat`, `conforms`, `constant`, `countBy`, `create`,\n`curry`, `debounce`, `defaults`, `defaultsDeep`, `defer`, `delay`,\n`difference`, `differenceBy`, `differenceWith`, `drop`, `dropRight`,\n`dropRightWhile`, `dropWhile`, `extend`, `extendWith`, `fill`, `filter`,\n`flatMap`, `flatMapDeep`, `flatMapDepth`, `flatten`, `flattenDeep`,\n`flattenDepth`, `flip`, `flow`, `flowRight`, `fromPairs`, `functions`,\n`functionsIn`, `groupBy`, `initial`, `intersection`, `intersectionBy`,\n`intersectionWith`, `invert`, `invertBy`, `invokeMap`, `iteratee`, `keyBy`,\n`keys`, `keysIn`, `map`, `mapKeys`, `mapValues`, `matches`, `matchesProperty`,\n`memoize`, `merge`, `mergeWith`, `method`, `methodOf`, `mixin`, `negate`,\n`nthArg`, `omit`, `omitBy`, `once`, `orderBy`, `over`, `overArgs`,\n`overEvery`, `overSome`, `partial`, `partialRight`, `partition`, `pick`,\n`pickBy`, `plant`, `property`, `propertyOf`, `pull`, `pullAll`, `pullAllBy`,\n`pullAllWith`, `pullAt`, `push`, `range`, `rangeRight`, `rearg`, `reject`,\n`remove`, `rest`, `reverse`, `sampleSize`, `set`, `setWith`, `shuffle`,\n`slice`, `sort`, `sortBy`, `splice`, `spread`, `tail`, `take`, `takeRight`,\n`takeRightWhile`, `takeWhile`, `tap`, `throttle`, `thru`, `toArray`,\n`toPairs`, `toPairsIn`, `toPath`, `toPlainObject`, `transform`, `unary`,\n`union`, `unionBy`, `unionWith`, `uniq`, `uniqBy`, `uniqWith`, `unset`,\n`unshift`, `unzip`, `unzipWith`, `update`, `updateWith`, `values`,\n`valuesIn`, `without`, `wrap`, `xor`, `xorBy`, `xorWith`, `zip`,\n`zipObject`, `zipObjectDeep`, and `zipWith`\n\nThe wrapper methods that are **not** chainable by default are:\n`add`, `attempt`, `camelCase`, `capitalize`, `ceil`, `clamp`, `clone`,\n`cloneDeep`, `cloneDeepWith`, `cloneWith`, `deburr`, `divide`, `each`,\n`eachRight`, `endsWith`, `eq`, `escape`, `escapeRegExp`, `every`, `find`,\n`findIndex`, `findKey`, `findLast`, `findLastIndex`, `findLastKey`, `first`,\n`floor`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,\n`forOwnRight`, `get`, `gt`, `gte`, `has`, `hasIn`, `head`, `identity`,\n`includes`, `indexOf`, `inRange`, `invoke`, `isArguments`, `isArray`,\n`isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`, `isBuffer`,\n`isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`, `isError`,\n`isFinite`, `isFunction`, `isInteger`, `isLength`, `isMap`, `isMatch`,\n`isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,\n`isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,\n`isSet`, `isString`, `isUndefined`, `isTypedArray`, `isWeakMap`, `isWeakSet`,\n`join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`, `lowerFirst`,\n`lt`, `lte`, `max`, `maxBy`, `mean`, `meanBy`, `min`, `minBy`, `multiply`,\n`noConflict`, `noop`, `now`, `nth`, `pad`, `padEnd`, `padStart`, `parseInt`,\n`pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,\n`runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,\n`sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,\n`startsWith`, `subtract`, `sum`, `sumBy`, `template`, `times`, `toInteger`,\n`toJSON`, `toLength`, `toLower`, `toNumber`, `toSafeInteger`, `toString`,\n`toUpper`, `trim`, `trimEnd`, `trimStart`, `truncate`, `unescape`,\n`uniqueId`, `upperCase`, `upperFirst`, `value`, and `words`",
         "parameters": [
           {
             "name": "value",
@@ -52,7 +53,8 @@
           "name": "chunk",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of elements split into groups the length of `size`.\nIf `array` can't be split evenly, the final chunk will be the remaining\nelements.",
+          "description":
+            "Creates an array of elements split into groups the length of `size`.\nIf `array` can't be split evenly, the final chunk will be the remaining\nelements.",
           "parameters": [
             {
               "name": "array",
@@ -83,7 +85,8 @@
           "name": "compact",
           "access": "",
           "virtual": false,
-          "description": "Creates an array with all falsey values removed. The values `false`, `null`,\n`0`, `\"\"`, `undefined`, and `NaN` are falsey.",
+          "description":
+            "Creates an array with all falsey values removed. The values `false`, `null`,\n`0`, `\"\"`, `undefined`, and `NaN` are falsey.",
           "parameters": [
             {
               "name": "array",
@@ -104,7 +107,8 @@
           "name": "concat",
           "access": "",
           "virtual": false,
-          "description": "Creates a new array concatenating `array` with any additional arrays\nand/or values.",
+          "description":
+            "Creates a new array concatenating `array` with any additional arrays\nand/or values.",
           "parameters": [
             {
               "name": "array",
@@ -197,7 +201,8 @@
           "name": "dropRightWhile",
           "access": "",
           "virtual": false,
-          "description": "Creates a slice of `array` excluding elements dropped from the end.\nElements are dropped until `predicate` returns falsey. The predicate is\ninvoked with three arguments: (value, index, array).",
+          "description":
+            "Creates a slice of `array` excluding elements dropped from the end.\nElements are dropped until `predicate` returns falsey. The predicate is\ninvoked with three arguments: (value, index, array).",
           "parameters": [
             {
               "name": "array",
@@ -228,7 +233,8 @@
           "name": "dropWhile",
           "access": "",
           "virtual": false,
-          "description": "Creates a slice of `array` excluding elements dropped from the beginning.\nElements are dropped until `predicate` returns falsey. The predicate is\ninvoked with three arguments: (value, index, array).",
+          "description":
+            "Creates a slice of `array` excluding elements dropped from the beginning.\nElements are dropped until `predicate` returns falsey. The predicate is\ninvoked with three arguments: (value, index, array).",
           "parameters": [
             {
               "name": "array",
@@ -259,7 +265,8 @@
           "name": "fill",
           "access": "",
           "virtual": false,
-          "description": "Fills elements of `array` with `value` from `start` up to, but not\nincluding, `end`.\n\n**Note:** This method mutates `array`.",
+          "description":
+            "Fills elements of `array` with `value` from `start` up to, but not\nincluding, `end`.\n\n**Note:** This method mutates `array`.",
           "parameters": [
             {
               "name": "array",
@@ -306,7 +313,8 @@
           "name": "findIndex",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.find` except that it returns the index of the first\nelement `predicate` returns truthy for instead of the element itself.",
+          "description":
+            "This method is like `_.find` except that it returns the index of the first\nelement `predicate` returns truthy for instead of the element itself.",
           "parameters": [
             {
               "name": "array",
@@ -337,7 +345,8 @@
           "name": "findLastIndex",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.findIndex` except that it iterates over elements\nof `collection` from right to left.",
+          "description":
+            "This method is like `_.findIndex` except that it iterates over elements\nof `collection` from right to left.",
           "parameters": [
             {
               "name": "array",
@@ -441,7 +450,8 @@
           "name": "fromPairs",
           "access": "",
           "virtual": false,
-          "description": "The inverse of `_.toPairs`; this method returns an object composed\nfrom key-value `pairs`.",
+          "description":
+            "The inverse of `_.toPairs`; this method returns an object composed\nfrom key-value `pairs`.",
           "parameters": [
             {
               "name": "pairs",
@@ -483,7 +493,8 @@
           "name": "indexOf",
           "access": "",
           "virtual": false,
-          "description": "Gets the index at which the first occurrence of `value` is found in `array`\nusing [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons. If `fromIndex` is negative, it's used as the\noffset from the end of `array`.",
+          "description":
+            "Gets the index at which the first occurrence of `value` is found in `array`\nusing [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons. If `fromIndex` is negative, it's used as the\noffset from the end of `array`.",
           "parameters": [
             {
               "name": "array",
@@ -593,7 +604,8 @@
           "name": "lastIndexOf",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.indexOf` except that it iterates over elements of\n`array` from right to left.",
+          "description":
+            "This method is like `_.indexOf` except that it iterates over elements of\n`array` from right to left.",
           "parameters": [
             {
               "name": "array",
@@ -632,7 +644,8 @@
           "name": "nth",
           "access": "",
           "virtual": false,
-          "description": "Gets the nth element of `array`. If `n` is negative, the nth element\nfrom the end is returned.",
+          "description":
+            "Gets the nth element of `array`. If `n` is negative, the nth element\nfrom the end is returned.",
           "parameters": [
             {
               "name": "array",
@@ -663,7 +676,8 @@
           "name": "pullAll",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.pull` except that it accepts an array of values to remove.\n\n**Note:** Unlike `_.difference`, this method mutates `array`.",
+          "description":
+            "This method is like `_.pull` except that it accepts an array of values to remove.\n\n**Note:** Unlike `_.difference`, this method mutates `array`.",
           "parameters": [
             {
               "name": "array",
@@ -694,7 +708,8 @@
           "name": "pullAllBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.pullAll` except that it accepts `iteratee` which is\ninvoked for each element of `array` and `values` to generate the criterion\nby which they're compared. The iteratee is invoked with one argument: (value).\n\n**Note:** Unlike `_.differenceBy`, this method mutates `array`.",
+          "description":
+            "This method is like `_.pullAll` except that it accepts `iteratee` which is\ninvoked for each element of `array` and `values` to generate the criterion\nby which they're compared. The iteratee is invoked with one argument: (value).\n\n**Note:** Unlike `_.differenceBy`, this method mutates `array`.",
           "parameters": [
             {
               "name": "array",
@@ -733,7 +748,8 @@
           "name": "pullAllWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.pullAll` except that it accepts `comparator` which\nis invoked to compare elements of `array` to `values`. The comparator is\ninvoked with two arguments: (arrVal, othVal).\n\n**Note:** Unlike `_.differenceWith`, this method mutates `array`.",
+          "description":
+            "This method is like `_.pullAll` except that it accepts `comparator` which\nis invoked to compare elements of `array` to `values`. The comparator is\ninvoked with two arguments: (arrVal, othVal).\n\n**Note:** Unlike `_.differenceWith`, this method mutates `array`.",
           "parameters": [
             {
               "name": "array",
@@ -772,7 +788,8 @@
           "name": "remove",
           "access": "",
           "virtual": false,
-          "description": "Removes all elements from `array` that `predicate` returns truthy for\nand returns an array of the removed elements. The predicate is invoked\nwith three arguments: (value, index, array).\n\n**Note:** Unlike `_.filter`, this method mutates `array`. Use `_.pull`\nto pull elements from an array by value.",
+          "description":
+            "Removes all elements from `array` that `predicate` returns truthy for\nand returns an array of the removed elements. The predicate is invoked\nwith three arguments: (value, index, array).\n\n**Note:** Unlike `_.filter`, this method mutates `array`. Use `_.pull`\nto pull elements from an array by value.",
           "parameters": [
             {
               "name": "array",
@@ -803,7 +820,8 @@
           "name": "reverse",
           "access": "",
           "virtual": false,
-          "description": "Reverses `array` so that the first element becomes the last, the second\nelement becomes the second to last, and so on.\n\n**Note:** This method mutates `array` and is based on\n[`Array#reverse`](https://mdn.io/Array/reverse).",
+          "description":
+            "Reverses `array` so that the first element becomes the last, the second\nelement becomes the second to last, and so on.\n\n**Note:** This method mutates `array` and is based on\n[`Array#reverse`](https://mdn.io/Array/reverse).",
           "parameters": [
             {
               "name": "array",
@@ -826,7 +844,8 @@
           "name": "slice",
           "access": "",
           "virtual": false,
-          "description": "Creates a slice of `array` from `start` up to, but not including, `end`.\n\n**Note:** This method is used instead of\n[`Array#slice`](https://mdn.io/Array/slice) to ensure dense arrays are\nreturned.",
+          "description":
+            "Creates a slice of `array` from `start` up to, but not including, `end`.\n\n**Note:** This method is used instead of\n[`Array#slice`](https://mdn.io/Array/slice) to ensure dense arrays are\nreturned.",
           "parameters": [
             {
               "name": "array",
@@ -863,7 +882,8 @@
           "name": "sortedIndex",
           "access": "",
           "virtual": false,
-          "description": "Uses a binary search to determine the lowest index at which `value`\nshould be inserted into `array` in order to maintain its sort order.",
+          "description":
+            "Uses a binary search to determine the lowest index at which `value`\nshould be inserted into `array` in order to maintain its sort order.",
           "parameters": [
             {
               "name": "array",
@@ -892,7 +912,8 @@
           "name": "sortedIndexBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.sortedIndex` except that it accepts `iteratee`\nwhich is invoked for `value` and each element of `array` to compute their\nsort ranking. The iteratee is invoked with one argument: (value).",
+          "description":
+            "This method is like `_.sortedIndex` except that it accepts `iteratee`\nwhich is invoked for `value` and each element of `array` to compute their\nsort ranking. The iteratee is invoked with one argument: (value).",
           "parameters": [
             {
               "name": "array",
@@ -931,7 +952,8 @@
           "name": "sortedIndexOf",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.indexOf` except that it performs a binary\nsearch on a sorted `array`.",
+          "description":
+            "This method is like `_.indexOf` except that it performs a binary\nsearch on a sorted `array`.",
           "parameters": [
             {
               "name": "array",
@@ -960,7 +982,8 @@
           "name": "sortedLastIndex",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.sortedIndex` except that it returns the highest\nindex at which `value` should be inserted into `array` in order to\nmaintain its sort order.",
+          "description":
+            "This method is like `_.sortedIndex` except that it returns the highest\nindex at which `value` should be inserted into `array` in order to\nmaintain its sort order.",
           "parameters": [
             {
               "name": "array",
@@ -989,7 +1012,8 @@
           "name": "sortedLastIndexBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.sortedLastIndex` except that it accepts `iteratee`\nwhich is invoked for `value` and each element of `array` to compute their\nsort ranking. The iteratee is invoked with one argument: (value).",
+          "description":
+            "This method is like `_.sortedLastIndex` except that it accepts `iteratee`\nwhich is invoked for `value` and each element of `array` to compute their\nsort ranking. The iteratee is invoked with one argument: (value).",
           "parameters": [
             {
               "name": "array",
@@ -1028,7 +1052,8 @@
           "name": "sortedLastIndexOf",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.lastIndexOf` except that it performs a binary\nsearch on a sorted `array`.",
+          "description":
+            "This method is like `_.lastIndexOf` except that it performs a binary\nsearch on a sorted `array`.",
           "parameters": [
             {
               "name": "array",
@@ -1057,7 +1082,8 @@
           "name": "sortedUniq",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.uniq` except that it's designed and optimized\nfor sorted arrays.",
+          "description":
+            "This method is like `_.uniq` except that it's designed and optimized\nfor sorted arrays.",
           "parameters": [
             {
               "name": "array",
@@ -1078,7 +1104,8 @@
           "name": "sortedUniqBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.uniqBy` except that it's designed and optimized\nfor sorted arrays.",
+          "description":
+            "This method is like `_.uniqBy` except that it's designed and optimized\nfor sorted arrays.",
           "parameters": [
             {
               "name": "array",
@@ -1190,7 +1217,8 @@
           "name": "takeRightWhile",
           "access": "",
           "virtual": false,
-          "description": "Creates a slice of `array` with elements taken from the end. Elements are\ntaken until `predicate` returns falsey. The predicate is invoked with\nthree arguments: (value, index, array).",
+          "description":
+            "Creates a slice of `array` with elements taken from the end. Elements are\ntaken until `predicate` returns falsey. The predicate is invoked with\nthree arguments: (value, index, array).",
           "parameters": [
             {
               "name": "array",
@@ -1221,7 +1249,8 @@
           "name": "takeWhile",
           "access": "",
           "virtual": false,
-          "description": "Creates a slice of `array` with elements taken from the beginning. Elements\nare taken until `predicate` returns falsey. The predicate is invoked with\nthree arguments: (value, index, array).",
+          "description":
+            "Creates a slice of `array` with elements taken from the beginning. Elements\nare taken until `predicate` returns falsey. The predicate is invoked with\nthree arguments: (value, index, array).",
           "parameters": [
             {
               "name": "array",
@@ -1252,7 +1281,8 @@
           "name": "uniq",
           "access": "",
           "virtual": false,
-          "description": "Creates a duplicate-free version of an array, using\n[`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons, in which only the first occurrence of each\nelement is kept.",
+          "description":
+            "Creates a duplicate-free version of an array, using\n[`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons, in which only the first occurrence of each\nelement is kept.",
           "parameters": [
             {
               "name": "array",
@@ -1273,7 +1303,8 @@
           "name": "uniqBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.uniq` except that it accepts `iteratee` which is\ninvoked for each element in `array` to generate the criterion by which\nuniqueness is computed. The iteratee is invoked with one argument: (value).",
+          "description":
+            "This method is like `_.uniq` except that it accepts `iteratee` which is\ninvoked for each element in `array` to generate the criterion by which\nuniqueness is computed. The iteratee is invoked with one argument: (value).",
           "parameters": [
             {
               "name": "array",
@@ -1304,7 +1335,8 @@
           "name": "uniqWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.uniq` except that it accepts `comparator` which\nis invoked to compare elements of `array`. The comparator is invoked with\ntwo arguments: (arrVal, othVal).",
+          "description":
+            "This method is like `_.uniq` except that it accepts `comparator` which\nis invoked to compare elements of `array`. The comparator is invoked with\ntwo arguments: (arrVal, othVal).",
           "parameters": [
             {
               "name": "array",
@@ -1335,7 +1367,8 @@
           "name": "unzip",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.zip` except that it accepts an array of grouped\nelements and creates an array regrouping the elements to their pre-zip\nconfiguration.",
+          "description":
+            "This method is like `_.zip` except that it accepts an array of grouped\nelements and creates an array regrouping the elements to their pre-zip\nconfiguration.",
           "parameters": [
             {
               "name": "array",
@@ -1358,7 +1391,8 @@
           "name": "unzipWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.unzip` except that it accepts `iteratee` to specify\nhow regrouped values should be combined. The iteratee is invoked with the\nelements of each group: (...group).",
+          "description":
+            "This method is like `_.unzip` except that it accepts `iteratee` to specify\nhow regrouped values should be combined. The iteratee is invoked with the\nelements of each group: (...group).",
           "parameters": [
             {
               "name": "array",
@@ -1389,7 +1423,8 @@
           "name": "zipObject",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.fromPairs` except that it accepts two arrays,\none of property identifiers and one of corresponding values.",
+          "description":
+            "This method is like `_.fromPairs` except that it accepts two arrays,\none of property identifiers and one of corresponding values.",
           "parameters": [
             {
               "name": "props",
@@ -1449,7 +1484,8 @@
           "name": "chain",
           "access": "",
           "virtual": false,
-          "description": "Creates a `lodash` wrapper instance that wraps `value` with explicit method\nchain sequences enabled. The result of such sequences must be unwrapped\nwith `_#value`.",
+          "description":
+            "Creates a `lodash` wrapper instance that wraps `value` with explicit method\nchain sequences enabled. The result of such sequences must be unwrapped\nwith `_#value`.",
           "parameters": [
             {
               "name": "value",
@@ -1472,7 +1508,8 @@
           "name": "tap",
           "access": "",
           "virtual": false,
-          "description": "This method invokes `interceptor` and returns `value`. The interceptor\nis invoked with one argument; (value). The purpose of this method is to\n\"tap into\" a method chain sequence in order to modify intermediate results.",
+          "description":
+            "This method invokes `interceptor` and returns `value`. The interceptor\nis invoked with one argument; (value). The purpose of this method is to\n\"tap into\" a method chain sequence in order to modify intermediate results.",
           "parameters": [
             {
               "name": "value",
@@ -1503,7 +1540,8 @@
           "name": "thru",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.tap` except that it returns the result of `interceptor`.\nThe purpose of this method is to \"pass thru\" values replacing intermediate\nresults in a method chain sequence.",
+          "description":
+            "This method is like `_.tap` except that it returns the result of `interceptor`.\nThe purpose of this method is to \"pass thru\" values replacing intermediate\nresults in a method chain sequence.",
           "parameters": [
             {
               "name": "value",
@@ -1534,7 +1572,8 @@
           "name": "every",
           "access": "",
           "virtual": false,
-          "description": "Checks if `predicate` returns truthy for **all** elements of `collection`.\nIteration is stopped once `predicate` returns falsey. The predicate is\ninvoked with three arguments: (value, index|key, collection).",
+          "description":
+            "Checks if `predicate` returns truthy for **all** elements of `collection`.\nIteration is stopped once `predicate` returns falsey. The predicate is\ninvoked with three arguments: (value, index|key, collection).",
           "parameters": [
             {
               "name": "collection",
@@ -1565,7 +1604,8 @@
           "name": "filter",
           "access": "",
           "virtual": false,
-          "description": "Iterates over elements of `collection`, returning an array of all elements\n`predicate` returns truthy for. The predicate is invoked with three\narguments: (value, index|key, collection).",
+          "description":
+            "Iterates over elements of `collection`, returning an array of all elements\n`predicate` returns truthy for. The predicate is invoked with three\narguments: (value, index|key, collection).",
           "parameters": [
             {
               "name": "collection",
@@ -1596,7 +1636,8 @@
           "name": "find",
           "access": "",
           "virtual": false,
-          "description": "Iterates over elements of `collection`, returning the first element\n`predicate` returns truthy for. The predicate is invoked with three\narguments: (value, index|key, collection).",
+          "description":
+            "Iterates over elements of `collection`, returning the first element\n`predicate` returns truthy for. The predicate is invoked with three\narguments: (value, index|key, collection).",
           "parameters": [
             {
               "name": "collection",
@@ -1627,7 +1668,8 @@
           "name": "findLast",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.find` except that it iterates over elements of\n`collection` from right to left.",
+          "description":
+            "This method is like `_.find` except that it iterates over elements of\n`collection` from right to left.",
           "parameters": [
             {
               "name": "collection",
@@ -1656,7 +1698,8 @@
           "name": "flatMap",
           "access": "",
           "virtual": false,
-          "description": "Creates a flattened array of values by running each element in `collection`\nthru `iteratee` and flattening the mapped results. The iteratee is invoked\nwith three arguments: (value, index|key, collection).",
+          "description":
+            "Creates a flattened array of values by running each element in `collection`\nthru `iteratee` and flattening the mapped results. The iteratee is invoked\nwith three arguments: (value, index|key, collection).",
           "parameters": [
             {
               "name": "collection",
@@ -1687,7 +1730,8 @@
           "name": "flatMapDeep",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.flatMap` except that it recursively flattens the\nmapped results.",
+          "description":
+            "This method is like `_.flatMap` except that it recursively flattens the\nmapped results.",
           "parameters": [
             {
               "name": "collection",
@@ -1718,7 +1762,8 @@
           "name": "flatMapDepth",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.flatMap` except that it recursively flattens the\nmapped results up to `depth` times.",
+          "description":
+            "This method is like `_.flatMap` except that it recursively flattens the\nmapped results up to `depth` times.",
           "parameters": [
             {
               "name": "collection",
@@ -1757,7 +1802,8 @@
           "name": "each",
           "access": "",
           "virtual": false,
-          "description": "Iterates over elements of `collection` and invokes `iteratee` for each element.\nThe iteratee is invoked with three arguments: (value, index|key, collection).\nIteratee functions may exit iteration early by explicitly returning `false`.\n\n**Note:** As with other \"Collections\" methods, objects with a \"length\"\nproperty are iterated like arrays. To avoid this behavior use `_.forIn`\nor `_.forOwn` for object iteration.",
+          "description":
+            "Iterates over elements of `collection` and invokes `iteratee` for each element.\nThe iteratee is invoked with three arguments: (value, index|key, collection).\nIteratee functions may exit iteration early by explicitly returning `false`.\n\n**Note:** As with other \"Collections\" methods, objects with a \"length\"\nproperty are iterated like arrays. To avoid this behavior use `_.forIn`\nor `_.forOwn` for object iteration.",
           "parameters": [
             {
               "name": "collection",
@@ -1788,7 +1834,8 @@
           "name": "eachRight",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.forEach` except that it iterates over elements of\n`collection` from right to left.",
+          "description":
+            "This method is like `_.forEach` except that it iterates over elements of\n`collection` from right to left.",
           "parameters": [
             {
               "name": "collection",
@@ -1819,7 +1866,8 @@
           "name": "includes",
           "access": "",
           "virtual": false,
-          "description": "Checks if `value` is in `collection`. If `collection` is a string, it's\nchecked for a substring of `value`, otherwise\n[`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nis used for equality comparisons. If `fromIndex` is negative, it's used as\nthe offset from the end of `collection`.",
+          "description":
+            "Checks if `value` is in `collection`. If `collection` is a string, it's\nchecked for a substring of `value`, otherwise\n[`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nis used for equality comparisons. If `fromIndex` is negative, it's used as\nthe offset from the end of `collection`.",
           "parameters": [
             {
               "name": "collection",
@@ -1858,7 +1906,8 @@
           "name": "map",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of values by running each element in `collection` thru\n`iteratee`. The iteratee is invoked with three arguments:\n(value, index|key, collection).\n\nMany lodash methods are guarded to work as iteratees for methods like\n`_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.\n\nThe guarded methods are:\n`ary`, `chunk`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,\n`fill`, `invert`, `parseInt`, `random`, `range`, `rangeRight`, `repeat`,\n`sampleSize`, `slice`, `some`, `sortBy`, `split`, `take`, `takeRight`,\n`template`, `trim`, `trimEnd`, `trimStart`, and `words`",
+          "description":
+            "Creates an array of values by running each element in `collection` thru\n`iteratee`. The iteratee is invoked with three arguments:\n(value, index|key, collection).\n\nMany lodash methods are guarded to work as iteratees for methods like\n`_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.\n\nThe guarded methods are:\n`ary`, `chunk`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,\n`fill`, `invert`, `parseInt`, `random`, `range`, `rangeRight`, `repeat`,\n`sampleSize`, `slice`, `some`, `sortBy`, `split`, `take`, `takeRight`,\n`template`, `trim`, `trimEnd`, `trimStart`, and `words`",
           "parameters": [
             {
               "name": "collection",
@@ -1889,7 +1938,8 @@
           "name": "orderBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.sortBy` except that it allows specifying the sort\norders of the iteratees to sort by. If `orders` is unspecified, all values\nare sorted in ascending order. Otherwise, specify an order of \"desc\" for\ndescending or \"asc\" for ascending sort order of corresponding values.",
+          "description":
+            "This method is like `_.sortBy` except that it allows specifying the sort\norders of the iteratees to sort by. If `orders` is unspecified, all values\nare sorted in ascending order. Otherwise, specify an order of \"desc\" for\ndescending or \"asc\" for ascending sort order of corresponding values.",
           "parameters": [
             {
               "name": "collection",
@@ -1928,7 +1978,8 @@
           "name": "reduce",
           "access": "",
           "virtual": false,
-          "description": "Reduces `collection` to a value which is the accumulated result of running\neach element in `collection` thru `iteratee`, where each successive\ninvocation is supplied the return value of the previous. If `accumulator`\nis not given, the first element of `collection` is used as the initial\nvalue. The iteratee is invoked with four arguments:\n(accumulator, value, index|key, collection).\n\nMany lodash methods are guarded to work as iteratees for methods like\n`_.reduce`, `_.reduceRight`, and `_.transform`.\n\nThe guarded methods are:\n`assign`, `defaults`, `defaultsDeep`, `includes`, `merge`, `orderBy`,\nand `sortBy`",
+          "description":
+            "Reduces `collection` to a value which is the accumulated result of running\neach element in `collection` thru `iteratee`, where each successive\ninvocation is supplied the return value of the previous. If `accumulator`\nis not given, the first element of `collection` is used as the initial\nvalue. The iteratee is invoked with four arguments:\n(accumulator, value, index|key, collection).\n\nMany lodash methods are guarded to work as iteratees for methods like\n`_.reduce`, `_.reduceRight`, and `_.transform`.\n\nThe guarded methods are:\n`assign`, `defaults`, `defaultsDeep`, `includes`, `merge`, `orderBy`,\nand `sortBy`",
           "parameters": [
             {
               "name": "collection",
@@ -1967,7 +2018,8 @@
           "name": "reduceRight",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.reduce` except that it iterates over elements of\n`collection` from right to left.",
+          "description":
+            "This method is like `_.reduce` except that it iterates over elements of\n`collection` from right to left.",
           "parameters": [
             {
               "name": "collection",
@@ -2006,7 +2058,8 @@
           "name": "reject",
           "access": "",
           "virtual": false,
-          "description": "The opposite of `_.filter`; this method returns the elements of `collection`\nthat `predicate` does **not** return truthy for.",
+          "description":
+            "The opposite of `_.filter`; this method returns the elements of `collection`\nthat `predicate` does **not** return truthy for.",
           "parameters": [
             {
               "name": "collection",
@@ -2058,7 +2111,8 @@
           "name": "sampleSize",
           "access": "",
           "virtual": false,
-          "description": "Gets `n` random elements at unique keys from `collection` up to the\nsize of `collection`.",
+          "description":
+            "Gets `n` random elements at unique keys from `collection` up to the\nsize of `collection`.",
           "parameters": [
             {
               "name": "collection",
@@ -2089,7 +2143,8 @@
           "name": "shuffle",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of shuffled values, using a version of the\n[Fisher-Yates shuffle](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).",
+          "description":
+            "Creates an array of shuffled values, using a version of the\n[Fisher-Yates shuffle](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).",
           "parameters": [
             {
               "name": "collection",
@@ -2110,7 +2165,8 @@
           "name": "size",
           "access": "",
           "virtual": false,
-          "description": "Gets the size of `collection` by returning its length for array-like\nvalues or the number of own enumerable string keyed properties for objects.",
+          "description":
+            "Gets the size of `collection` by returning its length for array-like\nvalues or the number of own enumerable string keyed properties for objects.",
           "parameters": [
             {
               "name": "collection",
@@ -2133,7 +2189,8 @@
           "name": "some",
           "access": "",
           "virtual": false,
-          "description": "Checks if `predicate` returns truthy for **any** element of `collection`.\nIteration is stopped once `predicate` returns truthy. The predicate is\ninvoked with three arguments: (value, index|key, collection).",
+          "description":
+            "Checks if `predicate` returns truthy for **any** element of `collection`.\nIteration is stopped once `predicate` returns truthy. The predicate is\ninvoked with three arguments: (value, index|key, collection).",
           "parameters": [
             {
               "name": "collection",
@@ -2164,7 +2221,8 @@
           "name": "after",
           "access": "",
           "virtual": false,
-          "description": "The opposite of `_.before`; this method creates a function that invokes\n`func` once it's called `n` or more times.",
+          "description":
+            "The opposite of `_.before`; this method creates a function that invokes\n`func` once it's called `n` or more times.",
           "parameters": [
             {
               "name": "n",
@@ -2195,7 +2253,8 @@
           "name": "ary",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that invokes `func`, with up to `n` arguments,\nignoring any additional arguments.",
+          "description":
+            "Creates a function that invokes `func`, with up to `n` arguments,\nignoring any additional arguments.",
           "parameters": [
             {
               "name": "func",
@@ -2224,7 +2283,8 @@
           "name": "before",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that invokes `func`, with the `this` binding and arguments\nof the created function, while it's called less than `n` times. Subsequent\ncalls to the created function return the result of the last `func` invocation.",
+          "description":
+            "Creates a function that invokes `func`, with the `this` binding and arguments\nof the created function, while it's called less than `n` times. Subsequent\ncalls to the created function return the result of the last `func` invocation.",
           "parameters": [
             {
               "name": "n",
@@ -2255,7 +2315,8 @@
           "name": "curry",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that accepts arguments of `func` and either invokes\n`func` returning its result, if at least `arity` number of arguments have\nbeen provided, or returns a function that accepts the remaining `func`\narguments, and so on. The arity of `func` may be specified if `func.length`\nis not sufficient.\n\nThe `_.curry.placeholder` value, which defaults to `_` in monolithic builds,\nmay be used as a placeholder for provided arguments.\n\n**Note:** This method doesn't set the \"length\" property of curried functions.",
+          "description":
+            "Creates a function that accepts arguments of `func` and either invokes\n`func` returning its result, if at least `arity` number of arguments have\nbeen provided, or returns a function that accepts the remaining `func`\narguments, and so on. The arity of `func` may be specified if `func.length`\nis not sufficient.\n\nThe `_.curry.placeholder` value, which defaults to `_` in monolithic builds,\nmay be used as a placeholder for provided arguments.\n\n**Note:** This method doesn't set the \"length\" property of curried functions.",
           "parameters": [
             {
               "name": "func",
@@ -2286,7 +2347,8 @@
           "name": "curryRight",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.curry` except that arguments are applied to `func`\nin the manner of `_.partialRight` instead of `_.partial`.\n\nThe `_.curryRight.placeholder` value, which defaults to `_` in monolithic\nbuilds, may be used as a placeholder for provided arguments.\n\n**Note:** This method doesn't set the \"length\" property of curried functions.",
+          "description":
+            "This method is like `_.curry` except that arguments are applied to `func`\nin the manner of `_.partialRight` instead of `_.partial`.\n\nThe `_.curryRight.placeholder` value, which defaults to `_` in monolithic\nbuilds, may be used as a placeholder for provided arguments.\n\n**Note:** This method doesn't set the \"length\" property of curried functions.",
           "parameters": [
             {
               "name": "func",
@@ -2317,7 +2379,8 @@
           "name": "debounce",
           "access": "",
           "virtual": false,
-          "description": "Creates a debounced function that delays invoking `func` until after `wait`\nmilliseconds have elapsed since the last time the debounced function was\ninvoked. The debounced function comes with a `cancel` method to cancel\ndelayed `func` invocations and a `flush` method to immediately invoke them.\nProvide an options object to indicate whether `func` should be invoked on\nthe leading and/or trailing edge of the `wait` timeout. The `func` is invoked\nwith the last arguments provided to the debounced function. Subsequent calls\nto the debounced function return the result of the last `func` invocation.\n\n**Note:** If `leading` and `trailing` options are `true`, `func` is invoked\non the trailing edge of the timeout only if the debounced function is\ninvoked more than once during the `wait` timeout.\n\nSee [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)\nfor details over the differences between `_.debounce` and `_.throttle`.",
+          "description":
+            "Creates a debounced function that delays invoking `func` until after `wait`\nmilliseconds have elapsed since the last time the debounced function was\ninvoked. The debounced function comes with a `cancel` method to cancel\ndelayed `func` invocations and a `flush` method to immediately invoke them.\nProvide an options object to indicate whether `func` should be invoked on\nthe leading and/or trailing edge of the `wait` timeout. The `func` is invoked\nwith the last arguments provided to the debounced function. Subsequent calls\nto the debounced function return the result of the last `func` invocation.\n\n**Note:** If `leading` and `trailing` options are `true`, `func` is invoked\non the trailing edge of the timeout only if the debounced function is\ninvoked more than once during the `wait` timeout.\n\nSee [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)\nfor details over the differences between `_.debounce` and `_.throttle`.",
           "parameters": [
             {
               "name": "func",
@@ -2403,7 +2466,8 @@
           "name": "memoize",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that memoizes the result of `func`. If `resolver` is\nprovided, it determines the cache key for storing the result based on the\narguments provided to the memoized function. By default, the first argument\nprovided to the memoized function is used as the map cache key. The `func`\nis invoked with the `this` binding of the memoized function.\n\n**Note:** The cache is exposed as the `cache` property on the memoized\nfunction. Its creation may be customized by replacing the `_.memoize.Cache`\nconstructor with one whose instances implement the\n[`Map`](http://ecma-international.org/ecma-262/6.0/#sec-properties-of-the-map-prototype-object)\nmethod interface of `delete`, `get`, `has`, and `set`.",
+          "description":
+            "Creates a function that memoizes the result of `func`. If `resolver` is\nprovided, it determines the cache key for storing the result based on the\narguments provided to the memoized function. By default, the first argument\nprovided to the memoized function is used as the map cache key. The `func`\nis invoked with the `this` binding of the memoized function.\n\n**Note:** The cache is exposed as the `cache` property on the memoized\nfunction. Its creation may be customized by replacing the `_.memoize.Cache`\nconstructor with one whose instances implement the\n[`Map`](http://ecma-international.org/ecma-262/6.0/#sec-properties-of-the-map-prototype-object)\nmethod interface of `delete`, `get`, `has`, and `set`.",
           "parameters": [
             {
               "name": "func",
@@ -2434,7 +2498,8 @@
           "name": "negate",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that negates the result of the predicate `func`. The\n`func` predicate is invoked with the `this` binding and arguments of the\ncreated function.",
+          "description":
+            "Creates a function that negates the result of the predicate `func`. The\n`func` predicate is invoked with the `this` binding and arguments of the\ncreated function.",
           "parameters": [
             {
               "name": "predicate",
@@ -2457,7 +2522,8 @@
           "name": "once",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that is restricted to invoking `func` once. Repeat calls\nto the function return the value of the first invocation. The `func` is\ninvoked with the `this` binding and arguments of the created function.",
+          "description":
+            "Creates a function that is restricted to invoking `func` once. Repeat calls\nto the function return the value of the first invocation. The `func` is\ninvoked with the `this` binding and arguments of the created function.",
           "parameters": [
             {
               "name": "func",
@@ -2480,7 +2546,8 @@
           "name": "rest",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that invokes `func` with the `this` binding of the\ncreated function and arguments from `start` and beyond provided as\nan array.\n\n**Note:** This method is based on the\n[rest parameter](https://mdn.io/rest_parameters).",
+          "description":
+            "Creates a function that invokes `func` with the `this` binding of the\ncreated function and arguments from `start` and beyond provided as\nan array.\n\n**Note:** This method is based on the\n[rest parameter](https://mdn.io/rest_parameters).",
           "parameters": [
             {
               "name": "func",
@@ -2511,7 +2578,8 @@
           "name": "spread",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that invokes `func` with the `this` binding of the\ncreate function and an array of arguments much like\n[`Function#apply`](http://www.ecma-international.org/ecma-262/6.0/#sec-function.prototype.apply).\n\n**Note:** This method is based on the\n[spread operator](https://mdn.io/spread_operator).",
+          "description":
+            "Creates a function that invokes `func` with the `this` binding of the\ncreate function and an array of arguments much like\n[`Function#apply`](http://www.ecma-international.org/ecma-262/6.0/#sec-function.prototype.apply).\n\n**Note:** This method is based on the\n[spread operator](https://mdn.io/spread_operator).",
           "parameters": [
             {
               "name": "func",
@@ -2542,7 +2610,8 @@
           "name": "throttle",
           "access": "",
           "virtual": false,
-          "description": "Creates a throttled function that only invokes `func` at most once per\nevery `wait` milliseconds. The throttled function comes with a `cancel`\nmethod to cancel delayed `func` invocations and a `flush` method to\nimmediately invoke them. Provide an options object to indicate whether\n`func` should be invoked on the leading and/or trailing edge of the `wait`\ntimeout. The `func` is invoked with the last arguments provided to the\nthrottled function. Subsequent calls to the throttled function return the\nresult of the last `func` invocation.\n\n**Note:** If `leading` and `trailing` options are `true`, `func` is\ninvoked on the trailing edge of the timeout only if the throttled function\nis invoked more than once during the `wait` timeout.\n\nSee [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)\nfor details over the differences between `_.throttle` and `_.debounce`.",
+          "description":
+            "Creates a throttled function that only invokes `func` at most once per\nevery `wait` milliseconds. The throttled function comes with a `cancel`\nmethod to cancel delayed `func` invocations and a `flush` method to\nimmediately invoke them. Provide an options object to indicate whether\n`func` should be invoked on the leading and/or trailing edge of the `wait`\ntimeout. The `func` is invoked with the last arguments provided to the\nthrottled function. Subsequent calls to the throttled function return the\nresult of the last `func` invocation.\n\n**Note:** If `leading` and `trailing` options are `true`, `func` is\ninvoked on the trailing edge of the timeout only if the throttled function\nis invoked more than once during the `wait` timeout.\n\nSee [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)\nfor details over the differences between `_.throttle` and `_.debounce`.",
           "parameters": [
             {
               "name": "func",
@@ -2597,7 +2666,8 @@
           "name": "unary",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that accepts up to one argument, ignoring any\nadditional arguments.",
+          "description":
+            "Creates a function that accepts up to one argument, ignoring any\nadditional arguments.",
           "parameters": [
             {
               "name": "func",
@@ -2618,7 +2688,8 @@
           "name": "wrap",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that provides `value` to the wrapper function as its\nfirst argument. Any additional arguments provided to the function are\nappended to those provided to the wrapper function. The wrapper is invoked\nwith the `this` binding of the created function.",
+          "description":
+            "Creates a function that provides `value` to the wrapper function as its\nfirst argument. Any additional arguments provided to the function are\nappended to those provided to the wrapper function. The wrapper is invoked\nwith the `this` binding of the created function.",
           "parameters": [
             {
               "name": "value",
@@ -2672,7 +2743,8 @@
           "name": "clone",
           "access": "",
           "virtual": false,
-          "description": "Creates a shallow clone of `value`.\n\n**Note:** This method is loosely based on the\n[structured clone algorithm](https://mdn.io/Structured_clone_algorithm)\nand supports cloning arrays, array buffers, booleans, date objects, maps,\nnumbers, `Object` objects, regexes, sets, strings, symbols, and typed\narrays. The own enumerable properties of `arguments` objects are cloned\nas plain objects. An empty object is returned for uncloneable values such\nas error objects, functions, DOM nodes, and WeakMaps.",
+          "description":
+            "Creates a shallow clone of `value`.\n\n**Note:** This method is loosely based on the\n[structured clone algorithm](https://mdn.io/Structured_clone_algorithm)\nand supports cloning arrays, array buffers, booleans, date objects, maps,\nnumbers, `Object` objects, regexes, sets, strings, symbols, and typed\narrays. The own enumerable properties of `arguments` objects are cloned\nas plain objects. An empty object is returned for uncloneable values such\nas error objects, functions, DOM nodes, and WeakMaps.",
           "parameters": [
             {
               "name": "value",
@@ -2695,7 +2767,8 @@
           "name": "cloneWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.clone` except that it accepts `customizer` which\nis invoked to produce the cloned value. If `customizer` returns `undefined`,\ncloning is handled by the method instead. The `customizer` is invoked with\nup to four arguments; (value [, index|key, object, stack]).",
+          "description":
+            "This method is like `_.clone` except that it accepts `customizer` which\nis invoked to produce the cloned value. If `customizer` returns `undefined`,\ncloning is handled by the method instead. The `customizer` is invoked with\nup to four arguments; (value [, index|key, object, stack]).",
           "parameters": [
             {
               "name": "value",
@@ -2780,7 +2853,8 @@
           "name": "eq",
           "access": "",
           "virtual": false,
-          "description": "Performs a\n[`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\ncomparison between two values to determine if they are equivalent.",
+          "description":
+            "Performs a\n[`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\ncomparison between two values to determine if they are equivalent.",
           "parameters": [
             {
               "name": "value",
@@ -2915,7 +2989,8 @@
           "name": "isArrayLike",
           "access": "",
           "virtual": false,
-          "description": "Checks if `value` is array-like. A value is considered array-like if it's\nnot a function and has a `value.length` that's an integer greater than or\nequal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.",
+          "description":
+            "Checks if `value` is array-like. A value is considered array-like if it's\nnot a function and has a `value.length` that's an integer greater than or\nequal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.",
           "parameters": [
             {
               "name": "value",
@@ -2938,7 +3013,8 @@
           "name": "isArrayLikeObject",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.isArrayLike` except that it also checks if `value`\nis an object.",
+          "description":
+            "This method is like `_.isArrayLike` except that it also checks if `value`\nis an object.",
           "parameters": [
             {
               "name": "value",
@@ -3024,7 +3100,8 @@
           "name": "isEmpty",
           "access": "",
           "virtual": false,
-          "description": "Checks if `value` is an empty object, collection, map, or set.\n\nObjects are considered empty if they have no own enumerable string keyed\nproperties.\n\nArray-like values such as `arguments` objects, arrays, buffers, strings, or\njQuery-like collections are considered empty if they have a `length` of `0`.\nSimilarly, maps and sets are considered empty if they have a `size` of `0`.",
+          "description":
+            "Checks if `value` is an empty object, collection, map, or set.\n\nObjects are considered empty if they have no own enumerable string keyed\nproperties.\n\nArray-like values such as `arguments` objects, arrays, buffers, strings, or\njQuery-like collections are considered empty if they have a `length` of `0`.\nSimilarly, maps and sets are considered empty if they have a `size` of `0`.",
           "parameters": [
             {
               "name": "value",
@@ -3047,7 +3124,8 @@
           "name": "isEqual",
           "access": "",
           "virtual": false,
-          "description": "Performs a deep comparison between two values to determine if they are\nequivalent.\n\n**Note:** This method supports comparing arrays, array buffers, booleans,\ndate objects, error objects, maps, numbers, `Object` objects, regexes,\nsets, strings, symbols, and typed arrays. `Object` objects are compared\nby their own, not inherited, enumerable properties. Functions and DOM\nnodes are **not** supported.",
+          "description":
+            "Performs a deep comparison between two values to determine if they are\nequivalent.\n\n**Note:** This method supports comparing arrays, array buffers, booleans,\ndate objects, error objects, maps, numbers, `Object` objects, regexes,\nsets, strings, symbols, and typed arrays. `Object` objects are compared\nby their own, not inherited, enumerable properties. Functions and DOM\nnodes are **not** supported.",
           "parameters": [
             {
               "name": "value",
@@ -3078,7 +3156,8 @@
           "name": "isEqualWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.isEqual` except that it accepts `customizer` which\nis invoked to compare values. If `customizer` returns `undefined`, comparisons\nare handled by the method instead. The `customizer` is invoked with up to\nsix arguments: (objValue, othValue [, index|key, object, other, stack]).",
+          "description":
+            "This method is like `_.isEqual` except that it accepts `customizer` which\nis invoked to compare values. If `customizer` returns `undefined`, comparisons\nare handled by the method instead. The `customizer` is invoked with up to\nsix arguments: (objValue, othValue [, index|key, object, other, stack]).",
           "parameters": [
             {
               "name": "value",
@@ -3117,7 +3196,8 @@
           "name": "isError",
           "access": "",
           "virtual": false,
-          "description": "Checks if `value` is an `Error`, `EvalError`, `RangeError`, `ReferenceError`,\n`SyntaxError`, `TypeError`, or `URIError` object.",
+          "description":
+            "Checks if `value` is an `Error`, `EvalError`, `RangeError`, `ReferenceError`,\n`SyntaxError`, `TypeError`, or `URIError` object.",
           "parameters": [
             {
               "name": "value",
@@ -3138,7 +3218,8 @@
           "name": "isFinite",
           "access": "",
           "virtual": false,
-          "description": "Checks if `value` is a finite primitive number.\n\n**Note:** This method is based on\n[`Number.isFinite`](https://mdn.io/Number/isFinite).",
+          "description":
+            "Checks if `value` is a finite primitive number.\n\n**Note:** This method is based on\n[`Number.isFinite`](https://mdn.io/Number/isFinite).",
           "parameters": [
             {
               "name": "value",
@@ -3182,7 +3263,8 @@
           "name": "isInteger",
           "access": "",
           "virtual": false,
-          "description": "Checks if `value` is an integer.\n\n**Note:** This method is based on\n[`Number.isInteger`](https://mdn.io/Number/isInteger).",
+          "description":
+            "Checks if `value` is an integer.\n\n**Note:** This method is based on\n[`Number.isInteger`](https://mdn.io/Number/isInteger).",
           "parameters": [
             {
               "name": "value",
@@ -3205,7 +3287,8 @@
           "name": "isLength",
           "access": "",
           "virtual": false,
-          "description": "Checks if `value` is a valid array-like length.\n\n**Note:** This function is loosely based on\n[`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).",
+          "description":
+            "Checks if `value` is a valid array-like length.\n\n**Note:** This function is loosely based on\n[`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).",
           "parameters": [
             {
               "name": "value",
@@ -3228,7 +3311,8 @@
           "name": "isObject",
           "access": "",
           "virtual": false,
-          "description": "Checks if `value` is the\n[language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)\nof `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)",
+          "description":
+            "Checks if `value` is the\n[language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)\nof `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)",
           "parameters": [
             {
               "name": "value",
@@ -3251,7 +3335,8 @@
           "name": "isObjectLike",
           "access": "",
           "virtual": false,
-          "description": "Checks if `value` is object-like. A value is object-like if it's not `null`\nand has a `typeof` result of \"object\".",
+          "description":
+            "Checks if `value` is object-like. A value is object-like if it's not `null`\nand has a `typeof` result of \"object\".",
           "parameters": [
             {
               "name": "value",
@@ -3295,7 +3380,8 @@
           "name": "isMatch",
           "access": "",
           "virtual": false,
-          "description": "Performs a partial deep comparison between `object` and `source` to\ndetermine if `object` contains equivalent property values. This method is\nequivalent to a `_.matches` function when `source` is partially applied.\n\n**Note:** This method supports comparing the same values as `_.isEqual`.",
+          "description":
+            "Performs a partial deep comparison between `object` and `source` to\ndetermine if `object` contains equivalent property values. This method is\nequivalent to a `_.matches` function when `source` is partially applied.\n\n**Note:** This method supports comparing the same values as `_.isEqual`.",
           "parameters": [
             {
               "name": "object",
@@ -3326,7 +3412,8 @@
           "name": "isMatchWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.isMatch` except that it accepts `customizer` which\nis invoked to compare values. If `customizer` returns `undefined`, comparisons\nare handled by the method instead. The `customizer` is invoked with five\narguments: (objValue, srcValue, index|key, object, source).",
+          "description":
+            "This method is like `_.isMatch` except that it accepts `customizer` which\nis invoked to compare values. If `customizer` returns `undefined`, comparisons\nare handled by the method instead. The `customizer` is invoked with five\narguments: (objValue, srcValue, index|key, object, source).",
           "parameters": [
             {
               "name": "object",
@@ -3365,7 +3452,8 @@
           "name": "isNaN",
           "access": "",
           "virtual": false,
-          "description": "Checks if `value` is `NaN`.\n\n**Note:** This method is based on\n[`Number.isNaN`](https://mdn.io/Number/isNaN) and is not the same as\nglobal [`isNaN`](https://mdn.io/isNaN) which returns `true` for\n`undefined` and other non-number values.",
+          "description":
+            "Checks if `value` is `NaN`.\n\n**Note:** This method is based on\n[`Number.isNaN`](https://mdn.io/Number/isNaN) and is not the same as\nglobal [`isNaN`](https://mdn.io/isNaN) which returns `true` for\n`undefined` and other non-number values.",
           "parameters": [
             {
               "name": "value",
@@ -3453,7 +3541,8 @@
           "name": "isNumber",
           "access": "",
           "virtual": false,
-          "description": "Checks if `value` is classified as a `Number` primitive or object.\n\n**Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are\nclassified as numbers, use the `_.isFinite` method.",
+          "description":
+            "Checks if `value` is classified as a `Number` primitive or object.\n\n**Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are\nclassified as numbers, use the `_.isFinite` method.",
           "parameters": [
             {
               "name": "value",
@@ -3476,7 +3565,8 @@
           "name": "isPlainObject",
           "access": "",
           "virtual": false,
-          "description": "Checks if `value` is a plain object, that is, an object created by the\n`Object` constructor or one with a `[[Prototype]]` of `null`.",
+          "description":
+            "Checks if `value` is a plain object, that is, an object created by the\n`Object` constructor or one with a `[[Prototype]]` of `null`.",
           "parameters": [
             {
               "name": "value",
@@ -3520,7 +3610,8 @@
           "name": "isSafeInteger",
           "access": "",
           "virtual": false,
-          "description": "Checks if `value` is a safe integer. An integer is safe if it's an IEEE-754\ndouble precision number which isn't the result of a rounded unsafe integer.\n\n**Note:** This method is based on\n[`Number.isSafeInteger`](https://mdn.io/Number/isSafeInteger).",
+          "description":
+            "Checks if `value` is a safe integer. An integer is safe if it's an IEEE-754\ndouble precision number which isn't the result of a rounded unsafe integer.\n\n**Note:** This method is based on\n[`Number.isSafeInteger`](https://mdn.io/Number/isSafeInteger).",
           "parameters": [
             {
               "name": "value",
@@ -3771,7 +3862,8 @@
           "name": "toInteger",
           "access": "",
           "virtual": false,
-          "description": "Converts `value` to an integer.\n\n**Note:** This function is loosely based on\n[`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).",
+          "description":
+            "Converts `value` to an integer.\n\n**Note:** This function is loosely based on\n[`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).",
           "parameters": [
             {
               "name": "value",
@@ -3794,7 +3886,8 @@
           "name": "toLength",
           "access": "",
           "virtual": false,
-          "description": "Converts `value` to an integer suitable for use as the length of an\narray-like object.\n\n**Note:** This method is based on\n[`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).",
+          "description":
+            "Converts `value` to an integer suitable for use as the length of an\narray-like object.\n\n**Note:** This method is based on\n[`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).",
           "parameters": [
             {
               "name": "value",
@@ -3840,7 +3933,8 @@
           "name": "toPlainObject",
           "access": "",
           "virtual": false,
-          "description": "Converts `value` to a plain object flattening inherited enumerable string\nkeyed properties of `value` to own properties of the plain object.",
+          "description":
+            "Converts `value` to a plain object flattening inherited enumerable string\nkeyed properties of `value` to own properties of the plain object.",
           "parameters": [
             {
               "name": "value",
@@ -3863,7 +3957,8 @@
           "name": "toSafeInteger",
           "access": "",
           "virtual": false,
-          "description": "Converts `value` to a safe integer. A safe integer can be compared and\nrepresented correctly.",
+          "description":
+            "Converts `value` to a safe integer. A safe integer can be compared and\nrepresented correctly.",
           "parameters": [
             {
               "name": "value",
@@ -3886,7 +3981,8 @@
           "name": "toString",
           "access": "",
           "virtual": false,
-          "description": "Converts `value` to a string. An empty string is returned for `null`\nand `undefined` values. The sign of `-0` is preserved.",
+          "description":
+            "Converts `value` to a string. An empty string is returned for `null`\nand `undefined` values. The sign of `-0` is preserved.",
           "parameters": [
             {
               "name": "value",
@@ -3909,7 +4005,8 @@
           "name": "create",
           "access": "",
           "virtual": false,
-          "description": "Creates an object that inherits from the `prototype` object. If a\n`properties` object is given, its own enumerable string keyed properties\nare assigned to the created object.",
+          "description":
+            "Creates an object that inherits from the `prototype` object. If a\n`properties` object is given, its own enumerable string keyed properties\nare assigned to the created object.",
           "parameters": [
             {
               "name": "prototype",
@@ -3940,7 +4037,8 @@
           "name": "findKey",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.find` except that it returns the key of the first\nelement `predicate` returns truthy for instead of the element itself.",
+          "description":
+            "This method is like `_.find` except that it returns the key of the first\nelement `predicate` returns truthy for instead of the element itself.",
           "parameters": [
             {
               "name": "object",
@@ -3971,7 +4069,8 @@
           "name": "findLastKey",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.findKey` except that it iterates over elements of\na collection in the opposite order.",
+          "description":
+            "This method is like `_.findKey` except that it iterates over elements of\na collection in the opposite order.",
           "parameters": [
             {
               "name": "object",
@@ -4002,7 +4101,8 @@
           "name": "forIn",
           "access": "",
           "virtual": false,
-          "description": "Iterates over own and inherited enumerable string keyed properties of an\nobject and invokes `iteratee` for each property. The iteratee is invoked\nwith three arguments: (value, key, object). Iteratee functions may exit\niteration early by explicitly returning `false`.",
+          "description":
+            "Iterates over own and inherited enumerable string keyed properties of an\nobject and invokes `iteratee` for each property. The iteratee is invoked\nwith three arguments: (value, key, object). Iteratee functions may exit\niteration early by explicitly returning `false`.",
           "parameters": [
             {
               "name": "object",
@@ -4033,7 +4133,8 @@
           "name": "forInRight",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.forIn` except that it iterates over properties of\n`object` in the opposite order.",
+          "description":
+            "This method is like `_.forIn` except that it iterates over properties of\n`object` in the opposite order.",
           "parameters": [
             {
               "name": "object",
@@ -4064,7 +4165,8 @@
           "name": "forOwn",
           "access": "",
           "virtual": false,
-          "description": "Iterates over own enumerable string keyed properties of an object and\ninvokes `iteratee` for each property. The iteratee is invoked with three\narguments: (value, key, object). Iteratee functions may exit iteration\nearly by explicitly returning `false`.",
+          "description":
+            "Iterates over own enumerable string keyed properties of an object and\ninvokes `iteratee` for each property. The iteratee is invoked with three\narguments: (value, key, object). Iteratee functions may exit iteration\nearly by explicitly returning `false`.",
           "parameters": [
             {
               "name": "object",
@@ -4095,7 +4197,8 @@
           "name": "forOwnRight",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.forOwn` except that it iterates over properties of\n`object` in the opposite order.",
+          "description":
+            "This method is like `_.forOwn` except that it iterates over properties of\n`object` in the opposite order.",
           "parameters": [
             {
               "name": "object",
@@ -4126,7 +4229,8 @@
           "name": "functions",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of function property names from own enumerable properties\nof `object`.",
+          "description":
+            "Creates an array of function property names from own enumerable properties\nof `object`.",
           "parameters": [
             {
               "name": "object",
@@ -4149,7 +4253,8 @@
           "name": "functionsIn",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of function property names from own and inherited\nenumerable properties of `object`.",
+          "description":
+            "Creates an array of function property names from own and inherited\nenumerable properties of `object`.",
           "parameters": [
             {
               "name": "object",
@@ -4172,7 +4277,8 @@
           "name": "get",
           "access": "",
           "virtual": false,
-          "description": "Gets the value at `path` of `object`. If the resolved value is\n`undefined`, the `defaultValue` is used in its place.",
+          "description":
+            "Gets the value at `path` of `object`. If the resolved value is\n`undefined`, the `defaultValue` is used in its place.",
           "parameters": [
             {
               "name": "object",
@@ -4273,7 +4379,8 @@
           "name": "keys",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of the own enumerable property names of `object`.\n\n**Note:** Non-object values are coerced to objects. See the\n[ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)\nfor more details.",
+          "description":
+            "Creates an array of the own enumerable property names of `object`.\n\n**Note:** Non-object values are coerced to objects. See the\n[ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)\nfor more details.",
           "parameters": [
             {
               "name": "object",
@@ -4296,7 +4403,8 @@
           "name": "keysIn",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of the own and inherited enumerable property names of `object`.\n\n**Note:** Non-object values are coerced to objects.",
+          "description":
+            "Creates an array of the own and inherited enumerable property names of `object`.\n\n**Note:** Non-object values are coerced to objects.",
           "parameters": [
             {
               "name": "object",
@@ -4319,7 +4427,8 @@
           "name": "mapKeys",
           "access": "",
           "virtual": false,
-          "description": "The opposite of `_.mapValues`; this method creates an object with the\nsame values as `object` and keys generated by running each own enumerable\nstring keyed property of `object` thru `iteratee`. The iteratee is invoked\nwith three arguments: (value, key, object).",
+          "description":
+            "The opposite of `_.mapValues`; this method creates an object with the\nsame values as `object` and keys generated by running each own enumerable\nstring keyed property of `object` thru `iteratee`. The iteratee is invoked\nwith three arguments: (value, key, object).",
           "parameters": [
             {
               "name": "object",
@@ -4350,7 +4459,8 @@
           "name": "mapValues",
           "access": "",
           "virtual": false,
-          "description": "Creates an object with the same keys as `object` and values generated\nby running each own enumerable string keyed property of `object` thru\n`iteratee`. The iteratee is invoked with three arguments:\n(value, key, object).",
+          "description":
+            "Creates an object with the same keys as `object` and values generated\nby running each own enumerable string keyed property of `object` thru\n`iteratee`. The iteratee is invoked with three arguments:\n(value, key, object).",
           "parameters": [
             {
               "name": "object",
@@ -4381,7 +4491,8 @@
           "name": "omitBy",
           "access": "",
           "virtual": false,
-          "description": "The opposite of `_.pickBy`; this method creates an object composed of\nthe own and inherited enumerable string keyed properties of `object` that\n`predicate` doesn't return truthy for. The predicate is invoked with two\narguments: (value, key).",
+          "description":
+            "The opposite of `_.pickBy`; this method creates an object composed of\nthe own and inherited enumerable string keyed properties of `object` that\n`predicate` doesn't return truthy for. The predicate is invoked with two\narguments: (value, key).",
           "parameters": [
             {
               "name": "object",
@@ -4412,7 +4523,8 @@
           "name": "pickBy",
           "access": "",
           "virtual": false,
-          "description": "Creates an object composed of the `object` properties `predicate` returns\ntruthy for. The predicate is invoked with two arguments: (value, key).",
+          "description":
+            "Creates an object composed of the `object` properties `predicate` returns\ntruthy for. The predicate is invoked with two arguments: (value, key).",
           "parameters": [
             {
               "name": "object",
@@ -4443,7 +4555,8 @@
           "name": "result",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.get` except that if the resolved value is a\nfunction it's invoked with the `this` binding of its parent object and\nits result is returned.",
+          "description":
+            "This method is like `_.get` except that if the resolved value is a\nfunction it's invoked with the `this` binding of its parent object and\nits result is returned.",
           "parameters": [
             {
               "name": "object",
@@ -4482,7 +4595,8 @@
           "name": "set",
           "access": "",
           "virtual": false,
-          "description": "Sets the value at `path` of `object`. If a portion of `path` doesn't exist,\nit's created. Arrays are created for missing index properties while objects\nare created for all other missing properties. Use `_.setWith` to customize\n`path` creation.\n\n**Note:** This method mutates `object`.",
+          "description":
+            "Sets the value at `path` of `object`. If a portion of `path` doesn't exist,\nit's created. Arrays are created for missing index properties while objects\nare created for all other missing properties. Use `_.setWith` to customize\n`path` creation.\n\n**Note:** This method mutates `object`.",
           "parameters": [
             {
               "name": "object",
@@ -4521,7 +4635,8 @@
           "name": "setWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.set` except that it accepts `customizer` which is\ninvoked to produce the objects of `path`.  If `customizer` returns `undefined`\npath creation is handled by the method instead. The `customizer` is invoked\nwith three arguments: (nsValue, key, nsObject).\n\n**Note:** This method mutates `object`.",
+          "description":
+            "This method is like `_.set` except that it accepts `customizer` which is\ninvoked to produce the objects of `path`.  If `customizer` returns `undefined`\npath creation is handled by the method instead. The `customizer` is invoked\nwith three arguments: (nsValue, key, nsObject).\n\n**Note:** This method mutates `object`.",
           "parameters": [
             {
               "name": "object",
@@ -4568,7 +4683,8 @@
           "name": "entries",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of own enumerable string keyed-value pairs for `object`\nwhich can be consumed by `_.fromPairs`.",
+          "description":
+            "Creates an array of own enumerable string keyed-value pairs for `object`\nwhich can be consumed by `_.fromPairs`.",
           "parameters": [
             {
               "name": "object",
@@ -4591,7 +4707,8 @@
           "name": "entriesIn",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of own and inherited enumerable string keyed-value pairs\nfor `object` which can be consumed by `_.fromPairs`.",
+          "description":
+            "Creates an array of own and inherited enumerable string keyed-value pairs\nfor `object` which can be consumed by `_.fromPairs`.",
           "parameters": [
             {
               "name": "object",
@@ -4614,7 +4731,8 @@
           "name": "transform",
           "access": "",
           "virtual": false,
-          "description": "An alternative to `_.reduce`; this method transforms `object` to a new\n`accumulator` object which is the result of running each of its own\nenumerable string keyed properties thru `iteratee`, with each invocation\npotentially mutating the `accumulator` object. The iteratee is invoked\nwith four arguments: (accumulator, value, key, object). Iteratee functions\nmay exit iteration early by explicitly returning `false`.",
+          "description":
+            "An alternative to `_.reduce`; this method transforms `object` to a new\n`accumulator` object which is the result of running each of its own\nenumerable string keyed properties thru `iteratee`, with each invocation\npotentially mutating the `accumulator` object. The iteratee is invoked\nwith four arguments: (accumulator, value, key, object). Iteratee functions\nmay exit iteration early by explicitly returning `false`.",
           "parameters": [
             {
               "name": "object",
@@ -4653,7 +4771,8 @@
           "name": "unset",
           "access": "",
           "virtual": false,
-          "description": "Removes the property at `path` of `object`.\n\n**Note:** This method mutates `object`.",
+          "description":
+            "Removes the property at `path` of `object`.\n\n**Note:** This method mutates `object`.",
           "parameters": [
             {
               "name": "object",
@@ -4684,7 +4803,8 @@
           "name": "update",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.set` except that accepts `updater` to produce the\nvalue to set. Use `_.updateWith` to customize `path` creation. The `updater`\nis invoked with one argument: (value).\n\n**Note:** This method mutates `object`.",
+          "description":
+            "This method is like `_.set` except that accepts `updater` to produce the\nvalue to set. Use `_.updateWith` to customize `path` creation. The `updater`\nis invoked with one argument: (value).\n\n**Note:** This method mutates `object`.",
           "parameters": [
             {
               "name": "object",
@@ -4723,7 +4843,8 @@
           "name": "updateWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.update` except that it accepts `customizer` which is\ninvoked to produce the objects of `path`.  If `customizer` returns `undefined`\npath creation is handled by the method instead. The `customizer` is invoked\nwith three arguments: (nsValue, key, nsObject).\n\n**Note:** This method mutates `object`.",
+          "description":
+            "This method is like `_.update` except that it accepts `customizer` which is\ninvoked to produce the objects of `path`.  If `customizer` returns `undefined`\npath creation is handled by the method instead. The `customizer` is invoked\nwith three arguments: (nsValue, key, nsObject).\n\n**Note:** This method mutates `object`.",
           "parameters": [
             {
               "name": "object",
@@ -4770,7 +4891,8 @@
           "name": "values",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of the own enumerable string keyed property values of `object`.\n\n**Note:** Non-object values are coerced to objects.",
+          "description":
+            "Creates an array of the own enumerable string keyed property values of `object`.\n\n**Note:** Non-object values are coerced to objects.",
           "parameters": [
             {
               "name": "object",
@@ -4793,7 +4915,8 @@
           "name": "valuesIn",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of the own and inherited enumerable string keyed property\nvalues of `object`.\n\n**Note:** Non-object values are coerced to objects.",
+          "description":
+            "Creates an array of the own and inherited enumerable string keyed property\nvalues of `object`.\n\n**Note:** Non-object values are coerced to objects.",
           "parameters": [
             {
               "name": "object",
@@ -4853,7 +4976,8 @@
           "name": "inRange",
           "access": "",
           "virtual": false,
-          "description": "Checks if `n` is between `start` and up to but not including, `end`. If\n`end` is not specified, it's set to `start` with `start` then set to `0`.\nIf `start` is greater than `end` the params are swapped to support\nnegative ranges.",
+          "description":
+            "Checks if `n` is between `start` and up to but not including, `end`. If\n`end` is not specified, it's set to `start` with `start` then set to `0`.\nIf `start` is greater than `end` the params are swapped to support\nnegative ranges.",
           "parameters": [
             {
               "name": "number",
@@ -4892,7 +5016,8 @@
           "name": "random",
           "access": "",
           "virtual": false,
-          "description": "Produces a random number between the inclusive `lower` and `upper` bounds.\nIf only one argument is provided a number between `0` and the given number\nis returned. If `floating` is `true`, or either `lower` or `upper` are\nfloats, a floating-point number is returned instead of an integer.\n\n**Note:** JavaScript follows the IEEE-754 standard for resolving\nfloating-point values which can produce unexpected results.",
+          "description":
+            "Produces a random number between the inclusive `lower` and `upper` bounds.\nIf only one argument is provided a number between `0` and the given number\nis returned. If `floating` is `true`, or either `lower` or `upper` are\nfloats, a floating-point number is returned instead of an integer.\n\n**Note:** JavaScript follows the IEEE-754 standard for resolving\nfloating-point values which can produce unexpected results.",
           "parameters": [
             {
               "name": "lower",
@@ -4931,7 +5056,8 @@
           "name": "capitalize",
           "access": "",
           "virtual": false,
-          "description": "Converts the first character of `string` to upper case and the remaining\nto lower case.",
+          "description":
+            "Converts the first character of `string` to upper case and the remaining\nto lower case.",
           "parameters": [
             {
               "name": "string",
@@ -4952,7 +5078,8 @@
           "name": "deburr",
           "access": "",
           "virtual": false,
-          "description": "Deburrs `string` by converting\n[latin-1 supplementary letters](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)\nto basic latin letters and removing\n[combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).",
+          "description":
+            "Deburrs `string` by converting\n[latin-1 supplementary letters](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)#Character_table)\nto basic latin letters and removing\n[combining diacritical marks](https://en.wikipedia.org/wiki/Combining_Diacritical_Marks).",
           "parameters": [
             {
               "name": "string",
@@ -5012,7 +5139,8 @@
           "name": "escape",
           "access": "",
           "virtual": false,
-          "description": "Converts the characters \"&\", \"<\", \">\", '\"', \"'\", and \"\\`\" in `string` to\ntheir corresponding HTML entities.\n\n**Note:** No other characters are escaped. To escape additional\ncharacters use a third-party library like [_he_](https://mths.be/he).\n\nThough the \">\" character is escaped for symmetry, characters like\n\">\" and \"/\" don't need escaping in HTML and have no special meaning\nunless they're part of a tag or unquoted attribute value. See\n[Mathias Bynens's article](https://mathiasbynens.be/notes/ambiguous-ampersands)\n(under \"semi-related fun fact\") for more details.\n\nBackticks are escaped because in IE < 9, they can break out of\nattribute values or HTML comments. See [#59](https://html5sec.org/#59),\n[#102](https://html5sec.org/#102), [#108](https://html5sec.org/#108), and\n[#133](https://html5sec.org/#133) of the\n[HTML5 Security Cheatsheet](https://html5sec.org/) for more details.\n\nWhen working with HTML you should always\n[quote attribute values](http://wonko.com/post/html-escaping) to reduce\nXSS vectors.",
+          "description":
+            "Converts the characters \"&\", \"<\", \">\", '\"', \"'\", and \"\\`\" in `string` to\ntheir corresponding HTML entities.\n\n**Note:** No other characters are escaped. To escape additional\ncharacters use a third-party library like [_he_](https://mths.be/he).\n\nThough the \">\" character is escaped for symmetry, characters like\n\">\" and \"/\" don't need escaping in HTML and have no special meaning\nunless they're part of a tag or unquoted attribute value. See\n[Mathias Bynens's article](https://mathiasbynens.be/notes/ambiguous-ampersands)\n(under \"semi-related fun fact\") for more details.\n\nBackticks are escaped because in IE < 9, they can break out of\nattribute values or HTML comments. See [#59](https://html5sec.org/#59),\n[#102](https://html5sec.org/#102), [#108](https://html5sec.org/#108), and\n[#133](https://html5sec.org/#133) of the\n[HTML5 Security Cheatsheet](https://html5sec.org/) for more details.\n\nWhen working with HTML you should always\n[quote attribute values](http://wonko.com/post/html-escaping) to reduce\nXSS vectors.",
           "parameters": [
             {
               "name": "string",
@@ -5033,7 +5161,8 @@
           "name": "escapeRegExp",
           "access": "",
           "virtual": false,
-          "description": "Escapes the `RegExp` special characters \"^\", \"$\", \"\\\", \".\", \"*\", \"+\",\n\"?\", \"(\", \")\", \"[\", \"]\", \"{\", \"}\", and \"|\" in `string`.",
+          "description":
+            "Escapes the `RegExp` special characters \"^\", \"$\", \"\\\", \".\", \"*\", \"+\",\n\"?\", \"(\", \")\", \"[\", \"]\", \"{\", \"}\", and \"|\" in `string`.",
           "parameters": [
             {
               "name": "string",
@@ -5056,7 +5185,8 @@
           "name": "pad",
           "access": "",
           "virtual": false,
-          "description": "Pads `string` on the left and right sides if it's shorter than `length`.\nPadding characters are truncated if they can't be evenly divided by `length`.",
+          "description":
+            "Pads `string` on the left and right sides if it's shorter than `length`.\nPadding characters are truncated if they can't be evenly divided by `length`.",
           "parameters": [
             {
               "name": "string",
@@ -5095,7 +5225,8 @@
           "name": "padEnd",
           "access": "",
           "virtual": false,
-          "description": "Pads `string` on the right side if it's shorter than `length`. Padding\ncharacters are truncated if they exceed `length`.",
+          "description":
+            "Pads `string` on the right side if it's shorter than `length`. Padding\ncharacters are truncated if they exceed `length`.",
           "parameters": [
             {
               "name": "string",
@@ -5134,7 +5265,8 @@
           "name": "padStart",
           "access": "",
           "virtual": false,
-          "description": "Pads `string` on the left side if it's shorter than `length`. Padding\ncharacters are truncated if they exceed `length`.",
+          "description":
+            "Pads `string` on the left side if it's shorter than `length`. Padding\ncharacters are truncated if they exceed `length`.",
           "parameters": [
             {
               "name": "string",
@@ -5173,7 +5305,8 @@
           "name": "parseInt",
           "access": "",
           "virtual": false,
-          "description": "Converts `string` to an integer of the specified radix. If `radix` is\n`undefined` or `0`, a `radix` of `10` is used unless `value` is a\nhexadecimal, in which case a `radix` of `16` is used.\n\n**Note:** This method aligns with the\n[ES5 implementation](https://es5.github.io/#x15.1.2.2) of `parseInt`.",
+          "description":
+            "Converts `string` to an integer of the specified radix. If `radix` is\n`undefined` or `0`, a `radix` of `10` is used unless `value` is a\nhexadecimal, in which case a `radix` of `16` is used.\n\n**Note:** This method aligns with the\n[ES5 implementation](https://es5.github.io/#x15.1.2.2) of `parseInt`.",
           "parameters": [
             {
               "name": "string",
@@ -5235,7 +5368,8 @@
           "name": "replace",
           "access": "",
           "virtual": false,
-          "description": "Replaces matches for `pattern` in `string` with `replacement`.\n\n**Note:** This method is based on\n[`String#replace`](https://mdn.io/String/replace).",
+          "description":
+            "Replaces matches for `pattern` in `string` with `replacement`.\n\n**Note:** This method is based on\n[`String#replace`](https://mdn.io/String/replace).",
           "parameters": [
             {
               "name": "string",
@@ -5272,7 +5406,8 @@
           "name": "split",
           "access": "",
           "virtual": false,
-          "description": "Splits `string` by `separator`.\n\n**Note:** This method is based on\n[`String#split`](https://mdn.io/String/split).",
+          "description":
+            "Splits `string` by `separator`.\n\n**Note:** This method is based on\n[`String#split`](https://mdn.io/String/split).",
           "parameters": [
             {
               "name": "string",
@@ -5348,7 +5483,8 @@
           "name": "template",
           "access": "",
           "virtual": false,
-          "description": "Creates a compiled template function that can interpolate data properties\nin \"interpolate\" delimiters, HTML-escape interpolated data properties in\n\"escape\" delimiters, and execute JavaScript in \"evaluate\" delimiters. Data\nproperties may be accessed as free variables in the template. If a setting\nobject is given, it takes precedence over `_.templateSettings` values.\n\n**Note:** In the development build `_.template` utilizes\n[sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)\nfor easier debugging.\n\nFor more information on precompiling templates see\n[lodash's custom builds documentation](https://lodash.com/custom-builds).\n\nFor more information on Chrome extension sandboxes see\n[Chrome's extensions documentation](https://developer.chrome.com/extensions/sandboxingEval).",
+          "description":
+            "Creates a compiled template function that can interpolate data properties\nin \"interpolate\" delimiters, HTML-escape interpolated data properties in\n\"escape\" delimiters, and execute JavaScript in \"evaluate\" delimiters. Data\nproperties may be accessed as free variables in the template. If a setting\nobject is given, it takes precedence over `_.templateSettings` values.\n\n**Note:** In the development build `_.template` utilizes\n[sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)\nfor easier debugging.\n\nFor more information on precompiling templates see\n[lodash's custom builds documentation](https://lodash.com/custom-builds).\n\nFor more information on Chrome extension sandboxes see\n[Chrome's extensions documentation](https://developer.chrome.com/extensions/sandboxingEval).",
           "parameters": [
             {
               "name": "string",
@@ -5427,7 +5563,8 @@
           "name": "toLower",
           "access": "",
           "virtual": false,
-          "description": "Converts `string`, as a whole, to lower case just like\n[String#toLowerCase](https://mdn.io/toLowerCase).",
+          "description":
+            "Converts `string`, as a whole, to lower case just like\n[String#toLowerCase](https://mdn.io/toLowerCase).",
           "parameters": [
             {
               "name": "string",
@@ -5450,7 +5587,8 @@
           "name": "toUpper",
           "access": "",
           "virtual": false,
-          "description": "Converts `string`, as a whole, to upper case just like\n[String#toUpperCase](https://mdn.io/toUpperCase).",
+          "description":
+            "Converts `string`, as a whole, to upper case just like\n[String#toUpperCase](https://mdn.io/toUpperCase).",
           "parameters": [
             {
               "name": "string",
@@ -5566,7 +5704,8 @@
           "name": "truncate",
           "access": "",
           "virtual": false,
-          "description": "Truncates `string` if it's longer than the given maximum string length.\nThe last characters of the truncated string are replaced with the omission\nstring which defaults to \"...\".",
+          "description":
+            "Truncates `string` if it's longer than the given maximum string length.\nThe last characters of the truncated string are replaced with the omission\nstring which defaults to \"...\".",
           "parameters": [
             {
               "name": "string",
@@ -5621,7 +5760,8 @@
           "name": "unescape",
           "access": "",
           "virtual": false,
-          "description": "The inverse of `_.escape`; this method converts the HTML entities\n`&amp;`, `&lt;`, `&gt;`, `&quot;`, `&#39;`, and `&#96;` in `string` to\ntheir corresponding characters.\n\n**Note:** No other HTML entities are unescaped. To unescape additional\nHTML entities use a third-party library like [_he_](https://mths.be/he).",
+          "description":
+            "The inverse of `_.escape`; this method converts the HTML entities\n`&amp;`, `&lt;`, `&gt;`, `&quot;`, `&#39;`, and `&#96;` in `string` to\ntheir corresponding characters.\n\n**Note:** No other HTML entities are unescaped. To unescape additional\nHTML entities use a third-party library like [_he_](https://mths.be/he).",
           "parameters": [
             {
               "name": "string",
@@ -5673,7 +5813,8 @@
           "name": "cond",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that iterates over `pairs` and invokes the corresponding\nfunction of the first predicate to return truthy. The predicate-function\npairs are invoked with the `this` binding and arguments of the created\nfunction.",
+          "description":
+            "Creates a function that iterates over `pairs` and invokes the corresponding\nfunction of the first predicate to return truthy. The predicate-function\npairs are invoked with the `this` binding and arguments of the created\nfunction.",
           "parameters": [
             {
               "name": "pairs",
@@ -5696,7 +5837,8 @@
           "name": "conforms",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that invokes the predicate properties of `source` with\nthe corresponding property values of a given object, returning `true` if\nall predicates return truthy, else `false`.",
+          "description":
+            "Creates a function that invokes the predicate properties of `source` with\nthe corresponding property values of a given object, returning `true` if\nall predicates return truthy, else `false`.",
           "parameters": [
             {
               "name": "source",
@@ -5763,7 +5905,8 @@
           "name": "iteratee",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that invokes `func` with the arguments of the created\nfunction. If `func` is a property name, the created function returns the\nproperty value for a given element. If `func` is an array or object, the\ncreated function returns `true` for elements that contain the equivalent\nsource properties, otherwise it returns `false`.",
+          "description":
+            "Creates a function that invokes `func` with the arguments of the created\nfunction. If `func` is a property name, the created function returns the\nproperty value for a given element. If `func` is an array or object, the\ncreated function returns `true` for elements that contain the equivalent\nsource properties, otherwise it returns `false`.",
           "parameters": [
             {
               "name": "func",
@@ -5786,7 +5929,8 @@
           "name": "matches",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that performs a partial deep comparison between a given\nobject and `source`, returning `true` if the given object has equivalent\nproperty values, else `false`. The created function is equivalent to\n`_.isMatch` with a `source` partially applied.\n\n**Note:** This method supports comparing the same values as `_.isEqual`.",
+          "description":
+            "Creates a function that performs a partial deep comparison between a given\nobject and `source`, returning `true` if the given object has equivalent\nproperty values, else `false`. The created function is equivalent to\n`_.isMatch` with a `source` partially applied.\n\n**Note:** This method supports comparing the same values as `_.isEqual`.",
           "parameters": [
             {
               "name": "source",
@@ -5809,7 +5953,8 @@
           "name": "matchesProperty",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that performs a partial deep comparison between the\nvalue at `path` of a given object to `srcValue`, returning `true` if the\nobject value is equivalent, else `false`.\n\n**Note:** This method supports comparing the same values as `_.isEqual`.",
+          "description":
+            "Creates a function that performs a partial deep comparison between the\nvalue at `path` of a given object to `srcValue`, returning `true` if the\nobject value is equivalent, else `false`.\n\n**Note:** This method supports comparing the same values as `_.isEqual`.",
           "parameters": [
             {
               "name": "path",
@@ -5840,7 +5985,8 @@
           "name": "mixin",
           "access": "",
           "virtual": false,
-          "description": "Adds all own enumerable string keyed function properties of a source\nobject to the destination object. If `object` is a function, then methods\nare added to its prototype as well.\n\n**Note:** Use `_.runInContext` to create a pristine `lodash` function to\navoid conflicts caused by modifying the original.",
+          "description":
+            "Adds all own enumerable string keyed function properties of a source\nobject to the destination object. If `object` is a function, then methods\nare added to its prototype as well.\n\n**Note:** Use `_.runInContext` to create a pristine `lodash` function to\navoid conflicts caused by modifying the original.",
           "parameters": [
             {
               "name": "object",
@@ -5887,7 +6033,8 @@
           "name": "noConflict",
           "access": "",
           "virtual": false,
-          "description": "Reverts the `_` variable to its previous value and returns a reference to\nthe `lodash` function.",
+          "description":
+            "Reverts the `_` variable to its previous value and returns a reference to\nthe `lodash` function.",
           "parameters": [],
           "examples": ["var lodash = _.noConflict();"],
           "returns": {
@@ -5899,7 +6046,8 @@
           "name": "noop",
           "access": "",
           "virtual": false,
-          "description": "A no-operation function that returns `undefined` regardless of the\narguments it receives.",
+          "description":
+            "A no-operation function that returns `undefined` regardless of the\narguments it receives.",
           "parameters": [],
           "examples": ["var object = { 'user': 'fred' };\n\n_.noop(object) === undefined;\n// => true"]
         },
@@ -5907,7 +6055,8 @@
           "name": "nthArg",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that returns its nth argument. If `n` is negative,\nthe nth argument from the end is returned.",
+          "description":
+            "Creates a function that returns its nth argument. If `n` is negative,\nthe nth argument from the end is returned.",
           "parameters": [
             {
               "name": "n",
@@ -5953,7 +6102,8 @@
           "name": "propertyOf",
           "access": "",
           "virtual": false,
-          "description": "The opposite of `_.property`; this method creates a function that returns\nthe value at a given path of `object`.",
+          "description":
+            "The opposite of `_.property`; this method creates a function that returns\nthe value at a given path of `object`.",
           "parameters": [
             {
               "name": "object",
@@ -5976,7 +6126,8 @@
           "name": "times",
           "access": "",
           "virtual": false,
-          "description": "Invokes the iteratee `n` times, returning an array of the results of\neach invocation. The iteratee is invoked with one argument; (index).",
+          "description":
+            "Invokes the iteratee `n` times, returning an array of the results of\neach invocation. The iteratee is invoked with one argument; (index).",
           "parameters": [
             {
               "name": "n",
@@ -6051,7 +6202,8 @@
           "name": "max",
           "access": "",
           "virtual": false,
-          "description": "Computes the maximum value of `array`. If `array` is empty or falsey,\n`undefined` is returned.",
+          "description":
+            "Computes the maximum value of `array`. If `array` is empty or falsey,\n`undefined` is returned.",
           "parameters": [
             {
               "name": "array",
@@ -6072,7 +6224,8 @@
           "name": "maxBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.max` except that it accepts `iteratee` which is\ninvoked for each element in `array` to generate the criterion by which\nthe value is ranked. The iteratee is invoked with one argument: (value).",
+          "description":
+            "This method is like `_.max` except that it accepts `iteratee` which is\ninvoked for each element in `array` to generate the criterion by which\nthe value is ranked. The iteratee is invoked with one argument: (value).",
           "parameters": [
             {
               "name": "array",
@@ -6124,7 +6277,8 @@
           "name": "meanBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.mean` except that it accepts `iteratee` which is\ninvoked for each element in `array` to generate the value to be averaged.\nThe iteratee is invoked with one argument: (value).",
+          "description":
+            "This method is like `_.mean` except that it accepts `iteratee` which is\ninvoked for each element in `array` to generate the value to be averaged.\nThe iteratee is invoked with one argument: (value).",
           "parameters": [
             {
               "name": "array",
@@ -6155,7 +6309,8 @@
           "name": "min",
           "access": "",
           "virtual": false,
-          "description": "Computes the minimum value of `array`. If `array` is empty or falsey,\n`undefined` is returned.",
+          "description":
+            "Computes the minimum value of `array`. If `array` is empty or falsey,\n`undefined` is returned.",
           "parameters": [
             {
               "name": "array",
@@ -6176,7 +6331,8 @@
           "name": "minBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.min` except that it accepts `iteratee` which is\ninvoked for each element in `array` to generate the criterion by which\nthe value is ranked. The iteratee is invoked with one argument: (value).",
+          "description":
+            "This method is like `_.min` except that it accepts `iteratee` which is\ninvoked for each element in `array` to generate the criterion by which\nthe value is ranked. The iteratee is invoked with one argument: (value).",
           "parameters": [
             {
               "name": "array",
@@ -6228,7 +6384,8 @@
           "name": "sumBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.sum` except that it accepts `iteratee` which is\ninvoked for each element in `array` to generate the value to be summed.\nThe iteratee is invoked with one argument: (value).",
+          "description":
+            "This method is like `_.sum` except that it accepts `iteratee` which is\ninvoked for each element in `array` to generate the value to be summed.\nThe iteratee is invoked with one argument: (value).",
           "parameters": [
             {
               "name": "array",
@@ -6261,119 +6418,136 @@
           "name": "difference",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of unique `array` values not included in the other given\narrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons. The order of result values is determined by the\norder they occur in the first array.",
+          "description":
+            "Creates an array of unique `array` values not included in the other given\narrays using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons. The order of result values is determined by the\norder they occur in the first array.",
           "type": ""
         },
         {
           "name": "differenceBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.difference` except that it accepts `iteratee` which\nis invoked for each element of `array` and `values` to generate the criterion\nby which they're compared. Result values are chosen from the first array.\nThe iteratee is invoked with one argument: (value).",
+          "description":
+            "This method is like `_.difference` except that it accepts `iteratee` which\nis invoked for each element of `array` and `values` to generate the criterion\nby which they're compared. Result values are chosen from the first array.\nThe iteratee is invoked with one argument: (value).",
           "type": ""
         },
         {
           "name": "differenceWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.difference` except that it accepts `comparator`\nwhich is invoked to compare elements of `array` to `values`. Result values\nare chosen from the first array. The comparator is invoked with two arguments:\n(arrVal, othVal).",
+          "description":
+            "This method is like `_.difference` except that it accepts `comparator`\nwhich is invoked to compare elements of `array` to `values`. Result values\nare chosen from the first array. The comparator is invoked with two arguments:\n(arrVal, othVal).",
           "type": ""
         },
         {
           "name": "intersection",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of unique values that are included in all given arrays\nusing [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons. The order of result values is determined by the\norder they occur in the first array.",
+          "description":
+            "Creates an array of unique values that are included in all given arrays\nusing [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons. The order of result values is determined by the\norder they occur in the first array.",
           "type": ""
         },
         {
           "name": "intersectionBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.intersection` except that it accepts `iteratee`\nwhich is invoked for each element of each `arrays` to generate the criterion\nby which they're compared. Result values are chosen from the first array.\nThe iteratee is invoked with one argument: (value).",
+          "description":
+            "This method is like `_.intersection` except that it accepts `iteratee`\nwhich is invoked for each element of each `arrays` to generate the criterion\nby which they're compared. Result values are chosen from the first array.\nThe iteratee is invoked with one argument: (value).",
           "type": ""
         },
         {
           "name": "intersectionWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.intersection` except that it accepts `comparator`\nwhich is invoked to compare elements of `arrays`. Result values are chosen\nfrom the first array. The comparator is invoked with two arguments:\n(arrVal, othVal).",
+          "description":
+            "This method is like `_.intersection` except that it accepts `comparator`\nwhich is invoked to compare elements of `arrays`. Result values are chosen\nfrom the first array. The comparator is invoked with two arguments:\n(arrVal, othVal).",
           "type": ""
         },
         {
           "name": "pull",
           "access": "",
           "virtual": false,
-          "description": "Removes all given values from `array` using\n[`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons.\n\n**Note:** Unlike `_.without`, this method mutates `array`. Use `_.remove`\nto remove elements from an array by predicate.",
+          "description":
+            "Removes all given values from `array` using\n[`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons.\n\n**Note:** Unlike `_.without`, this method mutates `array`. Use `_.remove`\nto remove elements from an array by predicate.",
           "type": ""
         },
         {
           "name": "pullAt",
           "access": "",
           "virtual": false,
-          "description": "Removes elements from `array` corresponding to `indexes` and returns an\narray of removed elements.\n\n**Note:** Unlike `_.at`, this method mutates `array`.",
+          "description":
+            "Removes elements from `array` corresponding to `indexes` and returns an\narray of removed elements.\n\n**Note:** Unlike `_.at`, this method mutates `array`.",
           "type": ""
         },
         {
           "name": "union",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of unique values, in order, from all given arrays using\n[`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons.",
+          "description":
+            "Creates an array of unique values, in order, from all given arrays using\n[`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons.",
           "type": ""
         },
         {
           "name": "unionBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.union` except that it accepts `iteratee` which is\ninvoked for each element of each `arrays` to generate the criterion by\nwhich uniqueness is computed. The iteratee is invoked with one argument:\n(value).",
+          "description":
+            "This method is like `_.union` except that it accepts `iteratee` which is\ninvoked for each element of each `arrays` to generate the criterion by\nwhich uniqueness is computed. The iteratee is invoked with one argument:\n(value).",
           "type": ""
         },
         {
           "name": "unionWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.union` except that it accepts `comparator` which\nis invoked to compare elements of `arrays`. The comparator is invoked\nwith two arguments: (arrVal, othVal).",
+          "description":
+            "This method is like `_.union` except that it accepts `comparator` which\nis invoked to compare elements of `arrays`. The comparator is invoked\nwith two arguments: (arrVal, othVal).",
           "type": ""
         },
         {
           "name": "without",
           "access": "",
           "virtual": false,
-          "description": "Creates an array excluding all given values using\n[`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons.",
+          "description":
+            "Creates an array excluding all given values using\n[`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)\nfor equality comparisons.",
           "type": ""
         },
         {
           "name": "xor",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of unique values that is the\n[symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)\nof the given arrays. The order of result values is determined by the order\nthey occur in the arrays.",
+          "description":
+            "Creates an array of unique values that is the\n[symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference)\nof the given arrays. The order of result values is determined by the order\nthey occur in the arrays.",
           "type": ""
         },
         {
           "name": "xorBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.xor` except that it accepts `iteratee` which is\ninvoked for each element of each `arrays` to generate the criterion by\nwhich by which they're compared. The iteratee is invoked with one argument:\n(value).",
+          "description":
+            "This method is like `_.xor` except that it accepts `iteratee` which is\ninvoked for each element of each `arrays` to generate the criterion by\nwhich by which they're compared. The iteratee is invoked with one argument:\n(value).",
           "type": ""
         },
         {
           "name": "xorWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.xor` except that it accepts `comparator` which is\ninvoked to compare elements of `arrays`. The comparator is invoked with\ntwo arguments: (arrVal, othVal).",
+          "description":
+            "This method is like `_.xor` except that it accepts `comparator` which is\ninvoked to compare elements of `arrays`. The comparator is invoked with\ntwo arguments: (arrVal, othVal).",
           "type": ""
         },
         {
           "name": "zip",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of grouped elements, the first of which contains the\nfirst elements of the given arrays, the second of which contains the\nsecond elements of the given arrays, and so on.",
+          "description":
+            "Creates an array of grouped elements, the first of which contains the\nfirst elements of the given arrays, the second of which contains the\nsecond elements of the given arrays, and so on.",
           "type": ""
         },
         {
           "name": "zipWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.zip` except that it accepts `iteratee` to specify\nhow grouped values should be combined. The iteratee is invoked with the\nelements of each group: (...group).",
+          "description":
+            "This method is like `_.zip` except that it accepts `iteratee` to specify\nhow grouped values should be combined. The iteratee is invoked with the\nelements of each group: (...group).",
           "type": ""
         },
         {
@@ -6401,7 +6575,8 @@
           "name": "next",
           "access": "",
           "virtual": false,
-          "description": "Gets the next value on a wrapped object following the\n[iterator protocol](https://mdn.io/iteration_protocols#iterator).",
+          "description":
+            "Gets the next value on a wrapped object following the\n[iterator protocol](https://mdn.io/iteration_protocols#iterator).",
           "type": ""
         },
         {
@@ -6415,7 +6590,8 @@
           "name": "reverse",
           "access": "",
           "virtual": false,
-          "description": "This method is the wrapper version of `_.reverse`.\n\n**Note:** This method mutates the wrapped array.",
+          "description":
+            "This method is the wrapper version of `_.reverse`.\n\n**Note:** This method mutates the wrapped array.",
           "type": ""
         },
         {
@@ -6429,49 +6605,56 @@
           "name": "countBy",
           "access": "",
           "virtual": false,
-          "description": "Creates an object composed of keys generated from the results of running\neach element of `collection` thru `iteratee`. The corresponding value of\neach key is the number of times the key was returned by `iteratee`. The\niteratee is invoked with one argument: (value).",
+          "description":
+            "Creates an object composed of keys generated from the results of running\neach element of `collection` thru `iteratee`. The corresponding value of\neach key is the number of times the key was returned by `iteratee`. The\niteratee is invoked with one argument: (value).",
           "type": ""
         },
         {
           "name": "groupBy",
           "access": "",
           "virtual": false,
-          "description": "Creates an object composed of keys generated from the results of running\neach element of `collection` thru `iteratee`. The order of grouped values\nis determined by the order they occur in `collection`. The corresponding\nvalue of each key is an array of elements responsible for generating the\nkey. The iteratee is invoked with one argument: (value).",
+          "description":
+            "Creates an object composed of keys generated from the results of running\neach element of `collection` thru `iteratee`. The order of grouped values\nis determined by the order they occur in `collection`. The corresponding\nvalue of each key is an array of elements responsible for generating the\nkey. The iteratee is invoked with one argument: (value).",
           "type": ""
         },
         {
           "name": "invokeMap",
           "access": "",
           "virtual": false,
-          "description": "Invokes the method at `path` of each element in `collection`, returning\nan array of the results of each invoked method. Any additional arguments\nare provided to each invoked method. If `methodName` is a function, it's\ninvoked for and `this` bound to, each element in `collection`.",
+          "description":
+            "Invokes the method at `path` of each element in `collection`, returning\nan array of the results of each invoked method. Any additional arguments\nare provided to each invoked method. If `methodName` is a function, it's\ninvoked for and `this` bound to, each element in `collection`.",
           "type": ""
         },
         {
           "name": "keyBy",
           "access": "",
           "virtual": false,
-          "description": "Creates an object composed of keys generated from the results of running\neach element of `collection` thru `iteratee`. The corresponding value of\neach key is the last element responsible for generating the key. The\niteratee is invoked with one argument: (value).",
+          "description":
+            "Creates an object composed of keys generated from the results of running\neach element of `collection` thru `iteratee`. The corresponding value of\neach key is the last element responsible for generating the key. The\niteratee is invoked with one argument: (value).",
           "type": ""
         },
         {
           "name": "partition",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of elements split into two groups, the first of which\ncontains elements `predicate` returns truthy for, the second of which\ncontains elements `predicate` returns falsey for. The predicate is\ninvoked with one argument: (value).",
+          "description":
+            "Creates an array of elements split into two groups, the first of which\ncontains elements `predicate` returns truthy for, the second of which\ncontains elements `predicate` returns falsey for. The predicate is\ninvoked with one argument: (value).",
           "type": ""
         },
         {
           "name": "sortBy",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of elements, sorted in ascending order by the results of\nrunning each element in a collection thru each iteratee. This method\nperforms a stable sort, that is, it preserves the original sort order of\nequal elements. The iteratees are invoked with one argument: (value).",
+          "description":
+            "Creates an array of elements, sorted in ascending order by the results of\nrunning each element in a collection thru each iteratee. This method\nperforms a stable sort, that is, it preserves the original sort order of\nequal elements. The iteratees are invoked with one argument: (value).",
           "type": ""
         },
         {
           "name": "now",
           "access": "",
           "virtual": false,
-          "description": "Gets the timestamp of the number of milliseconds that have elapsed since\nthe Unix epoch (1 January 1970 00:00:00 UTC).",
+          "description":
+            "Gets the timestamp of the number of milliseconds that have elapsed since\nthe Unix epoch (1 January 1970 00:00:00 UTC).",
           "type": {
             "names": ["function"]
           }
@@ -6480,56 +6663,64 @@
           "name": "bind",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that invokes `func` with the `this` binding of `thisArg`\nand `partials` prepended to the arguments it receives.\n\nThe `_.bind.placeholder` value, which defaults to `_` in monolithic builds,\nmay be used as a placeholder for partially applied arguments.\n\n**Note:** Unlike native `Function#bind` this method doesn't set the \"length\"\nproperty of bound functions.",
+          "description":
+            "Creates a function that invokes `func` with the `this` binding of `thisArg`\nand `partials` prepended to the arguments it receives.\n\nThe `_.bind.placeholder` value, which defaults to `_` in monolithic builds,\nmay be used as a placeholder for partially applied arguments.\n\n**Note:** Unlike native `Function#bind` this method doesn't set the \"length\"\nproperty of bound functions.",
           "type": ""
         },
         {
           "name": "bindKey",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that invokes the method at `object[key]` with `partials`\nprepended to the arguments it receives.\n\nThis method differs from `_.bind` by allowing bound functions to reference\nmethods that may be redefined or don't yet exist. See\n[Peter Michaux's article](http://peter.michaux.ca/articles/lazy-function-definition-pattern)\nfor more details.\n\nThe `_.bindKey.placeholder` value, which defaults to `_` in monolithic\nbuilds, may be used as a placeholder for partially applied arguments.",
+          "description":
+            "Creates a function that invokes the method at `object[key]` with `partials`\nprepended to the arguments it receives.\n\nThis method differs from `_.bind` by allowing bound functions to reference\nmethods that may be redefined or don't yet exist. See\n[Peter Michaux's article](http://peter.michaux.ca/articles/lazy-function-definition-pattern)\nfor more details.\n\nThe `_.bindKey.placeholder` value, which defaults to `_` in monolithic\nbuilds, may be used as a placeholder for partially applied arguments.",
           "type": ""
         },
         {
           "name": "defer",
           "access": "",
           "virtual": false,
-          "description": "Defers invoking the `func` until the current call stack has cleared. Any\nadditional arguments are provided to `func` when it's invoked.",
+          "description":
+            "Defers invoking the `func` until the current call stack has cleared. Any\nadditional arguments are provided to `func` when it's invoked.",
           "type": ""
         },
         {
           "name": "delay",
           "access": "",
           "virtual": false,
-          "description": "Invokes `func` after `wait` milliseconds. Any additional arguments are\nprovided to `func` when it's invoked.",
+          "description":
+            "Invokes `func` after `wait` milliseconds. Any additional arguments are\nprovided to `func` when it's invoked.",
           "type": ""
         },
         {
           "name": "overArgs",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that invokes `func` with arguments transformed by\ncorresponding `transforms`.",
+          "description":
+            "Creates a function that invokes `func` with arguments transformed by\ncorresponding `transforms`.",
           "type": ""
         },
         {
           "name": "partial",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that invokes `func` with `partials` prepended to the\narguments it receives. This method is like `_.bind` except it does **not**\nalter the `this` binding.\n\nThe `_.partial.placeholder` value, which defaults to `_` in monolithic\nbuilds, may be used as a placeholder for partially applied arguments.\n\n**Note:** This method doesn't set the \"length\" property of partially\napplied functions.",
+          "description":
+            "Creates a function that invokes `func` with `partials` prepended to the\narguments it receives. This method is like `_.bind` except it does **not**\nalter the `this` binding.\n\nThe `_.partial.placeholder` value, which defaults to `_` in monolithic\nbuilds, may be used as a placeholder for partially applied arguments.\n\n**Note:** This method doesn't set the \"length\" property of partially\napplied functions.",
           "type": ""
         },
         {
           "name": "partialRight",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.partial` except that partially applied arguments\nare appended to the arguments it receives.\n\nThe `_.partialRight.placeholder` value, which defaults to `_` in monolithic\nbuilds, may be used as a placeholder for partially applied arguments.\n\n**Note:** This method doesn't set the \"length\" property of partially\napplied functions.",
+          "description":
+            "This method is like `_.partial` except that partially applied arguments\nare appended to the arguments it receives.\n\nThe `_.partialRight.placeholder` value, which defaults to `_` in monolithic\nbuilds, may be used as a placeholder for partially applied arguments.\n\n**Note:** This method doesn't set the \"length\" property of partially\napplied functions.",
           "type": ""
         },
         {
           "name": "rearg",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that invokes `func` with arguments arranged according\nto the specified `indexes` where the argument value at the first index is\nprovided as the first argument, the argument value at the second index is\nprovided as the second argument, and so on.",
+          "description":
+            "Creates a function that invokes `func` with arguments arranged according\nto the specified `indexes` where the argument value at the first index is\nprovided as the first argument, the argument value at the second index is\nprovided as the second argument, and so on.",
           "type": ""
         },
         {
@@ -6552,28 +6743,32 @@
           "name": "assign",
           "access": "",
           "virtual": false,
-          "description": "Assigns own enumerable string keyed properties of source objects to the\ndestination object. Source objects are applied from left to right.\nSubsequent sources overwrite property assignments of previous sources.\n\n**Note:** This method mutates `object` and is loosely based on\n[`Object.assign`](https://mdn.io/Object/assign).",
+          "description":
+            "Assigns own enumerable string keyed properties of source objects to the\ndestination object. Source objects are applied from left to right.\nSubsequent sources overwrite property assignments of previous sources.\n\n**Note:** This method mutates `object` and is loosely based on\n[`Object.assign`](https://mdn.io/Object/assign).",
           "type": ""
         },
         {
           "name": "extend",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.assign` except that it iterates over own and\ninherited source properties.\n\n**Note:** This method mutates `object`.",
+          "description":
+            "This method is like `_.assign` except that it iterates over own and\ninherited source properties.\n\n**Note:** This method mutates `object`.",
           "type": ""
         },
         {
           "name": "extendWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.assignIn` except that it accepts `customizer`\nwhich is invoked to produce the assigned values. If `customizer` returns\n`undefined`, assignment is handled by the method instead. The `customizer`\nis invoked with five arguments: (objValue, srcValue, key, object, source).\n\n**Note:** This method mutates `object`.",
+          "description":
+            "This method is like `_.assignIn` except that it accepts `customizer`\nwhich is invoked to produce the assigned values. If `customizer` returns\n`undefined`, assignment is handled by the method instead. The `customizer`\nis invoked with five arguments: (objValue, srcValue, key, object, source).\n\n**Note:** This method mutates `object`.",
           "type": ""
         },
         {
           "name": "assignWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.assign` except that it accepts `customizer`\nwhich is invoked to produce the assigned values. If `customizer` returns\n`undefined`, assignment is handled by the method instead. The `customizer`\nis invoked with five arguments: (objValue, srcValue, key, object, source).\n\n**Note:** This method mutates `object`.",
+          "description":
+            "This method is like `_.assign` except that it accepts `customizer`\nwhich is invoked to produce the assigned values. If `customizer` returns\n`undefined`, assignment is handled by the method instead. The `customizer`\nis invoked with five arguments: (objValue, srcValue, key, object, source).\n\n**Note:** This method mutates `object`.",
           "type": ""
         },
         {
@@ -6587,28 +6782,32 @@
           "name": "defaults",
           "access": "",
           "virtual": false,
-          "description": "Assigns own and inherited enumerable string keyed properties of source\nobjects to the destination object for all destination properties that\nresolve to `undefined`. Source objects are applied from left to right.\nOnce a property is set, additional values of the same property are ignored.\n\n**Note:** This method mutates `object`.",
+          "description":
+            "Assigns own and inherited enumerable string keyed properties of source\nobjects to the destination object for all destination properties that\nresolve to `undefined`. Source objects are applied from left to right.\nOnce a property is set, additional values of the same property are ignored.\n\n**Note:** This method mutates `object`.",
           "type": ""
         },
         {
           "name": "defaultsDeep",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.defaults` except that it recursively assigns\ndefault properties.\n\n**Note:** This method mutates `object`.",
+          "description":
+            "This method is like `_.defaults` except that it recursively assigns\ndefault properties.\n\n**Note:** This method mutates `object`.",
           "type": ""
         },
         {
           "name": "invert",
           "access": "",
           "virtual": false,
-          "description": "Creates an object composed of the inverted keys and values of `object`.\nIf `object` contains duplicate values, subsequent values overwrite\nproperty assignments of previous values.",
+          "description":
+            "Creates an object composed of the inverted keys and values of `object`.\nIf `object` contains duplicate values, subsequent values overwrite\nproperty assignments of previous values.",
           "type": ""
         },
         {
           "name": "invertBy",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.invert` except that the inverted object is generated\nfrom the results of running each element of `object` thru `iteratee`. The\ncorresponding inverted value of each inverted key is an array of keys\nresponsible for generating the inverted value. The iteratee is invoked\nwith one argument: (value).",
+          "description":
+            "This method is like `_.invert` except that the inverted object is generated\nfrom the results of running each element of `object` thru `iteratee`. The\ncorresponding inverted value of each inverted key is an array of keys\nresponsible for generating the inverted value. The iteratee is invoked\nwith one argument: (value).",
           "type": ""
         },
         {
@@ -6622,21 +6821,24 @@
           "name": "merge",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.assign` except that it recursively merges own and\ninherited enumerable string keyed properties of source objects into the\ndestination object. Source properties that resolve to `undefined` are\nskipped if a destination value exists. Array and plain object properties\nare merged recursively.Other objects and value types are overridden by\nassignment. Source objects are applied from left to right. Subsequent\nsources overwrite property assignments of previous sources.\n\n**Note:** This method mutates `object`.",
+          "description":
+            "This method is like `_.assign` except that it recursively merges own and\ninherited enumerable string keyed properties of source objects into the\ndestination object. Source properties that resolve to `undefined` are\nskipped if a destination value exists. Array and plain object properties\nare merged recursively.Other objects and value types are overridden by\nassignment. Source objects are applied from left to right. Subsequent\nsources overwrite property assignments of previous sources.\n\n**Note:** This method mutates `object`.",
           "type": ""
         },
         {
           "name": "mergeWith",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.merge` except that it accepts `customizer` which\nis invoked to produce the merged values of the destination and source\nproperties. If `customizer` returns `undefined`, merging is handled by the\nmethod instead. The `customizer` is invoked with seven arguments:\n(objValue, srcValue, key, object, source, stack).\n\n**Note:** This method mutates `object`.",
+          "description":
+            "This method is like `_.merge` except that it accepts `customizer` which\nis invoked to produce the merged values of the destination and source\nproperties. If `customizer` returns `undefined`, merging is handled by the\nmethod instead. The `customizer` is invoked with seven arguments:\n(objValue, srcValue, key, object, source, stack).\n\n**Note:** This method mutates `object`.",
           "type": ""
         },
         {
           "name": "omit",
           "access": "",
           "virtual": false,
-          "description": "The opposite of `_.pick`; this method creates an object composed of the\nown and inherited enumerable string keyed properties of `object` that are\nnot omitted.",
+          "description":
+            "The opposite of `_.pick`; this method creates an object composed of the\nown and inherited enumerable string keyed properties of `object` that are\nnot omitted.",
           "type": ""
         },
         {
@@ -6657,7 +6859,8 @@
           "name": "kebabCase",
           "access": "",
           "virtual": false,
-          "description": "Converts `string` to\n[kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles).",
+          "description":
+            "Converts `string` to\n[kebab case](https://en.wikipedia.org/wiki/Letter_case#Special_case_styles).",
           "type": ""
         },
         {
@@ -6685,7 +6888,8 @@
           "name": "startCase",
           "access": "",
           "virtual": false,
-          "description": "Converts `string` to\n[start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).",
+          "description":
+            "Converts `string` to\n[start case](https://en.wikipedia.org/wiki/Letter_case#Stylistic_or_specialised_usage).",
           "type": ""
         },
         {
@@ -6706,77 +6910,88 @@
           "name": "attempt",
           "access": "",
           "virtual": false,
-          "description": "Attempts to invoke `func`, returning either the result or the caught error\nobject. Any additional arguments are provided to `func` when it's invoked.",
+          "description":
+            "Attempts to invoke `func`, returning either the result or the caught error\nobject. Any additional arguments are provided to `func` when it's invoked.",
           "type": ""
         },
         {
           "name": "bindAll",
           "access": "",
           "virtual": false,
-          "description": "Binds methods of an object to the object itself, overwriting the existing\nmethod.\n\n**Note:** This method doesn't set the \"length\" property of bound functions.",
+          "description":
+            "Binds methods of an object to the object itself, overwriting the existing\nmethod.\n\n**Note:** This method doesn't set the \"length\" property of bound functions.",
           "type": ""
         },
         {
           "name": "flow",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that returns the result of invoking the given functions\nwith the `this` binding of the created function, where each successive\ninvocation is supplied the return value of the previous.",
+          "description":
+            "Creates a function that returns the result of invoking the given functions\nwith the `this` binding of the created function, where each successive\ninvocation is supplied the return value of the previous.",
           "type": ""
         },
         {
           "name": "flowRight",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.flow` except that it creates a function that\ninvokes the given functions from right to left.",
+          "description":
+            "This method is like `_.flow` except that it creates a function that\ninvokes the given functions from right to left.",
           "type": ""
         },
         {
           "name": "method",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that invokes the method at `path` of a given object.\nAny additional arguments are provided to the invoked method.",
+          "description":
+            "Creates a function that invokes the method at `path` of a given object.\nAny additional arguments are provided to the invoked method.",
           "type": ""
         },
         {
           "name": "methodOf",
           "access": "",
           "virtual": false,
-          "description": "The opposite of `_.method`; this method creates a function that invokes\nthe method at a given path of `object`. Any additional arguments are\nprovided to the invoked method.",
+          "description":
+            "The opposite of `_.method`; this method creates a function that invokes\nthe method at a given path of `object`. Any additional arguments are\nprovided to the invoked method.",
           "type": ""
         },
         {
           "name": "over",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that invokes `iteratees` with the arguments it receives\nand returns their results.",
+          "description":
+            "Creates a function that invokes `iteratees` with the arguments it receives\nand returns their results.",
           "type": ""
         },
         {
           "name": "overEvery",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that checks if **all** of the `predicates` return\ntruthy when invoked with the arguments it receives.",
+          "description":
+            "Creates a function that checks if **all** of the `predicates` return\ntruthy when invoked with the arguments it receives.",
           "type": ""
         },
         {
           "name": "overSome",
           "access": "",
           "virtual": false,
-          "description": "Creates a function that checks if **any** of the `predicates` return\ntruthy when invoked with the arguments it receives.",
+          "description":
+            "Creates a function that checks if **any** of the `predicates` return\ntruthy when invoked with the arguments it receives.",
           "type": ""
         },
         {
           "name": "range",
           "access": "",
           "virtual": false,
-          "description": "Creates an array of numbers (positive and/or negative) progressing from\n`start` up to, but not including, `end`. A step of `-1` is used if a negative\n`start` is specified without an `end` or `step`. If `end` is not specified,\nit's set to `start` with `start` then set to `0`.\n\n**Note:** JavaScript follows the IEEE-754 standard for resolving\nfloating-point values which can produce unexpected results.",
+          "description":
+            "Creates an array of numbers (positive and/or negative) progressing from\n`start` up to, but not including, `end`. A step of `-1` is used if a negative\n`start` is specified without an `end` or `step`. If `end` is not specified,\nit's set to `start` with `start` then set to `0`.\n\n**Note:** JavaScript follows the IEEE-754 standard for resolving\nfloating-point values which can produce unexpected results.",
           "type": ""
         },
         {
           "name": "rangeRight",
           "access": "",
           "virtual": false,
-          "description": "This method is like `_.range` except that it populates values in\ndescending order.",
+          "description":
+            "This method is like `_.range` except that it populates values in\ndescending order.",
           "type": ""
         },
         {

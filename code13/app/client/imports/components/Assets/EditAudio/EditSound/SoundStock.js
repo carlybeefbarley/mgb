@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
-import sty from './editSound.css'
+import './editSound.css'
 
 export default class SoundStock extends React.Component {
   constructor(props) {

@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 
 import WaveDraw from '../lib/WaveDraw.js'
 import AudioConverter from '../lib/AudioConverter.js'
-import sty from './editMusic.css'
+import './editMusic.css'
 
 export default class Preview extends React.Component {
   constructor(props) {

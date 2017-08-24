@@ -8,7 +8,7 @@ import Layer from './Layer.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
-import sty from '../editGraphic.css'
+import '../editGraphic.css'
 
 // TODO - see if we can avoid forceUpdate() in addLayer() and addFrame()        [DG]
 // TODO - see if we can avoid using props.EditGraphic                           [DG]

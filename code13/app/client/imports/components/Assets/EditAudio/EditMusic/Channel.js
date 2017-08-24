@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 
-import sty from './editMusic.css'
+import './editMusic.css'
 import VolumeSlider from './VolumeSlider.js'
 
 import WaveSurfer from '../lib/WaveSurfer.js'

@@ -5,7 +5,7 @@ import NotePanel from './NotePanel'
 import SVG from './SVG'
 import { repeatArray } from '../utils/tools'
 
-import sty from './style.css'
+import './style.css'
 
 class Expandable extends Component {
   isPristine = true

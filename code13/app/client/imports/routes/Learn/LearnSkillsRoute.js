@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react'
-import styles from '../home.css'
+import '../home.css'
 import QLink from '../QLink'
-import getStartedStyle from '../GetStarted.css'
+import '../GetStarted.css'
 import { Card, Divider, Grid, Header, Icon, Label } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
-import sty from './learnRoute.css'
+import './learnRoute.css'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 

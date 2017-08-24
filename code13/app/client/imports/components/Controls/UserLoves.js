@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Icon, Popup } from 'semantic-ui-react'
-import style from './WorkState.css'
+import './WorkState.css'
 import QLink from '/client/imports/routes/QLink'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Users } from '/imports/schemas'

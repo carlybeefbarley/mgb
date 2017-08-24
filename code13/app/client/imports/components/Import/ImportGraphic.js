@@ -6,7 +6,7 @@ import ReactDOM from 'react-dom'
 
 import UploadForm from './UploadForm.js'
 import UploadList from './UploadList.js'
-import sty from './import.css'
+import './import.css'
 
 const STATUS_EMPTY = 'empty'
 const STATUS_DRAGGED_OVER = 'draggedOver'

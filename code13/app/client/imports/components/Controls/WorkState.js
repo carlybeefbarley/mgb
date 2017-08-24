@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { workStateNames, workStateIcons } from '/imports/Enums/workStates'
 import { Header, Icon, List, Popup } from 'semantic-ui-react'
-import style from './WorkState.css'
+import './WorkState.css'
 
 // Note that this is a Stateless function:
 //   See https://facebook.github.io/react/docs/reusable-components.html

@@ -6,7 +6,7 @@ import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import ProjectsBeingMadeGET from '/client/imports/components/Projects/ProjectsBeingMadeGET'
 import QLink from '/client/imports/routes/QLink'
 
-import sty from './dashboard.css'
+import './dashboard.css'
 
 // console.log(assetViewChoices, defaultAssetViewChoice)
 

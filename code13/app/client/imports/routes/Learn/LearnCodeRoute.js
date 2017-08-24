@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
-import styles from '../home.css'
-import sty from './learnRoute.css'
+import '../home.css'
+import './learnRoute.css'
 import QLink from '../QLink'
 import { Divider, Grid, Card, Header, Icon } from 'semantic-ui-react'
 import UX from '/client/imports/UX'

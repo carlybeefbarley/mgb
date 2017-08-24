@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from '../home.css'
+import '../home.css'
 import QLink from '../QLink'
 import Footer from '/client/imports/components/Footer/Footer'
 import { Segment, Header, Container, Button, Message, Divider } from 'semantic-ui-react'

@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react'
 import { Button, Grid, Header, Image, Segment } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
-import homeStyles from '/client/imports/routes/home.css'
-import getStartedStyle from '/client/imports/routes/GetStarted.css'
+import '/client/imports/routes/home.css'
+import '/client/imports/routes/GetStarted.css'
 
 import RecentlyEditedAssetGET from '/client/imports/components/Nav/RecentlyEditedAssetGET'
 

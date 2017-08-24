@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 
-import sty from './dashboard.css'
+import './dashboard.css'
 
 import DashboardCreate from './DashboardCreate'
 import DashboardSocial from './DashboardSocial'

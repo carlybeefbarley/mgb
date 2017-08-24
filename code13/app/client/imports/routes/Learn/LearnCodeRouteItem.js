@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import styles from '../home.css'
+import '../home.css'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { Divider, Grid, Header, List, Segment } from 'semantic-ui-react'
 

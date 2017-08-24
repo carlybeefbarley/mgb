@@ -15,7 +15,7 @@ import Tooltip, { _queryVisibleSelectorsInSequence } from './Tooltip'
 import { ChatSendMessageOnChannelName } from '/imports/schemas/chats'
 import { utilPushTo } from '/client/imports/routes/QLink'
 
-// Note: CSS styles come from App.js: import joyrideStyles from 'react-joyride/lib/react-joyride-compiled.css'
+// Note: CSS styles come from App.js: import 'react-joyride/lib/react-joyride-compiled.css'
 
 const _yPosForBody = 55
 const _transienceIntervalMs = 400

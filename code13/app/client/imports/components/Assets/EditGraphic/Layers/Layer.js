@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import { Dropdown, Icon } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
-import sty from '../editGraphic.css'
+import '../editGraphic.css'
 
 const _layerCanvasStyle = {
   maxWidth: '256px',

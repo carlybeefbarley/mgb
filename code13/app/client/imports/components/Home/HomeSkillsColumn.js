@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
-import homeStyles from '/client/imports/routes/home.css'
-import getStartedStyle from '/client/imports/routes/GetStarted.css'
+import '/client/imports/routes/home.css'
+import '/client/imports/routes/GetStarted.css'
 
 import { Grid, Header, List, Icon, Button } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'

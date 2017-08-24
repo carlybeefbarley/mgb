@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
-import styles from './home.css'
-import getStartedStyle from './GetStarted.css'
+import './home.css'
+import './GetStarted.css'
 import ResponsiveComponent from '/client/imports/ResponsiveComponent'
 
 import { Container, Divider, Grid, Segment } from 'semantic-ui-react'

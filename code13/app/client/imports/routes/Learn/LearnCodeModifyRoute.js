@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from '../home.css'
+import '../home.css'
 import QLink from '../QLink'
 import { Divider, Grid, Card, Header, Icon } from 'semantic-ui-react'
 import UX from '/client/imports/UX'

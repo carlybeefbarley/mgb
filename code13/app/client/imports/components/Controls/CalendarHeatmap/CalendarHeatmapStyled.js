@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import CalendarHeatmap from 'react-calendar-heatmap'
-import styles from './CalendarHeatmapStyles.css'
+import './CalendarHeatmapStyles.css'
 
 // See https://www.npmjs.com/package/react-calendar-heatmap for the control being used for this
 

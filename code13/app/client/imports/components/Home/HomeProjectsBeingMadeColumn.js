@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react'
-import homeStyles from '/client/imports/routes/home.css'
-import getStartedStyle from '/client/imports/routes/GetStarted.css'
+import '/client/imports/routes/home.css'
+import '/client/imports/routes/GetStarted.css'
 import ProjectsBeingMadeGET from '/client/imports/components/Projects/ProjectsBeingMadeGET'
 
 import { Grid, Header, Button } from 'semantic-ui-react'

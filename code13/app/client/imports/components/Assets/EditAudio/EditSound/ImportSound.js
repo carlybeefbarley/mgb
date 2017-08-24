@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { showToast } from '/client/imports/routes/App'
 
-import sty from './editSound.css'
+import './editSound.css'
 import WaveSurfer from '../lib/WaveSurfer.js'
 import lamejs from '../lib/lame.all.js'
 import SpecialGlobals from '/imports/SpecialGlobals'

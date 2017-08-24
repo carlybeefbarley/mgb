@@ -4,7 +4,7 @@ import { Button, Header, Icon, Message } from 'semantic-ui-react'
 import { showToast } from '/client/imports/routes/App'
 import ReactDOM from 'react-dom'
 import GifParser from './GifParser.js'
-import sty from './graphicImport.css'
+import './graphicImport.css'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
 const STATUS_EMPTY = 'empty'

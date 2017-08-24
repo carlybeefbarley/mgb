@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Button, Divider, Grid, Icon, Modal, Popup } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
-import sty from './editGraphic.css'
+import './editGraphic.css'
 import { SketchPicker } from 'react-color'
 import Tools from './GraphicTools'
 

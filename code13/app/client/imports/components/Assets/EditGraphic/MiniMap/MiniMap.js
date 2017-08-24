@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 import { Button, Segment } from 'semantic-ui-react'
 
-import sty from '../editGraphic.css'
+import '../editGraphic.css'
 
 // TODO - for drawing visible area rectangle
 // check editCanvas height

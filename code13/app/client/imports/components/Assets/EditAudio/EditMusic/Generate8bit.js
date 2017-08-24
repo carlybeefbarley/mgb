@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
 
-import sty from './editMusic.css'
+import './editMusic.css'
 import Song from './8bit/song.js'
 import RIFFWAVE from './8bit/encoder.js'
 // import RIFFWAVE from '../lib/riffwave.js'

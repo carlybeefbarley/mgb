@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Icon, Message, Popup } from 'semantic-ui-react'
+import { Message } from 'semantic-ui-react'
 import { browserHistory } from 'react-router'
 import Helmet from 'react-helmet'
 import { createContainer } from 'meteor/react-meteor-data'
@@ -16,7 +16,7 @@ import joyrideStyles from '/client/imports/Joyride/react-joyride-compiled.css'
 import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
 import { hasSkill, learnSkill } from '/imports/schemas/skills'
 
-import { Users, Activity, Projects, Settings, Sysvars, Skills } from '/imports/schemas'
+import { Activity, Projects, Settings, Sysvars, Skills } from '/imports/schemas'
 import { isSameUser } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
@@ -43,6 +43,7 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 
 import { InitHotjar } from '/client/imports/helpers/hotjar.js'
+import SupportedBrowsersContainer from '../components/SupportedBrowsers/SupportedBrowsersContainer'
 
 let G_localSettings = new ReactiveDict()
 
@@ -99,9 +100,6 @@ export const clearPriorPathsForJoyrideCompletionTags = () => {
   }
 }
 
-// General utils
-const px = someNumber => `${someNumber}px`
-
 // FlexPanel numbers
 const fpIconColumnWidthInPixels = 60 // The Column of Icons
 const fpFlexPanelContentWidthInPixels = 285 // The cool stuff
@@ -125,20 +123,20 @@ export const showToast = (content, type = 'success') => {
   return useType.delay
 }
 
-const AppUI = React.createClass({
-  propTypes: {
+class AppUI extends React.Component {
+  static propTypes = {
     params: PropTypes.object,
     query: PropTypes.object,
     routes: PropTypes.array,
     location: PropTypes.object,
     children: PropTypes.object,
-  },
+  }
 
-  childContextTypes: {
+  static childContextTypes = {
     urlLocation: PropTypes.object,
     settings: PropTypes.object,
     skills: PropTypes.object,
-  },
+  }
 
   getChildContext() {
     // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See https://github.com/facebook/react/issues/2517
@@ -147,7 +145,38 @@ const AppUI = React.createClass({
       settings: this.props.settings, // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
       skills: this.props.skills, // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
     }
-  },
+  }
+
+  state = {
+    hideHeaders: false, // Show/Hide NavPanel & Some other UI (like Asset Edit Header). This is a bit slow to do in the Navbar, so doing it here */
+    // read/unread Chat status. Gathered up here since it used across app, especially for notifications and lists
+    chatChannelTimestamps: null, // as defined by Chats.getLastMessageTimestamps RPC
+    hazUnreadChats: [], // will contain Array of channel names with unread chats
+    // hazUnreadChats is a subset of the data in chatChannelTimestamps, but simplified - just an
+    // Array of chat channelNames that have at least one unread message. Note that Global ChatChannels
+    // are treated a little specially - if you have never visited a particular global channel you will
+    // not get notifications for it. This is so new users don't get spammed to look at chat channels they
+    // are not yet interested in. This will always be an array, never null or undefined
+    // It is intended to be quick & convenient for generating notification UIs
+
+    currentlyEditingAssetInfo: {
+      // This is so that we can pass as subset of the Asset info into some other components
+      // like the flexpanels and Nav controls.
+      // The AssetEditRoute component is currently the only component expected to set this
+      //  value, since that is the layer in the container hierarchy that actually loads
+      // assets for the AssetEditors
+      kind: null, // null or a string which is a one of assets:AssetKindKeys
+      canEdit: false, // true or false. True iff editing an Asset _and_ user has edit permission
+      projectNames: [], // Empty array, or array of strings for project names as described in assets.js
+    },
+
+    // For react-joyride
+    joyrideSteps: [],
+    joyrideSkillPathTutorial: null, // String with skillPath (e.g code.js.foo) IFF it was started by startSkillPathTutorial -- i.e. it is an OFFICIAL SKILL TUTORIAL
+    joyrideCurrentStepNum: 0, // integer with cuurent step number (valid IFF there are steps defined)
+    joyrideOriginatingAssetId: null, // Used to support nice EditTutorial button in fpGoals ONLY. Null, or, if set, an object: origAsset: { ownerName: asset.dn_ownerName, id: asset._id }. THIS IS NOT USED FOR LOAD, JUST FOR OTHER UI TO ENABLE A EDIT-TUTORIAL BUTTON
+    joyrideDebug: false,
+  }
 
   componentDidMount() {
     this._schedule_requestChatChannelTimestampsNow()
@@ -161,7 +190,7 @@ const AppUI = React.createClass({
       const timeSincePageLoad = Math.round(performance.now())
       ga('send', 'timing', 'Page load', 'load', timeSincePageLoad)
     }
-  },
+  }
 
   componentDidUpdate(prevProps, prevState) {
     const pagepath = getPagepathFromProps(this.props)
@@ -182,7 +211,7 @@ const AppUI = React.createClass({
     // if(this.props.params.assetId){
     //   console.log( this.props.params.assetId, this.state.currentlyEditingAssetInfo)
     // }
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
     // We are using https://github.com/okgrow/analytics but it does not automatically log
@@ -220,63 +249,30 @@ const AppUI = React.createClass({
       ga('set', 'page', trackPage)
       ga('send', 'pageview', trackPage)
     }
-  },
+  }
 
-  getInitialState() {
-    return {
-      hideHeaders: false, // Show/Hide NavPanel & Some other UI (like Asset Edit Header). This is a bit slow to do in the Navbar, so doing it here */
-      // read/unread Chat status. Gathered up here since it used across app, especially for notifications and lists
-      chatChannelTimestamps: null, // as defined by Chats.getLastMessageTimestamps RPC
-      hazUnreadChats: [], // will contain Array of channel names with unread chats
-      // hazUnreadChats is a subset of the data in chatChannelTimestamps, but simplified - just an
-      // Array of chat channelNames that have at least one unread message. Note that Global ChatChannels
-      // are treated a little specially - if you have never visited a particular global channel you will
-      // not get notifications for it. This is so new users don't get spammed to look at chat channels they
-      // are not yet interested in. This will always be an array, never null or undefined
-      // It is intended to be quick & convenient for generating notification UIs
-
-      currentlyEditingAssetInfo: {
-        // This is so that we can pass as subset of the Asset info into some other components
-        // like the flexpanels and Nav controls.
-        // The AssetEditRoute component is currently the only component expected to set this
-        //  value, since that is the layer in the container hierarchy that actually loads
-        // assets for the AssetEditors
-        kind: null, // null or a string which is a one of assets:AssetKindKeys
-        canEdit: false, // true or false. True iff editing an Asset _and_ user has edit permission
-        projectNames: [], // Empty array, or array of strings for project names as described in assets.js
-      },
-
-      // For react-joyride
-      joyrideSteps: [],
-      joyrideSkillPathTutorial: null, // String with skillPath (e.g code.js.foo) IFF it was started by startSkillPathTutorial -- i.e. it is an OFFICIAL SKILL TUTORIAL
-      joyrideCurrentStepNum: 0, // integer with cuurent step number (valid IFF there are steps defined)
-      joyrideOriginatingAssetId: null, // Used to support nice EditTutorial button in fpGoals ONLY. Null, or, if set, an object: origAsset: { ownerName: asset.dn_ownerName, id: asset._id }. THIS IS NOT USED FOR LOAD, JUST FOR OTHER UI TO ENABLE A EDIT-TUTORIAL BUTTON
-      joyrideDebug: false,
-    }
-  },
-
-  _schedule_requestChatChannelTimestampsNow() {
+  _schedule_requestChatChannelTimestampsNow = () => {
     // One soon..
     window.setTimeout(this.requestChatChannelTimestampsNow, CHAT_POLL_INITIAL_MS)
     // And the ongoing poll less frequently
     window.setInterval(this.requestChatChannelTimestampsNow, CHAT_POLL_INTERVAL_MS)
-  },
+  }
 
-  handleKeyDown(kev) {
+  handleKeyDown = kev => {
     if (kev.altKey && kev.shiftKey && kev.which === 72) {
       // alt-shift-h
       this.handleHideHeadersToggle()
       kev.preventDefault()
       kev.stopPropagation()
     }
-  },
+  }
 
-  handleHideHeadersToggle() {
+  handleHideHeadersToggle = () => {
     this.setState({ hideHeaders: !this.state.hideHeaders })
-  },
+  }
 
   // TODO: Make this throttled, called when relevant
-  requestChatChannelTimestampsNow() {
+  requestChatChannelTimestampsNow = () => {
     if (!this.props.currUser) return
 
     const { settings, currUser, currUserProjects } = this.props
@@ -319,9 +315,9 @@ const AppUI = React.createClass({
           this.setState({ chatChannelTimestamps, hazUnreadChats })
       }
     })
-  },
+  }
 
-  configureTrackJs() {
+  configureTrackJs = () => {
     // TODO: Make reactive for login/logout
     // http://docs.trackjs.com/tracker/tips#include-user-id-version-and-session
     const doTrack = () => {
@@ -337,9 +333,9 @@ const AppUI = React.createClass({
       console.log('[tjfallback]') // so it's easier to know when this is happening
       $.getScript(makeCDNLink('/lib/t-r-a-c-k-e-r.js'), doTrack) // fallback to local version because of AdBlocks etc
     }
-  },
+  }
 
-  handleSetCurrentlyEditingAssetInfo(assetInfo) {
+  handleSetCurrentlyEditingAssetInfo = assetInfo => {
     if (!_.isEqual(this.state.currentlyEditingAssetInfo, assetInfo)) {
       // See comments in getInitialState() for explanation
       this.setState({ currentlyEditingAssetInfo: assetInfo })
@@ -351,9 +347,9 @@ const AppUI = React.createClass({
         ga('send', 'pageview', path)
       }
     }
-  },
+  }
 
-  render() {
+  render = () => {
     const {
       respData,
       respWidth,
@@ -381,8 +377,8 @@ const AppUI = React.createClass({
     const flexPanelQueryValue = query[urlMaker.queryParams('app_flexPanel')]
     const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== '-'
     const flexPanelWidthWhenExpanded = respData.fpReservedRightSidebarWidth
-      ? px(fpIconColumnWidthInPixels + fpFlexPanelContentWidthInPixels)
-      : px(fpFlexPanelContentWidthInPixels)
+      ? `${fpIconColumnWidthInPixels + fpFlexPanelContentWidthInPixels}px`
+      : `${fpFlexPanelContentWidthInPixels}px`
     const flexPanelWidth = showFlexPanel ? flexPanelWidthWhenExpanded : respData.fpReservedRightSidebarWidth
 
     const mainAreaAvailableWidth = respWidth - parseInt(flexPanelWidth)
@@ -397,11 +393,6 @@ const AppUI = React.createClass({
       marginBottom: '0px',
       // background:   'radial-gradient(100% 100% at center bottom, #555, #333)',
       overflow: 'auto', // 'scroll' - this will make very ugly scrollbars on firefox
-    }
-
-    const mainPanelInnerDivSty = {
-      padding: '0px',
-      height: 'auto',
     }
 
     //Check permissions of current user for super-admin,
@@ -459,6 +450,7 @@ const AppUI = React.createClass({
           />
 
           <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id="mgb-jr-main-container">
+            <SupportedBrowsersContainer />
             {!hideHeaders && <NavPanel currUser={currUser} navPanelAvailableWidth={mainAreaAvailableWidth} />}
 
             <NavBar
@@ -509,50 +501,50 @@ const AppUI = React.createClass({
         <NotificationContainer /> {/* This is for the top-right toast messages */}
       </div>
     )
-  },
+  }
 
   /**
    * This will show/hide the Flex Panel
    */
-  handleFlexPanelToggle() {
+  handleFlexPanelToggle = () => {
     const loc = this.props.location
     const qp = urlMaker.queryParams('app_flexPanel')
     let newQ
     if (loc.query[qp]) newQ = _.omit(loc.query, qp)
     else newQ = { ...loc.query, [qp]: NavPanel.getDefaultPanelViewTag() } //TODO: Wrong tag!?
     browserHistory.push({ ...loc, query: newQ })
-  },
+  }
 
-  closeFlexPanel() {
+  closeFlexPanel = () => {
     const loc = this.props.location
     const qp = urlMaker.queryParams('app_flexPanel')
     if (loc.query[qp]) {
       const newQ = _.omit(loc.query, qp)
       browserHistory.push({ ...loc, query: newQ })
     }
-  },
+  }
 
   /**
    * @param newFpView {String} the string that will be used for _fp=panel.submparam eg. "chat", or "chat.G_GENERAL_" or "assets" etc
    */
-  handleFlexPanelChange(newFpView) {
+  handleFlexPanelChange = newFpView => {
     const qp = urlMaker.queryParams('app_flexPanel')
 
     const queryModifier = { [qp]: newFpView }
     const loc = this.props.location
     const newQ = { ...loc.query, ...queryModifier }
     browserHistory.push({ ...loc, query: newQ })
-  },
+  }
 
   //
   // TOAST
   //
-  startSkillPathTutorial(skillPath) {
+  startSkillPathTutorial = skillPath => {
     const tutPath = makeTutorialAssetPathFromSkillPath(skillPath, 0)
     this.addJoyrideSteps(tutPath, { replace: true, skillPath: skillPath })
-  },
+  }
 
-  handleCompletedSkillTutorial(tutorialSkillPath) {
+  handleCompletedSkillTutorial = tutorialSkillPath => {
     console.log('Completed a Skill Tutorial: ', tutorialSkillPath)
     if (!hasSkill(tutorialSkillPath)) {
       showToast(`Tutorial Completed, Skill '${tutorialSkillPath}' gained`)
@@ -569,7 +561,7 @@ const AppUI = React.createClass({
         })
       }
     }
-  },
+  }
 
   //
   // React-Joyride
@@ -584,7 +576,7 @@ const AppUI = React.createClass({
   //   opts.skillPath  -- used by startSkillPathTutorial()
   //   opts.replace    -- if true, then replace current tutorial
   //   opts.origAssetId    -- If set, an object: origAsset: { ownerName: asset.dn_ownerName, id: asset._id }. THIS IS NOT USED FOR LOAD, JUST FOR OTHER UI TO ENABLE A EDIT-TUTORIAL BUTTON
-  addJoyrideSteps(steps, opts = {}) {
+  addJoyrideSteps = (steps, opts = {}) => {
     let joyride = this.refs.joyride
 
     if (_.isString(steps)) {
@@ -631,9 +623,9 @@ const AppUI = React.createClass({
 
       return currentState
     })
-  },
+  }
 
-  handleJoyrideCallback(func) {
+  handleJoyrideCallback = func => {
     if (func.type === 'finished') {
       // console.log('finished tutorial...', this.state.joyrideSkillPathTutorial)
       // analytics.track('startTutorial', {
@@ -651,8 +643,8 @@ const AppUI = React.createClass({
     } else if (func.type === 'step:after') {
       this.setState({ joyrideCurrentStepNum: func.newIndex })
     }
-  },
-  joyrideHandlers: {
+  }
+  joyrideHandlers = {
     // !!! these functions must not refer to this or do other funny stuff !!!
     openAsset: (type, user, name) => {
       // TODO: get location query ???? - or location query should be handled by QLink?
@@ -663,9 +655,9 @@ const AppUI = React.createClass({
       evt.data = { from, to }
       window.dispatchEvent(evt)
     },
-  },
+  }
   // return null for no error, or a string with errors
-  joyridePreparePageHandler(actionsString) {
+  joyridePreparePageHandler = actionsString => {
     const errors = []
     if (!actionsString || actionsString === '') return
 
@@ -738,8 +730,8 @@ const AppUI = React.createClass({
     })
 
     return errors.length === 0 ? null : errors.join('; ') + '.'
-  },
-})
+  }
+}
 
 const App = createContainer(({ params, location }) => {
   const pathUserName = params.username // This is the username (profile.name) on the url /u/xxxx/...
@@ -780,7 +772,7 @@ const App = createContainer(({ params, location }) => {
   }
 
   // send analytics data if user is not logged in and do it only once!
-  if (typeof currUser != 'undefined' && currUser === null && analyticsAnonymousSendFlag) {
+  if (typeof currUser !== 'undefined' && currUser === null && analyticsAnonymousSendFlag) {
     // analytics.page('/notLoggedIn')
     ga('send', 'pageview', '/notLoggedIn')
     analyticsAnonymousSendFlag = false
@@ -790,14 +782,14 @@ const App = createContainer(({ params, location }) => {
     // dimension1 = user id dimension (trick google to show individual id's)
     ga('set', 'dimension1', currUser._id)
     // superAdmin or tester user - need to filter them out in reports
-    if (isUserSuperAdmin(currUser) || currUser._id == 'AJ8jrFjxSYJATzscA') ga('set', 'dimension2', 'admin')
+    if (isUserSuperAdmin(currUser) || currUser._id === 'AJ8jrFjxSYJATzscA') ga('set', 'dimension2', 'admin')
 
     // tell google that this is user and all session need to connect to this data point
     ga('set', 'userId', currUser._id)
     analyticsLoggedInSendFlag = false
   }
 
-  if (typeof currUser != 'undefined' && hotjarInitFlag) {
+  if (typeof currUser !== 'undefined' && hotjarInitFlag) {
     InitHotjar(currUser)
     hotjarInitFlag = false
   }
@@ -840,10 +832,11 @@ App.responsiveRules = {
     respData: {
       footerTabMajorNav: false, //  flexPanel as right sidebar =|
       fpReservedFooterHeight: '0px',
-      fpReservedRightSidebarWidth: px(fpIconColumnWidthInPixels),
+      fpReservedRightSidebarWidth: `${fpIconColumnWidthInPixels}px`,
     },
   },
 }
 
 import ResponsiveComponent from '/client/imports/ResponsiveComponent'
+
 export default ResponsiveComponent(App)

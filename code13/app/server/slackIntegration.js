@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import request from 'request'
+import axios from 'axios'
 import os from 'os' // Node OS import for os.hostname()
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 
@@ -25,19 +25,22 @@ function slackGenericNotify(slackWebhookUrl, data) {
     return
   }
 
-  const options = {
-    url: slackWebhookUrl,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    json: data,
-  }
+  axios
+    .post(slackWebhookUrl, data)
+    .then(({ data }) => {
+      console.log('Messaged Slack Webhook OK :', data)
+    })
+    .catch(({ request, response, message, config }) => {
+      console.log('Error: Making Slack Webhook request with config:', config)
 
-  function callback(error, response, body) {
-    if (!error) console.log('Messaged Slack Webhook OK :', JSON.parse(JSON.stringify(body)))
-    else console.log('Error when messaging Slack Webhook: ' + error)
-  }
-
-  request(options, callback)
+      if (response) {
+        console.log('Error: Slack Webhook response status >2xx:', message, response)
+      } else if (request) {
+        console.log('Error: Slack Webhook did not respond:', message)
+      } else {
+        console.log('Error: Slack Webhook request could not be set up: ' + message)
+      }
+    })
 }
 
 Meteor.methods({

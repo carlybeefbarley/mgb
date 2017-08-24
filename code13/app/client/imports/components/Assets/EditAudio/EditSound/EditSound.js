@@ -6,7 +6,6 @@ import ImportSound from './ImportSound.js'
 import SoundStock from './SoundStock.js'
 import CreateSound from './CreateSound.js'
 import WaveSurfer from '../lib/WaveSurfer.js'
-import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 export default class EditSound extends React.Component {
@@ -117,8 +116,6 @@ export default class EditSound extends React.Component {
     return (
       <div className="ui grid">
         <div className="ui sixteen wide column">
-          <BrowserCompat context="edit.sound" />
-
           <div>
             {/*** button row ***/}
             <Modal

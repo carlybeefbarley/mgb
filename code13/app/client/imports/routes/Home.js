@@ -9,13 +9,6 @@ import HomeSkillsColumn from '/client/imports/components/Home/HomeSkillsColumn'
 import HomeProjectsBeingMadeColumn from '/client/imports/components/Home/HomeProjectsBeingMadeColumn'
 import HomeMeetFriendsColumn from '/client/imports/components/Home/HomeMeetFriendsColumn'
 import Footer from '/client/imports/components/Footer/Footer'
-import { detectIE } from '/client/imports/components/Controls/BrowserCompat'
-
-const _propTypes = {
-  currUser: PropTypes.object, // Can be null/undefined
-}
-
-const _isIE = detectIE()
 
 const HomeRoute = ({ currUser, respData, respIsRuleActive }) => {
   const username = currUser ? currUser.profile.name : 'guest'
@@ -24,11 +17,6 @@ const HomeRoute = ({ currUser, respData, respIsRuleActive }) => {
 
   return (
     <div>
-      {_isIE && (
-        <div style={{ color: 'red', padding: '2px 8px' }}>
-          Internet Explorer is not supported. Please use another browser
-        </div>
-      )}
       <div className="hero">
         <Container>
           <HomeHeroBanner username={username} userId={userId} />
@@ -53,7 +41,9 @@ const HomeRoute = ({ currUser, respData, respIsRuleActive }) => {
   )
 }
 
-HomeRoute.propTypes = _propTypes
+HomeRoute.propTypes = {
+  currUser: PropTypes.object, // Can be null/undefined
+}
 HomeRoute.responsiveRules = {
   // Note that this could also be a function that returns this kind of object
   noColumns: {

@@ -64,3 +64,143 @@ exports[`Storyshots __Examples__ Links 1`] = `
   </button>
 </div>
 `;
+
+exports[`Storyshots SupportedBrowsers Default 1`] = `
+<div
+  className="ui red inverted center aligned segment"
+  style={
+    Object {
+      "margin": 0,
+    }
+  }
+>
+  <p>
+    <i
+      aria-hidden="true"
+      className="warning sign inverted icon"
+    />
+    Your browser doesn't support newer features we use, please upgrade:
+  </p>
+  <a
+    className="ui tiny basic compact inverted button"
+    disabled={undefined}
+    href="javascript:;"
+    onClick={[Function]}
+    rel="noreferrer nofollow"
+    tabIndex={undefined}
+    target="_blank"
+  >
+    <i
+      aria-hidden="true"
+      className="chrome icon"
+    />
+    Chrome
+  </a>
+  <span>
+     
+  </span>
+  <a
+    className="ui red tiny compact button"
+    disabled={undefined}
+    href="javascript:;"
+    onClick={[Function]}
+    rel="noreferrer nofollow"
+    tabIndex={undefined}
+    target="_blank"
+  >
+    <i
+      aria-hidden="true"
+      className="firefox icon"
+    />
+    Firefox
+  </a>
+  <span>
+     
+  </span>
+  <a
+    className="ui red tiny compact button"
+    disabled={undefined}
+    href="javascript:;"
+    onClick={[Function]}
+    rel="noreferrer nofollow"
+    tabIndex={undefined}
+    target="_blank"
+  >
+    <i
+      aria-hidden="true"
+      className="safari icon"
+    />
+    Safari
+  </a>
+</div>
+`;
+
+exports[`Storyshots SupportedBrowsers Recommended Buttons 1`] = `
+<div
+  className="ui red inverted center aligned segment"
+  style={
+    Object {
+      "margin": 0,
+    }
+  }
+>
+  <p>
+    <i
+      aria-hidden="true"
+      className="warning sign inverted icon"
+    />
+    Your browser doesn't support newer features we use, please upgrade:
+  </p>
+  <a
+    className="ui tiny basic compact inverted button"
+    disabled={undefined}
+    href="javascript:;"
+    onClick={[Function]}
+    rel="noreferrer nofollow"
+    tabIndex={undefined}
+    target="_blank"
+  >
+    <i
+      aria-hidden="true"
+      className="asterisk icon"
+    />
+    Recommended
+  </a>
+  <span>
+     
+  </span>
+  <a
+    className="ui tiny basic compact inverted button"
+    disabled={undefined}
+    href="javascript:;"
+    onClick={[Function]}
+    rel="noreferrer nofollow"
+    tabIndex={undefined}
+    target="_blank"
+  >
+    <i
+      aria-hidden="true"
+      className="asterisk icon"
+    />
+    Also recommended
+  </a>
+  <span>
+     
+  </span>
+  <a
+    className="ui red tiny compact button"
+    disabled={undefined}
+    href="javascript:;"
+    onClick={[Function]}
+    rel="noreferrer nofollow"
+    tabIndex={undefined}
+    target="_blank"
+  >
+    <i
+      aria-hidden="true"
+      className="asterisk icon"
+    />
+    Not Recommended
+  </a>
+</div>
+`;

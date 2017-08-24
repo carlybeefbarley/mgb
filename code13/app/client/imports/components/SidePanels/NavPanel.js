@@ -334,6 +334,7 @@ class NavPanel extends React.Component {
   render() {
     const { currUser, navPanelAvailableWidth } = this.props
     const menuStyle = {
+      margin: 0,
       borderRadius: 0,
       marginBottom: 0,
       background: 'rgb(20, 150, 160)',

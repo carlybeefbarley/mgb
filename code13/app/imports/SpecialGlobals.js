@@ -7,6 +7,11 @@ const SpecialGlobals = {
     activityHistoryLimit: 20,
   },
 
+  // This is a !vault owned project for system assets
+  SystemParams: {
+    supportedBrowsers: 'SystemParams.supportedBrowsers',
+  },
+
   // codeflower props (probably we could allow user to tune these some day)
   // description about props can be found here: https://github.com/d3/d3-3.x-api-reference/blob/master/Force-Layout.md
   codeFlower: {

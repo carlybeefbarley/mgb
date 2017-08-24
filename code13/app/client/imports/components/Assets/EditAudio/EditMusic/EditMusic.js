@@ -13,7 +13,6 @@ import Timeline from './Timeline.js'
 import Channel from './Channel.js'
 import lamejs from '../lib/lame.all.js'
 import AudioConverter from '../lib/AudioConverter.js'
-import BrowserCompat from '/client/imports/components/Controls/BrowserCompat'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { showToast } from '/client/imports/routes/App'
@@ -539,7 +538,6 @@ export default class EditMusic extends React.Component {
     return (
       <div className="ui grid">
         <div className="ui sixteen wide column">
-          <BrowserCompat context="edit.music" />
           {/*** button row ***/}
           <div className="row">
             <button

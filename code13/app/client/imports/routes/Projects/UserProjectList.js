@@ -113,7 +113,7 @@ class UserProjectListUI extends React.PureComponent {
     const { user, currUser, location, loading, projects } = this.props
     const ownerName = user ? user.profile.name : 'all users'
     const qN = _queryNormalized(location.query)
-    const pageTitle = user ? `${ownerName}'s Projects` : 'Public Projects'
+    const pageTitle = user ? `${ownerName}'s Projects` : 'All Projects'
 
     return (
       <Segment.Group horizontal className="mgb-suir-plainSegment">

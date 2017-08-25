@@ -268,7 +268,7 @@ const UserAssetListRoute = React.createClass({
     const { view, limit } = qN
     const isAllKinds = isAssetKindsStringComplete(qN.kinds)
     const isOneKind = !_.includes(qN.kinds, safeAssetKindStringSepChar)
-    const pageTitle = user ? `${name}'s Assets` : 'Public Assets'
+    const pageTitle = user ? `${name}'s Assets` : 'All Assets'
 
     // need to send hotjar when we have assets and only once
     if (this.hotjarFlag && !loading && this.data.assets.length > 0) {

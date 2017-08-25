@@ -155,7 +155,7 @@ const BrowseGamesRoute = React.createClass({
               <a>{name}</a>'s Games
             </span>
           ) : (
-            'Public Games'
+            'All Games'
           )}
         </div>
 

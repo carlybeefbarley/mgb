@@ -58,15 +58,6 @@ export const getNavPanels = (currUser, showAll) => {
         header: 'Learn',
         to: '/learn',
         menu: [
-          /*
-          {
-            subcomponent: 'Item',
-            jrkey: 'learningPaths',
-            to: '/learn',
-            icon: { color: 'orange', name: 'map signs' },
-            content: 'All Learning paths',
-          },
-          */
           {
             subcomponent: 'Item',
             jrkey: 'getStarted',
@@ -81,15 +72,6 @@ export const getNavPanels = (currUser, showAll) => {
             icon: { name: 'code' },
             content: 'Learn programming',
           },
-          /*
-          {
-            subcomponent: 'Item',
-            jrkey: 'makeGames',
-            to: '/learn/games',
-            icon: { name: 'game' },
-            content: 'Make/Mod games',
-          },
-          */
           {
             subcomponent: 'Item',
             jrkey: 'learnSkills',
@@ -135,7 +117,7 @@ export const getNavPanels = (currUser, showAll) => {
       {
         name: 'meet',
         explainClickAction: 'Shortcut: Clicking here jumps to the User search page',
-        icon: { name: 'street view' },
+        icon: 'users',
         header: 'Meet',
         to: '/users',
         menu: [
@@ -143,24 +125,8 @@ export const getNavPanels = (currUser, showAll) => {
             subcomponent: 'Item',
             jrkey: 'allUsers',
             to: '/users',
-            icon: 'street view',
+            icon: 'users',
             content: 'All Users',
-          },
-          {
-            subcomponent: 'Item',
-            jrkey: 'allAssets',
-            to: '/assets',
-            query: { hidews: 7 },
-            icon: 'pencil',
-            content: 'All Assets',
-          },
-          {
-            subcomponent: 'Item',
-            jrkey: 'forkableProjects',
-            to: '/projects',
-            query: { hidews: 7, showForkable: 1 },
-            icon: 'sitemap',
-            content: 'Forkable Projects',
           },
           {
             subcomponent: 'Item',
@@ -179,30 +145,34 @@ export const getNavPanels = (currUser, showAll) => {
         explainClickAction: 'Shortcut: Clicking here jumps to the list of your Assets',
         icon: { name: 'pencil' },
         header: 'Assets',
-        to: uname ? `/u/${uname}/assets` : '/assets',
+        to: '/assets',
         menu: [
+          {
+            subcomponent: 'Item',
+            jrkey: 'allAssets',
+            to: '/assets',
+            icon: 'pencil',
+            content: 'All Assets',
+          },
           {
             subcomponent: 'Item',
             jrkey: 'listMy',
             to: `/u/${uname}/assets`,
-            title: 'List my Assets',
             icon: 'pencil',
-            content: 'List My Assets',
+            content: 'My Assets',
           },
           {
             subcomponent: 'Item',
             jrkey: 'listMyChallenge',
             to: `/u/${uname}/assets`,
             query: { showChallengeAssets: '1', view: 's' },
-            title: 'List my "Challenge Assets"',
             icon: { name: 'checked calendar', color: 'orange' },
-            content: 'List My "Challenge Assets"',
+            content: 'My "Challenge Assets"',
           },
           {
             subcomponent: 'Item',
             jrkey: 'createNew',
             to: `/assets/create`,
-            title: 'Create New Asset',
             icon: { name: 'pencil', color: 'green' },
             content: 'Create New Asset',
           },
@@ -213,30 +183,37 @@ export const getNavPanels = (currUser, showAll) => {
         explainClickAction: 'Shortcut: Clicking here jumps to the list of your Projects',
         icon: { name: 'sitemap' },
         header: 'Projects',
-        to: `/u/${uname}/projects`,
-        menu: _.compact([
-          showUserOptions && {
+        to: `/projects`,
+        menu: [
+          {
+            subcomponent: 'Item',
+            jrkey: 'allProjects',
+            to: '/projects',
+            icon: 'sitemap',
+            content: 'All Projects',
+          },
+          {
             subcomponent: 'Item',
             jrkey: 'listMy',
             to: `/u/${uname}/projects`,
             icon: 'sitemap',
-            content: 'List My Projects',
+            content: 'My Projects',
           },
-          showUserOptions && {
+          {
+            subcomponent: 'Item',
+            jrkey: 'importMgb1',
+            to: `/u/${uname}/projects/import/mgb1`,
+            icon: { name: 'upload', color: 'orange' },
+            content: 'Import MGBv1 Projects',
+          },
+          {
             subcomponent: 'Item',
             jrkey: 'createNew',
             to: `/u/${uname}/projects/create`,
             icon: { name: 'sitemap', color: 'green' },
             content: 'Create New Project',
           },
-          showUserOptions /*&& mgb1name && mgb1name !== ''*/ && {
-            subcomponent: 'Item',
-            jrkey: 'importMgb1',
-            to: `/u/${uname}/projects/import/mgb1`,
-            icon: { name: 'sitemap', color: 'orange' },
-            content: 'Import MGBv1 Projects',
-          },
-        ]),
+        ],
       },
       showGuestOptions && {
         name: 'login',
@@ -293,13 +270,6 @@ export const getNavPanels = (currUser, showAll) => {
             jrkey: 'mySkills',
             icon: 'plus circle',
             content: 'My Skills',
-          },
-          showUserOptions && {
-            subcomponent: 'Item',
-            query: { _fp: 'settings' },
-            jrkey: 'settings',
-            icon: 'settings',
-            content: 'Settings',
           },
           showUserOptions && {
             subcomponent: 'Item',
@@ -383,4 +353,5 @@ class NavPanel extends React.Component {
     )
   }
 }
+
 export default NavPanel

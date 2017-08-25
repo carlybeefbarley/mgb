@@ -256,7 +256,7 @@ const makeStepMacros = () => {
     _mkFp('chat', 'chat'),
     _mkFp('options', 'options'),
     _mkFp('skills', 'plus circle'),
-    _mkFp('users', 'street view'),
+    _mkFp('users', 'users'),
     _mkFp('network', 'signal'),
     _mkFp('keys', 'keyboard'),
     _mkFpDescribe('activity', 'lightning', 'This activity feed lets you see what people are working on'),
@@ -279,7 +279,7 @@ const makeStepMacros = () => {
     _mkFpDescribe('skills', 'plus circle', 'This lets you track your learning skills'),
     _mkFpDescribe(
       'users',
-      'street view',
+      'users',
       "This is a quick way to search for other users. It doesn't do much yet...",
     ),
     _mkFpDescribe(

@@ -227,7 +227,7 @@ export default class Toolbar extends React.Component {
                   style={{ marginLeft: '4px' }}
                   id="mgbjr-toolbar-optionsButton"
                   // Basic comes out a little smaller than normal, so don't need: size={_defaultToolbarButtonSize}
-                  icon="settings"
+                  icon="setting"
                 />
               }
               header="More Tools"

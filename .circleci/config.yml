@@ -54,5 +54,6 @@ jobs:
           name: Maybe deploy staging
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              sh code13/app/stage.sh
+              sh ./stage.sh
             fi
+          working_directory: code13/app

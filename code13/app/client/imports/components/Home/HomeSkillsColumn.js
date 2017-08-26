@@ -38,7 +38,7 @@ const HomeSkillsColumn = () => (
       as={QLink}
       to={`/learn/skills`}
       fluid
-      color="teal"
+      primary
       size="large"
       content="Set skill goals"
       // prevent vertical stretching in the `stretched` column

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Segment, Header, List, Message, Icon } from 'semantic-ui-react'
+import { Segment, Header, List, Icon } from 'semantic-ui-react'
 import QLink from '../QLink'
 
 const UserLink = ({ u }) => <QLink to={`/u/${u}`}>@{u}</QLink>
@@ -8,21 +8,24 @@ const AboutHeader = () => (
   <Segment raised padded>
     <Header>
       MyGameBuilder is now in public BETA
-      <br />
-      <small>
-        ...actively developed by <UserLink u="dgolds" />
+      <Header.Subheader>
+        Actively developed by <UserLink u="dgolds" />
         {', '}
         <UserLink u="stauzs" />
         {', '}
         <UserLink u="guntis" />
         {', '}
         <UserLink u="Bouhm" />
-        {' and '}
+        {', '}
         <UserLink u="leah" />
-      </small>
+        {' and '}
+        <UserLink u="levithomason" />
+      </Header.Subheader>
     </Header>
     <p>
-      Welcome to MyGameBuilder!&emsp; If you have thoughts, comments or feedback let us know using the{' '}
+      Welcome to MyGameBuilder!
+      <br />
+      If you have thoughts, comments or feedback let us know using the{' '}
       <QLink query={{ _fp: 'chat' }}>
         <Icon name="chat" />chat panel
       </QLink>{' '}

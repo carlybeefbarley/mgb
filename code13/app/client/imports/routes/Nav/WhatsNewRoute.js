@@ -94,9 +94,7 @@ const WhatsNewRoute = React.createClass({
       <div>
         <Segment basic>
           <Container>
-            <Header as="h2">
-              <Icon name="info circle" />What's New
-            </Header>
+            <Header as="h1" icon="gift" content="What's New" />
             <AboutHeader />
             <p>
               See what's coming soon in our <QLink to="/roadmap">feature roadmap</QLink>.
@@ -123,14 +121,15 @@ const WhatsNewRoute = React.createClass({
     return (
       <Grid columns={2} padded relaxed divided className="equal height">
         <Grid.Column>
-          <Header as="h4" content="MGB updates" />
+          <Header as="h2" content="MGB updates" />
           <div style={{ maxHeight: '800px', overflowY: 'scroll' }}>{this.renderNewsMgbVersionsColumn()}</div>
         </Grid.Column>
         <Grid.Column>
-          <Header as="h4">
-            Changes in v{rel.id.ver}&nbsp;&nbsp;&nbsp;<small>
+          <Header as="h2">
+            Changes in v{rel.id.ver}
+            <Header.Subheader>
               <ReleaseId releaseId={rel.id} />&emsp;{ago}
-            </small>
+            </Header.Subheader>
           </Header>
           {this.renderNewsRelChangesColumn()}
         </Grid.Column>

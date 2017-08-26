@@ -85,7 +85,7 @@ const SignupRoute = React.createClass({
                       placeholder="Password"
                     />
                     <Form.Button
-                      color="teal"
+                      primary
                       fluid
                       disabled={errors.email || errors.username || errors.password}
                       content="Create Account"

@@ -1,21 +1,36 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
 import { getCurrentReleaseVersionString } from '/imports/mgbReleaseInfo'
+import { Icon, Popup } from 'semantic-ui-react'
 
-const DeploymentAlert = ({ deploymentVersion }) =>
-  getCurrentReleaseVersionString() === deploymentVersion ? null : (
-    <a
-      className="fitted item"
-      data-inverted=""
-      data-position="right center"
-      data-variation="mini"
-      data-tooltip={`MGB is upgrading! Release: ${deploymentVersion} will deploy in a few minutes`}
-      style={{ paddingLeft: '14px', marginTop: '4px' }}
-    >
-      <i className="orange refresh loading icon" />
-    </a>
+const DeploymentAlert = ({ deploymentVersion }) => {
+  if (getCurrentReleaseVersionString() === deploymentVersion) return null
+
+  return (
+    <Popup
+      inverted
+      position="bottom left"
+      mouseEnterDelay={500}
+      size="tiny"
+      wide="very"
+      trigger={
+        <Icon fitted loading size="large" name="refresh" color="orange" style={{ marginRight: '1rem' }} />
+      }
+      content={
+        <span>
+          <strong>MGB is upgrading!</strong>
+          <p>Release: {deploymentVersion} will deploy in a few minutes</p>
+        </span>
+      }
+    />
   )
+}
 
-const SystemAlerts = ({ sysvars }) =>
-  !sysvars ? null : <DeploymentAlert deploymentVersion={sysvars && sysvars.deploymentVersion} />
+const SystemAlerts = ({ sysvars = {} }) => {
+  const { deploymentVersion } = sysvars
+
+  if (!deploymentVersion) return null
+
+  return <DeploymentAlert deploymentVersion={deploymentVersion} />
+}
 
 export default SystemAlerts

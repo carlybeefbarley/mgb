@@ -1,12 +1,8 @@
 import _ from 'lodash'
 import React from 'react'
-import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
+import { Container, Grid, Message, Segment, Header, Form } from 'semantic-ui-react'
 import validate from '/imports/schemas/validate'
 import Footer from '/client/imports/components/Footer/Footer'
-
-const ErrMsg = props => {
-  return props.text ? <Message error color="red" content={props.text} /> : null
-}
 
 const ForgotPasswordRoute = React.createClass({
   getInitialState: function() {
@@ -40,17 +36,21 @@ const ForgotPasswordRoute = React.createClass({
         )
 
       return (
-        <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
+        <Form
+          onSubmit={this.handleSubmit}
+          onChange={this.handleChange}
+          loading={isLoading}
+          error={_.isEmpty(errors)}
+        >
           <Form.Input
-            label="Enter your email to reset your password"
-            placeholder="Email address"
-            onChange={this.handleEmailChange}
-            error={!!errors.email}
+            error={errors.email}
+            icon="envelope"
+            label={errors.email || 'Email'}
+            name="email"
+            placeholder="Email"
             type="email"
           />
-          <ErrMsg text={errors.email} />
-          <ErrMsg text={errors.result} />
-          <Form.Button color="teal">Request reset</Form.Button>
+          <Form.Button fluid primary disabled={errors.email} content="Request reset" />
         </Form>
       )
     }
@@ -59,10 +59,15 @@ const ForgotPasswordRoute = React.createClass({
       <div>
         <div className="hero" style={{ paddingTop: '3em', paddingBottom: '3em' }}>
           <Container text>
-            <Segment padded>
-              <Header style={{ color: 'black' }} as="h2" content="Request a password reset" />
-              {innerRender()}
-            </Segment>
+            <Grid columns="equal" verticalAlign="middle">
+              <Grid.Column width={4} only="computer tablet" />
+              <Grid.Column>
+                <Header as="h2" inverted content="Reset password " />
+                <Segment stacked>{innerRender()}</Segment>
+                {errors.server && <Message error content={errors.server} />}
+              </Grid.Column>
+              <Grid.Column width={4} only="computer tablet" />
+            </Grid>
           </Container>
         </div>
         <Footer />
@@ -70,27 +75,39 @@ const ForgotPasswordRoute = React.createClass({
     )
   },
 
-  handleEmailChange: function(e, { value }) {
-    this.setState((prevState, props) => ({ email: value }))
+  handleChange: function(e) {
+    const { name, value } = e.target
+
+    this.setState((prevState, props) => ({
+      errors: {
+        ...prevState.errors,
+        // if a field had an error, provide continual validation
+        [name]: prevState.errors[name] ? validate[name + 'WithReason'](value) : null,
+      },
+      formData: { ...prevState.formData, [name]: value },
+    }))
   },
 
   handleSubmit: function(event) {
-    const { email } = this.state
+    const { email } = this.state.formData
 
     const why = validate.emailWithReason(email)
-    this.setState({ errors: why ? { password: why } : {} })
+    this.setState({ errors: why ? { email: why } : {} })
+    console.log({ email, why })
     if (why) return // if errors showing don't submit
 
-    this.setState({ isLoading: true })
+    this.setState({ isLoading: true, formData: {} })
     Accounts.forgotPassword({ email }, error => {
-      if (error)
+      if (error) {
         this.setState({
           isLoading: false,
           errors: {
-            result: error.reason || 'Server Error while requesting password-reset email for account',
+            server: error.reason || 'Server Error while requesting password-reset email for account',
           },
         })
-      else this.setState({ isLoading: false, errors: {}, isComplete: true })
+      } else {
+        this.setState({ isLoading: false, errors: {}, isComplete: true })
+      }
     })
   },
 })

@@ -153,9 +153,7 @@ class SkillLinkCard extends Component {
         to={!disabled && to}
         fluid
         style={{ ...cardStyle, ...unhandledProps.style }}
-        // TODO @levi after upgrading to SUIR 0.66, use link prop
-        // link={!completed && !disabled}
-        className={disabled || completed ? '' : 'link'}
+        link={!completed && !disabled}
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
         onClick={this.props.onClick || this.handleClick}

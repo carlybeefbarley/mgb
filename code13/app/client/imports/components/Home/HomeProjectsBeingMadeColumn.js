@@ -15,7 +15,7 @@ const HomeProjectsBeingMadeColumn = () => (
     </Header>
     <ProjectsBeingMadeGET numEntries={4} chosenClassName="ui very relaxed list" />
     <br />
-    <Button as={QLink} to={`/games`} fluid color="teal" size="large" content="See more games" />
+    <Button as={QLink} to={`/games`} fluid primary size="large" content="See more games" />
   </Grid.Column>
 )
 

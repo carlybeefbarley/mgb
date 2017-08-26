@@ -32,7 +32,7 @@ const HomeMeetFriendsColumnUI = ({ loading, userList }) => (
         ))}
     </List>
     <br />
-    <Button as={QLink} to={`/users`} fluid color="teal" size="large" content="See more creators" />
+    <Button as={QLink} to={`/users`} fluid primary size="large" content="See more creators" />
   </Grid.Column>
 )
 const HomeMeetFriendsColumn = createContainer(() => {

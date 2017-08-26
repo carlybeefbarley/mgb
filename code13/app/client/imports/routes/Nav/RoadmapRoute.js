@@ -1,7 +1,7 @@
 import React from 'react'
 import Footer from '/client/imports/components/Footer/Footer'
 import QLink from '/client/imports/routes/QLink'
-import { Segment, Container, Header, Icon } from 'semantic-ui-react'
+import { Segment, Container, Header } from 'semantic-ui-react'
 import AboutHeader from './AboutHeader'
 
 const RenderRoadmap = () => (
@@ -19,9 +19,6 @@ const RenderRoadmap = () => (
       <li>(@guntis) Build a game with the MGB community (probably tower defense-ish)</li>
       <li>(@DSeedman) Revamp the Badge system - define badges, get cleaned up art</li>
     </ul>
-    <p>
-      See the <QLink to="/whatsnew">What's new</QLink> page for the lists of recent changes
-    </p>
     <h2>Features coming later in 2017</h2>
     <ul>
       <li>Major Feature 'epics' which will each take a couple of months:</li>
@@ -60,7 +57,7 @@ const RenderRoadmap = () => (
         <li>Documents (and Cheat sheets. and presentations?)</li>
         <li>Cutscene Editor</li>
       </ul>
-      <li>Test reporting </li>
+      <li>Test reporting</li>
       <ul>
         <li>Playtest reporting</li>
         <li>Feature coverage reporting</li>
@@ -90,9 +87,7 @@ const RoadmapRoute = () => (
   <div>
     <Segment basic>
       <Container>
-        <Header as="h2">
-          <Icon name="info circle" />Roadmap
-        </Header>
+        <Header as="h1" icon="road" content="Roadmap" />
         <AboutHeader />
         <p>
           See the latest changes on the <QLink to="/whatsnew">What's New</QLink> page.

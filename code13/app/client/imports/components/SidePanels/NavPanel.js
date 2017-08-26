@@ -24,8 +24,8 @@ export const getNavPanels = (currUser, showAll) => {
         icon: { name: 'home' },
         explainClickAction: 'Shortcut: Clicking here jumps to the Home Page',
         header: (
-          <Menu.Item className="borderless" color="black" style={{ padding: '0px 8px' }}>
-            <img src="/images/logos/mgb/medium/03.png" style={{ width: 130 }} />
+          <Menu.Item style={{ padding: '0' }}>
+            <img src="/images/logos/mgb/medium/01w.png" style={{ width: 130, filter: 'brightness(1.7)' }} />
           </Menu.Item>
         ),
         to: '/',
@@ -35,17 +35,14 @@ export const getNavPanels = (currUser, showAll) => {
             jrkey: 'whatsNew', // used for mgjr-np-mgb-{jrkey} id generation for joyride system
             explainClickAction: "What's New",
             to: '/whatsnew',
-            content: (
-              <div>
-                What's New&emsp;
-                <WhatsNew currUser={currUser} />
-              </div>
-            ),
+            icon: <WhatsNew currUser={currUser} />,
+            content: "What's New",
           },
           {
             subcomponent: 'Item',
             jrkey: 'roadmap',
             to: '/roadmap',
+            icon: 'road',
             content: 'Roadmap',
           },
         ],
@@ -225,7 +222,7 @@ export const getNavPanels = (currUser, showAll) => {
       },
       showGuestOptions && {
         name: 'signup',
-        header: <Button color="yellow" content="Sign Up" />, // Button here will grow the height of the NavPanel but that's ok for not-logged in case IMHO
+        header: <Button size="small" primary content="Sign Up" />,
         icon: { name: 'signup' },
         style: { padding: '4px 16px' },
         menu: null,
@@ -307,7 +304,6 @@ class NavPanel extends React.Component {
       margin: 0,
       borderRadius: 0,
       marginBottom: 0,
-      background: 'rgb(20, 150, 160)',
     }
     const useIcons = navPanelAvailableWidth < 600 // px
     const allNavPanels = getNavPanels(currUser, false)

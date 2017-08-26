@@ -59,12 +59,7 @@ const LoginRoute = React.createClass({
                       placeholder="Password"
                       type="password"
                     />
-                    <Form.Button
-                      fluid
-                      color="teal"
-                      disabled={errors.email || errors.password}
-                      content="Log in"
-                    />
+                    <Form.Button fluid primary disabled={errors.email || errors.password} content="Log in" />
                   </Form>
                 </Segment>
                 {errors.server && <Message error content={errors.server} />}

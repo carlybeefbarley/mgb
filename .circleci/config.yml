@@ -54,6 +54,8 @@ jobs:
           name: Maybe deploy staging
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              sh ./stage.sh
+              curl https://install.meteor.com?release=1.5.1 | /bin/sh
+
+              bash ./stage.sh
             fi
           working_directory: code13/app

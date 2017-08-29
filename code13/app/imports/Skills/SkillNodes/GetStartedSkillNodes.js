@@ -85,16 +85,14 @@ const GetStartedSkillNodes = {
       name: 'Simple non-code game',
       description: 'A simple game using Actors instead of Code',
       sequence:
-        'createGraphic,createActor,createPlayer,createNPC,createObjects,createShot,createActorMap,useActorMap',
+        'actorMapGamesIntro,createGraphicAssets,actorAssetBasics,createActorAssets,createActorMapAsset,buildAndPlayActorMap',
     },
-    createGraphic: C.E,
-    createActor: C.E,
-    createPlayer: C.E,
-    createNPC: C.E,
-    createObjects: C.E,
-    createShot: C.E,
-    createActorMap: C.E,
-    useActorMap: C.E,
+    actorMapGamesIntro: C.E,
+    createGraphicAssets: C.E,
+    actorAssetBasics: C.E,
+    createActorAssets: C.E,
+    createActorMapAsset: C.E,
+    buildAndPlayActorMap: C.E,
     //  learnMore:       C.E
   },
 

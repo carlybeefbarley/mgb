@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import { Grid } from 'semantic-ui-react'
 import BaseForm from '/client/imports/components/Controls/BaseForm.js'
 import { GameItem } from '/client/imports/components/Assets/GameAsset/GameItems'
 import { Header, Divider, Message } from 'semantic-ui-react'
@@ -143,7 +144,6 @@ class EditGameForm extends BaseForm {
           </div>
         )}
 
-        <Divider />
         <Header as="h4" content="Statistics" />
         <div className="inline fields disabled">
           <label>Play Count</label>
@@ -188,19 +188,21 @@ export default class EditGame extends React.Component {
     if (!asset.metadata) asset.metadata = _defaultGameAssetMetadata
 
     return (
-      <div className="edit-game">
-        <div className="ui items">
-          <GameItem game={asset} />
-        </div>
-        <EditGameForm
-          asset={asset}
-          canEdit={canEdit}
-          onChange={this.handleChange.bind(this)}
-          saveThumbnail={d => {
-            handleContentChange(null, d, 'Updating thumbnail')
-          }}
-        />
-      </div>
+      <Grid centered container>
+        <Grid.Column className="edit-game">
+          <div className="ui items">
+            <GameItem game={asset} />
+          </div>
+          <EditGameForm
+            asset={asset}
+            canEdit={canEdit}
+            onChange={this.handleChange.bind(this)}
+            saveThumbnail={d => {
+              handleContentChange(null, d, 'Updating thumbnail')
+            }}
+          />
+        </Grid.Column>
+      </Grid>
     )
   }
 }

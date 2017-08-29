@@ -49,6 +49,7 @@ export default class ActorTileset extends React.Component {
     const gid = selectedTile.getGid(tileset)
     this.props.selectTile(selectedTile)
     this.props.selectTileset(index)
+    joyrideCompleteTag(`mgbjr-CT-MapTools-actors-selectTile`)
   }
 
   removeTileset = () => {
@@ -95,13 +96,9 @@ export default class ActorTileset extends React.Component {
     const map = { [name]: tileset }
     ActorHelper.loadActor(name, map, nextId, {}, null, () => {
       this.props.addActor(map[name])
+      if (tileset.actor && tileset.actor.databag)
+        this.props.setActiveLayerByName(this.getTilesetLayer(tileset))
     })
-
-    /*
-    $.when(this.props.updateTilesetFromData(this.props.mgb_content2)).then(() => {
-      this.selectTileset(this.props.tilesets[this.props.tilesets.length - 1])
-    })
-    */
   }
 
   renderEmpty() {
@@ -146,7 +143,16 @@ export default class ActorTileset extends React.Component {
         {...rest}
       />
     )
-    const types = ['Player', 'Non-Playable Character (NPC)', 'Item, Wall, or Scenery']
+    const types = [
+      'Player',
+      'Non-Playable Character (NPC)',
+      'Item, Wall, or Scenery',
+      'Scenery',
+      'Shot',
+      'Item',
+      'Solid Object',
+      'Floor',
+    ]
     const tsName = tileset.name.indexOf(':') === -1 ? tileset.name : tileset.name.split(':').pop()
     const title = `${tsName} (${tileset.imagewidth}x${tileset.imageheight})\n${types[
       parseInt(tileset.actor.databag.all.actorType)
@@ -227,7 +233,8 @@ export default class ActorTileset extends React.Component {
       return this.renderEmpty()
 
     // TODO: Some kind of (Showing n of m) using something like...
-    const layerName = this.props.getActiveLayerData().name
+    const layerData = this.props.getActiveLayerData()
+    const layerName = layerData ? layerData.name : 'Background'
     const isEventLayer = layerName === 'Events'
     const numActorsthisLayer = _.filter(this.props.tilesets, t => t.actor && ActorHelper.checks[layerName](t))
       .length

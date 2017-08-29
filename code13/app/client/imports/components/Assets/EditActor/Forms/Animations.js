@@ -4,6 +4,7 @@ import { Table, Accordion, Icon, Dimmer, Loader, Item, Button, Modal, Checkbox }
 import DropArea from '../../../Controls/DropArea.js'
 import SmallDD from '../../../Controls/SmallDD.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 export default class Animations extends React.Component {
   state = {
@@ -25,6 +26,10 @@ export default class Animations extends React.Component {
     // TODO: How is this called?
     e.preventDefault()
     this.setState({ serializedForm })
+  }
+
+  handleAnimationClick = animId => () => {
+    joyrideCompleteTag(`mgbjr-CT-edit-actor-Animations-accordion-${animId}`)
   }
 
   handleGraphicFrameSelection(e, data) {
@@ -170,11 +175,15 @@ export default class Animations extends React.Component {
 
   renderAccordion(animTable, animTitle, i) {
     if (animTitle !== 'stationary west') i--
+    let animId = animTitle.replace(' ', '')
 
     return (
       <div key={i}>
         <Accordion styled fluid exclusive={animTitle === 'stationary'} defaultActiveIndex={0}>
-          <Accordion.Title>
+          <Accordion.Title
+            id={'mgbjr-edit-actor-Animations-accordion-' + animId}
+            onClick={this.handleAnimationClick(animId)}
+          >
             <Icon name="dropdown" />
             {animTitle}
           </Accordion.Title>
@@ -182,8 +191,8 @@ export default class Animations extends React.Component {
             <Table fixed celled compact definition>
               <Table.Header fullWidth>
                 <Table.Row>
-                  <Table.HeaderCell>Animation Frame</Table.HeaderCell>
-                  <Table.HeaderCell width={8}>
+                  <Table.HeaderCell width={4}>Animation Frame</Table.HeaderCell>
+                  <Table.HeaderCell id={'mgbjr-edit-actor-Animations-graphic-' + animId} width={7}>
                     Graphic
                     <Button
                       compact
@@ -194,7 +203,7 @@ export default class Animations extends React.Component {
                       Clear All
                     </Button>
                   </Table.HeaderCell>
-                  <Table.HeaderCell style={{ position: 'relative' }}>
+                  <Table.HeaderCell id={'mgbjr-edit-actor-Animations-orientation-' + animId}>
                     Orientation
                     <Button
                       compact

@@ -30,15 +30,14 @@ export default class BaseForm extends React.Component {
     return !this._bf_inProgress || (this.state && this.state._bf_iterations != newState._bf_iterations)
   }
 
-  options(name, key, options, fieldOptions = {}, id = '', mgbjrCT = '', func) {
+  options(name, key, options, fieldOptions = {}, mgbjrCT = '', id = '', func) {
     let val = this.data[key]
     if (val === void 0) console.warn('value not defined for:', name + '[' + key + ']')
-    if (func) func()
 
     return (
       <div
         id={id ? id : ''}
-        className={'inline fields' + (fieldOptions.disabled ? ' disabled' : '')}
+        className={'field' + (fieldOptions.disabled ? ' disabled' : '')}
         title={fieldOptions && fieldOptions.title}
       >
         <label>{name}</label>
@@ -46,8 +45,9 @@ export default class BaseForm extends React.Component {
           options={options}
           onChange={val => {
             this.data[key] = val
-            this.props.onChange && this.props.onChange()
+            if (func) func()
             if (mgbjrCT) joyrideCompleteTag(mgbjrCT + val)
+            this.props.onChange && this.props.onChange()
           }}
           {...fieldOptions}
           value={val}
@@ -60,11 +60,11 @@ export default class BaseForm extends React.Component {
   //    .disabled:   disabled control
   //    .boolIsTF:   if boolIsTF===true,  then these bools are represented as Boolean true and false;
   //                 if boolIsTF===false (or is undefined), then these bools are represented as '1' and '0'
-  bool(name, key, fieldOptions = {}) {
+  bool(name, key, fieldOptions = {}, mgbjrCT = '', id = '') {
     // maybe boolIsTF - should be on by default - as it is expected value
     const checked = fieldOptions.boolIsTF ? this.data[key] : !!parseInt(this.data[key], 10)
     return (
-      <div className={'inline fields' + (fieldOptions.disabled ? ' disabled' : '')}>
+      <div id={id ? id : ''} className={'field' + (fieldOptions.disabled ? ' disabled' : '')}>
         <label>{name}</label>
 
         <div
@@ -86,6 +86,7 @@ export default class BaseForm extends React.Component {
             checked={checked}
             onChange={val => {
               this.data[key] = val
+              if (mgbjrCT) joyrideCompleteTag(mgbjrCT + val)
               this.props.onChange && this.props.onChange(key)
             }}
           />
@@ -97,7 +98,7 @@ export default class BaseForm extends React.Component {
   text(name, key, type, fieldOptions = {}) {
     return (
       <div
-        className={'inline fields' + (fieldOptions.disabled ? ' disabled' : '')}
+        className={'field' + (fieldOptions.disabled ? ' disabled' : '')}
         title={fieldOptions && fieldOptions.title}
       >
         <label>{name}</label>
@@ -137,10 +138,10 @@ export default class BaseForm extends React.Component {
     )
   }
 
-  textArea(name, key, fieldOptions = {}) {
+  textArea(name, key, fieldOptions = {}, mgbjrCT = '') {
     return (
       <div
-        className={'inline fields' + (fieldOptions.disabled ? ' disabled' : '')}
+        className={'field' + (fieldOptions.disabled ? ' disabled' : '')}
         title={fieldOptions && fieldOptions.title}
       >
         <label>{name}</label>
@@ -150,6 +151,7 @@ export default class BaseForm extends React.Component {
             const val = e.target.value
             this.data[key] = val
             this.props.onChange && this.props.onChange()
+            if (mgbjrCT) joyrideCompleteTag(mgbjrCT + val)
           }}
           value={this.data[key]}
         />
@@ -165,7 +167,7 @@ export default class BaseForm extends React.Component {
 
     return (
       <div
-        className={'inline fields' + (fieldOptions.disabled ? ' disabled' : '')}
+        className={'field' + (fieldOptions.disabled ? ' disabled' : '')}
         title={fieldOptions && fieldOptions.title}
       >
         <label>{name}</label>

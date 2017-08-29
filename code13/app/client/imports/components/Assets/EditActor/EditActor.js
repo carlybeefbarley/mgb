@@ -127,7 +127,7 @@ export default class EditActor extends React.Component {
         <Grid.Row>
           <Grid.Column width={8}>
             <Segment
-              id="mgbjr-create-actor-blank"
+              id="mgbjr-create-actor-scenery"
               onClick={this.handleTemplateClick('Scenery')}
               style={segmentStyle}
             >
@@ -208,7 +208,7 @@ export default class EditActor extends React.Component {
           </Grid.Column>
           <Grid.Column width={8}>
             <Segment
-              id="mgbjr-create-actor-solidObject"
+              id="mgbjr-create-actor-solidobject"
               onClick={this.handleTemplateClick('SolidObject')}
               style={segmentStyle}
             >
@@ -264,9 +264,9 @@ export default class EditActor extends React.Component {
     this.loadTemplate('alTemplate' + actorType)
     this.props.handleDescriptionChange('Created from Template: ' + actorType)
     this.handleSave('Initial Template selected')
-    joyrideCompleteTag(`mgbjr-CT-create-actor-${actorType}`)
+    joyrideCompleteTag(`mgbjr-CT-create-actor-${actorType.toLowerCase()}`)
   }
-  handleModalUnmount = () => {
+  handleModalClose = () => {
     if (!this.state.isTemplateSelected) this.loadDefaultTemplate()
   }
   loadTemplate(tpl) {
@@ -325,7 +325,7 @@ export default class EditActor extends React.Component {
           open={!databag && this.state.isModalOpen}
           closeOnDocumentClick={false}
           closeOnDimmerClick
-          onUnmount={this.handleModalUnmount}
+          onClose={this.handleModalClose}
         >
           <Modal.Header>
             Choose a template for the type of Actor, then modify the detailed options in the Actor Editor

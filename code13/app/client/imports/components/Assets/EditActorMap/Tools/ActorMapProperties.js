@@ -1,6 +1,6 @@
 'use strict'
 import React from 'react'
-
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
 
 export default class ActorMapProperties extends React.Component {
@@ -18,6 +18,7 @@ export default class ActorMapProperties extends React.Component {
             w:
           </div>
           <NumberInput
+            disabled={this.props.isPlaying}
             className="ui small input"
             min={1}
             max={300}
@@ -35,6 +36,7 @@ export default class ActorMapProperties extends React.Component {
             h:
           </div>
           <NumberInput
+            disabled={this.props.isPlaying}
             className="ui small input"
             min={1}
             max={300}
@@ -42,6 +44,7 @@ export default class ActorMapProperties extends React.Component {
             value={this.props.data.height}
             onFinalChange={num => {
               this.props.resize({ width: this.props.data.width, height: num })
+              joyrideCompleteTag(`mgbjr-CT-MapTools-properties-resizeHeight`)
             }}
           />
         </div>

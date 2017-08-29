@@ -19,6 +19,8 @@ import { showToast } from '/client/imports/routes/App'
 
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 
+import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+
 const MOUSE_BUTTONS = {
   none: 0, //  No button or un-initialized
   left: 1, //  Left button
@@ -614,6 +616,16 @@ export default class MapArea extends React.Component {
     if (this.refs.mapElement) {
       this.refs.mapElement.style.transition = '0.3s'
       this.refs.positionInfo.forceUpdate()
+
+      // Joyride completion tags
+      const editMode = this.props.getMode()
+      if (editMode === EditModes.stamp) {
+        joyrideCompleteTag(`mgbjr-CT-MapTools-stamp`)
+      } else if (editMode === EditModes.eraser) {
+        joyrideCompleteTag(`mgbjr-CT-MapTools-eraser`)
+      } else if (editMode === EditModes.fill) {
+        joyrideCompleteTag(`mgbjr-CT-MapTools-fill`)
+      }
     }
   }
   handleMouseDown(e) {

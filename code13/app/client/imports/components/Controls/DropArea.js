@@ -131,9 +131,9 @@ export default class DropArea extends React.Component {
   }
 
   handleRemove() {
-    this.props.value = ''
+    //this.props.value = ''
     this.setState({ asset: null, badAsset: null }, () => {
-      this.props.value = ''
+      //this.props.value = ''
       this.saveChanges()
     })
   }

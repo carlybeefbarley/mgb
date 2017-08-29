@@ -5,13 +5,13 @@ import ActorMapArea from './ActorMapArea.js'
 import MapToolbar from './Tools/ActorMapToolbar.js'
 
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-
+import { showToast } from '/client/imports/routes/App'
 import TileHelper from '../Common/Map/Helpers/TileHelper.js'
 import ActorHelper from '../Common/Map/Helpers/ActorHelper.js'
 
 import TileSet from './Tools/ActorTileset.js'
 import EventTool from './Tools/EventTool.js'
-
+import MapGenerator from './Tools/ActorMapGenerator.js'
 import LayerTool from '../Common/Map/Tools/Layers.js'
 import Properties from './Tools/ActorMapProperties.js'
 
@@ -69,7 +69,7 @@ export default class EditActorMap extends EditMap {
       })
     })
   }
-  createNewMap() {}
+
   componentWillReceiveProps(newp) {
     if (!newp.asset.content2) {
       return
@@ -194,7 +194,7 @@ export default class EditActorMap extends EditMap {
 
   renderPlayModal() {
     return (
-      <div className="ui modal" ref="jump" style={{ position: 'absolute' }}>
+      <div className="ui modal" ref="jump" style={{ position: 'absolute', padding: '5px' }}>
         <div className="header">Add Jump Event</div>
         <div className="content">
           <PlayForm
@@ -282,16 +282,26 @@ export default class EditActorMap extends EditMap {
                     width: c2.width,
                     height: c2.height,
                   }}
+                  isPlaying={isPlaying}
                 />
               </div>
               <div style={{ float: 'left', marginLeft: '5px' }}>
                 <EventTool
                   {...this.tilesetProps}
                   palette={this.cache.tiles}
-                  isEnabled={c2 && c2.layers[activeLayer].name === 'Events'}
                   activeTileset={activeTileset}
                   tilesets={c2.tilesets}
                   options={this.options}
+                  isPlaying={isPlaying}
+                />
+              </div>
+              <div style={{ float: 'left', marginLeft: '5px' }}>
+                <MapGenerator
+                  {...this.mapProps}
+                  data={c2}
+                  activeTileset={activeTileset}
+                  activeLayer={activeLayer}
+                  isPlaying={isPlaying}
                 />
               </div>
             </div>

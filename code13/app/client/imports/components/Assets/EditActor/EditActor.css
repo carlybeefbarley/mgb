@@ -1,60 +1,56 @@
 .edit-actor .form .inline > label {
-    min-width: 30% !important;
-    text-align: right !important;
+  min-width: 30% !important;
+  text-align: right !important;
 }
 
 .edit-actor .actor-template img {
-    float: left;
-    cursor: pointer;
+  float: left;
+  cursor: pointer;
 }
 
 .edit-actor .actor-template .column {
-    line-height: 16px;
-    display: flex !important;
-    align-items: center;
+  line-height: 16px;
+  display: flex !important;
+  align-items: center;
 }
 
 .edit-actor .actor-template span {
-    padding: 0 7px;
+  padding: 0 7px;
 }
 
 .edit-actor .eight.wide.column.sub {
-    margin: 5px 0 0 25px;
+  margin: 5px 0 0 25px;
 }
 
 .edit-actor img.north {
-    top: 0;
-    position: absolute;
-    left: 62px;
+  top: 0;
+  position: absolute;
+  left: 62px;
 }
 
 .edit-actor img.east {
-    position: absolute;
-    top: 25px;
-    left: 112px;
+  position: absolute;
+  top: 25px;
+  left: 112px;
 }
 
 .edit-actor img.west {
-    position: absolute;
-    top: 27px;
-    left: 12px;
+  position: absolute;
+  top: 27px;
+  left: 12px;
 }
 
 .edit-actor img.south {
-    position: absolute;
-    top: 50px;
-    left: 62px;
+  position: absolute;
+  top: 50px;
+  left: 62px;
 }
 
 .edit-actor .directions {
-    position: absolute;
-    top: 15px;
+  position: absolute;
+  top: 15px;
 }
 
 .edit-actor .has-directions {
-    margin-left: 165px;
-}
-
-.ui .form {
-    min-height: 50vh;
+  margin-left: 165px;
 }

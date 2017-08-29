@@ -95,6 +95,7 @@ export default class NumberInput extends React.Component {
         value={this.state.internalValue}
         min={min}
         max={max}
+        disabled={this.props.disabled}
         onChange={e => {
           this._onInternalChange(e)
         }}

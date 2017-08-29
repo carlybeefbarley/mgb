@@ -310,6 +310,7 @@ export default class EditMap extends React.Component {
     }
     this.setState({ undo })
   }
+
   doUndo() {
     if (!this.mgb_undo.length) return
     const pop = this.mgb_undo.pop()

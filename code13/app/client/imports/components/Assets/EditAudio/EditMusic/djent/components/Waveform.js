@@ -74,14 +74,16 @@ const level = (x, y, w, h, targetColor) => {
 }
 
 const createInitialLevels = (levelAmount, height, resolution) => {
-  return Array(levelAmount).fill().map((xxx, i) => {
-    const x = i * resolution
-    const y = 0
-    const w = resolution === 1 ? 1 : resolution - 1
-    const h = height
-    const targetColor = [255, 0, 0]
-    return level(x, y, w, h, targetColor)
-  })
+  return Array(levelAmount)
+    .fill()
+    .map((xxx, i) => {
+      const x = i * resolution
+      const y = 0
+      const w = resolution === 1 ? 1 : resolution - 1
+      const h = height
+      const targetColor = [255, 0, 0]
+      return level(x, y, w, h, targetColor)
+    })
 }
 
 const resolution = 2

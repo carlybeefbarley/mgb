@@ -637,7 +637,10 @@ var GifParser = function(opts) {
         }
         // emulating response field for IE9
         if (!('response' in this)) {
-          this.response = new window.VBArray(this.responseText).toArray().map(String.fromCharCode).join('')
+          this.response = new window.VBArray(this.responseText)
+            .toArray()
+            .map(String.fromCharCode)
+            .join('')
         }
         var data = this.response
         if (data.toString().indexOf('ArrayBuffer') > 0) {

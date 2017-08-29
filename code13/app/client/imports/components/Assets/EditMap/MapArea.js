@@ -41,7 +41,10 @@ export default class MapArea extends BaseMapArea {
       Array.prototype.forEach.call(files, (file, i) => {
         const reader = new FileReader()
         reader.onload = e => {
-          const ext = file.name.split('.').pop().toLowerCase()
+          const ext = file.name
+            .split('.')
+            .pop()
+            .toLowerCase()
           const method = 'handleFileByExt_' + ext
           if (this[method]) {
             this[method](file.name, e.target.result)

@@ -10,11 +10,23 @@ const CodeFlower = function(selector, w, h, options) {
   this.aspect = this.w / 600
   this.options = options
 
-  d3.select(selector).selectAll('svg').remove()
+  d3
+    .select(selector)
+    .selectAll('svg')
+    .remove()
 
-  this.svg = d3.select(selector).append('svg:svg').attr('width', w).attr('height', h)
+  this.svg = d3
+    .select(selector)
+    .append('svg:svg')
+    .attr('width', w)
+    .attr('height', h)
 
-  this.svg.append('svg:rect').style('stroke', '#999').style('fill', '#fff').attr('width', w).attr('height', h)
+  this.svg
+    .append('svg:rect')
+    .style('stroke', '#999')
+    .style('fill', '#fff')
+    .attr('width', w)
+    .attr('height', h)
 
   this.force = d3.layout
     .force()
@@ -271,7 +283,10 @@ CodeFlower.prototype.click = function(d) {
 
 CodeFlower.prototype.mouseover = function(d) {
   this.text.node = d
-  this.text.attr('transform', 'translate(' + d.x + ',' + d.y + ')').text(d.displayName).style('display', null)
+  this.text
+    .attr('transform', 'translate(' + d.x + ',' + d.y + ')')
+    .text(d.displayName)
+    .style('display', null)
 }
 
 CodeFlower.prototype.mouseout = function(d) {

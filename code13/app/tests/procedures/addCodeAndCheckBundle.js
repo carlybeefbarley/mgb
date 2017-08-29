@@ -55,14 +55,17 @@ div.setAttribute("id", "test-element")
             const popup = handles.find(h => h != mainWindow)
 
             // switch to popup and find created element and close after
-            browser.switchTo().window(popup).then(() => {
-              //sel.takeScreenShot('test.png', () => {
-              sel.css('#test-element')
-              browser.close()
+            browser
+              .switchTo()
+              .window(popup)
+              .then(() => {
+                //sel.takeScreenShot('test.png', () => {
+                sel.css('#test-element')
+                browser.close()
 
-              browser.switchTo().window(mainWindow)
-              sel.done(done)
-            })
+                browser.switchTo().window(mainWindow)
+                sel.done(done)
+              })
             //})
           })
         })

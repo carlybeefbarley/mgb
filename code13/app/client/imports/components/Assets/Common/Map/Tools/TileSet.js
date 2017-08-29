@@ -408,7 +408,9 @@ export default class TileSet extends React.Component {
   }
 
   showTileListPopup() {
-    $(this.refs.modal).modal('show').modal('setting', 'transition', 'vertical flip') // first time there is default animation
+    $(this.refs.modal)
+      .modal('show')
+      .modal('setting', 'transition', 'vertical flip') // first time there is default animation
   }
 
   renderForModal(from = 0, to = this.props.tilesets.length) {

@@ -15,14 +15,22 @@ module.exports = browser => {
       const ty = Math.floor(id / widthInTiles)
       const pos = { x: (tx + 0.5) * tileWidth, y: (ty + 0.5) * tileHeight }
       //console.log("SELECTING: ", pos)
-      browser.actions().mouseMove(ts, pos).click().perform()
+      browser
+        .actions()
+        .mouseMove(ts, pos)
+        .click()
+        .perform()
     })
   }
 
   const putTileOnMap = (x, y, tileWidth = 32, tileHeight = 32) => {
     const map = sel.css(el.mapArea)
     const loc = { x: (x + 0.5) * tileWidth, y: (y + 0.5) * tileHeight }
-    browser.actions().mouseMove(map, loc).click().perform()
+    browser
+      .actions()
+      .mouseMove(map, loc)
+      .click()
+      .perform()
   }
 
   return done => {

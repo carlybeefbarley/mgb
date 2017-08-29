@@ -146,8 +146,18 @@ const NavRecentGET = React.createClass({
       }
 
       if (item) {
-        if (moment(a.timestamp).add(24, 'hours').isBefore()) retval.older.push(item)
-        else if (moment(a.timestamp).add(6, 'minutes').isBefore()) retval.today.push(item)
+        if (
+          moment(a.timestamp)
+            .add(24, 'hours')
+            .isBefore()
+        )
+          retval.older.push(item)
+        else if (
+          moment(a.timestamp)
+            .add(6, 'minutes')
+            .isBefore()
+        )
+          retval.today.push(item)
         else retval.justNow.push(item)
       }
     })

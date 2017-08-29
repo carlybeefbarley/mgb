@@ -86,7 +86,13 @@ var ConsoleLogViewer = (function() {
   }
 
   ConsoleLogViewer.prototype.flatten = function(value) {
-    return value.split('<').join('&lt;').split('>').join('&gt;').split('"').join('&quot;')
+    return value
+      .split('<')
+      .join('&lt;')
+      .split('>')
+      .join('&gt;')
+      .split('"')
+      .join('&quot;')
   }
 
   ConsoleLogViewer.prototype.overwrite = function() {

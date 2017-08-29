@@ -42,14 +42,20 @@ module.exports = browser => {
       .perform()
 
     // close color picker
-    browser.actions().mouseMove(sel.css('#mgbjr-np-mgb')).perform()
+    browser
+      .actions()
+      .mouseMove(sel.css('#mgbjr-np-mgb'))
+      .perform()
 
     // wait a little bit until color picker is closed
     return sel.untilInvisible('#mgbjr-EditGraphic-colorPicker-body')
   }
   const removeFrame = id => {
     const frameoptions = sel.css(el.getFrameOptionsSelector(id))
-    browser.actions().mouseMove(frameoptions).perform()
+    browser
+      .actions()
+      .mouseMove(frameoptions)
+      .perform()
 
     sel.untilVisible(el.getFrameOptionsSelector(id) + ' .remove.icon')
     sel.css(el.getFrameOptionsSelector(id) + ' .remove.icon').click()
@@ -82,7 +88,11 @@ module.exports = browser => {
       .then(() => {
         sel.css(el.fillTool).click()
         // fill green rect
-        browser.actions().mouseMove(canvas, { x: 50, y: 50 }).click().perform()
+        browser
+          .actions()
+          .mouseMove(canvas, { x: 50, y: 50 })
+          .click()
+          .perform()
 
         console.log('trying to add frame: done!')
         sel.css(el.addFrame).click()
@@ -94,11 +104,18 @@ module.exports = browser => {
       .then(() => pickColor(18.5))
       .then(() => {
         console.log('pick color: done!')
-        sel.css(el.fillTool).click().catch(e => {
-          console.log('Caught error!', e)
-        })
+        sel
+          .css(el.fillTool)
+          .click()
+          .catch(e => {
+            console.log('Caught error!', e)
+          })
         // fill all canvas with yellow color
-        return browser.actions().mouseMove(canvas, { x: 50, y: 50 }).click().perform()
+        return browser
+          .actions()
+          .mouseMove(canvas, { x: 50, y: 50 })
+          .click()
+          .perform()
       })
       .then(() => {
         sel.css(el.addFrame).click()

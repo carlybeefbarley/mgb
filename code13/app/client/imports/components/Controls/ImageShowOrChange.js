@@ -8,7 +8,11 @@ import FittedImage from '/client/imports/components/Controls/FittedImage'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 const _getAssetIdFromUrl = url =>
-  url && url.startsWith('/api/asset/png') ? _.last(url.split('/')).split('?').shift() : null
+  url && url.startsWith('/api/asset/png')
+    ? _.last(url.split('/'))
+        .split('?')
+        .shift()
+    : null
 
 const _importFromDrop = (event, handleChange) => {
   const asset = DragNDropHelper.getAssetFromEvent(event)

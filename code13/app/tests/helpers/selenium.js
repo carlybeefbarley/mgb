@@ -35,19 +35,27 @@ module.exports = browser => {
       return browser.executeAsyncScript('')
     },
     showLogs: () => {
-      return browser.manage().logs().get('browser').then(logs => {
-        console.log(logs)
-      })
+      return browser
+        .manage()
+        .logs()
+        .get('browser')
+        .then(logs => {
+          console.log(logs)
+        })
     },
     done: done => {
       try {
-        browser.manage().logs().get('browser').then(logs => {
-          const errors = logs.filter(l => l.message.indexOf('Uncaught') > -1)
-          if (errors.length) {
-            throw new Error('Javascript errors encountered \n' + JSON.stringify(errors, null, '\t'))
-          }
-          done && browser.call(done)
-        })
+        browser
+          .manage()
+          .logs()
+          .get('browser')
+          .then(logs => {
+            const errors = logs.filter(l => l.message.indexOf('Uncaught') > -1)
+            if (errors.length) {
+              throw new Error('Javascript errors encountered \n' + JSON.stringify(errors, null, '\t'))
+            }
+            done && browser.call(done)
+          })
       } catch (e) {
         // this will throw exception on IE
         done && browser.call(done)

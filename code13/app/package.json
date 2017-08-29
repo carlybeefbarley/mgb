@@ -111,7 +111,7 @@
     "mocha": "^3.4.2",
     "mocha-parallel": "^0.1.0",
     "mocha.parallel": "^0.15.2",
-    "prettier": "github:prettier/prettier#5c539b06a477995c588aaf03a4662a4ad8c68c20",
+    "prettier": "^1.6.1",
     "react-test-renderer": "^15.6.1",
     "selenium-webdriver": "^3.4.0",
     "use-yarn": "^1.0.1"

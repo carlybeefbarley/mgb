@@ -16,7 +16,10 @@ const repeatArray = (arr, length) => {
 
   const diff = Math.ceil(length / arr.length)
 
-  return Array(diff).fill().reduce((newArr, index) => newArr.concat(...arr), []).slice(0, length)
+  return Array(diff)
+    .fill()
+    .reduce((newArr, index) => newArr.concat(...arr), [])
+    .slice(0, length)
 }
 
 const extendObjectArrayByID = (one, two) =>
@@ -67,10 +70,13 @@ const updateObjByID = ({ objs, id, prop, value }) =>
 const parseQueryString = (url = window.location.href) =>
   !url.includes('?')
     ? {}
-    : url.split('?')[1].split('&').reduce((list, query) => {
-        const [key, value] = query.split('=')
-        return { ...list, [key]: value || '' }
-      }, {})
+    : url
+        .split('?')[1]
+        .split('&')
+        .reduce((list, query) => {
+          const [key, value] = query.split('=')
+          return { ...list, [key]: value || '' }
+        }, {})
 
 const getHashQueryParam = (param, url = window.location.hash) => {
   const paramPart1 = url.split(`${param}=`)[1]

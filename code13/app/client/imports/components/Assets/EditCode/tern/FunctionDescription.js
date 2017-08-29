@@ -66,7 +66,10 @@ const FunctionDescription = React.createClass({
     if (type.length < 3) {
       return type
     }
-    return type.replace(/\{/gi, '{\n ').replace(/,/gi, ',\n').replace(/}/gi, '\n}\n')
+    return type
+      .replace(/\{/gi, '{\n ')
+      .replace(/,/gi, ',\n')
+      .replace(/}/gi, '\n}\n')
   },
   render: function() {
     let fh = this.props.functionHelp

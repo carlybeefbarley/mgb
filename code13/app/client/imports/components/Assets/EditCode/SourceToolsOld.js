@@ -461,7 +461,10 @@ export default class SourceTools {
   // loads and observes imported MGB code asset for changes
   loadAndObserveLocalFile(url, urlFinalPart, cb, origin) {
     // import './stauzs:asset_name'
-    const parts = urlFinalPart.split('/').pop().split(':')
+    const parts = urlFinalPart
+      .split('/')
+      .pop()
+      .split(':')
     const name = parts.pop()
     const owner = parts.length > 0 ? parts.pop() : this.owner
     const assetUrl = `/api/asset/code/${owner}/${name}`
@@ -602,7 +605,11 @@ export default class SourceTools {
       for (let i in sources) {
         const source = sources[i]
         if (source.isExternalFile) {
-          const localKey = source.url.split('/').pop().split('.').shift()
+          const localKey = source.url
+            .split('/')
+            .pop()
+            .split('.')
+            .shift()
           const partial = {
             url: source.url,
             localName: source.localName,
@@ -696,7 +703,11 @@ main = function(){
 
         const key = source.name.split('@').shift()
         const localKeyWithExt = key.split('/').pop()
-        const localKey = localKeyWithExt.split('.').shift().split(':').pop()
+        const localKey = localKeyWithExt
+          .split('.')
+          .shift()
+          .split(':')
+          .pop()
 
         allInOneBundle +=
           'window.module = {exports: {}};window.exports = window.module.exports;\n' + source.code + ';\n'
@@ -962,7 +973,13 @@ main = function(){
 
   // extracts short name from CDN link lib@ver.js => lib
   static getShortName(fullUrl) {
-    var name = fullUrl.split('/').pop().split('@').shift().split('.').shift()
+    var name = fullUrl
+      .split('/')
+      .pop()
+      .split('@')
+      .shift()
+      .split('.')
+      .shift()
     return name
   }
 

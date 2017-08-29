@@ -41,7 +41,9 @@ export default class SmallDD extends React.Component {
           this.state.hasTriggered ? null : (
             e => {
               //console.log("initialized dropdown!!", $(e.target).closest(".selection.dropdown"))
-              $(e.target).closest('.selection.dropdown').dropdown()
+              $(e.target)
+                .closest('.selection.dropdown')
+                .dropdown()
               this.setState({ hasTriggered: true })
             }
           )

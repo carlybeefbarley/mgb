@@ -562,7 +562,11 @@ export default class SourceTools extends EventEmitter {
           const lib = knownLibs[name]
           const url = lib && lib.min ? lib.min(source.version) : source.url
 
-          const localKey = source.url.split('/').pop().split('.').shift()
+          const localKey = source.url
+            .split('/')
+            .pop()
+            .split('.')
+            .shift()
           const partial = {
             url: url,
             localName: source.localName,
@@ -662,7 +666,11 @@ main = function(){
 
         const key = source.name.split('@').shift()
         const localKeyWithExt = key.split('/').pop()
-        const localKey = localKeyWithExt.split('.').shift().split(':').pop()
+        const localKey = localKeyWithExt
+          .split('.')
+          .shift()
+          .split(':')
+          .pop()
 
         allInOneBundle +=
           'window.module = {exports: {}};window.exports = window.module.exports;\n' + source.code + ';\n'

@@ -103,7 +103,11 @@ export default class EditSound extends React.Component {
     let asset = this.props.asset
     let c2 = asset.content2
 
-    const previewCanvas = $('#previewDiv').children().first().children().first()[0]
+    const previewCanvas = $('#previewDiv')
+      .children()
+      .first()
+      .children()
+      .first()[0]
     this.props.handleContentChange(c2, previewCanvas.toDataURL('image/png'), this.saveText)
   }
 

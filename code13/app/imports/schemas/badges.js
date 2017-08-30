@@ -4,250 +4,360 @@ import _ from 'lodash'
 //  getAllBadgesForUser(user) gets list of user's badges (returns array of keys into badgeList)
 
 export const badgeList = {
-  mgbAdmin: { name: 'mgbAdmin', img: 'gold/winner.png', descr: 'MGB Administrator' },
-  hasAvatar: { name: 'hasAvatar', img: 'bronze/cleaner.png', descr: 'Made an Avatar' },
-  mgb2AlphaTester: { name: 'mgb2AlphaTester', img: 'bronze/bug.png', descr: 'Active Alpha Tester' },
+  mgbAdmin: { name: 'mgbAdmin', title: 'MGB Admin', img: 'gold/winner.png', descr: 'MGB Administrator' },
+  hasAvatar: { name: 'hasAvatar', title: 'Has Avatar', img: 'bronze/cleaner.png', descr: 'Made an Avatar' },
+  mgb2AlphaTester: {
+    name: 'mgb2AlphaTester',
+    title: 'MGB Alpha Tester',
+    img: 'bronze/bug.png',
+    descr: 'Active Alpha Tester',
+  },
   mgb1namesVerified: {
     name: 'mgb1namesVerified',
+    title: 'MGB1 Verified',
     img: 'bronze/necromancer.png',
     descr: 'Verified MGBv1 veteran',
   },
   mgb1namesImported: {
     name: 'mgb1namesImported',
+    title: 'MGB1 Imported',
     img: 'bronze/necromancer.png',
     descr: 'Imported an MGBv1 game',
   },
 
-  // This is a special case just to make it easier to generate some UI consistently
-  _blankBadge: { name: '_blankBadge', img: 'Empty Badge slot.png', descr: 'Space for another badge' },
-
   // skill based
-  getStartedChat: { name: 'getStartedChat', img: 'bronze/nice_question.png', descr: 'Write a chat message' },
-  getStartedAsset: { name: 'getStartedAsset', img: 'bronze/teacher.png', descr: 'Create a sound asset' },
-  getStartedProject: { name: 'getStartedProject', img: 'bronze/teacher.png', descr: 'Create a project' },
+  getStartedChat: {
+    name: 'getStartedChat',
+    title: 'Talker',
+    img: 'bronze/nice_question.png',
+    descr: 'Write a chat message',
+  },
+  getStartedAsset: {
+    name: 'getStartedAsset',
+    title: 'Create an Asset',
+    img: 'bronze/created_asset.png',
+    descr: 'Create a sound asset',
+  },
+  getStartedProject: {
+    name: 'getStartedProject',
+    title: 'Create a Project',
+    img: 'bronze/created_project.png',
+    descr: 'Create a project',
+  },
   getStartedAll: {
     name: 'getStartedAll',
+    title: 'Complete Get Started',
     img: 'bronze/learner.png',
     descr: 'Finish all "Get Started" tutorials',
   },
 
   codeBasicsBronze: {
     name: 'codeBasicsBronze',
-    img: 'bronze/teacher.png',
+    title: 'Code Basics',
+    level: 0,
+    img: 'bronze/javascript.png',
     descr: 'Complete 3 code basics tutorials',
   },
   codeBasicsSilver: {
     name: 'codeBasicsSilver',
-    img: 'silver/teacher.png',
+    title: 'Code Basics',
+    level: 1,
+    img: 'silver/javascript.png',
     descr: 'Complete 15 code basics tutorials',
   },
   codeBasicsGold: {
     name: 'codeBasicsGold',
-    img: 'gold/teacher.png',
+    title: 'Code Basics',
+    level: 2,
+    img: 'gold/javascript.png',
     descr: 'Complete all code basics tutorials',
   },
 
-  codePhaserBronze: { name: 'codePhaserBronze', img: 'bronze/teacher.png', descr: 'Complete 1 Phaser task' },
-  codePhaserSilver: { name: 'codePhaserSilver', img: 'silver/teacher.png', descr: 'Complete 3 Phaser task' },
-  codePhaserGold: { name: 'codePhaserGold', img: 'gold/teacher.png', descr: 'Complete all Phaser tutorials' },
+  codePhaserBronze: {
+    name: 'codePhaserBronze',
+    title: 'Code Phaser',
+    level: 0,
+    img: 'bronze/phaser.png',
+    descr: 'Complete 1 Phaser task',
+  },
+  codePhaserSilver: {
+    name: 'codePhaserSilver',
+    title: 'Code Phaser',
+    level: 1,
+    img: 'silver/phaser.png',
+    descr: 'Complete 3 Phaser task',
+  },
+  codePhaserGold: {
+    name: 'codePhaserGold',
+    title: 'Code Phaser',
+    level: 2,
+    img: 'gold/phaser.png',
+    descr: 'Complete all Phaser tutorials',
+  },
 
   codeAdvancedBronze: {
     name: 'codeAdvancedBronze',
-    img: 'bronze/teacher.png',
+    title: 'Code Advanced',
+    level: 0,
+    img: 'bronze/code_advanced.png',
     descr: 'Complete 3 code advanced tutorials',
   },
   codeAdvancedSilver: {
     name: 'codeAdvancedSilver',
-    img: 'silver/teacher.png',
+    title: 'Code Advanced',
+    level: 1,
+    img: 'silver/code_advanced.png',
     descr: 'Complete 15 code advanced tutorials',
   },
   codeAdvancedGold: {
     name: 'codeAdvancedGold',
-    img: 'gold/teacher.png',
+    title: 'Code Advanced',
+    level: 2,
+    img: 'gold/code_advanced.png',
     descr: 'Complete all code advanced tutorials',
   },
 
-  artBronze: { name: 'artBronze', img: 'bronze/teacher.png', descr: 'Complete 2 art tutorials' },
-  artSilver: { name: 'artSilver', img: 'silver/teacher.png', descr: 'Complete 6 art tutorials' },
-  artGold: { name: 'artGold', img: 'gold/teacher.png', descr: 'Complete all art tutorials' },
+  artBronze: {
+    name: 'artBronze',
+    title: 'Art',
+    level: 0,
+    img: 'bronze/artist_03.png',
+    descr: 'Complete 2 art tutorials',
+  },
+  artSilver: {
+    name: 'artSilver',
+    title: 'Art',
+    level: 1,
+    img: 'silver/artist_03.png',
+    descr: 'Complete 6 art tutorials',
+  },
+  artGold: {
+    name: 'artGold',
+    title: 'Art',
+    level: 2,
+    img: 'gold/artist_03.png',
+    descr: 'Complete all art tutorials',
+  },
 
-  // time based
-  visitStrikeBronze: {
-    name: 'visitStrikeBronze',
-    img: 'bronze/teacher.png',
-    descr: 'Visit MGB for 2 consecutive days',
-  },
-  visitStrikeSilver: {
-    name: 'visitStrikeSilver',
-    img: 'silver/teacher.png',
-    descr: 'Visit MGB for 7 consecutive days',
-  },
-  visitStrikeGold: {
-    name: 'visitStrikeGold',
-    img: 'gold/teacher.png',
-    descr: 'Visit MGB for 30 consecutive days',
-  },
+  // TODO - time based
+  // visitStrikeBronze: {
+  //   name: 'visitStrikeBronze',
+  //   img: 'bronze/teacher.png',
+  //   descr: 'Visit MGB for 2 consecutive days',
+  // },
+  // visitStrikeSilver: {
+  //   name: 'visitStrikeSilver',
+  //   img: 'silver/teacher.png',
+  //   descr: 'Visit MGB for 7 consecutive days',
+  // },
+  // visitStrikeGold: {
+  //   name: 'visitStrikeGold',
+  //   img: 'gold/teacher.png',
+  //   descr: 'Visit MGB for 30 consecutive days',
+  // },
 
   // time based - editors
   useGraphicEditorBronze: {
     name: 'useGraphicEditorBronze',
+    title: 'Graphic Editor',
+    level: 0,
     img: 'bronze/artist.png',
     descr: 'Use graphic editor for 2 min',
   },
   useGraphicEditorSilver: {
     name: 'useGraphicEditorSilver',
+    title: 'Graphic Editor',
+    level: 1,
     img: 'silver/artist.png',
     descr: 'Use graphic editor for 1 hour',
   },
   useGraphicEditorGold: {
     name: 'useGraphicEditorGold',
+    title: 'Graphic Editor',
+    level: 2,
     img: 'gold/artist.png',
     descr: 'Use graphic editor for 10 hours',
   },
 
   useCodeEditorBronze: {
     name: 'useCodeEditorBronze',
+    title: 'Code Editor',
+    level: 0,
     img: 'bronze/code.png',
     descr: 'Use code editor for 2 min',
   },
   useCodeEditorSilver: {
     name: 'useCodeEditorSilver',
+    title: 'Code Editor',
+    level: 1,
     img: 'silver/code.png',
     descr: 'Use code editor for 1 hour',
   },
   useCodeEditorGold: {
     name: 'useCodeEditorGold',
+    title: 'Code Editor',
+    level: 2,
     img: 'gold/code.png',
     descr: 'Use code editor for 10 hours',
   },
 
   useMapEditorBronze: {
     name: 'useMapEditorBronze',
-    img: 'bronze/teacher.png',
+    title: 'Map Editor',
+    level: 0,
+    img: 'bronze/map_editor.png',
     descr: 'Use map editor for 2 min',
   },
   useMapEditorSilver: {
     name: 'useMapEditorSilver',
-    img: 'silver/teacher.png',
+    title: 'Map Editor',
+    level: 1,
+    img: 'silver/map_editor.png',
     descr: 'Use map editor for 1 hour',
   },
   useMapEditorGold: {
     name: 'useMapEditorGold',
-    img: 'gold/teacher.png',
+    title: 'Map Editor',
+    level: 2,
+    img: 'gold/map_editor.png',
     descr: 'Use map editor for 10 hours',
   },
 
   useActorEditorBronze: {
     name: 'useActorEditorBronze',
+    title: 'Actor Editor',
+    level: 0,
     img: 'bronze/animator_02.png',
     descr: 'Use actor editor for 2 min',
   },
   useActorEditorSilver: {
     name: 'useActorEditorSilver',
+    title: 'Actor Editor',
+    level: 1,
     img: 'silver/animator_02.png',
     descr: 'Use actor editor for 1 hour',
   },
   useActorEditorGold: {
     name: 'useActorEditorGold',
+    title: 'Actor Editor',
+    level: 2,
     img: 'gold/animator_02.png',
     descr: 'Use actor editor for 10 hours',
   },
 
   useActormapEditorBronze: {
     name: 'useActormapEditorBronze',
-    img: 'bronze/teacher.png',
+    title: 'Actormap Editor',
+    level: 0,
+    img: 'bronze/actormap.png',
     descr: 'Use actormap editor for 2 min',
   },
   useActormapEditorSilver: {
     name: 'useActormapEditorSilver',
-    img: 'silver/teacher.png',
+    title: 'Actormap Editor',
+    level: 1,
+    img: 'silver/actormap.png',
     descr: 'Use actormap editor for 1 hour',
   },
   useActormapEditorGold: {
     name: 'useActormapEditorGold',
-    img: 'gold/teacher.png',
+    title: 'Actormap Editor',
+    level: 2,
+    img: 'gold/actormap.png',
     descr: 'Use actormap editor for 10 hours',
   },
 
   useSoundEditorBronze: {
     name: 'useSoundEditorBronze',
+    title: 'Sound Editor',
+    level: 0,
     img: 'bronze/sound_guru_01.png',
     descr: 'Use sound editor for 2 min',
   },
   useSoundEditorSilver: {
     name: 'useSoundEditorSilver',
+    title: 'Sound Editor',
+    level: 1,
     img: 'silver/sound_guru_01.png',
     descr: 'Use sound editor for 1 hour',
   },
   useSoundEditorGold: {
     name: 'useSoundEditorGold',
+    title: 'Sound Editor',
+    level: 2,
     img: 'gold/sound_guru_01.png',
     descr: 'Use sound editor for 10 hours',
   },
 
   useMusicEditorBronze: {
     name: 'useMusicEditorBronze',
+    title: 'Music Editor',
+    level: 0,
     img: 'bronze/music.png',
     descr: 'Use music editor for 2 min',
   },
   useMusicEditorSilver: {
     name: 'useMusicEditorSilver',
+    title: 'Music Editor',
+    level: 1,
     img: 'silver/music.png',
     descr: 'Use music editor for 1 hour',
   },
   useMusicEditorGold: {
     name: 'useMusicEditorGold',
+    title: 'Music Editor',
+    level: 2,
     img: 'gold/music.png',
     descr: 'Use music editor for 10 hours',
   },
 
-  // interaction based
-  heartsBronze: { name: 'heartsBronze', img: 'bronze/teacher.png', descr: 'Asset got 1 like' },
-  heartsSilver: { name: 'heartsSilver', img: 'bronze/teacher.png', descr: 'Asset got 5 likes' },
-  heartsGold: { name: 'heartsGold', img: 'bronze/teacher.png', descr: 'Asset got 20 likes' },
+  // TODO interaction based
+  // heartsBronze: { name: 'heartsBronze', img: 'bronze/teacher.png', descr: 'Asset got 1 like' },
+  // heartsSilver: { name: 'heartsSilver', img: 'bronze/teacher.png', descr: 'Asset got 5 likes' },
+  // heartsGold: { name: 'heartsGold', img: 'bronze/teacher.png', descr: 'Asset got 20 likes' },
 
-  playsBronze: { name: 'playsBronze', img: 'bronze/teacher.png', descr: 'Game got 5 plays' },
-  playsSilver: { name: 'playsSilver', img: 'bronze/teacher.png', descr: 'Game got 50 plays' },
-  playsGold: { name: 'playsGold', img: 'bronze/teacher.png', descr: 'Game got 500 plays' },
+  // playsBronze: { name: 'playsBronze', img: 'bronze/teacher.png', descr: 'Game got 5 plays' },
+  // playsSilver: { name: 'playsSilver', img: 'bronze/teacher.png', descr: 'Game got 50 plays' },
+  // playsGold: { name: 'playsGold', img: 'bronze/teacher.png', descr: 'Game got 500 plays' },
 
-  mentionsBronze: {
-    name: 'mentionsBronze',
-    img: 'bronze/teacher.png',
-    descr: 'Got @ mentioned in chat 1 time',
-  },
-  mentionsSilver: {
-    name: 'mentionsSilver',
-    img: 'bronze/teacher.png',
-    descr: 'Got @ mentioned in chat 10 times',
-  },
-  mentionsGold: {
-    name: 'mentionsGold',
-    img: 'bronze/teacher.png',
-    descr: 'Got @ mentioned in chat 50 times',
-  },
+  // mentionsBronze: {
+  //   name: 'mentionsBronze',
+  //   img: 'bronze/teacher.png',
+  //   descr: 'Got @ mentioned in chat 1 time',
+  // },
+  // mentionsSilver: {
+  //   name: 'mentionsSilver',
+  //   img: 'bronze/teacher.png',
+  //   descr: 'Got @ mentioned in chat 10 times',
+  // },
+  // mentionsGold: {
+  //   name: 'mentionsGold',
+  //   img: 'bronze/teacher.png',
+  //   descr: 'Got @ mentioned in chat 50 times',
+  // },
 
-  projInviteBronze: {
-    name: 'projInviteBronze',
-    img: 'bronze/teacher.png',
-    descr: 'Got invited to 1 project',
-  },
-  projInviteSilver: {
-    name: 'projInviteSilver',
-    img: 'bronze/teacher.png',
-    descr: 'Got invited to 3 projects',
-  },
-  projInviteGold: { name: 'projInviteGold', img: 'bronze/teacher.png', descr: 'Got invited to 10 projects' },
+  // projInviteBronze: {
+  //   name: 'projInviteBronze',
+  //   img: 'bronze/teacher.png',
+  //   descr: 'Got invited to 1 project',
+  // },
+  // projInviteSilver: {
+  //   name: 'projInviteSilver',
+  //   img: 'bronze/teacher.png',
+  //   descr: 'Got invited to 3 projects',
+  // },
+  // projInviteGold: { name: 'projInviteGold', img: 'bronze/teacher.png', descr: 'Got invited to 10 projects' },
 
-  // special badges
-  verifiedAccount: {
-    name: 'verifiedAccount',
-    img: 'bronze/teacher.png',
-    descr: 'Verified account. Verification link sent via email',
-  },
-  // invite friends via special link?
-  inviteFriendsBronze: { name: 'inviteFriendsBronze', img: 'bronze/teacher.png', descr: 'Invite a friend' },
-  inviteFriendsSilver: { name: 'inviteFriendsSilver', img: 'bronze/teacher.png', descr: 'Invite 3 friends' },
-  inviteFriendsGold: { name: 'inviteFriendsGold', img: 'bronze/teacher.png', descr: 'Invite 10 friends' },
+  // // special badges
+  // verifiedAccount: {
+  //   name: 'verifiedAccount',
+  //   img: 'bronze/teacher.png',
+  //   descr: 'Verified account. Verification link sent via email',
+  // },
+  // // invite friends via special link?
+  // inviteFriendsBronze: { name: 'inviteFriendsBronze', img: 'bronze/teacher.png', descr: 'Invite a friend' },
+  // inviteFriendsSilver: { name: 'inviteFriendsSilver', img: 'bronze/teacher.png', descr: 'Invite 3 friends' },
+  // inviteFriendsGold: { name: 'inviteFriendsGold', img: 'bronze/teacher.png', descr: 'Invite 10 friends' },
 }
 
 export const getAllBadgesForUser = user => {

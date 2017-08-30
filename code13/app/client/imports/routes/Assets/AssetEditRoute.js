@@ -30,7 +30,7 @@ import AssetChatDetail from '/client/imports/components/Assets/AssetChatDetail'
 import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail'
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
-import EditTime from '/client/imports/components/Assets/EditTime'
+import { EditTimeCounter } from '/client/imports/components/Assets/EditTime'
 
 import TaskApprove from '/client/imports/components/Assets/TaskApprove'
 
@@ -126,6 +126,7 @@ const AssetEditRoute = React.createClass({
       isForkPending: false,
       isDeletePending: false,
       isForkRevertPending: false,
+      counterTime: null,
     }
   },
 
@@ -221,10 +222,24 @@ const AssetEditRoute = React.createClass({
 
     // Clear Asset kind status for parent App
     if (this.props.handleSetCurrentlyEditingAssetInfo) this.props.handleSetCurrentlyEditingAssetInfo({})
+
+    if (this.counter) this.counter.doUnmount()
   },
 
   componentDidUpdate() {
     this.checkForRedirect()
+
+    if (!this.counter && !this.data.loading) {
+      this.assetUpdatedAt = this.data.asset.updatedAt
+      this.counter = new EditTimeCounter(this.data.asset, this.props.currUser, newTime =>
+        this.setState({ counterTime: newTime }),
+      )
+    }
+
+    if (this.counter && this.assetUpdatedAt != this.data.asset.updatedAt) {
+      this.assetUpdatedAt = this.data.asset.updatedAt
+      this.counter.assetUpdated()
+    }
   },
 
   getMeteorData: function() {
@@ -396,7 +411,6 @@ const AssetEditRoute = React.createClass({
               // TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
             }
             {this.state.isForkRevertPending && <Icon name="fork" loading />}
-            <EditTime currUser={this.props.currUser} kind={asset.kind} lastUpdated={asset.updatedAt} />
             <UserLoves currUser={currUser} asset={asset} size="small" seeLovers />
             <WorkState
               workState={asset.workState}
@@ -428,7 +442,12 @@ const AssetEditRoute = React.createClass({
               currUser={currUser}
               activitySnapshots={this.getActivitySnapshots()}
             />
-            <AssetHistoryDetail asset={asset} currUser={currUser} assetActivity={this.data.assetActivity} />
+            <AssetHistoryDetail
+              asset={asset}
+              currUser={currUser}
+              assetActivity={this.data.assetActivity}
+              counterTime={this.state.counterTime}
+            />
             {asset.skillPath &&
             asset.skillPath.length > 0 && <ChallengeState ownername={asset.dn_ownerName} />}
             <AssetForkGenerator

@@ -308,7 +308,7 @@ const _doRefreshBadgeStatus = user => {
   // TODO: more...
 
   _.forEach(_.uniq(newBadgeKeys), bk => {
-    logActivity('user.earnBadge', `earned the '${bk}' badge`, null, null, { override_byUser: user })
+    logActivity('user.earnBadge', `earned the '${bk}' badge`, null, null)
   })
 
   if (newBadgeKeys.length > 0) {

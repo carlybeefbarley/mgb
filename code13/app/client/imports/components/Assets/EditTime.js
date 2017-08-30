@@ -1,29 +1,41 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Label } from 'semantic-ui-react'
 import { showToast } from '/client/imports/routes/App'
 
+// simple time displaying component
 export default class AssetEdit extends React.Component {
   static propTypes = {
-    currUser: PropTypes.object,
-    kind: PropTypes.string,
-    lastUpdated: PropTypes.object,
+    time: PropTypes.string,
+    asset: PropTypes.object,
   }
-  constructor(props) {
-    super(props)
 
-    this.state = {
-      timeSec: 0, // only for update UI purpose
-    }
+  render() {
+    if (!this.props.time) return null
+    return (
+      <span>
+        {_.capitalize(this.props.asset.kind)} editor experience: {this.props.time}
+      </span>
+    )
+  }
+}
+
+// count time logic
+export class EditTimeCounter {
+  constructor(asset, currUser, onSecondTick) {
+    this.asset = asset
+    this.currUser = currUser
+    this.onSecondTick = onSecondTick
+    this.timeSec = 0 // only for ui
     this.timeMs = 0 // real counter
     this.dbTime = 0 // saves actual time in db
-  }
 
-  componentDidMount() {
+    // check if logged in
+    if (!this.currUser) return null
+    // count time only for user owned assets
+    if (this.currUser._id != this.asset.ownerId) return null
     // get seconds from db
-    if (!this.props.currUser) return null
-    if (!_.isEmpty(this.props.currUser.edit_time) && this.props.currUser.edit_time[this.props.kind]) {
-      this.dbTime = this.props.currUser.edit_time[this.props.kind]
+    if (!_.isEmpty(this.currUser.edit_time) && this.currUser.edit_time[this.asset.kind]) {
+      this.dbTime = this.currUser.edit_time[this.asset.kind]
       this.timeMs = this.dbTime * 1000 // convert to miliseconds
     }
 
@@ -40,18 +52,20 @@ export default class AssetEdit extends React.Component {
     this._raf()
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.lastUpdated !== prevProps.lastUpdated) {
-      this.lastActivity = Date.now()
-    }
+  assetUpdated() {
+    this.lastActivity = Date.now()
   }
 
-  componentWillUnmount() {
+  doUnmount() {
     this.unmount = true
     this._raf = () => {}
   }
 
-  updateTimer = () => {
+  getTime() {
+    this.formatTime(this.timeSec)
+  }
+
+  updateTimer() {
     const now = Date.now()
     if (!this.unmount && now < this.lastActivity + this.inactivityInterval) {
       const deltaTime = now - this.lastTime
@@ -59,13 +73,14 @@ export default class AssetEdit extends React.Component {
       this.timeMs += deltaTime
       const timeSec = Math.floor(this.timeMs / 1000)
       // update UI
-      if (timeSec != this.state.timeSec) {
-        this.setState({ timeSec: timeSec })
+      if (timeSec != this.timeSec) {
+        this.timeSec = timeSec
+        this.onSecondTick(this.formatTime(this.timeSec))
       }
       // update DB
       if (timeSec >= this.dbTime + this.updateDBinterval) {
         this.dbTime += this.updateDBinterval
-        Meteor.call('User.addEditTime', this.props.kind, this.updateDBinterval, (error, result) => {
+        Meteor.call('User.addEditTime', this.asset.kind, this.updateDBinterval, (error, result) => {
           if (error) console.warn(error)
           else {
             Meteor.call('User.refreshBadgeStatus', (err, re) => {
@@ -84,9 +99,7 @@ export default class AssetEdit extends React.Component {
     }
   }
 
-  getTime = () => this.formatTime(this.state.timeSec)
-
-  formatTime = timeSec => {
+  formatTime(timeSec) {
     let formatedTime = '0s'
     if (timeSec < 60) {
       formatedTime = timeSec + 's'
@@ -109,9 +122,5 @@ export default class AssetEdit extends React.Component {
     }
 
     return formatedTime
-  }
-
-  render() {
-    return <Label>{this.getTime()}</Label>
   }
 }

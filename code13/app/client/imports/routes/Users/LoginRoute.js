@@ -9,7 +9,7 @@ import { utilPushTo } from '../QLink'
 import { logActivity } from '/imports/schemas/activity'
 import validate from '/imports/schemas/validate'
 import { showToast } from '/client/imports/routes/App'
-import Footer from '/client/imports/components/Footer/Footer'
+import HeroLayout from '/client/imports/layouts/HeroLayout'
 
 const LoginRoute = React.createClass({
   getInitialState: function() {
@@ -24,8 +24,22 @@ const LoginRoute = React.createClass({
     urlLocation: React.PropTypes.object,
   },
 
+  checkEmail: function(e) {
+    const email = e.target.value
+
+    // don't clear existing errors
+    if (this.state.errors.email) return
+
+    Meteor.call('AccountsHelp.emailTaken', email, (err, response) => {
+      if (err) return
+
+      const message = response ? null : `'${email}' is not registered`
+      this.setState({ errors: { ...this.state.errors, email: message } })
+    })
+  },
+
   render: function() {
-    const { isLoading, errors } = this.state
+    const { isLoading, errors, formData } = this.state
     const { currUser } = this.props
 
     if (currUser) {
@@ -34,8 +48,8 @@ const LoginRoute = React.createClass({
     }
 
     return (
-      <div>
-        <div className="hero" style={{ paddingTop: '3em', paddingBottom: '3em' }}>
+      <HeroLayout
+        heroContent={
           <Container text>
             <Grid columns="equal" verticalAlign="middle">
               <Grid.Column width={4} only="computer tablet" />
@@ -48,6 +62,7 @@ const LoginRoute = React.createClass({
                       icon="envelope"
                       label={errors.email || 'Email'}
                       name="email"
+                      onBlur={this.checkEmail}
                       placeholder="Email"
                       type="email"
                     />
@@ -59,7 +74,12 @@ const LoginRoute = React.createClass({
                       placeholder="Password"
                       type="password"
                     />
-                    <Form.Button fluid primary disabled={errors.email || errors.password} content="Log in" />
+                    <Form.Button
+                      fluid
+                      primary
+                      disabled={!formData.email || !formData.password || errors.email || errors.password}
+                      content="Log in"
+                    />
                   </Form>
                 </Segment>
                 {errors.server && <Message error content={errors.server} />}
@@ -68,9 +88,8 @@ const LoginRoute = React.createClass({
               <Grid.Column width={4} only="computer tablet" />
             </Grid>
           </Container>
-        </div>
-        <Footer />
-      </div>
+        }
+      />
     )
   },
 

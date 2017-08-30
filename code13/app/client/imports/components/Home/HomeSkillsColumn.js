@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import '/client/imports/routes/home.css'
 import '/client/imports/routes/GetStarted.css'
 
-import { Grid, Header, List, Icon, Button } from 'semantic-ui-react'
+import { Grid, Header, List, Icon, Button, Segment } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 
 const _propTypes = {
@@ -18,32 +18,43 @@ const skillsList = [
   { icon: 'line chart', msg: 'Analytics', link: '/learn/skills/analytics' },
 ]
 
+const segmentStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+}
+
+const listStyle = {
+  flex: '1',
+}
+
 const HomeSkillsColumn = () => (
   <Grid.Column className="animated fadeIn">
-    <Header as="h2" style={{ marginBottom: '1em' }}>
-      Grow your <em>real</em> skill tree
-    </Header>
-    <List relaxed="very" size="large">
-      {skillsList.map((skill, idx) => (
-        <List.Item key={idx} as={QLink} to={skill.link}>
-          <Icon name={skill.icon} size="large" />
-          <Header className="content" as="h3">
-            {skill.msg}
-          </Header>
-        </List.Item>
-      ))}
-    </List>
-    <br />
-    <Button
-      as={QLink}
-      to={`/learn/skills`}
-      fluid
-      primary
-      size="large"
-      content="Set skill goals"
-      // prevent vertical stretching in the `stretched` column
-      style={{ flex: '0 0 auto' }}
-    />
+    <Segment raised style={segmentStyle}>
+      <Header as="h2" textAlign="center">
+        Grow your <em>real</em> skill tree
+      </Header>
+      <List relaxed="very" size="large" selection style={listStyle}>
+        {skillsList.map((skill, idx) => (
+          <List.Item key={idx} as={QLink} to={skill.link}>
+            <Icon name={skill.icon} size="large" />
+            <List.Content verticalAlign="middle">
+              <Header as="h3">{skill.msg}</Header>
+            </List.Content>
+          </List.Item>
+        ))}
+      </List>
+      <br />
+      <Button
+        as={QLink}
+        to={`/learn/skills`}
+        fluid
+        primary
+        size="large"
+        content="Set skill goals"
+        // prevent vertical stretching in the `stretched` column
+        style={{ flex: '0 0 auto' }}
+      />
+    </Segment>
   </Grid.Column>
 )
 

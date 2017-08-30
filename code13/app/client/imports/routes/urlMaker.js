@@ -91,9 +91,8 @@ const urlMaker = {
     return queryParamKey
   },
 
-  pathTo: function(
-    stableName, // and other arguments for params
-  ) {
+  // and other arguments for params
+  pathTo: function(stableName) {
     if (stableName === '/') return '/' // Just handle this specially so we don't complicate parsing with this special case
 
     // TODO: Validate this is a known path by looking in _appRouter for paths other than *

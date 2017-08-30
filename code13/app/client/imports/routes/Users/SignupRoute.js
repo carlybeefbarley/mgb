@@ -8,7 +8,7 @@ import { utilPushTo } from '../QLink'
 import validate from '/imports/schemas/validate'
 import md5 from 'blueimp-md5'
 import { logActivity } from '/imports/schemas/activity'
-import Footer from '/client/imports/components/Footer/Footer'
+import HeroLayout from '/client/imports/layouts/HeroLayout'
 
 const SignupRoute = React.createClass({
   contextTypes: {
@@ -18,22 +18,41 @@ const SignupRoute = React.createClass({
   getInitialState: function() {
     return {
       errors: {},
+      formData: {},
       isLoading: false,
     }
   },
 
+  checkEmail: function(e) {
+    const email = e.target.value
+
+    // don't clear existing errors
+    if (this.state.errors.email) return
+
+    Meteor.call('AccountsHelp.emailTaken', email, (err, response) => {
+      if (err) return
+
+      const message = response ? `'${email}' is taken` : null
+      this.setState({ errors: { ...this.state.errors, email: message } })
+    })
+  },
+
   checkUserName: function(e) {
-    if (e && e.target.value && e.target.value.length > 2)
-      Meteor.call('AccountsHelp.userNameTaken', e.target.value, (err, response) => {
-        if (!err) {
-          const message = response ? `Username '${response}' has already been taken` : null
-          this.setState({ errors: { ...this.state.errors, username: message } })
-        }
-      })
+    const username = e.target.value
+
+    // don't clear existing errors
+    if (this.state.errors.username) return
+
+    Meteor.call('AccountsHelp.userNameTaken', username, (err, response) => {
+      if (err) return
+
+      const message = response ? `'${username}' is taken` : null
+      this.setState({ errors: { ...this.state.errors, username: message } })
+    })
   },
 
   render: function() {
-    const { isLoading, errors } = this.state
+    const { isLoading, errors, formData } = this.state
     const { currUser } = this.props
 
     if (currUser) {
@@ -41,28 +60,21 @@ const SignupRoute = React.createClass({
       return null
     }
 
-    // Turn of autocomplete for signup as described at https://bugs.chromium.org/p/chromium/issues/detail?id=370363#c7
-    // and at https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion#The_autocomplete_attribute_and_login_fields
-
     return (
-      <div>
-        <div className="hero" style={{ paddingTop: '3em', paddingBottom: '3em' }}>
+      <HeroLayout
+        heroContent={
           <Container text>
-            <Grid columns="equal" verticalAlign="middle">
+            <Grid padded columns="equal" verticalAlign="middle">
               <Grid.Column>
                 <Header as="h2" inverted content="Sign Up" />
                 <Segment stacked>
-                  <Form
-                    onChange={this.handleChange}
-                    onSubmit={this.handleSubmit}
-                    loading={isLoading}
-                    error={_.some(errors)}
-                  >
+                  <Form onChange={this.handleChange} onSubmit={this.handleSubmit} loading={isLoading}>
                     <Form.Input
                       error={!!errors.email}
                       icon="envelope"
                       label={errors.email || 'Email'}
                       name="email"
+                      onBlur={this.checkEmail}
                       placeholder="Email"
                       type="email"
                     />
@@ -72,10 +84,11 @@ const SignupRoute = React.createClass({
                       label={errors.username || 'Username'}
                       name="username"
                       onBlur={this.checkUserName}
-                      onChange={this.handleChange}
                       placeholder="Username"
                     />
                     <Form.Input
+                      // Turn of autocomplete for signup as described at https://bugs.chromium.org/p/chromium/issues/detail?id=370363#c7
+                      // and at https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion#The_autocomplete_attribute_and_login_fields
                       autoComplete="new-password"
                       error={!!errors.password}
                       icon="lock"
@@ -87,12 +100,19 @@ const SignupRoute = React.createClass({
                     <Form.Button
                       primary
                       fluid
-                      disabled={errors.email || errors.username || errors.password}
+                      disabled={
+                        !formData.email ||
+                        !formData.username ||
+                        !formData.password ||
+                        errors.email ||
+                        errors.username ||
+                        errors.password
+                      }
                       content="Create Account"
                     />
-                    <Message error content={errors.result} />
                   </Form>
                 </Segment>
+                {errors.server && <Message error content={errors.server} />}
                 {!currUser && <LoginLinks showLogin />}
               </Grid.Column>
               <Grid.Column width={8} only="tablet computer">
@@ -101,9 +121,8 @@ const SignupRoute = React.createClass({
               </Grid.Column>
             </Grid>
           </Container>
-        </div>
-        <Footer />
-      </div>
+        }
+      />
     )
   },
 
@@ -133,7 +152,7 @@ const SignupRoute = React.createClass({
       return
     }
 
-    this.setState({ isLoading: true, errors: null })
+    this.setState({ isLoading: true, errors })
     Accounts.createUser(
       {
         // Note that there is server-side validation in /server/CreateUser.js
@@ -147,27 +166,28 @@ const SignupRoute = React.createClass({
         },
       },
       error => {
-        if (error)
+        if (error) {
           this.setState({
             isLoading: false,
-            errors: { result: error.reason || 'Server Error while creating account' },
+            errors: { server: error.reason || 'Server Error while creating account' },
           })
-        else {
-          Meteor.call('User.sendSignUpEmail', email)
-          logActivity('user.join', `New user "${username}"`, null, null)
-          stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
-          utilPushTo(this.context.urlLocation.query, '/learn/getstarted')
-
-          // analytics.identify(Meteor.user()._id, {
-          //   name: Meteor.user().profile.name,
-          //   email: Meteor.user().emails[0].address
-          // })
-          // analytics.track('Signed up')
-          // analytics.page('/signup')
-          // showToast("Sign up ok!  Welcome aboard")
-          ga('send', 'pageview', '/signup')
-          ga('send', 'pageview', '/login')
+          return
         }
+
+        Meteor.call('User.sendSignUpEmail', email)
+        logActivity('user.join', `New user "${username}"`, null, null)
+        stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
+        utilPushTo(this.context.urlLocation.query, '/learn/getStarted')
+
+        // analytics.identify(Meteor.user()._id, {
+        //   name: Meteor.user().profile.name,
+        //   email: Meteor.user().emails[0].address
+        // })
+        // analytics.track('Signed up')
+        // analytics.page('/signup')
+        // showToast("Sign up ok!  Welcome aboard")
+        ga('send', 'pageview', '/signup')
+        ga('send', 'pageview', '/login')
       },
     )
   },

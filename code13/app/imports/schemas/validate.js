@@ -103,35 +103,35 @@ const validate = {
       return `That Asset name is too short. The minimum length is ${_minAssetNameLength} characters.`
 
     if (!_validAssetNameRegex.test(text))
-      return `That Asset name contains invalid characters... ${_listInvalidChars(
+      return `That Asset name contains invalid characters: ${_listInvalidChars(
         text,
         _validAssetNameRegex,
-      ).join(' ')}`
+      ).join(' ')}.`
 
     return null
   },
 
   // These functions return null for ok, or a string with a reason why they fail
   passwordWithReason: function(text) {
-    if (!text || text.length < 6) return 'Your password must be at least 6 characters long'
-    if (text.search(/[a-z]/i) < 0) return 'Your password must contain at least one letter'
-    if (text.search(/[0-9]/) < 0) return 'Your password must contain at least 1 number'
+    if (!text || text.length < 6) return 'Your password must be at least 6 characters long.'
+    if (text.search(/[a-z]/i) < 0) return 'Your password must contain at least one letter.'
+    if (text.search(/[0-9]/) < 0) return 'Your password must contain at least 1 number.'
 
     return null
   },
 
   emailWithReason: function(text) {
-    if (!text || !/\S+@\S+\.\S+/.test(text)) return "Doesn't look like a valid email"
+    if (!text || !/\S+@\S+\.\S+/.test(text)) return "Doesn't look like a valid email."
 
     return null
   },
 
   usernameWithReason: function(value) {
-    if (/([^\w]|_)/.test(value)) return 'Only letters and digits are allowed in usernames'
+    if (/([^\w]|_)/.test(value)) return 'Only letters and digits are allowed in usernames.'
     if (value.length > _maxUsernameLength)
-      return `Your username is too long. The maximum length is ${_maxUsernameLength} characters`
+      return `Your username is too long. The maximum length is ${_maxUsernameLength} characters.`
     if (value.length < _minUsernameLength)
-      return `Your username is too short. It must be at least ${_minUsernameLength} characters long`
+      return `Your username is too short. It must be at least ${_minUsernameLength} characters.`
 
     return null
   },

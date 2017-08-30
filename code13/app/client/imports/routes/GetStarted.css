@@ -1,7 +1,12 @@
-/* Keep colors in sync with landing-layout.less @blueGradient */
 .hero {
-  background: #1698A2;
-  background-image: linear-gradient(to bottom, #2B7277, #00BECC);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1 0 auto;
+  /* Keep colors in sync with landing-layout.less .blue-gradient() */
+  background: #43518B;
+  background-image: linear-gradient(#68256D, #0070b0 80%, #0080ff);
   box-shadow: inset 0 0.2em 1em rgba(0, 0, 0, 0.2);
 }
 

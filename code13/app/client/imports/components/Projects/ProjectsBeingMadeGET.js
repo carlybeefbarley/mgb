@@ -1,25 +1,30 @@
-import React, { PropTypes } from 'react'
 import { createContainer } from 'meteor/react-meteor-data'
+import React, { PropTypes } from 'react'
+import { Header, Icon, List } from 'semantic-ui-react'
+
 import Spinner from '/client/imports/components/Nav/Spinner'
 import QLink from '/client/imports/routes/QLink'
-
 import { Projects } from '/imports/schemas'
 import { projectMakeFrontPageListSelector } from '/imports/schemas/projects'
-import { Header, Icon, List } from 'semantic-ui-react'
 import { getProjectAvatarUrl, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import SpecialGlobals from '/imports/SpecialGlobals'
+import FittedImage from '../Controls/FittedImage'
 
-const _titleWrapperStyle = {
+const imageSize = 60 // px
+
+const titleWrapperStyle = {
   width: '100%',
   position: 'relative',
-  paddingLeft: '75px',
-  left: '-60px',
+  paddingLeft: `calc(${imageSize}px + 1em)`,
+  left: `-${imageSize}px`,
 }
-const _titleStyle = {
+const titleStyle = {
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
 }
+
+const listItemStyle = { display: 'flex' }
 
 const membersStr = memberIds => {
   const n = memberIds ? memberIds.length : 0
@@ -33,40 +38,35 @@ class ProjectsBeingMadeGetUI extends React.Component {
   }
 
   render() {
-    const { chosenClassName, loading, projects } = this.props
-
+    const { loading, projects, numEntries, ...listProps } = this.props
     if (loading) return <Spinner />
 
+    const items = !projects.length
+      ? ['(none)']
+      : projects.map((p, idx) => (
+          <List.Item as={QLink} key={idx} style={listItemStyle} to={`/u/${p.ownerName}/projects/${p.name}`}>
+            <FittedImage
+              src={getProjectAvatarUrl(p, makeExpireTimestamp(SpecialGlobals.avatar.validFor))}
+              width={imageSize}
+              height={imageSize}
+              style={{ flex: '0 0 auto' }}
+            />
+            <div className="content middle aligned" style={titleWrapperStyle}>
+              <Header as="h3" style={titleStyle}>
+                {p.name}
+              </Header>
+              <p>
+                {p.memberIds && p.memberIds.length > 0 && <Icon color="grey" name="user" />}
+                {p.memberIds && p.memberIds.length > 0 ? membersStr(p.memberIds) : ' '}
+              </p>
+            </div>
+          </List.Item>
+        ))
+
     return (
-      <div className={chosenClassName}>
-        {!projects.length ? (
-          '(none)'
-        ) : (
-          projects.map((p, idx) => (
-            <List.Item
-              as={QLink}
-              key={idx}
-              style={{ whiteSpace: 'nowrap' }}
-              to={`/u/${p.ownerName}/projects/${p.name}`}
-            >
-              <img
-                className="ui small middle aligned image"
-                style={{ height: 60, width: 'auto', maxWidth: 90 }}
-                src={getProjectAvatarUrl(p, makeExpireTimestamp(SpecialGlobals.avatar.validFor))}
-              />
-              <div className="content middle aligned" style={_titleWrapperStyle}>
-                <Header as="h3" style={_titleStyle}>
-                  {p.name}
-                </Header>
-                <p>
-                  {p.memberIds && p.memberIds.length > 0 && <Icon color="grey" name="user" />}
-                  {p.memberIds && p.memberIds.length > 0 ? membersStr(p.memberIds) : ' '}
-                </p>
-              </div>
-            </List.Item>
-          ))
-        )}
-      </div>
+      <List {...listProps} selection>
+        {items}
+      </List>
     )
   }
 }

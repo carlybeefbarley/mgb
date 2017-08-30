@@ -5,8 +5,13 @@ import validate from '/imports/schemas/validate'
 
 Meteor.methods({
   'AccountsHelp.userNameTaken': function(username) {
-    const u = Accounts.findUserByUsername(username)
-    return u ? u.username : null
+    return !!Accounts.findUserByUsername(username)
+  },
+})
+
+Meteor.methods({
+  'AccountsHelp.emailTaken': function(email) {
+    return !!Accounts.findUserByEmail(email)
   },
 })
 

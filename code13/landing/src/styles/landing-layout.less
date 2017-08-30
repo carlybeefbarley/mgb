@@ -1,7 +1,10 @@
 @import "mixins";
 
 // Keep colors in sync with GetStarted.css .hero colors
-@blueGradient: radial-gradient(#00BECC, #2B7277);
+.blue-gradient() {
+  background: #43518B;
+  background-image: linear-gradient(#68256D, #0070b0 80%, #0080ff);
+}
 
 /***************************************
  *   Responsive Vertical Whitespace    *
@@ -34,7 +37,7 @@ section:not(:last-child),
  *                Hero                 *
  ***************************************/
 .mgb-hero {
-  background: @blueGradient;
+  .blue-gradient();
   padding-top: 60px; // space for top fixed menu
 
   .mgb-hero-caption {
@@ -154,7 +157,7 @@ section:not(:last-child),
  *             Alternating             *
  ***************************************/
 .mgb-alternating {
-  background: @blueGradient;
+  .blue-gradient();
   overflow: hidden;
 
   .mgb-alternating-media {

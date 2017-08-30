@@ -1,54 +1,54 @@
-    .mgb-hidden.menu {
-      display: none;
-    }
-    .masthead.segment {
-      min-height: 320px;
-      padding: 1em 0em;
-      border-bottom: none !important;
-    }
-    .masthead .logo.item img {
-      margin-right: 1em;
-    }
-    .masthead .ui.menu .ui.button {
-      margin-left: 0.5em;
-    }
-    .masthead h1.ui.header {
-      margin-top: 0.8em;
-      margin-bottom: 0em;
-      font-size: 4em;
-      font-weight: bold;
-    }
-    .masthead h2 {
-      font-size: 1.9em;
-      margin-bottom: 0.8em;
-      font-weight: normal;
-    }
-    .ui.vertical.stripe {
-      padding: 4em 0em;
-    }
-    .ui.vertical.stripe h3 {
-      font-size: 2em;
-    }
-    .ui.vertical.stripe .button + h3,
-    .ui.vertical.stripe p + h3 {
-      margin-top: 3em;
-    }
-    .ui.vertical.stripe .floated.image {
-      clear: both;
-    }
-    .ui.vertical.stripe p {
-      font-size: 1.33em;
-    }
-    .ui.vertical.stripe .horizontal.divider {
-      margin: 3em 0em;
-    }
-    .quote.stripe.segment {
-      padding: 0em;
-    }
-    .quote.stripe.segment .grid .column {
-      padding-top: 5em;
-      padding-bottom: 5em;
-    }
-    .secondary.pointing.menu .toc.item {
-      display: none;
-    }
+.mgb-hidden.menu {
+  display: none;
+}
+.masthead.segment {
+  min-height: 320px;
+  padding: 1em 0em;
+  border-bottom: none !important;
+}
+.masthead .logo.item img {
+  margin-right: 1em;
+}
+.masthead .ui.menu .ui.button {
+  margin-left: 0.5em;
+}
+.masthead h1.ui.header {
+  margin-top: 0.8em;
+  margin-bottom: 0em;
+  font-size: 4em;
+  font-weight: bold;
+}
+.masthead h2 {
+  font-size: 1.9em;
+  margin-bottom: 0.8em;
+  font-weight: normal;
+}
+.ui.vertical.stripe {
+  padding: 4em 0em;
+}
+.ui.vertical.stripe h3 {
+  font-size: 2em;
+}
+.ui.vertical.stripe .button + h3,
+.ui.vertical.stripe p + h3 {
+  margin-top: 3em;
+}
+.ui.vertical.stripe .floated.image {
+  clear: both;
+}
+.ui.vertical.stripe p {
+  font-size: 1.33em;
+}
+.ui.vertical.stripe .horizontal.divider {
+  margin: 3em 0em;
+}
+.quote.stripe.segment {
+  padding: 0em;
+}
+.quote.stripe.segment .grid .column {
+  padding-top: 5em;
+  padding-bottom: 5em;
+}
+.secondary.pointing.menu .toc.item {
+  display: none;
+}

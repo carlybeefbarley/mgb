@@ -301,6 +301,8 @@ class NavPanel extends React.Component {
   render() {
     const { currUser, navPanelAvailableWidth } = this.props
     const menuStyle = {
+      // do not flex
+      flex: '0 0 auto',
       margin: 0,
       borderRadius: 0,
       marginBottom: 0,

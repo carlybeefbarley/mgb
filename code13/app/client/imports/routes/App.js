@@ -386,11 +386,14 @@ class AppUI extends React.Component {
     // The main Panel:  Outer is for the scroll container; inner is for content
     const mainPanelOuterDivSty = {
       position: 'fixed',
+      display: 'flex',
+      flexDirection: 'column',
       top: 0,
       bottom: respData.fpReservedFooterHeight,
       left: 0,
       right: flexPanelWidth,
       marginBottom: '0px',
+      minHeight: '100vh',
       // background:   'radial-gradient(100% 100% at center bottom, #555, #333)',
       overflow: 'auto', // 'scroll' - this will make very ugly scrollbars on firefox
     }
@@ -449,7 +452,7 @@ class AppUI extends React.Component {
             currentlyEditingAssetInfo={currentlyEditingAssetInfo}
           />
 
-          <div style={mainPanelOuterDivSty} className="noScrollbarDiv" id="mgb-jr-main-container">
+          <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
             <SupportedBrowsersContainer />
             {!hideHeaders && <NavPanel currUser={currUser} navPanelAvailableWidth={mainAreaAvailableWidth} />}
 

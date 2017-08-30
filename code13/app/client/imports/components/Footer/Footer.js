@@ -1,93 +1,32 @@
 import React from 'react'
-import ResponsiveComponent from '/client/imports/ResponsiveComponent'
+import QLink from '/client/imports/routes/QLink'
 
-const Footer = ({ respIsRuleActive, respData }) => (
-  <div className="ui large inverted grey padded vertical segment">
-    <div className="ui section" />
-    {respIsRuleActive('showCallsToAction') && (
-      <div className="ui left aligned container">
-        <div className="ui grid">
-          <div className="seven wide column">
-            <h4 className="ui inverted grey header" style={{ fontSize: '1.15em' }}>
-              Gain Skills
-            </h4>
-            <p>
-              Learn real world skills like Javascript and software design, but without boring{' '}
-              <em>'do this, do that'</em> lessons. Learn by making, learn from friends, pay it forward.
-            </p>
-          </div>
-          <div className="three wide column">
-            <h4 className="ui inverted grey header" style={{ fontSize: '1.15em' }}>
-              Make Games
-            </h4>
-            <div className="ui inverted grey link list">
-              <a href="#" className="item">
-                Make Art
-              </a>
-              <a href="#" className="item">
-                Make Maps
-              </a>
-            </div>
-          </div>
-          <div className="three wide column">
-            <h4 className="ui inverted grey header" style={{ fontSize: '1.15em' }}>
-              Make Friends
-            </h4>
-            <div className="ui inverted grey link list">
-              <a href="#" className="item">
-                Help each other out
-              </a>
-              <a href="#" className="item">
-                Work in teams
-              </a>
-            </div>
-          </div>
-          <div className="three wide column">
-            <h4 className="ui inverted grey header" style={{ fontSize: '1.15em' }}>
-              Have Fun
-            </h4>
-            <div className="ui inverted grey link list">
-              <a href="#" className="item">
-                Play Games
-              </a>
-              <a href="#" className="item">
-                Learn the fun way
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="ui hidden divider" />
-        <br />
-      </div>
-    )}
+import { Grid, List } from 'semantic-ui-react'
 
-    <div className="ui left aligned container">
-      <div className={`ui inverted grey small ${respData.legalListDirection} relaxed divided link list`}>
-        <a className="item" href="#">
-          Copyright ©2017 MyCodeBuilder Inc. All Rights Reserved.
-        </a>
-        <a className="item" href="/legal/tos">
-          Terms of Service
-        </a>
-        <a className="item" href="/legal/privacy">
-          Privacy Policy
-        </a>
-        <a className="item" href="/?_fp=chat">
-          Contact Us
-        </a>
-      </div>
-    </div>
-  </div>
-)
-
-Footer.responsiveRules = {
-  showCallsToAction: {
-    minWidth: 600,
-  },
-  legalStuffHorizontal: {
-    minWidth: 750,
-    respData: { legalListDirection: 'horizontal' },
-  },
+const style = {
+  // do not flex
+  flex: '0 0 auto',
 }
 
-export default ResponsiveComponent(Footer)
+const Footer = () => (
+  <Grid columns="equal" stackable padded style={style}>
+    <Grid.Column color="black">
+      <List
+        size="small"
+        inverted
+        horizontal
+        relaxed
+        divided
+        link
+        items={[
+          `Copyright ©${new Date().getFullYear()} MyCodeBuilder Inc. All Rights Reserved.`,
+          { key: 'terms', as: QLink, to: '/legal/tos', content: 'Terms of Service' },
+          { key: 'privacy', as: QLink, to: '/legal/privacy', content: 'Privacy Policy' },
+          { key: 'contact', as: QLink, to: '/?_fp=chat', content: 'Contact Us' },
+        ]}
+      />
+    </Grid.Column>
+  </Grid>
+)
+
+export default Footer

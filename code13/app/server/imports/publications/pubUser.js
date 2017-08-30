@@ -74,9 +74,8 @@ Meteor.publish('user.byName', function(username) {
 //    SETTINGS (keyed by user._id)
 //
 
-// TODO: Make sure userId can't be faked on server. Allow/deny rules required...
-Meteor.publish('settings.userId', function(userId) {
-  return Settings.find(userId)
+Meteor.publish('settings.userId', function() {
+  return Settings.find(this.userId)
 })
 
 //

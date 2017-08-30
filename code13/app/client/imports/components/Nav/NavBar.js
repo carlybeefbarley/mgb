@@ -54,10 +54,16 @@ const NavBar = React.createClass({
     ]
     if (_.includes(noBreadcrumbRoutes, location.pathname)) return null
 
+    // reset-password route has a random token following
+    // need to regex the match
+    if (/\/reset-password/.test(location.pathname)) return null
+
     const navBarStyle = {
       position: 'relative',
       display: 'flex',
       alignItems: 'center',
+      // do not flex
+      flex: '0 0 auto',
       marginBottom: hideHeaders ? '2rem' : '0',
       background: '#fff',
       boxShadow: `0 ${hideHeaders ? '2px 6px' : '1px 4px'} rgba(0, 0, 0, 0.2)`,

@@ -1,14 +1,11 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { showToast } from '/client/imports/routes/App'
+import { Container, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 
-import { Container, Message, Segment, Header, Form } from 'semantic-ui-react'
+import HeroLayout from '/client/imports/layouts/HeroLayout'
+import { showToast } from '/client/imports/routes/App'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import validate from '/imports/schemas/validate'
-
-const ErrMsg = props => {
-  return props.text ? <Message error color="red" content={props.text} /> : null
-}
 
 const ResetPasswordRoute = React.createClass({
   propTypes: {
@@ -22,77 +19,105 @@ const ResetPasswordRoute = React.createClass({
   getInitialState: function() {
     return {
       errors: {},
+      formData: {},
       isLoading: false,
       isComplete: false,
     }
   },
 
-  render: function() {
-    const { isLoading, isComplete, errors } = this.state
+  renderContent() {
+    const { isLoading, isComplete, errors, formData } = this.state
 
-    const innerRender = () => {
-      if (isComplete)
-        return (
-          <Message
-            success
-            header="Password reset successful"
-            content="You have successfully reset your password and are now logged in"
-          />
-        )
-
+    if (isComplete)
       return (
-        <Form onSubmit={this.handleSubmit} loading={isLoading} error={_.keys(errors).length > 0}>
-          <Form.Input
-            label="Enter your new password"
-            name="password"
-            placeholder="Password"
-            onChange={this.handlePasswordChange}
-            type="password"
-            error={!!errors.password}
-          />
-          <ErrMsg text={errors.password} />
-          <ErrMsg text={errors.result} />
-          <Form.Button>Submit</Form.Button>
-        </Form>
+        <Message
+          success
+          header="Password reset successful"
+          content="You have successfully reset your password and are now logged in."
+        />
       )
-    }
 
     return (
-      <Container text>
-        <br />
-        <Segment padded>
-          <Header as="h2">Reset your password</Header>
-          {innerRender()}
-        </Segment>
-      </Container>
+      <Form onChange={this.handleChange} onSubmit={this.handleSubmit} loading={isLoading}>
+        <Form.Input
+          error={errors.password}
+          icon="lock"
+          label={errors.password || 'New password'}
+          name="password"
+          placeholder="New password"
+          type="password"
+        />
+        <Form.Button primary fluid disabled={!formData.password || errors.password}>
+          Submit
+        </Form.Button>
+      </Form>
     )
   },
 
-  handlePasswordChange: function(e, { value }) {
-    this.setState((prevState, props) => ({ password: value }))
+  render: function() {
+    const { errors } = this.state
+
+    return (
+      <HeroLayout
+        heroContent={
+          <Container text>
+            <Grid columns="equal" verticalAlign="middle">
+              <Grid.Column width={4} only="computer tablet" />
+              <Grid.Column>
+                <Header as="h2" inverted content="Reset password " />
+                <Segment stacked>{this.renderContent()}</Segment>
+                {errors.server && <Message error content={errors.server} />}
+              </Grid.Column>
+              <Grid.Column width={4} only="computer tablet" />
+            </Grid>
+          </Container>
+        }
+      />
+    )
+  },
+
+  handleChange: function(e) {
+    const { name, value } = e.target
+
+    this.setState((prevState, props) => ({
+      errors: {
+        ...prevState.errors,
+        // if a field had an error, provide continual validation
+        [name]: prevState.errors[name] ? validate[name + 'WithReason'](value) : null,
+      },
+      formData: { ...prevState.formData, [name]: value },
+    }))
   },
 
   handleSubmit: function(event) {
+    const { params } = this.props
     const { password } = this.state
 
-    const why = validate.passwordWithReason(password)
-    this.setState({ errors: why ? { password: why } : {} })
-    if (why) return // if errors showing don't submit
+    const errors = {
+      password: validate.passwordWithReason(password),
+      server: null,
+    }
+
+    if (_.some(errors)) {
+      this.setState({ loading: false, errors })
+      return
+    }
 
     this.setState({ isLoading: true })
-    Accounts.resetPassword(this.props.params.token, password, error => {
-      if (error)
+    Accounts.resetPassword(params.token, password, error => {
+      if (error) {
         this.setState({
           isLoading: false,
-          errors: { result: error.reason || 'Server Error while resetting password for account' },
+          errors: { server: error.reason || 'Server Error while resetting password for account' },
         })
-      else {
-        // This is going to cause an auto-login to happen very quickly, and that will also regenerate this React control, so we
-        // Have to do some strange stuff now
-        showToast('Password reset was successful', 'success')
-        utilPushTo(this.context.urlLocation.query, '/')
-        this.setState({ isLoading: false, errors: {}, isComplete: true })
+        return
       }
+
+      // This is going to cause an auto-login to happen very quickly,
+      // and that will also regenerate this React control, so weh ave to do some strange stuff now
+      showToast('Password reset was successful', 'success')
+      utilPushTo(this.context.urlLocation.query, '/')
+      this.setState({ isLoading: false, errors: {}, isComplete: true })
     })
   },
 })

@@ -1,43 +1,38 @@
+import '/client/imports/routes/home.css'
+import '/client/imports/routes/GetStarted.css'
 import React, { PropTypes } from 'react'
-import './home.css'
-import './GetStarted.css'
-import ResponsiveComponent from '/client/imports/ResponsiveComponent'
+import { Divider, Grid } from 'semantic-ui-react'
 
-import { Container, Divider, Grid, Segment } from 'semantic-ui-react'
+import HeroLayout from '/client/imports/layouts/HeroLayout'
 import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
 import HomeSkillsColumn from '/client/imports/components/Home/HomeSkillsColumn'
 import HomeProjectsBeingMadeColumn from '/client/imports/components/Home/HomeProjectsBeingMadeColumn'
 import HomeMeetFriendsColumn from '/client/imports/components/Home/HomeMeetFriendsColumn'
-import Footer from '/client/imports/components/Footer/Footer'
 
-const HomeRoute = ({ currUser, respData, respIsRuleActive }) => {
+const HomeRoute = ({ currUser }) => {
   const username = currUser ? currUser.profile.name : 'guest'
   const userId = currUser ? currUser._id : null
-  const columns = respData.columns || 3
 
   return (
-    <div>
-      <div className="hero">
-        <Container>
-          <HomeHeroBanner username={username} userId={userId} />
-        </Container>
-        <Divider section hidden />
-      </div>
-      <Container>
-        <Segment basic padded>
-          {!respIsRuleActive('noColumns') && (
-            <Grid columns={columns} stretched style={{ clear: 'both' }}>
-              <HomeSkillsColumn userId={userId} />
-              <HomeProjectsBeingMadeColumn />
-              <HomeMeetFriendsColumn />
-            </Grid>
-          )}
+    <HeroLayout
+      heroContent={
+        <div>
           <Divider hidden />
-        </Segment>
-      </Container>
 
-      <Footer />
-    </div>
+          <HomeHeroBanner username={username} userId={userId} />
+
+          <Divider section />
+
+          <Grid columns="3" padded doubling stackable stretched>
+            <HomeSkillsColumn userId={userId} />
+            <HomeProjectsBeingMadeColumn />
+            <HomeMeetFriendsColumn />
+          </Grid>
+
+          <Divider hidden section />
+        </div>
+      }
+    />
   )
 }
 
@@ -66,4 +61,4 @@ HomeRoute.responsiveRules = {
     respData: { columns: 3 },
   },
 }
-export default ResponsiveComponent(HomeRoute)
+export default HomeRoute

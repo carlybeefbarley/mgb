@@ -196,12 +196,17 @@ export default class EditMap extends React.Component {
   }
 
   get meta() {
+    if (!this.props.asset.metadata) this.props.asset.metadata = {}
+
     if (!this.props.asset.metadata.options) {
       // try old version:
       this.props.asset.metadata.options = this.mgb_content2.meta
 
       // store new version
-      if (!this.props.asset.metadata.options) {
+      if (
+        !this.props.asset.metadata.options ||
+        (this.props.asset.metadata.options && !this.props.asset.metadata.options.options)
+      ) {
         this.props.asset.metadata.options = {
           // empty maps aren't visible without grid
           showGrid: 1,
@@ -215,7 +220,7 @@ export default class EditMap extends React.Component {
         this.props.asset.metadata.options = this.props.asset.metadata.options.options
       }
       // TODO: uncomment this in the next deployment - otherwise local maps and staging / v2 maps will conflict
-      // delete this.mgb_content2.meta
+      delete this.mgb_content2.meta
     }
 
     // Store once and do NOT update on remote changes -

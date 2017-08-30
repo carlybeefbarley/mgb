@@ -67,6 +67,21 @@ export default class EditActorMap extends EditMap {
           this.quickSave('Empty map')
         }
       })
+
+      // Properly update imported actor names and gids
+      if (this.mgb_content2.tilesets && this.mgb_content2.tilesets.length > 1) {
+        if (this.mgb_content2.tilesets[1].name.indexOf(':') === -1) {
+          _.map(this.mgb_content2.tilesets, ts => {
+            if (ts.name !== 'Actions' && ts.name.indexOf(':') === -1) {
+              ts.name = this.props.asset.dn_ownerName + ':' + ts.name
+            }
+          })
+        }
+        if (this.mgb_content2.tilesets[1].firstgid < 100) {
+          TileHelper.fixTilesetGids(this.mgb_content2)
+          this.updateMap()
+        }
+      }
     })
   }
 

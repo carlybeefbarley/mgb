@@ -21,17 +21,6 @@ const TilesetDropHintMsg = () => (
 )
 
 export default class ActorTileset extends React.Component {
-  componentWillMount() {
-    // Properly update imported actor names and gids
-    if (this.props.tilesets && this.props.tilesets.length > 1) {
-      // Assumes if first actor does not have owner:asset convention and has improper gid, the rest are too
-      if (this.props.tilesets[1].name.indexOf(':') === -1) this.props.fixImportNames()
-      if (this.props.tilesets[1].firstgid < 100) {
-        this.props.fixImportGids()
-      }
-    }
-  }
-
   // getter - returns active tileset
   get tileset() {
     return this.props.tilesets[this.props.activeTileset]

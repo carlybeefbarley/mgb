@@ -1,4 +1,5 @@
 import { Activity } from '/imports/schemas'
+import { getFeedSelector } from '/imports/schemas/activity'
 
 //
 //    ACTIVITY LOG Publication
@@ -7,7 +8,6 @@ import { Activity } from '/imports/schemas'
 Meteor.publish('activity.public.recent', function(limitCount = 50) {
   let selector = {}
   let options = { limit: limitCount, sort: { timestamp: -1 } }
-
   return Activity.find(selector, options)
 })
 
@@ -37,6 +37,12 @@ Meteor.publish('activity.public.type.recent.userId', function(userId, activityTy
   let options = { limit: limitCount, sort: { timestamp: -1 } }
 
   return Activity.find(selector, options)
+})
+
+Meteor.publish('activity.private.feed.recent.userId', function(userId, userName, limitCount = 20) {
+  // TODO need some kind of security here Meteor.userId() == userId ?
+  let options = { limit: limitCount, sort: { timestamp: -1 } }
+  return Activity.find(getFeedSelector(userId, userName), options)
 })
 
 //

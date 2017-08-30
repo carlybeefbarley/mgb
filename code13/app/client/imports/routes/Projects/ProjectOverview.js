@@ -272,7 +272,20 @@ const ProjectOverview = React.createClass({
     var newData = { memberIds: _.union(project.memberIds, [userId]) }
     Meteor.call('Projects.update', project._id, newData, (error, result) => {
       if (error) showToast(`Could not add member ${userName} to project ${project.name}`, 'error')
-      else logActivity('project.addMember', `Add Member ${userName} to project ${project.name}`)
+      else
+        // guntis - Is it ok that I've added project id, name as asset params?
+        logActivity(
+          'project.addMember',
+          `Add Member ${userName} to project ${project.name}`,
+          null,
+          {
+            dn_ownerName: project.ownerName,
+            ownerId: project.ownerId,
+            _id: project._id,
+            name: project.name,
+          },
+          { toUserId: userId, toUserName: userName },
+        )
     })
   },
 
@@ -287,7 +300,19 @@ const ProjectOverview = React.createClass({
 
     Meteor.call('Projects.update', project._id, newData, (error, result) => {
       if (error) showToast(`Could not remove member ${userName} from project ${project.name}`, 'error')
-      else logActivity('project.removeMember', `Removed Member ${userName} from project ${project.name}`)
+      else
+        logActivity(
+          'project.removeMember',
+          `Removed Member ${userName} from project ${project.name}`,
+          null,
+          {
+            dn_ownerName: project.ownerName,
+            ownerId: project.ownerId,
+            _id: project._id,
+            name: project.name,
+          },
+          { toUserId: userId, toUserName: userName },
+        )
     })
   },
 
@@ -295,7 +320,13 @@ const ProjectOverview = React.createClass({
     var project = this.data.project
     Meteor.call('Projects.leave', project._id, userId, (error, result) => {
       if (error) showToast(`Member ${userName} could not leave project ${project.name}`, 'error')
-      else logActivity('project.leaveMember', `Member ${userName} left from project ${project.name}`)
+      else
+        logActivity('project.leaveMember', `Member ${userName} left from project ${project.name}`, null, {
+          dn_ownerName: project.ownerName,
+          ownerId: project.ownerId,
+          _id: project._id,
+          name: project.name,
+        })
     })
   },
   /**

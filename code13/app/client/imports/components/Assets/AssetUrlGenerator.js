@@ -41,6 +41,10 @@ const _generateUrlOptions = asset => {
     case 'music':
       retval.push({ msg: 'as music.mp3', url: '/api/asset/music/' + asset._id + '/music.mp3' })
       break
+    // guntis: not sure if it is a good idea to put user in assets. Please advice where should I do that?
+    case 'user':
+      retval.push({ msg: 'as user object', url: '/api/user/name/' + asset._id })
+      break
     default:
       break
   }

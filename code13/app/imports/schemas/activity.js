@@ -41,6 +41,8 @@ var schema = {
   // The above is still here so that we can update records which has that info.
 
   toChatChannelName: Match.Optional(String), // Chat Channel Name as defined in makeChannelName() in chats.js. Added  2/16/2017
+  toUserId: Match.Optional(String), // user id interacted with (for example added to project) Added 08/28/2017
+  toUserName: Match.Optional(String), // user name interacted with (for example added to project) Added 08/28/2017
 }
 
 // Info on each type of activity, as the UI cares about it
@@ -51,7 +53,8 @@ export const ActivityTypes = {
   'user.logout': { icon: 'grey user', pri: 9, description: 'User Logged Out' },
   'user.changeFocus': { icon: 'green alarm', pri: 9, description: 'User changed their focus' },
   'user.clearFocus': { icon: 'grey alarm', pri: 9, description: 'User cleared their focus' },
-  'user.message': { icon: 'green chat', pri: 9, description: 'User sent a public message' }, // Should also include toChatChannelName
+  'user.message': { icon: 'chat', pri: 9, description: 'User sent a public message' }, // Should also include toChatChannelName
+  'user.messageAt': { icon: 'at', pri: 5, description: 'User mentioned in a message' }, // Should also include toChatChannelName
   'user.awardedSkill': { icon: 'green student', pri: 7, description: 'User was awarded a skill' },
   'user.learnedSkill': { icon: 'student', pri: 9, description: 'User learned a skill' },
   'user.earnBadge': { icon: 'green trophy', pri: 6, description: 'User earned a badge' },
@@ -208,6 +211,8 @@ export function logActivity(activityType, description, thumbnail, asset, otherDa
     toAssetKind: asset && asset.kind ? asset.kind : '',
   }
   if (otherData.toChatChannelName) logData.toChatChannelName = otherData.toChatChannelName
+  if (otherData.toUserId) logData.toUserId = otherData.toUserId
+  if (otherData.toUserName) logData.toUserName = otherData.toUserName
 
   if (_.isPlainObject(otherData.override_byUser)) {
     if (!isUserSuperAdmin(Meteor.user()))
@@ -238,4 +243,25 @@ export function logActivity(activityType, description, thumbnail, asset, otherDa
 
 export function deleteActivityRecord(activityId) {
   Meteor.call('Activity.delete', activityId)
+}
+
+export const feedActivityTypesByOthers = ['asset.userLoves', 'project.leaveMember', 'mgb.announce']
+
+export const feedActivityTypesByMe = ['project.addMember', 'project.removeMember']
+
+export const feedActivityTypesByName = ['user.message', 'user.messageAt']
+
+export const getFeedSelector = (userId, userName) => {
+  // guntis - actually we can simplify this query if each activity would have toUserId fields
+  // the problem with current design is that toOwnerId don't always mean that this was user action. For example adding/removing from project doesn't save user to toOwnerId
+  const byOthersArr = []
+  feedActivityTypesByOthers.forEach(type => byOthersArr.push({ activityType: type }))
+  const byOthersQuery = { $and: [{ toOwnerId: userId }, { $or: byOthersArr }] }
+  const byMeArr = []
+  feedActivityTypesByMe.forEach(type => byMeArr.push({ activityType: type }))
+  const byMeQuery = { $and: [{ toUserId: userId }, { $or: byMeArr }] }
+  const byNameArr = []
+  feedActivityTypesByName.forEach(type => byNameArr.push({ activityType: type }))
+  const byNameQuery = { $and: [{ toUserName: userName }, { $or: byNameArr }] }
+  return { $or: [byOthersQuery, byMeQuery, byNameQuery] }
 }

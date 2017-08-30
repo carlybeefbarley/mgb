@@ -11,6 +11,7 @@ import ForumRoute from './Forum'
 import PlayGameRoute from './PlayGameRoute'
 import BrowseGamesRoute from './BrowseGamesRoute'
 import DashboardRoute from './Dashboard/DashboardRoute'
+import VideoRoute from './Video/VideoRoute'
 
 import LearnRoute from './Learn/LearnRoute'
 import LearnSkillsRoute from './Learn/LearnSkillsRoute'
@@ -68,6 +69,7 @@ export function clientStartup() {
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />
 
         <Route path="/dashboard" component={DashboardRoute} name="Dashboard" />
+        <Route path="/video" component={VideoRoute} name="Video" />
 
         <Route path="forum" component={ForumRoute} />
 

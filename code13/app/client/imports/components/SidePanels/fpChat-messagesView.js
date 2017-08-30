@@ -25,6 +25,8 @@ import {
   ChatSendMessageOnChannelName,
   chatParams,
   makePresentedChannelName,
+  getUserNameFromChannelName,
+  getUserMentions,
 } from '/imports/schemas/chats'
 
 const additionalMessageIncrement = 15
@@ -172,10 +174,23 @@ const ChatMessagesView = React.createClass({
           channelObj.scopeGroupName === 'Global' ||
           channelObj.scopeGroupName === 'User' ||
           channelObj.scopeGroupName === 'Asset'
-        )
-          logActivity('user.message', `Sent a message on ${presentedChannelName}`, null, null, {
-            toChatChannelName: channelName,
-          })
+        ) {
+          const otherData = { toChatChannelName: channelName }
+          const toUserName = getUserNameFromChannelName(channelName, this.props.user)
+          if (toUserName) otherData.toUserName = toUserName
+          logActivity('user.message', `Sent a message on ${presentedChannelName}`, null, null, otherData)
+          const userName = getUserMentions(messageValue)
+          if (userName) {
+            otherData.toUserName = userName // it is ok, because mentioned user can differ from wall user or asset owner
+            logActivity(
+              'user.messageAt',
+              `Mentioned ${userName} on ${presentedChannelName}`,
+              null,
+              null,
+              otherData,
+            )
+          }
+        }
       }
     })
   },

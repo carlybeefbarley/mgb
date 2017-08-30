@@ -5,6 +5,7 @@
 const SpecialGlobals = {
   activity: {
     activityHistoryLimit: 20,
+    feedLimit: 10,
   },
 
   // This is a !vault owned project for system assets

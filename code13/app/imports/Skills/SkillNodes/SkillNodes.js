@@ -14,6 +14,8 @@ import CommunitySkillNodes from './CommunitySkillNodes'
 import MarketingSkillNodes from './MarketingSkillNodes'
 import GetStartedSkillNodes from './GetStartedSkillNodes'
 
+import { getSkillNodeStatus } from '/imports/schemas/skills'
+
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
 // A) THE SKILLS MODEL TRIFECTA... OVERVIEW
@@ -127,6 +129,7 @@ const SkillNodes = {
     map: {},
   },
 }
+
 // injection test example
 // SkillNodes["code.js.basics.xxx"] = C.E
 // SkillNodes["code.js.basics.group"] = {
@@ -348,3 +351,67 @@ export const isPathCodeTutorial = skillPath =>
 export const isPhaserTutorial = skillPath => _.startsWith(skillPath, 'code.js.phaser')
 
 export const isArtTutorial = skillPath => _.startsWith(skillPath, 'art')
+
+// order in which skillNodes should be completed
+// this is needed for dashboard "next skill" functionality
+export const SkillNodesOrder = {
+  getStarted: SkillNodes.getStarted,
+  code: {
+    js: {
+      intro: SkillNodes.code.js.intro,
+      phaser: SkillNodes.code.js.intro,
+      games: SkillNodes.code.js.games,
+      advanced: SkillNodes.code.js.intro,
+    },
+  },
+  art: SkillNodes.art,
+}
+
+function _convertToDottedSkills(obj) {
+  const arr = []
+  if (!_.isObject(obj)) return null
+  _.forOwn(obj, (val, key) => {
+    if (key !== '$meta') {
+      const children = _convertToDottedSkills(val)
+      if (!_.isArray(children) || _.isEmpty(children)) arr.push(key)
+      else {
+        children.forEach(childVal => {
+          let str = key
+          str += '.' + childVal
+          arr.push(str)
+        })
+      }
+    }
+  })
+  return arr
+}
+
+function _getParentDottedSkills(arr) {
+  const newArr = []
+  arr.forEach(val => {
+    val = val.split('.')
+    val.pop()
+    val = val.join('.')
+    newArr.push(val)
+  })
+  return newArr
+}
+
+export const getNextSkillPath = (currUser, userSkills) => {
+  const dottedSkillArr = _convertToDottedSkills(SkillNodesOrder)
+  const parentSkillArr = _getParentDottedSkills(dottedSkillArr)
+  for (let i = 0; i < parentSkillArr.length; i++) {
+    const skillPath = parentSkillArr[i]
+    const skillStatus = getSkillNodeStatus(currUser, userSkills, skillPath)
+    if (!_.isEmpty(skillStatus.todoSkills)) {
+      const nextSkillPath = skillPath + '.' + skillStatus.todoSkills[0]
+      return nextSkillPath
+      // this.setState({ nextSkillPath })
+      // const skillNode = getNode(nextSkillPath)
+      // // some skills doesn't have name
+      // const name = skillNode.$meta.name ? skillNode.$meta.name : nextSkillPath
+      // this.setState({ nextSkillName: name })
+      // break
+    }
+  }
+}

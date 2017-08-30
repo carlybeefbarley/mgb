@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import { Chats } from '/imports/schemas'
 import { Match } from 'meteor/check'
+import validate from '/imports/schemas/validate'
 
 // Data model for MGB Chats.
 
@@ -404,6 +405,23 @@ export function makePresentedChannelName(channelName, objectName) {
     default:
       console.trace('Unexpected ChatScope in channelName=', channelName)
   }
+}
+
+export function getUserNameFromChannelName(channelName, user) {
+  const channelObj = parseChannelName(channelName)
+  if (channelObj.scopeGroupName == 'User') return channelObj.scopeId
+  else if (channelObj.scopeGroupName == 'Asset' && user) return user.profile.name
+  return null
+}
+
+export function getUserMentions(text) {
+  const idx = text.search(/@./g)
+  if (idx == -1) return null
+  else text = text.substring(idx + 1)
+  const userName = text.split(' ')[0]
+  if (validate.usernameWithReason(userName)) return null
+  if (!validate.userName(userName)) return null
+  return userName
 }
 
 const _scopeGroupCharToIconNames = {

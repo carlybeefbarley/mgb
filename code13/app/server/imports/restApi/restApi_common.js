@@ -65,6 +65,18 @@ RestApi.addRoute(
 )
 
 RestApi.addRoute(
+  'asset/withoutC2/:id',
+  { authRequired: false },
+  {
+    get: function() {
+      var asset = Azzets.findOne(this.urlParams.id)
+      delete asset.content2
+      return genAPIreturn(this, asset)
+    },
+  },
+)
+
+RestApi.addRoute(
   'asset/full/:user/:name',
   { authRequired: false },
   {

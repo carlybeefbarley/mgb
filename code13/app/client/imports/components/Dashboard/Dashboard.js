@@ -1,37 +1,42 @@
 import React, { PropTypes } from 'react'
-import { Azzets } from '/imports/schemas'
-import { assetMakeSelector } from '/imports/schemas/assets'
-import { createContainer } from 'meteor/react-meteor-data'
-import DashboardUI from './DashboardUI'
+import { Grid } from 'semantic-ui-react'
+import SkillAction from './Actions/SkillAction'
+import VideoAction from './Actions/VideoAction'
+import FeedSegment from './Feed/FeedSegment'
+import FaqSegment from './Faq/FaqSegment'
+import BadgesSegment from './Badges/BadgesSegment'
+import ExploreSegment from './Explore/ExploreSegment'
 
-const _assetKindsToGet = ['graphic']
-const _numAssetsToGet = 6
-
-/**
- * For currentUser, get most recent _numAssetsToGet assets of kind _assetKindsToGet
- * and then pass onto wrapped component (DashboardUI)
- */
-const Dashboard = createContainer(({ currUser }) => {
-  if (!currUser) return <span>Not Logged In...</span>
-
-  const handleForAssets = Meteor.subscribe(
-    'assets.public',
-    currUser._id, // userId (null = all)
-    _assetKindsToGet,
-    null,
-    false, // Project Name.
-    false, // Show Only Deleted
-    false, // Show only Stable
-    undefined, // Use default sort order
-    _numAssetsToGet, // Limit
-  )
-
-  const assetSorter = { updatedAt: -1 }
-  const assetSelector = assetMakeSelector(currUser._id, _assetKindsToGet, '', null)
-  return {
-    assets: Azzets.find(assetSelector, { sort: assetSorter, limit: _numAssetsToGet }).fetch(),
-    loading: !handleForAssets.ready(),
+export default class Dashboard1st extends React.Component {
+  static propTypes = {
+    currUser: PropTypes.object,
+    activities: PropTypes.array,
   }
-}, DashboardUI)
 
-export default Dashboard
+  render() {
+    return (
+      <Grid columns="equal" verticalAlign="top" style={{ margin: '0 0 0 0' }}>
+        <Grid.Row stretched>
+          <Grid.Column width={10}>
+            <SkillAction currUser={this.props.currUser} />
+
+            <VideoAction />
+
+            <BadgesSegment currUser={this.props.currUser} />
+
+            <FeedSegment
+              feedArr={this.props.currUser}
+              currUser={this.props.currUser}
+              activities={this.props.activities}
+            />
+
+            <FaqSegment />
+          </Grid.Column>
+          <Grid.Column width={6}>
+            <ExploreSegment />
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    )
+  }
+}

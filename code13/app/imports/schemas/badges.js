@@ -256,6 +256,32 @@ export const getAllBadgesForUser = user => {
   return userBadges
 }
 
+export const getBadgesWithEnabledFlag = userBadges => {
+  const badgesArr = []
+
+  _.each(badgeList, (badge, badgeKey) => {
+    badgesArr.push({
+      img: '/images/badges/' + badge.img,
+      title: badgeKey,
+      descr: badge.descr,
+      enabled: _.includes(userBadges, badgeKey),
+    })
+  })
+
+  return badgesArr
+}
+
+export const selectBadges = (badgesArr, count, isEnabled) => {
+  const arr = []
+  _.every(badgesArr, badge => {
+    if (badge.enabled === isEnabled) {
+      arr.push(badge)
+    }
+    return arr.length < count
+  })
+  return arr
+}
+
 /**
  * hasBadge()
  *

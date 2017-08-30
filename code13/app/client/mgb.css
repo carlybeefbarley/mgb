@@ -1,3 +1,8 @@
+* {
+  /* hide blue overlay on touch - android */
+  -webkit-tap-highlight-color: transparent;
+}
+
 .ui.sidebar {
   overflow: visible !important;
   z-index: 1000 !important;

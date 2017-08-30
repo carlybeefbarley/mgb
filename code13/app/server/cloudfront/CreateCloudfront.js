@@ -24,7 +24,7 @@ import { WebApp } from 'meteor/webapp'
 // force localhost:3000 if in development mode.. to try out CDN like behaviour locally - add test.loc to /etc/hosts
 // 127.0.0.1 test.loc
 
-let CLOUDFRONT_DOMAIN_NAME = Meteor.isDevelopment ? '127.0.0.1:3000' : ''
+let CLOUDFRONT_DOMAIN_NAME = Meteor.isDevelopment ? '' : ''
 
 const STATIC_RESOURCES_MAX_CACHE_AGE_MINUTES = 60 // This should be much larger for PRODUCTION
 

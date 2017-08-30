@@ -28,11 +28,9 @@ export default class TouchController extends React.Component {
       }, 0)
       return
     }
-    const ev = new KeyboardEvent(up ? 'keyup' : 'keydown', { which, key })
-    // older chrome requires these to be set directly
-    ev.which = which
-    ev.key = key
-    window.dispatchEvent(ev)
+    // key is not supported by android chrome - until then which is there
+    const event = new KeyboardEvent(up ? 'keyup' : 'keydown', { which, key })
+    window.dispatchEvent(event)
     e.preventDefault()
     e.stopPropagation()
   }

@@ -6,6 +6,10 @@ import QLink from '/client/imports/routes/QLink'
 import { Label, Icon, Image } from 'semantic-ui-react'
 
 class WhatsNew extends React.Component {
+  static propTypes = {
+    currUser: PropTypes.object,
+  }
+
   state = { hovering: false }
 
   handleMouseEnter = () => this.setState(() => ({ hovering: true }))
@@ -13,14 +17,10 @@ class WhatsNew extends React.Component {
   handleMouseLeave = () => this.setState(() => ({ hovering: false }))
 
   render() {
-    const { currUser, asHidingLink } = this.props
+    const { currUser } = this.props
     const { hovering } = this.state
-    const color = 'purple'
-    const icon = 'gift'
     const hasNewNews =
       currUser && _.get(currUser, 'profile.latestNewsTimestampSeen') !== mgbReleaseInfo.releases[0].timestamp
-
-    if (!asHidingLink) return <Icon name={icon} color={hasNewNews ? color : null} />
 
     if (!hasNewNews) return null
 
@@ -68,8 +68,8 @@ class WhatsNew extends React.Component {
           <Label
             basic
             horizontal
-            icon={icon}
-            color={color}
+            icon="gift"
+            color="purple"
             pointing="left"
             content="New stuff for you!"
             size="small"
@@ -79,11 +79,6 @@ class WhatsNew extends React.Component {
       </span>
     )
   }
-}
-
-WhatsNew.propTypes = {
-  currUser: PropTypes.object, // Can be null (if user is not logged in)
-  asHidingLink: PropTypes.bool, // If true then render as null or <Qlink> depending on last seen
 }
 
 export default WhatsNew

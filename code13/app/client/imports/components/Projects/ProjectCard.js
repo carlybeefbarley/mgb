@@ -32,6 +32,9 @@ const ProjectCard = (props, context) => {
   return (
     <Card
       key={_id}
+      // `as="div"` and `link` because `onClick` renders as an `a`
+      link
+      as="div"
       className="animated fadeIn mgb-projectcard-width"
       onClick={() => utilPushTo(context.urlLocation.query, linkTo)}
     >

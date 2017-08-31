@@ -7,7 +7,6 @@ import { getAllBadgesForUser } from '/imports/schemas/badges'
 import { makeChannelName } from '/imports/schemas/chats'
 import QLink from '/client/imports/routes/QLink'
 // These can be rendered as attached segments so the caller can easily place/attach buttons around it
-// See http://v2.mygamebuilder.com/assetEdit/2Bot4CwduQRfRWBi6 for an example
 
 const _cardStyle = { textAlign: 'center' }
 
@@ -40,6 +39,8 @@ export default class UserCard extends React.Component {
     if (narrowItem)
       return (
         <Card
+          as="div"
+          link
           style={{ ...style, ..._cardStyle }}
           className="mgb-useritem-width-narrow"
           onClick={this.handleClickUser}
@@ -70,6 +71,8 @@ export default class UserCard extends React.Component {
 
     return (
       <Card
+        as="div"
+        link
         style={{ ...style, ..._cardStyle }}
         className="mgb-useritem-width-normal"
         onClick={this.handleClickUser}

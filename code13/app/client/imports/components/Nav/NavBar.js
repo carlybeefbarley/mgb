@@ -88,7 +88,7 @@ const NavBar = React.createClass({
           params={params}
           currentlyEditingAssetInfo={currentlyEditingAssetInfo}
         />
-        <WhatsNew currUser={currUser} asHidingLink />
+        <WhatsNew currUser={currUser} />
         <Popup
           mouseEnterDelay={200}
           trigger={

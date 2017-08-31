@@ -5,9 +5,10 @@ import { Dropdown, Menu } from 'semantic-ui-react'
 import _ from 'lodash'
 
 const _openLeftStyle = { left: 'auto', right: '0' }
+
 class NavPanelItem extends React.PureComponent {
   static propTypes = {
-    header: PropTypes.node,
+    content: PropTypes.node,
     name: PropTypes.string.isRequired, // Used for generating mgbjr-id-${name}-.. parts of joyride tags
     openLeft: PropTypes.bool,
     menu: PropTypes.arrayOf(
@@ -35,17 +36,19 @@ class NavPanelItem extends React.PureComponent {
   }
 
   render() {
-    const { header, name, menu, style, to, openLeft } = this.props
+    const { content, name, menu, style, to, openLeft, query } = this.props
     const { open } = this.state
+
+    const isLink = to || query
 
     const props = {
       id: `mgbjr-np-${name}`,
-      onClick: to ? this.handleClick : null,
+      onClick: isLink ? this.handleClick : null,
       style,
     }
 
     if (!menu) {
-      return <Menu.Item as={to ? 'a' : 'div'} {...props} content={header} />
+      return <Menu.Item {...props} as={isLink ? QLink : 'div'} content={content} />
     }
 
     return (
@@ -54,19 +57,23 @@ class NavPanelItem extends React.PureComponent {
         item
         onMouseEnter={this.handleMouseEnter}
         onMouseLeave={this.handleMouseLeave}
-        trigger={<span>{header}</span>}
+        trigger={content}
         icon={null}
         open={open}
       >
         <Dropdown.Menu style={openLeft ? _openLeftStyle : null}>
           {_.map(menu, ({ subcomponent, ...subcomponentProps }) => {
+            const { jrkey, ...rest } = subcomponentProps
+            delete rest.explainClickAction
+
+            const isLink = rest.to || rest.query
             return React.createElement(Dropdown[subcomponent], {
-              key: subcomponentProps.jrkey,
-              'data-joyridecompletiontag': `mgbjr-CT-np-${name}-${subcomponentProps.jrkey}`,
-              id: `mgbjr-np-${name}-${subcomponentProps.jrkey}`,
-              as: QLink,
-              onClick: this.handleItemClick,
-              ..._.omit(subcomponentProps, ['jrkey', 'explainClickAction']),
+              ...rest,
+              key: jrkey,
+              as: isLink ? QLink : 'div',
+              'data-joyridecompletiontag': `mgbjr-CT-np-${name}-${jrkey}`,
+              id: `mgbjr-np-${name}-${jrkey}`,
+              onClick: isLink ? this.handleItemClick : null,
             })
           })}
         </Dropdown.Menu>

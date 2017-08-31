@@ -1,3 +1,4 @@
+import cx from 'classnames'
 import _ from 'lodash'
 import moment from 'moment'
 import React, { PropTypes } from 'react'
@@ -119,6 +120,7 @@ const AssetCard = React.createClass({
 
     return (
       <Card
+        link
         color={assetKindColor}
         fluid={fluid || viewOpts.tightRows}
         style={viewOpts.tightRows ? { marginTop: '1px', marginBottom: '1px' } : { userSelect: 'none' }}
@@ -132,7 +134,7 @@ const AssetCard = React.createClass({
         // draggable must be explicitly set if element is not user-input, img, or link... see
         // https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/draggable
         draggable
-        className={`${classNames ? classNames : ''} animated fadeIn link`}
+        className={cx(classNames, 'animated fadeIn')}
       >
         {/* className here because Card.Content is functional and doesn't support no refs */}
         <div className="content" ref="thumbnailCanvas">

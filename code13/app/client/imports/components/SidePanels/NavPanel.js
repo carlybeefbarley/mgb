@@ -1,18 +1,33 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Button, Menu, Image, Header, Icon } from 'semantic-ui-react'
+import { Button, Menu, Image, Icon } from 'semantic-ui-react'
 import NavPanelItem from './NavPanelItem'
-import WhatsNew from '/client/imports/components/Nav/WhatsNew'
 
 // imports to enable logout functionality
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { logActivity } from '/imports/schemas/activity'
 
+const logoImageStyle = {
+  display: 'block',
+  // match height of avatar image, allow width to fit
+  width: 'auto',
+  height: '2em',
+  filter: 'brightness(1.7)',
+}
+
+const menuStyle = {
+  // do not flex
+  flex: '0 0 auto',
+  margin: 0,
+  borderRadius: 0,
+  marginBottom: 0,
+}
+
 // exported since the Tutorial Editor uses this to generate some
 // macros in JoyrideSpecialMacros.jsx
 // Note that this uses Meteor's Accounts.loggingIn() so it doesn't flash the Login/Sigup during user login
 export const getNavPanels = (currUser, showAll) => {
-  const uname = currUser ? currUser.username : null
+  const username = currUser ? currUser.username : null
   const isLoggingIn = Meteor.loggingIn()
   const showGuestOptions = (!isLoggingIn && !currUser) || showAll
   const showUserOptions = (!isLoggingIn && !!currUser) || showAll
@@ -20,14 +35,10 @@ export const getNavPanels = (currUser, showAll) => {
   return {
     left: [
       {
-        name: 'mgb', // used for mgjr-np-{name}- id generation
+        name: 'mgb',
         icon: { name: 'home' },
         explainClickAction: 'Shortcut: Clicking here jumps to the Home Page',
-        header: (
-          <Menu.Item style={{ padding: '0' }}>
-            <img src="/images/logos/mgb/medium/01w.png" style={{ width: 130, filter: 'brightness(1.7)' }} />
-          </Menu.Item>
-        ),
+        content: <img src="/images/logos/mgb/medium/01w.png" style={logoImageStyle} />,
         to: '/',
         menu: [
           {
@@ -35,7 +46,7 @@ export const getNavPanels = (currUser, showAll) => {
             jrkey: 'whatsNew', // used for mgjr-np-mgb-{jrkey} id generation for joyride system
             explainClickAction: "What's New",
             to: '/whatsnew',
-            icon: <WhatsNew currUser={currUser} />,
+            icon: 'gift',
             content: "What's New",
           },
           {
@@ -51,8 +62,8 @@ export const getNavPanels = (currUser, showAll) => {
         name: 'learn',
         explainClickAction: 'Shortcut: Clicking here jumps to the Learning Paths page',
         icon: { name: 'student' },
-        fHideForIconView: true, // For top-level, items, use
-        header: 'Learn',
+        hideInIconView: true, // For top-level, items, use
+        content: 'Learn',
         to: '/learn',
         menu: [
           {
@@ -82,7 +93,7 @@ export const getNavPanels = (currUser, showAll) => {
         name: 'play',
         explainClickAction: 'Shortcut: Clicking here jumps to the list of playable games',
         icon: { name: 'game' },
-        header: 'Play',
+        content: 'Play',
         to: '/games',
         menu: [
           {
@@ -115,7 +126,7 @@ export const getNavPanels = (currUser, showAll) => {
         name: 'meet',
         explainClickAction: 'Shortcut: Clicking here jumps to the User search page',
         icon: 'users',
-        header: 'Meet',
+        content: 'Meet',
         to: '/users',
         menu: [
           {
@@ -141,7 +152,7 @@ export const getNavPanels = (currUser, showAll) => {
         name: 'assets',
         explainClickAction: 'Shortcut: Clicking here jumps to the list of your Assets',
         icon: { name: 'pencil' },
-        header: 'Assets',
+        content: 'Assets',
         to: '/assets',
         menu: [
           {
@@ -154,14 +165,14 @@ export const getNavPanels = (currUser, showAll) => {
           {
             subcomponent: 'Item',
             jrkey: 'listMy',
-            to: `/u/${uname}/assets`,
+            to: `/u/${username}/assets`,
             icon: 'pencil',
             content: 'My Assets',
           },
           {
             subcomponent: 'Item',
             jrkey: 'listMyChallenge',
-            to: `/u/${uname}/assets`,
+            to: `/u/${username}/assets`,
             query: { showChallengeAssets: '1', view: 's' },
             icon: { name: 'checked calendar', color: 'orange' },
             content: 'My "Challenge Assets"',
@@ -179,7 +190,7 @@ export const getNavPanels = (currUser, showAll) => {
         name: 'projects',
         explainClickAction: 'Shortcut: Clicking here jumps to the list of your Projects',
         icon: { name: 'sitemap' },
-        header: 'Projects',
+        content: 'Projects',
         to: `/projects`,
         menu: [
           {
@@ -192,91 +203,88 @@ export const getNavPanels = (currUser, showAll) => {
           {
             subcomponent: 'Item',
             jrkey: 'listMy',
-            to: `/u/${uname}/projects`,
+            to: `/u/${username}/projects`,
             icon: 'sitemap',
             content: 'My Projects',
           },
           {
             subcomponent: 'Item',
             jrkey: 'importMgb1',
-            to: `/u/${uname}/projects/import/mgb1`,
+            to: `/u/${username}/projects/import/mgb1`,
             icon: { name: 'upload', color: 'orange' },
             content: 'Import MGBv1 Projects',
           },
           {
             subcomponent: 'Item',
             jrkey: 'createNew',
-            to: `/u/${uname}/projects/create`,
+            to: `/u/${username}/projects/create`,
             icon: { name: 'sitemap', color: 'green' },
             content: 'Create New Project',
           },
         ],
       },
+      showUserOptions && {
+        name: 'user',
+        explainClickAction: 'Shortcut: Clicking here jumps to your Profile Page', // if logged in, and this is used by tutorials, so that's ok
+        icon: { name: 'user' },
+        content: <Image id="mgbjr-np-user-avatar" centered avatar src={_.get(currUser, 'profile.avatar')} />,
+        to: `/u/${username}`,
+        menu: [
+          {
+            subcomponent: 'Header',
+            jrkey: 'username',
+            content: username,
+          },
+          {
+            subcomponent: 'Item',
+            to: `/u/${username}`,
+            jrkey: 'myProfile',
+            icon: 'user',
+            content: 'My Profile',
+          },
+          {
+            subcomponent: 'Item',
+            to: `/u/${username}/badges`,
+            jrkey: 'myBadges',
+            icon: 'trophy',
+            content: 'My Badges',
+          },
+          {
+            subcomponent: 'Item',
+            to: `/u/${username}/games`,
+            jrkey: 'myGames',
+            icon: 'game',
+            content: 'My Games',
+          },
+          {
+            subcomponent: 'Item',
+            to: `/u/${username}/skilltree`,
+            jrkey: 'mySkills',
+            icon: 'plus circle',
+            content: 'My Skills',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'logout',
+            icon: 'sign out',
+            content: 'Logout',
+            onClick: _doLogout,
+          },
+        ],
+      },
       showGuestOptions && {
         name: 'login',
-        header: 'Log in',
+        content: 'Log in',
         icon: { name: 'sign in' },
-        style: { padding: '4px 16px' },
         menu: null,
         to: '/login',
       },
       showGuestOptions && {
         name: 'signup',
-        header: <Button size="small" primary content="Sign Up" />,
+        content: <Button size="small" primary content="Sign Up" />,
         icon: { name: 'signup' },
-        style: { padding: '4px 16px' },
         menu: null,
         to: '/signup',
-      },
-      {
-        name: 'user',
-        explainClickAction: 'Shortcut: Clicking here jumps to your Profile Page', // if logged in, and this is used by tutorials, so that's ok
-        icon: { name: 'user' },
-        header: 'Login',
-        to: uname ? `/u/${uname}` : '/signup',
-        menu: _.compact([
-          showUserOptions && {
-            subcomponent: 'Header',
-            jrkey: 'username',
-            content: <Header style={{ paddingLeft: '1.2em' }}>{uname}</Header>,
-          },
-          showUserOptions && {
-            subcomponent: 'Item',
-            to: `/u/${uname}`,
-            jrkey: 'myProfile',
-            icon: 'user',
-            content: 'My Profile',
-          },
-          showUserOptions && {
-            subcomponent: 'Item',
-            to: `/u/${uname}/badges`,
-            jrkey: 'myBadges',
-            icon: 'trophy',
-            content: 'My Badges',
-          },
-          showUserOptions && {
-            subcomponent: 'Item',
-            to: `/u/${uname}/games`,
-            jrkey: 'myGames',
-            icon: 'game',
-            content: 'My Games',
-          },
-          showUserOptions && {
-            subcomponent: 'Item',
-            to: `/u/${uname}/skilltree`,
-            jrkey: 'mySkills',
-            icon: 'plus circle',
-            content: 'My Skills',
-          },
-          showUserOptions && {
-            subcomponent: 'Item',
-            jrkey: 'logout',
-            icon: 'sign out',
-            style: { marginTop: '1em' },
-            content: 'Logout',
-            onClick: _doLogout,
-          },
-        ]),
       },
     ]),
   }
@@ -290,8 +298,6 @@ const _doLogout = () => {
   utilPushTo({}, '/')
 }
 
-const _isLoggedInSty = { padding: '4px 8px' }
-
 class NavPanel extends React.Component {
   static propTypes = {
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
@@ -300,32 +306,21 @@ class NavPanel extends React.Component {
 
   render() {
     const { currUser, navPanelAvailableWidth } = this.props
-    const menuStyle = {
-      // do not flex
-      flex: '0 0 auto',
-      margin: 0,
-      borderRadius: 0,
-      marginBottom: 0,
-    }
     const useIcons = navPanelAvailableWidth < 600 // px
-    const allNavPanels = getNavPanels(currUser, false)
-
-    const userMenuKey = 'user' // We render this specially, even though it's part of allNavPanels
-    const userMenu = _.find(allNavPanels.right, { name: userMenuKey })
-    const userAvatarSrc = _.get(currUser, 'profile.avatar', 'http://placehold.it/50')
+    const allNavPanels = getNavPanels(currUser)
 
     const navPanelItems = side =>
       allNavPanels[side]
-        .filter(v => v.name !== userMenuKey && (!useIcons || !v.fHideForIconView))
-        .map(v => (
+        .filter(v => !(useIcons && v.hideInIconView))
+        .map(({ content, icon, menu, name, query, to }) => (
           <NavPanelItem
-            name={v.name}
+            name={name}
             openLeft={side === 'right'}
-            key={v.name}
-            header={useIcons || !v.header ? <Icon size="large" {...v.icon} /> : v.header}
-            menu={v.menu}
-            to={v.to}
-            query={v.query}
+            key={name}
+            content={useIcons || !content ? <Icon size="large" {...icon} /> : content}
+            menu={menu}
+            to={to}
+            query={query}
           />
         ))
 
@@ -333,20 +328,7 @@ class NavPanel extends React.Component {
       <Menu inverted borderless style={menuStyle} id="mgbjr-np">
         {navPanelItems('left')}
 
-        {/* The user menu, pushed to the right */}
-        <Menu.Menu position="right">
-          {navPanelItems('right')}
-          {currUser && (
-            <NavPanelItem
-              key="user"
-              name="user"
-              style={_isLoggedInSty}
-              header={<Image id="mgbjr-np-user-avatar" centered avatar src={userAvatarSrc} />}
-              menu={userMenu.menu}
-              to={userMenu.to}
-            />
-          )}
-        </Menu.Menu>
+        <Menu.Menu position="right">{navPanelItems('right')}</Menu.Menu>
       </Menu>
     )
   }

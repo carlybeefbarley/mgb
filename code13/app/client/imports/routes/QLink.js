@@ -1,26 +1,17 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Link, browserHistory } from 'react-router'
 import urlMaker from './urlMaker'
 import { clearPriorPathsForJoyrideCompletionTags } from '/client/imports/routes/App'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-// TODO   Implement some  <QLink nav="..."> cases to clean up code
 
-function isLeftClickEvent(event) {
-  return event.button === 0
-}
+const isLeftClickEvent = e => e.button === 0
+const hasModiferKeys = e => !!(e.metaKey || e.ctrlKey || e.shiftKey)
 
-function isModifiedEvent(event) {
-  return !!(event.metaKey || event.ctrlKey || event.shiftKey) // alt is handled specially in handleClick()
-}
-
-function createLocationDescriptor(to, _ref) {
-  var query = _ref.query
-  var hash = _ref.hash
-  var state = _ref.state
-
+const createLocationDescriptor = (to, { query, hash, state }) => {
   if (query || hash || state) {
-    return { pathname: to, query: query, hash: hash, state: state }
+    return { pathname: to, query, hash, state }
   }
 
   return to
@@ -37,35 +28,39 @@ function createLocationDescriptor(to, _ref) {
 //
 // 1. Any app-wide query params that should be preserved (see urlMaker.getCrossAppQueryParams() )
 
-const QLink = React.createClass({
-  // propTypes are same as from node_modules/react-router/es6/Link.js
-  propTypes: {
-    //  to:                   PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,   // The click href
-    //  altTo:                PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,   // The alt-click href
+class QLink extends React.Component {
+  static contextTypes = {
+    urlLocation: PropTypes.object,
+    router: PropTypes.object,
+  }
 
-    query: PropTypes.object,
-    //  altQuery:             PropTypes.object,       // The alt-click query
-    hash: PropTypes.string,
-    state: PropTypes.object,
-    activeStyle: PropTypes.object,
-    activeClassName: PropTypes.string,
-    //  onlyActiveOnIndex:    PropTypes.bool.isRequired,
-    onClick: PropTypes.func,
-    target: PropTypes.string,
-    elOverride: PropTypes.oneOfType([PropTypes.string, PropTypes.object]), // eg "div"
-  },
+  static propTypes = {
+    /** The alt-click href */
+    altTo: PropTypes.string,
 
-  getDefaultProps: function() {
-    return {
-      //  onlyActiveOnIndex: false,
-      style: {},
-    }
-  },
+    /** The alt-click query */
+    altQuery: PropTypes.object,
 
-  contextTypes: {
-    urlLocation: React.PropTypes.object,
-    router: React.PropTypes.object,
-  },
+    /** eg "div", MyComponent */
+    elOverride: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
+
+    // `nav` logic was not used in the codebase
+    // adding an error log for analytics tracking just in case a usage was missed
+    nav: (props, propName, componentName) => {
+      if (props[propName] !== undefined) {
+        return new Error(`\`nav\` is not implemented, see ${componentName}`)
+      }
+    },
+
+    // <Link /> props
+    ...Link.propTypes,
+  }
+
+  static defaultProps = {
+    onlyActiveOnIndex: false,
+    activeClassName: 'active',
+    elOverride: Link,
+  }
 
   /** This click handler will be called by the <Link> we create.
    *  This click handler effectively overrides from the handleClick() in node_modules/react-router/es6/Link.js
@@ -77,39 +72,37 @@ const QLink = React.createClass({
    * In orded to simplify tutorial development, we also file mgbjr-CT-
    * joyrideCompletionTags if the item had an id=mgbjr-.*
    */
-  handleClick: function(event) {
-    const p = this.props
+  handleClick = event => {
+    const { altTo, altQuery, hash, onClick, state, query, target, to } = this.props
 
     const appScopedQuery = urlMaker.getCrossAppQueryParams(this.context.urlLocation.query)
 
-    if (event.target && event.target.id && event.target.id.startsWith('mgbjr-'))
+    if (event.target && event.target.id && event.target.id.startsWith('mgbjr-')) {
       joyrideCompleteTag(event.target.id.replace(/^mgbjr-/, 'mgbjr-CT-'))
+    }
 
-    if (p.onClick) p.onClick(event) // Call the click handler we were given. Note that it has the option to preventDefault()
+    // Call the click handler we were given. Note that it has the option to preventDefault()
+    if (onClick) onClick(event)
 
-    if (
-      event.defaultPrevented === true || // p.OnClick() handler preventedDefault processing, that includes us.
-      isModifiedEvent(event) || // Dont handle clicks with Shift, Meta, Ctrl etc  -- leave to Browser
-      (event.altKey && !p.altTo) || // Don't handle Alt key - unless we have been told to have an override
+    const shouldIgnore =
+      event.defaultPrevented === true || // `onClick` handler preventedDefault processing, that includes us.
+      hasModiferKeys(event) || // Dont handle clicks with Shift, Meta, Ctrl etc  -- leave to Browser
+      (event.altKey && !altTo && !altQuery) || // Don't handle Alt key - unless we have been told to have an override
       !isLeftClickEvent(event) || // Don't handle other mouse buttons
-      p.target // there is a target such as _blank, so just jump to it, no fancy stuff
-    )
-      return // Browser needs to handle this. It's beyond our scope. (TODO ideally we could still monkey patch the query?)
+      target !== undefined // there is a target such as _blank, so just jump to it, no fancy stuff
+
+    // Browser needs to handle this. It's beyond our scope.
+    // TODO ideally we could still monkey patch the query?
+    if (shouldIgnore) return
 
     // resolve any modifiers to select altTo/AltQuery etc
-    const modifiedTo = (event.altKey && p.altTo ? p.altTo : p.to) || window.location.pathname
-    const modifiedQuery = event.altKey && p.altTo ? p.altQuery : p.query
-    // Todo AltHash if needed
+    const modifiedTo = (event.altKey && altTo ? altTo : to) || window.location.pathname
+    const modifiedQuery = event.altKey && altQuery ? altQuery : query
 
     // Combine the links' query with special appScoped query params we want to preserve such as _np= (this is all decided in urlMaker.js)
-    const combinedQuery = Object.assign({}, appScopedQuery, modifiedQuery)
+    const combinedQuery = { ...appScopedQuery, ...modifiedQuery }
 
-    // TODO: Decode p.nav to p.to here also.. or use something else
-    const location = createLocationDescriptor(modifiedTo, {
-      query: combinedQuery,
-      hash: p.hash,
-      state: p.state,
-    })
+    const location = createLocationDescriptor(modifiedTo, { query: combinedQuery, hash, state })
 
     // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
     clearPriorPathsForJoyrideCompletionTags()
@@ -117,36 +110,22 @@ const QLink = React.createClass({
     this.context.router.push(location)
     event.preventDefault() // Stop Link.handleClick from doing anything further
     event.stopPropagation()
-  },
+  }
 
-  render: function() {
-    const p = this.props
-    const chosenEl = p.elOverride ? p.elOverride : Link
-    const pClean = _.omit(p, ['elOverride', 'altTo', 'altQuery'])
+  render() {
+    const { elOverride, ...rest } = this.props
+    delete rest.altTo
+    delete rest.altQuery
 
-    if (!p.nav) return React.createElement(chosenEl, Object.assign({}, pClean, { onClick: this.handleClick }))
-
-    // Now try the             <QLink nav="users" className="item"></QLink> variant
-
-    let newTo = '',
-      newText = ''
-    switch (p.nav) {
-      case 'users':
-        newTo = urlMaker.pathTo('/users')
-        newText = '_Users'
-        break
-      default:
-        console.error(`Unknown case for QLink nav="${p.nav}"`)
-        break
+    if (elOverride !== Link) {
+      _.forEach(Link.propTypes, (val, key) => {
+        delete rest[key]
+      })
     }
 
-    return React.createElement(
-      chosenEl,
-      Object.assign({}, pClean, { to: newTo, onClick: this.handleClick }),
-      <span>{newText}</span>,
-    )
-  },
-})
+    return React.createElement(elOverride, { ...rest, onClick: this.handleClick })
+  }
+}
 
 export default QLink
 
@@ -158,51 +137,51 @@ function _getDefaultUrlQueryParams() {
   // we'll store the parameters here
   var obj = {}
 
-  // if query string exists
-  if (queryString) {
-    // stuff after # is not part of query string, so get rid of it
-    queryString = queryString.split('#')[0]
+  // no query, we're done
+  if (!queryString) return obj
 
-    // split our query string into its component parts
-    var arr = queryString.split('&')
+  // stuff after # is not part of query string, so get rid of it
+  queryString = queryString.split('#')[0]
 
-    for (let i = 0; i < arr.length; i++) {
-      // separate the keys and the values
-      var a = arr[i].split('=')
+  // split our query string into its component parts
+  var arr = queryString.split('&')
 
-      // in case params look like: list[]=thing1&list[]=thing2
-      var paramNum = undefined
-      var paramName = a[0].replace(/\[\d*\]/, function(v) {
-        paramNum = v.slice(1, -1)
-        return ''
-      })
+  for (let i = 0; i < arr.length; i++) {
+    // separate the keys and the values
+    var a = arr[i].split('=')
 
-      // set parameter value (use 'true' if empty)
-      var paramValue = typeof a[1] === 'undefined' ? true : a[1]
+    // in case params look like: list[]=thing1&list[]=thing2
+    var paramNum = undefined
+    var paramName = a[0].replace(/\[\d*\]/, function(v) {
+      paramNum = v.slice(1, -1)
+      return ''
+    })
 
-      // (optional) keep case consistent
-      // paramName = paramName.toLowerCase();
-      // paramValue = paramValue.toLowerCase();
+    // set parameter value (use 'true' if empty)
+    var paramValue = typeof a[1] === 'undefined' ? true : a[1]
 
-      // if parameter name already exists
-      if (obj[paramName]) {
-        // convert value to array (if still string)
-        if (typeof obj[paramName] === 'string') {
-          obj[paramName] = [obj[paramName]]
-        }
-        // if no array index number specified...
-        if (typeof paramNum === 'undefined') {
-          // put the value on the end of the array
-          obj[paramName].push(paramValue)
-        } else {
-          // if array index number specified...
-          // put the value at that index number
-          obj[paramName][paramNum] = paramValue
-        }
-      } else {
-        // if param name doesn't exist yet, set it
-        obj[paramName] = paramValue
+    // (optional) keep case consistent
+    // paramName = paramName.toLowerCase();
+    // paramValue = paramValue.toLowerCase();
+
+    // if parameter name already exists
+    if (obj[paramName]) {
+      // convert value to array (if still string)
+      if (typeof obj[paramName] === 'string') {
+        obj[paramName] = [obj[paramName]]
       }
+      // if no array index number specified...
+      if (typeof paramNum === 'undefined') {
+        // put the value on the end of the array
+        obj[paramName].push(paramValue)
+      } else {
+        // if array index number specified...
+        // put the value at that index number
+        obj[paramName][paramNum] = paramValue
+      }
+    } else {
+      // if param name doesn't exist yet, set it
+      obj[paramName] = paramValue
     }
   }
 
@@ -233,7 +212,7 @@ export const openAssetById = assetId => {
 export function utilPushTo(existingQuery, newTo, extraQueryParams = {}) {
   const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery || _getDefaultUrlQueryParams())
   const location = createLocationDescriptor(newTo, {
-    query: Object.assign({}, appScopedQuery, extraQueryParams),
+    query: { ...appScopedQuery, ...extraQueryParams },
   })
 
   // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
@@ -257,7 +236,7 @@ export function utilPushTo(existingQuery, newTo, extraQueryParams = {}) {
 export function utilReplaceTo(existingQuery, newTo, extraQueryParams = {}) {
   const appScopedQuery = urlMaker.getCrossAppQueryParams(existingQuery || _getDefaultUrlQueryParams())
   const location = createLocationDescriptor(newTo, {
-    query: Object.assign({}, appScopedQuery, extraQueryParams),
+    query: { ...appScopedQuery, ...extraQueryParams },
   })
 
   // This is in support of the joyride/tutorial infrastructure to edge-detect page changes

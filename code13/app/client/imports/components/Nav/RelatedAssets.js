@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { createContainer } from 'meteor/react-meteor-data'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button, Header, Icon, Input, List, Modal, Popup } from 'semantic-ui-react'
+import { Button, Divider, Header, Icon, Input, Segment, List, Modal, Popup } from 'semantic-ui-react'
 
 import { AssetKinds } from '/imports/schemas/assets'
 import QLink, { openAssetById, utilPushTo } from '/client/imports/routes/QLink'
@@ -14,9 +14,7 @@ const getContextualProjectName = ({ location, currentlyEditingAssetInfo, params 
   const { projectNames } = currentlyEditingAssetInfo
 
   // Else is it a query?
-  return _.first(projectNames) || !_.isEmpty(_.get(query, 'project'))
-    ? query.project
-    : params.projectName || null
+  return _.first(projectNames) || _.get(query, 'project') || params.projectName
 }
 
 class RelatedAssetsUI extends React.Component {
@@ -201,69 +199,93 @@ class RelatedAssetsUI extends React.Component {
 
     const contextualProjectName = getContextualProjectName(this.props)
     const filteredRelatedAssets = this.getFilteredAssets(assets, searchQuery)
+    const hasAssets = !_.isEmpty(assets)
+    const username = _.get(user || currUser, 'username')
+
+    const userLink = username && (
+      <QLink to={`/u/${username}`} style={{ whiteSpace: 'nowrap' }}>
+        <Icon name="user" />
+        {username}
+      </QLink>
+    )
+
+    const projectLink = contextualProjectName && (
+      <QLink to={`/u/${username}/projects/${contextualProjectName}`} style={{ whiteSpace: 'nowrap' }}>
+        <Icon name="sitemap" />
+        {contextualProjectName}
+      </QLink>
+    )
 
     return (
-      <div>
-        <Header>
+      <div style={{ minWidth: '20em' }}>
+        <Header size="small">
           Related Assets
           <Header.Subheader style={{ display: 'inline-block', marginLeft: '1em' }}>
             [Ctrl + O]
           </Header.Subheader>
         </Header>
-        <Input
-          id="mgb-related-assets-input" // so it can be focused on open
-          fluid
-          size="mini"
-          icon="search"
-          loading={loading}
-          placeholder="Search"
-          defaultValue={searchQuery}
-          onChange={this.handleSearchChange}
-        />
-        <List
-          id="mgb-related-assets-list"
-          selection
-          // Heads Up!
-          // Position relative is required for scrolling out of view active items into view
-          style={{ position: 'relative', maxHeight: '30em', minWidth: '18em', overflowY: 'auto' }}
-          items={_.map(filteredRelatedAssets, (a, index) => ({
-            key: a._id,
-            as: QLink,
-            onClick: this.closeAll,
-            to: `/u/${a.dn_ownerName}/asset/${a._id}`,
-            active: activeIndex === index,
-            style: { color: AssetKinds.getColor(a.kind) },
-            icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
-            content:
-              currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
-          }))}
-        />
-        <div>
-          {contextualProjectName && (
-            <span>
-              <span>Within </span>
-              <QLink
-                to={`/u/${user
-                  ? user.username
-                  : currUser ? currUser.username : null}/projects/${contextualProjectName}`}
-              >
-                <Icon name="sitemap" />
-                <span>{contextualProjectName}</span>
-              </QLink>
-            </span>
-          )}
-          <Button
-            as={QLink}
-            to="/assets/create"
-            query={{ projectName: contextualProjectName }}
-            compact
-            floated="right"
+        {hasAssets && (
+          <Input
+            id="mgb-related-assets-input" // so it can be focused on open
+            fluid
             size="mini"
-            color="green"
-            icon="pencil"
-            content="Create new [Ctrl + Alt + N]"
+            icon="search"
+            loading={loading}
+            placeholder="Search"
+            defaultValue={searchQuery}
+            onChange={this.handleSearchChange}
           />
-        </div>
+        )}
+        {hasAssets && (
+          <List
+            id="mgb-related-assets-list"
+            selection
+            // Heads Up!
+            // Position relative is required for scrolling out of view active items into view
+            style={{ position: 'relative', maxHeight: '30em', minWidth: '18em', overflowY: 'auto' }}
+            items={_.map(filteredRelatedAssets, (a, index) => ({
+              key: a._id,
+              as: QLink,
+              onClick: this.closeAll,
+              to: `/u/${a.dn_ownerName}/asset/${a._id}`,
+              active: activeIndex === index,
+              style: { color: AssetKinds.getColor(a.kind) },
+              icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
+              content:
+                currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
+            }))}
+          />
+        )}
+        {!hasAssets && (
+          <Segment secondary textAlign="center">
+            <Header icon color="grey">
+              <Icon name="search" size="large" />
+              <Header.Content>No results</Header.Content>
+            </Header>
+            <p>
+              There are no assets related to
+              {userLink && ' '}
+              {userLink}
+              {userLink && projectLink && ' or'}
+              {projectLink && ' '}
+              {projectLink}.
+            </p>
+          </Segment>
+        )}
+        <Divider />
+        <Button
+          as={QLink}
+          to="/assets/create"
+          query={{ projectName: contextualProjectName }}
+          compact
+          floated="right"
+          size="tiny"
+          color="green"
+          content="Create [Ctrl + Alt + N]"
+        />
+        {hasAssets && <div>{userLink}</div>}
+        {hasAssets && <div>{projectLink}</div>}
+        <Divider hidden fitted clearing />
       </div>
     )
   }
@@ -286,14 +308,14 @@ class RelatedAssetsUI extends React.Component {
   }
 
   renderPopup = () => {
+    const { assets } = this.props
     const { isPopupOpen } = this.state
 
     return (
       <Popup
         on="hover"
-        wide="very"
         hoverable
-        mouseEnterDelay={250}
+        wide={_.isEmpty(assets) ? false : 'very'}
         // leave undefined for auto controlled open state on hover
         open={isPopupOpen === false ? false : undefined}
         onOpen={this.openPopup}

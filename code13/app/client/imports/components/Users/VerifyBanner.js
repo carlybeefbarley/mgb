@@ -27,8 +27,6 @@ class VerifyBanner extends Component {
     const { currUser } = this.props
     const { isLoading, isSent } = this.state
 
-    console.log(this.props, this.state)
-
     if (!currUser || _.get(currUser, 'emails[0].verified')) return null
 
     return (

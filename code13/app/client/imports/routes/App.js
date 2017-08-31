@@ -44,6 +44,7 @@ import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 
 import { InitHotjar } from '/client/imports/helpers/hotjar.js'
 import SupportedBrowsersContainer from '../components/SupportedBrowsers/SupportedBrowsersContainer'
+import VerifyBanner from '/client/imports/components/Users/VerifyBanner'
 
 let G_localSettings = new ReactiveDict()
 
@@ -454,6 +455,7 @@ class AppUI extends React.Component {
 
           <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
             <SupportedBrowsersContainer />
+            <VerifyBanner currUser={currUser} />
             {!hideHeaders && <NavPanel currUser={currUser} navPanelAvailableWidth={mainAreaAvailableWidth} />}
 
             <NavBar

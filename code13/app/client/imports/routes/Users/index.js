@@ -7,6 +7,7 @@ import UserHistoryRoute from './UserHistoryRoute'
 import ResetPassword from './ResetPassword'
 import ForgotPassword from './ForgotPassword'
 import SkillTreeRoute from './SkillTreeRoute'
+import VerifyEmail from './VerifyEmailRoute'
 
 export default {
   UserListRoute,
@@ -18,4 +19,5 @@ export default {
   ResetPassword,
   ForgotPassword,
   SkillTreeRoute,
+  VerifyEmail,
 }

@@ -126,6 +126,12 @@ Meteor.methods({
     return count
   },
 
+  'User.sendVerifyEmail': function() {
+    if (Meteor.isServer) {
+      Accounts.sendVerificationEmail(Meteor.userId(), Meteor.user().emails[0].address)
+    }
+  },
+
   'User.addEditTime': function(editType, timeSec) {
     checkIsLoggedInAndNotSuspended()
     const editors = ['graphic', 'code', 'map', 'actor', 'actormap', 'sound', 'music']

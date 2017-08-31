@@ -9,6 +9,7 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 import { AssetKindEnum } from '/imports/schemas/assets'
 
 import { EventEmitter } from 'events'
+import _ from 'lodash'
 
 /**
  * Gets full url to module without known libs - e.g. jquery
@@ -76,6 +77,9 @@ export default class SourceTools extends EventEmitter {
 
     // map<importName, origin> - used to track down recursion
     this.pending = {}
+
+    // Array<url>
+    this.loadedDefs = []
   }
 
   /**
@@ -89,6 +93,7 @@ export default class SourceTools extends EventEmitter {
 
     this.closeSubscriptions(this.subscriptions)
     this.subscriptions = {}
+    this.loadedDefs = []
   }
 
   /**
@@ -296,20 +301,24 @@ export default class SourceTools extends EventEmitter {
     // remove leading . from filename - old imports has one
     if (filename.indexOf('.') === 0) filename = filename.substring(1, filename.length)
 
-    const parts = SourceTools.getLibAndVersion(filename)
+    const [name, version] = SourceTools.getLibAndVersion(filename)
+
     // simple import e.g. 'phaser', 'jquery'
     if (SourceTools.isGlobalImport(filename)) {
       // load knowLib - e.g. phaser
-      const lib = knownLibs[parts[0]]
+      const lib = knownLibs[name]
       if (lib) {
+        const getSrc = (lib.defs && lib.min) || lib.src
+        const src = getSrc ? getSrc(version) : getModuleServer(name, version)
+
         return this.load(
-          lib.src ? lib.src(parts[1]) : getModuleServer(parts[0], parts[1]),
+          src,
           null,
           Object.assign(additionalProps, {
             useGlobal: lib.useGlobal,
             isExternalFile: true,
-            lib: parts[0],
-            version: parts[1],
+            lib: name,
+            version,
           }),
         ).then(info => {
           if (lib.defs) this.loadDefs(lib.defs())
@@ -319,11 +328,11 @@ export default class SourceTools extends EventEmitter {
       } else {
         // unknown lib - e.g. jquery
         return this.load(
-          getModuleServer(parts[0], parts[1]),
+          getModuleServer(name, version),
           null,
           Object.assign(additionalProps, {
-            lib: parts[0],
-            version: parts[1],
+            lib: name,
+            version,
           }),
         ).then(info => {
           this.addFileToTern(filename, info.data)
@@ -333,11 +342,11 @@ export default class SourceTools extends EventEmitter {
     } else if (!SourceTools.isExternalFile(filename)) {
       // load local file
       const ref = additionalProps.referrer || this.asset.dn_ownerName
-      const parts = SourceTools.getUserAndName(filename, ref)
-      return this.startObserver(parts).then(asset => {
+      const userAndAsset = SourceTools.getUserAndName(filename, ref)
+      return this.startObserver(userAndAsset).then(asset => {
         // TODO: what to do without asset????
-        const url = makeCDNLink(`/api/asset/code/${parts.join('/')}`, genetag(asset))
-        const es5src = makeCDNLink(`/api/asset/code/es5/${parts.join('/')}`, genetag(asset))
+        const url = makeCDNLink(`/api/asset/code/${userAndAsset.join('/')}`, genetag(asset))
+        const es5src = makeCDNLink(`/api/asset/code/es5/${userAndAsset.join('/')}`, genetag(asset))
         // try to get e5 source from asset
         // TODO: store in the asset meta info - as we only need to verify if asset has es5 available
         return this.load(es5src, asset).then(es5 => {
@@ -348,8 +357,8 @@ export default class SourceTools extends EventEmitter {
               referrer: asset ? asset.dn_ownerName : ref,
               isExternalFile: !!(es5 && es5.data && es5.data.trim()),
               url: es5src,
-              lib: parts[0],
-              version: parts[1],
+              lib: name,
+              version,
             }),
             ignoreCache,
           ).then(info => {
@@ -365,8 +374,8 @@ export default class SourceTools extends EventEmitter {
         null,
         Object.assign(additionalProps, {
           isExternalFile: true,
-          lib: parts[0],
-          version: parts[1],
+          lib: name,
+          version,
         }),
       ).then(info => {
         this.addFileToTern(filename, info.data)
@@ -770,9 +779,10 @@ main = function(){
   load(url, asset = null, additionalProps = null, ignoreCache = false) {
     return new Promise((resolve, reject) => {
       this.checkCancel(reject)
-      if (!ignoreCache && this.loadedFilesAndDefs[url])
+      if (!ignoreCache && this.loadedFilesAndDefs[url]) {
         resolve(Object.assign({ url, data: this.loadedFilesAndDefs[url] }, additionalProps))
-
+        return
+      }
       mgbAjax(
         url,
         (err, data) => {
@@ -823,8 +833,12 @@ main = function(){
    * @returns {Promise.<>}
    */
   loadSingleDef(def) {
+    if (_.includes(this.loadedDefs, def)) {
+      return Promise.resolve()
+    }
     return this.load(def).then(contents => {
       this.tern.server.addDefs && this.tern.server.addDefs(JSON.parse(contents.data), true)
+      this.loadedDefs.push(def)
       this.tern.cachedArgHints = null
     })
   }

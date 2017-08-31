@@ -1,0 +1,14 @@
+{
+  "name": "massemail",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "make-csv": "node scripts/make-csv.js data/users.csv",
+    "get-logs": "node sender/send.js",
+    "send": "node logs/getLogs.js"
+  },
+  "dependencies": {
+    "json2csv": "^3.11.1"
+  }
+}

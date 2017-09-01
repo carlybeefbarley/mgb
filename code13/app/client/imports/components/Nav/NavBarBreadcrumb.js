@@ -226,7 +226,13 @@ const NavBarBreadcrumb = props => {
     //
     // Project Name - When on project detail page
     //
-    !assetId && projectName && <span key="project-name">{projectName}</span>,
+    !assetId &&
+    projectName && (
+      <span key="project-name">
+        <Icon name="sitemap" />
+        {projectName}
+      </span>
+    ),
   ]
     // filter out falsey breadcrumb sections
     .filter(Boolean)

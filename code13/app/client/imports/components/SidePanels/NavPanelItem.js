@@ -6,6 +6,8 @@ import _ from 'lodash'
 
 const _openLeftStyle = { left: 'auto', right: '0' }
 
+const getElementType = props => (props.to || props.query || props.onClick ? QLink : 'div')
+
 class NavPanelItem extends React.PureComponent {
   static propTypes = {
     content: PropTypes.node,
@@ -25,30 +27,28 @@ class NavPanelItem extends React.PureComponent {
 
   handleMouseEnter = () => this.setState({ open: true })
   handleMouseLeave = () => this.setState({ open: false })
-  handleItemClick = (e, data) => {
-    if (data && data['data-joyridecompletiontag']) joyrideCompleteTag(data['data-joyridecompletiontag'])
-    this.setState({ open: false })
-  }
-  handleClick = () => {
-    const { to, query, name } = this.props
-    joyrideCompleteTag(`mgbjr-CT-np-${name}`)
-    utilPushTo(null, to, query)
+  handleClick = props => (e, data) => {
+    const { jrkey, name, onClick, query, to } = props
+    if (onClick) onClick(e, data)
+
+    if (name || jrkey) joyrideCompleteTag(['mgbjr-CT-np', name, jrkey].join('-'))
+    if (to || query) utilPushTo(null, to, query)
+
+    this.setState({ open: !this.state.open })
   }
 
   render() {
-    const { content, name, menu, style, to, openLeft, query } = this.props
+    const { content, name, menu, style, openLeft } = this.props
     const { open } = this.state
-
-    const isLink = to || query
 
     const props = {
       id: `mgbjr-np-${name}`,
-      onClick: isLink ? this.handleClick : null,
+      onClick: this.handleClick(this.props),
       style,
     }
 
     if (!menu) {
-      return <Menu.Item {...props} as={isLink ? QLink : 'div'} content={content} />
+      return <Menu.Item {...props} as={getElementType(this.props)} content={content} />
     }
 
     return (
@@ -66,14 +66,13 @@ class NavPanelItem extends React.PureComponent {
             const { jrkey, ...rest } = subcomponentProps
             delete rest.explainClickAction
 
-            const isLink = rest.to || rest.query
             return React.createElement(Dropdown[subcomponent], {
               ...rest,
               key: jrkey,
-              as: isLink ? QLink : 'div',
-              'data-joyridecompletiontag': `mgbjr-CT-np-${name}-${jrkey}`,
+              as: getElementType(rest),
               id: `mgbjr-np-${name}-${jrkey}`,
-              onClick: isLink ? this.handleItemClick : null,
+              // we need the parent `name` for the joyride completion tag
+              onClick: this.handleClick({ name, ...rest }),
             })
           })}
         </Dropdown.Menu>

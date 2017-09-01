@@ -5,8 +5,12 @@ import { Button, Grid, Header, Image } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 
 import RecentlyEditedAssetGET from '/client/imports/components/Nav/RecentlyEditedAssetGET'
-
 import UX from '/client/imports/UX'
+
+const mascotColumnStyle = {
+  // allow click through, so users can play with the particles :)
+  pointerEvents: 'none',
+}
 
 const HomeHeroBanner = ({ userId, username }) => (
   <Grid columns="equal" verticalAlign="middle" padded>
@@ -69,7 +73,7 @@ const HomeHeroBanner = ({ userId, username }) => (
         </p>
       )}
     </Grid.Column>
-    <Grid.Column>
+    <Grid.Column style={mascotColumnStyle}>
       <Image size="large" centered src={UX.makeMascotImgLink('team')} />
     </Grid.Column>
   </Grid>

@@ -10,6 +10,11 @@ import md5 from 'blueimp-md5'
 import { logActivity } from '/imports/schemas/activity'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 
+const mascotColumnStyle = {
+  // allow click through, so users can play with the particles :)
+  pointerEvents: 'none',
+}
+
 const SignupRoute = React.createClass({
   contextTypes: {
     urlLocation: React.PropTypes.object,
@@ -115,7 +120,7 @@ const SignupRoute = React.createClass({
                 {errors.server && <Message error content={errors.server} />}
                 {!currUser && <LoginLinks showLogin />}
               </Grid.Column>
-              <Grid.Column width={8} only="tablet computer">
+              <Grid.Column width={8} only="tablet computer" style={mascotColumnStyle}>
                 <Divider hidden section />
                 <Image src="/images/mascots/team.png" />
               </Grid.Column>

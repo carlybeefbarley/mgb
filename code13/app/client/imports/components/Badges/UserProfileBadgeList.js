@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Badge from '/client/imports/components/Controls/Badge/Badge'
 import QLink from '/client/imports/routes/QLink'
-import { getAllBadgesForUser } from '/imports/schemas/badges'
+import { getBadgesWithHighestLevel } from '/imports/schemas/badges'
 
 import { Header } from 'semantic-ui-react'
 
@@ -22,7 +22,7 @@ const UserProfileBadgeList = ({ ownsProfile, user, className }) => {
   if (!user) return null
 
   const badgesPageUrl = `/u/${user.profile.name}/badges`
-  const uBadges = getAllBadgesForUser(user)
+  const uBadges = getBadgesWithHighestLevel(user)
 
   return (
     <div className={className}>

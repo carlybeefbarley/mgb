@@ -1,8 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Icon, Segment, List, Header, Modal, Popup } from 'semantic-ui-react'
-import BadgesItem from './BadgesItem'
-import BadgesItemMini from './BadgesItemMini'
+import BadgesItem from '/client/imports/components/Badges/BadgesItem'
 import { getBadgesWithEnabledFlag, selectBadges } from '/imports/schemas/badges'
 
 export default class FaqSegment extends React.Component {
@@ -20,7 +19,11 @@ export default class FaqSegment extends React.Component {
 
   render() {
     const badgesArr = getBadgesWithEnabledFlag(this.props.currUser.badges)
+    // reverse array because we want to get recent badges
+    _.reverse(badgesArr)
     const enabledBadges = selectBadges(badgesArr, 3, true)
+    // reverse again to get next disabled badges
+    _.reverse(badgesArr)
     const disabledBadges = selectBadges(badgesArr, 6 - enabledBadges.length, false)
     const displayArr = _.concat(enabledBadges, disabledBadges)
 
@@ -29,15 +32,7 @@ export default class FaqSegment extends React.Component {
         <Header as="h3">Badges</Header>
         <div style={{ display: this.state.isCollapsed ? 'none' : 'block' }}>
           <List horizontal>
-            {displayArr.map((val, i) => (
-              <BadgesItem
-                key={i}
-                img={val.img}
-                title={val.title}
-                description={val.description}
-                enabled={val.enabled || false}
-              />
-            ))}
+            {_.map(displayArr, badge => <BadgesItem key={badge.name} badge={badge} />)}
             <List.Item>
               <Popup
                 trigger={
@@ -59,15 +54,7 @@ export default class FaqSegment extends React.Component {
           <Modal.Header>Your Badges</Modal.Header>
           <Modal.Content>
             <List>
-              {badgesArr.map((val, i) => (
-                <BadgesItemMini
-                  key={i}
-                  img={val.img}
-                  title={val.title}
-                  description={val.description}
-                  enabled={val.enabled || false}
-                />
-              ))}
+              {_.map(badgesArr, badge => <BadgesItem size="mini" key={badge.name} badge={badge} />)}
             </List>
           </Modal.Content>
         </Modal>

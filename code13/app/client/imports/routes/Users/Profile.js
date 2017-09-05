@@ -11,7 +11,7 @@ import UserHistory from '/client/imports/components/Users/UserHistory'
 
 import UserLovesList from '/client/imports/components/Users/UserLovesList'
 
-import UserProfileBadgeList from '/client/imports/components/Users/UserProfileBadgeList'
+import UserProfileBadgeList from '/client/imports/components/Badges/UserProfileBadgeList'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
 import SkillTreeRoute from '/client/imports/routes/Users/SkillTreeRoute'
 import ActivityHeatmap from '/client/imports/components/Users/ActivityHeatmap'

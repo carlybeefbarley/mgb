@@ -6,24 +6,6 @@ import _ from 'lodash'
 export const badgeList = {
   mgbAdmin: { name: 'mgbAdmin', title: 'MGB Admin', img: 'gold/winner.png', descr: 'MGB Administrator' },
   hasAvatar: { name: 'hasAvatar', title: 'Has Avatar', img: 'bronze/cleaner.png', descr: 'Made an Avatar' },
-  mgb2AlphaTester: {
-    name: 'mgb2AlphaTester',
-    title: 'MGB Alpha Tester',
-    img: 'bronze/bug.png',
-    descr: 'Active Alpha Tester',
-  },
-  mgb1namesVerified: {
-    name: 'mgb1namesVerified',
-    title: 'MGB1 Verified',
-    img: 'bronze/necromancer.png',
-    descr: 'Verified MGBv1 veteran',
-  },
-  mgb1namesImported: {
-    name: 'mgb1namesImported',
-    title: 'MGB1 Imported',
-    img: 'bronze/necromancer.png',
-    descr: 'Imported an MGBv1 game',
-  },
 
   // skill based
   getStartedChat: {
@@ -311,6 +293,26 @@ export const badgeList = {
     descr: 'Use music editor for 10 hours',
   },
 
+  // mgb1 and mgb2 alpha specific
+  mgb2AlphaTester: {
+    name: 'mgb2AlphaTester',
+    title: 'MGB Alpha Tester',
+    img: 'bronze/bug.png',
+    descr: 'Active Alpha Tester',
+  },
+  mgb1namesVerified: {
+    name: 'mgb1namesVerified',
+    title: 'MGB1 Verified',
+    img: 'bronze/necromancer.png',
+    descr: 'Verified MGBv1 veteran',
+  },
+  mgb1namesImported: {
+    name: 'mgb1namesImported',
+    title: 'MGB1 Imported',
+    img: 'bronze/necromancer.png',
+    descr: 'Imported an MGBv1 game',
+  },
+
   // TODO interaction based
   // heartsBronze: { name: 'heartsBronze', img: 'bronze/teacher.png', descr: 'Asset got 1 like' },
   // heartsSilver: { name: 'heartsSilver', img: 'bronze/teacher.png', descr: 'Asset got 5 likes' },
@@ -366,13 +368,39 @@ export const getAllBadgesForUser = user => {
   return userBadges
 }
 
+// if user has bronze and gold badge then return only gold one
+export const getBadgesWithHighestLevel = user => {
+  const userBadges = user.badges || []
+  _.remove(userBadges, badgeKey => _.isEmpty(badgeList[badgeKey]))
+  const badges = []
+  _.map(userBadges, badgeKey => {
+    const badge = badgeList[badgeKey]
+    let repeatBadge = null
+    for (var i = 0; i < badges.length; i++) {
+      const tmpBadge = badgeList[badges[i]]
+      // compare titles, they must much
+      if (tmpBadge.title == badge.title) {
+        repeatBadge = tmpBadge
+        break
+      }
+    }
+    if (!repeatBadge) badges.push(badge.name)
+    else if (badge.level > repeatBadge.level) {
+      const i = badges.indexOf(repeatBadge.name)
+      badges[i] = badge.name
+    }
+  })
+  return badges
+}
+
 export const getBadgesWithEnabledFlag = userBadges => {
   const badgesArr = []
 
   _.each(badgeList, (badge, badgeKey) => {
     badgesArr.push({
       img: '/images/badges/' + badge.img,
-      title: badgeKey,
+      name: badge.name,
+      title: badge.title,
       descr: badge.descr,
       enabled: _.includes(userBadges, badgeKey),
     })

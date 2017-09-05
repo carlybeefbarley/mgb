@@ -1,28 +1,41 @@
-// importScripts("/lib/babel-standalone.js");
-// importScripts("/lib/jshint.min.js");
 // this is required for babel - as it uses window as global
 this.window = this
-importScripts("https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.12.0/babel.js")
-//importScripts("/lib/babel-standalone.js")
+importScripts("https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.12.0/babel.min.js")
 
 onmessage = function (e) {
   var filename = e.data[0]
   var srcText = e.data[1]
+  var extraOptions = e.data[2]
+  var referrer = e.data[3]
+
   var options = Object.assign({
     filename: filename,
     compact: false,           // Default of "auto" fails on ReactImport
-    presets: ['es2015', 'react'], // remove comments as they will break bundled code
-    plugins: ['transform-class-properties'], // , "transform-es2015-modules-amd" - not working
-    retainLines: true,
-    moduleRoot: "testxxx",
-    resolveModuleSource: (source, filename) => {
-      // only imports starting with /
-      if (source.indexOf('/') === 0 && source.indexOf('//') !== 0) {
-        return source + '.js'
+    presets: ['es2015', 'react'],
+    sourceMaps: 'inline',
+    plugins: ['transform-es2015-modules-amd', 'transform-class-properties'], // async
+    // this is function from SourceTools:resolveModuleSource
+    resolveModuleSource: function(importName, currentFile){
+      // global import
+      if(importName.indexOf('http') === 0 || importName.indexOf('//') === 0){
+        return importName
       }
-      return source
+      if(!referrer){
+        var parts = currentFile.substring(1).split(':')
+        if(parts.length > 1){
+          referrer = parts[0]
+        }
+      }
+      importName = importName.split(':').join('/')
+      if (importName.indexOf('/') === 0 && importName.indexOf('//') !== 0) {
+        if(importName.lastIndexOf('/') === 0 && referrer)
+          return '/' + referrer + importName + '.js'
+        else
+          return importName + '.js'
+      }
+      return importName
     },
-  }, e.data[2])
+  }, extraOptions)
   if (!options.filename) {
     options.filename = filename
   }
@@ -38,7 +51,7 @@ onmessage = function (e) {
       filename: filename,
       compact: false,           // Default of "auto" fails on ReactImport
       presets: ['es2015', 'react'],// remove comments as they will break bundled code
-      plugins: ['transform-class-properties'],// , "transform-es2015-modules-amd" - not working
+      plugins: [],// , "transform-es2015-modules-amd"
       retainLines: true
     });
     trans.code = `throw new Error('${e.message.split("\n").shift()}')`

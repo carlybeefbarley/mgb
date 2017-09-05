@@ -18,6 +18,8 @@ import _ from 'lodash'
  * @returns {String}
  */
 const getModuleServer = (lib, version = 'latest') => {
+  if (lib.indexOf('http:') === 0 || lib.indexOf('https:') === 0 || lib.indexOf('//') === 0) return lib
+
   const parts = lib.split('@')
   if (parts.length === 1) {
     return `https://cdn.jsdelivr.net/${lib}/${version}/${lib}.min.js`
@@ -137,7 +139,11 @@ export default class SourceTools extends EventEmitter {
     this.tmpSubscriptions = this.subscriptions
     this.subscriptions = {}
 
-    return this._collectAndTranspile(filename, src).then(
+    const parts = SourceTools.getUserAndName(filename, this.asset.dn_ownerName)
+
+    return this._collectAndTranspile(filename, src, null, {
+      url: '/api/asset/code/es5/' + parts.join('/'),
+    }).then(
       () => {
         // clean up pending scripts
         this.pending = {}
@@ -213,7 +219,7 @@ export default class SourceTools extends EventEmitter {
     // partial calls don't know origin - so leave as is
     if (origin) toAdd.origin.push(origin)
 
-    return this.transpile(filename, src)
+    return this.transpile(filename, src, additionalProps)
       .then(data => {
         const imports = SourceTools.parseImport(data)
         const promises = []
@@ -224,7 +230,7 @@ export default class SourceTools extends EventEmitter {
             promises.push(
               this.loadImportedFile(imp.url, {
                 filename: imp.url,
-                referrer: additionalProps ? additionalProps.referrer : null,
+                referrer: additionalProps ? additionalProps.referrer : this.asset.dn_ownerName,
               }),
             )
         })
@@ -239,11 +245,21 @@ export default class SourceTools extends EventEmitter {
           promises.push(this._collectAndTranspile(info.filename, data, filename, info))
         })
         return Promise.all(promises).then(() => {
+          this.normalizeName(toAdd)
           if (!this.findCollected(toAdd.name)) {
             this.collectedSources.push(toAdd)
           }
         })
       })
+  }
+
+  normalizeName(sourceInfo) {
+    sourceInfo.name = SourceTools.resolveModuleSource(
+      sourceInfo.name,
+      sourceInfo.referrer || this.asset.dn_ownerName,
+      sourceInfo.filename || sourceInfo.name,
+    )
+    return sourceInfo
   }
 
   /**
@@ -342,14 +358,20 @@ export default class SourceTools extends EventEmitter {
     } else if (!SourceTools.isExternalFile(filename)) {
       // load local file
       const ref = additionalProps.referrer || this.asset.dn_ownerName
-      const userAndAsset = SourceTools.getUserAndName(filename, ref)
+      const userAndAsset = SourceTools.getUserAndName(name, ref)
+
       return this.startObserver(userAndAsset).then(asset => {
+        const hash = version !== 'latest' ? '?hash=' + version : ''
         // TODO: what to do without asset????
-        const url = makeCDNLink(`/api/asset/code/${userAndAsset.join('/')}`, genetag(asset))
-        const es5src = makeCDNLink(`/api/asset/code/es5/${userAndAsset.join('/')}`, genetag(asset))
+        const url = `/api/asset/code/${userAndAsset.join('/')}${hash}`
+        const es5src = `/api/asset/code/es5/${userAndAsset.join('/')}${hash}`
+
+        const etag = genetag(asset)
+
+        // const cdnUrl = makeCDNLink(url, etag)
+        const cdnes5src = makeCDNLink(es5src, etag)
         // try to get e5 source from asset
-        // TODO: store in the asset meta info - as we only need to verify if asset has es5 available
-        return this.load(es5src, asset).then(es5 => {
+        return this.load(cdnes5src, asset).then(es5 => {
           return this.load(
             url,
             asset,
@@ -357,8 +379,10 @@ export default class SourceTools extends EventEmitter {
               referrer: asset ? asset.dn_ownerName : ref,
               isExternalFile: !!(es5 && es5.data && es5.data.trim()),
               url: es5src,
+              hash: hash,
               lib: name,
               version,
+              filename: filename,
             }),
             ignoreCache,
           ).then(info => {
@@ -398,6 +422,8 @@ export default class SourceTools extends EventEmitter {
       }
     }
     if (src.length < SpecialGlobals.editCode.maxFileSizeForAST) {
+      // tern don't like : in the middle
+      // filename = filename.splice(':').join('/')
       this.tern.server.addFile(filename, src, true)
       //console.log("Added file", filename, (src.length / 1024).toFixed(2) + "KB")
     } else console.log(`File ${filename} is too big (${(src.length / 1024).toFixed(2)}KB )!`)
@@ -497,9 +523,10 @@ export default class SourceTools extends EventEmitter {
    * Transpiles src from ES6 to ES5 and resolves promise with {babelResponse}
    * @param filename - name of the file
    * @param src - content of the file
+   * @param additionalProps - additional props related to code asset
    * @returns {Promise.<babelResponse>}
    */
-  transpile(filename, src) {
+  transpile(filename, src, additionalProps) {
     if (this.transpileCache[filename] && this.transpileCache[filename].src === src)
       return Promise.resolve(this.transpileCache[filename].data)
 
@@ -520,7 +547,12 @@ export default class SourceTools extends EventEmitter {
           resolve(m.data)
         }
         this.babelWorker.isBusy = filename
-        this.babelWorker.postMessage([filename, src])
+        this.babelWorker.postMessage([
+          filename,
+          src,
+          null,
+          additionalProps ? additionalProps.referrer : this.asset.dn_ownerName,
+        ])
       }
       const checkBabelStatus = () => {
         if (this.babelWorker.isBusy) setTimeout(checkBabelStatus, 100)
@@ -542,7 +574,8 @@ export default class SourceTools extends EventEmitter {
    * Creates Code Bundle - without external (CDN) files
    * @returns {Promise.<String>} - resolves with bundle string
    */
-  createBundle() {
+  createBundle(owner) {
+    const etag = genetag(this.asset)
     return this.collectSources().then(sources => {
       // check sources and skip bundling if ALL sources are empty
       // empty means ';' - because of babel transforms
@@ -566,7 +599,6 @@ export default class SourceTools extends EventEmitter {
       for (let i = 0; i < sources.length; i++) {
         const source = sources[i]
         if (source.isExternalFile) {
-          // only lib should be used here
           const name = source.lib || source.name
           const lib = knownLibs[name]
           const url = lib && lib.min ? lib.min(source.version) : source.url
@@ -576,12 +608,18 @@ export default class SourceTools extends EventEmitter {
             .pop()
             .split('.')
             .shift()
+          let libFullName = name
+          if (libFullName.lastIndexOf('/') === 0) {
+            libFullName = '/' + source.referrer + source.name
+          }
           const partial = {
-            url: url,
+            url: url + (source.hash ? '' : '?hash=' + etag),
             localName: source.localName,
             name: source.name,
             localKey: localKey,
             key: source.key,
+            libFullName: libFullName,
+            loadAsScript: source.loadAsScript,
           }
           source.useGlobal ? externalGlobal.push(partial) : externalLocal.push(partial)
         }
@@ -591,60 +629,296 @@ export default class SourceTools extends EventEmitter {
 (function(){
 
 var imports = {};
-window.require = function(key){
-  if(imports[key] && imports[key] !== true) {
-    return imports[key];
+window.require = function (key, silent) {
+  // true is for global modules
+  if (imports[key] && imports[key] !== true) {
+    return imports[key]
   }
-  console.log("guessing name:", key)
+  // test without @version
   var name = key.split("@").shift()
-  if(imports[name] && imports[name] !== true) {
+  if (imports[name] && imports[name] !== true) {
     return imports[name]
   }
-  name = name.split(":").pop();
-  if(imports[name] && imports[name] !== true) {
+  name = name.split(":").pop()
+  if (imports[name] && imports[name] !== true) {
     return imports[name]
   }
-  return (window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)])
-};
+  var ret = window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)]
+  if (!ret && !silent) {
+    console.error("cannot find required resource: " + key + ". Check if module have export defined")
+  }
+  return ret
+}
+  /**** MODULE LOADER *****/
+  // SuperSimple implementation for CommonJS like module loading
+  window.require = function (key, silent) {
+    // true is for global modules
+    if (imports[key] && imports[key] !== true) {
+      return imports[key]
+    }
+    // test without @version
+    var name = key.split("@").shift()
+    if (imports[name] && imports[name] !== true) {
+      return imports[name]
+    }
+    name = '/' + name.split(":").pop()
+    if (imports[name] && imports[name] !== true) {
+      return imports[name]
+    }
+    name = '/' + name.split("/").pop()
+    if (imports[name] && imports[name] !== true) {
+      return imports[name]
+    }
+    var ret = window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)]
+    if (!ret && !silent) {
+      console.error("cannot find required resource: " + key + ". Check if module have export defined")
+    }
+    return ret
+  }
 
+  var baseUrl = '/api/asset/code/es5'
+  var normalizeModuleName = function (moduleName, parentModuleName) {
+    if(moduleName.indexOf('http') === 0 || moduleName.indexOf('//') === 0){
+      return moduleName
+    }
+    var moduleNameFixed = moduleName.split(':').join('/')
+    if (moduleNameFixed.lastIndexOf('/') === 0
+      && parentModuleName
+      && parentModuleName.lastIndexOf('/') !== 0) {
+          moduleNameFixed = '/' +
+            parentModuleName.substring(1)
+              .split('/').shift() +
+            moduleNameFixed
+    }
+
+    return (
+      moduleNameFixed.lastIndexOf('.') === moduleNameFixed.length - 3
+        ? moduleNameFixed.substr(0, moduleNameFixed.length - 3)
+        : moduleNameFixed
+    )
+  }
+
+  var moduleCallbacks = {}
+  var addCallback = function (moduleName, cb) {
+    if (!moduleCallbacks[moduleName])
+      moduleCallbacks[moduleName] = []
+
+    if (moduleCallbacks[moduleName].locked) {
+      return moduleCallbacks[moduleName].locked.push(cb)
+    }
+    return moduleCallbacks[moduleName].push(cb)
+  }
+  var releaseCallbacks = function (name) {
+    var cbs = moduleCallbacks[name]
+    if (!cbs) {
+      return
+    }
+    cbs.locked = []
+    for (var i = 0; i < cbs.length; i++) {
+      cbs[i]()
+    }
+    moduleCallbacks[name] = moduleCallbacks[name].locked
+  }
+  var getExports = function () {
+    if (!window.module && !window.exports)
+      return null
+    return (window.exports === window.module.exports ? window.exports : window.module.exports)
+  }
+
+  /*
+  this is AMD loader
+  this is tricky because we don't know who and why called this function */
+  window.define = function (array, cb) {
+    var args = []
+    for (var i = array.length - 1; i > -1; i--) {
+      var moduleName = array[i]
+      if (moduleName === 'exports') {
+        // we need to use globals here to be compatible with commonJS
+        window.module = {exports: {}}
+        window.exports = window.module.exports
+        args[i] = window.exports
+        continue
+      }
+      moduleName = normalizeModuleName(moduleName, define.currentModule)
+
+      var mod = require(moduleName, true)
+      if (!mod) {
+        var cm = define.currentModule
+        window.define.pendingModule = moduleName
+        loadModule(moduleName, function () {
+          define.currentModule = cm
+          define(array, cb)
+        }, define.currentHash)
+        return
+      }
+
+      args[i] = mod
+    }
+
+    cb.apply(window, args)
+    window.define.module = getExports()
+  }
+  window.define.currentHash = ''
+  window.define.getModule = function (name, cb, hash) {
+    var moduleName = normalizeModuleName(name)
+    var module = window.require(moduleName, true)
+    if (module) {
+      cb(module)
+      return
+    }
+
+    loadModule(moduleName, function (err) {
+      window.define.getModule(name, cb, hash)
+    }, hash)
+  }
+  // we need to eval scripts one by one - otherwise there are racing conditions which are very hard to debug
+  var getScriptLocked = false
+
+  function loadModule(moduleName, cb, hash) {
+    hash = hash || ''
+    var src = moduleName
+    if(src.indexOf('http') !== 0 && src.indexOf('//') !== 0){
+      src = baseUrl + moduleName + (hash && hash !== 'latest' ? '?hash='+hash : '')
+    }
+
+
+    // already loaded
+    if (require(moduleName, true)) {
+      callback()
+      return
+    }
+
+    // if this is not first callback - assume that script is already loading
+    if (addCallback(moduleName, cb) > 1) {
+      return
+    }
+
+    getScript(src, function (source) {
+      (function execMaybe() {
+        if (getScriptLocked) {
+          addCallback('getScript', execMaybe)
+          return
+        }
+        getScriptLocked = true
+
+        define.currentModule = moduleName
+        window.define.currentHash = hash
+        appendScript(moduleName, source, function () {
+
+          getScriptLocked = false;
+
+          (function doNext() {
+            if (define.pendingModule) {
+              var pendingModule = define.pendingModule
+              define.pendingModule = ''
+              addCallback(pendingModule, doNext)
+            }
+            else {
+              saveModule(moduleName)
+            }
+          })()
+
+          releaseCallbacks('getScript')
+        })
+      })()
+    })
+  }
+
+  function saveModule(moduleName) {
+    var exports = getExports()
+    var shortName = moduleName.substring(moduleName.lastIndexOf('/'))
+
+    if (!imports[moduleName])
+      imports[moduleName] = exports
+
+    if (!imports[moduleName + '.js'])
+      imports[moduleName + '.js'] = exports
+
+    if (!imports[shortName])
+      imports[shortName] = exports
+
+    if (!imports[shortName + '.js'])
+      imports[shortName + '.js'] = exports
+
+    releaseCallbacks(moduleName)
+  }
+
+  function getScript(src, cb) {
+    var xhttp = new XMLHttpRequest()
+    xhttp.onreadystatechange = function () {
+      if (xhttp.readyState === XMLHttpRequest.DONE && xhttp.status >= 200 && xhttp.status < 400)
+        cb(xhttp.responseText)
+    }
+
+    xhttp.onerror = function () {
+      console.log("Failed to load script...", src)
+    }
+    xhttp.open("GET", src, true)
+    xhttp.send()
+  }
+
+  function loadScript(url, after) {
+    // Adding the script tag to the head to load it
+    var script = document.createElement('script')
+    script.type = 'text/javascript'
+    script.src = url
+
+    // Then bind the event to the callback function.
+    // There are several events for cross browser compatibility, so do both
+    script.onreadystatechange = script.onload = function () {
+      setTimeout(after, 0)
+    }
+
+    script.onerror = function (err) {
+      console.warn("Could not load script: " + url)
+      after(err)
+    }
+
+    // Fire the loading
+    document.head.appendChild(script)
+  }
+  function appendScript(filename, code, cb) {
+    var script = document.createElement('script')
+    script.setAttribute("data-origin", filename)
+    var name = filename || "_doc_" + (++scriptsLoaded) + ""
+    if (name.substr(-3) != ".js") {
+      name += ".js"
+    }
+
+    script.type = 'text/javascript'
+    script.text = code + "\\n//# sourceURL=" + name
+
+    script.onerror = function (err) {
+      console.warn("Could not load script [" + filename + "]")
+    }
+
+    // Adding the script tag to the head to load it
+    var head = document.getElementsByTagName('head')[0]
+    // Fire the loading
+    head.appendChild(script)
+    // remove from stack
+    window.setTimeout(function () {
+      cb && cb()
+    }, 0)
+  }
+  
+  /**** END OF MODULE LOADER *****/
+  
+  
 var main;
 var globalLibs = JSON.parse('${JSON.stringify(externalGlobal)}')
 var localLibs = JSON.parse('${JSON.stringify(externalLocal)}')
 
-var loadScript = function(src, cb){
-  var s = document.createElement("script")
-  s.onload = function(){
-    window.setTimeout(cb, 0)
-  }
-  s.src = src
-  document.head.appendChild(s)
-}
-
 var loadLocalLibs = function(){
-  window.module = {exports: {}};window.exports = window.module.exports;
+  window.module = {exports: {}};
+  window.exports = window.module.exports;
   if(!localLibs.length){
     window.setTimeout(main, 0)
     return
   }
   var lib = localLibs.shift()
   loadScript(lib.url, function(){
-            if(lib.key && !imports[lib.key])
-              imports[lib.key] = window.exports === window.module.exports ? window.exports : window.module.exports
-
-            if(lib.key && !imports[lib.key + '.js'])
-              imports[lib.key + '.js'] = window.exports === window.module.exports ? window.exports : window.module.exports
-
-            if(!imports[lib.localKey])
-              imports[lib.localKey] = window.exports === window.module.exports ? window.exports : window.module.exports
-
-            if (lib.localName && !imports[lib.localName])
-              imports[lib.localName] = window.exports === window.module.exports ? window.exports : window.module.exports
-
-            if (lib.name && !imports[lib.name])
-              imports[lib.name] = window.exports === window.module.exports ? window.exports : window.module.exports
-            if (lib.name && !imports[lib.name + '.js'])
-              imports[lib.name + '.js'] = window.exports === window.module.exports ? window.exports : window.module.exports
-
+    saveModule(lib.libFullName)
     loadLocalLibs()
   })
 }
@@ -656,8 +930,8 @@ var loadGlobalLibs = function(){
   }
   var lib = globalLibs.shift()
   loadScript(lib.url, function(){
-    if(window[lib.name]){
-      imports[lib.name] = window[lib.name]
+    if(window[lib.libFullName]){
+      imports[lib.libFullName] = window[lib.libFullName]
     }
     loadGlobalLibs()
   })
@@ -731,8 +1005,11 @@ main = function(){
       this.cachedBundle = allInOneBundle
 
       // uncomment to get readable version of es5 code
-      //return  this.cachedBundle
-      return this.transpileAndMinify('bundled_' + this.asset.name, allInOneBundle).then(code => {
+      // return  this.cachedBundle
+      return this.transpileAndMinify('bundled_' + this.asset.name, allInOneBundle, owner, {
+        plugins: [],
+        sourceMaps: false,
+      }).then(code => {
         this.cachedAndMinfiedBundle = code
         this._hasSourceChanged = false
         return this.cachedAndMinfiedBundle
@@ -744,9 +1021,11 @@ main = function(){
    * Transpiles and minifies requested ES6 code - used to store ES5 version of this file
    * @param name - filename (asset name)
    * @param codeToTranspile - ES6 code
+   * @param owner - owner of the code - used to make full module name /owner/filename
+   * @param options - additional babel options ( atm bundle needs to be in CommonJS module format, but es5 in AMD module format )
    * @returns {Promise}
    */
-  transpileAndMinify(name, codeToTranspile) {
+  transpileAndMinify(name, codeToTranspile, owner = '', options = {}) {
     name = name + '.js'
     return new Promise(resolve => {
       const worker = getCDNWorker('/lib/workers/BabelWorker.js')
@@ -757,13 +1036,17 @@ main = function(){
       worker.postMessage([
         name,
         codeToTranspile,
-        {
-          compact: true,
-          minified: true,
-          comments: false,
-          ast: false,
-          retainLines: false,
-        },
+        Object.assign(
+          {
+            compact: true,
+            minified: true,
+            comments: false,
+            ast: false,
+            retainLines: false,
+          },
+          options,
+        ),
+        owner,
       ])
     })
   }
@@ -794,6 +1077,10 @@ main = function(){
               evidence: filename,
               code: ERROR.SOURCE_NOT_FOUND,
             })
+            if (additionalProps) {
+              // try to load as script as AJAX failed
+              additionalProps.loadAsScript = true
+            }
           }
           this.loadedFilesAndDefs[url] = data || ''
           resolve(Object.assign({ url, data }, additionalProps))
@@ -847,6 +1134,25 @@ main = function(){
   /*****************    Static stuff     ********************/
   /**********************************************************/
 
+  static resolveModuleSource(importName, referrer, currentFile) {
+    // global import
+    if (importName.indexOf('http') === 0 || importName.indexOf('//') === 0) {
+      return importName
+    }
+    if (!referrer) {
+      var parts = currentFile.substring(1).split(':')
+      if (parts.length > 1) {
+        referrer = parts[0]
+      }
+    }
+    importName = importName.split(':').join('/')
+    if (importName.indexOf('/') === 0 && importName.indexOf('//') !== 0) {
+      if (importName.lastIndexOf('/') === 0 && referrer) return '/' + referrer + importName
+      else return importName
+    }
+    return importName
+  }
+
   /**
    * Checks if url is local or remote (CDN)
    * @param url - source location
@@ -870,7 +1176,7 @@ main = function(){
    * extracts username and assetname from filename
    * @param filename
    * @param defaultUser - default user
-   * @returns {String[]}
+   * @returns {String[{username}, {filename}]}
    */
   static getUserAndName(filename, defaultUser) {
     // older imports have format './myLib'
@@ -881,7 +1187,11 @@ main = function(){
     if (filename.indexOf('/') === 0) {
       filename = filename.substring(1, filename.length)
     }
-    const parts = filename.split(':')
+    // not officially supported, but seems legit: user/lib
+    let parts = filename.split('/')
+    if (parts.length > 1) return parts
+
+    parts = filename.split(':')
     if (parts.length > 1) return parts
     else if (defaultUser) return [defaultUser, parts[0]]
     else throw new Error('defaultUser is missing!!!')

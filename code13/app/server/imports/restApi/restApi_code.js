@@ -6,6 +6,7 @@ import { genAPIreturn, assetToCdn } from '/server/imports/helpers/generators'
 const makeBundleFields = { fields: { _id: 0, dn_ownerName: 1, name: 1, 'content2.bundle': 1 } }
 const c2srcFieldOnly = { fields: { 'content2.src': 1, _id: 0 } }
 const c2es5FieldOnly = { fields: { 'content2.es5': 1, _id: 0 } }
+const c2bundleFieldOnly = { fields: { 'content2.bundle': 1, _id: 0 } }
 const updateAndNameFields = { fields: { _id: 1, updatedAt: 1, name: 1 } }
 
 function _makeBundle(api, asset) {
@@ -30,6 +31,10 @@ const getSrc = partialAsset => {
 const getEs5 = partialAsset => {
   const asset = Azzets.findOne(partialAsset._id, c2es5FieldOnly)
   return partialAsset && asset && asset.content2 ? asset.content2.es5 || '' : null
+}
+const getBundle = partialAsset => {
+  const asset = Azzets.findOne(partialAsset._id, c2bundleFieldOnly)
+  return partialAsset && asset && asset.content2 ? asset.content2.bundle || '' : null
 }
 // get tutorial by id OR by ownerName:assetName. See addJoyrideSteps() for use case.
 RestApi.addRoute(
@@ -194,6 +199,36 @@ RestApi.addRoute(
       if (!asset) return err404
 
       return _makeBundle(this, asset)
+    },
+  },
+)
+
+RestApi.addRoute(
+  'asset/code/bundle/script/:username/:codename',
+  { authRequired: false },
+  {
+    get: function() {
+      const asset = Azzets.findOne(
+        Object.assign(
+          {
+            dn_ownerName: this.urlParams.username,
+            name: this.urlParams.codename,
+            kind: 'code',
+          },
+          assetAccessibleProps,
+        ),
+        updateAndNameFields,
+      )
+      if (!asset) return err404
+
+      let contentType = 'text/plain'
+      if (this.request.headers.accept) {
+        contentType = this.request.headers.accept.split(',').shift()
+      }
+      return genAPIreturn(this, asset, getBundle, {
+        'Content-Type': contentType,
+        'file-name': asset ? asset.name : this.urlParams.name,
+      })
     },
   },
 )

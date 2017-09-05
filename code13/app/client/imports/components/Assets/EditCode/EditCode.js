@@ -3,9 +3,10 @@ const reactUpdate = require('react-addons-update')
 
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
+import { Icon, Button, Segment } from 'semantic-ui-react'
+
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import TutorialMentor from './TutorialEditHelpers'
-import settings from '/imports/SpecialGlobals'
 
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import { showToast, addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
@@ -25,9 +26,6 @@ import CodeTutorials from './CodeTutorials'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
 
-import { Icon, Segment } from 'semantic-ui-react'
-
-import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import ThumbnailWithInfo from '/client/imports/components/Assets/ThumbnailWithInfo'
 
 import getCDNWorker from '/client/imports/helpers/CDNWorker'
@@ -104,6 +102,10 @@ export default class EditCode extends React.Component {
 
   constructor(props, context) {
     super(props)
+
+    // from now store here all stuff unrelated to react
+    this.mgb = {}
+
     registerDebugGlobal('editCode', this, __filename, 'Active Instance of Code editor')
 
     this.fontSizeSettingIndex = undefined
@@ -115,7 +117,6 @@ export default class EditCode extends React.Component {
     this.state = {
       _preventRenders: false, // We use this as a way to batch updates.
       consoleMessages: [],
-      gameRenderIterationKey: 0,
       isPlaying: false,
       previewAssetIdsArray: [], // Array of { id: assetIdString, kind: assetKindString } e.g. { id: "asdxzi87q", kind: "graphic" }
 
@@ -142,16 +143,12 @@ export default class EditCode extends React.Component {
       runChallengeDate: null,
     }
 
-    this.hintWidgets = []
     this.errorMessageCache = {}
     // assume that new code will have errors - it will be reset on first error checking
     this.hasErrors = true
 
     // is this component is still active?
     this.isActive = true
-
-    // store last saved value to prevent unnecessary updates and fancy behavior
-    this.lastSavedValue = ''
 
     this.cursorHistory = {
       undo: [],
@@ -723,7 +720,7 @@ export default class EditCode extends React.Component {
       this.codeMirror &&
       newVal !== undefined &&
       this._currentCodemirrorValue !== newVal &&
-      this.lastSavedValue != newVal
+      this.mgb.lastSaved.src != newVal
     ) {
       // user is typing - intensively working with document - don't update until it finishes ( update will trigger automatically on finish )
       if (this.changeTimeout) {
@@ -1612,6 +1609,8 @@ export default class EditCode extends React.Component {
         this.toggleBundling()
       }
     }
+
+    this.mgb.lastSaved = _.cloneDeep(asset.content2)
   }
 
   _consoleClearAllMessages() {
@@ -1798,7 +1797,7 @@ export default class EditCode extends React.Component {
     img.src = url
   }
 
-  postToIFrame(cmd, data) {
+  postToIFrame(cmd, data = {}) {
     if (this.state.isPlaying) {
       data.mgbCommand = cmd
       this._postMessageToIFrame(data)
@@ -1812,7 +1811,7 @@ export default class EditCode extends React.Component {
   }
 
   /** Start the code running! */
-  handleRun() {
+  handleRun = () => {
     // exception for code challenges
     // instead of standard iframe it runs CodeChallege component which has it's own iframe
     if (this.isChallenge) {
@@ -1865,15 +1864,20 @@ export default class EditCode extends React.Component {
     $('.ui.accordion').accordion('open', idx)
   }
 
-  handleStop() {
-    this.refs.gameScreen && this.refs.gameScreen.stop()
+  handleStop = options => {
+    this.postToIFrame('stop', options)
     this.setState({
-      gameRenderIterationKey: this.state.gameRenderIterationKey + 1, // or this.iFrameWindow.contentWindow.location.reload() ?
       isPlaying: false,
     })
     window.removeEventListener('message', this.bound_handle_iFrameMessageReceiver)
   }
-  handleFullScreen(id = this.props.asset._id) {
+
+  handleStopClick = () => {
+    this.handleStop({ closePopup: true })
+  }
+
+  handleFullScreen = () => {
+    const id = this.props.asset._id
     if (this.props.canEdit) {
       // use this so we can get favicon
       // TODO: change iframe manipulations to messages - to use CDN link to blank page
@@ -1916,28 +1920,35 @@ export default class EditCode extends React.Component {
       return
     }
     this.setState({ creatingBundle: true })
-    this.tools.createBundle().then(bundle => {
+    this.tools.createBundle(this.props.asset.dn_ownerName).then(bundle => {
       const value = this.codeMirror.getValue()
-      this.tools.transpileAndMinify('/' + this.props.asset.name, value).then(es5 => {
-        const c2 = this.props.asset.content2
+      this.tools
+        .transpileAndMinify('/' + this.props.asset.name, value, this.props.asset.dn_ownerName)
+        .then(es5 => {
+          const c2 = this.props.asset.content2
 
-        const newC2 = {
-          src: value,
-          bundle: bundle,
-          needsBundle: c2.needsBundle,
-          hotReload: c2.hotReload,
-          es5,
-        }
-        // make sure we have bundle before every save
-        this.handleContentChangeAsync(newC2, null, `Store code bundle`)
-        this.setState({ creatingBundle: false })
-        cb && cb()
-      })
+          const newC2 = {
+            src: value,
+            bundle: bundle,
+            needsBundle: c2.needsBundle,
+            hotReload: c2.hotReload,
+            es5,
+          }
+          // make sure we have bundle before every save
+          this.handleContentChangeAsync(newC2, null, `Store code bundle`)
+          this.setState({ creatingBundle: false })
+          cb && cb()
+        })
     })
   }
 
-  handleGamePopup() {
+  handleGamePopup = () => {
     this.setState({ isPopup: !this.state.isPopup })
+    this.handleRun()
+  }
+
+  handleGamePopout = () => {
+    this.refs.gameScreen && this.refs.gameScreen.popup()
     this.handleRun()
   }
 
@@ -1981,7 +1992,7 @@ export default class EditCode extends React.Component {
       // sencond handle change will overwrite deferred save
       if (this.props.asset.kind === 'tutorial' || this.mgb_mode !== 'jsx') {
         this.changeTimeout = 0
-        this.lastSavedValue = c2.src
+        this.mgb.lastSaved.src = c2.src
         this.props.handleContentChange(c2, thumbnail, reason)
         return
       }
@@ -1995,16 +2006,24 @@ export default class EditCode extends React.Component {
             console.log('Discarding bundle ERRORS to prevent overwrite')
             return
           }
-          this.tools.transpileAndMinify('/' + this.props.asset.name, c2.src).then(es5 => {
-            console.log('doFullUpdateOnContentChange() callback [C]. isActive = ', this.isActive)
-            if (!this.isActive) {
-              console.log('Discarding transpileAndMinify ERRORS to prevent overwrite')
-              return
-            }
-            c2.es5 = es5
-            this.lastSavedValue = c2.src
-            this.props.handleContentChange(c2, thumbnail, reason)
-          })
+          this.tools
+            .transpileAndMinify('/' + this.props.asset.name, c2.src, this.props.asset.dn_ownerName)
+            .then(es5 => {
+              console.log('doFullUpdateOnContentChange() callback [C]. isActive = ', this.isActive)
+              if (!this.isActive) {
+                console.log('Discarding transpileAndMinify ERRORS to prevent overwrite')
+                return
+              }
+              c2.es5 = es5
+              if (_.isEqual(_.omitBy(this.mgb.lastSaved, _.isUndefined), _.omitBy(c2, _.isUndefined))) {
+                console.log('Discarding changes as nothing has changed!')
+                return
+              }
+
+              this.mgb.lastSaved = _.cloneDeep(c2)
+
+              this.props.handleContentChange(c2, thumbnail, reason)
+            })
         } else {
           // createBundle is calling handleContentChangeAsync after completion
           this.createBundle(() => {
@@ -2019,9 +2038,14 @@ export default class EditCode extends React.Component {
   // this can be called even AFTER component unmount.. or another asset has been loaded
   // make sure we don't overwrite another source
   handleContentChangeAsync(c2, thumbnail, reason) {
+    if (_.isEqual(this.mgb.lastSaved, c2)) {
+      console.log('Discarding changes as nothing has changed!')
+      return
+    }
+
     // is this safe to use it here? Don't call handleContentChange() if we have unmounted
     if (this.isActive) {
-      this.lastSavedValue = c2.src
+      this.mgb.lastSaved = _.cloneDeep(c2)
       this.props.handleContentChange(c2, thumbnail, reason)
     } else {
       console.log('Discarding bundle to prevent overwrite')
@@ -2271,7 +2295,7 @@ export default class EditCode extends React.Component {
         shortcut: 'Ctrl+Alt+Shift+R',
       })
       config.buttons.unshift({
-        name: 'handleStop',
+        name: 'handleStopClick',
         label: 'Stop Running',
         icon: 'stop',
         tooltip: 'Stop Running',
@@ -2487,7 +2511,7 @@ export default class EditCode extends React.Component {
     // TODO.. something useful with token.state?
     if (token && token.type === 'string' && this.state.userScripts && this.state.userScripts.length > 0) {
       let string = this.cleanTokenString(token.string)
-      if (string.startsWith('/') && !string.startsWith('//')) {
+      if (string.startsWith('/') && !string.startsWith('//') && string.length > 1) {
         string = string.substring(1)
         const parts = this.getImportStringParts(string)
         const { kind, owner, name } = parts
@@ -2651,9 +2675,8 @@ export default class EditCode extends React.Component {
         isPlaying={this.state.isPlaying}
         asset={this.props.asset}
         consoleAdd={this._consoleAdd.bind(this)}
-        gameRenderIterationKey={this.state.gameRenderIterationKey}
         handleContentChange={this.handleContentChange.bind(this)}
-        handleStop={this.handleGamePopup.bind(this)}
+        handleStop={this.handleGamePopup}
       />
     )
 
@@ -2932,49 +2955,65 @@ export default class EditCode extends React.Component {
                       )}
                       {!isPlaying &&
                       this.state.astReady && (
-                        <a
-                          className="ui tiny icon button"
+                        <Button
+                          as="a"
+                          icon
+                          onClick={this.handleRun}
+                          size="tiny"
                           title="Click here to start the program running"
                           id="mgb-EditCode-start-button"
-                          onClick={this.handleRun.bind(this)}
                         >
-                          <i className="play icon" />&emsp;Run
-                        </a>
+                          <Icon name="play" /> Run
+                        </Button>
                       )}
                       {isPlaying && (
-                        <a
-                          className="ui tiny icon button"
+                        <Button
+                          as="a"
+                          icon
+                          onClick={this.handleStopClick}
+                          size="tiny"
                           title="Click here to stop the running program"
                           id="mgb-EditCode-stop-button"
-                          onClick={this.handleStop.bind(this)}
                         >
-                          <i className={'stop icon'} />&emsp;Stop
-                        </a>
+                          <Icon name="stop" /> Stop
+                        </Button>
                       )}
                       {isPlaying && (
-                        <a
-                          className={`ui tiny ${isPopup ? 'active' : ''} icon button`}
+                        <Button
+                          as="a"
+                          active={isPopup}
+                          icon
+                          onClick={this.handleGamePopup}
+                          size="tiny"
+                          id="mgb-EditCode-popup-button"
                           title="Popout the code-run area so it can be moved around the screen"
-                          onClick={this.handleGamePopup.bind(this)}
                         >
-                          <i className={'external icon'} />&emsp;Popout
-                        </a>
+                          <Icon name="external" /> Popout
+                        </Button>
+                      )}
+                      {isPlaying && (
+                        <Button
+                          as="a"
+                          icon
+                          onClick={this.handleGamePopout}
+                          size="tiny"
+                          title="Open Game screen in the window"
+                          id="mgb-EditCode-popup-button"
+                        >
+                          <Icon name="external" /> Full
+                        </Button>
                       )}
                       {!this.hasErrors && (
-                        <span
-                          className={
-                            this.state.creatingBundle && this.props.canEdit ? 'ui button labeled' : ''
-                          }
+                        <Button
+                          as="a"
+                          icon
+                          onClick={this.handleFullScreen}
+                          size="tiny"
+                          title="Click here to start running your program in a different browser tab"
+                          id="mgb-EditCode-full-screen-button"
                         >
-                          <a
-                            className="ui tiny icon button full-screen"
-                            id="mgb-EditCode-full-screen-button"
-                            title="Click here to start running your program in a different browser tab"
-                            onClick={this.handleFullScreen.bind(this, asset._id)}
-                          >
-                            <i className="external icon" />&emsp;Full&nbsp;
-                          </a>
-                        </span>
+                          <Icon name="external" /> Bundle
+                        </Button>
                       )}
                     </span>
                     {!isPopup && gameScreen}

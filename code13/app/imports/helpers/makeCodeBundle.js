@@ -24,11 +24,7 @@ const makeCodeBundle = (asset, origin) => {
 <title>${asset.name}</title>
 <style>html, body{padding: 0; margin: 0; width: 100%; height: 100%}</style>
 </head>
-<body><script type="text/javascript">
-//<!--
-${bundle}
-//-->
-</script>${extraMessage}</body>
+<body><script type="text/javascript" src="/api/asset/code/bundle/script/${asset.dn_ownerName}/${asset.name}"></script>${extraMessage}</body>
 </html>
 `
 }

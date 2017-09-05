@@ -23,12 +23,13 @@ export default class GameScreen extends React.Component {
     isPlaying: PropTypes.bool,
     isPopup: PropTypes.bool,
     asset: PropTypes.object,
-    gameRenderIterationKey: PropTypes.number,
 
     handleStop: PropTypes.func.isRequired,
     handleContentChange: PropTypes.func.isRequired,
     consoleAdd: PropTypes.func.isRequired,
   }
+  // keep only one popup per gamescreen instances
+  static popup = null
 
   constructor(props) {
     super(props)
@@ -46,10 +47,15 @@ export default class GameScreen extends React.Component {
   componentDidMount() {
     this.getReference()
   }
+  componentWillUnmount() {
+    GameScreen.popup && GameScreen.popup.close()
+  }
 
   componentDidUpdate(prevProps, prevState) {
     this.getReference()
     if (!prevProps.isPlaying && this.props.isPlaying && this.state.isMinimized) this.handleMinimizeClick()
+
+    if (!this.state.fullScreen && GameScreen.popup) GameScreen.popup.close()
   }
 
   componentWillReceiveProps(props) {
@@ -59,8 +65,10 @@ export default class GameScreen extends React.Component {
   getReference() {
     // TODO - change to use the ref={ c => { codestuff } } pattern that is now recommended.
     //        This will also help with the TODO in EditCode:_handle_iFrameMessageReceiver
-    this.iFrameWindow = ReactDOM.findDOMNode(this.refs.iFrame1)
-    this.wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
+    this.iFrameWindow =
+      this.state.fullScreen && GameScreen.popup ? { contentWindow: GameScreen.popup } : this.refs.iFrame1
+
+    this.wrapper = this.refs.wrapper
   }
 
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
@@ -90,6 +98,25 @@ export default class GameScreen extends React.Component {
       mgbSetIframeReady: function() {
         this._isIframeReady = true
       },
+      mgbClosed: function() {
+        // interval here because we cannot access popup directly when serving from CDN
+        // and therefore we don't have almost any control over popup
+        // unload on popup can be called in 2 separate occasions:
+        // 1. when it's closed (we are observing this)
+        // 2. when it gets reloaded (we are ignoring this - but event will fire anyway
+        // so this loop will continue to run until popup window gets closed
+
+        // cleanup just in a case if we were already listening for close
+        window.clearInterval(this.onClosePopupObeserverInterval)
+        const observePopup = () => {
+          // popup can be closed earlier
+          if (GameScreen.popup && GameScreen.popup.closed) {
+            this.setState({ fullScreen: false }, () => (GameScreen.popup = null))
+            window.clearInterval(this.onClosePopupObeserverInterval)
+          }
+        }
+        this.onClosePopupObeserverInterval = window.setInterval(observePopup, 100)
+      },
     }
 
     // iframe can be closed, but still receive something
@@ -98,22 +125,8 @@ export default class GameScreen extends React.Component {
     if (this.iFrameWindow && data.hasOwnProperty('mgbCmd') && commands[data.mgbCmd])
       commands[data.mgbCmd].call(this, data)
   }
-
-  // BEWARE!!! EditCode.js is going to reach-in and call this!!!
-  // TODO: Replace this with a stateChangeDetect on isPlaying?
-  stop() {
-    if (this.refs.iFrame1) {
-      this.refs.iFrame1.src = makeCDNLink('/codeEditSandbox.html')
-      this._isIframeReady = false
-    }
-    // reset game screen size on stop
-    if (this.wrapper) {
-      this.wrapper.style.width = this.props.isPopup && this.props.isPlaying ? 'auto' : '100%'
-      this.wrapper.style.height = _wrapperHeightPx
-      this.iFrameWindow.setAttribute('width', '100%')
-      this.iFrameWindow.setAttribute('height', '100%')
-    }
-  }
+  // see handle message mgbClosed why this interval is here
+  onClosePopupObeserverInterval = 0
 
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
   isIframeReady() {
@@ -125,9 +138,41 @@ export default class GameScreen extends React.Component {
 
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
   postMessage(messageObject) {
-    if (messageObject.mgbCommand == 'startRun') this.setState({ isHidden: false })
+    if (messageObject.mgbCommand === 'startRun') {
+      this.setState({ isHidden: false })
+      if (GameScreen.popup) {
+        if (this.state.fullScreen) GameScreen.popup.focus()
+        else GameScreen.popup.close()
+      } else if (this.state.fullScreen) {
+        // reopen popup as it got closed before (e.g. user clicked stop button)
+        this.popup()
+      }
+    } else if (messageObject.mgbCommand === 'stop' && messageObject && messageObject.closePopup) {
+      // messageObject.closePopup comes from user input on stop button
+      // otherwise we are simply reloading game
+      GameScreen.popup && GameScreen.popup.close()
+    } else if (messageObject.mgbCommand === 'approveIsReady') {
+      if ((!GameScreen.popup || GameScreen.popup.closed) && this.state.fullScreen) {
+        // reopen popup as it got closed before (e.g. user clicked stop button)
+        this.popup()
+      }
+    }
     this.getReference()
     this.iFrameWindow.contentWindow.postMessage(messageObject, '*')
+  }
+
+  // BEWARE!!! EditCode.js is going to reach-in and call this!!!
+  popup() {
+    if (!GameScreen.popup || GameScreen.popup.closed) {
+      GameScreen.popup = window.open(
+        makeCDNLink('/codeEditSandbox.html'),
+        'edit-code-sandbox',
+        'toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=640',
+      )
+    }
+
+    GameScreen.popup.focus()
+    this.setState({ fullScreen: true })
   }
 
   // click handlers for Buttons on this component when in the props.isPopup==true state
@@ -143,12 +188,12 @@ export default class GameScreen extends React.Component {
 
   // this function will tell sandbox to send back message with iframe size
   requestAdjustIframe() {
-    this.postMessage({ mgbCommand: 'requestSizeUpdate' })
+    if (this.props.isPlaying) this.postMessage({ mgbCommand: 'requestSizeUpdate' })
   }
 
   // adjust iFrame size. This is initiated by an event
   adjustIframe(size) {
-    if (this.state.isMinimized) {
+    if (this.state.isMinimized || this.state.fullScreen) {
       return
     }
 
@@ -203,6 +248,9 @@ export default class GameScreen extends React.Component {
   }
 
   render() {
+    // we have opened popup - so we can hide everything else
+    if (this.state.fullScreen || this.state.isMinimized) return null
+
     const { isPopup, isPlaying } = this.props
     const { isHidden, isMinimized } = this.state
 
@@ -274,11 +322,9 @@ export default class GameScreen extends React.Component {
             style={{
               display: this.state.isMinimized ? 'none' : 'block',
               minWidth: '100%',
-              // minHeight: window.innerHeight * SpecialGlobals.editCode.popup.maxHeight
             }}
-            // key={ this.props.gameRenderIterationKey }
             ref="iFrame1"
-            sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock"
+            sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
             src={makeCDNLink('/codeEditSandbox.html')}
             frameBorder="0"
             id="mgbjr-EditCode-sandbox-iframe"

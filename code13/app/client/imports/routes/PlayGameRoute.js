@@ -280,7 +280,7 @@ class PlayCodeGame extends React.Component {
               borderStyle: 'none',
               transformOrigin: '0 0',
             }}
-            sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock"
+            sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
             src={src}
           />
         </div>

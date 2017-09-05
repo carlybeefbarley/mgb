@@ -153,21 +153,21 @@ export const getNavPanels = (currUser, showAll) => {
         explainClickAction: 'Shortcut: Clicking here jumps to the list of your Assets',
         icon: { name: 'pencil' },
         content: 'Assets',
-        to: '/assets',
+        to: `/u/${username}/assets`,
         menu: [
-          {
-            subcomponent: 'Item',
-            jrkey: 'allAssets',
-            to: '/assets',
-            icon: 'pencil',
-            content: 'All Assets',
-          },
           {
             subcomponent: 'Item',
             jrkey: 'listMy',
             to: `/u/${username}/assets`,
             icon: 'pencil',
             content: 'My Assets',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'allAssets',
+            to: '/assets',
+            icon: 'pencil',
+            content: 'All Assets',
           },
           {
             subcomponent: 'Item',
@@ -191,21 +191,21 @@ export const getNavPanels = (currUser, showAll) => {
         explainClickAction: 'Shortcut: Clicking here jumps to the list of your Projects',
         icon: { name: 'sitemap' },
         content: 'Projects',
-        to: `/projects`,
+        to: `/u/${username}/projects`,
         menu: [
-          {
-            subcomponent: 'Item',
-            jrkey: 'allProjects',
-            to: '/projects',
-            icon: 'sitemap',
-            content: 'All Projects',
-          },
           {
             subcomponent: 'Item',
             jrkey: 'listMy',
             to: `/u/${username}/projects`,
             icon: 'sitemap',
             content: 'My Projects',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'allProjects',
+            to: '/projects',
+            icon: 'sitemap',
+            content: 'All Projects',
           },
           {
             subcomponent: 'Item',

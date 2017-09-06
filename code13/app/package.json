@@ -61,6 +61,7 @@
     "moment": "^2.18.1",
     "nested-property": "0.0.7",
     "pako": "^1.0.5",
+    "particle.js": "^1.0.7",
     "particles.js": "^2.0.0",
     "promisify-call": "^2.0.4",
     "prop-types": "^15.5.10",

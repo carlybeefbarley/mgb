@@ -1,33 +1,24 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react'
 
 import SFXR from '../lib/sfxr.js'
 import WaveSurfer from '../lib/WaveSurfer.js'
 import lamejs from '../lib/lame.all.js'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
-SFXR.Params.prototype.query = function() {
-  let result = ''
-  let self = this
-  $.each(this, function(key, value) {
-    if (self.hasOwnProperty(key)) result += '&' + key + '=' + value
-  })
-  return result.substring(1)
-}
-
 export default class CreateSound extends React.Component {
-  constructor(props) {
-    super(props)
+  constructor(...args) {
+    super(...args)
 
+    this.sfxr = new SFXR.Params()
     this.sound = null
-    this.resetParams()
-
     this.state = {
-      paramsUpdated: new Date().getTime(), // this.PARAMS is actual object in sfxr lib and paramsUpdated is just flag to trigger UI updates
+      sfxrParams: this.getDefaultParams(),
       playerStatus: 'empty', // empty, play, pause
       canPlay: false,
     }
+
+    this.playSound = _.debounce(this.playSoundImmediate, 200)
   }
 
   componentDidMount() {
@@ -37,39 +28,73 @@ export default class CreateSound extends React.Component {
       progressColor: 'purple',
     })
 
-    var self = this
-    this.wavesurfer.on('finish', function() {
-      self.wavesurfer.stop()
-      self.setState({ playerStatus: 'pause' })
+    this.wavesurfer.on('finish', () => {
+      this.wavesurfer.stop()
+      this.setState({ playerStatus: 'pause' })
+    })
+
+    this.regenerateSound(false)
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !_.isEqual(this.state.sfxrParams, nextState.sfxrParams)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!_.isEqual(this.state.sfxrParams, prevState.sfxrParams)) this.regenerateSound()
+  }
+
+  changeSliderParam = paramID => event => {
+    const { sfxrParams } = this.state
+
+    this.setState({
+      sfxrParams: {
+        ...sfxrParams,
+        [event.target.id]: parseInt(event.target.value) / 1000.0,
+      },
     })
   }
 
-  resetParams() {
-    this.PARAMS = new SFXR.Params()
-    this.PARAMS.sound_vol = 0.25
-    this.PARAMS.sample_rate = 44100
-    this.PARAMS.sample_size = 8
+  changeWaveType = event => {
+    const { sfxrParams } = this.state
+    this.setState({
+      sfxrParams: {
+        ...sfxrParams,
+        wave_type: parseInt(event.target.value),
+      },
+    })
   }
 
-  gen(fx) {
-    this.resetParams()
-    this.PARAMS[fx]()
-    this.setState({ paramsUpdated: new Date().getTime() })
-    this.regenerateSound()
+  gen = fx => () => {
+    const { sfxrParams } = this.state
+
+    this.setState({
+      sfxrParams: {
+        ...sfxrParams,
+        ...this.getDefaultParams(),
+        ...this.sfxr[fx](),
+      },
+    })
+
     joyrideCompleteTag('mgbjr-CT-editSound-createSound-' + fx + '-generate')
   }
 
-  regenerateSound() {
-    this.sound = new SFXR.SoundEffect(this.PARAMS).generate()
-    lamejs.encodeMono(1, this.sound.header.sampleRate, this.sound.samples, audioObject => {
-      this.sound.dataURI = audioObject.src
-      this.playSound()
-      this.setState({ canPlay: true })
-    })
+  getDefaultParams = () => {
+    // Params() returns values and methods, only keep non-methods
+    const params = _.pickBy(new SFXR.Params(), _.negate(_.isFunction))
+
+    return {
+      ...params,
+      sound_vol: 0.25,
+      sample_rate: 44100,
+      sample_size: 8,
+    }
   }
 
-  playSound() {
-    let sound = new Audio()
+  // iPad will only play if the playback is synchronous
+  // We need immediate playback on play button press
+  playSoundImmediate = () => {
+    const sound = new Audio()
     sound.oncanplaythrough = event => {
       sound.play()
     }
@@ -83,19 +108,24 @@ export default class CreateSound extends React.Component {
     }
   }
 
-  changeParam(paramID, event) {
-    this.PARAMS[event.target.id] = parseInt(event.target.value) / 1000.0
-    this.setState({ paramsUpdated: new Date().getTime() })
+  regenerateSound = (shouldPlay = true) => {
+    const { sfxrParams } = this.state
+
+    this.sound = new SFXR.SoundEffect(sfxrParams).generate()
+
+    lamejs.encodeMono(1, this.sound.header.sampleRate, this.sound.samples, audioObject => {
+      this.sound.dataURI = audioObject.src
+      if (shouldPlay) this.playSound()
+      this.setState({ canPlay: true })
+    })
   }
 
-  changeWaveType(event) {
-    this.PARAMS.wave_type = parseInt(event.target.value)
-    this.setState({ paramsUpdated: new Date().getTime() })
-    this.playSound()
+  resetSliders = () => {
+    this.setState({ sfxrParams: this.getDefaultParams() })
   }
 
-  saveSound() {
-    let sound = new Audio()
+  saveSound = () => {
+    const sound = new Audio()
     sound.src = this.sound.dataURI
     if (this.sound.dataURI.length > 100) {
       // check if dataUri is not corrupted
@@ -105,24 +135,27 @@ export default class CreateSound extends React.Component {
     }
   }
 
-  resetSliders() {
-    this.resetParams()
-    this.setState({ paramsUpdated: new Date().getTime() })
-  }
-
   render() {
-    let effects = 'pickupCoin,laserShoot,explosion,powerUp,hitHurt,jump,blipSelect,random,tone'.split(',')
-    let effectButtons = _.map(effects, effect => {
-      return (
-        <div id={'mgbjr-editSound-createSound-button-' + effect} key={'effect_' + effect}>
-          <button className="ui fluid button small" onMouseUp={this.gen.bind(this, effect)}>
-            {effect}
-          </button>
-        </div>
-      )
-    })
+    const { sfxrParams } = this.state
+    const effectButtons = [
+      'pickupCoin',
+      'laserShoot',
+      'explosion',
+      'powerUp',
+      'hitHurt',
+      'jump',
+      'blipSelect',
+      'random',
+      'tone',
+    ].map(effect => (
+      <div id={'mgbjr-editSound-createSound-button-' + effect} key={'effect_' + effect}>
+        <button className="ui fluid button small" onMouseUp={this.gen(effect)}>
+          {effect}
+        </button>
+      </div>
+    ))
 
-    let sliderParams = [
+    const sliders = [
       { id: 'p_env_attack', title: 'Attack time' },
       { id: 'p_env_sustain', title: 'Sustain time' },
       { id: 'p_env_punch', title: 'Sustain punch' },
@@ -145,43 +178,38 @@ export default class CreateSound extends React.Component {
       { id: 'p_lpf_resonance', title: 'Resonance' },
       { id: 'p_hpf_freq', title: 'Cutoff frequency' },
       { id: 'p_hpf_ramp', title: 'Cutoff sweep', signed: true },
-    ]
-    let sliders = _.map(sliderParams, param => {
-      return (
-        <div key={'slider_' + param.id}>
-          <input
-            id={param.id}
-            type="range"
-            value={this.PARAMS[param.id] * 1000}
-            min={param.signed ? -1000 : 0}
-            max="1000"
-            onChange={this.changeParam.bind(this, param.id)}
-            onMouseUp={this.changeParam.bind(this, param.id)}
-          />{' '}
-          {param.title}
-          <br />
-        </div>
-      )
-    })
+    ].map(param => (
+      <div key={'slider_' + param.id}>
+        <input
+          id={param.id}
+          type="range"
+          value={sfxrParams[param.id] * 1000}
+          min={param.signed ? -1000 : 0}
+          max={1000}
+          step={10}
+          onChange={this.changeSliderParam(param.id)}
+        />{' '}
+        {param.title}
+        <br />
+      </div>
+    ))
 
-    let shapeTypes = ['square', 'sawtooth', 'sine', 'noise']
-    let waveShapes = _.map(shapeTypes, (shape, nr) => {
-      return (
-        <div key={'wavetype_' + shape} className="field">
-          <div className="ui radio checkbox">
-            <input
-              onChange={this.changeWaveType.bind(this)}
-              type="radio"
-              value={nr}
-              name="waveType"
-              id={shape}
-              checked={this.PARAMS.wave_type === nr ? 'checked' : ''}
-            />
-            <label>{shape}</label>
-          </div>
+    const shapeTypes = ['square', 'sawtooth', 'sine', 'noise']
+    const waveShapes = _.map(shapeTypes, (shape, nr) => (
+      <div key={'wavetype_' + shape} className="field">
+        <div className="ui radio checkbox">
+          <input
+            onChange={this.changeWaveType}
+            type="radio"
+            value={nr}
+            name="waveType"
+            id={shape}
+            checked={sfxrParams.wave_type === nr ? 'checked' : ''}
+          />
+          <label>{shape}</label>
         </div>
-      )
-    })
+      </div>
+    ))
 
     return (
       <div className="content">
@@ -197,7 +225,7 @@ export default class CreateSound extends React.Component {
             <button
               className="ui icon button massive"
               title="Play"
-              onMouseUp={this.playSound.bind(this)}
+              onMouseUp={this.playSoundImmediate}
               disabled={!this.state.canPlay}
             >
               <i className="play icon" />
@@ -206,15 +234,11 @@ export default class CreateSound extends React.Component {
               id="mgbjr-editSound-createSound-save"
               className="ui icon button massive"
               title="Save sound"
-              onMouseUp={this.saveSound.bind(this)}
+              onMouseUp={this.saveSound}
             >
               <i className="save icon" />
             </button>
-            <button
-              className="ui icon button massive"
-              title="Reset sliders"
-              onMouseUp={this.resetSliders.bind(this)}
-            >
+            <button className="ui icon button massive" title="Reset sliders" onMouseUp={this.resetSliders}>
               <i className="erase icon" />
             </button>
             <div>&nbsp;</div>
@@ -232,11 +256,10 @@ export default class CreateSound extends React.Component {
               <input
                 id="sound_vol"
                 type="range"
-                value={this.PARAMS.sound_vol * 1000}
+                value={sfxrParams.sound_vol * 1000}
                 min="0"
                 max="1000"
-                onChange={this.changeParam.bind(this, 'sound_vol')}
-                onMouseUp={this.changeParam.bind(this, 'sound_vol')}
+                onChange={this.changeSliderParam('sound_vol')}
               />
             </div>
 
@@ -246,13 +269,4 @@ export default class CreateSound extends React.Component {
       </div>
     )
   }
-}
-
-function clone(obj) {
-  if (null == obj || 'object' != typeof obj) return obj
-  var copy = {}
-  for (let attr in obj) {
-    if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr]
-  }
-  return copy
 }

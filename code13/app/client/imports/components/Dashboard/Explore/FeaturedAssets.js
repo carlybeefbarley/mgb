@@ -16,7 +16,7 @@ export default class FeaturedAssets extends React.Component {
         <List horizontal>
           {this.props.assets.map(asset => (
             <List.Item key={asset._id}>
-              <a href={'/u/' + asset.dn_ownerName + '/play/' + asset._id}>
+              <a href={'/u/' + asset.dn_ownerName + '/asset/' + asset._id}>
                 <Image width={70} height={70} src={asset.thumbnail} />
               </a>
             </List.Item>

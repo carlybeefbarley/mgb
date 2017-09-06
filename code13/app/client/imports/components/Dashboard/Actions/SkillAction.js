@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Message, Header, Button, Icon } from 'semantic-ui-react'
 
-import { getNextSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
+import { getNextSkillPath, getFriendlyName, getNode } from '/imports/Skills/SkillNodes/SkillNodes'
 import { startSkillPathTutorial } from '/client/imports/routes/App'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
 
@@ -23,7 +23,12 @@ export default class SkillAction extends React.Component {
 
   componentDidMount = () => {
     const nextSkillPath = getNextSkillPath(this.props.currUser, this.userSkills)
-    this.setState({ nextSkillPath: nextSkillPath })
+    const nextSkill = getNode(nextSkillPath)
+    let nextSkillName = ''
+    if (nextSkill && nextSkill.$meta) {
+      nextSkillName = nextSkill.$meta.name || getFriendlyName(nextSkill.$meta.key)
+    }
+    this.setState({ nextSkillPath: nextSkillPath, nextSkillName: nextSkillName })
   }
 
   startNextSkill = () => {

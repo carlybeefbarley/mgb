@@ -236,7 +236,7 @@ const AssetEditRoute = React.createClass({
       )
     }
 
-    if (this.counter && this.assetUpdatedAt != this.data.asset.updatedAt) {
+    if (this.counter && this.data.asset && this.assetUpdatedAt != this.data.asset.updatedAt) {
       this.assetUpdatedAt = this.data.asset.updatedAt
       this.counter.assetUpdated()
     }

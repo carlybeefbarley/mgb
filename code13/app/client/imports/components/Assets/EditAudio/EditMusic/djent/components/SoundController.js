@@ -43,7 +43,15 @@ const getSequences = (grooveTotalBeats, allowedLengths, hitChance) => {
   return sequences
 }
 
-const generateNewBuffer = ({ bpm, beats, allowedLengths, hitChance, instruments, usePredefinedSettings }) => {
+const generateNewBuffer = ({
+  bpm,
+  beats,
+  allowedLengths,
+  hitChance,
+  instruments,
+  usePredefinedSettings,
+  audioContext,
+}) => {
   if (!allowedLengths.filter(length => length.amount).length)
     return Promise.reject('There are no allowed lengths given')
 
@@ -56,10 +64,9 @@ const generateNewBuffer = ({ bpm, beats, allowedLengths, hitChance, instruments,
     convertAllowedLengthsToArray(allowedLengths),
     hitChance,
   )
-  if (!this.audioContext) this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
   let riff = generateRiff(
     { bpm, totalBeatsProduct, allowedLengths, sequences, instruments, usePredefinedSettings },
-    this.audioContext,
+    audioContext,
   )
   return riff
 }
@@ -148,9 +155,6 @@ class SoundController extends Component {
 
     if (!this.audioContext) this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
 
-    // console.log('bpm', bpm)
-    // console.log(bpm, beats, allowedLengths, hitChance, instruments, usePredefinedSettings)
-
     const generationState = deepClone({
       bpm,
       beats,
@@ -165,11 +169,14 @@ class SoundController extends Component {
     this.isOutDated = false
     this.updateUI({ isLoading: true })
     let self = this
-    return generateNewBuffer({ ...generationState, instruments }).then(({ buffer, instruments }) => {
+    const audioContext = this.audioContext
+    return generateNewBuffer({
+      ...generationState,
+      instruments,
+      audioContext,
+    }).then(({ buffer, instruments }) => {
       const newState = { isLoading: false, error: '' }
       if (!buffer) newState.error = 'Error!'
-
-      // console.log('buffer is generated!', buffer)
 
       this.updateUI(newState)
 

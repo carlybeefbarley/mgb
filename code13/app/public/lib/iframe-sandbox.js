@@ -300,6 +300,31 @@ window.onload = function () {
     document.head.appendChild(script)
   }
 
+  function appendScript(filename, code, cb) {
+    var script = document.createElement('script')
+    script.setAttribute("data-origin", filename)
+    var name = filename || "_doc_" + (++scriptsLoaded) + ""
+    if (name.substr(-3) != ".js") {
+      name += ".js"
+    }
+
+    script.type = 'text/javascript'
+    script.text = code + "\n//# sourceURL=" + name
+
+    script.onerror = function (err) {
+      console.warn("Could not load script [" + filename + "]")
+    }
+
+    // Adding the script tag to the head to load it
+    var head = document.getElementsByTagName('head')[0]
+    // Fire the loading
+    head.appendChild(script)
+    // remove from stack
+    window.setTimeout(function () {
+      cb && cb()
+    }, 0)
+  }
+
   /**** END OF MODULE LOADER *****/
 
 
@@ -391,30 +416,7 @@ window.onload = function () {
   var scriptsLoaded = 0
 
 
-  function appendScript(filename, code, cb) {
-    var script = document.createElement('script')
-    script.setAttribute("data-origin", filename)
-    var name = filename || "_doc_" + (++scriptsLoaded) + ""
-    if (name.substr(-3) != ".js") {
-      name += ".js"
-    }
 
-    script.type = 'text/javascript'
-    script.text = code + "\n//# sourceURL=" + name
-
-    script.onerror = function (err) {
-      console.warn("Could not load script [" + filename + "]")
-    }
-
-    // Adding the script tag to the head to load it
-    var head = document.getElementsByTagName('head')[0]
-    // Fire the loading
-    head.appendChild(script)
-    // remove from stack
-    window.setTimeout(function () {
-      cb && cb()
-    }, 0)
-  }
 
   function sendSizeUpdate() {
     window.setTimeout(function () {

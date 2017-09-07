@@ -599,8 +599,8 @@ export default class SourceTools extends EventEmitter {
       for (let i = 0; i < sources.length; i++) {
         const source = sources[i]
         if (source.isExternalFile) {
-          const name = source.lib || source.name
-          const lib = knownLibs[name]
+          const name = source.name
+          const lib = knownLibs[source.lib || source.name]
           const url = lib && lib.min ? lib.min(source.version) : source.url
 
           const localKey = source.url
@@ -661,12 +661,12 @@ window.require = function (key, silent) {
     if (imports[name] && imports[name] !== true) {
       return imports[name]
     }
-    name = '/' + name.split(":").pop()
-    if (imports[name] && imports[name] !== true) {
+    var nname = '/' + name.split(":").pop()
+    if (imports[nname] && imports[nname] !== true) {
       return imports[name]
     }
-    name = '/' + name.split("/").pop()
-    if (imports[name] && imports[name] !== true) {
+    nname = '/' + name.split("/").pop()
+    if (imports[nname] && imports[nname] !== true) {
       return imports[name]
     }
     var ret = window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)]
@@ -877,6 +877,7 @@ window.require = function (key, silent) {
     // Fire the loading
     document.head.appendChild(script)
   }
+
   function appendScript(filename, code, cb) {
     var script = document.createElement('script')
     script.setAttribute("data-origin", filename)
@@ -901,9 +902,8 @@ window.require = function (key, silent) {
       cb && cb()
     }, 0)
   }
-  
+
   /**** END OF MODULE LOADER *****/
-  
   
 var main;
 var globalLibs = JSON.parse('${JSON.stringify(externalGlobal)}')
@@ -948,12 +948,15 @@ main = function(){
         }
 
         const key = source.name.split('@').shift()
-        const localKeyWithExt = key.split('/').pop()
-        const localKey = localKeyWithExt
-          .split('.')
-          .shift()
-          .split(':')
-          .pop()
+        const [user, asset] = SourceTools.getUserAndName(source.name)
+
+        let localKeyWithExt = '/' + key.split('/').pop()
+        if (localKeyWithExt.lastIndexOf('.js') === -1) {
+          localKeyWithExt = localKeyWithExt + '.js'
+        }
+        const localKey = localKeyWithExt.substring(0, localKeyWithExt.length - 3)
+
+        const fullImport = '/' + user + ':' + name
 
         allInOneBundle +=
           'window.module = {exports: {}};window.exports = window.module.exports;\n' + source.code + ';\n'
@@ -971,6 +974,30 @@ main = function(){
             'imports["' +
             key +
             '.js"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+
+        // this is used by old modules - e.g. import '/localKey' - in the babel is transpiled to '/localKey.js'
+        // as babel is striping extensions ( and assets usually don't have extensions ) we are adding .js by default
+        if (!imports[localKeyWithExt])
+          allInOneBundle +=
+            '\n' +
+            'imports["' +
+            localKeyWithExt +
+            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+
+        if (!imports[fullImport])
+          allInOneBundle +=
+            '\n' +
+            'imports["' +
+            fullImport +
+            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+
+        if (!imports[fullImport + '.js'])
+          allInOneBundle +=
+            '\n' +
+            'imports["' +
+            fullImport +
+            '.js' +
+            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
 
         if (!imports[localKey])
           allInOneBundle +=

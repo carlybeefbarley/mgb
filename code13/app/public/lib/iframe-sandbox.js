@@ -67,11 +67,10 @@ window.onload = function () {
     }
   })*/
 
-
-  // here will be stored all imported modules
-  var imports = {}
-
   /**** MODULE LOADER *****/
+  // here will be stored all imported modules
+
+  var imports = {}
   // SuperSimple implementation for CommonJS like module loading
   window.require = function (key, silent) {
     // true is for global modules
@@ -497,7 +496,6 @@ window.onload = function () {
             }
             else{
               saveModule(key)
-              window.exports = null
             }
             run()
           }

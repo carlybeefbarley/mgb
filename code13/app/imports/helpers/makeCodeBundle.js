@@ -1,7 +1,8 @@
 /**
  * creates single file html document from asset code bundle
  * @param asset ({dn_ownerName, name, content2}) - code asset
- * @param origin - host with protocol and optionally port (e.g. http://example.com:8081) where to redirect user if bundle is not present (while using CDN host by default will be cloudfront host) {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLHyperlinkElementUtils/origin}
+ * @param origin - host with protocol and optionally port (e.g. http://example.com:8081) where to redirect user if bundle is not present
+ * (while using CDN host by default will be cloudfront host) {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLHyperlinkElementUtils/origin}
  * @returns {String}
  */
 const makeCodeBundle = (asset, origin) => {
@@ -12,8 +13,9 @@ const makeCodeBundle = (asset, origin) => {
   const extraMessage = bundle
     ? ''
     : `
-<h2 style='padding:0.5em'>The distribution bundle for this game has not yet been created</h2>
-<p style='padding-left:2em'>You can create the bundle using the 'run code full screen' or 'bundle code' tools in the <a href='${origin}/u/${asset.dn_ownerName}/asset/${asset._id}' target="_blank" >MGB Code Editor</a>.</p>
+<h2 style='padding:0.5em'>The code has not been published</h2>
+<p style='padding-left:2em'>If you have permission to edit this code asset - you can publish game using the 'Publish' button in the <a href='${origin}/u/${asset.dn_ownerName}/asset/${asset._id}' target="_blank" >MGB Code Editor</a>.</p>
+<p style='padding-left:2em'>Or you contact asset owner <a href="${origin}/u/${asset.dn_ownerName}">@{asset.dn_ownerName}</a> and ask him/her to publish game</p>
 <script>window.setTimeout(function(){window.location.reload()}, 2000)</script>
 `
   return `<!DOCTYPE html>

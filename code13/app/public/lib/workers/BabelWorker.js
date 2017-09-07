@@ -27,6 +27,11 @@ onmessage = function (e) {
         }
       }
       importName = importName.split(':').join('/')
+      // at some point modules were imported as ./assetName
+      if(importName.indexOf('./') === 0 ){
+        // remove leading dot
+        importName = importName.substring(1)
+      }
       if (importName.indexOf('/') === 0 && importName.indexOf('//') !== 0) {
         if(importName.lastIndexOf('/') === 0 && referrer)
           return '/' + referrer + importName + '.js'

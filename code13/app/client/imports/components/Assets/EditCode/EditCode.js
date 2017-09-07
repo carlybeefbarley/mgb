@@ -1930,12 +1930,13 @@ export default class EditCode extends React.Component {
           const newC2 = {
             src: value,
             bundle: bundle,
+            lastBundle: Date.now(),
             needsBundle: c2.needsBundle,
             hotReload: c2.hotReload,
             es5,
           }
           // make sure we have bundle before every save
-          this.handleContentChangeAsync(newC2, null, `Store code bundle`)
+          this.handleContentChangeAsync(newC2, null, `Published`)
           this.setState({ creatingBundle: false })
           cb && cb()
         })
@@ -2333,10 +2334,10 @@ export default class EditCode extends React.Component {
       config.buttons.push({ name: 'separator' })
       config.buttons.push({
         name: 'toggleBundling',
-        label: 'Auto Bundle code',
-        icon: 'travel',
+        label: 'Auto Publish game',
+        icon: 'send outline',
         tooltip:
-          'Automatically merge all imports into single file when saving. This is useful for the top-level file for a program which is made of multiple files',
+          'Automatically publish game on every code change (this asset or one of the imported modules).',
         disabled: false,
         active: this.props.asset.content2.needsBundle,
         level: 3,
@@ -2689,7 +2690,7 @@ export default class EditCode extends React.Component {
 
     return (
       <div className="ui grid">
-        {this.state.creatingBundle && <div className="loading-notification">Bundling source code...</div>}
+        {this.state.creatingBundle && <div className="loading-notification">Publishing source code...</div>}
         <div className={infoPaneOpts.col1 + ' wide column'} style={{ paddingTop: 0, paddingBottom: 0 }}>
           <div className="row" style={{ marginBottom: '6px' }}>
             {<Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
@@ -3007,12 +3008,20 @@ export default class EditCode extends React.Component {
                         <Button
                           as="a"
                           icon
+                          disbled={!this.props.canEdit}
                           onClick={this.handleFullScreen}
                           size="tiny"
-                          title="Click here to start running your program in a different browser tab"
+                          title={
+                            this.props.canEdit ? (
+                              'Click here to publish your game and automatically open it in the new browser window (tab)'
+                            ) : (
+                              'Open published version of this game'
+                            )
+                          }
                           id="mgb-EditCode-full-screen-button"
                         >
-                          <Icon name="external" /> Bundle
+                          <Icon name="send outline" />
+                          {this.props.canEdit ? 'Publish' : 'View Published'}
                         </Button>
                       )}
                     </span>

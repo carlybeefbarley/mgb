@@ -230,7 +230,7 @@ export default class SourceTools extends EventEmitter {
             promises.push(
               this.loadImportedFile(imp.url, {
                 filename: imp.url,
-                referrer: additionalProps ? additionalProps.referrer : this.asset.dn_ownerName,
+                referrer: _.get(additionalProps, 'referrer', this.asset.dn_ownerName),
               }),
             )
         })
@@ -348,6 +348,7 @@ export default class SourceTools extends EventEmitter {
           null,
           Object.assign(additionalProps, {
             lib: name,
+            isExternalFile: true,
             version,
           }),
         ).then(info => {
@@ -366,29 +367,25 @@ export default class SourceTools extends EventEmitter {
         const url = `/api/asset/code/${userAndAsset.join('/')}${hash}`
         const es5src = `/api/asset/code/es5/${userAndAsset.join('/')}${hash}`
 
-        const etag = genetag(asset)
-
-        // const cdnUrl = makeCDNLink(url, etag)
-        const cdnes5src = makeCDNLink(es5src, etag)
-        // try to get e5 source from asset
-        return this.load(cdnes5src, asset).then(es5 => {
-          return this.load(
-            url,
-            asset,
-            Object.assign(additionalProps, {
-              referrer: asset ? asset.dn_ownerName : ref,
-              isExternalFile: !!(es5 && es5.data && es5.data.trim()),
-              url: es5src,
-              hash: hash,
-              lib: name,
-              version,
-              filename: filename,
-            }),
-            ignoreCache,
-          ).then(info => {
-            this.addFileToTern(filename, info.data)
-            return info
-          })
+        return this.load(
+          url,
+          asset,
+          Object.assign(additionalProps, {
+            referrer: asset ? asset.dn_ownerName : ref,
+            // to allow files to be loaded dynamically use:
+            // !!(es5 && es5.data && es5.data.trim()),
+            // atm we are NOT using this to make bundle more stand-alone due changes in the imported files
+            isExternalFile: false, // if set to false - embed / true load at runtime
+            url: es5src,
+            hash: hash,
+            lib: name,
+            version,
+            filename: filename,
+          }),
+          ignoreCache,
+        ).then(info => {
+          this.addFileToTern(filename, info.data)
+          return info
         })
       })
     } else {
@@ -551,7 +548,7 @@ export default class SourceTools extends EventEmitter {
           filename,
           src,
           null,
-          additionalProps ? additionalProps.referrer : this.asset.dn_ownerName,
+          _.get(additionalProps, 'referrer', this.asset.dn_ownerName),
         ])
       }
       const checkBabelStatus = () => {
@@ -627,29 +624,9 @@ export default class SourceTools extends EventEmitter {
 
       let allInOneBundle = `
 (function(){
-
-var imports = {};
-window.require = function (key, silent) {
-  // true is for global modules
-  if (imports[key] && imports[key] !== true) {
-    return imports[key]
-  }
-  // test without @version
-  var name = key.split("@").shift()
-  if (imports[name] && imports[name] !== true) {
-    return imports[name]
-  }
-  name = name.split(":").pop()
-  if (imports[name] && imports[name] !== true) {
-    return imports[name]
-  }
-  var ret = window[key] || window[name.toUpperCase()] || window[name.substring(0, 1).toUpperCase() + name.substring(1)]
-  if (!ret && !silent) {
-    console.error("cannot find required resource: " + key + ". Check if module have export defined")
-  }
-  return ret
-}
   /**** MODULE LOADER *****/
+  // !!! module loader chunk is from iframe-sandbox - don't modify directly !!!
+  var imports = {};
   // SuperSimple implementation for CommonJS like module loading
   window.require = function (key, silent) {
     // true is for global modules
@@ -661,6 +638,7 @@ window.require = function (key, silent) {
     if (imports[name] && imports[name] !== true) {
       return imports[name]
     }
+    
     var nname = '/' + name.split(":").pop()
     if (imports[nname] && imports[nname] !== true) {
       return imports[name]
@@ -943,102 +921,67 @@ main = function(){
       const imports = {}
       for (let i in sources) {
         const source = sources[i]
+        // ignore external files.. it's possible to use assets as external modules also (skip embedding),
+        // but that prevents bundle from being 'snapshot' of version
         if (source.isExternalFile) {
           continue
         }
+        // these scripts are embed into main game file
+        /*
+        there are multiple ways to refer 1 asset:
+        import X from:
+          '/user:name'
+          '/user/name'
+          '/name'
 
-        const key = source.name.split('@').shift()
-        const [user, asset] = SourceTools.getUserAndName(source.name)
+         * there is also theoretical support for '/user:name@version',
+           but atm asset versioning is not implemented in the MGB
 
-        let localKeyWithExt = '/' + key.split('/').pop()
-        if (localKeyWithExt.lastIndexOf('.js') === -1) {
-          localKeyWithExt = localKeyWithExt + '.js'
-        }
-        const localKey = localKeyWithExt.substring(0, localKeyWithExt.length - 3)
+         * for simplicity we internally use ONLY '/user/name.js'
+         */
 
-        const fullImport = '/' + user + ':' + name
+        // get all required peaces
+        const [key, version] = SourceTools.getLibAndVersion(source.name)
+        const [user, name] = SourceTools.getUserAndName(key, this.asset.dn_ownerName)
 
+        // expose module
         allInOneBundle +=
           'window.module = {exports: {}};window.exports = window.module.exports;\n' + source.code + ';\n'
 
+        // set references to module:
+        // default by name '/user/asset.js{@version}' - version is only theoretically supported atm
+        if (!imports[source.name])
+          allInOneBundle +=
+            '\n' +
+            'imports["' +
+            source.name +
+            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
+
+        // then try key '/user/asset.js' (name without version)
         if (!imports[key])
           allInOneBundle +=
             '\n' +
             'imports["' +
             key +
             '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-        if (!imports[key + '.js'])
-          allInOneBundle +=
-            '\n' +
-            'imports["' +
-            key +
-            '.js"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-        // this is used by old modules - e.g. import '/localKey' - in the babel is transpiled to '/localKey.js'
-        // as babel is striping extensions ( and assets usually don't have extensions ) we are adding .js by default
-        if (!imports[localKeyWithExt])
-          allInOneBundle +=
-            '\n' +
-            'imports["' +
-            localKeyWithExt +
-            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-        if (!imports[fullImport])
-          allInOneBundle +=
-            '\n' +
-            'imports["' +
-            fullImport +
-            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-        if (!imports[fullImport + '.js'])
-          allInOneBundle +=
-            '\n' +
-            'imports["' +
-            fullImport +
-            '.js' +
-            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-        if (!imports[localKey])
-          allInOneBundle +=
-            '\n' +
-            'imports["' +
-            localKey +
-            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-        if (source.localName && !imports[source.localName])
-          allInOneBundle +=
-            '\n' +
-            'imports["' +
-            source.localName +
-            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
-
-        if (source.name && !imports[source.name])
-          allInOneBundle +=
-            '\n' +
-            'imports["' +
-            source.name +
-            '"] = (window.exports === window.module.export ? window.exports : window.module.exports);'
       }
 
       allInOneBundle += '\n' + '}})(); '
-      // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
 
+      // spawn new babel worker and create bundle in the background - as it can take few seconds (could be even more that 30 on huge source and slow pc) to transpile
       if (this.cachedBundle === allInOneBundle) {
-        this._hasSourceChanged = false
         return this.cachedAndMinfiedBundle || this.cachedBundle
       }
 
       this.cachedBundle = allInOneBundle
 
-      // uncomment to get readable version of es5 code
+      // uncomment to get readable version of bundle (es5)
       // return  this.cachedBundle
       return this.transpileAndMinify('bundled_' + this.asset.name, allInOneBundle, owner, {
         plugins: [],
         sourceMaps: false,
       }).then(code => {
         this.cachedAndMinfiedBundle = code
-        this._hasSourceChanged = false
         return this.cachedAndMinfiedBundle
       })
     })
@@ -1098,7 +1041,7 @@ main = function(){
         (err, data) => {
           if (err) {
             console.log('FAILED TO LOAD:', err, additionalProps)
-            const filename = additionalProps ? additionalProps.filename || url : url
+            const filename = _.get(additionalProps, 'filename', url)
             this.emit('error', {
               reason: 'Unable to load: ' + filename,
               evidence: filename,

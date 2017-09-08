@@ -13,18 +13,11 @@ import ChallengeResults from './ChallengeResults'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import SkillNodes, { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
-import { learnSkill, hasSkill } from '/imports/schemas/skills'
+import { learnSkill } from '/imports/schemas/skills'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
 import { showToast } from '/client/imports/routes/App'
 
 import '../editcode.css'
-
-// We expect SkillNodes for this scenario to contain the following:
-//  $meta.tests
-//  $meta.code
-//  $meta.description
-const _jsBasicsSkillsRootPath = 'code.js.basics'
-const _jsBasicsSkillsRootNode = SkillNodes.$meta.map[_jsBasicsSkillsRootPath]
 
 // This file is communicating with a test page hosted in an iFrame.
 // The params related to it are in this structure for maintainability:
@@ -157,7 +150,18 @@ export default class CodeChallenges extends React.Component {
   }
 
   nextChallenge = () => {
-    const skillsArr = _.without(_.keys(_jsBasicsSkillsRootNode), '$meta')
+    // We expect SkillNodes for this scenario to contain the following:
+    //  $meta.tests
+    //  $meta.code
+    //  $meta.description
+    let skillsArr = []
+
+    if (_.startsWith(this.props.skillPath, 'code.js.intro'))
+      skillsArr = _.without(_.keys(_.get(SkillNodes, '$meta.map.code.js.intro')), '$meta')
+
+    if (_.startsWith(this.props.skillPath, 'code.js.advanced'))
+      skillsArr = _.without(_.keys(_.get(SkillNodes, '$meta.map.code.js.advanced')), '$meta')
+
     const idx = skillsArr.indexOf(this.skillName)
 
     if (idx < skillsArr.length - 1) {

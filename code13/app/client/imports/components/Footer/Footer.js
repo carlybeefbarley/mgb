@@ -22,7 +22,7 @@ const Footer = () => (
           `Copyright ©${new Date().getFullYear()} MyCodeBuilder Inc. All Rights Reserved.`,
           { key: 'terms', as: QLink, to: '/legal/tos', content: 'Terms of Service' },
           { key: 'privacy', as: QLink, to: '/legal/privacy', content: 'Privacy Policy' },
-          { key: 'contact', as: QLink, to: '/?_fp=chat', content: 'Contact Us' },
+          { key: 'contact', as: QLink, query: { _fp: 'chat' }, content: 'Contact Us' },
         ]}
       />
     </Grid.Column>

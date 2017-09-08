@@ -25,24 +25,29 @@ class NavPanelItem extends React.PureComponent {
 
   state = { open: false }
 
+  getJoyrideId = (name, jrkey) => _.compact(['mgbjr-np', name, jrkey]).join('-')
+
   handleMouseEnter = () => this.setState({ open: true })
   handleMouseLeave = () => this.setState({ open: false })
   handleClick = props => (e, data) => {
     const { jrkey, name, onClick, query, to } = props
     if (onClick) onClick(e, data)
 
-    if (name || jrkey) joyrideCompleteTag(['mgbjr-CT-np', name, jrkey].join('-'))
+    if (name || jrkey) {
+      const tagString = _.compact(['mgbjr-CT-np', name, jrkey]).join('-')
+      joyrideCompleteTag(tagString)
+    }
     if (to || query) utilPushTo(null, to, query)
 
     this.setState({ open: !this.state.open })
   }
 
   render() {
-    const { content, name, menu, style, openLeft } = this.props
+    const { content, jrkey, name, menu, style, openLeft } = this.props
     const { open } = this.state
 
     const props = {
-      id: `mgbjr-np-${name}`,
+      id: this.getJoyrideId(name, jrkey),
       onClick: this.handleClick(this.props),
       style,
     }
@@ -70,9 +75,9 @@ class NavPanelItem extends React.PureComponent {
               ...rest,
               key: jrkey,
               as: getElementType(rest),
-              id: `mgbjr-np-${name}-${jrkey}`,
-              // we need the parent `name` for the joyride completion tag
-              onClick: this.handleClick({ name, ...rest }),
+              id: this.getJoyrideId(name, jrkey),
+              // we need the parent `name` and the item's `jrkey` for the joyride completion tag
+              onClick: this.handleClick({ ...rest, name, jrkey }),
             })
           })}
         </Dropdown.Menu>

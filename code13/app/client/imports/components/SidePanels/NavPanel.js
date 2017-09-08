@@ -244,6 +244,13 @@ export const getNavPanels = (currUser, showAll) => {
           },
           {
             subcomponent: 'Item',
+            to: `/dashboard`,
+            jrkey: 'myDashboard',
+            icon: 'dashboard',
+            content: 'My Dashboard',
+          },
+          {
+            subcomponent: 'Item',
             to: `/u/${username}/badges`,
             jrkey: 'myBadges',
             icon: 'trophy',

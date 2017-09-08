@@ -157,10 +157,10 @@ export default class CodeChallenges extends React.Component {
     let skillsArr = []
 
     if (_.startsWith(this.props.skillPath, 'code.js.intro'))
-      skillsArr = _.without(_.keys(_.get(SkillNodes, '$meta.map.code.js.intro')), '$meta')
+      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.intro']), '$meta')
 
     if (_.startsWith(this.props.skillPath, 'code.js.advanced'))
-      skillsArr = _.without(_.keys(_.get(SkillNodes, '$meta.map.code.js.advanced')), '$meta')
+      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.advanced']), '$meta')
 
     const idx = skillsArr.indexOf(this.skillName)
 

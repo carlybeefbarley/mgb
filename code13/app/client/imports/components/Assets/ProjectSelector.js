@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import { Dropdown, Icon } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 
-const _NO_PROJECT_PROJNAME = '_'
+export const _NO_PROJECT_PROJNAME = '_'
 const _NO_PROJECT_LABELTXT = 'Not in a Project'
 const _NO_PROJECT_MITEMTXT = '(in no project)'
 

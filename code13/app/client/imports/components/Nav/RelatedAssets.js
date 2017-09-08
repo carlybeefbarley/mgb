@@ -283,8 +283,6 @@ class RelatedAssetsUI extends React.Component {
           color="green"
           content="Create [Ctrl + Alt + N]"
         />
-        {hasAssets && <div>{userLink}</div>}
-        {hasAssets && <div>{projectLink}</div>}
         <Divider hidden fitted clearing />
       </div>
     )

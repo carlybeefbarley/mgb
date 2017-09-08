@@ -31,8 +31,8 @@ const LearnSkillsRoute = ({ currUser }, context) => (
     <Divider hidden />
     <Grid.Column>
       <Header as="h1">
-        What kind of skill do you want to learn next?
-        <Header.Subheader>Game Builders have many kinds of skills</Header.Subheader>
+        All Skills
+        <Header.Subheader>What kind of skill do you want to learn next?</Header.Subheader>
       </Header>
     </Grid.Column>
     <Grid.Column>

@@ -73,8 +73,8 @@ export function clientStartup() {
 
         <Route path="forum" component={ForumRoute} />
 
-        <Route path="/learn" component={LearnRoute} />
-        <Route path="/learn/skills" component={LearnSkillsRoute} />
+        <Route path="/learn" component={LearnRoute} name="Learn" />
+        <Route path="/learn/skills" component={LearnSkillsRoute} name="All Skills" />
         <Route path="/learn/skills/:skillarea" component={LearnSkillsAreaRoute} />
         <Route path="/learn/getstarted" component={LearnGetStartedRoute} name="Get Started" />
 
@@ -93,9 +93,9 @@ export function clientStartup() {
         <Route path="/reset-password/:token" component={Users.ResetPassword} name="Reset Password" />
         <Route path="/verify-email/:token" component={Users.VerifyEmail} name="Verify Email" />
 
-        <Route path="users" component={Users.UserListRoute} name="Search All Users" />
+        <Route path="users" component={Users.UserListRoute} name="All Users" />
 
-        <Route path="u/:username/import" component={Import} />
+        <Route path="u/:username/import" component={Import} name="Bulk Import" />
 
         <Route path="user/:id" component={Users.Profile} name="Profile" />
         <Route path="u/:username" component={Users.Profile} name="Profile" />
@@ -149,9 +149,9 @@ export function clientStartup() {
 
         <Route path="badge/:badgename" component={BadgeHoldersListRoute} name="Badge Holders" />
 
-        <Route path="/projects" component={Projects.UserProjectList} name="Search All Projects" />
+        <Route path="/projects" component={Projects.UserProjectList} name="All Projects" />
 
-        <Route path="assets" component={Azzets.UserAssetListRoute} name="Search All Assets" />
+        <Route path="assets" component={Azzets.UserAssetListRoute} name="All Assets" />
         <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
 
         <Route

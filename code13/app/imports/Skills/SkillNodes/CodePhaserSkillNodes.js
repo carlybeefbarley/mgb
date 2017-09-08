@@ -11,7 +11,7 @@ import C from './CommonSkillNodes'
 
 const CodePhaserSkillNodes = {
   $meta: {
-    name: 'Game development concepts',
+    name: 'Game Development Concepts',
     description:
       "These concept tutorials use the 'PhaserJS' game engine for JavaScript. However, these are fundamental concepts that will apply to any game engine you use in future.",
     assetExamples: ['!vault:phaser.groups.addSprite'], // Not used yet. Example for discussion

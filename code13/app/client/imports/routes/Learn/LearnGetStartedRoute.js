@@ -108,7 +108,7 @@ const LearnGetStartedRoute = ({ currUser }, context) => {
     <Grid container columns="1">
       <Divider hidden />
       <Grid.Column>
-        <Header as="h1" size="huge" style={{ fontSize: '2.5em' }}>
+        <Header as="h1" style={{ fontSize: '2.5em' }}>
           Get Started
           <Header.Subheader>
             Learn to use this site - set up your profile, play a game, find friends, etc

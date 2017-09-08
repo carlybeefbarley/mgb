@@ -6,7 +6,7 @@ import C from './CommonSkillNodes'
 
 const CodeIntroSkillNodes = {
   $meta: {
-    name: 'JavaScript programming basics',
+    name: 'JavaScript Basics',
     description: 'Click on an item and explore it',
   },
   comments: {

@@ -338,7 +338,7 @@ class AppUI extends React.Component {
 
   handleSetCurrentlyEditingAssetInfo = assetInfo => {
     if (!_.isEqual(this.state.currentlyEditingAssetInfo, assetInfo)) {
-      // See comments in getInitialState() for explanation
+      // See comments in state = {} for explanation
       this.setState({ currentlyEditingAssetInfo: assetInfo })
 
       // guntis - the only place where I can get asset type and send to analytics
@@ -503,7 +503,7 @@ class AppUI extends React.Component {
           </div>
         </div>
         <NetworkStatusMsg meteorStatus={meteorStatus} />
-        <NotificationContainer /> {/* This is for the top-right toast messages */}
+        <NotificationContainer />
       </div>
     )
   }

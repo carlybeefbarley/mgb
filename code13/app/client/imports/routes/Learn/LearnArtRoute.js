@@ -120,7 +120,7 @@ const LearnArtRoute = ({ currUser }, context) => {
     <Grid container columns="1">
       <Divider hidden />
       <Grid.Column>
-        <Header as="h1" size="huge" style={{ fontSize: '2.5em' }}>
+        <Header as="h1" style={{ fontSize: '2.5em' }}>
           Pixel Art
           <Header.Subheader>Learn to make art for your games</Header.Subheader>
         </Header>

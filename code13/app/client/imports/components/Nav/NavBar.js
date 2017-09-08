@@ -43,20 +43,16 @@ const NavBar = React.createClass({
     } = this.props
 
     // We special-case a few paths to not show the Breadcrumb for aesthetic reasons
-    const noBreadcrumbRoutes = [
-      '/',
-      '/forgot-password',
-      '/legal',
-      '/login',
-      '/roadmap',
-      '/signup',
-      '/whatsnew',
-    ]
-    if (_.includes(noBreadcrumbRoutes, location.pathname)) return null
+    const doNotDisplay = [
+      /^\/$/,
+      /^\/legal/,
+      /^\/login/,
+      /^\/signup/,
+      /^\/forgot-password/,
+      /^\/reset-password/,
+    ].some(regExp => regExp.test(location.pathname))
 
-    // reset-password route has a random token following
-    // need to regex the match
-    if (/\/reset-password/.test(location.pathname)) return null
+    if (doNotDisplay) return null
 
     const navBarStyle = {
       position: 'relative',
@@ -80,7 +76,6 @@ const NavBar = React.createClass({
         />
         <SystemAlerts sysvars={sysvars} />
         <NavBarBreadcrumb
-          showHome={hideHeaders}
           location={location}
           name={name}
           user={user}

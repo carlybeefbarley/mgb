@@ -43,7 +43,7 @@ const learnTopLevelItems = [
   {
     mascot: 'whale',
     icon: 'student',
-    content: 'Learn new Skills',
+    content: 'All Skills',
     link: '/learn/skills',
     query: null,
     skillnodeTopLevelTag: '',
@@ -66,8 +66,8 @@ const LearnRoute = ({ currUser, params }, context) => (
     <Divider hidden />
     <Grid.Column>
       <Header as="h1">
-        How do you want to learn?
-        <Header.Subheader>Let's do it your way</Header.Subheader>
+        Learn
+        <Header.Subheader>How do you want to learn?</Header.Subheader>
       </Header>
     </Grid.Column>
     <Grid.Column>

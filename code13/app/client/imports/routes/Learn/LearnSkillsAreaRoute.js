@@ -34,7 +34,7 @@ const LearnSkillsAreaRoute = ({ currUser, params }, context) => {
   if (!area) return <ThingNotFound type="Skill area" id={params.skillarea} />
 
   return (
-    <Segment basic padded style={{ margin: '0 auto' }}>
+    <Segment basic padded>
       <UX.ImageMascot
         className="animated bounceInLeft"
         floated="left"

@@ -10,7 +10,7 @@ const learnCodeItems = [
   {
     mascot: 'bigguy',
     icon: 'code',
-    content: 'Basics of programming',
+    content: 'JavaScript Basics',
     link: '/learn/code/intro',
     skillPath: 'code.js.intro',
     query: null,
@@ -22,7 +22,7 @@ const learnCodeItems = [
   {
     mascot: 'phaserLogo',
     icon: 'code',
-    content: 'Game development concepts',
+    content: 'Game Development Concepts',
     link: '/learn/code/phaser',
     skillPath: 'code.js.phaser',
     query: null,
@@ -32,7 +32,7 @@ const learnCodeItems = [
   {
     mascot: 'mole',
     icon: 'code',
-    content: 'Game tutorials',
+    content: 'Game Tutorials',
     link: '/learn/code/games',
     skillPath: 'code.js.games',
     query: null,
@@ -66,7 +66,7 @@ const LearnCodeRoute = ({ currUser, params }, context) => (
     <Divider hidden />
     <Grid.Column>
       <Header as="h1">
-        Learn Programming
+        Programming
         <Header.Subheader>With JavaScript and Phaser</Header.Subheader>
       </Header>
     </Grid.Column>

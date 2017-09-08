@@ -4,7 +4,12 @@ import _ from 'lodash'
 //  getAllBadgesForUser(user) gets list of user's badges (returns array of keys into badgeList)
 
 export const badgeList = {
-  mgbAdmin: { name: 'mgbAdmin', title: 'MGB Admin', img: 'gold/winner.png', descr: 'MGB Administrator' },
+  emailVerified: {
+    name: 'emailVerified',
+    title: 'Email Verified',
+    img: 'bronze/accepted_question.png',
+    descr: 'Clicked on verification email. Email exists!',
+  },
   hasAvatar: { name: 'hasAvatar', title: 'Has Avatar', img: 'bronze/cleaner.png', descr: 'Made an Avatar' },
 
   // skill based
@@ -312,6 +317,8 @@ export const badgeList = {
     img: 'bronze/necromancer.png',
     descr: 'Imported an MGBv1 game',
   },
+
+  mgbAdmin: { name: 'mgbAdmin', title: 'MGB Admin', img: 'gold/winner.png', descr: 'MGB Administrator' },
 
   // TODO interaction based
   // heartsBronze: { name: 'heartsBronze', img: 'bronze/teacher.png', descr: 'Asset got 1 like' },

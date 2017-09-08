@@ -247,6 +247,10 @@ const _functionBasedBadges = [
     newBadgeName: badgeList.mgb1namesImported.name,
     func: user => Projects.find({ ownerId: user._id, mgb1: { $exists: true } }).count() > 0,
   },
+  {
+    newBadgeName: badgeList.emailVerified.name,
+    func: user => _.get(user, 'emails[0].verified'),
+  },
 ]
 
 const _doRefreshBadgeStatus = user => {

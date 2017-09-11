@@ -12,13 +12,8 @@ import PresetController from './components/PresetController'
 import BPMController from './components/BPMController'
 import BPMTapper from './components/BPMTapper'
 import SoundController from './components/SoundController'
-import Visualiser from './components/Visualiser'
-// import Modal from './components/Modal';
 
 import presets from './utils/presets'
-import { getActiveSoundsFromHitTypes } from './utils/instruments'
-import { getPresetData, getPresetFromData, handleGoogleAPI } from './utils/short-urls'
-import { getAllowedLengthsFromSequence } from './utils/sequences'
 import { confineToRange } from './utils/tools'
 
 import defaultInstruments from './utils/default-instruments'
@@ -53,6 +48,9 @@ export default class Djent extends Component {
       fadeIn: false,
 
       isExpanded: false,
+
+      canvasWidth: 850,
+      duration: 0,
     }
 
     this.actions = {}
@@ -75,10 +73,37 @@ export default class Djent extends Component {
 
     this.actions.updateContinuousGeneration = this.updateContinuousGeneration.bind(this)
     this.actions.updateFadeIn = this.updateFadeIn.bind(this)
+    this.actions.updateDuration = this.updateDuration.bind(this)
     this.actions.toggleSettings = this.toggleSettings.bind(this)
 
     this.actions.enableModal = this.enableModal.bind(this)
     this.actions.disableModal = this.disableModal.bind(this)
+    this.waveCanvas = null
+  }
+
+  componentDidMount() {
+    this.waveCanvas = this.refs.waveCanvas
+    this.forceUpdate()
+
+    this.songTime = 0
+    this.splitTime = 0
+    this._raf = () => {
+      this.updateCursor()
+      window.requestAnimationFrame(this._raf)
+    }
+    this._raf()
+  }
+
+  updateCursor() {
+    if (this.state.isPlaying && this.state.duration > 0) {
+      const ms = Date.now()
+      const deltaTime = ms - this.splitTime
+      this.songTime += deltaTime
+      const currTime = (this.songTime / 1000) % this.state.duration
+      this.splitTime = ms
+      const x = this.state.canvasWidth * currTime / this.state.duration
+      this.refs.cursor.style.left = x + 'px'
+    } else this.splitTime = Date.now()
   }
 
   componentWillMount = () => {
@@ -274,6 +299,7 @@ export default class Djent extends Component {
 
   updateCurrentBuffer(currentBuffer) {
     this.setState({ currentBuffer: currentBuffer })
+    this.songTime = 0 // resets cursor
   }
 
   updateCurrentSrc(currentSrc) {
@@ -282,6 +308,10 @@ export default class Djent extends Component {
 
   updateContinuousGeneration(continuousGeneration) {
     this.setState({ continuousGeneration: continuousGeneration })
+  }
+
+  updateDuration(newDuration) {
+    this.setState({ duration: newDuration })
   }
 
   updateFadeIn(fadeIn) {
@@ -323,12 +353,10 @@ export default class Djent extends Component {
               </div>
 
               <Panel>
-                <Visualiser
-                  pretext={''}
-                  isPlaying={this.state.isPlaying}
-                  currentBuffer={this.state.currentBuffer}
-                  currentSrc={this.state.currentSrc}
-                />
+                <div style={{ position: 'relative' }}>
+                  <div ref="cursor" className="cursor" />
+                  <canvas ref="waveCanvas" width={this.state.canvasWidth} height="128px" />
+                </div>
               </Panel>
 
               <Panel>
@@ -352,6 +380,7 @@ export default class Djent extends Component {
                     fadeIn={this.state.fadeIn}
                     isExpanded={this.state.isExpanded}
                     actions={this.actions}
+                    waveCanvas={this.waveCanvas}
                   />
                 </div>
               </Panel>

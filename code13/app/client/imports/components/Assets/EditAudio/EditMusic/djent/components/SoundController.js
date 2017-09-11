@@ -21,6 +21,10 @@ import audioBufferToWav from 'audiobuffer-to-wav'
 
 import lamejs from '../../../lib/lame.all.js'
 
+import WaveDraw from '/client/imports/components/Assets/EditAudio/lib/WaveDraw'
+
+import '../../editMusic.css'
+
 // Note that 1 is max and definitely too loud for listener
 const AUDIO_VOLUME = 0.5
 
@@ -73,6 +77,7 @@ const generateNewBuffer = ({
 
 const play = (audioContext, buffer) =>
   playSound(audioContext, buffer, audioContext.currentTime, buffer.duration, AUDIO_VOLUME)
+
 const stop = src => {
   if (src) {
     src.onended = () => {}
@@ -207,6 +212,19 @@ class SoundController extends Component {
     this.currentGainNode = this.audioContext.createGain()
 
     const currentSrc = currentBuffer ? play(this.audioContext, currentBuffer) : null
+
+    if (currentBuffer && this.props.waveCanvas) {
+      this.props.actions.updateDuration(currentBuffer.duration)
+      const channelData = currentBuffer.getChannelData(0)
+      const data = {
+        audioCtx: this.audioContext,
+        duration: currentBuffer.duration,
+        canvas: this.props.waveCanvas,
+        color: '#4dd2ff',
+        buffer: channelData,
+      }
+      this.waveDraw = new WaveDraw(data)
+    }
 
     this.props.actions.updateCurrentBuffer(currentBuffer)
     this.props.actions.updateCurrentSrc(currentSrc)

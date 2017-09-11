@@ -2,12 +2,10 @@ import { loopSequence, generateTimeMap } from './sequences'
 
 import { deepClone, randFromTo, repeatArray } from './tools'
 
-// import { playSound } from './audio';
+import { playSound } from './audio'
 
 const getInstrumentsSequences = ({ instruments, sequences, totalBeats, usePredefinedSettings }) =>
   Object.keys(sequences).map(instrumentId => {
-    // console.log(instruments, sequences)
-
     const instrument = instruments.find(i => i.id === instrumentId)
     const predefinedSequence = instrument.predefinedSequence
     const newSequence =
@@ -62,109 +60,43 @@ const getActiveSoundsFromHitTypes = hitTypes =>
     }, [])
     .map(hit => ({ id: hit, enabled: true }))
 
-const renderInstrumentSoundsAtTempo = (instruments, totalBeats, bpmMultiplier, audioCtx) => {
+const renderInstrumentSoundsAtTempo = (instruments, totalBeats, bpmMultiplier) => {
   const timeLength = totalBeats * bpmMultiplier
-  // const offlineCtx = new OfflineAudioContext(2, 44100 * timeLength, 44100);
-  // const offlineCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(2, 44100 * timeLength, 44100);
-  // console.log(offlineCtx)
+  const offlineCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(
+    2,
+    44100 * timeLength,
+    44100,
+  )
 
-  // instruments.forEach((instrument) => {
-  //     let startTimes = [];
-  //     let durations  = [];
-  //     const sources = instrument.timeMap.reduce((sources, time, i) => {
-  //         const pitchAmount       = instrument.pitch || 0;
-  //         const instrumentSound    = instrument.buffers[instrument.hitTypes[i]];
-  //         const startTime          = offlineCtx.currentTime + (time * bpmMultiplier);
-  //         const duration           = instrument.ringout ? instrumentSound.duration : ((1 / instrument.sequence[i].beat) * bpmMultiplier);
-  //         const source             = playSound(offlineCtx, instrumentSound, startTime, duration, instrument.sequence[i].volume, pitchAmount);
-
-  //         startTimes[i] = startTime;
-  //         durations[i]   = duration;
-
-  //         return [ ...sources, source ];
-  //     }, []);
-  // })
-
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-  const buffer = audioCtx.createBuffer(1, 44100 * timeLength, 44100)
-  const bufferData = buffer.getChannelData(0)
   instruments.forEach(instrument => {
     let startTimes = []
     let durations = []
     const sources = instrument.timeMap.reduce((sources, time, i) => {
       const pitchAmount = instrument.pitch || 0
       const instrumentSound = instrument.buffers[instrument.hitTypes[i]]
-      const instrumentBuffer = instrumentSound.getChannelData(0)
-      const instrumentBuffer2 = instrumentSound.getChannelData(1)
-      // const startTime          = offlineCtx.currentTime + (time * bpmMultiplier);
-      const startTime = time * bpmMultiplier
+      const startTime = offlineCtx.currentTime + time * bpmMultiplier
       const duration = instrument.ringout
         ? instrumentSound.duration
         : 1 / instrument.sequence[i].beat * bpmMultiplier
+      const source = playSound(
+        offlineCtx,
+        instrumentSound,
+        startTime,
+        duration,
+        instrument.sequence[i].volume,
+        pitchAmount,
+      )
 
-      sumBuffers(
-        instrumentBuffer,
-        startTime,
-        duration,
-        instrument.sequence[i].volume,
-        pitchAmount,
-        bufferData,
-      )
-      sumBuffers(
-        instrumentBuffer2,
-        startTime,
-        duration,
-        instrument.sequence[i].volume,
-        pitchAmount,
-        bufferData,
-      )
-    })
+      startTimes[i] = startTime
+      durations[i] = duration
+
+      return [...sources, source]
+    }, [])
   })
-
-  normalizeBuffer(bufferData)
-
   return new Promise((res, rej) => {
-    res(buffer)
-  })
-
-  // return new Promise((res, rej) => {
-  //     // offlineCtx.oncomplete = ev => res(ev.renderedBuffer)
-  //     // offlineCtx.onerror    = ev => rej(ev.renderedBuffer)
-  //     offlineCtx.oncomplete = ev => {
-  //         console.log('render instruments done', ev.renderedBuffer)
-  //         res(ev.renderedBuffer)
-  //     }
-  //     offlineCtx.onerror    = ev => {
-  //         console.log('render instruments rejected', ev.renderedBuffer)
-  //         rej(ev.renderedBuffer)
-  //     }
-  //     offlineCtx.onstatechange = ev => {
-  //         console.log('onstatechange fired', ev)
-  //     }
-  //     console.log("offlineCtx start rendering")
-  //     offlineCtx.startRendering()
-  //     // .then((renderedBuffer) => {
-  //     //     console.log('render success', renderedBuffer)
-  //     // }).catch(function(err) {
-  //     //   console.log('Rendering failed: ' + err);
-  //     // })
-  // })
-}
-
-const sumBuffers = (newBuffer, startTime, duration, volume, pitchAmount, destBuffer) => {
-  const startInd = Math.round(startTime * 44100)
-  let endInd = Math.round((startTime + duration) * 44100)
-  if (endInd > destBuffer.length - 1) endInd = destBuffer.length - 1
-
-  for (let i = startInd; i < endInd; i++) {
-    destBuffer[i] += newBuffer[i - startInd] * volume
-  }
-}
-
-const normalizeBuffer = buffer => {
-  buffer.forEach((val, i) => {
-    if (val > 1) buffer[i] = 1
-    else if (val < -1) buffer[i] = -1
+    offlineCtx.oncomplete = ev => res(ev.renderedBuffer)
+    offlineCtx.onerror = ev => rej(ev.renderedBuffer)
+    offlineCtx.startRendering()
   })
 }
 

@@ -233,7 +233,6 @@ const playSound = (context, buffer, time, duration, volume, pitchAmount = 0) => 
   const gainNode = context.createGain()
   const durationMultiplier = getPitchPlaybackRatio(pitchAmount)
 
-  console.log(volume)
   gainNode.gain.value = volume
 
   source.connect(gainNode)

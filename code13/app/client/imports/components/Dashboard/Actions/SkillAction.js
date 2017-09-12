@@ -1,28 +1,30 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
-import { Message, Header, Button, Icon } from 'semantic-ui-react'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 import { getNextSkillPath, getFriendlyName, getNode } from '/imports/Skills/SkillNodes/SkillNodes'
 import { startSkillPathTutorial } from '/client/imports/routes/App'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
 
+import DashboardAction from './DashboardAction'
+
 export default class SkillAction extends React.Component {
+  static contextTypes = {
+    skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)
+  }
+
   static propTypes = {
     currUser: PropTypes.object,
   }
 
-  constructor(props, context) {
-    super(props)
-    this.userSkills = context.skills
-    this.state = {
-      nextSkillPath: null,
-      nextSkillName: '',
-      allSkillsCompleted: false,
-    }
+  state = {
+    nextSkillPath: null,
+    nextSkillName: '',
+    allSkillsCompleted: false,
   }
 
   componentDidMount = () => {
-    const nextSkillPath = getNextSkillPath(this.props.currUser, this.userSkills)
+    const nextSkillPath = getNextSkillPath(this.props.currUser, this.context.skills)
     const nextSkill = getNode(nextSkillPath)
     let nextSkillName = ''
     if (nextSkill && nextSkill.$meta) {
@@ -32,43 +34,41 @@ export default class SkillAction extends React.Component {
   }
 
   startNextSkill = () => {
-    if (this.state.nextSkillPath) {
-      // code tutorial
-      if (_.startsWith(this.state.nextSkillPath, 'code.')) {
-        const skillPathArr = this.state.nextSkillPath.split('.')
-        const l = skillPathArr.length
-        const section = skillPathArr[l - 2]
-        const subSection = skillPathArr[l - 1]
-        StartJsGamesRoute(section, subSection, this.props.currUser)
-      } else
-        // joyride tutorial
-        startSkillPathTutorial(this.state.nextSkillPath)
-    } else console.warn("Didn't found next skillPath")
+    const { currUser } = this.props
+    const { nextSkillPath } = this.state
+
+    if (!nextSkillPath) {
+      return console.warn("Didn't found next skillPath")
+    }
+
+    // code tutorial
+    if (_.startsWith(nextSkillPath, 'code.')) {
+      const skillPathArr = nextSkillPath.split('.')
+      const l = skillPathArr.length
+      const section = skillPathArr[l - 2]
+      const subSection = skillPathArr[l - 1]
+      StartJsGamesRoute(section, subSection, currUser)
+    } else {
+      // joyride tutorial
+      startSkillPathTutorial(nextSkillPath)
+    }
   }
 
   render() {
-    if (this.state.allSkillsCompleted) return null
+    const { allSkillsCompleted, nextSkillName } = this.state
+
+    if (allSkillsCompleted) return null
 
     return (
-      <Message info icon>
-        <Icon name="student" />
-        <Message.Content>
-          <Header>MGB tutorials</Header>
-          <p>
-            <Button primary onClick={this.startNextSkill} floated="right" content="Start tutorial" />Get intro
-            into MyGameBuilder and start learning how to create games!
-          </p>
-          {this.state.nextSkillPath && (
-            <p>
-              <b>Next skill</b>: {this.state.nextSkillName}
-            </p>
-          )}
-        </Message.Content>
-      </Message>
+      <DashboardAction
+        color="yellow"
+        icon="student"
+        header="Tutorials"
+        subheader="Get intro into MyGameBuilder and start learning how to create games!"
+        buttonContent="Start"
+        buttonExtra={nextSkillName && `Next: ${nextSkillName}`}
+        onButtonClick={this.startNextSkill}
+      />
     )
   }
-}
-
-SkillAction.contextTypes = {
-  skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)
 }

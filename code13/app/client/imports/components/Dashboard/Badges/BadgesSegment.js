@@ -1,64 +1,42 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Icon, Segment, List, Header, Modal, Popup } from 'semantic-ui-react'
-import BadgesItem from '/client/imports/components/Badges/BadgesItem'
-import { getBadgesWithEnabledFlag, selectBadges } from '/imports/schemas/badges'
+import { Divider, Grid, Segment } from 'semantic-ui-react'
 
-export default class FaqSegment extends React.Component {
-  static propTypes = {
-    badgesArr: PropTypes.array,
-    currUser: PropTypes.object,
-  }
+import BadgesList from '/client/imports/components/Badges/DashboardBadgeList'
+import { getBadgesWithEnabledFlag } from '/imports/schemas/badges'
 
-  state = {
-    isCollapsed: false,
-    isModal: false,
-  }
+const BadgesSegment = ({ currUser }) => {
+  const badges = getBadgesWithEnabledFlag(currUser.badges)
+  const [enabledBadges, disabledBadges] = _.partition(badges, 'enabled')
 
-  toggleModal = () => this.setState({ isModal: true })
+  const disabledBadgeGroups = _.chain(disabledBadges)
+    .filter(badge => !badge.hideBeforeEnabled)
+    .groupBy('title')
+    .values()
+    .value()
 
-  render() {
-    const badgesArr = getBadgesWithEnabledFlag(this.props.currUser.badges)
-    // reverse array because we want to get recent badges
-    _.reverse(badgesArr)
-    const enabledBadges = selectBadges(badgesArr, 3, true)
-    // reverse again to get next disabled badges
-    _.reverse(badgesArr)
-    const disabledBadges = selectBadges(badgesArr, 6 - enabledBadges.length, false)
-    const displayArr = _.concat(enabledBadges, disabledBadges)
-
-    return (
+  return (
+    <div>
       <Segment>
-        <Header as="h3">Badges</Header>
-        <div style={{ display: this.state.isCollapsed ? 'none' : 'block' }}>
-          <List horizontal>
-            {_.map(displayArr, badge => <BadgesItem key={badge.name} badge={badge} />)}
-            <List.Item>
-              <Popup
-                trigger={
-                  <Icon
-                    name="ellipsis horizontal"
-                    size="huge"
-                    style={{ color: '#999' }}
-                    onClick={this.toggleModal}
-                  />
-                }
-              >
-                <Popup.Content>See all badges</Popup.Content>
-              </Popup>
-            </List.Item>
-          </List>
-        </div>
+        <BadgesList group={false} badges={enabledBadges} />
 
-        <Modal closeOnDimmerClick open={this.state.isModal} onClose={() => this.setState({ isModal: false })}>
-          <Modal.Header>Your Badges</Modal.Header>
-          <Modal.Content>
-            <List>
-              {_.map(badgesArr, badge => <BadgesItem size="mini" key={badge.name} badge={badge} />)}
-            </List>
-          </Modal.Content>
-        </Modal>
+        <Divider horizontal section>
+          Go for these badges next
+        </Divider>
+        <Grid columns="3" doubling stackable centered>
+          {_.map(disabledBadgeGroups, badges => (
+            <Grid.Column key={badges[0].name}>
+              <BadgesList badges={badges} />
+            </Grid.Column>
+          ))}
+        </Grid>
       </Segment>
-    )
-  }
+    </div>
+  )
 }
+
+BadgesSegment.propTypes = {
+  currUser: PropTypes.object.isRequired,
+}
+
+export default BadgesSegment

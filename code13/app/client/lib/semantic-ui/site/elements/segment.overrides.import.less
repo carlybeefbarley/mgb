@@ -1,9 +1,30 @@
 /*******************************
          Site Overrides
 *******************************/
-.ui.segment:not(.piled):not(.stacked) {
+// no borders on regular segments (except piled, stacked, and colored)
+.ui.segment:not(.piled):not(.stacked):not(.red):not(.orange):not(.yellow):not(.olive):not(.green):not(.teal):not(.blue):not(.violet):not(.purple):not(.pink):not(.brown):not(.grey):not(.black) {
   border: none;
 }
+
+// leave only top colored border on colored segments
+.ui.segment.red,
+.ui.segment.orange,
+.ui.segment.yellow,
+.ui.segment.olive,
+.ui.segment.green,
+.ui.segment.teal,
+.ui.segment.blue,
+.ui.segment.violet,
+.ui.segment.purple,
+.ui.segment.pink,
+.ui.segment.brown,
+.ui.segment.grey,
+.ui.segment.black {
+  border-left: none;
+  border-right: none;
+  border-bottom:none;
+}
+
 .ui.segment:not(.piled):not(.raised):not(.stacked) {
   box-shadow: none;
 }

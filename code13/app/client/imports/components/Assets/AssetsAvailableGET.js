@@ -19,7 +19,7 @@ const _nowrapStyle = {
 const AssetItems = ({ assets }) => (
   <Card.Group style={_nowrapStyle}>
     {(!assets || assets.length === 0) && <Segment basic>No assets yet</Segment>}
-    {_.map(assets, a => <AssetCard classNames="mgb-assetcard-width" allowDrag asset={a} key={a._id} />)}
+    {_.map(assets, a => <AssetCard classNames="mgb-assetcard-width" asset={a} key={a._id} />)}
     {assets &&
     assets.length > 0 && (
       <div

@@ -1,13 +1,12 @@
 import '/client/imports/routes/home.css'
 import '/client/imports/routes/GetStarted.css'
 import React, { PropTypes } from 'react'
-import { Divider, Grid } from 'semantic-ui-react'
+import { Divider } from 'semantic-ui-react'
 
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
-import HomeSkillsColumn from '/client/imports/components/Home/HomeSkillsColumn'
-import HomeProjectsBeingMadeColumn from '/client/imports/components/Home/HomeProjectsBeingMadeColumn'
-import HomeMeetFriendsColumn from '/client/imports/components/Home/HomeMeetFriendsColumn'
+
+import ExploreSegment from '/client/imports/components/Dashboard/Explore/ExploreSegment'
 
 const HomeRoute = ({ currUser }) => {
   const username = currUser ? currUser.profile.name : 'guest'
@@ -23,11 +22,7 @@ const HomeRoute = ({ currUser }) => {
 
           <Divider section />
 
-          <Grid columns="3" padded doubling stackable stretched>
-            <HomeSkillsColumn userId={userId} />
-            <HomeProjectsBeingMadeColumn />
-            <HomeMeetFriendsColumn />
-          </Grid>
+          <ExploreSegment inverted />
 
           <Divider hidden section />
         </div>

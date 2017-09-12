@@ -579,7 +579,7 @@ const fpChat = React.createClass({
                     <Popup.Content>
                       <div style={{ minWidth: '300px' }}>
                         {channelObj.scopeGroupName === 'Asset' && (
-                          <AssetCardGET assetId={channelObj.scopeId} allowDrag renderView="s" />
+                          <AssetCardGET assetId={channelObj.scopeId} renderView="s" />
                         )}
                         {channelObj.scopeGroupName === 'Project' && (
                           <ProjectCardGET projectId={channelObj.scopeId} />

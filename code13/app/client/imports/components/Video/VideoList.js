@@ -23,8 +23,6 @@ const _videoList = [
 ]
 
 export default class VideoList extends React.Component {
-  static propTypes = {}
-
   render() {
     return (
       <List>{_videoList.map(item => <VideoItem key={item.url} url={item.url} title={item.title} />)}</List>

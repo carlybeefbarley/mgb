@@ -273,7 +273,7 @@ const fpAssets = React.createClass({
           <Spinner />
         ) : (
           <div style={style}>
-            <AssetList allowDrag fluid renderView={view} assets={assets} currUser={currUser} />
+            <AssetList fluid renderView={view} assets={assets} currUser={currUser} />
           </div>
         )}
       </div>

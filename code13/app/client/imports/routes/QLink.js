@@ -57,7 +57,7 @@ class QLink extends React.Component {
   }
 
   static defaultProps = {
-    onlyActiveOnIndex: false,
+    onlyActiveOnIndex: true,
     activeClassName: 'active',
     elOverride: Link,
   }
@@ -73,7 +73,7 @@ class QLink extends React.Component {
    * joyrideCompletionTags if the item had an id=mgbjr-.*
    */
   handleClick = event => {
-    const { altTo, altQuery, hash, onClick, state, query, target, to } = this.props
+    const { altTo, altQuery, hash, onClick, state, query, target, to = window.location.pathname } = this.props
 
     const appScopedQuery = urlMaker.getCrossAppQueryParams(this.context.urlLocation.query)
 
@@ -96,7 +96,7 @@ class QLink extends React.Component {
     if (shouldIgnore) return
 
     // resolve any modifiers to select altTo/AltQuery etc
-    const modifiedTo = (event.altKey && altTo ? altTo : to) || window.location.pathname
+    const modifiedTo = event.altKey && altTo ? altTo : to
     const modifiedQuery = event.altKey && altQuery ? altQuery : query
 
     // Combine the links' query with special appScoped query params we want to preserve such as _np= (this is all decided in urlMaker.js)

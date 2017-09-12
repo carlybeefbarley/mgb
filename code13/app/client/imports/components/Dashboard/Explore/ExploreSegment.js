@@ -1,16 +1,20 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
-import { Segment } from 'semantic-ui-react'
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Divider } from 'semantic-ui-react'
+
+import { mgbAjax } from '/client/imports/helpers/assetFetchers'
+
 import FeaturedGames from './FeaturedGames'
 import FeaturedAssets from './FeaturedAssets'
 import FeaturedUsers from './FeaturedUsers'
 import LiveGames from './LiveGames'
 
-import { mgbAjax } from '/client/imports/helpers/assetFetchers'
-
-// console.log(assetViewChoices, defaultAssetViewChoice)
-
 export default class ExploreSegment extends React.Component {
+  static propTypes = {
+    inverted: PropTypes.bool,
+  }
+
   state = {
     featuredUsers: [],
     featuredGames: [],
@@ -20,88 +24,76 @@ export default class ExploreSegment extends React.Component {
 
   componentDidMount() {
     mgbAjax(`/api/asset/code/!vault/dashboard.featured`, (err, str) => {
-      if (err) console.log('error', err)
-      else {
-        const data = JSON.parse(str)
+      if (err) return console.log('error', err)
 
-        if (!_.isEmpty(data['liveGames'])) {
-          const liveGameData = []
-          data.liveGames.map(item => {
-            mgbAjax('/api/asset/withoutC2/' + item.id, (err, re) => {
-              // TODO set state liveGameDataError
-              if (err) console.log(err)
-              else {
-                const liveGame = JSON.parse(re)
-                liveGame.url = item.url
-                liveGameData.push(liveGame)
-                if (liveGameData.length == data.liveGames.length) {
-                  this.setState({ liveGames: liveGameData })
-                }
-              }
-            })
-          })
-        }
+      const data = JSON.parse(str)
 
-        if (!_.isEmpty(data['games'])) {
-          const gameData = []
-          data.games.map(item => {
-            mgbAjax('/api/asset/withoutC2/' + item.id, (err, re) => {
-              if (err) console.log(err)
-              else {
-                gameData.push(JSON.parse(re))
-                if (gameData.length == data['games'].length) {
-                  this.setState({ featuredGames: gameData })
-                }
-              }
-            })
-          })
-        }
+      _.map(data.liveGames, item => {
+        mgbAjax('/api/asset/withoutC2/' + item.id, (err, re) => {
+          // TODO set state liveGameDataError
+          if (err) return console.log(err)
 
-        if (!_.isEmpty(data['assets'])) {
-          const assetData = []
-          data['assets'].map(item => {
-            mgbAjax('/api/asset/withoutC2/' + item.id, (err, re) => {
-              if (err) console.log(err)
-              else {
-                assetData.push(JSON.parse(re))
-                if (assetData.length == data['assets'].length) {
-                  this.setState({ featuredAssets: assetData })
-                }
-              }
-            })
-          })
-        }
+          const record = { ...JSON.parse(re), url: item.url }
+          this.setState(prevState => ({ liveGames: [...prevState.liveGames, record] }))
+        })
+      })
 
-        if (!_.isEmpty(data['users'])) {
-          const userData = []
-          data['users'].map(item => {
-            mgbAjax('/api/user/name/' + item.name, (err, re) => {
-              if (err) console.log(err)
-              else {
-                userData.push(JSON.parse(re))
-                if (userData.length == data['users'].length) {
-                  this.setState({ featuredUsers: userData })
-                }
-              }
-            })
-          })
-        }
-      }
+      _.map(data.games, item => {
+        mgbAjax('/api/asset/withoutC2/' + item.id, (err, re) => {
+          if (err) return console.log(err)
+
+          const record = JSON.parse(re)
+          this.setState(prevState => ({ featuredGames: [...prevState.featuredGames, record] }))
+        })
+      })
+
+      _.map(data.assets, item => {
+        mgbAjax('/api/asset/withoutC2/' + item.id, (err, re) => {
+          if (err) return console.log(err)
+
+          const record = JSON.parse(re)
+          this.setState(prevState => ({ featuredAssets: [...prevState.featuredAssets, record] }))
+        })
+      })
+
+      _.map(data.users, item => {
+        mgbAjax('/api/user/name/' + item.name, (err, re) => {
+          if (err) return console.log(err)
+
+          const record = JSON.parse(re)
+          this.setState(prevState => ({ featuredUsers: [...prevState.featuredUsers, record] }))
+        })
+      })
     })
   }
 
-  /* Just has fake data */
   render() {
+    const { inverted } = this.props
+    const { liveGames, featuredGames, featuredAssets, featuredUsers } = this.state
+
+    const hasLiveGames = !_.isEmpty(liveGames)
+    const hasFeaturedGames = !_.isEmpty(featuredGames)
+    const hasFeaturedAssets = !_.isEmpty(featuredAssets)
+    const hasFeaturedUsers = !_.isEmpty(featuredUsers)
+
+    if (!hasLiveGames && !hasFeaturedGames && !hasFeaturedAssets && !hasFeaturedUsers) {
+      return null
+    }
+
     return (
-      <Segment>
-        <LiveGames games={this.state.liveGames} limit={2} />
+      <div>
+        <LiveGames inverted={inverted} games={liveGames} />
+        {hasLiveGames && <Divider hidden section />}
 
-        <FeaturedGames games={this.state.featuredGames} limit={4} />
+        <FeaturedGames inverted={inverted} games={featuredGames} />
+        {hasFeaturedGames && <Divider hidden section />}
 
-        <FeaturedAssets assets={this.state.featuredAssets} limit={10} />
+        <FeaturedAssets inverted={inverted} assets={featuredAssets} />
+        {hasFeaturedAssets && <Divider hidden section />}
 
-        <FeaturedUsers users={this.state.featuredUsers} limit={4} />
-      </Segment>
+        <FeaturedUsers inverted={inverted} users={featuredUsers} />
+        {hasFeaturedUsers && <Divider hidden section />}
+      </div>
     )
   }
 }

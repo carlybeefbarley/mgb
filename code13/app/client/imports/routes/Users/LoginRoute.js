@@ -124,7 +124,7 @@ const LoginRoute = React.createClass({
         var userName = Meteor.user().profile.name
         logActivity('user.login', `Logging in "${userName}"`, null, null)
         stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
-        utilPushTo(this.context.urlLocation.query, `/u/${userName}`)
+        utilPushTo(this.context.urlLocation.query, '/dashboard')
         showToast('Login ok!  Welcome back')
 
         // analytics.identify(Meteor.user()._id, {

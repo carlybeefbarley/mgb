@@ -105,7 +105,6 @@ export default class AssetEdit extends React.Component {
               fluid
               canEdit={false}
               showEditButton={false}
-              allowDrag
               renderView="l"
             />
           </Segment>

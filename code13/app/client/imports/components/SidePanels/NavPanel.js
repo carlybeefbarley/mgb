@@ -224,6 +224,14 @@ export const getNavPanels = (currUser, showAll) => {
         ],
       },
       showUserOptions && {
+        name: 'dashboard',
+        explainClickAction: 'Shortcut: Clicking here jumps to the Learning Paths page',
+        icon: { name: 'dashboard' },
+        to: `/dashboard`,
+        jrkey: 'dashboard',
+        content: 'Dashboard',
+      },
+      showUserOptions && {
         name: 'user',
         explainClickAction: 'Shortcut: Clicking here jumps to your Profile Page', // if logged in, and this is used by tutorials, so that's ok
         icon: { name: 'user' },
@@ -241,13 +249,6 @@ export const getNavPanels = (currUser, showAll) => {
             jrkey: 'myProfile',
             icon: 'user',
             content: 'My Profile',
-          },
-          {
-            subcomponent: 'Item',
-            to: `/dashboard`,
-            jrkey: 'myDashboard',
-            icon: 'dashboard',
-            content: 'My Dashboard',
           },
           {
             subcomponent: 'Item',
@@ -306,14 +307,19 @@ const _doLogout = () => {
 }
 
 class NavPanel extends React.Component {
+  static contextTypes = {
+    router: PropTypes.object.isRequired,
+  }
+
   static propTypes = {
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
     navPanelAvailableWidth: PropTypes.number, // Width of the page area available for NavPanel menu
   }
 
   render() {
+    const { router } = this.context
     const { currUser, navPanelAvailableWidth } = this.props
-    const useIcons = navPanelAvailableWidth < 600 // px
+    const useIcons = navPanelAvailableWidth < 768 // px
     const allNavPanels = getNavPanels(currUser)
 
     const navPanelItems = side =>
@@ -321,6 +327,7 @@ class NavPanel extends React.Component {
         .filter(v => !(useIcons && v.hideInIconView))
         .map(({ content, icon, menu, name, query, to }) => (
           <NavPanelItem
+            isActive={router.isActive(to)}
             name={name}
             openLeft={side === 'right'}
             key={name}

@@ -4,18 +4,19 @@ import { Icon, Header } from 'semantic-ui-react'
 
 export default class LiveGames extends React.Component {
   static propTypes = {
+    inverted: PropTypes.bool,
     games: PropTypes.array,
-    limit: PropTypes.number,
   }
 
   render() {
-    if (_.isEmpty(this.props.games)) return null
+    const { games, inverted } = this.props
 
-    const games = _.slice(this.props.games, 0, this.props.limit)
+    if (_.isEmpty(games)) return null
+
     return (
       <div style={{ overflow: 'hidden' }}>
-        <Header as="h3">
-          Games being made. <Icon name="circle" size="mini" color="red" />LIVE!
+        <Header as="h3" inverted={inverted} color={!inverted ? 'grey' : null}>
+          Game being made <Icon name="circle" size="mini" color="red" />LIVE!
         </Header>
         {games.map(game => (
           <div

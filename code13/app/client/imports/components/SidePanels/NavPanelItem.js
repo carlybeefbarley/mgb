@@ -1,12 +1,16 @@
+import _ from 'lodash'
+import cx from 'classnames'
 import React, { PropTypes } from 'react'
+import { Dropdown, Menu } from 'semantic-ui-react'
+
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
-import { Dropdown, Menu } from 'semantic-ui-react'
-import _ from 'lodash'
 
 const _openLeftStyle = { left: 'auto', right: '0' }
 
-const getElementType = props => (props.to || props.query || props.onClick ? QLink : 'div')
+const getElementType = ({ to, query, onClick }) => {
+  return to || query || onClick ? QLink : 'div'
+}
 
 class NavPanelItem extends React.PureComponent {
   static propTypes = {
@@ -43,17 +47,22 @@ class NavPanelItem extends React.PureComponent {
   }
 
   render() {
-    const { content, jrkey, name, menu, style, openLeft } = this.props
+    const { isActive, className, content, jrkey, name, menu, style, openLeft } = this.props
     const { open } = this.state
 
     const props = {
       id: this.getJoyrideId(name, jrkey),
+      // Heads up!
+      // Do no use a QLink here for activeClassName support.
+      // The Dropdown requires a ref and <Link /> is a functional component.
+      // React does not support refs on functional components.
+      className: cx(className, { active: isActive }),
       onClick: this.handleClick(this.props),
       style,
     }
 
     if (!menu) {
-      return <Menu.Item {...props} as={getElementType(this.props)} content={content} />
+      return <Menu.Item {...props} content={content} />
     }
 
     return (

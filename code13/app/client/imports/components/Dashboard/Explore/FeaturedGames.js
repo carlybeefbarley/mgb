@@ -1,30 +1,24 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { List, Header, Image } from 'semantic-ui-react'
+import { Header } from 'semantic-ui-react'
+
+import GameItems from '/client/imports/components/Assets/GameAsset/GameItems'
 
 export default class FeaturedGames extends React.Component {
   static propTypes = {
+    inverted: PropTypes.bool,
     games: PropTypes.array,
-    limit: PropTypes.number,
   }
 
   render() {
-    if (_.isEmpty(this.props.games)) return null
+    const { games, inverted } = this.props
+
+    if (_.isEmpty(games)) return null
 
     return (
       <div>
-        <Header as="h3">Featured games</Header>
-        <List>
-          {this.props.games.map((game, i) => (
-            <List.Item key={i}>
-              <a href={'/u/' + game.dn_ownerName + '/play/' + game._id}>
-                <div className="exploreItem">
-                  <Image width={70} height={70} floated="left" src={game.thumbnail} />
-                  {game.name}
-                </div>
-              </a>
-            </List.Item>
-          ))}
-        </List>
+        <Header as="h3" inverted={inverted} color={!inverted ? 'grey' : null} content="Featured Games" />
+        <GameItems games={games} wrap />
       </div>
     )
   }

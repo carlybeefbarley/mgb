@@ -403,13 +403,7 @@ const UserAssetListRoute = React.createClass({
                 <Spinner />
               </div>
             ) : (
-              <AssetList
-                allowDrag
-                assets={assets}
-                renderView={view}
-                currUser={currUser}
-                ownersProjects={projects}
-              />
+              <AssetList assets={assets} renderView={view} currUser={currUser} ownersProjects={projects} />
             )}
             {!loading &&
             assets.length >= SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit && (

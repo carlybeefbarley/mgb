@@ -395,8 +395,8 @@ class AppUI extends React.Component {
       right: flexPanelWidth,
       marginBottom: '0px',
       minHeight: '100vh',
-      // background:   'radial-gradient(100% 100% at center bottom, #555, #333)',
-      overflow: 'auto', // 'scroll' - this will make very ugly scrollbars on firefox
+      overflowY: 'scroll', // must be 'scroll' to preserve iOS inertia scrolling
+      WebkitOverflowScrolling: 'touch', // only works with overflowY: scroll (not auto)
     }
 
     //Check permissions of current user for super-admin,

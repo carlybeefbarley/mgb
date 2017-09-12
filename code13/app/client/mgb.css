@@ -182,12 +182,8 @@ body.dragging .accept-drop:hover {
 }
 
 .mgb-grayscale {
-  color: #666;
-}
-
-.mgb-grayscale img {
-  filter: grayscale(100%);
-  opacity: 0.3;
+  color: rgba(0, 0, 0, 0.5) !important;
+  filter: grayscale(100%) contrast(70%) brightness(120%);
 }
 
 /***************************************

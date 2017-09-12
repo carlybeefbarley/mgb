@@ -1,51 +1,66 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import { createContainer } from 'meteor/react-meteor-data'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Segment, List, Header, Icon } from 'semantic-ui-react'
-import FeedItem from './FeedItem'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
+
 import SpecialGlobals from '/imports/SpecialGlobals'
 import { Activity } from '/imports/schemas'
 import { getFeedSelector } from '/imports/schemas/activity'
 
+import FeedItem from './FeedItem'
+
+const segmentStyle = {
+  maxHeight: '20em',
+  overflowY: 'auto',
+}
+
 const FeedSegment = React.createClass({
-  mixins: [ReactMeteorData],
-
   propTypes: {
+    activities: PropTypes.array,
     currUser: PropTypes.object,
-  },
-
-  getMeteorData: function() {
-    const handleActivity = Meteor.subscribe(
-      'activity.private.feed.recent.userId',
-      this.props.currUser._id,
-      this.props.currUser.profile.name,
-      SpecialGlobals.activity.feedLimit,
-    )
-
-    return {
-      activities: Activity.find(getFeedSelector(this.props.currUser._id, this.props.currUser.profile.name), {
-        sort: { timestamp: -1 },
-      }).fetch(),
-      loading: !handleActivity.ready(),
-    }
+    loading: PropTypes.bool,
   },
 
   render: function() {
-    if (this.data.loading) return <Icon loading />
+    const { activities, currUser, loading } = this.props
+
+    if (loading) return <Icon loading />
 
     return (
-      <Segment>
-        <Header as="h3">Your Feed</Header>
-        <div>
-          <List>
-            {_.map(this.data.activities, activity => (
-              <FeedItem key={activity._id} activity={activity} currUser={this.props.currUser} />
-            ))}
-          </List>
-        </div>
-      </Segment>
+      <div>
+        <Header as="h3" color="grey" textAlign="center" content="Activity" />
+        <Segment style={segmentStyle}>
+          {
+            <List>
+              {_.isEmpty(activities) ? (
+                <List.Item content="Your feed is empty right now" />
+              ) : (
+                _.map(activities, activity => (
+                  <FeedItem key={activity._id} activity={activity} currUser={currUser} />
+                ))
+              )}
+            </List>
+          }
+        </Segment>
+      </div>
     )
   },
 })
 
-export default FeedSegment
+export default createContainer(({ currUser }) => {
+  const handleActivity = Meteor.subscribe(
+    'activity.private.feed.recent.userId',
+    currUser._id,
+    currUser.profile.name,
+    SpecialGlobals.activity.feedLimit,
+  )
+
+  return {
+    activities: Activity.find(getFeedSelector(currUser._id, currUser.profile.name), {
+      sort: { timestamp: -1 },
+    }).fetch(),
+    currUser,
+    loading: !handleActivity.ready(),
+  }
+}, FeedSegment)

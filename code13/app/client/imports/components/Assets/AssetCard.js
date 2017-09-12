@@ -48,7 +48,6 @@ const AssetCard = React.createClass({
     currUser: PropTypes.object, // currently Logged In user (not always provided)
     canEdit: PropTypes.bool, // Whether changes (like stable, delete etc) are allowed. Can be false
     renderView: PropTypes.string, // One of null/undefined  OR  one of the keys of AssetCard.assetViewChoices
-    allowDrag: PropTypes.bool.isRequired, // True if drag is allowed
   },
 
   contextTypes: {

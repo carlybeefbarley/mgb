@@ -196,16 +196,13 @@ window.addEventListener('load', function() {
   // ----------------------------------------
 
   var $menu = document.querySelector('.mgb-main-menu')
-  var $heroCaption = document.querySelector('.mgb-hero-caption')
+  var menuBackgroundColor = window.getComputedStyle($menu).backgroundColor
 
   var setMenuTransparency = throttle(function(e) {
-    var menuRect = $menu.getBoundingClientRect()
-    var heroCaptionRect = $heroCaption.getBoundingClientRect()
-
     // how far faded in the menu is, according to its scroll position
     var menuFadeInRatio = Math.min(100, Math.max(0, window.scrollY * 1.5)) / 100
 
-    $menu.style.background = 'rgba(20, 150, 160, ' + menuFadeInRatio + ')'
+    $menu.style.background = menuBackgroundColor.replace(/rgb\((.*)\)/, 'rgba($1, ' + menuFadeInRatio + ')')
     $menu.style.boxShadow = [
       '0 ', menuFadeInRatio * 5, 'px ', menuFadeInRatio * 10, 'px rgba(0, 0, 0, ', menuFadeInRatio * 0.25, ')',
     ].join('')

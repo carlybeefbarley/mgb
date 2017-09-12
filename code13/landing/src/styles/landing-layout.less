@@ -1,9 +1,15 @@
 @import "mixins";
 
 // Keep colors in sync with GetStarted.css .hero colors
-.blue-gradient() {
-  background: #43518B;
-  background-image: linear-gradient(#68256D, #0070b0 80%, #0080ff);
+@mgb-gradient-1: #68256D;
+@mgb-gradient-2: #0070b0;
+@mgb-gradient-3: #0080ff;
+@mgb-gradient-fallback: mix(@mgb-gradient-1, @mgb-gradient-3);
+
+.mgb-gradient(@deg: 180deg) {
+  // fallback
+  background: @mgb-gradient-fallback;
+  background-image: linear-gradient(@deg, @mgb-gradient-1, @mgb-gradient-2 80%, @mgb-gradient-3);
 }
 
 /***************************************
@@ -34,10 +40,24 @@ section:not(:last-child),
 }
 
 /***************************************
+ *                Menu                 *
+ ***************************************/
+// Heads up!
+// Keep in sync with NavPanel.js const logoImageStyle
+// !important to override the theme, similar to inline styles in NavPanel.js
+.mgb-menu-logo {
+  display: block !important;
+  // match height of avatar image, allow width to fit
+  width: auto !important;
+  height: 2em !important;
+  filter: brightness(1.7) !important;
+}
+
+/***************************************
  *                Hero                 *
  ***************************************/
 .mgb-hero {
-  .blue-gradient();
+  .mgb-gradient();
   padding-top: 60px; // space for top fixed menu
 
   .mgb-hero-caption {
@@ -104,21 +124,20 @@ section:not(:last-child),
 
   .mgb-piled-panel {
     margin: 0 -0.5rem;
-    // keep in sync with .mgb-games shadow
-    .mgb-box-shadow-border(0.25rem);
+    .mgb-box-shadow-border(0.1rem);
     &.back {
-      background: #F4E285;
+      background: hsl(50, 75%, 65%);
       transform: perspective(4000px) rotateY(0) skewY(-0.5deg);
     }
 
     &.middle {
-      background: #F4A259;
+      background: hsl(28, 85%, 60%);
       /* Note that rotateY(5deg) caused layer/zindex issues on Chrome on iOS */
       transform: perspective(5000px) rotateY(0) skewY(1deg) scale(0.99);
     }
 
     &.front {
-      background: #BC4B51;
+      background: hsl(357, 53%, 50%);
       /* Note that rotateY(-2deg) caused layer/zindex issues on Chrome on iOS */
       transform: perspective(3000px) rotateY(0) skewY(-0.5deg) scale(0.98);
     }
@@ -139,7 +158,6 @@ section:not(:last-child),
       border: 1px solid #000;
       background: #333;
       margin: -1rem auto;
-      // keep in sync with .mgb-piled-panel shadow
       .mgb-box-shadow-border(0.25rem);
     }
   }
@@ -157,7 +175,8 @@ section:not(:last-child),
  *             Alternating             *
  ***************************************/
 .mgb-alternating {
-  .blue-gradient();
+  //.mgb-gradient(180deg);
+  background-image: radial-gradient(@mgb-gradient-3, @mgb-gradient-2 60%, @mgb-gradient-1 120%);
   overflow: hidden;
 
   .mgb-alternating-media {
@@ -208,8 +227,7 @@ section:not(:last-child),
  ***************************************/
 footer {
   // keep pretty with section and .ui.container padding at top of file
-  padding: 10vh 0 5vh;
-  background: #373E40;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9em;
+  padding: 6vh 0 3vh !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 0.9em !important;
 }

@@ -7,6 +7,8 @@ import NavPanelItem from './NavPanelItem'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { logActivity } from '/imports/schemas/activity'
 
+// Heads up!
+// Keep in sync with landing-layout.less .mgb-menu-logo
 const logoImageStyle = {
   display: 'block',
   // match height of avatar image, allow width to fit

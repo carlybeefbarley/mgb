@@ -4,7 +4,8 @@
   flex-direction: column;
   justify-content: center;
   flex: 1 0 auto;
-  /* Keep colors in sync with landing-layout.less .blue-gradient() */
+  /* Heads up! */
+  /* Keep colors in sync with landing-layout.less .mgb-gradient-# colors */
   background: #43518B;
   background-image: linear-gradient(#68256D, #0070b0 80%, #0080ff);
   box-shadow: inset 0 0.2em 1em rgba(0, 0, 0, 0.2);

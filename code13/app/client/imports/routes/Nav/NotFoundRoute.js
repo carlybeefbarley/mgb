@@ -22,7 +22,7 @@ const NotFoundRoute = ({ currUser }) => (
             <Button size="huge" primary content="Keep Going" icon="right arrow" />
           </QLink>
         ) : (
-          <QLink to="/learn/getStarted">
+          <QLink to="/learn/get-started">
             <Button size="huge" primary content="Get Started" icon="right arrow" />
           </QLink>
         )}

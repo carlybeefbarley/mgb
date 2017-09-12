@@ -56,7 +56,7 @@ const HomeHeroBanner = ({ userId, username }) => (
           <br />
           <Button
             as={QLink}
-            to={`/learn/getstarted`}
+            to={`/learn/get-started`}
             secondary
             size="huge"
             style={{ marginTop: '1.5em', marginRight: '0.5em' }}

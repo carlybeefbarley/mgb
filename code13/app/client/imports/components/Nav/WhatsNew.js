@@ -56,7 +56,7 @@ class WhatsNew extends React.Component {
     return (
       <span>
         <span style={transformContainerStyle}>
-          <QLink to="/whatsnew" style={{ pointerEvents: 'all' }}>
+          <QLink to="/whats-new" style={{ pointerEvents: 'all' }}>
             <Image
               inline
               src="/images/mascots/penguin.png"

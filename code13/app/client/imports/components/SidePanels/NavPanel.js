@@ -45,7 +45,7 @@ export const getNavPanels = (currUser, showAll) => {
             subcomponent: 'Item',
             jrkey: 'whatsNew', // used for mgjr-np-mgb-{jrkey} id generation for joyride system
             explainClickAction: "What's New",
-            to: '/whatsnew',
+            to: '/whats-new',
             icon: 'gift',
             content: "What's New",
           },
@@ -69,7 +69,7 @@ export const getNavPanels = (currUser, showAll) => {
           {
             subcomponent: 'Item',
             jrkey: 'getStarted',
-            to: '/learn/getStarted',
+            to: '/learn/get-started',
             icon: { color: 'yellow', name: 'rocket' },
             content: 'Get Started',
           },

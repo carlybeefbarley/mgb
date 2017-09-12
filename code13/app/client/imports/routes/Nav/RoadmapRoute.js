@@ -90,7 +90,7 @@ const RoadmapRoute = () => (
         <Header as="h1" icon="road" content="Roadmap" />
         <AboutHeader />
         <p>
-          See the latest changes on the <QLink to="/whatsnew">What's New</QLink> page.
+          See the latest changes on the <QLink to="/whats-new">What's New</QLink> page.
         </p>
         <RenderRoadmap />
       </Container>

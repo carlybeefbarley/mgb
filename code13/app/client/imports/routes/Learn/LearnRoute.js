@@ -26,7 +26,7 @@ const learnTopLevelItems = [
     mascot: 'MgbLogo',
     icon: 'rocket',
     content: 'Get Started',
-    link: '/learn/getstarted',
+    link: '/learn/get-started',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
     desc: 'Learn to use this site - set up your profile, play a game, find friends, etc',

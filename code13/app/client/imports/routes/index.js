@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import { Router, Route, browserHistory } from 'react-router'
+import { Redirect, Router, Route, browserHistory } from 'react-router'
 import urlMaker from './urlMaker'
 
 import App from './App'
@@ -65,7 +65,8 @@ export function clientStartup() {
         <Route path="/u/:username/play/:assetId" component={PlayGameRoute} name="Play Game" />
 
         <Route path="/" component={Home} />
-        <Route path="/whatsnew" component={WhatsNewRoute} name="What's New" />
+        <Redirect from="/whatsnew" to="/whats-new" />
+        <Route path="/whats-new" component={WhatsNewRoute} name="What's New" />
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />
 
         <Route path="/dashboard" component={DashboardRoute} name="Dashboard" />
@@ -76,7 +77,8 @@ export function clientStartup() {
         <Route path="/learn" component={LearnRoute} name="Learn" />
         <Route path="/learn/skills" component={LearnSkillsRoute} name="All Skills" />
         <Route path="/learn/skills/:skillarea" component={LearnSkillsAreaRoute} />
-        <Route path="/learn/getstarted" component={LearnGetStartedRoute} name="Get Started" />
+        <Redirect from="/learn/getstarted" to="/learn/get-started" />
+        <Route path="/learn/get-started" component={LearnGetStartedRoute} name="Get Started" />
 
         <Route path="/learn/code" component={LearnCodeRoute} name="Programming" />
         <Route path="/learn/code/modify" component={LearnCodeModifyRoute} name="Modify Games" />

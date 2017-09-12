@@ -12,7 +12,7 @@ const NoBadgesMsg = ({ ownsProfile }) => (
     {ownsProfile && (
       <span>
         {' '}
-        Earn your first badge by trying the <QLink to="/learn/getStarted">Get Started</QLink> tutorials!
+        Earn your first badge by trying the <QLink to="/learn/get-started">Get Started</QLink> tutorials!
       </span>
     )}
   </span>

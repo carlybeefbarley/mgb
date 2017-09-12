@@ -4,6 +4,7 @@ import { Button, Menu, Image, Icon } from 'semantic-ui-react'
 import NavPanelItem from './NavPanelItem'
 
 // imports to enable logout functionality
+import { showToast } from '/client/imports/routes/App'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { logActivity } from '/imports/schemas/activity'
 
@@ -304,8 +305,13 @@ const _doLogout = () => {
   const userName = Meteor.user().profile.name
   logActivity('user.logout', `Logging out "${userName}"`, null, null)
 
-  Meteor.logout()
-  utilPushTo({}, '/')
+  Meteor.logout(error => {
+    if (error) {
+      showToast(`Logout failed: '${error.toString()}'.  Refresh and try again.`, 'error')
+    } else {
+      utilPushTo(null, '/')
+    }
+  })
 }
 
 class NavPanel extends React.Component {

@@ -5,7 +5,7 @@ import Footer from '/client/imports/components/Footer/Footer'
 import mgbReleaseInfo, { olderHistoryPath } from '/imports/mgbReleaseInfo'
 import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 import moment from 'moment'
-import { Segment, Container, Header, List, Item, Grid, Icon } from 'semantic-ui-react'
+import { Segment, Container, Header, List, Message, Item, Grid, Icon } from 'semantic-ui-react'
 import AboutHeader from './AboutHeader'
 
 const _releaseStateSymbols = {
@@ -59,7 +59,7 @@ const WhatsNewRoute = React.createClass({
         .then(data => this.setState({ olderHistoryJsonResult: JSON.parse(data) }))
         .catch(err => console.error(`Unable to load olderHistoryPath via ajax: ${err.toString()}`))
     }
-    this.handleUserSawNews(this.latestRelTimestamp())
+    this.handleUserSawNews(this.latestReleaseTimestamp())
   },
 
   /** This is called when the WhatsNew popup has been clicked and shown.
@@ -81,7 +81,7 @@ const WhatsNewRoute = React.createClass({
     }
   },
 
-  latestRelTimestamp: function() {
+  latestReleaseTimestamp: function() {
     return mgbReleaseInfo.releases[0].timestamp
   },
 
@@ -115,8 +115,8 @@ const WhatsNewRoute = React.createClass({
 
   renderNews: function() {
     const { releaseIdx } = this.state
-    const rel = this.getCombinedReleaseInfo()[releaseIdx]
-    const ago = moment(new Date(rel.timestamp)).fromNow()
+    const release = this.getCombinedReleaseInfo()[releaseIdx]
+    const ago = moment(new Date(release.timestamp)).fromNow()
 
     return (
       <Grid columns={2} padded relaxed divided className="equal height">
@@ -126,12 +126,13 @@ const WhatsNewRoute = React.createClass({
         </Grid.Column>
         <Grid.Column>
           <Header as="h2">
-            Changes in v{rel.id.ver}
+            Changes in v{release.id.ver}
             <Header.Subheader>
-              <ReleaseId releaseId={rel.id} />&emsp;{ago}
+              <ReleaseId releaseId={release.id} />&emsp;{ago}
             </Header.Subheader>
           </Header>
-          {this.renderNewsRelChangesColumn()}
+          {release.summary && <Message info icon="bullhorn" content={release.summary} />}
+          {this.renderNewsReleaseChangesColumn()}
         </Grid.Column>
       </Grid>
     )
@@ -139,29 +140,29 @@ const WhatsNewRoute = React.createClass({
 
   /** This is the left column. Uses React's state.releaseIdx */
   renderNewsMgbVersionsColumn: function() {
-    const rels = this.getCombinedReleaseInfo()
-    const activeRelIdx = this.state.releaseIdx
+    const releases = this.getCombinedReleaseInfo()
+    const activeReleaseIdx = this.state.releaseIdx
 
     return (
       <Item.Group link>
-        {rels.map((r, idx) => {
+        {releases.map((release, idx) => {
           const sty = {
-            backgroundColor: `rgba(0,0,0, ${activeRelIdx === idx ? 0.08 : 0})`,
+            backgroundColor: `rgba(0,0,0, ${activeReleaseIdx === idx ? 0.08 : 0})`,
             padding: '6px',
           }
-          const ago = moment(new Date(r.timestamp)).fromNow()
+          const ago = moment(new Date(release.timestamp)).fromNow()
           return (
-            <Item key={r.timestamp} style={sty} onClick={this.handleReleaseClicked.bind(this, idx)}>
+            <Item key={release.timestamp} style={sty} onClick={this.handleReleaseClicked.bind(this, idx)}>
               <Item.Content>
                 <Item.Header>
-                  v{r.id.ver}&nbsp;&nbsp;&nbsp;<small>
-                    <ReleaseId releaseId={r.id} />
+                  v{release.id.ver}&nbsp;&nbsp;&nbsp;<small>
+                    <ReleaseId releaseId={release.id} />
                   </small>
                 </Item.Header>
                 <Item.Meta>{ago}</Item.Meta>
                 <Item.Description>
                   <List>
-                    {r.changes.map((c, idx) => (
+                    {release.changes.map((c, idx) => (
                       <List.Item key={idx} icon={_getIconForChangeType(c.type)} description={c.changeName} />
                     ))}
                     <br />
@@ -176,33 +177,33 @@ const WhatsNewRoute = React.createClass({
   },
 
   /** This is the right column. Uses React's state.releaseIdx */
-  renderNewsRelChangesColumn: function() {
-    const relIdx = this.state.releaseIdx
-    const rel = this.getCombinedReleaseInfo()[relIdx]
+  renderNewsReleaseChangesColumn: function() {
+    const { releaseIdx } = this.state
+    const release = this.getCombinedReleaseInfo()[releaseIdx]
 
     return (
       <Item.Group icon>
-        {rel.changes.map(c => {
+        {release.changes.map(change => {
           return (
-            <Item key={c.changeName} className="animated fadeIn">
-              {_getIconForChangeType(c.type, 'large')}&emsp;
+            <Item key={change.changeName} className="animated fadeIn">
+              {_getIconForChangeType(change.type, 'large')}&emsp;
               <Item.Content>
                 <Item.Header>
-                  <small>{c.changeName}</small>
+                  <small>{change.changeName}</small>
                 </Item.Header>
                 <Item.Meta>
-                  <p>{c.changeSummary}</p>
-                  {c.otherUrls && c.otherUrls.length && c.otherUrls.length > 0 ? (
+                  <p>{change.changeSummary}</p>
+                  {!_.isEmpty(change.otherUrls) && (
                     <ul>
-                      {c.otherUrls.map((u, idx) => (
+                      {change.otherUrls.map((otherUrl, idx) => (
                         <li key={idx}>
-                          <a href={u.href} key={idx} target="_blank">
-                            {u.txt}
+                          <a href={otherUrl.href} target="_blank" rel="noopener noreferrer">
+                            {otherUrl.txt}
                           </a>
                         </li>
                       ))}
                     </ul>
-                  ) : null}
+                  )}
                 </Item.Meta>
               </Item.Content>
             </Item>

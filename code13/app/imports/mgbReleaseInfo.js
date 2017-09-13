@@ -15,6 +15,60 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Wed Sep 13 2017 13:05:00 GMT-0700 (PDT)',
+
+      id: {
+        ver: '0.3.0',
+        state: 'Beta',
+        iteration: '4837',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      summary:
+        "It's been a while!  We've been working hard on a big release for you :) With this large update done, you can expect us to return to our more rapid release schedule.",
+
+      changes: [
+        {
+          type: 'feature',
+          changeName: 'Dashboard',
+          changeSummary: 'Your shiny new Dashboard will help you focus on what is important.',
+          otherUrls: [
+            {
+              txt: 'Dashboard',
+              href: '/dashboard',
+            },
+          ],
+        },
+        {
+          type: 'improvement',
+          changeName: 'New UI',
+          changeSummary:
+            "We've updated the look and feel of the entire app, along with several usability improvements.",
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Better code tutorial pacing',
+          changeSummary:
+            'We\'ve made it easier and quicker for you to get on to making games. We\'ve broken down code tutorials into two sections. The "Intro to Coding" section gives you just what you need to move on to game development concepts. We\'ve moved everything else into the "Advanced Coding" section, out of your way.',
+          otherUrls: [
+            { txt: 'Learn Code', href: '/learn/code' },
+            { txt: 'Intro to Coding', href: '/learn/code/intro' },
+            { txt: 'Advanced Coding', href: '/learn/code/advanced' },
+          ],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'We fixed bugs and usability issues across the entire system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Wed Jul 26 2017 13:20:00 GMT-0700 (PDT)',
 
       id: {

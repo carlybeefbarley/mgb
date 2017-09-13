@@ -5,6 +5,7 @@ import React from 'react'
 import { Card, Header, Image, Message, Popup } from 'semantic-ui-react'
 
 import { getFriendlyName } from '/imports/schemas/badges'
+import { showBadgePoup } from './NewBadgePopup'
 
 export default class BadgesList extends React.Component {
   static propTypes = {
@@ -114,6 +115,10 @@ export default class BadgesList extends React.Component {
           onMouseLeave={this.handleImageMouseLeave}
           inline
           style={imageStyle}
+          onClick={e => {
+            console.log(badge.name)
+            showBadgePoup(badge)
+          }}
         />
       )
 

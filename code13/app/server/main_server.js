@@ -37,7 +37,7 @@ import '/imports/schemas/flags'
 import '/imports/schemas/denyRules'
 import '/server/imports/publications'
 
-import './EmailTemplates'
+import './EmailTemplates/main'
 import './CreateUser'
 import '/server/imports/restApi'
 import '/server/imports/jobs'

@@ -150,6 +150,12 @@ gulp.task('awspublish', function() {
   const publisher = g.awspublish.create(aws)
   const headers = { 'Cache-Control': 'max-age=315360000, no-transform, public' }
 
+  const isValidCloudFrontFile = file => {
+    const isDeleted = !!(file.s3 && file.s3.state && !file.s3.state.deleted)
+    const hasPath = !!file.path
+    return hasPath && !isDeleted
+  }
+
   return gulp
     .src('dist/**')
     .pipe(g.revAll.revision())
@@ -160,7 +166,11 @@ gulp.task('awspublish', function() {
     .pipe(publisher.sync())
     .pipe(publisher.cache())
     .pipe(g.awspublish.reporter())
-    .pipe(g.cloudfront(aws))
+    // Heads up!
+    // gulp-cloudfront doesn't play nicely with files deleted by publisher.sync()
+    // Make sure all files passed to cloudfront aren't deleted
+    // https://github.com/smysnk/gulp-cloudfront/issues/6
+    .pipe(g.if(isValidCloudFrontFile, g.cloudfront(aws)))
 })
 
 // ----------------------------------------

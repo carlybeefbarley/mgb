@@ -966,6 +966,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -2452,6 +2456,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -3041,6 +3049,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*******************************
@@ -4169,6 +4181,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -6238,7 +6254,7 @@ User Global Variables for MGB site
 
 .ui.blue.buttons .button,
 .ui.blue.button {
-  background-color: #2185d0;
+  background-color: #16b1ff;
   color: #ffffff;
   text-shadow: none;
   background-image: none;
@@ -6250,21 +6266,21 @@ User Global Variables for MGB site
 
 .ui.blue.buttons .button:hover,
 .ui.blue.button:hover {
-  background-color: #1678c2;
+  background-color: #00a7fb;
   color: #ffffff;
   text-shadow: none;
 }
 
 .ui.blue.buttons .button:focus,
 .ui.blue.button:focus {
-  background-color: #0d71bb;
+  background-color: #009dec;
   color: #ffffff;
   text-shadow: none;
 }
 
 .ui.blue.buttons .button:active,
 .ui.blue.button:active {
-  background-color: #1a69a4;
+  background-color: #0096e2;
   color: #ffffff;
   text-shadow: none;
 }
@@ -6273,7 +6289,7 @@ User Global Variables for MGB site
 .ui.blue.buttons .active.button:active,
 .ui.blue.active.button,
 .ui.blue.button .active.button:active {
-  background-color: #1279c6;
+  background-color: #00a7fb;
   color: #ffffff;
   text-shadow: none;
 }
@@ -6282,35 +6298,35 @@ User Global Variables for MGB site
 
 .ui.basic.blue.buttons .button,
 .ui.basic.blue.button {
-  box-shadow: 0px 0px 0px 1px #2185d0 inset !important;
-  color: #2185d0 !important;
+  box-shadow: 0px 0px 0px 1px #16b1ff inset !important;
+  color: #16b1ff !important;
 }
 
 .ui.basic.blue.buttons .button:hover,
 .ui.basic.blue.button:hover {
   background: transparent !important;
-  box-shadow: 0px 0px 0px 1px #1678c2 inset !important;
-  color: #1678c2 !important;
+  box-shadow: 0px 0px 0px 1px #00a7fb inset !important;
+  color: #00a7fb !important;
 }
 
 .ui.basic.blue.buttons .button:focus,
 .ui.basic.blue.button:focus {
   background: transparent !important;
-  box-shadow: 0px 0px 0px 1px #0d71bb inset !important;
-  color: #1678c2 !important;
+  box-shadow: 0px 0px 0px 1px #009dec inset !important;
+  color: #00a7fb !important;
 }
 
 .ui.basic.blue.buttons .active.button,
 .ui.basic.blue.active.button {
   background: transparent !important;
-  box-shadow: 0px 0px 0px 1px #1279c6 inset !important;
-  color: #1a69a4 !important;
+  box-shadow: 0px 0px 0px 1px #00a7fb inset !important;
+  color: #0096e2 !important;
 }
 
 .ui.basic.blue.buttons .button:active,
 .ui.basic.blue.button:active {
-  box-shadow: 0px 0px 0px 1px #1a69a4 inset !important;
-  color: #1a69a4 !important;
+  box-shadow: 0px 0px 0px 1px #0096e2 inset !important;
+  color: #0096e2 !important;
 }
 
 .ui.buttons:not(.vertical) > .basic.blue.button:not(:first-child) {
@@ -7862,7 +7878,7 @@ User Global Variables for MGB site
 
 .ui.primary.buttons .button,
 .ui.primary.button {
-  background-color: #2185d0;
+  background-color: #16b1ff;
   color: #ffffff;
   text-shadow: none;
   background-image: none;
@@ -7874,21 +7890,21 @@ User Global Variables for MGB site
 
 .ui.primary.buttons .button:hover,
 .ui.primary.button:hover {
-  background-color: #1678c2;
+  background-color: #00a7fb;
   color: #ffffff;
   text-shadow: none;
 }
 
 .ui.primary.buttons .button:focus,
 .ui.primary.button:focus {
-  background-color: #0d71bb;
+  background-color: #009dec;
   color: #ffffff;
   text-shadow: none;
 }
 
 .ui.primary.buttons .button:active,
 .ui.primary.button:active {
-  background-color: #1a69a4;
+  background-color: #0096e2;
   color: #ffffff;
   text-shadow: none;
 }
@@ -7897,7 +7913,7 @@ User Global Variables for MGB site
 .ui.primary.buttons .active.button:active,
 .ui.primary.active.button,
 .ui.primary.button .active.button:active {
-  background-color: #1279c6;
+  background-color: #00a7fb;
   color: #ffffff;
   text-shadow: none;
 }
@@ -7906,35 +7922,35 @@ User Global Variables for MGB site
 
 .ui.basic.primary.buttons .button,
 .ui.basic.primary.button {
-  box-shadow: 0px 0px 0px 1px #2185d0 inset !important;
-  color: #2185d0 !important;
+  box-shadow: 0px 0px 0px 1px #16b1ff inset !important;
+  color: #16b1ff !important;
 }
 
 .ui.basic.primary.buttons .button:hover,
 .ui.basic.primary.button:hover {
   background: transparent !important;
-  box-shadow: 0px 0px 0px 1px #1678c2 inset !important;
-  color: #1678c2 !important;
+  box-shadow: 0px 0px 0px 1px #00a7fb inset !important;
+  color: #00a7fb !important;
 }
 
 .ui.basic.primary.buttons .button:focus,
 .ui.basic.primary.button:focus {
   background: transparent !important;
-  box-shadow: 0px 0px 0px 1px #0d71bb inset !important;
-  color: #1678c2 !important;
+  box-shadow: 0px 0px 0px 1px #009dec inset !important;
+  color: #00a7fb !important;
 }
 
 .ui.basic.primary.buttons .active.button,
 .ui.basic.primary.active.button {
   background: transparent !important;
-  box-shadow: 0px 0px 0px 1px #1279c6 inset !important;
-  color: #1a69a4 !important;
+  box-shadow: 0px 0px 0px 1px #00a7fb inset !important;
+  color: #0096e2 !important;
 }
 
 .ui.basic.primary.buttons .button:active,
 .ui.basic.primary.button:active {
-  box-shadow: 0px 0px 0px 1px #1a69a4 inset !important;
-  color: #1a69a4 !important;
+  box-shadow: 0px 0px 0px 1px #0096e2 inset !important;
+  color: #0096e2 !important;
 }
 
 .ui.buttons:not(.vertical) > .basic.primary.button:not(:first-child) {
@@ -9252,6 +9268,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -10432,6 +10452,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -11735,6 +11759,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -14007,6 +14035,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -14623,15 +14655,15 @@ a.ui.inverted.teal.header:hover {
 /*--- Blue ---*/
 
 .ui.blue.header {
-  color: #2185d0 !important;
+  color: #16b1ff !important;
 }
 
 a.ui.blue.header:hover {
-  color: #1678c2 !important;
+  color: #00a7fb !important;
 }
 
 .ui.blue.dividing.header {
-  border-bottom: 2px solid #2185d0;
+  border-bottom: 2px solid #16b1ff;
 }
 
 /* Inverted */
@@ -15896,6 +15928,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -16247,7 +16283,7 @@ i.inverted.circular.teal.icon {
 /* Blue */
 
 i.blue.icon {
-  color: #2185d0 !important;
+  color: #16b1ff !important;
 }
 
 i.inverted.blue.icon {
@@ -16256,7 +16292,7 @@ i.inverted.blue.icon {
 
 i.inverted.bordered.blue.icon,
 i.inverted.circular.blue.icon {
-  background-color: #2185d0 !important;
+  background-color: #16b1ff !important;
   color: #ffffff !important;
 }
 
@@ -20925,6 +20961,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -21322,6 +21362,15 @@ img.ui.bordered.image {
 /*******************************
          Site Overrides
 *******************************/
+
+.ui.avatar.images .image,
+.ui.avatar.images img,
+.ui.avatar.images svg,
+.ui.avatar.image img,
+.ui.avatar.image svg,
+.ui.avatar.image {
+  border-radius: 0.3125em;
+}
 
 /*
   DO NOT MODIFY - This file has been generated and will be regenerated
@@ -22269,6 +22318,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -23882,6 +23935,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -24890,8 +24947,8 @@ a.ui.basic.teal.label:hover {
 
 .ui.blue.labels .label,
 .ui.blue.label {
-  background-color: #2185d0 !important;
-  border-color: #2185d0 !important;
+  background-color: #16b1ff !important;
+  border-color: #16b1ff !important;
   color: #ffffff !important;
 }
 
@@ -24899,8 +24956,8 @@ a.ui.basic.teal.label:hover {
 
 .ui.blue.labels .label:hover,
 a.ui.blue.label:hover {
-  background-color: #1678c2 !important;
-  border-color: #1678c2 !important;
+  background-color: #00a7fb !important;
+  border-color: #00a7fb !important;
   color: #ffffff !important;
 }
 
@@ -24914,22 +24971,22 @@ a.ui.blue.label:hover {
 /* Ribbon */
 
 .ui.blue.ribbon.label {
-  border-color: #1a69a4 !important;
+  border-color: #0096e2 !important;
 }
 
 /* Basic */
 
 .ui.basic.blue.label {
   background-color: #ffffff !important;
-  color: #2185d0 !important;
-  border-color: #2185d0 !important;
+  color: #16b1ff !important;
+  border-color: #16b1ff !important;
 }
 
 .ui.basic.blue.labels a.label:hover,
 a.ui.basic.blue.label:hover {
   background-color: #ffffff !important;
-  color: #1678c2 !important;
-  border-color: #1678c2 !important;
+  color: #00a7fb !important;
+  border-color: #00a7fb !important;
 }
 
 /*--- Violet ---*/
@@ -26438,6 +26495,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -27126,7 +27187,7 @@ ol.ui.list ol li,
   padding: 0.5em 0.5em;
   margin: 0em;
   color: rgba(0, 0, 0, 0.4);
-  border-radius: 0.5em;
+  border-radius: 0;
   transition: 0.1s color ease, 0.1s padding-left ease, 0.1s background-color ease;
 }
 
@@ -28657,6 +28718,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -30049,6 +30114,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -31316,6 +31385,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -32026,11 +32099,11 @@ User Global Variables for MGB site
 /* Blue */
 
 .ui.blue.segment:not(.inverted) {
-  border-top: 2px solid #2185d0;
+  border-top: 2px solid #16b1ff;
 }
 
 .ui.inverted.blue.segment {
-  background-color: #2185d0 !important;
+  background-color: #16b1ff !important;
   color: #ffffff !important;
 }
 
@@ -32297,8 +32370,26 @@ User Global Variables for MGB site
          Site Overrides
 *******************************/
 
-.ui.segment:not(.piled):not(.stacked) {
+.ui.segment:not(.piled):not(.stacked):not(.red):not(.orange):not(.yellow):not(.olive):not(.green):not(.teal):not(.blue):not(.violet):not(.purple):not(.pink):not(.brown):not(.grey):not(.black) {
   border: none;
+}
+
+.ui.segment.red,
+.ui.segment.orange,
+.ui.segment.yellow,
+.ui.segment.olive,
+.ui.segment.green,
+.ui.segment.teal,
+.ui.segment.blue,
+.ui.segment.violet,
+.ui.segment.purple,
+.ui.segment.pink,
+.ui.segment.brown,
+.ui.segment.grey,
+.ui.segment.black {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
 }
 
 .ui.segment:not(.piled):not(.raised):not(.stacked) {
@@ -33253,6 +33344,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -34394,6 +34489,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -36666,6 +36765,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -38326,7 +38429,7 @@ User Global Variables for MGB site
 .ui.grid > .blue.row,
 .ui.grid > .blue.column,
 .ui.grid > .row > .blue.column {
-  background-color: #2185d0 !important;
+  background-color: #16b1ff !important;
   color: #ffffff;
 }
 
@@ -39964,6 +40067,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -41657,8 +41764,8 @@ Floated Menu / Item
 
 .ui.menu .blue.active.item,
 .ui.blue.menu .active.item {
-  border-color: #2185d0 !important;
-  color: #2185d0 !important;
+  border-color: #16b1ff !important;
+  color: #16b1ff !important;
 }
 
 .ui.menu .violet.active.item,
@@ -41915,7 +42022,7 @@ Floated Menu / Item
 
 .ui.inverted.menu .blue.active.item,
 .ui.inverted.blue.menu {
-  background-color: #2185d0;
+  background-color: #16b1ff;
 }
 
 .ui.inverted.blue.menu .item:before {
@@ -43409,6 +43516,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -43943,12 +44054,12 @@ User Global Variables for MGB site
 
 .ui.blue.message {
   background-color: #dff0ff;
-  color: #2185d0;
-  box-shadow: 0px 0px 0px 1px #2185d0 inset, 0px 0px 0px 0px rgba(0, 0, 0, 0);
+  color: #16b1ff;
+  box-shadow: 0px 0px 0px 1px #16b1ff inset, 0px 0px 0px 0px rgba(0, 0, 0, 0);
 }
 
 .ui.blue.message .header {
-  color: #1e77ba;
+  color: #00a7fb;
 }
 
 .ui.violet.message {
@@ -44989,6 +45100,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -45905,11 +46020,11 @@ User Global Variables for MGB site
 /* Blue */
 
 .ui.blue.table {
-  border-top: 0.2em solid #2185d0;
+  border-top: 0.2em solid #16b1ff;
 }
 
 .ui.inverted.blue.table {
-  background-color: #2185d0 !important;
+  background-color: #16b1ff !important;
   color: #ffffff !important;
 }
 
@@ -47374,6 +47489,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -47800,7 +47919,7 @@ User Global Variables for MGB site
 .ui.card .avatar img {
   width: 1.5em;
   height: 1.5em;
-  border-radius: 500rem;
+  border-radius: 0;
 }
 
 /*--------------
@@ -48161,13 +48280,13 @@ a.ui.card:hover,
 .ui.blue.cards > .card,
 .ui.cards > .blue.card,
 .ui.blue.card {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #2185d0, none;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #16b1ff, none;
 }
 
 .ui.blue.cards > .card:hover,
 .ui.cards > .blue.card:hover,
 .ui.blue.card:hover {
-  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #1678c2, 0px 2px 8px 0px #bcbdbd;
+  box-shadow: 0px 0px 0px 0px #d4d4d5, 0px 2px 0px 0px #00a7fb, 0px 2px 8px 0px #bcbdbd;
 }
 
 /* Violet */
@@ -49575,6 +49694,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -50917,6 +51040,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -52306,6 +52433,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -53894,6 +54025,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -54369,7 +54504,7 @@ User Global Variables for MGB site
 .ui.blue.statistics .statistic > .value,
 .ui.statistics .blue.statistic > .value,
 .ui.blue.statistic > .value {
-  color: #2185d0;
+  color: #16b1ff;
 }
 
 .ui.violet.statistics .statistic > .value,
@@ -55573,6 +55708,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -56888,6 +57027,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -57590,7 +57733,7 @@ User Global Variables for MGB site
 
 .ui.toggle.checkbox input:checked ~ .box:before,
 .ui.toggle.checkbox input:checked ~ label:before {
-  background-color: #2185d0 !important;
+  background-color: #16b1ff !important;
 }
 
 .ui.toggle.checkbox input:checked ~ .box:after,
@@ -57608,7 +57751,7 @@ User Global Variables for MGB site
 
 .ui.toggle.checkbox input:focus:checked ~ .box:before,
 .ui.toggle.checkbox input:focus:checked ~ label:before {
-  background-color: #0d71bb !important;
+  background-color: #009dec !important;
 }
 
 /*******************************
@@ -58626,6 +58769,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -59853,6 +60000,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -62601,6 +62752,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -63792,6 +63947,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -65392,6 +65551,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -67262,6 +67425,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -67801,7 +67968,7 @@ User Global Variables for MGB site
 /* Blue */
 
 .ui.blue.progress .bar {
-  background-color: #2185d0;
+  background-color: #16b1ff;
 }
 
 .ui.blue.inverted.progress .bar {
@@ -68871,6 +69038,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -70171,6 +70342,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -71671,6 +71846,10 @@ User Global Variables for MGB site
 --------------------*/
 
 /*-------------------
+       Colors
+--------------------*/
+
+/*-------------------
  Component Variables
 ---------------------*/
 
@@ -72731,6 +72910,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -73810,6 +73993,10 @@ User Global Variables for MGB site
 
 /*-------------------
         Page
+--------------------*/
+
+/*-------------------
+       Colors
 --------------------*/
 
 /*-------------------
@@ -75916,6 +76103,11 @@ span.CodeMirror-selectedtext {
   width: .8em;
 }
 
+* {
+  /* hide blue overlay on touch - android */
+  -webkit-tap-highlight-color: transparent;
+}
+
 .ui.sidebar {
   overflow: visible !important;
   z-index: 1000 !important;
@@ -75971,14 +76163,14 @@ body.dragging .accept-drop:after {
   width: 100%;
   z-index: 10;
   height: 100%;
-  background-color: rgba(255,255,255,0.5);
+  background-color: rgba(255, 255, 255, 0.5);
   text-align: center;
   font-size: 110%;
   border: solid 1px;
 }
 
 body.dragging .accept-drop:hover {
-  background-color: rgba(255,255,255,0.9);
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 .mgb-keycap-button {
@@ -75989,7 +76181,7 @@ body.dragging .accept-drop:hover {
   display: inline-block;
   min-width: 1.5em;
   text-align: center;
-  box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2),0 0 0 2px #ffffff inset;
+  box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #ffffff inset;
 }
 
 /***************************************
@@ -76117,6 +76309,11 @@ body.dragging .accept-drop:hover {
   max-width: 118px !important;
 }
 
+.mgb-grayscale {
+  color: rgba(0, 0, 0, 0.5) !important;
+  filter: grayscale(100%) contrast(70%) brightness(120%);
+}
+
 /***************************************
  *            MGB Toolbar              *
  ***************************************/
@@ -76205,7 +76402,7 @@ body.dragging .accept-drop:hover {
   z-index: 100;
   left: 50px;
   padding: 1px 3px;
-  border: solid 1px rgba(0,0,0,0.3);
+  border: solid 1px rgba(0, 0, 0, 0.3);
 }
 
 .lint-error:hover .lint-error-text {

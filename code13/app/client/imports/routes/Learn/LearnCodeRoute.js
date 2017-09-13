@@ -10,7 +10,7 @@ const learnCodeItems = [
   {
     mascot: 'bigguy',
     icon: 'code',
-    content: 'JavaScript Basics',
+    content: 'Intro to Coding',
     link: '/learn/code/intro',
     skillPath: 'code.js.intro',
     query: null,
@@ -27,22 +27,22 @@ const learnCodeItems = [
     skillPath: 'code.js.phaser',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `'Phaser' is a very popular game programming library written in JavaScript. These tutorials explain what Phaser is, and demonstrate how to use it to handle graphics, sound, maps, physics etc in your games.`,
+    desc: `Phaser is a popular game engine written in JavaScript. Learn to handle graphics, sound, maps, physics, and more.`,
   },
   {
     mascot: 'mole',
     icon: 'code',
-    content: 'Game Tutorials',
+    content: 'Make Games',
     link: '/learn/code/games',
     skillPath: 'code.js.games',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `These walkthoughs will show you how to create a game using your new PhaserJS game-dev skills.`,
+    desc: `These walkthroughs will show you how to create a game using your new Phaser game-dev skills.`,
   },
   {
     mascot: 'arcade_player',
     icon: 'code',
-    content: 'Modify games',
+    content: 'Modify Games',
     link: '/learn/code/modify',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
@@ -51,13 +51,16 @@ const learnCodeItems = [
   {
     mascot: 'javascript-logo',
     icon: 'code',
-    content: 'Advanced JavaScript',
+    content: 'Advanced Coding',
     link: '/learn/code/advanced',
     skillPath: 'code.js.advanced',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `Learn the advanced part of Javascript.
-    This covers more sophisticated concepts which you don't necessarily need to understand right at beginning of developing game. But it is always good to build your developer expertise.`,
+    desc: [
+      'Learn the advanced part of Javascript.',
+      "This covers concepts you don't necessarily need to develop a basic game.",
+      'But it is always good to build your developer expertise.',
+    ].join(' '),
   },
 ]
 
@@ -66,8 +69,8 @@ const LearnCodeRoute = ({ currUser, params }, context) => (
     <Divider hidden />
     <Grid.Column>
       <Header as="h1">
-        Programming
-        <Header.Subheader>With JavaScript and Phaser</Header.Subheader>
+        Code
+        <Header.Subheader>Learn to code games with JavaScript and Phaser.</Header.Subheader>
       </Header>
     </Grid.Column>
     <Grid.Column>

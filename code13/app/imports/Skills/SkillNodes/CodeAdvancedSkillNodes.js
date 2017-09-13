@@ -6,7 +6,7 @@ import C from './CommonSkillNodes'
 
 const CodeAdvancedSkillNodes = {
   $meta: {
-    name: 'Advanced JavaScript',
+    name: 'Advanced Coding',
     description: 'Click on an item and explore it',
   },
   initVariables: {

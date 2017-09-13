@@ -22,7 +22,7 @@ const CodeSkillNodes = {
   js: {
     $meta: {
       name: 'Javascript',
-      description: 'JavaScript Programming',
+      description: 'Coding with JavaScript',
     },
     lang: {
       $meta: {
@@ -278,7 +278,12 @@ const CodeSkillNodes = {
   'cloud-services': {
     $meta: {
       name: 'Cloud Services',
-      description: `Cloud Services are provided by internet-based servers to fulfill certain tasks, usually as some kind of Appplication Programming Interface (API). For example, Google provides Cloud Service APIs to enable your programs to search the internet for information`,
+      description: [
+        'Cloud Services are provided by internet-based servers to fulfill certain tasks,',
+        ' usually as some kind of Application Programming Interface (API).',
+        'For example, Google provides Cloud Service APIs to enable your programs to search',
+        ' the internet for information.',
+      ].join(''),
     },
     basics: {
       statements: C.En(1),

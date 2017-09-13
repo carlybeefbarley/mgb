@@ -58,10 +58,10 @@ const ProjectsSection = ({ username, projectNames }) => {
 }
 
 const learnCodeItemHeaders = {
-  intro: 'JavaScript Basics',
-  advanced: 'Advanced JavaScript',
+  intro: 'Intro to Coding',
+  advanced: 'Advanced Coding',
   phaser: 'Game Development Concepts',
-  games: 'Game Tutorials',
+  games: 'Make Games',
 }
 
 // For all images in the breadcrumb
@@ -131,15 +131,15 @@ const NavBarBreadcrumb = props => {
     //
     isLearnCodeChild && (
       <QLink key="learn-code" to={`/learn/code`}>
-        Programming
+        Code
       </QLink>
     ),
     //
-    // Learn > Code > Modify
+    // Learn > Code > Modify Games
     //
     isLearnCodeModifyChild && (
       <QLink key="learn-code" to={`/learn/code/modify`}>
-        Modify
+        Modify Games
       </QLink>
     ),
     //

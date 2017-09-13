@@ -10,7 +10,7 @@ const _propTypes = {
 }
 
 const skillsList = [
-  { icon: 'code', msg: 'Programming', link: '/learn/code' },
+  { icon: 'code', msg: 'Coding', link: '/learn/code' },
   { icon: 'paint brush', msg: 'Pixel art', link: '/learn/art' },
   { icon: 'music', msg: 'Music & audio', link: '/learn/skills/audio' },
   { icon: 'idea', msg: 'Game design', link: '/learn/skills/design' },

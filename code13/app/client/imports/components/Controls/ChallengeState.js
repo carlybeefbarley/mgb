@@ -31,10 +31,11 @@ const ChallengeState = ({ ownername, asIcon, style }) => (
         </QLink>
       </div>
       <div style={{ marginTop: '1em' }}>
-        <QLink to="/learn/code/javascript">View the Programming Challenges</QLink>
-      </div>
-      <div style={{ marginTop: '1em' }}>
-        <QLink to="/learn/code/phaser">View the PhaserJS Game Programming Tutorials</QLink>
+        <QLink to="/learn/code/intro">Intro to Coding</QLink>
+        <br />
+        <QLink to="/learn/code/advanced">Advanced Coding</QLink>
+        <br />
+        <QLink to="/learn/code/phaser">Game Development Concepts</QLink>
       </div>
     </Popup.Content>
   </Popup>

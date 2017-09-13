@@ -5,9 +5,9 @@ import C from './CommonSkillNodes'
 
 const CodeGameSkillNodes = {
   $meta: {
-    name: 'Game Tutorials',
+    name: 'Make Games',
     description:
-      "These walkthoughs will show you how to create a game using your new PhaserJS game-dev skills. For each game there is a first tutorial that shows how to code the minimal 'base' of a game. Subsequent tutorials then add more features to that base.",
+      "These walkthroughs will show you how to create a game using your new Phaser game-dev skills. For each game there is a first tutorial that shows how to code the minimal 'base' of a game. Subsequent tutorials then add more features to that base.",
   },
   mole1: {
     $meta: {

@@ -13,7 +13,7 @@ const CodePhaserSkillNodes = {
   $meta: {
     name: 'Game Development Concepts',
     description:
-      "These concept tutorials use the 'PhaserJS' game engine for JavaScript. However, these are fundamental concepts that will apply to any game engine you use in future.",
+      'These concept tutorials use the Phaser game engine for JavaScript. However, these are fundamental concepts that will apply to any game engine you use in future.',
     assetExamples: ['!vault:phaser.groups.addSprite'], // Not used yet. Example for discussion
   },
   // Game:       C.En(1),

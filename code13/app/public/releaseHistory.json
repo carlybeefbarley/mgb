@@ -1242,7 +1242,7 @@
           "type": "feature",
           "changeName": "Code tutorials",
           "changeSummary":
-            "The Code tutorials have more content, specific PhaserJS skills, and also additional code-specific tutorial Asset capabilities, such as highlighting code regions",
+            "The Code tutorials have more content, specific Phaser skills, and also additional code-specific tutorial Asset capabilities, such as highlighting code regions",
           "otherUrls": []
         },
         {
@@ -1357,7 +1357,7 @@
           "type": "improvement",
           "changeName": "Code Mentor and autocomplete",
           "changeSummary":
-            "Updated the ctrl-enter autocomplete for more cases including 'import from', and updated the PhaserJS definitions and auto-help",
+            "Updated the ctrl-enter autocomplete for more cases including 'import from', and updated the Phaser definitions and auto-help",
           "otherUrls": []
         },
         {
@@ -3873,7 +3873,7 @@
           "type": "feature",
           "changeName": "Code Editor: ES6 and JSX",
           "changeSummary":
-            "The MGB Code Editor and Code Runner now support ECMAScript 6 and JSX. ECMAScript 6 (ES6) is sometimes called 'Javascript 2015' and provides many significant improvements beyond 'older' javascript versions. In order to maintain compatibility with all browsers, MGB automatically converts ES6 code into the older style of javascript before yoru game runs.  React is a popular Javascript framework for UI (User Interfaces) and is actually the one that we use for MGB itself.  We are looking at ways to let you write your own games' UI in React, but your game-loop code in game-oriented frameworks such as PhaserJS.. This will give a hybrid game+UI programming model that should make it easy to make games that also need a lot of Custom User Interface code",
+            "The MGB Code Editor and Code Runner now support ECMAScript 6 and JSX. ECMAScript 6 (ES6) is sometimes called 'Javascript 2015' and provides many significant improvements beyond 'older' javascript versions. In order to maintain compatibility with all browsers, MGB automatically converts ES6 code into the older style of javascript before yoru game runs.  React is a popular Javascript framework for UI (User Interfaces) and is actually the one that we use for MGB itself.  We are looking at ways to let you write your own games' UI in React, but your game-loop code in game-oriented frameworks such as Phaser.. This will give a hybrid game+UI programming model that should make it easy to make games that also need a lot of Custom User Interface code",
           "otherUrls": [
             {
               "txt": "JSX/React MGB Code example",

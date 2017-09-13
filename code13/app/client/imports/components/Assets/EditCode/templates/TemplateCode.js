@@ -1,7 +1,7 @@
 export const templateCode = [
   {
-    label: 'PhaserJS: Basic outline',
-    description: 'Empty functions for a PhaserJS game with preload(), create() and render()',
+    label: 'Phaser: Basic outline',
+    description: 'Empty functions for a Phaser game with preload(), create() and render()',
     code: `// Start to make a Phaser game.
 import Phaser from 'phaser'
 const game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', {
@@ -41,8 +41,8 @@ function render() {
   },
 
   {
-    label: 'PhaserJS: Moving player',
-    description: 'PhaserJs base template with player character that can move and jump',
+    label: 'Phaser: Moving player',
+    description: 'Phaser base template with player character that can move and jump',
     code: `// Start to make a Phaser game.
 
 import Phaser from 'phaser'
@@ -120,7 +120,7 @@ function render()
   },
 
   {
-    label: 'PhaserJS: Load MGB Map in Phaser',
+    label: 'Phaser: Load MGB Map in Phaser',
     description: 'Load a MGB Map into a Phaser Game',
     code: `
 

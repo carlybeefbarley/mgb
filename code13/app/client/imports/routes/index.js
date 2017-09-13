@@ -80,9 +80,10 @@ export function clientStartup() {
         <Redirect from="/learn/getstarted" to="/learn/get-started" />
         <Route path="/learn/get-started" component={LearnGetStartedRoute} name="Get Started" />
 
-        <Route path="/learn/code" component={LearnCodeRoute} name="Programming" />
+        <Route path="/learn/code" component={LearnCodeRoute} name="Code" />
         <Route path="/learn/code/modify" component={LearnCodeModifyRoute} name="Modify Games" />
         <Route path="/learn/code/:item" component={LearnCodeRouteItem} />
+        <Redirect from="/learn/code/javascript" to="/learn/code/intro" />
 
         <Route path="/learn/art" component={LearnArtRoute} name="Pixel Art" />
 

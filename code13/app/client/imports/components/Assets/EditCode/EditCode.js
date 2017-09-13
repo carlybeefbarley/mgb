@@ -832,7 +832,7 @@ export default class EditCode extends React.Component {
         switch (draggedAsset.kind) {
           case 'graphic':
             url = `/api/asset/png/${draggedAsset.dn_ownerName}/${draggedAsset.name}`
-            code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.image( '${draggedAsset.name}', '${url}' )`
+            code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in Phaser:\n     game.load.image( '${draggedAsset.name}', '${url}' )`
             break
           case 'map': {
             event.preventDefault()
@@ -860,7 +860,7 @@ export default class EditCode extends React.Component {
           case 'sound':
           case 'music':
             url = `/api/asset/${draggedAsset.kind}/${draggedAsset.dn_ownerName}/${draggedAsset.name}/${draggedAsset.kind}.mp3`
-            code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in PhaserJS:\n     game.load.audio( '${draggedAsset.name}', '${url}' )`
+            code = `// Load ${draggedAsset.kind} Asset '${draggedAsset.name}' in Phaser:\n     game.load.audio( '${draggedAsset.name}', '${url}' )`
             break
           case 'code':
             // TODO: support extensions or something similar - e.g. in case when importing css

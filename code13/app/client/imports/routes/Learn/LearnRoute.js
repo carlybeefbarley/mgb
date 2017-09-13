@@ -29,16 +29,16 @@ const learnTopLevelItems = [
     link: '/learn/get-started',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: 'Learn to use this site - set up your profile, play a game, find friends, etc',
+    desc: 'Learn to use this site - set up your profile, play a game, find friends, etc.',
   },
   {
     mascot: 'bigguy',
     icon: 'code',
-    content: 'Programming',
+    content: 'Code',
     link: '/learn/code',
     query: null,
     skillnodeTopLevelTag: 'code',
-    desc: 'Game programming with JavaScript and Phaser',
+    desc: 'Learn to code games with JavaScript and Phaser.',
   },
   {
     mascot: 'whale',
@@ -47,7 +47,7 @@ const learnTopLevelItems = [
     link: '/learn/skills',
     query: null,
     skillnodeTopLevelTag: '',
-    desc: 'Learn using skills-focused tutorials for coding, art, level design, etc',
+    desc: 'Learn using skills-focused tutorials for coding, art, level design, etc.',
   },
   /*
    {
@@ -56,7 +56,7 @@ const learnTopLevelItems = [
    content: 'Make/Mod Games',
    link: '/learn/games',
    query: null,
-   desc: 'Learn to make and modify some classic game types'
+   desc: 'Learn to make and modify some classic game types.',
    },
    */
 ]
@@ -88,7 +88,7 @@ const LearnRoute = ({ currUser, params }, context) => (
               <Header as="h2" style={headerStyle}>
                 <Icon name={area.icon} />&nbsp;{area.content}
               </Header>
-              <p style={descStyle}>{area.desc}.</p>
+              <p style={descStyle}>{area.desc}</p>
               {currUser &&
               'string' == typeof area.skillnodeTopLevelTag && (
                 <SkillsMap

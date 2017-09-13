@@ -26,8 +26,8 @@ export const skillAreaItems = [
     mascot: 'bigguy',
     mascotName: 'Codo',
     icon: 'code',
-    title: 'Programming',
-    desc: 'Code using JavaScript and game engines like Phaser',
+    title: 'Code',
+    desc: 'Code using JavaScript and Phaser.',
   },
   {
     tag: 'art',
@@ -36,7 +36,7 @@ export const skillAreaItems = [
     mascotName: 'Pixguin',
     icon: 'paint brush',
     title: 'Pixel Art',
-    desc: 'Create animated sprites, spritesheets and tilemaps for games',
+    desc: 'Create animated sprites, spritesheets and tilemaps for games.',
   },
   {
     tag: 'design',
@@ -45,7 +45,7 @@ export const skillAreaItems = [
     mascotName: 'Desi',
     icon: 'idea',
     title: 'Game Design',
-    desc: 'Design levels, balance gameplay mechanics and keep it fun',
+    desc: 'Design levels, balance gameplay mechanics and keep it fun.',
   },
   {
     tag: 'audio',
@@ -54,7 +54,7 @@ export const skillAreaItems = [
     mascotName: 'Mewse',
     icon: 'music',
     title: 'Music & Audio',
-    desc: 'Bring engagement and mood to games through music and sound',
+    desc: 'Bring engagement and mood to games through music and sound.',
   },
   {
     tag: 'analytics',
@@ -63,7 +63,7 @@ export const skillAreaItems = [
     mascotName: 'Hammer',
     icon: 'line chart',
     title: 'Analytics',
-    desc: 'Data beats opinions: analyze player activity and improve all the things',
+    desc: 'Data beats opinions: analyze player activity and improve all the things.',
   },
   {
     tag: 'writing',
@@ -72,7 +72,7 @@ export const skillAreaItems = [
     mascotName: 'Wryt',
     icon: 'book',
     title: 'Story Writing',
-    desc: 'Bring game stories to life through plot, character, narrative and dialog',
+    desc: 'Bring game stories to life through plot, character, narrative and dialog.',
   },
   {
     tag: 'marketing',
@@ -81,7 +81,7 @@ export const skillAreaItems = [
     mascotName: 'Marky',
     icon: 'flag outline',
     title: 'Marketing',
-    desc: 'Learn to publicise your game and get people to play it',
+    desc: 'Learn to publicise your game and get people to play it.',
   },
   {
     tag: 'community',
@@ -90,7 +90,7 @@ export const skillAreaItems = [
     mascotName: 'Slimy',
     icon: 'umbrella',
     title: 'Community',
-    desc: 'Learn to organize, communicate and playtest with player communities',
+    desc: 'Learn to organize, communicate and playtest with player communities.',
   },
   {
     tag: 'legal',
@@ -99,7 +99,7 @@ export const skillAreaItems = [
     mascotName: 'Gard',
     icon: 'law',
     title: 'Legal',
-    desc: 'Learn to protect your work and stay out of jail',
+    desc: 'Learn to protect your work and stay out of jail.',
   },
   {
     tag: 'business',
@@ -108,6 +108,6 @@ export const skillAreaItems = [
     mascotName: 'Bizni',
     icon: 'dollar',
     title: 'Business',
-    desc: 'Learn the best ways to make a good profit from your games',
+    desc: 'Learn the best ways to make a good profit from your games.',
   },
 ]

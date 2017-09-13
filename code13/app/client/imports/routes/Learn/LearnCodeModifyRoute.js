@@ -48,7 +48,7 @@ const LearnCodeModifyRoute = () => (
     <Divider hidden />
     <Grid.Column>
       <Header as="h1">
-        Modify games
+        Modify Games
         <Header.Subheader>
           Click on item to see the game's project page. You can then try the game, see how it is written and
           even fork + modify it as you wish

@@ -81,7 +81,7 @@ export const getNavPanels = (currUser, showAll) => {
             jrkey: 'learnCode',
             to: '/learn/code',
             icon: { name: 'code' },
-            content: 'Learn programming',
+            content: 'Code',
           },
           {
             subcomponent: 'Item',

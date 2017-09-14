@@ -484,6 +484,10 @@ export default class EditCode extends React.Component {
     this.tools = new SourceTools(this.ternServer, this.props.asset)
     this.tools.on('change', asset => {
       this.consoleLog(`Updated asset: /${asset.dn_ownerName}:${asset.name}`)
+      // TODO (@stauzs):
+      // looks like quick save can be skipped if automatic bundling (publishing) is not required
+      // before skipping quickSave - make sure that changes won't break anything else
+      // - at least hot reload relies on quickSave
       this.quickSave()
     })
     this.tools.on('error', err => {

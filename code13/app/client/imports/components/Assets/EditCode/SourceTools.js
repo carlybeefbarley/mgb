@@ -255,7 +255,7 @@ export default class SourceTools extends EventEmitter {
 
   normalizeName(sourceInfo) {
     sourceInfo.name = SourceTools.resolveModuleSource(
-      sourceInfo.name,
+      sourceInfo.name || sourceInfo.lib,
       sourceInfo.referrer || this.asset.dn_ownerName,
       sourceInfo.filename || sourceInfo.name,
     )
@@ -491,7 +491,7 @@ export default class SourceTools extends EventEmitter {
 
       const onChange = () => {
         this.loadImportedFile('/' + key, null, true)
-          .then(data => this._collectAndTranspile(data.url, data.data))
+          .then(data => this._collectAndTranspile(this.normalizeName(data).name, data.data))
           .then(() => {
             // guard here as async function - can be called even after component has been unmounted
             if (this.subscriptions[key]) this.emit('change', this.subscriptions[key].getAsset())

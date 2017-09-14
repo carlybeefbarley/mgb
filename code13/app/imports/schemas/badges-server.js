@@ -41,7 +41,7 @@ const _skillBasedBadges = [
   },
   {
     newBadgeName: badgeList.getStartedProject.name,
-    requiredSkills: ['getStarted.profile.createProject'],
+    requiredSkills: ['getStarted.projects.createProject'],
   },
   {
     newBadgeName: badgeList.getStartedAll.name,

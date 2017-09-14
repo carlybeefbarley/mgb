@@ -158,6 +158,12 @@ gulp.task('awspublish', function() {
 
   return gulp
     .src('dist/**')
+    // gulp-rev-all version hash depends on file order
+    // the gulp src stream doesn't guarantee order
+    // sort the files for deterministic hashing
+    // otherwise, when running consecutive deploys only the final deploy points to valid s3 objects
+    // https://github.com/smysnk/gulp-rev-all/issues/155
+    .pipe(g.sort())
     .pipe(g.revAll.revision())
     // don't gzip videos, S3 doesn't serve them with the right encoding headers by default
     // this is a shortcut since we'll be moving all videos to youtube anyway

@@ -2,16 +2,16 @@
 set -e
 
 confirm_app_build() {
-  echo "  Did you run a fresh build first (yes/no)? \c"
+  echo "  Did you run a fresh build first (y/N)? \c"
   read answer
-  if [ "$answer" = "yes" ]; then
+  if [ "$answer" = "y" ]; then
     echo ""
     echo "  Let's go!"
     echo ""
     exit 0
   fi
 
-  if [ "$answer" = "no" ]; then
+  if [ "$answer" = "n" ]; then
     echo ""
     echo "  Before Deploy:"
     echo "    1) cd to /app"
@@ -24,7 +24,7 @@ confirm_app_build() {
     exit 1
   fi
 
-  echo "  Please answer 'yes' or 'no'."
+  echo "  Please answer 'y' or 'n'."
   confirm_app_build
 }
 

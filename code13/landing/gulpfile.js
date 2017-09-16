@@ -12,9 +12,9 @@ const fs = require('fs-extra')
 // ============================================================
 
 const DEFAULT_ENV = {
-  BASE_URL: '',
-  MGB_URL: 'https://v2.mygamebuilder.com/',
-  CDN_URL: 'https://d1d15nbexzn633.cloudfront.net/',
+  MGB_LANDING_BASE_URL: '/',
+  MGB_APP_URL: 'https://v2.mygamebuilder.com/',
+  MGB_APP_CDN_URL: 'https://d1d15nbexzn633.cloudfront.net/',
 }
 
 process.env = Object.assign({}, DEFAULT_ENV, process.env)
@@ -22,6 +22,7 @@ process.env = Object.assign({}, DEFAULT_ENV, process.env)
 const makePath = (...paths) => paths.join('/').replace(/\/\//g, '/')
 const srcPath = (...paths) => makePath('src', ...paths)
 const distPath = (...paths) => makePath('dist', ...paths)
+const cdnPath = (...paths) => makePath('cdn', ...paths)
 const meteorBuildPath = (...paths) => makePath('../app/.meteor/local/build/programs/web.browser', ...paths)
 
 const paths = {
@@ -66,7 +67,7 @@ const uglifyOpts = {
 // Custom Plugins
 // ============================================================
 // Takes an HTML file and copies all the referenced assets from the meteor build
-const copyUsedMeteorAssets = () => through2.obj(function(file) {
+const copyUsedMeteorAssets = () => through2.obj(function(file, enc, cb) {
   const html = file.contents.toString()
   const $ = cheerio.load(html)
 
@@ -74,11 +75,24 @@ const copyUsedMeteorAssets = () => through2.obj(function(file) {
   const assetPaths = []
 
   attrs.forEach(attr => {
-    $(`[${attr}^="~"]`).each((i, node) => {
+    $(`[${attr}*="~"]`).each((i, node) => {
       const $node = $(node)
       const value = $node.attr(attr)
-      const buildPath = value.replace('~', '')
-      $node.attr(attr, (process.env.BASE_URL + buildPath ).replace(/\/\//g, '/'))
+
+      // https://host.com/path/~/app/images/borrowed.jpg
+      // ^-------prefix-------^ ^-------buildPath------^
+      //                       ^
+      //              MGB_LANDING_BASE_URL
+      const [prefix, buildPath] = /^(.*?)~(.*)$/.exec(value).slice(1)
+
+      // copied assets are served at the base url + the original build path
+      const publicPath = [process.env.MGB_LANDING_BASE_URL, buildPath]
+        .filter(Boolean)          // remove falsey
+        .join('')                 // make a string
+        .replace(/\/\/+/g, '/')   // replace all "//" with "/"
+
+      // replace the node attribute with the prefix + public path
+      $node.attr(attr, prefix + publicPath)
       assetPaths.push(buildPath)
     })
   })
@@ -97,17 +111,17 @@ const copyUsedMeteorAssets = () => through2.obj(function(file) {
 
   file.contents = Buffer.from($.html())
 
-  this.push(file)
+  cb(null, file)
 })
 
 // Replaces ${VAR} syntax with values from system environment variables
-const interpolateEnvVars = () => through2.obj(function(file) {
+const interpolateEnvVars = () => through2.obj(function(file, enc, cb) {
   const contents = file.contents.toString()
   const interpolated = contents.replace(/\{\{(.*?)\}\}/g, (match, p1) => process.env[p1.trim()])
 
   file.contents = Buffer.from(interpolated)
 
-  this.push(file)
+  cb(null, file)
 })
 
 // ============================================================
@@ -117,7 +131,17 @@ const interpolateEnvVars = () => through2.obj(function(file) {
 // ----------------------------------------
 // Publish
 // ----------------------------------------
-gulp.task('awspublish', function() {
+gulp.task('publish', (cb) => {
+  runSequence(
+    'clean',
+    'build',
+    'publish:make-cdn-files',
+    'publish:aws',
+    cb,
+  )
+})
+
+gulp.task('publish:aws', function() {
   const {
     AWS_S3_BUCKET_NAME,
     AWS_ACCESS_KEY_ID,
@@ -157,14 +181,7 @@ gulp.task('awspublish', function() {
   }
 
   return gulp
-    .src('dist/**')
-    // gulp-rev-all version hash depends on file order
-    // the gulp src stream doesn't guarantee order
-    // sort the files for deterministic hashing
-    // otherwise, when running consecutive deploys only the final deploy points to valid s3 objects
-    // https://github.com/smysnk/gulp-rev-all/issues/155
-    .pipe(g.sort())
-    .pipe(g.revAll.revision())
+    .src(cdnPath('**'))
     // don't gzip videos, S3 doesn't serve them with the right encoding headers by default
     // this is a shortcut since we'll be moving all videos to youtube anyway
     .pipe(g.if(file => !/.*\.webm$/.test(file.path), g.awspublish.gzip()))
@@ -177,6 +194,39 @@ gulp.task('awspublish', function() {
     // Make sure all files passed to cloudfront aren't deleted
     // https://github.com/smysnk/gulp-cloudfront/issues/6
     .pipe(g.if(isValidCloudFrontFile, g.cloudfront(aws)))
+})
+
+gulp.task('publish:make-cdn-files', () => {
+  const {
+    MGB_LANDING_BASE_URL,
+    MGB_LANDING_HOST,
+  } = process.env
+
+  if (!MGB_LANDING_BASE_URL)
+    throw new Error('Missing MGB_LANDING_BASE_URL env var, see README.md')
+
+  if (!MGB_LANDING_HOST)
+    throw new Error('Missing MGB_LANDING_HOST env var, see README.md')
+
+  return gulp
+    .src(distPath('**'))
+    // gulp-rev-all version hash depends on file order
+    // the gulp src stream doesn't guarantee order
+    // sort the files for deterministic hashing
+    // otherwise, when running consecutive deploys only the final deploy points to valid s3 objects
+    // https://github.com/smysnk/gulp-rev-all/issues/155
+    .pipe(g.sort())
+    // meta og:image tags require absolute urls
+    // rev-all by default does not update versioned asset names in absolute urls
+    // instead, we prefix all asset urls with the absolute urls and use a relative url for og:image
+    // this results in all assets having the correct absolute url
+    .pipe(g.revAll.revision({
+      prefix: 'https://' + [MGB_LANDING_HOST, MGB_LANDING_BASE_URL]
+        .filter(Boolean)
+        .join('')
+        .replace(/\/\/+/g, '/'),
+    }))
+    .pipe(gulp.dest(cdnPath()))
 })
 
 // ----------------------------------------
@@ -194,6 +244,7 @@ gulp.task('serve', () => {
 // Clean
 // ----------------------------------------
 gulp.task('clean', (cb) => {
+  del.sync(cdnPath())
   del.sync(distPath())
   cb()
 })
@@ -215,24 +266,24 @@ gulp.task('build', (cb) => {
 })
 
 gulp.task('build:fonts', () => {
-  gulp.src(paths.fonts.src)
+  return gulp.src(paths.fonts.src)
     .pipe(g.plumber())
     .pipe(gulp.dest(paths.fonts.dest))
     .pipe(g.connect.reload())
 })
 
 gulp.task('build:html', () => {
-  gulp.src(paths.html.src)
+  return gulp.src(paths.html.src)
     .pipe(g.plumber())
     .pipe(copyUsedMeteorAssets())
     .pipe(interpolateEnvVars())
-    .pipe(g.htmlmin({ collapseWhitespace: true }))
+    .pipe(g.htmlmin({ collapseWhitespace: true, removeComments: true }))
     .pipe(gulp.dest(paths.html.dest))
     .pipe(g.connect.reload())
 })
 
 gulp.task('build:images', () => {
-  gulp.src(paths.images.src)
+  return gulp.src(paths.images.src)
     .pipe(g.plumber())
     .pipe(g.imagemin())
     .pipe(gulp.dest(paths.images.dest))
@@ -240,7 +291,7 @@ gulp.task('build:images', () => {
 })
 
 gulp.task('build:js', () => {
-  gulp.src(paths.js.src)
+  return gulp.src(paths.js.src)
     .pipe(g.plumber())
     .pipe(interpolateEnvVars())
     .pipe(g.uglify(uglifyOpts))
@@ -249,7 +300,7 @@ gulp.task('build:js', () => {
 })
 
 gulp.task('build:styles', () => {
-  gulp.src(paths.styles.src)
+  return gulp.src(paths.styles.src)
     .pipe(g.plumber())
     .pipe(interpolateEnvVars())
     .pipe(g.less())

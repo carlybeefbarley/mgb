@@ -2,32 +2,52 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" >
-  <base href="{{ BASE_URL }}" >
+  <base href="{{ MGB_LANDING_BASE_URL }}" >
   <meta
     name="viewport"
     content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
   >
   <meta http-equiv="X-UA-Compatible" content="ie=edge" >
   <link rel="icon" href="~/app/images/favicons/favicon-310.png" >
-  <link rel="stylesheet" href="{{ BASE_URL }}/styles/main.css" >
+  <link rel="stylesheet" href="{{ MGB_LANDING_BASE_URL }}styles/main.css" >
   <link rel="stylesheet" href="~/merged-stylesheets.css" >
-  <meta property="og:image" content="~/app/images/mascots/team.png" />
-  <!-- TODO get all SEO tags in here-->
+
+  <meta property="og:site_name" content="MyGameBuilder" >
+  <meta property="og:url" content="https://build.games" >
+  <meta property="og:type" content="website" >
+  <meta property="og:title" content="MyGameBuilder" >
+  <meta property="og:description" content="Learn to build games in your browser. Make and play games together while learning real skills." >
+  <!-- Heads Up! Asset paths are converted to absolute urls by gulp-rev-all -->
+  <meta property="og:image" content="~/app/images/mascots/team-twitter-card.png" >
+  <meta property="og:image:type" content="image/png" >
+  <meta property="og:image:width" content="698" >
+  <meta property="og:image:height" content="366" >
+  <meta property="og:image:alt" content="MyGameBuilder mascot team" >
+  <meta property="og:locale" content="en_US" >
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@my_game_builder">
+  <meta name="twitter:creator" content="@stanchion">
+  <meta name="twitter:title" content="My Game Builder">
+  <meta name="twitter:description" content="Build games. Learn from friends. Have fun.">
+  <!-- Heads Up! Asset paths are converted to absolute urls by gulp-rev-all -->
+  <meta name="twitter:image" content="~/app/images/mascots/team-twitter-card.png">
+
   <title>MyGameBuilder</title>
 </head>
 <body>
 
 <!-- MENU -->
-<div class="mgb-main-menu ui inverted borderless top fixed menu">
-  <a class="item" href="{{ MGB_URL}}">
+<div class="mgb-main-menu ui inverted borderless top fixed menu" style="background: transparent;">
+  <a class="item" href="{{ MGB_APP_URL }}">
     <img class="mgb-menu-logo ui small image" src="~/app/images/logos/mgb/medium/01w.png" />
   </a>
 
   <div class="right menu">
-    <a class="item" href="{{ MGB_URL }}login">
+    <a class="item" href="{{ MGB_APP_URL }}login">
       Login
     </a>
-    <a class="item" href="{{ MGB_URL }}signup">
+    <a class="item" href="{{ MGB_APP_URL }}signup">
       <button class="ui small primary button">Signup</button>
     </a>
   </div>
@@ -58,9 +78,9 @@
             class="mgb-lazy"
             data-lazy-tag="iframe"
             data-lazy-scrolling="no"
-            data-lazy-src="{{ CDN_URL }}api/asset/code/bundle/hHncMnhmS7f5Mb5qa"
+            data-lazy-src="{{ MGB_APP_CDN_URL }}api/asset/code/bundle/hHncMnhmS7f5Mb5qa"
           >
-            <img src="{{ BASE_URL }}/img/game-placeholder.jpg" alt="Actor Map Editor" />
+            <img src="{{ MGB_LANDING_BASE_URL }}img/game-placeholder.jpg" alt="Actor Map Editor" />
           </div>
         </div>
       </div>
@@ -118,8 +138,8 @@
             Use Actors to build games without writing any code
           </span>
         </h1>
-        <div class="mgb-lazy" data-lazy-tag="video" data-lazy-src="{{ BASE_URL }}/img/actormapEditor.webm">
-          <img src="{{ BASE_URL }}/img/actormapEditor-cover.png" alt="Actor Map Editor" />
+        <div class="mgb-lazy" data-lazy-tag="video" data-lazy-src="{{ MGB_LANDING_BASE_URL }}img/actormapEditor.webm">
+          <img src="{{ MGB_LANDING_BASE_URL }}img/actormapEditor-cover.png" alt="Actor Map Editor" />
         </div>
       </div>
       <div class="mobile only tablet only column">
@@ -132,8 +152,8 @@
             Use our full featured code editor to write games
           </span>
         </h1>
-        <div class="mgb-lazy" data-lazy-tag="video" data-lazy-src="{{ BASE_URL }}/img/codeEditor.webm">
-          <img src="{{ BASE_URL }}/img/codeEditor-cover.png" alt="Code Editor" />
+        <div class="mgb-lazy" data-lazy-tag="video" data-lazy-src="{{ MGB_LANDING_BASE_URL }}img/codeEditor.webm">
+          <img src="{{ MGB_LANDING_BASE_URL }}img/codeEditor-cover.png" alt="Code Editor" />
         </div>
       </div>
     </div>
@@ -153,7 +173,7 @@
             Gain coding, design, team and business skills through real experiences with others.
           </span>
         </h2>
-        <a class="ui big primary fluid button" href="{{ MGB_URL }}learn/get-started" target="_blank">
+        <a class="ui big primary fluid button" href="{{ MGB_APP_URL }}learn/get-started" target="_blank">
           Start Learning
         </a>
       </div>
@@ -207,7 +227,7 @@
     <!-- TUTORIALS -->
     <div class="ui middle aligned equal width stackable grid">
       <div class="nine wide computer ten wide tablet column">
-        <img class="mgb-alternating-media ui image" src="{{ BASE_URL }}/img/tutorials_1200x720.png" >
+        <img class="mgb-alternating-media ui image" src="{{ MGB_LANDING_BASE_URL }}img/tutorials_1200x720.png" >
         <img class="mgb-alternating-mascot" src="~/app/images/mascots/bigguy.png" alt="Duck" >
       </div>
       <div class="seven wide computer six wide tablet column">
@@ -217,7 +237,7 @@
             Step-by-step programming/art/design tutorials & help systems <em>within</em> the game editors.
           </span>
         </h2>
-        <a class="ui big primary fluid button" href="{{ MGB_URL }}learn/get-started" target="_blank">Try
+        <a class="ui big primary fluid button" href="{{ MGB_APP_URL }}learn/get-started" target="_blank">Try
           it</a>
       </div>
     </div>
@@ -234,12 +254,12 @@
             Earn skill badges as you progress from beginner to guru.
           </span>
         </h2>
-        <a class="ui big primary fluid button" href="{{ MGB_URL }}learn/get-started" target="_blank">
+        <a class="ui big primary fluid button" href="{{ MGB_APP_URL }}learn/get-started" target="_blank">
           Earn Badges
         </a>
       </div>
       <div class="nine wide computer ten wide tablet column">
-        <img class="mgb-alternating-media ui image" src="{{ BASE_URL }}/img/profile.png" >
+        <img class="mgb-alternating-media ui image" src="{{ MGB_LANDING_BASE_URL }}img/profile.png" >
         <img class="mgb-alternating-mascot" src="~/app/images/mascots/ideaguy.png" alt="Duck" >
       </div>
     </div>
@@ -329,8 +349,8 @@
         <div class="ui equal width grid">
           <div class="column">
             <div class="ui small inverted horizontal divided link list">
-              <a class="item" href="{{ MGB_URL }}legal/tos" target="_blank">Terms and Conditions</a>
-              <a class="item" href="{{ MGB_URL }}legal/privacy" target="_blank">Privacy Policy</a>
+              <a class="item" href="{{ MGB_APP_URL }}legal/tos" target="_blank">Terms and Conditions</a>
+              <a class="item" href="{{ MGB_APP_URL }}legal/privacy" target="_blank">Privacy Policy</a>
               <a class="item" href="mailto:david@mycodebuilder.com">Contact Us</a>
             </div>
           </div>
@@ -340,23 +360,6 @@
   </div>
 </footer>
 
-<script src="{{ BASE_URL }}/js/main.js"></script>
-<script>
-  // google analytics
-  (function(i, s, o, g, r, a, m) {
-    i['GoogleAnalyticsObject'] = r
-    i[r] = i[r] || function() {
-      (i[r].q = i[r].q || []).push(arguments)
-    }, i[r].l = 1 * new Date()
-    a = s.createElement(o),
-      m = s.getElementsByTagName(o)[0]
-    a.async = 1
-    a.src = g
-    m.parentNode.insertBefore(a, m)
-  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga')
-
-  ga('create', 'UA-82379171-2', 'auto')
-  ga('send', 'pageview')
-</script>
+<script src="{{ MGB_LANDING_BASE_URL }}js/main.js"></script>
 </body>
 </html>

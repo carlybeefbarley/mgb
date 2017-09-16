@@ -25,11 +25,11 @@ Hack on `/src`, the site is rebuilt and reloaded automatically.
 HTML, JS, and LESS can use `{{ ENV_VAR }}` notation to interpolate system environment variables.
 
 ```html
-<base href="{{ BASE_URL }}">
-<img href="{{ BASE_URL }}/img/foo.png">
+<base href="{{ MGB_LANDING_BASE_URL }}">
+<img href="{{ MGB_LANDING_BASE_URL }}img/foo.png">
 ```
 ```bash
-$ BASE_URL=/other/site/ yarn build
+$ MGB_LANDING_BASE_URL=/other/site/ yarn build
 ```
 ```html
 <base href="/other/site/">

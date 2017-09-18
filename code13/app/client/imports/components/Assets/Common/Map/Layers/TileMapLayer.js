@@ -1,14 +1,11 @@
 'use strict'
-import _ from 'lodash'
 import React from 'react'
+import _ from 'lodash'
+
 import TileSelection from './../Tools/SelectedTile.js'
 import EditModes from './../Tools/EditModes.js'
-import LayerTypes from './../Tools/LayerTypes.js'
-import TileCollection from './../Tools/TileCollection.js'
 import AbstractLayer from './AbstractLayer.js'
 import TileHelper from './../Helpers/TileHelper.js'
-
-import BaseMapArea from '../BaseMapArea.js'
 
 import Plural from '/client/imports/helpers/Plural'
 
@@ -259,7 +256,10 @@ export default class TileMapLayer extends AbstractLayer {
         </div>
         <div>
           {Plural.numStr2(col.length, 'Selected Tile')}
-          {st}
+          {_.truncate(st, {
+            length: 100,
+            separator: /,? +/, // this will remove trailing comma also
+          })}
         </div>
       </div>
     )

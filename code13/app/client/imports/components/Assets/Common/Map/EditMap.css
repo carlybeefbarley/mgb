@@ -30,6 +30,8 @@
     -webkit-user-select: none;
     cursor: default;
     overflow: hidden;
+  /* fix fixed elements */
+  transform: translate(0, 0);
 }
 
 .MapPlayer {

@@ -229,6 +229,7 @@ export default class SourceTools extends EventEmitter {
           if (imp.url.trim())
             promises.push(
               this.loadImportedFile(imp.url, {
+                knownAs: imp.knownAs,
                 filename: imp.url,
                 referrer: _.get(additionalProps, 'referrer', this.asset.dn_ownerName),
               }),
@@ -352,7 +353,7 @@ export default class SourceTools extends EventEmitter {
             version,
           }),
         ).then(info => {
-          this.addFileToTern(filename, info.data)
+          this.addFileToTern(_.get(additionalProps, 'knownAs', filename), info.data)
           return info
         })
       }
@@ -384,7 +385,7 @@ export default class SourceTools extends EventEmitter {
           }),
           ignoreCache,
         ).then(info => {
-          this.addFileToTern(filename, info.data)
+          this.addFileToTern(_.get(additionalProps, 'knownAs', filename), info.data)
           return info
         })
       })
@@ -399,7 +400,7 @@ export default class SourceTools extends EventEmitter {
           version,
         }),
       ).then(info => {
-        this.addFileToTern(filename, info.data)
+        this.addFileToTern(_.get(additionalProps, 'knownAs', filename), info.data)
         return info
       })
     }
@@ -1197,6 +1198,7 @@ main = function(){
         im.pop()
       }
       ret.push({
+        knownAs: babelAST.importNames[i],
         url: im.join('.'),
         name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null,
       })

@@ -41,9 +41,12 @@ const FunctionDescription = React.createClass({
             return [
               <tr key={rowIdx} className={highlightRow === rowIdx ? 'active' : ''}>
                 {fields.map((fieldName, colIdx) => {
-                  return (
-                    <td key={colIdx}>{fieldName === '#' ? rowIdx + 1 : <code>{rowData[fieldName]}</code>}</td>
-                  )
+                  let value = rowData[fieldName]
+                  if (fieldName === 'name' && _.endsWith(value, '?')) {
+                    value = value.substring(0, value.length - 1) + ' (optional)'
+                  }
+
+                  return <td key={colIdx}>{fieldName === '#' ? rowIdx + 1 : <code>{value}</code>}</td>
                 })}
               </tr>,
               highlightRow === rowIdx && !!paramHelp ? (

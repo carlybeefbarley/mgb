@@ -671,10 +671,10 @@ export default class EditCode extends React.Component {
         })*/
       } else if (parts.length === 2) {
         // check if user exists at all? parts[0] - is username
-        const user = parts.shift()
-        mgbAjax(`/api/assets/code/${user}/?query=${parts.shift()}`, (err, listStr) => {
+        const userWithSlash = parts.shift()
+        mgbAjax(`/api/assets/code${userWithSlash}/?query=${parts.shift()}`, (err, listStr) => {
           if (err) return
-          this.showCustomCMHint(cm, JSON.parse(listStr), user.length + 1)
+          this.showCustomCMHint(cm, JSON.parse(listStr), userWithSlash.length + 1)
         })
       }
     }

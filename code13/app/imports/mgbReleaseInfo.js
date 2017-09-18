@@ -15,6 +15,55 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Mon Sep 18 2017 10:45:00 GMT-0700 (PDT)',
+
+      id: {
+        ver: '0.3.1',
+        state: 'Beta',
+        iteration: '4844',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Standardize terminology and navigation',
+          changeSummary: 'Terminology and navigation names were normalized and updated throughout the app.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Beautiful landing page social posts',
+          changeSummary:
+            'https://build.games now looks great in social posts.  Try it out on Twitter and Facebook!',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Code Editor hot reload',
+          changeSummary:
+            'Fixed a bug where global variables declared in an import were undefined in following imports.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Map Editor tile ids readout',
+          changeSummary: 'Fixed Map Editor bug where all tile ids would be drawn on the screen.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Create Project Badge',
+          changeSummary:
+            'This badge was not awarded when it should have been.  It will now be awarded properly the next time you are awarded a badge.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Wed Sep 13 2017 13:05:00 GMT-0700 (PDT)',
 
       id: {

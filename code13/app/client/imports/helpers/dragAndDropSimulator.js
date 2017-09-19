@@ -1,14 +1,14 @@
 import ReactTestUtils from 'react-addons-test-utils'
 const DRAG_THRESHOLD = 10
 const dragAndDropSimulator = {
-  simulateDragAndDrop: (src, target) => {
+  simulateDragAndDrop(src, target) {
     const initalEventData = {
       dataTransfer: {
         data: {},
-        setData: function(type, data) {
+        setData(type, data) {
           this.data[type] = data
         },
-        getData: function(type) {
+        getData(type) {
           return this.data[type]
         },
       },
@@ -30,7 +30,7 @@ const dragAndDropSimulator = {
   },
 
   // bind this event to touchstart DOM event
-  startDragOnTouch: e => {
+  startDragOnTouch(e) {
     let sx = 0,
       sy = 0
     if (e.touches.length) {
@@ -56,10 +56,10 @@ const dragAndDropSimulator = {
       const initalEventData = {
         dataTransfer: {
           data: {},
-          setData: function(type, data) {
+          setData(type, data) {
             this.data[type] = data
           },
-          getData: function(type) {
+          getData(type) {
             return this.data[type]
           },
         },

@@ -4,13 +4,13 @@ import validate from '/imports/schemas/validate'
 // This is all server-only code
 
 Meteor.methods({
-  'AccountsHelp.userNameTaken': function(username) {
+  'AccountsHelp.userNameTaken'(username) {
     return !!Accounts.findUserByUsername(username)
   },
 })
 
 Meteor.methods({
-  'AccountsHelp.emailTaken': function(email) {
+  'AccountsHelp.emailTaken'(email) {
     return !!Accounts.findUserByEmail(email)
   },
 })

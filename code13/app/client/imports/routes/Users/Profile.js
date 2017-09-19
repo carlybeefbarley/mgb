@@ -50,7 +50,7 @@ const UserProfileRoute = React.createClass({
     setTimeout(() => Hotjar('trigger', 'user-profile', this.props.currUser), 200)
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     const userId = this.props.user && this.props.user._id ? this.props.user._id : null
     let findOpts = {
       sort: projectSorters['createdNewest'],
@@ -67,7 +67,7 @@ const UserProfileRoute = React.createClass({
   /**
    *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
    */
-  handleProfileFieldChanged: function(changeObj) {
+  handleProfileFieldChanged(changeObj) {
     const fMsg = changeObj['profile.focusMsg']
     if (fMsg || fMsg === '') {
       // focusMessage has some additional handling.. activity Logging and also
@@ -85,7 +85,7 @@ const UserProfileRoute = React.createClass({
     })
   },
 
-  render: function() {
+  render() {
     const { user, ownsProfile, currUser, params } = this.props
     if (!user) return <ThingNotFound type="User" id={params.username} />
 
@@ -134,7 +134,7 @@ const UserProfileRoute = React.createClass({
     )
   },
 
-  renderUserInfo: function(user, ownsProfile, width) {
+  renderUserInfo(user, ownsProfile, width) {
     const { avatar, name, mgb1name, title, bio, focusMsg } = user.profile
     const editsDisabled = !ownsProfile || user.suIsBanned
     const channelName = makeChannelName({ scopeGroupName: 'User', scopeId: name })

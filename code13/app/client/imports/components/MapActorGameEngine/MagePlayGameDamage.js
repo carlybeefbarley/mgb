@@ -1,7 +1,7 @@
 import MgbActor from './MageMgbActor'
 
 const MagePlayGameDamage = {
-  checkForTouchDamageAtStartOfTween: function() {
+  checkForTouchDamageAtStartOfTween() {
     this.generateTicTable()
     const { actors, activeActors, G_tic, AA_player_idx } = this
     // Calculate moves (watch out for obstructions)
@@ -60,7 +60,7 @@ const MagePlayGameDamage = {
   },
 
   // This routine checks for aliveness, damageability, invulnerability, player armor and also plays sounds. Doesn't automatically calculate % chance of attack - sincethat depends on factors
-  applyDamageToActor: function(
+  applyDamageToActor(
     actorIdx,
     ap,
     damage,
@@ -94,7 +94,7 @@ const MagePlayGameDamage = {
     return damage != 0
   },
 
-  reduceDamageByPlayerArmor: function(baseDamage) {
+  reduceDamageByPlayerArmor(baseDamage) {
     const { inventory } = this
     let result = Math.floor(baseDamage * (100 - inventory.equipmentArmorEffect) / 100)
     if (result < 1 && baseDamage >= 1) result = Math.random() < result ? 1 : 0 // we'll turn this into a % chance to get 1 damage

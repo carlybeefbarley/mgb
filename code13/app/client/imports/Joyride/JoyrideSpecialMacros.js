@@ -42,7 +42,7 @@ const _mkNavPanelMacros = () => {
         showStepOverlay: true,
         skipIfUrlAt: dd.to,
         awaitCompletionTag: `mgbjr-CT-np-${dd.name}`,
-        position: position,
+        position,
         style: '%inverted%',
       },
     })
@@ -60,7 +60,7 @@ const _mkNavPanelMacros = () => {
           showStepOverlay: true,
           skipIfUrlAt: item.to,
           awaitCompletionTag: `mgbjr-CT-np-${dd.name}-${item.jrkey}`,
-          position: position,
+          position,
           style: '%inverted%',
         },
       })

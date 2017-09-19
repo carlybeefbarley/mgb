@@ -24,7 +24,7 @@ const AssetCreateSelectKind = React.createClass({
     joyrideCompleteTag(`mgbjr-CT-create-asset-kindinfo-${showMoreInfo ? 'less' : 'more'}`)
   },
 
-  render: function() {
+  render() {
     const { onChangeAsset, currUser, selectedKind } = this.props
     const { showMoreInfo } = this.state
     const activeAK = selectedKind ? AssetKinds[selectedKind] : null

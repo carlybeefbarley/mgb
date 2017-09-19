@@ -2,7 +2,7 @@ import _ from 'lodash'
 import swearjar from '/server/imports/swearjar/swearjar'
 
 Meteor.methods({
-  'Azzets.Name.isProfane': function(text) {
+  'Azzets.Name.isProfane'(text) {
     if (swearjar.profane(text))
       throw new Meteor.Error(
         401,
@@ -12,7 +12,7 @@ Meteor.methods({
 })
 
 Meteor.methods({
-  'Azzets.Description.isProfane': function(text) {
+  'Azzets.Description.isProfane'(text) {
     if (swearjar.profane(text))
       throw new Meteor.Error(
         401,

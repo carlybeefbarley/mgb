@@ -3,12 +3,12 @@ import dragAndDropSimulator from './dragAndDropSimulator.js'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 const DragNDropHelper = {
-  getAssetFromEvent: e => {
+  getAssetFromEvent(e) {
     const data = DragNDropHelper.getDataFromEvent(e)
     return data ? data.asset : null
   },
 
-  getDataFromEvent: e => {
+  getDataFromEvent(e) {
     e.preventDefault()
     const dataStr = e.dataTransfer.getData('text')
     if (!dataStr) return null
@@ -20,7 +20,7 @@ const DragNDropHelper = {
       return null
     }
   },
-  preventDefault: e => {
+  preventDefault(e) {
     e.stopPropagation()
     e.preventDefault()
     e.dataTransfer.effectAllowed = 'copy'
@@ -32,7 +32,7 @@ const DragNDropHelper = {
     }
     return false
   },
-  startSyntheticDrag: e => {
+  startSyntheticDrag(e) {
     dragAndDropSimulator.startDragOnTouch(e)
   },
   simulateDragAndDrop: (src, target) => dragAndDropSimulator.simulateDragAndDrop(src, target),

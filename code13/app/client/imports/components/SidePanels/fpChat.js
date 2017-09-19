@@ -171,7 +171,7 @@ const fpChat = React.createClass({
     settings: PropTypes.object,
   },
 
-  _calculateActiveChannelName: function() {
+  _calculateActiveChannelName() {
     const { subNavParam } = this.props // empty string means "default"
     const channelName = subNavParam // So this should be something like 'G_MGBBUGS_'.. i.e. a key into ChatChannels{}
     return isChannelNameValid(channelName)
@@ -179,7 +179,7 @@ const fpChat = React.createClass({
       : _previousChannelName || chatParams.defaultChannelName
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       view: 'comments', // Exactly one of ['comments', 'channels']
       pendingCommentsRenderForChannelName: '*', // Very explicit way to edge-detect to trigger code on first
@@ -191,7 +191,7 @@ const fpChat = React.createClass({
     }
   },
 
-  changeChannel: function(selectedChannelName) {
+  changeChannel(selectedChannelName) {
     joyrideCompleteTag(`mgbjr-CT-fp-chat-channel-select-${selectedChannelName}`)
     if (
       selectedChannelName &&
@@ -207,30 +207,30 @@ const fpChat = React.createClass({
     }
   },
 
-  handleChatChannelChange: function(newChannelName) {
+  handleChatChannelChange(newChannelName) {
     this.changeChannel(newChannelName)
     this.setState({ view: 'comments' })
   },
 
-  handleDocumentKeyDown: function(e) {
+  handleDocumentKeyDown(e) {
     if (e.keyCode === 27 && this.state.view === 'channels') this.setState({ view: 'comments' })
   },
 
-  handleDocumentClick: function() {
+  handleDocumentClick() {
     if (this.state.view === 'channels') this.setState({ view: 'comments' })
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     document.addEventListener('keydown', this.handleDocumentKeyDown)
     document.addEventListener('click', this.handleDocumentClick)
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     document.removeEventListener('keydown', this.handleDocumentKeyDown)
     document.removeEventListener('click', this.handleDocumentClick)
   },
 
-  componentDidUpdate: function() {
+  componentDidUpdate() {
     const { pendingCommentsRenderForChannelName } = this.state
     // There are some tasks to do the first time a comments/chat list has been rendered for a particular channel
     if (this.state.view === 'comments') {
@@ -260,7 +260,7 @@ const fpChat = React.createClass({
     }
   },
 
-  handleToggleChannelSelector: function(e) {
+  handleToggleChannelSelector(e) {
     // prevent document click from immediately closing the menu on toggle open
     e.preventDefault()
     e.nativeEvent.stopImmediatePropagation()
@@ -269,7 +269,7 @@ const fpChat = React.createClass({
     this.setState({ view: view === 'comments' ? 'channels' : 'comments' })
   },
 
-  doesChannelHaveUnreads: function(channelName, channelTimestamps) {
+  doesChannelHaveUnreads(channelName, channelTimestamps) {
     const latestForChannel = _.find(channelTimestamps, { _id: channelName })
     if (!latestForChannel) return false
 
@@ -278,7 +278,7 @@ const fpChat = React.createClass({
     return !lastReadByUser || latestForChannel.lastCreatedAt.getTime() > lastReadByUser.getTime()
   },
 
-  renderUnreadChannelIndicator: function(channelName, channelTimeStamps) {
+  renderUnreadChannelIndicator(channelName, channelTimeStamps) {
     if (!this.doesChannelHaveUnreads(channelName, channelTimeStamps)) return null
 
     return <Label empty circular color="red" size="mini" style={unreadChannelIndicatorStyle} />
@@ -287,7 +287,7 @@ const fpChat = React.createClass({
   /** Render the channel chooser list. This is shown when this.state.view == 'channels'
    *
    */
-  renderChannelSelector: function() {
+  renderChannelSelector() {
     const { view } = this.state
     const { currUser, currUserProjects, chatChannelTimestamps } = this.props
     const { settings } = this.context
@@ -495,7 +495,7 @@ const fpChat = React.createClass({
    * @param {String} channelName
    * @returns {String} something like project.name or asset.name or user.name
    */
-  findObjectNameForChannelName: function(channelName) {
+  findObjectNameForChannelName(channelName) {
     const channelObj = parseChannelName(channelName)
 
     // Global channels are a special case since they are a fixed mapping in chats.js
@@ -525,7 +525,7 @@ const fpChat = React.createClass({
     return 'TODO'
   },
 
-  render: function() {
+  render() {
     const { currUser, isSuperAdmin, user } = this.props
     const { view, pastMessageLimit } = this.state
     const channelName = this._calculateActiveChannelName()

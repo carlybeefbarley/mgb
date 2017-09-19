@@ -23,7 +23,7 @@ const AssetCreateNewRoute = React.createClass({
     setTimeout(() => Hotjar('trigger', 'asset-create-new', this.props.currUser), 200)
   },
 
-  render: function() {
+  render() {
     return (
       <Segment basic>
         <Helmet title="Create a new Asset" meta={[{ name: 'description', content: 'Assets' }]} />

@@ -25,7 +25,7 @@ const MapProps = {
     this.updateMapData(data)
   },
   updateScale(scale) {
-    this.setState({ scale: scale })
+    this.setState({ scale })
     this.saveMeta()
   },
   addImage(img) {

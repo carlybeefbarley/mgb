@@ -403,7 +403,7 @@ Meteor.methods({
    *  @param data.name           Name of Project. Must be unique for
    *  @param data.description    Description field
    */
-  'Projects.create': function(data) {
+  'Projects.create'(data) {
     // 0. Perform Input/User Validations
     checkIsLoggedInAndNotSuspended()
     checkMgb.projectName(data.name)
@@ -462,7 +462,7 @@ Meteor.methods({
   // PROJECT UPDATE
   //
 
-  'Projects.update': function(docId, data) {
+  'Projects.update'(docId, data) {
     // 0. Perform Input/User Validations
     checkIsLoggedInAndNotSuspended()
     check(docId, String)
@@ -502,7 +502,7 @@ Meteor.methods({
 
     return count
   },
-  'Projects.leave': function(projectId, userId) {
+  'Projects.leave'(projectId, userId) {
     checkIsLoggedInAndNotSuspended()
     check(projectId, String)
     check(userId, String)

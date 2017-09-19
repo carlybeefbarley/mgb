@@ -29,7 +29,7 @@ const ProjectMembersGET = React.createClass({
     handleLeave: PropTypes.func, // If provided, then this is the callback for the currentlyLoggedIn user to Leave the project. For super-paranoia, consider also passing in the username (but this is a matter of taste).
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     const project = this.props.project
     let idArray = project.memberIds.slice()
     const handleForUsers = Meteor.subscribe('users.getByIdList', idArray)
@@ -68,17 +68,17 @@ const ProjectMembersGET = React.createClass({
     ))
   },
 
-  handleRemove: function(user) {
+  handleRemove(user) {
     var handler = this.props.handleRemove
     handler && handler(user._id, user.profile.name)
   },
 
-  handleLeave: function(user) {
+  handleLeave(user) {
     var handler = this.props.handleLeave
     handler && handler(user._id, user.profile.name)
   },
 
-  render: function() {
+  render() {
     if (this.data.loading) return null
 
     return <div style={_nowrapStyle}>{this.renderMembers()}</div>

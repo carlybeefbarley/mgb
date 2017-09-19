@@ -38,7 +38,7 @@ const SkillTreeRoute = React.createClass({
     }
   },
 
-  render: function() {
+  render() {
     const { ownsProfile, isTopLevelRoute } = this.props
 
     const userSkills = ownsProfile ? this.context.skills : this.data.skills

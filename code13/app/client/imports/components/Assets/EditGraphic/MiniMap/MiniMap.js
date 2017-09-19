@@ -91,9 +91,9 @@ export default class MiniMap extends React.Component {
   redraw(editCanvas, w, h) {
     if (editCanvas) {
       this.backup = {
-        w: w,
-        h: h,
-        editCanvas: editCanvas,
+        w,
+        h,
+        editCanvas,
       }
     } else {
       if (!this.backup.editCanvas) return null
@@ -210,9 +210,7 @@ export default class MiniMap extends React.Component {
             onClick={this.toggleTessellated}
           />
         </div>
-        <Segment
-          style={{ float: 'right', clear: 'both', margin: 0, padding: 0, width: width, height: height }}
-        >
+        <Segment style={{ float: 'right', clear: 'both', margin: 0, padding: 0, width, height }}>
           <canvas
             ref="canvas"
             width={width}

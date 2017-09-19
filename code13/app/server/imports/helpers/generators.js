@@ -67,7 +67,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   }
   if (!asset) {
     return {
-      headers: headers,
+      headers,
       body: getBodyContent(body, asset),
     }
   }
@@ -91,7 +91,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
     api.queryParams && api.queryParams.hash
       ? Object.assign(
           {
-            etag: etag,
+            etag,
             'cache-control': cacheHeader,
           },
           headers,

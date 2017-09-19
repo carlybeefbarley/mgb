@@ -210,7 +210,7 @@ TutorialMentor.showHint = (cm, CodeMirror) => {
   }
 
   return cm.showHint({
-    hint: () => {
+    hint() {
       const token = cm.getTokenAt(cm.getCursor())
       if (token.type != 'string') {
         return null

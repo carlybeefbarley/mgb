@@ -41,7 +41,7 @@ var schema = {
 }
 
 Meteor.methods({
-  'ActivitySnapshot.setSnapshot': function(data) {
+  'ActivitySnapshot.setSnapshot'(data) {
     // Note that this DOES NOT require login.
     // TODO: Consider DDoS vectors here
 
@@ -97,7 +97,7 @@ const _snapshotActivity = (asset, passiveAction, url) => {
     toAssetName: asset && asset.name ? asset.name : '',
     toAssetKind: asset && asset.kind ? asset.kind : '',
 
-    passiveAction: passiveAction,
+    passiveAction,
     currentUrl: url ? url : window.location.href,
   }
 

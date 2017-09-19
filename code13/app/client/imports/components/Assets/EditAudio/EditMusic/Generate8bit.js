@@ -89,7 +89,7 @@ export default class Generate8bit extends React.Component {
     pianoParams.vv = Math.floor(Math.random() * 2) + 3
     let bpm = Math.floor(Math.random() * 100) + 80
     let bassVolume = Math.floor(Math.random() * 4) + 2
-    this.setState({ pianoParams: pianoParams, bpm: bpm, bassVolume: bassVolume })
+    this.setState({ pianoParams, bpm, bassVolume })
   }
 
   generateSample(song) {
@@ -201,14 +201,14 @@ export default class Generate8bit extends React.Component {
   changePianoParams(id, e) {
     let pianoParams = this.state.pianoParams
     pianoParams[id] = parseFloat(e.target.value)
-    this.setState({ pianoParams: pianoParams })
+    this.setState({ pianoParams })
     // console.log(this.state.pianoParams)
   }
 
   toggleEnchancePiano(e) {
     let pianoParams = this.state.pianoParams
     pianoParams.enchance = !pianoParams.enchance
-    this.setState({ pianoParams: pianoParams })
+    this.setState({ pianoParams })
   }
 
   render() {

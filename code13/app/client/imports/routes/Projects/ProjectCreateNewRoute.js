@@ -21,7 +21,7 @@ const ProjectCreateNewRoute = React.createClass({
     urlLocation: React.PropTypes.object,
   },
 
-  render: function() {
+  render() {
     const numUserOwnprojects = _.filter(
       this.props.currUserProjects,
       p => p.ownerId === this.props.currUser._id,
@@ -46,7 +46,7 @@ const ProjectCreateNewRoute = React.createClass({
     )
   },
 
-  handleCreateProjectClickFromComponent: function(pName) {
+  handleCreateProjectClickFromComponent(pName) {
     if (!pName || pName.length < 1) {
       showToast('TODO: Project name too short', 'warning')
       return

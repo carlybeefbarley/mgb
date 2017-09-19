@@ -7,7 +7,7 @@ let npm
 try {
   npm = Npm
 } catch (e) {
-  npm = { require: require }
+  npm = { require }
 }
 let parallel = function(...args) {
   return describe(...args)

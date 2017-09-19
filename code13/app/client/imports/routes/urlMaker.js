@@ -61,7 +61,7 @@ const urlMaker = {
    * @param query   An Object of querykey: queryvalue pairs
    * @param qGroup  A string with the queryGroup name, for example "APP". See _queryParamMap for definitions
    */
-  getQueryParamsMatchingQueryGroup: function(query, qGroup, excludedSymbolName) {
+  getQueryParamsMatchingQueryGroup(query, qGroup, excludedSymbolName) {
     return _.pickBy(
       query,
       (val, key) =>
@@ -77,12 +77,12 @@ const urlMaker = {
    * @param {string} [excludedSymbolName=null]  Optional - if present, then those entries from _queryParamMap will be excluded. The main case for this is the NavPanel auto-close
    * @returns {array}
    */
-  getCrossAppQueryParams: function(query, excludedSymbolName = null) {
+  getCrossAppQueryParams(query, excludedSymbolName = null) {
     return this.getQueryParamsMatchingQueryGroup(query, 'APP', excludedSymbolName)
   },
 
   /** This function checks that the query parameter is known (by symbolName) and returns the short form */
-  queryParams: function(symbolName) {
+  queryParams(symbolName) {
     const queryParamKey = _.findKey(_queryParamMap, ['symbolName', symbolName])
     if (!queryParamKey) {
       console.trace(`Unknown queryParam "${symbolName}" passed to urlMaker`)
@@ -92,7 +92,7 @@ const urlMaker = {
   },
 
   // and other arguments for params
-  pathTo: function(stableName) {
+  pathTo(stableName) {
     if (stableName === '/') return '/' // Just handle this specially so we don't complicate parsing with this special case
 
     // TODO: Validate this is a known path by looking in _appRouter for paths other than *

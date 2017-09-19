@@ -33,7 +33,7 @@ Meteor.publish('activity.public.recent.assetid', function(assetId, limitCount = 
 })
 
 Meteor.publish('activity.public.type.recent.userId', function(userId, activityType, limitCount = 10) {
-  let selector = { byUserId: userId, activityType: activityType }
+  let selector = { byUserId: userId, activityType }
   let options = { limit: limitCount, sort: { timestamp: -1 } }
 
   return Activity.find(selector, options)

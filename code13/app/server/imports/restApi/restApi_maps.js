@@ -23,7 +23,7 @@ const getMapAssetByUserName = function(kind = 'map') {
       {
         name: this.urlParams.name,
         dn_ownerName: this.urlParams.user,
-        kind: kind,
+        kind,
       },
       assetAccessibleProps,
     ),
@@ -37,7 +37,7 @@ RestApi.addRoute(
   'asset/map/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
       if (!asset) return err404
       return genAPIreturn(this, asset, getMapData)
@@ -51,7 +51,7 @@ RestApi.addRoute(
   'asset/actormap/:user/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       return getMapAssetByUserName.call(this, 'actormap')
     },
   },

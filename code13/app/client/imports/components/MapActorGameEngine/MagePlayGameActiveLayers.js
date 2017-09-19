@@ -19,7 +19,7 @@ const MagePlayGameActiveLayers = {
   //  3. Move layerForeground to be at the front (z-order) of the screen
   // Return value is the # of player items on the specified map
   // @@ todo - make sure the player is in a deterministic slot - either first or last - to make behavior more consistent
-  playPrepareActiveLayer: function(map, skipCreatingPlayers = false) {
+  playPrepareActiveLayer(map, skipCreatingPlayers = false) {
     var missingActors = 0
     var num_players = 0
     var layer = MgbMap.layerActive
@@ -151,14 +151,14 @@ const MagePlayGameActiveLayers = {
   },
 
   // playCleanupActiveLayer - called when a game ends on a map - undo what playPrepareActiveLayer did
-  playCleanupActiveLayer: function() {
+  playCleanupActiveLayer() {
     if (this.activeActors) {
       for (let AA = 0; AA < this.activeActors.length; AA++) this.activeActors[AA] = null
     }
     this.activeActors = []
   },
 
-  respawnRequiredActorsForMap: function() {
+  respawnRequiredActorsForMap() {
     // See the complementary code in playSpawnNewActor()
     if (this.respawnMemoryAutoRespawningActors[this.map.name]) {
       throw new Error('@dgolds 10/12/16 debugger: step through first time')
@@ -173,7 +173,7 @@ const MagePlayGameActiveLayers = {
   // These will always be added to the active layer, at the front of the draw list (since redraw's blitter uses the "painters algorithm").
   // Callers should set G_tic = null to invalidate the collision detection cache.   TODO: Recycle the actors (shots)
   // return -1 means failure
-  playSpawnNewActor: function(actorName, x, y, recycle = false, dropPersists = false, respawnId = null) {
+  playSpawnNewActor(actorName, x, y, recycle = false, dropPersists = false, respawnId = null) {
     // Put within bounds
     x = _.clamp(x, 0, this.map.metadata.width - 1)
     y = _.clamp(y, 0, this.map.metadata.height - 1)
@@ -248,7 +248,7 @@ const MagePlayGameActiveLayers = {
   },
 
   // returns a unique respawn id that can be later used to cancel respawning of this actor
-  markSpawnedActorForAutoRespawn: function(mapName, actorName, startX, startY) {
+  markSpawnedActorForAutoRespawn(mapName, actorName, startX, startY) {
     if (null == this.respawnMemoryAutoRespawningActors[mapName])
       this.respawnMemoryAutoRespawningActors[mapName] = {}
     const a = this.respawnMemoryAutoRespawningActors[mapName]
@@ -259,18 +259,18 @@ const MagePlayGameActiveLayers = {
     return s
   },
 
-  cancelSpawnedActorForAutoRespawn: function(mapName, respawnId) {
+  cancelSpawnedActorForAutoRespawn(mapName, respawnId) {
     if (respawnId && this.respawnMemoryAutoRespawningActors[mapName]) {
       var a = this.respawnMemoryAutoRespawningActors[mapName]
       if (a[respawnId]) a[respawnId].actorname = null
     }
   },
 
-  cancelAllSpawnedActorsForAutoRespawn: function() {
+  cancelAllSpawnedActorsForAutoRespawn() {
     this.respawnMemoryAutoRespawningActors = {}
   },
 
-  checkForGeneratedActorsThisSecond: function() {
+  checkForGeneratedActorsThisSecond() {
     const { activeActors, G_tweenCount } = this
 
     for (let AA = 0; AA < activeActors.length; AA++) {

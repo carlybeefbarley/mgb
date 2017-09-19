@@ -182,28 +182,28 @@ export const AssetKinds = {
   //   description: "(MGB Dev Team Only) MGB UI Prototyping tool"
   // },
   // Helper function that handles unknown asset kinds and also appends ' icon' for convenience
-  isValidKey: function(key) {
+  isValidKey(key) {
     return AssetKinds.hasOwnProperty(key)
   },
-  getIconClass: function(key) {
+  getIconClass(key) {
     return (AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : 'warning sign') + ' icon'
   },
-  getIconName: function(key) {
+  getIconName(key) {
     return AssetKinds.hasOwnProperty(key) ? AssetKinds[key].icon : 'warning sign'
   },
-  getColor: function(key) {
+  getColor(key) {
     return AssetKinds.hasOwnProperty(key) ? AssetKinds[key].color : 'pink'
   },
-  getLongName: function(key) {
+  getLongName(key) {
     return AssetKinds.hasOwnProperty(key) ? AssetKinds[key].longName : UAKerr
   },
-  getDescription: function(key) {
+  getDescription(key) {
     return AssetKinds.hasOwnProperty(key) ? AssetKinds[key].description : UAKerr
   },
-  getName: function(key) {
+  getName(key) {
     return AssetKinds.hasOwnProperty(key) ? AssetKinds[key].name : UAKerr
   },
-  getNamePlural: function(key) {
+  getNamePlural(key) {
     return AssetKinds.hasOwnProperty(key)
       ? AssetKinds[key].name + (AssetKinds[key].selfPlural ? '' : 's')
       : UAKerr

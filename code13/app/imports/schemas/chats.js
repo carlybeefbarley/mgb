@@ -293,7 +293,7 @@ export const ChatChannels = {
   //   subscopes:    {}
   // },
 
-  getIconClass: function(key) {
+  getIconClass(key) {
     return (ChatChannels.hasOwnProperty(key) ? ChatChannels[key].icon : 'warning sign') + ' icon'
   },
   sortedKeys: ['GENERAL', 'MGBBUGS', 'MGBHELP', 'RANDOM'],

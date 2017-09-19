@@ -120,7 +120,7 @@ const AssetEditRoute = React.createClass({
     handleSetCurrentlyEditingAssetInfo: PropTypes.func, // We should call this to set/clear current asset kind
   },
 
-  getInitialState: function() {
+  getInitialState() {
     this.getActivitySnapshots = () => this.data.activitySnapshots
     return {
       isForkPending: false,
@@ -148,7 +148,7 @@ const AssetEditRoute = React.createClass({
     }
   },
 
-  revertDataFromForkParent_ResultCallBack: function(error, result) {
+  revertDataFromForkParent_ResultCallBack(error, result) {
     if (error)
       showToast(`Unable to revert content to ForkParent for this asset: '${error.toString()}'`, 'error')
     else {
@@ -242,7 +242,7 @@ const AssetEditRoute = React.createClass({
     }
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     let assetId = this.props.params.assetId
     const assetHandler = (this.assetHandler = getAssetHandlerWithContent2(
       assetId,
@@ -288,12 +288,12 @@ const AssetEditRoute = React.createClass({
     }
   },
 
-  canCurrUserEditThisAsset: function(assetOverride = null) {
+  canCurrUserEditThisAsset(assetOverride = null) {
     const asset = assetOverride || this.data.asset
     return asset && this.canUserEditThisAssetIfUnlocked(asset) && !asset.isCompleted
   },
 
-  canUserEditThisAssetIfUnlocked: function(assetOverride = null) {
+  canUserEditThisAssetIfUnlocked(assetOverride = null) {
     if (this.data.loading || !this.props.currUser) return false // Need to at least be logged in and have the data to do any edits!
 
     const asset = assetOverride || this.data.asset
@@ -316,7 +316,7 @@ const AssetEditRoute = React.createClass({
     return isSameUserId(asset.ownerId, currUser._id)
   },
 
-  doForkAsset: function() {
+  doForkAsset() {
     if (!this.state.isForkPending) {
       const { asset } = this.data
       Meteor.call('Azzets.fork', asset._id, this.forkResultCallback)
@@ -325,7 +325,7 @@ const AssetEditRoute = React.createClass({
   },
 
   // This result object will come from Meteor.call("Azzets.fork")
-  forkResultCallback: function(error, result) {
+  forkResultCallback(error, result) {
     if (error) showToast(`Unable to create a forked copy of this asset: '${error.toString()}'`, 'error')
     else {
       showToast(`Loading your new Asset`, 'success')
@@ -342,7 +342,7 @@ const AssetEditRoute = React.createClass({
     this.setState({ isForkPending: false })
   },
 
-  render: function() {
+  render() {
     if (this.data.loading) return <Spinner loadingMsg="Loading Asset data" />
 
     const {
@@ -567,7 +567,7 @@ const AssetEditRoute = React.createClass({
     }
     this.m_deferredSaveObj = {
       assetId: asset._id,
-      changeText: changeText,
+      changeText,
       timeOfLastChange: new Date(),
     }
     if (content2Object) this.m_deferredSaveObj.content2Object = content2Object
@@ -594,7 +594,7 @@ const AssetEditRoute = React.createClass({
 
   // Note that this can be called directly by the Sub-components.
   // Primary use case is user hits 'save now' button, or 'play now'
-  handleSaveNowRequest: function() {
+  handleSaveNowRequest() {
     console.log('User request: Save deferred changes now')
     this._attemptToSendAnyDeferredChanges({ forceResend: true })
   },
@@ -672,7 +672,7 @@ const AssetEditRoute = React.createClass({
   },
 
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleAssetDescriptionChange: function(newText) {
+  handleAssetDescriptionChange(newText) {
     if (newText !== this.data.asset.text) {
       Meteor.call(
         'Azzets.update',
@@ -689,7 +689,7 @@ const AssetEditRoute = React.createClass({
 
   // TODO(@dgolds): This should probably also trigger a save of any pending content2
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleMetadataChange: function(newMetadata) {
+  handleMetadataChange(newMetadata) {
     Meteor.call(
       'Azzets.update',
       this.data.asset._id,
@@ -703,7 +703,7 @@ const AssetEditRoute = React.createClass({
   },
 
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleAssetNameChange: function(newName) {
+  handleAssetNameChange(newName) {
     if (newName !== this.data.asset.name) {
       Meteor.call(
         'Azzets.update',
@@ -725,7 +725,7 @@ const AssetEditRoute = React.createClass({
   },
 
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleLicenseChange: function(newLicense) {
+  handleLicenseChange(newLicense) {
     const oldLicense = this.data.asset.assetLicense
     if (newLicense !== oldLicense) {
       Meteor.call(
@@ -747,7 +747,7 @@ const AssetEditRoute = React.createClass({
   },
 
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleWorkStateChange: function(newWorkState) {
+  handleWorkStateChange(newWorkState) {
     const oldState = this.data.asset.workState
     if (newWorkState !== oldState) {
       Meteor.call(
@@ -769,7 +769,7 @@ const AssetEditRoute = React.createClass({
   },
 
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleDeletedStateChange: function(newIsDeleted) {
+  handleDeletedStateChange(newIsDeleted) {
     const { asset } = this.data
     const canEd = this.canCurrUserEditThisAsset()
     if (!asset) return
@@ -795,7 +795,7 @@ const AssetEditRoute = React.createClass({
     utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
 
-  handleStableStateChange: function(newIsCompleted) {
+  handleStableStateChange(newIsCompleted) {
     const { asset } = this.data
     if (!asset) return
 
@@ -820,7 +820,7 @@ const AssetEditRoute = React.createClass({
   },
 
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleToggleProjectName: function(pName) {
+  handleToggleProjectName(pName) {
     const { asset } = this.data
     const list = asset.projectNames || []
     const inList = _.includes(list, pName)
@@ -841,7 +841,7 @@ const AssetEditRoute = React.createClass({
     else logActivity('asset.project', `Added Asset to project '${pName}'`, null, asset)
   },
 
-  handleTaskApprove: function(hasSkill) {
+  handleTaskApprove(hasSkill) {
     const { asset } = this.data
     const skillPath = this.data.asset.skillPath
     const assetUserID = this.props.user._id

@@ -489,13 +489,13 @@ class AppUI extends React.Component {
               this.props.children &&
               React.cloneElement(this.props.children, {
                 // Make below props available to all routes.
-                user: user,
-                currUser: currUser,
-                hideHeaders: hideHeaders,
-                currUserProjects: currUserProjects,
-                hazUnreadAssetChat: hazUnreadAssetChat,
-                ownsProfile: ownsProfile,
-                isSuperAdmin: isSuperAdmin,
+                user,
+                currUser,
+                hideHeaders,
+                currUserProjects,
+                hazUnreadAssetChat,
+                ownsProfile,
+                isSuperAdmin,
                 availableWidth: mainAreaAvailableWidth,
                 handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
                 isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
@@ -546,7 +546,7 @@ class AppUI extends React.Component {
   //
   startSkillPathTutorial = skillPath => {
     const tutPath = makeTutorialAssetPathFromSkillPath(skillPath, 0)
-    this.addJoyrideSteps(tutPath, { replace: true, skillPath: skillPath })
+    this.addJoyrideSteps(tutPath, { replace: true, skillPath })
   }
 
   handleCompletedSkillTutorial = tutorialSkillPath => {
@@ -651,11 +651,11 @@ class AppUI extends React.Component {
   }
   joyrideHandlers = {
     // !!! these functions must not refer to this or do other funny stuff !!!
-    openAsset: (type, user, name) => {
+    openAsset(type, user, name) {
       // TODO: get location query ???? - or location query should be handled by QLink?
       utilPushTo(null, `/assetEdit/${type}/${user}/${name}`)
     },
-    highlightCode: (from, to) => {
+    highlightCode(from, to) {
       const evt = new Event('mgbjr-highlight-code')
       evt.data = { from, to }
       window.dispatchEvent(evt)

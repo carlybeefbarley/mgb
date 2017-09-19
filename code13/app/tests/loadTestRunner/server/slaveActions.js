@@ -16,11 +16,11 @@ const log = (clients, msg) => {
 }
 
 const events = {
-  test: (data, ws, clients, slaves) => {
+  test(data, ws, clients, slaves) {
     log(clients, 'From Slave:', data)
     sm(ws, 'test', { test: '123' })
   },
-  start: (data, ws, clients, slaves) => {
+  start(data, ws, clients, slaves) {
     if (!slaves.length) {
       sm(ws, 'error', 'No slaves available!')
       smAll(clients, 'runnerCompleted', data)
@@ -42,7 +42,7 @@ const events = {
       }, 1000)
     }
   },
-  runnerCompleted: (data, ws, clients, slaves) => {
+  runnerCompleted(data, ws, clients, slaves) {
     const slave = findSlave(ws, slaves)
     if (slave) {
       slave.jobs--
@@ -52,12 +52,12 @@ const events = {
     smAll(clients, 'runnerCompleted', data)
     //clientActions.events.runnerCompleted(data, ws, clients, slaves)
   },
-  updateSlaves: (data, ws, clients, slaves) => {
+  updateSlaves(data, ws, clients, slaves) {
     slaves.forEach(slave => {
       sm(slave.ws, 'update', data)
     })
   },
-  updateCompleted: (data, ws, clients, slaves) => {
+  updateCompleted(data, ws, clients, slaves) {
     log(
       clients,
       `Slave updated: ${ws.upgradeReq.headers['x-forwarded-for'] || ws.upgradeReq.connection.remoteAddress}`,

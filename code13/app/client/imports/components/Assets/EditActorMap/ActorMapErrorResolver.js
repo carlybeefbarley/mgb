@@ -71,7 +71,7 @@ export default class extends React.Component {
         </Segment.Group>
       </Segment>
     ),
-    [ActorHelper.errorTypes.MISSING_IMAGE]: (err, i) => {
+    [ActorHelper.errorTypes.MISSING_IMAGE](err, i) {
       const parts = err.actor.split(':')
       const name = parts.pop()
       const user = parts.pop()

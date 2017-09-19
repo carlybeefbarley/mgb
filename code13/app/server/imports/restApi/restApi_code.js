@@ -41,7 +41,7 @@ RestApi.addRoute(
   'asset/tutorial/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const idParts = this.urlParams.id.split(':')
 
       const asset =
@@ -73,7 +73,7 @@ RestApi.addRoute(
   'asset/code/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, updateAndNameFields)
       if (!asset) return err404
 
@@ -92,7 +92,7 @@ RestApi.addRoute(
   'asset/code/:owner/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {
@@ -123,7 +123,7 @@ RestApi.addRoute(
   'asset/code/bundle/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, updateAndNameFields)
       if (!asset) return err404
 
@@ -136,7 +136,7 @@ RestApi.addRoute(
   'asset/code/bundle/cdn/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, updateAndNameFields)
       if (!asset) return err404
 
@@ -150,7 +150,7 @@ RestApi.addRoute(
   'asset/code/bundle/cdn/:id/:username/:codename',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         {
           $or: [
@@ -184,7 +184,7 @@ RestApi.addRoute(
   'asset/code/bundle/:username/:codename',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {
@@ -207,7 +207,7 @@ RestApi.addRoute(
   'asset/code/bundle/script/:username/:codename',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {
@@ -237,7 +237,7 @@ RestApi.addRoute(
   'asset/code/es5/:username/:codename',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {
@@ -267,7 +267,7 @@ RestApi.addRoute(
   'asset/code/bundle/cdn/:username/:codename',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {

@@ -4,80 +4,80 @@ import EditModes from '../Tools/EditModes.js'
 import Camera from '../Camera'
 
 const TB = {
-  togglePreviewState: function() {
+  togglePreviewState() {
     this.options.preview = !this.options.preview
     this.setState({ preview: this.options.preview })
   },
 
-  play: function() {
+  play() {
     if (!this.state.isPlaying) this.props.handleSaveNowRequest()
     this.setState({ isPlaying: !this.state.isPlaying })
   },
 
-  getActiveLayer: function() {
+  getActiveLayer() {
     const c2 = this.mgb_content2
     return c2.layers[this.state.activeLayer]
   },
 
-  save: function() {
+  save() {
     this.quickSave('Manual save call')
   },
 
-  enableMode: function(mode) {
+  enableMode(mode) {
     // this is EditMap Scope
     this.enableMode(mode)
   },
 
-  toggleRandomMode: function() {
+  toggleRandomMode() {
     this.options.randomMode = !this.options.randomMode
     this.setState({ randomMode: this.options.randomMode })
   },
 
-  preview: function() {
+  preview() {
     this.options.preview = !this.options.preview
     this.setState({ preview: this.options.preview })
   },
 
-  resetCamera: function() {
+  resetCamera() {
     this.refs.map.resetCamera()
     this.setState({ preview: this.options.preview })
   },
-  fitMap: function() {
+  fitMap() {
     this.refs.map.fitMap()
     this.setState({ preview: this.options.preview })
   },
-  fitMapH: function(e) {
+  fitMapH(e) {
     this.refs.map.fitMap(Camera.HORIZONTAL)
     this.setState({ preview: this.options.preview })
   },
-  fitMapV: function(e) {
+  fitMapV(e) {
     this.refs.map.fitMap(Camera.VERTICAL)
     this.setState({ preview: this.options.preview })
   },
-  undo: function() {
+  undo() {
     this.doUndo()
   },
 
-  redo: function() {
+  redo() {
     this.doRedo()
   },
-  view: function() {
+  view() {
     this.refs.map.clearSelection()
     TB.enableMode.call(this, EditModes.view)
   },
-  stamp: function() {
+  stamp() {
     TB.enableMode.call(this, EditModes.stamp)
   },
 
-  terrain: function() {
+  terrain() {
     TB.enableMode.call(this, EditModes.terrain)
   },
 
-  fill: function() {
+  fill() {
     TB.enableMode.call(this, EditModes.fill)
   },
 
-  eraser: function() {
+  eraser() {
     TB.enableMode.call(this, EditModes.eraser)
     this.refs.map.clearSelection()
 
@@ -85,35 +85,35 @@ const TB = {
     activeLayer.deleteSelection && activeLayer.deleteSelection()
   },
 
-  drawRectangle: function() {
+  drawRectangle() {
     TB.enableMode.call(this, EditModes.drawRectangle)
   },
 
-  drawEllipse: function() {
+  drawEllipse() {
     TB.enableMode.call(this, EditModes.drawEllipse)
   },
 
-  drawShape: function() {
+  drawShape() {
     TB.enableMode.call(this, EditModes.drawShape)
   },
 
-  rectangle: function() {
+  rectangle() {
     TB.enableMode.call(this, EditModes.rectangle)
   },
 
-  wand: function() {
+  wand() {
     TB.enableMode.call(this, EditModes.wand)
   },
 
-  picker: function() {
+  picker() {
     TB.enableMode.call(this, EditModes.picker)
   },
 
-  clearSelection: function() {
+  clearSelection() {
     this.refs.map.clearSelection()
   },
 
-  togglePolygon: function() {
+  togglePolygon() {
     const l = this.refs.map.getActiveLayer()
     if (!l || !l.toggleFill) {
       return
@@ -122,11 +122,11 @@ const TB = {
     this.saveForUndo('Toggle Fill')
   },
 
-  rotateClockwise: function() {
+  rotateClockwise() {
     TB.rotate.call(this, true)
   },
 
-  rotateCounterClockwise: function() {
+  rotateCounterClockwise() {
     TB.rotate.call(this, false)
   },
 
@@ -142,7 +142,7 @@ const TB = {
     }
   },
 
-  flip: function() {
+  flip() {
     const l = this.refs.map.getActiveLayer()
     if (!l || !l.flip) {
       return
@@ -150,22 +150,22 @@ const TB = {
     l.flip()
   },
 
-  showGridToggle: function() {
+  showGridToggle() {
     this.options.showGrid = !this.options.showGrid
     this.setState({ showGrid: this.options.showGrid })
   },
 
-  toggleCtrlModifier: function() {
+  toggleCtrlModifier() {
     this.options.ctrlModifier = !this.options.ctrlModifier
     this.setState({ ctrlModifier: this.options.ctrlModifier })
   },
 
-  zoomIn: function() {
+  zoomIn() {
     this.refs.map && this.refs.map.zoomIn()
     this.refs.toolbar && this.refs.toolbar.setState({ zoomLevel: this.options.camera.zoom })
   },
 
-  zoomOut: function() {
+  zoomOut() {
     this.refs.map && this.refs.map.zoomOut()
     this.refs.toolbar && this.refs.toolbar.setState({ zoomLevel: this.options.camera.zoom })
   },

@@ -155,7 +155,7 @@ export const observeAsset = (selector, onReady, onChange = onReady, cachedObserv
   const observable = cachedObservable || {
     observer: null,
     getAssets: () => cursor.fetch(),
-    getAsset: () => {
+    getAsset() {
       const assets = cursor.fetch()
       if (assets.length > 0) {
         return assets[0]
@@ -168,7 +168,7 @@ export const observeAsset = (selector, onReady, onChange = onReady, cachedObserv
     stopped: () => stopped,
   }
   observable.subscription = Meteor.subscribe('assets.public.partial.bySelector', selector, {
-    onStop: () => {
+    onStop() {
       observable.observer && observable.observer.stop()
       // Something internally in Meteor makes subscription stop even before it's ready
       // ..this is caused by subscriptions called in ReactGetMeteorData() - as they
@@ -177,18 +177,18 @@ export const observeAsset = (selector, onReady, onChange = onReady, cachedObserv
       if (!onReadyCalled) observeAsset(selector, onReady, onChange, observable)
       else stopped = true
     },
-    onReady: () => {
+    onReady() {
       onReadyCalled = true
       if (ALLOW_OBSERVERS) {
         observable.observer = cursor.observeChanges({
-          changed: (id, changes) => {
+          changed(id, changes) {
             onChange(id, changes)
           },
         })
       }
       onReady && onReady()
     },
-    onError: (...args) => {
+    onError(...args) {
       console.log(' AssetFetcher:observe:observable:onError:', selector, ...args)
     },
   })
@@ -199,7 +199,7 @@ export const getAssetBySelector = (selector, onReady) => {
   // get meteor data issue
   setTimeout(() => {
     const sub = Meteor.subscribe('assets.public.partial.bySelector', selector, {
-      onReady: () => {
+      onReady() {
         const assets = PartialAzzets.find(selector).fetch()
         sub.stop()
         if (assets && assets.length) return onReady(assets[0])

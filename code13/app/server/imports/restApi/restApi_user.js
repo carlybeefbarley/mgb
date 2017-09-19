@@ -7,7 +7,7 @@ RestApi.addRoute(
   'user/name/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       'use strict'
 
       const user = Users.findOne({ 'profile.name': this.urlParams.name })

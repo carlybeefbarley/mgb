@@ -2,13 +2,13 @@ var FastBase64 = {
   chars: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
   encLookup: [],
 
-  Init: function() {
+  Init() {
     for (let i = 0; i < 4096; i++) {
       this.encLookup[i] = this.chars[i >> 6] + this.chars[i & 0x3f]
     }
   },
 
-  Encode: function(src) {
+  Encode(src) {
     var len = src.length
     var dst = ''
     var i = 0

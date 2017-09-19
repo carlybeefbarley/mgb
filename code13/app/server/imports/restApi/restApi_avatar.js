@@ -17,7 +17,7 @@ RestApi.addRoute(
   'user/:id/avatar',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const user = Meteor.users.findOne(userIdSelector(this.urlParams.id))
       if (user && user.profile.avatar) {
         const maxAge = SpecialGlobals.avatar.validFor
@@ -39,7 +39,7 @@ RestApi.addRoute(
   'user/:id/avatar/:expires',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const user = Meteor.users.findOne(userIdSelector(this.urlParams.id))
       if (user && user.profile.avatar) {
         let avatarLink

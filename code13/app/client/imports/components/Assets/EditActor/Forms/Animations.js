@@ -92,7 +92,7 @@ export default class Animations extends React.Component {
     let graphicFrames = []
     for (let i = 0; i < data.tilecount; i++) {
       let name = val + ' #' + (i + 1)
-      let frame = { name: name, checked: 1 }
+      let frame = { name, checked: 1 }
       graphicFrames.push(frame)
     }
     this.setState({ graphicFrameImports: graphicFrames })

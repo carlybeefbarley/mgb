@@ -93,7 +93,7 @@ export default class DropArea extends React.Component {
             if (this.isUnmounted) return
             this.subscription.onReady()
           },
-          onError: e => {
+          onError(e) {
             console.log('DropArea - subscription did not become ready', e)
           },
         },
@@ -152,7 +152,7 @@ export default class DropArea extends React.Component {
       if (owner == '[builtin]') return
 
       // use or not to use isDeleted here ???????
-      const selByName = { dn_ownerName: owner, name: name, kind: this.props.kind, isDeleted: false }
+      const selByName = { dn_ownerName: owner, name, kind: this.props.kind, isDeleted: false }
       const sel = this.props._id ? { _id: this.props._id, isDeleted: false } : selByName
 
       let assets = Azzets.find(sel).fetch()
@@ -174,7 +174,7 @@ export default class DropArea extends React.Component {
       return
     }
 
-    this.setState({ asset: asset, badAsset: null }, () => {
+    this.setState({ asset, badAsset: null }, () => {
       this.subscription && this.subscription.stop()
       // subscribe to new asset
       this.startSubscription(asset.dn_ownerName, asset.name, asset.kind)

@@ -118,7 +118,7 @@ export default class TileCache {
           h: ts.tileheight,
           x: pos.x,
           y: pos.y,
-          ts: ts,
+          ts,
         }
 
         this.tiles[gid] = tileInfo

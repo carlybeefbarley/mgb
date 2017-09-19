@@ -15,33 +15,33 @@ const knownLibs = {
   },
   phaser: {
     useGlobal: true,
-    src: function(version) {
+    src(version) {
       version = version || 'latest'
       return 'https://cdn.jsdelivr.net/phaser/' + version + '/phaser.js'
     },
-    min: function(version) {
+    min(version) {
       version = version || 'latest'
       return 'https://cdn.jsdelivr.net/phaser/' + version + '/phaser.min.js'
     },
     defs: () => ['/lib/tern/defs/phaser.old.json'],
   },
   react: {
-    src: function(version) {
+    src(version) {
       version = version || 'latest'
       return 'https://cdn.jsdelivr.net/react/' + version + '/react.js'
     },
-    min: function(version) {
+    min(version) {
       version = version || 'latest'
       return 'https://cdn.jsdelivr.net/react/' + version + '/react.min.js'
     },
     defs: () => ['/lib/tern/defs/react.json'],
   },
   'react-dom': {
-    src: function(version) {
+    src(version) {
       version = version || 'latest'
       return 'https://cdn.jsdelivr.net/react/' + version + '/react-dom.js'
     },
-    min: function(version) {
+    min(version) {
       version = version || 'latest'
       return 'https://cdn.jsdelivr.net/react/' + version + '/react-dom.min.js'
     },
@@ -49,11 +49,11 @@ const knownLibs = {
     defs: () => ['/lib/tern/defs/react.json'],
   },
   lodash: {
-    src: function(version) {
+    src(version) {
       version = version || 'latest'
       return 'https://cdn.jsdelivr.net/lodash/' + version + '/lodash.js'
     },
-    min: function(version) {
+    min(version) {
       version = version || 'latest'
       return 'https://cdn.jsdelivr.net/lodash/' + version + '/lodash.min.js'
     },

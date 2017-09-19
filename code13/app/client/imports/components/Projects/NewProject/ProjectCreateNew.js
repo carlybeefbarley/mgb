@@ -13,11 +13,11 @@ const ProjectCreateNew = React.createClass({
     currUserProjects: PropTypes.array, // Projects list for currently logged in user
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return { placeholderName: 'name for new project..' }
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       buttonActionPending: false, // True after the button has been pushed. so it doesn't get pushed twice
       newProjectName: '', // "" or a valid projectName string
@@ -30,7 +30,7 @@ const ProjectCreateNew = React.createClass({
    * @param {any} pName
    * @returns {Boolean}
    */
-  isProjectNameInUseByCurrUser: function(pName) {
+  isProjectNameInUseByCurrUser(pName) {
     const { currUser } = this.props
     if (!currUser) return false
 
@@ -42,7 +42,7 @@ const ProjectCreateNew = React.createClass({
     return exists
   },
 
-  render: function() {
+  render() {
     const { currUser } = this.props
     const newPname = this.state.newProjectName
     const inUse = this.isProjectNameInUseByCurrUser(newPname)
@@ -124,7 +124,7 @@ const ProjectCreateNew = React.createClass({
     )
   },
 
-  handleCreateProjectClick: function() {
+  handleCreateProjectClick() {
     this.setState({ buttonActionPending: true })
     this.props.handleCreateProjectClick(this.state.newProjectName)
   },

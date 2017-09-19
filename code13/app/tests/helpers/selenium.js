@@ -11,17 +11,17 @@ const until = webdriver.until
 // always return browser.XXX - to make function thenable
 module.exports = browser => {
   const sel = {
-    css: (rule, timeout) => {
+    css(rule, timeout) {
       timeout = timeout == void 0 ? 30000 : timeout
       return browser.wait(until.elementLocated(By.css(rule)), timeout)
     },
     // show console log timed correctly
-    log: (...args) => {
+    log(...args) {
       browser.call(() => {
         console.log(...args)
       })
     },
-    exists: (rule, callback) => {
+    exists(rule, callback) {
       const p = browser.findElements(By.css(rule))
       return p
         .then(found => {
@@ -31,10 +31,10 @@ module.exports = browser => {
           callback(e)
         })
     },
-    getUri: () => {
+    getUri() {
       return browser.executeAsyncScript('')
     },
-    showLogs: () => {
+    showLogs() {
       return browser
         .manage()
         .logs()
@@ -43,7 +43,7 @@ module.exports = browser => {
           console.log(logs)
         })
     },
-    done: done => {
+    done(done) {
       try {
         browser
           .manage()

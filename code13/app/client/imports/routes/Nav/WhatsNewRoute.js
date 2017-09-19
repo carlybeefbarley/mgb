@@ -38,7 +38,7 @@ const WhatsNewRoute = React.createClass({
   },
 
   /** React callback - before render() is called */
-  getInitialState: function() {
+  getInitialState() {
     return {
       releaseIdx: 0, // Index into mgbReleaseInfo[] for currently viewed release
       olderHistoryJsonResult: null, // Will be the data loaded from ${olderHistoryPath} once loaded
@@ -53,7 +53,7 @@ const WhatsNewRoute = React.createClass({
       : mgbReleaseInfo.releases
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     if (olderHistoryPath && !this.state.olderHistoryJsonResult) {
       fetchAssetByUri(olderHistoryPath)
         .then(data => this.setState({ olderHistoryJsonResult: JSON.parse(data) }))
@@ -65,7 +65,7 @@ const WhatsNewRoute = React.createClass({
   /** This is called when the WhatsNew popup has been clicked and shown.
    *  We are to note the current timestamp of the latest release in the user profile
    */
-  handleUserSawNews: function(latestNewsTimestampSeen) {
+  handleUserSawNews(latestNewsTimestampSeen) {
     let currUser = this.props.currUser
     if (currUser && currUser.profile.latestNewsTimestampSeen !== latestNewsTimestampSeen) {
       Meteor.call(
@@ -81,15 +81,15 @@ const WhatsNewRoute = React.createClass({
     }
   },
 
-  latestReleaseTimestamp: function() {
+  latestReleaseTimestamp() {
     return mgbReleaseInfo.releases[0].timestamp
   },
 
-  handleReleaseClicked: function(releaseIdx) {
-    this.setState({ releaseIdx: releaseIdx })
+  handleReleaseClicked(releaseIdx) {
+    this.setState({ releaseIdx })
   },
 
-  render: function() {
+  render() {
     return (
       <div>
         <Segment basic>
@@ -113,7 +113,7 @@ const WhatsNewRoute = React.createClass({
 
   /** This renders the 2 column structure for update info */
 
-  renderNews: function() {
+  renderNews() {
     const { releaseIdx } = this.state
     const release = this.getCombinedReleaseInfo()[releaseIdx]
     const ago = moment(new Date(release.timestamp)).fromNow()
@@ -139,7 +139,7 @@ const WhatsNewRoute = React.createClass({
   },
 
   /** This is the left column. Uses React's state.releaseIdx */
-  renderNewsMgbVersionsColumn: function() {
+  renderNewsMgbVersionsColumn() {
     const releases = this.getCombinedReleaseInfo()
     const activeReleaseIdx = this.state.releaseIdx
 
@@ -177,7 +177,7 @@ const WhatsNewRoute = React.createClass({
   },
 
   /** This is the right column. Uses React's state.releaseIdx */
-  renderNewsReleaseChangesColumn: function() {
+  renderNewsReleaseChangesColumn() {
     const { releaseIdx } = this.state
     const release = this.getCombinedReleaseInfo()[releaseIdx]
 

@@ -12,7 +12,7 @@ if (typeof Meteor !== 'undefined') {
   }
 } else {
   shouldRun = true
-  npm = { require: require }
+  npm = { require }
   // TODO: for unknown reason mocha.parallel makes Meteor server to crash after 2nd parallel test
   parallel = npm.require('mocha.parallel')
 }

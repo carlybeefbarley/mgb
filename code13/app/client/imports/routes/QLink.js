@@ -46,7 +46,7 @@ class QLink extends React.Component {
 
     // `nav` logic was not used in the codebase
     // adding an error log for analytics tracking just in case a usage was missed
-    nav: (props, propName, componentName) => {
+    nav(props, propName, componentName) {
       if (props[propName] !== undefined) {
         return new Error(`\`nav\` is not implemented, see ${componentName}`)
       }

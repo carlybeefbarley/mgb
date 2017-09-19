@@ -16,7 +16,7 @@ const ResetPasswordRoute = React.createClass({
     urlLocation: React.PropTypes.object,
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       errors: {},
       formData: {},
@@ -54,7 +54,7 @@ const ResetPasswordRoute = React.createClass({
     )
   },
 
-  render: function() {
+  render() {
     const { errors } = this.state
 
     return (
@@ -76,7 +76,7 @@ const ResetPasswordRoute = React.createClass({
     )
   },
 
-  handleChange: function(e) {
+  handleChange(e) {
     const { name, value } = e.target
 
     this.setState((prevState, props) => ({
@@ -89,7 +89,7 @@ const ResetPasswordRoute = React.createClass({
     }))
   },
 
-  handleSubmit: function(event) {
+  handleSubmit(event) {
     const { params } = this.props
     const { password } = this.state
 

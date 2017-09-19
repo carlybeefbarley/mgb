@@ -386,7 +386,7 @@ const PlayGameRoute = React.createClass({
     handleSetCurrentlyEditingAssetInfo: PropTypes.func, // We should call this to set/clear current asset kind
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     const { params } = this.props
     const { assetId } = params
     const assetHandler = (this.assetHandler = getAssetHandlerWithContent2(assetId, () => {
@@ -412,7 +412,7 @@ const PlayGameRoute = React.createClass({
     }
   },
 
-  incrementPlayCount: function() {
+  incrementPlayCount() {
     const game = this.data.asset // One Asset provided via getMeteorData()
     if (game && game._id) _incrementPlayCount(game._id)
   },
@@ -426,11 +426,11 @@ const PlayGameRoute = React.createClass({
     }
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     this.checkForImplicitIncrementPlayCount()
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     if (this.assetHandler) {
       this.assetHandler.stop()
       this.assetHandler = null
@@ -452,7 +452,7 @@ const PlayGameRoute = React.createClass({
     utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
 
-  render: function() {
+  render() {
     if (this.data.loading) return <Spinner />
 
     if (!this.data.asset) return <ThingNotFound type="GameConfig Asset" id={params.assetId} />

@@ -73,7 +73,7 @@ const ChatMessagesView = React.createClass({
     MessageContextComponent: PropTypes.node, // - A react component that will be rendered to the left of the 'Send Message' Button as context for the message send
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       isMessagePending: false,
     }
@@ -84,7 +84,7 @@ const ChatMessagesView = React.createClass({
     settings: PropTypes.object,
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     const { channelName, pastMessageLimit } = this.props
     const handleForChats = Meteor.subscribe('chats.channelName', channelName, pastMessageLimit)
     const retval = {
@@ -94,7 +94,7 @@ const ChatMessagesView = React.createClass({
     return retval
   },
 
-  componentDidUpdate: function() {
+  componentDidUpdate() {
     const { channelName } = this.props
     // There are some tasks to do the first time a comments/chat list has been rendered for a particular channel
     if (!this.data.loading) {
@@ -152,7 +152,7 @@ const ChatMessagesView = React.createClass({
     )
   },
 
-  doSendMessage: function() {
+  doSendMessage() {
     const { messageValue } = this.state
     const { channelName } = this.props
     if (!messageValue || messageValue.length < 1) return
@@ -203,7 +203,7 @@ const ChatMessagesView = React.createClass({
     this.props.handleExtendMessageLimit(newMessageLimit)
   },
 
-  renderMessage: function(c) {
+  renderMessage(c) {
     const ago = moment(c.createdAt).fromNow()
     const to = `/u/${c.byUserName}`
     const { isSuperAdmin } = this.props
@@ -259,7 +259,7 @@ const ChatMessagesView = React.createClass({
     )
   },
 
-  onDropChatMsg: function(e) {
+  onDropChatMsg(e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
     if (!asset) {
       console.log('Drop - NO asset')
@@ -270,11 +270,11 @@ const ChatMessagesView = React.createClass({
     })
   },
 
-  handleMessageChange: function(e) {
+  handleMessageChange(e) {
     this.setState({ messageValue: e.target.value })
   },
 
-  render: function() {
+  render() {
     const { messageValue } = this.state
     const { currUser, channelName, MessageContextComponent } = this.props
     const canSend = currUserCanSend(currUser, channelName)
@@ -340,7 +340,7 @@ const ChatMessagesView = React.createClass({
     )
   },
 
-  handleMessageKeyUp: function(e) {
+  handleMessageKeyUp(e) {
     if (e.keyCode === 13 && e.ctrlKey) this.doSendMessage()
   },
 })

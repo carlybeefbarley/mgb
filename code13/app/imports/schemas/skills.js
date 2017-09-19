@@ -25,7 +25,7 @@ const skillBasis = {
 }
 
 Meteor.methods({
-  'Skill.learn': function(dottedSkillKey, userID, basis = skillBasis.SELF_CLAIMED) {
+  'Skill.learn'(dottedSkillKey, userID, basis = skillBasis.SELF_CLAIMED) {
     //console.log(dottedSkillKey, userID, basis)
     let awardedSkill = false
     if (!this.userId) throw new Meteor.Error(401, 'Login required')
@@ -72,7 +72,7 @@ Meteor.methods({
     return count
   },
 
-  'Skill.forget': function(dottedSkillKey, userID, basis = skillBasis.SELF_CLAIMED) {
+  'Skill.forget'(dottedSkillKey, userID, basis = skillBasis.SELF_CLAIMED) {
     if (!this.userId) throw new Meteor.Error(401, 'Login required')
 
     // if (basis !== skillBasis.SELF_CLAIMED)
@@ -103,7 +103,7 @@ Meteor.methods({
 
 if (Meteor.isServer)
   Meteor.methods({
-    'Skill.getTutorialListForSkill': function(dottedSkillKey) {
+    'Skill.getTutorialListForSkill'(dottedSkillKey) {
       if (!this.userId) throw new Meteor.Error(401, 'Login required')
 
       const sel = makeTutorialsFindSelector(dottedSkillKey, 0)

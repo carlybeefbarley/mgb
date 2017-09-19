@@ -295,7 +295,7 @@ if (Meteor.isServer) {
     //   recordId: String,
     // }
 
-    'Flags.create': function(reportedEntity, data) {
+    'Flags.create'(reportedEntity, data) {
       //data = {
       //   flagTypes: [string],
       //   comments: string
@@ -359,7 +359,7 @@ if (Meteor.isServer) {
     },
 
     // ---------
-    'Flags.resolve': function(reportedEntity, data) {
+    'Flags.resolve'(reportedEntity, data) {
       const currUser = Meteor.user()
       check(reportedEntity, Object)
       check(reportedEntity.table, String)
@@ -432,7 +432,7 @@ if (Meteor.isServer) {
     },
 
     //----------
-    'Flags.banReverse': function(bannedEntity, data) {
+    'Flags.banReverse'(bannedEntity, data) {
       const currUser = Meteor.user()
       check(bannedEntity, Object)
       check(bannedEntity.table, String)

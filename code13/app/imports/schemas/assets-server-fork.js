@@ -22,7 +22,7 @@ Meteor.methods({
   //   opts.sourceProjectOwnerId   // Required string
   //   opts.newProjectName         // Required string
 
-  'Project.Azzets.fork': function(opts = {}) {
+  'Project.Azzets.fork'(opts = {}) {
     // 0. Perform Input/User Validations
     checkIsLoggedInAndNotSuspended()
     checkMgb.projectName(opts.newProjectName)
@@ -125,7 +125,7 @@ Meteor.methods({
     })
 
     return {
-      opts: opts,
+      opts,
       numNewAssets: srcAssetIds.length,
       newProjectId: newProjId,
     }
@@ -144,7 +144,7 @@ Meteor.methods({
   //   opts.newAssetName          // if null it will just append ' (fork)' to the old name
   //   opts.fixupReferences       // if true, then call the smart asset-handlers that fixup
   // references. For NOW, they assume ONLY the owner has changed
-  'Azzets.fork': function(srcId, opts = {}) {
+  'Azzets.fork'(srcId, opts = {}) {
     // 0. Perform Input/User Validations
     checkIsLoggedInAndNotSuspended()
     check(srcId, String)
@@ -268,7 +268,7 @@ Meteor.methods({
     }
   },
 
-  'Azzets.revertDataFromForkParent': function(assetId, forkParentId) {
+  'Azzets.revertDataFromForkParent'(assetId, forkParentId) {
     // 0. Perform Input/User Validations
     checkIsLoggedInAndNotSuspended()
     check(assetId, String)

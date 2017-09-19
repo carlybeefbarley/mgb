@@ -142,7 +142,7 @@ const ProjectMembershipEditorV2 = React.createClass({
     canEdit: PropTypes.bool, // Can be false
   },
 
-  render: function() {
+  render() {
     const { currUserId, asset, currUserProjects, canEdit, handleToggleProjectName } = this.props
 
     return (

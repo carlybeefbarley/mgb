@@ -33,7 +33,7 @@ export const checkMgb = {
    * Throw Meteor.Error() if not valid
    * @returns {void} or throws Meteor.Error()
    */
-  userId: function(userId) {
+  userId(userId) {
     if (!_.isString(userId) || userId.length < 8) throw new Meteor.Error(403, 'Invalid UserId')
   },
 
@@ -41,23 +41,23 @@ export const checkMgb = {
    * Check projectName is valid. Throw Meteor.Error() if not valid
    * @returns {void} or throws Meteor.Error()
    */
-  projectName: function(name) {
+  projectName(name) {
     if (!validate.projectName(name)) throw new Meteor.Error(403, 'Invalid Project Name')
   },
 
-  projectDescription: function(description) {
+  projectDescription(description) {
     if (!validate.projectDescription(description)) throw new Meteor.Error(403, 'Invalid Project Description')
   },
 
-  assetName: function(name) {
+  assetName(name) {
     if (!validate.assetName(name)) throw new Meteor.Error(403, 'Invalid Asset Name')
   },
 
-  assetDescription: function(description) {
+  assetDescription(description) {
     if (!validate.assetDescription(description)) throw new Meteor.Error(403, 'Invalid Asset Description')
   },
 
-  checkUserIsSuperAdmin: function() {
+  checkUserIsSuperAdmin() {
     if (!isUserSuperAdmin(Meteor.user())) throw new Meteor.Error(401, 'Requires SuperAdmin powers')
   },
 }

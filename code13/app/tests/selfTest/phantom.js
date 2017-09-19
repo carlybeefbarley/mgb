@@ -25,17 +25,17 @@ page.open('http://test.mygamebuilder.com', function() {
     debug: true, // optional
     interval: 3, // optional
     timeout: 5000, // optional
-    check: function() {
+    check() {
       return page.evaluate(function() {
         return $('.ui.teal.huge.button').is(':visible')
       })
     },
-    success: function() {
+    success() {
       console.log('Success....')
       page.render('phantomScreen.png')
       phantom.exit()
     },
-    error: function() {
+    error() {
       page.render('scr/phantomScreen.png')
       console.log('ERROR while waiting for button....')
     }, // optional

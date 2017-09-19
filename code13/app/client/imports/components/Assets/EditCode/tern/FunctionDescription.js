@@ -64,7 +64,7 @@ const FunctionDescription = React.createClass({
     )
   },
   // beautify type - TODO: make nice indent for object like types
-  beautifyType: function(type) {
+  beautifyType(type) {
     // for cases {}
     if (type.length < 3) {
       return type
@@ -74,7 +74,7 @@ const FunctionDescription = React.createClass({
       .replace(/,/gi, ',\n')
       .replace(/}/gi, '\n}\n')
   },
-  render: function() {
+  render() {
     let fh = this.props.functionHelp
     let hDoc = this.props.helpDocJsonMethodInfo
     let argPos = this.props.functionArgPos // 0 for first argument, -1 for Not in a function at all

@@ -30,7 +30,7 @@ export default class SkillAction extends React.Component {
     if (nextSkill && nextSkill.$meta) {
       nextSkillName = nextSkill.$meta.name || getFriendlyName(nextSkill.$meta.key)
     }
-    this.setState({ nextSkillPath: nextSkillPath, nextSkillName: nextSkillName })
+    this.setState({ nextSkillPath, nextSkillName })
   }
 
   startNextSkill = () => {

@@ -22,7 +22,7 @@ const FeedSegment = React.createClass({
     loading: PropTypes.bool,
   },
 
-  render: function() {
+  render() {
     const { activities, currUser, loading } = this.props
 
     if (loading) return <Icon loading />

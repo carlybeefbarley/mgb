@@ -9,8 +9,8 @@ const FittedImage = ({ src, height = '140px', width, ...rest }) => (
     {...rest}
     style={{
       background: `url("${src}") no-repeat center / contain`,
-      height: height,
-      width: width,
+      height,
+      width,
       ...rest.style,
     }}
   />

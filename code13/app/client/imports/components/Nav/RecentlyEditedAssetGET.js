@@ -10,7 +10,7 @@ const RecentlyEditedAssetGET = React.createClass({
     userId: PropTypes.string, // User Id we are interested in. Can be null/undefined
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     const { userId } = this.props
     if (!userId || userId === '') return {}
 

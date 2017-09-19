@@ -126,13 +126,13 @@ Meteor.publish('assets.public.byId.withContent2', function(assetId) {
 
 // drop area used this
 Meteor.publish('assets.public.owner.name', function(owner, name, kind) {
-  const sel = { dn_ownerName: owner, name: name, kind: kind, isDeleted: false }
+  const sel = { dn_ownerName: owner, name, kind, isDeleted: false }
   return Azzets.find(sel, { fields: { content2: 0, thumbnail: 0 } })
 })
 // drop area uses this now
 Meteor.publish('assets.public.id.or.owner.name', function(id, owner, name, kind) {
   const sel = {
-    $or: [{ _id: id, isDeleted: false }, { dn_ownerName: owner, name: name, kind: kind, isDeleted: false }],
+    $or: [{ _id: id, isDeleted: false }, { dn_ownerName: owner, name, kind, isDeleted: false }],
   }
   return Azzets.find(sel, { fields: { content2: 0, thumbnail: 0 } })
 })

@@ -12,7 +12,7 @@ const ExpressionDescription = React.createClass({
     expressionTypeInfo: PropTypes.object, // Has the data from a TernJS typeInfo request on an expression
   },
 
-  render: function() {
+  render() {
     if (!this.props.expressionTypeInfo || !this.props.expressionTypeInfo.exprName) return null
 
     const { name, type, exprName, doc, url, origin } = this.props.expressionTypeInfo

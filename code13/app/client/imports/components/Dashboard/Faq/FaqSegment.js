@@ -11,7 +11,7 @@ export default class FaqSegment extends React.Component {
       if (err) console.log('error', err)
       else {
         const data = JSON.parse(str)
-        this.setState({ data: data })
+        this.setState({ data })
       }
     })
   }

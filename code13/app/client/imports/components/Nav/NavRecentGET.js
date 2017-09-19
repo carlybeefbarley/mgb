@@ -24,13 +24,13 @@ const NavRecentGET = React.createClass({
     showUserActivities: PropTypes.bool.isRequired,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       showUserActivities: false,
     }
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     if (!this.props.currUser) return {}
 
     let uid = this.props.currUser._id
@@ -181,7 +181,7 @@ const NavRecentGET = React.createClass({
     return retvalJsx
   },
 
-  render: function() {
+  render() {
     const isNp = this.props.styledForNavPanel
     const inverted = isNp ? 'inverted' : 'borderless fitted '
     const menuSty = isNp ? { backgroundColor: 'transparent' } : { boxShadow: 'none', border: 'none' }

@@ -279,10 +279,10 @@ export default class EditCode extends React.Component {
         'Ctrl-S': cm => {
           this.ternServer.selectName(cm)
         },
-        'Ctrl-O': cm => {
+        'Ctrl-O'(cm) {
           cm.foldCode(cm.getCursor())
         },
-        'Ctrl-/': cm => {
+        'Ctrl-/'(cm) {
           cm.execCommand('toggleComment')
         },
         'Alt-.': cm => this.goToDef(),
@@ -372,7 +372,7 @@ export default class EditCode extends React.Component {
       useWorker: true,
       // load defs at runtime
       defs: [], //[Defs_ecma5, Defs_browser, Defs_lodash, Defs_phaser, Defs_sample],
-      completionTip: function(curData) {
+      completionTip(curData) {
         // we get called for the CURRENTLY highlighted entry in the autocomplete list.
         // We are provided fields like
         //   name, type     ... pretty reliably
@@ -425,7 +425,7 @@ export default class EditCode extends React.Component {
         this.ternServer &&
           this.ternServer.worker.postMessage({
             type: 'addDefs',
-            defs: defs,
+            defs,
           })
       }
     }
@@ -464,7 +464,7 @@ export default class EditCode extends React.Component {
       this.ternServer.worker.addEventListener('message', cb)
       this.ternServer.worker.postMessage({
         type: 'getComments',
-        filename: filename,
+        filename,
       })
     }
 
@@ -595,7 +595,7 @@ export default class EditCode extends React.Component {
 
     const hintObj = {
       // hint will be called on every change
-      hint: () => {
+      hint() {
         const cursor = cm.getCursor()
         const token = cm.getTokenAt(cursor, true)
         const keyword = token.string.substring(1 + keywordSubstring, token.string.length - 1)
@@ -1221,7 +1221,7 @@ export default class EditCode extends React.Component {
                 functionHelp: functionTypeInfo ? ternServer.cachedArgHints : {},
                 functionArgPos: argPos,
                 functionTypeInfo: functionTypeInfo || {},
-                currentToken: currentToken,
+                currentToken,
               })
             },
           )
@@ -1231,7 +1231,7 @@ export default class EditCode extends React.Component {
             functionArgPos: argPos,
             helpDocJsonMethodInfo: null,
             functionTypeInfo: functionTypeInfo || {},
-            currentToken: currentToken,
+            currentToken,
           })
         }
       }
@@ -1276,7 +1276,7 @@ export default class EditCode extends React.Component {
         (error, data) => {
           // async call - component may be unmounted already
           if (!this.isActive) return
-          if (error) resolve({ atCursorTypeRequestResponse: { error: error } })
+          if (error) resolve({ atCursorTypeRequestResponse: { error } })
           else {
             if (data.type == data.name) {
               query.depth = 1
@@ -1286,7 +1286,7 @@ export default class EditCode extends React.Component {
                 (error, data) => {
                   // async call - component may be unmounted already
                   if (!this.isActive) return
-                  if (error) resolve({ atCursorTypeRequestResponse: { error: error } })
+                  if (error) resolve({ atCursorTypeRequestResponse: { error } })
                   else resolve({ atCursorTypeRequestResponse: { data } })
                 },
                 position,
@@ -1318,7 +1318,7 @@ export default class EditCode extends React.Component {
         (error, data) => {
           // async call - component may be unmounted already
           if (!this.isActive) return // discuss: resolve or just ignore???
-          if (error) resolve({ atCursorRefRequestResponse: { error: error } })
+          if (error) resolve({ atCursorRefRequestResponse: { error } })
           else resolve({ atCursorRefRequestResponse: { data } })
         },
         position,
@@ -1345,7 +1345,7 @@ export default class EditCode extends React.Component {
         (error, data) => {
           // async call - component may be unmounted already
           if (!this.isActive) return
-          if (error) resolve({ atCursorDefRequestResponse: { error: error } })
+          if (error) resolve({ atCursorDefRequestResponse: { error } })
           else {
             data.definitionText =
               data.origin === this.props.asset.name && data.start
@@ -1473,7 +1473,7 @@ export default class EditCode extends React.Component {
         (error, data) => {
           // async call - component may be unmounted already
           if (!this.isActive) return
-          if (error) this.setState({ atCursorMemberParentRequestResponse: { error: error } })
+          if (error) this.setState({ atCursorMemberParentRequestResponse: { error } })
           else {
             this.setState({ atCursorMemberParentRequestResponse: { data } })
           }
@@ -1933,7 +1933,7 @@ export default class EditCode extends React.Component {
 
           const newC2 = {
             src: value,
-            bundle: bundle,
+            bundle,
             lastBundle: Date.now(),
             needsBundle: c2.needsBundle,
             hotReload: c2.hotReload,

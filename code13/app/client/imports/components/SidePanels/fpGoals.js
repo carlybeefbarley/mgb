@@ -71,7 +71,7 @@ const fpGoals = React.createClass({
     skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)
   },
 
-  render: function() {
+  render() {
     const skillarea = 'code' // temp hack
     const area = _.find(skillAreaItems, ['tag', skillarea])
     const {

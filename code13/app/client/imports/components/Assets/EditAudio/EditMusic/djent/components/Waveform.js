@@ -25,7 +25,7 @@ const level = (x, y, w, h, targetColor) => {
     w,
     h,
     color: [255, 255, 255],
-    targetColor: targetColor,
+    targetColor,
     targety: 0,
   }
 

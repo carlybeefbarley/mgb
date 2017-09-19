@@ -23,7 +23,7 @@ var schema = {
 Meteor.methods({
   /** Settings.save
    */
-  'Settings.save': function(data) {
+  'Settings.save'(data) {
     if (!this.userId) throw new Meteor.Error(401, 'Login required')
 
     data.updatedAt = new Date()

@@ -57,7 +57,7 @@ export const userSorters = {
 }
 
 Meteor.methods({
-  'User.storeProfileImage': function(url) {
+  'User.storeProfileImage'(url) {
     check(url, String)
     checkIsLoggedInAndNotSuspended()
 
@@ -70,13 +70,13 @@ Meteor.methods({
     }
   },
 
-  'User.setProfileImage': function(url) {
+  'User.setProfileImage'(url) {
     check(url, String)
     checkIsLoggedInAndNotSuspended()
     Meteor.users.update(Meteor.userId(), { $set: { 'profile.avatar': url } })
   },
 
-  'User.updateEmail': function(docId, data) {
+  'User.updateEmail'(docId, data) {
     check(docId, String)
     checkIsLoggedInAndNotSuspended()
 
@@ -93,7 +93,7 @@ Meteor.methods({
     return count
   },
 
-  'User.updateProfile': function(docId, data) {
+  'User.updateProfile'(docId, data) {
     check(docId, String)
     checkIsLoggedInAndNotSuspended()
 
@@ -126,13 +126,13 @@ Meteor.methods({
     return count
   },
 
-  'User.sendVerifyEmail': function() {
+  'User.sendVerifyEmail'() {
     if (Meteor.isServer) {
       Accounts.sendVerificationEmail(Meteor.userId(), Meteor.user().emails[0].address)
     }
   },
 
-  'User.addEditTime': function(editType, timeSec) {
+  'User.addEditTime'(editType, timeSec) {
     checkIsLoggedInAndNotSuspended()
     const editors = ['graphic', 'code', 'map', 'actor', 'actormap', 'sound', 'music']
     // add to time max 60sec per request
@@ -141,7 +141,7 @@ Meteor.methods({
       const edit_time = _.isEmpty(user.edit_time) ? {} : user.edit_time
       if (!edit_time[editType]) edit_time[editType] = 0
       edit_time[editType] += timeSec
-      Meteor.users.update({ _id: Meteor.userId() }, { $set: { edit_time: edit_time } })
+      Meteor.users.update({ _id: Meteor.userId() }, { $set: { edit_time } })
     }
   },
 })

@@ -4,33 +4,33 @@ import EditModes from '../Tools/EditModes.js'
 
 const TilesetProps = {
   // tileset -> map proxy - don't need to change state
-  clearActiveSelection: function() {
+  clearActiveSelection() {
     this.refs.map.clearActiveSelection()
   },
-  selectTile: function(tile) {
+  selectTile(tile) {
     this.refs.map.collection.pushOrRemove(tile)
     // it's annoying to pick stamp tool after picking tile
     if ([EditModes.stamp, EditModes.fill].indexOf(this.options.mode) === -1) {
       this.enableMode(EditModes.stamp)
     }
   },
-  pushUnique: function(tile) {
+  pushUnique(tile) {
     this.refs.map.collection.pushUnique(tile)
   },
-  resetActiveLayer: function() {
+  resetActiveLayer() {
     const l = this.refs.map.getActiveLayer()
     l && l.resetRotation && l.resetRotation()
   },
-  isTileSelected: function(gid) {
+  isTileSelected(gid) {
     return this.refs.map ? this.refs.map.collection.indexOfGid(gid) : -1
   },
 
-  setMode: function(mode) {
+  setMode(mode) {
     this.setState({ activeMode: mode })
   },
 
   // TODO: add warning
-  removeTileset: function(id = this.state.activeTileset) {
+  removeTileset(id = this.state.activeTileset) {
     const c2 = this.mgb_content2
     if (!c2.tilesets.length) {
       return
@@ -56,11 +56,11 @@ const TilesetProps = {
       })
     })
   },
-  selectTileset: function(id) {
+  selectTileset(id) {
     this.setState({ activeTileset: id })
   },
 
-  updateTilesetFromData: function(data, ref = null, fixGids = false) {
+  updateTilesetFromData(data, ref = null, fixGids = false) {
     const c2 = this.mgb_content2
     let ts
     if (data && data.imagewidth == data.tilewidth) {
@@ -107,11 +107,11 @@ const TilesetProps = {
     this.quickSave('Added new tileset: ' + data.name)
   },
 
-  getActiveLayerData: function() {
+  getActiveLayerData() {
     return this.mgb_content2.layers[this.state.activeLayer]
   },
 
-  addActor: function(ts) {
+  addActor(ts) {
     // make sure we don't collide gids
     ts.firstgid = Infinity // nothing is infinite
     this.mgb_content2.tilesets.push(ts)
@@ -121,7 +121,7 @@ const TilesetProps = {
     this.quickSave('Added actor')
   },
 
-  setActiveLayerByName: function(name) {
+  setActiveLayerByName(name) {
     const layers = this.mgb_content2.layers
     for (let i = 0; i < layers.length; i++) {
       if (layers[i].name == name) {
@@ -130,7 +130,7 @@ const TilesetProps = {
       }
     }
   },
-  startLoading: function() {
+  startLoading() {
     this.setState({ isLoading: true })
   },
 }

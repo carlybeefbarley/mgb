@@ -62,7 +62,7 @@ const UX = {
     <QLink to={`/u/${ownerUsername}/asset/${assetId}`}>Flagged Asset Id: {assetId}</QLink>
   ),
 
-  LinkToFlaggedEntity: ({ entityType, entityId, ownerUsername }) => {
+  LinkToFlaggedEntity({ entityType, entityId, ownerUsername }) {
     if (entityType === 'Chats') return <UX.LinkToChatId chatId={entityId} />
     if (entityType === 'Azzets') {
       return <UX.LinkToAsset assetId={entityId} entityType={entityType} ownerUsername={ownerUsername} />
@@ -79,7 +79,7 @@ const UX = {
     </span>
   ),
 
-  UserWhenJoined: ({ when, as }) => {
+  UserWhenJoined({ when, as }) {
     const Element = as || 'span'
     return <Element>Joined {moment(when).format('MMMM DD, YYYY')}</Element>
   },
@@ -93,12 +93,12 @@ const UX = {
     </QLink>
   ),
 
-  TimeAgo: ({ when, as, style }) => {
+  TimeAgo({ when, as, style }) {
     const Element = as || 'span'
     return <Element style={style}>{moment(when).fromNow()}</Element>
   },
 
-  TimeMDY: ({ when, as }) => {
+  TimeMDY({ when, as }) {
     const Element = as || 'span'
     return <Element>{moment(when).format('MMMM DD, YYYY')}</Element>
   },

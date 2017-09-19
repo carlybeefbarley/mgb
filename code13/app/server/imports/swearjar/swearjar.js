@@ -7,7 +7,7 @@ var path = require('path')
 const swearjar = {
   _badWords: badWords,
 
-  scan: function(text, callback) {
+  scan(text, callback) {
     var word, key, match
     var regex = /\w+/g
 
@@ -23,7 +23,7 @@ const swearjar = {
     }
   },
 
-  profane: function(text) {
+  profane(text) {
     var profane = false
 
     this.scan(text, function(word, index, categories) {
@@ -34,7 +34,7 @@ const swearjar = {
     return profane
   },
 
-  scorecard: function(text) {
+  scorecard(text) {
     var scorecard = {}
 
     this.scan(text, function(word, index, categories) {
@@ -52,7 +52,7 @@ const swearjar = {
     return scorecard
   },
 
-  censor: function(text) {
+  censor(text) {
     var censored = text
 
     this.scan(text, function(word, index, categories) {
@@ -62,13 +62,13 @@ const swearjar = {
     return censored
   },
 
-  loadBadWords: function(relativePath) {
+  loadBadWords(relativePath) {
     var basePath = path.dirname(module.parent.filename)
     var fullPath = path.join(basePath, relativePath)
     this._badWords = require(fullPath)
   },
 
-  setBadWords: function(badWords) {
+  setBadWords(badWords) {
     this._badWords = badWords || {}
   },
 }

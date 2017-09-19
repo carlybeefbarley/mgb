@@ -34,7 +34,7 @@ export default class EditMusic extends React.Component {
       viewWidth: 500, // temporary width
       trackWidth: pxPerSecond * props.asset.content2.duration + 1, // changing depending on props.duration
       canvasHeight: 128,
-      pxPerSecond: pxPerSecond, // defines width of canvass
+      pxPerSecond, // defines width of canvass
       waveColor: '#4dd2ff',
       isDrag: false,
       isSelecting: false,
@@ -335,9 +335,9 @@ export default class EditMusic extends React.Component {
     // in sec
     this.setState({
       selectData: {
-        channelID: channelID,
-        selectStart: selectStart,
-        selectDuration: selectDuration,
+        channelID,
+        selectStart,
+        selectDuration,
       },
     })
 
@@ -403,7 +403,7 @@ export default class EditMusic extends React.Component {
       id: Date.now(),
       title: 'Channel ' + c2.channels.length,
       volume: 0.75,
-      dataUri: dataUri,
+      dataUri,
     })
     this.handleSave('Add channel', c2)
     this.doSaveStateForUndo('Add channel')

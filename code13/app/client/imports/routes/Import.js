@@ -20,7 +20,7 @@ const ImportRoute = React.createClass({
     urlLocation: React.PropTypes.object,
   },
 
-  createAsset: function(
+  createAsset(
     assetKindKey,
     assetName,
     projectName,
@@ -40,13 +40,13 @@ const ImportRoute = React.createClass({
     let newAsset = {
       name: assetName,
       kind: assetKindKey,
-      assetLicense: assetLicense,
-      workState: workState,
-      thumbnail: thumbnail,
-      content2: content2,
+      assetLicense,
+      workState,
+      thumbnail,
+      content2,
       dn_ownerName: this.props.currUser.username, // Will be replaced below if in another project
 
-      isCompleted: isCompleted,
+      isCompleted,
       isDeleted: false,
       isPrivate: false,
     }
@@ -68,7 +68,7 @@ const ImportRoute = React.createClass({
     })
   },
 
-  render: function() {
+  render() {
     return (
       <div>
         <h1>Bulk Import</h1>

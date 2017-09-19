@@ -8,7 +8,7 @@ const VerifyEmailRoute = React.createClass({
     params: PropTypes.object,
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       isLoading: true,
       isVerified: false,
@@ -35,7 +35,7 @@ const VerifyEmailRoute = React.createClass({
     })
   },
 
-  render: function() {
+  render() {
     if (this.state.isLoading) return <Icon loading />
     else if (this.state.error) return <Message negative header="Error" content={this.state.error} />
     else if (this.state.isVerified)

@@ -6,7 +6,7 @@ import BlockageMap from './MageBlockageMap'
 
 // need to handle gameActions
 const MagePlayGameMovement = {
-  calculateNewPlayerPosition: function(stepStyleOverride) {
+  calculateNewPlayerPosition(stepStyleOverride) {
     const { activeActors, AA_player_idx, G_player_action, map } = this
     var plyr = activeActors[AA_player_idx]
 
@@ -47,7 +47,7 @@ const MagePlayGameMovement = {
 
   // AAi is the index into activeActors[] for this enemy/item
   // stepStyleOverride is -1 for no override, or 0..3 for an override    // TODO
-  calculateNewEnemyPosition: function(AAi, stepStyleOverride = -1) {
+  calculateNewEnemyPosition(AAi, stepStyleOverride = -1) {
     const { actors, activeActors, AA_player_idx } = this
 
     var enemyAA = activeActors[AAi]
@@ -251,7 +251,7 @@ const MagePlayGameMovement = {
   // 3. layerForeground isn't checked - by convention it's just for visual effect
   // Note that if the actor is the player and the obstruction is a pushable item, then we say not-obstructed..
   //    ...the tweening moves will resolve what action should occur
-  checkIfActorObstructed: function(AAidxToCheck, checkActives = false) {
+  checkIfActorObstructed(AAidxToCheck, checkActives = false) {
     const { actors, activeActors, AA_player_idx, map, backgroundBlockageMap } = this
     var obstructed = false
     var aa = activeActors[AAidxToCheck] // This is the actor that wants to move

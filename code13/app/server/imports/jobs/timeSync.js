@@ -1,5 +1,5 @@
 Meteor.methods({
-  syncTime: date => {
+  syncTime(date) {
     return { now: Date.now(), diff: Date.now() - date.now }
   },
 })

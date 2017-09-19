@@ -47,7 +47,7 @@ export default function InstallMgbTernExtensions(tern) {
 
   tern.defineQueryType('mgbGetMemberParent', {
     takesFile: true,
-    run: function(srv, query, file) {
+    run(srv, query, file) {
       try {
         return DG_MEMBERPARENT(tern, srv, query, file)
       } catch (err) {

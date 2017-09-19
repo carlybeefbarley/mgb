@@ -33,10 +33,10 @@ const ActorHelper = {
   },
   layerNames: ['Background', 'Active', 'Foreground', 'Events'],
   errors: [],
-  getErrors: function() {
+  getErrors() {
     return ActorHelper.errors
   },
-  v2_to_v1: function(data) {
+  v2_to_v1(data) {
     const d = {
       mapLayer: [],
       maxLayers: 4,
@@ -76,7 +76,7 @@ const ActorHelper = {
     return d
   },
 
-  v1_to_v2: function(data, names, cb, onChange, onRemovedActor) {
+  v1_to_v2(data, names, cb, onChange, onRemovedActor) {
     ActorHelper.errors.length = 0
     if (!data.metadata) {
       cb(this.createEmptyMap())
@@ -136,7 +136,7 @@ const ActorHelper = {
             imageheight: 0,
             imagewidth: 0,
             margin: 0,
-            name: name,
+            name,
             spacing: 0,
             tilecount: 1,
             tileheight: 0,
@@ -300,7 +300,7 @@ const ActorHelper = {
     return dd
   },
 
-  loadActors: function(actorMap, names, images, cb, onChange, onRemovedActor) {
+  loadActors(actorMap, names, images, cb, onChange, onRemovedActor) {
     const actors = Object.keys(actorMap)
     // nothing to do
     if (actors.length === 0) {
@@ -335,19 +335,19 @@ const ActorHelper = {
   },
   isLoading: {},
   cache: {},
-  clearCache: key => {
+  clearCache(key) {
     if (key == void 0) ActorHelper.cache = {}
     else delete ActorHelper.cache[key]
   },
   subscriptions: {},
-  cleanUp: () => {
+  cleanUp() {
     for (let i in ActorHelper.subscriptions) {
       ActorHelper.subscriptions[i].subscription.stop()
     }
     ActorHelper.subscriptions = {}
     ActorHelper.clearCache()
   },
-  loadActor: function(name, map, nr, images, names, cb, onChange, onRemovedActor) {
+  loadActor(name, map, nr, images, names, cb, onChange, onRemovedActor) {
     const parts = name.split(':')
     const user = parts.length > 1 ? parts.shift() : names.user
     const actorName = parts.length ? parts.pop() : name
@@ -464,7 +464,7 @@ const ActorHelper = {
     Events: tileset => tileset.firstgid <= ActorHelper.TILES_IN_ACTIONS,
   },
 
-  getTilesetFromGid: (gid, tilesets) => {
+  getTilesetFromGid(gid, tilesets) {
     // is this still true???
     // after adding and removing tilesets  - tileset ordering is messed up - don't rely that firstgid will be ordered in tilesets array
     for (let i = 0; i < tilesets.length; i++) {
@@ -474,7 +474,7 @@ const ActorHelper = {
     return null
   },
 
-  eventNameToTile: function(name) {
+  eventNameToTile(name) {
     if (name.indexOf('jump') === 0) return 1
 
     if (name.indexOf('music') === 0) return 2

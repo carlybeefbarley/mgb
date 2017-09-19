@@ -378,10 +378,10 @@ export default class SourceTools extends EventEmitter {
             // atm we are NOT using this to make bundle more stand-alone due changes in the imported files
             isExternalFile: false, // if set to false - embed / true load at runtime
             url: es5src,
-            hash: hash,
+            hash,
             lib: name,
             version,
-            filename: filename,
+            filename,
           }),
           ignoreCache,
         ).then(info => {
@@ -502,7 +502,7 @@ export default class SourceTools extends EventEmitter {
       this.subscriptions[key] = observeAsset(
         {
           dn_ownerName: owner,
-          name: name,
+          name,
           kind: AssetKindEnum.code,
           isDeleted: false,
         },
@@ -614,9 +614,9 @@ export default class SourceTools extends EventEmitter {
             url: url + (source.hash ? '' : '?hash=' + etag),
             localName: source.localName,
             name: source.name,
-            localKey: localKey,
+            localKey,
             key: source.key,
-            libFullName: libFullName,
+            libFullName,
             loadAsScript: source.loadAsScript,
           }
           source.useGlobal ? externalGlobal.push(partial) : externalLocal.push(partial)

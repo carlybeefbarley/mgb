@@ -5,7 +5,7 @@ import HeroLayout from '/client/imports/layouts/HeroLayout'
 import LoginLinks from './LoginLinks'
 
 const ForgotPasswordRoute = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {
       errors: {},
       formData: {},
@@ -50,7 +50,7 @@ const ForgotPasswordRoute = React.createClass({
     )
   },
 
-  render: function() {
+  render() {
     const { errors } = this.state
 
     return (
@@ -73,7 +73,7 @@ const ForgotPasswordRoute = React.createClass({
     )
   },
 
-  handleChange: function(e) {
+  handleChange(e) {
     const { name, value } = e.target
 
     this.setState((prevState, props) => ({
@@ -86,7 +86,7 @@ const ForgotPasswordRoute = React.createClass({
     }))
   },
 
-  handleSubmit: function(event) {
+  handleSubmit(event) {
     const { email } = this.state.formData
 
     const emailError = validate.emailWithReason(email)

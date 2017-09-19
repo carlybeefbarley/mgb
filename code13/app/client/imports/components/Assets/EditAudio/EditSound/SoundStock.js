@@ -46,7 +46,7 @@ export default class SoundStock extends React.Component {
     $.get(infolink, sounds => {
       // async call component might be unmounted
       if (!this.isReallyMounted) return
-      self.setState({ sounds: sounds })
+      self.setState({ sounds })
     })
   }
 

@@ -34,7 +34,7 @@ RestApi.addRoute(
   'asset/png/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
       if (!asset) return err404
 
@@ -55,7 +55,7 @@ RestApi.addRoute(
   'asset/png/:user/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {
@@ -86,7 +86,7 @@ RestApi.addRoute(
   'asset/fullgraphic/:user/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {
@@ -111,7 +111,7 @@ RestApi.addRoute(
   'asset/tileset-info/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
       if (!asset) return err404
 
@@ -172,7 +172,7 @@ RestApi.addRoute(
           name: asset.name,
           imageheight: c2.rows ? c2.rows * c2.height : c2.height,
           imagewidth: c2.cols ? c2.cols * c2.width : c2.width * tilecount,
-          tilecount: tilecount,
+          tilecount,
           tileheight: c2.height,
           tilewidth: c2.width,
           tiles,
@@ -186,7 +186,7 @@ RestApi.addRoute(
   'asset/tileset/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
       if (!asset) return err404
 
@@ -215,7 +215,7 @@ RestApi.addRoute(
   'asset/tileset/:user/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {

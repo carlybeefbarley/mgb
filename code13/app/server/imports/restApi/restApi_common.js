@@ -23,7 +23,7 @@ RestApi.addRoute(
   'error',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       return this.request.headers
     },
   },
@@ -32,7 +32,7 @@ RestApi.addRoute(
   'make-error',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       return {
         statusCode: 503,
         headers: {
@@ -58,7 +58,7 @@ RestApi.addRoute(
   'asset/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       return getFullAsset.call(this, this.urlParams.id)
     },
   },
@@ -68,7 +68,7 @@ RestApi.addRoute(
   'asset/withoutC2/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       var asset = Azzets.findOne(this.urlParams.id)
       delete asset.content2
       return genAPIreturn(this, asset)
@@ -80,7 +80,7 @@ RestApi.addRoute(
   'asset/full/:user/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       return getFullAsset.call(
         this,
         Object.assign(
@@ -99,7 +99,7 @@ RestApi.addRoute(
   'asset/content2/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
       if (!asset) return err404
 
@@ -113,7 +113,7 @@ RestApi.addRoute(
   'asset/json/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
       if (!asset) return err404
 
@@ -131,7 +131,7 @@ RestApi.addRoute(
   'asset/id/:user/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {
@@ -182,7 +182,7 @@ RestApi.addRoute(
   'asset/thumbnail/png/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, thumbnailProjectionFields)
       if (!asset) return err404
       return getThumbnailFromAsset(this, asset)
@@ -193,7 +193,7 @@ RestApi.addRoute(
   'asset/thumbnail/png/:user/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {
@@ -215,7 +215,7 @@ RestApi.addRoute(
   'asset/cached-thumbnail/png/:expires/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, thumbnailProjectionFields)
       if (!asset) return err404
       const expires = this.urlParams.expires || 30
@@ -230,7 +230,7 @@ RestApi.addRoute(
   'asset/cached-thumbnail/png/:expires/:kind/:user/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {
@@ -256,7 +256,7 @@ RestApi.addRoute(
   'asset/cached-thumbnail/png/:expires/:user/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {
@@ -283,7 +283,7 @@ RestApi.addRoute(
   'assets/:kind/:owner/',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const assets = Azzets.find(
         Object.assign(
           {

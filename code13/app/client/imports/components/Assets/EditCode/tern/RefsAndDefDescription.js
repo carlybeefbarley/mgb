@@ -8,7 +8,7 @@ const RefsAndDefDescription = React.createClass({
     expressionTypeInfo: PropTypes.object, // This is the data frim ternserver TYPE request
   },
 
-  render: function() {
+  render() {
     if (!this.props.refsInfo) return null
 
     let refs = this.props.refsInfo.refs

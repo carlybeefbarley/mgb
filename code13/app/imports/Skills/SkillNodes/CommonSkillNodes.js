@@ -48,13 +48,13 @@ const CommonSkillNodes = {
     }
   },
 
-  En: function(level = 0, name) {
+  En(level = 0, name) {
     // Note that 0 will be turned into 1.. the levels go from 1 to 4
     _validateLevel(level)
     const retval = {
       $meta: {
         enabled: 1,
-        level: level,
+        level,
         isLeaf: 1,
       },
     }

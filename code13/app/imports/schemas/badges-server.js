@@ -354,7 +354,7 @@ const _awardBadge = (type, newBadgeName, newBadgeKeys, user) => {
 }
 
 Meteor.methods({
-  'User.refreshBadgeStatus': function() {
+  'User.refreshBadgeStatus'() {
     return _doRefreshBadgeStatus(Meteor.user())
   },
   // ,

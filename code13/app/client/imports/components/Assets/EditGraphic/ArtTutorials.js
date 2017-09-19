@@ -44,7 +44,7 @@ export default class ArtTutorial extends React.Component {
     const step = this.state.step + 1
     if (step < this.state.data.steps.length) {
       if (this.props.frameData[step]) this.props.handleSelectFrame(step)
-      this.setState({ step: step })
+      this.setState({ step })
     } else this.successPopup()
     ga('send', 'pageview', this.props.skillPath)
   }
@@ -53,7 +53,7 @@ export default class ArtTutorial extends React.Component {
     if (this.state.step > 0) {
       const step = this.state.step - 1
       if (this.props.frameData[step]) this.props.handleSelectFrame(step)
-      this.setState({ step: step })
+      this.setState({ step })
     }
   }
 

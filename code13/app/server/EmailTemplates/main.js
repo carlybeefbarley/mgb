@@ -7,22 +7,22 @@ Accounts.emailTemplates.siteName = 'MyGameBuilder.com'
 Accounts.emailTemplates.from = 'MyGameBuilder Accounts Admin <no-reply@mygamebuilder.com>'
 
 Accounts.emailTemplates.resetPassword = {
-  subject: function(user) {
+  subject(user) {
     return 'Reset your email'
   },
 
-  html: function(user, url) {
+  html(user, url) {
     url = url.replace('#/', '')
     return ResetPassword(url)
   },
 }
 
 Accounts.emailTemplates.verifyEmail = {
-  subject: function(user) {
+  subject(user) {
     return 'Verify your email'
   },
 
-  html: function(user, url) {
+  html(user, url) {
     url = url.replace('#/', '')
     return VerifyEmail(url)
   },

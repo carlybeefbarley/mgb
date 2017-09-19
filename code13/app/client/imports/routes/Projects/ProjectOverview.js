@@ -56,7 +56,7 @@ const ProjectOverview = React.createClass({
     confirmDeleteNum: -1, // If >=0 then it indicates how many assets will be deleted. Used to flag 2-stage DELETE PROJECT
   }),
 
-  getMeteorData: function() {
+  getMeteorData() {
     const { projectId, projectName } = this.props.params
     const { user } = this.props
     const sel = projectId ? { _id: projectId } : { ownerId: user._id, name: projectName }
@@ -69,7 +69,7 @@ const ProjectOverview = React.createClass({
     }
   },
 
-  canEdit: function() {
+  canEdit() {
     return Boolean(
       !this.data.loading &&
         this.data.project &&
@@ -78,7 +78,7 @@ const ProjectOverview = React.createClass({
     )
   },
 
-  render: function() {
+  render() {
     const { project, loading } = this.data // One Project provided via getMeteorData()
     if (loading) return <Spinner />
 
@@ -262,7 +262,7 @@ const ProjectOverview = React.createClass({
 
   // TODO - override 'Search Users" header level in UserListRoute
   // TODO - some better UI for Add People.
-  handleClickUser: function(userId, userName) {
+  handleClickUser(userId, userName) {
     if (this.state.isDeletePending) {
       showToast('Delete is still pending. Please wait..', 'warning')
       return
@@ -289,7 +289,7 @@ const ProjectOverview = React.createClass({
     })
   },
 
-  handleRemoveMemberFromProject: function(userId, userName) {
+  handleRemoveMemberFromProject(userId, userName) {
     if (this.state.isDeletePending) {
       showToast('Delete is still pending. Please wait..', 'warning')
       return
@@ -316,7 +316,7 @@ const ProjectOverview = React.createClass({
     })
   },
 
-  handleMemberLeaveFromProject: function(userId, userName) {
+  handleMemberLeaveFromProject(userId, userName) {
     var project = this.data.project
     Meteor.call('Projects.leave', project._id, userId, (error, result) => {
       if (error) showToast(`Member ${userName} could not leave project ${project.name}`, 'error')
@@ -332,7 +332,7 @@ const ProjectOverview = React.createClass({
   /**
    *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
    */
-  handleFieldChanged: function(changeObj) {
+  handleFieldChanged(changeObj) {
     const { project } = this.data
 
     Meteor.call('Projects.update', project._id, changeObj, error => {
@@ -344,7 +344,7 @@ const ProjectOverview = React.createClass({
     })
   },
 
-  handleDeleteProject: function() {
+  handleDeleteProject() {
     var { name } = this.data.project
     Meteor.call('Projects.countNonDeletedAssets', name, (error, result) => {
       if (error) showToast(`Could not count Number of Assets in Project '${name}: ${error.reason}`, 'error')
@@ -352,7 +352,7 @@ const ProjectOverview = React.createClass({
     })
   },
 
-  handleConfirmedDeleteProject: function() {
+  handleConfirmedDeleteProject() {
     var { name, _id, ownerName } = this.data.project
     var compoundNameOfDeletedProject = `${ownerName}:${name}`
     this.setState({ isDeletePending: true }) // Button disable/enable also guards against re-entrancy
@@ -366,7 +366,7 @@ const ProjectOverview = React.createClass({
         this.setState({
           isDeletePending: false,
           isDeleteComplete: true,
-          compoundNameOfDeletedProject: compoundNameOfDeletedProject,
+          compoundNameOfDeletedProject,
         })
       }
     })
@@ -374,7 +374,7 @@ const ProjectOverview = React.createClass({
 
   // TODO - Activity - filter for project / user.  Maybe have a Project-related Activity Page
 
-  renderRenameDeleteProject: function() {
+  renderRenameDeleteProject() {
     const { isDeleteComplete, isDeletePending, confirmDeleteNum } = this.state
     const canEdit = this.canEdit()
 
@@ -422,7 +422,7 @@ const ProjectOverview = React.createClass({
     )
   },
 
-  renderAddPeople: function() {
+  renderAddPeople() {
     if (!this.canEdit()) return null
 
     const project = this.data.project

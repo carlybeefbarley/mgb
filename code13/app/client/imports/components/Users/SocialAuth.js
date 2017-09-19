@@ -9,13 +9,13 @@ const SocialAuth = React.createClass({
     type: React.PropTypes.string,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       type: 'Join',
     }
   },
 
-  render: function() {
+  render() {
     return null // disabled for now
     // return (
     //     <div>
@@ -26,7 +26,7 @@ const SocialAuth = React.createClass({
     // );
   },
 
-  handleFacebook: function() {
+  handleFacebook() {
     Meteor.loginWithFacebook(
       {
         requestPermissions: ['email'],
@@ -44,7 +44,7 @@ const SocialAuth = React.createClass({
     )
   },
 
-  handleGoogle: function() {
+  handleGoogle() {
     Meteor.loginWithGoogle(
       {
         requestPermissions: ['email'],
@@ -62,7 +62,7 @@ const SocialAuth = React.createClass({
     )
   },
 
-  handleTwitter: function() {
+  handleTwitter() {
     Meteor.loginWithTwitter(error => {
       if (error) {
         this.setState({

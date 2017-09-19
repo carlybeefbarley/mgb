@@ -44,7 +44,7 @@ function slackGenericNotify(slackWebhookUrl, data) {
 }
 
 Meteor.methods({
-  'Slack.Chats.send': function(username, message, channel) {
+  'Slack.Chats.send'(username, message, channel) {
     const infoUrl = `https://v2.mygamebuilder.com/u/${username}?_fp=chat.${channel}`
     slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
       username: `MGBv2 @${username}`,
@@ -68,7 +68,7 @@ Meteor.methods({
 })
 
 Meteor.methods({
-  'Slack.Chats.censored': function(username, message, channel, censoredMsg) {
+  'Slack.Chats.censored'(username, message, channel, censoredMsg) {
     const infoUrl = `https://v2.mygamebuilder.com/u/${username}?_fp=chat.${channel}`
     slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
       username: `MGBv2 @${username}`,
@@ -93,7 +93,7 @@ Meteor.methods({
 })
 
 Meteor.methods({
-  'Slack.User.create': function(username, email) {
+  'Slack.User.create'(username, email) {
     const userUrl = `https://v2.mygamebuilder.com/u/${username}`
     slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
       username: `MGBv2 @${username}`,
@@ -104,7 +104,7 @@ Meteor.methods({
 })
 
 Meteor.methods({
-  'Slack.User.eradicated': function(username, infoObject) {
+  'Slack.User.eradicated'(username, infoObject) {
     const userUrl = `https://v2.mygamebuilder.com/u/${username}`
     slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
       username: `MGBv2 @${username}`,
@@ -117,7 +117,7 @@ Meteor.methods({
 })
 
 Meteor.methods({
-  'Slack.Assets.create': function(username, kind, assetname, docId) {
+  'Slack.Assets.create'(username, kind, assetname, docId) {
     const userUrl = `https://v2.mygamebuilder.com/u/${username}`
     const assetUrl = `https://v2.mygamebuilder.com/u/${username}/asset/${docId}`
     const text = `New ${kind} Asset <${assetUrl}|${assetname}> created by user <${userUrl}|${username}>`
@@ -131,13 +131,13 @@ Meteor.methods({
       slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
         username: `MGBv2 @${username}`,
         icon_emoji: ':pencil:',
-        text: text,
+        text,
       })
   },
 })
 
 Meteor.methods({
-  'Slack.Projects.create': function(username, projectname, docId) {
+  'Slack.Projects.create'(username, projectname, docId) {
     const userUrl = `https://v2.mygamebuilder.com/u/${username}`
     const projectUrl = `https://v2.mygamebuilder.com/u/${username}/project/${docId}`
     const text = `New Project <${projectUrl}|${projectname}> created by user <${userUrl}|${username}>`
@@ -147,13 +147,13 @@ Meteor.methods({
       slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
         username: `MGBv2 @${username}`,
         icon_emoji: ':card_file_box:',
-        text: text,
+        text,
       })
   },
 })
 
 Meteor.methods({
-  'Slack.Cloudfront.notification': function(message, isBad) {
+  'Slack.Cloudfront.notification'(message, isBad) {
     if (Meteor.isProduction) {
       slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_deploys, {
         username: `MGBv2 Cloudfront bot`,
@@ -167,7 +167,7 @@ Meteor.methods({
 })
 
 Meteor.methods({
-  'Slack.MGB.productionStartup': function() {
+  'Slack.MGB.productionStartup'() {
     const mgbVer = `Iteration ${mgbReleaseInfo.releases[0].id.iteration}`
     const configDumpMsg = !os
       ? '(no OS object)'
@@ -191,7 +191,7 @@ Meteor.methods({
 })
 
 Meteor.methods({
-  'Slack.Flags.unresolved': function(entity, ownerUsername, reporterUsername, createdAt, entityType) {
+  'Slack.Flags.unresolved'(entity, ownerUsername, reporterUsername, createdAt, entityType) {
     let infoUrl = ''
     let userUrl = ''
     if (entityType == 'Chats')

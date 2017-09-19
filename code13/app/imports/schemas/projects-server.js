@@ -26,7 +26,7 @@ export function lookupIsUseridInProject(userId, projectId) {
 }
 
 Meteor.methods({
-  'Projects.countNonDeletedAssets': function(projectName) {
+  'Projects.countNonDeletedAssets'(projectName) {
     return Azzets.find({ ownerId: this.userId, projectNames: projectName }).count()
   },
 
@@ -34,7 +34,7 @@ Meteor.methods({
   // so it's not a big deal.. but still, for simplicity we define it
   // server-side only and the client UI is careful to disable other
   // project operations while this is happening
-  'Projects.deleteProjectId': function(projectId, fAutoDeleteAssets) {
+  'Projects.deleteProjectId'(projectId, fAutoDeleteAssets) {
     check(projectId, String)
     checkIsLoggedInAndNotSuspended()
     console.log('Delete Project #', projectId)

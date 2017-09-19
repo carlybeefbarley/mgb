@@ -28,7 +28,7 @@ const _serverMethodHelper = userId => {
 // },
 
 Meteor.methods({
-  'User.sendSignUpEmail': function(email) {
+  'User.sendSignUpEmail'(email) {
     console.log('############## User.sendSignUpEmail...', email)
     console.log('userId', Meteor.userId())
 
@@ -58,7 +58,7 @@ Meteor.methods({
    * RPC User.update.mgb1namesVerified
    * Currently only superAdmin can do this. Self-validation system "coming soon"
    */
-  'User.update.mgb1namesVerified': function(userId, newMgb1namesVerified) {
+  'User.update.mgb1namesVerified'(userId, newMgb1namesVerified) {
     const u = _serverMethodHelper(userId)
     check(newMgb1namesVerified, String)
     checkMgb.checkUserIsSuperAdmin()
@@ -80,7 +80,7 @@ Meteor.methods({
    * Currently only superAdmin can ban/unban an account. The idea is that the
    * discussion with the banned user would happen via email for now.
    */
-  'User.toggleBan': function(userId) {
+  'User.toggleBan'(userId) {
     const u = _serverMethodHelper(userId)
     checkMgb.checkUserIsSuperAdmin()
     const newIsBanned = !u.suIsBanned
@@ -93,7 +93,7 @@ Meteor.methods({
    * RPC User.deactivateAccount
    * Only owning-User or superadmin can mark an account as de-activated
    */
-  'User.deactivateAccount': function(userId) {
+  'User.deactivateAccount'(userId) {
     const u = _serverMethodHelper(userId)
     if (this.userId !== userId) checkMgb.checkUserIsSuperAdmin()
     if (u.isDeactivated === true) throw new Meteor.Error(500, `User #${userId} is already deactivated`)
@@ -107,7 +107,7 @@ Meteor.methods({
    * Currently only superAdmin can re-activate an account. We don't yet have a full
    * Deactivate/Reactivate user account flow, but this is done for now from fpSuperAdmin
    */
-  'User.reactivateAccount': function(userId) {
+  'User.reactivateAccount'(userId) {
     const u = _serverMethodHelper(userId)
     checkMgb.checkUserIsSuperAdmin()
     if (u.isDeactivated !== true) throw new Meteor.Error(500, `User #${userId} is not deActivated`)
@@ -123,7 +123,7 @@ Meteor.methods({
    * THIS IS BRUTAL AND SHOULD JUST BE USED TO GET RID OF
    * TEST ACCOUNTS AND REPEAT-SPAMMERS
    */
-  'User.eradicateAccountBrutally': function(userNameToNuke, eradicateReason = 'spammer') {
+  'User.eradicateAccountBrutally'(userNameToNuke, eradicateReason = 'spammer') {
     if (!_.has(eradicateReasons, eradicateReason))
       throw new Meteor.Error(401, `Unknown eradication reason: ${eradicateReason}`)
 

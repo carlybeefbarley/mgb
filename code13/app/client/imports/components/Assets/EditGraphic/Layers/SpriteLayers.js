@@ -188,7 +188,7 @@ export default class SpriteLayers extends React.Component {
 
   togglePlayAnimation() {
     let isPlaying = !this.state.isPlaying
-    this.setState({ isPlaying: isPlaying })
+    this.setState({ isPlaying })
 
     if (isPlaying) this.playAnimation(this.props.selectedFrameIdx)
     else this.cancelNextAnimationTimeout()
@@ -286,7 +286,7 @@ export default class SpriteLayers extends React.Component {
       } else {
         let animation = c2.animations[animID]
         animTH.push({
-          animID: animID,
+          animID,
           name: animation.name,
           fps: animation.fps,
           colspan: animation.frames.length,

@@ -786,7 +786,7 @@ export default class TileMapLayer extends AbstractLayer {
 
 /* !!! this - in this scope is instance of tilemap layer (above) */
 const edit = {
-  debug: function(e, mouseUp) {
+  debug(e, mouseUp) {
     //const pos = this.getTilePosInfo(e)
     //pos.gid = this.options.data[pos.id]
   },

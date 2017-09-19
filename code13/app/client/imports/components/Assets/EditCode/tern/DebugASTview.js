@@ -6,7 +6,7 @@ const DebugASTview = React.createClass({
     atCursorMemberParentRequestResponse: PropTypes.object,
   },
 
-  smartRender: function() {
+  smartRender() {
     if (
       !this.props.atCursorMemberParentRequestResponse ||
       !this.props.atCursorMemberParentRequestResponse.data
@@ -20,7 +20,7 @@ const DebugASTview = React.createClass({
     } else return null
   },
 
-  render: function() {
+  render() {
     if (!this.props.atCursorMemberParentRequestResponse) return null
 
     return (

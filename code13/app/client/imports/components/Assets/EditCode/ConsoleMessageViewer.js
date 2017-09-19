@@ -29,7 +29,7 @@ const ConsoleMessageViewer = React.createClass({
   componentDidUpdate() {
     this.refs.msgContainer.scrollTop = this.refs.msgContainer.scrollHeight
   },
-  smartRender: function() {
+  smartRender() {
     if (!this.props.messages) return null
 
     let fmt = {
@@ -70,7 +70,7 @@ const ConsoleMessageViewer = React.createClass({
     })
   },
 
-  render: function() {
+  render() {
     const { messages, clearConsoleHandler } = this.props
     if (!messages) return null
 

@@ -98,13 +98,13 @@ export const ActivityTypes = {
   'project.removeMember': { icon: 'sitemap', pri: 4, description: 'Remove Member from project' },
   'project.leaveMember': { icon: 'sitemap', pri: 4, description: 'Member Left project' },
   // Helper functions that handles unknown asset kinds and gets good defaults for unknown items
-  getIconClass: function(key) {
+  getIconClass(key) {
     return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].icon : 'warning sign') + ' icon'
   },
-  getPri: function(key) {
+  getPri(key) {
     return ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].pri : 0
   },
-  getDescription: function(key) {
+  getDescription(key) {
     return ActivityTypes.hasOwnProperty(key)
       ? ActivityTypes[key].description
       : 'Unknown Activity type (' + key + ')'
@@ -112,7 +112,7 @@ export const ActivityTypes = {
 }
 
 Meteor.methods({
-  'Activity.log': function(
+  'Activity.log'(
     data, // Proposed Activity record
     override_byUser, // If admin, the user _id and username we want to force so we can do log-on-behalf-of
   ) {
@@ -152,7 +152,7 @@ Meteor.methods({
     return docId
   },
 
-  'Activity.delete': function(activityId) {
+  'Activity.delete'(activityId) {
     if (!this.userId) throw new Meteor.Error(401, 'Login required')
 
     check(activityId, String)
@@ -190,7 +190,7 @@ export function logActivity(activityType, description, thumbnail, asset, otherDa
 
   const username = user.profile.name
   var logData = {
-    activityType: activityType, // One of the keys of the ActivityTypes object defined above
+    activityType, // One of the keys of the ActivityTypes object defined above
     priority: ActivityTypes.getPri(activityType),
 
     timestamp: new Date(), // We do it here also so it will be in the priorLog data

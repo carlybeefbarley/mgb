@@ -1,10 +1,10 @@
 import options from './ActorOptions.js'
 
 const validator = {
-  hasConditionalBehavior: databag => {
+  hasConditionalBehavior(databag) {
     return databag.itemOrNPC.appearIf && databag.itemOrNPC.appearIf != options.appearIf['No condition']
   },
-  hasKey: databag => {
+  hasKey(databag) {
     return (
       !!databag.item.keyForThisDoor &&
       (databag.item.itemActivationType == options.itemActivationType['Blocks Player'] ||
@@ -12,7 +12,7 @@ const validator = {
       databag.item.pushToSlideNum == 0
     )
   },
-  isValidForBG: databag => {
+  isValidForBG(databag) {
     if (!databag) {
       return false
     }
@@ -39,7 +39,7 @@ const validator = {
       databag.item.pushToSlideNum == 0
     )
   },
-  isValidForActive: databag => {
+  isValidForActive(databag) {
     if (!databag) {
       return false
     }
@@ -65,7 +65,7 @@ const validator = {
         databag.item.itemActivationType != options.itemActivationType['Inactive'])
     )
   },
-  isValidForFG: databag => {
+  isValidForFG(databag) {
     if (!databag) {
       return false
     }

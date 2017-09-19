@@ -81,7 +81,7 @@ const AssetPathDetail = React.createClass({
     handleSaveNowRequest: PropTypes.func.isRequired, // Callback indicating User has said 'save now'
   },
 
-  handleFieldChanged: function(data) {
+  handleFieldChanged(data) {
     // data = { description: "New validated text comes here" }
     // Update your model from here
     if (data.name) this.props.handleNameChange(data.name)

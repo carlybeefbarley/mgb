@@ -91,8 +91,8 @@ const _doResolveReportEntity = (entityId, wasPermBanned, comments, tableCollecti
       recordId: entityId,
     }
     data = {
-      wasPermBanned: wasPermBanned,
-      comments: comments,
+      wasPermBanned,
+      comments,
     }
   } else if (tableCollection === 'Azzets') {
     reportedEntity = {
@@ -100,8 +100,8 @@ const _doResolveReportEntity = (entityId, wasPermBanned, comments, tableCollecti
       recordId: entityId,
     }
     data = {
-      wasPermBanned: wasPermBanned,
-      comments: comments,
+      wasPermBanned,
+      comments,
     }
   }
   Meteor.call('Flags.resolve', reportedEntity, data, (error, result) => {

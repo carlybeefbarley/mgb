@@ -20,7 +20,7 @@ const TileHelper = {
     pal: null,
     nextUpdate: 0,
   },
-  getAnimationTileInfo: (pal, palette, now) => {
+  getAnimationTileInfo(pal, palette, now) {
     // babel causes deopt for default values (arguments / splice combo)
     now = now || Date.now()
     if (!pal.ts.tiles) {
@@ -69,19 +69,19 @@ const TileHelper = {
     //this.queueDrawTiles(anim.duration - (tot - relDelta))
   },
   // TODO: take in to account margins and paddings
-  getTilePos: (id, widthInTiles, tilewidth, tileheight, ret = { x: 0, y: 0 }) => {
+  getTilePos(id, widthInTiles, tilewidth, tileheight, ret = { x: 0, y: 0 }) {
     ret.x = (id % widthInTiles) * tilewidth
     ret.y = Math.floor(id / widthInTiles) * tileheight
     return ret
   },
 
-  getTilePosRel: (id, widthInTiles, tilewidth, tileheight, ret = { x: 0, y: 0 }) => {
+  getTilePosRel(id, widthInTiles, tilewidth, tileheight, ret = { x: 0, y: 0 }) {
     ret.x = id % widthInTiles
     ret.y = Math.floor(id / widthInTiles)
     return ret
   },
 
-  getTilePosWithOffsets: (
+  getTilePosWithOffsets(
     id,
     widthInTiles,
     tilewidth,
@@ -89,7 +89,7 @@ const TileHelper = {
     margin = 0,
     spacing = 0,
     ret = { x: 0, y: 0 },
-  ) => {
+  ) {
     let tx = id % widthInTiles
     let ty = Math.floor(id / widthInTiles)
 
@@ -111,13 +111,13 @@ const TileHelper = {
     mTsTsTsTm
     mmmmmmmmm
   */
-  getColumns: tileset => {
+  getColumns(tileset) {
     return (
       (tileset.imagewidth - tileset.margin * 2 - tileset.tilewidth) / (tileset.tilewidth + tileset.spacing) +
       1
     )
   },
-  getRows: tileset => {
+  getRows(tileset) {
     return (
       (tileset.imageheight - -tileset.margin * 2 - tileset.tileheight) /
         (tileset.tileheight + tileset.spacing) +
@@ -125,13 +125,13 @@ const TileHelper = {
     )
   },
 
-  getTileCoordsRel: (x, y, tilewidth, tileheight, spacing = 0, ret = { x: 0, y: 0 }) => {
+  getTileCoordsRel(x, y, tilewidth, tileheight, spacing = 0, ret = { x: 0, y: 0 }) {
     ret.x = Math.floor(x / (tilewidth + spacing))
     ret.y = Math.floor(y / (tileheight + spacing))
     return ret
   },
 
-  getTilesetWidth: (tileset, spacing = 1) => {
+  getTilesetWidth(tileset, spacing = 1) {
     tileset.tilewidth = tileset.tilewidth || 32
     tileset.tileheight = tileset.tileheight || 32
     tileset.columns = TileHelper.getColumns(tileset)
@@ -139,7 +139,7 @@ const TileHelper = {
     return (tileset.columns - 1) * (tileset.tilewidth + spacing) + tileset.tilewidth
   },
 
-  getTilesetHeight: (tileset, spacing = 1) => {
+  getTilesetHeight(tileset, spacing = 1) {
     tileset.tilewidth = tileset.tilewidth || 32
     tileset.tileheight = tileset.tileheight || 32
     tileset.columns = TileHelper.getColumns(tileset)
@@ -150,14 +150,14 @@ const TileHelper = {
     return tileset.tilecount / tileset.columns * (spacing + tileset.tileheight) - spacing
   },
   /* helpers */
-  normalizePath: raw => {
+  normalizePath(raw) {
     let val = raw
     if (raw.indexOf(location.origin) === 0) {
       val = val.substr(location.origin.length)
     }
     return val
   },
-  extractName: path => {
+  extractName(path) {
     return path.substring(path.lastIndexOf('/') + 1)
   },
 
@@ -178,7 +178,7 @@ const TileHelper = {
   },
 
   /* generators */
-  genNewMap: (widthInTiles = 20, heightInTiles = 20, tilewidth = 32, tileheight = 32, numlayers = 1) => {
+  genNewMap(widthInTiles = 20, heightInTiles = 20, tilewidth = 32, tileheight = 32, numlayers = 1) {
     let layers = new Array(numlayers)
 
     for (let i = 0; i < numlayers; i++) {
@@ -199,12 +199,12 @@ const TileHelper = {
     }
   },
 
-  genLayer: (widthInTiles = 32, heightInTiles = 32, name = 'Layer') => {
+  genLayer(widthInTiles = 32, heightInTiles = 32, name = 'Layer') {
     const mapSize = widthInTiles * heightInTiles
 
     const layer = {
       data: [],
-      name: name,
+      name,
       draworder: 'topdown',
       width: widthInTiles,
       height: heightInTiles,
@@ -219,10 +219,10 @@ const TileHelper = {
     return layer
   },
 
-  genImageLayer: name => {
+  genImageLayer(name) {
     return {
       image: '',
-      name: name,
+      name,
       opacity: 1,
       type: 'imagelayer',
       visible: true,
@@ -231,10 +231,10 @@ const TileHelper = {
     }
   },
 
-  genObjectLayer: name => {
+  genObjectLayer(name) {
     return {
       draworder: 'topdown',
-      name: name,
+      name,
       opacity: 1,
       type: 'objectgroup',
       visible: true,
@@ -244,7 +244,7 @@ const TileHelper = {
     }
   },
 
-  genTileset: (
+  genTileset(
     map,
     imagepath,
     imagewidth,
@@ -254,7 +254,7 @@ const TileHelper = {
     name = TileHelper.extractName(imagepath),
     margin = -1,
     spacing = -1,
-  ) => {
+  ) {
     let path = TileHelper.normalizePath(imagepath)
 
     const extraPixels = imagewidth % tilewidth
@@ -345,7 +345,7 @@ const TileHelper = {
   },
 
   /* fixing something that is broken */
-  zeroOutUnreachableTiles: (mapdata, gidCache) => {
+  zeroOutUnreachableTiles(mapdata, gidCache) {
     for (let i = 0; i < mapdata.layers.length; i++) {
       const layer = mapdata.layers[i]
       if (LayerTypes.isTilemapLayer(layer.type)) {
@@ -371,7 +371,7 @@ const TileHelper = {
     TileHelper.fixTilesetGids(mapdata)
   },
 
-  fixTilesetGids: mapdata => {
+  fixTilesetGids(mapdata) {
     let nextGid = 1
     const changedTiles = {} // map with changed tiles
 
@@ -407,11 +407,11 @@ const TileHelper = {
     }
   },
 
-  getNextGid: ts => {
+  getNextGid(ts) {
     return ts.firstgid + (Math.floor(ts.tilecount / 100) + 1) * 100
   },
 
-  getOffsetX: e => {
+  getOffsetX(e) {
     if (e.offsetX !== void 0) {
       return e.offsetX
     }
@@ -428,7 +428,7 @@ const TileHelper = {
     }
     return 0
   },
-  getOffsetY: e => {
+  getOffsetY(e) {
     if (e.offsetY !== void 0) {
       return e.offsetY
     }

@@ -12,7 +12,7 @@ const TaskApprove = React.createClass({
     handleTaskApprove: PropTypes.func.isRequired,
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     const sub = Meteor.subscribe('skills.userId', this.props.ownerID)
 
     return {
@@ -21,7 +21,7 @@ const TaskApprove = React.createClass({
     }
   },
 
-  render: function() {
+  render() {
     const { loading, ownerSkills } = this.data
 
     // no need to show button if we don't know asset owner skills
@@ -38,7 +38,7 @@ const TaskApprove = React.createClass({
         hoverable
         wide
         size="tiny"
-        trigger={<Label basic size="small" icon={{ name: 'tasks', color: color }} content="task" />}
+        trigger={<Label basic size="small" icon={{ name: 'tasks', color }} content="task" />}
         position="bottom right"
       >
         <Popup.Header>Approve task</Popup.Header>

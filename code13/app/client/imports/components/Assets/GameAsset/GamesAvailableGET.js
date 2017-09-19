@@ -19,7 +19,7 @@ const GamesAvailableGet = React.createClass({
     scopeToProjectName: PropTypes.string, // e.g. foobar. Can be undefined/null. If specified, then scopeToUserId must also be specified
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     const { scopeToUserId, scopeToProjectName } = this.props
 
     const handleForAssets = Meteor.subscribe(
@@ -47,7 +47,7 @@ const GamesAvailableGet = React.createClass({
     }
   },
 
-  render: function() {
+  render() {
     const { loading, games } = this.data
     const { currUser, header } = this.props
     return loading || games.length === 0 ? null : (

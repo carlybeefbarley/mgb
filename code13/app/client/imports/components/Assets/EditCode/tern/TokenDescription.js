@@ -1671,14 +1671,14 @@ const TokenDescription = React.createClass({
     skills: PropTypes.object,
   },
 
-  handleHideShowClick: function(skillNodeKey) {
+  handleHideShowClick(skillNodeKey) {
     if (!skillNodeKey) return
 
     if (hasSkill(this.context.skills, skillNodeKey)) Meteor.call('Skill.forget', skillNodeKey)
     else Meteor.call('Skill.learn', skillNodeKey)
   },
 
-  render: function() {
+  render() {
     let token = this.props.currentToken
     // search for the next token - just in case..
     /*

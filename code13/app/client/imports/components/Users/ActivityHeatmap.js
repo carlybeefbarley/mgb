@@ -9,7 +9,7 @@ const ActivityHeatmap = React.createClass({
     className: PropTypes.string,
   },
 
-  render: function() {
+  render() {
     const { user } = this.props
 
     if (!user) return null

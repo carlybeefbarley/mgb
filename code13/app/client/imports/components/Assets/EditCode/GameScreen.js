@@ -80,25 +80,25 @@ export default class GameScreen extends React.Component {
     const data = event.data
 
     const commands = {
-      mgbConsoleMsg: function(data) {
+      mgbConsoleMsg(data) {
         return this.props.consoleAdd(data)
       },
       // In a Phaser game, this is needed to enable screenshots if using WebGL renderer
       //   game.preserveDrawingBuffer = true;
       // OR use Phaser.CANVAS as the renderer
-      mgbScreenshotCanvasResponse: function(data) {
+      mgbScreenshotCanvasResponse(data) {
         let asset = this.props.asset
         asset.thumbnail = data.pngDataUrl
         this.props.handleContentChange(null, asset.thumbnail, 'update thumbnail')
       },
 
-      mgbAdjustIframe: function(data) {
+      mgbAdjustIframe(data) {
         this.adjustIframe(data.size)
       },
-      mgbSetIframeReady: function() {
+      mgbSetIframeReady() {
         this._isIframeReady = true
       },
-      mgbClosed: function() {
+      mgbClosed() {
         // interval here because we cannot access popup directly when serving from CDN
         // and therefore we don't have almost any control over popup
         // unload on popup can be called in 2 separate occasions:

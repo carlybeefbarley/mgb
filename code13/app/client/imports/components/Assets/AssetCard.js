@@ -54,7 +54,7 @@ const AssetCard = React.createClass({
     urlLocation: React.PropTypes.object,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       canEdit: false,
       renderView: defaultAssetViewChoice,
@@ -76,7 +76,7 @@ const AssetCard = React.createClass({
     const { asset } = this.props
     const url = `/api/asset/png/${asset._id}`
     // IE supports only text.. so - encode everything in the "text"
-    e.dataTransfer.setData('text', JSON.stringify({ link: url, asset: asset }))
+    e.dataTransfer.setData('text', JSON.stringify({ link: url, asset }))
     $(document.body).addClass('dragging') // this is in mgb.css
   },
 

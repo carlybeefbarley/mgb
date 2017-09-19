@@ -77,7 +77,7 @@ export function createInitialUserAnalytics(userId) {
 
 Meteor.methods({
   /** This is ONLY for superAdmins to be nosey. See fpSuperAdmin which uses this */
-  'User.su.analytics.info': function(userId) {
+  'User.su.analytics.info'(userId) {
     checkMgb.checkUserIsSuperAdmin()
     checkMgb.userId(userId)
     const sel = { _id: userId }

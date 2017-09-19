@@ -75,7 +75,7 @@ const UserAssetListRoute = React.createClass({
    *   The result is a data structure that can be used without need for range/validity checking
    * @param q typically this.props.location.query  -  from react-router
   */
-  queryNormalized: function(q = {}) {
+  queryNormalized(q = {}) {
     // Start with defaults
     let newQ = _.clone(queryDefaults)
 
@@ -133,7 +133,7 @@ const UserAssetListRoute = React.createClass({
 
   /**  Returns the given query EXCEPT for keys that match a key/value pair in queryDefaults array
   */
-  _stripQueryOfDefaults: function(queryObj) {
+  _stripQueryOfDefaults(queryObj) {
     var strippedQ = _.omitBy(queryObj, function(val, key) {
       let retval = queryDefaults.hasOwnProperty(key) && queryDefaults[key] === val
       return retval
@@ -155,7 +155,7 @@ const UserAssetListRoute = React.createClass({
    * Always get the Assets stuff.
    * Optionally get the Project info - if this is a user-scoped view
    */
-  getMeteorData: function() {
+  getMeteorData() {
     const userId = this.props.user && this.props.user._id ? this.props.user._id : null
     const qN = this.queryNormalized(this.props.location.query)
     let handleForAssets = Meteor.subscribe(

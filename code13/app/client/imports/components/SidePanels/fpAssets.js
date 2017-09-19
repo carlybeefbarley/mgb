@@ -132,7 +132,7 @@ const fpAssets = React.createClass({
    * Always get the Assets stuff.
    * Optionally get the Project info - if this is a user-scoped view
    */
-  getMeteorData: function() {
+  getMeteorData() {
     // Much of this is copied from UserAssetListRoute - repeats.. needs cleanup
 
     const { user, currUser, currUserProjects } = this.props
@@ -204,7 +204,7 @@ const fpAssets = React.createClass({
     this.setState({ kindsActive: newKindsString })
   },
 
-  render: function() {
+  render() {
     const { assets, userProjects, loading } = this.data // list of assets provided via getMeteorData()
     const { user, currUser } = this.props
     const { view, kindsActive, searchName, project, projectName, showFromUserId } = this.state

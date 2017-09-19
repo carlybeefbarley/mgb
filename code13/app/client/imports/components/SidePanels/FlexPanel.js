@@ -193,24 +193,24 @@ const FlexPanel = React.createClass({
   },
 
   statics: {
-    getDefaultPanelViewTag: function() {
+    getDefaultPanelViewTag() {
       return flexPanelViews[defaultPanelViewIndex].tag
     },
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       wiggleActivity: false,
     }
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     return {
       fpFeatureLevel: getFeatureLevel(this.context.settings, makeLevelKey('FlexPanel')),
     }
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     registerDebugGlobal('fp', this, __filename, 'The global FlexPanel instance')
   },
 
@@ -227,14 +227,14 @@ const FlexPanel = React.createClass({
     }
   },
 
-  _viewTagMatchesPropSelectedViewTag: function(viewTag) {
+  _viewTagMatchesPropSelectedViewTag(viewTag) {
     if (!this.props.selectedViewTag) return false
 
     const selectedViewTagParts = this.props.selectedViewTag.split('.')
     return selectedViewTagParts[0] === viewTag
   },
 
-  _getSelectedFlexPanelChoice: function() {
+  _getSelectedFlexPanelChoice() {
     const defaultReturnValue = flexPanelViews[defaultPanelViewIndex]
     if (!this.props.selectedViewTag) return defaultReturnValue
 
@@ -244,12 +244,12 @@ const FlexPanel = React.createClass({
   },
 
   // Return the suffix (if any) of this.props.selectedViewTag.. For example 'chats.general' will return "general";    but 'chats' will return ""
-  getSubNavParam: function() {
+  getSubNavParam() {
     const selectedViewTagParts = this.props.selectedViewTag.split('.')
     return selectedViewTagParts[1] || ''
   },
 
-  handleChangeSubNavParam: function(newSubNavParamStr) {
+  handleChangeSubNavParam(newSubNavParamStr) {
     const { handleFlexPanelChange, selectedViewTag } = this.props
     const selectedViewTagParts = selectedViewTag.split('.')
     const newFullViewTag = selectedViewTagParts[0] + '.' + newSubNavParamStr
@@ -262,7 +262,7 @@ const FlexPanel = React.createClass({
     else handleFlexPanelChange(fpViewTag)
   },
 
-  getFpButtonSpecialClassForTag: function(tag) {
+  getFpButtonSpecialClassForTag(tag) {
     const { joyrideSteps, hazUnreadChats } = this.props
     const { wiggleActivity } = this.state
 
@@ -275,7 +275,7 @@ const FlexPanel = React.createClass({
     return ''
   },
 
-  getFpButtonExtraLabelForTag: function(tag) {
+  getFpButtonExtraLabelForTag(tag) {
     const { joyrideSteps, hazUnreadChats } = this.props
     const { wiggleActivity } = this.state
 
@@ -290,13 +290,13 @@ const FlexPanel = React.createClass({
     return null
   },
 
-  getFpButtonAutoShowForTag: function(tag) {
+  getFpButtonAutoShowForTag(tag) {
     if (this.props.selectedViewTag == tag) return true
 
     return false
   },
 
-  render: function() {
+  render() {
     const {
       currUserProjects,
       flexPanelWidth,

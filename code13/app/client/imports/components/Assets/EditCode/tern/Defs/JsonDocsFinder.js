@@ -5,7 +5,7 @@ const JsonDocsFinder = {
 
   _jsonDocCache: {},
 
-  _makeDocUrl: function(req) {
+  _makeDocUrl(req) {
     let ver
     let file
     switch (req.frameworkName) {
@@ -37,7 +37,7 @@ const JsonDocsFinder = {
    * @returns <nothing>   There will ALWAYS be a callback, sometimes sync (error or cached), sometimes async (needed network)
    *
    */
-  getApiDocsAsync: function(request, callbackFn) {
+  getApiDocsAsync(request, callbackFn) {
     request._urlString = this._makeDocUrl(request)
     if (!request.symbol || request.symbol.indexOf('.') === -1 || request._urlString === null) {
       this._processApiDocRequest(request, null, callbackFn)
@@ -67,7 +67,7 @@ const JsonDocsFinder = {
   /**
    * get the relevant info
    */
-  _getDesiredDocInfo: function(originalRequest, docInfoFromJsonFile) {
+  _getDesiredDocInfo(originalRequest, docInfoFromJsonFile) {
     if (!docInfoFromJsonFile) return null // We're not psychics!
 
     // so now we care about the following parts of originalRequest:
@@ -111,7 +111,7 @@ const JsonDocsFinder = {
     return retval
   },
 
-  _processApiDocRequest: function(originalRequest, docInfoFromJsonFile, originalCallbackFn) {
+  _processApiDocRequest(originalRequest, docInfoFromJsonFile, originalCallbackFn) {
     if (docInfoFromJsonFile === null)
       originalCallbackFn(originalRequest, {
         error: `API Doc not found at ${originalRequest._urlString} for request ${originalRequest.symbol}`,
@@ -122,7 +122,7 @@ const JsonDocsFinder = {
     }
   },
 
-  _getClassNameFromOneName: function(longName) {
+  _getClassNameFromOneName(longName) {
     if (!longName || longName.length === 0) return null
 
     var nArray = longName.split('.')

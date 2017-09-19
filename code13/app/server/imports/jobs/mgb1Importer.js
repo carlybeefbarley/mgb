@@ -29,7 +29,7 @@ const _importParamsSchema = {
 
 Meteor.methods({
   // retrieve array of MGB1 project names under the named MGB1 account
-  'mgb1.getProjectNames': function(mgb1Username) {
+  'mgb1.getProjectNames'(mgb1Username) {
     // if (!this.userId)
     //   throw new Meteor.Error(500, "Not logged in")
 
@@ -39,7 +39,7 @@ Meteor.methods({
 })
 
 Meteor.methods({
-  'job.import.mgb1.project': function(importParams) {
+  'job.import.mgb1.project'(importParams) {
     if (!this.userId) throw new Meteor.Error(401, 'Must be logged in to request import')
 
     let thisUser = Meteor.user()
@@ -80,8 +80,8 @@ Meteor.methods({
 
     // The following data will be used for the return value info
     const retValAccumulator = {
-      importParams: importParams,
-      newProjectId: newProjectId,
+      importParams,
+      newProjectId,
       assetIdsAdded: [], // Mgb2 Asset ids - those where the prior asset name did not exist (including isDeleted=true and isDeleted=false)
       assetIdsUpdated: [], // Mgb2 Asset ids - those where the prior asset name did exist (including isDeleted=true and isDeleted=false)
       mgb1AssetsFailedToConvert: [], // Array of { name: string, reason: string}.. For name, use Mgb1 Asset names - [type]/name.. eg. 'map/my map 1'

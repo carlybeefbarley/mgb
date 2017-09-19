@@ -152,12 +152,12 @@ export default class ImportGraphic extends React.Component {
 
     const graphics = _.cloneDeep(this.state.graphics)
     graphics.push({
-      fileName: fileName,
-      content2: content2,
-      thumbnail: thumbnail,
+      fileName,
+      content2,
+      thumbnail,
     })
     // TODO remake status so it shows also uploading status
-    this.setState({ graphics: graphics, status: STATUS_UPLOADED })
+    this.setState({ graphics, status: STATUS_UPLOADED })
   }
 
   createThumbnail(imgObject) {

@@ -27,7 +27,7 @@ Meteor.methods({
   //   opts.assetOwnerName                  // Optional String. If null, or "" then all users' assets are in scope
   //  e.g. Meteor.call("Azzets.Purge", { purgeIfUntouchedForNumDays: 14, isDryRun: false, assetOwnerName: '' })
 
-  'Azzets.Purge': function(opts = {}) {
+  'Azzets.Purge'(opts = {}) {
     checkMgb.checkUserIsSuperAdmin()
     check(opts, Object)
     check(opts.purgeIfUntouchedForNumDays, Match.Integer)

@@ -35,8 +35,8 @@ export default class Djent extends Component {
       return a.id === activePresetID ? a : null
     })
     this.state = {
-      activePresetID: activePresetID,
-      preset: preset,
+      activePresetID,
+      preset,
 
       isPlaying: false,
       isLooping: true,
@@ -180,7 +180,7 @@ export default class Djent extends Component {
       })
     })
 
-    this.setState({ activePresetID: preset.id, preset: preset })
+    this.setState({ activePresetID: preset.id, preset })
   }
 
   updateHitChance(hitChance) {
@@ -192,7 +192,7 @@ export default class Djent extends Component {
 
     let preset = this.state.preset
     preset.settings.config.hitChance = hitChance
-    this.setState({ preset: preset })
+    this.setState({ preset })
   }
 
   updateBeats(id, prop, value) {
@@ -214,7 +214,7 @@ export default class Djent extends Component {
 
       let preset = this.state.preset
       preset.settings.beats = beats
-      this.setState({ preset: preset })
+      this.setState({ preset })
 
       console.log('updated beats')
     }
@@ -225,7 +225,7 @@ export default class Djent extends Component {
 
     let preset = this.state.preset
     preset.settings.config.allowedLengths = allowedLengths
-    this.setState({ preset: preset })
+    this.setState({ preset })
   }
 
   updateBPM(bpm) {
@@ -235,7 +235,7 @@ export default class Djent extends Component {
 
     let preset = this.state.preset
     preset.settings.config.bpm = bpm
-    this.setState({ preset: preset })
+    this.setState({ preset })
   }
 
   updateInstrumentSound({ soundID, parentID, prop, value }) {
@@ -265,7 +265,7 @@ export default class Djent extends Component {
 
         let preset = this.state.preset
         preset.settings.instruments = instruments
-        this.setState({ preset: preset })
+        this.setState({ preset })
       }
     }
   }
@@ -286,28 +286,28 @@ export default class Djent extends Component {
   }
 
   updateIsPlaying(isPlaying) {
-    this.setState({ isPlaying: isPlaying })
+    this.setState({ isPlaying })
   }
 
   updateIsLooping(isLooping) {
-    this.setState({ isLooping: isLooping })
+    this.setState({ isLooping })
   }
 
   updateGenerationState(generationState) {
-    this.setState({ generationState: generationState })
+    this.setState({ generationState })
   }
 
   updateCurrentBuffer(currentBuffer) {
-    this.setState({ currentBuffer: currentBuffer })
+    this.setState({ currentBuffer })
     this.songTime = 0 // resets cursor
   }
 
   updateCurrentSrc(currentSrc) {
-    this.setState({ currentSrc: currentSrc })
+    this.setState({ currentSrc })
   }
 
   updateContinuousGeneration(continuousGeneration) {
-    this.setState({ continuousGeneration: continuousGeneration })
+    this.setState({ continuousGeneration })
   }
 
   updateDuration(newDuration) {
@@ -315,11 +315,11 @@ export default class Djent extends Component {
   }
 
   updateFadeIn(fadeIn) {
-    this.setState({ fadeIn: fadeIn })
+    this.setState({ fadeIn })
   }
 
   toggleSettings(isExpanded) {
-    this.setState({ isExpanded: isExpanded })
+    this.setState({ isExpanded })
     // console.log( $('.generateMusicPopup') )
 
     // hack to adjust popup height

@@ -17,7 +17,7 @@ const fpSkills = React.createClass({
     skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)
   },
 
-  render: function() {
+  render() {
     const { currUser } = this.props
     const { skills } = this.context
 

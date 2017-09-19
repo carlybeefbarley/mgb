@@ -20,7 +20,7 @@ const SignupRoute = React.createClass({
     urlLocation: React.PropTypes.object,
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       errors: {},
       formData: {},
@@ -28,7 +28,7 @@ const SignupRoute = React.createClass({
     }
   },
 
-  checkEmail: function(e) {
+  checkEmail(e) {
     const email = e.target.value
 
     // don't clear existing errors
@@ -42,7 +42,7 @@ const SignupRoute = React.createClass({
     })
   },
 
-  checkUserName: function(e) {
+  checkUserName(e) {
     const username = e.target.value
 
     // don't clear existing errors
@@ -56,7 +56,7 @@ const SignupRoute = React.createClass({
     })
   },
 
-  render: function() {
+  render() {
     const { isLoading, errors, formData } = this.state
     const { currUser } = this.props
 
@@ -131,7 +131,7 @@ const SignupRoute = React.createClass({
     )
   },
 
-  handleChange: function(e) {
+  handleChange(e) {
     const { name, value } = e.target
     this.setState((prevState, props) => ({
       errors: {
@@ -143,7 +143,7 @@ const SignupRoute = React.createClass({
     }))
   },
 
-  handleSubmit: function(event) {
+  handleSubmit(event) {
     const { formData = {} } = this.state
     const { email, username, password } = formData
     const errors = {
@@ -161,9 +161,9 @@ const SignupRoute = React.createClass({
     Accounts.createUser(
       {
         // Note that there is server-side validation in /server/CreateUser.js
-        email: email,
-        username: username, // Fixup mshell.sh code was:   _.each(Meteor.users.find().fetch(), function (u) { try { Accounts.setUsername( u._id,  u.profile.name ) } catch (e) { console.log('dupe:',u._id)} } )
-        password: password,
+        email,
+        username, // Fixup mshell.sh code was:   _.each(Meteor.users.find().fetch(), function (u) { try { Accounts.setUsername( u._id,  u.profile.name ) } catch (e) { console.log('dupe:',u._id)} } )
+        password,
         profile: {
           name: username,
           avatar: '//www.gravatar.com/avatar/' + md5(email.trim().toLowerCase()) + '?s=155&d=mm', // actual image picked by user to display

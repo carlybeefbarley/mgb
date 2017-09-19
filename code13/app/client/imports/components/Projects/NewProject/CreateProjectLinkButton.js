@@ -9,7 +9,7 @@ const CreateProjectLinkButton = React.createClass({
     currUser: PropTypes.object, // Currently Logged in user. Can be null
   },
 
-  render: function() {
+  render() {
     const { currUser } = this.props
 
     if (!currUser) return null

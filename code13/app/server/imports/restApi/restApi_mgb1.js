@@ -20,7 +20,7 @@ RestApi.addRoute(
   'mgb1/tile/:account/:project/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       let newUrl = `https://s3.amazonaws.com/JGI_test1/${this.urlParams.account}/${this.urlParams
         .project}/tile/${this.urlParams.name}`
       return {
@@ -43,7 +43,7 @@ RestApi.addRoute(
   'mgb1/actor/:account/:project/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       let s3Key = `${this.urlParams.account}/${this.urlParams.project}/actor/${this.urlParams.name}`
       var s3 = new AWS.S3({ region: aws_s3_region, maxRetries: 3 })
       var getObjectSync = Meteor.wrapAsync(s3.getObject, s3)
@@ -115,7 +115,7 @@ RestApi.addRoute(
   'mgb1/actor-for-diff/:account/:project/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       let s3Key = `${this.urlParams.account}/${this.urlParams.project}/actor/${this.urlParams.name}`
       var s3 = new AWS.S3({ region: aws_s3_region, maxRetries: 3 })
       var getObjectSync = Meteor.wrapAsync(s3.getObject, s3)
@@ -189,7 +189,7 @@ RestApi.addRoute(
   'mgb1/map/:account/:project/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       let s3Key = `${this.urlParams.account}/${this.urlParams.project}/map/${this.urlParams.name}`
       var s3 = new AWS.S3({ region: aws_s3_region, maxRetries: 3 })
       var getObjectSync = Meteor.wrapAsync(s3.getObject, s3)

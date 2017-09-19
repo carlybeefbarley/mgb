@@ -283,7 +283,7 @@ export default class EditGraphic extends React.Component {
         a: 1,
       }
       // console.log(hex, rgb)
-      return { fg: { hex: hex, rgb: rgb } }
+      return { fg: { hex, rgb } }
     } else {
       // returns offset in minutes to UTC
       // value can be positive or negative
@@ -299,7 +299,7 @@ export default class EditGraphic extends React.Component {
         b: parseInt(hex.substring(5, 7), 16),
         a: 1,
       }
-      return { fg: { hex: hex, rgb: rgb } }
+      return { fg: { hex, rgb } }
     }
   }
 
@@ -636,7 +636,7 @@ export default class EditGraphic extends React.Component {
       width: c2.width,
       height: c2.height,
       scale: this.state.editScale,
-      event: event,
+      event,
 
       chosenColor: this.state.selectedColors['fg'],
 
@@ -647,7 +647,7 @@ export default class EditGraphic extends React.Component {
 
       // setPreviewPixelsAt() Like CanvasRenderingContext2D.fillRect, but
       //   It SETS rather than draws-with-alpha-blending
-      setPreviewPixelsAt: function(x, y, w = 1, h = 1) {
+      setPreviewPixelsAt(x, y, w = 1, h = 1) {
         // Set Pixels on the Preview context ONLY
         self._setImageData4BytesFromRGBA(retval.previewCtxImageData1x1.data, retval.chosenColor.rgb)
         for (let i = 0; i < w; i++) {
@@ -664,7 +664,7 @@ export default class EditGraphic extends React.Component {
       //   (a) It SETS rather than draws-with-alpha-blending
       //   (b) It does this to both the current Preview AND the Edit contexts (with zoom scaling)
       //   So this is faster than a ClearRect+FillRect in many cases.
-      setPixelsAt: function(x, y, w = 1, h = 1) {
+      setPixelsAt(x, y, w = 1, h = 1) {
         // First, set Pixels on the Preview context
         retval.setPreviewPixelsAt(x, y, w, h)
 
@@ -680,7 +680,7 @@ export default class EditGraphic extends React.Component {
         }
       },
 
-      saveSelectRect: function(startX, startY, endX, endY) {
+      saveSelectRect(startX, startY, endX, endY) {
         if (startX > endX) {
           const tmp = startX
           startX = endX
@@ -693,42 +693,42 @@ export default class EditGraphic extends React.Component {
         }
         self.setState({
           selectRect: {
-            startX: startX,
-            startY: startY,
-            endX: endX,
-            endY: endY,
+            startX,
+            startY,
+            endX,
+            endY,
           },
         })
       },
 
-      getPasteCanvas: function() {
+      getPasteCanvas() {
         return self.state.pasteCanvas
       },
 
-      unselect: function() {
+      unselect() {
         self.setState({ selectRect: null })
         self.updateEditCanvasFromSelectedPreviewCanvas()
       },
 
-      showDimensions: function(width, height) {
-        self.setState({ selectDimensions: { width: width, height: height } })
+      showDimensions(width, height) {
+        self.setState({ selectDimensions: { width, height } })
       },
 
-      setPrevTool: function() {
+      setPrevTool() {
         if (self.prevToolIdx !== null) self.setState({ toolChosen: Tools[self.prevToolIdx] })
       },
 
       // clearPixelsAt() Like CanvasRenderingContext2D.clearRect, but
       //   (a) It does this to both the current Preview AND the Edit contexts (with zoom scaling)
       //   So this is more convenient than a ClearRect+FillRect in many cases.
-      clearPixelsAt: function(x, y, w = 1, h = 1) {
+      clearPixelsAt(x, y, w = 1, h = 1) {
         let s = retval.scale
         retval.previewCtx.clearRect(x, y, w, h)
         retval.editCtx.clearRect(x * s, y * s, w * s, h * s)
       },
 
       setColorRGBA(r, g, b, aByte) {
-        self.handleColorChangeComplete('fg', { rgb: { r: r, g: g, b: b, a: aByte / 256 } })
+        self.handleColorChangeComplete('fg', { rgb: { r, g, b, a: aByte / 256 } })
       },
 
       updateEditCanvasFromSelectedPreviewCanvas: self.updateEditCanvasFromSelectedPreviewCanvas.bind(self),
@@ -768,7 +768,7 @@ export default class EditGraphic extends React.Component {
     pasteCanvas.height = height
     let pasteCtx = pasteCanvas.getContext('2d')
     pasteCtx.putImageData(imgData, 0, 0)
-    this.setState({ pasteCanvas: pasteCanvas })
+    this.setState({ pasteCanvas })
   }
 
   findToolByLabelString(labelString) {
@@ -1303,8 +1303,8 @@ export default class EditGraphic extends React.Component {
 
     return {
       image: canvas.toDataURL('image/png'),
-      cols: cols,
-      rows: rows,
+      cols,
+      rows,
     }
   }
 

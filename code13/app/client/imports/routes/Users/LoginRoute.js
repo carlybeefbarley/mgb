@@ -12,7 +12,7 @@ import { showToast } from '/client/imports/routes/App'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 
 const LoginRoute = React.createClass({
-  getInitialState: function() {
+  getInitialState() {
     return {
       errors: {},
       isLoading: false,
@@ -24,7 +24,7 @@ const LoginRoute = React.createClass({
     urlLocation: React.PropTypes.object,
   },
 
-  checkEmail: function(e) {
+  checkEmail(e) {
     const email = e.target.value
 
     // don't clear existing errors
@@ -38,7 +38,7 @@ const LoginRoute = React.createClass({
     })
   },
 
-  render: function() {
+  render() {
     const { isLoading, errors, formData } = this.state
     const { currUser } = this.props
 
@@ -93,7 +93,7 @@ const LoginRoute = React.createClass({
     )
   },
 
-  handleChange: function(e) {
+  handleChange(e) {
     const { name, value } = e.target
 
     this.setState((prevState, props) => ({
@@ -138,7 +138,7 @@ const LoginRoute = React.createClass({
     })
   },
 
-  handleSubmit: function(e) {
+  handleSubmit(e) {
     const { email, password } = this.state.formData
 
     const errors = {

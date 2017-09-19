@@ -61,7 +61,7 @@ export default class ActorTileset extends React.Component {
     }
 
     const name = asset.dn_ownerName + ':' + asset.name
-    if (_.some(this.props.tilesets, { name: name })) {
+    if (_.some(this.props.tilesets, { name })) {
       showToast(`TD: This Map already contains Asset '${name}'`, 'warning')
       return
     }
@@ -74,7 +74,7 @@ export default class ActorTileset extends React.Component {
       imageheight: 0,
       imagewidth: 0,
       margin: 0,
-      name: name,
+      name,
       spacing: 0,
       tilecount: 1,
       tileheight: 32,
@@ -126,7 +126,7 @@ export default class ActorTileset extends React.Component {
         className="mgb-pixelated"
         style={{
           background: `url("${src}") no-repeat center center`,
-          height: height,
+          height,
           backgroundSize: 'contain',
         }}
         {...rest}

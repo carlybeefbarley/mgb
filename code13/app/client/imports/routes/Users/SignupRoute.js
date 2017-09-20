@@ -34,8 +34,13 @@ const SignupRoute = React.createClass({
     // don't clear existing errors
     if (this.state.errors.email) return
 
+    const reason = validate.emailWithReason(email)
+    if (reason) {
+      return this.setState({ errors: { ...this.state.errors, email: reason } })
+    }
+
     Meteor.call('AccountsHelp.emailTaken', email, (err, response) => {
-      if (err) return
+      if (err) return console.error(err)
 
       const message = response ? `'${email}' is taken` : null
       this.setState({ errors: { ...this.state.errors, email: message } })
@@ -48,8 +53,13 @@ const SignupRoute = React.createClass({
     // don't clear existing errors
     if (this.state.errors.username) return
 
+    const reason = validate.usernameWithReason(username)
+    if (reason) {
+      return this.setState({ errors: { ...this.state.errors, username: reason } })
+    }
+
     Meteor.call('AccountsHelp.userNameTaken', username, (err, response) => {
-      if (err) return
+      if (err) return console.error(err)
 
       const message = response ? `'${username}' is taken` : null
       this.setState({ errors: { ...this.state.errors, username: message } })
@@ -86,7 +96,7 @@ const SignupRoute = React.createClass({
                     <Form.Input
                       error={!!errors.username}
                       icon="user"
-                      label={errors.username || 'Username'}
+                      label={errors.username || 'Username (used for profile)'}
                       name="username"
                       onBlur={this.checkUserName}
                       placeholder="Username"
@@ -153,8 +163,7 @@ const SignupRoute = React.createClass({
     }
 
     if (_.some(errors)) {
-      this.setState({ errors })
-      return
+      return this.setState({ errors })
     }
 
     this.setState({ isLoading: true, errors })
@@ -172,11 +181,11 @@ const SignupRoute = React.createClass({
       },
       error => {
         if (error) {
-          this.setState({
+          console.error(error)
+          return this.setState({
             isLoading: false,
             errors: { server: error.reason || 'Server Error while creating account' },
           })
-          return
         }
 
         Meteor.call('User.sendSignUpEmail', email)

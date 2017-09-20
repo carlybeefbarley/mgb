@@ -25,7 +25,7 @@ const VerifyEmailRoute = React.createClass({
         this.setState({ isVerified: true, isLoading: false })
 
         Meteor.call('User.refreshBadgeStatus', (err, re) => {
-          if (err) console.log('User.refreshBadgeStatus error', err)
+          if (err) console.error('User.refreshBadgeStatus error', err)
           else {
             if (!re || re.length === 0) console.log(`No New badges awarded`)
             else showToast(`New badges awarded: ${re.join(', ')} `)

@@ -77,7 +77,7 @@ const UserProfileRoute = React.createClass({
         logActivity('user.clearFocus', `Prior focus '${this.props.user.profile.focusMsg}' has been cleared`)
     }
     Meteor.call('User.updateProfile', this.props.user._id, changeObj, error => {
-      if (error) console.log('Could not update profile: ', error.reason)
+      if (error) console.error('Could not update profile:', error.reason)
       else {
         // Go through all the keys, log completion tags for each
         _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-profile-set-field-${k}`))

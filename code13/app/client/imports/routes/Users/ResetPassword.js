@@ -99,18 +99,17 @@ const ResetPasswordRoute = React.createClass({
     }
 
     if (_.some(errors)) {
-      this.setState({ loading: false, errors })
-      return
+      return this.setState({ loading: false, errors })
     }
 
     this.setState({ isLoading: true })
     Accounts.resetPassword(params.token, password, error => {
       if (error) {
-        this.setState({
+        console.error(error)
+        return this.setState({
           isLoading: false,
           errors: { server: error.reason || 'Server Error while resetting password for account' },
         })
-        return
       }
 
       // This is going to cause an auto-login to happen very quickly,

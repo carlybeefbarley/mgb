@@ -30,8 +30,13 @@ const LoginRoute = React.createClass({
     // don't clear existing errors
     if (this.state.errors.email) return
 
+    const reason = validate.emailWithReason(email)
+    if (reason) {
+      return this.setState({ errors: { ...this.state.errors, email: reason } })
+    }
+
     Meteor.call('AccountsHelp.emailTaken', email, (err, response) => {
-      if (err) return
+      if (err) return console.error(err)
 
       const message = response ? null : `'${email}' is not registered`
       this.setState({ errors: { ...this.state.errors, email: message } })
@@ -148,8 +153,7 @@ const LoginRoute = React.createClass({
     }
 
     if (_.some(errors)) {
-      this.setState({ loading: false, errors })
-      return
+      return this.setState({ loading: false, errors })
     }
 
     this.doLogin(email, password)

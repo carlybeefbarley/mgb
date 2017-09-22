@@ -101,7 +101,7 @@ export const StartDefaultNextTutorial = ({ currUser, userSkills }) => {
   )
 }
 
-const LearnGetStartedRoute = ({ currUser }, context) => {
+const LearnGetStartedRoute = ({ currUser, isSuperAdmin }, context) => {
   const numGsSkills = countCurrentUserSkills(context.skills, _gsSkillNodeName + '.') || 0
 
   return (
@@ -116,7 +116,9 @@ const LearnGetStartedRoute = ({ currUser }, context) => {
         </Header>
         <ProgressLabel subSkillsComplete={numGsSkills} subSkillTotal={_maxGsSkillCount} />
         <Divider hidden />
-        {currUser && <SkillsMap skills={context.skills} expandable toggleable skillPaths={['getStarted']} />}
+        {currUser && (
+          <SkillsMap isSuperAdmin={isSuperAdmin} skills={context.skills} skillPaths={['getStarted']} />
+        )}
 
         {/*
          Add a pseudo-card for login/signup

@@ -61,7 +61,7 @@ const learnTopLevelItems = [
    */
 ]
 
-const LearnRoute = ({ currUser, params }, context) => (
+const LearnRoute = ({ currUser, isSuperAdmin, params }, context) => (
   <Grid container columns="1">
     <Divider hidden />
     <Grid.Column>
@@ -90,11 +90,10 @@ const LearnRoute = ({ currUser, params }, context) => (
               </Header>
               <p style={descStyle}>{area.desc}</p>
               {currUser &&
-              'string' == typeof area.skillnodeTopLevelTag && (
+              typeof area.skillnodeTopLevelTag === 'string' && (
                 <SkillsMap
+                  isSuperAdmin={isSuperAdmin}
                   skills={context.skills}
-                  expandable
-                  toggleable
                   skillPaths={[area.skillnodeTopLevelTag]}
                 />
               )}

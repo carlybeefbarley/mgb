@@ -113,7 +113,7 @@ const openUrl = (url, newTab) => {
   else utilPushTo(null, url)
 }
 
-const LearnArtRoute = ({ currUser }, context) => {
+const LearnArtRoute = ({ currUser, isSuperAdmin }, context) => {
   const numArtSkills = countCurrentUserSkills(context.skills, _artSkillNodeName + '.') || 0
 
   return (
@@ -126,7 +126,7 @@ const LearnArtRoute = ({ currUser }, context) => {
         </Header>
         <ProgressLabel subSkillsComplete={numArtSkills} subSkillTotal={_maxArtSkillCount} />
         <Divider hidden />
-        {currUser && <SkillsMap skills={context.skills} expandable toggleable skillPaths={['art']} />}
+        {currUser && <SkillsMap isSuperAdmin={isSuperAdmin} skills={context.skills} skillPaths={['art']} />}
 
         {/*
          Add a pseudo-card for login/signup

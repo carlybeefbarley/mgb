@@ -26,7 +26,7 @@ const _linkOverrides = {
   art: '/learn/art', // WIP
 }
 
-const LearnSkillsRoute = ({ currUser }, context) => (
+const LearnSkillsRoute = ({ currUser, isSuperAdmin }, context) => (
   <Grid container columns="1">
     <Divider hidden />
     <Grid.Column>
@@ -55,7 +55,9 @@ const LearnSkillsRoute = ({ currUser }, context) => (
               {!_linkOverrides[area.tag] && (
                 <Label basic color="orange" content="under construction during Beta" />
               )}
-              {currUser && <SkillsMap skills={context.skills} skillPaths={[area.tag]} />}
+              {currUser && (
+                <SkillsMap isSuperAdmin={isSuperAdmin} skills={context.skills} skillPaths={[area.tag]} />
+              )}
             </Card.Content>
           </Card>
         ))}

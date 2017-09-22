@@ -64,7 +64,7 @@ const learnCodeItems = [
   },
 ]
 
-const LearnCodeRoute = ({ currUser, params }, context) => (
+const LearnCodeRoute = ({ currUser, isSuperAdmin, params }, context) => (
   <Grid container columns="1">
     <Divider hidden />
     <Grid.Column>
@@ -93,7 +93,13 @@ const LearnCodeRoute = ({ currUser, params }, context) => (
               </Header>
               <p style={descStyle}>{area.desc}</p>
               {area.skillPath &&
-              currUser && <SkillsMap skills={context.skills} skillPaths={[area.skillPath]} />}
+              currUser && (
+                <SkillsMap
+                  isSuperAdmin={isSuperAdmin}
+                  skills={context.skills}
+                  skillPaths={[area.skillPath]}
+                />
+              )}
             </Card.Content>
           </QLink>
         ))}

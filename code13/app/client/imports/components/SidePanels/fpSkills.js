@@ -18,7 +18,7 @@ const fpSkills = React.createClass({
   },
 
   render() {
-    const { currUser } = this.props
+    const { currUser, isSuperAdmin } = this.props
     const { skills } = this.context
 
     if (!currUser) return <Message warning content="You must be logged in to see your skills status" />
@@ -34,7 +34,7 @@ const fpSkills = React.createClass({
           This is your learning progress via tutorials, muted help, assessed tasks etc...
         </p>
 
-        <SkillsMap expandable toggleable skills={skills} />
+        <SkillsMap isSuperAdmin={isSuperAdmin} expandable labeled skills={skills} />
 
         <Divider hidden />
 

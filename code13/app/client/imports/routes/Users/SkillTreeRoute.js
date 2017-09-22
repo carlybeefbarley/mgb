@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react'
 import { Segment, Header } from 'semantic-ui-react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { Skills } from '/imports/schemas'
-import { isUserSuperAdmin } from '/imports/schemas/roles'
 import Helmet from 'react-helmet'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import Spinner from '/client/imports/components/Nav/Spinner'
@@ -39,10 +38,9 @@ const SkillTreeRoute = React.createClass({
   },
 
   render() {
-    const { ownsProfile, isTopLevelRoute } = this.props
-
+    const { isSuperAdmin, ownsProfile, isTopLevelRoute } = this.props
     const userSkills = ownsProfile ? this.context.skills : this.data.skills
-    const isAdmin = isUserSuperAdmin(Meteor.user())
+
     return (
       <div className={isTopLevelRoute ? 'ui basic padded segment' : null}>
         {isTopLevelRoute && (
@@ -66,13 +64,7 @@ const SkillTreeRoute = React.createClass({
         {this.data.loading ? (
           <Spinner />
         ) : (
-          <SkillsMap
-            skills={userSkills}
-            expandable
-            toggleable={ownsProfile}
-            userCanManuallyClaimSkill={ownsProfile && isAdmin}
-            ownsProfile={ownsProfile}
-          />
+          <SkillsMap isSuperAdmin={isSuperAdmin} expandable labeled skills={userSkills} />
         )}
       </div>
     )

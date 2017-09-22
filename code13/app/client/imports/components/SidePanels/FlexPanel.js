@@ -290,20 +290,26 @@ const FlexPanel = React.createClass({
     return null
   },
 
-  getFpButtonAutoShowForTag(tag) {
-    if (this.props.selectedViewTag == tag) return true
-
-    return false
-  },
-
   render() {
     const {
+      activity,
+      chatChannelTimestamps,
+      currentlyEditingAssetInfo,
+      currUser,
       currUserProjects,
-      flexPanelWidth,
       flexPanelIsVisible,
-      handleFlexPanelToggle,
+      flexPanelWidth,
       fpIsFooter,
+      handleFlexPanelToggle,
       hazUnreadChats,
+      isSuperAdmin,
+      joyrideSteps,
+      joyrideSkillPathTutorial,
+      joyrideOriginatingAssetId,
+      joyrideCurrentStepNum,
+      requestChatChannelTimestampsNow,
+      selectedViewTag,
+      user,
     } = this.props
 
     const isMobileUI = fpIsFooter
@@ -380,7 +386,7 @@ const FlexPanel = React.createClass({
     const flexPanelChoice = this._getSelectedFlexPanelChoice()
     const flexPanelHeader = flexPanelChoice.header
     const flexPanelIcon = flexPanelChoice.icon
-    const ElementFP = !this.props.isSuperAdmin && flexPanelChoice.superAdminOnly ? null : flexPanelChoice.el
+    const ElementFP = !isSuperAdmin && flexPanelChoice.superAdminOnly ? null : flexPanelChoice.el
 
     if (flexPanelIsVisible && ElementFP !== null)
       joyrideCompleteTag(`mgbjr-CT-flexPanel-${flexPanelChoice.tag}-show`)
@@ -407,20 +413,20 @@ const FlexPanel = React.createClass({
                   <div className="ui fluid label">TODO: {flexPanelHeader} FlexPanel</div>
                 ) : (
                   <ElementFP
-                    currUser={this.props.currUser}
-                    currUserProjects={this.props.currUserProjects}
-                    user={this.props.user}
-                    chatChannelTimestamps={this.props.chatChannelTimestamps}
+                    currUser={currUser}
+                    currUserProjects={currUserProjects}
+                    user={user}
+                    chatChannelTimestamps={chatChannelTimestamps}
                     hazUnreadChats={hazUnreadChats}
-                    requestChatChannelTimestampsNow={this.props.requestChatChannelTimestampsNow}
-                    joyrideSteps={this.props.joyrideSteps}
-                    joyrideSkillPathTutorial={this.props.joyrideSkillPathTutorial}
-                    joyrideOriginatingAssetId={this.props.joyrideOriginatingAssetId}
-                    joyrideCurrentStepNum={this.props.joyrideCurrentStepNum}
-                    activity={this.props.activity}
-                    panelWidth={this.props.flexPanelWidth}
-                    isSuperAdmin={this.props.isSuperAdmin}
-                    currentlyEditingAssetInfo={this.props.currentlyEditingAssetInfo}
+                    requestChatChannelTimestampsNow={requestChatChannelTimestampsNow}
+                    joyrideSteps={joyrideSteps}
+                    joyrideSkillPathTutorial={joyrideSkillPathTutorial}
+                    joyrideOriginatingAssetId={joyrideOriginatingAssetId}
+                    joyrideCurrentStepNum={joyrideCurrentStepNum}
+                    activity={activity}
+                    panelWidth={flexPanelWidth}
+                    isSuperAdmin={isSuperAdmin}
+                    currentlyEditingAssetInfo={currentlyEditingAssetInfo}
                     subNavParam={this.getSubNavParam()}
                     handleChangeSubNavParam={this.handleChangeSubNavParam}
                     location={this.context.urlLocation}
@@ -434,8 +440,8 @@ const FlexPanel = React.createClass({
           {flexPanelViews.map(v => {
             const active = this._viewTagMatchesPropSelectedViewTag(v.tag)
             if (isMobileUI && !v.mobileUI) return null
-            if (v.lev > fpFeatureLevel && this.getFpButtonAutoShowForTag(v.tag) !== true) return null
-            if (v.superAdminOnly && !this.props.isSuperAdmin) return null
+            if (v.lev > fpFeatureLevel && selectedViewTag !== v.tag) return null
+            if (v.superAdminOnly && !isSuperAdmin) return null
             if (fpIsFooter && v.lev > 4) return null
             if (v.tag === 'projects' && (!currUserProjects || !currUserProjects.length)) return null
 

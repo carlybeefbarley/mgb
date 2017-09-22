@@ -99,9 +99,8 @@ const getSubSkills = learnItem => {
   // }
 }
 
-const LearnCodeRouteItem = (params, context) => {
-  const currUser = params.currUser
-  const learnItem = params.params.item
+const LearnCodeRouteItem = ({ currUser, isSuperAdmin, params }, context) => {
+  const learnItem = params.item
   const bySubsection = _.groupBy(getSubSkills(learnItem), 'subsection')
 
   if (!learnItems.includes(learnItem))
@@ -121,9 +120,8 @@ const LearnCodeRouteItem = (params, context) => {
           {currUser && (
             <div style={{ clear: 'both' }}>
               <SkillsMap
+                isSuperAdmin={isSuperAdmin}
                 skills={context.skills}
-                expandable
-                toggleable
                 skillPaths={['code.js.' + learnItem]}
               />
             </div>

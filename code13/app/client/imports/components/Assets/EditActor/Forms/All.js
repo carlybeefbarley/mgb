@@ -51,7 +51,7 @@ export default class All extends BaseForm {
     this.forceUpdate()
   }
 
-  updateActorImage = asset => () => {
+  updateActorThumbnail = () => asset => {
     if (!asset) return
 
     const canvas = document.createElement('canvas')
@@ -102,7 +102,13 @@ export default class All extends BaseForm {
               max: 10000,
               title: 'This is the highest health the actor can have. The value 0 means there is no limit',
             })}
-            {this.dropArea('Graphic', 'defaultGraphicName', 'graphic', null, this.updateActorImage())}
+            {this.dropArea(
+              'Graphic',
+              'defaultGraphicName',
+              'graphic',
+              null,
+              this.updateActorThumbnail(this.props.asset),
+            )}
             {this.dropArea('Sound When Harmed', 'soundWhenHarmed', 'sound', soundOptions)}
             {this.dropArea('Sound When Healed', 'soundWhenHealed', 'sound', soundOptions)}
             {this.dropArea('Sound When Killed', 'soundWhenKilled', 'sound', soundOptions)}

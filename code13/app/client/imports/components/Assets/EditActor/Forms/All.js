@@ -73,7 +73,7 @@ export default class All extends BaseForm {
       options: MgbActor.alCannedSoundsList.map(s => ({ text: '[builtin]:' + s, value: '[builtin]:' + s })),
     }
     // Handle limiting InitialHealth < initialMaxHealthNum
-    let initHealthConfig = { min: 1 }
+    let initHealthConfig = { min: 1, max: 1000000, default: 1 }
     if (this.data.initialMaxHealthNum) {
       const max = parseInt(this.data.initialMaxHealthNum, 10)
       if (max > 0) initHealthConfig.max = max
@@ -99,7 +99,8 @@ export default class All extends BaseForm {
             {this.text('Initial Heath', 'initialHealthNum', 'number', initHealthConfig)}
             {this.text('Initial Max Health', 'initialMaxHealthNum', 'number', {
               min: 0,
-              max: 10000,
+              max: 1000000,
+              default: 0,
               title: 'This is the highest health the actor can have. The value 0 means there is no limit',
             })}
             {this.dropArea(

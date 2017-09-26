@@ -23,6 +23,7 @@ export default class All extends BaseForm {
                 'scoreOrLosePointsWhenShotByPlayerNum',
                 'number',
                 {
+                  default: 0,
                   disabled: this.data.destroyableYN == '0',
                 },
               )}
@@ -31,6 +32,9 @@ export default class All extends BaseForm {
                 'scoreOrLosePointsWhenKilledByPlayerNum',
                 'number',
                 {
+                  min: -1000000,
+                  max: 1000000,
+                  default: 0,
                   disabled: this.data.destroyableYN == '0',
                 },
               )}
@@ -39,6 +43,7 @@ export default class All extends BaseForm {
                 'dropsObjectWhenKilledName',
                 'actor',
                 {
+                  default: 0,
                   disabled: this.data.destroyableYN == '0',
                 },
               )}
@@ -46,6 +51,7 @@ export default class All extends BaseForm {
                 this.text('% Chance of drop happening', 'dropsObjectWhenKilledChance', 'number', {
                   min: 1,
                   max: 100,
+                  default: 100,
                   disabled: this.data.destroyableYN == '0',
                 })}
             </div>
@@ -56,6 +62,7 @@ export default class All extends BaseForm {
                 'dropsObjectWhenKilledName2',
                 'actor',
                 {
+                  default: 0,
                   disabled: this.data.destroyableYN == '0',
                 },
               )}
@@ -81,6 +88,7 @@ export default class All extends BaseForm {
                   "% chance of randomly generating actor '" +
                   this.data.dropsObjectRandomlyName +
                   "' each second",
+                default: 0,
                 disabled: this.data.destroyableYN == '0',
               })}
           </Form>

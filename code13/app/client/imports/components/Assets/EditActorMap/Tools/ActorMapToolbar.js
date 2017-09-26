@@ -103,6 +103,7 @@ export default class MapToolbar extends React.Component {
           fitMap: this.props.fitMap,
           fitMapH: this.props.fitMapH,
           fitMapV: this.props.fitMapV,
+          disabled: this.props.isPlaying,
         },
         {
           name: 'zoomOut',
@@ -131,6 +132,7 @@ export default class MapToolbar extends React.Component {
           name: 'view',
           icon: 'mouse pointer',
           active: this.props.options.mode == EditModes.view,
+          disabled,
           label: 'View',
           tooltip: 'Allows to scroll map in the mobile mode',
           level: 1,

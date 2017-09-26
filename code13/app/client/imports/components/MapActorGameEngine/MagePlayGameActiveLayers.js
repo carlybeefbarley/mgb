@@ -307,7 +307,7 @@ const MagePlayGameActiveLayers = {
     var aalen = activeActors.length
     for (let AAi = 0; AAi < aalen; AAi++) {
       if (activeActors[AAi].alive) {
-        var name = activeActors[AAi].ACidx.split(':').pop()
+        var name = activeActors[AAi].ACidx
         ach[name] = ach[name] ? ach[name] + 1 : 1
       }
     }

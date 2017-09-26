@@ -35,6 +35,7 @@ export default class CharacterBehavior extends BaseForm {
                 this.text('Movement Frequency', 'movementSpeedNum', 'number', {
                   min: 0,
                   max: 1,
+                  default: 1,
                   step: 0.1,
                 })}
               {this.bool('Can Move Up \u2191', 'upYN')}
@@ -51,36 +52,43 @@ export default class CharacterBehavior extends BaseForm {
                 this.text('Shot Rate', 'shotRateNum', 'number', {
                   min: 0,
                   max: 9,
+                  default: 1,
                 })}
               {this.data.shotActor &&
                 this.text('Shot Range', 'shotRangeNum', 'number', {
                   min: 1,
                   max: 20,
+                  default: 1,
                 })}
               {this.data.shotActor &&
                 this.text('Shot damage against player', 'shotDamageToPlayerNum', 'number', {
                   min: 0,
-                  max: 1000,
+                  max: 1000000,
+                  default: 0,
                 })}
               {this.data.shotActor &&
                 this.text('Shot damage against NPCs or Items', 'shotDamageToNPCorItemNum', 'number', {
                   min: 0,
-                  max: 1000,
+                  max: 1000000,
+                  default: 1,
                 })}
             </div>
             <Divider />
             <div id="mgbjr-edit-actor-CharacterBehavior-touch">
               {this.text('Touch Damage Against Players', 'touchDamageToPlayerNum', 'number', {
                 min: 0,
-                max: 1000,
+                max: 1000000,
+                default: 0,
               })}
               {this.text('Touch Damage Against NPCS', 'touchDamageToNPCorItemNum', 'number', {
                 min: 0,
-                max: 1000,
+                max: 1000000,
+                default: 0,
               })}
               {this.text('Touch Damage Attack chance', 'touchDamageAttackChance', 'number', {
                 min: 1,
                 max: 100,
+                default: 100,
                 title: 'Chance of making a touch attack each round. 100% = always',
               })}
 
@@ -94,17 +102,20 @@ export default class CharacterBehavior extends BaseForm {
             <div id="mgbjr-edit-actor-CharacterBehavior-melee">
               {this.text('Melee Damage Against Player', 'meleeDamageToPlayerNum', 'number', {
                 min: 0,
-                max: 1000,
+                max: 1000000,
+                default: 0,
               })}
 
               {this.text('Melee Damage Against Npc', 'meleeDamageToNPCorItemNum', 'number', {
                 min: 0,
-                max: 1000,
+                max: 1000000,
+                default: 1,
               })}
 
               {this.text('Melee Repeat Delay', 'meleeRepeatDelay', 'number', {
                 min: 0,
                 max: 8,
+                default: 0,
                 title:
                   'Number of turns the character must wait before doing another melee attack. Note that a melee attack takes 2 turns.',
               })}

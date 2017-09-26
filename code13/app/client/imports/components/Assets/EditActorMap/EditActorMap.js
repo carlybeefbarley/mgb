@@ -339,8 +339,10 @@ export default class EditActorMap extends EditMap {
           </div>
         </div>
         <div
-          className={'three wide ' + (isPlaying ? 'mgb-hidden' : '') + ' column'}
-          style={{ display: 'flex', flexDirection: 'column', minWidth: '175px' }}
+          className={'three wide column'}
+          style={
+            isPlaying ? { display: 'none' } : { display: 'flex', flexDirection: 'column', minWidth: '175px' }
+          }
         >
           <LayerTool
             {...this.layerProps}

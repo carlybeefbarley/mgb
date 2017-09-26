@@ -54,28 +54,33 @@ export default class ObjectBehavior extends BaseForm {
             title: 'When equipped, increase base shot damage by this amount',
             min: -10000,
             max: 10000,
+            default: 0,
           })}
 
           {this.text('Shot rate bonus', 'equippedNewShotRateBonusNum', 'number', {
             title: 'When equipped, increase base shot rate by this amount',
             min: -20,
             max: 20,
+            default: 0,
           })}
           {this.text('Shot range bonus', 'equippedNewShotRangeBonusNum', 'number', {
             title: 'When equipped, increase base shot range by this amount',
             min: -20,
             max: 20,
+            default: 0,
           })}
           {this.text('Armor effect', 'equippedArmorEffect', 'number', {
             title: 'When equipped, Reduce damage by this percentage',
             min: -100, // cursed blade? :) originally 0
             max: 100,
+            default: 0,
           })}
           {this.text('Melee Damage Bonus', 'equippedNewMeleeDamageBonusNum', 'number', {
             title:
               'When equipped, Increase Melee damage by this number of points. You can also have a negative value - that this item reduces damage - for example a weapon might be fast but reduce base damage',
             min: -10000,
             max: 10000,
+            default: 0,
           })}
           {this.dropArea('New Melee sound', 'equippedNewMeleeSound', 'sound', {
             options: soundOptions,
@@ -86,6 +91,7 @@ export default class ObjectBehavior extends BaseForm {
               'This raises or lowers the Melee repeat rate of the character who has equipped the item. If the value is zero, there is no change to melee repeat rate. A positive number increases the delay, a negative number reduces the delay',
             min: -10,
             max: 10,
+            default: 0,
           })}
         </div>
         <Divider />
@@ -100,16 +106,20 @@ export default class ObjectBehavior extends BaseForm {
 
         {this.text('Heal (or harm) when used', 'healOrHarmWhenUsedNum', 'number', {
           title: 'Positive numbers heal and negative numbers harm',
-          min: -10000,
-          max: 10000,
+          min: -1000000,
+          max: 1000000,
         })}
         {this.text('Increase Max Health', 'increasesMaxHealthNum', 'number', {
           title: 'Enter the number of points of extra max health this item gives.',
-          min: -10000,
-          max: 10000,
+          min: -1000000,
+          max: 1000000,
         })}
         {/*this.bool("Gain an Extra Life when used", 'gainExtraLifeYN')  //  ENABLE THIS LINE ONCE WE IMPLEMENT LIVES */}
-        {this.text('Score (or lose points) when used', 'gainOrLosePointsNum', 'number')}
+        {this.text('Score (or lose points) when used', 'gainOrLosePointsNum', 'number', {
+          min: -1000000,
+          max: 1000000,
+          default: 0,
+        })}
 
         {this.bool(
           'Win this level when used',
@@ -126,7 +136,7 @@ export default class ObjectBehavior extends BaseForm {
         {this.data.gainPowerType == '1' &&
           this.text('Gain the power for', 'gainPowerSecondsNum', 'number', {
             title: 'seconds',
-            max: 60,
+            max: 300,
           })}
       </div>
     )
@@ -157,8 +167,8 @@ export default class ObjectBehavior extends BaseForm {
       <div>
         {this.text('Heal (or harm) when used', 'healOrHarmWhenUsedNum', 'number', {
           title: 'Positive numbers heal and negative numbers harm',
-          min: -10000,
-          max: 10000,
+          min: -1000000,
+          max: 1000000,
         })}
       </div>
     )

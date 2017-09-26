@@ -5,7 +5,12 @@ import { Icon, Dropdown } from 'semantic-ui-react'
 import './rsui-dd-fix.css'
 
 const CameraTools = ({ button }) => (
-  <Dropdown compact button className="require-sub-menu-fix" text={button.iconText}>
+  <Dropdown
+    compact
+    button
+    className={'require-sub-menu-fix' + (button.disabled ? ' disabled' : '')}
+    text={button.iconText}
+  >
     <Dropdown.Menu>
       <Dropdown.Item onClick={button.resetCamera}>Reset Camera</Dropdown.Item>
       <Dropdown.Item onClick={button.fitMap}>

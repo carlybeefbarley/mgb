@@ -81,6 +81,7 @@ export default class NPCBehavior extends BaseForm {
                 this.text('Aggro range', 'aggroRange', 'number', {
                   title:
                     'If the NPC is with this many tiles of the player, then the NPC will move towards the player',
+                  default: 0,
                 })}
 
               {this.bool("NPC can occupy player's space", 'canOccupyPlayerSpaceYN')}

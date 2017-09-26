@@ -58,6 +58,7 @@ const MgbMusic = {
     _currentlyPlaying = musicSource
     newMusic.addEventListener('canplaythrough', canplay, false)
     newMusic.src = MgbMusic.musicUrlFromMusicFileName(musicSource, oName)
+    newMusic.volume = 0.4
   },
   playMusic(musicSource, oName) {
     if (musicSource && musicSource === _currentlyPlaying) {

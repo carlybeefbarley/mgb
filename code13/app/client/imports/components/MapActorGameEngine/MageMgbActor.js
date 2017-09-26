@@ -387,7 +387,7 @@ const MgbActor = {
         } else {
           // builtin sound
           MgbActor._loadedSounds[name].src = '/audio/builtinForActors/' + name + '.wav'
-          MgbActor._loadedSounds[name].volume = 0.5 // Half volume
+          MgbActor._loadedSounds[name].volume = 0.4
         }
       }
     }
@@ -416,7 +416,7 @@ const MgbActor = {
     if (soundName !== 'none') {
       const sound = document.createElement('audio')
       sound.src = '/audio/builtinForActors/' + soundName + '.wav'
-      sound.volume = 0.5 // Half volume
+      sound.volume = 0.4
       sound && sound.play()
     }
   },

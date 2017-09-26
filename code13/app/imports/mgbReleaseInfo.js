@@ -15,6 +15,49 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Tue Sep 26 2017 11:55:00 GMT-0700 (PDT)',
+
+      id: {
+        ver: '0.3.2',
+        state: 'Beta',
+        iteration: '4853',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Improved Signup and Login forms',
+          changeSummary:
+            'Improved the validation speed and experience.  Clarified how "Username" will be used in the system.',
+          otherUrls: ['/login', '/signup'],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Contact us at hello@mygamebuilder.com',
+          changeSummary: 'Updated Contact Us to use our new email, hello@mygamebuilder.com.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Skills progress bar component',
+          changeSummary:
+            'Fixed broken Get Started progress bar style.  Removed the ability to "forget" (un-learn) a skill.  Improved the UX/UI of the Skills progress bar in /learn routes.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Fixed missing ActorMap thumbnails',
+          changeSummary:
+            'The ActorMap had a bug where dragging and dropping a Graphic Asset onto an Actor did not update the thumbnail.  Now it does.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Mon Sep 18 2017 10:45:00 GMT-0700 (PDT)',
 
       id: {

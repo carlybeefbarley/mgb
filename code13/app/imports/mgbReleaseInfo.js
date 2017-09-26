@@ -33,7 +33,7 @@ const mgbReleaseInfo = {
           changeName: 'Improved Signup and Login forms',
           changeSummary:
             'Improved the validation speed and experience.  Clarified how "Username" will be used in the system.',
-          otherUrls: ['/login', '/signup'],
+          otherUrls: [],
         },
         {
           type: 'improvement',

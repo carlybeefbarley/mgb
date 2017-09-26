@@ -40,14 +40,14 @@ const ResetPasswordRoute = React.createClass({
     return (
       <Form onChange={this.handleChange} onSubmit={this.handleSubmit} loading={isLoading}>
         <Form.Input
-          error={errors.password}
+          error={!!errors.password}
           icon="lock"
           label={errors.password || 'New password'}
           name="password"
           placeholder="New password"
           type="password"
         />
-        <Form.Button primary fluid disabled={!formData.password || errors.password}>
+        <Form.Button primary fluid disabled={!formData.password || !!errors.password}>
           Submit
         </Form.Button>
       </Form>
@@ -91,7 +91,7 @@ const ResetPasswordRoute = React.createClass({
 
   handleSubmit(event) {
     const { params } = this.props
-    const { password } = this.state
+    const { password } = this.state.formData
 
     const errors = {
       password: validate.passwordWithReason(password),

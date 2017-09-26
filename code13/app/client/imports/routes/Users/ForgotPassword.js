@@ -38,7 +38,7 @@ const ForgotPasswordRoute = React.createClass({
     return (
       <Form onSubmit={this.handleSubmit} onChange={this.handleChange} loading={isLoading}>
         <Form.Input
-          error={errors.email}
+          error={!!errors.email}
           icon="envelope"
           label={errors.email || 'Email'}
           name="email"

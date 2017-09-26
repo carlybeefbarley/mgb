@@ -63,7 +63,7 @@ const LoginRoute = React.createClass({
                 <Segment stacked>
                   <Form onChange={this.handleChange} onSubmit={this.handleSubmit} loading={isLoading}>
                     <Form.Input
-                      error={errors.email}
+                      error={!!errors.email}
                       icon="envelope"
                       label={errors.email || 'Email'}
                       name="email"
@@ -72,7 +72,7 @@ const LoginRoute = React.createClass({
                       type="email"
                     />
                     <Form.Input
-                      error={errors.password}
+                      error={!!errors.password}
                       icon="lock"
                       label={errors.password || 'Password'}
                       name="password"

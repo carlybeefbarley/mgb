@@ -252,11 +252,12 @@ window.addEventListener('load', function() {
   // ----------------------------------------
   // Particles
   // ----------------------------------------
+  var particlesId = 'particles-container'
 
   // Heads Up!
   //
   // Keep in sync with code13/app/client/imports/particlesjs-config.js
-  window.particlesJS('particles-container', {
+  window.particlesJS(particlesId, {
     retina_detect: true,
     particles: {
       number: {
@@ -297,6 +298,9 @@ window.addEventListener('load', function() {
       },
     },
   })
+
+  var $particlesContainer = document.querySelector('#' + particlesId)
+  $particlesContainer.classList.add('initialized')
 
   // ----------------------------------------
   // Message to console peekers

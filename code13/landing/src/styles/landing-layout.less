@@ -81,11 +81,16 @@ section:not(:last-child),
   }
 
   #particles-container {
+    transition: opacity 0.5s ease-in;
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
+    opacity: 0;
+    &.initialized {
+      opacity: 1;
+    }
   }
 
   .mgb-hero-caption {

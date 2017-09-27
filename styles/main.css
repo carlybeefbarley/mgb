@@ -440,7 +440,13 @@ section:not(:last-child),
 /***************************************
  *                Menu                 *
  ***************************************/
-.mgb-menu-logo {
+.mgb-main-menu {
+  pointer-events: none;
+}
+.mgb-main-menu > * {
+  pointer-events: all;
+}
+.mgb-main-menu .mgb-menu-logo {
   display: block !important;
   width: auto !important;
   height: 2em !important;
@@ -451,8 +457,25 @@ section:not(:last-child),
  ***************************************/
 .mgb-hero {
   background: #3453b6;
-  background-image: linear-gradient(180deg, #68256D, #0070b0 80%, #0080ff);
+  background-image: linear-gradient(180deg, #68256D, #0070B0 80%, #0080FF);
+  position: relative;
   padding-top: 60px;
+  pointer-events: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+.mgb-hero #particles-container,
+.mgb-hero .mgb-piled-container {
+  pointer-events: all;
+}
+.mgb-hero #particles-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 .mgb-hero .mgb-hero-caption {
   text-align: center;
@@ -555,7 +578,7 @@ section:not(:last-child),
  *             Alternating             *
  ***************************************/
 .mgb-alternating {
-  background-image: radial-gradient(#0080ff, #0070b0 60%, #68256D 120%);
+  background-image: radial-gradient(#0080FF, #0070B0 60%, #68256D 120%);
   overflow: hidden;
 }
 .mgb-alternating .mgb-alternating-media {

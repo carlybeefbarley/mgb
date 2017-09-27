@@ -2,8 +2,8 @@
 
 // Keep colors in sync with GetStarted.css .hero colors
 @mgb-gradient-1: #68256D;
-@mgb-gradient-2: #0070b0;
-@mgb-gradient-3: #0080ff;
+@mgb-gradient-2: #0070B0;
+@mgb-gradient-3: #0080FF;
 @mgb-gradient-fallback: mix(@mgb-gradient-1, @mgb-gradient-3);
 
 .mgb-gradient(@deg: 180deg) {
@@ -42,15 +42,24 @@ section:not(:last-child),
 /***************************************
  *                Menu                 *
  ***************************************/
-// Heads up!
-// Keep in sync with NavPanel.js const logoImageStyle
-// !important to override the theme, similar to inline styles in NavPanel.js
-.mgb-menu-logo {
-  display: block !important;
-  // match height of avatar image, allow width to fit
-  width: auto !important;
-  height: 2em !important;
-  filter: brightness(1.7) !important;
+.mgb-main-menu {
+  // allow particle interaction through the menu
+  // restore pointer events for things inside menu items
+  pointer-events: none;
+  & > * {
+    pointer-events: all;
+  }
+
+  // Heads up!
+  // Keep in sync with NavPanel.js const logoImageStyle
+  // !important to override the theme, similar to inline styles in NavPanel.js
+  .mgb-menu-logo {
+    display: block !important;
+    // match height of avatar image, allow width to fit
+    width: auto !important;
+    height: 2em !important;
+    filter: brightness(1.7) !important;
+  }
 }
 
 /***************************************
@@ -58,7 +67,26 @@ section:not(:last-child),
  ***************************************/
 .mgb-hero {
   .mgb-gradient();
+  position: relative;
   padding-top: 60px; // space for top fixed menu
+
+  // allow particle interaction through hero
+  pointer-events: none;
+  user-select: none;
+
+  // restore pointer events where clicks are needed (particle container, game container)
+  #particles-container,
+  .mgb-piled-container {
+    pointer-events: all;
+  }
+
+  #particles-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 
   .mgb-hero-caption {
     text-align: center;

@@ -16,7 +16,10 @@
   <meta property="og:url" content="https://build.games" >
   <meta property="og:type" content="website" >
   <meta property="og:title" content="MyGameBuilder" >
-  <meta property="og:description" content="Learn to build games in your browser. Make and play games together while learning real skills." >
+  <meta
+    property="og:description"
+    content="Learn to build games in your browser. Make and play games together while learning real skills."
+  >
   <!-- Heads Up! Asset paths are converted to absolute urls by gulp-rev-all -->
   <meta property="og:image" content="~/app/images/mascots/team-twitter-card.png" >
   <meta property="og:image:type" content="image/png" >
@@ -25,13 +28,13 @@
   <meta property="og:image:alt" content="MyGameBuilder mascot team" >
   <meta property="og:locale" content="en_US" >
 
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@my_game_builder">
-  <meta name="twitter:creator" content="@stanchion">
-  <meta name="twitter:title" content="My Game Builder">
-  <meta name="twitter:description" content="Build games. Learn from friends. Have fun.">
+  <meta name="twitter:card" content="summary_large_image" >
+  <meta name="twitter:site" content="@my_game_builder" >
+  <meta name="twitter:creator" content="@stanchion" >
+  <meta name="twitter:title" content="My Game Builder" >
+  <meta name="twitter:description" content="Build games. Learn from friends. Have fun." >
   <!-- Heads Up! Asset paths are converted to absolute urls by gulp-rev-all -->
-  <meta name="twitter:image" content="~/app/images/mascots/team-twitter-card.png">
+  <meta name="twitter:image" content="~/app/images/mascots/team-twitter-card.png" >
 
   <title>MyGameBuilder</title>
 </head>
@@ -55,6 +58,8 @@
 
 <!-- HERO -->
 <section class="mgb-hero">
+  <div id="particles-container"></div>
+
   <div class="mgb-hero-caption">
     <h1 class="ui inverted header">
       Learn to build games in your browser
@@ -138,7 +143,11 @@
             Use Actors to build games without writing any code
           </span>
         </h1>
-        <div class="mgb-lazy" data-lazy-tag="video" data-lazy-src="{{ MGB_LANDING_BASE_URL }}img/actormapEditor.webm">
+        <div
+          class="mgb-lazy"
+          data-lazy-tag="video"
+          data-lazy-src="{{ MGB_LANDING_BASE_URL }}img/actormapEditor.webm"
+        >
           <img src="{{ MGB_LANDING_BASE_URL }}img/actormapEditor-cover.png" alt="Actor Map Editor" />
         </div>
       </div>
@@ -152,7 +161,11 @@
             Use our full featured code editor to write games
           </span>
         </h1>
-        <div class="mgb-lazy" data-lazy-tag="video" data-lazy-src="{{ MGB_LANDING_BASE_URL }}img/codeEditor.webm">
+        <div
+          class="mgb-lazy"
+          data-lazy-tag="video"
+          data-lazy-src="{{ MGB_LANDING_BASE_URL }}img/codeEditor.webm"
+        >
           <img src="{{ MGB_LANDING_BASE_URL }}img/codeEditor-cover.png" alt="Code Editor" />
         </div>
       </div>
@@ -227,7 +240,10 @@
     <!-- TUTORIALS -->
     <div class="ui middle aligned equal width stackable grid">
       <div class="nine wide computer ten wide tablet column">
-        <img class="mgb-alternating-media ui image" src="{{ MGB_LANDING_BASE_URL }}img/tutorials_1200x720.png" >
+        <img
+          class="mgb-alternating-media ui image"
+          src="{{ MGB_LANDING_BASE_URL }}img/tutorials_1200x720.png"
+        >
         <img class="mgb-alternating-mascot" src="~/app/images/mascots/bigguy.png" alt="Duck" >
       </div>
       <div class="seven wide computer six wide tablet column">
@@ -361,5 +377,6 @@
 </footer>
 
 <script src="{{ MGB_LANDING_BASE_URL }}js/main.js"></script>
+<script src="//cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 </body>
 </html>

@@ -49,13 +49,12 @@ jobs:
           command: yarn ci
           working_directory: code13/app
 
-      # Deploy staging
       - deploy:
           name: Maybe deploy staging
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               curl https://install.meteor.com?release=1.5.1 | /bin/sh
 
-              bash ./stage.sh
+              bash ./deploy.sh staging
             fi
           working_directory: code13/app

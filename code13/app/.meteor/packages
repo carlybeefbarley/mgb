@@ -38,3 +38,4 @@ meteorhacks:aggregate
 juliancwirko:postcss
 less@2.7.9
 dynamic-import
+percolate:migrations

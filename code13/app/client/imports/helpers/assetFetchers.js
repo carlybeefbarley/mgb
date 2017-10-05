@@ -112,29 +112,33 @@ const syncTime = () => {
   const emitted = Date.now()
   Meteor.call('syncTime', { now: emitted }, (err, date) => {
     lastDiff = Date.now() - date.now
+
     console.log(
       `[Timeslip check: Server->Client Diff = ${lastDiff}ms; Client->Server Diff = ${date.diff} ms]`,
     )
   })
+  // sync every 15 minutes
+  setTimeout(syncTime, 15 * 1000 * 60)
 }
-// Wait for 5 (arbitrary) seconds after Meteor.startup() calls us.. Might be better to wait for a connection
-// but that's more client-side work than is worthwhile for this
-Meteor.startup(() => window.setTimeout(syncTime, 5000))
+Meteor.startup(syncTime)
 
-// use this to allow client NOT pull resources every time
-// will return timestamp with next expire datetime
+/**
+ * Generates same timestamp for every maxAge seconds
+ *
+ * it will round timestamp to maxAge seconds
+ * it's easier to understand with tens and fives, but it will work with any number
+ * for example if maxAge is set to 10s - then return will be rounded to 10 * 1000 (four zeroes)
+ * and makeExpireTimestamp will return same value for next 10 seconds
+ * actually it can return different earlier for the first and second call,
+ * but all next calls will get same value for next 10 seconds
+ *
+ * @param maxAge - in seconds
+ * @returns {number} timestamp with next expire datetime
+ */
 export const makeExpireTimestamp = maxAge => {
-  // TODO(@stauzs): we need server time here - this will work only for short periods of time !!!!
-  // See https://github.com/mizzao/meteor-timesync
   const now = Date.now() - lastDiff
-  // this will be timestamp rounded to seconds   // TODO(@stauzs) explain why this is  % (expires * 1000) rather than % 1000
-  // it will round timestamp to expires seconds - * 1000 because JS timestamps are in milliseconds
-  // it's easier to understand with tens and fives, but it will work with any number
-  // for example if expires will be 10s - then return will be rounded to 10 * 1000 (four zeroes)
-  // and makeExpireTimestamp will return same value for next 10 seconds
-  // actually it can return different earlier for the first and second call,
-  // but all next calls will get same value for next 10 seconds
-  const maxAgeMS = maxAge * 1000
+
+  const maxAgeMS = maxAge * 1000 // 1000 because JS timestamps are in milliseconds
   return now - now % maxAgeMS + maxAgeMS
 }
 

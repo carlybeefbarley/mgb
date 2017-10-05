@@ -6,6 +6,7 @@ import { Button, Divider, Header, Icon, Input, Segment, List, Modal, Popup } fro
 
 import { AssetKinds } from '/imports/schemas/assets'
 import QLink, { openAssetById, utilPushTo } from '/client/imports/routes/QLink'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 const NameInfoAzzets = new Meteor.Collection('NameInfoAzzets')
 
@@ -355,7 +356,9 @@ const RelatedAssets = createContainer(props => {
     false,
     false,
     'edited', // Sort by recently edited
-    user || currUser ? 50 : 10, // Just a few if not logged in and no context
+    user || currUser
+      ? SpecialGlobals.relatedAssets.limit.withUser
+      : SpecialGlobals.relatedAssets.limit.noContext,
   )
 
   return {

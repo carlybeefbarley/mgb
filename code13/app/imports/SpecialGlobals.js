@@ -114,6 +114,13 @@ const SpecialGlobals = {
     tutorialAssetNamePrefix: 'tutorials.',
   },
 
+  relatedAssets: {
+    limit: {
+      withUser: 100,
+      noContext: 30,
+    },
+  },
+
   quotas: {
     // Project limits: max members in project
     defaultNumMembersAllowedInProject: 10, // For normal users

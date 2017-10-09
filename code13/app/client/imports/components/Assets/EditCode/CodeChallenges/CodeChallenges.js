@@ -29,7 +29,7 @@ const _runFrameConfig = {
 }
 
 const _openHelpChat = () => utilShowChatPanelChannel(window.location, 'G_MGBHELP_')
-const _openChallengeList = () => utilPushTo(window.location, '/learn/code/basics')
+const _openChallengeList = () => utilPushTo(window.location, '/learn/code/intro')
 
 export default class CodeChallenges extends React.Component {
   static propTypes = {

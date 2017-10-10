@@ -15,6 +15,59 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Mon Oct 10 2017 09:30:00 GMT-0700 (PDT)',
+
+      id: {
+        ver: '0.3.3',
+        state: 'Beta',
+        iteration: '4867',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'More Related Assets',
+          changeSummary: 'We improved the number of related assets that are fetched in the list.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Actor Maps',
+          changeSummary: 'We improved the speed and usability of the Actor Map editor.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Faster Dashboard and Home',
+          changeSummary: 'We implemented caching techniques to improve the page load times.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Award Honorable Initiate Badge',
+          changeSummary:
+            "In some cases, the Honorable Initiate Badge was not awarded when it should have been.  The next time you complete a tutorial, it will be awarded if you've earned it.",
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Missing Code Skills',
+          changeSummary: 'You may have noticed some of your code skills were missing, they are back now!',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'We fixed bugs and usability issues across the entire system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Tue Sep 26 2017 12:30:00 GMT-0700 (PDT)',
 
       id: {

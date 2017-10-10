@@ -29,7 +29,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "code13/app/yarn.lock" }}
+            - v1-dependencies-{{ arch }}-{{ checksum "code13/app/yarn.lock" }}
             - v1-dependencies
 
       - run:
@@ -38,7 +38,7 @@ jobs:
           working_directory: code13/app
 
       - save_cache:
-          key: v1-dependencies-{{ checksum "code13/app/yarn.lock" }}
+          key: v1-dependencies-{{ arch }}-{{ checksum "code13/app/yarn.lock" }}
           paths:
             - ~/.cache/yarn
             - .yarn-cache

@@ -45,7 +45,7 @@ const _skillBasedBadges = [
   },
   {
     newBadgeName: badgeList.getStartedAll.name,
-    requiredSkills: ['getStarted.nonCodeGame.useActorMap'],
+    requiredSkills: ['getStarted.nonCodeGame.buildAndPlayActorMap'],
   },
 ]
 

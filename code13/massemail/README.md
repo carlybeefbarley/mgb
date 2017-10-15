@@ -2,10 +2,10 @@
 
 This app contains scripts and tools for sending mass emails.
 
-sender/ - sends emails to list of email addresses
-cleaner/ - cleans unsubscribed emails from delivered email list
-logs/ - parse log file and get delivered, rejected, unsubscribet etc emails
-scripts/ - get emails from mgb actual user database
+- `sender/` - sends emails to list of email addresses
+- `cleaner/` - cleans unsubscribed emails from delivered email list
+- `logs/` - parse log file and get delivered, rejected, unsubscribet etc emails
+- `scripts/` - get emails from mgb actual user database
 
 ## sender/ Sends emails
 Reads emails.csv file and sends email each 10 seconds. 
@@ -45,7 +45,7 @@ const EVENT_CLICKED       = 'clicked'
 
 ## Generate CSV of usernames and emails
 
-Make a one off CSV of usernames and emails in `data/users.csv`.
+Make a one off CSV of usernames and emails in the current production database.  Saves to `data/users.csv`.
 
     # first start the app
     cd ../app

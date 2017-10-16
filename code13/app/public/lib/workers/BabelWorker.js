@@ -1,6 +1,6 @@
 // this is required for babel - as it uses window as global
 this.window = this
-importScripts("https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.12.0/babel.min.js")
+importScripts("https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js")
 
 var resolveModuleName = function(importName, currentFile, referrer){
   // global import
@@ -32,10 +32,19 @@ onmessage = function (e) {
 
   var options = Object.assign({
     filename: filename,
+    retainLines: true,
     compact: false,           // Default of "auto" fails on ReactImport
     presets: ['es2015', 'react'],
     sourceMaps: 'inline',
-    plugins: ['transform-es2015-modules-amd', 'transform-class-properties'], // async
+    plugins: [
+      'transform-es2015-modules-amd',
+      'transform-class-properties',
+      'transform-es2015-destructuring',
+      'transform-es2015-spread',
+      'transform-object-rest-spread',
+      'syntax-object-rest-spread'
+    ],
+
     // this is function from SourceTools:resolveModuleSource
     resolveModuleSource: function(importName, currentFile){
       importNames.push(importName)

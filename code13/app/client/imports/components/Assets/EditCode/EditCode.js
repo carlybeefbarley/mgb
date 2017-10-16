@@ -2104,6 +2104,7 @@ export default class EditCode extends React.Component {
     let pos = { line: line - 1, ch: 0 }
     this.codeMirror.scrollIntoView(pos, 100) //100 pixels margin
     this.codeMirror.setCursor(pos)
+    this.codeMirror.focus()
   }
 
   /** This is useful when working with Tern stuff..

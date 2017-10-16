@@ -155,10 +155,17 @@ class RelatedAssetsUI extends React.Component {
 
   focusSearchInput = () => {
     // wait for it to open, then focus it
-    setTimeout(() => {
-      const relatedInput = document.querySelector('#mgb-related-assets-input')
-      relatedInput && relatedInput.focus()
-    })
+    const relatedInput = document.querySelector('#mgb-related-assets-input')
+    if (relatedInput) {
+      relatedInput.focus()
+      // workaround for #1471 - blur on search bar in the Codemirror focuses CodeEditor - fight for focus
+      const codeMirrorElement = document.querySelector('.CodeMirror')
+      if (codeMirrorElement && codeMirrorElement.CodeMirror) {
+        codeMirrorElement.CodeMirror.operation(() => {
+          relatedInput.focus()
+        })
+      }
+    }
   }
 
   /**

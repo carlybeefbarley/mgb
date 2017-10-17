@@ -3,10 +3,12 @@ import React, { PropTypes } from 'react'
 import { Button, Menu, Image, Icon } from 'semantic-ui-react'
 import NavPanelItem from './NavPanelItem'
 
+import cookie from '/client/imports/helpers/cookie'
 // imports to enable logout functionality
 import { showToast } from '/client/imports/routes/App'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { logActivity } from '/imports/schemas/activity'
+import SpecialGlobals from "../../../../imports/SpecialGlobals"
 
 // Heads up!
 // Keep in sync with landing-layout.less .mgb-menu-logo
@@ -309,6 +311,7 @@ const _doLogout = () => {
     if (error) {
       showToast(`Logout failed: '${error.toString()}'.  Refresh and try again.`, 'error')
     } else {
+      cookie.remove(SpecialGlobals.mgb_api_cookie_name)
       utilPushTo(null, '/')
     }
   })

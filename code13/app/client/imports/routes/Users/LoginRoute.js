@@ -11,6 +11,9 @@ import validate from '/imports/schemas/validate'
 import { showToast } from '/client/imports/routes/App'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 
+import cookie from '/client/imports/helpers/cookie'
+import SpecialGlobals from "../../../../imports/SpecialGlobals"
+
 const LoginRoute = React.createClass({
   getInitialState() {
     return {
@@ -126,11 +129,14 @@ const LoginRoute = React.createClass({
           errors: { ...prevState.errors, server: error.reason },
         }))
       } else {
-        var userName = Meteor.user().profile.name
+        var user = Meteor.user()
+        var userName = user.profile.name
         logActivity('user.login', `Logging in "${userName}"`, null, null)
         stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
         utilPushTo(this.context.urlLocation.query, '/dashboard')
         showToast('Login ok!  Welcome back')
+
+        cookie.create(SpecialGlobals.mgb_api_cookie_name, user.username, '/api/')
 
         // analytics.identify(Meteor.user()._id, {
         //   name: userName,

@@ -3,6 +3,7 @@
 // this code smell in our codebase :)
 
 const SpecialGlobals = {
+  mgb_api_cookie_name: 'mgb_active_user',
   activity: {
     activityHistoryLimit: 20,
     feedLimit: 10,

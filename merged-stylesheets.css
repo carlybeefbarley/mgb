@@ -76499,8 +76499,8 @@ body.dragging .accept-drop:hover {
   top: 240px;
   right: 0;
   z-index: 999999;
-  width: 25em;
-  padding-right: 5em;
+  width: 480px;
+  padding: 0 100px;
   max-height: calc(100% - 240px);
   overflow-x: hidden;
   overflow-y: auto;
@@ -76508,7 +76508,7 @@ body.dragging .accept-drop:hover {
 
 .notification {
   box-sizing: border-box;
-  padding: 1em 1em 1em 4em;
+  padding: 15px 15px 15px 58px;
   border-radius: 2px;
   color: #fff;
   background-color: #ccc;
@@ -76556,14 +76556,16 @@ body.dragging .accept-drop:hover {
 
 .notification:before {
   position: absolute;
-  top: 0.6em;
-  left: 0.6em;
+  top: 50%;
+  left: 15px;
+  margin-top: -14px;
   display: block;
   font-family: Notification;
-  width: 1em;
-  height: 1em;
-  font-size: 2em;
-  line-height: 1em;
+  width: 28px;
+  height: 28px;
+  font-size: 28px;
+  text-align: center;
+  line-height: 28px;
 }
 
 .notification-info {

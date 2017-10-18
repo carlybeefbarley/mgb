@@ -100,7 +100,7 @@ window.addEventListener('load', function() {
     //
     // Google
     //
-    (function(i, s, o, g, r, a, m) {
+    ;(function(i, s, o, g, r, a, m) {
       i['GoogleAnalyticsObject'] = r
       i[r] = i[r] || function() {
         (i[r].q = i[r].q || []).push(arguments)
@@ -112,26 +112,31 @@ window.addEventListener('load', function() {
       m.parentNode.insertBefore(a, m)
     })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga')
 
-    ga('create', 'UA-82379171-2', 'auto')
-    ga('send', 'pageview')
+    var gaInterval = setInterval(function() {
+      if (!ga) return
+
+      clearInterval(gaInterval)
+      ga('create', 'UA-82379171-2', 'auto')
+      ga('send', 'pageview')
+    }, 100)
 
     //
     // Google Tag Manager
     //
-    (function (w, d, s, l, i) {
+    ;(function (w, d, s, l, i) {
       w[l] = w[l] || []; w[l].push({
         'gtm.start':
         new Date().getTime(), event: 'gtm.js'
       }); var f = d.getElementsByTagName(s)[0],
         j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
           'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-    })(window, document, 'script', 'dataLayer', 'GTM-PWBJMQZ');
+    })(window, document, 'script', 'dataLayer', 'GTM-PWBJMQZ')
 
     //
     // Hotjar
     //
     function initHotjar() {
-      (function(h, o, t, j, a, r) {
+      ;(function(h, o, t, j, a, r) {
         h.hj = h.hj || function() {(h.hj.q = h.hj.q || []).push(arguments)}
         h._hjSettings = { hjid: 446876, hjsv: 5 }
         a = o.getElementsByTagName('head')[0]

@@ -137,7 +137,7 @@ gulp.task('publish', (cb) => {
     'build',
     'publish:make-cdn-files',
     'publish:aws',
-    cb,
+    cb
   )
 })
 
@@ -261,7 +261,7 @@ gulp.task('build', (cb) => {
       'build:js',
       'build:styles',
     ],
-    cb,
+    cb
   )
 })
 
@@ -332,6 +332,6 @@ gulp.task('default', cb => {
       'watch',
       'serve',
     ],
-    cb,
+    cb
   )
 })

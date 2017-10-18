@@ -2,10 +2,10 @@ import { RestApi } from './restApi'
 import { genAPIreturn } from '/server/imports/helpers/generators'
 import { Users } from '/imports/schemas'
 
-const parseCookies = (cookieStr) => {
+const parseCookies = cookieStr => {
   const cookieParts = cookieStr.split(';')
   const cookies = {}
-  cookieParts.forEach( c => {
+  cookieParts.forEach(c => {
     const parts = c.trim().split('=')
     cookies[parts[0]] = parts[1]
   })
@@ -41,7 +41,7 @@ RestApi.addRoute(
   {
     get() {
       const cookies = parseCookies(this.request.headers.cookie)
-      return cookies.activeUser ? {username: cookies.activeUser} : {}
+      return cookies.activeUser ? { username: cookies.activeUser } : {}
     },
   },
 )

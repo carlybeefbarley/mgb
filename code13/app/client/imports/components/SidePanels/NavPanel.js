@@ -8,7 +8,7 @@ import cookie from '/client/imports/helpers/cookie'
 import { showToast } from '/client/imports/routes/App'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { logActivity } from '/imports/schemas/activity'
-import SpecialGlobals from "../../../../imports/SpecialGlobals"
+import SpecialGlobals from '../../../../imports/SpecialGlobals'
 
 // Heads up!
 // Keep in sync with landing-layout.less .mgb-menu-logo

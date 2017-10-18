@@ -12,7 +12,7 @@ import { showToast } from '/client/imports/routes/App'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 
 import cookie from '/client/imports/helpers/cookie'
-import SpecialGlobals from "../../../../imports/SpecialGlobals"
+import SpecialGlobals from '../../../../imports/SpecialGlobals'
 
 const LoginRoute = React.createClass({
   getInitialState() {

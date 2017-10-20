@@ -35,14 +35,16 @@ git_branch=$(git rev-parse --abbrev-ref HEAD)
 git_commit_count=$(git rev-list --count ${git_branch})
 git_describe=$(git describe --always)
 
+escaped_branch=$(echo $git_branch | sed -e s~\/~\\\\/~)
+
 cat "$source_settings_filename" | \
 sed \
--e "s/__MGB_DEPLOY_ENV__/${deploy_env//\//\\/}/" \
--e "s/__MGB_GIT_BRANCH__/${git_branch//\//\\/}/" \
--e "s/__MGB_GIT_BRANCH_COMMIT_COUNT__/${git_commit_count}/; " \
--e "s/__MGB_GIT_DESCRIBE__/${git_describe}/;" \
--e "s/__ORIGIN_DOMAIN_NAME__/$subdomain/;" \
--e "s/__ORIGIN_ID__/$subdomain/;" \
+-e s~__MGB_DEPLOY_ENV__~${deploy_env}~ \
+-e s~__MGB_GIT_BRANCH__~${escaped_branch}~ \
+-e s~__MGB_GIT_BRANCH_COMMIT_COUNT__~${git_commit_count}~ \
+-e s~__MGB_GIT_DESCRIBE__~${git_describe}~ \
+-e s~__ORIGIN_DOMAIN_NAME__~${subdomain}~ \
+-e s~__ORIGIN_ID__~${subdomain}~ \
 > "$generated_settings_filename"
 
 # ----------------------------------------

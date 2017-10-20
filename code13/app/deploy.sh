@@ -35,7 +35,7 @@ git_branch=$(git rev-parse --abbrev-ref HEAD)
 git_commit_count=$(git rev-list --count ${git_branch})
 git_describe=$(git describe --always)
 
-escaped_branch=$(sed -e "s:/:\\\/:g" <<< "$git_branch")
+escaped_branch=$(echo ${git_branch} | sed -e "s:/:\\\/:g")
 
 cat "$source_settings_filename" | \
 sed \

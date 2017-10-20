@@ -55,6 +55,6 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               curl https://install.meteor.com?release=1.5.1 | /bin/sh
 
-              bash ./deploy.sh staging
+              yarn deploy:staging
             fi
           working_directory: code13/app

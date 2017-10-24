@@ -370,7 +370,7 @@ class AppUI extends React.Component {
       hideHeaders,
     } = this.state
     const { query } = this.props.location
-
+    const isGuest = true //currUser.profile.guest
     if (!loading) this.configureTrackJs()
 
     // The Flex Panel is for communications and common quick searches in a right hand margin
@@ -392,7 +392,7 @@ class AppUI extends React.Component {
       top: 0,
       bottom: respData.fpReservedFooterHeight,
       left: 0,
-      right: flexPanelWidth,
+      right: `${isGuest ? 0 : flexPanelWidth}`,
       marginBottom: '0px',
       minHeight: '100vh',
       overflowY: 'scroll', // must be 'scroll' to preserve iOS inertia scrolling
@@ -431,45 +431,48 @@ class AppUI extends React.Component {
           debug={joyrideDebug}
         />
         <div>
-          <FlexPanel
-            fpIsFooter={!!respData.footerTabMajorNav}
-            joyrideSteps={this.state.joyrideSteps}
-            joyrideSkillPathTutorial={this.state.joyrideSkillPathTutorial}
-            joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
-            joyrideOriginatingAssetId={this.state.joyrideOriginatingAssetId}
-            currUser={currUser}
-            chatChannelTimestamps={chatChannelTimestamps}
-            hazUnreadChats={hazUnreadChats}
-            requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
-            currUserProjects={currUserProjects}
-            user={user}
-            selectedViewTag={flexPanelQueryValue}
-            handleFlexPanelToggle={this.handleFlexPanelToggle}
-            handleFlexPanelChange={this.handleFlexPanelChange}
-            flexPanelWidth={flexPanelWidth}
-            flexPanelIsVisible={showFlexPanel}
-            activity={this.props.activity}
-            isSuperAdmin={isSuperAdmin}
-            currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-          />
+          {!isGuest && (
+            <FlexPanel
+              fpIsFooter={!!respData.footerTabMajorNav}
+              joyrideSteps={this.state.joyrideSteps}
+              joyrideSkillPathTutorial={this.state.joyrideSkillPathTutorial}
+              joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
+              joyrideOriginatingAssetId={this.state.joyrideOriginatingAssetId}
+              currUser={currUser}
+              chatChannelTimestamps={chatChannelTimestamps}
+              hazUnreadChats={hazUnreadChats}
+              requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
+              currUserProjects={currUserProjects}
+              user={user}
+              selectedViewTag={flexPanelQueryValue}
+              handleFlexPanelToggle={this.handleFlexPanelToggle}
+              handleFlexPanelChange={this.handleFlexPanelChange}
+              flexPanelWidth={flexPanelWidth}
+              flexPanelIsVisible={showFlexPanel}
+              activity={this.props.activity}
+              isSuperAdmin={isSuperAdmin}
+              currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+            />
+          )}
 
           <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
             <SupportedBrowsersContainer />
-            <VerifyBanner currUser={currUser} />
+            {!isGuest && <VerifyBanner currUser={currUser} />}
             {!hideHeaders && <NavPanel currUser={currUser} navPanelAvailableWidth={mainAreaAvailableWidth} />}
-
-            <NavBar
-              currUser={currUser}
-              user={user}
-              location={this.props.location}
-              name={this.props.routes[1].name}
-              params={this.props.params}
-              flexPanelWidth={flexPanelWidth}
-              hideHeaders={hideHeaders}
-              onToggleHeaders={this.handleHideHeadersToggle}
-              sysvars={sysvars}
-              currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-            />
+            {!isGuest && (
+              <NavBar
+                currUser={currUser}
+                user={user}
+                location={this.props.location}
+                name={this.props.routes[1].name}
+                params={this.props.params}
+                flexPanelWidth={flexPanelWidth}
+                hideHeaders={hideHeaders}
+                onToggleHeaders={this.handleHideHeadersToggle}
+                sysvars={sysvars}
+                currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+              />
+            )}
 
             {currUser &&
             currUser.suIsBanned && (

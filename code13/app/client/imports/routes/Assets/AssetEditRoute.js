@@ -373,6 +373,8 @@ const AssetEditRoute = React.createClass({
     const currUserId = currUser ? currUser._id : null
     const hasUnsentSaves = !!this.m_deferredSaveObj
 
+    const isGuest = true //currUser.profile.guest
+
     return (
       <Grid
         padded
@@ -387,7 +389,8 @@ const AssetEditRoute = React.createClass({
         />
 
         {!isTooSmall &&
-        !hideHeaders && (
+        !hideHeaders &&
+        !isGuest && (
           <AssetPathDetail
             canEdit={canEd}
             isUnconfirmedSave={asset.isUnconfirmedSave}
@@ -404,7 +407,8 @@ const AssetEditRoute = React.createClass({
         )}
 
         {!isTooSmall &&
-        !hideHeaders && (
+        !hideHeaders &&
+        !isGuest && (
           <Grid.Column width="8" textAlign="right" id="mgbjr-asset-edit-header-right">
             {
               // We use this.props.params.assetId since it is available sooner than the asset

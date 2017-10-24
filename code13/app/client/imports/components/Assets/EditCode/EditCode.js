@@ -2715,7 +2715,7 @@ export default class EditCode extends React.Component {
     this.codeMirror && this.codeMirror.setOption('readOnly', !this.props.canEdit)
 
     const stringReferences = this.getStringReferences()
-    const infoPaneOpts = _infoPaneModes[this.state.infoPaneMode]
+    const infoPaneOpts = this.isGuest ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
 
     const tbConfig = this.generateToolbarConfig()
 

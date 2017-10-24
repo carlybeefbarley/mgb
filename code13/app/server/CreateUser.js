@@ -1,5 +1,6 @@
 import { Accounts } from 'meteor/accounts-base'
 import validate from '/imports/schemas/validate'
+import md5 from 'blueimp-md5'
 
 // This is all server-only code
 
@@ -14,6 +15,8 @@ Meteor.methods({
     return !!Accounts.findUserByEmail(email)
   },
 })
+
+const getGravatarUrl = email => '//www.gravatar.com/avatar/' + md5(email.trim().toLowerCase()) + '?s=155&d=mm'
 
 Accounts.validateNewUser(function(user) {
   if (!user.emails || !_.isArray(user.emails) || user.emails.length === 0)
@@ -86,8 +89,13 @@ Accounts.onCreateUser(function(options, user) {
 
   if (user.services.password) {
     if (options.profile) {
+      const gravatarUrl = getGravatarUrl(user.emails[0].address)
       // Extra checks for validity like is done in Meteor.call("User.updateProfile")" ?
       user.profile = options.profile
+      // actual image picked by user to display
+      user.profile.avatar = gravatarUrl
+      // collection of images in users account
+      user.profile.images = [gravatarUrl]
     }
   }
 

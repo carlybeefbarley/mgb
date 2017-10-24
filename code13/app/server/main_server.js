@@ -39,6 +39,7 @@ import '/server/imports/publications'
 
 import './EmailTemplates/main'
 import './CreateUser'
+import '/server/imports/guests'
 import '/server/imports/restApi'
 import '/server/imports/jobs'
 

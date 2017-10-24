@@ -86,7 +86,7 @@ const UserProfileRoute = React.createClass({
   },
 
   render() {
-    const { user, ownsProfile, currUser, params } = this.props
+    const { isSuperAdmin, user, ownsProfile, currUser, params } = this.props
     if (!user) return <ThingNotFound type="User" id={params.username} />
 
     return (
@@ -125,7 +125,7 @@ const UserProfileRoute = React.createClass({
             <Header as="h2">
               <QLink to={`/u/${user.profile.name}/skilltree`}>Skills</QLink>
             </Header>
-            <SkillTreeRoute user={user} ownsProfile={ownsProfile} />
+            <SkillTreeRoute isSuperAdmin={isSuperAdmin} user={user} ownsProfile={ownsProfile} />
           </Grid.Column>
 
           <UserLovesList user={user} />

@@ -1,5 +1,6 @@
 /* global Mongo, Meteor */
 import _ from 'lodash'
+import { Users } from '/imports/schemas'
 import { checkMgb } from '/imports/schemas/checkMgb'
 
 // This file contains the code to update the MongoDB user_analytics record.
@@ -26,6 +27,7 @@ const UserAnalytics = new Mongo.Collection('user_analytics')
 export const eradicateReasons = {
   spammer: 'spammer',
   testAccount: 'testAccount',
+  guestExpired: 'guestExpired',
 }
 
 var schema = {
@@ -82,7 +84,7 @@ Meteor.methods({
     checkMgb.userId(userId)
     const sel = { _id: userId }
     const ua = UserAnalytics.findOne(sel)
-    const user = Meteor.users.findOne(sel)
+    const user = Users.findOne(sel)
     return {
       ua,
       u: { emails: user.emails },

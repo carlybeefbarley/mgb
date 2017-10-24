@@ -3,7 +3,7 @@ import SkillNodes, {
   makeSlashSeparatedSkillKey,
   makeTutorialsFindSelector,
 } from '/imports/Skills/SkillNodes/SkillNodes.js'
-import { Azzets, Skills } from '/imports/schemas'
+import { Azzets, Skills, Users } from '/imports/schemas'
 import { isUserSuperAdmin } from './roles'
 import { logActivity } from '/imports/schemas/activity'
 
@@ -55,7 +55,7 @@ Meteor.methods({
     if (Meteor.isServer) {
       if (count) {
         if (awardedSkill) {
-          const userRecord = Meteor.users.findOne({ _id: userID }, { fields: { username: 1, _id: 1 } })
+          const userRecord = Users.findOne({ _id: userID }, { fields: { username: 1, _id: 1 } })
           logActivity(
             'user.awardedSkill',
             `was awarded the '${dottedSkillKey}' skill by @${Meteor.user().username}`,

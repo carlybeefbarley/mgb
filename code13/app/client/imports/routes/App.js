@@ -16,7 +16,7 @@ import '/client/imports/Joyride/react-joyride-compiled.css'
 import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
 import { hasSkill, learnSkill } from '/imports/schemas/skills'
 
-import { Activity, Projects, Settings, Sysvars, Skills } from '/imports/schemas'
+import { Activity, Projects, Settings, Sysvars, Skills, Users } from '/imports/schemas'
 import { isSameUser } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
@@ -212,6 +212,8 @@ class AppUI extends React.Component {
     // if(this.props.params.assetId){
     //   console.log( this.props.params.assetId, this.state.currentlyEditingAssetInfo)
     // }
+
+    this.maybeCreateGuestUser()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -249,6 +251,32 @@ class AppUI extends React.Component {
 
       ga('set', 'page', trackPage)
       ga('send', 'pageview', trackPage)
+    }
+  }
+
+  maybeCreateGuestUser = () => {
+    const { currUser, location, loading } = this.props
+
+    const loggingIn = Accounts.loggingIn()
+    const isGuestRoute = _.has(location.query, 'createGuest')
+    const shouldCreateGuest = isGuestRoute && !loggingIn && !loading && !currUser
+
+    if (shouldCreateGuest) {
+      const newQuery = { ...location.query, createGuest: undefined }
+      utilPushTo(newQuery, location.pathname)
+      console.log('isHourOfCodeRoute && !loading && !currUser, create guest...')
+
+      Meteor.call('User.generateGuestUser', (err, guestUser) => {
+        if (err) return console.error('Failed to generate a guest user object:', err)
+
+        console.log('Generated guest user:', guestUser)
+
+        Accounts.createUser(guestUser, err => {
+          if (err) return console.error('Failed to create guest user:', err)
+
+          console.log('Guest created!')
+        })
+      })
     }
   }
 
@@ -805,9 +833,7 @@ const App = createContainer(({ params, location }) => {
     currUserProjects: !handleForProjects
       ? []
       : Projects.find(projectSelector, { sort: defaultProjectSorter }).fetch(),
-    user: pathUserName
-      ? Meteor.users.findOne({ 'profile.name': pathUserName })
-      : Meteor.users.findOne(pathUserId), // User on the url /user/xxx/...
+    user: pathUserName ? Users.findOne({ 'profile.name': pathUserName }) : Users.findOne(pathUserId), // User on the url /user/xxx/...
     activity: getActivity ? Activity.find({}, { sort: { timestamp: -1 } }).fetch() : [], // Activity for any user
     settings: G_localSettings,
     meteorStatus: Meteor.status(),

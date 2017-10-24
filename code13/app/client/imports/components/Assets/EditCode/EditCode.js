@@ -158,6 +158,9 @@ export default class EditCode extends React.Component {
     // indicates if code is challenge and/or tutorial
     this.isChallenge = false
     this.isCodeTutorial = false
+
+    // is guest user?
+    this.isGuest = true //this.props.currUser.profile.guest
   }
 
   handleJsBeautify() {
@@ -2158,6 +2161,56 @@ export default class EditCode extends React.Component {
 
   generateToolbarConfig() {
     const history = this.codeMirror ? this.codeMirror.historySize() : { undo: 0, redo: 0 }
+    if (this.isGuest) {
+      return {
+        buttons: [
+          {
+            name: 'handleRun',
+            label: 'Run code',
+            icon: 'play',
+            tooltip: 'Run Code',
+            disabled: this.state.isPlaying || !this.state.astReady,
+            level: 1,
+            shortcut: 'Ctrl+ENTER',
+          },
+          {
+            name: 'handleStopClick',
+            label: 'Stop Running',
+            icon: 'stop',
+            tooltip: 'Stop Running',
+            disabled: !this.state.isPlaying,
+            level: 1,
+            shortcut: 'Ctrl+ENTER',
+          },
+          {
+            name: 'toggleHotReload',
+            label: 'Automatically reload game screen',
+            icon:
+              'refresh' +
+              `${this.tools && this.mgb_c2_hasChanged ? ' red' : ''} ${!this.state.astReady
+                ? ' animate rotate'
+                : ''}`,
+            tooltip:
+              (!this.state.astReady ? 'Loading all required files...\n' : '') +
+              'Automatically reloads game screen when one of the imported scripts changes',
+            disabled: false,
+            active: this.props.asset.content2.hotReload,
+            level: 3,
+            shortcut: 'Ctrl+Alt+Shift+R',
+          },
+          {
+            name: 'handleJsBeautify',
+            label: 'Beautify Code',
+            icon: 'leaf',
+            tooltip: 'Beautify: Auto-format your code',
+            disabled: false,
+            level: 3,
+            shortcut: 'Ctrl+B',
+          },
+        ],
+      }
+    }
+
     const config = {
       // level: 2,    // default level -- This is now in expectedToolbars.getDefaultLevel
       buttons: [
@@ -2904,7 +2957,8 @@ export default class EditCode extends React.Component {
                 !asset.isCompleted &&
                 !this.isCodeTutorial &&
                 !this.isChallenge &&
-                this.mgb_mode === 'jsx' && (
+                this.mgb_mode === 'jsx' &&
+                !this.isGuest && (
                   <div className="title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                       <Icon name="dropdown" />Import Assistant
@@ -3009,11 +3063,12 @@ export default class EditCode extends React.Component {
                           <Icon name="external" /> Full
                         </Button>
                       )}
-                      {!this.hasErrors && (
+                      {!this.hasErrors &&
+                      !this.isGuest && (
                         <Button
                           as="a"
                           icon
-                          disbled={!this.props.canEdit}
+                          disabled={!this.props.canEdit}
                           onClick={this.handleFullScreen}
                           size="tiny"
                           title={
@@ -3041,7 +3096,8 @@ export default class EditCode extends React.Component {
                 )}
                 {this.state.astReady &&
                 asset.kind === 'code' &&
-                this.mgb_mode === 'jsx' && (
+                this.mgb_mode === 'jsx' &&
+                !this.isGuest && (
                   <div id="mgbjr-EditCode-codeFlower" className="title">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                       <i className="dropdown icon" />Code Flower

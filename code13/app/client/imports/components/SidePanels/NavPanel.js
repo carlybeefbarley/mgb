@@ -346,7 +346,7 @@ class NavPanel extends React.Component {
     const { currUser, navPanelAvailableWidth } = this.props
     const useIcons = navPanelAvailableWidth < 768 // px
     const allNavPanels = getNavPanels(currUser)
-    const isGuest = true //currUser.profile.guest
+    const isGuest = false //currUser.profile.guest
 
     const navPanelItems = side =>
       allNavPanels[side]

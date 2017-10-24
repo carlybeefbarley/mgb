@@ -2856,6 +2856,7 @@ export default class EditCode extends React.Component {
                 )}
 
                 {!docEmpty &&
+                !this.isGuest &&
                 asset.kind === 'code' && (
                   // Current Line/Selection helper (header)
                   <div
@@ -2888,6 +2889,7 @@ export default class EditCode extends React.Component {
                   </div>
                 )}
                 {!docEmpty &&
+                !this.isGuest &&
                 asset.kind === 'code' &&
                 this.mgb_mode === 'jsx' && (
                   // Current Line/Selection helper (body)
@@ -2977,7 +2979,8 @@ export default class EditCode extends React.Component {
                     </span>
                   </div>
                 )}
-                {this.state.astReady && (
+                {this.state.astReady &&
+                !this.isGuest && (
                   <div className="content">
                     <ImportHelperPanel
                       scripts={this.state.userScripts}
@@ -2991,9 +2994,9 @@ export default class EditCode extends React.Component {
                 asset.kind === 'code' &&
                 this.mgb_mode === 'jsx' && (
                   // Code run/stop (header)
-                  <div className="title" id="mgbjr-EditCode-codeRunner">
+                  <div className={'title ' + (!this.isGuest ? '' : 'active')} id="mgbjr-EditCode-codeRunner">
                     <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
-                      <i className="dropdown icon" />Code Runner
+                      {!this.isGuest && <i className="dropdown icon" />}Code Runner
                     </span>
                   </div>
                 )}
@@ -3001,9 +3004,13 @@ export default class EditCode extends React.Component {
                 asset.kind === 'code' &&
                 this.mgb_mode === 'jsx' && (
                   // Code run/stop (body)
-                  <div className="content">
+                  <div
+                    className={'content ' + (!this.isGuest ? '' : 'active')}
+                    style={!this.isGuest ? {} : { height: '100vh' }}
+                  >
                     <span style={{ float: 'right', marginTop: '-19px', position: 'relative' }}>
-                      {isPlaying &&
+                      {!this.isGuest &&
+                      isPlaying &&
                       this.props.canEdit && (
                         <a
                           className={'ui tiny icon button'}
@@ -3013,7 +3020,8 @@ export default class EditCode extends React.Component {
                           <i className="save icon" />
                         </a>
                       )}
-                      {!isPlaying &&
+                      {!this.isGuest &&
+                      !isPlaying &&
                       this.state.astReady && (
                         <Button
                           as="a"
@@ -3026,7 +3034,8 @@ export default class EditCode extends React.Component {
                           <Icon name="play" /> Run
                         </Button>
                       )}
-                      {isPlaying && (
+                      {!this.isGuest &&
+                      isPlaying && (
                         <Button
                           as="a"
                           icon
@@ -3038,7 +3047,8 @@ export default class EditCode extends React.Component {
                           <Icon name="stop" /> Stop
                         </Button>
                       )}
-                      {isPlaying && (
+                      {!this.isGuest &&
+                      isPlaying && (
                         <Button
                           as="a"
                           active={isPopup}
@@ -3051,7 +3061,8 @@ export default class EditCode extends React.Component {
                           <Icon name="external" /> Popout
                         </Button>
                       )}
-                      {isPlaying && (
+                      {!this.isGuest &&
+                      isPlaying && (
                         <Button
                           as="a"
                           icon
@@ -3063,7 +3074,8 @@ export default class EditCode extends React.Component {
                           <Icon name="external" /> Full
                         </Button>
                       )}
-                      {!this.hasErrors &&
+                      {!this.isGuest &&
+                      !this.hasErrors &&
                       !this.isGuest && (
                         <Button
                           as="a"
@@ -3105,6 +3117,7 @@ export default class EditCode extends React.Component {
                   </div>
                 )}
                 {this.state.astReady &&
+                !this.isGuest &&
                 asset.kind === 'code' &&
                 this.mgb_mode === 'jsx' && (
                   <div className="content">

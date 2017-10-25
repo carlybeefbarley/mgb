@@ -329,6 +329,7 @@ export default class GameScreen extends React.Component {
             src={makeCDNLink('/codeEditSandbox.html')}
             frameBorder="0"
             id="mgbjr-EditCode-sandbox-iframe"
+            onLoad={this.props.onLoad}
           />
         </div>
       </div>

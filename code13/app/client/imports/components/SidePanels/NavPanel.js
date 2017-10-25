@@ -34,7 +34,7 @@ export const getNavPanels = (currUser, showAll) => {
   const isLoggingIn = Meteor.loggingIn()
   const showGuestOptions = (!isLoggingIn && !currUser) || showAll
   const showUserOptions = (!isLoggingIn && !!currUser) || showAll
-  const isGuest = currUser ? currUser.profile.isGuest : true
+  const isGuest = currUser ? currUser.profile.isGuest : false
 
   if (isGuest) {
     return {
@@ -346,7 +346,7 @@ class NavPanel extends React.Component {
     const { currUser, navPanelAvailableWidth } = this.props
     const useIcons = navPanelAvailableWidth < 768 // px
     const allNavPanels = getNavPanels(currUser)
-    const isGuest = currUser ? currUser.profile.isGuest : true
+    const isGuest = currUser ? currUser.profile.isGuest : false
 
     const navPanelItems = side =>
       allNavPanels[side]
@@ -367,7 +367,11 @@ class NavPanel extends React.Component {
     return (
       <Menu inverted borderless style={menuStyle} id="mgbjr-np">
         {navPanelItems('left')}
-        {isGuest && <a href="" />}
+        {isGuest && (
+          <div className="ui item" style={{ margin: '0 auto', left: '79px' }}>
+            <a href="https://hourofcode.com/us/learn">Hour of Code</a>
+          </div>
+        )}
         <Menu.Menu position="right">{navPanelItems('right')}</Menu.Menu>
       </Menu>
     )

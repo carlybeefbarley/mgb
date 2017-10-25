@@ -398,7 +398,7 @@ class AppUI extends React.Component {
       hideHeaders,
     } = this.state
     const { query } = this.props.location
-    const isGuest = currUser ? currUser.profile.isGuest : true
+    const isGuest = currUser ? currUser.profile.isGuest : false
     if (!loading) this.configureTrackJs()
 
     // The Flex Panel is for communications and common quick searches in a right hand margin

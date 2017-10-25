@@ -77,21 +77,20 @@ const ConsoleMessageViewer = React.createClass({
     return (
       <div
         id="mgbjr-EditCode-console"
-        className="ui grey segment"
+        className="ui secondary segment"
         style={{
-          backgroundColor: 'rgba(0,0,0,0.03)',
           // maxHeight: "200px",
           // overflow: "auto",
-          clear: 'both',
+          height: '100%',
+          margin: 0,
         }}
       >
         <div className="header">
-          Latest Console output from program
           {messages.length > 0 &&
           clearConsoleHandler && (
             <i
-              style={{ float: 'right' }}
-              className="ui trash outline icon"
+              style={{ position: 'absolute', top: '0', right: '0' }}
+              className="ui ban outline icon"
               title="clear console"
               onClick={clearConsoleHandler}
             />
@@ -103,8 +102,7 @@ const ConsoleMessageViewer = React.createClass({
           style={{
             overflow: 'auto',
             width: '100%',
-            maxHeight: '150px',
-            marginTop: '6px',
+            height: '100px',
           }}
         >
           {this.smartRender()}

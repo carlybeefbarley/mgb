@@ -1,6 +1,7 @@
 import _ from 'lodash'
-import { Meteor } from 'meteor/meteor'
 import { Accounts } from 'meteor/accounts-base'
+import { Meteor } from 'meteor/meteor'
+import { Random } from 'meteor/random'
 
 import { adjectives, animals } from './username-words'
 import validate from '/imports/schemas/validate'

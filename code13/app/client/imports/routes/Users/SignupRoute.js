@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { Accounts } from 'meteor/accounts-base'
 import React from 'react'
 import { Container, Divider, Message, Segment, Header, Form, Grid, Image } from 'semantic-ui-react'
 

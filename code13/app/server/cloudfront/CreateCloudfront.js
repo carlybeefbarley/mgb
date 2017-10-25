@@ -17,7 +17,7 @@ import '/server/slackIntegration'
 // See https://docs.meteor.com/packages/webapp.html
 //   The webapp package is what lets your Meteor app serve content to a web browser
 //   This package also allows you to add handlers for HTTP requests.
-import { WebApp } from 'meteor/webapp'
+import { WebApp, WebAppInternals } from 'meteor/webapp'
 
 // This will be set at runtime by setCDNParams() which will retrieve this value from AWS.
 // If it is not configured, then the various features using this shall fallback to non-cloudfronted

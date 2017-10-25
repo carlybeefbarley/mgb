@@ -1,5 +1,6 @@
-/* global Accounts */
-import { Users, Sysvars } from '/imports/schemas'
+import _ from 'lodash'
+import { Accounts } from 'meteor/accounts-base'
+import { Users } from '/imports/schemas'
 import { roleSuperAdmin } from '/imports/schemas/roles'
 
 export function createUsers() {

@@ -1,9 +1,10 @@
 import _ from 'lodash'
+import { Random } from 'meteor/random'
 import React, { PropTypes } from 'react'
-import { Button, Divider, Grid, Icon, Modal, Popup } from 'semantic-ui-react'
-import ReactDOM from 'react-dom'
-import './editGraphic.css'
 import { SketchPicker } from 'react-color'
+import { Button, Divider, Grid, Icon, Modal, Popup } from 'semantic-ui-react'
+
+import './editGraphic.css'
 import Tools from './GraphicTools'
 
 import SpriteLayers from './Layers/SpriteLayers'

@@ -2,6 +2,7 @@
 // usage: $ curl -k -H "nocache: true"  http://localhost:3000/api/test - to manually invalidate cache
 // !!! not suitable for production - only for testing purposes
 import cache from '/imports/cache'
+import { Restivus } from 'meteor/nimble:restivus'
 
 export default class CachedRestivus extends Restivus {
   addRoute(path, options, req, ...rest) {

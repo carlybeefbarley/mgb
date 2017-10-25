@@ -1,5 +1,6 @@
-/* global Mongo, Meteor */
 import _ from 'lodash'
+import { Mongo } from 'meteor/mongo'
+
 import { Users } from '/imports/schemas'
 import { checkMgb } from '/imports/schemas/checkMgb'
 

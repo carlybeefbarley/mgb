@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { Accounts } from 'meteor/accounts-base'
 import React, { PropTypes } from 'react'
 import { Container, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 

@@ -1,4 +1,6 @@
+import { Accounts } from 'meteor/accounts-base'
 import { setUpCloudFront } from './cloudfront/CreateCloudfront'
+import { ServiceConfiguration } from 'meteor/service-configuration'
 
 import { Users } from '../imports/schemas'
 
@@ -123,10 +125,6 @@ Meteor.startup(function() {
     },
   )
 })
-
-// smoke test that these are present
-Npm.require
-Assets
 
 console.log(`
   MGBv2 server running ${Meteor.release}

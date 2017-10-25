@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import pako from 'pako'
 import xml2js from 'xml2js'
 import validate from '/imports/schemas/validate'

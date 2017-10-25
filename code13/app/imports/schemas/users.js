@@ -1,8 +1,10 @@
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
 import _ from 'lodash'
-import { Users } from '/imports/schemas'
+import { Accounts } from 'meteor/accounts-base'
 import { Match, check } from 'meteor/check'
+
+import { Users } from '/imports/schemas'
 import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
 
 const optional = Match.Optional

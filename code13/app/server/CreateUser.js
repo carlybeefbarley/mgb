@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { Accounts } from 'meteor/accounts-base'
 import validate from '/imports/schemas/validate'
 import md5 from 'blueimp-md5'

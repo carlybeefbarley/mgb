@@ -1,7 +1,9 @@
 // !!! important when adding new api endpoint add it also to tests/tests/api.test.js
 
-import { Azzets } from '/imports/schemas'
+import { Restivus } from 'meteor/nimble:restivus'
 import dataUriToBuffer from 'data-uri-to-buffer'
+
+import { Azzets } from '/imports/schemas'
 
 // Note that Restivus's default url prefix is /api
 const options = {

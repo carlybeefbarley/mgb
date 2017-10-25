@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { Tracker } from 'meteor/tracker'
 import React, { PropTypes } from 'react'
 import QLink from '/client/imports/routes/QLink'
 

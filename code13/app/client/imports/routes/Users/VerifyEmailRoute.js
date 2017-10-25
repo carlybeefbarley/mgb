@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { Accounts } from 'meteor/accounts-base'
 import React, { PropTypes } from 'react'
 import { showToast } from '/client/imports/routes/App'
 import { Icon, Message } from 'semantic-ui-react'

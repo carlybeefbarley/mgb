@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { RestApi } from './restApi'
 
 // These are the APIs for extracting information from the legacy MGBv1 site

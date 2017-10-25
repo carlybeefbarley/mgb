@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { Activity, Azzets, Chats, Flags, Projects, Settings, Users } from '/imports/schemas'
 import { check } from 'meteor/check'
 import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'

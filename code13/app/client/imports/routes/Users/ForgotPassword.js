@@ -1,5 +1,7 @@
+import { Accounts } from 'meteor/accounts-base'
 import React from 'react'
 import { Container, Grid, Message, Segment, Header, Form } from 'semantic-ui-react'
+
 import validate from '/imports/schemas/validate'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 import LoginLinks from './LoginLinks'

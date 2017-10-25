@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { Tracker } from 'meteor/tracker'
 import React from 'react'
 import { getNavPanels } from '/client/imports/components/SidePanels/NavPanel'
 

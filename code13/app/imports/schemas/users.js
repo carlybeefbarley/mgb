@@ -62,8 +62,8 @@ Meteor.methods({
     checkIsLoggedInAndNotSuspended()
 
     try {
-      Meteor.users.update(Meteor.userId(), { $push: { 'profile.images': url } })
-      Meteor.users.update(Meteor.userId(), { $set: { 'profile.avatar': url } })
+      Users.update(Meteor.userId(), { $push: { 'profile.images': url } })
+      Users.update(Meteor.userId(), { $set: { 'profile.avatar': url } })
     } catch (exception) {
       console.log('User.storeProfileImage failed:', exception)
       return exception
@@ -73,7 +73,7 @@ Meteor.methods({
   'User.setProfileImage'(url) {
     check(url, String)
     checkIsLoggedInAndNotSuspended()
-    Meteor.users.update(Meteor.userId(), { $set: { 'profile.avatar': url } })
+    Users.update(Meteor.userId(), { $set: { 'profile.avatar': url } })
   },
 
   'User.updateEmail'(docId, data) {
@@ -87,7 +87,7 @@ Meteor.methods({
       emails: optional(schema.emails),
     })
 
-    count = Meteor.users.update(docId, { $push: data })
+    count = Users.update(docId, { $push: data })
 
     console.log('[User.updateEmail]', count, docId)
     return count
@@ -120,7 +120,7 @@ Meteor.methods({
       suIsBanned: schema.suIsBanned,
       suFlagId: schema.suFlagId,
     })
-    count = Meteor.users.update(docId, { $set: data })
+    count = Users.update(docId, { $set: data })
 
     if (Meteor.isServer) console.log('[User.updateProfile]', count, docId)
     return count
@@ -141,7 +141,7 @@ Meteor.methods({
       const edit_time = _.isEmpty(user.edit_time) ? {} : user.edit_time
       if (!edit_time[editType]) edit_time[editType] = 0
       edit_time[editType] += timeSec
-      Meteor.users.update({ _id: Meteor.userId() }, { $set: { edit_time } })
+      Users.update({ _id: Meteor.userId() }, { $set: { edit_time } })
     }
   },
 })

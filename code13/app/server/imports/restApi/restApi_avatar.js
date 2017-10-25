@@ -1,5 +1,6 @@
 import { err404, RestApi } from './restApi'
 import SpecialGlobals from '/imports/SpecialGlobals'
+import { Users } from '/imports/schemas'
 
 // For avatars, there is a common case where we want the avatar from just the name,
 // So we provide a way to get this:
@@ -18,7 +19,7 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get() {
-      const user = Meteor.users.findOne(userIdSelector(this.urlParams.id))
+      const user = Users.findOne(userIdSelector(this.urlParams.id))
       if (user && user.profile.avatar) {
         const maxAge = SpecialGlobals.avatar.validFor
         return {
@@ -40,7 +41,7 @@ RestApi.addRoute(
   { authRequired: false },
   {
     get() {
-      const user = Meteor.users.findOne(userIdSelector(this.urlParams.id))
+      const user = Users.findOne(userIdSelector(this.urlParams.id))
       if (user && user.profile.avatar) {
         let avatarLink
         const expires = parseInt(this.urlParams.expires, 10)

@@ -17,7 +17,7 @@ const _serverMethodHelper = userId => {
   check(userId, String)
   checkIsLoggedInAndNotSuspended()
   const sel = { _id: userId }
-  const u = Meteor.users.findOne(sel)
+  const u = Users.findOne(sel)
   if (!u) throw new Meteor.Error(404, `User #${userId} not found`)
   return u
 }
@@ -62,7 +62,7 @@ Meteor.methods({
     const u = _serverMethodHelper(userId)
     check(newMgb1namesVerified, String)
     checkMgb.checkUserIsSuperAdmin()
-    const count = Meteor.users.update(
+    const count = Users.update(
       { _id: userId },
       { $set: { 'profile.mgb1namesVerified': newMgb1namesVerified } },
     )
@@ -84,7 +84,7 @@ Meteor.methods({
     const u = _serverMethodHelper(userId)
     checkMgb.checkUserIsSuperAdmin()
     const newIsBanned = !u.suIsBanned
-    const count = Meteor.users.update({ _id: userId }, { $set: { suIsBanned: newIsBanned } })
+    const count = Users.update({ _id: userId }, { $set: { suIsBanned: newIsBanned } })
     console.log('[User.toggleBan]', count, userId, `NewValue=${newIsBanned}`)
     return count
   },
@@ -97,7 +97,7 @@ Meteor.methods({
     const u = _serverMethodHelper(userId)
     if (this.userId !== userId) checkMgb.checkUserIsSuperAdmin()
     if (u.isDeactivated === true) throw new Meteor.Error(500, `User #${userId} is already deactivated`)
-    const count = Meteor.users.update({ _id: userId }, { $set: { isDeactivated: true } })
+    const count = Users.update({ _id: userId }, { $set: { isDeactivated: true } })
     console.log('[User.deactivateAccount]', count, userId)
     return count
   },
@@ -111,7 +111,7 @@ Meteor.methods({
     const u = _serverMethodHelper(userId)
     checkMgb.checkUserIsSuperAdmin()
     if (u.isDeactivated !== true) throw new Meteor.Error(500, `User #${userId} is not deActivated`)
-    const count = Meteor.users.update({ _id: userId }, { $set: { isDeactivated: false } })
+    const count = Users.update({ _id: userId }, { $set: { isDeactivated: false } })
     console.log('[User.reactivateAccount]', count, userId)
     return count
   },

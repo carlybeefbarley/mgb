@@ -2,6 +2,8 @@ import _ from 'lodash'
 import { Button, Icon, Segment } from 'semantic-ui-react'
 import React, { PropTypes } from 'react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
+
+import { Users } from '/imports/schemas'
 import UserCard from '../Users/UserCard'
 
 const _nowrapStyle = {
@@ -36,7 +38,7 @@ const ProjectMembersGET = React.createClass({
     const selector = { _id: { $in: idArray } }
 
     return {
-      users: Meteor.users.find(selector).fetch(),
+      users: Users.find(selector).fetch(),
       loading: !handleForUsers.ready(),
     }
   },

@@ -6,7 +6,6 @@ import { stopCurrentTutorial } from '/client/imports/routes/App'
 import LoginLinks from './LoginLinks'
 import { utilPushTo } from '../QLink'
 import validate from '/imports/schemas/validate'
-import md5 from 'blueimp-md5'
 import { logActivity } from '/imports/schemas/activity'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 
@@ -171,12 +170,10 @@ const SignupRoute = React.createClass({
       {
         // Note that there is server-side validation in /server/CreateUser.js
         email,
-        username, // Fixup mshell.sh code was:   _.each(Meteor.users.find().fetch(), function (u) { try { Accounts.setUsername( u._id,  u.profile.name ) } catch (e) { console.log('dupe:',u._id)} } )
+        username, // Fixup mshell.sh code was:   _.each(Users.find().fetch(), function (u) { try { Accounts.setUsername( u._id,  u.profile.name ) } catch (e) { console.log('dupe:',u._id)} } )
         password,
         profile: {
           name: username,
-          avatar: '//www.gravatar.com/avatar/' + md5(email.trim().toLowerCase()) + '?s=155&d=mm', // actual image picked by user to display
-          images: ['//www.gravatar.com/avatar/' + md5(email.trim().toLowerCase()) + '?s=155&d=mm'], // collection of images in users account
         },
       },
       error => {

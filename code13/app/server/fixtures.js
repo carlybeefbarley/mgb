@@ -26,7 +26,7 @@ export function createUsers() {
       },
     })
 
-    Meteor.users.update(id, {
+    Users.update(id, {
       $set: {
         permissions: [
           // See roles.js

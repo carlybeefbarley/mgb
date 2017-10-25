@@ -3013,7 +3013,7 @@ export default class EditCode extends React.Component {
                         <Button
                           as="a"
                           icon
-                          disbled={!this.props.canEdit}
+                          disabled={!this.props.canEdit}
                           onClick={this.handleFullScreen}
                           size="tiny"
                           title={

@@ -373,7 +373,7 @@ const AssetEditRoute = React.createClass({
     const currUserId = currUser ? currUser._id : null
     const hasUnsentSaves = !!this.m_deferredSaveObj
 
-    const isGuest = true //currUser.profile.guest
+    const isGuest = currUser ? currUser.profile.isGuest : true
 
     return (
       <Grid

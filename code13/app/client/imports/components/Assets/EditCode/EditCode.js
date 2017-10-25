@@ -160,7 +160,7 @@ export default class EditCode extends React.Component {
     this.isCodeTutorial = false
 
     // is guest user?
-    this.isGuest = true //this.props.currUser.profile.guest
+    this.isGuest = this.props.currUser ? this.props.currUser.profile.isGuest : true
   }
 
   handleJsBeautify() {

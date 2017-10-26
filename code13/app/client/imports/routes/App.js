@@ -212,8 +212,6 @@ class AppUI extends React.Component {
     // if(this.props.params.assetId){
     //   console.log( this.props.params.assetId, this.state.currentlyEditingAssetInfo)
     // }
-
-    this.maybeCreateGuestUser()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -251,32 +249,6 @@ class AppUI extends React.Component {
 
       ga('set', 'page', trackPage)
       ga('send', 'pageview', trackPage)
-    }
-  }
-
-  maybeCreateGuestUser = () => {
-    const { currUser, location, loading } = this.props
-
-    const loggingIn = Accounts.loggingIn()
-    const isGuestRoute = _.has(location.query, 'createGuest')
-    const shouldCreateGuest = isGuestRoute && !loggingIn && !loading && !currUser
-
-    if (shouldCreateGuest) {
-      const newQuery = { ...location.query, createGuest: undefined }
-      utilPushTo(newQuery, location.pathname)
-      console.log('isHourOfCodeRoute && !loading && !currUser, create guest...')
-
-      Meteor.call('User.generateGuestUser', (err, guestUser) => {
-        if (err) return console.error('Failed to generate a guest user object:', err)
-
-        console.log('Generated guest user:', guestUser)
-
-        Accounts.createUser(guestUser, err => {
-          if (err) return console.error('Failed to create guest user:', err)
-
-          console.log('Guest created!')
-        })
-      })
     }
   }
 

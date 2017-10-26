@@ -6,6 +6,7 @@ import urlMaker from './urlMaker'
 
 import App from './App'
 import Home from './Home'
+import HourOfCode from './HourOfCode/HourOfCodeRoute'
 import Import from './Import'
 import ForumRoute from './Forum'
 import PlayGameRoute from './PlayGameRoute'
@@ -69,6 +70,7 @@ export function clientStartup() {
         <Route path="/whats-new" component={WhatsNewRoute} name="What's New" />
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />
 
+        <Route path="/hour-of-code" component={HourOfCode} name="Hour of Code" />
         <Route path="/dashboard" component={DashboardRoute} name="Dashboard" />
         <Route path="/video" component={VideoRoute} name="Video" />
 

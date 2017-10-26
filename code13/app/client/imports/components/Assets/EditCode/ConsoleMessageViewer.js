@@ -102,7 +102,7 @@ const ConsoleMessageViewer = React.createClass({
           style={{
             overflow: 'auto',
             width: '100%',
-            height: '100px',
+            height: '150px',
           }}
         >
           {this.smartRender()}

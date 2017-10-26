@@ -76,7 +76,7 @@ export default class HoCActivity extends React.Component {
     const { isCompleted } = this.state
 
     return (
-      <Segment raised id="mgb-codeActivity" style={this.props.style}>
+      <Segment piled id="mgb-codeActivity" style={this.props.style}>
         <Button
           compact
           size="mini"

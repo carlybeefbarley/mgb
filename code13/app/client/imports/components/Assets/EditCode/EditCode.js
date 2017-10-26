@@ -365,6 +365,15 @@ export default class EditCode extends React.Component {
       hotReload: c2.hotReload,
       documentIsEmpty: !c2.src || c2.src.length === 0,
     })
+
+    if (this.isGuest) {
+      var timerId = window.setInterval(() => {
+        if (this.state.astReady) {
+          this.handleRun()
+          window.clearInterval(timerId)
+        }
+      }, 200)
+    }
   }
 
   startTernServer() {
@@ -540,16 +549,6 @@ export default class EditCode extends React.Component {
     this.highlightedLines = null
 
     this.mgb_cache = null
-  }
-
-  handleGameScreenLoad = () => {
-    if (!this.isGuest) return
-    var timerId = window.setInterval(() => {
-      if (this.state.astReady) {
-        this.handleRun()
-        window.clearInterval(timerId)
-      }
-    }, 200)
   }
 
   terminateWorkers() {
@@ -2730,7 +2729,6 @@ export default class EditCode extends React.Component {
         consoleAdd={this._consoleAdd.bind(this)}
         handleContentChange={this.handleContentChange.bind(this)}
         handleStop={this.handleGamePopup}
-        onLoad={this.handleGameScreenLoad}
       />
     )
 
@@ -2748,14 +2746,15 @@ export default class EditCode extends React.Component {
           <div className={infoPaneOpts.col1 + ' wide column'}>
             {this.isGuest && (
               <HoCActivity
-                style={{ minHeight: '4em' }}
+                style={{ marginBottom: '1em', minHeight: '4em' }}
                 codeMirror={this.codeMirror}
                 highlightLines={this.highlightLines.bind(this)}
                 assetId={asset._id}
               />
             )}
             {!this.isGuest && <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
-            <div
+            {!this.isGuest ? (
+              <div
               className={'accept-drop' + (this.props.canEdit ? '' : ' read-only')}
               onDrop={e => {
                 this.handleDropAsset(this.codeMirror, e)
@@ -2772,6 +2771,17 @@ export default class EditCode extends React.Component {
                 placeholder="Start typing code here..."
               />
             </div>
+            ) : (
+              <Segment raised style={{margin: 0, padding: 0}}>
+                <textarea
+                  ref="textarea"
+                  className="allow-toolbar-shortcuts"
+                  defaultValue={asset.content2.src}
+                  autoComplete="off"
+                  placeholder="Start typing code here..."
+                />
+              </Segment>
+            )}
           </div>
           <div
             className={infoPaneOpts.col2 + ' wide column'}
@@ -3165,7 +3175,7 @@ export default class EditCode extends React.Component {
                 </div>
               </div>
             ) : (
-              <Segment>
+              <Segment raised>
                 <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
                 {gameScreen}
                 <ConsoleMessageViewer

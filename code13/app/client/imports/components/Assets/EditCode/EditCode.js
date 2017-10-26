@@ -2746,10 +2746,10 @@ export default class EditCode extends React.Component {
           <div className={infoPaneOpts.col1 + ' wide column'}>
             {this.isGuest && (
               <HoCActivity
-                style={{ marginBottom: '1em', minHeight: '4em' }}
                 codeMirror={this.codeMirror}
                 highlightLines={this.highlightLines.bind(this)}
                 assetId={asset._id}
+                currUser={currUser}
               />
             )}
             {!this.isGuest && <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}

@@ -2,11 +2,44 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Button, Icon, Message, Segment } from 'semantic-ui-react'
 
+import { utilPushTo } from '/client/imports/routes/QLink'
+import { showToast } from '/client/imports/routes/App'
+import { getAssetBySelector } from '/client/imports/helpers/assetFetchers'
 import { mgbAjax } from '/client/imports/helpers/assetFetchers'
-
 import './editcode.css'
 
-const _smallTopMarginSty = { style: { marginTop: '0.5em' } }
+export const GetHoCRoute = (currUser, step) => {
+  const newAsset = {
+    name: 'HoC.activity.' + step,
+    kind: 'code',
+    isDeleted: false,
+    dn_ownerName: currUser.username,
+  }
+
+  // check if asset exists
+  getAssetBySelector(newAsset, (asset, err) => {
+    if (asset) {
+      // asset exists. open it.
+      const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
+      utilPushTo(null, url)
+    } else {
+      newAsset.isCompleted = false
+      newAsset.isPrivate = false
+
+      // asset doesn't exist. create one.
+      Meteor.call('Azzets.create', newAsset, (error, result) => {
+        if (error) {
+          showToast('cannot create Asset because: ' + error.reason, 'error')
+          return
+        }
+        newAsset._id = result
+        const url = `/u/${currUser.username}/asset/${newAsset._id}`
+
+        utilPushTo(null, url)
+      })
+    }
+  })
+}
 
 export default class HoCActivity extends React.Component {
   static propTypes = {
@@ -19,35 +52,34 @@ export default class HoCActivity extends React.Component {
   constructor(props) {
     super(props)
 
+    // CAN NO LONGER STORE STEP IN STATE SINCE EACH STEP IS A DIFFERENT ASSET
     this.state = {
       step: 0, // curent step of tutorial
       isCompleted: false, // indicator if current tutorial is completed and we need to show modal
-      isTaskSubmitted: false, // indicator if task is submitted and we need to show modal
       data: {}, // will get from CDN
     }
 
-    /*
-    mgbAjax(`/api/asset/code/!vault/`, (err, listStr) => {
+    mgbAjax(`/api/asset/code/Bouhm/HoC.test`, (err, listStr) => {
       if (err) console.log('error', err)
       else this.setState({ data: JSON.parse(listStr) })
     })
-    */
   }
 
-  stepNext = () => {
+  stepNext = currUser => {
     const step = this.state.step + 1
     if (step < this.state.data.steps.length) {
       this.setState({ step })
-      this.resetCode(step)
     } else this.successPopup()
+    GetHoCRoute(currUser, step)
   }
 
-  stepBack = () => {
-    if (this.state.step > 0) {
-      const step = this.state.step - 1
+  stepBack = currUser => {
+    var step = this.state.step
+    if (step > 0) {
+      step--
       this.setState({ step })
-      this.resetCode(step)
     }
+    GetHoCRoute(currUser, step)
   }
 
   resetCode = step => {
@@ -55,7 +87,6 @@ export default class HoCActivity extends React.Component {
     const currStep = this.state.data.steps[step]
     const code = currStep.code
     this.props.codeMirror.setValue(code)
-    this.props.quickSave()
     if (currStep.highlight) {
       currStep.highlight.map(highlight => {
         this.props.highlightLines(highlight.from, highlight.to)
@@ -68,15 +99,19 @@ export default class HoCActivity extends React.Component {
   }
 
   render() {
-    const description = this.state.data.steps
-      ? this.state.data.steps[this.state.step].text
-      : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-    const totalSteps = this.state.data.steps ? this.state.data.steps.length : 0
-    const isLastStep = totalSteps > 0 && this.state.step == totalSteps - 1
+    var { currUser } = this.props
     const { isCompleted } = this.state
 
+    const currStep = this.state.data.steps ? this.state.data.steps[this.state.step] : null
+    const stepHeader = currStep ? currStep.header : ''
+    const description = currStep ? currStep.text : ''
+    const video = currStep ? currStep.video : ''
+    const code = currStep ? currStep.code : ''
+    const totalSteps = this.state.data.steps ? this.state.data.steps.length : 0
+    const isLastStep = totalSteps > 0 && this.state.step == totalSteps - 1
+
     return (
-      <Segment piled id="mgb-codeActivity" style={this.props.style}>
+      <Segment piled id="mgb-codeActivity" style={{ marginBottom: '1em', height: '11em' }}>
         <Button
           compact
           size="mini"
@@ -107,33 +142,32 @@ export default class HoCActivity extends React.Component {
           content="Reset code"
         />
 
-        {isCompleted && (
-          <Message size="small" icon style={{ paddingBottom: 0 }}>
-            <Icon color="green" name="check circle" />
-            <Message.Content>
-              <Message.Header>Completed...</Message.Header>
-              <Button
-                positive
-                compact
-                size="mini"
-                content=""
-                icon="up arrow"
-                labelPosition="right"
-                {..._smallTopMarginSty}
-              />
-            </Message.Content>
-          </Message>
-        )}
-
         {totalSteps > 0 && (
-          <div style={{ color: '#aaa' }}>
+          <div style={{ float: 'right', color: '#aaa' }}>
             <small>
-              Step #{1 + this.state.step} of {totalSteps}
+              Step {1 + this.state.step} of {totalSteps}
             </small>
           </div>
         )}
 
-        <div style={{ marginTop: '0.5em' }} dangerouslySetInnerHTML={{ __html: description }} />
+        {isCompleted && (
+          <Message size="small" icon style={{ paddingBottom: 0 }}>
+            <Icon color="green" name="check circle" />
+            <Message.Content>
+              <Message.Header>Activity Completed!</Message.Header>
+              <div style={{ padding: '0.5em 0 1em 0' }}>
+                <a href="https://hourofcode.com/us/learn">Hour of Code</a>
+              </div>
+            </Message.Content>
+          </Message>
+        )}
+
+        {!isCompleted && (
+          <div>
+            <h5 style={{ margin: '0.5em 0 0.2em 0' }}>{stepHeader}</h5>
+            <div dangerouslySetInnerHTML={{ __html: description }} />
+          </div>
+        )}
       </Segment>
     )
   }

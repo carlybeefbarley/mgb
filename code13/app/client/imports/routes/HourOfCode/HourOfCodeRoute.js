@@ -140,11 +140,9 @@ class HourOfCodeRoute extends Component {
 
   render() {
     return (
-      <Container text>
+      <Container text textAlign="center">
         <Divider hidden section />
-        <Header as="h1" textAlign="center">
-          Welcome to an Hour of Code with My Game Builder!
-        </Header>
+        <Header as="h1">Welcome to an Hour of Code with My Game Builder!</Header>
 
         <p>Setting up...</p>
       </Container>

@@ -10,6 +10,7 @@ import './editcode.css'
 
 export const GetHoCRoute = (currUser, step) => {
   const newAsset = {
+    // Placeholder asset name
     name: 'HoC.activity.' + step,
     kind: 'code',
     isDeleted: false,
@@ -24,7 +25,7 @@ export const GetHoCRoute = (currUser, step) => {
       utilPushTo(null, url)
     } else {
       newAsset.isCompleted = false
-      newAsset.isPrivate = false
+      newAsset.isPrivate = true
 
       // asset doesn't exist. create one.
       Meteor.call('Azzets.create', newAsset, (error, result) => {
@@ -59,6 +60,7 @@ export default class HoCActivity extends React.Component {
       data: {}, // will get from CDN
     }
 
+    // Using placeholder asset
     mgbAjax(`/api/asset/code/Bouhm/HoC.test`, (err, listStr) => {
       if (err) console.log('error', err)
       else this.setState({ data: JSON.parse(listStr) })
@@ -70,7 +72,7 @@ export default class HoCActivity extends React.Component {
     if (step < this.state.data.steps.length) {
       this.setState({ step })
     } else this.successPopup()
-    GetHoCRoute(currUser, step)
+    //GetHoCRoute(currUser, step)
   }
 
   stepBack = currUser => {
@@ -79,7 +81,7 @@ export default class HoCActivity extends React.Component {
       step--
       this.setState({ step })
     }
-    GetHoCRoute(currUser, step)
+    //GetHoCRoute(currUser, step)
   }
 
   resetCode = step => {
@@ -156,6 +158,7 @@ export default class HoCActivity extends React.Component {
             <Message.Content>
               <Message.Header>Activity Completed!</Message.Header>
               <div style={{ padding: '0.5em 0 1em 0' }}>
+                {/* This should link to the HoC certificate upon completion */}
                 <a href="https://hourofcode.com/us/learn">Hour of Code</a>
               </div>
             </Message.Content>

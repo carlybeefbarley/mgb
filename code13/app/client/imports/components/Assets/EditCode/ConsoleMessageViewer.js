@@ -82,7 +82,7 @@ const ConsoleMessageViewer = React.createClass({
           // maxHeight: "200px",
           // overflow: "auto",
           height: '100%',
-          margin: 0,
+          clear: 'both',
         }}
       >
         <div className="header">
@@ -102,7 +102,8 @@ const ConsoleMessageViewer = React.createClass({
           style={{
             overflow: 'auto',
             width: '100%',
-            height: '150px',
+            maxHeight: '150px',
+            marginTop: '6px',
           }}
         >
           {this.smartRender()}

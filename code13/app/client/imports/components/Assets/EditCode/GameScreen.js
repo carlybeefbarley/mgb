@@ -23,6 +23,7 @@ export default class GameScreen extends React.Component {
     isPlaying: PropTypes.bool,
     isPopup: PropTypes.bool,
     asset: PropTypes.object,
+    currUser: PropTypes.object,
 
     handleStop: PropTypes.func.isRequired,
     handleContentChange: PropTypes.func.isRequired,
@@ -253,6 +254,7 @@ export default class GameScreen extends React.Component {
 
     const { isPopup, isPlaying } = this.props
     const { isHidden, isMinimized } = this.state
+    let urlData = this.props.currUser ? '&hocname=' + this.props.currUser.profile.name : ''
 
     const wrapStyle = {
       display: 'block',
@@ -326,7 +328,7 @@ export default class GameScreen extends React.Component {
             }}
             ref="iFrame1"
             sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
-            src={makeCDNLink('/codeEditSandbox.html')}
+            src={makeCDNLink('/codeEditSandbox.html') + urlData}
             frameBorder="0"
             id="mgbjr-EditCode-sandbox-iframe"
           />

@@ -2683,6 +2683,7 @@ export default class EditCode extends React.Component {
         consoleAdd={this._consoleAdd.bind(this)}
         handleContentChange={this.handleContentChange.bind(this)}
         handleStop={this.handleGamePopup}
+        currUser={currUser}
       />
     )
 

@@ -212,8 +212,6 @@ class AppUI extends React.Component {
     // if(this.props.params.assetId){
     //   console.log( this.props.params.assetId, this.state.currentlyEditingAssetInfo)
     // }
-
-    this.maybeCreateGuestUser()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -251,32 +249,6 @@ class AppUI extends React.Component {
 
       ga('set', 'page', trackPage)
       ga('send', 'pageview', trackPage)
-    }
-  }
-
-  maybeCreateGuestUser = () => {
-    const { currUser, location, loading } = this.props
-
-    const loggingIn = Accounts.loggingIn()
-    const isGuestRoute = _.has(location.query, 'createGuest')
-    const shouldCreateGuest = isGuestRoute && !loggingIn && !loading && !currUser
-
-    if (shouldCreateGuest) {
-      const newQuery = { ...location.query, createGuest: undefined }
-      utilPushTo(newQuery, location.pathname)
-      console.log('isHourOfCodeRoute && !loading && !currUser, create guest...')
-
-      Meteor.call('User.generateGuestUser', (err, guestUser) => {
-        if (err) return console.error('Failed to generate a guest user object:', err)
-
-        console.log('Generated guest user:', guestUser)
-
-        Accounts.createUser(guestUser, err => {
-          if (err) return console.error('Failed to create guest user:', err)
-
-          console.log('Guest created!')
-        })
-      })
     }
   }
 
@@ -398,7 +370,7 @@ class AppUI extends React.Component {
       hideHeaders,
     } = this.state
     const { query } = this.props.location
-
+    const isGuest = currUser ? currUser.profile.isGuest : false
     if (!loading) this.configureTrackJs()
 
     // The Flex Panel is for communications and common quick searches in a right hand margin
@@ -420,7 +392,7 @@ class AppUI extends React.Component {
       top: 0,
       bottom: respData.fpReservedFooterHeight,
       left: 0,
-      right: flexPanelWidth,
+      right: `${isGuest ? 0 : flexPanelWidth}`,
       marginBottom: '0px',
       minHeight: '100vh',
       overflowY: 'scroll', // must be 'scroll' to preserve iOS inertia scrolling
@@ -459,45 +431,48 @@ class AppUI extends React.Component {
           debug={joyrideDebug}
         />
         <div>
-          <FlexPanel
-            fpIsFooter={!!respData.footerTabMajorNav}
-            joyrideSteps={this.state.joyrideSteps}
-            joyrideSkillPathTutorial={this.state.joyrideSkillPathTutorial}
-            joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
-            joyrideOriginatingAssetId={this.state.joyrideOriginatingAssetId}
-            currUser={currUser}
-            chatChannelTimestamps={chatChannelTimestamps}
-            hazUnreadChats={hazUnreadChats}
-            requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
-            currUserProjects={currUserProjects}
-            user={user}
-            selectedViewTag={flexPanelQueryValue}
-            handleFlexPanelToggle={this.handleFlexPanelToggle}
-            handleFlexPanelChange={this.handleFlexPanelChange}
-            flexPanelWidth={flexPanelWidth}
-            flexPanelIsVisible={showFlexPanel}
-            activity={this.props.activity}
-            isSuperAdmin={isSuperAdmin}
-            currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-          />
+          {!isGuest && (
+            <FlexPanel
+              fpIsFooter={!!respData.footerTabMajorNav}
+              joyrideSteps={this.state.joyrideSteps}
+              joyrideSkillPathTutorial={this.state.joyrideSkillPathTutorial}
+              joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
+              joyrideOriginatingAssetId={this.state.joyrideOriginatingAssetId}
+              currUser={currUser}
+              chatChannelTimestamps={chatChannelTimestamps}
+              hazUnreadChats={hazUnreadChats}
+              requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
+              currUserProjects={currUserProjects}
+              user={user}
+              selectedViewTag={flexPanelQueryValue}
+              handleFlexPanelToggle={this.handleFlexPanelToggle}
+              handleFlexPanelChange={this.handleFlexPanelChange}
+              flexPanelWidth={flexPanelWidth}
+              flexPanelIsVisible={showFlexPanel}
+              activity={this.props.activity}
+              isSuperAdmin={isSuperAdmin}
+              currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+            />
+          )}
 
           <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
             <SupportedBrowsersContainer />
-            <VerifyBanner currUser={currUser} />
+            {!isGuest && <VerifyBanner currUser={currUser} />}
             {!hideHeaders && <NavPanel currUser={currUser} navPanelAvailableWidth={mainAreaAvailableWidth} />}
-
-            <NavBar
-              currUser={currUser}
-              user={user}
-              location={this.props.location}
-              name={this.props.routes[1].name}
-              params={this.props.params}
-              flexPanelWidth={flexPanelWidth}
-              hideHeaders={hideHeaders}
-              onToggleHeaders={this.handleHideHeadersToggle}
-              sysvars={sysvars}
-              currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-            />
+            {!isGuest && (
+              <NavBar
+                currUser={currUser}
+                user={user}
+                location={this.props.location}
+                name={this.props.routes[1].name}
+                params={this.props.params}
+                flexPanelWidth={flexPanelWidth}
+                hideHeaders={hideHeaders}
+                onToggleHeaders={this.handleHideHeadersToggle}
+                sysvars={sysvars}
+                currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+              />
+            )}
 
             {currUser &&
             currUser.suIsBanned && (

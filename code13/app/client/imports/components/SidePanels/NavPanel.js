@@ -34,6 +34,23 @@ export const getNavPanels = (currUser, showAll) => {
   const isLoggingIn = Meteor.loggingIn()
   const showGuestOptions = (!isLoggingIn && !currUser) || showAll
   const showUserOptions = (!isLoggingIn && !!currUser) || showAll
+  const isGuest = currUser ? currUser.profile.isGuest : false
+
+  if (isGuest) {
+    return {
+      left: [
+        {
+          name: 'mgb',
+          icon: { name: 'home' },
+          explainClickAction: 'Shortcut: Clicking here jumps to the Home Page',
+          content: <img src="/images/logos/mgb/medium/01w.png" style={logoImageStyle} />,
+          to: '/',
+          menu: [],
+        },
+      ],
+      right: [],
+    }
+  }
 
   return {
     left: [
@@ -329,6 +346,7 @@ class NavPanel extends React.Component {
     const { currUser, navPanelAvailableWidth } = this.props
     const useIcons = navPanelAvailableWidth < 768 // px
     const allNavPanels = getNavPanels(currUser)
+    const isGuest = currUser ? currUser.profile.isGuest : false
 
     const navPanelItems = side =>
       allNavPanels[side]
@@ -339,7 +357,7 @@ class NavPanel extends React.Component {
             name={name}
             openLeft={side === 'right'}
             key={name}
-            content={useIcons || !content ? <Icon size="large" {...icon} /> : content}
+            content={!isGuest && (useIcons || !content) ? <Icon size="large" {...icon} /> : content}
             menu={menu}
             to={to}
             query={query}
@@ -349,7 +367,12 @@ class NavPanel extends React.Component {
     return (
       <Menu inverted borderless style={menuStyle} id="mgbjr-np">
         {navPanelItems('left')}
-
+        {isGuest && (
+          <div className="ui item" style={{ margin: '0 auto', left: '79px' }}>
+            {/* Provide link to HoC MGB page and link to the HoC certificate */}
+            <a href="https://hourofcode.com/us/learn">Hour of Code</a>
+          </div>
+        )}
         <Menu.Menu position="right">{navPanelItems('right')}</Menu.Menu>
       </Menu>
     )

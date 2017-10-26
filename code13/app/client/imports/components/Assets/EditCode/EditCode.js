@@ -2755,24 +2755,24 @@ export default class EditCode extends React.Component {
             {!this.isGuest && <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
             {!this.isGuest ? (
               <div
-              className={'accept-drop' + (this.props.canEdit ? '' : ' read-only')}
-              onDrop={e => {
-                this.handleDropAsset(this.codeMirror, e)
-              }}
-              onDragOver={e => {
-                this.handleDragOver(this.codeMirror, e)
-              }}
-            >
-              <textarea
-                ref="textarea"
-                className="allow-toolbar-shortcuts"
-                defaultValue={asset.content2.src}
-                autoComplete="off"
-                placeholder="Start typing code here..."
-              />
-            </div>
+                className={'accept-drop' + (this.props.canEdit ? '' : ' read-only')}
+                onDrop={e => {
+                  this.handleDropAsset(this.codeMirror, e)
+                }}
+                onDragOver={e => {
+                  this.handleDragOver(this.codeMirror, e)
+                }}
+              >
+                <textarea
+                  ref="textarea"
+                  className="allow-toolbar-shortcuts"
+                  defaultValue={asset.content2.src}
+                  autoComplete="off"
+                  placeholder="Start typing code here..."
+                />
+              </div>
             ) : (
-              <Segment raised style={{margin: 0, padding: 0}}>
+              <Segment raised style={{ margin: 0, padding: 0 }}>
                 <textarea
                   ref="textarea"
                   className="allow-toolbar-shortcuts"
@@ -2848,7 +2848,7 @@ export default class EditCode extends React.Component {
                       id="mgbjr-EditCode-codeTutorials"
                     >
                       <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
-                        {!this.isGuest && <i className="dropdown icon" />}Code Tutorials
+                        <i className="dropdown icon" />Code Tutorials
                       </span>
                     </div>
                   )}
@@ -2869,7 +2869,6 @@ export default class EditCode extends React.Component {
                   )}
 
                   {!docEmpty &&
-                  !this.isGuest &&
                   asset.kind === 'code' && (
                     // Current Line/Selection helper (header)
                     <div
@@ -2902,7 +2901,6 @@ export default class EditCode extends React.Component {
                     </div>
                   )}
                   {!docEmpty &&
-                  !this.isGuest &&
                   asset.kind === 'code' &&
                   this.mgb_mode === 'jsx' && (
                     // Current Line/Selection helper (body)
@@ -2972,8 +2970,7 @@ export default class EditCode extends React.Component {
                   !asset.isCompleted &&
                   !this.isCodeTutorial &&
                   !this.isChallenge &&
-                  this.mgb_mode === 'jsx' &&
-                  !this.isGuest && (
+                  this.mgb_mode === 'jsx' && (
                     <div className="title">
                       <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                         <Icon name="dropdown" />Import Assistant
@@ -2992,8 +2989,7 @@ export default class EditCode extends React.Component {
                       </span>
                     </div>
                   )}
-                  {this.state.astReady &&
-                  !this.isGuest && (
+                  {this.state.astReady && (
                     <div className="content">
                       <ImportHelperPanel
                         scripts={this.state.userScripts}
@@ -3005,11 +3001,10 @@ export default class EditCode extends React.Component {
                   )}
                   {!docEmpty &&
                   asset.kind === 'code' &&
-                  this.mgb_mode === 'jsx' &&
-                  !this.isGuest && (
+                  this.mgb_mode === 'jsx' && (
                     // Code run/stop (header)
-                    <div className={'title'} id="mgbjr-EditCode-codeRunner" style={{ margin: 0 }}>
-                      <span style={{ whiteSpace: 'nowrap' }}>
+                    <div className="title" id="mgbjr-EditCode-codeRunner">
+                      <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                         <i className="dropdown icon" />Code Runner
                       </span>
                     </div>
@@ -3018,13 +3013,9 @@ export default class EditCode extends React.Component {
                   asset.kind === 'code' &&
                   this.mgb_mode === 'jsx' && (
                     // Code run/stop (body)
-                    <div
-                      className={'content ' + (!this.isGuest ? '' : 'active')}
-                      style={!this.isGuest ? {} : { height: '100%', padding: 0 }}
-                    >
+                    <div className="content">
                       <span style={{ float: 'right', marginTop: '-19px', position: 'relative' }}>
-                        {!this.isGuest &&
-                        isPlaying &&
+                        {isPlaying &&
                         this.props.canEdit && (
                           <a
                             className={'ui tiny icon button'}
@@ -3034,8 +3025,7 @@ export default class EditCode extends React.Component {
                             <i className="save icon" />
                           </a>
                         )}
-                        {!this.isGuest &&
-                        !isPlaying &&
+                        {!isPlaying &&
                         this.state.astReady && (
                           <Button
                             as="a"
@@ -3048,8 +3038,7 @@ export default class EditCode extends React.Component {
                             <Icon name="play" /> Run
                           </Button>
                         )}
-                        {!this.isGuest &&
-                        isPlaying && (
+                        {isPlaying && (
                           <Button
                             as="a"
                             icon
@@ -3061,8 +3050,7 @@ export default class EditCode extends React.Component {
                             <Icon name="stop" /> Stop
                           </Button>
                         )}
-                        {!this.isGuest &&
-                        isPlaying && (
+                        {isPlaying && (
                           <Button
                             as="a"
                             active={isPopup}
@@ -3075,8 +3063,7 @@ export default class EditCode extends React.Component {
                             <Icon name="external" /> Popout
                           </Button>
                         )}
-                        {!this.isGuest &&
-                        isPlaying && (
+                        {isPlaying && (
                           <Button
                             as="a"
                             icon
@@ -3088,9 +3075,7 @@ export default class EditCode extends React.Component {
                             <Icon name="external" /> Full
                           </Button>
                         )}
-                        {!this.isGuest &&
-                        !this.hasErrors &&
-                        !this.isGuest && (
+                        {!this.hasErrors && (
                           <Button
                             as="a"
                             icon
@@ -3122,8 +3107,7 @@ export default class EditCode extends React.Component {
                   )}
                   {this.state.astReady &&
                   asset.kind === 'code' &&
-                  this.mgb_mode === 'jsx' &&
-                  !this.isGuest && (
+                  this.mgb_mode === 'jsx' && (
                     <div id="mgbjr-EditCode-codeFlower" className="title">
                       <span className="explicittrigger" style={{ whiteSpace: 'nowrap' }}>
                         <i className="dropdown icon" />Code Flower
@@ -3131,16 +3115,15 @@ export default class EditCode extends React.Component {
                     </div>
                   )}
                   {this.state.astReady &&
-                  !this.isGuest &&
                   asset.kind === 'code' &&
                   this.mgb_mode === 'jsx' && (
                     <div className="content">
                       {/* this.props.canEdit && this.state.astReady &&
-               <a className={"ui right floated mini icon button"} onClick={this.drawAstFlower.bind(this)}
-               title="This will make abstract image of your code">
-               <i className={"write square icon"}></i>Draw AST
-               </a>
-               */}
+                   <a className={"ui right floated mini icon button"} onClick={this.drawAstFlower.bind(this)}
+                   title="This will make abstract image of your code">
+                   <i className={"write square icon"}></i>Draw AST
+                   </a>
+                   */}
                       <span style={{ float: 'right', marginTop: '-28px', position: 'relative' }}>
                         {this.state.astFlowerReady &&
                         this.props.canEdit && (
@@ -3187,6 +3170,7 @@ export default class EditCode extends React.Component {
             )}
           </div>
         </div>
+        {isPopup && gameScreen}
       </div>
     )
   }

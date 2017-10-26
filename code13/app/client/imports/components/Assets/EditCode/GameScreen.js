@@ -28,6 +28,7 @@ export default class GameScreen extends React.Component {
     handleStop: PropTypes.func.isRequired,
     handleContentChange: PropTypes.func.isRequired,
     consoleAdd: PropTypes.func.isRequired,
+    mgbHocEvent: PropTypes.func,
   }
   // keep only one popup per gamescreen instances
   static popup = null
@@ -117,6 +118,11 @@ export default class GameScreen extends React.Component {
           }
         }
         this.onClosePopupObeserverInterval = window.setInterval(observePopup, 100)
+      },
+      // data.success = true - task is completed
+      // data.gameOver = true - task is failed, try again
+      mgbHocEvent(data) {
+        this.props.mgbHocEvent(data)
       },
     }
 

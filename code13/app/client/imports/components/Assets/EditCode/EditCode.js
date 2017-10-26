@@ -2725,11 +2725,12 @@ export default class EditCode extends React.Component {
         ref="gameScreen"
         isPopup={isPopup}
         isPlaying={this.state.isPlaying}
-        hocLevelId={1}
+        hocLevelId={1} // TODO pass actual level here
         asset={this.props.asset}
         consoleAdd={this._consoleAdd.bind(this)}
         handleContentChange={this.handleContentChange.bind(this)}
         handleStop={this.handleGamePopup}
+        mgbHocEvent={() => {}} // TODO pass actual callback function
       />
     )
 

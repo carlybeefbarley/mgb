@@ -2725,6 +2725,7 @@ export default class EditCode extends React.Component {
         ref="gameScreen"
         isPopup={isPopup}
         isPlaying={this.state.isPlaying}
+        hocLevelId={1}
         asset={this.props.asset}
         consoleAdd={this._consoleAdd.bind(this)}
         handleContentChange={this.handleContentChange.bind(this)}

@@ -460,7 +460,7 @@ const PlayGameRoute = React.createClass({
     const game = this.data.asset // One Asset provided via getMeteorData()
 
     return (
-      <Segment basic padded style={{ paddingTop: 0, paddingBottom: 0 }}>
+      <Segment basic padded style={{ paddingTop: 0, paddingBottom: 0, marginBottom: 0 }}>
         <Header as="span">
           <QLink to={`/u/${game.dn_ownerName}/asset/${game._id}`}>
             <Icon name="game" />

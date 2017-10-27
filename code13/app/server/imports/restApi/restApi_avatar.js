@@ -27,6 +27,7 @@ RestApi.addRoute(
           headers: {
             Location: user.profile.avatar,
             'cache-control': `public, max-age=${maxAge}, s-maxage=${maxAge}, must-revalidate`,
+            etag: user.profile.avatar.split('/').pop(),
           },
           body: {},
         }
@@ -55,8 +56,13 @@ RestApi.addRoute(
           const now = Date.now()
           // this will be timestamp rounded to seconds
           const nextUpdate = now - now % (expires * 1000)
+
+          const hashStr =
+            user.profile.avatar.indexOf('?hash=') > -1
+              ? ''
+              : `hash=${this.queryParams.hash ? this.queryParams.hash : nextUpdate}`
           // this will force cache on our api
-          avatarLink = user.profile.avatar + `?hash=${nextUpdate}&expires=${expires}`
+          avatarLink = user.profile.avatar + `?${hashStr}&expires=${expires}`
         } else {
           avatarLink = user.profile.avatar
         }
@@ -67,6 +73,7 @@ RestApi.addRoute(
           headers: {
             Location: avatarLink,
             'cache-control': `public, max-age=${maxAge}, s-maxage=${maxAge}, must-revalidate`,
+            ETag: avatarLink.split('/').pop(),
             // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
           },
           body: {},

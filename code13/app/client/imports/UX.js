@@ -5,6 +5,7 @@ import QLink from '/client/imports/routes/QLink'
 import { Button, Icon, Image, Popup } from 'semantic-ui-react'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import moment from 'moment'
+import SpecialGlobals from '../../imports/SpecialGlobals'
 
 // >>>  import UX from '/client/imports/UX'
 
@@ -14,7 +15,7 @@ import moment from 'moment'
 // 3. with limited interaction
 // 4. Use shallow information about the main MGB schema types (e.g. know about user, not about details of map assets)
 
-const _makeAvatarImgLink = (username, validFor) =>
+const _makeAvatarImgLink = (username, validFor = SpecialGlobals.avatar.validFor) =>
   _.isNumber(validFor)
     ? makeCDNLink(`/api/user/@${username}/avatar/${validFor}`, makeExpireTimestamp(validFor))
     : makeCDNLink(`/api/user/@${username}/avatar/`)

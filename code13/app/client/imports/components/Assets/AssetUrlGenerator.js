@@ -34,6 +34,10 @@ const _generateUrlOptions = asset => {
       break
     case 'map':
       retval.push({ msg: 'as JSON map', url: '/api/asset/map/' + asset._id })
+      retval.push({
+        msg: 'as JSON map by name',
+        url: '/api/asset/map/' + asset.dn_ownerName + '/' + asset.name,
+      })
       break
     case 'sound':
       retval.push({ msg: 'as sound.mp3', url: '/api/asset/sound/' + asset._id + '/sound.mp3' })

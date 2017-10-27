@@ -745,7 +745,9 @@ export default class EditCode extends React.Component {
         return
       }
 
-      let currentCursor = this.codeMirror.getCursor()
+      const currentCursor = this.codeMirror.getCursor()
+      const currentScrollInfo = this.codeMirror.getScrollInfo()
+
       this.codeMirror.setValue(newVal)
       this.setState({
         needsBundle: nextProps.asset.content2.needsBundle,
@@ -753,7 +755,11 @@ export default class EditCode extends React.Component {
       })
 
       this._currentCodemirrorValue = newVal // This needs to be done here or we will loop around forever
+
+      // restore scroll and cursor
       this.codeMirror.setCursor(currentCursor) // Note that this will trigger the source Analysis stuff also.. and can update activitySnapshots. TODO(@dgolds) look at inhibiting the latter
+      this.codeMirror.scrollTo(currentScrollInfo.left, currentScrollInfo.top)
+
       // force update source tools related files
       this.doFullUpdateOnContentChange()
     }

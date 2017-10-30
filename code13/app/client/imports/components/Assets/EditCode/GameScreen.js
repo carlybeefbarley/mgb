@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react'
-import ReactDOM from 'react-dom'
 import { Icon, Button } from 'semantic-ui-react'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
@@ -23,10 +22,12 @@ export default class GameScreen extends React.Component {
     isPlaying: PropTypes.bool,
     isPopup: PropTypes.bool,
     asset: PropTypes.object,
+    hocLevelId: PropTypes.number,
 
     handleStop: PropTypes.func.isRequired,
     handleContentChange: PropTypes.func.isRequired,
     consoleAdd: PropTypes.func.isRequired,
+    onEvent: PropTypes.func,
   }
   // keep only one popup per gamescreen instances
   static popup = null
@@ -116,6 +117,14 @@ export default class GameScreen extends React.Component {
           }
         }
         this.onClosePopupObeserverInterval = window.setInterval(observePopup, 100)
+      },
+      // data.success = true - task is completed
+      // data.gameOver = true - task is failed, try again
+      mgbHocEvent(data) {
+        const { onEvent } = this.props
+        if (!onEvent) return
+
+        onEvent(data)
       },
     }
 
@@ -326,7 +335,7 @@ export default class GameScreen extends React.Component {
             }}
             ref="iFrame1"
             sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
-            src={makeCDNLink('/codeEditSandbox.html')}
+            src={makeCDNLink('/codeEditSandbox.html') + '&hocLevelId=' + this.props.hocLevelId}
             frameBorder="0"
             id="mgbjr-EditCode-sandbox-iframe"
           />

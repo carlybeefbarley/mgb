@@ -30,6 +30,7 @@ const schema = {
     isDeleted: optional(Boolean), // soft delete flag, so we can have an undelete easily
     //    invites: optional([]),             // DEPRECATED
     projectNames: optional([String]), // An array of strings  DEPRECATED, IGNORE+DELETE
+    HoC: { currStepIndex: optional(Number) }, // Data for HoC guest accounts,
   },
   badges: optional([]), // Empty.. or array of badge names (see badges.js)
   badges_count: optional(Number), // Number of badges
@@ -117,6 +118,7 @@ Meteor.methods({
       'profile.isDeleted': optional(schema.profile.isDeleted),
       'profile.projectNames': optional(schema.profile.projectNames),
       'profile.latestNewsTimestampSeen': optional(schema.profile.latestNewsTimestampSeen),
+      'profile.HoC.currStepIndex': optional(schema.profile.HoC.currStepIndex),
       suIsBanned: schema.suIsBanned,
       suFlagId: schema.suFlagId,
     })

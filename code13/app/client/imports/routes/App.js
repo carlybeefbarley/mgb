@@ -46,6 +46,8 @@ import { InitHotjar } from '/client/imports/helpers/hotjar.js'
 import SupportedBrowsersContainer from '../components/SupportedBrowsers/SupportedBrowsersContainer'
 import VerifyBanner from '/client/imports/components/Users/VerifyBanner'
 
+import { hourOfCodeStore } from '/client/imports/stores'
+
 let G_localSettings = new ReactiveDict()
 
 // This works because <App> is the first Route in /app/client/imports/routes
@@ -385,7 +387,7 @@ class AppUI extends React.Component {
     const mainAreaAvailableWidth = respWidth - parseInt(flexPanelWidth)
 
     // The main Panel:  Outer is for the scroll container; inner is for content
-    const mainPanelOuterDivSty = {
+    var mainPanelOuterDivSty = {
       position: 'fixed',
       display: 'flex',
       flexDirection: 'column',
@@ -395,9 +397,10 @@ class AppUI extends React.Component {
       right: `${isGuest ? 0 : flexPanelWidth}`,
       marginBottom: '0px',
       minHeight: '100vh',
-      overflowY: 'scroll', // must be 'scroll' to preserve iOS inertia scrolling
       WebkitOverflowScrolling: 'touch', // only works with overflowY: scroll (not auto)
     }
+
+    isGuest ? (mainPanelOuterDivSty.overflow = 'hidden') : (mainPanelOuterDivSty.overflowY = 'scroll')
 
     //Check permissions of current user for super-admin,
     //if user is on their own profile route,

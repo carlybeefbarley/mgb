@@ -367,13 +367,14 @@ class NavPanel extends React.Component {
     return (
       <Menu inverted borderless style={menuStyle} id="mgbjr-np">
         {navPanelItems('left')}
-        {isGuest && (
-          <div className="ui item" style={{ margin: '0 auto', left: '79px' }}>
+        {isGuest ? (
+          <div className="ui item" style={{ margin: '0 auto', right: '79px' }}>
             {/* Provide link to HoC MGB page and link to the HoC certificate */}
             <a href="https://hourofcode.com/us/learn">Hour of Code</a>
           </div>
+        ) : (
+          <Menu.Menu position="right">{navPanelItems('right')}</Menu.Menu>
         )}
-        <Menu.Menu position="right">{navPanelItems('right')}</Menu.Menu>
       </Menu>
     )
   }

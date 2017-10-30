@@ -44,7 +44,7 @@ const withStores = stores => WrappedComponent => {
   class WithStores extends Component {
     state = {}
 
-    static displayName = displayName
+    static displayName = `withStores(${displayName})`
 
     constructor(...args) {
       super(...args)
@@ -86,10 +86,10 @@ const withStores = stores => WrappedComponent => {
               },
             },
           }
-          console.log(`${displayName} updated: withStores({ ${propName}: ${storeName} })`, {
-            oldState: { ...this.state[propName].state },
-            newState: { ...newState[propName].state },
-          })
+          // console.log(`${displayName} updated: withStores({ ${propName}: ${storeName} })`, {
+          //   oldState: { ...this.state[propName].state },
+          //   newState: { ...newState[propName].state },
+          // })
           this.setState(newState)
         }
         store.subscribe(handlers[propName])

@@ -4,9 +4,11 @@ import { Container, Divider, Header } from 'semantic-ui-react'
 
 import { createContainer } from 'meteor/react-meteor-data'
 
-import { Activity } from '/imports/schemas'
+import { Activity, Azzets } from '/imports/schemas'
+import { mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { showToast } from '/client/imports/routes/App'
 import { utilPushTo } from '/client/imports/routes/QLink'
+import { hourOfCodeStore } from '/client/imports/stores'
 
 class HourOfCodeRoute extends Component {
   componentDidMount() {
@@ -40,52 +42,54 @@ class HourOfCodeRoute extends Component {
     const newQuery = { ...location.query, createGuest: undefined }
     utilPushTo(newQuery, location.pathname)
 
-    const assetName = 'dwarfs.userCode0'
-    const assetKind = 'code'
-    const projectName = 'hourOfCode'
-    const projectDescription = 'Auto-created for Hour of Code'
-
     Meteor.call('User.generateGuestUser', (err, guestUser) => {
       if (err) return console.error('Failed to generate a guest user object:', err)
 
       console.log('Generated guest user:', guestUser)
+      guestUser.profile.HoC = { currStepIndex: 0 } // Stores HoC activity progress
 
-      Accounts.createUser(guestUser, error => {
+      Accounts.createUser(guestUser, (error, id) => {
         if (error) return showToast('Could not create user:' + error.reason, 'error')
 
         console.log('Created guest user:', guestUser)
 
-        const newProject = {
-          name: projectName,
-          description: projectDescription,
-        }
+        const newProject = hourOfCodeStore.getUserProjectShape()
 
-        Meteor.call('Projects.create', newProject, (error, result) => {
+        Meteor.call('Projects.create', newProject, (error, projectId) => {
           if (error) return showToast('Could not create project:' + error.reason, 'error')
 
-          console.log('Created project:', result)
+          console.log('Created project:', projectId)
 
-          const newAsset = {
-            name: assetName,
-            kind: assetKind,
-            text: '',
-            thumbnail: '',
-            content2: {},
-            dn_ownerName: guestUser.username,
-            ownerId: guestUser._id,
-            projectNames: [projectName],
-            isCompleted: false,
-            isDeleted: false,
-            isPrivate: false,
-          }
+          // TODO Using placeholder asset
+          hourOfCodeStore.getActivityData().then(activityAsset => {
+            if (!_.isArray(_.get(activityAsset, 'steps'))) {
+              console.error('Activity asset does not have valid steps:', activityAsset)
+              return showToast('Cannot load activity: ' + err.reason, 'error')
+            }
 
-          Meteor.call('Azzets.create', newAsset, (error, result) => {
-            if (error) return showToast('Could not create asset: ' + error.reason, 'error')
+            const azzetCreate = newAsset => {
+              return new Promise((resolve, reject) => {
+                Meteor.call('Azzets.create', newAsset, (error, assetId) => {
+                  if (error) return reject(error)
 
-            console.log('Created asset:', result)
+                  resolve({ ...newAsset, _id: assetId })
+                })
+              })
+            }
 
-            // Now go to the new Asset
-            utilPushTo(null, `/u/${newAsset.dn_ownerName}/asset/${result}`)
+            const userAssetPromises = activityAsset.steps
+              .map((step, i) => hourOfCodeStore.getUserAssetShape(step, i))
+              .map(userAssetShape => azzetCreate(userAssetShape))
+
+            Promise.all(userAssetPromises)
+              .then(userAssets => {
+                const assetId = userAssets[0]._id
+                utilPushTo(null, `/u/${guestUser.username}/asset/${assetId}`)
+              })
+              .catch(error => {
+                console.error('Cannot create asset:', error)
+                showToast('Cannot create asset: ' + error.reason, 'error')
+              })
           })
         })
       })

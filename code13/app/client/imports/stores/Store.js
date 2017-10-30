@@ -8,7 +8,7 @@
  * The Store API is inspired by React.Component:
  *
  *   // Called when the store calls setState(), before applying the state change.
- *   // Return an object here to REPLACE the incoming state change with your own.
+ *   // Return an object here to update the incoming state change with your own.
  *   storeWillReceiveState(nextState) {}
  *
  *   // Called before notifying store subscribers of the new state.

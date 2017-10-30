@@ -23,7 +23,7 @@ import GameScreen from './GameScreen'
 import CodeStarter from './CodeStarter'
 import CodeChallenges from './CodeChallenges/CodeChallenges'
 import CodeTutorials from './CodeTutorials'
-import HoCActivity from './HoCActivity'
+import HocActivity from './HocActivity'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
 
@@ -69,6 +69,8 @@ const THUMBNAIL_WIDTH = SpecialGlobals.thumbnail.width
 const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
 
 import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes'
+import { withStores } from '/client/imports/hocs'
+import { hourOfCodeStore } from '/client/imports/stores'
 
 let showDebugAST = false // Handy thing while doing TERN dev work
 
@@ -92,7 +94,7 @@ const _infoPaneModes = [
 //
 // content2.src                     // String with source code
 
-export default class EditCode extends React.Component {
+class EditCode extends React.Component {
   // static PropTypes = {
   //   asset: PropTypes.object.isRequired
   //   canEdit: PropTypes.bool.isRequired
@@ -208,8 +210,7 @@ export default class EditCode extends React.Component {
         const newValue = this._currentCodemirrorValue + event.detail
         this.codeMirror.setValue(newValue)
         this._currentCodemirrorValue = newValue
-        let newC2 = { src: newValue }
-        this.handleContentChange(newC2, null, `Tutorial appended code`)
+        this.handleContentChange({ src: newValue }, null, `Tutorial appended code`)
       } else this.warnNoWriteAccess()
     }
 
@@ -2182,24 +2183,7 @@ export default class EditCode extends React.Component {
 
     var config = this.isGuest
       ? {
-          buttons: [
-            {
-              name: 'toggleHotReload',
-              label: 'Automatically reload game screen',
-              icon:
-                'refresh' +
-                `${this.tools && this.mgb_c2_hasChanged ? ' red' : ''} ${!this.state.astReady
-                  ? ' animate rotate'
-                  : ''}`,
-              tooltip:
-                (!this.state.astReady ? 'Loading all required files...\n' : '') +
-                'Automatically reloads game screen when one of the imported scripts changes',
-              disabled: false,
-              active: this.props.asset.content2.hotReload,
-              level: 3,
-              shortcut: 'Ctrl+Alt+Shift+R',
-            },
-          ],
+          buttons: [],
         }
       : {
           // level: 2,    // default level -- This is now in expectedToolbars.getDefaultLevel
@@ -2696,8 +2680,27 @@ export default class EditCode extends React.Component {
     }
   }
 
+  // Reset code for HoC activity
+  handleReset = src => {
+    const isConfirmed = confirm('Are you sure you want to reset your code?')
+    if (!isConfirmed) return
+
+    this.codeMirror.setValue(src)
+    this.handleContentChange({ src }, null, `Reset code`)
+  }
+
+  handleGameScreenEvent = event => {
+    // if first time gamescreen calls back
+    if (!this.isGameScreenInitialized) {
+      this.isGameScreenInitialized = true
+      return
+    }
+    if (event.success) alert('Success')
+    if (event.gameOver) alert('Game over')
+  }
+
   render() {
-    const { asset, canEdit, currUser } = this.props
+    const { asset, canEdit, currUser, hourOfCodeStore: { state: { currStepIndex } } } = this.props
 
     if (!asset) return null
 
@@ -2731,10 +2734,12 @@ export default class EditCode extends React.Component {
         ref="gameScreen"
         isPopup={isPopup}
         isPlaying={this.state.isPlaying}
-        asset={this.props.asset}
+        hocLevelId={currStepIndex}
+        asset={asset}
         consoleAdd={this._consoleAdd.bind(this)}
         handleContentChange={this.handleContentChange.bind(this)}
         handleStop={this.handleGamePopup}
+        onEvent={this.handleGameScreenEvent}
       />
     )
 
@@ -2750,14 +2755,7 @@ export default class EditCode extends React.Component {
         {this.state.creatingBundle && <div className="loading-notification">Publishing source code...</div>}
         <div className="row stretched">
           <div className={infoPaneOpts.col1 + ' wide column'}>
-            {this.isGuest && (
-              <HoCActivity
-                codeMirror={this.codeMirror}
-                highlightLines={this.highlightLines.bind(this)}
-                assetId={asset._id}
-                currUser={currUser}
-              />
-            )}
+            {this.isGuest && <HocActivity onReset={this.handleReset} />}
             {!this.isGuest && <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
             {!this.isGuest ? (
               <div
@@ -3185,3 +3183,5 @@ export default class EditCode extends React.Component {
 EditCode.contextTypes = {
   skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)
 }
+
+export default withStores({ hourOfCodeStore })(EditCode)

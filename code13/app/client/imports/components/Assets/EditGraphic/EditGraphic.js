@@ -456,13 +456,20 @@ export default class EditGraphic extends React.Component {
         let self = this
         _img.onload = function(e) {
           let loadedImage = e.target
+          if (!c2.layerParams[loadedImage.layerID].isHidden) {
+            let frame = self.frameCtxArray[loadedImage.frameID]
+            if (frame) {
+              // clear frame whenever we start drawing from most bottom of layer
+              if (c2.frameData[loadedImage.frameID].length - 1 == loadedImage.layerID) {
+                self.frameCtxArray[loadedImage.frameID].clearRect(0, 0, c2.width, c2.height)
+              }
+              frame.drawImage(loadedImage, 0, 0) // There seems to be a race condition that means frame is sometime null.
+            }
+          }
+
           if (loadedImage.frameID === self.state.selectedFrameIdx) {
             self.previewCtxArray[loadedImage.layerID].clearRect(0, 0, c2.width, c2.height)
             self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0)
-          }
-          if (!c2.layerParams[loadedImage.layerID].isHidden) {
-            let frame = self.frameCtxArray[loadedImage.frameID]
-            if (frame) frame.drawImage(loadedImage, 0, 0) // There seems to be a race condition that means frame is sometime null.
           }
 
           loadedCount++

@@ -74,7 +74,7 @@ class HocActivity extends React.Component {
               <Message.Header>Activity Completed!</Message.Header>
               <div style={{ padding: '0.5em 0 1em 0' }}>
                 {/* This should link to the HoC certificate upon completion */}
-                <a href="https://hourofcode.com/us/learn">Hour of Code</a>
+                <a href="https://hourofcode.com/us/learn">Hour of Code™</a>
               </div>
             </Message.Content>
           </Message>

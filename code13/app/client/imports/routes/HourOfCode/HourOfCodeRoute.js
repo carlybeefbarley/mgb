@@ -1,10 +1,12 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Container, Divider, Header } from 'semantic-ui-react'
+import { Container, Divider, Icon, Image, Segment } from 'semantic-ui-react'
+import UX from '../../UX'
 
 import { createContainer } from 'meteor/react-meteor-data'
 
 import { Activity } from '/imports/schemas'
+import HeroLayout from '/client/imports/layouts/HeroLayout'
 import { showToast } from '/client/imports/routes/App'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { hourOfCodeStore } from '/client/imports/stores'
@@ -137,12 +139,36 @@ class HourOfCodeRoute extends Component {
 
   render() {
     return (
-      <Container text textAlign="center">
-        <Divider hidden section />
-        <Header as="h1">Welcome to an Hour of Code with My Game Builder!</Header>
+      <HeroLayout
+        heroContent={
+          <Container text textAlign="center">
+            <style>{'.mgb-navbar-breadcrumb, .mgbFlexPanel { display: none; }'}</style>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ flex: '2' }}>
+                <Image centered src="/images/logos/hoc/HourOfCode_logo_RGB.png" style={{ width: 200 }} />
+              </div>
+              <div style={{ flex: '1' }}>
+                <Icon name="plus" inverted size="huge" />
+              </div>
+              <div style={{ flex: '2' }}>
+                <Segment inverted style={{ margin: 'auto', width: 220, height: 200 }}>
+                  <Image centered src={UX.makeMascotImgLink('team')} style={{ width: 200 }} />
+                  <Image centered src="/images/logos/mgb/medium/01w.png" style={{ width: 200 }} />
+                </Segment>
+              </div>
+            </div>
 
-        <p>Setting up...</p>
-      </Container>
+            <Divider hidden />
+
+            <Segment size="huge">
+              <p>Welcome to an Hour of Code™ with My Game Builder!</p>
+              <p>
+                <Icon loading name="spinner" /> Setting up
+              </p>
+            </Segment>
+          </Container>
+        }
+      />
     )
   }
 }

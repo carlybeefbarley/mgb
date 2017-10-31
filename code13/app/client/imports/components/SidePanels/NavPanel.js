@@ -370,7 +370,7 @@ class NavPanel extends React.Component {
         {isGuest ? (
           <div className="ui item" style={{ clear: 'both', margin: '0 auto', right: '79px' }}>
             {/* Provide link to HoC MGB page and link to the HoC certificate */}
-            <a href="https://hourofcode.com/us/learn">Hour of Code</a>
+            <a href="https://hourofcode.com/us/learn">Hour of Code™</a>
           </div>
         ) : (
           <Menu.Menu position="right">{navPanelItems('right')}</Menu.Menu>

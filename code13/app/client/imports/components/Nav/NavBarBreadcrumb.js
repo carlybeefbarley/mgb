@@ -243,7 +243,14 @@ const NavBarBreadcrumb = props => {
       )
     })
 
-  return <Breadcrumb icon="right angle" sections={sections} style={{ marginRight: '1rem' }} />
+  return (
+    <Breadcrumb
+      className="mgb-navbar-breadcrumb"
+      icon="right angle"
+      sections={sections}
+      style={{ marginRight: '1rem' }}
+    />
+  )
 }
 
 NavBarBreadcrumb.propTypes = {

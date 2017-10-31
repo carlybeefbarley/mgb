@@ -11,12 +11,12 @@ import { hourOfCodeStore } from '/client/imports/stores'
 
 class HourOfCodeRoute extends Component {
   componentDidMount() {
-    const isGuest = _.get(this.props, 'currUser.profile.isGuest')
     this.waitForLogin()
       .then(() => this.waitForLoading())
       .then(() => {
-        const { activity, location } = this.props
+        const { activity, currUser, location } = this.props
         const recentAsset = _.first(activity)
+        const isGuest = _.get(currUser, 'profile.isGuest')
         console.log('Login and loading done, activity is:', activity)
 
         if (recentAsset && isGuest) {
@@ -35,12 +35,6 @@ class HourOfCodeRoute extends Component {
    */
   createHoCUser = () => {
     console.log('Creating hour of code user...')
-
-    const { location } = this.props
-
-    // remove the query flag so we don't try to create more users when App updates
-    const newQuery = { ...location.query, createGuest: undefined }
-    utilPushTo(newQuery, location.pathname)
 
     Meteor.call('User.generateGuestUser', (err, guestUser) => {
       if (err) return console.error('Failed to generate a guest user object:', err)

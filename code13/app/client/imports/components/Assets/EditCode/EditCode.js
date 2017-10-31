@@ -1627,14 +1627,13 @@ class EditCode extends React.Component {
     this.cm_updateActivityMarkers()
     this.updateDocName()
     const asset = this.props.asset
-    // enable auto bundle by default
-    if (asset.content2.needsBundle === void 0) {
-      // disable code bundling for challenges
-      if (!asset.skillPath) {
-        this.toggleBundling()
-      }
+    // enable auto bundle by default for code asset
+    if (asset.content2.needsBundle === void 0 && !asset.skillPath && !this.isGuest) {
+      this.toggleBundling()
     }
-
+    if (this.isGuest && !asset.content2.hotReload) {
+      this.toggleHotReload()
+    }
     this.mgb.lastSaved = _.cloneDeep(asset.content2)
   }
 
@@ -1935,6 +1934,8 @@ class EditCode extends React.Component {
       console.log('not creating bundle since not active')
       return
     }
+    // this is called directly from publish button also - to disable bundling see:
+    // componentDidUpdate
     if (this.props.asset.kind == 'tutorial' || this.isGuest || this.mgb_mode !== 'jsx') {
       return
     }
@@ -2027,7 +2028,7 @@ class EditCode extends React.Component {
       this.doFullUpdateOnContentChange(errors => {
         // it's not possible to create useful bundle with errors in the code - just save
         console.log('doFullUpdateOnContentChange() callback [A]: error', errors)
-        if (errors.length || !this.props.asset.content2.needsBundle) {
+        if (errors.length || !this.props.asset.content2.needsBundle || this.isGuest) {
           console.log('doFullUpdateOnContentChange() callback [B]')
           if (!this.isActive) {
             console.log('Discarding bundle ERRORS to prevent overwrite')
@@ -2388,6 +2389,7 @@ class EditCode extends React.Component {
         shortcut: 'Ctrl+ENTER',
       })
     } else {
+      // this is guest
       // css and maybe something else in the future ( e.g. html ? )
       config.buttons.push({ name: 'separator' })
       config.buttons.push({

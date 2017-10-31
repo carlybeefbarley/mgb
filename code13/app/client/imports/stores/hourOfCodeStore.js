@@ -122,7 +122,7 @@ class HourOfCodeStore extends Store {
   preloadAssets(data) {
     const promises = []
     const cachedHandlers = this.cachedHandlers || []
-    // !!! Notice - we are skipping current step (which by default will be 0 ) so array looks like [undefined, instance...]
+    // !!! Notice - we are skipping current step (which by default will be 0 ) so array looks like [undefined, ...instances]
     data.steps.forEach((step, stepIndex) => {
       if (stepIndex === this.state.stepIndex || cachedHandlers[stepIndex]) return
 
@@ -133,10 +133,6 @@ class HourOfCodeStore extends Store {
       assets.forEach((asset, stepIndex) => {
         if (!asset) return
         // !!! Be aware - we are opening subscriptions here which won't be closed automatically - we need to close them manually
-        // window.unload should close them ( needs verification )
-        // @levi - how to close handler when store is not used anymore?
-        // * on unsubscribe ???
-        // if no listeners -> cachedHandlers.forEach(h => h.stop())
 
         // this is dummy request to open subscription for another step
         // then AssetEdit will pick it up and it will be loaded - see AssetEditRoute -> getMeteorData
@@ -149,8 +145,7 @@ class HourOfCodeStore extends Store {
 
   getActivityData = () => {
     return new Promise((resolve, reject) => {
-      // TODO: @levi change this back to !vault when ready !!!!
-      mgbAjax(`/api/asset/code/stauzs/dwarfs.activityData.json`, (err, activityAssetString) => {
+      mgbAjax(`/api/asset/code/!vault/dwarfs.activityData.json`, (err, activityAssetString) => {
         let activityAsset
 
         try {
@@ -190,11 +185,8 @@ class HourOfCodeStore extends Store {
   successPopup = () => this.setState({ isCompleted: true })
 
   // TODO: see if lint shows correct lines - if not place this on the same line with first line of user code
-  prepareSource = srcIn => `
-import main from '/!vault:dwarfs.main'
-main.setup = (dwarf) => {
-${srcIn};
-}`
+  prepareSource = srcIn => `import main from '/!vault:dwarfs.main'; main.setup = (dwarf) => {${srcIn}
+;}`
 }
 
 export default new HourOfCodeStore()

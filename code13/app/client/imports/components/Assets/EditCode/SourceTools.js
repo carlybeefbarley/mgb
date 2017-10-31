@@ -126,8 +126,6 @@ export default class SourceTools extends EventEmitter {
       if (this.inProgress > started) return Promise.reject() // bail out
 
       this.shouldCancelASAP = true
-      // TODO: @stauzs - there is some very hard to repro race condition - appeared in the HOC
-      // best guess - syntax error related / maybe no error in the jshint, but in babel only
       const spawnNew = () => {
         return new Promise(resolve => {
           if (this.shouldCancelASAP) {
@@ -135,10 +133,6 @@ export default class SourceTools extends EventEmitter {
               resolve(spawnNew())
             }, 1000)
           } else {
-            // bug bug -
-            if (this.inProgress > started)
-              console.log("BUG BUG.. what to do now??? promise won't resolve .. ever")
-
             resolve(this.collectAndTranspile(filename, src, started))
           }
         })

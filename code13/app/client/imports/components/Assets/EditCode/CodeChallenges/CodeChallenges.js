@@ -155,19 +155,23 @@ export default class CodeChallenges extends React.Component {
     //  $meta.code
     //  $meta.description
     let skillsArr = []
+    let learnGroup = 'basics'
 
-    if (_.startsWith(this.props.skillPath, 'code.js.intro'))
+    if (_.startsWith(this.props.skillPath, 'code.js.intro')) {
       skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.intro']), '$meta')
+      learnGroup = 'intro'
+    }
 
-    if (_.startsWith(this.props.skillPath, 'code.js.advanced'))
+    if (_.startsWith(this.props.skillPath, 'code.js.advanced')) {
       skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.advanced']), '$meta')
+      learnGroup = 'advanced'
+    }
 
     const idx = skillsArr.indexOf(this.skillName)
-
     if (idx < skillsArr.length - 1) {
       const nextSkillName = skillsArr[idx + 1]
       this.setState({ pendingLoadNextSkill: true })
-      StartJsGamesRoute('basics', nextSkillName, this.props.currUser)
+      StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser)
     } else {
       utilPushTo(null, '/learn/code')
     }

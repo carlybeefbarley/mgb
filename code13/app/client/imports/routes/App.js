@@ -811,7 +811,9 @@ const App = createContainer(({ params, location }) => {
     currUserProjects: !handleForProjects
       ? []
       : Projects.find(projectSelector, { sort: defaultProjectSorter }).fetch(),
-    user: pathUserName ? Users.findOne({ 'profile.name': pathUserName }) : Users.findOne(pathUserId), // User on the url /user/xxx/...
+    user: pathUserName
+      ? Users.findOne({ 'profile.name': pathUserName })
+      : pathUserId ? Users.findOne(pathUserId) : null, // User on the url /user/xxx/...
     activity: getActivity ? Activity.find({}, { sort: { timestamp: -1 } }).fetch() : [], // Activity for any user
     settings: G_localSettings,
     meteorStatus: Meteor.status(),

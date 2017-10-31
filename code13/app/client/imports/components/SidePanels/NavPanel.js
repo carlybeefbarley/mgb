@@ -44,7 +44,7 @@ export const getNavPanels = (currUser, showAll) => {
           icon: { name: 'home' },
           explainClickAction: 'Shortcut: Clicking here jumps to the Home Page',
           content: <img src="/images/logos/mgb/medium/01w.png" style={logoImageStyle} />,
-          to: '/',
+          to: '/hour-of-code',
           menu: [],
         },
       ],
@@ -368,12 +368,17 @@ class NavPanel extends React.Component {
       <Menu inverted borderless style={menuStyle} id="mgbjr-np">
         {navPanelItems('left')}
         {isGuest ? (
-          <div className="ui item" style={{ margin: '0 auto', right: '79px' }}>
+          <div className="ui item" style={{ clear: 'both', margin: '0 auto', right: '79px' }}>
             {/* Provide link to HoC MGB page and link to the HoC certificate */}
             <a href="https://hourofcode.com/us/learn">Hour of Code</a>
           </div>
         ) : (
           <Menu.Menu position="right">{navPanelItems('right')}</Menu.Menu>
+        )}
+        {isGuest && (
+          <div style={{ float: 'right', display: 'flex', alignItems: 'center', padding: '5px' }}>
+            <Icon inverted disabled style={{ cursor: 'pointer' }} name="sign out" onClick={_doLogout} />
+          </div>
         )}
       </Menu>
     )

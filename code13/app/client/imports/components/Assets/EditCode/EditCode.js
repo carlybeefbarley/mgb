@@ -1935,7 +1935,7 @@ class EditCode extends React.Component {
       console.log('not creating bundle since not active')
       return
     }
-    if (this.props.asset.kind == 'tutorial' || this.mgb_mode !== 'jsx') {
+    if (this.props.asset.kind == 'tutorial' || this.isGuest || this.mgb_mode !== 'jsx') {
       return
     }
 

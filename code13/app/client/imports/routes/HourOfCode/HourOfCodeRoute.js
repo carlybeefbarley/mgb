@@ -4,14 +4,14 @@ import { Container, Divider, Header } from 'semantic-ui-react'
 
 import { createContainer } from 'meteor/react-meteor-data'
 
-import { Activity, Azzets } from '/imports/schemas'
-import { mgbAjax } from '/client/imports/helpers/assetFetchers'
+import { Activity } from '/imports/schemas'
 import { showToast } from '/client/imports/routes/App'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { hourOfCodeStore } from '/client/imports/stores'
 
 class HourOfCodeRoute extends Component {
   componentDidMount() {
+    const isGuest = _.get(this.props, 'currUser.profile.isGuest')
     this.waitForLogin()
       .then(() => this.waitForLoading())
       .then(() => {
@@ -19,11 +19,11 @@ class HourOfCodeRoute extends Component {
         const recentAsset = _.first(activity)
         console.log('Login and loading done, activity is:', activity)
 
-        if (recentAsset) {
+        if (recentAsset && isGuest) {
           return utilPushTo(location.query, `/u/${recentAsset.toOwnerName}/asset/${recentAsset.toAssetId}`)
+        } else {
+          this.createHoCUser()
         }
-
-        this.createHoCUser()
       })
       .catch(err => {
         throw err
@@ -60,7 +60,6 @@ class HourOfCodeRoute extends Component {
 
           console.log('Created project:', projectId)
 
-          // TODO Using placeholder asset
           hourOfCodeStore.getActivityData().then(activityAsset => {
             if (!_.isArray(_.get(activityAsset, 'steps'))) {
               console.error('Activity asset does not have valid steps:', activityAsset)

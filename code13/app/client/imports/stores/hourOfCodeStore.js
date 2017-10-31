@@ -119,6 +119,12 @@ class HourOfCodeStore extends Store {
     this.preloadAssets(data)
   }
 
+  cleanup() {
+    if (this.cachedHandlers) {
+      this.cachedHandlers.forEach(handler => handler && handler.stop())
+      this.cachedHandlers = null
+    }
+  }
   preloadAssets(data) {
     const promises = []
     const cachedHandlers = this.cachedHandlers || []

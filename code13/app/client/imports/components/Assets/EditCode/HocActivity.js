@@ -9,7 +9,6 @@ class HocActivity extends React.Component {
   componentDidMount() {
     this.props.hourOfCodeStore.getActivityData()
   }
-
   handleReset = () => {
     const { onReset, hourOfCodeStore: { state: { currStep } } } = this.props
     if (!onReset) return
@@ -25,7 +24,8 @@ class HocActivity extends React.Component {
       },
     } = this.props
 
-    if (!currStep) return null
+    if (!currStep)
+      return <Segment piled id="mgb-codeActivity" style={{ marginBottom: '1em', height: '11em' }} />
 
     return (
       <Segment piled id="mgb-codeActivity" style={{ marginBottom: '1em', height: '11em' }}>

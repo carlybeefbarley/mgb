@@ -278,10 +278,12 @@ class AssetHandler {
    * Create an AssetHandler.
    * @param {string} assetId - Asset Id.
    * @param {function} onChange - Callback when changes to asset or content2 occur - first time will be called on successful content2 acquisition.
+   * @param {bool} keepOpen - don't close subscription automatically ( use with caution!!!! )
    */
-  constructor(assetId, onChange) {
+  constructor(assetId, onChange, keepOpen) {
     this.id = assetId
     this.onChange = onChange // TODO: Needs default for undefined? otherwise we have undefined/null which can cause errors if truthy comparisons aren't precise
+    this.keepOpen = keepOpen
 
     this.asset = null
     this.isReady = false
@@ -502,9 +504,9 @@ const cachedAssetHandlers = []
  * @name getAssetHandlerWithContent2 - factory function for AssetHandlers
  * this will return a (potentially cached or new) AssetHandler, not an Asset
  * */
-export const getAssetHandlerWithContent2 = (id, onChange, forceFullUpdate = false) => {
+export const getAssetHandlerWithContent2 = (id, onChange, forceFullUpdate = false, keepOpen = false) => {
   // stop other handler subscriptions - e.g. AssetRoute changed asset without calling unmount
-  cachedAssetHandlers.forEach(h => h.id !== id && h.stop())
+  cachedAssetHandlers.forEach(h => h.id !== id && !h.keepOpen && h.stop())
   let handler = cachedAssetHandlers.find(h => h.id === id)
   //
   if (handler) {
@@ -521,7 +523,7 @@ export const getAssetHandlerWithContent2 = (id, onChange, forceFullUpdate = fals
     handler = cachedAssetHandlers.pop()
     handler.stop()
   }
-  handler = new AssetHandler(id, onChange)
+  handler = new AssetHandler(id, onChange, keepOpen)
   handler.lastAccessed = Date.now()
   cachedAssetHandlers.push(handler)
   return handler

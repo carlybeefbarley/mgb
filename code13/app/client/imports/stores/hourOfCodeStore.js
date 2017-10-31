@@ -1,9 +1,12 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import { Store } from '/client/imports/stores'
-import { getAssetBySelector } from '/client/imports/helpers/assetFetchers'
 import { utilPushTo } from '/client/imports/routes/QLink'
-import { mgbAjax } from '/client/imports/helpers/assetFetchers'
+import {
+  mgbAjax,
+  getAssetHandlerWithContent2,
+  getAssetBySelector,
+} from '/client/imports/helpers/assetFetchers'
 import { showToast } from '/client/imports/routes/App'
 
 class HourOfCodeStore extends Store {
@@ -86,25 +89,68 @@ class HourOfCodeStore extends Store {
     }
   }
 
-  loadUserAssetForStep = () => {
-    const { name, kind, dn_ownerName, isDeleted } = this.getUserAssetShape()
+  getUserAssetForStep = (step = this.state.currStep, stepIndex = this.state.currStepIndex) => {
+    const { name, kind, dn_ownerName, isDeleted } = this.getUserAssetShape(step, stepIndex)
     const assetShape = { name, kind, dn_ownerName, isDeleted }
 
-    // if asset exists, open it, else create one
-    getAssetBySelector(assetShape, asset => {
-      if (!asset) return console.error('Failed to find HoC user code asset using selector', assetShape)
+    // maybe show loading here ?
+    return new Promise((resolve, reject) => {
+      // if asset exists, open it, else create one
+      getAssetBySelector(assetShape, asset => {
+        if (!asset) {
+          console.error('Failed to find HoC user code asset using selector', assetShape)
+          reject()
+          return
+        }
+        // and hide loading here?
+        resolve(asset)
+      })
+    })
+  }
 
+  loadUserAssetForStep = () => {
+    return this.getUserAssetForStep().then(asset => {
       utilPushTo(null, `/u/${asset.dn_ownerName}/asset/${asset._id}`)
     })
   }
 
   setActivityData = data => {
     this.setState(data)
+    this.preloadAssets(data)
+  }
+
+  preloadAssets(data) {
+    const promises = []
+    const cachedHandlers = this.cachedHandlers || []
+    // !!! Notice - we are skipping current step (which by default will be 0 ) so array looks like [undefined, instance...]
+    data.steps.forEach((step, stepIndex) => {
+      if (stepIndex === this.state.stepIndex || cachedHandlers[stepIndex]) return
+
+      promises[stepIndex] = this.getUserAssetForStep(step, stepIndex)
+    })
+
+    Promise.all(promises).then(assets => {
+      assets.forEach((asset, stepIndex) => {
+        if (!asset) return
+        // !!! Be aware - we are opening subscriptions here which won't be closed automatically - we need to close them manually
+        // window.unload should close them ( needs verification )
+        // @levi - how to close handler when store is not used anymore?
+        // * on unsubscribe ???
+        // if no listeners -> cachedHandlers.forEach(h => h.stop())
+
+        // this is dummy request to open subscription for another step
+        // then AssetEdit will pick it up and it will be loaded - see AssetEditRoute -> getMeteorData
+        cachedHandlers[stepIndex] = getAssetHandlerWithContent2(asset._id, () => {}, false, true)
+      })
+
+      this.cachedHandlers = cachedHandlers
+    })
   }
 
   getActivityData = () => {
     return new Promise((resolve, reject) => {
-      mgbAjax(`/api/asset/code/!vault/dwarfs.activityData.json`, (err, activityAssetString) => {
+      // TODO: @levi change this back to !vault when ready !!!!
+      mgbAjax(`/api/asset/code/stauzs/dwarfs.activityData.json`, (err, activityAssetString) => {
         let activityAsset
 
         try {
@@ -142,6 +188,13 @@ class HourOfCodeStore extends Store {
   }
 
   successPopup = () => this.setState({ isCompleted: true })
+
+  // TODO: see if lint shows correct lines - if not place this on the same line with first line of user code
+  prepareSource = srcIn => `
+import main from '/!vault:dwarfs.main'
+main.setup = (dwarf) => {
+${srcIn};
+}`
 }
 
 export default new HourOfCodeStore()

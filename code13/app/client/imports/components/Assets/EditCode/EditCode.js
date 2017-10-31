@@ -1947,14 +1947,14 @@ class EditCode extends React.Component {
     }
     this.setState({ creatingBundle: true })
     this.tools.createBundle(this.props.asset.dn_ownerName).then(bundle => {
-      const value = this.codeMirror.getValue()
+      const value = this.getEditorValue()
       this.tools
         .transpileAndMinify('/' + this.props.asset.name, value, this.props.asset.dn_ownerName)
         .then(es5 => {
           const c2 = this.props.asset.content2
 
           const newC2 = {
-            src: value,
+            src: this.codeMirror.getValue(),
             bundle,
             lastBundle: Date.now(),
             needsBundle: c2.needsBundle,
@@ -2034,7 +2034,11 @@ class EditCode extends React.Component {
             return
           }
           this.tools
-            .transpileAndMinify('/' + this.props.asset.name, c2.src, this.props.asset.dn_ownerName)
+            .transpileAndMinify(
+              '/' + this.props.asset.name,
+              this.getEditorValue(c2.src),
+              this.props.asset.dn_ownerName,
+            )
             .then(es5 => {
               console.log('doFullUpdateOnContentChange() callback [C]. isActive = ', this.isActive)
               if (!this.isActive) {
@@ -2089,6 +2093,10 @@ class EditCode extends React.Component {
     }
   }
 
+  getEditorValue(value = this.codeMirror.getValue()) {
+    return !this.isGuest ? value : this.props.hourOfCodeStore.prepareSource(value)
+  }
+
   // this is very heavy function - use with care
   // callback gets one argument - array with critical errors
   doFullUpdateOnContentChange(cb) {
@@ -2096,7 +2104,9 @@ class EditCode extends React.Component {
     // However, it is still synchronous - this isn't an async callback
     this.mgb_c2_hasChanged = true
     this.codeMirror.operation(() => {
-      const val = this.codeMirror.getValue()
+      // this is where source tools receive raw source - we are modifying it for HOC
+      const val = this.getEditorValue()
+
       this.runJSHintWorker(val, errors => {
         const critical = errors.filter(e => e.code.substr(0, 1) === 'E')
         this.hasErrors = !!critical.length

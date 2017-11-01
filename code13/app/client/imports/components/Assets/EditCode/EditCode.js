@@ -230,7 +230,7 @@ class EditCode extends React.Component {
       mode: this.mgb_mode,
       inputStyle: 'textarea', // contentEditable is another option - but input on tablet then sux
       // change theme for read only?
-      theme: 'eclipse',
+      theme: 'monokai',
       styleActiveLine: true,
       lineNumbers: true,
       lineWrapping: true,

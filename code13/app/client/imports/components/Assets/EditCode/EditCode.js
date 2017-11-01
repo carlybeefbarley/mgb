@@ -1631,9 +1631,7 @@ class EditCode extends React.Component {
     if (asset.content2.needsBundle === void 0 && !asset.skillPath && !this.isGuest) {
       this.toggleBundling()
     }
-    if (this.isGuest && !asset.content2.hotReload) {
-      this.toggleHotReload()
-    }
+
     this.mgb.lastSaved = _.cloneDeep(asset.content2)
   }
 

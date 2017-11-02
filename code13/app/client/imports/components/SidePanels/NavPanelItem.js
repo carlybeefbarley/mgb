@@ -47,10 +47,11 @@ class NavPanelItem extends React.PureComponent {
   }
 
   render() {
-    const { isActive, className, content, jrkey, name, menu, style, openLeft } = this.props
+    const { isActive, className, content, href, jrkey, name, menu, style, openLeft } = this.props
     const { open } = this.state
 
     const props = {
+      href,
       id: this.getJoyrideId(name, jrkey),
       // Heads up!
       // Do no use a QLink here for activeClassName support.

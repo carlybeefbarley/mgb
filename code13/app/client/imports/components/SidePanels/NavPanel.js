@@ -38,19 +38,35 @@ export const getNavPanels = (currUser, showAll) => {
   const isGuest = currUser ? currUser.profile.isGuest : false
   const isHocActivity = isGuest && _.startsWith(window.location.pathname, `/u/${currUser.username}/asset/`)
 
-  if (isHocActivity) {
+  if (isGuest) {
     return {
       left: [
         {
           name: 'mgb',
           icon: { name: 'home' },
-          explainClickAction: 'Shortcut: Clicking here jumps to the Home Page',
           content: <img src="/images/logos/mgb/medium/01w.png" style={logoImageStyle} />,
-          to: '/',
-          menu: [],
         },
       ],
-      right: [],
+      right: [
+        isHocActivity
+          ? {
+              name: 'hour-of-code-finished',
+              content: "I'm finished with my Hour of Code™",
+              href: 'https://code.org/api/hour/finish',
+            }
+          : {
+              name: 'hour-of-code-back',
+              content: 'Back to Hour of Code',
+              to: '/hour-of-code',
+            },
+        {
+          name: 'hour-of-code-save',
+          content: <Button size="small" primary content="Save my work" />,
+          icon: { name: 'signup' },
+          // TODO this needs to show a modal to collect their email
+          to: '/signup',
+        },
+      ],
     }
   }
 
@@ -306,14 +322,12 @@ export const getNavPanels = (currUser, showAll) => {
         name: 'login',
         content: 'Log in',
         icon: { name: 'sign in' },
-        menu: null,
         to: '/login',
       },
       showGuestOptions && {
         name: 'signup',
         content: <Button size="small" primary content="Sign Up" />,
         icon: { name: 'signup' },
-        menu: null,
         to: '/signup',
       },
     ]),
@@ -349,25 +363,13 @@ class NavPanel extends React.Component {
     const useIcons = navPanelAvailableWidth < 768 // px
     const allNavPanels = getNavPanels(currUser)
     const isGuest = currUser ? currUser.profile.isGuest : false
-    const isHocActivity = isGuest && _.startsWith(window.location.pathname, `/u/${currUser.username}/asset/`)
-    const centeredSty = {
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      marginLeft: 'auto',
-      marginRight: 'auto',
-      width: '16em',
-      display: 'inline-block',
-      textAlign: 'center',
-      lineHeight: '1.5em',
-    }
 
     const navPanelItems = side =>
       allNavPanels[side]
         .filter(v => !(useIcons && v.hideInIconView))
-        .map(({ content, icon, menu, name, query, to }) => (
+        .map(({ content, href, icon, menu, name, query, to }) => (
           <NavPanelItem
-            isActive={router.isActive(to)}
+            isActive={to && router.isActive(to)}
             name={name}
             openLeft={side === 'right'}
             key={name}
@@ -375,31 +377,14 @@ class NavPanel extends React.Component {
             menu={menu}
             to={to}
             query={query}
+            href={href}
           />
         ))
 
     return (
       <Menu inverted borderless style={menuStyle} id="mgbjr-np">
         {navPanelItems('left')}
-        {isGuest && (
-          <div className="ui item" style={centeredSty}>
-            {/* Provide link to HoC MGB page and link to the HoC certificate */}
-            <b>
-              {isHocActivity ? (
-                <a href="https://hourofcode.com/us/learn">I've finished my Hour of Code</a>
-              ) : (
-                <RecentlyEditedAssetGET userId={currUser._id} linkText={'Back to Hour of Code'} />
-              )}
-            </b>
-          </div>
-        )}
-        {isGuest ? (
-          <div style={{ position: 'absolute', top: '1em', right: '1em' }}>
-            <Icon inverted disabled style={{ cursor: 'pointer' }} name="sign out" onClick={_doLogout} />
-          </div>
-        ) : (
-          <Menu.Menu position="right">{navPanelItems('right')}</Menu.Menu>
-        )}
+        <Menu.Menu position="right">{navPanelItems('right')}</Menu.Menu>
       </Menu>
     )
   }

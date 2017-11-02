@@ -66,7 +66,6 @@ class HourOfCodeRoute extends Component {
               return new Promise((resolve, reject) => {
                 Meteor.call('Azzets.create', newAsset, (error, assetId) => {
                   if (error) return reject(error)
-
                   resolve({ ...newAsset, _id: assetId })
                 })
               })

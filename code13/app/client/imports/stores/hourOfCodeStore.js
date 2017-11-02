@@ -13,7 +13,7 @@ class HourOfCodeStore extends Store {
   static storeShape = {
     state: PropTypes.shape({
       currStep: PropTypes.object,
-      isCompleted: PropTypes.bool,
+      completedSteps: PropTypes.array,
       steps: PropTypes.arrayOf(
         PropTypes.shape({
           header: PropTypes.string.isRequired,
@@ -28,7 +28,7 @@ class HourOfCodeStore extends Store {
   state = {
     currStepIndex: 0,
     currStep: null,
-    isCompleted: false, // indicator if current tutorial is completed and we need to show modal
+    completedSteps: [], // array to keep track of which steps were previously completed
     steps: null, // will get from CDN
   }
 
@@ -125,6 +125,7 @@ class HourOfCodeStore extends Store {
       this.cachedHandlers = null
     }
   }
+
   preloadAssets(data) {
     const promises = []
     const cachedHandlers = this.cachedHandlers || []
@@ -168,14 +169,19 @@ class HourOfCodeStore extends Store {
     })
   }
 
+  setCurrStepCompletion = isComplete => {
+    const { currStepIndex, completedSteps } = this.state
+    var newArray = completedSteps
+    newArray[currStepIndex] = isComplete
+    this.setState({ completedSteps: newArray })
+  }
+
   stepNext = () => {
     const { currStepIndex, steps } = this.state
     const nextStepIndex = currStepIndex + 1
 
     if (nextStepIndex < steps.length) {
       this.setState({ currStepIndex: nextStepIndex })
-    } else {
-      this.successPopup()
     }
   }
 
@@ -187,8 +193,6 @@ class HourOfCodeStore extends Store {
       this.setState({ currStepIndex })
     }
   }
-
-  successPopup = () => this.setState({ isCompleted: true })
 
   // TODO: see if lint shows correct lines - if not place this on the same line with first line of user code
   prepareSource = srcIn => `import main from '/!vault:dwarfs.main'; main.setup = (dwarf) => {${srcIn}

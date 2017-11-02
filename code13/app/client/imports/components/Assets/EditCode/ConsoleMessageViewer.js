@@ -71,7 +71,7 @@ const ConsoleMessageViewer = React.createClass({
   },
 
   render() {
-    const { messages, clearConsoleHandler } = this.props
+    const { messages, clearConsoleHandler, style } = this.props
     if (!messages) return null
 
     return (
@@ -83,6 +83,7 @@ const ConsoleMessageViewer = React.createClass({
           // overflow: "auto",
           height: '100%',
           clear: 'both',
+          margin: 0,
         }}
       >
         <div className="header">
@@ -96,16 +97,7 @@ const ConsoleMessageViewer = React.createClass({
             />
           )}
         </div>
-        <div
-          className="message-container"
-          ref="msgContainer"
-          style={{
-            overflow: 'auto',
-            width: '100%',
-            maxHeight: '150px',
-            marginTop: '6px',
-          }}
-        >
+        <div className="message-container" ref="msgContainer" style={style}>
           {this.smartRender()}
         </div>
       </div>

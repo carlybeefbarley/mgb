@@ -373,6 +373,7 @@ class AppUI extends React.Component {
     } = this.state
     const { query } = this.props.location
     const isGuest = currUser ? currUser.profile.isGuest : false
+    const isHocActivity = isGuest && _.startsWith(window.location.pathname, `/u/${currUser.username}/asset/`)
     if (!loading) this.configureTrackJs()
 
     // The Flex Panel is for communications and common quick searches in a right hand margin
@@ -394,13 +395,13 @@ class AppUI extends React.Component {
       top: 0,
       bottom: respData.fpReservedFooterHeight,
       left: 0,
-      right: `${isGuest ? 0 : flexPanelWidth}`,
+      right: `${isHocActivity ? 0 : flexPanelWidth}`,
       marginBottom: '0px',
       minHeight: '100vh',
       WebkitOverflowScrolling: 'touch', // only works with overflowY: scroll (not auto)
     }
 
-    isGuest ? (mainPanelOuterDivSty.overflow = 'hidden') : (mainPanelOuterDivSty.overflowY = 'scroll')
+    isHocActivity ? (mainPanelOuterDivSty.overflow = 'hidden') : (mainPanelOuterDivSty.overflowY = 'scroll')
 
     //Check permissions of current user for super-admin,
     //if user is on their own profile route,
@@ -434,7 +435,7 @@ class AppUI extends React.Component {
           debug={joyrideDebug}
         />
         <div>
-          {!isGuest && (
+          {!isHocActivity && (
             <FlexPanel
               fpIsFooter={!!respData.footerTabMajorNav}
               joyrideSteps={this.state.joyrideSteps}
@@ -462,7 +463,7 @@ class AppUI extends React.Component {
             <SupportedBrowsersContainer />
             {!isGuest && <VerifyBanner currUser={currUser} />}
             {!hideHeaders && <NavPanel currUser={currUser} navPanelAvailableWidth={mainAreaAvailableWidth} />}
-            {!isGuest && (
+            {!isHocActivity && (
               <NavBar
                 currUser={currUser}
                 user={user}

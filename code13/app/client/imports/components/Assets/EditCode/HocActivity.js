@@ -20,7 +20,7 @@ class HocActivity extends React.Component {
   render() {
     const {
       hourOfCodeStore: {
-        state: { totalSteps, isCompleted, isFirstStep, isLastStep, currStep, currStepIndex },
+        state: { totalSteps, completedSteps, isFirstStep, isLastStep, currStep, currStepIndex },
       },
     } = this.props
 
@@ -36,7 +36,7 @@ class HocActivity extends React.Component {
           onClick={hourOfCodeStore.stepBack}
           icon="backward"
           content="Back"
-          disabled={isFirstStep || isCompleted}
+          disabled={isFirstStep}
         />
 
         <Button
@@ -46,7 +46,7 @@ class HocActivity extends React.Component {
           onClick={hourOfCodeStore.stepNext}
           icon={isLastStep ? 'check' : 'forward'}
           content={isLastStep ? 'Finish' : 'Next'}
-          disabled={isCompleted}
+          disabled={!completedSteps[currStepIndex]}
         />
 
         <Button
@@ -67,22 +67,20 @@ class HocActivity extends React.Component {
           </div>
         )}
 
-        {isCompleted && (
+        {isLastStep && completedSteps[currStepIndex] ? (
           <Message size="small" icon style={{ paddingBottom: 0 }}>
             <Icon color="green" name="check circle" />
             <Message.Content>
-              <Message.Header>Activity Completed!</Message.Header>
+              <Message.Header>Congratulations! You completed the activity!</Message.Header>
               <div style={{ padding: '0.5em 0 1em 0' }}>
                 {/* This should link to the HoC certificate upon completion */}
                 <a href="https://hourofcode.com/us/learn">Hour of Code™</a>
               </div>
             </Message.Content>
           </Message>
-        )}
-
-        {!isCompleted && (
+        ) : (
           <div>
-            <h5 style={{ margin: '0.5em 0 0.2em 0' }}>{currStep.header}</h5>
+            <h4 style={{ margin: '0.5em 0 0.2em 0' }}>{currStep.header}</h4>
             <div dangerouslySetInnerHTML={{ __html: currStep.text }} />
           </div>
         )}

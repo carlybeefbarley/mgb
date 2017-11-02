@@ -24,11 +24,12 @@ class HocActivity extends React.Component {
       },
     } = this.props
 
-    if (!currStep)
-      return <Segment piled id="mgb-codeActivity" style={{ marginBottom: '1em', height: '11em' }} />
+    const segmentStyle = { flex: '0 0 auto', marginBottom: '1em' }
+
+    if (!currStep) return <Segment piled id="mgb-codeActivity" style={segmentStyle} />
 
     return (
-      <Segment piled id="mgb-codeActivity" style={{ marginBottom: '1em', height: '11em' }}>
+      <Segment piled id="mgb-codeActivity" style={segmentStyle}>
         <Button
           compact
           size="mini"

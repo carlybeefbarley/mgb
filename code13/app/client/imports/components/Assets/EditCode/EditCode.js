@@ -3,7 +3,7 @@ const reactUpdate = require('react-addons-update')
 
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Icon, Button, Segment, Modal, Header, Dimmer, Loader } from 'semantic-ui-react'
+import { Button, Segment, Table, Modal, Header, Icon, Dimmer, Loader } from 'semantic-ui-react'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import TutorialMentor from './TutorialEditHelpers'
@@ -330,21 +330,23 @@ class EditCode extends React.Component {
 
     this.codeMirror.getWrapperElement().addEventListener('wheel', this.handleMouseWheel.bind(this))
 
-    this.codeMirror.setSize('100%', '500px')
+    this.codeMirror.setSize('100%', this.isGuest ? '200px' : '500px')
 
     // Resize Handler - a bit complicated since we want to use to end of page
     // TODO: Fix this properly using flexbox/stretched so the content elements stretch to take remaining space.
     //       NOTE that the parent elements have the wrong heights because of a bunch of cascading h=100% styles. D'oh.
     var ed = this.codeMirror
-    this.edResizeHandler = e => {
-      const $sPane = $('.CodeMirror')
-      const edHeight = window.innerHeight - (16 + $sPane.offset().top)
-      ed.setSize('100%', `${edHeight}px`)
-      //$(".mgbAccordionScroller").css("max-height", `${window.innerHeight-16}px`)
-      //$(".mgbAccordionScroller").css("overflow-y", "scroll")
+    if (!this.isGuest) {
+      this.edResizeHandler = e => {
+        const $sPane = $('.CodeMirror')
+        const edHeight = window.innerHeight - (16 + $sPane.offset().top)
+        ed.setSize('100%', `${edHeight}px`)
+        //$(".mgbAccordionScroller").css("max-height", `${window.innerHeight-16}px`)
+        //$(".mgbAccordionScroller").css("overflow-y", "scroll")
+      }
+      $(window).on('resize', this.edResizeHandler)
+      this.edResizeHandler()
     }
-    $(window).on('resize', this.edResizeHandler)
-    this.edResizeHandler()
     this.updateDocName()
     this.doHandleFontSizeDelta(0, { force: true })
 
@@ -2720,7 +2722,12 @@ class EditCode extends React.Component {
   }
 
   render() {
-    const { asset, canEdit, currUser, hourOfCodeStore: { state: { currStepIndex } } } = this.props
+    const {
+      asset,
+      canEdit,
+      currUser,
+      hourOfCodeStore: { state: { api, currStepIndex, currStep } },
+    } = this.props
 
     if (!asset) return null
 
@@ -2822,6 +2829,25 @@ class EditCode extends React.Component {
                     autoComplete="off"
                     placeholder="Start typing code here..."
                   />
+                </Segment>
+              )}
+              {this.isGuest && (
+                <Segment stacked>
+                  <Header sub>Command Reference</Header>
+                  <Table basic compact definition size="small">
+                    <Table.Body>
+                      {_.map(_.get(currStep, 'api'), command => (
+                        <Table.Row key={command}>
+                          <Table.Cell>
+                            <pre style={{ margin: 0 }}>
+                              <code>{api[command].code}</code>
+                            </pre>
+                          </Table.Cell>
+                          <Table.Cell>{api[command].description}</Table.Cell>
+                        </Table.Row>
+                      ))}
+                    </Table.Body>
+                  </Table>
                 </Segment>
               )}
             </div>

@@ -14,6 +14,7 @@ class HourOfCodeStore extends Store {
     state: PropTypes.shape({
       currStep: PropTypes.object,
       completedSteps: PropTypes.array,
+      api: PropTypes.object,
       steps: PropTypes.arrayOf(
         PropTypes.shape({
           header: PropTypes.string.isRequired,
@@ -30,6 +31,7 @@ class HourOfCodeStore extends Store {
     currStep: null,
     completedSteps: [], // array to keep track of which steps were previously completed
     steps: null, // will get from CDN
+    api: null, // will get from CDN
   }
 
   storeWillReceiveState(nextState) {

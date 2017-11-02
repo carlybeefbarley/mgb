@@ -2715,6 +2715,10 @@ class EditCode extends React.Component {
       hourOfCodeStore.setCurrStepCompletion(event.success)
       this.setState({ isCurrStepCompleted: event.success })
     }
+
+    if (event.gameOver) {
+      showToast('Some gems were not collected! Review your code and try again.', 'info')
+    }
   }
 
   handleCloseHocModal = () => {

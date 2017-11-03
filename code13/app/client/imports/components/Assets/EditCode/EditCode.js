@@ -2711,6 +2711,11 @@ class EditCode extends React.Component {
   }
 
   handleGameScreenEvent = event => {
+    if (!this.isFirstGameScreenEvent) {
+      this.isFirstGameScreenEvent = true
+      return
+    }
+
     if (event.success) {
       hourOfCodeStore.setCurrStepCompletion(event.success)
       this.setState({ isCurrStepCompleted: event.success })
@@ -2825,7 +2830,7 @@ class EditCode extends React.Component {
                   />
                 </div>
               ) : (
-                <Segment raised style={{ margin: 0, padding: 0 }}>
+                <Segment raised style={{ flex: '0 0 auto', margin: 0, padding: 0 }}>
                   <textarea
                     ref="textarea"
                     className="allow-toolbar-shortcuts"
@@ -3248,7 +3253,7 @@ class EditCode extends React.Component {
                         style={{
                           overflow: 'auto',
                           width: '100%',
-                          maxHeight: '150px',
+                          height: '150px',
                         }}
                       />
                     </div>

@@ -171,6 +171,8 @@ class HourOfCodeStore extends Store {
     })
   }
 
+  // TODO, this needs to be persisted and rehydrated from currUser.profile.HoC
+  // This way, completed steps are retained across page reload
   setCurrStepCompletion = isComplete => {
     const { currStepIndex, completedSteps } = this.state
     var newArray = completedSteps

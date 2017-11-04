@@ -15,6 +15,61 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Fri Nov 03 2017 17:45:00 GMT-0700 (PDT)',
+
+      id: {
+        ver: '0.3.4',
+        state: 'Beta',
+        iteration: '4903',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'feature',
+          changeName: 'Hour of Code',
+          changeSummary:
+            "We've been hard at work creating an experience for Hour of Code 2017.  This release includes a beta version, on a hidden link :) If you'd like to test it out and give feedback, let us know in Chat!  We'll make a formal announcement soon.",
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Use dark Code Editor theme',
+          changeSummary: 'Our code editor theme is now set to a dark theme, Monokai.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Remove scrollbars in code runner',
+          changeSummary: 'Phaser canvases now load at full resolution with no scrollbars.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Clear Graphic Editor frames during animation.',
+          changeSummary: 'Transparency layers were fixed in animations in the Graphic Editor',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Remove circular Code Challenge issue',
+          changeSummary:
+            'Code Challenges would sometimes "reset" your progress, requiring you to complete challenges twice.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'Lots of minor bug fixes and usability updates throughout the system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Mon Oct 10 2017 09:30:00 GMT-0700 (PDT)',
 
       id: {

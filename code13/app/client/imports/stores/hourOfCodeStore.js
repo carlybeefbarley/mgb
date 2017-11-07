@@ -198,9 +198,37 @@ class HourOfCodeStore extends Store {
     }
   }
 
-  // TODO: see if lint shows correct lines - if not place this on the same line with first line of user code
-  prepareSource = srcIn => `import main from '/!vault:dwarfs.main'; main.setup = (dwarf) => {${srcIn}
-;}`
+  prepareSource = srcIn => {
+    srcIn = this.regexLoop(srcIn)
+    srcIn = this.regexIf(srcIn)
+    return `import main from '/!vault:dwarfs.main'; main.setup = dwarf => {${srcIn}}`
+  }
+
+  regexLoop = srcIn => {
+    const regex = /loop\s*[(]\s*(.*)[)]\s*[{]([\s\S]*?)[}]/gi
+    let result
+    while ((result = regex.exec(srcIn)) !== null) {
+      let code = result[0]
+      let iterator = result[1]
+      let loopContent = result[2]
+      let newCode = `for(let i=0; i<${iterator}; i++){
+        ${loopContent}
+      }`
+      srcIn = srcIn.replace(code, newCode)
+    }
+    return srcIn
+  }
+
+  regexIf = srcIn => {
+    const regex = /if\s*[(]\s*(.*)[)]{([\s\S]*?)}/gi
+    let result
+    while ((result = regex.exec(srcIn)) !== null) {
+      let code = result[0]
+      let newCode = `ActionManager.addAction('if', \`${code}\`)`
+      srcIn = srcIn.replace(code, newCode)
+    }
+    return srcIn
+  }
 }
 
 export default new HourOfCodeStore()

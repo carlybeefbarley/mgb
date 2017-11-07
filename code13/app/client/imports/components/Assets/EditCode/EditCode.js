@@ -30,6 +30,7 @@ import { AssetKindEnum } from '/imports/schemas/assets'
 import ThumbnailWithInfo from '/client/imports/components/Assets/ThumbnailWithInfo'
 
 import getCDNWorker from '/client/imports/helpers/CDNWorker'
+import Hotjar from '/client/imports/helpers/hotjar'
 // import tlint from 'tern-lint'
 import validJSName from '/client/imports/helpers/validJSName'
 
@@ -373,7 +374,9 @@ class EditCode extends React.Component {
     })
 
     if (this.isGuest) {
-      var timerId = window.setInterval(() => {
+      Hotjar('vpv', `hour-of-code/step${+this.props.hourOfCodeStore.state.currStepIndex + 1}`)
+
+      const timerId = window.setInterval(() => {
         if (this.state.astReady) {
           this.handleRun()
           window.clearInterval(timerId)

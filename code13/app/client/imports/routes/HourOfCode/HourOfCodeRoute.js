@@ -10,6 +10,7 @@ import HeroLayout from '/client/imports/layouts/HeroLayout'
 import { showToast } from '/client/imports/routes/App'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { hourOfCodeStore } from '/client/imports/stores'
+import Hotjar from '/client/imports/helpers/hotjar'
 
 class HourOfCodeRoute extends Component {
   componentDidMount() {
@@ -36,6 +37,7 @@ class HourOfCodeRoute extends Component {
    * Creates a guest user, a project, and a code asset.
    */
   createHoCUser = () => {
+    Hotjar('vpv', 'hour-of-code/create-guest-start')
     console.log('Creating hour of code user...')
 
     Meteor.call('User.generateGuestUser', (err, guestUser) => {
@@ -78,6 +80,7 @@ class HourOfCodeRoute extends Component {
             Promise.all(userAssetPromises)
               .then(userAssets => {
                 const assetId = userAssets[0]._id
+                Hotjar('vpv', 'hour-of-code/create-guest-success', this.props.currUser)
                 utilPushTo(null, `/u/${guestUser.username}/asset/${assetId}`)
               })
               .catch(error => {

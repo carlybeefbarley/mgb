@@ -15,6 +15,40 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Tue Nov 07 2017 15:40:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.3.5',
+        state: 'Beta',
+        iteration: '4909',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Loop Syntax',
+          changeSummary: "We've added simplified `loop() { ... }` syntax to the Hour of Code activity.",
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Loop Save Progress',
+          changeSummary: 'Guest users can now enter their email address to save their progress.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'User Avatar Images',
+          changeSummary: 'Resolved a bug with displaying and changing user avatars.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Fri Nov 03 2017 17:45:00 GMT-0700 (PDT)',
 
       id: {

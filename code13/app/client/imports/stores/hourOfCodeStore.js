@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
+
 import { Store } from '/client/imports/stores'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import {
@@ -121,14 +122,14 @@ class HourOfCodeStore extends Store {
     this.preloadAssets(data)
   }
 
-  cleanup() {
+  cleanup = () => {
     if (this.cachedHandlers) {
       this.cachedHandlers.forEach(handler => handler && handler.stop())
       this.cachedHandlers = null
     }
   }
 
-  preloadAssets(data) {
+  preloadAssets = data => {
     const promises = []
     const cachedHandlers = this.cachedHandlers || []
     // !!! Notice - we are skipping current step (which by default will be 0 ) so array looks like [undefined, ...instances]

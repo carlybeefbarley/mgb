@@ -2,11 +2,11 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import { Button, Menu, Image, Icon } from 'semantic-ui-react'
 import NavPanelItem from './NavPanelItem'
-import RecentlyEditedAssetGET from '/client/imports/components/Nav/RecentlyEditedAssetGET'
 
 // imports to enable logout functionality
 import { showToast } from '/client/imports/routes/App'
 import { utilPushTo } from '/client/imports/routes/QLink'
+import SaveMyWorkButton from '/client/imports/components/HourOfCode/SaveMyWorkButton'
 import { logActivity } from '/imports/schemas/activity'
 
 // Heads up!
@@ -61,10 +61,8 @@ export const getNavPanels = (currUser, showAll) => {
             },
         {
           name: 'hour-of-code-save',
-          content: <Button size="small" primary content="Save my work" />,
+          content: <SaveMyWorkButton />,
           icon: { name: 'signup' },
-          // TODO this needs to show a modal to collect their email
-          to: '/signup',
         },
       ],
     }

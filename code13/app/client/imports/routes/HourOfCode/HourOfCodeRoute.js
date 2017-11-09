@@ -12,6 +12,8 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import { hourOfCodeStore } from '/client/imports/stores'
 import Hotjar from '/client/imports/helpers/hotjar'
 
+let isCreatingGuest = false
+
 class HourOfCodeRoute extends Component {
   componentDidMount() {
     this.waitForLogin()
@@ -23,6 +25,7 @@ class HourOfCodeRoute extends Component {
         console.log('Login and loading done, activity is:', activity)
 
         if (recentAsset && isGuest) {
+          isCreatingGuest = false
           return utilPushTo(location.query, `/u/${recentAsset.toOwnerName}/asset/${recentAsset.toAssetId}`)
         } else {
           this.createHocUser()
@@ -37,29 +40,42 @@ class HourOfCodeRoute extends Component {
    * Creates a guest user, a project, and a code asset.
    */
   createHocUser = () => {
+    if (isCreatingGuest) return console.log('Refusing to create duplicate guest, already in progress...')
+    isCreatingGuest = true
+
     Hotjar('vpv', 'hour-of-code/create-guest-start')
     console.log('Creating hour of code user...')
 
     Meteor.call('User.generateGuestUser', (err, guestUser) => {
-      if (err) return console.error('Failed to generate a guest user object:', err)
+      if (err) {
+        isCreatingGuest = false
+        return console.error('Failed to generate a guest user object:', err)
+      }
 
       console.log('Generated guest user:', guestUser)
       guestUser.profile.HoC = { currStepId: '', stepToAssetMap: {} } // Stores HoC activity progress
 
       Accounts.createUser(guestUser, (error, id) => {
-        if (error) return showToast('Could not create user:' + error.reason, 'error')
+        if (error) {
+          isCreatingGuest = false
+          return showToast('Could not create user:' + error.reason, 'error')
+        }
 
         console.log('Created guest user:', guestUser)
 
         const newProject = hourOfCodeStore.getUserProjectShape()
 
         Meteor.call('Projects.create', newProject, (error, projectId) => {
-          if (error) return showToast('Could not create project:' + error.reason, 'error')
+          if (error) {
+            isCreatingGuest = false
+            return showToast('Could not create project:' + error.reason, 'error')
+          }
 
           console.log('Created project:', projectId)
 
           hourOfCodeStore.getActivityData(true).then(activityAsset => {
             if (!_.isArray(_.get(activityAsset, 'steps'))) {
+              isCreatingGuest = false
               console.error('Activity asset does not have valid steps:', activityAsset)
               return showToast('Cannot load activity: ' + err.reason, 'error')
             }
@@ -67,7 +83,10 @@ class HourOfCodeRoute extends Component {
             const azzetCreate = newAsset => {
               return new Promise((resolve, reject) => {
                 Meteor.call('Azzets.create', newAsset, (error, assetId) => {
-                  if (error) return reject(error)
+                  if (error) {
+                    isCreatingGuest = false
+                    return reject(error)
+                  }
                   resolve({ ...newAsset, _id: assetId })
                 })
               })
@@ -77,8 +96,9 @@ class HourOfCodeRoute extends Component {
             // nav to first asset once done
             const mapStepToAsset = userAssets => {
               let stepToAssetMap = {}
-              const steps = activityAsset.steps
-              _.map(userAssets, (asset, i) => (stepToAssetMap[steps[i].id] = asset._id))
+              _.forEach(userAssets, (asset, i) => {
+                stepToAssetMap[activityAsset.steps[i].id] = asset._id
+              })
 
               Meteor.call(
                 'User.updateProfile',
@@ -87,26 +107,25 @@ class HourOfCodeRoute extends Component {
                   'profile.HoC.stepToAssetMap': stepToAssetMap,
                 },
                 error => {
-                  if (error) console.error('Could not update stepToAssetMap to profile:', error.reason)
-                  else {
-                    // Nav to first asset
-                    const assetId = userAssets[0]._id
-                    Hotjar('vpv', 'hour-of-code/create-guest-success', this.props.currUser)
-                    utilPushTo(null, `/u/${guestUser.username}/asset/${assetId}`)
-                  }
+                  isCreatingGuest = false
+                  if (error) return console.error('Could not update stepToAssetMap to profile:', error.reason)
+
+                  // Nav to first asset
+                  const assetId = userAssets[0]._id
+                  Hotjar('vpv', 'hour-of-code/create-guest-success', this.props.currUser)
+                  utilPushTo(null, `/u/${guestUser.username}/asset/${assetId}`)
                 },
               )
             }
 
             const userAssetPromises = activityAsset.steps
-              .map((step, i) => hourOfCodeStore.getUserAssetShape(step, i))
-              .map(userAssetShape => azzetCreate(userAssetShape))
+              .map(hourOfCodeStore.getUserAssetShape)
+              .map(azzetCreate)
 
             Promise.all(userAssetPromises)
-              .then(userAssets => {
-                mapStepToAsset(userAssets)
-              })
+              .then(mapStepToAsset)
               .catch(error => {
+                isCreatingGuest = false
                 console.error('Cannot create asset:', error)
                 showToast('Cannot create asset: ' + error.reason, 'error')
               })
@@ -116,7 +135,7 @@ class HourOfCodeRoute extends Component {
     })
   }
 
-  waitForLogin = (timeout = 1000 * 10) => {
+  waitForLogin = (timeout = 1000 * 30) => {
     return new Promise((resolve, reject) => {
       const start = Date.now()
 

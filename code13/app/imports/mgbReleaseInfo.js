@@ -18,6 +18,40 @@ const mgbReleaseInfo = {
       timestamp: 'Tue Nov 07 2017 15:40:00 GMT-0800 (PST)',
 
       id: {
+        ver: '0.3.6',
+        state: 'Beta',
+        iteration: '4912',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Save Progress',
+          changeSummary: 'Guests can now save their progress by submitting their email address.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Timer',
+          changeSummary: 'The activity now has a one hour completion and congratulations timer.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Hour of Code Guests',
+          changeSummary: 'Fix duplicate guest creation.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Tue Nov 07 2017 15:40:00 GMT-0800 (PST)',
+
+      id: {
         ver: '0.3.5',
         state: 'Beta',
         iteration: '4909',

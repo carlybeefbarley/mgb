@@ -1632,10 +1632,17 @@ class EditCode extends React.Component {
   }
 
   codemirrorValueChanged(doc, change) {
+    const value = doc.getValue()
+    const newValue = (value + '\n').replace(/\n{2,}$/, '\n')
+    if (newValue !== value) {
+      const cursorPosition = doc.getCursor()
+      doc.setValue(newValue)
+      doc.setCursor(cursorPosition)
+    }
+
     // Ignore SetValue so we don't bounce changes from server back up to server
     this.mgb_c2_hasChanged = true
     if (change.origin !== 'setValue') {
-      const newValue = doc.getValue()
       this._currentCodemirrorValue = newValue
       let newC2 = { src: newValue }
       this.handleContentChange(newC2, null, 'Edit code')
@@ -2875,7 +2882,10 @@ class EditCode extends React.Component {
                   />
                 </div>
               ) : (
-                <Segment raised style={{ margin: 0, padding: 0 }}>
+                <Segment inverted raised style={{ margin: 0, padding: 0 }}>
+                  <Header as="h3" inverted sub attached="top" style={{ margin: 0 }}>
+                    Enter commands here
+                  </Header>
                   <textarea
                     ref="textarea"
                     className="allow-toolbar-shortcuts"
@@ -2888,7 +2898,9 @@ class EditCode extends React.Component {
               {this.isGuest &&
               steps && (
                 <Segment stacked>
-                  <Header sub>Command Reference</Header>
+                  <Header as="h3" sub>
+                    Command Reference
+                  </Header>
                   <Table basic compact definition size="small">
                     <Table.Body>
                       {_.map(_.get(currStep, 'api'), command => (

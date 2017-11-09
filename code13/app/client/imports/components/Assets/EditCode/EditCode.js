@@ -3,7 +3,7 @@ const reactUpdate = require('react-addons-update')
 
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { Button, Segment, Table, Modal, Header, Icon, Dimmer, Loader } from 'semantic-ui-react'
+import { Button, Segment, Table, Modal, Header, Icon, Dimmer, Loader, Image } from 'semantic-ui-react'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import TutorialMentor from './TutorialEditHelpers'
@@ -26,6 +26,8 @@ import CodeTutorials from './CodeTutorials'
 import HocActivity from './HocActivity'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
+import SaveMyWorkButton from '/client/imports/components/HourOfCode/SaveMyWorkButton'
+import UX from '/client/imports/UX'
 
 import ThumbnailWithInfo from '/client/imports/components/Assets/ThumbnailWithInfo'
 
@@ -382,6 +384,15 @@ class EditCode extends React.Component {
           window.clearInterval(timerId)
         }
       }, 200)
+
+      // Check every second for activity time expiration
+      var activityTimerId = window.setInterval(() => {
+        if (!this.props.hourOfCodeStore.state.isActivityOver) {
+          this.props.hourOfCodeStore.checkActivityTime()
+        } else {
+          window.clearInterval(activityTimerId)
+        }
+      }, 10 * 1000)
     }
   }
 
@@ -2393,7 +2404,7 @@ class EditCode extends React.Component {
         name: 'handleRun',
         label: 'Run code',
         icon: 'play',
-        iconText: this.isGuest ? 'Run Code' : '',
+        iconText: this.isGuest ? ' Run Code' : '',
         tooltip: 'Run Code',
         disabled: (!this.isGuest && this.state.isPlaying) || !this.state.astReady,
         level: 1,
@@ -2708,14 +2719,17 @@ class EditCode extends React.Component {
     const isConfirmed = confirm('Are you sure you want to reset your code?')
     if (!isConfirmed) return
 
-    hourOfCodeStore.setCurrStepCompletion(false)
+    this.props.hourOfCodeStore.setCurrStepCompletion(false)
     this.codeMirror.setValue(src)
     this.handleContentChange({ src }, null, `Reset code`)
   }
 
   handleGameScreenEvent = event => {
+    const { hourOfCodeStore: { state: { isLastStep, isActivityOver } } } = this.props
+    if (isActivityOver || (isLastStep && this.state.isCurrStepCompleted)) return
+
     if (event.success) {
-      hourOfCodeStore.setCurrStepCompletion(event.success)
+      this.props.hourOfCodeStore.setCurrStepCompletion(event.success)
       this.setState({ isCurrStepCompleted: event.success })
     }
 
@@ -2733,7 +2747,7 @@ class EditCode extends React.Component {
       asset,
       canEdit,
       currUser,
-      hourOfCodeStore: { state: { api, steps, currStepIndex, currStep } },
+      hourOfCodeStore: { state: { api, steps, currStepIndex, currStep, isLastStep, isActivityOver } },
     } = this.props
 
     if (!asset) return null
@@ -2789,7 +2803,7 @@ class EditCode extends React.Component {
         <Modal
           closeOnDimmerClick
           closeIcon
-          open={this.state.isCurrStepCompleted}
+          open={this.state.isCurrStepCompleted && !isLastStep}
           size="small"
           onClose={this.handleCloseHocModal}
         >
@@ -2803,6 +2817,38 @@ class EditCode extends React.Component {
               Continue
             </Button>
           </Modal.Actions>
+        </Modal>
+        <Modal size="large" open={isActivityOver || (isLastStep && this.state.isCurrStepCompleted)}>
+          <Header as="h1" color="green" textAlign="center">
+            <p>
+              <Icon name="graduation" />Congratulations, you completed the activity!
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <div>
+                <Image centered src="/images/logos/hoc/HourOfCode_logo_RGB.png" style={{ width: 140 }} />
+              </div>
+              <div style={{ color: 'black', padding: '10px' }}>
+                <Icon style={{ margin: 0 }} name="plus" size="large" />
+              </div>
+              <div>
+                <Segment inverted style={{ margin: 'auto', borderRadius: '8px', width: 140, height: 140 }}>
+                  <Image centered src={UX.makeMascotImgLink('team')} style={{ width: 140 }} />
+                  <Image centered src="/images/logos/mgb/medium/01w.png" style={{ width: 140 }} />
+                </Segment>
+              </div>
+            </div>
+          </Header>
+          <Modal.Content style={{ display: 'flex', justifyContent: 'center' }}>
+            {/* This should link to the HoC certificate upon completion */}
+            <div style={{ display: 'inline-block', textAlign: 'center' }}>
+              <h3>
+                <a target="_blank" rel="noopener noreferrer" href="https://hourofcode.com/us/learn">
+                  I've finished my Hour of Code™ <Icon name="sign out" />
+                </a>
+              </h3>
+              <SaveMyWorkButton />
+            </div>
+          </Modal.Content>
         </Modal>
         <div className="ui grid">
           {this.state.creatingBundle && <div className="loading-notification">Publishing source code...</div>}

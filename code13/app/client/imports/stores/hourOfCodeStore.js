@@ -29,6 +29,7 @@ class HourOfCodeStore extends Store {
       currStepId: PropTypes.string,
       currStepIndex: PropTypes.number,
       completedSteps: PropTypes.array,
+      isActivityOver: PropTypes.bool,
       api: PropTypes.object,
       steps: PropTypes.arrayOf(
         PropTypes.shape({
@@ -48,6 +49,7 @@ class HourOfCodeStore extends Store {
     currStepIndex: 0, // index of current step in steps array for handling back/next
     completedSteps: [], // keep track of which steps were previously completed
     steps: null, // will get from CDN
+    isActivityOver: false, // when user reaches 1 hour limit
     api: null, // will get from CDN
   }
 
@@ -247,6 +249,14 @@ class HourOfCodeStore extends Store {
     var newArray = completedSteps
     newArray[currStepIndex] = isComplete
     this.setState({ completedSteps: newArray })
+  }
+
+  checkActivityTime = () => {
+    const now = new Date().getTime()
+    const hour = 3600000 + 10000 // an hour in milliseconds (+10 seconds)
+    if (now >= Meteor.user().createdAt.getTime() + hour) {
+      this.setState({ isActivityOver: true })
+    }
   }
 
   stepNext = () => {

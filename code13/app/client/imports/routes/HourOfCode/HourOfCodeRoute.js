@@ -44,7 +44,7 @@ class HourOfCodeRoute extends Component {
       if (err) return console.error('Failed to generate a guest user object:', err)
 
       console.log('Generated guest user:', guestUser)
-      guestUser.profile.HoC = { currStepId: '', stepToAssetMap: {}, activityStartTime: 0 } // Stores HoC activity progress
+      guestUser.profile.HoC = { currStepId: '', stepToAssetMap: {} } // Stores HoC activity progress
 
       Accounts.createUser(guestUser, (error, id) => {
         if (error) return showToast('Could not create user:' + error.reason, 'error')
@@ -85,7 +85,6 @@ class HourOfCodeRoute extends Component {
                 Meteor.user()._id,
                 {
                   'profile.HoC.stepToAssetMap': stepToAssetMap,
-                  'profile.HoC.activityStartTime': new Date().getTime(),
                 },
                 error => {
                   if (error) console.error('Could not update stepToAssetMap to profile:', error.reason)

@@ -33,7 +33,6 @@ const schema = {
     HoC: {
       currStepId: optional(String),
       stepToAssetMap: optional(Object),
-      activityStartTime: optional(Number),
       email: optional(String), // Their real email address, for porting assets to a real user later
     },
   },
@@ -125,7 +124,6 @@ Meteor.methods({
       'profile.latestNewsTimestampSeen': optional(schema.profile.latestNewsTimestampSeen),
       'profile.HoC.currStepId': optional(schema.profile.HoC.currStepId),
       'profile.HoC.stepToAssetMap': optional(schema.profile.HoC.stepToAssetMap),
-      'profile.HoC.activityStartTime': optional(schema.profile.HoC.activityStartTime),
       'profile.HoC.email': optional(schema.profile.HoC.email),
       suIsBanned: schema.suIsBanned,
       suFlagId: schema.suFlagId,

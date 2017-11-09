@@ -10,14 +10,29 @@ import {
 } from '/client/imports/helpers/assetFetchers'
 import { showToast } from '/client/imports/routes/App'
 
+/*
+In order to handle cases when user switches steps by going
+back/forward on the browser or buy manually changing the URL
+to one of the assets, the step data will be fetched by the
+corresponding id, and the corresponding id will be fetched from
+the current assetId.
+
+currStepIndex is used to load the correct step data when the
+user clicks back/next button in HocActivity and refers to the index
+in the steps array from activityData.json
+*/
 class HourOfCodeStore extends Store {
   static storeShape = {
     state: PropTypes.shape({
+      currAssetId: PropTypes.string,
       currStep: PropTypes.object,
+      currStepId: PropTypes.string,
+      currStepIndex: PropTypes.number,
       completedSteps: PropTypes.array,
       api: PropTypes.object,
       steps: PropTypes.arrayOf(
         PropTypes.shape({
+          id: PropTypes.string,
           header: PropTypes.string.isRequired,
           text: PropTypes.string.isRequired,
           video: PropTypes.string,
@@ -28,44 +43,44 @@ class HourOfCodeStore extends Store {
   }
 
   state = {
-    currStepIndex: 0,
-    currStep: null,
-    completedSteps: [], // array to keep track of which steps were previously completed
+    currStep: null, // object containing step data in activityData.json
+    currStepId: '', // id for current step, to get step from corresponding assetId
+    currStepIndex: 0, // index of current step in steps array for handling back/next
+    completedSteps: [], // keep track of which steps were previously completed
     steps: null, // will get from CDN
     api: null, // will get from CDN
   }
 
   storeWillReceiveState(nextState) {
-    const { steps, currStepIndex } = nextState
+    let { steps, currStepId } = nextState
 
     return {
-      currStep: steps ? steps[currStepIndex] : null,
+      currStep: steps ? _.find(steps, { id: currStepId }) : null,
       totalSteps: steps ? steps.length : 0,
-      isFirstStep: currStepIndex === 0,
-      isLastStep: steps ? steps.length === currStepIndex + 1 : false,
+      isFirstStep: steps ? currStepId === _.head(steps).id : false,
+      isLastStep: steps ? currStepId === _.last(steps).id : false,
     }
   }
 
   storeDidUpdate(prevState) {
-    const { currStepIndex: prevCurrStepIndex } = prevState
-    const { currStepIndex } = this.state
+    const { currStepId: prevCurrStepId } = prevState
+    const { currStepId } = this.state
 
-    if (currStepIndex !== prevCurrStepIndex) {
+    if (currStepId !== prevCurrStepId) {
       Meteor.call(
         'User.updateProfile',
         Meteor.user()._id,
-        { 'profile.HoC.currStepIndex': currStepIndex },
+        { 'profile.HoC.currStepId': currStepId },
         error => {
           if (error) console.error('Could not update progress:', error.reason)
         },
       )
-
       this.loadUserAssetForStep()
     }
   }
 
-  getUserAssetShape = (step = this.state.currStep, stepIndex = this.state.currStepIndex) => {
-    const assetName = 'dwarfs.userCode' + stepIndex
+  getUserAssetShape = (step = this.state.currStep, stepId = this.state.currStepId) => {
+    const assetName = 'dwarfs.userCode.' + stepId
     const assetKind = 'code'
     const { name: projectName } = this.getUserProjectShape()
 
@@ -92,8 +107,8 @@ class HourOfCodeStore extends Store {
     }
   }
 
-  getUserAssetForStep = (step = this.state.currStep, stepIndex = this.state.currStepIndex) => {
-    const { name, kind, dn_ownerName, isDeleted } = this.getUserAssetShape(step, stepIndex)
+  getUserAssetForStep = (step = this.state.currStep, stepId = this.state.currStepId) => {
+    const { name, kind, dn_ownerName, isDeleted } = this.getUserAssetShape(step, stepId)
     const assetShape = { name, kind, dn_ownerName, isDeleted }
 
     // maybe show loading here ?
@@ -111,10 +126,59 @@ class HourOfCodeStore extends Store {
     })
   }
 
+  getCurrentAssetId = currAssetId => {
+    this.setState({ currAssetId })
+  }
+
+  getAssetIdFromStepId = stepId => {
+    return Meteor.user().profile.HoC.stepToAssetMap[stepId]
+  }
+
+  getStepIdFromAssetId = assetId => {
+    const stepToAssetMap = Meteor.user().profile.HoC.stepToAssetMap
+    return _.findKey(stepToAssetMap, asset => {
+      return asset === assetId
+    })
+  }
+
+  loadStepForAsset = data => {
+    const { currAssetId } = this.state
+
+    const currStepId = this.getStepIdFromAssetId(currAssetId)
+    const currStep = _.find(data.steps, { id: currStepId })
+    const currStepIndex = _.indexOf(data.steps, currStep)
+
+    this.setState({ currStep, currStepId, currStepIndex })
+  }
+
   loadUserAssetForStep = () => {
     return this.getUserAssetForStep().then(asset => {
       utilPushTo(null, `/u/${asset.dn_ownerName}/asset/${asset._id}`)
     })
+  }
+
+  // update step to asset mapping if there are any changes
+  updateStepToAsset = activityAsset => {
+    const { steps, currStepId, currStepIndex, currAssetId } = this.state
+    let stepToAssetMap = Meteor.user().profile.HoC.stepToAssetMap
+    const stepIds = Object.keys(stepToAssetMap)
+
+    if (!currStepId || !currStepIndex || steps.length === stepIds.length) return
+
+    // update mapping if changes are made to activityData
+    let newId = activityAsset.steps[currStepIndex].id
+    if (!_.find(stepIds, newId)) {
+      stepToAssetMap[newId] = currAssetId
+
+      Meteor.call(
+        'User.updateProfile',
+        Meteor.user()._id,
+        { 'profile.HoC.stepToAssetMap': stepToAssetMap },
+        error => {
+          if (error) console.error('Could not update stepToAssetMap to profile:', error.reason)
+        },
+      )
+    }
   }
 
   setActivityData = data => {
@@ -136,7 +200,7 @@ class HourOfCodeStore extends Store {
     data.steps.forEach((step, stepIndex) => {
       if (stepIndex === this.state.stepIndex || cachedHandlers[stepIndex]) return
 
-      promises[stepIndex] = this.getUserAssetForStep(step, stepIndex)
+      promises[stepIndex] = this.getUserAssetForStep(step, step.id)
     })
 
     Promise.all(promises).then(assets => {
@@ -153,7 +217,7 @@ class HourOfCodeStore extends Store {
     })
   }
 
-  getActivityData = () => {
+  getActivityData = (isActivitySetup = false) => {
     return new Promise((resolve, reject) => {
       mgbAjax(`/api/asset/code/!vault/dwarfs.activityData.json`, (err, activityAssetString) => {
         let activityAsset
@@ -166,14 +230,18 @@ class HourOfCodeStore extends Store {
           reject(err)
           return
         }
-        this.setActivityData(activityAsset)
+
+        // These should not be called when guest is being generated
+        if (!isActivitySetup) {
+          this.updateStepToAsset(activityAsset)
+          this.loadStepForAsset(activityAsset)
+          this.setActivityData(activityAsset)
+        }
         resolve(activityAsset)
       })
     })
   }
 
-  // TODO, this needs to be persisted and rehydrated from currUser.profile.HoC
-  // This way, completed steps are retained across page reload
   setCurrStepCompletion = isComplete => {
     const { currStepIndex, completedSteps } = this.state
     var newArray = completedSteps
@@ -182,20 +250,20 @@ class HourOfCodeStore extends Store {
   }
 
   stepNext = () => {
-    const { currStepIndex, steps } = this.state
-    const nextStepIndex = currStepIndex + 1
+    let { currStepIndex, steps } = this.state
 
-    if (nextStepIndex < steps.length) {
-      this.setState({ currStepIndex: nextStepIndex })
+    if (currStepIndex + 1 < steps.length) {
+      currStepIndex++
+      this.setState({ currStepIndex, currStepId: steps[currStepIndex].id })
     }
   }
 
   stepBack = () => {
-    let { currStepIndex } = this.state
+    let { currStepIndex, steps } = this.state
 
     if (currStepIndex > 0) {
       currStepIndex--
-      this.setState({ currStepIndex })
+      this.setState({ currStepIndex, currStepId: steps[currStepIndex].id })
     }
   }
 

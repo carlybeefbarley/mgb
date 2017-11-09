@@ -6,9 +6,19 @@ import { withStores } from '/client/imports/hocs'
 import { hourOfCodeStore } from '/client/imports/stores'
 
 class HocActivity extends React.Component {
+  constructor() {
+    super()
+  }
+
+  componentWillMount() {
+    const { hourOfCodeStore, assetId } = this.props
+    hourOfCodeStore.getCurrentAssetId(assetId)
+  }
+
   componentDidMount() {
     this.props.hourOfCodeStore.getActivityData()
   }
+
   handleReset = () => {
     const { onReset, hourOfCodeStore: { state: { currStep } } } = this.props
     if (!onReset) return
@@ -20,13 +30,13 @@ class HocActivity extends React.Component {
   render() {
     const {
       hourOfCodeStore: {
-        state: { totalSteps, completedSteps, isFirstStep, isLastStep, currStep, currStepIndex },
+        state: { steps, totalSteps, completedSteps, isFirstStep, isLastStep, currStep, currStepIndex },
       },
     } = this.props
 
     const segmentStyle = { flex: '0 0 auto', marginBottom: '1em' }
 
-    if (!currStep) return <Segment piled id="mgb-codeActivity" style={segmentStyle} />
+    if (!steps || !currStep) return <Segment piled id="mgb-codeActivity" style={segmentStyle} />
 
     return (
       <Segment piled id="mgb-codeActivity" style={segmentStyle}>
@@ -46,8 +56,8 @@ class HocActivity extends React.Component {
           color={isLastStep ? 'blue' : 'green'}
           onClick={hourOfCodeStore.stepNext}
           icon={isLastStep ? 'check' : 'forward'}
-          content={isLastStep ? 'Finish' : 'Next'}
-          disabled={!completedSteps[currStepIndex]}
+          content={isLastStep ? 'Finished' : 'Next'}
+          disabled={!completedSteps[currStepIndex] || isLastStep}
         />
 
         <Button
@@ -75,7 +85,7 @@ class HocActivity extends React.Component {
               <Message.Header>Congratulations! You completed the activity!</Message.Header>
               <div style={{ padding: '0.5em 0 1em 0' }}>
                 {/* This should link to the HoC certificate upon completion */}
-                <a href="https://hourofcode.com/us/learn">Hour of Code™</a>
+                <a href="https://hourofcode.com/us/learn">I've finished my Hour of Code™</a>
               </div>
             </Message.Content>
           </Message>

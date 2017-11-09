@@ -22,7 +22,7 @@ export default class GameScreen extends React.Component {
     isPlaying: PropTypes.bool,
     isPopup: PropTypes.bool,
     asset: PropTypes.object,
-    hocLevelId: PropTypes.number,
+    hocLevelId: PropTypes.number, // change to string when passing in currStepId
 
     handleStop: PropTypes.func.isRequired,
     handleContentChange: PropTypes.func.isRequired,

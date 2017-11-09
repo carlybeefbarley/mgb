@@ -25,7 +25,7 @@ class HourOfCodeRoute extends Component {
         if (recentAsset && isGuest) {
           return utilPushTo(location.query, `/u/${recentAsset.toOwnerName}/asset/${recentAsset.toAssetId}`)
         } else {
-          this.createHoCUser()
+          this.createHocUser()
         }
       })
       .catch(err => {
@@ -36,7 +36,7 @@ class HourOfCodeRoute extends Component {
   /**
    * Creates a guest user, a project, and a code asset.
    */
-  createHoCUser = () => {
+  createHocUser = () => {
     Hotjar('vpv', 'hour-of-code/create-guest-start')
     console.log('Creating hour of code user...')
 
@@ -44,7 +44,7 @@ class HourOfCodeRoute extends Component {
       if (err) return console.error('Failed to generate a guest user object:', err)
 
       console.log('Generated guest user:', guestUser)
-      guestUser.profile.HoC = { currStepIndex: 0 } // Stores HoC activity progress
+      guestUser.profile.HoC = { currStepId: '', stepToAssetMap: {}, activityStartTime: 0 } // Stores HoC activity progress
 
       Accounts.createUser(guestUser, (error, id) => {
         if (error) return showToast('Could not create user:' + error.reason, 'error')
@@ -58,7 +58,7 @@ class HourOfCodeRoute extends Component {
 
           console.log('Created project:', projectId)
 
-          hourOfCodeStore.getActivityData().then(activityAsset => {
+          hourOfCodeStore.getActivityData(true).then(activityAsset => {
             if (!_.isArray(_.get(activityAsset, 'steps'))) {
               console.error('Activity asset does not have valid steps:', activityAsset)
               return showToast('Cannot load activity: ' + err.reason, 'error')
@@ -73,15 +73,39 @@ class HourOfCodeRoute extends Component {
               })
             }
 
+            // map asset to steps then add it to user.profile.HoC
+            // nav to first asset once done
+            const mapStepToAsset = userAssets => {
+              let stepToAssetMap = {}
+              const steps = activityAsset.steps
+              _.map(userAssets, (asset, i) => (stepToAssetMap[steps[i].id] = asset._id))
+
+              Meteor.call(
+                'User.updateProfile',
+                Meteor.user()._id,
+                {
+                  'profile.HoC.stepToAssetMap': stepToAssetMap,
+                  'profile.HoC.activityStartTime': new Date().getTime(),
+                },
+                error => {
+                  if (error) console.error('Could not update stepToAssetMap to profile:', error.reason)
+                  else {
+                    // Nav to first asset
+                    const assetId = userAssets[0]._id
+                    Hotjar('vpv', 'hour-of-code/create-guest-success', this.props.currUser)
+                    utilPushTo(null, `/u/${guestUser.username}/asset/${assetId}`)
+                  }
+                },
+              )
+            }
+
             const userAssetPromises = activityAsset.steps
               .map((step, i) => hourOfCodeStore.getUserAssetShape(step, i))
               .map(userAssetShape => azzetCreate(userAssetShape))
 
             Promise.all(userAssetPromises)
               .then(userAssets => {
-                const assetId = userAssets[0]._id
-                Hotjar('vpv', 'hour-of-code/create-guest-success', this.props.currUser)
-                utilPushTo(null, `/u/${guestUser.username}/asset/${assetId}`)
+                mapStepToAsset(userAssets)
               })
               .catch(error => {
                 console.error('Cannot create asset:', error)

@@ -77,6 +77,8 @@ const withStores = stores => WrappedComponent => {
 
         // create a handler for store changes and subscribe to future changes
         handlers[propName] = state => {
+          if (this.isUnmounted) return
+
           const newState = {
             [propName]: {
               ...this.state[propName],
@@ -96,7 +98,12 @@ const withStores = stores => WrappedComponent => {
       })
     }
 
+    componentDidMount() {
+      this.isUnmounted = false
+    }
+
     componentWillUnmount() {
+      this.isUnmounted = true
       _.forEach(stores, (store, propName) => {
         store.unsubscribe(handlers[propName])
         delete handlers[propName]

@@ -289,7 +289,7 @@ export default class Toolbar extends React.Component {
             data-index={index}
           >
             <i className={(b.icon ? b.icon : b.name) + ' icon'} />
-            {b.iconText ? b.iconText : ''}
+            {b.iconText ? ' ' + b.iconText : ''}
           </Button>
         }
         key={index}

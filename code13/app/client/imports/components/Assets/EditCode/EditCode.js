@@ -2391,7 +2391,7 @@ class EditCode extends React.Component {
       }
       config.buttons.unshift({
         name: 'handleRun',
-        label: ' Run code',
+        label: 'Run code',
         icon: 'play',
         iconText: this.isGuest ? 'Run Code' : '',
         tooltip: 'Run Code',
@@ -2714,11 +2714,6 @@ class EditCode extends React.Component {
   }
 
   handleGameScreenEvent = event => {
-    if (!this.isFirstGameScreenEvent) {
-      this.isFirstGameScreenEvent = true
-      return
-    }
-
     if (event.success) {
       hourOfCodeStore.setCurrStepCompletion(event.success)
       this.setState({ isCurrStepCompleted: event.success })
@@ -2738,7 +2733,7 @@ class EditCode extends React.Component {
       asset,
       canEdit,
       currUser,
-      hourOfCodeStore: { state: { api, currStepIndex, currStep } },
+      hourOfCodeStore: { state: { api, steps, currStepIndex, currStep } },
     } = this.props
 
     if (!asset) return null
@@ -2773,7 +2768,7 @@ class EditCode extends React.Component {
         ref="gameScreen"
         isPopup={isPopup}
         isPlaying={this.state.isPlaying}
-        hocLevelId={currStepIndex}
+        hocLevelId={currStepIndex} // change to currStepId
         asset={asset}
         consoleAdd={this._consoleAdd.bind(this)}
         handleContentChange={this.handleContentChange.bind(this)}
@@ -2792,8 +2787,9 @@ class EditCode extends React.Component {
     return (
       <div>
         <Modal
-          open={this.state.isCurrStepCompleted}
           closeOnDimmerClick
+          closeIcon
+          open={this.state.isCurrStepCompleted}
           size="small"
           onClose={this.handleCloseHocModal}
         >
@@ -2803,7 +2799,7 @@ class EditCode extends React.Component {
             </p>
           </Header>
           <Modal.Actions style={{ display: 'flex', justifyContent: 'center' }}>
-            <Button primary onClick={this.handleCloseHocModal}>
+            <Button primary onClick={hourOfCodeStore.stepNext}>
               Continue
             </Button>
           </Modal.Actions>
@@ -2812,7 +2808,7 @@ class EditCode extends React.Component {
           {this.state.creatingBundle && <div className="loading-notification">Publishing source code...</div>}
           <div className="row stretched">
             <div className={infoPaneOpts.col1 + ' wide column'}>
-              {this.isGuest && <HocActivity onReset={this.handleReset} />}
+              {this.isGuest && <HocActivity assetId={asset._id} onReset={this.handleReset} />}
               {!this.isGuest && <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
               {!this.isGuest ? (
                 <div
@@ -2833,7 +2829,7 @@ class EditCode extends React.Component {
                   />
                 </div>
               ) : (
-                <Segment raised style={{ flex: '0 0 auto', margin: 0, padding: 0 }}>
+                <Segment raised style={{ margin: 0, padding: 0 }}>
                   <textarea
                     ref="textarea"
                     className="allow-toolbar-shortcuts"
@@ -2843,7 +2839,8 @@ class EditCode extends React.Component {
                   />
                 </Segment>
               )}
-              {this.isGuest && (
+              {this.isGuest &&
+              steps && (
                 <Segment stacked>
                   <Header sub>Command Reference</Header>
                   <Table basic compact definition size="small">
@@ -3256,7 +3253,7 @@ class EditCode extends React.Component {
                         style={{
                           overflow: 'auto',
                           width: '100%',
-                          height: '150px',
+                          maxHeight: '150px',
                         }}
                       />
                     </div>

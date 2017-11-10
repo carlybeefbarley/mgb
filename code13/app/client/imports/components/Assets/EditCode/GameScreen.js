@@ -121,7 +121,12 @@ export default class GameScreen extends React.Component {
       // data.success = true - task is completed
       // data.gameOver = true - task is failed, try again
       mgbHocEvent(data) {
-        const { onEvent } = this.props
+        const { onEvent, isAutoRun, handleAutoRun } = this.props
+        if (isAutoRun) {
+          handleAutoRun()
+          return
+        }
+
         if (!onEvent) return
 
         onEvent(data)

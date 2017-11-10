@@ -170,6 +170,9 @@ class EditCode extends React.Component {
 
     // is guest user?
     this.isGuest = this.props.currUser ? this.props.currUser.profile.isGuest : false
+
+    this.isAutoRun = true
+    this.handleAutoRun = this.handleAutoRun.bind(this)
   }
 
   handleJsBeautify() {
@@ -2751,6 +2754,10 @@ class EditCode extends React.Component {
     this.setState({ isCurrStepCompleted: false })
   }
 
+  handleAutoRun() {
+    this.isAutoRun = false
+  }
+
   render() {
     const {
       asset,
@@ -2791,6 +2798,8 @@ class EditCode extends React.Component {
         ref="gameScreen"
         isPopup={isPopup}
         isPlaying={this.state.isPlaying}
+        isAutoRun={this.isAutoRun}
+        handleAutoRun={this.handleAutoRun}
         hocLevelId={currStepIndex} // change to currStepId
         asset={asset}
         consoleAdd={this._consoleAdd.bind(this)}
@@ -2827,10 +2836,7 @@ class EditCode extends React.Component {
             </Button>
           </Modal.Actions>
         </Modal>
-        <Modal
-          size="large"
-          open={(false && isActivityOver) || (isLastStep && this.state.isCurrStepCompleted)}
-        >
+        <Modal size="large" open={isActivityOver || (isLastStep && this.state.isCurrStepCompleted)}>
           <Header as="h1" color="green" textAlign="center">
             <p>
               <Icon name="graduation" />Congratulations, you completed the activity!

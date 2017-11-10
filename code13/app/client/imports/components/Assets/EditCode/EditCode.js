@@ -2903,7 +2903,7 @@ class EditCode extends React.Component {
                   />
                 </div>
               ) : (
-                <Segment inverted raised style={{ margin: 0, padding: 0 }}>
+                <Segment inverted raised style={{ position: 'relative', margin: 0, padding: 0 }}>
                   <Header as="h3" inverted sub attached="top" style={{ margin: 0 }}>
                     Enter commands here
                   </Header>
@@ -2914,6 +2914,22 @@ class EditCode extends React.Component {
                     autoComplete="off"
                     placeholder="Start typing code here..."
                   />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      padding: '0.5em',
+                      bottom: '1em',
+                      right: '1em',
+                      background: '#333',
+                      borderTop: '2px solid #58C',
+                      fontSize: '0.9em',
+                      zIndex: 100,
+                    }}
+                  >
+                    <Icon name="trophy" />
+                    Try to solve this level with{' '}
+                    <strong>{currStep && currStep.locToSolve} lines of code</strong>
+                  </div>
                 </Segment>
               )}
               {this.isGuest &&

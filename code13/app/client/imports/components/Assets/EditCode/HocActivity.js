@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
-import { Button, Icon, Message, Segment } from 'semantic-ui-react'
+import { Button, Header, Icon, Message, Segment } from 'semantic-ui-react'
 import './editcode.css'
 import { withStores } from '/client/imports/hocs'
 import { hourOfCodeStore } from '/client/imports/stores'

@@ -380,7 +380,8 @@ class EditCode extends React.Component {
 
       const timerId = window.setInterval(() => {
         if (this.state.astReady) {
-          this.handleRun()
+          // run empty on first autorun
+          this.handleRunHelper(true)
           window.clearInterval(timerId)
         }
       }, 200)
@@ -1852,8 +1853,12 @@ class EditCode extends React.Component {
     // this.iFrameWindow.contentWindow.postMessage(messageObject, "*")
   }
 
-  /** Start the code running! */
   handleRun = () => {
+    this.handleRunHelper()
+  }
+
+  /** Start the code running! */
+  handleRunHelper = (isEmptyRun = false) => {
     // exception for code challenges
     // instead of standard iframe it runs CodeChallege component which has it's own iframe
     if (this.isChallenge) {
@@ -1876,25 +1881,29 @@ class EditCode extends React.Component {
     // we don't want to hide tutorials so we open popup
     if (asset.skillPath && !this.state.isPopup) this.setState({ isPopup: true })
 
-    this.tools.collectSources().then(collectedSources => {
-      const startRun = () => {
-        if (this.refs.gameScreen && this.refs.gameScreen.isIframeReady()) {
-          this._postMessageToIFrame({
-            mgbCommand: 'startRun',
-            sourcesToRun: collectedSources,
-            asset_id: asset._id,
-            filename: asset.name || '',
-          })
-        } else {
-          // ask iframe to tell parent that it is ready.. fix for very slow connections
-          this._postMessageToIFrame({
-            mgbCommand: 'approveIsReady',
-          })
-          window.setTimeout(startRun, 100)
+    const val = isEmptyRun ? this.getEditorValue('') : this.getEditorValue()
+    this.tools
+      .collectAndTranspile('/' + this.props.asset.name, val)
+      .then(() => this.tools.collectSources())
+      .then(collectedSources => {
+        const startRun = () => {
+          if (this.refs.gameScreen && this.refs.gameScreen.isIframeReady()) {
+            this._postMessageToIFrame({
+              mgbCommand: 'startRun',
+              sourcesToRun: collectedSources,
+              asset_id: asset._id,
+              filename: asset.name || '',
+            })
+          } else {
+            // ask iframe to tell parent that it is ready.. fix for very slow connections
+            this._postMessageToIFrame({
+              mgbCommand: 'approveIsReady',
+            })
+            window.setTimeout(startRun, 100)
+          }
         }
-      }
-      startRun()
-    })
+        startRun()
+      })
 
     const idx = Math.floor($('#mgbjr-EditCode-codeRunner').index() / 2) //  because title + content for one entry
     // auto-close accordion above so there's space.
@@ -2404,7 +2413,7 @@ class EditCode extends React.Component {
         name: 'handleRun',
         label: 'Run code',
         icon: 'play',
-        iconText: this.isGuest ? ' Run Code' : '',
+        iconText: this.isGuest ? 'Run Code' : '',
         tooltip: 'Run Code',
         disabled: (!this.isGuest && this.state.isPlaying) || !this.state.astReady,
         level: 1,
@@ -2818,7 +2827,10 @@ class EditCode extends React.Component {
             </Button>
           </Modal.Actions>
         </Modal>
-        <Modal size="large" open={isActivityOver || (isLastStep && this.state.isCurrStepCompleted)}>
+        <Modal
+          size="large"
+          open={(false && isActivityOver) || (isLastStep && this.state.isCurrStepCompleted)}
+        >
           <Header as="h1" color="green" textAlign="center">
             <p>
               <Icon name="graduation" />Congratulations, you completed the activity!

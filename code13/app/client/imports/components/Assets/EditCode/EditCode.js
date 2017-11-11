@@ -1889,7 +1889,7 @@ class EditCode extends React.Component {
     // we don't want to hide tutorials so we open popup
     if (asset.skillPath && !this.state.isPopup) this.setState({ isPopup: true })
 
-    const val = this.isAutoRun ? this.getEditorValue('') : this.getEditorValue()
+    const val = this.getEditorValue()
     this.tools
       .collectAndTranspile('/' + this.props.asset.name, val)
       .then(() => this.tools.collectSources())
@@ -2130,6 +2130,7 @@ class EditCode extends React.Component {
   }
 
   getEditorValue(value = this.codeMirror.getValue()) {
+    value = this.isAutoRun ? '' : value
     return !this.isGuest ? value : this.props.hourOfCodeStore.prepareSource(value)
   }
 

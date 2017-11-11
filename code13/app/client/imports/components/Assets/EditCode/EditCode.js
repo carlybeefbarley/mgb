@@ -1865,6 +1865,11 @@ class EditCode extends React.Component {
     // this.iFrameWindow.contentWindow.postMessage(messageObject, "*")
   }
 
+  handleEmptyRun = () => {
+    this.isAutoRun = true
+    this.handleRun()
+  }
+
   /** Start the code running! */
   handleRun = () => {
     // exception for code challenges
@@ -2404,19 +2409,30 @@ class EditCode extends React.Component {
           level: 3,
           shortcut: 'Ctrl+Alt+Shift+B',
         })
+        config.buttons.unshift({
+          name: 'handleStopClick',
+          label: 'Stop Running',
+          icon: 'stop',
+          tooltip: 'Stop Running',
+          disabled: !this.state.isPlaying,
+          level: 1,
+          shortcut: 'Ctrl+ENTER',
+        })
+      } else {
+        // this is guest
+        config.buttons.unshift({
+          name: 'handleEmptyRun',
+          label: 'Move to Start',
+          icon: 'refresh',
+          iconText: 'Move to Start',
+          tooltip: 'Move the Dwarf back to the starting position',
+          disabled: false,
+          level: 1,
+          shortcut: null,
+        })
+        config.buttons.unshift({ name: 'separator' })
       }
-      {
-        !this.isGuest &&
-          config.buttons.unshift({
-            name: 'handleStopClick',
-            label: 'Stop Running',
-            icon: 'stop',
-            tooltip: 'Stop Running',
-            disabled: !this.state.isPlaying,
-            level: 1,
-            shortcut: 'Ctrl+ENTER',
-          })
-      }
+      // jsx, regardless of guest/not guest
       config.buttons.unshift({
         name: 'handleRun',
         label: 'Run code',
@@ -2428,7 +2444,6 @@ class EditCode extends React.Component {
         shortcut: 'Ctrl+ENTER',
       })
     } else {
-      // this is guest
       // css and maybe something else in the future ( e.g. html ? )
       config.buttons.push({ name: 'separator' })
       config.buttons.push({

@@ -170,6 +170,8 @@ class EditCode extends React.Component {
 
     // is guest user?
     this.isGuest = this.props.currUser ? this.props.currUser.profile.isGuest : false
+
+    this.isAutoRun = true
   }
 
   handleJsBeautify() {
@@ -380,12 +382,15 @@ class EditCode extends React.Component {
 
       const timerId = window.setInterval(() => {
         if (this.state.astReady) {
+          // run empty on first autorun
           this.handleRun()
           window.clearInterval(timerId)
         }
       }, 200)
 
+      /*
       // Check every second for activity time expiration
+      // DISABLED FOR TESTING; UNCOMMENT FOR HOC
       var activityTimerId = window.setInterval(() => {
         if (!this.props.hourOfCodeStore.state.isActivityOver) {
           this.props.hourOfCodeStore.checkActivityTime()
@@ -393,6 +398,7 @@ class EditCode extends React.Component {
           window.clearInterval(activityTimerId)
         }
       }, 10 * 1000)
+      */
     }
   }
 
@@ -1883,25 +1889,29 @@ class EditCode extends React.Component {
     // we don't want to hide tutorials so we open popup
     if (asset.skillPath && !this.state.isPopup) this.setState({ isPopup: true })
 
-    this.tools.collectSources().then(collectedSources => {
-      const startRun = () => {
-        if (this.refs.gameScreen && this.refs.gameScreen.isIframeReady()) {
-          this._postMessageToIFrame({
-            mgbCommand: 'startRun',
-            sourcesToRun: collectedSources,
-            asset_id: asset._id,
-            filename: asset.name || '',
-          })
-        } else {
-          // ask iframe to tell parent that it is ready.. fix for very slow connections
-          this._postMessageToIFrame({
-            mgbCommand: 'approveIsReady',
-          })
-          window.setTimeout(startRun, 100)
+    const val = this.isAutoRun ? this.getEditorValue('') : this.getEditorValue()
+    this.tools
+      .collectAndTranspile('/' + this.props.asset.name, val)
+      .then(() => this.tools.collectSources())
+      .then(collectedSources => {
+        const startRun = () => {
+          if (this.refs.gameScreen && this.refs.gameScreen.isIframeReady()) {
+            this._postMessageToIFrame({
+              mgbCommand: 'startRun',
+              sourcesToRun: collectedSources,
+              asset_id: asset._id,
+              filename: asset.name || '',
+            })
+          } else {
+            // ask iframe to tell parent that it is ready.. fix for very slow connections
+            this._postMessageToIFrame({
+              mgbCommand: 'approveIsReady',
+            })
+            window.setTimeout(startRun, 100)
+          }
         }
-      }
-      startRun()
-    })
+        startRun()
+      })
 
     const idx = Math.floor($('#mgbjr-EditCode-codeRunner').index() / 2) //  because title + content for one entry
     // auto-close accordion above so there's space.
@@ -2411,7 +2421,7 @@ class EditCode extends React.Component {
         name: 'handleRun',
         label: 'Run code',
         icon: 'play',
-        iconText: this.isGuest ? ' Run Code' : '',
+        iconText: this.isGuest ? 'Run Code' : '',
         tooltip: 'Run Code',
         disabled: (!this.isGuest && this.state.isPlaying) || !this.state.astReady,
         level: 1,
@@ -2749,6 +2759,10 @@ class EditCode extends React.Component {
     this.setState({ isCurrStepCompleted: false })
   }
 
+  handleAutoRun = () => {
+    this.isAutoRun = false
+  }
+
   render() {
     const {
       asset,
@@ -2789,6 +2803,8 @@ class EditCode extends React.Component {
         ref="gameScreen"
         isPopup={isPopup}
         isPlaying={this.state.isPlaying}
+        isAutoRun={this.isAutoRun}
+        onAutoRun={this.handleAutoRun}
         hocLevelId={currStepIndex} // change to currStepId
         asset={asset}
         consoleAdd={this._consoleAdd.bind(this)}

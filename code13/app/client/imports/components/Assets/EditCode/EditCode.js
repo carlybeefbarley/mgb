@@ -172,7 +172,6 @@ class EditCode extends React.Component {
     this.isGuest = this.props.currUser ? this.props.currUser.profile.isGuest : false
 
     this.isAutoRun = true
-    this.handleAutoRun = this.handleAutoRun.bind(this)
   }
 
   handleJsBeautify() {
@@ -384,7 +383,7 @@ class EditCode extends React.Component {
       const timerId = window.setInterval(() => {
         if (this.state.astReady) {
           // run empty on first autorun
-          this.handleRunHelper(true)
+          this.handleRun()
           window.clearInterval(timerId)
         }
       }, 200)
@@ -1866,12 +1865,8 @@ class EditCode extends React.Component {
     // this.iFrameWindow.contentWindow.postMessage(messageObject, "*")
   }
 
-  handleRun = () => {
-    this.handleRunHelper()
-  }
-
   /** Start the code running! */
-  handleRunHelper = (isEmptyRun = false) => {
+  handleRun = () => {
     // exception for code challenges
     // instead of standard iframe it runs CodeChallege component which has it's own iframe
     if (this.isChallenge) {
@@ -1894,7 +1889,7 @@ class EditCode extends React.Component {
     // we don't want to hide tutorials so we open popup
     if (asset.skillPath && !this.state.isPopup) this.setState({ isPopup: true })
 
-    const val = isEmptyRun ? this.getEditorValue('') : this.getEditorValue()
+    const val = this.isAutoRun ? this.getEditorValue('') : this.getEditorValue()
     this.tools
       .collectAndTranspile('/' + this.props.asset.name, val)
       .then(() => this.tools.collectSources())
@@ -2764,7 +2759,7 @@ class EditCode extends React.Component {
     this.setState({ isCurrStepCompleted: false })
   }
 
-  handleAutoRun() {
+  handleAutoRun = () => {
     this.isAutoRun = false
   }
 
@@ -2809,7 +2804,7 @@ class EditCode extends React.Component {
         isPopup={isPopup}
         isPlaying={this.state.isPlaying}
         isAutoRun={this.isAutoRun}
-        handleAutoRun={this.handleAutoRun}
+        onAutoRun={this.handleAutoRun}
         hocLevelId={currStepIndex} // change to currStepId
         asset={asset}
         consoleAdd={this._consoleAdd.bind(this)}

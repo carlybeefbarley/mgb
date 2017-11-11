@@ -23,11 +23,13 @@ export default class GameScreen extends React.Component {
     isPopup: PropTypes.bool,
     asset: PropTypes.object,
     hocLevelId: PropTypes.number, // change to string when passing in currStepId
+    isAutoRun: PropTypes.bool,
 
     handleStop: PropTypes.func.isRequired,
     handleContentChange: PropTypes.func.isRequired,
     consoleAdd: PropTypes.func.isRequired,
     onEvent: PropTypes.func,
+    onAutoRun: PropTypes.func,
   }
   // keep only one popup per gamescreen instances
   static popup = null
@@ -121,9 +123,9 @@ export default class GameScreen extends React.Component {
       // data.success = true - task is completed
       // data.gameOver = true - task is failed, try again
       mgbHocEvent(data) {
-        const { onEvent, isAutoRun, handleAutoRun } = this.props
+        const { onEvent, isAutoRun, onAutoRun } = this.props
         if (isAutoRun) {
-          handleAutoRun()
+          onAutoRun()
           return
         }
 

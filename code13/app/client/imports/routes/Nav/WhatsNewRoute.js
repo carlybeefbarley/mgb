@@ -182,7 +182,7 @@ const WhatsNewRoute = React.createClass({
     const release = this.getCombinedReleaseInfo()[releaseIdx]
 
     return (
-      <Item.Group icon>
+      <Item.Group>
         {release.changes.map(change => {
           return (
             <Item key={change.changeName} className="animated fadeIn">

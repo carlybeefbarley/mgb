@@ -976,21 +976,25 @@ class EditCode extends React.Component {
       event.preventDefault()
 
       const token = cm.getTokenAt(pos, true)
-      // open link in the new tab
-      if (token.type === 'string') {
-        const link = this.getImportStringLocation(this.cleanTokenString(token.string))
-        if (link) {
-          const a = document.createElement('a')
-          a.setAttribute('href', link)
-          a.setAttribute('target', '_blank')
-          a.click()
+
+      cm.operation(() => {
+        if (token.type === 'string') {
+          const link = this.getImportStringLocation(this.cleanTokenString(token.string))
+
+          if (link) {
+            // open link in the new tab
+            const a = document.createElement('a')
+            a.setAttribute('href', link)
+            a.setAttribute('target', '_blank')
+            a.click()
+          }
+        } else {
+          // jump to definition
+          this.codeMirror.setCursor(pos)
+          this.cursorHistory.undo.push(pos)
+          this.ternServer.jumpToDef(cm)
         }
-      } else {
-        // jump to definition
-        this.codeMirror.setCursor(pos)
-        this.cursorHistory.undo.push(pos)
-        this.ternServer.jumpToDef(cm)
-      }
+      })
     }
   }
 

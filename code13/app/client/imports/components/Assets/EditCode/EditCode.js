@@ -171,8 +171,7 @@ class EditCode extends React.Component {
 
     // is guest user?
     this.isGuest = this.props.currUser ? this.props.currUser.profile.isGuest : false
-
-    this.isAutoRun = true
+    this.isAutoRun = this.isGuest
   }
 
   handleJsBeautify() {

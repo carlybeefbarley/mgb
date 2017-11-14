@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { showToast } from '/client/imports/modules'
+import refreshBadgeStatus from '/client/imports/helpers/refreshBadgeStatus'
 
 // simple time displaying component
 export default class AssetEdit extends React.Component {
@@ -83,15 +83,7 @@ export class EditTimeCounter {
         this.dbTime += this.updateDBinterval
         Meteor.call('User.addEditTime', this.asset.kind, this.updateDBinterval, (error, result) => {
           if (error) console.warn(error)
-          else {
-            Meteor.call('User.refreshBadgeStatus', (err, re) => {
-              if (err) console.log('User.refreshBadgeStatus error', err)
-              else {
-                if (!re || re.length === 0) console.log(`No New badges awarded`)
-                else showToast(`New badges awarded: ${re.join(', ')} `)
-              }
-            })
-          }
+          else refreshBadgeStatus()
         })
       }
     } else {

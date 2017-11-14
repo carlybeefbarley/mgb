@@ -14,9 +14,9 @@ import ChallengeResults from './ChallengeResults'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import SkillNodes, { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
+import refreshBadgeStatus from '/client/imports/helpers/refreshBadgeStatus'
 import { learnSkill } from '/imports/schemas/skills'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
-import { showToast } from '/client/imports/modules'
 
 import '../editcode.css'
 
@@ -111,13 +111,7 @@ export default class CodeChallenges extends React.Component {
     // TODO show notification for user
     learnSkill(this.props.skillPath)
     this.setState({ showAllTestsCompletedMessage: true })
-    Meteor.call('User.refreshBadgeStatus', (err, result) => {
-      if (err) console.log('User.refreshBadgeStatus error', err)
-      else {
-        if (!result || result.length === 0) console.log(`No New badges awarded`)
-        else showToast(`New badges awarded: ${result.join(', ')} `)
-      }
-    })
+    refreshBadgeStatus()
   }
 
   runTests = () => {

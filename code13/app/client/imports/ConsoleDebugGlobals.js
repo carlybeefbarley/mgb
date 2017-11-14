@@ -1,48 +1,50 @@
 import _ from 'lodash'
 
-window._MGB_DBG = {
-  _contents: {}, // This should have strings like 'J:Joyride'
+const contents = {
+  // [key]: { filename, comment },
 }
 
-if (!window.m) window.m = window._MGB_DBG
+const indentedColumn = text => _.padEnd(`  ${text}`, 15)
 
-const registerDebugGlobal = (propertyKey, value, sourceFileName, comment) => {
-  window._MGB_DBG[propertyKey] = value
-  window._MGB_DBG._contents[propertyKey] = { sourceFileName, comment }
-  window._MGB_DBG.h =
-    '\nAvailable helpful MGB debug values: \n' +
-    `m.h                 This help text - ${__filename}\n` +
-    _.sortBy(
-      _.map(
-        window._MGB_DBG._contents,
-        (v, k) => `m.${(k + '               ').slice(0, 16)}  ${v.comment} - ${v.sourceFileName}`,
-      ),
-    ).join('\n') +
-    '\n'
-  // this is for tests.. so we can disable side panel animations
-  window._MGB_DBG.addStyle = s => {
-    const style = document.createElement('style')
-    style.setAttribute('type', 'text/css')
-    style.appendChild(document.createTextNode(s))
-    document.head.appendChild(style)
-  }
+window._MGB_DEBUG = {
+  get help() {
+    return [
+      'Available helpful _MGB_DEBUG properties:',
+      '',
+      `${indentedColumn('.help')} This help text (${__filename})`,
+      ..._.sortBy(_.map(contents, (v, k) => `${indentedColumn(`.${k}`)} ${v.comment} (${v.filename})`)),
+    ].join('\n')
+  },
+
+  get h() {
+    return this.help
+  },
 }
 
-registerDebugGlobal('_reg', registerDebugGlobal, __filename, 'The registerDebugGlobal function!')
-registerDebugGlobal(
-  '_what',
-  `This is a handy debug object created by MGB's App.js component. It is a place to put debug stuff. It should only be set via the window._MGB_DBG variable, but there is also a convenient alias window.m for console debugging in browser\n\n Try typing   m.h  in the browser console to learn more`,
-  __filename,
-  'Explains more about what this is',
-)
+const registerDebugGlobal = (key, value, filename, comment) => {
+  _.set(window._MGB_DEBUG, key, value)
+  _.set(contents, key, { filename, comment })
+}
 
 registerDebugGlobal(
-  '_what',
-  `This is a handy debug object created by MGB's App.js component. It is a place to put debug stuff. It should only be set via the window._MGB_DBG variable, but there is also a convenient alias window.m for console debugging in browser\n\n Try typing   m.h  in the browser console to learn more`,
+  'addStyle',
+  css => {
+    const $style = document.createElement('style')
+    $style.setAttribute('type', 'text/css')
+    $style.appendChild(document.createTextNode(css))
+    document.head.appendChild($style)
+  },
   __filename,
-  'Explains more about what this is',
+  'Inject global CSS. Used in tests.',
 )
 
-//console.log(`%cMGB debug helpers enabled. Try typing 'm.h' in the browser debug console`, 'color: #00aa00; font-weight: bold; font-size: 14px;')
+window.m = window.m || window._MGB_DEBUG
+
+if (!Meteor.isProduction) {
+  console.log(
+    `%cMGB debug helpers enabled. Type '_MGB_DEBUG.help' or 'm.h' for short.`,
+    'color: #00aa00; font-weight: bold; font-size: 14px;',
+  )
+}
 
 export default registerDebugGlobal

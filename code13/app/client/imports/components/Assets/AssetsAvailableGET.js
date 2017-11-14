@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Card, Segment } from 'semantic-ui-react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import AssetCard from '/client/imports/components/Assets/AssetCard'

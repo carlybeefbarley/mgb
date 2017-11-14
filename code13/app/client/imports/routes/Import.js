@@ -1,4 +1,5 @@
-import React, { PropTypes, Component } from 'react'
+import PropTypes from 'prop-types'
+import React, { Component } from 'react'
 import { showToast } from '/client/imports/modules'
 
 import { logActivity } from '/imports/schemas/activity'
@@ -17,7 +18,7 @@ const ImportRoute = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
   createAsset(

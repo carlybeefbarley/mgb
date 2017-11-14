@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import FittedImage from '/client/imports/components/Controls/FittedImage'
 import QLink from '/client/imports/routes/QLink'
 import { Button, Icon, Image, Popup } from 'semantic-ui-react'

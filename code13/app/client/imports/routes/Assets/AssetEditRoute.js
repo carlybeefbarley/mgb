@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Grid, Icon, Message } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
@@ -131,8 +132,8 @@ const AssetEditRoute = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object,
-    skills: React.PropTypes.object,
+    urlLocation: PropTypes.object,
+    skills: PropTypes.object,
   },
 
   // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the userId

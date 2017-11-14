@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Segment, Header, Button, Grid, Item, Icon, Label, Popup } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import { ReactMeteorData } from 'meteor/react-meteor-data'

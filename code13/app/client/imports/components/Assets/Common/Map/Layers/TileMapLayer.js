@@ -1,4 +1,4 @@
-'use strict'
+import PropTypes from 'prop-types'
 import React from 'react'
 import _ from 'lodash'
 
@@ -12,8 +12,8 @@ import Plural from '/client/imports/helpers/Plural'
 export default class TileMapLayer extends AbstractLayer {
   static propTypes = Object.assign(
     {
-      clearSelection: React.PropTypes.func.isRequired, // cleans map selection
-      clearTmpSelection: React.PropTypes.func.isRequired, // cleans temporary selection buffer
+      clearSelection: PropTypes.func.isRequired, // cleans map selection
+      clearTmpSelection: PropTypes.func.isRequired, // cleans temporary selection buffer
     },
     AbstractLayer.propTypes,
   )

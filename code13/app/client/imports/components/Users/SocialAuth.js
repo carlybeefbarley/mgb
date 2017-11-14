@@ -1,12 +1,13 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { browserHistory } from 'react-router'
 
 // TODO.. 1. Fix this so it works again
 // TODO.. 2. change to use   utilPushTo(this.context.urlLocation.query, ...) instead of browserHistory.push()
 const SocialAuth = React.createClass({
   propTypes: {
-    type: React.PropTypes.string,
+    type: PropTypes.string,
   },
 
   getDefaultProps() {

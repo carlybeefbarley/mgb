@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Dropdown } from 'semantic-ui-react'
 
 const _menuOpenLeftSty = { left: 'auto', right: '0' } // Magic from levithomason

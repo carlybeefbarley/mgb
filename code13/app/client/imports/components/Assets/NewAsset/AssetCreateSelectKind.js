@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { AssetKinds, AssetKindKeys } from '/imports/schemas/assets'
 import { doesUserHaveRole } from '/imports/schemas/roles'
 import { Button, Icon } from 'semantic-ui-react'

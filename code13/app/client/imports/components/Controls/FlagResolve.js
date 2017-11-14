@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Popup, Button, Form, Label, Divider } from 'semantic-ui-react'
 import { Flags } from '/imports/schemas'
 import { FlagTypes } from '/imports/schemas/flags'

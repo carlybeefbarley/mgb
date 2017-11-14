@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import assetLicenses, { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
 import { Icon, Header, List, Label, Popup } from 'semantic-ui-react'

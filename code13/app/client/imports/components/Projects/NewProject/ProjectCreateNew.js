@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import validate from '/imports/schemas/validate'
 import { Message, Icon } from 'semantic-ui-react'
 

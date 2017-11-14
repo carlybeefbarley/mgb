@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import Helmet from 'react-helmet'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { browserHistory } from 'react-router'
@@ -32,7 +33,7 @@ const BrowseGamesRoute = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
   /**

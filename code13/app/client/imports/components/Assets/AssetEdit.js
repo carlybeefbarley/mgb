@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Message, Segment } from 'semantic-ui-react'
 
 import EditUnknown from './EditUnknown'

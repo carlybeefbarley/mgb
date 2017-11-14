@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { List } from 'semantic-ui-react'
 import QLink, { utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import { ActivityTypes } from '/imports/schemas/activity'

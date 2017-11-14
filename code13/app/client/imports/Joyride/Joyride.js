@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import { offerRevertAssetToForkedParentIfParentIdIs } from '/client/imports/routes/Assets/AssetEditRoute'

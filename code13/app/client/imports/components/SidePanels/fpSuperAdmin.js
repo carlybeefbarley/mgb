@@ -1,10 +1,10 @@
 import _ from 'lodash'
-import React, { Component, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { Component } from 'react'
 import QLink from '/client/imports/routes/QLink'
 import { Button, Menu, Header, List, Segment } from 'semantic-ui-react'
 import { isSameUser } from '/imports/schemas/users'
 import moment from 'moment'
-import { Flags } from '/imports/schemas'
 import FlagsModerate from '/client/imports/components/Controls/FlagsModerate'
 
 const outlinkLi = (txt, url, key) => (

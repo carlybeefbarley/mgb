@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Input } from 'semantic-ui-react'
 
 // This is a variant of <Input> which provides a nice default searchIcon and show

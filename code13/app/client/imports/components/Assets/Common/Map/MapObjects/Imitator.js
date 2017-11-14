@@ -1,4 +1,3 @@
-'use strict'
 // This object imitates rectangle from shapes
 import ObjectHelper from '../Helpers/ObjectHelper.js'
 

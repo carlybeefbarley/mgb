@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Container, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 
 import HeroLayout from '/client/imports/layouts/HeroLayout'
@@ -13,7 +14,7 @@ const ResetPasswordRoute = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
   getInitialState() {

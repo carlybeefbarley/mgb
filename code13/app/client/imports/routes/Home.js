@@ -1,6 +1,7 @@
 import '/client/imports/routes/home.css'
 import '/client/imports/routes/GetStarted.css'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Divider } from 'semantic-ui-react'
 
 import HeroLayout from '/client/imports/layouts/HeroLayout'

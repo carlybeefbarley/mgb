@@ -1,4 +1,3 @@
-'use strict'
 // this is my cheat sheet :)
 // not used in code - just for reference on Math transformations
 // took out from dirty rectangles engine

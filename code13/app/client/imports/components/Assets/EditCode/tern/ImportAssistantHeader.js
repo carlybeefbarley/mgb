@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Divider, Label, Popup } from 'semantic-ui-react'
 import _ from 'lodash'
 import QLink from '/client/imports/routes/QLink'

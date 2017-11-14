@@ -1,6 +1,7 @@
 import '/client/imports/routes/home.css'
 import '/client/imports/routes/GetStarted.css'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Button, Grid, Header, Image } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 

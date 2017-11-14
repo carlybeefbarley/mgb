@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Container, Header, Segment } from 'semantic-ui-react'
 import Helmet from 'react-helmet'
 import NavRecentGET from '/client/imports/components/Nav/NavRecentGET'

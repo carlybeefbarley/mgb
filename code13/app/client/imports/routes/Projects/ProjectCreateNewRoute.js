@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import _ from 'lodash'
 import Helmet from 'react-helmet'
 import { showToast } from '/client/imports/modules'
@@ -18,7 +19,7 @@ const ProjectCreateNewRoute = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
   render() {

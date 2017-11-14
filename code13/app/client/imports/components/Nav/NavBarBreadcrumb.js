@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Breadcrumb, Icon, Label, List, Popup } from 'semantic-ui-react'
 
 import { _NO_PROJECT_PROJNAME } from '/client/imports/components/Assets/ProjectSelector'

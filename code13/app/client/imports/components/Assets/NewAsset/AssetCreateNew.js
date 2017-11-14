@@ -1,7 +1,9 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Form, Header, Input, Button, Label } from 'semantic-ui-react'
 import ReactDOM from 'react-dom'
+
 import { AssetKinds } from '/imports/schemas/assets'
 import AssetCreateSelectKind from './AssetCreateSelectKind'
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
@@ -36,7 +38,7 @@ const AssetCreateNew = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
   componentDidMount() {

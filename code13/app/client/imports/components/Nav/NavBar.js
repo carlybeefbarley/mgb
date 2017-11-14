@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Icon, Popup } from 'semantic-ui-react'
 import SystemAlerts from './SystemAlerts'
 import NavBarBreadcrumb from './NavBarBreadcrumb'

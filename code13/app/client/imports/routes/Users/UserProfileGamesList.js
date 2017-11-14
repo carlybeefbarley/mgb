@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Header, Grid } from 'semantic-ui-react'
 import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/GamesAvailableGET'
 import QLink from '/client/imports/routes/QLink'

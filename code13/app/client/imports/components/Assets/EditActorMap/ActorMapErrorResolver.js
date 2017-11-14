@@ -1,14 +1,15 @@
-import React from 'react'
+import PropTypes from 'prop-types'
+import React, { Component } from 'react'
 import ActorHelper from '../Common/Map/Helpers/ActorHelper'
 import DropArea from '/client/imports/components/Controls/DropArea'
-import { List, Icon, Button, Segment, Container } from 'semantic-ui-react'
+import { Icon, Button, Segment, Container } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 
-export default class extends React.Component {
+export default class extends Component {
   static propTypes = {
-    errors: React.PropTypes.array.isRequired, // array with errors reported by ActorHelper
-    callback: React.PropTypes.func.isRequired, // callback after some changes has been made - usually it will be re-check function
-    content2: React.PropTypes.object.isRequired, // reference to content2
+    errors: PropTypes.array.isRequired, // array with errors reported by ActorHelper
+    callback: PropTypes.func.isRequired, // callback after some changes has been made - usually it will be re-check function
+    content2: PropTypes.object.isRequired, // reference to content2
   }
   errorHandlers = {
     [ActorHelper.errorTypes.MISSING_ACTOR]: (err, i) => (

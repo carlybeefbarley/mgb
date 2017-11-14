@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import QLink from '../QLink'
 import Footer from '/client/imports/components/Footer/Footer'
 import mgbReleaseInfo, { olderHistoryPath } from '/imports/mgbReleaseInfo'

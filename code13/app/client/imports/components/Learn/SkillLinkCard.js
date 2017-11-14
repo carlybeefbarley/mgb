@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { Component, PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React, { Component } from 'react'
 import { Button, Card, Grid, Header, Icon, Label, List, Popup, Progress } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import QLink from '/client/imports/routes/QLink'

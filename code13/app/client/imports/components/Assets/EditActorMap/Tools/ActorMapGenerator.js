@@ -1,4 +1,3 @@
-'use strict'
 import _ from 'lodash'
 import React from 'react'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'

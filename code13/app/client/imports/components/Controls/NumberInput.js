@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 // This is a variant of <input> which handles the problems of enforcing val being between min & max
 // but allowing temporary typing.. for example if min=1, max=10, how to type 9 (since blank can get set to 1)

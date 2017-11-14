@@ -1,4 +1,3 @@
-'use strict'
 import LayerTypes from '../Tools/LayerTypes.js'
 import ObjectHelper from './ObjectHelper.js'
 

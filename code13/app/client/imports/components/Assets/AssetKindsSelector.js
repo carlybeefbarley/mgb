@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar } from '/imports/schemas/assets'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { Icon, Menu } from 'semantic-ui-react'

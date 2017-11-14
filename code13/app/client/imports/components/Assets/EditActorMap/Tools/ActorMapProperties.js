@@ -1,4 +1,3 @@
-'use strict'
 import React from 'react'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import NumberInput from '/client/imports/components/Controls/NumberInput'

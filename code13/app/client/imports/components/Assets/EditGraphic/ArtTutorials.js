@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Grid, Segment, Button, Icon, Message, Divider, Header } from 'semantic-ui-react'
 
 import { mgbAjax } from '/client/imports/helpers/assetFetchers'

@@ -1,4 +1,3 @@
-'use strict'
 import { AssetKinds, AssetKindKeys } from '/imports/schemas/assets'
 import { logActivity } from '/imports/schemas/activity'
 import { showToast } from '/client/imports/modules'

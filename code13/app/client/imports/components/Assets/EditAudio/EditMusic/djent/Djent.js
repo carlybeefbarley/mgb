@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 
 import BeatsController from './components/BeatsController'
@@ -21,7 +22,7 @@ import defaultLengths from './utils/defaultLengths'
 
 export default class Djent extends Component {
   static contextTypes = {
-    router: React.PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired,
   }
   state = {
     googleAPIHasLoaded: false,

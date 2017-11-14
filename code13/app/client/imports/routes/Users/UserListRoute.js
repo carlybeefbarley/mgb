@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
 import { browserHistory } from 'react-router'
 import { createContainer } from 'meteor/react-meteor-data'

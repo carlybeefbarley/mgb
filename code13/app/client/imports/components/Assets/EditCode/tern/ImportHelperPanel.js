@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Dropdown, Segment, Label, Icon } from 'semantic-ui-react'
 import _ from 'lodash'
 import settings from '/imports/SpecialGlobals'

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Icon, Button } from 'semantic-ui-react'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'

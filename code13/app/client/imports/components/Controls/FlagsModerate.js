@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Header, List, Segment } from 'semantic-ui-react'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Flags } from '/imports/schemas'

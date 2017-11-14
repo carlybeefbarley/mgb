@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Grid, Header, Segment } from 'semantic-ui-react'
 import NavRecentGET from '/client/imports/components/Nav/NavRecentGET'
 import QLink from '/client/imports/routes/QLink'

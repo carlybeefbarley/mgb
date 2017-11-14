@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Icon, Message, Button } from 'semantic-ui-react'
 
 export default class ChallengeCompleted extends React.Component {

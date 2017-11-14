@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import PropTypes from 'prop-types'
 import React from 'react'
 import { Container, Divider, Message, Segment, Header, Form, Grid, Image } from 'semantic-ui-react'
 
@@ -16,7 +17,7 @@ const mascotColumnStyle = {
 
 const SignupRoute = React.createClass({
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
   getInitialState() {

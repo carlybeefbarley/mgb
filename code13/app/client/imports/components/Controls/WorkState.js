@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { workStateNames, workStateIcons } from '/imports/Enums/workStates'
 import { Header, Icon, List, Popup } from 'semantic-ui-react'
 import './WorkState.css'

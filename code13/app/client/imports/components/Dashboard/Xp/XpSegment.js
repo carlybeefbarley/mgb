@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Icon, Segment, List, Modal } from 'semantic-ui-react'
 
 // fake data here. Currently no XP point functionality implemented

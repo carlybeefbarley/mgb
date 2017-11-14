@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Popup, Button } from 'semantic-ui-react'
 
 const ProjectsShowForkableSelector = ({ showForkable, handleChangeFlag }) => {

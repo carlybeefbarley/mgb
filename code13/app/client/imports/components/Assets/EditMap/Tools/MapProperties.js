@@ -1,6 +1,7 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
-import { Accordion, Segment, Divider, Label, Button, Table } from 'semantic-ui-react'
+import { Accordion, Segment, Label, Button, Table } from 'semantic-ui-react'
 import validate from '/imports/schemas/validate'
 
 // TODO: replace InlineEdit with something better - editor input like ( e.g. in the blender/photoshop)
@@ -181,8 +182,8 @@ const tilesetProperties = (
 // TODO: add / handle property type - e.g. string / number etc
 class MoreProperties extends React.Component {
   static propTypes = {
-    savedProps: React.PropTypes.array,
-    updateSavedProps: React.PropTypes.function,
+    savedProps: PropTypes.array,
+    updateSavedProps: PropTypes.function,
   }
 
   changeName(index, changes) {
@@ -330,9 +331,9 @@ const objectProperties = (
 
 export default class extends React.Component {
   static propTypes = {
-    map: React.PropTypes.object, // basic map data: {width, height, tilewidth, tileheight}
-    layer: React.PropTypes.object, // object representing Tiled Layer- http://doc.mapeditor.org/reference/tmx-map-format/#layer - content2.layers[active]
-    tileset: React.PropTypes.object, // object representing Tiled tileset - http://doc.mapeditor.org/reference/tmx-map-format/#tileset - content2.tilesets[active]
+    map: PropTypes.object, // basic map data: {width, height, tilewidth, tileheight}
+    layer: PropTypes.object, // object representing Tiled Layer- http://doc.mapeditor.org/reference/tmx-map-format/#layer - content2.layers[active]
+    tileset: PropTypes.object, // object representing Tiled tileset - http://doc.mapeditor.org/reference/tmx-map-format/#tileset - content2.tilesets[active]
 
     /// check out app/client/imports/components/Assets/Common/Map/Props/PropertiesProps.js - for related methods
   }

@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { hasSkill } from '/imports/schemas/skills'
 import { isSkillKeyValid } from '/imports/Skills/SkillNodes/SkillNodes.js'
 

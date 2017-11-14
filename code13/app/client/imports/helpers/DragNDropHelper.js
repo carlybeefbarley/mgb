@@ -1,4 +1,3 @@
-'use strict'
 import dragAndDropSimulator from './dragAndDropSimulator.js'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 

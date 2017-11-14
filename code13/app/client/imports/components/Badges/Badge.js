@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { badgeList } from '/imports/schemas/badges'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import { Popup } from 'semantic-ui-react'

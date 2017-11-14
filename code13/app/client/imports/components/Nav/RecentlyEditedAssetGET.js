@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import QLink from '/client/imports/routes/QLink'
 import { Activity } from '/imports/schemas'
 import { ReactMeteorData } from 'meteor/react-meteor-data'

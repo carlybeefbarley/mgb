@@ -1,5 +1,3 @@
-'use strict'
-
 import ActorLayer from './ActorLayer.js'
 
 export default class EventLayer extends ActorLayer {

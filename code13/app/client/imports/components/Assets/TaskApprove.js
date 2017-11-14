@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Popup, Label, Button, Segment } from 'semantic-ui-react'
 import { Skills } from '/imports/schemas'
 import { ReactMeteorData } from 'meteor/react-meteor-data'

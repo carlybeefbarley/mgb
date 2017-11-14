@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Grid } from 'semantic-ui-react'
 import BaseForm from '/client/imports/components/Controls/BaseForm.js'
 import { GameItem } from '/client/imports/components/Assets/GameAsset/GameItems'

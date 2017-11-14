@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { AssetKinds } from '/imports/schemas/assets'
 import validate from '/imports/schemas/validate'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'

@@ -1,10 +1,11 @@
 import cx from 'classnames'
 import _ from 'lodash'
 import moment from 'moment'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Card, Icon, Popup } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
-import QLink, { utilPushTo } from '/client/imports/routes/QLink'
+import { utilPushTo } from '/client/imports/routes/QLink'
 import { AssetKinds } from '/imports/schemas/assets'
 import { logActivity } from '/imports/schemas/activity'
 import ProjectMembershipEditor from './ProjectMembershipEditor'
@@ -51,7 +52,7 @@ const AssetCard = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
   getDefaultProps() {

@@ -1,6 +1,7 @@
 import cx from 'classnames'
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Label } from 'semantic-ui-react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 

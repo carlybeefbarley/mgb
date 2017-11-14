@@ -1,8 +1,8 @@
-'use strict'
 const reactUpdate = require('react-addons-update')
 
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Button, Segment, Table, Modal, Header, Icon, Dimmer, Loader, Image } from 'semantic-ui-react'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'

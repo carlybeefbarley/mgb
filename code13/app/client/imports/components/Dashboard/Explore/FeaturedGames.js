@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Header } from 'semantic-ui-react'
 
 import GameItems from '/client/imports/components/Assets/GameAsset/GameItems'

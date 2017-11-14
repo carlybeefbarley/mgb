@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Segment, Popup, Button, Dropdown, Label, Divider, TextArea } from 'semantic-ui-react'
 import { FlagTypes, _parseTableNameToTable } from '/imports/schemas/flags'
 import _ from 'lodash'

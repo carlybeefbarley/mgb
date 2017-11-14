@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import '../home.css'
 import { Segment, Header, Icon, Label } from 'semantic-ui-react'
 import UX from '/client/imports/UX'

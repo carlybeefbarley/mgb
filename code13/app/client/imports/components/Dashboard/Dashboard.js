@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Container, Divider, Grid, Header } from 'semantic-ui-react'
 import SkillAction from './Actions/SkillAction'
 import RecentAssetAction from './Actions/RecentAssetAction'

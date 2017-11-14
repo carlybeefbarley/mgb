@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Button, Divider, Header, Message } from 'semantic-ui-react'
 
 import QLink from '/client/imports/routes/QLink'

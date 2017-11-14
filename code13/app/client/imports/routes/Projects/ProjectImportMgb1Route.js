@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import Helmet from 'react-helmet'
 import { Button, Header, Icon, Input, List, Message, Segment } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'

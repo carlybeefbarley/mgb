@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Card, Icon } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import { utilPushTo } from '/client/imports/routes/QLink'

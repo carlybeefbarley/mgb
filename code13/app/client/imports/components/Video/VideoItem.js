@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { List, Segment, Header } from 'semantic-ui-react'
 
 export default class VideoItem extends React.Component {

@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import ChatMessage, { encodeAssetInMsg } from './fpChat-message'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { showToast } from '/client/imports/modules'

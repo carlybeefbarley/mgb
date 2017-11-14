@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillCountsLabel from '/client/imports/components/Skills/SkillCountsLabel'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'

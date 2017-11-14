@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { showToast } from '/client/imports/modules'
 import { Icon, Message } from 'semantic-ui-react'
 

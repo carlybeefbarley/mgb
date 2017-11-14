@@ -1,7 +1,8 @@
 import './SkillsMap.less'
 import _ from 'lodash'
 import cx from 'classnames'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Icon, Message, Popup } from 'semantic-ui-react'
 
 import * as skillsModel from '/imports/Skills/SkillNodes/SkillNodes'

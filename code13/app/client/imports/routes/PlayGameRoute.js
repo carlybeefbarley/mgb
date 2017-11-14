@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
@@ -439,7 +440,7 @@ const PlayGameRoute = React.createClass({
     }
   },
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
   componentDidUpdate() {

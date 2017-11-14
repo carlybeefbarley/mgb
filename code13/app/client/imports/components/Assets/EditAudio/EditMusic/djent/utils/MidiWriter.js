@@ -2,8 +2,6 @@
 // MIDI reference: https://www.csie.ntu.edu.tw/~r92092/ref/midi/
 import { roundToXPlaces } from '../utils/tools'
 ;(function() {
-  'use strict'
-
   var MidiWriter = {}
 
   MidiWriter.constants = {

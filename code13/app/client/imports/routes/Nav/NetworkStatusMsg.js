@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Segment, Header, List, Button } from 'semantic-ui-react'
 
 // Meteor conection status values from https://docs.meteor.com/api/connections.html

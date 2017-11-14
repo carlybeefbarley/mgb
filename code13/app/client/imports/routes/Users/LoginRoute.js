@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import PropTypes from 'prop-types'
 import React from 'react'
 import { Container, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 
@@ -21,7 +22,7 @@ const LoginRoute = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
   checkEmail(e) {

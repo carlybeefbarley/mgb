@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Icon, Menu } from 'semantic-ui-react'
 
 // This is a compact editor for deciding if an Asset is in one or more projects.

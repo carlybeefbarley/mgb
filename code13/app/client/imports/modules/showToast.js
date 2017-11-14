@@ -9,10 +9,10 @@ const toast = (type = 'success', msg, opts = {}) => {
   const { title, timeout = 5000, callback, priority } = opts
 
   if (typeof opts === 'string') {
-    throw new Error(`showToast no longer accepts a string type, call showToast.${type}() instead.`)
+    console.error(`showToast no longer accepts a string type, call showToast.${type}() instead.`)
   }
-  if (!msg) {
-    throw new Error('showToast called with no `msg`:', { msg, timeout })
+  if (!msg && !title) {
+    console.error('showToast called with no `title` and no `msg`:', { msg, title, timeout })
   }
 
   NotificationManager[type](msg, title, timeout, callback, priority)
@@ -69,31 +69,33 @@ showToast.warning = (msg, opts) => toast('warning', msg, opts)
 showToast.error = (msg, opts) => {
   toast(
     'error',
-    <div>
-      <p>{msg}</p>
-      {Meteor.user() && (
-        <p>
-          <Button
-            as={QLink}
-            query={{ _fp: 'chat.G_MGBHELP_' }}
-            basic
-            inverted
-            compact
-            size="tiny"
-            content="#mgb-help"
-          />
-          <Button
-            as={QLink}
-            query={{ _fp: 'chat.G_MGBBUGS_' }}
-            basic
-            inverted
-            compact
-            size="tiny"
-            content="#mgb-bugs"
-          />
-        </p>
-      )}
-    </div>,
+    (msg || Meteor.user()) && (
+      <div>
+        {msg && <p>{msg}</p>}
+        {Meteor.user() && (
+          <p>
+            <Button
+              as={QLink}
+              query={{ _fp: 'chat.G_MGBHELP_' }}
+              basic
+              inverted
+              compact
+              size="tiny"
+              content="#mgb-help"
+            />
+            <Button
+              as={QLink}
+              query={{ _fp: 'chat.G_MGBBUGS_' }}
+              basic
+              inverted
+              compact
+              size="tiny"
+              content="#mgb-bugs"
+            />
+          </p>
+        )}
+      </div>
+    ),
     { timeout: 10000, ...opts },
   )
 }

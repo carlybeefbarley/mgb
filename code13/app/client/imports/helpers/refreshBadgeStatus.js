@@ -1,4 +1,5 @@
 import React from 'react'
+import { Icon, List } from 'semantic-ui-react'
 
 import { showToast } from '/client/imports/modules'
 import { getFriendlyName } from '/imports/schemas/badges'
@@ -13,12 +14,28 @@ const refreshBadgeStatus = () => {
 
     if (!result || result.length === 0) return console.log(`No new badges to award`)
 
-    showToast(
-      <ul>
-        <li>{result.filter(Boolean).map(getFriendlyName)}</li>
-      </ul>,
-      { title: `You got ${result.length > 1 ? 'some badges' : 'a badge'}!` },
-    )
+    const friendlyNames = result.map(getFriendlyName).filter(Boolean)
+
+    let msg
+    let title
+
+    if (friendlyNames.length === 1) {
+      title = (
+        <span>
+          You got the <Icon name="trophy" />
+          {friendlyNames[0]} badge!
+        </span>
+      )
+    } else {
+      title = `You got ${friendlyNames.length} badges!`
+      msg = (
+        <List inverted>
+          {friendlyNames.map(name => <List.Item key={name} icon="trophy" header={name} />)}
+        </List>
+      )
+    }
+
+    showToast(msg, { title, timeout: 10000 })
   })
 }
 

@@ -15,7 +15,7 @@ import Camera from './Camera'
 
 import Plural from '/client/imports/helpers/Plural'
 
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 
@@ -212,7 +212,7 @@ export default class MapArea extends React.Component {
     //
     const parser = new DOMParser()
     const xml = parser.parseFromString(xmlString, 'text/xml')
-    showToast('Sorry: TMX import is not implemented... yet\nTry JSON', 'error')
+    showToast.error('Sorry: TMX import is not implemented... yet\nTry JSON')
 
     this.data = this.xmlToJson(xml)
   }

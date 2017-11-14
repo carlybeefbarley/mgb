@@ -15,7 +15,7 @@ import lamejs from '../lib/lame.all.js'
 import AudioConverter from '../lib/AudioConverter.js'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 
 export default class EditMusic extends React.Component {
   constructor(props) {
@@ -127,7 +127,7 @@ export default class EditMusic extends React.Component {
 
   importMusic(audioObject, saveText) {
     if (!this.hasPermission()) {
-      showToast("You don't have write access to this Asset", 'error')
+      showToast.error("You don't have write access to this Asset")
       return false
     }
 
@@ -276,7 +276,7 @@ export default class EditMusic extends React.Component {
 
   handleSave(saveText, c2) {
     if (!this.hasPermission()) {
-      showToast("You don't have write access to this Asset", 'error')
+      showToast.error("You don't have write access to this Asset")
       return false
     }
     if (!c2) c2 = this.props.asset.content2

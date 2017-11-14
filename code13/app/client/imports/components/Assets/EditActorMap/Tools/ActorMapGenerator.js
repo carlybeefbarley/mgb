@@ -3,7 +3,7 @@ import _ from 'lodash'
 import React from 'react'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import { Popup, Form, Radio, Input, Segment, Button, Loader } from 'semantic-ui-react'
 
 export default class ActorMapGenerator extends React.Component {
@@ -33,7 +33,7 @@ export default class ActorMapGenerator extends React.Component {
     const { data, activeTileset, activeLayer } = this.props
 
     if (!activeTileset) {
-      showToast('Must select an actor tile to generate', 'warning')
+      showToast.warning('Must select an actor tile to generate')
       return
     }
 
@@ -118,9 +118,8 @@ export default class ActorMapGenerator extends React.Component {
     }
 
     if (layer === -1) {
-      showToast(
+      showToast.warning(
         'The selected tile cannot be used with this tool or there is a layer incompatibility issue.',
-        'warning',
       )
       return
     }

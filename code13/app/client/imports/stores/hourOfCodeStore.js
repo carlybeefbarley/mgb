@@ -8,7 +8,7 @@ import {
   getAssetHandlerWithContent2,
   getAssetBySelector,
 } from '/client/imports/helpers/assetFetchers'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 
 /*
 In order to handle cases when user switches steps by going
@@ -228,7 +228,7 @@ class HourOfCodeStore extends Store {
           activityAsset = JSON.parse(activityAssetString)
         } catch (err) {
           console.error('Failed to JSON parse activity asset:', activityAsset)
-          showToast('Cannot load activity: ' + err.reason, 'error')
+          showToast.error('Cannot load activity: ' + err.reason)
           reject(err)
           return
         }

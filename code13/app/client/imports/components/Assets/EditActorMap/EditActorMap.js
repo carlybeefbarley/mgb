@@ -5,7 +5,7 @@ import ActorMapArea from './ActorMapArea.js'
 import MapToolbar from './Tools/ActorMapToolbar.js'
 
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import TileHelper from '../Common/Map/Helpers/TileHelper.js'
 import ActorHelper from '../Common/Map/Helpers/ActorHelper.js'
 

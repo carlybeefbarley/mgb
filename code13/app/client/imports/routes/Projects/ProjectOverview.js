@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Helmet from 'react-helmet'
 import { Grid, Segment, Checkbox, Message, Icon, Header, Button, Popup } from 'semantic-ui-react'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import QLink from '../QLink'
 import { Projects } from '/imports/schemas'
@@ -240,7 +240,7 @@ const ProjectOverview = React.createClass({
 
   handleForkGo() {
     const newProjName = this.refs.forkNameInput.value
-    showToast(`Forking project '${this.data.project.name}' to '${newProjName}..`, 'info')
+    showToast.info(`Forking project '${this.data.project.name}' to '${newProjName}..`)
     this.setState({ isForkPending: true })
     const forkCallParams = {
       sourceProjectName: this.data.project.name,
@@ -248,12 +248,12 @@ const ProjectOverview = React.createClass({
       newProjectName: newProjName,
     }
     Meteor.call('Project.Azzets.fork', forkCallParams, (err, result) => {
-      if (err) showToast(`Could not fork project: ${err}`, 'error')
+      if (err) showToast.error(`Could not fork project: ${err}`)
       else {
         const msg = `Forked project '${this.data.project
           .name}' to '${newProjName}, creating ${result.numNewAssets} new Assets`
         logActivity('project.fork', msg)
-        showToast(msg)
+        showToast.warning(msg)
         // TODO: navigate to /u/${currUser.username}/projects/${result.newProjectId}
       }
       this.setState({ isForkPending: false })
@@ -264,14 +264,14 @@ const ProjectOverview = React.createClass({
   // TODO - some better UI for Add People.
   handleClickUser(userId, userName) {
     if (this.state.isDeletePending) {
-      showToast('Delete is still pending. Please wait..', 'warning')
+      showToast('Delete is still pending. Please wait..')
       return
     }
 
     var project = this.data.project
     var newData = { memberIds: _.union(project.memberIds, [userId]) }
     Meteor.call('Projects.update', project._id, newData, (error, result) => {
-      if (error) showToast(`Could not add member ${userName} to project ${project.name}`, 'error')
+      if (error) showToast.error(`Could not add member ${userName} to project ${project.name}`)
       else
         // guntis - Is it ok that I've added project id, name as asset params?
         logActivity(
@@ -291,7 +291,7 @@ const ProjectOverview = React.createClass({
 
   handleRemoveMemberFromProject(userId, userName) {
     if (this.state.isDeletePending) {
-      showToast('Delete is still pending. Please wait..', 'warning')
+      showToast.warning('Delete is still pending. Please wait..')
       return
     }
 
@@ -299,7 +299,7 @@ const ProjectOverview = React.createClass({
     var newData = { memberIds: _.without(project.memberIds, userId) }
 
     Meteor.call('Projects.update', project._id, newData, (error, result) => {
-      if (error) showToast(`Could not remove member ${userName} from project ${project.name}`, 'error')
+      if (error) showToast.error(`Could not remove member ${userName} from project ${project.name}`)
       else
         logActivity(
           'project.removeMember',
@@ -319,7 +319,7 @@ const ProjectOverview = React.createClass({
   handleMemberLeaveFromProject(userId, userName) {
     var project = this.data.project
     Meteor.call('Projects.leave', project._id, userId, (error, result) => {
-      if (error) showToast(`Member ${userName} could not leave project ${project.name}`, 'error')
+      if (error) showToast.error(`Member ${userName} could not leave project ${project.name}`)
       else
         logActivity('project.leaveMember', `Member ${userName} left from project ${project.name}`, null, {
           dn_ownerName: project.ownerName,
@@ -336,7 +336,7 @@ const ProjectOverview = React.createClass({
     const { project } = this.data
 
     Meteor.call('Projects.update', project._id, changeObj, error => {
-      if (error) showToast(`Could not update project: ${error.reason}`, 'error')
+      if (error) showToast.error(`Could not update project: ${error.reason}`)
       else {
         // Go through all the keys, log completion tags for each
         _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-project-set-field-${k}`))
@@ -347,7 +347,7 @@ const ProjectOverview = React.createClass({
   handleDeleteProject() {
     var { name } = this.data.project
     Meteor.call('Projects.countNonDeletedAssets', name, (error, result) => {
-      if (error) showToast(`Could not count Number of Assets in Project '${name}: ${error.reason}`, 'error')
+      if (error) showToast.error(`Could not count Number of Assets in Project '${name}: ${error.reason}`)
       else this.setState({ confirmDeleteNum: result })
     })
   },
@@ -359,7 +359,7 @@ const ProjectOverview = React.createClass({
 
     Meteor.call('Projects.deleteProjectId', _id, true, (error, result) => {
       if (error) {
-        showToast(`Could not delete Project '${name}: ${error.reason}`, 'error')
+        showToast.error(`Could not delete Project '${name}: ${error.reason}`)
         this.setState({ isDeletePending: false })
       } else {
         logActivity('project.destroy', `Deleted ${result} Project ${name}`)
@@ -391,7 +391,7 @@ const ProjectOverview = React.createClass({
             content="Rename"
             disabled={isDeleteComplete || isDeletePending}
             onClick={() => {
-              showToast('Rename Project has not yet been implemented..', 'warning')
+              showToast.warning('Rename Project has not yet been implemented..')
             }}
           />
         </div>

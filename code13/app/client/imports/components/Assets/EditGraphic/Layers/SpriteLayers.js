@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 
 import Layer from './Layer.js'
 
@@ -136,7 +136,7 @@ export default class SpriteLayers extends React.Component {
 
     let c2 = this.props.content2
     if (c2.frameData.length === 1) {
-      showToast('You cannot delete the only frame', 'error')
+      showToast.error('You cannot delete the only frame')
       return
     }
 
@@ -439,7 +439,7 @@ export default class SpriteLayers extends React.Component {
 
     let c2 = this.props.content2
     if (c2.layerParams.length === 1) {
-      showToast('You cannot delete the only layer', 'error')
+      showToast.error('You cannot delete the only layer')
       return
     }
 

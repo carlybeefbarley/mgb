@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import { Container, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 
 import HeroLayout from '/client/imports/layouts/HeroLayout'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import validate from '/imports/schemas/validate'
 
@@ -114,7 +114,7 @@ const ResetPasswordRoute = React.createClass({
 
       // This is going to cause an auto-login to happen very quickly,
       // and that will also regenerate this React control, so weh ave to do some strange stuff now
-      showToast('Password reset was successful', 'success')
+      showToast.success('Password reset was successful')
       utilPushTo(this.context.urlLocation.query, '/')
       this.setState({ isLoading: false, errors: {}, isComplete: true })
     })

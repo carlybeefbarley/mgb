@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import { Label, Segment, Grid, Icon, Popup } from 'semantic-ui-react'
 
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
@@ -56,13 +56,13 @@ export default class ActorTileset extends React.Component {
 
     // TODO: create nice popup
     if (asset.kind !== 'actor') {
-      showToast('TD: Only Actors are supported in ActorMap ', 'warning')
+      showToast.warning('TD: Only Actors are supported in ActorMap ')
       return
     }
 
     const name = asset.dn_ownerName + ':' + asset.name
     if (_.some(this.props.tilesets, { name })) {
-      showToast(`TD: This Map already contains Asset '${name}'`, 'warning')
+      showToast.warning(`TD: This Map already contains Asset '${name}'`)
       return
     }
 

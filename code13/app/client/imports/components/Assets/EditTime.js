@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 
 // simple time displaying component
 export default class AssetEdit extends React.Component {

@@ -16,7 +16,7 @@ import { logActivity } from '/imports/schemas/activity'
 import { ActivitySnapshots, Activity } from '/imports/schemas'
 import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 import { makeAssetInfoFromAsset } from '/imports/schemas/assets/assets-client'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 
 import WorkState from '/client/imports/components/Controls/WorkState'
 import StableState from '/client/imports/components/Controls/StableState'
@@ -149,10 +149,9 @@ const AssetEditRoute = React.createClass({
   },
 
   revertDataFromForkParent_ResultCallBack(error, result) {
-    if (error)
-      showToast(`Unable to revert content to ForkParent for this asset: '${error.toString()}'`, 'error')
+    if (error) showToast.error(`Unable to revert content to ForkParent for this asset: '${error.toString()}'`)
     else {
-      showToast(`Reverted to Fork Parent's data`, 'success')
+      showToast.success(`Reverted to Fork Parent's data`)
       logActivity('asset.fork.revertTo', "Reverted to Fork Parent's data", null, this.data.asset)
     }
 
@@ -326,9 +325,9 @@ const AssetEditRoute = React.createClass({
 
   // This result object will come from Meteor.call("Azzets.fork")
   forkResultCallback(error, result) {
-    if (error) showToast(`Unable to create a forked copy of this asset: '${error.toString()}'`, 'error')
+    if (error) showToast.error(`Unable to create a forked copy of this asset: '${error.toString()}'`)
     else {
-      showToast(`Loading your new Asset`, 'success')
+      showToast.success(`Loading your new Asset`)
       logActivity('asset.fork.from', 'Forked new asset from this asset', null, this.data.asset)
       logActivity('asset.fork.to', 'Forked this new asset from another asset', null, result.newAssetNoC2)
 
@@ -545,16 +544,15 @@ const AssetEditRoute = React.createClass({
     $('.mgbReadOnlyReminder').transition({ animation: 'flash', duration: '800ms' })
     if (this.props.currUser) {
       if (!this.canUserEditThisAssetIfUnlocked())
-        showToast(
+        showToast.error(
           'You do not have edit permission for this Asset. Ask owner to join their Project, or fork this asset',
           'error',
         )
       else {
-        if (this.canCurrUserChangeCompletion())
-          showToast('This Asset is Locked. Unlock it to enable editing', 'error')
-        else showToast('Asset is Locked. Fork it or ask the owner to Unlock it for editing', 'error')
+        if (this.canCurrUserChangeCompletion()) showToast('This Asset is Locked. Unlock it to enable editing')
+        else showToast.error('Asset is Locked. Fork it or ask the owner to Unlock it for editing')
       }
-    } else showToast('Not logged in. You must Log in to edit Assets', 'error')
+    } else showToast.error('Not logged in. You must Log in to edit Assets')
   }, 5000), // 5000ms is the duration of an error Notification
 
   // See comment at top of file for format of m_deferredSaveObj. We only defer content2 and thumbnail because they are slowest.
@@ -684,7 +682,7 @@ const AssetEditRoute = React.createClass({
         this.canCurrUserEditThisAsset(),
         { text: newText },
         (err, res) => {
-          if (err) showToast(err.reason, 'error')
+          if (err) showToast.error(err.reason)
         },
       )
       logActivity('asset.description', `Update description to "${newText}"`, null, this.data.asset)
@@ -700,7 +698,7 @@ const AssetEditRoute = React.createClass({
       this.canCurrUserEditThisAsset(),
       { metadata: newMetadata },
       (err, res) => {
-        if (err) showToast(err.reason, 'error')
+        if (err) showToast.error(err.reason)
       },
     )
     logActivity('asset.metadata', `Update metadata of asset`, null, this.data.asset)
@@ -715,7 +713,7 @@ const AssetEditRoute = React.createClass({
         this.canCurrUserEditThisAsset(),
         { name: newName },
         (err, res) => {
-          if (err) showToast(err.reason, 'error')
+          if (err) showToast.error(err.reason)
         },
       )
       logActivity('asset.rename', `Rename to "${newName}"`, null, this.data.asset)
@@ -738,7 +736,7 @@ const AssetEditRoute = React.createClass({
         this.canCurrUserEditThisAsset(),
         { assetLicense: newLicense },
         (err, res) => {
-          if (err) showToast(err.reason, 'error')
+          if (err) showToast.error(err.reason)
         },
       )
       logActivity(
@@ -760,7 +758,7 @@ const AssetEditRoute = React.createClass({
         this.canCurrUserEditThisAsset(),
         { workState: newWorkState },
         (err, res) => {
-          if (err) showToast(err.reason, 'error')
+          if (err) showToast.error(err.reason)
         },
       )
       logActivity(
@@ -785,7 +783,7 @@ const AssetEditRoute = React.createClass({
     if (asset.isDeleted !== newIsDeleted) {
       this.setState({ isDeletePending: true })
       Meteor.call('Azzets.update', asset._id, canEd, { isDeleted: newIsDeleted }, (err, res) => {
-        if (err) showToast(err.reason, 'error')
+        if (err) showToast.error(err.reason)
       })
       if (newIsDeleted) logActivity('asset.delete', 'Delete asset', null, asset)
       else logActivity('asset.undelete', 'Undelete asset', null, asset)
@@ -805,7 +803,7 @@ const AssetEditRoute = React.createClass({
 
     if (asset.isCompleted !== newIsCompleted) {
       if (asset.isDeleted === true && newIsCompleted === true) {
-        showToast("Asset is deleted. It doesn't make sense to Lock it", 'error')
+        showToast.error("Asset is deleted. It doesn't make sense to Lock it")
         return
       }
 
@@ -815,7 +813,7 @@ const AssetEditRoute = React.createClass({
         this.canCurrUserChangeCompletion(),
         { isCompleted: newIsCompleted },
         (err, res) => {
-          if (err) showToast(err.reason, 'error')
+          if (err) showToast.error(err.reason)
         },
       )
       if (newIsCompleted) logActivity('asset.stable', 'Locked an asset', null, asset)
@@ -837,7 +835,7 @@ const AssetEditRoute = React.createClass({
       this.canCurrUserEditThisAsset(),
       { projectNames: newChosenProjectNamesArray },
       (err, res) => {
-        if (err) showToast(err.reason, 'error')
+        if (err) showToast.error(err.reason)
       },
     )
 

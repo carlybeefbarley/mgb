@@ -9,7 +9,7 @@ import validate from '/imports/schemas/validate'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { logActivity } from '/imports/schemas/activity'
 import { utilPushTo } from '/client/imports/routes/QLink'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 
 const formStyle = {
   maxWidth: '40em',
@@ -61,7 +61,7 @@ const AssetCreateNew = React.createClass({
   ) {
     const { currUser } = this.props
     if (!currUser) {
-      showToast('You must be logged-in to create a new Asset', 'error')
+      showToast.error('You must be logged-in to create a new Asset')
       return
     }
 
@@ -85,7 +85,7 @@ const AssetCreateNew = React.createClass({
 
     Meteor.call('Azzets.create', newAsset, (error, result) => {
       if (error) {
-        showToast('Failed to create new Asset because: ' + error.reason, 'error')
+        showToast.error('Failed to create new Asset because: ' + error.reason)
         this.setState({ buttonActionPending: false })
       } else {
         newAsset._id = result // So activity log will work

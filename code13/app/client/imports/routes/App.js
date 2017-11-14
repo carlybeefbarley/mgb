@@ -8,6 +8,7 @@ import { createContainer } from 'meteor/react-meteor-data'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
+import { showToast } from '/client/imports/modules'
 import { utilPushTo } from '/client/imports/routes/QLink'
 
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
@@ -106,25 +107,6 @@ export const clearPriorPathsForJoyrideCompletionTags = () => {
 // FlexPanel numbers
 const fpIconColumnWidthInPixels = 60 // The Column of Icons
 const fpFlexPanelContentWidthInPixels = 285 // The cool stuff
-
-// Toast and other warnings
-const _toastTypes = {
-  error: { funcName: 'error', header: 'Error', delay: 7000 },
-  warning: { funcName: 'warning', header: 'Warning', delay: 4000 },
-  info: { funcName: 'info', header: 'Info', delay: 4000 },
-  success: { funcName: 'success', header: 'Success', delay: 4000 },
-}
-
-/**
- * @param {string} content . . If non-null, then display the Notification
- * @param {string} [type='success']
- * @returns {Number} number of Milliseconds the alert will remain for. Can be used for revising _throttle etc. Even returned when content=null
- */
-export const showToast = (content, type = 'success') => {
-  const useType = _toastTypes[type] || _toastTypes['success']
-  if (content) NotificationManager[useType.funcName](content, useType.header, useType.delay)
-  return useType.delay
-}
 
 class AppUI extends React.Component {
   static propTypes = {
@@ -559,7 +541,7 @@ class AppUI extends React.Component {
   handleCompletedSkillTutorial = tutorialSkillPath => {
     console.log('Completed a Skill Tutorial: ', tutorialSkillPath)
     if (!hasSkill(tutorialSkillPath)) {
-      showToast(`Tutorial Completed, Skill '${tutorialSkillPath}' gained`)
+      showToast.error(`Tutorial Completed, Skill '${tutorialSkillPath}' gained`)
       learnSkill(tutorialSkillPath)
 
       // because we don't want award badge now, but wait for next tutorial
@@ -602,7 +584,7 @@ class AppUI extends React.Component {
             loadedSteps = JSON.parse(data)
           } catch (err) {
             const msg = `Unable to parse JSON for tutorial at '${codeUrl}: ${err.toString()}`
-            showToast(msg, 'error')
+            showToast(msg)
             console.error(msg)
             loadedSteps = null
           }
@@ -616,7 +598,7 @@ class AppUI extends React.Component {
           // })
         })
         .catch(err => {
-          showToast(`Unable to start tutorial '${steps}': ${err.toString()}`, 'error')
+          showToast.error(`Unable to start tutorial '${steps}': ${err.toString()}`)
         })
       return
     }

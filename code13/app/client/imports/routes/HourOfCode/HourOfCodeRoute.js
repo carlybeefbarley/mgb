@@ -7,7 +7,7 @@ import { createContainer } from 'meteor/react-meteor-data'
 
 import { Activity } from '/imports/schemas'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { hourOfCodeStore } from '/client/imports/stores'
 import Hotjar from '/client/imports/helpers/hotjar'
@@ -58,7 +58,7 @@ class HourOfCodeRoute extends Component {
       Accounts.createUser(guestUser, (error, id) => {
         if (error) {
           isCreatingGuest = false
-          return showToast('Could not create user:' + error.reason, 'error')
+          return showToast.error('Could not create user:' + error.reason)
         }
 
         console.log('Created guest user:', guestUser)
@@ -68,7 +68,7 @@ class HourOfCodeRoute extends Component {
         Meteor.call('Projects.create', newProject, (error, projectId) => {
           if (error) {
             isCreatingGuest = false
-            return showToast('Could not create project:' + error.reason, 'error')
+            return showToast.error('Could not create project:' + error.reason)
           }
 
           console.log('Created project:', projectId)
@@ -77,7 +77,7 @@ class HourOfCodeRoute extends Component {
             if (!_.isArray(_.get(activityAsset, 'steps'))) {
               isCreatingGuest = false
               console.error('Activity asset does not have valid steps:', activityAsset)
-              return showToast('Cannot load activity: ' + err.reason, 'error')
+              return showToast.error('Cannot load activity: ' + err.reason)
             }
 
             const azzetCreate = newAsset => {
@@ -127,7 +127,7 @@ class HourOfCodeRoute extends Component {
               .catch(error => {
                 isCreatingGuest = false
                 console.error('Cannot create asset:', error)
-                showToast('Cannot create asset: ' + error.reason, 'error')
+                showToast.error('Cannot create asset: ' + error.reason)
               })
           })
         })

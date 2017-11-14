@@ -10,7 +10,7 @@ import { logActivity } from '/imports/schemas/activity'
 import ProjectMembershipEditor from './ProjectMembershipEditor'
 import WorkState from '/client/imports/components/Controls/WorkState'
 import ChallengeState from '/client/imports/components/Controls/ChallengeState'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
@@ -264,7 +264,7 @@ const AssetCard = React.createClass({
    * @param {any} err
    */
   _handleMeteorErrResp(err) {
-    if (err) showToast(err.reason, 'error')
+    if (err) showToast.error(err.reason)
   },
 
   handleChangeChosenProjectNames(newChosenProjectNamesArray) {

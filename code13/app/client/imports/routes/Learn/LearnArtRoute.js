@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import '../home.css'
 import './learnRoute.css'
 import { utilPushTo } from '../QLink'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import { Divider, Grid, Header, Label } from 'semantic-ui-react'
 import { logActivity } from '/imports/schemas/activity'
 import SkillLinkCard from '/client/imports/components/Learn/SkillLinkCard'
@@ -54,7 +54,7 @@ const handleDoItAgainClick = (e, key, currUser) => {
 
 export const StartArtRoute = (key, currUser, newTab) => {
   if (!currUser) {
-    showToast('You must be logged in to use these tutorials', 'info')
+    showToast.info('You must be logged in to use these tutorials')
     return
   }
 
@@ -93,7 +93,7 @@ export const StartArtRoute = (key, currUser, newTab) => {
 
           Meteor.call('Azzets.create', newAsset, (error, result) => {
             if (error) {
-              showToast('cannot create Asset because: ' + error.reason, 'error')
+              showToast.error('cannot create Asset because: ' + error.reason)
               return
             }
             newAsset._id = result // So activity log will work

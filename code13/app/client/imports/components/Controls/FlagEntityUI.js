@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react'
 import { Segment, Popup, Button, Dropdown, Label, Divider, TextArea } from 'semantic-ui-react'
 import { FlagTypes, _parseTableNameToTable } from '/imports/schemas/flags'
 import _ from 'lodash'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 
 class FlagEntity extends React.Component {
   state = {
@@ -117,8 +117,8 @@ const _doReportEntity = (currUser, entity, tableCollection, selectedTags, userCo
     }
   }
   Meteor.call('Flags.create', reportedEntity, data, (error, result) => {
-    if (error) showToast(`Could not flag: ${error.reason}`, 'error')
-    else showToast('Flagged successfully', 'success')
+    if (error) showToast.error(`Could not flag: ${error.reason}`)
+    else showToast.success('Flagged successfully')
   })
 }
 export default FlagEntity

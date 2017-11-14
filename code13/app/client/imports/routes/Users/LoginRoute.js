@@ -8,7 +8,7 @@ import LoginLinks from './LoginLinks'
 import { utilPushTo } from '../QLink'
 import { logActivity } from '/imports/schemas/activity'
 import validate from '/imports/schemas/validate'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 
 const LoginRoute = React.createClass({

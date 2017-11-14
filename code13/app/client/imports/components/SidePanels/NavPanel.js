@@ -4,7 +4,7 @@ import { Button, Menu, Image, Icon } from 'semantic-ui-react'
 import NavPanelItem from './NavPanelItem'
 
 // imports to enable logout functionality
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import SaveMyWorkButton from '/client/imports/components/HourOfCode/SaveMyWorkButton'
 import { logActivity } from '/imports/schemas/activity'
@@ -338,7 +338,7 @@ const _doLogout = () => {
 
   Meteor.logout(error => {
     if (error) {
-      showToast(`Logout failed: '${error.toString()}'.  Refresh and try again.`, 'error')
+      showToast.error(`Logout failed: '${error.toString()}'.  Refresh and try again.`)
     } else {
       utilPushTo(null, '/')
     }

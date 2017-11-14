@@ -15,7 +15,7 @@ import SkillNodes, { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNod
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import { learnSkill } from '/imports/schemas/skills'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 
 import '../editcode.css'
 

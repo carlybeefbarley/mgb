@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ChatMessage, { encodeAssetInMsg } from './fpChat-message'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import { Chats } from '/imports/schemas'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import { Button, Comment, Divider, Form, Header, Icon } from 'semantic-ui-react'
@@ -166,7 +166,7 @@ const ChatMessagesView = React.createClass({
     this.setState({ isMessagePending: true })
     ChatSendMessageOnChannelName(channelName, messageValue, (error, result) => {
       this.setState({ isMessagePending: false })
-      if (error) showToast('Cannot send message because: ' + error.reason, 'error')
+      if (error) showToast.error('Cannot send message because: ' + error.reason)
       else {
         this.setState({ messageValue: '' })
         setLastReadTimestampForChannel(this.context.settings, channelName, result.chatTimestamp)

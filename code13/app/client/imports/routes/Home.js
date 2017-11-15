@@ -35,26 +35,5 @@ const HomeRoute = ({ currUser }) => {
 HomeRoute.propTypes = {
   currUser: PropTypes.object, // Can be null/undefined
 }
-HomeRoute.responsiveRules = {
-  // Note that this could also be a function that returns this kind of object
-  noColumns: {
-    minWidth: 0,
-    maxWidth: 250,
-    respData: { columns: -1 },
-  },
-  oneColumn: {
-    minWidth: 251,
-    maxWidth: 650,
-    respData: { columns: 1 },
-  },
-  TwoColumn: {
-    minWidth: 651,
-    maxWidth: 850,
-    respData: { columns: 2 },
-  },
-  ThreeColumn: {
-    minWidth: 851,
-    respData: { columns: 3 },
-  },
-}
+
 export default HomeRoute

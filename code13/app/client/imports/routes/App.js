@@ -9,6 +9,7 @@ import { createContainer } from 'meteor/react-meteor-data'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
+import { responsiveComponent } from '/client/imports/hocs'
 import refreshBadgeStatus from '/client/imports/helpers/refreshBadgeStatus'
 import { showToast } from '/client/imports/modules'
 import { utilPushTo } from '/client/imports/routes/QLink'
@@ -112,6 +113,7 @@ const fpFlexPanelContentWidthInPixels = 285 // The cool stuff
 
 class AppUI extends React.Component {
   static propTypes = {
+    ...responsiveComponent.propTypes,
     params: PropTypes.object,
     query: PropTypes.object,
     routes: PropTypes.array,
@@ -338,8 +340,7 @@ class AppUI extends React.Component {
 
   render = () => {
     const {
-      respData,
-      respWidth,
+      responsive,
       params,
       loading,
       currUser,
@@ -364,12 +365,14 @@ class AppUI extends React.Component {
     //   (or fixed footer for Phone-size PortraitUI)
     const flexPanelQueryValue = query[urlMaker.queryParams('app_flexPanel')]
     const showFlexPanel = !!flexPanelQueryValue && flexPanelQueryValue[0] !== '-'
-    const flexPanelWidthWhenExpanded = respData.fpReservedRightSidebarWidth
+    const flexPanelWidthWhenExpanded = responsive.data.fpReservedRightSidebarWidth
       ? `${fpIconColumnWidthInPixels + fpFlexPanelContentWidthInPixels}px`
       : `${fpFlexPanelContentWidthInPixels}px`
-    const flexPanelWidth = showFlexPanel ? flexPanelWidthWhenExpanded : respData.fpReservedRightSidebarWidth
+    const flexPanelWidth = showFlexPanel
+      ? flexPanelWidthWhenExpanded
+      : responsive.data.fpReservedRightSidebarWidth
 
-    const mainAreaAvailableWidth = respWidth - parseInt(flexPanelWidth)
+    const mainAreaAvailableWidth = responsive.width - parseInt(flexPanelWidth)
 
     // The main Panel:  Outer is for the scroll container; inner is for content
     var mainPanelOuterDivSty = {
@@ -377,7 +380,7 @@ class AppUI extends React.Component {
       display: 'flex',
       flexDirection: 'column',
       top: 0,
-      bottom: respData.fpReservedFooterHeight,
+      bottom: responsive.data.fpReservedFooterHeight,
       left: 0,
       right: `${isHocActivity ? 0 : flexPanelWidth}`,
       marginBottom: '0px',
@@ -421,7 +424,7 @@ class AppUI extends React.Component {
         <div>
           {!isHocActivity && (
             <FlexPanel
-              fpIsFooter={!!respData.footerTabMajorNav}
+              fpIsFooter={!!responsive.data.footerTabMajorNav}
               joyrideSteps={this.state.joyrideSteps}
               joyrideSkillPathTutorial={this.state.joyrideSkillPathTutorial}
               joyrideCurrentStepNum={this.state.joyrideCurrentStepNum}
@@ -814,25 +817,23 @@ const App = createContainer(({ params, location }) => {
   }
 }, AppUI)
 
-App.responsiveRules = {
-  portraitPhoneUI: {
-    maxWidth: 420,
-    respData: {
-      footerTabMajorNav: true, // |__| flexPanel as footer
-      fpReservedFooterHeight: '60px',
-      fpReservedRightSidebarWidth: '0px',
+export default _.flow(
+  responsiveComponent({
+    portraitPhoneUI: {
+      maxWidth: 420,
+      data: {
+        footerTabMajorNav: true, // |__| flexPanel as footer
+        fpReservedFooterHeight: '60px',
+        fpReservedRightSidebarWidth: '0px',
+      },
     },
-  },
-  desktopUI: {
-    minWidth: 421,
-    respData: {
-      footerTabMajorNav: false, //  flexPanel as right sidebar =|
-      fpReservedFooterHeight: '0px',
-      fpReservedRightSidebarWidth: `${fpIconColumnWidthInPixels}px`,
+    desktopUI: {
+      minWidth: 421,
+      data: {
+        footerTabMajorNav: false, //  flexPanel as right sidebar =|
+        fpReservedFooterHeight: '0px',
+        fpReservedRightSidebarWidth: `${fpIconColumnWidthInPixels}px`,
+      },
     },
-  },
-}
-
-import ResponsiveComponent from '/client/imports/ResponsiveComponent'
-
-export default ResponsiveComponent(App)
+  }),
+)(App)

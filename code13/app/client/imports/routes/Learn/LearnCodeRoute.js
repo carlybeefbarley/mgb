@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import '../home.css'
-import './learnRoute.css'
 import QLink from '../QLink'
 import { Divider, Grid, Card, Header, Icon } from 'semantic-ui-react'
-import UX from '/client/imports/UX'
+import MascotImage from '/client/imports/components/MascotImage/MascotImage'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 
 const learnCodeItems = [
@@ -85,10 +84,7 @@ const LearnCodeRoute = ({ currUser, isSuperAdmin, params }, context) => (
             query={area.query}
           >
             <Card.Content>
-              <div
-                className="learnThumbnail"
-                style={{ backgroundImage: `url("${UX.makeMascotImgLink(area.mascot)}")` }}
-              />
+              <MascotImage name={area.mascot} />
               <Header as="h2" style={headerStyle}>
                 <Icon name={area.icon} />&nbsp;{area.content}
               </Header>

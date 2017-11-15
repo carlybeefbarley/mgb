@@ -4,10 +4,9 @@ import '../home.css'
 import QLink from '../QLink'
 import '../GetStarted.css'
 import { Card, Divider, Grid, Header, Icon, Label } from 'semantic-ui-react'
-import UX from '/client/imports/UX'
+import MascotImage from '/client/imports/components/MascotImage/MascotImage'
 import { skillAreaItems } from '/imports/Skills/SkillAreas'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
-import './learnRoute.css'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
@@ -45,10 +44,7 @@ const LearnSkillsRoute = ({ currUser, isSuperAdmin }, context) => (
             to={_linkOverrides[area.tag] ? _linkOverrides[area.tag] : `/learn/skills/${area.tag}`}
           >
             <Card.Content>
-              <div
-                className="learnThumbnail"
-                style={{ backgroundImage: `url("${UX.makeMascotImgLink(area.mascot)}")` }}
-              />
+              <MascotImage name={area.mascot} />
               <Header as="h2" style={headerStyle}>
                 <Icon name={area.icon} />&nbsp;{area.title}
               </Header>

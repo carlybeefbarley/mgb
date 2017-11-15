@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Component } from 'react'
 import { Container, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 
 import { stopCurrentTutorial } from '/client/imports/routes/App'
@@ -12,20 +12,18 @@ import validate from '/imports/schemas/validate'
 import { showToast } from '/client/imports/modules'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 
-const LoginRoute = React.createClass({
-  getInitialState() {
-    return {
-      errors: {},
-      isLoading: false,
-      formData: {},
-    }
-  },
-
-  contextTypes: {
+class LoginRoute extends Component {
+  static contextTypes = {
     urlLocation: PropTypes.object,
-  },
+  }
 
-  checkEmail(e) {
+  state = {
+    errors: {},
+    isLoading: false,
+    formData: {},
+  }
+
+  checkEmail = e => {
     const email = e.target.value
 
     // don't clear existing errors
@@ -42,7 +40,68 @@ const LoginRoute = React.createClass({
       const message = response ? null : `'${email}' is not registered`
       this.setState({ errors: { ...this.state.errors, email: message } })
     })
-  },
+  }
+
+  handleChange = e => {
+    const { name, value } = e.target
+
+    this.setState((prevState, props) => ({
+      errors: {
+        ...prevState.errors,
+        // if a field had an error, provide continual validation
+        [name]: prevState.errors[name] ? validate[name + 'WithReason'](value) : null,
+      },
+      formData: { ...prevState.formData, [name]: value },
+    }))
+  }
+
+  doLogin = () => {
+    const { email, password } = this.state.formData
+
+    this.setState((prevState, props) => ({
+      isLoading: true,
+      errors: { ...prevState.errors, server: null },
+    }))
+
+    Meteor.loginWithPassword(email.trim(), password, error => {
+      if (error) {
+        this.setState((prevState, props) => ({
+          isLoading: false,
+          errors: { ...prevState.errors, server: error.reason },
+        }))
+      } else {
+        var userName = Meteor.user().profile.name
+        logActivity('user.login', `Logging in "${userName}"`, null, null)
+        stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
+        utilPushTo(this.context.urlLocation.query, '/dashboard')
+        showToast('Login ok!  Welcome back')
+
+        // analytics.identify(Meteor.user()._id, {
+        //   name: userName,
+        //   email: Meteor.user().emails[0].address
+        // })
+        // analytics.track('Logged in')
+        // analytics.page('/login')
+        ga('send', 'pageview', '/login')
+      }
+    })
+  }
+
+  handleSubmit = e => {
+    const { email, password } = this.state.formData
+
+    const errors = {
+      email: validate.emailWithReason(email),
+      password: validate.passwordWithReason(password),
+      server: null,
+    }
+
+    if (_.some(errors)) {
+      return this.setState({ loading: false, errors })
+    }
+
+    this.doLogin(email, password)
+  }
 
   render() {
     const { isLoading, errors, formData } = this.state
@@ -97,68 +156,7 @@ const LoginRoute = React.createClass({
         }
       />
     )
-  },
-
-  handleChange(e) {
-    const { name, value } = e.target
-
-    this.setState((prevState, props) => ({
-      errors: {
-        ...prevState.errors,
-        // if a field had an error, provide continual validation
-        [name]: prevState.errors[name] ? validate[name + 'WithReason'](value) : null,
-      },
-      formData: { ...prevState.formData, [name]: value },
-    }))
-  },
-
-  doLogin() {
-    const { email, password } = this.state.formData
-
-    this.setState((prevState, props) => ({
-      isLoading: true,
-      errors: { ...prevState.errors, server: null },
-    }))
-
-    Meteor.loginWithPassword(email.trim(), password, error => {
-      if (error) {
-        this.setState((prevState, props) => ({
-          isLoading: false,
-          errors: { ...prevState.errors, server: error.reason },
-        }))
-      } else {
-        var userName = Meteor.user().profile.name
-        logActivity('user.login', `Logging in "${userName}"`, null, null)
-        stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
-        utilPushTo(this.context.urlLocation.query, '/dashboard')
-        showToast('Login ok!  Welcome back')
-
-        // analytics.identify(Meteor.user()._id, {
-        //   name: userName,
-        //   email: Meteor.user().emails[0].address
-        // })
-        // analytics.track('Logged in')
-        // analytics.page('/login')
-        ga('send', 'pageview', '/login')
-      }
-    })
-  },
-
-  handleSubmit(e) {
-    const { email, password } = this.state.formData
-
-    const errors = {
-      email: validate.emailWithReason(email),
-      password: validate.passwordWithReason(password),
-      server: null,
-    }
-
-    if (_.some(errors)) {
-      return this.setState({ loading: false, errors })
-    }
-
-    this.doLogin(email, password)
-  },
-})
+  }
+}
 
 export default LoginRoute

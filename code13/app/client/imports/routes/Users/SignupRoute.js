@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Component } from 'react'
 import { Container, Divider, Message, Segment, Header, Form, Grid, Image } from 'semantic-ui-react'
 
 import { stopCurrentTutorial } from '/client/imports/routes/App'
@@ -15,20 +15,18 @@ const mascotColumnStyle = {
   pointerEvents: 'none',
 }
 
-const SignupRoute = React.createClass({
-  contextTypes: {
+class SignupRoute extends Component {
+  static contextTypes = {
     urlLocation: PropTypes.object,
-  },
+  }
 
-  getInitialState() {
-    return {
-      errors: {},
-      formData: {},
-      isLoading: false,
-    }
-  },
+  state = {
+    errors: {},
+    formData: {},
+    isLoading: false,
+  }
 
-  checkEmail(e) {
+  checkEmail = e => {
     const email = e.target.value
 
     // don't clear existing errors
@@ -45,9 +43,9 @@ const SignupRoute = React.createClass({
       const message = response ? `'${email}' is taken` : null
       this.setState({ errors: { ...this.state.errors, email: message } })
     })
-  },
+  }
 
-  checkUserName(e) {
+  checkUserName = e => {
     const username = e.target.value
 
     // don't clear existing errors
@@ -64,7 +62,70 @@ const SignupRoute = React.createClass({
       const message = response ? `'${username}' is taken` : null
       this.setState({ errors: { ...this.state.errors, username: message } })
     })
-  },
+  }
+
+  handleChange = e => {
+    const { name, value } = e.target
+    this.setState((prevState, props) => ({
+      errors: {
+        ...prevState.errors,
+        // if a field had an error, provide continual validation
+        [name]: prevState.errors[name] ? validate[name + 'WithReason'](value) : null,
+      },
+      formData: { ...prevState.formData, [name]: value },
+    }))
+  }
+
+  handleSubmit = event => {
+    const { formData = {} } = this.state
+    const { email, username, password } = formData
+    const errors = {
+      email: validate.emailWithReason(email),
+      username: validate.usernameWithReason(username),
+      password: validate.passwordWithReason(password),
+    }
+
+    if (_.some(errors)) {
+      return this.setState({ errors })
+    }
+
+    this.setState({ isLoading: true, errors })
+    Accounts.createUser(
+      {
+        // Note that there is server-side validation in /server/CreateUser.js
+        email,
+        username, // Fixup mshell.sh code was:   _.each(Users.find().fetch(), function (u) { try { Accounts.setUsername( u._id,  u.profile.name ) } catch (e) { console.log('dupe:',u._id)} } )
+        password,
+        profile: {
+          name: username,
+        },
+      },
+      error => {
+        if (error) {
+          console.error(error)
+          return this.setState({
+            isLoading: false,
+            errors: { server: error.reason || 'Server Error while creating account' },
+          })
+        }
+
+        Meteor.call('User.sendSignUpEmail', email)
+        logActivity('user.join', `New user "${username}"`, null, null)
+        stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
+        utilPushTo(this.context.urlLocation.query, '/dashboard')
+
+        // analytics.identify(Meteor.user()._id, {
+        //   name: Meteor.user().profile.name,
+        //   email: Meteor.user().emails[0].address
+        // })
+        // analytics.track('Signed up')
+        // analytics.page('/signup')
+        // showToast("Sign up ok!  Welcome aboard")
+        ga('send', 'pageview', '/signup')
+        ga('send', 'pageview', '/login')
+      },
+    )
+  }
 
   render() {
     const { isLoading, errors, formData } = this.state
@@ -139,70 +200,7 @@ const SignupRoute = React.createClass({
         }
       />
     )
-  },
-
-  handleChange(e) {
-    const { name, value } = e.target
-    this.setState((prevState, props) => ({
-      errors: {
-        ...prevState.errors,
-        // if a field had an error, provide continual validation
-        [name]: prevState.errors[name] ? validate[name + 'WithReason'](value) : null,
-      },
-      formData: { ...prevState.formData, [name]: value },
-    }))
-  },
-
-  handleSubmit(event) {
-    const { formData = {} } = this.state
-    const { email, username, password } = formData
-    const errors = {
-      email: validate.emailWithReason(email),
-      username: validate.usernameWithReason(username),
-      password: validate.passwordWithReason(password),
-    }
-
-    if (_.some(errors)) {
-      return this.setState({ errors })
-    }
-
-    this.setState({ isLoading: true, errors })
-    Accounts.createUser(
-      {
-        // Note that there is server-side validation in /server/CreateUser.js
-        email,
-        username, // Fixup mshell.sh code was:   _.each(Users.find().fetch(), function (u) { try { Accounts.setUsername( u._id,  u.profile.name ) } catch (e) { console.log('dupe:',u._id)} } )
-        password,
-        profile: {
-          name: username,
-        },
-      },
-      error => {
-        if (error) {
-          console.error(error)
-          return this.setState({
-            isLoading: false,
-            errors: { server: error.reason || 'Server Error while creating account' },
-          })
-        }
-
-        Meteor.call('User.sendSignUpEmail', email)
-        logActivity('user.join', `New user "${username}"`, null, null)
-        stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
-        utilPushTo(this.context.urlLocation.query, '/dashboard')
-
-        // analytics.identify(Meteor.user()._id, {
-        //   name: Meteor.user().profile.name,
-        //   email: Meteor.user().emails[0].address
-        // })
-        // analytics.track('Signed up')
-        // analytics.page('/signup')
-        // showToast("Sign up ok!  Welcome aboard")
-        ga('send', 'pageview', '/signup')
-        ga('send', 'pageview', '/login')
-      },
-    )
-  },
-})
+  }
+}
 
 export default SignupRoute

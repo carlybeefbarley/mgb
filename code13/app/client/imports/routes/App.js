@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Message } from 'semantic-ui-react'
+import { Message, Icon } from 'semantic-ui-react'
 import { browserHistory } from 'react-router'
 import Helmet from 'react-helmet'
 import { createContainer } from 'meteor/react-meteor-data'
@@ -9,13 +9,14 @@ import { createContainer } from 'meteor/react-meteor-data'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
+import refreshBadgeStatus from '/client/imports/helpers/refreshBadgeStatus'
 import { showToast } from '/client/imports/modules'
 import { utilPushTo } from '/client/imports/routes/QLink'
 
 import Joyride, { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import '/client/imports/Joyride/react-joyride-compiled.css'
 
-import { makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
+import { getFriendlyName, makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
 import { hasSkill, learnSkill } from '/imports/schemas/skills'
 
 import { Activity, Projects, Settings, Sysvars, Skills, Users } from '/imports/schemas'
@@ -542,18 +543,18 @@ class AppUI extends React.Component {
   handleCompletedSkillTutorial = tutorialSkillPath => {
     console.log('Completed a Skill Tutorial: ', tutorialSkillPath)
     if (!hasSkill(tutorialSkillPath)) {
-      showToast.error(`Tutorial Completed, Skill '${tutorialSkillPath}' gained`)
+      showToast(
+        <span>
+          You just gained the <Icon name="plus circle" />
+          {getFriendlyName(tutorialSkillPath)} skill.
+        </span>,
+        { title: 'Congrats!' },
+      )
       learnSkill(tutorialSkillPath)
 
       // because we don't want award badge now, but wait for next tutorial
       if (tutorialSkillPath != 'getStarted.profile.avatar') {
-        Meteor.call('User.refreshBadgeStatus', (err, result) => {
-          if (err) console.log('User.refreshBadgeStatus error', err)
-          else {
-            if (!result || result.length === 0) console.log(`No New badges awarded`)
-            else showToast(`New badges awarded: ${result.join(', ')} `)
-          }
-        })
+        refreshBadgeStatus()
       }
     }
   }

@@ -1,13 +1,12 @@
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 import '../home.css'
 import QLink from '../QLink'
 import '../GetStarted.css'
-import { Button, Divider, Grid, Header, Icon, Label, Message } from 'semantic-ui-react'
-import SkillLinkCard from '/client/imports/components/Learn/SkillLinkCard'
+import { Button, Divider, Grid, Header, Icon, Message } from 'semantic-ui-react'
+import { ProgressLabel, SkillLinkCard } from '/client/imports/components/Learn'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
-import SkillNodes, { countMaxUserSkills, getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
+import { countMaxUserSkills, getFriendlyName, getStartedItems } from '/imports/Skills/SkillNodes/SkillNodes'
 import { getSkillNodeStatus, countCurrentUserSkills } from '/imports/schemas/skills'
 import { startSkillPathTutorial } from '/client/imports/routes/App'
 
@@ -22,37 +21,12 @@ const OfferLoginTutorial = () => (
   </QLink>
 )
 
-const _gsSkillNodeName = 'getStarted'
-const _maxGsSkillCount = countMaxUserSkills(_gsSkillNodeName + '.')
-const gsSkills = SkillNodes[_gsSkillNodeName] // shorthand
-const gsItems = [
-  { node: gsSkills.profile, mascot: 'arcade_player' },
-  { node: gsSkills.chat, mascot: 'slimy2' },
-  { node: gsSkills.play, mascot: 'whale' },
-  { node: gsSkills.assetsBasics, mascot: 'ideaguy' },
-  { node: gsSkills.projects, mascot: 'team' },
-  { node: gsSkills.nonCodeGame, mascot: 'duck' },
-  //  { node: gsSkills.codeGame, mascot: 'bigguy' }
-  // { node: gsSkills.assetsAdvanced,  mascot: 'ideaguy'      },
-  // { node: gsSkills.learn,           mascot: 'MgbLogo'      }
-]
-
-// This is the   1 / n    box at the top-right of each skill box
-const ProgressLabel = ({ subSkillsComplete, subSkillTotal }) => (
-  <Label attached="top right">
-    {subSkillsComplete} / {subSkillTotal}
-  </Label>
-)
-
-ProgressLabel.propTypes = {
-  subSkillsComplete: PropTypes.number,
-  subSkillTotal: PropTypes.number,
-}
+const _maxGsSkillCount = countMaxUserSkills('getStarted.')
 
 const _calcDefaultNextTutorialSkillPath = (currUser, userSkills) => {
   var skillPath = null
-  for (var i = 0; i < gsItems.length; i += 1) {
-    const area = gsItems[i]
+  for (var i = 0; i < getStartedItems.length; i += 1) {
+    const area = getStartedItems[i]
     const { key } = area.node.$meta
     const skillStatus = getSkillNodeStatus(currUser, userSkills, key)
     if (skillStatus.todoSkills.length !== 0) {
@@ -103,7 +77,7 @@ export const StartDefaultNextTutorial = ({ currUser, userSkills }) => {
 }
 
 const LearnGetStartedRoute = ({ currUser, isSuperAdmin }, context) => {
-  const numGsSkills = countCurrentUserSkills(context.skills, _gsSkillNodeName + '.') || 0
+  const numGsSkills = countCurrentUserSkills(context.skills, 'getStarted.') || 0
 
   return (
     <Grid container columns="1">
@@ -136,7 +110,7 @@ const LearnGetStartedRoute = ({ currUser, isSuperAdmin }, context) => {
           />
         )}
 
-        {gsItems.map(area => {
+        {getStartedItems.map(area => {
           const skillStatus = getSkillNodeStatus(currUser, context.skills, area.node.$meta.key)
           return (
             <SkillLinkCard

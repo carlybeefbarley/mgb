@@ -4,11 +4,11 @@ import React from 'react'
 import '../home.css'
 import { utilPushTo } from '../QLink'
 import { showToast } from '/client/imports/modules'
-import { Divider, Grid, Header, Label } from 'semantic-ui-react'
+import { Divider, Grid, Header } from 'semantic-ui-react'
 import { logActivity } from '/imports/schemas/activity'
-import SkillLinkCard from '/client/imports/components/Learn/SkillLinkCard'
+import { ProgressLabel, SkillLinkCard } from '/client/imports/components/Learn'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
-import SkillNodes, { countMaxUserSkills } from '/imports/Skills/SkillNodes/SkillNodes'
+import { artItems, countMaxUserSkills } from '/imports/Skills/SkillNodes/SkillNodes'
 import { getSkillNodeStatus, countCurrentUserSkills } from '/imports/schemas/skills'
 
 import { getAssetBySelector } from '/client/imports/helpers/assetFetchers'
@@ -17,27 +17,7 @@ import { mgbAjax } from '/client/imports/helpers/assetFetchers'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-const _artSkillNodeName = 'art'
-const _maxArtSkillCount = countMaxUserSkills(_artSkillNodeName + '.')
-const artSkills = SkillNodes[_artSkillNodeName] // shorthand
-const artItems = [
-  { key: 'lineArt', node: artSkills.lineArt, mascot: 'arcade_player' },
-  { key: 'colors', node: artSkills.colors, mascot: 'rpgGuy' },
-  { key: 'shadesAndTextures', node: artSkills.shadesAndTextures, mascot: 'slimy2' },
-  { key: 'gameSprites', node: artSkills.gameSprites, mascot: 'game_runner' },
-]
-
-// This is the   1 / n    box at the top-right of each skill box
-const ProgressLabel = ({ subSkillsComplete, subSkillTotal }) => (
-  <Label attached="top right">
-    {subSkillsComplete} / {subSkillTotal}
-  </Label>
-)
-
-ProgressLabel.propTypes = {
-  subSkillsComplete: PropTypes.number,
-  subSkillTotal: PropTypes.number,
-}
+const _maxArtSkillCount = countMaxUserSkills('art.')
 
 const handleClick = (e, key, currUser, todoSkills) => {
   // cards with links already have a path, skip on to
@@ -114,7 +94,7 @@ const openUrl = (url, newTab) => {
 }
 
 const LearnArtRoute = ({ currUser, isSuperAdmin }, context) => {
-  const numArtSkills = countCurrentUserSkills(context.skills, _artSkillNodeName + '.') || 0
+  const numArtSkills = countCurrentUserSkills(context.skills, 'art.') || 0
 
   return (
     <Grid container columns="1">

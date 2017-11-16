@@ -292,9 +292,8 @@ class PlayCodeGame extends React.Component {
 
 //         src='/api/asset/code/bundle/AXhwYgg93roEsLCBJ'>
 
-const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb, availableWidth }) => {
+const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb, availableWidth, isMgb1Game }) => {
   if (!_mapName || _mapName === '') return <ThingNotFound type="ActorGame" id="&quot;&quot;" />
-
   const colonPlace = _mapName.search(':')
   const [ownerName, mapName] =
     colonPlace == -1
@@ -307,6 +306,7 @@ const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb, availableWidth })
       ownerName={ownerName}
       startMapName={mapName}
       isPaused={false}
+      isMgb1Game={isMgb1Game}
       playCountIncFn={incrementPlayCountCb}
       fetchAssetByUri={uri => fetchAssetByUri(uri)}
     />
@@ -360,6 +360,7 @@ const PlayGame = ({ game, user, incrementPlayCountCb, availableWidth }) => {
             owner={user}
             incrementPlayCountCb={incrementPlayCountCb}
             availableWidth={availableWidth}
+            isMgb1Game={game.text.startsWith('Imported from MGB1')}
           />
         </div>
       )

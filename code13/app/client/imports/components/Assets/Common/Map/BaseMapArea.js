@@ -615,7 +615,7 @@ export default class MapArea extends React.Component {
     this.lastEvent = null
     if (this.refs.mapElement) {
       this.refs.mapElement.style.transition = '0.3s'
-      this.refs.positionInfo.forceUpdate()
+      this.refs.positionInfo && this.refs.positionInfo.forceUpdate()
 
       // Joyride completion tags
       const editMode = this.props.getMode()

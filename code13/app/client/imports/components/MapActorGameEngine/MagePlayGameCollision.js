@@ -59,7 +59,7 @@ const MagePlayGameCollision = {
                   var h2 = a2._image.height - 1 + a2.renderOffsetCellsHeight * MgbSystem.tileMinHeight
                   if ((y1 >= y2 && y1 < y2 + h2) || (y2 >= y1 && y2 < y1 + h1)) {
                     // OK, now let's look really closely..
-                    if (this.pixelLevelHitTest(a1._image, x1, y1, a2._image, x2, y2)) {
+                    if (this.pixelLevelHitTest(a1._image, x1, y1, w1, h1, a2._image, x2, y2, w2, h2)) {
                       if (AA2 == AA_player_idx)
                         hits.push(new ActorCollision(AA2, AA1)) // Player is always first item in a collision pair
                       else hits.push(new ActorCollision(AA1, AA2))
@@ -87,103 +87,97 @@ const MagePlayGameCollision = {
     return hits
   },
 
-  // Implementation from http://www.playmycode.com/blog/2011/08/javascript-per-pixel-html5-canvas-image-collision-detection/
-  pixelLevelHitTest(image1, x1, y1, image2, x2, y2) {
-    // Not used for now
-    return true
-
-    /*
+  // Modified implementation of http://www.playmycode.com/blog/2011/08/javascript-per-pixel-html5-canvas-image-collision-detection/
+  pixelLevelHitTest(image1, x1, y1, w1, h1, image2, x2, y2, w2, h2) {
     // we need to avoid using floats, as were doing array lookups
-    x1 = Math.round( x1 );
-    y1 = Math.round( y1 );
-    x2 = Math.round( x2 );
-    y2 = Math.round( y2 );
+    x1 = Math.floor(x1)
+    y1 = Math.floor(y1)
+    x2 = Math.floor(x2)
+    y2 = Math.floor(y2)
 
-    var w1  = image1.width,
-        h1  = image1.height,
-        w2 = image2.width,
-        h2 = image2.height ;
-
+    // just draw images in memory and compare pixels
     const c1 = document.createElement('canvas')
     c1.ctx = c1.getContext('2d')
     c1.width = w1
     c1.height = h1
-    c1.ctx.drawImage(image1, x1, y1)
+    c1.ctx.drawImage(image1, 0, 0)
     const c2 = document.createElement('canvas')
     c2.ctx = c2.getContext('2d')
     c2.width = w2
     c2.height = h2
-    c2.ctx.drawImage(image2, x2, y2)
+    c2.ctx.drawImage(image2, 0, 0)
+    // image1 and image2 are correctly defined yet it doesn't seem to draw the images
 
     // find the top left and bottom right corners of overlapping area
-    var xMin = Math.max( x1, x2 ),
-        yMin = Math.max( y1, y2 ),
-        xMax = Math.min( x1+w1, x2+w2 ),
-        yMax = Math.min( y1+h1, y2+h2 );
+    var xMin = Math.max(x1, x2),
+      yMin = Math.max(y1, y2),
+      xMax = Math.min(x1 + w1, x2 + w2),
+      yMax = Math.min(y1 + h1, y2 + h2)
+
+    var xDiff = xMax - xMin,
+      yDiff = yMax - yMin
 
     // Sanity collision check, we ensure that the top-left corner is both
     // above and to the left of the bottom-right corner.
-    if ( xMin >= xMax || yMin >= yMax ) {
-        return false;
+    if (xMin >= xMax || yMin >= yMax) {
+      return false
     }
 
-    var xDiff = xMax - xMin,
-        yDiff = yMax - yMin;
-
     // get the pixels out from the images
-    var pixels1 = c1.ctx.getImageData(x1, y1, w1, h1),
-        pixels2 = c2.ctx.getImageData(x2, y2, w2, h2);
+    var pixels1 = c1.ctx.getImageData(0, 0, w1, h1).data
+    var pixels2 = c2.ctx.getImageData(0, 0, w2, h2).data
+
+    // MGB1 would treat everthing below 255 alpha as transparent
+    const transparencyLevel = this.isMgb1Game ? 255 : ALPHALEVEL
 
     // if the area is really small,
     // then just perform a normal image collision check
-    if ( xDiff < 4 && yDiff < 4 ) {
-        for ( var pixelX = xMin; pixelX < xMax; pixelX++ ) {
-            for ( var pixelY = yMin; pixelY < yMax; pixelY++ ) {
-                if (
-                        ( pixels1[ ((pixelX-x1) + (pixelY-y1)*w1)*4 + 3 ] !== 0 ) &&
-                        ( pixels2[ ((pixelX-x2) + (pixelY-y2)*w2)*4 + 3 ] !== 0 )
-                ) {
-                    return true;
-                }
-            }
+    if (xDiff < 4 && yDiff < 4) {
+      for (var pixelX = xMin; pixelX < xMax; pixelX++) {
+        for (var pixelY = yMin; pixelY < yMax; pixelY++) {
+          if (
+            pixels1[(pixelX - x1 + (pixelY - y1) * w1) * 4 + 3] >= transparencyLevel &&
+            pixels2[(pixelX - x2 + (pixelY - y2) * w2) * 4 + 3] >= transparencyLevel
+          ) {
+            return true
+          }
         }
+      }
     } else {
-         //It is iterating over the overlapping area,
-         //across the x then y the,
-         //checking if the pixels are on top of this.
+      //It is iterating over the overlapping area,
+      //across the x then y the,
+      //checking if the pixels are on top of this.
 
-         //What is special is that it increments by incX or incY,
-         //allowing it to quickly jump across the image in large increments
-         //rather then slowly going pixel by pixel.
+      //What is special is that it increments by incX or incY,
+      //allowing it to quickly jump across the image in large increments
+      //rather then slowly going pixel by pixel.
 
-         //This makes it more likely to find a colliding pixel early.
+      //This makes it more likely to find a colliding pixel early.
 
-        // Work out the increments,
-        // it's a third, but ensure we don't get a tiny
-        // slither of an area for the last iteration (using fast ceil).
-        var incX = xDiff / 3.0,
-            incY = yDiff / 3.0;
-        incX = (~~incX === incX) ? incX : (incX+1 | 0);
-        incY = (~~incY === incY) ? incY : (incY+1 | 0);
+      // Work out the increments,
+      // it's a third, but ensure we don't get a tiny
+      // slither of an area for the last iteration (using fast ceil).
+      var incX = xDiff / 3.0,
+        incY = yDiff / 3.0
+      incX = ~~incX === incX ? incX : (incX + 1) | 0
+      incY = ~~incY === incY ? incY : (incY + 1) | 0
 
-        for ( var offsetY = 0; offsetY < incY; offsetY++ ) {
-            for ( var offsetX = 0; offsetX < incX; offsetX++ ) {
-                for ( var pixelY = yMin+offsetY; pixelY < yMax; pixelY += incY ) {
-                    for ( var pixelX = xMin+offsetX; pixelX < xMax; pixelX += incX ) {
-                        if (
-                                ( pixels1[ ((pixelX-x1) + (pixelY-y1)*w1)*4 + 3 ] !== 0 ) &&
-                                ( pixels2[ ((pixelX-x2) + (pixelY-y2)*w2)*4 + 3 ] !== 0 )
-                        ) {
-                            return true;
-                        }
-                    }
-                }
+      for (var offsetY = 0; offsetY < incY; offsetY++) {
+        for (var offsetX = 0; offsetX < incX; offsetX++) {
+          for (let pixelY = yMin + offsetY; pixelY < yMax; pixelY += incY) {
+            for (let pixelX = xMin + offsetX; pixelX < xMax; pixelX += incX) {
+              if (
+                pixels1[(pixelX - x1 + (pixelY - y1) * w1) * 4 + 3] >= transparencyLevel &&
+                pixels2[(pixelX - x2 + (pixelY - y2) * w2) * 4 + 3] >= transparencyLevel
+              ) {
+                return true
+              }
             }
+          }
         }
+      }
     }
-
-    return false;
-    */
+    return false
   },
 
   sortOnChoice(

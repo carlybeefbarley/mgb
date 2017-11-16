@@ -257,6 +257,7 @@ export default class ActorMapArea extends BaseMapArea {
 
   renderMage() {
     const { asset, playDataIsReady } = this.props
+    const isMgb1Game = asset.text.startsWith('Imported from MGB1')
 
     if (!playDataIsReady) return <p>Waiting for Cloud save to flush</p>
 
@@ -267,6 +268,7 @@ export default class ActorMapArea extends BaseMapArea {
             ownerName={asset.dn_ownerName}
             startMapName={asset.name}
             isPaused={false}
+            isMgb1Game={isMgb1Game}
             hideButtons
             fetchAssetByUri={this.fetchAssetByUri}
           />

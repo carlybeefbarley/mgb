@@ -7,7 +7,7 @@ const ActorOptions = {
     'Player Picks up, uses later': '4',
     'Player Picks up, uses immediately': '5',
     'Player uses, but leaves the item': '6',
-    'Player shoots item to use it': '7',
+    'Player shoots item to use it': '7', // Unused but left for backwards compatibility
     'Pushes actors in a direction': '8',
     'Floor that causes damage': '9',
   },

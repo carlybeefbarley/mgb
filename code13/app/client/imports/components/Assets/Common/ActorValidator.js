@@ -27,6 +27,7 @@ const validator = {
         options.actorType['Scenery'],
       ].indexOf(databag.all.actorType) > -1 &&
       !hasConditionalBehavior &&
+      !databag.itemOrNPC.dropsObjectRandomlyName &&
       [
         options.itemActivationType['Inactive'],
         options.itemActivationType['Pushes actors in a direction'],
@@ -47,6 +48,7 @@ const validator = {
       (databag.all.actorType != options.actorType['Shot'] &&
         databag.all.actorType == options.actorType['Player']) ||
       databag.all.actorType == options.actorType['Non-Player Character (NPC)'] ||
+      databag.itemOrNPC.dropsObjectRandomlyName ||
       validator.hasConditionalBehavior(databag) ||
       validator.hasKey(databag) ||
       ([
@@ -74,6 +76,7 @@ const validator = {
     return (
       (databag.all.actorType == options.actorType['Item, Wall, or Scenery'] ||
         databag.all.actorType == options.actorType['Scenery']) &&
+      !databag.itemOrNPC.dropsObjectRandomlyName &&
       databag.all.actorType !== options.actorType['Floor'] && // To prioritize use of Scenery in FG
       databag.item.itemActivationType == options.itemActivationType['Inactive'] &&
       !hasConditionalBehavior

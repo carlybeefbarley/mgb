@@ -15,7 +15,7 @@ export default class All extends BaseForm {
 
   // Should other data be reset?
   // reload correct template
-  handleChangeActorType = databag => (e, data) => {
+  handleChangeActorType = databag => () => {
     // Set correct itemActivationType when actorType is changed
     const { itemActivationType } = databag.item
 
@@ -79,6 +79,7 @@ export default class All extends BaseForm {
       if (max > 0) initHealthConfig.max = max
     }
     const databag = this.props.asset.content2.databag
+    const actorType = databag.all.actorType
 
     return (
       <Grid style={{ minHeight: '50vh' }} centered container>

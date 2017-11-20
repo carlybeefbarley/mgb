@@ -304,6 +304,7 @@ export default class EditActor extends React.Component {
   }
   render() {
     const { asset } = this.props
+
     if (!asset) return null
     const databag = asset.content2.databag
     const LayerValid = ({ layerName, isValid }) =>
@@ -315,11 +316,13 @@ export default class EditActor extends React.Component {
 
     return (
       <div className="ui grid edit-actor">
-        <b title="This Actor can work on the following Layers of an ActorMap">ActorMap Layers:</b>
-        <div id="mgbjr-edit-actor-layerValid">
-          <LayerValid layerName="Background" isValid={ActorValidator.isValidForBG(databag)} />
-          <LayerValid layerName="Active" isValid={ActorValidator.isValidForActive(databag)} />
-          <LayerValid layerName="Foreground" isValid={ActorValidator.isValidForFG(databag)} />
+        <div>
+          <b title="This Actor can work on the following Layers of an ActorMap">ActorMap Layers:</b>
+          <div id="mgbjr-edit-actor-layerValid">
+            <LayerValid layerName="Background" isValid={ActorValidator.isValidForBG(databag)} />
+            <LayerValid layerName="Active" isValid={ActorValidator.isValidForActive(databag)} />
+            <LayerValid layerName="Foreground" isValid={ActorValidator.isValidForFG(databag)} />
+          </div>
         </div>
         <Modal
           open={!databag && this.state.isModalOpen}

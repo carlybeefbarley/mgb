@@ -166,14 +166,14 @@ const responsiveComponent = (rules = {}) => WrappedComponent => {
 
 // The propTypes we hand down to the wrapped component
 responsiveComponent.propTypes = {
-  responsive: {
+  responsive: PropTypes.shape({
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
     activeRules: PropTypes.arrayOf(PropTypes.string).isRequired,
     data: PropTypes.object.isRequired,
     debug: PropTypes.element.isRequired,
     isRuleActive: PropTypes.func.isRequired,
-  },
+  }),
 }
 
 export default responsiveComponent

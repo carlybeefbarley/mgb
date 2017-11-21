@@ -146,8 +146,10 @@ export function clientStartup() {
           name="Project Details"
         />
 
-        <Route path="user/:id/history" component={Users.UserHistoryRoute} name="History" />
-        <Route path="u/:username/history" component={Users.UserHistoryRoute} name="History" />
+        <Redirect from="user/:id/history" to="user/:id/activity" />
+        <Redirect from="u/:username/history" to="u/:username/activity" />
+        <Route path="user/:id/activity" component={Users.UserHistoryRoute} name="Activity" />
+        <Route path="u/:username/activity" component={Users.UserHistoryRoute} name="Activity" />
 
         <Route path="user/:id/badges" component={Users.BadgeListRoute} name="Badges" />
         <Route path="u/:username/badges" component={Users.BadgeListRoute} name="Badges" />

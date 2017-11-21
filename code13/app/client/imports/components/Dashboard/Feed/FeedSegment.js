@@ -29,7 +29,7 @@ const FeedSegment = React.createClass({
 
     return (
       <div>
-        <Header as="h3" color="grey" textAlign="center" content="Interactions" />
+        <Header as="h3" color="grey" textAlign="center" content="Activity" />
         <Segment style={segmentStyle}>
           {
             <List>

@@ -20,6 +20,7 @@ import '/client/imports/Joyride/react-joyride-compiled.css'
 import { getFriendlyName, makeTutorialAssetPathFromSkillPath } from '/imports/Skills/SkillNodes/SkillNodes'
 import { hasSkill, learnSkill } from '/imports/schemas/skills'
 
+import { getFeedSelector } from '/imports/schemas/activity'
 import { Activity, Projects, Settings, Sysvars, Skills, Users } from '/imports/schemas'
 import { isSameUser } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
@@ -752,9 +753,14 @@ const App = createContainer(({ params, location }) => {
 
   // activity? if useful..
   const flexPanelQueryValue = location.query[urlMaker.queryParams('app_flexPanel')]
-  const getActivity = currUser || flexPanelQueryValue === 'activity'
+  const getActivity = currUser && flexPanelQueryValue === 'activity'
   const handleActivity = getActivity
-    ? Meteor.subscribe('activity.public.recent', SpecialGlobals.activity.activityHistoryLimit)
+    ? Meteor.subscribe(
+        'activity.private.feed.recent.userId',
+        currUser._id,
+        currUser.profile.name,
+        SpecialGlobals.activity.feedLimit,
+      )
     : null
 
   // projects stuff
@@ -802,7 +808,11 @@ const App = createContainer(({ params, location }) => {
     user: pathUserName
       ? Users.findOne({ 'profile.name': pathUserName })
       : pathUserId ? Users.findOne(pathUserId) : null, // User on the url /user/xxx/...
-    activity: getActivity ? Activity.find({}, { sort: { timestamp: -1 } }).fetch() : [], // Activity for any user
+    activity: getActivity
+      ? Activity.find(getFeedSelector(currUser._id, currUser.profile.name), {
+          sort: { timestamp: -1 },
+        }).fetch()
+      : [],
     settings: G_localSettings,
     meteorStatus: Meteor.status(),
     skills: currUser ? Skills.findOne(currUserId) : null,

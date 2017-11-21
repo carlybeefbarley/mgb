@@ -8,7 +8,7 @@ const UserHistory = ({ user, width }) => (
   <Grid.Column width={width}>
     <Segment id="mgbjr-user-profile-history">
       <Header as="h2">
-        <QLink to={`/u/${user.profile.name}/history`}>Recent Activity</QLink>
+        <QLink to={`/u/${user.profile.name}/history`}>Activity</QLink>
       </Header>
       <div style={{ maxHeight: '20em', overflowY: 'auto' }}>
         <NavRecentGET styledForNavPanel={false} currUser={user} showUserActivities />

@@ -67,16 +67,6 @@ const flexPanelViews = [
     superAdminOnly: false,
     mobileUI: false,
   },
-  {
-    tag: 'settings',
-    lev: 3,
-    name: 'settings',
-    icon: 'options',
-    header: 'Settings',
-    el: fpSettings,
-    superAdminOnly: false,
-    mobileUI: false,
-  },
 
   // Experimental UI for mobile
   //{ tag: 'more',      lev: 8,  name: 'more',     icon: 'ellipsis horizontal', header: 'More', el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
@@ -110,6 +100,17 @@ const flexPanelViews = [
     el: fpActivity,
     superAdminOnly: false,
     mobileUI: true,
+  },
+
+  {
+    tag: 'settings',
+    lev: 3,
+    name: 'settings',
+    icon: 'options',
+    header: 'Settings',
+    el: fpSettings,
+    superAdminOnly: false,
+    mobileUI: false,
   },
 
   // SuperAdmin-only:

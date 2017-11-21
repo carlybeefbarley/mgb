@@ -2839,56 +2839,63 @@ class EditCode extends React.Component {
 
     return (
       <div>
-        <Modal
-          closeOnDimmerClick
-          closeIcon
-          open={this.state.isCurrStepCompleted && !isLastStep}
-          size="small"
-          onClose={this.handleCloseHocModal}
-        >
-          <Header as="h1" color="green" textAlign="center">
-            <p>
-              <Icon name="check circle" />Success!
-            </p>
-          </Header>
-          <Modal.Actions style={{ display: 'flex', justifyContent: 'center' }}>
-            <Button primary onClick={hourOfCodeStore.stepNext}>
-              Continue
-            </Button>
-          </Modal.Actions>
-        </Modal>
-        <Modal size="large" open={isActivityOver || (isLastStep && this.state.isCurrStepCompleted)}>
-          <Header as="h1" color="green" textAlign="center">
-            <p>
-              <Icon name="graduation" />Congratulations, you completed the activity!
-            </p>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <div>
-                <Image centered src="/images/logos/hoc/HourOfCode_logo_RGB.png" style={{ width: 140 }} />
-              </div>
-              <div style={{ color: 'black', padding: '10px' }}>
-                <Icon style={{ margin: 0 }} name="plus" size="large" />
-              </div>
-              <div>
-                <Segment inverted style={{ margin: 'auto', borderRadius: '8px', width: 140, height: 140 }}>
-                  <Image centered src={UX.makeMascotImgLink('team')} style={{ width: 140 }} />
-                  <Image centered src="/images/logos/mgb/medium/01w.png" style={{ width: 140 }} />
-                </Segment>
-              </div>
-            </div>
-          </Header>
-          <Modal.Content style={{ display: 'flex', justifyContent: 'center' }}>
-            {/* This should link to the HoC certificate upon completion */}
-            <div style={{ display: 'inline-block', textAlign: 'center' }}>
-              <h3>
-                <a target="_blank" rel="noopener noreferrer" href="https://code.org/api/hour/finish">
-                  I've finished my Hour of Code™ <Icon name="sign out" />
-                </a>
-              </h3>
-              <SaveMyWorkButton />
-            </div>
-          </Modal.Content>
-        </Modal>
+        {this.isGuest && (
+          <div>
+            <Modal
+              closeOnDimmerClick
+              closeIcon
+              open={this.state.isCurrStepCompleted && !isLastStep}
+              size="small"
+              onClose={this.handleCloseHocModal}
+            >
+              <Header as="h1" color="green" textAlign="center">
+                <p>
+                  <Icon name="check circle" />Success!
+                </p>
+              </Header>
+              <Modal.Actions style={{ display: 'flex', justifyContent: 'center' }}>
+                <Button primary onClick={hourOfCodeStore.stepNext}>
+                  Continue
+                </Button>
+              </Modal.Actions>
+            </Modal>
+            <Modal size="large" open={isActivityOver || (isLastStep && this.state.isCurrStepCompleted)}>
+              <Header as="h1" color="green" textAlign="center">
+                <p>
+                  <Icon name="graduation" />Congratulations, you completed the activity!
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  <div>
+                    <Image centered src="/images/logos/hoc/HourOfCode_logo_RGB.png" style={{ width: 140 }} />
+                  </div>
+                  <div style={{ color: 'black', padding: '10px' }}>
+                    <Icon style={{ margin: 0 }} name="plus" size="large" />
+                  </div>
+                  <div>
+                    <Segment
+                      inverted
+                      style={{ margin: 'auto', borderRadius: '8px', width: 140, height: 140 }}
+                    >
+                      <Image centered src={UX.makeMascotImgLink('team')} style={{ width: 140 }} />
+                      <Image centered src="/images/logos/mgb/medium/01w.png" style={{ width: 140 }} />
+                    </Segment>
+                  </div>
+                </div>
+              </Header>
+              <Modal.Content style={{ display: 'flex', justifyContent: 'center' }}>
+                {/* This should link to the HoC certificate upon completion */}
+                <div style={{ display: 'inline-block', textAlign: 'center' }}>
+                  <h3>
+                    <a target="_blank" rel="noopener noreferrer" href="https://code.org/api/hour/finish">
+                      I've finished my Hour of Code™ <Icon name="sign out" />
+                    </a>
+                  </h3>
+                  <SaveMyWorkButton />
+                </div>
+              </Modal.Content>
+            </Modal>
+          </div>
+        )}
         <div className="ui grid">
           {this.state.creatingBundle && <div className="loading-notification">Publishing source code...</div>}
           <div className="row stretched">

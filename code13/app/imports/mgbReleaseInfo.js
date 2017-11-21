@@ -15,6 +15,42 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Tue Nov 21 2017 12:15:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.3.7',
+        state: 'Beta',
+        iteration: '4938',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Activity Feed',
+          changeSummary: 'The Activity flex panel now displays more relevant activity updates.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Improvements',
+          changeSummary:
+            'Add recaptcha, more game controls, code editor autocomplete, hints, a better UI and more.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'Lots of minor bug fixes and usability updates throughout the system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Tue Nov 07 2017 15:40:00 GMT-0800 (PST)',
 
       id: {

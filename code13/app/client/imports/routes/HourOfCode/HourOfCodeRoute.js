@@ -1,3 +1,4 @@
+import { HTTP } from 'meteor/http'
 import _ from 'lodash'
 import React, { Component } from 'react'
 import { Container, Divider, Icon, Image, Segment } from 'semantic-ui-react'
@@ -15,7 +16,43 @@ import Hotjar from '/client/imports/helpers/hotjar'
 let isCreatingGuest = false
 
 class HourOfCodeRoute extends Component {
-  componentDidMount() {
+  state = {}
+
+  componentWillMount() {
+    window.handleHoCRecaptchaLoad = e => {
+      console.log('Recaptcha loaded', e)
+      document.head.removeChild($script)
+      delete window.handleHoCRecaptchaLoad
+    }
+
+    window.handleHoCRecaptchaResponse = response => {
+      console.log('Recaptcha response', response)
+
+      HTTP.call('GET', `api/validate-recaptcha/${encodeURIComponent(response)}`, (error, isValid) => {
+        console.log(`api/validate-recaptcha/:recaptchaResponse result:`)
+        console.log(`Result`, isValid)
+        console.log(`Error`, error)
+        if (isValid) {
+          delete window.handleHoCRecaptchaResponse
+          this.beginSetup()
+        }
+      })
+    }
+
+    const $script = document.createElement('script')
+    $script.setAttribute('src', 'https://www.google.com/recaptcha/api.js?onload=handleHoCRecaptchaLoad')
+    $script.setAttribute('async', true)
+    $script.setAttribute('defer', true)
+    document.head.appendChild($script)
+  }
+
+  componentWillUnmount() {
+    delete window.handleHoCRecaptchaResponse
+  }
+
+  beginSetup = () => {
+    this.setState(() => ({ didSetupBegin: true }))
+
     this.waitForLogin()
       .then(() => this.waitForLoading())
       .then(() => {
@@ -182,11 +219,15 @@ class HourOfCodeRoute extends Component {
   }
 
   render() {
+    const { didSetupBegin } = this.state
+    const recaptchaStyle = {
+      display: 'inline-block',
+    }
+
     return (
       <HeroLayout
         heroContent={
           <Container text textAlign="center">
-            <style>{'.mgb-navbar-breadcrumb, .mgbFlexPanel { display: none; }'}</style>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ flex: '2' }}>
                 <Image centered src="/images/logos/hoc/HourOfCode_logo_RGB.png" style={{ width: 200 }} />
@@ -206,9 +247,18 @@ class HourOfCodeRoute extends Component {
 
             <Segment size="huge">
               <p>Welcome to an Hour of Code™ with My Game Builder!</p>
-              <p>
-                <Icon loading name="spinner" /> Setting up
-              </p>
+              {didSetupBegin ? (
+                <p>
+                  <Icon loading name="spinner" /> Setting up
+                </p>
+              ) : (
+                <div
+                  style={recaptchaStyle}
+                  className="g-recaptcha"
+                  data-sitekey="6LdDrTkUAAAAABDXBxlLwWwTvnpmfH0s-4O5ckkm"
+                  data-callback="handleHoCRecaptchaResponse"
+                />
+              )}
             </Segment>
           </Container>
         }

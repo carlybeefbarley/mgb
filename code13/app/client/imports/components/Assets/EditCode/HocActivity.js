@@ -83,10 +83,6 @@ class HocActivity extends React.Component {
             <Icon color="green" name="check circle" />
             <Message.Content>
               <Message.Header>Congratulations! You completed the activity!</Message.Header>
-              <div style={{ padding: '0.5em 0 1em 0' }}>
-                {/* This should link to the HoC certificate upon completion */}
-                <a href="https://hourofcode.com/us/learn">I've finished my Hour of Code™</a>
-              </div>
             </Message.Content>
           </Message>
         ) : (

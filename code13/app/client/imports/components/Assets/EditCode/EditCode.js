@@ -2881,7 +2881,7 @@ class EditCode extends React.Component {
             {/* This should link to the HoC certificate upon completion */}
             <div style={{ display: 'inline-block', textAlign: 'center' }}>
               <h3>
-                <a target="_blank" rel="noopener noreferrer" href="https://hourofcode.com/us/learn">
+                <a target="_blank" rel="noopener noreferrer" href="https://code.org/api/hour/finish">
                   I've finished my Hour of Code™ <Icon name="sign out" />
                 </a>
               </h3>

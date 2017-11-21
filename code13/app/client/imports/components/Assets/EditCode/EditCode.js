@@ -388,9 +388,7 @@ class EditCode extends React.Component {
         }
       }, 200)
 
-      /*
       // Check every second for activity time expiration
-      // DISABLED FOR TESTING; UNCOMMENT FOR HOC
       var activityTimerId = window.setInterval(() => {
         if (!this.props.hourOfCodeStore.state.isActivityOver) {
           this.props.hourOfCodeStore.checkActivityTime()
@@ -398,7 +396,6 @@ class EditCode extends React.Component {
           window.clearInterval(activityTimerId)
         }
       }, 10 * 1000)
-      */
     }
   }
 

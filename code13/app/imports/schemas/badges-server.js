@@ -355,7 +355,10 @@ const _awardBadge = (type, newBadgeName, newBadgeKeys, user) => {
 
 Meteor.methods({
   'User.refreshBadgeStatus'() {
-    return _doRefreshBadgeStatus(Meteor.user())
+    const currUser = Meteor.user()
+    // don't award guest users with badges
+    if (!currUser || currUser.profile.isGuest) return false
+    return _doRefreshBadgeStatus(currUser)
   },
   // ,
   // "User.refreshAllUserBadges": function() {   // e.g. call with   Meteor.call("User.refreshAllUserBadges")

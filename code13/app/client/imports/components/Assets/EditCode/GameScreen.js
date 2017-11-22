@@ -8,7 +8,7 @@ import './editcode.css'
 
 import SpecialGlobals from '/imports/SpecialGlobals'
 
-const _wrapperHeightPx = '320px'
+const _wrapperHeightPx = '450px'
 const _popopButtonsRowStyle = {
   transform: 'translateY(-100%)', // Move it to be *above* the top of the iFrame part of this Component
   boxShadow: '0 1px 4px rgba(0, 0, 0, 0.2)',
@@ -23,7 +23,7 @@ export default class GameScreen extends React.Component {
     isPlaying: PropTypes.bool,
     isPopup: PropTypes.bool,
     asset: PropTypes.object,
-    hocLevelId: PropTypes.string,
+    hocStepId: PropTypes.string,
     isAutoRun: PropTypes.bool,
 
     handleStop: PropTypes.func.isRequired,
@@ -343,7 +343,7 @@ export default class GameScreen extends React.Component {
             }}
             ref="iFrame1"
             sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
-            src={makeCDNLink('/codeEditSandbox.html') + '&hocLevelId=' + this.props.hocLevelId}
+            src={makeCDNLink('/codeEditSandbox.html') + `&hocStepId=${this.props.hocStepId}`}
             frameBorder="0"
             id="mgbjr-EditCode-sandbox-iframe"
           />

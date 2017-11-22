@@ -378,7 +378,7 @@ class EditCode extends React.Component {
     })
 
     if (this.isGuest) {
-      Hotjar('vpv', `hour-of-code/step${+this.props.hourOfCodeStore.state.currStepIndex + 1}`)
+      Hotjar('vpv', `hour-of-code/stepId:${this.props.hourOfCodeStore.state.currStepId}`)
 
       const timerId = window.setInterval(() => {
         if (this.state.astReady) {
@@ -2821,7 +2821,7 @@ class EditCode extends React.Component {
         isPlaying={this.state.isPlaying}
         isAutoRun={this.isAutoRun}
         onAutoRun={this.handleAutoRun}
-        hocLevelId={currStepId}
+        hocStepId={currStepId}
         asset={asset}
         consoleAdd={this._consoleAdd.bind(this)}
         handleContentChange={this.handleContentChange.bind(this)}

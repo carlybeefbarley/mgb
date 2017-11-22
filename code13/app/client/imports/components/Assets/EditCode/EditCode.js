@@ -2784,7 +2784,7 @@ class EditCode extends React.Component {
       asset,
       canEdit,
       currUser,
-      hourOfCodeStore: { state: { api, steps, currStepIndex, currStep, isLastStep, isActivityOver } },
+      hourOfCodeStore: { state: { api, steps, currStepId, currStep, isLastStep, isActivityOver } },
     } = this.props
 
     if (!asset) return null
@@ -2821,7 +2821,7 @@ class EditCode extends React.Component {
         isPlaying={this.state.isPlaying}
         isAutoRun={this.isAutoRun}
         onAutoRun={this.handleAutoRun}
-        hocLevelId={currStepIndex} // change to currStepId
+        hocLevelId={currStepId}
         asset={asset}
         consoleAdd={this._consoleAdd.bind(this)}
         handleContentChange={this.handleContentChange.bind(this)}

@@ -65,19 +65,19 @@ class HourOfCodeStore extends Store {
   }
 
   storeDidUpdate(prevState) {
-    const { currStepId: prevCurrStepId } = prevState
-    const { currStepId } = this.state
+    const { currAssetId: prevAssetId } = prevState
+    const { currAssetId } = this.state
+    if (currAssetId !== prevAssetId) {
+      this.loadStepForAsset()
 
-    if (currStepId !== prevCurrStepId) {
       Meteor.call(
         'User.updateProfile',
         Meteor.user()._id,
-        { 'profile.HoC.currStepId': currStepId },
+        { 'profile.HoC.currStepId': this.state.currStepId },
         error => {
           if (error) console.error('Could not update progress:', error.reason)
         },
       )
-      this.loadUserAssetForStep()
     }
   }
 
@@ -132,10 +132,6 @@ class HourOfCodeStore extends Store {
     this.setState({ currAssetId })
   }
 
-  getAssetIdFromStepId = stepId => {
-    return Meteor.user().profile.HoC.stepToAssetMap[stepId]
-  }
-
   getStepIdFromAssetId = assetId => {
     const stepToAssetMap = Meteor.user().profile.HoC.stepToAssetMap
     return _.findKey(stepToAssetMap, asset => {
@@ -143,13 +139,12 @@ class HourOfCodeStore extends Store {
     })
   }
 
-  loadStepForAsset = data => {
+  loadStepForAsset = (steps = this.state.steps) => {
     const { currAssetId } = this.state
 
     const currStepId = this.getStepIdFromAssetId(currAssetId)
-    const currStep = _.find(data.steps, { id: currStepId })
-    const currStepIndex = _.indexOf(data.steps, currStep)
-
+    const currStep = _.find(steps, { id: currStepId })
+    const currStepIndex = _.indexOf(steps, currStep)
     this.setState({ currStep, currStepId, currStepIndex })
   }
 
@@ -162,6 +157,8 @@ class HourOfCodeStore extends Store {
   // update step to asset mapping if there are any changes
   updateStepToAsset = activityAsset => {
     const { steps, currStepId, currStepIndex, currAssetId } = this.state
+    if (!steps) return
+
     let stepToAssetMap = Meteor.user().profile.HoC.stepToAssetMap
     const stepIds = Object.keys(stepToAssetMap)
 
@@ -236,7 +233,7 @@ class HourOfCodeStore extends Store {
         // These should not be called when guest is being generated
         if (!isActivitySetup) {
           this.updateStepToAsset(activityAsset)
-          this.loadStepForAsset(activityAsset)
+          this.loadStepForAsset(activityAsset.steps)
           this.setActivityData(activityAsset)
         }
         resolve(activityAsset)
@@ -264,7 +261,11 @@ class HourOfCodeStore extends Store {
 
     if (currStepIndex + 1 < steps.length) {
       currStepIndex++
-      this.setState({ currStepIndex, currStepId: steps[currStepIndex].id })
+      const currStep = steps[currStepIndex]
+      this.getUserAssetForStep(currStep, currStep.id).then(asset => {
+        utilPushTo(null, `/u/${asset.dn_ownerName}/asset/${asset._id}`)
+        this.setState({ currAssetId: asset._id })
+      })
     }
   }
 
@@ -273,7 +274,11 @@ class HourOfCodeStore extends Store {
 
     if (currStepIndex > 0) {
       currStepIndex--
-      this.setState({ currStepIndex, currStepId: steps[currStepIndex].id })
+      const currStep = steps[currStepIndex]
+      this.getUserAssetForStep(currStep, currStep.id).then(asset => {
+        utilPushTo(null, `/u/${asset.dn_ownerName}/asset/${asset._id}`)
+        this.setState({ currAssetId: asset._id })
+      })
     }
   }
 

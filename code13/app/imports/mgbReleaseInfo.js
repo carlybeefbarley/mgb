@@ -15,12 +15,12 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
-      timestamp: 'Tue Nov 21 2017 12:15:00 GMT-0800 (PST)',
+      timestamp: 'Wed Nov 22 2017 10:45:00 GMT-0800 (PST)',
 
       id: {
         ver: '0.3.7',
         state: 'Beta',
-        iteration: '4938',
+        iteration: '4943',
       },
 
       releaseManagement: {

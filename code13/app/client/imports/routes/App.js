@@ -359,7 +359,7 @@ class AppUI extends React.Component {
     } = this.state
     const { query } = this.props.location
     const isGuest = currUser ? currUser.profile.isGuest : false
-    const isHocActivity = isGuest && _.startsWith(window.location.pathname, `/u/${currUser.username}/asset/`)
+    const isHocRoute = window.location.pathname === '/hour-of-code'
     if (!loading) this.configureTrackJs()
 
     // The Flex Panel is for communications and common quick searches in a right hand margin
@@ -383,13 +383,13 @@ class AppUI extends React.Component {
       top: 0,
       bottom: responsive.data.fpReservedFooterHeight,
       left: 0,
-      right: `${isHocActivity ? 0 : flexPanelWidth}`,
+      right: `${isGuest || isHocRoute ? 0 : flexPanelWidth}`,
       marginBottom: '0px',
       minHeight: '100vh',
+      overflow: isGuest || isHocRoute ? 'hidden' : undefined,
+      overflowY: !isGuest && !isHocRoute ? 'scroll' : undefined,
       WebkitOverflowScrolling: 'touch', // only works with overflowY: scroll (not auto)
     }
-
-    isHocActivity ? (mainPanelOuterDivSty.overflow = 'hidden') : (mainPanelOuterDivSty.overflowY = 'scroll')
 
     //Check permissions of current user for super-admin,
     //if user is on their own profile route,
@@ -408,22 +408,26 @@ class AppUI extends React.Component {
           titleTemplate="%s"
           meta={[{ name: 'My Game Builder', content: 'MyGameBuilder' }]}
         />
-        <Joyride
-          ref="joyride"
-          steps={this.state.joyrideSteps}
-          showOverlay
-          disableOverlay={false}
-          showSkipButton
-          tooltipOffset={0}
-          showStepsProgress
-          type="continuous"
-          callback={this.handleJoyrideCallback}
-          preparePageHandler={this.joyridePreparePageHandler}
-          assetId={params.assetId}
-          debug={joyrideDebug}
-        />
+        {!isGuest &&
+        !isHocRoute && (
+          <Joyride
+            ref="joyride"
+            steps={this.state.joyrideSteps}
+            showOverlay
+            disableOverlay={false}
+            showSkipButton
+            tooltipOffset={0}
+            showStepsProgress
+            type="continuous"
+            callback={this.handleJoyrideCallback}
+            preparePageHandler={this.joyridePreparePageHandler}
+            assetId={params.assetId}
+            debug={joyrideDebug}
+          />
+        )}
         <div>
-          {!isHocActivity && (
+          {!isGuest &&
+          !isHocRoute && (
             <FlexPanel
               fpIsFooter={!!responsive.data.footerTabMajorNav}
               joyrideSteps={this.state.joyrideSteps}
@@ -449,9 +453,10 @@ class AppUI extends React.Component {
 
           <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
             <SupportedBrowsersContainer />
-            {!isGuest && <VerifyBanner currUser={currUser} />}
+            {!isGuest && !isHocRoute && <VerifyBanner currUser={currUser} />}
             {!hideHeaders && <NavPanel currUser={currUser} navPanelAvailableWidth={mainAreaAvailableWidth} />}
-            {!isHocActivity && (
+            {!isGuest &&
+            !isHocRoute && (
               <NavBar
                 currUser={currUser}
                 user={user}

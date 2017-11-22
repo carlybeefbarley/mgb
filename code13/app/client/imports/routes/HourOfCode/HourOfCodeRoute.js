@@ -6,7 +6,9 @@ import UX from '../../UX'
 
 import { createContainer } from 'meteor/react-meteor-data'
 
-import { Activity } from '/imports/schemas'
+import { Azzets } from '/imports/schemas'
+import { AssetKindEnum, assetMakeSelector, assetSorters } from '/imports/schemas/assets'
+
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 import { showToast } from '/client/imports/modules'
 import { utilPushTo } from '/client/imports/routes/QLink'
@@ -16,9 +18,42 @@ import Hotjar from '/client/imports/helpers/hotjar'
 let isCreatingGuest = false
 
 class HourOfCodeRoute extends Component {
-  state = {}
+  state = { isLoading: true }
 
-  componentWillMount() {
+  componentDidMount() {
+    this.waitForLogin()
+      .then(() => this.waitForLoading())
+      .then(() => {
+        const { assets, currUser, location } = this.props
+        const asset = _.first(assets)
+        const isGuest = _.get(currUser, 'profile.isGuest')
+        console.log('Login and loading done')
+        console.log('  isGuest:', isGuest)
+        console.log('  asset:', asset)
+        console.log('  assets:', assets)
+
+        if (asset && isGuest) {
+          isCreatingGuest = false
+          window.clearInterval(this.waitForLoadingTimer)
+          window.clearInterval(this.waitForLoginTimer)
+          return utilPushTo(location.query, `/u/${asset.dn_ownerName}/asset/${asset._id}`)
+        } else {
+          this.beginRecaptcha()
+        }
+      })
+      .catch(err => {
+        throw err
+      })
+  }
+
+  componentWillUnmount() {
+    delete window.handleHoCRecaptchaResponse
+  }
+
+  beginRecaptcha = () => {
+    console.log('Starting recaptcha')
+    this.setState(() => ({ isLoading: false }))
+
     window.handleHoCRecaptchaLoad = e => {
       console.log('Recaptcha loaded', e)
       document.head.removeChild($script)
@@ -34,7 +69,8 @@ class HourOfCodeRoute extends Component {
         console.log(`Error`, error)
         if (isValid) {
           delete window.handleHoCRecaptchaResponse
-          this.beginSetup()
+          this.setState(() => ({ isRecaptchaComplete: true }))
+          this.createHocUser()
         }
       })
     }
@@ -46,38 +82,12 @@ class HourOfCodeRoute extends Component {
     document.head.appendChild($script)
   }
 
-  componentWillUnmount() {
-    delete window.handleHoCRecaptchaResponse
-  }
-
-  beginSetup = () => {
-    this.setState(() => ({ didSetupBegin: true }))
-
-    this.waitForLogin()
-      .then(() => this.waitForLoading())
-      .then(() => {
-        const { activity, currUser, location } = this.props
-        const recentAsset = _.first(activity)
-        const isGuest = _.get(currUser, 'profile.isGuest')
-        console.log('Login and loading done, activity is:', activity)
-
-        if (recentAsset && isGuest) {
-          isCreatingGuest = false
-          return utilPushTo(location.query, `/u/${recentAsset.toOwnerName}/asset/${recentAsset.toAssetId}`)
-        } else {
-          this.createHocUser()
-        }
-      })
-      .catch(err => {
-        throw err
-      })
-  }
-
   /**
    * Creates a guest user, a project, and a code asset.
    */
   createHocUser = () => {
     if (isCreatingGuest) return console.log('Refusing to create duplicate guest, already in progress...')
+    this.setState(() => ({ isLoading: true }))
     isCreatingGuest = true
 
     Hotjar('vpv', 'hour-of-code/create-guest-start')
@@ -188,14 +198,14 @@ class HourOfCodeRoute extends Component {
 
         console.log('...waiting for login to finish')
 
-        setTimeout(checkLoggingIn, 250)
+        this.waitForLoginTimer = setTimeout(checkLoggingIn, 250)
       }
 
       checkLoggingIn()
     })
   }
 
-  waitForLoading = (timeout = 1000 * 10) => {
+  waitForLoading = (timeout = 1000 * 30) => {
     return new Promise((resolve, reject) => {
       const start = Date.now()
 
@@ -211,7 +221,7 @@ class HourOfCodeRoute extends Component {
 
         console.log('...waiting for loading to finish')
 
-        setTimeout(checkLoading, 250)
+        this.waitForLoadingTimer = setTimeout(checkLoading, 250)
       }
 
       checkLoading()
@@ -219,7 +229,7 @@ class HourOfCodeRoute extends Component {
   }
 
   render() {
-    const { didSetupBegin } = this.state
+    const { isLoading, isRecaptchaComplete } = this.state
     const recaptchaStyle = {
       display: 'inline-block',
     }
@@ -247,11 +257,12 @@ class HourOfCodeRoute extends Component {
 
             <Segment size="huge">
               <p>Welcome to an Hour of Code™ with My Game Builder!</p>
-              {didSetupBegin ? (
+              {isLoading && (
                 <p>
-                  <Icon loading name="spinner" /> Setting up
+                  <Icon loading name="spinner" />
                 </p>
-              ) : (
+              )}
+              {!isRecaptchaComplete && (
                 <div
                   style={recaptchaStyle}
                   className="g-recaptcha"
@@ -260,6 +271,8 @@ class HourOfCodeRoute extends Component {
                 />
               )}
             </Segment>
+
+            <Divider hidden section />
           </Container>
         }
       />
@@ -269,15 +282,28 @@ class HourOfCodeRoute extends Component {
 
 export default createContainer(props => {
   const userId = _.get(props, 'currUser._id')
+  const { name: projectName } = hourOfCodeStore.getUserProjectShape()
 
-  const handleActivity = Meteor.subscribe('activity.public.assets.recent.userId', userId, 4)
+  const handleForAssets = Meteor.subscribe(
+    'assets.public',
+    userId,
+    [AssetKindEnum.code],
+    null, // search
+    projectName, // project
+    false, // only deleted
+    false, // only stable
+    assetSorters.edited, // sort
+  )
+  const assetSelector = assetMakeSelector(
+    userId,
+    [AssetKindEnum.code],
+    null, // search
+    projectName, // project
+  )
 
   return {
-    activity: Activity.find(
-      { byUserId: userId, toAssetId: { $ne: '' } },
-      { sort: { timestamp: -1 }, limit: 1 },
-    ).fetch(),
+    assets: userId ? Azzets.find(assetSelector, { sort: assetSorters.edited }).fetch() : [],
 
-    loading: !handleActivity.ready(),
+    loading: !handleForAssets.ready(),
   }
 }, HourOfCodeRoute)

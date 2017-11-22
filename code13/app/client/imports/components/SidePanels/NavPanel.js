@@ -38,8 +38,9 @@ export const getNavPanels = (currUser, showAll) => {
   const showUserOptions = (!isLoggingIn && !!currUser) || showAll
   const isGuest = currUser ? currUser.profile.isGuest : false
   const isHocActivity = isGuest && _.startsWith(window.location.pathname, `/u/${currUser.username}/asset/`)
+  const isHocRoute = window.location.pathname === '/hour-of-code'
 
-  if (isGuest) {
+  if (isGuest || isHocActivity || isHocRoute) {
     return {
       left: [
         {
@@ -48,24 +49,26 @@ export const getNavPanels = (currUser, showAll) => {
           content: <img src="/images/logos/mgb/medium/01w.png" style={logoImageStyle} />,
         },
       ],
-      right: [
-        isHocActivity
-          ? {
-              name: 'hour-of-code-finished',
-              content: "I'm finished with my Hour of Code™",
-              href: 'https://code.org/api/hour/finish',
-            }
-          : {
-              name: 'hour-of-code-back',
-              content: 'Back to Hour of Code',
-              to: '/hour-of-code',
+      right: isHocRoute
+        ? []
+        : [
+            isHocActivity
+              ? {
+                  name: 'hour-of-code-finished',
+                  content: "I'm finished with my Hour of Code™",
+                  href: 'https://code.org/api/hour/finish',
+                }
+              : {
+                  name: 'hour-of-code-back',
+                  content: 'Back to Hour of Code',
+                  to: '/hour-of-code',
+                },
+            {
+              name: 'hour-of-code-save',
+              content: <SaveMyWorkButton />,
+              icon: { name: 'signup' },
             },
-        {
-          name: 'hour-of-code-save',
-          content: <SaveMyWorkButton />,
-          icon: { name: 'signup' },
-        },
-      ],
+          ],
     }
   }
 

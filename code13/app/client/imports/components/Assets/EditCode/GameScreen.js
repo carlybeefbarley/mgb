@@ -340,6 +340,7 @@ export default class GameScreen extends React.Component {
               display: this.state.isMinimized ? 'none' : 'block',
               minWidth: '100%',
               minHeight: '95%', // 100% creates scrollbars
+              width: '100%',
             }}
             ref="iFrame1"
             sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"

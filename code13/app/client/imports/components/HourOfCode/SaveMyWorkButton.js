@@ -115,7 +115,7 @@ class SaveMyWorkButton extends Component {
     const hasVisibleError = hasSaved && !!error
 
     return (
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative', display: 'inline-block' }}>
         {showInput ? (
           <Input
             id="mgb-hoc-save-my-work-email-input"
@@ -148,7 +148,9 @@ class SaveMyWorkButton extends Component {
             top: '100%',
             width: '100%',
             padding: '1em',
+            color: '#fff',
             fontSize: '0.85em',
+            textAlign: 'left',
             background: 'rgba(0, 0, 0, 0.85)',
             opacity: +hasVisibleError,
             zIndex: '1000',

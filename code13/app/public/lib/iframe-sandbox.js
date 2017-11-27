@@ -111,9 +111,9 @@ window.onload = function () {
               .split('/').shift() +
             moduleNameFixed
     }
-
+    const extension = moduleNameFixed.substring(moduleNameFixed.lastIndexOf('.'), moduleNameFixed.length)
     return (
-      moduleNameFixed.lastIndexOf('.') === moduleNameFixed.length - 3
+      extension === '.js'
         ? moduleNameFixed.substr(0, moduleNameFixed.length - 3)
         : moduleNameFixed
     )

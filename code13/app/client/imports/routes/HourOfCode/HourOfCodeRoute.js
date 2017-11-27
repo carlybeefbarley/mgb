@@ -21,6 +21,8 @@ class HourOfCodeRoute extends Component {
   state = { isLoading: true }
 
   componentDidMount() {
+    Hotjar('trigger', 'hour-of-code')
+
     this.waitForLogin()
       .then(() => this.waitForLoading())
       .then(() => {

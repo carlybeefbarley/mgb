@@ -1,9 +1,10 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
 
-import { Popup, Icon, Input, Button } from 'semantic-ui-react'
+import { Icon, Input, Button } from 'semantic-ui-react'
 
 import validate from '/imports/schemas/validate'
+import Hotjar from '/client/imports/helpers/hotjar'
 
 class SaveMyWorkButton extends Component {
   state = {
@@ -33,7 +34,11 @@ class SaveMyWorkButton extends Component {
 
   handleEmailKeyDown = e => e.keyCode === 13 && this.saveEmail()
 
-  showInput = () => this.setState({ email: this.getHoCEmail() || '', showInput: true }, this.focusInput)
+  showInput = () => {
+    Hotjar('vpv', 'hour-of-code/save-my-work:start')
+    this.setState({ email: this.getHoCEmail() || '', showInput: true }, this.focusInput)
+  }
+
   hideInput = () => this.setState({ showInput: false })
 
   focusInput = () => {
@@ -51,6 +56,8 @@ class SaveMyWorkButton extends Component {
   saveEmail = () => {
     this.setState({ isSaving: true, hasSaved: true })
     const { email } = this.state
+
+    Hotjar('vpv', 'hour-of-code/save-my-work:submit')
 
     // don't clear existing error
     if (this.state.error) {
@@ -77,6 +84,8 @@ class SaveMyWorkButton extends Component {
         return
       }
 
+      Hotjar('vpv', 'hour-of-code/save-my-work:validated')
+
       Meteor.call('User.updateProfile', Meteor.user()._id, { 'profile.HoC.email': email }, error => {
         const { profile: { name } } = Meteor.user()
         this.setState({ isSaving: false })
@@ -90,6 +99,8 @@ class SaveMyWorkButton extends Component {
           )
           return
         }
+
+        Hotjar('vpv', 'hour-of-code/save-my-work:success')
 
         this.hideInput()
       })

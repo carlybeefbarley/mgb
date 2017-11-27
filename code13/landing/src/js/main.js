@@ -96,7 +96,7 @@ window.addEventListener('load', function() {
   // ----------------------------------------
   // Analytics
   // ----------------------------------------
-  if (location.hostname !== 'localhost') {
+  if (!/^localhost|devlapse\.github\.io/.test(location.hostname)) {
     //
     // Google
     //

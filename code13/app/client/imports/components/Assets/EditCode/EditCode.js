@@ -2965,7 +2965,7 @@ class EditCode extends React.Component {
                               <code>{api[command].code}</code>
                             </pre>
                           </Table.Cell>
-                          <Table.Cell>{api[command].description}</Table.Cell>
+                          <Table.Cell dangerouslySetInnerHTML={{ __html: api[command].description }} />
                         </Table.Row>
                       ))}
                     </Table.Body>

@@ -1640,7 +1640,7 @@ class EditCode extends React.Component {
 
   codemirrorValueChanged(doc, change) {
     const value = doc.getValue()
-    const newValue = (value + '\n').replace(/\n{2,}$/, '\n')
+    const newValue = this.isGuest ? (value + '\n').replace(/\n{2,}$/, '\n') : value
     if (newValue !== value) {
       const cursorPosition = doc.getCursor()
       doc.setValue(newValue)

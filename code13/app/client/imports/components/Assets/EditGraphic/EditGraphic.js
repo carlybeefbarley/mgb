@@ -373,12 +373,6 @@ export default class EditGraphic extends React.Component {
       }
     }
 
-    if (c2.doResaveTileset) {
-      c2.doResaveTileset = false
-      // minimum delay just to be sure that previewcanvases are drawn
-      // this will affect edge case for graphic import
-      setTimeout(() => this.handleSave('Resave tileset'), 50)
-    }
     this.setStatusBarInfo()
   }
 
@@ -1292,6 +1286,12 @@ export default class EditGraphic extends React.Component {
   } // TODO(DGOLDS): Maybe _.throttle() this?
 
   createTileset() {
+    if (this.tilesetInfo) {
+      const tmpTilesetInfo = this.tilesetInfo
+      this.tilesetInfo = null
+      return tmpTilesetInfo
+    }
+
     if (!this.frameCanvasArray || this.frameCanvasArray.length == 0) return null
 
     let c2 = this.props.asset.content2
@@ -1504,10 +1504,12 @@ export default class EditGraphic extends React.Component {
   toolOpenImportPopup = () => this.setState({ showGraphicImportPopup: true })
   toolCloseImportPopup = () => this.setState({ showGraphicImportPopup: false })
 
+  // @@@
   // This is passed to the <GraphicImport> Control so the tiles can be imported
-  importTileset = (tileWidth, tileHeight, imgDataArr, thumbCanvas) => {
+  importTileset = (tileWidth, tileHeight, imgDataArr, thumbCanvas, tilesetInfo) => {
     let c2 = this.props.asset.content2
     this.thumbCanvas = thumbCanvas
+    this.tilesetInfo = tilesetInfo
 
     c2.width = tileWidth
     c2.height = tileHeight
@@ -1526,11 +1528,6 @@ export default class EditGraphic extends React.Component {
 
     this.handleSave('Import tileset', true, true) // DG - added allowBackwash = true so we get and process the redraw immediately
     this.setState({ editScale: this.getDefaultScale(), showGraphicImportPopup: false })
-
-    // hack, but because of whole EditGraphic architecture
-    // we need to create tileset, but frame canvases are not yet drawn
-    // they are drawn only after content2 travels to server and back
-    c2.doResaveTileset = true
   }
 
   //

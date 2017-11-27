@@ -205,6 +205,12 @@ export default class GraphicImport extends React.Component {
     const rows = Math.floor(this.canvas.height / this.state.tileHeight)
     let importedSoFar = 0
 
+    const tilesetInfo = {
+      image: tmpCanvas.toDataURL('image/png'),
+      cols,
+      rows,
+    }
+
     for (let row = 0; row < rows && importedSoFar < MAX_IMPORTED_FRAMES; row++) {
       for (let col = 0; col < cols && importedSoFar < MAX_IMPORTED_FRAMES; col++) {
         let imgData = tmpCtx.getImageData(
@@ -224,7 +230,13 @@ export default class GraphicImport extends React.Component {
       }
     }
 
-    this.props.importTileset(this.state.tileWidth, this.state.tileHeight, imgDataArr, thumbCanvas) // TODO: Check that this sets W,H correctly
+    this.props.importTileset(
+      this.state.tileWidth,
+      this.state.tileHeight,
+      imgDataArr,
+      thumbCanvas,
+      tilesetInfo,
+    ) // TODO: Check that this sets W,H correctly
   }
 
   clearAll = () => {

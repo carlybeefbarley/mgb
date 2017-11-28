@@ -94,7 +94,7 @@ class HourOfCodeStore extends Store {
       projectNames: [projectName],
       isCompleted: false,
       isPrivate: true,
-      isDeleted: false,
+      isDeleted: true,
       content2: { src: _.get(step, 'code', '') },
     }
   }

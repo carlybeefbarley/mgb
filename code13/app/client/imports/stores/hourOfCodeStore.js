@@ -304,7 +304,7 @@ class HourOfCodeStore extends Store {
   }
 
   regexIf = srcIn => {
-    const regex = /if\s*[(]\s*(.*)[)]{([\s\S]*?)}/gi
+    const regex = /if\s*\(([\s\S]*?)\)\s*{([\s\S]*?)}/gi
     let result
     while ((result = regex.exec(srcIn)) !== null) {
       let code = result[0]

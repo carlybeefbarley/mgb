@@ -128,6 +128,7 @@ const AssetEditRoute = React.createClass({
       isDeletePending: false,
       isForkRevertPending: false,
       counterTime: null,
+      counterVisible: false,
     }
   },
 
@@ -208,7 +209,6 @@ const AssetEditRoute = React.createClass({
 
   componentWillUnmount() {
     if (this.m_tickIntervalFunctionHandle) {
-      //console.log("Clearing TICK timer")
       Meteor.clearInterval(this.m_tickIntervalFunctionHandle)
       this.m_tickIntervalFunctionHandle = null
       this._attemptToSendAnyDeferredChanges({ forceResend: true })
@@ -231,15 +231,21 @@ const AssetEditRoute = React.createClass({
 
     if (!this.counter && !this.data.loading) {
       this.assetUpdatedAt = this.data.asset.updatedAt
-      this.counter = new EditTimeCounter(this.data.asset, this.props.currUser, newTime =>
-        this.setState({ counterTime: newTime }),
-      )
+      this.counter = new EditTimeCounter(this.data.asset, this.props.currUser, newTime => {
+        if (this.state.counterVisible) {
+          this.setState({ counterTime: newTime })
+        }
+      })
     }
 
     if (this.counter && this.data.asset && this.assetUpdatedAt != this.data.asset.updatedAt) {
       this.assetUpdatedAt = this.data.asset.updatedAt
       this.counter.assetUpdated()
     }
+  },
+
+  toggleCounterVisibility(isVisible) {
+    this.setState({ counterVisible: isVisible, counterTime: this.counter.getTime() })
   },
 
   getMeteorData() {
@@ -451,6 +457,7 @@ const AssetEditRoute = React.createClass({
               currUser={currUser}
               assetActivity={this.data.assetActivity}
               counterTime={this.state.counterTime}
+              toggleCounterVisibility={this.toggleCounterVisibility}
             />
             {asset.skillPath &&
             asset.skillPath.length > 0 && <ChallengeState ownername={asset.dn_ownerName} />}

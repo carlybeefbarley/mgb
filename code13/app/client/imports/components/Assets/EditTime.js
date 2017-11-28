@@ -63,7 +63,7 @@ export class EditTimeCounter {
   }
 
   getTime() {
-    this.formatTime(this.timeSec)
+    return this.formatTime(this.timeSec)
   }
 
   updateTimer() {

@@ -29,8 +29,18 @@ class HocActivity extends React.Component {
 
   render() {
     const {
+      openVideoModal,
       hourOfCodeStore: {
-        state: { steps, totalSteps, completedSteps, isFirstStep, isLastStep, currStep, currStepIndex },
+        state: {
+          steps,
+          totalSteps,
+          completedSteps,
+          isFirstStep,
+          isLastStep,
+          currStep,
+          currStepId,
+          currStepIndex,
+        },
       },
     } = this.props
 
@@ -57,7 +67,7 @@ class HocActivity extends React.Component {
           onClick={hourOfCodeStore.stepNext}
           icon={isLastStep ? 'check' : 'forward'}
           content={isLastStep ? 'Finished' : 'Next'}
-          disabled={!completedSteps[currStepIndex] || isLastStep}
+          disabled={!_.includes(completedSteps, currStepId) || isLastStep}
         />
 
         <Button
@@ -69,6 +79,10 @@ class HocActivity extends React.Component {
           icon="refresh"
           content="Reset code"
         />
+
+        {currStep.videoId && (
+          <Button compact basic size="mini" color="green" onClick={openVideoModal} icon="video" />
+        )}
 
         {totalSteps > 0 && (
           <div style={{ float: 'right', color: '#aaa' }}>

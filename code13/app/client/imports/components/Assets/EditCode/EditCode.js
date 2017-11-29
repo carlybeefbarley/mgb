@@ -29,6 +29,7 @@ import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
 import SaveMyWorkButton from '/client/imports/components/HourOfCode/SaveMyWorkButton'
 import UX from '/client/imports/UX'
+import VideoFrame from '/client/imports/components/Video/VideoFrame'
 
 import ThumbnailWithInfo from '/client/imports/components/Assets/ThumbnailWithInfo'
 
@@ -151,6 +152,9 @@ class EditCode extends React.Component {
 
       // for showing modal upon completing current HoC task
       isCurrStepCompleted: false,
+
+      // for showing HoC video modal
+      showVideoModal: true,
     }
 
     this.errorMessageCache = {}
@@ -2775,6 +2779,18 @@ class EditCode extends React.Component {
     this.setState({ isCurrStepCompleted: false })
   }
 
+  handleOpenVideoModal = () => {
+    this.setState({ showVideoModal: true })
+    // fix video modal open/close not working after content change update
+    this.forceUpdate()
+  }
+
+  handleCloseVideoModal = () => {
+    this.setState({ showVideoModal: false })
+    // fix video modal open/close not working after content change update
+    this.forceUpdate()
+  }
+
   handleAutoRun = () => {
     this.isAutoRun = false
   }
@@ -2841,6 +2857,20 @@ class EditCode extends React.Component {
       <div>
         {this.isGuest && (
           <div>
+            {/* HoC VIDEO MODAL */}
+            {currStep && (
+              <Modal
+                open={this.state.showVideoModal}
+                closeOnDimmerClick
+                closeIcon
+                style={{ background: 'rgba(0,0,0,0)' }}
+                onClose={this.handleCloseVideoModal}
+              >
+                <VideoFrame videoId={currStep.videoId} hd="1080" width="854px" height="480px" />
+              </Modal>
+            )}
+
+            {/* HoC STEP COMPLETION MODAL */}
             <Modal
               closeOnDimmerClick
               closeIcon
@@ -2859,6 +2889,8 @@ class EditCode extends React.Component {
                 </Button>
               </Modal.Actions>
             </Modal>
+
+            {/* HoC ACTIVITY FINISH MODAL */}
             <Modal size="large" open={isActivityOver || (isLastStep && this.state.isCurrStepCompleted)}>
               <Header as="h1" color="green" textAlign="center">
                 <p>
@@ -2900,7 +2932,13 @@ class EditCode extends React.Component {
           {this.state.creatingBundle && <div className="loading-notification">Publishing source code...</div>}
           <div className="row stretched">
             <div className={infoPaneOpts.col1 + ' wide column'}>
-              {this.isGuest && <HocActivity assetId={asset._id} onReset={this.handleReset} />}
+              {this.isGuest && (
+                <HocActivity
+                  assetId={asset._id}
+                  onReset={this.handleReset}
+                  openVideoModal={this.handleOpenVideoModal}
+                />
+              )}
               {!this.isGuest && <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
               {!this.isGuest ? (
                 <div

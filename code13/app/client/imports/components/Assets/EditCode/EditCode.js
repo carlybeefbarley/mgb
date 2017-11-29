@@ -2892,7 +2892,8 @@ class EditCode extends React.Component {
         {this.isGuest && (
           <div>
             {/* HoC VIDEO MODAL */}
-            {currStep && (
+            {currStep &&
+            currStep.videoId && (
               <Modal
                 open={this.state.showVideoModal}
                 closeOnDimmerClick

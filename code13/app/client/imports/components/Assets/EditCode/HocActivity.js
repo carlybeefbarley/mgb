@@ -80,7 +80,8 @@ class HocActivity extends React.Component {
           content="Reset code"
         />
 
-        {currStep.videoId && (
+        {currStep &&
+        currStep.videoId && (
           <Button compact basic size="mini" color="green" onClick={openVideoModal} icon="video" />
         )}
 

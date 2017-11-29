@@ -23,6 +23,9 @@ import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 
 import { makeExpireThumbnailLink } from '/client/imports/helpers/assetFetchers'
 
+import { withStores } from '/client/imports/hocs'
+import { videoStore } from '/client/imports/stores'
+
 // Some constants we will use
 const MAX_BITMAP_WIDTH = 2048
 const MAX_BITMAP_HEIGHT = 2048
@@ -84,7 +87,7 @@ const _defaultColors = [
   '#7f0037',
 ]
 
-export default class EditGraphic extends React.Component {
+class EditGraphic extends React.Component {
   // See AssetEdit.js for propTypes. That wrapper just passes them to us
 
   handleToggleCheckeredBg = () => this.setState({ showCheckeredBg: !this.state.showCheckeredBg })
@@ -2115,3 +2118,5 @@ export default class EditGraphic extends React.Component {
 EditGraphic.contextTypes = {
   skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)
 }
+
+export default withStores({ videoStore })(EditGraphic)

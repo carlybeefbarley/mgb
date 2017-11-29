@@ -1687,6 +1687,9 @@ class EditCode extends React.Component {
   }
 
   consoleLog(message) {
+    // Don't post anything to console if HoC
+    if (!_.isEmpty(this.props.hourOfCodeStore.state.currStep)) return null
+
     this._consoleAdd({
       args: ['MGB: ' + message],
       timestamp: new Date(),

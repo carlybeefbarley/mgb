@@ -289,7 +289,12 @@ class HourOfCodeStore extends Store {
   prepareSource = srcIn => {
     srcIn = this.regexLoop(srcIn)
     srcIn = this.regexIf(srcIn)
-    return `import main from '/!vault:dwarfs.main'; main.setup = dwarf => {${srcIn}}`
+    // keep all in the first line - so lines match for user
+    return `import DwarfX from "/!vault:dwarf-ac"; import main from "/!vault:dwarfs.main"; const dwarf = new DwarfX; // jshint ignore:line
+/** @param {DwarfX} dwarf */
+main.setup = (dwarf) => { // jshint ignore:line
+${srcIn}
+};`
   }
 
   regexLoop = srcIn => {

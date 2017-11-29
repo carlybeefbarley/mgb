@@ -542,6 +542,34 @@ class EditCode extends React.Component {
     // tern won't update itself after loading new import - without changes to active document
     if (this.state.astReady && this.lastName !== this.props.asset.name) {
       const doc = this.codeMirror.getDoc()
+      if (this.isGuest) {
+        const getValue = doc.getValue
+        doc.getValue = () => this.getEditorValue()
+
+        const req = this.ternServer.server.request
+        this.ternServer.server.request = (body, c) => {
+          let cb = c
+          if (body && body.query && body.query.end && body.query.end.line !== void 0) {
+            const origVal = getValue.call(doc)
+            const currVal = doc.getValue()
+            const extraLines = currVal.substring(0, currVal.indexOf(origVal) - origVal.length).split('\n')
+              .length
+
+            body.query.end = Object.assign({}, body.query.end, { line: body.query.end.line + extraLines })
+            // there is less hackinsh option - responseFilter.. but there is no requestFilter ...
+            cb = (err, data) => {
+              if (data && data.end && data.end.line) {
+                data.end.line -= extraLines
+              }
+              if (data && data.start && data.start.line) {
+                data.start.line -= extraLines
+              }
+              c(err, data)
+            }
+          }
+          return req.call(this.ternServer.server, body, cb)
+        }
+      }
       if (this.ternServer && doc) {
         this.ternServer.delDoc(doc)
         this.ternServer.addDoc(this.props.asset.name, doc)
@@ -1398,10 +1426,13 @@ class EditCode extends React.Component {
           if (!this.isActive) return
           if (error) resolve({ atCursorDefRequestResponse: { error } })
           else {
-            data.definitionText =
-              data.origin === this.props.asset.name && data.start
-                ? editor.getLine(data.start.line).trim()
-                : null
+            data.definitionText = null
+            if (data.origin === this.props.asset.name && data.start && data.start.line) {
+              const line = editor.getLine(data.start.line)
+              if (line) {
+                data.definitionText = line.trim()
+              }
+            }
             resolve({ atCursorDefRequestResponse: { data } })
           }
         },

@@ -300,6 +300,8 @@ export default class GameScreen extends React.Component {
       wrapStyle.minHeight = 0
     }
 
+    const hocUrl = this.props.hocStepId ? `&hocStepId=${this.props.hocStepId}` : ``
+
     return (
       <div
         ref="wrapper"
@@ -344,7 +346,7 @@ export default class GameScreen extends React.Component {
             }}
             ref="iFrame1"
             sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
-            src={makeCDNLink('/codeEditSandbox.html') + `&hocStepId=${this.props.hocStepId}`}
+            src={makeCDNLink('/codeEditSandbox.html') + hocUrl}
             frameBorder="0"
             id="mgbjr-EditCode-sandbox-iframe"
           />

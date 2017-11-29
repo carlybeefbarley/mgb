@@ -408,7 +408,8 @@ Meteor.methods({
     checkIsLoggedInAndNotSuspended()
     checkMgb.projectName(data.name)
     checkMgb.projectDescription(data.description)
-    const username = Meteor.user().profile.name
+    const user = Meteor.user()
+    const username = user.profile.name
 
     // Note that this check will also run on the client, but could potentially fail to
     // find a conflict (since the client's subscription might not include all the user's
@@ -453,7 +454,9 @@ Meteor.methods({
     // 2. Handle post-create actions and return docId of new record
     if (Meteor.isServer) {
       console.log(`  [Projects.create]  "${data.name}"  #${docId}  `)
-      Meteor.call('Slack.Projects.create', username, data.name, docId)
+      if (!user.profile.isGuest) {
+        Meteor.call('Slack.Projects.create', username, data.name, docId)
+      }
     }
     return docId
   },

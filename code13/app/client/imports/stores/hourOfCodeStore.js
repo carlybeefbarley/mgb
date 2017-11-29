@@ -36,7 +36,7 @@ class HourOfCodeStore extends Store {
           id: PropTypes.string,
           header: PropTypes.string.isRequired,
           text: PropTypes.string.isRequired,
-          video: PropTypes.string,
+          videoId: PropTypes.string,
           code: PropTypes.string,
         }),
       ),
@@ -110,8 +110,8 @@ class HourOfCodeStore extends Store {
   }
 
   getUserAssetForStep = (step = this.state.currStep, stepId = this.state.currStepId) => {
-    const { name, kind, dn_ownerName, isDeleted } = this.getUserAssetShape(step, stepId)
-    const assetShape = { name, kind, dn_ownerName, isDeleted }
+    const { name, kind, dn_ownerName } = this.getUserAssetShape(step, stepId)
+    const assetShape = { name, kind, dn_ownerName }
 
     // maybe show loading here ?
     return new Promise((resolve, reject) => {
@@ -145,6 +145,7 @@ class HourOfCodeStore extends Store {
     const currStepId = this.getStepIdFromAssetId(currAssetId)
     const currStep = _.find(steps, { id: currStepId })
     const currStepIndex = _.indexOf(steps, currStep)
+
     this.setState({ currStep, currStepId, currStepIndex })
   }
 
@@ -242,10 +243,13 @@ class HourOfCodeStore extends Store {
   }
 
   setCurrStepCompletion = isComplete => {
-    const { currStepIndex, completedSteps } = this.state
-    var newArray = completedSteps
-    newArray[currStepIndex] = isComplete
-    this.setState({ completedSteps: newArray })
+    const { currStepId, completedSteps } = this.state
+    isComplete
+      ? completedSteps.push(currStepId)
+      : _.remove(completedSteps, stepId => {
+          return _.indexOf(completedSteps, stepId) !== -1
+        })
+    this.setState({ completedSteps })
   }
 
   checkActivityTime = () => {
@@ -285,7 +289,12 @@ class HourOfCodeStore extends Store {
   prepareSource = srcIn => {
     srcIn = this.regexLoop(srcIn)
     srcIn = this.regexIf(srcIn)
-    return `import main from '/!vault:dwarfs.main'; main.setup = dwarf => {${srcIn}}`
+    // keep all in the first line - so lines match for user
+    return `import DwarfX from "/!vault:dwarf-ac"; import main from "/!vault:dwarfs.main"; const dwarf = new DwarfX; // jshint ignore:line
+/** @param {DwarfX} dwarf */
+main.setup = (dwarf) => { // jshint ignore:line
+${srcIn}
+};`
   }
 
   regexLoop = srcIn => {

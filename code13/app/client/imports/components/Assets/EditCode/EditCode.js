@@ -29,6 +29,7 @@ import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
 import SaveMyWorkButton from '/client/imports/components/HourOfCode/SaveMyWorkButton'
 import UX from '/client/imports/UX'
+import VideoFrame from '/client/imports/components/Video/VideoFrame'
 
 import ThumbnailWithInfo from '/client/imports/components/Assets/ThumbnailWithInfo'
 
@@ -151,6 +152,9 @@ class EditCode extends React.Component {
 
       // for showing modal upon completing current HoC task
       isCurrStepCompleted: false,
+
+      // for showing HoC video modal
+      showVideoModal: true,
     }
 
     this.errorMessageCache = {}
@@ -538,6 +542,34 @@ class EditCode extends React.Component {
     // tern won't update itself after loading new import - without changes to active document
     if (this.state.astReady && this.lastName !== this.props.asset.name) {
       const doc = this.codeMirror.getDoc()
+      if (this.isGuest) {
+        const getValue = doc.getValue
+        doc.getValue = () => this.getEditorValue()
+
+        const req = this.ternServer.server.request
+        this.ternServer.server.request = (body, c) => {
+          let cb = c
+          if (body && body.query && body.query.end && body.query.end.line !== void 0) {
+            const origVal = getValue.call(doc)
+            const currVal = doc.getValue()
+            const extraLines = currVal.substring(0, currVal.indexOf(origVal) - origVal.length).split('\n')
+              .length
+
+            body.query.end = Object.assign({}, body.query.end, { line: body.query.end.line + extraLines })
+            // there is less hackinsh option - responseFilter.. but there is no requestFilter ...
+            cb = (err, data) => {
+              if (data && data.end && data.end.line) {
+                data.end.line -= extraLines
+              }
+              if (data && data.start && data.start.line) {
+                data.start.line -= extraLines
+              }
+              c(err, data)
+            }
+          }
+          return req.call(this.ternServer.server, body, cb)
+        }
+      }
       if (this.ternServer && doc) {
         this.ternServer.delDoc(doc)
         this.ternServer.addDoc(this.props.asset.name, doc)
@@ -1394,10 +1426,13 @@ class EditCode extends React.Component {
           if (!this.isActive) return
           if (error) resolve({ atCursorDefRequestResponse: { error } })
           else {
-            data.definitionText =
-              data.origin === this.props.asset.name && data.start
-                ? editor.getLine(data.start.line).trim()
-                : null
+            data.definitionText = null
+            if (data.origin === this.props.asset.name && data.start && data.start.line) {
+              const line = editor.getLine(data.start.line)
+              if (line) {
+                data.definitionText = line.trim()
+              }
+            }
             resolve({ atCursorDefRequestResponse: { data } })
           }
         },
@@ -1683,6 +1718,9 @@ class EditCode extends React.Component {
   }
 
   consoleLog(message) {
+    // Don't post anything to console if HoC
+    if (!_.isEmpty(this.props.hourOfCodeStore.state.currStep)) return null
+
     this._consoleAdd({
       args: ['MGB: ' + message],
       timestamp: new Date(),
@@ -2775,6 +2813,18 @@ class EditCode extends React.Component {
     this.setState({ isCurrStepCompleted: false })
   }
 
+  handleOpenVideoModal = () => {
+    this.setState({ showVideoModal: true })
+    // fix video modal open/close not working after content change update
+    this.forceUpdate()
+  }
+
+  handleCloseVideoModal = () => {
+    this.setState({ showVideoModal: false })
+    // fix video modal open/close not working after content change update
+    this.forceUpdate()
+  }
+
   handleAutoRun = () => {
     this.isAutoRun = false
   }
@@ -2841,6 +2891,20 @@ class EditCode extends React.Component {
       <div>
         {this.isGuest && (
           <div>
+            {/* HoC VIDEO MODAL */}
+            {currStep && (
+              <Modal
+                open={this.state.showVideoModal}
+                closeOnDimmerClick
+                closeIcon
+                style={{ background: 'rgba(0,0,0,0)' }}
+                onClose={this.handleCloseVideoModal}
+              >
+                <VideoFrame videoId={currStep.videoId} hd="1080" width="854px" height="480px" />
+              </Modal>
+            )}
+
+            {/* HoC STEP COMPLETION MODAL */}
             <Modal
               closeOnDimmerClick
               closeIcon
@@ -2859,6 +2923,8 @@ class EditCode extends React.Component {
                 </Button>
               </Modal.Actions>
             </Modal>
+
+            {/* HoC ACTIVITY FINISH MODAL */}
             <Modal size="large" open={isActivityOver || (isLastStep && this.state.isCurrStepCompleted)}>
               <Header as="h1" color="green" textAlign="center">
                 <p>
@@ -2900,7 +2966,13 @@ class EditCode extends React.Component {
           {this.state.creatingBundle && <div className="loading-notification">Publishing source code...</div>}
           <div className="row stretched">
             <div className={infoPaneOpts.col1 + ' wide column'}>
-              {this.isGuest && <HocActivity assetId={asset._id} onReset={this.handleReset} />}
+              {this.isGuest && (
+                <HocActivity
+                  assetId={asset._id}
+                  onReset={this.handleReset}
+                  openVideoModal={this.handleOpenVideoModal}
+                />
+              )}
               {!this.isGuest && <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
               {!this.isGuest ? (
                 <div

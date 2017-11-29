@@ -38,7 +38,9 @@ Accounts.validateNewUser(function(user) {
   console.log(`  [validateNewUser]  OK  name=${user.username}   email=${user.emails[0].address} `)
 
   try {
-    if (Meteor.isProduction) Meteor.call('Slack.User.create', user.username, user.emails[0].address)
+    if (Meteor.isProduction && !user.profile.isGuest) {
+      Meteor.call('Slack.User.create', user.username, user.emails[0].address)
+    }
   } catch (err) {
     console.log('  validateNewUser]  failed to call Slack: ', err.toString())
   }

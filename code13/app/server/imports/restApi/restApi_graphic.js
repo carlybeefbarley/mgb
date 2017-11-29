@@ -30,6 +30,70 @@ const _getAssetFrameDataUri = (partialAsset, frame = 0) => {
   return emptyPixel
 }
 
+/* Example...
+firstgid:    1
+image:       "main.png"
+imageheight: 100
+imagewidth:  256
+margin:      0
+name:        "main"
+spacing:     0
+tilecount:   4
+tileheight:  100
+tiles:       Object
+tilewidth:   64
+*/
+const getAssetTilesetInfo = (api, asset) => {
+  return genAPIreturn(api, asset, partialAsset => {
+    const asset = Azzets.findOne(partialAsset._id, {
+      fields: {
+        dn_ownerName: 1,
+        name: 1,
+        'content2.frameData': 1,
+        'content2.animations': 1,
+        'content2.rows': 1,
+        'content2.cols': 1,
+        'content2.width': 1,
+        'content2.height': 1,
+      },
+    })
+
+    const c2 = asset.content2
+    const tilecount = c2.frameData ? c2.frameData.length : 1
+    const tiles = {}
+    c2.animations &&
+      c2.animations.forEach(anim => {
+        const duration = 1000 / anim.fps // round?
+        const animation = anim.frames.map(frame => {
+          return {
+            duration,
+            tileid: frame,
+          }
+        })
+        tiles[anim.frames[0]] = {
+          animation,
+          mgb_animation_info: {
+            name: anim.name,
+            fps: anim.fps,
+          },
+        }
+      })
+
+    return {
+      image: '/api/asset/tileset/' + asset.dn_ownerName + '/' + asset.name,
+      // don't do that - as image will be cached forever and embedded in the map (phaser don't know how to extract embedded images automatically)
+      //image: c2.tileset ? c2.tileset : "/api/asset/tileset/" + this.urlParams.id,
+      name: asset.name,
+      imageheight: c2.rows ? c2.rows * c2.height : c2.height,
+      imagewidth: c2.cols ? c2.cols * c2.width : c2.width * tilecount,
+      tilecount,
+      tileheight: c2.height,
+      tilewidth: c2.width,
+      tiles,
+    }
+  })
+}
+
 RestApi.addRoute(
   'asset/png/:id',
   { authRequired: false },
@@ -114,74 +178,31 @@ RestApi.addRoute(
     get() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
       if (!asset) return err404
-
-      /* Example...
-      firstgid:    1
-      image:       "main.png"
-      imageheight: 100
-      imagewidth:  256
-      margin:      0
-      name:        "main"
-      spacing:     0
-      tilecount:   4
-      tileheight:  100
-      tiles:       Object
-      tilewidth:   64
-     */
-
-      return genAPIreturn(this, asset, partialAsset => {
-        const asset = Azzets.findOne(partialAsset._id, {
-          fields: {
-            dn_ownerName: 1,
-            name: 1,
-            'content2.frameData': 1,
-            'content2.animations': 1,
-            'content2.rows': 1,
-            'content2.cols': 1,
-            'content2.width': 1,
-            'content2.height': 1,
-          },
-        })
-
-        const c2 = asset.content2
-        const tilecount = c2.frameData ? c2.frameData.length : 1
-        const tiles = {}
-        c2.animations &&
-          c2.animations.forEach(anim => {
-            const animation = []
-            const duration = 1000 / anim.fps // round?
-            anim.frames.forEach(frame => {
-              animation.push({
-                duration,
-                tileid: frame,
-              })
-            })
-            tiles[anim.frames[0]] = {
-              animation,
-              mgb_animation_info: {
-                name: anim.name,
-                fps: anim.fps,
-              },
-            }
-          })
-
-        return {
-          image: '/api/asset/tileset/' + asset.dn_ownerName + '/' + asset.name,
-          // don't do that - as image will be cached forever and embedded in the map (phaser don't know how to extract embedded images automatically)
-          //image: c2.tileset ? c2.tileset : "/api/asset/tileset/" + this.urlParams.id,
-          name: asset.name,
-          imageheight: c2.rows ? c2.rows * c2.height : c2.height,
-          imagewidth: c2.cols ? c2.cols * c2.width : c2.width * tilecount,
-          tilecount,
-          tileheight: c2.height,
-          tilewidth: c2.width,
-          tiles,
-        }
-      })
+      return getAssetTilesetInfo(this, asset)
     },
   },
 )
-
+RestApi.addRoute(
+  'asset/tileset-info/:user/:name',
+  { authRequired: false },
+  {
+    get() {
+      const asset = Azzets.findOne(
+        Object.assign(
+          {
+            name: this.urlParams.name,
+            dn_ownerName: this.urlParams.user,
+            kind: 'graphic',
+          },
+          assetAccessibleProps,
+        ),
+        etagFields,
+      )
+      if (!asset) return err404
+      return getAssetTilesetInfo(this, asset)
+    },
+  },
+)
 RestApi.addRoute(
   'asset/tileset/:id',
   { authRequired: false },

@@ -64,6 +64,10 @@ export const getNavPanels = (currUser, showAll) => {
                   to: '/hour-of-code',
                 },
             {
+              name: 'log-out',
+              content: <Button icon="sign out" content="Exit Hour of Code" size="tiny" onClick={_doLogout} />,
+            },
+            {
               name: 'hour-of-code-save',
               content: <EnrollButton />,
               icon: { name: 'signup' },
@@ -337,8 +341,18 @@ export const getNavPanels = (currUser, showAll) => {
 }
 
 const _doLogout = () => {
-  const userName = Meteor.user().profile.name
-  logActivity('user.logout', `Logging out "${userName}"`, null, null)
+  const currUser = Meteor.user()
+  const userName = currUser.profile.name
+  const isGuest = currUser ? currUser.profile.isGuest : false
+
+  if (isGuest) {
+    const isConfirmed = confirm(
+      'Are you sure you want to log out? You will lose your progress unless you save your work.',
+    )
+    if (!isConfirmed) return
+  } else {
+    logActivity('user.logout', `Logging out "${userName}"`, null, null)
+  }
 
   Meteor.logout(error => {
     if (error) {

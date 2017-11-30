@@ -7,7 +7,7 @@ import NavPanelItem from './NavPanelItem'
 // imports to enable logout functionality
 import { showToast } from '/client/imports/modules'
 import { utilPushTo } from '/client/imports/routes/QLink'
-import SaveMyWorkButton from '/client/imports/components/HourOfCode/SaveMyWorkButton'
+import EnrollButton from '/client/imports/components/HourOfCode/EnrollButton'
 import { logActivity } from '/imports/schemas/activity'
 
 // Heads up!
@@ -65,7 +65,7 @@ export const getNavPanels = (currUser, showAll) => {
                 },
             {
               name: 'hour-of-code-save',
-              content: <SaveMyWorkButton />,
+              content: <EnrollButton />,
               icon: { name: 'signup' },
             },
           ],

@@ -65,7 +65,7 @@ class HourOfCodeRoute extends Component {
     window.handleHoCRecaptchaResponse = response => {
       console.log('Recaptcha response', response)
 
-      HTTP.call('GET', `api/validate-recaptcha/${encodeURIComponent(response)}`, (error, isValid) => {
+      HTTP.call('GET', `/api/validate-recaptcha/${encodeURIComponent(response)}`, (error, isValid) => {
         console.log(`api/validate-recaptcha/:recaptchaResponse result:`)
         console.log(`Result`, isValid)
         console.log(`Error`, error)

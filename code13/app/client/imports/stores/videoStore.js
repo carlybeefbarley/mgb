@@ -10,30 +10,31 @@ For showing relevant videos for pages/components when available
 class videoStore extends Store {
   static storeShape = {
     state: PropTypes.shape({
-      // object with components as keys and videoIds as values
-      videos: PropTypes.object,
-      // videoId of related video
-      // must match this.constructor.name
-      relatedVideoId: PropTypes.string,
+      videos: PropTypes.object, // object with components as keys and videoIds as values
+      relatedVideoId: PropTypes.string, // videoId of related video
+      componentName: PropTypes.string, // component name
     }),
   }
 
   state = {
     videos: null,
     relatedVideoId: null,
+    componentName: null,
   }
 
   storeWillReceiveState(nextState) {}
 
   storeDidUpdate(prevState) {
-    const { relatedVideoId: prevVideoId } = prevState
-    const { relatedVideoId } = this.state
-    if (relatedVideoId !== prevVideoId) {
-      console.log(relatedVideoId)
+    const { componentName: prevComponentName } = prevState
+    const { componentName, videos } = this.state
+    if (!videos) return
+    if (componentName !== prevComponentName) {
+      this.setState({ relatedVideoId: videos[componentName] })
     }
   }
 
-  getVideoData = (isActivitySetup = false) => {
+  // Get the data containing components and related videoIds
+  getVideoData = () => {
     return new Promise((resolve, reject) => {
       mgbAjax(`/api/asset/code/!vault/videoListData.json`, (err, videoListString) => {
         let videoList
@@ -52,10 +53,9 @@ class videoStore extends Store {
     })
   }
 
-  getRelatedVideoByComponent = component => {
-    if (!this.state.videoList) return
-
-    this.setState({ relatedVideoId: this.state.videoList[component] })
+  // Get the component name from the component
+  getComponentName = componentName => {
+    this.setState({ componentName })
   }
 }
 

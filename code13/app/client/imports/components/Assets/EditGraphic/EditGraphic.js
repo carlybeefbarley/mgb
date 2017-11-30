@@ -240,7 +240,8 @@ class EditGraphic extends React.Component {
     // TODO inspect. without this color picker hide doesn't work
     document.querySelector('#root').addEventListener('click', () => {})
 
-    this.props.videoStore.getRelatedVideoByComponent(this.constructor.name)
+    // Get component name to get related video popup
+    this.props.videoStore.getComponentName(this.constructor.name)
   }
 
   componentWillUnmount() {
@@ -1687,7 +1688,6 @@ class EditGraphic extends React.Component {
   }
 
   render() {
-    console.log(this.props.videoStore.state)
     this.initDefaultContent2() // The NewAsset code is lazy, so add base content here
     this.initDefaultUndoStack()
 

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Modal, Button, Icon } from 'semantic-ui-react'
+import { Modal, Icon } from 'semantic-ui-react'
 import VideoFrame from './VideoFrame'
 
 export default class VideoPopup extends React.Component {

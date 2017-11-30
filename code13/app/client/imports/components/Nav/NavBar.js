@@ -48,6 +48,7 @@ const NavBar = React.createClass({
       hideHeaders,
       sysvars,
       currentlyEditingAssetInfo,
+      videoStore: { state: { relatedVideoId } },
     } = this.props
 
     // We special-case a few paths to not show the Breadcrumb for aesthetic reasons
@@ -93,7 +94,7 @@ const NavBar = React.createClass({
         />
         <WhatsNew currUser={currUser} />
         <div style={{ margin: '0 0 0 auto' }}>
-          {this.props.videoStore.state.videoId && <VideoPopup />}
+          {relatedVideoId && <VideoPopup videoId={relatedVideoId} />}
           <Popup
             mouseEnterDelay={200}
             trigger={

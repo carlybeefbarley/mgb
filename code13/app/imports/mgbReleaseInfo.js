@@ -15,6 +15,34 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Fri Dec 01 2017 08:30:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.0',
+        state: 'Beta',
+        iteration: '4968',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Performance',
+          changeSummary: 'Remove project creation from The Hour of Code activity.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Performance',
+          changeSummary: 'Queries were improved to help with site performance.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Thu Nov 30 2017 14:00:00 GMT-0800 (PST)',
 
       id: {

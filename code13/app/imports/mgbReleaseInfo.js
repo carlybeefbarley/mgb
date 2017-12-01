@@ -15,6 +15,36 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Thu Nov 30 2017 14:00:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.3.9',
+        state: 'Beta',
+        iteration: '4965',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Improvements',
+          changeSummary:
+            'Video explanations before each level. A button to exit. Hiding user assets from the main site.  And much more....',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'Lots of minor bug fixes and usability updates throughout the system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Mon Nov 27 2017 14:30:00 GMT-0800 (PST)',
 
       id: {

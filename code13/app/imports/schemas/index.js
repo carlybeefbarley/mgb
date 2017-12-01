@@ -29,7 +29,7 @@ export const PurgedAzzets = new Mongo.Collection('purgedAzzets')
 const ignoreGuests = selector => {
   const selectorObj = _.isString(selector) ? { _id: selector } : selector
 
-  return { 'profile.guest': { $ne: true }, ...selectorObj }
+  return { 'profile.isGuest': { $ne: true }, ...selectorObj }
 }
 
 const MeteorUsers = Meteor.users

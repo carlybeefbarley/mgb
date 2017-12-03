@@ -74,7 +74,7 @@ export function clientStartup() {
         <Route path="/dashboard" component={DashboardRoute} name="Dashboard" />
         <Route path="/video" component={VideoRoute} name="Video" />
 
-        <Route path="forum" component={ForumRoute} />
+        <Route path="forum" component={ForumRoute} name="Forum" />
 
         <Route path="/learn" component={LearnRoute} name="Learn" />
         <Route path="/learn/skills" component={LearnSkillsRoute} name="All Skills" />

@@ -1029,6 +1029,8 @@ User Global Variables for MGB site
 
 /* This is copied from node-modules/react-notifications/dist in order to avoid
    the usual did-it-load shenannighans
+
+   We've also customized it a bit.
  */
 
 *,
@@ -75483,97 +75485,6 @@ li.CodeMirror-hint-active {
   opacity: .7;
 }
 
-.cm-s-eclipse span.cm-meta {
-  color: #FF1717;
-}
-
-.cm-s-eclipse span.cm-keyword {
-  line-height: 1em;
-  font-weight: bold;
-  color: #7F0055;
-}
-
-.cm-s-eclipse span.cm-atom {
-  color: #219;
-}
-
-.cm-s-eclipse span.cm-number {
-  color: #164;
-}
-
-.cm-s-eclipse span.cm-def {
-  color: #00f;
-}
-
-.cm-s-eclipse span.cm-variable {
-  color: black;
-}
-
-.cm-s-eclipse span.cm-variable-2 {
-  color: #0000C0;
-}
-
-.cm-s-eclipse span.cm-variable-3 {
-  color: #0000C0;
-}
-
-.cm-s-eclipse span.cm-property {
-  color: black;
-}
-
-.cm-s-eclipse span.cm-operator {
-  color: black;
-}
-
-.cm-s-eclipse span.cm-comment {
-  color: #3F7F5F;
-}
-
-.cm-s-eclipse span.cm-string {
-  color: #2A00FF;
-}
-
-.cm-s-eclipse span.cm-string-2 {
-  color: #f50;
-}
-
-.cm-s-eclipse span.cm-qualifier {
-  color: #555;
-}
-
-.cm-s-eclipse span.cm-builtin {
-  color: #30a;
-}
-
-.cm-s-eclipse span.cm-bracket {
-  color: #cc7;
-}
-
-.cm-s-eclipse span.cm-tag {
-  color: #170;
-}
-
-.cm-s-eclipse span.cm-attribute {
-  color: #00c;
-}
-
-.cm-s-eclipse span.cm-link {
-  color: #219;
-}
-
-.cm-s-eclipse span.cm-error {
-  color: #f00;
-}
-
-.cm-s-eclipse .CodeMirror-activeline-background {
-  background: #e8f2ff;
-}
-
-.cm-s-eclipse .CodeMirror-matchingbracket {
-  outline: 1px solid grey;
-  color: black !important;
-}
-
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   font-family: monospace;
@@ -76496,29 +76407,35 @@ body.dragging .accept-drop:hover {
 .notification-container {
   box-sizing: border-box;
   position: fixed;
-  top: 240px;
+  margin: 0 auto;
+  top: 0;
+  bottom: 0;
   right: 0;
+  left: 0;
   z-index: 999999;
   width: 480px;
-  padding: 0 100px;
-  max-height: calc(100% - 240px);
+  max-width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
+  pointer-events: none;
 }
 
 .notification {
+  transition: transform 0.4s, opacity 0.4s;
+  transition-timing-function: cubic-bezier(0.2, 1, 0.7, 1);
   box-sizing: border-box;
   padding: 15px 15px 15px 58px;
-  border-radius: 2px;
-  color: #fff;
-  background-color: #ccc;
-  box-shadow: 0 0 12px #999;
+  border-radius: 0;
+  color: #FFF;
+  background-color: #CCC;
+  box-shadow: 0 0 0 0.5em rgba(0, 0, 0, 0.1), 0 0 0.125em rgba(0, 0, 0, 0.2);
   cursor: pointer;
   font-size: 1em;
   line-height: 1.2em;
   position: relative;
-  opacity: .9;
-  margin-top: 15px;
+  margin: 1.25em;
+  pointer-events: all;
+  opacity: 0.95;
 }
 
 .notification .title {
@@ -76534,24 +76451,24 @@ body.dragging .accept-drop:hover {
 }
 
 .notification-enter {
-  visibility: hidden;
-  transform: translate3d(100%, 0, 0);
+  transform: translateY(-100%);
+  opacity: 0;
+  z-index: 1;
 }
 
 .notification-enter.notification-enter-active {
-  transition: all .4s;
+  z-index: 1;
 }
 
-.notification-enter.notification-enter-active,
 .notification-leave {
-  visibility: visible;
-  transform: translateZ(0);
+  z-index: 0;
 }
 
 .notification-leave.notification-leave-active {
-  visibility: hidden;
-  transform: translate3d(100%, 0, 0);
-  transition: all .4s;
+  transition-timing-function: cubic-bezier(0.8, 0, 0.9, 0.5);
+  transform: translateY(-100%) scale(0.95);
+  opacity: 0;
+  z-index: 0;
 }
 
 .notification:before {
@@ -76569,7 +76486,7 @@ body.dragging .accept-drop:hover {
 }
 
 .notification-info {
-  background-color: #2f96b4;
+  background-color: #2F96B4;
 }
 
 .notification-info:before {
@@ -76577,7 +76494,7 @@ body.dragging .accept-drop:hover {
 }
 
 .notification-success {
-  background-color: #51a351;
+  background-color: #51A351;
 }
 
 .notification-success:before {
@@ -76585,7 +76502,7 @@ body.dragging .accept-drop:hover {
 }
 
 .notification-warning {
-  background-color: #f89406;
+  background-color: #F89406;
 }
 
 .notification-warning:before {
@@ -76593,7 +76510,7 @@ body.dragging .accept-drop:hover {
 }
 
 .notification-error {
-  background-color: #bd362f;
+  background-color: #BD362F;
 }
 
 .notification-error:before {

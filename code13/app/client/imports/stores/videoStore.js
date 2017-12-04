@@ -27,8 +27,10 @@ class videoStore extends Store {
   storeDidUpdate(prevState) {
     const { componentName: prevComponentName } = prevState
     const { componentName, videos } = this.state
+    console.log(videos)
     if (!videos) return
     if (componentName !== prevComponentName) {
+      console.log(3)
       this.setState({ relatedVideoId: videos[componentName] })
     }
   }
@@ -46,6 +48,7 @@ class videoStore extends Store {
           reject(err)
           return
         }
+        console.log(1)
         this.setState({ videos: videoList.videos })
 
         resolve(videoList)
@@ -55,6 +58,7 @@ class videoStore extends Store {
 
   // Get the component name from the component
   getComponentName = componentName => {
+    console.log(2, componentName)
     this.setState({ componentName })
   }
 }

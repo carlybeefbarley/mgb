@@ -25,6 +25,7 @@ import { makeExpireThumbnailLink } from '/client/imports/helpers/assetFetchers'
 
 import { withStores } from '/client/imports/hocs'
 import { videoStore } from '/client/imports/stores'
+import VideoPopup from '/client/imports/components/Video/VideoPopup'
 
 // Some constants we will use
 const MAX_BITMAP_WIDTH = 2048
@@ -180,6 +181,10 @@ class EditGraphic extends React.Component {
       window.requestAnimationFrame(this._raf)
     }
     this._raf()
+
+    // Get component name to get related video popup then get the data
+    const { videoStore } = this.props
+    videoStore.getVideoData().then(() => videoStore.getComponentName(this.constructor.name))
   }
 
   getImageData() {
@@ -239,9 +244,6 @@ class EditGraphic extends React.Component {
 
     // TODO inspect. without this color picker hide doesn't work
     document.querySelector('#root').addEventListener('click', () => {})
-
-    // Get component name to get related video popup
-    this.props.videoStore.getComponentName(this.constructor.name)
   }
 
   componentWillUnmount() {
@@ -1691,7 +1693,7 @@ class EditGraphic extends React.Component {
     this.initDefaultContent2() // The NewAsset code is lazy, so add base content here
     this.initDefaultUndoStack()
 
-    const { asset, currUser } = this.props
+    const { asset, currUser, videoStore: { state: { relatedVideoId } } } = this.props
     const {
       editScale,
       selectedColors,
@@ -1706,6 +1708,7 @@ class EditGraphic extends React.Component {
       showCheckeredBg,
       toolChosen,
     } = this.state
+    console.log(videoStore)
 
     const c2 = asset.content2
     const { actions, config } = this.generateToolbarActions()
@@ -2113,6 +2116,7 @@ class EditGraphic extends React.Component {
             editCanvasScale={editScale}
           />
         )}
+        {relatedVideoId && <VideoPopup videoId={relatedVideoId} />}
       </Grid>
     )
   }

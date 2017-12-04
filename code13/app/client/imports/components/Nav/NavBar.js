@@ -6,10 +6,6 @@ import NavBarBreadcrumb from './NavBarBreadcrumb'
 import WhatsNew from './WhatsNew'
 import RelatedAssets from './RelatedAssets'
 
-import { withStores } from '/client/imports/hocs'
-import { videoStore } from '/client/imports/stores'
-import VideoPopup from '/client/imports/components/Video/VideoPopup'
-
 // The NavBar is the 2nd row of the central column of the page
 // (i.e. between the left margin and the FlexPanel (if) on the right; below the NavPanel).
 
@@ -28,10 +24,6 @@ const NavBar = React.createClass({
     currentlyEditingAssetInfo: PropTypes.object.isRequired, // An object with some info about the currently edited Asset - as defined in App.js' this.state
   },
 
-  componentDidMount() {
-    this.props.videoStore.getVideoData()
-  },
-
   handleHideHeadersToggle() {
     const { onToggleHeaders } = this.props
 
@@ -48,7 +40,6 @@ const NavBar = React.createClass({
       hideHeaders,
       sysvars,
       currentlyEditingAssetInfo,
-      videoStore: { state: { relatedVideoId } },
     } = this.props
 
     // We special-case a few paths to not show the Breadcrumb for aesthetic reasons
@@ -93,26 +84,23 @@ const NavBar = React.createClass({
           currentlyEditingAssetInfo={currentlyEditingAssetInfo}
         />
         <WhatsNew currUser={currUser} />
-        <div style={{ margin: '0 0 0 auto' }}>
-          {relatedVideoId && <VideoPopup videoId={relatedVideoId} />}
-          <Popup
-            mouseEnterDelay={200}
-            trigger={
-              <Icon
-                link
-                style={{ margin: '0 0 0 auto' }}
-                size="large"
-                onClick={this.handleHideHeadersToggle}
-                name={hideHeaders ? 'angle double down' : 'angle double up'}
-              />
-            }
-            header="Toggle headers"
-            content="Shortcut: [Alt + Shift + H]"
-          />
-        </div>
+        <Popup
+          mouseEnterDelay={200}
+          trigger={
+            <Icon
+              link
+              style={{ margin: '0 0 0 auto' }}
+              size="large"
+              onClick={this.handleHideHeadersToggle}
+              name={hideHeaders ? 'angle double down' : 'angle double up'}
+            />
+          }
+          header="Toggle headers"
+          content="Shortcut: [Alt + Shift + H]"
+        />
       </div>
     )
   },
 })
 
-export default withStores({ videoStore })(NavBar)
+export default NavBar

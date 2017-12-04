@@ -40,3 +40,4 @@ less@2.7.9
 dynamic-import
 percolate:migrations
 http
+mdg:meteor-apm-agent

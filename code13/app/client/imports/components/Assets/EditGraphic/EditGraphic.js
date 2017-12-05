@@ -183,8 +183,7 @@ class EditGraphic extends React.Component {
     this._raf()
 
     // Get component name to get related video popup then get the data
-    const { videoStore } = this.props
-    videoStore.getVideoData().then(() => videoStore.getComponentName(this.constructor.name))
+    this.props.videoStore.getVideosForComponent(this.constructor.name)
   }
 
   getImageData() {
@@ -1693,7 +1692,8 @@ class EditGraphic extends React.Component {
     this.initDefaultContent2() // The NewAsset code is lazy, so add base content here
     this.initDefaultUndoStack()
 
-    const { asset, currUser, videoStore: { state: { relatedVideoId } } } = this.props
+    const { asset, currUser, videoStore: { state: { videos } } } = this.props
+
     const {
       editScale,
       selectedColors,
@@ -1736,387 +1736,389 @@ class EditGraphic extends React.Component {
 
     // Make element
     return (
-      <Grid columns="equal">
-        <Grid.Row>
-          <Grid.Column>
-            {/* First Toolbar row */}
-            <Grid.Row style={{ paddingBottom: '0.3em', whiteSpace: 'nowrap' }}>
-              <Grid.Column>
-                {isColorPickerPinned ? (
-                  <Button
-                    id="mgbjr-EditGraphic-colorPicker"
-                    className="TopToolBarRowIcon"
-                    style={{ backgroundColor: selectedColors['fg'].hex }}
-                    onClick={this.handleToggleColorPicker}
-                    icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex } }}
+      <div>
+        <Grid columns="equal">
+          <Grid.Row>
+            <Grid.Column>
+              {/* First Toolbar row */}
+              <Grid.Row style={{ paddingBottom: '0.3em', whiteSpace: 'nowrap' }}>
+                <Grid.Column>
+                  {isColorPickerPinned ? (
+                    <Button
+                      id="mgbjr-EditGraphic-colorPicker"
+                      className="TopToolBarRowIcon"
+                      style={{ backgroundColor: selectedColors['fg'].hex }}
+                      onClick={this.handleToggleColorPicker}
+                      icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex } }}
+                    />
+                  ) : (
+                    <Popup
+                      on="hover"
+                      position="bottom left"
+                      hoverable
+                      hideOnScroll
+                      mouseEnterDelay={250}
+                      id="mgbjr-EditGraphic-colorPicker-body"
+                      trigger={
+                        <Button
+                          id="mgbjr-EditGraphic-colorPicker"
+                          className="TopToolBarRowIcon"
+                          style={{ backgroundColor: selectedColors['fg'].hex }}
+                          onClick={this.handleToggleColorPicker}
+                          icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex } }}
+                        />
+                      }
+                      header="Color Picker"
+                      content={colorPickerEl}
+                    />
+                  )}
+
+                  <ResizeImagePopup
+                    initialWidth={c2.width}
+                    initialHeight={c2.height}
+                    maxWidth={MAX_BITMAP_WIDTH}
+                    maxHeight={MAX_BITMAP_HEIGHT}
+                    scalingOptions={['None']}
+                    handleResize={this.handleImageResize}
                   />
-                ) : (
+
                   <Popup
-                    on="hover"
-                    position="bottom left"
-                    hoverable
-                    hideOnScroll
-                    mouseEnterDelay={250}
-                    id="mgbjr-EditGraphic-colorPicker-body"
                     trigger={
-                      <Button
-                        id="mgbjr-EditGraphic-colorPicker"
-                        className="TopToolBarRowIcon"
-                        style={{ backgroundColor: selectedColors['fg'].hex }}
-                        onClick={this.handleToggleColorPicker}
-                        icon={{ name: 'block layout', style: { color: selectedColors['fg'].hex } }}
-                      />
+                      <span
+                        id="mgbjr-editGraphic-changeCanvasZoom"
+                        style={{ cursor: 'pointer' }}
+                        onClick={this.zoomIn}
+                        className="ui button zoomLeftIcon noMargin"
+                      >
+                        <Icon name="zoom in" className="noMargin" />
+                      </span>
                     }
-                    header="Color Picker"
-                    content={colorPickerEl}
+                    on="hover"
+                    header="Zoom In"
+                    mouseEnterDelay={250}
+                    content="Click here or scroll/mousewheel over edit area to change zoom level."
+                    size="tiny"
+                    position="bottom left"
                   />
+
+                  <Popup
+                    trigger={
+                      <span
+                        style={{ cursor: 'pointer' }}
+                        onClick={this.resetZoom}
+                        className="ui button zoomMiddleIcon noMargin"
+                      >
+                        {editScale}x
+                      </span>
+                    }
+                    on="hover"
+                    header="Reset Zoom"
+                    mouseEnterDelay={250}
+                    content="Click here to reset zoom"
+                    size="tiny"
+                    position="bottom left"
+                  />
+
+                  <Popup
+                    trigger={
+                      <span
+                        style={{ cursor: 'pointer' }}
+                        onClick={this.zoomOut}
+                        className="ui button zoomRightIcon"
+                      >
+                        <Icon name="zoom out" className="noMargin" />
+                      </span>
+                    }
+                    on="hover"
+                    header="Zoom Out"
+                    mouseEnterDelay={250}
+                    content="Click here or scroll/mousewheel over edit area to change zoom level."
+                    size="tiny"
+                    position="bottom left"
+                  />
+
+                  <Popup
+                    wide
+                    trigger={
+                      <span className="ui button TopToolBarRowIcon" id="mgbjr-editGraphic-toggleGrid">
+                        <span>Views&emsp;</span>
+                        <span style={{ cursor: 'pointer' }} onClick={this.handleToggleGrid}>
+                          <Icon name="grid layout" color={showGrid ? 'blue' : 'grey'} />
+                        </span>
+                        <span>&nbsp;</span>
+                        <span style={{ cursor: 'pointer' }} onClick={this.handleToggleCheckeredBg}>
+                          <Icon name="clone" color={showCheckeredBg ? 'blue' : 'grey'} />
+                        </span>
+                        <span>&nbsp;</span>
+                        <span style={{ cursor: 'pointer' }} onClick={this.toggleMiniMap}>
+                          <Icon name="tv" color={showMiniMap ? 'blue' : 'grey'} />
+                        </span>
+                        <span>&nbsp;</span>
+                        <span style={{ cursor: 'pointer' }} onClick={this.handleToggleDrawingStatus}>
+                          <Icon name="bullseye" color={showDrawingStatus ? 'blue' : 'grey'} />
+                        </span>
+                        <span>&nbsp;</span>
+                        <span style={{ cursor: 'pointer' }} onClick={this.handleToggleAnimFrames}>
+                          <Icon name="film" color={this.state.showAnimFrames ? 'blue' : 'grey'} />
+                        </span>
+                      </span>
+                    }
+                    on="hover"
+                    mouseEnterDelay={250}
+                    header="Preview Helpers"
+                    content={
+                      <div>
+                        <Divider hidden />
+                        <p>
+                          <Icon color={showGrid ? 'blue' : 'grey'} name="grid layout" /> Show/Hide Gridlines
+                          <span style={editScale >= MIN_ZOOM_FOR_GRIDLINES ? null : { color: 'red' }}>
+                            {' '}
+                            (shows when zoom > {MIN_ZOOM_FOR_GRIDLINES - 1}x)
+                          </span>
+                        </p>
+                        <p>
+                          <Icon color={showCheckeredBg ? 'blue' : 'grey'} name="clone" /> Show/Hide
+                          transparency checkerboard helper
+                        </p>
+                        <p>
+                          <Icon color={showMiniMap ? 'blue' : 'grey'} name="tv" /> Show/Hide drawing preview
+                          at 1x scale
+                        </p>
+                        <p>
+                          <Icon color={showDrawingStatus ? 'blue' : 'grey'} name="bullseye" /> Show/Hide
+                          drawing status bar info
+                        </p>
+                        <p>
+                          <Icon color={this.state.showAnimFrames ? 'blue' : 'grey'} name="film" />{' '}
+                          Minimize/Maximize frames and animations
+                        </p>
+                      </div>
+                    }
+                    size="tiny"
+                    position="bottom left"
+                  />
+                </Grid.Column>
+              </Grid.Row>
+              {/* Second Toolbar row */}
+              <Grid.Row style={{ paddingTop: 0, paddingBottom: 0, whiteSpace: 'nowrap' }}>
+                <Grid.Column>
+                  {
+                    <Toolbar
+                      actions={actions}
+                      config={config}
+                      name="EditGraphic"
+                      setPrevToolIdx={this.setPrevToolIdx.bind(this)}
+                    />
+                  }
+                </Grid.Column>
+              </Grid.Row>
+
+              {/* 2nd 'row' is for potentially multiple columns */}
+              <Grid.Row style={{ paddingTop: 0, paddingBottom: '0.25em', display: 'flex' }}>
+                {/* A. Optional Color Picker & Palette */}
+                {isColorPickerPinned && (
+                  <Grid.Column style={{ paddingRight: '1em', paddingTop: '0.5em' }}>
+                    {isColorPickerPinned && colorPickerEl}
+                  </Grid.Column>
                 )}
 
-                <ResizeImagePopup
-                  initialWidth={c2.width}
-                  initialHeight={c2.height}
-                  maxWidth={MAX_BITMAP_WIDTH}
-                  maxHeight={MAX_BITMAP_HEIGHT}
-                  scalingOptions={['None']}
-                  handleResize={this.handleImageResize}
-                />
+                {/* B. Main Drawing area and tools */}
+                <Grid.Column>
+                  <Grid.Row style={{ marginBottom: '6px' }}>
+                    <Grid.Column width={12}>
+                      {/* Paste options - only shown when paste tool is active */}
+                      {toolChosen &&
+                      toolChosen.label == 'Paste' && (
+                        <div className="ui form">
+                          <div className="inline fields">
+                            <label>Scroll modifier:</label>
+                            {scrollModes.map(mode => (
+                              <div key={mode} className="field">
+                                <div className="ui radio checkbox">
+                                  <input
+                                    type="radio"
+                                    name={mode}
+                                    checked={mode == scrollMode ? 'checked' : ''}
+                                    onChange={this.setScrollMode.bind(this, mode)}
+                                  />
+                                  <label>{mode}</label>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
-                <Popup
-                  trigger={
-                    <span
-                      id="mgbjr-editGraphic-changeCanvasZoom"
-                      style={{ cursor: 'pointer' }}
-                      onClick={this.zoomIn}
-                      className="ui button zoomLeftIcon noMargin"
-                    >
-                      <Icon name="zoom in" className="noMargin" />
-                    </span>
-                  }
-                  on="hover"
-                  header="Zoom In"
-                  mouseEnterDelay={250}
-                  content="Click here or scroll/mousewheel over edit area to change zoom level."
-                  size="tiny"
-                  position="bottom left"
-                />
+                      {/*** Status Bar ***/}
+                      <div
+                        className={`ui horizontal list ${showDrawingStatus ? '' : 'mgb-hidden'}`}
+                        ref="statusBarDiv"
+                        style={{ marginBottom: '4px', marginTop: '1px', whiteSpace: 'nowrap' }}
+                      >
+                        <Popup
+                          trigger={
+                            <div className="item">
+                              <div className="content">
+                                <div
+                                  className="ui small circular label"
+                                  style={{ cursor: 'pointer' }}
+                                  onClick={this.handleGotoNextFrame}
+                                >
+                                  &nbsp;
+                                  <Icon name="spinner" />
+                                  <span>Frame {1 + selectedFrameIdx}</span>
+                                  &nbsp;
+                                </div>
+                              </div>
+                            </div>
+                          }
+                          header={`Frame #${1 + selectedFrameIdx} of ${c2.frameNames.length}`}
+                          content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
+                          size="small"
+                          mouseEnterDelay={250}
+                          position="bottom left"
+                        />
+                        &nbsp;
+                        <Popup
+                          trigger={
+                            <div className="item">
+                              <div className="content">
+                                <div
+                                  className="ui small circular label"
+                                  style={{ cursor: 'pointer' }}
+                                  onClick={this.handleGotoNextLayer}
+                                >
+                                  &nbsp;
+                                  <Icon name="tasks" />
+                                  <span>
+                                    layer: <em>{layerName}</em>
+                                  </span>
+                                  &nbsp;
+                                </div>
+                              </div>
+                            </div>
+                          }
+                          header={`Graphic has ${layerCount} layers`}
+                          content="Click here or use the layers table to change the currently selected layer"
+                          size="small"
+                          mouseEnterDelay={250}
+                          position="bottom left"
+                        />
+                        &nbsp;
+                        <div className="item">
+                          <div className="content" ref="statusBarMouseAtText" />
+                        </div>
+                        <div className="item">
+                          <i className="square icon" ref="statusBarColorAtIcon" />
+                          <div className="content" ref="statusBarColorAtText" />
+                        </div>
+                      </div>
 
-                <Popup
-                  trigger={
-                    <span
-                      style={{ cursor: 'pointer' }}
-                      onClick={this.resetZoom}
-                      className="ui button zoomMiddleIcon noMargin"
-                    >
-                      {editScale}x
-                    </span>
-                  }
-                  on="hover"
-                  header="Reset Zoom"
-                  mouseEnterDelay={250}
-                  content="Click here to reset zoom"
-                  size="tiny"
-                  position="bottom left"
-                />
+                      {/*** Drawing Canvas ***/}
+                      <Grid.Row style={{ minHeight: '64px' }}>
+                        <Grid.Column style={{ height: '100%' }}>
+                          <div
+                            style={{
+                              overflow: 'auto',
+                              maxWidth: 'calc(100vw - 32px)',
+                              maxHeight: editCanvasMaxHeight + 'px',
+                            }}
+                            onScroll={this.handleEditCanvasScroll}
+                          >
+                            <canvas
+                              id="mgb_edit_graphic_main_canvas"
+                              ref="editCanvas"
+                              style={imgEditorSty}
+                              width={editScale * c2.width}
+                              height={editScale * c2.height}
+                              className={
+                                (showCheckeredBg ? 'mgbEditGraphicSty_checkeredBackground' : '') +
+                                ' mgbEditGraphicSty_thinBorder'
+                              }
+                              onDragOver={this.handleDragOverPreview.bind(this)}
+                              onDrop={this.handleDropPreview.bind(this, -1)}
+                            />
+                            {/*** <canvas id="tilesetCanvas"></canvas> ***/}
+                            <CanvasGrid scale={editScale} setGrid={this.setGrid} />
+                          </div>
+                        </Grid.Column>
+                      </Grid.Row>
 
-                <Popup
-                  trigger={
-                    <span
-                      style={{ cursor: 'pointer' }}
-                      onClick={this.zoomOut}
-                      className="ui button zoomRightIcon"
-                    >
-                      <Icon name="zoom out" className="noMargin" />
-                    </span>
-                  }
-                  on="hover"
-                  header="Zoom Out"
-                  mouseEnterDelay={250}
-                  content="Click here or scroll/mousewheel over edit area to change zoom level."
-                  size="tiny"
-                  position="bottom left"
-                />
-
-                <Popup
-                  wide
-                  trigger={
-                    <span className="ui button TopToolBarRowIcon" id="mgbjr-editGraphic-toggleGrid">
-                      <span>Views&emsp;</span>
-                      <span style={{ cursor: 'pointer' }} onClick={this.handleToggleGrid}>
-                        <Icon name="grid layout" color={showGrid ? 'blue' : 'grey'} />
-                      </span>
-                      <span>&nbsp;</span>
-                      <span style={{ cursor: 'pointer' }} onClick={this.handleToggleCheckeredBg}>
-                        <Icon name="clone" color={showCheckeredBg ? 'blue' : 'grey'} />
-                      </span>
-                      <span>&nbsp;</span>
-                      <span style={{ cursor: 'pointer' }} onClick={this.toggleMiniMap}>
-                        <Icon name="tv" color={showMiniMap ? 'blue' : 'grey'} />
-                      </span>
-                      <span>&nbsp;</span>
-                      <span style={{ cursor: 'pointer' }} onClick={this.handleToggleDrawingStatus}>
-                        <Icon name="bullseye" color={showDrawingStatus ? 'blue' : 'grey'} />
-                      </span>
-                      <span>&nbsp;</span>
-                      <span style={{ cursor: 'pointer' }} onClick={this.handleToggleAnimFrames}>
-                        <Icon name="film" color={this.state.showAnimFrames ? 'blue' : 'grey'} />
-                      </span>
-                    </span>
-                  }
-                  on="hover"
-                  mouseEnterDelay={250}
-                  header="Preview Helpers"
-                  content={
-                    <div>
-                      <Divider hidden />
-                      <p>
-                        <Icon color={showGrid ? 'blue' : 'grey'} name="grid layout" /> Show/Hide Gridlines
-                        <span style={editScale >= MIN_ZOOM_FOR_GRIDLINES ? null : { color: 'red' }}>
-                          {' '}
-                          (shows when zoom > {MIN_ZOOM_FOR_GRIDLINES - 1}x)
-                        </span>
-                      </p>
-                      <p>
-                        <Icon color={showCheckeredBg ? 'blue' : 'grey'} name="clone" /> Show/Hide transparency
-                        checkerboard helper
-                      </p>
-                      <p>
-                        <Icon color={showMiniMap ? 'blue' : 'grey'} name="tv" /> Show/Hide drawing preview at
-                        1x scale
-                      </p>
-                      <p>
-                        <Icon color={showDrawingStatus ? 'blue' : 'grey'} name="bullseye" /> Show/Hide drawing
-                        status bar info
-                      </p>
-                      <p>
-                        <Icon color={this.state.showAnimFrames ? 'blue' : 'grey'} name="film" />{' '}
-                        Minimize/Maximize frames and animations
-                      </p>
-                    </div>
-                  }
-                  size="tiny"
-                  position="bottom left"
-                />
-              </Grid.Column>
-            </Grid.Row>
-            {/* Second Toolbar row */}
-            <Grid.Row style={{ paddingTop: 0, paddingBottom: 0, whiteSpace: 'nowrap' }}>
-              <Grid.Column>
-                {
-                  <Toolbar
-                    actions={actions}
-                    config={config}
-                    name="EditGraphic"
-                    setPrevToolIdx={this.setPrevToolIdx.bind(this)}
-                  />
-                }
-              </Grid.Column>
-            </Grid.Row>
-
-            {/* 2nd 'row' is for potentially multiple columns */}
-            <Grid.Row style={{ paddingTop: 0, paddingBottom: '0.25em', display: 'flex' }}>
-              {/* A. Optional Color Picker & Palette */}
-              {isColorPickerPinned && (
-                <Grid.Column style={{ paddingRight: '1em', paddingTop: '0.5em' }}>
-                  {isColorPickerPinned && colorPickerEl}
+                      {/* Selection size info while selection is active */}
+                      {selectRect && (
+                        <div>
+                          Selected area:&emsp;width = {selectDimensions.width}&emsp;height ={' '}
+                          {selectDimensions.height}
+                        </div>
+                      )}
+                    </Grid.Column>
+                  </Grid.Row>
                 </Grid.Column>
-              )}
+              </Grid.Row>
+            </Grid.Column>
+            {/* Art Mentor Column */}
+            {isSkillTutorialGraphic && (
+              <ArtTutorial
+                style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+                isOwner={currUser && currUser._id === asset.ownerId}
+                active={asset.skillPath ? true : false}
+                skillPath={asset.skillPath}
+                currUser={this.props.currUser}
+                userSkills={this.userSkills}
+                assetId={asset._id}
+                frameData={c2.frameData}
+                handleSelectFrame={frame => this.handleSelectFrame(frame)}
+              />
+            )}
+          </Grid.Row>
 
-              {/* B. Main Drawing area and tools */}
-              <Grid.Column>
-                <Grid.Row style={{ marginBottom: '6px' }}>
-                  <Grid.Column width={12}>
-                    {/* Paste options - only shown when paste tool is active */}
-                    {toolChosen &&
-                    toolChosen.label == 'Paste' && (
-                      <div className="ui form">
-                        <div className="inline fields">
-                          <label>Scroll modifier:</label>
-                          {scrollModes.map(mode => (
-                            <div key={mode} className="field">
-                              <div className="ui radio checkbox">
-                                <input
-                                  type="radio"
-                                  name={mode}
-                                  checked={mode == scrollMode ? 'checked' : ''}
-                                  onChange={this.setScrollMode.bind(this, mode)}
-                                />
-                                <label>{mode}</label>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+          {/*** GraphicImport ***/}
+          <Modal open={this.state.showGraphicImportPopup} onClose={this.toolCloseImportPopup}>
+            <GraphicImport
+              importTileset={this.importTileset}
+              maxTileWidth={MAX_BITMAP_WIDTH}
+              maxTileHeight={MAX_BITMAP_WIDTH}
+            />
+          </Modal>
 
-                    {/*** Status Bar ***/}
-                    <div
-                      className={`ui horizontal list ${showDrawingStatus ? '' : 'mgb-hidden'}`}
-                      ref="statusBarDiv"
-                      style={{ marginBottom: '4px', marginTop: '1px', whiteSpace: 'nowrap' }}
-                    >
-                      <Popup
-                        trigger={
-                          <div className="item">
-                            <div className="content">
-                              <div
-                                className="ui small circular label"
-                                style={{ cursor: 'pointer' }}
-                                onClick={this.handleGotoNextFrame}
-                              >
-                                &nbsp;
-                                <Icon name="spinner" />
-                                <span>Frame {1 + selectedFrameIdx}</span>
-                                &nbsp;
-                              </div>
-                            </div>
-                          </div>
-                        }
-                        header={`Frame #${1 + selectedFrameIdx} of ${c2.frameNames.length}`}
-                        content="Use ALT+mousewheel over Edit area to change current edited frame. You can also upload image files by dragging them to the frame previews or to the drawing area"
-                        size="small"
-                        mouseEnterDelay={250}
-                        position="bottom left"
-                      />
-                      &nbsp;
-                      <Popup
-                        trigger={
-                          <div className="item">
-                            <div className="content">
-                              <div
-                                className="ui small circular label"
-                                style={{ cursor: 'pointer' }}
-                                onClick={this.handleGotoNextLayer}
-                              >
-                                &nbsp;
-                                <Icon name="tasks" />
-                                <span>
-                                  layer: <em>{layerName}</em>
-                                </span>
-                                &nbsp;
-                              </div>
-                            </div>
-                          </div>
-                        }
-                        header={`Graphic has ${layerCount} layers`}
-                        content="Click here or use the layers table to change the currently selected layer"
-                        size="small"
-                        mouseEnterDelay={250}
-                        position="bottom left"
-                      />
-                      &nbsp;
-                      <div className="item">
-                        <div className="content" ref="statusBarMouseAtText" />
-                      </div>
-                      <div className="item">
-                        <i className="square icon" ref="statusBarColorAtIcon" />
-                        <div className="content" ref="statusBarColorAtText" />
-                      </div>
-                    </div>
+          {/*** SpriteLayers ***/}
 
-                    {/*** Drawing Canvas ***/}
-                    <Grid.Row style={{ minHeight: '64px' }}>
-                      <Grid.Column style={{ height: '100%' }}>
-                        <div
-                          style={{
-                            overflow: 'auto',
-                            maxWidth: 'calc(100vw - 32px)',
-                            maxHeight: editCanvasMaxHeight + 'px',
-                          }}
-                          onScroll={this.handleEditCanvasScroll}
-                        >
-                          <canvas
-                            id="mgb_edit_graphic_main_canvas"
-                            ref="editCanvas"
-                            style={imgEditorSty}
-                            width={editScale * c2.width}
-                            height={editScale * c2.height}
-                            className={
-                              (showCheckeredBg ? 'mgbEditGraphicSty_checkeredBackground' : '') +
-                              ' mgbEditGraphicSty_thinBorder'
-                            }
-                            onDragOver={this.handleDragOverPreview.bind(this)}
-                            onDrop={this.handleDropPreview.bind(this, -1)}
-                          />
-                          {/*** <canvas id="tilesetCanvas"></canvas> ***/}
-                          <CanvasGrid scale={editScale} setGrid={this.setGrid} />
-                        </div>
-                      </Grid.Column>
-                    </Grid.Row>
+          <SpriteLayers
+            content2={c2}
+            isMinimized={!this.state.showAnimFrames}
+            availableWidth={this.props.availableWidth}
+            hasPermission={this.hasPermission}
+            handleSave={this.handleSave.bind(this)}
+            selectedFrameIdx={this.state.selectedFrameIdx}
+            selectedLayerIdx={this.state.selectedLayerIdx}
+            // The following params are an anti-pattern for React.
+            // TODO: Need to make this a normal flow instead
+            forceDraw={this.forceDraw}
+            forceUpdate={this.forceUpdateForLayers}
+            getFrameData={frameId => this.frameCanvasArray[frameId].toDataURL('image/png')}
+            getLayerData={layerId => this.previewCanvasArray[layerId].toDataURL('image/png')}
+            handleSelectLayer={this.handleSelectLayer}
+            handleSelectFrame={this.handleSelectFrame}
+          />
 
-                    {/* Selection size info while selection is active */}
-                    {selectRect && (
-                      <div>
-                        Selected area:&emsp;width = {selectDimensions.width}&emsp;height ={' '}
-                        {selectDimensions.height}
-                      </div>
-                    )}
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid.Column>
-          {/* Art Mentor Column */}
-          {isSkillTutorialGraphic && (
-            <ArtTutorial
-              style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
-              isOwner={currUser && currUser._id === asset.ownerId}
-              active={asset.skillPath ? true : false}
-              skillPath={asset.skillPath}
-              currUser={this.props.currUser}
-              userSkills={this.userSkills}
-              assetId={asset._id}
-              frameData={c2.frameData}
-              handleSelectFrame={frame => this.handleSelectFrame(frame)}
+          {/*** MiniMap ***/}
+          {showMiniMap &&
+          this.refs.editCanvas && (
+            <MiniMap
+              ref={this.handleRefMiniMap}
+              width={c2.width}
+              height={c2.height}
+              toggleMiniMap={this.toggleMiniMap}
+              editCanvasMaxHeight={editCanvasMaxHeight}
+              editCanvasHeight={this.refs.editCanvas ? this.refs.editCanvas.height : null}
+              editCanvasMaxWidth={screen.width}
+              editCanvasWidth={this.refs.editCanvas ? this.refs.editCanvas.width : null}
+              editCanvasScale={editScale}
             />
           )}
-        </Grid.Row>
-
-        {/*** GraphicImport ***/}
-        <Modal open={this.state.showGraphicImportPopup} onClose={this.toolCloseImportPopup}>
-          <GraphicImport
-            importTileset={this.importTileset}
-            maxTileWidth={MAX_BITMAP_WIDTH}
-            maxTileHeight={MAX_BITMAP_WIDTH}
-          />
-        </Modal>
-
-        {/*** SpriteLayers ***/}
-
-        <SpriteLayers
-          content2={c2}
-          isMinimized={!this.state.showAnimFrames}
-          availableWidth={this.props.availableWidth}
-          hasPermission={this.hasPermission}
-          handleSave={this.handleSave.bind(this)}
-          selectedFrameIdx={this.state.selectedFrameIdx}
-          selectedLayerIdx={this.state.selectedLayerIdx}
-          // The following params are an anti-pattern for React.
-          // TODO: Need to make this a normal flow instead
-          forceDraw={this.forceDraw}
-          forceUpdate={this.forceUpdateForLayers}
-          getFrameData={frameId => this.frameCanvasArray[frameId].toDataURL('image/png')}
-          getLayerData={layerId => this.previewCanvasArray[layerId].toDataURL('image/png')}
-          handleSelectLayer={this.handleSelectLayer}
-          handleSelectFrame={this.handleSelectFrame}
-        />
-
-        {/*** MiniMap ***/}
-        {showMiniMap &&
-        this.refs.editCanvas && (
-          <MiniMap
-            ref={this.handleRefMiniMap}
-            width={c2.width}
-            height={c2.height}
-            toggleMiniMap={this.toggleMiniMap}
-            editCanvasMaxHeight={editCanvasMaxHeight}
-            editCanvasHeight={this.refs.editCanvas ? this.refs.editCanvas.height : null}
-            editCanvasMaxWidth={screen.width}
-            editCanvasWidth={this.refs.editCanvas ? this.refs.editCanvas.width : null}
-            editCanvasScale={editScale}
-          />
-        )}
-        {relatedVideoId && <VideoPopup videoId={relatedVideoId} />}
-      </Grid>
+        </Grid>
+        {videos && <VideoPopup />}
+      </div>
     )
   }
 }

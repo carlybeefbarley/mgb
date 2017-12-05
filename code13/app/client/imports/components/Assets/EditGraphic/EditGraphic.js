@@ -1708,7 +1708,6 @@ class EditGraphic extends React.Component {
       showCheckeredBg,
       toolChosen,
     } = this.state
-    console.log(videoStore)
 
     const c2 = asset.content2
     const { actions, config } = this.generateToolbarActions()

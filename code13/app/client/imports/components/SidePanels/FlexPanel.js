@@ -70,6 +70,7 @@ const flexPanelViews = [
 
   // Experimental UI for mobile
   //{ tag: 'more',      lev: 8,  name: 'more',     icon: 'ellipsis horizontal', header: 'More', el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
+  /*
   {
     tag: 'projects',
     lev: 5,
@@ -90,6 +91,7 @@ const flexPanelViews = [
     superAdminOnly: false,
     mobileUI: false,
   },
+  */
   //{ tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   header: 'Keys',          el: fpKeyboard,      superAdminOnly: false, mobileUI: false },
   {
     tag: 'activity',
@@ -101,7 +103,7 @@ const flexPanelViews = [
     superAdminOnly: false,
     mobileUI: true,
   },
-
+  /*
   {
     tag: 'settings',
     lev: 3,
@@ -112,7 +114,7 @@ const flexPanelViews = [
     superAdminOnly: false,
     mobileUI: false,
   },
-
+  */
   // SuperAdmin-only:
   {
     tag: 'super',

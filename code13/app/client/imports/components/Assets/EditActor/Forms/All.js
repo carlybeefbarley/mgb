@@ -8,7 +8,19 @@ import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import templates from '../TemplateDiffs.js'
 
-export default class All extends BaseForm {
+import { withStores } from '/client/imports/hocs'
+import { videoStore } from '/client/imports/stores'
+import VideoPopup from '/client/imports/components/Video/VideoPopup'
+
+class All extends BaseForm {
+  componentWillMount() {
+    // Get related video data
+    const { videoStore: { state: videoData } } = this.props
+    videoData
+      ? videoStore.getComponentName(this.constructor.name)
+      : videoStore.getVideoData().then(() => videoStore.getComponentName(this.constructor.name))
+  }
+
   get data() {
     return this.props.asset.content2.databag.all
   }
@@ -80,43 +92,49 @@ export default class All extends BaseForm {
     }
     const databag = this.props.asset.content2.databag
     const actorType = databag.all.actorType
+    const { videoStore: { state: { videos } } } = this.props
 
     return (
-      <Grid style={{ minHeight: '50vh' }} centered container>
-        <Grid.Column>
-          <Form style={!this.props.canEdit ? { pointerEvents: 'none' } : {}}>
-            {this.options(
-              'Actor Type',
-              'actorType',
-              _.pickBy(actorOptions.actorType, (val, key) => {
-                return key !== 'Item, Wall, or Scenery'
-              }),
-              {},
-              'mgbjr-CT-edit-actor-actorType',
-              'mgbjr-edit-actor-actorType',
-              this.handleChangeActorType(databag),
-            )}
-            {this.text('Description', 'description')}
-            {this.text('Initial Heath', 'initialHealthNum', 'number', initHealthConfig)}
-            {this.text('Initial Max Health', 'initialMaxHealthNum', 'number', {
-              min: 0,
-              max: 1000000,
-              default: 0,
-              title: 'This is the highest health the actor can have. The value 0 means there is no limit',
-            })}
-            {this.dropArea(
-              'Graphic',
-              'defaultGraphicName',
-              'graphic',
-              null,
-              this.updateActorThumbnail(this.props.asset),
-            )}
-            {this.dropArea('Sound When Harmed', 'soundWhenHarmed', 'sound', soundOptions)}
-            {this.dropArea('Sound When Healed', 'soundWhenHealed', 'sound', soundOptions)}
-            {this.dropArea('Sound When Killed', 'soundWhenKilled', 'sound', soundOptions)}
-          </Form>
-        </Grid.Column>
-      </Grid>
+      <div>
+        <Grid style={{ minHeight: '50vh' }} centered container>
+          <Grid.Column>
+            <Form style={!this.props.canEdit ? { pointerEvents: 'none' } : {}}>
+              {this.options(
+                'Actor Type',
+                'actorType',
+                _.pickBy(actorOptions.actorType, (val, key) => {
+                  return key !== 'Item, Wall, or Scenery'
+                }),
+                {},
+                'mgbjr-CT-edit-actor-actorType',
+                'mgbjr-edit-actor-actorType',
+                this.handleChangeActorType(databag),
+              )}
+              {this.text('Description', 'description')}
+              {this.text('Initial Heath', 'initialHealthNum', 'number', initHealthConfig)}
+              {this.text('Initial Max Health', 'initialMaxHealthNum', 'number', {
+                min: 0,
+                max: 1000000,
+                default: 0,
+                title: 'This is the highest health the actor can have. The value 0 means there is no limit',
+              })}
+              {this.dropArea(
+                'Graphic',
+                'defaultGraphicName',
+                'graphic',
+                null,
+                this.updateActorThumbnail(this.props.asset),
+              )}
+              {this.dropArea('Sound When Harmed', 'soundWhenHarmed', 'sound', soundOptions)}
+              {this.dropArea('Sound When Healed', 'soundWhenHealed', 'sound', soundOptions)}
+              {this.dropArea('Sound When Killed', 'soundWhenKilled', 'sound', soundOptions)}
+            </Form>
+          </Grid.Column>
+        </Grid>
+        {videos && <VideoPopup />}
+      </div>
     )
   }
 }
+
+export default withStores({ videoStore })(All)

@@ -33,7 +33,11 @@ import ActorMapErrorResolver from './ActorMapErrorResolver.js'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
-export default class EditActorMap extends EditMap {
+import { withStores } from '/client/imports/hocs'
+import { videoStore } from '/client/imports/stores'
+import VideoPopup from '/client/imports/components/Video/VideoPopup'
+
+class EditActorMap extends EditMap {
   static propTypes = {
     asset: PropTypes.object, // asset to be changed
     currUser: PropTypes.object, // current user
@@ -84,6 +88,12 @@ export default class EditActorMap extends EditMap {
         }
       }
     })
+  }
+
+  componentWillMount() {
+    // Get related video data
+    const { videoStore } = this.props
+    videoStore.getVideoData().then(() => videoStore.getComponentName(this.constructor.name))
   }
 
   componentWillReceiveProps(newp) {
@@ -269,97 +279,106 @@ export default class EditActorMap extends EditMap {
     if (!this.mgb_content2 || !this.cache) return this.renderLoading()
 
     const { isLoading, isPlaying, activeLayer, activeTileset } = this.state
-
+    const { videoStore: { state: { videos } } } = this.props
     const c2 = this.mgb_content2
 
     return (
-      <div className="ui grid" ref="container" style={{ flexWrap: 'nowrap' }}>
-        {isLoading && this.renderLoading()}
-        {this.renderPlayModal()}
-        {this.renderMusicModal()}
+      <div>
+        <div className="ui grid" ref="container" style={{ flexWrap: 'nowrap' }}>
+          {isLoading && this.renderLoading()}
+          {this.renderPlayModal()}
+          {this.renderMusicModal()}
 
-        <div className={(isPlaying ? 'sixteen' : 'thirteen') + ' wide column'}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ float: 'left' }}>
-              <MapToolbar
-                {...this.toolbarProps}
+          <div className={(isPlaying ? 'sixteen' : 'thirteen') + ' wide column'}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ float: 'left' }}>
+                <MapToolbar
+                  {...this.toolbarProps}
+                  isPlaying={isPlaying}
+                  options={this.options}
+                  undoSteps={this.mgb_undo}
+                  redoSteps={this.mgb_redo}
+                  ref="toolbar"
+                />
+              </div>
+              <div style={{ float: 'right' }}>
+                <div style={{ float: 'left', marginLeft: '5px' }}>
+                  <Properties
+                    {...this.propertiesProps}
+                    data={{
+                      width: c2.width,
+                      height: c2.height,
+                    }}
+                    isPlaying={isPlaying}
+                  />
+                </div>
+                <div style={{ float: 'left', marginLeft: '5px' }}>
+                  <EventTool
+                    {...this.tilesetProps}
+                    palette={this.cache.tiles}
+                    activeTileset={activeTileset}
+                    tilesets={c2.tilesets}
+                    options={this.options}
+                    isPlaying={isPlaying}
+                  />
+                </div>
+                <div style={{ float: 'left', marginLeft: '5px' }}>
+                  <MapGenerator
+                    {...this.mapProps}
+                    data={c2}
+                    activeTileset={activeTileset}
+                    activeLayer={activeLayer}
+                    isPlaying={isPlaying}
+                  />
+                </div>
+              </div>
+            </div>
+            <div style={{ clear: 'both', overflow: 'hidden' }}>
+              <ActorMapArea
+                {...this.mapProps}
+                showModal={this.showModal}
+                playDataIsReady={!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave}
                 isPlaying={isPlaying}
+                cache={this.cache}
+                activeLayer={activeLayer}
+                highlightActiveLayer={this.options.highlightActiveLayer}
+                canEdit={this.props.canEdit}
                 options={this.options}
-                undoSteps={this.mgb_undo}
-                redoSteps={this.mgb_redo}
-                ref="toolbar"
+                data={c2}
+                asset={this.props.asset}
+                ref="map"
               />
             </div>
-            <div style={{ float: 'right' }}>
-              <div style={{ float: 'left', marginLeft: '5px' }}>
-                <Properties
-                  {...this.propertiesProps}
-                  data={{
-                    width: c2.width,
-                    height: c2.height,
-                  }}
-                  isPlaying={isPlaying}
-                />
-              </div>
-              <div style={{ float: 'left', marginLeft: '5px' }}>
-                <EventTool
-                  {...this.tilesetProps}
-                  palette={this.cache.tiles}
-                  activeTileset={activeTileset}
-                  tilesets={c2.tilesets}
-                  options={this.options}
-                  isPlaying={isPlaying}
-                />
-              </div>
-              <div style={{ float: 'left', marginLeft: '5px' }}>
-                <MapGenerator
-                  {...this.mapProps}
-                  data={c2}
-                  activeTileset={activeTileset}
-                  activeLayer={activeLayer}
-                  isPlaying={isPlaying}
-                />
-              </div>
-            </div>
           </div>
-          <div style={{ clear: 'both', overflow: 'hidden' }}>
-            <ActorMapArea
-              {...this.mapProps}
-              showModal={this.showModal}
-              playDataIsReady={!this.props.hasUnsentSaves && !this.props.asset.isUnconfirmedSave}
-              isPlaying={isPlaying}
-              cache={this.cache}
-              activeLayer={activeLayer}
-              highlightActiveLayer={this.options.highlightActiveLayer}
-              canEdit={this.props.canEdit}
+          <div
+            className={'three wide column'}
+            style={
+              isPlaying ? (
+                { display: 'none' }
+              ) : (
+                { display: 'flex', flexDirection: 'column', minWidth: '175px' }
+              )
+            }
+          >
+            <LayerTool
+              {...this.layerProps}
+              layers={c2.layers}
               options={this.options}
-              data={c2}
-              asset={this.props.asset}
-              ref="map"
+              activeLayer={activeLayer}
+            />
+            <TileSet
+              {...this.tilesetProps}
+              palette={this.cache.tiles}
+              activeTileset={activeTileset}
+              tilesets={c2.tilesets}
+              options={this.options}
             />
           </div>
         </div>
-        <div
-          className={'three wide column'}
-          style={
-            isPlaying ? { display: 'none' } : { display: 'flex', flexDirection: 'column', minWidth: '175px' }
-          }
-        >
-          <LayerTool
-            {...this.layerProps}
-            layers={c2.layers}
-            options={this.options}
-            activeLayer={activeLayer}
-          />
-          <TileSet
-            {...this.tilesetProps}
-            palette={this.cache.tiles}
-            activeTileset={activeTileset}
-            tilesets={c2.tilesets}
-            options={this.options}
-          />
-        </div>
+        {videos && <VideoPopup />}
       </div>
     )
   }
 }
+
+export default withStores({ videoStore })(EditActorMap)

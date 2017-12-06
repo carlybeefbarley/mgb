@@ -181,9 +181,6 @@ class EditGraphic extends React.Component {
       window.requestAnimationFrame(this._raf)
     }
     this._raf()
-
-    // Get component name to get related video popup then get the data
-    this.props.videoStore.getVideosForComponent(this.constructor.name)
   }
 
   getImageData() {
@@ -203,6 +200,12 @@ class EditGraphic extends React.Component {
   // content2.spriteData[]    // dataUrl. Same frameData elements but with merged layers
   // content2.tileset         // all frames joined in one image
   // content2.animations[]    // { name, frames[], fps }
+
+  componentWillMount() {
+    // Get related video data
+    const { videoStore } = this.props
+    videoStore.getVideoData().then(() => videoStore.getComponentName(this.constructor.name))
+  }
 
   // React Callback: componentDidMount()
   componentDidMount() {

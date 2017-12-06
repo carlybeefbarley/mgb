@@ -6,7 +6,16 @@ import SmallDD from '../../../Controls/SmallDD.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
-export default class Animations extends React.Component {
+import { withStores } from '/client/imports/hocs'
+import { videoStore } from '/client/imports/stores'
+import VideoPopup from '/client/imports/components/Video/VideoPopup'
+
+class Animations extends React.Component {
+  componentWillMount() {
+    const { videoStore } = this.props
+    videoStore.getComponentName(this.constructor.name)
+  }
+
   state = {
     serializedForm: {},
     isLoading: false, // When loading graphic asset tileset info and frames
@@ -238,6 +247,7 @@ export default class Animations extends React.Component {
   }
 
   render() {
+    const { videoStore: { state: { videos } } } = this.props
     let checkedCount = this.state.graphicFrameImports.length
 
     // Animation accordions
@@ -309,67 +319,72 @@ export default class Animations extends React.Component {
     }
 
     return (
-      <div style={{ position: 'relative' }}>
-        {this.state.isLoading && (
-          <Dimmer active inverted>
-            <Loader
-              style={{ position: 'fixed', right: '345px', top: '50%', translate: 'transform(-50%, -50%)' }}
-              active
-              inline
-              size="large"
+      <div>
+        <div style={{ position: 'relative' }}>
+          {this.state.isLoading && (
+            <Dimmer active inverted>
+              <Loader
+                style={{ position: 'fixed', right: '345px', top: '50%', translate: 'transform(-50%, -50%)' }}
+                active
+                inline
+                size="large"
+              >
+                Loading frames...
+              </Loader>
+            </Dimmer>
+          )}
+          {this.state.showModal && (
+            <Modal
+              defaultOpen
+              size="small"
+              onUnmount={() => {
+                this.setState({ showModal: false, graphicFrameImports: [], animationIndex: 0 })
+              }}
             >
-              Loading frames...
-            </Loader>
-          </Dimmer>
-        )}
-        {this.state.showModal && (
-          <Modal
-            defaultOpen
-            size="small"
-            onUnmount={() => {
-              this.setState({ showModal: false, graphicFrameImports: [], animationIndex: 0 })
-            }}
-          >
-            <Modal.Header>Import Graphic Frames</Modal.Header>
-            <Modal.Content>
-              <Item.Group divided>
-                {_.map(this.state.graphicFrameImports, (frame, i) => {
-                  if (!frame.checked) checkedCount--
+              <Modal.Header>Import Graphic Frames</Modal.Header>
+              <Modal.Content>
+                <Item.Group divided>
+                  {_.map(this.state.graphicFrameImports, (frame, i) => {
+                    if (!frame.checked) checkedCount--
 
-                  return (
-                    <Item key={i}>
-                      <DropArea
-                        kind="graphic"
-                        value={frame.name}
-                        frame={i}
-                        asset={this.props.asset}
-                        isModalView
-                      />
-                      <Checkbox
-                        name={frame.name}
-                        value={i}
-                        style={{ position: 'absolute', right: '25px' }}
-                        defaultChecked
-                        onChange={(e, data) => {
-                          this.handleGraphicFrameSelection(e, data)
-                        }}
-                      />
-                    </Item>
-                  )
-                })}
-              </Item.Group>
-            </Modal.Content>
-            <Modal.Actions>
-              <Button primary disabled={!checkedCount} onClick={() => this.changeGraphicFrames()}>
-                Import Selected Frames
-              </Button>
-            </Modal.Actions>
-          </Modal>
-        )}
-        {rows.map(anim => {
-          return anim
-        })}
+                    return (
+                      <Item key={i}>
+                        <DropArea
+                          kind="graphic"
+                          value={frame.name}
+                          frame={i}
+                          asset={this.props.asset}
+                          isModalView
+                        />
+                        <Checkbox
+                          name={frame.name}
+                          value={i}
+                          style={{ position: 'absolute', right: '25px' }}
+                          defaultChecked
+                          onChange={(e, data) => {
+                            this.handleGraphicFrameSelection(e, data)
+                          }}
+                        />
+                      </Item>
+                    )
+                  })}
+                </Item.Group>
+              </Modal.Content>
+              <Modal.Actions>
+                <Button primary disabled={!checkedCount} onClick={() => this.changeGraphicFrames()}>
+                  Import Selected Frames
+                </Button>
+              </Modal.Actions>
+            </Modal>
+          )}
+          {rows.map(anim => {
+            return anim
+          })}
+        </div>
+        {videos && <VideoPopup />}
       </div>
     )
   }
 }
+
+export default withStores({ videoStore })(Animations)

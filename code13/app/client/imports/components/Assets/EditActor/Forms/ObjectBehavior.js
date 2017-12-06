@@ -5,7 +5,16 @@ import BaseForm from '../../../Controls/BaseForm.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
 import actorOptions from '../../Common/ActorOptions.js'
 
-export default class ObjectBehavior extends BaseForm {
+import { withStores } from '/client/imports/hocs'
+import { videoStore } from '/client/imports/stores'
+import VideoPopup from '/client/imports/components/Video/VideoPopup'
+
+class ObjectBehavior extends BaseForm {
+  componentWillMount() {
+    const { videoStore } = this.props
+    videoStore.getComponentName(this.constructor.name)
+  }
+
   get data() {
     return this.props.asset.content2.databag.item
   }
@@ -328,19 +337,8 @@ export default class ObjectBehavior extends BaseForm {
 
   render() {
     let behaviorOptions = null
-    const actorType = this.props.asset.content2.databag.all.actorType
-    const objectByItemActivation = [
-      'Scenery, Floor',
-      'Wall',
-      'Wall',
-      'Wall',
-      'Item',
-      'Item',
-      'Item',
-      '',
-      'Floor',
-      'Floor',
-    ]
+    const { asset, videoStore: { state: { videos } } } = this.props
+    const actorType = asset.content2.databag.all.actorType
 
     if (actorType === actorOptions.actorType['Item'])
       behaviorOptions = this.renderItemBehavior(
@@ -364,9 +362,14 @@ export default class ObjectBehavior extends BaseForm {
       behaviorOptions = <div className="ui message ">This ActorType doesn't use this set of options</div>
 
     return (
-      <Grid style={{ minHeight: '50vh' }} centered container>
-        <Grid.Column>{behaviorOptions ? behaviorOptions : this.renderAll()}</Grid.Column>
-      </Grid>
+      <div>
+        <Grid style={{ minHeight: '50vh' }} centered container>
+          <Grid.Column>{behaviorOptions ? behaviorOptions : this.renderAll()}</Grid.Column>
+        </Grid>
+        {videos && <VideoPopup />}
+      </div>
     )
   }
 }
+
+export default withStores({ videoStore })(ObjectBehavior)

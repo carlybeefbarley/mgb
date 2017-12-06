@@ -9,10 +9,9 @@ import { videoStore } from '/client/imports/stores'
 import VideoPopup from '/client/imports/components/Video/VideoPopup'
 
 class NPCBehavior extends BaseForm {
-  constructor(props) {
-    super(props)
-    // Get component name to get related video popup then get the data
-    this.props.videoStore.getVideosForComponent(this.constructor.name)
+  componentWillMount() {
+    const { videoStore } = this.props
+    videoStore.getComponentName(this.constructor.name)
   }
 
   get data() {

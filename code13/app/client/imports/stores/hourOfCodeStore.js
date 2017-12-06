@@ -84,28 +84,16 @@ class HourOfCodeStore extends Store {
   getUserAssetShape = (step = this.state.currStep, stepId = this.state.currStepId) => {
     const assetName = 'dwarfs.userCode.' + stepId
     const assetKind = 'code'
-    const { name: projectName } = this.getUserProjectShape()
 
     return {
       // Placeholder asset name
       name: assetName,
       kind: assetKind,
       dn_ownerName: Meteor.user().username,
-      projectNames: [projectName],
       isCompleted: false,
       isPrivate: true,
       isDeleted: true,
       content2: { src: _.get(step, 'code', '') },
-    }
-  }
-
-  getUserProjectShape = () => {
-    const projectName = 'hourOfCode'
-    const projectDescription = 'Auto-created for Hour of Code'
-
-    return {
-      name: projectName,
-      description: projectDescription,
     }
   }
 

@@ -67,35 +67,36 @@ showToast.warning = (msg, opts) => toast('warning', msg, opts)
  * @param {object} [opts.timeout] - How many ms to stay on the screen.
  */
 showToast.error = (msg, opts) => {
+  const user = Meteor.user()
+  const showButtons = user && !user.profile.isGuest
+
   toast(
     'error',
-    (msg || Meteor.user()) && (
-      <div>
-        {msg && <p>{msg}</p>}
-        {Meteor.user() && (
-          <p>
-            <Button
-              as={QLink}
-              query={{ _fp: 'chat.G_MGBHELP_' }}
-              basic
-              inverted
-              compact
-              size="tiny"
-              content="#mgb-help"
-            />
-            <Button
-              as={QLink}
-              query={{ _fp: 'chat.G_MGBBUGS_' }}
-              basic
-              inverted
-              compact
-              size="tiny"
-              content="#mgb-bugs"
-            />
-          </p>
-        )}
-      </div>
-    ),
+    <div>
+      {msg && <p>{msg}</p>}
+      {showButtons && (
+        <p>
+          <Button
+            as={QLink}
+            query={{ _fp: 'chat.G_MGBHELP_' }}
+            basic
+            inverted
+            compact
+            size="tiny"
+            content="#mgb-help"
+          />
+          <Button
+            as={QLink}
+            query={{ _fp: 'chat.G_MGBBUGS_' }}
+            basic
+            inverted
+            compact
+            size="tiny"
+            content="#mgb-bugs"
+          />
+        </p>
+      )}
+    </div>,
     { timeout: 10000, ...opts },
   )
 }

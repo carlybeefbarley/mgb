@@ -33,7 +33,8 @@ const schema = {
     HoC: {
       currStepId: optional(String),
       stepToAssetMap: optional(Object),
-      email: optional(String), // Their real email address, for porting assets to a real user later
+      email: optional(String), // Their real email address
+      username: optional(String), // Their real username
     },
   },
   badges: optional([]), // Empty.. or array of badge names (see badges.js)
@@ -125,6 +126,7 @@ Meteor.methods({
       'profile.HoC.currStepId': optional(schema.profile.HoC.currStepId),
       'profile.HoC.stepToAssetMap': optional(schema.profile.HoC.stepToAssetMap),
       'profile.HoC.email': optional(schema.profile.HoC.email),
+      'profile.HoC.username': optional(schema.profile.HoC.username),
       suIsBanned: schema.suIsBanned,
       suFlagId: schema.suFlagId,
     })

@@ -27,7 +27,7 @@ import CodeTutorials from './CodeTutorials'
 import HocActivity from './HocActivity'
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
 import { AssetKindEnum } from '/imports/schemas/assets'
-import SaveMyWorkButton from '/client/imports/components/HourOfCode/SaveMyWorkButton'
+import EnrollButton from '/client/imports/components/HourOfCode/EnrollButton'
 import UX from '/client/imports/UX'
 import VideoFrame from '/client/imports/components/Video/VideoFrame'
 
@@ -2957,7 +2957,7 @@ class EditCode extends React.Component {
                       I've finished my Hour of Code™ <Icon name="sign out" />
                     </a>
                   </h3>
-                  <SaveMyWorkButton />
+                  <EnrollButton />
                 </div>
               </Modal.Content>
             </Modal>

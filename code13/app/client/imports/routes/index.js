@@ -74,7 +74,7 @@ export function clientStartup() {
         <Route path="/dashboard" component={DashboardRoute} name="Dashboard" />
         <Route path="/video" component={VideoRoute} name="Video" />
 
-        <Route path="forum" component={ForumRoute} />
+        <Route path="forum" component={ForumRoute} name="Forum" />
 
         <Route path="/learn" component={LearnRoute} name="Learn" />
         <Route path="/learn/skills" component={LearnSkillsRoute} name="All Skills" />
@@ -96,6 +96,7 @@ export function clientStartup() {
         <Route path="/login" component={Users.LoginRoute} name="Log In" />
         <Route path="/forgot-password" component={Users.ForgotPassword} name="Forgot Password" />
         <Route path="/reset-password/:token" component={Users.ResetPassword} name="Reset Password" />
+        <Route path="/enroll-account/:token" component={Users.ResetPassword} name="Enroll Account" />
         <Route path="/verify-email/:token" component={Users.VerifyEmail} name="Verify Email" />
 
         <Route path="users" component={Users.UserListRoute} name="All Users" />

@@ -1,5 +1,3 @@
-import _ from 'lodash'
-
 // Heads Up!
 //
 // Checklist when adding a collection:
@@ -18,33 +16,4 @@ export const Activity = new Mongo.Collection('activity')
 export const Settings = new Mongo.Collection('settings')
 export const ActivitySnapshots = new Mongo.Collection('activity_snapshots')
 export const PurgedAzzets = new Mongo.Collection('purgedAzzets')
-
-//
-// Users
-//
-// We wrap Meteor.users here so that we can handle "guests".
-// Guests are excluded from "find*" queries by default.
-
-// Modifies a selector to exclude 'profile.guest' users by default.
-const ignoreGuests = selector => {
-  const selectorObj = _.isString(selector) ? { _id: selector } : selector
-
-  return { 'profile.guest': { $ne: true }, ...selectorObj }
-}
-
-const MeteorUsers = Meteor.users
 export const Users = Meteor.users
-
-const MeteorUsersFind = Meteor.users.find.bind(Users)
-const MeteorUsersFindOne = Meteor.users.findOne.bind(Users)
-
-Users.find = (selector, options) => MeteorUsersFind(ignoreGuests(selector), options)
-Users.findOne = (selector, options) => MeteorUsersFindOne(ignoreGuests(selector), options)
-
-// Provide warnings if `users` is directly accessed through the Meteor global.
-Object.defineProperty(Meteor, 'users', {
-  get() {
-    console.error('Warning: Do not use Meteor.users directly.  Use `Users` from /schemas instead.')
-    return MeteorUsers
-  },
-})

@@ -10,7 +10,7 @@ import validate from '/imports/schemas/validate'
 
 const ResetPasswordRoute = React.createClass({
   propTypes: {
-    params: PropTypes.object,
+    params: PropTypes.object.isRequired,
   },
 
   contextTypes: {
@@ -22,21 +22,11 @@ const ResetPasswordRoute = React.createClass({
       errors: {},
       formData: {},
       isLoading: false,
-      isComplete: false,
     }
   },
 
   renderContent() {
-    const { isLoading, isComplete, errors, formData } = this.state
-
-    if (isComplete)
-      return (
-        <Message
-          success
-          header="Password reset successful"
-          content="You have successfully reset your password and are now logged in."
-        />
-      )
+    const { isLoading, errors, formData } = this.state
 
     return (
       <Form onChange={this.handleChange} onSubmit={this.handleSubmit} loading={isLoading}>
@@ -117,7 +107,7 @@ const ResetPasswordRoute = React.createClass({
       // and that will also regenerate this React control, so weh ave to do some strange stuff now
       showToast.success('Password reset was successful')
       utilPushTo(this.context.urlLocation.query, '/')
-      this.setState({ isLoading: false, errors: {}, isComplete: true })
+      this.setState({ isLoading: false, errors: {} })
     })
   },
 })

@@ -241,6 +241,8 @@ class HourOfCodeStore extends Store {
   }
 
   checkActivityTime = () => {
+    if (!Meteor.user()) return
+
     const now = new Date().getTime()
     const hour = 3600000 + 10000 // an hour in milliseconds (+10 seconds)
     if (now >= Meteor.user().createdAt.getTime() + hour) {

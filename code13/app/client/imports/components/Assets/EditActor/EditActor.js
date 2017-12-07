@@ -26,7 +26,6 @@ export default class EditActor extends React.Component {
   constructor(...props) {
     super(...props)
     this.state = {
-      isModalOpen: true,
       isTemplateSelected: false,
     }
   }
@@ -259,8 +258,19 @@ export default class EditActor extends React.Component {
     )
   }
 
+  renderTemplates() {
+    return (
+      <div>
+        <h3 style={{ textAlign: 'center' }}>
+          Choose a template for the type of Actor, then modify the detailed options in the Actor Editor
+        </h3>
+        <div className="edit-actor">{this.getTemplates()}</div>
+      </div>
+    )
+  }
+
   handleTemplateClick = actorType => () => {
-    this.setState({ isModalOpen: false, isTemplateSelected: true })
+    this.setState({ isTemplateSelected: true })
     this.loadTemplate('alTemplate' + actorType)
     this.props.handleDescriptionChange('Created from Template: ' + actorType)
     this.handleSave('Initial Template selected')
@@ -316,26 +326,22 @@ export default class EditActor extends React.Component {
 
     return (
       <div className="ui grid edit-actor">
-        <div>
-          <b title="This Actor can work on the following Layers of an ActorMap">ActorMap Layers:</b>
-          <div id="mgbjr-edit-actor-layerValid">
-            <LayerValid layerName="Background" isValid={ActorValidator.isValidForBG(databag)} />
-            <LayerValid layerName="Active" isValid={ActorValidator.isValidForActive(databag)} />
-            <LayerValid layerName="Foreground" isValid={ActorValidator.isValidForFG(databag)} />
+        {databag ? (
+          <div style={{ overflow: 'hidden' }}>
+            <div>
+              <b title="This Actor can work on the following Layers of an ActorMap">ActorMap Layers:</b>
+              <div id="mgbjr-edit-actor-layerValid">
+                <LayerValid layerName="Background" isValid={ActorValidator.isValidForBG(databag)} />
+                <LayerValid layerName="Active" isValid={ActorValidator.isValidForActive(databag)} />
+                <LayerValid layerName="Foreground" isValid={ActorValidator.isValidForFG(databag)} />
+              </div>
+            </div>
+
+            <Tabs tabs={this.getTabs(databag)} />
           </div>
-        </div>
-        <Modal
-          open={!databag && this.state.isModalOpen}
-          closeOnDocumentClick={false}
-          closeOnDimmerClick
-          onClose={this.handleModalClose}
-        >
-          <Modal.Header>
-            Choose a template for the type of Actor, then modify the detailed options in the Actor Editor
-          </Modal.Header>
-          <Modal.Content className="edit-actor">{this.getTemplates()}</Modal.Content>
-        </Modal>
-        {databag && <Tabs tabs={this.getTabs(databag)} />}
+        ) : (
+          this.renderTemplates()
+        )}
       </div>
     )
   }

@@ -95,7 +95,7 @@ export default class ActorTileset extends React.Component {
       <Segment id="mgbjr-MapTools-actors" style={{ display: 'flex', height: '100%' }}>
         <Label attached="top">Actors</Label>
         <div
-          className="active content tilesets accept-drop"
+          className="tilesets accept-drop"
           onDrop={this.onDropOnLayer.bind(this)}
           onDragOver={DragNDropHelper.preventDefault}
           style={{ maxHeight: '100%', width: '100%' }}
@@ -251,14 +251,14 @@ export default class ActorTileset extends React.Component {
             className="actor-disabled-hint"
             style={{ width: '100%', opacity: 1, backgroundColor: '#e8e8e8' }}
           >
-            <p className="title active" style={{ color: 'black', borderTop: 'none', paddingTop: 0 }}>
+            <p style={{ color: 'black', borderTop: 'none', paddingTop: 0 }}>
               You cannot use Actors in the Events layer. Use the Events Tool instead for setting Music and
               Warp .
             </p>
           </div>
         ) : (
           <div
-            className="active content tilesets accept-drop"
+            className="tilesets accept-drop"
             data-drop-text={_tilesetHintText}
             onDrop={this.onDropOnLayer.bind(this)}
             onDragOver={DragNDropHelper.preventDefault}

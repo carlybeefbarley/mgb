@@ -25,9 +25,10 @@ const validateGreaterThanZero = numLike => {
   return validateInteger(numParsed) && numParsed > 0
 }
 
-const mapProperties = ({ width, height, tilewidth, tileheight }, changeSize, changeTile) => {
-  return {
-    title: 'Map Properties',
+const mapProperties = ({ width, height, tilewidth, tileheight }, changeSize, changeTile) => ({
+  title: 'Map Properties',
+  content: {
+    key: 'map-properties-content',
     content: (
       <Segment.Group>
         <Segment.Group horizontal>
@@ -73,47 +74,50 @@ const mapProperties = ({ width, height, tilewidth, tileheight }, changeSize, cha
         </Segment.Group>
       </Segment.Group>
     ),
-  }
-}
+  },
+})
 
 const layerProperties = ({ name, width, height, x, y, type }, onChangeLayer) => ({
   title: name + ' properties',
-  content: (
-    <Segment.Group>
-      {type === 'tilelayer' && (
+  content: {
+    key: name + '-properties-content',
+    content: (
+      <Segment.Group>
+        {type === 'tilelayer' && (
+          <Segment.Group horizontal>
+            <Segment>
+              <Label pointing="right">Width:</Label>
+              <InlineEdit
+                change={onChangeLayer}
+                text={width + ''}
+                paramName="width"
+                validate={validateGreaterThanZero}
+              />
+            </Segment>
+            <Segment>
+              <Label pointing="right">Height:</Label>
+              <InlineEdit
+                change={onChangeLayer}
+                text={height + ''}
+                paramName="height"
+                validate={validateGreaterThanZero}
+              />
+            </Segment>
+          </Segment.Group>
+        )}
         <Segment.Group horizontal>
           <Segment>
-            <Label pointing="right">Width:</Label>
-            <InlineEdit
-              change={onChangeLayer}
-              text={width + ''}
-              paramName="width"
-              validate={validateGreaterThanZero}
-            />
+            <Label pointing="right">Offset x:</Label>
+            <InlineEdit change={onChangeLayer} text={x + ''} paramName="x" validate={validateInteger} />
           </Segment>
           <Segment>
-            <Label pointing="right">Height:</Label>
-            <InlineEdit
-              change={onChangeLayer}
-              text={height + ''}
-              paramName="height"
-              validate={validateGreaterThanZero}
-            />
+            <Label pointing="right">Offset y:</Label>
+            <InlineEdit change={onChangeLayer} text={y + ''} paramName="y" validate={validateInteger} />
           </Segment>
         </Segment.Group>
-      )}
-      <Segment.Group horizontal>
-        <Segment>
-          <Label pointing="right">Offset x:</Label>
-          <InlineEdit change={onChangeLayer} text={x + ''} paramName="x" validate={validateInteger} />
-        </Segment>
-        <Segment>
-          <Label pointing="right">Offset y:</Label>
-          <InlineEdit change={onChangeLayer} text={y + ''} paramName="y" validate={validateInteger} />
-        </Segment>
       </Segment.Group>
-    </Segment.Group>
-  ),
+    ),
+  },
 })
 
 const tilesetProperties = (
@@ -122,61 +126,64 @@ const tilesetProperties = (
   onChangeTileset,
 ) => ({
   title: name + ' properties',
-  content: (
-    <Segment.Group>
-      <Segment>
-        <Label pointing="right">Name:</Label>
-        <InlineEdit
-          change={onChangeTilesetName}
-          text={name + ''}
-          paramName="name"
-          validate={val => validate.notEmpty(val) && validate.lengthCap(val, 255)}
-        />
-      </Segment>
-
-      <Segment.Group horizontal>
+  content: {
+    key: name + '-properties-content',
+    content: (
+      <Segment.Group>
         <Segment>
-          <Label pointing="right">TileWidth:</Label>
+          <Label pointing="right">Name:</Label>
           <InlineEdit
-            change={onChangeTileset}
-            text={tilewidth + ''}
-            paramName="tilewidth"
-            validate={validateGreaterThanZero}
+            change={onChangeTilesetName}
+            text={name + ''}
+            paramName="name"
+            validate={val => validate.notEmpty(val) && validate.lengthCap(val, 255)}
           />
         </Segment>
-        <Segment>
-          <Label pointing="right">TileHeight:</Label>
-          <InlineEdit
-            change={onChangeTileset}
-            text={tileheight + ''}
-            paramName="tileheight"
-            validate={validateGreaterThanZero}
-          />
-        </Segment>
-      </Segment.Group>
 
-      <Segment.Group horizontal>
-        <Segment compact>
-          <Label pointing="right">Margin:</Label>
-          <InlineEdit
-            change={onChangeTileset}
-            text={margin + ''}
-            paramName="margin"
-            validate={validateUInt}
-          />
-        </Segment>
-        <Segment compact>
-          <Label pointing="right">Spacing:</Label>
-          <InlineEdit
-            change={onChangeTileset}
-            text={spacing + ''}
-            paramName="spacing"
-            validate={validateUInt}
-          />
-        </Segment>
+        <Segment.Group horizontal>
+          <Segment>
+            <Label pointing="right">TileWidth:</Label>
+            <InlineEdit
+              change={onChangeTileset}
+              text={tilewidth + ''}
+              paramName="tilewidth"
+              validate={validateGreaterThanZero}
+            />
+          </Segment>
+          <Segment>
+            <Label pointing="right">TileHeight:</Label>
+            <InlineEdit
+              change={onChangeTileset}
+              text={tileheight + ''}
+              paramName="tileheight"
+              validate={validateGreaterThanZero}
+            />
+          </Segment>
+        </Segment.Group>
+
+        <Segment.Group horizontal>
+          <Segment compact>
+            <Label pointing="right">Margin:</Label>
+            <InlineEdit
+              change={onChangeTileset}
+              text={margin + ''}
+              paramName="margin"
+              validate={validateUInt}
+            />
+          </Segment>
+          <Segment compact>
+            <Label pointing="right">Spacing:</Label>
+            <InlineEdit
+              change={onChangeTileset}
+              text={spacing + ''}
+              paramName="spacing"
+              validate={validateUInt}
+            />
+          </Segment>
+        </Segment.Group>
       </Segment.Group>
-    </Segment.Group>
-  ),
+    ),
+  },
 })
 
 // TODO: add / handle property type - e.g. string / number etc
@@ -265,68 +272,76 @@ const objectProperties = (
   updateSavedProps,
 ) => ({
   title: name + ' properties',
-  content: (
-    <Segment.Group>
-      <Segment>
-        <Label pointing="right">Name:</Label>
-        <InlineEdit
-          change={changeString}
-          text={name + ''}
-          paramName="name"
-          validate={val => validate.notEmpty(val) && validate.lengthCap(val, 255)}
+  content: {
+    key: name + '-properties-content',
+    content: (
+      <Segment.Group>
+        <Segment>
+          <Label pointing="right">Name:</Label>
+          <InlineEdit
+            change={changeString}
+            text={name + ''}
+            paramName="name"
+            validate={val => validate.notEmpty(val) && validate.lengthCap(val, 255)}
+          />
+        </Segment>
+
+        <Segment.Group horizontal>
+          <Segment>
+            <Label pointing="right">width:</Label>
+            <InlineEdit change={changeNumber} text={width + ''} paramName="width" validate={validateNumber} />
+          </Segment>
+          <Segment>
+            <Label pointing="right">height:</Label>
+            <InlineEdit
+              change={changeNumber}
+              text={height + ''}
+              paramName="height"
+              validate={validateNumber}
+            />
+          </Segment>
+        </Segment.Group>
+
+        <Segment.Group horizontal>
+          <Segment>
+            <Label pointing="right">x:</Label>
+            <InlineEdit change={changeNumber} text={x + ''} paramName="x" validate={validateNumber} />
+          </Segment>
+          <Segment>
+            <Label pointing="right">y:</Label>
+            <InlineEdit change={changeNumber} text={y + ''} paramName="y" validate={validateNumber} />
+          </Segment>
+        </Segment.Group>
+
+        <Segment.Group horizontal>
+          <Segment>
+            <Label pointing="right">rotation:</Label>
+            <InlineEdit
+              change={changeNumber}
+              text={rotation + ''}
+              paramName="rotation"
+              validate={validateInteger}
+            />
+          </Segment>
+          <Segment>
+            <Label pointing="right">type:</Label>
+            <InlineEdit
+              change={changeNumber}
+              text={type + ''}
+              paramName="type"
+              validate={val => validate.lengthCap(val, 255)}
+            />
+          </Segment>
+        </Segment.Group>
+
+        <MoreProperties
+          savedProps={mgb_properties}
+          tiledProps={properties}
+          updateSavedProps={updateSavedProps}
         />
-      </Segment>
-
-      <Segment.Group horizontal>
-        <Segment>
-          <Label pointing="right">width:</Label>
-          <InlineEdit change={changeNumber} text={width + ''} paramName="width" validate={validateNumber} />
-        </Segment>
-        <Segment>
-          <Label pointing="right">height:</Label>
-          <InlineEdit change={changeNumber} text={height + ''} paramName="height" validate={validateNumber} />
-        </Segment>
       </Segment.Group>
-
-      <Segment.Group horizontal>
-        <Segment>
-          <Label pointing="right">x:</Label>
-          <InlineEdit change={changeNumber} text={x + ''} paramName="x" validate={validateNumber} />
-        </Segment>
-        <Segment>
-          <Label pointing="right">y:</Label>
-          <InlineEdit change={changeNumber} text={y + ''} paramName="y" validate={validateNumber} />
-        </Segment>
-      </Segment.Group>
-
-      <Segment.Group horizontal>
-        <Segment>
-          <Label pointing="right">rotation:</Label>
-          <InlineEdit
-            change={changeNumber}
-            text={rotation + ''}
-            paramName="rotation"
-            validate={validateInteger}
-          />
-        </Segment>
-        <Segment>
-          <Label pointing="right">type:</Label>
-          <InlineEdit
-            change={changeNumber}
-            text={type + ''}
-            paramName="type"
-            validate={val => validate.lengthCap(val, 255)}
-          />
-        </Segment>
-      </Segment.Group>
-
-      <MoreProperties
-        savedProps={mgb_properties}
-        tiledProps={properties}
-        updateSavedProps={updateSavedProps}
-      />
-    </Segment.Group>
-  ),
+    ),
+  },
 })
 
 export default class extends React.Component {
@@ -337,9 +352,6 @@ export default class extends React.Component {
 
     /// check out app/client/imports/components/Assets/Common/Map/Props/PropertiesProps.js - for related methods
   }
-  constructor(...p) {
-    super(...p)
-  }
 
   onChangeMapSize = changes => {
     const width = (changes.width ? parseInt(changes.width, 10) : this.props.map.width) || 1
@@ -347,6 +359,7 @@ export default class extends React.Component {
 
     this.props.resize({ width, height })
   }
+
   onChangeMapTileSize = changes => {
     const tilewidth = (changes.tilewidth ? parseInt(changes.tilewidth, 10) : this.props.map.tilewidth) || 1
     const tileheight =
@@ -366,6 +379,7 @@ export default class extends React.Component {
     this.props.tileset.name = changes.name
     this.props.updateTileset(this.props.tileset)
   }
+
   onChangeTileset = changes => {
     for (let i in changes) {
       this.props.tileset[i] = parseInt(changes[i], 10)
@@ -380,6 +394,7 @@ export default class extends React.Component {
     }
     this.props.updateObject(object)
   }
+
   onChangeObjectNumbericValue = changes => {
     const object = this.props.getActiveObject()
     for (let i in changes) {
@@ -400,15 +415,14 @@ export default class extends React.Component {
   }
 
   render() {
+    const { getActiveObject, layer, map, tileset } = this.props
     const panels = []
 
-    this.props.map &&
-      panels.push(mapProperties(this.props.map, this.onChangeMapSize, this.onChangeMapTileSize))
-    this.props.layer && panels.push(layerProperties(this.props.layer, this.onChangeLayer))
-    this.props.tileset &&
-      panels.push(tilesetProperties(this.props.tileset, this.onChangeTilesetName, this.onChangeTileset))
+    if (map) panels.push(mapProperties(map, this.onChangeMapSize, this.onChangeMapTileSize))
+    if (layer) panels.push(layerProperties(layer, this.onChangeLayer))
+    if (tileset) panels.push(tilesetProperties(tileset, this.onChangeTilesetName, this.onChangeTileset))
 
-    const object = this.props.getActiveObject()
+    const object = getActiveObject()
     if (object) {
       // TODO - clean up
       if (!object.mgb_properties) object.mgb_properties = []

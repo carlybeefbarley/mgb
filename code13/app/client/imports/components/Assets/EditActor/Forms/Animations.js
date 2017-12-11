@@ -34,7 +34,7 @@ export default class Animations extends React.Component {
 
   handleGraphicFrameSelection(e, data) {
     let frames = this.state.graphicFrameImports
-    if (!data.checked) frames[data.value].checked = 0
+    if (data.checked) frames[data.value].checked = 0
     else frames[data.value].checked = 1
 
     this.setState({ graphicFrameImports: frames })
@@ -179,60 +179,75 @@ export default class Animations extends React.Component {
 
     return (
       <div key={i}>
-        <Accordion styled fluid exclusive={animTitle === 'stationary'} defaultActiveIndex={0}>
-          <Accordion.Title
-            id={'mgbjr-edit-actor-Animations-accordion-' + animId}
-            onClick={this.handleAnimationClick(animId)}
-          >
-            <Icon name="dropdown" />
-            {animTitle}
-          </Accordion.Title>
-          <Accordion.Content>
-            <Table fixed celled compact definition>
-              <Table.Header fullWidth>
-                <Table.Row>
-                  <Table.HeaderCell width={4}>Animation Frame</Table.HeaderCell>
-                  <Table.HeaderCell id={'mgbjr-edit-actor-Animations-graphic-' + animId} width={7}>
-                    Graphic
-                    <Button
-                      compact
-                      size="mini"
-                      floated="right"
-                      onClick={() => this.handleClearAll(animTitle)}
-                    >
-                      Clear All
-                    </Button>
-                  </Table.HeaderCell>
-                  <Table.HeaderCell id={'mgbjr-edit-actor-Animations-orientation-' + animId}>
-                    Orientation
-                    <Button
-                      compact
-                      size="mini"
-                      floated="right"
-                      onClick={() => this.handleApplyEffects(i, animTitle)}
-                    >
-                      Apply to All
-                    </Button>
-                    {this.state.lastEffectChange && (
-                      <span
-                        style={{
-                          position: 'absolute',
-                          bottom: '-3px',
-                          right: '10px',
-                          fontSize: '8px',
-                          color: 'grey',
-                        }}
-                      >
-                        Effect: {this.state.lastEffectChange}
-                      </span>
-                    )}
-                  </Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>{animTable}</Table.Body>
-            </Table>
-          </Accordion.Content>
-        </Accordion>
+        <Accordion
+          styled
+          fluid
+          exclusive={animTitle === 'stationary'}
+          defaultActiveIndex={0}
+          panels={[
+            {
+              key: 'animation',
+              title: {
+                key: 'animation-title',
+                id: 'mgbjr-edit-actor-Animations-accordion-' + animId,
+                onClick: this.handleAnimationClick(animId),
+                content: (
+                  <span>
+                    <Icon name="dropdown" /> {animTitle}
+                  </span>
+                ),
+              },
+              content: {
+                key: 'animation-content',
+                content: (
+                  <Table fixed celled compact definition>
+                    <Table.Header fullWidth>
+                      <Table.Row>
+                        <Table.HeaderCell width={4}>Animation Frame</Table.HeaderCell>
+                        <Table.HeaderCell id={'mgbjr-edit-actor-Animations-graphic-' + animId} width={7}>
+                          Graphic
+                          <Button
+                            compact
+                            size="mini"
+                            floated="right"
+                            onClick={() => this.handleClearAll(animTitle)}
+                          >
+                            Clear All
+                          </Button>
+                        </Table.HeaderCell>
+                        <Table.HeaderCell id={'mgbjr-edit-actor-Animations-orientation-' + animId}>
+                          Orientation
+                          <Button
+                            compact
+                            size="mini"
+                            floated="right"
+                            onClick={() => this.handleApplyEffects(i, animTitle)}
+                          >
+                            Apply to All
+                          </Button>
+                          {this.state.lastEffectChange && (
+                            <span
+                              style={{
+                                position: 'absolute',
+                                bottom: '-3px',
+                                right: '10px',
+                                fontSize: '8px',
+                                color: 'grey',
+                              }}
+                            >
+                              Effect: {this.state.lastEffectChange}
+                            </span>
+                          )}
+                        </Table.HeaderCell>
+                      </Table.Row>
+                    </Table.Header>
+                    <Table.Body>{animTable}</Table.Body>
+                  </Table>
+                ),
+              },
+            },
+          ]}
+        />
       </div>
     )
   }
@@ -350,9 +365,7 @@ export default class Animations extends React.Component {
                         value={i}
                         style={{ position: 'absolute', right: '25px' }}
                         defaultChecked
-                        onChange={(e, data) => {
-                          this.handleGraphicFrameSelection(e, data)
-                        }}
+                        onChange={this.handleGraphicFrameSelection}
                       />
                     </Item>
                   )

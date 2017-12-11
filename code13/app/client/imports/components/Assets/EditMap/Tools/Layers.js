@@ -61,13 +61,16 @@ export default class Layers extends React.Component {
     const panels = [
       {
         title: 'Layers',
-        content: (
-          <div>
-            <LayerControls {...this.props} />
-            <List selection>{layers}</List>
-            {this.props.children}
-          </div>
-        ),
+        content: {
+          key: 'layers-content',
+          content: (
+            <div>
+              <LayerControls {...this.props} />
+              <List selection>{layers}</List>
+              {this.props.children}
+            </div>
+          ),
+        },
       },
     ]
 

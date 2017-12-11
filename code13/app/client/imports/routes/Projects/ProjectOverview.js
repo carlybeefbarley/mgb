@@ -156,7 +156,7 @@ const ProjectOverview = React.createClass({
               <Checkbox
                 disabled={!canEdit}
                 checked={!!project.allowForks}
-                onChange={() => this.handleFieldChanged({ allowForks: !project.allowForks })}
+                onChange={(e, data) => this.handleFieldChanged({ allowForks: data.checked })}
                 label="Allow forks"
                 title="Project Owner may allow other users to fork this Project and it's Assets"
               />

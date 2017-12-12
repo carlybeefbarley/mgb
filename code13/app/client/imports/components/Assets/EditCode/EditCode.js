@@ -135,7 +135,7 @@ class EditCode extends React.Component {
 
     this.state = {
       _preventRenders: false, // We use this as a way to batch updates.
-      accordionActiveIndex: [], // keys of open accordion panels
+      accordionActiveIndex: [0], // keys of open accordion panels
       consoleMessages: [],
       isPlaying: false,
       previewAssetIdsArray: [], // Array of { id: assetIdString, kind: assetKindString } e.g. { id: "asdxzi87q", kind: "graphic" }
@@ -2953,17 +2953,7 @@ class EditCode extends React.Component {
           key: 'code-mentor-title',
           onClick: this.handleAccordionTitleClick,
           // Current Line/Selection helper (header)
-          // TODO active state  TODO active state  TODO active state  TODO active state
-          // TODO active state  TODO active state  TODO active state  TODO active state
-          // TODO active state  TODO active state  TODO active state  TODO active state
-          // TODO active state  TODO active state  TODO active state  TODO active state
-          // TODO active state  TODO active state  TODO active state  TODO active state
-          // handle the active class here...
-          content: (
-            <span id="mgbjr-EditCode-codeMentor" className={'title ' + (asset.skillPath ? '' : 'active')}>
-              Code Mentor
-            </span>
-          ),
+          content: <span id="mgbjr-EditCode-codeMentor">Code Mentor</span>,
         },
         content: {
           key: 'code-mentor-content',
@@ -2988,14 +2978,8 @@ class EditCode extends React.Component {
                 </Segment>
               </div>
             ) : this.mgb_mode === 'jsx' ? (
-              // TODO active state  TODO active state  TODO active state  TODO active state
-              // TODO active state  TODO active state  TODO active state  TODO active state
-              // TODO active state  TODO active state  TODO active state  TODO active state
-              // TODO active state  TODO active state  TODO active state  TODO active state
-              // TODO active state  TODO active state  TODO active state  TODO active state
               // Current Line/Selection helper (body)
-              // optimise: don't render if accordeon is closed
-              <div className={'content ' + (asset.skillPath ? '' : 'active')}>
+              <div>
                 <TokenDescription
                   currentToken={this.state.currentToken}
                   getPrevToken={cb => this.getPrevToken(cb)}
@@ -3260,25 +3244,41 @@ class EditCode extends React.Component {
     ].filter(Boolean)
   }
 
-  toggleAccordionIndex = index => {
-    const { accordionActiveIndex } = this.state
-    const newIndex = _.includes(accordionActiveIndex, index)
-      ? _.without(accordionActiveIndex, index)
-      : _.concat(accordionActiveIndex, index)
+  openAccordionByKey = key => {
+    console.log('openAccordionByKey', key)
+    const index = _.findIndex(this.getAccordionPanels(), { title: { key: key + '-title' } })
+    this.openAccordionByIndex(index)
+  }
 
-    console.log('toggleAccordionIndex', { index, newIndex })
-    this.setState({ accordionActiveIndex: newIndex })
+  openAccordionByIndex = index => {
+    console.log('openAccordionByIndex', index)
+    this.setState(({ accordionActiveIndex }) => ({
+      accordionActiveIndex: _.uniq([...accordionActiveIndex, index]),
+    }))
+  }
+
+  closeAccordionByIndex = index => {
+    console.log('closeAccordionByIndex', index)
+    this.setState(({ accordionActiveIndex }) => ({
+      accordionActiveIndex: _.without(accordionActiveIndex, index),
+    }))
+  }
+
+  toggleAccordionByIndex = index => {
+    console.log('toggleAccordionByIndex', index)
+
+    const { accordionActiveIndex } = this.state
+
+    if (_.includes(accordionActiveIndex, index)) {
+      this.closeAccordionByIndex(index)
+    } else {
+      this.openAccordionByIndex(index)
+    }
   }
 
   handleAccordionTitleClick = (e, data) => {
     console.log('handleAccordionTitleClick', data.index)
-    this.toggleAccordionIndex(data.index)
-  }
-
-  openAccordionByKey = key => {
-    const index = _.findIndex(this.getAccordionPanels(), { title: { key: key + '-title' } })
-    console.log('openAccordionByKey', { key, index })
-    this.toggleAccordionIndex(index)
+    this.toggleAccordionByIndex(data.index)
   }
 
   renderGameScreen = () => {

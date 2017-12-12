@@ -2899,9 +2899,9 @@ class EditCode extends React.Component {
           key: 'code-challenge-title',
           onClick: this.handleAccordionTitleClick,
           content: (
-            <div style={{ backgroundColor: 'rgba(0,255,0,0.02)' }} id="mgbjr-EditCode-codeChallenges">
-              <span>Code Challenges</span>
-            </div>
+            <span style={{ backgroundColor: 'rgba(0,255,0,0.02)' }} id="mgbjr-EditCode-codeChallenges">
+              Code Challenges
+            </span>
           ),
         },
         content: {

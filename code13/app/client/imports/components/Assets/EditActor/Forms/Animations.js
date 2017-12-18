@@ -191,11 +191,7 @@ export default class Animations extends React.Component {
                 key: 'animation-title',
                 id: 'mgbjr-edit-actor-Animations-accordion-' + animId,
                 onClick: this.handleAnimationClick(animId),
-                content: (
-                  <span>
-                    <Icon name="dropdown" /> {animTitle}
-                  </span>
-                ),
+                content: <span>{animTitle}</span>,
               },
               content: {
                 key: 'animation-content',

@@ -325,9 +325,9 @@ export default class EditActor extends React.Component {
       )
 
     return (
-      <div className="ui grid edit-actor">
+      <Grid className="edit-actor">
         {databag ? (
-          <div style={{ overflow: 'hidden' }}>
+          <div style={{ width: '100%', overflow: 'hidden' }}>
             <div>
               <b title="This Actor can work on the following Layers of an ActorMap">ActorMap Layers:</b>
               <div id="mgbjr-edit-actor-layerValid">
@@ -342,7 +342,7 @@ export default class EditActor extends React.Component {
         ) : (
           this.renderTemplates()
         )}
-      </div>
+      </Grid>
     )
   }
 }

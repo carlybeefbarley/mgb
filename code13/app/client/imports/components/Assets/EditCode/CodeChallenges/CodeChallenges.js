@@ -19,8 +19,11 @@ import { learnSkill } from '/imports/schemas/skills'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
 
 import '../editcode.css'
+import getCDNWorker from '/client/imports/helpers/CDNWorker'
 
-// This file is communicating with a test page hosted in an iFrame.
+const MAX_TIME_TO_RUN = 3 * 1000 // 3 seconds already seems very high amount of time
+
+// This file is communicating with a test page hosted in an webWorker.
 // The params related to it are in this structure for maintainability:
 const _runFrameConfig = {
   srcUrl: '/codeTests.html', // In our git source, this is in app/public/
@@ -50,12 +53,12 @@ export default class CodeChallenges extends React.Component {
     this.skillName = _.last(_.split(props.skillPath, '.'))
     this.state = {
       pendingLoadNextSkill: false, // True when next skill is loading.. better experience for slow networks
-      results: [], // Array of results we get back from the iFrame that runs the tests
+      results: [], // Array of results we get back from the worker that runs the tests
       testCount: 0, // how many times user run this test
-      testsLoading: false, // loading state between post message to iframe and receiving response
+      testsLoading: true, // by default true - waiting for initial message from web worker - loading state between post message to worker and receiving response
       latestTest: null, // indicates latest test date
-      error: null, // get back from iFrame if it has some syntax error
-      console: null, // get back from iFrame console.log messages
+      error: null, // get back from worker if it has some syntax error
+      console: null, // get back from worker console.log messages
       showAllTestsCompletedMessage: false, // true if we want to show the All Tests Completed Modal
       data: {}, // get challenge data from CDN
     }
@@ -75,35 +78,43 @@ export default class CodeChallenges extends React.Component {
   }
 
   componentDidMount() {
-    this.getReference()
-    window.addEventListener(_runFrameConfig.eventName, this.receiveMessage, false)
-    // don't run automatic tests if user already has this skill. Useful for cases when user just checks his previous code
-    // if(!hasSkill(this.props.userSkills, this.props.skillPath){
-    // // for some reason tests (iframe, codeMirror) are not ready when component did mount //!!!
-    //   setTimeout( () => this.runTests(), _hackDeferForFirstTestRunMs)
-    // }
+    this.initWorker()
   }
 
   componentWillUnmount() {
-    window.removeEventListener(_runFrameConfig.eventName, this.receiveMessage, false)
+    this.worker.terminate()
+    if (this.timeout) {
+      window.clearTimeout(this.timeout)
+      this.timeout = 0
+    }
   }
 
-  getReference() {
-    this.iFrame = ReactDOM.findDOMNode(this.refs.iFrameTests)
-  }
+  initWorker() {
+    if (this.worker) this.worker.terminate()
 
+    this.worker = getCDNWorker('/lib/workers/CodeChallenges.js')
+    this.worker.onmessage = this.receiveMessage
+  }
   receiveMessage = e => {
-    if (e.data.prefix && e.data.prefix == _runFrameConfig.codeTestsDataPrefix) {
-      this.setState({ results: e.data.results })
-      this.setState({ error: e.data.error })
-      this.setState({ console: e.data.console })
-      this.setState({ testCount: this.state.testCount + 1 })
-      this.setState({ latestTest: Date.now() })
-      if (_.every(e.data.results, 'success')) {
-        ga('send', 'pageview', this.props.skillPath)
-        this.successPopup()
+    if (this.timeout) clearTimeout(this.timeout)
+    this.timeout = 0
+
+    if (e.data.prefix && e.data.prefix === _runFrameConfig.codeTestsDataPrefix) {
+      // ready simply tells that worker is ready to accept messages
+      if (e.data.results !== 'ready') {
+        this.setState({ results: e.data.results })
+        this.setState({ error: e.data.error })
+        this.setState({ console: e.data.console })
+        this.setState({ testCount: this.state.testCount + 1 })
+        this.setState({ latestTest: Date.now() })
+        if (_.every(e.data.results, 'success')) {
+          ga('send', 'pageview', this.props.skillPath)
+          this.successPopup()
+        }
+        this.initWorker()
       }
     }
+
     this.setState({ testsLoading: false })
   }
 
@@ -131,7 +142,39 @@ export default class CodeChallenges extends React.Component {
       tail: tail.join('\n'),
       importException: this.state.data.importException,
     }
-    this.iFrame.contentWindow.postMessage(message, '*')
+    this.worker.postMessage(message)
+    this.timeout = setTimeout(() => {
+      this.worker.terminate()
+      this.initWorker()
+
+      this.receiveMessage({
+        data: {
+          prefix: _runFrameConfig.codeTestsDataPrefix,
+          error: (
+            <span>
+              Test timed out! Please check your code! Or ask for a help on the {' '}
+              <a
+                onClick={_openHelpChat}
+                style={{
+                  cursor: 'pointer',
+                  color: '#9edfff',
+                  fontWeight: 'bold',
+                  textDecoration: 'underline',
+                }}
+              >
+                Help channel
+              </a>!
+            </span>
+          ),
+          results: [
+            {
+              success: false,
+              message: 'Timed out',
+            },
+          ],
+        },
+      })
+    }, MAX_TIME_TO_RUN)
     this.setState({ testsLoading: true })
   }
 
@@ -271,15 +314,6 @@ export default class CodeChallenges extends React.Component {
         />
 
         <CodeCredits />
-
-        <iframe
-          style={_runFrameConfig.style}
-          ref="iFrameTests"
-          sandbox="allow-modals allow-same-origin allow-scripts allow-popups"
-          src={makeCDNLink(_runFrameConfig.srcUrl)}
-          frameBorder="0"
-          id="mgbjr-EditCode-codeTests-iframe"
-        />
       </div>
     )
   }

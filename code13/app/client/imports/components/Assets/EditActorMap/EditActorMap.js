@@ -1,35 +1,26 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import ActorMapArea from './ActorMapArea.js'
+import ActorMapArea from './ActorMapArea'
 
-import MapToolbar from './Tools/ActorMapToolbar.js'
+import MapToolbar from './Tools/ActorMapToolbar'
 
-import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-import { showToast } from '/client/imports/modules'
-import TileHelper from '../Common/Map/Helpers/TileHelper.js'
-import ActorHelper from '../Common/Map/Helpers/ActorHelper.js'
+import TileHelper from '../Common/Map/Helpers/TileHelper'
+import ActorHelper from '../Common/Map/Helpers/ActorHelper'
 
-import TileSet from './Tools/ActorTileset.js'
-import EventTool from './Tools/EventTool.js'
-import MapGenerator from './Tools/ActorMapGenerator.js'
-import LayerTool from '../Common/Map/Tools/Layers.js'
-import Properties from './Tools/ActorMapProperties.js'
+import ActorTileSet from './Tools/ActorTileset'
+import EventTool from './Tools/EventTool'
+import ActorMapGenerator from './Tools/ActorMapGenerator'
+import Layers from '../Common/Map/Tools/Layers'
+import ActorMapProperties from './Tools/ActorMapProperties'
 
-import Cache from './Helpers/ActorCache.js'
-import EditModes from '../Common/Map/Tools/EditModes.js'
+import Cache from './Helpers/ActorCache'
 
-import LayerProps from '../Common/Map/Props/LayerProps.js'
-import TilesetProps from '../Common/Map/Props/TilesetProps.js'
-import MapProps from '../Common/Map/Props/MapProps.js'
-import ToolbarProps from '../Common/Map/Props/ToolbarProps.js'
-import PropertiesProps from '../Common/Map/Props/PropertiesProps.js'
+import PlayForm from './Modals/PlayForm'
+import MusicForm from './Modals/MusicForm'
 
-import PlayForm from './Modals/PlayForm.js'
-import MusicForm from './Modals/MusicForm.js'
-
-import EditMap from '../EditMap/EditMap.js'
-import ActorMapErrorResolver from './ActorMapErrorResolver.js'
+import EditMap from '../EditMap/EditMap'
+import ActorMapErrorResolver from './ActorMapErrorResolver'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
@@ -303,7 +294,7 @@ class EditActorMap extends EditMap {
               </div>
               <div style={{ float: 'right' }}>
                 <div style={{ float: 'left', marginLeft: '5px' }}>
-                  <Properties
+                  <ActorMapProperties
                     {...this.propertiesProps}
                     data={{
                       width: c2.width,
@@ -323,7 +314,7 @@ class EditActorMap extends EditMap {
                   />
                 </div>
                 <div style={{ float: 'left', marginLeft: '5px' }}>
-                  <MapGenerator
+                  <ActorMapGenerator
                     {...this.mapProps}
                     data={c2}
                     activeTileset={activeTileset}
@@ -360,13 +351,13 @@ class EditActorMap extends EditMap {
               )
             }
           >
-            <LayerTool
+            <Layers
               {...this.layerProps}
               layers={c2.layers}
               options={this.options}
               activeLayer={activeLayer}
             />
-            <TileSet
+            <ActorTileSet
               {...this.tilesetProps}
               palette={this.cache.tiles}
               activeTileset={activeTileset}

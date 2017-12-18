@@ -1,13 +1,14 @@
-import _ from 'lodash'
 import React from 'react'
-import TileHelper from '../Helpers/TileHelper.js'
-import TilesetControls from './TilesetControls.js'
-import SelectedTile from './SelectedTile.js'
+import { Accordion } from 'semantic-ui-react'
 
-import EditModes from './EditModes.js'
-import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
+import TileHelper from '../Helpers/TileHelper'
+import TilesetControls from './TilesetControls'
+import SelectedTile from './SelectedTile'
+
+import EditModes from './EditModes'
+import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import { AssetKindEnum } from '/imports/schemas/assets'
-import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers.js'
+import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 
 export default class TileSet extends React.Component {
   /* lifecycle functions */
@@ -25,8 +26,6 @@ export default class TileSet extends React.Component {
   }
 
   componentDidMount() {
-    $('.ui.accordion').accordion({ exclusive: false, selector: { trigger: '.title .explicittrigger' } })
-
     this.adjustCanvas()
     window.addEventListener('mousemove', this.onMouseMove)
     window.addEventListener('touchmove', this.onMouseMove)
@@ -436,14 +435,19 @@ export default class TileSet extends React.Component {
   renderEmpty() {
     return (
       <div className="mgbAccordionScroller">
-        <div className="ui fluid styled accordion">
-          <div className="active title">
-            <span className="explicittrigger">
-              <i className="dropdown icon" /> Tilesets
-            </span>
-          </div>
-          {this.renderContent(false)}
-        </div>
+        <Accordion
+          fluid
+          styled
+          panels={[
+            {
+              title: 'Tilesets',
+              content: {
+                key: 'tilesets-content',
+                content: this.renderContent(false),
+              },
+            },
+          ]}
+        />
       </div>
     )
   }
@@ -458,44 +462,64 @@ export default class TileSet extends React.Component {
     return (
       <div className="mgbAccordionScroller tilesets">
         {this.renderForModal()}
-        <div className="ui fluid styled accordion">
-          <div
-            className="active title accept-drop"
-            data-drop-text="Drop asset here to update tileset image"
-            onDragOver={DragNDropHelper.preventDefault}
-            onDrop={this.onDropChangeTilesetImage.bind(this)}
-          >
-            <span className="explicittrigger">
-              <i className="dropdown icon" /> Tilesets
-            </span>
-            <div
-              className="ui simple dropdown top right basic grey below label item"
-              style={{
-                float: 'right',
-                paddingRight: '20px',
-                whiteSpace: 'nowrap',
-                maxWidth: '70%',
-                minWidth: '50%',
-                top: '-5px',
-              }}
-            >
-              <i className="dropdown icon" />
-              <span
-                className="tileset-title"
-                title={ts.imagewidth + 'x' + ts.imageheight}
-                style={{ textOverflow: 'ellipsis', maxWidth: '85%', float: 'right', overflow: 'hidden' }}
-              >
-                {ts.name} {ts.imagewidth + 'x' + ts.imageheight}
-              </span>
-              <div className="floating ui tiny green label">{this.props.tilesets.length}</div>
-              <div className="menu" style={{ maxHeight: '295px', overflow: 'auto', maxWidth: '50px' }}>
-                {tilesets}
-              </div>
-            </div>
-            {this.renderOpenListButton()}
-          </div>
-          {this.renderContent(ts)}
-        </div>
+        <Accordion
+          fluid
+          styled
+          panels={[
+            {
+              title: {
+                key: 'tileset-title',
+                content: (
+                  <span
+                    className="accept-drop"
+                    data-drop-text="Drop asset here to update tileset image"
+                    onDragOver={DragNDropHelper.preventDefault}
+                    onDrop={this.onDropChangeTilesetImage.bind(this)}
+                  >
+                    Tilesets
+                    <div
+                      className="ui simple dropdown top right basic grey below label item"
+                      style={{
+                        float: 'right',
+                        paddingRight: '20px',
+                        whiteSpace: 'nowrap',
+                        maxWidth: '70%',
+                        minWidth: '50%',
+                        top: '-5px',
+                      }}
+                    >
+                      <i className="dropdown icon" />
+                      <span
+                        className="tileset-title"
+                        title={ts.imagewidth + 'x' + ts.imageheight}
+                        style={{
+                          textOverflow: 'ellipsis',
+                          maxWidth: '85%',
+                          float: 'right',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {ts.name} {ts.imagewidth + 'x' + ts.imageheight}
+                      </span>
+                      <div className="floating ui tiny green label">{this.props.tilesets.length}</div>
+                      <div
+                        className="menu"
+                        style={{ maxHeight: '295px', overflow: 'auto', maxWidth: '50px' }}
+                      >
+                        {tilesets}
+                      </div>
+                    </div>
+                    {this.renderOpenListButton()}
+                  </span>
+                ),
+              },
+              content: {
+                key: 'tileset-content',
+                content: this.renderContent(ts),
+              },
+            },
+          ]}
+        />
       </div>
     )
   }

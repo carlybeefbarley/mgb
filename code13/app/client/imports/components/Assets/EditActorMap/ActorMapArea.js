@@ -243,14 +243,28 @@ export default class ActorMapArea extends BaseMapArea {
       >
         {layers}
         <MaskLayer map={this} layer={this.layers[this.props.activeLayer]} ref="mask" />
-        <Accordion inverted className="inspectInfo">
-          <Accordion.Title>
-            <i className="icon search" style={{ float: 'right', color: 'white' }} />
-          </Accordion.Title>
-          <Accordion.Content style={{ padding: '5px', minWidth: '200px' }}>
-            <PositionInfo getInfo={this.getAllInfo.bind(this)} ref="positionInfo" />
-          </Accordion.Content>
-        </Accordion>
+        <Accordion
+          inverted
+          className="inspectInfo"
+          panels={[
+            {
+              key: 'position',
+              title: {
+                key: 'position-title',
+                icon: null,
+                content: <i className="icon search" style={{ float: 'right', color: 'white' }} />,
+              },
+              content: {
+                key: 'position-content',
+                content: (
+                  <div style={{ padding: '5px', minWidth: '200px' }}>
+                    <PositionInfo getInfo={this.getAllInfo.bind(this)} ref="positionInfo" />
+                  </div>
+                ),
+              },
+            },
+          ]}
+        />
       </div>
     )
   }

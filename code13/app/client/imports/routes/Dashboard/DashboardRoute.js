@@ -1,6 +1,6 @@
 import React from 'react'
 import { utilPushTo } from '/client/imports/routes/QLink'
-import Dashboard from '/client/imports/components/Dashboard/Dashboard.js'
+import Dashboard from '/client/imports/components/Dashboard/Dashboard'
 
 const DashboardRoute = React.createClass({
   componentWillMount() {

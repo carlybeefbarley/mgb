@@ -1689,7 +1689,8 @@ class EditCode extends React.Component {
       this.state.isPlaying !== nextState.isPlaying ||
       this.state.lastAnalysisAtCursor !== nextState.lastAnalysisAtCursor ||
       this.state.lastUndoRedo !== nextState.lastUndoRedo ||
-      this.state.needsBundle !== nextState.needsBundle
+      this.state.needsBundle !== nextState.needsBundle ||
+      this.state.accordionActiveIndex !== nextState.accordionActiveIndex
     )
   }
 
@@ -1800,8 +1801,8 @@ class EditCode extends React.Component {
 
           const DOMURL = window.URL || window.webkitURL || window
 
-          const img = new Image()
-          const svg = new Blob([data], { type: 'image/svg+xml;charset=utf-8' })
+          const img = new window.Image()
+          const svg = new window.Blob([data], { type: 'image/svg+xml;charset=utf-8' })
           const url = DOMURL.createObjectURL(svg)
 
           img.onload = () => {

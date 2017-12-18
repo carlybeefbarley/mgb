@@ -466,7 +466,6 @@ section:not(:last-child),
       -ms-user-select: none;
           user-select: none;
 }
-.mgb-hero #mgb-hoc-container,
 .mgb-hero #particles-container,
 .mgb-hero .mgb-piled-container {
   pointer-events: all;

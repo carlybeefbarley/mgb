@@ -65,6 +65,7 @@ class VideoPopup extends React.Component {
         )}
         {!this.state.hidden && (
           <Popup
+            basic
             hoverable
             on="hover"
             trigger={
@@ -87,6 +88,8 @@ class VideoPopup extends React.Component {
             position="top left"
           >
             <div>
+              {/*
+              // Hide for now -- a bit confusing on appearing inside popup
               <Icon
                 name="close"
                 color="red"
@@ -96,6 +99,7 @@ class VideoPopup extends React.Component {
                 style={{ position: 'absolute', top: 0, right: 0 }}
                 onClick={this.handleHidePopup}
               />
+              */}
               {this.renderVideoList()}
             </div>
           </Popup>

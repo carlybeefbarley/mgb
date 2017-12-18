@@ -262,8 +262,8 @@ class Animations extends React.Component {
   }
 
   render() {
-    const { videoStore: { state: { videos } } } = this.props
     let checkedCount = this.state.graphicFrameImports.length
+    const { videoStore: { state: { videos } } } = this.props
 
     // Animation accordions
     const aType = this.props.asset.content2.databag.all.actorType
@@ -376,9 +376,7 @@ class Animations extends React.Component {
                           value={i}
                           style={{ position: 'absolute', right: '25px' }}
                           defaultChecked
-                          onChange={(e, data) => {
-                            this.handleGraphicFrameSelection(e, data)
-                          }}
+                          onChange={this.handleGraphicFrameSelection}
                         />
                       </Item>
                     )

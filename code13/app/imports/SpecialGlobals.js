@@ -130,6 +130,17 @@ const SpecialGlobals = {
     defaultNumOfOwnedProjectsAllowed: 10, // For normal accounts
     SUdefaultNumOfOwnedProjectsAllowed: 99, // For admin accounts
   },
+
+  cache: {
+    // cache max age in seconds for all /api/asset/... requests
+    // BE AWARE!!! - only requests with ?hash={unique key} are cached - otherwise we assume that user has requested latest version
+    apiAssets: 60 * 60 * 24 * 30,
+    // cache max age in seconds for fonts
+    // fonts has special CORS handling as they require 'access-control-allow-origin', '*' header
+    fonts: 60 * 60 * 24 * 30,
+    // all other resources - e.g. /images/logos/mgb/medium/01w.png
+    static: 60 * 60 * 24 * 30,
+  },
 }
 
 export default SpecialGlobals

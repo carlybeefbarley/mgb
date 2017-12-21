@@ -18,17 +18,18 @@ import '/server/slackIntegration'
 //   The webapp package is what lets your Meteor app serve content to a web browser
 //   This package also allows you to add handlers for HTTP requests.
 import { WebApp } from 'meteor/webapp'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 // This will be set at runtime by setCDNParams() which will retrieve this value from AWS.
 // If it is not configured, then the various features using this shall fallback to non-cloudfronted
 // force localhost:3000 if in development mode.. to try out CDN like behaviour locally - add test.loc to /etc/hosts
 // 127.0.0.1 test.loc
 
-let CLOUDFRONT_DOMAIN_NAME = Meteor.isDevelopment ? '' : ''
+let CLOUDFRONT_DOMAIN_NAME = '' // filled at runtime in production mode or use it to debug CDN locally
 
-const STATIC_RESOURCES_MAX_CACHE_AGE_MINUTES = 60 // This should be much larger for PRODUCTION
+const STATIC_RESOURCES_MAX_CACHE_AGE = SpecialGlobals.cache.static // This should be much larger for PRODUCTION
 
-// Domain names used in this file:
+// Domain names used in this file: used for testing only
 const DEFAULT_CUSTOMER_FACING_MGB_ORIGIN_DOMAIN_NAME = 'test.mygamebuilder.com' // Can be overriden by env.ORIGIN_DOMAIN_NAME
 const DEFAULT_CUSTOMER_FACING_MGB_ORIGIN_ID = 'test.mygamebuilder.com' // ID is actually different to DOMAIN NAME, BUT WE HAPPEN TO HAVE CONFIGURED ORIGIN_ID=DN+Path in CloudFront :)
 const DEFAULT_ISDEVELOPMENT_MGB_CLOUDFRONT_ORIGIN_ID = 'test.mygamebuilder.com-dev' // Can be overriden by env.ORIGIN_ID.  THIS MUST be different to DEFAULT_CUSTOMER_FACING_MGB_ORIGIN_ID
@@ -80,7 +81,7 @@ export const setUpCloudFront = function() {
       req._parsedUrl.pathname.endsWith('.ttf')
     if (isFont) {
       res.setHeader('access-control-allow-origin', '*')
-      const maxAge = 5 * 60
+      const maxAge = SpecialGlobals.cache.fonts
       res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}`)
     } else {
       const index = req.headers.origin
@@ -98,14 +99,14 @@ export const setUpCloudFront = function() {
       // res.setHeader('access-control-allow-origin', '*')   // This is the wide-open option. Leaving it here since it can be helpful for debugging
       res.setHeader('access-control-expose-headers', 'etag')
 
-      // Cache static files for STATIC_RESOURCES_MAX_CACHE_AGE_MINUTES - after Meteor update they will be invalidated before cache expires
+      // Cache static files for STATIC_RESOURCES_MAX_CACHE_AGE - after Meteor update they will be invalidated before cache expires
       if (
         req._parsedUrl.path.startsWith('/badges') ||
         req._parsedUrl.path.startsWith('/audio') ||
         req._parsedUrl.path.startsWith('/images') ||
         req._parsedUrl.path.startsWith('/lib')
       ) {
-        const maxAge = STATIC_RESOURCES_MAX_CACHE_AGE_MINUTES * 60
+        const maxAge = STATIC_RESOURCES_MAX_CACHE_AGE
         res.setHeader('cache-control', `public, max-age=${maxAge}, s-maxage=${maxAge}, must-revalidate`)
       }
     }

@@ -228,6 +228,13 @@ export const getNavPanels = (currUser, showAll) => {
             icon: { name: 'pencil', color: 'green' },
             content: 'Create New Asset',
           },
+          {
+            subcomponent: 'Item',
+            jrkey: 'createFromTemplate',
+            to: `/assets/create-from-template`,
+            icon: { name: 'pencil' },
+            content: 'Create From Template',
+          },
         ],
       },
       showUserOptions && {

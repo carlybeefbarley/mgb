@@ -161,6 +161,11 @@ export function clientStartup() {
 
         <Route path="assets" component={Azzets.UserAssetListRoute} name="All Assets" />
         <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
+        <Route
+          path="assets/create-from-template"
+          component={Azzets.AssetCreateFromTemplateRoute}
+          name="Create Asset From Template"
+        />
 
         <Route
           path="assetEdit/:assetId"

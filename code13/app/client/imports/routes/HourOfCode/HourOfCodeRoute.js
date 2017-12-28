@@ -1,4 +1,3 @@
-import { HTTP } from 'meteor/http'
 import _ from 'lodash'
 import React, { Component } from 'react'
 import { Container, Divider, Icon, Image, Segment } from 'semantic-ui-react'
@@ -14,6 +13,7 @@ import { showToast } from '/client/imports/modules'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { hourOfCodeStore } from '/client/imports/stores'
 import Hotjar from '/client/imports/helpers/hotjar'
+import Recaptcha from '/client/imports/components/Recaptcha/Recaptcha'
 
 let isCreatingGuest = false
 
@@ -39,49 +39,11 @@ class HourOfCodeRoute extends Component {
           window.clearInterval(this.waitForLoadingTimer)
           window.clearInterval(this.waitForLoginTimer)
           return utilPushTo(location.query, `/u/${asset.dn_ownerName}/asset/${asset._id}`)
-        } else {
-          this.beginRecaptcha()
         }
       })
       .catch(err => {
         throw err
       })
-  }
-
-  componentWillUnmount() {
-    delete window.handleHoCRecaptchaResponse
-  }
-
-  beginRecaptcha = () => {
-    console.log('Starting recaptcha')
-    this.setState(() => ({ isLoading: false }))
-
-    window.handleHoCRecaptchaLoad = e => {
-      console.log('Recaptcha loaded', e)
-      document.head.removeChild($script)
-      delete window.handleHoCRecaptchaLoad
-    }
-
-    window.handleHoCRecaptchaResponse = response => {
-      console.log('Recaptcha response', response)
-
-      HTTP.call('GET', `/api/validate-recaptcha/${encodeURIComponent(response)}`, (error, isValid) => {
-        console.log(`api/validate-recaptcha/:recaptchaResponse result:`)
-        console.log(`Result`, isValid)
-        console.log(`Error`, error)
-        if (isValid) {
-          delete window.handleHoCRecaptchaResponse
-          this.setState(() => ({ isRecaptchaComplete: true }))
-          this.createHocUser()
-        }
-      })
-    }
-
-    const $script = document.createElement('script')
-    $script.setAttribute('src', 'https://www.google.com/recaptcha/api.js?onload=handleHoCRecaptchaLoad')
-    $script.setAttribute('async', true)
-    $script.setAttribute('defer', true)
-    document.head.appendChild($script)
   }
 
   /**
@@ -219,11 +181,10 @@ class HourOfCodeRoute extends Component {
     })
   }
 
+  handleRecaptchaLoad = () => this.setState({ isLoading: false })
+
   render() {
-    const { isLoading, isRecaptchaComplete } = this.state
-    const recaptchaStyle = {
-      display: 'inline-block',
-    }
+    const { isLoading } = this.state
 
     return (
       <HeroLayout
@@ -253,14 +214,7 @@ class HourOfCodeRoute extends Component {
                   <Icon loading name="spinner" />
                 </p>
               )}
-              {!isRecaptchaComplete && (
-                <div
-                  style={recaptchaStyle}
-                  className="g-recaptcha"
-                  data-sitekey="6LdDrTkUAAAAABDXBxlLwWwTvnpmfH0s-4O5ckkm"
-                  data-callback="handleHoCRecaptchaResponse"
-                />
-              )}
+              <Recaptcha onLoad={this.handleRecaptchaLoad} onComplete={this.createHocUser} />
             </Segment>
 
             <Divider hidden section />

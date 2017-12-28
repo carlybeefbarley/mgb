@@ -9,6 +9,7 @@ import { utilPushTo } from '../QLink'
 import validate from '/imports/schemas/validate'
 import { logActivity } from '/imports/schemas/activity'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
+import Recaptcha from '/client/imports/components/Recaptcha/Recaptcha'
 
 const mascotColumnStyle = {
   // allow click through, so users can play with the particles :)
@@ -24,6 +25,7 @@ class SignupRoute extends Component {
     errors: {},
     formData: {},
     isLoading: false,
+    isRecaptchaComplete: false,
   }
 
   checkEmail = e => {
@@ -127,8 +129,10 @@ class SignupRoute extends Component {
     )
   }
 
+  handleRecaptchaComplete = () => this.setState({ isRecaptchaComplete: true })
+
   render() {
-    const { isLoading, errors, formData } = this.state
+    const { isLoading, errors, formData, isRecaptchaComplete } = this.state
     const { currUser } = this.props
 
     if (currUser) {
@@ -173,6 +177,7 @@ class SignupRoute extends Component {
                       name="password"
                       placeholder="Password"
                     />
+                    <Recaptcha onComplete={this.handleRecaptchaComplete} />
                     <Form.Button
                       primary
                       fluid
@@ -182,7 +187,8 @@ class SignupRoute extends Component {
                         !formData.password ||
                         errors.email ||
                         errors.username ||
-                        errors.password
+                        errors.password ||
+                        !isRecaptchaComplete
                       }
                       content="Create Account"
                     />

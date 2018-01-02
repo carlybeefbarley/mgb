@@ -20,17 +20,29 @@ const FlagsModerateUI = ({ loading, flagsList }) => (
               />
             </List.Item>
             <List.Item>
-              Created: <UX.TimeAgo when={flag.createdAt} />
+              <List.Icon name="clock" />
+              <List.Content>
+                Created: <UX.TimeAgo when={flag.createdAt} />
+              </List.Content>
             </List.Item>
             <List.Item>
-              Flagged content owner: <UX.UserLink username={flag.ownerUserName} />
+              <List.Icon name="user" />
+              <List.Content>
+                Flagged User: <UX.UserLink username={flag.ownerUserName} />
+              </List.Content>
             </List.Item>
             <List.Item>
-              Flagged by: <UX.UserLink username={flag.reporterUserName} />
+              <List.Icon name="warning sign" />
+              <List.Content>
+                Flagged by: <UX.UserLink username={flag.reporterUserName} />
+              </List.Content>
             </List.Item>
             <List.Item>Type of entity: {flag.entityType}</List.Item>
             <List.Item>
-              List of flag types:
+              <List.Content>
+                <List.Icon name="list layout" />
+                &#9; List of flag types
+              </List.Content>
               <List bulleted>
                 {flag.flagTypes && flag.flagTypes.map((type, idx) => <List.Item key={idx}>{type}</List.Item>)}
               </List>

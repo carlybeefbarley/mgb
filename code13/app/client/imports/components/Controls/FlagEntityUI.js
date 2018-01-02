@@ -29,6 +29,7 @@ class FlagEntity extends React.Component {
           <Popup
             on="click"
             size="tiny"
+            wide="very"
             position="bottom right"
             trigger={
               <Label
@@ -38,16 +39,18 @@ class FlagEntity extends React.Component {
                 icon={{ name: 'warning', color: 'red', style: { marginRight: 0 } }}
               />
             }
-            wide="very"
           >
-            <Popup.Header>
+            <Popup.Header
+              style={{ paddingLeft: '3%', paddingTop: '2%', paddingBottom: '4%', fontSize: '1.5em' }}
+            >
               Report this {tableCollection === 'Azzets' ? 'Asset' : 'Message'} to Moderator
             </Popup.Header>
             <Popup.Content>
-              <Segment basic>
+              <Segment basic style={{ minWidth: '30em' }}>
                 <Dropdown
                   placeholder="Reason(s)"
                   search
+                  compact
                   fluid
                   multiple
                   selection
@@ -55,12 +58,14 @@ class FlagEntity extends React.Component {
                     text: FlagTypes[k].displayName,
                     value: k,
                   }))}
-                  onChange={(event, dropdown) => {
-                    this.setState({ userSelectedTags: dropdown.value })
+                  onChange={(event, data) => {
+                    console.log('Change Happened')
+                    this.setState({ userSelectedTags: data.value })
                   }}
                 />
                 <Divider hidden />
                 <TextArea
+                  style={{ width: '100%' }}
                   placeholder="Additional comments/concerns"
                   autoHeight
                   onChange={(event, textarea) => {
@@ -69,6 +74,7 @@ class FlagEntity extends React.Component {
                 />
                 <Divider hidden />
                 <Button
+                  style={{ marginBottom: '2%' }}
                   as="div"
                   floated="right"
                   onClick={() =>
@@ -79,9 +85,10 @@ class FlagEntity extends React.Component {
                       this.state.userSelectedTags,
                       this.state.userComments,
                     )}
-                  size="small"
+                  size="large"
                   content="Report"
-                  icon="warning"
+                  icon="warning sign"
+                  color="red"
                 />
                 &nbsp;
               </Segment>

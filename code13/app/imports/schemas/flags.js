@@ -221,67 +221,67 @@ export const _parseTableNameToTable = tableNameString => {
 //to isolate/harm other user(s) i believe this still counts as a violation of community rules.
 export const FlagTypes = {
   'abuse.bullying': {
-    displayName: 'bullying',
+    displayName: 'Bullying',
     description:
       'User was intentionally harassing one or more other users with the intention to socially isolate/humiliate.',
   },
   'abuse.profane': {
-    displayName: 'inappropriate/profane',
+    displayName: 'Inappropriate/Profane',
     description:
       'User was intentionally using/enabling actions, slurs, images, videos, or references that are considered inappropriate/vulgar according to MGB community rules.',
   },
   'spam.advert': {
-    displayName: 'spam advertising',
+    displayName: 'Spam: Advertising',
     description:
       'Actions, messages, images, videos, or references that are considered spam/promotional according to MGB community rules.',
   },
   'spam.porno': {
-    displayName: 'spam pornographic',
+    displayName: 'Spam: Pornographic',
     description:
       'Actions, messages, images, videos, or references that are considered spam/pornogrpahic according to MGB community rules.',
   },
   'spam.malware': {
-    displayName: 'spam malware/phishing',
+    displayName: 'Spam: Malware/Phishing',
     description:
       'Actions, messages, images, videos, or references that are considered spam/malware according to MGB community rules.',
   },
   'abuse.sexualHarassment': {
-    displayName: 'Sexual harrasment',
+    displayName: 'Sexual Harassment',
     description:
       'User was intentionally using/enabling actions, slurs, images, videos, or references of a sexual nature intended to cause harm/discomfort',
   },
   'abuse.ageInappropriate': {
-    displayName: 'Age inappropriate',
+    displayName: 'Age Inappropriate',
     description:
       'User intentionally or failed to censor/properly label actions, words, videos, images, games, references that would be considered for inappropriate for youth under 18 years of age.',
   },
   'discrimination.racial': {
-    displayName: 'Racist/discrimination',
+    displayName: 'Racism',
     description:
       'User was intentionally using/enabling actions, slurs, images, videos, or references that would harm/isolate users based upon racial identity/percieved race.',
   },
   'discrimination.sexist': {
-    displayName: 'Sexist/discrimination',
+    displayName: 'Sexism',
     description:
       'User was intentionally using/enabling actions, slurs, images, videos, or references that would harm/isolate users based upon sex/gender identity/percieved gender.',
   },
   'discrimination.ableist': {
-    displayName: 'Ableist/discrimination',
+    displayName: 'Ableism',
     description:
       'User was intentionally using/enabling actions, slurs, images, videos, or references that would harm/isolate users based upon their ablity/percieved ability.',
   },
   'discrimination.LGBTQ': {
-    displayName: 'LGBTQ discrimination',
+    displayName: 'Homophobia',
     description:
       'User was intentionally using/enabling actions, slurs, images, videos, or references that would harm/isolate users based upon their sexuality/gender identity/gender assignment at birth/percieved sexuality/gender identity.',
   },
   'discirmination.religious': {
-    displayName: 'Religious discrimination',
+    displayName: 'Religious Discrimination',
     description:
       'User was intentionally using/enabling actions, slurs, images, videos, or references that would harm/isolate users based upon their religion/percieved religion.',
   },
   'discrimination.xenophobic': {
-    displayName: 'National/Xenophobic discrimination',
+    displayName: 'Nationalism/Xenophobia',
     description:
       'User was intentionally using/enabling actions, slurs, images, videos, or references that would harm/isolate users based upon their national identity/percieved naional identity.',
   },

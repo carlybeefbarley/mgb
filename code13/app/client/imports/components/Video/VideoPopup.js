@@ -74,7 +74,7 @@ class VideoPopup extends React.Component {
                 circular
                 title="Need help? Click to watch a video tutorial."
                 name="video"
-                color="purple"
+                color="yellow"
                 size="large"
                 style={{
                   fontWeight: 'bold',

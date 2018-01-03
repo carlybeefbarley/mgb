@@ -8,7 +8,7 @@ This is the user facing application for My Game Builder.
 
 1. [Install Yarn][1] (`v0.27.5` or later)
 1. [Install Node.js][2] (`v6.9.4` or later)
-1. [Install Meteor][3] (use `v1.5.1`)
+1. [Install Meteor][3] (use `v1.6.0.1`)
 
 ### Dependencies
 

@@ -50,8 +50,8 @@ const ConsoleMessageViewer = React.createClass({
         marginBottom: '0px',
         lineHeight: '12px',
         fontSize: '10px',
+        ...fmt[fn].style,
       }
-      $.extend(s, fmt[fn].style)
       let atLine = !msg.line ? null : (
         <span>
           {msg.url ? msg.url + ':' : ''}{' '}

@@ -10,7 +10,7 @@ class HitChanceController extends Component {
     if (value) this.props.actions.updateHitChance(value)
   }
 
-  render = () => {
+  render() {
     const props = {
       label: 'Hit Chance (%)',
       id: 'hitChance',

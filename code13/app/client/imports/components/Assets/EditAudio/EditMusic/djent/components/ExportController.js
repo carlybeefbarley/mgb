@@ -50,11 +50,17 @@ class ExportController extends Component {
     // this.props.actions.enableModal({ content, isCloseable: true, title: 'Export Riff' });
   }
 
-  render = () => (
-    <button className="button-primary" onClick={this.launchExportModal} disabled={!this.props.currentBuffer}>
-      Save Riff
-    </button>
-  )
+  render() {
+    return (
+      <button
+        className="button-primary"
+        onClick={this.launchExportModal}
+        disabled={!this.props.currentBuffer}
+      >
+        Save Riff
+      </button>
+    )
+  }
 }
 
 export default ExportController

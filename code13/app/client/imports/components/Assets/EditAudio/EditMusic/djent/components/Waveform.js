@@ -205,7 +205,7 @@ export default class Waveform extends Component {
     })
   }
 
-  render = () => {
+  render() {
     return (
       <canvas
         ref="canvas"

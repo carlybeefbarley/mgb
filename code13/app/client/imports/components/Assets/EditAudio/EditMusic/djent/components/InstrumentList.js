@@ -25,15 +25,13 @@ export default class InstrumentList extends Component {
       <InstrumentSettingsPane
         instrument={instrument}
         actions={{
-          // disableModal: this.props.actions.disableModal,
           updateInstrumentPitch: this.props.actions.updateInstrumentPitch,
         }}
       />
     )
-    // this.props.actions.enableModal({ content, isCloseable: true, title: `${ instrument.description || instrument.id } Settings` });
   }
 
-  render = () => {
+  render() {
     const instrumentViews = this.props.instruments.map((instrument, index) => {
       let categories = instrument.sounds
         .reduce((cats, sound) => {
@@ -92,14 +90,11 @@ export default class InstrumentList extends Component {
 }
 
 const InstrumentSettingsPane = ({ instrument, actions }) => (
-  <div>
-    <div className="u-mb1">
-      <PitchController
-        pitch={instrument.pitch}
-        id={instrument.id}
-        actions={{ updateInstrumentPitch: actions.updateInstrumentPitch }}
-      />
-    </div>
-    {/* <button className="button-primary button-primary--small button-primary--positive" onClick={ actions.disableModal } >Continue</button> */}
+  <div className="u-mb1">
+    <PitchController
+      pitch={instrument.pitch}
+      id={instrument.id}
+      actions={{ updateInstrumentPitch: actions.updateInstrumentPitch }}
+    />
   </div>
 )

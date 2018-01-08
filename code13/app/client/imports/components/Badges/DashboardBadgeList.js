@@ -62,7 +62,7 @@ export default class BadgesList extends React.Component {
       return (
         <Card>
           <Card.Content>
-            <Image src={displayBadge.img} size="mini" floated="left" />
+            <Image src={displayBadge.img} circular size="mini" floated="left" />
             <Card.Header>
               {displayBadge.title}
               {friendlyName}

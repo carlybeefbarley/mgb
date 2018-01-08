@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
+import { Confirm } from 'semantic-ui-react'
 import ActorMapArea from './ActorMapArea'
 
 import MapToolbar from './Tools/ActorMapToolbar'
@@ -187,55 +188,52 @@ export default class EditActorMap extends EditMap {
   }
 
   showModal = (action, cb) => {
-    $(this.refs[action])
-      .modal({
-        size: 'small',
-        detachable: false,
-        context: this.refs.container,
-        onApprove: () => {
-          cb(this.state[action + 'Data'])
-        },
-      })
-      .modal('show')
+    this.setState({ currentlyOpenModal: action, currentConfirmCallback: cb })
+  }
+
+  handleModalCancel = () => {
+    this.setState(() => ({ currentlyOpenModal: null }))
+  }
+
+  handleModalConfirm = data => {
+    const { currentConfirmCallback } = this.state
+
+    currentConfirmCallback(data)
+
+    this.setState({ currentlyOpenModal: null })
   }
 
   renderPlayModal() {
+    const { jumpData, currentlyOpenModal } = this.state
+    const action = 'jump'
+
     return (
-      <div className="ui modal" ref="jump" style={{ position: 'absolute', padding: '5px' }}>
-        <div className="header">Add Jump Event</div>
-        <div className="content">
-          <PlayForm
-            asset={this.state.jumpData}
-            onChange={v => {
-              this.setState({ event: this.state.jumpData })
-            }}
-          />
-        </div>
-        <div className="actions">
-          <div className="ui approve button">Approve</div>
-          <div className="ui cancel button">Cancel</div>
-        </div>
-      </div>
+      <Confirm
+        open={currentlyOpenModal === action}
+        size="small"
+        header="Add Jump Event"
+        confirmButton="Add"
+        content={<PlayForm asset={jumpData} onChange={() => this.setState({ event: jumpData })} />}
+        onConfirm={() => this.handleModalConfirm(jumpData)}
+        onCancel={this.handleModalCancel}
+      />
     )
   }
 
   renderMusicModal() {
+    const { musicData, currentlyOpenModal } = this.state
+    const action = 'music'
+
     return (
-      <div className="ui modal" ref="music" style={{ position: 'absolute' }}>
-        <div className="header">Add Music Event</div>
-        <div className="content">
-          <MusicForm
-            asset={this.state.musicData}
-            onChange={() => {
-              this.setState({ event: this.state.musicData })
-            }}
-          />
-        </div>
-        <div className="actions">
-          <div className="ui approve button">Confirm</div>
-          <div className="ui cancel button">Cancel</div>
-        </div>
-      </div>
+      <Confirm
+        open={currentlyOpenModal === action}
+        size="small"
+        header="Add Music Event"
+        confirmButton="Add"
+        content={<MusicForm asset={musicData} onChange={() => this.setState({ event: musicData })} />}
+        onConfirm={() => this.handleModalConfirm(musicData)}
+        onCancel={this.handleModalCancel}
+      />
     )
   }
 

@@ -1,8 +1,8 @@
-import _ from 'lodash'
 import React from 'react'
+import { Checkbox } from 'semantic-ui-react'
+
 import DropArea from './DropArea.js'
 import SmallDD from './SmallDD.js'
-import actorOptions from '../Assets/Common/ActorOptions.js'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 // This partial class uses the following React props..
@@ -55,30 +55,17 @@ export default class BaseForm extends React.Component {
       <div id={id ? id : ''} className={'field' + (fieldOptions.disabled ? ' disabled' : '')}>
         <label>{name}</label>
 
-        <div
-          className="ui toggle checkbox"
-          ref={b => {
-            $(b).checkbox()
-          }}
-          onClick={() => {
+        <Checkbox
+          toggle
+          name={key}
+          checked={checked}
+          onChange={() => {
             this.data[key] = fieldOptions.boolIsTF ? !checked : !checked ? '1' : '0'
+            console.log('onChange dataKey', this.data[key])
+            if (mgbjrCT) joyrideCompleteTag(mgbjrCT)
             this.props.onChange && this.props.onChange(key)
           }}
-        >
-          <input
-            type="checkbox"
-            name={key}
-            tabIndex="0"
-            className="mgb-hidden"
-            ref="checkbox"
-            checked={checked}
-            onChange={val => {
-              this.data[key] = val
-              if (mgbjrCT) joyrideCompleteTag(mgbjrCT + val)
-              this.props.onChange && this.props.onChange(key)
-            }}
-          />
-        </div>
+        />
       </div>
     )
   }

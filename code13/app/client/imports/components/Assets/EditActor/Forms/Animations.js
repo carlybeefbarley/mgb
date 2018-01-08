@@ -1,6 +1,7 @@
 import _ from 'lodash'
+import { HTTP } from 'meteor/http'
 import React from 'react'
-import { Table, Accordion, Icon, Dimmer, Loader, Item, Button, Modal, Checkbox } from 'semantic-ui-react'
+import { Table, Accordion, Dimmer, Loader, Item, Button, Modal, Checkbox } from 'semantic-ui-react'
 import DropArea from '../../../Controls/DropArea.js'
 import SmallDD from '../../../Controls/SmallDD.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
@@ -124,7 +125,7 @@ export default class Animations extends React.Component {
     if (asset) {
       this.setState({ isLoading: true })
 
-      $.get('/api/asset/tileset-info/' + asset._id, data => {
+      HTTP.get('/api/asset/tileset-info/' + asset._id, (error, data) => {
         if (data.tilecount > 1) {
           this.setState({ showModal: true })
           this.getGraphicFrames(data, val)

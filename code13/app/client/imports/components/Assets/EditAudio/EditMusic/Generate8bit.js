@@ -55,14 +55,11 @@ export default class Generate8bit extends React.Component {
   generate() {
     if (this.state.isHidden) {
       this.setState({ isHidden: false })
-      setTimeout(() => {
-        $('.generate8bitPopup').modal('refresh')
-      }, 300)
     }
     this.stop()
     this.audio = null
     this.setState({ isGenerating: true, isAudio: false })
-    var self = this
+
     setTimeout(() => {
       const bassParams = {
         isBass: this.state.isBass,

@@ -11,7 +11,7 @@ class PresetController extends Component {
     this.props.actions.applyPreset(presets.find(preset => preset.id === presetID))
   }
 
-  render = () => {
+  render() {
     const activePreset = presets.find(preset => preset.id === this.props.activePresetID)
     const presetItems = presets.map((preset, i) => (
       <option value={preset.id} key={i}>

@@ -10,7 +10,7 @@ class BPMController extends Component {
     this.props.actions.updateBPM(bpm)
   }
 
-  render = () => {
+  render() {
     const props = {
       id: 'bpm',
       label: 'BPM (50 - 300)',

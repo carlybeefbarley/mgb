@@ -35,7 +35,7 @@ export default class EditSound extends React.Component {
       progressColor: 'purple',
     })
 
-    this.soundCanvas = $('#soundPlayer canvas')[0]
+    this.soundCanvas = document.querySelector('#soundPlayer canvas')
     this.soundCtx = this.soundCanvas.getContext('2d')
 
     let c2 = this.props.asset.content2
@@ -104,11 +104,7 @@ export default class EditSound extends React.Component {
     let asset = this.props.asset
     let c2 = asset.content2
 
-    const previewCanvas = $('#previewDiv')
-      .children()
-      .first()
-      .children()
-      .first()[0]
+    const previewCanvas = document.querySelector('#previewDiv canvas')
     this.props.handleContentChange(c2, previewCanvas.toDataURL('image/png'), this.saveText)
   }
 

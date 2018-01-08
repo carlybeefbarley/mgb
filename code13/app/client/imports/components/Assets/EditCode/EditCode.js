@@ -357,13 +357,11 @@ class EditCode extends React.Component {
     var ed = this.codeMirror
     if (!this.isGuest) {
       this.edResizeHandler = e => {
-        const $sPane = $('.CodeMirror')
-        const edHeight = window.innerHeight - (16 + $sPane.offset().top)
+        const $sPane = document.querySelector('.CodeMirror')
+        const edHeight = window.innerHeight - (16 + $sPane.getBoundingClientRect().top)
         ed.setSize('100%', `${edHeight}px`)
-        //$(".mgbAccordionScroller").css("max-height", `${window.innerHeight-16}px`)
-        //$(".mgbAccordionScroller").css("overflow-y", "scroll")
       }
-      $(window).on('resize', this.edResizeHandler)
+      window.addEventListener('resize', this.edResizeHandler)
       this.edResizeHandler()
     }
     this.updateDocName()
@@ -598,7 +596,7 @@ class EditCode extends React.Component {
   }
 
   componentWillUnmount() {
-    $(window).off('resize', this.edResizeHandler)
+    window.removeEventListener('resize', this.edResizeHandler)
     window.removeEventListener('mgbjr-stepAction-appendCode', this.listeners.joyrideCodeAction)
     window.removeEventListener('mgbjr-highlight-code', this.listeners.joyrideHighlightCode)
 
@@ -884,9 +882,13 @@ class EditCode extends React.Component {
 
     // 2. Apply new Alpha using CSS magic
     let customCSSid = 'idOfCustomMgbCSSforComments'
-    let $sty = $(`#${customCSSid}`)
-    $sty && $sty.remove()
-    $('head').append(`<style id="${customCSSid}">.cm-comment { opacity: ${alpha / 100} }</style>`)
+    let $sty = document.querySelector(`#${customCSSid}`)
+    if ($sty) $sty.parentNode.removeChild($sty)
+
+    const $newStyle = document.createElement('style')
+    $newStyle.setAttribute('id', customCSSid)
+    $newStyle.innerHTML = `.cm-comment { opacity: ${alpha / 100} }`
+    document.head.appendChild($newStyle)
   }
 
   // Drag and Drop of Asset onto code area
@@ -1787,8 +1789,8 @@ class EditCode extends React.Component {
         local: false,
       },
       tree => {
-        const w = $(this.refs.codeflower).width()
-        const flower = new CodeFlower('#codeflower', w, w / canvas.width * THUMBNAIL_HEIGHT)
+        const { width } = this.refs.codeflower.getBoundingClientRect()
+        const flower = new CodeFlower('#codeflower', width, width / canvas.width * THUMBNAIL_HEIGHT)
 
         flower.update(tree)
 
@@ -1820,8 +1822,8 @@ class EditCode extends React.Component {
 
   drawAstFlower() {
     this.ternServer.server.getAstFlowerTree(tree => {
-      const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower('#codeflower', w, w / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT)
+      const { width } = this.refs.codeflower.getBoundingClientRect()
+      const flower = new CodeFlower('#codeflower', width, width / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT)
       flower.update(tree)
       this.setState({
         astFlowerReady: true,
@@ -1835,8 +1837,8 @@ class EditCode extends React.Component {
         local: true,
       },
       tree => {
-        const w = $(this.refs.codeflower).width()
-        const flower = new CodeFlower('#codeflower', w, w / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT, {
+        const { width } = this.refs.codeflower.getBoundingClientRect()
+        const flower = new CodeFlower('#codeflower', width, width / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT, {
           showNames: false,
           onclick: node => {
             // make node stay in place
@@ -1876,8 +1878,8 @@ class EditCode extends React.Component {
 
   drawAstFlowerFull() {
     this.ternServer.server.getAstFlowerTree({}, tree => {
-      const w = $(this.refs.codeflower).width()
-      const flower = new CodeFlower('#codeflower', w, w / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT, {
+      const { width } = this.refs.codeflower.getBoundingClientRect()
+      const flower = new CodeFlower('#codeflower', width, width / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT, {
         showNames: true,
       })
       flower.update(tree)

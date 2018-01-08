@@ -63,7 +63,7 @@ class ShareController extends Component {
       .then(response => response.result.id, reason => (console.error || console.log).call(console, reason))
   }
 
-  render = () => {
+  render() {
     const isDisabled = !this.props.googleAPIHasLoaded || !this.props.currentBuffer
     return (
       <div className="">

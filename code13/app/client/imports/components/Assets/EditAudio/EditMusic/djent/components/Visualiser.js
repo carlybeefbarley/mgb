@@ -9,7 +9,7 @@ class Visualiser extends Component {
     this.containerWidth = this.refs.container.offsetWidth
   }
 
-  render = () => {
+  render() {
     return (
       <div ref="container" className={`visualiser ${!this.props.currentBuffer ? 'is-inactive' : ''}`}>
         <Waveform

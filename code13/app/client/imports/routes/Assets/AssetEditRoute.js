@@ -548,8 +548,6 @@ const AssetEditRoute = React.createClass({
   },
 
   handleEditDeniedReminder: _.throttle(function() {
-    // This is a style on the Edit/view tag in render()
-    $('.mgbReadOnlyReminder').transition({ animation: 'flash', duration: '800ms' })
     if (this.props.currUser) {
       if (!this.canUserEditThisAssetIfUnlocked())
         showToast.error(

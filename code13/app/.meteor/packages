@@ -31,7 +31,6 @@ reactive-dict@1.2.0
 shell-server@0.3.0
 dispatch:mocha
 practicalmeteor:mocha
-semantic:ui
 email@1.2.3
 crosswalk@1.7.1
 meteorhacks:aggregate

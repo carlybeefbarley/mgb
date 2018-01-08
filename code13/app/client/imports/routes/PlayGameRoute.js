@@ -179,8 +179,7 @@ class PlayCodeGame extends React.Component {
    * */
   restart() {
     if (this.refs.iframe) {
-      // jquery only for cross browser support
-      $(this.refs.iframe).attr('src', this.refs.iframe.src)
+      this.refs.iframe.setAttribute('src', this.refs.iframe.src)
       this.props.incrementPlayCountCb()
     }
   }

@@ -12,7 +12,7 @@ class BeatsController extends Component {
     this.props.actions.updateBeats(this.props.beat.id, prop, value)
   }
 
-  render = () => {
+  render() {
     const getProps = type => {
       return {
         type: 'number',

@@ -17,6 +17,7 @@
   "scripts": {
     "deploy:staging": "sh ./deploy.sh staging",
     "deploy:production": "sh ./deploy.sh production",
+    "postinstall": "sh ./update-semantic-ui-less.sh",
     "lint": "sh ./lint.sh",
     "start": "sh ./go.sh",
     "start:empty": "sh ./meteor.sh",
@@ -87,6 +88,7 @@
     "react-router": "^2.8.1",
     "react-swipeable-views": "~0.10.3",
     "scroll": "^2.0.0",
+    "semantic-ui-less": "^2.2.12",
     "semantic-ui-react": "^0.77.1",
     "tern": "~0.20.0",
     "tsscmp": "^1.0.5",

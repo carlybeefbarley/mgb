@@ -110,8 +110,8 @@ const BrowseGamesRoute = React.createClass({
 
   handleSearchGo() {
     // TODO - disallow/escape search string
-    const $button = $(this.refs.searchGoButton)
-    $button.removeClass('orange')
+    const { searchGoButton } = this.refs
+    searchGoButton.classList.remove('orange')
     this._updateLocationQuery({ searchName: this.refs.searchNameInput.value })
   },
 
@@ -122,9 +122,9 @@ const BrowseGamesRoute = React.createClass({
   handleSearchNameBoxChanges() {
     // mark if the button needs to be pushed
     const qN = this.queryNormalized(this.props.location.query)
-    const $button = $(this.refs.searchGoButton)
-    if (this.refs.searchNameInput.value !== qN.searchName) $button.addClass('orange')
-    else $button.removeClass('orange')
+    const { searchGoButton } = this.refs
+    if (this.refs.searchNameInput.value !== qN.searchName) searchGoButton.classList.add('orange')
+    else searchGoButton.classList.remove('orange')
   },
 
   componentDidMount() {

@@ -21,7 +21,6 @@ module.exports = {
   },
   globals: {
     __meteor_runtime_config__: false,
-    $: false,
     ga: false,
     Meteor: false,
     Restivus: false,

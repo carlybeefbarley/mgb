@@ -1,5 +1,6 @@
+import { HTTP } from 'meteor/http'
 import React from 'react'
-import { Accordion } from 'semantic-ui-react'
+import { Accordion, Modal } from 'semantic-ui-react'
 
 import TileHelper from '../Helpers/TileHelper'
 import TilesetControls from './TilesetControls'
@@ -11,6 +12,8 @@ import { AssetKindEnum } from '/imports/schemas/assets'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 
 export default class TileSet extends React.Component {
+  state = {}
+
   /* lifecycle functions */
   constructor(...args) {
     super(...args)
@@ -44,8 +47,6 @@ export default class TileSet extends React.Component {
     window.removeEventListener('touchend', this.onMouseUp)
 
     if (this.refs.canvas) this.refs.canvas.removeEventListener('touchstart', this.onMouseDown)
-
-    if (this.refs.modal) $(this.refs.modal).remove()
   }
 
   componentDidUpdate() {
@@ -256,7 +257,7 @@ export default class TileSet extends React.Component {
     }
 
     const infolink = '/api/asset/tileset-info/' + asset._id
-    $.get(infolink, data => {
+    HTTP.get(infolink, (error, data) => {
       this.props.updateTilesetFromData(data)
     })
   }
@@ -270,7 +271,7 @@ export default class TileSet extends React.Component {
       return
     }
     const infolink = '/api/asset/tileset-info/' + asset._id
-    $.get(infolink, data => {
+    HTTP.get(infolink, (error, data) => {
       this.props.updateTilesetFromData(data, this.tileset, true)
     })
   }
@@ -385,7 +386,7 @@ export default class TileSet extends React.Component {
         className={'tilesetPreview' + (isActive ? ' active' : '')}
         key={index}
         onClick={() => {
-          $(this.refs.modal).modal('hide')
+          this.setState({ isModalOpen: false })
           this.selectTileset(index)
         }}
       >
@@ -406,18 +407,16 @@ export default class TileSet extends React.Component {
   }
 
   showTileListPopup() {
-    $(this.refs.modal)
-      .modal('show')
-      .modal('setting', 'transition', 'vertical flip') // first time there is default animation
+    this.setState({ isModalOpen: true })
   }
 
   renderForModal(from = 0, to = this.props.tilesets.length) {
+    const { isModalOpen } = this.state
+
     return (
-      <div ref="modal" style={{ display: 'none' }} className="ui modal">
-        <div className="content tilesetPreviewModal">
-          {this.renderTileset(from, to, this.genTilesetImage)}
-        </div>
-      </div>
+      <Modal open={isModalOpen}>
+        <div className="tilesetPreviewModal">{this.renderTileset(from, to, this.genTilesetImage)}</div>
+      </Modal>
     )
   }
 

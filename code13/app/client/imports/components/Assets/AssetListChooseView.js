@@ -4,32 +4,24 @@ import React from 'react'
 import { Dropdown } from 'semantic-ui-react'
 import { assetViewChoices } from '/client/imports/components/Assets/AssetCard'
 
-const _menuOpenLeftSty = { left: 'auto', right: '0' } // Magic from levithomason
-
 const AssetListChooseView = ({ chosenView, handleChangeViewClick, sty }) => (
   <Dropdown
     inline
+    pointing="top right"
+    selectOnBlur={false}
     trigger={<small>{chosenView.toUpperCase()}</small>}
     id="mgbjr-asset-search-viewFormatChooser"
     style={{ ...{ color: 'grey' }, ...sty }}
     title="View Assets as.."
-  >
-    <Dropdown.Menu style={_menuOpenLeftSty}>
-      {_.map(
-        _.keys(assetViewChoices).map(k => (
-          <Dropdown.Item
-            active={k === chosenView}
-            value={k}
-            key={k}
-            content={<small>{k.toUpperCase()}</small>}
-            onClick={() => {
-              handleChangeViewClick(k)
-            }}
-          />
-        )),
-      )}
-    </Dropdown.Menu>
-  </Dropdown>
+    value={chosenView}
+    onChange={(e, data) => handleChangeViewClick(data.value)}
+    options={_.map(assetViewChoices, (val, k) => ({
+      key: k,
+      text: k,
+      value: k,
+      content: <small>{k.toUpperCase()}</small>,
+    }))}
+  />
 )
 
 AssetListChooseView.propTypes = {

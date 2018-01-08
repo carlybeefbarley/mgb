@@ -1,5 +1,5 @@
 import React from 'react'
-import Toolbar from '/client/imports/components/Toolbar/Toolbar.js'
+import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 
 export default class AudioToolbar extends React.Component {
   constructor(props) {

@@ -1,13 +1,13 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import ReactDOM from 'react-dom'
-import { showToast } from '/client/imports/modules'
+import { Dropdown, Icon, Label, Table } from 'semantic-ui-react'
 
-import Layer from './Layer.js'
+import Layer from './Layer'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { showToast } from '/client/imports/modules'
 
 import '../editGraphic.css'
 
@@ -515,7 +515,7 @@ export default class SpriteLayers extends React.Component {
     }
     // IE needs this!!!
     // e.dataTransfer.effectAllowed = "copy"
-    $(document.body).addClass('dragging')
+    document.body.classList.add('dragging')
   }
   handleDragStartForLayer(layerId, e) {
     // allow to drop on graphics canvas
@@ -526,10 +526,10 @@ export default class SpriteLayers extends React.Component {
     }
     // IE needs this!!!
     // e.dataTransfer.effectAllowed = "copy"
-    $(document.body).addClass('dragging')
+    document.body.classList.add('dragging')
   }
   handleDragEnd = () => {
-    $(document.body).removeClass('dragging')
+    document.body.classList.remove('dragging')
   }
 
   renderLayers() {
@@ -559,6 +559,17 @@ export default class SpriteLayers extends React.Component {
         handleDragEnd={this.handleDragEnd}
       />
     ))
+  }
+
+  openFrameDropdown = idx => this.setState({ openFrameDropdownIndex: idx })
+  closeFrameDropdown = () => this.setState({ openFrameDropdownIndex: null })
+
+  handleFrameDropdownMouseEnter = idx => () => {
+    this.openFrameDropdown(idx)
+  }
+
+  handleFrameDropdownMouseLeave = () => {
+    this.closeFrameDropdown()
   }
 
   render() {
@@ -634,212 +645,222 @@ export default class SpriteLayers extends React.Component {
           </div>
         </div>
 
-        <table className="ui celled small padded table spriteLayersTable">
-          <thead id="mgbjr-editGraphic-frames">
+        <Table size="small" className="spriteLayersTable" celled padded>
+          <Table.Header id="mgbjr-editGraphic-frames">
             {/** Animation tabs **/}
 
-            <tr className={'animTR ' + (!c2.animations || c2.animations.length === 0 ? 'mgb-hidden' : '')}>
-              <th />
-              <th />
-              <th />
-              <th />
-              {_.map(this.getAnimationsTH(), (item, idx) => {
-                return (
-                  <th key={'thAnim_' + idx} colSpan={item.colspan} className="animTH">
-                    <div className={'ui ' + (item.color ? 'simple tiny dropdown label ' + item.color : '')}>
-                      <span
-                        onClick={() => {
-                          this.togglePartialAnimation(item.startFrame, item.endFrame, item.name)
-                        }}
-                      >
-                        {item.name}
-                      </span>
-                      {item.name ? (
-                        <div className="ui menu">
-                          <div className="item">
-                            <div className="ui input">
-                              <span className="text">Animation Name:&ensp;</span>
-                              <input
-                                type="text"
-                                value={item.name}
-                                onChange={this.renameAnimation.bind(this, item.animID)}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="item">
-                            <div className="ui input">
-                              <span className="text">From:&ensp;</span>
-                              <input
-                                onChange={this.changeAnimStart.bind(this, item.animID)}
-                                type="number"
-                                value={item.startFrame}
-                                min="1"
-                                max={c2.frameNames.length}
-                              />
-                              <span className="text">&nbsp;To:&nbsp;</span>
-                              <input
-                                onChange={this.changeAnimEnd.bind(this, item.animID)}
-                                type="number"
-                                value={item.endFrame}
-                                min="1"
-                                max={c2.frameNames.length}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="item">
-                            <div className="ui input">
-                              <span className="text">FPS:&ensp;</span>
-                              <input
-                                type="number"
-                                value={item.fps}
-                                min="1"
-                                max="60"
-                                onChange={this.changeAnimFPS.bind(this, item.animID)}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="divide" />
-
-                          <div
-                            className="item"
-                            onClick={this.deleteAnimation.bind(this, item.animID)}
-                            title="Deletes the Animation data, but not the frames."
-                          >
-                            <i className="remove icon" />Delete Animation
+            <Table.Row
+              className={'animTR ' + (!c2.animations || c2.animations.length === 0 ? 'mgb-hidden' : '')}
+            >
+              <Table.HeaderCell />
+              <Table.HeaderCell />
+              <Table.HeaderCell />
+              <Table.HeaderCell />
+              {_.map(this.getAnimationsTH(), (item, idx) => (
+                <Table.HeaderCell key={'thAnim_' + idx} colSpan={item.colspan} className="animTH">
+                  <div className={'ui ' + (item.color ? 'simple tiny dropdown label ' + item.color : '')}>
+                    <span
+                      onClick={() => {
+                        this.togglePartialAnimation(item.startFrame, item.endFrame, item.name)
+                      }}
+                    >
+                      {item.name}
+                    </span>
+                    {item.name && (
+                      <div className="ui menu">
+                        <div className="item">
+                          <div className="ui input">
+                            <span className="text">Animation Name:&ensp;</span>
+                            <input
+                              type="text"
+                              value={item.name}
+                              onChange={this.renameAnimation.bind(this, item.animID)}
+                            />
                           </div>
                         </div>
-                      ) : (
-                        ''
-                      )}
-                    </div>
-                  </th>
-                )
-              })}
-              <th />
-              <th />
-            </tr>
+
+                        <div className="item">
+                          <div className="ui input">
+                            <span className="text">From:&ensp;</span>
+                            <input
+                              onChange={this.changeAnimStart.bind(this, item.animID)}
+                              type="number"
+                              value={item.startFrame}
+                              min="1"
+                              max={c2.frameNames.length}
+                            />
+                            <span className="text">&nbsp;To:&nbsp;</span>
+                            <input
+                              onChange={this.changeAnimEnd.bind(this, item.animID)}
+                              type="number"
+                              value={item.endFrame}
+                              min="1"
+                              max={c2.frameNames.length}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="item">
+                          <div className="ui input">
+                            <span className="text">FPS:&ensp;</span>
+                            <input
+                              type="number"
+                              value={item.fps}
+                              min="1"
+                              max="60"
+                              onChange={this.changeAnimFPS.bind(this, item.animID)}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="divider" />
+
+                        <div
+                          className="item"
+                          onClick={this.deleteAnimation.bind(this, item.animID)}
+                          title="Deletes the Animation data, but not the frames."
+                        >
+                          <Icon name="remove" />Delete Animation
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </Table.HeaderCell>
+              ))}
+              <Table.HeaderCell />
+              <Table.HeaderCell />
+            </Table.Row>
             {/* animations end */}
 
-            <tr className="framesHeader">
-              <th width="32px">
+            <Table.Row className="framesHeader">
+              <Table.HeaderCell collapsing>
                 <i
                   className={'icon ' + (this.state.allLayersHidden ? 'hide' : 'unhide')}
                   onClick={this.toggleAllVisibility.bind(this)}
                 />
-              </th>
-              <th width="32px">
+              </Table.HeaderCell>
+              <Table.HeaderCell collapsing>
                 <i
                   className={'icon ' + (this.state.allLayersLocked ? 'lock' : 'unlock')}
                   onClick={this.toggleAllLocking.bind(this)}
                 />
-              </th>
-              <th width="180px">
+              </Table.HeaderCell>
+              <Table.HeaderCell>
                 <a
                   id="mgb_edit_graphics_add_layer"
                   className="ui small label"
                   onClick={this.addLayer.bind(this)}
                 >
-                  <i className="add circle icon" /> Add Layer
+                  <Icon name="add circle" /> Add Layer
                 </a>
-              </th>
-              <th width="32px" />
+              </Table.HeaderCell>
+              <Table.HeaderCell collapsing />
               {/* Tools drop down */
               _.map(c2.frameNames, (frameName, idx) => {
                 return (
-                  <th key={'th_' + idx} width="32px" className={'frameTH ' + 'frame' + idx}>
-                    <div
-                      className="ui dropdown"
-                      ref={c => {
-                        c && $(ReactDOM.findDOMNode(c)).dropdown({ on: 'hover', direction: 'upward' })
-                      }}
+                  <Table.HeaderCell key={'th_' + idx} collapsing className={'frame' + idx}>
+                    <Dropdown
                       id={'mgb_edit_graphics_frame_options_' + idx}
-                    >
-                      <span className="ui circular label">{idx + 1}</span>
-                      <div className="ui vertical menu">
-                        <div className="header item">Frame #{idx + 1}</div>
-                        <div onClick={this.insertFrameAfter.bind(this, idx, true)} className="item">
-                          <i className="add circle icon" />
+                      trigger={<Label circular content={idx + 1} />}
+                      icon={null}
+                      upward
+                      open={this.state.openFrameDropdownIndex === idx}
+                      onMouseLeave={this.handleFrameDropdownMouseLeave}
+                      onMouseEnter={this.handleFrameDropdownMouseEnter(idx)}
+                      onClose={this.closeFrameDropdown}
+                      options={[
+                        <div
+                          key="duplicate-frame"
+                          onClick={this.insertFrameAfter.bind(this, idx, true)}
+                          className="item"
+                        >
+                          <Icon name="add circle" />
                           Duplicate Frame
-                        </div>
-                        <div onClick={this.insertFrameAfter.bind(this, idx, false)} className="item">
+                        </div>,
+                        <div
+                          key="new-frame"
+                          onClick={this.insertFrameAfter.bind(this, idx, false)}
+                          className="item"
+                        >
                           <i className="circle icon outline" />
                           New Empty Frame
-                        </div>
-                        <div onClick={this.addAnimation.bind(this, idx)} className="item">
-                          <i className="wait icon" />
+                        </div>,
+                        <div key="add-animation" onClick={this.addAnimation.bind(this, idx)} className="item">
+                          <Icon name="wait" />
                           Add animation
-                        </div>
+                        </div>,
 
-                        <div className="divider" />
+                        <div key="divider-1" className="divider" />,
 
-                        <div onClick={this.copyFrame.bind(this, idx)} className="item">
-                          <i className="copy icon" />
+                        <div key="copy-frame" onClick={this.copyFrame.bind(this, idx)} className="item">
+                          <Icon name="copy" />
                           Copy
-                        </div>
+                        </div>,
                         <div
+                          key="paste-frame"
                           onClick={this.pasteFrame.bind(this, idx)}
                           className={'item ' + (this.state.copyFrameID === null ? 'disabled' : '')}
                         >
-                          <i className="paste icon" />
+                          <Icon name="paste" />
                           Paste
-                        </div>
+                        </div>,
 
-                        <div className="divider" />
+                        <div key="divider-2" className="divider" />,
 
                         <div
+                          key="move-frame-left"
                           onClick={this.frameMoveLeft.bind(this, idx)}
                           className={'item ' + (idx === 0 ? 'disabled' : '')}
                         >
-                          <i className="arrow left icon" />
+                          <Icon name="arrow left" />
                           Move Left
-                        </div>
+                        </div>,
                         <div
+                          key="move-frame-right"
                           onClick={this.frameMoveRight.bind(this, idx)}
                           className={
                             'item ' + (idx === this.props.content2.frameNames.length - 1 ? 'disabled' : '')
                           }
                         >
-                          <i className="arrow right icon" />
+                          <Icon name="arrow right" />
                           Move Right
-                        </div>
+                        </div>,
 
-                        <div className="divider" />
+                        <div key="divider-3" className="divider" />,
 
                         <div
+                          key="delete-frame"
                           className={'item ' + (this.props.content2.frameData.length === 1 ? 'disabled' : '')}
                           onClick={this.deleteFrame.bind(this, idx)}
                         >
-                          <i className="remove icon" />
+                          <Icon name="remove" />
                           Delete
-                        </div>
-                      </div>
-                    </div>
-                  </th>
+                        </div>,
+                      ]}
+                    />
+                  </Table.HeaderCell>
                 )
               })}
-              <th>
+              <Table.HeaderCell>
                 <div className="row">
                   <a
                     className="ui small label"
                     id="mgb_edit_graphics_add_frame"
                     onClick={this.addFrame.bind(this)}
                   >
-                    <i className="add circle icon" /> Add Frame
+                    <Icon name="add circle" /> Add Frame
                   </a>
                 </div>
-              </th>
-              <th width="32px" />
-            </tr>
+              </Table.HeaderCell>
+              <Table.HeaderCell collapsing />
+            </Table.Row>
 
             {/** Previews for frames **/}
-            <tr className={'frameCanvases ' + (this.state.isCanvasFramesVisible ? '' : 'mgb-hidden')}>
-              <th className="minimizeHide" />
-              <th className="minimizeHide" />
-              <th className="minimizeHide" />
-              <th className="minimizeSmall">
+            <Table.Row className={'frameCanvases ' + (this.state.isCanvasFramesVisible ? '' : 'mgb-hidden')}>
+              <Table.HeaderCell className="minimizeHide" />
+              <Table.HeaderCell className="minimizeHide" />
+              <Table.HeaderCell className="minimizeHide" />
+              <Table.HeaderCell className="minimizeSmall">
                 <div
                   onClick={this.togglePlayAnimation.bind(this)}
                   className={'miniPlay ' + buttonDivClass + (this.state.isPlaying ? ' black' : '')}
@@ -847,28 +868,20 @@ export default class SpriteLayers extends React.Component {
                 >
                   <i className={'icon ' + (this.state.isPlaying ? 'pause' : 'play')} />
                 </div>
-              </th>
+              </Table.HeaderCell>
               {// TODO: change from frameNames[] to frameData[] ?
               _.map(c2.frameNames, (frameName, idx) => {
                 return (
-                  <th
+                  <Table.HeaderCell
                     key={'thCanvas_' + idx}
-                    width="32px"
+                    collapsing
                     className={idx == this.props.selectedFrameIdx ? 'active' : ''}
                   >
                     <div
-                      className="ui image "
                       // replace onClick wit mouseUp / touchEnd - to prevent conflict with mobile drag
                       onMouseUp={this.selectFrame.bind(this, idx)}
                       onTouchEnd={this.selectFrame.bind(this, idx)}
-                      style={{
-                        maxWidth: '256px',
-                        maxHeight: '256px',
-                        width: `${frameWidth}px`,
-                        display: 'block',
-                        margin: '0px auto',
-                        overflow: 'auto',
-                      }}
+                      style={{ margin: 'auto', width: `${frameWidth}px` }}
                       title={`Preview for combined visible layers of Frame #${idx + 1}`}
                     >
                       <canvas
@@ -881,22 +894,22 @@ export default class SpriteLayers extends React.Component {
                         draggable="true"
                       />
                     </div>
-                  </th>
+                  </Table.HeaderCell>
                 )
               })}
-              <th>
+              <Table.HeaderCell>
                 <div className={'row miniAddFrames'} style={{ marginLeft: '10px' }}>
                   <a className="ui small label" onClick={this.addFrame.bind(this)}>
-                    <i className="add circle icon" /> Add Frame
+                    <Icon name="add circle" /> Add Frame
                   </a>
                 </div>
-              </th>
-              <th className="minimizeHide" />
-            </tr>
-          </thead>
+              </Table.HeaderCell>
+              <Table.HeaderCell className="minimizeHide" />
+            </Table.Row>
+          </Table.Header>
 
-          <tbody className="layers">{this.renderLayers()}</tbody>
-        </table>
+          <Table.Body className="layers">{this.renderLayers()}</Table.Body>
+        </Table>
       </div>
     )
   }

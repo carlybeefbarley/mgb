@@ -6,7 +6,7 @@ import NotePanel from './NotePanel'
 class AllowedLengthsController extends Component {
   shouldComponentUpdate = nextProps => !deepEqual(nextProps.allowedLengths, this.props.allowedLengths)
 
-  render = () => {
+  render() {
     const { allowedLengths, actions } = this.props
     // console.log(allowedLengths)
     const totalAmount = allowedLengths.reduce((a, b) => a + b.amount, 0)

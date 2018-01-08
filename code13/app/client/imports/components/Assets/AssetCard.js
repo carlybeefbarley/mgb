@@ -78,13 +78,13 @@ const AssetCard = React.createClass({
     const url = `/api/asset/png/${asset._id}`
     // IE supports only text.. so - encode everything in the "text"
     e.dataTransfer.setData('text', JSON.stringify({ link: url, asset }))
-    $(document.body).addClass('dragging') // this is in mgb.css
+    document.body.classList.add('dragging') // this is in mgb.css
   },
 
   endDrag(e) {
     //const { asset } = this.props
     //console.log(`AssetCard stopDrag(${asset ? asset._id : 'null?'})..`)
-    $(document.body).removeClass('dragging') // this is in mgb.css
+    document.body.classList.remove('dragging') // this is in mgb.css
   },
 
   render() {

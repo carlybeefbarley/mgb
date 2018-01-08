@@ -321,7 +321,11 @@ class AppUI extends React.Component {
     if (window.trackJs) doTrack()
     else {
       console.log('[tjfallback]') // so it's easier to know when this is happening
-      $.getScript(makeCDNLink('/lib/t-r-a-c-k-e-r.js'), doTrack) // fallback to local version because of AdBlocks etc
+
+      const $script = document.createElement('script')
+      $script.setAttribute('src', makeCDNLink('/lib/t-r-a-c-k-e-r.js')) // fallback to local version because of AdBlocks etc
+      $script.setAttribute('onload', doTrack)
+      document.currentScript.parentNode.insertBefore($script, document.currentScript)
     }
   }
 
@@ -339,7 +343,7 @@ class AppUI extends React.Component {
     }
   }
 
-  render = () => {
+  render() {
     const {
       responsive,
       params,

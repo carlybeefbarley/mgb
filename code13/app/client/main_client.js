@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Routes } from '/client/imports/routes'
+import '/client/imports/styles/semantic-ui-less/semantic.less'
 
 import '/imports/schemas/chats'
 import '/imports/schemas/users'

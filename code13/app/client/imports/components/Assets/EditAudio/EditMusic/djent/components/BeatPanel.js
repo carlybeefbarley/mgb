@@ -10,7 +10,7 @@ class BeatPanel extends Component {
     this.props.actions.updateHitChance(hitChance)
   }
 
-  render = () => {
+  render() {
     // console.log(this.props.hitChance)
     const allowedLengths = this.props.preset.settings.config.allowedLengths
     const hitChance = this.props.preset.settings.config.hitChance

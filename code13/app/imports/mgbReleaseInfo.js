@@ -15,6 +15,41 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Mon Jan 08 2018 09:15:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.2',
+        state: 'Beta',
+        iteration: '4996',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Template Projects and Assets',
+          changeSummary: 'You can now create projects and assets quickly using our starter templates.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Prevent bots from signing up',
+          changeSummary: 'Added Recaptcha to the signup form.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'Lots of minor bug fixes and usability updates throughout the system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Thu Dec 07 2017 12:30:00 GMT-0800 (PST)',
 
       id: {
@@ -30,8 +65,8 @@ const mgbReleaseInfo = {
       changes: [
         {
           type: 'bugfix',
-          changeName: 'Fix bug when loading the hour of code activity while not logged in.',
-          changeSummary: 'There are',
+          changeName: 'Hour of Code Loading',
+          changeSummary: 'Fix bug when loading the hour of code activity while not logged in.',
           otherUrls: [],
         },
         {
@@ -167,7 +202,7 @@ const mgbReleaseInfo = {
       ],
     },
     {
-      timestamp: 'Tue Nov 07 2017 15:40:00 GMT-0800 (PST)',
+      timestamp: 'Tue Nov 09 2017 15:40:00 GMT-0800 (PST)',
 
       id: {
         ver: '0.3.6',

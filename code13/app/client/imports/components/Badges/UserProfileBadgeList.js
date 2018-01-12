@@ -5,7 +5,7 @@ import Badge from '/client/imports/components/Badges/Badge'
 import QLink from '/client/imports/routes/QLink'
 import { getBadgesWithHighestLevel } from '/imports/schemas/badges'
 
-import { Header } from 'semantic-ui-react'
+import { Header, Segment, Grid } from 'semantic-ui-react'
 
 const NoBadgesMsg = ({ ownsProfile }) => (
   <span>
@@ -19,23 +19,24 @@ const NoBadgesMsg = ({ ownsProfile }) => (
   </span>
 )
 
-const UserProfileBadgeList = ({ ownsProfile, user, className }) => {
+const UserProfileBadgeList = ({ ownsProfile, user }) => {
   if (!user) return null
 
   const badgesPageUrl = `/u/${user.profile.name}/badges`
   const uBadges = getBadgesWithHighestLevel(user)
 
   return (
-    <div className={className}>
-      <Header as="h2" id="#mgbjr-profile-badges-header">
-        <QLink to={badgesPageUrl}>Badges</QLink>
-      </Header>
+    <Grid.Column width={16}>
+      <Segment raised color="blue">
 
-      <div id="#mgbjr-profile-badges-area">
-        {_.map(uBadges, b => <Badge name={b || '_blankBadge'} key={b} />)}
-        {(!uBadges || uBadges.length === 0) && <NoBadgesMsg ownsProfile={ownsProfile} />}
-      </div>
-    </div>
+        <div id="#mgbjr-profile-badges-area">
+
+          {_.map(uBadges, b => <Badge name={b || '_blankBadge'} key={b} />)}
+          {(!uBadges || uBadges.length === 0) && <NoBadgesMsg ownsProfile={ownsProfile} />}
+
+        </div>
+      </Segment>
+    </Grid.Column>
   )
 }
 

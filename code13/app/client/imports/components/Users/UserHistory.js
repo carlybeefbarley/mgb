@@ -6,7 +6,7 @@ import QLink from '/client/imports/routes/QLink'
 
 const UserHistory = ({ user, width }) => (
   <Grid.Column width={width}>
-    <Segment id="mgbjr-user-profile-history">
+    <Segment id="mgbjr-user-profile-history" raised color="blue">
       <Header as="h2">
         <QLink to={`/u/${user.profile.name}/history`}>Activity</QLink>
       </Header>

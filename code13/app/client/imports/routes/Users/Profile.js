@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Segment, Header, Button, Grid, Item, Icon, Label, Popup } from 'semantic-ui-react'
+import { Segment, Header, Button, Form, Grid, Item, Icon, Label, Popup, Dropdown, Container } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import Helmet from 'react-helmet'
@@ -25,6 +25,7 @@ import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 import { Projects } from '/imports/schemas'
 import { logActivity } from '/imports/schemas/activity'
 import { projectMakeSelector, projectSorters } from '/imports/schemas/projects'
+import FocusDropdown from '/imports/schemas/focus'
 
 import { makeChannelName } from '/imports/schemas/chats'
 
@@ -68,6 +69,10 @@ const UserProfileRoute = React.createClass({
   /**
    *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
    */
+
+
+
+
   handleProfileFieldChanged(changeObj) {
     const fMsg = changeObj['profile.focusMsg']
     if (fMsg || fMsg === '') {
@@ -91,7 +96,7 @@ const UserProfileRoute = React.createClass({
     if (!user) return <ThingNotFound type="User" id={params.username} />
 
     return (
-      <Segment basic>
+      <Container>
         <Grid padded stackable stretched>
           <Helmet
             title={`MGB: @${user.username}`}
@@ -104,8 +109,12 @@ const UserProfileRoute = React.createClass({
           {/* User History ("Activity") */}
           <UserHistory user={user} width={8} />
 
-          {/* User Badges */}
-          <UserProfileBadgeList ownsProfile={ownsProfile} user={user} className="sixteen wide column" />
+          {/* User Badges*/}
+          <Header as="h2" color="grey" id="#mgbjr-profile-badges-header">
+            Badges
+          </Header>
+
+          <UserProfileBadgeList ownsProfile={ownsProfile} user={user} />
 
           {/* User Games */}
           <UserProfileGamesList currUser={currUser} user={user} width={16} />
@@ -131,7 +140,7 @@ const UserProfileRoute = React.createClass({
 
           <UserLovesList user={user} />
         </Grid>
-      </Segment>
+      </Container>
     )
   },
 
@@ -143,10 +152,10 @@ const UserProfileRoute = React.createClass({
     const firstMgb1name = mgb1name && mgb1name.length > 0 ? mgb1name.split(',')[0] : null
     return (
       <Grid.Column width={width} id="mgbjr-profile-bioDiv" style={{ textAlign: 'center' }}>
-        <Segment>
+        <Segment raised color="blue">
           <ImageShowOrChange
             id="mgbjr-profile-avatar"
-            maxHeight="6em"
+            maxHeight="8em"
             maxWidth="auto"
             imageSrc={avatar}
             header="User Avatar"
@@ -166,19 +175,19 @@ const UserProfileRoute = React.createClass({
               <Label size="small" color="purple" content="Deactivated Account" />
             </div>
           )}
-          <div title="User's 'title'" style={{ opacity: 0.5 }}>
-            <Icon size="small" name="quote left" />
+          <div title="User's 'title'" style={{ opacity: 0.6 }}>
+            <Icon size="tiny" name="quote left" />
             <InlineEdit
               id="mgbjr-profile-userTitle-edit"
               validate={validate.userTitle}
               activeClassName="editing"
-              placeholder="(no title)"
+              placeholder="(Title) "
               text={title || ''}
               paramName="profile.title"
               change={this.handleProfileFieldChanged}
               isDisabled={editsDisabled}
             />
-            <Icon size="small" name="quote right" />
+            <Icon size="tiny" name="quote right" />
           </div>
 
           <p>
@@ -191,29 +200,17 @@ const UserProfileRoute = React.createClass({
               id="mgbjr-profile-userBio-edit"
               validate={validate.userBio}
               activeClassName="editing"
-              placeholder="(no description)"
+              placeholder="(Tell us a bit about yourself)"
               text={bio || ''}
               paramName="profile.bio"
               change={this.handleProfileFieldChanged}
               isDisabled={editsDisabled}
             />
           </p>
-          <p>
-            <b title="What you are working on right now. This will also show in the top bar as a reminder!">
-              Focus:
-            </b>&nbsp;
-            <InlineEdit
-              id="mgbjr-profile-focusMsg-edit"
-              validate={validate.userFocusMsg}
-              activeClassName="editing"
-              placeholder="(no current focus)"
-              text={focusMsg || ''}
-              paramName="profile.focusMsg"
-              change={this.handleProfileFieldChanged}
-              isDisabled={editsDisabled}
-            />
-          </p>
-
+          <b title="What you are working on right now. This will also show in the top bar as a reminder!">
+            Focus: </b>&nbsp;
+          <FocusDropdown user={user} />
+          <br />
           <p>
             <b title="This is the user's name on the prior flash-based MGBv1 system. ">MGB1 name:</b>
             &nbsp;
@@ -229,30 +226,30 @@ const UserProfileRoute = React.createClass({
             />
             &nbsp;
             {_.isString(mgb1name) &&
-            mgb1name.length > 0 && (
-              <Popup
-                on="hover"
-                hoverable
-                position="bottom right"
-                trigger={<img className="ui avatar image" src={mgb1.getUserAvatarUrl(firstMgb1name)} />}
-                mouseEnterDelay={500}
-              >
-                <Popup.Header>Legacy 'MGBv1' account</Popup.Header>
-                <Popup.Content>
-                  <div>Prior account in the legacy Flash-based 'MGB1' system from 2007:</div>
-                  <br />
-                  <a className="mini image" href={mgb1.getEditPageUrl(firstMgb1name)} target="_blank">
-                    <img
-                      className="ui centered image bordered"
-                      style={{ maxWidth: '64px', maxHeight: '64px' }}
-                      src={mgb1.getUserAvatarUrl(firstMgb1name)}
-                    />
-                  </a>
-                  <br />
-                  <QLink to={`/u/${user.username}/projects/import/mgb1`}>MGBv1 Project Importer...</QLink>
-                </Popup.Content>
-              </Popup>
-            )}
+              mgb1name.length > 0 && (
+                <Popup
+                  on="hover"
+                  hoverable
+                  position="bottom right"
+                  trigger={<img className="ui avatar image" src={mgb1.getUserAvatarUrl(firstMgb1name)} />}
+                  mouseEnterDelay={500}
+                >
+                  <Popup.Header>Legacy 'MGBv1' account</Popup.Header>
+                  <Popup.Content>
+                    <div>Prior account in the legacy Flash-based 'MGB1' system from 2007:</div>
+                    <br />
+                    <a className="mini image" href={mgb1.getEditPageUrl(firstMgb1name)} target="_blank">
+                      <img
+                        className="ui centered image bordered"
+                        style={{ maxWidth: '64px', maxHeight: '64px' }}
+                        src={mgb1.getUserAvatarUrl(firstMgb1name)}
+                      />
+                    </a>
+                    <br />
+                    <QLink to={`/u/${user.username}/projects/import/mgb1`}>MGBv1 Project Importer...</QLink>
+                  </Popup.Content>
+                </Popup>
+              )}
           </p>
 
           <div style={{ clear: 'both', right: 'auto', left: 'auto' }}>

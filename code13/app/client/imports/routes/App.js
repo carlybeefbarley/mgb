@@ -373,7 +373,7 @@ class AppUI extends Component {
       marginBottom: '0px',
       minHeight: '100vh',
       overflow: isGuest || isHocRoute ? 'hidden' : undefined,
-      overflowY: !isGuest && !isHocRoute ? 'scroll' : undefined,
+      overflowY: !isGuest && !isHocRoute ? 'auto' : undefined,
       WebkitOverflowScrolling: 'touch', // only works with overflowY: scroll (not auto)
     }
 

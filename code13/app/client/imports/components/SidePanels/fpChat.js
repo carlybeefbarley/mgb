@@ -31,7 +31,7 @@ const unreadChannelIndicatorStyle = {
   fontSize: '0.5rem',
 }
 
-const initialMessageLimit = 5
+const initialMessageLimit = 15
 
 /* TODOs for planned chat work
 

@@ -317,7 +317,7 @@ const FlexPanel = React.createClass({
       bottom: fpIsFooter ? '60px' : '0px',
       right: fpIsFooter ? '0px' : fpIconColumnWidthInPixels + 'px',
       width: fpFlexPanelContentWidthInPixels + 'px',
-      overflowY: 'scroll',
+      overflowY: 'auto',
       overflowX: 'hidden',
       zIndex: 301, // Temp Hack
     }

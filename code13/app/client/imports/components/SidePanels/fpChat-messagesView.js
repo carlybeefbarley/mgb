@@ -1,22 +1,24 @@
 import _ from 'lodash'
+import moment from 'moment'
+import { ReactMeteorData } from 'meteor/react-meteor-data'
 import PropTypes from 'prop-types'
 import React from 'react'
-import ChatMessage, { encodeAssetInMsg } from './fpChat-message'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
-import { showToast } from '/client/imports/modules'
-import { Chats } from '/imports/schemas'
-import { joyrideStore } from '/client/imports/stores'
 import { Button, Comment, Divider, Form, Header, Icon } from 'semantic-ui-react'
-import { isSameUserId } from '/imports/schemas/users'
+
+import { showToast } from '/client/imports/modules'
+import { joyrideStore } from '/client/imports/stores'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
-import { logActivity } from '/imports/schemas/activity'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
-import SpecialGlobals from '/imports/SpecialGlobals'
 import FlagEntity from '/client/imports/components/Controls/FlagEntityUI'
 import ResolveReportEntity from '/client/imports/components/Controls/FlagResolve'
-import { setLastReadTimestampForChannel } from '/imports/schemas/settings-client'
 import QLink from '/client/imports/routes/QLink'
-import moment from 'moment'
+
+import ChatMessage, { encodeAssetInMsg } from './fpChat-message'
+import { logActivity } from '/imports/schemas/activity'
+import SpecialGlobals from '/imports/SpecialGlobals'
+import { Chats } from '/imports/schemas'
+import { setLastReadTimestampForChannel } from '/imports/schemas/settings-client'
+import { isSameUserId } from '/imports/schemas/users'
 
 import {
   deleteChatRecord,
@@ -51,7 +53,6 @@ const DeleteChatMessage = ({ chat, currUser, isSuperAdmin }) =>
   (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin || _isCurrUsersWall(chat, currUser)) &&
   !chat.isDeleted ? (
     <span className="mgb-show-on-parent-hover" onClick={() => deleteChatRecord(chat._id)}>
-      &nbsp;
       <Icon color="red" circular link name="delete" />
     </span>
   ) : null
@@ -59,7 +60,6 @@ const DeleteChatMessage = ({ chat, currUser, isSuperAdmin }) =>
 const UndeleteChatMessage = ({ chat, currUser, isSuperAdmin }) =>
   currUser && (isSameUserId(chat.byUserId, currUser._id) || isSuperAdmin) && chat.isDeleted ? (
     <span className="mgb-show-on-parent-hover" onClick={() => restoreChatRecord(chat._id)}>
-      &nbsp;
       <Icon color="blue" circular link name="undo" />
     </span>
   ) : null
@@ -204,60 +204,126 @@ const ChatMessagesView = React.createClass({
     this.props.handleExtendMessageLimit(newMessageLimit)
   },
 
-  renderMessage(c) {
-    const ago = moment(c.createdAt).fromNow()
-    const to = `/u/${c.byUserName}`
-    const { isSuperAdmin } = this.props
-    const absTime = moment(c.createdAt).format('MMMM Do YYYY, h:mm:ss a')
-    const currUser = Meteor.user()
+  renderMessages() {
+    const grouped = _.groupBy(this.data.chats, c => moment(c.createdAt).format('L'))
+    console.log(grouped)
+
+    return _.flatMap(grouped, (chatsForDate, date) => {
+      console.log(date, chatsForDate)
+      return [
+        <Divider key={chatsForDate[0].createdAt.toString()} horizontal>
+          {moment(chatsForDate[0].createdAt).calendar(null, {
+            sameDay: '[Today]',
+            nextDay: '[Tomorrow]',
+            nextWeek: 'dddd',
+            lastDay: '[Yesterday]',
+            lastWeek: 'dddd, MMMM D',
+            sameElse: 'DD/MM/YYYY',
+          })}
+        </Divider>,
+      ].concat(
+        chatsForDate
+          .reduce((acc, next) => {
+            // byUserId: "raMDZ9atjHABXu5KG"
+            // byUserName: "stauzs"
+            // createdAt: Thu Jan 11 2018 01:47:27 GMT-0800 (PST) {constructor: ƒ}
+            // message: "Really nice music"
+            // toChannelName: "G_GENERAL_"
+            // updatedAt: Thu Jan 11 2018 01:47:27 GMT-0800 (PST) {constructor: ƒ}
+            // _id: "GaWiEtkeE5M2LeC2j"
+            const prev = _.last(acc)
+
+            if (prev && prev.byUserId === next.byUserId) {
+              prev.consecutiveChats.push(next)
+            } else {
+              next.consecutiveChats = []
+              acc.push(next)
+            }
+
+            return acc
+          }, [])
+          .map(c => {
+            // turn each chat message into an array of consecutive chat messages by user
+            const $createdAt = moment(c.createdAt)
+            const time = $createdAt.format('h:mm a')
+            const to = `/u/${c.byUserName}`
+            const { isSuperAdmin } = this.props
+            const absTime = $createdAt.format('MMMM Do YYYY, h:mm:ss a')
+            const currUser = Meteor.user()
+
+            return (
+              <Comment key={c._id}>
+                <QLink to={to} className="avatar">
+                  {currUser &&
+                  currUser._id == c.byUserId && (
+                    <img src={makeCDNLink(currUser.profile.avatar)} style={{ maxHeight: '3em' }} />
+                  )}
+                  {(!currUser || currUser._id !== c.byUserId) && (
+                    <img
+                      src={makeCDNLink(
+                        `/api/user/${c.byUserId}/avatar/${SpecialGlobals.avatar.validFor}`,
+                        makeExpireTimestamp(SpecialGlobals.avatar.validFor),
+                      )}
+                      style={{ maxHeight: '3em' }}
+                    />
+                  )}
+                </QLink>
+                <Comment.Content>
+                  <Comment.Author as={QLink} to={to}>
+                    {c.byUserName}
+                  </Comment.Author>
+                  <Comment.Metadata>
+                    <div title={absTime}>{time}</div>
+                    {!(c.suIsBanned === true) &&
+                    !c.suFlagId && (
+                      <DeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
+                    )}
+                    <UndeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
+                    <FlagEntity entity={c} currUser={currUser} tableCollection={'Chats'} />
+                    {isSuperAdmin && (
+                      <ResolveReportEntity
+                        entity={c}
+                        currUser={currUser}
+                        tableCollection={'Chats'}
+                        isSuperAdmin={isSuperAdmin}
+                      />
+                    )}
+                  </Comment.Metadata>
+                  <Comment.Text>
+                    {c.suFlagId && !c.suIsBanned ? (
+                      <span>(flagged, waiting review)</span>
+                    ) : (
+                      <ChatMessage msg={c.isDeleted ? '(deleted)' : c.message} />
+                    )}
+                  </Comment.Text>
+                  {_.map(c.consecutiveChats, chat => (
+                    <Comment.Text key={chat._id} style={{ position: 'relative' }}>
+                      <span
+                        className="metadata mgb-show-on-parent-hover"
+                        style={{
+                          position: 'absolute',
+                          margin: '0 0.25em 0 0',
+                          right: '100%',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {moment(chat.createdAt).format('h:mm a')}
+                      </span>
+                      {chat.suFlagId && !chat.suIsBanned ? (
+                        <span>(flagged, waiting review)</span>
+                      ) : (
+                        <ChatMessage msg={chat.isDeleted ? '(deleted)' : chat.message} />
+                      )}
+                    </Comment.Text>
+                  ))}
+                </Comment.Content>
+              </Comment>
+            )
+          }),
+      )
+    })
+
     //const isModerator = isUserModerator(currUser)
-    return (
-      <Comment key={c._id}>
-        <QLink to={to} className="avatar">
-          {currUser &&
-          currUser._id == c.byUserId && (
-            <img src={makeCDNLink(currUser.profile.avatar)} style={{ maxHeight: '3em' }} />
-          )}
-          {(!currUser || currUser._id !== c.byUserId) && (
-            <img
-              src={makeCDNLink(
-                `/api/user/${c.byUserId}/avatar/${SpecialGlobals.avatar.validFor}`,
-                makeExpireTimestamp(SpecialGlobals.avatar.validFor),
-              )}
-              style={{ maxHeight: '3em' }}
-            />
-          )}
-        </QLink>
-        <Comment.Content>
-          <Comment.Author as={QLink} to={to}>
-            {c.byUserName}
-          </Comment.Author>
-          <Comment.Metadata>
-            <div title={absTime}>{ago}</div>
-            {!(c.suIsBanned === true) &&
-            !c.suFlagId && <DeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />}
-            <UndeleteChatMessage chat={c} currUser={currUser} isSuperAdmin={isSuperAdmin} />
-            <FlagEntity entity={c} currUser={currUser} tableCollection={'Chats'} />
-            {isSuperAdmin && (
-              <ResolveReportEntity
-                entity={c}
-                currUser={currUser}
-                tableCollection={'Chats'}
-                isSuperAdmin={isSuperAdmin}
-              />
-            )}
-          </Comment.Metadata>
-          <Comment.Text>
-            {c.suFlagId && !c.suIsBanned ? (
-              <span>(flagged, waiting review)</span>
-            ) : (
-              <ChatMessage msg={c.isDeleted ? '(deleted)' : c.message} />
-            )}
-            &nbsp;
-          </Comment.Text>
-        </Comment.Content>
-      </Comment>
-    )
   },
 
   onDropChatMsg(e) {
@@ -302,7 +368,7 @@ const ChatMessagesView = React.createClass({
           {this.renderGetMoreMessages()}
           <div id="mgbjr-fp-chat-channel-messages">
             {// Always have at least one div so we will be robust with a '#mgbjr-fp-chat-channel-messages div:first' css selector for tutorials
-            this.data.chats ? this.data.chats.map(this.renderMessage) : <div />}
+            this.data.chats ? this.renderMessages() : <div />}
           </div>
           <span />
         </Comment.Group>

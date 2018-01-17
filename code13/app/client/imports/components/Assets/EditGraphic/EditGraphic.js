@@ -1159,7 +1159,7 @@ export default class EditGraphic extends React.Component {
       byUserName: 'usernameTODO', // TODO
       byUserContext: 'someMachineTODO', // TODO
       changeInfo: changeInfoString,
-      savedContent2: { ...this.props.asset.content2 },
+      savedContent2: _.cloneDeep(this.props.asset.content2),
     }
   }
 

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 export default class Tabs extends React.Component {
   constructor() {
@@ -41,7 +41,7 @@ export default class Tabs extends React.Component {
             key={i}
             style={{ color: disabled ? 'gray' : 'black', cursor: disabled ? 'auto' : 'pointer' }}
             onClick={() => {
-              joyrideCompleteTag(`mgbjr-CT-edit-actor-tab-${tabs[i].tab.replace(/[^A-Z0-9]/gi, '')}`)
+              joyrideStore.completeTag(`mgbjr-CT-edit-actor-tab-${tabs[i].tab.replace(/[^A-Z0-9]/gi, '')}`)
               this.setState({ activeTab: i })
             }}
           >

@@ -172,7 +172,7 @@ export const toggleSkill = (skillsObj, dottedSkillKey) =>
  * @returns {Number}
  */
 export function countCurrentUserSkills(skillsObj, dotttedSkillPrefix = null) {
-  if (!skillsObj) return null
+  if (!skillsObj) return 0
 
   return _.size(
     _.filter(

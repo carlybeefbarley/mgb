@@ -20,9 +20,7 @@ import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import TutorialMentor from './TutorialEditHelpers'
 
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
-import { addJoyrideSteps, joyrideDebugEnable } from '/client/imports/routes/App'
 import { showToast } from '/client/imports/modules'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
 
 import moment from 'moment'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots'
@@ -86,7 +84,7 @@ const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
 
 import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes'
 import { withStores } from '/client/imports/hocs'
-import { hourOfCodeStore } from '/client/imports/stores'
+import { hourOfCodeStore, joyrideStore } from '/client/imports/stores'
 
 let showDebugAST = false // Handy thing while doing TERN dev work
 
@@ -111,13 +109,14 @@ const _infoPaneModes = [
 // content2.src                     // String with source code
 
 class EditCode extends React.Component {
-  // static PropTypes = {
-  //   asset: PropTypes.object.isRequired
-  //   canEdit: PropTypes.bool.isRequired
-  //   editDeniedReminder: PropTypes.function
-  //   handleContentChange: PropTypes.function.isRequired
-  //   activitySnapshots: PropTypes.array               // can be null whilst loading
-  // }
+  static propTypes = {
+    asset: PropTypes.object.isRequired,
+    canEdit: PropTypes.bool.isRequired,
+    editDeniedReminder: PropTypes.func,
+    handleContentChange: PropTypes.func.isRequired,
+    //    can be null whilst loading
+    activitySnapshots: PropTypes.array,
+  }
 
   constructor(props, context) {
     super(props)
@@ -1105,7 +1104,7 @@ class EditCode extends React.Component {
       // set state seems to be expensive - based on profiler data
       this.setState({ documentIsEmpty: isEmpty })
       if (this._currentCodemirrorValue.length === 0) {
-        joyrideCompleteTag('mgbjr-CT-EditCode-editor-clean')
+        joyrideStore.completeTag('mgbjr-CT-EditCode-editor-clean')
       }
     }
   }
@@ -2087,7 +2086,7 @@ class EditCode extends React.Component {
     this.handleContentChange(newC2, null, `Template code: ${item.label}`)
 
     const label = item.label.replace(/ /g, '-')
-    joyrideCompleteTag('mgbjr-CT-EditCode-templates-' + label + '-invoke')
+    joyrideStore.completeTag('mgbjr-CT-EditCode-templates-' + label + '-invoke')
   }
 
   // Note that either c2 or thumbnail could be null/undefined.
@@ -2566,35 +2565,36 @@ class EditCode extends React.Component {
     doc.replaceRange(text, cursor)
   }
 
-  tryTutorial() {
+  tryTutorial = () => {
     if (!this._currentCodemirrorValue) return
+    const { joyride } = this.props
 
-    const pj = TutorialMentor.parseJson(this._currentCodemirrorValue)
+    const parsedJSON = TutorialMentor.parseJson(this._currentCodemirrorValue)
 
-    if (pj.errorHintString) {
-      showToast.error('JSON Parse error: ' + pj.errorHintString)
-      if (pj.errorCharIdx >= 0) {
+    if (parsedJSON.errorHintString) {
+      showToast.error('JSON Parse error: ' + parsedJSON.errorHintString)
+      if (parsedJSON.errorCharIdx >= 0) {
         const editor = this.codeMirror
-        editor.setCursor(editor.posFromIndex(pj.errorCharIdx))
+        editor.setCursor(editor.posFromIndex(parsedJSON.errorCharIdx))
         editor.focus()
       }
     }
 
-    if (pj.data) {
-      if (!_.has(pj.data, 'steps')) showToast.error('Tutorials must have a steps: [] array value')
+    if (parsedJSON.data) {
+      if (!_.has(parsedJSON.data, 'steps')) showToast.error('Tutorials must have a steps: [] array value')
       else {
-        joyrideDebugEnable(true)
-        addJoyrideSteps(pj.data.steps, {
-          replace: true,
+        joyride.setDebug(true)
+        joyride.addSteps(parsedJSON.data.steps, {
           origAssetId: { ownerName: this.props.asset.dn_ownerName, id: this.props.asset._id },
         })
       }
     }
   }
 
-  stopTutorial() {
-    joyrideDebugEnable(false)
-    addJoyrideSteps([], { replace: true })
+  stopTutorial = () => {
+    const { joyride } = this.props
+    joyride.setDebug(false)
+    joyride.stop()
   }
 
   createImportString(val, user) {
@@ -2884,8 +2884,8 @@ class EditCode extends React.Component {
           content: (
             <div>
               <TutorialMentor
-                tryTutorial={() => this.tryTutorial()}
-                stopTutorial={() => this.stopTutorial()}
+                tryTutorial={this.tryTutorial}
+                stopTutorial={this.stopTutorial}
                 parsedTutorialData={this.state.parsedTutorialData}
                 insertCodeCallback={canEdit ? newCodeStr => this.insertTextAtCursor(newCodeStr) : null}
               />
@@ -3553,4 +3553,7 @@ EditCode.contextTypes = {
   skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)
 }
 
-export default withStores({ hourOfCodeStore })(EditCode)
+export default withStores({
+  hourOfCodeStore,
+  joyride: joyrideStore,
+})(EditCode)

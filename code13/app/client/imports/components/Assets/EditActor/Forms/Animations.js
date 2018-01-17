@@ -5,7 +5,7 @@ import { Table, Accordion, Dimmer, Loader, Item, Button, Modal, Checkbox } from 
 import DropArea from '../../../Controls/DropArea.js'
 import SmallDD from '../../../Controls/SmallDD.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 export default class Animations extends React.Component {
   state = {
@@ -30,7 +30,7 @@ export default class Animations extends React.Component {
   }
 
   handleAnimationClick = animId => () => {
-    joyrideCompleteTag(`mgbjr-CT-edit-actor-Animations-accordion-${animId}`)
+    joyrideStore.completeTag(`mgbjr-CT-edit-actor-Animations-accordion-${animId}`)
   }
 
   handleGraphicFrameSelection(e, data) {

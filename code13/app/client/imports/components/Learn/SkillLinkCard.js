@@ -4,7 +4,8 @@ import React, { Component } from 'react'
 import { Button, Card, Grid, Header, Icon, Label, List, Popup, Progress } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import QLink from '/client/imports/routes/QLink'
-import { startSkillPathTutorial } from '/client/imports/routes/App'
+import { withStores } from '/client/imports/hocs'
+import { joyrideStore } from '/client/imports/stores'
 import { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
@@ -44,12 +45,12 @@ class SkillLinkCard extends Component {
   }
 
   handleClick = () => {
-    const { skillPath, todoSkills, disabled, to } = this.props
+    const { disabled, joyride, skillPath, to, todoSkills } = this.props
 
     // cards with links already have a path, skip on to
     if (!!to || disabled || this.isCompleted()) return
 
-    startSkillPathTutorial(skillPath + '.' + todoSkills[0])
+    joyride.startSkillPathTutorial(skillPath + '.' + todoSkills[0])
   }
 
   handleMouseEnter = () => this.setState({ isHovering: true })
@@ -59,8 +60,9 @@ class SkillLinkCard extends Component {
   handlePopupClose = () => this.setState({ showPopup: false })
 
   handleDoItAgainClick(skillPath) {
+    const { joyride } = this.props
     this.setState({ isHovering: false, showPopup: false })
-    startSkillPathTutorial(skillPath)
+    joyride.startSkillPathTutorial(skillPath)
   }
 
   renderProgressBar = () => {
@@ -205,4 +207,4 @@ class SkillLinkCard extends Component {
   }
 }
 
-export default SkillLinkCard
+export default withStores({ joyride: joyrideStore })(SkillLinkCard)

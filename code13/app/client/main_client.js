@@ -1,4 +1,4 @@
-import React from 'react'
+import smoothScrollPolyfill from 'smoothscroll-polyfill'
 
 import { Routes } from '/client/imports/routes'
 import '/client/imports/styles/semantic-ui-less/semantic.less'
@@ -20,6 +20,9 @@ import { Tracker } from 'meteor/tracker'
 if ('ontouchstart' in document.documentElement) {
   document.body.style.cursor = 'pointer'
 }
+
+// enable the { behavior: 'smooth' } option for element.scrollIntoView()
+smoothScrollPolyfill.polyfill()
 
 if (Meteor.isDevelopment) {
   // Expose the React Performance Tools on the`window` object

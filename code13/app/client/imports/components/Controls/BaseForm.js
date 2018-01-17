@@ -3,7 +3,7 @@ import { Checkbox } from 'semantic-ui-react'
 
 import DropArea from './DropArea.js'
 import SmallDD from './SmallDD.js'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 // This partial class uses the following React props..
 // propTypes: {
@@ -34,7 +34,7 @@ export default class BaseForm extends React.Component {
           onChange={val => {
             this.data[key] = val
             if (func) func()
-            if (mgbjrCT) joyrideCompleteTag(mgbjrCT + val)
+            if (mgbjrCT) joyrideStore.completeTag(mgbjrCT + val)
             this.props.onChange && this.props.onChange()
           }}
           {...fieldOptions}
@@ -62,7 +62,7 @@ export default class BaseForm extends React.Component {
           onChange={() => {
             this.data[key] = fieldOptions.boolIsTF ? !checked : !checked ? '1' : '0'
             console.log('onChange dataKey', this.data[key])
-            if (mgbjrCT) joyrideCompleteTag(mgbjrCT)
+            if (mgbjrCT) joyrideStore.completeTag(mgbjrCT)
             this.props.onChange && this.props.onChange(key)
           }}
         />
@@ -117,7 +117,7 @@ export default class BaseForm extends React.Component {
             const val = e.target.value
             this.data[key] = val
             this.props.onChange && this.props.onChange()
-            if (mgbjrCT) joyrideCompleteTag(mgbjrCT + val)
+            if (mgbjrCT) joyrideStore.completeTag(mgbjrCT + val)
           }}
           value={this.data[key]}
         />

@@ -2,7 +2,7 @@ import React from 'react'
 import { Grid, Form, Divider } from 'semantic-ui-react'
 import BaseForm from '../../../Controls/BaseForm.js'
 
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 export default class NPCBehavior extends BaseForm {
   get data() {

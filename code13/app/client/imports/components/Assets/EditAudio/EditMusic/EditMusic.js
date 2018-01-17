@@ -16,7 +16,7 @@ import Channel from './Channel'
 import lamejs from '../lib/lame.all'
 import AudioConverter from '../lib/AudioConverter'
 import NumberInput from '/client/imports/components/Controls/NumberInput'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import { showToast } from '/client/imports/modules'
 
 export default class EditMusic extends React.Component {
@@ -117,7 +117,7 @@ export default class EditMusic extends React.Component {
 
     this.closeAllModals()
 
-    joyrideCompleteTag('mgbjr-CT-editMusic-music-imported')
+    joyrideStore.completeTag('mgbjr-CT-editMusic-music-imported')
   }
 
   closeAllModals = () => {
@@ -145,12 +145,12 @@ export default class EditMusic extends React.Component {
 
   openGeneratePopup = () => {
     this.setState({ isGenerateMusicPopupOpen: true })
-    joyrideCompleteTag('mgbjr-CT-editMusic-generateMetal-invoke')
+    joyrideStore.completeTag('mgbjr-CT-editMusic-generateMetal-invoke')
   }
 
   open8bitPopup = () => {
     this.setState({ isGenerate8bitPopupOpen: true })
-    joyrideCompleteTag('mgbjr-CT-editMusic-generate8bit-invoke')
+    joyrideStore.completeTag('mgbjr-CT-editMusic-generate8bit-invoke')
   }
 
   togglePlayMusic = () => {

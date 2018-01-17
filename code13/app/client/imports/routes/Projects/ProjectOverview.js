@@ -11,7 +11,7 @@ import ProjectCard from '/client/imports/components/Projects/ProjectCard'
 import ProjectMembersGET from '/client/imports/components/Projects/ProjectMembersGET'
 import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/GamesAvailableGET'
 import Spinner from '/client/imports/components/Nav/Spinner'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import UserListRoute from '../Users/UserListRoute'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
@@ -265,7 +265,7 @@ const ProjectOverview = React.createClass({
   // TODO - some better UI for Add People.
   handleClickUser(userId, userName) {
     if (this.state.isDeletePending) {
-      showToast('Delete is still pending. Please wait..')
+      showToast.warning('Delete is still pending. Please wait..')
       return
     }
 
@@ -340,7 +340,7 @@ const ProjectOverview = React.createClass({
       if (error) showToast.error(`Could not update project: ${error.reason}`)
       else {
         // Go through all the keys, log completion tags for each
-        _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-project-set-field-${k}`))
+        _.each(_.keys(changeObj), k => joyrideStore.completeTag(`mgbjr-CT-project-set-field-${k}`))
       }
     })
   },

@@ -2,8 +2,8 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Header, Button, Segment, Message, Icon, List, Label, Dropdown } from 'semantic-ui-react'
-import { parseStepsWithMacroResults } from '/client/imports/Joyride/Joyride'
 
+import { parseStepsWithMacroResults } from '/client/imports/stores/joyrideStore'
 import { stepKeyOptionsForDropdown, autocompleteOptions } from '/client/imports/Joyride/JoyrideSpecialMacros'
 
 const isMacroStepSty = { color: 'green' }

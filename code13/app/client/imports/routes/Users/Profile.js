@@ -29,7 +29,7 @@ import { projectMakeSelector, projectSorters } from '/imports/schemas/projects'
 import { makeChannelName } from '/imports/schemas/chats'
 
 import QLink from '../QLink'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 import Hotjar from '/client/imports/helpers/hotjar.js'
 
@@ -81,7 +81,7 @@ const UserProfileRoute = React.createClass({
       if (error) console.error('Could not update profile:', error.reason)
       else {
         // Go through all the keys, log completion tags for each
-        _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-profile-set-field-${k}`))
+        _.each(_.keys(changeObj), k => joyrideStore.completeTag(`mgbjr-CT-profile-set-field-${k}`))
       }
     })
   },

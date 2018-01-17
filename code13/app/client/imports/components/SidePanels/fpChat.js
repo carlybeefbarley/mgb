@@ -14,7 +14,7 @@ import {
   togglePinnedChannelName,
 } from '/imports/schemas/settings-client'
 
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import {
   parseChannelName,
   makeChannelName,
@@ -193,7 +193,7 @@ const fpChat = React.createClass({
   },
 
   changeChannel(selectedChannelName) {
-    joyrideCompleteTag(`mgbjr-CT-fp-chat-channel-select-${selectedChannelName}`)
+    joyrideStore.completeTag(`mgbjr-CT-fp-chat-channel-select-${selectedChannelName}`)
     if (
       selectedChannelName &&
       selectedChannelName.length > 0 &&

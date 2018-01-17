@@ -5,7 +5,7 @@ import ChatMessage, { encodeAssetInMsg } from './fpChat-message'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { showToast } from '/client/imports/modules'
 import { Chats } from '/imports/schemas'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import { Button, Comment, Divider, Form, Header, Icon } from 'semantic-ui-react'
 import { isSameUserId } from '/imports/schemas/users'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
@@ -160,8 +160,8 @@ const ChatMessagesView = React.createClass({
     const channelObj = parseChannelName(channelName)
     const presentedChannelName = makePresentedChannelName(channelName, channelObj.scopeId)
 
-    joyrideCompleteTag(`mgbjr-CT-fp-chat-send-message`)
-    joyrideCompleteTag(`mgbjr-CT-fp-chat-send-message-on-${channelName}`)
+    joyrideStore.completeTag(`mgbjr-CT-fp-chat-send-message`)
+    joyrideStore.completeTag(`mgbjr-CT-fp-chat-send-message-on-${channelName}`)
 
     // TODO: Set pending?, disable textarea on pendings
     this.setState({ isMessagePending: true })

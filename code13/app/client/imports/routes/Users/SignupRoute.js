@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { Container, Divider, Message, Segment, Header, Form, Grid, Image } from 'semantic-ui-react'
 
-import { stopCurrentTutorial } from '/client/imports/routes/App'
+import { withStores } from '/client/imports/hocs'
+import { joyrideStore } from '/client/imports/stores'
 import LoginLinks from './LoginLinks'
 import { utilPushTo } from '../QLink'
 import validate from '/imports/schemas/validate'
@@ -78,7 +79,8 @@ class SignupRoute extends Component {
     }))
   }
 
-  handleSubmit = event => {
+  handleSubmit = e => {
+    const { joyride } = this.props
     const { formData = {} } = this.state
     const { email, username, password } = formData
     const errors = {
@@ -113,7 +115,7 @@ class SignupRoute extends Component {
 
         Meteor.call('User.sendSignUpEmail', email)
         logActivity('user.join', `New user "${username}"`, null, null)
-        stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
+        joyride.stop() // It would be weird to continue one, and the main case will be the signup Tutorial
         utilPushTo(this.context.urlLocation.query, '/dashboard')
 
         // analytics.identify(Meteor.user()._id, {
@@ -209,4 +211,4 @@ class SignupRoute extends Component {
   }
 }
 
-export default SignupRoute
+export default withStores({ joyride: joyrideStore })(SignupRoute)

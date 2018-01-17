@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import { Modal, Segment, Grid } from 'semantic-ui-react'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
@@ -274,7 +274,7 @@ export default class EditActor extends React.Component {
     this.loadTemplate('alTemplate' + actorType)
     this.props.handleDescriptionChange('Created from Template: ' + actorType)
     this.handleSave('Initial Template selected')
-    joyrideCompleteTag(`mgbjr-CT-create-actor-${actorType.toLowerCase()}`)
+    joyrideStore.completeTag(`mgbjr-CT-create-actor-${actorType.toLowerCase()}`)
   }
   handleModalClose = () => {
     if (!this.state.isTemplateSelected) this.loadDefaultTemplate()

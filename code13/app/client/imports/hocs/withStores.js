@@ -51,9 +51,6 @@ const withStores = stores => WrappedComponent => {
 
       // create an API from the store to map to the wrapped component's prop
       _.forEach(stores, (store, propName) => {
-        const storeName = store.constructor.name
-        // console.log('CHECK', storeName)
-
         // set initial state from store.state (synchronous set is safe in the constructor)
         // eslint-disable-next-line react/no-direct-mutation-state
         this.state[propName] = {}

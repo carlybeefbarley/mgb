@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 import Helmet from 'react-helmet'
@@ -11,7 +12,7 @@ const ThingNotFound = ({ type, id, defaultHead }) => (
       icon="broken chain"
       header={`${type} not found`}
       list={[
-        `${type} ${id ? `'${id}' ` : ''} does not exist. Weird...`,
+        _.compact([type, id, 'does not exist. Weird...']).join(' '),
         `Maybe it was deleted?`,
         `Names and Ids in URLs are case-sensitive - maybe that's the issue?`,
       ]}

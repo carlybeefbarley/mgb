@@ -50,6 +50,7 @@
  */
 class Store {
   __storeListeners = []
+  __eventListeners = []
 
   state = {}
 
@@ -79,12 +80,32 @@ class Store {
     this.storeDidUpdate(prevState)
   }
 
+  // ============================================================
+  // Store state listeners
+  // ============================================================
   subscribe = fn => {
     this.__storeListeners.push(fn)
   }
 
   unsubscribe = fn => {
     this.__storeListeners = this.__storeListeners.filter(listener => listener !== fn)
+  }
+
+  // ============================================================
+  // Custom Events
+  // ============================================================
+  on = (event, handler) => {
+    this.__eventListeners[event] = this.__eventListeners[event] || []
+
+    this.__eventListeners[event].push(handler)
+
+    return () => _.pull(this.__eventListeners[event], handler)
+  }
+
+  emit = (event, ...args) => {
+    _.forEach(this.__eventListeners[event], handler => {
+      handler(...args)
+    })
   }
 }
 

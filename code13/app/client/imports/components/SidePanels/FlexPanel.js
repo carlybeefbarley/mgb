@@ -5,7 +5,8 @@ import React from 'react'
 import { Label } from 'semantic-ui-react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { responsiveComponent, withStores } from '/client/imports/hocs'
+import { joyrideStore } from '/client/imports/stores'
 import { getFeatureLevel } from '/imports/schemas/settings-client'
 import { expectedToolbars } from '/client/imports/components/Toolbar/expectedToolbars'
 
@@ -16,15 +17,14 @@ import fpActivity from './fpActivity'
 import fpKeyboard from './fpKeyboard'
 import fpProjects from './fpProjects'
 import fpAssets from './fpAssets'
-import fpSkills from './fpSkills'
-import fpGoals from './fpGoals'
 import fpUsers from './fpUsers'
 import fpChat from './fpChat'
+import fpLearn from './fpLearn'
+import handleFlexPanelChange from './handleFlexPanelChange'
 
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 
-const _flexPanelTitleHeaderIsHidden = true
 const flexPanelViews = [
   // default_level is defined in expectedToolbars.js (probably = 6)
   {
@@ -48,22 +48,12 @@ const flexPanelViews = [
     mobileUI: true,
   },
   {
-    tag: 'goals',
+    tag: 'learn',
     lev: 1,
-    name: 'goals',
+    name: 'learn',
     icon: 'student',
-    header: 'Goals',
-    el: fpGoals,
-    superAdminOnly: false,
-    mobileUI: false,
-  },
-  {
-    tag: 'skills',
-    lev: 2,
-    name: 'skills',
-    icon: 'plus circle',
-    header: 'Skills',
-    el: fpSkills,
+    header: 'Learn',
+    el: fpLearn,
     superAdminOnly: false,
     mobileUI: false,
   },
@@ -175,15 +165,10 @@ const FlexPanel = React.createClass({
     // least one unread message. Handy for notification UIs, and quicker to parse
     requestChatChannelTimestampsNow: PropTypes.func.isRequired, // It does what it says on the box. Used by fpChat
     user: PropTypes.object, // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
-    joyrideSteps: PropTypes.array, // As passed to Joyride. If non-empty, a joyride is active
-    joyrideSkillPathTutorial: PropTypes.string, // Null, unless it is one of the builtin skills tutorials which is currently active
-    joyrideCurrentStepNum: PropTypes.number, // Step number (IFF joyrideSteps is not an empty array)
-    joyrideOriginatingAssetId: PropTypes.object, // Used to support nice EditTutorial button in fpGoals ONLY. Null, or, if set, an object: origAsset: { ownerName: asset.dn_ownerName, id: asset._id }. THIS IS NOT USED FOR LOAD, JUST FOR OTHER UI TO ENABLE A EDIT-TUTORIAL BUTTON
     selectedViewTag: PropTypes.string, // One of the flexPanelViews.tags values (or validtagkeyhere.somesuffix)
     activity: PropTypes.array.isRequired, // An activity Stream passed down from the App and passed on to interested compinents
     flexPanelIsVisible: PropTypes.bool.isRequired,
     handleFlexPanelToggle: PropTypes.func.isRequired, // Callback for enabling/disabling FlexPanel view
-    handleFlexPanelChange: PropTypes.func.isRequired, // Callback to change pane - records it in URL
     flexPanelWidth: PropTypes.string.isRequired, // Typically something like "200px".
     isSuperAdmin: PropTypes.bool.isRequired, // Yes if one of core engineering team. Show extra stuff
     currentlyEditingAssetInfo: PropTypes.object.isRequired, // An object with some info about the currently edited Asset - as defined in App.js' this.state
@@ -214,6 +199,13 @@ const FlexPanel = React.createClass({
 
   componentDidMount() {
     registerDebugGlobal('fp', this, __filename, 'The global FlexPanel instance')
+    const { flexPanelIsVisible } = this.props
+
+    const { el, tag } = this._getSelectedFlexPanelChoice()
+
+    if (flexPanelIsVisible && el) {
+      joyrideStore.completeTag(`mgbjr-CT-flexPanel-${tag}-show`)
+    }
   },
 
   componentWillReceiveProps(nextProps) {
@@ -252,40 +244,40 @@ const FlexPanel = React.createClass({
   },
 
   handleChangeSubNavParam(newSubNavParamStr) {
-    const { handleFlexPanelChange, selectedViewTag } = this.props
+    const { selectedViewTag } = this.props
     const selectedViewTagParts = selectedViewTag.split('.')
     const newFullViewTag = selectedViewTagParts[0] + '.' + newSubNavParamStr
     handleFlexPanelChange(newFullViewTag)
   },
 
   fpViewSelect(fpViewTag) {
-    const { handleFlexPanelToggle, flexPanelIsVisible, handleFlexPanelChange } = this.props
+    const { handleFlexPanelToggle, flexPanelIsVisible } = this.props
     if (flexPanelIsVisible && this._viewTagMatchesPropSelectedViewTag(fpViewTag)) handleFlexPanelToggle()
     else handleFlexPanelChange(fpViewTag)
   },
 
   getFpButtonSpecialClassForTag(tag) {
-    const { joyrideSteps, hazUnreadChats } = this.props
+    const { joyride, hazUnreadChats } = this.props
     const { wiggleActivity } = this.state
 
     if (tag === 'chat' && hazUnreadChats.length > 0) return 'animated swing'
 
     if (tag === 'activity' && wiggleActivity) return 'animated swing'
 
-    if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0) return 'animated swing'
+    if (tag === 'learn' && joyride.state.isRunning) return 'animated swing'
 
     return ''
   },
 
   getFpButtonExtraLabelForTag(tag) {
-    const { joyrideSteps, hazUnreadChats } = this.props
+    const { joyride, hazUnreadChats } = this.props
     const { wiggleActivity } = this.state
 
     if (tag === 'chat' && hazUnreadChats.length > 0)
       return <Indicator title={`Channels: ${hazUnreadChats.join(', ')}`} content={hazUnreadChats.length} />
 
-    if (tag === 'goals' && joyrideSteps && joyrideSteps.length > 0)
-      return <Indicator title={`${joyrideSteps.length} steps in tutorial`} />
+    if (tag === 'learn' && joyride.state.isRunning)
+      return <Indicator title={`${joyride.state.steps.length} steps in tutorial`} />
 
     if (tag === 'activity' && wiggleActivity) return <Indicator />
 
@@ -305,10 +297,7 @@ const FlexPanel = React.createClass({
       handleFlexPanelToggle,
       hazUnreadChats,
       isSuperAdmin,
-      joyrideSteps,
-      joyrideSkillPathTutorial,
-      joyrideOriginatingAssetId,
-      joyrideCurrentStepNum,
+      joyride,
       requestChatChannelTimestampsNow,
       selectedViewTag,
       user,
@@ -327,7 +316,6 @@ const FlexPanel = React.createClass({
           borderRadius: 0,
           marginBottom: 0,
           background: '#f3f4f5',
-          //zIndex:       90    // Temp Hack - this forces onscreen controller to be behind controls
         }
       : {
           position: 'fixed',
@@ -342,31 +330,33 @@ const FlexPanel = React.createClass({
         }
 
     const miniNavClassNames = fpIsFooter
-      ? 'ui blue borderless labeled icon bottom fixed six item fluid menu'
-      : 'ui blue borderless labeled icon right fixed vertical horizontally fitted menu'
-    const miniNavStyle = fpIsFooter
-      ? {
-          height: '61px',
-          background: '#e2e3e4',
-          border: 'none',
-          boxShadow: 'none',
-          zIndex: 300, // Temp Hack
-        }
-      : {
-          // This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel
-          width: '61px',
-          background: '#e2e3e4',
-          border: 'none',
-          boxShadow: 'none',
-        }
+      ? `ui blue borderless labeled icon bottom fixed six item fluid menu`
+      : `ui blue borderless labeled icon right fixed vertical horizontally fitted menu`
+    const miniNavStyle = _.assign(
+      {
+        background: '#e2e3e4',
+        border: 'none',
+        boxShadow: 'none',
+      },
+      fpIsFooter
+        ? {
+            height: '61px',
+            zIndex: 300, // Temp Hack
+          }
+        : {
+            // This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel
+            width: '61px',
+          },
+    )
 
     const panelScrollContainerStyle = {
       position: 'fixed',
-      top: _flexPanelTitleHeaderIsHidden ? '0px' : '50px', /// TODO calculate this
+      top: '0px',
       bottom: fpIsFooter ? '60px' : '0px',
       right: fpIsFooter ? '0px' : '60px',
       width: '285px',
       overflowY: 'scroll',
+      overflowX: 'hidden',
       zIndex: 301, // Temp Hack
     }
 
@@ -377,64 +367,37 @@ const FlexPanel = React.createClass({
       zIndex: 302, // Temp Hack
     }
 
-    const flexHeaderStyle = {
-      display: _flexPanelTitleHeaderIsHidden ? 'none' : 'block',
-      float: 'right',
-      marginRight: fpIsFooter ? '0px' : '60px',
-      width: '285px',
-      zIndex: 301, // Temp Hack
-    }
-
     const flexPanelChoice = this._getSelectedFlexPanelChoice()
     const flexPanelHeader = flexPanelChoice.header
-    const flexPanelIcon = flexPanelChoice.icon
     const ElementFP = !isSuperAdmin && flexPanelChoice.superAdminOnly ? null : flexPanelChoice.el
 
     if (flexPanelIsVisible && ElementFP !== null)
-      joyrideCompleteTag(`mgbjr-CT-flexPanel-${flexPanelChoice.tag}-show`)
+      joyride.completeTag(`mgbjr-CT-flexPanel-${flexPanelChoice.tag}-show`)
 
     return (
       <div className="mgbFlexPanel" style={panelStyle} id="mgbjr-flexPanelArea">
         {flexPanelIsVisible && (
-          <div>
-            <div className="flex header" style={flexHeaderStyle}>
-              <span className="title">
-                <i className={flexPanelIcon + ' icon'} />&nbsp;&nbsp;{flexPanelHeader}
-              </span>
-              <span
-                style={{ float: 'right', cursor: 'pointer', padding: '3px' }}
-                onClick={handleFlexPanelToggle}
-              >
-                <i className="ui grey small close icon" />
-              </span>
-            </div>
-
-            <div style={panelScrollContainerStyle}>
-              <div style={panelInnerStyle}>
-                {!ElementFP ? (
-                  <div className="ui fluid label">TODO: {flexPanelHeader} FlexPanel</div>
-                ) : (
-                  <ElementFP
-                    currUser={currUser}
-                    currUserProjects={currUserProjects}
-                    user={user}
-                    chatChannelTimestamps={chatChannelTimestamps}
-                    hazUnreadChats={hazUnreadChats}
-                    requestChatChannelTimestampsNow={requestChatChannelTimestampsNow}
-                    joyrideSteps={joyrideSteps}
-                    joyrideSkillPathTutorial={joyrideSkillPathTutorial}
-                    joyrideOriginatingAssetId={joyrideOriginatingAssetId}
-                    joyrideCurrentStepNum={joyrideCurrentStepNum}
-                    activity={activity}
-                    panelWidth={flexPanelWidth}
-                    isSuperAdmin={isSuperAdmin}
-                    currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-                    subNavParam={this.getSubNavParam()}
-                    handleChangeSubNavParam={this.handleChangeSubNavParam}
-                    location={this.context.urlLocation}
-                  />
-                )}
-              </div>
+          <div style={panelScrollContainerStyle}>
+            <div style={panelInnerStyle}>
+              {!ElementFP ? (
+                <div className="ui fluid label">TODO: {flexPanelHeader} FlexPanel</div>
+              ) : (
+                <ElementFP
+                  currUser={currUser}
+                  currUserProjects={currUserProjects}
+                  user={user}
+                  chatChannelTimestamps={chatChannelTimestamps}
+                  hazUnreadChats={hazUnreadChats}
+                  requestChatChannelTimestampsNow={requestChatChannelTimestampsNow}
+                  activity={activity}
+                  panelWidth={flexPanelWidth}
+                  isSuperAdmin={isSuperAdmin}
+                  currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+                  subNavParam={this.getSubNavParam()}
+                  handleChangeSubNavParam={this.handleChangeSubNavParam}
+                  location={this.context.urlLocation}
+                />
+              )}
             </div>
           </div>
         )}
@@ -452,9 +415,6 @@ const FlexPanel = React.createClass({
               ? {
                   background: '#f3f4f5',
                   fontWeight: 700,
-                  boxShadow: fpIsFooter
-                    ? '0 0.5em 0.5em rgba(0, 0, 0, 0.2)'
-                    : '0.5em 0 0.5em rgba(0, 0, 0, 0.2)',
                 }
               : {
                   boxShadow: 'none',
@@ -487,4 +447,4 @@ const FlexPanel = React.createClass({
   },
 })
 
-export default FlexPanel
+export default _.flow(withStores({ joyride: joyrideStore }), responsiveComponent())(FlexPanel)

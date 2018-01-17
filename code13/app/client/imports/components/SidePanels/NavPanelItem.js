@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Dropdown, Menu } from 'semantic-ui-react'
 
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 
 const _openLeftStyle = { left: 'auto', right: '0' }
@@ -40,7 +40,7 @@ class NavPanelItem extends React.PureComponent {
 
     if (name || jrkey) {
       const tagString = _.compact(['mgbjr-CT-np', name, jrkey]).join('-')
-      joyrideCompleteTag(tagString)
+      joyrideStore.completeTag(tagString)
     }
     if (to || query) utilPushTo(null, to, query)
 

@@ -213,10 +213,11 @@ const fpAssets = React.createClass({
 
     const style = {
       position: 'absolute',
-      overflow: 'auto',
+      overflowY: 'auto',
+      overflowX: 'hidden',
       margin: '0',
       // keep padding on all sides to prevent shadow clipping on asset card hover
-      padding: '8px',
+      padding: '0 8px',
       top: '11em',
       bottom: '0.5em',
       left: '0',

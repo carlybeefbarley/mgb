@@ -4,7 +4,7 @@ import { Grid, Form } from 'semantic-ui-react'
 import BaseForm from '../../../Controls/BaseForm.js'
 import actorOptions from '../../Common/ActorOptions.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import templates from '../TemplateDiffs.js'
 

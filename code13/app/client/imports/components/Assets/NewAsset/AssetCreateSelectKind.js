@@ -4,7 +4,7 @@ import { AssetKinds, AssetKindKeys } from '/imports/schemas/assets'
 import { doesUserHaveRole } from '/imports/schemas/roles'
 import { Button, Icon } from 'semantic-ui-react'
 
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 const AssetCreateSelectKind = React.createClass({
   propTypes: {
@@ -22,7 +22,7 @@ const AssetCreateSelectKind = React.createClass({
     const { showMoreInfo } = this.state
 
     this.setState({ showMoreInfo: !showMoreInfo })
-    joyrideCompleteTag(`mgbjr-CT-create-asset-kindinfo-${showMoreInfo ? 'less' : 'more'}`)
+    joyrideStore.completeTag(`mgbjr-CT-create-asset-kindinfo-${showMoreInfo ? 'less' : 'more'}`)
   },
 
   render() {
@@ -57,7 +57,7 @@ const AssetCreateSelectKind = React.createClass({
               color={ak.color}
               style={sty}
               onClick={() => {
-                joyrideCompleteTag(`mgbjr-CT-create-asset-select-kind-${k}`)
+                joyrideStore.completeTag(`mgbjr-CT-create-asset-select-kind-${k}`)
                 onChangeAsset(k)
               }}
             >

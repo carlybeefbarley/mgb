@@ -337,6 +337,19 @@ export const getFriendlyName = skillPath => {
   return _.get(getNode(skillPath), '$meta.name') || _.startCase(_.last(skillPath.split('.')))
 }
 
+export const getFriendlyNames = skillPath => {
+  const names = []
+
+  if (!skillPath) return names
+
+  do {
+    names.unshift(getFriendlyName(skillPath))
+    skillPath = skillPath.substring(0, skillPath.lastIndexOf('.'))
+  } while (skillPath)
+
+  return names
+}
+
 // this string indicates if a path is code challenge
 const _challengeStrArray = ['basics', 'intro', 'advanced']
 
@@ -367,6 +380,7 @@ export const SkillNodesOrder = {
   art: SkillNodes.art,
 }
 
+// Ordered lists of learn items and corresponding info
 export const artItems = [
   { key: 'lineArt', node: SkillNodes.art.lineArt, mascot: 'arcade_player' },
   { key: 'colors', node: SkillNodes.art.colors, mascot: 'rpgGuy' },

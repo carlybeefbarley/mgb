@@ -1,6 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 export default class ActorMapProperties extends React.Component {
   constructor(...args) {
@@ -54,7 +54,7 @@ export default class ActorMapProperties extends React.Component {
     this.setState(newState)
 
     if (name === 'height') {
-      joyrideCompleteTag(`mgbjr-CT-MapTools-properties-resizeHeight`)
+      joyrideStore.completeTag(`mgbjr-CT-MapTools-properties-resizeHeight`)
     }
   }
 

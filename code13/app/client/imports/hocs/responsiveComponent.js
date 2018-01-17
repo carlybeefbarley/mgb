@@ -173,7 +173,7 @@ responsiveComponent.propTypes = {
     data: PropTypes.object.isRequired,
     debug: PropTypes.element.isRequired,
     isRuleActive: PropTypes.func.isRequired,
-  }),
+  }).isRequired,
 }
 
 export default responsiveComponent

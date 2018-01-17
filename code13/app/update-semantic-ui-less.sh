@@ -23,10 +23,9 @@ parse_less_file() {
   cat "$input" | \
   sed -e "s/\.variables/\.variables\.less/g" | \
   sed -e "s/\.overrides/\.overrides\.less/g" | \
-  sed -e "s/\.config/\.config\.less/g" > "$output"
-
+  sed -e "s/\.config/\.config\.less/g" | \
   # ensure eof newline
-  ed -s "$output" <<< w
+  sed -e '$a\' > "$output"
 }
 
 # Copies all *.variables, *.overrides, *.config files from the node_module

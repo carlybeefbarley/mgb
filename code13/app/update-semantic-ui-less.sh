@@ -24,6 +24,8 @@ parse_less_file() {
   sed -e "s/\.variables/\.variables\.less/g" | \
   sed -e "s/\.overrides/\.overrides\.less/g" | \
   sed -e "s/\.config/\.config\.less/g" | \
+  # remove CR from CRLF newline characters
+  tr -d "\r" | \
   # ensure eof newline
   sed -e '$a\' > "$output"
 }

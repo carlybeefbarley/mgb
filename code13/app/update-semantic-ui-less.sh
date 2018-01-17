@@ -17,12 +17,16 @@ BASE_TARGET_DIR="client/imports/styles/semantic-ui-less"
 # Updates references to SUI *.variables, *.overrides, *.config files
 # to Meteor friendly *.less extensions
 parse_less_file() {
-  local file="$1"
+  local input="$1"
+  local output="$2"
 
-  cat "$file" | \
+  cat "$input" | \
   sed -e "s/\.variables/\.variables\.less/g" | \
   sed -e "s/\.overrides/\.overrides\.less/g" | \
-  sed -e "s/\.config/\.config\.less/g"
+  sed -e "s/\.config/\.config\.less/g" > "$output"
+
+  # ensure eof newline
+  ed -s "$output" <<< w
 }
 
 # Copies all *.variables, *.overrides, *.config files from the node_module
@@ -48,7 +52,7 @@ update_less_files_in_dir() {
     mkdir -p "$target_dirname"
 
     # output to new filename with .less appended
-    parse_less_file "$file" > "$target_filename"
+    parse_less_file "$file" "$target_filename"
   done
 }
 
@@ -71,6 +75,6 @@ cp -R "$BASE_SOURCE_DIR"/themes/default/assets/images/* "$images_dir"
 
 # update root files
 echo "... updating root files"
-parse_less_file "$BASE_SOURCE_DIR/theme.less" > "$BASE_TARGET_DIR/theme.less"
+parse_less_file "$BASE_SOURCE_DIR/theme.less" "$BASE_TARGET_DIR/theme.less"
 
 echo "... Done!"

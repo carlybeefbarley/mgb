@@ -215,7 +215,7 @@ class EnrollButton extends Component {
     const { email, username } = this.state
 
     // TODO only display email on enrollment success
-    return email && username ? 'Enrolled: ' + email : 'Keep Learning'
+    return email && username ? 'Enrolled: ' + email : 'Sign Up'
   }
 
   render() {

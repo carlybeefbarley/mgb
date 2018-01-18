@@ -6,7 +6,7 @@ import { Dropdown, Icon, Label, Table } from 'semantic-ui-react'
 import Layer from './Layer'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import { showToast } from '/client/imports/modules'
 
 import '../editGraphic.css'
@@ -73,7 +73,7 @@ export default class SpriteLayers extends React.Component {
     }
     this.handleSave('Insert frame', true)
     this.forceUpdate() // Force react to update.. needed since we need render() to create new canvasses
-    joyrideCompleteTag('mgbjr-CT-editGraphic-insertFrameAfter-invoke')
+    joyrideStore.completeTag('mgbjr-CT-editGraphic-insertFrameAfter-invoke')
   }
 
   copyFrame(frameID) {

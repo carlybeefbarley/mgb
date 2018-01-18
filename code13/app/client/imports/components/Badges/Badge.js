@@ -5,8 +5,6 @@ import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import { Popup } from 'semantic-ui-react'
 import { getFriendlyName } from '/imports/schemas/badges'
 
-
-
 const Badge = ({ name, forceSize }) => {
   const badge = badgeList[name] || ['Unknown.png', `Badge "${name}" not recognised`]
   const imgUrl = makeCDNLink(badge.img)

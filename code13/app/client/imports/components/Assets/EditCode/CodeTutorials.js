@@ -7,6 +7,7 @@ import { mgbAjax } from '/client/imports/helpers/assetFetchers'
 import SkillNodes, { isPhaserTutorial, getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import { learnSkill } from '/imports/schemas/skills'
+import { logActivity } from '/imports/schemas/activity'
 
 import { ChatSendMessageOnChannelName } from '/imports/schemas/chats'
 
@@ -24,7 +25,8 @@ export default class CodeTutorials extends React.Component {
     active: PropTypes.bool,
     quickSave: PropTypes.func,
     highlightLines: PropTypes.func,
-    assetId: PropTypes.string,
+    assetId: PropTypes.object,
+    asset: PropTypes.string,
     style: PropTypes.object,
     isOwner: PropTypes.bool,
   }
@@ -75,6 +77,7 @@ export default class CodeTutorials extends React.Component {
     )
     _openHelpChat()
     this.setState({ isTaskSubmitted: true })
+    logActivity('task.askReview', 'Request for task review', null, this.props.asset)
     ga('send', 'pageview', this.props.skillPath)
   }
 

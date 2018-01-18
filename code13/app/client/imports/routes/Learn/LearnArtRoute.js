@@ -17,8 +17,6 @@ import { mgbAjax } from '/client/imports/helpers/assetFetchers'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-const _maxArtSkillCount = countMaxUserSkills('art.')
-
 const handleClick = (e, key, currUser, todoSkills) => {
   // cards with links already have a path, skip on to
   if (!currUser || _.get(todoSkills, 'length') === 0) return
@@ -94,7 +92,8 @@ const openUrl = (url, newTab) => {
 }
 
 const LearnArtRoute = ({ currUser, isSuperAdmin }, context) => {
-  const numArtSkills = countCurrentUserSkills(context.skills, 'art.') || 0
+  const completedSkills = countCurrentUserSkills(context.skills, 'art.') || 0
+  const totalSkills = countMaxUserSkills('art.')
 
   return (
     <Grid container columns="1">
@@ -104,7 +103,7 @@ const LearnArtRoute = ({ currUser, isSuperAdmin }, context) => {
           Pixel Art
           <Header.Subheader>Learn to make art for your games</Header.Subheader>
         </Header>
-        <ProgressLabel subSkillsComplete={numArtSkills} subSkillTotal={_maxArtSkillCount} />
+        <ProgressLabel subSkillsComplete={completedSkills} subSkillTotal={totalSkills} />
         <Divider hidden />
         {currUser && <SkillsMap isSuperAdmin={isSuperAdmin} skills={context.skills} skillPaths={['art']} />}
 

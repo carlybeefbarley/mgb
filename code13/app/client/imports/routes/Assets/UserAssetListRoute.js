@@ -13,7 +13,7 @@ import {
   assetSorters,
   isAssetKindsStringComplete,
 } from '/imports/schemas/assets'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
 
 import AssetList from '/client/imports/components/Assets/AssetList'
@@ -314,7 +314,7 @@ const UserAssetListRoute = React.createClass({
                 id="mgbjr-asset-search-kind-select-allKinds"
                 style={{ float: 'right', fontWeight: 'bold', cursor: 'pointer' }}
                 onClick={() => {
-                  joyrideCompleteTag('mgbjr-CT-asset-search-kind-select-allKinds')
+                  joyrideStore.completeTag('mgbjr-CT-asset-search-kind-select-allKinds')
                   this.handleToggleKind('__all')
                 }}
               >

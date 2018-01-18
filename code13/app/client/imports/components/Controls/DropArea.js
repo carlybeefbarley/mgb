@@ -11,7 +11,7 @@ import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
 // TODO: use observeAsset from assetFetchers instead of custom observer
 // import { observeAsset } from "/client/imports/helpers/assetFetchers"
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 // TODO - change pattern to be getMeteorData so we fix the timing issues.
 export default class DropArea extends React.Component {
@@ -277,7 +277,7 @@ export default class DropArea extends React.Component {
         }
         onDragOver={DragNDropHelper.preventDefault}
         onDrop={e => {
-          joyrideCompleteTag(`mgbjr-CT-dropArea-${this.props.kind}`)
+          joyrideStore.completeTag(`mgbjr-CT-dropArea-${this.props.kind}`)
           this.handleDrop(e)
         }}
       >

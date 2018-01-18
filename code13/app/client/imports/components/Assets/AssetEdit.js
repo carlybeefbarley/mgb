@@ -7,7 +7,7 @@ import EditUnknown from './EditUnknown'
 import AssetCard from './AssetCard'
 import Hotjar from '/client/imports/helpers/hotjar'
 import Spinner from '/client/imports/components/Nav/Spinner'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import { getKnownExtension } from '/client/imports/helpers/extensions'
 
 // @stauzs - for Cordova you may need to have to do the imports like we used to.. im which case
@@ -57,7 +57,7 @@ export default class AssetEdit extends React.Component {
   }
 
   componentDidMount() {
-    joyrideCompleteTag(`mgbjr-CT-openAssetEditor-${this.props.asset.kind}`)
+    joyrideStore.completeTag(`mgbjr-CT-openAssetEditor-${this.props.asset.kind}`)
 
     // console.log(this.props.asset.kind)
     // trigger hotjar heatmap

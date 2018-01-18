@@ -1,10 +1,19 @@
-import React, { Component } from 'react'
+import _ from 'lodash'
+import React, { Children, cloneElement, Component } from 'react'
 import PropTypes from 'prop-types'
+import { Button } from 'semantic-ui-react'
+
+const recaptchaProps = {
+  className: 'g-recaptcha',
+  'data-sitekey': '6LfASUEUAAAAAK1P5iKcak7LqxepMOzNw-AOHbcr',
+  'data-callback': 'handleRecaptchaResponse',
+}
 
 class Recaptcha extends Component {
   static propTypes = {
     onLoad: PropTypes.func,
     onComplete: PropTypes.func.isRequired,
+    invisible: PropTypes.bool, // show invisible recaptcha
   }
 
   componentDidMount() {
@@ -39,15 +48,19 @@ class Recaptcha extends Component {
     delete window.handleRecaptchaResponse
   }
 
+  renderInvisible = () => <Button {...recaptchaProps}>Submit</Button>
+
+  renderInvisibleWithChild = () => cloneElement(Children.only(this.props.children), recaptchaProps)
+
   render() {
-    return (
-      <div
-        style={{ display: 'inline-block' }}
-        className="g-recaptcha"
-        data-sitekey="6LdDrTkUAAAAABDXBxlLwWwTvnpmfH0s-4O5ckkm"
-        data-callback="handleRecaptchaResponse"
-      />
-    )
+    const { children, invisible } = this.props
+    const hasChildren = !_.isNil(children) && !_.isEmpty(children)
+
+    if (!invisible) {
+      return <div style={{ display: 'inline-block' }} {...recaptchaProps} />
+    }
+
+    return hasChildren ? this.renderInvisibleWithChild() : this.renderInvisible()
   }
 }
 

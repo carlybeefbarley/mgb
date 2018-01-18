@@ -19,7 +19,7 @@ import { showToast } from '/client/imports/modules'
 
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 const MOUSE_BUTTONS = {
   none: 0, //  No button or un-initialized
@@ -620,11 +620,11 @@ export default class MapArea extends React.Component {
       // Joyride completion tags
       const editMode = this.props.getMode()
       if (editMode === EditModes.stamp) {
-        joyrideCompleteTag(`mgbjr-CT-MapTools-stamp`)
+        joyrideStore.completeTag(`mgbjr-CT-MapTools-stamp`)
       } else if (editMode === EditModes.eraser) {
-        joyrideCompleteTag(`mgbjr-CT-MapTools-eraser`)
+        joyrideStore.completeTag(`mgbjr-CT-MapTools-eraser`)
       } else if (editMode === EditModes.fill) {
-        joyrideCompleteTag(`mgbjr-CT-MapTools-fill`)
+        joyrideStore.completeTag(`mgbjr-CT-MapTools-fill`)
       }
     }
   }

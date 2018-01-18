@@ -1,33 +1,21 @@
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button, Menu, Image, Icon } from 'semantic-ui-react'
+import { Menu, Icon } from 'semantic-ui-react'
+import getNavPanels from './getNavPanels'
 import NavPanelItem from './NavPanelItem'
 
-// imports to enable logout functionality
-import { showToast } from '/client/imports/modules'
-import { utilPushTo } from '/client/imports/routes/QLink'
-import EnrollButton from '/client/imports/components/HourOfCode/EnrollButton'
-import { logActivity } from '/imports/schemas/activity'
-
-// Heads up!
-// Keep in sync with landing-layout.less .mgb-menu-logo
-const logoImageStyle = {
-  display: 'block',
-  // match height of avatar image, allow width to fit
-  width: 'auto',
-  height: '2em',
-  filter: 'brightness(1.7)',
-}
+import { ActivityTypes } from '/imports/schemas/activity'
+import { AssetKinds } from '/imports/schemas/assets'
 
 const menuStyle = {
-  // do not flex
+  position: 'relative',
   flex: '0 0 auto',
   margin: 0,
   borderRadius: 0,
   marginBottom: 0,
 }
 
+<<<<<<< HEAD
 // exported since the Tutorial Editor uses this to generate some
 // macros in JoyrideSpecialMacros.jsx
 // Note that this uses Meteor's Accounts.loggingIn() so it doesn't flash the Login/Sigup during user login
@@ -370,6 +358,8 @@ const _doLogout = () => {
   })
 }
 
+=======
+>>>>>>> master
 class NavPanel extends React.Component {
   static contextTypes = {
     router: PropTypes.object.isRequired,
@@ -378,34 +368,74 @@ class NavPanel extends React.Component {
   static propTypes = {
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
     navPanelAvailableWidth: PropTypes.number, // Width of the page area available for NavPanel menu
+    activity: PropTypes.array,
+    hazUnreadActivities: PropTypes.array,
   }
 
   render() {
     const { router } = this.context
-    const { currUser, navPanelAvailableWidth } = this.props
-    const useIcons = navPanelAvailableWidth < 768 // px
+    const { currUser, navPanelAvailableWidth, activity, hazUnreadActivities } = this.props
+    const useIcons = navPanelAvailableWidth < 728 // px
     const allNavPanels = getNavPanels(currUser)
-    const isGuest = currUser ? currUser.profile.isGuest : false
+
+    const notifications = _.find(allNavPanels.right, item => item.name === 'notifications')
+    if (notifications) {
+      // if there are no notifications
+      if (activity.length === 0) {
+        notifications.menu.push({
+          subcomponent: 'Item',
+          content: "You don't have any notifications yet",
+          jrkey: 'empty-notifications',
+        })
+      }
+      // add menu items for notifications
+      _.map(activity, act => {
+        const linkTo = `/u/${act.toOwnerName}/asset/${act.toAssetId}`
+        const icon = {
+          name: AssetKinds.getIconName(act.toAssetKind),
+          color: AssetKinds.getColor(act.toAssetKind),
+        }
+        const isUnread = !!_.find(hazUnreadActivities, unread => unread._id === act._id)
+        const description =
+          act.toAssetName + ': ' + act.byUserName + ' ' + ActivityTypes.getDescription(act.activityType)
+
+        notifications.menu.push({
+          subcomponent: 'Item',
+          icon,
+          content: description,
+          to: linkTo,
+          jrkey: act._id,
+          selected: isUnread,
+        })
+      })
+
+      // add red bubble for unread notifications
+      if (hazUnreadActivities && hazUnreadActivities.length > 0) {
+        if (notifications) notifications.notifyCount = hazUnreadActivities.length
+      }
+    }
 
     const navPanelItems = side =>
       allNavPanels[side]
         .filter(v => !(useIcons && v.hideInIconView))
-        .map(({ content, href, icon, menu, name, query, to }) => (
+        .map(({ content, href, icon, menu, name, notifyCount, query, to }) => (
           <NavPanelItem
             isActive={to && router.isActive(to)}
             name={name}
             openLeft={side === 'right'}
             key={name}
-            content={!isGuest && (useIcons || !content) ? <Icon size="large" {...icon} /> : content}
+            content={useIcons || !content ? <Icon size="large" {...icon} /> : content}
             menu={menu}
             to={to}
             query={query}
             href={href}
+            hazUnreadActivities={hazUnreadActivities}
+            notifyCount={notifyCount}
           />
         ))
 
     return (
-      <Menu inverted borderless style={menuStyle} id="mgbjr-np">
+      <Menu icon={useIcons} inverted borderless style={menuStyle} id="mgbjr-np">
         {navPanelItems('left')}
         <Menu.Menu position="right">{navPanelItems('right')}</Menu.Menu>
       </Menu>

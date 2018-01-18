@@ -48,9 +48,7 @@ const FlagsModerateUI = ({ loading, flagsList }) => (
               </List>
             </List.Item>
             <List.Item>
-              <List.Content>
-              Reporter comments: "{flag.reporterComments}"
-              </List.Content>
+              <List.Content>Reporter comments: "{flag.reporterComments}"</List.Content>
             </List.Item>
           </List>
         </Segment>

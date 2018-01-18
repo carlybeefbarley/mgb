@@ -6,7 +6,7 @@ import { showToast } from '/client/imports/modules'
 import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers.js'
 import QLink from '/client/imports/routes/QLink'
 
@@ -38,7 +38,7 @@ export default class ActorTileset extends React.Component {
     const gid = selectedTile.getGid(tileset)
     this.props.selectTile(selectedTile)
     this.props.selectTileset(index)
-    joyrideCompleteTag(`mgbjr-CT-MapTools-actors-selectTile`)
+    joyrideStore.completeTag(`mgbjr-CT-MapTools-actors-selectTile`)
   }
 
   removeTileset = () => {
@@ -51,7 +51,7 @@ export default class ActorTileset extends React.Component {
 
   onDropOnLayer(e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
-    joyrideCompleteTag(`mgbjr-CT-MapTools-actors-drop`)
+    joyrideStore.completeTag(`mgbjr-CT-MapTools-actors-drop`)
     if (!asset) return
 
     // TODO: create nice popup

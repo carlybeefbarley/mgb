@@ -28,12 +28,9 @@ const UserProfileBadgeList = ({ ownsProfile, user }) => {
   return (
     <Grid.Column width={16}>
       <Segment raised color="blue">
-
         <div id="#mgbjr-profile-badges-area">
-
           {_.map(uBadges, b => <Badge name={b || '_blankBadge'} key={b} />)}
           {(!uBadges || uBadges.length === 0) && <NoBadgesMsg ownsProfile={ownsProfile} />}
-
         </div>
       </Segment>
     </Grid.Column>

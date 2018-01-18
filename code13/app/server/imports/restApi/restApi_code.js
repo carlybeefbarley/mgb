@@ -36,7 +36,7 @@ const getBundle = partialAsset => {
   const asset = Azzets.findOne(partialAsset._id, c2bundleFieldOnly)
   return partialAsset && asset && asset.content2 ? asset.content2.bundle || '' : null
 }
-// get tutorial by id OR by ownerName:assetName. See addJoyrideSteps() for use case.
+// get tutorial by id OR by ownerName:assetName. See joyrideStore.addJoyrideSteps() for use case.
 RestApi.addRoute(
   'asset/tutorial/:id',
   { authRequired: false },

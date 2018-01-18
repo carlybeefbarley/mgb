@@ -80,7 +80,6 @@ const fpAssets = React.createClass({
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
     user: PropTypes.object, // User object for context we are navigating to in main page. Can be null/undefined. Can be same as currUser, or different user
     currUserProjects: PropTypes.array, // Projects list for currently logged in user
-    activity: PropTypes.array.isRequired, // An activity Stream passed down from the App and passed on to interested compinents
     panelWidth: PropTypes.string.isRequired, // Typically something like "200px".
   },
 
@@ -213,10 +212,11 @@ const fpAssets = React.createClass({
 
     const style = {
       position: 'absolute',
-      overflow: 'auto',
+      overflowY: 'auto',
+      overflowX: 'hidden',
       margin: '0',
       // keep padding on all sides to prevent shadow clipping on asset card hover
-      padding: '8px',
+      padding: '0 8px',
       top: '11em',
       bottom: '0.5em',
       left: '0',

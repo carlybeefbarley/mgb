@@ -4,7 +4,7 @@ import React from 'react'
 import SFXR from '../lib/sfxr.js'
 import WaveSurfer from '../lib/WaveSurfer.js'
 import lamejs from '../lib/lame.all.js'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 export default class CreateSound extends React.Component {
   constructor(...args) {
@@ -76,7 +76,7 @@ export default class CreateSound extends React.Component {
       },
     })
 
-    joyrideCompleteTag('mgbjr-CT-editSound-createSound-' + fx + '-generate')
+    joyrideStore.completeTag('mgbjr-CT-editSound-createSound-' + fx + '-generate')
   }
 
   getDefaultParams = () => {

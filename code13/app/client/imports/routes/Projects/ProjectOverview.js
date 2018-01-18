@@ -9,9 +9,10 @@ import QLink from '../QLink'
 import { Projects } from '/imports/schemas'
 import ProjectCard from '/client/imports/components/Projects/ProjectCard'
 import ProjectMembersGET from '/client/imports/components/Projects/ProjectMembersGET'
+import ProjectHistoryRoute from './ProjectHistoryRoute'
 import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/GamesAvailableGET'
 import Spinner from '/client/imports/components/Nav/Spinner'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import UserListRoute from '../Users/UserListRoute'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
@@ -46,6 +47,7 @@ const ProjectOverview = React.createClass({
   componentDidMount() {
     // setTimeou just to be sure that everything is loaded
     setTimeout(() => Hotjar('trigger', 'project-overview', this.props.currUser), 200)
+    this.getHistory()
   },
 
   getInitialState: () => ({
@@ -55,7 +57,23 @@ const ProjectOverview = React.createClass({
     isDeleteComplete: false, // True if a delete project operation succeeded.
     compoundNameOfDeletedProject: null, // Used for User feedback after deleting project. using Compound name for full clarity
     confirmDeleteNum: -1, // If >=0 then it indicates how many assets will be deleted. Used to flag 2-stage DELETE PROJECT
+    activities: [], // always array even empty one
   }),
+
+  getHistory() {
+    const activityLimit = 6
+    Meteor.call(
+      'Activity.getActivitiesByProjectName',
+      this.props.params.projectName,
+      activityLimit,
+      (error, activities) => {
+        if (error) console.warn(error)
+        else {
+          this.setState({ activities })
+        }
+      },
+    )
+  },
 
   getMeteorData() {
     const { projectId, projectName } = this.props.params
@@ -200,7 +218,11 @@ const ProjectOverview = React.createClass({
         </Grid.Column>
 
         <Grid.Column>
-          <Segment basic>
+          <Segment basic floated="right" style={{ width: '50%' }}>
+            <ProjectHistoryRoute project={project} activities={this.state.activities} />
+          </Segment>
+
+          <Segment basic floated="left">
             <GamesAvailableGET
               header={<Header as="h3">Games in this Project</Header>}
               currUser={currUser}
@@ -209,6 +231,8 @@ const ProjectOverview = React.createClass({
             />
           </Segment>
 
+          <div style={{ clear: 'both', height: '10px' }} />
+
           <QLink
             id="mgbjr-project-overview-assets"
             to={`/u/${project.ownerName}/assets`}
@@ -216,7 +240,7 @@ const ProjectOverview = React.createClass({
           >
             <Header as="h3">Project Assets</Header>
           </QLink>
-          <Segment basic>
+          <Segment basic clearing="true">
             <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
           </Segment>
 
@@ -265,7 +289,7 @@ const ProjectOverview = React.createClass({
   // TODO - some better UI for Add People.
   handleClickUser(userId, userName) {
     if (this.state.isDeletePending) {
-      showToast('Delete is still pending. Please wait..')
+      showToast.warning('Delete is still pending. Please wait..')
       return
     }
 
@@ -340,7 +364,7 @@ const ProjectOverview = React.createClass({
       if (error) showToast.error(`Could not update project: ${error.reason}`)
       else {
         // Go through all the keys, log completion tags for each
-        _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-project-set-field-${k}`))
+        _.each(_.keys(changeObj), k => joyrideStore.completeTag(`mgbjr-CT-project-set-field-${k}`))
       }
     })
   },

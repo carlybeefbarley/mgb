@@ -43,14 +43,14 @@ const WhatsNewRoute = React.createClass({
     return {
       releaseIdx: 0, // Index into mgbReleaseInfo[] for currently viewed release
       olderHistoryJsonResult: null, // Will be the data loaded from ${olderHistoryPath} once loaded
-      limit: 5 // Only allow 5 info releases to show at once
+      limit: 5, // Only allow 5 info releases to show at once
     }
   },
 
   onLoadMore() {
     this.setState({
-      limit: this.state.limit + 5
-    });
+      limit: this.state.limit + 5,
+    })
   },
 
   getCombinedReleaseInfo() {
@@ -97,18 +97,16 @@ const WhatsNewRoute = React.createClass({
   },
 
   render() {
-    var { releases } = this.props;
+    var { releases } = this.props
     return (
       <div>
         <Segment basic>
           <Container>
-            <Header as='h1'>
-              <Icon name='newspaper' size="huge" />
+            <Header as="h1">
+              <Icon name="newspaper" size="huge" />
               <Header.Content>
                 What's New
-  <Header.Subheader color='grey'>
-                  The Latest Features and Improvements at MGB
-    </Header.Subheader>
+                <Header.Subheader color="grey">The Latest Features and Improvements at MGB</Header.Subheader>
               </Header.Content>
             </Header>
             {this.renderNews()}
@@ -133,12 +131,16 @@ const WhatsNewRoute = React.createClass({
     return (
       <Container>
         <AboutHeader />
-        <p>See what's coming soon in our <QLink to="/roadmap">feature roadmap</QLink>.</p>
+        <p>
+          See what's coming soon in our <QLink to="/roadmap">feature roadmap</QLink>.
+        </p>
         <Grid columns={2} padded relaxed divided className="equal height">
           <Grid.Column width={7}>
-            <Segment color='grey' raised>
+            <Segment color="grey" raised>
               <Header as="h2">
-                <Label color="blue" ribbon>Changes in v{release.id.ver}</Label>
+                <Label color="blue" ribbon>
+                  Changes in v{release.id.ver}
+                </Label>
                 <Header.Subheader>
                   <ReleaseId releaseId={release.id} />&emsp;{ago}
                 </Header.Subheader>
@@ -150,7 +152,12 @@ const WhatsNewRoute = React.createClass({
           <Grid.Column width={9}>
             <Header as="h2" content="MGB updates" />
             <Segment color="grey" raised>
-              <div style={{ maxHeight: '800px', overflowY: 'scroll' }}>{this.renderNewsMgbVersionsColumn()}<a href="#" onClick={this.onLoadMore}><Icon name="history" style={{ margin: 0 }} /> Load More</a></div>
+              <div style={{ maxHeight: '800px', overflowY: 'scroll' }}>
+                {this.renderNewsMgbVersionsColumn()}
+                <a href="#" onClick={this.onLoadMore}>
+                  <Icon name="history" style={{ margin: 0 }} /> Load More
+                </a>
+              </div>
             </Segment>
           </Grid.Column>
         </Grid>
@@ -173,9 +180,8 @@ const WhatsNewRoute = React.createClass({
           const ago = moment(new Date(release.timestamp)).fromNow()
           return (
             <Item key={release.timestamp} style={sty} onClick={this.handleReleaseClicked.bind(this, idx)}>
-              <Item.Content >
-
-                <Header color='blue'>
+              <Item.Content>
+                <Header color="blue">
                   v{release.id.ver}&nbsp;&nbsp;&nbsp;<small>
                     <ReleaseId releaseId={release.id} />
                   </small>

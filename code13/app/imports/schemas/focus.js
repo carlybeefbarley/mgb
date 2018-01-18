@@ -25,7 +25,6 @@ const FocusTopics = [
 ]
 
 export default class FocusDropdown extends Component {
-
   // propTypes declares the data type that we will expect from our props.  In this case, our prop focusMsg
   // will be a string, which presents a small challenge because FocusTopics is an array...have to split
   // and rejoin it
@@ -34,8 +33,8 @@ export default class FocusDropdown extends Component {
     user: PropTypes.shape({
       _id: PropTypes.string.isRequired,
       profile: PropTypes.shape({
-        focusMsg: PropTypes.string
-      }).isRequired
+        focusMsg: PropTypes.string,
+      }).isRequired,
     }).isRequired,
   }
 
@@ -44,7 +43,7 @@ export default class FocusDropdown extends Component {
     super(props)
     const focusMsg = this.props.user.profile.focusMsg || ''
     this.state = {
-      value: focusMsg.split(",")
+      value: focusMsg.split(','),
     }
   }
 
@@ -54,10 +53,9 @@ export default class FocusDropdown extends Component {
   componentWillReceiveProps(nextProps) {
     const focusMsg = this.props.user.profile.focusMsg || ''
     this.setState({
-      value: focusMsg.split(",")
+      value: focusMsg.split(','),
     })
   }
-
 
   // event handler function updating Meteor of a change when editing ones own profile, which will join into string.
   //  If trying to edit another profile there will be a toast saying you can't edit others profile
@@ -71,7 +69,13 @@ export default class FocusDropdown extends Component {
   render() {
     const { value } = this.state
     return (
-      <Form.Select options={FocusTopics} placeholder='What are you working on at MGB' onChange={this.handleChange} multiple value={value} />
+      <Form.Select
+        options={FocusTopics}
+        placeholder="What are you working on at MGB"
+        onChange={this.handleChange}
+        multiple
+        value={value}
+      />
     )
   }
 }

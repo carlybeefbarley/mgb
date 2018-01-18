@@ -39,7 +39,7 @@ import { makeChannelName, ChatSendMessageOnChannelName } from '/imports/schemas/
 
 import urlMaker from '/client/imports/routes/urlMaker'
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 import { canUserEditAssetIfUnlocked, fAllowSuperAdminToEditAnything } from '/imports/schemas/roles'
 
@@ -342,7 +342,7 @@ const AssetEditRoute = React.createClass({
         this.context.urlLocation.query,
         '/u/' + this.props.currUser.username + '/asset/' + result.newId,
       )
-      joyrideCompleteTag('mgbjr-CT-asset-fork')
+      joyrideStore.completeTag('mgbjr-CT-asset-fork')
     }
 
     this.setState({ isForkPending: false })
@@ -552,10 +552,10 @@ const AssetEditRoute = React.createClass({
       if (!this.canUserEditThisAssetIfUnlocked())
         showToast.error(
           'You do not have edit permission for this Asset. Ask owner to join their Project, or fork this asset',
-          'error',
         )
       else {
-        if (this.canCurrUserChangeCompletion()) showToast('This Asset is Locked. Unlock it to enable editing')
+        if (this.canCurrUserChangeCompletion())
+          showToast.error('This Asset is Locked. Unlock it to enable editing')
         else showToast.error('Asset is Locked. Fork it or ask the owner to Unlock it for editing')
       }
     } else showToast.error('Not logged in. You must Log in to edit Assets')
@@ -799,7 +799,7 @@ const AssetEditRoute = React.createClass({
 
   handleChatClick() {
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: this.props.params.assetId })
-    joyrideCompleteTag('mgbjr-CT-asset-edit-header-right-chat')
+    joyrideStore.completeTag('mgbjr-CT-asset-edit-header-right-chat')
     utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
 

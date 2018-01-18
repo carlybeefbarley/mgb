@@ -3,12 +3,12 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { Container, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 
-import { stopCurrentTutorial } from '/client/imports/routes/App'
-
 import LoginLinks from './LoginLinks'
 import { utilPushTo } from '../QLink'
 import { logActivity } from '/imports/schemas/activity'
 import validate from '/imports/schemas/validate'
+import { withStores } from '/client/imports/hocs'
+import { joyrideStore } from '/client/imports/stores'
 import { showToast } from '/client/imports/modules'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 
@@ -56,6 +56,7 @@ class LoginRoute extends Component {
   }
 
   doLogin = () => {
+    const { joyride } = this.props
     const { email, password } = this.state.formData
 
     this.setState((prevState, props) => ({
@@ -72,9 +73,9 @@ class LoginRoute extends Component {
       } else {
         var userName = Meteor.user().profile.name
         logActivity('user.login', `Logging in "${userName}"`, null, null)
-        stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
+        joyride.stop() // It would be weird to continue one, and the main case will be the signup Tutorial
         utilPushTo(this.context.urlLocation.query, '/dashboard')
-        showToast('Login ok!  Welcome back')
+        showToast('Welcome back!', { title: 'Login' })
 
         // analytics.identify(Meteor.user()._id, {
         //   name: userName,
@@ -159,4 +160,4 @@ class LoginRoute extends Component {
   }
 }
 
-export default LoginRoute
+export default withStores({ joyride: joyrideStore })(LoginRoute)

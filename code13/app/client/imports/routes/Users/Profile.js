@@ -1,7 +1,19 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Segment, Header, Button, Form, Grid, Item, Icon, Label, Popup, Dropdown, Container } from 'semantic-ui-react'
+import {
+  Segment,
+  Header,
+  Button,
+  Form,
+  Grid,
+  Item,
+  Icon,
+  Label,
+  Popup,
+  Dropdown,
+  Container,
+} from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import Helmet from 'react-helmet'
@@ -30,7 +42,7 @@ import FocusDropdown from '/imports/schemas/focus'
 import { makeChannelName } from '/imports/schemas/chats'
 
 import QLink from '../QLink'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 import Hotjar from '/client/imports/helpers/hotjar.js'
 
@@ -70,9 +82,6 @@ const UserProfileRoute = React.createClass({
    *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
    */
 
-
-
-
   handleProfileFieldChanged(changeObj) {
     const fMsg = changeObj['profile.focusMsg']
     if (fMsg || fMsg === '') {
@@ -86,7 +95,7 @@ const UserProfileRoute = React.createClass({
       if (error) console.error('Could not update profile:', error.reason)
       else {
         // Go through all the keys, log completion tags for each
-        _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-profile-set-field-${k}`))
+        _.each(_.keys(changeObj), k => joyrideStore.completeTag(`mgbjr-CT-profile-set-field-${k}`))
       }
     })
   },
@@ -163,7 +172,6 @@ const UserProfileRoute = React.createClass({
             canLinkToSrc
             handleChange={newUrl => this.handleProfileFieldChanged({ 'profile.avatar': newUrl })}
           />
-
           <Header style={{ marginTop: 0, marginBottom: '8px' }} size="large" content={name} />
           {user.suIsBanned && (
             <div>
@@ -189,11 +197,9 @@ const UserProfileRoute = React.createClass({
             />
             <Icon size="tiny" name="quote right" />
           </div>
-
           <p>
             <UX.UserWhenJoined when={user.createdAt} />
           </p>
-
           <p>
             <b title="About yourself">Bio:</b>&nbsp;
             <InlineEdit
@@ -208,7 +214,8 @@ const UserProfileRoute = React.createClass({
             />
           </p>
           <b title="What you are working on right now. This will also show in the top bar as a reminder!">
-            Focus: </b>&nbsp;
+            Focus:{' '}
+          </b>&nbsp;
           <FocusDropdown user={user} />
           <br />
           <p>
@@ -226,32 +233,31 @@ const UserProfileRoute = React.createClass({
             />
             &nbsp;
             {_.isString(mgb1name) &&
-              mgb1name.length > 0 && (
-                <Popup
-                  on="hover"
-                  hoverable
-                  position="bottom right"
-                  trigger={<img className="ui avatar image" src={mgb1.getUserAvatarUrl(firstMgb1name)} />}
-                  mouseEnterDelay={500}
-                >
-                  <Popup.Header>Legacy 'MGBv1' account</Popup.Header>
-                  <Popup.Content>
-                    <div>Prior account in the legacy Flash-based 'MGB1' system from 2007:</div>
-                    <br />
-                    <a className="mini image" href={mgb1.getEditPageUrl(firstMgb1name)} target="_blank">
-                      <img
-                        className="ui centered image bordered"
-                        style={{ maxWidth: '64px', maxHeight: '64px' }}
-                        src={mgb1.getUserAvatarUrl(firstMgb1name)}
-                      />
-                    </a>
-                    <br />
-                    <QLink to={`/u/${user.username}/projects/import/mgb1`}>MGBv1 Project Importer...</QLink>
-                  </Popup.Content>
-                </Popup>
-              )}
+            mgb1name.length > 0 && (
+              <Popup
+                on="hover"
+                hoverable
+                position="bottom right"
+                trigger={<img className="ui avatar image" src={mgb1.getUserAvatarUrl(firstMgb1name)} />}
+                mouseEnterDelay={500}
+              >
+                <Popup.Header>Legacy 'MGBv1' account</Popup.Header>
+                <Popup.Content>
+                  <div>Prior account in the legacy Flash-based 'MGB1' system from 2007:</div>
+                  <br />
+                  <a className="mini image" href={mgb1.getEditPageUrl(firstMgb1name)} target="_blank">
+                    <img
+                      className="ui centered image bordered"
+                      style={{ maxWidth: '64px', maxHeight: '64px' }}
+                      src={mgb1.getUserAvatarUrl(firstMgb1name)}
+                    />
+                  </a>
+                  <br />
+                  <QLink to={`/u/${user.username}/projects/import/mgb1`}>MGBv1 Project Importer...</QLink>
+                </Popup.Content>
+              </Popup>
+            )}
           </p>
-
           <div style={{ clear: 'both', right: 'auto', left: 'auto' }}>
             <QLink to={`/u/${name}/assets`} style={{ marginBottom: '6px' }}>
               <UX.Button2 basic icon="pencil" content="Assets" />

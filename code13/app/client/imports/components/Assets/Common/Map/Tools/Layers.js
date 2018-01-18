@@ -2,14 +2,14 @@ import _ from 'lodash'
 import React from 'react'
 import { Label, Segment } from 'semantic-ui-react'
 import LayerControls from './LayerControls.js'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 export default class Layers extends React.Component {
   componentDidMount() {}
 
   handleClick(layerNum) {
     if (layerNum !== 3) this.props.setActiveLayer(layerNum)
-    joyrideCompleteTag(`mgbjr-CT-MapTools-layers-select${layerNum}`)
+    joyrideStore.completeTag(`mgbjr-CT-MapTools-layers-select${layerNum}`)
   }
   showOrHideLayer(layerId, wasVisible, e) {
     e.preventDefault()

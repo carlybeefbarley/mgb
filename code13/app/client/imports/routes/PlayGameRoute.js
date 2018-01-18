@@ -8,7 +8,7 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import Helmet from 'react-helmet'
 
 import { makeChannelName } from '/imports/schemas/chats'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import { utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import { isValidCodeGame, isValidActorMapGame } from '/imports/schemas/assets'
 
@@ -449,7 +449,7 @@ const PlayGameRoute = React.createClass({
 
   handleChatClick() {
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: this.props.params.assetId })
-    joyrideCompleteTag('mgbjr-CT-asset-play-game-show-chat')
+    joyrideStore.completeTag('mgbjr-CT-asset-play-game-show-chat')
     utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
 

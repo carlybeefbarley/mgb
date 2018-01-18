@@ -4,7 +4,6 @@ import { Container, Divider, Grid, Header } from 'semantic-ui-react'
 import SkillAction from './Actions/SkillAction'
 import RecentAssetAction from './Actions/RecentAssetAction'
 // import VideoAction from './Actions/VideoAction'
-import FeedSegment from './Feed/FeedSegment'
 import FaqSegment from './Faq/FaqSegment'
 import BadgesSegment from './Badges/BadgesSegment'
 import ExploreSegment from './Explore/ExploreSegment'
@@ -12,11 +11,10 @@ import ExploreSegment from './Explore/ExploreSegment'
 export default class Dashboard1st extends React.Component {
   static propTypes = {
     currUser: PropTypes.object,
-    activities: PropTypes.array,
   }
 
   render() {
-    const { activities, currUser } = this.props
+    const { currUser } = this.props
 
     return (
       <Container>
@@ -53,8 +51,6 @@ export default class Dashboard1st extends React.Component {
           </Grid.Column>
 
           <Grid.Column tablet={5} computer={4}>
-            <FeedSegment feedArr={currUser} currUser={currUser} activities={activities} />
-            <Divider hidden section />
             <FaqSegment />
           </Grid.Column>
 

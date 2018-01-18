@@ -7,7 +7,7 @@ import ImportSound from './ImportSound.js'
 import SoundStock from './SoundStock.js'
 import CreateSound from './CreateSound.js'
 import WaveSurfer from '../lib/WaveSurfer.js'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 export default class EditSound extends React.Component {
   constructor(props) {
@@ -70,7 +70,7 @@ export default class EditSound extends React.Component {
     }
     this.setState({ isCreateModal: false })
     this.setState({ isImportModal: false })
-    joyrideCompleteTag('mgbjr-CT-editSound-sound-imported')
+    joyrideStore.completeTag('mgbjr-CT-editSound-sound-imported')
   }
 
   togglePlaySound() {
@@ -110,7 +110,7 @@ export default class EditSound extends React.Component {
 
   openCreateModal = () => {
     this.setState({ isCreateModal: true })
-    joyrideCompleteTag('mgbjr-CT-editSound-createSound-invoke')
+    joyrideStore.completeTag('mgbjr-CT-editSound-createSound-invoke')
   }
 
   render() {

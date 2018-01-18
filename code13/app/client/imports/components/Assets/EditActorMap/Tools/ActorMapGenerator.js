@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
 import { showToast } from '/client/imports/modules'
 import { Popup, Form, Radio, Input, Segment, Button, Loader } from 'semantic-ui-react'
@@ -23,7 +23,7 @@ export default class ActorMapGenerator extends React.Component {
   }
 
   handleGenerate = () => {
-    joyrideCompleteTag(`mgbjr-CT-MapTools-generator-generate`)
+    joyrideStore.completeTag(`mgbjr-CT-MapTools-generator-generate`)
     this.generateMaze()
   }
 

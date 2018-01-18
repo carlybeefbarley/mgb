@@ -85,7 +85,7 @@ RestApi.addRoute(
 
       const result = HTTP.call('POST', 'https://www.google.com/recaptcha/api/siteverify', {
         params: {
-          secret: '6LdDrTkUAAAAAOMbWNV_Bxwohue0mwO2j_Yvq6dN',
+          secret: '6LfASUEUAAAAACmpZjnc3diiuwXfhPYouv6gh8dy',
           response: this.urlParams.recaptchaResponse,
         },
       })

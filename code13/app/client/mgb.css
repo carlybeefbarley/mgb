@@ -1,6 +1,7 @@
 * {
   /* hide blue overlay on touch - android */
   -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
 }
 
 .ui.sidebar {

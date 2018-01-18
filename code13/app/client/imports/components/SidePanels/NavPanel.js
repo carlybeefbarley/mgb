@@ -4,8 +4,8 @@ import { Menu, Icon } from 'semantic-ui-react'
 import getNavPanels from './getNavPanels'
 import NavPanelItem from './NavPanelItem'
 
-import { withStores } from '/client/imports/hocs'
-import { joyrideStore } from '/client/imports/stores'
+import { ActivityTypes } from '/imports/schemas/activity'
+import { AssetKinds } from '/imports/schemas/assets'
 
 const menuStyle = {
   position: 'relative',
@@ -23,18 +23,57 @@ class NavPanel extends React.Component {
   static propTypes = {
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
     navPanelAvailableWidth: PropTypes.number, // Width of the page area available for NavPanel menu
+    activity: PropTypes.array,
+    hazUnreadActivities: PropTypes.array,
   }
 
   render() {
     const { router } = this.context
-    const { currUser, joyrideStore, navPanelAvailableWidth } = this.props
-    const useIcons = navPanelAvailableWidth < (joyrideStore.state.isRunning ? 790 : 670) // px
+    const { currUser, navPanelAvailableWidth, activity, hazUnreadActivities } = this.props
+    const useIcons = navPanelAvailableWidth < 728 // px
     const allNavPanels = getNavPanels(currUser)
+
+    const notifications = _.find(allNavPanels.right, item => item.name === 'notifications')
+    if (notifications) {
+      // if there are no notifications
+      if (activity.length === 0) {
+        notifications.menu.push({
+          subcomponent: 'Item',
+          content: "You don't have any notifications yet",
+          jrkey: 'empty-notifications',
+        })
+      }
+      // add menu items for notifications
+      _.map(activity, act => {
+        const linkTo = `/u/${act.toOwnerName}/asset/${act.toAssetId}`
+        const icon = {
+          name: AssetKinds.getIconName(act.toAssetKind),
+          color: AssetKinds.getColor(act.toAssetKind),
+        }
+        const isUnread = !!_.find(hazUnreadActivities, unread => unread._id === act._id)
+        const description =
+          act.toAssetName + ': ' + act.byUserName + ' ' + ActivityTypes.getDescription(act.activityType)
+
+        notifications.menu.push({
+          subcomponent: 'Item',
+          icon,
+          content: description,
+          to: linkTo,
+          jrkey: act._id,
+          selected: isUnread,
+        })
+      })
+
+      // add red bubble for unread notifications
+      if (hazUnreadActivities && hazUnreadActivities.length > 0) {
+        if (notifications) notifications.notifyCount = hazUnreadActivities.length
+      }
+    }
 
     const navPanelItems = side =>
       allNavPanels[side]
         .filter(v => !(useIcons && v.hideInIconView))
-        .map(({ content, href, icon, menu, name, query, to }) => (
+        .map(({ content, href, icon, menu, name, notifyCount, query, to }) => (
           <NavPanelItem
             isActive={to && router.isActive(to)}
             name={name}
@@ -45,6 +84,8 @@ class NavPanel extends React.Component {
             to={to}
             query={query}
             href={href}
+            hazUnreadActivities={hazUnreadActivities}
+            notifyCount={notifyCount}
           />
         ))
 
@@ -57,4 +98,4 @@ class NavPanel extends React.Component {
   }
 }
 
-export default withStores({ joyrideStore })(NavPanel)
+export default NavPanel

@@ -13,8 +13,6 @@ import { expectedToolbars } from '/client/imports/components/Toolbar/expectedToo
 import fpSuperAdmin from './fpSuperAdmin'
 import fpMobileMore from './fpMobileMore'
 import fpSettings from './fpSettings'
-import fpActivity from './fpActivity'
-import fpKeyboard from './fpKeyboard'
 import fpProjects from './fpProjects'
 import fpAssets from './fpAssets'
 import fpUsers from './fpUsers'
@@ -79,17 +77,6 @@ const flexPanelViews = [
     el: fpUsers,
     superAdminOnly: false,
     mobileUI: false,
-  },
-  //{ tag: 'keys',      lev: 7,  name: 'keys',     icon: 'keyboard',   header: 'Keys',          el: fpKeyboard,      superAdminOnly: false, mobileUI: false },
-  {
-    tag: 'activity',
-    lev: 6,
-    name: 'activity',
-    icon: 'lightning',
-    header: 'Activity',
-    el: fpActivity,
-    superAdminOnly: false,
-    mobileUI: true,
   },
 
   {
@@ -166,7 +153,6 @@ const FlexPanel = React.createClass({
     requestChatChannelTimestampsNow: PropTypes.func.isRequired, // It does what it says on the box. Used by fpChat
     user: PropTypes.object, // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     selectedViewTag: PropTypes.string, // One of the flexPanelViews.tags values (or validtagkeyhere.somesuffix)
-    activity: PropTypes.array.isRequired, // An activity Stream passed down from the App and passed on to interested compinents
     flexPanelIsVisible: PropTypes.bool.isRequired,
     handleFlexPanelToggle: PropTypes.func.isRequired, // Callback for enabling/disabling FlexPanel view
     flexPanelWidth: PropTypes.string.isRequired, // Typically something like "200px".
@@ -185,12 +171,6 @@ const FlexPanel = React.createClass({
     },
   },
 
-  getInitialState() {
-    return {
-      wiggleActivity: false,
-    }
-  },
-
   getMeteorData() {
     return {
       fpFeatureLevel: getFeatureLevel(this.context.settings, makeLevelKey('FlexPanel')),
@@ -205,19 +185,6 @@ const FlexPanel = React.createClass({
 
     if (flexPanelIsVisible && el) {
       joyrideStore.completeTag(`mgbjr-CT-flexPanel-${tag}-show`)
-    }
-  },
-
-  componentWillReceiveProps(nextProps) {
-    const a1 = this.props.activity
-    const a2 = nextProps.activity
-    if (a1 && a1.length > 0 && a2 && a2.length > 0) {
-      if (a1[0]._id !== a2[0]._id && this.state.wiggleActivity === false) {
-        this.setState({ wiggleActivity: true })
-        window.setTimeout(() => {
-          this.setState({ wiggleActivity: false })
-        }, 5 * 1000)
-      }
     }
   },
 
@@ -258,11 +225,8 @@ const FlexPanel = React.createClass({
 
   getFpButtonSpecialClassForTag(tag) {
     const { joyride, hazUnreadChats } = this.props
-    const { wiggleActivity } = this.state
 
     if (tag === 'chat' && hazUnreadChats.length > 0) return 'animated swing'
-
-    if (tag === 'activity' && wiggleActivity) return 'animated swing'
 
     if (tag === 'learn' && joyride.state.isRunning) return 'animated swing'
 
@@ -271,7 +235,6 @@ const FlexPanel = React.createClass({
 
   getFpButtonExtraLabelForTag(tag) {
     const { joyride, hazUnreadChats } = this.props
-    const { wiggleActivity } = this.state
 
     if (tag === 'chat' && hazUnreadChats.length > 0)
       return <Indicator title={`Channels: ${hazUnreadChats.join(', ')}`} content={hazUnreadChats.length} />
@@ -279,14 +242,11 @@ const FlexPanel = React.createClass({
     if (tag === 'learn' && joyride.state.isRunning)
       return <Indicator title={`${joyride.state.steps.length} steps in tutorial`} />
 
-    if (tag === 'activity' && wiggleActivity) return <Indicator />
-
     return null
   },
 
   render() {
     const {
-      activity,
       chatChannelTimestamps,
       currentlyEditingAssetInfo,
       currUser,
@@ -301,6 +261,8 @@ const FlexPanel = React.createClass({
       requestChatChannelTimestampsNow,
       selectedViewTag,
       user,
+      fpIconColumnWidthInPixels,
+      fpFlexPanelContentWidthInPixels,
     } = this.props
 
     const isMobileUI = fpIsFooter
@@ -309,7 +271,7 @@ const FlexPanel = React.createClass({
       ? {
           position: 'fixed',
           top: flexPanelIsVisible ? '0px' : undefined,
-          bottom: '61px',
+          bottom: fpIconColumnWidthInPixels + 'px',
           width: flexPanelWidth,
           right: '0px',
           border: 'none',
@@ -330,8 +292,8 @@ const FlexPanel = React.createClass({
         }
 
     const miniNavClassNames = fpIsFooter
-      ? `ui blue borderless labeled icon bottom fixed six item fluid menu`
-      : `ui blue borderless labeled icon right fixed vertical horizontally fitted menu`
+      ? 'ui blue borderless labeled icon bottom fixed six item fluid menu'
+      : 'ui blue borderless labeled icon right fixed vertical horizontally fitted menu'
     const miniNavStyle = _.assign(
       {
         background: '#e2e3e4',
@@ -340,12 +302,12 @@ const FlexPanel = React.createClass({
       },
       fpIsFooter
         ? {
-            height: '61px',
+            height: fpIconColumnWidthInPixels + 'px',
             zIndex: 300, // Temp Hack
           }
         : {
             // This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel
-            width: '61px',
+            width: fpIconColumnWidthInPixels + 'px',
           },
     )
 
@@ -353,8 +315,8 @@ const FlexPanel = React.createClass({
       position: 'fixed',
       top: '0px',
       bottom: fpIsFooter ? '60px' : '0px',
-      right: fpIsFooter ? '0px' : '60px',
-      width: '285px',
+      right: fpIsFooter ? '0px' : fpIconColumnWidthInPixels + 'px',
+      width: fpFlexPanelContentWidthInPixels + 'px',
       overflowY: 'scroll',
       overflowX: 'hidden',
       zIndex: 301, // Temp Hack
@@ -389,7 +351,6 @@ const FlexPanel = React.createClass({
                   chatChannelTimestamps={chatChannelTimestamps}
                   hazUnreadChats={hazUnreadChats}
                   requestChatChannelTimestampsNow={requestChatChannelTimestampsNow}
-                  activity={activity}
                   panelWidth={flexPanelWidth}
                   isSuperAdmin={isSuperAdmin}
                   currentlyEditingAssetInfo={currentlyEditingAssetInfo}

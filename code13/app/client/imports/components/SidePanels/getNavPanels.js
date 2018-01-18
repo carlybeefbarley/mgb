@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { Meteor } from 'meteor/meteor'
 import React from 'react'
-import { Button, Image } from 'semantic-ui-react'
+import { Button, Icon, Image } from 'semantic-ui-react'
 
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { showToast } from '/client/imports/modules'
@@ -294,6 +294,21 @@ const getNavPanels = (currUser, showAll) => {
         to: `/dashboard`,
         jrkey: 'dashboard',
         content: 'Dashboard',
+      },
+      showUserOptions && {
+        name: 'notifications',
+        explainClickAction: 'Shortcut: Clicking here jumps to your notifications',
+        icon: { name: 'bell' },
+        to: `/notifications`,
+        jrkey: 'notifications',
+        content: <Icon name="bell" />,
+        menu: [
+          {
+            subcomponent: 'Header',
+            jrkey: 'notificationsHeader',
+            content: 'notifications',
+          },
+        ],
       },
       showUserOptions && {
         name: 'user',

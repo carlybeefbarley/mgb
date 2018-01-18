@@ -2946,6 +2946,7 @@ class EditCode extends React.Component {
               quickSave={this.quickSave.bind(this)}
               highlightLines={this.highlightLines.bind(this)}
               assetId={asset._id}
+              asset={asset}
             />
           ),
         },

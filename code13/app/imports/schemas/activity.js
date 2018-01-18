@@ -2,7 +2,7 @@
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
 import _ from 'lodash'
-import { Activity } from '/imports/schemas'
+import { Activity, Azzets } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 import { isSameUserId } from '/imports/schemas/users'
@@ -43,6 +43,8 @@ var schema = {
   toChatChannelName: Match.Optional(String), // Chat Channel Name as defined in makeChannelName() in chats.js. Added  2/16/2017
   toUserId: Match.Optional(String), // user id interacted with (for example added to project) Added 08/28/2017
   toUserName: Match.Optional(String), // user name interacted with (for example added to project) Added 08/28/2017
+
+  unread: Boolean, // flag if user (toUserId) read activity. Used only for interactions (mention in chat, adding to project, loved assets) with users. Added 12/27/2017
 }
 
 // Info on each type of activity, as the UI cares about it
@@ -86,6 +88,7 @@ export const ActivityTypes = {
   'asset.userLoves': { icon: 'heart', pri: 12, description: 'love asset' },
   'asset.ban': { icon: 'red bomb', pri: 12, description: 'Ban Asset' },
   'asset.unban': { icon: 'green bomb', pri: 12, description: 'Un-ban Asset' },
+  'task.askReview': { icon: 'grey tasks', pri: 12, description: 'Ask for task review' },
   'task.approve': { icon: 'green tasks', pri: 12, description: 'Approve Task' },
   'task.disapprove': { icon: 'grey tasks', pri: 12, description: 'Disapprove Task' },
 
@@ -119,6 +122,7 @@ Meteor.methods({
     if (!this.userId) throw new Meteor.Error(401, 'Login required')
 
     data.timestamp = new Date()
+    data.unread = true // by default all activities are unread. We do use unread only for interactions
 
     if (_.isPlainObject(override_byUser)) {
       if (!isUserSuperAdmin(Meteor.user()))
@@ -168,6 +172,63 @@ Meteor.methods({
     if (Meteor.isServer) console.log(`  [Activity.delete]  #${activityId}  by: ${act.byUserName}`)
 
     return nRemoved
+  },
+
+  // marks unread activities as read
+  'Activity.readLog'() {
+    const currUser = Meteor.user()
+    if (currUser) {
+      const options = { limit: 20, sort: { timestamp: -1 } }
+      const query = { $and: [{ unread: true }, getFeedSelector(currUser._id, currUser.profile.name)] }
+      const update = { $set: { unread: false } }
+      Activity.update(query, update, options)
+    }
+  },
+
+  'Activity.getUnreadLog'(limitCount = 20) {
+    const currUser = Meteor.user()
+    if (currUser) {
+      const options = { limit: limitCount, sort: { timestamp: -1 } }
+      const unread = []
+      const activities = Activity.find(getFeedSelector(currUser._id, currUser.profile.name), options).fetch()
+      _.map(activities, activity => {
+        if (activity.unread) unread.push(activity)
+      })
+      return unread
+    }
+  },
+
+  'Activity.getNotifications'(limitCount = 30) {
+    const currUser = Meteor.user()
+    if (currUser) {
+      let options = { limit: limitCount, sort: { timestamp: -1 } }
+      return Activity.find(getFeedSelector(currUser._id, currUser.profile.name), options).fetch()
+    }
+  },
+
+  'Activity.getActivitiesByProjectName'(projectName, limit = 10) {
+    const options = { limit, sort: { timestamp: -1 } }
+    const assetsIdArr = []
+    const assetsArr = []
+    // getting all assets in project
+    const assets = Azzets.find({ projectNames: [projectName] }).fetch()
+    _.map(assets, asset => {
+      assetsIdArr.push(asset._id)
+      assetsArr.push({
+        _id: asset._id,
+        name: asset.name,
+        kind: asset.kind,
+        dn_ownerName: asset.dn_ownerName,
+      })
+    })
+    // getting latest activities for assets in project
+    const activities = Activity.find({ toAssetId: { $in: assetsIdArr } }, options).fetch()
+    _.map(activities, activity => {
+      const i = assetsIdArr.indexOf(activity.toAssetId)
+      if (i > -1) activity.asset = assetsArr[i]
+    })
+
+    return activities
   },
 })
 
@@ -245,7 +306,13 @@ export function deleteActivityRecord(activityId) {
   Meteor.call('Activity.delete', activityId)
 }
 
-export const feedActivityTypesByOthers = ['asset.userLoves', 'project.leaveMember', 'mgb.announce']
+export const feedActivityTypesByOthers = [
+  'asset.userLoves',
+  'project.leaveMember',
+  'mgb.announce',
+  'task.approve',
+  'task.disapprove',
+]
 
 export const feedActivityTypesByMe = ['project.addMember', 'project.removeMember']
 
@@ -260,8 +327,12 @@ export const getFeedSelector = (userId, userName) => {
   const byMeArr = []
   feedActivityTypesByMe.forEach(type => byMeArr.push({ activityType: type }))
   const byMeQuery = { $and: [{ toUserId: userId }, { $or: byMeArr }] }
-  const byNameArr = []
-  feedActivityTypesByName.forEach(type => byNameArr.push({ activityType: type }))
-  const byNameQuery = { $and: [{ toUserName: userName }, { $or: byNameArr }] }
-  return { $or: [byOthersQuery, byMeQuery, byNameQuery] }
+
+  // Guntis - commenting out this part of query as it duplicates with chat notifications.
+  // But keeping it here if we decide to get it back
+  // const byNameArr = []
+  // feedActivityTypesByName.forEach(type => byNameArr.push({ activityType: type }))
+  // const byNameQuery = { $and: [{ toUserName: userName }, { $or: byNameArr }] }
+  // return { $or: [byOthersQuery, byMeQuery, byNameQuery] }
+  return { $or: [byOthersQuery, byMeQuery] }
 }

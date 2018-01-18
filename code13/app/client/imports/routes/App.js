@@ -61,9 +61,12 @@ let hotjarInitFlag = true
 const CHAT_POLL_INITIAL_MS = 3 * 1000
 const CHAT_POLL_INTERVAL_MS = 12 * 1000
 
+const ACTIVITY_POLL_INITIAL_MS = 3 * 1000
+const ACTIVITY_POLL_INTERVAL_MS = 12 * 1000
+
 // FlexPanel numbers
 const fpIconColumnWidthInPixels = 60 // The Column of Icons
-const fpFlexPanelContentWidthInPixels = 285 // The cool stuff
+const fpFlexPanelContentWidthInPixels = 260 // The cool stuff
 
 class AppUI extends Component {
   static propTypes = {
@@ -102,6 +105,8 @@ class AppUI extends Component {
     // are not yet interested in. This will always be an array, never null or undefined
     // It is intended to be quick & convenient for generating notification UIs
 
+    hazUnreadActivities: [], // will always contain array even empty one
+
     currentlyEditingAssetInfo: {
       // This is so that we can pass as subset of the Asset info into some other components
       // like the flexpanels and Nav controls.
@@ -116,6 +121,7 @@ class AppUI extends Component {
 
   componentDidMount() {
     this._schedule_requestChatChannelTimestampsNow()
+    this._schedule_requestUnreadActivities()
     registerDebugGlobal('app', this, __filename, 'The global App.js instance')
 
     window.addEventListener('keydown', this.handleKeyDown)
@@ -185,6 +191,11 @@ class AppUI extends Component {
     window.setInterval(this.requestChatChannelTimestampsNow, CHAT_POLL_INTERVAL_MS)
   }
 
+  _schedule_requestUnreadActivities = () => {
+    window.setTimeout(this.requestUnreadActivities, ACTIVITY_POLL_INITIAL_MS)
+    window.setInterval(this.requestUnreadActivities, ACTIVITY_POLL_INTERVAL_MS)
+  }
+
   handleKeyDown = kev => {
     if (kev.altKey && kev.shiftKey && kev.which === 72) {
       // alt-shift-h
@@ -240,6 +251,15 @@ class AppUI extends Component {
           !_.isEqual(chatChannelTimestamps, this.state.chatChannelTimestamps)
         )
           this.setState({ chatChannelTimestamps, hazUnreadChats })
+      }
+    })
+  }
+
+  requestUnreadActivities = () => {
+    Meteor.call('Activity.getUnreadLog', (error, activities) => {
+      if (error) console.warn(error)
+      else {
+        this.setState({ hazUnreadActivities: activities })
       }
     })
   }
@@ -316,7 +336,13 @@ class AppUI extends Component {
       sysvars,
       user,
     } = this.props
-    const { currentlyEditingAssetInfo, chatChannelTimestamps, hazUnreadChats, hideHeaders } = this.state
+    const {
+      currentlyEditingAssetInfo,
+      chatChannelTimestamps,
+      hazUnreadActivities,
+      hazUnreadChats,
+      hideHeaders,
+    } = this.state
     const { query } = this.props.location
     const isGuest = currUser ? currUser.profile.isGuest : false
     const isHocRoute = window.location.pathname === '/hour-of-code'
@@ -384,16 +410,24 @@ class AppUI extends Component {
               handleFlexPanelToggle={this.handleFlexPanelToggle}
               flexPanelWidth={flexPanelWidth}
               flexPanelIsVisible={showFlexPanel}
-              activity={this.props.activity}
               isSuperAdmin={isSuperAdmin}
               currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+              fpIconColumnWidthInPixels={fpIconColumnWidthInPixels}
+              fpFlexPanelContentWidthInPixels={fpFlexPanelContentWidthInPixels}
             />
           )}
 
           <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
             <SupportedBrowsersContainer />
             {!isGuest && !isHocRoute && <VerifyBanner currUser={currUser} />}
-            {!hideHeaders && <NavPanel currUser={currUser} navPanelAvailableWidth={mainAreaAvailableWidth} />}
+            {!hideHeaders && (
+              <NavPanel
+                currUser={currUser}
+                navPanelAvailableWidth={mainAreaAvailableWidth}
+                activity={this.props.activity}
+                hazUnreadActivities={hazUnreadActivities}
+              />
+            )}
             {!isGuest &&
             !isHocRoute && (
               <NavBar
@@ -468,16 +502,15 @@ export default _.flow(
     const settingsReady = handleForSettings === null ? true : handleForSettings.ready()
 
     // activity? if useful..
-    const flexPanelQueryValue = location.query[urlMaker.queryParams('app_flexPanel')]
-    const getActivity = currUser && flexPanelQueryValue === 'activity'
-    const handleActivity = getActivity
-      ? Meteor.subscribe(
-          'activity.private.feed.recent.userId',
-          currUser._id,
-          currUser.profile.name,
-          SpecialGlobals.activity.feedLimit,
-        )
-      : null
+    let handleActivity = null
+    if (currUser) {
+      handleActivity = Meteor.subscribe(
+        'activity.private.feed.recent.userId',
+        currUser._id,
+        currUser.profile.name,
+        SpecialGlobals.activity.feedLimit,
+      )
+    }
 
     // projects stuff
     const handleForProjects = currUserId ? Meteor.subscribe('projects.byUserId', currUserId) : null
@@ -524,7 +557,7 @@ export default _.flow(
       user: pathUserName
         ? Users.findOne({ 'profile.name': pathUserName })
         : pathUserId ? Users.findOne(pathUserId) : null, // User on the url /user/xxx/...
-      activity: getActivity
+      activity: currUser
         ? Activity.find(getFeedSelector(currUser._id, currUser.profile.name), {
             sort: { timestamp: -1 },
           }).fetch()

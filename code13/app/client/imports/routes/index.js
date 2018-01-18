@@ -13,6 +13,7 @@ import PlayGameRoute from './PlayGameRoute'
 import BrowseGamesRoute from './BrowseGamesRoute'
 import DashboardRoute from './Dashboard/DashboardRoute'
 import VideoRoute from './Video/VideoRoute'
+import NotificationsRoute from './Notifications/NotificationsRoute'
 
 import LearnRoute from './Learn/LearnRoute'
 import LearnSkillsRoute from './Learn/LearnSkillsRoute'
@@ -73,6 +74,7 @@ export function clientStartup() {
         <Route path="/hour-of-code" component={HourOfCode} name="Hour of Code™" />
         <Route path="/dashboard" component={DashboardRoute} name="Dashboard" />
         <Route path="/video" component={VideoRoute} name="Video" />
+        <Route path="/notifications" component={NotificationsRoute} name="Notifications" />
 
         <Route path="forum" component={ForumRoute} name="Forum" />
 
@@ -145,6 +147,11 @@ export function clientStartup() {
           path="u/:username/project/:projectId"
           component={Projects.ProjectOverview}
           name="Project Details"
+        />
+        <Route
+          path="u/:username/projects/:projectName/activity"
+          component={Projects.ProjectActivityRoute}
+          name="Project Activity"
         />
 
         <Redirect from="user/:id/history" to="user/:id/activity" />

@@ -69,7 +69,7 @@ class WhatsNew extends React.Component {
           <Label
             basic
             horizontal
-            icon="gift"
+            icon="newspaper"
             color="purple"
             pointing="left"
             content="New stuff for you!"

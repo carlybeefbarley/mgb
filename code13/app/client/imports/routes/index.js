@@ -35,6 +35,7 @@ import NotYetImplementedRoute from './Nav/NotYetImplementedRoute'
 import NotFoundRoute from './Nav/NotFoundRoute'
 import WhatsNewRoute from './Nav/WhatsNewRoute'
 import Roadmap from './Nav/RoadmapRoute'
+import ContactUs from './Nav/ContactUsRoute'
 
 import TermsOfService from '/client/imports/legal/TermsOfService'
 import Privacy from '/client/imports/legal/Privacy'
@@ -69,6 +70,7 @@ export function clientStartup() {
         <Redirect from="/whatsnew" to="/whats-new" />
         <Route path="/whats-new" component={WhatsNewRoute} name="What's New" />
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />
+        <Route path="/contact-us" component={ContactUs} name="Contact Us" />
 
         <Route path="/hour-of-code" component={HourOfCode} name="Hour of Code™" />
         <Route path="/dashboard" component={DashboardRoute} name="Dashboard" />
@@ -204,7 +206,7 @@ export function clientStartup() {
   return router
 }
 
-Meteor.startup(function() {
+Meteor.startup(function () {
   const router = clientStartup()
   ReactDOM.render(router, document.getElementById('root'))
 })

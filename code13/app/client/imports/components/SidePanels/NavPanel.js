@@ -52,27 +52,27 @@ export const getNavPanels = (currUser, showAll) => {
       right: isHocRoute
         ? []
         : [
-            isHocActivity
-              ? {
-                  name: 'hour-of-code-finished',
-                  content: "I'm finished with my Hour of Code™",
-                  href: 'https://code.org/api/hour/finish',
-                }
-              : {
-                  name: 'hour-of-code-back',
-                  content: 'Back to Hour of Code',
-                  to: '/hour-of-code',
-                },
-            {
-              name: 'log-out',
-              content: <Button icon="sign out" content="Exit Hour of Code" size="tiny" onClick={_doLogout} />,
+          isHocActivity
+            ? {
+              name: 'hour-of-code-finished',
+              content: "I'm finished with my Hour of Code™",
+              href: 'https://code.org/api/hour/finish',
+            }
+            : {
+              name: 'hour-of-code-back',
+              content: 'Back to Hour of Code',
+              to: '/hour-of-code',
             },
-            {
-              name: 'hour-of-code-save',
-              content: <EnrollButton />,
-              icon: { name: 'signup' },
-            },
-          ],
+          {
+            name: 'log-out',
+            content: <Button icon="sign out" content="Exit Hour of Code" size="tiny" onClick={_doLogout} />,
+          },
+          {
+            name: 'hour-of-code-save',
+            content: <EnrollButton />,
+            icon: { name: 'signup' },
+          },
+        ],
     }
   }
 
@@ -90,7 +90,7 @@ export const getNavPanels = (currUser, showAll) => {
             jrkey: 'whatsNew', // used for mgjr-np-mgb-{jrkey} id generation for joyride system
             explainClickAction: "What's New",
             to: '/whats-new',
-            icon: 'gift',
+            icon: 'newspaper',
             content: "What's New",
           },
           {

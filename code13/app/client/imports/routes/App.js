@@ -27,7 +27,6 @@ import NetworkStatusMsg from '/client/imports/routes/Nav/NetworkStatusMsg'
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 
 import urlMaker from './urlMaker'
-import './webkitSmallScrollbars.css'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 import { parseChannelName, makeChannelName, ChatChannels } from '/imports/schemas/chats'

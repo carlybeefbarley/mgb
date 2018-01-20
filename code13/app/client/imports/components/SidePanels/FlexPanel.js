@@ -25,16 +25,16 @@ import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 
 const flexPanelViews = [
   // default_level is defined in expectedToolbars.js (probably = 6)
-  {
-    tag: 'chat',
-    lev: 1,
-    name: 'chat',
-    icon: 'chat',
-    header: 'Chat',
-    el: fpChat,
-    superAdminOnly: false,
-    mobileUI: true,
-  },
+  // {
+  //   tag: 'chat',
+  //   lev: 1,
+  //   name: 'chat',
+  //   icon: 'chat',
+  //   header: 'Chat',
+  //   el: fpChat,
+  //   superAdminOnly: false,
+  //   mobileUI: true,
+  // },
   {
     tag: 'assets',
     lev: 1,
@@ -204,7 +204,8 @@ const FlexPanel = React.createClass({
     return _.find(flexPanelViews, ['tag', selectedViewTagParts[0]]) || defaultReturnValue
   },
 
-  // Return the suffix (if any) of this.props.selectedViewTag.. For example 'chats.general' will return "general";    but 'chats' will return ""
+  // Return the suffix (if any) of this.props.selectedViewTag.
+  // For example 'chats.general' will return "general";    but 'chats' will return ""
   getSubNavParam() {
     const selectedViewTagParts = this.props.selectedViewTag.split('.')
     return selectedViewTagParts[1] || ''

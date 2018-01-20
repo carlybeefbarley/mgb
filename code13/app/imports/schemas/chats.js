@@ -301,7 +301,7 @@ export const ChatChannels = {
 
 // TODO: Move to SpecialGlobals.js
 export const chatParams = {
-  maxChatMessageTextLen: 220, // Maximum number of chars in a single message
+  maxChatMessageTextLen: 500, // Maximum number of chars in a single message
   maxClientChatHistory: 200, // Maximum number of historical messages to send back to client
   defaultChannelName: ChatChannels['GENERAL'].channelName,
 }

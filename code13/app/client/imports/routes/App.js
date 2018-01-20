@@ -23,9 +23,9 @@ import { projectMakeSelector, defaultProjectSorter } from '/imports/schemas/proj
 import NavBar from '/client/imports/components/Nav/NavBar'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
 import FlexPanel from '/client/imports/components/SidePanels/FlexPanel'
+import Chat from '/client/imports/components/SidePanels/fpChat'
 import NetworkStatusMsg from '/client/imports/routes/Nav/NetworkStatusMsg'
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
-
 import urlMaker from './urlMaker'
 
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
@@ -394,6 +394,20 @@ class AppUI extends Component {
           meta={[{ name: 'My Game Builder', content: 'MyGameBuilder' }]}
         />
         <JoyrideRootHelper currUser={currUser} />
+        <Chat
+          currUser={currUser}
+          currUserProjects={currUserProjects}
+          user={user}
+          chatChannelTimestamps={chatChannelTimestamps}
+          hazUnreadChats={hazUnreadChats}
+          requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
+          panelWidth={flexPanelWidth}
+          isSuperAdmin={isSuperAdmin}
+          currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+          subNavParam={flexPanelQueryValue ? flexPanelQueryValue.split('.')[1] : ''}
+          handleChangeSubNavParam={this.handleChangeSubNavParam}
+          location={this.context.urlLocation}
+        />
         <div>
           {!isGuest &&
           !isHocRoute && (

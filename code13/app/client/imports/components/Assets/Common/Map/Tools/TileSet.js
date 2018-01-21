@@ -257,7 +257,7 @@ export default class TileSet extends React.Component {
     }
 
     const infolink = '/api/asset/tileset-info/' + asset._id
-    HTTP.get(infolink, (error, data) => {
+    HTTP.get(infolink, (error, { data }) => {
       this.props.updateTilesetFromData(data)
     })
   }
@@ -271,7 +271,7 @@ export default class TileSet extends React.Component {
       return
     }
     const infolink = '/api/asset/tileset-info/' + asset._id
-    HTTP.get(infolink, (error, data) => {
+    HTTP.get(infolink, (error, { data }) => {
       this.props.updateTilesetFromData(data, this.tileset, true)
     })
   }

@@ -125,12 +125,12 @@ export default class Animations extends React.Component {
     if (asset) {
       this.setState({ isLoading: true })
 
-      HTTP.get('/api/asset/tileset-info/' + asset._id, (error, data) => {
+      HTTP.get('/api/asset/tileset-info/' + asset._id, (error, { data }) => {
         if (data.tilecount > 1) {
           this.setState({ showModal: true })
           this.getGraphicFrames(data, val)
         }
-      }).done(() => {
+
         this.setState({ isLoading: false })
       })
     }

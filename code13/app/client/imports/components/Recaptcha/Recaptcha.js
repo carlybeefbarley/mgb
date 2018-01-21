@@ -27,14 +27,18 @@ class Recaptcha extends Component {
     }
 
     window.handleRecaptchaResponse = response => {
-      HTTP.call('GET', `/api/validate-recaptcha/${encodeURIComponent(response)}`, (error, isValid) => {
-        if (!isValid) return
+      HTTP.call(
+        'GET',
+        `/api/validate-recaptcha/${encodeURIComponent(response)}`,
+        (error, { data: isValid }) => {
+          if (!isValid) return
 
-        const { onComplete } = this.props
+          const { onComplete } = this.props
 
-        delete window.handleRecaptchaResponse
-        onComplete()
-      })
+          delete window.handleRecaptchaResponse
+          onComplete()
+        },
+      )
     }
 
     const $script = document.createElement('script')

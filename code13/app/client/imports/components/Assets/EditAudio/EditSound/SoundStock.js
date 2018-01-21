@@ -44,7 +44,7 @@ export default class SoundStock extends React.Component {
   searchOnSubmit() {
     let self = this
     const infolink = makeCDNLink('/api/asset/sound/name/' + this.state.searchField)
-    HTTP.get(infolink, (error, sounds) => {
+    HTTP.get(infolink, (error, { data: sounds }) => {
       // async call component might be unmounted
       if (!this.isReallyMounted) return
       self.setState({ sounds })
@@ -77,7 +77,7 @@ export default class SoundStock extends React.Component {
     } else {
       let self = this
       const infolink = '/api/asset/sound/' + soundID
-      HTTP.get(infolink, (error, data) => {
+      HTTP.get(infolink, (error, { data }) => {
         player.src = data.dataUri
         player.play()
         self.setState({ playingSoundID: soundID })
@@ -145,7 +145,7 @@ export default class SoundStock extends React.Component {
     } else {
       let self = this
       const infolink = '/api/asset/sound/' + soundID
-      HTTP.get(infolink, (error, data) => {
+      HTTP.get(infolink, (error, { data }) => {
         player.src = data.dataUri
         self.props.importSound(player, 'Imported stock sound')
       })

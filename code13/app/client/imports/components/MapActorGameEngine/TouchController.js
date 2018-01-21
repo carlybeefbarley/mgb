@@ -16,7 +16,7 @@ export default class TouchController extends React.Component {
       this.node.style.opacity = 0.5
     }, 100)
   }
-  handleInput(e, up) {
+  handleInput = (e, up) => {
     const key = e.target.dataset.key || e.target.parentNode.dataset.key
     const which = parseInt(e.target.dataset.which || e.target.parentNode.dataset.which, 10)
 

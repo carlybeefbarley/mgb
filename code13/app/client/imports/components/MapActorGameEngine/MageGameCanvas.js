@@ -11,7 +11,7 @@ export default class MageGameCanvas extends React.Component {
     super(props)
   }
 
-  cell(x, y, fReturnMinusOneIfOutOfBounds = false) {
+  cell = (x, y, fReturnMinusOneIfOutOfBounds = false) => {
     if (
       (fReturnMinusOneIfOutOfBounds && y > this.props.cellsHigh) ||
       x > this.props.cellsWide ||
@@ -22,11 +22,11 @@ export default class MageGameCanvas extends React.Component {
     return y * this.props.cellsWide + x // Arranged in rows
   }
 
-  loadActorByName(actorName) {
+  loadActorByName = actorName => {
     console.log(`actor not preloaded: ${actorName}`)
   }
 
-  _drawActor(ctx, image, effect, x, y) {
+  _drawActor = (ctx, image, effect, x, y) => {
     ctx.save()
     switch (effect) {
       case 'rotate90':
@@ -65,7 +65,7 @@ export default class MageGameCanvas extends React.Component {
     ctx.restore()
   }
 
-  _drawPassiveLayer(map, actors, tileData, layerIdx, tweenCount) {
+  _drawPassiveLayer = (map, actors, tileData, layerIdx, tweenCount) => {
     const { _ctx } = this
     const startY = 0
     const endY = map.metadata.height
@@ -94,7 +94,7 @@ export default class MageGameCanvas extends React.Component {
   }
 
   // Render from ActiveActors[] array
-  _drawActiveLayer(map, actorData, tileData, activeActors, tweenCount) {
+  _drawActiveLayer = (map, actorData, tileData, activeActors, tweenCount) => {
     const { _ctx } = this
 
     // TODO - implement built-in scroll+crop system
@@ -124,7 +124,7 @@ export default class MageGameCanvas extends React.Component {
     }
   }
 
-  doBlit(mapData, actorData, tileData, activeActors, tweenCount) {
+  doBlit = (mapData, actorData, tileData, activeActors, tweenCount) => {
     const ctx = this._ctx
     if (!ctx) return
 
@@ -137,7 +137,7 @@ export default class MageGameCanvas extends React.Component {
     this._drawPassiveLayer(mapData, actorData, tileData, 2, tweenCount)
   }
 
-  prepCanvas(c) {
+  prepCanvas = c => {
     this._canvas = c
     this._ctx = c ? c.getContext('2d') : null // Try alpha = false?
   }

@@ -193,19 +193,19 @@ class MoreProperties extends React.Component {
     updateSavedProps: PropTypes.function,
   }
 
-  changeName(index, changes) {
+  changeName = (index, changes) => {
     const { savedProps } = this.props
     savedProps[index].name = changes.name
     this.props.updateSavedProps(savedProps)
   }
 
-  changeValue(index, changes) {
+  changeValue = (index, changes) => {
     const { savedProps } = this.props
     savedProps[index].value = changes.value
     this.props.updateSavedProps(savedProps)
   }
 
-  removeKeyVal(index) {
+  removeKeyVal = index => {
     this.props.savedProps.splice(index, 1)
     this.props.updateSavedProps(this.props.savedProps)
   }

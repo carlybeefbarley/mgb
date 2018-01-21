@@ -137,16 +137,16 @@ export default class EditMap extends React.Component {
     this._mgb_content2 = v
   }
 
-  getImageData() {
+  getImageData = () => {
     return this.refs.map.generatePreview()
   }
 
-  isMapBroken() {
+  isMapBroken = () => {
     const c2 = this.props.asset.content2
 
     return !Object.keys(c2).length || typeof c2.layers !== 'object'
   }
-  setInitialStateFromContent() {
+  setInitialStateFromContent = () => {
     if (this.isMapBroken()) {
       this.createNewMap()
       return
@@ -174,7 +174,7 @@ export default class EditMap extends React.Component {
     }))
   }
 
-  createNewMap() {
+  createNewMap = () => {
     this.mgb_content2 = TileHelper.genNewMap(10, 10)
     this.cache = new Cache(this.mgb_content2, () => {
       // unmounted during cache fetching
@@ -187,7 +187,7 @@ export default class EditMap extends React.Component {
     })
   }
 
-  updateMapData(data = this.mgb_content2, reason = 'Imported map') {
+  updateMapData = (data = this.mgb_content2, reason = 'Imported map') => {
     this.mgb_content2 = data
     this.cache.update(this.mgb_content2, () => {
       this.quickSave(reason)
@@ -242,7 +242,7 @@ export default class EditMap extends React.Component {
    * the 'viewers' indicator. It helps users know other people are looking at some asset
    * right now
    */
-  doSnapshotActivity() {
+  doSnapshotActivity = () => {
     let passiveAction = {
       isMap: true, // This could in future have info such as which layer is being edited, but not needed yet
     }
@@ -287,7 +287,7 @@ export default class EditMap extends React.Component {
     this.cache = null
   }
 
-  enableTrait(trait) {
+  enableTrait = trait => {
     const out = {}
     for (let i in trait) {
       out[i] = trait[i].bind(this)
@@ -295,11 +295,11 @@ export default class EditMap extends React.Component {
     return out
   }
 
-  getUser() {
+  getUser = () => {
     return this.props.currUser.profile.name
   }
 
-  saveForUndo(reason = '', skipRedo = false) {
+  saveForUndo = (reason = '', skipRedo = false) => {
     // this will prevent update between editing step and next save
     this.preventUpdates = true
     if (this.ignoreUndo) return
@@ -317,7 +317,7 @@ export default class EditMap extends React.Component {
     this.setState({ undo })
   }
 
-  doUndo() {
+  doUndo = () => {
     if (!this.mgb_undo.length) return
     const pop = this.mgb_undo.pop()
     // save current state
@@ -340,7 +340,7 @@ export default class EditMap extends React.Component {
 
     this.setState({ content2: data })
   }
-  doRedo() {
+  doRedo = () => {
     if (!this.mgb_redo.length) return
 
     const pop = this.mgb_redo.pop()
@@ -363,7 +363,7 @@ export default class EditMap extends React.Component {
     this.setState({ content2: data })
   }
 
-  enableMode(mode) {
+  enableMode = mode => {
     // this seems a little bit strange - state and props have same variable
     // probably state should hold only props.options ?
     this.options.mode = mode
@@ -371,7 +371,7 @@ export default class EditMap extends React.Component {
     this.saveMeta()
   }
 
-  handleSave(data, reason, thumbnail, skipUndo = false) {
+  handleSave = (data, reason, thumbnail, skipUndo = false) => {
     this.preventUpdates = false
     if (!this.props.canEdit) {
       this.props.editDeniedReminder()
@@ -391,11 +391,11 @@ export default class EditMap extends React.Component {
     this.saveMeta()
   }
 
-  quickSave(reason = 'noReason', skipUndo = true, thumbnail = null) {
+  quickSave = (reason = 'noReason', skipUndo = true, thumbnail = null) => {
     return this.handleSave(this.mgb_content2, reason, thumbnail, skipUndo)
   }
 
-  _saveMeta() {
+  _saveMeta = () => {
     if (this.props.canEdit) this.props.handleMetadataChange(this.mgb_meta)
   }
   // probably copy of data would be better to hold .. or not research strings vs objects
@@ -404,10 +404,10 @@ export default class EditMap extends React.Component {
     return JSON.stringify(data)
   }
 
-  showLoading(elm) {
+  showLoading = elm => {
     if (elm) setTimeout(() => elm.classList.add('show'), 5)
   }
-  renderLoading() {
+  renderLoading = () => {
     return (
       <div ref={this.showLoading} className="loading-notification">
         Working in background...

@@ -53,7 +53,7 @@ export default class Channel extends React.Component {
     }
   }
 
-  getBuffer() {
+  getBuffer = () => {
     if (!this.buffer) return null
     const bufferLength = Math.round(this.props.duration * this.props.audioCtx.sampleRate)
     const delayLength = Math.round(this.sample.delay * this.props.audioCtx.sampleRate)
@@ -70,7 +70,7 @@ export default class Channel extends React.Component {
     return returnBuffer
   }
 
-  getSelectBuffer(selectStart, selectDuration) {
+  getSelectBuffer = (selectStart, selectDuration) => {
     // in sec
     let bufferLength = Math.round(selectDuration * this.props.audioCtx.sampleRate)
     let selectBuffer = new Float32Array(bufferLength)
@@ -89,11 +89,11 @@ export default class Channel extends React.Component {
     return selectBuffer
   }
 
-  forceDraw(channel) {
+  forceDraw = channel => {
     this.initWave(channel)
   }
 
-  initWave(channel) {
+  initWave = channel => {
     channel = channel || this.props.channel
     if (!channel.dataUri) return
 
@@ -111,7 +111,7 @@ export default class Channel extends React.Component {
     reader.readAsArrayBuffer(soundBlob)
   }
 
-  initAudio(songTime = 0) {
+  initAudio = (songTime = 0) => {
     if (!this.buffer) return
     this.clearAudio()
     this.sample.duration = Math.round(this.buffer.length / this.props.audioCtx.sampleRate)
@@ -143,7 +143,7 @@ export default class Channel extends React.Component {
     //     }, 0)
   }
 
-  clearAudio() {
+  clearAudio = () => {
     if (this.source) {
       this.source.stop()
       this.source.disconnect(0)
@@ -151,11 +151,11 @@ export default class Channel extends React.Component {
     if (this.gainNode) this.gainNode.disconnect(0)
   }
 
-  calculateOffsetX() {
+  calculateOffsetX = () => {
     return (this.props.channel.delay || 0) * this.props.pxPerSecond
   }
 
-  drawWave() {
+  drawWave = () => {
     this.waveCtx.clearRect(0, 0, this.props.viewWidth, this.props.canvasHeight)
     this.drawTimeline()
     this.drawSampleBG()
@@ -202,12 +202,12 @@ export default class Channel extends React.Component {
     this.waveCtx.restore()
   }
 
-  setViewOffset(seconds) {
+  setViewOffset = seconds => {
     this.viewOffset = seconds
     this.drawWave()
   }
 
-  drawSampleBG() {
+  drawSampleBG = () => {
     this.waveCtx.save()
     this.waveCtx.globalAlpha = 0.2
     this.waveCtx.fillStyle = '#4dd2ff'
@@ -217,7 +217,7 @@ export default class Channel extends React.Component {
     this.waveCtx.restore()
   }
 
-  drawTimeline() {
+  drawTimeline = () => {
     let count = Math.floor(this.props.duration) + 1
     const viewOffsetX = this.viewOffset * this.props.pxPerSecond
     this.waveCtx.save()
@@ -234,7 +234,7 @@ export default class Channel extends React.Component {
     this.waveCtx.restore()
   }
 
-  dataURItoBlob(dataURI) {
+  dataURItoBlob = dataURI => {
     var byteString = atob(dataURI.split(',')[1])
     var mimeString = dataURI
       .split(',')[0]
@@ -249,7 +249,7 @@ export default class Channel extends React.Component {
     return blob
   }
 
-  onClick(e) {
+  onClick = e => {
     // paste sample
     if (this.props.isPaste) {
       this.pasteSample(e)
@@ -262,7 +262,7 @@ export default class Channel extends React.Component {
     }
   }
 
-  onDragStart(e) {
+  onDragStart = e => {
     if (e.touches && e.touches[0]) e = e.touches[0]
 
     e.dataTransfer.setData('text', 'startDrag')
@@ -283,7 +283,7 @@ export default class Channel extends React.Component {
     this.dragStartX = e.clientX
   }
 
-  onDrag(e) {
+  onDrag = e => {
     if (e.touches && e.touches[0]) e = e.touches[0]
 
     if (e.clientX == 0 && e.clientY == 0) return // avoiding weird glitch when at the end of drag 0,0 coords returned
@@ -310,7 +310,7 @@ export default class Channel extends React.Component {
     }
   }
 
-  onDragEnd(e) {
+  onDragEnd = e => {
     if (e.touches && e.touches[0]) e = e.touches[0]
 
     // selecting
@@ -331,7 +331,7 @@ export default class Channel extends React.Component {
     }
   }
 
-  pastePreview(e) {
+  pastePreview = e => {
     if (this.props.isPaste && this.props.pasteData) {
       // paste tool is actived
       this.clearPastePreview()
@@ -362,13 +362,13 @@ export default class Channel extends React.Component {
     }
   }
 
-  clearPastePreview() {
+  clearPastePreview = () => {
     if (this.props.isPaste) {
       this.pasteCtx.clearRect(0, 0, this.props.viewWidth, this.props.canvasHeight)
     }
   }
 
-  pasteSample(e) {
+  pasteSample = e => {
     if (this.props.isPaste && this.props.pasteData) {
       const canvasX = this.waveCanvas.getBoundingClientRect().left
       const viewOffsetX = this.viewOffset * this.props.pxPerSecond
@@ -408,7 +408,7 @@ export default class Channel extends React.Component {
     }
   }
 
-  saveNewBuffer() {
+  saveNewBuffer = () => {
     this.initAudio()
     this.drawWave()
     const channelData = this.buffer.getChannelData(0)
@@ -418,7 +418,7 @@ export default class Channel extends React.Component {
     })
   }
 
-  clearBufferPart(selectStart, selectDuration) {
+  clearBufferPart = (selectStart, selectDuration) => {
     let startId = this.timeToArrayId(selectStart)
     let endId = this.timeToArrayId(selectStart + selectDuration)
     const channelData = this.buffer.getChannelData(0)
@@ -428,7 +428,7 @@ export default class Channel extends React.Component {
     this.saveNewBuffer()
   }
 
-  eraseBufferPart(selectStart, selectDuration) {
+  eraseBufferPart = (selectStart, selectDuration) => {
     const startId = this.timeToArrayId(selectStart)
     const endId = this.timeToArrayId(selectStart + selectDuration)
     const deleteLength = endId - startId
@@ -447,7 +447,7 @@ export default class Channel extends React.Component {
     this.saveNewBuffer()
   }
 
-  timeToArrayId(time) {
+  timeToArrayId = time => {
     let ind
     if (this.sample.delay > time) {
       ind = 0
@@ -459,7 +459,7 @@ export default class Channel extends React.Component {
     return Math.round(ind * this.props.audioCtx.sampleRate)
   }
 
-  copyData(source, offset, destination) {
+  copyData = (source, offset, destination) => {
     if (offset >= destination.length) return
     const end = destination.length < offset + source.length ? destination.length : offset + source.length
     for (let i = offset; i < end; i++) {
@@ -467,25 +467,25 @@ export default class Channel extends React.Component {
     }
   }
 
-  clearSelect() {
+  clearSelect = () => {
     this.selectX = 0
     this.selectWidth = 0
     this.drawSelect()
   }
 
-  drawSelect() {
+  drawSelect = () => {
     this.selectDiv.style.left = this.selectX + 'px'
     this.selectDiv.style.width = this.selectWidth + 'px'
   }
 
-  changeVolume(volume) {
+  changeVolume = volume => {
     this.props.doSaveStateForUndo('Volume change')
     this.props.channel.volume = volume
     if (this.gainNode) this.gainNode.gain.value = volume
     this.props.saveChannel(this.props.channel)
   }
 
-  deleteChannel() {
+  deleteChannel = () => {
     this.clearAudio()
     this.props.deleteChannel(this.props.nr)
   }

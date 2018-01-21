@@ -40,7 +40,7 @@ export default class MaskLayer extends React.Component {
   }
 
   /* endof lifecycle functions */
-  adjustCanvas() {
+  adjustCanvas = () => {
     const mask = this.refs.mask
 
     const w = mask.parentElement.offsetWidth
@@ -51,7 +51,7 @@ export default class MaskLayer extends React.Component {
     this.alignToLayer()
   }
 
-  alignToLayer() {
+  alignToLayer = () => {
     if (this.props.layer && this.props.layer.refs.layer) {
       this.refs.layer.style['transform'] = this.props.layer.refs.layer.style['transform']
 
@@ -69,13 +69,13 @@ export default class MaskLayer extends React.Component {
     }
   }
 
-  draw() {
+  draw = () => {
     this.adjustCanvas()
     this.drawMask()
   }
 
   // Draw darker mask outside of active map area that covers the grid
-  drawMask() {
+  drawMask = () => {
     const camera = this.props.map.camera
     const data = this.props.map.data
 

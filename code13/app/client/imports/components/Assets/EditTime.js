@@ -53,20 +53,20 @@ export class EditTimeCounter {
     this._raf()
   }
 
-  assetUpdated() {
+  assetUpdated = () => {
     this.lastActivity = Date.now()
   }
 
-  doUnmount() {
+  doUnmount = () => {
     this.unmount = true
     this._raf = () => {}
   }
 
-  getTime() {
+  getTime = () => {
     return this.formatTime(this.timeSec)
   }
 
-  updateTimer() {
+  updateTimer = () => {
     const now = Date.now()
     if (!this.unmount && now < this.lastActivity + this.inactivityInterval) {
       const deltaTime = now - this.lastTime
@@ -92,7 +92,7 @@ export class EditTimeCounter {
     }
   }
 
-  formatTime(timeSec) {
+  formatTime = timeSec => {
     let formatedTime = '0s'
     if (timeSec < 60) {
       formatedTime = timeSec + 's'

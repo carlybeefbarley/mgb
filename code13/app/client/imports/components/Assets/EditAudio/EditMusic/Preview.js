@@ -38,17 +38,17 @@ export default class Preview extends React.Component {
     this.draw()
   }
 
-  loadDataUri(dataUri) {
+  loadDataUri = dataUri => {
     if (!dataUri) return
     this.converter.dataUriToBuffer(dataUri, this.loadBuffer.bind(this))
   }
 
-  loadBuffer(buffer) {
+  loadBuffer = buffer => {
     this.buffer = buffer
     this.draw()
   }
 
-  draw() {
+  draw = () => {
     if (!this.buffer) return
 
     const data = {
@@ -62,7 +62,7 @@ export default class Preview extends React.Component {
     this.drawSlider()
   }
 
-  drawSlider() {
+  drawSlider = () => {
     if (this.props.duration * this.props.pxPerSecond > this.props.viewWidth) {
       const visibleDuration = this.props.viewWidth / this.props.pxPerSecond
       const previewPxPerSecond = this.state.previewWidth / this.props.duration
@@ -77,7 +77,7 @@ export default class Preview extends React.Component {
     this.previewSlider.style.width = this.sliderWidth + 'px'
   }
 
-  onDragStart(e) {
+  onDragStart = e => {
     if (this.sliderWidth == 0) return // no slider to draw
 
     if (e.touches && e.touches[0]) e = e.touches[0]
@@ -90,7 +90,7 @@ export default class Preview extends React.Component {
     this.dragStartX = e.clientX
   }
 
-  onDrag(e) {
+  onDrag = e => {
     if (e.touches && e.touches[0]) e = e.touches[0]
 
     if (e.clientX == 0 && e.clientY == 0) return // avoiding weid glitch when at the end of drag 0,0 coords returned
@@ -104,17 +104,17 @@ export default class Preview extends React.Component {
     this.calculateViewOffset()
   }
 
-  onDragEnd(e) {}
+  onDragEnd = e => {}
 
-  calculateViewOffset() {
+  calculateViewOffset = () => {
     const previewPxPerSecond = this.state.previewWidth / this.props.duration
     const viewOffset = this.sliderX / previewPxPerSecond // offset in seconds
     this.props.setViewOffset(viewOffset)
   }
 
-  update(songTime) {}
+  update = songTime => {}
 
-  getThumbnail() {
+  getThumbnail = () => {
     this.thumbnailCtx.putImageData(this.previewCtx.getImageData(0, 0, 290, 128), 0, 0)
     return this.thumbnailCanvas.toDataURL('image/png')
   }

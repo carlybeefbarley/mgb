@@ -1,7 +1,7 @@
 import TileMapLayer from './TileMapLayer.js'
 
 export default class ActorLayer extends TileMapLayer {
-  getInfo() {
+  getInfo = () => {
     return this.tilePosInfo
   }
 }

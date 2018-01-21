@@ -47,7 +47,7 @@ export default class ActorMapArea extends BaseMapArea {
     return fetchAssetByUri(uri, false) // 2nd param is cache - but it tends to overcache - etag would be better
   }
 
-  handleMouseInfo(e) {
+  handleMouseInfo = e => {
     // Conflicts with getting pos offsets
     if (e.target.tagName !== 'CANVAS') {
       return
@@ -64,7 +64,7 @@ export default class ActorMapArea extends BaseMapArea {
   }
 
   // render related methods
-  getInfo(info, count, i) {
+  getInfo = (info, count, i) => {
     if (!info.gid) {
       return null
     }
@@ -113,7 +113,7 @@ export default class ActorMapArea extends BaseMapArea {
     )
   }
 
-  getAllInfo() {
+  getAllInfo = () => {
     const ret = []
     let activeLayer = this.getActiveLayer()
     let layerInfo = activeLayer ? activeLayer.getInfo() : null
@@ -151,7 +151,7 @@ export default class ActorMapArea extends BaseMapArea {
     return ret.reverse()
   }
 
-  renderMap() {
+  renderMap = () => {
     const data = this.data
 
     if (!data || !data.layers) return <div className="map-empty" ref="mapElement" />
@@ -269,7 +269,7 @@ export default class ActorMapArea extends BaseMapArea {
     )
   }
 
-  renderMage() {
+  renderMage = () => {
     const { asset, playDataIsReady } = this.props
     const isMgb1Game = asset.text.startsWith('Imported from MGB1')
 

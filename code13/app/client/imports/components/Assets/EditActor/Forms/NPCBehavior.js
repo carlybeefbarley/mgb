@@ -9,7 +9,7 @@ export default class NPCBehavior extends BaseForm {
     return this.props.asset.content2.databag.npc
   }
 
-  createResponses(num) {
+  createResponses = num => {
     const responseChoice = 'responseChoice' + num
     const dropsObjectOnChoice = 'dropsObjectOnChoice' + num
     const responseChoiceDropPersistsYN = 'responseChoice' + num + 'DropPersistsYN'

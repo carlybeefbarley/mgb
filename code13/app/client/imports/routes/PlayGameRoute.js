@@ -137,7 +137,7 @@ class PlayCodeGame extends React.Component {
   /**
    * Adjusts iframe - to fit in the current window
    * */
-  adjustIframeSize() {
+  adjustIframeSize = () => {
     // fullscreen - don't adjust anything
     if (this.refs.iframe.offsetHeight === window.innerHeight) return
 
@@ -177,7 +177,7 @@ class PlayCodeGame extends React.Component {
   /**
    * Restarts on game (reloads iframe)
    * */
-  restart() {
+  restart = () => {
     if (this.refs.iframe) {
       this.refs.iframe.setAttribute('src', this.refs.iframe.src)
       this.props.incrementPlayCountCb()
@@ -186,7 +186,7 @@ class PlayCodeGame extends React.Component {
   /**
    * Enables fullscreen on game's iframe
    * */
-  fullscreen() {
+  fullscreen = () => {
     // TODO: find out
     const rfs =
       this.refs.iframe.requestFullScreen ||
@@ -200,7 +200,7 @@ class PlayCodeGame extends React.Component {
   /**
    * Checks if we can offer fullscreen functionality
    * */
-  canDoFullScreen() {
+  canDoFullScreen = () => {
     const { allowFullScreen } = this.props.metadata
     const rfs =
       document.body.requestFullScreen ||
@@ -211,7 +211,7 @@ class PlayCodeGame extends React.Component {
     return allowFullScreen && rfs
   }
 
-  createConfig() {
+  createConfig = () => {
     const toolbarConfig = {
       buttons: [
         {

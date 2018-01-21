@@ -66,7 +66,7 @@ export default class GameScreen extends React.Component {
     this.requestAdjustIframe()
   }
 
-  getReference() {
+  getReference = () => {
     // TODO - change to use the ref={ c => { codestuff } } pattern that is now recommended.
     //        This will also help with the TODO in EditCode:_handle_iFrameMessageReceiver
     this.iFrameWindow =
@@ -76,7 +76,7 @@ export default class GameScreen extends React.Component {
   }
 
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
-  handleMessage(event) {
+  handleMessage = event => {
     // Message receivers like this can receive a lot of crap from malicious windows
     // debug tools etc, so we have to be careful to filter out what we actually care
     // about
@@ -146,7 +146,7 @@ export default class GameScreen extends React.Component {
   onClosePopupObeserverInterval = 0
 
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
-  isIframeReady() {
+  isIframeReady = () => {
     const lastVal = this._isIframeReady
     // reset ready status for next stop
     this._isIframeReady = false
@@ -154,7 +154,7 @@ export default class GameScreen extends React.Component {
   }
 
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
-  postMessage(messageObject) {
+  postMessage = messageObject => {
     if (messageObject.mgbCommand === 'startRun') {
       this.setState({ isHidden: false })
       if (GameScreen.popup) {
@@ -179,7 +179,7 @@ export default class GameScreen extends React.Component {
   }
 
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
-  popup() {
+  popup = () => {
     if (!GameScreen.popup || GameScreen.popup.closed) {
       GameScreen.popup = window.open(
         makeCDNLink('/codeEditSandbox.html'),
@@ -204,12 +204,12 @@ export default class GameScreen extends React.Component {
   }
 
   // this function will tell sandbox to send back message with iframe size
-  requestAdjustIframe() {
+  requestAdjustIframe = () => {
     if (this.props.isPlaying) this.postMessage({ mgbCommand: 'requestSizeUpdate' })
   }
 
   // adjust iFrame size. This is initiated by an event
-  adjustIframe(size) {
+  adjustIframe = size => {
     if (this.state.isMinimized || this.state.fullScreen) {
       return
     }

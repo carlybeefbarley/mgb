@@ -36,13 +36,13 @@ export default class NumberInput extends React.Component {
     })
   }
 
-  _calcValidatedValue(event) {
+  _calcValidatedValue = event => {
     const { min, max } = this.props
     const parsedVal = parseInt(event.target.value, 10) || min
     return _.clamp(parsedVal, min, max)
   }
 
-  _exposeChangedVal(event, callFinalAlso = false) {
+  _exposeChangedVal = (event, callFinalAlso = false) => {
     const { value, onValidChange, onFinalChange } = this.props
     const clampedVal = this._calcValidatedValue(event)
     this.setState({ internalValue: clampedVal })
@@ -52,11 +52,11 @@ export default class NumberInput extends React.Component {
     if (callFinalAlso && value !== clampedVal && onFinalChange) onFinalChange(clampedVal)
   }
 
-  _onBlur(event) {
+  _onBlur = event => {
     this._exposeChangedVal(event, true)
   }
 
-  _onKeyUp(event) {
+  _onKeyUp = event => {
     if (event.key === 'Enter') this._exposeChangedVal(event, true)
 
     if (event.key === 27) {
@@ -68,7 +68,7 @@ export default class NumberInput extends React.Component {
   // This will update the internal value.
   // If the current (internal) value is valid (i.e. a number between min and max), this function will
   // also send the current (valid) value up to the calling Component via props.onValidChange()
-  _onInternalChange(event) {
+  _onInternalChange = event => {
     const { onValidChange } = this.props
     this.setState({ internalValue: event.target.value }) // Note that this is a string and can be null or ""
     const enteredValAsNum = parseInt(event.target.value, 10)

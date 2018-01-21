@@ -41,18 +41,18 @@ export default class ImportMusic extends React.Component {
     })
   }
 
-  onDragOver(event) {
+  onDragOver = event => {
     event.stopPropagation()
     event.preventDefault()
     event.dataTransfer.dropEffect = 'copy'
     this.setState({ status: 'draggedOver' })
   }
 
-  onDragLeave(event) {
+  onDragLeave = event => {
     this.setState({ status: 'empty' })
   }
 
-  onDrop(event) {
+  onDrop = event => {
     event.stopPropagation()
     event.preventDefault()
 
@@ -75,7 +75,7 @@ export default class ImportMusic extends React.Component {
     }
   }
 
-  loadWav(file) {
+  loadWav = file => {
     let reader = new FileReader()
     reader.onload = e => {
       let audioData = e.target.result
@@ -100,7 +100,7 @@ export default class ImportMusic extends React.Component {
     reader.readAsArrayBuffer(file)
   }
 
-  loadEncoded(file) {
+  loadEncoded = file => {
     let reader = new FileReader()
     reader.onload = ev => {
       let audioData = ev.target.result
@@ -120,12 +120,12 @@ export default class ImportMusic extends React.Component {
     reader.readAsDataURL(file)
   }
 
-  audioLoaded(musicObject) {
+  audioLoaded = musicObject => {
     this.musicObject = musicObject
     this.wavesurfer.load(musicObject.src)
   }
 
-  togglePlayMusic() {
+  togglePlayMusic = () => {
     if (this.state.playerStatus === 'play') {
       this.wavesurfer.pause()
       this.setState({ playerStatus: 'pause' })
@@ -135,19 +135,19 @@ export default class ImportMusic extends React.Component {
     }
   }
 
-  stopMusic() {
+  stopMusic = () => {
     this.wavesurfer.play() // stopping unplayed audio causes error
     this.wavesurfer.stop()
     this.setState({ playerStatus: 'pause' })
   }
 
-  clearAll() {
+  clearAll = () => {
     if (this.wavesurfer.isPlaying()) this.wavesurfer.stop()
     this.wavesurfer.empty()
     this.setState({ status: 'empty', playerStatus: 'empty' })
   }
 
-  finishImport() {
+  finishImport = () => {
     // console.log(this.wavesurfer);
     this.props.importMusic(this.musicObject, 'Imported music')
   }

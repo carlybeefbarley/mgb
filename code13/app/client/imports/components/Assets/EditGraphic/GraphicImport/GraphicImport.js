@@ -46,18 +46,18 @@ export default class GraphicImport extends React.Component {
     }
   }
 
-  onDragOver(event) {
+  onDragOver = event => {
     event.stopPropagation()
     event.preventDefault()
     event.dataTransfer.dropEffect = 'copy'
     this.setState({ status: STATUS_DRAGGED_OVER })
   }
 
-  onDragLeave(event) {
+  onDragLeave = event => {
     this.setState({ status: STATUS_EMPTY })
   }
 
-  onDrop(event) {
+  onDrop = event => {
     event.stopPropagation()
     event.preventDefault()
 
@@ -90,7 +90,7 @@ export default class GraphicImport extends React.Component {
   }
 
   // Decode GIF. See https://en.wikipedia.org/wiki/GIF#File_format for details on the GIF file format
-  gifLoaded(img) {
+  gifLoaded = img => {
     let self = this
     let parser = new GifParser({ gif: img })
     parser.load(function() {
@@ -121,7 +121,7 @@ export default class GraphicImport extends React.Component {
   }
 
   // Decode PNG/JPG etc as if it were a spritesheet
-  spriteSheetLoaded(img) {
+  spriteSheetLoaded = img => {
     this.loadedImg = img
     this.setState({ imgWidth: img.width, imgHeight: img.height })
     this.canvas.width = img.width
@@ -134,13 +134,13 @@ export default class GraphicImport extends React.Component {
     this.drawGrid()
   }
 
-  drawImage() {
+  drawImage = () => {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.ctx.drawImage(this.loadedImg, 0, 0)
   }
 
   // Draw the grid of how the tiles will be extracted from the spriteSheet
-  drawGrid() {
+  drawGrid = () => {
     let self = this
     this.ctx.lineWidth = 1
     this.ctx.strokeStyle = '#000000'
@@ -165,19 +165,19 @@ export default class GraphicImport extends React.Component {
     }
   }
 
-  changeTileWidth(event) {
+  changeTileWidth = event => {
     const maxWidth = Math.min(this.state.imgWidth, this.props.maxTileWidth)
     const clampedWidth = _.clamp(parseInt(event.target.value), MIN_FRAME_WIDTH, maxWidth)
     this.setState({ tileWidth: clampedWidth })
   }
 
-  changeTileHeight(event) {
+  changeTileHeight = event => {
     const maxHeight = Math.min(this.state.imgHeight, this.props.maxTileHeight)
     const clampedHeight = _.clamp(parseInt(event.target.value), MIN_FRAME_HEIGHT, maxHeight)
     this.setState({ tileHeight: clampedHeight })
   }
 
-  calcNumFramesThisWouldImport() {
+  calcNumFramesThisWouldImport = () => {
     const state = this.state
     if (!state.imgWidth || !state.imgWidth) return 0
 

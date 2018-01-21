@@ -195,7 +195,7 @@ export default class Djent extends Component {
     this.setState({ preset })
   }
 
-  updateBPM(bpm) {
+  updateBPM = bpm => {
     if (!bpm) bpm = 100
     if (bpm < 50) bpm = 50
     if (bpm > 300) bpm = 300

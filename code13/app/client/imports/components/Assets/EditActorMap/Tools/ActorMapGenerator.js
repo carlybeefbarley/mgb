@@ -13,7 +13,7 @@ export default class ActorMapGenerator extends React.Component {
     this.state = { mode: 1, isLoading: false }
   }
 
-  handleRadioClick(data) {
+  handleRadioClick = data => {
     if (data.label === 'Maze' && !data.checked) this.setState({ mode: 1 })
     else if (data.label === 'Random Placement' && !data.checked) this.setState({ mode: 2 })
   }
@@ -28,7 +28,7 @@ export default class ActorMapGenerator extends React.Component {
   }
 
   // Algorithm from http://www.emanueleferonato.com/2015/06/30/pure-javascript-perfect-tile-maze-generation-with-a-bit-of-magic-thanks-to-phaser/
-  generateMaze() {
+  generateMaze = () => {
     const { data, activeTileset, activeLayer } = this.props
 
     if (!activeTileset) {
@@ -134,11 +134,11 @@ export default class ActorMapGenerator extends React.Component {
     this.setState({ isLoading: false })
   }
 
-  generateRandom() {
+  generateRandom = () => {
     this.props.onGenerateRandom(this.random)
   }
 
-  renderContent() {
+  renderContent = () => {
     if (this.state.mode === 1) {
       return (
         <Form.Field>

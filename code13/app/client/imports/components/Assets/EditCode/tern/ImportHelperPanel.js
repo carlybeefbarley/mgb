@@ -44,7 +44,7 @@ export default class ImportHelperPanel extends React.Component {
     if (!_.isEqual(this.props, nextProps)) this.updateOptionsFromProps(nextProps)
   }
 
-  updateOptionsFromProps({ knownImports, scripts }) {
+  updateOptionsFromProps = ({ knownImports, scripts }) => {
     this.popular = _.chain(settings.editCode.popularLibs)
       .filter(lib => !_.some(knownImports, k => lib.import === k.name))
       .map((lib, idx) => ({

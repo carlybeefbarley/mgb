@@ -69,14 +69,14 @@ export default class AbstractLayer extends Component {
   }
 
   // this layer has been selected
-  activate() {
+  activate = () => {
     if (this.activeMode) {
       this.props.setEditMode(this.activeMode)
     }
   }
 
   // this layer has been deselected - called before another layer activate
-  deactivate() {
+  deactivate = () => {
     //this.activeMode = this.props.getEditMode()
   }
 
@@ -115,11 +115,11 @@ export default class AbstractLayer extends Component {
     return this._isVisible && this.options.visible
   }
 
-  getInfo() {
+  getInfo = () => {
     return 'Please set info! Override getInfo@' + this.constructor.name
   }
 
-  adjustCanvas() {
+  adjustCanvas = () => {
     const canvas = this.refs.canvas
     if (!canvas) {
       return
@@ -133,7 +133,7 @@ export default class AbstractLayer extends Component {
     }
   }
 
-  queueDraw(timeout) {
+  queueDraw = timeout => {
     if (this.nextDraw <= this.now || this.nextDraw > this.now + timeout) {
       this.nextDraw = this.now + timeout
     }
@@ -142,15 +142,15 @@ export default class AbstractLayer extends Component {
     }
   }
 
-  draw() {
+  draw = () => {
     this.nextDraw = 0
   }
 
   // abstract
-  _draw(timestamp) {}
+  _draw = timestamp => {}
 
   /* events */
-  handleMouseUp(e) {
+  handleMouseUp = e => {
     this.mouseDown = false
 
     this.movementX = 0
@@ -169,7 +169,7 @@ export default class AbstractLayer extends Component {
     this.pointerMovementY = 0
   }
 
-  handleMouseDown(e) {
+  handleMouseDown = e => {
     this.mouseDown = true
 
     this.movementX = 0
@@ -194,7 +194,7 @@ export default class AbstractLayer extends Component {
     }
   }
 
-  handleMouseMove(e) {
+  handleMouseMove = e => {
     const ox = TileHelper.getOffsetX(e)
     const oy = TileHelper.getOffsetY(e)
 
@@ -213,13 +213,13 @@ export default class AbstractLayer extends Component {
     }
   }
 
-  _onKeyUp(e) {
+  _onKeyUp = e => {
     if (this.props.isActive) {
       this.onKeyUp && this.onKeyUp(e)
     }
   }
 
-  isCtrlKey(e) {
+  isCtrlKey = e => {
     return this.props.getCtrlModifier() || (e && e.ctrlKey)
   }
 

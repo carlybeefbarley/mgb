@@ -26,13 +26,13 @@ export default class ActorTileset extends React.Component {
     return this.props.tilesets[this.props.activeTileset]
   }
 
-  getTilesetLayer(tileset) {
+  getTilesetLayer = tileset => {
     if (ActorHelper.checks['Background'](tileset)) return 'Background'
     if (ActorHelper.checks['Active'](tileset)) return 'Active'
     if (ActorHelper.checks['Foreground'](tileset)) return 'Foreground'
   }
 
-  selectTileset(index, tileset) {
+  selectTileset = (index, tileset) => {
     this.props.clearActiveSelection()
     const selectedTile = new SelectedTile()
     const gid = selectedTile.getGid(tileset)
@@ -49,7 +49,7 @@ export default class ActorTileset extends React.Component {
     this.props.clearActiveSelection()
   }
 
-  onDropOnLayer(e) {
+  onDropOnLayer = e => {
     const asset = DragNDropHelper.getAssetFromEvent(e)
     joyrideStore.completeTag(`mgbjr-CT-MapTools-actors-drop`)
     if (!asset) return
@@ -90,7 +90,7 @@ export default class ActorTileset extends React.Component {
     })
   }
 
-  renderEmpty() {
+  renderEmpty = () => {
     return (
       <Segment id="mgbjr-MapTools-actors" style={{ display: 'flex', height: '100%' }}>
         <Label attached="top">Actors</Label>
@@ -111,7 +111,7 @@ export default class ActorTileset extends React.Component {
   }
 
   // Render functions for Actors
-  renderActors(from = 0, to = this.props.tilesets.length) {
+  renderActors = (from = 0, to = this.props.tilesets.length) => {
     return (
       <Grid columns="equal" style={{ width: '100%', margin: 0 }}>
         {this.renderTileset(from, to, this.genTilesetImage)}
@@ -119,7 +119,7 @@ export default class ActorTileset extends React.Component {
     )
   }
 
-  genTilesetImage(index, isActive, tileset) {
+  genTilesetImage = (index, isActive, tileset) => {
     const FittedImage = ({ src, height = '80px', ...rest }) => (
       // This is <div> instead of <img> so that it won't have the border that chrome puts on if src has no content
       <div
@@ -187,7 +187,7 @@ export default class ActorTileset extends React.Component {
     )
   }
 
-  renderTileset(from = 0, to = this.props.tilesets.length, genTemplate = this.genTilesetList) {
+  renderTileset = (from = 0, to = this.props.tilesets.length, genTemplate = this.genTilesetList) => {
     const tss = this.props.tilesets
     let ts = this.tileset
     const tilesets = []

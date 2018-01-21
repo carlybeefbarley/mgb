@@ -76,7 +76,7 @@ export default class ObjectLayer extends AbstractLayer {
     this._highlightedObject = val
   }
 
-  getInfo() {
+  getInfo = () => {
     let info
     if (this.info > -1) {
       const o = this.data.objects[this.info]
@@ -90,7 +90,7 @@ export default class ObjectLayer extends AbstractLayer {
     )
   }
 
-  getObjectType(o) {
+  getObjectType = o => {
     if (o.gid) {
       return 'tile'
     } else if (o.orig) {
@@ -109,14 +109,14 @@ export default class ObjectLayer extends AbstractLayer {
     }
   }
 
-  setPickedObjectSlow(id) {
+  setPickedObjectSlow = id => {
     this._pickedObject = id
     this.props.setPickedObject(id)
   }
-  getPickedObject() {
+  getPickedObject = () => {
     return this._pickedObject
   }
-  updateClonedObject() {
+  updateClonedObject = () => {
     if (this.selection.length) {
       this.clonedObject = this.selection.toBox()
     } else if (this.pickedObject instanceof Imitator) {
@@ -126,14 +126,14 @@ export default class ObjectLayer extends AbstractLayer {
     }
   }
   // this gets called when layer is activated
-  activate() {
+  activate = () => {
     if (!this.activeMode) {
       this.props.setEditMode(EditModes.rectangle)
     }
     super.activate()
   }
 
-  getMaxId() {
+  getMaxId = () => {
     let d
     let maxId = 1
     for (let i = 0; i < this.data.objects.length; i++) {
@@ -146,13 +146,13 @@ export default class ObjectLayer extends AbstractLayer {
     }
     return maxId
   }
-  pickObject(e) {
+  pickObject = e => {
     const ret = this.queryObject(e)
     this.setPickedObjectSlow(ret)
     return ret
   }
 
-  queryObject(e) {
+  queryObject = e => {
     let obj
     const x = TileHelper.getOffsetX(e) / this.camera.zoom - this.camera.x
     const y = TileHelper.getOffsetY(e) / this.camera.zoom - this.camera.y
@@ -184,10 +184,10 @@ export default class ObjectLayer extends AbstractLayer {
     return ret
   }
 
-  selectObject(obj) {
+  selectObject = obj => {
     this.setPickedObjectSlow(this.data.objects.indexOf(obj))
   }
-  selectObjects(box) {
+  selectObjects = box => {
     let ret = 0
     this.selection.clear()
     for (let i = 0; i < this.data.objects.length; i++) {
@@ -219,7 +219,7 @@ export default class ObjectLayer extends AbstractLayer {
     return ret
   }
 
-  removeObject() {
+  removeObject = () => {
     this.props.saveForUndo('Delete Object')
     if (this.pickedObject) {
       this.deleteObject(this.pickedObject.orig ? this.pickedObject.orig : this.pickedObject)
@@ -239,7 +239,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.draw()
   }
   /* Events */
-  handleMouseMove(ep) {
+  handleMouseMove = ep => {
     const e = ep.nativeEvent ? ep.nativeEvent : ep
     super.handleMouseMove(e)
 
@@ -261,7 +261,7 @@ export default class ObjectLayer extends AbstractLayer {
       this.draw()
     }
   }
-  handleMouseDown(ep) {
+  handleMouseDown = ep => {
     const e = ep.nativeEvent ? ep.nativeEvent : ep
 
     // TODO (stauzs): fix - move camera and object at the same time
@@ -292,7 +292,7 @@ export default class ObjectLayer extends AbstractLayer {
       this.mouseDown = false
     }
   }
-  handleMouseUp(ep) {
+  handleMouseUp = ep => {
     if (ep.target != this.refs.canvas) {
       return
     }
@@ -308,13 +308,13 @@ export default class ObjectLayer extends AbstractLayer {
       this.draw()
     }
   }
-  onMouseLeave() {
+  onMouseLeave = () => {
     if (this.highlightedObject) {
       this.deleteObject(this.highlightedObject)
       this.highlightedObject = null
     }
   }
-  onKeyUp(e) {
+  onKeyUp = e => {
     // don't steal events from input fields
     // TODO: this repeats at least in 2 places.. Create Helper - DRY!!!! :)
     if (['INPUT', 'SELECT', 'TEXTAREA'].indexOf(e.target.tagName) > -1) {
@@ -390,7 +390,7 @@ export default class ObjectLayer extends AbstractLayer {
   }
   /* End of Events */
 
-  updateHandles(obj) {
+  updateHandles = obj => {
     // tile
     if (obj.gid) {
       this.handles.update(obj.x, obj.y - obj.height, obj.width, obj.height, obj.rotation, obj.x, obj.y)
@@ -401,7 +401,7 @@ export default class ObjectLayer extends AbstractLayer {
       this.handles.update(obj.x, obj.y, obj.width, obj.height, obj.rotation, obj.x, obj.y)
     }
   }
-  clearSelection(alsoSelectedObjects = false) {
+  clearSelection = (alsoSelectedObjects = false) => {
     this.handles.clearActive()
     if (alsoSelectedObjects) {
       this.selection.clear()
@@ -411,7 +411,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.draw()
   }
 
-  deleteObject(obj) {
+  deleteObject = obj => {
     const index = this.data.objects.indexOf(obj)
     if (index > -1) {
       delete this.shapeBoxes[index]
@@ -419,12 +419,12 @@ export default class ObjectLayer extends AbstractLayer {
       this.clearCache()
     }
   }
-  rotateObject(rotation, object = this.pickedObject) {
+  rotateObject = (rotation, object = this.pickedObject) => {
     const angle = rotation * Math.PI / 180
     ObjectHelper.rotateObject(object, angle)
     this.draw()
   }
-  toggleFill() {
+  toggleFill = () => {
     this.props.saveForUndo('Toggle shape fill')
 
     //selection.selection
@@ -439,7 +439,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.props.handleSave('Toggle shape fill')
     this.draw()
   }
-  _toggleFill(obj) {
+  _toggleFill = obj => {
     if (obj && obj.orig) {
       if (obj.orig.polyline) {
         obj.orig.polygon = obj.orig.polyline
@@ -450,7 +450,7 @@ export default class ObjectLayer extends AbstractLayer {
       }
     }
   }
-  setPickedObject(obj, index) {
+  setPickedObject = (obj, index) => {
     this.setPickedObjectSlow(index)
     // TODO: make this more automatic
     if (obj.polygon || obj.polyline) {
@@ -464,7 +464,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.draw()
     this.highlightSelected()
   }
-  clearCache() {
+  clearCache = () => {
     Object.keys(this.shapeBoxes).forEach(k => {
       delete this.shapeBoxes[k]
     })
@@ -472,7 +472,7 @@ export default class ObjectLayer extends AbstractLayer {
   }
 
   /* DRAWING methods */
-  _draw(now, force = false) {
+  _draw = (now, force = false) => {
     this.now = now
     if (!force && this.nextDraw > now) {
       return
@@ -522,7 +522,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.highlightSelected()
   }
 
-  drawTile(obj) {
+  drawTile = obj => {
     const gid = obj.gid & ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG)
 
     const flipX = obj.gid & FLIPPED_HORIZONTALLY_FLAG ? -1 : 1
@@ -585,7 +585,7 @@ export default class ObjectLayer extends AbstractLayer {
     }
     this.ctx.restore()
   }
-  drawRectangle(obj) {
+  drawRectangle = obj => {
     const cam = this.camera
     let x = (cam.x + obj.x) * cam.zoom
     let y = (cam.y + obj.y) * cam.zoom
@@ -607,7 +607,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.ctx.strokeRect(0.5, 0.5, w, h)
     this.ctx.restore()
   }
-  drawEllipse(obj) {
+  drawEllipse = obj => {
     const cam = this.camera
     let x = (cam.x + obj.x) * cam.zoom
     let y = (cam.y + obj.y) * cam.zoom
@@ -630,7 +630,7 @@ export default class ObjectLayer extends AbstractLayer {
     // this.ctx.strokeRect(0.5, 0.5, w, h)
     this.ctx.restore()
   }
-  drawPolyline(o) {
+  drawPolyline = o => {
     const cam = this.camera
     let x = (cam.x + o.x) * cam.zoom
     let y = (cam.y + o.y) * cam.zoom
@@ -665,7 +665,7 @@ export default class ObjectLayer extends AbstractLayer {
     this.ctx.restore()
   }
   // this one is drawing on the grid layer - as overlay
-  highlightSelected() {
+  highlightSelected = () => {
     const grid = this.props.getOverlay()
     if (grid) {
       grid.draw()

@@ -5,7 +5,7 @@ import LayerTypes from './../Tools/LayerTypes.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 
 export default class ImageLayer extends AbstractLayer {
-  draw() {
+  draw = () => {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
     if (!this.options.visible) {
       return
@@ -33,13 +33,13 @@ export default class ImageLayer extends AbstractLayer {
     )
   }
 
-  getInfo() {
+  getInfo = () => {
     return this.options.image ? this.options.image : null
   }
-  handleMouseMove() {}
-  handleMouseDown() {}
-  onMouseLeave() {}
-  onDrop(e) {
+  handleMouseMove = () => {}
+  handleMouseDown = () => {}
+  onMouseLeave = () => {}
+  onDrop = e => {
     return this.props.onImageLayerDrop(e, this.options)
   }
 

@@ -68,7 +68,7 @@ export default class Layer extends React.Component {
     this.props.selectLayer(this.props.idx)
   }
 
-  selectFrame(frameID) {
+  selectFrame = frameID => {
     this.props.selectFrame(frameID)
   }
 

@@ -38,7 +38,7 @@ export default class GridLayer extends React.Component {
     document.body.removeEventListener('mouseup', this._mup)
   }
   /* endof lifecycle functions */
-  adjustCanvas() {
+  adjustCanvas = () => {
     const canvas = this.refs.canvas
     //const $el = $(canvas.parentElement)
 
@@ -51,21 +51,21 @@ export default class GridLayer extends React.Component {
     this.alignToLayer()
   }
 
-  alignToLayer() {
+  alignToLayer = () => {
     if (this.props.layer && this.props.layer.refs.layer) {
       this.refs.layer.style['transform'] = this.props.layer.refs.layer.style['transform']
       this.refs.layer.style['z-index'] = this.props.layer.refs.layer.style['z-index']
     }
   }
 
-  draw() {
+  draw = () => {
     this.adjustCanvas()
     if (this.props.map.options.showGrid) {
       this.drawGrid()
     }
   }
 
-  drawGrid() {
+  drawGrid = () => {
     // this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
     const camera = this.props.map.camera
     if (this.ctx.setLineDash) {

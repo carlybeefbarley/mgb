@@ -59,7 +59,7 @@ class SkillLinkCard extends Component {
   handlePopupOpen = () => this.setState({ showPopup: true })
   handlePopupClose = () => this.setState({ showPopup: false })
 
-  handleDoItAgainClick(skillPath) {
+  handleDoItAgainClick = skillPath => {
     const { joyride } = this.props
     this.setState({ isHovering: false, showPopup: false })
     joyride.startSkillPathTutorial(skillPath)

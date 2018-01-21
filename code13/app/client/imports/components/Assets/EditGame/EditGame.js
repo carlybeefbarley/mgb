@@ -165,7 +165,7 @@ export default class EditGame extends React.Component {
     activitySnapshots: PropTypes.array, // can be null whilst loading
   }
 
-  handleChange(key) {
+  handleChange = key => {
     const md = this.props.asset.metadata
     // would be nice to actually know which on input has been changed
     if (!md.allowLandscape && !md.allowPortrait) {
@@ -176,7 +176,7 @@ export default class EditGame extends React.Component {
     this.handleSave()
   }
 
-  handleSave(reason) {
+  handleSave = reason => {
     if (_isActorGame(this.props.asset.metadata))
       this.props.asset.metadata = Object.assign(this.props.asset.metadata, _actorGameSupportedControls)
     this.props.handleMetadataChange(this.props.asset.metadata)

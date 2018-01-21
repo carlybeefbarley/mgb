@@ -72,7 +72,7 @@ export default class MiniMap extends React.Component {
     if (prevProps.editCanvasHeight != this.props.editCanvasHeight) this.calculateVisibleRectDimensions()
   }
 
-  calculateVisibleRectDimensions() {
+  calculateVisibleRectDimensions = () => {
     if (this.props.editCanvasHeight && this.backup.editCanvas) {
       const editCanvas = this.backup.editCanvas
       const height =
@@ -89,7 +89,7 @@ export default class MiniMap extends React.Component {
   }
 
   /** Beware of react-anti-pattern. The parent is calling into this function!!! */
-  redraw(editCanvas, w, h) {
+  redraw = (editCanvas, w, h) => {
     if (editCanvas) {
       this.backup = {
         w,
@@ -159,7 +159,7 @@ export default class MiniMap extends React.Component {
     this.setState({ isTessellated: !this.state.isTessellated })
   }
 
-  drawVisibleRect() {
+  drawVisibleRect = () => {
     // check if editCanvas is mounted (height is passed)
     if (this.props.editCanvasHeight) {
       const r = this.visibleRect

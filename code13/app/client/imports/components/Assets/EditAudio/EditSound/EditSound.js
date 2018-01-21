@@ -57,7 +57,7 @@ export default class EditSound extends React.Component {
     })
   }
 
-  importSound(soundObject, saveText) {
+  importSound = (soundObject, saveText) => {
     if (!this.hasPermission) return
 
     if (soundObject) {
@@ -73,7 +73,7 @@ export default class EditSound extends React.Component {
     joyrideStore.completeTag('mgbjr-CT-editSound-sound-imported')
   }
 
-  togglePlaySound() {
+  togglePlaySound = () => {
     if (this.state.playerStatus === 'play') {
       this.wavesurfer.pause()
       this.setState({ playerStatus: 'pause' })
@@ -83,12 +83,12 @@ export default class EditSound extends React.Component {
     }
   }
 
-  stopSound() {
+  stopSound = () => {
     this.wavesurfer.stop()
     this.setState({ playerStatus: 'pause' })
   }
 
-  hasPermission() {
+  hasPermission = () => {
     if (!this.props.canEdit) {
       this.props.editDeniedReminder()
       return false
@@ -97,7 +97,7 @@ export default class EditSound extends React.Component {
     }
   }
 
-  handleSave() {
+  handleSave = () => {
     if (!this.hasPermission) return
     if (!this.saveText) return // don't save at start when sound is loaded
 

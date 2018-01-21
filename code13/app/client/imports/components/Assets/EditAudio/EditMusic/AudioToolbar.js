@@ -6,59 +6,59 @@ export default class AudioToolbar extends React.Component {
     super(props)
   }
 
-  addChannel() {
+  addChannel = () => {
     this.props.addChannel()
   }
 
-  togglePlay() {
+  togglePlay = () => {
     this.props.togglePlayMusic()
   }
 
-  stopAudio() {
+  stopAudio = () => {
     this.props.stopMusic()
   }
 
-  toggleLoop() {
+  toggleLoop = () => {
     this.props.toggleLoop()
   }
 
-  handleUndo() {
+  handleUndo = () => {
     this.props.handleUndo()
   }
 
-  handleRedo() {
+  handleRedo = () => {
     this.props.handleRedo()
   }
 
-  zoomIn() {
+  zoomIn = () => {
     this.props.zoom(true)
   }
 
-  zoomOut() {
+  zoomOut = () => {
     this.props.zoom(false)
   }
 
-  drag() {
+  drag = () => {
     this.props.selectableButtons('isDrag')
   }
 
-  select() {
+  select = () => {
     this.props.selectableButtons('isSelecting')
   }
 
-  eraseSelected() {
+  eraseSelected = () => {
     this.props.eraseSelected()
   }
 
-  cutSelected() {
+  cutSelected = () => {
     this.props.cutSelected()
   }
 
-  copySelected() {
+  copySelected = () => {
     this.props.copySelected()
   }
 
-  pasteSelected() {
+  pasteSelected = () => {
     this.props.selectableButtons('isPaste')
   }
 

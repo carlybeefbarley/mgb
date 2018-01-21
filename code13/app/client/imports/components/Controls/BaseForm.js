@@ -18,7 +18,7 @@ import { joyrideStore } from '/client/imports/stores'
 // }
 
 export default class BaseForm extends React.Component {
-  options(name, key, options, fieldOptions = {}, mgbjrCT = '', id = '', func) {
+  options = (name, key, options, fieldOptions = {}, mgbjrCT = '', id = '', func) => {
     let val = this.data[key]
     if (val === void 0) console.warn('value not defined for:', name + '[' + key + ']')
 
@@ -48,7 +48,7 @@ export default class BaseForm extends React.Component {
   //    .disabled:   disabled control
   //    .boolIsTF:   if boolIsTF===true,  then these bools are represented as Boolean true and false;
   //                 if boolIsTF===false (or is undefined), then these bools are represented as '1' and '0'
-  bool(name, key, fieldOptions = {}, mgbjrCT = '', id = '') {
+  bool = (name, key, fieldOptions = {}, mgbjrCT = '', id = '') => {
     // maybe boolIsTF - should be on by default - as it is expected value
     const checked = fieldOptions.boolIsTF ? this.data[key] : !!parseInt(this.data[key], 10)
     return (
@@ -70,7 +70,7 @@ export default class BaseForm extends React.Component {
     )
   }
 
-  text(name, key, type, fieldOptions = {}) {
+  text = (name, key, type, fieldOptions = {}) => {
     return (
       <div
         className={'field' + (fieldOptions.disabled ? ' disabled' : '')}
@@ -104,7 +104,7 @@ export default class BaseForm extends React.Component {
     )
   }
 
-  textArea(name, key, fieldOptions = {}, mgbjrCT = '') {
+  textArea = (name, key, fieldOptions = {}, mgbjrCT = '') => {
     return (
       <div
         className={'field' + (fieldOptions.disabled ? ' disabled' : '')}
@@ -125,7 +125,7 @@ export default class BaseForm extends React.Component {
     )
   }
 
-  dropArea(name, key, kind, fieldOptions, cb = null) {
+  dropArea = (name, key, kind, fieldOptions, cb = null) => {
     fieldOptions = fieldOptions || {}
     if (!this.data._ids) {
       this.data._ids = {}

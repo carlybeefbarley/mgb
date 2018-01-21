@@ -89,7 +89,7 @@ export default class CodeChallenges extends React.Component {
     }
   }
 
-  initWorker() {
+  initWorker = () => {
     if (this.worker) this.worker.terminate()
 
     this.worker = getCDNWorker('/lib/workers/CodeChallenges.js')
@@ -118,7 +118,7 @@ export default class CodeChallenges extends React.Component {
     this.setState({ testsLoading: false })
   }
 
-  successPopup() {
+  successPopup = () => {
     // TODO show notification for user
     learnSkill(this.props.skillPath)
     this.setState({ showAllTestsCompletedMessage: true })

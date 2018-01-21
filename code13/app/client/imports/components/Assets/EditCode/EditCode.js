@@ -189,7 +189,7 @@ class EditCode extends React.Component {
     this.isAutoRun = this.isGuest
   }
 
-  handleJsBeautify() {
+  handleJsBeautify = () => {
     let newValue = js_beautify(this._currentCodemirrorValue, { indent_size: 2, brace_style: 'expand' })
     this.codeMirror.setValue(newValue)
     this._currentCodemirrorValue = newValue
@@ -197,12 +197,12 @@ class EditCode extends React.Component {
     this.handleContentChange(newC2, null, `Beautify code`)
   }
 
-  quickSave() {
+  quickSave = () => {
     let newC2 = { src: this.codeMirror.getValue() }
     this.handleContentChange(newC2, null, `Save code`)
   }
 
-  warnNoWriteAccess() {
+  warnNoWriteAccess = () => {
     showToast.error("You don't have write access to this Asset")
   }
 
@@ -410,7 +410,7 @@ class EditCode extends React.Component {
     }
   }
 
-  startTernServer() {
+  startTernServer = () => {
     // Tern setup
     var myTernConfig = {
       // in worker mode it's not possible to add defs and doc_comment plugin also can't add parsed defs
@@ -545,7 +545,7 @@ class EditCode extends React.Component {
   }
 
   // update file name - to correctly report 'part of'
-  updateDocName(updateDocumentAnyway) {
+  updateDocName = updateDocumentAnyway => {
     // don't update doc name until all required assets are loaded.
     // tern won't update itself after loading new import - without changes to active document
     if (this.state.astReady && this.lastName !== this.props.asset.name) {
@@ -589,7 +589,7 @@ class EditCode extends React.Component {
     } else if (updateDocumentAnyway) this.doFullUpdateOnContentChange()
   }
 
-  codeMirrorOnCursorActivity() {
+  codeMirrorOnCursorActivity = () => {
     // Indirecting this to help with debugging and maybe some future optimizations
     this.codeMirrorUpdateHintsDebounced(false)
   }
@@ -614,7 +614,7 @@ class EditCode extends React.Component {
     this.mgb_cache = null
   }
 
-  terminateWorkers() {
+  terminateWorkers = () => {
     this.jshintWorker && this.jshintWorker.terminate()
     this.jshintWorker = null
 
@@ -626,7 +626,7 @@ class EditCode extends React.Component {
   }
 
   // used only for debugging purposes
-  restartWorkers() {
+  restartWorkers = () => {
     // terminate all old workers
     this.terminateWorkers()
     // tern will start tool - and tools will start separate babel worker
@@ -638,7 +638,7 @@ class EditCode extends React.Component {
     this.doFullUpdateOnContentChange()
   }
 
-  codeEditShowHint(cm) {
+  codeEditShowHint = cm => {
     // we could use specific keywords for tutorial
     if (this.props.asset.kind === 'tutorial') {
       return TutorialMentor.showHint(cm, CodeMirror)
@@ -655,7 +655,7 @@ class EditCode extends React.Component {
   }
 
   // autocomplete options type: [{text: '', desc: ''}, ...]
-  showCustomCMHint(cm, autocompleteOptions, keywordSubstring = 0) {
+  showCustomCMHint = (cm, autocompleteOptions, keywordSubstring = 0) => {
     let tooltip = null
     // TODO: optimize - reuse tooltip
     const createTooltip = () => {
@@ -726,7 +726,7 @@ class EditCode extends React.Component {
     return cm.showHint(hintObj)
   }
 
-  showUserAssetHint(cm, CodeMirror, token) {
+  showUserAssetHint = (cm, CodeMirror, token) => {
     // strip quotes
     const keyword = token.string.substring(1, token.string.length - 1)
     // this combo starts to repeat too often
@@ -758,7 +758,7 @@ class EditCode extends React.Component {
     return CodeMirror.Pass
   }
 
-  updateUserScripts(cb) {
+  updateUserScripts = cb => {
     if (Meteor.user()) {
       mgbAjax(`/api/assets/code/${Meteor.user().username}/?query=`, (err, listStr) => {
         // async call
@@ -777,7 +777,7 @@ class EditCode extends React.Component {
     }
   }
 
-  codeEditPassAndHint(cm) {
+  codeEditPassAndHint = cm => {
     if (this.props.canEdit)
       if (this.acTimeout) {
         window.clearTimeout(this.acTimeout)
@@ -831,7 +831,7 @@ class EditCode extends React.Component {
   }
 
   // opts can be    force = true ... force a font change even if delta =0
-  doHandleFontSizeDelta(delta, opts = {}) {
+  doHandleFontSizeDelta = (delta, opts = {}) => {
     // delta should be -1 or +1
     const fontSizes = [
       { fontSize: '8.5px', lineHeight: '10px' }, //  0
@@ -868,7 +868,7 @@ class EditCode extends React.Component {
   }
 
   // delta should be -1 or +1
-  doHandleCommentFadeDelta(delta) {
+  doHandleCommentFadeDelta = delta => {
     // 0. Set default Alpha now if it hasn't been set already
     if (this.CommentAlphaSetting === undefined) this.CommentAlphaSetting = 100 // Default is 100% Opacity
 
@@ -891,7 +891,7 @@ class EditCode extends React.Component {
   }
 
   // Drag and Drop of Asset onto code area
-  handleDragOver(cm, event) {
+  handleDragOver = (cm, event) => {
     if (this.props.canEdit) {
       const scrollInfo = this.codeMirror.getScrollInfo()
 
@@ -915,7 +915,7 @@ class EditCode extends React.Component {
     }
   }
 
-  handleDropAsset(cm, event) {
+  handleDropAsset = (cm, event) => {
     // TODO: check if this is phaser game.. do something other if phaser is not included
     if (this.props.canEdit) {
       const draggedAsset = DragNDropHelper.getAssetFromEvent(event)
@@ -979,7 +979,7 @@ class EditCode extends React.Component {
   }
 
   // Alt-Shift Mousewheel will change the editor font Size
-  handleMouseWheel(event) {
+  handleMouseWheel = event => {
     // We only handle alt-shift + wheel or alt-wheel. Anything else is system behavior (scrolling etc)
     if (event.altKey === false) return
 
@@ -999,7 +999,7 @@ class EditCode extends React.Component {
   }
 
   // TODO(@stauzs): add deeper analysis - would be really nice to - allow to change asset on include ??
-  handleDocumentClick(cm, event) {
+  handleDocumentClick = (cm, event) => {
     const pos = cm.coordsChar({ left: event.clientX, top: event.clientY })
     // click on the gutter
     if (pos.xRel < 0) {
@@ -1046,19 +1046,19 @@ class EditCode extends React.Component {
    * @param string - CodeMirror Token
    * @returns string
    */
-  cleanTokenString(string) {
+  cleanTokenString = string => {
     // check if we are actually stripping quotes?
     return string.substring(1, string.length - 1)
   }
 
-  goToDef() {
+  goToDef = () => {
     const currentCursor = _.cloneDeep(this.codeMirror.getCursor())
     this.cursorHistory.undo.push(currentCursor)
 
     this.ternServer.jumpToDef(this.codeMirror)
   }
 
-  goBack() {
+  goBack = () => {
     const pos = this.cursorHistory.undo.pop()
     this.cursorHistory.redo.push(_.cloneDeep(this.codeMirror.getCursor()))
 
@@ -1067,7 +1067,7 @@ class EditCode extends React.Component {
     this.codeMirror.focus()
   }
 
-  goForward() {
+  goForward = () => {
     const currentCursor = _.cloneDeep(this.codeMirror.getCursor())
     this.cursorHistory.undo.push(currentCursor)
 
@@ -1077,7 +1077,7 @@ class EditCode extends React.Component {
     this.codeMirror.focus()
   }
 
-  _getMgbAssetIdsInLine(lineText) {
+  _getMgbAssetIdsInLine = lineText => {
     //  let re = /api\/asset\/([a-z]+)\/([A-Za-z0-9]+)/g
     // TODO: split regexp for each case
     // load.mgbMap - as create takes in key (it may or may not be id) - not sure about this
@@ -1098,7 +1098,7 @@ class EditCode extends React.Component {
   }
 
   /** Just show the Clean Sheet helpers if there is no code */
-  srcUpdate_CleanSheetCase() {
+  srcUpdate_CleanSheetCase = () => {
     const isEmpty = this.codeMirror.getValue().length === 0
     if (this.state.documentIsEmpty !== isEmpty) {
       // set state seems to be expensive - based on profiler data
@@ -1109,13 +1109,13 @@ class EditCode extends React.Component {
     }
   }
 
-  srcUpdate_AnalyzeTutorial() {
+  srcUpdate_AnalyzeTutorial = () => {
     const pj = TutorialMentor.parseJson(this._currentCodemirrorValue)
     this.setState({ parsedTutorialData: pj })
   }
 
   /** Look for any MGB asset strings in current line or selection */
-  srcUpdate_LookForMgbAssets() {
+  srcUpdate_LookForMgbAssets = () => {
     // Extract Asset IDs in current line for 'Current line help' view
     let thisLine = this.codeMirror.getSelection(';')
     if (!thisLine || thisLine.length === 0) {
@@ -1130,7 +1130,7 @@ class EditCode extends React.Component {
    * directly below that code in CodeMirror. This was adapted from the demo code
    * at https://codemirror.net/demo/widget.html
    */
-  srcUpdate_ShowJSHintWidgetsForCurrentLine(fSourceMayHaveChanged = false) {
+  srcUpdate_ShowJSHintWidgetsForCurrentLine = (fSourceMayHaveChanged = false) => {
     //return // TODO make this user-selectable
     const editor = this.codeMirror
     const currentLineNumber = editor.getCursor().line + 1 // +1 since user code is 1...
@@ -1140,7 +1140,7 @@ class EditCode extends React.Component {
     if (info.top + info.clientHeight < after) editor.scrollTo(null, after - info.clientHeight + 3)
   }
 
-  runJSHintWorker(code, cb) {
+  runJSHintWorker = (code, cb) => {
     if (this.props.asset.kind === 'tutorial' || this.mgb_mode !== 'jsx') return
 
     // terminate old busy worker - as jshint can take a lot time on huge scripts
@@ -1185,7 +1185,7 @@ class EditCode extends React.Component {
     this.jshintWorker.postMessage([code, conf])
   }
 
-  showErrors(errors, clear) {
+  showErrors = (errors, clear) => {
     // TODO: allow user to change error level? Warning / Error?
     if (clear) {
       this.codeMirror.clearGutter('CodeMirror-lint-markers')
@@ -1195,7 +1195,7 @@ class EditCode extends React.Component {
     for (let i = 0; i < errors.length; ++i) this.showError(errors[i], clear)
   }
 
-  showError(err, clear) {
+  showError = (err, clear) => {
     if (!err) return
     const msgs = this.errorMessageCache
     // get line
@@ -1254,7 +1254,7 @@ class EditCode extends React.Component {
    * Gets info about function from tern server asynchronously and resolves promise with new state props on completion.
    * @returns Promise
    */
-  srcUpdate_GetInfoForCurrentFunction() {
+  srcUpdate_GetInfoForCurrentFunction = () => {
     return new Promise(resolve => {
       const ternServer = this.ternServer
       const editor = this.codeMirror
@@ -1351,7 +1351,7 @@ class EditCode extends React.Component {
    * Gets type from tern server asynchronously and resolves promise with new state props on completion.
    * @returns Promise
    */
-  srcUpdate_GetRelevantTypeInfo() {
+  srcUpdate_GetRelevantTypeInfo = () => {
     return new Promise(resolve => {
       const ternServer = this.ternServer
       const editor = this.codeMirror
@@ -1399,7 +1399,7 @@ class EditCode extends React.Component {
    * Gets references from tern server asynchronously and resolves promise with new state props on completion.
    * @returns Promise
    */
-  srcUpdate_GetRefs() {
+  srcUpdate_GetRefs = () => {
     return new Promise(resolve => {
       let ternServer = this.ternServer
       let editor = this.codeMirror
@@ -1427,7 +1427,7 @@ class EditCode extends React.Component {
    * Gets definitions from tern server asynchronously and resolves promise with new state props on completion.
    * @returns Promise
    */
-  srcUpdate_GetDef() {
+  srcUpdate_GetDef = () => {
     return new Promise(resolve => {
       let ternServer = this.ternServer
       let editor = this.codeMirror
@@ -1465,7 +1465,7 @@ class EditCode extends React.Component {
    * @param {number} index - character index in the WHOLE document
    * @returns Promise
    */
-  getCommentAt(index = 0) {
+  getCommentAt = (index = 0) => {
     return new Promise(resolve => {
       if (this.mgb_c2_hasChanged || !this.mgb_cache.comments || this.mgb_cache.comments.length === 0) {
         this.ternServer.server.getComments(comments => {
@@ -1488,7 +1488,7 @@ class EditCode extends React.Component {
    * Gets Comment at cursor position - resolves on completion with found Comment (if any) - may or may not be async
    * @returns Promise
    */
-  getCommentAtCursor() {
+  getCommentAtCursor = () => {
     const ternServer = this.ternServer
     const editor = this.codeMirror
     if (!ternServer || !editor) {
@@ -1505,7 +1505,7 @@ class EditCode extends React.Component {
    *
    * @return Promise.<{atCursorTypeDescription: {}}>
    */
-  getTypeDescription(atCursorTypeRequestResponse) {
+  getTypeDescription = atCursorTypeRequestResponse => {
     return new Promise(resolve => {
       if (
         !atCursorTypeRequestResponse ||
@@ -1552,7 +1552,7 @@ class EditCode extends React.Component {
   /* TODO (@stauzs): fix this - Tern worker don't have MGB extensions installed
     (move EditCode/tern/MgbTernExtensions.js to TernWorker)
   */
-  srcUpdate_getMemberParent(callback) {
+  srcUpdate_getMemberParent = callback => {
     return new Promise(resolve => {
       if (!showDebugAST) {
         // nothing to do
@@ -1587,7 +1587,7 @@ class EditCode extends React.Component {
     })
   }
 
-  cm_updateActivityMarkers() {
+  cm_updateActivityMarkers = () => {
     var ed = this.codeMirror
     ed.clearGutter('mgb-cm-user-markers')
 
@@ -1610,7 +1610,7 @@ class EditCode extends React.Component {
 
   // This gets called by CodeMirror when there is CursorActivity
   // This gets _.debounced in componentDidMount() and split into 2 parts +haveChanges
-  codeMirrorUpdateHints(fSourceMayHaveChanged = false) {
+  codeMirrorUpdateHints = (fSourceMayHaveChanged = false) => {
     // Update the activity snapshot if the code line has changed
     // TODO: Batch this so it only fires when line# is changed
     if (!this.isActive) {
@@ -1695,7 +1695,7 @@ class EditCode extends React.Component {
     )
   }
 
-  codemirrorValueChanged(doc, change) {
+  codemirrorValueChanged = (doc, change) => {
     const value = doc.getValue()
     const newValue = this.isGuest ? (value + '\n').replace(/\n{2,}$/, '\n') : value
     if (newValue !== value) {
@@ -1726,11 +1726,11 @@ class EditCode extends React.Component {
     this.mgb.lastSaved = _.cloneDeep(asset.content2)
   }
 
-  _consoleClearAllMessages() {
+  _consoleClearAllMessages = () => {
     this.setState({ consoleMessages: [] })
   }
 
-  _consoleAdd(data) {
+  _consoleAdd = data => {
     // Using immutability helpers as described on https://facebook.github.io/react/docs/update.html
     let newMessages = reactUpdate(this.state.consoleMessages, { $push: [data] }).slice(
       -SpecialGlobals.editCode.messagesInConsole,
@@ -1739,7 +1739,7 @@ class EditCode extends React.Component {
     // todo -  all the fancy stuff in https://github.com/WebKit/webkit/blob/master/Source/WebInspectorUI/UserInterface/Views/ConsoleMessageView.js
   }
 
-  consoleLog(message) {
+  consoleLog = message => {
     // Don't post anything to console if HoC
     if (!_.isEmpty(this.props.hourOfCodeStore.state.currStep)) return null
 
@@ -1750,7 +1750,7 @@ class EditCode extends React.Component {
     })
   }
 
-  _handle_iFrameMessageReceiver(event) {
+  _handle_iFrameMessageReceiver = event => {
     // there is no ref for empty code
     if (
       this.refs.gameScreen // TODO: This maybe a code smell that we (a) are getting a bunch more mesage noise than we expect (e.g. Meteor.immediate) and (b) that we should maybe register/deregister this handler more carefully
@@ -1758,7 +1758,7 @@ class EditCode extends React.Component {
       this.refs.gameScreen.handleMessage(event)
   }
 
-  handleScreenshotIFrame() {
+  handleScreenshotIFrame = () => {
     if (this.state.isPlaying)
       this._postMessageToIFrame({
         mgbCommand: 'screenshotCanvas',
@@ -1766,7 +1766,7 @@ class EditCode extends React.Component {
       })
   }
 
-  setAstThumbnail() {
+  setAstThumbnail = () => {
     /*this.tools.getAST((list) => {
       /*
         list will contain objects with the following structure :
@@ -1819,7 +1819,7 @@ class EditCode extends React.Component {
     )
   }
 
-  drawAstFlower() {
+  drawAstFlower = () => {
     this.ternServer.server.getAstFlowerTree(tree => {
       const { width } = this.refs.codeflower.getBoundingClientRect()
       const flower = new CodeFlower('#codeflower', width, width / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT)
@@ -1830,7 +1830,7 @@ class EditCode extends React.Component {
     })
   }
 
-  drawAstFlowerForThumbnail() {
+  drawAstFlowerForThumbnail = () => {
     this.ternServer.server.getAstFlowerTree(
       {
         local: true,
@@ -1875,7 +1875,7 @@ class EditCode extends React.Component {
     )
   }
 
-  drawAstFlowerFull() {
+  drawAstFlowerFull = () => {
     this.ternServer.server.getAstFlowerTree({}, tree => {
       const { width } = this.refs.codeflower.getBoundingClientRect()
       const flower = new CodeFlower('#codeflower', width, width / THUMBNAIL_WIDTH * THUMBNAIL_HEIGHT, {
@@ -1888,7 +1888,7 @@ class EditCode extends React.Component {
     })
   }
 
-  saveAstThumbnail() {
+  saveAstThumbnail = () => {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     canvas.width = THUMBNAIL_WIDTH
@@ -1914,14 +1914,14 @@ class EditCode extends React.Component {
     img.src = url
   }
 
-  postToIFrame(cmd, data = {}) {
+  postToIFrame = (cmd, data = {}) => {
     if (this.state.isPlaying) {
       data.mgbCommand = cmd
       this._postMessageToIFrame(data)
     }
   }
 
-  _postMessageToIFrame(messageObject) {
+  _postMessageToIFrame = messageObject => {
     // there is no ref for empty code
     this.refs.gameScreen && this.refs.gameScreen.postMessage(messageObject)
     // this.iFrameWindow.contentWindow.postMessage(messageObject, "*")
@@ -2024,7 +2024,7 @@ class EditCode extends React.Component {
     }
   }
 
-  createBundle(cb) {
+  createBundle = cb => {
     if (!this.isActive) {
       console.log('not creating bundle since not active')
       return
@@ -2090,7 +2090,7 @@ class EditCode extends React.Component {
   }
 
   // Note that either c2 or thumbnail could be null/undefined.
-  handleContentChange(c2, thumbnail, reason) {
+  handleContentChange = (c2, thumbnail, reason) => {
     if (!this.props.canEdit) {
       this.props.editDeniedReminder()
       return
@@ -2165,7 +2165,7 @@ class EditCode extends React.Component {
 
   // this can be called even AFTER component unmount.. or another asset has been loaded
   // make sure we don't overwrite another source
-  handleContentChangeAsync(c2, thumbnail, reason) {
+  handleContentChangeAsync = (c2, thumbnail, reason) => {
     if (_.isEqual(this.mgb.lastSaved, c2)) {
       console.log('Discarding changes as nothing has changed!')
       return
@@ -2180,7 +2180,7 @@ class EditCode extends React.Component {
     }
   }
 
-  handleHotReload() {
+  handleHotReload = () => {
     if (this.state.hotReload) {
       this.consoleLog(`Hot Reload - refreshing`)
       if (this.state.isPlaying) {
@@ -2190,13 +2190,13 @@ class EditCode extends React.Component {
     }
   }
 
-  getEditorValue(value = this.codeMirror.getValue()) {
+  getEditorValue = (value = this.codeMirror.getValue()) => {
     return !this.isGuest ? value : this.props.hourOfCodeStore.prepareSource(value)
   }
 
   // this is very heavy function - use with care
   // callback gets one argument - array with critical errors
-  doFullUpdateOnContentChange(cb) {
+  doFullUpdateOnContentChange = cb => {
     // operation() is a way to prevent CodeMirror updates until the function completes
     // However, it is still synchronous - this isn't an async callback
     this.mgb_c2_hasChanged = true
@@ -2229,7 +2229,7 @@ class EditCode extends React.Component {
     })
   }
 
-  gotoLineHandler(line, file) {
+  gotoLineHandler = (line, file) => {
     let pos = { line: line - 1, ch: 0 }
     this.codeMirror.scrollIntoView(pos, 100) //100 pixels margin
     this.codeMirror.setCursor(pos)
@@ -2239,40 +2239,40 @@ class EditCode extends React.Component {
   /** This is useful when working with Tern stuff..
    * It is Enabled by setting showDebugAST at top of this file
    */
-  renderDebugAST() {
+  renderDebugAST = () => {
     if (showDebugAST && this.state.atCursorMemberParentRequestResponse)
       return (
         <DebugASTview atCursorMemberParentRequestResponse={this.state.atCursorMemberParentRequestResponse} />
       )
   }
 
-  toolZoomIn() {
+  toolZoomIn = () => {
     this.doHandleFontSizeDelta(-1)
   }
 
-  toolZoomOut() {
+  toolZoomOut = () => {
     this.doHandleFontSizeDelta(1)
   }
 
-  toolCommentFade() {
+  toolCommentFade = () => {
     this.doHandleCommentFadeDelta(1)
   }
 
-  toolCommentUnFade() {
+  toolCommentUnFade = () => {
     this.doHandleCommentFadeDelta(-1)
   }
 
-  doUndo(e) {
+  doUndo = e => {
     if (e.target.className !== 'allow-toolbar-shortcuts') this.codeMirror.undo()
     this.setState({ lastUndoRedo: Date.now() })
   }
 
-  doRedo(e) {
+  doRedo = e => {
     if (e.target.className !== 'allow-toolbar-shortcuts') this.codeMirror.redo()
     this.setState({ lastUndoRedo: Date.now() })
   }
 
-  toolToggleInfoPane() {
+  toolToggleInfoPane = () => {
     const i = this.state.infoPaneMode
     const newMode = (i + 1) % _infoPaneModes.length
 
@@ -2287,7 +2287,7 @@ class EditCode extends React.Component {
     this.setState({ infoPaneMode: newMode })
   }
 
-  generateToolbarConfig() {
+  generateToolbarConfig = () => {
     const history = this.codeMirror ? this.codeMirror.historySize() : { undo: 0, redo: 0 }
 
     var config = this.isGuest
@@ -2526,7 +2526,7 @@ class EditCode extends React.Component {
     return config
   }
 
-  toggleFold() {
+  toggleFold = () => {
     const cm = this.codeMirror
 
     cm.operation(() => {
@@ -2540,21 +2540,21 @@ class EditCode extends React.Component {
     })
   }
 
-  toggleBundling() {
+  toggleBundling = () => {
     this.props.asset.content2.needsBundle = !this.props.asset.content2.needsBundle
     this.setState({ needsBundle: this.props.asset.content2.needsBundle })
 
     this.handleContentChange(this.props.asset.content2, null, 'enableBundling')
   }
 
-  toggleHotReload() {
+  toggleHotReload = () => {
     this.props.asset.content2.hotReload = !this.props.asset.content2.hotReload
     this.setState({ hotReload: this.props.asset.content2.hotReload })
 
     this.handleContentChange(this.props.asset.content2, null, 'enableHotReload')
   }
 
-  insertTextAtCursor(text) {
+  insertTextAtCursor = text => {
     if (!this.props.canEdit) {
       this.warnNoWriteAccess()
       return
@@ -2597,7 +2597,7 @@ class EditCode extends React.Component {
     joyride.stop()
   }
 
-  createImportString(val, user) {
+  createImportString = (val, user) => {
     return `import ${validJSName(val)} from '/${user ? user + ':' : ''}${val}'\n`
   }
 
@@ -2624,7 +2624,7 @@ class EditCode extends React.Component {
   }
 
   // TODO: add some sort of message to highlighted lines????
-  highlightLines(from, to) {
+  highlightLines = (from, to) => {
     // make from 1 -> 0 so it's not confusing
     from--
     if (to == void 0 || isNaN(to)) to = from
@@ -2647,14 +2647,14 @@ class EditCode extends React.Component {
     if (from > -1) this.scrollToLine(from)
   }
 
-  scrollToLine(line) {
+  scrollToLine = line => {
     this.codeMirror.setCursor(line, 0)
     var t = this.codeMirror.charCoords({ line, ch: 0 }, 'local').top
     var middleHeight = this.codeMirror.getScrollerElement().offsetHeight / 2
     this.codeMirror.scrollTo(null, t - middleHeight - 5)
   }
 
-  getKind(maybeKind) {
+  getKind = maybeKind => {
     if (AssetKindEnum[maybeKind]) return maybeKind
 
     switch (maybeKind) {
@@ -2667,7 +2667,7 @@ class EditCode extends React.Component {
 
   // this is almost same as: _getMgbAssetIdsInLine
   // leave only one.. or merge both functions into one
-  getStringReferences() {
+  getStringReferences = () => {
     const token = this.state.currentToken
     const advices = []
     // TODO.. something useful with token.state?
@@ -2737,7 +2737,7 @@ class EditCode extends React.Component {
    * @returns {kind<string>, owner<string>, name<string>}
    * */
 
-  getImportStringParts(string) {
+  getImportStringParts = string => {
     // split and filter out empty strings
     const pieces = string.split('/').filter(p => {
       return p
@@ -2764,18 +2764,18 @@ class EditCode extends React.Component {
     return { kind, owner, name }
   }
 
-  getAssetUrl(assetInfo) {
+  getAssetUrl = assetInfo => {
     const { owner, name, kind } = assetInfo
     // substr - because otherwise chaning to create link with others strings looks too strange - e.g. /thumbnail${myVar}
     // /thumbnail/${myVar} - looks better
     return `${kind ? '/' + kind : ''}${owner ? '/' + owner : ''}${name ? '/' + name : ''}`.substr(1)
   }
 
-  getImportStringLocation(string) {
+  getImportStringLocation = string => {
     return `/assetEdit/${this.getAssetUrl(this.getImportStringParts(string))}`
   }
 
-  getPrevToken(callback, cursor = null) {
+  getPrevToken = (callback, cursor = null) => {
     const cur = cursor || Object.assign({}, this.codeMirror.getCursor())
     // TODO: maybe get correct last char of line instead for forcing random number?
     cur.ch = 100
@@ -2785,7 +2785,7 @@ class EditCode extends React.Component {
     }
   }
 
-  getNextToken(callback, tokenIn, cursor = null) {
+  getNextToken = (callback, tokenIn, cursor = null) => {
     const cur = cursor || Object.assign({}, this.codeMirror.getCursor())
     const token = tokenIn || this.codeMirror.getTokenAt(cur)
 

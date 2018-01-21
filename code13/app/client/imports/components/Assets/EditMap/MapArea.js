@@ -12,7 +12,7 @@ export default class MapArea extends BaseMapArea {
   }
 
   /* events */
-  importFromDrop(e) {
+  importFromDrop = e => {
     const layer = this.getActiveLayer()
     if (layer && layer.onDrop) {
       // layer by it's own can handle drop

@@ -4,28 +4,28 @@ import { Accordion, Icon, List, Button } from 'semantic-ui-react'
 import LayerTypes from './LayerTypes.js'
 
 export default class ObjectList extends React.Component {
-  raise() {
+  raise = () => {
     this.props.lowerOrRaiseObject()
   }
 
-  lower() {
+  lower = () => {
     this.props.lowerOrRaiseObject(true)
   }
 
-  showOrHideObject(index) {
+  showOrHideObject = index => {
     this.props.showOrHideObject(index)
     // TODO: @stausz remove this in favor of setState locally for the active item
     this.forceUpdate()
   }
 
-  handleClick(event, index) {
+  handleClick = (event, index) => {
     // do not change selection when toggling visibility icon
     if (_.includes(event.target.classList, 'icon')) return
 
     this.props.setPickedObject(index)
   }
 
-  renderBlock(content = [], active = 0) {
+  renderBlock = (content = [], active = 0) => {
     let rise = '',
       lower = '',
       remove = ''

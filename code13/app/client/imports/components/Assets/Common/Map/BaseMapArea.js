@@ -134,7 +134,7 @@ export default class MapArea extends React.Component {
     this.redraw()
   }
 
-  startEventListeners() {
+  startEventListeners = () => {
     window.addEventListener('mousemove', this.globalMouseMove, false)
     window.addEventListener('touchmove', this.globalMouseMove, false)
 
@@ -162,7 +162,7 @@ export default class MapArea extends React.Component {
     }
     this._raf()
   }
-  stopEventListeners() {
+  stopEventListeners = () => {
     window.removeEventListener('pointermove', this.globalMouseMove)
     //window.removeEventListener('touchmove', this.globalMouseMove)
     window.removeEventListener('pointerup', this.globalMouseUp)
@@ -177,7 +177,7 @@ export default class MapArea extends React.Component {
     this._raf = () => {}
   }
 
-  redrawOnAnimationEnd() {
+  redrawOnAnimationEnd = () => {
     const onEnd = () => {
       this.redraw()
       this.refs.mapElement.removeEventListener('transitionend', onEnd)
@@ -203,10 +203,10 @@ export default class MapArea extends React.Component {
   }
 
   /* import and conversion */
-  xmlToJson(xml) {
+  xmlToJson = xml => {
     // window.xml = xml
   }
-  handleFileByExt_tmx(name, buffer) {
+  handleFileByExt_tmx = (name, buffer) => {
     // https://github.com/inexorabletash/text-encoding
     const xmlString = new TextDecoder().decode(new Uint8Array(buffer))
     //
@@ -216,18 +216,18 @@ export default class MapArea extends React.Component {
 
     this.data = this.xmlToJson(xml)
   }
-  handleFileByExt_json(name, buffer) {
+  handleFileByExt_json = (name, buffer) => {
     const jsonString = new TextDecoder().decode(new Uint8Array(buffer))
     const newData = JSON.parse(jsonString)
     this.props.updateMapData(newData)
     //this.updateImages()
   }
   // TODO: move api links to external resource?
-  handleFileByExt_png(nameWithExt, buffer) {
+  handleFileByExt_png = (nameWithExt, buffer) => {
     const blob = new Blob([buffer], { type: 'image/png' })
     this.createGraphicsAsset(nameWithExt, URL.createObjectURL(blob))
   }
-  createGraphicsAsset(nameWithExt, src) {
+  createGraphicsAsset = (nameWithExt, src) => {
     const name = nameWithExt.substr(0, nameWithExt.lastIndexOf('.')) || nameWithExt
     const img = new Image()
     img.onload = () => {
@@ -253,7 +253,7 @@ export default class MapArea extends React.Component {
   }
   /* endof import and conversion */
 
-  lowerOrRaiseObject(lower) {
+  lowerOrRaiseObject = lower => {
     const l = this.getActiveLayer()
     if (l.type != LayerTypes.object) {
       return
@@ -280,7 +280,7 @@ export default class MapArea extends React.Component {
     this.props.setPickedObject(newSelection)
   }
   // TODO(stauzs): add 'insert/remove row/column' functionality
-  resize(newSize = this.data) {
+  resize = (newSize = this.data) => {
     this.data.width = newSize.width
     this.data.height = newSize.height
     // Disabled until fixed
@@ -316,14 +316,14 @@ export default class MapArea extends React.Component {
     this.redraw()
   }
 
-  setActiveLayer(id) {
+  setActiveLayer = id => {
     let l = this.getActiveLayer()
     l && l.deactivate()
 
     l = this.getActiveLayer(id)
     l && l.activate()
   }
-  setActiveLayerByName(name) {
+  setActiveLayerByName = name => {
     for (let i = 0; i < this.data.layers.length; i++) {
       if (this.data.layers[i].name === name) {
         this.setActiveLayer(i)
@@ -333,27 +333,27 @@ export default class MapArea extends React.Component {
   }
 
   /* selection methods - these are used only by tilemap layers */
-  addToActiveSelection(gid) {
+  addToActiveSelection = gid => {
     const index = this.collection.indexOf(gid)
     if (index == -1) this.collection.push(gid)
   }
-  removeFromActiveSelection(gid) {
+  removeFromActiveSelection = gid => {
     const index = this.collection.indexOf(gid)
     if (index > -1) this.collection.splice(index, 1)
   }
-  clearActiveSelection() {
+  clearActiveSelection = () => {
     this.collection.length = 0
   }
-  swapOutSelection() {
+  swapOutSelection = () => {
     for (let i = 0; i < this.tmpSelection.length; i++) this.selection.pushUniquePos(this.tmpSelection[i])
     this.tmpSelection.clear()
   }
-  removeFromSelection() {
+  removeFromSelection = () => {
     for (let i = 0; i < this.tmpSelection.length; i++) this.selection.removeByPos(this.tmpSelection[i])
     this.tmpSelection.clear()
   }
   // keep only matching form both selections
-  keepDiffInSelection() {
+  keepDiffInSelection = () => {
     const tmp = new TileCollection()
 
     for (let i = 0; i < this.tmpSelection.length; i++) {
@@ -364,15 +364,15 @@ export default class MapArea extends React.Component {
     this.selection = tmp
     this.tmpSelection.clear()
   }
-  selectionToTmp() {
+  selectionToTmp = () => {
     this.tmpSelection.clear()
     for (let i = 0; i < this.selection.length; i++) this.tmpSelection.push(this.selection[i])
   }
-  selectionToCollection() {
+  selectionToCollection = () => {
     this.collection.clear()
     for (let i = 0; i < this.selection.length; i++) this.collection.push(this.selection[i])
   }
-  clearSelection() {
+  clearSelection = () => {
     this.tmpSelection.clear()
     this.selection.clear()
     this.collection.clear()
@@ -386,14 +386,14 @@ export default class MapArea extends React.Component {
   /* end of selection */
 
   /* camera stuff */
-  resetCamera() {
+  resetCamera = () => {
     this.lastEvent = null
     this.camera.reset()
 
     if (this.options.preview) this.resetPreview()
   }
 
-  fitMap(direction = Camera.AUTO) {
+  fitMap = (direction = Camera.AUTO) => {
     this.lastEvent = null
     const md = this.data
 
@@ -402,14 +402,14 @@ export default class MapArea extends React.Component {
     if (this.options.preview) this.resetPreview()
   }
 
-  resetPreview() {
+  resetPreview = () => {
     this.preview.x = DEFAULT_PREVIEW_ANGLE_X
     this.preview.y = DEFAULT_PREVIEW_ANGLE_Y
 
     this.adjustPreview()
   }
 
-  moveCamera(e) {
+  moveCamera = e => {
     // special zoom case
     if (e.touches && e.touches.length > 1) {
       // TODO: probably better would be interpolate between moving points and set distance according moving finger???
@@ -448,7 +448,7 @@ export default class MapArea extends React.Component {
     this.redraw()
   }
 
-  zoomCamera(newZoom, e) {
+  zoomCamera = (newZoom, e) => {
     let px = 0,
       py = 0
 
@@ -460,13 +460,13 @@ export default class MapArea extends React.Component {
     this.doCameraZoom(newZoom, px, py)
   }
 
-  zoomIn() {
+  zoomIn = () => {
     this.doCameraZoom(this.camera.zoom + ZOOM_STEP, this.camera.width * 0.5, this.camera.height * 0.5) // or 0,0 would be better?
   }
-  zoomOut() {
+  zoomOut = () => {
     this.doCameraZoom(this.camera.zoom - ZOOM_STEP, this.camera.width * 0.5, this.camera.height * 0.5) // or 0,0 would be better?
   }
-  doCameraZoom(newZoom, pivotX, pivotY) {
+  doCameraZoom = (newZoom, pivotX, pivotY) => {
     const zoom = Math.max(Math.min(newZoom, MAX_ZOOM), MIN_ZOOM)
 
     if (pivotX || pivotY) {
@@ -489,7 +489,7 @@ export default class MapArea extends React.Component {
     this.redraw()
   }
 
-  movePreview(e) {
+  movePreview = e => {
     if (!this.lastEvent) {
       this.lastEvent = {
         pageX: e.pageX,
@@ -508,7 +508,7 @@ export default class MapArea extends React.Component {
     this.adjustPreview()
   }
 
-  adjustPreview() {
+  adjustPreview = () => {
     if (this.props.isPlaying) return
 
     if (!this.data.layers) this.data.layers = []
@@ -575,13 +575,13 @@ export default class MapArea extends React.Component {
     this.redrawOnAnimationEnd()
   }
 
-  getDistanceBetweenPoints(p1, p2) {
+  getDistanceBetweenPoints = (p1, p2) => {
     return Math.sqrt(Math.pow(p2.clientX - p1.clientX, 2) + Math.pow(p2.clientY - p1.clientY, 2))
   }
   /* endof camera stuff */
 
   /* events */
-  handleMouseMove(e) {
+  handleMouseMove = e => {
     if (this.props.isPlaying || this.props.isLoading) {
       return
     }
@@ -610,7 +610,7 @@ export default class MapArea extends React.Component {
     }
   }
 
-  handleMouseUp(e) {
+  handleMouseUp = e => {
     if (this.props.isPlaying) return
     this.lastEvent = null
     if (this.refs.mapElement) {
@@ -628,7 +628,7 @@ export default class MapArea extends React.Component {
       }
     }
   }
-  handleMouseDown(e) {
+  handleMouseDown = e => {
     // prevent putting extra tiles on the map
     if (e.touches) {
       this.startTouches.length = 0
@@ -644,12 +644,12 @@ export default class MapArea extends React.Component {
     }
     this.isMouseDown = true
   }
-  removeObject() {
+  removeObject = () => {
     const l = this.getActiveLayer()
     l && l.removeObject && l.removeObject()
   }
 
-  handleOnWheel(e) {
+  handleOnWheel = e => {
     if (this.props.isPlaying) return
 
     if (!e.shiftKey) {
@@ -674,7 +674,7 @@ export default class MapArea extends React.Component {
     this.props.updateScale(this.camera.zoom)
   }
 
-  handleKeyDown(e) {
+  handleKeyDown = e => {
     if (this.props.isPlaying) return
 
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
@@ -709,7 +709,7 @@ export default class MapArea extends React.Component {
 
     if (needUpdate) this.redraw()
   }
-  handleKeyUp(e) {
+  handleKeyUp = e => {
     if (this.props.isPlaying) return
 
     let update = false
@@ -728,7 +728,7 @@ export default class MapArea extends React.Component {
     if (update) this.redraw()
   }
 
-  prepareForDrag(e) {
+  prepareForDrag = e => {
     e.stopPropagation()
     e.preventDefault()
     e.dataTransfer.effectAllowed = 'copy'
@@ -736,7 +736,7 @@ export default class MapArea extends React.Component {
     // e.dataTransfer.dropEffect = 'copy'
   }
 
-  onImageLayerDrop(e, layer_data) {
+  onImageLayerDrop = (e, layer_data) => {
     const data = DragNDropHelper.getDataFromEvent(e)
     if (!data || !data.asset || data.asset.kind !== 'graphic') return false
 
@@ -749,41 +749,41 @@ export default class MapArea extends React.Component {
   /* update stuff */
 
   /* update all except images */
-  update(cb = () => {}) {
+  update = (cb = () => {}) => {
     this.redraw()
     cb()
   }
 
-  redraw() {
+  redraw = () => {
     this.redrawLayers()
     this.redrawGrid()
     this.redrawMask()
   }
 
-  redrawGrid() {
+  redrawGrid = () => {
     this.refs.grid && this.refs.grid.draw()
   }
 
-  redrawLayers() {
+  redrawLayers = () => {
     this.layers.forEach(layer => {
       layer.adjustCanvas()
       layer.draw()
     })
   }
 
-  redrawMask() {
+  redrawMask = () => {
     this.refs.mask && this.refs.mask.draw()
   }
 
   // RAF calls this function
-  drawLayers(forceRedraw) {
+  drawLayers = forceRedraw => {
     const now = Date.now()
     for (let i = 0; i < this.layers.length; i++) this.layers[i]._draw(now, forceRedraw)
   }
   /* endof update stuff */
 
   // added id - as sometimes we fail to get active layer - e.g. in cases when map has been updated, but layer data haven't
-  getLayer(ld, id = 0) {
+  getLayer = (ld, id = 0) => {
     const l = this.layers[id]
     // in most cases this will be valid
     if (l && l.options == ld) return l
@@ -793,19 +793,19 @@ export default class MapArea extends React.Component {
     return l
   }
 
-  getActiveLayer(id = this.props.activeLayer) {
+  getActiveLayer = (id = this.props.activeLayer) => {
     if (!this.data.layers) return null
 
     return this.getLayer(this.data.layers[id], id)
   }
 
-  togglePreviewState() {
+  togglePreviewState = () => {
     // this is not a synchronous function !!!
     this.options.preview = !this.options.preview
     this.adjustPreview()
   }
 
-  activateLayer(id) {
+  activateLayer = id => {
     let l = this.getActiveLayer()
     l && l.deactivate()
 
@@ -814,14 +814,14 @@ export default class MapArea extends React.Component {
 
     this.update()
   }
-  generatePreviewAndSaveIt(data, reason) {
+  generatePreviewAndSaveIt = (data, reason) => {
     window.requestAnimationFrame(() => {
       const thumbnail = this.generatePreview()
       this.props.saveThumbnail(data, reason, thumbnail)
     })
   }
   // find out correct thumbnail size
-  generatePreview() {
+  generatePreview = () => {
     for (let i = 0; i < this.data.layers.length; i++) {
       const ld = this.data.layers[i]
       if (!ld.visible) continue
@@ -875,29 +875,29 @@ export default class MapArea extends React.Component {
     return canvas.toDataURL()
   }
 
-  getLayers() {
+  getLayers = () => {
     return this.layers
   }
 
   // render related methods
-  getInfo() {
+  getInfo = () => {
     const layer = this.getActiveLayer()
     return layer ? layer.getInfo() : null
   }
 
-  getNotification() {
+  getNotification = () => {
     return this.data.width * this.data.height > 100000 ? (
       <div>This map is larger than our recommended size - so editing may be slower than normal!</div>
     ) : null
   }
 
-  addLayerRef(id, layer) {
+  addLayerRef = (id, layer) => {
     if (layer) {
       this.layers[id] = layer
     }
   }
 
-  renderMap() {
+  renderMap = () => {
     const data = this.data
 
     if (!data || !data.layers) return <div className="map-empty" ref="mapElement" />

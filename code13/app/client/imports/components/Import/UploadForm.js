@@ -29,13 +29,13 @@ export default class UploadForm extends React.Component {
     }
   }
 
-  onDragOver(e) {
+  onDragOver = e => {
     this.props.onDragOver(e)
   }
-  onDragLeave(e) {
+  onDragLeave = e => {
     this.props.onDragLeave(e)
   }
-  onDrop(e) {
+  onDrop = e => {
     this.props.onDrop(
       e,
       this.state.assetType,
@@ -47,29 +47,29 @@ export default class UploadForm extends React.Component {
     )
   }
 
-  handleChangeSelectedProjectName(selectedProjName, selectedProj) {
+  handleChangeSelectedProjectName = (selectedProjName, selectedProj) => {
     this.setState({ selectedProject: selectedProj })
   }
 
-  handleLicenseChange(newLicense) {
+  handleLicenseChange = newLicense => {
     if (newLicense != this.state.assetLicense) this.setState({ assetLicense: newLicense })
   }
 
-  handleWorkStateChange(newWorkState) {
+  handleWorkStateChange = newWorkState => {
     if (newWorkState != this.state.workState) this.setState({ workState: newWorkState })
   }
 
-  handlePrefixChange(e) {
+  handlePrefixChange = e => {
     if (e.target.value != this.state.prefix) {
       this.setState({ prefix: e.target.value })
     }
   }
 
-  handleStableStateChange(e) {
+  handleStableStateChange = e => {
     this.setState({ isCompleted: !this.state.isCompleted })
   }
 
-  handleAssetTypeChange(e, param) {
+  handleAssetTypeChange = (e, param) => {
     this.setState({ assetType: param.value })
   }
 

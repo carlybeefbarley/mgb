@@ -36,7 +36,7 @@ export default class EditActorMap extends EditMap {
     registerDebugGlobal('ActorHelper', ActorHelper, __filename, 'ActorHelper of ActorMap editor')
   }
 
-  setInitialStateFromContent() {
+  setInitialStateFromContent = () => {
     this.v1_to_v2(this.props, mapData => {
       this.mgb_content2 = mapData
 
@@ -95,7 +95,7 @@ export default class EditActorMap extends EditMap {
     }
   }
 
-  updateMap(props = this.props) {
+  updateMap = (props = this.props) => {
     this.setState({ isLoading: true })
     this.v1_to_v2(props, d => {
       this.preventUpdates = false
@@ -127,7 +127,7 @@ export default class EditActorMap extends EditMap {
     ActorHelper.cleanUp()
   }
 
-  v1_to_v2(props, cb, c2 = props.asset.content2) {
+  v1_to_v2 = (props, cb, c2 = props.asset.content2) => {
     const names = {
       map: props.asset.name,
       user: props.asset.dn_ownerName,
@@ -158,7 +158,7 @@ export default class EditActorMap extends EditMap {
     )
   }
 
-  handleSave(data, reason, thumbnail, skipUndo = false) {
+  handleSave = (data, reason, thumbnail, skipUndo = false) => {
     this.preventUpdates = false
 
     // can be already unmounted - as called by async function
@@ -203,7 +203,7 @@ export default class EditActorMap extends EditMap {
     this.setState({ currentlyOpenModal: null })
   }
 
-  renderPlayModal() {
+  renderPlayModal = () => {
     const { jumpData, currentlyOpenModal } = this.state
     const action = 'jump'
 
@@ -220,7 +220,7 @@ export default class EditActorMap extends EditMap {
     )
   }
 
-  renderMusicModal() {
+  renderMusicModal = () => {
     const { musicData, currentlyOpenModal } = this.state
     const action = 'music'
 
@@ -237,7 +237,7 @@ export default class EditActorMap extends EditMap {
     )
   }
 
-  togglePlayState() {
+  togglePlayState = () => {
     this.setState({ isPlaying: !this.state.isPlaying })
   }
 

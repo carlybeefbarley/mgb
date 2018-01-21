@@ -8,12 +8,12 @@ export default class EventTool extends Tileset {
     return this.props.tilesets[0]
   }
 
-  onMouseDown(e) {
+  onMouseDown = e => {
     super.onMouseDown(e)
     this.props.setActiveLayerByName('Events')
   }
 
-  renderContent() {
+  renderContent = () => {
     return (
       <canvas
         ref="canvas"

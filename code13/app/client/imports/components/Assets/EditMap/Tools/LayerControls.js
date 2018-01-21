@@ -12,7 +12,7 @@ export default class LayerControls extends React.Component {
     super(...args)
   }
 
-  addLayer(type) {
+  addLayer = type => {
     this.props.addLayer(type)
   }
 

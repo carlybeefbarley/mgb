@@ -10,11 +10,11 @@ export default class GenerateMusic extends React.Component {
     super(props)
   }
 
-  importAudio(audioObject) {
+  importAudio = audioObject => {
     this.props.importMusic(audioObject, 'Generated music')
   }
 
-  stop() {
+  stop = () => {
     this.refs.djent.stop()
   }
 

@@ -49,7 +49,7 @@ export default class DropArea extends React.Component {
     this.subscription && this.subscription.stop()
   }
 
-  startSubscription(owner, name, kind = this.props.kind) {
+  startSubscription = (owner, name, kind = this.props.kind) => {
     // no need for subscription here
     if (owner == '[builtin]') {
       return
@@ -106,7 +106,7 @@ export default class DropArea extends React.Component {
     }, 0)
   }
 
-  handleDrop(e) {
+  handleDrop = e => {
     const asset = DragNDropHelper.getAssetFromEvent(e)
 
     if (!asset) {
@@ -117,7 +117,7 @@ export default class DropArea extends React.Component {
     this.setAsset(asset)
   }
 
-  saveChanges() {
+  saveChanges = () => {
     if (this.state.badAsset) {
       return
     }
@@ -131,7 +131,7 @@ export default class DropArea extends React.Component {
     this.props.onChange && this.props.onChange(name, this.state.asset)
   }
 
-  handleRemove() {
+  handleRemove = () => {
     //this.props.value = ''
     this.setState({ asset: null, badAsset: null }, () => {
       //this.props.value = ''
@@ -141,7 +141,7 @@ export default class DropArea extends React.Component {
   /**
    * Gets asset related to this drop area
    */
-  getAsset() {
+  getAsset = () => {
     if (this.state.asset) return this.state.asset
 
     if (this.props.value) {
@@ -167,7 +167,7 @@ export default class DropArea extends React.Component {
     return null
   }
 
-  setAsset(asset) {
+  setAsset = asset => {
     if (asset.kind !== this.props.kind) {
       this.setState({ badAsset: asset, asset: null }, () => {
         this.saveChanges()
@@ -183,7 +183,7 @@ export default class DropArea extends React.Component {
     })
   }
 
-  createAssetView() {
+  createAssetView = () => {
     const asset = this.state.asset || this.getAsset() || this.state.badAsset
     if (!asset) return
 
@@ -202,7 +202,7 @@ export default class DropArea extends React.Component {
     )
   }
 
-  getEffect(effect) {
+  getEffect = effect => {
     if (!effect) return 'none'
 
     const map = {
@@ -215,7 +215,7 @@ export default class DropArea extends React.Component {
     return map[effect] || 'none'
   }
 
-  getFrame(frame) {
+  getFrame = frame => {
     if (!frame) return 0
 
     return frame
@@ -232,7 +232,7 @@ export default class DropArea extends React.Component {
     this.props.onChange && this.props.onChange(val)
   }
 
-  renderOptions() {
+  renderOptions = () => {
     const name = this.props.title || 'Builtin samples'
     const options = this.props.options
     return (
@@ -243,7 +243,7 @@ export default class DropArea extends React.Component {
     )
   }
 
-  renderModalView() {
+  renderModalView = () => {
     const asset = this.state.asset || this.getAsset() || this.state.badAsset
     if (!asset) return
 

@@ -110,7 +110,7 @@ export default class Toolbar extends React.Component {
     }
   }
 
-  getEffectiveFeatureLevel() {
+  getEffectiveFeatureLevel = () => {
     return (
       getFeatureLevel(this.context.settings, this.lsLevelKey) ||
       expectedToolbars.getDefaultLevel(this.lsActiveFeatureLevelName)
@@ -138,7 +138,7 @@ export default class Toolbar extends React.Component {
     this.keyActions = null
   }
 
-  getKeyval(e) {
+  getKeyval = e => {
     let keyval = e.which
     e.metaKey && (keyval |= keyModifiers.META)
     e.shiftKey && (keyval |= keyModifiers.SHIFT)
@@ -147,11 +147,11 @@ export default class Toolbar extends React.Component {
     return keyval
   }
 
-  getButtonFromAction(action) {
+  getButtonFromAction = action => {
     return _.find(this.props.config.buttons, o => o.name == action)
   }
 
-  getActiveButtonIdx() {
+  getActiveButtonIdx = () => {
     let idx = null
     for (let i = 0; i < this.props.config.buttons.length; i++) {
       const button = this.props.config.buttons[i]
@@ -160,7 +160,7 @@ export default class Toolbar extends React.Component {
     return idx
   }
 
-  registerShortcut(shortcut, action) {
+  registerShortcut = (shortcut, action) => {
     const keys = shortcut.split('+')
     // create unique index where first 8 bits is keycode
     // 9th-12th bits are Ctrl/Shift/Alt/Meta - See keyModifiers.*
@@ -240,7 +240,7 @@ export default class Toolbar extends React.Component {
     )
   }
 
-  _handleClick(action, index, e) {
+  _handleClick = (action, index, e) => {
     if (this.state.activeButtonIndex === index) return
 
     if (this.props.actions[action]) {
@@ -261,7 +261,7 @@ export default class Toolbar extends React.Component {
     } else console.error(`Cannot find action for button '${action}'`, this.props.actions)
   }
 
-  _renderButton(b, index) {
+  _renderButton = (b, index) => {
     const label = b.label && (this.state.level <= 2 || this.state.level === b.level) ? ' ' + b.label : ''
     const joyrideId = 'mgbjr-' + this.props.name + '-' + b.name // Auto-create an id for react-joyride purposes
     if (b.shortcut && !b.disabled) this.registerShortcut(b.shortcut, b.name)

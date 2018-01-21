@@ -301,7 +301,7 @@ class SoundController extends Component {
     this.playEvent(buffer)
   }
 
-  importWav() {
+  importWav = () => {
     var self = this
     this.setState({ isConvertingWav: true })
 

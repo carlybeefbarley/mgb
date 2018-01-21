@@ -20,18 +20,18 @@ export default class ImportGraphic extends Component {
     }
   }
 
-  onDragOver(event) {
+  onDragOver = event => {
     event.stopPropagation()
     event.preventDefault()
     event.dataTransfer.dropEffect = 'copy'
     this.setState({ status: STATUS_DRAGGED_OVER })
   }
 
-  onDragLeave(event) {
+  onDragLeave = event => {
     this.setState({ status: STATUS_EMPTY })
   }
 
-  onDrop(event, assetType, prefix, project, assetLicense, workState, isCompleted) {
+  onDrop = (event, assetType, prefix, project, assetLicense, workState, isCompleted) => {
     event.stopPropagation()
     event.preventDefault()
 
@@ -69,7 +69,7 @@ export default class ImportGraphic extends Component {
     }
   }
 
-  readFileUri(file, assetType, path, prefix) {
+  readFileUri = (file, assetType, path, prefix) => {
     const fileName = (prefix + path + file.name).replace(/\//gi, '.')
     const reader = new FileReader()
 
@@ -102,7 +102,7 @@ export default class ImportGraphic extends Component {
     }
   }
 
-  saveGraphic(imgObject, fileName, assetType) {
+  saveGraphic = (imgObject, fileName, assetType) => {
     let content2 = {}
     let thumbnail = null
     switch (assetType) {
@@ -157,7 +157,7 @@ export default class ImportGraphic extends Component {
     this.setState({ graphics, status: STATUS_UPLOADED })
   }
 
-  createThumbnail(imgObject) {
+  createThumbnail = imgObject => {
     const tmpCanvas = document.createElement('canvas')
     const tmpCtx = tmpCanvas.getContext('2d')
     tmpCanvas.width = 290
@@ -175,7 +175,7 @@ export default class ImportGraphic extends Component {
     return tmpCanvas.toDataURL('image/png')
   }
 
-  clearImport() {
+  clearImport = () => {
     this.setState({ graphics: [], status: STATUS_EMPTY })
   }
 

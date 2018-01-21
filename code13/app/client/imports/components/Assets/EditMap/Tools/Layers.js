@@ -21,7 +21,7 @@ export default class Layers extends React.Component {
     this.props.toggleLayerVisibilty(i, !isVisible)
   }
 
-  renameLayer(layerId, changed) {
+  renameLayer = (layerId, changed) => {
     this.props.renameLayer(layerId, changed.name)
   }
 

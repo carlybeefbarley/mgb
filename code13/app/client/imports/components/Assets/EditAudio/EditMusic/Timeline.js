@@ -25,12 +25,12 @@ export default class Timeline extends React.Component {
     this.draw()
   }
 
-  setViewOffset(viewOffset) {
+  setViewOffset = viewOffset => {
     this.viewOffsetX = viewOffset * this.props.pxPerSecond
     this.draw()
   }
 
-  draw() {
+  draw = () => {
     this.timelineCtx.clearRect(0, 0, this.props.viewWidth, 50)
     if (!this.props.duration) return
     let count = Math.floor(this.props.duration) + 1

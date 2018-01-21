@@ -7,11 +7,11 @@ import { joyrideStore } from '/client/imports/stores'
 export default class Layers extends React.Component {
   componentDidMount() {}
 
-  handleClick(layerNum) {
+  handleClick = layerNum => {
     if (layerNum !== 3) this.props.setActiveLayer(layerNum)
     joyrideStore.completeTag(`mgbjr-CT-MapTools-layers-select${layerNum}`)
   }
-  showOrHideLayer(layerId, wasVisible, e) {
+  showOrHideLayer = (layerId, wasVisible, e) => {
     e.preventDefault()
     e.stopPropagation()
     this.props.toggleLayerVisibilty(layerId, !wasVisible)

@@ -58,16 +58,16 @@ export default class ActorMapProperties extends React.Component {
     }
   }
 
-  _fixValue(value, name) {
+  _fixValue = (value, name) => {
     //if (!value) return this._getPrevState(name)
     return _.clamp(value, this.min, this.max)
   }
 
-  _getPrevStateName(name) {
+  _getPrevStateName = name => {
     return 'prev' + _.capitalize(name)
   }
 
-  _getPrevState(name) {
+  _getPrevState = name => {
     return this.state[this._getPrevStateName(name)]
   }
 

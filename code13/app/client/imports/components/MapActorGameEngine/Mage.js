@@ -118,20 +118,20 @@ export default class Mage extends React.Component {
     }
   }
 
-  _mkFriendlyMapName() {
+  _mkFriendlyMapName = () => {
     return `${this.props.ownerName}.${this.props.startMapName}`
   }
 
-  handleInventoryAction(action, item) {
+  handleInventoryAction = (action, item) => {
     this._game && this._game.inventoryDialogActionHandler(action, item)
   }
 
-  handleSetGameStatus(lineNum, text) {
+  handleSetGameStatus = (lineNum, text) => {
     const line = lineNum ? this._statusLine1 : this._statusLine0
     line.innerText = text || ''
   }
 
-  handleShowNpcDialog(npcDialogData) {
+  handleShowNpcDialog = npcDialogData => {
     // can be null (meaning hide)
     this.setState({ activeNpcDialog: npcDialogData })
   }
@@ -145,13 +145,13 @@ export default class Mage extends React.Component {
 
   handleHideInventory = () => this.handleSetInventoryVisibility(false)
 
-  handleForceInventoryUpdate() {
+  handleForceInventoryUpdate = () => {
     // This is a bit of a pain since the inventory object is in the _game object so can't be used as a prop.
     this.forceUpdate() // Simple, brutal, effective.
   }
 
   // If this fails to start, it will trigger a UI message which will later nuke this._mageCanvas by unmouting the canvas
-  handlePlay() {
+  handlePlay = () => {
     const { ownerName, isMgb1Game, playCountIncFn } = this.props
 
     if (!this._mageCanvas) return
@@ -186,7 +186,7 @@ export default class Mage extends React.Component {
     if (startedOk) this.setState({ isPlaying: true })
   }
 
-  handleStop() {
+  handleStop = () => {
     if (!this._mageCanvas || !this._game) return
 
     this._game.endGame()
@@ -198,7 +198,7 @@ export default class Mage extends React.Component {
     })
   }
 
-  callDoBlit() {
+  callDoBlit = () => {
     if (this._mageCanvas && !this.props.isPaused) {
       const pendingLoads = this._countPendingLoads()
 
@@ -256,17 +256,17 @@ export default class Mage extends React.Component {
   */
 
   // Check if name has " #frameNumber"
-  _isFrameNamedGraphicAsset(name) {
+  _isFrameNamedGraphicAsset = name => {
     return /(#\d+)$/.test(name)
   }
 
   // Get frame number from name
-  _parseFrameNamedGraphicAsset(name) {
+  _parseFrameNamedGraphicAsset = name => {
     return parseInt(name.split(' #').pop(), 10) // explicitly parse int as base-10 since it has leading zero
   }
 
   // Load any actors that we don't already have in state.actors or pendingActorLoads
-  _loadRequiredGraphics(desiredGraphicNames, oName) {
+  _loadRequiredGraphics = (desiredGraphicNames, oName) => {
     const { fetchAssetByUri } = this.props
     const ownerName = oName ? oName : this.props.ownerName
 
@@ -286,7 +286,7 @@ export default class Mage extends React.Component {
     this.setState({ pendingGraphicLoads }) // and maybe isPreloadingStr? use a _mkIisPreloadingStrFn
   }
 
-  _graphicLoadResult(aName, isSuccess, data) {
+  _graphicLoadResult = (aName, isSuccess, data) => {
     const { loadedGraphics, failedGraphics } = this.state
     const pendingGraphicLoads = _.pull(this.state.pendingGraphicLoads, aName)
     if (isSuccess) {
@@ -316,7 +316,7 @@ export default class Mage extends React.Component {
   }
 
   // Load any actors that we don't already have in state.actors or pendingActorLoads
-  loadRequiredActors(desiredActorNames, actorOwnerName) {
+  loadRequiredActors = (desiredActorNames, actorOwnerName) => {
     const { fetchAssetByUri, ownerName } = this.props // ownerName is map owner name
     const { pendingActorLoads, loadedActors } = this.state
     _.each(desiredActorNames, aName => {
@@ -333,7 +333,7 @@ export default class Mage extends React.Component {
     this.setState({ pendingActorLoads }) // and maybe isPreloadingStr? use a _mkIisPreloadingStrFn
   }
 
-  _actorLoadResult(aName, oName, isSuccess, data) {
+  _actorLoadResult = (aName, oName, isSuccess, data) => {
     const { loadedActors, failedActors } = this.state
     const pendingActorLoads = _.pull(this.state.pendingActorLoads, aName)
     if (isSuccess) {
@@ -346,7 +346,7 @@ export default class Mage extends React.Component {
   }
 
   // An actor can also require other actors or tiles
-  _loadRequiredAssetsForActor(actor, oName) {
+  _loadRequiredAssetsForActor = (actor, oName) => {
     // Load any referenced graphics
     const desiredGraphicNames = _.filter(
       _.union(
@@ -382,7 +382,7 @@ export default class Mage extends React.Component {
     this.loadRequiredActors(desiredActorNames, oName)
   }
 
-  _countPendingLoads() {
+  _countPendingLoads = () => {
     return (
       this.state.pendingActorLoads.length +
       this.state.pendingMapLoads.length +
@@ -390,7 +390,7 @@ export default class Mage extends React.Component {
     )
   }
 
-  _startMapLoaded(activeMap) {
+  _startMapLoaded = activeMap => {
     const { startMapName } = this.props
     if (!this.state.loadedMaps[startMapName])
       this.setState({
@@ -413,7 +413,7 @@ export default class Mage extends React.Component {
       })
   }
 
-  _startMapLoadFailed(data) {
+  _startMapLoadFailed = data => {
     console.log(`MAPLOAD ERROR: '${data}'`)
     this.setState({
       isPreloadingStr: null,
@@ -421,7 +421,7 @@ export default class Mage extends React.Component {
     })
   }
 
-  _loadStartMap() {
+  _loadStartMap = () => {
     const { ownerName, startMapName, fetchAssetByUri } = this.props
     const mapData = this.state.loadedMaps[startMapName]
     if (mapData) this._startMapLoaded(mapData)
@@ -432,7 +432,7 @@ export default class Mage extends React.Component {
     }
   }
 
-  _transitionToNextMap(nextMapName) {
+  _transitionToNextMap = nextMapName => {
     this._transitioningToMapName = nextMapName
 
     const { fetchAssetByUri, ownerName } = this.props
@@ -446,7 +446,7 @@ export default class Mage extends React.Component {
     } else this._startMapLoaded(loadedMaps[nextMapName])
   }
 
-  _transitionMapLoadResult(nextMapName, isSuccess, data) {
+  _transitionMapLoadResult = (nextMapName, isSuccess, data) => {
     const { loadedMaps, failedMaps } = this.state
     const pendingMapLoads = _.pull(this.state.pendingMapLoads, nextMapName)
     if (isSuccess) {
@@ -493,7 +493,7 @@ export default class Mage extends React.Component {
       }
   }
 
-  handleTouchControls() {
+  handleTouchControls = () => {
     this.setState({ showTouchControls: !this.state.showTouchControls })
   }
 

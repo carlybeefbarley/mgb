@@ -19,7 +19,7 @@ export default class VolumeSlider extends React.Component {
     }
   }
 
-  changeVolume(e) {
+  changeVolume = e => {
     this.setState({ volume: parseFloat(e.target.value) })
     this.lastUpdate = Date.now()
 

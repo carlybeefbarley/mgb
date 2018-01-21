@@ -30,7 +30,7 @@ export default class EditActor extends React.Component {
     }
   }
 
-  doSnapshotActivity() {
+  doSnapshotActivity = () => {
     let passiveAction = {
       isActor: true, // This could in future have info such as which layer is being edited, but not needed yet
     }
@@ -41,7 +41,7 @@ export default class EditActor extends React.Component {
     this.doSnapshotActivity()
   }
 
-  handleSave(reason, thumbnail) {
+  handleSave = (reason, thumbnail) => {
     if (!this.props.canEdit) {
       this.props.editDeniedReminder()
       return
@@ -49,7 +49,7 @@ export default class EditActor extends React.Component {
     this.props.handleContentChange(this.props.asset.content2, thumbnail, reason)
   }
 
-  getTabs(databag) {
+  getTabs = databag => {
     const _makeContent = Element => (
       <Element
         asset={this.props.asset}
@@ -111,7 +111,7 @@ export default class EditActor extends React.Component {
     return allTabs
   }
 
-  getTemplates() {
+  getTemplates = () => {
     const segmentStyle = {
       height: '100%',
       verticalAlign: 'middle',
@@ -258,7 +258,7 @@ export default class EditActor extends React.Component {
     )
   }
 
-  renderTemplates() {
+  renderTemplates = () => {
     return (
       <div>
         <h3 style={{ textAlign: 'center' }}>
@@ -279,7 +279,7 @@ export default class EditActor extends React.Component {
   handleModalClose = () => {
     if (!this.state.isTemplateSelected) this.loadDefaultTemplate()
   }
-  loadTemplate(tpl) {
+  loadTemplate = tpl => {
     // force defaults
     this.props.asset.content2 = getDefaultActor()
     const t = templates[tpl]
@@ -294,7 +294,7 @@ export default class EditActor extends React.Component {
     merge(t, d)
     this.forceUpdate()
   }
-  loadDefaultTemplate() {
+  loadDefaultTemplate = () => {
     // force defaults
     const templateName = 'alTemplateScenery'
     this.props.asset.content2 = getDefaultActor()

@@ -67,12 +67,12 @@ export default class TileMapLayer extends AbstractLayer {
 
   /* endof lifecycle functions */
 
-  increaseSizeToTop(pos) {
+  increaseSizeToTop = pos => {
     this.props.getLayers().forEach(l => {
       l._increaseSizeToTop && l._increaseSizeToTop(pos)
     })
   }
-  _increaseSizeToTop(pos) {
+  _increaseSizeToTop = pos => {
     this.options.y -= this.props.mapData.tileheight
     for (let i = 0; i < this.options.width; i++) {
       this.options.data.unshift(0)
@@ -84,12 +84,12 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
 
-  increaseSizeToRight(pos) {
+  increaseSizeToRight = pos => {
     this.props.getLayers().forEach(l => {
       l._increaseSizeToRight && l._increaseSizeToRight(pos)
     })
   }
-  _increaseSizeToRight(pos) {
+  _increaseSizeToRight = pos => {
     // one step at the time..
     // this method will be called more - if necessary
     // reverse as first splice will resize array
@@ -103,13 +103,13 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
 
-  increaseSizeToBottom(pos) {
+  increaseSizeToBottom = pos => {
     this.props.getLayers().forEach(l => {
       l._increaseSizeToBottom && l._increaseSizeToBottom(pos)
     })
   }
 
-  _increaseSizeToBottom(pos) {
+  _increaseSizeToBottom = pos => {
     for (let i = 0; i < this.options.width; i++) {
       this.options.data.push(0)
     }
@@ -120,12 +120,12 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
 
-  increaseSizeToLeft(pos) {
+  increaseSizeToLeft = pos => {
     this.props.getLayers().forEach(l => {
       l._increaseSizeToLeft && l._increaseSizeToLeft(pos)
     })
   }
-  _increaseSizeToLeft(pos) {
+  _increaseSizeToLeft = pos => {
     this.options.x -= this.props.mapData.tilewidth
     // reverse as first splice will resize array
     for (let i = this.options.height - 1; i > -1; i--) {
@@ -139,7 +139,7 @@ export default class TileMapLayer extends AbstractLayer {
   }
 
   // this only tells renderer to draw in the rotated position
-  rotate() {
+  rotate = () => {
     // this.ctrl.h = this.ctrl.h > 0 ? -1 : 1
     this.ctrl.d = !this.ctrl.d
 
@@ -157,7 +157,7 @@ export default class TileMapLayer extends AbstractLayer {
       }
     }
   }
-  rotateBack() {
+  rotateBack = () => {
     // this.ctrl.h = this.ctrl.h > 0 ? -1 : 1
     this.ctrl.d = !this.ctrl.d
 
@@ -175,16 +175,16 @@ export default class TileMapLayer extends AbstractLayer {
       }
     }
   }
-  resetRotation() {
+  resetRotation = () => {
     this.ctrl.d = false
     this.ctrl.h = 1
     this.ctrl.v = 1
   }
-  flip() {
+  flip = () => {
     this.ctrl.h = this.ctrl.h > 0 ? -1 : 1
   }
 
-  fixRotation(id) {
+  fixRotation = id => {
     if (this.ctrl.h == -1) {
       this.options.data[id] |= TileHelper.FLIPPED_HORIZONTALLY_FLAG
     }
@@ -195,7 +195,7 @@ export default class TileMapLayer extends AbstractLayer {
       this.options.data[id] |= TileHelper.FLIPPED_DIAGONALLY_FLAG
     }
   }
-  tileWithRotation(id) {
+  tileWithRotation = id => {
     let ret = id
     if (this.ctrl.h == -1) {
       ret |= TileHelper.FLIPPED_HORIZONTALLY_FLAG
@@ -209,7 +209,7 @@ export default class TileMapLayer extends AbstractLayer {
     return ret
   }
 
-  getTilePosInfo(e) {
+  getTilePosInfo = e => {
     const pos = new TileSelection()
     const props = this.props
 
@@ -227,7 +227,7 @@ export default class TileMapLayer extends AbstractLayer {
     pos.gid = this.options.data[pos.id]
     return pos
   }
-  getInfo() {
+  getInfo = () => {
     let st = ''
     const col = this.props.getCollection()
     col &&
@@ -265,7 +265,7 @@ export default class TileMapLayer extends AbstractLayer {
     )
   }
 
-  selectRectangle(pos) {
+  selectRectangle = pos => {
     if (!this.startingTilePos) {
       this.props.addFirstToSelection(new TileSelection(pos))
       return
@@ -307,14 +307,14 @@ export default class TileMapLayer extends AbstractLayer {
 
   // large maps are still slow on movement..
   // dirty rectalngles (in our case dirty tiles :) are great for super fast map movement
-  draw() {
+  draw = () => {
     this.nextDraw = this.now
   }
-  drawTiles() {
+  drawTiles = () => {
     this.draw()
   }
 
-  _draw(now, force) {
+  _draw = (now, force) => {
     this.now = now
     if (!force && this.nextDraw > now) {
       return
@@ -410,7 +410,7 @@ export default class TileMapLayer extends AbstractLayer {
     this.drawSelection(true)
   }
 
-  drawTile(pal, pos, spacing, clear) {
+  drawTile = (pal, pos, spacing, clear) => {
     if (!pal.image) {
       return
     }
@@ -514,7 +514,7 @@ export default class TileMapLayer extends AbstractLayer {
   }
 
   // drawTiles will call this
-  _highlightTiles(off = this.lastOffset) {
+  _highlightTiles = (off = this.lastOffset) => {
     const palette = this.props.palette
     const camera = this.camera
     const layer = this.options
@@ -602,7 +602,7 @@ export default class TileMapLayer extends AbstractLayer {
     }
     this.prevTile = pos
   }
-  highlightTile(pos, fillStyle) {
+  highlightTile = (pos, fillStyle) => {
     const props = this.props
     const camera = this.camera
     const spacing = 0
@@ -635,7 +635,7 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
 
-  drawSelection(tmp) {
+  drawSelection = tmp => {
     if (!this.props.isActive) {
       return
     }
@@ -669,7 +669,7 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
   /* events */
-  handleMouseDown(e) {
+  handleMouseDown = e => {
     // multitouch handles mapArea - camera stuff
     if (e.touches && e.touches.length > 1) {
       return
@@ -683,7 +683,7 @@ export default class TileMapLayer extends AbstractLayer {
     }
   }
   // this should be triggered on window instead of main element
-  handleMouseUp(e) {
+  handleMouseUp = e => {
     // 0 - mouse / undefined - touch
     if (e.button) {
       return
@@ -710,7 +710,7 @@ export default class TileMapLayer extends AbstractLayer {
       }
     }
   }
-  handleMouseMove(e) {
+  handleMouseMove = e => {
     const nat = e.nativeEvent ? e.nativeEvent : e
     if (nat.target !== this.refs.canvas) {
       return
@@ -738,7 +738,7 @@ export default class TileMapLayer extends AbstractLayer {
       edit.debug.call(this, nat)
     }
   }
-  onMouseLeave(e) {
+  onMouseLeave = e => {
     this.lastEvent = null
     this.isMouseOver = false
     this.props.clearTmpSelection()
@@ -750,7 +750,7 @@ export default class TileMapLayer extends AbstractLayer {
     this.drawTiles()
   }
 
-  onKeyUp(e) {
+  onKeyUp = e => {
     const w = e.which
 
     if (w === 46) {
@@ -761,7 +761,7 @@ export default class TileMapLayer extends AbstractLayer {
   }
   /* end of events */
 
-  insertTile(id, gid) {
+  insertTile = (id, gid) => {
     this.options.data[id] = gid
     // this makes filling tiles slow - as full update will start on changes
     // this.props.handleSave('Inserting Tiles')
@@ -771,7 +771,7 @@ export default class TileMapLayer extends AbstractLayer {
    * deletes selected tiles
    * @returns {Integer} removed count
    */
-  deleteSelection() {
+  deleteSelection = () => {
     const sel = this.props.getSelection()
     const retval = sel.length
     if (!retval) return retval

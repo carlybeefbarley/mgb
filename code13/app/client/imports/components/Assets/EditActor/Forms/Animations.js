@@ -33,7 +33,7 @@ export default class Animations extends React.Component {
     joyrideStore.completeTag(`mgbjr-CT-edit-actor-Animations-accordion-${animId}`)
   }
 
-  handleGraphicFrameSelection(e, data) {
+  handleGraphicFrameSelection = (e, data) => {
     let frames = this.state.graphicFrameImports
     if (data.checked) frames[data.value].checked = 0
     else frames[data.value].checked = 1
@@ -41,13 +41,13 @@ export default class Animations extends React.Component {
     this.setState({ graphicFrameImports: frames })
   }
 
-  handleClearAll(animTitle) {
+  handleClearAll = animTitle => {
     _.forEach(Object.keys(this.refs), frame => {
       if (_.startsWith(frame, animTitle)) this.refs[frame].handleRemove()
     })
   }
 
-  handleApplyEffects(index, animTitle) {
+  handleApplyEffects = (index, animTitle) => {
     if (!this.state.lastEffectChange) return
 
     let count = 0
@@ -89,7 +89,7 @@ export default class Animations extends React.Component {
   */
 
   // Store graphic frames in graphicFrameImports
-  getGraphicFrames(data, val) {
+  getGraphicFrames = (data, val) => {
     let graphicFrames = []
     for (let i = 0; i < data.tilecount; i++) {
       let name = val + ' #' + (i + 1)
@@ -100,7 +100,7 @@ export default class Animations extends React.Component {
   }
 
   // Change graphics based on selected frames from graphicFrameImports
-  changeGraphicFrames() {
+  changeGraphicFrames = () => {
     let index = this.state.animationIndex
     let frames = this.state.graphicFrameImports
     for (let i = 0; i < frames.length; i++) {
@@ -117,7 +117,7 @@ export default class Animations extends React.Component {
     this.props.onChange && this.props.onChange()
   }
 
-  changeGraphic(index, val, asset) {
+  changeGraphic = (index, val, asset) => {
     this.data[index].tileName = val
     this.data[index].frame = 0
     this.setState({ animationIndex: index })
@@ -138,7 +138,7 @@ export default class Animations extends React.Component {
     this.props.onChange && this.props.onChange()
   }
 
-  changeEffect(index, val) {
+  changeEffect = (index, val) => {
     this.setState({ lastEffectChange: val })
 
     this.data[index].effect = val
@@ -147,7 +147,7 @@ export default class Animations extends React.Component {
     this.props.onChange && this.props.onChange()
   }
 
-  renderContent(animations, animTitle, i) {
+  renderContent = (animations, animTitle, i) => {
     return (
       <Table.Row style={!this.props.canEdit ? { pointerEvents: 'none' } : {}} key={i}>
         <Table.Cell>{animations[i]}</Table.Cell>
@@ -174,7 +174,7 @@ export default class Animations extends React.Component {
     )
   }
 
-  renderAccordion(animTable, animTitle, i) {
+  renderAccordion = (animTable, animTitle, i) => {
     if (animTitle !== 'stationary west') i--
     let animId = animTitle.replace(' ', '')
 

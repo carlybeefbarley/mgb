@@ -52,7 +52,7 @@ export default class Generate8bit extends React.Component {
     this.ctx = this.canvas.getContext('2d')
   }
 
-  generate() {
+  generate = () => {
     if (this.state.isHidden) {
       this.setState({ isHidden: false })
     }
@@ -78,7 +78,7 @@ export default class Generate8bit extends React.Component {
     }, 50)
   }
 
-  randomize() {
+  randomize = () => {
     let pianoParams = this.state.pianoParams
     pianoParams.v = Math.floor(Math.random() * 4) - 2
     pianoParams.v1 = Math.floor(Math.random() * 20) - 10
@@ -90,7 +90,7 @@ export default class Generate8bit extends React.Component {
     this.setState({ pianoParams, bpm, bassVolume })
   }
 
-  generateSample(song) {
+  generateSample = song => {
     var downsample = 2 //increasing this will speed up generation but yield lower-res sound
     var bpm = this.state.bpm
     bpm = 1 / (bpm / 120)
@@ -129,7 +129,7 @@ export default class Generate8bit extends React.Component {
     // return audio;
   }
 
-  drawNotes(song, bpm, duration) {
+  drawNotes = (song, bpm, duration) => {
     this.ctx.fillStyle = '#ffffff'
     this.ctx.fillRect(0, 0, this.state.canvasWidth, this.state.canvasHeight)
 
@@ -153,57 +153,57 @@ export default class Generate8bit extends React.Component {
     }
   }
 
-  togglePlay() {
+  togglePlay = () => {
     if (!this.audio) return
 
     this.state.isPlaying ? this.stop() : this.play()
   }
 
-  play() {
+  play = () => {
     if (!this.audio) return
     this.audio.play()
     this.setState({ isPlaying: true })
   }
 
-  stop() {
+  stop = () => {
     if (!this.audio) return
     this.audio.pause()
     this.audio.currentTime = 0
     this.setState({ isPlaying: false })
   }
 
-  toggleLoop() {
+  toggleLoop = () => {
     if (this.audio) {
       this.audio.loop = this.isLoop
     }
     this.setState({ isLoop: !this.state.isLoop })
   }
 
-  importAudio() {
+  importAudio = () => {
     if (!this.audio) return
     this.props.importMusic(this.audio, 'Generated 8bit music')
   }
 
-  changeBPM(e) {
+  changeBPM = e => {
     this.setState({ bpm: parseInt(e.target.value) })
   }
 
-  toggleBass() {
+  toggleBass = () => {
     this.setState({ isBass: !this.state.isBass })
   }
 
-  changeBassVolume(e) {
+  changeBassVolume = e => {
     this.setState({ bassVolume: parseInt(e.target.value) / 10 })
   }
 
-  changePianoParams(id, e) {
+  changePianoParams = (id, e) => {
     let pianoParams = this.state.pianoParams
     pianoParams[id] = parseFloat(e.target.value)
     this.setState({ pianoParams })
     // console.log(this.state.pianoParams)
   }
 
-  toggleEnchancePiano(e) {
+  toggleEnchancePiano = e => {
     let pianoParams = this.state.pianoParams
     pianoParams.enchance = !pianoParams.enchance
     this.setState({ pianoParams })

@@ -67,7 +67,7 @@ export default class TileSet extends React.Component {
   }
 
   /* helpers */
-  adjustCanvas() {
+  adjustCanvas = () => {
     const ts = this.tileset
     const canvas = this.refs.canvas
 
@@ -87,7 +87,7 @@ export default class TileSet extends React.Component {
     this.ctx = canvas.getContext('2d')
   }
 
-  getTilePosInfo(e) {
+  getTilePosInfo = e => {
     const ts = this.tileset
     // image has not been loaded
     if (!ts) {
@@ -100,7 +100,7 @@ export default class TileSet extends React.Component {
   /* endof helpers */
 
   /* functionality */
-  selectTile(e) {
+  selectTile = e => {
     if (!this.prevTile) {
       this.prevTile = this.getTilePosInfo(e)
       // failed to get prev tile.. e.g. click was out of bounds
@@ -112,7 +112,7 @@ export default class TileSet extends React.Component {
     this.highlightTile(e, true)
   }
 
-  selectRectangle(e) {
+  selectRectangle = e => {
     const ts = this.tileset
     // new map!
     if (!ts) {
@@ -154,13 +154,13 @@ export default class TileSet extends React.Component {
     this.drawTiles()
   }
 
-  selectTileset(tilesetNum) {
+  selectTileset = tilesetNum => {
     this.props.selectTileset(tilesetNum)
   }
   /* endof functionlity */
 
   /* drawing on canvas*/
-  drawTiles() {
+  drawTiles = () => {
     this.prevTile = null
     const tss = this.props.tilesets
     const ts = this.tileset
@@ -199,7 +199,7 @@ export default class TileSet extends React.Component {
     }
   }
 
-  drawTile(pal, pos, info, clear = false) {
+  drawTile = (pal, pos, info, clear = false) => {
     if (clear) {
       this.ctx.clearRect(
         pos.x * (pal.ts.tilewidth + this.spacing),
@@ -227,7 +227,7 @@ export default class TileSet extends React.Component {
     }
   }
 
-  highlightTile(e) {
+  highlightTile = e => {
     const ts = this.tileset
     if (!ts) {
       return
@@ -250,7 +250,7 @@ export default class TileSet extends React.Component {
   /* endof drawing on canvas */
 
   /* events */
-  onDropOnLayer(e) {
+  onDropOnLayer = e => {
     const asset = DragNDropHelper.getAssetFromEvent(e)
     if (!asset || asset.kind != AssetKindEnum.graphic) {
       return
@@ -262,7 +262,7 @@ export default class TileSet extends React.Component {
     })
   }
 
-  onDropChangeTilesetImage(e) {
+  onDropChangeTilesetImage = e => {
     e.preventDefault()
     e.stopPropagation()
 
@@ -276,7 +276,7 @@ export default class TileSet extends React.Component {
     })
   }
 
-  onMouseDown(e) {
+  onMouseDown = e => {
     e.preventDefault()
 
     if (e.button == 2) {
@@ -330,7 +330,7 @@ export default class TileSet extends React.Component {
 
   /* react dom */
 
-  renderContent(tileset) {
+  renderContent = tileset => {
     return (
       <div
         className="active content tilesets accept-drop"
@@ -364,7 +364,7 @@ export default class TileSet extends React.Component {
     )
   }
 
-  genTilesetList(index, isActive, tileset) {
+  genTilesetList = (index, isActive, tileset) => {
     const title = `${tileset.name} ${tileset.imagewidth}x${tileset.imageheight}`
     return (
       <a
@@ -378,7 +378,7 @@ export default class TileSet extends React.Component {
     )
   }
 
-  genTilesetImage(index, isActive, tileset) {
+  genTilesetImage = (index, isActive, tileset) => {
     const title = `${tileset.name} ${tileset.imagewidth}x${tileset.imageheight}`
     return (
       <div
@@ -396,7 +396,7 @@ export default class TileSet extends React.Component {
     )
   }
 
-  renderTileset(from = 0, to = this.props.tilesets.length, genTemplate = this.genTilesetList) {
+  renderTileset = (from = 0, to = this.props.tilesets.length, genTemplate = this.genTilesetList) => {
     const tss = this.props.tilesets
     let ts = this.tileset
     const tilesets = []
@@ -406,11 +406,11 @@ export default class TileSet extends React.Component {
     return tilesets
   }
 
-  showTileListPopup() {
+  showTileListPopup = () => {
     this.setState({ isModalOpen: true })
   }
 
-  renderForModal(from = 0, to = this.props.tilesets.length) {
+  renderForModal = (from = 0, to = this.props.tilesets.length) => {
     const { isModalOpen } = this.state
 
     return (
@@ -420,7 +420,7 @@ export default class TileSet extends React.Component {
     )
   }
 
-  renderOpenListButton(offset = 0) {
+  renderOpenListButton = (offset = 0) => {
     if (this.props.tilesets.length < offset) {
       return null
     }
@@ -431,7 +431,7 @@ export default class TileSet extends React.Component {
     )
   }
 
-  renderEmpty() {
+  renderEmpty = () => {
     return (
       <div className="mgbAccordionScroller">
         <Accordion

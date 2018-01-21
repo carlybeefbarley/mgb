@@ -36,12 +36,12 @@ export default class SoundStock extends React.Component {
     this.isReallyMounted = false
   }
 
-  searchOnChange(event) {
+  searchOnChange = event => {
     // TODO clever autosearch
     this.setState({ searchField: event.target.value })
   }
 
-  searchOnSubmit() {
+  searchOnSubmit = () => {
     let self = this
     const infolink = makeCDNLink('/api/asset/sound/name/' + this.state.searchField)
     HTTP.get(infolink, (error, sounds) => {
@@ -51,7 +51,7 @@ export default class SoundStock extends React.Component {
     })
   }
 
-  togglePlay(soundID) {
+  togglePlay = soundID => {
     let player = ReactDOM.findDOMNode(this.refs[soundID])
     if (this.state.playingSoundID === null) {
       this.playSound(soundID)
@@ -69,7 +69,7 @@ export default class SoundStock extends React.Component {
     }
   }
 
-  playSound(soundID) {
+  playSound = soundID => {
     let player = ReactDOM.findDOMNode(this.refs[soundID])
     if (player.src) {
       player.play()
@@ -85,7 +85,7 @@ export default class SoundStock extends React.Component {
     }
   }
 
-  drawTimeline() {
+  drawTimeline = () => {
     let player = ReactDOM.findDOMNode(this.refs[this.state.playingSoundID])
     let timeLine = ReactDOM.findDOMNode(this.refs['timeline_' + this.state.playingSoundID])
     let ctx = timeLine.getContext('2d')
@@ -98,7 +98,7 @@ export default class SoundStock extends React.Component {
     return width
   }
 
-  timelineClick(soundID, duration, e) {
+  timelineClick = (soundID, duration, e) => {
     let player = ReactDOM.findDOMNode(this.refs[soundID])
     let timeLine = ReactDOM.findDOMNode(this.refs['timeline_' + soundID])
     let rect = timeLine.getBoundingClientRect()
@@ -121,13 +121,13 @@ export default class SoundStock extends React.Component {
     }
   }
 
-  clearTimeline(soundID) {
+  clearTimeline = soundID => {
     let timeLine = ReactDOM.findDOMNode(this.refs['timeline_' + soundID])
     let ctx = timeLine.getContext('2d')
     ctx.clearRect(0, 0, 280, 160)
   }
 
-  audioEnded(event) {
+  audioEnded = event => {
     let soundID = event.target.dataset.id
     let player = ReactDOM.findDOMNode(this.refs[soundID])
     player.pause()
@@ -138,7 +138,7 @@ export default class SoundStock extends React.Component {
     }
   }
 
-  importSound(soundID) {
+  importSound = soundID => {
     let player = ReactDOM.findDOMNode(this.refs[soundID])
     if (player.src) {
       this.props.importSound(player, 'Imported stock sound')
@@ -152,7 +152,7 @@ export default class SoundStock extends React.Component {
     }
   }
 
-  formatDuration(sec) {
+  formatDuration = sec => {
     if (!sec) sec = 1
     sec = Math.round(sec)
     let min = Math.floor(sec / 60) + ''

@@ -6,7 +6,7 @@ export default class LayerControls extends React.Component {
     return this.props.options
   }
 
-  addLayer(type) {
+  addLayer = type => {
     this.props.addLayer(type)
   }
 

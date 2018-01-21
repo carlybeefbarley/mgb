@@ -39,12 +39,12 @@ export default class SpriteLayers extends React.Component {
 
   /************************** FRAMES ******************************/
 
-  selectFrame(frameID) {
+  selectFrame = frameID => {
     this.props.handleSelectFrame(frameID)
   }
 
   // Append frame at end of frame list
-  addFrame() {
+  addFrame = () => {
     if (!this.hasPermission()) return
 
     let fN = this.props.content2.frameNames
@@ -57,11 +57,11 @@ export default class SpriteLayers extends React.Component {
     this.forceUpdate() // Force react to update.. needed since we need render() to create new canvasses
   }
 
-  toggleCanvasFramesVisibility() {
+  toggleCanvasFramesVisibility = () => {
     this.setState({ isCanvasFramesVisible: !this.state.isCanvasFramesVisible })
   }
 
-  insertFrameAfter(frameID, doCopy) {
+  insertFrameAfter = (frameID, doCopy) => {
     if (!this.hasPermission()) return
 
     let c2 = this.props.content2
@@ -76,12 +76,12 @@ export default class SpriteLayers extends React.Component {
     joyrideStore.completeTag('mgbjr-CT-editGraphic-insertFrameAfter-invoke')
   }
 
-  copyFrame(frameID) {
+  copyFrame = frameID => {
     if (!this.hasPermission()) return
     this.setState({ copyFrameID: frameID })
   }
 
-  pasteFrame(frameID) {
+  pasteFrame = frameID => {
     if (!this.hasPermission()) return
 
     let c2 = this.props.content2
@@ -93,7 +93,7 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('Paste frame #' + this.state.copyFrameID + ' to #' + frameID, true)
   }
 
-  frameMoveLeft(frameID) {
+  frameMoveLeft = frameID => {
     if (!this.hasPermission()) return
 
     if (frameID <= 0) return
@@ -113,7 +113,7 @@ export default class SpriteLayers extends React.Component {
     this.handleSave(`Move frame ${frameID} left`, true)
   }
 
-  frameMoveRight(frameID) {
+  frameMoveRight = frameID => {
     if (!this.hasPermission()) return
 
     let c2 = this.props.content2
@@ -132,7 +132,7 @@ export default class SpriteLayers extends React.Component {
     this.handleSave(`Move frame ${frameID} right`, true)
   }
 
-  deleteFrame(frameID) {
+  deleteFrame = frameID => {
     if (!this.hasPermission()) return
 
     let c2 = this.props.content2
@@ -155,7 +155,7 @@ export default class SpriteLayers extends React.Component {
 
   /************************** ANIMATIONS ******************************/
 
-  deleteAnimationFrame(frameID) {
+  deleteAnimationFrame = frameID => {
     const c2 = this.props.content2
     c2.animations.forEach((anim, idx) => {
       // remove frame from animation
@@ -179,7 +179,7 @@ export default class SpriteLayers extends React.Component {
     // console.log(c2.animations)
   }
 
-  cancelNextAnimationTimeout() {
+  cancelNextAnimationTimeout = () => {
     if (this._playAnimationTimeoutId) {
       clearTimeout(this._playAnimationTimeoutId)
       this._playAnimationTimeoutId = null
@@ -187,7 +187,7 @@ export default class SpriteLayers extends React.Component {
     }
   }
 
-  togglePlayAnimation() {
+  togglePlayAnimation = () => {
     let isPlaying = !this.state.isPlaying
     this.setState({ isPlaying })
 
@@ -195,7 +195,7 @@ export default class SpriteLayers extends React.Component {
     else this.cancelNextAnimationTimeout()
   }
 
-  togglePartialAnimation(frameID, endFrameID, animationName) {
+  togglePartialAnimation = (frameID, endFrameID, animationName) => {
     if (this.state.isPlaying && this._playLoopRange && animationName === this._playLoopRange.name) {
       this.cancelNextAnimationTimeout()
       this.setState({ isPlaying: false })
@@ -206,7 +206,7 @@ export default class SpriteLayers extends React.Component {
     }
   }
 
-  playAnimation(frameID, endFrameID, animationName) {
+  playAnimation = (frameID, endFrameID, animationName) => {
     this.selectFrame(frameID)
     //
     if (!this._playLoopRange)
@@ -224,25 +224,25 @@ export default class SpriteLayers extends React.Component {
     }, Math.round(1000 / this.props.content2.fps))
   }
 
-  stepFrame(isForward) {
+  stepFrame = isForward => {
     let selectedID = this.props.selectedFrameIdx
     let frameID = isForward ? selectedID + 1 : selectedID - 1
     if (frameID >= 0 && frameID < this.props.content2.frameNames.length) this.selectFrame(frameID)
   }
 
-  rewindFrames(isForward) {
+  rewindFrames = isForward => {
     let frameID = isForward ? this.props.content2.frameNames.length - 1 : 0
     this.selectFrame(frameID)
   }
 
-  changeFps(event) {
+  changeFps = event => {
     if (!this.hasPermission()) return
 
     this.props.content2.fps = event.target.value
     this.handleSave('Changed FPS')
   }
 
-  getAnimIdByFrame(frameID) {
+  getAnimIdByFrame = frameID => {
     let c2 = this.props.content2
     let animID = false
     if (c2.animations) {
@@ -257,7 +257,7 @@ export default class SpriteLayers extends React.Component {
     return animID
   }
 
-  addAnimation(frameID) {
+  addAnimation = frameID => {
     if (!this.hasPermission()) return
 
     let c2 = this.props.content2
@@ -273,7 +273,7 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('Add animation')
   }
 
-  getAnimationsTH() {
+  getAnimationsTH = () => {
     let colors = ['orange', 'green', 'blue', 'violet']
     let colorID = 0
 
@@ -302,7 +302,7 @@ export default class SpriteLayers extends React.Component {
     return animTH
   }
 
-  changeAnimStart(animID, e) {
+  changeAnimStart = (animID, e) => {
     if (!this.hasPermission()) return
 
     let c2 = this.props.content2
@@ -325,7 +325,7 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('Changed animation start')
   }
 
-  changeAnimEnd(animID, e) {
+  changeAnimEnd = (animID, e) => {
     if (!this.hasPermission()) return
 
     let c2 = this.props.content2
@@ -348,7 +348,7 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('Changed animation end')
   }
 
-  changeAnimFPS(animID, e) {
+  changeAnimFPS = (animID, e) => {
     if (!this.hasPermission()) return
 
     let newFPS = e.target.value
@@ -357,7 +357,7 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('Change animation FPS')
   }
 
-  renameAnimation(animID, e) {
+  renameAnimation = (animID, e) => {
     if (!this.hasPermission()) return
 
     let newName = e.target.value
@@ -366,7 +366,7 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('Rename animation')
   }
 
-  deleteAnimation(animID) {
+  deleteAnimation = animID => {
     if (!this.hasPermission()) return
 
     this.props.content2.animations.splice(animID, 1)
@@ -375,7 +375,7 @@ export default class SpriteLayers extends React.Component {
 
   /************************** LAYERS ******************************/
 
-  toggleAllVisibility() {
+  toggleAllVisibility = () => {
     let isVisible = !this.state.allLayersHidden
     this.setState({ allLayersHidden: isVisible })
     let layerParams = this.props.content2.layerParams
@@ -383,7 +383,7 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('All layers visibility')
   }
 
-  toggleAllLocking() {
+  toggleAllLocking = () => {
     if (!this.hasPermission()) return
     let isLocked = !this.state.allLayersLocked
     this.setState({ allLayersLocked: isLocked })
@@ -392,15 +392,15 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('All layers locking')
   }
 
-  toggleCanvasLayersVisibility() {
+  toggleCanvasLayersVisibility = () => {
     this.setState({ isCanvasLayersVisible: !this.state.isCanvasLayersVisible })
   }
 
-  selectLayer(layerID) {
+  selectLayer = layerID => {
     this.props.handleSelectLayer(layerID) // TODO: Cleaner to just have a prop.callback for this
   }
 
-  addLayer() {
+  addLayer = () => {
     if (!this.hasPermission()) return
 
     // TODO this.doSaveStateForUndo("Add Layer")
@@ -417,12 +417,12 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('Add layer to graphic')
   }
 
-  copyLayer(layerID) {
+  copyLayer = layerID => {
     if (!this.hasPermission()) return
     this.setState({ copyLayerID: layerID })
   }
 
-  pasteLayer(layerID) {
+  pasteLayer = layerID => {
     if (!this.hasPermission()) return
     if (this.state.copyLayerID === null) return
 
@@ -435,7 +435,7 @@ export default class SpriteLayers extends React.Component {
     this.handleSave(`Paste layer #${this.state.copyLayerID} to #${layerID}`, true)
   }
 
-  deleteLayer(layerID) {
+  deleteLayer = layerID => {
     if (!this.hasPermission()) return
 
     let c2 = this.props.content2
@@ -456,7 +456,7 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('Delete layer', true)
   }
 
-  moveLayerUp(layerID) {
+  moveLayerUp = layerID => {
     if (!this.hasPermission()) return
 
     let c2 = this.props.content2
@@ -474,7 +474,7 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('Layer moved up', true)
   }
 
-  moveLayerDown(layerID) {
+  moveLayerDown = layerID => {
     if (!this.hasPermission()) return
 
     let c2 = this.props.content2
@@ -492,21 +492,21 @@ export default class SpriteLayers extends React.Component {
     this.handleSave('Layer moved down', true)
   }
 
-  handleSave(changeText = 'change graphic', dontSaveFrameData) {
+  handleSave = (changeText = 'change graphic', dontSaveFrameData) => {
     this.props.handleSave(changeText, dontSaveFrameData)
   }
 
-  hasPermission() {
+  hasPermission = () => {
     return this.props.hasPermission()
   }
 
-  registerPreviewCanvas(idx, element) {
+  registerPreviewCanvas = (idx, element) => {
     if (element && !element.hasRegisteredDragStart) {
       element.addEventListener('touchstart', DragNDropHelper.startSyntheticDrag)
       element.hasRegisteredDragStart = true
     }
   }
-  handleDragStart(frameId, e) {
+  handleDragStart = (frameId, e) => {
     // allow to drop on graphics canvas
     try {
       e.dataTransfer.setData('mgb/image', this.props.getFrameData(frameId))
@@ -517,7 +517,7 @@ export default class SpriteLayers extends React.Component {
     // e.dataTransfer.effectAllowed = "copy"
     document.body.classList.add('dragging')
   }
-  handleDragStartForLayer(layerId, e) {
+  handleDragStartForLayer = (layerId, e) => {
     // allow to drop on graphics canvas
     try {
       e.dataTransfer.setData('mgb/image', this.props.getLayerData(layerId))
@@ -532,7 +532,7 @@ export default class SpriteLayers extends React.Component {
     document.body.classList.remove('dragging')
   }
 
-  renderLayers() {
+  renderLayers = () => {
     const c2 = this.props.content2
     return c2.layerParams.map((layer, idx) => (
       <Layer

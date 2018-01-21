@@ -10,7 +10,7 @@ export default class ObjectBehavior extends BaseForm {
     return this.props.asset.content2.databag.item
   }
 
-  showInventoryOptions() {
+  showInventoryOptions = () => {
     const soundOptions = MgbActor.alCannedSoundsList.map(s => ({
       text: '[builtin]:' + s,
       value: '[builtin]:' + s,
@@ -100,7 +100,7 @@ export default class ObjectBehavior extends BaseForm {
     )
   }
 
-  showPickableOptions() {
+  showPickableOptions = () => {
     const { gainPowerType } = this.data
     return (
       <div>
@@ -144,7 +144,7 @@ export default class ObjectBehavior extends BaseForm {
     )
   }
 
-  showPushingOptions() {
+  showPushingOptions = () => {
     return (
       <div>
         {this.options('Direction this item pushes other actors', 'itemPushesActorType', [
@@ -164,7 +164,7 @@ export default class ObjectBehavior extends BaseForm {
     )
   }
 
-  showFloorDamageOptions() {
+  showFloorDamageOptions = () => {
     return (
       <div>
         {this.text('Heal (or harm) when used', 'healOrHarmWhenUsedNum', 'number', {
@@ -176,7 +176,7 @@ export default class ObjectBehavior extends BaseForm {
     )
   }
 
-  renderItemBehavior(behaviorOptions) {
+  renderItemBehavior = behaviorOptions => {
     const { itemActivationType, inventoryEquippableYN } = this.data
 
     return (
@@ -205,7 +205,7 @@ export default class ObjectBehavior extends BaseForm {
     )
   }
 
-  renderSolidBehavior(behaviorOptions) {
+  renderSolidBehavior = behaviorOptions => {
     const { itemActivationType, pushToSlideNum } = this.data
 
     return (
@@ -250,7 +250,7 @@ export default class ObjectBehavior extends BaseForm {
     )
   }
 
-  renderFloorBehavior(behaviorOptions) {
+  renderFloorBehavior = behaviorOptions => {
     const { itemActivationType } = this.data
 
     return (
@@ -266,7 +266,7 @@ export default class ObjectBehavior extends BaseForm {
     )
   }
 
-  renderAll() {
+  renderAll = () => {
     const { itemActivationType, pushToSlideNum, inventoryEquippableYN } = this.data
 
     return (

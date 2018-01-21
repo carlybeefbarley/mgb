@@ -370,7 +370,7 @@ export default class Animations extends React.Component {
               </Item.Group>
             </Modal.Content>
             <Modal.Actions>
-              <Button primary disabled={!checkedCount} onClick={() => this.changeGraphicFrames()}>
+              <Button primary disabled={checkedCount === 0} onClick={() => this.changeGraphicFrames()}>
                 Import Selected Frames
               </Button>
             </Modal.Actions>

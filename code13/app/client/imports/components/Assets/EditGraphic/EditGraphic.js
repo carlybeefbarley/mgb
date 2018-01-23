@@ -34,6 +34,7 @@ const THUMBNAIL_WIDTH = SpecialGlobals.thumbnail.width
 const THUMBNAIL_HEIGHT = SpecialGlobals.thumbnail.height
 
 const MIN_ZOOM_FOR_GRIDLINES = 4
+const MAX_CANVAS_GRID_SIZE = 500 * 500 // if bigger then editor lags computer
 
 //TODO put these in a settings object
 const settings_ignoreMouseLeave = true
@@ -1652,9 +1653,15 @@ export default class EditGraphic extends React.Component {
   }
 
   drawGrid() {
+    const c2 = this.props.asset.content2
+    const canvasSize = c2.width * c2.height
     const zoom = this.state.editScale
-    if (zoom >= MIN_ZOOM_FOR_GRIDLINES && this.gridImg && this.state.showGrid) {
-      const c2 = this.props.asset.content2
+    if (
+      zoom >= MIN_ZOOM_FOR_GRIDLINES &&
+      this.gridImg &&
+      this.state.showGrid &&
+      canvasSize < MAX_CANVAS_GRID_SIZE
+    ) {
       for (let col = 0; col < c2.width; col++) {
         for (let row = 0; row < c2.height; row++) this.editCtx.drawImage(this.gridImg, zoom * col, zoom * row)
       }

@@ -174,11 +174,13 @@ export default class ShareButton extends React.Component {
       this.setState({
         isOpen: true,
         content: this.props.tooltip,
+        shareVisible: false,
       })
   }
   handleClose = e => {
     this.setState({
       isOpen: false,
+      shareVisible: false,
     })
   }
   handleInputRef = input => {
@@ -188,17 +190,19 @@ export default class ShareButton extends React.Component {
     this.setState({
       isOpen: true,
       content: this.shareLinks(),
+      shareVisible: true,
     })
   }
   render() {
+    const style = !this.state.shareVisible ? null : { width: '300px', maxWidth: 'none' }
     return (
       <Popup
         hoverable
         position={this.props.position}
         onOpen={this.handleOpen}
         onClose={this.handleClose}
-        open={!!this.state.isOpen}
-        style={{ width: '300px', maxWidth: 'none' }}
+        open={this.state.isOpen}
+        style={style}
         trigger={
           this.props.children ? (
             React.cloneElement(this.props.children, { onClick: this.handleShareClick })

@@ -28,6 +28,7 @@ import AssetPathDetail from '/client/imports/components/Assets/AssetPathDetail'
 import AssetUrlGenerator from '/client/imports/components/Assets/AssetUrlGenerator'
 import AssetForkGenerator from '/client/imports/components/Assets/AssetForkGenerator'
 import AssetChatDetail from '/client/imports/components/Assets/AssetChatDetail'
+import AssetShareButton from '/client/imports/components/ShareButtons/AssetShareButton'
 import AssetHistoryDetail from '/client/imports/components/Assets/AssetHistoryDetail'
 import AssetActivityDetail from '/client/imports/components/Assets/AssetActivityDetail'
 import ProjectMembershipEditorV2 from '/client/imports/components/Assets/ProjectMembershipEditorV2'
@@ -442,6 +443,7 @@ const AssetEditRoute = React.createClass({
               handleChange={this.handleDeletedStateChange}
             />
             <AssetChatDetail hasUnreads={hazUnreadAssetChat} handleClick={this.handleChatClick} />
+            <AssetShareButton />
             <AssetLicense
               license={asset.assetLicense}
               canEdit={canEd}

@@ -1501,8 +1501,12 @@ export default class EditGraphic extends React.Component {
     img.src = url // is the data URL because called
   }
 
-  toolOpenImportPopup = () => this.setState({ showGraphicImportPopup: true })
-  toolCloseImportPopup = () => this.setState({ showGraphicImportPopup: false })
+  toolOpenImportPopup = () => {
+    setTimeout(() => this.setState({ showGraphicImportPopup: true }), 0)
+  }
+  toolCloseImportPopup = () => {
+    this.setState({ showGraphicImportPopup: false })
+  }
 
   // @@@
   // This is passed to the <GraphicImport> Control so the tiles can be imported
@@ -2062,7 +2066,6 @@ export default class EditGraphic extends React.Component {
             />
           )}
         </Grid.Row>
-
         {/*** GraphicImport ***/}
         <Modal open={this.state.showGraphicImportPopup} onClose={this.toolCloseImportPopup}>
           <GraphicImport
@@ -2071,9 +2074,7 @@ export default class EditGraphic extends React.Component {
             maxTileHeight={MAX_BITMAP_WIDTH}
           />
         </Modal>
-
         {/*** SpriteLayers ***/}
-
         <SpriteLayers
           content2={c2}
           isMinimized={!this.state.showAnimFrames}
@@ -2091,7 +2092,6 @@ export default class EditGraphic extends React.Component {
           handleSelectLayer={this.handleSelectLayer}
           handleSelectFrame={this.handleSelectFrame}
         />
-
         {/*** MiniMap ***/}
         {showMiniMap &&
         this.refs.editCanvas && (

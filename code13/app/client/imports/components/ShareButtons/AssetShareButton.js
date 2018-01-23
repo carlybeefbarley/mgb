@@ -13,7 +13,7 @@ export default () => {
       tooltip="Share with friends"
       position="bottom right"
     >
-      <Label basic id="mgbjr-asset-edit-header-right-share" size="small" style={{ float: 'right' }}>
+      <Label basic id="mgbjr-asset-edit-header-right-share" size="small" style={this.props.style}>
         <Icon.Group>
           <Icon name="share" title="Share" />
         </Icon.Group>

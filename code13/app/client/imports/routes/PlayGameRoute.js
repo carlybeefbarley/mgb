@@ -478,7 +478,7 @@ const PlayGameRoute = React.createClass({
         />
         <GameTypeDetail game={game} style={_styleGameNavButtons} />
 
-        <AssetShareButton />
+        <AssetShareButton style={_styleGameNavButtons} />
 
         <PlayGame
           game={game}

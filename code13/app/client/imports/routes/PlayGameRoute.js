@@ -22,6 +22,8 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 import Toolbar from '/client/imports/components/Toolbar/Toolbar'
 import AssetChatDetail from '/client/imports/components/Assets/AssetChatDetail'
 
+import ShareButton from '/client/imports/components/ShareButton/ShareButton'
+
 import elementResizeDetectorMaker from 'element-resize-detector'
 
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
@@ -460,6 +462,12 @@ const PlayGameRoute = React.createClass({
     const { params, user, hazUnreadAssetChat } = this.props
     const game = this.data.asset // One Asset provided via getMeteorData()
 
+    const label = <Label basic id="mgbjr-asset-edit-header-right-share" size="small" style={{float: "right"}}>
+      <Icon.Group>
+        <Icon name="share" title="Share"/>
+      </Icon.Group>
+    </Label>
+
     return (
       <Segment basic padded style={{ paddingTop: 0, paddingBottom: 0, marginBottom: 0 }}>
         <Header as="span">
@@ -475,6 +483,14 @@ const PlayGameRoute = React.createClass({
           handleClick={this.handleChatClick}
         />
         <GameTypeDetail game={game} style={_styleGameNavButtons} />
+
+        <ShareButton facebook google mail
+                     url={window.location.href}
+                     tooltip='Share with friends'
+                     position="bottom right"
+        >{label}</ShareButton>
+
+
         <PlayGame
           game={game}
           user={user}

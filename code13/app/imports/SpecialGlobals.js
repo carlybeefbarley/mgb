@@ -130,7 +130,9 @@ const SpecialGlobals = {
     defaultNumOfOwnedProjectsAllowed: 10, // For normal accounts
     SUdefaultNumOfOwnedProjectsAllowed: 99, // For admin accounts
   },
-
+  share: {
+    fb_app_id: 87741124305 // this is youtube app id - change it to MGB app ID
+  },
   cache: {
     // cache max age in seconds for all /api/asset/... requests
     // BE AWARE!!! - only requests with ?hash={unique key} are cached - otherwise we assume that user has requested latest version

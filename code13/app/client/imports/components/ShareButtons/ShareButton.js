@@ -2,6 +2,9 @@ import React, { PropTypes } from 'react'
 import { Button, Popup, TextArea, Segment, Input, Form, Divider } from 'semantic-ui-react'
 import _ from 'lodash'
 
+import SpecialGlobals from '/imports/SpecialGlobals'
+const FB_APP_ID = SpecialGlobals.share.fb_app_id
+
 export default class ShareButton extends React.Component {
   // Available services
   static options = [
@@ -30,7 +33,7 @@ export default class ShareButton extends React.Component {
     // TODO: get correct FB app_id
     facebook: {
       title: 'Facebook',
-      link: content => `https://www.facebook.com/dialog/share?app_id=87741124305&href=${content.url}`,
+      link: content => `https://www.facebook.com/dialog/share?app_id=${FB_APP_ID}&href=${content.url}`,
     },
     twitter: {
       title: 'Twitter',
@@ -39,7 +42,7 @@ export default class ShareButton extends React.Component {
 
     mail: {
       title: 'Email',
-      link: c => `mailto:?body=${c.url} /n${c.description}`,
+      link: c => `mailto:?body=${c.url}%0A${c.description}`,
     },
 
     google: {
@@ -59,7 +62,7 @@ export default class ShareButton extends React.Component {
       link: c => `https://www.reddit.com/submit?url=${c.url}&title=${c.description}`,
     },
 
-    // canoncial URL is for counter - maybe extract base from c.url ?
+    // canoncial URL is for counter - maybe extract base from c.url instead of hardcoded build.games?
     tumblr: {
       title: 'Tumblr',
       link: c =>
@@ -100,10 +103,10 @@ export default class ShareButton extends React.Component {
     }
   }
 
-  componentWillReceiveProps(props) {
+  componentWillReceiveProps(nextProps, nextContent) {
     this.setState({
-      url: _.escape(props.url),
-      description: _.escape(props.description),
+      url: _.escape(nextProps.url),
+      description: _.escape(nextProps.description),
     })
   }
 

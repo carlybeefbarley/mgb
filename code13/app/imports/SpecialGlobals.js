@@ -131,7 +131,7 @@ const SpecialGlobals = {
     SUdefaultNumOfOwnedProjectsAllowed: 99, // For admin accounts
   },
   share: {
-    fb_app_id: 87741124305 // this is youtube app id - change it to MGB app ID
+    fb_app_id: 920630231425869, // this app is created by @stauzs
   },
   cache: {
     // cache max age in seconds for all /api/asset/... requests

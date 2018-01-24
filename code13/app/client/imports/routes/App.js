@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { browserHistory } from 'react-router'
 import Helmet from 'react-helmet'
-import { Message } from 'semantic-ui-react'
+import { Grid, Message } from 'semantic-ui-react'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
@@ -21,6 +21,7 @@ import { isUserSuperAdmin } from '/imports/schemas/roles'
 import { projectMakeSelector, defaultProjectSorter } from '/imports/schemas/projects'
 
 import NavBar from '/client/imports/components/Nav/NavBar'
+import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
 import FlexPanel from '/client/imports/components/SidePanels/FlexPanel'
 import NetworkStatusMsg from '/client/imports/routes/Nav/NetworkStatusMsg'
@@ -371,7 +372,7 @@ class AppUI extends Component {
       left: 0,
       right: `${isGuest || isHocRoute ? 0 : flexPanelWidth}`,
       marginBottom: '0px',
-      minHeight: '100vh',
+      height: '100vh',
       overflow: isGuest || isHocRoute ? 'hidden' : undefined,
       overflowY: !isGuest && !isHocRoute ? 'scroll' : undefined,
       WebkitOverflowScrolling: 'touch', // only works with overflowY: scroll (not auto)
@@ -395,85 +396,95 @@ class AppUI extends Component {
           meta={[{ name: 'My Game Builder', content: 'MyGameBuilder' }]}
         />
         <JoyrideRootHelper currUser={currUser} />
-        <div>
+        {!isGuest &&
+        !isHocRoute && (
+          <FlexPanel
+            fpIsFooter={!!responsive.data.footerTabMajorNav}
+            currUser={currUser}
+            chatChannelTimestamps={chatChannelTimestamps}
+            hazUnreadChats={hazUnreadChats}
+            requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
+            currUserProjects={currUserProjects}
+            user={user}
+            selectedViewTag={flexPanelQueryValue}
+            handleFlexPanelToggle={this.handleFlexPanelToggle}
+            flexPanelWidth={flexPanelWidth}
+            flexPanelIsVisible={showFlexPanel}
+            isSuperAdmin={isSuperAdmin}
+            currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+            fpIconColumnWidthInPixels={fpIconColumnWidthInPixels}
+            fpFlexPanelContentWidthInPixels={fpFlexPanelContentWidthInPixels}
+          />
+        )}
+
+        <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
+          <SupportedBrowsersContainer />
+          {!isGuest && !isHocRoute && <VerifyBanner currUser={currUser} />}
+          {!hideHeaders && (
+            <NavPanel
+              currUser={currUser}
+              navPanelAvailableWidth={mainAreaAvailableWidth}
+              activity={this.props.activity}
+              hazUnreadActivities={hazUnreadActivities}
+            />
+          )}
           {!isGuest &&
           !isHocRoute && (
-            <FlexPanel
-              fpIsFooter={!!responsive.data.footerTabMajorNav}
+            <NavBar
               currUser={currUser}
-              chatChannelTimestamps={chatChannelTimestamps}
-              hazUnreadChats={hazUnreadChats}
-              requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
-              currUserProjects={currUserProjects}
               user={user}
-              selectedViewTag={flexPanelQueryValue}
-              handleFlexPanelToggle={this.handleFlexPanelToggle}
+              location={this.props.location}
+              name={this.props.routes[1].name}
+              params={this.props.params}
               flexPanelWidth={flexPanelWidth}
-              flexPanelIsVisible={showFlexPanel}
-              isSuperAdmin={isSuperAdmin}
+              hideHeaders={hideHeaders}
+              onToggleHeaders={this.handleHideHeadersToggle}
+              sysvars={sysvars}
               currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-              fpIconColumnWidthInPixels={fpIconColumnWidthInPixels}
-              fpFlexPanelContentWidthInPixels={fpFlexPanelContentWidthInPixels}
             />
           )}
 
-          <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
-            <SupportedBrowsersContainer />
-            {!isGuest && !isHocRoute && <VerifyBanner currUser={currUser} />}
-            {!hideHeaders && (
-              <NavPanel
-                currUser={currUser}
-                navPanelAvailableWidth={mainAreaAvailableWidth}
-                activity={this.props.activity}
-                hazUnreadActivities={hazUnreadActivities}
-              />
-            )}
-            {!isGuest &&
-            !isHocRoute && (
-              <NavBar
-                currUser={currUser}
-                user={user}
+          {currUser &&
+          currUser.suIsBanned && (
+            <Message
+              error
+              icon="ban"
+              header="Your Account has been suspended by an Admin"
+              list={[
+                'You may not edit Assets or Projects',
+                'You may not send Chat messages',
+                'Check your email for details',
+              ]}
+            />
+          )}
+          <Grid padded columns="equal" style={{ flex: '1' }}>
+            <Grid.Column style={{ flex: '0 0 20em', overflowY: 'auto' }}>
+              <RelatedAssets
                 location={this.props.location}
-                name={this.props.routes[1].name}
+                user={this.props.user}
+                currUser={this.props.currUser}
                 params={this.props.params}
-                flexPanelWidth={flexPanelWidth}
-                hideHeaders={hideHeaders}
-                onToggleHeaders={this.handleHideHeadersToggle}
-                sysvars={sysvars}
                 currentlyEditingAssetInfo={currentlyEditingAssetInfo}
               />
-            )}
-
-            {currUser &&
-            currUser.suIsBanned && (
-              <Message
-                error
-                icon="ban"
-                header="Your Account has been suspended by an Admin"
-                list={[
-                  'You may not edit Assets or Projects',
-                  'You may not send Chat messages',
-                  'Check your email for details',
-                ]}
-              />
-            )}
-
-            {!loading &&
-              this.props.children &&
-              React.cloneElement(this.props.children, {
-                // Make below props available to all routes.
-                user,
-                currUser,
-                hideHeaders,
-                currUserProjects,
-                hazUnreadAssetChat,
-                ownsProfile,
-                isSuperAdmin,
-                availableWidth: mainAreaAvailableWidth,
-                handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
-                isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
-              })}
-          </div>
+            </Grid.Column>
+            <Grid.Column style={{ overflowY: 'auto' }}>
+              {!loading &&
+                this.props.children &&
+                React.cloneElement(this.props.children, {
+                  // Make below props available to all routes.
+                  user,
+                  currUser,
+                  hideHeaders,
+                  currUserProjects,
+                  hazUnreadAssetChat,
+                  ownsProfile,
+                  isSuperAdmin,
+                  availableWidth: mainAreaAvailableWidth,
+                  handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
+                  isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
+                })}
+            </Grid.Column>
+          </Grid>
         </div>
         <NetworkStatusMsg meteorStatus={meteorStatus} />
         <NotificationContainer />

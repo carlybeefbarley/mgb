@@ -2,7 +2,18 @@ import _ from 'lodash'
 import { createContainer } from 'meteor/react-meteor-data'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button, Divider, Header, Icon, Input, Segment, List, Modal, Popup } from 'semantic-ui-react'
+import {
+  Accordion,
+  Button,
+  Divider,
+  Header,
+  Icon,
+  Input,
+  Segment,
+  List,
+  Modal,
+  Popup,
+} from 'semantic-ui-react'
 
 import { AssetKinds } from '/imports/schemas/assets'
 import QLink, { openAssetById, utilPushTo } from '/client/imports/routes/QLink'
@@ -201,6 +212,22 @@ class RelatedAssetsUI extends React.Component {
     }
   }
 
+  renderItem = a => {
+    const { currUser } = this.props
+
+    return {
+      key: a._id,
+      as: QLink,
+      'data-kind': a.kind,
+      // onClick: this.closeAll,
+      to: `/u/${a.dn_ownerName}/asset/${a._id}`,
+      // active: activeIndex === index,
+      style: { color: AssetKinds.getColor(a.kind) },
+      icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
+      content: currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
+    }
+  }
+
   renderRelatedAssetsList = () => {
     const { currUser, assets, loading, user } = this.props
     const { activeIndex, searchQuery } = this.state
@@ -225,45 +252,75 @@ class RelatedAssetsUI extends React.Component {
     )
 
     return (
-      <div style={{ minWidth: '20em' }}>
+      <div>
         <Header size="small">
           Related Assets
           <Header.Subheader style={{ display: 'inline-block', marginLeft: '1em' }}>
             [Ctrl + O]
           </Header.Subheader>
         </Header>
-        {hasAssets && (
-          <Input
-            id="mgb-related-assets-input" // so it can be focused on open
-            fluid
-            size="mini"
-            icon="search"
-            loading={loading}
-            placeholder="Search"
-            defaultValue={searchQuery}
-            onChange={this.handleSearchChange}
-          />
-        )}
+        {/*{hasAssets && (*/}
+        {/*<Input*/}
+        {/*id="mgb-related-assets-input" // so it can be focused on open*/}
+        {/*fluid*/}
+        {/*size="mini"*/}
+        {/*icon="search"*/}
+        {/*loading={loading}*/}
+        {/*placeholder="Search"*/}
+        {/*defaultValue={searchQuery}*/}
+        {/*onChange={this.handleSearchChange}*/}
+        {/*/>*/}
+        {/*)}*/}
+        {_.chain(filteredRelatedAssets)
+          .groupBy('kind')
+          .toPairs()
+          .map(([kind, assetsOfKind]) => (
+            <div key={kind}>
+              <Divider horizontal>{kind}</Divider>
+              <List
+                id="mgb-related-assets-list"
+                selection
+                items={_.map(assetsOfKind, (a, index) => ({
+                  key: a._id,
+                  as: QLink,
+                  onClick: this.closeAll,
+                  to: `/u/${a.dn_ownerName}/asset/${a._id}`,
+                  active: activeIndex === index,
+                  style: { color: AssetKinds.getColor(a.kind) },
+                  icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
+                  content:
+                    currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
+                }))}
+              />
+            </div>
+          ))
+          .value()}
+        {/*
         {hasAssets && (
           <List
             id="mgb-related-assets-list"
             selection
             // Heads Up!
             // Position relative is required for scrolling out of view active items into view
-            style={{ position: 'relative', maxHeight: '30em', minWidth: '18em', overflowY: 'auto' }}
-            items={_.map(filteredRelatedAssets, (a, index) => ({
-              key: a._id,
-              as: QLink,
-              onClick: this.closeAll,
-              to: `/u/${a.dn_ownerName}/asset/${a._id}`,
-              active: activeIndex === index,
-              style: { color: AssetKinds.getColor(a.kind) },
-              icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
-              content:
-                currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
-            }))}
+            style={{ position: 'relative', overflowY: 'auto' }}
+            items={_.chain(filteredRelatedAssets)
+              .map((a, index) => ({
+                key: a._id,
+                as: QLink,
+                'data-kind': a.kind,
+                onClick: this.closeAll,
+                to: `/u/${a.dn_ownerName}/asset/${a._id}`,
+                active: activeIndex === index,
+                style: { color: AssetKinds.getColor(a.kind) },
+                icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
+                content:
+                  currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
+              }))
+              .sortBy('data-kind')
+              .value()}
           />
         )}
+        */}
         {!hasAssets && (
           <Segment secondary textAlign="center">
             <Header icon color="grey">
@@ -343,6 +400,7 @@ class RelatedAssetsUI extends React.Component {
   }
 
   render() {
+    return this.renderRelatedAssetsList()
     return (
       <div>
         {this.renderPopup()}

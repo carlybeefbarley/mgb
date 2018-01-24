@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Grid, Icon, Message } from 'semantic-ui-react'
+import { Button, Divider, Grid, Icon, Message, Tab } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
@@ -39,7 +39,7 @@ import { makeChannelName, ChatSendMessageOnChannelName } from '/imports/schemas/
 
 import urlMaker from '/client/imports/routes/urlMaker'
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
-import { joyrideStore } from '/client/imports/stores'
+import { assetStore, joyrideStore } from '/client/imports/stores'
 
 import { canUserEditAssetIfUnlocked, fAllowSuperAdminToEditAnything } from '/imports/schemas/roles'
 
@@ -48,6 +48,8 @@ import { learnSkill, forgetSkill } from '/imports/schemas/skills'
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 import FlagEntity from '/client/imports/components/Controls/FlagEntityUI'
 import ResolveReportEntity from '/client/imports/components/Controls/FlagResolve'
+import { AssetKindEnum } from '../../../../imports/schemas/assets'
+import { withStores } from '/client/imports/hocs'
 
 const FLUSH_TIMER_INTERVAL_MS = 6000 // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
 
@@ -227,6 +229,7 @@ const AssetEditRoute = React.createClass({
   },
 
   componentDidUpdate() {
+    const { assetStore } = this.props
     this.checkForRedirect()
 
     if (!this.counter && !this.data.loading) {
@@ -238,9 +241,19 @@ const AssetEditRoute = React.createClass({
       })
     }
 
-    if (this.counter && this.data.asset && this.assetUpdatedAt != this.data.asset.updatedAt) {
+    if (this.counter && this.data.asset && this.assetUpdatedAt !== this.data.asset.updatedAt) {
       this.assetUpdatedAt = this.data.asset.updatedAt
       this.counter.assetUpdated()
+    }
+
+    // auto open any new asset
+    if (
+      this.data.asset &&
+      //   this.data.asset._id === this.props.params.assetId &&
+      !_.find(assetStore.state.openAssets, { _id: this.data.asset._id })
+    ) {
+      console.log('componentDidUpdate: open asset', this.data.asset, assetStore.state.openAssets)
+      assetStore.openAsset(this.data.asset)
     }
   },
 
@@ -348,7 +361,118 @@ const AssetEditRoute = React.createClass({
     this.setState({ isForkPending: false })
   },
 
+  handleCreateClick() {
+    const { assetStore, currUser } = this.props
+
+    const assetName =
+      'Actor ' +
+      Date.now()
+        .toString(36)
+        .substr(3)
+
+    this.setState({ creatingTabName: assetName })
+
+    assetStore.createAsset(currUser, AssetKindEnum.actor, assetName).then(newAsset => {
+      assetStore.openAsset(newAsset)
+      this.setState({ creatingTabName: null })
+    })
+  },
+
+  handleTabChange(asset) {
+    const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
+
+    return () => {
+      utilPushTo(this.context.urlLocation, url)
+    }
+  },
+
+  handleCloseTab(asset) {
+    return e => {
+      const { params, assetStore } = this.props
+      console.log('handleCloseTab', asset)
+
+      e.preventDefault()
+      e.stopPropagation()
+      e.nativeEvent.stopImmediatePropagation()
+
+      // open the tab to the left on close of the currently open tab
+      if (params.assetId === asset._id) {
+        const currTabIndex = _.findIndex(assetStore.state.openAssets, { _id: asset._id })
+        const nextAsset =
+          assetStore.state.openAssets[currTabIndex - 1] || assetStore.state.openAssets[currTabIndex + 1]
+        const nextURL = `/u/${nextAsset.dn_ownerName}/asset/${nextAsset._id}`
+
+        utilPushTo(this.context.urlLocation, nextURL)
+      }
+
+      assetStore.closeAsset(asset)
+    }
+  },
+
   render() {
+    const { assetStore, params } = this.props
+    const { creatingTabName } = this.state
+    const panes = _.map(assetStore.state.openAssets, asset => {
+      return {
+        menuItem: {
+          key: asset._id,
+          onClick: this.handleTabChange(asset),
+          content: (
+            <span>
+              <Icon name={AssetKinds[asset.kind].icon} color={AssetKinds[asset.kind].color} />
+              {asset.name}
+              {_.get(assetStore.state.openAssets, 'length') > 1 && (
+                <Icon
+                  link
+                  fitted
+                  style={{ marginLeft: '1em' }}
+                  name="remove"
+                  color="grey"
+                  onClick={this.handleCloseTab(asset)}
+                />
+              )}
+            </span>
+          ),
+        },
+        render: this.renderRoute,
+      }
+    })
+
+    return (
+      <div>
+        <Divider hidden />
+        <Tab
+          activeIndex={_.findIndex(assetStore.state.openAssets, { _id: params.assetId })}
+          onTabChange={this.handleTabChange}
+          panes={[
+            ...panes,
+            creatingTabName
+              ? {
+                  menuItem: {
+                    key: creatingTabName,
+                    disabled: true,
+                    icon: { name: 'spinner', loading: true },
+                    content: creatingTabName,
+                  },
+                  render: () => <Tab.Pane loading />,
+                }
+              : {
+                  menuItem: {
+                    key: 'new',
+                    active: false,
+                    content: (
+                      <Button icon="plus" content="New" color="green" onClick={this.handleCreateClick} />
+                    ),
+                  },
+                  render: () => null,
+                },
+          ]}
+        />
+      </div>
+    )
+  },
+
+  renderRoute() {
     if (this.data.loading) return <Spinner loadingMsg="Loading Asset data" />
 
     const {
@@ -385,6 +509,7 @@ const AssetEditRoute = React.createClass({
       <Grid
         padded
         style={{
+          background: '#fff',
           overflowX:
             'hidden' /* this will prevent padding (+v scrolling) caused by mgbjr-asset-edit-header-right when all icons don't fit in the new line*/,
         }}
@@ -870,7 +995,9 @@ const AssetEditRoute = React.createClass({
   },
 })
 
-export default AssetEditRoute
+export default withStores({
+  assetStore,
+})(AssetEditRoute)
 
 function _makeUpdateObj(content2Object, thumbnail) {
   let updateObj = {}

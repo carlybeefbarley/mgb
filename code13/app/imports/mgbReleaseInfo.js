@@ -15,6 +15,42 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Tue Feb 06 2018 16:20:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.3',
+        state: 'Beta',
+        iteration: '5010',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'New Tutorial Experience',
+          changeSummary: 'The workflow and presentation of tutorials has been vastly improved, try them out!',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Notifications & Activity Feeds',
+          changeSummary:
+            'Notifications and Activity feeds have been improved throughout the app.  Find them in top nav bar, projects, and user profiles.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'Lots of minor bug fixes and usability updates throughout the system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Mon Jan 08 2018 09:15:00 GMT-0800 (PST)',
 
       id: {

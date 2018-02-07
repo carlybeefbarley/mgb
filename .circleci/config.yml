@@ -34,7 +34,10 @@ jobs:
 
       - run:
           name: Install dependencies
-          command: yarn
+          command: |
+            git config --global user.email "hello@mygamebuilder.com"
+            git config --global user.name "CI"
+            yarn
           working_directory: code13/app
 
       - save_cache:

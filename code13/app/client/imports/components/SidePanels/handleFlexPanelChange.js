@@ -8,11 +8,21 @@ import urlMaker from '/client/imports/routes/urlMaker'
 const handleFlexPanelChange = newFpView => {
   const queryParams = urlMaker.queryParams('app_flexPanel')
 
+  const query = window.location.search
+    .substr(1)
+    .split('&')
+    .filter(Boolean)
+    .reduce((acc, next) => {
+      console.log(next)
+      const [key, val] = next.split('=')
+      return { ...acc, [key]: decodeURIComponent(val) }
+    }, {})
+
   browserHistory.push({
     pathname: window.location.pathname,
     search: window.location.query,
     hash: window.location.hash,
-    query: { ...location.search, [queryParams]: newFpView },
+    query: { ...query, [queryParams]: newFpView },
   })
 }
 

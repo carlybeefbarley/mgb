@@ -79,7 +79,7 @@ class SignupRoute extends Component {
     }))
   }
 
-  handleSubmit = e => {
+  handleSubmit = () => {
     const { joyride } = this.props
     const { formData = {} } = this.state
     const { email, username, password } = formData
@@ -131,10 +131,9 @@ class SignupRoute extends Component {
     )
   }
 
-  handleRecaptchaComplete = () =>
-    this.setState({ isRecaptchaComplete: true, isLoading: true }, () => {
-      this.handleSubmit()
-    })
+  handleRecaptchaComplete = () => {
+    this.setState({ isRecaptchaComplete: true, isLoading: true }, this.handleSubmit)
+  }
 
   render() {
     const { isLoading, errors, formData, isRecaptchaComplete } = this.state
@@ -190,7 +189,6 @@ class SignupRoute extends Component {
                         errors.email ||
                         errors.username ||
                         errors.password
-                        // || !isRecaptchaComplete
                       }
                     >
                       <Recaptcha onComplete={this.handleRecaptchaComplete} invisible>

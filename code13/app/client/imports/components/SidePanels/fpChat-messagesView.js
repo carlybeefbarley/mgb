@@ -82,32 +82,34 @@ class ChatMessagesViewUI extends Component {
   renderGetMoreMessages = () => {
     const { chats, loading, pastMessageLimit } = this.props
 
+    let ElementType = 'div'
     const props = {}
+    const disabledStyle = { opacity: 0.5, pointerEvents: 'none' }
 
     if (!chats || chats.length === 0) {
-      props.content = '(no messages yet)'
-      props.disabled = true
-    } else if (chats.length < pastMessageLimit) {
-      props.content = '(start of topic)'
-      props.disabled = true
+      props.children = 'no messages yet'
+      props.style = disabledStyle
+    } else if (chats.length < pastMessageLimit && !loading) {
+      props.children = 'start of topic'
+      props.style = disabledStyle
     } else if (chats.length >= chatParams.maxClientChatHistory) {
-      props.content = '(history limit reached)'
-      props.disabled = true
+      props.children = 'history limit reached'
+      props.style = disabledStyle
     } else {
-      props.icon = 'history'
-      props.content = 'Get older messages'
+      ElementType = loading ? 'div' : 'a'
+      props.children = (
+        <span>
+          <Icon name={loading ? 'circle notched' : 'history'} loading={loading} /> Get older messages
+        </span>
+      )
       props.onClick = this.doGetMoreMessages
+      props.style = loading ? disabledStyle : { cursor: 'pointer' }
     }
 
     return (
-      <Button
-        id={'mgbjr-fp-chat-channel-get-earlier-messages'}
-        loading={loading}
-        size="small"
-        fluid
-        compact
-        {...props}
-      />
+      <div style={{ padding: '1em', textAlign: 'center' }}>
+        <ElementType id={'mgbjr-fp-chat-channel-get-earlier-messages'} {...props} />
+      </div>
     )
   }
 
@@ -126,7 +128,7 @@ class ChatMessagesViewUI extends Component {
     const messages = _.flatMap(grouped, (chatsForDate, date) => {
       return (
         [
-          <Divider key={chatsForDate[0].createdAt.toString()} horizontal section>
+          <Divider key={chatsForDate[0].createdAt.toString()} horizontal>
             {moment(chatsForDate[0].createdAt).calendar(null, {
               sameDay: '[Today]',
               nextDay: '[Tomorrow]',
@@ -244,6 +246,8 @@ class ChatMessagesViewUI extends Component {
 
   render() {
     const style = {
+      flex: 1,
+      paddingBottom: '1em',
       overflowX: 'hidden',
       overflowY: 'auto',
       whiteSpace: 'pre-wrap',

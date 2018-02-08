@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
-import { Form, TextArea } from 'semantic-ui-react'
+import { Form, Progress, TextArea } from 'semantic-ui-react'
 
 import { showToast } from '/client/imports/modules'
 import { joyrideStore } from '/client/imports/stores'
@@ -40,7 +40,7 @@ class ChatMessageInput extends Component {
     const { value } = this.state
     const { channelName } = this.props
 
-    if (_.isEmpty(value)) return
+    if (_.isEmpty(_.trim(value))) return
 
     const channelObj = parseChannelName(channelName)
     const presentedChannelName = makePresentedChannelName(channelName, channelObj.scopeId)
@@ -96,8 +96,11 @@ class ChatMessageInput extends Component {
     })
   }
 
-  handleTextAreaKeyUp = e => {
-    if (e.keyCode === 13 && !e.shiftKey) this.sendMessage()
+  handleTextAreaKeyDown = e => {
+    if (e.keyCode === 13 && !e.shiftKey) {
+      e.preventDefault()
+      this.setState(({ value }) => ({ value: _.trim(value) }), this.sendMessage)
+    }
   }
 
   render() {
@@ -105,22 +108,39 @@ class ChatMessageInput extends Component {
     const { currUser, channelName, style } = this.props
     const canSend = currUserCanSend(currUser, channelName)
 
+    const channelObj = parseChannelName(channelName)
+    const presentedChannelName = makePresentedChannelName(channelName, channelObj.scopeId)
+
+    const currMessageLen = _.get(value, 'length', 0)
+    const { maxChatMessageTextLen } = chatParams
+
+    const mergedStyle = {
+      ...style,
+      flex: '0 0 auto',
+    }
+
+    const textAreaStyle = {
+      maxHeight: '10em',
+      border: '2px solid rgba(0, 0, 0, 0.35)',
+      borderRadius: '0.25em',
+    }
+
     return (
-      <div style={{ ...style, flex: '0 0 auto' }}>
+      <div style={mergedStyle}>
         <Form size="small">
           <Form.Field>
             <TextArea
               id="mgbjr-fp-chat-messageInput"
               disabled={!canSend}
               autoHeight
-              rows={3}
-              style={{ maxHeight: '5em' }}
-              placeholder={'Message ' + channelName}
+              rows={1}
+              style={textAreaStyle}
+              placeholder={'Message ' + presentedChannelName}
               value={value}
               onChange={this.handleTextAreaChange}
-              maxLength={chatParams.maxChatMessageTextLen}
+              maxLength={maxChatMessageTextLen}
               onDragOver={DragNDropHelper.preventDefault}
-              onKeyUp={this.handleTextAreaKeyUp}
+              onKeyDown={this.handleTextAreaKeyDown}
               onDrop={this.handleTextAreaDrop}
             />
             {/*
@@ -138,9 +158,20 @@ class ChatMessageInput extends Component {
               onClick={this.doSendMessage}
             />
             */}
+            {currMessageLen >= maxChatMessageTextLen * 0.5 && (
+              <Progress
+                size="tiny"
+                color="orange"
+                total={maxChatMessageTextLen}
+                value={currMessageLen}
+                error={currMessageLen >= maxChatMessageTextLen}
+              />
+            )}
+            {/*
+            Old help text and characters left indicator
             <small style={{ display: 'block', padding: '0 0.5em', overflow: 'hidden' }}>
               <div style={{ float: 'right' }}>
-                <strong>{chatParams.maxChatMessageTextLen - _.get(value, 'length', 0)}</strong> characters
+                <strong>{maxChatMessageTextLen - currMessageLen}</strong> characters
                 left
               </div>
               <div style={{ float: 'left' }}>
@@ -149,6 +180,7 @@ class ChatMessageInput extends Component {
                 <strong>Shift + Enter:</strong> newline
               </div>
             </small>
+            */}
           </Form.Field>
         </Form>
       </div>

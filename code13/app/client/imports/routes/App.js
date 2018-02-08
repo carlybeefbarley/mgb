@@ -8,7 +8,7 @@ import { Message } from 'semantic-ui-react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
-import { responsiveComponent, withStores, withMeteorData } from '/client/imports/hocs'
+import { responsiveComponent, withMeteorData } from '/client/imports/hocs'
 import { joyrideStore } from '/client/imports/stores'
 
 import { JoyrideRootHelper } from '/client/imports/components/Joyride'
@@ -40,6 +40,7 @@ import { NotificationContainer } from 'react-notifications'
 import { InitHotjar } from '/client/imports/helpers/hotjar.js'
 import SupportedBrowsersContainer from '../components/SupportedBrowsers/SupportedBrowsersContainer'
 import VerifyBanner from '/client/imports/components/Users/VerifyBanner'
+import handleFlexPanelChange from '../components/SidePanels/handleFlexPanelChange'
 
 let G_localSettings = new ReactiveDict()
 
@@ -323,11 +324,18 @@ class AppUI extends Component {
     }
   }
 
+  handleChangeSubNavParam = newSubNavParamStr => {
+    const { query } = this.props.location
+    const flexPanelQueryValue = query[urlMaker.queryParams('app_flexPanel')]
+    const selectedViewTagParts = flexPanelQueryValue.split('.')
+    const newFullViewTag = selectedViewTagParts[0] + '.' + newSubNavParamStr
+    handleFlexPanelChange(newFullViewTag)
+  }
+
   render() {
     const {
       currUser,
       currUserProjects,
-      joyride,
       loading,
       meteorStatus,
       params,
@@ -587,9 +595,6 @@ export default _.flow(
         !settingsReady ||
         !skillsReady,
     }
-  }),
-  withStores({
-    joyride: joyrideStore,
   }),
   responsiveComponent({
     portraitPhoneUI: {

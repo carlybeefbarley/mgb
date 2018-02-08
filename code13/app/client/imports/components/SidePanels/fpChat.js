@@ -10,6 +10,7 @@ import { Azzets } from '/imports/schemas'
 import { parseChannelName, isChannelNameValid, chatParams } from '/imports/schemas/chats'
 import ChatChannelSelector from './ChatChannelSelector'
 import ChatMessageInput from './ChatMessageInput'
+import ToolWindow from '../ToolWindow/ToolWindow'
 
 const initialMessageLimit = 15
 
@@ -212,6 +213,21 @@ class fpChat extends Component {
     }
   }
 
+  handleMinimize = e => {
+    this.setState({ minimized: true })
+  }
+
+  handleMaximize = e => {
+    this.setState({ minimized: false })
+  }
+
+  handleTitleBarClick = e => {
+    const { minimized } = this.state
+
+    if (minimized) this.handleMaximize(e)
+    else this.handleMinimize(e)
+  }
+
   render() {
     const {
       chatChannelTimestamps,
@@ -223,23 +239,62 @@ class fpChat extends Component {
       subNavParam,
       user,
     } = this.props
-    const { pastMessageLimit } = this.state
+    const { minimized, pastMessageLimit } = this.state
     const channelName = this._calculateActiveChannelName()
     const channelObj = parseChannelName(channelName)
 
     const style = {
+      willChange: 'transform',
+      transition: 'transform 0.5s',
+      transitionTimingFunction: 'cubic-bezier(0.3, 1, 0.7, 1)',
       position: 'fixed',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
       bottom: '0',
-      right: '5em',
-      height: '30vh',
+      right: '0.5em',
+      width: '20em',
+      height: '30em',
+      maxHeight: '50vh',
+      transform: minimized ? 'translateY(calc(100% - 37px))' : 'translateY(0)',
+      background: 'white',
       zIndex: '999',
     }
 
+    const inputStyle = {
+      // flex: '0 0 auto',
+    }
+
+    const messagesStyle = {
+      // flex: '1',
+    }
+
+    const toolWindowTitleStyle = {
+      cursor: 'pointer',
+    }
+
+    const toolWindowContentStyle = {
+      display: 'flex',
+      flexDirection: 'column',
+      padding: '0.5em',
+      overflow: 'hidden',
+      maxHeight: 'unset',
+    }
+
     return (
-      <div style={style}>
+      <ToolWindow
+        open
+        color="black"
+        closable={false}
+        draggable={false}
+        style={style}
+        icon="chat"
+        title="Chat"
+        minimized={minimized}
+        onTitleBarClick={this.handleTitleBarClick}
+        titleBarStyle={toolWindowTitleStyle}
+        contentStyle={toolWindowContentStyle}
+      >
         <ChatChannelSelector
           chatChannelTimestamps={chatChannelTimestamps}
           currUser={currUser}
@@ -251,31 +306,32 @@ class fpChat extends Component {
         <ChatMessagesView
           currUser={currUser}
           user={user}
+          style={messagesStyle}
           pastMessageLimit={pastMessageLimit}
           isSuperAdmin={isSuperAdmin}
           handleExtendMessageLimit={newLimit => this.setState({ pastMessageLimit: newLimit })}
           channelName={channelName}
         />
 
-        <ChatMessageInput channelName={channelName} currUser={currUser} />
+        <ChatMessageInput style={inputStyle} channelName={channelName} currUser={currUser} />
 
-        {channelObj.scopeGroupName === 'Global' ? null : (
-          <div>
-            <strong>Public Chat Channel for this {channelObj.scopeGroupName}</strong>
-            <div style={{ minWidth: '300px' }}>
-              {channelObj.scopeGroupName === 'Asset' && (
-                <AssetCardGET assetId={channelObj.scopeId} renderView="s" />
-              )}
-              {channelObj.scopeGroupName === 'Project' && <ProjectCardGET projectId={channelObj.scopeId} />}
-              {channelObj.scopeGroupName === 'User' && (
-                <span>
-                  User Wall for <QLink to={`/u/${channelObj.scopeId}`}>@{channelObj.scopeId}</QLink>
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+        {/*{channelObj.scopeGroupName === 'Global' ? null : (*/}
+        {/*<div>*/}
+        {/*<strong>Public Chat Channel for this {channelObj.scopeGroupName}</strong>*/}
+        {/*<div style={{ minWidth: '300px' }}>*/}
+        {/*{channelObj.scopeGroupName === 'Asset' && (*/}
+        {/*<AssetCardGET assetId={channelObj.scopeId} renderView="s" />*/}
+        {/*)}*/}
+        {/*{channelObj.scopeGroupName === 'Project' && <ProjectCardGET projectId={channelObj.scopeId} />}*/}
+        {/*{channelObj.scopeGroupName === 'User' && (*/}
+        {/*<span>*/}
+        {/*User Wall for <QLink to={`/u/${channelObj.scopeId}`}>@{channelObj.scopeId}</QLink>*/}
+        {/*</span>*/}
+        {/*)}*/}
+        {/*</div>*/}
+        {/*</div>*/}
+        {/*)}*/}
+      </ToolWindow>
     )
   }
 }

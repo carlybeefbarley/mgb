@@ -76,10 +76,6 @@ class JoyrideRootHelper extends Component {
     }
   }
 
-  handleToolWindowMinimize = () => this.setState(() => ({ isToolWindowMinimized: true }))
-
-  handleToolWindowMaximize = () => this.setState(() => ({ isToolWindowMinimized: false }))
-
   handleToolWindowClose = () => {
     const { joyrideStore } = this.props
 
@@ -251,7 +247,7 @@ class JoyrideRootHelper extends Component {
 
   render() {
     const { currUser, joyrideStore } = this.props
-    const { isClosing, isToolWindowMinimized, style } = this.state
+    const { isClosing, style } = this.state
     const [section, heading, title] = getFriendlyNames(joyrideStore.state.skillPathTutorial)
 
     return (
@@ -263,11 +259,8 @@ class JoyrideRootHelper extends Component {
         title={title}
         style={style}
         size="large"
-        minimized={isToolWindowMinimized}
         onClose={this.handleToolWindowClose}
         onHide={this.handleToolWindowHide}
-        onMaximize={this.handleToolWindowMaximize}
-        onMinimize={this.handleToolWindowMinimize}
       >
         {isClosing ? (
           <div>

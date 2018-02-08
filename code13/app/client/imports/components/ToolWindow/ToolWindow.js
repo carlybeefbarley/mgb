@@ -10,19 +10,27 @@ class ToolWindow extends Component {
     animation: PropTypes.string,
     /** The SUIR Segment color of the title */
     color: PropTypes.string,
+    /** Whether or not the ToolWindow can be closed */
+    closable: PropTypes.bool,
+    contentStyle: PropTypes.object,
+    draggable: PropTypes.bool,
     icon: PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.element]),
     onClose: PropTypes.func,
     onHide: PropTypes.func,
     onMinimize: PropTypes.func,
+    onTitleBarClick: PropTypes.func,
     onMaximize: PropTypes.func,
     onOpen: PropTypes.func,
     size: PropTypes.oneOf(['massive', 'huge', 'big', 'large', 'small', 'tiny', 'mini']),
     title: PropTypes.string,
+    titleBarStyle: PropTypes.object,
   }
 
   static defaultProps = {
     animation: 'fade up',
     color: 'grey',
+    draggable: true,
+    closable: true,
   }
 
   state = {
@@ -31,11 +39,18 @@ class ToolWindow extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // if our position is updated, persist it
-    const xPos = _.get(nextProps, 'style.left', this.state.xPos)
-    const yPos = _.get(nextProps, 'style.top', this.state.yPos)
+    const { draggable } = this.props
+    if (draggable) {
+      // if our position is updated, persist it
+      const xPos = _.get(nextProps, 'style.left', this.state.xPos)
+      const yPos = _.get(nextProps, 'style.top', this.state.yPos)
 
-    this.setState({ xPos, yPos })
+      this.setState({ xPos, yPos })
+    }
+
+    if (nextProps.minimized !== undefined) {
+      this.setState({ minimized: nextProps.minimized })
+    }
   }
 
   componentWillUnmount() {
@@ -43,7 +58,13 @@ class ToolWindow extends Component {
     document.removeEventListener('mouseup', this.handleDocumentMouseUp)
   }
 
-  handleClose = e => _.invoke(this.props, 'onClose', e, this.props)
+  handleClose = e => {
+    const { onClose } = this.props
+
+    if (onClose) return onClose(e, this.props)
+
+    this.stopEvent(e)
+  }
 
   handleDocumentMouseUp = () => document.removeEventListener('mousemove', this.handleDocumentMouseMove)
 
@@ -73,9 +94,23 @@ class ToolWindow extends Component {
 
   handleHide = e => _.invoke(this.props, 'onHide', e, this.props)
 
-  handleMinimize = () => _.invoke(this.props, 'onMinimize')
+  handleMinimize = () => {
+    _.invoke(this.props, 'onMinimize')
 
-  handleMaximize = () => _.invoke(this.props, 'onMaximize')
+    this.setState(prevState => {
+      const { minimized } = this.props
+      return { minimized: minimized === undefined ? true : minimized }
+    })
+  }
+
+  handleMaximize = () => {
+    _.invoke(this.props, 'onMaximize')
+
+    this.setState(prevState => {
+      const { minimized } = this.props
+      return { minimized: minimized === undefined ? false : minimized }
+    })
+  }
 
   handleOpen = e => _.invoke(this.props, 'onOpen', e, this.props)
 
@@ -83,7 +118,10 @@ class ToolWindow extends Component {
 
   handleRef = c => (this.ref = c)
 
-  stopEvent = e => e.stopPropagation()
+  stopEvent = e => {
+    e.nativeEvent.stopImmediatePropagation()
+    e.stopPropagation()
+  }
 
   updatePosition = ({ clientX, clientY }) => {
     this.setState(
@@ -98,50 +136,66 @@ class ToolWindow extends Component {
   }
 
   handleMount = e => {
+    const { draggable } = this.props
     this.handleMaximize(e)
 
-    // center the portal after mount
-    window.setTimeout(() => {
-      console.log('handleMount')
-      const { width } = this.ref.getBoundingClientRect()
+    if (draggable) {
+      // center the portal after mount
+      window.setTimeout(this.moveToScreenCenter, 1)
+    }
+  }
 
-      this.setState({
-        xPos: window.innerWidth * 0.5 - width * 0.5,
-        yPos: window.innerHeight * 0.25,
-      })
-    }, 1)
+  moveToScreenCenter = () => {
+    const { width } = this.ref.getBoundingClientRect()
+
+    this.setState({
+      xPos: window.innerWidth * 0.5 - width * 0.5,
+      yPos: window.innerHeight * 0.25,
+    })
   }
 
   toggleMinimize = e => {
-    const { minimized } = this.props
+    const { minimized } = this.state
 
     if (minimized) this.handleMaximize(e)
     else this.handleMinimize(e)
   }
 
   renderContent = () => {
-    const { children, size } = this.props
+    const { children, size, contentStyle } = this.props
+    const { minimized } = this.state
 
     const style = {
+      flex: '1',
+      margin: 0,
       maxHeight: '30em',
       overflow: 'auto',
+      ...contentStyle,
+    }
+
+    if (minimized) {
+      Object.assign(style, {
+        display: 'none',
+      })
     }
 
     return (
-      <Segment attached="bottom" size={size} style={style}>
+      <Segment size={size} style={style}>
         {children}
       </Segment>
     )
   }
 
   renderTitleBar = () => {
-    const { color, icon, minimized, size, title } = this.props
+    const { closable, color, icon, draggable, onTitleBarClick, size, title, titleBarStyle } = this.props
+    const { minimized } = this.state
     const style = {
+      flex: '0 0 auto',
       display: 'flex',
       alignItems: 'center',
       padding: '0.25em 0.5em',
+      margin: 0,
       border: '1px solid transparent',
-      cursor: 'move',
     }
 
     const titleStyle = {
@@ -152,19 +206,28 @@ class ToolWindow extends Component {
       userSelect: 'none',
     }
 
+    const props = {
+      inverted: true,
+      color,
+      textAlign: 'right',
+      size,
+      onClick: onTitleBarClick,
+      onDoubleClick: this.toggleMinimize,
+    }
+
+    if (draggable) {
+      Object.assign(props, {
+        onTouchStart: this.handleDragStart,
+        onMouseDown: this.handleDragStart,
+        title: 'Drag to move',
+      })
+      Object.assign(style, {
+        cursor: 'move',
+      })
+    }
+
     return (
-      <Segment
-        inverted
-        color={color}
-        attached={minimized ? false : 'top'}
-        textAlign="right"
-        size={size}
-        style={style}
-        title="Drag to move"
-        onTouchStart={this.handleDragStart}
-        onMouseDown={this.handleDragStart}
-        onDoubleClick={this.toggleMinimize}
-      >
+      <Segment {...props} style={{ ...style, ...titleBarStyle }}>
         <div style={titleStyle}>
           {Icon.create(icon)} {title}
         </div>
@@ -174,51 +237,65 @@ class ToolWindow extends Component {
           title={minimized ? 'Maximize' : 'Minimize'}
           size="small"
           icon={minimized ? 'window maximize' : 'window minimize'}
-          onMouseDown={this.stopEvent}
           onClick={this.toggleMinimize}
         />
-        <Button
-          compact
-          color={color}
-          title="Close"
-          size="small"
-          icon="window close"
-          onMouseDown={this.stopEvent}
-          onClick={this.handleClose}
-        />
+        {closable && (
+          <Button
+            compact
+            color={color}
+            title="Close"
+            size="small"
+            icon="window close"
+            onClick={this.handleClose}
+          />
+        )}
       </Segment>
     )
   }
 
   render() {
-    const { animation, id, minimized, open, style } = this.props
-    const { xPos, yPos } = this.state
+    const { animation, id, draggable, open, style: usersStyle } = this.props
+    const { minimized, xPos, yPos } = this.state
 
-    const mergedStyle = {
-      position: 'fixed',
-      top: `${yPos}px`,
-      left: `${xPos}px`,
+    let ElementType = 'div'
+
+    const style = {
       width: '25em',
-      boxShadow: '0 0.125em 0.5em rgba(0, 0, 0, 0.25)',
-      ...style,
+      boxShadow: '0 0 0.25em rgba(0, 0, 0, 0.25)',
+    }
+
+    const props = {
+      transition: { animation },
+      onHide: this.handleHide,
+    }
+
+    if (draggable) {
+      ElementType = TransitionablePortal
+
+      Object.assign(style, {
+        position: 'fixed',
+        top: `${yPos}px`,
+        left: `${xPos}px`,
+        boxShadow: '0 0.125em 0.5em rgba(0, 0, 0, 0.25)',
+      })
+
+      Object.assign(props, {
+        open,
+        onOpen: this.handleOpen,
+        onClose: this.handleClose,
+        onMount: this.handleMount,
+        closeOnDocumentClick: false,
+        closeOnRootNodeClick: false,
+      })
     }
 
     return (
-      <TransitionablePortal
-        transition={{ animation }}
-        open={open}
-        onOpen={this.handleOpen}
-        onClose={this.handleClose}
-        onHide={this.handleHide}
-        onMount={this.handleMount}
-        closeOnDocumentClick={false}
-        closeOnRootNodeClick={false}
-      >
-        <div id={id} style={mergedStyle} ref={this.handleRef}>
+      <ElementType {...props}>
+        <div id={id} style={{ ...style, ...usersStyle }} ref={this.handleRef}>
           {this.renderTitleBar()}
-          {!minimized && this.renderContent()}
+          {this.renderContent()}
         </div>
-      </TransitionablePortal>
+      </ElementType>
     )
   }
 }

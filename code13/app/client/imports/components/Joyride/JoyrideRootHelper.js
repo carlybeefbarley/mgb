@@ -17,6 +17,11 @@ class JoyrideRootHelper extends Component {
     currUser: PropTypes.object,
   }
 
+  static contextTypes = {
+    /** skills for current user */
+    skills: PropTypes.object,
+  }
+
   state = {}
 
   componentDidMount() {
@@ -52,6 +57,7 @@ class JoyrideRootHelper extends Component {
   }
 
   handleFinish = () => {
+    const { skills } = this.context
     const { joyrideStore: { state: { skillPathTutorial, skipped } } } = this.props
 
     // console.log('Finished tutorial:', skillPathTutorial)
@@ -59,7 +65,7 @@ class JoyrideRootHelper extends Component {
     if (!skillPathTutorial || skipped) return
 
     // console.log('Completed a Skill Tutorial: ', skillPathTutorial)
-    if (!hasSkill(skillPathTutorial)) {
+    if (!hasSkill(skills, skillPathTutorial)) {
       showToast(
         <span>
           You just gained the <Icon name="plus circle" />

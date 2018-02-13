@@ -15,6 +15,30 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Tue Feb 13 2018 09:00:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.4',
+        state: 'Beta',
+        iteration: '5013',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'Fix tutorial looping issue',
+          changeSummary:
+            'Tutorials sometimes did not award skills and required repeating.  This has been fixed.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Tue Feb 06 2018 16:20:00 GMT-0800 (PST)',
 
       id: {

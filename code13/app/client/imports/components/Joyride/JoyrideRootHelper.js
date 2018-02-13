@@ -58,13 +58,13 @@ class JoyrideRootHelper extends Component {
 
   handleFinish = () => {
     const { skills } = this.context
-    const { joyrideStore: { state: { skillPathTutorial, skipped } } } = this.props
+    const { joyrideStore: { state: { skillPathTutorial } } } = this.props
 
-    // console.log('Finished tutorial:', skillPathTutorial)
+    console.log('Finished tutorial:', skillPathTutorial)
 
-    if (!skillPathTutorial || skipped) return
+    if (!skillPathTutorial) return
 
-    // console.log('Completed a Skill Tutorial: ', skillPathTutorial)
+    console.log('Completed a Skill Tutorial: ', skillPathTutorial)
     if (!hasSkill(skills, skillPathTutorial)) {
       showToast(
         <span>

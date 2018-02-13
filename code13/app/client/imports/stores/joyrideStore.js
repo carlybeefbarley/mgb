@@ -144,14 +144,8 @@ class JoyrideStore extends Store {
     // Handle Finished
     //
 
-    // Reset _hasFinished tracking when we start running
-    if (!this.state.isRunning && nextState.isRunning) {
-      this._hasFinished = false
-    }
-
     // only emit finished once on last step
-    if (this.isLastStep(nextState) && !this._hasFinished) {
-      this._hasFinished = true
+    if (this.isLastStep(nextState)) {
       this.debug('updated to last step, emit finish')
       this.emit('finish')
     }

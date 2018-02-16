@@ -19,32 +19,36 @@ const formStyle = {
 }
 
 class AssetCreateNew extends Component {
+  static contextTypes = {
+    urlLocation: PropTypes.object,
+  }
+
   static propTypes = {
+    showProjectSelector: PropTypes.bool,
     suggestedParams: PropTypes.object, // projectName,assetName,assetKind
     currUser: PropTypes.object, // currently logged in user (if any)
     currUserProjects: PropTypes.array, // Projects list for currently logged in user
   }
 
-  static contextTypes = {
-    urlLocation: PropTypes.object,
+  static defaultProps = {
+    showProjectSelector: true,
   }
 
   state = {}
 
-  constructor(props) {
-    super(props)
+  constructor(props, context) {
+    super(props, context)
+    const { urlLocation } = context
     const { currUserProjects, suggestedParams } = this.props
     const { projectName, assetName, assetKind } = suggestedParams
 
+    const selectedProject = projectName || urlLocation.query.project
+
     this.state.isNamePristine = true // whether or not the form has had changes made
-    this.state.selectedProject = _.find(currUserProjects, { name: projectName }) || null // Project Object or Null
+    this.state.selectedProject = _.find(currUserProjects, { name: selectedProject }) || null // Project Object or Null
     this.state.buttonActionPending = false // True after the button has been pushed. so it doesn't get pushed twice
     this.state.selectedKind = AssetKinds.isValidKey(assetKind) ? assetKind : ''
     this.state.newAssetName = assetName || '' // "" or a valid assetName string
-  }
-
-  componentDidMount() {
-    this.focusNameInput()
   }
 
   handleInputRef = c => (this.inputRef = c)
@@ -108,7 +112,8 @@ class AssetCreateNew extends Component {
         // projectOwnerName - if projectName is a nonEmpty string, should be a valid projectOwnerName
         selectedProject ? selectedProject.ownerName : null,
       )
-      .then(newAssetUrl => {
+      .then(newAsset => {
+        const newAssetUrl = `/u/${newAsset.dn_ownerName}/asset/${newAsset._id}`
         this.setState({ buttonActionPending: false })
 
         utilPushTo(this.context.urlLocation.query, newAssetUrl)
@@ -120,7 +125,7 @@ class AssetCreateNew extends Component {
 
   render() {
     const { isNamePristine, newAssetName, selectedKind } = this.state
-    const { currUser, currUserProjects } = this.props
+    const { currUser, currUserProjects, showProjectSelector } = this.props
     const isAssetNameValid = validate.assetName(newAssetName)
     const assetNameErrText = validate.assetNameWithReason(newAssetName)
     const isKindValid = !!selectedKind
@@ -155,20 +160,22 @@ class AssetCreateNew extends Component {
           !!assetNameErrText && <Label basic pointing color="red" content={assetNameErrText} />}
         </Form.Field>
 
-        <Form.Field>
-          <label>Project (optional)</label>
-          <ProjectSelector
-            id="mgbjr-create-asset-project"
-            canEdit={false}
-            isUseCaseCreate
-            showProjectsUserIsMemberOf
-            user={currUser}
-            handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
-            availableProjects={currUserProjects}
-            ProjectListLinkUrl={currUser && `/u/${currUser.profile.name}/projects`}
-            chosenProjectObj={this.state.selectedProject}
-          />
-        </Form.Field>
+        {showProjectSelector && (
+          <Form.Field>
+            <label>Project (optional)</label>
+            <ProjectSelector
+              id="mgbjr-create-asset-project"
+              canEdit={false}
+              isUseCaseCreate
+              showProjectsUserIsMemberOf
+              user={currUser}
+              handleChangeSelectedProjectName={this.handleChangeSelectedProjectName}
+              availableProjects={currUserProjects}
+              ProjectListLinkUrl={currUser && `/u/${currUser.profile.name}/projects`}
+              chosenProjectObj={this.state.selectedProject}
+            />
+          </Form.Field>
+        )}
 
         <Form.Field>
           <Button

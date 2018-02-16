@@ -9,7 +9,7 @@ import FittedImage from '/client/imports/components/Controls/FittedImage'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 const _getAssetIdFromUrl = url =>
-  url && url.startsWith('/api/asset/png')
+  /api\/asset\/(cached-thumbnail\/)?png/.test(url)
     ? _.last(url.split('/'))
         .split('?')
         .shift()
@@ -70,7 +70,7 @@ const ImageShowOrChange = ({
 }
 
 ImageShowOrChange.propTypes = {
-  header: PropTypes.string.isRequired, // e.g "Project Avatar"
+  header: PropTypes.string, // e.g "Project Avatar"
   imageSrc: PropTypes.string, // A string which will be passed to img.src. Can be null
   canEdit: PropTypes.bool, // True if this should be able to accept changes via Drag LR--not required anymore b/c causes console spew w/ logged out user
   canLinkToSrc: PropTypes.bool.isRequired, // True if this should be a QLink to the image (or image editor)

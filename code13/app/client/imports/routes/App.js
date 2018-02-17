@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { browserHistory } from 'react-router'
 import Helmet from 'react-helmet'
-import { Grid, Message } from 'semantic-ui-react'
+import { Button, Dropdown, Grid, Header, Icon, Message, Segment } from 'semantic-ui-react'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
@@ -19,12 +19,13 @@ import { isSameUser } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
 import { projectMakeSelector, defaultProjectSorter } from '/imports/schemas/projects'
-
+import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
 import NavBar from '/client/imports/components/Nav/NavBar'
 import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
 import FlexPanel from '/client/imports/components/SidePanels/FlexPanel'
 import NetworkStatusMsg from '/client/imports/routes/Nav/NetworkStatusMsg'
+import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 
 import urlMaker from './urlMaker'
@@ -42,6 +43,7 @@ import { NotificationContainer } from 'react-notifications'
 import { InitHotjar } from '/client/imports/helpers/hotjar.js'
 import SupportedBrowsersContainer from '../components/SupportedBrowsers/SupportedBrowsersContainer'
 import VerifyBanner from '/client/imports/components/Users/VerifyBanner'
+import { _NO_PROJECT_PROJNAME } from '../components/Assets/ProjectSelector'
 
 let G_localSettings = new ReactiveDict()
 
@@ -86,16 +88,20 @@ class AppUI extends Component {
   }
 
   getChildContext() {
-    // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See https://github.com/facebook/react/issues/2517
+    // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See
+    // https://github.com/facebook/react/issues/2517
     return {
       urlLocation: this.props.location,
-      settings: this.props.settings, // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
-      skills: this.props.skills, // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
+      settings: this.props.settings, // We pass Settings in context since it will be a huge pain to pass it throughout
+      // the component tree as props
+      skills: this.props.skills, // We pass Skills in context since it will be a huge pain to pass it throughout the
+      // component tree as props
     }
   }
 
   state = {
-    hideHeaders: false, // Show/Hide NavPanel & Some other UI (like Asset Edit Header). This is a bit slow to do in the Navbar, so doing it here */
+    hideHeaders: false, // Show/Hide NavPanel & Some other UI (like Asset Edit Header). This is a bit slow to do in the
+    // Navbar, so doing it here */
     // read/unread Chat status. Gathered up here since it used across app, especially for notifications and lists
     chatChannelTimestamps: null, // as defined by Chats.getLastMessageTimestamps RPC
     hazUnreadChats: [], // will contain Array of channel names with unread chats
@@ -117,6 +123,7 @@ class AppUI extends Component {
       kind: null, // null or a string which is a one of assets:AssetKindKeys
       canEdit: false, // true or false. True iff editing an Asset _and_ user has edit permission
       projectNames: [], // Empty array, or array of strings for project names as described in assets.js
+      ownerName: '', // The asset.dn_ownerName, human readable name of the asset owner's profile
     },
   }
 
@@ -137,12 +144,14 @@ class AppUI extends Component {
   componentDidUpdate(prevProps, prevState) {
     const pagepath = getPagepathFromProps(this.props)
 
-    // Fire Completion Tags for the Joyride/Tutorial system. Make sure we only fire when the path has changed, not on every page update
+    // Fire Completion Tags for the Joyride/Tutorial system. Make sure we only fire when the path has changed, not on
+    // every page update
     const newRouterPath = `mgbjr-CT-app-router-path-${pagepath}` // e.g. /u/:username
     if (newRouterPath !== this._priorRouterPath) joyrideStore.completeTag(newRouterPath)
     this._priorRouterPath = newRouterPath
 
-    const newLocationPath = `mgbjr-CT-app-location-path-${this.props.location.pathname}` // e.g. /u/dgolds   -- will exclude search/query params
+    const newLocationPath = `mgbjr-CT-app-location-path-${this.props.location.pathname}` // e.g. /u/dgolds   -- will
+    // exclude search/query params
     if (newLocationPath !== this._priorLocationPath) joyrideStore.completeTag(newLocationPath)
     this._priorLocationPath = newLocationPath
   }
@@ -235,15 +244,19 @@ class AppUI extends Component {
     Meteor.call('Chats.getLastMessageTimestamps', chanArray, (error, chatChannelTimestamps) => {
       if (error) console.log('unable to invoke Chats.getLastMessageTimestamps()', error)
       else {
-        // 2. Now process that list for easy consumption (and store results in state.hazUnreadChats and state.chatChannelTimestamps)
+        // 2. Now process that list for easy consumption (and store results in state.hazUnreadChats and
+        // state.chatChannelTimestamps)
         let hazUnreadChats = []
         _.each(chatChannelTimestamps, cct => {
           const channelName = cct._id
           const lastReadByUser = getLastReadTimestampForChannel(settings, channelName)
           const channelObj = parseChannelName(channelName)
           cct._hazUnreads = Boolean(
-            (channelObj && channelObj.scopeGroupName !== 'Global' && !lastReadByUser) || // Non-global chat groups that user has access to but has not looked at
-              (lastReadByUser && cct.lastCreatedAt.getTime() > lastReadByUser.getTime()), // Any chat channel user has looked at but has more recent messages
+            (channelObj && channelObj.scopeGroupName !== 'Global' && !lastReadByUser) || // Non-global chat groups that user has
+              // access to but has not looked at
+              (lastReadByUser && cct.lastCreatedAt.getTime() > lastReadByUser.getTime()), // Any chat channel user has
+            // looked at but has more
+            // recent messages
           )
           if (cct._hazUnreads) hazUnreadChats.push(channelName)
         })
@@ -281,7 +294,8 @@ class AppUI extends Component {
       console.log('[tjfallback]') // so it's easier to know when this is happening
 
       const $script = document.createElement('script')
-      $script.setAttribute('src', makeCDNLink('/lib/t-r-a-c-k-e-r.js')) // fallback to local version because of AdBlocks etc
+      $script.setAttribute('src', makeCDNLink('/lib/t-r-a-c-k-e-r.js')) // fallback to local version because of
+      // AdBlocks etc
       $script.setAttribute('onload', doTrack)
       document.currentScript.parentNode.insertBefore($script, document.currentScript)
     }
@@ -374,7 +388,6 @@ class AppUI extends Component {
       marginBottom: '0px',
       height: '100vh',
       overflow: isGuest || isHocRoute ? 'hidden' : undefined,
-      overflowY: !isGuest && !isHocRoute ? 'scroll' : undefined,
       WebkitOverflowScrolling: 'touch', // only works with overflowY: scroll (not auto)
     }
 
@@ -387,6 +400,17 @@ class AppUI extends Component {
     const hazUnreadAssetChat =
       params.assetId &&
       _.includes(hazUnreadChats, makeChannelName({ scopeGroupName: 'Asset', scopeId: params.assetId }))
+
+    const projectName = [params.projectName, _.get(location, 'query.project')]
+      .concat(currentlyEditingAssetInfo.projectNames)
+      .filter(
+        name =>
+          // remove falsey values
+          !!name &&
+          // there is a weird case where the query param for "no project" is actually ?project=_
+          // make sure we don't show that in the breadcrumb :/ fix that someday...
+          name !== _NO_PROJECT_PROJNAME,
+      )[0]
 
     return (
       <div>
@@ -457,16 +481,75 @@ class AppUI extends Component {
               ]}
             />
           )}
+          {currentlyEditingAssetInfo.kind &&
+          projectName && (
+            <Grid padded columns="equal" style={{ flex: '0 0 auto' }}>
+              <Grid.Column style={{ flex: '0 0 20em' }}>
+                <div style={{ display: 'inline', fontSize: '2em' }}>
+                  <Dropdown
+                    selectOnBlur={false}
+                    selectOnNavigation={false}
+                    button
+                    className="basic secondary right labeled icon"
+                    fluid
+                    search
+                    scrolling
+                    value={projectName}
+                    text={
+                      <span>
+                        <Icon name="sitemap" /> {projectName}
+                      </span>
+                    }
+                    onChange={(e, { value }) => {
+                      const project = _.find(currUserProjects, { name: value })
+                      utilPushTo(location.query, `/u/${project.ownerName}/projects/${project.name}`)
+                    }}
+                    options={_.map(currUserProjects, project => ({
+                      key: project.name,
+                      text: project.name,
+                      value: project.name,
+                      icon: 'sitemap',
+                    }))}
+                  />
+                </div>
+              </Grid.Column>
+              <Grid.Column>
+                <AssetCreateNewModal
+                  currUser={currUser}
+                  currUserProjects={currUserProjects}
+                  buttonProps={{ floated: 'right' }}
+                  viewProps={{
+                    showProjectSelector: false,
+                    suggestedParams: { projectName },
+                  }}
+                />
+                <Button
+                  as={QLink}
+                  floated="right"
+                  to={`/u/${currentlyEditingAssetInfo.ownerName}/projects/${projectName}`}
+                >
+                  Project Overview
+                </Button>
+              </Grid.Column>
+            </Grid>
+          )}
           <Grid padded columns="equal" style={{ flex: '1' }}>
-            <Grid.Column style={{ flex: '0 0 20em', overflowY: 'auto' }}>
-              <RelatedAssets
-                location={this.props.location}
-                user={this.props.user}
-                currUser={this.props.currUser}
-                params={this.props.params}
-                currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-              />
-            </Grid.Column>
+            {currentlyEditingAssetInfo.kind &&
+            projectName && (
+              <Grid.Column stretched style={{ flex: '0 0 20em', overflowY: 'auto' }}>
+                <Segment>
+                  <RelatedAssets
+                    projectName={projectName}
+                    location={location}
+                    user={user}
+                    currUser={currUser}
+                    currUserProjects={currUserProjects}
+                    params={params}
+                    currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+                  />
+                </Segment>
+              </Grid.Column>
+            )}
             <Grid.Column style={{ overflowY: 'auto' }}>
               {!loading &&
                 this.props.children &&
@@ -475,13 +558,15 @@ class AppUI extends Component {
                   user,
                   currUser,
                   hideHeaders,
+                  currentlyEditingAssetInfo,
                   currUserProjects,
                   hazUnreadAssetChat,
                   ownsProfile,
                   isSuperAdmin,
                   availableWidth: mainAreaAvailableWidth,
                   handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
-                  isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
+                  isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off
+                  // toolbars/headings etc as appropriate
                 })}
             </Grid.Column>
           </Grid>
@@ -560,7 +645,8 @@ export default _.flow(
     }
 
     return {
-      currUser: currUser ? currUser : null, // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
+      currUser: currUser ? currUser : null, // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user.
+      // Putting it here makes it reactive
 
       currUserProjects: !handleForProjects
         ? []

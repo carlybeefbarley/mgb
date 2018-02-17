@@ -64,6 +64,7 @@ const NavBar = React.createClass({
       marginBottom: hideHeaders ? '2rem' : '0',
       background: '#fff',
       boxShadow: `0 ${hideHeaders ? '2px 6px' : '1px 4px'} rgba(0, 0, 0, 0.2)`,
+      zIndex: 1,
     }
 
     return (

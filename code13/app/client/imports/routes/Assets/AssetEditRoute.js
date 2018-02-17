@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button, Divider, Grid, Icon, Message, Tab } from 'semantic-ui-react'
+import { Button, Divider, Dropdown, Grid, Icon, Message, Tab } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
@@ -62,12 +62,10 @@ const FLUSH_TIMER_INTERVAL_MS = 6000 // Milliseconds between timed flush attempt
 //                      Asset Kind (immutable)
 //                      Asset Name (mutable)
 //                      ReadOnly / Writeable indicator (changes via project membership)
-//                      Indicate current active viewers/editors of same asset (dynamic) [Could use FlexPanel to show those users]
-//                      Pinned/Unpinned (mutable)
-//                      Asset Change history (dynamic) [Could use FlexPanel to see history]
-//
-// 3. Provide functions for sub components to call which will store the Asset
-// 4. (TODO) Provide "Leave hooks" for warning about unsaved work: https://github.com/reactjs/react-router/blob/master/docs/guides/ConfirmingNavigation.md
+//                      Indicate current active viewers/editors of same asset (dynamic) [Could use FlexPanel to show
+// those users] Pinned/Unpinned (mutable) Asset Change history (dynamic) [Could use FlexPanel to see history]  3.
+// Provide functions for sub components to call which will store the Asset 4. (TODO) Provide "Leave hooks" for warning
+// about unsaved work: https://github.com/reactjs/react-router/blob/master/docs/guides/ConfirmingNavigation.md
 
 // TODO: Simplify/cleanup the various overlapping ways of handling collisions
 // asset.isUnconfirmedSave
@@ -76,10 +74,10 @@ const FLUSH_TIMER_INTERVAL_MS = 6000 // Milliseconds between timed flush attempt
 // asset.content2.changeMarker  (only used by EditGraphic)
 
 // ALSO TODO: Add a 'editorLease' field.. This would contain a userid, sessionId and lease-until timestamp.
-// This SHOULD prevent edits from other users: BLUE editor field, and details of edit actions.  Field is disregarded if not present or is expired.
-// TBD who does cleanup.
-// Note that the Lease field should not be set on client.. it should be guarded by !isSimulation
-// BUT this will not work if clients' clocks are wrong :(  So instead, the leases should be managed on server:  ??????
+// This SHOULD prevent edits from other users: BLUE editor field, and details of edit actions.  Field is disregarded if
+// not present or is expired. TBD who does cleanup. Note that the Lease field should not be set on client.. it should
+// be guarded by !isSimulation BUT this will not work if clients' clocks are wrong :(  So instead, the leases should be
+// managed on server:  ??????
 
 // The deferred saves are handled by the following data:
 //     this.m_deferredSaveObj: null
@@ -92,8 +90,8 @@ const FLUSH_TIMER_INTERVAL_MS = 6000 // Milliseconds between timed flush attempt
 //   timeOfLastWriteAttempt     // TODO
 // }
 // And this structure is set in deferContentChange()
-// ... Note that this isn't being stored in React's this.state.___ because we need access to it after the component has been unmounted
-/// (Hmm.. maybe I should create a global state container for this outside this component?)
+// ... Note that this isn't being stored in React's this.state.___ because we need access to it after the component has
+// been unmounted / (Hmm.. maybe I should create a global state container for this outside this component?)
 
 export const offerRevertAssetToForkedParentIfParentIdIs = forkParentId => {
   const event = new CustomEvent('mgbOfferRevertToFork', { detail: forkParentId })
@@ -113,7 +111,8 @@ const AssetEditRoute = React.createClass({
 
   propTypes: {
     hideHeaders: PropTypes.bool, // If true, don't show any UI header stuff. like a Zen mode...
-    params: PropTypes.object, // params.assetId is the ASSET id; params._xed tells <AssetEdit> to load any experimental editors
+    params: PropTypes.object, // params.assetId is the ASSET id; params._xed tells <AssetEdit> to load any experimental
+    // editors
     user: PropTypes.object,
     currUser: PropTypes.object,
     currUserProjects: PropTypes.array, // Both Owned and memberOf. Check ownerName / ownerId fields to know which
@@ -139,17 +138,18 @@ const AssetEditRoute = React.createClass({
     skills: PropTypes.object,
   },
 
-  // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the userId
-  // TODO: Make this QLink-smart so it preserves queries
+  // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the
+  // userId TODO: Make this QLink-smart so it preserves queries
   checkForRedirect() {
-    if (!this.props.user && !!this.data.asset) {
-      // don't push - just replace #225 - back button not always work
-      console.log('AssetEditRoute - redirecting')
-      utilReplaceTo(
-        this.context.urlLocation.query,
-        '/u/' + this.data.asset.dn_ownerName + '/asset/' + this.data.asset._id,
-      )
-    }
+    console.log('checkForRedirect', { user: this.props.user, asset: this.data.asset })
+    // if (!this.props.user && !!this.data.asset) {
+    //   // don't push - just replace #225 - back button not always work
+    //   console.log('AssetEditRoute - redirecting')
+    //   utilReplaceTo(
+    //     this.context.urlLocation.query,
+    //     '/u/' + this.data.asset.dn_ownerName + '/asset/' + this.data.asset._id,
+    //   )
+    // }
   },
 
   revertDataFromForkParent_ResultCallBack(error, result) {
@@ -303,7 +303,8 @@ const AssetEditRoute = React.createClass({
 
       get loading() {
         return !assetHandler.isReady
-      }, // Child components must be aware that 'activitySnapshots' and 'assetActivity' may still be loading. But we don't wait for them
+      }, // Child components must be aware that 'activitySnapshots' and 'assetActivity' may still be loading. But we
+      // don't wait for them
     }
   },
 
@@ -313,7 +314,8 @@ const AssetEditRoute = React.createClass({
   },
 
   canUserEditThisAssetIfUnlocked(assetOverride = null) {
-    if (this.data.loading || !this.props.currUser) return false // Need to at least be logged in and have the data to do any edits!
+    if (this.data.loading || !this.props.currUser) return false // Need to at least be logged in and have the data to
+    // do any edits!
 
     const asset = assetOverride || this.data.asset
     return canUserEditAssetIfUnlocked(asset, this.props.currUserProjects, this.props.currUser)
@@ -324,7 +326,8 @@ const AssetEditRoute = React.createClass({
     const asset = assetOverride || this.data.asset
     const { currUser } = this.props
 
-    if (!asset || this.data.loading || !currUser) return false // Need to at least be logged in and have the data to do any edits...
+    if (!asset || this.data.loading || !currUser) return false // Need to at least be logged in and have the data to do
+    // any edits...
 
     // Are we superAdmin?
     if (this.props.isSuperAdmin && fAllowSuperAdminToEditAnything) {
@@ -361,21 +364,35 @@ const AssetEditRoute = React.createClass({
     this.setState({ isForkPending: false })
   },
 
-  handleCreateClick() {
-    const { assetStore, currUser } = this.props
+  handleCreateClick(type) {
+    const { assetStore, currentlyEditingAssetInfo, currUser } = this.props
 
-    const assetName =
-      'Actor ' +
+    const assetName = [
+      type,
       Date.now()
         .toString(36)
-        .substr(3)
+        .substr(2),
+    ].join(' ')
 
     this.setState({ creatingTabName: assetName })
 
-    assetStore.createAsset(currUser, AssetKindEnum.actor, assetName).then(newAsset => {
-      assetStore.openAsset(newAsset)
-      this.setState({ creatingTabName: null })
-    })
+    assetStore
+      .createAsset(
+        currUser,
+        type,
+        assetName,
+        _.first(currentlyEditingAssetInfo.projectNames),
+        currUser.profile.name,
+        currUser._id,
+      )
+      .then(newAsset => {
+        assetStore.openAsset(newAsset)
+        this.handleTabChange(newAsset)
+        this.setState({ creatingTabName: null })
+      })
+      .catch(error => {
+        this.setState({ creatingTabName: null })
+      })
   },
 
   handleTabChange(asset) {
@@ -385,6 +402,8 @@ const AssetEditRoute = React.createClass({
       utilPushTo(this.context.urlLocation, url)
     }
   },
+
+  goToAsset(asset) {},
 
   handleCloseTab(asset) {
     return e => {
@@ -439,36 +458,45 @@ const AssetEditRoute = React.createClass({
     })
 
     return (
-      <div>
-        <Divider hidden />
-        <Tab
-          activeIndex={_.findIndex(assetStore.state.openAssets, { _id: params.assetId })}
-          onTabChange={this.handleTabChange}
-          panes={[
-            ...panes,
-            creatingTabName
-              ? {
-                  menuItem: {
-                    key: creatingTabName,
-                    disabled: true,
-                    icon: { name: 'spinner', loading: true },
-                    content: creatingTabName,
-                  },
-                  render: () => <Tab.Pane loading />,
-                }
-              : {
-                  menuItem: {
-                    key: 'new',
-                    active: false,
-                    content: (
-                      <Button icon="plus" content="New" color="green" onClick={this.handleCreateClick} />
-                    ),
-                  },
-                  render: () => null,
+      <Tab
+        menu={{ attached: 'top', tabular: true, style: { overflowX: 'auto' } }}
+        activeIndex={_.findIndex(assetStore.state.openAssets, { _id: params.assetId })}
+        onTabChange={this.handleTabChange}
+        panes={[
+          ...panes,
+          creatingTabName
+            ? {
+                menuItem: {
+                  key: creatingTabName,
+                  disabled: true,
+                  icon: { name: 'spinner', loading: true },
+                  content: creatingTabName,
                 },
-          ]}
-        />
-      </div>
+                render: () => <Tab.Pane loading />,
+              }
+            : {
+                menuItem: {
+                  key: 'new',
+                  active: false,
+                  content: (
+                    <Dropdown
+                      value={null}
+                      simple
+                      text={'New'}
+                      options={_.map(AssetKindEnum, key => ({
+                        key,
+                        text: AssetKinds[key].name,
+                        value: key,
+                        icon: { name: AssetKinds[key].icon, color: AssetKinds[key].color },
+                        onClick: () => this.handleCreateClick(key),
+                      }))}
+                    />
+                  ),
+                },
+                render: () => null,
+              },
+        ]}
+      />
     )
   },
 
@@ -686,9 +714,9 @@ const AssetEditRoute = React.createClass({
     } else showToast.error('Not logged in. You must Log in to edit Assets')
   }, 5000), // 5000ms is the duration of an error Notification
 
-  // See comment at top of file for format of m_deferredSaveObj. We only defer content2 and thumbnail because they are slowest.
-  // TODO: Consider benefits of also deferring metadata in the same model... however, it won't conflict for now since we don't
-  //       touch asset.metadata in this method
+  // See comment at top of file for format of m_deferredSaveObj. We only defer content2 and thumbnail because they are
+  // slowest. TODO: Consider benefits of also deferring metadata in the same model... however, it won't conflict for
+  // now since we don't touch asset.metadata in this method
   deferContentChange(content2Object, thumbnail, changeText = 'content change') {
     const asset = this.data.asset // TODO: Change interface so this gets passed in instead?
 
@@ -722,7 +750,8 @@ const AssetEditRoute = React.createClass({
       }
     }
 
-    this.forceUpdate() // YUCK, but I think I have to, coz I can't put a deferral data structure in this.state. TODO.. revisit this soon
+    this.forceUpdate() // YUCK, but I think I have to, coz I can't put a deferral data structure in this.state. TODO..
+    // revisit this soon
   },
 
   // Note that this can be called directly by the Sub-components.
@@ -749,8 +778,8 @@ const AssetEditRoute = React.createClass({
             `Won't send deferred save of asset ${asset.name} yet because the prior save's results are still pending. Keeping it in deferred save Object list so it Will retry later..`,
           )
         } else {
-          // At this point, we have an asset with a deferred save, the connection is up, and there is no pending Meteor RPC save for it..
-          // ... so send the change to the server now
+          // At this point, we have an asset with a deferred save, the connection is up, and there is no pending Meteor
+          // RPC save for it.. ... so send the change to the server now
           this._doSendDeferredChangeNow()
         }
       }
@@ -778,7 +807,8 @@ const AssetEditRoute = React.createClass({
         toBeSent.changeText,
       )
       this.m_deferredSaveObj = null
-      // Note that potentially we can no longer recover from a failed save.. but the sub-component does have the data still..
+      // Note that potentially we can no longer recover from a failed save.. but the sub-component does have the data
+      // still..
     }
   },
 

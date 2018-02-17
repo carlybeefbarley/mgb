@@ -63,7 +63,7 @@ const ImageShowOrChange = ({
   )
 
   return React.createElement(
-    canLinkToSrc && avatarAssetId ? QLink : 'div',
+    canLinkToSrc && avatarAssetId ? QLink : 'span',
     propsImgContainer,
     handleChange ? imgPopup : innerImg,
   )

@@ -44,7 +44,7 @@ class AssetStore extends Store {
         isDeleted: false,
         isPrivate: false,
       }
-      if (projectName && projectName !== '') {
+      if (projectName) {
         newAsset.projectNames = [projectName]
         newAsset.dn_ownerName = projectOwnerName
         newAsset.ownerId = projectOwnerId

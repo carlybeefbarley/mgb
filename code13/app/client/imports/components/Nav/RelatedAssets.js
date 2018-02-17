@@ -6,6 +6,7 @@ import {
   Accordion,
   Button,
   Divider,
+  Form,
   Header,
   Icon,
   Input,
@@ -16,18 +17,12 @@ import {
 } from 'semantic-ui-react'
 
 import { AssetKinds } from '/imports/schemas/assets'
-import QLink, { openAssetById, utilPushTo } from '/client/imports/routes/QLink'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
+import getContextualProjectName from '/client/imports/helpers/getContextualProjectName'
+import QLink, { openAssetById, utilPushTo } from '/client/imports/routes/QLink'
+
 const NameInfoAzzets = new Meteor.Collection('NameInfoAzzets')
-
-const getContextualProjectName = ({ location, currentlyEditingAssetInfo, params }) => {
-  const { query } = location
-  const { projectNames } = currentlyEditingAssetInfo
-
-  // Else is it a query?
-  return _.first(projectNames) || _.get(query, 'project') || params.projectName
-}
 
 class RelatedAssetsUI extends React.Component {
   static propTypes = {
@@ -45,6 +40,8 @@ class RelatedAssetsUI extends React.Component {
 
     /** An object with some info about the currently edited Asset - as defined in App.js' this.state */
     currentlyEditingAssetInfo: PropTypes.object.isRequired,
+
+    currUserProjects: PropTypes.array,
   }
 
   state = { activeIndex: 0, isModalOpen: false, searchQuery: '' }
@@ -71,8 +68,8 @@ class RelatedAssetsUI extends React.Component {
       e.stopPropagation()
     }
 
-    // TODO: get constants for keycodes probably they should be here: app/client/imports/components/Skills/Keybindings.js
-    // Ctrl (Cmd) + o (O)
+    // TODO: get constants for keycodes probably they should be here:
+    // app/client/imports/components/Skills/Keybindings.js Ctrl (Cmd) + o (O)
     if (e.which === 79 && (e.ctrlKey || e.metaKey)) {
       this.toggleModal()
       prevent()
@@ -229,7 +226,7 @@ class RelatedAssetsUI extends React.Component {
   }
 
   renderRelatedAssetsList = () => {
-    const { currUser, assets, loading, user } = this.props
+    const { currUser, currUserProjects, assets, loading, user } = this.props
     const { activeIndex, searchQuery } = this.state
 
     const contextualProjectName = getContextualProjectName(this.props)
@@ -253,46 +250,46 @@ class RelatedAssetsUI extends React.Component {
 
     return (
       <div>
-        <Header size="small">
-          Related Assets
-          <Header.Subheader style={{ display: 'inline-block', marginLeft: '1em' }}>
-            [Ctrl + O]
-          </Header.Subheader>
+        <Header>
+          Assets
+          {/*<Header.Subheader style={{ display: 'inline-block', marginLeft: '1em' }}>*/}
+          {/*[Ctrl + O]*/}
+          {/*</Header.Subheader>*/}
         </Header>
-        {/*{hasAssets && (*/}
-        {/*<Input*/}
-        {/*id="mgb-related-assets-input" // so it can be focused on open*/}
-        {/*fluid*/}
-        {/*size="mini"*/}
-        {/*icon="search"*/}
-        {/*loading={loading}*/}
-        {/*placeholder="Search"*/}
-        {/*defaultValue={searchQuery}*/}
-        {/*onChange={this.handleSearchChange}*/}
-        {/*/>*/}
-        {/*)}*/}
+        {hasAssets && (
+          <Input
+            id="mgb-related-assets-input" // so it can be focused on open
+            fluid
+            icon="search"
+            loading={loading}
+            placeholder="Search"
+            defaultValue={searchQuery}
+            onChange={this.handleSearchChange}
+          />
+        )}
         {_.chain(filteredRelatedAssets)
           .groupBy('kind')
           .toPairs()
           .map(([kind, assetsOfKind]) => (
-            <div key={kind}>
-              <Divider horizontal>{kind}</Divider>
-              <List
-                id="mgb-related-assets-list"
-                selection
-                items={_.map(assetsOfKind, (a, index) => ({
-                  key: a._id,
-                  as: QLink,
-                  onClick: this.closeAll,
-                  to: `/u/${a.dn_ownerName}/asset/${a._id}`,
-                  active: activeIndex === index,
-                  style: { color: AssetKinds.getColor(a.kind) },
-                  icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
-                  content:
-                    currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
-                }))}
-              />
-            </div>
+            // <div key={kind}>
+            // <Divider horizontal>{kind}</Divider>
+            <List
+              key={kind}
+              id="mgb-related-assets-list"
+              selection
+              items={_.map(assetsOfKind, (a, index) => ({
+                key: a._id,
+                as: QLink,
+                onClick: this.closeAll,
+                to: `/u/${a.dn_ownerName}/asset/${a._id}`,
+                // active: activeIndex === index,
+                style: { color: AssetKinds.getColor(a.kind) },
+                icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
+                content:
+                  currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
+              }))}
+            />
+            // </div>
           ))
           .value()}
         {/*
@@ -337,18 +334,18 @@ class RelatedAssetsUI extends React.Component {
             </p>
           </Segment>
         )}
-        <Divider />
-        <Button
-          as={QLink}
-          to="/assets/create"
-          query={{ projectName: contextualProjectName }}
-          compact
-          floated="right"
-          size="tiny"
-          color="green"
-          content="Create [Ctrl + Alt + N]"
-        />
-        <Divider hidden fitted clearing />
+        {/*<Divider />*/}
+        {/*<Button*/}
+        {/*as={QLink}*/}
+        {/*to="/assets/create"*/}
+        {/*query={{ projectName: contextualProjectName }}*/}
+        {/*compact*/}
+        {/*floated="right"*/}
+        {/*size="tiny"*/}
+        {/*color="green"*/}
+        {/*content="Create [Ctrl + Alt + N]"*/}
+        {/*/>*/}
+        {/*<Divider hidden fitted clearing />*/}
       </div>
     )
   }
@@ -385,13 +382,7 @@ class RelatedAssetsUI extends React.Component {
         onClose={this.closePopup}
         position="bottom left"
         trigger={
-          <Button
-            style={{ marginRight: '1rem' }}
-            primary
-            size="small"
-            content="Related Assets"
-            icon="dropdown"
-          />
+          <Button style={{ marginRight: '1rem' }} primary size="small" content="Assets" icon="dropdown" />
         }
       >
         <Popup.Content>{this.renderRelatedAssetsList()}</Popup.Content>

@@ -157,18 +157,18 @@ body.dragging .accept-drop:hover {
 }
 
 .mgb-assetcard-width {
-  min-width: 230px;
-  max-width: 230px;
+  min-width: 202px;
+  max-width: 202px;
 }
 
 .mgb-projectcard-width {
-  min-width: 230px;
-  max-width: 230px;
+  min-width: 202px;
+  max-width: 202px;
 }
 
 .mgb-useritem-width-normal {
-  min-width: 230px;
-  max-width: 230px;
+  min-width: 202px;
+  max-width: 202px;
 }
 
 .mgb-useritem-width-narrow {

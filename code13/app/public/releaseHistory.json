@@ -20,11 +20,11 @@
           "otherUrls": []
         },
         {
-          "featureTag": "nav.loves",
+          "featureTag": "nav.likes",
           "type": "feature",
-          "changeName": "Love/Heart Assets & Games",
+          "changeName": "Like/Thumbs Up Assets & Games",
           "changeSummary":
-            "Assets and Games can now be hearted/loved! Because of this, the Assets and Games lists can optionally be sorted by # of loves.  On a user's Profile Page you can see the Assets/Games they have loved. Note that currently, 'loving' an asset does change the updatedAt timestamp which can be a bit annoying (causes items to jump to top of list if sorted-by-edited), but we will fix that soon",
+            "Assets and Games can now be liked/thumbs upped! Because of this, the Assets and Games lists can optionally be sorted by # of likes.  On a user's Profile Page you can see the Assets/Games they have liked. Note that currently, 'loving' an asset does change the updatedAt timestamp which can be a bit annoying (causes items to jump to top of list if sorted-by-edited), but we will fix that soon",
           "otherUrls": []
         },
         {

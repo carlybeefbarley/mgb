@@ -7,21 +7,21 @@ import QLink from '/client/imports/routes/QLink'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Activity } from '/imports/schemas'
 
-const UserLovesListUI = ({ user, loveAct }) => (
+const UserLikesListUI = ({ user, likeAct }) => (
   <div>
     <Header
       as="h2"
       content={
         <a>
-          <Icon fitted name="heart" color="red" />
-          {`${user ? user.username : '???'}'s recent loves`}
+          <Icon fitted name="thumbs up" color="blue" />
+          {`${user ? user.username : '???'}'s recent likes`}
         </a>
       }
     />
-    {_.map(loveAct, a => (
+    {_.map(likeAct, a => (
       <div key={a._id}>
-        <Icon name="heart" color="red" />
-        <span>Loved </span>
+        <Icon name="thumbs up" color="blue" />
+        <span>Liked </span>
         <QLink to={`/u/${a.toOwnerName}/asset/${a.toAssetId}`}>{a.toAssetName}</QLink>
         <span> by </span>
         <QLink to={`/u/${a.toOwnerName}`}>{a.toOwnerName}</QLink>
@@ -29,28 +29,28 @@ const UserLovesListUI = ({ user, loveAct }) => (
         <UX.TimeAgo as="small" style={{ color: '#c8c8c8' }} when={a.timestamp} />
       </div>
     ))}
-    {(!loveAct || loveAct.length === 0) && <span>Nothing loved recently...</span>}
+    {(!likeAct || likeAct.length === 0) && <span>Nothing liked recently...</span>}
   </div>
 )
 
-UserLovesListUI.PropTypes = {
+UserLikesListUI.PropTypes = {
   user: PropTypes.object,
-  loveAct: PropTypes.array,
+  likeAct: PropTypes.array,
 }
 
-const UserLovesList = createContainer(props => {
+const UserLikesList = createContainer(props => {
   const userId = props.user._id ? props.user._id : null
   if (userId) {
     let handleActivity = Meteor.subscribe('activity.public.recent.userId')
     let selector = {
       byUserId: userId,
-      activityType: 'asset.userLoves',
+      activityType: 'asset.userLikes',
     }
     let findOpts = { sort: { timestamp: -1 } }
     return {
-      loveAct: Activity.find(selector, findOpts).fetch(),
+      likeAct: Activity.find(selector, findOpts).fetch(),
       loading: !handleActivity.ready(),
     }
   }
-}, UserLovesListUI)
-export default UserLovesList
+}, UserLikesListUI)
+export default UserLikesList

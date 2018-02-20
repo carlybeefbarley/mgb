@@ -45,7 +45,7 @@ import { canUserEditAssetIfUnlocked, fAllowSuperAdminToEditAnything } from '/imp
 
 import { learnSkill, forgetSkill } from '/imports/schemas/skills'
 
-import UserLoves from '/client/imports/components/Controls/UserLoves'
+import UserLikes from '/client/imports/components/Controls/UserLikes'
 import FlagEntity from '/client/imports/components/Controls/FlagEntityUI'
 import ResolveReportEntity from '/client/imports/components/Controls/FlagResolve'
 
@@ -421,7 +421,7 @@ const AssetEditRoute = React.createClass({
               // TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
             }
             {this.state.isForkRevertPending && <Icon name="fork" loading />}
-            <UserLoves currUser={currUser} asset={asset} size="small" seeLovers />
+            <UserLikes currUser={currUser} asset={asset} size="small" seeLikers />
             <WorkState
               workState={asset.workState}
               canEdit={canEd}

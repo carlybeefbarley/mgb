@@ -11,6 +11,7 @@ import WorkState from '/client/imports/components/Controls/WorkState'
 import { getProjectAvatarUrl } from '/client/imports/helpers/assetFetchers'
 // This is a Project Card which is a card-format version of the Project information.
 // It is passed a project database object and it locally decides what fields to use/render within that structure.
+import UserLikes from '/client/imports/components/Controls/UserLikes'
 
 const ProjectCard = (props, context) => {
   const { project, canEdit, handleFieldChanged } = props
@@ -40,6 +41,7 @@ const ProjectCard = (props, context) => {
       onClick={() => utilPushTo(context.urlLocation.query, linkTo)}
     >
       <Card.Content>
+        {/*<UserLikes />*/}
         <ImageShowOrChange
           imageSrc={getProjectAvatarUrl(project)}
           header="Project Avatar"

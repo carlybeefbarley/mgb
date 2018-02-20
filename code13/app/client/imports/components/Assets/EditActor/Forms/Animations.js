@@ -33,7 +33,7 @@ export default class Animations extends React.Component {
     joyrideStore.completeTag(`mgbjr-CT-edit-actor-Animations-accordion-${animId}`)
   }
 
-  handleGraphicFrameSelection(e, data) {
+  handleGraphicFrameSelection = (e, data) => {
     let frames = this.state.graphicFrameImports
     if (data.checked) frames[data.value].checked = 0
     else frames[data.value].checked = 1
@@ -117,7 +117,7 @@ export default class Animations extends React.Component {
     this.props.onChange && this.props.onChange()
   }
 
-  changeGraphic(index, val, asset) {
+  changeGraphic = (index, val, asset) => {
     this.data[index].tileName = val
     this.data[index].frame = 0
     this.setState({ animationIndex: index })

@@ -88,9 +88,9 @@ const UX = {
 
   UserAvatarName: ({ username, validFor }) => (
     <QLink to={`/u/${username}`} altTo={`/u/${username}/projects`}>
-      <span className="right floated author">
+      <span className="author">
+        <span>by&nbsp;{username}</span>
         <Image avatar src={_makeAvatarImgLink(username, validFor)} />
-        <span>{username}</span>
       </span>
     </QLink>
   ),

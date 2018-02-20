@@ -44,14 +44,13 @@ var schema = {
   toUserId: Match.Optional(String), // user id interacted with (for example added to project) Added 08/28/2017
   toUserName: Match.Optional(String), // user name interacted with (for example added to project) Added 08/28/2017
 
-  unread: Boolean, // flag if user (toUserId) read activity. Used only for interactions (mention in chat, adding to project, loved assets) with users. Added 12/27/2017
+  unread: Boolean, // flag if user (toUserId) read activity. Used only for interactions (mention in chat, adding to project, liked assets) with users. Added 12/27/2017
 }
 
 // Info on each type of activity, as the UI cares about it
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
 export const ActivityTypes = {
-<<<<<<< HEAD
-  'user.join': { icon: 'green user', pri: 5, description: 'Joing My Game Builder' },
+  'user.join': { icon: 'green user', pri: 5, description: 'Joined My Game Builder' },
   'user.login': { icon: 'user', pri: 9, description: 'Logged In' },
   'user.logout': { icon: 'grey user', pri: 9, description: 'Logged Out' },
   'user.changeFocus': { icon: 'green alarm', pri: 9, description: 'Changed Focus' },
@@ -86,7 +85,7 @@ export const ActivityTypes = {
   'asset.license': { icon: 'law', pri: 11, description: "Changed an Asset's License" },
   'asset.project': { icon: 'folder sitemap', pri: 12, description: "Changed an Asset's Project" },
   'asset.undelete': { icon: 'green trash outline', pri: 12, description: 'Undeleted an Asset' },
-  'asset.userLoves': { icon: 'heart', pri: 12, description: 'Loved an Asset' },
+  'asset.userLikes': { icon: 'thumbs up', pri: 12, description: 'Liked an Asset' },
   'asset.ban': { icon: 'red bomb', pri: 12, description: 'Banned an Asset' },
   'asset.unban': { icon: 'green bomb', pri: 12, description: 'Unbanned an Asset' },
   'task.approve': { icon: 'green tasks', pri: 12, description: 'Approved a Task' },
@@ -100,7 +99,6 @@ export const ActivityTypes = {
   'project.destroy': { icon: 'red sitemap', pri: 4, description: 'Destroyed an Empty Project' },
   /* 'project.removeMember': { icon: 'sitemap', pri: 4, description: 'Removed a Membeer from a Project' }, */
   'project.leaveMember': { icon: 'sitemap', pri: 4, description: 'Left a Project' },
-=======
   'user.join': { icon: 'green user', pri: 5, description: 'User joined' },
   'user.login': { icon: 'user', pri: 9, description: 'User Logged In' },
   'user.logout': { icon: 'grey user', pri: 9, description: 'User Logged Out' },
@@ -136,7 +134,7 @@ export const ActivityTypes = {
   'asset.license': { icon: 'law', pri: 11, description: 'Asset license changed' },
   'asset.project': { icon: 'folder sitemap', pri: 12, description: "Change Asset's project" },
   'asset.undelete': { icon: 'green trash outline', pri: 12, description: 'Undelete asset' },
-  'asset.userLoves': { icon: 'heart', pri: 12, description: 'love asset' },
+  'asset.userLikes': { icon: 'heart', pri: 12, description: 'Like Asset' },
   'asset.ban': { icon: 'red bomb', pri: 12, description: 'Ban Asset' },
   'asset.unban': { icon: 'green bomb', pri: 12, description: 'Un-ban Asset' },
   'task.askReview': { icon: 'grey tasks', pri: 12, description: 'Ask for task review' },
@@ -151,7 +149,7 @@ export const ActivityTypes = {
   'project.destroy': { icon: 'red sitemap', pri: 4, description: 'Destroyed Empty project' },
   'project.removeMember': { icon: 'sitemap', pri: 4, description: 'Remove Member from project' },
   'project.leaveMember': { icon: 'sitemap', pri: 4, description: 'Member Left project' },
->>>>>>> master
+
   // Helper functions that handles unknown asset kinds and gets good defaults for unknown items
   getIconClass(key) {
     return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].icon : 'warning sign') + ' icon'
@@ -359,7 +357,7 @@ export function deleteActivityRecord(activityId) {
 }
 
 export const feedActivityTypesByOthers = [
-  'asset.userLoves',
+  'asset.userLikes',
   'project.leaveMember',
   'mgb.announce',
   'task.approve',

@@ -33,8 +33,8 @@ const SpecialGlobals = {
     validFor: 60, // seconds until we force avatar to refresh
   },
   thumbnail: {
-    width: 230, // In px. See in mgb.css for .mgb-projectcard-width and .mgb-assetcard-width
-    height: 155, // In px
+    width: 202, // In px. See in mgb.css for .mgb-projectcard-width and .mgb-assetcard-width
+    height: 202, // In px
     defaultExpiresDuration: 3600,
   },
   // If observers will turn out too slow - we may change it to false - and then implement slow polling (@stauzs)

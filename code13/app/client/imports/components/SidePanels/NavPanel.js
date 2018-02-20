@@ -15,11 +15,10 @@ const menuStyle = {
   marginBottom: 0,
 }
 
-<<<<<<< HEAD
 // exported since the Tutorial Editor uses this to generate some
 // macros in JoyrideSpecialMacros.jsx
 // Note that this uses Meteor's Accounts.loggingIn() so it doesn't flash the Login/Sigup during user login
-export const getNavPanels = (currUser, showAll) => {
+export const getNavPanel = (currUser, showAll) => {
   const username = currUser ? currUser.username : null
   const isLoggingIn = Meteor.loggingIn()
   const showGuestOptions = (!isLoggingIn && !currUser) || showAll
@@ -40,27 +39,27 @@ export const getNavPanels = (currUser, showAll) => {
       right: isHocRoute
         ? []
         : [
-          isHocActivity
-            ? {
-              name: 'hour-of-code-finished',
-              content: "I'm finished with my Hour of Code™",
-              href: 'https://code.org/api/hour/finish',
-            }
-            : {
-              name: 'hour-of-code-back',
-              content: 'Back to Hour of Code',
-              to: '/hour-of-code',
+            isHocActivity
+              ? {
+                  name: 'hour-of-code-finished',
+                  content: "I'm finished with my Hour of Code™",
+                  href: 'https://code.org/api/hour/finish',
+                }
+              : {
+                  name: 'hour-of-code-back',
+                  content: 'Back to Hour of Code',
+                  to: '/hour-of-code',
+                },
+            {
+              name: 'log-out',
+              content: <Button icon="sign out" content="Exit Hour of Code" size="tiny" onClick={_doLogout} />,
             },
-          {
-            name: 'log-out',
-            content: <Button icon="sign out" content="Exit Hour of Code" size="tiny" onClick={_doLogout} />,
-          },
-          {
-            name: 'hour-of-code-save',
-            content: <EnrollButton />,
-            icon: { name: 'signup' },
-          },
-        ],
+            {
+              name: 'hour-of-code-save',
+              content: <EnrollButton />,
+              icon: { name: 'signup' },
+            },
+          ],
     }
   }
 
@@ -130,11 +129,11 @@ export const getNavPanels = (currUser, showAll) => {
         menu: [
           {
             subcomponent: 'Item',
-            jrkey: 'lovedGames',
-            icon: { name: 'heart', color: 'red' },
+            jrkey: 'likedGames',
+            icon: { name: 'thumbs up outline', color: 'blue' },
             to: '/games',
-            query: { sort: 'loves' },
-            content: 'Loved Games',
+            query: { sort: 'likes' },
+            content: 'Liked Games',
           },
           {
             subcomponent: 'Item',
@@ -358,8 +357,6 @@ const _doLogout = () => {
   })
 }
 
-=======
->>>>>>> master
 class NavPanel extends React.Component {
   static contextTypes = {
     router: PropTypes.object.isRequired,

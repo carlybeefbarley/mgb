@@ -3,7 +3,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Card, Icon, Popup } from 'semantic-ui-react'
+import { Card, Icon, Popup, Header, Label } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { AssetKinds } from '/imports/schemas/assets'
@@ -15,21 +15,30 @@ import { showToast } from '/client/imports/modules'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
-import UserLoves from '/client/imports/components/Controls/UserLoves'
+import UserLikes from '/client/imports/components/Controls/UserLikes'
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
 
 export const assetViewChoices = {
-  s: {
+  listview: {
     showFooter: false,
-    showWorkstate: true,
+    showLikesSmall: true,
+    showLikes: false,
     showMeta: false,
     showExtra: false,
     showImg: false,
+    showUserName: false,
     tightRows: true,
   },
-  m: { showFooter: false, showWorkstate: true, showMeta: false, showExtra: true, showImg: true },
-  l: { showFooter: false, showWorkstate: true, showMeta: true, showExtra: true, showImg: true },
-  xl: { showFooter: true, showWorkstate: true, showMeta: true, showExtra: true, showImg: true },
+  cardview: {
+    showUserName: true,
+    showLikesSmall: false,
+    showLikes: true,
+    showFooter: true,
+    showWorkstate: true,
+    showMeta: true,
+    showExtra: true,
+    showImg: true,
+  },
 }
 
 const _preventOnMouseUpClickSteal = e => {
@@ -37,7 +46,7 @@ const _preventOnMouseUpClickSteal = e => {
   e.stopPropagation()
 }
 
-export const defaultAssetViewChoice = 'm'
+export const defaultAssetViewChoice = 'cardview'
 
 const AssetCard = React.createClass({
   propTypes: {
@@ -100,7 +109,12 @@ const AssetCard = React.createClass({
     const hasParentFork = _.isArray(asset.forkParentChain) && asset.forkParentChain.length > 0
     const ago = moment(asset.updatedAt).fromNow() // TODO: Make reactive
     const ownerName = asset.dn_ownerName
-    const veryCompactButtonStyle = { paddingLeft: '0.25em', paddingRight: '0.25em' }
+    const veryCompactButtonStyle = {
+      paddingLeft: '0.25em',
+      paddingRight: '0.25em',
+      float: 'right',
+      backgroundColor: 'rgba(255, 0, 0, 0)',
+    }
     const chosenProjectNamesArray = asset.projectNames || []
     const availableProjectNamesArray = ownersProjects
       ? _.map(_.filter(ownersProjects, { ownerId: asset.ownerId }), 'name')
@@ -136,30 +150,60 @@ const AssetCard = React.createClass({
         draggable
         className={cx(classNames, 'animated fadeIn')}
       >
-        {/* className here because Card.Content is functional and doesn't support no refs */}
         <div className="content" ref="thumbnailCanvas">
-          {viewOpts.showImg && <Thumbnail constrainHeight="155px" asset={asset} />}
+          {viewOpts.showImg && (
+            <div>
+              <span
+                className={(canEdit && !asset.isCompleted ? '' : 'disabled ') + 'ui compact button'}
+                style={veryCompactButtonStyle}
+                onMouseUp={this.handleDeleteClick}
+                onTouchEnd={this.handleDeleteClick}
+              >
+                {asset.isDeleted ? null : <Icon color="red" name="trash" />}
+                {/* <small>&nbsp;{asset.isDeleted ? 'Undelete' : 'Delete'}</small> */}
+              </span>
+              <div
+                className={
+                  (canEdit ? '' : 'disabled ') + 'ui ' + (asset.isCompleted ? 'blue' : '') + ' compact button'
+                }
+                style={veryCompactButtonStyle}
+                onMouseUp={this.handleCompletedClick}
+                onTouchEnd={this.handleCompletedClick}
+              >
+                <Icon name={asset.isCompleted ? 'lock' : 'unlock'} color="yellow" />
+                {/*  <small>&nbsp;{asset.isCompleted ? 'Locked' : 'Unlocked'}</small> */}
+              </div>
+              <Thumbnail asset={asset} />{' '}
+              <Label as="a" color={assetKindColor} corner="left" icon={assetKindIcon} />
+            </div>
+          )}
         </div>
 
-        <Card.Content>
-          {viewOpts.showWorkstate && (
+        <Card.Content extra>
+          {/* className here because Card.Content is functional and doesn't support no refs */}
+          <div className="left floated">
+            <span style={{ float: 'left', fontSize: '1.1em', color: 'black' }}>
+              {viewOpts.showExtra && (
+                <div style={{ width: '50%', float: 'left' }}>
+                  {' '}
+                  <span>"{shownAssetName}"&nbsp;</span>
+                </div>
+              )}
+            </span>
+            {viewOpts.showUserName && <UX.UserAvatarName username={asset.dn_ownerName} />}
+          </div>
+          {viewOpts.showLikesSmall && (
             <span style={{ float: 'right' }}>
               <span onMouseUp={_preventOnMouseUpClickSteal}>
-                <UserLoves
+                <UserLikes
                   currUser={currUser}
                   asset={asset}
                   size={viewOpts.showExtra ? null : 'small'}
-                  seeLovers={false}
+                  seeLikers={false}
                 />
               </span>
-              <WorkState
-                workState={asset.workState}
-                size={viewOpts.showExtra ? null : 'small'}
-                canEdit={false}
-              />
             </span>
           )}
-
           {!viewOpts.showExtra && (
             // This is used for SMALL sizes. It has a popup to show the Medium one!
             <Popup
@@ -175,7 +219,7 @@ const AssetCard = React.createClass({
                     size="large"
                     name={assetKindIcon}
                   />
-                  {shownAssetName}
+                  <strong>{shownAssetName}</strong>
                 </div>
               }
             >
@@ -184,76 +228,55 @@ const AssetCard = React.createClass({
               </div>
             </Popup>
           )}
-
-          {viewOpts.showExtra && <Card.Header title={shownAssetName} content={shownAssetName} />}
-
-          {viewOpts.showMeta && (
-            <Card.Meta>
-              <div>
-                <Icon name="history" />
-                <span>
-                  Updated <UX.TimeAgo when={asset.updatedAt} />
-                </span>
-              </div>
-              <div style={{ color: numChildForks ? 'black' : null }}>
-                <Icon name="fork" color={hasParentFork ? 'blue' : null} />
-                <span>{numChildForks} Forks</span>
-              </div>
-              {editProjects}
-            </Card.Meta>
-          )}
+          {/*          {viewOpts.showMeta && (
+//           <Card.Meta>
+//             <div>
+//              <Icon name="history" />
+//               <span>
+//                Updated <UX.TimeAgo when={asset.updatedAt} />
+//              </span>
+//            </div>
+//            <div style={{ color: numChildForks ? 'black' : null }}>
+//              <Icon name="fork" color={hasParentFork ? 'blue' : null} />
+//              <span>{numChildForks} Forks</span>
+//            </div>
+//            {editProjects}
+//          </Card.Meta> )}
 
           {viewOpts.showMeta &&
           (asset.text && asset.text !== '') && <Card.Description content={<small>{asset.text}</small>} />}
-
           {asset.isDeleted && (
             <div className="ui massive red corner label">
               <span style={{ fontSize: '10px', paddingLeft: '10px' }}>DELETED</span>
             </div>
-          )}
+          )}*/}
         </Card.Content>
 
         {viewOpts.showExtra && (
           <Card.Content extra>
-            <span
-              style={{ color: assetKindColor }}
-              className={'left floated ' + assetKindColor + ' icon label'}
-              title={assetKindDescription}
-            >
-              <Icon color={assetKindColor} name={assetKindIcon} />
-              {assetKindName}
-              {asset.skillPath &&
-              asset.skillPath.length > 0 && (
-                <ChallengeState ownername={asset.dn_ownerName} asIcon style={{ marginLeft: '3px' }} />
-              )}
-            </span>
-            <UX.UserAvatarName username={asset.dn_ownerName} />
+            {viewOpts.showMeta && (
+              <span onMouseUp={_preventOnMouseUpClickSteal}>
+                <Card.Meta>
+                  <div style={{ color: numChildForks ? 'black' : null, float: 'right' }}>
+                    <Icon name="fork" color={hasParentFork ? 'green' : null} />
+                    <span>{numChildForks} Forks</span>
+                  </div>
+                </Card.Meta>
+              </span>
+            )}
+            {viewOpts.showLikes && (
+              <span style={{ float: 'left' }}>
+                <span onMouseUp={_preventOnMouseUpClickSteal}>
+                  <UserLikes
+                    currUser={currUser}
+                    asset={asset}
+                    size={viewOpts.showExtra ? null : 'small'}
+                    seeLikers={false}
+                  />
+                </span>
+              </span>
+            )}
           </Card.Content>
-        )}
-
-        {viewOpts.showFooter && (
-          <div className="ui two small bottom attached icon buttons">
-            <div
-              className={
-                (canEdit ? '' : 'disabled ') + 'ui ' + (asset.isCompleted ? 'blue' : '') + ' compact button'
-              }
-              style={veryCompactButtonStyle}
-              onMouseUp={this.handleCompletedClick}
-              onTouchEnd={this.handleCompletedClick}
-            >
-              <Icon name={asset.isCompleted ? 'lock' : 'unlock'} />
-              <small>&nbsp;{asset.isCompleted ? 'Locked' : 'Unlocked'}</small>
-            </div>
-            <div
-              className={(canEdit && !asset.isCompleted ? '' : 'disabled ') + 'ui compact button'}
-              style={veryCompactButtonStyle}
-              onMouseUp={this.handleDeleteClick}
-              onTouchEnd={this.handleDeleteClick}
-            >
-              {asset.isDeleted ? null : <Icon color="red" name="trash" />}
-              <small>&nbsp;{asset.isDeleted ? 'Undelete' : 'Delete'}</small>
-            </div>
-          </div>
         )}
       </Card>
     )

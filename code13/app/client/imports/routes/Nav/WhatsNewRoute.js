@@ -106,7 +106,9 @@ const WhatsNewRoute = React.createClass({
               <Icon name="newspaper" size="huge" />
               <Header.Content>
                 What's New
-                <Header.Subheader color="grey">The Latest Features and Improvements at MGB</Header.Subheader>
+                <Header.Subheader color="grey">
+                  Stay Up-to-Date on thep Latest Features and Improvements at MGB
+                </Header.Subheader>
               </Header.Content>
             </Header>
             {this.renderNews()}

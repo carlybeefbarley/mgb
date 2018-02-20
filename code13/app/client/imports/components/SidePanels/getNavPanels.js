@@ -103,7 +103,7 @@ const getNavPanels = (currUser, showAll) => {
             jrkey: 'whatsNew', // used for mgjr-np-mgb-{jrkey} id generation for joyride system
             explainClickAction: "What's New",
             to: '/whats-new',
-            icon: { name: 'gift' },
+            icon: { name: 'newspaper' },
             content: "What's New",
           },
           {
@@ -155,11 +155,11 @@ const getNavPanels = (currUser, showAll) => {
         menu: [
           {
             subcomponent: 'Item',
-            jrkey: 'lovedGames',
-            icon: { name: 'heart', color: 'red' },
+            jrkey: 'likedGames',
+            icon: { name: 'thumbs up outline', color: 'blue' },
             to: '/games',
-            query: { sort: 'loves' },
-            content: 'Loved Games',
+            query: { sort: 'likes' },
+            content: 'Liked Games',
           },
           {
             subcomponent: 'Item',

@@ -1227,7 +1227,7 @@ const mgbReleaseInfo = {
           type: 'bugfix',
           changeName: 'A bunch of bugfixes/tweaks',
           changeSummary:
-            "Hid last getStarted tutorial which didn't actually do anything; Forking assets now clears the 'loved' entries from the new assets; Fixed one of the gettingStarted tutorials (#16) that was getting stuck",
+            "Hid last getStarted tutorial which didn't actually do anything; Forking assets now clears the liked' entries from the new assets; Fixed one of the gettingStarted tutorials (#16) that was getting stuck",
           otherUrls: [],
         },
       ],

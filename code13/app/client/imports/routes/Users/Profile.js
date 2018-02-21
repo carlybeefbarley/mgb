@@ -1,7 +1,19 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Segment, Header, Button, Grid, Item, Icon, Label, Popup } from 'semantic-ui-react'
+import {
+  Segment,
+  Header,
+  Button,
+  Form,
+  Grid,
+  Item,
+  Icon,
+  Label,
+  Popup,
+  Dropdown,
+  Container,
+} from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import Helmet from 'react-helmet'
@@ -16,6 +28,7 @@ import UserProfileBadgeList from '/client/imports/components/Badges/UserProfileB
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
 import SkillTreeRoute from '/client/imports/routes/Users/SkillTreeRoute'
 import ActivityHeatmap from '/client/imports/components/Users/ActivityHeatmap'
+import FocusDropdown from '/client/imports/components/Users/FocusDropdown'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
@@ -68,6 +81,7 @@ const UserProfileRoute = React.createClass({
   /**
    *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
    */
+
   handleProfileFieldChanged(changeObj) {
     const fMsg = changeObj['profile.focusMsg']
     if (fMsg || fMsg === '') {
@@ -91,7 +105,7 @@ const UserProfileRoute = React.createClass({
     if (!user) return <ThingNotFound type="User" id={params.username} />
 
     return (
-      <Segment basic>
+      <Container>
         <Grid padded stackable stretched>
           <Helmet
             title={`MGB: @${user.username}`}
@@ -104,8 +118,12 @@ const UserProfileRoute = React.createClass({
           {/* User History ("Activity") */}
           <UserHistory user={user} width={8} />
 
-          {/* User Badges */}
-          <UserProfileBadgeList ownsProfile={ownsProfile} user={user} className="sixteen wide column" />
+          {/* User Badges*/}
+          <Header as="h2" color="grey" id="#mgbjr-profile-badges-header">
+            Badges
+          </Header>
+
+          <UserProfileBadgeList ownsProfile={ownsProfile} user={user} />
 
           {/* User Games */}
           <UserProfileGamesList currUser={currUser} user={user} width={16} />
@@ -131,7 +149,7 @@ const UserProfileRoute = React.createClass({
 
           <UserLovesList user={user} />
         </Grid>
-      </Segment>
+      </Container>
     )
   },
 
@@ -143,10 +161,10 @@ const UserProfileRoute = React.createClass({
     const firstMgb1name = mgb1name && mgb1name.length > 0 ? mgb1name.split(',')[0] : null
     return (
       <Grid.Column width={width} id="mgbjr-profile-bioDiv" style={{ textAlign: 'center' }}>
-        <Segment>
+        <Segment raised color="blue">
           <ImageShowOrChange
             id="mgbjr-profile-avatar"
-            maxHeight="6em"
+            maxHeight="8em"
             maxWidth="auto"
             imageSrc={avatar}
             header="User Avatar"
@@ -154,7 +172,6 @@ const UserProfileRoute = React.createClass({
             canLinkToSrc
             handleChange={newUrl => this.handleProfileFieldChanged({ 'profile.avatar': newUrl })}
           />
-
           <Header style={{ marginTop: 0, marginBottom: '8px' }} size="large" content={name} />
           {user.suIsBanned && (
             <div>
@@ -166,54 +183,41 @@ const UserProfileRoute = React.createClass({
               <Label size="small" color="purple" content="Deactivated Account" />
             </div>
           )}
-          <div title="User's 'title'" style={{ opacity: 0.5 }}>
-            <Icon size="small" name="quote left" />
+          <div title="User's 'title'" style={{ opacity: 0.6 }}>
+            <Icon size="tiny" name="quote left" />
             <InlineEdit
               id="mgbjr-profile-userTitle-edit"
               validate={validate.userTitle}
               activeClassName="editing"
-              placeholder="(no title)"
+              placeholder="(Title) "
               text={title || ''}
               paramName="profile.title"
               change={this.handleProfileFieldChanged}
               isDisabled={editsDisabled}
             />
-            <Icon size="small" name="quote right" />
+            <Icon size="tiny" name="quote right" />
           </div>
-
           <p>
             <UX.UserWhenJoined when={user.createdAt} />
           </p>
-
           <p>
             <b title="About yourself">Bio:</b>&nbsp;
             <InlineEdit
               id="mgbjr-profile-userBio-edit"
               validate={validate.userBio}
               activeClassName="editing"
-              placeholder="(no description)"
+              placeholder="(Tell us a bit about yourself)"
               text={bio || ''}
               paramName="profile.bio"
               change={this.handleProfileFieldChanged}
               isDisabled={editsDisabled}
             />
           </p>
-          <p>
-            <b title="What you are working on right now. This will also show in the top bar as a reminder!">
-              Focus:
-            </b>&nbsp;
-            <InlineEdit
-              id="mgbjr-profile-focusMsg-edit"
-              validate={validate.userFocusMsg}
-              activeClassName="editing"
-              placeholder="(no current focus)"
-              text={focusMsg || ''}
-              paramName="profile.focusMsg"
-              change={this.handleProfileFieldChanged}
-              isDisabled={editsDisabled}
-            />
-          </p>
-
+          <b title="What you are working on right now. This will also show in the top bar as a reminder!">
+            Focus:{' '}
+          </b>&nbsp;
+          {ownsProfile ? <FocusDropdown user={user} /> : user.profile.focusMsg}
+          <br />
           <p>
             <b title="This is the user's name on the prior flash-based MGBv1 system. ">MGB1 name:</b>
             &nbsp;
@@ -254,7 +258,6 @@ const UserProfileRoute = React.createClass({
               </Popup>
             )}
           </p>
-
           <div style={{ clear: 'both', right: 'auto', left: 'auto' }}>
             <QLink to={`/u/${name}/assets`} style={{ marginBottom: '6px' }}>
               <UX.Button2 basic icon="pencil" content="Assets" />

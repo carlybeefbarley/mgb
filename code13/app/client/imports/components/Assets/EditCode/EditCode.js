@@ -1023,14 +1023,7 @@ class EditCode extends React.Component {
       cm.operation(() => {
         if (token.type === 'string') {
           const link = this.getImportStringLocation(this.cleanTokenString(token.string))
-
-          if (link) {
-            // open link in the new tab
-            const a = document.createElement('a')
-            a.setAttribute('href', link)
-            a.setAttribute('target', '_blank')
-            a.click()
-          }
+          if (link) this.openNewTab(link)
         } else {
           // jump to definition
           this.codeMirror.setCursor(pos)
@@ -2229,11 +2222,28 @@ class EditCode extends React.Component {
     })
   }
 
-  gotoLineHandler(line, file) {
-    let pos = { line: line - 1, ch: 0 }
-    this.codeMirror.scrollIntoView(pos, 100) //100 pixels margin
-    this.codeMirror.setCursor(pos)
-    this.codeMirror.focus()
+  /**
+   * Opens asset in the new tab
+   * @param link - location to asset
+   */
+  openNewTab(link) {
+    // open link in the new tab
+    const a = document.createElement('a')
+    a.setAttribute('href', link)
+    a.setAttribute('target', '_blank')
+    a.click()
+  }
+  gotoLineHandler(line, filename) {
+    const { asset } = this.props
+    if (filename && filename !== '/' + asset.dn_ownerName + '/' + asset.name) {
+      const link = this.getImportStringLocation(filename)
+      if (link) this.openNewTab(link)
+    } else {
+      let pos = { line: line - 1, ch: 0 }
+      this.codeMirror.scrollIntoView(pos, 100) //100 pixels margin
+      this.codeMirror.setCursor(pos)
+      this.codeMirror.focus()
+    }
   }
 
   /** This is useful when working with Tern stuff..

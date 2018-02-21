@@ -24,7 +24,13 @@ const ConsoleMessageViewer = React.createClass({
 
   invokeGotoLinehandler(msg) {
     // TODO check if msg.url / show asset:line combo
-    if (this.props.gotoLinehandler) this.props.gotoLinehandler(msg.line, msg.file)
+
+    // msg.url is always reported with js extension due to babel bug stripping all extensions
+    let filename = msg.file || msg.url
+    if (filename.substring(filename.length - 3, filename.length) === '.js') {
+      filename = filename.substring(0, filename.length - 3)
+    }
+    if (this.props.gotoLinehandler) this.props.gotoLinehandler(msg.line, filename)
   },
 
   componentDidUpdate() {

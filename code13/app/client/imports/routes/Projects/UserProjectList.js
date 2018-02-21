@@ -10,7 +10,6 @@ import Spinner from '/client/imports/components/Nav/Spinner'
 import { Projects } from '/imports/schemas'
 import { defaultProjectSorterName, projectMakeSelector, projectSorters } from '/imports/schemas/projects'
 import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
-import { WorkStateMultiSelect } from '/client/imports/components/Controls/WorkState'
 import ProjectsShowForkableSelector from './ProjectsShowForkableSelector'
 import ProjectCard from '/client/imports/components/Projects/ProjectCard'
 import CreateProjectLinkButton from '/client/imports/components/Projects/NewProject/CreateProjectLinkButton'
@@ -108,8 +107,6 @@ class UserProjectListUI extends React.PureComponent {
 
   handleChangeShowForkableFlag = newValue => this._updateLocationQuery({ showForkable: newValue })
 
-  handleChangeWorkstateHideMask = newValue => this._updateLocationQuery({ hidews: String(newValue) })
-
   render() {
     const { user, currUser, location, loading, projects } = this.props
     const ownerName = user ? user.profile.name : 'all users'
@@ -125,11 +122,6 @@ class UserProjectListUI extends React.PureComponent {
           <div id="mgbjr-project-search-searchStringInput">
             <InputSearchBox size="small" fluid value={qN.searchName} onFinalChange={this.handleSearchGo} />
           </div>
-          <WorkStateMultiSelect
-            hideMask={parseInt(qN.hidews)}
-            handleChangeMask={this.handleChangeWorkstateHideMask}
-            style={{ marginTop: '0.5em', textAlign: 'center' }}
-          />
 
           <div style={{ marginTop: '1em', textAlign: 'center' }}>
             <Menu secondary compact borderless className="fitted">

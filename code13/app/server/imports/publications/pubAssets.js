@@ -26,7 +26,6 @@ Meteor.publish('assets.public', function(
   showStable = false,
   assetSortType = undefined, // null/undefined or one of the keys of allSorters{}
   limitCount = SpecialGlobals.assets.mainAssetsListDefaultLimit,
-  hideWorkstateMask = 0, // As defined for use by assetMakeSelector()
   showChallengeAssets = false,
 ) {
   const actualLimit = _.clamp(limitCount, 1, SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit)
@@ -37,7 +36,6 @@ Meteor.publish('assets.public', function(
     projectName,
     showDeleted,
     showStable,
-    hideWorkstateMask,
     showChallengeAssets,
   )
   const assetSorter = assetSortType ? allSorters[assetSortType] : allSorters['edited']
@@ -82,7 +80,6 @@ Meteor.publish('assets.public.nameInfo.query', function(
   showStable = false,
   assetSortType = undefined, // null/undefined or one of the keys of allSorters{}
   limitCount = 50,
-  hideWorkstateMask = 0, // As defined for use by assetMakeSelector()
   showChallengeAssets = false,
 ) {
   const selector = assetMakeSelector(
@@ -92,7 +89,6 @@ Meteor.publish('assets.public.nameInfo.query', function(
     projectName,
     showDeleted,
     showStable,
-    hideWorkstateMask,
     showChallengeAssets,
   )
   let assetSorter = assetSortType ? allSorters[assetSortType] : allSorters['edited']

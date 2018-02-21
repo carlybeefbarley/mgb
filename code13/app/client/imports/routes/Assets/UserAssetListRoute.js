@@ -27,7 +27,6 @@ import AssetListChooseLimit from '/client/imports/components/Assets/AssetListCho
 import { assetViewChoices, defaultAssetViewChoice } from '/client/imports/components/Assets/AssetCard'
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 import { defaultProjectSorter } from '/imports/schemas/projects'
-import { WorkStateMultiSelect } from '/client/imports/components/Controls/WorkState'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import { browserHistory } from 'react-router'
 import Helmet from 'react-helmet'
@@ -241,9 +240,6 @@ const UserAssetListRoute = React.createClass({
   handleChangeShowDeletedFlag(newValue) {
     this._updateLocationQuery({ showDeleted: newValue })
   },
-  handleChangeWorkstateHideMask(newValue) {
-    this._updateLocationQuery({ hidews: String(newValue) })
-  },
   handleChangeSelectedProjectName(newValue) {
     this._updateLocationQuery({ project: newValue })
   },
@@ -323,12 +319,6 @@ const UserAssetListRoute = React.createClass({
             )}
             <AssetKindsSelector kindsActive={qN.kinds} handleToggleKindCallback={this.handleToggleKind} />
           </div>
-
-          <WorkStateMultiSelect
-            hideMask={parseInt(qN.hidews)}
-            handleChangeMask={this.handleChangeWorkstateHideMask}
-            style={{ marginTop: '0.5em', textAlign: 'center' }}
-          />
 
           <div style={{ marginTop: '1em', textAlign: 'center' }}>
             <Menu secondary compact borderless className="fitted">

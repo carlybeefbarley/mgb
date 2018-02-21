@@ -9,7 +9,6 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import { AssetKinds } from '/imports/schemas/assets'
 import { logActivity } from '/imports/schemas/activity'
 import ProjectMembershipEditor from './ProjectMembershipEditor'
-import WorkState from '/client/imports/components/Controls/WorkState'
 import ChallengeState from '/client/imports/components/Controls/ChallengeState'
 import { showToast } from '/client/imports/modules'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
@@ -34,7 +33,6 @@ export const assetViewChoices = {
     showLikesSmall: false,
     showLikes: true,
     showFooter: true,
-    showWorkstate: true,
     showMeta: true,
     showExtra: true,
     showImg: true,

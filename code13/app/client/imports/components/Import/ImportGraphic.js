@@ -31,13 +31,12 @@ export default class ImportGraphic extends Component {
     this.setState({ status: STATUS_EMPTY })
   }
 
-  onDrop(event, assetType, prefix, project, assetLicense, workState, isCompleted) {
+  onDrop(event, assetType, prefix, project, assetLicense, isCompleted) {
     event.stopPropagation()
     event.preventDefault()
 
     this.project = project
     this.assetLicense = assetLicense
-    this.workState = workState
     this.isCompleted = isCompleted
 
     const items = event.dataTransfer.items
@@ -143,7 +142,6 @@ export default class ImportGraphic extends Component {
       content2,
       thumbnail,
       this.assetLicense,
-      this.workState,
       this.isCompleted,
     )
 

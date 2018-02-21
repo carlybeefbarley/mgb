@@ -26,9 +26,8 @@ Meteor.publish('projects.search', function(
   userId, // can be null
   nameSearch, // can be null
   showOnlyForkable = false,
-  hideWorkstateMask = 0, // As defined for use by assetMakeSelector()
 ) {
-  const selector = projectMakeSelector(userId, nameSearch, showOnlyForkable, hideWorkstateMask, {
+  const selector = projectMakeSelector(userId, nameSearch, showOnlyForkable, {
     sort: { updatedAt: -1 },
   })
 
@@ -40,6 +39,5 @@ Meteor.publish('projects.search', function(
 //
 
 Projects._ensureIndex({ updatedAt: -1 })
-Projects._ensureIndex({ workState: -1 })
-Projects._ensureIndex({ workState: 1, updatedAt: -1 })
+Projects._ensureIndex({ updatedAt: -1 })
 Projects._ensureIndex({ ownerId: 1, name: 1 })

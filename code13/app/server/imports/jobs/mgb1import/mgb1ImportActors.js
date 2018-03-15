@@ -70,7 +70,6 @@ export const doImportActor = (content, rva, fullS3Name, assetName) => {
     text: `Imported from MGB1 (${fullS3Name}) ${Metadata.comment}`,
     thumbnail: Metadata._tileDataUri,
     content2: jsonData.actor,
-    workState: 'working',
     assetLicense: 'CC-BY-NC-4.0',
     isCompleted: false, // This supports the 'is stable' flag
     isDeleted: false, // This is a soft 'marked-as-deleted' indicator

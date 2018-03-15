@@ -30,7 +30,7 @@ const ImageShowOrChange = ({
   handleChange,
   header,
   maxHeight = '155px',
-  maxWidth = '230px',
+  maxWidth = '202px',
 }) => {
   const avatarAssetId = _getAssetIdFromUrl(imageSrc)
   const imageSrcToUse =

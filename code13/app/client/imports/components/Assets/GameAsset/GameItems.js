@@ -5,10 +5,10 @@ import QLink from '/client/imports/routes/QLink'
 import { Card, Segment } from 'semantic-ui-react'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import FittedImage from '/client/imports/components/Controls/FittedImage'
-import UserLoves from '/client/imports/components/Controls/UserLoves'
+import UserLikes from '/client/imports/components/Controls/UserLikes'
 import { isValidCodeGame, isValidActorMapGame } from '/imports/schemas/assets'
 
-const _cardStyle = { minWidth: '200px', maxWidth: '200px' }
+const _cardStyle = { minWidth: '300px', maxWidth: '300px' }
 
 export const GameItem = ({ game, currUser }) => (
   <Card color={isValidCodeGame(game) ? 'green' : 'blue'} className="link" style={_cardStyle}>
@@ -32,9 +32,9 @@ export const GameItem = ({ game, currUser }) => (
       </p>
       <p>
         <span>{((game.metadata && game.metadata.playCount) || 0) + ' Plays'}</span>
-        <span style={{ float: 'right' }}>
-          <UserLoves size="small" currUser={currUser} asset={game} seeLovers={false} />
-        </span>
+        {/*<span style={{ float: 'right' }}>
+          <UserLikes size="small" currUser={currUser} asset={game} seeLikers={false} />
+      </span>*/}
       </p>
     </Card.Content>
   </Card>

@@ -2,22 +2,26 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { makeExpireThumbnailLink, makeGraphicAPILink } from '/client/imports/helpers/assetFetchers'
 import FittedImage from '/client/imports/components/Controls/FittedImage'
+import { Label } from 'semantic-ui-react'
 
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 // This will use display:block formatting; it can not work inline
 const Thumbnail = ({
-  constrainHeight = '155',
+  constrainHeight = '202',
   title = '',
   expires = SpecialGlobals.thumbnail.defaultExpiresDuration,
   asset,
   assetId,
 }) => (
-  <FittedImage
-    src={Thumbnail.getLink(asset || assetId, expires)}
-    title={`${title} (CacheExpire = ${expires} seconds)`}
-    height={constrainHeight}
-  />
+  <div>
+    <FittedImage
+      src={Thumbnail.getLink(asset || assetId, expires)}
+      title={`${title} (CacheExpire = ${expires} seconds)`}
+      height={constrainHeight}
+    />
+    {/*<Label as="a" color="red" corner="right" icon="heart" />*/}
+  </div>
 )
 
 Thumbnail.propTypes = {

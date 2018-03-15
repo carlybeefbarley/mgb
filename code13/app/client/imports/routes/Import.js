@@ -30,7 +30,6 @@ const ImportRoute = React.createClass({
     content2,
     thumbnail,
     assetLicense,
-    workState,
     isCompleted,
   ) {
     if (!this.props.currUser) {
@@ -42,7 +41,6 @@ const ImportRoute = React.createClass({
       name: assetName,
       kind: assetKindKey,
       assetLicense,
-      workState,
       thumbnail,
       content2,
       dn_ownerName: this.props.currUser.username, // Will be replaced below if in another project

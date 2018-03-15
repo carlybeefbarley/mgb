@@ -2,7 +2,6 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 import QLink from '/client/imports/routes/QLink'
-import WorkState from '/client/imports/components/Controls/WorkState'
 import { Header, Icon, Menu, Message } from 'semantic-ui-react'
 import { makeChannelName } from '/imports/schemas/chats'
 
@@ -26,7 +25,6 @@ const ProjectMenu = ({ projects, ownedFlag, currUserId, hazUnreadChats }) => {
       ? Empty
       : wantedProjects.map(p => (
           <Menu.Item key={p._id}>
-            <WorkState workState={p.workState} canEdit={false} />
             {!ownedFlag && (
               <span>
                 <QLink to={`/u/${p.ownerName}`} altTo={`/u/${p.ownerName}/projects`}>

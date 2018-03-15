@@ -22,7 +22,7 @@ import mgb1 from '/client/imports/helpers/mgb1'
 import UserProjects from '/client/imports/components/Users/UserProjects'
 import UserHistory from '/client/imports/components/Users/UserHistory'
 
-import UserLovesList from '/client/imports/components/Users/UserLovesList'
+import UserLikesList from '/client/imports/components/Users/UserLikesList'
 
 import UserProfileBadgeList from '/client/imports/components/Badges/UserProfileBadgeList'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
@@ -147,7 +147,7 @@ const UserProfileRoute = React.createClass({
             <SkillTreeRoute isSuperAdmin={isSuperAdmin} user={user} ownsProfile={ownsProfile} />
           </Grid.Column>
 
-          <UserLovesList user={user} />
+          <UserLikesList user={user} />
         </Grid>
       </Container>
     )

@@ -7,24 +7,14 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import validate from '/imports/schemas/validate'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
-import WorkState from '/client/imports/components/Controls/WorkState'
 import { getProjectAvatarUrl } from '/client/imports/helpers/assetFetchers'
 // This is a Project Card which is a card-format version of the Project information.
 // It is passed a project database object and it locally decides what fields to use/render within that structure.
+import UserLikes from '/client/imports/components/Controls/UserLikes'
 
 const ProjectCard = (props, context) => {
   const { project, canEdit, handleFieldChanged } = props
-  const {
-    _id,
-    allowForks,
-    description,
-    forkChildren,
-    forkParentChain,
-    memberIds,
-    name,
-    ownerName,
-    workState,
-  } = project
+  const { _id, allowForks, description, forkChildren, forkParentChain, memberIds, name, ownerName } = project
   const linkTo = '/u/' + ownerName + '/projects/' + name
   const MemberStr = !memberIds || memberIds.length === 0 ? '1 Member' : memberIds.length + 1 + ' Members'
   const numChildForks = _.isArray(forkChildren) ? forkChildren.length : 0
@@ -40,6 +30,7 @@ const ProjectCard = (props, context) => {
       onClick={() => utilPushTo(context.urlLocation.query, linkTo)}
     >
       <Card.Content>
+        {/*<UserLikes />*/}
         <ImageShowOrChange
           imageSrc={getProjectAvatarUrl(project)}
           header="Project Avatar"
@@ -55,20 +46,6 @@ const ProjectCard = (props, context) => {
         />
       </Card.Content>
       <Card.Content>
-        <span style={{ float: 'right' }}>
-          <WorkState
-            workState={workState}
-            handleChange={
-              !handleFieldChanged ? (
-                undefined
-              ) : (
-                newWorkState => handleFieldChanged({ workState: newWorkState })
-              )
-            }
-            canEdit={canEdit}
-          />
-        </span>
-
         <Card.Header title={name} content={name} />
 
         <Card.Meta>

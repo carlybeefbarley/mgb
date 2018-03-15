@@ -169,8 +169,8 @@ Meteor.methods({
     dstAsset.updatedAt = now
     dstAsset.isDeleted = false // Yes, we allow forking of a deleted asset, and will undelete it as we fork
     dstAsset.projectNames = []
-    dstAsset.heartedBy = []
-    dstAsset.heartedBy_count = 0
+    dstAsset.likedBy = []
+    dstAsset.likedBy_count = 0
 
     dstAsset.name =
       opts.newAssetName ||

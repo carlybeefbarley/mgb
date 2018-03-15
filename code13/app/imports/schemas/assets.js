@@ -26,7 +26,7 @@ var schema = {
   updatedAt: Date, // Must be altered for any change that should be pushed to clients. See assetFetchers.js
 
   // TODO - needed to fix the annoying sort order issues
-  //   contentChangedAt: Date,  // A weaker change-timestamp that is used for changes that should not alter sorts - e.g. lock/unlock or heart/unheart
+  //   contentChangedAt: Date,  // A weaker change-timestamp that is used for changes that should not alter sorts - e.g. lock/unlock or like/unlike
   // // ***TODO: MIGRATION Need to duplicate all updatedAt -> contentChangedAt
 
   //teamId: String,       // team owner user id (NOT USED. TODO: REMOVE FROM DB RECORDS)
@@ -65,9 +65,9 @@ var schema = {
   forkChildren: Array, // Array of peer direct children
   forkParentChain: Array, // Array of parent forks
 
-  //heartedBy an array of userIds that represents people who hearted an asset
-  heartedBy: optional(Array),
-  heartedBy_count: optional(Number), //just how many people have hearted something
+  //likedBy an array of userIds that represents people who liked an asset
+  likedBy: optional(Array),
+  likedBy_count: optional(Number), //just how many people have liked something
 
   // Metadata field wwas added 10/29/2016 so earlier objects do NOT have it.
   // The 'metdata' field is intended for a SMALL subset of data that is important for good asset-preview (previews exclude 'content2').
@@ -175,14 +175,14 @@ export const assetSorters = {
   edited: { updatedAt: -1 },
   created: { createdAt: -1 },
   name: { name: 1 },
-  loves: { heartedBy_count: -1 },
+  likes: { likedBy_count: -1 },
   kind: { kind: 1 },
 }
 
 export const gameSorters = {
   edited: { updatedAt: -1 },
   created: { createdAt: -1 },
-  loves: { heartedBy_count: -1 },
+  likes: { likedBy_count: -1 },
   name: { name: 1 },
   plays: { 'metadata.playCount': -1 },
 }
@@ -191,7 +191,7 @@ export const gameSorters = {
 export const allSorters = {
   edited: { updatedAt: -1 },
   created: { createdAt: -1 },
-  loves: { heartedBy_count: -1 },
+  likes: { likedBy_count: -1 },
   name: { name: 1 },
   kind: { kind: 1 },
   plays: { 'metadata.playCount': -1 },
@@ -279,30 +279,30 @@ Meteor.methods({
     return docId
   },
 
-  'Azzets.toggleHeart'(docId, userId) {
+  'Azzets.toggleLike'(docId, userId) {
     checkIsLoggedInAndNotSuspended()
     check(docId, String)
     check(userId, String)
     if (userId !== this.userId) throw new Meteor.Error(404, 'User Id does not match current user Id')
     const selector = { _id: docId }
-    const asset = Azzets.findOne(selector, { fields: { heartedBy: 1, heartedBy_count: 1 } })
+    const asset = Azzets.findOne(selector, { fields: { likedBy: 1, likedBy_count: 1 } })
     if (!asset) throw new Meteor.Error(404, 'Asset Id does not exist')
-    const currUserLoves = _.includes(asset.heartedBy, userId)
-    var newHeartedBy
-    if (!currUserLoves) newHeartedBy = _.union(asset.heartedBy, [userId])
-    else newHeartedBy = _.without(asset.heartedBy, userId)
+    const currUserLikes = _.includes(asset.likedBy, userId)
+    var newLikedBy
+    if (!currUserLikes) newLikedBy = _.union(asset.likedBy, [userId])
+    else newLikedBy = _.without(asset.likedBy, userId)
 
     const newData = {
       $set: {
-        heartedBy: newHeartedBy,
-        heartedBy_count: newHeartedBy.length,
+        likedBy: newLikedBy,
+        likedBy_count: newLikedBy.length,
         updatedAt: new Date(),
       },
     }
     const count = Azzets.update(selector, newData)
-    if (Meteor.isServer) console.log(`  [Assets.toggleHeart]  (${count}) #${docId} '${asset.name}'`)
+    if (Meteor.isServer) console.log(`  [Assets.toggleLike]  (${count}) #${docId} '${asset.name}'`)
 
-    return { count, newLoveState: !currUserLoves }
+    return { count, newLikeState: !currUserLikes }
   },
 
   // This does not allow changes to the su* fields. It is much simpler

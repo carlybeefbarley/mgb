@@ -116,14 +116,14 @@ const SkillNodes = {
   //physics
   //computerScience
   art: ArtSkillNodes,
-  design: DesignSkillNodes,
-  audio: AudioSkillNodes,
-  analytics: AnalyticsSkillNodes,
-  writing: WritingSkillNodes,
-  marketing: MarketingSkillNodes,
-  community: CommunitySkillNodes,
-  legal: LegalSkillNodes,
-  business: BusinessSkillNodes,
+  // design: DesignSkillNodes,
+  // audio: AudioSkillNodes,
+  // analytics: AnalyticsSkillNodes,
+  // writing: WritingSkillNodes,
+  // marketing: MarketingSkillNodes,
+  // community: CommunitySkillNodes,
+  // legal: LegalSkillNodes,
+  // business: BusinessSkillNodes,
 
   $meta: {
     map: {},

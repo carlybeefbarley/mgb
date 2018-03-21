@@ -14,14 +14,14 @@ const rootSkillPaths = [
   'getStarted',
   'code',
   'art',
-  'design',
-  'audio',
-  'analytics',
-  'writing',
-  'marketing',
-  'community',
-  'legal',
-  'business',
+  // 'design',
+  // 'audio',
+  // 'analytics',
+  // 'writing',
+  // 'marketing',
+  // 'community',
+  // 'legal',
+  // 'business',
 ]
 
 /**

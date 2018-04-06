@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button, Divider, Dropdown, Grid, Icon, Message, Tab } from 'semantic-ui-react'
+import { Grid, Icon, Message, Tab } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
@@ -48,7 +48,6 @@ import { learnSkill, forgetSkill } from '/imports/schemas/skills'
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 import FlagEntity from '/client/imports/components/Controls/FlagEntityUI'
 import ResolveReportEntity from '/client/imports/components/Controls/FlagResolve'
-import { AssetKindEnum } from '../../../../imports/schemas/assets'
 import { withStores } from '/client/imports/hocs'
 
 const FLUSH_TIMER_INTERVAL_MS = 6000 // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
@@ -229,7 +228,6 @@ const AssetEditRoute = React.createClass({
   },
 
   componentDidUpdate() {
-    const { assetStore } = this.props
     this.checkForRedirect()
 
     if (!this.counter && !this.data.loading) {
@@ -247,12 +245,9 @@ const AssetEditRoute = React.createClass({
     }
 
     // auto open any new asset
-    if (
-      this.data.asset &&
-      //   this.data.asset._id === this.props.params.assetId &&
-      !_.find(assetStore.state.openAssets, { _id: this.data.asset._id })
-    ) {
-      console.log('componentDidUpdate: open asset', this.data.asset, assetStore.state.openAssets)
+    if (this.data.asset) {
+      const { assetStore } = this.props
+      console.log('componentDidUpdate: open asset', this.data.asset, assetStore.assets)
       assetStore.openAsset(this.data.asset)
     }
   },
@@ -364,37 +359,6 @@ const AssetEditRoute = React.createClass({
     this.setState({ isForkPending: false })
   },
 
-  handleCreateClick(type) {
-    const { assetStore, currentlyEditingAssetInfo, currUser } = this.props
-
-    const assetName = [
-      type,
-      Date.now()
-        .toString(36)
-        .substr(2),
-    ].join(' ')
-
-    this.setState({ creatingTabName: assetName })
-
-    assetStore
-      .createAsset(
-        currUser,
-        type,
-        assetName,
-        _.first(currentlyEditingAssetInfo.projectNames),
-        currUser.profile.name,
-        currUser._id,
-      )
-      .then(newAsset => {
-        assetStore.openAsset(newAsset)
-        this.handleTabChange(newAsset)
-        this.setState({ creatingTabName: null })
-      })
-      .catch(error => {
-        this.setState({ creatingTabName: null })
-      })
-  },
-
   handleTabChange(asset) {
     const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
 
@@ -402,8 +366,6 @@ const AssetEditRoute = React.createClass({
       utilPushTo(this.context.urlLocation, url)
     }
   },
-
-  goToAsset(asset) {},
 
   handleCloseTab(asset) {
     return e => {
@@ -416,9 +378,8 @@ const AssetEditRoute = React.createClass({
 
       // open the tab to the left on close of the currently open tab
       if (params.assetId === asset._id) {
-        const currTabIndex = _.findIndex(assetStore.state.openAssets, { _id: asset._id })
-        const nextAsset =
-          assetStore.state.openAssets[currTabIndex - 1] || assetStore.state.openAssets[currTabIndex + 1]
+        const currTabIndex = _.findIndex(assetStore.assets, { _id: asset._id })
+        const nextAsset = assetStore.assets[currTabIndex - 1] || assetStore.assets[currTabIndex + 1]
         const nextURL = `/u/${nextAsset.dn_ownerName}/asset/${nextAsset._id}`
 
         utilPushTo(this.context.urlLocation, nextURL)
@@ -430,8 +391,8 @@ const AssetEditRoute = React.createClass({
 
   render() {
     const { assetStore, params } = this.props
-    const { creatingTabName } = this.state
-    const panes = _.map(assetStore.state.openAssets, asset => {
+    const panes = _.map(assetStore.assets, asset => {
+      console.log('render open asset', asset)
       return {
         menuItem: {
           key: asset._id,
@@ -440,7 +401,7 @@ const AssetEditRoute = React.createClass({
             <span>
               <Icon name={AssetKinds[asset.kind].icon} color={AssetKinds[asset.kind].color} />
               {asset.name}
-              {_.get(assetStore.state.openAssets, 'length') > 1 && (
+              {_.get(assetStore.assets, 'length') > 1 && (
                 <Icon
                   link
                   fitted
@@ -457,45 +418,14 @@ const AssetEditRoute = React.createClass({
       }
     })
 
+    console.log('PANES', panes)
+
     return (
       <Tab
         menu={{ attached: 'top', tabular: true, style: { overflowX: 'auto' } }}
-        activeIndex={_.findIndex(assetStore.state.openAssets, { _id: params.assetId })}
+        activeIndex={_.findIndex(assetStore.assets, { _id: params.assetId })}
         onTabChange={this.handleTabChange}
-        panes={[
-          ...panes,
-          creatingTabName
-            ? {
-                menuItem: {
-                  key: creatingTabName,
-                  disabled: true,
-                  icon: { name: 'spinner', loading: true },
-                  content: creatingTabName,
-                },
-                render: () => <Tab.Pane loading />,
-              }
-            : {
-                menuItem: {
-                  key: 'new',
-                  active: false,
-                  content: (
-                    <Dropdown
-                      value={null}
-                      simple
-                      text={'New'}
-                      options={_.map(AssetKindEnum, key => ({
-                        key,
-                        text: AssetKinds[key].name,
-                        value: key,
-                        icon: { name: AssetKinds[key].icon, color: AssetKinds[key].color },
-                        onClick: () => this.handleCreateClick(key),
-                      }))}
-                    />
-                  ),
-                },
-                render: () => null,
-              },
-        ]}
+        panes={panes}
       />
     )
   },

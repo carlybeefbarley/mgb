@@ -2,27 +2,79 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 
 import { Store } from '/client/imports/stores'
-import { utilPushTo } from '/client/imports/routes/QLink'
 import { showToast } from '/client/imports/modules'
 import { logActivity } from '../../../imports/schemas/activity'
+import registerDebugGlobal from '../ConsoleDebugGlobals'
+
+// Used to group assets that do not have a project
+const NO_PROJECT = '__NO_PROJECT__'
+
+// We only store limited necessary information about open assets
+// The content2 field is massive, this allows us to keep a small footprint
+const getAssetTombstone = asset => ({ ...asset, content2: null })
 
 class AssetStore extends Store {
   static storeShape = {
-    state: PropTypes.shape({}),
+    state: PropTypes.shape({
+      asset: PropTypes.arrayOf(PropTypes.object),
+      project: PropTypes.string,
+    }),
   }
 
   state = {
-    openAssets: [],
+    assets: {
+      // [project]: [...assets] }
+    },
+    project: NO_PROJECT,
+  }
+
+  get assets() {
+    const { assets, project } = this.state
+
+    return assets[project]
+  }
+
+  get project() {
+    const { project } = this.state
+
+    return project
+  }
+
+  openProject = project => {
+    console.log('assetStore.openProject()', project)
+    this.setState({ project })
   }
 
   openAsset = asset => {
-    console.log('openAsset', asset)
-    this.setState({ openAssets: _.uniq([...this.state.openAssets, asset]) })
+    const { assets } = this.state
+
+    const targetProject = _.first(asset.projectNames) || NO_PROJECT
+
+    const isAlreadyOpen = _.find(assets[targetProject], { _id: asset._id })
+
+    if (isAlreadyOpen) {
+      console.log('assetStore.openAsset() ...skipping already open asset', { project: targetProject, asset })
+      return
+    }
+
+    const assetTombstone = getAssetTombstone(asset)
+    const newAssets = _.union(this.state.assets[targetProject], [assetTombstone])
+    console.log('assetStore.openAsset()', { project: targetProject, asset, assets })
+
+    this.setState({
+      assets: {
+        ...this.state.assets,
+        [targetProject]: newAssets,
+      },
+      project: targetProject,
+    })
   }
 
   closeAsset = asset => {
-    console.log('closeAsset', asset)
-    this.setState({ openAssets: _.filter(this.state.openAssets, a => a._id !== asset._id) })
+    console.log('assetStore.closeAsset()', asset)
+    const { assets, project } = this.state
+
+    this.setState({ assets: _.filter(assets[project], a => a._id !== asset._id) })
   }
 
   createAsset = (currUser, assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName) => {
@@ -65,4 +117,8 @@ class AssetStore extends Store {
   }
 }
 
-export default new AssetStore()
+const assetStore = new AssetStore()
+
+registerDebugGlobal('assetStore', assetStore, __filename)
+
+export default assetStore

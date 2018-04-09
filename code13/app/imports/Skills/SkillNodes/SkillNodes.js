@@ -40,6 +40,9 @@ import { getSkillNodeStatus } from '/imports/schemas/skills'
 //                        To check that some string (either a dotted path or a slashSeparatedPath) is a valid
 //                        *LEAF* skill (leaf skills are explained below), use
 //                    >>    import { isSkillKeyValid } from '/imports/Skills/SkillNodes/SkillNodes'
+//  NEW
+//   skillChallengeType = "phaser" | "js" | "games"
+
 //
 //   1c) SkillAreas.js -- This defines the overall skillAreas (the top-level keys of SkillNodes.js)
 //                        and defines the skills that are listed and displayed in LearnSkillsAreaRoute.js and
@@ -350,11 +353,11 @@ export const getFriendlyNames = skillPath => {
   return names
 }
 
-// this string indicates if a path is code challenge
-const _challengeStrArray = ['basics', 'intro', 'advanced']
+// this string indicates if a path is code challenge (free code camp?)
+// @Carly we think basics is gone,..
+const _challengeStrArray = ['challenges', 'intro', 'advanced']
 
-export const isStringChallenge = str => _.includes(_challengeStrArray, str)
-
+// SEE WHEN THESE ARE USED - PROBABLY STILL A BUG HERE WHERE WE GET TO EDIT A FREECODE CAMP ONE
 export const isPathChallenge = skillPath =>
   _.some(_challengeStrArray, str => _.startsWith(skillPath, 'code.js.' + str))
 

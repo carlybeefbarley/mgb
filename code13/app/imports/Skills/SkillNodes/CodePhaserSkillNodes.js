@@ -18,6 +18,16 @@ const CodePhaserSkillNodes = {
   },
   // Game:       C.En(1),
   // Loader:     C.En(1),
+  intro: {
+    $meta: {
+      name: 'Introduction to Phaser',
+      icon: 'code',
+      link: '/u/!vault/asset/ZJeuF9TJkQizQhxxM',
+      description: `An introduction to the Phaser game engine`,
+      subsection: 'Image',
+      ...C.E.$meta,
+    },
+  },
   drawImage: {
     $meta: {
       name: 'Load & Draw image',

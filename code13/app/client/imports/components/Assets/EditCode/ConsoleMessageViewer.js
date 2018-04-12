@@ -86,9 +86,8 @@ const ConsoleMessageViewer = React.createClass({
         id="mgbjr-EditCode-console"
         className="ui secondary segment"
         style={{
-          // maxHeight: "200px",
+          maxHeight: '200px',
           // overflow: "auto",
-          height: '100%',
           clear: 'both',
           margin: 0,
         }}

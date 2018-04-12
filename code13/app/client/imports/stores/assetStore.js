@@ -28,21 +28,16 @@ class AssetStore extends Store {
     project: NO_PROJECT,
   }
 
-  get assets() {
+  getOpenAssets = () => {
     const { assets, project } = this.state
 
     return assets[project]
   }
 
-  get project() {
+  project = () => {
     const { project } = this.state
 
     return project
-  }
-
-  openProject = project => {
-    console.log('assetStore.openProject()', project)
-    this.setState({ project })
   }
 
   openAsset = asset => {

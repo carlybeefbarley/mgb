@@ -247,7 +247,7 @@ const AssetEditRoute = React.createClass({
     // auto open any new asset
     if (this.data.asset) {
       const { assetStore } = this.props
-      console.log('componentDidUpdate: open asset', this.data.asset, assetStore.assets)
+      console.log('componentDidUpdate: open asset', this.data.asset, assetStore.getOpenAssets())
       assetStore.openAsset(this.data.asset)
     }
   },
@@ -378,8 +378,8 @@ const AssetEditRoute = React.createClass({
 
       // open the tab to the left on close of the currently open tab
       if (params.assetId === asset._id) {
-        const currTabIndex = _.findIndex(assetStore.assets, { _id: asset._id })
-        const nextAsset = assetStore.assets[currTabIndex - 1] || assetStore.assets[currTabIndex + 1]
+        const currTabIndex = _.findIndex(assetStore.getOpenAssets(), { _id: asset._id })
+        const nextAsset = assetStore.getOpenAssets()[currTabIndex - 1] || assetStore.getOpenAssets()[currTabIndex + 1]
         const nextURL = `/u/${nextAsset.dn_ownerName}/asset/${nextAsset._id}`
 
         utilPushTo(this.context.urlLocation, nextURL)
@@ -391,7 +391,7 @@ const AssetEditRoute = React.createClass({
 
   render() {
     const { assetStore, params } = this.props
-    const panes = _.map(assetStore.assets, asset => {
+    const panes = _.map(assetStore.getOpenAssets(), asset => {
       console.log('render open asset', asset)
       return {
         menuItem: {
@@ -401,7 +401,7 @@ const AssetEditRoute = React.createClass({
             <span>
               <Icon name={AssetKinds[asset.kind].icon} color={AssetKinds[asset.kind].color} />
               {asset.name}
-              {_.get(assetStore.assets, 'length') > 1 && (
+              {_.get(assetStore.getOpenAssets(), 'length') > 1 && (
                 <Icon
                   link
                   fitted
@@ -418,12 +418,13 @@ const AssetEditRoute = React.createClass({
       }
     })
 
+    console.log('ASSETS', assetStore.getOpenAssets())
     console.log('PANES', panes)
 
     return (
       <Tab
         menu={{ attached: 'top', tabular: true, style: { overflowX: 'auto' } }}
-        activeIndex={_.findIndex(assetStore.assets, { _id: params.assetId })}
+        activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
         onTabChange={this.handleTabChange}
         panes={panes}
       />

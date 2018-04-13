@@ -353,18 +353,18 @@ export const getFriendlyNames = skillPath => {
   return names
 }
 
-// this string indicates if a path is code challenge (free code camp?)
-// @Carly we think basics is gone,..
-const _challengeStrArray = ['challenges', 'intro', 'advanced']
-
-// SEE WHEN THESE ARE USED - PROBABLY STILL A BUG HERE WHERE WE GET TO EDIT A FREECODE CAMP ONE
+// this string indicates if a path is code challenge (free code camp)
 export const isPathChallenge = skillPath =>
-  _.some(_challengeStrArray, str => _.startsWith(skillPath, 'code.js.' + str))
+  SkillNodes.$meta.map[skillPath].$meta.skillChallengeType === 'challenges'
 
+// this string indicates if a path is step-by-step challenge
 export const isPathCodeTutorial = skillPath =>
-  _.startsWith(skillPath, 'code.js.games') || _.startsWith(skillPath, 'code.js.phaser')
+  SkillNodes.$meta.map[skillPath].$meta.skillChallengeType === 'phaser'
 
-export const isPhaserTutorial = skillPath => _.startsWith(skillPath, 'code.js.phaser')
+// TODO- whack a mole thing - to find the path?
+// this string indicates if a path is step-by-step challenge
+export const isPhaserTutorial = skillPath =>
+  SkillNodes.$meta.map[skillPath].$meta.skillChallengeType === 'phaser'
 
 export const isArtTutorial = skillPath => _.startsWith(skillPath, 'art')
 
@@ -400,19 +400,18 @@ export const codeItems = [
     skillPath: 'code.js.intro',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `Learn the basics of the Javascript programming language.
-    This covers the core programming language concepts necessary to write a game: variables, arrays, loops, functions, etc.
-    If you already know these, you can proceed to the next section instead...`,
+    desc: `Learn the basics of the Javascript programming language, and the popular game engine Phaser so you can start making your own games!
+`,
   },
   {
     mascot: 'phaserLogo',
     icon: 'code',
-    content: 'Game Development Concepts',
+    content: 'Make Your First Game From Scratch',
     link: '/learn/code/phaser',
     skillPath: 'code.js.phaser',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `Phaser is a popular game engine written in JavaScript. Learn to handle graphics, sound, maps, physics, and more.`,
+    desc: `Learn how to create one of the very first arcade games using JavaScript and Phaser: Pong!`,
   },
   {
     mascot: 'mole',

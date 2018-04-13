@@ -14,135 +14,67 @@ const CodePhaserSkillNodes = {
     $meta: {
       name: 'Increment and Decrement a Number with JavaScript', // Name changed
       icon: 'code',
-      subsection: 'Game 1',
+      subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
 
-  // CONSOLIDATED WITH ADDING AND DIVIDING
-
-  // multiplyDecimal: {
-  //   $meta: {
-  //     name: 'Multiply Two Decimals with JavaScript',
-  //     icon: 'code',
-  //     subsection: 'Numbers',
-  //     ...C.E.$meta,
-  //   },
-  // },
   concatenatingStringPlus: {
     $meta: {
       name: 'Concatenating Strings with Plus Operator and Variables', // Name changed
       icon: 'code',
-      subsection: 'Game 1',
+      subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
-
-  // CONSOLIDATED WITH CONCATENATING STRINGS
-
-  // constructingStringVariables: {
-  //   $meta: {
-  //     name: 'Constructing Strings with Variables',
-  //     icon: 'code',
-  //     subsection: 'game 1',
-  //     skillChallengeType: 'challenges',
-  //     ...C.E.$meta,
-  //   },
-  // },
 
   booleans: {
     $meta: {
       name: 'Understanding Boolean Values and If Statements', // Name changed
       icon: 'code',
-      subsection: 'Game 1',
+      subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
-
-  // CONSOLIDATED WITH UNDERSTANDING BOOLEANS
-
-  // ifStatement: {
-  //   $meta: {
-  //     name: 'Use Conditional Logic with If Statements',
-  //     icon: 'code',
-  //     subsection: 'Game 1',
-  //     skillChallengeType: 'challenges',
-  //     ...C.E.$meta,
-  //   },
-  // },
 
   comparison: {
     $meta: {
       name: 'Comparison with the Equality and Inequality Operators', // Name changed
       icon: 'code',
-      subsection: 'Game 1',
+      subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
-
-  // COSOLIDATED WITH EQUALITY OPERATOR
-
-  // comparisonInequeality: {
-  //   $meta: {
-  //     name: 'Comparison with the Inequality Operator',
-  //     icon: 'code',
-  //     subsection: 'Game 1',
-  //     skillChallengeType: 'challenges',
-  //     ...C.E.$meta,
-  //   },
-  // },
 
   greaterThan: {
     $meta: {
       name: 'Greater Than and Less Than Comparison Operators', // Name Changed
       icon: 'code',
-      subsection: 'Game 1',
+      subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
 
-  // CONSOLIDATED WITH GREATER THAN
-
-  // lessThanOr: {
-  //   $meta: {
-  //     name: 'Comparison with the Less Than Or Equal To Operator',
-  //     icon: 'code',
-  //     subsection: 'Game 1',
-  //     skillChallengeType: 'challenges',
-  //     ...C.E.$meta,
-  //   },
-  // },
   logicalAnd: {
     $meta: {
       name: 'Comparisons with the Logical And/Or Operator', // Name changed
       icon: 'code',
-      subsection: 'Game 1',
+      subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
 
-  // CONSOLIDATED WTIH AND OPERATOR
-
-  // logicalOr: {
-  //   $meta: {
-  //     name: 'Comparisons with the Logical Or Operator',
-  //     icon: 'code',
-  //     subsection: 'Game 1',
-  //     skillChallengeType: 'challenges',
-  //     ...C.E.$meta,
-  //   },
-  // },
   elseStatement: {
     $meta: {
       name: 'Introducing Else Statements',
       icon: 'code',
-      subsection: 'Game 1',
+      subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
@@ -151,36 +83,17 @@ const CodePhaserSkillNodes = {
     $meta: {
       name: 'Use Else If Statements and Chain Them in a Logical Order', // Name Changed
       icon: 'code',
-      subsection: 'Game 1',
+      subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
-  //  FOLLOWING 2 ARE CONSOLIDATED WITH INTRODUCING ELSE IF STATEMENTS
 
-  // ifElseOrder: {
-  //   $meta: {
-  //     name: 'Logical Order in If Else Statements',
-  //     icon: 'code',
-  //     subsection: 'Game 1',
-  //     skillChallengeType: 'challenges',
-  //     ...C.E.$meta,
-  //   },
-  // },
-  // chainingIfElse: {
-  //   $meta: {
-  //     name: 'Chaining If Else Statements',
-  //     icon: 'code',
-  //     subsection: 'Game 1',
-  //     skillChallengeType: 'challenges',
-  //     ...C.E.$meta,
-  //   },
-  // },
   golfCode: {
     $meta: {
       name: 'Golf Code',
       icon: 'code',
-      subsection: 'Game 1',
+      subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
@@ -189,7 +102,7 @@ const CodePhaserSkillNodes = {
     $meta: {
       name: 'Compound Assignment with Augmented Addition and Subtraction',
       icon: 'code',
-      subsection: 'Game 1',
+      subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
@@ -198,55 +111,31 @@ const CodePhaserSkillNodes = {
     $meta: {
       name: 'Generate Random Fractions and Numbers with JavaScript', // Name Changed
       icon: 'code',
-      subsection: 'Game 1',
+      subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
-
-  // COMBINED WITH RANDOM FRACTIONS
-
-  // randomIntegers: {
-  //   $meta: {
-  //     name: 'Generate Random Whole Numbers with JavaScript',
-  //     icon: 'code',
-  //     subsection: 'Useful stuff',
-  //     skillChallengeType: 'challenges',
-  //     ...C.E.$meta,
-  //   },
-  // },
-  // randomIntegersRange: {
-  //   $meta: {
-  //     name: 'Generate Random Whole Numbers within a Range',
-  //     icon: 'code',
-  //     subsection: 'Useful stuff',
-  //     skillChallengeType: 'challenges',
-  //     ...C.E.$meta,
-  //   },
-  // },
 
   strictComparison: {
     $meta: {
       name: 'Comparison with the Strict Equality and Strict Inequality Operators', // Name changed
       icon: 'code',
-      subsection: 'Game 1',
+      subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
 
-  // COMBINED WITH STRICT EQUALITY
-
-  // comparisonStrictInequeality: {
-  //   $meta: {
-  //     name: 'Comparison with the Strict Inequality Operator',
-  //     icon: 'code',
-  //     subsection: 'Decision Making',
-  //     skillChallengeType: 'challenges',
-  //     ...C.E.$meta,
-  //   },
-  // },
-
+  taskMoveWithMouse: {
+    $meta: {
+      name: 'Control Your Game with Mouse Input',
+      icon: 'trophy',
+      subsection: 'Program Pong',
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
   // ***** BELOW IS ALL OF THE ORIGINAL PHASER TUTORIAL STUFF, WHICH HAS BEEN MOVED INTO THE INTRODUCTORY STEP ALONG WITH ASSOCIATED JS
   // ***** NEW PHASER TUTORIALS WILL GO HERE FOR THE PONG GAME AS WELL AS APPROPRIATE JS
 

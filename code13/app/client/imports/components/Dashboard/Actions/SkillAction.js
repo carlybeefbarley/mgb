@@ -48,6 +48,8 @@ class SkillAction extends React.Component {
       const l = skillPathArr.length
       const section = skillPathArr[l - 2]
       const subSection = skillPathArr[l - 1]
+
+      // TODO - pass in area!
       StartJsGamesRoute(section, subSection, currUser)
     } else {
       // joyride tutorial

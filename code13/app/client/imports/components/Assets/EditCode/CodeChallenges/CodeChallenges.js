@@ -209,6 +209,7 @@ export default class CodeChallenges extends React.Component {
     if (idx < skillsArr.length - 1) {
       const nextSkillName = skillsArr[idx + 1]
       this.setState({ pendingLoadNextSkill: true })
+      // TODO - pass in area!
       StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser)
     } else {
       utilPushTo(null, '/learn/code')

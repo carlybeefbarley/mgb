@@ -492,6 +492,111 @@ const CodeAdvancedSkillNodes = {
       ...C.E.$meta,
     },
   },
+  tweens: {
+    $meta: {
+      name: 'Tweening',
+      icon: 'code',
+      link: '/u/!vault/asset/XnsehSEruvMKMBKLx',
+      description: `Animating images with interpolation instead of frames`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  groups: {
+    $meta: {
+      name: 'Sprite Groups',
+      icon: 'code',
+      link: '/u/!vault/asset/jYQwe8cv2rtDDCM89',
+      description: `Adding sprites to a group`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  taskTweenGroup: {
+    $meta: {
+      isTask: true,
+      name: 'Task: Animate a group',
+      icon: 'tasks',
+      link: '/u/!vault/asset/rDMCqocQv3nnYx8AB',
+      description: `Animate a group of dwarves`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  getObjectFromGroup: {
+    $meta: {
+      name: 'Get object from group',
+      icon: 'code',
+      description: `Iterating through group children`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  bringToTop: {
+    $meta: {
+      name: 'Bring to top',
+      icon: 'code',
+      description: `Bring object in a group to top`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  swapChildren: {
+    $meta: {
+      name: 'Swap children',
+      icon: 'code',
+      description: `Swap object indexes in a group`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  callAll: {
+    $meta: {
+      name: 'Call all',
+      icon: 'code',
+      description: `Call all objects in a group`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  sound: {
+    $meta: {
+      name: 'Sound',
+      icon: 'code',
+      description: `Music and sound`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  // TODO needs joyride selectors, completation tags
+  // oop: {
+  //   $meta: {
+  //     icon: 'code',
+  //     link: '/u/!vault/project/aEzfbLcQ9uZKYaCu8',
+  //     name: 'OOP',
+  //     description: `Object-oriented-programming and game states`
+  //   },
+  //   'oop': C.En(0),
+  // },
+  next: {
+    $meta: {
+      icon: 'info',
+      link: '/u/!vault/asset/jWGJmWKcGe83r5pEY',
+      name: 'What to do next?',
+      description: `Learn using the Phaser docs and examples`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
 }
 
 export default CodeAdvancedSkillNodes

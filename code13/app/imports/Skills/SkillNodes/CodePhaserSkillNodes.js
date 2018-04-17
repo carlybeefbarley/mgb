@@ -10,14 +10,9 @@ import C from './CommonSkillNodes'
 // Enabled Leaf Node, Learning Level = 0..4 (0 = beginner). See CommonSkillNodes.js for info
 
 const CodePhaserSkillNodes = {
-  decrementNumbers: {
-    $meta: {
-      name: 'Increment and Decrement a Number with JavaScript', // Name changed
-      icon: 'code',
-      subsection: 'Continue Learning JavaScript',
-      skillChallengeType: 'challenges',
-      ...C.E.$meta,
-    },
+  $meta: {
+    name: 'Program Pong',
+    description: 'Learn some more basic JavaScript and Phaser so that you can make a classic Pong game',
   },
 
   concatenatingStringPlus: {
@@ -30,9 +25,19 @@ const CodePhaserSkillNodes = {
     },
   },
 
-  booleans: {
+  decrementNumbers: {
     $meta: {
-      name: 'Understanding Boolean Values and If Statements', // Name changed
+      name: 'Increment and Decrement a Number with JavaScript', // Name changed
+      icon: 'code',
+      subsection: 'Continue Learning JavaScript',
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+
+  compoundAssignment: {
+    $meta: {
+      name: 'Compound Assignment with Augmented Addition and Subtraction',
       icon: 'code',
       subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
@@ -43,6 +48,16 @@ const CodePhaserSkillNodes = {
   comparison: {
     $meta: {
       name: 'Comparison with the Equality and Inequality Operators', // Name changed
+      icon: 'code',
+      subsection: 'Continue Learning JavaScript',
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+
+  strictComparison: {
+    $meta: {
+      name: 'Comparison with the Strict Equality and Strict Inequality Operators', // Name changed
       icon: 'code',
       subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
@@ -62,7 +77,27 @@ const CodePhaserSkillNodes = {
 
   logicalAnd: {
     $meta: {
-      name: 'Comparisons with the Logical And/Or Operator', // Name changed
+      name: 'Comparisons with the Logical And/Or Operators', // Name changed
+      icon: 'code',
+      subsection: 'Continue Learning JavaScript',
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+
+  randomFractions: {
+    $meta: {
+      name: 'Generate Random Fractions and Numbers with JavaScript', // Name Changed
+      icon: 'code',
+      subsection: 'Continue Learning JavaScript',
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+
+  booleans: {
+    $meta: {
+      name: 'Understanding Boolean Values and If Statements', // Name changed
       icon: 'code',
       subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',
@@ -92,34 +127,6 @@ const CodePhaserSkillNodes = {
   golfCode: {
     $meta: {
       name: 'Golf Code',
-      icon: 'code',
-      subsection: 'Continue Learning JavaScript',
-      skillChallengeType: 'challenges',
-      ...C.E.$meta,
-    },
-  },
-  compoundAssignment: {
-    $meta: {
-      name: 'Compound Assignment with Augmented Addition and Subtraction',
-      icon: 'code',
-      subsection: 'Continue Learning JavaScript',
-      skillChallengeType: 'challenges',
-      ...C.E.$meta,
-    },
-  },
-  randomFractions: {
-    $meta: {
-      name: 'Generate Random Fractions and Numbers with JavaScript', // Name Changed
-      icon: 'code',
-      subsection: 'Continue Learning JavaScript',
-      skillChallengeType: 'challenges',
-      ...C.E.$meta,
-    },
-  },
-
-  strictComparison: {
-    $meta: {
-      name: 'Comparison with the Strict Equality and Strict Inequality Operators', // Name changed
       icon: 'code',
       subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',

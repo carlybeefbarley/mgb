@@ -17,7 +17,7 @@ import { mgbAjax } from '/client/imports/helpers/assetFetchers'
 // This can be called with the url param:
 // item = one of these: (a subset of what what is SkillNodes.js : codeItems)
 const learnItems = ['intro', 'phaser', 'games', 'advanced']
-// Note that this does not handle the /learn/code/modify route - that has it's own
+// Note that this does not handle the /learn/code/modify route - that has its own
 // component instead.
 
 const handleClick = (e, learnItem, idx, currUser, area) => {
@@ -25,6 +25,14 @@ const handleClick = (e, learnItem, idx, currUser, area) => {
   StartJsGamesRoute(learnItem, idx, currUser, newTab, area)
 }
 
+/**
+ *
+ * @param {string} learnItem - one of the learn groups (basic, intro, advanced etc). This is used to determine the tutorial asset name and the skill path
+ * @param {string} name - name of this skill
+ * @param {User} currUser - currently logged-in Meteor User.
+ * @param {boolean} newTab True if it should be opened in a new Browser tab
+ * @param {any} area A Skillnode object from SkillNodes.js
+ */
 export const StartJsGamesRoute = (learnItem, name, currUser, newTab, area) => {
   if (!currUser) {
     showToast.info('You must be logged in to use these tutorials')
@@ -83,6 +91,11 @@ export const StartJsGamesRoute = (learnItem, name, currUser, newTab, area) => {
   })
 }
 
+/**
+ *
+ * @param {string} url The URL to open
+ * @param {boolean} newTab True if it should be opened in a new Browser tab
+ */
 const openUrl = (url, newTab) => {
   if (newTab) window.open(window.location.origin + url)
   else utilPushTo(null, url)

@@ -30,6 +30,7 @@ export default class CodeTutorials extends React.Component {
     asset: PropTypes.object,
     style: PropTypes.object,
     isOwner: PropTypes.bool,
+    runCode: PropTypes.func,
   }
 
   constructor(props) {
@@ -93,6 +94,10 @@ export default class CodeTutorials extends React.Component {
         this.props.highlightLines(highlight.from, highlight.to)
       })
     }
+  }
+
+  handleRunCode = () => {
+    this.props.runCode()
   }
 
   successPopup = () => {
@@ -176,7 +181,15 @@ export default class CodeTutorials extends React.Component {
             disabled={isCompleted}
           />
         )}
-
+        <Button
+          compact
+          basic
+          size="small"
+          color="green"
+          onClick={this.handleRunCode}
+          icon="play"
+          content="Run code"
+        />
         <Button
           compact
           basic

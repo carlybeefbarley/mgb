@@ -189,7 +189,6 @@ class EditCode extends React.Component {
     this.isCodeTutorial = false
     this.isChallenge = isPathChallenge(this.props.asset.skillPath)
     this.isCodeTutorial = isPathCodeTutorial(this.props.asset.skillPath)
-
     this.isSimplifiedView = this.isGuest || this.isCodeTutorial || this.isChallenge
   }
 
@@ -363,6 +362,9 @@ class EditCode extends React.Component {
         const $sPane = document.querySelector('.CodeMirror')
         const edHeight = window.innerHeight - (16 + $sPane.getBoundingClientRect().top)
         ed.setSize('100%', `${edHeight}px`)
+
+        const sc = document.querySelector('.simplified-container')
+        sc.style.height = `${edHeight}px`
       }
       window.addEventListener('resize', this.edResizeHandler)
       this.edResizeHandler()
@@ -3484,43 +3486,24 @@ class EditCode extends React.Component {
                   />
                 </div>
               ) : (
-                <Segment raised style={{ overflowY: 'auto' }}>
+                <Segment
+                  className="simplified-container"
+                  raised
+                  style={{
+                    overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
                   {this.isGuest ? this.bound_handle_iFrameMessageReceiver ? (
                     <div>
-                      {this.isChallenge && (
-                        <CodeChallenges
-                          style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
-                          active={!!asset.skillPath}
-                          skillPath={asset.skillPath}
-                          codeMirror={this.codeMirror}
-                          currUser={currUser}
-                          userSkills={this.userSkills}
-                          runChallengeDate={this.state.runChallengeDate}
-                        />
-                      )}
-                      {this.isCodeTutorial && (
-                        <CodeTutorials
-                          style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
-                          isOwner={currUser && currUser._id === asset.ownerId}
-                          active={!!asset.skillPath}
-                          skillPath={asset.skillPath}
-                          codeMirror={this.codeMirror}
-                          currUser={currUser}
-                          userSkills={this.userSkills}
-                          quickSave={this.quickSave.bind(this)}
-                          highlightLines={this.highlightLines.bind(this)}
-                          assetId={asset._id}
-                          asset={asset}
-                        />
-                      )}
                       <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
-                      {!this.isChallenge && this.renderGameScreen()}
+                      {this.renderGameScreen()}
                       <ConsoleMessageViewer
                         messages={this.state.consoleMessages}
                         gotoLinehandler={this.gotoLineHandler.bind(this)}
                         clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
                         style={{
-                          overflow: 'auto',
                           width: '100%',
                           maxHeight: '150px',
                         }}
@@ -3531,19 +3514,50 @@ class EditCode extends React.Component {
                       <Loader>Preparing code runner...</Loader>
                     </Dimmer>
                   ) : (
-                    <div>
-                      <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
-                      {this.renderGameScreen()}
-                      <ConsoleMessageViewer
-                        messages={this.state.consoleMessages}
-                        gotoLinehandler={this.gotoLineHandler.bind(this)}
-                        clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
-                        style={{
-                          overflow: 'auto',
-                          width: '100%',
-                          maxHeight: '150px',
-                        }}
-                      />
+                    // Tutorial container
+                    <div style={{ overflowY: 'auto' }}>
+                      <div style={{ flex: 3 }}>
+                        {this.isChallenge && (
+                          <CodeChallenges
+                            style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+                            active={!!asset.skillPath}
+                            skillPath={asset.skillPath}
+                            codeMirror={this.codeMirror}
+                            currUser={currUser}
+                            userSkills={this.userSkills}
+                            runChallengeDate={this.state.runChallengeDate}
+                          />
+                        )}
+                        {this.isCodeTutorial && (
+                          <CodeTutorials
+                            style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+                            isOwner={currUser && currUser._id === asset.ownerId}
+                            active={!!asset.skillPath}
+                            skillPath={asset.skillPath}
+                            codeMirror={this.codeMirror}
+                            currUser={currUser}
+                            userSkills={this.userSkills}
+                            quickSave={this.quickSave.bind(this)}
+                            runCode={this.handleRun}
+                            highlightLines={this.highlightLines.bind(this)}
+                            assetId={asset._id}
+                            asset={asset}
+                          />
+                        )}
+                      </div>
+                      <div style={{ flex: 2, marginTop: '1em' }}>
+                        {!this.isChallenge && this.renderGameScreen()}
+                        <ConsoleMessageViewer
+                          messages={this.state.consoleMessages}
+                          gotoLinehandler={this.gotoLineHandler.bind(this)}
+                          clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
+                          style={{
+                            overflow: 'auto',
+                            width: '100%',
+                            maxHeight: '150px',
+                          }}
+                        />
+                      </div>
                     </div>
                   )}
                 </Segment>

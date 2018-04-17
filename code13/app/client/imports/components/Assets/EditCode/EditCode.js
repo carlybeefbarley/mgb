@@ -101,7 +101,7 @@ const _infoPaneModes = [
   { col1: 'ten', col2: 'six' },
   { col1: 'sixteen', col2: null },
   { col1: 'six', col2: 'ten' },
-  { col1: 'eight', col2: 'eight' },
+  { col1: 'nine', col2: 'seven' },
 ]
 
 // Code asset - Data format:
@@ -180,13 +180,17 @@ class EditCode extends React.Component {
       redo: [],
     }
 
-    // indicates if code is challenge and/or tutorial
-    this.isChallenge = false
-    this.isCodeTutorial = false
-
     // is guest user?
     this.isGuest = this.props.currUser ? this.props.currUser.profile.isGuest : false
     this.isAutoRun = this.isGuest
+
+    // indicates if code is challenge and/or tutorial
+    this.isChallenge = false
+    this.isCodeTutorial = false
+    this.isChallenge = isPathChallenge(this.props.asset.skillPath)
+    this.isCodeTutorial = isPathCodeTutorial(this.props.asset.skillPath)
+
+    this.isSimplifiedView = this.isGuest || this.isCodeTutorial || this.isChallenge
   }
 
   handleJsBeautify() {
@@ -2300,7 +2304,7 @@ class EditCode extends React.Component {
   generateToolbarConfig() {
     const history = this.codeMirror ? this.codeMirror.historySize() : { undo: 0, redo: 0 }
 
-    var config = this.isGuest
+    var config = this.isSimplifiedView
       ? {
           buttons: [],
         }
@@ -2429,7 +2433,7 @@ class EditCode extends React.Component {
       })
     } else if (this.mgb_mode === 'jsx') {
       // code...
-      if (!this.isGuest) {
+      if (!this.isSimplifiedView) {
         config.buttons.unshift({ name: 'separator' })
         config.buttons.unshift({
           name: 'toggleHotReload',
@@ -2487,17 +2491,17 @@ class EditCode extends React.Component {
           shortcut: 'Ctrl+ENTER',
         })
       } else {
-        // this is guest
-        config.buttons.unshift({
-          name: 'handleEmptyRun',
-          label: 'Move to Start',
-          icon: 'refresh',
-          iconText: 'Move to Start',
-          tooltip: 'Move the Dwarf back to the starting position',
-          disabled: false,
-          level: 1,
-          shortcut: null,
-        })
+        this.isGuest &&
+          config.buttons.unshift({
+            name: 'handleEmptyRun',
+            label: 'Move to Start',
+            icon: 'refresh',
+            iconText: 'Move to Start',
+            tooltip: 'Move the Dwarf back to the starting position',
+            disabled: false,
+            level: 1,
+            shortcut: null,
+          })
         config.buttons.unshift({ name: 'separator' })
       }
       // jsx, regardless of guest/not guest
@@ -2505,9 +2509,9 @@ class EditCode extends React.Component {
         name: 'handleRun',
         label: 'Run code',
         icon: 'play',
-        iconText: this.isGuest ? 'Run Code' : '',
+        iconText: this.isSimplifiedView ? 'Run Code' : '',
         tooltip: 'Run Code',
-        disabled: (!this.isGuest && this.state.isPlaying) || !this.state.astReady,
+        disabled: (!this.isSimplifiedView && this.state.isPlaying) || !this.state.astReady,
         level: 1,
         shortcut: 'Ctrl+ENTER',
       })
@@ -2873,7 +2877,7 @@ class EditCode extends React.Component {
     const isPlaying = this.state.isPlaying
 
     const stringReferences = this.getStringReferences()
-    const infoPaneOpts = this.isGuest ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
+    const infoPaneOpts = this.isSimplifiedView ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
 
     const isPopup = this.state.isPopup || !infoPaneOpts.col2
 
@@ -2904,60 +2908,6 @@ class EditCode extends React.Component {
                 <div className="ui divided selection list">{stringReferences}</div>
               )}
             </div>
-          ),
-        },
-      },
-      this.isChallenge && {
-        title: {
-          key: 'code-challenge-title',
-          onClick: this.handleAccordionTitleClick,
-          content: (
-            <span style={{ backgroundColor: 'rgba(0,255,0,0.02)' }} id="mgbjr-EditCode-codeChallenges">
-              Code Challenges
-            </span>
-          ),
-        },
-        content: {
-          key: 'code-challenge-content',
-          content: (
-            <CodeChallenges
-              style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
-              active={!!asset.skillPath}
-              skillPath={asset.skillPath}
-              codeMirror={this.codeMirror}
-              currUser={this.props.currUser}
-              userSkills={this.userSkills}
-              runChallengeDate={this.state.runChallengeDate}
-            />
-          ),
-        },
-      },
-      this.isCodeTutorial && {
-        title: {
-          key: 'code-tutorial-title',
-          onClick: this.handleAccordionTitleClick,
-          content: (
-            <span style={{ backgroundColor: 'rgba(0,255,0,0.02)' }} id="mgbjr-EditCode-codeTutorials">
-              Code Tutorials
-            </span>
-          ),
-        },
-        content: {
-          key: 'code-tutorial-content',
-          content: (
-            <CodeTutorials
-              style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
-              isOwner={currUser && currUser._id === asset.ownerId}
-              active={!!asset.skillPath}
-              skillPath={asset.skillPath}
-              codeMirror={this.codeMirror}
-              currUser={this.props.currUser}
-              userSkills={this.userSkills}
-              quickSave={this.quickSave.bind(this)}
-              highlightLines={this.highlightLines.bind(this)}
-              assetId={asset._id}
-              asset={asset}
-            />
           ),
         },
       },
@@ -3302,7 +3252,7 @@ class EditCode extends React.Component {
   renderGameScreen = () => {
     const { asset, hourOfCodeStore: { state: { currStepId } } } = this.props
 
-    const infoPaneOpts = this.isGuest ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
+    const infoPaneOpts = this.isSimplifiedView ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
 
     const isPopup = this.state.isPopup || !infoPaneOpts.col2
 
@@ -3327,6 +3277,7 @@ class EditCode extends React.Component {
   render() {
     const {
       asset,
+      currUser,
       hourOfCodeStore: { state: { api, steps, currStep, isLastStep, isActivityOver } },
     } = this.props
 
@@ -3334,7 +3285,7 @@ class EditCode extends React.Component {
 
     this.codeMirror && this.codeMirror.setOption('readOnly', !this.props.canEdit)
 
-    const infoPaneOpts = this.isGuest ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
+    const infoPaneOpts = this.isSimplifiedView ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
 
     const tbConfig = this.generateToolbarConfig()
 
@@ -3444,7 +3395,9 @@ class EditCode extends React.Component {
                   openVideoModal={this.handleOpenVideoModal}
                 />
               )}
-              {!this.isGuest && <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
+              {!this.isSimplifiedView && (
+                <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
+              )}
               {!this.isGuest ? (
                 <div
                   className={'accept-drop' + (this.props.canEdit ? '' : ' read-only')}
@@ -3520,7 +3473,7 @@ class EditCode extends React.Component {
               className={infoPaneOpts.col2 + ' wide column'}
               style={{ display: infoPaneOpts.col2 ? 'block' : 'none' }}
             >
-              {!this.isGuest ? (
+              {!this.isSimplifiedView ? (
                 <div className="mgbAccordionScroller" style={fullSize}>
                   <Accordion
                     fluid
@@ -3531,11 +3484,37 @@ class EditCode extends React.Component {
                   />
                 </div>
               ) : (
-                <Segment raised>
-                  {this.bound_handle_iFrameMessageReceiver ? (
+                <Segment raised style={{ overflowY: 'auto' }}>
+                  {this.isGuest ? this.bound_handle_iFrameMessageReceiver ? (
                     <div>
+                      {this.isChallenge && (
+                        <CodeChallenges
+                          style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+                          active={!!asset.skillPath}
+                          skillPath={asset.skillPath}
+                          codeMirror={this.codeMirror}
+                          currUser={currUser}
+                          userSkills={this.userSkills}
+                          runChallengeDate={this.state.runChallengeDate}
+                        />
+                      )}
+                      {this.isCodeTutorial && (
+                        <CodeTutorials
+                          style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+                          isOwner={currUser && currUser._id === asset.ownerId}
+                          active={!!asset.skillPath}
+                          skillPath={asset.skillPath}
+                          codeMirror={this.codeMirror}
+                          currUser={currUser}
+                          userSkills={this.userSkills}
+                          quickSave={this.quickSave.bind(this)}
+                          highlightLines={this.highlightLines.bind(this)}
+                          assetId={asset._id}
+                          asset={asset}
+                        />
+                      )}
                       <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
-                      {this.renderGameScreen()}
+                      {!this.isChallenge && this.renderGameScreen()}
                       <ConsoleMessageViewer
                         messages={this.state.consoleMessages}
                         gotoLinehandler={this.gotoLineHandler.bind(this)}
@@ -3551,12 +3530,27 @@ class EditCode extends React.Component {
                     <Dimmer inverted active>
                       <Loader>Preparing code runner...</Loader>
                     </Dimmer>
+                  ) : (
+                    <div>
+                      <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
+                      {this.renderGameScreen()}
+                      <ConsoleMessageViewer
+                        messages={this.state.consoleMessages}
+                        gotoLinehandler={this.gotoLineHandler.bind(this)}
+                        clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
+                        style={{
+                          overflow: 'auto',
+                          width: '100%',
+                          maxHeight: '150px',
+                        }}
+                      />
+                    </div>
                   )}
                 </Segment>
               )}
             </div>
           </div>
-          {isPopup && this.renderGameScreen()}
+          {!this.isSimplifiedView && isPopup && this.renderGameScreen()}
         </div>
       </div>
     )

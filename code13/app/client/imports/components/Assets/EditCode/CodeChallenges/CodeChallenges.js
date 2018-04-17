@@ -12,7 +12,7 @@ import ChallengeCompleted from './ChallengeCompleted'
 import ChallengeResults from './ChallengeResults'
 
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
-import SkillNodes, { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
+import SkillNodes, { getFriendlyName, getNode } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import refreshBadgeStatus from '/client/imports/helpers/refreshBadgeStatus'
 import { learnSkill } from '/imports/schemas/skills'
@@ -193,6 +193,7 @@ export default class CodeChallenges extends React.Component {
     //  $meta.tests
     //  $meta.code
     //  $meta.description
+
     let skillsArr = []
     let learnGroup = 'basics'
 
@@ -211,7 +212,9 @@ export default class CodeChallenges extends React.Component {
       const nextSkillName = skillsArr[idx + 1]
       this.setState({ pendingLoadNextSkill: true })
       // TODO - pass in area!
-      StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser)
+      const newSkillPath = `code.js.${learnGroup}.${nextSkillName}`
+      const newSkillNode = getNode(newSkillPath).$meta
+      StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser, false, newSkillNode)
     } else {
       utilPushTo(null, '/learn/code')
     }

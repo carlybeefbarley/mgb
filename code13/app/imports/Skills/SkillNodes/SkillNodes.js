@@ -317,8 +317,16 @@ export const makeTutorialsFindSelector = dottedSkillKey => {
     dn_ownerName: SpecialGlobals.skillsModelTrifecta.tutorialAccount,
   }
 }
-
+/**
+ * Get a skillNode based on the given dot-separated skillPath string
+ * @param {string} skillPath A dot-delimited skill path e.g code.js.foobar
+ */
 export const getNode = skillPath => Object.freeze({ ...SkillNodes.$meta.map[skillPath] })
+
+/**
+ * Get a dot-separated skillPath based on the given dot-separated skillPath string
+ * @param {string} skillNode A skill Node
+ */
 export const getPath = skillNode => skillNode.$meta.key
 
 export const getParentPath = skillPath => _.initial(skillPath.split('.')).join('.')

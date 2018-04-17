@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Icon, Button } from 'semantic-ui-react'
-
+import ToolWindow from '/client/imports/components/ToolWindow/ToolWindow'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 import './editcode.css'
@@ -22,6 +22,7 @@ export default class GameScreen extends React.Component {
   static propTypes = {
     isPlaying: PropTypes.bool,
     isPopup: PropTypes.bool,
+    popupOnly: PropTypes.bool,
     asset: PropTypes.object,
     hocStepId: PropTypes.string,
     isAutoRun: PropTypes.bool,
@@ -156,7 +157,7 @@ export default class GameScreen extends React.Component {
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
   postMessage(messageObject) {
     if (messageObject.mgbCommand === 'startRun') {
-      this.setState({ isHidden: false })
+      !this.props.isHidden && this.setState({ isHidden: false })
       if (GameScreen.popup) {
         if (this.state.fullScreen) GameScreen.popup.focus()
         else GameScreen.popup.close()
@@ -195,7 +196,6 @@ export default class GameScreen extends React.Component {
   // click handlers for Buttons on this component when in the props.isPopup==true state
   handleMinimizeClick = () => {
     this.setState({ isMinimized: !this.state.isMinimized })
-    this.requestAdjustIframe()
   }
 
   handleCloseClick = () => {
@@ -268,7 +268,7 @@ export default class GameScreen extends React.Component {
     // we have opened popup - so we can hide everything else
     if (this.state.fullScreen || this.state.isMinimized) return null
 
-    const { isPopup, isPlaying } = this.props
+    const { isPopup, isPlaying, isPopupOnly } = this.props
     const { isHidden, isMinimized } = this.state
 
     const wrapStyle = {
@@ -288,10 +288,8 @@ export default class GameScreen extends React.Component {
     if (isHidden && !isPlaying) {
       wrapStyle.display = 'none'
     }
-    if (isPopup && isPlaying) {
-      wrapStyle.width = window.innerHeight * SpecialGlobals.editCode.popup.maxWidth
-      wrapStyle.overflow = 'initial'
-      wrapStyle.position = 'absolute' // or fixed
+    if ((isPopup && isPlaying) || isPopupOnly) {
+      wrapStyle.display = 'none'
     }
     if (isMinimized) {
       wrapStyle.bottom = '0'
@@ -309,48 +307,50 @@ export default class GameScreen extends React.Component {
         className={isPopup && isPlaying ? 'popup' : 'accordion'}
         style={wrapStyle}
       >
-        {isPopup &&
-        isPlaying && (
-          <div style={_popopButtonsRowStyle}>
-            <Button title="Close" icon="close" size="mini" floated="right" onClick={this.handleCloseClick} />
-
-            <Button
-              title={isMinimized ? 'Maximize' : 'Minimize'}
-              icon={isMinimized ? 'maximize' : 'minus'}
-              size="mini"
-              floated="right"
-              onClick={this.handleMinimizeClick}
-            />
-
-            <button
-              // Making the a SUIR Button creates some funny drag icon, so clean this up another day
-              title="Drag Window"
-              className="ui mini right floated icon button"
-              draggable
-              onDragStart={this.onDragStart}
-              onDrag={this.onDrag}
-              onTouchStart={this.onDragStart}
-              onTouchMove={this.onDrag}
-            >
-              <Icon name="move" />
-            </button>
-          </div>
-        )}
-        <div style={{ overflow: 'auto', position: 'absolute', width: '100%', height: '100%' }}>
-          <iframe
-            style={{
-              display: this.state.isMinimized ? 'none' : 'block',
-              minWidth: '100%',
-              minHeight: '95%', // 100% creates scrollbars
-              width: '100%',
+        {isPopup && isPlaying ? (
+          <ToolWindow
+            open
+            size="massive"
+            onClose={this.handleCloseClick}
+            contentStyle={{
+              padding: '0',
             }}
-            ref="iFrame1"
-            sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
-            src={makeCDNLink('/codeEditSandbox.html') + hocUrl}
-            frameBorder="0"
-            id="mgbjr-EditCode-sandbox-iframe"
-          />
-        </div>
+            style={{
+              width: 'auto !important',
+              height: 'auto !important',
+              maxHeight: '70%',
+              maxWidth: '70%',
+            }}
+          >
+            <iframe
+              style={{
+                minWidth: '100%',
+                minHeight: '95%', // 100% creates scrollbars
+              }}
+              ref="iFrame1"
+              sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
+              src={makeCDNLink('/codeEditSandbox.html') + hocUrl}
+              frameBorder="0"
+              id="mgbjr-EditCode-sandbox-iframe"
+            />
+          </ToolWindow>
+        ) : !isPopupOnly ? (
+          <div style={{ overflow: 'auto', position: 'absolute', width: '100%', height: '100%' }}>
+            <iframe
+              style={{
+                display: this.state.isMinimized ? 'none' : 'block',
+                minWidth: '100%',
+                minHeight: '95%', // 100% creates scrollbars
+                width: '100%',
+              }}
+              ref="iFrame1"
+              sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
+              src={makeCDNLink('/codeEditSandbox.html') + hocUrl}
+              frameBorder="0"
+              id="mgbjr-EditCode-sandbox-iframe"
+            />
+          </div>
+        ) : null}
       </div>
     )
   }

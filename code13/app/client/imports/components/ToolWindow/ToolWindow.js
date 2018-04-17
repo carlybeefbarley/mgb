@@ -120,11 +120,12 @@ class ToolWindow extends Component {
   }
 
   renderContent = () => {
-    const { children, size } = this.props
+    const { children, size, contentStyle } = this.props
 
     const style = {
       maxHeight: '30em',
       overflow: 'auto',
+      ...contentStyle,
     }
 
     return (

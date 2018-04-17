@@ -255,65 +255,78 @@ export default class CodeChallenges extends React.Component {
         className={'content ' + (this.props.active ? 'active' : '')}
         style={this.props.style}
       >
-        <Button
-          compact
-          basic={showAllTestsCompletedMessage}
-          size="small"
-          color="green"
-          onClick={this.runTests}
-          icon="play"
-          content="Run tests"
-          loading={this.state.testsLoading}
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={this.resetCode}
-          icon="refresh"
-          content="Reset code"
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={_openHelpChat}
-          icon="help"
-          data-position="top right"
-          data-tooltip="Ask for help"
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={_openChallengeList}
-          icon="up arrow"
-          data-position="top right"
-          data-tooltip="Go up to Challenges list"
-        />
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            right: 0,
+            padding: '1em',
+            backgroundColor: 'white',
+            zIndex: 99,
+          }}
+        >
+          <Button
+            compact
+            basic={showAllTestsCompletedMessage}
+            size="small"
+            color="green"
+            onClick={this.runTests}
+            icon="play"
+            content="Run tests"
+            loading={this.state.testsLoading}
+          />
+          <Button
+            compact
+            basic
+            size="small"
+            color="green"
+            onClick={this.resetCode}
+            icon="refresh"
+            content="Reset code"
+          />
+          <Button
+            compact
+            basic
+            size="small"
+            color="green"
+            onClick={_openHelpChat}
+            icon="help"
+            data-position="top right"
+            data-tooltip="Ask for help"
+          />
+          <Button
+            compact
+            basic
+            size="small"
+            color="green"
+            onClick={_openChallengeList}
+            icon="up arrow"
+            data-position="top right"
+            data-tooltip="Go up to Challenges list"
+          />
+        </div>
+        <div style={{ marginTop: '3.5em' }}>
+          <OutputError error={this.state.error} />
 
-        <OutputError error={this.state.error} />
+          <OutputConsole console={this.state.console} />
 
-        <OutputConsole console={this.state.console} />
+          <ChallengeResults results={this.state.results} latestTestTimeStr={latestTestTimeStr} />
 
-        <ChallengeResults results={this.state.results} latestTestTimeStr={latestTestTimeStr} />
+          <ChallengeCompleted
+            show={showAllTestsCompletedMessage}
+            loading={this.state.pendingLoadNextSkill}
+            onStartNext={this.nextChallenge}
+          />
 
-        <ChallengeCompleted
-          show={showAllTestsCompletedMessage}
-          loading={this.state.pendingLoadNextSkill}
-          onStartNext={this.nextChallenge}
-        />
+          <ChallengeInstructions
+            instructions={instructions}
+            description={description}
+            fullBannerText={fullBannerText}
+          />
 
-        <ChallengeInstructions
-          instructions={instructions}
-          description={description}
-          fullBannerText={fullBannerText}
-        />
-
-        <CodeCredits />
+          <CodeCredits />
+        </div>
       </div>
     )
   }

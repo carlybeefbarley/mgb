@@ -149,87 +149,100 @@ export default class CodeTutorials extends React.Component {
         className={'content ' + (this.props.active ? 'active' : '')}
         style={this.props.style}
       >
-        {this.skillNode.$meta.isTask && (
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            right: 0,
+            padding: '1em',
+            backgroundColor: 'white',
+            zIndex: 99,
+          }}
+        >
+          {this.skillNode.$meta.isTask && (
+            <Button
+              compact
+              size="small"
+              color="green"
+              disabled={!this.props.isOwner}
+              onClick={this.submitTask}
+              content="Submit task"
+            />
+          )}
+          {!this.isPhaserTutorial && (
+            <Button
+              compact
+              size="small"
+              color="green"
+              onClick={this.stepBack}
+              icon="backward"
+              content="Back"
+              disabled={this.state.step === 0 || isCompleted}
+            />
+          )}
+          {!this.skillNode.$meta.isTask && (
+            <Button
+              compact
+              size="small"
+              color={isLastStep ? 'blue' : 'green'}
+              onClick={this.stepNext}
+              icon={isLastStep ? 'check' : 'forward'}
+              content={isLastStep ? 'Finish' : 'Next'}
+              disabled={isCompleted}
+            />
+          )}
           <Button
             compact
+            basic
             size="small"
             color="green"
-            disabled={!this.props.isOwner}
-            onClick={this.submitTask}
-            content="Submit task"
+            onClick={this.handleRunCode}
+            icon="play"
+            content="Run code"
           />
-        )}
-        {!this.isPhaserTutorial && (
           <Button
             compact
+            basic
             size="small"
             color="green"
-            onClick={this.stepBack}
-            icon="backward"
-            content="Back"
-            disabled={this.state.step === 0 || isCompleted}
+            onClick={this.resetCode}
+            icon="refresh"
+            content="Reset code"
           />
-        )}
-        {!this.skillNode.$meta.isTask && (
           <Button
             compact
+            basic
             size="small"
-            color={isLastStep ? 'blue' : 'green'}
-            onClick={this.stepNext}
-            icon={isLastStep ? 'check' : 'forward'}
-            content={isLastStep ? 'Finish' : 'Next'}
-            disabled={isCompleted}
+            color="green"
+            onClick={_openHelpChat}
+            icon="help"
+            data-position="top right"
+            data-tooltip="Ask for help"
           />
-        )}
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={this.handleRunCode}
-          icon="play"
-          content="Run code"
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={this.resetCode}
-          icon="refresh"
-          content="Reset code"
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={_openHelpChat}
-          icon="help"
-          data-position="top right"
-          data-tooltip="Ask for help"
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={this.navigateToSkillsList}
-          icon="up arrow"
-          data-position="top right"
-          data-tooltip="Go up to Tutorial list"
-        />
+          <Button
+            compact
+            basic
+            size="small"
+            color="green"
+            onClick={this.navigateToSkillsList}
+            icon="up arrow"
+            data-position="top right"
+            data-tooltip="Go up to Tutorial list"
+          />
+        </div>
 
         <Divider
           as={Header}
           color="grey"
           size="tiny"
+          style={{ marginTop: '3.5em' }}
           horizontal
           content={getFriendlyName(this.props.skillPath)}
         />
 
         {isCompleted && (
-          <Message size="small" icon style={{ paddingBottom: 0 }}>
+          <Message size="small" icon>
             <Icon color="green" name="check circle" />
             <Message.Content>
               <Message.Header>Completed...</Message.Header>

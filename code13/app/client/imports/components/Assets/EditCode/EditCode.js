@@ -363,8 +363,10 @@ class EditCode extends React.Component {
         const edHeight = window.innerHeight - (16 + $sPane.getBoundingClientRect().top)
         ed.setSize('100%', `${edHeight}px`)
 
+        // Resize right panes
         const sc = document.querySelector('.simplified-container')
         sc.style.height = `${edHeight}px`
+        sc.style.maxHeight = `${edHeight}px`
       }
       window.addEventListener('resize', this.edResizeHandler)
       this.edResizeHandler()
@@ -1979,10 +1981,11 @@ class EditCode extends React.Component {
         startRun()
       })
 
-    this.openAccordionByKey('code-runner')
+    !this.isSimplifiedView && this.openAccordionByKey('code-runner')
   }
 
   handleStop = options => {
+    console.log('ayy')
     this.postToIFrame('stop', options)
     this.setState({
       isPlaying: false,
@@ -3263,6 +3266,8 @@ class EditCode extends React.Component {
         key="gameScreen"
         ref="gameScreen"
         isPopup={isPopup}
+        isPopupOnly={this.isCodeTutorial}
+        isHidden={this.isChallenge}
         isPlaying={this.state.isPlaying}
         isAutoRun={this.isAutoRun}
         onAutoRun={this.handleAutoRun}
@@ -3273,6 +3278,98 @@ class EditCode extends React.Component {
         handleStop={this.handleGamePopup}
         onEvent={this.handleGameScreenEvent}
       />
+    )
+  }
+
+  // Simplified views of right panels (replaces accordions)
+  // For HoC, Code Challenges, and Code Tutorials
+  renderHoc = tbConfig => {
+    return (
+      <div>
+        {this.bound_handle_iFrameMessageReceiver ? (
+          <div>
+            <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
+            {this.renderGameScreen()}
+            <ConsoleMessageViewer
+              messages={this.state.consoleMessages}
+              gotoLinehandler={this.gotoLineHandler.bind(this)}
+              clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
+              style={{
+                width: '100%',
+                maxHeight: '150px',
+              }}
+            />
+          </div>
+        ) : (
+          <Dimmer inverted active>
+            <Loader>Preparing code runner...</Loader>
+          </Dimmer>
+        )}
+      </div>
+    )
+  }
+
+  renderCodeTutorial = (asset, currUser) => {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexFlow: 'column',
+          height: 'inherit',
+          overflowY: 'auto',
+        }}
+      >
+        <div style={{ overflowY: 'auto', flex: '1 1 auto' }}>
+          <CodeTutorials
+            style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+            isOwner={currUser && currUser._id === asset.ownerId}
+            active={!!asset.skillPath}
+            skillPath={asset.skillPath}
+            codeMirror={this.codeMirror}
+            currUser={currUser}
+            userSkills={this.userSkills}
+            quickSave={this.quickSave.bind(this)}
+            runCode={this.handleRun}
+            highlightLines={this.highlightLines.bind(this)}
+            assetId={asset._id}
+            asset={asset}
+          />
+        </div>
+        <div style={{ flex: '0 1 225px', marginTop: '1em' }}>
+          {this.renderGameScreen()}
+          <ConsoleMessageViewer
+            messages={this.state.consoleMessages}
+            gotoLinehandler={this.gotoLineHandler.bind(this)}
+            clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
+            style={{
+              overflow: 'auto',
+              width: '100%',
+              maxHeight: '150px',
+            }}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  renderCodeChallenge = (asset, currUser) => {
+    return (
+      <div
+        style={{
+          height: '100%',
+          overflowY: 'auto',
+        }}
+      >
+        <CodeChallenges
+          style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+          active={!!asset.skillPath}
+          skillPath={asset.skillPath}
+          codeMirror={this.codeMirror}
+          currUser={currUser}
+          userSkills={this.userSkills}
+          runChallengeDate={this.state.runChallengeDate}
+        />
+      </div>
     )
   }
 
@@ -3486,79 +3583,13 @@ class EditCode extends React.Component {
                   />
                 </div>
               ) : (
-                <Segment
-                  className="simplified-container"
-                  raised
-                  style={{
-                    overflowY: 'auto',
-                    display: 'flex',
-                    flexDirection: 'column',
-                  }}
-                >
-                  {this.isGuest ? this.bound_handle_iFrameMessageReceiver ? (
-                    <div>
-                      <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
-                      {this.renderGameScreen()}
-                      <ConsoleMessageViewer
-                        messages={this.state.consoleMessages}
-                        gotoLinehandler={this.gotoLineHandler.bind(this)}
-                        clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
-                        style={{
-                          width: '100%',
-                          maxHeight: '150px',
-                        }}
-                      />
-                    </div>
+                <Segment raised style={{ overflow: 'hidden' }} className="simplified-container">
+                  {this.isGuest ? (
+                    this.renderHoc(tbConfig)
+                  ) : this.isChallenge ? (
+                    this.renderCodeChallenge(asset, currUser)
                   ) : (
-                    <Dimmer inverted active>
-                      <Loader>Preparing code runner...</Loader>
-                    </Dimmer>
-                  ) : (
-                    // Tutorial container
-                    <div style={{ overflowY: 'auto' }}>
-                      <div style={{ flex: 3 }}>
-                        {this.isChallenge && (
-                          <CodeChallenges
-                            style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
-                            active={!!asset.skillPath}
-                            skillPath={asset.skillPath}
-                            codeMirror={this.codeMirror}
-                            currUser={currUser}
-                            userSkills={this.userSkills}
-                            runChallengeDate={this.state.runChallengeDate}
-                          />
-                        )}
-                        {this.isCodeTutorial && (
-                          <CodeTutorials
-                            style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
-                            isOwner={currUser && currUser._id === asset.ownerId}
-                            active={!!asset.skillPath}
-                            skillPath={asset.skillPath}
-                            codeMirror={this.codeMirror}
-                            currUser={currUser}
-                            userSkills={this.userSkills}
-                            quickSave={this.quickSave.bind(this)}
-                            runCode={this.handleRun}
-                            highlightLines={this.highlightLines.bind(this)}
-                            assetId={asset._id}
-                            asset={asset}
-                          />
-                        )}
-                      </div>
-                      <div style={{ flex: 2, marginTop: '1em' }}>
-                        {!this.isChallenge && this.renderGameScreen()}
-                        <ConsoleMessageViewer
-                          messages={this.state.consoleMessages}
-                          gotoLinehandler={this.gotoLineHandler.bind(this)}
-                          clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
-                          style={{
-                            overflow: 'auto',
-                            width: '100%',
-                            maxHeight: '150px',
-                          }}
-                        />
-                      </div>
-                    </div>
+                    this.isCodeTutorial && this.renderCodeTutorial(asset, currUser)
                   )}
                 </Segment>
               )}

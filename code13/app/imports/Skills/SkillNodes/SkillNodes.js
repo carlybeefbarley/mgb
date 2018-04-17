@@ -393,7 +393,7 @@ export const artItems = [
 
 export const codeItems = [
   {
-    mascot: 'bigguy',
+    mascot: 'javascript-logo',
     icon: 'code',
     content: 'Intro to Coding',
     link: '/learn/code/intro',
@@ -405,7 +405,7 @@ export const codeItems = [
   },
   {
     mascot: 'phaserLogo',
-    icon: 'code',
+    icon: 'game',
     content: 'Make Your First Game From Scratch',
     link: '/learn/code/phaser',
     skillPath: 'code.js.phaser',
@@ -433,7 +433,7 @@ export const codeItems = [
     desc: `We provide some working games that you can fork (copy) and change as you wish.`,
   },
   {
-    mascot: 'javascript-logo',
+    mascot: 'bigguy',
     icon: 'code',
     content: 'Advanced Coding',
     link: '/learn/code/advanced',

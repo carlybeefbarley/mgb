@@ -2,7 +2,7 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Button } from 'semantic-ui-react'
+import { Button, Segment, Dimmer, Loader } from 'semantic-ui-react'
 
 import OutputError from './OutputError'
 import OutputConsole from './OutputConsole'
@@ -17,6 +17,7 @@ import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLi
 import refreshBadgeStatus from '/client/imports/helpers/refreshBadgeStatus'
 import { learnSkill } from '/imports/schemas/skills'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
+import { ConsoleMessageViewer } from '/client/imports/components/Assets/EditCode/ConsoleMessageViewer'
 
 import '../editcode.css'
 import getCDNWorker from '/client/imports/helpers/CDNWorker'

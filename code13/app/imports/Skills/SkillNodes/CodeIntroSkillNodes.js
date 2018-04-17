@@ -57,10 +57,10 @@ const CodeIntroSkillNodes = {
       ...C.E.$meta,
     },
   },
-  // This reusable functions tutorial is new to MGB
-  reusableFunctions: {
+  // This debugging/console tutorial is new to MGB
+  debuggingAndConsole: {
     $meta: {
-      name: 'Write Reusable JavaScript Functions',
+      name: 'Introduction to the Debugging Challenge and Using the Dev Console',
       icon: 'code',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
@@ -68,9 +68,10 @@ const CodeIntroSkillNodes = {
     },
   },
 
-  arrayVariable: {
+  // This reusable functions tutorial is new to MGB
+  reusableFunctions: {
     $meta: {
-      name: 'Store Multiple Values in one Variable using JavaScript Arrays',
+      name: 'Write Reusable JavaScript Functions',
       icon: 'code',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
@@ -116,7 +117,18 @@ const CodeIntroSkillNodes = {
   },
   returnValue: {
     $meta: {
-      name: 'Return a Value from a Function with Return and Assign a Returned Value', // Name changed
+      name:
+        'Return a Value from a Function with Return, Understand Undefined Values Returned from a Function, and Assignment with a Returned Value', // Name changed
+      icon: 'code',
+      subsection: 'Introduction to JavaScript',
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+
+  arrayVariable: {
+    $meta: {
+      name: 'Store Multiple Values in one Variable using JavaScript Arrays',
       icon: 'code',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',

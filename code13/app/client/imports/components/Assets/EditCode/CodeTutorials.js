@@ -38,7 +38,6 @@ export default class CodeTutorials extends React.Component {
     this.skillNode = SkillNodes.$meta.map[props.skillPath]
     this.skillName = _.last(_.split(props.skillPath, '.'))
     this.isPhaserTutorial = isPhaserTutorial(props.skillPath)
-
     this.state = {
       step: 0, // curent step of tutorial
       isCompleted: false, // indicator if current tutorial is completed and we need to show modal
@@ -106,7 +105,10 @@ export default class CodeTutorials extends React.Component {
   }
 
   navigateToSkillsList = () => {
-    const returnToSkillsUrl = this.isPhaserTutorial ? '/learn/code/phaser' : '/learn/code/games'
+    let skillPathArr = _.split(this.props.skillPath, '.')
+    skillPathArr.pop()
+    const returnToSkillsUrl = '/learn/code/' + skillPathArr.pop()
+
     utilPushTo(null, returnToSkillsUrl)
   }
 

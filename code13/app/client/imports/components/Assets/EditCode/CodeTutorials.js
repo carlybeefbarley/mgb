@@ -4,7 +4,7 @@ import React from 'react'
 import { Button, Modal, Icon, Message, Divider, Header } from 'semantic-ui-react'
 
 import { mgbAjax } from '/client/imports/helpers/assetFetchers'
-import SkillNodes, { isPhaserTutorial, getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
+import SkillNodes, { isPhaserTutorial, getFriendlyName, getNode } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import { learnSkill } from '/imports/schemas/skills'
 import { logActivity } from '/imports/schemas/activity'
@@ -115,25 +115,30 @@ export default class CodeTutorials extends React.Component {
     //  $meta.tests
     //  $meta.code
     //  $meta.description
-    let skillsArr = []
-    let learnGroup
 
-    if (_.startsWith(this.props.skillPath, 'code.js.phaser')) {
-      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.phaser']), '$meta')
-      learnGroup = 'phaser'
+    let skillsArr = []
+    let learnGroup = 'basics'
+
+    if (_.startsWith(this.props.skillPath, 'code.js.intro')) {
+      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.intro']), '$meta')
+      learnGroup = 'intro'
     }
 
-    if (_.startsWith(this.props.skillPath, 'code.js.games')) {
-      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.games']), '$meta')
-      learnGroup = 'games'
+    if (_.startsWith(this.props.skillPath, 'code.js.advanced')) {
+      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.advanced']), '$meta')
+      learnGroup = 'advanced'
     }
 
     const idx = skillsArr.indexOf(this.skillName)
     if (idx < skillsArr.length - 1) {
       const nextSkillName = skillsArr[idx + 1]
-      StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser)
+      this.setState({ pendingLoadNextSkill: true })
+      // TODO - pass in area!
+      const newSkillPath = `code.js.${learnGroup}.${nextSkillName}`
+      const newSkillNode = getNode(newSkillPath).$meta
+      StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser, false, newSkillNode)
     } else {
-      utilPushTo(null, '/learn/code' + learnGroup)
+      utilPushTo(null, '/learn/code')
     }
   }
 

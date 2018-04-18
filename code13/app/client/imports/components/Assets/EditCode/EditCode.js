@@ -185,10 +185,8 @@ class EditCode extends React.Component {
     this.isAutoRun = this.isGuest
 
     // indicates if code is challenge and/or tutorial
-    this.isChallenge = false
-    this.isCodeTutorial = false
-    this.isChallenge = isPathChallenge(this.props.asset.skillPath)
-    this.isCodeTutorial = isPathCodeTutorial(this.props.asset.skillPath)
+    this.isChallenge = this.props.asset.skillPath && isPathChallenge(this.props.asset.skillPath)
+    this.isCodeTutorial = this.props.asset.skillPath && isPathCodeTutorial(this.props.asset.skillPath)
     this.isTutorialView = this.isCodeTutorial || this.isChallenge
   }
 

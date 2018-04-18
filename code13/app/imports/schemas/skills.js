@@ -148,14 +148,14 @@ export const hasSkillCount = (skillsObj, skillPath, requiredCount) => {
 
 export const learnSkill = (dottedSkillKey, userID) => {
   Meteor.call('Skill.learn', dottedSkillKey, userID, (err, result) => {
-    console.log(`${result} Skill learned: '${dottedSkillKey}'. Err=`, err)
+    console.log(`${result} Skill learned: '${dottedSkillKey}'. Err=`, err || '(no error)')
   })
   // TODO: set it with a rounded timestamp so we know timeline and recency of this skill change
 }
 
 export const forgetSkill = (dottedSkillKey, userID) => {
   Meteor.call('Skill.forget', dottedSkillKey, userID, (err, result) => {
-    console.log(`${result} Skill forgotten: '${dottedSkillKey}'. Err=`, err)
+    console.log(`${result} Skill forgotten: '${dottedSkillKey}'. Err=`, err || '(no error)')
   })
 }
 

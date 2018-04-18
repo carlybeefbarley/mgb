@@ -2,7 +2,7 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Button } from 'semantic-ui-react'
+import { Button, Segment, Dimmer, Loader } from 'semantic-ui-react'
 
 import OutputError from './OutputError'
 import OutputConsole from './OutputConsole'
@@ -12,11 +12,12 @@ import ChallengeCompleted from './ChallengeCompleted'
 import ChallengeResults from './ChallengeResults'
 
 import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
-import SkillNodes, { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
+import SkillNodes, { getFriendlyName, getNode } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import refreshBadgeStatus from '/client/imports/helpers/refreshBadgeStatus'
 import { learnSkill } from '/imports/schemas/skills'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
+import { ConsoleMessageViewer } from '/client/imports/components/Assets/EditCode/ConsoleMessageViewer'
 
 import '../editcode.css'
 import getCDNWorker from '/client/imports/helpers/CDNWorker'
@@ -192,6 +193,7 @@ export default class CodeChallenges extends React.Component {
     //  $meta.tests
     //  $meta.code
     //  $meta.description
+
     let skillsArr = []
     let learnGroup = 'basics'
 
@@ -209,7 +211,10 @@ export default class CodeChallenges extends React.Component {
     if (idx < skillsArr.length - 1) {
       const nextSkillName = skillsArr[idx + 1]
       this.setState({ pendingLoadNextSkill: true })
-      StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser)
+      // TODO - pass in area!
+      const newSkillPath = `code.js.${learnGroup}.${nextSkillName}`
+      const newSkillNode = getNode(newSkillPath).$meta
+      StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser, false, newSkillNode)
     } else {
       utilPushTo(null, '/learn/code')
     }

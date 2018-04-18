@@ -48,7 +48,8 @@ class SkillAction extends React.Component {
       const l = skillPathArr.length
       const section = skillPathArr[l - 2]
       const subSection = skillPathArr[l - 1]
-      StartJsGamesRoute(section, subSection, currUser)
+
+      StartJsGamesRoute(section, subSection, currUser, false, getNode(nextSkillPath))
     } else {
       // joyride tutorial
       joyride.startSkillPathTutorial(nextSkillPath)

@@ -136,7 +136,7 @@ class ToolWindow extends Component {
   }
 
   renderTitleBar = () => {
-    const { color, icon, minimized, size, title } = this.props
+    const { color, icon, minimized, size, title, onMinimize } = this.props
     const style = {
       display: 'flex',
       alignItems: 'center',
@@ -169,15 +169,17 @@ class ToolWindow extends Component {
         <div style={titleStyle}>
           {Icon.create(icon)} {title}
         </div>
-        <Button
-          compact
-          color={color}
-          title={minimized ? 'Maximize' : 'Minimize'}
-          size="small"
-          icon={minimized ? 'window maximize' : 'window minimize'}
-          onMouseDown={this.stopEvent}
-          onClick={this.toggleMinimize}
-        />
+        {onMinimize && (
+          <Button
+            compact
+            color={color}
+            title={minimized ? 'Maximize' : 'Minimize'}
+            size="small"
+            icon={minimized ? 'window maximize' : 'window minimize'}
+            onMouseDown={this.stopEvent}
+            onClick={this.toggleMinimize}
+          />
+        )}
         <Button
           compact
           color={color}

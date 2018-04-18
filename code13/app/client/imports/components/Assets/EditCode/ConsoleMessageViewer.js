@@ -82,29 +82,30 @@ const ConsoleMessageViewer = React.createClass({
     if (!messages) return null
 
     return (
-      <div
-        id="mgbjr-EditCode-console"
-        className="ui secondary segment"
-        style={{
-          maxHeight: '200px',
-          // overflow: "auto",
-          clear: 'both',
-          margin: 0,
-        }}
-      >
-        <div className="header">
+      <div style={{ position: 'relative' }}>
+        <div className="header" style={{ position: 'absolute', top: '1em', right: '1em', zIndex: 9 }}>
           {messages.length > 0 &&
           clearConsoleHandler && (
             <i
-              style={{ position: 'absolute', top: '0', right: '0' }}
+              style={{ cursor: 'pointer' }}
               className="ui ban outline icon"
               title="clear console"
               onClick={clearConsoleHandler}
             />
           )}
         </div>
-        <div className="message-container" ref="msgContainer" style={style}>
-          {this.smartRender()}
+        <div
+          id="mgbjr-EditCode-console"
+          className="ui secondary segment"
+          style={{
+            height: '150px',
+            width: '100%',
+            overflow: 'auto',
+          }}
+        >
+          <div className="message-container" ref="msgContainer" style={style}>
+            {this.smartRender()}
+          </div>
         </div>
       </div>
     )

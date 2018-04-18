@@ -160,6 +160,14 @@ export default class CodeTutorials extends React.Component {
             zIndex: 99,
           }}
         >
+          <Button
+            compact
+            size="small"
+            color="green"
+            onClick={this.handleRunCode}
+            icon="play"
+            content="Run code"
+          />
           {this.skillNode.$meta.isTask && (
             <Button
               compact
@@ -197,15 +205,6 @@ export default class CodeTutorials extends React.Component {
             basic
             size="small"
             color="green"
-            onClick={this.handleRunCode}
-            icon="play"
-            content="Run code"
-          />
-          <Button
-            compact
-            basic
-            size="small"
-            color="green"
             onClick={this.resetCode}
             icon="refresh"
             content="Reset code"
@@ -231,59 +230,59 @@ export default class CodeTutorials extends React.Component {
             data-tooltip="Go up to Tutorial list"
           />
         </div>
+        <div style={{ marginTop: '2.5em', padding: '1em' }}>
+          <Divider
+            as={Header}
+            color="grey"
+            size="tiny"
+            horizontal
+            content={getFriendlyName(this.props.skillPath)}
+          />
 
-        <Divider
-          as={Header}
-          color="grey"
-          size="tiny"
-          style={{ marginTop: '3.5em' }}
-          horizontal
-          content={getFriendlyName(this.props.skillPath)}
-        />
+          {isCompleted && (
+            <Message size="small" icon>
+              <Icon color="green" name="check circle" />
+              <Message.Content>
+                <Message.Header>Completed...</Message.Header>
+                <Button
+                  positive
+                  compact
+                  size="small"
+                  content="Next Tutorial"
+                  icon="right arrow"
+                  labelPosition="right"
+                  {..._smallTopMarginSty}
+                  onClick={this.nextTutorial}
+                />
+              </Message.Content>
+            </Message>
+          )}
 
-        {isCompleted && (
-          <Message size="small" icon>
-            <Icon color="green" name="check circle" />
-            <Message.Content>
-              <Message.Header>Completed...</Message.Header>
-              <Button
-                positive
-                compact
-                size="small"
-                content="Next Tutorial"
-                icon="right arrow"
-                labelPosition="right"
-                {..._smallTopMarginSty}
-                onClick={this.nextTutorial}
-              />
-            </Message.Content>
-          </Message>
-        )}
+          {totalSteps > 1 && (
+            <div style={{ color: '#aaa' }}>
+              <small>
+                Step #{1 + this.state.step} of {totalSteps}
+              </small>
+            </div>
+          )}
 
-        {totalSteps > 1 && (
-          <div style={{ color: '#aaa' }}>
-            <small>
-              Step #{1 + this.state.step} of {totalSteps}
-            </small>
-          </div>
-        )}
+          <div style={{ marginTop: '0.5em' }} dangerouslySetInnerHTML={{ __html: description }} />
 
-        <div style={{ marginTop: '0.5em' }} dangerouslySetInnerHTML={{ __html: description }} />
-
-        {isTaskSubmitted && (
-          <Modal closeOnDocumentClick closeOnRootNodeClick={false} defaultOpen>
-            <Modal.Header>
-              <Icon size="big" color="green" name="check circle" />
-              Task submitted
-            </Modal.Header>
-            <Modal.Content>
-              Your task has been submitted for review. One of the moderators will look at it soon.
-            </Modal.Content>
-            <Modal.Actions>
-              <Button positive content="Tutorial List" onClick={this.navigateToSkillsList} />
-            </Modal.Actions>
-          </Modal>
-        )}
+          {isTaskSubmitted && (
+            <Modal closeOnDocumentClick closeOnRootNodeClick={false} defaultOpen>
+              <Modal.Header>
+                <Icon size="big" color="green" name="check circle" />
+                Task submitted
+              </Modal.Header>
+              <Modal.Content>
+                Your task has been submitted for review. One of the moderators will look at it soon.
+              </Modal.Content>
+              <Modal.Actions>
+                <Button positive content="Tutorial List" onClick={this.navigateToSkillsList} />
+              </Modal.Actions>
+            </Modal>
+          )}
+        </div>
       </div>
     )
   }

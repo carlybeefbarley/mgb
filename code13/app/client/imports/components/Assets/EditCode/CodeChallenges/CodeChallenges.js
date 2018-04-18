@@ -306,7 +306,7 @@ export default class CodeChallenges extends React.Component {
             data-tooltip="Go up to Challenges list"
           />
         </div>
-        <div style={{ marginTop: '3.5em' }}>
+        <div style={{ marginTop: '2.5em', padding: '1em' }}>
           <OutputError error={this.state.error} />
 
           <OutputConsole console={this.state.console} />

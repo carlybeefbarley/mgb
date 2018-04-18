@@ -58,7 +58,6 @@ export default class GameScreen extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     this.getReference()
-    if (!prevProps.isPlaying && this.props.isPlaying && this.state.isMinimized) this.handleMinimizeClick()
 
     if (!this.state.fullScreen && GameScreen.popup) GameScreen.popup.close()
   }
@@ -194,7 +193,7 @@ export default class GameScreen extends React.Component {
   }
 
   // click handlers for Buttons on this component when in the props.isPopup==true state
-  handleMinimizeClick = () => {
+  handleMinimizeToggle() {
     this.setState({ isMinimized: !this.state.isMinimized })
   }
 
@@ -210,7 +209,7 @@ export default class GameScreen extends React.Component {
 
   // adjust iFrame size. This is initiated by an event
   adjustIframe(size) {
-    if (this.state.isMinimized || this.state.fullScreen) {
+    if (this.state.fullScreen) {
       return
     }
 
@@ -266,7 +265,7 @@ export default class GameScreen extends React.Component {
 
   render() {
     // we have opened popup - so we can hide everything else
-    if (this.state.fullScreen || this.state.isMinimized) return null
+    if (this.state.fullScreen) return null
 
     const { isPopup, isPlaying, isPopupOnly } = this.props
     const { isHidden, isMinimized } = this.state
@@ -285,19 +284,21 @@ export default class GameScreen extends React.Component {
       bottom: this.screenY + 'px',
     }
 
+    const iframeStyle = {
+      overflow: 'auto',
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+    }
+
+    // Hide iframe when not playing without losing reference
+    if ((isPopupOnly && !isPlaying) || (isPopup && isPlaying)) {
+      iframeStyle.width = 0
+      iframeStyle.height = 0
+    }
     if (isHidden && !isPlaying) {
       wrapStyle.display = 'none'
     }
-    if ((isPopup && isPlaying) || isPopupOnly) {
-      wrapStyle.display = 'none'
-    }
-    if (isMinimized) {
-      wrapStyle.bottom = '0'
-      wrapStyle.right = '0'
-      wrapStyle.height = 0
-      wrapStyle.minHeight = 0
-    }
-
     const hocUrl = this.props.hocStepId ? `&hocStepId=${this.props.hocStepId}` : ``
 
     return (
@@ -324,8 +325,8 @@ export default class GameScreen extends React.Component {
           >
             <iframe
               style={{
-                minWidth: '100%',
                 minHeight: '95%', // 100% creates scrollbars
+                display: 'block',
               }}
               ref="iFrame1"
               sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
@@ -334,14 +335,12 @@ export default class GameScreen extends React.Component {
               id="mgbjr-EditCode-sandbox-iframe"
             />
           </ToolWindow>
-        ) : !isPopupOnly ? (
-          <div style={{ overflow: 'auto', position: 'absolute', width: '100%', height: '100%' }}>
+        ) : (
+          <div style={iframeStyle}>
             <iframe
               style={{
-                display: this.state.isMinimized ? 'none' : 'block',
-                minWidth: '100%',
+                display: 'block',
                 minHeight: '95%', // 100% creates scrollbars
-                width: '100%',
               }}
               ref="iFrame1"
               sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
@@ -350,7 +349,7 @@ export default class GameScreen extends React.Component {
               id="mgbjr-EditCode-sandbox-iframe"
             />
           </div>
-        ) : null}
+        )}
       </div>
     )
   }

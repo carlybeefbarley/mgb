@@ -101,7 +101,7 @@ const _infoPaneModes = [
   { col1: 'ten', col2: 'six' },
   { col1: 'sixteen', col2: null },
   { col1: 'six', col2: 'ten' },
-  { col1: 'nine', col2: 'seven' },
+  { col1: 'eight', col2: 'eight' },
 ]
 
 // Code asset - Data format:
@@ -189,7 +189,7 @@ class EditCode extends React.Component {
     this.isCodeTutorial = false
     this.isChallenge = isPathChallenge(this.props.asset.skillPath)
     this.isCodeTutorial = isPathCodeTutorial(this.props.asset.skillPath)
-    this.isSimplifiedView = this.isGuest || this.isCodeTutorial || this.isChallenge
+    this.isTutorialView = this.isCodeTutorial || this.isChallenge
   }
 
   handleJsBeautify() {
@@ -363,10 +363,12 @@ class EditCode extends React.Component {
         const edHeight = window.innerHeight - (16 + $sPane.getBoundingClientRect().top)
         ed.setSize('100%', `${edHeight}px`)
 
-        // Resize right panes
-        const sc = document.querySelector('.simplified-container')
-        sc.style.height = `${edHeight}px`
-        sc.style.maxHeight = `${edHeight}px`
+        if (this.isTutorialView) {
+          // Resize right panes
+          const sc = document.querySelector('.tutorial-container')
+          sc.style.height = `${edHeight}px`
+          sc.style.maxHeight = `${edHeight}px`
+        }
       }
       window.addEventListener('resize', this.edResizeHandler)
       this.edResizeHandler()
@@ -1981,11 +1983,10 @@ class EditCode extends React.Component {
         startRun()
       })
 
-    !this.isSimplifiedView && this.openAccordionByKey('code-runner')
+    !this.isTutorialView && this.openAccordionByKey('code-runner')
   }
 
   handleStop = options => {
-    console.log('ayy')
     this.postToIFrame('stop', options)
     this.setState({
       isPlaying: false,
@@ -2073,8 +2074,7 @@ class EditCode extends React.Component {
   }
 
   handleGamePopout = () => {
-    this.refs.gameScreen && this.refs.gameScreen.popup()
-    this.handleRun()
+    this.refs.gameScreen && this.refs.gameScreen.popup(), this.handleRun()
   }
 
   /**
@@ -2309,103 +2309,104 @@ class EditCode extends React.Component {
   generateToolbarConfig() {
     const history = this.codeMirror ? this.codeMirror.historySize() : { undo: 0, redo: 0 }
 
-    var config = this.isSimplifiedView
-      ? {
-          buttons: [],
-        }
-      : {
-          // level: 2,    // default level -- This is now in expectedToolbars.getDefaultLevel
-          buttons: [
-            {
-              name: 'doUndo',
-              icon: 'undo',
-              label: 'Undo',
-              iconText: history.undo ? history.undo : '',
-              disabled: !history.undo,
-              tooltip: 'Undo last action',
-              level: 1,
-              shortcut: 'Ctrl+Z',
-            },
-            {
-              name: 'doRedo',
-              icon: 'undo flip', // redo is flipped undo
-              iconText: '', // history.redo ? history.redo : '',
-              label: 'Redo',
-              disabled: !history.redo,
-              tooltip: 'Redo previous action',
-              level: 1,
-              shortcut: 'Ctrl+Shift+Z',
-            },
-            { name: 'separator' },
-            {
-              name: 'goBack',
-              icon: 'arrow left',
-              level: 2,
-              label: 'Go Back',
-              tooltip: 'This action will move cursor to the previous location',
-              disabled: !this.cursorHistory.undo.length,
-              shortcut: 'Ctrl+Alt+LEFT',
-            },
-            {
-              name: 'goForward',
-              icon: 'arrow right',
-              label: 'Go Forward',
-              level: 2,
-              tooltip: 'This action will move cursor to the next location',
-              disabled: !this.cursorHistory.redo.length,
-              shortcut: 'Ctrl+Alt+RIGHT',
-            },
-            { name: 'separator' },
-            {
-              name: 'toolZoomOut',
-              label: 'Small Font',
-              icon: 'zoom out',
-              tooltip: 'Smaller Text',
-              disabled: false,
-              level: 2,
-              shortcut: 'Ctrl+P',
-            },
-            {
-              name: 'toolZoomIn',
-              label: 'Large font',
-              icon: 'zoom in',
-              tooltip: 'Larger text',
-              disabled: false,
-              level: 2,
-              shortcut: 'Ctrl+L',
-            },
-            { name: 'separator' },
-            {
-              name: 'handleJsBeautify',
-              label: 'Beautify Code',
-              icon: 'leaf',
-              tooltip: 'Beautify: Auto-format your code',
-              disabled: false,
-              level: 3,
-              shortcut: 'Ctrl+B',
-            },
-            { name: 'separator' },
-            {
-              name: 'toggleFold',
-              label: this.mgb_code_folded ? 'Expand all nodes' : 'Fold all nodes',
-              icon: this.mgb_code_folded ? 'expand' : 'compress',
-              tooltip: this.mgb_code_folded ? 'Unfold all nodes in the code' : 'Fold all nodes in the code',
-              disabled: false,
-              level: 3,
-              shortcut: 'Ctrl+Shift+\\',
-            },
-            { name: 'separator' },
-            {
-              name: 'toolToggleInfoPane',
-              label: 'Info Panels',
-              icon: 'resize horizontal',
-              tooltip: 'Resize Info Pane',
-              disabled: false,
-              level: 1,
-              shortcut: 'Ctrl+I',
-            },
-          ],
-        }
+    var config =
+      this.isTutorialView || this.isGuest
+        ? {
+            buttons: [],
+          }
+        : {
+            // level: 2,    // default level -- This is now in expectedToolbars.getDefaultLevel
+            buttons: [
+              {
+                name: 'doUndo',
+                icon: 'undo',
+                label: 'Undo',
+                iconText: history.undo ? history.undo : '',
+                disabled: !history.undo,
+                tooltip: 'Undo last action',
+                level: 1,
+                shortcut: 'Ctrl+Z',
+              },
+              {
+                name: 'doRedo',
+                icon: 'undo flip', // redo is flipped undo
+                iconText: '', // history.redo ? history.redo : '',
+                label: 'Redo',
+                disabled: !history.redo,
+                tooltip: 'Redo previous action',
+                level: 1,
+                shortcut: 'Ctrl+Shift+Z',
+              },
+              { name: 'separator' },
+              {
+                name: 'goBack',
+                icon: 'arrow left',
+                level: 2,
+                label: 'Go Back',
+                tooltip: 'This action will move cursor to the previous location',
+                disabled: !this.cursorHistory.undo.length,
+                shortcut: 'Ctrl+Alt+LEFT',
+              },
+              {
+                name: 'goForward',
+                icon: 'arrow right',
+                label: 'Go Forward',
+                level: 2,
+                tooltip: 'This action will move cursor to the next location',
+                disabled: !this.cursorHistory.redo.length,
+                shortcut: 'Ctrl+Alt+RIGHT',
+              },
+              { name: 'separator' },
+              {
+                name: 'toolZoomOut',
+                label: 'Small Font',
+                icon: 'zoom out',
+                tooltip: 'Smaller Text',
+                disabled: false,
+                level: 2,
+                shortcut: 'Ctrl+P',
+              },
+              {
+                name: 'toolZoomIn',
+                label: 'Large font',
+                icon: 'zoom in',
+                tooltip: 'Larger text',
+                disabled: false,
+                level: 2,
+                shortcut: 'Ctrl+L',
+              },
+              { name: 'separator' },
+              {
+                name: 'handleJsBeautify',
+                label: 'Beautify Code',
+                icon: 'leaf',
+                tooltip: 'Beautify: Auto-format your code',
+                disabled: false,
+                level: 3,
+                shortcut: 'Ctrl+B',
+              },
+              { name: 'separator' },
+              {
+                name: 'toggleFold',
+                label: this.mgb_code_folded ? 'Expand all nodes' : 'Fold all nodes',
+                icon: this.mgb_code_folded ? 'expand' : 'compress',
+                tooltip: this.mgb_code_folded ? 'Unfold all nodes in the code' : 'Fold all nodes in the code',
+                disabled: false,
+                level: 3,
+                shortcut: 'Ctrl+Shift+\\',
+              },
+              { name: 'separator' },
+              {
+                name: 'toolToggleInfoPane',
+                label: 'Info Panels',
+                icon: 'resize horizontal',
+                tooltip: 'Resize Info Pane',
+                disabled: false,
+                level: 1,
+                shortcut: 'Ctrl+I',
+              },
+            ],
+          }
 
     if (this.props.asset.kind === 'tutorial') {
       config.buttons.unshift({
@@ -2438,7 +2439,7 @@ class EditCode extends React.Component {
       })
     } else if (this.mgb_mode === 'jsx') {
       // code...
-      if (!this.isSimplifiedView) {
+      if (!(this.isTutorialView || this.isGuest)) {
         config.buttons.unshift({ name: 'separator' })
         config.buttons.unshift({
           name: 'toggleHotReload',
@@ -2514,9 +2515,9 @@ class EditCode extends React.Component {
         name: 'handleRun',
         label: 'Run code',
         icon: 'play',
-        iconText: this.isSimplifiedView ? 'Run Code' : '',
+        iconText: this.isTutorialView || this.isGuest ? 'Run Code' : '',
         tooltip: 'Run Code',
-        disabled: (!this.isSimplifiedView && this.state.isPlaying) || !this.state.astReady,
+        disabled: (!(this.isTutorialView || this.isGuest) && this.state.isPlaying) || !this.state.astReady,
         level: 1,
         shortcut: 'Ctrl+ENTER',
       })
@@ -2882,7 +2883,9 @@ class EditCode extends React.Component {
     const isPlaying = this.state.isPlaying
 
     const stringReferences = this.getStringReferences()
-    const infoPaneOpts = this.isSimplifiedView ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
+    const infoPaneOpts = this.isGuest
+      ? _infoPaneModes[3]
+      : this.isTutorialView ? _infoPaneModes[0] : _infoPaneModes[this.state.infoPaneMode]
 
     const isPopup = this.state.isPopup || !infoPaneOpts.col2
 
@@ -3020,69 +3023,12 @@ class EditCode extends React.Component {
                   gotoLinehandler={this.gotoLineHandler.bind(this)}
                   clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
                   style={{
-                    overflow: 'auto',
-                    width: '100%',
+                    marginTop: '1em',
                     maxHeight: '150px',
-                    marginTop: '6px',
                   }}
                 />
               )}
             </div>
-          ),
-        },
-      },
-      docEmpty &&
-      !asset.isCompleted &&
-      !this.isCodeTutorial &&
-      !this.isChallenge &&
-      this.mgb_mode === 'jsx' && {
-        title: {
-          key: 'code-starter-title',
-          onClick: this.handleAccordionTitleClick,
-          // Clean sheet helper!
-          content: <span>Code Starter</span>,
-        },
-        content: {
-          key: 'code-starter-content',
-          content: <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />,
-        },
-      },
-      // Import Assistant HEADER
-      canEdit &&
-      !asset.isCompleted &&
-      !this.isCodeTutorial &&
-      !this.isChallenge &&
-      this.mgb_mode === 'jsx' && {
-        title: {
-          key: 'import-assistant-title',
-          onClick: this.handleAccordionTitleClick,
-          content: (
-            <span>
-              Import Assistant
-              <span style={{ float: 'right' }}>
-                {this.tools &&
-                (this.mgb_c2_hasChanged || !this.state.astReady) && (
-                  <Icon
-                    name="refresh"
-                    size="small"
-                    color={this.mgb_c2_hasChanged ? 'orange' : null}
-                    loading={this.state.astReady}
-                  />
-                )}
-                <ImportAssistantHeader knownImports={knownImports} />
-              </span>
-            </span>
-          ),
-        },
-        content: {
-          key: 'import-assistant-content',
-          content: this.state.astReady && (
-            <ImportHelperPanel
-              scripts={this.state.userScripts}
-              includeLocalImport={this.includeLocalImport}
-              includeExternalImport={this.includeExternalImport}
-              knownImports={knownImports}
-            />
           ),
         },
       },
@@ -3155,6 +3101,61 @@ class EditCode extends React.Component {
                 )}
               </div>
             ) : null,
+        },
+      },
+      docEmpty &&
+      !asset.isCompleted &&
+      !this.isCodeTutorial &&
+      !this.isChallenge &&
+      this.mgb_mode === 'jsx' && {
+        title: {
+          key: 'code-starter-title',
+          onClick: this.handleAccordionTitleClick,
+          // Clean sheet helper!
+          content: <span>Code Starter</span>,
+        },
+        content: {
+          key: 'code-starter-content',
+          content: <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />,
+        },
+      },
+      // Import Assistant HEADER
+      canEdit &&
+      !asset.isCompleted &&
+      !this.isCodeTutorial &&
+      !this.isChallenge &&
+      this.mgb_mode === 'jsx' && {
+        title: {
+          key: 'import-assistant-title',
+          onClick: this.handleAccordionTitleClick,
+          content: (
+            <span>
+              Import Assistant
+              <span style={{ float: 'right' }}>
+                {this.tools &&
+                (this.mgb_c2_hasChanged || !this.state.astReady) && (
+                  <Icon
+                    name="refresh"
+                    size="small"
+                    color={this.mgb_c2_hasChanged ? 'orange' : null}
+                    loading={this.state.astReady}
+                  />
+                )}
+                <ImportAssistantHeader knownImports={knownImports} />
+              </span>
+            </span>
+          ),
+        },
+        content: {
+          key: 'import-assistant-content',
+          content: this.state.astReady && (
+            <ImportHelperPanel
+              scripts={this.state.userScripts}
+              includeLocalImport={this.includeLocalImport}
+              includeExternalImport={this.includeExternalImport}
+              knownImports={knownImports}
+            />
+          ),
         },
       },
       !this.isCodeTutorial &&
@@ -3257,7 +3258,9 @@ class EditCode extends React.Component {
   renderGameScreen = () => {
     const { asset, hourOfCodeStore: { state: { currStepId } } } = this.props
 
-    const infoPaneOpts = this.isSimplifiedView ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
+    const infoPaneOpts = this.isGuest
+      ? _infoPaneModes[3]
+      : this.isTutorialView ? _infoPaneModes[0] : _infoPaneModes[this.state.infoPaneMode]
 
     const isPopup = this.state.isPopup || !infoPaneOpts.col2
 
@@ -3267,7 +3270,6 @@ class EditCode extends React.Component {
         ref="gameScreen"
         isPopup={isPopup}
         isPopupOnly={this.isCodeTutorial}
-        isHidden={this.isChallenge}
         isPlaying={this.state.isPlaying}
         isAutoRun={this.isAutoRun}
         onAutoRun={this.handleAutoRun}
@@ -3295,7 +3297,6 @@ class EditCode extends React.Component {
               gotoLinehandler={this.gotoLineHandler.bind(this)}
               clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
               style={{
-                width: '100%',
                 maxHeight: '150px',
               }}
             />
@@ -3319,9 +3320,9 @@ class EditCode extends React.Component {
           overflowY: 'auto',
         }}
       >
-        <div style={{ overflowY: 'auto', flex: '1 1 auto' }}>
+        <div style={{ overflowY: 'auto', flex: '1 1 auto', height: 'calc(100% - 2.5em)' }}>
           <CodeTutorials
-            style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
+            style={{ backgroundColor: 'rgba(0,255,0,0.02)', height: 'calc(100% - 2.5em)' }}
             isOwner={currUser && currUser._id === asset.ownerId}
             active={!!asset.skillPath}
             skillPath={asset.skillPath}
@@ -3335,15 +3336,13 @@ class EditCode extends React.Component {
             asset={asset}
           />
         </div>
-        <div style={{ flex: '0 1 225px', marginTop: '1em' }}>
+        <div style={{ flex: '0 1 150px', marginBottom: '2em', height: '100%' }}>
           {this.renderGameScreen()}
           <ConsoleMessageViewer
             messages={this.state.consoleMessages}
             gotoLinehandler={this.gotoLineHandler.bind(this)}
             clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
             style={{
-              overflow: 'auto',
-              width: '100%',
               maxHeight: '150px',
             }}
           />
@@ -3356,7 +3355,7 @@ class EditCode extends React.Component {
     return (
       <div
         style={{
-          height: '100%',
+          height: 'calc(100% - 2.5em)',
           overflowY: 'auto',
         }}
       >
@@ -3384,7 +3383,9 @@ class EditCode extends React.Component {
 
     this.codeMirror && this.codeMirror.setOption('readOnly', !this.props.canEdit)
 
-    const infoPaneOpts = this.isSimplifiedView ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
+    const infoPaneOpts = this.isGuest
+      ? _infoPaneModes[3]
+      : this.isTutorialView ? _infoPaneModes[0] : _infoPaneModes[this.state.infoPaneMode]
 
     const tbConfig = this.generateToolbarConfig()
 
@@ -3494,7 +3495,7 @@ class EditCode extends React.Component {
                   openVideoModal={this.handleOpenVideoModal}
                 />
               )}
-              {!this.isSimplifiedView && (
+              {!(this.isTutorialView || this.isGuest) && (
                 <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
               )}
               {!this.isGuest ? (
@@ -3572,7 +3573,7 @@ class EditCode extends React.Component {
               className={infoPaneOpts.col2 + ' wide column'}
               style={{ display: infoPaneOpts.col2 ? 'block' : 'none' }}
             >
-              {!this.isSimplifiedView ? (
+              {!(this.isTutorialView || this.isGuest) ? (
                 <div className="mgbAccordionScroller" style={fullSize}>
                   <Accordion
                     fluid
@@ -3583,7 +3584,7 @@ class EditCode extends React.Component {
                   />
                 </div>
               ) : (
-                <Segment raised style={{ overflow: 'hidden' }} className="simplified-container">
+                <Segment raised style={{ overflow: 'hidden' }} className="tutorial-container">
                   {this.isGuest ? (
                     this.renderHoc(tbConfig)
                   ) : this.isChallenge ? (
@@ -3595,7 +3596,7 @@ class EditCode extends React.Component {
               )}
             </div>
           </div>
-          {!this.isSimplifiedView && isPopup && this.renderGameScreen()}
+          {!(this.isTutorialView || this.isGuest) && isPopup && this.renderGameScreen()}
         </div>
       </div>
     )

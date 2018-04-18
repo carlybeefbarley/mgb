@@ -297,7 +297,7 @@ export default class CodeChallenges extends React.Component {
             color="green"
             onClick={_openHelpChat}
             icon="help"
-            data-position="top right"
+            data-position="bottom right"
             data-tooltip="Ask for help"
           />
           <Button
@@ -307,7 +307,7 @@ export default class CodeChallenges extends React.Component {
             color="green"
             onClick={_openChallengeList}
             icon="up arrow"
-            data-position="top right"
+            data-position="bottom right"
             data-tooltip="Go up to Challenges list"
           />
         </div>

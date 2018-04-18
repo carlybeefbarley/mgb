@@ -223,7 +223,7 @@ export default class CodeTutorials extends React.Component {
             color="green"
             onClick={_openHelpChat}
             icon="help"
-            data-position="top right"
+            data-position="bottom right"
             data-tooltip="Ask for help"
           />
           <Button
@@ -233,7 +233,7 @@ export default class CodeTutorials extends React.Component {
             color="green"
             onClick={this.navigateToSkillsList}
             icon="up arrow"
-            data-position="top right"
+            data-position="bottom right"
             data-tooltip="Go up to Tutorial list"
           />
         </div>

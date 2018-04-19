@@ -510,7 +510,7 @@ window.onload = function() {
             appendScript(source.name, source.code, saveModuleAndRun)
           }
         } else {
-          // don't log message if HoC or undefined source
+          // don't log message if HoC
           if (isHoC()) return false
           //console.info('MGB: All files have loaded!')
           sendSizeUpdate()

@@ -22,7 +22,7 @@ export default class GameScreen extends React.Component {
   static propTypes = {
     isPlaying: PropTypes.bool,
     isPopup: PropTypes.bool,
-    popupOnly: PropTypes.bool,
+    isPopupOnly: PropTypes.bool,
     asset: PropTypes.object,
     hocStepId: PropTypes.string,
     isAutoRun: PropTypes.bool,
@@ -296,7 +296,7 @@ export default class GameScreen extends React.Component {
       iframeStyle.width = 0
       iframeStyle.height = 0
     }
-    if ((isHidden && !isPlaying) || this.props.isHidden) {
+    if ((isHidden && !isPlaying) || isPopupOnly || this.props.isHidden) {
       wrapStyle.display = 'none'
     }
     const hocUrl = this.props.hocStepId ? `&hocStepId=${this.props.hocStepId}` : ``

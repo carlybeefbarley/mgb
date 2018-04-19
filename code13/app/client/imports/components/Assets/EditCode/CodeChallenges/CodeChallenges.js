@@ -111,6 +111,7 @@ export default class CodeChallenges extends React.Component {
           this.successPopup()
         }
         this.initWorker()
+        this.props.runCode()
       }
     }
 
@@ -132,7 +133,6 @@ export default class CodeChallenges extends React.Component {
       !this.state.data.tests // data not yet loaded from CDN
     )
       return false
-    this.props.runCode()
     const head = this.state.data.head || []
     const tail = this.state.data.tail || []
     const message = {

@@ -1935,8 +1935,6 @@ class EditCode extends React.Component {
 
   /** Start the code running! */
   handleRun = () => {
-    // exception for code challenges
-    // instead of standard iframe it runs CodeChallege component which has it's own iframe
     if (this.isChallenge) {
       this.setState({ runChallengeDate: Date.now() })
       //return false // don't need to execute further as CodeChallenges have all need functionality
@@ -1953,6 +1951,7 @@ class EditCode extends React.Component {
     const { asset } = this.props
 
     this.setState({ isPlaying: true })
+    console.log('how')
     // we don't want to hide tutorials so we open popup
     if (asset.skillPath && !this.state.isPopup) this.setState({ isPopup: true })
 

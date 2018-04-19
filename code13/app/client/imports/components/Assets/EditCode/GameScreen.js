@@ -26,7 +26,7 @@ export default class GameScreen extends React.Component {
     asset: PropTypes.object,
     hocStepId: PropTypes.string,
     isAutoRun: PropTypes.bool,
-
+    isHidden: PropTypes.bool, // Different from state - this means gamescreen should never show
     handleStop: PropTypes.func.isRequired,
     handleContentChange: PropTypes.func.isRequired,
     consoleAdd: PropTypes.func.isRequired,
@@ -292,11 +292,11 @@ export default class GameScreen extends React.Component {
     }
 
     // Hide iframe when not playing without losing reference
-    if ((isPopupOnly && !isPlaying) || (isPopup && isPlaying)) {
+    if ((isPopupOnly && !isPlaying) || (isPopup && isPlaying) || this.props.isHidden) {
       iframeStyle.width = 0
       iframeStyle.height = 0
     }
-    if (isHidden && !isPlaying) {
+    if ((isHidden && !isPlaying) || this.props.isHidden) {
       wrapStyle.display = 'none'
     }
     const hocUrl = this.props.hocStepId ? `&hocStepId=${this.props.hocStepId}` : ``
@@ -308,7 +308,7 @@ export default class GameScreen extends React.Component {
         className={isPopup && isPlaying ? 'popup' : 'accordion'}
         style={wrapStyle}
       >
-        {isPopup && isPlaying ? (
+        {isPopup && isPlaying && !this.props.isHidden ? (
           <ToolWindow
             open
             size="massive"

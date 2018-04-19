@@ -1,8 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import ReactDOM from 'react-dom'
-import { Button, Segment, Dimmer, Loader } from 'semantic-ui-react'
+import { Button } from 'semantic-ui-react'
 
 import OutputError from './OutputError'
 import OutputConsole from './OutputConsole'
@@ -11,14 +10,12 @@ import CodeCredits from './CodeCredits'
 import ChallengeCompleted from './ChallengeCompleted'
 import ChallengeResults from './ChallengeResults'
 
-import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
+import { mgbAjax } from '/client/imports/helpers/assetFetchers'
 import SkillNodes, { getFriendlyName, getNode } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import refreshBadgeStatus from '/client/imports/helpers/refreshBadgeStatus'
 import { learnSkill } from '/imports/schemas/skills'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
-import { ConsoleMessageViewer } from '/client/imports/components/Assets/EditCode/ConsoleMessageViewer'
-
 import '../editcode.css'
 import getCDNWorker from '/client/imports/helpers/CDNWorker'
 
@@ -31,6 +28,7 @@ const _runFrameConfig = {
   style: { display: 'none', width: '10px', height: '10px' },
   eventName: 'message',
   codeTestsDataPrefix: 'codeTests',
+  runCode: PropTypes.func,
 }
 
 const _openHelpChat = () => utilShowChatPanelChannel(window.location, 'G_MGBHELP_')
@@ -134,6 +132,7 @@ export default class CodeChallenges extends React.Component {
       !this.state.data.tests // data not yet loaded from CDN
     )
       return false
+    this.props.runCode()
     const head = this.state.data.head || []
     const tail = this.state.data.tail || []
     const message = {

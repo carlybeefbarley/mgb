@@ -1939,13 +1939,12 @@ class EditCode extends React.Component {
     // instead of standard iframe it runs CodeChallege component which has it's own iframe
     if (this.isChallenge) {
       this.setState({ runChallengeDate: Date.now() })
-      return false // don't need to execute further as CodeChallenges have all need functionality
+      //return false // don't need to execute further as CodeChallenges have all need functionality
     }
 
     // always make sure we are running latest sources and not stacking them
     if (this.state.isPlaying) this.handleStop()
-
-    this.consoleLog('Starting new game runner')
+    //this.consoleLog('Starting new game runner')
     if (!this.bound_handle_iFrameMessageReceiver)
       this.bound_handle_iFrameMessageReceiver = this._handle_iFrameMessageReceiver.bind(this)
 
@@ -3268,6 +3267,7 @@ class EditCode extends React.Component {
         ref="gameScreen"
         isPopup={isPopup}
         isPopupOnly={this.isCodeTutorial}
+        isHidden={this.isChallenge}
         isPlaying={this.state.isPlaying}
         isAutoRun={this.isAutoRun}
         onAutoRun={this.handleAutoRun}
@@ -3353,19 +3353,35 @@ class EditCode extends React.Component {
     return (
       <div
         style={{
-          height: 'calc(100% - 2.5em)',
+          display: 'flex',
+          flexFlow: 'column',
+          height: 'inherit',
           overflowY: 'auto',
         }}
       >
-        <CodeChallenges
-          style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
-          active={!!asset.skillPath}
-          skillPath={asset.skillPath}
-          codeMirror={this.codeMirror}
-          currUser={currUser}
-          userSkills={this.userSkills}
-          runChallengeDate={this.state.runChallengeDate}
-        />
+        <div style={{ overflowY: 'auto', flex: '1 1 auto', height: 'calc(100% - 2.5em)' }}>
+          <CodeChallenges
+            style={{ backgroundColor: 'rgba(0,255,0,0.02)', height: 'calc(100% - 2.5em)' }}
+            active={!!asset.skillPath}
+            skillPath={asset.skillPath}
+            codeMirror={this.codeMirror}
+            currUser={currUser}
+            userSkills={this.userSkills}
+            runChallengeDate={this.state.runChallengeDate}
+            runCode={this.handleRun}
+          />
+        </div>
+        <div style={{ flex: '0 1 150px', marginBottom: '2em', height: '100%' }}>
+          {this.renderGameScreen()}
+          <ConsoleMessageViewer
+            messages={this.state.consoleMessages}
+            gotoLinehandler={this.gotoLineHandler.bind(this)}
+            clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
+            style={{
+              maxHeight: '150px',
+            }}
+          />
+        </div>
       </div>
     )
   }

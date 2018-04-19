@@ -199,7 +199,7 @@ export default class GameScreen extends React.Component {
 
   handleCloseClick = () => {
     // this.setState( { isHidden: true } )
-    this.props.handleStop()
+    this.props.handleStop({ closePopup: true })
   }
 
   // this function will tell sandbox to send back message with iframe size

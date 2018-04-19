@@ -1951,7 +1951,7 @@ class EditCode extends React.Component {
     const { asset } = this.props
 
     this.setState({ isPlaying: true })
-    console.log('how')
+
     // we don't want to hide tutorials so we open popup
     if (asset.skillPath && !this.state.isPopup) this.setState({ isPopup: true })
 
@@ -1983,6 +1983,7 @@ class EditCode extends React.Component {
   }
 
   handleStop = options => {
+    this.isCodeTutorial
     this.postToIFrame('stop', options)
     this.setState({
       isPlaying: false,
@@ -3013,7 +3014,7 @@ class EditCode extends React.Component {
               </span>
               {!isPopup && this.renderGameScreen()}
 
-              {this.state.isPlaying && (
+              {this.refs.gameScreen && (
                 <ConsoleMessageViewer
                   messages={this.state.consoleMessages}
                   gotoLinehandler={this.gotoLineHandler.bind(this)}
@@ -3274,7 +3275,7 @@ class EditCode extends React.Component {
         asset={asset}
         consoleAdd={this._consoleAdd.bind(this)}
         handleContentChange={this.handleContentChange.bind(this)}
-        handleStop={this.handleGamePopup}
+        handleStop={this.isCodeTutorial ? this.handleStop : this.handleGamePopup}
         onEvent={this.handleGameScreenEvent}
       />
     )

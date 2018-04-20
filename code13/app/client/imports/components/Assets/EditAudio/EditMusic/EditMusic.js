@@ -527,7 +527,7 @@ export default class EditMusic extends React.Component {
       isLoop,
       isGenerate8bitPopupOpen,
       isGenerateMusicPopupOpen,
-      isMusicPopupOpen,
+      isImportMusicPopupOpen,
       isMusicStockPopupOpen,
       isPaste,
       isPlaying,
@@ -639,7 +639,7 @@ export default class EditMusic extends React.Component {
           </div>
         </div>
         {/*** POPUPS ***/}
-        <Modal open={isMusicPopupOpen} onClose={this.handleModalClose}>
+        <Modal open={isImportMusicPopupOpen} onClose={this.handleModalClose}>
           <ImportMusic ref="importMusic" importMusic={this.importMusic} />
         </Modal>
         <Modal open={isMusicStockPopupOpen}>

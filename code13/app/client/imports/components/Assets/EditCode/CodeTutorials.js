@@ -8,8 +8,9 @@ import SkillNodes, { isPhaserTutorial, getFriendlyName } from '/imports/Skills/S
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import { learnSkill } from '/imports/schemas/skills'
 import { logActivity } from '/imports/schemas/activity'
-
 import { ChatSendMessageOnChannelName } from '/imports/schemas/chats'
+
+import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
 
 import './editcode.css'
 
@@ -25,8 +26,8 @@ export default class CodeTutorials extends React.Component {
     active: PropTypes.bool,
     quickSave: PropTypes.func,
     highlightLines: PropTypes.func,
-    assetId: PropTypes.object,
-    asset: PropTypes.string,
+    assetId: PropTypes.string,
+    asset: PropTypes.object,
     style: PropTypes.object,
     isOwner: PropTypes.bool,
   }
@@ -102,6 +103,33 @@ export default class CodeTutorials extends React.Component {
   navigateToSkillsList = () => {
     const returnToSkillsUrl = this.isPhaserTutorial ? '/learn/code/phaser' : '/learn/code/games'
     utilPushTo(null, returnToSkillsUrl)
+  }
+
+  nextTutorial = () => {
+    // We expect SkillNodes for this scenario to contain the following:
+    //  $meta.tests
+    //  $meta.code
+    //  $meta.description
+    let skillsArr = []
+    let learnGroup
+
+    if (_.startsWith(this.props.skillPath, 'code.js.phaser')) {
+      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.phaser']), '$meta')
+      learnGroup = 'phaser'
+    }
+
+    if (_.startsWith(this.props.skillPath, 'code.js.games')) {
+      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.games']), '$meta')
+      learnGroup = 'games'
+    }
+
+    const idx = skillsArr.indexOf(this.skillName)
+    if (idx < skillsArr.length - 1) {
+      const nextSkillName = skillsArr[idx + 1]
+      StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser)
+    } else {
+      utilPushTo(null, '/learn/code' + learnGroup)
+    }
   }
 
   render() {
@@ -196,17 +224,17 @@ export default class CodeTutorials extends React.Component {
                 positive
                 compact
                 size="small"
-                content="Return to Tutorial List"
-                icon="up arrow"
+                content="Next Tutorial"
+                icon="right arrow"
                 labelPosition="right"
                 {..._smallTopMarginSty}
-                onClick={this.navigateToSkillsList}
+                onClick={this.nextTutorial}
               />
             </Message.Content>
           </Message>
         )}
 
-        {totalSteps > 0 && (
+        {totalSteps > 1 && (
           <div style={{ color: '#aaa' }}>
             <small>
               Step #{1 + this.state.step} of {totalSteps}

@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import ReactDOM from 'react-dom'
 import { Button } from 'semantic-ui-react'
 
 import OutputError from './OutputError'
@@ -11,13 +10,12 @@ import CodeCredits from './CodeCredits'
 import ChallengeCompleted from './ChallengeCompleted'
 import ChallengeResults from './ChallengeResults'
 
-import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
-import SkillNodes, { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
+import { mgbAjax } from '/client/imports/helpers/assetFetchers'
+import SkillNodes, { getFriendlyName, getNode } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import refreshBadgeStatus from '/client/imports/helpers/refreshBadgeStatus'
 import { learnSkill } from '/imports/schemas/skills'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
-
 import '../editcode.css'
 import getCDNWorker from '/client/imports/helpers/CDNWorker'
 
@@ -30,6 +28,7 @@ const _runFrameConfig = {
   style: { display: 'none', width: '10px', height: '10px' },
   eventName: 'message',
   codeTestsDataPrefix: 'codeTests',
+  runCode: PropTypes.func,
 }
 
 const _openHelpChat = () => utilShowChatPanelChannel(window.location, 'G_MGBHELP_')
@@ -112,6 +111,7 @@ export default class CodeChallenges extends React.Component {
           this.successPopup()
         }
         this.initWorker()
+        this.props.runCode()
       }
     }
 
@@ -192,6 +192,7 @@ export default class CodeChallenges extends React.Component {
     //  $meta.tests
     //  $meta.code
     //  $meta.description
+
     let skillsArr = []
     let learnGroup = 'basics'
 
@@ -209,7 +210,10 @@ export default class CodeChallenges extends React.Component {
     if (idx < skillsArr.length - 1) {
       const nextSkillName = skillsArr[idx + 1]
       this.setState({ pendingLoadNextSkill: true })
-      StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser)
+      // TODO - pass in area!
+      const newSkillPath = `code.js.${learnGroup}.${nextSkillName}`
+      const newSkillNode = getNode(newSkillPath).$meta
+      StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser, false, newSkillNode)
     } else {
       utilPushTo(null, '/learn/code')
     }
@@ -255,65 +259,78 @@ export default class CodeChallenges extends React.Component {
         className={'content ' + (this.props.active ? 'active' : '')}
         style={this.props.style}
       >
-        <Button
-          compact
-          basic={showAllTestsCompletedMessage}
-          size="small"
-          color="green"
-          onClick={this.runTests}
-          icon="play"
-          content="Run tests"
-          loading={this.state.testsLoading}
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={this.resetCode}
-          icon="refresh"
-          content="Reset code"
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={_openHelpChat}
-          icon="help"
-          data-position="top right"
-          data-tooltip="Ask for help"
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={_openChallengeList}
-          icon="up arrow"
-          data-position="top right"
-          data-tooltip="Go up to Challenges list"
-        />
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            right: 0,
+            padding: '1em',
+            backgroundColor: 'white',
+            zIndex: 99,
+          }}
+        >
+          <Button
+            compact
+            basic={showAllTestsCompletedMessage}
+            size="small"
+            color="green"
+            onClick={this.runTests}
+            icon="play"
+            content="Run tests"
+            loading={this.state.testsLoading}
+          />
+          <Button
+            compact
+            basic
+            size="small"
+            color="green"
+            onClick={this.resetCode}
+            icon="refresh"
+            content="Reset code"
+          />
+          <Button
+            compact
+            basic
+            size="small"
+            color="green"
+            onClick={_openHelpChat}
+            icon="help"
+            data-position="bottom right"
+            data-tooltip="Ask for help"
+          />
+          <Button
+            compact
+            basic
+            size="small"
+            color="green"
+            onClick={_openChallengeList}
+            icon="up arrow"
+            data-position="bottom right"
+            data-tooltip="Go up to Challenges list"
+          />
+        </div>
+        <div style={{ marginTop: '2.5em', padding: '1em' }}>
+          <OutputError error={this.state.error} />
 
-        <OutputError error={this.state.error} />
+          <OutputConsole console={this.state.console} />
 
-        <OutputConsole console={this.state.console} />
+          <ChallengeResults results={this.state.results} latestTestTimeStr={latestTestTimeStr} />
 
-        <ChallengeResults results={this.state.results} latestTestTimeStr={latestTestTimeStr} />
+          <ChallengeCompleted
+            show={showAllTestsCompletedMessage}
+            loading={this.state.pendingLoadNextSkill}
+            onStartNext={this.nextChallenge}
+          />
 
-        <ChallengeCompleted
-          show={showAllTestsCompletedMessage}
-          loading={this.state.pendingLoadNextSkill}
-          onStartNext={this.nextChallenge}
-        />
+          <ChallengeInstructions
+            instructions={instructions}
+            description={description}
+            fullBannerText={fullBannerText}
+          />
 
-        <ChallengeInstructions
-          instructions={instructions}
-          description={description}
-          fullBannerText={fullBannerText}
-        />
-
-        <CodeCredits />
+          <CodeCredits />
+        </div>
       </div>
     )
   }

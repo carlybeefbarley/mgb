@@ -512,7 +512,7 @@ window.onload = function() {
         } else {
           // don't log message if HoC
           if (isHoC()) return false
-          console.info('MGB: All files have loaded!')
+          //console.info('MGB: All files have loaded!')
           sendSizeUpdate()
         }
       }

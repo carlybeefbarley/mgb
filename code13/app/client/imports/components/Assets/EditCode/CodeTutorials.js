@@ -4,7 +4,7 @@ import React from 'react'
 import { Button, Modal, Icon, Message, Divider, Header } from 'semantic-ui-react'
 
 import { mgbAjax } from '/client/imports/helpers/assetFetchers'
-import SkillNodes, { isPhaserTutorial, getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
+import SkillNodes, { isPhaserTutorial, getFriendlyName, getNode } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import { learnSkill } from '/imports/schemas/skills'
 import { logActivity } from '/imports/schemas/activity'
@@ -30,6 +30,7 @@ export default class CodeTutorials extends React.Component {
     asset: PropTypes.object,
     style: PropTypes.object,
     isOwner: PropTypes.bool,
+    runCode: PropTypes.func,
   }
 
   constructor(props) {
@@ -37,7 +38,6 @@ export default class CodeTutorials extends React.Component {
     this.skillNode = SkillNodes.$meta.map[props.skillPath]
     this.skillName = _.last(_.split(props.skillPath, '.'))
     this.isPhaserTutorial = isPhaserTutorial(props.skillPath)
-
     this.state = {
       step: 0, // curent step of tutorial
       isCompleted: false, // indicator if current tutorial is completed and we need to show modal
@@ -95,13 +95,20 @@ export default class CodeTutorials extends React.Component {
     }
   }
 
+  handleRunCode = () => {
+    this.props.runCode()
+  }
+
   successPopup = () => {
     learnSkill(this.props.skillPath)
     this.setState({ isCompleted: true })
   }
 
   navigateToSkillsList = () => {
-    const returnToSkillsUrl = this.isPhaserTutorial ? '/learn/code/phaser' : '/learn/code/games'
+    let skillPathArr = _.split(this.props.skillPath, '.')
+    skillPathArr.pop()
+    const returnToSkillsUrl = '/learn/code/' + skillPathArr.pop()
+
     utilPushTo(null, returnToSkillsUrl)
   }
 
@@ -110,25 +117,30 @@ export default class CodeTutorials extends React.Component {
     //  $meta.tests
     //  $meta.code
     //  $meta.description
-    let skillsArr = []
-    let learnGroup
 
-    if (_.startsWith(this.props.skillPath, 'code.js.phaser')) {
-      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.phaser']), '$meta')
-      learnGroup = 'phaser'
+    let skillsArr = []
+    let learnGroup = 'basics'
+
+    if (_.startsWith(this.props.skillPath, 'code.js.intro')) {
+      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.intro']), '$meta')
+      learnGroup = 'intro'
     }
 
-    if (_.startsWith(this.props.skillPath, 'code.js.games')) {
-      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.games']), '$meta')
-      learnGroup = 'games'
+    if (_.startsWith(this.props.skillPath, 'code.js.advanced')) {
+      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.advanced']), '$meta')
+      learnGroup = 'advanced'
     }
 
     const idx = skillsArr.indexOf(this.skillName)
     if (idx < skillsArr.length - 1) {
       const nextSkillName = skillsArr[idx + 1]
-      StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser)
+      this.setState({ pendingLoadNextSkill: true })
+      // TODO - pass in area!
+      const newSkillPath = `code.js.${learnGroup}.${nextSkillName}`
+      const newSkillNode = getNode(newSkillPath).$meta
+      StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser, false, newSkillNode)
     } else {
-      utilPushTo(null, '/learn/code' + learnGroup)
+      utilPushTo(null, '/learn/code')
     }
   }
 
@@ -144,120 +156,140 @@ export default class CodeTutorials extends React.Component {
         className={'content ' + (this.props.active ? 'active' : '')}
         style={this.props.style}
       >
-        {this.skillNode.$meta.isTask && (
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            right: 0,
+            padding: '1em',
+            backgroundColor: 'white',
+            zIndex: 99,
+          }}
+        >
           <Button
             compact
             size="small"
             color="green"
-            disabled={!this.props.isOwner}
-            onClick={this.submitTask}
-            content="Submit task"
+            onClick={this.handleRunCode}
+            icon="play"
+            content="Run code"
           />
-        )}
-        {!this.isPhaserTutorial && (
+          {this.skillNode.$meta.isTask && (
+            <Button
+              compact
+              size="small"
+              color="green"
+              disabled={!this.props.isOwner}
+              onClick={this.submitTask}
+              content="Submit task"
+            />
+          )}
+          {!this.isPhaserTutorial && (
+            <Button
+              compact
+              size="small"
+              color="green"
+              onClick={this.stepBack}
+              icon="backward"
+              content="Back"
+              disabled={this.state.step === 0 || isCompleted}
+            />
+          )}
+          {!this.skillNode.$meta.isTask && (
+            <Button
+              compact
+              size="small"
+              color={isLastStep ? 'blue' : 'green'}
+              onClick={this.stepNext}
+              icon={isLastStep ? 'check' : 'forward'}
+              content={isLastStep ? 'Finish' : 'Next'}
+              disabled={isCompleted}
+            />
+          )}
           <Button
             compact
+            basic
             size="small"
             color="green"
-            onClick={this.stepBack}
-            icon="backward"
-            content="Back"
-            disabled={this.state.step === 0 || isCompleted}
+            onClick={this.resetCode}
+            icon="refresh"
+            content="Reset code"
           />
-        )}
-        {!this.skillNode.$meta.isTask && (
           <Button
             compact
+            basic
             size="small"
-            color={isLastStep ? 'blue' : 'green'}
-            onClick={this.stepNext}
-            icon={isLastStep ? 'check' : 'forward'}
-            content={isLastStep ? 'Finish' : 'Next'}
-            disabled={isCompleted}
+            color="green"
+            onClick={_openHelpChat}
+            icon="help"
+            data-position="bottom right"
+            data-tooltip="Ask for help"
           />
-        )}
+          <Button
+            compact
+            basic
+            size="small"
+            color="green"
+            onClick={this.navigateToSkillsList}
+            icon="up arrow"
+            data-position="bottom right"
+            data-tooltip="Go up to Tutorial list"
+          />
+        </div>
+        <div style={{ marginTop: '2.5em', padding: '1em' }}>
+          <Divider
+            as={Header}
+            color="grey"
+            size="tiny"
+            horizontal
+            content={getFriendlyName(this.props.skillPath)}
+          />
 
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={this.resetCode}
-          icon="refresh"
-          content="Reset code"
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={_openHelpChat}
-          icon="help"
-          data-position="top right"
-          data-tooltip="Ask for help"
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={this.navigateToSkillsList}
-          icon="up arrow"
-          data-position="top right"
-          data-tooltip="Go up to Tutorial list"
-        />
+          {isCompleted && (
+            <Message size="small" icon>
+              <Icon color="green" name="check circle" />
+              <Message.Content>
+                <Message.Header>Completed...</Message.Header>
+                <Button
+                  positive
+                  compact
+                  size="small"
+                  content="Next Tutorial"
+                  icon="right arrow"
+                  labelPosition="right"
+                  {..._smallTopMarginSty}
+                  onClick={this.nextTutorial}
+                />
+              </Message.Content>
+            </Message>
+          )}
 
-        <Divider
-          as={Header}
-          color="grey"
-          size="tiny"
-          horizontal
-          content={getFriendlyName(this.props.skillPath)}
-        />
+          {totalSteps > 1 && (
+            <div style={{ color: '#aaa' }}>
+              <small>
+                Step #{1 + this.state.step} of {totalSteps}
+              </small>
+            </div>
+          )}
 
-        {isCompleted && (
-          <Message size="small" icon style={{ paddingBottom: 0 }}>
-            <Icon color="green" name="check circle" />
-            <Message.Content>
-              <Message.Header>Completed...</Message.Header>
-              <Button
-                positive
-                compact
-                size="small"
-                content="Next Tutorial"
-                icon="right arrow"
-                labelPosition="right"
-                {..._smallTopMarginSty}
-                onClick={this.nextTutorial}
-              />
-            </Message.Content>
-          </Message>
-        )}
+          <div style={{ marginTop: '0.5em' }} dangerouslySetInnerHTML={{ __html: description }} />
 
-        {totalSteps > 1 && (
-          <div style={{ color: '#aaa' }}>
-            <small>
-              Step #{1 + this.state.step} of {totalSteps}
-            </small>
-          </div>
-        )}
-
-        <div style={{ marginTop: '0.5em' }} dangerouslySetInnerHTML={{ __html: description }} />
-
-        {isTaskSubmitted && (
-          <Modal closeOnDocumentClick closeOnRootNodeClick={false} defaultOpen>
-            <Modal.Header>
-              <Icon size="big" color="green" name="check circle" />
-              Task submitted
-            </Modal.Header>
-            <Modal.Content>
-              Your task has been submitted for review. One of the moderators will look at it soon.
-            </Modal.Content>
-            <Modal.Actions>
-              <Button positive content="Tutorial List" onClick={this.navigateToSkillsList} />
-            </Modal.Actions>
-          </Modal>
-        )}
+          {isTaskSubmitted && (
+            <Modal closeOnDocumentClick closeOnRootNodeClick={false} defaultOpen>
+              <Modal.Header>
+                <Icon size="big" color="green" name="check circle" />
+                Task submitted
+              </Modal.Header>
+              <Modal.Content>
+                Your task has been submitted for review. One of the moderators will look at it soon.
+              </Modal.Content>
+              <Modal.Actions>
+                <Button positive content="Tutorial List" onClick={this.navigateToSkillsList} />
+              </Modal.Actions>
+            </Modal>
+          )}
+        </div>
       </div>
     )
   }

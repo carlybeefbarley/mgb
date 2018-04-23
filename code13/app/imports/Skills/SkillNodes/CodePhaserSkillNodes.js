@@ -432,8 +432,6 @@ const CodePhaserSkillNodes = {
   //   },
 }
 
-export default CodePhaserSkillNodes
-
 //   basics: {
 //     $meta: {
 //       name:         'PhaserJS Basics',
@@ -521,3 +519,4 @@ export default CodePhaserSkillNodes
 //     bodySize:       C.En(1),
 //     angryBirds:     C.En(1),
 //   },
+export default CodePhaserSkillNodes

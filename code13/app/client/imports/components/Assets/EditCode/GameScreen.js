@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Icon, Button } from 'semantic-ui-react'
-
+import ToolWindow from '/client/imports/components/ToolWindow/ToolWindow'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
 import './editcode.css'
@@ -22,10 +22,11 @@ export default class GameScreen extends React.Component {
   static propTypes = {
     isPlaying: PropTypes.bool,
     isPopup: PropTypes.bool,
+    isPopupOnly: PropTypes.bool,
     asset: PropTypes.object,
     hocStepId: PropTypes.string,
     isAutoRun: PropTypes.bool,
-
+    isHidden: PropTypes.bool, // Different from state - this means gamescreen should never show
     handleStop: PropTypes.func.isRequired,
     handleContentChange: PropTypes.func.isRequired,
     consoleAdd: PropTypes.func.isRequired,
@@ -57,7 +58,6 @@ export default class GameScreen extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     this.getReference()
-    if (!prevProps.isPlaying && this.props.isPlaying && this.state.isMinimized) this.handleMinimizeClick()
 
     if (!this.state.fullScreen && GameScreen.popup) GameScreen.popup.close()
   }
@@ -156,7 +156,7 @@ export default class GameScreen extends React.Component {
   // BEWARE!!! EditCode.js is going to reach-in and call this!!!
   postMessage(messageObject) {
     if (messageObject.mgbCommand === 'startRun') {
-      this.setState({ isHidden: false })
+      !this.props.isHidden && this.setState({ isHidden: false })
       if (GameScreen.popup) {
         if (this.state.fullScreen) GameScreen.popup.focus()
         else GameScreen.popup.close()
@@ -193,14 +193,13 @@ export default class GameScreen extends React.Component {
   }
 
   // click handlers for Buttons on this component when in the props.isPopup==true state
-  handleMinimizeClick = () => {
+  handleMinimizeToggle() {
     this.setState({ isMinimized: !this.state.isMinimized })
-    this.requestAdjustIframe()
   }
 
   handleCloseClick = () => {
     // this.setState( { isHidden: true } )
-    this.props.handleStop()
+    this.props.handleStop({ closePopup: true })
   }
 
   // this function will tell sandbox to send back message with iframe size
@@ -210,7 +209,7 @@ export default class GameScreen extends React.Component {
 
   // adjust iFrame size. This is initiated by an event
   adjustIframe(size) {
-    if (this.state.isMinimized || this.state.fullScreen) {
+    if (this.state.fullScreen) {
       return
     }
 
@@ -266,9 +265,9 @@ export default class GameScreen extends React.Component {
 
   render() {
     // we have opened popup - so we can hide everything else
-    if (this.state.fullScreen || this.state.isMinimized) return null
+    if (this.state.fullScreen) return null
 
-    const { isPopup, isPlaying } = this.props
+    const { isPopup, isPlaying, isPopupOnly } = this.props
     const { isHidden, isMinimized } = this.state
 
     const wrapStyle = {
@@ -285,21 +284,21 @@ export default class GameScreen extends React.Component {
       bottom: this.screenY + 'px',
     }
 
-    if (isHidden && !isPlaying) {
-      wrapStyle.display = 'none'
-    }
-    if (isPopup && isPlaying) {
-      wrapStyle.width = window.innerHeight * SpecialGlobals.editCode.popup.maxWidth
-      wrapStyle.overflow = 'initial'
-      wrapStyle.position = 'absolute' // or fixed
-    }
-    if (isMinimized) {
-      wrapStyle.bottom = '0'
-      wrapStyle.right = '0'
-      wrapStyle.height = 0
-      wrapStyle.minHeight = 0
+    const iframeStyle = {
+      overflow: 'auto',
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
     }
 
+    // Hide iframe when not playing without losing reference
+    if ((isPopupOnly && !isPlaying) || (isPopup && isPlaying) || this.props.isHidden) {
+      iframeStyle.width = 0
+      iframeStyle.height = 0
+    }
+    if ((isHidden && !isPlaying) || isPopupOnly || this.props.isHidden) {
+      wrapStyle.display = 'none'
+    }
     const hocUrl = this.props.hocStepId ? `&hocStepId=${this.props.hocStepId}` : ``
 
     return (
@@ -309,48 +308,48 @@ export default class GameScreen extends React.Component {
         className={isPopup && isPlaying ? 'popup' : 'accordion'}
         style={wrapStyle}
       >
-        {isPopup &&
-        isPlaying && (
-          <div style={_popopButtonsRowStyle}>
-            <Button title="Close" icon="close" size="mini" floated="right" onClick={this.handleCloseClick} />
-
-            <Button
-              title={isMinimized ? 'Maximize' : 'Minimize'}
-              icon={isMinimized ? 'maximize' : 'minus'}
-              size="mini"
-              floated="right"
-              onClick={this.handleMinimizeClick}
+        {isPopup && isPlaying && !this.props.isHidden ? (
+          <ToolWindow
+            open
+            size="massive"
+            onClose={this.handleCloseClick}
+            contentStyle={{
+              padding: '0',
+            }}
+            style={{
+              width: 'auto !important',
+              height: 'auto !important',
+              maxHeight: '70%',
+              maxWidth: '70%',
+            }}
+          >
+            <iframe
+              style={{
+                minHeight: '95%', // 100% creates scrollbars
+                display: 'block',
+              }}
+              ref="iFrame1"
+              sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
+              src={makeCDNLink('/codeEditSandbox.html') + hocUrl}
+              frameBorder="0"
+              id="mgbjr-EditCode-sandbox-iframe"
             />
-
-            <button
-              // Making the a SUIR Button creates some funny drag icon, so clean this up another day
-              title="Drag Window"
-              className="ui mini right floated icon button"
-              draggable
-              onDragStart={this.onDragStart}
-              onDrag={this.onDrag}
-              onTouchStart={this.onDragStart}
-              onTouchMove={this.onDrag}
-            >
-              <Icon name="move" />
-            </button>
+          </ToolWindow>
+        ) : (
+          <div style={iframeStyle}>
+            <iframe
+              style={{
+                display: 'block',
+                minHeight: '95%', // 100% creates scrollbars
+              }}
+              ref="iFrame1"
+              sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
+              src={makeCDNLink('/codeEditSandbox.html') + hocUrl}
+              frameBorder="0"
+              id="mgbjr-EditCode-sandbox-iframe"
+            />
           </div>
         )}
-        <div style={{ overflow: 'auto', position: 'absolute', width: '100%', height: '100%' }}>
-          <iframe
-            style={{
-              display: this.state.isMinimized ? 'none' : 'block',
-              minWidth: '100%',
-              minHeight: '95%', // 100% creates scrollbars
-              width: '100%',
-            }}
-            ref="iFrame1"
-            sandbox="allow-modals allow-same-origin allow-scripts allow-popups allow-pointer-lock allow-forms"
-            src={makeCDNLink('/codeEditSandbox.html') + hocUrl}
-            frameBorder="0"
-            id="mgbjr-EditCode-sandbox-iframe"
-          />
-        </div>
       </div>
     )
   }

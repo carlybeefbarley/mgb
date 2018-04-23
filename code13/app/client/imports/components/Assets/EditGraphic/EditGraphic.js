@@ -2,7 +2,6 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Button, Divider, Grid, Icon, Modal, Popup } from 'semantic-ui-react'
-import ReactDOM from 'react-dom'
 import './editGraphic.css'
 import { SketchPicker } from 'react-color'
 import Tools from './GraphicTools'
@@ -1502,6 +1501,7 @@ export default class EditGraphic extends React.Component {
   }
 
   toolOpenImportPopup = () => this.setState({ showGraphicImportPopup: true })
+
   toolCloseImportPopup = () => this.setState({ showGraphicImportPopup: false })
 
   // @@@
@@ -1588,16 +1588,6 @@ export default class EditGraphic extends React.Component {
         icon: 'remove circle outline icon',
         shortcut: 'Ctrl+Shift+E',
         level: 2,
-        simpleTool: true,
-      },
-      Import: {
-        label: 'Import',
-        name: 'toolOpenImportPopup',
-        tooltip: 'Import',
-        disabled: false,
-        icon: 'add square icon',
-        shortcut: 'Ctrl+I',
-        level: 3,
         simpleTool: true,
       },
     }
@@ -1888,6 +1878,35 @@ export default class EditGraphic extends React.Component {
                   size="tiny"
                   position="bottom left"
                 />
+                {/*** GraphicImport ***/}
+                <Modal
+                  trigger={
+                    <Popup
+                      trigger={
+                        <Button
+                          icon
+                          className="mgbjr-EditGraphic-toolOpenImportPopup"
+                          disabled={false}
+                          style={{ position: 'relative' }}
+                          onClick={this.toolOpenImportPopup}
+                        >
+                          <i className="add square icon" />
+                        </Button>
+                      }
+                      header={'Importer'}
+                      position="bottom left"
+                      content="Import graphics from the web or from your local directory."
+                    />
+                  }
+                  open={this.state.showGraphicImportPopup}
+                  onClose={this.toolCloseImportPopup}
+                >
+                  <GraphicImport
+                    importTileset={this.importTileset}
+                    maxTileWidth={MAX_BITMAP_WIDTH}
+                    maxTileHeight={MAX_BITMAP_WIDTH}
+                  />
+                </Modal>
               </Grid.Column>
             </Grid.Row>
             {/* Second Toolbar row */}
@@ -2062,15 +2081,6 @@ export default class EditGraphic extends React.Component {
             />
           )}
         </Grid.Row>
-
-        {/*** GraphicImport ***/}
-        <Modal open={this.state.showGraphicImportPopup} onClose={this.toolCloseImportPopup}>
-          <GraphicImport
-            importTileset={this.importTileset}
-            maxTileWidth={MAX_BITMAP_WIDTH}
-            maxTileHeight={MAX_BITMAP_WIDTH}
-          />
-        </Modal>
 
         {/*** SpriteLayers ***/}
 

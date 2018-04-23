@@ -162,14 +162,14 @@ export default class CodeTutorials extends React.Component {
             left: 0,
             top: 0,
             right: 0,
-            padding: '1em',
+            padding: '1em 1em 0 1em',
             backgroundColor: 'white',
             zIndex: 99,
           }}
         >
           <Button
             compact
-            size="small"
+            size="mini"
             color="green"
             onClick={this.handleRunCode}
             icon="play"
@@ -178,7 +178,7 @@ export default class CodeTutorials extends React.Component {
           {this.skillNode.$meta.isTask && (
             <Button
               compact
-              size="small"
+              size="mini"
               color="green"
               disabled={!this.props.isOwner}
               onClick={this.submitTask}
@@ -188,7 +188,7 @@ export default class CodeTutorials extends React.Component {
           {!this.isPhaserTutorial && (
             <Button
               compact
-              size="small"
+              size="mini"
               color="green"
               onClick={this.stepBack}
               icon="backward"
@@ -199,7 +199,7 @@ export default class CodeTutorials extends React.Component {
           {!this.skillNode.$meta.isTask && (
             <Button
               compact
-              size="small"
+              size="mini"
               color={isLastStep ? 'blue' : 'green'}
               onClick={this.stepNext}
               icon={isLastStep ? 'check' : 'forward'}
@@ -210,7 +210,7 @@ export default class CodeTutorials extends React.Component {
           <Button
             compact
             basic
-            size="small"
+            size="mini"
             color="green"
             onClick={this.resetCode}
             icon="refresh"
@@ -219,7 +219,7 @@ export default class CodeTutorials extends React.Component {
           <Button
             compact
             basic
-            size="small"
+            size="mini"
             color="green"
             onClick={_openHelpChat}
             icon="help"
@@ -229,7 +229,7 @@ export default class CodeTutorials extends React.Component {
           <Button
             compact
             basic
-            size="small"
+            size="mini"
             color="green"
             onClick={this.navigateToSkillsList}
             icon="up arrow"
@@ -237,7 +237,7 @@ export default class CodeTutorials extends React.Component {
             data-tooltip="Go up to Tutorial list"
           />
         </div>
-        <div style={{ marginTop: '2.5em', padding: '1em' }}>
+        <div style={{ marginTop: '1em', padding: '1em' }}>
           <Divider
             as={Header}
             color="grey"
@@ -247,14 +247,14 @@ export default class CodeTutorials extends React.Component {
           />
 
           {isCompleted && (
-            <Message size="small" icon>
+            <Message size="mini" icon>
               <Icon color="green" name="check circle" />
               <Message.Content>
                 <Message.Header>Completed...</Message.Header>
                 <Button
                   positive
                   compact
-                  size="small"
+                  size="mini"
                   content="Next Tutorial"
                   icon="right arrow"
                   labelPosition="right"

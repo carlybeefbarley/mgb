@@ -3,7 +3,18 @@ const reactUpdate = require('react-addons-update')
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button, Segment, Table, Modal, Header, Icon, Dimmer, Loader, Image } from 'semantic-ui-react'
+import {
+  Accordion,
+  Button,
+  Segment,
+  Table,
+  Modal,
+  Header,
+  Icon,
+  Dimmer,
+  Loader,
+  Image,
+} from 'semantic-ui-react'
 import Tabs from './CodeEditorTabs'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
@@ -155,6 +166,9 @@ class EditCode extends React.Component {
 
       // for showing HoC video modal
       showVideoModal: true,
+
+      // collapsible console in tutorials to increase space
+      showConsole: true,
     }
 
     this.errorMessageCache = {}
@@ -350,10 +364,12 @@ class EditCode extends React.Component {
         const edHeight = window.innerHeight - (16 + $sPane.getBoundingClientRect().top)
         ed.setSize('100%', `${edHeight}px`)
 
-        // Resize right panes
-        const sc = document.querySelector('.pane-container')
-        sc.style.height = `${edHeight}px`
-        sc.style.maxHeight = `${edHeight}px`
+        if (this.isTutorialView) {
+          // Resize right panes
+          const sc = document.querySelector('.pane-container')
+          sc.style.height = `${edHeight}px`
+          sc.style.maxHeight = `${edHeight}px`
+        }
       }
       window.addEventListener('resize', this.edResizeHandler)
       this.edResizeHandler()
@@ -2855,6 +2871,10 @@ class EditCode extends React.Component {
     this.isAutoRun = false
   }
 
+  handleToggleConsole = () => {
+    this.setState({ showConsole: !this.state.showConsole })
+  }
+
   //
   // Tabs
   //
@@ -2914,108 +2934,114 @@ class EditCode extends React.Component {
         key: 'code-runner',
         icon: 'toggle right',
         content: (
-          <div>
-            <span style={{ float: 'right', position: 'relative' }}>
-              {isPlaying &&
-              this.props.canEdit && (
-                <Button
-                  icon
-                  compact
-                  size="mini"
-                  onClick={this.handleScreenshotIFrame.bind(this)}
-                  title="This will set the Asset preview Thumbnail image to be a screenshot of the first <canvas> element in the page, *IF* your code has created one..."
-                >
-                  <Icon name="save" />
-                </Button>
-              )}
-              {!isPlaying &&
-              this.state.astReady && (
-                <Button
-                  icon
-                  compact
-                  onClick={this.handleRun}
-                  size="mini"
-                  title="Click here to start the program running"
-                  id="mgb-EditCode-start-button"
-                >
-                  <Icon name="play" />&ensp;Run
-                </Button>
-              )}
+          <div
+            style={{
+              flexFlow: 'column',
+              height: '100%',
+              overflowY: 'auto',
+            }}
+          >
+            <div style={{ overflowY: 'auto', flex: '1 1 auto', height: 'calc(100% - 2.5em)' }}>
+              <span style={{ float: 'right', position: 'relative' }}>
+                {isPlaying &&
+                this.props.canEdit && (
+                  <Button
+                    icon
+                    compact
+                    size="mini"
+                    onClick={this.handleScreenshotIFrame.bind(this)}
+                    title="This will set the Asset preview Thumbnail image to be a screenshot of the first <canvas> element in the page, *IF* your code has created one..."
+                  >
+                    <Icon name="save" />
+                  </Button>
+                )}
+                {!isPlaying &&
+                this.state.astReady && (
+                  <Button
+                    icon
+                    compact
+                    onClick={this.handleRun}
+                    size="mini"
+                    title="Click here to start the program running"
+                    id="mgb-EditCode-start-button"
+                  >
+                    <Icon name="play" />&ensp;Run
+                  </Button>
+                )}
+                {isPlaying && (
+                  <Button
+                    icon
+                    compact
+                    onClick={this.handleStopClick}
+                    size="mini"
+                    title="Click here to stop the running program"
+                    id="mgb-EditCode-stop-button"
+                  >
+                    <Icon name="stop" />&ensp;Stop
+                  </Button>
+                )}
+                {isPlaying && (
+                  <Button
+                    as="a"
+                    active={isPopup}
+                    icon
+                    compact
+                    onClick={this.handleGamePopup}
+                    size="mini"
+                    id="mgb-EditCode-popup-button"
+                    title="Popout the code-run area so it can be moved around the screen"
+                  >
+                    <Icon name="external" />&ensp;Popout
+                  </Button>
+                )}
+                {isPlaying && (
+                  <Button
+                    as="a"
+                    icon
+                    compact
+                    onClick={this.handleGamePopout}
+                    size="mini"
+                    title="Open Game screen in the window"
+                    id="mgb-EditCode-popup-button"
+                  >
+                    <Icon name="external" />&ensp;Full
+                  </Button>
+                )}
+                {!this.hasErrors && (
+                  <Button
+                    icon
+                    compact
+                    disabled={!this.props.canEdit}
+                    onClick={this.handleFullScreen}
+                    size="mini"
+                    title={
+                      this.props.canEdit ? (
+                        'Click here to publish your game and automatically open it in the new browser window (tab)'
+                      ) : (
+                        'Open published version of this game'
+                      )
+                    }
+                    id="mgb-EditCode-full-screen-button"
+                  >
+                    <Icon name="send outline" />
+                    &ensp;{this.props.canEdit ? 'Publish' : 'View Published'}
+                  </Button>
+                )}
+              </span>
+              {!isPopup && this.renderGameScreen()}
+            </div>
+            <div style={{ flex: '0 1 4em', height: '100%' }}>
               {isPlaying && (
-                <Button
-                  icon
-                  compact
-                  onClick={this.handleStopClick}
-                  size="mini"
-                  title="Click here to stop the running program"
-                  id="mgb-EditCode-stop-button"
-                >
-                  <Icon name="stop" />&ensp;Stop
-                </Button>
+                <ConsoleMessageViewer
+                  messages={this.state.consoleMessages}
+                  gotoLinehandler={this.gotoLineHandler.bind(this)}
+                  clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
+                  style={{
+                    maxHeight: '125px',
+                  }}
+                />
               )}
-              {isPlaying && (
-                <Button
-                  as="a"
-                  active={isPopup}
-                  icon
-                  compact
-                  onClick={this.handleGamePopup}
-                  size="mini"
-                  id="mgb-EditCode-popup-button"
-                  title="Popout the code-run area so it can be moved around the screen"
-                >
-                  <Icon name="external" />&ensp;Popout
-                </Button>
-              )}
-              {isPlaying && (
-                <Button
-                  as="a"
-                  icon
-                  compact
-                  onClick={this.handleGamePopout}
-                  size="mini"
-                  title="Open Game screen in the window"
-                  id="mgb-EditCode-popup-button"
-                >
-                  <Icon name="external" />&ensp;Full
-                </Button>
-              )}
-              {!this.hasErrors && (
-                <Button
-                  icon
-                  compact
-                  disabled={!this.props.canEdit}
-                  onClick={this.handleFullScreen}
-                  size="mini"
-                  title={
-                    this.props.canEdit ? (
-                      'Click here to publish your game and automatically open it in the new browser window (tab)'
-                    ) : (
-                      'Open published version of this game'
-                    )
-                  }
-                  id="mgb-EditCode-full-screen-button"
-                >
-                  <Icon name="send outline" />
-                  &ensp;{this.props.canEdit ? 'Publish' : 'View Published'}
-                </Button>
-              )}
-            </span>
-            {!isPopup && this.renderGameScreen()}
-
-            {this.state.isPlaying && (
-              <ConsoleMessageViewer
-                messages={this.state.consoleMessages}
-                gotoLinehandler={this.gotoLineHandler.bind(this)}
-                clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
-                style={{
-                  overflow: 'auto',
-                  width: '100%',
-                  maxHeight: '125px',
-                  marginTop: '6px',
-                }}
-              />
-            )}
+            </div>
           </div>
         ),
       },
@@ -3222,7 +3248,7 @@ class EditCode extends React.Component {
     )
   }
 
-  renderCodeTutorial = (asset, currUser) => {
+  renderTutorial = (asset, currUser) => {
     return (
       <div
         style={{
@@ -3233,68 +3259,57 @@ class EditCode extends React.Component {
         }}
       >
         <div style={{ overflowY: 'auto', flex: '1 1 auto', height: 'calc(100% - 2.5em)' }}>
-          <CodeTutorials
-            style={{ backgroundColor: 'rgba(0,255,0,0.02)', height: 'calc(100% - 2.5em)' }}
-            isOwner={currUser && currUser._id === asset.ownerId}
-            active={!!asset.skillPath}
-            skillPath={asset.skillPath}
-            codeMirror={this.codeMirror}
-            currUser={currUser}
-            userSkills={this.userSkills}
-            quickSave={this.quickSave.bind(this)}
-            runCode={this.handleRun}
-            highlightLines={this.highlightLines.bind(this)}
-            assetId={asset._id}
-            asset={asset}
-          />
+          {this.isCodeTutorial && (
+            <CodeTutorials
+              style={{ backgroundColor: 'rgba(0,255,0,0.02)', height: 'calc(100% - 2.5em)' }}
+              isOwner={currUser && currUser._id === asset.ownerId}
+              active={!!asset.skillPath}
+              skillPath={asset.skillPath}
+              codeMirror={this.codeMirror}
+              currUser={currUser}
+              userSkills={this.userSkills}
+              quickSave={this.quickSave.bind(this)}
+              runCode={this.handleRun}
+              highlightLines={this.highlightLines.bind(this)}
+              assetId={asset._id}
+              asset={asset}
+            />
+          )}
+          {this.isChallenge && (
+            <CodeChallenges
+              style={{ backgroundColor: 'rgba(0,255,0,0.02)', height: 'calc(100% - 2.5em)' }}
+              active={!!asset.skillPath}
+              skillPath={asset.skillPath}
+              codeMirror={this.codeMirror}
+              currUser={currUser}
+              userSkills={this.userSkills}
+              runChallengeDate={this.state.runChallengeDate}
+              runCode={this.handleRun}
+            />
+          )}
         </div>
-        <div style={{ flex: '0 1 125px', marginBottom: '2em', height: '100%' }}>
+        <div style={{ flex: '0 1 4em', height: '100%' }}>
           {this.renderGameScreen()}
-          <ConsoleMessageViewer
-            messages={this.state.consoleMessages}
-            gotoLinehandler={this.gotoLineHandler.bind(this)}
-            clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
-            style={{
-              maxHeight: '125px',
-            }}
-          />
-        </div>
-      </div>
-    )
-  }
-
-  renderCodeChallenge = (asset, currUser) => {
-    return (
-      <div
-        style={{
-          display: 'flex',
-          flexFlow: 'column',
-          height: 'inherit',
-          overflowY: 'auto',
-        }}
-      >
-        <div style={{ overflowY: 'auto', flex: '1 1 auto', height: 'calc(100% - 2.5em)' }}>
-          <CodeChallenges
-            style={{ backgroundColor: 'rgba(0,255,0,0.02)', height: 'calc(100% - 2.5em)' }}
-            active={!!asset.skillPath}
-            skillPath={asset.skillPath}
-            codeMirror={this.codeMirror}
-            currUser={currUser}
-            userSkills={this.userSkills}
-            runChallengeDate={this.state.runChallengeDate}
-            runCode={this.handleRun}
-          />
-        </div>
-        <div style={{ flex: '0 1 125px', marginBottom: '2em', height: '100%' }}>
-          {this.renderGameScreen()}
-          <ConsoleMessageViewer
-            messages={this.state.consoleMessages}
-            gotoLinehandler={this.gotoLineHandler.bind(this)}
-            clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
-            style={{
-              maxHeight: '125px',
-            }}
-          />
+          <Accordion fluid>
+            <Accordion.Title style={{ padding: 0 }} onClick={this.handleToggleConsole}>
+              {this.state.showConsole ? (
+                <Button compact fluid size="mini" icon="chevron down" />
+              ) : (
+                <Button compact fluid size="mini" icon="chevron up" />
+              )}
+            </Accordion.Title>
+            <Accordion.Content style={{ padding: 0 }} active={this.state.showConsole}>
+              <ConsoleMessageViewer
+                messages={this.state.consoleMessages}
+                gotoLinehandler={this.gotoLineHandler.bind(this)}
+                clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
+                style={{
+                  maxHeight: '125px',
+                  marginBottom: '2em',
+                }}
+              />
+            </Accordion.Content>
+          </Accordion>
         </div>
       </div>
     )
@@ -3318,6 +3333,14 @@ class EditCode extends React.Component {
     const tbConfig = this.generateToolbarConfig()
 
     const isPopup = this.state.isPopup || !infoPaneOpts.col2
+
+    const fullSize = {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: '1em',
+    }
 
     if (asset.skillPath && asset.kind === 'code') {
       if (isPathChallenge(asset.skillPath)) this.isChallenge = true
@@ -3490,16 +3513,14 @@ class EditCode extends React.Component {
               style={{ display: infoPaneOpts.col2 ? 'block' : 'none' }}
             >
               {!this.isGuest && !this.isTutorialView ? (
-                <Tabs ref={ref => (this.tabs = ref)} panes={this.getTabPanes()} />
+                <div
+                  style={fullSize}
+                >
+                  <Tabs ref={ref => (this.tabs = ref)} panes={this.getTabPanes()} />
+                </div>
               ) : (
-                <Segment raised className="pane-container" style={{ overflow: 'hidden' }}>
-                  {this.isGuest ? (
-                    this.renderHoc(tbConfig)
-                  ) : this.isChallenge ? (
-                    this.renderCodeChallenge(asset, currUser)
-                  ) : (
-                    this.isCodeTutorial && this.renderCodeTutorial(asset, currUser)
-                  )}
+                <Segment raised className="pane-container" style={{ overflow: 'hidden', ...fullSize}}>
+                  {this.isGuest ? this.renderHoc(tbConfig) : this.renderTutorial(asset, currUser)}
                 </Segment>
               )}
             </div>

@@ -3031,13 +3031,14 @@ class EditCode extends React.Component {
               {!isPopup && this.renderGameScreen()}
             </div>
             <div style={{ flex: '0 1 4em', height: '100%' }}>
-              {isPlaying && (
+              {this.refs.gameScreen && (
                 <ConsoleMessageViewer
                   messages={this.state.consoleMessages}
                   gotoLinehandler={this.gotoLineHandler.bind(this)}
                   clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
                   style={{
                     maxHeight: '125px',
+                    marginBottom: '1em',
                   }}
                 />
               )}
@@ -3513,13 +3514,11 @@ class EditCode extends React.Component {
               style={{ display: infoPaneOpts.col2 ? 'block' : 'none' }}
             >
               {!this.isGuest && !this.isTutorialView ? (
-                <div
-                  style={fullSize}
-                >
+                <div style={fullSize}>
                   <Tabs ref={ref => (this.tabs = ref)} panes={this.getTabPanes()} />
                 </div>
               ) : (
-                <Segment raised className="pane-container" style={{ overflow: 'hidden', ...fullSize}}>
+                <Segment raised className="pane-container" style={{ overflow: 'hidden', ...fullSize }}>
                   {this.isGuest ? this.renderHoc(tbConfig) : this.renderTutorial(asset, currUser)}
                 </Segment>
               )}

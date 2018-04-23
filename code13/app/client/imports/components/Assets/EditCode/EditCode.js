@@ -350,12 +350,10 @@ class EditCode extends React.Component {
         const edHeight = window.innerHeight - (16 + $sPane.getBoundingClientRect().top)
         ed.setSize('100%', `${edHeight}px`)
 
-        if (this.isTutorialView) {
-          // Resize right panes
-          const sc = document.querySelector('.tutorial-container')
-          sc.style.height = `${edHeight}px`
-          sc.style.maxHeight = `${edHeight}px`
-        }
+        // Resize right panes
+        const sc = document.querySelector('.pane-container')
+        sc.style.height = `${edHeight}px`
+        sc.style.maxHeight = `${edHeight}px`
       }
       window.addEventListener('resize', this.edResizeHandler)
       this.edResizeHandler()
@@ -2876,6 +2874,18 @@ class EditCode extends React.Component {
     const knownImports = this.tools ? this.tools.collectAvailableImportsForFile(asset.name) : []
 
     return [
+      docEmpty &&
+      !asset.isCompleted &&
+      !this.isCodeTutorial &&
+      !this.isChallenge &&
+      this.mgb_mode === 'jsx' && {
+        content: {
+          title: 'Code Starter',
+          key: 'code-starter-content',
+          icon: 'file text',
+          content: <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />,
+        },
+      },
       // TUTORIAL Current Line/Selection helper (body)
       !docEmpty &&
       asset.kind === 'tutorial' && {
@@ -2895,42 +2905,6 @@ class EditCode extends React.Component {
               <div className="ui divided selection list">{stringReferences}</div>
             )}
           </div>
-        ),
-      },
-
-      this.isChallenge && {
-        title: 'Code Challenges',
-        key: 'code-challenge',
-        content: (
-          <CodeChallenges
-            style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
-            active={!!asset.skillPath}
-            skillPath={asset.skillPath}
-            codeMirror={this.codeMirror}
-            currUser={this.props.currUser}
-            userSkills={this.userSkills}
-            runChallengeDate={this.state.runChallengeDate}
-          />
-        ),
-      },
-      this.isCodeTutorial && {
-        title: 'Code Tutorials',
-        key: 'code-tutorial',
-        icon: 'student',
-        content: (
-          <CodeTutorials
-            style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
-            isOwner={currUser && currUser._id === asset.ownerId}
-            active={!!asset.skillPath}
-            skillPath={asset.skillPath}
-            codeMirror={this.codeMirror}
-            currUser={this.props.currUser}
-            userSkills={this.userSkills}
-            quickSave={this.quickSave.bind(this)}
-            highlightLines={this.highlightLines.bind(this)}
-            assetId={asset._id}
-            asset={asset}
-          />
         ),
       },
       !docEmpty &&
@@ -3037,41 +3011,12 @@ class EditCode extends React.Component {
                 style={{
                   overflow: 'auto',
                   width: '100%',
-                  maxHeight: '150px',
+                  maxHeight: '125px',
                   marginTop: '6px',
                 }}
               />
             )}
           </div>
-        ),
-      },
-
-      docEmpty &&
-      !asset.isCompleted &&
-      !this.isCodeTutorial &&
-      !this.isChallenge &&
-      this.mgb_mode === 'jsx' && {
-        title: 'Code Stater',
-        key: 'code-starter',
-
-        content: <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />,
-      },
-      // Import Assistant HEADER
-      canEdit &&
-      !asset.isCompleted &&
-      !this.isCodeTutorial &&
-      !this.isChallenge &&
-      this.mgb_mode === 'jsx' && {
-        title: 'Import Assistant',
-        key: 'import-assistant',
-        icon: 'arrow circle outline down',
-        content: this.state.astReady && (
-          <ImportHelperPanel
-            scripts={this.state.userScripts}
-            includeLocalImport={this.includeLocalImport}
-            includeExternalImport={this.includeExternalImport}
-            knownImports={knownImports}
-          />
         ),
       },
       !docEmpty &&
@@ -3139,60 +3084,23 @@ class EditCode extends React.Component {
             </div>
           ) : null,
       },
-      docEmpty &&
-      !asset.isCompleted &&
-      !this.isCodeTutorial &&
-      !this.isChallenge &&
-      this.mgb_mode === 'jsx' && {
-        title: {
-          key: 'code-starter-title',
-          onClick: this.handleAccordionTitleClick,
-          // Clean sheet helper!
-          content: <span>Code Starter</span>,
-        },
-        content: {
-          key: 'code-starter-content',
-          content: <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />,
-        },
-      },
       // Import Assistant HEADER
       canEdit &&
       !asset.isCompleted &&
       !this.isCodeTutorial &&
       !this.isChallenge &&
       this.mgb_mode === 'jsx' && {
-        title: {
-          key: 'import-assistant-title',
-          onClick: this.handleAccordionTitleClick,
-          content: (
-            <span>
-              Import Assistant
-              <span style={{ float: 'right' }}>
-                {this.tools &&
-                (this.mgb_c2_hasChanged || !this.state.astReady) && (
-                  <Icon
-                    name="refresh"
-                    size="small"
-                    color={this.mgb_c2_hasChanged ? 'orange' : null}
-                    loading={this.state.astReady}
-                  />
-                )}
-                <ImportAssistantHeader knownImports={knownImports} />
-              </span>
-            </span>
-          ),
-        },
-        content: {
-          key: 'import-assistant-content',
-          content: this.state.astReady && (
-            <ImportHelperPanel
-              scripts={this.state.userScripts}
-              includeLocalImport={this.includeLocalImport}
-              includeExternalImport={this.includeExternalImport}
-              knownImports={knownImports}
-            />
-          ),
-        },
+        title: 'Import Assistant',
+        key: 'import-assistant',
+        icon: 'arrow circle outline down',
+        content: this.state.astReady && (
+          <ImportHelperPanel
+            scripts={this.state.userScripts}
+            includeLocalImport={this.includeLocalImport}
+            includeExternalImport={this.includeExternalImport}
+            knownImports={knownImports}
+          />
+        ),
       },
       !this.isCodeTutorial &&
       !this.isChallenge &&
@@ -3301,7 +3209,7 @@ class EditCode extends React.Component {
               gotoLinehandler={this.gotoLineHandler.bind(this)}
               clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
               style={{
-                maxHeight: '150px',
+                maxHeight: '125px',
               }}
             />
           </div>
@@ -3340,14 +3248,14 @@ class EditCode extends React.Component {
             asset={asset}
           />
         </div>
-        <div style={{ flex: '0 1 150px', marginBottom: '2em', height: '100%' }}>
+        <div style={{ flex: '0 1 125px', marginBottom: '2em', height: '100%' }}>
           {this.renderGameScreen()}
           <ConsoleMessageViewer
             messages={this.state.consoleMessages}
             gotoLinehandler={this.gotoLineHandler.bind(this)}
             clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
             style={{
-              maxHeight: '150px',
+              maxHeight: '125px',
             }}
           />
         </div>
@@ -3377,14 +3285,14 @@ class EditCode extends React.Component {
             runCode={this.handleRun}
           />
         </div>
-        <div style={{ flex: '0 1 150px', marginBottom: '2em', height: '100%' }}>
+        <div style={{ flex: '0 1 125px', marginBottom: '2em', height: '100%' }}>
           {this.renderGameScreen()}
           <ConsoleMessageViewer
             messages={this.state.consoleMessages}
             gotoLinehandler={this.gotoLineHandler.bind(this)}
             clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
             style={{
-              maxHeight: '150px',
+              maxHeight: '125px',
             }}
           />
         </div>
@@ -3581,10 +3489,10 @@ class EditCode extends React.Component {
               className={infoPaneOpts.col2 + ' wide column'}
               style={{ display: infoPaneOpts.col2 ? 'block' : 'none' }}
             >
-              {!this.isGuest ? (
+              {!this.isGuest && !this.isTutorialView ? (
                 <Tabs ref={ref => (this.tabs = ref)} panes={this.getTabPanes()} />
               ) : (
-                <Segment raised style={{ overflow: 'hidden' }} className="tutorial-container">
+                <Segment raised className="pane-container" style={{ overflow: 'hidden' }}>
                   {this.isGuest ? (
                     this.renderHoc(tbConfig)
                   ) : this.isChallenge ? (

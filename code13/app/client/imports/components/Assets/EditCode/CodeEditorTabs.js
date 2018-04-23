@@ -51,10 +51,20 @@ export default class CodeEditorTabs extends React.Component {
   // mounted, not just the active tab pane
   renderPanes = panes => {
     return (
-      <div>
+      <div
+        style={{
+          display: 'flex',
+          flexFlow: 'column',
+          height: '100%',
+          overflowY: 'auto',
+        }}
+      >
         {_.map(panes, (pane, i) => {
           return (
-            <div key={i} style={this.state.activeIndex === i ? { display: 'block' } : { display: 'none' }}>
+            <div
+              key={i}
+              style={this.state.activeIndex === i ? { display: 'block', flex: '1' } : { display: 'none' }}
+            >
               {pane.content}
             </div>
           )
@@ -66,9 +76,9 @@ export default class CodeEditorTabs extends React.Component {
   render() {
     const { panes } = this.props
     return (
-      <div style={{ display: 'flex', flexFlow: 'column', height: '100%', overflow: 'auto' }}>
+      <div style={{ display: 'flex', flexFlow: 'column', height: '100%' }}>
         {this.renderTabs(panes)}
-        <Segment style={{ flex: '1', margin: 0 }} raised>
+        <Segment className="pane-container" style={{ flex: '1', margin: 0 }}>
           {this.renderPanes(panes)}
         </Segment>
       </div>

@@ -265,7 +265,7 @@ export default class CodeChallenges extends React.Component {
             left: 0,
             top: 0,
             right: 0,
-            padding: '1em',
+            padding: '1em 1em 0 1em',
             backgroundColor: 'white',
             zIndex: 99,
           }}
@@ -273,7 +273,7 @@ export default class CodeChallenges extends React.Component {
           <Button
             compact
             basic={showAllTestsCompletedMessage}
-            size="small"
+            size="mini"
             color="green"
             onClick={this.runTests}
             icon="play"
@@ -283,7 +283,7 @@ export default class CodeChallenges extends React.Component {
           <Button
             compact
             basic
-            size="small"
+            size="mini"
             color="green"
             onClick={this.resetCode}
             icon="refresh"
@@ -292,7 +292,7 @@ export default class CodeChallenges extends React.Component {
           <Button
             compact
             basic
-            size="small"
+            size="mini"
             color="green"
             onClick={_openHelpChat}
             icon="help"
@@ -302,7 +302,7 @@ export default class CodeChallenges extends React.Component {
           <Button
             compact
             basic
-            size="small"
+            size="mini"
             color="green"
             onClick={_openChallengeList}
             icon="up arrow"
@@ -310,7 +310,7 @@ export default class CodeChallenges extends React.Component {
             data-tooltip="Go up to Challenges list"
           />
         </div>
-        <div style={{ marginTop: '2.5em', padding: '1em' }}>
+        <div style={{ marginTop: '1em', padding: '1em' }}>
           <OutputError error={this.state.error} />
 
           <OutputConsole console={this.state.console} />

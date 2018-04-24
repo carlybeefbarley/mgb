@@ -82,8 +82,8 @@ const ConsoleMessageViewer = React.createClass({
     if (!messages) return null
 
     return (
-      <div style={{ position: 'relative' }}>
-        <div className="header" style={{ position: 'absolute', top: '1em', right: '1em', zIndex: 9 }}>
+      <div style={{ position: 'relative', ...style }}>
+        <div className="header" style={{ position: 'absolute', top: 0, right: '1em', zIndex: 9 }}>
           {messages.length > 0 &&
           clearConsoleHandler && (
             <i
@@ -98,12 +98,13 @@ const ConsoleMessageViewer = React.createClass({
           id="mgbjr-EditCode-console"
           className="ui secondary segment"
           style={{
-            height: '150px',
+            height: '125px',
             width: '100%',
             overflow: 'auto',
+            margin: 0,
           }}
         >
-          <div className="message-container" ref="msgContainer" style={style}>
+          <div className="message-container" ref="msgContainer">
             {this.smartRender()}
           </div>
         </div>

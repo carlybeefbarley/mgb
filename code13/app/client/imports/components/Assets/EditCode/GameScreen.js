@@ -292,7 +292,7 @@ export default class GameScreen extends React.Component {
     }
 
     // Hide iframe when not playing without losing reference
-    if ((isPopupOnly && !isPlaying) || (isPopup && isPlaying) || this.props.isHidden) {
+    if ((isPopupOnly && !isPlaying) || this.props.isHidden) {
       iframeStyle.width = 0
       iframeStyle.height = 0
     }

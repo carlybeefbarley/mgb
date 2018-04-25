@@ -62,6 +62,8 @@ export default class CodeChallenges extends React.Component {
       data: {}, // get challenge data from CDN
     }
 
+    this.runTests = _.throttle(this.runTests, 3000)
+
     mgbAjax(`/api/asset/code/!vault/challenges.` + this.skillName, (err, listStr) => {
       if (err) console.log('error', err)
       else this.setState({ data: JSON.parse(listStr) })

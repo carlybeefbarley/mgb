@@ -367,7 +367,7 @@ export const isPathChallenge = skillPath =>
 
 // this string indicates if a path is step-by-step challenge
 export const isPathCodeTutorial = skillPath =>
-  SkillNodes.$meta.map[skillPath].$meta.skillChallengeType === 'phaser'
+  _.includes(['phaser', 'games'], SkillNodes.$meta.map[skillPath].$meta.skillChallengeType)
 
 // TODO- whack a mole thing - to find the path?
 // this string indicates if a path is step-by-step challenge
@@ -384,7 +384,7 @@ export const SkillNodesOrder = {
     js: {
       intro: SkillNodes.code.js.intro,
       phaser: SkillNodes.code.js.intro,
-      games: SkillNodes.code.js.games,
+      games: SkillNodes.code.js.intro,
       advanced: SkillNodes.code.js.intro,
     },
   },

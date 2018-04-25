@@ -204,6 +204,9 @@ export default class CodeChallenges extends React.Component {
     } else if (_.startsWith(this.props.skillPath, 'code.js.phaser')) {
       skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.phaser']), '$meta')
       learnGroup = 'phaser'
+    } else if (_.startsWith(this.props.skillPath, 'code.js.games')) {
+      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.games']), '$meta')
+      learnGroup = 'games'
     } else if (_.startsWith(this.props.skillPath, 'code.js.advanced')) {
       skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.advanced']), '$meta')
       learnGroup = 'advanced'
@@ -313,7 +316,7 @@ export default class CodeChallenges extends React.Component {
             data-tooltip="Go up to Challenges list"
           />
         </div>
-        <div style={{ marginTop: '1em', padding: '1em' }}>
+        <div style={{ marginTop: '1.5em', padding: '1em' }}>
           <OutputError error={this.state.error} />
 
           <OutputConsole console={this.state.console} />

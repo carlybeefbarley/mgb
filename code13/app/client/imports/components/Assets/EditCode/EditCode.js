@@ -1981,7 +1981,7 @@ class EditCode extends React.Component {
         startRun()
       })
 
-    this.tabs.openTabByKey('code-runner')
+    !this.isGuest && !this.isTutorialView && this.tabs.openTabByKey('code-runner')
   }
 
   handleStop = options => {

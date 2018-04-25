@@ -61,6 +61,16 @@ const SpecialGlobals = {
         tutorialsInternalLink: '/learn/code/phaser',
       },
       {
+        name: 'Phaser3',
+        import: 'phaser3',
+        desc: 'For making games',
+        descLong:
+          'Phaser3 is a good framework for making 2D games in Javascript. It helps developers with game scenes, asset loaders, rendering, physics, input devices, sound, and more',
+        landingPageUrl: '//phaser.io/phaser3',
+        apiDocsPageUrl: '//photonstorm.github.io/phaser3-docs/index.html',
+        tutorialsInternalLink: '/learn/code/phaser',
+      },
+      {
         name: 'React',
         import: 'react',
         desc: 'For making apps',

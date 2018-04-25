@@ -25,6 +25,18 @@ const knownLibs = {
     },
     defs: () => ['/lib/tern/defs/phaser.old.json'],
   },
+  phaser3: {
+    useGlobal: true,
+    src(version) {
+      version = version || '3.6.0'
+      return 'https://cdn.jsdelivr.net/gh/photonstorm/phaser@' + version + '/dist/phaser.js'
+    },
+    min(version) {
+      version = version || '3.6.0'
+      return 'https://cdn.jsdelivr.net/gh/photonstorm/phaser@' + version + '/dist/phaser.min.js'
+    },
+    defs: () => [],
+  },
   react: {
     src(version) {
       version = version || 'latest'

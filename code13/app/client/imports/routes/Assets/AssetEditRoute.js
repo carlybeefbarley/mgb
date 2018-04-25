@@ -228,6 +228,8 @@ const AssetEditRoute = React.createClass({
   },
 
   componentDidUpdate() {
+    debugger
+
     this.checkForRedirect()
 
     if (!this.counter && !this.data.loading) {
@@ -418,8 +420,8 @@ const AssetEditRoute = React.createClass({
       }
     })
 
-    console.log('ASSETS', assetStore.getOpenAssets())
-    console.log('PANES', panes)
+    console.log('AssetEditRoute: ASSETS', assetStore.getOpenAssets())
+    console.log('AssetEditRoute: PANES', panes)
 
     return (
       <Tab

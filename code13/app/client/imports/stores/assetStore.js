@@ -23,7 +23,10 @@ class AssetStore extends Store {
 
   state = {
     assets: {
-      // [project]: [...assets] }
+      // [project]: [...assetTombstone] },
+      // pacman: [pacmanGraphic, pacmanMap, coinSound] },
+      // otherProject: [asdf, zxvc] },
+      // __NO_PROJECT__: [...assetTombstone] },
     },
     project: NO_PROJECT,
   }
@@ -41,6 +44,7 @@ class AssetStore extends Store {
   }
 
   openAsset = asset => {
+    debugger
     const { assets } = this.state
 
     const targetProject = _.first(asset.projectNames) || NO_PROJECT

@@ -2899,12 +2899,12 @@ class EditCode extends React.Component {
       !this.isCodeTutorial &&
       !this.isChallenge &&
       this.mgb_mode === 'jsx' && {
-        content: {
+
           title: 'Code Starter',
           key: 'code-starter-content',
           icon: 'file text',
           content: <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />,
-        },
+
       },
       // TUTORIAL Current Line/Selection helper (body)
       !docEmpty &&

@@ -168,7 +168,7 @@ export default class CodeTutorials extends React.Component {
             right: 0,
             padding: '1em 1em 0 1em',
             backgroundColor: 'white',
-            zIndex: 99,
+            zIndex: 10,
           }}
         >
           <Button

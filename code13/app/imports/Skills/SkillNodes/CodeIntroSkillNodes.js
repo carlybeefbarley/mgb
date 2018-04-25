@@ -7,8 +7,9 @@ import { skillAreaItems } from '../SkillAreas'
 
 const CodeIntroSkillNodes = {
   $meta: {
-    name: 'Intro to Coding',
-    description: 'Learn the basics of the JavaScript programming language.',
+    name: 'Intro to game coding with JavaScript and Phaser',
+    description:
+      'At the end of these tutorials, you will know the basics of the JavaScript programming language and the Phaser game engine. You will be able to draw a player character, then let them run and jump!',
   },
   comments: {
     $meta: {
@@ -219,7 +220,7 @@ const CodeIntroSkillNodes = {
   keyEvents: {
     $meta: {
       name: 'Key events',
-      icon: 'game',
+      icon: 'keyboard',
       description: `Adding key events to the game`,
       subsection: 'Input',
       skillChallengeType: 'phaser',
@@ -228,7 +229,7 @@ const CodeIntroSkillNodes = {
   },
   handlingInputs: {
     $meta: {
-      icon: 'game',
+      icon: 'keyboard',
       name: 'Handling inputs in update()',
       description: `Learn how to handle inputs with update()`,
       subsection: 'Input',

@@ -3,12 +3,12 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import '../home.css'
 import { utilPushTo } from '/client/imports/routes/QLink'
-import { Divider, Grid, Header, List, Segment } from 'semantic-ui-react'
+import { Divider, Grid, Header, Icon, List, Segment } from 'semantic-ui-react'
 
 import { showToast } from '/client/imports/modules'
 import { logActivity } from '/imports/schemas/activity'
 
-import SkillNodes, { getNode } from '/imports/Skills/SkillNodes/SkillNodes'
+import SkillNodes from '/imports/Skills/SkillNodes/SkillNodes'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap.js'
 
 import { getAssetBySelector } from '/client/imports/helpers/assetFetchers'
@@ -165,7 +165,13 @@ const LearnCodeRouteItem = ({ currUser, isSuperAdmin, params }, context) => {
                       as={'a'}
                       onMouseUp={e => handleClick(e, learnItem, area.idx, currUser, area)}
                       onTouchEnd={e => handleClick(e, learnItem, area.idx, currUser, area)}
-                      icon={isComplete ? { name: 'checkmark', color: 'green' } : area.icon}
+                      icon={
+                        isComplete ? (
+                          <Icon size="large" name="checkmark" color="green" />
+                        ) : (
+                          <Icon size="large" name={area.icon} />
+                        )
+                      }
                       header={isComplete ? null : area.name}
                       content={isComplete ? area.name : null}
                     />

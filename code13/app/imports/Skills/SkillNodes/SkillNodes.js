@@ -403,7 +403,7 @@ export const codeItems = [
   {
     mascot: 'javascript-logo',
     icon: 'code',
-    content: 'Intro to Coding',
+    content: 'Intro to game coding with JavaScript and Phaser',
     link: '/learn/code/intro',
     skillPath: 'code.js.intro',
     query: null,
@@ -414,7 +414,7 @@ export const codeItems = [
   {
     mascot: 'phaserLogo',
     icon: 'game',
-    content: 'Make Your First Game From Scratch',
+    content: 'Code your first playable game',
     link: '/learn/code/phaser',
     skillPath: 'code.js.phaser',
     query: null,
@@ -424,12 +424,12 @@ export const codeItems = [
   {
     mascot: 'mole',
     icon: 'code',
-    content: 'Make Games',
+    content: 'Game development walkthroughs',
     link: '/learn/code/games',
     skillPath: 'code.js.games',
     query: null,
     skillnodeTopLevelTag: 'getStarted',
-    desc: `These walkthroughs will show you how to create a game using your new Phaser game-dev skills.`,
+    desc: `These walkthroughs will show you how to create a game using your new Phaser and JavaScript game-dev skills.`,
   },
   {
     mascot: 'arcade_player',

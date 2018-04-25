@@ -168,7 +168,7 @@ class EditCode extends React.Component {
       showVideoModal: true,
 
       // collapsible console in tutorials to increase space
-      showConsole: true,
+      showConsole: false,
     }
 
     this.errorMessageCache = {}

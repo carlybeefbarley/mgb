@@ -194,14 +194,15 @@ export default class CodeChallenges extends React.Component {
     //  $meta.description
 
     let skillsArr = []
-    let learnGroup = 'basics'
+    let learnGroup
 
     if (_.startsWith(this.props.skillPath, 'code.js.intro')) {
       skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.intro']), '$meta')
       learnGroup = 'intro'
-    }
-
-    if (_.startsWith(this.props.skillPath, 'code.js.advanced')) {
+    } else if (_.startsWith(this.props.skillPath, 'code.js.phaser')) {
+      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.phaser']), '$meta')
+      learnGroup = 'phaser'
+    } else if (_.startsWith(this.props.skillPath, 'code.js.advanced')) {
       skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.advanced']), '$meta')
       learnGroup = 'advanced'
     }

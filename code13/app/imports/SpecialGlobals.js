@@ -61,7 +61,7 @@ const SpecialGlobals = {
         tutorialsInternalLink: '/learn/code/phaser',
       },
       {
-        name: 'Phaser3',
+        name: 'Phaser',
         import: 'phaser3',
         desc: 'For making games',
         descLong:

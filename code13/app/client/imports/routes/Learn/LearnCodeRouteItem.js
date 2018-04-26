@@ -167,9 +167,9 @@ const LearnCodeRouteItem = ({ currUser, isSuperAdmin, params }, context) => {
                       onTouchEnd={e => handleClick(e, learnItem, area.idx, currUser, area)}
                       icon={
                         isComplete ? (
-                          <Icon size="big" name="checkmark" color="green" />
+                          <Icon size="large" name="checkmark" color="green" />
                         ) : (
-                          <Icon size="big" name={area.icon} />
+                          <Icon size="large" name={area.icon} />
                         )
                       }
                       header={isComplete ? null : area.name}
@@ -186,7 +186,7 @@ const LearnCodeRouteItem = ({ currUser, isSuperAdmin, params }, context) => {
 }
 
 const headerStyle = {
-  fontSize: '3em',
+  fontSize: '2.5em',
   textAlign: 'center',
   paddingBottom: '10px',
 }

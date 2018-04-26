@@ -203,6 +203,7 @@ class ToolWindow extends Component {
       left: `${xPos}px`,
       width: '25em',
       boxShadow: '0 0.125em 0.5em rgba(0, 0, 0, 0.25)',
+      zIndex: 99,
       ...style,
     }
 

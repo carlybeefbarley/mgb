@@ -324,6 +324,7 @@ export default class GameScreen extends React.Component {
             }}
           >
             <iframe
+              className="popup-iframe"
               style={{
                 minHeight: '95%', // 100% creates scrollbars
                 display: 'block',

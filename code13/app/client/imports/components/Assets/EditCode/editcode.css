@@ -41,3 +41,7 @@
 [data-tooltip]::after {
   z-index: 9999;
 }
+
+.popup-iframe * {
+  display: block;
+}

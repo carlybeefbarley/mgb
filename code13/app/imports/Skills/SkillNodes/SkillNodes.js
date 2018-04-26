@@ -401,9 +401,14 @@ export const artItems = [
 
 export const codeItems = [
   {
-    mascot: 'javascript-logo',
+<<<<<<< Updated upstream
+    mascot: 'flying',
     icon: 'code',
-    content: 'Intro to game coding with JavaScript and Phaser',
+=======
+    mascot: 'digger',
+    icon: 'game',
+>>>>>>> Stashed changes
+    content: 'Intro to Game Coding',
     link: '/learn/code/intro',
     skillPath: 'code.js.intro',
     query: null,
@@ -412,9 +417,15 @@ export const codeItems = [
 `,
   },
   {
-    mascot: 'phaserLogo',
+<<<<<<< Updated upstream
+    mascot: 'pongPlay',
     icon: 'game',
-    content: 'Code your first playable game',
+    content: 'Create your first game from start to finish',
+=======
+    mascot: 'pong',
+    icon: 'code',
+    content: 'Make Your First Game From Scratch',
+>>>>>>> Stashed changes
     link: '/learn/code/phaser',
     skillPath: 'code.js.phaser',
     query: null,
@@ -423,7 +434,7 @@ export const codeItems = [
   },
   {
     mascot: 'mole',
-    icon: 'code',
+    icon: 'road',
     content: 'Game development walkthroughs',
     link: '/learn/code/games',
     skillPath: 'code.js.games',

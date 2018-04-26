@@ -7,14 +7,14 @@ import { skillAreaItems } from '../SkillAreas'
 
 const CodeIntroSkillNodes = {
   $meta: {
-    name: 'Intro to game coding with JavaScript and Phaser',
+    name: 'Intro to Game Coding with JavaScript and Phaser',
     description:
-      'At the end of these tutorials, you will know the basics of the JavaScript programming language and the Phaser game engine. You will be able to draw a player character, then let them run and jump!',
+      'At the end of these tutorials, you will know the basics of the JavaScript programming language and the Phaser game engine. You will be able to draw a player character, and then animate them to run and fly!',
   },
   comments: {
     $meta: {
       name: 'Comment your JavaScript Code',
-      icon: 'code',
+      icon: 'comment',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -23,7 +23,7 @@ const CodeIntroSkillNodes = {
   caseSensitiveVariables: {
     $meta: {
       name: 'Understanding Case Sensitivity in Variables',
-      icon: 'code',
+      icon: 'font',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -32,7 +32,7 @@ const CodeIntroSkillNodes = {
   variables: {
     $meta: {
       name: 'Declare JavaScript Number and String Variables', // Name changed
-      icon: 'code',
+      icon: 'announcement',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -42,7 +42,7 @@ const CodeIntroSkillNodes = {
   initVariables: {
     $meta: {
       name: 'Understanding Initialized and Uninitialized Variables', // Name changed
-      icon: 'code',
+      icon: 'superscript',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -52,7 +52,7 @@ const CodeIntroSkillNodes = {
   sumNumbers: {
     $meta: {
       name: 'Basic Math Operations with JavaScript', // Name changed
-      icon: 'code',
+      icon: 'calculator',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -62,7 +62,7 @@ const CodeIntroSkillNodes = {
   debuggingAndConsole: {
     $meta: {
       name: 'Introduction to the Debugging Challenge and Using the Dev Console',
-      icon: 'code',
+      icon: 'bug',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -73,7 +73,7 @@ const CodeIntroSkillNodes = {
   reusableFunctions: {
     $meta: {
       name: 'Write Reusable JavaScript Functions',
-      icon: 'code',
+      icon: 'recycle',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -83,7 +83,7 @@ const CodeIntroSkillNodes = {
   functionArguments: {
     $meta: {
       name: 'Passing Values to Functions with Arguments',
-      icon: 'code',
+      icon: 'share',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -92,7 +92,7 @@ const CodeIntroSkillNodes = {
   globalScope: {
     $meta: {
       name: 'Global Scope and Functions',
-      icon: 'code',
+      icon: 'globe',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -101,7 +101,7 @@ const CodeIntroSkillNodes = {
   localScope: {
     $meta: {
       name: 'Local Scope and Functions',
-      icon: 'code',
+      icon: 'home',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -110,7 +110,7 @@ const CodeIntroSkillNodes = {
   globalVsLocal: {
     $meta: {
       name: 'Global vs. Local Scope in Functions',
-      icon: 'code',
+      icon: 'search',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -120,7 +120,7 @@ const CodeIntroSkillNodes = {
     $meta: {
       name:
         'Return a Value from a Function with Return, Understand Undefined Values Returned from a Function, and Assignment with a Returned Value', // Name changed
-      icon: 'code',
+      icon: 'reply',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -130,7 +130,7 @@ const CodeIntroSkillNodes = {
   arrayVariable: {
     $meta: {
       name: 'Store Multiple Values in one Variable using JavaScript Arrays',
-      icon: 'code',
+      icon: 'lock',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -140,7 +140,7 @@ const CodeIntroSkillNodes = {
   objects: {
     $meta: {
       name: 'Build JavaScript Objects',
-      icon: 'code',
+      icon: 'cube',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -150,7 +150,7 @@ const CodeIntroSkillNodes = {
   objectsPropertiesDot: {
     $meta: {
       name: 'Accessing Objects Properties with the Dot Operator and Bracket Notation', // Name changed
-      icon: 'code',
+      icon: 'unlock alternate',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -159,7 +159,7 @@ const CodeIntroSkillNodes = {
   intro: {
     $meta: {
       name: 'Intro to Phaser',
-      icon: 'game',
+      icon: 'info',
       description: "A brief intro to Phaser and how we'll Us it",
       subsection: 'Introduction to Phaser',
       skillChallengeType: 'phaser',
@@ -169,7 +169,7 @@ const CodeIntroSkillNodes = {
   predefinedMethods: {
     $meta: {
       name: "Phaser's Predefined Methods",
-      icon: 'game',
+      icon: 'tags',
       description: "Predefined methods we will use and what they're for",
       subsection: 'Introduction to Phaser',
       skillChallengeType: 'phaser',
@@ -179,7 +179,7 @@ const CodeIntroSkillNodes = {
   createSprite: {
     $meta: {
       name: 'Creating sprites',
-      icon: 'game',
+      icon: 'female',
       description: `Learn to load and add images to the game as sprites`,
       subsection: 'Sprites',
       skillChallengeType: 'phaser',
@@ -189,7 +189,7 @@ const CodeIntroSkillNodes = {
   manipulateSprite: {
     $meta: {
       name: 'Sprite scaling, rotation, and more',
-      icon: 'game',
+      icon: 'expand',
       description: `Manipulate sprites using angle and rotation properties`,
       subsection: 'Sprites',
       skillChallengeType: 'phaser',
@@ -199,9 +199,9 @@ const CodeIntroSkillNodes = {
   anchor: {
     $meta: {
       name: 'Using the anchor property',
-      icon: 'game',
+      icon: 'anchor',
       description: `How the anchor property affects sprite properties`,
-      subsection: 'Sprite',
+      subsection: 'Sprites',
       skillChallengeType: 'phaser',
       ...C.E.$meta,
     },
@@ -212,7 +212,7 @@ const CodeIntroSkillNodes = {
       isTask: true,
       icon: 'trophy',
       description: `Position five instances of a sprite`,
-      subsection: 'Sprite',
+      subsection: 'Sprites',
       skillChallengeType: 'phaser',
       ...C.E.$meta,
     },
@@ -229,7 +229,7 @@ const CodeIntroSkillNodes = {
   },
   handlingInputs: {
     $meta: {
-      icon: 'keyboard',
+      icon: 'laptop',
       name: 'Handling inputs in update()',
       description: `Learn how to handle inputs with update()`,
       subsection: 'Input',
@@ -251,7 +251,7 @@ const CodeIntroSkillNodes = {
   physicsIntro: {
     $meta: {
       name: 'Physics basics',
-      icon: 'game',
+      icon: 'wrench',
       description: `Velocity, gravity, bounce, and world bounds`,
       subsection: 'Physics',
       skillChallengeType: 'phaser',
@@ -261,7 +261,7 @@ const CodeIntroSkillNodes = {
   physicsCollide: {
     $meta: {
       name: 'Physics collisions',
-      icon: 'game',
+      icon: 'compress',
       description: `Collisions between two objects`,
       subsection: 'Physics',
       skillChallengeType: 'phaser',
@@ -271,7 +271,7 @@ const CodeIntroSkillNodes = {
   physicsGroup: {
     $meta: {
       name: 'Physics group',
-      icon: 'game',
+      icon: 'group',
       description: `Grouping physics enabled objects`,
       subsection: 'Physics',
       skillChallengeType: 'phaser',
@@ -291,7 +291,7 @@ const CodeIntroSkillNodes = {
   },
   spriteSheet: {
     $meta: {
-      icon: 'game',
+      icon: 'child',
       name: 'Spritesheet animations',
       description: `Frame animations for a character`,
       subsection: 'Animation',

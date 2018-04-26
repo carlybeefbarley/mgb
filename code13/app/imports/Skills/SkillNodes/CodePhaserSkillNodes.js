@@ -136,8 +136,19 @@ const CodePhaserSkillNodes = {
 
   taskMoveWithMouse: {
     $meta: {
+      isTask: true,
       name: 'Control Your Game with Mouse Input',
       icon: 'trophy',
+      subsection: 'Program Pong',
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+
+  dynamicText: {
+    $meta: {
+      name: 'Add Dynamic Text to Your Games',
+      icon: 'game',
       subsection: 'Program Pong',
       skillChallengeType: 'phaser',
       ...C.E.$meta,

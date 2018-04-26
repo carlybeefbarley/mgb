@@ -136,7 +136,7 @@ const LearnCodeRouteItem = ({ currUser, isSuperAdmin, params }, context) => {
       <Grid container columns="1">
         <Divider hidden />
         <Grid.Column>
-          <Header as="h1">
+          <Header style={headerStyle}>
             {getSkillTitle(learnItem)}
             <Header.Subheader>{getSkillDescription(learnItem)}</Header.Subheader>
           </Header>
@@ -153,7 +153,7 @@ const LearnCodeRouteItem = ({ currUser, isSuperAdmin, params }, context) => {
         <Grid.Column>
           {_.map(_.keys(bySubsection), subkey => (
             <Segment padded piled key={subkey}>
-              <Header as="h3" content={subkey} />
+              <Header as="h2" content={subkey} />
               <List size="large" relaxed="very" link className="skills">
                 {_.map(bySubsection[subkey], (area, idx) => {
                   let skillPath = 'code/js/' + learnItem + '/' + area.idx
@@ -167,9 +167,9 @@ const LearnCodeRouteItem = ({ currUser, isSuperAdmin, params }, context) => {
                       onTouchEnd={e => handleClick(e, learnItem, area.idx, currUser, area)}
                       icon={
                         isComplete ? (
-                          <Icon size="large" name="checkmark" color="green" />
+                          <Icon size="big" name="checkmark" color="green" />
                         ) : (
-                          <Icon size="large" name={area.icon} />
+                          <Icon size="big" name={area.icon} />
                         )
                       }
                       header={isComplete ? null : area.name}
@@ -183,6 +183,12 @@ const LearnCodeRouteItem = ({ currUser, isSuperAdmin, params }, context) => {
         </Grid.Column>
       </Grid>
     )
+}
+
+const headerStyle = {
+  fontSize: '3em',
+  textAlign: 'center',
+  paddingBottom: '10px',
 }
 
 LearnCodeRouteItem.contextTypes = {

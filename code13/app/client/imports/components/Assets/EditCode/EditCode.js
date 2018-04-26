@@ -3117,7 +3117,7 @@ class EditCode extends React.Component {
       this.mgb_mode === 'jsx' && {
         title: 'Import Assistant',
         key: 'import-assistant',
-        icon: 'arrow circle outline down',
+        icon: 'download',
         content: this.state.astReady && (
           <ImportHelperPanel
             scripts={this.state.userScripts}
@@ -3257,7 +3257,10 @@ class EditCode extends React.Component {
           overflowY: 'auto',
         }}
       >
-        <div         id="tutorial-container" style={{ overflowY: 'auto', flex: '1 1 auto', height: 'calc(100% - 2.5em)' }}>
+        <div
+          id="tutorial-container"
+          style={{ overflowY: 'auto', flex: '1 1 auto', height: 'calc(100% - 2.5em)' }}
+        >
           {this.isCodeTutorial && (
             <CodeTutorials
               style={{ backgroundColor: 'rgba(0,255,0,0.02)', height: 'calc(100% - 2.5em)' }}

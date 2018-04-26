@@ -2902,6 +2902,7 @@ class EditCode extends React.Component {
         title: 'Code Starter',
         key: 'code-starter-content',
         icon: 'file text',
+        tooltip: 'Templates for generating starter code',
         content: <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />,
       },
       // TUTORIAL Current Line/Selection helper (body)
@@ -2910,6 +2911,7 @@ class EditCode extends React.Component {
         title: 'Tutorial Mentor',
         key: 'tutorial-mentor',
         icon: 'student',
+        tooltip: 'Walkthrough of each step of the tutorial',
         content: (
           <div>
             <TutorialMentor
@@ -2931,6 +2933,7 @@ class EditCode extends React.Component {
         title: 'Code Runner',
         key: 'code-runner',
         icon: 'toggle right',
+        tooltip: 'Run your code and display the resulting content',
         content: this.state.astReady ? (
           <div
             style={{
@@ -3052,6 +3055,7 @@ class EditCode extends React.Component {
         title: 'Code Docs',
         key: 'code-docs',
         icon: 'book',
+        tooltip: 'Documentation for JS/CSS/Phaser',
         content:
           this.mgb_mode === 'css' ? (
             <div className="ui divided selection list active">
@@ -3121,6 +3125,7 @@ class EditCode extends React.Component {
         title: 'Import Assistant',
         key: 'import-assistant',
         icon: 'download',
+        tooltip: 'Interface for importing MGB code assets or JS frameworks',
         content: this.state.astReady ? (
           <ImportHelperPanel
             scripts={this.state.userScripts}
@@ -3141,6 +3146,7 @@ class EditCode extends React.Component {
         title: 'Code Flower',
         key: 'code-flower',
         icon: 'asterisk',
+        tooltip: 'Code visualization',
         content: this.state.astReady ? (
           <div>
             {

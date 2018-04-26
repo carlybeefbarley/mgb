@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Icon, Button, Segment } from 'semantic-ui-react'
+import { Button, Segment, Popup } from 'semantic-ui-react'
 import _ from 'lodash'
 import './editcode.css'
 
@@ -29,15 +29,32 @@ export default class CodeEditorTabs extends React.Component {
     return (
       <Button.Group>
         {_.map(panes, (pane, i) => {
-          return (
+          return pane.tooltip ? (
+            <Popup
+              trigger={
+                <Button
+                  compact
+                  size="small"
+                  floated="right"
+                  key={i}
+                  style={{ margin: 0 }}
+                  active={this.state.activeIndex === i}
+                  icon={pane.icon}
+                  onClick={() => this.handleTabClick(i)}
+                />
+              }
+              header={pane.title}
+              content={pane.tooltip}
+            />
+          ) : (
             <Button
               compact
               size="small"
               floated="right"
               key={i}
+              title={pane.title}
               style={{ margin: 0 }}
               active={this.state.activeIndex === i}
-              title={pane.title}
               icon={pane.icon}
               onClick={() => this.handleTabClick(i)}
             />

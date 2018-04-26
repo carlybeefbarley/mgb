@@ -32,7 +32,6 @@ const _runFrameConfig = {
 }
 
 const _openHelpChat = () => utilShowChatPanelChannel(window.location, 'G_MGBHELP_')
-const _openChallengeList = () => utilPushTo(window.location, '/learn/code/intro')
 
 export default class CodeChallenges extends React.Component {
   static propTypes = {
@@ -228,6 +227,14 @@ export default class CodeChallenges extends React.Component {
     }
   }
 
+  navigateToSkillsList = () => {
+    let skillPathArr = _.split(this.props.skillPath, '.')
+    skillPathArr.pop()
+    const returnToSkillsUrl = '/learn/code/' + skillPathArr.pop()
+
+    utilPushTo(null, returnToSkillsUrl)
+  }
+
   formatTime = ms => {
     const date = new Date(ms)
     return (
@@ -313,7 +320,7 @@ export default class CodeChallenges extends React.Component {
             basic
             size="mini"
             color="green"
-            onClick={_openChallengeList}
+            onClick={this.navigateToSkillsList}
             icon="up arrow"
             data-position="bottom right"
             data-tooltip="Go up to Challenges list"

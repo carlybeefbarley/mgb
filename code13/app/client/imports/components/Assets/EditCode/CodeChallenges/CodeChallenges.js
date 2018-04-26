@@ -113,11 +113,15 @@ export default class CodeChallenges extends React.Component {
           this.successPopup()
         }
         this.initWorker()
-        this.props.runCode()
       }
     }
-
+    this.scrollToTop()
     this.setState({ testsLoading: false })
+  }
+
+  scrollToTop = () => {
+    let div = document.getElementById('tutorial-container')
+    div.scrollTop = 0
   }
 
   successPopup() {
@@ -273,7 +277,7 @@ export default class CodeChallenges extends React.Component {
             right: 0,
             padding: '1em 1em 0 1em',
             backgroundColor: 'white',
-            zIndex: 99,
+            zIndex: 10,
           }}
         >
           <Button

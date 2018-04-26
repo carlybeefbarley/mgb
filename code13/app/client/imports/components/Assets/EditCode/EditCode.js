@@ -2899,12 +2899,10 @@ class EditCode extends React.Component {
       !this.isCodeTutorial &&
       !this.isChallenge &&
       this.mgb_mode === 'jsx' && {
-
-          title: 'Code Starter',
-          key: 'code-starter-content',
-          icon: 'file text',
-          content: <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />,
-
+        title: 'Code Starter',
+        key: 'code-starter-content',
+        icon: 'file text',
+        content: <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />,
       },
       // TUTORIAL Current Line/Selection helper (body)
       !docEmpty &&
@@ -3259,7 +3257,7 @@ class EditCode extends React.Component {
           overflowY: 'auto',
         }}
       >
-        <div style={{ overflowY: 'auto', flex: '1 1 auto', height: 'calc(100% - 2.5em)' }}>
+        <div         id="tutorial-container" style={{ overflowY: 'auto', flex: '1 1 auto', height: 'calc(100% - 2.5em)' }}>
           {this.isCodeTutorial && (
             <CodeTutorials
               style={{ backgroundColor: 'rgba(0,255,0,0.02)', height: 'calc(100% - 2.5em)' }}
@@ -3286,6 +3284,7 @@ class EditCode extends React.Component {
               userSkills={this.userSkills}
               runChallengeDate={this.state.runChallengeDate}
               runCode={this.handleRun}
+              isPlaying={this.props.isPlaying}
             />
           )}
         </div>

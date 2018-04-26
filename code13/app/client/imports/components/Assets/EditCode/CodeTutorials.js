@@ -52,12 +52,18 @@ export default class CodeTutorials extends React.Component {
     })
   }
 
+  scrollToTop = () => {
+    let div = document.getElementById('tutorial-container')
+    div.scrollTop = 0
+  }
+
   stepNext = () => {
     const step = this.state.step + 1
     if (step < this.state.data.steps.length) {
       this.setState({ step })
       this.resetCode(step)
     } else this.successPopup()
+
     ga('send', 'pageview', this.props.skillPath)
   }
 
@@ -101,6 +107,7 @@ export default class CodeTutorials extends React.Component {
 
   successPopup = () => {
     learnSkill(this.props.skillPath)
+    this.scrollToTop()
     this.setState({ isCompleted: true })
   }
 

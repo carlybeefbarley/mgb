@@ -401,13 +401,8 @@ export const artItems = [
 
 export const codeItems = [
   {
-<<<<<<< Updated upstream
     mascot: 'flying',
     icon: 'code',
-=======
-    mascot: 'digger',
-    icon: 'game',
->>>>>>> Stashed changes
     content: 'Intro to Game Coding',
     link: '/learn/code/intro',
     skillPath: 'code.js.intro',
@@ -417,15 +412,9 @@ export const codeItems = [
 `,
   },
   {
-<<<<<<< Updated upstream
     mascot: 'pongPlay',
     icon: 'game',
     content: 'Create your first game from start to finish',
-=======
-    mascot: 'pong',
-    icon: 'code',
-    content: 'Make Your First Game From Scratch',
->>>>>>> Stashed changes
     link: '/learn/code/phaser',
     skillPath: 'code.js.phaser',
     query: null,

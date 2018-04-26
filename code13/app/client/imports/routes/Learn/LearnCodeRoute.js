@@ -31,7 +31,7 @@ const LearnCodeRoute = ({ currUser, isSuperAdmin, params }, context) => (
           >
             <Card.Content>
               <MascotImage name={area.mascot} />
-              <Header as="h1" style={headerStyle}>
+              <Header as="h2" style={headerStyle}>
                 <Icon name={area.icon} />&nbsp;{area.content}
               </Header>
               <p style={descStyle}>{area.desc}</p>
@@ -62,7 +62,7 @@ const cardStyle = {
 }
 
 const titleStyle = {
-  fontSize: '5em',
+  fontSize: '4em',
   textAlign: 'center',
 }
 

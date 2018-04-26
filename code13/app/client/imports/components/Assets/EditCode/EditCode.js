@@ -2931,7 +2931,7 @@ class EditCode extends React.Component {
         title: 'Code Runner',
         key: 'code-runner',
         icon: 'toggle right',
-        content: (
+        content: this.state.astReady ? (
           <div
             style={{
               flexFlow: 'column',
@@ -2953,8 +2953,7 @@ class EditCode extends React.Component {
                     <Icon name="save" />
                   </Button>
                 )}
-                {!isPlaying &&
-                this.state.astReady && (
+                {!isPlaying && (
                   <Button
                     icon
                     compact
@@ -3029,7 +3028,7 @@ class EditCode extends React.Component {
               {!isPopup && this.renderGameScreen()}
             </div>
             <div style={{ flex: '0 1 4em', height: '100%' }}>
-              {this.refs.gameScreen && (
+              {this.refs.iFrame1 && (
                 <ConsoleMessageViewer
                   messages={this.state.consoleMessages}
                   gotoLinehandler={this.gotoLineHandler.bind(this)}
@@ -3042,6 +3041,10 @@ class EditCode extends React.Component {
               )}
             </div>
           </div>
+        ) : (
+          <Dimmer inverted active>
+            <Loader />
+          </Dimmer>
         ),
       },
       !docEmpty &&
@@ -3118,24 +3121,27 @@ class EditCode extends React.Component {
         title: 'Import Assistant',
         key: 'import-assistant',
         icon: 'download',
-        content: this.state.astReady && (
+        content: this.state.astReady ? (
           <ImportHelperPanel
             scripts={this.state.userScripts}
             includeLocalImport={this.includeLocalImport}
             includeExternalImport={this.includeExternalImport}
             knownImports={knownImports}
           />
+        ) : (
+          <Dimmer inverted active>
+            <Loader />
+          </Dimmer>
         ),
       },
       !this.isCodeTutorial &&
       !this.isChallenge &&
-      this.state.astReady &&
       asset.kind === 'code' &&
       this.mgb_mode === 'jsx' && {
         title: 'Code Flower',
         key: 'code-flower',
         icon: 'asterisk',
-        content: (
+        content: this.state.astReady ? (
           <div>
             {
               // Is this needed?
@@ -3186,6 +3192,10 @@ class EditCode extends React.Component {
             </span>
             <div id="codeflower" ref="codeflower" />
           </div>
+        ) : (
+          <Dimmer inverted active>
+            <Loader />
+          </Dimmer>
         ),
       },
     ].filter(Boolean)

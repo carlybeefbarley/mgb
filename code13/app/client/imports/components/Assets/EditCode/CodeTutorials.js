@@ -31,6 +31,7 @@ export default class CodeTutorials extends React.Component {
     style: PropTypes.object,
     isOwner: PropTypes.bool,
     runCode: PropTypes.func,
+    handleOpenConsole: PropTypes.func,
   }
 
   constructor(props) {
@@ -103,6 +104,7 @@ export default class CodeTutorials extends React.Component {
 
   handleRunCode = () => {
     this.props.runCode()
+    this.props.handleOpenConsole()
   }
 
   successPopup = () => {

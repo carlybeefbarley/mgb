@@ -98,15 +98,14 @@ const ConsoleMessageViewer = React.createClass({
           id="mgbjr-EditCode-console"
           className="ui secondary segment"
           style={{
-            height: '125px',
+            height: '100px',
             width: '100%',
             overflow: 'auto',
             margin: 0,
           }}
+          ref="msgContainer"
         >
-          <div className="message-container" ref="msgContainer">
-            {this.smartRender()}
-          </div>
+          <div className="message-container">{this.smartRender()}</div>
         </div>
       </div>
     )

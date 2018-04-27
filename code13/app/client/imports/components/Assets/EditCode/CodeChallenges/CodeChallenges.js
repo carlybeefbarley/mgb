@@ -28,7 +28,6 @@ const _runFrameConfig = {
   style: { display: 'none', width: '10px', height: '10px' },
   eventName: 'message',
   codeTestsDataPrefix: 'codeTests',
-  runCode: PropTypes.func,
 }
 
 const _openHelpChat = () => utilShowChatPanelChannel(window.location, 'G_MGBHELP_')
@@ -42,6 +41,8 @@ export default class CodeChallenges extends React.Component {
     active: PropTypes.bool,
     style: PropTypes.object,
     runChallengeDate: PropTypes.number,
+    runCode: PropTypes.func,
+    handleOpenConsole: PropTypes.func,
   }
 
   constructor(props) {
@@ -110,10 +111,11 @@ export default class CodeChallenges extends React.Component {
           this.successPopup()
         }
         this.initWorker()
+        // Gives TypeError because it gets the return value of runCode
+        // and it needs a function in the arg...
         _.once(this.props.runCode())
       }
     }
-    this.scrollToTop()
     this.setState({ testsLoading: false })
   }
 
@@ -179,6 +181,9 @@ export default class CodeChallenges extends React.Component {
         },
       })
     }, MAX_TIME_TO_RUN)
+
+    this.props.handleOpenConsole()
+    this.scrollToTop()
     this.setState({ testsLoading: true })
   }
 
@@ -329,7 +334,11 @@ export default class CodeChallenges extends React.Component {
         <div style={{ marginTop: '1.5em', padding: '1em' }}>
           <OutputError error={this.state.error} />
 
+          {/*
+          // Does not work with user added console logs
+          // Use MGB's console instead
           <OutputConsole console={this.state.console} />
+          */}
 
           <ChallengeResults results={this.state.results} latestTestTimeStr={latestTestTimeStr} />
 

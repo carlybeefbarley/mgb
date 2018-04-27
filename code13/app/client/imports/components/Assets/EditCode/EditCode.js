@@ -2875,6 +2875,10 @@ class EditCode extends React.Component {
     this.setState({ showConsole: !this.state.showConsole })
   }
 
+  handleOpenConsole = () => {
+    this.setState({ showConsole: true })
+  }
+
   //
   // Tabs
   //
@@ -3037,7 +3041,7 @@ class EditCode extends React.Component {
                   gotoLinehandler={this.gotoLineHandler.bind(this)}
                   clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
                   style={{
-                    maxHeight: '125px',
+                    maxHeight: '100px',
                     marginBottom: '1em',
                   }}
                 />
@@ -3250,7 +3254,7 @@ class EditCode extends React.Component {
               gotoLinehandler={this.gotoLineHandler.bind(this)}
               clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
               style={{
-                maxHeight: '125px',
+                maxHeight: '100px',
               }}
             />
           </div>
@@ -3288,6 +3292,7 @@ class EditCode extends React.Component {
               userSkills={this.userSkills}
               quickSave={this.quickSave.bind(this)}
               runCode={this.handleRun}
+              handleOpenConsole={this.handleOpenConsole}
               highlightLines={this.highlightLines.bind(this)}
               assetId={asset._id}
               asset={asset}
@@ -3303,7 +3308,7 @@ class EditCode extends React.Component {
               userSkills={this.userSkills}
               runChallengeDate={this.state.runChallengeDate}
               runCode={this.handleRun}
-              isPlaying={this.props.isPlaying}
+              handleOpenConsole={this.handleOpenConsole}
             />
           )}
         </div>
@@ -3323,7 +3328,7 @@ class EditCode extends React.Component {
                 gotoLinehandler={this.gotoLineHandler.bind(this)}
                 clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
                 style={{
-                  maxHeight: '125px',
+                  maxHeight: '100px',
                   marginBottom: '2em',
                 }}
               />

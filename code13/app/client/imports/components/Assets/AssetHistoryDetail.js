@@ -69,7 +69,7 @@ export default class AssetHistoryDetail extends React.Component {
         <Popup.Content>
           <div>Asset created: {moment(asset.createdAt).fromNow()}</div>
           <div>Last update: {moment(asset.updatedAt).fromNow()}</div>
-          <div style={{ maxHeight: '400px', overflow: 'scroll' }}>{changes}</div>
+          <div style={{ maxHeight: '400px', overflow: 'auto' }}>{changes}</div>
           <EditTime time={this.props.counterTime} asset={asset} />
         </Popup.Content>
       </Popup>

@@ -3031,7 +3031,7 @@ class EditCode extends React.Component {
               {!isPopup && this.renderGameScreen()}
             </div>
             <div style={{ flex: '0 1 4em', height: '100%' }}>
-              {this.refs.iFrame1 && (
+              {this.refs.gameScreen && (
                 <ConsoleMessageViewer
                   messages={this.state.consoleMessages}
                   gotoLinehandler={this.gotoLineHandler.bind(this)}

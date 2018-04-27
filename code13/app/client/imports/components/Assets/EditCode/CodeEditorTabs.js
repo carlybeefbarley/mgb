@@ -31,12 +31,12 @@ export default class CodeEditorTabs extends React.Component {
         {_.map(panes, (pane, i) => {
           return pane.tooltip ? (
             <Popup
+              key={i}
               trigger={
                 <Button
                   compact
                   size="small"
                   floated="right"
-                  key={i}
                   style={{ margin: 0 }}
                   active={this.state.activeIndex === i}
                   icon={pane.icon}

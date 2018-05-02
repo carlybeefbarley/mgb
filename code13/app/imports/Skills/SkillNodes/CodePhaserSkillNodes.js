@@ -149,6 +149,7 @@ const CodePhaserSkillNodes = {
     $meta: {
       name: 'Add Dynamic Text to Your Games',
       icon: 'game',
+      description: 'Add text that can change along with gameplay',
       subsection: 'Program Pong',
       skillChallengeType: 'phaser',
       ...C.E.$meta,

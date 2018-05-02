@@ -20,19 +20,21 @@ const CodeIntroSkillNodes = {
       ...C.E.$meta,
     },
   },
-  caseSensitiveVariables: {
+
+  variables: {
     $meta: {
-      name: 'Understanding Case Sensitivity in Variables',
-      icon: 'font',
+      name: 'Declare JavaScript Number and String Variables', // Name changed
+      icon: 'announcement',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
-  variables: {
+
+  caseSensitiveVariables: {
     $meta: {
-      name: 'Declare JavaScript Number and String Variables', // Name changed
-      icon: 'announcement',
+      name: 'Understanding Case Sensitivity in Variables',
+      icon: 'font',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',
       ...C.E.$meta,
@@ -118,8 +120,7 @@ const CodeIntroSkillNodes = {
   },
   returnValue: {
     $meta: {
-      name:
-        'Return a Value from a Function with Return, Understand Undefined Values Returned from a Function, and Assignment with a Returned Value', // Name changed
+      name: 'Returned Values', // Name changed
       icon: 'reply',
       subsection: 'Introduction to JavaScript',
       skillChallengeType: 'challenges',

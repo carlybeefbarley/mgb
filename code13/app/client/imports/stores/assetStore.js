@@ -44,15 +44,16 @@ class AssetStore extends Store {
   }
 
   openAsset = asset => {
-    debugger
     const { assets } = this.state
 
     const targetProject = _.first(asset.projectNames) || NO_PROJECT
 
     const isAlreadyOpen = _.find(assets[targetProject], { _id: asset._id })
-
     if (isAlreadyOpen) {
       console.log('assetStore.openAsset() ...skipping already open asset', { project: targetProject, asset })
+      // Make sure to be on the right project even if it's already open,
+      // as the user may have navigated away and come back.
+      if (this.state.project !== targetProject) this.setState({ project: targetProject })
       return
     }
 
@@ -72,8 +73,15 @@ class AssetStore extends Store {
   closeAsset = asset => {
     console.log('assetStore.closeAsset()', asset)
     const { assets, project } = this.state
-
+    // delete this.state.assets[asset.projectNames[0]]
     this.setState({ assets: _.filter(assets[project], a => a._id !== asset._id) })
+  }
+
+  setProject = project => {
+    this.setState({
+      ...this.state,
+      project,
+    })
   }
 
   createAsset = (currUser, assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName) => {

@@ -249,6 +249,7 @@ const AssetEditRoute = React.createClass({
     if (this.data.asset) {
       const { assetStore } = this.props
       console.log('componentDidUpdate: open asset', this.data.asset, assetStore.getOpenAssets())
+      // debugger
       assetStore.openAsset(this.data.asset)
     }
   },
@@ -371,12 +372,12 @@ const AssetEditRoute = React.createClass({
   handleCloseTab(asset) {
     return e => {
       const { params, assetStore } = this.props
-      console.log('handleCloseTab', asset)
+      // console.log('handleCloseTab', asset)
 
       e.preventDefault()
       e.stopPropagation()
       e.nativeEvent.stopImmediatePropagation()
-
+      assetStore.closeAsset(asset)
       // open the tab to the left on close of the currently open tab
       if (params.assetId === asset._id) {
         const currTabIndex = _.findIndex(assetStore.getOpenAssets(), { _id: asset._id })
@@ -386,13 +387,11 @@ const AssetEditRoute = React.createClass({
 
         utilPushTo(this.context.urlLocation, nextURL)
       }
-
-      assetStore.closeAsset(asset)
     }
   },
 
   render() {
-    const { assetStore, params, asset, currUserProjects } = this.props
+    const { assetStore, params, asset, currUserProjects, currentlyEditingAssetInfo } = this.props
     const panes = _.map(assetStore.getOpenAssets(), asset => {
       console.log('render open asset', asset)
       return {
@@ -426,14 +425,8 @@ const AssetEditRoute = React.createClass({
     console.log('THIS.DATA: ', this.data)
 
     // Return an IDE-like wrapped tab list & editor if the asset has any project(s)
-    return this.data.projectNames ? (
-      <Tab
-        menu={{ attached: 'top', tabular: true, style: { overflowX: 'auto' } }}
-        activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
-        onTabChange={this.handleTabChange}
-        panes={panes}
-      />
-    ) : (
+    // TODO: Look into data prefetch to make tabs more responsive.
+    return (
       <AssetEditProjectContainer {...this.props}>
         <Tab
           menu={{ attached: 'top', tabular: true, style: { overflowX: 'auto' } }}

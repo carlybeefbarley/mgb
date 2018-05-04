@@ -12,10 +12,12 @@ import { Grid, Dropdown, Button, Segment, Icon } from 'semantic-ui-react'
 import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
 import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
+import { browserHistory } from 'react-router'
 
 export default function AssetEditProjectContainer(props) {
-  const { currUserProjects, currUser, currentlyEditingAssetInfo, params, user } = props
-  // Set the name for the projects dropdown list
+  // Destructure props
+  const { currUserProjects, currUser, currentlyEditingAssetInfo, params, user, assetStore } = props
+  // Set the default name/option for the projects dropdown list
   const projectName = _.first(currentlyEditingAssetInfo.projectNames)
   return (
     <div>
@@ -37,8 +39,8 @@ export default function AssetEditProjectContainer(props) {
                 </span>
               }
               onChange={(e, { value }) => {
-                const project = _.find(currUserProjects, { name: value })
-                utilPushTo(location.query, `/u/${project.ownerName}/projects/${project.name}`)
+                const project = { name: value }
+                utilPushTo(location.query, `/u/${currUser.username}/projects/${project.name}`)
               }}
               options={_.map(currUserProjects, project => ({
                 key: project.name,

@@ -12,7 +12,6 @@ import { Grid, Dropdown, Button, Segment, Icon } from 'semantic-ui-react'
 import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
 import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
-import { browserHistory } from 'react-router'
 
 export default function AssetEditProjectContainer(props) {
   // Destructure props

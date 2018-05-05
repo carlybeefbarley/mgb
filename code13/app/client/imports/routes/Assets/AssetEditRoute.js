@@ -248,7 +248,7 @@ const AssetEditRoute = React.createClass({
     // auto open any new asset
     if (this.data.asset) {
       const { assetStore } = this.props
-      console.log('componentDidUpdate: open asset', this.data.asset, assetStore.getOpenAssets())
+      // console.log('componentDidUpdate: open asset', this.data.asset, assetStore.getOpenAssets())
       assetStore.openAsset(this.data.asset)
     }
   },
@@ -395,7 +395,7 @@ const AssetEditRoute = React.createClass({
     const assetHasProjects =
       !this.data.loading && this.data.asset !== null && this.data.asset.projectNames.length > 0
     const panes = _.map(assetStore.getOpenAssets(), asset => {
-      console.log('render open asset', asset)
+      // console.log('render open asset', asset)
       return {
         menuItem: {
           key: asset._id,
@@ -423,8 +423,7 @@ const AssetEditRoute = React.createClass({
 
     // console.log('AssetEditRoute: ASSETS', assetStore.getOpenAssets())
     // console.log('AssetEditRoute: PANES', panes)
-
-    console.log('THIS.DATA: ', this.data)
+    // console.log('THIS.DATA: ', this.data)
 
     // Return an IDE-like wrapped tab list & editor if the asset has any project(s)
     // TODO: Look into data prefetch to make tabs more responsive.
@@ -700,7 +699,7 @@ const AssetEditRoute = React.createClass({
   // Note that this can be called directly by the Sub-components.
   // Primary use case is user hits 'save now' button, or 'play now'
   handleSaveNowRequest() {
-    console.log('User request: Save deferred changes now')
+    // console.log('User request: Save deferred changes now')
     this._attemptToSendAnyDeferredChanges({ forceResend: true })
   },
 

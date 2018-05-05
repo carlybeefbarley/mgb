@@ -3,8 +3,8 @@ import React from 'react'
 import UX from '/client/imports/UX'
 
 const makeStyle = (mascot, style = {}) => ({
-  width: '8em',
-  height: '10em',
+  width: '10em',
+  height: '8em',
   paddingRight: '0.5em',
   marginBottom: '0',
   float: 'left',

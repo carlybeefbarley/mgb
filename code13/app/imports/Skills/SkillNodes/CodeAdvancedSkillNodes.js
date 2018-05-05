@@ -9,27 +9,197 @@ const CodeAdvancedSkillNodes = {
     name: 'Advanced Coding',
     description: 'Click on an item and explore it',
   },
-  initVariables: {
+
+  findingRemainder: {
     $meta: {
-      name: 'Initializing Variables with the Assignment Operator',
+      name: 'Finding a Remainder in JavaScript',
       icon: 'code',
-      subsection: 'Numbers',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
-  unitializedVariables: {
+  stringLength: {
     $meta: {
-      name: 'Understanding Uninitialized Variables',
+      name: 'Find the Length of a String',
       icon: 'code',
-      subsection: 'Numbers',
+      subsection: 'Game 2', // temporary
       ...C.E.$meta,
     },
   },
+  arrayIndexes: {
+    $meta: {
+      name: 'Access Array Data with Indexes',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+
+  modifyArray: {
+    $meta: {
+      name: 'Modify Array Data With Indexes',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  arrayPush: {
+    $meta: {
+      name: 'Manipulate Arrays With push()',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  arrayPop: {
+    $meta: {
+      name: 'Manipulate Arrays With pop()',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  arrayShift: {
+    $meta: {
+      name: 'Manipulate Arrays With shift()',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  arrayUnshift: {
+    $meta: {
+      name: 'Manipulate Arrays With unshift()',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  importCode: {
+    $meta: {
+      name: 'Import code from external file',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  standInLine: {
+    $meta: {
+      name: 'Stand in Line',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+
+  returnBoolean: {
+    $meta: {
+      name: 'Returning Boolean Values from Functions',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  countingCards: {
+    $meta: {
+      name: 'Counting Cards',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  objectsPropertiesVariables: {
+    $meta: {
+      name: 'Accessing Objects Properties with Variables',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+
+  updatingProperties: {
+    $meta: {
+      name: 'Updating Object Properties',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  newProperty: {
+    $meta: {
+      name: 'Add New Properties to a JavaScript Object',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  deleteProperties: {
+    $meta: {
+      name: 'Delete Properties from a JavaScript Object',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  forLoops: {
+    $meta: {
+      name: 'Iterate with JavaScript For Loops',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  oddNumbersIterate: {
+    $meta: {
+      name: 'Iterate Odd Numbers With a For Loop',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  countBackwardLoops: {
+    $meta: {
+      name: 'Count Backwards With a For Loop',
+      icon: 'code',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+
+  iterateArrayLoop: {
+    $meta: {
+      name: 'Iterate Through an Array with a For Loop',
+      icon: 'code',
+      subsection: 'Game 2',
+      skillChallengeType: 'challenges', // temporary
+      ...C.E.$meta,
+    },
+  },
+
   escapingQoutesString: {
     $meta: {
       name: 'Escaping Literal Quotes in Strings',
       icon: 'code',
-      subsection: 'Strings',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -37,7 +207,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Quoting Strings with Single Quotes',
       icon: 'code',
-      subsection: 'Strings',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -45,7 +216,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Escape Sequences in Strings',
       icon: 'code',
-      subsection: 'Strings',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -53,7 +225,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Concatenating Strings with the Plus Equals Operator',
       icon: 'code',
-      subsection: 'Strings',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -61,7 +234,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Appending Variables to Strings',
       icon: 'code',
-      subsection: 'Strings',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -69,7 +243,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Use Bracket Notation to Find the First Character in a String',
       icon: 'code',
-      subsection: 'Strings',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -77,7 +252,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Understand String Immutability',
       icon: 'code',
-      subsection: 'Strings',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -85,7 +261,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Use Bracket Notation to Find the Nth Character in a String',
       icon: 'code',
-      subsection: 'Strings',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -93,7 +270,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Use Bracket Notation to Find the Last Character in a String',
       icon: 'code',
-      subsection: 'Strings',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -101,7 +279,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Use Bracket Notation to Find the Nth-to-Last Character in a String',
       icon: 'code',
-      subsection: 'Strings',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -109,7 +288,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Word Blanks',
       icon: 'code',
-      subsection: 'Strings',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -117,7 +297,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Nest one Array within Another Array',
       icon: 'code',
-      subsection: 'Arrays',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -125,7 +306,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Access Multi-Dimensional Arrays With Indexes',
       icon: 'code',
-      subsection: 'Arrays',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -133,7 +315,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Shopping List',
       icon: 'code',
-      subsection: 'Arrays',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -141,31 +324,18 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Write Reusable JavaScript with Functions',
       icon: 'code',
-      subsection: 'Functions',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
-  strictComparison: {
-    $meta: {
-      name: 'Comparison with the Strict Equality Operator',
-      icon: 'code',
-      subsection: 'Decision Making',
-      ...C.E.$meta,
-    },
-  },
-  comparisonStrictInequeality: {
-    $meta: {
-      name: 'Comparison with the Strict Inequality Operator',
-      icon: 'code',
-      subsection: 'Decision Making',
-      ...C.E.$meta,
-    },
-  },
+
   switchStatement: {
     $meta: {
       name: 'Selecting from many options with Switch Statements',
       icon: 'code',
-      subsection: 'Decision Making',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -173,7 +343,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Adding a default option in Switch statements',
       icon: 'code',
-      subsection: 'Decision Making',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -181,7 +352,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Multiple Identical Options in Switch Statements',
       icon: 'code',
-      subsection: 'Decision Making',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -189,7 +361,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Replacing If Else Chains with Switch',
       icon: 'code',
-      subsection: 'Decision Making',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -197,7 +370,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Return Early Pattern for Functions',
       icon: 'code',
-      subsection: 'Decision Making',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -205,7 +379,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Using Objects for Lookups',
       icon: 'code',
-      subsection: 'Objects',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -213,7 +388,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Testing Objects for Properties',
       icon: 'code',
-      subsection: 'Objects',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -221,7 +397,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Manipulating Complex Objects',
       icon: 'code',
-      subsection: 'Objects',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -229,7 +406,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Accessing Nested Objects',
       icon: 'code',
-      subsection: 'Nesting',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -237,7 +415,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Accessing Nested Arrays',
       icon: 'code',
-      subsection: 'Nesting',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -245,7 +424,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Record Collection',
       icon: 'code',
-      subsection: 'Nesting',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -253,7 +433,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Iterate with JavaScript While Loops',
       icon: 'code',
-      subsection: 'Loops',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -261,7 +442,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Nesting For Loops',
       icon: 'code',
-      subsection: 'Loops',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -269,31 +451,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Profile Lookup',
       icon: 'code',
-      subsection: 'Loops',
-      ...C.E.$meta,
-    },
-  },
-  randomFractions: {
-    $meta: {
-      name: 'Generate Random Fractions with JavaScript',
-      icon: 'code',
-      subsection: 'Useful stuff',
-      ...C.E.$meta,
-    },
-  },
-  randomIntegers: {
-    $meta: {
-      name: 'Generate Random Whole Numbers with JavaScript',
-      icon: 'code',
-      subsection: 'Useful stuff',
-      ...C.E.$meta,
-    },
-  },
-  randomIntegersRange: {
-    $meta: {
-      name: 'Generate Random Whole Numbers within a Range',
-      icon: 'code',
-      subsection: 'Useful stuff',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -301,7 +460,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Use the parseInt Function',
       icon: 'code',
-      subsection: 'Useful stuff',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -309,7 +469,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Use the parseInt Function with a Radix',
       icon: 'code',
-      subsection: 'Useful stuff',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -317,7 +478,8 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Use the Conditional (Ternary) Operator',
       icon: 'code',
-      subsection: 'Useful stuff',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
       ...C.E.$meta,
     },
   },
@@ -325,7 +487,113 @@ const CodeAdvancedSkillNodes = {
     $meta: {
       name: 'Use Multiple Conditional (Ternary) Operators',
       icon: 'code',
-      subsection: 'Useful stuff',
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
+  tweens: {
+    $meta: {
+      name: 'Tweening',
+      icon: 'code',
+      link: '/u/!vault/asset/XnsehSEruvMKMBKLx',
+      description: `Animating images with interpolation instead of frames`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  groups: {
+    $meta: {
+      name: 'Sprite Groups',
+      icon: 'code',
+      link: '/u/!vault/asset/jYQwe8cv2rtDDCM89',
+      description: `Adding sprites to a group`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  taskTweenGroup: {
+    $meta: {
+      isTask: true,
+      name: 'Task: Animate a group',
+      icon: 'tasks',
+      link: '/u/!vault/asset/rDMCqocQv3nnYx8AB',
+      description: `Animate a group of dwarves`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  getObjectFromGroup: {
+    $meta: {
+      name: 'Get object from group',
+      icon: 'code',
+      description: `Iterating through group children`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  bringToTop: {
+    $meta: {
+      name: 'Bring to top',
+      icon: 'code',
+      description: `Bring object in a group to top`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  swapChildren: {
+    $meta: {
+      name: 'Swap children',
+      icon: 'code',
+      description: `Swap object indexes in a group`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  callAll: {
+    $meta: {
+      name: 'Call all',
+      icon: 'code',
+      description: `Call all objects in a group`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  sound: {
+    $meta: {
+      name: 'Sound',
+      icon: 'code',
+      description: `Music and sound`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
+      ...C.E.$meta,
+    },
+  },
+  // TODO needs joyride selectors, completation tags
+  // oop: {
+  //   $meta: {
+  //     icon: 'code',
+  //     link: '/u/!vault/project/aEzfbLcQ9uZKYaCu8',
+  //     name: 'OOP',
+  //     description: `Object-oriented-programming and game states`
+  //   },
+  //   'oop': C.En(0),
+  // },
+  next: {
+    $meta: {
+      icon: 'info',
+      link: '/u/!vault/asset/jWGJmWKcGe83r5pEY',
+      name: 'What to do next?',
+      description: `Learn using the Phaser docs and examples`,
+      subsection: 'Game 2', // temporary
+      skillChallengeType: 'phaser',
       ...C.E.$meta,
     },
   },

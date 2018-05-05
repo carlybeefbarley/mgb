@@ -392,6 +392,8 @@ const AssetEditRoute = React.createClass({
 
   render() {
     const { assetStore, params, asset, currUserProjects, currentlyEditingAssetInfo } = this.props
+    const assetHasProjects =
+      !this.data.loading && this.data.asset !== null && this.data.asset.projectNames.length > 0
     const panes = _.map(assetStore.getOpenAssets(), asset => {
       console.log('render open asset', asset)
       return {
@@ -426,7 +428,7 @@ const AssetEditRoute = React.createClass({
 
     // Return an IDE-like wrapped tab list & editor if the asset has any project(s)
     // TODO: Look into data prefetch to make tabs more responsive.
-    return (
+    return assetHasProjects ? (
       <AssetEditProjectContainer {...this.props}>
         <Tab
           menu={{ attached: 'top', tabular: true, style: { overflowX: 'auto' } }}
@@ -435,6 +437,8 @@ const AssetEditRoute = React.createClass({
           panes={panes}
         />
       </AssetEditProjectContainer>
+    ) : (
+      this.renderRoute()
     )
   },
 

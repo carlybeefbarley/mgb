@@ -249,7 +249,6 @@ const AssetEditRoute = React.createClass({
     if (this.data.asset) {
       const { assetStore } = this.props
       console.log('componentDidUpdate: open asset', this.data.asset, assetStore.getOpenAssets())
-      // debugger
       assetStore.openAsset(this.data.asset)
     }
   },
@@ -377,6 +376,7 @@ const AssetEditRoute = React.createClass({
       e.preventDefault()
       e.stopPropagation()
       e.nativeEvent.stopImmediatePropagation()
+
       assetStore.closeAsset(asset)
       // open the tab to the left on close of the currently open tab
       if (params.assetId === asset._id) {

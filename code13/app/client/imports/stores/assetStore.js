@@ -73,8 +73,23 @@ class AssetStore extends Store {
   closeAsset = asset => {
     console.log('assetStore.closeAsset()', asset)
     const { assets, project } = this.state
-    // delete this.state.assets[asset.projectNames[0]]
-    this.setState({ assets: _.filter(assets[project], a => a._id !== asset._id) })
+
+    // Copy all the arrays that are not 'project'
+
+    let filteredProjects = {}
+    for (let item in assets) {
+      if (item !== project) {
+        filteredProjects[item] = assets[item]
+      }
+    }
+
+    const newProjectTabs = _.filter(assets[project], a => a._id !== asset._id)
+    // filter the array that is 'project'
+
+    filteredProjects[project] = newProjectTabs
+
+    this.setState({ assets: filteredProjects })
+    console.log('Filtered Results:', filteredProjects, assets)
   }
 
   setProject = project => {

@@ -17,7 +17,7 @@ export default function AssetEditProjectContainer(props) {
   // Destructure props
   const { currUserProjects, currUser, currentlyEditingAssetInfo, params, user, assetStore } = props
   // Set the default name/option for the projects dropdown list
-  const projectName = _.first(currentlyEditingAssetInfo.projectNames)
+  const projectName = assetStore.state.project
   return (
     <div style={{ overflowY: 'auto' }}>
       <Grid padded columns="equal" style={{ flex: '0 0 auto' }}>
@@ -32,6 +32,7 @@ export default function AssetEditProjectContainer(props) {
               search
               scrolling
               value={projectName}
+              // Throws error but semantic doesnt curently support this icon positioning correctly via built in props
               text={
                 <span>
                   <Icon name="sitemap" /> {projectName}
@@ -74,6 +75,7 @@ export default function AssetEditProjectContainer(props) {
           <Segment>
             <RelatedAssets
               projectName={projectName}
+              overrideProject={assetStore.state.project}
               location={location}
               user={user}
               currUser={currUser}

@@ -5,6 +5,7 @@ import { Grid, Icon, Message, Tab } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import AssetEditProjectContainer from '/client/imports/components/Assets/AssetEditProjectContainer'
+import { browserHistory } from 'react-router'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
@@ -396,6 +397,7 @@ const AssetEditRoute = React.createClass({
       !this.data.loading && this.data.asset !== null && this.data.asset.projectNames.length > 0
     const panes = _.map(assetStore.getOpenAssets(), asset => {
       // console.log('render open asset', asset)
+      console.log('HISTORY: ', browserHistory)
       return {
         menuItem: {
           key: asset._id,

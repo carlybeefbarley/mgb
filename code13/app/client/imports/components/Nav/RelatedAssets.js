@@ -402,13 +402,14 @@ class RelatedAssetsUI extends React.Component {
 }
 
 const RelatedAssets = createContainer(props => {
-  const { user, currUser, currentlyEditingAssetInfo, location, params } = props
+  const { user, currUser, currentlyEditingAssetInfo, location, params, overrideProject } = props
+  const defaultProject = getContextualProjectName({ location, currentlyEditingAssetInfo, params })
   const handleForAssets = Meteor.subscribe(
     'assets.public.nameInfo.query',
     _.get(user || currUser, '_id', null),
     null, // assetKinds=all
     '', // Search for string in name
-    getContextualProjectName({ location, currentlyEditingAssetInfo, params }),
+    overrideProject || defaultProject, // check for override project, then default to auto resolution
     false,
     false,
     'edited', // Sort by recently edited

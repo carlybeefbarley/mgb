@@ -20,7 +20,7 @@ export default function AssetEditProjectContainer(props) {
   // Set the default name/option for the projects dropdown list
   const projectName = _.first(currentlyEditingAssetInfo.projectNames)
   return (
-    <div>
+    <div style={{ overflowY: 'auto' }}>
       <Grid padded columns="equal" style={{ flex: '0 0 auto' }}>
         <Grid.Column style={{ flex: '0 0 20em' }}>
           <div style={{ display: 'inline', fontSize: '2em' }}>

@@ -73,23 +73,22 @@ class AssetStore extends Store {
   closeAsset = asset => {
     console.log('assetStore.closeAsset()', asset)
     const { assets, project } = this.state
+    let filteredAssets = {}
 
-    // Copy all the arrays that are not 'project'
-
-    let filteredProjects = {}
+    // Copy all the arrays that are not 'project' into results
     for (let item in assets) {
       if (item !== project) {
-        filteredProjects[item] = assets[item]
+        filteredAssets[item] = assets[item]
       }
     }
 
-    const newProjectTabs = _.filter(assets[project], a => a._id !== asset._id)
-    // filter the array that is 'project'
+    // filter the array that is 'project' and remove the asset
+    const newAssetTabs = _.filter(assets[project], a => a._id !== asset._id)
 
-    filteredProjects[project] = newProjectTabs
+    // Merge the newly filtered asset list into the copied object containing the arrays
+    filteredAssets[project] = newAssetTabs
 
-    this.setState({ assets: filteredProjects })
-    console.log('Filtered Results:', filteredProjects, assets)
+    this.setState({ assets: filteredAssets })
   }
 
   setProject = project => {

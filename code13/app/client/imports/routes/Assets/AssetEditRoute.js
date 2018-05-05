@@ -377,7 +377,6 @@ const AssetEditRoute = React.createClass({
       e.stopPropagation()
       e.nativeEvent.stopImmediatePropagation()
 
-      assetStore.closeAsset(asset)
       // open the tab to the left on close of the currently open tab
       if (params.assetId === asset._id) {
         const currTabIndex = _.findIndex(assetStore.getOpenAssets(), { _id: asset._id })
@@ -387,6 +386,7 @@ const AssetEditRoute = React.createClass({
 
         utilPushTo(this.context.urlLocation, nextURL)
       }
+      assetStore.closeAsset(asset)
     }
   },
 

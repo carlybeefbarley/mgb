@@ -5,7 +5,6 @@ import { Grid, Icon, Message, Tab } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import AssetEditProjectContainer from '/client/imports/components/Assets/AssetEditProjectContainer'
-import { browserHistory } from 'react-router'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
@@ -393,11 +392,12 @@ const AssetEditRoute = React.createClass({
 
   render() {
     const { assetStore, params, asset, currUserProjects, currentlyEditingAssetInfo } = this.props
+    const __NO_ASSET__ = 'no_asset'
     const assetHasProjects =
       !this.data.loading && this.data.asset !== null && this.data.asset.projectNames.length > 0
+    const noAssetPanes = <div> There doesnt seem to be an assssset </div>
     const panes = _.map(assetStore.getOpenAssets(), asset => {
       // console.log('render open asset', asset)
-      console.log('HISTORY: ', browserHistory)
       return {
         menuItem: {
           key: asset._id,
@@ -423,23 +423,25 @@ const AssetEditRoute = React.createClass({
       }
     })
 
+    let renderNoProject = this.renderRoute()
+
     // console.log('AssetEditRoute: ASSETS', assetStore.getOpenAssets())
     // console.log('AssetEditRoute: PANES', panes)
     // console.log('THIS.DATA: ', this.data)
 
     // Return an IDE-like wrapped tab list & editor if the asset has any project(s)
     // TODO: Look into data prefetch to make tabs more responsive.
-    return assetHasProjects ? (
+    return assetHasProjects || params.assetId === __NO_ASSET__ ? (
       <AssetEditProjectContainer {...this.props}>
         <Tab
           menu={{ attached: 'top', tabular: true, style: { overflowX: 'auto' } }}
           activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
           onTabChange={this.handleTabChange}
-          panes={panes}
+          panes={params === __NO_ASSET__ ? noAssetPanes : panes}
         />
       </AssetEditProjectContainer>
     ) : (
-      this.renderRoute()
+      <div>{renderNoProject}</div>
     )
   },
 

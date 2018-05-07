@@ -14,10 +14,11 @@ import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 
 export default function AssetEditProjectContainer(props) {
-  // Destructure props
   const { currUserProjects, currUser, currentlyEditingAssetInfo, params, user, assetStore } = props
   // Set the default name/option for the projects dropdown list
   const projectName = assetStore.state.project
+  const __NO_ASSET__ = 'no_asset'
+
   return (
     <div style={{ overflowY: 'auto' }}>
       <Grid padded columns="equal" style={{ flex: '0 0 auto' }}>
@@ -40,7 +41,8 @@ export default function AssetEditProjectContainer(props) {
               }
               onChange={(e, { value }) => {
                 const project = { name: value }
-                utilPushTo(location.query, `/u/${currUser.username}/projects/${project.name}`)
+                assetStore.setProject(project.name)
+                utilPushTo(location.query, `/u/${currUser.username}/asset/${__NO_ASSET__}`)
               }}
               options={_.map(currUserProjects, project => ({
                 key: project.name,

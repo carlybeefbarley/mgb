@@ -42,7 +42,12 @@ export default function AssetEditProjectContainer(props) {
               onChange={(e, { value }) => {
                 const project = { name: value }
                 assetStore.setProject(project.name)
-                utilPushTo(location.query, `/u/${currUser.username}/asset/${__NO_ASSET__}`)
+                if (assetStore.state.assets[project.name]) {
+                  utilPushTo(
+                    location.query,
+                    `/u/${currUser.username}/asset/${assetStore.state.assets[project.name][0]._id}`,
+                  )
+                } else utilPushTo(location.query, `/u/${currUser.username}/asset/${__NO_ASSET__}`)
               }}
               options={_.map(currUserProjects, project => ({
                 key: project.name,

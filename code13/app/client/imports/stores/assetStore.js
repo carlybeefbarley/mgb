@@ -7,7 +7,7 @@ import { logActivity } from '../../../imports/schemas/activity'
 import registerDebugGlobal from '../ConsoleDebugGlobals'
 
 // Used to group assets that do not have a project
-const NO_PROJECT = '__NO_PROJECT__'
+export const __NO_PROJECT__ = '__NO_PROJECT__'
 
 // We only store limited necessary information about open assets
 // The content2 field is massive, this allows us to keep a small footprint
@@ -28,7 +28,7 @@ class AssetStore extends Store {
       // otherProject: [asdf, zxvc] },
       // __NO_PROJECT__: [...assetTombstone] },
     },
-    project: NO_PROJECT,
+    project: __NO_PROJECT__,
   }
 
   getOpenAssets = () => {
@@ -43,13 +43,56 @@ class AssetStore extends Store {
     return project
   }
 
-  openAsset = asset => {
+  assetHasMultipleProjects = (asset, targetProject) => {
+    if (targetProject !== __NO_PROJECT__) {
+      return asset.projectNames.length > 1
+    } else {
+      return false
+    }
+  }
+
+  isAlreadyOpen = (asset, targetProject) => {
     const { assets } = this.state
-
-    const targetProject = _.first(asset.projectNames) || NO_PROJECT
-
     const isAlreadyOpen = _.find(assets[targetProject], { _id: asset._id })
     if (isAlreadyOpen) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  openAsset = asset => {
+    const { assets } = this.state
+    // set the target project to the current project if it is in the assets list of projects,
+    // if it isn't in the list of projects, open the first project on the asset. If it has no projects, default to __NO_PROJECT__
+    const targetProject =
+      _.find(asset.projectNames, this.state.project) || _.first(asset.projectNames) || __NO_PROJECT__
+    const assetHasMultipleProjects = this.assetHasMultipleProjects(asset, targetProject)
+    // console.log('Asset Has Multiple Projects?: ', assetHasMultipleProjects)
+    const assetTombstone = getAssetTombstone(asset)
+    let otherProjectsAssets = {}
+
+    if (assetHasMultipleProjects) {
+      for (let project in asset.projectNames) {
+        if (project !== __NO_PROJECT__ && project !== targetProject) {
+          let projectName = asset.projectNames[project]
+
+          if (!this.isAlreadyOpen(assetTombstone, projectName)) {
+            otherProjectsAssets[projectName] = _.union(assets[project], [assetTombstone])
+          }
+          console.log('PROJECT NAMES:', otherProjectsAssets)
+        }
+      }
+    }
+
+    const newAssets = _.union(this.state.assets[targetProject], [assetTombstone])
+    let testAssets = otherProjectsAssets
+    testAssets[targetProject] = newAssets
+
+    console.log('All Projects: ', testAssets)
+
+    // Check if asset is already open in this project branch.
+    if (this.isAlreadyOpen(asset, targetProject)) {
       console.log('assetStore.openAsset() ...skipping already open asset', { project: targetProject, asset })
       // Make sure to be on the right project even if it's already open,
       // as the user may have navigated away and come back.
@@ -57,44 +100,31 @@ class AssetStore extends Store {
       return
     }
 
-    const assetTombstone = getAssetTombstone(asset)
-    const newAssets = _.union(this.state.assets[targetProject], [assetTombstone])
     console.log('assetStore.openAsset()', { project: targetProject, asset, assets })
 
     this.setState({
-      assets: {
-        ...this.state.assets,
-        [targetProject]: newAssets,
-      },
+      assets: testAssets,
       project: targetProject,
     })
+
+    // this.setState({
+    //   assets: {
+    //     ...this.state.assets,
+    //     [targetProject]: newAssets,
+    //   },
+    //   project: targetProject,
+    // })
   }
 
   closeAsset = asset => {
     console.log('assetStore.closeAsset()', asset)
     const { assets, project } = this.state
-    let filteredAssets = {}
 
-    // Copy all the arrays that are not 'project' into results
-    for (let item in assets) {
-      if (item !== project) {
-        filteredAssets[item] = assets[item]
-      }
-    }
-
-    // filter the array that is 'project' and remove the asset
-    const newAssetTabs = _.filter(assets[project], a => a._id !== asset._id)
-
-    // Merge the newly filtered asset list into the copied object containing the arrays
-    filteredAssets[project] = newAssetTabs
-
-    this.setState({ assets: filteredAssets })
-  }
-
-  setProject = project => {
     this.setState({
-      ...this.state,
-      project,
+      assets: {
+        ...this.state.assets,
+        [project]: _.filter(assets[project], a => a._id !== asset._id),
+      },
     })
   }
 

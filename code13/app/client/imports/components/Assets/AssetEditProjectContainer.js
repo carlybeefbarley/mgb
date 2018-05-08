@@ -12,9 +12,24 @@ import { Grid, Dropdown, Button, Segment, Icon } from 'semantic-ui-react'
 import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
 import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
+import { __NO_PROJECT__ } from '/client/imports/stores/assetStore'
+
+function renderProjectsList(currUserProjects) {
+  let data = _.map(currUserProjects, project => ({
+    key: project.name,
+    text: project.name,
+    value: project.name,
+    icon: 'sitemap',
+  }))
+
+  data.push({ key: __NO_PROJECT__, text: 'No Project', value: __NO_PROJECT__, icon: 'sitemap' })
+
+  return data
+}
 
 export default function AssetEditProjectContainer(props) {
   const { currUserProjects, currUser, currentlyEditingAssetInfo, params, user, assetStore } = props
+  const currUserProjectsWithNoProject = renderProjectsList(currUserProjects)
   // Set the default name/option for the projects dropdown list
   const projectName = assetStore.state.project
   const __NO_ASSET__ = 'no_asset'
@@ -36,7 +51,7 @@ export default function AssetEditProjectContainer(props) {
               // Throws error but semantic doesnt curently support this icon positioning correctly via built in props
               text={
                 <span>
-                  <Icon name="sitemap" /> {projectName}
+                  <Icon name="sitemap" /> {_.find(currUserProjectsWithNoProject, { value: projectName }).text}
                 </span>
               }
               onChange={(e, { value }) => {
@@ -49,12 +64,7 @@ export default function AssetEditProjectContainer(props) {
                   )
                 } else utilPushTo(location.query, `/u/${currUser.username}/asset/${__NO_ASSET__}`)
               }}
-              options={_.map(currUserProjects, project => ({
-                key: project.name,
-                text: project.name,
-                value: project.name,
-                icon: 'sitemap',
-              }))}
+              options={currUserProjectsWithNoProject}
             />
           </div>
         </Grid.Column>
@@ -68,13 +78,15 @@ export default function AssetEditProjectContainer(props) {
               suggestedParams: { projectName },
             }}
           />
-          <Button
-            as={QLink}
-            floated="right"
-            to={`/u/${currentlyEditingAssetInfo.ownerName}/projects/${projectName}`}
-          >
-            Project Overview
-          </Button>
+          {projectName !== __NO_PROJECT__ && (
+            <Button
+              as={QLink}
+              floated="right"
+              to={`/u/${currentlyEditingAssetInfo.ownerName}/projects/${projectName}`}
+            >
+              Project Overview
+            </Button>
+          )}
         </Grid.Column>
       </Grid>
       <Grid padded columns="equal" style={{ flex: '1' }}>

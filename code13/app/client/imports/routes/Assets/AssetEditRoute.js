@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Grid, Icon, Message, Tab } from 'semantic-ui-react'
+import { Grid, Icon, Message, Tab, Segment } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import AssetEditProjectContainer from '/client/imports/components/Assets/AssetEditProjectContainer'
@@ -395,7 +395,12 @@ const AssetEditRoute = React.createClass({
     const __NO_ASSET__ = 'no_asset'
     const assetHasProjects =
       !this.data.loading && this.data.asset !== null && this.data.asset.projectNames.length > 0
-    const noAssetPanes = <div> There doesnt seem to be an assssset </div>
+    const noAssetPane = (
+      <Segment size="large" basic>
+        You don't currently have any assets open for this project. Click on an asset in the assets menu to
+        begin editing.
+      </Segment>
+    )
     const panes = _.map(assetStore.getOpenAssets(), asset => {
       // console.log('render open asset', asset)
       return {
@@ -423,25 +428,25 @@ const AssetEditRoute = React.createClass({
       }
     })
 
-    let renderNoProject = this.renderRoute()
-
     // console.log('AssetEditRoute: ASSETS', assetStore.getOpenAssets())
     // console.log('AssetEditRoute: PANES', panes)
     // console.log('THIS.DATA: ', this.data)
 
     // Return an IDE-like wrapped tab list & editor if the asset has any project(s)
     // TODO: Look into data prefetch to make tabs more responsive.
-    return assetHasProjects || params.assetId === __NO_ASSET__ ? (
+    return (
       <AssetEditProjectContainer {...this.props}>
-        <Tab
-          menu={{ attached: 'top', tabular: true, style: { overflowX: 'auto' } }}
-          activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
-          onTabChange={this.handleTabChange}
-          panes={params === __NO_ASSET__ ? noAssetPanes : panes}
-        />
+        {params.assetId === __NO_ASSET__ ? (
+          noAssetPane
+        ) : (
+          <Tab
+            menu={{ attached: 'top', tabular: true, style: { overflowX: 'auto' } }}
+            activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
+            onTabChange={this.handleTabChange}
+            panes={panes}
+          />
+        )}
       </AssetEditProjectContainer>
-    ) : (
-      <div>{renderNoProject}</div>
     )
   },
 

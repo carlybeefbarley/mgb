@@ -82,7 +82,8 @@ class AssetStore extends Store {
     return assets
   }
 
-  // Never call this before trackProject or you will end up with improperly tracked assets.
+  // This should never be called directly as it depends on the current projects in assets
+  // to be set correctly for this particular asset
   trackAsset = (asset, assets) => {
     let newAssets = Object.assign(assets)
     for (let index in asset.projectNames) {
@@ -90,6 +91,18 @@ class AssetStore extends Store {
       newAssets = this.trackProject(curProject, newAssets)
       if (!_.find(newAssets[curProject], { _id: asset._id })) {
         newAssets[curProject].push(asset)
+      }
+    }
+    return newAssets
+  }
+
+  untrackAsset = (asset, assets) => {
+    let newAssets = Object.assign(assets)
+    for (let index in asset.projectNames) {
+      let indexName = asset.projectNames[index]
+      if (newAssets[indexName]) {
+        let targetIndex = _.findIndex(newAssets[indexName], { _id: asset._id })
+        newAssets[indexName].splice(targetIndex, 1)
       }
     }
     return newAssets
@@ -119,11 +132,10 @@ class AssetStore extends Store {
     // console.log('assetStore.closeAsset()', asset)
     const { assets, project } = this.state
 
+    const newAssets = this.untrackAsset(asset, assets)
+
     this.setState({
-      assets: {
-        ...this.state.assets,
-        [project]: _.filter(assets[project], a => a._id !== asset._id),
-      },
+      assets: newAssets,
     })
   }
 

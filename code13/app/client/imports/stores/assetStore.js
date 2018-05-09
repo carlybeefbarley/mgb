@@ -110,14 +110,14 @@ class AssetStore extends Store {
 
   openAsset = asset => {
     const { assets, project } = this.state
-
+    const tombstone = getAssetTombstone(asset)
     let newAssets = {}
 
     // Track all of the projects this asset is in.
-    newAssets = this.trackAsset(asset, assets)
+    newAssets = this.trackAsset(tombstone, assets)
 
-    const targetProject = asset.projectNames[0]
-    if (!this.isAlreadyOpen(asset, targetProject)) {
+    const targetProject = tombstone.projectNames[0]
+    if (!this.isAlreadyOpen(tombstone, targetProject)) {
       this.setState({
         assets: newAssets,
         project: targetProject,
@@ -130,7 +130,7 @@ class AssetStore extends Store {
 
   closeAsset = asset => {
     // console.log('assetStore.closeAsset()', asset)
-    const { assets, project } = this.state
+    const { assets } = this.state
 
     const newAssets = this.untrackAsset(asset, assets)
 

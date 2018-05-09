@@ -191,6 +191,11 @@ const AssetEditRoute = React.createClass({
   },
 
   componentDidMount() {
+    const { query } = this.props.location
+    const { assetStore } = this.props
+    if (query.project) {
+      assetStore.setProject(query.project)
+    }
     this.checkForRedirect()
     this.m_deferredSaveObj = null
     this.addListenersOnMount()

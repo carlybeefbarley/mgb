@@ -58,6 +58,7 @@ const AssetsAvailableGET = React.createClass({
 
   render() {
     const { loading, assets } = this.data
+    const { scopeToProjectName } = this.props
 
     // In profile, vertically stacked list view fits better than card view
     if (loading) return <Spinner />
@@ -70,7 +71,14 @@ const AssetsAvailableGET = React.createClass({
           </Segment>
         ) : (
           <Card.Group style={_nowrapStyle}>
-            {_.map(assets, a => <AssetCard classNames="mgb-assetcard-width" asset={a} key={a._id} />)}
+            {_.map(assets, a => (
+              <AssetCard
+                classNames="mgb-assetcard-width"
+                asset={a}
+                key={a._id}
+                project={scopeToProjectName}
+              />
+            ))}
           </Card.Group>
         )}
 

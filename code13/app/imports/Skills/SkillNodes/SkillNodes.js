@@ -462,8 +462,8 @@ export const getStartedItems = [
   { node: SkillNodes.getStarted.play, mascot: 'whale' },
   { node: SkillNodes.getStarted.assetsBasics, mascot: 'ideaguy' },
   { node: SkillNodes.getStarted.projects, mascot: 'team' },
-  { node: SkillNodes.getStarted.nonCodeGame, mascot: 'duck' },
-  //  { node: SkillNodes.getStarted.codeGame, mascot: 'bigguy' }
+  // { node: SkillNodes.getStarted.nonCodeGame, mascot: 'duck' },
+  // { node: SkillNodes.getStarted.codeGame, mascot: 'bigguy' }
   // { node: SkillNodes.getStarted.assetsAdvanced,  mascot: 'ideaguy'      },
   // { node: SkillNodes.getStarted.learn,           mascot: 'MgbLogo'      }
 ]

@@ -62,7 +62,7 @@ class AssetStore extends Store {
   }
 
   projectHasLoadedAssets = projectName => {
-    if (this.state.assets[projectName]) {
+    if (this.state.assets[projectName] && this.state.assets[projectName].length > 0) {
       return true
     } else {
       return false

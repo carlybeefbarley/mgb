@@ -61,63 +61,62 @@ class AssetStore extends Store {
     }
   }
 
-  openAsset = asset => {
-    const { assets } = this.state
-    // set the target project to the current project if it is in the assets list of projects,
-    // if it isn't in the list of projects, open the first project on the asset. If it has no projects, default to __NO_PROJECT__
-    const targetProject =
-      _.find(asset.projectNames, this.state.project) || _.first(asset.projectNames) || __NO_PROJECT__
-    const assetHasMultipleProjects = this.assetHasMultipleProjects(asset, targetProject)
-    // console.log('Asset Has Multiple Projects?: ', assetHasMultipleProjects)
-    const assetTombstone = getAssetTombstone(asset)
-    let otherProjectsAssets = {}
+  projectHasLoadedAssets = projectName => {
+    if (this.state.assets[projectName]) {
+      return true
+    } else {
+      return false
+    }
+  }
 
-    if (assetHasMultipleProjects) {
-      for (let project in asset.projectNames) {
-        if (project !== __NO_PROJECT__ && project !== targetProject) {
-          let projectName = asset.projectNames[project]
+  setProject = project => {
+    this.setState({ project })
+  }
 
-          if (!this.isAlreadyOpen(assetTombstone, projectName)) {
-            otherProjectsAssets[projectName] = _.union(assets[project], [assetTombstone])
-          }
-          console.log('PROJECT NAMES:', otherProjectsAssets)
-        }
+  trackProject = (project, assets) => {
+    let newAssets = Object.assign(assets)
+    if (!assets[project]) {
+      newAssets[project] = []
+      return newAssets
+    }
+    return assets
+  }
+
+  // Never call this before trackProject or you will end up with improperly tracked assets.
+  trackAsset = (asset, assets) => {
+    let newAssets = Object.assign(assets)
+    for (let index in asset.projectNames) {
+      let curProject = asset.projectNames[index]
+      newAssets = this.trackProject(curProject, newAssets)
+      if (!_.find(newAssets[curProject], { _id: asset._id })) {
+        newAssets[curProject].push(asset)
       }
     }
+    return newAssets
+  }
 
-    const newAssets = _.union(this.state.assets[targetProject], [assetTombstone])
-    let testAssets = otherProjectsAssets
-    testAssets[targetProject] = newAssets
+  openAsset = asset => {
+    const { assets, project } = this.state
 
-    console.log('All Projects: ', testAssets)
+    let newAssets = {}
 
-    // Check if asset is already open in this project branch.
-    if (this.isAlreadyOpen(asset, targetProject)) {
-      console.log('assetStore.openAsset() ...skipping already open asset', { project: targetProject, asset })
-      // Make sure to be on the right project even if it's already open,
-      // as the user may have navigated away and come back.
-      if (this.state.project !== targetProject) this.setState({ project: targetProject })
+    // Track all of the projects this asset is in.
+    newAssets = this.trackAsset(asset, assets)
+
+    const targetProject = asset.projectNames[0]
+    if (!this.isAlreadyOpen(asset, targetProject)) {
+      this.setState({
+        assets: newAssets,
+        project: targetProject,
+      })
       return
+    } else if (project === __NO_PROJECT__) {
+      this.setProject(targetProject)
     }
-
-    console.log('assetStore.openAsset()', { project: targetProject, asset, assets })
-
-    this.setState({
-      assets: testAssets,
-      project: targetProject,
-    })
-
-    // this.setState({
-    //   assets: {
-    //     ...this.state.assets,
-    //     [targetProject]: newAssets,
-    //   },
-    //   project: targetProject,
-    // })
   }
 
   closeAsset = asset => {
-    console.log('assetStore.closeAsset()', asset)
+    // console.log('assetStore.closeAsset()', asset)
     const { assets, project } = this.state
 
     this.setState({

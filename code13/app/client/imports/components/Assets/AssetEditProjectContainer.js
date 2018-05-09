@@ -29,9 +29,9 @@ function renderProjectsList(currUserProjects) {
 
 export default function AssetEditProjectContainer(props) {
   const { currUserProjects, currUser, currentlyEditingAssetInfo, params, user, assetStore } = props
-  const currUserProjectsWithNoProject = renderProjectsList(currUserProjects)
+  const renderedProjectsList = renderProjectsList(currUserProjects)
   // Set the default name/option for the projects dropdown list
-  const projectName = assetStore.state.project
+  const projectName = assetStore.project()
   const __NO_ASSET__ = 'no_asset'
 
   return (
@@ -51,20 +51,21 @@ export default function AssetEditProjectContainer(props) {
               // Throws error but semantic doesnt curently support this icon positioning correctly via built in props
               text={
                 <span>
-                  <Icon name="sitemap" /> {_.find(currUserProjectsWithNoProject, { value: projectName }).text}
+                  <Icon name="sitemap" />
+                  {_.find(renderedProjectsList, { value: projectName }).text}
                 </span>
               }
               onChange={(e, { value }) => {
                 const project = { name: value }
                 assetStore.setProject(project.name)
-                if (assetStore.state.assets[project.name]) {
+                if (assetStore.projectHasLoadedAssets(project.name)) {
                   utilPushTo(
                     location.query,
                     `/u/${currUser.username}/asset/${assetStore.state.assets[project.name][0]._id}`,
                   )
                 } else utilPushTo(location.query, `/u/${currUser.username}/asset/${__NO_ASSET__}`)
               }}
-              options={currUserProjectsWithNoProject}
+              options={renderedProjectsList}
             />
           </div>
         </Grid.Column>
@@ -94,7 +95,7 @@ export default function AssetEditProjectContainer(props) {
           <Segment>
             <RelatedAssets
               projectName={projectName}
-              overrideProject={assetStore.state.project}
+              overrideProject={assetStore.project()}
               location={location}
               user={user}
               currUser={currUser}

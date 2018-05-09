@@ -120,7 +120,7 @@ class ProjectOverview extends Component {
     Meteor.call('Projects.update', project._id, newData, (error, result) => {
       if (error) showToast.error(`Could not add member ${userName} to project ${project.name}`)
       else
-      // guntis - Is it ok that I've added project id, name as asset params?
+        // guntis - Is it ok that I've added project id, name as asset params?
         logActivity(
           'project.addMember',
           `Add Member ${userName} to project ${project.name}`,
@@ -307,7 +307,7 @@ class ProjectOverview extends Component {
     const sideBarColumnStyle = { minWidth: '250px', maxWidth: '250px' }
 
     return (
-      <Grid columns="equal" container>
+      <Grid columns="equal" container style={{ overflowX: 'hidden' }}>
         <Helmet
           title={`Project: ${relativeProjectName}`}
           meta={[{ name: `Project: ${relativeProjectName}`, content: 'Project' }]}

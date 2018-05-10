@@ -42,8 +42,6 @@ const Tools = [
   ToolPaste,
 
   ToolSeparator,
-
-  { label: 'Import' },
 ]
 
 export default Tools

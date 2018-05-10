@@ -41,13 +41,15 @@ const FlagsModerateUI = ({ loading, flagsList }) => (
             <List.Item>
               <List.Content>
                 <List.Icon name="list layout" />
-                &#9; List of flag types
+                &ensp; List of flag types
               </List.Content>
               <List bulleted>
                 {flag.flagTypes && flag.flagTypes.map((type, idx) => <List.Item key={idx}>{type}</List.Item>)}
               </List>
             </List.Item>
-            <List.Item>Reporter comments: "{flag.reporterComments}"</List.Item>
+            <List.Item>
+              <List.Content>Reporter comments: "{flag.reporterComments}"</List.Content>
+            </List.Item>
           </List>
         </Segment>
       ))}

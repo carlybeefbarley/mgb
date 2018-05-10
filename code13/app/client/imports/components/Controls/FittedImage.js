@@ -5,7 +5,6 @@ const FittedImage = ({ src, height = '140px', width, ...rest }) => (
   // This is <span> instead of <img> so that it won't have the border that chrome puts on if src has no content
   <span
     className="mgb-pixelated"
-    crossOrigin="anonymous"
     {...rest}
     style={{
       display: 'block',

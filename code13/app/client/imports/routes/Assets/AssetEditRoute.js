@@ -4,7 +4,7 @@ import React from 'react'
 import { Grid, Icon, Message, Tab, Segment } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
-import AssetEditProjectContainer from '/client/imports/components/Assets/AssetEditProjectContainer'
+import AssetEditProjectLayout from '/client/imports/layouts/AssetEditProjectLayout'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
@@ -51,7 +51,7 @@ import FlagEntity from '/client/imports/components/Controls/FlagEntityUI'
 import ResolveReportEntity from '/client/imports/components/Controls/FlagResolve'
 import { withStores } from '/client/imports/hocs'
 
-const FLUSH_TIMER_INTERVAL_MS = 6000 // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
+const FLUSH_TIMER_INTERVAL_MS = 60000000000000000000000000 // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
 
 // This AssetEditRoute serves the following objectives
 // 1. Provide a reactive  this.data.___ for the data needed to view/edit this Asset
@@ -141,7 +141,7 @@ const AssetEditRoute = React.createClass({
   // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the
   // userId TODO: Make this QLink-smart so it preserves queries
   checkForRedirect() {
-    console.log('checkForRedirect', { user: this.props.user, asset: this.data.asset })
+    // console.log('checkForRedirect', { user: this.props.user, asset: this.data.asset })
     // if (!this.props.user && !!this.data.asset) {
     //   // don't push - just replace #225 - back button not always work
     //   console.log('AssetEditRoute - redirecting')
@@ -235,6 +235,7 @@ const AssetEditRoute = React.createClass({
 
   componentDidUpdate() {
     this.checkForRedirect()
+    assetStore.setProps(this.props)
 
     if (!this.counter && !this.data.loading) {
       this.assetUpdatedAt = this.data.asset.updatedAt
@@ -440,7 +441,7 @@ const AssetEditRoute = React.createClass({
     // Return an IDE-like wrapped tab list & editor if the asset has any project(s)
     // TODO: Look into data prefetch to make tabs more responsive.
     return (
-      <AssetEditProjectContainer {...this.props}>
+      <AssetEditProjectLayout {...this.props}>
         {params.assetId === __NO_ASSET__ ? (
           noAssetPane
         ) : (
@@ -451,7 +452,7 @@ const AssetEditRoute = React.createClass({
             panes={panes}
           />
         )}
-      </AssetEditProjectContainer>
+      </AssetEditProjectLayout>
     )
   },
 

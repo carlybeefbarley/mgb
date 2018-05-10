@@ -8,6 +8,7 @@ import registerDebugGlobal from '../ConsoleDebugGlobals'
 
 // Used to group assets that do not have a project
 export const __NO_PROJECT__ = '__NO_PROJECT__'
+export const __NO_ASSET__ = 'no_asset'
 
 // We only store limited necessary information about open assets
 // The content2 field is massive, this allows us to keep a small footprint
@@ -27,6 +28,7 @@ class AssetStore extends Store {
       // pacman: [pacmanGraphic, pacmanMap, coinSound] },
       // otherProject: [asdf, zxvc] },
       // __NO_PROJECT__: [...assetTombstone] },
+      __NO_PROJECT__: [],
     },
     project: __NO_PROJECT__,
   }
@@ -82,10 +84,20 @@ class AssetStore extends Store {
     return assets
   }
 
-  // This should never be called directly as it depends on the current projects in assets
-  // to be set correctly for this particular asset
   trackAsset = (asset, assets) => {
     let newAssets = Object.assign(assets)
+
+    if (asset.projectNames.length === 0) {
+      // debugger
+      // if the asset has no project, track the special "no project" project
+      newAssets = this.trackProject(__NO_PROJECT__, newAssets)
+      if (!this.isAlreadyOpen(asset, __NO_PROJECT__)) {
+        newAssets[__NO_PROJECT__].push(asset)
+        // Return and exit the function, we do not need to loop over the asset's project list
+      }
+      return newAssets
+    }
+
     for (let index in asset.projectNames) {
       let curProject = asset.projectNames[index]
       newAssets = this.trackProject(curProject, newAssets)
@@ -108,6 +120,18 @@ class AssetStore extends Store {
     return newAssets
   }
 
+  getContextualProject = asset => {
+    if (asset.projectNames.length === 0) {
+      return __NO_PROJECT__
+    } else {
+      return asset.projectNames[0]
+    }
+  }
+
+  setProps = props => {
+    this.props = props
+  }
+
   openAsset = asset => {
     const { assets, project } = this.state
     const tombstone = getAssetTombstone(asset)
@@ -116,15 +140,12 @@ class AssetStore extends Store {
     // Track all of the projects this asset is in.
     newAssets = this.trackAsset(tombstone, assets)
 
-    const targetProject = tombstone.projectNames[0]
+    const targetProject = this.getContextualProject(tombstone)
     if (!this.isAlreadyOpen(tombstone, targetProject)) {
       this.setState({
         assets: newAssets,
         project: targetProject,
       })
-      return
-    } else if (project === __NO_PROJECT__) {
-      this.setProject(targetProject)
     }
   }
 
@@ -137,6 +158,14 @@ class AssetStore extends Store {
     this.setState({
       assets: newAssets,
     })
+  }
+
+  getFirstAssetInProject = project => {
+    if (this.projectHasLoadedAssets(project)) {
+      return this.state.assets[project][0]
+    } else {
+      return __NO_ASSET__
+    }
   }
 
   createAsset = (currUser, assetKindKey, assetName, projectName, projectOwnerId, projectOwnerName) => {

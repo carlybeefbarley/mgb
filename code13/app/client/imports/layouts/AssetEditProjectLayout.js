@@ -12,7 +12,7 @@ import { Grid, Dropdown, Button, Segment, Icon } from 'semantic-ui-react'
 import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
 import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
-import { __NO_PROJECT__ } from '/client/imports/stores/assetStore'
+import { __NO_PROJECT__, __NO_ASSET__ } from '/client/imports/stores/assetStore'
 
 function renderProjectsList(currUserProjects) {
   let data = _.map(currUserProjects, project => ({
@@ -22,18 +22,27 @@ function renderProjectsList(currUserProjects) {
     icon: 'sitemap',
   }))
 
-  data.push({ key: __NO_PROJECT__, text: 'No Project', value: __NO_PROJECT__, icon: 'sitemap' })
+  data.push({ key: __NO_PROJECT__, text: 'No Project', value: '__NO_PROJECT__', icon: 'sitemap' })
 
   return data
 }
 
 export default class AssetEditProjectContainer extends React.Component {
+  getAssetIdOrRouteByProject = project => {
+    const { assetStore } = this.props
+    let val = assetStore.getFirstAssetInProject(project)
+    if (val !== __NO_ASSET__) {
+      return val._id
+    } else {
+      return val
+    }
+  }
+
   render() {
     const { currUserProjects, currUser, currentlyEditingAssetInfo, params, user, assetStore } = this.props
     const renderedProjectsList = renderProjectsList(currUserProjects)
     // Set the default name/option for the projects dropdown list
-    const projectName = assetStore.project()
-    const __NO_ASSET__ = 'no_asset'
+    const projectName = assetStore.project() || __NO_PROJECT__
 
     return (
       <div style={{ overflowY: 'auto' }}>
@@ -62,9 +71,13 @@ export default class AssetEditProjectContainer extends React.Component {
                   if (assetStore.projectHasLoadedAssets(project.name)) {
                     utilPushTo(
                       location.query,
-                      `/u/${currUser.username}/asset/${assetStore.state.assets[project.name][0]._id}`,
+                      `/u/${currUser.username}/asset/${assetStore.getFirstAssetInProject(project.name)._id}`,
                     )
-                  } else utilPushTo(location.query, `/u/${currUser.username}/asset/${__NO_ASSET__}`)
+                  } else
+                    utilPushTo(
+                      location.query,
+                      `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(__NO_PROJECT__)}`,
+                    )
                 }}
                 options={renderedProjectsList}
               />

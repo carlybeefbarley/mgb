@@ -16,7 +16,7 @@ export default class Dashboard1st extends React.Component {
   render() {
     const { currUser } = this.props
     const containerStyle = {
-      overflowY: 'auto'
+      overflowY: 'auto',
     }
 
     return (

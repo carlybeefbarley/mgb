@@ -70,11 +70,11 @@ const NavBar = React.createClass({
     return (
       <div style={navBarStyle}>
         {/*<RelatedAssets*/}
-          {/*location={location}*/}
-          {/*user={user}*/}
-          {/*currUser={currUser}*/}
-          {/*params={params}*/}
-          {/*currentlyEditingAssetInfo={currentlyEditingAssetInfo}*/}
+        {/*location={location}*/}
+        {/*user={user}*/}
+        {/*currUser={currUser}*/}
+        {/*params={params}*/}
+        {/*currentlyEditingAssetInfo={currentlyEditingAssetInfo}*/}
         {/*/>*/}
         <SystemAlerts sysvars={sysvars} />
         <NavBarBreadcrumb

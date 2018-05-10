@@ -392,12 +392,6 @@ class RelatedAssetsUI extends React.Component {
 
   render() {
     return this.renderRelatedAssetsList()
-    return (
-      <div>
-        {this.renderPopup()}
-        {this.renderModal()}
-      </div>
-    )
   }
 }
 

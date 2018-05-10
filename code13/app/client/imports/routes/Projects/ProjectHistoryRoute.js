@@ -30,9 +30,7 @@ const ProjectHistoryRoute = React.createClass({
               </List.Content>
             </List.Item>
           ) : (
-            _.map(this.props.activities, activity => (
-              <ActivityItem key={activity._id} activity={activity} />
-            ))
+            _.map(this.props.activities, activity => <ActivityItem key={activity._id} activity={activity} />)
           )}
         </List>
       </Segment>

@@ -18,7 +18,6 @@ export default class AssetHistoryDetail extends React.Component {
   handleClose = () => this.props.toggleCounterVisibility(false)
 
   render() {
-    console.log('render asset history')
     const asset = this.props.asset
     const assetActivity = this.props.assetActivity
     const currUser = this.props.currUser

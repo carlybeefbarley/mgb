@@ -414,17 +414,6 @@ const RelatedAssets = createContainer(props => {
     // show challenge assets = false
   )
 
-  // userId,
-  // selectedAssetKinds,
-  // nameSearch, // TODO: cleanse the nameSearch RegExp. Issue is regex vs text index. See notes in _ensureIndex() below.
-  // projectName = null,
-  // showDeleted = false,
-  // showStable = false,
-  // assetSortType = undefined, // null/undefined or one of the keys of allSorters{}
-  // limitCount = 50,
-  // hideWorkstateMask = 0, // As defined for use by assetMakeSelector()
-  // showChallengeAssets = false,
-
   return {
     ...props,
     loading: !handleForAssets.ready(),

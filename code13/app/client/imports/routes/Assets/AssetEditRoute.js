@@ -942,6 +942,7 @@ const AssetEditRoute = React.createClass({
   // This should not conflict with the deferred changes since those don't change these fields :)
   handleToggleProjectName(pName) {
     const { asset } = this.data
+    const { assetStore } = this.props
     const list = asset.projectNames || []
     const inList = _.includes(list, pName)
     let newChosenProjectNamesArray = inList ? _.without(list, pName) : _.union(list, [pName])
@@ -959,6 +960,8 @@ const AssetEditRoute = React.createClass({
 
     if (inList) logActivity('asset.project', `removed Asset from project '${pName}'`, null, asset)
     else logActivity('asset.project', `Added Asset to project '${pName}'`, null, asset)
+
+    assetStore.closeAsset(asset)
   },
 
   handleTaskApprove(hasSkill) {

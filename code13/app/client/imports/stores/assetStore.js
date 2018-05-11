@@ -12,6 +12,12 @@ export const __NO_ASSET__ = 'no_asset'
 
 // We only store limited necessary information about open assets
 // The content2 field is massive, this allows us to keep a small footprint
+/**
+ * Removes unnecessary data from the object for performance reasons. 
+ * @param {object} Asset Any asset
+ * 
+ * @returns {object} New object with a null content2 property 
+ */
 const getAssetTombstone = asset => ({ ...asset, content2: null })
 
 class AssetStore extends Store {
@@ -33,11 +39,18 @@ class AssetStore extends Store {
     project: __NO_PROJECT__,
   }
 
+  /**
+   * @returns {Array} Returns array of asset objects
+   */
   getOpenAssets = () => {
     const { assets, project } = this.state
 
     return assets[project]
   }
+
+  /**
+   * @returns {String} The current project from the store as a String
+   */
 
   project = () => {
     const { project } = this.state
@@ -53,9 +66,19 @@ class AssetStore extends Store {
     }
   }
 
-  isAlreadyOpen = (asset, targetProject) => {
-    const { assets } = this.state
-    const isAlreadyOpen = _.find(assets[targetProject], { _id: asset._id })
+  /**
+   * Checks to see if an asset is already open in a project
+   * 
+   * @param {Object} Asset Asset to look for in the assets list
+   * 
+   * @param {String} ProjectName Which project to check
+   * 
+   * @param {Object} AssetsObject Optional, pass custom object instead of state.assets
+   * 
+   * @returns {Boolean} true or false
+   */
+  isAlreadyOpen = (asset, targetProject, targetAssets = this.state.assets) => {
+    const isAlreadyOpen = _.find(targetAssets[targetProject], { _id: asset._id })
     if (isAlreadyOpen) {
       return true
     } else {
@@ -63,6 +86,14 @@ class AssetStore extends Store {
     }
   }
 
+  /**
+   * Checks if store.assets[ProjectName] has open assets or is empty/exists. Returns false if
+   * it does not exist, or has no open assets. Returns true otherwise.
+   * 
+   * @param {String} ProjectName The target project to check, should be a string.
+   * 
+   * @returns {Boolean} true or false 
+   */
   projectHasLoadedAssets = projectName => {
     if (this.state.assets[projectName] && this.state.assets[projectName].length > 0) {
       return true
@@ -75,6 +106,17 @@ class AssetStore extends Store {
     this.setState({ project })
   }
 
+  /**
+   * Tracks a new project in the assets list.
+   * In most cases this shouldn't be called directly as tracking new assets
+   * should be done with this.trackAsset()
+   * 
+   * @param {String} ProjectName A string that contains the new project's name
+   * 
+   * @param {Object} Assets Object of assets you would like to add a project to
+   * 
+   * @returns {Object} The new instance of the Assets object that now tracks the project.
+   */
   trackProject = (project, assets) => {
     let newAssets = Object.assign(assets)
     if (!assets[project]) {
@@ -84,6 +126,17 @@ class AssetStore extends Store {
     return assets
   }
 
+  /**
+   * Add an asset to the given assets object. This does NOT modify the state of the store.
+   * This function is smart and will not generate duplicates and will automatically track
+   * any projects that are not already in the asset store.
+   * 
+   * @param {Object} Asset The asset to add to the given assets object.
+   * 
+   * @param {Object} Assets Object that you would like to add the asset to.
+   * 
+   * @returns {Object} New assets object that has given asset added.
+   */
   trackAsset = (asset, assets) => {
     let newAssets = Object.assign(assets)
 
@@ -108,11 +161,19 @@ class AssetStore extends Store {
     return newAssets
   }
 
+  /**
+   * Remove an asset from the given assets object. This does NOT modify the state of the store.
+   * 
+   * @param {Object} Asset The asset to look for and remove.
+   * 
+   * @param {Object} Assets Object that contains assets in the {[ProjectName]: [...assets]} format.
+   * 
+   * @returns {Object} New assets object that has given asset removed.
+   */
   untrackAsset = (asset, assets) => {
     let newAssets = Object.assign(assets)
     // handle assets with no projects
     if (asset.projectNames.length === 0) {
-      debugger
       let targetIndex = _.findIndex(newAssets[__NO_PROJECT__], { _id: asset._id })
       newAssets[__NO_PROJECT__].splice(targetIndex, 1)
       return newAssets
@@ -128,6 +189,11 @@ class AssetStore extends Store {
     return newAssets
   }
 
+  /**
+   * @param {Object} Asset The asset that you would like to get the project name from.
+   * 
+   * @returns {String} Either __NO_PROJECT__ or the asset's first project as a string.
+   */
   getContextualProject = asset => {
     if (asset.projectNames.length === 0) {
       return __NO_PROJECT__
@@ -154,6 +220,8 @@ class AssetStore extends Store {
         assets: newAssets,
         project: targetProject,
       })
+    } else if (project !== targetProject) {
+      this.setState({ project: targetProject })
     }
   }
 

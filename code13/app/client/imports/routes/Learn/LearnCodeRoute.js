@@ -4,6 +4,7 @@ import '../home.css'
 import QLink from '../QLink'
 import { Divider, Grid, Card, Header, Icon } from 'semantic-ui-react'
 import MascotImage from '/client/imports/components/MascotImage/MascotImage'
+import HeaderImage from '/client/imports/components/HeaderImage/HeaderImage'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 import { codeItems } from '/imports/Skills/SkillNodes/SkillNodes'
 
@@ -11,8 +12,10 @@ const LearnCodeRoute = ({ currUser, isSuperAdmin, params }, context) => (
   <Grid container columns="1">
     <Divider hidden />
     <Grid.Column>
-      <Header as="h1">
-        Code
+      <Header style={titleStyle} as="h1">
+        <HeaderImage name="javascript-logo" />
+        Start Making Games!
+        <HeaderImage name="phaserLogo" />
         <Header.Subheader>Learn to code games with JavaScript and Phaser.</Header.Subheader>
       </Header>
     </Grid.Column>
@@ -58,6 +61,11 @@ const cardStyle = {
   color: '#2e2e2e',
 }
 
+const titleStyle = {
+  fontSize: '4em',
+  textAlign: 'center',
+}
+
 const headerStyle = {
   marginTop: '0.15em',
   marginBottom: '0.4em',
@@ -66,4 +74,8 @@ const headerStyle = {
 const descStyle = {
   fontSize: '1.25em',
   lineHeight: '1.5em',
+}
+
+const headerImageStyle = {
+  maxWidth: '50px',
 }

@@ -37,3 +37,11 @@
   border: 1px solid rgba(0,0,0,.15);
   white-space:pre;
 }
+
+[data-tooltip]::after {
+  z-index: 9999;
+}
+
+.popup-iframe * {
+  display: block;
+}

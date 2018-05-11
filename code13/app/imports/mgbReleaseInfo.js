@@ -15,6 +15,50 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Friday May 04 2018 09:00:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.5',
+        state: 'Beta',
+        iteration: '5021',
+      },
+
+      releaseManagement: {
+        eng: 'Bouhm',
+      },
+
+      changes: [
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'Fix modal popup issues',
+          changeSummary: 'Modals not popping up for Graphic and Music imports have been fixed.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'New Code Tutorial Flow',
+          changeSummary:
+            'Many experimental changes have been made to the code tutorial flows, one of which combines JS and Phaser tutorials.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'nav.layout',
+          type: 'improvement',
+          changeName: 'Code Editor UI Improvement',
+          changeSummary:
+            'Many changes have been made to the Code Editor to better utilize the space next to the code editor.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Phaser3 libs',
+          changeSummary: 'Phaser3 has been added as an option for import. This is still experimental.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Tue Feb 13 2018 09:00:00 GMT-0800 (PST)',
 
       id: {

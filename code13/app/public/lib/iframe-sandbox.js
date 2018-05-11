@@ -93,6 +93,9 @@ window.onload = function() {
       window[key] ||
       window[name.toUpperCase()] ||
       window[name.substring(0, 1).toUpperCase() + name.substring(1)]
+
+    if (!ret && key == "phaser3")
+      ret = window.Phaser
     if (!ret && !silent) {
       console.error('cannot find required resource: ' + key + '. Check if module have export defined')
     }
@@ -512,7 +515,7 @@ window.onload = function() {
         } else {
           // don't log message if HoC
           if (isHoC()) return false
-          console.info('MGB: All files have loaded!')
+          //console.info('MGB: All files have loaded!')
           sendSizeUpdate()
         }
       }

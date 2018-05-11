@@ -120,11 +120,12 @@ class ToolWindow extends Component {
   }
 
   renderContent = () => {
-    const { children, size } = this.props
+    const { children, size, contentStyle } = this.props
 
     const style = {
       maxHeight: '30em',
       overflow: 'auto',
+      ...contentStyle,
     }
 
     return (
@@ -135,7 +136,7 @@ class ToolWindow extends Component {
   }
 
   renderTitleBar = () => {
-    const { color, icon, minimized, size, title } = this.props
+    const { color, icon, minimized, size, title, onMinimize } = this.props
     const style = {
       display: 'flex',
       alignItems: 'center',
@@ -168,15 +169,17 @@ class ToolWindow extends Component {
         <div style={titleStyle}>
           {Icon.create(icon)} {title}
         </div>
-        <Button
-          compact
-          color={color}
-          title={minimized ? 'Maximize' : 'Minimize'}
-          size="small"
-          icon={minimized ? 'window maximize' : 'window minimize'}
-          onMouseDown={this.stopEvent}
-          onClick={this.toggleMinimize}
-        />
+        {onMinimize && (
+          <Button
+            compact
+            color={color}
+            title={minimized ? 'Maximize' : 'Minimize'}
+            size="small"
+            icon={minimized ? 'window maximize' : 'window minimize'}
+            onMouseDown={this.stopEvent}
+            onClick={this.toggleMinimize}
+          />
+        )}
         <Button
           compact
           color={color}
@@ -200,6 +203,7 @@ class ToolWindow extends Component {
       left: `${xPos}px`,
       width: '25em',
       boxShadow: '0 0.125em 0.5em rgba(0, 0, 0, 0.25)',
+      zIndex: 99,
       ...style,
     }
 

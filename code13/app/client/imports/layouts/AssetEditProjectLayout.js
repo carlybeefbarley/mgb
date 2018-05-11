@@ -14,20 +14,20 @@ import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import { __NO_PROJECT__, __NO_ASSET__ } from '/client/imports/stores/assetStore'
 
-function renderProjectsList(currUserProjects) {
-  let data = _.map(currUserProjects, project => ({
-    key: project.name,
-    text: project.name,
-    value: project.name,
-    icon: 'sitemap',
-  }))
-
-  data.push({ key: __NO_PROJECT__, text: 'No Project', value: '__NO_PROJECT__', icon: 'sitemap' })
-
-  return data
-}
-
 export default class AssetEditProjectContainer extends React.Component {
+  renderProjectsList = currUserProjects => {
+    let data = _.map(currUserProjects, project => ({
+      key: project.name,
+      text: project.name,
+      value: project.name,
+      icon: 'sitemap',
+    }))
+
+    data.push({ key: __NO_PROJECT__, text: 'No Project', value: '__NO_PROJECT__', icon: 'sitemap' })
+
+    return data
+  }
+
   getAssetIdOrRouteByProject = project => {
     const { assetStore } = this.props
     let val = assetStore.getFirstAssetInProject(project)
@@ -38,9 +38,19 @@ export default class AssetEditProjectContainer extends React.Component {
     }
   }
 
+  projectChangeHandler = (e, { value }) => {
+    const { assetStore, currUser } = this.props
+    const project = { name: value }
+    assetStore.setProject(project.name)
+    utilPushTo(
+      location.query,
+      `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(project.name)}`,
+    )
+  }
+
   render() {
     const { currUserProjects, currUser, currentlyEditingAssetInfo, params, user, assetStore } = this.props
-    const renderedProjectsList = renderProjectsList(currUserProjects)
+    const renderedProjectsList = this.renderProjectsList(currUserProjects)
     // Set the default name/option for the projects dropdown list
     const projectName = assetStore.project() || __NO_PROJECT__
 
@@ -66,18 +76,7 @@ export default class AssetEditProjectContainer extends React.Component {
                   </span>
                 }
                 onChange={(e, { value }) => {
-                  const project = { name: value }
-                  assetStore.setProject(project.name)
-                  if (assetStore.projectHasLoadedAssets(project.name)) {
-                    utilPushTo(
-                      location.query,
-                      `/u/${currUser.username}/asset/${assetStore.getFirstAssetInProject(project.name)._id}`,
-                    )
-                  } else
-                    utilPushTo(
-                      location.query,
-                      `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(__NO_PROJECT__)}`,
-                    )
+                  this.projectChangeHandler(e, { value })
                 }}
                 options={renderedProjectsList}
               />

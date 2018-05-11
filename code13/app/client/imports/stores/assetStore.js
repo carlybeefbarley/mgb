@@ -110,6 +110,14 @@ class AssetStore extends Store {
 
   untrackAsset = (asset, assets) => {
     let newAssets = Object.assign(assets)
+    // handle assets with no projects
+    if (asset.projectNames.length === 0) {
+      debugger
+      let targetIndex = _.findIndex(newAssets[__NO_PROJECT__], { _id: asset._id })
+      newAssets[__NO_PROJECT__].splice(targetIndex, 1)
+      return newAssets
+    }
+    // handle assets with projects
     for (let index in asset.projectNames) {
       let indexName = asset.projectNames[index]
       if (newAssets[indexName]) {

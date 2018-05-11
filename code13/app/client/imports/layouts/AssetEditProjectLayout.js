@@ -1,6 +1,6 @@
 /*
  *************************************************************
- * This component wraps the asset editor to provide IDE-like options
+ * This layout wraps the asset editor to provide IDE-like options
  * such as creating new assets, tabs for each open asset, and quick project
  * swapping.
  *************************************************************
@@ -108,8 +108,7 @@ export default class AssetEditProjectContainer extends React.Component {
           <Grid.Column stretched style={{ flex: '0 0 20em', overflowY: 'auto' }}>
             <Segment>
               <RelatedAssets
-                projectName={projectName}
-                overrideProject={assetStore.project()}
+                projectName={assetStore.project() === __NO_PROJECT__ ? '_' : assetStore.project()}
                 location={location}
                 user={user}
                 currUser={currUser}

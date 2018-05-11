@@ -396,21 +396,34 @@ class RelatedAssetsUI extends React.Component {
 }
 
 const RelatedAssets = createContainer(props => {
-  const { user, currUser, currentlyEditingAssetInfo, location, params, overrideProject } = props
+  const { user, currUser, currentlyEditingAssetInfo, location, params, projectName } = props
   const defaultProject = getContextualProjectName({ location, currentlyEditingAssetInfo, params })
   const handleForAssets = Meteor.subscribe(
     'assets.public.nameInfo.query',
-    _.get(user || currUser, '_id', null),
+    _.get(user || currUser, '_id', null), // UserId
     null, // assetKinds=all
     '', // Search for string in name
-    overrideProject || defaultProject, // check for override project, then default to auto resolution
-    false,
-    false,
+    projectName || defaultProject, // check for override project, then default to auto resolution
+    false, // show deleted?
+    false, // show stable?
     'edited', // Sort by recently edited
-    user || currUser
+    user || currUser // Limit results to global limit in special globals
       ? SpecialGlobals.relatedAssets.limit.withUser
       : SpecialGlobals.relatedAssets.limit.noContext,
+    // hide workstate mask = 0
+    // show challenge assets = false
   )
+
+  // userId,
+  // selectedAssetKinds,
+  // nameSearch, // TODO: cleanse the nameSearch RegExp. Issue is regex vs text index. See notes in _ensureIndex() below.
+  // projectName = null,
+  // showDeleted = false,
+  // showStable = false,
+  // assetSortType = undefined, // null/undefined or one of the keys of allSorters{}
+  // limitCount = 50,
+  // hideWorkstateMask = 0, // As defined for use by assetMakeSelector()
+  // showChallengeAssets = false,
 
   return {
     ...props,

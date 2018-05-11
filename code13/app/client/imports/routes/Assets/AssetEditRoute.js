@@ -401,12 +401,7 @@ const AssetEditRoute = React.createClass({
     const { assetStore, params, asset, currUserProjects, currentlyEditingAssetInfo } = this.props
     const assetHasProjects =
       !this.data.loading && this.data.asset !== null && this.data.asset.projectNames.length > 0
-    const noAssetPane = (
-      <Segment size="large" basic>
-        You don't currently have any assets open for this project. Click on an asset in the assets menu to
-        begin editing.
-      </Segment>
-    )
+
     const panes = _.map(assetStore.getOpenAssets(), asset => {
       // console.log('render open asset', asset)
       return {
@@ -440,20 +435,39 @@ const AssetEditRoute = React.createClass({
 
     // Return an IDE-like wrapped tab list & editor if the asset has any project(s)
     // TODO: Look into data prefetch to make tabs more responsive.
-    return (
-      <AssetEditProjectLayout {...this.props}>
-        {params.assetId === __NO_ASSET__ ? (
-          noAssetPane
-        ) : (
-          <Tab
-            menu={{ attached: 'top', tabular: true, style: { overflowX: 'auto' } }}
-            activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
-            onTabChange={this.handleTabChange}
-            panes={panes}
-          />
-        )}
-      </AssetEditProjectLayout>
+    return this.resolveProjectRender(panes)
+  },
+
+  resolveProjectRender(panes) {
+    const { currUser, currentlyEditingAssetInfo, params } = this.props
+    let returnElement
+    const noAssetPane = (
+      <Segment size="large" basic>
+        You don't currently have any assets open for this project. Click on an asset in the assets menu to
+        begin editing.
+      </Segment>
     )
+
+    if (currentlyEditingAssetInfo.ownerName !== currUser.username) {
+      returnElement = this.renderRoute()
+    } else {
+      returnElement = (
+        <AssetEditProjectLayout {...this.props}>
+          {params.assetId === __NO_ASSET__ ? (
+            noAssetPane
+          ) : (
+            <Tab
+              menu={{ attached: 'top', tabular: true, style: { overflowX: 'auto' } }}
+              activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
+              onTabChange={this.handleTabChange}
+              panes={panes}
+            />
+          )}
+        </AssetEditProjectLayout>
+      )
+    }
+
+    return returnElement
   },
 
   renderRoute() {

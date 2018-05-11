@@ -41,6 +41,7 @@ import { makeChannelName, ChatSendMessageOnChannelName } from '/imports/schemas/
 import urlMaker from '/client/imports/routes/urlMaker'
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
 import { assetStore, joyrideStore } from '/client/imports/stores'
+import { __NO_ASSET__ } from '/client/imports/stores/assetStore'
 
 import { canUserEditAssetIfUnlocked, fAllowSuperAdminToEditAnything } from '/imports/schemas/roles'
 
@@ -398,7 +399,6 @@ const AssetEditRoute = React.createClass({
 
   render() {
     const { assetStore, params, asset, currUserProjects, currentlyEditingAssetInfo } = this.props
-    const __NO_ASSET__ = 'no_asset'
     const assetHasProjects =
       !this.data.loading && this.data.asset !== null && this.data.asset.projectNames.length > 0
     const noAssetPane = (
@@ -943,6 +943,7 @@ const AssetEditRoute = React.createClass({
   handleToggleProjectName(pName) {
     const { asset } = this.data
     const { assetStore } = this.props
+    const query = this.props.location.query
     const list = asset.projectNames || []
     const inList = _.includes(list, pName)
     let newChosenProjectNamesArray = inList ? _.without(list, pName) : _.union(list, [pName])
@@ -962,6 +963,11 @@ const AssetEditRoute = React.createClass({
     else logActivity('asset.project', `Added Asset to project '${pName}'`, null, asset)
 
     assetStore.closeAsset(asset)
+    if (pName === assetStore.project() && assetStore.projectHasLoadedAssets(pName)) {
+      utilPushTo(query, `/u/${asset.dn_ownerName}/asset/${assetStore.getFirstAssetInProject(pName)._id}`)
+    } else if (pName === assetStore.project() && !assetStore.projectHasLoadedAssets(pName)) {
+      utilPushTo(query, `/u/${asset.dn_ownerName}/asset/${__NO_ASSET__}`)
+    }
   },
 
   handleTaskApprove(hasSkill) {

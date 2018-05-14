@@ -15,6 +15,7 @@ import {
   Loader,
   Image,
 } from 'semantic-ui-react'
+import Tabs from './CodeEditorTabs'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import TutorialMentor from './TutorialEditHelpers'
@@ -134,7 +135,6 @@ class EditCode extends React.Component {
 
     this.state = {
       _preventRenders: false, // We use this as a way to batch updates.
-      accordionActiveIndex: [0], // keys of open accordion panels
       consoleMessages: [],
       isPlaying: false,
       previewAssetIdsArray: [], // Array of { id: assetIdString, kind: assetKindString } e.g. { id: "asdxzi87q", kind: "graphic" }
@@ -180,13 +180,14 @@ class EditCode extends React.Component {
       redo: [],
     }
 
-    // indicates if code is challenge and/or tutorial
-    this.isChallenge = false
-    this.isCodeTutorial = false
-
     // is guest user?
     this.isGuest = this.props.currUser ? this.props.currUser.profile.isGuest : false
     this.isAutoRun = this.isGuest
+
+    // indicates if code is challenge and/or tutorial
+    this.isChallenge = this.props.asset.skillPath && isPathChallenge(this.props.asset.skillPath)
+    this.isCodeTutorial = this.props.asset.skillPath && isPathCodeTutorial(this.props.asset.skillPath)
+    this.isTutorialView = this.isCodeTutorial || this.isChallenge
   }
 
   handleJsBeautify() {
@@ -359,6 +360,13 @@ class EditCode extends React.Component {
         const $sPane = document.querySelector('.CodeMirror')
         const edHeight = window.innerHeight - (16 + $sPane.getBoundingClientRect().top)
         ed.setSize('100%', `${edHeight}px`)
+
+        if (this.isTutorialView) {
+          // Resize right panes
+          const sc = document.querySelector('.pane-container')
+          sc.style.height = `${edHeight}px`
+          sc.style.maxHeight = `${edHeight}px`
+        }
       }
       window.addEventListener('resize', this.edResizeHandler)
       this.edResizeHandler()
@@ -1683,8 +1691,7 @@ class EditCode extends React.Component {
       this.state.isPlaying !== nextState.isPlaying ||
       this.state.lastAnalysisAtCursor !== nextState.lastAnalysisAtCursor ||
       this.state.lastUndoRedo !== nextState.lastUndoRedo ||
-      this.state.needsBundle !== nextState.needsBundle ||
-      this.state.accordionActiveIndex !== nextState.accordionActiveIndex
+      this.state.needsBundle !== nextState.needsBundle
     )
   }
 
@@ -1927,17 +1934,14 @@ class EditCode extends React.Component {
 
   /** Start the code running! */
   handleRun = () => {
-    // exception for code challenges
-    // instead of standard iframe it runs CodeChallege component which has it's own iframe
     if (this.isChallenge) {
       this.setState({ runChallengeDate: Date.now() })
-      return false // don't need to execute further as CodeChallenges have all need functionality
+      //return false // don't need to execute further as CodeChallenges have all need functionality
     }
 
     // always make sure we are running latest sources and not stacking them
     if (this.state.isPlaying) this.handleStop()
-
-    this.consoleLog('Starting new game runner')
+    //this.consoleLog('Starting new game runner')
     if (!this.bound_handle_iFrameMessageReceiver)
       this.bound_handle_iFrameMessageReceiver = this._handle_iFrameMessageReceiver.bind(this)
 
@@ -1946,6 +1950,7 @@ class EditCode extends React.Component {
     const { asset } = this.props
 
     this.setState({ isPlaying: true })
+
     // we don't want to hide tutorials so we open popup
     if (asset.skillPath && !this.state.isPopup) this.setState({ isPopup: true })
 
@@ -1973,10 +1978,11 @@ class EditCode extends React.Component {
         startRun()
       })
 
-    this.openAccordionByKey('code-runner')
+    !this.isGuest && !this.isTutorialView && this.tabs.openTabByKey('code-runner')
   }
 
   handleStop = options => {
+    this.isCodeTutorial
     this.postToIFrame('stop', options)
     this.setState({
       isPlaying: false,
@@ -2064,8 +2070,7 @@ class EditCode extends React.Component {
   }
 
   handleGamePopout = () => {
-    this.refs.gameScreen && this.refs.gameScreen.popup()
-    this.handleRun()
+    this.refs.gameScreen && this.refs.gameScreen.popup(), this.handleRun()
   }
 
   /**
@@ -2300,103 +2305,104 @@ class EditCode extends React.Component {
   generateToolbarConfig() {
     const history = this.codeMirror ? this.codeMirror.historySize() : { undo: 0, redo: 0 }
 
-    var config = this.isGuest
-      ? {
-          buttons: [],
-        }
-      : {
-          // level: 2,    // default level -- This is now in expectedToolbars.getDefaultLevel
-          buttons: [
-            {
-              name: 'doUndo',
-              icon: 'undo',
-              label: 'Undo',
-              iconText: history.undo ? history.undo : '',
-              disabled: !history.undo,
-              tooltip: 'Undo last action',
-              level: 1,
-              shortcut: 'Ctrl+Z',
-            },
-            {
-              name: 'doRedo',
-              icon: 'undo flip', // redo is flipped undo
-              iconText: '', // history.redo ? history.redo : '',
-              label: 'Redo',
-              disabled: !history.redo,
-              tooltip: 'Redo previous action',
-              level: 1,
-              shortcut: 'Ctrl+Shift+Z',
-            },
-            { name: 'separator' },
-            {
-              name: 'goBack',
-              icon: 'arrow left',
-              level: 2,
-              label: 'Go Back',
-              tooltip: 'This action will move cursor to the previous location',
-              disabled: !this.cursorHistory.undo.length,
-              shortcut: 'Ctrl+Alt+LEFT',
-            },
-            {
-              name: 'goForward',
-              icon: 'arrow right',
-              label: 'Go Forward',
-              level: 2,
-              tooltip: 'This action will move cursor to the next location',
-              disabled: !this.cursorHistory.redo.length,
-              shortcut: 'Ctrl+Alt+RIGHT',
-            },
-            { name: 'separator' },
-            {
-              name: 'toolZoomOut',
-              label: 'Small Font',
-              icon: 'zoom out',
-              tooltip: 'Smaller Text',
-              disabled: false,
-              level: 2,
-              shortcut: 'Ctrl+P',
-            },
-            {
-              name: 'toolZoomIn',
-              label: 'Large font',
-              icon: 'zoom in',
-              tooltip: 'Larger text',
-              disabled: false,
-              level: 2,
-              shortcut: 'Ctrl+L',
-            },
-            { name: 'separator' },
-            {
-              name: 'handleJsBeautify',
-              label: 'Beautify Code',
-              icon: 'leaf',
-              tooltip: 'Beautify: Auto-format your code',
-              disabled: false,
-              level: 3,
-              shortcut: 'Ctrl+B',
-            },
-            { name: 'separator' },
-            {
-              name: 'toggleFold',
-              label: this.mgb_code_folded ? 'Expand all nodes' : 'Fold all nodes',
-              icon: this.mgb_code_folded ? 'expand' : 'compress',
-              tooltip: this.mgb_code_folded ? 'Unfold all nodes in the code' : 'Fold all nodes in the code',
-              disabled: false,
-              level: 3,
-              shortcut: 'Ctrl+Shift+\\',
-            },
-            { name: 'separator' },
-            {
-              name: 'toolToggleInfoPane',
-              label: 'Info Panels',
-              icon: 'resize horizontal',
-              tooltip: 'Resize Info Pane',
-              disabled: false,
-              level: 1,
-              shortcut: 'Ctrl+I',
-            },
-          ],
-        }
+    var config =
+      this.isTutorialView || this.isGuest
+        ? {
+            buttons: [],
+          }
+        : {
+            // level: 2,    // default level -- This is now in expectedToolbars.getDefaultLevel
+            buttons: [
+              {
+                name: 'doUndo',
+                icon: 'undo',
+                label: 'Undo',
+                iconText: history.undo ? history.undo : '',
+                disabled: !history.undo,
+                tooltip: 'Undo last action',
+                level: 1,
+                shortcut: 'Ctrl+Z',
+              },
+              {
+                name: 'doRedo',
+                icon: 'undo flip', // redo is flipped undo
+                iconText: '', // history.redo ? history.redo : '',
+                label: 'Redo',
+                disabled: !history.redo,
+                tooltip: 'Redo previous action',
+                level: 1,
+                shortcut: 'Ctrl+Shift+Z',
+              },
+              { name: 'separator' },
+              {
+                name: 'goBack',
+                icon: 'arrow left',
+                level: 2,
+                label: 'Go Back',
+                tooltip: 'This action will move cursor to the previous location',
+                disabled: !this.cursorHistory.undo.length,
+                shortcut: 'Ctrl+Alt+LEFT',
+              },
+              {
+                name: 'goForward',
+                icon: 'arrow right',
+                label: 'Go Forward',
+                level: 2,
+                tooltip: 'This action will move cursor to the next location',
+                disabled: !this.cursorHistory.redo.length,
+                shortcut: 'Ctrl+Alt+RIGHT',
+              },
+              { name: 'separator' },
+              {
+                name: 'toolZoomOut',
+                label: 'Small Font',
+                icon: 'zoom out',
+                tooltip: 'Smaller Text',
+                disabled: false,
+                level: 2,
+                shortcut: 'Ctrl+P',
+              },
+              {
+                name: 'toolZoomIn',
+                label: 'Large font',
+                icon: 'zoom in',
+                tooltip: 'Larger text',
+                disabled: false,
+                level: 2,
+                shortcut: 'Ctrl+L',
+              },
+              { name: 'separator' },
+              {
+                name: 'handleJsBeautify',
+                label: 'Beautify Code',
+                icon: 'leaf',
+                tooltip: 'Beautify: Auto-format your code',
+                disabled: false,
+                level: 3,
+                shortcut: 'Ctrl+B',
+              },
+              { name: 'separator' },
+              {
+                name: 'toggleFold',
+                label: this.mgb_code_folded ? 'Expand all nodes' : 'Fold all nodes',
+                icon: this.mgb_code_folded ? 'expand' : 'compress',
+                tooltip: this.mgb_code_folded ? 'Unfold all nodes in the code' : 'Fold all nodes in the code',
+                disabled: false,
+                level: 3,
+                shortcut: 'Ctrl+Shift+\\',
+              },
+              { name: 'separator' },
+              {
+                name: 'toolToggleInfoPane',
+                label: 'Info Panels',
+                icon: 'resize horizontal',
+                tooltip: 'Resize Info Pane',
+                disabled: false,
+                level: 1,
+                shortcut: 'Ctrl+I',
+              },
+            ],
+          }
 
     if (this.props.asset.kind === 'tutorial') {
       config.buttons.unshift({
@@ -2420,7 +2426,7 @@ class EditCode extends React.Component {
       config.buttons.push({ name: 'separator' })
       config.buttons.push({
         name: 'toolToggleInfoPane',
-        label: 'Info Panels',
+        label: 'Info Panes',
         icon: 'resize horizontal',
         tooltip: 'Resize Info Pane',
         disabled: false,
@@ -2429,7 +2435,7 @@ class EditCode extends React.Component {
       })
     } else if (this.mgb_mode === 'jsx') {
       // code...
-      if (!this.isGuest) {
+      if (!(this.isTutorialView || this.isGuest)) {
         config.buttons.unshift({ name: 'separator' })
         config.buttons.unshift({
           name: 'toggleHotReload',
@@ -2487,17 +2493,17 @@ class EditCode extends React.Component {
           shortcut: 'Ctrl+ENTER',
         })
       } else {
-        // this is guest
-        config.buttons.unshift({
-          name: 'handleEmptyRun',
-          label: 'Move to Start',
-          icon: 'refresh',
-          iconText: 'Move to Start',
-          tooltip: 'Move the Dwarf back to the starting position',
-          disabled: false,
-          level: 1,
-          shortcut: null,
-        })
+        this.isGuest &&
+          config.buttons.unshift({
+            name: 'handleEmptyRun',
+            label: 'Move to Start',
+            icon: 'refresh',
+            iconText: 'Move to Start',
+            tooltip: 'Move the Dwarf back to the starting position',
+            disabled: false,
+            level: 1,
+            shortcut: null,
+          })
         config.buttons.unshift({ name: 'separator' })
       }
       // jsx, regardless of guest/not guest
@@ -2505,9 +2511,9 @@ class EditCode extends React.Component {
         name: 'handleRun',
         label: 'Run code',
         icon: 'play',
-        iconText: this.isGuest ? 'Run Code' : '',
+        iconText: this.isTutorialView || this.isGuest ? 'Run Code' : '',
         tooltip: 'Run Code',
-        disabled: (!this.isGuest && this.state.isPlaying) || !this.state.astReady,
+        disabled: (!(this.isTutorialView || this.isGuest) && this.state.isPlaying) || !this.state.astReady,
         level: 1,
         shortcut: 'Ctrl+ENTER',
       })
@@ -2863,152 +2869,108 @@ class EditCode extends React.Component {
   }
 
   //
-  // Accordion
+  // Tabs
   //
-
-  getAccordionPanels = () => {
+  getTabPanes = () => {
     const { asset, canEdit, currUser } = this.props
 
     const docEmpty = this.state.documentIsEmpty
     const isPlaying = this.state.isPlaying
 
     const stringReferences = this.getStringReferences()
-    const infoPaneOpts = this.isGuest ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
+    const infoPaneOpts = this.isGuest
+      ? _infoPaneModes[3]
+      : this.isTutorialView ? _infoPaneModes[0] : _infoPaneModes[this.state.infoPaneMode]
 
     const isPopup = this.state.isPopup || !infoPaneOpts.col2
 
     const knownImports = this.tools ? this.tools.collectAvailableImportsForFile(asset.name) : []
 
     return [
+      docEmpty &&
+      !asset.isCompleted &&
+      !this.isCodeTutorial &&
+      !this.isChallenge &&
+      this.mgb_mode === 'jsx' && {
+        title: 'Code Starter',
+        key: 'code-starter-content',
+        icon: 'file text',
+        tooltip: 'Templates for generating starter code',
+        content: <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />,
+      },
       // TUTORIAL Current Line/Selection helper (body)
       !docEmpty &&
       asset.kind === 'tutorial' && {
-        title: {
-          key: 'tutorial-mentor-title',
-          onClick: this.handleAccordionTitleClick,
-          // Current Line/Selection helper (header)
-          content: <span>Tutorial Mentor</span>,
-        },
-        content: {
-          key: 'tutorial-mentor-content',
-          content: (
-            <div>
-              <TutorialMentor
-                tryTutorial={this.tryTutorial}
-                stopTutorial={this.stopTutorial}
-                parsedTutorialData={this.state.parsedTutorialData}
-                insertCodeCallback={canEdit ? newCodeStr => this.insertTextAtCursor(newCodeStr) : null}
-              />
-              {stringReferences &&
-              stringReferences.length > 0 && (
-                <div className="ui divided selection list">{stringReferences}</div>
-              )}
-            </div>
-          ),
-        },
-      },
-      this.isChallenge && {
-        title: {
-          key: 'code-challenge-title',
-          onClick: this.handleAccordionTitleClick,
-          content: (
-            <span style={{ backgroundColor: 'rgba(0,255,0,0.02)' }} id="mgbjr-EditCode-codeChallenges">
-              Code Challenges
-            </span>
-          ),
-        },
-        content: {
-          key: 'code-challenge-content',
-          content: (
-            <CodeChallenges
-              style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
-              active={!!asset.skillPath}
-              skillPath={asset.skillPath}
-              codeMirror={this.codeMirror}
-              currUser={this.props.currUser}
-              userSkills={this.userSkills}
-              runChallengeDate={this.state.runChallengeDate}
+        title: 'Tutorial Mentor',
+        key: 'tutorial-mentor',
+        icon: 'student',
+        tooltip: 'Walkthrough of each step of the tutorial',
+        content: (
+          <div>
+            <TutorialMentor
+              tryTutorial={this.tryTutorial}
+              stopTutorial={this.stopTutorial}
+              parsedTutorialData={this.state.parsedTutorialData}
+              insertCodeCallback={canEdit ? newCodeStr => this.insertTextAtCursor(newCodeStr) : null}
             />
-          ),
-        },
-      },
-      this.isCodeTutorial && {
-        title: {
-          key: 'code-tutorial-title',
-          onClick: this.handleAccordionTitleClick,
-          content: (
-            <span style={{ backgroundColor: 'rgba(0,255,0,0.02)' }} id="mgbjr-EditCode-codeTutorials">
-              Code Tutorials
-            </span>
-          ),
-        },
-        content: {
-          key: 'code-tutorial-content',
-          content: (
-            <CodeTutorials
-              style={{ backgroundColor: 'rgba(0,255,0,0.02)' }}
-              isOwner={currUser && currUser._id === asset.ownerId}
-              active={!!asset.skillPath}
-              skillPath={asset.skillPath}
-              codeMirror={this.codeMirror}
-              currUser={this.props.currUser}
-              userSkills={this.userSkills}
-              quickSave={this.quickSave.bind(this)}
-              highlightLines={this.highlightLines.bind(this)}
-              assetId={asset._id}
-              asset={asset}
-            />
-          ),
-        },
+            {stringReferences &&
+            stringReferences.length > 0 && (
+              <div className="ui divided selection list">{stringReferences}</div>
+            )}
+          </div>
+        ),
       },
       !docEmpty &&
       asset.kind === 'code' &&
       this.mgb_mode === 'jsx' && {
-        title: {
-          key: 'code-runner-title',
-          onClick: this.handleAccordionTitleClick,
-          // Code run/stop (header)
-          content: <span id="mgbjr-EditCode-codeRunner">Code Runner</span>,
-        },
-        content: {
-          key: 'code-runner-content',
-          // Code run/stop (body)
-          content: (
-            <div>
-              <span style={{ float: 'right', marginTop: '-19px', position: 'relative' }}>
+        title: 'Code Runner',
+        key: 'code-runner',
+        icon: 'toggle right',
+        tooltip: 'Run your code and display the resulting content',
+        content: this.state.astReady ? (
+          <div
+            style={{
+              flexFlow: 'column',
+              height: '100%',
+              overflowY: 'auto',
+            }}
+          >
+            <div style={{ overflowY: 'auto', flex: '1 1 auto', height: 'calc(100% - 2.5em)' }}>
+              <span style={{ float: 'right', position: 'relative' }}>
                 {isPlaying &&
                 this.props.canEdit && (
-                  <a
-                    className={'ui tiny icon button'}
+                  <Button
+                    icon
+                    compact
+                    size="mini"
                     onClick={this.handleScreenshotIFrame.bind(this)}
                     title="This will set the Asset preview Thumbnail image to be a screenshot of the first <canvas> element in the page, *IF* your code has created one..."
                   >
-                    <i className="save icon" />
-                  </a>
+                    <Icon name="save" />
+                  </Button>
                 )}
-                {!isPlaying &&
-                this.state.astReady && (
+                {!isPlaying && (
                   <Button
-                    as="a"
                     icon
+                    compact
                     onClick={this.handleRun}
-                    size="tiny"
+                    size="mini"
                     title="Click here to start the program running"
                     id="mgb-EditCode-start-button"
                   >
-                    <Icon name="play" /> Run
+                    <Icon name="play" />&ensp;Run
                   </Button>
                 )}
                 {isPlaying && (
                   <Button
-                    as="a"
                     icon
+                    compact
                     onClick={this.handleStopClick}
-                    size="tiny"
+                    size="mini"
                     title="Click here to stop the running program"
                     id="mgb-EditCode-stop-button"
                   >
-                    <Icon name="stop" /> Stop
+                    <Icon name="stop" />&ensp;Stop
                   </Button>
                 )}
                 {isPlaying && (
@@ -3016,33 +2978,35 @@ class EditCode extends React.Component {
                     as="a"
                     active={isPopup}
                     icon
+                    compact
                     onClick={this.handleGamePopup}
-                    size="tiny"
+                    size="mini"
                     id="mgb-EditCode-popup-button"
                     title="Popout the code-run area so it can be moved around the screen"
                   >
-                    <Icon name="external" /> Popout
+                    <Icon name="external" />&ensp;Popout
                   </Button>
                 )}
                 {isPlaying && (
                   <Button
                     as="a"
                     icon
+                    compact
                     onClick={this.handleGamePopout}
-                    size="tiny"
+                    size="mini"
                     title="Open Game screen in the window"
                     id="mgb-EditCode-popup-button"
                   >
-                    <Icon name="external" /> Full
+                    <Icon name="external" />&ensp;Full
                   </Button>
                 )}
                 {!this.hasErrors && (
                   <Button
-                    as="a"
                     icon
+                    compact
                     disabled={!this.props.canEdit}
                     onClick={this.handleFullScreen}
-                    size="tiny"
+                    size="mini"
                     title={
                       this.props.canEdit ? (
                         'Click here to publish your game and automatically open it in the new browser window (tab)'
@@ -3053,44 +3017,97 @@ class EditCode extends React.Component {
                     id="mgb-EditCode-full-screen-button"
                   >
                     <Icon name="send outline" />
-                    {this.props.canEdit ? 'Publish' : 'View Published'}
+                    &ensp;{this.props.canEdit ? 'Publish' : 'View Published'}
                   </Button>
                 )}
               </span>
               {!isPopup && this.renderGameScreen()}
-
-              {this.state.isPlaying && (
+            </div>
+            <div style={{ flex: '0 1 4em', height: '100%' }}>
+              {this.refs.gameScreen && (
                 <ConsoleMessageViewer
                   messages={this.state.consoleMessages}
                   gotoLinehandler={this.gotoLineHandler.bind(this)}
                   clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
                   style={{
-                    overflow: 'auto',
-                    width: '100%',
-                    maxHeight: '150px',
-                    marginTop: '6px',
+                    maxHeight: '100px',
+                    marginBottom: '1em',
                   }}
                 />
               )}
             </div>
-          ),
-        },
+          </div>
+        ) : (
+          <Dimmer inverted active>
+            <Loader />
+          </Dimmer>
+        ),
       },
-      docEmpty &&
-      !asset.isCompleted &&
-      !this.isCodeTutorial &&
-      !this.isChallenge &&
-      this.mgb_mode === 'jsx' && {
-        title: {
-          key: 'code-starter-title',
-          onClick: this.handleAccordionTitleClick,
-          // Clean sheet helper!
-          content: <span>Code Starter</span>,
-        },
-        content: {
-          key: 'code-starter-content',
-          content: <CodeStarter asset={asset} handlePasteCode={this.pasteSampleCode} />,
-        },
+      !docEmpty &&
+      asset.kind === 'code' && {
+        title: 'Code Docs',
+        key: 'code-docs',
+        icon: 'book',
+        tooltip: 'Documentation for JS/CSS/Phaser',
+        content:
+          this.mgb_mode === 'css' ? (
+            <div className="ui divided selection list active">
+              <Segment>
+                <p>
+                  This asset is treated as Cascading Style Sheets (CSS) file - because of the
+                  <em>css</em> extension in the filename
+                </p>
+                <p>
+                  You can find more about CSS in the{' '}
+                  <a
+                    href="https://developer.mozilla.org/en-US/docs/Web/CSS"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    MDN Web Docs / Web / CSS
+                  </a>{' '}
+                </p>
+              </Segment>
+            </div>
+          ) : this.mgb_mode === 'jsx' ? (
+            // Current Line/Selection helper (body)
+            <div>
+              <TokenDescription
+                currentToken={this.state.currentToken}
+                getPrevToken={cb => this.getPrevToken(cb)}
+                getNextToken={cb => this.getNextToken(cb)}
+                comment={this.state.comment}
+              />
+              <FunctionDescription
+                functionHelp={this.state.functionHelp}
+                functionArgPos={this.state.functionArgPos}
+                functionTypeInfo={this.state.functionTypeInfo}
+                helpDocJsonMethodInfo={this.state.helpDocJsonMethodInfo}
+              />
+
+              {this.state.atCursorTypeRequestResponse.data &&
+              this.state.atCursorTypeRequestResponse.data.exprName && (
+                <ExpressionDescription expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
+              )}
+              {(!this.state.atCursorTypeRequestResponse.data ||
+                !this.state.atCursorTypeRequestResponse.data.exprName) && (
+                <InvokingDescription typeDescription={this.state.atCursorTypeDescription} />
+              )}
+
+              <RefsAndDefDescription
+                refsInfo={this.state.atCursorRefRequestResponse.data}
+                defInfo={this.state.atCursorDefRequestResponse.data}
+                expressionTypeInfo={this.state.atCursorTypeRequestResponse.data}
+              />
+
+              {this.renderDebugAST()}
+
+              {stringReferences &&
+              stringReferences.length > 0 && (
+                <div className="ui divided selection list">{stringReferences}</div>
+              )}
+            </div>
+          ) : null,
       },
       // Import Assistant HEADER
       canEdit &&
@@ -3098,211 +3115,97 @@ class EditCode extends React.Component {
       !this.isCodeTutorial &&
       !this.isChallenge &&
       this.mgb_mode === 'jsx' && {
-        title: {
-          key: 'import-assistant-title',
-          onClick: this.handleAccordionTitleClick,
-          content: (
-            <span>
-              Import Assistant
-              <span style={{ float: 'right' }}>
-                {this.tools &&
-                (this.mgb_c2_hasChanged || !this.state.astReady) && (
-                  <Icon
-                    name="refresh"
-                    size="small"
-                    color={this.mgb_c2_hasChanged ? 'orange' : null}
-                    loading={this.state.astReady}
-                  />
-                )}
-                <ImportAssistantHeader knownImports={knownImports} />
-              </span>
-            </span>
-          ),
-        },
-        content: {
-          key: 'import-assistant-content',
-          content: this.state.astReady && (
-            <ImportHelperPanel
-              scripts={this.state.userScripts}
-              includeLocalImport={this.includeLocalImport}
-              includeExternalImport={this.includeExternalImport}
-              knownImports={knownImports}
-            />
-          ),
-        },
-      },
-      !docEmpty &&
-      asset.kind === 'code' && {
-        title: {
-          key: 'code-mentor-title',
-          onClick: this.handleAccordionTitleClick,
-          // Current Line/Selection helper (header)
-          content: <span id="mgbjr-EditCode-codeMentor">Code Mentor</span>,
-        },
-        content: {
-          key: 'code-mentor-content',
-          content:
-            this.mgb_mode === 'css' ? (
-              <div className="ui divided selection list active">
-                <Segment>
-                  <p>
-                    This asset is treated as Cascading Style Sheets (CSS) file - because of the
-                    <em>css</em> extension in the filename
-                  </p>
-                  <p>
-                    You can find more about CSS in the{' '}
-                    <a
-                      href="https://developer.mozilla.org/en-US/docs/Web/CSS"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      MDN Web Docs / Web / CSS
-                    </a>{' '}
-                  </p>
-                </Segment>
-              </div>
-            ) : this.mgb_mode === 'jsx' ? (
-              // Current Line/Selection helper (body)
-              <div>
-                <TokenDescription
-                  currentToken={this.state.currentToken}
-                  getPrevToken={cb => this.getPrevToken(cb)}
-                  getNextToken={cb => this.getNextToken(cb)}
-                  comment={this.state.comment}
-                />
-                <FunctionDescription
-                  functionHelp={this.state.functionHelp}
-                  functionArgPos={this.state.functionArgPos}
-                  functionTypeInfo={this.state.functionTypeInfo}
-                  helpDocJsonMethodInfo={this.state.helpDocJsonMethodInfo}
-                />
-
-                {this.state.atCursorTypeRequestResponse.data &&
-                this.state.atCursorTypeRequestResponse.data.exprName && (
-                  <ExpressionDescription expressionTypeInfo={this.state.atCursorTypeRequestResponse.data} />
-                )}
-                {(!this.state.atCursorTypeRequestResponse.data ||
-                  !this.state.atCursorTypeRequestResponse.data.exprName) && (
-                  <InvokingDescription typeDescription={this.state.atCursorTypeDescription} />
-                )}
-
-                <RefsAndDefDescription
-                  refsInfo={this.state.atCursorRefRequestResponse.data}
-                  defInfo={this.state.atCursorDefRequestResponse.data}
-                  expressionTypeInfo={this.state.atCursorTypeRequestResponse.data}
-                />
-
-                {this.renderDebugAST()}
-
-                {stringReferences &&
-                stringReferences.length > 0 && (
-                  <div className="ui divided selection list">{stringReferences}</div>
-                )}
-              </div>
-            ) : null,
-        },
+        title: 'Import Assistant',
+        key: 'import-assistant',
+        icon: 'download',
+        tooltip: 'Interface for importing MGB code assets or JS frameworks',
+        content: this.state.astReady ? (
+          <ImportHelperPanel
+            scripts={this.state.userScripts}
+            includeLocalImport={this.includeLocalImport}
+            includeExternalImport={this.includeExternalImport}
+            knownImports={knownImports}
+          />
+        ) : (
+          <Dimmer inverted active>
+            <Loader />
+          </Dimmer>
+        ),
       },
       !this.isCodeTutorial &&
       !this.isChallenge &&
-      this.state.astReady &&
       asset.kind === 'code' &&
       this.mgb_mode === 'jsx' && {
-        title: {
-          key: 'code-flower-title',
-          onClick: this.handleAccordionTitleClick,
-          content: <span id="mgbjr-EditCode-codeFlower">Code Flower</span>,
-        },
-        content: {
-          key: 'code-flower-content',
-          content: (
-            <div>
-              {this.props.canEdit &&
-              this.state.astReady && (
-                <a
-                  className={'ui right floated mini icon button'}
-                  onClick={this.drawAstFlower.bind(this)}
-                  title="This will make abstract image of your code"
+        title: 'Code Flower',
+        key: 'code-flower',
+        icon: 'asterisk',
+        tooltip: 'Code visualization',
+        content: this.state.astReady ? (
+          <div>
+            {
+              // Is this needed?
+              /*this.props.canEdit &&
+            this.state.astReady && (
+              <Button
+                icon
+                compact
+                floated="right"
+                size="mini"
+                onClick={this.drawAstFlower.bind(this)}
+                title="This will make abstract image of your code"
+              >
+                <Icon name="write square" />&ensp;Draw AST
+              </Button>
+            )*/
+            }
+            <span style={{ float: 'right', position: 'relative' }}>
+              {this.state.astFlowerReady &&
+              this.props.canEdit && (
+                <Button
+                  icon
+                  compact
+                  size="mini"
+                  title="Save the currently displayed CodeFlower as the Code Asset preview 'thumbnail' image for this asset"
                 >
-                  <i className={'write square icon'} />Draw AST
-                </a>
+                  <Icon name="save" />&ensp;Save AST
+                </Button>
               )}
-              <span style={{ float: 'right', marginTop: '-28px', position: 'relative' }}>
-                {this.state.astFlowerReady &&
-                this.props.canEdit && (
-                  <a
-                    className="ui tiny icon button"
-                    onClick={() => {
-                      this.saveAstThumbnail(() => {})
-                    }}
-                    title="Save the currently displayed CodeFlower as the Code Asset preview 'thumbnail' image for this asset"
-                  >
-                    <i className="save icon" />
-                  </a>
-                )}
-                <a
-                  className="ui tiny icon button"
-                  onClick={this.drawAstFlowerForThumbnail.bind(this, asset._id)}
-                  title="Generate an abstract CodeFlower image based on the structure of your source code"
-                >
-                  <i className="empire icon" />&emsp;Simple
-                </a>&nbsp;
-                <a
-                  className="ui tiny icon button"
-                  onClick={this.drawAstFlowerFull.bind(this, asset._id)}
-                  title="Generate a more detailed CodeFlower image based on the structure of your source code"
-                >
-                  <i className="first order icon" />&emsp;Detailed
-                </a>&nbsp;
-              </span>
-              <div id="codeflower" ref="codeflower" />
-            </div>
-          ),
-        },
+              <Button
+                icon
+                compact
+                size="mini"
+                onClick={this.drawAstFlowerForThumbnail.bind(this, asset._id)}
+                title="Generate an abstract CodeFlower image based on the structure of your source code"
+              >
+                <Icon name="asterisk" />&ensp;Simple
+              </Button>
+              <Button
+                icon
+                compact
+                size="mini"
+                onClick={this.drawAstFlowerFull.bind(this, asset._id)}
+                title="Generate a more detailed CodeFlower image based on the structure of your source code"
+              >
+                <Icon name="certificate" />&ensp;Detailed
+              </Button>
+            </span>
+            <div id="codeflower" ref="codeflower" />
+          </div>
+        ) : (
+          <Dimmer inverted active>
+            <Loader />
+          </Dimmer>
+        ),
       },
     ].filter(Boolean)
-  }
-
-  openAccordionByKey = key => {
-    console.log('openAccordionByKey', key)
-    const index = _.findIndex(this.getAccordionPanels(), { title: { key: key + '-title' } })
-    this.openAccordionByIndex(index)
-  }
-
-  openAccordionByIndex = index => {
-    console.log('openAccordionByIndex', index)
-    this.setState(({ accordionActiveIndex }) => ({
-      accordionActiveIndex: _.uniq([...accordionActiveIndex, index]),
-    }))
-  }
-
-  closeAccordionByIndex = index => {
-    console.log('closeAccordionByIndex', index)
-    this.setState(({ accordionActiveIndex }) => ({
-      accordionActiveIndex: _.without(accordionActiveIndex, index),
-    }))
-  }
-
-  toggleAccordionByIndex = index => {
-    console.log('toggleAccordionByIndex', index)
-
-    const { accordionActiveIndex } = this.state
-
-    if (_.includes(accordionActiveIndex, index)) {
-      this.closeAccordionByIndex(index)
-    } else {
-      this.openAccordionByIndex(index)
-    }
-  }
-
-  handleAccordionTitleClick = (e, data) => {
-    console.log('handleAccordionTitleClick', data.index)
-    this.toggleAccordionByIndex(data.index)
   }
 
   renderGameScreen = () => {
     const { asset, hourOfCodeStore: { state: { currStepId } } } = this.props
 
-    const infoPaneOpts = this.isGuest ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
+    const infoPaneOpts = this.isGuest
+      ? _infoPaneModes[3]
+      : this.isTutorialView ? _infoPaneModes[0] : _infoPaneModes[this.state.infoPaneMode]
 
     const isPopup = this.state.isPopup || !infoPaneOpts.col2
 
@@ -3311,6 +3214,8 @@ class EditCode extends React.Component {
         key="gameScreen"
         ref="gameScreen"
         isPopup={isPopup}
+        isPopupOnly={this.isCodeTutorial}
+        isHidden={this.isChallenge}
         isPlaying={this.state.isPlaying}
         isAutoRun={this.isAutoRun}
         onAutoRun={this.handleAutoRun}
@@ -3318,15 +3223,105 @@ class EditCode extends React.Component {
         asset={asset}
         consoleAdd={this._consoleAdd.bind(this)}
         handleContentChange={this.handleContentChange.bind(this)}
-        handleStop={this.handleGamePopup}
+        handleStop={this.isCodeTutorial ? this.handleStop : this.handleGamePopup}
         onEvent={this.handleGameScreenEvent}
       />
+    )
+  }
+
+  // Simplified views of right panels (replaces accordions)
+  // For HoC, Code Challenges, and Code Tutorials
+  renderHoc = tbConfig => {
+    return (
+      <div>
+        {this.bound_handle_iFrameMessageReceiver ? (
+          <div>
+            <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
+            {this.renderGameScreen()}
+            <ConsoleMessageViewer
+              messages={this.state.consoleMessages}
+              gotoLinehandler={this.gotoLineHandler.bind(this)}
+              clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
+              style={{
+                maxHeight: '100px',
+              }}
+            />
+          </div>
+        ) : (
+          <Dimmer inverted active>
+            <Loader>Preparing code runner...</Loader>
+          </Dimmer>
+        )}
+      </div>
+    )
+  }
+
+  renderTutorial = (asset, currUser) => {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexFlow: 'column',
+          height: 'inherit',
+          overflowY: 'auto',
+        }}
+      >
+        <div
+          id="tutorial-container"
+          style={{ overflowY: 'auto', flex: '1 1 auto', height: 'calc(100% - 2.5em)' }}
+        >
+          {this.isCodeTutorial && (
+            <CodeTutorials
+              style={{ backgroundColor: 'rgba(0,255,0,0.02)', height: 'calc(100% - 2.5em)' }}
+              isOwner={currUser && currUser._id === asset.ownerId}
+              active={!!asset.skillPath}
+              skillPath={asset.skillPath}
+              codeMirror={this.codeMirror}
+              currUser={currUser}
+              userSkills={this.userSkills}
+              quickSave={this.quickSave.bind(this)}
+              runCode={this.handleRun}
+              handleOpenConsole={this.handleOpenConsole}
+              highlightLines={this.highlightLines.bind(this)}
+              assetId={asset._id}
+              asset={asset}
+            />
+          )}
+          {this.isChallenge && (
+            <CodeChallenges
+              style={{ backgroundColor: 'rgba(0,255,0,0.02)', height: 'calc(100% - 2.5em)' }}
+              active={!!asset.skillPath}
+              skillPath={asset.skillPath}
+              codeMirror={this.codeMirror}
+              currUser={currUser}
+              userSkills={this.userSkills}
+              runChallengeDate={this.state.runChallengeDate}
+              runCode={this.handleRun}
+              handleOpenConsole={this.handleOpenConsole}
+            />
+          )}
+        </div>
+        <div style={{ flex: '0 1 4em', height: '100%' }}>
+          {this.renderGameScreen()}
+          <ConsoleMessageViewer
+            messages={this.state.consoleMessages}
+            gotoLinehandler={this.gotoLineHandler.bind(this)}
+            clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
+            isTutorialView={this.isTutorialView}
+            style={{
+              maxHeight: '100px',
+              marginBottom: '2em',
+            }}
+          />
+        </div>
+      </div>
     )
   }
 
   render() {
     const {
       asset,
+      currUser,
       hourOfCodeStore: { state: { api, steps, currStep, isLastStep, isActivityOver } },
     } = this.props
 
@@ -3334,23 +3329,21 @@ class EditCode extends React.Component {
 
     this.codeMirror && this.codeMirror.setOption('readOnly', !this.props.canEdit)
 
-    const infoPaneOpts = this.isGuest ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
+    const infoPaneOpts = this.isGuest
+      ? _infoPaneModes[3]
+      : this.isTutorialView ? _infoPaneModes[0] : _infoPaneModes[this.state.infoPaneMode]
 
     const tbConfig = this.generateToolbarConfig()
 
-    // const RunCodeIFrameStyle = {
-    //   transform: "scale(0.5)",
-    //   transformOrigin: "0 0",
-    //   overflow: "hidden"
-    // }
+    const isPopup = this.state.isPopup || !infoPaneOpts.col2
+
     const fullSize = {
       position: 'absolute',
       top: 0,
       bottom: 0,
       left: 0,
-      right: 0,
+      right: '1em',
     }
-    const isPopup = this.state.isPopup || !infoPaneOpts.col2
 
     if (asset.skillPath && asset.kind === 'code') {
       if (isPathChallenge(asset.skillPath)) this.isChallenge = true
@@ -3444,7 +3437,9 @@ class EditCode extends React.Component {
                   openVideoModal={this.handleOpenVideoModal}
                 />
               )}
-              {!this.isGuest && <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />}
+              {!(this.isTutorialView || this.isGuest) && (
+                <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
+              )}
               {!this.isGuest ? (
                 <div
                   className={'accept-drop' + (this.props.canEdit ? '' : ' read-only')}
@@ -3520,43 +3515,18 @@ class EditCode extends React.Component {
               className={infoPaneOpts.col2 + ' wide column'}
               style={{ display: infoPaneOpts.col2 ? 'block' : 'none' }}
             >
-              {!this.isGuest ? (
-                <div className="mgbAccordionScroller" style={fullSize}>
-                  <Accordion
-                    fluid
-                    styled
-                    exclusive={false}
-                    activeIndex={this.state.accordionActiveIndex}
-                    panels={this.getAccordionPanels()}
-                  />
+              {!this.isGuest && !this.isTutorialView ? (
+                <div style={fullSize}>
+                  <Tabs ref={ref => (this.tabs = ref)} panes={this.getTabPanes()} />
                 </div>
               ) : (
-                <Segment raised>
-                  {this.bound_handle_iFrameMessageReceiver ? (
-                    <div>
-                      <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
-                      {this.renderGameScreen()}
-                      <ConsoleMessageViewer
-                        messages={this.state.consoleMessages}
-                        gotoLinehandler={this.gotoLineHandler.bind(this)}
-                        clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
-                        style={{
-                          overflow: 'auto',
-                          width: '100%',
-                          maxHeight: '150px',
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <Dimmer inverted active>
-                      <Loader>Preparing code runner...</Loader>
-                    </Dimmer>
-                  )}
+                <Segment raised className="pane-container" style={{ overflow: 'hidden', ...fullSize }}>
+                  {this.isGuest ? this.renderHoc(tbConfig) : this.renderTutorial(asset, currUser)}
                 </Segment>
               )}
             </div>
           </div>
-          {isPopup && this.renderGameScreen()}
+          {!(this.isTutorialView || this.isGuest) && isPopup && this.renderGameScreen()}
         </div>
       </div>
     )

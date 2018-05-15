@@ -225,6 +225,13 @@ class RelatedAssetsUI extends React.Component {
     }
   }
 
+  handleClickAccordion = index => {
+    const { activeIndex } = this.state
+    if (activeIndex === index) index = -1
+
+    this.setState({ activeIndex: index })
+  }
+
   renderRelatedAssetsList = () => {
     const { currUser, currUserProjects, assets, loading, user } = this.props
     const { activeIndex, searchQuery } = this.state
@@ -250,12 +257,7 @@ class RelatedAssetsUI extends React.Component {
 
     return (
       <div>
-        <Header>
-          Assets
-          {/*<Header.Subheader style={{ display: 'inline-block', marginLeft: '1em' }}>*/}
-          {/*[Ctrl + O]*/}
-          {/*</Header.Subheader>*/}
-        </Header>
+        <Header>Assets</Header>
         {hasAssets && (
           <Input
             id="mgb-related-assets-input" // so it can be focused on open
@@ -270,54 +272,46 @@ class RelatedAssetsUI extends React.Component {
         {_.chain(filteredRelatedAssets)
           .groupBy('kind')
           .toPairs()
-          .map(([kind, assetsOfKind]) => (
+          .map(([kind, assetsOfKind], index) => (
             // <div key={kind}>
             // <Divider horizontal>{kind}</Divider>
-            <List
+            <Accordion
               key={kind}
-              id="mgb-related-assets-list"
-              selection
-              items={_.map(assetsOfKind, (a, index) => ({
-                key: a._id,
-                as: QLink,
-                onClick: this.closeAll,
-                to: `/u/${a.dn_ownerName}/asset/${a._id}`,
-                // active: activeIndex === index,
-                style: { color: AssetKinds.getColor(a.kind) },
-                icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
-                content:
-                  currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
-              }))}
-            />
-            // </div>
+              onClick={() => {
+                this.handleClickAccordion(index)
+              }}
+            >
+              <Accordion.Title
+                content={`${kind.charAt(0).toUpperCase() + kind.slice(1)}s`}
+                active={activeIndex === index}
+                style={{ color: AssetKinds.getColor(kind) }}
+              />
+              <Accordion.Content
+                active={activeIndex === index}
+                content={
+                  <List
+                    key={kind}
+                    id="mgb-related-assets-list"
+                    selection
+                    items={_.map(assetsOfKind, (a, index) => ({
+                      key: a._id,
+                      as: QLink,
+                      onClick: this.closeAll,
+                      to: `/u/${a.dn_ownerName}/asset/${a._id}`,
+                      // active: activeIndex === index,
+                      style: { color: AssetKinds.getColor(a.kind) },
+                      icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
+                      content:
+                        currUser && currUser.username === a.dn_ownerName
+                          ? a.name
+                          : `${a.dn_ownerName}:${a.name}`,
+                    }))}
+                  />
+                }
+              />
+            </Accordion>
           ))
           .value()}
-        {/*
-        {hasAssets && (
-          <List
-            id="mgb-related-assets-list"
-            selection
-            // Heads Up!
-            // Position relative is required for scrolling out of view active items into view
-            style={{ position: 'relative', overflowY: 'auto' }}
-            items={_.chain(filteredRelatedAssets)
-              .map((a, index) => ({
-                key: a._id,
-                as: QLink,
-                'data-kind': a.kind,
-                onClick: this.closeAll,
-                to: `/u/${a.dn_ownerName}/asset/${a._id}`,
-                active: activeIndex === index,
-                style: { color: AssetKinds.getColor(a.kind) },
-                icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
-                content:
-                  currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
-              }))
-              .sortBy('data-kind')
-              .value()}
-          />
-        )}
-        */}
         {!hasAssets && (
           <Segment secondary textAlign="center">
             <Header icon color="grey">
@@ -334,18 +328,6 @@ class RelatedAssetsUI extends React.Component {
             </p>
           </Segment>
         )}
-        {/*<Divider />*/}
-        {/*<Button*/}
-        {/*as={QLink}*/}
-        {/*to="/assets/create"*/}
-        {/*query={{ projectName: contextualProjectName }}*/}
-        {/*compact*/}
-        {/*floated="right"*/}
-        {/*size="tiny"*/}
-        {/*color="green"*/}
-        {/*content="Create [Ctrl + Alt + N]"*/}
-        {/*/>*/}
-        {/*<Divider hidden fitted clearing />*/}
       </div>
     )
   }

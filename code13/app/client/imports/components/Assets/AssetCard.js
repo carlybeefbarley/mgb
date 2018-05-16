@@ -14,6 +14,7 @@ import ChallengeState from '/client/imports/components/Controls/ChallengeState'
 import { showToast } from '/client/imports/modules'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+import assetStore from '/client/imports/stores/assetStore'
 
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
@@ -280,6 +281,7 @@ const AssetCard = React.createClass({
 
     let projectsString = newChosenProjectNamesArray.join(', ')
     logActivity('asset.project', `now in projects ${projectsString}`, null, this.props.asset)
+    assetStore.untrackAsset(this.props.asset, assetStore.assets())
   },
 
   handleDeleteClick(e) {

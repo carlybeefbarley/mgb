@@ -58,6 +58,11 @@ class AssetStore extends Store {
     return project
   }
 
+  assets = () => {
+    const { assets } = this.state
+    return assets
+  }
+
   assetHasMultipleProjects = (asset, targetProject) => {
     if (targetProject !== __NO_PROJECT__) {
       return asset.projectNames.length > 1

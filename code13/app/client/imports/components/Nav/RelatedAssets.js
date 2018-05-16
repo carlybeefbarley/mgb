@@ -232,6 +232,31 @@ class RelatedAssetsUI extends React.Component {
     this.setState({ activeIndex: index })
   }
 
+  getPrettyKind = kind => {
+    switch (kind) {
+      case 'actormap':
+        return 'Actor Maps'
+      case 'map':
+        return 'Maps'
+      case 'graphic':
+        return 'Graphics'
+      case 'actor':
+        return 'Actors'
+      case 'sound':
+        return 'Sounds'
+      case 'music':
+        return 'Music'
+      case 'code':
+        return 'Code'
+      case 'game':
+        return 'Games'
+      case 'tutorial':
+        return 'Tutorials'
+      default:
+        return 'Other Assets'
+    }
+  }
+
   renderRelatedAssetsList = () => {
     const { currUser, currUserProjects, assets, loading, user } = this.props
     const { activeIndex, searchQuery } = this.state
@@ -282,7 +307,7 @@ class RelatedAssetsUI extends React.Component {
               }}
             >
               <Accordion.Title
-                content={`${kind.charAt(0).toUpperCase() + kind.slice(1)}s`}
+                content={this.getPrettyKind(kind)}
                 active={activeIndex === index}
                 style={{ color: AssetKinds.getColor(kind) }}
               />

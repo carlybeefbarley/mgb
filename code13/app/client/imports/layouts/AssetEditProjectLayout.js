@@ -53,6 +53,7 @@ export default class AssetEditProjectContainer extends React.Component {
     const renderedProjectsList = this.renderProjectsList(currUserProjects)
     // Set the default name/option for the projects dropdown list
     const projectName = assetStore.project() || __NO_PROJECT__
+    const dropDownCurrentProjectName = _.find(renderedProjectsList, { value: projectName }).text
 
     return (
       <div style={{ overflowY: 'auto' }}>
@@ -72,7 +73,7 @@ export default class AssetEditProjectContainer extends React.Component {
                 text={
                   <span>
                     <Icon name="sitemap" />
-                    {_.find(renderedProjectsList, { value: projectName }).text}
+                    {dropDownCurrentProjectName}
                   </span>
                 }
                 onChange={(e, { value }) => {

@@ -143,9 +143,10 @@ class AssetStore extends Store {
    * @returns {Object} New assets object that has given asset added.
    */
   trackAsset = (asset, assets) => {
+    const { currUser } = this.props
     let newAssets = Object.assign(assets)
 
-    if (asset.projectNames.length === 0) {
+    if (asset.projectNames.length === 0 || asset.dn_ownerName !== currUser.username) {
       // debugger
       // if the asset has no project, track the special "no project" project
       newAssets = this.trackProject(__NO_PROJECT__, newAssets)
@@ -176,9 +177,10 @@ class AssetStore extends Store {
    * @returns {Object} New assets object that has given asset removed.
    */
   untrackAsset = (asset, assets) => {
+    const { currUser } = this.props
     let newAssets = Object.assign(assets)
     // handle assets with no projects
-    if (asset.projectNames.length === 0) {
+    if (asset.projectNames.length === 0 || asset.dn_ownerName !== currUser.username) {
       let targetIndex = _.findIndex(newAssets[__NO_PROJECT__], { _id: asset._id })
       newAssets[__NO_PROJECT__].splice(targetIndex, 1)
       return newAssets

@@ -448,26 +448,35 @@ const AssetEditRoute = React.createClass({
       </Segment>
     )
 
-    if (currentlyEditingAssetInfo.ownerName !== currUser.username) {
-      returnElement = this.renderRoute()
-    } else {
-      returnElement = (
-        <AssetEditProjectLayout {...this.props}>
-          {params.assetId === __NO_ASSET__ ? (
-            noAssetPane
-          ) : (
-            <Tab
-              menu={{ attached: 'top', tabular: true, style: { overflowX: 'auto' } }}
-              activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
-              onTabChange={this.handleTabChange}
-              panes={panes}
-            />
-          )}
-        </AssetEditProjectLayout>
-      )
-    }
+    return (
+      <AssetEditProjectLayout {...this.props}>
+        {params.assetId === __NO_ASSET__ ? (
+          noAssetPane
+        ) : (
+          <Tab
+            menu={{
+              color: this.resolveTabColor(),
+              inverted: !!this.resolveTabColor(),
+              attached: 'top',
+              tabular: true,
+              style: { overflowX: 'auto' },
+            }}
+            activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
+            onTabChange={this.handleTabChange}
+            panes={panes}
+          />
+        )}
+      </AssetEditProjectLayout>
+    )
+  },
 
-    return returnElement
+  resolveTabColor() {
+    const { currentlyEditingAssetInfo, currUser } = this.props
+    if (currentlyEditingAssetInfo.ownerName !== currUser.username) {
+      return 'yellow'
+    } else {
+      return null
+    }
   },
 
   renderRoute() {

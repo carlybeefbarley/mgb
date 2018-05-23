@@ -16,6 +16,7 @@ import { __NO_PROJECT__, __NO_ASSET__ } from '/client/imports/stores/assetStore'
 
 export default class AssetEditProjectContainer extends React.Component {
   renderProjectsList = currUserProjects => {
+    const { currentlyEditingAssetInfo, currUser } = this.props
     let data = _.map(currUserProjects, project => ({
       key: project.name,
       text: project.name,
@@ -24,6 +25,17 @@ export default class AssetEditProjectContainer extends React.Component {
     }))
 
     data.push({ key: __NO_PROJECT__, text: 'No Project', value: '__NO_PROJECT__', icon: 'sitemap' })
+
+    if (
+      currentlyEditingAssetInfo.projectNames &&
+      currentlyEditingAssetInfo.projectNames.length &&
+      currentlyEditingAssetInfo.ownerName !== currUser.username
+    ) {
+      for (let index of currentlyEditingAssetInfo.projectNames) {
+        let indexName = currentlyEditingAssetInfo.projectNames[index]
+        data.push({ key: index, text: index, value: index, icon: 'sitemap' })
+      }
+    }
 
     return data
   }

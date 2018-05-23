@@ -146,7 +146,7 @@ class AssetStore extends Store {
     const { currUser } = this.props
     let newAssets = Object.assign(assets)
 
-    if (asset.projectNames.length === 0 || asset.dn_ownerName !== currUser.username) {
+    if (currUser === null || asset.projectNames.length === 0 || asset.dn_ownerName !== currUser.username) {
       // debugger
       // if the asset has no project, track the special "no project" project
       newAssets = this.trackProject(__NO_PROJECT__, newAssets)
@@ -202,7 +202,8 @@ class AssetStore extends Store {
    * @returns {String} Either __NO_PROJECT__ or the asset's first project as a string.
    */
   getContextualProject = asset => {
-    if (asset.projectNames.length === 0) {
+    const { currUser } = this.props
+    if (asset.projectNames.length === 0 || currUser === null || currUser !== asset.dn_ownerName) {
       return __NO_PROJECT__
     } else {
       return asset.projectNames[0]
@@ -211,6 +212,15 @@ class AssetStore extends Store {
 
   setProps = props => {
     this.props = props
+  }
+
+  userIsOwner = asset => {
+    const { currUser } = this.props
+    if (currUser === asset.dn_ownerName) {
+      return true
+    } else {
+      return false
+    }
   }
 
   openAsset = asset => {
@@ -222,7 +232,8 @@ class AssetStore extends Store {
     newAssets = this.trackAsset(tombstone, assets)
 
     const targetProject = this.getContextualProject(tombstone)
-    if (!this.isAlreadyOpen(tombstone, targetProject)) {
+
+    if (this.userIsOwner(asset) && !this.isAlreadyOpen(tombstone, targetProject)) {
       this.setState({
         assets: newAssets,
         project: targetProject,

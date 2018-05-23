@@ -66,6 +66,7 @@ export default class AssetEditProjectContainer extends React.Component {
                 selectOnBlur={false}
                 selectOnNavigation={false}
                 button
+                disabled={currUser === null}
                 className="basic secondary right labeled icon"
                 fluid
                 search

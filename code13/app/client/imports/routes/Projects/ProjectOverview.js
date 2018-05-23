@@ -473,15 +473,17 @@ class ProjectOverview extends Component {
                 >
                   Assets
                 </Header>
-                <AssetCreateNewModal
-                  currUser={currUser}
-                  currUserProjects={currUserProjects}
-                  buttonProps={{ floated: 'right' }}
-                  viewProps={{
-                    showProjectSelector: false,
-                    suggestedParams: { projectName: project.name },
-                  }}
-                />
+                {canEdit && (
+                  <AssetCreateNewModal
+                    currUser={currUser}
+                    currUserProjects={currUserProjects}
+                    buttonProps={{ floated: 'right' }}
+                    viewProps={{
+                      showProjectSelector: false,
+                      suggestedParams: { projectName: project.name },
+                    }}
+                  />
+                )}
                 <Divider fitted hidden clearing />
                 <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
               </Grid.Column>

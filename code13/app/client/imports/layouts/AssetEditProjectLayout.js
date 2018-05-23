@@ -42,12 +42,10 @@ export default class AssetEditProjectContainer extends React.Component {
     const { assetStore, currUser } = this.props
     const project = { name: value }
     assetStore.setProject(project.name)
-    if (this.props.canEdit) {
-      utilPushTo(
-        location.query,
-        `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(project.name)}`,
-      )
-    }
+    utilPushTo(
+      location.query,
+      `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(project.name)}`,
+    )
   }
 
   render() {

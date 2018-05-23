@@ -16,25 +16,13 @@ import { __NO_PROJECT__, __NO_ASSET__ } from '/client/imports/stores/assetStore'
 
 export default class AssetEditProjectContainer extends React.Component {
   renderProjectsList = currUserProjects => {
-    const { currentlyEditingAssetInfo, currUser } = this.props
-    let data = _.map(currUserProjects, project => ({
-      key: project.name,
-      text: project.name,
-      value: project.name,
-      icon: 'sitemap',
-    }))
+    const { assetStore } = this.props
+    const assets = Object.assign(assetStore.assets())
+    let data = [],
+      keys = Object.keys(assets)
 
-    data.push({ key: __NO_PROJECT__, text: 'No Project', value: '__NO_PROJECT__', icon: 'sitemap' })
-
-    if (
-      currentlyEditingAssetInfo.projectNames &&
-      currentlyEditingAssetInfo.projectNames.length &&
-      currentlyEditingAssetInfo.ownerName !== currUser.username
-    ) {
-      for (let index of currentlyEditingAssetInfo.projectNames) {
-        let indexName = currentlyEditingAssetInfo.projectNames[index]
-        data.push({ key: index, text: index, value: index, icon: 'sitemap' })
-      }
+    for (let index in keys) {
+      data.push({ key: keys[index], text: keys[index], value: keys[index], icon: 'sitemap' })
     }
 
     return data
@@ -58,6 +46,11 @@ export default class AssetEditProjectContainer extends React.Component {
       location.query,
       `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(project.name)}`,
     )
+  }
+
+  componentDidMount() {
+    const { assetStore, currUserProjects } = this.props
+    assetStore.trackAllProjects(currUserProjects, assetStore.assets())
   }
 
   render() {

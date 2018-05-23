@@ -193,7 +193,9 @@ const AssetEditRoute = React.createClass({
 
   componentDidMount() {
     const { query } = this.props.location
-    const { assetStore } = this.props
+    const { assetStore, currUserProjects } = this.props
+
+    assetStore.trackAllProjects(currUserProjects, assetStore.assets())
     if (query.project) {
       assetStore.setProject(query.project)
     }

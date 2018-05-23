@@ -107,6 +107,15 @@ class AssetStore extends Store {
     }
   }
 
+  trackAllProjects = (userProjectsArray, assets) => {
+    let newAssets = Object.assign(assets)
+    for (let item in userProjectsArray) {
+      newAssets = this.trackProject(userProjectsArray[item].name, newAssets)
+    }
+
+    return newAssets
+  }
+
   setProject = project => {
     this.setState({ project })
   }

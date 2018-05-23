@@ -8,7 +8,7 @@
 
 import React from 'react'
 import _ from 'lodash'
-import { Grid, Dropdown, Button, Segment, Icon } from 'semantic-ui-react'
+import { Grid, Dropdown, Button, Segment, Icon, Popup } from 'semantic-ui-react'
 import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
 import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
@@ -42,10 +42,12 @@ export default class AssetEditProjectContainer extends React.Component {
     const { assetStore, currUser } = this.props
     const project = { name: value }
     assetStore.setProject(project.name)
-    utilPushTo(
-      location.query,
-      `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(project.name)}`,
-    )
+    if (this.props.canEdit) {
+      utilPushTo(
+        location.query,
+        `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(project.name)}`,
+      )
+    }
   }
 
   render() {
@@ -53,7 +55,9 @@ export default class AssetEditProjectContainer extends React.Component {
     const renderedProjectsList = this.renderProjectsList(currUserProjects)
     // Set the default name/option for the projects dropdown list
     const projectName = assetStore.project() || __NO_PROJECT__
-    const dropDownCurrentProjectName = _.find(renderedProjectsList, { value: projectName }).text
+    const dropDownCurrentProjectName = _.find(renderedProjectsList, { value: projectName })
+      ? _.find(renderedProjectsList, { value: projectName }).text
+      : __NO_PROJECT__
 
     return (
       <div style={{ overflowY: 'auto' }}>

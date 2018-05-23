@@ -5,6 +5,7 @@ import { Grid, Icon, Message, Tab, Segment } from 'semantic-ui-react'
 import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import AssetEditProjectLayout from '/client/imports/layouts/AssetEditProjectLayout'
+// import withMeteorData from
 
 import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
@@ -50,7 +51,9 @@ import { learnSkill, forgetSkill } from '/imports/schemas/skills'
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 import FlagEntity from '/client/imports/components/Controls/FlagEntityUI'
 import ResolveReportEntity from '/client/imports/components/Controls/FlagResolve'
-import { withStores } from '/client/imports/hocs'
+import { withStores, withMeteorData } from '/client/imports/hocs'
+import { compose } from 'redux'
+import { withTracker } from 'meteor/react-meteor-data'
 
 const FLUSH_TIMER_INTERVAL_MS = 60000000000000000000000000 // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
 
@@ -107,10 +110,26 @@ const _makeTitle = (kind, hasUnsentSaves, isUnconfirmedSave, assetName) => {
   return `${assetKindName}: ${unsavedMarker}'${assetName || '(unnamed)'}'`
 }
 
-const AssetEditRoute = React.createClass({
-  mixins: [ReactMeteorData],
+const _makeUpdateObj = (content2Object, thumbnail) => {
+  let updateObj = {}
+  if (content2Object) updateObj.content2 = content2Object
+  if (thumbnail) updateObj.thumbnail = thumbnail
+  return updateObj
+}
 
-  propTypes: {
+class AssetEditRoute extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      data: this.getMeteorData(props),
+      isForkPending: false,
+      isDeletePending: false,
+      isForkRevertPending: false,
+      counterTime: null,
+      counterVisible: false,
+    }
+  }
+  static propTypes: {
     hideHeaders: PropTypes.bool, // If true, don't show any UI header stuff. like a Zen mode...
     params: PropTypes.object, // params.assetId is the ASSET id; params._xed tells <AssetEdit> to load any experimental
     // editors
@@ -121,150 +140,30 @@ const AssetEditRoute = React.createClass({
     ownsProfile: PropTypes.bool, // true IFF user is valid and asset owner is currently logged in user
     hazUnreadAssetChat: PropTypes.bool, // true IFF there is unread chat for this asset
     handleSetCurrentlyEditingAssetInfo: PropTypes.func, // We should call this to set/clear current asset kind
-  },
+  }
 
-  getInitialState() {
-    this.getActivitySnapshots = () => this.data.activitySnapshots
-    return {
-      isForkPending: false,
-      isDeletePending: false,
-      isForkRevertPending: false,
-      counterTime: null,
-      counterVisible: false,
-    }
-  },
+  getActivitySnapshots = () => this.state.data.activitySnapshots
 
-  contextTypes: {
+  static contextTypes: {
     urlLocation: PropTypes.object,
     skills: PropTypes.object,
-  },
+  }
 
   // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the
   // userId TODO: Make this QLink-smart so it preserves queries
-  checkForRedirect() {
+  checkForRedirect = () => {
     // console.log('checkForRedirect', { user: this.props.user, asset: this.data.asset })
     // if (!this.props.user && !!this.data.asset) {
     //   // don't push - just replace #225 - back button not always work
     //   console.log('AssetEditRoute - redirecting')
     //   utilReplaceTo(
-    //     this.context.urlLocation.query,
+    //     this.props.location.query,
     //     '/u/' + this.data.asset.dn_ownerName + '/asset/' + this.data.asset._id,
     //   )
     // }
-  },
+  }
 
-  revertDataFromForkParent_ResultCallBack(error, result) {
-    if (error) showToast.error(`Unable to revert content to ForkParent for this asset: '${error.toString()}'`)
-    else {
-      showToast.success(`Reverted to Fork Parent's data`)
-      logActivity('asset.fork.revertTo', "Reverted to Fork Parent's data", null, this.data.asset)
-    }
-
-    this.setState({ isForkRevertPending: false })
-  },
-
-  addListenersOnMount() {
-    this.listeners = {}
-    // mgbOfferRevertToFork handler
-    this.listeners.mgbOfferRevertToFork = e => {
-      const { asset } = this.data
-      if (!asset || !this.canCurrUserEditThisAsset()) return
-      const forkParentId = e.detail
-      const fpc = asset.forkParentChain
-      if (!fpc || !_.isArray(fpc) || fpc.length === 0) return
-      if (fpc[0].parentId !== forkParentId) return
-
-      // ok, so this is the right asset being targetted by the mgbOfferRevertToFork() message..
-      // TODO: How to offer undo?
-      this.setState({ isForkRevertPending: true })
-      Meteor.call(
-        'Azzets.revertDataFromForkParent',
-        asset._id,
-        forkParentId,
-        this.revertDataFromForkParent_ResultCallBack,
-      )
-    }
-    window.addEventListener('mgbOfferRevertToFork', this.listeners.mgbOfferRevertToFork)
-  },
-
-  removeListenersOnUnmount() {
-    window.removeEventListener('mgbOfferRevertToFork', this.listeners.mgbOfferRevertToFork)
-  },
-
-  componentDidMount() {
-    const { query } = this.props.location
-    const { assetStore } = this.props
-    if (query.project) {
-      assetStore.setProject(query.project)
-    }
-    this.checkForRedirect()
-    this.m_deferredSaveObj = null
-    this.addListenersOnMount()
-
-    //console.log("Preparing TICK Timer")
-    this.m_tickIntervalFunctionHandle = Meteor.setInterval(() => {
-      //console.log("TICK")
-      this._attemptToSendAnyDeferredChanges()
-    }, FLUSH_TIMER_INTERVAL_MS)
-  },
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.params.assetId !== this.props.params.assetId) {
-      console.log('Switch to different Asset. Flushing deferred saves to existing asset.')
-      this._attemptToSendAnyDeferredChanges({ forceResend: true })
-    }
-  },
-
-  componentWillUnmount() {
-    if (this.m_tickIntervalFunctionHandle) {
-      Meteor.clearInterval(this.m_tickIntervalFunctionHandle)
-      this.m_tickIntervalFunctionHandle = null
-      this._attemptToSendAnyDeferredChanges({ forceResend: true })
-    }
-
-    // stop subscription handler
-    this.assetHandler.stop()
-    this.assetHandler = null
-
-    this.removeListenersOnUnmount()
-
-    // Clear Asset kind status for parent App
-    if (this.props.handleSetCurrentlyEditingAssetInfo) this.props.handleSetCurrentlyEditingAssetInfo({})
-
-    if (this.counter) this.counter.doUnmount()
-  },
-
-  componentDidUpdate() {
-    this.checkForRedirect()
-    assetStore.setProps(this.props)
-
-    if (!this.counter && !this.data.loading) {
-      this.assetUpdatedAt = this.data.asset.updatedAt
-      this.counter = new EditTimeCounter(this.data.asset, this.props.currUser, newTime => {
-        if (this.state.counterVisible) {
-          this.setState({ counterTime: newTime })
-        }
-      })
-    }
-
-    if (this.counter && this.data.asset && this.assetUpdatedAt !== this.data.asset.updatedAt) {
-      this.assetUpdatedAt = this.data.asset.updatedAt
-      this.counter.assetUpdated()
-    }
-
-    // auto open any new asset
-    if (this.data.asset) {
-      const { assetStore } = this.props
-      // console.log('componentDidUpdate: open asset', this.data.asset, assetStore.getOpenAssets())
-      assetStore.openAsset(this.data.asset)
-    }
-  },
-
-  toggleCounterVisibility(isVisible) {
-    this.setState({ counterVisible: isVisible, counterTime: this.counter.getTime() })
-  },
-
-  getMeteorData() {
+  getMeteorData = props => {
     let assetId = this.props.params.assetId
     const assetHandler = (this.assetHandler = getAssetHandlerWithContent2(
       assetId,
@@ -281,8 +180,8 @@ const AssetEditRoute = React.createClass({
       this.props.handleSetCurrentlyEditingAssetInfo(makeAssetInfoFromAsset(asset, assetVerb))
     }
 
-    let handleForActivitySnapshots = Meteor.subscribe('activitysnapshots.assetid', assetId)
-    let handleForAssetActivity = Meteor.subscribe('activity.public.recent.assetid', assetId)
+    // let handleForActivitySnapshots = Meteor.subscribe('activitysnapshots.assetid', assetId)
+    // let handleForAssetActivity = Meteor.subscribe('activity.public.recent.assetid', assetId)
 
     let selector = { toAssetId: assetId }
     let options = { sort: { timestamp: -1 } }
@@ -309,27 +208,143 @@ const AssetEditRoute = React.createClass({
       }, // Child components must be aware that 'activitySnapshots' and 'assetActivity' may still be loading. But we
       // don't wait for them
     }
-  },
+  }
 
-  canCurrUserEditThisAsset(assetOverride = null) {
-    const asset = assetOverride || this.data.asset
-    return !!(asset && this.canUserEditThisAssetIfUnlocked(asset) && !asset.isCompleted)
-  },
+  revertDataFromForkParent_ResultCallBack = (error, result) => {
+    if (error) showToast.error(`Unable to revert content to ForkParent for this asset: '${error.toString()}'`)
+    else {
+      showToast.success(`Reverted to Fork Parent's data`)
+      logActivity('asset.fork.revertTo', "Reverted to Fork Parent's data", null, this.state.data.asset)
+    }
 
-  canUserEditThisAssetIfUnlocked(assetOverride = null) {
-    if (this.data.loading || !this.props.currUser) return false // Need to at least be logged in and have the data to
+    this.setState({ isForkRevertPending: false })
+  }
+
+  addListenersOnMount = () => {
+    this.listeners = {}
+    // mgbOfferRevertToFork handler
+    this.listeners.mgbOfferRevertToFork = e => {
+      const { asset } = this.state.data
+      if (!asset || !this.canCurrUserEditThisAsset()) return
+      const forkParentId = e.detail
+      const fpc = asset.forkParentChain
+      if (!fpc || !_.isArray(fpc) || fpc.length === 0) return
+      if (fpc[0].parentId !== forkParentId) return
+
+      // ok, so this is the right asset being targetted by the mgbOfferRevertToFork() message..
+      // TODO: How to offer undo?
+      this.setState({ isForkRevertPending: true })
+      Meteor.call(
+        'Azzets.revertDataFromForkParent',
+        asset._id,
+        forkParentId,
+        this.revertDataFromForkParent_ResultCallBack,
+      )
+    }
+    window.addEventListener('mgbOfferRevertToFork', this.listeners.mgbOfferRevertToFork)
+  }
+
+  removeListenersOnUnmount = () => {
+    window.removeEventListener('mgbOfferRevertToFork', this.listeners.mgbOfferRevertToFork)
+  }
+
+  componentDidMount() {
+    const { query } = this.props.location
+    const { assetStore } = this.props
+    this.assetHandler = this.state.data.assetHandler
+
+    if (query.project) {
+      assetStore.setProject(query.project)
+    }
+
+    this.checkForRedirect()
+    this.m_deferredSaveObj = null
+    this.addListenersOnMount()
+
+    //console.log("Preparing TICK Timer")
+    this.m_tickIntervalFunctionHandle = Meteor.setInterval(() => {
+      //console.log("TICK")
+      this._attemptToSendAnyDeferredChanges()
+    }, FLUSH_TIMER_INTERVAL_MS)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // this.data = this.state.data
+    if (nextProps.params.assetId !== this.props.params.assetId) {
+      console.log('Switch to different Asset. Flushing deferred saves to existing asset.')
+      this._attemptToSendAnyDeferredChanges({ forceResend: true })
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.m_tickIntervalFunctionHandle) {
+      Meteor.clearInterval(this.m_tickIntervalFunctionHandle)
+      this.m_tickIntervalFunctionHandle = null
+      this._attemptToSendAnyDeferredChanges({ forceResend: true })
+    }
+
+    // stop subscription handler
+    this.assetHandler.stop()
+    this.assetHandler = null
+
+    this.removeListenersOnUnmount()
+
+    // Clear Asset kind status for parent App
+    if (this.props.handleSetCurrentlyEditingAssetInfo) this.props.handleSetCurrentlyEditingAssetInfo({})
+
+    if (this.counter) this.counter.doUnmount()
+  }
+
+  componentDidUpdate() {
+    // this.data = this.state.data
+    this.checkForRedirect()
+    assetStore.setProps(this.props)
+
+    if (!this.counter && !this.state.data.loading) {
+      this.assetUpdatedAt = this.state.data.asset.updatedAt
+      this.counter = new EditTimeCounter(this.state.data.asset, this.props.currUser, newTime => {
+        if (this.state.counterVisible) {
+          this.setState({ counterTime: newTime })
+        }
+      })
+    }
+
+    if (this.counter && this.state.data.asset && this.assetUpdatedAt !== this.state.data.asset.updatedAt) {
+      this.assetUpdatedAt = this.state.data.asset.updatedAt
+      this.counter.assetUpdated()
+    }
+
+    // auto open any new asset
+    if (this.state.data.asset) {
+      const { assetStore } = this.props
+      // console.log('componentDidUpdate: open asset', this.state.data.asset, assetStore.getOpenAssets())
+      assetStore.openAsset(this.state.data.asset)
+    }
+  }
+
+  toggleCounterVisibility = isVisible => {
+    this.setState({ counterVisible: isVisible, counterTime: this.counter.getTime() })
+  }
+
+  canCurrUserEditThisAsset = (assetOverride = null) => {
+    const asset = assetOverride || this.state.data.asset
+    return asset && this.canUserEditThisAssetIfUnlocked(asset) && !asset.isCompleted
+  }
+
+  canUserEditThisAssetIfUnlocked = (assetOverride = null) => {
+    if (this.state.data.loading || !this.props.currUser) return false // Need to at least be logged in and have the data to
     // do any edits!
 
-    const asset = assetOverride || this.data.asset
+    const asset = assetOverride || this.state.data.asset
     return canUserEditAssetIfUnlocked(asset, this.props.currUserProjects, this.props.currUser)
-  },
+  }
 
   // only the Asset Owner can Lock/Unlock Asset (i.e. change asset.isCompleted)
-  canCurrUserChangeCompletion(assetOverride = null) {
-    const asset = assetOverride || this.data.asset
+  canCurrUserChangeCompletion = (assetOverride = null) => {
+    const asset = assetOverride || this.state.data.asset
     const { currUser } = this.props
 
-    if (!asset || this.data.loading || !currUser) return false // Need to at least be logged in and have the data to do
+    if (!asset || this.state.data.loading || !currUser) return false // Need to at least be logged in and have the data to do
     // any edits...
 
     // Are we superAdmin?
@@ -339,43 +354,43 @@ const AssetEditRoute = React.createClass({
     }
 
     return isSameUserId(asset.ownerId, currUser._id)
-  },
+  }
 
-  doForkAsset() {
+  doForkAsset = () => {
     if (!this.state.isForkPending) {
-      const { asset } = this.data
+      const { asset } = this.state.data
       Meteor.call('Azzets.fork', asset._id, this.forkResultCallback)
       this.setState({ isForkPending: true })
     }
-  },
+  }
 
   // This result object will come from Meteor.call("Azzets.fork")
-  forkResultCallback(error, result) {
+  forkResultCallback = (error, result) => {
     if (error) showToast.error(`Unable to create a forked copy of this asset: '${error.toString()}'`)
     else {
       showToast.success(`Loading your new Asset`)
-      logActivity('asset.fork.from', 'Forked new asset from this asset', null, this.data.asset)
+      logActivity('asset.fork.from', 'Forked new asset from this asset', null, this.state.data.asset)
       logActivity('asset.fork.to', 'Forked this new asset from another asset', null, result.newAssetNoC2)
 
       utilPushTo(
-        this.context.urlLocation.query,
+        this.props.location.query,
         '/u/' + this.props.currUser.username + '/asset/' + result.newId,
       )
       joyrideStore.completeTag('mgbjr-CT-asset-fork')
     }
 
     this.setState({ isForkPending: false })
-  },
+  }
 
-  handleTabChange(asset) {
+  handleTabChange = asset => {
     const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
 
     return () => {
-      utilPushTo(this.context.urlLocation, url)
+      utilPushTo(this.props.location, url)
     }
-  },
+  }
 
-  handleCloseTab(asset) {
+  handleCloseTab = asset => {
     return e => {
       const { params, assetStore } = this.props
       // console.log('handleCloseTab', asset)
@@ -391,14 +406,18 @@ const AssetEditRoute = React.createClass({
           assetStore.getOpenAssets()[currTabIndex - 1] || assetStore.getOpenAssets()[currTabIndex + 1]
         const nextURL = `/u/${nextAsset.dn_ownerName}/asset/${nextAsset._id}`
 
-        utilPushTo(this.context.urlLocation, nextURL)
+        utilPushTo(this.props.location, nextURL)
       }
       assetStore.closeAsset(asset)
     }
-  },
+  }
 
   render() {
-    const { assetStore } = this.props
+    const { assetStore, params, asset, currUserProjects, currentlyEditingAssetInfo } = this.props
+    const assetHasProjects =
+      !this.state.data.loading &&
+      this.state.data.asset !== null &&
+      this.state.data.asset.projectNames.length > 0
 
     const panes = _.map(assetStore.getOpenAssets(), asset => {
       // console.log('render open asset', asset)
@@ -434,11 +453,11 @@ const AssetEditRoute = React.createClass({
     // Return an IDE-like wrapped tab list & editor if the asset has any project(s)
     // TODO: Look into data prefetch to make tabs more responsive.
     return this.resolveProjectRender(panes)
-  },
+  }
 
-  resolveProjectRender(panes) {
-    const { params } = this.props
-    const canEdit = this.canCurrUserEditThisAsset()
+  resolveProjectRender = panes => {
+    const { currUser, currentlyEditingAssetInfo, params } = this.props
+    let returnElement
     const noAssetPane = (
       <Segment size="large" basic>
         You don't currently have any assets open for this project. Click on an asset in the assets menu to
@@ -447,14 +466,14 @@ const AssetEditRoute = React.createClass({
     )
 
     return (
-      <AssetEditProjectLayout canEdit={canEdit} {...this.props}>
+      <AssetEditProjectLayout {...this.props}>
         {params.assetId === __NO_ASSET__ ? (
           noAssetPane
         ) : (
           <Tab
             menu={{
-              color: canEdit ? null : 'yellow',
-              inverted: !canEdit,
+              color: this.resolveTabColor(),
+              inverted: !!this.resolveTabColor(),
               attached: 'top',
               tabular: true,
               style: { overflowX: 'auto' },
@@ -466,10 +485,19 @@ const AssetEditRoute = React.createClass({
         )}
       </AssetEditProjectLayout>
     )
-  },
+  }
 
-  renderRoute() {
-    if (this.data.loading) return <Spinner loadingMsg="Loading Asset data" />
+  resolveTabColor = () => {
+    const { currentlyEditingAssetInfo, currUser } = this.props
+    if (currentlyEditingAssetInfo.ownerName !== currUser.username) {
+      return 'yellow'
+    } else {
+      return null
+    }
+  }
+
+  renderRoute = () => {
+    if (this.state.data.loading) return <Spinner loadingMsg="Loading Asset data" />
 
     const {
       params,
@@ -483,8 +511,9 @@ const AssetEditRoute = React.createClass({
 
     const { isForkPending, isDeletePending } = this.state
     const isTooSmall = availableWidth < 500
-    let asset = Object.assign({}, this.data.asset) // One Asset provided via getMeteorData()
-    if (!this.data.asset) return <ThingNotFound type="Asset" id={params.assetId} />
+    let asset = Object.assign({}, this.state.data.asset) // One Asset provided via getMeteorData()
+    // console.log('Rendered Asset: ', asset)
+    if (!this.state.data.asset) return <ThingNotFound type="Asset" id={params.assetId} />
 
     const isOwner = currUser && isSameUserId(currUser._id, asset.ownerId)
     // Overlay any newer data to the child component so that it gets what it expects based on last save attempt
@@ -577,7 +606,7 @@ const AssetEditRoute = React.createClass({
             <AssetHistoryDetail
               asset={asset}
               currUser={currUser}
-              assetActivity={this.data.assetActivity}
+              assetActivity={this.state.data.assetActivity}
               counterTime={this.state.counterTime}
               toggleCounterVisibility={this.toggleCounterVisibility}
             />
@@ -653,7 +682,7 @@ const AssetEditRoute = React.createClass({
               availableWidth={availableWidth}
               currUser={currUser}
               useExperimentalEditors={
-                this.context.urlLocation.query[urlMaker.queryParams('app_experimentalEditors')]
+                this.props.location.query[urlMaker.queryParams('app_experimentalEditors')]
               }
               handleContentChange={this.deferContentChange}
               handleMetadataChange={this.handleMetadataChange}
@@ -667,27 +696,29 @@ const AssetEditRoute = React.createClass({
         )}
       </Grid>
     )
-  },
+  }
 
-  handleEditDeniedReminder: _.throttle(function() {
-    if (this.props.currUser) {
-      if (!this.canUserEditThisAssetIfUnlocked())
-        showToast.error(
-          'You do not have edit permission for this Asset. Ask owner to join their Project, or fork this asset',
-        )
-      else {
-        if (this.canCurrUserChangeCompletion())
-          showToast.error('This Asset is Locked. Unlock it to enable editing')
-        else showToast.error('Asset is Locked. Fork it or ask the owner to Unlock it for editing')
-      }
-    } else showToast.error('Not logged in. You must Log in to edit Assets')
-  }, 5000), // 5000ms is the duration of an error Notification
+  handleEditDeniedReminder = () => {
+    _.throttle(() => {
+      if (this.props.currUser) {
+        if (!this.canUserEditThisAssetIfUnlocked())
+          showToast.error(
+            'You do not have edit permission for this Asset. Ask owner to join their Project, or fork this asset',
+          )
+        else {
+          if (this.canCurrUserChangeCompletion())
+            showToast.error('This Asset is Locked. Unlock it to enable editing')
+          else showToast.error('Asset is Locked. Fork it or ask the owner to Unlock it for editing')
+        }
+      } else showToast.error('Not logged in. You must Log in to edit Assets')
+    }, 5000) // 5000ms is the duration of an error Notification
+  }
 
   // See comment at top of file for format of m_deferredSaveObj. We only defer content2 and thumbnail because they are
   // slowest. TODO: Consider benefits of also deferring metadata in the same model... however, it won't conflict for
   // now since we don't touch asset.metadata in this method
-  deferContentChange(content2Object, thumbnail, changeText = 'content change') {
-    const asset = this.data.asset // TODO: Change interface so this gets passed in instead?
+  deferContentChange = (content2Object, thumbnail, changeText = 'content change') => {
+    const asset = this.state.data.asset // TODO: Change interface so this gets passed in instead?
 
     const old_deferredSaveObj = this.m_deferredSaveObj
 
@@ -721,19 +752,19 @@ const AssetEditRoute = React.createClass({
 
     this.forceUpdate() // YUCK, but I think I have to, coz I can't put a deferral data structure in this.state. TODO..
     // revisit this soon
-  },
+  }
 
   // Note that this can be called directly by the Sub-components.
   // Primary use case is user hits 'save now' button, or 'play now'
-  handleSaveNowRequest() {
+  handleSaveNowRequest = () => {
     // console.log('User request: Save deferred changes now')
     this._attemptToSendAnyDeferredChanges({ forceResend: true })
-  },
+  }
 
   // This 'flush' could be called by a 'tick' timer OR user force-save-click OR unmount (navigate away from page)
   // TODO: test props change of jump to different asset - is that a props change or an unmount?!!!
-  _attemptToSendAnyDeferredChanges(options = {}) {
-    const asset = this.data.asset
+  _attemptToSendAnyDeferredChanges = (options = {}) => {
+    const asset = this.state.data.asset
     if (this.m_deferredSaveObj) {
       if (!Meteor.status().connected) {
         console.log(
@@ -753,13 +784,13 @@ const AssetEditRoute = React.createClass({
         }
       }
     }
-  },
+  }
 
   // No ifs and buts - just send any deferred change now (and immediately take it off of the deferred list)
-  _doSendDeferredChangeNow() {
+  _doSendDeferredChangeNow = () => {
     const toBeSent = this.m_deferredSaveObj
     if (toBeSent) {
-      const asset = this.data.asset
+      const asset = this.state.data.asset
       if (asset && asset.isUnconfirmedSave) {
         console.log(
           `Warning: A save of asset ${asset.name} was still pending confirmation from server, but we are re-sending anyway`,
@@ -779,11 +810,11 @@ const AssetEditRoute = React.createClass({
       // Note that potentially we can no longer recover from a failed save.. but the sub-component does have the data
       // still..
     }
-  },
+  }
 
   // Internal only. Can't be called by sub-components
   // This intentionally does NOT use or manipulate this.m_deferredSaveObj, nor is it smart about asset.isUnconfirmedSave
-  _sendContentChange(assetId, content2Object, thumbnail, changeText = 'content change') {
+  _sendContentChange = (assetId, content2Object, thumbnail, changeText = 'content change') => {
     const updateObj = _makeUpdateObj(content2Object, thumbnail)
     Meteor.call('Azzets.update', assetId, this.canCurrUserEditThisAsset(), updateObj, (err, res) => {
       if (err) {
@@ -795,58 +826,58 @@ const AssetEditRoute = React.createClass({
       }
     })
     if (content2Object) {
-      if (this.data.asset && this.data.asset._id && this.data.asset._id !== assetId) {
+      if (this.state.data.asset && this.state.data.asset._id && this.state.data.asset._id !== assetId) {
         console.error('_doSendDeferredChangeNow() Detected overdue asset save. NOT Updating current asset.')
         this.m_deferredSaveObj = null
-      } else this.data.update(updateObj)
+      } else this.state.data.update(updateObj)
     }
-    logActivity('asset.edit', changeText, null, this.data.asset || { _id: assetId })
-  },
+    logActivity('asset.edit', changeText, null, this.state.data.asset || { _id: assetId })
+  }
 
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleAssetDescriptionChange(newText) {
-    if (newText !== this.data.asset.text) {
+  handleAssetDescriptionChange = newText => {
+    if (newText !== this.state.data.asset.text) {
       Meteor.call(
         'Azzets.update',
-        this.data.asset._id,
+        this.state.data.asset._id,
         this.canCurrUserEditThisAsset(),
         { text: newText },
         (err, res) => {
           if (err) showToast.error(err.reason)
         },
       )
-      logActivity('asset.description', `Update description to "${newText}"`, null, this.data.asset)
+      logActivity('asset.description', `Update description to "${newText}"`, null, this.state.data.asset)
     }
-  },
+  }
 
   // TODO(@dgolds): This should probably also trigger a save of any pending content2
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleMetadataChange(newMetadata) {
+  handleMetadataChange = newMetadata => {
     Meteor.call(
       'Azzets.update',
-      this.data.asset._id,
+      this.state.data.asset._id,
       this.canCurrUserEditThisAsset(),
       { metadata: newMetadata },
       (err, res) => {
         if (err) showToast.error(err.reason)
       },
     )
-    logActivity('asset.metadata', `Update metadata of asset`, null, this.data.asset)
-  },
+    logActivity('asset.metadata', `Update metadata of asset`, null, this.state.data.asset)
+  }
 
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleAssetNameChange(newName) {
-    if (newName !== this.data.asset.name) {
+  handleAssetNameChange = newName => {
+    if (newName !== this.state.data.asset.name) {
       Meteor.call(
         'Azzets.update',
-        this.data.asset._id,
+        this.state.data.asset._id,
         this.canCurrUserEditThisAsset(),
         { name: newName },
         (err, res) => {
           if (err) showToast.error(err.reason)
         },
       )
-      logActivity('asset.rename', `Rename to "${newName}"`, null, this.data.asset)
+      logActivity('asset.rename', `Rename to "${newName}"`, null, this.state.data.asset)
     }
     // TODO:  Call snapshotActivity after rename so it will fix up any stale names:
     // import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
@@ -854,15 +885,15 @@ const AssetEditRoute = React.createClass({
     //            so we need to pass down a handler for the asset-specific editors to let us
     //            invoke the snapshotActivity() call (a good idea anyway) and then we can re-use
     //            the most recent passive activity
-  },
+  }
 
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleLicenseChange(newLicense) {
-    const oldLicense = this.data.asset.assetLicense
+  handleLicenseChange = newLicense => {
+    const oldLicense = this.state.data.asset.assetLicense
     if (newLicense !== oldLicense) {
       Meteor.call(
         'Azzets.update',
-        this.data.asset._id,
+        this.state.data.asset._id,
         this.canCurrUserEditThisAsset(),
         { assetLicense: newLicense },
         (err, res) => {
@@ -873,18 +904,18 @@ const AssetEditRoute = React.createClass({
         'asset.license',
         `License changed from ${oldLicense || defaultAssetLicense} to "${newLicense}"`,
         null,
-        this.data.asset,
+        this.state.data.asset,
       )
     }
-  },
+  }
 
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleWorkStateChange(newWorkState) {
-    const oldState = this.data.asset.workState
+  handleWorkStateChange = newWorkState => {
+    const oldState = this.state.data.asset.workState
     if (newWorkState !== oldState) {
       Meteor.call(
         'Azzets.update',
-        this.data.asset._id,
+        this.state.data.asset._id,
         this.canCurrUserEditThisAsset(),
         { workState: newWorkState },
         (err, res) => {
@@ -895,14 +926,14 @@ const AssetEditRoute = React.createClass({
         'asset.workState',
         `WorkState changed from ${oldState} to "${newWorkState}"`,
         null,
-        this.data.asset,
+        this.state.data.asset,
       )
     }
-  },
+  }
 
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleDeletedStateChange(newIsDeleted) {
-    const { asset } = this.data
+  handleDeletedStateChange = newIsDeleted => {
+    const { asset } = this.state.data
     const canEd = this.canCurrUserEditThisAsset()
     if (!asset) return
 
@@ -919,16 +950,20 @@ const AssetEditRoute = React.createClass({
       else logActivity('asset.undelete', 'Undelete asset', null, asset)
       this.setState({ isDeletePending: false })
     }
-  },
+  }
 
-  handleChatClick() {
+  runForceUpdate() {
+    this.forceUpdate()
+  }
+
+  handleChatClick = () => {
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: this.props.params.assetId })
     joyrideStore.completeTag('mgbjr-CT-asset-edit-header-right-chat')
-    utilShowChatPanelChannel(this.context.urlLocation, channelName)
-  },
+    utilShowChatPanelChannel(this.props.location, channelName)
+  }
 
-  handleStableStateChange(newIsCompleted) {
-    const { asset } = this.data
+  handleStableStateChange = newIsCompleted => {
+    const { asset } = this.state.data
     if (!asset) return
 
     if (asset.isCompleted !== newIsCompleted) {
@@ -949,11 +984,11 @@ const AssetEditRoute = React.createClass({
       if (newIsCompleted) logActivity('asset.stable', 'Locked an asset', null, asset)
       else logActivity('asset.unstable', 'Unlocked an asset', null, asset)
     }
-  },
+  }
 
   // This should not conflict with the deferred changes since those don't change these fields :)
-  handleToggleProjectName(pName) {
-    const { asset } = this.data
+  handleToggleProjectName = pName => {
+    const { asset } = this.state.data
     const { assetStore } = this.props
     const query = this.props.location.query
     const list = asset.projectNames || []
@@ -980,11 +1015,11 @@ const AssetEditRoute = React.createClass({
     } else if (pName === assetStore.project() && !assetStore.projectHasLoadedAssets(pName)) {
       utilPushTo(query, `/u/${asset.dn_ownerName}/asset/${__NO_ASSET__}`)
     }
-  },
+  }
 
-  handleTaskApprove(hasSkill) {
-    const { asset } = this.data
-    const skillPath = this.data.asset.skillPath
+  handleTaskApprove = hasSkill => {
+    const { asset } = this.state.data
+    const skillPath = this.state.data.asset.skillPath
     const assetUserID = this.props.user._id
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: this.props.params.assetId })
     const otherData = {
@@ -1000,16 +1035,11 @@ const AssetEditRoute = React.createClass({
       logActivity('task.approve', `Approved Task`, null, asset)
       ChatSendMessageOnChannelName(channelName, 'Task approved')
     }
-  },
-})
-
-export default withStores({
-  assetStore,
-})(AssetEditRoute)
-
-function _makeUpdateObj(content2Object, thumbnail) {
-  let updateObj = {}
-  if (content2Object) updateObj.content2 = content2Object
-  if (thumbnail) updateObj.thumbnail = thumbnail
-  return updateObj
+  }
 }
+
+export default compose(
+  withStores({
+    assetStore,
+  }),
+)(AssetEditRoute)

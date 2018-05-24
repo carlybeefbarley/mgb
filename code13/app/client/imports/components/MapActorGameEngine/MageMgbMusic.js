@@ -13,7 +13,7 @@ let _currentlyPlaying = null // null, or the string which was the param to playM
 // how to get from the full name (with the [builtin] prefix) to the URL (stored on S3 for now)
 
 const MgbMusic = {
-  musicUrlFromMusicFileName: (name, oName) => {
+  musicUrlFromMusicFileName(name, oName) {
     if (!name || name === '') {
       console.error('Empty/invalid music filename provided to musicUrlFromMusicFileName')
       return ''
@@ -31,7 +31,7 @@ const MgbMusic = {
   _loadedMusic: {}, // This is a place we store/cache loaded music. // TODO: Consider memory implications - Consider just keeping N entries
 
   // TODO: A preloader method..which is why there is a loadedMusic structure here for future use.
-  loadMusic: function(musicSource, oName) {
+  loadMusic(musicSource, oName) {
     if (!musicSource || musicSource === '' || musicSource === 'none') return
 
     const canplay = function(e) {
@@ -58,8 +58,9 @@ const MgbMusic = {
     _currentlyPlaying = musicSource
     newMusic.addEventListener('canplaythrough', canplay, false)
     newMusic.src = MgbMusic.musicUrlFromMusicFileName(musicSource, oName)
+    newMusic.volume = 0.4
   },
-  playMusic: function(musicSource, oName) {
+  playMusic(musicSource, oName) {
     if (musicSource && musicSource === _currentlyPlaying) {
       // Too noisy...  console.log(`playMusic determined that '${musicSource}' is already playing, so no action required`)
       return
@@ -83,7 +84,7 @@ const MgbMusic = {
     }
   },
 
-  stopMusic: function() {
+  stopMusic() {
     if (!_currentlyPlaying) {
       console.log(`StopMusic requested - but there's nothing playing to stop`)
       return

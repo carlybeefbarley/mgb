@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { GetFreq } from './instruments'
 
 import { PianoInstrument, NoiseInstrument, SinWaveInstrument } from './instruments.js'
@@ -12,7 +13,7 @@ function Song(bassParams, pianoParams) {
   this.piano = {
     //time, pitch (0-1), note start, note end
     name: 'piano',
-    generator: function(t, p, s, e) {
+    generator(t, p, s, e) {
       var freq = GetFreq(p * 88)
       var vol = Math.pow(1 - (t - s) / (e - s), 0.25)
       return (t % freq) / freq * vol
@@ -33,8 +34,8 @@ function Song(bassParams, pianoParams) {
   this.addChannel = function(instrument) {
     var id = this.Channels.length
     this.Channels.push({
-      id: id,
-      instrument: instrument,
+      id,
+      instrument,
       vol: 1,
       notes: instrument.notes ? instrument.notes : [],
       name: id + ' : ' + instrument.name,

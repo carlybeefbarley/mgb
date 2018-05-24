@@ -1,18 +1,19 @@
-import React from 'react'
+import PropTypes from 'prop-types'
+import React, { Component } from 'react'
 import TileHelper from '../Helpers/TileHelper.js'
 import cx from 'classnames'
 
 import Camera from '../Camera.js'
 
-export default class AbstractLayer extends React.Component {
+export default class AbstractLayer extends Component {
   static propTypes = {
-    isActive: React.PropTypes.bool.isRequired, // is this an active layer?
-    data: React.PropTypes.object.isRequired, // layer data
+    isActive: PropTypes.bool.isRequired, // is this an active layer?
+    data: PropTypes.object.isRequired, // layer data
 
-    camera: React.PropTypes.instanceOf(Camera).isRequired,
+    camera: PropTypes.instanceOf(Camera).isRequired,
 
-    getEditMode: React.PropTypes.func.isRequired, // gets editing mode
-    setEditMode: React.PropTypes.func.isRequired, // sets editing mode
+    getEditMode: PropTypes.func.isRequired, // gets editing mode
+    setEditMode: PropTypes.func.isRequired, // sets editing mode
   }
 
   /* lifecycle functions */
@@ -66,6 +67,7 @@ export default class AbstractLayer extends React.Component {
 
     this._isVisible = false
   }
+
   // this layer has been selected
   activate() {
     if (this.activeMode) {
@@ -77,11 +79,13 @@ export default class AbstractLayer extends React.Component {
   deactivate() {
     //this.activeMode = this.props.getEditMode()
   }
+
   /* endof lifecycle functions */
 
   get options() {
     return this.props.data
   }
+
   get data() {
     return this.props.data
   }
@@ -89,10 +93,12 @@ export default class AbstractLayer extends React.Component {
   get type() {
     return this.data.type
   }
+
   // same as type - in assets we are using kind - so it might be more intuitive for other ppl
   get kind() {
     return this.data.type
   }
+
   // camera sets correct offsets when rendering bounds etc
   get camera() {
     //return this.props.camera
@@ -104,6 +110,7 @@ export default class AbstractLayer extends React.Component {
     this._camera.zoom = this.props.camera.zoom
     return this._camera
   }
+
   get isVisible() {
     return this._isVisible && this.options.visible
   }
@@ -134,6 +141,7 @@ export default class AbstractLayer extends React.Component {
       this.nextDraw = 0
     }
   }
+
   draw() {
     this.nextDraw = 0
   }
@@ -160,6 +168,7 @@ export default class AbstractLayer extends React.Component {
     this.pointerMovementX = 0
     this.pointerMovementY = 0
   }
+
   handleMouseDown(e) {
     this.mouseDown = true
 
@@ -184,6 +193,7 @@ export default class AbstractLayer extends React.Component {
       return false
     }
   }
+
   handleMouseMove(e) {
     const ox = TileHelper.getOffsetX(e)
     const oy = TileHelper.getOffsetY(e)

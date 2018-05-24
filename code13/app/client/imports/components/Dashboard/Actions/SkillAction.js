@@ -3,12 +3,13 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 import { getNextSkillPath, getFriendlyName, getNode } from '/imports/Skills/SkillNodes/SkillNodes'
-import { startSkillPathTutorial } from '/client/imports/routes/App'
+import { withStores } from '/client/imports/hocs'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
+import { joyrideStore } from '/client/imports/stores'
 
 import DashboardAction from './DashboardAction'
 
-export default class SkillAction extends React.Component {
+class SkillAction extends React.Component {
   static contextTypes = {
     skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)
   }
@@ -30,11 +31,11 @@ export default class SkillAction extends React.Component {
     if (nextSkill && nextSkill.$meta) {
       nextSkillName = nextSkill.$meta.name || getFriendlyName(nextSkill.$meta.key)
     }
-    this.setState({ nextSkillPath: nextSkillPath, nextSkillName: nextSkillName })
+    this.setState({ nextSkillPath, nextSkillName })
   }
 
   startNextSkill = () => {
-    const { currUser } = this.props
+    const { currUser, joyride } = this.props
     const { nextSkillPath } = this.state
 
     if (!nextSkillPath) {
@@ -47,10 +48,11 @@ export default class SkillAction extends React.Component {
       const l = skillPathArr.length
       const section = skillPathArr[l - 2]
       const subSection = skillPathArr[l - 1]
-      StartJsGamesRoute(section, subSection, currUser)
+
+      StartJsGamesRoute(section, subSection, currUser, false, getNode(nextSkillPath))
     } else {
       // joyride tutorial
-      startSkillPathTutorial(nextSkillPath)
+      joyride.startSkillPathTutorial(nextSkillPath)
     }
   }
 
@@ -72,3 +74,5 @@ export default class SkillAction extends React.Component {
     )
   }
 }
+
+export default withStores({ joyride: joyrideStore })(SkillAction)

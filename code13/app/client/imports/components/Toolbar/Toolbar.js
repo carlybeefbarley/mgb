@@ -1,9 +1,10 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import QLink from '/client/imports/routes/QLink'
 
 import { getFeatureLevel } from '/imports/schemas/settings-client'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import { Popup, Button } from 'semantic-ui-react'
 import { expectedToolbars } from './expectedToolbars.js'
 
@@ -97,8 +98,8 @@ export default class Toolbar extends React.Component {
         }
 
         const action = this.keyActions[keyval].action
-        joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-keypress`)
-        joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-invoke`)
+        joyrideStore.completeTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-keypress`)
+        joyrideStore.completeTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-invoke`)
         this.keyActions[keyval](e)
 
         const pageName = this.props.name
@@ -250,8 +251,8 @@ export default class Toolbar extends React.Component {
         }
       }
 
-      joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-click`)
-      joyrideCompleteTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-invoke`)
+      joyrideStore.completeTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-click`)
+      joyrideStore.completeTag(`mgbjr-CT-toolbar-${this.props.name}-${action}-invoke`)
       this.props.actions[action](e)
 
       const pageName = this.props.name
@@ -289,7 +290,7 @@ export default class Toolbar extends React.Component {
             data-index={index}
           >
             <i className={(b.icon ? b.icon : b.name) + ' icon'} />
-            {b.iconText ? b.iconText : ''}
+            {b.iconText ? ' ' + b.iconText : ''}
           </Button>
         }
         key={index}

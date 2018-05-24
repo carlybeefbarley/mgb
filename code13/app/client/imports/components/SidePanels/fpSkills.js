@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Button, Divider, Header, Message } from 'semantic-ui-react'
 
 import QLink from '/client/imports/routes/QLink'
@@ -17,8 +18,8 @@ const fpSkills = React.createClass({
     skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)
   },
 
-  render: function() {
-    const { currUser } = this.props
+  render() {
+    const { currUser, isSuperAdmin } = this.props
     const { skills } = this.context
 
     if (!currUser) return <Message warning content="You must be logged in to see your skills status" />
@@ -34,7 +35,7 @@ const fpSkills = React.createClass({
           This is your learning progress via tutorials, muted help, assessed tasks etc...
         </p>
 
-        <SkillsMap expandable toggleable skills={skills} />
+        <SkillsMap isSuperAdmin={isSuperAdmin} expandable labeled skills={skills} />
 
         <Divider hidden />
 

@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import ReactDOM from 'react-dom'
 
 import './editMusic.css'
@@ -54,14 +55,11 @@ export default class Generate8bit extends React.Component {
   generate() {
     if (this.state.isHidden) {
       this.setState({ isHidden: false })
-      setTimeout(() => {
-        $('.generate8bitPopup').modal('refresh')
-      }, 300)
     }
     this.stop()
     this.audio = null
     this.setState({ isGenerating: true, isAudio: false })
-    var self = this
+
     setTimeout(() => {
       const bassParams = {
         isBass: this.state.isBass,
@@ -89,7 +87,7 @@ export default class Generate8bit extends React.Component {
     pianoParams.vv = Math.floor(Math.random() * 2) + 3
     let bpm = Math.floor(Math.random() * 100) + 80
     let bassVolume = Math.floor(Math.random() * 4) + 2
-    this.setState({ pianoParams: pianoParams, bpm: bpm, bassVolume: bassVolume })
+    this.setState({ pianoParams, bpm, bassVolume })
   }
 
   generateSample(song) {
@@ -201,14 +199,14 @@ export default class Generate8bit extends React.Component {
   changePianoParams(id, e) {
     let pianoParams = this.state.pianoParams
     pianoParams[id] = parseFloat(e.target.value)
-    this.setState({ pianoParams: pianoParams })
+    this.setState({ pianoParams })
     // console.log(this.state.pianoParams)
   }
 
   toggleEnchancePiano(e) {
     let pianoParams = this.state.pianoParams
     pianoParams.enchance = !pianoParams.enchance
-    this.setState({ pianoParams: pianoParams })
+    this.setState({ pianoParams })
   }
 
   render() {

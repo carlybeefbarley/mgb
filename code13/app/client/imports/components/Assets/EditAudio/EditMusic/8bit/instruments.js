@@ -14,10 +14,10 @@ function PianoInstrument(params) {
 
   this.addNote = function(channel, key, start, end, vol) {
     this.notes.push({
-      channel: channel,
-      key: key,
-      start: start,
-      end: end,
+      channel,
+      key,
+      start,
+      end,
       vol: vol ? vol : -1,
     })
   }
@@ -106,10 +106,10 @@ function NoiseInstrument() {
 
   this.addNote = function(channel, key, start, end, vol) {
     this.notes.push({
-      channel: channel,
-      key: key,
-      start: start,
-      end: end,
+      channel,
+      key,
+      start,
+      end,
       vol: vol ? vol : -1,
     })
   }
@@ -161,10 +161,10 @@ function SinWaveInstrument(beatNotes, params) {
 
   this.addNote = function(channel, key, start, end, vol) {
     this.notes.push({
-      channel: channel,
-      key: key,
-      start: start,
-      end: end,
+      channel,
+      key,
+      start,
+      end,
       vol: vol ? vol : -1,
     })
   }
@@ -185,10 +185,10 @@ function SinWaveInstrument(beatNotes, params) {
 
 function Note(channel, key, start, end, vol) {
   return {
-    channel: channel,
-    key: key,
-    start: start,
-    end: end,
+    channel,
+    key,
+    start,
+    end,
     vol: vol ? vol : -1,
   }
 }

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 //import Inspector from 'react-inspector'
 
 const DebugASTview = React.createClass({
@@ -6,7 +7,7 @@ const DebugASTview = React.createClass({
     atCursorMemberParentRequestResponse: PropTypes.object,
   },
 
-  smartRender: function() {
+  smartRender() {
     if (
       !this.props.atCursorMemberParentRequestResponse ||
       !this.props.atCursorMemberParentRequestResponse.data
@@ -20,7 +21,7 @@ const DebugASTview = React.createClass({
     } else return null
   },
 
-  render: function() {
+  render() {
     if (!this.props.atCursorMemberParentRequestResponse) return null
 
     return (

@@ -1,10 +1,11 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import ChatMessage, { encodeAssetInMsg } from './fpChat-message'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import { Chats } from '/imports/schemas'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import { Button, Comment, Divider, Form, Header, Icon } from 'semantic-ui-react'
 import { isSameUserId } from '/imports/schemas/users'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
@@ -73,7 +74,7 @@ const ChatMessagesView = React.createClass({
     MessageContextComponent: PropTypes.node, // - A react component that will be rendered to the left of the 'Send Message' Button as context for the message send
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       isMessagePending: false,
     }
@@ -84,7 +85,7 @@ const ChatMessagesView = React.createClass({
     settings: PropTypes.object,
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     const { channelName, pastMessageLimit } = this.props
     const handleForChats = Meteor.subscribe('chats.channelName', channelName, pastMessageLimit)
     const retval = {
@@ -94,7 +95,7 @@ const ChatMessagesView = React.createClass({
     return retval
   },
 
-  componentDidUpdate: function() {
+  componentDidUpdate() {
     const { channelName } = this.props
     // There are some tasks to do the first time a comments/chat list has been rendered for a particular channel
     if (!this.data.loading) {
@@ -152,21 +153,21 @@ const ChatMessagesView = React.createClass({
     )
   },
 
-  doSendMessage: function() {
+  doSendMessage() {
     const { messageValue } = this.state
     const { channelName } = this.props
     if (!messageValue || messageValue.length < 1) return
     const channelObj = parseChannelName(channelName)
     const presentedChannelName = makePresentedChannelName(channelName, channelObj.scopeId)
 
-    joyrideCompleteTag(`mgbjr-CT-fp-chat-send-message`)
-    joyrideCompleteTag(`mgbjr-CT-fp-chat-send-message-on-${channelName}`)
+    joyrideStore.completeTag(`mgbjr-CT-fp-chat-send-message`)
+    joyrideStore.completeTag(`mgbjr-CT-fp-chat-send-message-on-${channelName}`)
 
     // TODO: Set pending?, disable textarea on pendings
     this.setState({ isMessagePending: true })
     ChatSendMessageOnChannelName(channelName, messageValue, (error, result) => {
       this.setState({ isMessagePending: false })
-      if (error) showToast('Cannot send message because: ' + error.reason, 'error')
+      if (error) showToast.error('Cannot send message because: ' + error.reason)
       else {
         this.setState({ messageValue: '' })
         setLastReadTimestampForChannel(this.context.settings, channelName, result.chatTimestamp)
@@ -203,7 +204,7 @@ const ChatMessagesView = React.createClass({
     this.props.handleExtendMessageLimit(newMessageLimit)
   },
 
-  renderMessage: function(c) {
+  renderMessage(c) {
     const ago = moment(c.createdAt).fromNow()
     const to = `/u/${c.byUserName}`
     const { isSuperAdmin } = this.props
@@ -259,7 +260,7 @@ const ChatMessagesView = React.createClass({
     )
   },
 
-  onDropChatMsg: function(e) {
+  onDropChatMsg(e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
     if (!asset) {
       console.log('Drop - NO asset')
@@ -270,11 +271,11 @@ const ChatMessagesView = React.createClass({
     })
   },
 
-  handleMessageChange: function(e) {
+  handleMessageChange(e) {
     this.setState({ messageValue: e.target.value })
   },
 
-  render: function() {
+  render() {
     const { messageValue } = this.state
     const { currUser, channelName, MessageContextComponent } = this.props
     const canSend = currUserCanSend(currUser, channelName)
@@ -340,7 +341,7 @@ const ChatMessagesView = React.createClass({
     )
   },
 
-  handleMessageKeyUp: function(e) {
+  handleMessageKeyUp(e) {
     if (e.keyCode === 13 && e.ctrlKey) this.doSendMessage()
   },
 })

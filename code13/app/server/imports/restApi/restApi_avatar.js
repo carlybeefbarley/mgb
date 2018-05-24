@@ -1,5 +1,6 @@
 import { err404, RestApi } from './restApi'
 import SpecialGlobals from '/imports/SpecialGlobals'
+import { Users } from '/imports/schemas'
 
 // For avatars, there is a common case where we want the avatar from just the name,
 // So we provide a way to get this:
@@ -17,8 +18,8 @@ RestApi.addRoute(
   'user/:id/avatar',
   { authRequired: false },
   {
-    get: function() {
-      const user = Meteor.users.findOne(userIdSelector(this.urlParams.id))
+    get() {
+      const user = Users.findOne(userIdSelector(this.urlParams.id))
       if (user && user.profile.avatar) {
         const maxAge = SpecialGlobals.avatar.validFor
         return {
@@ -26,6 +27,7 @@ RestApi.addRoute(
           headers: {
             Location: user.profile.avatar,
             'cache-control': `public, max-age=${maxAge}, s-maxage=${maxAge}, must-revalidate`,
+            etag: user.profile.avatar.split('/').pop(),
           },
           body: {},
         }
@@ -39,8 +41,8 @@ RestApi.addRoute(
   'user/:id/avatar/:expires',
   { authRequired: false },
   {
-    get: function() {
-      const user = Meteor.users.findOne(userIdSelector(this.urlParams.id))
+    get() {
+      const user = Users.findOne(userIdSelector(this.urlParams.id))
       if (user && user.profile.avatar) {
         let avatarLink
         const expires = parseInt(this.urlParams.expires, 10)
@@ -54,8 +56,13 @@ RestApi.addRoute(
           const now = Date.now()
           // this will be timestamp rounded to seconds
           const nextUpdate = now - now % (expires * 1000)
+
+          const hashStr =
+            user.profile.avatar.indexOf('?hash=') > -1
+              ? ''
+              : `hash=${this.queryParams.hash ? this.queryParams.hash : nextUpdate}`
           // this will force cache on our api
-          avatarLink = user.profile.avatar + `?hash=${nextUpdate}&expires=${expires}`
+          avatarLink = user.profile.avatar + `?${hashStr}&expires=${expires}`
         } else {
           avatarLink = user.profile.avatar
         }
@@ -66,6 +73,7 @@ RestApi.addRoute(
           headers: {
             Location: avatarLink,
             'cache-control': `public, max-age=${maxAge}, s-maxage=${maxAge}, must-revalidate`,
+            ETag: avatarLink.split('/').pop(),
             // TODO: Add caching. See example of http://graph.facebook.com/4/picture?width=200&height=200
           },
           body: {},

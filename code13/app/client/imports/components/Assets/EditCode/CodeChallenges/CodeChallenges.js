@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
-import ReactDOM from 'react-dom'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Button } from 'semantic-ui-react'
 
 import OutputError from './OutputError'
@@ -10,16 +10,18 @@ import CodeCredits from './CodeCredits'
 import ChallengeCompleted from './ChallengeCompleted'
 import ChallengeResults from './ChallengeResults'
 
-import { makeCDNLink, mgbAjax } from '/client/imports/helpers/assetFetchers'
-import SkillNodes, { getFriendlyName } from '/imports/Skills/SkillNodes/SkillNodes'
+import { mgbAjax } from '/client/imports/helpers/assetFetchers'
+import SkillNodes, { getFriendlyName, getNode } from '/imports/Skills/SkillNodes/SkillNodes'
 import { utilPushTo, utilShowChatPanelChannel } from '/client/imports/routes/QLink'
+import refreshBadgeStatus from '/client/imports/helpers/refreshBadgeStatus'
 import { learnSkill } from '/imports/schemas/skills'
 import { StartJsGamesRoute } from '/client/imports/routes/Learn/LearnCodeRouteItem'
-import { showToast } from '/client/imports/routes/App'
-
 import '../editcode.css'
+import getCDNWorker from '/client/imports/helpers/CDNWorker'
 
-// This file is communicating with a test page hosted in an iFrame.
+const MAX_TIME_TO_RUN = 3 * 1000 // 3 seconds already seems very high amount of time
+
+// This file is communicating with a test page hosted in an webWorker.
 // The params related to it are in this structure for maintainability:
 const _runFrameConfig = {
   srcUrl: '/codeTests.html', // In our git source, this is in app/public/
@@ -29,7 +31,6 @@ const _runFrameConfig = {
 }
 
 const _openHelpChat = () => utilShowChatPanelChannel(window.location, 'G_MGBHELP_')
-const _openChallengeList = () => utilPushTo(window.location, '/learn/code/basics')
 
 export default class CodeChallenges extends React.Component {
   static propTypes = {
@@ -40,6 +41,7 @@ export default class CodeChallenges extends React.Component {
     active: PropTypes.bool,
     style: PropTypes.object,
     runChallengeDate: PropTypes.number,
+    runCode: PropTypes.func,
   }
 
   constructor(props) {
@@ -49,12 +51,12 @@ export default class CodeChallenges extends React.Component {
     this.skillName = _.last(_.split(props.skillPath, '.'))
     this.state = {
       pendingLoadNextSkill: false, // True when next skill is loading.. better experience for slow networks
-      results: [], // Array of results we get back from the iFrame that runs the tests
+      results: [], // Array of results we get back from the worker that runs the tests
       testCount: 0, // how many times user run this test
-      testsLoading: false, // loading state between post message to iframe and receiving response
+      testsLoading: true, // by default true - waiting for initial message from web worker - loading state between post message to worker and receiving response
       latestTest: null, // indicates latest test date
-      error: null, // get back from iFrame if it has some syntax error
-      console: null, // get back from iFrame console.log messages
+      error: null, // get back from worker if it has some syntax error
+      console: null, // get back from worker console.log messages
       showAllTestsCompletedMessage: false, // true if we want to show the All Tests Completed Modal
       data: {}, // get challenge data from CDN
     }
@@ -74,49 +76,58 @@ export default class CodeChallenges extends React.Component {
   }
 
   componentDidMount() {
-    this.getReference()
-    window.addEventListener(_runFrameConfig.eventName, this.receiveMessage, false)
-    // don't run automatic tests if user already has this skill. Useful for cases when user just checks his previous code
-    // if(!hasSkill(this.props.userSkills, this.props.skillPath){
-    // // for some reason tests (iframe, codeMirror) are not ready when component did mount //!!!
-    //   setTimeout( () => this.runTests(), _hackDeferForFirstTestRunMs)
-    // }
+    this.initWorker()
   }
 
   componentWillUnmount() {
-    window.removeEventListener(_runFrameConfig.eventName, this.receiveMessage, false)
+    this.worker.terminate()
+    if (this.timeout) {
+      window.clearTimeout(this.timeout)
+      this.timeout = 0
+    }
   }
 
-  getReference() {
-    this.iFrame = ReactDOM.findDOMNode(this.refs.iFrameTests)
-  }
+  initWorker() {
+    if (this.worker) this.worker.terminate()
 
+    this.worker = getCDNWorker('/lib/workers/CodeChallenges.js')
+    this.worker.onmessage = this.receiveMessage
+  }
   receiveMessage = e => {
-    if (e.data.prefix && e.data.prefix == _runFrameConfig.codeTestsDataPrefix) {
-      this.setState({ results: e.data.results })
-      this.setState({ error: e.data.error })
-      this.setState({ console: e.data.console })
-      this.setState({ testCount: this.state.testCount + 1 })
-      this.setState({ latestTest: Date.now() })
-      if (_.every(e.data.results, 'success')) {
-        ga('send', 'pageview', this.props.skillPath)
-        this.successPopup()
+    if (this.timeout) clearTimeout(this.timeout)
+    this.timeout = 0
+
+    if (e.data.prefix && e.data.prefix === _runFrameConfig.codeTestsDataPrefix) {
+      // ready simply tells that worker is ready to accept messages
+      if (e.data.results !== 'ready') {
+        this.setState({ results: e.data.results })
+        this.setState({ error: e.data.error })
+        this.setState({ console: e.data.console })
+        this.setState({ testCount: this.state.testCount + 1 })
+        this.setState({ latestTest: Date.now() })
+        if (_.every(e.data.results, 'success')) {
+          ga('send', 'pageview', this.props.skillPath)
+          this.successPopup()
+        }
+        this.initWorker()
+        // Gives TypeError because it gets the return value of runCode
+        // and it needs a function in the arg...
+        _.once(this.props.runCode())
       }
     }
     this.setState({ testsLoading: false })
+  }
+
+  scrollToTop = () => {
+    let div = document.getElementById('tutorial-container')
+    div.scrollTop = 0
   }
 
   successPopup() {
     // TODO show notification for user
     learnSkill(this.props.skillPath)
     this.setState({ showAllTestsCompletedMessage: true })
-    Meteor.call('User.refreshBadgeStatus', (err, result) => {
-      if (err) console.log('User.refreshBadgeStatus error', err)
-      else {
-        if (!result || result.length === 0) console.log(`No New badges awarded`)
-        else showToast(`New badges awarded: ${result.join(', ')} `)
-      }
-    })
+    refreshBadgeStatus()
   }
 
   runTests = () => {
@@ -136,7 +147,41 @@ export default class CodeChallenges extends React.Component {
       tail: tail.join('\n'),
       importException: this.state.data.importException,
     }
-    this.iFrame.contentWindow.postMessage(message, '*')
+    this.worker.postMessage(message)
+    this.timeout = setTimeout(() => {
+      this.worker.terminate()
+      this.initWorker()
+
+      this.receiveMessage({
+        data: {
+          prefix: _runFrameConfig.codeTestsDataPrefix,
+          error: (
+            <span>
+              Test timed out! Please check your code! Or ask for a help on the {' '}
+              <a
+                onClick={_openHelpChat}
+                style={{
+                  cursor: 'pointer',
+                  color: '#9edfff',
+                  fontWeight: 'bold',
+                  textDecoration: 'underline',
+                }}
+              >
+                Help channel
+              </a>!
+            </span>
+          ),
+          results: [
+            {
+              success: false,
+              message: 'Timed out',
+            },
+          ],
+        },
+      })
+    }, MAX_TIME_TO_RUN)
+
+    this.scrollToTop()
     this.setState({ testsLoading: true })
   }
 
@@ -154,23 +199,43 @@ export default class CodeChallenges extends React.Component {
     //  $meta.tests
     //  $meta.code
     //  $meta.description
+
     let skillsArr = []
+    let learnGroup
 
-    if (_.startsWith(this.props.skillPath, 'code.js.intro'))
+    if (_.startsWith(this.props.skillPath, 'code.js.intro')) {
       skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.intro']), '$meta')
-
-    if (_.startsWith(this.props.skillPath, 'code.js.advanced'))
+      learnGroup = 'intro'
+    } else if (_.startsWith(this.props.skillPath, 'code.js.phaser')) {
+      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.phaser']), '$meta')
+      learnGroup = 'phaser'
+    } else if (_.startsWith(this.props.skillPath, 'code.js.games')) {
+      skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.games']), '$meta')
+      learnGroup = 'games'
+    } else if (_.startsWith(this.props.skillPath, 'code.js.advanced')) {
       skillsArr = _.without(_.keys(SkillNodes.$meta.map['code.js.advanced']), '$meta')
+      learnGroup = 'advanced'
+    }
 
     const idx = skillsArr.indexOf(this.skillName)
-
     if (idx < skillsArr.length - 1) {
       const nextSkillName = skillsArr[idx + 1]
       this.setState({ pendingLoadNextSkill: true })
-      StartJsGamesRoute('basics', nextSkillName, this.props.currUser)
+      // TODO - pass in area!
+      const newSkillPath = `code.js.${learnGroup}.${nextSkillName}`
+      const newSkillNode = getNode(newSkillPath).$meta
+      StartJsGamesRoute(learnGroup, nextSkillName, this.props.currUser, false, newSkillNode)
     } else {
       utilPushTo(null, '/learn/code')
     }
+  }
+
+  navigateToSkillsList = () => {
+    let skillPathArr = _.split(this.props.skillPath, '.')
+    skillPathArr.pop()
+    const returnToSkillsUrl = '/learn/code/' + skillPathArr.pop()
+
+    utilPushTo(null, returnToSkillsUrl)
   }
 
   formatTime = ms => {
@@ -213,74 +278,82 @@ export default class CodeChallenges extends React.Component {
         className={'content ' + (this.props.active ? 'active' : '')}
         style={this.props.style}
       >
-        <Button
-          compact
-          basic={showAllTestsCompletedMessage}
-          size="small"
-          color="green"
-          onClick={this.runTests}
-          icon="play"
-          content="Run tests"
-          loading={this.state.testsLoading}
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={this.resetCode}
-          icon="refresh"
-          content="Reset code"
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={_openHelpChat}
-          icon="help"
-          data-position="top right"
-          data-tooltip="Ask for help"
-        />
-        <Button
-          compact
-          basic
-          size="small"
-          color="green"
-          onClick={_openChallengeList}
-          icon="up arrow"
-          data-position="top right"
-          data-tooltip="Go up to Challenges list"
-        />
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            right: 0,
+            padding: '1em 1em 0 1em',
+            backgroundColor: 'white',
+            zIndex: 10,
+          }}
+        >
+          <Button
+            compact
+            basic={showAllTestsCompletedMessage}
+            size="mini"
+            color="green"
+            onClick={this.runTests}
+            icon="play"
+            content="Run tests"
+            loading={this.state.testsLoading}
+          />
+          <Button
+            compact
+            basic
+            size="mini"
+            color="green"
+            onClick={this.resetCode}
+            icon="refresh"
+            content="Reset code"
+          />
+          <Button
+            compact
+            basic
+            size="mini"
+            color="green"
+            onClick={_openHelpChat}
+            icon="help"
+            data-position="bottom right"
+            data-tooltip="Ask for help"
+          />
+          <Button
+            compact
+            basic
+            size="mini"
+            color="green"
+            onClick={this.navigateToSkillsList}
+            icon="up arrow"
+            data-position="bottom right"
+            data-tooltip="Go up to Challenges list"
+          />
+        </div>
+        <div style={{ marginTop: '1.5em', padding: '1em' }}>
+          <OutputError error={this.state.error} />
 
-        <OutputError error={this.state.error} />
+          {/*
+          // Does not work with user added console logs
+          // Use MGB's console instead
+          <OutputConsole console={this.state.console} />
+          */}
 
-        <OutputConsole console={this.state.console} />
+          <ChallengeResults results={this.state.results} latestTestTimeStr={latestTestTimeStr} />
 
-        <ChallengeResults results={this.state.results} latestTestTimeStr={latestTestTimeStr} />
+          <ChallengeCompleted
+            show={showAllTestsCompletedMessage}
+            loading={this.state.pendingLoadNextSkill}
+            onStartNext={this.nextChallenge}
+          />
 
-        <ChallengeCompleted
-          show={showAllTestsCompletedMessage}
-          loading={this.state.pendingLoadNextSkill}
-          onStartNext={this.nextChallenge}
-        />
+          <ChallengeInstructions
+            instructions={instructions}
+            description={description}
+            fullBannerText={fullBannerText}
+          />
 
-        <ChallengeInstructions
-          instructions={instructions}
-          description={description}
-          fullBannerText={fullBannerText}
-        />
-
-        <CodeCredits />
-
-        <iframe
-          style={_runFrameConfig.style}
-          ref="iFrameTests"
-          sandbox="allow-modals allow-same-origin allow-scripts allow-popups"
-          src={makeCDNLink(_runFrameConfig.srcUrl)}
-          frameBorder="0"
-          id="mgbjr-EditCode-codeTests-iframe"
-        />
+          <CodeCredits />
+        </div>
       </div>
     )
   }

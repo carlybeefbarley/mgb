@@ -1,10 +1,11 @@
 import _ from 'lodash'
+import { HTTP } from 'meteor/http'
 import React from 'react'
-import { Table, Accordion, Icon, Dimmer, Loader, Item, Button, Modal, Checkbox } from 'semantic-ui-react'
+import { Table, Accordion, Dimmer, Loader, Item, Button, Modal, Checkbox } from 'semantic-ui-react'
 import DropArea from '../../../Controls/DropArea.js'
 import SmallDD from '../../../Controls/SmallDD.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 export default class Animations extends React.Component {
   state = {
@@ -29,12 +30,12 @@ export default class Animations extends React.Component {
   }
 
   handleAnimationClick = animId => () => {
-    joyrideCompleteTag(`mgbjr-CT-edit-actor-Animations-accordion-${animId}`)
+    joyrideStore.completeTag(`mgbjr-CT-edit-actor-Animations-accordion-${animId}`)
   }
 
   handleGraphicFrameSelection(e, data) {
     let frames = this.state.graphicFrameImports
-    if (!data.checked) frames[data.value].checked = 0
+    if (data.checked) frames[data.value].checked = 0
     else frames[data.value].checked = 1
 
     this.setState({ graphicFrameImports: frames })
@@ -92,7 +93,7 @@ export default class Animations extends React.Component {
     let graphicFrames = []
     for (let i = 0; i < data.tilecount; i++) {
       let name = val + ' #' + (i + 1)
-      let frame = { name: name, checked: 1 }
+      let frame = { name, checked: 1 }
       graphicFrames.push(frame)
     }
     this.setState({ graphicFrameImports: graphicFrames })
@@ -124,12 +125,12 @@ export default class Animations extends React.Component {
     if (asset) {
       this.setState({ isLoading: true })
 
-      $.get('/api/asset/tileset-info/' + asset._id, data => {
+      HTTP.get('/api/asset/tileset-info/' + asset._id, (error, { data }) => {
         if (data.tilecount > 1) {
           this.setState({ showModal: true })
           this.getGraphicFrames(data, val)
         }
-      }).done(() => {
+
         this.setState({ isLoading: false })
       })
     }
@@ -179,60 +180,71 @@ export default class Animations extends React.Component {
 
     return (
       <div key={i}>
-        <Accordion styled fluid exclusive={animTitle === 'stationary'} defaultActiveIndex={0}>
-          <Accordion.Title
-            id={'mgbjr-edit-actor-Animations-accordion-' + animId}
-            onClick={this.handleAnimationClick(animId)}
-          >
-            <Icon name="dropdown" />
-            {animTitle}
-          </Accordion.Title>
-          <Accordion.Content>
-            <Table fixed celled compact definition>
-              <Table.Header fullWidth>
-                <Table.Row>
-                  <Table.HeaderCell width={4}>Animation Frame</Table.HeaderCell>
-                  <Table.HeaderCell id={'mgbjr-edit-actor-Animations-graphic-' + animId} width={7}>
-                    Graphic
-                    <Button
-                      compact
-                      size="mini"
-                      floated="right"
-                      onClick={() => this.handleClearAll(animTitle)}
-                    >
-                      Clear All
-                    </Button>
-                  </Table.HeaderCell>
-                  <Table.HeaderCell id={'mgbjr-edit-actor-Animations-orientation-' + animId}>
-                    Orientation
-                    <Button
-                      compact
-                      size="mini"
-                      floated="right"
-                      onClick={() => this.handleApplyEffects(i, animTitle)}
-                    >
-                      Apply to All
-                    </Button>
-                    {this.state.lastEffectChange && (
-                      <span
-                        style={{
-                          position: 'absolute',
-                          bottom: '-3px',
-                          right: '10px',
-                          fontSize: '8px',
-                          color: 'grey',
-                        }}
-                      >
-                        Effect: {this.state.lastEffectChange}
-                      </span>
-                    )}
-                  </Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>{animTable}</Table.Body>
-            </Table>
-          </Accordion.Content>
-        </Accordion>
+        <Accordion
+          styled
+          fluid
+          exclusive={animTitle === 'stationary'}
+          defaultActiveIndex={0}
+          panels={[
+            {
+              key: 'animation',
+              title: {
+                key: 'animation-title',
+                id: 'mgbjr-edit-actor-Animations-accordion-' + animId,
+                onClick: this.handleAnimationClick(animId),
+                content: <span>{animTitle}</span>,
+              },
+              content: {
+                key: 'animation-content',
+                content: (
+                  <Table fixed celled compact definition>
+                    <Table.Header fullWidth>
+                      <Table.Row>
+                        <Table.HeaderCell width={4}>Animation Frame</Table.HeaderCell>
+                        <Table.HeaderCell id={'mgbjr-edit-actor-Animations-graphic-' + animId} width={7}>
+                          Graphic
+                          <Button
+                            compact
+                            size="mini"
+                            floated="right"
+                            onClick={() => this.handleClearAll(animTitle)}
+                          >
+                            Clear All
+                          </Button>
+                        </Table.HeaderCell>
+                        <Table.HeaderCell id={'mgbjr-edit-actor-Animations-orientation-' + animId}>
+                          Orientation
+                          <Button
+                            compact
+                            size="mini"
+                            floated="right"
+                            onClick={() => this.handleApplyEffects(i, animTitle)}
+                          >
+                            Apply to All
+                          </Button>
+                          {this.state.lastEffectChange && (
+                            <span
+                              style={{
+                                position: 'absolute',
+                                bottom: '-3px',
+                                right: '10px',
+                                fontSize: '8px',
+                                color: 'grey',
+                              }}
+                            >
+                              Effect: {this.state.lastEffectChange}
+                            </span>
+                          )}
+                        </Table.HeaderCell>
+                      </Table.Row>
+                    </Table.Header>
+                    <Table.Body>{animTable}</Table.Body>
+                  </Table>
+                ),
+              },
+            },
+          ]}
+        />
       </div>
     )
   }
@@ -350,9 +362,7 @@ export default class Animations extends React.Component {
                         value={i}
                         style={{ position: 'absolute', right: '25px' }}
                         defaultChecked
-                        onChange={(e, data) => {
-                          this.handleGraphicFrameSelection(e, data)
-                        }}
+                        onChange={this.handleGraphicFrameSelection}
                       />
                     </Item>
                   )

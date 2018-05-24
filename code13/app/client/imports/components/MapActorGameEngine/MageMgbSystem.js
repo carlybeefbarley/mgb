@@ -17,7 +17,7 @@ const MgbSystem = {
     'illegaledding',
   ],
 
-  parseEventCommand: function(str) {
+  parseEventCommand(str) {
     const [cmd, params] = str.split(': ')
     const p2 = params.split(',').sort()
     let result = { command: cmd }

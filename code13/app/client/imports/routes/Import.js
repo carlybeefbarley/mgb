@@ -1,5 +1,6 @@
-import React, { PropTypes, Component } from 'react'
-import { showToast } from '/client/imports/routes/App'
+import PropTypes from 'prop-types'
+import React, { Component } from 'react'
+import { showToast } from '/client/imports/modules'
 
 import { logActivity } from '/imports/schemas/activity'
 import { utilPushTo } from '/client/imports/routes/QLink'
@@ -17,10 +18,10 @@ const ImportRoute = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
-  createAsset: function(
+  createAsset(
     assetKindKey,
     assetName,
     projectName,
@@ -33,20 +34,20 @@ const ImportRoute = React.createClass({
     isCompleted,
   ) {
     if (!this.props.currUser) {
-      showToast('You must be logged-in to create a new Asset', 'error')
+      showToast.error('You must be logged-in to create a new Asset')
       return
     }
 
     let newAsset = {
       name: assetName,
       kind: assetKindKey,
-      assetLicense: assetLicense,
-      workState: workState,
-      thumbnail: thumbnail,
-      content2: content2,
+      assetLicense,
+      workState,
+      thumbnail,
+      content2,
       dn_ownerName: this.props.currUser.username, // Will be replaced below if in another project
 
-      isCompleted: isCompleted,
+      isCompleted,
       isDeleted: false,
       isPrivate: false,
     }
@@ -60,7 +61,7 @@ const ImportRoute = React.createClass({
 
     Meteor.call('Azzets.create', newAsset, (error, result) => {
       if (error) {
-        showToast('cannot create Asset because: ' + error.reason, 'error')
+        showToast.error('cannot create Asset because: ' + error.reason)
       } else {
         newAsset._id = result // So activity log will work
         logActivity('asset.create', `Bulk import ${assetKindKey}`, null, newAsset)
@@ -68,7 +69,7 @@ const ImportRoute = React.createClass({
     })
   },
 
-  render: function() {
+  render() {
     return (
       <div>
         <h1>Bulk Import</h1>

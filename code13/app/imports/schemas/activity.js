@@ -2,7 +2,7 @@
 // This file must be imported by main_server.js so that the Meteor method can be registered
 
 import _ from 'lodash'
-import { Activity } from '/imports/schemas'
+import { Activity, Azzets } from '/imports/schemas'
 import { check, Match } from 'meteor/check'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 import { isSameUserId } from '/imports/schemas/users'
@@ -43,68 +43,71 @@ var schema = {
   toChatChannelName: Match.Optional(String), // Chat Channel Name as defined in makeChannelName() in chats.js. Added  2/16/2017
   toUserId: Match.Optional(String), // user id interacted with (for example added to project) Added 08/28/2017
   toUserName: Match.Optional(String), // user name interacted with (for example added to project) Added 08/28/2017
+
+  unread: Boolean, // flag if user (toUserId) read activity. Used only for interactions (mention in chat, adding to project, loved assets) with users. Added 12/27/2017
 }
 
 // Info on each type of activity, as the UI cares about it
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
 export const ActivityTypes = {
-  'user.join': { icon: 'green user', pri: 5, description: 'User joined' },
-  'user.login': { icon: 'user', pri: 9, description: 'User Logged In' },
-  'user.logout': { icon: 'grey user', pri: 9, description: 'User Logged Out' },
-  'user.changeFocus': { icon: 'green alarm', pri: 9, description: 'User changed their focus' },
-  'user.clearFocus': { icon: 'grey alarm', pri: 9, description: 'User cleared their focus' },
-  'user.message': { icon: 'chat', pri: 9, description: 'User sent a public message' }, // Should also include toChatChannelName
-  'user.messageAt': { icon: 'at', pri: 5, description: 'User mentioned in a message' }, // Should also include toChatChannelName
-  'user.awardedSkill': { icon: 'green student', pri: 7, description: 'User was awarded a skill' },
-  'user.learnedSkill': { icon: 'student', pri: 9, description: 'User learned a skill' },
-  'user.earnBadge': { icon: 'green trophy', pri: 6, description: 'User earned a badge' },
+  'user.join': { icon: 'green user', pri: 5, description: 'Joing My Game Builder' },
+  'user.login': { icon: 'user', pri: 9, description: 'Logged In' },
+  'user.logout': { icon: 'grey user', pri: 9, description: 'Logged Out' },
+  'user.changeFocus': { icon: 'green alarm', pri: 9, description: 'Changed Focus' },
+  'user.clearFocus': { icon: 'grey alarm', pri: 9, description: 'Cleared Focus' },
+  'user.message': { icon: 'chat', pri: 9, description: 'Sent a Public Message' }, // Should also include toChatChannelName
+  'user.messageAt': { icon: 'at', pri: 5, description: 'Was Mentioned in a Message' }, // Should also include toChatChannelName
+  'user.awardedSkill': { icon: 'green student', pri: 7, description: 'Awarded a New Skill' },
+  'user.learnedSkill': { icon: 'student', pri: 9, description: 'Learned New Skill' },
+  'user.earnBadge': { icon: 'green trophy', pri: 6, description: 'Earned a Badge' },
 
-  'asset.create': { icon: 'green plus', pri: 10, description: 'Create new asset' },
-  'asset.fork.from': { icon: 'blue fork', pri: 10, description: 'Forked new asset from this asset' },
-  'asset.fork.to': {
-    icon: 'green fork',
-    pri: 10,
-    description: 'Created new asset by forking existing asset',
-  },
-  'asset.fork.revertTo': {
-    icon: 'orange fork',
-    pri: 10,
-    description: "Reverted asset content to ForkParent's content",
-  },
-  'asset.edit': { icon: 'edit', pri: 15, description: 'Edit asset' },
-  'asset.description': { icon: 'edit', pri: 14, description: 'Change asset description' },
-  'asset.metadata': { icon: 'edit', pri: 16, description: 'Change asset metadata' },
-  'asset.stable': { icon: 'blue lock', pri: 6, description: 'Asset marked as Locked' },
-  'asset.unstable': { icon: 'grey unlock', pri: 6, description: 'Asset marked as Unlocked' },
-  'asset.workState': { icon: 'orange checkmark', pri: 6, description: 'Asset workState changed' },
+  'asset.create': { icon: 'green plus', pri: 10, description: 'Created New Asset' },
+  'asset.fork.from': { icon: 'blue fork', pri: 10, description: 'Forked an Asset' },
+  /*'asset.fork.to': {
+      icon: 'green fork',
+      pri: 10,
+      description: 'Created new asset by forking existing asset',
+    },
+    'asset.fork.revertTo': {
+      icon: 'orange fork',
+      pri: 10,
+      description: "Reverted asset content to ForkParent's content",
+    }, */
+  'asset.edit': { icon: 'edit', pri: 15, description: 'Edited an Asset' },
+  'asset.description': { icon: 'edit', pri: 14, description: "Changed an Asset's Description" },
+  'asset.metadata': { icon: 'edit', pri: 16, description: "Changed an Asset's Metadata" },
+  'asset.stable': { icon: 'blue lock', pri: 6, description: 'Locked an Asset' },
+  'asset.unstable': { icon: 'grey unlock', pri: 6, description: 'Unlocked an Asset' },
+  /* 'asset.workState': { icon: 'orange checkmark', pri: 6, description: 'Changed Asset Work State' }, */
 
-  'asset.rename': { icon: 'write', pri: 11, description: 'Rename asset' },
-  'asset.delete': { icon: 'red trash', pri: 12, description: 'Delete asset' },
-  'asset.license': { icon: 'law', pri: 11, description: 'Asset license changed' },
-  'asset.project': { icon: 'folder sitemap', pri: 12, description: "Change Asset's project" },
-  'asset.undelete': { icon: 'green trash outline', pri: 12, description: 'Undelete asset' },
-  'asset.userLoves': { icon: 'heart', pri: 12, description: 'love asset' },
-  'asset.ban': { icon: 'red bomb', pri: 12, description: 'Ban Asset' },
-  'asset.unban': { icon: 'green bomb', pri: 12, description: 'Un-ban Asset' },
-  'task.approve': { icon: 'green tasks', pri: 12, description: 'Approve Task' },
-  'task.disapprove': { icon: 'grey tasks', pri: 12, description: 'Disapprove Task' },
+  'asset.rename': { icon: 'write', pri: 11, description: 'Renamed an Asset' },
+  'asset.delete': { icon: 'red trash', pri: 12, description: 'Deleted an Asset' },
+  'asset.license': { icon: 'law', pri: 11, description: "Changed an Asset's License" },
+  'asset.project': { icon: 'folder sitemap', pri: 12, description: "Changed an Asset's Project" },
+  'asset.undelete': { icon: 'green trash outline', pri: 12, description: 'Undeleted an Asset' },
+  'asset.userLoves': { icon: 'heart', pri: 12, description: 'Loved an Asset' },
+  'asset.ban': { icon: 'red bomb', pri: 12, description: 'Banned an Asset' },
+  'asset.unban': { icon: 'green bomb', pri: 12, description: 'Unbanned an Asset' },
+  'task.askReview': { icon: 'grey tasks', pri: 12, description: 'Asked for a Task review' },
+  'task.approve': { icon: 'green tasks', pri: 12, description: 'Approved a Task' },
+  'task.disapprove': { icon: 'grey tasks', pri: 12, description: 'Diapproved a Task' },
 
-  'game.play.start': { icon: 'green play', pri: 17, description: 'Start game' },
+  'game.play.start': { icon: 'green play', pri: 17, description: 'Started a Game' },
 
-  'project.create': { icon: 'green sitemap', pri: 3, description: 'Create project' },
-  'project.fork': { icon: 'green fork', pri: 3, description: 'Fork project' },
-  'project.addMember': { icon: 'sitemap', pri: 4, description: 'Add Member to project' },
-  'project.destroy': { icon: 'red sitemap', pri: 4, description: 'Destroyed Empty project' },
-  'project.removeMember': { icon: 'sitemap', pri: 4, description: 'Remove Member from project' },
-  'project.leaveMember': { icon: 'sitemap', pri: 4, description: 'Member Left project' },
+  'project.create': { icon: 'green sitemap', pri: 3, description: 'Created a Project' },
+  'project.fork': { icon: 'green fork', pri: 3, description: 'Forked a Project' },
+  'project.addMember': { icon: 'sitemap', pri: 4, description: 'Added a Member to a Project' },
+  'project.destroy': { icon: 'red sitemap', pri: 4, description: 'Destroyed an Empty Project' },
+  /* 'project.removeMember': { icon: 'sitemap', pri: 4, description: 'Removed a Membeer from a Project' }, */
+  'project.leaveMember': { icon: 'sitemap', pri: 4, description: 'Left a Project' },
   // Helper functions that handles unknown asset kinds and gets good defaults for unknown items
-  getIconClass: function(key) {
+  getIconClass(key) {
     return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].icon : 'warning sign') + ' icon'
   },
-  getPri: function(key) {
+  getPri(key) {
     return ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].pri : 0
   },
-  getDescription: function(key) {
+  getDescription(key) {
     return ActivityTypes.hasOwnProperty(key)
       ? ActivityTypes[key].description
       : 'Unknown Activity type (' + key + ')'
@@ -112,13 +115,14 @@ export const ActivityTypes = {
 }
 
 Meteor.methods({
-  'Activity.log': function(
+  'Activity.log'(
     data, // Proposed Activity record
     override_byUser, // If admin, the user _id and username we want to force so we can do log-on-behalf-of
   ) {
     if (!this.userId) throw new Meteor.Error(401, 'Login required')
 
     data.timestamp = new Date()
+    data.unread = true // by default all activities are unread. We do use unread only for interactions
 
     if (_.isPlainObject(override_byUser)) {
       if (!isUserSuperAdmin(Meteor.user()))
@@ -152,7 +156,7 @@ Meteor.methods({
     return docId
   },
 
-  'Activity.delete': function(activityId) {
+  'Activity.delete'(activityId) {
     if (!this.userId) throw new Meteor.Error(401, 'Login required')
 
     check(activityId, String)
@@ -168,6 +172,63 @@ Meteor.methods({
     if (Meteor.isServer) console.log(`  [Activity.delete]  #${activityId}  by: ${act.byUserName}`)
 
     return nRemoved
+  },
+
+  // marks unread activities as read
+  'Activity.readLog'() {
+    const currUser = Meteor.user()
+    if (currUser) {
+      const options = { limit: 20, sort: { timestamp: -1 } }
+      const query = { $and: [{ unread: true }, getFeedSelector(currUser._id, currUser.profile.name)] }
+      const update = { $set: { unread: false } }
+      Activity.update(query, update, options)
+    }
+  },
+
+  'Activity.getUnreadLog'(limitCount = 20) {
+    const currUser = Meteor.user()
+    if (currUser) {
+      const options = { limit: limitCount, sort: { timestamp: -1 } }
+      const unread = []
+      const activities = Activity.find(getFeedSelector(currUser._id, currUser.profile.name), options).fetch()
+      _.map(activities, activity => {
+        if (activity.unread) unread.push(activity)
+      })
+      return unread
+    }
+  },
+
+  'Activity.getNotifications'(limitCount = 30) {
+    const currUser = Meteor.user()
+    if (currUser) {
+      let options = { limit: limitCount, sort: { timestamp: -1 } }
+      return Activity.find(getFeedSelector(currUser._id, currUser.profile.name), options).fetch()
+    }
+  },
+
+  'Activity.getActivitiesByProjectName'(projectName, limit = 10) {
+    const options = { limit, sort: { timestamp: -1 } }
+    const assetsIdArr = []
+    const assetsArr = []
+    // getting all assets in project
+    const assets = Azzets.find({ projectNames: [projectName] }).fetch()
+    _.map(assets, asset => {
+      assetsIdArr.push(asset._id)
+      assetsArr.push({
+        _id: asset._id,
+        name: asset.name,
+        kind: asset.kind,
+        dn_ownerName: asset.dn_ownerName,
+      })
+    })
+    // getting latest activities for assets in project
+    const activities = Activity.find({ toAssetId: { $in: assetsIdArr } }, options).fetch()
+    _.map(activities, activity => {
+      const i = assetsIdArr.indexOf(activity.toAssetId)
+      if (i > -1) activity.asset = assetsArr[i]
+    })
+
+    return activities
   },
 })
 
@@ -190,7 +251,7 @@ export function logActivity(activityType, description, thumbnail, asset, otherDa
 
   const username = user.profile.name
   var logData = {
-    activityType: activityType, // One of the keys of the ActivityTypes object defined above
+    activityType, // One of the keys of the ActivityTypes object defined above
     priority: ActivityTypes.getPri(activityType),
 
     timestamp: new Date(), // We do it here also so it will be in the priorLog data
@@ -245,7 +306,13 @@ export function deleteActivityRecord(activityId) {
   Meteor.call('Activity.delete', activityId)
 }
 
-export const feedActivityTypesByOthers = ['asset.userLoves', 'project.leaveMember', 'mgb.announce']
+export const feedActivityTypesByOthers = [
+  'asset.userLoves',
+  'project.leaveMember',
+  'mgb.announce',
+  'task.approve',
+  'task.disapprove',
+]
 
 export const feedActivityTypesByMe = ['project.addMember', 'project.removeMember']
 
@@ -260,8 +327,12 @@ export const getFeedSelector = (userId, userName) => {
   const byMeArr = []
   feedActivityTypesByMe.forEach(type => byMeArr.push({ activityType: type }))
   const byMeQuery = { $and: [{ toUserId: userId }, { $or: byMeArr }] }
-  const byNameArr = []
-  feedActivityTypesByName.forEach(type => byNameArr.push({ activityType: type }))
-  const byNameQuery = { $and: [{ toUserName: userName }, { $or: byNameArr }] }
-  return { $or: [byOthersQuery, byMeQuery, byNameQuery] }
+
+  // Guntis - commenting out this part of query as it duplicates with chat notifications.
+  // But keeping it here if we decide to get it back
+  // const byNameArr = []
+  // feedActivityTypesByName.forEach(type => byNameArr.push({ activityType: type }))
+  // const byNameQuery = { $and: [{ toUserName: userName }, { $or: byNameArr }] }
+  // return { $or: [byOthersQuery, byMeQuery, byNameQuery] }
+  return { $or: [byOthersQuery, byMeQuery] }
 }

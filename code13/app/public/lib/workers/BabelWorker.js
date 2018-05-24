@@ -1,44 +1,54 @@
 // this is required for babel - as it uses window as global
 this.window = this
-importScripts("https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.12.0/babel.min.js")
+importScripts("https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js")
+
+var resolveModuleName = function(importName, currentFile, referrer){
+  // global import
+  if(importName.indexOf('http') === 0 || importName.indexOf('//') === 0){
+    return importName
+  }
+  if(!referrer){
+    var parts = currentFile.substring(1).split(':')
+    if(parts.length > 1){
+      referrer = parts[0]
+    }
+  }
+  importName = importName.split(':').join('/')
+  if (importName.indexOf('/') === 0 && importName.indexOf('//') !== 0) {
+    if(importName.lastIndexOf('/') === 0 && referrer)
+      return '/' + referrer + importName + '.js'
+    else
+      return importName + '.js'
+  }
+  return importName
+}
 
 onmessage = function (e) {
   var filename = e.data[0]
   var srcText = e.data[1]
   var extraOptions = e.data[2]
   var referrer = e.data[3]
+  var importNames = []
 
   var options = Object.assign({
     filename: filename,
+    retainLines: true,
     compact: false,           // Default of "auto" fails on ReactImport
     presets: ['es2015', 'react'],
     sourceMaps: 'inline',
-    plugins: ['transform-es2015-modules-amd', 'transform-class-properties'], // async
+    plugins: [
+      'transform-es2015-modules-amd',
+      'transform-class-properties',
+      'transform-es2015-destructuring',
+      'transform-es2015-spread',
+      'transform-object-rest-spread',
+      'syntax-object-rest-spread'
+    ],
+
     // this is function from SourceTools:resolveModuleSource
     resolveModuleSource: function(importName, currentFile){
-      // global import
-      if(importName.indexOf('http') === 0 || importName.indexOf('//') === 0){
-        return importName
-      }
-      if(!referrer){
-        var parts = currentFile.substring(1).split(':')
-        if(parts.length > 1){
-          referrer = parts[0]
-        }
-      }
-      importName = importName.split(':').join('/')
-      // at some point modules were imported as ./assetName
-      if(importName.indexOf('./') === 0 ){
-        // remove leading dot
-        importName = importName.substring(1)
-      }
-      if (importName.indexOf('/') === 0 && importName.indexOf('//') !== 0) {
-        if(importName.lastIndexOf('/') === 0 && referrer)
-          return '/' + referrer + importName + '.js'
-        else
-          return importName + '.js'
-      }
-      return importName
+      importNames.push(importName)
+      return resolveModuleName(importName, currentFile, referrer)
     },
   }, extraOptions)
   if (!options.filename) {
@@ -66,5 +76,5 @@ onmessage = function (e) {
   trans.code = trans.code.replace(/['"]use strict['"]/gi, '')
 
 
-  postMessage({data: trans.metadata, code: trans.code, error: trans.error, astTokens: null})
+  postMessage({data: trans.metadata, code: trans.code, error: trans.error, astTokens: null, importNames: importNames})
 };

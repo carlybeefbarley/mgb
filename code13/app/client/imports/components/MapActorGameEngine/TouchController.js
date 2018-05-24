@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
@@ -5,7 +6,7 @@ import './TouchController.css'
 
 export default class TouchController extends React.Component {
   static propTypes = {
-    availableWidth: React.PropTypes.number, // available horizontal space
+    availableWidth: PropTypes.number, // available horizontal space
   }
   componentDidMount() {
     this.node = ReactDOM.findDOMNode(this)

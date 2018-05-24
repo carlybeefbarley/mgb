@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import QLink from '/client/imports/routes/QLink'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
@@ -17,7 +18,7 @@ const _getAssetIdFromUrl = url =>
 const _importFromDrop = (event, handleChange) => {
   const asset = DragNDropHelper.getAssetFromEvent(event)
   if (asset && asset.kind === 'graphic') {
-    const imgUrl = `/api/asset/png/${asset._id}?hash=${Date.now()}`
+    const imgUrl = `/api/asset/png/${asset._id}`
     handleChange(imgUrl, asset._id)
   }
 }

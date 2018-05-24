@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Segment, Header, Divider } from 'semantic-ui-react'
 
 export default class ChallengeInstructions extends React.Component {

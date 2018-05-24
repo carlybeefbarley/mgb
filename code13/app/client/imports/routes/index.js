@@ -6,12 +6,14 @@ import urlMaker from './urlMaker'
 
 import App from './App'
 import Home from './Home'
+import HourOfCode from './HourOfCode/HourOfCodeRoute'
 import Import from './Import'
 import ForumRoute from './Forum'
 import PlayGameRoute from './PlayGameRoute'
 import BrowseGamesRoute from './BrowseGamesRoute'
 import DashboardRoute from './Dashboard/DashboardRoute'
 import VideoRoute from './Video/VideoRoute'
+import NotificationsRoute from './Notifications/NotificationsRoute'
 
 import LearnRoute from './Learn/LearnRoute'
 import LearnSkillsRoute from './Learn/LearnSkillsRoute'
@@ -69,10 +71,12 @@ export function clientStartup() {
         <Route path="/whats-new" component={WhatsNewRoute} name="What's New" />
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />
 
+        <Route path="/hour-of-code" component={HourOfCode} name="Hour of Code™" />
         <Route path="/dashboard" component={DashboardRoute} name="Dashboard" />
         <Route path="/video" component={VideoRoute} name="Video" />
+        <Route path="/notifications" component={NotificationsRoute} name="Notifications" />
 
-        <Route path="forum" component={ForumRoute} />
+        <Route path="forum" component={ForumRoute} name="Forum" />
 
         <Route path="/learn" component={LearnRoute} name="Learn" />
         <Route path="/learn/skills" component={LearnSkillsRoute} name="All Skills" />
@@ -94,6 +98,7 @@ export function clientStartup() {
         <Route path="/login" component={Users.LoginRoute} name="Log In" />
         <Route path="/forgot-password" component={Users.ForgotPassword} name="Forgot Password" />
         <Route path="/reset-password/:token" component={Users.ResetPassword} name="Reset Password" />
+        <Route path="/enroll-account/:token" component={Users.ResetPassword} name="Enroll Account" />
         <Route path="/verify-email/:token" component={Users.VerifyEmail} name="Verify Email" />
 
         <Route path="users" component={Users.UserListRoute} name="All Users" />
@@ -143,9 +148,16 @@ export function clientStartup() {
           component={Projects.ProjectOverview}
           name="Project Details"
         />
+        <Route
+          path="u/:username/projects/:projectName/activity"
+          component={Projects.ProjectActivityRoute}
+          name="Project Activity"
+        />
 
-        <Route path="user/:id/history" component={Users.UserHistoryRoute} name="History" />
-        <Route path="u/:username/history" component={Users.UserHistoryRoute} name="History" />
+        <Redirect from="user/:id/history" to="user/:id/activity" />
+        <Redirect from="u/:username/history" to="u/:username/activity" />
+        <Route path="user/:id/activity" component={Users.UserHistoryRoute} name="Activity" />
+        <Route path="u/:username/activity" component={Users.UserHistoryRoute} name="Activity" />
 
         <Route path="user/:id/badges" component={Users.BadgeListRoute} name="Badges" />
         <Route path="u/:username/badges" component={Users.BadgeListRoute} name="Badges" />
@@ -156,6 +168,11 @@ export function clientStartup() {
 
         <Route path="assets" component={Azzets.UserAssetListRoute} name="All Assets" />
         <Route path="assets/create" component={Azzets.AssetCreateNewRoute} name="Create New Asset" />
+        <Route
+          path="assets/create-from-template"
+          component={Azzets.AssetCreateFromTemplateRoute}
+          name="Create Asset From Template"
+        />
 
         <Route
           path="assetEdit/:assetId"

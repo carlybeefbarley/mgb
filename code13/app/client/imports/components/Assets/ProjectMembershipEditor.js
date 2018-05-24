@@ -1,6 +1,7 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
-import { Icon, Menu } from 'semantic-ui-react'
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Dropdown, Icon, Menu } from 'semantic-ui-react'
 
 // This is a compact editor for deciding if an Asset is in one or more projects.
 // It is an earlier version of ProjectMembershipEditorv2 but with a slightly different
@@ -32,25 +33,26 @@ export default class ProjectMembershipEditor extends React.Component {
     // OK, so we can edit! Let's do this! ...  Create the  | (edit) > |      UI
     return (
       <div>
-        <Icon name="sitemap" /> {projectNames}
-        <div className="ui simple dropdown item">
-          <Icon name="dropdown" />
-          <Menu>
-            {availableProjectNamesArray.map(k => {
-              const inList = _.includes(chosenProjectNames, k)
-              return (
-                <Menu.Item
-                  active={inList}
-                  data-value={k}
-                  key={k}
-                  onClick={() => this.handleToggleProjectName(k)}
-                >
-                  <Icon name={inList ? 'toggle on' : 'toggle off'} />&nbsp;{k}
-                </Menu.Item>
-              )
-            })}
-          </Menu>
-        </div>
+        <Dropdown
+          item
+          simple
+          trigger={
+            <span>
+              <Icon name="sitemap" /> {projectNames}
+            </span>
+          }
+          options={availableProjectNamesArray.map(k => {
+            const inList = _.includes(chosenProjectNames, k)
+            return {
+              active: inList,
+              key: k,
+              value: k,
+              text: k,
+              onClick: () => this.handleToggleProjectName(k),
+              icon: inList ? 'toggle on' : 'toggle off',
+            }
+          })}
+        />
       </div>
     )
   }

@@ -1,8 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes, Component } from 'react'
-import ReactDOM from 'react-dom'
-
-// import { Segment, Grid, Header, List, Icon, Image, Button } from 'semantic-ui-react'
+import PropTypes from 'prop-types'
+import React, { Component } from 'react'
 
 import UploadForm from './UploadForm.js'
 import UploadList from './UploadList.js'
@@ -10,10 +8,9 @@ import './import.css'
 
 const STATUS_EMPTY = 'empty'
 const STATUS_DRAGGED_OVER = 'draggedOver'
-const STATUS_UPLOADING = 'uploading' // TODO: Confirm with @shmicikus that this was not an intended state (it is never used)
 const STATUS_UPLOADED = 'uploaded'
 
-export default class ImportGraphic extends React.Component {
+export default class ImportGraphic extends Component {
   constructor(props) {
     super(props)
 
@@ -152,12 +149,12 @@ export default class ImportGraphic extends React.Component {
 
     const graphics = _.cloneDeep(this.state.graphics)
     graphics.push({
-      fileName: fileName,
-      content2: content2,
-      thumbnail: thumbnail,
+      fileName,
+      content2,
+      thumbnail,
     })
     // TODO remake status so it shows also uploading status
-    this.setState({ graphics: graphics, status: STATUS_UPLOADED })
+    this.setState({ graphics, status: STATUS_UPLOADED })
   }
 
   createThumbnail(imgObject) {

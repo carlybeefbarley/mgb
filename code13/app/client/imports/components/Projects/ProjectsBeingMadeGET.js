@@ -1,5 +1,6 @@
 import { createContainer } from 'meteor/react-meteor-data'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Header, Icon, List } from 'semantic-ui-react'
 
 import Spinner from '/client/imports/components/Nav/Spinner'

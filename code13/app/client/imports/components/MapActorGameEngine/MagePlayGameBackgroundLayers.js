@@ -7,7 +7,7 @@ import MgbMap from './MageMgbMap'
 // This file contains the part of the class that is primarily focussed on the BACKGROUND Layers
 
 const MagePlayGameBackgroundLayers = {
-  playPrepareBackgroundLayer: function() {
+  playPrepareBackgroundLayer() {
     const { backgroundBlockageMap } = this
     backgroundBlockageMap.reset(this.map.metadata.width, this.map.metadata.height)
     for (let y = 0; y < this.map.metadata.height; y++) {
@@ -52,7 +52,7 @@ const MagePlayGameBackgroundLayers = {
     }
   },
 
-  playCleanupBackgroundLayer: function() {
+  playCleanupBackgroundLayer() {
     if (this.backgroundBlockageMap) this.backgroundBlockageMap.reset(1, 1)
   },
 }

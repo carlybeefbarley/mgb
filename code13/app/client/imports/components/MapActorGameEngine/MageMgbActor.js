@@ -35,7 +35,7 @@ const MgbActor = {
   alRespawnOption_MapReload: 0,
   alRespawnOption_Never: 1,
 
-  isSoundNonNull: function(s) {
+  isSoundNonNull(s) {
     return s && s != '' && s != 'none'
   }, // these are all types of 'nul' sound
 
@@ -333,7 +333,7 @@ const MgbActor = {
     'stationary west 15',
     'stationary west 16',
   ],
-  loadSounds: function(actor, oName, callback) {
+  loadSounds(actor, oName, callback) {
     if (!MgbActor._loadedSounds) {
       MgbActor._loadedSounds = {}
       // Builtin sounds
@@ -387,14 +387,14 @@ const MgbActor = {
         } else {
           // builtin sound
           MgbActor._loadedSounds[name].src = '/audio/builtinForActors/' + name + '.wav'
-          MgbActor._loadedSounds[name].volume = 0.5 // Half volume
+          MgbActor._loadedSounds[name].volume = 0.4
         }
       }
     }
   },
 
   // TODO: Implement a preloadSoundsForActor() method
-  playCannedSound: function(_soundName, actor, oName) {
+  playCannedSound(_soundName, actor, oName) {
     if (!_soundName) return
 
     const soundName = _soundName.replace(/^\[builtin]:/, '') // We will handle missing [builtin]: for now
@@ -408,7 +408,7 @@ const MgbActor = {
   },
 
   // Preview sound when selecting in editor, only builtin sounds
-  previewCannedSound: function(_soundName) {
+  previewCannedSound(_soundName) {
     if (!_soundName) return
 
     const soundName = _soundName.split(':').pop()
@@ -416,12 +416,12 @@ const MgbActor = {
     if (soundName !== 'none') {
       const sound = document.createElement('audio')
       sound.src = '/audio/builtinForActors/' + soundName + '.wav'
-      sound.volume = 0.5 // Half volume
+      sound.volume = 0.4
       sound && sound.play()
     }
   },
 
-  getAnimationIndex: function(
+  getAnimationIndex(
     actorPiece,
     currentStepStyle, // -1 means stationary. 0...3 Mean north/east/south/west. If -1, we use priorstepStyle to work out the direction the actor should be facing
     priorStepStyle,
@@ -530,7 +530,7 @@ const MgbActor = {
     return animationTableIndex
   },
 
-  isAnimationTableIndexValid: function(
+  isAnimationTableIndexValid(
     actorPiece,
     animationTableIndex, // i.e. non-empty and correctly formed
   ) {
@@ -538,7 +538,7 @@ const MgbActor = {
     return ate && ((ate.effect !== 'no effect' && ate.effect !== '') || ate.tileName !== '')
   },
 
-  getAnimationEffectFromIndex: function(actorPiece, animationTableIndex) {
+  getAnimationEffectFromIndex(actorPiece, animationTableIndex) {
     // We define there
     if (animationTableIndex == -1) return 'no effect'
     const ate = actorPiece.animationTable[animationTableIndex]
@@ -550,7 +550,7 @@ const MgbActor = {
     return retval
   },
 
-  getAnimationTileFromIndex: function(actorPiece, animationTableIndex) {
+  getAnimationTileFromIndex(actorPiece, animationTableIndex) {
     let tileName
     if (animationTableIndex == -1) tileName = actorPiece.databag.all.defaultGraphicName
     else {
@@ -560,19 +560,19 @@ const MgbActor = {
     return tileName ? tileName : '' // Null -> ''
   },
 
-  intFromActorParam: function(param) {
+  intFromActorParam(param) {
     if (typeof param == 'number') return Math.floor(param)
     if (typeof param === 'undefined') return 0 // http://help.adobe.com/en_US/ActionScript/3.0_ProgrammingAS3/WS5b3ccc516d4fbf351e63e3d118a9b90204-7f87.html
     return parseInt(param, 10)
   },
 
-  numberFromActorParam: function(param) {
+  numberFromActorParam(param) {
     if (typeof param == 'number') return param
     if (typeof param === 'undefined') return 0 // http://help.adobe.com/en_US/ActionScript/3.0_ProgrammingAS3/WS5b3ccc516d4fbf351e63e3d118a9b90204-7f87.html
     return Number(param)
   },
 
-  stringFromActorParam: function(param) {
+  stringFromActorParam(param) {
     if (typeof param == 'string') return param
     if (typeof param === 'undefined') return null // http://help.adobe.com/en_US/ActionScript/3.0_ProgrammingAS3/WS5b3ccc516d4fbf351e63e3d118a9b90204-7f87.html
     return param.toString()

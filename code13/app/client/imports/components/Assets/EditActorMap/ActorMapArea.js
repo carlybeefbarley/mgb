@@ -243,20 +243,35 @@ export default class ActorMapArea extends BaseMapArea {
       >
         {layers}
         <MaskLayer map={this} layer={this.layers[this.props.activeLayer]} ref="mask" />
-        <Accordion inverted className="inspectInfo">
-          <Accordion.Title>
-            <i className="icon search" style={{ float: 'right', color: 'white' }} />
-          </Accordion.Title>
-          <Accordion.Content style={{ padding: '5px', minWidth: '200px' }}>
-            <PositionInfo getInfo={this.getAllInfo.bind(this)} ref="positionInfo" />
-          </Accordion.Content>
-        </Accordion>
+        <Accordion
+          inverted
+          className="inspectInfo"
+          panels={[
+            {
+              key: 'position',
+              title: {
+                key: 'position-title',
+                icon: null,
+                content: <i className="icon search" style={{ float: 'right', color: 'white' }} />,
+              },
+              content: {
+                key: 'position-content',
+                content: (
+                  <div style={{ padding: '5px', minWidth: '200px' }}>
+                    <PositionInfo getInfo={this.getAllInfo.bind(this)} ref="positionInfo" />
+                  </div>
+                ),
+              },
+            },
+          ]}
+        />
       </div>
     )
   }
 
   renderMage() {
     const { asset, playDataIsReady } = this.props
+    const isMgb1Game = asset.text.startsWith('Imported from MGB1')
 
     if (!playDataIsReady) return <p>Waiting for Cloud save to flush</p>
 
@@ -267,6 +282,7 @@ export default class ActorMapArea extends BaseMapArea {
             ownerName={asset.dn_ownerName}
             startMapName={asset.name}
             isPaused={false}
+            isMgb1Game={isMgb1Game}
             hideButtons
             fetchAssetByUri={this.fetchAssetByUri}
           />

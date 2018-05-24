@@ -10,7 +10,7 @@ class HitChanceController extends Component {
     if (value) this.props.actions.updateInstrumentPitch({ instrumentID: this.props.id, value })
   }
 
-  render = () => {
+  render() {
     const props = {
       label: 'Pitch (-12 - 12)',
       id: 'pitch',

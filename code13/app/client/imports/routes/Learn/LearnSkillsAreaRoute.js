@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import '../home.css'
 import { Segment, Header, Icon, Label } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
@@ -26,7 +27,7 @@ const descStyle = {
   lineHeight: '1.5em',
 }
 
-const LearnSkillsAreaRoute = ({ currUser, params }, context) => {
+const LearnSkillsAreaRoute = ({ currUser, isSuperAdmin, params }, context) => {
   //props.params.skillarea
 
   const area = _.find(skillAreaItems, ['tag', params.skillarea])
@@ -57,7 +58,9 @@ const LearnSkillsAreaRoute = ({ currUser, params }, context) => {
           (v, k) => (k === '$meta' ? null : <li key={k}>{v.$meta && v.$meta.name ? v.$meta.name : k}</li>),
         )}
       </ul>
-      {currUser && <SkillsMap skills={context.skills} expandable toggleable skillPaths={[area.tag]} />}
+      {currUser && (
+        <SkillsMap isSuperAdmin={isSuperAdmin} skills={context.skills} expandable skillPaths={[area.tag]} />
+      )}
     </Segment>
   )
 }

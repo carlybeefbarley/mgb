@@ -43,7 +43,7 @@ class Expandable extends Component {
     }
   }
 
-  render = () => {
+  render() {
     return (
       <div
         className={`expandable ${this.state.isExpanded ? 'is-expanded' : ''} ${this.props.className

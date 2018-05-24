@@ -1,10 +1,12 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import FittedImage from '/client/imports/components/Controls/FittedImage'
 import QLink from '/client/imports/routes/QLink'
-import { Button, Icon, Image, Popup } from 'semantic-ui-react'
+import { Button, Icon, Image } from 'semantic-ui-react'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import moment from 'moment'
+import SpecialGlobals from '../../imports/SpecialGlobals'
 
 // >>>  import UX from '/client/imports/UX'
 
@@ -14,7 +16,7 @@ import moment from 'moment'
 // 3. with limited interaction
 // 4. Use shallow information about the main MGB schema types (e.g. know about user, not about details of map assets)
 
-const _makeAvatarImgLink = (username, validFor) =>
+const _makeAvatarImgLink = (username, validFor = SpecialGlobals.avatar.validFor) =>
   _.isNumber(validFor)
     ? makeCDNLink(`/api/user/@${username}/avatar/${validFor}`, makeExpireTimestamp(validFor))
     : makeCDNLink(`/api/user/@${username}/avatar/`)
@@ -62,7 +64,7 @@ const UX = {
     <QLink to={`/u/${ownerUsername}/asset/${assetId}`}>Flagged Asset Id: {assetId}</QLink>
   ),
 
-  LinkToFlaggedEntity: ({ entityType, entityId, ownerUsername }) => {
+  LinkToFlaggedEntity({ entityType, entityId, ownerUsername }) {
     if (entityType === 'Chats') return <UX.LinkToChatId chatId={entityId} />
     if (entityType === 'Azzets') {
       return <UX.LinkToAsset assetId={entityId} entityType={entityType} ownerUsername={ownerUsername} />
@@ -79,7 +81,7 @@ const UX = {
     </span>
   ),
 
-  UserWhenJoined: ({ when, as }) => {
+  UserWhenJoined({ when, as }) {
     const Element = as || 'span'
     return <Element>Joined {moment(when).format('MMMM DD, YYYY')}</Element>
   },
@@ -93,12 +95,12 @@ const UX = {
     </QLink>
   ),
 
-  TimeAgo: ({ when, as, style }) => {
+  TimeAgo({ when, as, style }) {
     const Element = as || 'span'
     return <Element style={style}>{moment(when).fromNow()}</Element>
   },
 
-  TimeMDY: ({ when, as }) => {
+  TimeMDY({ when, as }) {
     const Element = as || 'span'
     return <Element>{moment(when).format('MMMM DD, YYYY')}</Element>
   },

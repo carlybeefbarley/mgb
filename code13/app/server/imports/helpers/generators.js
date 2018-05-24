@@ -4,9 +4,11 @@
 //          generator 'genetag' (which we also import and export from this module)
 import { genetag } from '/imports/helpers/generators'
 import { getCDNDomain } from '../../cloudfront/CreateCloudfront'
+import SpecialGlobals from '/imports/SpecialGlobals'
+
 export { genetag }
 
-const DEFAULT_MAX_AGE = 600 // This cache MAX_AGE config param is for dynamic requests (10 minutes) - probably we can increase this. This is not for static assets
+const DEFAULT_MAX_AGE = SpecialGlobals.cache.apiAssets
 
 /**
  * This function redirects from our server to CDN link -
@@ -67,7 +69,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
   }
   if (!asset) {
     return {
-      headers: headers,
+      headers,
       body: getBodyContent(body, asset),
     }
   }
@@ -91,7 +93,7 @@ export const genAPIreturn = (api, asset, body = asset, headers = {}) => {
     api.queryParams && api.queryParams.hash
       ? Object.assign(
           {
-            etag: etag,
+            etag,
             'cache-control': cacheHeader,
           },
           headers,

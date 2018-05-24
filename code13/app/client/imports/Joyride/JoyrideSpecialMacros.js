@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
-import { getNavPanels } from '/client/imports/components/SidePanels/NavPanel'
+import getNavPanels from '/client/imports/components/SidePanels/getNavPanels'
 
 // This code is used by the Joyride/Tutorial systems to make it easier to write tutorials.
 //
@@ -16,7 +16,7 @@ const _fullStepField = null // This is returned in notFoundMacros[].field result
   {
     "steps": [
       "%flexPanel%",
-      "%fp-goals%",
+      "%fp-learn%",
     ...
   }
 
@@ -42,7 +42,7 @@ const _mkNavPanelMacros = () => {
         showStepOverlay: true,
         skipIfUrlAt: dd.to,
         awaitCompletionTag: `mgbjr-CT-np-${dd.name}`,
-        position: position,
+        position,
         style: '%inverted%',
       },
     })
@@ -54,13 +54,13 @@ const _mkNavPanelMacros = () => {
         hint: `${_.upperFirst(smText)} Menu`,
         desc: `Step for finding the ${smText} menu`,
         newVal: {
-          title: `Go to the ${smText} page:`,
-          text: `Hover on the <div style='border: 1px solid dimgrey' class='ui small black compact button'>${ddUpName}</div> menu,<br></br> then click the <div class='ui small label'>${smText}</div> option`,
+          title: `Go to the ${smText} page`,
+          text: `Hover on the "${_.startCase(ddUpName)}" menu and click "${_.startCase(smText)}".`,
           selector: `#mgbjr-np-${dd.name}-${item.jrkey},#mgbjr-np-${dd.name}`, // Note the  comma  which allows multiple selectors, in descending preference
           showStepOverlay: true,
           skipIfUrlAt: item.to,
           awaitCompletionTag: `mgbjr-CT-np-${dd.name}-${item.jrkey}`,
-          position: position,
+          position,
           style: '%inverted%',
         },
       })
@@ -96,7 +96,7 @@ const _mkFpDescribe = (fpname, icon, describeText) => ({
   desc: `Step for finding the <strong>${fpname.toUpperCase()}</strong> FlexPanel`,
   newVal: {
     title: `The ${fpname.toUpperCase()} FlexPanel`,
-    text: `${describeText}. <br></br>Click on the  <i class='ui inverted bordered ${icon} icon'></i> <strong>${fpname.toUpperCase()}</strong> button here to show this Panel`,
+    text: `${describeText}. <br></br>Click on the  <i class='ui inverted bordered ${icon} icon'></i> <strong>${fpname.toUpperCase()}</strong> button here to show this Panel.`,
     selector: `#mgbjr-flexPanelIcons-${fpname}`,
     showStepOverlay: true,
     awaitCompletionTag: `mgbjr-CT-flexPanel-${fpname}-show`,
@@ -112,7 +112,7 @@ const _mkCreateAsset = kind => [
     hint: `New ${kind.toUpperCase()} asset kind selected`,
     desc: `Step for selecting a new <strong>${kind.toUpperCase()}</strong> Asset`,
     newVal: {
-      title: `Select the ${kind.toUpperCase()} Asset kind`,
+      title: `Select ${kind.toUpperCase()} Asset kind`,
       text: `Select the <strong>${kind.toUpperCase()}</strong> asset kind. You cannot change the kind once it is created.`,
       selector: `#mgbjr-create-asset-select-kind-${kind}`,
       showStepOverlay: false,
@@ -168,12 +168,11 @@ const makeStepMacros = () => {
     {
       key: _wrapKey('complete'),
       hint: `Tutorial completed`,
-      desc: `Tutorial completed, Show GoalsFP to start next`,
+      desc: `Tutorial completed, you can also start the next from the learn flex panel.`,
       newVal: {
-        title: `Great! You completed the tutorial`,
-        text: `You can start the next tutorial from the Goals FlexPanel at any time`,
-        selector: '#mgbjr-flexPanelIcons-goals',
-        preparePage: 'openFlexPanel:goals',
+        title: `Great, you completed the tutorial!`,
+        text: `Let's get started on the next tutorial.`,
+        preparePage: 'openFlexPanel:learn',
         showStepOverlay: true,
         position: 'left',
         style: '%green%', // Note that full Step Macros can still use per-field macros :)
@@ -185,9 +184,8 @@ const makeStepMacros = () => {
       hint: `Tutorial completed`,
       desc: `Tutorial completed, explain how to start next using FP`,
       newVal: {
-        title: `Great! You completed the tutorial`,
-        text: `You can start the next tutorial from the Goals FlexPanel at any time`,
-        selector: '#mgbjr-flexPanelIcons-goals',
+        title: `Great, you completed the tutorial!`,
+        text: `Let's get started on the next tutorial.`,
         showStepOverlay: true,
         position: 'left',
         style: '%green%',
@@ -199,9 +197,8 @@ const makeStepMacros = () => {
       hint: `Tutorial completed`,
       desc: `Tutorial completed, go to /learn/code/phaser for next`,
       newVal: {
-        title: `Great! You completed the tutorial`,
-        text: `You can start the next tutorial from the Goals FlexPanel at any time`,
-        selector: '#mgbjr-flexPanelIcons-goals',
+        title: `Great, you completed the tutorial!`,
+        text: `Let's get started on the next tutorial.`,
         preparePage: 'navToRelativeUrl:/learn/code/phaser',
         showStepOverlay: true,
         position: 'left',
@@ -251,16 +248,15 @@ const makeStepMacros = () => {
     ..._mkNavPanelMacros(),
 
     _mkFp('activity', 'lightning'),
-    _mkFp('goals', 'student'),
+    _mkFp('learn', 'student'),
     _mkFp('assets', 'pencil'),
     _mkFp('chat', 'chat'),
     _mkFp('options', 'options'),
-    _mkFp('skills', 'plus circle'),
     _mkFp('users', 'users'),
     _mkFp('network', 'signal'),
     _mkFp('keys', 'keyboard'),
     _mkFpDescribe('activity', 'lightning', 'This activity feed lets you see what people are working on'),
-    _mkFpDescribe('goals', 'student', 'You can track, start/stop or resume your tutorials from here'),
+    _mkFpDescribe('learn', 'student', 'You can track, start/stop or resume your tutorials from here'),
     _mkFpDescribe(
       'assets',
       'pencil',
@@ -276,12 +272,7 @@ const makeStepMacros = () => {
       'options',
       'This lets you enable advanced fetures that are initially hidden for new users',
     ),
-    _mkFpDescribe('skills', 'plus circle', 'This lets you track your learning skills'),
-    _mkFpDescribe(
-      'users',
-      'users',
-      "This is a quick way to search for other users. It doesn't do much yet...",
-    ),
+    _mkFpDescribe('users', 'users', "This is a quick way to search for other users. It doesn't do much yet."),
     _mkFpDescribe(
       'network',
       'signal',

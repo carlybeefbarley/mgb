@@ -1,8 +1,8 @@
 const Plural = {
-  numStr: function(number, str, suffix = 's') {
+  numStr(number, str, suffix = 's') {
     return `${number} ${str}${number === 1 ? '' : suffix}`
   },
-  numStr2: function(number, str, suffix = 's') {
+  numStr2(number, str, suffix = 's') {
     if (!number) {
       return ''
     }

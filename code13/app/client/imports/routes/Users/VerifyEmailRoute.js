@@ -1,14 +1,15 @@
-import _ from 'lodash'
-import React, { PropTypes } from 'react'
-import { showToast } from '/client/imports/routes/App'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Icon, Message } from 'semantic-ui-react'
+
+import refreshBadgeStatus from '/client/imports/helpers/refreshBadgeStatus'
 
 const VerifyEmailRoute = React.createClass({
   propTypes: {
     params: PropTypes.object,
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       isLoading: true,
       isVerified: false,
@@ -24,18 +25,12 @@ const VerifyEmailRoute = React.createClass({
       } else {
         this.setState({ isVerified: true, isLoading: false })
 
-        Meteor.call('User.refreshBadgeStatus', (err, re) => {
-          if (err) console.log('User.refreshBadgeStatus error', err)
-          else {
-            if (!re || re.length === 0) console.log(`No New badges awarded`)
-            else showToast(`New badges awarded: ${re.join(', ')} `)
-          }
-        })
+        refreshBadgeStatus()
       }
     })
   },
 
-  render: function() {
+  render() {
     if (this.state.isLoading) return <Icon loading />
     else if (this.state.error) return <Message negative header="Error" content={this.state.error} />
     else if (this.state.isVerified)

@@ -1,50 +1,59 @@
+import _ from 'lodash'
 import { Accounts } from 'meteor/accounts-base'
 import validate from '/imports/schemas/validate'
+import md5 from 'blueimp-md5'
 
 // This is all server-only code
 
 Meteor.methods({
-  'AccountsHelp.userNameTaken': function(username) {
+  'AccountsHelp.userNameTaken'(username) {
     return !!Accounts.findUserByUsername(username)
   },
 })
 
 Meteor.methods({
-  'AccountsHelp.emailTaken': function(email) {
+  'AccountsHelp.emailTaken'(email) {
     return !!Accounts.findUserByEmail(email)
   },
 })
 
+const getGravatarUrl = email => '//www.gravatar.com/avatar/' + md5(email.trim().toLowerCase()) + '?s=155&d=mm'
+
 Accounts.validateNewUser(function(user) {
-  if (!user.emails || !_.isArray(user.emails) || user.emails.length === 0)
+  const { emails, username, profile } = user
+  if (!emails || !_.isArray(emails) || emails.length === 0)
     throw new Meteor.Error(403, 'Server response: new user emails array is invalid')
 
-  console.log(`  [validateNewUser]  ..  name=${user.username}   email=${user.emails[0].address}`)
+  console.log(`  [validateNewUser] name=${username} email=${username} profile=${JSON.stringify(profile)}`)
 
-  if (!user.username || user.username.length < 3)
+  if (!username || username.length < 3)
     throw new Meteor.Error(403, 'Username must have at least 3 characters')
 
-  if (user.profile.name !== user.username)
+  if (profile.name !== username)
     throw new Meteor.Error(403, 'Internal error: Mismatched username and profile.name')
 
-  _.each(user.emails, emailEntry => {
+  _.each(emails, emailEntry => {
     const r = validate.emailWithReason(emailEntry.address)
     if (r) throw new Meteor.Error(403, `Server response: ${r}`)
   })
 
-  console.log(`  [validateNewUser]  OK  name=${user.username}   email=${user.emails[0].address} `)
+  console.log(`  [validateNewUser]  OK  name=${username}   email=${emails[0].address} `)
 
   try {
-    if (Meteor.isProduction) Meteor.call('Slack.User.create', user.username, user.emails[0].address)
+    if (Meteor.isProduction && !profile.isGuest) {
+      Meteor.call('Slack.User.create', username, emails[0].address)
+    }
   } catch (err) {
-    console.log('  validateNewUser]  failed to call Slack: ', err.toString())
+    console.log('  [validateNewUser]  failed to call Slack: ', err.toString())
   }
 
   return true
 })
 
 Accounts.onCreateUser(function(options, user) {
-  console.log(`  [CreateUser]  ${user.username}   email: ${user.emails[0].address}`)
+  console.log(
+    `  [CreateUser] name=${user.username} email=${user.username} profile=${JSON.stringify(user.profile)}`,
+  )
 
   if (user.services.twitter) {
     if (options.profile) {
@@ -84,10 +93,17 @@ Accounts.onCreateUser(function(options, user) {
     }
   }
 
-  if (user.services.password) {
+  // handle when enrolling user without a password (!user.services)
+  // handle user sign up with the password service
+  if (_.isEmpty(user.services) || user.services.password) {
     if (options.profile) {
+      const gravatarUrl = getGravatarUrl(user.emails[0].address)
       // Extra checks for validity like is done in Meteor.call("User.updateProfile")" ?
       user.profile = options.profile
+      // actual image picked by user to display
+      user.profile.avatar = gravatarUrl
+      // collection of images in users account
+      user.profile.images = [gravatarUrl]
     }
   }
 

@@ -112,29 +112,33 @@ const syncTime = () => {
   const emitted = Date.now()
   Meteor.call('syncTime', { now: emitted }, (err, date) => {
     lastDiff = Date.now() - date.now
+
     console.log(
       `[Timeslip check: Server->Client Diff = ${lastDiff}ms; Client->Server Diff = ${date.diff} ms]`,
     )
   })
+  // sync every 15 minutes
+  setTimeout(syncTime, 15 * 1000 * 60)
 }
-// Wait for 5 (arbitrary) seconds after Meteor.startup() calls us.. Might be better to wait for a connection
-// but that's more client-side work than is worthwhile for this
-Meteor.startup(() => window.setTimeout(syncTime, 5000))
+Meteor.startup(syncTime)
 
-// use this to allow client NOT pull resources every time
-// will return timestamp with next expire datetime
+/**
+ * Generates same timestamp for every maxAge seconds
+ *
+ * it will round timestamp to maxAge seconds
+ * it's easier to understand with tens and fives, but it will work with any number
+ * for example if maxAge is set to 10s - then return will be rounded to 10 * 1000 (four zeroes)
+ * and makeExpireTimestamp will return same value for next 10 seconds
+ * actually it can return different earlier for the first and second call,
+ * but all next calls will get same value for next 10 seconds
+ *
+ * @param maxAge - in seconds
+ * @returns {number} timestamp with next expire datetime
+ */
 export const makeExpireTimestamp = maxAge => {
-  // TODO(@stauzs): we need server time here - this will work only for short periods of time !!!!
-  // See https://github.com/mizzao/meteor-timesync
   const now = Date.now() - lastDiff
-  // this will be timestamp rounded to seconds   // TODO(@stauzs) explain why this is  % (expires * 1000) rather than % 1000
-  // it will round timestamp to expires seconds - * 1000 because JS timestamps are in milliseconds
-  // it's easier to understand with tens and fives, but it will work with any number
-  // for example if expires will be 10s - then return will be rounded to 10 * 1000 (four zeroes)
-  // and makeExpireTimestamp will return same value for next 10 seconds
-  // actually it can return different earlier for the first and second call,
-  // but all next calls will get same value for next 10 seconds
-  const maxAgeMS = maxAge * 1000
+
+  const maxAgeMS = maxAge * 1000 // 1000 because JS timestamps are in milliseconds
   return now - now % maxAgeMS + maxAgeMS
 }
 
@@ -155,7 +159,7 @@ export const observeAsset = (selector, onReady, onChange = onReady, cachedObserv
   const observable = cachedObservable || {
     observer: null,
     getAssets: () => cursor.fetch(),
-    getAsset: () => {
+    getAsset() {
       const assets = cursor.fetch()
       if (assets.length > 0) {
         return assets[0]
@@ -168,7 +172,7 @@ export const observeAsset = (selector, onReady, onChange = onReady, cachedObserv
     stopped: () => stopped,
   }
   observable.subscription = Meteor.subscribe('assets.public.partial.bySelector', selector, {
-    onStop: () => {
+    onStop() {
       observable.observer && observable.observer.stop()
       // Something internally in Meteor makes subscription stop even before it's ready
       // ..this is caused by subscriptions called in ReactGetMeteorData() - as they
@@ -177,18 +181,18 @@ export const observeAsset = (selector, onReady, onChange = onReady, cachedObserv
       if (!onReadyCalled) observeAsset(selector, onReady, onChange, observable)
       else stopped = true
     },
-    onReady: () => {
+    onReady() {
       onReadyCalled = true
       if (ALLOW_OBSERVERS) {
         observable.observer = cursor.observeChanges({
-          changed: (id, changes) => {
+          changed(id, changes) {
             onChange(id, changes)
           },
         })
       }
       onReady && onReady()
     },
-    onError: (...args) => {
+    onError(...args) {
       console.log(' AssetFetcher:observe:observable:onError:', selector, ...args)
     },
   })
@@ -199,7 +203,7 @@ export const getAssetBySelector = (selector, onReady) => {
   // get meteor data issue
   setTimeout(() => {
     const sub = Meteor.subscribe('assets.public.partial.bySelector', selector, {
-      onReady: () => {
+      onReady() {
         const assets = PartialAzzets.find(selector).fetch()
         sub.stop()
         if (assets && assets.length) return onReady(assets[0])
@@ -274,10 +278,12 @@ class AssetHandler {
    * Create an AssetHandler.
    * @param {string} assetId - Asset Id.
    * @param {function} onChange - Callback when changes to asset or content2 occur - first time will be called on successful content2 acquisition.
+   * @param {bool} keepOpen - don't close subscription automatically ( use with caution!!!! )
    */
-  constructor(assetId, onChange) {
+  constructor(assetId, onChange, keepOpen) {
     this.id = assetId
     this.onChange = onChange // TODO: Needs default for undefined? otherwise we have undefined/null which can cause errors if truthy comparisons aren't precise
+    this.keepOpen = keepOpen
 
     this.asset = null
     this.isReady = false
@@ -498,9 +504,9 @@ const cachedAssetHandlers = []
  * @name getAssetHandlerWithContent2 - factory function for AssetHandlers
  * this will return a (potentially cached or new) AssetHandler, not an Asset
  * */
-export const getAssetHandlerWithContent2 = (id, onChange, forceFullUpdate = false) => {
+export const getAssetHandlerWithContent2 = (id, onChange, forceFullUpdate = false, keepOpen = false) => {
   // stop other handler subscriptions - e.g. AssetRoute changed asset without calling unmount
-  cachedAssetHandlers.forEach(h => h.id !== id && h.stop())
+  cachedAssetHandlers.forEach(h => h.id !== id && !h.keepOpen && h.stop())
   let handler = cachedAssetHandlers.find(h => h.id === id)
   //
   if (handler) {
@@ -517,7 +523,7 @@ export const getAssetHandlerWithContent2 = (id, onChange, forceFullUpdate = fals
     handler = cachedAssetHandlers.pop()
     handler.stop()
   }
-  handler = new AssetHandler(id, onChange)
+  handler = new AssetHandler(id, onChange, keepOpen)
   handler.lastAccessed = Date.now()
   cachedAssetHandlers.push(handler)
   return handler

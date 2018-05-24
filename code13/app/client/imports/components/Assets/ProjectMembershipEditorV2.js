@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import QLink from '/client/imports/routes/QLink'
 import { Popup, Label, Icon } from 'semantic-ui-react'
 import {
@@ -130,7 +131,7 @@ const ProjectMembershipPopup = props => {
     else choices.unshift(makeHeaderEl('h0', `${asset.dn_ownerName}'s Projects containing this Asset`))
   }
 
-  return <div style={{ maxHeight: '500px', overflow: 'scroll' }}>{choices}</div>
+  return <div style={{ maxHeight: '500px', overflow: 'auto' }}>{choices}</div>
 }
 
 const ProjectMembershipEditorV2 = React.createClass({
@@ -142,7 +143,7 @@ const ProjectMembershipEditorV2 = React.createClass({
     canEdit: PropTypes.bool, // Can be false
   },
 
-  render: function() {
+  render() {
     const { currUserId, asset, currUserProjects, canEdit, handleToggleProjectName } = this.props
 
     return (

@@ -46,9 +46,9 @@ Meteor.publish('chats.channelName', function(toChannelName, limit = 20) {
 
   if (limit > chatParams.maxClientChatHistory) limit = chatParams.maxClientChatHistory
 
-  let selector = { toChannelName: toChannelName }
+  let selector = { toChannelName }
   let options = {
-    limit: limit,
+    limit,
     sort: { createdAt: -1 },
     fields: fieldsChatPublic,
   }

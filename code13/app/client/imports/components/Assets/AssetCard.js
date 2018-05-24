@@ -1,16 +1,17 @@
 import cx from 'classnames'
 import _ from 'lodash'
 import moment from 'moment'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Card, Icon, Popup } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
-import QLink, { utilPushTo } from '/client/imports/routes/QLink'
+import { utilPushTo } from '/client/imports/routes/QLink'
 import { AssetKinds } from '/imports/schemas/assets'
 import { logActivity } from '/imports/schemas/activity'
 import ProjectMembershipEditor from './ProjectMembershipEditor'
 import WorkState from '/client/imports/components/Controls/WorkState'
 import ChallengeState from '/client/imports/components/Controls/ChallengeState'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
@@ -51,10 +52,10 @@ const AssetCard = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps() {
     return {
       canEdit: false,
       renderView: defaultAssetViewChoice,
@@ -76,14 +77,14 @@ const AssetCard = React.createClass({
     const { asset } = this.props
     const url = `/api/asset/png/${asset._id}`
     // IE supports only text.. so - encode everything in the "text"
-    e.dataTransfer.setData('text', JSON.stringify({ link: url, asset: asset }))
-    $(document.body).addClass('dragging') // this is in mgb.css
+    e.dataTransfer.setData('text', JSON.stringify({ link: url, asset }))
+    document.body.classList.add('dragging') // this is in mgb.css
   },
 
   endDrag(e) {
     //const { asset } = this.props
     //console.log(`AssetCard stopDrag(${asset ? asset._id : 'null?'})..`)
-    $(document.body).removeClass('dragging') // this is in mgb.css
+    document.body.classList.remove('dragging') // this is in mgb.css
   },
 
   render() {
@@ -264,7 +265,7 @@ const AssetCard = React.createClass({
    * @param {any} err
    */
   _handleMeteorErrResp(err) {
-    if (err) showToast(err.reason, 'error')
+    if (err) showToast.error(err.reason)
   },
 
   handleChangeChosenProjectNames(newChosenProjectNamesArray) {

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 // TODO: use full list from view-source:https://codemirror.net/demo/search.html
 
@@ -7,7 +8,7 @@ const KeyBindings = React.createClass({
     commandContext: PropTypes.string,
   },
 
-  makeList: function(cmdContext) {
+  makeList(cmdContext) {
     return keysDB.filter(v => v.command.startsWith(cmdContext)).map(v2 => (
       <a className="item" key={v2.command}>
         <div className="ui horizontal label" style={{ width: '5em' }}>
@@ -18,7 +19,7 @@ const KeyBindings = React.createClass({
     ))
   },
 
-  render: function() {
+  render() {
     const { commandContext } = this.props
     return (
       <div

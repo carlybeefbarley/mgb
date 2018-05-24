@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Segment, Header, Icon } from 'semantic-ui-react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { expectedToolbars } from '/client/imports/components/Toolbar/expectedToolbars'
@@ -42,7 +43,7 @@ const fpSettings = React.createClass({
     settings: PropTypes.object,
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     const foo = _.map(expectedToolbars.scopeNames, name => this.getLevelValFromSettings(name))
     return { levels: foo } // This data isn't used, but because we referenced it in getMeteorData, there will be a forceUpdate() when settings change
   },
@@ -65,7 +66,7 @@ const fpSettings = React.createClass({
     resetAllFeatureLevelsToDefaults(this.context.settings)
   },
 
-  render: function() {
+  render() {
     const makeSlider = name => {
       const maxVal = expectedToolbars.getMaxLevel(name)
       const defaultLevel = expectedToolbars.getDefaultLevel(name)

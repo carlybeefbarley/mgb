@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import moment from 'moment'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Popup, Label, Button, Icon, Segment } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 
@@ -82,7 +83,7 @@ const AssetForkGenerator = ({ asset, canFork, isForkPending, doForkAsset }) => {
             </div>
           </div>
         )}
-        <div style={{ marginTop: '1em', maxHeight: '200px', overflow: 'scroll' }}>
+        <div style={{ marginTop: '1em', maxHeight: '200px', overflow: 'auto' }}>
           <b>
             <Icon name="fork" />
             {numChildren} Forks:

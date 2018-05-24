@@ -9,13 +9,13 @@ const API_SERVERS = [
 ]
 
 const cache = {
-  API_SERVERS: API_SERVERS,
+  API_SERVERS,
   cleanHeader: 'nocache',
   cacheServerHeader: 'x-cache-server',
   store: {},
   // find a way to automate this - AssetUrlGenerator?
   routes: {
-    common: (id, user, name) => {
+    common(id, user, name) {
       return [
         `test`,
         /*`asset/${id}`,
@@ -27,7 +27,7 @@ const cache = {
          `asset/id/${user}/${name}`*/
       ]
     },
-    graphic: (id, user, name) => {
+    graphic(id, user, name) {
       return [
         `asset/png/${id}`,
         `asset/png/${user}/${name}`,
@@ -37,16 +37,16 @@ const cache = {
         `asset/tileset/${user}/${name}`,
       ]
     },
-    actor: (id, user, name) => {
+    actor(id, user, name) {
       return [`asset/actor/${user}/${name}`, `asset/fullactor/${user}/${name}`]
     },
-    avatar: (id, user, name) => {
+    avatar(id, user, name) {
       return [`user/${id}/avatar`]
     },
-    tutorial: (id, user, name) => {
+    tutorial(id, user, name) {
       return [`asset/tutorial/${id}`]
     },
-    code: (id, user, name) => {
+    code(id, user, name) {
       return [
         //`asset/code/${id}`,
         //`asset/code/${id}/${name}`,// this could break things
@@ -55,15 +55,15 @@ const cache = {
         //`asset/code/bundle/u/${user}/${name}`
       ]
     },
-    music: (id, user, name) => {
+    music(id, user, name) {
       return [`asset/music/${id}/music.mp3`]
     },
-    sound: (id, user, name) => {
+    sound(id, user, name) {
       return [`asset/sound/${id}/sound.mp3`, `asset/sound/name/${name}`]
     },
   },
   // call this after updating asset
-  invalidateAsset: function(assetData) {
+  invalidateAsset(assetData) {
     const id = assetData._id
     const user = assetData.dn_ownerName
     const name = assetData.name

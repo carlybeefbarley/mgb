@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import QLink from '/client/imports/routes/QLink'
 import { Activity } from '/imports/schemas'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
@@ -8,9 +9,10 @@ const RecentlyEditedAssetGET = React.createClass({
 
   propTypes: {
     userId: PropTypes.string, // User Id we are interested in. Can be null/undefined
+    linkText: PropTypes.string,
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     const { userId } = this.props
     if (!userId || userId === '') return {}
 
@@ -27,12 +29,12 @@ const RecentlyEditedAssetGET = React.createClass({
   },
 
   render() {
-    const { userId } = this.props
+    const { userId, linkText } = this.props
     if (!userId || userId === '') return null
     if (this.data.loading) return <span>...</span>
     const nothin = (
       <span>
-        <em>nothing yet...</em>
+        <em>nothing, yet!</em>
       </span>
     )
 
@@ -41,7 +43,7 @@ const RecentlyEditedAssetGET = React.createClass({
     if (!activity) return nothin
 
     const to = `/u/${activity.toOwnerName}/asset/${activity.toAssetId}`
-    return <QLink to={to}>{activity.toAssetName}</QLink>
+    return <QLink to={to}>{linkText ? linkText : activity.toAssetName}</QLink>
   },
 })
 

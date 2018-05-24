@@ -30,7 +30,7 @@ class BPMTapper extends Component {
     return bpm
   }
 
-  render = () => {
+  render() {
     const props = {
       id: 'bpm',
       label: 'BPM',

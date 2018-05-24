@@ -12,12 +12,9 @@ Primary Integration points
 ==========================
 
 1. package.json includes react-joyride.
-1. App.js embeds the <Joyride> react element, provides the state management for the joyride
-   in this.state.joyrideSteps, and provides a method (via props) to the <FlexPanel> element
-   so it can add or replace steps. That function is addJoyrideSteps(). See the source for
-   it's parameters and options.   Currently only FlexPanels can start tours, but that will 
-   probably change in future
-1. We SHALL NEVER use react-joyride for tooltips. Semantic UI provides all we need there
+1. App.js embeds the <LearnRootHelper /> react element, joyrideStore provides the state management for the joyride.
+   withStores provides a joyrideStore method to the wrapped component so it can add steps.
+   That function is joyrideStore.addSteps(). See the source for it's parameters and options.
 
 
 Joyride Tour definitions

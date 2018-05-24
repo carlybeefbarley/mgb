@@ -1,9 +1,10 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import QLink from '/client/imports/routes/QLink'
 import moment from 'moment'
 import { Popup, Icon, Label } from 'semantic-ui-react'
-import EditTime, { EditTimeCounter } from '/client/imports/components/Assets/EditTime'
+import EditTime from '/client/imports/components/Assets/EditTime'
 
 const SESSION_MAGIC_TEXT = 'BY_SESSION:'
 const _getCurrUserIdentifier = currUser =>
@@ -12,7 +13,12 @@ const _getCurrUserIdentifier = currUser =>
 const ACTIVE_OTHER_PERSON_EDITING_HIGHLIGHT_MS = 1000 * 60 // Highlight if another person changed this in last N seconds. Make this reactive/timed?
 
 export default class AssetHistoryDetail extends React.Component {
+  handleOpen = () => this.props.toggleCounterVisibility(true)
+
+  handleClose = () => this.props.toggleCounterVisibility(false)
+
   render() {
+    console.log('render asset history')
     const asset = this.props.asset
     const assetActivity = this.props.assetActivity
     const currUser = this.props.currUser
@@ -50,12 +56,20 @@ export default class AssetHistoryDetail extends React.Component {
     )
 
     return (
-      <Popup wide="very" hoverable position="bottom right" trigger={TriggerElement} size="tiny">
+      <Popup
+        wide="very"
+        hoverable
+        position="bottom right"
+        trigger={TriggerElement}
+        size="tiny"
+        onOpen={this.handleOpen}
+        onClose={this.handleClose}
+      >
         <Popup.Header>{changesCount} changes</Popup.Header>
         <Popup.Content>
           <div>Asset created: {moment(asset.createdAt).fromNow()}</div>
           <div>Last update: {moment(asset.updatedAt).fromNow()}</div>
-          <div style={{ maxHeight: '400px', overflow: 'scroll' }}>{changes}</div>
+          <div style={{ maxHeight: '400px', overflow: 'auto' }}>{changes}</div>
           <EditTime time={this.props.counterTime} asset={asset} />
         </Popup.Content>
       </Popup>
@@ -67,5 +81,6 @@ AssetHistoryDetail.propTypes = {
   asset: PropTypes.object.isRequired,
   assetActivity: PropTypes.array, // A list of Activity records for an Asset provided via getMeteorData(). Can be empty while being loaded
   currUser: PropTypes.object, // currently Logged In user (not always provided)
-  counterTime: PropTypes.string,
+  counterTime: PropTypes.string, // display editor use time
+  toggleCounterVisibility: PropTypes.func.isRequired, // pass parent flag if counter is visible so it doesn't rerender on each second if counter is hidden
 }

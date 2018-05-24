@@ -28,7 +28,7 @@ RestApi.addRoute(
   'asset/sound/:id/sound.mp3',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
       if (!asset) return err404
 
@@ -41,7 +41,7 @@ RestApi.addRoute(
   'asset/sound/:user/:name/sound.mp3',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {
@@ -66,11 +66,11 @@ RestApi.addRoute(
   'asset/sound/name/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       'use strict'
       const ownerId = 'fijoMML4CZzTAdHuf' // guntis id for test purposes // TODO(guntis) FIX
       // let sound = Azzets.findOne(this.urlParams.id)
-      let query = Azzets.find({ kind: 'sound', ownerId: ownerId, name: { $regex: this.urlParams.name } })
+      let query = Azzets.find({ kind: 'sound', ownerId, name: { $regex: this.urlParams.name } })
 
       let sounds = []
       query.forEach(function(item) {

@@ -1,8 +1,9 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Segment, Popup, Button, Dropdown, Label, Divider, TextArea } from 'semantic-ui-react'
 import { FlagTypes, _parseTableNameToTable } from '/imports/schemas/flags'
 import _ from 'lodash'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 
 class FlagEntity extends React.Component {
   state = {
@@ -28,6 +29,7 @@ class FlagEntity extends React.Component {
           <Popup
             on="click"
             size="tiny"
+            wide="very"
             position="bottom right"
             trigger={
               <Label
@@ -37,16 +39,18 @@ class FlagEntity extends React.Component {
                 icon={{ name: 'warning', color: 'red', style: { marginRight: 0 } }}
               />
             }
-            wide="very"
           >
-            <Popup.Header>
+            <Popup.Header
+              style={{ paddingLeft: '3%', paddingTop: '2%', paddingBottom: '4%', fontSize: '1.5em' }}
+            >
               Report this {tableCollection === 'Azzets' ? 'Asset' : 'Message'} to Moderator
             </Popup.Header>
             <Popup.Content>
-              <Segment basic>
+              <Segment basic style={{ minWidth: '30em' }}>
                 <Dropdown
                   placeholder="Reason(s)"
                   search
+                  compact
                   fluid
                   multiple
                   selection
@@ -54,12 +58,14 @@ class FlagEntity extends React.Component {
                     text: FlagTypes[k].displayName,
                     value: k,
                   }))}
-                  onChange={(event, dropdown) => {
-                    this.setState({ userSelectedTags: dropdown.value })
+                  onChange={(event, data) => {
+                    console.log('Change Happened')
+                    this.setState({ userSelectedTags: data.value })
                   }}
                 />
                 <Divider hidden />
                 <TextArea
+                  style={{ width: '100%' }}
                   placeholder="Additional comments/concerns"
                   autoHeight
                   onChange={(event, textarea) => {
@@ -68,6 +74,7 @@ class FlagEntity extends React.Component {
                 />
                 <Divider hidden />
                 <Button
+                  style={{ marginBottom: '2%' }}
                   as="div"
                   floated="right"
                   onClick={() =>
@@ -78,9 +85,10 @@ class FlagEntity extends React.Component {
                       this.state.userSelectedTags,
                       this.state.userComments,
                     )}
-                  size="small"
+                  size="large"
                   content="Report"
-                  icon="warning"
+                  icon="warning sign"
+                  color="red"
                 />
                 &nbsp;
               </Segment>
@@ -117,8 +125,8 @@ const _doReportEntity = (currUser, entity, tableCollection, selectedTags, userCo
     }
   }
   Meteor.call('Flags.create', reportedEntity, data, (error, result) => {
-    if (error) showToast(`Could not flag: ${error.reason}`, 'error')
-    else showToast('Flagged successfully', 'success')
+    if (error) showToast.error(`Could not flag: ${error.reason}`)
+    else showToast.success('Flagged successfully')
   })
 }
 export default FlagEntity

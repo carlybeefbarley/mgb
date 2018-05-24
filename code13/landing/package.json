@@ -4,7 +4,6 @@
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
-    "preinstall": "which use-yarn && use-yarn || true",
     "build": "gulp clean build",
     "start": "gulp",
     "deploy": "yarn deploy:staging --silent && yarn deploy:production --silent ",
@@ -38,7 +37,6 @@
     "gulp-uglify": "^2.1.2",
     "gulp-util": "^3.0.8",
     "run-sequence": "~1.2.2",
-    "through2": "^2.0.3",
-    "use-yarn": "^1.0.1"
+    "through2": "^2.0.3"
   }
 }

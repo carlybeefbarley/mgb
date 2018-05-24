@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Link, browserHistory } from 'react-router'
 import urlMaker from './urlMaker'
-import { clearPriorPathsForJoyrideCompletionTags } from '/client/imports/routes/App'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 const isLeftClickEvent = e => e.button === 0
 const hasModiferKeys = e => !!(e.metaKey || e.ctrlKey || e.shiftKey)
@@ -46,7 +45,7 @@ class QLink extends React.Component {
 
     // `nav` logic was not used in the codebase
     // adding an error log for analytics tracking just in case a usage was missed
-    nav: (props, propName, componentName) => {
+    nav(props, propName, componentName) {
       if (props[propName] !== undefined) {
         return new Error(`\`nav\` is not implemented, see ${componentName}`)
       }
@@ -78,7 +77,7 @@ class QLink extends React.Component {
     const appScopedQuery = urlMaker.getCrossAppQueryParams(this.context.urlLocation.query)
 
     if (event.target && event.target.id && event.target.id.startsWith('mgbjr-')) {
-      joyrideCompleteTag(event.target.id.replace(/^mgbjr-/, 'mgbjr-CT-'))
+      joyrideStore.completeTag(event.target.id.replace(/^mgbjr-/, 'mgbjr-CT-'))
     }
 
     // Call the click handler we were given. Note that it has the option to preventDefault()
@@ -103,9 +102,6 @@ class QLink extends React.Component {
     const combinedQuery = { ...appScopedQuery, ...modifiedQuery }
 
     const location = createLocationDescriptor(modifiedTo, { query: combinedQuery, hash, state })
-
-    // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
-    clearPriorPathsForJoyrideCompletionTags()
 
     this.context.router.push(location)
     event.preventDefault() // Stop Link.handleClick from doing anything further
@@ -215,9 +211,6 @@ export function utilPushTo(existingQuery, newTo, extraQueryParams = {}) {
     query: { ...appScopedQuery, ...extraQueryParams },
   })
 
-  // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
-  clearPriorPathsForJoyrideCompletionTags()
-
   browserHistory.push(location)
 }
 
@@ -238,9 +231,6 @@ export function utilReplaceTo(existingQuery, newTo, extraQueryParams = {}) {
   const location = createLocationDescriptor(newTo, {
     query: { ...appScopedQuery, ...extraQueryParams },
   })
-
-  // This is in support of the joyride/tutorial infrastructure to edge-detect page changes
-  clearPriorPathsForJoyrideCompletionTags()
 
   browserHistory.replace(location)
 }

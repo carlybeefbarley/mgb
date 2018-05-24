@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { assetMakeSelector, assetSorters } from '/imports/schemas/assets'
 import GameItems from '/client/imports/components/Assets/GameAsset/GameItems'
@@ -19,7 +20,7 @@ const GamesAvailableGet = React.createClass({
     scopeToProjectName: PropTypes.string, // e.g. foobar. Can be undefined/null. If specified, then scopeToUserId must also be specified
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     const { scopeToUserId, scopeToProjectName } = this.props
 
     const handleForAssets = Meteor.subscribe(
@@ -47,7 +48,7 @@ const GamesAvailableGet = React.createClass({
     }
   },
 
-  render: function() {
+  render() {
     const { loading, games } = this.data
     const { currUser, header } = this.props
     return loading || games.length === 0 ? null : (

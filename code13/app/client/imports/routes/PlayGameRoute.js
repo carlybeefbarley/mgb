@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
@@ -7,7 +8,7 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import Helmet from 'react-helmet'
 
 import { makeChannelName } from '/imports/schemas/chats'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import { utilShowChatPanelChannel } from '/client/imports/routes/QLink'
 import { isValidCodeGame, isValidActorMapGame } from '/imports/schemas/assets'
 
@@ -178,8 +179,7 @@ class PlayCodeGame extends React.Component {
    * */
   restart() {
     if (this.refs.iframe) {
-      // jquery only for cross browser support
-      $(this.refs.iframe).attr('src', this.refs.iframe.src)
+      this.refs.iframe.setAttribute('src', this.refs.iframe.src)
       this.props.incrementPlayCountCb()
     }
   }
@@ -291,9 +291,8 @@ class PlayCodeGame extends React.Component {
 
 //         src='/api/asset/code/bundle/AXhwYgg93roEsLCBJ'>
 
-const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb, availableWidth }) => {
+const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb, availableWidth, isMgb1Game }) => {
   if (!_mapName || _mapName === '') return <ThingNotFound type="ActorGame" id="&quot;&quot;" />
-
   const colonPlace = _mapName.search(':')
   const [ownerName, mapName] =
     colonPlace == -1
@@ -306,6 +305,7 @@ const PlayMageGame = ({ _mapName, owner, incrementPlayCountCb, availableWidth })
       ownerName={ownerName}
       startMapName={mapName}
       isPaused={false}
+      isMgb1Game={isMgb1Game}
       playCountIncFn={incrementPlayCountCb}
       fetchAssetByUri={uri => fetchAssetByUri(uri)}
     />
@@ -359,6 +359,7 @@ const PlayGame = ({ game, user, incrementPlayCountCb, availableWidth }) => {
             owner={user}
             incrementPlayCountCb={incrementPlayCountCb}
             availableWidth={availableWidth}
+            isMgb1Game={game.text.startsWith('Imported from MGB1')}
           />
         </div>
       )
@@ -386,7 +387,7 @@ const PlayGameRoute = React.createClass({
     handleSetCurrentlyEditingAssetInfo: PropTypes.func, // We should call this to set/clear current asset kind
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     const { params } = this.props
     const { assetId } = params
     const assetHandler = (this.assetHandler = getAssetHandlerWithContent2(assetId, () => {
@@ -412,7 +413,7 @@ const PlayGameRoute = React.createClass({
     }
   },
 
-  incrementPlayCount: function() {
+  incrementPlayCount() {
     const game = this.data.asset // One Asset provided via getMeteorData()
     if (game && game._id) _incrementPlayCount(game._id)
   },
@@ -426,11 +427,11 @@ const PlayGameRoute = React.createClass({
     }
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     this.checkForImplicitIncrementPlayCount()
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     if (this.assetHandler) {
       this.assetHandler.stop()
       this.assetHandler = null
@@ -439,7 +440,7 @@ const PlayGameRoute = React.createClass({
     }
   },
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
   componentDidUpdate() {
@@ -448,11 +449,11 @@ const PlayGameRoute = React.createClass({
 
   handleChatClick() {
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: this.props.params.assetId })
-    joyrideCompleteTag('mgbjr-CT-asset-play-game-show-chat')
+    joyrideStore.completeTag('mgbjr-CT-asset-play-game-show-chat')
     utilShowChatPanelChannel(this.context.urlLocation, channelName)
   },
 
-  render: function() {
+  render() {
     if (this.data.loading) return <Spinner />
 
     if (!this.data.asset) return <ThingNotFound type="GameConfig Asset" id={params.assetId} />
@@ -460,7 +461,7 @@ const PlayGameRoute = React.createClass({
     const game = this.data.asset // One Asset provided via getMeteorData()
 
     return (
-      <Segment basic padded style={{ paddingTop: 0, paddingBottom: 0 }}>
+      <Segment basic padded style={{ paddingTop: 0, paddingBottom: 0, marginBottom: 0 }}>
         <Header as="span">
           <QLink to={`/u/${game.dn_ownerName}/asset/${game._id}`}>
             <Icon name="game" />

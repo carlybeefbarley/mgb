@@ -3,7 +3,7 @@ import { Azzets } from '/imports/schemas'
 import { logActivity } from '/imports/schemas/activity'
 
 Meteor.methods({
-  'job.gamePlayStats.playGame': function(assetId) {
+  'job.gamePlayStats.playGame'(assetId) {
     let username = this.userId ? Meteor.user().profile.name : '<guest>'
     console.log(
       '[PlayGame]  Request To Increment PlayCount for ',

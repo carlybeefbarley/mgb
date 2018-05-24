@@ -30,6 +30,12 @@ const schema = {
     isDeleted: optional(Boolean), // soft delete flag, so we can have an undelete easily
     //    invites: optional([]),             // DEPRECATED
     projectNames: optional([String]), // An array of strings  DEPRECATED, IGNORE+DELETE
+    HoC: {
+      currStepId: optional(String),
+      stepToAssetMap: optional(Object),
+      email: optional(String), // Their real email address
+      username: optional(String), // Their real username
+    },
   },
   badges: optional([]), // Empty.. or array of badge names (see badges.js)
   badges_count: optional(Number), // Number of badges
@@ -57,26 +63,26 @@ export const userSorters = {
 }
 
 Meteor.methods({
-  'User.storeProfileImage': function(url) {
+  'User.storeProfileImage'(url) {
     check(url, String)
     checkIsLoggedInAndNotSuspended()
 
     try {
-      Meteor.users.update(Meteor.userId(), { $push: { 'profile.images': url } })
-      Meteor.users.update(Meteor.userId(), { $set: { 'profile.avatar': url } })
+      Users.update(Meteor.userId(), { $push: { 'profile.images': url } })
+      Users.update(Meteor.userId(), { $set: { 'profile.avatar': url } })
     } catch (exception) {
       console.log('User.storeProfileImage failed:', exception)
       return exception
     }
   },
 
-  'User.setProfileImage': function(url) {
+  'User.setProfileImage'(url) {
     check(url, String)
     checkIsLoggedInAndNotSuspended()
-    Meteor.users.update(Meteor.userId(), { $set: { 'profile.avatar': url } })
+    Users.update(Meteor.userId(), { $set: { 'profile.avatar': url } })
   },
 
-  'User.updateEmail': function(docId, data) {
+  'User.updateEmail'(docId, data) {
     check(docId, String)
     checkIsLoggedInAndNotSuspended()
 
@@ -87,13 +93,13 @@ Meteor.methods({
       emails: optional(schema.emails),
     })
 
-    count = Meteor.users.update(docId, { $push: data })
+    count = Users.update(docId, { $push: data })
 
     console.log('[User.updateEmail]', count, docId)
     return count
   },
 
-  'User.updateProfile': function(docId, data) {
+  'User.updateProfile'(docId, data) {
     check(docId, String)
     checkIsLoggedInAndNotSuspended()
 
@@ -117,22 +123,26 @@ Meteor.methods({
       'profile.isDeleted': optional(schema.profile.isDeleted),
       'profile.projectNames': optional(schema.profile.projectNames),
       'profile.latestNewsTimestampSeen': optional(schema.profile.latestNewsTimestampSeen),
+      'profile.HoC.currStepId': optional(schema.profile.HoC.currStepId),
+      'profile.HoC.stepToAssetMap': optional(schema.profile.HoC.stepToAssetMap),
+      'profile.HoC.email': optional(schema.profile.HoC.email),
+      'profile.HoC.username': optional(schema.profile.HoC.username),
       suIsBanned: schema.suIsBanned,
       suFlagId: schema.suFlagId,
     })
-    count = Meteor.users.update(docId, { $set: data })
+    count = Users.update(docId, { $set: data })
 
     if (Meteor.isServer) console.log('[User.updateProfile]', count, docId)
     return count
   },
 
-  'User.sendVerifyEmail': function() {
+  'User.sendVerifyEmail'() {
     if (Meteor.isServer) {
       Accounts.sendVerificationEmail(Meteor.userId(), Meteor.user().emails[0].address)
     }
   },
 
-  'User.addEditTime': function(editType, timeSec) {
+  'User.addEditTime'(editType, timeSec) {
     checkIsLoggedInAndNotSuspended()
     const editors = ['graphic', 'code', 'map', 'actor', 'actormap', 'sound', 'music']
     // add to time max 60sec per request
@@ -141,7 +151,7 @@ Meteor.methods({
       const edit_time = _.isEmpty(user.edit_time) ? {} : user.edit_time
       if (!edit_time[editType]) edit_time[editType] = 0
       edit_time[editType] += timeSec
-      Meteor.users.update({ _id: Meteor.userId() }, { $set: { edit_time: edit_time } })
+      Users.update({ _id: Meteor.userId() }, { $set: { edit_time } })
     }
   },
 })

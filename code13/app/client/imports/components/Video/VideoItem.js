@@ -1,26 +1,22 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
-import { List, Segment, Header } from 'semantic-ui-react'
+import PropTypes from 'prop-types'
+import React from 'react'
+import { List, Segment } from 'semantic-ui-react'
+import VideoFrame from './VideoFrame'
 
 export default class VideoItem extends React.Component {
   static propTypes = {
-    url: PropTypes.string,
+    videoId: PropTypes.string,
     title: PropTypes.string,
   }
 
   render() {
+    const { videoId, title } = this.props
+
     return (
       <List.Item>
-        <Segment>
-          <iframe
-            style={{ display: 'block', margin: '0 auto' }}
-            width="560"
-            height="315"
-            src={'https://www.youtube.com/embed/' + this.props.url}
-            frameBorder="0"
-            allowFullScreen
-          />
-          <Header textAlign="center">{this.props.title}</Header>
+        <Segment style={{ paddingBottom: '3em' }}>
+          <VideoFrame videoId={videoId} title={title} hd="1080" width="560px" height="315px" />
         </Segment>
       </List.Item>
     )

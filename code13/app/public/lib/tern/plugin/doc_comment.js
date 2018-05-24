@@ -333,7 +333,6 @@
           var key = parseType(scope, str, pos + 2);
           if (!key) return null;
           pos = skipSpace(str, key.end);
-          madeUp = madeUp || key.madeUp;
           if (str.charAt(pos++) != ",") return null;
           var val = parseType(scope, str, pos);
           if (!val) return null;
@@ -389,8 +388,8 @@
 
     for (var i = 0; i < comments.length; ++i) {
       var comment = comments[i];
-      var decl = /(?:\n|$|\*)\s*@(type|param|arg(?:ument)?|returns?|this|class|constructor)\s+(.*)/g, m;
-      while (m = decl.exec(comment)) {
+      var declaration = /(?:\n|\*)\s*@(type|param|arg(?:ument)?|returns?|this|class|constructor)\s+(.*)/g, m;
+      while (m = declaration.exec(comment)) {
         if (m[1] == "class" || m[1] == "constructor") {
           self = foundOne = true;
           continue;
@@ -419,7 +418,7 @@
             // employees[].name
             var name = m[2].slice(parsed.end).match(/^\s*(\[?)\s*([^\[\]\s=]+(\[\][^\[\]\s=]+)?)\s*(?:=[^\]]+\s*)?(\]?).*/);
             if (!name) continue;
-            var argname = name[2] + (parsed.isOptional || (name[1] === '[' && name[4] === ']') ? "?" : "");
+            var argname = name[2] + (parsed.isOptional || (name[1] === '[' && name[4] === ']') ? '?' : "");
 
             // Check to see if the jsdoc is indicating a property of a previously documented parameter
             var isObjProp = false;
@@ -444,6 +443,11 @@
                   parsed.type.propagate(value.type.getProp("<i>").getType().defProp(argname));
                 }
               }
+            }
+            else{
+              // this will add default value e.g. number [name = value] instead of simply number
+              // need feedback for this.. as this can look confusing although it gives more info
+              parsed.type.name = extractDefaultValue(parsed.type.name, m[2]);
             }
             if (!isObjProp) {
               (args || (args = Object.create(null)))[argname] = parsed;
@@ -518,4 +522,16 @@
       propagateWithWeight(type, aval);
     }
   };
+
+  function extractDefaultValue(type, argdef){
+    if(!type){
+      return type
+    }
+    // already parsed or this is some sort of array
+    if(type.indexOf('[') !== -1){
+      return type
+    }
+    var found = argdef.split(/(\[.*\])/)[1]
+    return type + (found || '')
+  }
 });

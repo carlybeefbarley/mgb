@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Card, Segment, Header, Divider, Menu } from 'semantic-ui-react'
 import { createContainer } from 'meteor/react-meteor-data'
 import Helmet from 'react-helmet'

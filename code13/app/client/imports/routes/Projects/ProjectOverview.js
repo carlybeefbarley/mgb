@@ -1,16 +1,18 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import Helmet from 'react-helmet'
 import { Grid, Segment, Checkbox, Message, Icon, Header, Button, Popup } from 'semantic-ui-react'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import QLink from '../QLink'
 import { Projects } from '/imports/schemas'
 import ProjectCard from '/client/imports/components/Projects/ProjectCard'
 import ProjectMembersGET from '/client/imports/components/Projects/ProjectMembersGET'
+import ProjectHistoryRoute from './ProjectHistoryRoute'
 import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/GamesAvailableGET'
 import Spinner from '/client/imports/components/Nav/Spinner'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import UserListRoute from '../Users/UserListRoute'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
@@ -45,6 +47,7 @@ const ProjectOverview = React.createClass({
   componentDidMount() {
     // setTimeou just to be sure that everything is loaded
     setTimeout(() => Hotjar('trigger', 'project-overview', this.props.currUser), 200)
+    this.getHistory()
   },
 
   getInitialState: () => ({
@@ -54,9 +57,25 @@ const ProjectOverview = React.createClass({
     isDeleteComplete: false, // True if a delete project operation succeeded.
     compoundNameOfDeletedProject: null, // Used for User feedback after deleting project. using Compound name for full clarity
     confirmDeleteNum: -1, // If >=0 then it indicates how many assets will be deleted. Used to flag 2-stage DELETE PROJECT
+    activities: [], // always array even empty one
   }),
 
-  getMeteorData: function() {
+  getHistory() {
+    const activityLimit = 6
+    Meteor.call(
+      'Activity.getActivitiesByProjectName',
+      this.props.params.projectName,
+      activityLimit,
+      (error, activities) => {
+        if (error) console.warn(error)
+        else {
+          this.setState({ activities })
+        }
+      },
+    )
+  },
+
+  getMeteorData() {
     const { projectId, projectName } = this.props.params
     const { user } = this.props
     const sel = projectId ? { _id: projectId } : { ownerId: user._id, name: projectName }
@@ -69,7 +88,7 @@ const ProjectOverview = React.createClass({
     }
   },
 
-  canEdit: function() {
+  canEdit() {
     return Boolean(
       !this.data.loading &&
         this.data.project &&
@@ -78,7 +97,7 @@ const ProjectOverview = React.createClass({
     )
   },
 
-  render: function() {
+  render() {
     const { project, loading } = this.data // One Project provided via getMeteorData()
     if (loading) return <Spinner />
 
@@ -155,7 +174,7 @@ const ProjectOverview = React.createClass({
               <Checkbox
                 disabled={!canEdit}
                 checked={!!project.allowForks}
-                onChange={() => this.handleFieldChanged({ allowForks: !project.allowForks })}
+                onChange={(e, data) => this.handleFieldChanged({ allowForks: data.checked })}
                 label="Allow forks"
                 title="Project Owner may allow other users to fork this Project and it's Assets"
               />
@@ -199,7 +218,11 @@ const ProjectOverview = React.createClass({
         </Grid.Column>
 
         <Grid.Column>
-          <Segment basic>
+          <Segment basic floated="right" style={{ width: '50%' }}>
+            <ProjectHistoryRoute project={project} activities={this.state.activities} />
+          </Segment>
+
+          <Segment basic floated="left">
             <GamesAvailableGET
               header={<Header as="h3">Games in this Project</Header>}
               currUser={currUser}
@@ -208,6 +231,8 @@ const ProjectOverview = React.createClass({
             />
           </Segment>
 
+          <div style={{ clear: 'both', height: '10px' }} />
+
           <QLink
             id="mgbjr-project-overview-assets"
             to={`/u/${project.ownerName}/assets`}
@@ -215,7 +240,7 @@ const ProjectOverview = React.createClass({
           >
             <Header as="h3">Project Assets</Header>
           </QLink>
-          <Segment basic>
+          <Segment basic clearing="true">
             <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
           </Segment>
 
@@ -240,7 +265,7 @@ const ProjectOverview = React.createClass({
 
   handleForkGo() {
     const newProjName = this.refs.forkNameInput.value
-    showToast(`Forking project '${this.data.project.name}' to '${newProjName}..`, 'info')
+    showToast.info(`Forking project '${this.data.project.name}' to '${newProjName}..`)
     this.setState({ isForkPending: true })
     const forkCallParams = {
       sourceProjectName: this.data.project.name,
@@ -248,12 +273,12 @@ const ProjectOverview = React.createClass({
       newProjectName: newProjName,
     }
     Meteor.call('Project.Azzets.fork', forkCallParams, (err, result) => {
-      if (err) showToast(`Could not fork project: ${err}`, 'error')
+      if (err) showToast.error(`Could not fork project: ${err}`)
       else {
         const msg = `Forked project '${this.data.project
           .name}' to '${newProjName}, creating ${result.numNewAssets} new Assets`
         logActivity('project.fork', msg)
-        showToast(msg)
+        showToast.warning(msg)
         // TODO: navigate to /u/${currUser.username}/projects/${result.newProjectId}
       }
       this.setState({ isForkPending: false })
@@ -262,16 +287,16 @@ const ProjectOverview = React.createClass({
 
   // TODO - override 'Search Users" header level in UserListRoute
   // TODO - some better UI for Add People.
-  handleClickUser: function(userId, userName) {
+  handleClickUser(userId, userName) {
     if (this.state.isDeletePending) {
-      showToast('Delete is still pending. Please wait..', 'warning')
+      showToast.warning('Delete is still pending. Please wait..')
       return
     }
 
     var project = this.data.project
     var newData = { memberIds: _.union(project.memberIds, [userId]) }
     Meteor.call('Projects.update', project._id, newData, (error, result) => {
-      if (error) showToast(`Could not add member ${userName} to project ${project.name}`, 'error')
+      if (error) showToast.error(`Could not add member ${userName} to project ${project.name}`)
       else
         // guntis - Is it ok that I've added project id, name as asset params?
         logActivity(
@@ -289,9 +314,9 @@ const ProjectOverview = React.createClass({
     })
   },
 
-  handleRemoveMemberFromProject: function(userId, userName) {
+  handleRemoveMemberFromProject(userId, userName) {
     if (this.state.isDeletePending) {
-      showToast('Delete is still pending. Please wait..', 'warning')
+      showToast.warning('Delete is still pending. Please wait..')
       return
     }
 
@@ -299,7 +324,7 @@ const ProjectOverview = React.createClass({
     var newData = { memberIds: _.without(project.memberIds, userId) }
 
     Meteor.call('Projects.update', project._id, newData, (error, result) => {
-      if (error) showToast(`Could not remove member ${userName} from project ${project.name}`, 'error')
+      if (error) showToast.error(`Could not remove member ${userName} from project ${project.name}`)
       else
         logActivity(
           'project.removeMember',
@@ -316,10 +341,10 @@ const ProjectOverview = React.createClass({
     })
   },
 
-  handleMemberLeaveFromProject: function(userId, userName) {
+  handleMemberLeaveFromProject(userId, userName) {
     var project = this.data.project
     Meteor.call('Projects.leave', project._id, userId, (error, result) => {
-      if (error) showToast(`Member ${userName} could not leave project ${project.name}`, 'error')
+      if (error) showToast.error(`Member ${userName} could not leave project ${project.name}`)
       else
         logActivity('project.leaveMember', `Member ${userName} left from project ${project.name}`, null, {
           dn_ownerName: project.ownerName,
@@ -332,41 +357,41 @@ const ProjectOverview = React.createClass({
   /**
    *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
    */
-  handleFieldChanged: function(changeObj) {
+  handleFieldChanged(changeObj) {
     const { project } = this.data
 
     Meteor.call('Projects.update', project._id, changeObj, error => {
-      if (error) showToast(`Could not update project: ${error.reason}`, 'error')
+      if (error) showToast.error(`Could not update project: ${error.reason}`)
       else {
         // Go through all the keys, log completion tags for each
-        _.each(_.keys(changeObj), k => joyrideCompleteTag(`mgbjr-CT-project-set-field-${k}`))
+        _.each(_.keys(changeObj), k => joyrideStore.completeTag(`mgbjr-CT-project-set-field-${k}`))
       }
     })
   },
 
-  handleDeleteProject: function() {
+  handleDeleteProject() {
     var { name } = this.data.project
     Meteor.call('Projects.countNonDeletedAssets', name, (error, result) => {
-      if (error) showToast(`Could not count Number of Assets in Project '${name}: ${error.reason}`, 'error')
+      if (error) showToast.error(`Could not count Number of Assets in Project '${name}: ${error.reason}`)
       else this.setState({ confirmDeleteNum: result })
     })
   },
 
-  handleConfirmedDeleteProject: function() {
+  handleConfirmedDeleteProject() {
     var { name, _id, ownerName } = this.data.project
     var compoundNameOfDeletedProject = `${ownerName}:${name}`
     this.setState({ isDeletePending: true }) // Button disable/enable also guards against re-entrancy
 
     Meteor.call('Projects.deleteProjectId', _id, true, (error, result) => {
       if (error) {
-        showToast(`Could not delete Project '${name}: ${error.reason}`, 'error')
+        showToast.error(`Could not delete Project '${name}: ${error.reason}`)
         this.setState({ isDeletePending: false })
       } else {
         logActivity('project.destroy', `Deleted ${result} Project ${name}`)
         this.setState({
           isDeletePending: false,
           isDeleteComplete: true,
-          compoundNameOfDeletedProject: compoundNameOfDeletedProject,
+          compoundNameOfDeletedProject,
         })
       }
     })
@@ -374,7 +399,7 @@ const ProjectOverview = React.createClass({
 
   // TODO - Activity - filter for project / user.  Maybe have a Project-related Activity Page
 
-  renderRenameDeleteProject: function() {
+  renderRenameDeleteProject() {
     const { isDeleteComplete, isDeletePending, confirmDeleteNum } = this.state
     const canEdit = this.canEdit()
 
@@ -391,7 +416,7 @@ const ProjectOverview = React.createClass({
             content="Rename"
             disabled={isDeleteComplete || isDeletePending}
             onClick={() => {
-              showToast('Rename Project has not yet been implemented..', 'warning')
+              showToast.warning('Rename Project has not yet been implemented..')
             }}
           />
         </div>
@@ -422,7 +447,7 @@ const ProjectOverview = React.createClass({
     )
   },
 
-  renderAddPeople: function() {
+  renderAddPeople() {
     if (!this.canEdit()) return null
 
     const project = this.data.project

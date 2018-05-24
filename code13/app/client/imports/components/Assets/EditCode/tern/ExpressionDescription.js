@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
 function makeFriendlyName(name, eName) {
@@ -12,7 +13,7 @@ const ExpressionDescription = React.createClass({
     expressionTypeInfo: PropTypes.object, // Has the data from a TernJS typeInfo request on an expression
   },
 
-  render: function() {
+  render() {
     if (!this.props.expressionTypeInfo || !this.props.expressionTypeInfo.exprName) return null
 
     const { name, type, exprName, doc, url, origin } = this.props.expressionTypeInfo

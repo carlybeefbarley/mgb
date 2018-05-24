@@ -1,7 +1,8 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Button, Header, Icon, Message } from 'semantic-ui-react'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import ReactDOM from 'react-dom'
 import GifParser from './GifParser.js'
 import './graphicImport.css'
@@ -68,7 +69,7 @@ export default class GraphicImport extends React.Component {
       const maxUploadMB = (maxUpload / 1024 / 1024).toFixed(1)
       // console.log(file, maxUpload)
       if (file.size > maxUpload) {
-        showToast("You can't upload a file more than " + maxUploadMB + ' MB', 'error')
+        showToast.error("You can't upload a file more than " + maxUploadMB + ' MB')
         this.setState({ status: STATUS_EMPTY })
         return
       }
@@ -204,6 +205,12 @@ export default class GraphicImport extends React.Component {
     const rows = Math.floor(this.canvas.height / this.state.tileHeight)
     let importedSoFar = 0
 
+    const tilesetInfo = {
+      image: tmpCanvas.toDataURL('image/png'),
+      cols,
+      rows,
+    }
+
     for (let row = 0; row < rows && importedSoFar < MAX_IMPORTED_FRAMES; row++) {
       for (let col = 0; col < cols && importedSoFar < MAX_IMPORTED_FRAMES; col++) {
         let imgData = tmpCtx.getImageData(
@@ -223,7 +230,13 @@ export default class GraphicImport extends React.Component {
       }
     }
 
-    this.props.importTileset(this.state.tileWidth, this.state.tileHeight, imgDataArr, thumbCanvas) // TODO: Check that this sets W,H correctly
+    this.props.importTileset(
+      this.state.tileWidth,
+      this.state.tileHeight,
+      imgDataArr,
+      thumbCanvas,
+      tilesetInfo,
+    ) // TODO: Check that this sets W,H correctly
   }
 
   clearAll = () => {

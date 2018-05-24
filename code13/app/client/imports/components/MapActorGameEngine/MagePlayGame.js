@@ -30,7 +30,7 @@ import MgbMap from './MageMgbMap'
 // This class will uses exceptions
 
 export default class MagePlayGame {
-  constructor(ownerName) {
+  constructor(ownerName, isMgb1Game) {
     // This has been a hard class to break into clean sub-classes, so I'm just putting some of the code
     // in other files and I'm connecting them here so it isn't one huge source file.
     // This is sort of a cheap 'partial class' mechanism for javascript classes
@@ -49,6 +49,7 @@ export default class MagePlayGame {
     _.assign(this, MagePlayGameActiveLayers)
     _.assign(this, MagePlayGameBackgroundLayers)
     this.container = document.getElementById('mgb-game-container')
+    this.isMgb1Game = isMgb1Game
     this.ownerName = ownerName
   }
 

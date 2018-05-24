@@ -17,7 +17,7 @@ const _serverMethodHelper = userId => {
   check(userId, String)
   checkIsLoggedInAndNotSuspended()
   const sel = { _id: userId }
-  const u = Meteor.users.findOne(sel)
+  const u = Users.findOne(sel)
   if (!u) throw new Meteor.Error(404, `User #${userId} not found`)
   return u
 }
@@ -28,7 +28,7 @@ const _serverMethodHelper = userId => {
 // },
 
 Meteor.methods({
-  'User.sendSignUpEmail': function(email) {
+  'User.sendSignUpEmail'(email) {
     console.log('############## User.sendSignUpEmail...', email)
     console.log('userId', Meteor.userId())
 
@@ -58,11 +58,11 @@ Meteor.methods({
    * RPC User.update.mgb1namesVerified
    * Currently only superAdmin can do this. Self-validation system "coming soon"
    */
-  'User.update.mgb1namesVerified': function(userId, newMgb1namesVerified) {
+  'User.update.mgb1namesVerified'(userId, newMgb1namesVerified) {
     const u = _serverMethodHelper(userId)
     check(newMgb1namesVerified, String)
     checkMgb.checkUserIsSuperAdmin()
-    const count = Meteor.users.update(
+    const count = Users.update(
       { _id: userId },
       { $set: { 'profile.mgb1namesVerified': newMgb1namesVerified } },
     )
@@ -80,11 +80,11 @@ Meteor.methods({
    * Currently only superAdmin can ban/unban an account. The idea is that the
    * discussion with the banned user would happen via email for now.
    */
-  'User.toggleBan': function(userId) {
+  'User.toggleBan'(userId) {
     const u = _serverMethodHelper(userId)
     checkMgb.checkUserIsSuperAdmin()
     const newIsBanned = !u.suIsBanned
-    const count = Meteor.users.update({ _id: userId }, { $set: { suIsBanned: newIsBanned } })
+    const count = Users.update({ _id: userId }, { $set: { suIsBanned: newIsBanned } })
     console.log('[User.toggleBan]', count, userId, `NewValue=${newIsBanned}`)
     return count
   },
@@ -93,11 +93,11 @@ Meteor.methods({
    * RPC User.deactivateAccount
    * Only owning-User or superadmin can mark an account as de-activated
    */
-  'User.deactivateAccount': function(userId) {
+  'User.deactivateAccount'(userId) {
     const u = _serverMethodHelper(userId)
     if (this.userId !== userId) checkMgb.checkUserIsSuperAdmin()
     if (u.isDeactivated === true) throw new Meteor.Error(500, `User #${userId} is already deactivated`)
-    const count = Meteor.users.update({ _id: userId }, { $set: { isDeactivated: true } })
+    const count = Users.update({ _id: userId }, { $set: { isDeactivated: true } })
     console.log('[User.deactivateAccount]', count, userId)
     return count
   },
@@ -107,11 +107,11 @@ Meteor.methods({
    * Currently only superAdmin can re-activate an account. We don't yet have a full
    * Deactivate/Reactivate user account flow, but this is done for now from fpSuperAdmin
    */
-  'User.reactivateAccount': function(userId) {
+  'User.reactivateAccount'(userId) {
     const u = _serverMethodHelper(userId)
     checkMgb.checkUserIsSuperAdmin()
     if (u.isDeactivated !== true) throw new Meteor.Error(500, `User #${userId} is not deActivated`)
-    const count = Meteor.users.update({ _id: userId }, { $set: { isDeactivated: false } })
+    const count = Users.update({ _id: userId }, { $set: { isDeactivated: false } })
     console.log('[User.reactivateAccount]', count, userId)
     return count
   },
@@ -123,7 +123,7 @@ Meteor.methods({
    * THIS IS BRUTAL AND SHOULD JUST BE USED TO GET RID OF
    * TEST ACCOUNTS AND REPEAT-SPAMMERS
    */
-  'User.eradicateAccountBrutally': function(userNameToNuke, eradicateReason = 'spammer') {
+  'User.eradicateAccountBrutally'(userNameToNuke, eradicateReason = 'spammer') {
     if (!_.has(eradicateReasons, eradicateReason))
       throw new Meteor.Error(401, `Unknown eradication reason: ${eradicateReason}`)
 

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Label, List, Popup } from 'semantic-ui-react'
 import { templateCode } from './templates/TemplateCode.js'
 import { templateTutorial } from './templates/TemplateTutorial.js'

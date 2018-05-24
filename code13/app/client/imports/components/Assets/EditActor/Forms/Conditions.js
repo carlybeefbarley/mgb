@@ -26,7 +26,7 @@ export default class All extends BaseForm {
               {this.data.appearIf != '0' && <span style={{ padding: '5px' }}>if</span>}
               {this.data.appearIf != '0' && (
                 <span style={{ verticalAlign: 'middle', padding: '5px' }}>
-                  {this.text('', 'appearCount', 'number')}
+                  {this.text('', 'appearCount', 'number', { default: 0 })}
                 </span>
               )}
               {

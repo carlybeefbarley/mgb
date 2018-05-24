@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { hasSkill } from '/imports/schemas/skills'
 import { isSkillKeyValid } from '/imports/Skills/SkillNodes/SkillNodes.js'
 
@@ -1671,14 +1672,14 @@ const TokenDescription = React.createClass({
     skills: PropTypes.object,
   },
 
-  handleHideShowClick: function(skillNodeKey) {
+  handleHideShowClick(skillNodeKey) {
     if (!skillNodeKey) return
 
     if (hasSkill(this.context.skills, skillNodeKey)) Meteor.call('Skill.forget', skillNodeKey)
     else Meteor.call('Skill.learn', skillNodeKey)
   },
 
-  render: function() {
+  render() {
     let token = this.props.currentToken
     // search for the next token - just in case..
     /*

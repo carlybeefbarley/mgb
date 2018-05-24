@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Card, Segment } from 'semantic-ui-react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import AssetCard from '/client/imports/components/Assets/AssetCard'
@@ -44,7 +45,7 @@ const AssetsAvailableGET = React.createClass({
     scopeToProjectName: PropTypes.string, // e.g. foobar. Can be undefined/null. If specified, then scopeToUserId must also be specified
   },
 
-  getMeteorData: function() {
+  getMeteorData() {
     const { scopeToUserId, scopeToProjectName } = this.props
 
     const handleForAssets = Meteor.subscribe(
@@ -73,7 +74,7 @@ const AssetsAvailableGET = React.createClass({
     }
   },
 
-  render: function() {
+  render() {
     const { loading, assets } = this.data
     // In profile, vertically stacked list view fits better than card view
     return loading ? <Spinner /> : <AssetItems assets={assets} wrap={false} />

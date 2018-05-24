@@ -44,46 +44,46 @@ const _listInvalidChars = (text, StringAllowedRegex) =>
 
 // These functions return true for ok
 const validate = {
-  lengthCap: function(text, lengthCap) {
+  lengthCap(text, lengthCap) {
     return _.isString(text) && text.length <= lengthCap
   },
 
-  mgb1name: function(text) {
+  mgb1name(text) {
     // TODO more safety content checks here ... should allow    name1
     return validate.lengthCap(text, 64) // 64 since can have comma-separated
   },
 
-  mgb1names: function(text) {
+  mgb1names(text) {
     // TODO more safety content checks here ... should allow    name1,name2,name3
     return validate.lengthCap(text, 32)
   },
 
-  userName: function(text) {
+  userName(text) {
     return validate.lengthCap(text, _maxUsernameLength) && text.length >= _minUsernameLength
   },
 
-  userBio: function(text) {
+  userBio(text) {
     return validate.lengthCap(text, 64)
   },
 
-  userTitle: function(text) {
+  userTitle(text) {
     return validate.lengthCap(text, 64)
   },
 
-  userFocusMsg: function(text) {
+  userFocusMsg(text) {
     return validate.lengthCap(text, 64)
   },
 
-  projectName: function(text) {
+  projectName(text) {
     // Note that we have a reserved projectName '_' for "No project"
     return validate.lengthCap(text, 64) && text.length > 1 && _validProjectNameRegex.test(text)
   },
 
-  projectDescription: function(text) {
+  projectDescription(text) {
     return validate.lengthCap(text, 120)
   },
 
-  assetName: function(text) {
+  assetName(text) {
     return (
       text.length >= _minAssetNameLength &&
       validate.lengthCap(text, _maxAssetNameLength) &&
@@ -91,11 +91,11 @@ const validate = {
     )
   },
 
-  assetDescription: function(text) {
+  assetDescription(text) {
     return validate.lengthCap(text, 120)
   },
 
-  assetNameWithReason: function(text) {
+  assetNameWithReason(text) {
     if (text.length > _maxAssetNameLength)
       return `That Asset name is too long. The maximum length is ${_maxAssetNameLength} characters.`
 
@@ -112,7 +112,7 @@ const validate = {
   },
 
   // These functions return null for ok, or a string with a reason why they fail
-  passwordWithReason: function(text) {
+  passwordWithReason(text) {
     if (!text || text.length < 6) return 'Your password must be at least 6 characters long.'
     if (text.search(/[a-z]/i) < 0) return 'Your password must contain at least one letter.'
     if (text.search(/[0-9]/) < 0) return 'Your password must contain at least 1 number.'
@@ -120,13 +120,13 @@ const validate = {
     return null
   },
 
-  emailWithReason: function(text) {
+  emailWithReason(text) {
     if (!text || !/\S+@\S+\.\S+/.test(text)) return "Doesn't look like a valid email."
 
     return null
   },
 
-  usernameWithReason: function(value) {
+  usernameWithReason(value) {
     if (/([^\w]|_)/.test(value)) return 'Only letters and digits are allowed in usernames.'
     if (value.length > _maxUsernameLength)
       return `Your username is too long. The maximum length is ${_maxUsernameLength} characters.`
@@ -136,7 +136,7 @@ const validate = {
     return null
   },
 
-  notEmpty: function(value) {
+  notEmpty(value) {
     return !!(value + '')
   },
 }

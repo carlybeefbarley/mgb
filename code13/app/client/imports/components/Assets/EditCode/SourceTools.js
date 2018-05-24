@@ -126,11 +126,18 @@ export default class SourceTools extends EventEmitter {
       if (this.inProgress > started) return Promise.reject() // bail out
 
       this.shouldCancelASAP = true
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve(this.collectAndTranspile(filename, src, started))
-        }, 1000)
-      })
+      const spawnNew = () => {
+        return new Promise(resolve => {
+          if (this.shouldCancelASAP) {
+            setTimeout(() => {
+              resolve(spawnNew())
+            }, 1000)
+          } else {
+            resolve(this.collectAndTranspile(filename, src, started))
+          }
+        })
+      }
+      return spawnNew()
     }
 
     this.inProgress = started
@@ -229,6 +236,7 @@ export default class SourceTools extends EventEmitter {
           if (imp.url.trim())
             promises.push(
               this.loadImportedFile(imp.url, {
+                knownAs: imp.knownAs,
                 filename: imp.url,
                 referrer: _.get(additionalProps, 'referrer', this.asset.dn_ownerName),
               }),
@@ -352,7 +360,7 @@ export default class SourceTools extends EventEmitter {
             version,
           }),
         ).then(info => {
-          this.addFileToTern(filename, info.data)
+          this.addFileToTern(_.get(additionalProps, 'knownAs', filename), info.data)
           return info
         })
       }
@@ -377,14 +385,14 @@ export default class SourceTools extends EventEmitter {
             // atm we are NOT using this to make bundle more stand-alone due changes in the imported files
             isExternalFile: false, // if set to false - embed / true load at runtime
             url: es5src,
-            hash: hash,
+            hash,
             lib: name,
             version,
-            filename: filename,
+            filename,
           }),
           ignoreCache,
         ).then(info => {
-          this.addFileToTern(filename, info.data)
+          this.addFileToTern(_.get(additionalProps, 'knownAs', filename), info.data)
           return info
         })
       })
@@ -399,7 +407,7 @@ export default class SourceTools extends EventEmitter {
           version,
         }),
       ).then(info => {
-        this.addFileToTern(filename, info.data)
+        this.addFileToTern(_.get(additionalProps, 'knownAs', filename), info.data)
         return info
       })
     }
@@ -501,7 +509,7 @@ export default class SourceTools extends EventEmitter {
       this.subscriptions[key] = observeAsset(
         {
           dn_ownerName: owner,
-          name: name,
+          name,
           kind: AssetKindEnum.code,
           isDeleted: false,
         },
@@ -613,9 +621,9 @@ export default class SourceTools extends EventEmitter {
             url: url + (source.hash ? '' : '?hash=' + etag),
             localName: source.localName,
             name: source.name,
-            localKey: localKey,
+            localKey,
             key: source.key,
-            libFullName: libFullName,
+            libFullName,
             loadAsScript: source.loadAsScript,
           }
           source.useGlobal ? externalGlobal.push(partial) : externalLocal.push(partial)
@@ -1197,6 +1205,7 @@ main = function(){
         im.pop()
       }
       ret.push({
+        knownAs: babelAST.importNames[i],
         url: im.join('.'),
         name: imp[i].specifiers && imp[i].specifiers.length ? imp[i].specifiers[0].local : null,
       })

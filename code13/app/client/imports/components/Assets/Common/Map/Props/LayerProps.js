@@ -6,17 +6,17 @@ const Prefixes = {
   objectLayer: 'Object Layer ',
 }
 const LayerProps = {
-  setActiveLayer: function(id) {
+  setActiveLayer(id) {
     this.setState({ activeLayer: id })
   },
 
-  toggleLayerVisibilty: function(id, isVisible) {
+  toggleLayerVisibilty(id, isVisible) {
     const c2 = this.mgb_content2
     c2.layers[id].visible = isVisible
     this.quickSave('ToggleLayerVisibility')
   },
 
-  addLayer: function(type) {
+  addLayer(type) {
     const c2 = this.mgb_content2
     const lss = c2.layers
 
@@ -35,7 +35,7 @@ const LayerProps = {
     return ls
   },
 
-  removeLayer: function() {
+  removeLayer() {
     const c2 = this.mgb_content2
     const lss = c2.layers
     lss.splice(this.state.activeLayer, 1)
@@ -46,7 +46,7 @@ const LayerProps = {
     this.quickSave('Remove Layer')
   },
 
-  raiseLayer: function() {
+  raiseLayer() {
     const c2 = this.mgb_content2
     const lss = c2.layers
     const layer = lss.splice(this.state.activeLayer, 1)
@@ -59,7 +59,7 @@ const LayerProps = {
     this.quickSave('Raise Layer')
   },
 
-  lowerLayer: function() {
+  lowerLayer() {
     const c2 = this.mgb_content2
     const lss = c2.layers
     const layer = lss.splice(this.state.activeLayer, 1)
@@ -72,14 +72,14 @@ const LayerProps = {
     this.quickSave('Lower Layer')
   },
 
-  highlightActiveLayerToggle: function() {
+  highlightActiveLayerToggle() {
     this.options.highlightActiveLayer = !this.options.highlightActiveLayer
     this.setState({
       content2: this.mgb_content2,
     })
   },
 
-  renameLayer: function(id, newName) {
+  renameLayer(id, newName) {
     const c2 = this.mgb_content2
     const reason = 'Renamed layer ' + c2.layers[id].name + ' to ' + newName
     c2.layers[id].name = newName

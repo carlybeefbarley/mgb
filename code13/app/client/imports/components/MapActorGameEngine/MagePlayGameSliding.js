@@ -4,7 +4,7 @@ import MgbSystem from './MageMgbSystem'
 // This file contains the part of the class that is primarily focussed on the Sliding behaviors
 
 const MagePlayGameSliding = {
-  playPushItemToStartSliding: function(AA_pusher_idx, AA_item_idx) {
+  playPushItemToStartSliding(AA_pusher_idx, AA_item_idx) {
     // 0. Some shortcuts
     const { activeActors, map, G_tweensPerTurn, G_tweenCount } = this
     const aap = activeActors[AA_pusher_idx]
@@ -66,7 +66,7 @@ const MagePlayGameSliding = {
 
   // Called when either a sliding block hits something solid, OR when a shot has hit it's target.
   // This function only handles the effects on the shot/block, not on what it hit
-  playStopItemSliding: function(
+  playStopItemSliding(
     aai, //aai is an ActiveActor
   ) {
     aai.isSliding = false

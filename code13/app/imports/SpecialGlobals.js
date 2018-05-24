@@ -61,6 +61,16 @@ const SpecialGlobals = {
         tutorialsInternalLink: '/learn/code/phaser',
       },
       {
+        name: 'Phaser',
+        import: 'phaser3',
+        desc: 'For making games',
+        descLong:
+          'Phaser3 is a good framework for making 2D games in Javascript. It helps developers with game scenes, asset loaders, rendering, physics, input devices, sound, and more',
+        landingPageUrl: '//phaser.io/phaser3',
+        apiDocsPageUrl: '//photonstorm.github.io/phaser3-docs/index.html',
+        tutorialsInternalLink: '/learn/code/phaser',
+      },
+      {
         name: 'React',
         import: 'react',
         desc: 'For making apps',
@@ -114,6 +124,13 @@ const SpecialGlobals = {
     tutorialAssetNamePrefix: 'tutorials.',
   },
 
+  relatedAssets: {
+    limit: {
+      withUser: 100,
+      noContext: 30,
+    },
+  },
+
   quotas: {
     // Project limits: max members in project
     defaultNumMembersAllowedInProject: 10, // For normal users
@@ -122,6 +139,17 @@ const SpecialGlobals = {
     // Project limits: max projects owned by an account
     defaultNumOfOwnedProjectsAllowed: 10, // For normal accounts
     SUdefaultNumOfOwnedProjectsAllowed: 99, // For admin accounts
+  },
+
+  cache: {
+    // cache max age in seconds for all /api/asset/... requests
+    // BE AWARE!!! - only requests with ?hash={unique key} are cached - otherwise we assume that user has requested latest version
+    apiAssets: 60 * 60 * 24 * 30,
+    // cache max age in seconds for fonts
+    // fonts has special CORS handling as they require 'access-control-allow-origin', '*' header
+    fonts: 60 * 60 * 24 * 30,
+    // all other resources - e.g. /images/logos/mgb/medium/01w.png
+    static: 60 * 60 * 24 * 30,
   },
 }
 

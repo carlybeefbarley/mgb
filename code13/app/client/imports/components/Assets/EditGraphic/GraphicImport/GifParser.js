@@ -479,7 +479,7 @@ var GifParser = function(opts) {
     if (!frame) return
     frames.push({
       data: frame.getImageData(0, 0, header.width, header.height),
-      delay: delay,
+      delay,
     })
     // frameOffsets.push({ x: 0, y: 0 });
   }
@@ -575,7 +575,7 @@ var GifParser = function(opts) {
       NETSCAPE: withProgress(doNothing),
     },
     img: withProgress(doImg, true),
-    eof: function(block) {
+    eof(block) {
       pushFrame()
       doDecodeProgress(false)
       if (!(options.c_w && options.c_h)) {
@@ -611,7 +611,7 @@ var GifParser = function(opts) {
   var load_callback = false
 
   return {
-    load_url: function(src, callback) {
+    load_url(src, callback) {
       load_callback = callback
       var h = new XMLHttpRequest()
       // new browsers (XMLHttpRequest2-compliant)
@@ -658,7 +658,7 @@ var GifParser = function(opts) {
       }
       h.send()
     },
-    load: function(callback) {
+    load(callback) {
       this.load_url(gif.src, callback)
     },
 

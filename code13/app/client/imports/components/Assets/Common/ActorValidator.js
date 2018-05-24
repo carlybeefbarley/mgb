@@ -1,10 +1,10 @@
 import options from './ActorOptions.js'
 
 const validator = {
-  hasConditionalBehavior: databag => {
+  hasConditionalBehavior(databag) {
     return databag.itemOrNPC.appearIf && databag.itemOrNPC.appearIf != options.appearIf['No condition']
   },
-  hasKey: databag => {
+  hasKey(databag) {
     return (
       !!databag.item.keyForThisDoor &&
       (databag.item.itemActivationType == options.itemActivationType['Blocks Player'] ||
@@ -12,7 +12,7 @@ const validator = {
       databag.item.pushToSlideNum == 0
     )
   },
-  isValidForBG: databag => {
+  isValidForBG(databag) {
     if (!databag) {
       return false
     }
@@ -27,6 +27,7 @@ const validator = {
         options.actorType['Scenery'],
       ].indexOf(databag.all.actorType) > -1 &&
       !hasConditionalBehavior &&
+      !databag.itemOrNPC.dropsObjectRandomlyName &&
       [
         options.itemActivationType['Inactive'],
         options.itemActivationType['Pushes actors in a direction'],
@@ -39,7 +40,7 @@ const validator = {
       databag.item.pushToSlideNum == 0
     )
   },
-  isValidForActive: databag => {
+  isValidForActive(databag) {
     if (!databag) {
       return false
     }
@@ -47,6 +48,7 @@ const validator = {
       (databag.all.actorType != options.actorType['Shot'] &&
         databag.all.actorType == options.actorType['Player']) ||
       databag.all.actorType == options.actorType['Non-Player Character (NPC)'] ||
+      databag.itemOrNPC.dropsObjectRandomlyName ||
       validator.hasConditionalBehavior(databag) ||
       validator.hasKey(databag) ||
       ([
@@ -65,7 +67,7 @@ const validator = {
         databag.item.itemActivationType != options.itemActivationType['Inactive'])
     )
   },
-  isValidForFG: databag => {
+  isValidForFG(databag) {
     if (!databag) {
       return false
     }
@@ -74,6 +76,7 @@ const validator = {
     return (
       (databag.all.actorType == options.actorType['Item, Wall, or Scenery'] ||
         databag.all.actorType == options.actorType['Scenery']) &&
+      !databag.itemOrNPC.dropsObjectRandomlyName &&
       databag.all.actorType !== options.actorType['Floor'] && // To prioritize use of Scenery in FG
       databag.item.itemActivationType == options.itemActivationType['Inactive'] &&
       !hasConditionalBehavior

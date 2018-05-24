@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import QLink from '/client/imports/routes/QLink'
 import { Azzets } from '/imports/schemas'
@@ -10,7 +11,7 @@ import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 
 // TODO: use observeAsset from assetFetchers instead of custom observer
 // import { observeAsset } from "/client/imports/helpers/assetFetchers"
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 // TODO - change pattern to be getMeteorData so we fix the timing issues.
 export default class DropArea extends React.Component {
@@ -93,7 +94,7 @@ export default class DropArea extends React.Component {
             if (this.isUnmounted) return
             this.subscription.onReady()
           },
-          onError: e => {
+          onError(e) {
             console.log('DropArea - subscription did not become ready', e)
           },
         },
@@ -152,7 +153,7 @@ export default class DropArea extends React.Component {
       if (owner == '[builtin]') return
 
       // use or not to use isDeleted here ???????
-      const selByName = { dn_ownerName: owner, name: name, kind: this.props.kind, isDeleted: false }
+      const selByName = { dn_ownerName: owner, name, kind: this.props.kind, isDeleted: false }
       const sel = this.props._id ? { _id: this.props._id, isDeleted: false } : selByName
 
       let assets = Azzets.find(sel).fetch()
@@ -174,7 +175,7 @@ export default class DropArea extends React.Component {
       return
     }
 
-    this.setState({ asset: asset, badAsset: null }, () => {
+    this.setState({ asset, badAsset: null }, () => {
       this.subscription && this.subscription.stop()
       // subscribe to new asset
       this.startSubscription(asset.dn_ownerName, asset.name, asset.kind)
@@ -276,7 +277,7 @@ export default class DropArea extends React.Component {
         }
         onDragOver={DragNDropHelper.preventDefault}
         onDrop={e => {
-          joyrideCompleteTag(`mgbjr-CT-dropArea-${this.props.kind}`)
+          joyrideStore.completeTag(`mgbjr-CT-dropArea-${this.props.kind}`)
           this.handleDrop(e)
         }}
       >

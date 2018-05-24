@@ -1,9 +1,9 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import '../home.css'
-import './learnRoute.css'
 import '../GetStarted.css'
 import { Card, Divider, Grid, Header, Icon } from 'semantic-ui-react'
-import UX from '/client/imports/UX'
+import MascotImage from '/client/imports/components/MascotImage/MascotImage'
 import QLink from '../QLink'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
 
@@ -61,7 +61,7 @@ const learnTopLevelItems = [
    */
 ]
 
-const LearnRoute = ({ currUser, params }, context) => (
+const LearnRoute = ({ currUser, isSuperAdmin, params }, context) => (
   <Grid container columns="1">
     <Divider hidden />
     <Grid.Column>
@@ -81,20 +81,16 @@ const LearnRoute = ({ currUser, params }, context) => (
             query={area.query}
           >
             <Card.Content>
-              <div
-                className="learnThumbnail"
-                style={{ backgroundImage: `url("${UX.makeMascotImgLink(area.mascot)}")` }}
-              />
+              <MascotImage name={area.mascot} />
               <Header as="h2" style={headerStyle}>
                 <Icon name={area.icon} />&nbsp;{area.content}
               </Header>
               <p style={descStyle}>{area.desc}</p>
               {currUser &&
-              'string' == typeof area.skillnodeTopLevelTag && (
+              typeof area.skillnodeTopLevelTag === 'string' && (
                 <SkillsMap
+                  isSuperAdmin={isSuperAdmin}
                   skills={context.skills}
-                  expandable
-                  toggleable
                   skillPaths={[area.skillnodeTopLevelTag]}
                 />
               )}

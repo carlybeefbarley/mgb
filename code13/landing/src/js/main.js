@@ -96,11 +96,11 @@ window.addEventListener('load', function() {
   // ----------------------------------------
   // Analytics
   // ----------------------------------------
-  if (location.hostname !== 'localhost') {
+  if (!/^localhost|devlapse\.github\.io/.test(location.hostname)) {
     //
     // Google
     //
-    (function(i, s, o, g, r, a, m) {
+    ;(function(i, s, o, g, r, a, m) {
       i['GoogleAnalyticsObject'] = r
       i[r] = i[r] || function() {
         (i[r].q = i[r].q || []).push(arguments)
@@ -112,14 +112,31 @@ window.addEventListener('load', function() {
       m.parentNode.insertBefore(a, m)
     })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga')
 
-    ga('create', 'UA-82379171-2', 'auto')
-    ga('send', 'pageview')
+    var gaInterval = setInterval(function() {
+      if (!ga) return
+
+      clearInterval(gaInterval)
+      ga('create', 'UA-82379171-2', 'auto')
+      ga('send', 'pageview')
+    }, 100)
+
+    //
+    // Google Tag Manager
+    //
+    ;(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+        new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-PWBJMQZ')
 
     //
     // Hotjar
     //
     function initHotjar() {
-      (function(h, o, t, j, a, r) {
+      ;(function(h, o, t, j, a, r) {
         h.hj = h.hj || function() {(h.hj.q = h.hj.q || []).push(arguments)}
         h._hjSettings = { hjid: 446876, hjsv: 5 }
         a = o.getElementsByTagName('head')[0]
@@ -248,6 +265,63 @@ window.addEventListener('load', function() {
   }
 
   window.addEventListener('resize', handleWindowResize)
+
+  // ----------------------------------------
+  // Particles
+  // ----------------------------------------
+  var particlesId = 'particles-container'
+
+  // Heads Up!
+  //
+  // Keep in sync with code13/app/client/imports/particlesjs-config.js
+  window.particlesJS(particlesId, {
+    retina_detect: true,
+    particles: {
+      number: {
+        value: 100,
+        density: { enable: true, value_area: 800 },
+      },
+      color: { value: '#e6ffff' },
+      shape: {
+        type: 'circle',
+        stroke: { width: 0, color: '#000000' },
+      },
+      opacity: {
+        value: 0.7,
+        random: true,
+        anim: { enable: true, speed: 1, opacity_min: 0 },
+      },
+      size: {
+        value: 3,
+        random: true,
+        anim: { enable: true, speed: 1, size_min: 1 },
+      },
+      line_linked: { enable: true, distance: 15, color: '#ffffff', opacity: 0.7, width: 1 },
+      move: { enable: true, speed: 1, direction: 'top', random: true, out_mode: 'out' },
+    },
+    interactivity: {
+      detect_on: 'canvas',
+      events: {
+        onhover: { enable: true, mode: 'grab' },
+        onclick: { enable: true, mode: 'repulse' },
+        resize: true,
+      },
+      modes: {
+        grab: {
+          distance: 150,
+          line_linked: { opacity: 0.4 },
+        },
+        repulse: { distance: 200, duration: 0.4 },
+      },
+    },
+  })
+
+  var $particlesContainer = document.querySelector('#' + particlesId)
+  $particlesContainer.classList.add('initialized')
+
+  // ----------------------------------------
+  // Message to console peekers
+  // ----------------------------------------
 
   console.log(
     '%cHello Curious hacker-type people who like to look under the hood!\n' +

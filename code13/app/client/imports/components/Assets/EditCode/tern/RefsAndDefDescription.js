@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 const RefsAndDefDescription = React.createClass({
   propTypes: {
@@ -8,7 +9,7 @@ const RefsAndDefDescription = React.createClass({
     expressionTypeInfo: PropTypes.object, // This is the data frim ternserver TYPE request
   },
 
-  render: function() {
+  render() {
     if (!this.props.refsInfo) return null
 
     let refs = this.props.refsInfo.refs

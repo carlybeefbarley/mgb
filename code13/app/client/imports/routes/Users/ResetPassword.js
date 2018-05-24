@@ -1,60 +1,51 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Container, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 
 import HeroLayout from '/client/imports/layouts/HeroLayout'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import validate from '/imports/schemas/validate'
 
 const ResetPasswordRoute = React.createClass({
   propTypes: {
-    params: PropTypes.object,
+    params: PropTypes.object.isRequired,
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return {
       errors: {},
       formData: {},
       isLoading: false,
-      isComplete: false,
     }
   },
 
   renderContent() {
-    const { isLoading, isComplete, errors, formData } = this.state
-
-    if (isComplete)
-      return (
-        <Message
-          success
-          header="Password reset successful"
-          content="You have successfully reset your password and are now logged in."
-        />
-      )
+    const { isLoading, errors, formData } = this.state
 
     return (
       <Form onChange={this.handleChange} onSubmit={this.handleSubmit} loading={isLoading}>
         <Form.Input
-          error={errors.password}
+          error={!!errors.password}
           icon="lock"
           label={errors.password || 'New password'}
           name="password"
           placeholder="New password"
           type="password"
         />
-        <Form.Button primary fluid disabled={!formData.password || errors.password}>
+        <Form.Button primary fluid disabled={!formData.password || !!errors.password}>
           Submit
         </Form.Button>
       </Form>
     )
   },
 
-  render: function() {
+  render() {
     const { errors } = this.state
 
     return (
@@ -76,7 +67,7 @@ const ResetPasswordRoute = React.createClass({
     )
   },
 
-  handleChange: function(e) {
+  handleChange(e) {
     const { name, value } = e.target
 
     this.setState((prevState, props) => ({
@@ -89,9 +80,9 @@ const ResetPasswordRoute = React.createClass({
     }))
   },
 
-  handleSubmit: function(event) {
+  handleSubmit(event) {
     const { params } = this.props
-    const { password } = this.state
+    const { password } = this.state.formData
 
     const errors = {
       password: validate.passwordWithReason(password),
@@ -99,25 +90,24 @@ const ResetPasswordRoute = React.createClass({
     }
 
     if (_.some(errors)) {
-      this.setState({ loading: false, errors })
-      return
+      return this.setState({ loading: false, errors })
     }
 
     this.setState({ isLoading: true })
     Accounts.resetPassword(params.token, password, error => {
       if (error) {
-        this.setState({
+        console.error(error)
+        return this.setState({
           isLoading: false,
           errors: { server: error.reason || 'Server Error while resetting password for account' },
         })
-        return
       }
 
       // This is going to cause an auto-login to happen very quickly,
       // and that will also regenerate this React control, so weh ave to do some strange stuff now
-      showToast('Password reset was successful', 'success')
+      showToast.success('Password reset was successful')
       utilPushTo(this.context.urlLocation.query, '/')
-      this.setState({ isLoading: false, errors: {}, isComplete: true })
+      this.setState({ isLoading: false, errors: {} })
     })
   },
 })

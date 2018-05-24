@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 // These MUST match the paths defined in RestApi.addRoute() calls
 const _generateUrlOptions = asset => {
@@ -34,6 +35,10 @@ const _generateUrlOptions = asset => {
       break
     case 'map':
       retval.push({ msg: 'as JSON map', url: '/api/asset/map/' + asset._id })
+      retval.push({
+        msg: 'as JSON map by name',
+        url: '/api/asset/map/' + asset.dn_ownerName + '/' + asset.name,
+      })
       break
     case 'sound':
       retval.push({ msg: 'as sound.mp3', url: '/api/asset/sound/' + asset._id + '/sound.mp3' })

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import KeyBindings from '/client/imports/components/Skills/Keybindings'
 
 // TODO: Allow these to be edited using https://github.com/florian/react-shortcut-chooser

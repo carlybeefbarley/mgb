@@ -3,7 +3,7 @@ import SkillNodes, {
   makeSlashSeparatedSkillKey,
   makeTutorialsFindSelector,
 } from '/imports/Skills/SkillNodes/SkillNodes.js'
-import { Azzets, Skills } from '/imports/schemas'
+import { Azzets, Skills, Users } from '/imports/schemas'
 import { isUserSuperAdmin } from './roles'
 import { logActivity } from '/imports/schemas/activity'
 
@@ -25,7 +25,7 @@ const skillBasis = {
 }
 
 Meteor.methods({
-  'Skill.learn': function(dottedSkillKey, userID, basis = skillBasis.SELF_CLAIMED) {
+  'Skill.learn'(dottedSkillKey, userID, basis = skillBasis.SELF_CLAIMED) {
     //console.log(dottedSkillKey, userID, basis)
     let awardedSkill = false
     if (!this.userId) throw new Meteor.Error(401, 'Login required')
@@ -55,7 +55,7 @@ Meteor.methods({
     if (Meteor.isServer) {
       if (count) {
         if (awardedSkill) {
-          const userRecord = Meteor.users.findOne({ _id: userID }, { fields: { username: 1, _id: 1 } })
+          const userRecord = Users.findOne({ _id: userID }, { fields: { username: 1, _id: 1 } })
           logActivity(
             'user.awardedSkill',
             `was awarded the '${dottedSkillKey}' skill by @${Meteor.user().username}`,
@@ -72,7 +72,7 @@ Meteor.methods({
     return count
   },
 
-  'Skill.forget': function(dottedSkillKey, userID, basis = skillBasis.SELF_CLAIMED) {
+  'Skill.forget'(dottedSkillKey, userID, basis = skillBasis.SELF_CLAIMED) {
     if (!this.userId) throw new Meteor.Error(401, 'Login required')
 
     // if (basis !== skillBasis.SELF_CLAIMED)
@@ -103,7 +103,7 @@ Meteor.methods({
 
 if (Meteor.isServer)
   Meteor.methods({
-    'Skill.getTutorialListForSkill': function(dottedSkillKey) {
+    'Skill.getTutorialListForSkill'(dottedSkillKey) {
       if (!this.userId) throw new Meteor.Error(401, 'Login required')
 
       const sel = makeTutorialsFindSelector(dottedSkillKey, 0)
@@ -148,14 +148,14 @@ export const hasSkillCount = (skillsObj, skillPath, requiredCount) => {
 
 export const learnSkill = (dottedSkillKey, userID) => {
   Meteor.call('Skill.learn', dottedSkillKey, userID, (err, result) => {
-    console.log(`${result} Skill learned: '${dottedSkillKey}'. Err=`, err)
+    console.log(`${result} Skill learned: '${dottedSkillKey}'. Err=`, err || '(no error)')
   })
   // TODO: set it with a rounded timestamp so we know timeline and recency of this skill change
 }
 
 export const forgetSkill = (dottedSkillKey, userID) => {
   Meteor.call('Skill.forget', dottedSkillKey, userID, (err, result) => {
-    console.log(`${result} Skill forgotten: '${dottedSkillKey}'. Err=`, err)
+    console.log(`${result} Skill forgotten: '${dottedSkillKey}'. Err=`, err || '(no error)')
   })
 }
 
@@ -172,7 +172,7 @@ export const toggleSkill = (skillsObj, dottedSkillKey) =>
  * @returns {Number}
  */
 export function countCurrentUserSkills(skillsObj, dotttedSkillPrefix = null) {
-  if (!skillsObj) return null
+  if (!skillsObj) return 0
 
   return _.size(
     _.filter(

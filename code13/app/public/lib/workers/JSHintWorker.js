@@ -1,10 +1,12 @@
 // this is required for babel - as it uses window as global
+
 this.window = this
 importScripts(
-  "https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.12.0/babel.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js",
   "https://cdnjs.cloudflare.com/ajax/libs/jshint/2.9.4/jshint.min.js"
 )
 importScripts()
+
 
 onmessage = function (e) {
   var str = e.data[0]
@@ -15,7 +17,11 @@ onmessage = function (e) {
     trans = Babel.transform(str, {
       compact: false,           // Default of "auto" fails on ReactImport
       presets: ['react'],
-      plugins: ['transform-class-properties'],
+      // minimal required plugins for jshint stop complaining
+      plugins: [
+        'transform-object-rest-spread',
+        'transform-class-properties'
+      ],
       retainLines: true
     })
     code = trans.code
@@ -28,7 +34,7 @@ onmessage = function (e) {
     babelError = {
       line: e.loc.line,
       code: "EXXX",
-      reason: e.message.substring(0, e.message.indexOf("(") - 1)
+      reason: e.message.substring(0, e.message.indexOf("\n"))
     }
   }
 

@@ -4,8 +4,8 @@
     before: [],
     it: [],
     describe: [],
-    timeout: function() {},
-    slow: function() {},
+    timeout() {},
+    slow() {},
   }
   const doRun = function() {
     if (stack.next.length) {

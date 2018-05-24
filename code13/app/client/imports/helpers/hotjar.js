@@ -1,10 +1,12 @@
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
-const Hotjar = (action, codeSnippet, currUser) => {
+const isLocalHostOrStaging = () => /^localhost|staging/.test(location.hostname)
+
+const Hotjar = (action, codeSnippet, currUser = Meteor.user()) => {
   // console.log('superAdmin', isUserSuperAdmin(currUser))
 
   // don't send hotjar heatmap if superadmin or localhost
-  if (!isUserSuperAdmin(currUser) && location.hostname != 'localhost') {
+  if (!isUserSuperAdmin(currUser) && !isLocalHostOrStaging()) {
     if (typeof window.hj === 'function') {
       window.hj(action, codeSnippet)
     }
@@ -13,8 +15,8 @@ const Hotjar = (action, codeSnippet, currUser) => {
 
 export default Hotjar
 
-export const InitHotjar = currUser => {
-  if (!isUserSuperAdmin(currUser) && location.hostname != 'localhost') {
+export const InitHotjar = (currUser = Meteor.user()) => {
+  if (!isUserSuperAdmin(currUser) && !isLocalHostOrStaging()) {
     // h._hjSettings={hjid:446876,hjsv:5,hjdebug:true};
     ;(function(h, o, t, j, a, r) {
       h.hj =

@@ -6,14 +6,9 @@
 }
 
 .mgb-skillmap {
-  @height: 1.75em;
-
-  margin: 0.25em 0;
-  transition: margin 0.2s, box-shadow 0.2s;
+  margin-bottom: 2px;
   &.active {
-    margin: 1em 0;
-    box-shadow: 0.15em 0.3em 0 rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 0.5em;
   }
 
   &:not(.expandable) > .progress > .label .icon {
@@ -23,8 +18,9 @@
   // Content
   // ----------------------------------------
   & > .content {
-    padding: 0.5em;
+    padding: 0.5em 0 0 0.5em;
     background: #FFF;
+    border-left: 2px solid rgba(0, 0, 0, 0.2);
 
     //
     // Child Leaves
@@ -34,13 +30,19 @@
       flex-wrap: wrap;
 
       & > .leaf {
+        position: relative;
         flex: 1 1 15em;
         transition: background 0.2s, opacity 0.2s, color 0.2s;
-        padding: 1em;
-        margin: 0.25em;
-        text-align: center;
+        padding: 0.25em 0.25em 0.25em 1.75em;
+        margin: 0 0.5em 0.5em 0;
         background: transparent;
         user-select: none;
+        cursor: default;
+        & > .icon {
+          position: absolute;
+          left: 0.25em;
+          top: 0.375em;
+        }
         &.active {
           opacity: 0.8;
           color: rgba(0, 0, 0, 0.4);
@@ -51,8 +53,11 @@
     //
     // Nested SkillMap
     //
-    & > .mgb-skillmap {
-      margin-left: 1em;
+    & > .mgb-skillmap + .mgb-skillmap {
+      margin-top: 0.5em;
+      &:last-child {
+        border-bottom: 0.5em solid transparent;
+      }
     }
   }
 
@@ -60,12 +65,15 @@
   // ----------------------------------------
   & > .progress {
     position: relative;
-    height: @height;
+    display: flex;
+    align-items: center;
+    // height when there is no label
+    min-height: 1em;
     & > .label {
       position: relative;
       padding-left: 0.25em;
-      height: @height;
-      line-height: @height;
+      // height with label
+      line-height: 1.75em;
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
@@ -86,7 +94,10 @@
         flex: 1;
         transition: background 0.2s;
         background: rgba(0, 0, 0, 0.05);
-        box-shadow: inset -0.5px 0 0 0 #FFF;
+        box-shadow: inset -0.5px 0 0 0 #fff;
+        &:first-child:not(.active) {
+          border-left: 2px solid rgba(0, 0, 0, 0.2);
+        }
       }
     }
   }
@@ -99,8 +110,8 @@
 // Keep this mixin synced with landing site mock-skillsmap.less
 .mgb-set-skillsmap-variant-variables(@mgbAreaColor) {
   @hue: hue(@mgbAreaColor);
-  @textColor: hsl(@hue, 20%, 30%);
-  @textHoverColor: hsl(@hue, 20%, 20%);
+  @textColor: hsl(@hue, 40%, 30%);
+  @textHoverColor: hsl(@hue, 40%, 20%);
   @barColor: tint(@mgbAreaColor, 65%);
   @barHoverColor: tint(@mgbAreaColor, 55%);
 }
@@ -112,6 +123,9 @@
   }
   & > .cells > .cell {
     background: rgba(0, 0, 0, 0.1);
+    &:first-child:not(.active) {
+      border-left-color: @barHoverColor;
+    }
     &.active {
       background: @barHoverColor;
     }
@@ -121,31 +135,35 @@
 // Color Variant Mixin
 // ----------------------------------------
 // Each skill area has a custom color variation
+// We use the hover/active colors by default
+// The expandable variation uses lighter colors initially, and hover colors on hover/active
 .mgb-skillmap-color-variant(@mgbAreaColor) {
   .mgb-set-skillsmap-variant-variables(@mgbAreaColor);
 
-  // Active
-  &.active > .progress {
-    .mgb-skillsmap-progress-active();
-  }
-
   // Content
-  & > .content > .leaves > .leaf {
-    border: 1px solid @barHoverColor;
-    color: @textColor;
-    &.active {
-      border-color: transparent;
-      color: rgba(0, 0, 0, 0.4);
+  & > .content {
+    border-left-color: @barColor;
+
+    & > .leaves > .leaf {
+      color: @textHoverColor;
+      &.active {
+        color: rgba(0, 0, 0, 0.4);
+      }
     }
   }
 
   // Progress bar
   & > .progress {
     & > .label {
-      color: @textColor;
+      color: @textHoverColor;
     }
-    & > .cells > .cell.active {
-      background: @barColor;
+    & > .cells > .cell {
+      &:first-child:not(.active) {
+        border-left-color: @barHoverColor;
+      }
+      &.active {
+        background: @barHoverColor;
+      }
     }
   }
 }
@@ -156,11 +174,30 @@
 .mgb-skillmap-expandable-variant(@mgbAreaColor) {
   .mgb-set-skillsmap-variant-variables(@mgbAreaColor);
 
+  // Content
+  & > .content > .leaves > .leaf {
+    color: @textColor;
+    &.active {
+      color: rgba(0, 0, 0, 0.4);
+    }
+  }
+
   // Progress bar
   & > .progress {
     cursor: pointer;
     &:hover {
       .mgb-skillsmap-progress-active();
+    }
+    & > .label {
+      color: @textColor;
+    }
+    & > .cells > .cell {
+      &:first-child:not(.active) {
+        border-left-color: @barColor;
+      }
+      &.active {
+        background: @barColor;
+      }
     }
   }
 }

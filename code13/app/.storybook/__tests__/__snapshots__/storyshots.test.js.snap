@@ -11,6 +11,7 @@ exports[`Storyshots __Examples__ Actions 1`] = `
     className="ui button"
     disabled={undefined}
     onClick={[Function]}
+    role="button"
     tabIndex={undefined}
   >
     Log Action
@@ -35,6 +36,7 @@ exports[`Storyshots __Examples__ Knobs 1`] = `
       className="ui button"
       disabled={undefined}
       onClick={[Function]}
+      role="button"
       tabIndex={undefined}
     >
       Click Me
@@ -54,6 +56,7 @@ exports[`Storyshots __Examples__ Links 1`] = `
     className="ui icon primary left labeled button"
     disabled={undefined}
     onClick={[Function]}
+    role="button"
     tabIndex={undefined}
   >
     <i
@@ -87,6 +90,7 @@ exports[`Storyshots SupportedBrowsers Default 1`] = `
     href="javascript:;"
     onClick={[Function]}
     rel="noreferrer nofollow"
+    role="button"
     tabIndex={undefined}
     target="_blank"
   >
@@ -105,6 +109,7 @@ exports[`Storyshots SupportedBrowsers Default 1`] = `
     href="javascript:;"
     onClick={[Function]}
     rel="noreferrer nofollow"
+    role="button"
     tabIndex={undefined}
     target="_blank"
   >
@@ -123,6 +128,7 @@ exports[`Storyshots SupportedBrowsers Default 1`] = `
     href="javascript:;"
     onClick={[Function]}
     rel="noreferrer nofollow"
+    role="button"
     tabIndex={undefined}
     target="_blank"
   >
@@ -157,6 +163,7 @@ exports[`Storyshots SupportedBrowsers Recommended Buttons 1`] = `
     href="javascript:;"
     onClick={[Function]}
     rel="noreferrer nofollow"
+    role="button"
     tabIndex={undefined}
     target="_blank"
   >
@@ -175,6 +182,7 @@ exports[`Storyshots SupportedBrowsers Recommended Buttons 1`] = `
     href="javascript:;"
     onClick={[Function]}
     rel="noreferrer nofollow"
+    role="button"
     tabIndex={undefined}
     target="_blank"
   >
@@ -193,6 +201,7 @@ exports[`Storyshots SupportedBrowsers Recommended Buttons 1`] = `
     href="javascript:;"
     onClick={[Function]}
     rel="noreferrer nofollow"
+    role="button"
     tabIndex={undefined}
     target="_blank"
   >

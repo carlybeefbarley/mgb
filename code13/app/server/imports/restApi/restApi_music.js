@@ -14,7 +14,7 @@ RestApi.addRoute(
   'asset/music/:id/music.mp3',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
 
       if (!asset) return err404
@@ -28,7 +28,7 @@ RestApi.addRoute(
   'asset/music/:user/:name/music.mp3',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {

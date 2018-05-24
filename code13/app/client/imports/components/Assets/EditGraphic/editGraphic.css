@@ -40,18 +40,6 @@
 	background-color: #ccc;
 }
 
-.frameTH {
-	padding: 0 !important;
-}
-
-.frameTH .dropdown {
-	width: 32px !important;
-	height: 48px !important;
-	line-height: 48px;
-	text-align: center;
-
-}
-
 #framesView table th.active {
 	border: 1px solid #2185d0;
 }

@@ -1,11 +1,12 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Icon, Popup } from 'semantic-ui-react'
 import './WorkState.css'
 import QLink from '/client/imports/routes/QLink'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Users } from '/imports/schemas'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import { logActivity } from '/imports/schemas/activity'
 
 const UserLoveIcon = ({ size, onIconClick, currUserLoves }) => (
@@ -84,7 +85,7 @@ const UserLoves = createContainer(props => {
       ? null
       : () => {
           Meteor.call('Azzets.toggleHeart', asset._id, userId, (error, result) => {
-            if (error) showToast('was unable to love/unlove this asset: ' + error.reason, 'error')
+            if (error) showToast.error('was unable to love/unlove this asset: ' + error.reason)
             else {
               if (result.newLoveState)
                 logActivity('asset.userLoves', `${currUser.username} loved this asset`, null, asset)

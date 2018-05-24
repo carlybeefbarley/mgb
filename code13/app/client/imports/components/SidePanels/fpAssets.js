@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Divider, Dropdown, Icon } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
@@ -79,7 +80,6 @@ const fpAssets = React.createClass({
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
     user: PropTypes.object, // User object for context we are navigating to in main page. Can be null/undefined. Can be same as currUser, or different user
     currUserProjects: PropTypes.array, // Projects list for currently logged in user
-    activity: PropTypes.array.isRequired, // An activity Stream passed down from the App and passed on to interested compinents
     panelWidth: PropTypes.string.isRequired, // Typically something like "200px".
   },
 
@@ -132,7 +132,7 @@ const fpAssets = React.createClass({
    * Always get the Assets stuff.
    * Optionally get the Project info - if this is a user-scoped view
    */
-  getMeteorData: function() {
+  getMeteorData() {
     // Much of this is copied from UserAssetListRoute - repeats.. needs cleanup
 
     const { user, currUser, currUserProjects } = this.props
@@ -204,7 +204,7 @@ const fpAssets = React.createClass({
     this.setState({ kindsActive: newKindsString })
   },
 
-  render: function() {
+  render() {
     const { assets, userProjects, loading } = this.data // list of assets provided via getMeteorData()
     const { user, currUser } = this.props
     const { view, kindsActive, searchName, project, projectName, showFromUserId } = this.state
@@ -212,10 +212,11 @@ const fpAssets = React.createClass({
 
     const style = {
       position: 'absolute',
-      overflow: 'auto',
+      overflowY: 'auto',
+      overflowX: 'hidden',
       margin: '0',
       // keep padding on all sides to prevent shadow clipping on asset card hover
-      padding: '8px',
+      padding: '0 8px',
       top: '11em',
       bottom: '0.5em',
       left: '0',

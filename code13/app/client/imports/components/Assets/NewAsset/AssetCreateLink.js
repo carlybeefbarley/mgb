@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import QLink from '/client/imports/routes/QLink'
 
 const _makeQuery = (assetKind, projectName, assetName) => {
@@ -14,14 +15,24 @@ const _makeQuery = (assetKind, projectName, assetName) => {
 }
 
 const AssetCreateLink = ({ assetKind, projectName, assetName, label, classNames }) => (
-  <QLink
-    className={`ui compact ${classNames || ' '} green button`}
-    to="/assets/create"
-    query={_makeQuery(assetKind, projectName, assetName)}
-    id="mgbjr-create-new-asset"
-  >
-    {label || 'Create New Asset'}
-  </QLink>
+  <div>
+    <QLink
+      className={`ui compact ${classNames || ' '} green button`}
+      to="/assets/create"
+      query={_makeQuery(assetKind, projectName, assetName)}
+      id="mgbjr-create-new-asset"
+    >
+      {label || 'Create New Asset'}
+    </QLink>
+    <QLink
+      className={`ui compact ${classNames || ' '} green button`}
+      to="/assets/create-from-template"
+      query={_makeQuery(assetKind, projectName, assetName)}
+      id="mgbjr-create-from-template"
+    >
+      {label || 'Create From Template'}
+    </QLink>
+  </div>
 )
 
 AssetCreateLink.PropTypes = {

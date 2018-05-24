@@ -1,6 +1,7 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar } from '/imports/schemas/assets'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import { Icon, Menu } from 'semantic-ui-react'
 
 // UI Component to render menus to allow asset types to be selected
@@ -25,7 +26,7 @@ const AssetKindsSelector = ({ showCompact, kindsActive, handleToggleKindCallback
         key={k}
         onClick={ev => {
           // fyi - this is a pretty simple/stateless completion tag - it's not tracking Select/unselect/multiselect.
-          joyrideCompleteTag(`mgbjr-CT-asset-search-kind-select-clicked-${k}`)
+          joyrideStore.completeTag(`mgbjr-CT-asset-search-kind-select-clicked-${k}`)
           if (handleToggleKindCallback) handleToggleKindCallback(k, ev.altKey)
         }}
       >

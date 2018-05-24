@@ -2,11 +2,11 @@ import _ from 'lodash'
 import React from 'react'
 import { Label, Segment, Grid, Icon, Popup } from 'semantic-ui-react'
 
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper.js'
 import ActorHelper from '../../Common/Map/Helpers/ActorHelper.js'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers.js'
 import QLink from '/client/imports/routes/QLink'
 
@@ -38,7 +38,7 @@ export default class ActorTileset extends React.Component {
     const gid = selectedTile.getGid(tileset)
     this.props.selectTile(selectedTile)
     this.props.selectTileset(index)
-    joyrideCompleteTag(`mgbjr-CT-MapTools-actors-selectTile`)
+    joyrideStore.completeTag(`mgbjr-CT-MapTools-actors-selectTile`)
   }
 
   removeTileset = () => {
@@ -51,18 +51,18 @@ export default class ActorTileset extends React.Component {
 
   onDropOnLayer(e) {
     const asset = DragNDropHelper.getAssetFromEvent(e)
-    joyrideCompleteTag(`mgbjr-CT-MapTools-actors-drop`)
+    joyrideStore.completeTag(`mgbjr-CT-MapTools-actors-drop`)
     if (!asset) return
 
     // TODO: create nice popup
     if (asset.kind !== 'actor') {
-      showToast('TD: Only Actors are supported in ActorMap ', 'warning')
+      showToast.warning('TD: Only Actors are supported in ActorMap ')
       return
     }
 
     const name = asset.dn_ownerName + ':' + asset.name
-    if (_.some(this.props.tilesets, { name: name })) {
-      showToast(`TD: This Map already contains Asset '${name}'`, 'warning')
+    if (_.some(this.props.tilesets, { name })) {
+      showToast.warning(`TD: This Map already contains Asset '${name}'`)
       return
     }
 
@@ -74,7 +74,7 @@ export default class ActorTileset extends React.Component {
       imageheight: 0,
       imagewidth: 0,
       margin: 0,
-      name: name,
+      name,
       spacing: 0,
       tilecount: 1,
       tileheight: 32,
@@ -95,7 +95,7 @@ export default class ActorTileset extends React.Component {
       <Segment id="mgbjr-MapTools-actors" style={{ display: 'flex', height: '100%' }}>
         <Label attached="top">Actors</Label>
         <div
-          className="active content tilesets accept-drop"
+          className="tilesets accept-drop"
           onDrop={this.onDropOnLayer.bind(this)}
           onDragOver={DragNDropHelper.preventDefault}
           style={{ maxHeight: '100%', width: '100%' }}
@@ -126,7 +126,7 @@ export default class ActorTileset extends React.Component {
         className="mgb-pixelated"
         style={{
           background: `url("${src}") no-repeat center center`,
-          height: height,
+          height,
           backgroundSize: 'contain',
         }}
         {...rest}
@@ -251,14 +251,14 @@ export default class ActorTileset extends React.Component {
             className="actor-disabled-hint"
             style={{ width: '100%', opacity: 1, backgroundColor: '#e8e8e8' }}
           >
-            <p className="title active" style={{ color: 'black', borderTop: 'none', paddingTop: 0 }}>
+            <p style={{ color: 'black', borderTop: 'none', paddingTop: 0 }}>
               You cannot use Actors in the Events layer. Use the Events Tool instead for setting Music and
               Warp .
             </p>
           </div>
         ) : (
           <div
-            className="active content tilesets accept-drop"
+            className="tilesets accept-drop"
             data-drop-text={_tilesetHintText}
             onDrop={this.onDropOnLayer.bind(this)}
             onDragOver={DragNDropHelper.preventDefault}

@@ -1,34 +1,27 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
-import ActorMapArea from './ActorMapArea.js'
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Confirm } from 'semantic-ui-react'
+import ActorMapArea from './ActorMapArea'
 
-import MapToolbar from './Tools/ActorMapToolbar.js'
+import MapToolbar from './Tools/ActorMapToolbar'
 
-import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
-import { showToast } from '/client/imports/routes/App'
-import TileHelper from '../Common/Map/Helpers/TileHelper.js'
-import ActorHelper from '../Common/Map/Helpers/ActorHelper.js'
+import TileHelper from '../Common/Map/Helpers/TileHelper'
+import ActorHelper from '../Common/Map/Helpers/ActorHelper'
 
-import TileSet from './Tools/ActorTileset.js'
-import EventTool from './Tools/EventTool.js'
-import MapGenerator from './Tools/ActorMapGenerator.js'
-import LayerTool from '../Common/Map/Tools/Layers.js'
-import Properties from './Tools/ActorMapProperties.js'
+import ActorTileSet from './Tools/ActorTileset'
+import EventTool from './Tools/EventTool'
+import ActorMapGenerator from './Tools/ActorMapGenerator'
+import Layers from '../Common/Map/Tools/Layers'
+import ActorMapProperties from './Tools/ActorMapProperties'
 
-import Cache from './Helpers/ActorCache.js'
-import EditModes from '../Common/Map/Tools/EditModes.js'
+import Cache from './Helpers/ActorCache'
 
-import LayerProps from '../Common/Map/Props/LayerProps.js'
-import TilesetProps from '../Common/Map/Props/TilesetProps.js'
-import MapProps from '../Common/Map/Props/MapProps.js'
-import ToolbarProps from '../Common/Map/Props/ToolbarProps.js'
-import PropertiesProps from '../Common/Map/Props/PropertiesProps.js'
+import PlayForm from './Modals/PlayForm'
+import MusicForm from './Modals/MusicForm'
 
-import PlayForm from './Modals/PlayForm.js'
-import MusicForm from './Modals/MusicForm.js'
-
-import EditMap from '../EditMap/EditMap.js'
-import ActorMapErrorResolver from './ActorMapErrorResolver.js'
+import EditMap from '../EditMap/EditMap'
+import ActorMapErrorResolver from './ActorMapErrorResolver'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
@@ -195,55 +188,52 @@ export default class EditActorMap extends EditMap {
   }
 
   showModal = (action, cb) => {
-    $(this.refs[action])
-      .modal({
-        size: 'small',
-        detachable: false,
-        context: this.refs.container,
-        onApprove: () => {
-          cb(this.state[action + 'Data'])
-        },
-      })
-      .modal('show')
+    this.setState({ currentlyOpenModal: action, currentConfirmCallback: cb })
+  }
+
+  handleModalCancel = () => {
+    this.setState(() => ({ currentlyOpenModal: null }))
+  }
+
+  handleModalConfirm = data => {
+    const { currentConfirmCallback } = this.state
+
+    currentConfirmCallback(data)
+
+    this.setState({ currentlyOpenModal: null })
   }
 
   renderPlayModal() {
+    const { jumpData, currentlyOpenModal } = this.state
+    const action = 'jump'
+
     return (
-      <div className="ui modal" ref="jump" style={{ position: 'absolute', padding: '5px' }}>
-        <div className="header">Add Jump Event</div>
-        <div className="content">
-          <PlayForm
-            asset={this.state.jumpData}
-            onChange={v => {
-              this.setState({ event: this.state.jumpData })
-            }}
-          />
-        </div>
-        <div className="actions">
-          <div className="ui approve button">Approve</div>
-          <div className="ui cancel button">Cancel</div>
-        </div>
-      </div>
+      <Confirm
+        open={currentlyOpenModal === action}
+        size="small"
+        header="Add Jump Event"
+        confirmButton="Add"
+        content={<PlayForm asset={jumpData} onChange={() => this.setState({ event: jumpData })} />}
+        onConfirm={() => this.handleModalConfirm(jumpData)}
+        onCancel={this.handleModalCancel}
+      />
     )
   }
 
   renderMusicModal() {
+    const { musicData, currentlyOpenModal } = this.state
+    const action = 'music'
+
     return (
-      <div className="ui modal" ref="music" style={{ position: 'absolute' }}>
-        <div className="header">Add Music Event</div>
-        <div className="content">
-          <MusicForm
-            asset={this.state.musicData}
-            onChange={() => {
-              this.setState({ event: this.state.musicData })
-            }}
-          />
-        </div>
-        <div className="actions">
-          <div className="ui approve button">Confirm</div>
-          <div className="ui cancel button">Cancel</div>
-        </div>
-      </div>
+      <Confirm
+        open={currentlyOpenModal === action}
+        size="small"
+        header="Add Music Event"
+        confirmButton="Add"
+        content={<MusicForm asset={musicData} onChange={() => this.setState({ event: musicData })} />}
+        onConfirm={() => this.handleModalConfirm(musicData)}
+        onCancel={this.handleModalCancel}
+      />
     )
   }
 
@@ -291,7 +281,7 @@ export default class EditActorMap extends EditMap {
             </div>
             <div style={{ float: 'right' }}>
               <div style={{ float: 'left', marginLeft: '5px' }}>
-                <Properties
+                <ActorMapProperties
                   {...this.propertiesProps}
                   data={{
                     width: c2.width,
@@ -311,7 +301,7 @@ export default class EditActorMap extends EditMap {
                 />
               </div>
               <div style={{ float: 'left', marginLeft: '5px' }}>
-                <MapGenerator
+                <ActorMapGenerator
                   {...this.mapProps}
                   data={c2}
                   activeTileset={activeTileset}
@@ -339,16 +329,13 @@ export default class EditActorMap extends EditMap {
           </div>
         </div>
         <div
-          className={'three wide ' + (isPlaying ? 'mgb-hidden' : '') + ' column'}
-          style={{ display: 'flex', flexDirection: 'column', minWidth: '175px' }}
+          className={'three wide column'}
+          style={
+            isPlaying ? { display: 'none' } : { display: 'flex', flexDirection: 'column', minWidth: '175px' }
+          }
         >
-          <LayerTool
-            {...this.layerProps}
-            layers={c2.layers}
-            options={this.options}
-            activeLayer={activeLayer}
-          />
-          <TileSet
+          <Layers {...this.layerProps} layers={c2.layers} options={this.options} activeLayer={activeLayer} />
+          <ActorTileSet
             {...this.tilesetProps}
             palette={this.cache.tiles}
             activeTileset={activeTileset}

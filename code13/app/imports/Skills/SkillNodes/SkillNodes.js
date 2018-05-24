@@ -40,6 +40,9 @@ import { getSkillNodeStatus } from '/imports/schemas/skills'
 //                        To check that some string (either a dotted path or a slashSeparatedPath) is a valid
 //                        *LEAF* skill (leaf skills are explained below), use
 //                    >>    import { isSkillKeyValid } from '/imports/Skills/SkillNodes/SkillNodes'
+//  NEW
+//   skillChallengeType = "phaser" | "js" | "games"
+
 //
 //   1c) SkillAreas.js -- This defines the overall skillAreas (the top-level keys of SkillNodes.js)
 //                        and defines the skills that are listed and displayed in LearnSkillsAreaRoute.js and
@@ -314,8 +317,16 @@ export const makeTutorialsFindSelector = dottedSkillKey => {
     dn_ownerName: SpecialGlobals.skillsModelTrifecta.tutorialAccount,
   }
 }
-
+/**
+ * Get a skillNode based on the given dot-separated skillPath string
+ * @param {string} skillPath A dot-delimited skill path e.g code.js.foobar
+ */
 export const getNode = skillPath => Object.freeze({ ...SkillNodes.$meta.map[skillPath] })
+
+/**
+ * Get a dot-separated skillPath based on the given dot-separated skillPath string
+ * @param {string} skillNode A skill Node
+ */
 export const getPath = skillNode => skillNode.$meta.key
 
 export const getParentPath = skillPath => _.initial(skillPath.split('.')).join('.')
@@ -337,18 +348,31 @@ export const getFriendlyName = skillPath => {
   return _.get(getNode(skillPath), '$meta.name') || _.startCase(_.last(skillPath.split('.')))
 }
 
-// this string indicates if a path is code challenge
-const _challengeStrArray = ['basics', 'intro', 'advanced']
+export const getFriendlyNames = skillPath => {
+  const names = []
 
-export const isStringChallenge = str => _.includes(_challengeStrArray, str)
+  if (!skillPath) return names
 
+  do {
+    names.unshift(getFriendlyName(skillPath))
+    skillPath = skillPath.substring(0, skillPath.lastIndexOf('.'))
+  } while (skillPath)
+
+  return names
+}
+
+// this string indicates if a path is code challenge (free code camp)
 export const isPathChallenge = skillPath =>
-  _.some(_challengeStrArray, str => _.startsWith(skillPath, 'code.js.' + str))
+  SkillNodes.$meta.map[skillPath].$meta.skillChallengeType === 'challenges'
 
+// this string indicates if a path is step-by-step challenge
 export const isPathCodeTutorial = skillPath =>
-  _.startsWith(skillPath, 'code.js.games') || _.startsWith(skillPath, 'code.js.phaser')
+  _.includes(['phaser', 'games'], SkillNodes.$meta.map[skillPath].$meta.skillChallengeType)
 
-export const isPhaserTutorial = skillPath => _.startsWith(skillPath, 'code.js.phaser')
+// TODO- whack a mole thing - to find the path?
+// this string indicates if a path is step-by-step challenge
+export const isPhaserTutorial = skillPath =>
+  SkillNodes.$meta.map[skillPath].$meta.skillChallengeType === 'phaser'
 
 export const isArtTutorial = skillPath => _.startsWith(skillPath, 'art')
 
@@ -360,12 +384,89 @@ export const SkillNodesOrder = {
     js: {
       intro: SkillNodes.code.js.intro,
       phaser: SkillNodes.code.js.intro,
-      games: SkillNodes.code.js.games,
+      games: SkillNodes.code.js.intro,
       advanced: SkillNodes.code.js.intro,
     },
   },
   art: SkillNodes.art,
 }
+
+// Ordered lists of learn items and corresponding info
+export const artItems = [
+  { key: 'lineArt', node: SkillNodes.art.lineArt, mascot: 'arcade_player' },
+  { key: 'colors', node: SkillNodes.art.colors, mascot: 'rpgGuy' },
+  { key: 'shadesAndTextures', node: SkillNodes.art.shadesAndTextures, mascot: 'slimy2' },
+  { key: 'gameSprites', node: SkillNodes.art.gameSprites, mascot: 'game_runner' },
+]
+
+export const codeItems = [
+  {
+    mascot: 'flying',
+    icon: 'code',
+    content: 'Intro to Game Coding',
+    link: '/learn/code/intro',
+    skillPath: 'code.js.intro',
+    query: null,
+    skillnodeTopLevelTag: 'getStarted',
+    desc: `Learn the basics of the Javascript programming language, and the popular game engine Phaser so you can start making your own games!
+`,
+  },
+  {
+    mascot: 'pongPlay',
+    icon: 'game',
+    content: 'Create your first game from start to finish',
+    link: '/learn/code/phaser',
+    skillPath: 'code.js.phaser',
+    query: null,
+    skillnodeTopLevelTag: 'getStarted',
+    desc: `Learn how to create one of the very first arcade games using JavaScript and Phaser: Pong!`,
+  },
+  {
+    mascot: 'mole',
+    icon: 'road',
+    content: 'Game development walkthroughs',
+    link: '/learn/code/games',
+    skillPath: 'code.js.games',
+    query: null,
+    skillnodeTopLevelTag: 'getStarted',
+    desc: `These walkthroughs will show you how to create a game using your new Phaser and JavaScript game-dev skills.`,
+  },
+  {
+    mascot: 'arcade_player',
+    icon: 'code',
+    content: 'Modify Games',
+    link: '/learn/code/modify',
+    query: null,
+    skillnodeTopLevelTag: 'getStarted',
+    desc: `We provide some working games that you can fork (copy) and change as you wish.`,
+  },
+  {
+    mascot: 'bigguy',
+    icon: 'code',
+    content: 'Advanced Coding',
+    link: '/learn/code/advanced',
+    skillPath: 'code.js.advanced',
+    query: null,
+    skillnodeTopLevelTag: 'getStarted',
+    desc: [
+      'Learn the advanced part of Javascript.',
+      "This covers concepts you don't necessarily need to develop a basic game.",
+      'But it is always good to build your developer expertise.',
+    ].join(' '),
+  },
+]
+
+export const getStartedItems = [
+  { node: SkillNodes.getStarted.profile, mascot: 'arcade_player' },
+  { node: SkillNodes.getStarted.chat, mascot: 'slimy2' },
+  { node: SkillNodes.getStarted.play, mascot: 'whale' },
+  { node: SkillNodes.getStarted.assetsBasics, mascot: 'ideaguy' },
+  { node: SkillNodes.getStarted.projects, mascot: 'team' },
+  // { node: SkillNodes.getStarted.nonCodeGame, mascot: 'duck' },
+  // { node: SkillNodes.getStarted.codeGame, mascot: 'bigguy' }
+  // { node: SkillNodes.getStarted.assetsAdvanced,  mascot: 'ideaguy'      },
+  // { node: SkillNodes.getStarted.learn,           mascot: 'MgbLogo'      }
+]
 
 function _convertToDottedSkills(obj) {
   const arr = []

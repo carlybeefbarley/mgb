@@ -1,4 +1,3 @@
-'use strict'
 import SelectedTile from './SelectedTile.js'
 
 // for some reason babel don't want to extend Array.....

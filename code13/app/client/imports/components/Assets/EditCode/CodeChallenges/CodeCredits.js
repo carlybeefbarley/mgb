@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Popup } from 'semantic-ui-react'
 
 export default class CodeCredits extends React.Component {

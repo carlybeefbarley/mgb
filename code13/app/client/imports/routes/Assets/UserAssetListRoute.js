@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Segment, Popup, Menu, Message, Header } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
@@ -12,7 +13,7 @@ import {
   assetSorters,
   isAssetKindsStringComplete,
 } from '/imports/schemas/assets'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
 
 import AssetList from '/client/imports/components/Assets/AssetList'
@@ -75,7 +76,7 @@ const UserAssetListRoute = React.createClass({
    *   The result is a data structure that can be used without need for range/validity checking
    * @param q typically this.props.location.query  -  from react-router
   */
-  queryNormalized: function(q = {}) {
+  queryNormalized(q = {}) {
     // Start with defaults
     let newQ = _.clone(queryDefaults)
 
@@ -133,7 +134,7 @@ const UserAssetListRoute = React.createClass({
 
   /**  Returns the given query EXCEPT for keys that match a key/value pair in queryDefaults array
   */
-  _stripQueryOfDefaults: function(queryObj) {
+  _stripQueryOfDefaults(queryObj) {
     var strippedQ = _.omitBy(queryObj, function(val, key) {
       let retval = queryDefaults.hasOwnProperty(key) && queryDefaults[key] === val
       return retval
@@ -155,7 +156,7 @@ const UserAssetListRoute = React.createClass({
    * Always get the Assets stuff.
    * Optionally get the Project info - if this is a user-scoped view
    */
-  getMeteorData: function() {
+  getMeteorData() {
     const userId = this.props.user && this.props.user._id ? this.props.user._id : null
     const qN = this.queryNormalized(this.props.location.query)
     let handleForAssets = Meteor.subscribe(
@@ -313,7 +314,7 @@ const UserAssetListRoute = React.createClass({
                 id="mgbjr-asset-search-kind-select-allKinds"
                 style={{ float: 'right', fontWeight: 'bold', cursor: 'pointer' }}
                 onClick={() => {
-                  joyrideCompleteTag('mgbjr-CT-asset-search-kind-select-allKinds')
+                  joyrideStore.completeTag('mgbjr-CT-asset-search-kind-select-allKinds')
                   this.handleToggleKind('__all')
                 }}
               >

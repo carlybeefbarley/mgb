@@ -15,11 +15,11 @@ import Camera from './Camera'
 
 import Plural from '/client/imports/helpers/Plural'
 
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 const MOUSE_BUTTONS = {
   none: 0, //  No button or un-initialized
@@ -212,7 +212,7 @@ export default class MapArea extends React.Component {
     //
     const parser = new DOMParser()
     const xml = parser.parseFromString(xmlString, 'text/xml')
-    showToast('Sorry: TMX import is not implemented... yet\nTry JSON', 'error')
+    showToast.error('Sorry: TMX import is not implemented... yet\nTry JSON')
 
     this.data = this.xmlToJson(xml)
   }
@@ -615,16 +615,16 @@ export default class MapArea extends React.Component {
     this.lastEvent = null
     if (this.refs.mapElement) {
       this.refs.mapElement.style.transition = '0.3s'
-      this.refs.positionInfo.forceUpdate()
+      this.refs.positionInfo && this.refs.positionInfo.forceUpdate()
 
       // Joyride completion tags
       const editMode = this.props.getMode()
       if (editMode === EditModes.stamp) {
-        joyrideCompleteTag(`mgbjr-CT-MapTools-stamp`)
+        joyrideStore.completeTag(`mgbjr-CT-MapTools-stamp`)
       } else if (editMode === EditModes.eraser) {
-        joyrideCompleteTag(`mgbjr-CT-MapTools-eraser`)
+        joyrideStore.completeTag(`mgbjr-CT-MapTools-eraser`)
       } else if (editMode === EditModes.fill) {
-        joyrideCompleteTag(`mgbjr-CT-MapTools-fill`)
+        joyrideStore.completeTag(`mgbjr-CT-MapTools-fill`)
       }
     }
   }

@@ -1,4 +1,6 @@
+import PropTypes from 'prop-types'
 import React, { Component } from 'react'
+import { routerShape } from 'react-router'
 
 import BeatsController from './components/BeatsController'
 import Expandable from './components/Expandable'
@@ -19,66 +21,44 @@ import { confineToRange } from './utils/tools'
 import defaultInstruments from './utils/default-instruments'
 import defaultLengths from './utils/defaultLengths'
 
+const activePresetID = 'adtr'
+
 export default class Djent extends Component {
   static contextTypes = {
-    router: React.PropTypes.object.isRequired,
+    router: routerShape.isRequired,
   }
+
   state = {
     googleAPIHasLoaded: false,
+    activePresetID,
+    preset: presets.find(a => a.id === activePresetID) || null,
+
+    isPlaying: false,
+    isLooping: true,
+    generationState: undefined,
+    currentBuffer: undefined,
+    currentSrc: undefined,
+
+    continuousGeneration: false,
+    fadeIn: false,
+
+    isExpanded: false,
+
+    canvasWidth: 850,
+    duration: 0,
   }
 
   constructor(props) {
     super(props)
+    this.importAudio = this.props.importAudio
+  }
 
-    const activePresetID = 'adtr'
-    const preset = presets.find(function(a) {
-      return a.id === activePresetID ? a : null
-    })
-    this.state = {
-      activePresetID: activePresetID,
-      preset: preset,
+  componentWillMount = () => {
+    const { activePresetID } = this.state
 
-      isPlaying: false,
-      isLooping: true,
-      generationState: undefined,
-      currentBuffer: undefined,
-      currentSrc: undefined,
+    const preset = presets.find(preset => preset.id === activePresetID)
 
-      continuousGeneration: false,
-      fadeIn: false,
-
-      isExpanded: false,
-
-      canvasWidth: 850,
-      duration: 0,
-    }
-
-    this.actions = {}
-
-    this.actions.importAudio = this.props.importAudio
-    this.actions.applyPreset = this.applyPreset.bind(this)
-    this.actions.updateHitChance = this.updateHitChance.bind(this)
-    this.actions.updateBeats = this.updateBeats.bind(this)
-    this.actions.updateAllowedLengths = this.updateAllowedLengths.bind(this)
-    this.actions.updateBPM = this.updateBPM.bind(this)
-    this.actions.updateInstrumentSound = this.updateInstrumentSound.bind(this)
-    this.actions.updateInstrumentPitch = this.updateInstrumentPitch.bind(this)
-    this.actions.updateCustomPresetInstruments = this.updateCustomPresetInstruments.bind(this)
-
-    this.actions.updateIsPlaying = this.updateIsPlaying.bind(this)
-    this.actions.updateIsLooping = this.updateIsLooping.bind(this)
-    this.actions.updateGenerationState = this.updateGenerationState.bind(this)
-    this.actions.updateCurrentBuffer = this.updateCurrentBuffer.bind(this)
-    this.actions.updateCurrentSrc = this.updateCurrentSrc.bind(this)
-
-    this.actions.updateContinuousGeneration = this.updateContinuousGeneration.bind(this)
-    this.actions.updateFadeIn = this.updateFadeIn.bind(this)
-    this.actions.updateDuration = this.updateDuration.bind(this)
-    this.actions.toggleSettings = this.toggleSettings.bind(this)
-
-    this.actions.enableModal = this.enableModal.bind(this)
-    this.actions.disableModal = this.disableModal.bind(this)
-    this.waveCanvas = null
+    return this.applyPreset(preset)
   }
 
   componentDidMount() {
@@ -94,7 +74,7 @@ export default class Djent extends Component {
     this._raf()
   }
 
-  updateCursor() {
+  updateCursor = () => {
     if (this.state.isPlaying && this.state.duration > 0) {
       const ms = Date.now()
       const deltaTime = ms - this.splitTime
@@ -106,23 +86,10 @@ export default class Djent extends Component {
     } else this.splitTime = Date.now()
   }
 
-  componentWillMount = () => {
-    // const presetID = this.props.params.presetID || this.props.activePresetID;
-    const presetID = this.state.activePresetID
-
-    const preset =
-      presets.find(preset => preset.id === presetID) ||
-      presets.find(preset => preset.id === this.state.activePresetID)
-    // console.log('apply preset')
-    return this.actions.applyPreset(preset)
-  }
-
-  stop() {
-    this.refs.soundController.stopEvent()
-  }
+  stop = () => this.refs.soundController.stopEvent()
 
   // ********** actions *******************
-  applyPreset(preset) {
+  applyPreset = preset => {
     // console.log('apply preset new', preset)
 
     let instruments = preset.settings.instruments
@@ -180,10 +147,10 @@ export default class Djent extends Component {
       })
     })
 
-    this.setState({ activePresetID: preset.id, preset: preset })
+    this.setState({ activePresetID: preset.id, preset })
   }
 
-  updateHitChance(hitChance) {
+  updateHitChance = hitChance => {
     console.log('updatehitchance', hitChance)
 
     if (!hitChance) hitChance = 1
@@ -192,10 +159,10 @@ export default class Djent extends Component {
 
     let preset = this.state.preset
     preset.settings.config.hitChance = hitChance
-    this.setState({ preset: preset })
+    this.setState({ preset })
   }
 
-  updateBeats(id, prop, value) {
+  updateBeats = (id, prop, value) => {
     console.log('update beats', id, prop, value)
     if (prop === 'bars' || prop === 'beats') {
       if (!value) value = 4
@@ -214,18 +181,18 @@ export default class Djent extends Component {
 
       let preset = this.state.preset
       preset.settings.beats = beats
-      this.setState({ preset: preset })
+      this.setState({ preset })
 
       console.log('updated beats')
     }
   }
 
-  updateAllowedLengths(allowedLengths) {
+  updateAllowedLengths = allowedLengths => {
     console.log('update allowed length', allowedLengths)
 
     let preset = this.state.preset
     preset.settings.config.allowedLengths = allowedLengths
-    this.setState({ preset: preset })
+    this.setState({ preset })
   }
 
   updateBPM(bpm) {
@@ -235,10 +202,10 @@ export default class Djent extends Component {
 
     let preset = this.state.preset
     preset.settings.config.bpm = bpm
-    this.setState({ preset: preset })
+    this.setState({ preset })
   }
 
-  updateInstrumentSound({ soundID, parentID, prop, value }) {
+  updateInstrumentSound = ({ soundID, parentID, prop, value }) => {
     let instruments = this.state.preset.settings.instruments
     let parentNr = instruments
       .map((item, nr) => {
@@ -265,12 +232,12 @@ export default class Djent extends Component {
 
         let preset = this.state.preset
         preset.settings.instruments = instruments
-        this.setState({ preset: preset })
+        this.setState({ preset })
       }
     }
   }
 
-  updateInstrumentPitch({ instrumentID, value }) {
+  updateInstrumentPitch = ({ instrumentID, value }) => {
     console.log('updateInstrumentPitch', instrumentID, value, confineToRange(value, -1200, 1200))
 
     // return {
@@ -279,147 +246,137 @@ export default class Djent extends Component {
     // };
   }
 
-  updateCustomPresetInstruments(instruments) {
+  updateCustomPresetInstruments = instruments => {
     // let preset = this.state.preset
     // preset.settings.instruments = instruments
     // this.setState({ preset: preset })
   }
 
-  updateIsPlaying(isPlaying) {
-    this.setState({ isPlaying: isPlaying })
-  }
+  updateIsPlaying = isPlaying => this.setState({ isPlaying })
 
-  updateIsLooping(isLooping) {
-    this.setState({ isLooping: isLooping })
-  }
+  updateIsLooping = isLooping => this.setState({ isLooping })
 
-  updateGenerationState(generationState) {
-    this.setState({ generationState: generationState })
-  }
+  updateGenerationState = generationState => this.setState({ generationState })
 
-  updateCurrentBuffer(currentBuffer) {
-    this.setState({ currentBuffer: currentBuffer })
+  updateCurrentBuffer = currentBuffer => {
+    this.setState({ currentBuffer })
     this.songTime = 0 // resets cursor
   }
 
-  updateCurrentSrc(currentSrc) {
-    this.setState({ currentSrc: currentSrc })
-  }
+  updateCurrentSrc = currentSrc => this.setState({ currentSrc })
 
-  updateContinuousGeneration(continuousGeneration) {
-    this.setState({ continuousGeneration: continuousGeneration })
-  }
+  updateContinuousGeneration = continuousGeneration => this.setState({ continuousGeneration })
 
-  updateDuration(newDuration) {
-    this.setState({ duration: newDuration })
-  }
+  updateDuration = newDuration => this.setState({ duration: newDuration })
 
-  updateFadeIn(fadeIn) {
-    this.setState({ fadeIn: fadeIn })
-  }
+  updateFadeIn = fadeIn => this.setState({ fadeIn })
 
-  toggleSettings(isExpanded) {
-    this.setState({ isExpanded: isExpanded })
-    // console.log( $('.generateMusicPopup') )
+  toggleSettings = isExpanded => this.setState({ isExpanded })
 
-    // hack to adjust popup height
-    setTimeout(function() {
-      $('.generateMusicPopup').modal('refresh')
-    }, 300)
-  }
+  enableModal = () => {}
 
-  enableModal() {}
-
-  disableModal() {}
+  disableModal = () => {}
 
   // -------------- actions ----------------------
 
-  render = () => {
-    const totalBeat = this.state.preset.settings.beats.find(beat => beat.id === 'total')
-    const beats = this.state.preset.settings.beats
+  render() {
+    const {
+      activePresetID,
+      canvasWidth,
+      continuousGeneration,
+      currentBuffer,
+      currentSrc,
+      fadeIn,
+      generationState,
+      isExpanded,
+      isLooping,
+      isPlaying,
+      preset,
+    } = this.state
+
+    const totalBeat = preset.settings.beats.find(beat => beat.id === 'total')
+    const beats = preset.settings.beats
       .filter(beat => beat.id !== 'total')
-      .map((beat, i) => <BeatPanel beat={beat} actions={this.actions} preset={this.state.preset} key={i} />)
+      .map((beat, i) => <BeatPanel beat={beat} actions={this} preset={preset} key={i} />)
 
     return (
       <section>
         {/* <Modal /> */}
         <div>
           <div>
-            <div>
-              <div className="row">
-                <span className="title-primary">Preset</span>
-                &nbsp;&nbsp;
-                <PresetController activePresetID={this.state.activePresetID} actions={this.actions} />
+            <div className="row">
+              <span className="title-primary">Preset</span>
+              &nbsp;&nbsp;
+              <PresetController activePresetID={activePresetID} actions={this} />
+            </div>
+
+            <Panel>
+              <div style={{ position: 'relative' }}>
+                <div ref="cursor" className="cursor" />
+                <canvas ref="waveCanvas" width={canvasWidth} height="128px" />
               </div>
+            </Panel>
 
+            <Panel>
+              <div>
+                <SoundController
+                  ref="soundController"
+                  usePredefinedSettings={false}
+                  generateButtonText={'Generate Riff'}
+                  enableContinuousGenerationControl
+                  isPlaying={isPlaying}
+                  isLooping={isLooping}
+                  generationState={generationState}
+                  currentBuffer={currentBuffer}
+                  currentSrc={currentSrc}
+                  bpm={preset.settings.config.bpm}
+                  beats={preset.settings.beats}
+                  allowedLengths={preset.settings.config.allowedLengths}
+                  hitChance={preset.settings.config.hitChance}
+                  instruments={preset.settings.instruments}
+                  continuousGeneration={continuousGeneration}
+                  fadeIn={fadeIn}
+                  isExpanded={isExpanded}
+                  actions={this}
+                  waveCanvas={this.waveCanvas}
+                />
+              </div>
+            </Panel>
+          </div>
+
+          <div style={{ clear: 'both' }}>&nbsp;</div>
+          <div style={isExpanded ? { display: 'block' } : { display: 'none' }}>
+            <div>
               <Panel>
-                <div style={{ position: 'relative' }}>
-                  <div ref="cursor" className="cursor" />
-                  <canvas ref="waveCanvas" width={this.state.canvasWidth} height="128px" />
+                <h3>Main Settings</h3>
+
+                <div className="row">
+                  <BPMController bpm={preset.settings.config.bpm} actions={this} />
+                  &nbsp;&nbsp;
+                  <BPMTapper actions={this} />
+                  &nbsp;&nbsp;
+                  <BeatsController beat={totalBeat} actions={this} />
                 </div>
               </Panel>
 
-              <Panel>
-                <div>
-                  <SoundController
-                    ref="soundController"
-                    usePredefinedSettings={false}
-                    generateButtonText={'Generate Riff'}
-                    enableContinuousGenerationControl
-                    isPlaying={this.state.isPlaying}
-                    isLooping={this.state.isLooping}
-                    generationState={this.state.generationState}
-                    currentBuffer={this.state.currentBuffer}
-                    currentSrc={this.state.currentSrc}
-                    bpm={this.state.preset.settings.config.bpm}
-                    beats={this.state.preset.settings.beats}
-                    allowedLengths={this.state.preset.settings.config.allowedLengths}
-                    hitChance={this.state.preset.settings.config.hitChance}
-                    instruments={this.state.preset.settings.instruments}
-                    continuousGeneration={this.state.continuousGeneration}
-                    fadeIn={this.state.fadeIn}
-                    isExpanded={this.state.isExpanded}
-                    actions={this.actions}
-                    waveCanvas={this.waveCanvas}
-                  />
-                </div>
-              </Panel>
+              <div style={{ clear: 'both' }}>&nbsp;</div>
+              <Panel>{beats}</Panel>
             </div>
 
             <div style={{ clear: 'both' }}>&nbsp;</div>
-            <div style={this.state.isExpanded ? { display: 'block' } : { display: 'none' }}>
-              <div>
-                <Panel>
-                  <h3>Main Settings</h3>
+            <Panel>
+              <h3>Sounds</h3>
 
-                  <div className="row">
-                    <BPMController bpm={this.state.preset.settings.config.bpm} actions={this.actions} />
-                    &nbsp;&nbsp;
-                    <BPMTapper actions={this.actions} />
-                    &nbsp;&nbsp;
-                    <BeatsController beat={totalBeat} actions={this.actions} />
-                  </div>
-                </Panel>
-
-                <div style={{ clear: 'both' }}>&nbsp;</div>
-                <Panel>{beats}</Panel>
-              </div>
-
-              <div style={{ clear: 'both' }}>&nbsp;</div>
-              <Panel>
-                <h3>Sounds</h3>
-
-                <InstrumentList
-                  actions={{
-                    disableModal: this.actions.disableModal,
-                    enableModal: this.actions.enableModal,
-                    updateInstrumentSound: this.actions.updateInstrumentSound,
-                    updateInstrumentPitch: this.actions.updateInstrumentPitch,
-                  }}
-                  instruments={this.state.preset.settings.instruments}
-                />
-              </Panel>
-            </div>
+              <InstrumentList
+                actions={{
+                  disableModal: this.disableModal,
+                  enableModal: this.enableModal,
+                  updateInstrumentSound: this.updateInstrumentSound,
+                  updateInstrumentPitch: this.updateInstrumentPitch,
+                }}
+                instruments={preset.settings.instruments}
+              />
+            </Panel>
           </div>
         </div>
       </section>

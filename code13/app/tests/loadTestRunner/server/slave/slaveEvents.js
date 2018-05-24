@@ -4,10 +4,10 @@ const { sm } = require('../wsTools')
 
 let port = Math.floor(Math.random() * 1000) + 4000
 module.exports = {
-  test: (data, ws) => {
+  test(data, ws) {
     console.log('Test message from Master:', data)
   },
-  start: (data, ws) => {
+  start(data, ws) {
     port++
     const localPort = port
     spawnPhantom(localPort, phantom => {
@@ -44,7 +44,7 @@ module.exports = {
       })
     })
   },
-  update: (data, ws) => {
+  update(data, ws) {
     console.log('updating...')
     const update = spawn(__dirname + '/../../../updateSlave.sh', {
       env: { PATH: process.env.PATH },

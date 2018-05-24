@@ -1,11 +1,14 @@
-import _ from 'lodash'
 import React from 'react'
-import { Message } from 'semantic-ui-react'
-import Dashboard from '/client/imports/components/Dashboard/Dashboard.js'
+import { utilPushTo } from '/client/imports/routes/QLink'
+import Dashboard from '/client/imports/components/Dashboard/Dashboard'
 
 const DashboardRoute = React.createClass({
-  render: function() {
-    return !this.props.currUser ? <Message content="Not logged in" /> : <Dashboard {...this.props} />
+  componentWillMount() {
+    if (!this.props.currUser) utilPushTo(null, '/')
+  },
+
+  render() {
+    return <Dashboard {...this.props} />
   },
 })
 

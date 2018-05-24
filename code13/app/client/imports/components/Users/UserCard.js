@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Header, Label, Card, Icon } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import { utilPushTo } from '/client/imports/routes/QLink'
@@ -18,7 +19,7 @@ export default class UserCard extends React.Component {
   }
 
   static contextTypes = {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   }
 
   handleClickUser = () => {

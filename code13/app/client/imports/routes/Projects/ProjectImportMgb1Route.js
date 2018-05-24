@@ -1,9 +1,10 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import Helmet from 'react-helmet'
 import { Button, Header, Icon, Input, List, Message, Segment } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import { logActivity } from '/imports/schemas/activity'
 import mgb1 from '/client/imports/helpers/mgb1'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
@@ -106,7 +107,7 @@ class ProjectImportMgb1RouteUI extends React.Component {
     this.setState({ importInProcess: true })
     Meteor.call('job.import.mgb1.project', importParams, (err, result) => {
       this.setState({ importInProcess: false })
-      if (err) showToast(`Unable to import project: ${err.reason}`, 'error')
+      if (err) showToast.error(`Unable to import project: ${err.reason}`)
       else {
         this.setState({ confirmPendingForProjectName: null })
         showToast(`Completed import. New project id = ${result.newProjectId}`)

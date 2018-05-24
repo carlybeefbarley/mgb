@@ -111,7 +111,7 @@ const _prefixAllAssetNames = (jsonData, mgb2assetNamePrefix) => {
   _fixup('item', 'equippedNewShotActor,equippedNewActorGraphics')
   _fixup('npc', 'takesObjectOnChoice1,dropsObjectOnChoice1')
   _fixup('npc', 'takesObjectOnChoice2,dropsObjectOnChoice2')
-  _fixup('npc', 'takesObjectOnChoice2,dropsObjectOnChoice3')
+  _fixup('npc', 'takesObjectOnChoice3,dropsObjectOnChoice3')
   _fixup('itemOrNPC', 'dropsObjectWhenKilledName,dropsObjectWhenKilledName2')
   _fixup('itemOrNPC', 'dropsObjectRandomlyName,conditionsActor')
   _fixup('item', 'keyForThisDoor')

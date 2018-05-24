@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { AssetKinds } from '/imports/schemas/assets'
 import validate from '/imports/schemas/validate'
 import InlineEdit from '/client/imports/components/Controls/InlineEdit'
@@ -81,7 +82,7 @@ const AssetPathDetail = React.createClass({
     handleSaveNowRequest: PropTypes.func.isRequired, // Callback indicating User has said 'save now'
   },
 
-  handleFieldChanged: function(data) {
+  handleFieldChanged(data) {
     // data = { description: "New validated text comes here" }
     // Update your model from here
     if (data.name) this.props.handleNameChange(data.name)

@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import Helmet from 'react-helmet'
 import AssetCreateNew from '/client/imports/components/Assets/NewAsset/AssetCreateNew'
 import { Container, Segment } from 'semantic-ui-react'
@@ -23,7 +24,7 @@ const AssetCreateNewRoute = React.createClass({
     setTimeout(() => Hotjar('trigger', 'asset-create-new', this.props.currUser), 200)
   },
 
-  render: function() {
+  render() {
     return (
       <Segment basic>
         <Helmet title="Create a new Asset" meta={[{ name: 'description', content: 'Assets' }]} />

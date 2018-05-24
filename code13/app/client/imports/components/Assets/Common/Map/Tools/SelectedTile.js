@@ -1,4 +1,3 @@
-'use strict'
 import TileHelper from '../Helpers/TileHelper.js'
 
 // Represents one selected tile

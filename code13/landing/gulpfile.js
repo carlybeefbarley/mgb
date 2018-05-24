@@ -137,7 +137,7 @@ gulp.task('publish', (cb) => {
     'build',
     'publish:make-cdn-files',
     'publish:aws',
-    cb,
+    cb
   )
 })
 
@@ -175,7 +175,7 @@ gulp.task('publish:aws', function() {
   const headers = { 'Cache-Control': 'max-age=315360000, no-transform, public' }
 
   const isValidCloudFrontFile = file => {
-    const isDeleted = !!(file.s3 && file.s3.state && !file.s3.state.deleted)
+    const isDeleted = file.s3 && file.s3.state && file.s3.state.deleted
     const hasPath = !!file.path
     return hasPath && !isDeleted
   }
@@ -261,7 +261,7 @@ gulp.task('build', (cb) => {
       'build:js',
       'build:styles',
     ],
-    cb,
+    cb
   )
 })
 
@@ -332,6 +332,6 @@ gulp.task('default', cb => {
       'watch',
       'serve',
     ],
-    cb,
+    cb
   )
 })

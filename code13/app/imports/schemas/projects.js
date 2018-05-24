@@ -403,12 +403,13 @@ Meteor.methods({
    *  @param data.name           Name of Project. Must be unique for
    *  @param data.description    Description field
    */
-  'Projects.create': function(data) {
+  'Projects.create'(data) {
     // 0. Perform Input/User Validations
     checkIsLoggedInAndNotSuspended()
     checkMgb.projectName(data.name)
     checkMgb.projectDescription(data.description)
-    const username = Meteor.user().profile.name
+    const user = Meteor.user()
+    const username = user.profile.name
 
     // Note that this check will also run on the client, but could potentially fail to
     // find a conflict (since the client's subscription might not include all the user's
@@ -453,7 +454,9 @@ Meteor.methods({
     // 2. Handle post-create actions and return docId of new record
     if (Meteor.isServer) {
       console.log(`  [Projects.create]  "${data.name}"  #${docId}  `)
-      Meteor.call('Slack.Projects.create', username, data.name, docId)
+      if (!user.profile.isGuest) {
+        Meteor.call('Slack.Projects.create', username, data.name, docId)
+      }
     }
     return docId
   },
@@ -462,7 +465,7 @@ Meteor.methods({
   // PROJECT UPDATE
   //
 
-  'Projects.update': function(docId, data) {
+  'Projects.update'(docId, data) {
     // 0. Perform Input/User Validations
     checkIsLoggedInAndNotSuspended()
     check(docId, String)
@@ -502,7 +505,7 @@ Meteor.methods({
 
     return count
   },
-  'Projects.leave': function(projectId, userId) {
+  'Projects.leave'(projectId, userId) {
     checkIsLoggedInAndNotSuspended()
     check(projectId, String)
     check(userId, String)

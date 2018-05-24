@@ -1,14 +1,13 @@
-'use strict'
 import { AssetKinds, AssetKindKeys } from '/imports/schemas/assets'
 import { logActivity } from '/imports/schemas/activity'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 
 const TO_RADIANS = Math.PI / 180
 const TO_DEGREES = 1 / TO_RADIANS
 // collection with useful functions
 const ObjectHelper = {
   // aabb may be any object who contains: {x, y, width, height}
-  AABBvsAABB: (box1, box2) => {
+  AABBvsAABB(box1, box2) {
     return !(
       box1.x + box1.width < box2.x ||
       box1.y + box1.height < box2.y ||
@@ -17,13 +16,13 @@ const ObjectHelper = {
     )
   },
 
-  rotAABBvsAABB: (box1, angle1, box2, angle2) => {
+  rotAABBvsAABB(box1, angle1, box2, angle2) {
     const a = { x: 0, y: 0, width: 0, height: 0 }
     const b = { x: 0, y: 0, width: 0, height: 0 }
   },
 
   // camera has inverse x/y
-  CameravsAABB: (cam, box) => {
+  CameravsAABB(cam, box) {
     return !// add extra space to all box sides as pos to camera is related from drawing position
     // and also rotation point in tiled is left / bottom corner
     (
@@ -33,7 +32,7 @@ const ObjectHelper = {
       -cam.y > box.y + box.height * 2
     )
   },
-  PointvsAABB: (box, x, y, skipRotation, px = box.x, py = box.y) => {
+  PointvsAABB(box, x, y, skipRotation, px = box.x, py = box.y) {
     let nx = x
     let ny = y
     if (box.rotation && !skipRotation) {
@@ -48,7 +47,7 @@ const ObjectHelper = {
     return !(box.x > nx || box.y > ny || box.x + box.width < nx || box.y + box.height < ny)
   },
 
-  PointvsTile: (box, x, y) => {
+  PointvsTile(box, x, y) {
     if (box.rotation) {
       // rotate one point to opposite direction instead of 4 box points
       const angle = -box.rotation * TO_RADIANS
@@ -64,14 +63,14 @@ const ObjectHelper = {
     return ObjectHelper.PointvsAABB(box, x, y + box.height)
   },
   // rotate per x
-  rpx: (sin, cos, x, y, cx, cy) => {
+  rpx(sin, cos, x, y, cx, cy) {
     return (x - cx) * cos - (y - cy) * sin + cx
   },
-  rpy: (sin, cos, x, y, cx, cy) => {
+  rpy(sin, cos, x, y, cx, cy) {
     return (y - cy) * cos + (x - cx) * sin + cy
   },
 
-  rotateObject: (o, angle) => {
+  rotateObject(o, angle) {
     if (o.orig) {
       return ObjectHelper.rotateShape(o, angle)
     }
@@ -106,7 +105,7 @@ const ObjectHelper = {
     o.rotation = angle * TO_DEGREES
   },
 
-  rotateShape: (o, angle) => {
+  rotateShape(o, angle) {
     const oldAngle = o.rotation * Math.PI / 180
 
     // ccx / ccy - is same as pivot point
@@ -133,14 +132,14 @@ const ObjectHelper = {
     o.update()
   },
 
-  createTileObject: (pal, id, x, y, name = '(unnamed tile #' + id + ')') => {
+  createTileObject(pal, id, x, y, name = '(unnamed tile #' + id + ')') {
     return {
       name,
       x,
       y,
       gid: pal.gid,
       height: pal.h,
-      id: id,
+      id,
       rotation: 0,
       type: '',
       visible: true,
@@ -149,12 +148,12 @@ const ObjectHelper = {
     }
   },
 
-  createEmptyTileObject: (gid = 0, x = 0, y = 0, name = '(unnamed tile)') => {
+  createEmptyTileObject(gid = 0, x = 0, y = 0, name = '(unnamed tile)') {
     return {
       name,
       x,
       y,
-      gid: gid,
+      gid,
       height: 32,
       id: 0,
       rotation: 0,
@@ -165,7 +164,7 @@ const ObjectHelper = {
     }
   },
 
-  createRectangle: (id, x, y, width = 1, height = 1, name = '(unnamed rectangle #' + id + ')') => {
+  createRectangle(id, x, y, width = 1, height = 1, name = '(unnamed rectangle #' + id + ')') {
     return {
       height,
       id,
@@ -180,12 +179,12 @@ const ObjectHelper = {
       mgb_properties: [],
     }
   },
-  createEllipse: (id, x, y, width = 1, height = 1, name = '(unnamed elipse #' + id + ')') => {
+  createEllipse(id, x, y, width = 1, height = 1, name = '(unnamed elipse #' + id + ')') {
     const ellipse = ObjectHelper.createRectangle(id, x, y, width, height, name)
     ellipse.ellipse = true
     return ellipse
   },
-  createPolyline: (id, x, y, width = 1, height = 1, name = '(unnamed shape #' + id + ')') => {
+  createPolyline(id, x, y, width = 1, height = 1, name = '(unnamed shape #' + id + ')') {
     return {
       height,
       id,
@@ -236,7 +235,7 @@ const ObjectHelper = {
 
       Meteor.call('Azzets.create', newAsset, (error, result) => {
         if (error) {
-          showToast('cannot create asset because: ' + error.reason, 'error')
+          showToast.error('cannot create asset because: ' + error.reason)
         } else {
           newAsset._id = result // So activity log will work
           logActivity('asset.create', `Create ${assetKindKey}`, null, newAsset)
@@ -248,7 +247,7 @@ const ObjectHelper = {
     img.src = dataUrl
   },
 
-  drawEllipse: (ctx, x, y, w, h) => {
+  drawEllipse(ctx, x, y, w, h) {
     const kappa = 0.5522848,
       ox = w / 2 * kappa, // control point offset horizontal
       oy = h / 2 * kappa, // control point offset vertical

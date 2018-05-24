@@ -60,13 +60,13 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
   })
 
   const actions = {
-    status: data => {
+    status(data) {
       status.memory.progress(data.status.used * 100)
       status.cpu.progress(data.status.loadAvg * 100)
       status.info.addOrUpdate('Clients connected: ', data.clients)
       status.info.addOrUpdate('Slaves available: ', data.slaves)
     },
-    runnerStarted: data => {
+    runnerStarted(data) {
       const testCase =
         window.ml.TestCase.find(data.id) ||
         new window.ml.TestCase(data, () => {
@@ -75,33 +75,33 @@ require(['/widgets/gauge.js', '/widgets/testCase.js', '/widgets/info.js'], () =>
       testCase.init(data)
       // console.log("Runner started:", data)
     },
-    runnerCompleted: data => {
+    runnerCompleted(data) {
       const testCase = window.ml.TestCase.find(data.id)
       testCase && testCase.update(data)
       // console.log("Runner completed:", data, data.tests[0])
     },
-    slaveStarting: data => {
+    slaveStarting(data) {
       status.info.addOrUpdate(txt.startSlave, 'Starting Slave')
     },
-    slaveStarted: data => {
+    slaveStarted(data) {
       status.info.addOrUpdate('StartSlave', '', () => {
         sendMessage('startSlave')
         return 'starting'
       })
     },
-    slavesTerminating: data => {
+    slavesTerminating(data) {
       console.log('Slaves terminating...')
     },
-    slavesTerminated: data => {
+    slavesTerminated(data) {
       console.log('Slaves terminated...')
     },
-    log: data => {
+    log(data) {
       console.log('>>>', data)
     },
-    critical: data => {
+    critical(data) {
       alert('Critical error!\n' + data)
     },
-    error: data => {
+    error(data) {
       alert('Error:\n' + data)
     },
   }

@@ -5,7 +5,7 @@ class InputBox extends Component {
     this.refs.input.value = nextProps.defaultValue
   }
 
-  render = () => {
+  render() {
     const inputProps = {
       id: '',
       type: 'text',

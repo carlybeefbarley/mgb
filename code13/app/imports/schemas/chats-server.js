@@ -106,7 +106,7 @@ Meteor.methods({
    *  @param {string} message - the message to be sent (TBD on validation)
    *
    */
-  'Chats.send': function(channelName, message, chatMetadata) {
+  'Chats.send'(channelName, message, chatMetadata) {
     const currUser = Meteor.user()
     _checkChatSendIsValid(currUser, channelName, message)
     const currUserName = currUser.username
@@ -141,7 +141,7 @@ Meteor.methods({
     return { chatId: docId, chatTimestamp: now }
   },
 
-  'Chat.delete': function(chatId) {
+  'Chat.delete'(chatId) {
     if (!this.userId) throw new Meteor.Error(401, 'Login required')
 
     check(chatId, String)
@@ -176,7 +176,7 @@ Meteor.methods({
 
     return nDeleted
   },
-  'Chat.restore': function(chatId) {
+  'Chat.restore'(chatId) {
     if (!this.userId) throw new Meteor.Error(401, 'Login required')
 
     check(chatId, String)
@@ -240,7 +240,7 @@ Meteor.methods({
    * @param {Array} requestedChannelTimestamps Array - augmented with assetInfo for Asset Chat Channels
    * @returns
    */
-  'Chats.getLastMessageTimestamps': function(channelNamesArray) {
+  'Chats.getLastMessageTimestamps'(channelNamesArray) {
     if (!this.userId) throw new Meteor.Error(401, 'Login required')
 
     const requestedChannelTimestamps = Chats.aggregate([

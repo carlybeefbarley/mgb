@@ -11,7 +11,7 @@ export default class FaqSegment extends React.Component {
       if (err) console.log('error', err)
       else {
         const data = JSON.parse(str)
-        this.setState({ data: data })
+        this.setState({ data })
       }
     })
   }
@@ -30,7 +30,10 @@ export default class FaqSegment extends React.Component {
           panels={data.map(item => ({
             key: item.question,
             title: item.question,
-            content: <p style={{ wordBreak: 'break-word' }}>{item.answer}</p>,
+            content: {
+              key: item.question + '-content',
+              content: <p style={{ wordBreak: 'break-word' }}>{item.answer}</p>,
+            },
           }))}
         />
         <Button fluid attached="bottom" content="Ask for help" onClick={this.openHelpChat} />

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import AssetCard from './AssetCard'
 import { Card } from 'semantic-ui-react'
 import { isSameUserId } from '/imports/schemas/users'

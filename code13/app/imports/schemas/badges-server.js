@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { hasMultipleSkills, hasSkillCount } from './skills'
-import { Skills, Projects } from '/imports/schemas'
+import { Skills, Projects, Users } from '/imports/schemas'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 import { logActivity } from '/imports/schemas/activity'
 import { badgeList } from '/imports/schemas/badges'
@@ -43,10 +43,10 @@ const _skillBasedBadges = [
     newBadgeName: badgeList.getStartedProject.name,
     requiredSkills: ['getStarted.projects.createProject'],
   },
-  {
-    newBadgeName: badgeList.getStartedAll.name,
-    requiredSkills: ['getStarted.nonCodeGame.useActorMap'],
-  },
+  // {
+  //   newBadgeName: badgeList.getStartedAll.name,
+  //   requiredSkills: ['getStarted.nonCodeGame.buildAndPlayActorMap'],
+  // },
 ]
 
 const _skillCountBasedBadges = [
@@ -318,7 +318,7 @@ const _doRefreshBadgeStatus = user => {
   if (newBadgeKeys.length > 0) {
     const allBadges =
       _.isArray(user.badges) && user.badges.length > 0 ? _.union(user.badges, newBadgeKeys) : newBadgeKeys
-    const count = Meteor.users.update(user._id, {
+    const count = Users.update(user._id, {
       $set: {
         badges_count: allBadges.length,
         updatedAt: now,
@@ -340,7 +340,7 @@ const _awardBadge = (type, newBadgeName, newBadgeKeys, user) => {
       "Meteor.Error"
       message:"Only admins/mods can log Activity on behalf of others [401]"
     */
-  const count = Meteor.users.update(user._id, {
+  const count = Users.update(user._id, {
     $addToSet: { badges: newBadgeName },
     $set: { updatedAt: Date.now() },
   })
@@ -354,16 +354,19 @@ const _awardBadge = (type, newBadgeName, newBadgeKeys, user) => {
 }
 
 Meteor.methods({
-  'User.refreshBadgeStatus': function() {
-    return _doRefreshBadgeStatus(Meteor.user())
+  'User.refreshBadgeStatus'() {
+    const currUser = Meteor.user()
+    // don't award guest users with badges
+    if (!currUser || currUser.profile.isGuest) return false
+    return _doRefreshBadgeStatus(currUser)
   },
   // ,
   // "User.refreshAllUserBadges": function() {   // e.g. call with   Meteor.call("User.refreshAllUserBadges")
   //   console.log("---User.refreshAllUserBadges-start---")
-  //   Meteor.users.find( ).forEach(function(u) { _doRefreshBadgeStatus(u) } )
+  //   Users.find( ).forEach(function(u) { _doRefreshBadgeStatus(u) } )
   //   console.log("---User.refreshAllUserBadges-done---")
   // }
 })
 
 // Example of how to fix badges given by mistake:
-//   FIX FIX  Meteor.users.update( {}  , { $pull: { badges: "mgbAdmin" }}, { multi: true }  )
+//   FIX FIX  Users.update( {}  , { $pull: { badges: "mgbAdmin" }}, { multi: true }  )

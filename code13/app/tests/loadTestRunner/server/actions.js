@@ -5,7 +5,7 @@ const slaveActions = require('./slaveActions')
 const ec2 = require('./aws/EC2')
 
 module.exports = {
-  broadcastStatus: (clients, slaves) => {
+  broadcastStatus(clients, slaves) {
     status.update()
     clients.forEach(c => {
       module.exports.events.status(null, c.ws, clients, slaves)
@@ -13,19 +13,19 @@ module.exports = {
     // smAll(wss, 'status', {status, phantoms: 0})
   },
   events: {
-    hello: (data, ws, clients, slaves) => {
+    hello(data, ws, clients, slaves) {
       console.log('Message from client', data.toString())
       smOthers(clients, 'hello', data, ws)
     },
-    start: (data, ws, clients, slaves) => {
+    start(data, ws, clients, slaves) {
       smAll(clients, 'runnerStarted', data)
       slaveActions.events.start(data, ws, clients, slaves)
     },
-    status: (data, ws, clients, slaves) => {
+    status(data, ws, clients, slaves) {
       status.update()
       sm(ws, 'status', { status, clients: clients.length, slaves: slaves.length })
     },
-    startSlave: (data, ws, clients, slaves) => {
+    startSlave(data, ws, clients, slaves) {
       smAll(clients, 'slaveStarting', data)
       console.log('starting slave')
       ec2.createSlaves(err => {
@@ -33,13 +33,13 @@ module.exports = {
         else smAll(clients, 'slaveStarted', data)
       })
     },
-    terminateSlaves: (data, ws, clients, slaves) => {
+    terminateSlaves(data, ws, clients, slaves) {
       smAll(clients, 'slavesTerminating', data)
       ec2.terminateSlaves(() => {
         smAll(clients, 'slavesTerminated', data)
       })
     },
-    updateSlaves: (data, ws, clients, slaves) => {
+    updateSlaves(data, ws, clients, slaves) {
       slaveActions.events.updateSlaves(data, ws, clients, slaves)
     },
   },

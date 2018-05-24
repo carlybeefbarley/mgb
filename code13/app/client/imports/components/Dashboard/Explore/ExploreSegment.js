@@ -9,6 +9,9 @@ import FeaturedGames from './FeaturedGames'
 import FeaturedAssets from './FeaturedAssets'
 import FeaturedUsers from './FeaturedUsers'
 import LiveGames from './LiveGames'
+import { makeExpireTimestamp } from '../../../helpers/assetFetchers'
+
+const MAX_AGE = 600 // 10 minutes
 
 export default class ExploreSegment extends React.Component {
   static propTypes = {
@@ -23,13 +26,15 @@ export default class ExploreSegment extends React.Component {
   }
 
   componentDidMount() {
-    mgbAjax(`/api/asset/code/!vault/dashboard.featured`, (err, str) => {
+    // TODO (@team): figure out how to use cache globally: get latest version when it's required and use hashed when latest version is not changed
+    const expireHash = `?hash=${makeExpireTimestamp(MAX_AGE)}`
+    mgbAjax(`/api/asset/code/!vault/dashboard.featured${expireHash}`, (err, str) => {
       if (err) return console.log('error', err)
 
       const data = JSON.parse(str)
 
       _.map(data.liveGames, item => {
-        mgbAjax('/api/asset/withoutC2/' + item.id, (err, re) => {
+        mgbAjax('/api/asset/withoutC2/' + item.id + expireHash, (err, re) => {
           // TODO set state liveGameDataError
           if (err) return console.log(err)
 
@@ -39,7 +44,7 @@ export default class ExploreSegment extends React.Component {
       })
 
       _.map(data.games, item => {
-        mgbAjax('/api/asset/withoutC2/' + item.id, (err, re) => {
+        mgbAjax('/api/asset/withoutC2/' + item.id + expireHash, (err, re) => {
           if (err) return console.log(err)
 
           const record = JSON.parse(re)
@@ -48,7 +53,7 @@ export default class ExploreSegment extends React.Component {
       })
 
       _.map(data.assets, item => {
-        mgbAjax('/api/asset/withoutC2/' + item.id, (err, re) => {
+        mgbAjax('/api/asset/withoutC2/' + item.id + expireHash, (err, re) => {
           if (err) return console.log(err)
 
           const record = JSON.parse(re)
@@ -57,7 +62,7 @@ export default class ExploreSegment extends React.Component {
       })
 
       _.map(data.users, item => {
-        mgbAjax('/api/user/name/' + item.name, (err, re) => {
+        mgbAjax('/api/user/name/' + item.name + expireHash, (err, re) => {
           if (err) return console.log(err)
 
           const record = JSON.parse(re)

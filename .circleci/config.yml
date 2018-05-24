@@ -29,16 +29,19 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "code13/app/yarn.lock" }}
+            - v1-dependencies-{{ arch }}-{{ checksum "code13/app/yarn.lock" }}
             - v1-dependencies
 
       - run:
           name: Install dependencies
-          command: yarn
+          command: |
+            git config --global user.email "hello@mygamebuilder.com"
+            git config --global user.name "CI"
+            yarn
           working_directory: code13/app
 
       - save_cache:
-          key: v1-dependencies-{{ checksum "code13/app/yarn.lock" }}
+          key: v1-dependencies-{{ arch }}-{{ checksum "code13/app/yarn.lock" }}
           paths:
             - ~/.cache/yarn
             - .yarn-cache
@@ -49,13 +52,12 @@ jobs:
           command: yarn ci
           working_directory: code13/app
 
-      # Deploy staging
       - deploy:
           name: Maybe deploy staging
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              curl https://install.meteor.com?release=1.5.1 | /bin/sh
+              curl https://install.meteor.com?release=1.6.0.1 | /bin/sh
 
-              bash ./stage.sh
+              yarn deploy:staging
             fi
           working_directory: code13/app

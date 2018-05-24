@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { makeExpireThumbnailLink, makeGraphicAPILink } from '/client/imports/helpers/assetFetchers'
 import FittedImage from '/client/imports/components/Controls/FittedImage'
 

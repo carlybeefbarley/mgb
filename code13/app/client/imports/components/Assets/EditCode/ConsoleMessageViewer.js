@@ -1,15 +1,19 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import { Button } from 'semantic-ui-react'
+import React from 'react'
 import moment from 'moment'
 
-const ConsoleMessageViewer = React.createClass({
-  propTypes: {
-    messages: PropTypes.array, // of { mgbCmd: , data: }
-    gotoLinehandler: PropTypes.func,
-    clearConsoleHandler: PropTypes.func,
-  },
+export default class ConsoleMessageViewer extends React.Component {
+  state = {
+    showConsole: false,
+  }
 
-  cleanupMessage(argArray) {
+  componentDidUpdate() {
+    this.refs.msgContainer.scrollTop = this.refs.msgContainer.scrollHeight
+  }
+
+  cleanupMessage = argArray => {
     // Get rid of any %c modifiers, and remove the associated parameters. this is not robust, but works for the common case.
     var arg0 = argArray[0]
     if (typeof arg0 === 'string') {
@@ -19,17 +23,28 @@ const ConsoleMessageViewer = React.createClass({
 
       return (noColor0 + '  ' + rest.join(', ')).trim()
     } else return argArray.join(', ')
-  },
+  }
 
-  invokeGotoLinehandler(msg) {
+  invokeGotoLinehandler = msg => {
     // TODO check if msg.url / show asset:line combo
-    if (this.props.gotoLinehandler) this.props.gotoLinehandler(msg.line, msg.file)
-  },
 
-  componentDidUpdate() {
-    this.refs.msgContainer.scrollTop = this.refs.msgContainer.scrollHeight
-  },
-  smartRender: function() {
+    // msg.url is always reported with js extension due to babel bug stripping all extensions
+    let filename = msg.file || msg.url
+    if (filename.substring(filename.length - 3, filename.length) === '.js') {
+      filename = filename.substring(0, filename.length - 3)
+    }
+    if (this.props.gotoLinehandler) this.props.gotoLinehandler(msg.line, filename)
+  }
+
+  handleOpenConsole = () => {
+    this.setState({ showConsole: true })
+  }
+
+  handleToggleConsole = () => {
+    this.setState({ showConsole: !this.state.showConsole })
+  }
+
+  smartRender = () => {
     if (!this.props.messages) return null
 
     let fmt = {
@@ -49,8 +64,8 @@ const ConsoleMessageViewer = React.createClass({
         marginBottom: '0px',
         lineHeight: '12px',
         fontSize: '10px',
+        ...fmt[fn].style,
       }
-      $.extend(s, fmt[fn].style)
       let atLine = !msg.line ? null : (
         <span>
           {msg.url ? msg.url + ':' : ''}{' '}
@@ -68,50 +83,90 @@ const ConsoleMessageViewer = React.createClass({
         </pre>
       )
     })
-  },
+  }
 
-  render: function() {
-    const { messages, clearConsoleHandler } = this.props
+  renderAccordion = (style, messages, clearConsoleHandler) => {
+    return (
+      <div>
+        <div style={{ padding: 0 }} onClick={this.handleToggleConsole}>
+          {this.state.showConsole ? (
+            <Button compact fluid size="mini" icon="chevron down" />
+          ) : (
+            <Button compact fluid size="mini" icon="chevron up" />
+          )}
+        </div>
+        <div style={this.state.showConsole ? { display: 'block' } : { display: 'none' }}>
+          <div style={{ position: 'relative', ...style }}>
+            <div className="header" style={{ position: 'absolute', top: 0, right: '1em', zIndex: 9 }}>
+              {messages.length > 0 &&
+              clearConsoleHandler && (
+                <i
+                  style={{ cursor: 'pointer' }}
+                  className="ui ban outline icon"
+                  title="clear console"
+                  onClick={clearConsoleHandler}
+                />
+              )}
+            </div>
+            <div
+              id="mgbjr-EditCode-console"
+              className="ui secondary segment"
+              style={{
+                height: '100px',
+                width: '100%',
+                overflow: 'auto',
+                margin: 0,
+              }}
+              ref="msgContainer"
+            >
+              <div className="message-container">{this.smartRender()}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  render() {
+    const { messages, clearConsoleHandler, style, isTutorialView } = this.props
     if (!messages) return null
 
-    return (
-      <div
-        id="mgbjr-EditCode-console"
-        className="ui grey segment"
-        style={{
-          backgroundColor: 'rgba(0,0,0,0.03)',
-          // maxHeight: "200px",
-          // overflow: "auto",
-          clear: 'both',
-        }}
-      >
-        <div className="header">
-          Latest Console output from program
+    return isTutorialView ? (
+      this.renderAccordion(style, messages, clearConsoleHandler)
+    ) : (
+      <div style={{ position: 'relative', ...style }}>
+        <div className="header" style={{ position: 'absolute', top: 0, right: '1em', zIndex: 9 }}>
           {messages.length > 0 &&
           clearConsoleHandler && (
             <i
-              style={{ float: 'right' }}
-              className="ui trash outline icon"
+              style={{ cursor: 'pointer' }}
+              className="ui ban outline icon"
               title="clear console"
               onClick={clearConsoleHandler}
             />
           )}
         </div>
         <div
-          className="message-container"
-          ref="msgContainer"
+          id="mgbjr-EditCode-console"
+          className="ui secondary segment"
           style={{
-            overflow: 'auto',
+            height: '100px',
             width: '100%',
-            maxHeight: '150px',
-            marginTop: '6px',
+            overflow: 'auto',
+            margin: 0,
           }}
+          ref="msgContainer"
         >
-          {this.smartRender()}
+          <div className="message-container">{this.smartRender()}</div>
         </div>
       </div>
     )
-  },
-})
+  }
+}
 
-export default ConsoleMessageViewer
+ConsoleMessageViewer.PropTypes = {
+  messages: PropTypes.array, // of { mgbCmd: , data: }
+  gotoLinehandler: PropTypes.func,
+  clearConsoleHandler: PropTypes.func,
+  isTutorialView: PropTypes.bool,
+}

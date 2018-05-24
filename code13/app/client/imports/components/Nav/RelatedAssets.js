@@ -6,6 +6,7 @@ import { Button, Divider, Header, Icon, Input, Segment, List, Modal, Popup } fro
 
 import { AssetKinds } from '/imports/schemas/assets'
 import QLink, { openAssetById, utilPushTo } from '/client/imports/routes/QLink'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 const NameInfoAzzets = new Meteor.Collection('NameInfoAzzets')
 
@@ -154,10 +155,17 @@ class RelatedAssetsUI extends React.Component {
 
   focusSearchInput = () => {
     // wait for it to open, then focus it
-    setTimeout(() => {
-      const relatedInput = document.querySelector('#mgb-related-assets-input')
-      relatedInput && relatedInput.focus()
-    })
+    const relatedInput = document.querySelector('#mgb-related-assets-input')
+    if (relatedInput) {
+      relatedInput.focus()
+      // workaround for #1471 - blur on search bar in the Codemirror focuses CodeEditor - fight for focus
+      const codeMirrorElement = document.querySelector('.CodeMirror')
+      if (codeMirrorElement && codeMirrorElement.CodeMirror) {
+        codeMirrorElement.CodeMirror.operation(() => {
+          relatedInput.focus()
+        })
+      }
+    }
   }
 
   /**
@@ -355,7 +363,9 @@ const RelatedAssets = createContainer(props => {
     false,
     false,
     'edited', // Sort by recently edited
-    user || currUser ? 50 : 10, // Just a few if not logged in and no context
+    user || currUser
+      ? SpecialGlobals.relatedAssets.limit.withUser
+      : SpecialGlobals.relatedAssets.limit.noContext,
   )
 
   return {

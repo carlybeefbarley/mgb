@@ -1,63 +1,142 @@
 import _ from 'lodash'
-import React from 'react'
-import { Container, Divider, Message, Segment, Header, Form, Grid, Image } from 'semantic-ui-react'
+import PropTypes from 'prop-types'
+import React, { Component } from 'react'
+import { Container, Divider, Message, Segment, Header, Form, Grid, Image, Button } from 'semantic-ui-react'
 
-import { stopCurrentTutorial } from '/client/imports/routes/App'
+import { withStores } from '/client/imports/hocs'
+import { joyrideStore } from '/client/imports/stores'
 import LoginLinks from './LoginLinks'
 import { utilPushTo } from '../QLink'
 import validate from '/imports/schemas/validate'
-import md5 from 'blueimp-md5'
 import { logActivity } from '/imports/schemas/activity'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
+import Recaptcha from '/client/imports/components/Recaptcha/Recaptcha'
 
 const mascotColumnStyle = {
   // allow click through, so users can play with the particles :)
   pointerEvents: 'none',
 }
 
-const SignupRoute = React.createClass({
-  contextTypes: {
-    urlLocation: React.PropTypes.object,
-  },
+class SignupRoute extends Component {
+  static contextTypes = {
+    urlLocation: PropTypes.object,
+  }
 
-  getInitialState: function() {
-    return {
-      errors: {},
-      formData: {},
-      isLoading: false,
-    }
-  },
+  state = {
+    errors: {},
+    formData: {},
+    isLoading: false,
+    isRecaptchaComplete: false,
+  }
 
-  checkEmail: function(e) {
+  checkEmail = e => {
     const email = e.target.value
 
     // don't clear existing errors
     if (this.state.errors.email) return
 
+    const reason = validate.emailWithReason(email)
+    if (reason) {
+      return this.setState({ errors: { ...this.state.errors, email: reason } })
+    }
+
     Meteor.call('AccountsHelp.emailTaken', email, (err, response) => {
-      if (err) return
+      if (err) return console.error(err)
 
       const message = response ? `'${email}' is taken` : null
       this.setState({ errors: { ...this.state.errors, email: message } })
     })
-  },
+  }
 
-  checkUserName: function(e) {
+  checkUserName = e => {
     const username = e.target.value
 
     // don't clear existing errors
     if (this.state.errors.username) return
 
+    const reason = validate.usernameWithReason(username)
+    if (reason) {
+      return this.setState({ errors: { ...this.state.errors, username: reason } })
+    }
+
     Meteor.call('AccountsHelp.userNameTaken', username, (err, response) => {
-      if (err) return
+      if (err) return console.error(err)
 
       const message = response ? `'${username}' is taken` : null
       this.setState({ errors: { ...this.state.errors, username: message } })
     })
-  },
+  }
 
-  render: function() {
-    const { isLoading, errors, formData } = this.state
+  handleChange = e => {
+    const { name, value } = e.target
+    this.setState((prevState, props) => ({
+      errors: {
+        ...prevState.errors,
+        // if a field had an error, provide continual validation
+        [name]: prevState.errors[name] ? validate[name + 'WithReason'](value) : null,
+      },
+      formData: { ...prevState.formData, [name]: value },
+    }))
+  }
+
+  handleSubmit = () => {
+    const { joyride } = this.props
+    const { formData = {} } = this.state
+    const { email, username, password } = formData
+    const errors = {
+      email: validate.emailWithReason(email),
+      username: validate.usernameWithReason(username),
+      password: validate.passwordWithReason(password),
+    }
+
+    if (_.some(errors)) {
+      return this.setState({ errors })
+    }
+
+    this.setState({ isLoading: true, errors })
+    Accounts.createUser(
+      {
+        // Note that there is server-side validation in /server/CreateUser.js
+        email,
+        username, // Fixup mshell.sh code was:   _.each(Users.find().fetch(), function (u) { try { Accounts.setUsername( u._id,  u.profile.name ) } catch (e) { console.log('dupe:',u._id)} } )
+        password,
+        profile: {
+          name: username,
+        },
+      },
+      error => {
+        if (error) {
+          console.error(error)
+          return this.setState({
+            isLoading: false,
+            errors: { server: error.reason || 'Server Error while creating account' },
+          })
+        }
+
+        Meteor.call('User.sendSignUpEmail', email)
+        logActivity('user.join', `New user "${username}"`, null, null)
+        joyride.stop() // It would be weird to continue one, and the main case will be the signup Tutorial
+        utilPushTo(this.context.urlLocation.query, '/dashboard')
+
+        // analytics.identify(Meteor.user()._id, {
+        //   name: Meteor.user().profile.name,
+        //   email: Meteor.user().emails[0].address
+        // })
+        // analytics.track('Signed up')
+        // analytics.page('/signup')
+        // showToast("Sign up ok!  Welcome aboard")
+        ga('send', 'pageview', '/signup')
+        ga('send', 'pageview', '/login')
+      },
+    )
+  }
+
+  handleRecaptchaComplete = () => {
+    this.setState({ isRecaptchaComplete: true, isLoading: true }, this.handleSubmit)
+  }
+
+  render() {
+    const { isLoading, errors, formData, isRecaptchaComplete } = this.state
     const { currUser } = this.props
 
     if (currUser) {
@@ -73,7 +152,7 @@ const SignupRoute = React.createClass({
               <Grid.Column>
                 <Header as="h2" inverted content="Sign Up" />
                 <Segment stacked>
-                  <Form onChange={this.handleChange} onSubmit={this.handleSubmit} loading={isLoading}>
+                  <Form onChange={this.handleChange} loading={isLoading}>
                     <Form.Input
                       error={!!errors.email}
                       icon="envelope"
@@ -86,7 +165,7 @@ const SignupRoute = React.createClass({
                     <Form.Input
                       error={!!errors.username}
                       icon="user"
-                      label={errors.username || 'Username'}
+                      label={errors.username || 'Username (used for profile)'}
                       name="username"
                       onBlur={this.checkUserName}
                       placeholder="Username"
@@ -102,9 +181,7 @@ const SignupRoute = React.createClass({
                       name="password"
                       placeholder="Password"
                     />
-                    <Form.Button
-                      primary
-                      fluid
+                    <Form.Field
                       disabled={
                         !formData.email ||
                         !formData.username ||
@@ -113,8 +190,11 @@ const SignupRoute = React.createClass({
                         errors.username ||
                         errors.password
                       }
-                      content="Create Account"
-                    />
+                    >
+                      <Recaptcha onComplete={this.handleRecaptchaComplete} invisible>
+                        <Button fluid primary content="Create Account" />
+                      </Recaptcha>
+                    </Form.Field>
                   </Form>
                 </Segment>
                 {errors.server && <Message error content={errors.server} />}
@@ -129,73 +209,7 @@ const SignupRoute = React.createClass({
         }
       />
     )
-  },
+  }
+}
 
-  handleChange: function(e) {
-    const { name, value } = e.target
-    this.setState((prevState, props) => ({
-      errors: {
-        ...prevState.errors,
-        // if a field had an error, provide continual validation
-        [name]: prevState.errors[name] ? validate[name + 'WithReason'](value) : null,
-      },
-      formData: { ...prevState.formData, [name]: value },
-    }))
-  },
-
-  handleSubmit: function(event) {
-    const { formData = {} } = this.state
-    const { email, username, password } = formData
-    const errors = {
-      email: validate.emailWithReason(email),
-      username: validate.usernameWithReason(username),
-      password: validate.passwordWithReason(password),
-    }
-
-    if (_.some(errors)) {
-      this.setState({ errors })
-      return
-    }
-
-    this.setState({ isLoading: true, errors })
-    Accounts.createUser(
-      {
-        // Note that there is server-side validation in /server/CreateUser.js
-        email: email,
-        username: username, // Fixup mshell.sh code was:   _.each(Meteor.users.find().fetch(), function (u) { try { Accounts.setUsername( u._id,  u.profile.name ) } catch (e) { console.log('dupe:',u._id)} } )
-        password: password,
-        profile: {
-          name: username,
-          avatar: '//www.gravatar.com/avatar/' + md5(email.trim().toLowerCase()) + '?s=155&d=mm', // actual image picked by user to display
-          images: ['//www.gravatar.com/avatar/' + md5(email.trim().toLowerCase()) + '?s=155&d=mm'], // collection of images in users account
-        },
-      },
-      error => {
-        if (error) {
-          this.setState({
-            isLoading: false,
-            errors: { server: error.reason || 'Server Error while creating account' },
-          })
-          return
-        }
-
-        Meteor.call('User.sendSignUpEmail', email)
-        logActivity('user.join', `New user "${username}"`, null, null)
-        stopCurrentTutorial() // It would be weird to continue one, and the main case will be the signup Tutorial
-        utilPushTo(this.context.urlLocation.query, '/dashboard')
-
-        // analytics.identify(Meteor.user()._id, {
-        //   name: Meteor.user().profile.name,
-        //   email: Meteor.user().emails[0].address
-        // })
-        // analytics.track('Signed up')
-        // analytics.page('/signup')
-        // showToast("Sign up ok!  Welcome aboard")
-        ga('send', 'pageview', '/signup')
-        ga('send', 'pageview', '/login')
-      },
-    )
-  },
-})
-
-export default SignupRoute
+export default withStores({ joyride: joyrideStore })(SignupRoute)

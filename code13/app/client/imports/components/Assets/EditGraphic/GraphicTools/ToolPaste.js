@@ -15,7 +15,7 @@ const ToolPaste = {
   _scale: 1,
   _flipH: 1, // -1 if flipped
 
-  handleMouseDown: drawEnv => {
+  handleMouseDown(drawEnv) {
     let pasteCanvas = drawEnv.getPasteCanvas()
     if (!pasteCanvas) return
 
@@ -40,7 +40,7 @@ const ToolPaste = {
     drawEnv.updateEditCanvasFromSelectedPreviewCanvas()
   },
 
-  handleMouseMove: drawEnv => {
+  handleMouseMove(drawEnv) {
     let pasteCanvas = drawEnv.getPasteCanvas()
     if (!pasteCanvas) return
 
@@ -66,7 +66,7 @@ const ToolPaste = {
     drawEnv.editCtx.restore()
   },
 
-  handleMouseWheel: (drawEnv, wd, scrollMode) => {
+  handleMouseWheel(drawEnv, wd, scrollMode) {
     // rotate paste preview
     if (drawEnv.event.altKey || (scrollMode && scrollMode == 'Rotate')) {
       let direction = wd > 0 ? -1 : 1
@@ -87,9 +87,9 @@ const ToolPaste = {
     }
   },
 
-  handleMouseUp: drawEnv => {},
+  handleMouseUp(drawEnv) {},
 
-  handleMouseLeave: drawEnv => {
+  handleMouseLeave(drawEnv) {
     ToolPaste.handleMouseUp()
   },
 }

@@ -1,7 +1,8 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import _ from 'lodash'
 import Helmet from 'react-helmet'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 import { Segment, Header } from 'semantic-ui-react'
 import ProjectCreateNew from '/client/imports/components/Projects/NewProject/ProjectCreateNew'
 import { logActivity } from '/imports/schemas/activity'
@@ -18,10 +19,10 @@ const ProjectCreateNewRoute = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
-  render: function() {
+  render() {
     const numUserOwnprojects = _.filter(
       this.props.currUserProjects,
       p => p.ownerId === this.props.currUser._id,
@@ -46,9 +47,9 @@ const ProjectCreateNewRoute = React.createClass({
     )
   },
 
-  handleCreateProjectClickFromComponent: function(pName) {
+  handleCreateProjectClickFromComponent(pName) {
     if (!pName || pName.length < 1) {
-      showToast('TODO: Project name too short', 'warning')
+      showToast.warning('TODO: Project name too short')
       return
     }
 
@@ -58,7 +59,7 @@ const ProjectCreateNewRoute = React.createClass({
     }
 
     Meteor.call('Projects.create', newProj, (error, result) => {
-      if (error) showToast('Could not create project - ' + error.reason, 'error')
+      if (error) showToast.error('Could not create project - ' + error.reason)
       else {
         logActivity('project.create', `Create project ${pName}`)
         utilPushTo(this.context.urlLocation.query, `/u/${this.props.currUser.profile.name}/projects/${pName}`)

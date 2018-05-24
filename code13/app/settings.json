@@ -1,17 +1,17 @@
 {
   "galaxy.meteor.com": {
     "env": {
-      "ORIGIN_DOMAIN_NAME": "v2.mygamebuilder.com",
-      "ORIGIN_ID": "v2.mygamebuilder.com",
+      "ORIGIN_DOMAIN_NAME": "__ORIGIN_DOMAIN_NAME__.mygamebuilder.com",
+      "ORIGIN_ID": "__ORIGIN_ID__.mygamebuilder.com",
       "MONGO_URL":
         "mongodb://mgbapp:tiNmhsp1@ds021730-a0.mlab.com:21730,ds021730-a1.mlab.com:21730/mgb2_clus001?replicaSet=rs-ds021730",
       "MONGO_OPLOG_URL":
         "mongodb://oplog-reader:tiNmhsp1@ds021730-a0.mlab.com:21730,ds021730-a1.mlab.com:21730/local?replicaSet=rs-ds021730&authSource=admin",
       "MAIL_URL":
         "smtps://postmaster%40mailgun.mygamebuilder.com:e812b67c37675b894d976bd50c74ba0e@smtp.mailgun.org:465",
-      "MGB_GIT_BRANCH": "__MGB_GIT_BRANCH__WILL_GO_HERE__",
-      "MGB_GIT_BRANCH_COMMIT_COUNT": "__MGB_GIT_BRANCH_COMMIT_COUNT__WILL_GO_HERE__",
-      "MGB_GIT_DESCRIBE": "__MGB_GIT_DESCRIBE__WILL_GO_HERE__"
+      "MGB_GIT_BRANCH": "__MGB_GIT_BRANCH__",
+      "MGB_GIT_BRANCH_COMMIT_COUNT": "__MGB_GIT_BRANCH_COMMIT_COUNT__",
+      "MGB_GIT_DESCRIBE": "__MGB_GIT_DESCRIBE__"
     }
   },
   "kadira": {
@@ -19,8 +19,9 @@
     "appSecret": "99fe1486-f031-427c-95e2-a3fe9d48b828"
   },
   "public": {
-    "MGB_GIT_BRANCH": "__MGB_GIT_BRANCH__WILL_GO_HERE__",
-    "MGB_GIT_BRANCH_COMMIT_COUNT": "__MGB_GIT_BRANCH_COMMIT_COUNT__WILL_GO_HERE__",
-    "MGB_GIT_DESCRIBE": "__MGB_GIT_DESCRIBE__WILL_GO_HERE__"
+    "MGB_DEPLOY_ENV": "__MGB_DEPLOY_ENV__",
+    "MGB_GIT_BRANCH": "__MGB_GIT_BRANCH__",
+    "MGB_GIT_BRANCH_COMMIT_COUNT": "__MGB_GIT_BRANCH_COMMIT_COUNT__",
+    "MGB_GIT_DESCRIBE": "__MGB_GIT_DESCRIBE__"
   }
 }

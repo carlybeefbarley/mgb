@@ -6,7 +6,7 @@ RestApi.addRoute(
   'asset/actor/:id',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(this.urlParams.id, etagFields)
       if (!asset) return err404
       return genAPIreturn(this, asset, getContent2)
@@ -17,7 +17,7 @@ RestApi.addRoute(
   'asset/actor/:user/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {
@@ -39,7 +39,7 @@ RestApi.addRoute(
   'asset/fullactor/:user/:name',
   { authRequired: false },
   {
-    get: function() {
+    get() {
       const asset = Azzets.findOne(
         Object.assign(
           {

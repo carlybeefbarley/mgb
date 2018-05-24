@@ -1,14 +1,14 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import '../home.css'
-import './learnRoute.css'
 import { utilPushTo } from '../QLink'
-import { showToast } from '/client/imports/routes/App'
-import { Divider, Grid, Header, Label } from 'semantic-ui-react'
+import { showToast } from '/client/imports/modules'
+import { Divider, Grid, Header } from 'semantic-ui-react'
 import { logActivity } from '/imports/schemas/activity'
-import SkillLinkCard from '/client/imports/components/Learn/SkillLinkCard'
+import { ProgressLabel, SkillLinkCard } from '/client/imports/components/Learn'
 import SkillsMap from '/client/imports/components/Skills/SkillsMap'
-import SkillNodes, { countMaxUserSkills } from '/imports/Skills/SkillNodes/SkillNodes'
+import { artItems, countMaxUserSkills } from '/imports/Skills/SkillNodes/SkillNodes'
 import { getSkillNodeStatus, countCurrentUserSkills } from '/imports/schemas/skills'
 
 import { getAssetBySelector } from '/client/imports/helpers/assetFetchers'
@@ -16,28 +16,6 @@ import { getAssetBySelector } from '/client/imports/helpers/assetFetchers'
 import { mgbAjax } from '/client/imports/helpers/assetFetchers'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
-
-const _artSkillNodeName = 'art'
-const _maxArtSkillCount = countMaxUserSkills(_artSkillNodeName + '.')
-const artSkills = SkillNodes[_artSkillNodeName] // shorthand
-const artItems = [
-  { key: 'lineArt', node: artSkills.lineArt, mascot: 'arcade_player' },
-  { key: 'colors', node: artSkills.colors, mascot: 'rpgGuy' },
-  { key: 'shadesAndTextures', node: artSkills.shadesAndTextures, mascot: 'slimy2' },
-  { key: 'gameSprites', node: artSkills.gameSprites, mascot: 'game_runner' },
-]
-
-// This is the   1 / n    box at the top-right of each skill box
-const ProgressLabel = ({ subSkillsComplete, subSkillTotal }) => (
-  <Label attached="top right">
-    {subSkillsComplete} / {subSkillTotal}
-  </Label>
-)
-
-ProgressLabel.propTypes = {
-  subSkillsComplete: PropTypes.number,
-  subSkillTotal: PropTypes.number,
-}
 
 const handleClick = (e, key, currUser, todoSkills) => {
   // cards with links already have a path, skip on to
@@ -54,7 +32,7 @@ const handleDoItAgainClick = (e, key, currUser) => {
 
 export const StartArtRoute = (key, currUser, newTab) => {
   if (!currUser) {
-    showToast('You must be logged in to use these tutorials', 'info')
+    showToast.info('You must be logged in to use these tutorials')
     return
   }
 
@@ -93,7 +71,7 @@ export const StartArtRoute = (key, currUser, newTab) => {
 
           Meteor.call('Azzets.create', newAsset, (error, result) => {
             if (error) {
-              showToast('cannot create Asset because: ' + error.reason, 'error')
+              showToast.error('cannot create Asset because: ' + error.reason)
               return
             }
             newAsset._id = result // So activity log will work
@@ -113,8 +91,9 @@ const openUrl = (url, newTab) => {
   else utilPushTo(null, url)
 }
 
-const LearnArtRoute = ({ currUser }, context) => {
-  const numArtSkills = countCurrentUserSkills(context.skills, _artSkillNodeName + '.') || 0
+const LearnArtRoute = ({ currUser, isSuperAdmin }, context) => {
+  const completedSkills = countCurrentUserSkills(context.skills, 'art.') || 0
+  const totalSkills = countMaxUserSkills('art.')
 
   return (
     <Grid container columns="1">
@@ -124,9 +103,9 @@ const LearnArtRoute = ({ currUser }, context) => {
           Pixel Art
           <Header.Subheader>Learn to make art for your games</Header.Subheader>
         </Header>
-        <ProgressLabel subSkillsComplete={numArtSkills} subSkillTotal={_maxArtSkillCount} />
+        <ProgressLabel subSkillsComplete={completedSkills} subSkillTotal={totalSkills} />
         <Divider hidden />
-        {currUser && <SkillsMap skills={context.skills} expandable toggleable skillPaths={['art']} />}
+        {currUser && <SkillsMap isSuperAdmin={isSuperAdmin} skills={context.skills} skillPaths={['art']} />}
 
         {/*
          Add a pseudo-card for login/signup

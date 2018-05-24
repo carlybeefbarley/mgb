@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 import QLink from '/client/imports/routes/QLink'
@@ -68,7 +69,7 @@ class WhatsNew extends React.Component {
           <Label
             basic
             horizontal
-            icon="gift"
+            icon="newspaper"
             color="purple"
             pointing="left"
             content="New stuff for you!"

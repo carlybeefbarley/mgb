@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 const FunctionDescription = React.createClass({
   propTypes: {
@@ -41,9 +42,12 @@ const FunctionDescription = React.createClass({
             return [
               <tr key={rowIdx} className={highlightRow === rowIdx ? 'active' : ''}>
                 {fields.map((fieldName, colIdx) => {
-                  return (
-                    <td key={colIdx}>{fieldName === '#' ? rowIdx + 1 : <code>{rowData[fieldName]}</code>}</td>
-                  )
+                  let value = rowData[fieldName]
+                  if (fieldName === 'name' && _.endsWith(value, '?')) {
+                    value = value.substring(0, value.length - 1) + ' (optional)'
+                  }
+
+                  return <td key={colIdx}>{fieldName === '#' ? rowIdx + 1 : <code>{value}</code>}</td>
                 })}
               </tr>,
               highlightRow === rowIdx && !!paramHelp ? (
@@ -61,7 +65,7 @@ const FunctionDescription = React.createClass({
     )
   },
   // beautify type - TODO: make nice indent for object like types
-  beautifyType: function(type) {
+  beautifyType(type) {
     // for cases {}
     if (type.length < 3) {
       return type
@@ -71,7 +75,7 @@ const FunctionDescription = React.createClass({
       .replace(/,/gi, ',\n')
       .replace(/}/gi, '\n}\n')
   },
-  render: function() {
+  render() {
     let fh = this.props.functionHelp
     let hDoc = this.props.helpDocJsonMethodInfo
     let argPos = this.props.functionArgPos // 0 for first argument, -1 for Not in a function at all

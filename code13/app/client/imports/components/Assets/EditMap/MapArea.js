@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { Segment } from 'semantic-ui-react'
 import BaseMapArea from '../Common/Map/BaseMapArea.js'
 import LayerTypes from '../Common/Map/Tools/LayerTypes.js'
 import PositionInfo from '../Common/Map/Tools/PositionInfo.js'
@@ -70,11 +70,17 @@ export default class MapArea extends BaseMapArea {
       >
         {this.getNotification()}
         {this.renderMap()}
-        <PositionInfo
-          getInfo={this.getInfo.bind(this)}
-          infoStyle={{ position: 'fixed', bottom: 0 }}
-          ref="positionInfo"
-        />
+        <Segment
+          style={{
+            zIndex: 1,
+            position: 'fixed',
+            bottom: 0,
+            pointerEvents: 'none',
+            backgroundColor: 'rgba(255,255,255, 0.85)',
+          }}
+        >
+          <PositionInfo getInfo={this.getInfo.bind(this)} ref="positionInfo" />
+        </Segment>
       </div>
     )
   }

@@ -15,6 +15,595 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Thursday May 24 2018 15:00:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.6',
+        state: 'Beta',
+        iteration: '5024',
+      },
+
+      releaseManagement: {
+        eng: 'Bouhm',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Beginning of ActorMap Phaseout',
+          changeSummary:
+            'Beginning of phasing out ActorMap assets from the site. Added a warning in the announcement banner.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'Fix asset history link',
+          changeSummary: 'Fixed an issue with asset history items routing incorrectly',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Friday May 04 2018 09:00:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.5',
+        state: 'Beta',
+        iteration: '5021',
+      },
+
+      releaseManagement: {
+        eng: 'Bouhm',
+      },
+
+      changes: [
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'Fix modal popup issues',
+          changeSummary: 'Modals not popping up for Graphic and Music imports have been fixed.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'New Code Tutorial Flow',
+          changeSummary:
+            'Many experimental changes have been made to the code tutorial flows, one of which combines JS and Phaser tutorials.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'nav.layout',
+          type: 'improvement',
+          changeName: 'Code Editor UI Improvement',
+          changeSummary:
+            'Many changes have been made to the Code Editor to better utilize the space next to the code editor.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Phaser3 libs',
+          changeSummary: 'Phaser3 has been added as an option for import. This is still experimental.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Tue Feb 13 2018 09:00:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.4',
+        state: 'Beta',
+        iteration: '5013',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'Fix tutorial looping issue',
+          changeSummary:
+            'Tutorials sometimes did not award skills and required repeating.  This has been fixed.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Tue Feb 06 2018 16:20:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.3',
+        state: 'Beta',
+        iteration: '5010',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'New Tutorial Experience',
+          changeSummary: 'The workflow and presentation of tutorials has been vastly improved, try them out!',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Notifications & Activity Feeds',
+          changeSummary:
+            'Notifications and Activity feeds have been improved throughout the app.  Find them in top nav bar, projects, and user profiles.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'Lots of minor bug fixes and usability updates throughout the system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Mon Jan 08 2018 09:15:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.2',
+        state: 'Beta',
+        iteration: '4996',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Template Projects and Assets',
+          changeSummary: 'You can now create projects and assets quickly using our starter templates.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Prevent bots from signing up',
+          changeSummary: 'Added Recaptcha to the signup form.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'Lots of minor bug fixes and usability updates throughout the system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Thu Dec 07 2017 12:30:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.1',
+        state: 'Beta',
+        iteration: '4977',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'bugfix',
+          changeName: 'Hour of Code Loading',
+          changeSummary: 'Fix bug when loading the hour of code activity while not logged in.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'Lots of minor bug fixes and usability updates throughout the system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Fri Dec 01 2017 08:30:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.0',
+        state: 'Beta',
+        iteration: '4968',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Performance',
+          changeSummary: 'Remove project creation from The Hour of Code activity.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Performance',
+          changeSummary: 'Queries were improved to help with site performance.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Thu Nov 30 2017 14:00:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.3.9',
+        state: 'Beta',
+        iteration: '4965',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Improvements',
+          changeSummary:
+            'Video explanations before each level. A button to exit. Hiding user assets from the main site.  And much more....',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'Lots of minor bug fixes and usability updates throughout the system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Mon Nov 27 2017 14:30:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.3.8',
+        state: 'Beta',
+        iteration: '4953',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Improvements',
+          changeSummary: 'This release includes many fixes and improvements to the Hour of Code experience.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'Lots of minor bug fixes and usability updates throughout the system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Wed Nov 22 2017 10:45:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.3.7',
+        state: 'Beta',
+        iteration: '4943',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Activity Feed',
+          changeSummary: 'The Activity flex panel now displays more relevant activity updates.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Improvements',
+          changeSummary:
+            'Add recaptcha, more game controls, code editor autocomplete, hints, a better UI and more.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'Lots of minor bug fixes and usability updates throughout the system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Tue Nov 09 2017 15:40:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.3.6',
+        state: 'Beta',
+        iteration: '4912',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Save Progress',
+          changeSummary: 'Guests can now save their progress by submitting their email address.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Timer',
+          changeSummary: 'The activity now has a one hour completion and congratulations timer.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Hour of Code Guests',
+          changeSummary: 'Fix duplicate guest creation.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Tue Nov 07 2017 15:40:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.3.5',
+        state: 'Beta',
+        iteration: '4909',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Loop Syntax',
+          changeSummary: "We've added simplified `loop() { ... }` syntax to the Hour of Code activity.",
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Hour of Code Loop Save Progress',
+          changeSummary: 'Guest users can now enter their email address to save their progress.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'User Avatar Images',
+          changeSummary: 'Resolved a bug with displaying and changing user avatars.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Fri Nov 03 2017 17:45:00 GMT-0700 (PDT)',
+
+      id: {
+        ver: '0.3.4',
+        state: 'Beta',
+        iteration: '4903',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'feature',
+          changeName: 'Hour of Code',
+          changeSummary:
+            "We've been hard at work creating an experience for Hour of Code 2017.  This release includes a beta version, on a hidden link :) If you'd like to test it out and give feedback, let us know in Chat!  We'll make a formal announcement soon.",
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Use dark Code Editor theme',
+          changeSummary: 'Our code editor theme is now set to a dark theme, Monokai.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Remove scrollbars in code runner',
+          changeSummary: 'Phaser canvases now load at full resolution with no scrollbars.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Clear Graphic Editor frames during animation.',
+          changeSummary: 'Transparency layers were fixed in animations in the Graphic Editor',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Remove circular Code Challenge issue',
+          changeSummary:
+            'Code Challenges would sometimes "reset" your progress, requiring you to complete challenges twice.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'Lots of minor bug fixes and usability updates throughout the system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Mon Oct 10 2017 09:30:00 GMT-0700 (PDT)',
+
+      id: {
+        ver: '0.3.3',
+        state: 'Beta',
+        iteration: '4867',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'More Related Assets',
+          changeSummary: 'We improved the number of related assets that are fetched in the list.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Actor Maps',
+          changeSummary: 'We improved the speed and usability of the Actor Map editor.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Faster Dashboard and Home',
+          changeSummary: 'We implemented caching techniques to improve the page load times.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Award Honorable Initiate Badge',
+          changeSummary:
+            "In some cases, the Honorable Initiate Badge was not awarded when it should have been.  The next time you complete a tutorial, it will be awarded if you've earned it.",
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Missing Code Skills',
+          changeSummary: 'You may have noticed some of your code skills were missing, they are back now!',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'A bunch of bugfixes/tweaks',
+          changeSummary: 'We fixed bugs and usability issues across the entire system.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Tue Sep 26 2017 12:30:00 GMT-0700 (PDT)',
+
+      id: {
+        ver: '0.3.2',
+        state: 'Beta',
+        iteration: '4855',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Improved Signup and Login forms',
+          changeSummary:
+            'Improved the validation speed and experience.  Clarified how "Username" will be used in the system.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Contact us at hello@mygamebuilder.com',
+          changeSummary: 'Updated Contact Us to use our new email, hello@mygamebuilder.com.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Skills progress bar component',
+          changeSummary:
+            'Fixed broken Get Started progress bar style.  Removed the ability to "forget" (un-learn) a skill.  Improved the UX/UI of the Skills progress bar in /learn routes.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Fixed missing ActorMap thumbnails',
+          changeSummary:
+            'The ActorMap had a bug where dragging and dropping a Graphic Asset onto an Actor did not update the thumbnail.  Now it does.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
+      timestamp: 'Mon Sep 18 2017 10:45:00 GMT-0700 (PDT)',
+
+      id: {
+        ver: '0.3.1',
+        state: 'Beta',
+        iteration: '4844',
+      },
+
+      releaseManagement: {
+        eng: 'levithomason',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Standardize terminology and navigation',
+          changeSummary: 'Terminology and navigation names were normalized and updated throughout the app.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Beautiful landing page social posts',
+          changeSummary:
+            'https://build.games now looks great in social posts.  Try it out on Twitter and Facebook!',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Code Editor hot reload',
+          changeSummary:
+            'Fixed a bug where global variables declared in an import were undefined in following imports.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Map Editor tile ids readout',
+          changeSummary: 'Fixed Map Editor bug where all tile ids would be drawn on the screen.',
+          otherUrls: [],
+        },
+        {
+          type: 'bugfix',
+          changeName: 'Create Project Badge',
+          changeSummary:
+            'This badge was not awarded when it should have been.  It will now be awarded properly the next time you are awarded a badge.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Wed Sep 13 2017 13:05:00 GMT-0700 (PDT)',
 
       id: {

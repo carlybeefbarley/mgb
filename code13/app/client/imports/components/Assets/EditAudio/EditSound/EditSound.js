@@ -1,12 +1,13 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Modal, Button, Icon } from 'semantic-ui-react'
 
 import ImportSound from './ImportSound.js'
 import SoundStock from './SoundStock.js'
 import CreateSound from './CreateSound.js'
 import WaveSurfer from '../lib/WaveSurfer.js'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 
 export default class EditSound extends React.Component {
   constructor(props) {
@@ -34,7 +35,7 @@ export default class EditSound extends React.Component {
       progressColor: 'purple',
     })
 
-    this.soundCanvas = $('#soundPlayer canvas')[0]
+    this.soundCanvas = document.querySelector('#soundPlayer canvas')
     this.soundCtx = this.soundCanvas.getContext('2d')
 
     let c2 = this.props.asset.content2
@@ -69,7 +70,7 @@ export default class EditSound extends React.Component {
     }
     this.setState({ isCreateModal: false })
     this.setState({ isImportModal: false })
-    joyrideCompleteTag('mgbjr-CT-editSound-sound-imported')
+    joyrideStore.completeTag('mgbjr-CT-editSound-sound-imported')
   }
 
   togglePlaySound() {
@@ -103,17 +104,13 @@ export default class EditSound extends React.Component {
     let asset = this.props.asset
     let c2 = asset.content2
 
-    const previewCanvas = $('#previewDiv')
-      .children()
-      .first()
-      .children()
-      .first()[0]
+    const previewCanvas = document.querySelector('#previewDiv canvas')
     this.props.handleContentChange(c2, previewCanvas.toDataURL('image/png'), this.saveText)
   }
 
   openCreateModal = () => {
     this.setState({ isCreateModal: true })
-    joyrideCompleteTag('mgbjr-CT-editSound-createSound-invoke')
+    joyrideStore.completeTag('mgbjr-CT-editSound-createSound-invoke')
   }
 
   render() {

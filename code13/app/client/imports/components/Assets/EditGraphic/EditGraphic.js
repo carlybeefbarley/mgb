@@ -1,7 +1,7 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Button, Divider, Grid, Icon, Modal, Popup } from 'semantic-ui-react'
-import ReactDOM from 'react-dom'
 import './editGraphic.css'
 import { SketchPicker } from 'react-color'
 import Tools from './GraphicTools'
@@ -283,7 +283,7 @@ export default class EditGraphic extends React.Component {
         a: 1,
       }
       // console.log(hex, rgb)
-      return { fg: { hex: hex, rgb: rgb } }
+      return { fg: { hex, rgb } }
     } else {
       // returns offset in minutes to UTC
       // value can be positive or negative
@@ -299,7 +299,7 @@ export default class EditGraphic extends React.Component {
         b: parseInt(hex.substring(5, 7), 16),
         a: 1,
       }
-      return { fg: { hex: hex, rgb: rgb } }
+      return { fg: { hex, rgb } }
     }
   }
 
@@ -372,12 +372,6 @@ export default class EditGraphic extends React.Component {
       }
     }
 
-    if (c2.doResaveTileset) {
-      c2.doResaveTileset = false
-      // minimum delay just to be sure that previewcanvases are drawn
-      // this will affect edge case for graphic import
-      setTimeout(() => this.handleSave('Resave tileset'), 50)
-    }
     this.setStatusBarInfo()
   }
 
@@ -456,13 +450,20 @@ export default class EditGraphic extends React.Component {
         let self = this
         _img.onload = function(e) {
           let loadedImage = e.target
+          if (!c2.layerParams[loadedImage.layerID].isHidden) {
+            let frame = self.frameCtxArray[loadedImage.frameID]
+            if (frame) {
+              // clear frame whenever we start drawing from most bottom of layer
+              if (c2.frameData[loadedImage.frameID].length - 1 == loadedImage.layerID) {
+                self.frameCtxArray[loadedImage.frameID].clearRect(0, 0, c2.width, c2.height)
+              }
+              frame.drawImage(loadedImage, 0, 0) // There seems to be a race condition that means frame is sometime null.
+            }
+          }
+
           if (loadedImage.frameID === self.state.selectedFrameIdx) {
             self.previewCtxArray[loadedImage.layerID].clearRect(0, 0, c2.width, c2.height)
             self.previewCtxArray[loadedImage.layerID].drawImage(loadedImage, 0, 0)
-          }
-          if (!c2.layerParams[loadedImage.layerID].isHidden) {
-            let frame = self.frameCtxArray[loadedImage.frameID]
-            if (frame) frame.drawImage(loadedImage, 0, 0) // There seems to be a race condition that means frame is sometime null.
           }
 
           loadedCount++
@@ -636,7 +637,7 @@ export default class EditGraphic extends React.Component {
       width: c2.width,
       height: c2.height,
       scale: this.state.editScale,
-      event: event,
+      event,
 
       chosenColor: this.state.selectedColors['fg'],
 
@@ -647,7 +648,7 @@ export default class EditGraphic extends React.Component {
 
       // setPreviewPixelsAt() Like CanvasRenderingContext2D.fillRect, but
       //   It SETS rather than draws-with-alpha-blending
-      setPreviewPixelsAt: function(x, y, w = 1, h = 1) {
+      setPreviewPixelsAt(x, y, w = 1, h = 1) {
         // Set Pixels on the Preview context ONLY
         self._setImageData4BytesFromRGBA(retval.previewCtxImageData1x1.data, retval.chosenColor.rgb)
         for (let i = 0; i < w; i++) {
@@ -664,7 +665,7 @@ export default class EditGraphic extends React.Component {
       //   (a) It SETS rather than draws-with-alpha-blending
       //   (b) It does this to both the current Preview AND the Edit contexts (with zoom scaling)
       //   So this is faster than a ClearRect+FillRect in many cases.
-      setPixelsAt: function(x, y, w = 1, h = 1) {
+      setPixelsAt(x, y, w = 1, h = 1) {
         // First, set Pixels on the Preview context
         retval.setPreviewPixelsAt(x, y, w, h)
 
@@ -680,7 +681,7 @@ export default class EditGraphic extends React.Component {
         }
       },
 
-      saveSelectRect: function(startX, startY, endX, endY) {
+      saveSelectRect(startX, startY, endX, endY) {
         if (startX > endX) {
           const tmp = startX
           startX = endX
@@ -693,42 +694,42 @@ export default class EditGraphic extends React.Component {
         }
         self.setState({
           selectRect: {
-            startX: startX,
-            startY: startY,
-            endX: endX,
-            endY: endY,
+            startX,
+            startY,
+            endX,
+            endY,
           },
         })
       },
 
-      getPasteCanvas: function() {
+      getPasteCanvas() {
         return self.state.pasteCanvas
       },
 
-      unselect: function() {
+      unselect() {
         self.setState({ selectRect: null })
         self.updateEditCanvasFromSelectedPreviewCanvas()
       },
 
-      showDimensions: function(width, height) {
-        self.setState({ selectDimensions: { width: width, height: height } })
+      showDimensions(width, height) {
+        self.setState({ selectDimensions: { width, height } })
       },
 
-      setPrevTool: function() {
+      setPrevTool() {
         if (self.prevToolIdx !== null) self.setState({ toolChosen: Tools[self.prevToolIdx] })
       },
 
       // clearPixelsAt() Like CanvasRenderingContext2D.clearRect, but
       //   (a) It does this to both the current Preview AND the Edit contexts (with zoom scaling)
       //   So this is more convenient than a ClearRect+FillRect in many cases.
-      clearPixelsAt: function(x, y, w = 1, h = 1) {
+      clearPixelsAt(x, y, w = 1, h = 1) {
         let s = retval.scale
         retval.previewCtx.clearRect(x, y, w, h)
         retval.editCtx.clearRect(x * s, y * s, w * s, h * s)
       },
 
       setColorRGBA(r, g, b, aByte) {
-        self.handleColorChangeComplete('fg', { rgb: { r: r, g: g, b: b, a: aByte / 256 } })
+        self.handleColorChangeComplete('fg', { rgb: { r, g, b, a: aByte / 256 } })
       },
 
       updateEditCanvasFromSelectedPreviewCanvas: self.updateEditCanvasFromSelectedPreviewCanvas.bind(self),
@@ -768,7 +769,7 @@ export default class EditGraphic extends React.Component {
     pasteCanvas.height = height
     let pasteCtx = pasteCanvas.getContext('2d')
     pasteCtx.putImageData(imgData, 0, 0)
-    this.setState({ pasteCanvas: pasteCanvas })
+    this.setState({ pasteCanvas })
   }
 
   findToolByLabelString(labelString) {
@@ -1157,7 +1158,7 @@ export default class EditGraphic extends React.Component {
       byUserName: 'usernameTODO', // TODO
       byUserContext: 'someMachineTODO', // TODO
       changeInfo: changeInfoString,
-      savedContent2: $.extend(true, {}, this.props.asset.content2),
+      savedContent2: _.cloneDeep(this.props.asset.content2),
     }
   }
 
@@ -1284,6 +1285,12 @@ export default class EditGraphic extends React.Component {
   } // TODO(DGOLDS): Maybe _.throttle() this?
 
   createTileset() {
+    if (this.tilesetInfo) {
+      const tmpTilesetInfo = this.tilesetInfo
+      this.tilesetInfo = null
+      return tmpTilesetInfo
+    }
+
     if (!this.frameCanvasArray || this.frameCanvasArray.length == 0) return null
 
     let c2 = this.props.asset.content2
@@ -1303,8 +1310,8 @@ export default class EditGraphic extends React.Component {
 
     return {
       image: canvas.toDataURL('image/png'),
-      cols: cols,
-      rows: rows,
+      cols,
+      rows,
     }
   }
 
@@ -1494,12 +1501,15 @@ export default class EditGraphic extends React.Component {
   }
 
   toolOpenImportPopup = () => this.setState({ showGraphicImportPopup: true })
+
   toolCloseImportPopup = () => this.setState({ showGraphicImportPopup: false })
 
+  // @@@
   // This is passed to the <GraphicImport> Control so the tiles can be imported
-  importTileset = (tileWidth, tileHeight, imgDataArr, thumbCanvas) => {
+  importTileset = (tileWidth, tileHeight, imgDataArr, thumbCanvas, tilesetInfo) => {
     let c2 = this.props.asset.content2
     this.thumbCanvas = thumbCanvas
+    this.tilesetInfo = tilesetInfo
 
     c2.width = tileWidth
     c2.height = tileHeight
@@ -1518,11 +1528,6 @@ export default class EditGraphic extends React.Component {
 
     this.handleSave('Import tileset', true, true) // DG - added allowBackwash = true so we get and process the redraw immediately
     this.setState({ editScale: this.getDefaultScale(), showGraphicImportPopup: false })
-
-    // hack, but because of whole EditGraphic architecture
-    // we need to create tileset, but frame canvases are not yet drawn
-    // they are drawn only after content2 travels to server and back
-    c2.doResaveTileset = true
   }
 
   //
@@ -1583,16 +1588,6 @@ export default class EditGraphic extends React.Component {
         icon: 'remove circle outline icon',
         shortcut: 'Ctrl+Shift+E',
         level: 2,
-        simpleTool: true,
-      },
-      Import: {
-        label: 'Import',
-        name: 'toolOpenImportPopup',
-        tooltip: 'Import',
-        disabled: false,
-        icon: 'add square icon',
-        shortcut: 'Ctrl+I',
-        level: 3,
         simpleTool: true,
       },
     }
@@ -1883,6 +1878,35 @@ export default class EditGraphic extends React.Component {
                   size="tiny"
                   position="bottom left"
                 />
+                {/*** GraphicImport ***/}
+                <Modal
+                  trigger={
+                    <Popup
+                      trigger={
+                        <Button
+                          icon
+                          className="mgbjr-EditGraphic-toolOpenImportPopup"
+                          disabled={false}
+                          style={{ position: 'relative' }}
+                          onClick={this.toolOpenImportPopup}
+                        >
+                          <i className="add square icon" />
+                        </Button>
+                      }
+                      header={'Importer'}
+                      position="bottom left"
+                      content="Import graphics from the web or from your local directory."
+                    />
+                  }
+                  open={this.state.showGraphicImportPopup}
+                  onClose={this.toolCloseImportPopup}
+                >
+                  <GraphicImport
+                    importTileset={this.importTileset}
+                    maxTileWidth={MAX_BITMAP_WIDTH}
+                    maxTileHeight={MAX_BITMAP_WIDTH}
+                  />
+                </Modal>
               </Grid.Column>
             </Grid.Row>
             {/* Second Toolbar row */}
@@ -2057,15 +2081,6 @@ export default class EditGraphic extends React.Component {
             />
           )}
         </Grid.Row>
-
-        {/*** GraphicImport ***/}
-        <Modal open={this.state.showGraphicImportPopup} onClose={this.toolCloseImportPopup}>
-          <GraphicImport
-            importTileset={this.importTileset}
-            maxTileWidth={MAX_BITMAP_WIDTH}
-            maxTileHeight={MAX_BITMAP_WIDTH}
-          />
-        </Modal>
 
         {/*** SpriteLayers ***/}
 

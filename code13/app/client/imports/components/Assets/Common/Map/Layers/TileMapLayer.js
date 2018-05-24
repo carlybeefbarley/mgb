@@ -1,22 +1,19 @@
-'use strict'
-import _ from 'lodash'
+import PropTypes from 'prop-types'
 import React from 'react'
+import _ from 'lodash'
+
 import TileSelection from './../Tools/SelectedTile.js'
 import EditModes from './../Tools/EditModes.js'
-import LayerTypes from './../Tools/LayerTypes.js'
-import TileCollection from './../Tools/TileCollection.js'
 import AbstractLayer from './AbstractLayer.js'
 import TileHelper from './../Helpers/TileHelper.js'
-
-import BaseMapArea from '../BaseMapArea.js'
 
 import Plural from '/client/imports/helpers/Plural'
 
 export default class TileMapLayer extends AbstractLayer {
   static propTypes = Object.assign(
     {
-      clearSelection: React.PropTypes.func.isRequired, // cleans map selection
-      clearTmpSelection: React.PropTypes.func.isRequired, // cleans temporary selection buffer
+      clearSelection: PropTypes.func.isRequired, // cleans map selection
+      clearTmpSelection: PropTypes.func.isRequired, // cleans temporary selection buffer
     },
     AbstractLayer.propTypes,
   )
@@ -259,7 +256,10 @@ export default class TileMapLayer extends AbstractLayer {
         </div>
         <div>
           {Plural.numStr2(col.length, 'Selected Tile')}
-          {st}
+          {_.truncate(st, {
+            length: 100,
+            separator: /,? +/, // this will remove trailing comma also
+          })}
         </div>
       </div>
     )
@@ -786,7 +786,7 @@ export default class TileMapLayer extends AbstractLayer {
 
 /* !!! this - in this scope is instance of tilemap layer (above) */
 const edit = {
-  debug: function(e, mouseUp) {
+  debug(e, mouseUp) {
     //const pos = this.getTilePosInfo(e)
     //pos.gid = this.options.data[pos.id]
   },

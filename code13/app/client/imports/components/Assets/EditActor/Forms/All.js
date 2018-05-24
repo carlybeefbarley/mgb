@@ -4,7 +4,7 @@ import { Grid, Form } from 'semantic-ui-react'
 import BaseForm from '../../../Controls/BaseForm.js'
 import actorOptions from '../../Common/ActorOptions.js'
 import MgbActor from '/client/imports/components/MapActorGameEngine/MageMgbActor'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import templates from '../TemplateDiffs.js'
 
@@ -15,7 +15,7 @@ export default class All extends BaseForm {
 
   // Should other data be reset?
   // reload correct template
-  handleChangeActorType = databag => (e, data) => {
+  handleChangeActorType = databag => () => {
     // Set correct itemActivationType when actorType is changed
     const { itemActivationType } = databag.item
 
@@ -51,7 +51,7 @@ export default class All extends BaseForm {
     this.forceUpdate()
   }
 
-  updateActorImage = asset => () => {
+  updateActorThumbnail = () => asset => {
     if (!asset) return
 
     const canvas = document.createElement('canvas')
@@ -73,12 +73,13 @@ export default class All extends BaseForm {
       options: MgbActor.alCannedSoundsList.map(s => ({ text: '[builtin]:' + s, value: '[builtin]:' + s })),
     }
     // Handle limiting InitialHealth < initialMaxHealthNum
-    let initHealthConfig = { min: 1 }
+    let initHealthConfig = { min: 1, max: 1000000, default: 1 }
     if (this.data.initialMaxHealthNum) {
       const max = parseInt(this.data.initialMaxHealthNum, 10)
       if (max > 0) initHealthConfig.max = max
     }
     const databag = this.props.asset.content2.databag
+    const actorType = databag.all.actorType
 
     return (
       <Grid style={{ minHeight: '50vh' }} centered container>
@@ -99,10 +100,17 @@ export default class All extends BaseForm {
             {this.text('Initial Heath', 'initialHealthNum', 'number', initHealthConfig)}
             {this.text('Initial Max Health', 'initialMaxHealthNum', 'number', {
               min: 0,
-              max: 10000,
+              max: 1000000,
+              default: 0,
               title: 'This is the highest health the actor can have. The value 0 means there is no limit',
             })}
-            {this.dropArea('Graphic', 'defaultGraphicName', 'graphic', null, this.updateActorImage())}
+            {this.dropArea(
+              'Graphic',
+              'defaultGraphicName',
+              'graphic',
+              null,
+              this.updateActorThumbnail(this.props.asset),
+            )}
             {this.dropArea('Sound When Harmed', 'soundWhenHarmed', 'sound', soundOptions)}
             {this.dropArea('Sound When Healed', 'soundWhenHealed', 'sound', soundOptions)}
             {this.dropArea('Sound When Killed', 'soundWhenKilled', 'sound', soundOptions)}

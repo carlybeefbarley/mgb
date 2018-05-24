@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import { Modal, Segment, Grid } from 'semantic-ui-react'
-import { joyrideCompleteTag } from '/client/imports/Joyride/Joyride'
+import { joyrideStore } from '/client/imports/stores'
 import { snapshotActivity } from '/imports/schemas/activitySnapshots.js'
 import { makeCDNLink } from '/client/imports/helpers/assetFetchers'
 
@@ -26,7 +26,6 @@ export default class EditActor extends React.Component {
   constructor(...props) {
     super(...props)
     this.state = {
-      isModalOpen: true,
       isTemplateSelected: false,
     }
   }
@@ -259,12 +258,23 @@ export default class EditActor extends React.Component {
     )
   }
 
+  renderTemplates() {
+    return (
+      <div>
+        <h3 style={{ textAlign: 'center' }}>
+          Choose a template for the type of Actor, then modify the detailed options in the Actor Editor
+        </h3>
+        <div className="edit-actor">{this.getTemplates()}</div>
+      </div>
+    )
+  }
+
   handleTemplateClick = actorType => () => {
-    this.setState({ isModalOpen: false, isTemplateSelected: true })
+    this.setState({ isTemplateSelected: true })
     this.loadTemplate('alTemplate' + actorType)
     this.props.handleDescriptionChange('Created from Template: ' + actorType)
     this.handleSave('Initial Template selected')
-    joyrideCompleteTag(`mgbjr-CT-create-actor-${actorType.toLowerCase()}`)
+    joyrideStore.completeTag(`mgbjr-CT-create-actor-${actorType.toLowerCase()}`)
   }
   handleModalClose = () => {
     if (!this.state.isTemplateSelected) this.loadDefaultTemplate()
@@ -304,6 +314,7 @@ export default class EditActor extends React.Component {
   }
   render() {
     const { asset } = this.props
+
     if (!asset) return null
     const databag = asset.content2.databag
     const LayerValid = ({ layerName, isValid }) =>
@@ -314,26 +325,24 @@ export default class EditActor extends React.Component {
       )
 
     return (
-      <div className="ui grid edit-actor">
-        <b title="This Actor can work on the following Layers of an ActorMap">ActorMap Layers:</b>
-        <div id="mgbjr-edit-actor-layerValid">
-          <LayerValid layerName="Background" isValid={ActorValidator.isValidForBG(databag)} />
-          <LayerValid layerName="Active" isValid={ActorValidator.isValidForActive(databag)} />
-          <LayerValid layerName="Foreground" isValid={ActorValidator.isValidForFG(databag)} />
-        </div>
-        <Modal
-          open={!databag && this.state.isModalOpen}
-          closeOnDocumentClick={false}
-          closeOnDimmerClick
-          onClose={this.handleModalClose}
-        >
-          <Modal.Header>
-            Choose a template for the type of Actor, then modify the detailed options in the Actor Editor
-          </Modal.Header>
-          <Modal.Content className="edit-actor">{this.getTemplates()}</Modal.Content>
-        </Modal>
-        {databag && <Tabs tabs={this.getTabs(databag)} />}
-      </div>
+      <Grid className="edit-actor">
+        {databag ? (
+          <div style={{ width: '100%', overflow: 'hidden' }}>
+            <div>
+              <b title="This Actor can work on the following Layers of an ActorMap">ActorMap Layers:</b>
+              <div id="mgbjr-edit-actor-layerValid">
+                <LayerValid layerName="Background" isValid={ActorValidator.isValidForBG(databag)} />
+                <LayerValid layerName="Active" isValid={ActorValidator.isValidForActive(databag)} />
+                <LayerValid layerName="Foreground" isValid={ActorValidator.isValidForFG(databag)} />
+              </div>
+            </div>
+
+            <Tabs tabs={this.getTabs(databag)} />
+          </div>
+        ) : (
+          this.renderTemplates()
+        )}
+      </Grid>
     )
   }
 }

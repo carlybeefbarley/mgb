@@ -17,12 +17,23 @@ export default class All extends BaseForm {
                 { text: 'Respawn on map reload', value: '0' },
                 { text: 'Never respawn', value: '1' },
               ])}
-              {this.bool('Can this be destroyed/damaged', 'destroyableYN')}
+              {this.dropArea('Randomly generates new actor', 'dropsObjectRandomlyName', 'actor')}
+              {this.text('% chance of randomly generating actor', 'dropsObjectRandomlyChance', 'number', {
+                min: 1,
+                max: 100,
+                title:
+                  "% chance of randomly generating actor '" +
+                  this.data.dropsObjectRandomlyName +
+                  "' each second",
+                default: 0,
+              })}
+              {this.bool('Can be destroyed/damaged', 'destroyableYN')}
               {this.text(
                 'Points scored (or lost) when shot by player',
                 'scoreOrLosePointsWhenShotByPlayerNum',
                 'number',
                 {
+                  default: 0,
                   disabled: this.data.destroyableYN == '0',
                 },
               )}
@@ -31,6 +42,9 @@ export default class All extends BaseForm {
                 'scoreOrLosePointsWhenKilledByPlayerNum',
                 'number',
                 {
+                  min: -1000000,
+                  max: 1000000,
+                  default: 0,
                   disabled: this.data.destroyableYN == '0',
                 },
               )}
@@ -39,6 +53,7 @@ export default class All extends BaseForm {
                 'dropsObjectWhenKilledName',
                 'actor',
                 {
+                  default: 0,
                   disabled: this.data.destroyableYN == '0',
                 },
               )}
@@ -46,6 +61,7 @@ export default class All extends BaseForm {
                 this.text('% Chance of drop happening', 'dropsObjectWhenKilledChance', 'number', {
                   min: 1,
                   max: 100,
+                  default: 100,
                   disabled: this.data.destroyableYN == '0',
                 })}
             </div>
@@ -56,6 +72,7 @@ export default class All extends BaseForm {
                 'dropsObjectWhenKilledName2',
                 'actor',
                 {
+                  default: 0,
                   disabled: this.data.destroyableYN == '0',
                 },
               )}
@@ -67,22 +84,7 @@ export default class All extends BaseForm {
                     'This % chance is independent of drop #1 - so if both are 100% then there will always be two actors dropped. The first dropped item will be in the top-left corner of where the destroyed actor was. The 2nd drop, if it happens will be next to where the destroyed actor was, placed based on the direction the destroyed actor had been facing',
                   disabled: this.data.destroyableYN == '0',
                 })}
-
-              {this.dropArea('Randomly generates new actor', 'dropsObjectRandomlyName', 'actor', {
-                disabled: this.data.destroyableYN == '0',
-              })}
             </div>
-
-            {this.data.dropsObjectRandomlyName &&
-              this.text('% chance of randomly generating actor', 'dropsObjectRandomlyChance', 'number', {
-                min: 1,
-                max: 100,
-                title:
-                  "% chance of randomly generating actor '" +
-                  this.data.dropsObjectRandomlyName +
-                  "' each second",
-                disabled: this.data.destroyableYN == '0',
-              })}
           </Form>
         </Grid.Column>
       </Grid>

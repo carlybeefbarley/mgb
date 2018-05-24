@@ -15,12 +15,13 @@ export default class ObjectBehavior extends BaseForm {
       text: '[builtin]:' + s,
       value: '[builtin]:' + s,
     }))
+    const { equippedNewActorGraphics } = this.data.equippedNewActorGraphics
 
     return (
       <div>
         <Divider />
         <div>
-          {this.data.equippedNewActorGraphics && (
+          {equippedNewActorGraphics && (
             <span style={{ color: '#A91313' }}>
               Note: It is recommended that items that can change the player's appearance should use the same
               slot name. This is because only one equipped item can only change how the player looks.
@@ -54,28 +55,33 @@ export default class ObjectBehavior extends BaseForm {
             title: 'When equipped, increase base shot damage by this amount',
             min: -10000,
             max: 10000,
+            default: 0,
           })}
 
           {this.text('Shot rate bonus', 'equippedNewShotRateBonusNum', 'number', {
             title: 'When equipped, increase base shot rate by this amount',
             min: -20,
             max: 20,
+            default: 0,
           })}
           {this.text('Shot range bonus', 'equippedNewShotRangeBonusNum', 'number', {
             title: 'When equipped, increase base shot range by this amount',
             min: -20,
             max: 20,
+            default: 0,
           })}
           {this.text('Armor effect', 'equippedArmorEffect', 'number', {
             title: 'When equipped, Reduce damage by this percentage',
             min: -100, // cursed blade? :) originally 0
             max: 100,
+            default: 0,
           })}
           {this.text('Melee Damage Bonus', 'equippedNewMeleeDamageBonusNum', 'number', {
             title:
               'When equipped, Increase Melee damage by this number of points. You can also have a negative value - that this item reduces damage - for example a weapon might be fast but reduce base damage',
             min: -10000,
             max: 10000,
+            default: 0,
           })}
           {this.dropArea('New Melee sound', 'equippedNewMeleeSound', 'sound', {
             options: soundOptions,
@@ -86,6 +92,7 @@ export default class ObjectBehavior extends BaseForm {
               'This raises or lowers the Melee repeat rate of the character who has equipped the item. If the value is zero, there is no change to melee repeat rate. A positive number increases the delay, a negative number reduces the delay',
             min: -10,
             max: 10,
+            default: 0,
           })}
         </div>
         <Divider />
@@ -94,22 +101,27 @@ export default class ObjectBehavior extends BaseForm {
   }
 
   showPickableOptions() {
+    const { gainPowerType } = this.data
     return (
       <div>
         {this.textArea('Display a message when picked up', 'useText')}
 
         {this.text('Heal (or harm) when used', 'healOrHarmWhenUsedNum', 'number', {
           title: 'Positive numbers heal and negative numbers harm',
-          min: -10000,
-          max: 10000,
+          min: -1000000,
+          max: 1000000,
         })}
         {this.text('Increase Max Health', 'increasesMaxHealthNum', 'number', {
           title: 'Enter the number of points of extra max health this item gives.',
-          min: -10000,
-          max: 10000,
+          min: -1000000,
+          max: 1000000,
         })}
         {/*this.bool("Gain an Extra Life when used", 'gainExtraLifeYN')  //  ENABLE THIS LINE ONCE WE IMPLEMENT LIVES */}
-        {this.text('Score (or lose points) when used', 'gainOrLosePointsNum', 'number')}
+        {this.text('Score (or lose points) when used', 'gainOrLosePointsNum', 'number', {
+          min: -1000000,
+          max: 1000000,
+          default: 0,
+        })}
 
         {this.bool(
           'Win this level when used',
@@ -123,10 +135,10 @@ export default class ObjectBehavior extends BaseForm {
           { text: 'No power', value: '0' },
           { text: 'Cannot be harmed', value: '1' },
         ])}
-        {this.data.gainPowerType == '1' &&
+        {gainPowerType == '1' &&
           this.text('Gain the power for', 'gainPowerSecondsNum', 'number', {
             title: 'seconds',
-            max: 60,
+            max: 300,
           })}
       </div>
     )
@@ -144,10 +156,10 @@ export default class ObjectBehavior extends BaseForm {
           { text: 'Backwards', value: '5' },
           { text: 'Random', value: '6' },
         ])}
-        {this.text('Distance this item pushes other actors', 'itemPushesActorDistance', 'number', {
+        {/*this.text('Distance this item pushes other actors', 'itemPushesActorDistance', 'number', {
           min: 1,
           max: 50,
-        })}
+        })*/}
       </div>
     )
   }
@@ -157,14 +169,16 @@ export default class ObjectBehavior extends BaseForm {
       <div>
         {this.text('Heal (or harm) when used', 'healOrHarmWhenUsedNum', 'number', {
           title: 'Positive numbers heal and negative numbers harm',
-          min: -10000,
-          max: 10000,
+          min: -1000000,
+          max: 1000000,
         })}
       </div>
     )
   }
 
   renderItemBehavior(behaviorOptions) {
+    const { itemActivationType, inventoryEquippableYN } = this.data
+
     return (
       <Form style={!this.props.canEdit ? { pointerEvents: 'none' } : {}}>
         <div style={{ marginBottom: '10px' }} id="mgbjr-edit-actor-ObjectBehavior-itemType">
@@ -177,19 +191,14 @@ export default class ObjectBehavior extends BaseForm {
         </div>
 
         <div>
-          {this.data.itemActivationType == '4' &&
+          {itemActivationType == '4' &&
             this.bool('Equippable?', 'inventoryEquippableYN', {
               title: "'Yes' if this item can be equipped (wielded/worn etc) by the player",
             })}
 
-          {this.data.itemActivationType == '4' &&
-            this.data.inventoryEquippableYN == '1' &&
-            this.showInventoryOptions()}
+          {itemActivationType == '4' && inventoryEquippableYN == '1' && this.showInventoryOptions()}
 
-          {(this.data.itemActivationType == '4' ||
-            this.data.itemActivationType == '5' ||
-            this.data.itemActivationType == '6') &&
-            // this.data.itemActivationType == '7')
+          {(itemActivationType == '4' || itemActivationType == '5' || itemActivationType == '6') &&
             this.showPickableOptions()}
         </div>
       </Form>
@@ -197,6 +206,8 @@ export default class ObjectBehavior extends BaseForm {
   }
 
   renderSolidBehavior(behaviorOptions) {
+    const { itemActivationType, pushToSlideNum } = this.data
+
     return (
       <Form style={!this.props.canEdit ? { pointerEvents: 'none' } : {}}>
         <div style={{ marginBottom: '10px' }} id="mgbjr-edit-actor-ObjectBehavior-type">
@@ -204,7 +215,7 @@ export default class ObjectBehavior extends BaseForm {
         </div>
 
         <div>
-          {(this.data.itemActivationType == '1' || this.data.itemActivationType == '3') &&
+          {(itemActivationType == '1' || itemActivationType == '3') &&
             this.text('Player can push object to slide it', 'pushToSlideNum', 'number', {
               title:
                 "If the value here is '0', then this is just a normal wall or other obstruction that cannot move. However, if the value is not zero, this item will be able to slide when pushed - 'a sliding block' and this can be used for puzzles or as a weapon for the player",
@@ -213,24 +224,24 @@ export default class ObjectBehavior extends BaseForm {
             })}
 
           {/* hmm - not used?
-          (this.data.itemActivationType == "1" ||
-            this.data.itemActivationType == "3" ) && (this.data.pushToSlideNum > 0) &&
+          (itemActivationType == "1" ||
+            itemActivationType == "3" ) && (pushToSlideNum > 0) &&
               this.bool("Sliding block can squish players?", 'squishPlayerYN')
           */}
 
-          {(this.data.itemActivationType == '1' || this.data.itemActivationType == '3') &&
-            this.data.pushToSlideNum > 0 &&
+          {(itemActivationType == '1' || itemActivationType == '3') &&
+            pushToSlideNum > 0 &&
             this.bool('Sliding block can squish NPCs?', 'squishNPCYN', {
               title: "If you want sliding blocks to be able to kill enemy NPCs, then select 'yes' here.",
             })}
 
-          {(this.data.itemActivationType == '1' || this.data.itemActivationType == '3') &&
-            this.data.pushToSlideNum == '0' &&
+          {(itemActivationType == '1' || itemActivationType == '3') &&
+            pushToSlideNum == '0' &&
             this.dropArea('Item that acts as a key:', 'keyForThisDoor', 'actor', {
               title: "If the player is carrying the specified 'key' item, then the player can go past",
             })}
-          {(this.data.itemActivationType == '1' || this.data.itemActivationType == '3') &&
-            this.data.pushToSlideNum == '0' &&
+          {(itemActivationType == '1' || itemActivationType == '3') &&
+            pushToSlideNum == '0' &&
             this.bool('Key is consumed when used', 'keyForThisDoorConsumedYN', {
               title: "Select Yes if the 'key' is taken from the player when used",
             })}
@@ -240,28 +251,32 @@ export default class ObjectBehavior extends BaseForm {
   }
 
   renderFloorBehavior(behaviorOptions) {
+    const { itemActivationType } = this.data
+
     return (
       <Form style={!this.props.canEdit ? { pointerEvents: 'none' } : {}}>
         <div style={{ marginBottom: '10px' }} id="mgbjr-edit-actor-ObjectBehavior-type">
           {this.options('Floor Type', 'itemActivationType', behaviorOptions)}
         </div>
         <div>
-          {this.data.itemActivationType == '8' && this.showPushingOptions()}
-          {this.data.itemActivationType == '9' && this.showFloorDamageOptions()}
+          {itemActivationType == '8' && this.showPushingOptions()}
+          {itemActivationType == '9' && this.showFloorDamageOptions()}
         </div>
       </Form>
     )
   }
 
   renderAll() {
+    const { itemActivationType, pushToSlideNum, inventoryEquippableYN } = this.data
+
     return (
       <Form style={!this.props.canEdit ? { pointerEvents: 'none' } : {}}>
         <div style={{ marginBottom: '10px' }} id="mgbjr-edit-actor-ObjectBehavior-type">
-          {this.options('Object Type', 'itemActivationType', actorOptions.itemActivationType)}
+          {this.options('Object Behavior', 'itemActivationType', actorOptions.itemActivationType)}
         </div>
 
         <div>
-          {(this.data.itemActivationType == '1' || this.data.itemActivationType == '3') &&
+          {(itemActivationType == '1' || itemActivationType == '3') &&
             this.text('Player can push object to slide it', 'pushToSlideNum', 'number', {
               title:
                 "If the value here is '0', then this is just a normal wall or other obstruction that cannot move. However, if the value is not zero, this item will be able to slide when pushed - 'a sliding block' and this can be used for puzzles or as a weapon for the player",
@@ -269,45 +284,43 @@ export default class ObjectBehavior extends BaseForm {
             })}
 
           {/* hmm - not used?
-        (this.data.itemActivationType == "1" ||
-          this.data.itemActivationType == "3" ) && (this.data.pushToSlideNum > 0) &&
+        (itemActivationType == "1" ||
+          itemActivationType == "3" ) && (pushToSlideNum > 0) &&
             this.bool("Sliding block can squish players?", 'squishPlayerYN')
         */}
 
-          {(this.data.itemActivationType == '1' || this.data.itemActivationType == '3') &&
-            this.data.pushToSlideNum > 0 &&
+          {(itemActivationType == '1' || itemActivationType == '3') &&
+            pushToSlideNum > 0 &&
             this.bool('Sliding block can squish NPCs?', 'squishNPCYN', {
               title: "If you want sliding blocks to be able to kill enemy NPCs, then select 'yes' here.",
             })}
 
-          {(this.data.itemActivationType == '1' || this.data.itemActivationType == '3') &&
-            this.data.pushToSlideNum == '0' &&
+          {(itemActivationType == '1' || itemActivationType == '3') &&
+            pushToSlideNum == '0' &&
             this.dropArea('Item that acts as a key:', 'keyForThisDoor', 'actor', {
               title: "If the player is carrying the specified 'key' item, then the player can go past",
             })}
-          {(this.data.itemActivationType == '1' || this.data.itemActivationType == '3') &&
-            this.data.pushToSlideNum == '0' &&
+          {(itemActivationType == '1' || itemActivationType == '3') &&
+            pushToSlideNum == '0' &&
             this.bool('Key is consumed when used', 'keyForThisDoorConsumedYN', {
               title: "Select Yes if the 'key' is taken from the player when used",
             })}
 
-          {this.data.itemActivationType == '4' &&
+          {itemActivationType == '4' &&
             this.bool('Equippable?', 'inventoryEquippableYN', {
               title: "'Yes' if this item can be equipped (wielded/worn etc) by the player",
             })}
 
-          {this.data.itemActivationType == '4' &&
-            this.data.inventoryEquippableYN == '1' &&
-            this.showInventoryOptions()}
+          {itemActivationType == '4' && inventoryEquippableYN == '1' && this.showInventoryOptions()}
 
-          {(this.data.itemActivationType == '4' ||
-            this.data.itemActivationType == '5' ||
-            this.data.itemActivationType == '6' ||
-            this.data.itemActivationType == '7') &&
+          {(itemActivationType == '4' ||
+            itemActivationType == '5' ||
+            itemActivationType == '6' ||
+            itemActivationType == '7') &&
             this.showPickableOptions()}
 
-          {this.data.itemActivationType == '8' && this.showPushingOptions()}
-          {this.data.itemActivationType == '9' && this.showFloorDamageOptions()}
+          {itemActivationType == '8' && this.showPushingOptions()}
+          {itemActivationType == '9' && this.showFloorDamageOptions()}
         </div>
       </Form>
     )
@@ -315,26 +328,39 @@ export default class ObjectBehavior extends BaseForm {
 
   render() {
     let behaviorOptions = null
+    const actorType = this.props.asset.content2.databag.all.actorType
+    const objectByItemActivation = [
+      'Scenery, Floor',
+      'Wall',
+      'Wall',
+      'Wall',
+      'Item',
+      'Item',
+      'Item',
+      '',
+      'Floor',
+      'Floor',
+    ]
 
-    if (this.props.asset.content2.databag.all.actorType === actorOptions.actorType['Item'])
+    if (actorType === actorOptions.actorType['Item'])
       behaviorOptions = this.renderItemBehavior(
         _.pickBy(actorOptions.itemActivationType, type => {
-          return type === '4' || type === '5' || type === '6' || type === '7'
+          return type === '4' || type === '5' || type === '6' // || type === '7'
         }),
       )
-    else if (this.props.asset.content2.databag.all.actorType === actorOptions.actorType['Solid Object'])
+    else if (actorType === actorOptions.actorType['Solid Object'])
       behaviorOptions = this.renderSolidBehavior(
         _.pickBy(actorOptions.itemActivationType, type => {
           return type === '1' || type === '2' || type === '3'
         }),
       )
-    else if (this.props.asset.content2.databag.all.actorType === actorOptions.actorType['Floor'])
+    else if (actorType === actorOptions.actorType['Floor'])
       behaviorOptions = this.renderFloorBehavior(
         _.pickBy(actorOptions.itemActivationType, type => {
           return type === '0' || type === '8' || type === '9'
         }),
       )
-    else if (this.props.asset.content2.databag.all.actorType === actorOptions.actorType['Scenery'])
+    else if (actorType === actorOptions.actorType['Scenery'])
       behaviorOptions = <div className="ui message ">This ActorType doesn't use this set of options</div>
 
     return (

@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import assetLicenses, { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 
 import { Icon, Header, List, Label, Popup } from 'semantic-ui-react'
@@ -85,8 +86,12 @@ const AssetLicense = ({ license, popupPosition, handleChange, canEdit }) => {
                     <Icon name="law" />
                     <small>{key}</small>
                   </Label>
+                  {/* way too large, causes over flow problems.
+                  // Adding prop wide="very" will contain everything
+                  // But the resulting popup is still too large.
                   &nbsp;&nbsp;
                   <small>{assetLicenses[key].name}</small>
+                  */}
                 </List.Content>
               </List.Item>
             ))}

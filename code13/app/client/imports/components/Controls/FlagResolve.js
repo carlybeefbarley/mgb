@@ -1,9 +1,10 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Popup, Button, Form, Label, Divider } from 'semantic-ui-react'
 import { Flags } from '/imports/schemas'
 import { FlagTypes } from '/imports/schemas/flags'
 import _ from 'lodash'
-import { showToast } from '/client/imports/routes/App'
+import { showToast } from '/client/imports/modules'
 
 class ResolveReportEntity extends React.Component {
   state = {
@@ -91,8 +92,8 @@ const _doResolveReportEntity = (entityId, wasPermBanned, comments, tableCollecti
       recordId: entityId,
     }
     data = {
-      wasPermBanned: wasPermBanned,
-      comments: comments,
+      wasPermBanned,
+      comments,
     }
   } else if (tableCollection === 'Azzets') {
     reportedEntity = {
@@ -100,12 +101,12 @@ const _doResolveReportEntity = (entityId, wasPermBanned, comments, tableCollecti
       recordId: entityId,
     }
     data = {
-      wasPermBanned: wasPermBanned,
-      comments: comments,
+      wasPermBanned,
+      comments,
     }
   }
   Meteor.call('Flags.resolve', reportedEntity, data, (error, result) => {
-    if (error) showToast(`Could not resolve flag: ${error.reason}`, 'error')
+    if (error) showToast.error(`Could not resolve flag: ${error.reason}`)
     else console.log('Flags.resolve said ok')
     // else say ok?
   })

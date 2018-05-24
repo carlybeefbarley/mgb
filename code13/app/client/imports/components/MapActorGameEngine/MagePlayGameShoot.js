@@ -4,7 +4,7 @@ import MgbActor from './MageMgbActor'
 // This file contains the part of the class that is primarily focussed on the Shooting behaviors
 
 const MagePlayGameShoot = {
-  actorCanShoot: function(aa_idx) {
+  actorCanShoot(aa_idx) {
     const { activeActors, AA_player_idx, inventory } = this
     var rateBonus = aa_idx == AA_player_idx ? inventory.equipmentShotRateBonus : 0
 
@@ -14,7 +14,7 @@ const MagePlayGameShoot = {
     )
   },
 
-  actorCreateShot: function(aa_idx, stepStyleOverride = NaN) {
+  actorCreateShot(aa_idx, stepStyleOverride = NaN) {
     const { actors, activeActors, AA_player_idx, inventory, map, ownerName } = this
     var actor = activeActors[aa_idx]
     var ap = actors[actor.ACidx]
@@ -77,7 +77,7 @@ const MagePlayGameShoot = {
     }
   },
 
-  destroyShot: function(
+  destroyShot(
     shot, // shot is an ActiveActor
   ) {
     const { activeActors } = this

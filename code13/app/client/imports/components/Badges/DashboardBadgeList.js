@@ -62,7 +62,7 @@ export default class BadgesList extends React.Component {
       return (
         <Card>
           <Card.Content>
-            <Image src={displayBadge.img} size="mini" floated="left" />
+            <Image src={displayBadge.img} circular size="mini" floated="left" />
             <Card.Header>
               {displayBadge.title}
               {friendlyName}
@@ -109,7 +109,7 @@ export default class BadgesList extends React.Component {
           className={cx({ 'mgb-grayscale': isGrayscale })}
           src={badge.img}
           size="tiny"
-          shape="circular"
+          circular
           onMouseEnter={this.handleImageMouseEnter(badge)}
           onMouseLeave={this.handleImageMouseLeave}
           inline

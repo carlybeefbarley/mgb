@@ -7,7 +7,7 @@ class Modal extends Component {
     this.props.isCloseable && this.props.actions.disableModal()
   }
 
-  render = () => {
+  render() {
     const title = this.props.title ? (
       <div className="panel panel--dark">
         <div className="group-padding-x group-padding-y">{this.props.title}</div>

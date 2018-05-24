@@ -385,15 +385,28 @@ export const badgeList = {
 /**
  * Generates a friendly "<level> <title>" name for the badge.
  *
- * @param {object} badge
+ * @param {string|object} badge - Either a badgeList badge object or badge key string.
  * @returns {string}
  */
-export const getFriendlyName = (badge = {}) => {
-  if (!_.has(badge, 'level')) return badge.title
+export const getFriendlyName = badge => {
+  const isString = _.isString(badge)
+  const isObject = _.isPlainObject(badge)
 
-  const adjective = ['', 'Pro', 'Guru'][badge.level]
+  if (!isString && !isObject) {
+    return console.error('badges.getFriendlyName(badge) `badge` must be a string or object, got:', badge)
+  }
 
-  return [adjective, badge.title].filter(Boolean).join(' ')
+  const badgeObject = isString ? badgeList[badge] : isObject ? badge : null
+
+  if (!badgeObject) {
+    return console.error('badges.getFriendlyName() called with unknown badge:', badge)
+  }
+
+  if (!_.has(badgeObject, 'level')) return badgeObject.title
+
+  const prefix = ['', 'Pro', 'Guru'][badgeObject.level]
+
+  return [prefix, badgeObject.title].filter(Boolean).join(' ')
 }
 
 export const getAllBadgesForUser = user => {

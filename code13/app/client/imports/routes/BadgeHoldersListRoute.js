@@ -1,8 +1,10 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import Helmet from 'react-helmet'
 import Badge from '/client/imports/components/Badges/Badge'
 import QLink from '/client/imports/routes/QLink'
+import { Users } from '/imports/schemas'
 import { badgeList } from '/imports/schemas/badges'
 import { Header, Container, Segment, Item } from 'semantic-ui-react'
 import { createContainer } from 'meteor/react-meteor-data'
@@ -51,7 +53,7 @@ const BadgeHoldersListRoute = createContainer(({ params }) => {
 
   return {
     loading: !handle.ready(),
-    holders: Meteor.users.find({ badges: { $in: [badgename] } }, { sort: { badges_count: -1 } }).fetch(),
+    holders: Users.find({ badges: { $in: [badgename] } }, { sort: { badges_count: -1 } }).fetch(),
   }
 }, BadgeHoldersListUI)
 

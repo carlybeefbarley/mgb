@@ -2,13 +2,13 @@
 // This file contains the part of the class that deals with the TIC structure - TIC means Things In Cell
 
 const MagePlayGameTIC = {
-  clearTicTable: function() // FIXME - needs to sort into larger cells - maybe MgbSystem.tileMax{Width/Height}
-  {
+  clearTicTable() {
+    // FIXME - needs to sort into larger cells - maybe MgbSystem.tileMax{Width/Height}
     this.G_tic = null
   },
 
-  generateTicTable: function() // FIXME - needs to sort into larger cells - maybe MgbSystem.tileMax{Width/Height}
-  {
+  generateTicTable() {
+    // FIXME - needs to sort into larger cells - maybe MgbSystem.tileMax{Width/Height}
     const { activeActors } = this
     this.G_tic = [] // NOT the same as clearing it.. clearing means null
 
@@ -23,7 +23,7 @@ const MagePlayGameTIC = {
     }
   },
 
-  ticAdd: function(x, y, AAidx) {
+  ticAdd(x, y, AAidx) {
     const { activeActors, map, G_tic } = this
 
     var aa = activeActors[AAidx]

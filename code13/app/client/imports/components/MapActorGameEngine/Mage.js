@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
@@ -151,11 +152,13 @@ export default class Mage extends React.Component {
 
   // If this fails to start, it will trigger a UI message which will later nuke this._mageCanvas by unmouting the canvas
   handlePlay() {
+    const { ownerName, isMgb1Game, playCountIncFn } = this.props
+
     if (!this._mageCanvas) return
 
-    if (this.props.playCountIncFn) this.props.playCountIncFn()
+    if (this.props.playCountIncFn) playCountIncFn()
 
-    this._game = new MagePlayGame(this.props.ownerName)
+    this._game = new MagePlayGame(ownerName, isMgb1Game)
     let startedOk = false
 
     try {

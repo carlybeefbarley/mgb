@@ -210,7 +210,7 @@ export const isValidActorMapGame = g =>
   g.metadata.startActorMap !== ''
 
 Meteor.methods({
-  'Azzets.create': function(data) {
+  'Azzets.create'(data) {
     checkIsLoggedInAndNotSuspended()
     const username = Meteor.user().profile.name
     const now = new Date()
@@ -279,7 +279,7 @@ Meteor.methods({
     return docId
   },
 
-  'Azzets.toggleHeart': function(docId, userId) {
+  'Azzets.toggleHeart'(docId, userId) {
     checkIsLoggedInAndNotSuspended()
     check(docId, String)
     check(userId, String)
@@ -302,13 +302,13 @@ Meteor.methods({
     const count = Azzets.update(selector, newData)
     if (Meteor.isServer) console.log(`  [Assets.toggleHeart]  (${count}) #${docId} '${asset.name}'`)
 
-    return { count: count, newLoveState: !currUserLoves }
+    return { count, newLoveState: !currUserLoves }
   },
 
   // This does not allow changes to the su* fields. It is much simpler
   // and more robust to handle those cases in a simpler, privileged path instead of
   // complicating the general update path
-  'Azzets.update': function(docId, canEdit, data) {
+  'Azzets.update'(docId, canEdit, data) {
     checkIsLoggedInAndNotSuspended()
     check(docId, String)
     // TODO: Move this access check to be server side..

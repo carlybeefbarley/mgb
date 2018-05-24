@@ -1,23 +1,24 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { List } from 'semantic-ui-react'
 import VideoItem from './VideoItem'
 
 const _videoList = [
   {
-    url: 'uzwmnpqt8AA',
+    videoId: 'uzwmnpqt8AA',
     title: 'Graphic Editor Collaboration',
   },
   {
-    url: 'u6QHlHHNbAc',
+    videoId: 'u6QHlHHNbAc',
     title: 'Actor Editor Live Collaboration',
   },
   {
-    url: 'ckUhs9RcQ0c',
+    videoId: 'ckUhs9RcQ0c',
     title: 'Code Editor Live Collaboration',
   },
   {
-    url: 'o2hwsLFhDzY',
+    videoId: 'o2hwsLFhDzY',
     title: 'Map Editor Live Collaboration',
   },
 ]
@@ -25,7 +26,9 @@ const _videoList = [
 export default class VideoList extends React.Component {
   render() {
     return (
-      <List>{_videoList.map(item => <VideoItem key={item.url} url={item.url} title={item.title} />)}</List>
+      <List>
+        {_videoList.map(item => <VideoItem key={item.videoId} videoId={item.videoId} title={item.title} />)}
+      </List>
     )
   }
 }

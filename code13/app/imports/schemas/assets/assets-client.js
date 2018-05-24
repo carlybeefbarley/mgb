@@ -12,7 +12,7 @@
 export const makeAssetInfoFromAsset = (asset, assetVerb) => ({
   kind: asset.kind,
   name: asset.name,
-  assetVerb: assetVerb,
+  assetVerb,
   isDeleted: asset.isDeleted,
   isLocked: asset.isCompleted,
   projectNames: asset.projectNames || [],

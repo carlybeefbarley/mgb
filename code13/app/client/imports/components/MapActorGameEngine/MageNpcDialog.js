@@ -1,6 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
-import autobind from 'react-autobind'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Segment, Icon, Label, Header, Popup } from 'semantic-ui-react'
 
 // MapActorGameEngine NPC Dialog
@@ -12,12 +12,9 @@ const actorImgSrc = (actor, loadedGraphics) =>
   actor ? loadedGraphics[actor.content2.databag.all.defaultGraphicName].thumbnail : null
 
 class MageNpcDialogText extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { shownChars: 0 }
-    this._rafId = null
-    autobind(this)
-  }
+  state = { shownChars: 0 }
+
+  _rafId = null
 
   componentDidMount() {
     this._rafId = requestAnimationFrame(this.showNextChar_loopWithRAF)
@@ -37,7 +34,7 @@ class MageNpcDialogText extends React.Component {
     }
   }
 
-  showNextChar_loopWithRAF() {
+  showNextChar_loopWithRAF = () => {
     const msg = this.props.message
     let { shownChars } = this.state
     if (shownChars < msg.length) {

@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Icon, Popup } from 'semantic-ui-react'
 import SystemAlerts from './SystemAlerts'
 import NavBarBreadcrumb from './NavBarBreadcrumb'
@@ -23,7 +24,7 @@ const NavBar = React.createClass({
     currentlyEditingAssetInfo: PropTypes.object.isRequired, // An object with some info about the currently edited Asset - as defined in App.js' this.state
   },
 
-  handleHideHeadersToggle: function() {
+  handleHideHeadersToggle() {
     const { onToggleHeaders } = this.props
 
     if (onToggleHeaders) onToggleHeaders()

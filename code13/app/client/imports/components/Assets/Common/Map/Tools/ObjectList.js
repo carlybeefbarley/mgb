@@ -7,20 +7,24 @@ export default class ObjectList extends React.Component {
   raise() {
     this.props.lowerOrRaiseObject()
   }
+
   lower() {
     this.props.lowerOrRaiseObject(true)
   }
+
   showOrHideObject(index) {
     this.props.showOrHideObject(index)
     // TODO: @stausz remove this in favor of setState locally for the active item
     this.forceUpdate()
   }
+
   handleClick(event, index) {
     // do not change selection when toggling visibility icon
     if (_.includes(event.target.classList, 'icon')) return
 
     this.props.setPickedObject(index)
   }
+
   renderBlock(content = [], active = 0) {
     let rise = '',
       lower = '',
@@ -59,16 +63,19 @@ export default class ObjectList extends React.Component {
     const panels = [
       {
         title: 'Object List',
-        content: (
-          <div>
-            <Button.Group size="mini">
-              {rise}
-              {lower}
-            </Button.Group>
-            {remove}
-            <List selection>{content}</List>
-          </div>
-        ),
+        content: {
+          key: 'object-list-content',
+          content: (
+            <div>
+              <Button.Group size="mini">
+                {rise}
+                {lower}
+              </Button.Group>
+              {remove}
+              <List selection>{content}</List>
+            </div>
+          ),
+        },
       },
     ]
     return <Accordion styled fluid defaultActiveIndex={0} panels={panels} />

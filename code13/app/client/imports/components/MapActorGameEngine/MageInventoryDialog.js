@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Menu, Segment, Header, Icon, Item, Image, Button, Popup } from 'semantic-ui-react'
 
 // MapActorGameEngine Inventory Dialog

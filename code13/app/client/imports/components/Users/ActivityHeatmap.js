@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 
 import CalendarHeatmapStyled from '/client/imports/components/Controls/CalendarHeatmap/CalendarHeatmapStyled'
 
@@ -9,7 +10,7 @@ const ActivityHeatmap = React.createClass({
     className: PropTypes.string,
   },
 
-  render: function() {
+  render() {
     const { user } = this.props
 
     if (!user) return null

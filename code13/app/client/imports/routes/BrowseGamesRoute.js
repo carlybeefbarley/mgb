@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import PropTypes from 'prop-types'
+import React from 'react'
 import Helmet from 'react-helmet'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { browserHistory } from 'react-router'
@@ -32,7 +33,7 @@ const BrowseGamesRoute = React.createClass({
   },
 
   contextTypes: {
-    urlLocation: React.PropTypes.object,
+    urlLocation: PropTypes.object,
   },
 
   /**
@@ -41,7 +42,7 @@ const BrowseGamesRoute = React.createClass({
    *   The result is a data structure that can be used without need for range/validity checking
    * @param q typically this.props.location.query  -  from react-router
   */
-  queryNormalized: function(q) {
+  queryNormalized(q) {
     // Start with defaults
     let newQ = _.clone(queryDefaults)
 
@@ -58,7 +59,7 @@ const BrowseGamesRoute = React.createClass({
   /**  Returns the given query EXCEPT for keys that match a key/value pair in queryDefaults array
   */
 
-  _stripQueryOfDefaults: function(queryObj) {
+  _stripQueryOfDefaults(queryObj) {
     return _.omitBy(queryObj, (val, key) => queryDefaults.hasOwnProperty(key) && queryDefaults[key] === val)
   },
 
@@ -75,7 +76,7 @@ const BrowseGamesRoute = React.createClass({
    * Always get the Assets stuff.
    * Optionally get the Project info - if this is a user-scoped view
    */
-  getMeteorData: function() {
+  getMeteorData() {
     const userId = this.props.user && this.props.user._id ? this.props.user._id : null
     const qN = this.queryNormalized(this.props.location.query)
 
@@ -109,8 +110,8 @@ const BrowseGamesRoute = React.createClass({
 
   handleSearchGo() {
     // TODO - disallow/escape search string
-    const $button = $(this.refs.searchGoButton)
-    $button.removeClass('orange')
+    const { searchGoButton } = this.refs
+    searchGoButton.classList.remove('orange')
     this._updateLocationQuery({ searchName: this.refs.searchNameInput.value })
   },
 
@@ -121,9 +122,9 @@ const BrowseGamesRoute = React.createClass({
   handleSearchNameBoxChanges() {
     // mark if the button needs to be pushed
     const qN = this.queryNormalized(this.props.location.query)
-    const $button = $(this.refs.searchGoButton)
-    if (this.refs.searchNameInput.value !== qN.searchName) $button.addClass('orange')
-    else $button.removeClass('orange')
+    const { searchGoButton } = this.refs
+    if (this.refs.searchNameInput.value !== qN.searchName) searchGoButton.classList.add('orange')
+    else searchGoButton.classList.remove('orange')
   },
 
   componentDidMount() {

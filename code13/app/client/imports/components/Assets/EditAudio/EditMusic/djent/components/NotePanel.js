@@ -30,7 +30,7 @@ class NotePanel extends Component {
     this.props.actions.updateAllowedLengths(newAllowedLengths)
   }
 
-  render = () => {
+  render() {
     const { length, totalAmount } = this.props
     // console.log(this.props)
     // const noteName = `${capitalize(length.name)} note`;

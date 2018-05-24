@@ -81,7 +81,6 @@ const UserProfileRoute = React.createClass({
   /**
    *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
    */
-
   handleProfileFieldChanged(changeObj) {
     const fMsg = changeObj['profile.focusMsg']
     if (fMsg || fMsg === '') {

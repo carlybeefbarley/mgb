@@ -54,7 +54,8 @@ export default class AssetEditProjectContainer extends React.Component {
   }
 
   render() {
-    const { currUserProjects, currUser, currentlyEditingAssetInfo, params, user, assetStore } = this.props
+    const { currUserProjects, currUser, currentlyEditingAssetInfo, params, assetStore } = this.props
+    const user = currentlyEditingAssetInfo.ownerName || this.props.user.username
     const renderedProjectsList = this.renderProjectsList(currUserProjects)
     // Set the default name/option for the projects dropdown list
     const projectName = assetStore.project() || __NO_PROJECT__

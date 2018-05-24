@@ -30,7 +30,9 @@ class RelatedAssetsUI extends React.Component {
     params: PropTypes.object.isRequired,
 
     /** If there is a :id user id  or :username on the path, this is the user record for it */
-    user: PropTypes.object,
+    //TODO: Strictly expect a user ID as the username is currently passed to this prop and
+    // may run into issues with duplicate or similar user names if they are not unique.
+    user: PropTypes.string,
 
     /** Currently logged in user.. or null if not logged in. */
     currUser: PropTypes.object,

@@ -131,7 +131,7 @@ const SpecialGlobals = {
     },
   },
 
-  isAssetDisabled: {
+  disabledAssets: {
     graphic: false,
     actor: true,
     actormap: true,

@@ -20,6 +20,7 @@ import { isUserSuperAdmin } from '/imports/schemas/roles'
 
 import { projectMakeSelector, defaultProjectSorter } from '/imports/schemas/projects'
 
+import { AnnouncementBanner } from '/client/imports/components/Home/AnnouncementBanner'
 import NavBar from '/client/imports/components/Nav/NavBar'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
 import FlexPanel from '/client/imports/components/SidePanels/FlexPanel'
@@ -346,6 +347,8 @@ class AppUI extends Component {
     const { query } = this.props.location
     const isGuest = currUser ? currUser.profile.isGuest : false
     const isHocRoute = window.location.pathname === '/hour-of-code'
+    const announcement =
+      'Non-code (Actor/ActorMap) assets will soon be phased out. Further use of these assets is discouraged. Please ask a moderator for more info.'
     if (!loading) this.configureTrackJs()
 
     // The Flex Panel is for communications and common quick searches in a right hand margin
@@ -420,6 +423,7 @@ class AppUI extends Component {
           <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
             <SupportedBrowsersContainer />
             {!isGuest && !isHocRoute && <VerifyBanner currUser={currUser} />}
+            {announcement && <AnnouncementBanner text={announcement} />}
             {!hideHeaders && (
               <NavPanel
                 currUser={currUser}

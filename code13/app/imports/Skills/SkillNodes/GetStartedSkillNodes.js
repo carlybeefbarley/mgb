@@ -79,7 +79,7 @@ const GetStartedSkillNodes = {
     // projectsCanOverlap:    C.E,
     // projectPrefix:         C.E
   },
-
+  /*
   nonCodeGame: {
     $meta: {
       name: 'Simple non-code game',
@@ -95,6 +95,7 @@ const GetStartedSkillNodes = {
     buildAndPlayActorMap: C.E,
     //  learnMore:       C.E
   },
+  */
 
   // These probably should not be in GetStarted
 

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Grid, Icon, Message, Tab, Segment } from 'semantic-ui-react'
-import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
+import { utilPushTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import AssetEditProjectLayout from '/client/imports/layouts/AssetEditProjectLayout'
 
@@ -52,7 +52,7 @@ import FlagEntity from '/client/imports/components/Controls/FlagEntityUI'
 import ResolveReportEntity from '/client/imports/components/Controls/FlagResolve'
 import { withStores } from '/client/imports/hocs'
 
-const FLUSH_TIMER_INTERVAL_MS = 60000000000000000000000000 // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
+const FLUSH_TIMER_INTERVAL_MS = 6000 // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
 
 // This AssetEditRoute serves the following objectives
 // 1. Provide a reactive  this.data.___ for the data needed to view/edit this Asset

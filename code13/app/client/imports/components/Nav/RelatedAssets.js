@@ -2,19 +2,7 @@ import _ from 'lodash'
 import { createContainer } from 'meteor/react-meteor-data'
 import PropTypes from 'prop-types'
 import React from 'react'
-import {
-  Accordion,
-  Button,
-  Divider,
-  Form,
-  Header,
-  Icon,
-  Input,
-  Segment,
-  List,
-  Modal,
-  Popup,
-} from 'semantic-ui-react'
+import { Accordion, Button, Header, Icon, Input, Segment, List, Modal, Popup } from 'semantic-ui-react'
 
 import { AssetKinds } from '/imports/schemas/assets'
 import SpecialGlobals from '/imports/SpecialGlobals'
@@ -331,7 +319,7 @@ class RelatedAssetsUI extends React.Component {
                       content:
                         currUser && currUser.username === a.dn_ownerName
                           ? a.name
-                          : `${a.dn_ownerName}:${a.name}`,
+                          : `${a.dn_ownerName}: ${a.name}`,
                     }))}
                   />
                 }

@@ -152,7 +152,6 @@ class AssetStore extends Store {
    * @returns {Object} New assets object that has given asset added.
    */
   trackAsset = (asset, assets) => {
-    const { currUser } = this.props
     let newAssets = Object.assign(assets)
 
     if (asset.projectNames.length === 0) {
@@ -211,7 +210,6 @@ class AssetStore extends Store {
    * @returns {String} Either __NO_PROJECT__ or the asset's first project as a string.
    */
   getContextualProject = asset => {
-    const { currUser } = this.props
     if (asset.projectNames.length === 0) {
       return __NO_PROJECT__
     } else {

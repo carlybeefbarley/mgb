@@ -80,23 +80,23 @@ const GetStartedSkillNodes = {
     // projectPrefix:         C.E
   },
 
-  nonCodeGame: {
-    $meta: {
-      name: 'Simple non-code game',
-      description: 'A simple game using Actors instead of Code',
-      sequence:
-        'actorMapGamesIntro,createGraphicAssets,actorAssetBasics,createActorAssets,createActorMapAsset,buildAndPlayActorMap',
-    },
-    actorMapGamesIntro: C.E,
-    createGraphicAssets: C.E,
-    actorAssetBasics: C.E,
-    createActorAssets: C.E,
-    createActorMapAsset: C.E,
-    buildAndPlayActorMap: C.E,
-    //  learnMore:       C.E
-  },
-
   // These probably should not be in GetStarted
+
+  // nonCodeGame: {
+  //   $meta: {
+  //     name: 'Simple non-code game',
+  //     description: 'A simple game using Actors instead of Code',
+  //     sequence:
+  //       'actorMapGamesIntro,createGraphicAssets,actorAssetBasics,createActorAssets,createActorMapAsset,buildAndPlayActorMap',
+  //   },
+  //   actorMapGamesIntro: C.E,
+  //   createGraphicAssets: C.E,
+  //   actorAssetBasics: C.E,
+  //   createActorAssets: C.E,
+  //   createActorMapAsset: C.E,
+  //   buildAndPlayActorMap: C.E,
+  //   //  learnMore:       C.E
+  // },
 
   // codeGame: {
   //   $meta: {

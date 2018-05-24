@@ -43,10 +43,10 @@ const _skillBasedBadges = [
     newBadgeName: badgeList.getStartedProject.name,
     requiredSkills: ['getStarted.projects.createProject'],
   },
-  {
-    newBadgeName: badgeList.getStartedAll.name,
-    requiredSkills: ['getStarted.nonCodeGame.buildAndPlayActorMap'],
-  },
+  // {
+  //   newBadgeName: badgeList.getStartedAll.name,
+  //   requiredSkills: ['getStarted.nonCodeGame.buildAndPlayActorMap'],
+  // },
 ]
 
 const _skillCountBasedBadges = [

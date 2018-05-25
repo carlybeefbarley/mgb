@@ -21,14 +21,14 @@ export const expectedToolbars = {
     icon: AssetKinds.getIconName('graphic'),
   },
   EditCode: {
-    friendlyName: 'Code/Tutorial Editor',
+    friendlyName: 'Code Editor',
     max: 4,
     default: 4,
     assetKinds: ['code', 'tutorial'],
     icon: AssetKinds.getIconName('code'),
   },
   MapTools: {
-    friendlyName: 'Map/ActorMap Editor',
+    friendlyName: 'Map Editor',
     max: 27,
     default: 27,
     assetKinds: ['map', 'actormap'],

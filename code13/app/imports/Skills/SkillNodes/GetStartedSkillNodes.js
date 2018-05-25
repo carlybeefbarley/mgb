@@ -78,7 +78,7 @@ const GetStartedSkillNodes = {
     // changeProjectForAsset: C.E,
     // projectsCanOverlap:    C.E,
     // projectPrefix:         C.E
-  },
+  }
 
   // These probably should not be in GetStarted
 

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
-import { Label, Segment, Grid, Icon, Popup } from 'semantic-ui-react'
+import { Button, Label, Segment, Grid, Icon, Popup } from 'semantic-ui-react'
 
 import { showToast } from '/client/imports/modules'
 import SelectedTile from '../../Common/Map/Tools/SelectedTile.js'
@@ -114,6 +114,7 @@ export default class ActorTileset extends React.Component {
   renderActors(from = 0, to = this.props.tilesets.length) {
     return (
       <Grid columns="equal" style={{ width: '100%', margin: 0 }}>
+        <Button fluid icon="child" content="Create Actor" />
         {this.renderTileset(from, to, this.genTilesetImage)}
       </Grid>
     )

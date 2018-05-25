@@ -35,6 +35,7 @@ body {
 .mgb-suir-plainSegment {
   border: 0 !important; /* SUI has a habit of putting unwanted dividers on horizontal segments */
   background: transparent !important;
+  overflow-y: auto;
 }
 
 .accept-drop {

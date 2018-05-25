@@ -13,7 +13,7 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import { showToast } from '/client/imports/modules'
 
 const formStyle = {
-  maxWidth: '40em',
+  maxWidth: '50em',
   margin: 'auto',
 }
 

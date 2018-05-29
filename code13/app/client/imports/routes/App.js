@@ -390,7 +390,7 @@ class AppUI extends Component {
       right: `${isGuest || isHocRoute ? 0 : flexPanelWidth}`,
       marginBottom: '0px',
       height: '100vh',
-      overflow: isGuest || isHocRoute ? 'hidden' : undefined,
+      overflow: isGuest || isHocRoute ? 'hidden' : 'auto',
       WebkitOverflowScrolling: 'touch', // only works with overflowY: scroll (not auto)
     }
 

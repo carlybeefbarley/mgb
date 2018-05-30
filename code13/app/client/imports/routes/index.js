@@ -95,6 +95,7 @@ export function clientStartup() {
         <Route path="/u/:username/games" component={BrowseGamesRoute} name="Games" />
 
         <Route path="/signup" component={Users.SignupRoute} name="Sign up" />
+        <Route path="/signup-education" component={Users.SignupEducationRoute} name="Educational Signup" />
         <Route path="/login" component={Users.LoginRoute} name="Log In" />
         <Route path="/forgot-password" component={Users.ForgotPassword} name="Forgot Password" />
         <Route path="/reset-password/:token" component={Users.ResetPassword} name="Reset Password" />

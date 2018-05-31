@@ -23,15 +23,14 @@ import { workStateNames } from '../../../../imports/Enums/workStates'
 export const assetViewChoices = {
   s: {
     showFooter: false,
-    showWorkstate: true,
     showMeta: false,
     showExtra: false,
     showImg: false,
     tightRows: true,
   },
-  m: { showFooter: false, showWorkstate: true, showMeta: false, showExtra: true, showImg: true },
-  l: { showFooter: false, showWorkstate: true, showMeta: true, showExtra: true, showImg: true },
-  xl: { showFooter: true, showWorkstate: true, showMeta: true, showExtra: true, showImg: true },
+  m: { showFooter: false, showMeta: false, showExtra: true, showImg: true },
+  l: { showFooter: false, showMeta: true, showExtra: true, showImg: true },
+  xl: { showFooter: true, showMeta: true, showExtra: true, showImg: true },
 }
 
 const _preventOnMouseUpClickSteal = e => {
@@ -100,8 +99,6 @@ const AssetCard = React.createClass({
     const viewOpts = assetViewChoices[renderView]
     const numChildForks = _.isArray(asset.forkChildren) ? asset.forkChildren.length : 0
     const hasParentFork = _.isArray(asset.forkParentChain) && asset.forkParentChain.length > 0
-    const ago = moment(asset.updatedAt).fromNow() // TODO: Make reactive
-    const ownerName = asset.dn_ownerName
     const veryCompactButtonStyle = { paddingLeft: '0.25em', paddingRight: '0.25em' }
     const chosenProjectNamesArray = asset.projectNames || []
     const availableProjectNamesArray = ownersProjects
@@ -144,7 +141,7 @@ const AssetCard = React.createClass({
         </div>
 
         <Card.Content>
-          {viewOpts.showWorkstate && (
+          {!(currUser.profile.isTeacher || currUser.profile.isStudent) && (
             <span style={{ float: 'right' }}>
               <span onMouseUp={_preventOnMouseUpClickSteal}>
                 <UserLoves

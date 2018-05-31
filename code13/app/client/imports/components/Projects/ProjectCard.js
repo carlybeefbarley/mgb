@@ -29,6 +29,7 @@ const ProjectCard = (props, context) => {
   const MemberStr = !memberIds || memberIds.length === 0 ? '1 Member' : memberIds.length + 1 + ' Members'
   const numChildForks = _.isArray(forkChildren) ? forkChildren.length : 0
   const hasParentFork = _.isArray(forkParentChain) && forkParentChain.length > 0
+  const currUser = Meteor.user()
 
   return (
     <Card
@@ -55,19 +56,21 @@ const ProjectCard = (props, context) => {
         />
       </Card.Content>
       <Card.Content>
-        <span style={{ float: 'right' }}>
-          <WorkState
-            workState={workState}
-            handleChange={
-              !handleFieldChanged ? (
-                undefined
-              ) : (
-                newWorkState => handleFieldChanged({ workState: newWorkState })
-              )
-            }
-            canEdit={canEdit}
-          />
-        </span>
+        {!(currUser.profile.isTeacher || currUser.profile.isStudent) && (
+          <span style={{ float: 'right' }}>
+            <WorkState
+              workState={workState}
+              handleChange={
+                !handleFieldChanged ? (
+                  undefined
+                ) : (
+                  newWorkState => handleFieldChanged({ workState: newWorkState })
+                )
+              }
+              canEdit={canEdit}
+            />
+          </span>
+        )}
 
         <Card.Header title={name} content={name} />
 

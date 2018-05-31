@@ -462,7 +462,9 @@ class AppUI extends Component {
 
         <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
           <SupportedBrowsersContainer />
-          {!isGuest && !isHocRoute && <VerifyBanner currUser={currUser} />}
+          {!isGuest &&
+          !isHocRoute &&
+          !(currUser.profile.isTeacher || currUser.profile.isStudent) && <VerifyBanner currUser={currUser} />}
           {!hideHeaders && (
             <NavPanel
               currUser={currUser}

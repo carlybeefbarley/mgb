@@ -10,13 +10,13 @@ import './WorkState.css'
 
 export const WorkStateIcon = ({ workState, size, onIconClick, labelStyle }) => (
   <Icon
-    name={workStateIcons[workState]}
-    circular
+    inverted
+    name={workStateIcons[workState] || 'unknown'}
     style={labelStyle}
-    color="black"
+    color="brown"
     size={size}
     onClick={onIconClick}
-    className={`mgb-workstate-${workState}`}
+    className={`workstate-icon mgb-workstate-${workState}`}
   />
 )
 

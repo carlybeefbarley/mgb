@@ -17,6 +17,7 @@ import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import assetStore from '/client/imports/stores/assetStore'
 
 import UserLoves from '/client/imports/components/Controls/UserLoves'
+import { workStateNames } from '../../../../imports/Enums/workStates'
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
 
 export const assetViewChoices = {
@@ -153,11 +154,14 @@ const AssetCard = React.createClass({
                   seeLovers={false}
                 />
               </span>
-              <WorkState
-                workState={asset.workState}
-                size={viewOpts.showExtra ? null : 'small'}
-                canEdit={false}
-              />
+              {asset.workState !== 'unknown' &&
+              _.includes(workStateNames, asset.workState) && (
+                <WorkState
+                  workState={asset.workState}
+                  size={viewOpts.showExtra ? null : 'small'}
+                  canEdit={false}
+                />
+              )}
             </span>
           )}
 

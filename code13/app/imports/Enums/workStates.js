@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-export const workStateNames = ['broken', 'experiment', 'unknown', 'working', 'polished', 'showcase']
+export const workStateNames = ['broken', 'unknown', 'working', 'polished']
 
 export const makeWorkstateNamesArray = hideWorkstateMask =>
   // Special case 0 which is the most common case to be the least work
@@ -12,10 +12,8 @@ export const defaultWorkStateName = 'unknown'
 export const bestWorkStateName = _.last(workStateNames)
 
 export const workStateIcons = {
-  broken: 'bug',
-  experiment: 'lab',
-  unknown: 'asterisk',
+  broken: 'frown',
+  unknown: 'help',
   working: 'meh',
   polished: 'smile',
-  showcase: 'thumbs up',
 }

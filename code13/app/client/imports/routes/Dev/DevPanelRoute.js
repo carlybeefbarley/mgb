@@ -30,20 +30,18 @@ export default class DevPanelRoute extends Component {
   }
 
   handleSubmit = event => {
-    const { institution, email, username, password } = this.state.formData
+    const { institution, email, username } = this.state.formData
     const { salutationIndex } = this.state
     const salutation = salutations[salutationIndex].text
 
     const errors = {
       email: validate.emailWithReason(email),
       username: validate.usernameWithReason(username),
-      password: validate.passwordWithReason(password),
     }
 
     let data = {
       username,
       email,
-      password,
       profile: {
         name: username,
         institution,
@@ -63,15 +61,17 @@ export default class DevPanelRoute extends Component {
     }
     console.log('Creating account with: ', data)
 
-    Accounts.createUser(data, error => {
-      if (error) {
-        console.error(error)
-        return this.setState({
-          isLoading: false,
-          errors: { server: error.reason || 'Server Error while creating account' },
-        })
-      }
-    })
+    // Accounts.createUser(data, error => {
+    //   if (error) {
+    //     console.error(error)
+    //     return this.setState({
+    //       isLoading: false,
+    //       errors: { server: error.reason || 'Server Error while creating account' },
+    //     })
+    //   }
+    // })
+
+    Meteor.call('AccountsCreate.teacher', data)
   }
 
   handleChange = e => {
@@ -155,17 +155,6 @@ export default class DevPanelRoute extends Component {
                           onBlur={this.checkUserName}
                           placeholder={`${salutations[this.state.salutationIndex].text} Woodstock`}
                         />
-                        <Form.Input
-                          // Turn of autocomplete for signup as described at https://bugs.chromium.org/p/chromium/issues/detail?id=370363#c7
-                          // and at https://developer.mozilla.org/en-US/docs/Web/Security/Securing_your_site/Turning_off_form_autocompletion#The_autocomplete_attribute_and_login_fields
-                          autoComplete="new-password"
-                          error={!!errors.password}
-                          icon="lock"
-                          type="password"
-                          label={errors.password || 'Password'}
-                          name="password"
-                          placeholder="Password"
-                        />
                         <Button fluid primary content="Submit Application" />
                         <Button
                           fluid
@@ -186,7 +175,8 @@ export default class DevPanelRoute extends Component {
                   </Grid.Column>
                 </Grid>
                 <Divider />
-                <Segment>Some other stuff goes here</Segment>
+                <Segment>{`${salutations[this.state.salutationIndex].text} ${this.state.formData.username ||
+                  ''}`}</Segment>
               </Container>
             </Segment>
           }

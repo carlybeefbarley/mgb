@@ -17,6 +17,13 @@ Meteor.methods({
   },
 })
 
+Meteor.methods({
+  'AccountsCreate.teacher'(data) {
+    let userId = Accounts.createUser(data)
+    console.log('Teacher User Id:', userId)
+  },
+})
+
 const getGravatarUrl = email => '//www.gravatar.com/avatar/' + md5(email.trim().toLowerCase()) + '?s=155&d=mm'
 
 Accounts.validateNewUser(function(user) {

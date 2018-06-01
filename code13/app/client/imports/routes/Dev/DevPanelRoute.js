@@ -49,9 +49,9 @@ export default class DevPanelRoute extends Component {
         institution,
         salutation,
         students: [
-          { id: 'Sdjfkl2Ds9xDhgRp', username: 'Edward Jamison' },
-          { id: 'Sdjfkl2Ds9xDhgRp', username: 'Edward Jamison' },
-          { id: 'Sdjfkl2Ds9xDhgRp', username: 'Edward Jamison' },
+          { _id: 'Sdjfkl2Ds9xDhgRp', username: 'Edward Jamison' },
+          { _id: 'Sdjfkl2Ds9xDhgRp', username: 'Edward Jamison' },
+          { _id: 'Sdjfkl2Ds9xDhgRp', username: 'Edward Jamison' },
         ], // Array of user ID/Name pairs that point to which users belong to this teacher.
         isTeacher: true,
       },
@@ -107,7 +107,7 @@ export default class DevPanelRoute extends Component {
 
     let renderItem
 
-    if (currUser && currUser.username === 'Lousaydus') {
+    if (true) {
       renderItem = (
         <HeroLayout
           heroContent={

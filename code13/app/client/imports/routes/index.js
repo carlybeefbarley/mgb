@@ -41,6 +41,7 @@ import TermsOfService from '/client/imports/legal/TermsOfService'
 import Privacy from '/client/imports/legal/Privacy'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+import DevPanelRoute from './Dev/DevPanelRoute';
 
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
@@ -202,6 +203,13 @@ export function clientStartup() {
           component={NotYetImplementedRoute}
           name="Coming Soon!.."
         />
+
+        <Route
+        path="/devpanel"
+        component={DevPanelRoute}
+        name="Super Secret Land"
+        />
+
         <Route path="*" component={NotFoundRoute} name="Page Not Found" />
       </Route>
     </Router>

@@ -464,7 +464,9 @@ class AppUI extends Component {
           <SupportedBrowsersContainer />
           {!isGuest &&
           !isHocRoute &&
-          !(currUser.profile.isTeacher || currUser.profile.isStudent) && <VerifyBanner currUser={currUser} />}
+          !(currUser && (currUser.profile.isTeacher || currUser.profile.isStudent)) && (
+            <VerifyBanner currUser={currUser} />
+          )}
           {!hideHeaders && (
             <NavPanel
               currUser={currUser}

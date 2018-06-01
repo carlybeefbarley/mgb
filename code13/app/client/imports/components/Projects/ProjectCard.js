@@ -56,21 +56,16 @@ const ProjectCard = (props, context) => {
         />
       </Card.Content>
       <Card.Content>
-        {!(currUser.profile.isTeacher || currUser.profile.isStudent) && (
-          <span style={{ float: 'right' }}>
-            <WorkState
-              workState={workState}
-              handleChange={
-                !handleFieldChanged ? (
-                  undefined
-                ) : (
-                  newWorkState => handleFieldChanged({ workState: newWorkState })
-                )
-              }
-              canEdit={canEdit}
-            />
-          </span>
-        )}
+        <span style={{ float: 'right' }}>
+          <WorkState
+            isClassroom={currUser && (currUser.profile.isTeacher || currUser.profile.isStudent)}
+            workState={workState}
+            handleChange={
+              !handleFieldChanged ? null : newWorkState => handleFieldChanged({ workState: newWorkState })
+            }
+            canEdit={canEdit}
+          />
+        </span>
 
         <Card.Header title={name} content={name} />
 

@@ -1,7 +1,13 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { workStateQualities, statusIcons, qualityIcons, statusColors } from '/imports/Enums/workStates'
+import {
+  workStateQualities,
+  workStateStatuses,
+  statusIcons,
+  qualityIcons,
+  statusColors,
+} from '/imports/Enums/workStates'
 import { Header, Label, Icon, List, Popup } from 'semantic-ui-react'
 import './WorkState.css'
 
@@ -49,7 +55,7 @@ const WorkState = (
   <div>
     {!isClassroom ? (
       <WorkStateQuality
-        workState={workState}
+        workState={_.includes(workStateQualities, workState) ? workState : 'unknown'}
         canEdit={canEdit}
         size={size}
         popupPosition={popupPosition}
@@ -58,7 +64,11 @@ const WorkState = (
         onIconClick={onIconClick}
       />
     ) : (
-      <WorkStateStatus workState={workState} size={size} labelStyle={labelStyle} />
+      <WorkStateStatus
+        workState={_.includes(workStateStatuses, workState) ? workState : 'unknown'}
+        size={size}
+        labelStyle={labelStyle}
+      />
     )}
   </div>
 )
@@ -108,14 +118,13 @@ const WorkStateQuality = ({
 )
 
 const WorkStateStatus = ({ workState, size, labelStyle }) => (
-  <Label
-    name={statusIcons[workState] || statusIcons['unknown']}
-    style={labelStyle}
-    color={`${statusColors[workState] || statusColors['unknown']}`}
-    size={size}
-  >
-    <Icon />
-  </Label>
+  <div>
+    {workState !== 'unknown' && (
+      <Label style={labelStyle} color={`${statusColors[workState]}`} size={size}>
+        <Icon name={statusIcons[workState]} />
+      </Label>
+    )}
+  </div>
 )
 
 WorkState.propTypes = {

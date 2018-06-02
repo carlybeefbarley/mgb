@@ -21,6 +21,8 @@ Meteor.methods({
   'AccountsCreate.teacher'(data) {
     let userId = Accounts.createUser(data)
     console.log('Teacher User Id:', userId)
+    Accounts.sendEnrollmentEmail(userId)
+    return userId
   },
 })
 

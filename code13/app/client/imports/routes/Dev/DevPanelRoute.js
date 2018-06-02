@@ -30,6 +30,7 @@ export default class DevPanelRoute extends Component {
   }
 
   handleSubmit = event => {
+    event.preventDefault()
     const { institution, email, username } = this.state.formData
     const { salutationIndex } = this.state
     const salutation = salutations[salutationIndex].text
@@ -71,7 +72,7 @@ export default class DevPanelRoute extends Component {
     //   }
     // })
 
-    Meteor.call('AccountsCreate.teacher', data)
+    let enrollId = Meteor.call('AccountsCreate.teacher', data)
   }
 
   handleChange = e => {
@@ -159,7 +160,7 @@ export default class DevPanelRoute extends Component {
                         <Button
                           fluid
                           color="red"
-                          content="FORCE"
+                          content="Send Enrollment Email"
                           onClick={e => {
                             this.handleSubmit(e)
                           }}

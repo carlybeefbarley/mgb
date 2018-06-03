@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Grid, Icon, Message, Tab, Segment } from 'semantic-ui-react'
+import { Button, Grid, Icon, Message, Tab, Segment } from 'semantic-ui-react'
 import { utilPushTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import AssetEditProjectLayout from '/client/imports/layouts/AssetEditProjectLayout'
@@ -550,6 +550,15 @@ const AssetEditRoute = React.createClass({
               // TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
             }
             {this.state.isForkRevertPending && <Icon name="fork" loading />}
+            {!isClassroom && <UserLoves currUser={currUser} asset={asset} size="small" seeLovers />}
+            <WorkState
+              workState={asset.workState}
+              canEdit={canEd}
+              handleChange={this.handleWorkStateChange}
+            />
+            <Button primary compact onClick={this.handleWorkSubmit}>
+              Submit
+            </Button>
             &ensp;
             <AssetUrlGenerator showBordered asset={asset} />
             <StableState
@@ -899,6 +908,10 @@ const AssetEditRoute = React.createClass({
         this.data.asset,
       )
     }
+  },
+
+  handleWorkSubmit() {
+    this.handleWorkStateChange('needs review')
   },
 
   // This should not conflict with the deferred changes since those don't change these fields :)

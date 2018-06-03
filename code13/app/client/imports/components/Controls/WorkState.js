@@ -52,7 +52,7 @@ const WorkState = (
   labelStyle,
   onIconClick,
 ) => (
-  <div>
+  <span>
     {!isClassroom ? (
       <WorkStateQuality
         workState={_.includes(workStateQualities, workState) ? workState : 'unknown'}
@@ -70,7 +70,7 @@ const WorkState = (
         labelStyle={labelStyle}
       />
     )}
-  </div>
+  </span>
 )
 
 const WorkStateQuality = ({

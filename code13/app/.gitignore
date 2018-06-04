@@ -8,3 +8,4 @@ meteor_session.json
 .directory
 .yarn-cache
 yarn-error.log
+MGB_MONGODB_DUMP

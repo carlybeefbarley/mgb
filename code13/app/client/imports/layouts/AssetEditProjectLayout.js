@@ -40,12 +40,8 @@ export default class AssetEditProjectContainer extends React.Component {
 
   projectChangeHandler = (e, { value }) => {
     const { assetStore, currUser } = this.props
-    const project = { name: value }
-    assetStore.setProject(project.name)
-    utilPushTo(
-      location.query,
-      `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(project.name)}`,
-    )
+    assetStore.setProject(value)
+    utilPushTo(location.query, `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(value)}`)
   }
 
   componentDidMount() {

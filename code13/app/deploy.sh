@@ -5,7 +5,7 @@ deploy_env=$1
 
 usage() {
   echo ""
-  echo "Usage: sh deploy.sh <staging|production>"
+  echo "Usage: sh deploy.sh <staging|production|subdomain>"
 }
 
 # ----------------------------------------
@@ -13,7 +13,7 @@ usage() {
 # ----------------------------------------
 sh assert-pristine-git.sh
 
-if [ "$deploy_env" != "staging" ] && [ "$deploy_env" != "production" ]; then
+if [ "$deploy_env" != "staging" ] && [ "$deploy_env" != "production" ] && [ "$deploy_env" != "aie" ]; then
   echo "Bad deploy environment: \"$deploy_env\""
   usage
   exit 1
@@ -29,6 +29,8 @@ if [ "$deploy_env" = "staging" ]; then
   subdomain="staging"
 elif [ "$deploy_env" = "production" ]; then
   subdomain="v2"
+elif [ "$deploy_env" = "aie" ]; then
+  subdomain="aie"
 fi
 
 git_branch=$(git rev-parse --abbrev-ref HEAD)

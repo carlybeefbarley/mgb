@@ -45,6 +45,15 @@ const CodePhaserSkillNodes = {
     },
   },
 
+  booleans: {
+    $meta: {
+      name: 'Understanding Boolean Values and If Statements', // Name changed
+      icon: 'code',
+      subsection: 'Continue Learning JavaScript',
+      skillChallengeType: 'challenges',
+      ...C.E.$meta,
+    },
+  },
   comparison: {
     $meta: {
       name: 'Comparison with the Equality and Inequality Operators', // Name changed
@@ -88,16 +97,6 @@ const CodePhaserSkillNodes = {
   randomFractions: {
     $meta: {
       name: 'Generate Random Fractions and Numbers with JavaScript', // Name Changed
-      icon: 'code',
-      subsection: 'Continue Learning JavaScript',
-      skillChallengeType: 'challenges',
-      ...C.E.$meta,
-    },
-  },
-
-  booleans: {
-    $meta: {
-      name: 'Understanding Boolean Values and If Statements', // Name changed
       icon: 'code',
       subsection: 'Continue Learning JavaScript',
       skillChallengeType: 'challenges',

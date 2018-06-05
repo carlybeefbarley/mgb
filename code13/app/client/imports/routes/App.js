@@ -19,12 +19,8 @@ import { isSameUser } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
 import { projectMakeSelector, defaultProjectSorter } from '/imports/schemas/projects'
-<<<<<<< HEAD
-
-import { AnnouncementBanner } from '/client/imports/components/Home/AnnouncementBanner'
-=======
 import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
->>>>>>> 21603dd46de6cfddf1423e6a803f95e51345eebd
+import { AnnouncementBanner } from '/client/imports/components/Home/AnnouncementBanner'
 import NavBar from '/client/imports/components/Nav/NavBar'
 import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
@@ -494,7 +490,6 @@ class AppUI extends Component {
             />
           )}
 
-<<<<<<< HEAD
           <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
             <SupportedBrowsersContainer />
             {!isGuest && !isHocRoute && <VerifyBanner currUser={currUser} />}
@@ -553,27 +548,6 @@ class AppUI extends Component {
                 isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
               })}
           </div>
-=======
-          {currUser &&
-          currUser.suIsBanned && (
-            <Message
-              error
-              icon="ban"
-              header="Your Account has been suspended by an Admin"
-              list={[
-                'You may not edit Assets or Projects',
-                'You may not send Chat messages',
-                'Check your email for details',
-              ]}
-            />
-          )}
-
-          {/*
-            Just render the route unless we're editing a project asset
-            Project assets need to wrap the asset edit route in the project tabs UI layout
-          */}
-          {routeComponent}
->>>>>>> 21603dd46de6cfddf1423e6a803f95e51345eebd
         </div>
         <NetworkStatusMsg meteorStatus={meteorStatus} />
         <NotificationContainer />

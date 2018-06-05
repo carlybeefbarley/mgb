@@ -5,7 +5,11 @@ deploy_env=$1
 
 usage() {
   echo ""
+<<<<<<< HEAD
   echo "Usage: sh deploy.sh <staging|production|aie>"
+=======
+  echo "Usage: sh deploy.sh <staging|production|subdomain>"
+>>>>>>> 21603dd46de6cfddf1423e6a803f95e51345eebd
 }
 
 # ----------------------------------------

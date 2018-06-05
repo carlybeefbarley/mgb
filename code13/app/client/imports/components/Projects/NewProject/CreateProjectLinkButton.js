@@ -1,6 +1,7 @@
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
+import { Button } from 'semantic-ui-react'
+
 import QLink from '/client/imports/routes/QLink'
 
 // The Create Project link is always in context of a user since only a user can create a project in their account.
@@ -18,11 +19,9 @@ const CreateProjectLinkButton = React.createClass({
     const to = `/u/${currUser.profile.name}/projects/create`
 
     return (
-      <div className="ui green tiny button">
-        <QLink to={to} className="item" elOverride="div">
-          Create New Project
-        </QLink>
-      </div>
+      <Button as={QLink} to={to} color="green" size="tiny">
+        Create New Project
+      </Button>
     )
   },
 })

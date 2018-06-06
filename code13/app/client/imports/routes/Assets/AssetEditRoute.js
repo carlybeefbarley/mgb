@@ -370,10 +370,11 @@ const AssetEditRoute = React.createClass({
   },
 
   handleTabChange(asset) {
+    const { assetStore } = this.props
     const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
 
     return () => {
-      utilPushTo(this.context.urlLocation, url)
+      utilPushTo(this.context.urlLocation, url, { project: assetStore.project() })
     }
   },
 

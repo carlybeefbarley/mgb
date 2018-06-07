@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Divider, Grid, Header, Segment } from 'semantic-ui-react'
+import { Container, Divider, Grid, Header, Segment, Tab } from 'semantic-ui-react'
 import Footer from '/client/imports/components/Footer/Footer'
 import PropTypes from 'prop-types'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
@@ -9,7 +9,7 @@ import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 
 //import RecentAssetAction from './Actions/RecentAssetAction'
 
-export default class Dashboard1st extends React.Component {
+class Dashboard1st extends React.Component {
   static propTypes = {
     currUser: PropTypes.object,
   }
@@ -22,10 +22,10 @@ export default class Dashboard1st extends React.Component {
     const { avatar } = currUser.profile
 
     return (
-      <Container style={containerStyle}>
+      <div>
         <Grid columns={2} padded>
           <Grid.Row>
-            <Grid.Column>
+            <Grid.Column width={5}>
               <Segment raised color="blue">
                 <Header as="h1" content={`Student Dashboard: ${currUser.username}`} />
                 <ImageShowOrChange
@@ -42,7 +42,7 @@ export default class Dashboard1st extends React.Component {
                 <SkillAction currUser={currUser} />  
                 <RecentAssetAction currUser={currUser} />*/}
             </Grid.Column>
-            <Grid.Column>
+            <Grid.Column width={11}>
               <Segment raised color="blue">
                 <Header as="h2" content="Upcoming Assignments" />
                 ...
@@ -78,6 +78,30 @@ export default class Dashboard1st extends React.Component {
             <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
           </Grid.Column>
         </Grid>
+      </div>
+    )
+  }
+}
+
+export default class DashboardTabs extends React.Component {
+  render() {
+    const panes = [
+      {
+        menuItem: 'Student Dashboard',
+        render: () => (
+          <Tab.Pane>
+            <Dashboard1st {...this.props} />
+          </Tab.Pane>
+        ),
+      },
+      {
+        menuItem: 'Classroom 1',
+        render: () => <Tab.Pane>Do stuff already</Tab.Pane>,
+      },
+    ]
+    return (
+      <Container>
+        <Tab panes={panes} />
       </Container>
     )
   }

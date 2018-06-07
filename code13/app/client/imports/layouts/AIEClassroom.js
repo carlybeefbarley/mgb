@@ -52,6 +52,9 @@ class Dashboard1st extends React.Component {
       textAlign: 'center',
     }
 
+    const upcomingStyle = {
+      minHeight: '21.5em',
+    }
     return (
       <div>
         <Grid columns={2} padded>
@@ -78,8 +81,9 @@ class Dashboard1st extends React.Component {
                 <SkillAction currUser={currUser} />  
                 <RecentAssetAction currUser={currUser} />*/}
             </Grid.Column>
+
             <Grid.Column width={11}>
-              <Segment raised color="blue">
+              <Segment raised color="blue" style={upcomingStyle}>
                 <Header as="h2" content="Upcoming Assignments" />
                 <AssignmentsList />
               </Segment>

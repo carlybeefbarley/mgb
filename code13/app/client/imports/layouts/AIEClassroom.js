@@ -42,21 +42,36 @@ class Dashboard1st extends React.Component {
 
     const { avatar } = currUser.profile
 
+    const titleStyle = {
+      fontSize: '3em',
+      textAlign: 'center',
+    }
+
+    const infoStyle = {
+      fontSize: '1.5em',
+      textAlign: 'center',
+    }
+
     return (
       <div>
         <Grid columns={2} padded>
           <Grid.Row>
             <Grid.Column width={5}>
               <Segment raised color="blue">
-                <Header as="h1" content={`Student Dashboard: ${currUser.username}`} />
+                <Header style={titleStyle} as="h1" content={`${currUser.username}`} textAlign="center" />
                 <ImageShowOrChange
                   id="mgbjr-profile-avatar"
-                  maxHeight="8em"
+                  maxHeight="11em"
                   maxWidth="auto"
                   imageSrc={avatar}
                   header="User Avatar"
                   canEdit={true}
                 />
+                <Container style={infoStyle}>
+                  <p>
+                    Class Name<br />Teacher Name
+                  </p>
+                </Container>
               </Segment>
               {/* Not sure if we are tracking skills with AIE
                 

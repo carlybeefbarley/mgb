@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Divider, Grid, Header, Segment, Tab, List } from 'semantic-ui-react'
+import { Container, Divider, Grid, Header, Segment, Tab, List, Input, TextArea } from 'semantic-ui-react'
 import Footer from '/client/imports/components/Footer/Footer'
 import PropTypes from 'prop-types'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
@@ -90,15 +90,12 @@ class AssignmentsList extends React.Component {
   }
 }
 
-class Dashboard1st extends React.Component {
+class Dashboard extends React.Component {
   static propTypes = {
     currUser: PropTypes.object,
   }
   render() {
     const { currUser } = this.props
-    const containerStyle = {
-      overflowY: 'auto',
-    }
 
     const { avatar } = currUser.profile
 
@@ -115,6 +112,17 @@ class Dashboard1st extends React.Component {
     const upcomingStyle = {
       minHeight: '21.5em',
     }
+
+    const aboutMeStyle = {
+      minHeight: '15em',
+    }
+
+    const inputStyle = {
+      minHeight: '10em',
+      width: '100%',
+      opacity: '0.9',
+    }
+
     return (
       <div>
         <Grid columns={2} padded>
@@ -151,33 +159,21 @@ class Dashboard1st extends React.Component {
           </Grid.Row>
         </Grid>
 
-        <Divider hidden />
+        {/* <Divider hidden /> */}
 
         <Grid padded stackable>
           <Grid.Column tablet={16} computer={16}>
-            <Segment raised color="yellow">
+            <Segment raised color="yellow" style={aboutMeStyle}>
               <Header as="h2" content="About me" />
+              <TextArea
+                placeholder="Tell the class a little about yourself and your goals for making games"
+                style={inputStyle}
+              />
+              <br /> <hr /> <br />
+              <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
             </Segment>
-            {/* <BadgesSegment currUser={currUser} /> */}
-
-            <Grid>
-              {/*
-                Heads Up!
-                This is a responsive position.
-                The ExploreSegment appears at the end of the page in mobile/tablet.
-                See below...
-              */}
-              <Grid.Column width={16} only="computer">
-                <Divider hidden section />
-                {/* <ExploreSegment /> */}
-              </Grid.Column>
-            </Grid>
-          </Grid.Column>
-
-          <Grid.Column width={16}>
-            {/* <ExploreSegment /> */}
             <UserProfileGamesList user={currUser} currUser={currUser} />
-            <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
+            {/* <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} /> */}
           </Grid.Column>
         </Grid>
       </div>
@@ -195,7 +191,7 @@ class ClassroomDashboard extends React.Component {
     const { avatar } = currUser.profile
 
     return (
-      <div>
+      <div style={containerStyle}>
         <Grid columns={2} padded>
           <Grid.Row>
             <Grid.Column width={5}>
@@ -235,7 +231,7 @@ export default class DashboardTabs extends React.Component {
         menuItem: 'Student Dashboard',
         render: () => (
           <Tab.Pane>
-            <Dashboard1st {...this.props} />
+            <Dashboard {...this.props} />
           </Tab.Pane>
         ),
       },
@@ -250,6 +246,7 @@ export default class DashboardTabs extends React.Component {
     ]
     return (
       <Container>
+        <Dashboard {...this.props} />
         <Tab panes={panes} />
       </Container>
     )

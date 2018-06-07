@@ -210,7 +210,9 @@ class AssetStore extends Store {
    * @returns {String} Either __NO_PROJECT__ or the asset's first project as a string.
    */
   getContextualProject = asset => {
-    if (asset.projectNames.length === 0) {
+    if (this.isAlreadyOpen(asset, this.project())) {
+      return this.project()
+    } else if (asset.projectNames.length === 0) {
       return __NO_PROJECT__
     } else {
       return asset.projectNames[0]

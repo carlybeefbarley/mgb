@@ -190,29 +190,60 @@ class ClassroomDashboard extends React.Component {
 
     const { avatar } = currUser.profile
 
+    const titleStyle = {
+      fontSize: '2em',
+      textAlign: 'center',
+    }
+
+    const infoStyle = {
+      fontSize: '1.2em',
+      textAlign: 'center',
+    }
+
     return (
       <div style={containerStyle}>
         <Grid columns={2} padded>
           <Grid.Row>
             <Grid.Column width={5}>
               <Segment raised color="blue">
-                <Header as="h1" content={`Classroom Dashboard`} />
+                <Header style={titleStyle} as="h1" content={`Classroom Dashboard`} />
 
                 {/* Change avatar for classroom later  */}
                 <ImageShowOrChange
                   id="mgbjr-profile-avatar"
-                  maxHeight="8em"
+                  maxHeight="11em"
                   maxWidth="auto"
                   imageSrc={avatar}
                   header="User Avatar"
-                  canEdit={true}
+                  canEdit={false}
                 />
+                <Container style={infoStyle}>
+                  <p>Teacher Name </p>
+                  <p>Class Chat</p>
+                </Container>
               </Segment>
             </Grid.Column>
             <Grid.Column width={11}>
               <Segment raised color="blue">
-                <Header as="h2" content="About this Class" />
-                <Segment>lorem ipsum blah blah blah</Segment>
+                <Header as="h3" content="About this Class" />
+                <Segment>
+                  <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+                    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+                    est laborum.
+                  </p>
+                  <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+                    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+                    est laborum.
+                  </p>
+                </Segment>
               </Segment>
             </Grid.Column>
           </Grid.Row>

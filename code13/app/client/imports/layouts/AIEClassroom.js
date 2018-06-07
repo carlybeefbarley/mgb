@@ -104,6 +104,49 @@ class Dashboard1st extends React.Component {
   }
 }
 
+class ClassroomDashboard extends React.Component {
+  render() {
+    const { currUser } = this.props
+    const containerStyle = {
+      overflowY: 'auto',
+    }
+
+    const { avatar } = currUser.profile
+
+    return (
+      <div>
+        <Grid columns={2} padded>
+          <Grid.Row>
+            <Grid.Column width={5}>
+              <Segment raised color="blue">
+                <Header as="h1" content={`Classroom Dashboard`} />
+
+                {/* Change avatar for classroom later  */}
+                <ImageShowOrChange
+                  id="mgbjr-profile-avatar"
+                  maxHeight="8em"
+                  maxWidth="auto"
+                  imageSrc={avatar}
+                  header="User Avatar"
+                  canEdit={true}
+                />
+              </Segment>
+            </Grid.Column>
+            <Grid.Column width={11}>
+              <Segment raised color="blue">
+                <Header as="h2" content="About this Class" />
+                <Segment>lorem ipsum blah blah blah</Segment>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+
+        <Divider hidden />
+      </div>
+    )
+  }
+}
+
 export default class DashboardTabs extends React.Component {
   render() {
     const panes = [
@@ -117,7 +160,11 @@ export default class DashboardTabs extends React.Component {
       },
       {
         menuItem: 'Classroom 1',
-        render: () => <Tab.Pane>Do stuff already</Tab.Pane>,
+        render: () => (
+          <Tab.Pane>
+            <ClassroomDashboard {...this.props} />
+          </Tab.Pane>
+        ),
       },
     ]
     return (

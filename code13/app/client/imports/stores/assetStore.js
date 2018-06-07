@@ -251,7 +251,6 @@ class AssetStore extends Store {
   }
 
   closeAsset = asset => {
-    // console.log('assetStore.closeAsset()', asset)
     const { assets } = this.state
 
     const newAssets = this.untrackAsset(asset, assets)

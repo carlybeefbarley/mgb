@@ -22,7 +22,21 @@ export default class AssetEditProjectContainer extends React.Component {
       keys = Object.keys(assets)
 
     for (let index in keys) {
-      data.push({ key: keys[index], text: keys[index], value: keys[index], icon: 'sitemap' })
+      if (index === '0') {
+        data.push({
+          key: keys[index],
+          text: keys[index],
+          value: __NO_PROJECT__,
+          icon: 'sitemap',
+        })
+      } else {
+        data.push({
+          key: keys[index],
+          text: keys[index],
+          value: currUserProjects[index - 1]._id,
+          icon: 'sitemap',
+        })
+      }
     }
 
     return data
@@ -38,12 +52,18 @@ export default class AssetEditProjectContainer extends React.Component {
     }
   }
 
-  projectChangeHandler = (e, { value }) => {
+  projectChangeHandler = (e, object) => {
     const { assetStore, currUser } = this.props
-    assetStore.setProject(value)
-    utilPushTo(location.query, `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(value)}`, {
-      project: value,
-    })
+    const valueID = object.value
+    const valueText = object.options[_.findIndex(object.options, { value: valueID })].text
+    assetStore.setProject(valueText)
+    utilPushTo(
+      location.query,
+      `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(valueText)}`,
+      {
+        project: valueText,
+      },
+    )
   }
 
   componentDidMount() {
@@ -57,8 +77,8 @@ export default class AssetEditProjectContainer extends React.Component {
     const renderedProjectsList = this.renderProjectsList(currUserProjects)
     // Set the default name/option for the projects dropdown list
     const projectName = assetStore.project() || __NO_PROJECT__
-    const dropDownCurrentProjectName = _.find(renderedProjectsList, { value: projectName })
-      ? _.find(renderedProjectsList, { value: projectName }).text
+    const dropDownCurrentProjectName = _.find(renderedProjectsList, { text: projectName })
+      ? _.find(renderedProjectsList, { text: projectName }).text
       : __NO_PROJECT__
 
     return (
@@ -83,8 +103,8 @@ export default class AssetEditProjectContainer extends React.Component {
                     {dropDownCurrentProjectName}
                   </span>
                 }
-                onChange={(e, { value }) => {
-                  this.projectChangeHandler(e, { value })
+                onChange={(e, obj) => {
+                  this.projectChangeHandler(e, obj)
                 }}
                 options={renderedProjectsList}
               />

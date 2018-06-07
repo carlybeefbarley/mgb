@@ -27,7 +27,8 @@ const editElementsForKind = {
   doc: { loader: () => import('./EditDoc/EditDoc') },
   sound: { loader: () => import('./EditAudio/EditSound/EditSound') },
   music: { loader: () => import('./EditAudio/EditMusic/EditMusic') },
-  game: { loader: () => import('./EditGame/EditGame') },
+  game: { loader: () => import('./EditAssignment/EditAssignment') },
+  //assignment: { loader: () => import('./EditAssignment/EditAssignment') },
 }
 
 const _omitPropsForEditors = [

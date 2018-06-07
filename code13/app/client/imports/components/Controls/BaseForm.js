@@ -1,5 +1,5 @@
 import React from 'react'
-import { Checkbox } from 'semantic-ui-react'
+import { Checkbox, Grid } from 'semantic-ui-react'
 
 import DropArea from './DropArea.js'
 import SmallDD from './SmallDD.js'
@@ -148,6 +148,27 @@ export default class BaseForm extends React.Component {
             this.data._ids[key] = asset ? asset._id : ''
             this.props.onChange && this.props.onChange()
             cb && cb(asset)
+          }}
+        />
+      </div>
+    )
+  }
+
+  date(name, key, fieldOptions = {}) {
+    return (
+      <div
+        className={'field' + (fieldOptions.disabled ? ' disabled' : '')}
+        title={fieldOptions && fieldOptions.title}
+      >
+        <label>{name}</label>
+        <input
+          {...fieldOptions}
+          type="date"
+          placeholder={name}
+          value={this.data[key]}
+          onChange={e => {
+            this.data[key] = e.target.value
+            this.props.onChange && this.props.onChange()
           }}
         />
       </div>

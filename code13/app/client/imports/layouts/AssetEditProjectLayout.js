@@ -40,12 +40,10 @@ export default class AssetEditProjectContainer extends React.Component {
 
   projectChangeHandler = (e, { value }) => {
     const { assetStore, currUser } = this.props
-    const project = { name: value }
-    assetStore.setProject(project.name)
-    utilPushTo(
-      location.query,
-      `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(project.name)}`,
-    )
+    assetStore.setProject(value)
+    utilPushTo(location.query, `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(value)}`, {
+      project: value,
+    })
   }
 
   componentDidMount() {
@@ -78,7 +76,7 @@ export default class AssetEditProjectContainer extends React.Component {
                 search
                 scrolling
                 value={projectName}
-                // Throws error but semantic doesnt curently support this icon positioning correctly via built in props
+                // Throws error but semantic doesn't currently support this icon positioning correctly via built in props
                 text={
                   <span>
                     <Icon name="sitemap" />

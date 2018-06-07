@@ -97,7 +97,7 @@ Meteor.publish('assets.public.nameInfo.query', function(
   )
   let assetSorter = assetSortType ? allSorters[assetSortType] : allSorters['edited']
   const findOpts = {
-    fields: { updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1 },
+    fields: { updatedAt: 1, name: 1, kind: 1, dn_ownerName: 1, isDeleted: 1, ownerId: 1 },
     sort: assetSorter,
     limit: Math.min(limitCount, 99),
   }

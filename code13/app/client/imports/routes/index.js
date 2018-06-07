@@ -40,6 +40,8 @@ import Roadmap from './Nav/RoadmapRoute'
 import TermsOfService from '/client/imports/legal/TermsOfService'
 import Privacy from '/client/imports/legal/Privacy'
 
+import AIE from '/client/imports/layouts/AIEClassroom'
+
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 // To understand this file...
@@ -195,6 +197,7 @@ export function clientStartup() {
 
         <Route path="/legal/tos" component={TermsOfService} name="Terms Of Service" />
         <Route path="/legal/privacy" component={Privacy} name="Privacy Policy" />
+        <Route path="/layouts/AIECLassroom" component={AIE} name="AIE Classroom" />
 
         <Route
           path="/notyetimplemented/:featureName"

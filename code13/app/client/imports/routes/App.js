@@ -490,7 +490,7 @@ class AppUI extends Component {
             />
           )}
 
-          <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
+          {/* <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
             <SupportedBrowsersContainer />
             {!isGuest && !isHocRoute && <VerifyBanner currUser={currUser} />}
             {announcement && <AnnouncementBanner text={announcement} />}
@@ -516,38 +516,38 @@ class AppUI extends Component {
                 sysvars={sysvars}
                 currentlyEditingAssetInfo={currentlyEditingAssetInfo}
               />
-            )}
+            )} */}
 
-            {currUser &&
-            currUser.suIsBanned && (
-              <Message
-                error
-                icon="ban"
-                header="Your Account has been suspended by an Admin"
-                list={[
-                  'You may not edit Assets or Projects',
-                  'You may not send Chat messages',
-                  'Check your email for details',
-                ]}
-              />
-            )}
+          {currUser &&
+          currUser.suIsBanned && (
+            <Message
+              error
+              icon="ban"
+              header="Your Account has been suspended by an Admin"
+              list={[
+                'You may not edit Assets or Projects',
+                'You may not send Chat messages',
+                'Check your email for details',
+              ]}
+            />
+          )}
 
-            {!loading &&
-              this.props.children &&
-              React.cloneElement(this.props.children, {
-                // Make below props available to all routes.
-                user,
-                currUser,
-                hideHeaders,
-                currUserProjects,
-                hazUnreadAssetChat,
-                ownsProfile,
-                isSuperAdmin,
-                availableWidth: mainAreaAvailableWidth,
-                handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
-                isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
-              })}
-          </div>
+          {!loading &&
+            this.props.children &&
+            React.cloneElement(this.props.children, {
+              // Make below props available to all routes.
+              user,
+              currUser,
+              hideHeaders,
+              currUserProjects,
+              hazUnreadAssetChat,
+              ownsProfile,
+              isSuperAdmin,
+              availableWidth: mainAreaAvailableWidth,
+              handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
+              isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
+            })}
+          {/* </div> */}
         </div>
         <NetworkStatusMsg meteorStatus={meteorStatus} />
         <NotificationContainer />

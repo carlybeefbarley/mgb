@@ -17,16 +17,20 @@ const ChatIcon = ({ hazUnreadChats, projId }) => {
   )
 }
 
-const ProjectMenu = ({ projects, ownedFlag, currUserId, hazUnreadChats }) => {
+const ProjectMenu = ({ projects, ownedFlag, currUser, hazUnreadChats }) => {
   if (!projects || projects.length === 0) return Empty
 
-  const wantedProjects = _.filter(projects, p => (p.ownerId === currUserId) === ownedFlag)
+  const wantedProjects = _.filter(projects, p => (p.ownerId === currUser._id) === ownedFlag)
   const retval =
     wantedProjects.length === 0
       ? Empty
       : wantedProjects.map(p => (
           <Menu.Item key={p._id}>
-            <WorkState workState={p.workState} canEdit={false} />
+            <WorkState
+              isClassroom={currUser.profile.isTeacher | currUser.profile.isStudent}
+              workState={p.workState}
+              canEdit={false}
+            />
             {!ownedFlag && (
               <span>
                 <QLink to={`/u/${p.ownerName}`} altTo={`/u/${p.ownerName}/projects`}>
@@ -70,7 +74,7 @@ const fpProjects = ({ currUser, currUserProjects, hazUnreadChats }) => {
           projects={currUserProjects}
           ownedFlag
           hazUnreadChats={hazUnreadChats}
-          currUserId={currUser._id}
+          currUser={currUser}
         />
       </Menu>
 
@@ -82,7 +86,7 @@ const fpProjects = ({ currUser, currUserProjects, hazUnreadChats }) => {
           projects={currUserProjects}
           ownedFlag={false}
           hazUnreadChats={hazUnreadChats}
-          currUserId={currUser._id}
+          currUser={currUser}
         />
       </Menu>
     </div>

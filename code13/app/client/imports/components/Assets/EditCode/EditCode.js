@@ -3,18 +3,7 @@ const reactUpdate = require('react-addons-update')
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import {
-  Accordion,
-  Button,
-  Segment,
-  Table,
-  Modal,
-  Header,
-  Icon,
-  Dimmer,
-  Loader,
-  Image,
-} from 'semantic-ui-react'
+import { Button, Segment, Table, Modal, Header, Icon, Dimmer, Loader, Image } from 'semantic-ui-react'
 import Tabs from './CodeEditorTabs'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'

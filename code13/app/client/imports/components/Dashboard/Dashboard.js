@@ -15,9 +15,12 @@ export default class Dashboard1st extends React.Component {
 
   render() {
     const { currUser } = this.props
+    const containerStyle = {
+      overflowY: 'auto',
+    }
 
     return (
-      <Container>
+      <Container style={containerStyle}>
         <Grid columns={1} padded>
           <Grid.Column>
             <Header as="h3" color="grey" content="Next up" />

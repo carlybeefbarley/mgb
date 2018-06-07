@@ -1,29 +1,22 @@
+
+/*
 .mgb-workstate-broken
 {
-    background-color: #52A7C4 !important;
-}
-
-.mgb-workstate-experiment
-{
-    background-color: #67B7C8 !important;
+  color: #52A7C4 !important;
 }
 
 .mgb-workstate-unknown
 {
-    background-color: #7CCDD0 !important;
+  color: #67B7C8 !important;
 }
 
 .mgb-workstate-working
 {
-    background-color: #92D8CD !important;
+  color: #92D8CD !important;
 }
 
 .mgb-workstate-polished
 {
-    background-color: #A8DFC8 !important;
+  color: #AEE7BB !important;
 }
-
-.mgb-workstate-showcase
-{
-    background-color: #AEE7BB !important;
-}   
+*/

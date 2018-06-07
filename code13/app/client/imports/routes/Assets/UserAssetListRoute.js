@@ -324,11 +324,13 @@ const UserAssetListRoute = React.createClass({
             <AssetKindsSelector kindsActive={qN.kinds} handleToggleKindCallback={this.handleToggleKind} />
           </div>
 
-          <WorkStateMultiSelect
-            hideMask={parseInt(qN.hidews)}
-            handleChangeMask={this.handleChangeWorkstateHideMask}
-            style={{ marginTop: '0.5em', textAlign: 'center' }}
-          />
+          {!(currUser.profile.isTeacher || currUser.profile.isStudent) && (
+            <WorkStateMultiSelect
+              hideMask={parseInt(qN.hidews)}
+              handleChangeMask={this.handleChangeWorkstateHideMask}
+              style={{ marginTop: '0.5em', textAlign: 'center' }}
+            />
+          )}
 
           <div style={{ marginTop: '1em', textAlign: 'center' }}>
             <Menu secondary compact borderless className="fitted">

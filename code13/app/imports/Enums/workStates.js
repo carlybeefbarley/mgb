@@ -1,21 +1,34 @@
 import _ from 'lodash'
 
-export const workStateNames = ['broken', 'experiment', 'unknown', 'working', 'polished', 'showcase']
+export const workStateQualities = ['broken', 'unknown', 'working', 'polished']
+export const workStateStatuses = ['needs review', 'needs work', 'completed']
 
 export const makeWorkstateNamesArray = hideWorkstateMask =>
   // Special case 0 which is the most common case to be the least work
   hideWorkstateMask === 0
-    ? workStateNames
-    : _.filter(workStateNames, (n, idx) => !((1 << idx) & hideWorkstateMask))
+    ? workStateQualities
+    : _.filter(workStateQualities, (n, idx) => !((1 << idx) & hideWorkstateMask))
 
 export const defaultWorkStateName = 'unknown'
-export const bestWorkStateName = _.last(workStateNames)
+export const bestWorkStateName = _.last(workStateQualities)
 
-export const workStateIcons = {
-  broken: 'bug',
-  experiment: 'lab',
-  unknown: 'asterisk',
+export const qualityIcons = {
+  broken: 'frown',
+  unknown: 'help',
   working: 'meh',
   polished: 'smile',
-  showcase: 'thumbs up',
+}
+
+export const statusIcons = {
+  unknown: 'help',
+  'needs review': 'exclamation',
+  'needs work': 'exclamation',
+  completed: 'check',
+}
+
+export const statusColors = {
+  unknown: 'grey',
+  'needs review': 'yellow',
+  'needs work': 'yellow',
+  completed: 'green',
 }

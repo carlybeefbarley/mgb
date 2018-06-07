@@ -154,8 +154,10 @@ class Dashboard1st extends React.Component {
         <Divider hidden />
 
         <Grid padded stackable>
-          <Grid.Column tablet={11} computer={12}>
-            <Header as="h3" color="grey" content="My Badges" />
+          <Grid.Column tablet={16} computer={16}>
+            <Segment raised color="yellow">
+              <Header as="h2" content="About me" />
+            </Segment>
             {/* <BadgesSegment currUser={currUser} /> */}
 
             <Grid>

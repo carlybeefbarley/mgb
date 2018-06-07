@@ -123,6 +123,10 @@ class Dashboard extends React.Component {
       opacity: '0.9',
     }
 
+    const boxBorderStyle = {
+      border: '1px solid grey',
+    }
+
     return (
       <div>
         <Grid columns={2} padded>
@@ -170,10 +174,15 @@ class Dashboard extends React.Component {
                 style={inputStyle}
               />
               <br /> <hr /> <br />
-              <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
+              <UserColleaguesList
+                user={currUser}
+                narrowItem
+                projects={this.props.currUserProjects}
+                style={boxBorderStyle}
+              />
+              <br /> <hr /> <br />
+              <UserProfileGamesList user={currUser} currUser={currUser} style={boxBorderStyle} />
             </Segment>
-            <UserProfileGamesList user={currUser} currUser={currUser} />
-            {/* <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} /> */}
           </Grid.Column>
         </Grid>
       </div>
@@ -246,7 +255,7 @@ export default class DashboardTabs extends React.Component {
     ]
     return (
       <Container>
-        <Dashboard {...this.props} />
+        {/* <Dashboard {...this.props} /> */}
         <Tab panes={panes} />
       </Container>
     )

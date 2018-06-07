@@ -196,7 +196,7 @@ class ClassroomDashboard extends React.Component {
     }
 
     const infoStyle = {
-      fontSize: '1.2em',
+      fontSize: '1.3em',
       textAlign: 'center',
     }
 
@@ -217,10 +217,16 @@ class ClassroomDashboard extends React.Component {
                   header="User Avatar"
                   canEdit={false}
                 />
-                <Container style={infoStyle}>
-                  <p>Teacher Name </p>
-                  <p>Class Chat</p>
-                </Container>
+                <List style={infoStyle}>
+                  <List.Item>
+                    <List.Content>Teacher Name</List.Content>
+                  </List.Item>
+                  <List.Item>
+                    <List.Content>
+                      <List.Icon name="chat" color="blue" />Class Chat
+                    </List.Content>
+                  </List.Item>
+                </List>
               </Segment>
             </Grid.Column>
             <Grid.Column width={11}>
@@ -235,6 +241,7 @@ class ClassroomDashboard extends React.Component {
                     sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
                     est laborum.
                   </p>
+
                   <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
                     ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation

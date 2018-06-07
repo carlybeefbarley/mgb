@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Divider, Grid, Header, Segment, Tab } from 'semantic-ui-react'
+import { Container, Divider, Grid, Header, Segment, Tab, List } from 'semantic-ui-react'
 import Footer from '/client/imports/components/Footer/Footer'
 import PropTypes from 'prop-types'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
@@ -8,6 +8,27 @@ import SkillAction from '/client/imports/components/Dashboard/Actions/SkillActio
 import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 
 //import RecentAssetAction from './Actions/RecentAssetAction'
+
+class AssignmentsList extends React.Component {
+  render() {
+    return (
+      <List>
+        <List.Item key="id">
+          <List.Icon name="student" />
+          <List.Content style={{ width: '100%' }}>
+            <List.Content floated="right">
+              <small style={{ color: 'lightgray' }}>when</small>
+            </List.Content>
+            <List.Header>Foo bar</List.Header>
+            <List.Description>
+              <small>Carly is cool</small>
+            </List.Description>
+          </List.Content>
+        </List.Item>
+      </List>
+    )
+  }
+}
 
 class Dashboard1st extends React.Component {
   static propTypes = {
@@ -45,7 +66,7 @@ class Dashboard1st extends React.Component {
             <Grid.Column width={11}>
               <Segment raised color="blue">
                 <Header as="h2" content="Upcoming Assignments" />
-                ...
+                <AssignmentsList />
               </Segment>
             </Grid.Column>
           </Grid.Row>

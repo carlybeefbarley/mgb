@@ -364,7 +364,7 @@ class TeacherProfile extends React.Component {
           <Grid.Row>
             <Grid.Column width={5}>
               <Segment raised color="blue">
-                <Header style={titleStyle} as="h1" content={`Classroom Dashboard`} />
+                <Header as="h1" content={`Classroom Dashboard`} />
 
                 {/* Change avatar for classroom later  */}
                 <ImageShowOrChange
@@ -375,7 +375,7 @@ class TeacherProfile extends React.Component {
                   header="User Avatar"
                   canEdit={false}
                 />
-                <List style={infoStyle}>
+                <List>
                   <List.Item>
                     <List.Content>Teacher Name</List.Content>
                   </List.Item>
@@ -514,19 +514,16 @@ class ClassroomDashboard extends React.Component {
 class StudentProfile extends React.Component {
   render() {
     const { currUser } = this.props
-    const containerStyle = {
-      overflowY: 'auto',
-    }
 
     const { avatar } = currUser.profile
 
     return (
-      <div style={containerStyle}>
+      <div>
         <Grid columns={2} padded>
           <Grid.Row>
             <Grid.Column width={5}>
               <Segment raised color="blue">
-                <Header style={titleStyle} as="h1" content={`Classroom Dashboard`} />
+                <Header as="h1" content={`Classroom Dashboard`} />
 
                 {/* Change avatar for classroom later  */}
                 <ImageShowOrChange
@@ -537,7 +534,7 @@ class StudentProfile extends React.Component {
                   header="User Avatar"
                   canEdit={false}
                 />
-                <List style={infoStyle}>
+                <List>
                   <List.Item>
                     <List.Content>Teacher Name</List.Content>
                   </List.Item>

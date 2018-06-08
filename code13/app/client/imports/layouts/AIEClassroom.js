@@ -359,18 +359,18 @@ class TeacherProfile extends React.Component {
     const { avatar } = currUser.profile
 
     const TeacherNameStyle = {
-      fontSize: '2.5em',
+      fontSize: '2.6em',
       textAlign: 'center',
     }
 
     const SchoolNameStyle = {
-      fontSize: '1.5em',
+      fontSize: '1.6em',
       textAlign: 'center',
     }
 
     const ChatFontStyle = {
       textAlign: 'center',
-      fontSize: '1.5em',
+      fontSize: '1.6em',
     }
     return (
       <div style={containerStyle}>
@@ -532,16 +532,43 @@ class ClassroomDashboard extends React.Component {
 class StudentProfile extends React.Component {
   render() {
     const { currUser } = this.props
+    const containerStyle = {
+      overflowY: 'auto',
+    }
 
     const { avatar } = currUser.profile
 
+    const TeacherNameStyle = {
+      fontSize: '2.3em',
+      textAlign: 'center',
+    }
+
+    const SchoolNameStyle = {
+      fontSize: '1.3em',
+      textAlign: 'center',
+    }
+
+    const ChatFontStyle = {
+      textAlign: 'center',
+      fontSize: '1.3em',
+    }
     return (
-      <div>
+      <div style={containerStyle}>
         <Grid columns={2} padded>
           <Grid.Row>
             <Grid.Column width={5}>
               <Segment raised color="blue">
-                <Header as="h1" content={`Classroom Dashboard`} />
+                <List>
+                  <List.Item>
+                    <List.Content style={TeacherNameStyle}>Student Name</List.Content>
+                  </List.Item>
+                  <List.Item>
+                    <List.Content style={SchoolNameStyle}>Classname</List.Content>
+                  </List.Item>
+                  <List.Item>
+                    <List.Content style={SchoolNameStyle}>AIE</List.Content>
+                  </List.Item>
+                </List>
 
                 {/* Change avatar for classroom later  */}
                 <ImageShowOrChange
@@ -554,11 +581,8 @@ class StudentProfile extends React.Component {
                 />
                 <List>
                   <List.Item>
-                    <List.Content>Teacher Name</List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <List.Content>
-                      <List.Icon name="chat" color="blue" />Class Chat
+                    <List.Content style={ChatFontStyle}>
+                      <List.Icon name="chat" color="blue" />Student Chat
                     </List.Content>
                   </List.Item>
                 </List>

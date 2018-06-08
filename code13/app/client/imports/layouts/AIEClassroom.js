@@ -358,13 +358,34 @@ class TeacherProfile extends React.Component {
 
     const { avatar } = currUser.profile
 
+    const TeacherNameStyle = {
+      fontSize: '2.5em',
+      textAlign: 'center',
+    }
+
+    const SchoolNameStyle = {
+      fontSize: '1.5em',
+      textAlign: 'center',
+    }
+
+    const ChatFontStyle = {
+      textAlign: 'center',
+      fontSize: '1.5em',
+    }
     return (
       <div style={containerStyle}>
         <Grid columns={2} padded>
           <Grid.Row>
             <Grid.Column width={5}>
               <Segment raised color="blue">
-                <Header as="h1" content={`Classroom Dashboard`} />
+                <List>
+                  <List.Item>
+                    <List.Content style={TeacherNameStyle}>Teacher Name</List.Content>
+                  </List.Item>
+                  <List.Item>
+                    <List.Content style={SchoolNameStyle}>AIE</List.Content>
+                  </List.Item>
+                </List>
 
                 {/* Change avatar for classroom later  */}
                 <ImageShowOrChange
@@ -377,11 +398,8 @@ class TeacherProfile extends React.Component {
                 />
                 <List>
                   <List.Item>
-                    <List.Content>Teacher Name</List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <List.Content>
-                      <List.Icon name="chat" color="blue" />Class Chat
+                    <List.Content style={ChatFontStyle}>
+                      <List.Icon name="chat" color="blue" />Teacher Chat
                     </List.Content>
                   </List.Item>
                 </List>

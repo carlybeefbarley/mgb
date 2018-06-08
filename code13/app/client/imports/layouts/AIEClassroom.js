@@ -372,6 +372,11 @@ class TeacherProfile extends React.Component {
       textAlign: 'center',
       fontSize: '1.6em',
     }
+
+    const ParagraphStyle = {
+      fontSize: '1.05em',
+    }
+
     return (
       <div style={containerStyle}>
         <Grid columns={2} padded>
@@ -403,6 +408,29 @@ class TeacherProfile extends React.Component {
                     </List.Content>
                   </List.Item>
                 </List>
+              </Segment>
+            </Grid.Column>
+            <Grid.Column width={11}>
+              <Segment raised color="blue">
+                <Header as="h3" content="About Me" />
+                <Segment>
+                  <p style={ParagraphStyle}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+                    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+                    est laborum.
+                  </p>
+                  <p style={ParagraphStyle}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+                    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+                    est laborum.
+                  </p>
+                </Segment>
               </Segment>
             </Grid.Column>
           </Grid.Row>
@@ -552,6 +580,10 @@ class StudentProfile extends React.Component {
       textAlign: 'center',
       fontSize: '1.3em',
     }
+
+    const ParagraphStyle = {
+      fontSize: '1.1em',
+    }
     return (
       <div style={containerStyle}>
         <Grid columns={2} padded>
@@ -586,6 +618,30 @@ class StudentProfile extends React.Component {
                     </List.Content>
                   </List.Item>
                 </List>
+              </Segment>
+            </Grid.Column>
+
+            <Grid.Column width={11}>
+              <Segment raised color="blue">
+                <Header as="h3" content="About Me" />
+                <Segment>
+                  <p style={ParagraphStyle}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+                    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+                    est laborum.
+                  </p>
+                  <p style={ParagraphStyle}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+                    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+                    est laborum.
+                  </p>
+                </Segment>
               </Segment>
             </Grid.Column>
           </Grid.Row>

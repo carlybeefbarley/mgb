@@ -434,6 +434,14 @@ class TeacherProfile extends React.Component {
               </Segment>
             </Grid.Column>
           </Grid.Row>
+
+          <Grid.Row>
+            <Grid.Column width={16}>
+              <Segment raised color="yellow">
+                <UserProfileGamesList user={currUser} currUser={currUser} />
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
         </Grid>
       </div>
     )
@@ -642,6 +650,14 @@ class StudentProfile extends React.Component {
                     est laborum.
                   </p>
                 </Segment>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+
+          <Grid.Row>
+            <Grid.Column width={16}>
+              <Segment raised color="yellow">
+                <UserProfileGamesList user={currUser} currUser={currUser} />
               </Segment>
             </Grid.Column>
           </Grid.Row>

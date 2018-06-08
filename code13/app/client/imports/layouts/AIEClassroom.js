@@ -251,6 +251,7 @@ class PastClassAssignmentsList extends React.Component {
     )
   }
 }
+
 class Dashboard extends React.Component {
   static propTypes = {
     currUser: PropTypes.object,
@@ -348,6 +349,51 @@ class Dashboard extends React.Component {
   }
 }
 
+class TeacherProfile extends React.Component {
+  render() {
+    const { currUser } = this.props
+    const containerStyle = {
+      overflowY: 'auto',
+    }
+
+    const { avatar } = currUser.profile
+
+    return (
+      <div style={containerStyle}>
+        <Grid columns={2} padded>
+          <Grid.Row>
+            <Grid.Column width={5}>
+              <Segment raised color="blue">
+                <Header style={titleStyle} as="h1" content={`Classroom Dashboard`} />
+
+                {/* Change avatar for classroom later  */}
+                <ImageShowOrChange
+                  id="mgbjr-profile-avatar"
+                  maxHeight="11em"
+                  maxWidth="auto"
+                  imageSrc={avatar}
+                  header="User Avatar"
+                  canEdit={false}
+                />
+                <List style={infoStyle}>
+                  <List.Item>
+                    <List.Content>Teacher Name</List.Content>
+                  </List.Item>
+                  <List.Item>
+                    <List.Content>
+                      <List.Icon name="chat" color="blue" />Class Chat
+                    </List.Content>
+                  </List.Item>
+                </List>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </div>
+    )
+  }
+}
+
 class ClassroomDashboard extends React.Component {
   render() {
     const { currUser } = this.props
@@ -369,21 +415,21 @@ class ClassroomDashboard extends React.Component {
 
     const leftColumnStyle = {
       float: 'left',
-      border: '1px solid grey',
+      border: '1px solid #BFBCBC',
       padding: '5px',
       //marginRight: '35px',
     }
 
     const rightColumnStyle = {
       float: 'right',
-      border: '1px solid grey',
+      border: '1px solid #BFBCBC',
       padding: '5px',
       marginLeft: '4em',
     }
 
     return (
       <div style={containerStyle}>
-        <Grid columns={2} padded>
+        <Grid columns={2} padded stretched>
           <Grid.Row>
             <Grid.Column width={5}>
               <Segment raised color="blue">
@@ -465,6 +511,51 @@ class ClassroomDashboard extends React.Component {
   }
 }
 
+class StudentProfile extends React.Component {
+  render() {
+    const { currUser } = this.props
+    const containerStyle = {
+      overflowY: 'auto',
+    }
+
+    const { avatar } = currUser.profile
+
+    return (
+      <div style={containerStyle}>
+        <Grid columns={2} padded>
+          <Grid.Row>
+            <Grid.Column width={5}>
+              <Segment raised color="blue">
+                <Header style={titleStyle} as="h1" content={`Classroom Dashboard`} />
+
+                {/* Change avatar for classroom later  */}
+                <ImageShowOrChange
+                  id="mgbjr-profile-avatar"
+                  maxHeight="11em"
+                  maxWidth="auto"
+                  imageSrc={avatar}
+                  header="User Avatar"
+                  canEdit={false}
+                />
+                <List style={infoStyle}>
+                  <List.Item>
+                    <List.Content>Teacher Name</List.Content>
+                  </List.Item>
+                  <List.Item>
+                    <List.Content>
+                      <List.Icon name="chat" color="blue" />Class Chat
+                    </List.Content>
+                  </List.Item>
+                </List>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </div>
+    )
+  }
+}
+
 export default class DashboardTabs extends React.Component {
   render() {
     const panes = [
@@ -484,9 +575,29 @@ export default class DashboardTabs extends React.Component {
           </Tab.Pane>
         ),
       },
+      {
+        menuItem: 'Teacher Profile',
+        render: () => (
+          <Tab.Pane>
+            <TeacherProfile {...this.props} />
+          </Tab.Pane>
+        ),
+      },
+      {
+        menuItem: 'Student Profile',
+        render: () => (
+          <Tab.Pane>
+            <StudentProfile {...this.props} />
+          </Tab.Pane>
+        ),
+      },
     ]
     return (
-      <Container>
+      <Container
+        style={{
+          overflowY: 'auto',
+        }}
+      >
         <Tab panes={panes} />
       </Container>
     )

@@ -281,20 +281,22 @@ const ChatMessagesView = React.createClass({
     const canSend = currUserCanSend(currUser, channelName)
     const isOpen = true
 
-    const style = {
-      position: 'absolute',
-      overflow: 'auto',
-      margin: '0',
-      padding: '0 8px 0 8px',
-      top: '5em',
-      bottom: '0.5em',
-      left: '0',
-      right: '0',
-      transition: 'transform 200ms, opacity 200ms',
-      transform: isOpen ? 'translateY(0)' : 'translateY(-3em)',
-      opacity: +isOpen,
-      zIndex: '100',
-    }
+    const style = this.props.style
+      ? this.props.style
+      : {
+          position: 'absolute',
+          overflow: 'auto',
+          margin: '0',
+          padding: '0 8px 0 8px',
+          top: '5em',
+          bottom: '0.5em',
+          left: '0',
+          right: '0',
+          transition: 'transform 200ms, opacity 200ms',
+          transform: isOpen ? 'translateY(0)' : 'translateY(-3em)',
+          opacity: +isOpen,
+          zIndex: '100',
+        }
 
     return (
       <div style={style}>

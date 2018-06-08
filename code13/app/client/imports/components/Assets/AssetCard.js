@@ -148,8 +148,8 @@ const AssetCard = React.createClass({
         </div>
 
         <Card.Content>
-          <span style={{ float: 'right' }}>
-            {!isClassroom && (
+          {!isClassroom && (
+            <span style={{ float: 'right' }}>
               <span onMouseUp={_preventOnMouseUpClickSteal}>
                 <UserLoves
                   currUser={currUser}
@@ -158,17 +158,14 @@ const AssetCard = React.createClass({
                   seeLovers={false}
                 />
               </span>
-            )}
-            {asset.workState !== 'unknown' &&
-            _.includes([...workStateQualities, ...workStateStatuses], asset.workState) && (
+
               <WorkState
-                isClassroom={isClassroom}
                 workState={asset.workState}
                 size={viewOpts.showExtra ? null : 'small'}
                 canEdit={false}
               />
-            )}
-          </span>
+            </span>
+          )}
           {!viewOpts.showExtra && (
             // This is used for SMALL sizes. It has a popup to show the Medium one!
             <Popup

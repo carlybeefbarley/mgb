@@ -1,4 +1,3 @@
-
 /*
 .mgb-workstate-broken
 {
@@ -20,3 +19,7 @@
   color: #AEE7BB !important;
 }
 */
+
+.workstate-label {
+  border-radius: 2.5px !important;
+}

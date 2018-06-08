@@ -30,13 +30,22 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
 import { logActivity } from '/imports/schemas/activity'
 import ProjectForkGenerator from './ProjectForkGenerator'
-import { makeChannelName } from '/imports/schemas/chats'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 import { withMeteorData } from '../../hocs'
 import { getProjectAvatarUrl } from '../../helpers/assetFetchers'
 import AssignmentDetails from './AssignmentDetails'
+import ChatMessagesView from '/client/imports/components/SidePanels/fpChat-messagesView.js'
+import {
+  parseChannelName,
+  makeChannelName,
+  ChatChannels,
+  isChannelNameValid,
+  chatParams,
+  makePresentedChannelName,
+  makePresentedChannelIconName,
+} from '/imports/schemas/chats'
 
 class AssignmentOverview extends Component {
   static propTypes = {
@@ -74,8 +83,8 @@ class AssignmentOverview extends Component {
           <AssignmentDetails isStudent />
         </Grid.Row>
         <Grid.Row />
-        <Grid.Row>
-          <Grid.Column>
+        <Grid.Row stretched columns={2}>
+          <Grid.Column width={11}>
             <Header
               as="h2"
               color="grey"
@@ -87,7 +96,7 @@ class AssignmentOverview extends Component {
             </Header>
             <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
           </Grid.Column>
-          <Grid.Column stretched>
+          <Grid.Column width={5}>
             <Header
               as="h2"
               color="grey"
@@ -100,7 +109,7 @@ class AssignmentOverview extends Component {
             >
               Activity
             </Header>
-            <ProjectHistoryRoute project={project} activities={activities} />
+            <ProjectHistoryRoute project={project} activities={activities} style={{ clear: 'left' }} />
           </Grid.Column>
         </Grid.Row>
       </Grid>
@@ -112,8 +121,9 @@ class AssignmentOverview extends Component {
       overflowY: 'auto',
       height: '20em',
     }
+
     return (
-      <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em' }}>
+      <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em', width: '100%' }}>
         <Grid.Row>
           <Header as="h2" color="grey" floated="left">
             Assignment Details
@@ -160,34 +170,36 @@ class AssignmentOverview extends Component {
 
   renderCompletedList = () => {
     const names = 'abcdefghijklmnopqrstuvwxyz'
+
     return (
       <List relaxed divided style={{ paddingBottom: '1em !important' }}>
         {_.map(names, letter => {
-          return <List.Item>{`${letter.toUpperCase()}rian`}</List.Item>
+          var day = Math.floor(Math.random() * 10) + 16
+          return (
+            <List.Item>
+              <List.Header as="a">{`${letter.toUpperCase()}rian`}</List.Header>
+              <List.Description>
+                Assignment completed on {new Date(2018, 6, day).toDateString()}
+              </List.Description>
+            </List.Item>
+          )
         })}
       </List>
     )
   }
 
   renderIncompleteList = () => {
+    const students = ['Briaa', 'Briab', 'Briac', 'Briad', 'Briae']
     return (
       <List relaxed divided style={{ paddingBottom: '1em !important' }}>
-        <List.Item>
-          <List.Content>Briaa</List.Content>
-          <List.Content float="right">2/3 completed</List.Content>
-        </List.Item>
-        <List.Item>
-          Briab<List.Content float="right">2/3 completed</List.Content>
-        </List.Item>
-        <List.Item>
-          Briac<List.Content float="right">2/3 completed</List.Content>
-        </List.Item>
-        <List.Item>
-          Briad<List.Content float="right">1/3 completed</List.Content>
-        </List.Item>
-        <List.Item>
-          Briae<List.Content float="right">0/3 completed</List.Content>
-        </List.Item>
+        {_.map(students, student => {
+          return (
+            <List.Item>
+              <List.Header as="a">{student}</List.Header>
+              <List.Description>{Math.floor(Math.random() * 3)}/3 assets completed</List.Description>
+            </List.Item>
+          )
+        })}
       </List>
     )
   }
@@ -199,13 +211,31 @@ class AssignmentOverview extends Component {
 
     const isStudent = true
 
+    const currUser = Meteor.user()
+    const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: 'Rz3yh9K5zCHZxvEWJ' })
+    const channelObj = parseChannelName(channelName)
+
     return (
-      <div>
-        {isStudent ? (
-          this.renderStudentView(project, activities)
-        ) : (
-          this.renderTeacherView(project, activities)
-        )}
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '0 3em 0 3em' }}>
+        <div style={{ flex: 1 }}>
+          <ChatMessagesView
+            style={{ height: '100%' }}
+            pastMessageLimit={10}
+            handleExtendMessageLimit={() => {
+              return
+            }}
+            currUser={currUser}
+            MessageContextComponent={null}
+            channelName={channelName}
+          />
+        </div>
+        <div style={{ flex: 5 }}>
+          {isStudent ? (
+            this.renderStudentView(project, activities)
+          ) : (
+            this.renderTeacherView(project, activities)
+          )}
+        </div>
       </div>
     )
   }

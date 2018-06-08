@@ -42,7 +42,7 @@ export const WorkStateMultiSelect = ({ style, hideMask, handleChangeMask }) => (
   </div>
 )
 
-const WorkState = (
+const WorkState = ({
   isClassroom,
   workState,
   canEdit,
@@ -51,8 +51,8 @@ const WorkState = (
   handleChange,
   labelStyle,
   onIconClick,
-) => (
-  <span>
+}) => (
+  <span className="workstate-container">
     {!isClassroom ? (
       <WorkStateQuality
         workState={_.includes(workStateQualities, workState) ? workState : 'unknown'}
@@ -118,13 +118,15 @@ const WorkStateQuality = ({
 )
 
 const WorkStateStatus = ({ workState, size, labelStyle }) => (
-  <div>
-    {workState !== 'unknown' && (
-      <Label style={labelStyle} color={`${statusColors[workState]}`} size={size}>
-        <Icon name={statusIcons[workState]} />
-      </Label>
-    )}
-  </div>
+  <Label
+    className="workstate-label"
+    style={workState === 'unknown' ? { display: 'none', ...labelStyle } : labelStyle}
+    color={`${statusColors[workState]}`}
+    size={size}
+  >
+    <Icon name={statusIcons[workState]} />
+    {workState}
+  </Label>
 )
 
 WorkState.propTypes = {

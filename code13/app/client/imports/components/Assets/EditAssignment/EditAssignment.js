@@ -23,7 +23,9 @@ class EditAssignmentForm extends BaseForm {
       <div className="ui form">
         {this.text('Name', 'name', 'text')}
         {this.textArea('Description', 'description')}
+        {this.bool('Is Team Project', 'isTeamProject')}
         {this.date('Deadline', 'deadline')}
+        {this.dropArea('Code', 'defaultAssetName', 'code', null)}
       </div>
     )
   }

@@ -10,7 +10,7 @@ export const makeWorkstateNamesArray = hideWorkstateMask =>
     : _.filter(workStateQualities, (n, idx) => !((1 << idx) & hideWorkstateMask))
 
 export const defaultWorkStateName = 'unknown'
-export const bestWorkStateName = _.last(workStateQualities)
+export const bestWorkStateQuality = _.last(workStateQualities)
 
 export const qualityIcons = {
   broken: 'frown',

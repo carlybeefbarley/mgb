@@ -551,15 +551,20 @@ const AssetEditRoute = React.createClass({
               // TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
             }
             {this.state.isForkRevertPending && <Icon name="fork" loading />}
-            {!isClassroom && <UserLoves currUser={currUser} asset={asset} size="small" seeLovers />}
-            <WorkState
-              workState={asset.workState}
-              canEdit={canEd}
-              handleChange={this.handleWorkStateChange}
-            />
-            <Button primary compact onClick={this.handleWorkSubmit}>
-              Submit
-            </Button>
+            <span style={{ margin: '0 5px 0 5px' }}>
+              {!isClassroom && <UserLoves currUser={currUser} asset={asset} size="small" seeLovers />}
+              <WorkState
+                isClassroom={isClassroom}
+                workState={asset.workState}
+                canEdit={canEd}
+                handleChange={this.handleWorkStateChange}
+              />
+            </span>
+            {currUser.profile.ColumnisStudent && (
+              <Button primary compact onClick={this.handleWorkSubmit}>
+                Submit
+              </Button>
+            )}
             &ensp;
             <AssetUrlGenerator showBordered asset={asset} />
             <StableState

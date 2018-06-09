@@ -54,7 +54,6 @@ class AssetStore extends Store {
 
   project = () => {
     const { project } = this.state
-
     return project
   }
 
@@ -248,7 +247,7 @@ class AssetStore extends Store {
         project: targetProject,
       })
     } else if (project !== targetProject) {
-      this.setState({ project: targetProject })
+      this.setProject(targetProject)
     }
   }
 

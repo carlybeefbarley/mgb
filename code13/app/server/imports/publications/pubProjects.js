@@ -17,6 +17,11 @@ Meteor.publish('projects.byUserId', function(userId, showOnlyForkable = false) {
   return Projects.find(selector)
 })
 
+Meteor.publish('projects.byUserNameAndProjectName', function(ownerName, name) {
+  const selector = { ownerName, name }
+  return Projects.find(selector)
+})
+
 Meteor.publish('projects.frontPageList', function(limitCount = 5) {
   const selector = projectMakeFrontPageListSelector()
   return Projects.find(selector, { limit: limitCount, sort: { updatedAt: -1 } })

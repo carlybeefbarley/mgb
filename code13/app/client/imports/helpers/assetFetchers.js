@@ -314,7 +314,7 @@ class AssetHandler {
     return this.isReady && this.asset
   }
 
-  // this method only updatea Asset meta info, but will skip content2
+  // this method only updates Asset meta info, but will skip content2
   /**
    * tell assetHandler to update Asset info - except content2
    * @param {function} onChange - Overwrite previous onChange callback

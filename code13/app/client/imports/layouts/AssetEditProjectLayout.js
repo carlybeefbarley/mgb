@@ -13,33 +13,55 @@ import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/Asse
 import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import { __NO_PROJECT__, __NO_ASSET__ } from '/client/imports/stores/assetStore'
+import { Projects } from '/imports/schemas'
 
 export default class AssetEditProjectContainer extends React.Component {
-  renderProjectsList = currUserProjects => {
+  static state = {}
+
+  renderProjectsList = (currUserProjects, additionalProjects) => {
     const { assetStore } = this.props
     const assets = Object.assign(assetStore.assets())
+
     let data = [],
       keys = Object.keys(assets)
 
     for (let index in keys) {
-      if (index === '0') {
+      if (keys[index] === __NO_PROJECT__) {
         data.push({
           key: keys[index],
           text: keys[index],
-          value: __NO_PROJECT__,
+          value: '_',
+          icon: 'sitemap',
+        })
+      } else if (_.find(currUserProjects, { name: keys[index] })) {
+        data.push({
+          key: keys[index],
+          text: keys[index],
+          value: _.find(currUserProjects, { name: keys[index] })._id,
           icon: 'sitemap',
         })
       } else {
+        //go find the id to this project by ProjectName and Ownername
         data.push({
           key: keys[index],
           text: keys[index],
-          value: currUserProjects[index - 1]._id,
+          value: '_',
           icon: 'sitemap',
         })
       }
     }
 
     return data
+  }
+
+  getProjectsByOwnerId = ownerName => {
+    const { currentlyEditingAssetInfo, currUser } = this.props
+    const project = this.props.location.query.project || null
+    const projectsHandler = Meteor.subscribe('projects.byUserNameAndProjectName', ownerName, project)
+    // console.log(projectsHandler.find({ name: 'Snake RPG' }))
+    console.log(Projects.find({ name: 'Snake RPG' }, { limit: 1 }).fetch())
+
+    return projectsHandler
   }
 
   getAssetIdOrRouteByProject = project => {
@@ -66,9 +88,24 @@ export default class AssetEditProjectContainer extends React.Component {
     )
   }
 
+  stopHandlers = () => {}
+
+  updateHandlers = () => {
+    const handlers = this.state.projectHandlers
+  }
+
   componentDidMount() {
     const { assetStore, currUserProjects } = this.props
-    assetStore.trackAllProjects(currUserProjects, assetStore.assets())
+    const assets = assetStore.assets()
+    assetStore.trackAllProjects(currUserProjects, assets)
+
+    let projectHandler = this.getProjectsByOwnerId(this.props.currentlyEditingAssetInfo.ownerName)
+
+    this.setState({ projectHandlers: [...this.state.projectHandlers, projectHandler] })
+  }
+
+  componentWillUnmount() {
+    this.stopHandlers()
   }
 
   render() {

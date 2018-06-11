@@ -6,6 +6,8 @@ import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesL
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import SkillAction from '/client/imports/components/Dashboard/Actions/SkillAction'
 import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
+import HeroLayout from '/client/imports/layouts/HeroLayout'
+import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
 
 //import RecentAssetAction from './Actions/RecentAssetAction'
 
@@ -667,6 +669,26 @@ class StudentProfile extends React.Component {
   }
 }
 
+class HomePage extends React.Component {
+  render() {
+    return (
+      <HeroLayout
+        heroContent={
+          <div>
+            <Divider hidden />
+
+            {/* <HomeHeroBanner /> */}
+
+            <Divider section />
+
+            <Divider hidden section />
+          </div>
+        }
+      />
+    )
+  }
+}
+
 export default class DashboardTabs extends React.Component {
   render() {
     const panes = [
@@ -699,6 +721,14 @@ export default class DashboardTabs extends React.Component {
         render: () => (
           <Tab.Pane>
             <StudentProfile {...this.props} />
+          </Tab.Pane>
+        ),
+      },
+      {
+        menuItem: 'HomePage',
+        render: () => (
+          <Tab.Pane>
+            <HomePage {...this.props} />
           </Tab.Pane>
         ),
       },

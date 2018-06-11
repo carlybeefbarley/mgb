@@ -3,6 +3,7 @@ import {
   Container,
   Divider,
   Button,
+  Image,
   Grid,
   Header,
   Segment,
@@ -19,6 +20,7 @@ import SkillAction from '/client/imports/components/Dashboard/Actions/SkillActio
 import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 import QLink from '/client/imports/routes/QLink'
+import UX from '/client/imports/UX'
 
 //import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
 
@@ -702,11 +704,6 @@ class HomePage extends React.Component {
   }
 }
 
-// const mascotColumnStyle = {
-//   // allow click through, so users can play with the particles :)
-//   pointerEvents: 'none',
-// }
-
 class HomeHeroBanner extends React.Component {
   render() {
     const { currUser } = this.props
@@ -777,7 +774,7 @@ class HomeHeroBanner extends React.Component {
           )}
         </Grid.Column>
         <Grid.Column style={mascotColumnStyle}>
-          {/* <Image size="large" centered src={UX.makeMascotImgLink('team')} /> */}
+          <Image size="large" centered src={UX.makeMascotImgLink('team')} />
         </Grid.Column>
       </Grid>
     )

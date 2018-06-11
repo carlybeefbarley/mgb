@@ -710,13 +710,18 @@ class HomeHeroBanner extends React.Component {
     const mascotColumnStyle = {
       pointerEvents: 'none',
     }
+    const gameProgrammingStyle = {
+      color: 'black',
+      border: '10 px solid orange',
+    }
+
     return (
       <Grid columns="3" verticalAlign="middle" padded>
         <Grid.Row>
-          <Grid.Column width={4} style={mascotColumnStyle}>
+          <Grid.Column width={5} style={mascotColumnStyle}>
             <Image size="large" centered src={UX.makeMascotImgLink('team')} />
           </Grid.Column>
-          <Grid.Column width={8}>
+          <Grid.Column width={6}>
             <Header as="h1" inverted>
               <huge>My Game Builder</huge>
               <Header.Subheader>
@@ -775,7 +780,7 @@ class HomeHeroBanner extends React.Component {
               </p>
             )}
           </Grid.Column>
-          <Grid.Column width={4}>
+          <Grid.Column width={5}>
             <Image size="large" centered src={UX.makeMascotImgLink('aie-logo')} />
           </Grid.Column>
         </Grid.Row>
@@ -783,30 +788,67 @@ class HomeHeroBanner extends React.Component {
         <Grid.Row>
           <Grid.Column width={2} />
           <Grid.Column width={2}>
-            <Image size="large" centered src={UX.makeMascotImgLink('aie-game-programming')} />
-          </Grid.Column>
-          <Grid.Column width={2}>
-            <Image size="large" centered src={UX.makeMascotImgLink('learn-from-industry-leaders')} />
-          </Grid.Column>
-          <Grid.Column width={2}>
-            <Image size="large" centered src={UX.makeMascotImgLink('aie-child')} />
+            <Image
+              size="tiny"
+              opacity="75%"
+              centered
+              src={UX.makeMascotImgLink('game-design-and-production')}
+            />
+            <Header as="h3" color="green">
+              Game Programming
+            </Header>
           </Grid.Column>
           <Grid.Column width={2}>
             <Image
-              size="large"
+              size="tiny"
+              opacity="75%"
+              centered
+              src={UX.makeMascotImgLink('learn-from-industry-leaders')}
+            />
+            <Header as="h3" inverted>
+              Learn from Industry Experienced Teachers
+            </Header>
+          </Grid.Column>
+          <Grid.Column width={2}>
+            <Image size="small" opacity="75%" centered src={UX.makeMascotImgLink('aie-child')} />
+            <Header as="h3" color="green">
+              Game Art and Animation
+            </Header>
+          </Grid.Column>
+          <Grid.Column width={2}>
+            <Image
+              size="tiny"
               centered
               src={UX.makeMascotImgLink('work-on-latest-hardware-and-industry-software-tools')}
+              opacity="75%"
             />
-          </Grid.Column>
-          <Grid.Column width={2}>
-            <Image size="large" centered src={UX.makeMascotImgLink('game-design-and-production')} />
+            <Header as="h3" inverted>
+              Work on Latest Hardware and Industry Software Tools
+            </Header>
           </Grid.Column>
           <Grid.Column width={2}>
             <Image
-              size="large"
+              size="tiny"
+              centered
+              src={UX.makeMascotImgLink('aie-game-programming')}
+              style={gameProgrammingStyle}
+              //onMouseOver={{ gameProgrammingStyle }}
+              opacity="75%"
+            />
+            <Header as="h3" color="green">
+              Game Production and Design
+            </Header>
+          </Grid.Column>
+          <Grid.Column width={2}>
+            <Image
+              size="tiny"
               centered
               src={UX.makeMascotImgLink('develop-practical-skills-demanded-by-industry')}
+              opacity="75%"
             />
+            <Header as="h3" inverted>
+              Develop Practical Skill Demanded by Industry
+            </Header>
           </Grid.Column>
           <Grid.Column width={2} />
         </Grid.Row>

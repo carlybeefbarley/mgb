@@ -60,9 +60,13 @@ class RelatedAssetsUI extends React.Component {
    * Then filters those assets by compiling a list of user IDs from all projects that this user is part of
    * via this.props.currUserProjects so that assets from projects that share the same name but are not part
    * of the projects this user belongs to do not show up in the related assets menu.
+   * 
+   * This is an odd way of getting assets, should be replaced with a simple selector that filters by projectId but
+   * assets do not know the IDs of projects they belong to for some reason.
    */
 
   getFilteredAssets = (assets, searchQuery) => {
+    const { currUser, currentlyEditingAssetInfo } = this.props
     // Compile list of allowed user Ids from currUserProjects and check if the open assets belong to any
     // of those users
     const allowedUserIds = this.getAllowedUserIds()
@@ -75,7 +79,11 @@ class RelatedAssetsUI extends React.Component {
     })
 
     const assetNameQuickNavRegex = new RegExp('^.*' + _.escapeRegExp(searchQuery), 'i')
-    return _.filter(newAssets, a => assetNameQuickNavRegex.test(a.name))
+    if (currUser._id !== currentlyEditingAssetInfo.ownerId) {
+      return _.filter(assets, a => assetNameQuickNavRegex.test(a.name))
+    } else {
+      return _.filter(newAssets, a => assetNameQuickNavRegex.test(a.name))
+    }
   }
 
   handleDocumentKeyDown = e => {
@@ -420,18 +428,13 @@ class RelatedAssetsUI extends React.Component {
     return this.renderRelatedAssetsList()
   }
 }
-/**
- * Get all users listed in the project
- * find({memberIds: "user._id"}) to find projects that contains the id you're looking for.
- * Need to query DB for projects by user ID, then filter projects by project name selected.
- * then pass that project name to this component.
- */
+
 const RelatedAssets = createContainer(props => {
   const { user, currUser, currentlyEditingAssetInfo, location, params, projectName } = props
   const defaultProject = getContextualProjectName({ location, currentlyEditingAssetInfo, params })
   const handleForAssets = Meteor.subscribe(
     'assets.public.nameInfo.query',
-    _.get(user || currUser, '_id', null), // UserId
+    currentlyEditingAssetInfo.ownerId || null, // UserId
     null, // assetKinds=all
     '', // Search for string in name
     projectName || defaultProject, // check for override project, then default to auto resolution

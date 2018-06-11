@@ -18,9 +18,10 @@ import { Projects } from '/imports/schemas'
 export default class AssetEditProjectContainer extends React.Component {
   static state = {}
 
-  renderProjectsList = (currUserProjects, additionalProjects) => {
-    const { assetStore } = this.props
+  renderProjectsList = currUserProjects => {
+    const { assetStore, currentlyEditingAssetInfo, location } = this.props
     const assets = Object.assign(assetStore.assets())
+    const project = this.getProjectData(currentlyEditingAssetInfo.ownerId, location.query.project)
 
     let data = [],
       keys = Object.keys(assets)
@@ -41,11 +42,10 @@ export default class AssetEditProjectContainer extends React.Component {
           icon: 'sitemap',
         })
       } else {
-        //go find the id to this project by ProjectName and Ownername
         data.push({
           key: keys[index],
           text: keys[index],
-          value: '_',
+          value: project._id,
           icon: 'sitemap',
         })
       }
@@ -54,12 +54,13 @@ export default class AssetEditProjectContainer extends React.Component {
     return data
   }
 
-  getProjectsByOwnerId = ownerName => {
-    const { currentlyEditingAssetInfo, currUser } = this.props
-    const project = this.props.location.query.project || null
-    const projectsHandler = Meteor.subscribe('projects.byUserNameAndProjectName', ownerName, project)
-    // console.log(projectsHandler.find({ name: 'Snake RPG' }))
-    console.log(Projects.find({ name: 'Snake RPG' }, { limit: 1 }).fetch())
+  getProjectData = (ownerId, name) => {
+    const data = Projects.find({ ownerId, name }).fetch()
+    return data
+  }
+
+  getProjectsByOwnerId = ownerId => {
+    const projectsHandler = Meteor.subscribe('projects.byUserId', ownerId)
 
     return projectsHandler
   }
@@ -88,24 +89,29 @@ export default class AssetEditProjectContainer extends React.Component {
     )
   }
 
-  stopHandlers = () => {}
-
-  updateHandlers = () => {
-    const handlers = this.state.projectHandlers
-  }
-
   componentDidMount() {
     const { assetStore, currUserProjects } = this.props
     const assets = assetStore.assets()
     assetStore.trackAllProjects(currUserProjects, assets)
 
-    let projectHandler = this.getProjectsByOwnerId(this.props.currentlyEditingAssetInfo.ownerName)
+    let projectHandler = this.getProjectsByOwnerId(this.props.currentlyEditingAssetInfo.ownerId)
 
-    this.setState({ projectHandlers: [...this.state.projectHandlers, projectHandler] })
+    this.setState({ projectHandler })
+  }
+
+  componentDidUpdate(prevProps) {
+    const { currentlyEditingAssetInfo } = this.props
+    const { projectHandler } = this.state || null
+    if (currentlyEditingAssetInfo.name !== prevProps.currentlyEditingAssetInfo.name && projectHandler) {
+      console.log('Stopping Subscription: ', projectHandler.subscriptionId)
+      projectHandler.stop()
+      let newProjectHandler = this.getProjectsByOwnerId(this.props.currentlyEditingAssetInfo.ownerId)
+      this.setState({ projectHandler: newProjectHandler })
+    }
   }
 
   componentWillUnmount() {
-    this.stopHandlers()
+    this.state.projectHandler.stop()
   }
 
   render() {

@@ -11,16 +11,13 @@
  * @param {object} asset
  * @param {string} assetVerb.. e.g 'View', 'Edit', 'Play' etc
  */
-export const makeAssetInfoFromAsset = (asset, assetVerb) => {
-  console.log('THIS IS SO WEIRD AND BROKEN: ', asset)
-  return {
-    kind: asset.kind,
-    name: asset.name,
-    assetVerb,
-    isDeleted: asset.isDeleted,
-    isLocked: asset.isCompleted,
-    projectNames: asset.projectNames || [],
-    ownerName: asset.dn_ownerName,
-    ownerId: asset.ownerId,
-  }
-}
+export const makeAssetInfoFromAsset = (asset, assetVerb) => ({
+  kind: asset.kind,
+  name: asset.name,
+  assetVerb,
+  isDeleted: asset.isDeleted,
+  isLocked: asset.isCompleted,
+  projectNames: asset.projectNames || [],
+  ownerName: asset.dn_ownerName,
+  ownerId: asset.ownerId,
+})

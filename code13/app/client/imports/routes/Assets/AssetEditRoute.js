@@ -4,10 +4,10 @@ import React from 'react'
 import { Grid, Icon, Message, Tab, Segment } from 'semantic-ui-react'
 import { utilPushTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
-import AssetEditProjectLayout from '/client/imports/layouts/AssetEditProjectLayout'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
+import AssetEditProjectLayout from '/client/imports/layouts/AssetEditProjectLayout'
 import Helmet from 'react-helmet'
 
 import AssetEdit from '/client/imports/components/Assets/AssetEdit'

@@ -694,8 +694,6 @@ class HomePage extends React.Component {
 
             <HomeHeroBanner />
 
-            <Divider section />
-
             <Divider hidden section />
           </div>
         }
@@ -714,71 +712,104 @@ class HomeHeroBanner extends React.Component {
     }
     return (
       <Grid columns="3" verticalAlign="middle" padded>
-        <Grid.Column width={4} style={mascotColumnStyle}>
-          <Image size="large" centered src={UX.makeMascotImgLink('team')} />
-        </Grid.Column>
-        <Grid.Column width={8}>
-          <Header as="h1" inverted>
-            <huge>My Game Builder</huge>
-            <Header.Subheader>
-              <p>Make Games. Make Friends. Have Fun.</p>
-              <p>
-                <QLink to="/roadmap">Public BETA</QLink>
+        <Grid.Row>
+          <Grid.Column width={4} style={mascotColumnStyle}>
+            <Image size="large" centered src={UX.makeMascotImgLink('team')} />
+          </Grid.Column>
+          <Grid.Column width={8}>
+            <Header as="h1" inverted>
+              <huge>My Game Builder</huge>
+              <Header.Subheader>
+                <p>Make Games. Make Friends. Have Fun.</p>
+                <p>
+                  <QLink to="/roadmap">Public BETA</QLink>
+                </p>
+              </Header.Subheader>
+            </Header>
+            {userId ? (
+              <p style={{ color: '#fff', fontSize: '1.5em', maxWidth: '450px' }}>
+                Welcome back, {username}!
+                <br />
+                Last time you were working on{' '}
+                <em>
+                  <RecentlyEditedAssetGET userId={userId} />
+                </em>.
+                <br />
+                <Button
+                  as={QLink}
+                  to={`/u/${username}/assets`}
+                  color="green"
+                  size="huge"
+                  style={{ marginTop: '1.5em', marginRight: '0.5em' }}
+                  content="Keep going"
+                />
+                <Button
+                  as={QLink}
+                  to={`/learn`}
+                  color="green"
+                  size="huge"
+                  style={{ marginTop: '0.5em' }}
+                  content="Learn new skills"
+                />
               </p>
-            </Header.Subheader>
-          </Header>
-          {userId ? (
-            <p style={{ color: '#fff', fontSize: '1.5em', maxWidth: '450px' }}>
-              Welcome back, {username}!
-              <br />
-              Last time you were working on{' '}
-              <em>
-                <RecentlyEditedAssetGET userId={userId} />
-              </em>.
-              <br />
-              <Button
-                as={QLink}
-                to={`/u/${username}/assets`}
-                color="green"
-                size="huge"
-                style={{ marginTop: '1.5em', marginRight: '0.5em' }}
-                content="Keep going"
-              />
-              <Button
-                as={QLink}
-                to={`/learn`}
-                color="green"
-                size="huge"
-                style={{ marginTop: '0.5em' }}
-                content="Learn new skills"
-              />
-            </p>
-          ) : (
-            <p style={{ color: '#fff', fontSize: '1.5em', maxWidth: '450px' }}>
-              Learn coding, design, team and biz skills - by making original games with friends
-              <br />
-              <Button
-                as={QLink}
-                to={`/learn/get-started`}
-                secondary
-                size="huge"
-                style={{ marginTop: '1.5em', marginRight: '0.5em' }}
-                content="Get started"
-              />
-              <Button
-                as={QLink}
-                to={`/signup`}
-                primary
-                size="huge"
-                style={{ marginTop: '0.5em' }}
-                content="Sign me up"
-              />
-            </p>
-          )}
-        </Grid.Column>
-        <Grid.Column width={4}>
-          <Image size="large" centered src={UX.makeMascotImgLink('aie-logo')} />
-        </Grid.Column>
+            ) : (
+              <p style={{ color: '#fff', fontSize: '1.5em', maxWidth: '450px' }}>
+                Learn coding, design, team and biz skills - by making original games with friends
+                <br />
+                <Button
+                  as={QLink}
+                  to={`/learn/get-started`}
+                  secondary
+                  size="huge"
+                  style={{ marginTop: '1.5em', marginRight: '0.5em' }}
+                  content="Get started"
+                />
+                <Button
+                  as={QLink}
+                  to={`/signup`}
+                  primary
+                  size="huge"
+                  style={{ marginTop: '0.5em' }}
+                  content="Sign me up"
+                />
+              </p>
+            )}
+          </Grid.Column>
+          <Grid.Column width={4}>
+            <Image size="large" centered src={UX.makeMascotImgLink('aie-logo')} />
+          </Grid.Column>
+        </Grid.Row>
+        <Divider section />
+        <Grid.Row>
+          <Grid.Column width={2} />
+          <Grid.Column width={2}>
+            <Image size="large" centered src={UX.makeMascotImgLink('aie-game-programming')} />
+          </Grid.Column>
+          <Grid.Column width={2}>
+            <Image size="large" centered src={UX.makeMascotImgLink('learn-from-industry-leaders')} />
+          </Grid.Column>
+          <Grid.Column width={2}>
+            <Image size="large" centered src={UX.makeMascotImgLink('aie-child')} />
+          </Grid.Column>
+          <Grid.Column width={2}>
+            <Image
+              size="large"
+              centered
+              src={UX.makeMascotImgLink('work-on-latest-hardware-and-industry-software-tools')}
+            />
+          </Grid.Column>
+          <Grid.Column width={2}>
+            <Image size="large" centered src={UX.makeMascotImgLink('game-design-and-production')} />
+          </Grid.Column>
+          <Grid.Column width={2}>
+            <Image
+              size="large"
+              centered
+              src={UX.makeMascotImgLink('develop-practical-skills-demanded-by-industry')}
+            />
+          </Grid.Column>
+          <Grid.Column width={2} />
+        </Grid.Row>
       </Grid>
     )
   }

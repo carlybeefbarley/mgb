@@ -713,11 +713,11 @@ class HomeHeroBanner extends React.Component {
       pointerEvents: 'none',
     }
     return (
-      <Grid columns="4" verticalAlign="middle" padded>
-        <Grid.Column style={mascotColumnStyle}>
+      <Grid columns="3" verticalAlign="middle" padded>
+        <Grid.Column width={4} style={mascotColumnStyle}>
           <Image size="large" centered src={UX.makeMascotImgLink('team')} />
         </Grid.Column>
-        <Grid.Column>
+        <Grid.Column width={8}>
           <Header as="h1" inverted>
             <huge>My Game Builder</huge>
             <Header.Subheader>
@@ -776,8 +776,9 @@ class HomeHeroBanner extends React.Component {
             </p>
           )}
         </Grid.Column>
-        <Grid.Column />
-        <Grid.Column />
+        <Grid.Column width={4}>
+          <Image size="large" centered src={UX.makeMascotImgLink('aie-logo')} />
+        </Grid.Column>
       </Grid>
     )
   }

@@ -1,5 +1,16 @@
 import React from 'react'
-import { Container, Divider, Grid, Header, Segment, Tab, List, Input, TextArea } from 'semantic-ui-react'
+import {
+  Container,
+  Divider,
+  Button,
+  Grid,
+  Header,
+  Segment,
+  Tab,
+  List,
+  Input,
+  TextArea,
+} from 'semantic-ui-react'
 import Footer from '/client/imports/components/Footer/Footer'
 import PropTypes from 'prop-types'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
@@ -7,7 +18,9 @@ import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrCh
 import SkillAction from '/client/imports/components/Dashboard/Actions/SkillAction'
 import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
-import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
+import QLink from '/client/imports/routes/QLink'
+
+//import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
 
 //import RecentAssetAction from './Actions/RecentAssetAction'
 
@@ -677,7 +690,7 @@ class HomePage extends React.Component {
           <div>
             <Divider hidden />
 
-            {/* <HomeHeroBanner /> */}
+            <HomeHeroBanner />
 
             <Divider section />
 
@@ -685,6 +698,88 @@ class HomePage extends React.Component {
           </div>
         }
       />
+    )
+  }
+}
+
+// const mascotColumnStyle = {
+//   // allow click through, so users can play with the particles :)
+//   pointerEvents: 'none',
+// }
+
+class HomeHeroBanner extends React.Component {
+  render() {
+    const { currUser } = this.props
+    const { userId } = this.props
+
+    const mascotColumnStyle = {
+      pointerEvents: 'none',
+    }
+    return (
+      <Grid columns="equal" verticalAlign="middle" padded>
+        <Grid.Column>
+          <Header as="h1" inverted>
+            <huge>My Game Builder</huge>
+            <Header.Subheader>
+              <p>Make Games. Make Friends. Have Fun.</p>
+              <p>
+                <QLink to="/roadmap">Public BETA</QLink>
+              </p>
+            </Header.Subheader>
+          </Header>
+          {userId ? (
+            <p style={{ color: '#fff', fontSize: '1.5em', maxWidth: '450px' }}>
+              Welcome back, {username}!
+              <br />
+              Last time you were working on{' '}
+              <em>
+                <RecentlyEditedAssetGET userId={userId} />
+              </em>.
+              <br />
+              <Button
+                as={QLink}
+                to={`/u/${username}/assets`}
+                color="green"
+                size="huge"
+                style={{ marginTop: '1.5em', marginRight: '0.5em' }}
+                content="Keep going"
+              />
+              <Button
+                as={QLink}
+                to={`/learn`}
+                color="green"
+                size="huge"
+                style={{ marginTop: '0.5em' }}
+                content="Learn new skills"
+              />
+            </p>
+          ) : (
+            <p style={{ color: '#fff', fontSize: '1.5em', maxWidth: '450px' }}>
+              Learn coding, design, team and biz skills - by making original games with friends
+              <br />
+              <Button
+                as={QLink}
+                to={`/learn/get-started`}
+                secondary
+                size="huge"
+                style={{ marginTop: '1.5em', marginRight: '0.5em' }}
+                content="Get started"
+              />
+              <Button
+                as={QLink}
+                to={`/signup`}
+                primary
+                size="huge"
+                style={{ marginTop: '0.5em' }}
+                content="Sign me up"
+              />
+            </p>
+          )}
+        </Grid.Column>
+        <Grid.Column style={mascotColumnStyle}>
+          {/* <Image size="large" centered src={UX.makeMascotImgLink('team')} /> */}
+        </Grid.Column>
+      </Grid>
     )
   }
 }

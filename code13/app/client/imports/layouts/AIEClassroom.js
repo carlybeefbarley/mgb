@@ -21,6 +21,7 @@ import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 import QLink from '/client/imports/routes/QLink'
 import UX from '/client/imports/UX'
+import HoverImage from 'react-hover-image'
 
 //import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
 
@@ -809,10 +810,9 @@ class HomeHeroBanner extends React.Component {
             </Header> */}
           </Grid.Column>
           <Grid.Column width={2}>
-            <Image
-              size="mini"
-              centered
+            <HoverImage
               src={UX.makeMascotImgLink('work-on-latest-hardware-and-industry-software-tools')}
+              hoverSrc={UX.makeMascotImgLink('work-on-latest-hardware-and-industry-software-tools2')}
             />
             {/* <Header as="h3" inverted>
               Work on Latest Hardware and Industry Software Tools

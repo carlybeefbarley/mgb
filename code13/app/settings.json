@@ -3,10 +3,8 @@
     "env": {
       "ORIGIN_DOMAIN_NAME": "__ORIGIN_DOMAIN_NAME__.mygamebuilder.com",
       "ORIGIN_ID": "__ORIGIN_ID__.mygamebuilder.com",
-      "MONGO_URL":
-        "__MGB_MONGO_URL__",
-      "MONGO_OPLOG_URL":
-        "__MGB_MONGO_OPLOG_URL__",
+      "MONGO_URL": "__MGB_MONGO_URL__",
+      "MONGO_OPLOG_URL": "__MGB_MONGO_OPLOG_URL__",
       "MAIL_URL":
         "smtps://postmaster%40mailgun.mygamebuilder.com:e812b67c37675b894d976bd50c74ba0e@smtp.mailgun.org:465",
       "MGB_GIT_BRANCH": "__MGB_GIT_BRANCH__",

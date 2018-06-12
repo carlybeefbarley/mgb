@@ -136,7 +136,7 @@ class Dashboard extends React.Component {
                   maxWidth="auto"
                   imageSrc={avatar}
                   header="User Avatar"
-                  canEdit={true}
+                  canEdit
                 />
                 <Container style={infoStyle}>
                   <p>

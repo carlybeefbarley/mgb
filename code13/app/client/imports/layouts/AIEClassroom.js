@@ -716,7 +716,7 @@ class HomeHeroBanner extends React.Component {
     }
 
     const headerStyle = {
-      fontSize: '2.8em',
+      fontSize: '3.2em',
       textAlign: 'center',
     }
 
@@ -725,8 +725,9 @@ class HomeHeroBanner extends React.Component {
     }
 
     return (
-      <Grid columns="3" verticalAlign="middle" padded>
+      <Grid verticalAlign="middle" padded>
         <Grid.Row>
+          <Grid.Column width={2} />
           <Grid.Column width={5} style={mascotColumnStyle}>
             <Image size="large" centered src={UX.makeMascotImgLink('team')} />
             <Header style={headerStyle} inverted>
@@ -736,53 +737,56 @@ class HomeHeroBanner extends React.Component {
               </Header.Subheader>
             </Header>
           </Grid.Column>
-          <Grid.Column width={6}>
-            {userId ? (
-              <p style={{ color: '#fff', fontSize: '1.5em', maxWidth: '450px' }}>
-                Welcome back, {username}!
-                <br />
-                Last time you were working on{' '}
-                <em>
-                  <RecentlyEditedAssetGET userId={userId} />
-                </em>.
-                <br />
-                <Button
-                  as={QLink}
-                  to={`/u/${username}/assets`}
-                  color="green"
-                  size="huge"
-                  style={{ marginTop: '1.5em', marginRight: '0.5em' }}
-                  content="Keep going"
-                />
-                <Button
-                  as={QLink}
-                  to={`/learn`}
-                  color="green"
-                  size="huge"
-                  style={{ marginTop: '0.5em' }}
-                  content="Learn new skills"
-                />
-              </p>
-            ) : (
-              <p style={{ color: '#fff', fontSize: '1.5em', maxWidth: '450px' }}>
-                Learn coding, design, team and biz skills - by making original games with friends
-                <br />
-                <Button
-                  as={QLink}
-                  to={`/signup`}
-                  secondary
-                  size="massive"
-                  style={{ marginTop: '0.5em' }}
-                  content="Sign me up"
-                />
-              </p>
-            )}
-          </Grid.Column>
+          <Grid.Column width={2} />
           <Grid.Column width={5}>
             <Image size="large" centered src={UX.makeMascotImgLink('aie-logo')} />
           </Grid.Column>
+          <Grid.Column width={2} />
         </Grid.Row>
         <Grid.Row />
+        <Grid.Row centered>
+          {userId ? (
+            <p style={{ color: '#fff', fontSize: '1.5em', maxWidth: '450px' }}>
+              Welcome back, {username}!
+              <br />
+              Last time you were working on{' '}
+              <em>
+                <RecentlyEditedAssetGET userId={userId} />
+              </em>.
+              <br />
+              <Button
+                as={QLink}
+                to={`/u/${username}/assets`}
+                color="green"
+                size="huge"
+                style={{ marginTop: '1.5em', marginRight: '0.5em' }}
+                content="Keep going"
+              />
+              <Button
+                as={QLink}
+                to={`/learn`}
+                color="green"
+                size="huge"
+                style={{ marginTop: '0.5em' }}
+                content="Learn new skills"
+              />
+            </p>
+          ) : (
+            <p style={{ color: '#fff', fontSize: '3.5em', textAlign: 'center' }}>
+              Combining Forces So That You Can Learn How to Code Games With Your Class
+              <br />
+              <Button
+                centered
+                as={QLink}
+                to={`/signup`}
+                secondary
+                size="massive"
+                style={{ marginTop: '0.5em' }}
+                content="Sign me up"
+              />
+            </p>
+          )}
+        </Grid.Row>
         <Divider section />
         <Grid.Row>
           <Grid.Column width={2} />
@@ -879,7 +883,7 @@ export default class DashboardTabs extends React.Component {
         ),
       },
       {
-        menuItem: 'HomePage',
+        menuItem: 'Home Page',
         render: () => (
           <Tab.Pane>
             <HomePage {...this.props} />

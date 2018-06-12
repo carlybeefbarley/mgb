@@ -792,53 +792,45 @@ class HomeHeroBanner extends React.Component {
         <Grid.Row>
           <Grid.Column width={2} />
           <Grid.Column width={2}>
-            <Image size="mini" centered src={UX.makeMascotImgLink('game-design-and-production')} />
-            {/* <Header as="h3" color="green">
-              Game Programming
-            </Header> */}
+            <HoverImage
+              src={UX.makeMascotImgLink('game-design-and-production')}
+              hoverSrc={UX.makeMascotImgLink('game-design-and-production2')}
+            />
           </Grid.Column>
           <Grid.Column width={2}>
-            <Image size="mini" centered src={UX.makeMascotImgLink('learn-from-industry-leaders')} />
-            {/* <Header as="h3" inverted>
-              Learn from Industry Experienced Teachers
-            </Header> */}
+            <HoverImage
+              src={UX.makeMascotImgLink('learn-from-industry-leaders')}
+              hoverSrc={UX.makeMascotImgLink('learn-from-industry-leaders2')}
+            />
           </Grid.Column>
           <Grid.Column width={2}>
-            <Image size="mini" centered src={UX.makeMascotImgLink('aie-child')} />
-            {/* <Header as="h3" color="green">
-              Game Art and Animation
-            </Header> */}
+            <HoverImage
+              src={UX.makeMascotImgLink('aie-child')}
+              hoverSrc={UX.makeMascotImgLink('aie-child2')}
+            />
           </Grid.Column>
           <Grid.Column width={2}>
             <HoverImage
               src={UX.makeMascotImgLink('work-on-latest-hardware-and-industry-software-tools')}
               hoverSrc={UX.makeMascotImgLink('work-on-latest-hardware-and-industry-software-tools2')}
             />
-            {/* <Header as="h3" inverted>
-              Work on Latest Hardware and Industry Software Tools
-            </Header> */}
           </Grid.Column>
           <Grid.Column width={2}>
-            <Image
-              size="mini"
-              centered
+            <HoverImage
               src={UX.makeMascotImgLink('aie-game-programming')}
-              style={gameProgrammingStyle}
-              //onMouseOver={{ gameProgrammingStyle }}
+              hoverSrc={UX.makeMascotImgLink('aie-game-programming2')}
             />
-            {/* <Header as="h3" color="green">
-              Game Production and Design
-            </Header> */}
           </Grid.Column>
           <Grid.Column width={2}>
-            <Image
+            {/* <Image
               size="mini"
               centered
               src={UX.makeMascotImgLink('develop-practical-skills-demanded-by-industry')}
+            /> */}
+            <HoverImage
+              src={UX.makeMascotImgLink('develop-practical-skills-demanded-by-industry')}
+              hoverSrc={UX.makeMascotImgLink('develop-practical-skills-demanded-by-industry2')}
             />
-            {/* <Header as="h3" inverted>
-              Develop Practical Skill Demanded by Industry
-            </Header> */}
           </Grid.Column>
           <Grid.Column width={2} />
         </Grid.Row>

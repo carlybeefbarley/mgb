@@ -715,22 +715,28 @@ class HomeHeroBanner extends React.Component {
       border: '10 px solid orange',
     }
 
+    const headerStyle = {
+      fontSize: '2.8em',
+      textAlign: 'center',
+    }
+
+    const subheaderStyle = {
+      color: '#00cc00',
+    }
+
     return (
       <Grid columns="3" verticalAlign="middle" padded>
         <Grid.Row>
           <Grid.Column width={5} style={mascotColumnStyle}>
             <Image size="large" centered src={UX.makeMascotImgLink('team')} />
-          </Grid.Column>
-          <Grid.Column width={6}>
-            <Header as="h1" inverted>
+            <Header style={headerStyle} inverted>
               <huge>My Game Builder</huge>
-              <Header.Subheader>
+              <Header.Subheader style={subheaderStyle}>
                 <p>Make Games. Make Friends. Have Fun.</p>
-                <p>
-                  <QLink to="/roadmap">Public BETA</QLink>
-                </p>
               </Header.Subheader>
             </Header>
+          </Grid.Column>
+          <Grid.Column width={6}>
             {userId ? (
               <p style={{ color: '#fff', fontSize: '1.5em', maxWidth: '450px' }}>
                 Welcome back, {username}!
@@ -763,17 +769,9 @@ class HomeHeroBanner extends React.Component {
                 <br />
                 <Button
                   as={QLink}
-                  to={`/learn/get-started`}
-                  secondary
-                  size="huge"
-                  style={{ marginTop: '1.5em', marginRight: '0.5em' }}
-                  content="Get started"
-                />
-                <Button
-                  as={QLink}
                   to={`/signup`}
-                  primary
-                  size="huge"
+                  secondary
+                  size="massive"
                   style={{ marginTop: '0.5em' }}
                   content="Sign me up"
                 />
@@ -784,71 +782,59 @@ class HomeHeroBanner extends React.Component {
             <Image size="large" centered src={UX.makeMascotImgLink('aie-logo')} />
           </Grid.Column>
         </Grid.Row>
+        <Grid.Row />
         <Divider section />
         <Grid.Row>
           <Grid.Column width={2} />
           <Grid.Column width={2}>
-            <Image
-              size="tiny"
-              opacity="75%"
-              centered
-              src={UX.makeMascotImgLink('game-design-and-production')}
-            />
-            <Header as="h3" color="green">
+            <Image size="mini" centered src={UX.makeMascotImgLink('game-design-and-production')} />
+            {/* <Header as="h3" color="green">
               Game Programming
-            </Header>
+            </Header> */}
           </Grid.Column>
           <Grid.Column width={2}>
-            <Image
-              size="tiny"
-              opacity="75%"
-              centered
-              src={UX.makeMascotImgLink('learn-from-industry-leaders')}
-            />
-            <Header as="h3" inverted>
+            <Image size="mini" centered src={UX.makeMascotImgLink('learn-from-industry-leaders')} />
+            {/* <Header as="h3" inverted>
               Learn from Industry Experienced Teachers
-            </Header>
+            </Header> */}
           </Grid.Column>
           <Grid.Column width={2}>
-            <Image size="small" opacity="75%" centered src={UX.makeMascotImgLink('aie-child')} />
-            <Header as="h3" color="green">
+            <Image size="mini" centered src={UX.makeMascotImgLink('aie-child')} />
+            {/* <Header as="h3" color="green">
               Game Art and Animation
-            </Header>
+            </Header> */}
           </Grid.Column>
           <Grid.Column width={2}>
             <Image
-              size="tiny"
+              size="mini"
               centered
               src={UX.makeMascotImgLink('work-on-latest-hardware-and-industry-software-tools')}
-              opacity="75%"
             />
-            <Header as="h3" inverted>
+            {/* <Header as="h3" inverted>
               Work on Latest Hardware and Industry Software Tools
-            </Header>
+            </Header> */}
           </Grid.Column>
           <Grid.Column width={2}>
             <Image
-              size="tiny"
+              size="mini"
               centered
               src={UX.makeMascotImgLink('aie-game-programming')}
               style={gameProgrammingStyle}
               //onMouseOver={{ gameProgrammingStyle }}
-              opacity="75%"
             />
-            <Header as="h3" color="green">
+            {/* <Header as="h3" color="green">
               Game Production and Design
-            </Header>
+            </Header> */}
           </Grid.Column>
           <Grid.Column width={2}>
             <Image
-              size="tiny"
+              size="mini"
               centered
               src={UX.makeMascotImgLink('develop-practical-skills-demanded-by-industry')}
-              opacity="75%"
             />
-            <Header as="h3" inverted>
+            {/* <Header as="h3" inverted>
               Develop Practical Skill Demanded by Industry
-            </Header>
+            </Header> */}
           </Grid.Column>
           <Grid.Column width={2} />
         </Grid.Row>

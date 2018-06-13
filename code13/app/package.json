@@ -21,6 +21,7 @@
     "lint": "sh ./lint.sh",
     "start": "sh ./go.sh",
     "start:empty": "sh ./meteor.sh",
+    "start:aie": "sh ./go-aie.sh",
     "ci": "yarn lint && yarn jest",
     "test": "jest --config jest.config.js",
     "test:watch": "yarn jest -- --watchAll",

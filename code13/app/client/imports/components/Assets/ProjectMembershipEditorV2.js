@@ -131,7 +131,7 @@ const ProjectMembershipPopup = props => {
     else choices.unshift(makeHeaderEl('h0', `${asset.dn_ownerName}'s Projects containing this Asset`))
   }
 
-  return <div style={{ maxHeight: '500px', overflow: 'auto' }}>{choices}</div>
+  return <div style={{ maxHeight: '500px', overflowY: 'auto', overflowX: 'hidden' }}>{choices}</div>
 }
 
 const ProjectMembershipEditorV2 = React.createClass({

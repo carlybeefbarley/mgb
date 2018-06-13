@@ -3,13 +3,13 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Card, Segment } from 'semantic-ui-react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
+
 import AssetCard from '/client/imports/components/Assets/AssetCard'
 import Spinner from '/client/imports/components/Nav/Spinner'
+import { Azzets } from '/imports/schemas'
 import { assetMakeSelector, assetSorters } from '/imports/schemas/assets'
 
-import { Azzets } from '/imports/schemas'
-
-const _showLimit = 12
+const _showLimit = 20
 const _nowrapStyle = {
   clear: 'both',
   flexWrap: 'nowrap',
@@ -17,32 +17,13 @@ const _nowrapStyle = {
   overflowY: 'hidden',
 }
 
-const AssetItems = ({ assets }) => (
-  <Card.Group style={_nowrapStyle}>
-    {(!assets || assets.length === 0) && <Segment basic>No assets yet</Segment>}
-    {_.map(assets, a => <AssetCard classNames="mgb-assetcard-width" asset={a} key={a._id} />)}
-    {assets &&
-    assets.length > 0 && (
-      <div
-        data-tooltip={`Only the ${_showLimit} most recently edited assets are shown here`}
-        style={{ minWidth: '8em', textAlign: 'center', margin: 'auto' }}
-      >
-        . . .
-      </div>
-    )}
-  </Card.Group>
-)
-
-AssetItems.propTypes = {
-  assets: PropTypes.array, // an array of game assets
-}
-
 const AssetsAvailableGET = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
     scopeToUserId: PropTypes.string, // e.g. 987e78dsygwef. Can be undefined/null
-    scopeToProjectName: PropTypes.string, // e.g. foobar. Can be undefined/null. If specified, then scopeToUserId must also be specified
+    scopeToProjectName: PropTypes.string, // e.g. foobar. Can be undefined/null. If specified, then scopeToUserId must
+    // also be specified
   },
 
   getMeteorData() {
@@ -69,15 +50,45 @@ const AssetsAvailableGET = React.createClass({
       false,
     ) // stable & unstable
     return {
-      assets: Azzets.find(assetSelector, { sort: assetSorter }).fetch(), // Note that the subscription we used excludes the content2 field which can get quite large
+      // Note that the subscription we used excludes the content2 field which can get quite large
+      assets: Azzets.find(assetSelector, { sort: assetSorter }).fetch(),
       loading: !handleForAssets.ready(),
     }
   },
 
   render() {
     const { loading, assets } = this.data
+    const { scopeToProjectName } = this.props
+
     // In profile, vertically stacked list view fits better than card view
-    return loading ? <Spinner /> : <AssetItems assets={assets} wrap={false} />
+    if (loading) return <Spinner />
+
+    return (
+      <div>
+        {_.isEmpty(assets) ? (
+          <Segment tertiary style={{ padding: '6vh 0' }} textAlign="center">
+            Create some assets to get started.
+          </Segment>
+        ) : (
+          <Card.Group style={_nowrapStyle}>
+            {_.map(assets, a => (
+              <AssetCard
+                classNames="mgb-assetcard-width"
+                asset={a}
+                key={a._id}
+                project={scopeToProjectName}
+              />
+            ))}
+          </Card.Group>
+        )}
+
+        {assets.length >= _showLimit && (
+          <Segment secondary basic textAlign="center">
+            Showing <strong>{_showLimit}</strong> recently edited assets.{' '}
+          </Segment>
+        )}
+      </div>
+    )
   },
 })
 

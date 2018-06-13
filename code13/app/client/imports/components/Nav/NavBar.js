@@ -60,20 +60,22 @@ const NavBar = React.createClass({
       alignItems: 'center',
       // do not flex
       flex: '0 0 auto',
+      padding: '0.5em',
       marginBottom: hideHeaders ? '2rem' : '0',
       background: '#fff',
       boxShadow: `0 ${hideHeaders ? '2px 6px' : '1px 4px'} rgba(0, 0, 0, 0.2)`,
+      zIndex: 1,
     }
 
     return (
       <div style={navBarStyle}>
-        <RelatedAssets
-          location={location}
-          user={user}
-          currUser={currUser}
-          params={params}
-          currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-        />
+        {/*<RelatedAssets*/}
+        {/*location={location}*/}
+        {/*user={user}*/}
+        {/*currUser={currUser}*/}
+        {/*params={params}*/}
+        {/*currentlyEditingAssetInfo={currentlyEditingAssetInfo}*/}
+        {/*/>*/}
         <SystemAlerts sysvars={sysvars} />
         <NavBarBreadcrumb
           location={location}

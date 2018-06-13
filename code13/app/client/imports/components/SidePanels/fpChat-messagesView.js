@@ -300,7 +300,7 @@ const ChatMessagesView = React.createClass({
 
     return (
       <div style={style}>
-        <Comment.Group className="small">
+        <Comment.Group style={{ flex: 1, overflowY: 'auto' }} className="small">
           {this.renderGetMoreMessages()}
           <div id="mgbjr-fp-chat-channel-messages">
             {// Always have at least one div so we will be robust with a '#mgbjr-fp-chat-channel-messages div:first' css selector for tutorials
@@ -309,7 +309,7 @@ const ChatMessagesView = React.createClass({
           <span />
         </Comment.Group>
 
-        <Form size="small">
+        <Form styke={{ flex: '0 1 175px' }} size="small">
           <Form.Field id="mgbjr-fp-chat-messageInput" disabled={!canSend}>
             <Form.TextArea
               rows={3}

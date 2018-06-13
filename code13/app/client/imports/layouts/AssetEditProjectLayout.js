@@ -13,6 +13,8 @@ import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/Asse
 import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import { __NO_PROJECT__, __NO_ASSET__ } from '/client/imports/stores/assetStore'
+import ChatPanel from '/client/imports/components/Assets/ChatPanel.js'
+import { makeChannelName } from '/imports/schemas/chats'
 
 export default class AssetEditProjectContainer extends React.Component {
   renderProjectsList = currUserProjects => {
@@ -60,6 +62,8 @@ export default class AssetEditProjectContainer extends React.Component {
     const dropDownCurrentProjectName = _.find(renderedProjectsList, { value: projectName })
       ? _.find(renderedProjectsList, { value: projectName }).text
       : __NO_PROJECT__
+    const showChat = true
+    const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: 'fbS7P5NYvZfjDmzjn' })
 
     return (
       <div style={{ overflowY: 'auto' }}>
@@ -112,19 +116,23 @@ export default class AssetEditProjectContainer extends React.Component {
           </Grid.Column>
         </Grid>
         <Grid padded columns="equal" style={{ flex: '1' }}>
-          <Grid.Column stretched style={{ flex: '0 0 20em', overflowY: 'auto' }}>
-            <Segment>
-              <RelatedAssets
-                projectName={assetStore.project() === __NO_PROJECT__ ? '_' : assetStore.project()}
-                location={location}
-                user={user}
-                currUser={currUser}
-                currUserProjects={currUserProjects}
-                params={params}
-                currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-              />
-            </Segment>
-          </Grid.Column>
+          {showChat ? (
+            <ChatPanel currUser={currUser} channelName={channelName} />
+          ) : (
+            <Grid.Column stretched style={{ flex: '0 0 20em', overflowY: 'auto' }}>
+              <Segment>
+                <RelatedAssets
+                  projectName={assetStore.project() === __NO_PROJECT__ ? '_' : assetStore.project()}
+                  location={location}
+                  user={user}
+                  currUser={currUser}
+                  currUserProjects={currUserProjects}
+                  params={params}
+                  currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+                />
+              </Segment>
+            </Grid.Column>
+          )}
           <Grid.Column style={{ overflowY: 'auto' }}>{this.props.children}</Grid.Column>
         </Grid>
       </div>

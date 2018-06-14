@@ -11,6 +11,7 @@ import {
   List,
   Input,
   TextArea,
+  Table,
 } from 'semantic-ui-react'
 import Footer from '/client/imports/components/Footer/Footer'
 import PropTypes from 'prop-types'
@@ -838,6 +839,161 @@ class HomeHeroBanner extends React.Component {
   }
 }
 
+class TeacherClassroom extends React.Component {
+  render() {
+    return (
+      <Table cell striped>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell colSpan="1" />
+            <Table.HeaderCell colSpan="1">Assignment 1</Table.HeaderCell>
+            <Table.HeaderCell colSpan="1">Assignment 2</Table.HeaderCell>
+            <Table.HeaderCell colSpan="1">Assignment 3</Table.HeaderCell>
+            <Table.HeaderCell colSpan="1">Assignment 4</Table.HeaderCell>
+            <Table.HeaderCell colSpan="1">Assignment 5</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell collapsing>Jim Bob</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Billy Bob Joe</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Alexander Hamilton</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Maria Carey</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Kendrick Lamar</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Archibald T. Doodle</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Dolly Parton</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Howdy Doody</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Janelle Monae</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Ava Grace</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Cookie Monster</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Purple Telletubby</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Ginny Weasley</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Princess Nokia</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Richard Simmons</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell collapsing>Ada Lovelace</Table.Cell>
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+            <Table.Cell />
+          </Table.Row>
+        </Table.Body>
+      </Table>
+    )
+  }
+}
+
+class TeacherDashboard extends React.Component {
+  render() {
+    return <div />
+  }
+}
+
 export default class DashboardTabs extends React.Component {
   render() {
     const panes = [
@@ -878,6 +1034,22 @@ export default class DashboardTabs extends React.Component {
         render: () => (
           <Tab.Pane>
             <HomePage {...this.props} />
+          </Tab.Pane>
+        ),
+      },
+      {
+        menuItem: '(Teacher) Classroom',
+        render: () => (
+          <Tab.Pane>
+            <TeacherClassroom {...this.props} />
+          </Tab.Pane>
+        ),
+      },
+      {
+        menuItem: '(Teacher) Dashboard',
+        render: () => (
+          <Tab.Pane>
+            <TeacherDashboard {...this.props} />
           </Tab.Pane>
         ),
       },

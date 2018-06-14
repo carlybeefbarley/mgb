@@ -20,6 +20,12 @@ const salutations = [
   { key: 5, text: 'A.H.', value: 5 },
 ]
 
+const teacherPermissions = {
+  teamId: 'teachers',
+  teamName: 'teachers',
+  role: ['teacher'],
+}
+
 export default class DevPanelRoute extends Component {
   state = {
     errors: {},
@@ -45,34 +51,21 @@ export default class DevPanelRoute extends Component {
       email,
       profile: {
         name: username,
-        institution,
+        institution: 'Academy of Interactive Entertainment',
         salutation,
-        students: [
-          { _id: 'Sdjfkl2Ds9xDhgRp', username: 'Edward Jamison' },
-          { _id: 'Sdjfkl2Ds9xDhgRp', username: 'Edward Jamison' },
-          { _id: 'Sdjfkl2Ds9xDhgRp', username: 'Edward Jamison' },
-        ], // Array of user ID/Name pairs that point to which users belong to this teacher.
-        isTeacher: true,
       },
+      permissions: [teacherPermissions],
     }
 
     if (_.some(errors)) {
       this.setState({ errors })
       return
     }
+
     console.log('Creating account with: ', data)
 
-    // Accounts.createUser(data, error => {
-    //   if (error) {
-    //     console.error(error)
-    //     return this.setState({
-    //       isLoading: false,
-    //       errors: { server: error.reason || 'Server Error while creating account' },
-    //     })
-    //   }
-    // })
-
     let enrollId = Meteor.call('AccountsCreate.teacher', data)
+    console.log('Returned ID is :', enrollId)
   }
 
   handleChange = e => {

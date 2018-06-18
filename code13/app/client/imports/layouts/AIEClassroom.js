@@ -3,6 +3,7 @@ import {
   Container,
   Divider,
   Button,
+  Icon,
   Image,
   Grid,
   Header,
@@ -849,7 +850,7 @@ class TeacherClassroom extends React.Component {
     const { avatar } = currUser.profile
 
     const titleStyle = {
-      fontSize: '2.1em',
+      fontSize: '2em',
       textAlign: 'center',
     }
 
@@ -874,26 +875,28 @@ class TeacherClassroom extends React.Component {
             </div>
           </Grid.Column>
         </Grid>
-        <Grid columns={2} padded>
+        <Grid columns={2} padded stretched>
           <Grid.Row>
-            <Segment raised color="blue">
-              <Header style={titleStyle} as="h1" content={`Classroom Dashboard`} />
-              <ImageShowOrChange
-                id="mgbjr-profile-avatar"
-                maxHeight="11em"
-                maxWidth="auto"
-                imageSrc={avatar}
-                header="User Avatar"
-                canEdit={false}
-              />
-              <List style={infoStyle}>
-                <List.Item>
-                  <List.Content>
-                    <List.Icon name="chat" color="blue" />Class Chat
-                  </List.Content>
-                </List.Item>
-              </List>
-            </Segment>
+            <Grid.Column width={5}>
+              <Segment raised color="blue">
+                <Header style={titleStyle} as="h1" content={`Classroom Dashboard`} />
+                <ImageShowOrChange
+                  id="mgbjr-profile-avatar"
+                  maxHeight="11em"
+                  maxWidth="auto"
+                  imageSrc={avatar}
+                  header="User Avatar"
+                  canEdit={false}
+                />
+                <List style={infoStyle}>
+                  <List.Item>
+                    <List.Content>
+                      <List.Icon name="chat" color="blue" />Class Chat
+                    </List.Content>
+                  </List.Item>
+                </List>
+              </Segment>
+            </Grid.Column>
             <Grid.Column width={11}>
               <Segment raised color="blue">
                 <Header as="h3" content="Upcoming Assignments" />
@@ -912,151 +915,157 @@ class TeacherClassroom extends React.Component {
             </div>
           </Grid.Column>
         </Grid>
-        <Grid>
-          <Grid.Row>
-            <Table celled striped>
-              <Table.Header>
-                <Table.Row>
-                  <Table.HeaderCell colSpan="1" />
-                  <Table.HeaderCell colSpan="1">Assignment 1</Table.HeaderCell>
-                  <Table.HeaderCell colSpan="1">Assignment 2</Table.HeaderCell>
-                  <Table.HeaderCell colSpan="1">Assignment 3</Table.HeaderCell>
-                  <Table.HeaderCell colSpan="1">Assignment 4</Table.HeaderCell>
-                  <Table.HeaderCell colSpan="1">Assignment 5</Table.HeaderCell>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                <Table.Row>
-                  <Table.Cell collapsing>Jim Bob</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Billy Bob Joe</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Alexander Hamilton</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Maria Carey</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Kendrick Lamar</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Archibald T. Doodle</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Dolly Parton</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Howdy Doody</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Janelle Monae</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Ava Grace</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Cookie Monster</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Purple Telletubby</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Ginny Weasley</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Princess Nokia</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Richard Simmons</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-                <Table.Row>
-                  <Table.Cell collapsing>Ada Lovelace</Table.Cell>
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                  <Table.Cell />
-                </Table.Row>
-              </Table.Body>
-            </Table>
-          </Grid.Row>
+        <Grid columns={1} padded>
+          <Grid.Column width={16}>
+            <Segment raised color="yellow">
+              <Grid.Row>
+                <Table celled striped>
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.HeaderCell colSpan="1" />
+                      <Table.HeaderCell colSpan="1">Assignment 1</Table.HeaderCell>
+                      <Table.HeaderCell colSpan="1">Assignment 2</Table.HeaderCell>
+                      <Table.HeaderCell colSpan="1">Assignment 3</Table.HeaderCell>
+                      <Table.HeaderCell colSpan="1">Assignment 4</Table.HeaderCell>
+                      <Table.HeaderCell colSpan="1">Assignment 5</Table.HeaderCell>
+                    </Table.Row>
+                  </Table.Header>
+                  <Table.Body>
+                    <Table.Row>
+                      <Table.Cell collapsing>Jim Bob</Table.Cell>
+                      <Table.Cell>
+                        <Icon name="check circle" color="green" />
+                      </Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Billy Bob Joe</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Alexander Hamilton</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Maria Carey</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Kendrick Lamar</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Archibald T. Doodle</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Dolly Parton</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Howdy Doody</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Janelle Monae</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Ava Grace</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Cookie Monster</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Purple Telletubby</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Ginny Weasley</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Princess Nokia</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Richard Simmons</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell collapsing>Ada Lovelace</Table.Cell>
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                      <Table.Cell />
+                    </Table.Row>
+                  </Table.Body>
+                </Table>
+              </Grid.Row>
+            </Segment>
+          </Grid.Column>
         </Grid>
       </div>
     )

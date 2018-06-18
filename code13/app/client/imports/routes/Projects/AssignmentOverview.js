@@ -35,6 +35,7 @@ import SpecialGlobals from '/imports/SpecialGlobals.js'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 import { withMeteorData } from '../../hocs'
 import { getProjectAvatarUrl } from '../../helpers/assetFetchers'
+import StudentListGET from '/client/imports/routes/Projects/StudentListGET.js'
 import AssignmentDetails from './AssignmentDetails'
 import ChatPanel from '/client/imports/components/Assets/ChatPanel.js'
 import { makeChannelName } from '/imports/schemas/chats'
@@ -63,6 +64,34 @@ class AssignmentOverview extends Component {
   componentDidMount() {
     // setTimeou just to be sure that everything is loaded
     setTimeout(() => Hotjar('trigger', 'project-overview', this.props.currUser), 200)
+  }
+
+  handleDeleteProject = () => {
+    var { name } = this.props.project
+    Meteor.call('Projects.countNonDeletedAssets', name, (error, result) => {
+      if (error) showToast.error(`Could not count Number of Assets in Project '${name}: ${error.reason}`)
+      else this.setState({ confirmDeleteNum: result })
+    })
+  }
+
+  handleConfirmedDeleteProject = () => {
+    var { name, _id, ownerName } = this.props.project
+    var compoundNameOfDeletedProject = `${ownerName}:${name}`
+    this.setState({ isDeletePending: true }) // Button disable/enable also guards against re-entrancy
+
+    Meteor.call('Projects.deleteProjectId', _id, true, (error, result) => {
+      if (error) {
+        showToast.error(`Could not delete Project '${name}: ${error.reason}`)
+        this.setState({ isDeletePending: false })
+      } else {
+        logActivity('project.destroy', `Deleted ${result} Project ${name}`)
+        this.setState({
+          isDeletePending: false,
+          isDeleteComplete: true,
+          compoundNameOfDeletedProject,
+        })
+      }
+    })
   }
 
   renderStudentView = (project, activities) => {
@@ -114,14 +143,27 @@ class AssignmentOverview extends Component {
       height: '20em',
     }
 
+    const { assignmentDetail, dueDate } = this.props.project
+    const { confirmDeleteNum, isDeleteComplete, isDeletePending } = this.state
+
     return (
       <Grid.Column>
         <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em', width: '100%' }}>
+          <Button
+            labelPosition="left"
+            icon="trash"
+            disabled={isDeleteComplete || isDeletePending}
+            content={
+              confirmDeleteNum < 0 ? 'Delete' : `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`
+            }
+            color={confirmDeleteNum < 0 ? null : 'red'}
+            onClick={confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject}
+          />
           <Grid.Row>
             <Header as="h2" color="grey" floated="left">
               Assignment Details
             </Header>
-            <AssignmentDetails />
+            <AssignmentDetails detail={assignmentDetail} dueDate={dueDate} />
           </Grid.Row>
           <Grid.Row stretched>
             <Grid.Column style={{ height: 'auto' }}>
@@ -135,7 +177,7 @@ class AssignmentOverview extends Component {
                 Completed
               </Header>
               <Segment padded raised style={listSty}>
-                {this.renderCompletedList()}
+                <StudentListGET assignment={project} />
               </Segment>
             </Grid.Column>
             <Grid.Column style={{ height: 'auto' }}>
@@ -187,7 +229,7 @@ class AssignmentOverview extends Component {
       <List relaxed divided style={{ paddingBottom: '1em !important' }}>
         {_.map(students, student => {
           return (
-            <List.Item>
+            <List.Item key={student}>
               <List.Header as="a">{student}</List.Header>
               <List.Description>{Math.floor(Math.random() * 3)}/3 assets completed</List.Description>
             </List.Item>

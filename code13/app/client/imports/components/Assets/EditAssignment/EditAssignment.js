@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Grid } from 'semantic-ui-react'
+import { Grid, Button } from 'semantic-ui-react'
 import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
 import BaseForm from '/client/imports/components/Controls/BaseForm.js'
-import { Header, Divider, Message } from 'semantic-ui-react'
-import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+import CreateProjectLinkButton from '/client/imports/components/Projects/NewProject/CreateProjectLinkButton.js'
+import { showToast } from '/client/imports/modules'
+import { logActivity } from '/imports/schemas/activity'
+import { utilPushTo } from '/client/imports/routes/QLink'
 
 const _defaultAssignmentMetadata = {
-  name: '',
-  description: '',
-  deadline: '',
-  project: '',
+  assignmentDetail: '',
+  dueDate: '',
 }
 
 class EditAssignmentForm extends BaseForm {
@@ -21,10 +21,9 @@ class EditAssignmentForm extends BaseForm {
   render() {
     return (
       <div className="ui form">
-        {this.text('Name', 'name', 'text')}
-        {this.textArea('Description', 'description')}
+        {this.textArea('Assignment Detail', 'assignmentDetail')}
         {this.bool('Is Team Project', 'isTeamProject')}
-        {this.date('Deadline', 'deadline')}
+        {this.date('Due Date', 'dueDate')}
         {this.dropArea('Code', 'defaultAssetName', 'code', null)}
       </div>
     )
@@ -41,6 +40,10 @@ export default class EditAssignment extends React.Component {
     project: PropTypes.string,
   }
 
+  static contextTypes = {
+    urlLocation: PropTypes.object,
+  }
+
   handleChange(key) {
     this.handleSave()
   }
@@ -49,16 +52,36 @@ export default class EditAssignment extends React.Component {
     this.props.handleMetadataChange(this.props.asset.metadata)
   }
 
+  handleCreateProjectFromAssignment = () => {
+    console.log(this)
+    const { currUser, asset: { _id, name, text, metadata: { assignmentDetail, dueDate } } } = this.props
+    let newProj = {
+      name,
+      description: text,
+      assignmentDetail,
+      assignmentId: _id,
+      dueDate: dueDate.toString(),
+    }
+
+    Meteor.call('Projects.create', newProj, (error, result) => {
+      if (error) showToast.error('Could not create project - ' + error.reason)
+      else {
+        logActivity('project.create', `Create project ${name}`)
+        utilPushTo(this.context.urlLocation.query, `/u/${currUser.profile.name}/projects/${name}`)
+      }
+    })
+  }
+
   render() {
-    const { asset, canEdit, handleContentChange, currUser } = this.props
-    asset.p
+    const { asset, canEdit, handleContentChange } = this.props
     if (!asset) return null
 
     if (!asset.metadata) asset.metadata = _defaultAssignmentMetadata
 
     return (
       <Grid centered container>
-        <Grid.Column className="edit-game">
+        <Grid.Column className="edit-assignment">
+          <Button onClick={this.handleCreateProjectFromAssignment}>Create Project</Button>
           <EditAssignmentForm
             asset={asset}
             canEdit={canEdit}
@@ -67,8 +90,6 @@ export default class EditAssignment extends React.Component {
               handleContentChange(null, d, 'Updating thumbnail')
             }}
           />
-          <br />
-          <AssetsAvailableGET scopeToUserId={currUser._id} scopeToProjectName={'_assignment1'} />
         </Grid.Column>
       </Grid>
     )

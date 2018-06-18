@@ -843,6 +843,7 @@ class HomeHeroBanner extends React.Component {
 class TeacherClassroom extends React.Component {
   render() {
     const { currUser } = this.props
+
     const containerStyle = {
       overflowY: 'auto',
     }
@@ -1096,7 +1097,81 @@ class TeacherClassroom extends React.Component {
 
 class TeacherDashboard extends React.Component {
   render() {
-    return <div />
+    const { currUser } = this.props
+
+    const containerStyle = {
+      overflowY: 'auto',
+    }
+    const titleStyle = {
+      fontSize: '3em',
+      textAlign: 'center',
+    }
+
+    const { avatar } = currUser.profile
+
+    const infoStyle = {
+      fontSize: '1.7em',
+      textAlign: 'center',
+    }
+
+    return (
+      <div style={containerStyle}>
+        <Grid columns={1} padded>
+          <Grid.Column width={16}>
+            <div>
+              <Button color="orange" floated="right">
+                Add New Class
+              </Button>
+            </div>
+          </Grid.Column>
+        </Grid>
+        <Grid columns={2} padded stretched>
+          <Grid.Row>
+            <Grid.Column width={5}>
+              <Segment raised color="blue">
+                <Header style={titleStyle} as="h1" content={`${currUser.username}`} textAlign="center" />
+                <ImageShowOrChange
+                  id="mgbjr-profile-avatar"
+                  maxHeight="11em"
+                  maxWidth="auto"
+                  imageSrc={avatar}
+                  header="User Avatar"
+                  canEdit={false}
+                />
+                <List style={infoStyle}>
+                  <List.Item>
+                    <List.Content>
+                      <List.Icon name="chat" color="blue" />Class Chat
+                    </List.Content>
+                  </List.Item>
+                </List>
+              </Segment>
+            </Grid.Column>
+            <Grid.Column width={11}>
+              <Segment raised color="blue">
+                <Header as="h2" content="Your Classes" />
+                <ul>
+                  <li>Animation Class</li>
+                  <li>JavaScript Class</li>
+                  <li>Phaser Class</li>
+                  <li>Advanced JavaScript</li>
+                  <li>Advanced Animation</li>
+                </ul>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+        <Grid columns={1} padded stackable>
+          <Grid.Column width={16}>
+            <Grid.Row>
+              <Segment raised color="yellow">
+                <Header as="h2" content="Submission Feed" />
+              </Segment>
+            </Grid.Row>
+          </Grid.Column>
+        </Grid>
+      </div>
+    )
   }
 }
 

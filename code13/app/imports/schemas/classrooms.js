@@ -2,16 +2,17 @@ import _ from 'lodash'
 import { Classrooms } from '/imports/schemas'
 import { Match, check } from 'meteor/check'
 import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
-import { swearjar } from '/server/imports/swearjar'
+// import { swearjar } from '/server/imports/swearjar'
 
-export makeClassroomSelector = () => {
-
+export const makeClassroomSelector = () => {
+  return 0
 }
 
 const optional = Match.Optional
 
 const schema = {
   _id: String,
+  creatorId: String,
   // schoolId: String, // Used to determine rights for assets, chats, students, assignments etc.
   createdAt: Date,
   teachers: optional([String]), // List of teacher account Ids
@@ -23,27 +24,63 @@ const schema = {
 }
 
 Meteor.methods({
-  'Classroom.storeProfileImage'(assetId, classroomId) {
-    check(url, String)
+  'Classroom.storeProfileImage'(classroomId, assetId) {
+    check(assetId, String)
     checkIsLoggedInAndNotSuspended()
 
     try {
-      Classrooms.update(classroomId, { $set: { 'avatarAssetId': assetId } })
+      Classrooms.update(classroomId, { $set: { avatarAssetId: assetId } })
     } catch (exception) {
       console.log('Classroom.storeProfileImage:', exception)
       return exception
     }
   },
 
-  'Classroom.setAvatarId'(id, classroomId) {
-    check(url, String)
+  'Classroom.setAvatarId'(classroomId, avatarAssetId) {
+    check(avatarAssetId, String)
     checkIsLoggedInAndNotSuspended()
-    Classrooms.update(classroomId, { $set: { 'avatarUrl': url } })
+    Classrooms.update(classroomId, { $set: { avatarAssetId } })
   },
 
-  'Classroom.create'(name){
+  'Classroom.create'(name, description = 'No Description', teacherIds = [], studentIds = []) {
+    checkIsLoggedInAndNotSuspended()
     check(name, String)
+    check(description, String)
+    check(teacherIds, [String])
+    check(studentIds, [String])
 
+    let now = new Date(),
+      user = Meteor.user(),
+      newClassroom = {
+        name,
+        description,
+        createdAt: now,
+        updatedAt: now,
+        ownerId: user._id,
+        teacherIds,
+        studentIds,
+        isDeleted: false,
+        assignmentAssetIds: [],
+        avatarAssetId: '', //TODO: Insert default classroom Asset ID
+      }
 
-  }
+    Classrooms.insert(newClassroom)
+  },
+
+  'Classroom.updateDescription'(classroomId, description) {
+    checkIsLoggedInAndNotSuspended()
+    check(description, String)
+    check(classroomId, String)
+    let user = Meteor.user(),
+      targetDoc = Classrooms.findOne(classroomId)
+
+    if (!targetDoc) {
+      throw new Meteor.Error(404, 'File Not Found: Could not find document to update.')
+    } else if (_.includes(targetDoc.teacherIds, user._id) || targetDoc.ownerId === user._id) {
+      Classrooms.update({ _id: classroomId }, { $set: { description } })
+      return targetDoc._id
+    } else {
+      throw new Meteor.Error(401, 'Unauthorized: User not permitted to edit this document.')
+    }
+  },
 })

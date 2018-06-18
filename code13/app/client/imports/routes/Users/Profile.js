@@ -35,7 +35,7 @@ import InlineEdit from '/client/imports/components/Controls/InlineEdit'
 import validate from '/imports/schemas/validate'
 import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 
-import { Projects } from '/imports/schemas'
+import { Projects, Classrooms } from '/imports/schemas'
 import { logActivity } from '/imports/schemas/activity'
 import { projectMakeSelector, projectSorters } from '/imports/schemas/projects'
 
@@ -72,7 +72,10 @@ const UserProfileRoute = React.createClass({
     const handleForProjects = Meteor.subscribe('projects.byUserId', userId)
     const projectSelector = projectMakeSelector(userId)
 
+    const handleForClassrooms = Meteor.subscribe('classrooms.all')
+
     return {
+      classrooms: Classrooms.find({}),
       projects: Projects.find(projectSelector, findOpts).fetch(),
       loading: userId && !handleForProjects.ready(),
     }

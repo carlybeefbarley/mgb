@@ -282,6 +282,7 @@ const schema = {
   workState: String, // A value matching a key from workStates.js
   memberIds: [String], // Array of memberIds (User._id keys)
   avatarAssetId: String, // Asset that will be used as the avatar for this project (should be of kind=graphic)
+  assignmentId: optional(String),
 }
 
 // Helper functions

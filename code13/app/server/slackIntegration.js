@@ -93,6 +93,17 @@ Meteor.methods({
 })
 
 Meteor.methods({
+  'Slack.Classrooms.create'(username, classroomName) {
+    const userUrl = `https://v2.mygamebuilder.com/u/${username}`
+    slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {
+      username: `MGBv2 @${username}`,
+      icon_emoji: ':smile:',
+      text: `Creating New Classroom  (${classroomName}) by user <${userUrl}|${username}> `,
+    })
+  },
+})
+
+Meteor.methods({
   'Slack.User.create'(username, email) {
     const userUrl = `https://v2.mygamebuilder.com/u/${username}`
     slackGenericNotify(mgb_slack_eng__webhookUrl_mgb_community, {

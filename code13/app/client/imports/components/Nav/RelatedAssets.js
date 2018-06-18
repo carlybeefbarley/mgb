@@ -2,21 +2,15 @@ import _ from 'lodash'
 import { createContainer } from 'meteor/react-meteor-data'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button, Divider, Header, Icon, Input, Segment, List, Modal, Popup } from 'semantic-ui-react'
+import { Accordion, Button, Header, Icon, Input, Segment, List, Modal, Popup } from 'semantic-ui-react'
 
 import { AssetKinds } from '/imports/schemas/assets'
-import QLink, { openAssetById, utilPushTo } from '/client/imports/routes/QLink'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
+import getContextualProjectName from '/client/imports/helpers/getContextualProjectName'
+import QLink, { openAssetById, utilPushTo } from '/client/imports/routes/QLink'
+
 const NameInfoAzzets = new Meteor.Collection('NameInfoAzzets')
-
-const getContextualProjectName = ({ location, currentlyEditingAssetInfo, params }) => {
-  const { query } = location
-  const { projectNames } = currentlyEditingAssetInfo
-
-  // Else is it a query?
-  return _.first(projectNames) || _.get(query, 'project') || params.projectName
-}
 
 class RelatedAssetsUI extends React.Component {
   static propTypes = {
@@ -24,7 +18,9 @@ class RelatedAssetsUI extends React.Component {
     params: PropTypes.object.isRequired,
 
     /** If there is a :id user id  or :username on the path, this is the user record for it */
-    user: PropTypes.object,
+    //TODO: Strictly expect a user ID as the username is currently passed to this prop and
+    // may run into issues with duplicate or similar user names if they are not unique.
+    user: PropTypes.string,
 
     /** Currently logged in user.. or null if not logged in. */
     currUser: PropTypes.object,
@@ -34,6 +30,8 @@ class RelatedAssetsUI extends React.Component {
 
     /** An object with some info about the currently edited Asset - as defined in App.js' this.state */
     currentlyEditingAssetInfo: PropTypes.object.isRequired,
+
+    currUserProjects: PropTypes.array,
   }
 
   state = { activeIndex: 0, isModalOpen: false, searchQuery: '' }
@@ -60,8 +58,8 @@ class RelatedAssetsUI extends React.Component {
       e.stopPropagation()
     }
 
-    // TODO: get constants for keycodes probably they should be here: app/client/imports/components/Skills/Keybindings.js
-    // Ctrl (Cmd) + o (O)
+    // TODO: get constants for keycodes probably they should be here:
+    // app/client/imports/components/Skills/Keybindings.js Ctrl (Cmd) + o (O)
     if (e.which === 79 && (e.ctrlKey || e.metaKey)) {
       this.toggleModal()
       prevent()
@@ -201,8 +199,56 @@ class RelatedAssetsUI extends React.Component {
     }
   }
 
+  renderItem = a => {
+    const { currUser } = this.props
+
+    return {
+      key: a._id,
+      as: QLink,
+      'data-kind': a.kind,
+      // onClick: this.closeAll,
+      to: `/u/${a.dn_ownerName}/asset/${a._id}`,
+      // active: activeIndex === index,
+      style: { color: AssetKinds.getColor(a.kind) },
+      icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
+      content: currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
+    }
+  }
+
+  handleClickAccordion = index => {
+    const { activeIndex } = this.state
+    if (activeIndex === index) index = -1
+
+    this.setState({ activeIndex: index })
+  }
+
+  getPrettyKind = kind => {
+    switch (kind) {
+      case 'actormap':
+        return 'Actor Maps'
+      case 'map':
+        return 'Maps'
+      case 'graphic':
+        return 'Graphics'
+      case 'actor':
+        return 'Actors'
+      case 'sound':
+        return 'Sounds'
+      case 'music':
+        return 'Music'
+      case 'code':
+        return 'Code'
+      case 'game':
+        return 'Games'
+      case 'tutorial':
+        return 'Tutorials'
+      default:
+        return 'Other Assets'
+    }
+  }
+
   renderRelatedAssetsList = () => {
-    const { currUser, assets, loading, user } = this.props
+    const { currUser, currUserProjects, assets, loading, user } = this.props
     const { activeIndex, searchQuery } = this.state
 
     const contextualProjectName = getContextualProjectName(this.props)
@@ -225,18 +271,12 @@ class RelatedAssetsUI extends React.Component {
     )
 
     return (
-      <div style={{ minWidth: '20em' }}>
-        <Header size="small">
-          Related Assets
-          <Header.Subheader style={{ display: 'inline-block', marginLeft: '1em' }}>
-            [Ctrl + O]
-          </Header.Subheader>
-        </Header>
+      <div>
+        <Header>Assets</Header>
         {hasAssets && (
           <Input
             id="mgb-related-assets-input" // so it can be focused on open
             fluid
-            size="mini"
             icon="search"
             loading={loading}
             placeholder="Search"
@@ -244,26 +284,49 @@ class RelatedAssetsUI extends React.Component {
             onChange={this.handleSearchChange}
           />
         )}
-        {hasAssets && (
-          <List
-            id="mgb-related-assets-list"
-            selection
-            // Heads Up!
-            // Position relative is required for scrolling out of view active items into view
-            style={{ position: 'relative', maxHeight: '30em', minWidth: '18em', overflowY: 'auto' }}
-            items={_.map(filteredRelatedAssets, (a, index) => ({
-              key: a._id,
-              as: QLink,
-              onClick: this.closeAll,
-              to: `/u/${a.dn_ownerName}/asset/${a._id}`,
-              active: activeIndex === index,
-              style: { color: AssetKinds.getColor(a.kind) },
-              icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
-              content:
-                currUser && currUser.username === a.dn_ownerName ? a.name : `${a.dn_ownerName}:${a.name}`,
-            }))}
-          />
-        )}
+        {_.chain(filteredRelatedAssets)
+          .groupBy('kind')
+          .toPairs()
+          .map(([kind, assetsOfKind], index) => (
+            // <div key={kind}>
+            // <Divider horizontal>{kind}</Divider>
+            <Accordion
+              key={kind}
+              onClick={() => {
+                this.handleClickAccordion(index)
+              }}
+            >
+              <Accordion.Title
+                content={this.getPrettyKind(kind)}
+                active={activeIndex === index}
+                style={{ color: AssetKinds.getColor(kind) }}
+              />
+              <Accordion.Content
+                active={activeIndex === index}
+                content={
+                  <List
+                    key={kind}
+                    id="mgb-related-assets-list"
+                    selection
+                    items={_.map(assetsOfKind, (a, index) => ({
+                      key: a._id,
+                      as: QLink,
+                      onClick: this.closeAll,
+                      to: `/u/${a.dn_ownerName}/asset/${a._id}`,
+                      // active: activeIndex === index,
+                      style: { color: AssetKinds.getColor(a.kind) },
+                      icon: { name: AssetKinds.getIconName(a.kind), color: AssetKinds.getColor(a.kind) },
+                      content:
+                        currUser && currUser.username === a.dn_ownerName
+                          ? a.name
+                          : `${a.dn_ownerName}: ${a.name}`,
+                    }))}
+                  />
+                }
+              />
+            </Accordion>
+          ))
+          .value()}
         {!hasAssets && (
           <Segment secondary textAlign="center">
             <Header icon color="grey">
@@ -280,18 +343,6 @@ class RelatedAssetsUI extends React.Component {
             </p>
           </Segment>
         )}
-        <Divider />
-        <Button
-          as={QLink}
-          to="/assets/create"
-          query={{ projectName: contextualProjectName }}
-          compact
-          floated="right"
-          size="tiny"
-          color="green"
-          content="Create [Ctrl + Alt + N]"
-        />
-        <Divider hidden fitted clearing />
       </div>
     )
   }
@@ -328,13 +379,7 @@ class RelatedAssetsUI extends React.Component {
         onClose={this.closePopup}
         position="bottom left"
         trigger={
-          <Button
-            style={{ marginRight: '1rem' }}
-            primary
-            size="small"
-            content="Related Assets"
-            icon="dropdown"
-          />
+          <Button style={{ marginRight: '1rem' }} primary size="small" content="Assets" icon="dropdown" />
         }
       >
         <Popup.Content>{this.renderRelatedAssetsList()}</Popup.Content>
@@ -343,29 +388,27 @@ class RelatedAssetsUI extends React.Component {
   }
 
   render() {
-    return (
-      <div>
-        {this.renderPopup()}
-        {this.renderModal()}
-      </div>
-    )
+    return this.renderRelatedAssetsList()
   }
 }
 
 const RelatedAssets = createContainer(props => {
-  const { user, currUser, currentlyEditingAssetInfo, location, params } = props
+  const { user, currUser, currentlyEditingAssetInfo, location, params, projectName } = props
+  const defaultProject = getContextualProjectName({ location, currentlyEditingAssetInfo, params })
   const handleForAssets = Meteor.subscribe(
     'assets.public.nameInfo.query',
-    _.get(user || currUser, '_id', null),
+    _.get(user || currUser, '_id', null), // UserId
     null, // assetKinds=all
     '', // Search for string in name
-    getContextualProjectName({ location, currentlyEditingAssetInfo, params }),
-    false,
-    false,
+    projectName || defaultProject, // check for override project, then default to auto resolution
+    false, // show deleted?
+    false, // show stable?
     'edited', // Sort by recently edited
-    user || currUser
+    user || currUser // Limit results to global limit in special globals
       ? SpecialGlobals.relatedAssets.limit.withUser
       : SpecialGlobals.relatedAssets.limit.noContext,
+    // hide workstate mask = 0
+    // show challenge assets = false
   )
 
   return {

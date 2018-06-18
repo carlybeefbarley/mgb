@@ -1,11 +1,12 @@
 import _ from 'lodash'
-import { Button, Icon, Segment } from 'semantic-ui-react'
+import { Button, Segment } from 'semantic-ui-react'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 import { Users } from '/imports/schemas'
 import UserCard from '../Users/UserCard'
+import Spinner from '/client/imports/components/Nav/Spinner'
 
 const _nowrapStyle = {
   display: 'flex',
@@ -13,10 +14,6 @@ const _nowrapStyle = {
   flexWrap: 'nowrap',
   overflowX: 'auto',
   overflowY: 'hidden',
-}
-
-const _buttonStyle = {
-  width: '116px', // This should match the narrow UserCard width
 }
 
 // ...GET - because this is a component that GETs it's own data via getMeteorData() callback
@@ -48,26 +45,24 @@ const ProjectMembersGET = React.createClass({
     const { enableLeaveButton, enableRemoveButton } = this.props
 
     return _.map(this.data.users, user => (
-      <Segment basic key={user._id} style={{ marginTop: 0 }}>
-        <UserCard narrowItem user={user} style={{ paddingBottom: 0 }} />
-        <div className="ui bottom attached buttons">
-          {enableLeaveButton && enableLeaveButton === user._id ? (
-            <Button
-              style={_buttonStyle}
-              onClick={this.handleLeave.bind(this, user)}
-              icon={{ name: 'sign out', color: 'red' }}
-              content="Leave"
-            />
-          ) : enableRemoveButton ? (
-            <Button
-              style={_buttonStyle}
-              onClick={this.handleRemove.bind(this, user)}
-              icon={{ name: 'remove', color: 'red' }}
-              content="Remove"
-            />
-          ) : null}
-        </div>
-      </Segment>
+      <div key={user._id} style={{ margin: '0 1em 1em 0' }}>
+        <UserCard narrowItem user={user} style={{ marginBottom: 0 }} />
+        {enableLeaveButton && enableLeaveButton === user._id ? (
+          <Button
+            fluid
+            onClick={this.handleLeave.bind(this, user)}
+            icon={{ name: 'sign out', color: 'red' }}
+            content="Leave"
+          />
+        ) : enableRemoveButton ? (
+          <Button
+            fluid
+            onClick={this.handleRemove.bind(this, user)}
+            icon={{ name: 'remove', color: 'red' }}
+            content="Remove"
+          />
+        ) : null}
+      </div>
     ))
   },
 
@@ -82,7 +77,15 @@ const ProjectMembersGET = React.createClass({
   },
 
   render() {
-    if (this.data.loading) return null
+    if (this.data.loading) return <Spinner />
+
+    if (_.isEmpty(this.data.users)) {
+      return (
+        <Segment tertiary style={{ padding: '6vh 0' }} textAlign="center">
+          Add some members to get started.
+        </Segment>
+      )
+    }
 
     return <div style={_nowrapStyle}>{this.renderMembers()}</div>
   },

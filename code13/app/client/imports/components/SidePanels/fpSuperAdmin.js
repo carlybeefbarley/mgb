@@ -6,6 +6,7 @@ import { Button, Menu, Header, List, Segment } from 'semantic-ui-react'
 import { isSameUser } from '/imports/schemas/users'
 import moment from 'moment'
 import FlagsModerate from '/client/imports/components/Controls/FlagsModerate'
+import { utilPushTo } from '/client/imports/routes/QLink'
 
 const outlinkLi = (txt, url, key) => (
   <List.Item key={key}>
@@ -41,6 +42,7 @@ const LinkTabContent = () => (
           <small>Newest users</small>
         </QLink>
       </List.Item>
+      {linkLi('Administrators Panel', '/devpanel')}
       {linkLi('localhost/v2 flipside', _getFlipsideUrl())}
       {linkLi('Slack', 'https://devlapse.slack.com/messages/mgb-dev')}
       {linkLi('Github', 'https://github.com/devlapse/mgb')}

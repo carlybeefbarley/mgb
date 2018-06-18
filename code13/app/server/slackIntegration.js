@@ -15,7 +15,7 @@ const mgb_slack_eng__webhookUrl_mgb_deploys =
 const DISABLE_SLACK_NOTIFICATIONS = false
 
 const MUTE_ASSET_CREATE_NOTIFICATIONS = true
-const MUTE_ASSET_AND_PROJECT_CREATE_FOR_SPECIAL_USERS = 'tester,stauzs,dgolds,Bouhm,guntis,SuperAdmin'.split(
+const MUTE_ASSET_AND_PROJECT_CREATE_FOR_SPECIAL_USERS = 'tester,stauzs,dgolds,Bouhm,guntis,SuperAdmin,teacher2'.split(
   ',',
 )
 

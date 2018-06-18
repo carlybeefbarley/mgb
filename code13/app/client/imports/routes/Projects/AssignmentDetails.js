@@ -3,9 +3,10 @@ import { Segment, Header, Message, Icon, List } from 'semantic-ui-react'
 
 const AssignmentDetails = props => (
   <Segment raised padded style={{ flex: '1 1 100%', margin: 0 }}>
-    <Header as="h3">Assignment 1</Header>
-    <p>{props.detail}</p>
-    <Header as="h4">Due date: {props.dueDate}</Header>
+    <Header>
+      {props.name} - Due {props.dueDate}
+    </Header>
+    <div dangerouslySetInnerHTML={{ __html: props.detail }} />
     {props.isStudent && (
       <Message icon warning>
         <Message.Content>

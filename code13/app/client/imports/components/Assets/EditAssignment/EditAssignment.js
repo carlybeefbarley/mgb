@@ -7,10 +7,12 @@ import CreateProjectLinkButton from '/client/imports/components/Projects/NewProj
 import { showToast } from '/client/imports/modules'
 import { logActivity } from '/imports/schemas/activity'
 import { utilPushTo } from '/client/imports/routes/QLink'
+import ReactQuill from 'react-quill'
 
 const _defaultAssignmentMetadata = {
   assignmentDetail: '',
   dueDate: '',
+  workState: 'unknown',
 }
 
 class EditAssignmentForm extends BaseForm {
@@ -21,7 +23,7 @@ class EditAssignmentForm extends BaseForm {
   render() {
     return (
       <div className="ui form">
-        {this.textArea('Assignment Detail', 'assignmentDetail')}
+        {this.textEditor('Assignment Detail', 'assignmentDetail')}
         {this.bool('Is Team Project', 'isTeamProject')}
         {this.date('Due Date', 'dueDate')}
         {this.dropArea('Code', 'defaultAssetName', 'code', null)}
@@ -53,14 +55,14 @@ export default class EditAssignment extends React.Component {
   }
 
   handleCreateProjectFromAssignment = () => {
-    console.log(this)
     const { currUser, asset: { _id, name, text, metadata: { assignmentDetail, dueDate } } } = this.props
     let newProj = {
       name,
       description: text,
       assignmentDetail,
       assignmentId: _id,
-      dueDate: dueDate.toString(),
+      dueDate,
+      workState: 'unknown',
     }
 
     Meteor.call('Projects.create', newProj, (error, result) => {
@@ -81,7 +83,7 @@ export default class EditAssignment extends React.Component {
     return (
       <Grid centered container>
         <Grid.Column className="edit-assignment">
-          <Button onClick={this.handleCreateProjectFromAssignment}>Create Project</Button>
+          <Button onClick={this.handleCreateProjectFromAssignment} content="Create Project" />
           <EditAssignmentForm
             asset={asset}
             canEdit={canEdit}

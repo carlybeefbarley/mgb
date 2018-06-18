@@ -34,7 +34,6 @@ import { isUserSuperAdmin } from '/imports/schemas/roles'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 import { withMeteorData } from '../../hocs'
-import { getProjectAvatarUrl } from '../../helpers/assetFetchers'
 import StudentListGET from '/client/imports/routes/Projects/StudentListGET.js'
 import AssignmentDetails from './AssignmentDetails'
 import ChatPanel from '/client/imports/components/Assets/ChatPanel.js'
@@ -64,6 +63,27 @@ class AssignmentOverview extends Component {
   componentDidMount() {
     // setTimeou just to be sure that everything is loaded
     setTimeout(() => Hotjar('trigger', 'project-overview', this.props.currUser), 200)
+  }
+
+  // This should not conflict with the deferred changes since those don't change these fields :)
+  handleWorkStateChange = newWorkState => {
+    const { _id, workState } = this.props.project
+    const oldState = workState
+    if (newWorkState !== oldState) {
+      Meteor.call('Projects.update', _id, { workState: newWorkState }, (err, res) => {
+        if (err) showToast.error(err.reason)
+      })
+      logActivity(
+        'project.workState',
+        `WorkState changed from ${oldState} to "${newWorkState}"`,
+        null,
+        this.props.project,
+      )
+    }
+  }
+
+  handleSubmitAssignment = () => {
+    this.handleWorkStateChange('needs review')
   }
 
   handleDeleteProject = () => {
@@ -143,27 +163,39 @@ class AssignmentOverview extends Component {
       height: '20em',
     }
 
-    const { assignmentDetail, dueDate } = this.props.project
+    const { name, assignmentDetail, dueDate } = this.props.project
     const { confirmDeleteNum, isDeleteComplete, isDeletePending } = this.state
 
     return (
       <Grid.Column>
         <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em', width: '100%' }}>
-          <Button
-            labelPosition="left"
-            icon="trash"
-            disabled={isDeleteComplete || isDeletePending}
-            content={
-              confirmDeleteNum < 0 ? 'Delete' : `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`
-            }
-            color={confirmDeleteNum < 0 ? null : 'red'}
-            onClick={confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject}
-          />
+          <div style={{ float: 'right' }}>
+            <Button
+              labelPosition="left"
+              icon="trash"
+              disabled={isDeleteComplete || isDeletePending}
+              content={
+                confirmDeleteNum < 0 ? (
+                  'Delete'
+                ) : (
+                  `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`
+                )
+              }
+              color={confirmDeleteNum < 0 ? null : 'red'}
+              onClick={confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject}
+            />
+            <Button
+              labelPosition="left"
+              icon="calendar check"
+              content={'Submit Assignment'}
+              onClick={this.handleSubmitAssignment}
+            />
+          </div>
           <Grid.Row>
             <Header as="h2" color="grey" floated="left">
               Assignment Details
             </Header>
-            <AssignmentDetails detail={assignmentDetail} dueDate={dueDate} />
+            <AssignmentDetails name={name} detail={assignmentDetail} dueDate={dueDate} />
           </Grid.Row>
           <Grid.Row stretched>
             <Grid.Column style={{ height: 'auto' }}>
@@ -248,6 +280,8 @@ class AssignmentOverview extends Component {
 
     const currUser = Meteor.user()
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: 'Rz3yh9K5zCHZxvEWJ' })
+
+    console.log(this)
 
     return (
       <Grid columns="equal" padded style={{ flex: '1 1 0' }}>

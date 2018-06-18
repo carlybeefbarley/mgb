@@ -8,6 +8,13 @@ export const makeClassroomSelector = () => {
   return 0
 }
 
+const canEditClassroom = (classroom, userId) => {
+  if (_.includes(classroom.teacherIds, userId) || classroom.ownerId === userId) {
+    return true
+  }
+  return false
+}
+
 const optional = Match.Optional
 
 const schema = {
@@ -71,14 +78,29 @@ Meteor.methods({
     checkIsLoggedInAndNotSuspended()
     check(description, String)
     check(classroomId, String)
-    let user = Meteor.user(),
+    const user = Meteor.user(),
       targetDoc = Classrooms.findOne(classroomId)
 
     if (!targetDoc) {
       throw new Meteor.Error(404, 'File Not Found: Could not find document to update.')
-    } else if (_.includes(targetDoc.teacherIds, user._id) || targetDoc.ownerId === user._id) {
+    } else if (canEditClassroom(targetDoc, user._id)) {
       Classrooms.update({ _id: classroomId }, { $set: { description } })
       return targetDoc._id
+    } else {
+      throw new Meteor.Error(401, 'Unauthorized: User not permitted to edit this document.')
+    }
+  },
+  'Classroom.addTeacher'(classroomId, teacherId) {
+    checkIsLoggedInAndNotSuspended()
+    check(classroomId, String)
+    check(teacherId, String)
+    const user = Meteor.user(),
+      targetDoc = Classrooms.findOne(classroomId)
+
+    if (!targetDoc) {
+      throw new Meteor.Error(404, 'File Not Found: Could not find document to update.')
+    } else if (canEditClassroom(targetDoc, user._id)) {
+      Classrooms.update(classroomId, { $addToSet: { teacherIds: teacherId } })
     } else {
       throw new Meteor.Error(401, 'Unauthorized: User not permitted to edit this document.')
     }

@@ -859,6 +859,10 @@ class TeacherClassroom extends React.Component {
       textAlign: 'center',
     }
 
+    const cellStyle = {
+      textAlign: 'center',
+    }
+
     // const buttonStyle = {
     //   float: 'right',
     // }
@@ -933,21 +937,39 @@ class TeacherClassroom extends React.Component {
                   <Table.Body>
                     <Table.Row>
                       <Table.Cell collapsing>Jim Bob</Table.Cell>
-                      <Table.Cell>
+                      <Table.Cell style={cellStyle}>
                         <Icon name="check circle" color="green" />
                       </Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="check circle" color="green" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="check circle" color="green" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="x" color="red" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="check circle" color="green" />
+                      </Table.Cell>
                     </Table.Row>
                     <Table.Row>
                       <Table.Cell collapsing>Billy Bob Joe</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="check circle" color="green" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="x" color="red" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="x" color="red" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="x" color="red" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="x" color="red" />
+                      </Table.Cell>
                     </Table.Row>
                     <Table.Row>
                       <Table.Cell collapsing>Alexander Hamilton</Table.Cell>

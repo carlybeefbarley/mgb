@@ -15,6 +15,7 @@ import '/imports/schemas/assets-server-fork'
 import '/imports/schemas/assets-server-purge'
 
 import '/imports/schemas/sysvars'
+import '/imports/schemas/classrooms'
 import '/imports/schemas/projects'
 import '/imports/schemas/projects-server'
 import '/imports/schemas/activity'

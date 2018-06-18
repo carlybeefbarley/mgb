@@ -75,7 +75,10 @@ Meteor.methods({
       return exception
     }
   },
-
+  'Users.setPermissions'(id, permissions) {
+    let log = Users.update(id, { $set: { permissions } })
+    console.log(log)
+  },
   'User.setProfileImage'(url) {
     check(url, String)
     checkIsLoggedInAndNotSuspended()

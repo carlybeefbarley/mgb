@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 import validate from '/imports/schemas/validate'
+import { Users } from '/imports/schemas/'
 import { Container, Grid, Header, Segment, Form, Divider, Message, Image, Button } from 'semantic-ui-react'
 import LoginLinks from '../Users/LoginLinks'
 import Recaptcha from '/client/imports/components/Recaptcha/Recaptcha'
@@ -83,6 +84,10 @@ export default class DevPanelRoute extends Component {
     }
   }
 
+  handleSetPermissions = e => {
+    Meteor.call('Users.setPermissions', { _id: 'mGeXxx6is7zKhXgnL' }, teacherPermissions)
+  }
+
   handleSelect = event => {
     const salutationIndex = _.find(salutations, { text: event.target.innerText })
 
@@ -149,7 +154,14 @@ export default class DevPanelRoute extends Component {
                           onBlur={this.checkUserName}
                           placeholder={`${salutations[this.state.salutationIndex].text} Woodstock`}
                         />
-                        <Button fluid primary content="Submit Application" />
+                        <Button
+                          fluid
+                          primary
+                          content="Set Permissions"
+                          onClick={e => {
+                            this.handleSetPermissions(e)
+                          }}
+                        />
                         <Button
                           fluid
                           color="red"

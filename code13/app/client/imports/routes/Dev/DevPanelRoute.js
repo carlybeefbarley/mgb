@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 import validate from '/imports/schemas/validate'
-import { Users } from '/imports/schemas/'
 import { Container, Grid, Header, Segment, Form, Divider, Message, Image, Button } from 'semantic-ui-react'
 import LoginLinks from '../Users/LoginLinks'
 import Recaptcha from '/client/imports/components/Recaptcha/Recaptcha'
@@ -29,17 +28,20 @@ const teacherPermissions = {
 
 export default class DevPanelRoute extends Component {
   state = {
-    errors: {},
-    formData: { salutation: 0 },
+    errors: { teacher: {}, student: {} },
+    formDataTeacher: { salutation: 0 },
+    formDataStudent: {},
     isLoading: false,
     isRecaptchaComplete: false,
     salutationIndex: 0,
   }
 
-  handleSubmit = event => {
+  handleSubmit = target => {
     event.preventDefault()
-    const { institution, email, username } = this.state.formData
+    const { email, username } = this.state.formDataTeacher
     const { salutationIndex } = this.state
+    const teacherErrors = this.state.errors.teacher
+    const studentErrors = this.state.errors.student
     const salutation = salutations[salutationIndex].text
 
     const errors = {
@@ -49,7 +51,7 @@ export default class DevPanelRoute extends Component {
 
     let data = {
       username,
-      email,
+      emails: [{ address: email, verified: false }],
       profile: {
         name: username,
         institution: 'Academy of Interactive Entertainment',
@@ -58,8 +60,11 @@ export default class DevPanelRoute extends Component {
       permissions: [teacherPermissions],
     }
 
-    if (_.some(errors)) {
-      this.setState({ errors })
+    if (_.some(errors) && target === 'teacher') {
+      this.setState({ errors: { teacher: errors, student: studentErrors } })
+      return
+    } else if (_.some(errors) && target === 'student') {
+      this.setState({ errors: { teacher: teacherErrors, student: errors } })
       return
     }
 
@@ -69,14 +74,29 @@ export default class DevPanelRoute extends Component {
     console.log('Returned ID is :', enrollId)
   }
 
-  handleChange = e => {
+  handleChangeTeacher = e => {
     const { name, value } = e.target
     console.dir(e.target.value)
     if (value) {
       this.setState((prevState, props) => {
         return {
-          formData: {
-            ...prevState.formData,
+          formDataTeacher: {
+            ...prevState.formDataTeacher,
+            [name]: value,
+          },
+        }
+      })
+    }
+  }
+
+  handleStudentChange = e => {
+    const { name, value } = e.target
+    console.dir(e.target.value)
+    if (value) {
+      this.setState((prevState, props) => {
+        return {
+          formDataStudent: {
+            ...prevState.formDataStudent,
             [name]: value,
           },
         }
@@ -101,7 +121,7 @@ export default class DevPanelRoute extends Component {
   }
 
   render() {
-    const { isLoading, errors, formData, isRecaptchaComplete } = this.state
+    const { isLoading, errors, formDataTeacher, isRecaptchaComplete } = this.state
     const { currUser } = this.props
 
     let renderItem
@@ -116,20 +136,13 @@ export default class DevPanelRoute extends Component {
               <Container text>
                 <Grid padded columns="equal" verticalAlign="middle">
                   <Grid.Column>
-                    <Header as="h2" inverted content="Sign Up" />
+                    <Header as="h2" content="Sign Up Invite - Teacher" />
                     <Segment stacked>
                       <Form
-                        onChange={this.handleChange}
-                        onSubmit={e => this.handleSubmit(e)}
+                        onChange={this.handleChangeTeacher}
+                        onSubmit={() => this.handleSubmit('teacher')}
                         loading={isLoading}
                       >
-                        <Form.Input
-                          icon="university"
-                          label={'Institution'}
-                          name="institution"
-                          placeholder="Clark County High"
-                          type="institution"
-                        />
                         <Form.Input
                           error={!!errors.email}
                           icon="envelope"
@@ -166,8 +179,8 @@ export default class DevPanelRoute extends Component {
                           fluid
                           color="red"
                           content="Send Enrollment Email"
-                          onClick={e => {
-                            this.handleSubmit(e)
+                          onClick={() => {
+                            this.handleSubmit('teacher')
                           }}
                         />
                       </Form>
@@ -180,9 +193,59 @@ export default class DevPanelRoute extends Component {
                     <Image src="/images/mascots/team.png" />
                   </Grid.Column>
                 </Grid>
-                <Divider />
-                <Segment>{`${salutations[this.state.salutationIndex].text} ${this.state.formData.username ||
-                  ''}`}</Segment>
+                <Divider /> {/************** STUDENT STUFF BELOW *****************/}
+                <Grid padded columns="equal" verticalAlign="middle">
+                  <Grid.Column>
+                    <Header as="h2" content="Sign Up - Student (Testing only)" />
+                    <Segment stacked>
+                      <Form
+                        onChange={this.handleStudentChange}
+                        onSubmit={() => this.handleSubmit('student')}
+                        loading={isLoading}
+                      >
+                        <Form.Input
+                          error={!!errors.email}
+                          icon="envelope"
+                          label={errors.teacher.email || 'Email'}
+                          name="email"
+                          onBlur={this.checkEmail}
+                          placeholder="c.woodstock@CCH.edu"
+                          type="email"
+                        />
+                        <Form.Input
+                          error={!!errors.teacher.username}
+                          icon="user"
+                          label={errors.teacher.username || 'Username (used for profile)'}
+                          name="username"
+                          onBlur={this.checkUserName}
+                          placeholder={`${salutations[this.state.salutationIndex].text} Woodstock`}
+                        />
+                        <Button
+                          fluid
+                          primary
+                          content="Set Permissions"
+                          onClick={e => {
+                            this.handleSetPermissions(e)
+                          }}
+                        />
+                        <Button
+                          fluid
+                          color="red"
+                          content="Enroll Student"
+                          onClick={() => {
+                            this.handleSubmit('student')
+                          }}
+                        />
+                      </Form>
+                    </Segment>
+                    {errors.teacher.server && <Message error content={errors.teacher.server} />}
+                    {!currUser && <LoginLinks showLogin />}
+                  </Grid.Column>
+                  <Grid.Column width={8} only="tablet computer" style={mascotColumnStyle}>
+                    <Divider hidden section />
+                    {/* <Image src="/images/mascots/team.png" /> */}
+                  </Grid.Column>
+                </Grid>
               </Container>
             </Segment>
           }

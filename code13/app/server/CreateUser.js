@@ -1,7 +1,9 @@
 import _ from 'lodash'
 import { Accounts } from 'meteor/accounts-base'
 import validate from '/imports/schemas/validate'
+import { schema } from '/imports/schemas/users'
 import md5 from 'blueimp-md5'
+import { Match, check } from 'meteor/check'
 
 // This is all server-only code
 
@@ -19,16 +21,32 @@ Meteor.methods({
 
 Meteor.methods({
   'AccountsCreate.teacher'(data) {
+    // check(data, _.omit(schema, '_id'))
     let userId = Accounts.createUser(data)
     console.log('Teacher User Id:', userId)
-    Accounts.sendEnrollmentEmail(userId)
+    // Accounts.sendEnrollmentEmail(userId)
     return userId
+  },
+})
+
+Meteor.methods({
+  'AccountsCreate.student'(data) {
+    check(data, _.omit(schema, '_id'))
+    let userId = Accounts.createUser(data)
+    console.log('Student User Id:', userId)
+    Accounts.sendEnrollmentEmail(userId)
   },
 })
 
 const getGravatarUrl = email => '//www.gravatar.com/avatar/' + md5(email.trim().toLowerCase()) + '?s=155&d=mm'
 
 Accounts.validateNewUser(function(user) {
+  if (user.emails === undefined) {
+    console.warn(
+      'User was created as untrusted, account must be signed into first before validation can take place.',
+    )
+    return true
+  }
   const { emails, username, profile } = user
   if (!emails || !_.isArray(emails) || emails.length === 0)
     throw new Meteor.Error(403, 'Server response: new user emails array is invalid')
@@ -104,15 +122,26 @@ Accounts.onCreateUser(function(options, user) {
 
   // handle when enrolling user without a password (!user.services)
   // handle user sign up with the password service
-  if (_.isEmpty(user.services) || user.services.password) {
+  // console.log(user.emails[0])
+  console.log(_.isEmpty(user.services))
+  console.log(!_.isEmpty(user.services.password))
+  if (_.isEmpty(user.services) || !_.isEmpty(user.services.password)) {
+    let gravatarUrl, unverified
     if (options.profile) {
-      const gravatarUrl = getGravatarUrl(user.emails[0].address)
+      if (options.emails) {
+        gravatarUrl = getGravatarUrl(options.emails[0].address)
+        unverified = true
+      } else if (user.emails) {
+        gravatarUrl = getGravatarUrl(user.emails[0].address)
+        unverified = false
+      }
       // Extra checks for validity like is done in Meteor.call("User.updateProfile")" ?
       user.profile = options.profile
       // actual image picked by user to display
       user.profile.avatar = gravatarUrl
       // collection of images in users account
       user.profile.images = [gravatarUrl]
+      unverified ? (user.emails = options.emails) : null
     }
   }
 

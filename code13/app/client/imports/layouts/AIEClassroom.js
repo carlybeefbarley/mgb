@@ -272,6 +272,81 @@ class PastClassAssignmentsList extends React.Component {
   }
 }
 
+class SubmissionFeed extends React.Component {
+  render() {
+    return (
+      <List>
+        <List.Item key="id">
+          <List.Content style={{ width: '100%' }}>
+            <List.Content floated="right">
+              <small style={{ color: 'lightgray' }}>date submitted</small>
+            </List.Content>
+            <List.Header>Student Name</List.Header>
+            <List.Description>
+              <small>Assignment Name</small>
+            </List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item key="id2">
+          <List.Content style={{ width: '100%' }}>
+            <List.Content floated="right">
+              <small style={{ color: 'lightgray' }}>date submitted</small>
+            </List.Content>
+            <List.Header>Student Name</List.Header>
+            <List.Description>
+              <small>Assignment Name</small>
+            </List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item key="id3">
+          <List.Content style={{ width: '100%' }}>
+            <List.Content floated="right">
+              <small style={{ color: 'lightgray' }}>date submitted</small>
+            </List.Content>
+            <List.Header>Student Name</List.Header>
+            <List.Description>
+              <small>Assignment Name</small>
+            </List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item key="id4">
+          <List.Content style={{ width: '100%' }}>
+            <List.Content floated="right">
+              <small style={{ color: 'lightgray' }}>date submitted</small>
+            </List.Content>
+            <List.Header>Student Name</List.Header>
+            <List.Description>
+              <small>Assignment Name</small>
+            </List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item key="id5">
+          <List.Content style={{ width: '100%' }}>
+            <List.Content floated="right">
+              <small style={{ color: 'lightgray' }}>date submitted</small>
+            </List.Content>
+            <List.Header>Student Name</List.Header>
+            <List.Description>
+              <small>Assignment Name</small>
+            </List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item key="id6">
+          <List.Content style={{ width: '100%' }}>
+            <List.Content floated="right">
+              <small style={{ color: 'lightgray' }}>date submitted</small>
+            </List.Content>
+            <List.Header>Student Name</List.Header>
+            <List.Description>
+              <small>Assignment Name</small>
+            </List.Description>
+          </List.Content>
+        </List.Item>
+      </List>
+    )
+  }
+}
+
 class Dashboard extends React.Component {
   static propTypes = {
     currUser: PropTypes.object,
@@ -1114,6 +1189,16 @@ class TeacherDashboard extends React.Component {
       textAlign: 'center',
     }
 
+    const inputStyle = {
+      minHeight: '10em',
+      width: '100%',
+      opacity: '0.9',
+    }
+
+    const ulStyle = {
+      listStyleType: 'square',
+      padding: '5px',
+    }
     return (
       <div style={containerStyle}>
         <Grid columns={1} padded>
@@ -1150,7 +1235,7 @@ class TeacherDashboard extends React.Component {
             <Grid.Column width={11}>
               <Segment raised color="blue">
                 <Header as="h2" content="Your Classes" />
-                <ul>
+                <ul style={ulStyle}>
                   <li>Animation Class</li>
                   <li>JavaScript Class</li>
                   <li>Phaser Class</li>
@@ -1166,6 +1251,20 @@ class TeacherDashboard extends React.Component {
             <Grid.Row>
               <Segment raised color="yellow">
                 <Header as="h2" content="Submission Feed" />
+                <SubmissionFeed />
+              </Segment>
+            </Grid.Row>
+          </Grid.Column>
+        </Grid>
+        <Grid columns={1} padded stackable>
+          <Grid.Column width={16}>
+            <Grid.Row>
+              <Segment raised color="purple">
+                <Header as="h2" content="About You" />
+                <TextArea
+                  placeholder="Let your students know a little bit about your background and what kind of games you have worked on"
+                  style={inputStyle}
+                />
               </Segment>
             </Grid.Row>
           </Grid.Column>

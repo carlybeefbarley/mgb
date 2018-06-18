@@ -1,21 +1,15 @@
-import _ from 'lodash'
 import { Classrooms } from '/imports/schemas'
+import { check } from 'meteor/check'
 
-Meteor.publish('classrooms.byUserId', function(userId) {
-  // const byOwner = Classrooms.find({ ownerId: userId }),
-  //   byTeacherId = Classrooms.find({ teacherIds: userId }),
-  //   byStudentId = Classrooms.find({ studentIds: userId }),
-  const target = Classrooms.find({
+Meteor.publish('classrooms.byUserId', userId => {
+  check(userId, String)
+  const classroomsCursor = Classrooms.find({
     $or: [{ ownerId: userId }, { teacherIds: userId }, { studentIds: userId }],
   })
-
-  // let returnArray = _.union(_.union(byOwner, byTeacherId), byStudentId)
-
-  // console.log(target)
-  return target
-  // return Classrooms.find({ _id: sel })
+  return classroomsCursor
 })
 
-Meteor.publish('classrooms.oneClassroom', sel => {
-  return Classrooms.findOne(sel)
+Meteor.publish('classrooms.oneClassroom', classroomId => {
+  check(classroomId, String)
+  return Classrooms.findOne(classroomId)
 })

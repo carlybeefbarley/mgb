@@ -1,12 +1,7 @@
 import _ from 'lodash'
-import { Classrooms, Azzets } from '/imports/schemas'
+import { Classrooms } from '/imports/schemas'
 import { Match, check } from 'meteor/check'
-import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
-// import { swearjar } from '/server/imports/swearjar'
-
-export const makeClassroomSelector = () => {
-  return 0
-}
+import { checkIsLoggedInAndNotSuspended } from './checkMgb'
 
 const canEditClassroom = (classroom, userId) => {
   if (_.includes(classroom.teacherIds, userId) || classroom.ownerId === userId) {
@@ -54,13 +49,16 @@ const optional = Match.Optional
 
 const schema = {
   _id: String,
-  creatorId: String,
+  ownerId: String,
   // schoolId: String, // Used to determine rights for assets, chats, students, assignments etc.
   createdAt: Date,
-  teachers: optional([String]), // List of teacher account Ids
+  updatedAt: optional(Date),
   name: String,
-  students: optional([String]), //List of student account Ids
-  assignments: optional([String]), // List of asset IDs
+  description: String,
+  teacherIds: optional([String]), // List of teacher account Ids
+  studentIds: optional([String]), //List of student account Ids
+  isDeleted: Boolean, // Flag for marking classroom as deleted
+  assignmentAssetIds: optional([String]), // List of asset IDs
   // assetList: optional([String]),
   avatarAssetId: String,
 }
@@ -70,7 +68,6 @@ Meteor.methods({
     check(classroomId, String)
     check(avatarAssetId, String)
     checkIsLoggedInAndNotSuspended()
-    // Classrooms.update(classroomId, { $set: { avatarAssetId } })
     attemptUpdate(classroomId, { $set: { avatarAssetId } })
   },
 
@@ -84,18 +81,18 @@ Meteor.methods({
     let now = new Date(),
       user = Meteor.user(),
       newClassroom = {
-        name,
-        description,
+        ownerId: user._id,
         createdAt: now,
         updatedAt: now,
-        ownerId: user._id,
+        name,
+        description,
         teacherIds,
         studentIds,
         isDeleted: false,
         assignmentAssetIds: [],
         avatarAssetId: '', //TODO: Insert default classroom Asset ID
       }
-
+    check(newClassroom, _.omit(schema, '_id'))
     Classrooms.insert(newClassroom)
   },
 
@@ -103,135 +100,54 @@ Meteor.methods({
     checkIsLoggedInAndNotSuspended()
     check(description, String)
     check(classroomId, String)
-    // const user = Meteor.user(),
-    //   targetDoc = Classrooms.findOne(classroomId)
-
-    // if (!targetDoc) {
-    //   throw new Meteor.Error(404, 'File Not Found: Could not find document to update.')
-    // } else if (canEditClassroom(targetDoc, user._id)) {
-    //   Classrooms.update({ _id: classroomId }, { $set: { description } })
-    //   return targetDoc._id
-    // } else {
-    //   throw new Meteor.Error(401, 'Unauthorized: User not permitted to edit this document.')
-    // }
-
     attemptUpdate(classroomId, { $set: { description } })
   },
   'Classroom.addTeacher'(classroomId, teacherId) {
     checkIsLoggedInAndNotSuspended()
     check(classroomId, String)
     check(teacherId, String)
-    // const user = Meteor.user(),
-    //   targetDoc = Classrooms.findOne(classroomId)
-
-    // if (!targetDoc) {
-    //   throw new Meteor.Error(404, 'File Not Found: Could not find document to update.')
-    // } else if (canEditClassroom(targetDoc, user._id)) {
-    //   Classrooms.update(classroomId, { $addToSet: { teacherIds: teacherId } })
-    // } else {
-    //   throw new Meteor.Error(401, 'Unauthorized: User not permitted to edit this document.')
-    // }
-
     attemptUpdate(classroomId, { $addToSet: { teacherIds: teacherId } })
   },
   'Classroom.addStudent'(classroomId, studentId) {
     checkIsLoggedInAndNotSuspended()
     check(classroomId, String)
     check(studentId, String)
-    // const user = Meteor.user(),
-    //   targetDoc = Classrooms.findOne(classroomId)
-
-    // if (!targetDoc) {
-    //   throw new Meteor.Error(404, 'File Not Found: Could not find document to update.')
-    // } else if (canEditClassroom(targetDoc, user._id)) {
-    //   Classrooms.update(classroomId, { $addToSet: { studentIds: studentId } })
-    // } else {
-    //   throw new Meteor.Error(401, 'Unauthorized: User not permitted to edit this document.')
-    // }
-
     attemptUpdate(classroomId, { $addToSet: { studentIds: studentId } })
   },
   'Classroom.addAssignmentAsset'(classroomId, assetId) {
     checkIsLoggedInAndNotSuspended()
     check(classroomId, String)
     check(assetId, String)
-    // const user = Meteor.user(),
-    //   targetDoc = Classrooms.findOne(classroomId)
-
-    // if (!targetDoc) {
-    //   throw new Meteor.Error(404, 'File Not Found: Could not find document to update.')
-    // } else if (canEditClassroom(targetDoc, user._id)) {
-    //   Classrooms.update(classroomId, { $addToSet: { assignmentAssetIds: assetId } })
-    // } else {
-    //   throw new Meteor.Error(401, 'Unauthorized: User not permitted to edit this document.')
-    // }
-
     attemptUpdate(classroomId, { $addToSet: { assignmentAssetIds: assetId } })
   },
   'Classroom.removeTeacher'(classroomId, teacherId) {
     checkIsLoggedInAndNotSuspended()
     check(classroomId, String)
     check(teacherId, String)
-    // const user = Meteor.user(),
-    //   targetDoc = Classrooms.findOne(classroomId)
-
-    // if (!targetDoc) {
-    //   throw new Meteor.Error(404, 'File Not Found: Could not find document to update.')
-    // } else if (canEditClassroom(targetDoc, user._id)) {
-    //   Classrooms.update(classroomId, { $pull: { teacherIds: teacherId } })
-    // } else {
-    //   throw new Meteor.Error(401, 'Unauthorized: User not permitted to edit this document.')
-    // }
-
     attemptUpdate(classroomId, { $pull: { teacherIds: teacherId } })
   },
   'Classroom.removeStudent'(classroomId, studentId) {
     checkIsLoggedInAndNotSuspended()
     check(classroomId, String)
     check(studentId, String)
-    // const user = Meteor.user(),
-    //   targetDoc = Classrooms.findOne(classroomId)
-
-    // if (!targetDoc) {
-    //   throw new Meteor.Error(404, 'File Not Found: Could not find document to update.')
-    // } else if (canEditClassroom(targetDoc, user._id)) {
-    //   Classrooms.update(classroomId, { $pull: { studentIds: studentId } })
-    // } else {
-    //   throw new Meteor.Error(401, 'Unauthorized: User not permitted to edit this document.')
-    // }
-
     attemptUpdate(classroomId, { $pull: { studentIds: studentId } })
   },
   'Classroom.removeAssignmentAsset'(classroomId, assetId) {
     checkIsLoggedInAndNotSuspended()
     check(classroomId, String)
     check(assetId, String)
-    // const user = Meteor.user(),
-    //   targetDoc = Classrooms.findOne(classroomId)
-
-    // if (!targetDoc) {
-    //   throw new Meteor.Error(404, 'File Not Found: Could not find document to update.')
-    // } else if (canEditClassroom(targetDoc, user._id)) {
-    //   Classrooms.update(classroomId, { $pull: { assignmentAssetIds: assetId } })
-    // } else {
-    //   throw new Meteor.Error(401, 'Unauthorized: User not permitted to edit this document.')
-    // }
-
     attemptUpdate(classroomId, { $pull: { assignmentAssetIds: assetId } })
   },
   'Classroom.setIsDeleted'(classroomId, value) {
     checkIsLoggedInAndNotSuspended()
     check(classroomId, String)
     check(value, Boolean)
-    // const user = Meteor.user()
-
     attemptUpdate(classroomId, { $set: { isDeleted: value } })
   },
   'Classroom.setName'(classroomId, value) {
     checkIsLoggedInAndNotSuspended()
     check(classroomId, String)
     check(value, String)
-
     attemptUpdate(classroomId, { $set: { name: value } })
   },
 })

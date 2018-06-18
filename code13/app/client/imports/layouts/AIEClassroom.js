@@ -849,12 +849,12 @@ class TeacherClassroom extends React.Component {
     const { avatar } = currUser.profile
 
     const titleStyle = {
-      fontSize: '2em',
+      fontSize: '2.1em',
       textAlign: 'center',
     }
 
     const infoStyle = {
-      fontSize: '1.3em',
+      fontSize: '1.7em',
       textAlign: 'center',
     }
 
@@ -864,11 +864,13 @@ class TeacherClassroom extends React.Component {
 
     return (
       <div style={containerStyle}>
-        <Grid columns={2}>
-          <Grid.Column width={13} />
-          <Grid.Column width={3}>
+        {/* FLoating doesn't seem to work unless I include columns */}
+        <Grid columns={1} padded>
+          <Grid.Column width={16}>
             <div>
-              <Button floated="right">Add New Assignment</Button>
+              <Button color="orange" floated="right">
+                Add New Assignment
+              </Button>
             </div>
           </Grid.Column>
         </Grid>
@@ -900,6 +902,17 @@ class TeacherClassroom extends React.Component {
               </Segment>
             </Grid.Column>
           </Grid.Row>
+        </Grid>
+        <Grid columns={1} padded>
+          <Grid.Column width={16}>
+            <div>
+              <Button color="green" floated="right">
+                Add New Student
+              </Button>
+            </div>
+          </Grid.Column>
+        </Grid>
+        <Grid>
           <Grid.Row>
             <Table celled striped>
               <Table.Header>

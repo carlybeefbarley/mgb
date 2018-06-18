@@ -858,16 +858,21 @@ class TeacherClassroom extends React.Component {
       textAlign: 'center',
     }
 
-    const buttonStyle = {
-      float: 'right',
-    }
+    // const buttonStyle = {
+    //   float: 'right',
+    // }
 
     return (
       <div style={containerStyle}>
+        <Grid columns={2}>
+          <Grid.Column width={13} />
+          <Grid.Column width={3}>
+            <div>
+              <Button floated="right">Add New Assignment</Button>
+            </div>
+          </Grid.Column>
+        </Grid>
         <Grid columns={2} padded>
-          <Grid.Row style={buttonStyle}>
-            <Button floated="right">Add New Assignment</Button>
-          </Grid.Row>
           <Grid.Row>
             <Segment raised color="blue">
               <Header style={titleStyle} as="h1" content={`Classroom Dashboard`} />

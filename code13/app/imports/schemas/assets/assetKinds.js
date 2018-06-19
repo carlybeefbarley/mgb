@@ -81,16 +81,16 @@ export const AssetKinds = {
   //   description: "Physics configuration",
   //   explanation: 'Not yet implemented'
   // },
-  doc: {
-    name: 'Doc',
+  assignment: {
+    name: 'Assignment',
     selfPlural: false,
-    disable: true, // Disabled 9/23/2016 by dgolds
-    longName: 'Document',
+    disable: false,
+    longName: 'Assignment',
     icon: 'file text outline',
     color: 'grey',
-    requiresUserRole: roleSuperAdmin,
-    description: 'Text Document',
-    explanation: 'Not yet implemented',
+    requiresUserRole: null,
+    description: 'Assignment',
+    explanation: 'A class assignment with a due date.',
   },
   // "cheatsheet": {
   //   name: "Cheatsheet",

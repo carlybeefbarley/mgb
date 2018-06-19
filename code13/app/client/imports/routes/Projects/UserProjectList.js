@@ -125,11 +125,13 @@ class UserProjectListUI extends React.PureComponent {
           <div id="mgbjr-project-search-searchStringInput">
             <InputSearchBox size="small" fluid value={qN.searchName} onFinalChange={this.handleSearchGo} />
           </div>
-          <WorkStateMultiSelect
-            hideMask={parseInt(qN.hidews)}
-            handleChangeMask={this.handleChangeWorkstateHideMask}
-            style={{ marginTop: '0.5em', textAlign: 'center' }}
-          />
+          {!(currUser.profile.isTeacher || currUser.profile.isStudent) && (
+            <WorkStateMultiSelect
+              hideMask={parseInt(qN.hidews)}
+              handleChangeMask={this.handleChangeWorkstateHideMask}
+              style={{ marginTop: '0.5em', textAlign: 'center' }}
+            />
+          )}
 
           <div style={{ marginTop: '1em', textAlign: 'center' }}>
             <Menu secondary compact borderless className="fitted">

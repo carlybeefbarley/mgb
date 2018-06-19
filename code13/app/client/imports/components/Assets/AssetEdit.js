@@ -24,10 +24,11 @@ const editElementsForKind = {
   map: { loader: () => import('./EditMap/EditMap') },
   actormap: { loader: () => import('./EditActorMap/EditActorMap') },
   actor: { loader: () => import('./EditActor/EditActor') },
-  doc: { loader: () => import('./EditDoc/EditDoc') },
+  assignment: { loader: () => import('./EditAssignment/EditAssignment') },
   sound: { loader: () => import('./EditAudio/EditSound/EditSound') },
   music: { loader: () => import('./EditAudio/EditMusic/EditMusic') },
-  game: { loader: () => import('./EditGame/EditGame') },
+  game: { loader: () => import('./EditAssignment/EditAssignment') },
+  //assignment: { loader: () => import('./EditAssignment/EditAssignment') },
 }
 
 const _omitPropsForEditors = [

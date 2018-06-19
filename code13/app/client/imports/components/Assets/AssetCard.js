@@ -15,22 +15,23 @@ import { showToast } from '/client/imports/modules'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
 import assetStore from '/client/imports/stores/assetStore'
+import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes'
 
 import UserLoves from '/client/imports/components/Controls/UserLoves'
+import { workStateQualities, workStateStatuses } from '../../../../imports/Enums/workStates'
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
 
 export const assetViewChoices = {
   s: {
     showFooter: false,
-    showWorkstate: true,
     showMeta: false,
     showExtra: false,
     showImg: false,
     tightRows: true,
   },
-  m: { showFooter: false, showWorkstate: true, showMeta: false, showExtra: true, showImg: true },
-  l: { showFooter: false, showWorkstate: true, showMeta: true, showExtra: true, showImg: true },
-  xl: { showFooter: true, showWorkstate: true, showMeta: true, showExtra: true, showImg: true },
+  m: { showFooter: false, showMeta: false, showExtra: true, showImg: true },
+  l: { showFooter: false, showMeta: true, showExtra: true, showImg: true },
+  xl: { showFooter: true, showMeta: true, showExtra: true, showImg: true },
 }
 
 const _preventOnMouseUpClickSteal = e => {
@@ -91,7 +92,7 @@ const AssetCard = React.createClass({
   render() {
     if (!this.props.asset) return null
 
-    const { renderView, asset, fluid, canEdit, classNames, ownersProjects } = this.props
+    const { renderView, asset, fluid, canEdit, classNames, ownersProjects, currUser } = this.props
     const assetKindIcon = AssetKinds.getIconName(asset.kind)
     const assetKindDescription = AssetKinds.getDescription(asset.kind)
     const assetKindName = AssetKinds.getName(asset.kind)
@@ -99,8 +100,6 @@ const AssetCard = React.createClass({
     const viewOpts = assetViewChoices[renderView]
     const numChildForks = _.isArray(asset.forkChildren) ? asset.forkChildren.length : 0
     const hasParentFork = _.isArray(asset.forkParentChain) && asset.forkParentChain.length > 0
-    const ago = moment(asset.updatedAt).fromNow() // TODO: Make reactive
-    const ownerName = asset.dn_ownerName
     const veryCompactButtonStyle = { paddingLeft: '0.25em', paddingRight: '0.25em' }
     const chosenProjectNamesArray = asset.projectNames || []
     const availableProjectNamesArray = ownersProjects
@@ -117,7 +116,13 @@ const AssetCard = React.createClass({
       </span>
     )
     const shownAssetName = asset.name || '(untitled)'
-    const currUser = Meteor.user()
+
+    const isChallenge = asset.skillPath && isPathChallenge(asset.skillPath)
+    const isCodeTutorial = asset.skillPath && isPathCodeTutorial(asset.skillPath)
+    const isClassroom =
+      (currUser && (currUser.profile.isTeacher || currUser.profile.isStudent)) ||
+      isChallenge ||
+      isCodeTutorial
 
     return (
       <Card
@@ -143,7 +148,7 @@ const AssetCard = React.createClass({
         </div>
 
         <Card.Content>
-          {viewOpts.showWorkstate && (
+          {!isClassroom && (
             <span style={{ float: 'right' }}>
               <span onMouseUp={_preventOnMouseUpClickSteal}>
                 <UserLoves
@@ -153,6 +158,7 @@ const AssetCard = React.createClass({
                   seeLovers={false}
                 />
               </span>
+
               <WorkState
                 workState={asset.workState}
                 size={viewOpts.showExtra ? null : 'small'}
@@ -160,7 +166,6 @@ const AssetCard = React.createClass({
               />
             </span>
           )}
-
           {!viewOpts.showExtra && (
             // This is used for SMALL sizes. It has a popup to show the Medium one!
             <Popup
@@ -185,9 +190,7 @@ const AssetCard = React.createClass({
               </div>
             </Popup>
           )}
-
           {viewOpts.showExtra && <Card.Header title={shownAssetName} content={shownAssetName} />}
-
           {viewOpts.showMeta && (
             <Card.Meta>
               <div>
@@ -203,10 +206,8 @@ const AssetCard = React.createClass({
               {editProjects}
             </Card.Meta>
           )}
-
           {viewOpts.showMeta &&
           (asset.text && asset.text !== '') && <Card.Description content={<small>{asset.text}</small>} />}
-
           {asset.isDeleted && (
             <div className="ui massive red corner label">
               <span style={{ fontSize: '10px', paddingLeft: '10px' }}>DELETED</span>

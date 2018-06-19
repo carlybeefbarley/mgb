@@ -1,8 +1,14 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { workStateNames, workStateIcons } from '/imports/Enums/workStates'
-import { Header, Icon, List, Popup } from 'semantic-ui-react'
+import {
+  workStateQualities,
+  workStateStatuses,
+  statusIcons,
+  qualityIcons,
+  statusColors,
+} from '/imports/Enums/workStates'
+import { Header, Label, Icon, List, Popup } from 'semantic-ui-react'
 import './WorkState.css'
 
 // Note that this is a Stateless function:
@@ -10,21 +16,21 @@ import './WorkState.css'
 
 export const WorkStateIcon = ({ workState, size, onIconClick, labelStyle }) => (
   <Icon
-    name={workStateIcons[workState]}
-    circular
+    inverted
+    name={qualityIcons[workState] || qualityIcons['unknown']}
     style={labelStyle}
-    color="black"
+    color="brown"
     size={size}
     onClick={onIconClick}
-    className={`mgb-workstate-${workState}`}
+    className={`workstate-icon mgb-workstate-${workState}`}
   />
 )
 
 const _hiddenWorkstateStyle = { opacity: 0.1 }
 export const WorkStateMultiSelect = ({ style, hideMask, handleChangeMask }) => (
   <div style={style}>
-    {_.map(workStateNames, (workState, idx) => (
-      <WorkState
+    {_.map(workStateQualities, (workState, idx) => (
+      <WorkStateQuality
         key={workState}
         workState={workState}
         popupPosition="bottom left"
@@ -36,10 +42,49 @@ export const WorkStateMultiSelect = ({ style, hideMask, handleChangeMask }) => (
   </div>
 )
 
-const WorkState = ({ workState, canEdit, size, popupPosition, handleChange, labelStyle, onIconClick }) => (
+const WorkState = ({
+  isClassroom,
+  workState,
+  canEdit,
+  size,
+  popupPosition,
+  handleChange,
+  labelStyle,
+  onIconClick,
+}) => (
+  <span className="workstate-container">
+    {!isClassroom ? (
+      <WorkStateQuality
+        workState={_.includes(workStateQualities, workState) ? workState : 'unknown'}
+        canEdit={canEdit}
+        size={size}
+        popupPosition={popupPosition}
+        handleChange={handleChange}
+        labelStyle={labelStyle}
+        onIconClick={onIconClick}
+      />
+    ) : (
+      <WorkStateStatus
+        workState={_.includes(workStateStatuses, workState) ? workState : 'unknown'}
+        size={size}
+        labelStyle={labelStyle}
+      />
+    )}
+  </span>
+)
+
+const WorkStateQuality = ({
+  workState,
+  canEdit,
+  size,
+  popupPosition,
+  handleChange,
+  labelStyle,
+  onIconClick,
+}) => (
   <Popup
     on="hover"
-    hoverable={canEdit} // So mouse-over popup keeps it visible for Edit for example
+    hoverable={!!canEdit} // So mouse-over popup keeps it visible for Edit for example
     position={popupPosition}
     trigger={
       <span>
@@ -51,7 +96,7 @@ const WorkState = ({ workState, canEdit, size, popupPosition, handleChange, labe
       <Header content="Quality level" />
       <List selection>
         {_.map(
-          workStateNames,
+          workStateQualities,
           name =>
             (canEdit || name == workState) && (
               <List.Item
@@ -70,6 +115,18 @@ const WorkState = ({ workState, canEdit, size, popupPosition, handleChange, labe
       </List>
     </div>
   </Popup>
+)
+
+const WorkStateStatus = ({ workState, size, labelStyle }) => (
+  <Label
+    className="workstate-label"
+    style={workState === 'unknown' ? { display: 'none', ...labelStyle } : labelStyle}
+    color={`${statusColors[workState]}`}
+    size={size}
+  >
+    <Icon name={statusIcons[workState]} />
+    {workState}
+  </Label>
 )
 
 WorkState.propTypes = {

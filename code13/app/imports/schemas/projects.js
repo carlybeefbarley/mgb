@@ -257,6 +257,7 @@ import SpecialGlobals from '/imports/SpecialGlobals.js'
 const optional = Match.Optional
 const schema = {
   _id: String,
+  assignmentId: optional(String), // if is project is an assignment
 
   createdAt: Date,
   updatedAt: Date,
@@ -282,7 +283,6 @@ const schema = {
   workState: String, // A value matching a key from workStates.js
   memberIds: [String], // Array of memberIds (User._id keys)
   avatarAssetId: String, // Asset that will be used as the avatar for this project (should be of kind=graphic)
-  assignmentId: optional(String),
 }
 
 // Helper functions

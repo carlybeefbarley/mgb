@@ -1,9 +1,10 @@
 import React from 'react'
-import { Checkbox } from 'semantic-ui-react'
-
+import { Checkbox, Button } from 'semantic-ui-react'
 import DropArea from './DropArea.js'
 import SmallDD from './SmallDD.js'
 import { joyrideStore } from '/client/imports/stores'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
 
 // This partial class uses the following React props..
 // propTypes: {
@@ -18,6 +19,14 @@ import { joyrideStore } from '/client/imports/stores'
 // }
 
 export default class BaseForm extends React.Component {
+  state = {
+    showQuillHtml: false,
+  }
+
+  handleToggleShowQuillHtml = () => {
+    this.setState({ showQuillHtml: !this.state.showQuillHtml })
+  }
+
   options(name, key, options, fieldOptions = {}, mgbjrCT = '', id = '', func) {
     let val = this.data[key]
     if (val === void 0) console.warn('value not defined for:', name + '[' + key + ']')
@@ -125,6 +134,81 @@ export default class BaseForm extends React.Component {
     )
   }
 
+  // Quill.js editor
+  textEditor(name, key, fieldOptions = {}) {
+    /*
+    * Quill modules to attach to editor
+    * See http://quilljs.com/docs/modules/ for complete options
+    */
+    const modules = {
+      toolbar: [
+        [{ header: [1, 2, false] }],
+        ['bold', 'italic', 'underline', 'strike', 'color', 'blockquote', 'code-block'],
+        [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+        ['link', 'image'],
+        ['clean'],
+      ],
+      clipboard: {
+        matchVisual: false,
+      },
+    }
+
+    /*
+     * Quill editor formats
+     * See http://quilljs.com/docs/formats/
+     */
+    const formats = [
+      'header',
+      'font',
+      'size',
+      'bold',
+      'italic',
+      'underline',
+      'strike',
+      'blockquote',
+      'code-block',
+      'code',
+      'list',
+      'bullet',
+      'indent',
+      'link',
+      'image',
+      'color',
+    ]
+
+    return (
+      <div
+        className={'field' + (fieldOptions.disabled ? ' disabled' : '')}
+        title={fieldOptions && fieldOptions.title}
+      >
+        <label>{name}</label>
+        {this.state.showQuillHtml ? (
+          <div>
+            <div
+              className="ql-container"
+              style={{ border: '1px solid lightgray', padding: '1em' }}
+              dangerouslySetInnerHTML={{ __html: this.data[key] }}
+            />
+            <Button icon="pencil" content="Edit" onClick={this.handleToggleShowQuillHtml} />
+          </div>
+        ) : (
+          <div>
+            <ReactQuill
+              modules={modules}
+              formats={formats}
+              defaultValue={this.data[key]}
+              onChange={content => {
+                this.data[key] = content // This is an HTML string
+                this.props.onChange && this.props.onChange()
+              }}
+            />
+            <Button icon="save" content="Save" onClick={this.handleToggleShowQuillHtml} />
+          </div>
+        )}
+      </div>
+    )
+  }
+
   dropArea(name, key, kind, fieldOptions, cb = null) {
     fieldOptions = fieldOptions || {}
     if (!this.data._ids) {
@@ -148,6 +232,27 @@ export default class BaseForm extends React.Component {
             this.data._ids[key] = asset ? asset._id : ''
             this.props.onChange && this.props.onChange()
             cb && cb(asset)
+          }}
+        />
+      </div>
+    )
+  }
+
+  date(name, key, fieldOptions = {}) {
+    return (
+      <div
+        className={'field' + (fieldOptions.disabled ? ' disabled' : '')}
+        title={fieldOptions && fieldOptions.title}
+      >
+        <label>{name}</label>
+        <input
+          {...fieldOptions}
+          type="date"
+          placeholder={name}
+          value={this.data[key]}
+          onChange={e => {
+            this.data[key] = e.target.value
+            this.props.onChange && this.props.onChange()
           }}
         />
       </div>

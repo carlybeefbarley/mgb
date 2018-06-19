@@ -3,18 +3,7 @@ const reactUpdate = require('react-addons-update')
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import {
-  Accordion,
-  Button,
-  Segment,
-  Table,
-  Modal,
-  Header,
-  Icon,
-  Dimmer,
-  Loader,
-  Image,
-} from 'semantic-ui-react'
+import { Button, Segment, Table, Modal, Header, Icon, Dimmer, Loader, Image } from 'semantic-ui-react'
 import Tabs from './CodeEditorTabs'
 
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
@@ -187,7 +176,7 @@ class EditCode extends React.Component {
     // indicates if code is challenge and/or tutorial
     this.isChallenge = this.props.asset.skillPath && isPathChallenge(this.props.asset.skillPath)
     this.isCodeTutorial = this.props.asset.skillPath && isPathCodeTutorial(this.props.asset.skillPath)
-    this.isTutorialView = this.isCodeTutorial || this.isChallenge
+    this.isTutorialView = this.isCodeTutorial || this.isChallenge || this.props.currUser.profile.isTeacher || this.props.currUser.profile.isStudent
   }
 
   handleJsBeautify() {

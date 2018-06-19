@@ -2,15 +2,14 @@
   <title>MGB</title>
   <!-- UTF-8 needed for draftjs-->
   <meta charset="utf-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-  <meta property="og:title" content="MyGameBuilder"/>
+  <meta property="og:title" content="MyGameBuilder" />
   <meta property="og:type" content="presentation" />
   <meta property="og:url" content="https://v2.mygamebuilder.com" />
   <meta property="og:image" content="https://v2.mygamebuilder.com/images/mascots/team.png" />
 
-  <meta property="twitter:title" content="MyGameBuilder"/>
+  <meta property="twitter:title" content="MyGameBuilder" />
   <meta property="twitter:url" content="https://v2.mygamebuilder.com" />
   <meta property="twitter:image" content="https://v2.mygamebuilder.com/images/mascots/team.png" />
 
@@ -39,14 +38,28 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
   <style type="text/css">
-    .widget-lint-error {font-family: arial; font-size: 90%; background: #ffa; color:#a00; padding: 4px 6px 3px; }
-    .widget-lint-error-icon {color: white; background-color: red; font-weight: bold; border-radius: 50%; padding: 0 3px; margin-right: 7px;}
+    .widget-lint-error {
+      font-family: arial;
+      font-size: 90%;
+      background: #ffa;
+      color: #a00;
+      padding: 4px 6px 3px;
+    }
+
+    .widget-lint-error-icon {
+      color: white;
+      background-color: red;
+      font-weight: bold;
+      border-radius: 50%;
+      padding: 0 3px;
+      margin-right: 7px;
+    }
   </style>
 
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jsonlint/1.6.0/jsonlint.min.js"></script>   If we need it in future... -->
 
   <!-- BEGIN TRACKJS -->
-  <script type="text/javascript">window._trackJs = { token: '52e4ee679f2e45fdbf102f6a683ff0fd',  application: "mgb2-main-website", enabled: !(window.location.host.indexOf('localhost') >= 0)};</script>
+  <script type="text/javascript">window._trackJs = { token: '52e4ee679f2e45fdbf102f6a683ff0fd', application: "mgb2-main-website", enabled: !(window.location.host.indexOf('localhost') >= 0) };</script>
   <script type="text/javascript" src="https://d2zah9y47r7bi2.cloudfront.net/releases/current/tracker.js"></script>
   <!-- END TRACKJS -->
 
@@ -63,22 +76,24 @@
 
   <!-- BEGIN GOOGLE ANALYTICS -->
   <script>
-  // https://www.google-analytics.com/analytics.js - production
-  // https://www.google-analytics.com/analytics_debug.js - debugging in console
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga')
+    // https://www.google-analytics.com/analytics.js - production
+    // https://www.google-analytics.com/analytics_debug.js - debugging in console
+    (function (i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date(); a = s.createElement(o),
+        m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga')
 
-  // Enabling trace debugging will output more verbose information to the console.
-  // window.ga_debug = {trace: true};
+    // Enabling trace debugging will output more verbose information to the console.
+    // window.ga_debug = {trace: true};
 
-  ga('create', 'UA-82379171-1', 'auto');
-  // don't send any data from localhost
-  // if (location.hostname == 'localhost') {
-  //   ga('set', 'sendHitTask', null);
-  // }
-  ga('send', 'pageview');
+    ga('create', 'UA-82379171-1', 'auto');
+    // don't send any data from localhost
+    // if (location.hostname == 'localhost') {
+    //   ga('set', 'sendHitTask', null);
+    // }
+    ga('send', 'pageview');
   </script>
   <!-- END GOOGLE ANALYTICS -->
 
@@ -87,7 +102,7 @@
     (function (w, d, s, l, i) {
       w[l] = w[l] || []; w[l].push({
         'gtm.start':
-        new Date().getTime(), event: 'gtm.js'
+          new Date().getTime(), event: 'gtm.js'
       }); var f = d.getElementsByTagName(s)[0],
         j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
           'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
@@ -97,8 +112,12 @@
 
   <!-- BEGIN CLICKY -->
   <script src="//static.getclicky.com/js" type="text/javascript"></script>
-<script type="text/javascript">try{ clicky.init(101033041); }catch(e){}</script>
-<noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/101033041ns.gif" /></p></noscript>
+  <script type="text/javascript">try { clicky.init(101033041); } catch (e) { }</script>
+  <noscript>
+    <p>
+      <img alt="Clicky" width="1" height="1" src="//in.getclicky.com/101033041ns.gif" />
+    </p>
+  </noscript>
   <!-- END CLICKY -->
 
 </head>

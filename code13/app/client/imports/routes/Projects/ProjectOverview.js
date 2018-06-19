@@ -2,20 +2,7 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import Helmet from 'react-helmet'
-import {
-  Divider,
-  Form,
-  Grid,
-  Input,
-  Segment,
-  Checkbox,
-  Message,
-  Modal,
-  Icon,
-  Header,
-  Button,
-  Popup,
-} from 'semantic-ui-react'
+import { Divider, Form, Grid, Input, Segment, Message, Icon, Header, Button, Popup } from 'semantic-ui-react'
 import { showToast } from '/client/imports/modules'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import { Projects } from '/imports/schemas'

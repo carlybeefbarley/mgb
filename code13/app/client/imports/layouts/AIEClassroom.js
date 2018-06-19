@@ -26,8 +26,10 @@ import UX from '/client/imports/UX'
 import HoverImage from 'react-hover-image'
 
 //import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
-
 //import RecentAssetAction from './Actions/RecentAssetAction'
+
+// Trying to decide if I should create a separate componenet for UserColleagueList
+// So that I can use the label "classmates," and fiddle the with UI
 
 class AssignmentsList extends React.Component {
   render() {
@@ -418,25 +420,35 @@ class Dashboard extends React.Component {
 
         {/* <Divider hidden /> */}
 
-        <Grid padded stackable>
-          <Grid.Column tablet={16} computer={16}>
-            <Segment raised color="yellow" style={aboutMeStyle}>
-              <Grid.Row>
-                <Header as="h2" content="About me" />
+        <Grid columns={1} padded stackable>
+          <Grid.Column width={16}>
+            <Grid.Row>
+              <Segment raised color="yellow">
+                <Header as="h2" content="About Me" />
                 <TextArea
                   placeholder="Tell the class a little about yourself and your goals for making games"
                   style={inputStyle}
                 />
-              </Grid.Row>
-              <hr />
-              <Grid.Row>
+              </Segment>
+            </Grid.Row>
+          </Grid.Column>
+        </Grid>
+        <Grid columns={1} padded stackable>
+          <Grid.Column width={16}>
+            <Grid.Row>
+              <Segment raised color="purple">
                 <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
-              </Grid.Row>
-              <hr />
-              <Grid.Row>
+              </Segment>
+            </Grid.Row>
+          </Grid.Column>
+        </Grid>
+        <Grid columns={1} padded stackable>
+          <Grid.Column width={16}>
+            <Grid.Row>
+              <Segment raised color="teal">
                 <UserProfileGamesList user={currUser} currUser={currUser} />
-              </Grid.Row>
-            </Segment>
+              </Segment>
+            </Grid.Row>
           </Grid.Column>
         </Grid>
       </div>
@@ -635,15 +647,23 @@ class ClassroomDashboard extends React.Component {
             </Grid.Column>
           </Grid.Row>
         </Grid>
-        <hr />
-        <Grid>
-          <Grid.Row>
-            <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
-          </Grid.Row>
-          <hr />
-          <Grid.Row>
-            <UserProfileGamesList user={currUser} currUser={currUser} />
-          </Grid.Row>
+        <Grid columns={1} padded stackable>
+          <Grid.Column width={16}>
+            <Grid.Row>
+              <Segment raised color="purple">
+                <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
+              </Segment>
+            </Grid.Row>
+          </Grid.Column>
+        </Grid>
+        <Grid columns={1} padded stackable>
+          <Grid.Column width={16}>
+            <Grid.Row>
+              <Segment raised color="teal">
+                <UserProfileGamesList user={currUser} currUser={currUser} />
+              </Segment>
+            </Grid.Row>
+          </Grid.Column>
         </Grid>
       </div>
     )

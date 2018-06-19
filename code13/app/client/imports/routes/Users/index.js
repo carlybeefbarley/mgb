@@ -8,16 +8,18 @@ import ResetPassword from './ResetPassword'
 import ForgotPassword from './ForgotPassword'
 import SkillTreeRoute from './SkillTreeRoute'
 import VerifyEmail from './VerifyEmailRoute'
+import SignupEducationRoute from './SignupEducationRoute'
 
 export default {
-  UserListRoute,
-  Profile,
   BadgeListRoute,
-  LoginRoute,
-  SignupRoute,
-  UserHistoryRoute,
-  ResetPassword,
   ForgotPassword,
+  UserListRoute,
+  LoginRoute,
+  Profile,
+  ResetPassword,
+  SignupRoute,
+  SignupEducationRoute,
   SkillTreeRoute,
+  UserHistoryRoute,
   VerifyEmail,
 }

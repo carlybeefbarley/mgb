@@ -562,20 +562,6 @@ class ClassroomDashboard extends React.Component {
       textAlign: 'center',
     }
 
-    const leftColumnStyle = {
-      float: 'left',
-      border: '1px solid #BFBCBC',
-      padding: '5px',
-      //marginRight: '35px',
-    }
-
-    const rightColumnStyle = {
-      float: 'right',
-      border: '1px solid #BFBCBC',
-      padding: '5px',
-      marginLeft: '4em',
-    }
-
     return (
       <div style={containerStyle}>
         <Grid columns={2} padded stretched>
@@ -631,30 +617,34 @@ class ClassroomDashboard extends React.Component {
             </Grid.Column>
           </Grid.Row>
         </Grid>
-        <Segment raised color="yellow">
-          <Grid columns={2} padded stackable>
-            <Grid.Row>
-              <Grid.Column width={7} style={leftColumnStyle}>
+
+        <Grid columns={2} padded stackable>
+          <Grid.Row>
+            <Grid.Column width={8}>
+              <Segment raised color="yellow">
                 <Header as="h2" content="Upcoming Assignments" />
                 <UpcomingClassAssignmentsList />
-              </Grid.Column>
-              <Grid.Column width={7} style={rightColumnStyle}>
+              </Segment>
+            </Grid.Column>
+
+            <Grid.Column width={8}>
+              <Segment raised color="yellow">
                 <Header as="h2" content="Past Assignments" />
                 <PastClassAssignmentsList />
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+        <hr />
+        <Grid>
+          <Grid.Row>
+            <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
+          </Grid.Row>
           <hr />
-          <Grid>
-            <Grid.Row>
-              <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
-            </Grid.Row>
-            <hr />
-            <Grid.Row>
-              <UserProfileGamesList user={currUser} currUser={currUser} />
-            </Grid.Row>
-          </Grid>
-        </Segment>
+          <Grid.Row>
+            <UserProfileGamesList user={currUser} currUser={currUser} />
+          </Grid.Row>
+        </Grid>
       </div>
     )
   }
@@ -1196,7 +1186,7 @@ class TeacherDashboard extends React.Component {
     }
 
     const ulStyle = {
-      listStyleType: 'square',
+      listStyleType: 'none',
       padding: '5px',
     }
     return (

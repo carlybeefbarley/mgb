@@ -17,6 +17,18 @@ Meteor.publish('projects.byUserId', function(userId, showOnlyForkable = false) {
   return Projects.find(selector)
 })
 
+// TODO: add assigmentId support and classroomId support to projectMakeSelector()
+Meteor.publish('projects.byAssignmentId', function(assignmentId) {
+  const selector = projectMakeSelector(assignmentId)
+  return Projects.find(selector)
+})
+
+//TODO: projects by classroom
+Meteor.publish('projects.byClassroomId', function(classroomId) {
+  const selector = projectMakeSelector(classroomId)
+  return Projects.find(selector)
+})
+
 Meteor.publish('projects.frontPageList', function(limitCount = 5) {
   const selector = projectMakeFrontPageListSelector()
   return Projects.find(selector, { limit: limitCount, sort: { updatedAt: -1 } })

@@ -43,6 +43,7 @@ import Privacy from '/client/imports/legal/Privacy'
 import AIE from '/client/imports/layouts/AIEClassroom'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
+import DevPanelRoute from './Dev/DevPanelRoute';
 
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
@@ -97,6 +98,7 @@ export function clientStartup() {
         <Route path="/u/:username/games" component={BrowseGamesRoute} name="Games" />
 
         <Route path="/signup" component={Users.SignupRoute} name="Sign up" />
+        <Route path="/signup-education" component={Users.SignupEducationRoute} name="Educational Signup" />
         <Route path="/login" component={Users.LoginRoute} name="Log In" />
         <Route path="/forgot-password" component={Users.ForgotPassword} name="Forgot Password" />
         <Route path="/reset-password/:token" component={Users.ResetPassword} name="Reset Password" />
@@ -204,6 +206,13 @@ export function clientStartup() {
           component={NotYetImplementedRoute}
           name="Coming Soon!.."
         />
+
+        <Route
+        path="/devpanel"
+        component={DevPanelRoute}
+        name="Super Secret Land"
+        />
+
         <Route path="*" component={NotFoundRoute} name="Page Not Found" />
       </Route>
     </Router>

@@ -24,6 +24,8 @@ import SpecialGlobals from '/imports/SpecialGlobals.js'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 import { withMeteorData } from '../../hocs'
 import { getProjectAvatarUrl } from '../../helpers/assetFetchers'
+// import AssignmentCard from '/client/imports/components/Assets/AssignmentCard'
+import AssignmentCardGET from '/client/imports/components/Assets/AssignmentCardGET'
 
 class ProjectOverview extends Component {
   static propTypes = {
@@ -422,15 +424,26 @@ class ProjectOverview extends Component {
           <Grid.Column>
             <Grid columns="equal">
               <Grid.Column stretched>
-                <Header as="h2" color="grey" style={{ flex: '0 0 auto' }}>
-                  Games
-                </Header>
-                <GamesAvailableGET
-                  canEdit={canEdit}
-                  currUser={currUser}
-                  scopeToUserId={project.ownerId}
-                  scopeToProjectName={project.name}
-                />
+                {!project.assignmentId ? (
+                  <div>
+                    <Header as="h2" color="grey" style={{ flex: '0 0 auto' }}>
+                      Games
+                    </Header>
+                    <GamesAvailableGET
+                      canEdit={canEdit}
+                      currUser={currUser}
+                      scopeToUserId={project.ownerId}
+                      scopeToProjectName={project.name}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <Header as="h2" color="grey" style={{ flex: '0 0 auto' }}>
+                      Assignment
+                    </Header>
+                    <AssignmentCardGET assignmentId={project.assignmentId} />
+                  </div>
+                )}
               </Grid.Column>
               <Grid.Column stretched>
                 <Header
@@ -516,7 +529,7 @@ class ProjectOverview extends Component {
                   handleRemove={this.handleRemoveMemberFromProject}
                   handleLeave={this.handleMemberLeaveFromProject}
                 />
-                <div>Assignment ID: {project.assignmentId}</div>
+                {project.assignmentId && <div>Assignment ID: {project.assignmentId}</div>}
               </Grid.Column>
             </Grid>
           </Grid.Column>

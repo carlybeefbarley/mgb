@@ -272,6 +272,81 @@ class PastClassAssignmentsList extends React.Component {
   }
 }
 
+class SubmissionFeed extends React.Component {
+  render() {
+    return (
+      <List>
+        <List.Item key="id">
+          <List.Content style={{ width: '100%' }}>
+            <List.Content floated="right">
+              <small style={{ color: 'lightgray' }}>date submitted</small>
+            </List.Content>
+            <List.Header>Student Name</List.Header>
+            <List.Description>
+              <small>Assignment Name</small>
+            </List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item key="id2">
+          <List.Content style={{ width: '100%' }}>
+            <List.Content floated="right">
+              <small style={{ color: 'lightgray' }}>date submitted</small>
+            </List.Content>
+            <List.Header>Student Name</List.Header>
+            <List.Description>
+              <small>Assignment Name</small>
+            </List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item key="id3">
+          <List.Content style={{ width: '100%' }}>
+            <List.Content floated="right">
+              <small style={{ color: 'lightgray' }}>date submitted</small>
+            </List.Content>
+            <List.Header>Student Name</List.Header>
+            <List.Description>
+              <small>Assignment Name</small>
+            </List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item key="id4">
+          <List.Content style={{ width: '100%' }}>
+            <List.Content floated="right">
+              <small style={{ color: 'lightgray' }}>date submitted</small>
+            </List.Content>
+            <List.Header>Student Name</List.Header>
+            <List.Description>
+              <small>Assignment Name</small>
+            </List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item key="id5">
+          <List.Content style={{ width: '100%' }}>
+            <List.Content floated="right">
+              <small style={{ color: 'lightgray' }}>date submitted</small>
+            </List.Content>
+            <List.Header>Student Name</List.Header>
+            <List.Description>
+              <small>Assignment Name</small>
+            </List.Description>
+          </List.Content>
+        </List.Item>
+        <List.Item key="id6">
+          <List.Content style={{ width: '100%' }}>
+            <List.Content floated="right">
+              <small style={{ color: 'lightgray' }}>date submitted</small>
+            </List.Content>
+            <List.Header>Student Name</List.Header>
+            <List.Description>
+              <small>Assignment Name</small>
+            </List.Description>
+          </List.Content>
+        </List.Item>
+      </List>
+    )
+  }
+}
+
 class Dashboard extends React.Component {
   static propTypes = {
     currUser: PropTypes.object,
@@ -487,20 +562,6 @@ class ClassroomDashboard extends React.Component {
       textAlign: 'center',
     }
 
-    const leftColumnStyle = {
-      float: 'left',
-      border: '1px solid #BFBCBC',
-      padding: '5px',
-      //marginRight: '35px',
-    }
-
-    const rightColumnStyle = {
-      float: 'right',
-      border: '1px solid #BFBCBC',
-      padding: '5px',
-      marginLeft: '4em',
-    }
-
     return (
       <div style={containerStyle}>
         <Grid columns={2} padded stretched>
@@ -556,30 +617,34 @@ class ClassroomDashboard extends React.Component {
             </Grid.Column>
           </Grid.Row>
         </Grid>
-        <Segment raised color="yellow">
-          <Grid columns={2} padded stackable>
-            <Grid.Row>
-              <Grid.Column width={7} style={leftColumnStyle}>
+
+        <Grid columns={2} padded stackable>
+          <Grid.Row>
+            <Grid.Column width={8}>
+              <Segment raised color="yellow">
                 <Header as="h2" content="Upcoming Assignments" />
                 <UpcomingClassAssignmentsList />
-              </Grid.Column>
-              <Grid.Column width={7} style={rightColumnStyle}>
+              </Segment>
+            </Grid.Column>
+
+            <Grid.Column width={8}>
+              <Segment raised color="yellow">
                 <Header as="h2" content="Past Assignments" />
                 <PastClassAssignmentsList />
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+        <hr />
+        <Grid>
+          <Grid.Row>
+            <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
+          </Grid.Row>
           <hr />
-          <Grid>
-            <Grid.Row>
-              <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
-            </Grid.Row>
-            <hr />
-            <Grid.Row>
-              <UserProfileGamesList user={currUser} currUser={currUser} />
-            </Grid.Row>
-          </Grid>
-        </Segment>
+          <Grid.Row>
+            <UserProfileGamesList user={currUser} currUser={currUser} />
+          </Grid.Row>
+        </Grid>
       </div>
     )
   }
@@ -843,6 +908,7 @@ class HomeHeroBanner extends React.Component {
 class TeacherClassroom extends React.Component {
   render() {
     const { currUser } = this.props
+
     const containerStyle = {
       overflowY: 'auto',
     }
@@ -1096,7 +1162,105 @@ class TeacherClassroom extends React.Component {
 
 class TeacherDashboard extends React.Component {
   render() {
-    return <div />
+    const { currUser } = this.props
+
+    const containerStyle = {
+      overflowY: 'auto',
+    }
+    const titleStyle = {
+      fontSize: '3em',
+      textAlign: 'center',
+    }
+
+    const { avatar } = currUser.profile
+
+    const infoStyle = {
+      fontSize: '1.7em',
+      textAlign: 'center',
+    }
+
+    const inputStyle = {
+      minHeight: '10em',
+      width: '100%',
+      opacity: '0.9',
+    }
+
+    const ulStyle = {
+      listStyleType: 'none',
+      padding: '5px',
+    }
+    return (
+      <div style={containerStyle}>
+        <Grid columns={1} padded>
+          <Grid.Column width={16}>
+            <div>
+              <Button color="orange" floated="right">
+                Add New Class
+              </Button>
+            </div>
+          </Grid.Column>
+        </Grid>
+        <Grid columns={2} padded stretched>
+          <Grid.Row>
+            <Grid.Column width={5}>
+              <Segment raised color="blue">
+                <Header style={titleStyle} as="h1" content={`${currUser.username}`} textAlign="center" />
+                <ImageShowOrChange
+                  id="mgbjr-profile-avatar"
+                  maxHeight="11em"
+                  maxWidth="auto"
+                  imageSrc={avatar}
+                  header="User Avatar"
+                  canEdit={false}
+                />
+                <List style={infoStyle}>
+                  <List.Item>
+                    <List.Content>
+                      <List.Icon name="chat" color="blue" />Class Chat
+                    </List.Content>
+                  </List.Item>
+                </List>
+              </Segment>
+            </Grid.Column>
+            <Grid.Column width={11}>
+              <Segment raised color="blue">
+                <Header as="h2" content="Your Classes" />
+                <ul style={ulStyle}>
+                  <li>Animation Class</li>
+                  <li>JavaScript Class</li>
+                  <li>Phaser Class</li>
+                  <li>Advanced JavaScript</li>
+                  <li>Advanced Animation</li>
+                </ul>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+        <Grid columns={1} padded stackable>
+          <Grid.Column width={16}>
+            <Grid.Row>
+              <Segment raised color="yellow">
+                <Header as="h2" content="Submission Feed" />
+                <SubmissionFeed />
+              </Segment>
+            </Grid.Row>
+          </Grid.Column>
+        </Grid>
+        <Grid columns={1} padded stackable>
+          <Grid.Column width={16}>
+            <Grid.Row>
+              <Segment raised color="purple">
+                <Header as="h2" content="About You" />
+                <TextArea
+                  placeholder="Let your students know a little bit about your background and what kind of games you have worked on"
+                  style={inputStyle}
+                />
+              </Segment>
+            </Grid.Row>
+          </Grid.Column>
+        </Grid>
+      </div>
+    )
   }
 }
 

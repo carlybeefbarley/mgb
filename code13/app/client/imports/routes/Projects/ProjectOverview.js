@@ -516,6 +516,7 @@ class ProjectOverview extends Component {
                   handleRemove={this.handleRemoveMemberFromProject}
                   handleLeave={this.handleMemberLeaveFromProject}
                 />
+                <div>Assignment ID: {project.assignmentId}</div>
               </Grid.Column>
             </Grid>
           </Grid.Column>

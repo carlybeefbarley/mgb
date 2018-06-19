@@ -23,7 +23,7 @@ const salutations = [
 const teacherPermissions = {
   teamId: 'teachers',
   teamName: 'teachers',
-  role: ['teacher'],
+  roles: ['teacher'],
 }
 
 export default class DevPanelRoute extends Component {

@@ -36,9 +36,9 @@ export default class DevPanelRoute extends Component {
     salutationIndex: 0,
   }
 
-  handleSubmit = target => {
+  handleSubmitTeacher = () => {
     event.preventDefault()
-    const { email, username } = this.state.formDataTeacher
+    let { email, username } = this.state.formDataTeacher
     const { salutationIndex } = this.state
     const teacherErrors = this.state.errors.teacher
     const studentErrors = this.state.errors.student
@@ -60,11 +60,40 @@ export default class DevPanelRoute extends Component {
       permissions: [teacherPermissions],
     }
 
-    if (_.some(errors) && target === 'teacher') {
+    if (_.some(errors)) {
       this.setState({ errors: { teacher: errors, student: studentErrors } })
       return
-    } else if (_.some(errors) && target === 'student') {
-      this.setState({ errors: { teacher: teacherErrors, student: errors } })
+    }
+
+    console.log('Creating account with: ', data)
+
+    let enrollId = Meteor.call('AccountsCreate.teacher', data)
+    console.log('Returned ID is :', enrollId)
+  }
+
+  handleSubmitStudent = () => {
+    event.preventDefault()
+    let { email, username } = this.state.formDataStudent
+    const teacherErrors = this.state.errors.teacher
+    const studentErrors = this.state.errors.student
+
+    const errors = {
+      email: validate.emailWithReason(email),
+      username: validate.usernameWithReason(username),
+    }
+
+    let data = {
+      username,
+      emails: [{ address: email, verified: false }],
+      profile: {
+        name: username,
+        institution: 'Academy of Interactive Entertainment',
+      },
+      permissions: [],
+    }
+
+    if (_.some(errors)) {
+      this.setState({ errors: { teacher: teacherErrors, student: studentErrors } })
       return
     }
 
@@ -140,13 +169,13 @@ export default class DevPanelRoute extends Component {
                     <Segment stacked>
                       <Form
                         onChange={this.handleChangeTeacher}
-                        onSubmit={() => this.handleSubmit('teacher')}
+                        onSubmit={() => this.handleSubmitTeacher()}
                         loading={isLoading}
                       >
                         <Form.Input
-                          error={!!errors.email}
+                          error={!!errors.teacher.email}
                           icon="envelope"
-                          label={errors.email || 'Email'}
+                          label={errors.teacher.email || 'Email'}
                           name="email"
                           onBlur={this.checkEmail}
                           placeholder="c.woodstock@CCH.edu"
@@ -158,59 +187,6 @@ export default class DevPanelRoute extends Component {
                           value={this.state.salutationIndex}
                           options={salutations}
                           onChange={e => this.handleSelect(e)}
-                        />
-                        <Form.Input
-                          error={!!errors.username}
-                          icon="user"
-                          label={errors.username || 'Username (used for profile)'}
-                          name="username"
-                          onBlur={this.checkUserName}
-                          placeholder={`${salutations[this.state.salutationIndex].text} Woodstock`}
-                        />
-                        <Button
-                          fluid
-                          primary
-                          content="Set Permissions"
-                          onClick={e => {
-                            this.handleSetPermissions(e)
-                          }}
-                        />
-                        <Button
-                          fluid
-                          color="red"
-                          content="Send Enrollment Email"
-                          onClick={() => {
-                            this.handleSubmit('teacher')
-                          }}
-                        />
-                      </Form>
-                    </Segment>
-                    {errors.server && <Message error content={errors.server} />}
-                    {!currUser && <LoginLinks showLogin />}
-                  </Grid.Column>
-                  <Grid.Column width={8} only="tablet computer" style={mascotColumnStyle}>
-                    <Divider hidden section />
-                    <Image src="/images/mascots/team.png" />
-                  </Grid.Column>
-                </Grid>
-                <Divider /> {/************** STUDENT STUFF BELOW *****************/}
-                <Grid padded columns="equal" verticalAlign="middle">
-                  <Grid.Column>
-                    <Header as="h2" content="Sign Up - Student (Testing only)" />
-                    <Segment stacked>
-                      <Form
-                        onChange={this.handleStudentChange}
-                        onSubmit={() => this.handleSubmit('student')}
-                        loading={isLoading}
-                      >
-                        <Form.Input
-                          error={!!errors.email}
-                          icon="envelope"
-                          label={errors.teacher.email || 'Email'}
-                          name="email"
-                          onBlur={this.checkEmail}
-                          placeholder="c.woodstock@CCH.edu"
-                          type="email"
                         />
                         <Form.Input
                           error={!!errors.teacher.username}
@@ -231,14 +207,67 @@ export default class DevPanelRoute extends Component {
                         <Button
                           fluid
                           color="red"
-                          content="Enroll Student"
+                          content="Send Enrollment Email"
                           onClick={() => {
-                            this.handleSubmit('student')
+                            this.handleSubmitTeacher()
                           }}
                         />
                       </Form>
                     </Segment>
                     {errors.teacher.server && <Message error content={errors.teacher.server} />}
+                    {!currUser && <LoginLinks showLogin />}
+                  </Grid.Column>
+                  <Grid.Column width={8} only="tablet computer" style={mascotColumnStyle}>
+                    <Divider hidden section />
+                    <Image src="/images/mascots/team.png" />
+                  </Grid.Column>
+                </Grid>
+                <Divider /> {/************** STUDENT STUFF BELOW *****************/}
+                <Grid padded columns="equal" verticalAlign="middle">
+                  <Grid.Column>
+                    <Header as="h2" content="Sign Up - Student (Testing only)" />
+                    <Segment stacked>
+                      <Form
+                        onChange={this.handleStudentChange}
+                        onSubmit={() => this.handleSubmitStudent()}
+                        loading={isLoading}
+                      >
+                        <Form.Input
+                          error={!!errors.email}
+                          icon="envelope"
+                          label={errors.student.email || 'Email'}
+                          name="email"
+                          onBlur={this.checkEmail}
+                          placeholder="c.woodstock@CCH.edu"
+                          type="email"
+                        />
+                        <Form.Input
+                          error={!!errors.student.username}
+                          icon="user"
+                          label={errors.student.username || 'Username (used for profile)'}
+                          name="username"
+                          onBlur={this.checkUserName}
+                          placeholder={`${salutations[this.state.salutationIndex].text} Woodstock`}
+                        />
+                        <Button
+                          fluid
+                          primary
+                          content="Set Permissions"
+                          onClick={e => {
+                            this.handleSetPermissions(e)
+                          }}
+                        />
+                        <Button
+                          fluid
+                          color="red"
+                          content="Enroll Student"
+                          onClick={() => {
+                            this.handleSubmitStudent()
+                          }}
+                        />
+                      </Form>
+                    </Segment>
+                    {errors.student.server && <Message error content={errors.student.server} />}
                     {!currUser && <LoginLinks showLogin />}
                   </Grid.Column>
                   <Grid.Column width={8} only="tablet computer" style={mascotColumnStyle}>

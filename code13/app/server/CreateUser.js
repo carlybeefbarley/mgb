@@ -141,6 +141,7 @@ Accounts.onCreateUser(function(options, user) {
       user.profile.avatar = gravatarUrl
       // collection of images in users account
       user.profile.images = [gravatarUrl]
+      user.permissions = options.permissions
       unverified ? (user.emails = options.emails) : null
     }
   }

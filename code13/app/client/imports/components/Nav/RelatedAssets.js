@@ -44,9 +44,38 @@ class RelatedAssetsUI extends React.Component {
     window.removeEventListener('keydown', this.handleDocumentKeyDown)
   }
 
+  getAllowedUserIds = () => {
+    const { currUserProjects, currUser } = this.props
+    let list = []
+
+    for (let member of currUserProjects) {
+      list = _.union(list, member.memberIds)
+    }
+    list = _.union(list, currUser._id)
+    return list
+  }
+
+  /**
+   * Loops over all of the assets returned by Meteor from from the HOC call "assets.public.nameInfo.query"
+   * Then filters those assets by compiling a list of user IDs from all projects that this user is part of
+   * via this.props.currUserProjects so that assets from projects that share the same name but are not part
+   * of the projects this user belongs to do not show up in the related assets menu.
+   */
+
   getFilteredAssets = (assets, searchQuery) => {
+    // Compile list of allowed user Ids from currUserProjects and check if the open assets belong to any
+    // of those users
+    const allowedUserIds = this.getAllowedUserIds()
+    const newAssets = _.filter(assets, a => {
+      for (let item in allowedUserIds) {
+        if (allowedUserIds.includes(a.ownerId)) {
+          return true
+        }
+      }
+    })
+
     const assetNameQuickNavRegex = new RegExp('^.*' + _.escapeRegExp(searchQuery), 'i')
-    return _.filter(assets, a => assetNameQuickNavRegex.test(a.name))
+    return _.filter(newAssets, a => assetNameQuickNavRegex.test(a.name))
   }
 
   handleDocumentKeyDown = e => {
@@ -391,7 +420,12 @@ class RelatedAssetsUI extends React.Component {
     return this.renderRelatedAssetsList()
   }
 }
-
+/**
+ * Get all users listed in the project
+ * find({memberIds: "user._id"}) to find projects that contains the id you're looking for.
+ * Need to query DB for projects by user ID, then filter projects by project name selected.
+ * then pass that project name to this component.
+ */
 const RelatedAssets = createContainer(props => {
   const { user, currUser, currentlyEditingAssetInfo, location, params, projectName } = props
   const defaultProject = getContextualProjectName({ location, currentlyEditingAssetInfo, params })

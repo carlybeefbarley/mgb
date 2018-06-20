@@ -281,24 +281,29 @@ const ChatMessagesView = React.createClass({
     const canSend = currUserCanSend(currUser, channelName)
     const isOpen = true
 
-    const style = {
-      position: 'absolute',
-      overflow: 'auto',
-      margin: '0',
-      padding: '0 8px 0 8px',
-      top: '5em',
-      bottom: '0.5em',
-      left: '0',
-      right: '0',
-      transition: 'transform 200ms, opacity 200ms',
-      transform: isOpen ? 'translateY(0)' : 'translateY(-3em)',
-      opacity: +isOpen,
-      zIndex: '100',
-    }
+    const style = this.props.style
+      ? this.props.style
+      : {
+          position: 'absolute',
+          overflow: 'auto',
+          margin: '0',
+          padding: '0 8px 0 8px',
+          top: '5em',
+          bottom: '0.5em',
+          left: '0',
+          right: '0',
+          transition: 'transform 200ms, opacity 200ms',
+          transform: isOpen ? 'translateY(0)' : 'translateY(-3em)',
+          opacity: +isOpen,
+          zIndex: '100',
+        }
 
     return (
       <div style={style}>
-        <Comment.Group className="small">
+        <Comment.Group
+          style={{ flex: 1, overflowY: 'auto', paddingRight: '1em', marginRight: '-1em' }}
+          className="small"
+        >
           {this.renderGetMoreMessages()}
           <div id="mgbjr-fp-chat-channel-messages">
             {// Always have at least one div so we will be robust with a '#mgbjr-fp-chat-channel-messages div:first' css selector for tutorials
@@ -307,7 +312,7 @@ const ChatMessagesView = React.createClass({
           <span />
         </Comment.Group>
 
-        <Form size="small">
+        <Form style={{ flex: '0 1 175px' }} size="small">
           <Form.Field id="mgbjr-fp-chat-messageInput" disabled={!canSend}>
             <Form.TextArea
               rows={3}

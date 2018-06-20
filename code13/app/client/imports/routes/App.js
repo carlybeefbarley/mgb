@@ -465,7 +465,11 @@ class AppUI extends Component {
 
         <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
           <SupportedBrowsersContainer />
-          {!isGuest && !isHocRoute && <VerifyBanner currUser={currUser} />}
+          {!isGuest &&
+          !isHocRoute &&
+          !(currUser && (currUser.profile.isTeacher || currUser.profile.isStudent)) && (
+            <VerifyBanner currUser={currUser} />
+          )}
           {!hideHeaders && (
             <NavPanel
               currUser={currUser}
@@ -532,22 +536,11 @@ class AppUI extends Component {
             />
           )}
 
-          {!loading &&
-            this.props.children &&
-            React.cloneElement(this.props.children, {
-              // Make below props available to all routes.
-              user,
-              currUser,
-              hideHeaders,
-              currUserProjects,
-              hazUnreadAssetChat,
-              ownsProfile,
-              isSuperAdmin,
-              availableWidth: mainAreaAvailableWidth,
-              handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
-              isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
-            })}
-          {/* </div> */}
+          {/*
+            Just render the route unless we're editing a project asset
+            Project assets need to wrap the asset edit route in the project tabs UI layout
+          */}
+          {routeComponent}
         </div>
         <NetworkStatusMsg meteorStatus={meteorStatus} />
         <NotificationContainer />

@@ -4,6 +4,7 @@ import {
   Divider,
   Button,
   Icon,
+  Card,
   Image,
   Grid,
   Header,
@@ -30,6 +31,71 @@ import HoverImage from 'react-hover-image'
 
 // Trying to decide if I should create a separate componenet for UserColleagueList
 // So that I can use the label "classmates," and fiddle the with UI
+
+// import { createContainer } from 'meteor/react-meteor-data'
+// import { Users } from '/imports/schemas'
+// import UserCard from '/client/imports/components/Users/UserCard'
+
+// class UserColleaguesList extends React.Component {
+//   render() {
+//     const { wrap } = this.props
+//     const { projects } = this.props
+//     const { user } = this.props
+//     const { narrowItem } = this.props
+//     const { handleClickUser } = this.props
+
+//     const _wrapStyle = { clear: 'both', flexWrap: 'wrap' }
+//     const _nowrapStyle = {
+//       clear: 'both',
+//       flexWrap: 'nowrap',
+//       overflowX: 'auto',
+//       overflowY: 'hidden',
+//       marginBottom: '1em',
+//     }
+
+//     const UserColleaguesList = createContainer(props => {
+//       let colleagueIds = []
+//       _.forEach(props.projects, project => {
+//         colleagueIds = _.union(colleagueIds, project.memberIds, [project.ownerId])
+//       })
+//       colleagueIds = _.without(colleagueIds, props.user._id)
+//       const selector = { _id: { $in: colleagueIds } }
+//       const usersHandle = Meteor.subscribe('users.getByIdList', colleagueIds)
+
+//       return {
+//         userList: _.sortBy(Users.find(selector).fetch(), u => _.toLower(u.username)),
+//         loading: !usersHandle.ready(),
+//       }
+//     })
+
+//     return (
+//       <Grid.Column className="animated fadeIn" width={16}>
+//         <Grid.Row>
+//           <Header
+//             as="h2"
+//             content={
+//               <a>
+//                 Classmates <small>({userList.length})</small>
+//               </a>
+//             }
+//           />
+//           <Card.Group className="relaxed" style={wrap ? _wrapStyle : _nowrapStyle}>
+//             {loading === false &&
+//               userList.map((person, idx) => (
+//                 <UserCard
+//                   key={idx}
+//                   user={person}
+//                   narrowItem={narrowItem}
+//                   handleClickUser={handleClickUser}
+//                   //as={QLink} to={`/u/${person.username}`}
+//                 />
+//               ))}
+//           </Card.Group>
+//         </Grid.Row>
+//       </Grid.Column>
+//     )
+//   }
+// }
 
 class AssignmentsList extends React.Component {
   render() {
@@ -122,7 +188,7 @@ class UpcomingClassAssignmentsList extends React.Component {
             <List.Content floated="right">
               <small style={{ color: 'lightgray' }}>when</small>
             </List.Content>
-            <List.Header>Foo bar</List.Header>
+            <List.Header>Assignment Name</List.Header>
             <List.Description>
               <small>Carly is cool</small>
             </List.Description>
@@ -1059,11 +1125,21 @@ class TeacherClassroom extends React.Component {
                     </Table.Row>
                     <Table.Row>
                       <Table.Cell collapsing>Alexander Hamilton</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="x" color="red" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="plus circle" color="yellow" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="plus circle" color="yellow" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="plus circle" color="yellow" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="check circle" color="green" />
+                      </Table.Cell>
                     </Table.Row>
                     <Table.Row>
                       <Table.Cell collapsing>Maria Carey</Table.Cell>

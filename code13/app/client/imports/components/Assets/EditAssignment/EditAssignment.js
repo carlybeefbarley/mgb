@@ -23,8 +23,8 @@ class EditAssignmentForm extends BaseForm {
     return (
       <div className="ui form">
         {this.date('Due Date', 'dueDate')}
-        {this.textEditor('Assignment Detail', 'assignmentDetail')}
         {this.bool('Is Team Project', 'isTeamProject')}
+        {this.textEditor('Assignment Detail', 'assignmentDetail')}
       </div>
     )
   }
@@ -81,7 +81,6 @@ export default class EditAssignment extends React.Component {
     return (
       <Grid centered container>
         <Grid.Column className="edit-assignment">
-          <Button onClick={this.handleCreateProjectFromAssignment} content="Create Project" />
           <EditAssignmentForm
             asset={asset}
             canEdit={canEdit}
@@ -90,6 +89,7 @@ export default class EditAssignment extends React.Component {
               handleContentChange(null, d, 'Updating thumbnail')
             }}
           />
+          <Button floated="right" onClick={this.handleCreateProjectFromAssignment} content="Create Project" />
         </Grid.Column>
       </Grid>
     )

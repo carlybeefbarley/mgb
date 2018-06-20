@@ -400,15 +400,15 @@ export const setUpCloudFront = function() {
                     Meteor.bindEnvironment(function(err, data) {
                       if (err) {
                         console.log('Failed to update CloudFront distribution', err, err.stack)
-                        Meteor.call(
-                          'Slack.Cloudfront.notification',
-                          `${ORIGIN_ID}: Failed to update CloudFront distribution: ${err}`,
-                        )
+                        // Meteor.call(
+                        //   'Slack.Cloudfront.notification',
+                        //   `${ORIGIN_ID}: Failed to update CloudFront distribution: ${err}`,
+                        // )
                       } else {
-                        Meteor.call(
-                          'Slack.Cloudfront.notification',
-                          `${ORIGIN_ID}: CloudFront distribution updated`,
-                        )
+                        // Meteor.call(
+                        //   'Slack.Cloudfront.notification',
+                        //   `${ORIGIN_ID}: CloudFront distribution updated`,
+                        // )
                       }
                       callback(null, items[i])
                     }),
@@ -433,28 +433,28 @@ export const setUpCloudFront = function() {
     WebAppInternals.setBundledJsCssUrlRewriteHook(rwHook) // TODO: (@STAUZS) see if we really need this here)
 
     if (cloudfrontDistribution.Status != 'Deployed') {
-      Meteor.call(
-        'Slack.Cloudfront.notification',
-        `${ORIGIN_ID}: Waiting for CloudFront distribution to be ready. \n this may take a while (up to 30 minutes)`,
-      )
+      // Meteor.call(
+      //   'Slack.Cloudfront.notification',
+      //   `${ORIGIN_ID}: Waiting for CloudFront distribution to be ready. \n this may take a while (up to 30 minutes)`,
+      // )
       cloudfront.waitFor(
         'distributionDeployed',
         { Id: cloudfrontDistribution.Id },
         Meteor.bindEnvironment((err, data) => {
           if (err) {
-            Meteor.call(
-              'Slack.Cloudfront.notification',
-              `${ORIGIN_ID}: Distribution failed to become ready. Error: ${err}`,
-              true,
-            )
+            // Meteor.call(
+            //   'Slack.Cloudfront.notification',
+            //   `${ORIGIN_ID}: Distribution failed to become ready. Error: ${err}`,
+            //   true,
+            // )
             // retry.. as it tends to time out - if Cloudfront Deploying takes more than 20 minutes
             setCDNParams(cloudfrontDistribution)
           } else {
             CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
-            Meteor.call(
-              'Slack.Cloudfront.notification',
-              `${ORIGIN_ID}: Distribution deployed and ready to serve: ${CLOUDFRONT_DOMAIN_NAME}`,
-            )
+            // Meteor.call(
+            //   'Slack.Cloudfront.notification',
+            //   `${ORIGIN_ID}: Distribution deployed and ready to serve: ${CLOUDFRONT_DOMAIN_NAME}`,
+            // )
             // we need to set this a 2nd time - as Meteor has some sort of
             // caching / delay system for WebAppInternals.setBundledJsCssUrlRewriteHook
             WebAppInternals.setBundledJsCssUrlRewriteHook(rwHook)
@@ -463,10 +463,10 @@ export const setUpCloudFront = function() {
       )
     } else {
       CLOUDFRONT_DOMAIN_NAME = cloudfrontDistribution.DomainName
-      Meteor.call(
-        'Slack.Cloudfront.notification',
-        `${ORIGIN_ID}: CloudFront distribution is Ready @ ${CLOUDFRONT_DOMAIN_NAME}`,
-      )
+      // Meteor.call(
+      //   'Slack.Cloudfront.notification',
+      //   `${ORIGIN_ID}: CloudFront distribution is Ready @ ${CLOUDFRONT_DOMAIN_NAME}`,
+      // )
       // we need to set this a 2nd time - as Meteor has some sort of
       // caching / delay system for WebAppInternals.setBundledJsCssUrlRewriteHook
       WebAppInternals.setBundledJsCssUrlRewriteHook(rwHook)
@@ -482,19 +482,19 @@ export const setUpCloudFront = function() {
       Meteor.bindEnvironment((err, cloudfrontDistribution) => {
         if (err) {
           console.error(`Failed to LOAD CloudFront distribution with error: ${err}`, err)
-          Meteor.call(
-            'Slack.Cloudfront.notification',
-            `${ORIGIN_ID}: Failed to LOAD distribution with error: ${err} \n Trying to create new Distribution`,
-          )
+          // Meteor.call(
+          //   'Slack.Cloudfront.notification',
+          //   `${ORIGIN_ID}: Failed to LOAD distribution with error: ${err} \n Trying to create new Distribution`,
+          // )
 
           createDistribution(
             Meteor.bindEnvironment((err, data) => {
               if (err) {
-                Meteor.call(
-                  'Slack.Cloudfront.notification',
-                  `${ORIGIN_ID}: Failed to CREATE distribution with error: ${err}`,
-                  true,
-                )
+                // Meteor.call(
+                //   'Slack.Cloudfront.notification',
+                //   `${ORIGIN_ID}: Failed to CREATE distribution with error: ${err}`,
+                //   true,
+                // )
                 console.error(`Failed to CREATE distribution with error`, err)
                 return
               }

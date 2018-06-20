@@ -9,3 +9,4 @@ meteor_session.json
 .yarn-cache
 yarn-error.log
 MGB_MONGODB_DUMP
+npm-debug.log

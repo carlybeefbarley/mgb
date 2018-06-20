@@ -4,6 +4,7 @@ import { isSameUserId } from '/imports/schemas/users'
 // Currently very simplistic but interface supports some future needs
 
 export const roleSuperAdmin = 'super-admin'
+export const roleTeacher = 'teacher'
 
 export const fAllowSuperAdminToEditAnything = false // TODO: PUT IN SERVER POLICY?
 
@@ -32,6 +33,10 @@ export function canUserEditAssetIfUnlocked(asset, projects, user) {
 
 export function isUserSuperAdmin(user) {
   return doesUserHaveRole(user, roleSuperAdmin)
+}
+
+export function isUserTeacher(user) {
+  return doesUserHaveRole(user, roleTeacher)
 }
 
 export function isUserModerator(user) {

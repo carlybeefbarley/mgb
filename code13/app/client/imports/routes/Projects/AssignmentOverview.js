@@ -12,7 +12,7 @@ import { logActivity } from '/imports/schemas/activity'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 import { withMeteorData } from '../../hocs'
 import StudentListGET from '/client/imports/routes/Projects/StudentListGET.js'
-import AssignmentDetails from './AssignmentDetails'
+import AssignmentDetail from './AssignmentDetail'
 import ChatPanel from '/client/imports/components/Assets/ChatPanel.js'
 import { makeChannelName } from '/imports/schemas/chats'
 import WorkState from '/client/imports/components/Controls/WorkState'
@@ -99,7 +99,7 @@ class AssignmentOverview extends Component {
           <Header as="h2" color="grey" floated="left">
             Assignment Details
           </Header>
-          <AssignmentDetails isStudent />
+          <AssignmentDetail isStudent />
         </Grid.Row>
         <Grid.Row />
         <Grid.Row stretched columns={2}>
@@ -141,7 +141,7 @@ class AssignmentOverview extends Component {
       height: '20em',
     }
 
-    const { project: { name, assignmentDetail, dueDate, workState } } = this.props
+    const { project: { name, assignmentDetail, dueDate, workState, assignmentId } } = this.props
     const { confirmDeleteNum, isDeleteComplete, isDeletePending } = this.state
 
     return (
@@ -174,7 +174,12 @@ class AssignmentOverview extends Component {
             <Header as="h2" color="grey" floated="left">
               Assignment Details
             </Header>
-            <AssignmentDetails name={name} detail={assignmentDetail} dueDate={dueDate} />
+            <AssignmentDetail
+              name={name}
+              detail={assignmentDetail}
+              dueDate={dueDate}
+              assignmentId={assignmentId}
+            />
           </Grid.Row>
           <Grid.Row stretched>
             <Grid.Column style={{ height: 'auto' }}>

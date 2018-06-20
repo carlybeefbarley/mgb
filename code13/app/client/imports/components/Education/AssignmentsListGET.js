@@ -1,8 +1,3 @@
-// export default createContainer(props => {
-//     Meteor.subscribe('classrooms.oneClassroom', )
-//     return { ...props, DEMPROPS: 'RED' }
-//   }, AssignmentsList)
-
 import React from 'react'
 import AssignmentsList from './AssignmentsList'
 import { createContainer } from 'meteor/react-meteor-data'
@@ -14,7 +9,6 @@ const AssignmentsListLoading = props =>
   props.loading ? <Spinner loadingMsg={`Loading Assignments...`} /> : <AssignmentsList {...props} />
 
 const AssignmentsListGET = createContainer(props => {
-  //   const handle = Meteor.subscribe('assets.public.byId', assignmentAssetIds)
   const userId = Meteor.user()._id
   const handle = Meteor.subscribe('classrooms.byUserId', userId)
   const cursor = Classrooms.find(classroomsMakeSelectorForStudent(userId))
@@ -24,8 +18,8 @@ const AssignmentsListGET = createContainer(props => {
   if (handle.ready() && classrooms && classrooms[0]) {
     returnProps.assignmentAssetIds = classrooms && classrooms[0] ? classrooms[0].assignmentAssetIds : []
     Meteor.subscribe('assets.public.byId', { _id: { $in: returnProps.assignmentAssetIds } }) // Technically correct
-    const DERP = Azzets.find()
-    returnProps.assignmentAssets = DERP.fetch()
+    const assignmentAssetsCursor = Azzets.find({ _id: { $in: returnProps.assignmentAssetIds } })
+    returnProps.assignmentAssets = assignmentAssetsCursor.fetch()
   }
 
   return returnProps

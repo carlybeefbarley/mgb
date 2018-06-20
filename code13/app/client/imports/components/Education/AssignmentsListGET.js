@@ -1,0 +1,34 @@
+// export default createContainer(props => {
+//     Meteor.subscribe('classrooms.oneClassroom', )
+//     return { ...props, DEMPROPS: 'RED' }
+//   }, AssignmentsList)
+
+import React from 'react'
+import AssignmentsList from './AssignmentsList'
+import { createContainer } from 'meteor/react-meteor-data'
+import Spinner from '/client/imports/components/Nav/Spinner'
+import { Azzets, Classrooms, Users } from '/imports/schemas'
+import { classroomsMakeSelectorForStudent } from '/imports/schemas/classrooms'
+
+const AssignmentsListLoading = props =>
+  props.loading ? <Spinner loadingMsg={`Loading Assignments...`} /> : <AssignmentsList {...props} />
+
+const AssignmentsListGET = createContainer(props => {
+  //   const handle = Meteor.subscribe('assets.public.byId', assignmentAssetIds)
+  const userId = Meteor.user()._id
+  const handle = Meteor.subscribe('classrooms.byUserId', userId)
+  const cursor = Classrooms.find(classroomsMakeSelectorForStudent(userId))
+  const classrooms = cursor.fetch()
+  let returnProps = { ...props, classrooms, loading: !handle.ready() }
+  // !!If users are able to be part of more than one class room this entire HOC will be completely useless.!!
+  if (handle.ready() && classrooms && classrooms[0]) {
+    returnProps.assignmentAssetIds = classrooms && classrooms[0] ? classrooms[0].assignmentAssetIds : []
+    Meteor.subscribe('assets.public.byId', { _id: { $in: returnProps.assignmentAssetIds } }) // Technically correct
+    const DERP = Azzets.find()
+    returnProps.assignmentAssets = DERP.fetch()
+  }
+
+  return returnProps
+}, AssignmentsListLoading)
+
+export default AssignmentsListGET

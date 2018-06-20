@@ -24,91 +24,12 @@ import HeroLayout from '/client/imports/layouts/HeroLayout'
 import QLink from '/client/imports/routes/QLink'
 import UX from '/client/imports/UX'
 import HoverImage from 'react-hover-image'
+import StudentDashboard from '/client/imports/components/Education/StudentDashboard'
 
 //import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
 
 //import RecentAssetAction from './Actions/RecentAssetAction'
 
-class AssignmentsList extends React.Component {
-  render() {
-    return (
-      <List>
-        <List.Item key="id">
-          <List.Icon name="student" />
-          <List.Content style={{ width: '100%' }}>
-            <List.Content floated="right">
-              <small style={{ color: 'lightgray' }}>when</small>
-            </List.Content>
-            <List.Header>Foo bar</List.Header>
-            <List.Description>
-              <small>Carly is cool</small>
-            </List.Description>
-          </List.Content>
-        </List.Item>
-        <List.Item key="id2">
-          <List.Icon name="code" />
-          <List.Content style={{ width: '100%' }}>
-            <List.Content floated="right">
-              <small style={{ color: 'lightgray' }}>when</small>
-            </List.Content>
-            <List.Header>Your Mom</List.Header>
-            <List.Description>
-              <small>goes to college</small>
-            </List.Description>
-          </List.Content>
-        </List.Item>
-        <List.Item key="id3">
-          <List.Icon name="clock" />
-          <List.Content style={{ width: '100%' }}>
-            <List.Content floated="right">
-              <small style={{ color: 'lightgray' }}>when</small>
-            </List.Content>
-            <List.Header>Llama Llama</List.Header>
-            <List.Description>
-              <small>red pajamas</small>
-            </List.Description>
-          </List.Content>
-        </List.Item>
-        <List.Item key="id4">
-          <List.Icon name="keyboard" />
-          <List.Content style={{ width: '100%' }}>
-            <List.Content floated="right">
-              <small style={{ color: 'lightgray' }}>when</small>
-            </List.Content>
-            <List.Header>Bread Jedi</List.Header>
-            <List.Description>
-              <small>flexible bean</small>
-            </List.Description>
-          </List.Content>
-        </List.Item>
-        <List.Item key="id5">
-          <List.Icon name="smile" />
-          <List.Content style={{ width: '100%' }}>
-            <List.Content floated="right">
-              <small style={{ color: 'lightgray' }}>when</small>
-            </List.Content>
-            <List.Header>See ya See ya</List.Header>
-            <List.Description>
-              <small>wouldn't wanna be ya</small>
-            </List.Description>
-          </List.Content>
-        </List.Item>
-        <List.Item key="id6">
-          <List.Icon name="female" />
-          <List.Content style={{ width: '100%' }}>
-            <List.Content floated="right">
-              <small style={{ color: 'lightgray' }}>when</small>
-            </List.Content>
-            <List.Header>Girls Rule</List.Header>
-            <List.Description>
-              <small>boys drool</small>
-            </List.Description>
-          </List.Content>
-        </List.Item>
-      </List>
-    )
-  }
-}
 
 class UpcomingClassAssignmentsList extends React.Component {
   render() {
@@ -347,102 +268,6 @@ class SubmissionFeed extends React.Component {
   }
 }
 
-class Dashboard extends React.Component {
-  static propTypes = {
-    currUser: PropTypes.object,
-  }
-  render() {
-    const { currUser } = this.props
-
-    const { avatar } = currUser.profile
-
-    const titleStyle = {
-      fontSize: '3em',
-      textAlign: 'center',
-    }
-
-    const infoStyle = {
-      fontSize: '1.5em',
-      textAlign: 'center',
-    }
-
-    const upcomingStyle = {
-      minHeight: '21.5em',
-    }
-
-    const aboutMeStyle = {
-      minHeight: '15em',
-    }
-
-    const inputStyle = {
-      minHeight: '10em',
-      width: '100%',
-      opacity: '0.9',
-    }
-
-    return (
-      <div>
-        <Grid columns={2} padded>
-          <Grid.Row>
-            <Grid.Column width={5}>
-              <Segment raised color="blue">
-                <Header style={titleStyle} as="h1" content={`${currUser.username}`} textAlign="center" />
-                <ImageShowOrChange
-                  id="mgbjr-profile-avatar"
-                  maxHeight="11em"
-                  maxWidth="auto"
-                  imageSrc={avatar}
-                  header="User Avatar"
-                  canEdit
-                />
-                <Container style={infoStyle}>
-                  <p>
-                    Class Name<br />Teacher Name
-                  </p>
-                </Container>
-              </Segment>
-              {/* Not sure if we are tracking skills with AIE
-                
-                <SkillAction currUser={currUser} />  
-                <RecentAssetAction currUser={currUser} />*/}
-            </Grid.Column>
-
-            <Grid.Column width={11}>
-              <Segment raised color="blue" style={upcomingStyle}>
-                <Header as="h2" content="Upcoming Assignments" />
-                <AssignmentsList />
-              </Segment>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-
-        {/* <Divider hidden /> */}
-
-        <Grid padded stackable>
-          <Grid.Column tablet={16} computer={16}>
-            <Segment raised color="yellow" style={aboutMeStyle}>
-              <Grid.Row>
-                <Header as="h2" content="About me" />
-                <TextArea
-                  placeholder="Tell the class a little about yourself and your goals for making games"
-                  style={inputStyle}
-                />
-              </Grid.Row>
-              <hr />
-              <Grid.Row>
-                <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
-              </Grid.Row>
-              <hr />
-              <Grid.Row>
-                <UserProfileGamesList user={currUser} currUser={currUser} />
-              </Grid.Row>
-            </Segment>
-          </Grid.Column>
-        </Grid>
-      </div>
-    )
-  }
-}
 
 class TeacherProfile extends React.Component {
   render() {
@@ -1271,7 +1096,7 @@ export default class DashboardTabs extends React.Component {
         menuItem: 'Student Dashboard',
         render: () => (
           <Tab.Pane>
-            <Dashboard {...this.props} />
+            <StudentDashboard {...this.props} />
           </Tab.Pane>
         ),
       },

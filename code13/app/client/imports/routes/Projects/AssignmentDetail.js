@@ -6,15 +6,17 @@ const AssignmentDetail = props => (
   <Segment raised padded style={{ flex: '1 1 100%', margin: 0 }}>
     <Header>
       {props.name} - Due {`${props.dueDate.split('-')[1]}/${props.dueDate.split('-')[2]}`}
+      <Button
+        compact
+        floated="right"
+        icon="pencil"
+        content="Edit"
+        onClick={() => {
+          openAssetById(props.assignmentId)
+        }}
+      />
     </Header>
     <div dangerouslySetInnerHTML={{ __html: props.detail }} />
-    <Button
-      icon="pencil"
-      content="Edit"
-      onClick={() => {
-        openAssetById(props.assignmentId)
-      }}
-    />
   </Segment>
 )
 

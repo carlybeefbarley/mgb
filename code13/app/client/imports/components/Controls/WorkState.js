@@ -68,7 +68,6 @@ const WorkState = ({
       <WorkStateStatus
         iconOnly={iconOnly}
         workState={_.includes(workStateStatuses, workState) ? workState : 'unknown'}
-        size={size}
         labelStyle={labelStyle}
       />
     )}
@@ -119,24 +118,24 @@ const WorkStateQuality = ({
   </Popup>
 )
 
-const WorkStateStatus = ({ workState, size, labelStyle, iconOnly }) => (
+// Completely different from WorkStateQuality; used exclusively for classrooms
+// Statuses change when students submit assignments and teachers review assignment.
+// These cannot be directly changes like WorkStateQuality.
+const WorkStateStatus = ({ workState, labelStyle, iconOnly }) => (
   <span>
     {workState !== 'unknown' &&
       (iconOnly ? (
         <Icon
           circular
           inverted
+          fitted
+          size="small"
           title={workState}
           color={`${statusColors[workState]}`}
           name={`${statusIcons[workState]}`}
         />
       ) : (
-        <Label
-          className="workstate-label"
-          style={labelStyle}
-          color={`${statusColors[workState]}`}
-          size={size}
-        >
+        <Label className="workstate-label" style={labelStyle} color={`${statusColors[workState]}`}>
           <Icon name={statusIcons[workState]} />
           {workState}
         </Label>

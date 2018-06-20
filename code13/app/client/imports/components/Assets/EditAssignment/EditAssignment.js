@@ -22,10 +22,9 @@ class EditAssignmentForm extends BaseForm {
   render() {
     return (
       <div className="ui form">
+        {this.date('Due Date', 'dueDate')}
         {this.textEditor('Assignment Detail', 'assignmentDetail')}
         {this.bool('Is Team Project', 'isTeamProject')}
-        {this.date('Due Date', 'dueDate')}
-        {this.dropArea('Code', 'defaultAssetName', 'code', null)}
       </div>
     )
   }

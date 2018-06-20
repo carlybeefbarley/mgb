@@ -31,6 +31,7 @@ import LearnArtRoute from './Learn/LearnArtRoute'
 import Users from './Users'
 import Azzets from './Assets'
 import Projects from './Projects'
+import Education from './Education'
 
 import NotYetImplementedRoute from './Nav/NotYetImplementedRoute'
 import NotFoundRoute from './Nav/NotFoundRoute'
@@ -43,7 +44,7 @@ import Privacy from '/client/imports/legal/Privacy'
 import AIE from '/client/imports/layouts/AIEClassroom'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
-import DevPanelRoute from './Dev/DevPanelRoute';
+import DevPanelRoute from './Dev/DevPanelRoute'
 
 // To understand this file...
 // Overview article: https://css-tricks.com/learning-react-router/
@@ -120,6 +121,17 @@ export function clientStartup() {
 
         <Route path="user/:id/projects" component={Projects.UserProjectList} name="Projects" />
         <Route path="u/:username/projects" component={Projects.UserProjectList} name="Projects" />
+
+        <Route
+          path="user/:id/classroom/:classroomId"
+          component={Education.ClassroomDashboardRoute}
+          name="Classroom"
+        />
+        <Route
+          path="u/:id/classroom/:classroomId"
+          component={Education.ClassroomDashboardRoute}
+          name="Classroom"
+        />
 
         <Route
           path="user/:id/projects/create"
@@ -207,11 +219,7 @@ export function clientStartup() {
           name="Coming Soon!.."
         />
 
-        <Route
-        path="/devpanel"
-        component={DevPanelRoute}
-        name="Super Secret Land"
-        />
+        <Route path="/devpanel" component={DevPanelRoute} name="Super Secret Land" />
 
         <Route path="*" component={NotFoundRoute} name="Page Not Found" />
       </Route>

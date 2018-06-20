@@ -3,7 +3,6 @@ import React from 'react'
 import { Grid, Button } from 'semantic-ui-react'
 import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
 import BaseForm from '/client/imports/components/Controls/BaseForm.js'
-import CreateProjectLinkButton from '/client/imports/components/Projects/NewProject/CreateProjectLinkButton.js'
 import { showToast } from '/client/imports/modules'
 import { logActivity } from '/imports/schemas/activity'
 import { utilPushTo } from '/client/imports/routes/QLink'
@@ -23,10 +22,9 @@ class EditAssignmentForm extends BaseForm {
   render() {
     return (
       <div className="ui form">
-        {this.textEditor('Assignment Detail', 'assignmentDetail')}
-        {this.bool('Is Team Project', 'isTeamProject')}
         {this.date('Due Date', 'dueDate')}
-        {this.dropArea('Code', 'defaultAssetName', 'code', null)}
+        {this.bool('Is Team Project', 'isTeamProject')}
+        {this.textEditor('Assignment Detail', 'assignmentDetail')}
       </div>
     )
   }
@@ -83,7 +81,6 @@ export default class EditAssignment extends React.Component {
     return (
       <Grid centered container>
         <Grid.Column className="edit-assignment">
-          <Button onClick={this.handleCreateProjectFromAssignment} content="Create Project" />
           <EditAssignmentForm
             asset={asset}
             canEdit={canEdit}
@@ -92,6 +89,7 @@ export default class EditAssignment extends React.Component {
               handleContentChange(null, d, 'Updating thumbnail')
             }}
           />
+          <Button floated="right" onClick={this.handleCreateProjectFromAssignment} content="Create Project" />
         </Grid.Column>
       </Grid>
     )

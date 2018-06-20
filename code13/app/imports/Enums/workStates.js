@@ -29,6 +29,6 @@ export const statusIcons = {
 export const statusColors = {
   unknown: 'grey',
   'needs review': 'yellow',
-  'needs work': 'yellow',
+  'needs work': 'olive',
   completed: 'green',
 }

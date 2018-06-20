@@ -160,6 +160,7 @@ const AssetCard = React.createClass({
               </span>
 
               <WorkState
+                iconOnly
                 workState={asset.workState}
                 size={viewOpts.showExtra ? null : 'small'}
                 canEdit={false}

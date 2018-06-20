@@ -1,43 +1,21 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
-import Helmet from 'react-helmet'
-import {
-  Divider,
-  Form,
-  Grid,
-  Input,
-  Segment,
-  Checkbox,
-  Message,
-  Modal,
-  Icon,
-  Header,
-  Button,
-  Popup,
-  List,
-} from 'semantic-ui-react'
+
+import { Grid, Segment, Header, Button, List } from 'semantic-ui-react'
 import { showToast } from '/client/imports/modules'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import { Projects } from '/imports/schemas'
-import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
-import Spinner from '/client/imports/components/Nav/Spinner'
-import { joyrideStore } from '/client/imports/stores'
 import ProjectHistoryRoute from './ProjectHistoryRoute'
-import UserListRoute from '../Users/UserListRoute'
-import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
-import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
 import { logActivity } from '/imports/schemas/activity'
-import ProjectForkGenerator from './ProjectForkGenerator'
-import { isUserSuperAdmin } from '/imports/schemas/roles'
-import SpecialGlobals from '/imports/SpecialGlobals.js'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 import { withMeteorData } from '../../hocs'
 import StudentListGET from '/client/imports/routes/Projects/StudentListGET.js'
 import AssignmentDetails from './AssignmentDetails'
 import ChatPanel from '/client/imports/components/Assets/ChatPanel.js'
 import { makeChannelName } from '/imports/schemas/chats'
+import WorkState from '/client/imports/components/Controls/WorkState'
 
 class AssignmentOverview extends Component {
   static propTypes = {
@@ -163,13 +141,20 @@ class AssignmentOverview extends Component {
       height: '20em',
     }
 
-    const { name, assignmentDetail, dueDate } = this.props.project
+    const { project: { name, assignmentDetail, dueDate, workState } } = this.props
     const { confirmDeleteNum, isDeleteComplete, isDeletePending } = this.state
 
     return (
       <Grid.Column>
         <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em', width: '100%' }}>
-          <div style={{ float: 'right' }}>
+          <div style={{ display: 'flex', flexFlow: 'row', justifyContent: 'flex-end', width: '100%' }}>
+            <WorkState isClassroom workState={workState} />
+            <Button
+              labelPosition="left"
+              icon="calendar check"
+              content={'Submit Assignment'}
+              onClick={this.handleSubmitAssignment}
+            />
             <Button
               labelPosition="left"
               icon="trash"
@@ -183,12 +168,6 @@ class AssignmentOverview extends Component {
               }
               color={confirmDeleteNum < 0 ? null : 'red'}
               onClick={confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject}
-            />
-            <Button
-              labelPosition="left"
-              icon="calendar check"
-              content={'Submit Assignment'}
-              onClick={this.handleSubmitAssignment}
             />
           </div>
           <Grid.Row>
@@ -279,9 +258,7 @@ class AssignmentOverview extends Component {
     const isStudent = false
 
     const currUser = Meteor.user()
-    const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: 'Rz3yh9K5zCHZxvEWJ' })
-
-    console.log(this)
+    const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: project.assignmentId })
 
     return (
       <Grid columns="equal" padded style={{ flex: '1 1 0' }}>

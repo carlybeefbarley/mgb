@@ -312,7 +312,7 @@ const ChatMessagesView = React.createClass({
           <span />
         </Comment.Group>
 
-        <Form style={{ flex: '0 1 175px' }} size="small">
+        <Form style={{ flex: '0 1 100px' }} size="small">
           <Form.Field id="mgbjr-fp-chat-messageInput" disabled={!canSend}>
             <Form.TextArea
               rows={3}

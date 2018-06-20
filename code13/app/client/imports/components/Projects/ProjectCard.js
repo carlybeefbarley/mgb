@@ -58,6 +58,7 @@ const ProjectCard = (props, context) => {
       <Card.Content>
         <span style={{ float: 'right' }}>
           <WorkState
+            iconOnly
             isClassroom={currUser && (currUser.profile.isTeacher || currUser.profile.isStudent)}
             workState={workState}
             handleChange={

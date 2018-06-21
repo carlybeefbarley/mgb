@@ -16,6 +16,7 @@ import AssignmentDetail from './AssignmentDetail'
 import ChatPanel from '/client/imports/components/Assets/ChatPanel.js'
 import { makeChannelName } from '/imports/schemas/chats'
 import WorkState from '/client/imports/components/Controls/WorkState'
+import AssignmentCardGET from '/client/imports/components/Assets/AssignmentCardGET'
 
 class AssignmentOverview extends Component {
   static propTypes = {
@@ -141,14 +142,18 @@ class AssignmentOverview extends Component {
       height: '20em',
     }
 
-    const { project: { name, assignmentDetail, dueDate, workState, assignmentId } } = this.props
+    const { project: { assignmentId } } = this.props
     const { confirmDeleteNum, isDeleteComplete, isDeletePending } = this.state
 
     return (
       <Grid.Column>
         <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em', width: '100%' }}>
           <div style={{ display: 'flex', flexFlow: 'row', justifyContent: 'flex-end', width: '100%' }}>
-            <WorkState isClassroom workState={workState} />
+            <Button.Group>
+              <Button color="olive">Needs Work</Button>
+              <Button.Or />
+              <Button color="green">Complete</Button>
+            </Button.Group>
             <Button
               labelPosition="left"
               icon="calendar check"
@@ -174,12 +179,7 @@ class AssignmentOverview extends Component {
             <Header as="h2" color="grey" floated="left">
               Assignment Details
             </Header>
-            <AssignmentDetail
-              name={name}
-              detail={assignmentDetail}
-              dueDate={dueDate}
-              assignmentId={assignmentId}
-            />
+            <AssignmentCardGET assignmentId={assignmentId} />
           </Grid.Row>
           <Grid.Row stretched>
             <Grid.Column style={{ height: 'auto' }}>
@@ -260,7 +260,7 @@ class AssignmentOverview extends Component {
 
     const { activities } = this.state
 
-    const isStudent = false
+    const isStudent = true
 
     const currUser = Meteor.user()
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: project.assignmentId })

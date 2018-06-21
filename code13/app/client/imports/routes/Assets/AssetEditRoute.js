@@ -50,6 +50,7 @@ import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 import FlagEntity from '/client/imports/components/Controls/FlagEntityUI'
 import ResolveReportEntity from '/client/imports/components/Controls/FlagResolve'
+import SpecialGlobals from '../../../../imports/SpecialGlobals'
 import { withStores } from '/client/imports/hocs'
 
 const FLUSH_TIMER_INTERVAL_MS = 6000 // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
@@ -598,7 +599,7 @@ const AssetEditRoute = React.createClass({
             asset.skillPath.length > 0 && <ChallengeState ownername={asset.dn_ownerName} />}
             <AssetForkGenerator
               asset={asset}
-              canFork={currUser !== null}
+              canFork={currUser !== null && !SpecialGlobals.disabledAssets[asset.kind]}
               doForkAsset={this.doForkAsset}
               isForkPending={isForkPending}
             />

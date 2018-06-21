@@ -362,8 +362,7 @@ class AppUI extends Component {
     const { query } = this.props.location
     const isGuest = currUser ? currUser.profile.isGuest : false
     const isHocRoute = window.location.pathname === '/hour-of-code'
-    const announcement =
-      'Non-code (Actor/ActorMap) assets will soon be phased out. Further use of these assets is discouraged. Please ask a moderator for more info.'
+    const announcement = ''
     if (!loading) this.configureTrackJs()
 
     // The Flex Panel is for communications and common quick searches in a right hand margin
@@ -390,7 +389,7 @@ class AppUI extends Component {
       right: `${isGuest || isHocRoute ? 0 : flexPanelWidth}`,
       marginBottom: '0px',
       height: '100vh',
-      overflow: isGuest || isHocRoute ? 'hidden' : undefined,
+      overflow: isGuest || isHocRoute ? 'hidden' : 'auto',
       WebkitOverflowScrolling: 'touch', // only works with overflowY: scroll (not auto)
     }
 

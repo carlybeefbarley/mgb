@@ -57,9 +57,7 @@ export default class EditAssignment extends React.Component {
     let newProj = {
       name,
       description: text,
-      assignmentDetail,
       assignmentId: _id,
-      dueDate,
       workState: 'unknown',
     }
 

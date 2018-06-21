@@ -14,13 +14,13 @@ export const bestWorkStateQuality = _.last(workStateQualities)
 
 export const qualityIcons = {
   broken: 'frown',
-  unknown: 'help',
+  unknown: 'asterisk',
   working: 'meh',
   polished: 'smile',
 }
 
 export const statusIcons = {
-  unknown: 'help',
+  unknown: 'asterisk',
   'needs review': 'exclamation',
   'needs work': 'exclamation',
   completed: 'check',

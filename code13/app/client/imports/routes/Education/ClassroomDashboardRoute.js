@@ -6,10 +6,12 @@ import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 import { createContainer } from 'meteor/react-meteor-data'
 import UpcomingClassAssignmentsList from '/client/imports/components/Education/UpcomingClassAssignmentsList'
 import { Classrooms, Users } from '/imports/schemas'
+import Spinner from '../../components/Nav/Spinner'
+import ReactQuill from 'react-quill'
 
 class ClassroomDashboard extends React.Component {
   render() {
-    const { currUser, classroom } = this.props
+    const { currUser, classroom, teacher, assignment } = this.props
     const containerStyle = {
       overflowY: 'auto',
     }
@@ -25,7 +27,9 @@ class ClassroomDashboard extends React.Component {
       fontSize: '1.3em',
       textAlign: 'center',
     }
-
+    if (!classroom) {
+      return <Spinner content="Loading Data..." />
+    }
     return (
       <div style={containerStyle}>
         <Grid columns={2} padded stretched>
@@ -45,7 +49,7 @@ class ClassroomDashboard extends React.Component {
                 />
                 <List style={infoStyle}>
                   <List.Item>
-                    <List.Content>Teacher Name</List.Content>
+                    <List.Content>{teacher.username}</List.Content>
                   </List.Item>
                   <List.Item>
                     <List.Content>
@@ -59,23 +63,7 @@ class ClassroomDashboard extends React.Component {
               <Segment raised color="blue">
                 <Header as="h3" content="About this Class" />
                 <Segment>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-                    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                    est laborum.
-                  </p>
-
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-                    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                    est laborum.
-                  </p>
+                  <ReactQuill theme={null} readyOnly value={classroom.description} />
                 </Segment>
               </Segment>
             </Grid.Column>
@@ -123,11 +111,21 @@ class ClassroomDashboard extends React.Component {
 }
 
 export default createContainer(props => {
+  // console.log(props.params.classroomId)
   const handleForClassroom = Meteor.subscribe('classrooms.oneClassroom', props.params.classroomId)
-  // const handleForUsers = Users
   const classroomCursor = Classrooms.find(props.params.classroomId)
   const classroom = classroomCursor.fetch()[0]
+  let teacher, handleForUsers
+  if (classroom && classroom.ownerId) {
+    handleForUsers = Meteor.subscribe('users.getByIdList', [classroom.ownerId])
+    teacher = Users.find(classroom.ownerId).fetch()[0]
+  }
 
-  const returnProps = { ...props, classroom }
+  const returnProps = {
+    ...props,
+    classroom,
+    loading: !handleForClassroom.ready() && handleForUsers && handleForUsers.ready(),
+    teacher,
+  }
   return returnProps
 }, ClassroomDashboard)

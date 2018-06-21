@@ -2,12 +2,6 @@ import React from 'react'
 import { Card, Icon, Popup } from 'semantic-ui-react'
 import ReactQuill from 'react-quill'
 
-const renderDueDate = fuzzyDate => {
-  // const actualDate =
-  //TODO: Fix this so it works
-  return fuzzyDate
-}
-
 const AssignmentCard = props => {
   const { assignmentDetail, dueDate = null } = props.assignmentAsset.metadata
   const { assignmentAsset } = props

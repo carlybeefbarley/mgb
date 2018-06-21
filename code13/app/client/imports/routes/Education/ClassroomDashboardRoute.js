@@ -8,6 +8,7 @@ import UpcomingClassAssignmentsList from '/client/imports/components/Education/U
 import { Classrooms, Users } from '/imports/schemas'
 import Spinner from '../../components/Nav/Spinner'
 import ReactQuill from 'react-quill'
+import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
 
 class ClassroomDashboard extends React.Component {
   render() {
@@ -75,14 +76,14 @@ class ClassroomDashboard extends React.Component {
             <Grid.Column width={8}>
               <Segment raised color="yellow">
                 <Header as="h2" content="Upcoming Assignments" />
-                <UpcomingClassAssignmentsList />
+                <AssignmentsListGET showUpcoming showPastDue={false} showNoDueDate={false} />
               </Segment>
             </Grid.Column>
 
             <Grid.Column width={8}>
               <Segment raised color="yellow">
                 <Header as="h2" content="Past Assignments" />
-                {/* <PastClassAssignmentsList /> */}
+                <AssignmentsListGET showPastDue showNoDueDate={false} showUpcoming={false} />
               </Segment>
             </Grid.Column>
           </Grid.Row>
@@ -111,7 +112,6 @@ class ClassroomDashboard extends React.Component {
 }
 
 export default createContainer(props => {
-  // console.log(props.params.classroomId)
   const handleForClassroom = Meteor.subscribe('classrooms.oneClassroom', props.params.classroomId)
   const classroomCursor = Classrooms.find(props.params.classroomId)
   const classroom = classroomCursor.fetch()[0]

@@ -30,6 +30,8 @@ import StudentDashboard from '/client/imports/components/Education/StudentDashbo
 //import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
 //import RecentAssetAction from './Actions/RecentAssetAction'
 
+// DO NOT USE
+// Use AssignmentsListGET instead. You may pass props showPastDue showNoDueDate & showUpcoming
 class UpcomingClassAssignmentsList extends React.Component {
   render() {
     return (
@@ -111,6 +113,8 @@ class UpcomingClassAssignmentsList extends React.Component {
   }
 }
 
+// DO NOT USE
+// Use AssignmentsListGET instead. You may pass props showPastDue showNoDueDate & showUpcoming
 class PastClassAssignmentsList extends React.Component {
   render() {
     return (
@@ -366,6 +370,9 @@ class TeacherProfile extends React.Component {
   }
 }
 
+
+// DO NOT USE
+// Moved to ClassroomDashboardRoute already implemented.
 class ClassroomDashboard extends React.Component {
   render() {
     const { currUser } = this.props
@@ -404,7 +411,7 @@ class ClassroomDashboard extends React.Component {
                 />
                 <List style={infoStyle}>
                   <List.Item>
-                    <List.Content>Teacher Name</List.Content>
+                    <List.Content>Teacher Name - ALREADY IMPLEMENTED</List.Content>
                   </List.Item>
                   <List.Item>
                     <List.Content>
@@ -481,6 +488,8 @@ class ClassroomDashboard extends React.Component {
   }
 }
 
+
+// TODO: Needs to be refactored to own route
 class StudentProfile extends React.Component {
   render() {
     const { currUser } = this.props
@@ -583,6 +592,7 @@ class StudentProfile extends React.Component {
   }
 }
 
+// TODO: Needs to be refactored to own route
 class HomePage extends React.Component {
   render() {
     return (
@@ -601,6 +611,8 @@ class HomePage extends React.Component {
   }
 }
 
+
+// TODO: Refactor to own class inside of HomePageRoute when refactoring class HomePage
 class HomeHeroBanner extends React.Component {
   render() {
     const { currUser } = this.props
@@ -736,6 +748,7 @@ class HomeHeroBanner extends React.Component {
   }
 }
 
+// TODO: Needs to be refactored to own route
 class TeacherClassroom extends React.Component {
   render() {
     const { currUser } = this.props
@@ -1001,6 +1014,7 @@ class TeacherClassroom extends React.Component {
   }
 }
 
+// TODO: Needs to be refactored to own route
 class TeacherDashboard extends React.Component {
   render() {
     const { currUser } = this.props
@@ -1105,6 +1119,7 @@ class TeacherDashboard extends React.Component {
   }
 }
 
+// TODO: This boiler plate will be discarded once all other classes/routes are implemented.
 export default class DashboardTabs extends React.Component {
   render() {
     const panes = [

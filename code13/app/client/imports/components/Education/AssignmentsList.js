@@ -1,26 +1,26 @@
 import React from 'react'
 import _ from 'lodash'
 import { List } from 'semantic-ui-react'
-import { arraySelector } from '../Assets/EditAudio/EditMusic/djent/utils/tools'
+import PropTypes from 'prop-types'
 
 export default class AssignmentsList extends React.Component {
-  defaultProps = {}
+  static propTypes = {
+    showPastDue: PropTypes.bool,
+    showUpcoming: PropTypes.bool,
+    showNoDueDate: PropTypes.bool,
+    showCompleted: PropTypes.bool,
+  }
+
+  static defaultProps = { showPastDue: true, showUpcoming: true, showNoDueDate: true, showCompleted: true }
+
   getFutureAssignments = () => {
     const { assignmentAssets } = this.props
 
     return assignmentAssets
   }
 
-  convertDueDate = assignmentDate => {
-    const dateArr = assignmentDate.split('-'),
-      day = parseInt(dateArr[2]),
-      month = parseInt(dateArr[1]),
-      year = parseInt(dateArr[0])
-    return new Date(`${year}-${month}-${day}`)
-  }
-
   assignmentHasDueDate = assignment => {
-    if (typeof assignment !== 'object') throw new Error('Invalid type passed.')
+    if (typeof assignment !== 'object') throw new Error('Invalid type passed, expect object.')
     if (assignment && assignment.metadata && assignment.metadata.dueDate) {
       return true
     }
@@ -28,10 +28,10 @@ export default class AssignmentsList extends React.Component {
   }
 
   assignmentIsPastDue = assignment => {
-    if (typeof assignment !== 'object') throw new Error('Invalid type passed.')
+    if (typeof assignment !== 'object') throw new Error('Invalid type passed, expect object.')
 
     if (this.assignmentHasDueDate(assignment)) {
-      const dueDate = this.convertDueDate(assignment.metadata.dueDate),
+      const dueDate = new Date(assignment.metadata.dueDate),
         now = new Date()
       if (dueDate < now) {
         return true
@@ -42,26 +42,26 @@ export default class AssignmentsList extends React.Component {
     console.warn('Warning: Assignment does not have due date.')
   }
 
-  filterAssetList = (assignmentAssetList, returnTypes) => {
-    const returnArray = assignmentAssetList.filter(curr => {
-      if (returnTypes.includes('noDueDate')) {
-        if (!this.assignmentHasDueDate(curr)) {
-          return curr
-        }
+  // TODO: Handle for completed past assignments
+  filterAssetList = assignmentAssetList => {
+    const { showNoDueDate, showPastDue, showUpcoming } = this.props
+    const returnArray = assignmentAssetList.filter(assignmentAsset => {
+      if (showNoDueDate && !this.assignmentHasDueDate(assignmentAsset)) {
+        return assignmentAsset
       }
-      if (returnTypes.includes('pastDue')) {
-        if (this.assignmentIsPastDue(curr)) {
-          return curr
-        }
+      if (showPastDue && this.assignmentIsPastDue(assignmentAsset)) {
+        return assignmentAsset
       }
-      if (returnTypes.includes('upcoming')) {
-        if (!this.assignmentIsPastDue(curr)) {
-          return curr
-        }
+      if (
+        showUpcoming &&
+        !this.assignmentIsPastDue(assignmentAsset) &&
+        this.assignmentHasDueDate(assignmentAsset)
+      ) {
+        return assignmentAsset
       }
     })
 
-    if (returnArray.length === 0) console.log('sortAssetList() No Assets Found!')
+    if (returnArray.length === 0) console.warn('sortAssetList() No Assets Found!')
     return returnArray
   }
 
@@ -98,9 +98,8 @@ export default class AssignmentsList extends React.Component {
   }
 
   render() {
-    const { assignmentAssets, showPastDue, showUpcoming, showNoDueDate } = this.props
-    const viewAssets = this.filterAssetList(assignmentAssets, ['pastDue', 'upcoming', 'noDueDate'])
-    const listItems = this.renderListItems(viewAssets)
+    const { assignmentAssets } = this.props
+    const listItems = this.renderListItems(this.filterAssetList(assignmentAssets))
     return <List>{listItems}</List>
   }
 }

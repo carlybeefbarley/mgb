@@ -31,6 +31,7 @@ import LearnArtRoute from './Learn/LearnArtRoute'
 import Users from './Users'
 import Azzets from './Assets'
 import Projects from './Projects'
+import Education from './Education'
 
 import NotYetImplementedRoute from './Nav/NotYetImplementedRoute'
 import NotFoundRoute from './Nav/NotFoundRoute'
@@ -120,6 +121,17 @@ export function clientStartup() {
 
         <Route path="user/:id/projects" component={Projects.UserProjectList} name="Projects" />
         <Route path="u/:username/projects" component={Projects.UserProjectList} name="Projects" />
+
+        <Route
+          path="user/:id/classroom/:classroomId"
+          component={Education.ClassroomDashboardRoute}
+          name="Classroom"
+        />
+        <Route
+          path="u/:id/classroom/:classroomId"
+          component={Education.ClassroomDashboardRoute}
+          name="Classroom"
+        />
 
         <Route
           path="user/:id/projects/create"

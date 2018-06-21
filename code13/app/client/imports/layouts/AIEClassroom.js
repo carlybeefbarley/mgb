@@ -4,6 +4,7 @@ import {
   Divider,
   Button,
   Icon,
+  Card,
   Image,
   Grid,
   Header,
@@ -27,9 +28,7 @@ import HoverImage from 'react-hover-image'
 import StudentDashboard from '/client/imports/components/Education/StudentDashboard'
 
 //import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
-
 //import RecentAssetAction from './Actions/RecentAssetAction'
-
 
 class UpcomingClassAssignmentsList extends React.Component {
   render() {
@@ -41,7 +40,7 @@ class UpcomingClassAssignmentsList extends React.Component {
             <List.Content floated="right">
               <small style={{ color: 'lightgray' }}>when</small>
             </List.Content>
-            <List.Header>Foo bar</List.Header>
+            <List.Header>Assignment Name</List.Header>
             <List.Description>
               <small>Carly is cool</small>
             </List.Description>
@@ -268,7 +267,6 @@ class SubmissionFeed extends React.Component {
   }
 }
 
-
 class TeacherProfile extends React.Component {
   render() {
     const { currUser } = this.props
@@ -460,15 +458,23 @@ class ClassroomDashboard extends React.Component {
             </Grid.Column>
           </Grid.Row>
         </Grid>
-        <hr />
-        <Grid>
-          <Grid.Row>
-            <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
-          </Grid.Row>
-          <hr />
-          <Grid.Row>
-            <UserProfileGamesList user={currUser} currUser={currUser} />
-          </Grid.Row>
+        <Grid columns={1} padded stackable>
+          <Grid.Column width={16}>
+            <Grid.Row>
+              <Segment raised color="purple">
+                <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
+              </Segment>
+            </Grid.Row>
+          </Grid.Column>
+        </Grid>
+        <Grid columns={1} padded stackable>
+          <Grid.Column width={16}>
+            <Grid.Row>
+              <Segment raised color="teal">
+                <UserProfileGamesList user={currUser} currUser={currUser} />
+              </Segment>
+            </Grid.Row>
+          </Grid.Column>
         </Grid>
       </div>
     )
@@ -864,11 +870,21 @@ class TeacherClassroom extends React.Component {
                     </Table.Row>
                     <Table.Row>
                       <Table.Cell collapsing>Alexander Hamilton</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="x" color="red" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="plus circle" color="yellow" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="plus circle" color="yellow" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="plus circle" color="yellow" />
+                      </Table.Cell>
+                      <Table.Cell style={cellStyle}>
+                        <Icon name="check circle" color="green" />
+                      </Table.Cell>
                     </Table.Row>
                     <Table.Row>
                       <Table.Cell collapsing>Maria Carey</Table.Cell>

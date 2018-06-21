@@ -11,5 +11,5 @@ Meteor.publish('classrooms.byUserId', userId => {
 
 Meteor.publish('classrooms.oneClassroom', classroomId => {
   check(classroomId, String)
-  return Classrooms.findOne(classroomId)
+  return Classrooms.find({ _id: classroomId })
 })

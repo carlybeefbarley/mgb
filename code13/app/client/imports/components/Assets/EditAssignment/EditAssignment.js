@@ -53,7 +53,7 @@ export default class EditAssignment extends React.Component {
   }
 
   handleCreateProjectFromAssignment = () => {
-    const { currUser, asset: { _id, name, text, metadata: { assignmentDetail, dueDate } } } = this.props
+    const { currUser, asset: { _id, name, text } } = this.props
     let newProj = {
       name,
       description: text,

@@ -26,6 +26,8 @@ import { withMeteorData } from '../../hocs'
 import { getProjectAvatarUrl } from '../../helpers/assetFetchers'
 // import AssignmentCard from '/client/imports/components/Assets/AssignmentCard'
 import AssignmentCardGET from '/client/imports/components/Assets/AssignmentCardGET'
+import ChatPanel from '/client/imports/components/Assets/ChatPanel.js'
+import StudentListGET from '/client/imports/routes/Projects/StudentListGET.js'
 
 class ProjectOverview extends Component {
   static propTypes = {
@@ -240,6 +242,92 @@ class ProjectOverview extends Component {
     )
   }
 
+  renderAssignmentView() {
+    const listSty = {
+      overflowY: 'auto',
+      height: '20em',
+    }
+
+    const { currUser, project } = this.props
+    const { confirmDeleteNum, isDeleteComplete, isDeletePending } = this.state
+    const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: project.assignmentId })
+
+    return (
+      <Grid columns="equal" padded style={{ flex: '1 1 0' }}>
+        <ChatPanel currUser={currUser} channelName={channelName} />
+        <Grid.Column>
+          <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em', width: '100%' }}>
+            <div style={{ display: 'flex', flexFlow: 'row', justifyContent: 'flex-end', width: '100%' }}>
+              <Button.Group>
+                <Button color="olive">Needs Work</Button>
+                <Button.Or />
+                <Button color="green">Complete</Button>
+              </Button.Group>
+              <Button
+                labelPosition="left"
+                icon="calendar check"
+                content={'Submit Assignment'}
+                onClick={this.handleSubmitAssignment}
+              />
+              <Button
+                labelPosition="left"
+                icon="trash"
+                disabled={isDeleteComplete || isDeletePending}
+                content={
+                  confirmDeleteNum < 0 ? (
+                    'Delete'
+                  ) : (
+                    `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`
+                  )
+                }
+                color={confirmDeleteNum < 0 ? null : 'red'}
+                onClick={confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject}
+              />
+            </div>
+            <Grid.Row>
+              <Header as="h2" color="grey" floated="left">
+                Assignment Details
+              </Header>
+              <AssignmentCardGET assignmentId={project.assignmentId} />
+            </Grid.Row>
+            <Grid.Row stretched>
+              <Grid.Column style={{ height: 'auto' }}>
+                <Header
+                  as="h2"
+                  color="grey"
+                  floated="left"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
+                >
+                  Completed
+                </Header>
+                <Segment padded raised style={listSty}>
+                  <StudentListGET assignment={project} />
+                </Segment>
+              </Grid.Column>
+              <Grid.Column style={{ height: 'auto' }}>
+                <Header
+                  as="h2"
+                  color="grey"
+                  floated="left"
+                  // Stretched columns force the width to be 100%
+                  // The text only should be clickable, limit the width to the length of the text
+                  style={{ flex: '0 0 auto', width: '3.75em', cursor: 'pointer' }}
+                  id="mgbjr-project-activity"
+                  onClick={() =>
+                    utilPushTo(null, `/u/${project.ownerName}/projects/${project.name}/activity`)}
+                >
+                  Incomplete
+                </Header>
+                <Segment padded raised style={listSty} />
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </Grid.Column>
+      </Grid>
+    )
+  }
+
   render() {
     const { currUser, currUserProjects, location, loading, params, project } = this.props // One Project provided via
 
@@ -296,246 +384,247 @@ class ProjectOverview extends Component {
     const sideBarColumnStyle = { minWidth: '250px', maxWidth: '250px' }
 
     return (
-      <Grid columns="equal" container style={{ overflowX: 'hidden' }}>
-        <Helmet
-          title={`Project: ${relativeProjectName}`}
-          meta={[{ name: `Project: ${relativeProjectName}`, content: 'Project' }]}
-        />
-        <Grid.Row columns="equal">
-          <Grid.Column textAlign="center" style={sideBarColumnStyle} />
-          <Grid.Column>
-            <Header as="h1" textAlign="center" dividing>
-              {project.name}
-            </Header>
-          </Grid.Column>
-        </Grid.Row>
+      <div>
+        {project.assignmentId ? (
+          this.renderAssignmentView()
+        ) : (
+          <Grid columns="equal" container style={{ overflowX: 'hidden' }}>
+            <Helmet
+              title={`Project: ${relativeProjectName}`}
+              meta={[{ name: `Project: ${relativeProjectName}`, content: 'Project' }]}
+            />
+            <Grid.Row columns="equal">
+              <Grid.Column textAlign="center" style={sideBarColumnStyle} />
+              <Grid.Column>
+                <Header as="h1" textAlign="center" dividing>
+                  {project.name}
+                </Header>
+              </Grid.Column>
+            </Grid.Row>
 
-        <Grid.Row columns="equal">
-          <Grid.Column textAlign="center" style={sideBarColumnStyle}>
-            <Segment>
-              <p>
-                <ImageShowOrChange
-                  header="Project Avatar"
-                  imageSrc={getProjectAvatarUrl(project)}
-                  canEdit={canEdit}
-                  canLinkToSrc={canEdit}
-                  handleChange={(newUrl, avatarId) => this.handleFieldChanged({ avatarAssetId: avatarId })}
-                />
-              </p>
-              <Form>
-                {isPartOfTeam && (
-                  <Form.Field>
-                    <QLink
-                      query={{
-                        _fp: `chat.${makeChannelName({ scopeGroupName: 'Project', scopeId: project._id })}`,
-                      }}
-                    >
-                      <Button fluid labelPosition="left" icon="chat" content="Chat" />
-                    </QLink>
-                  </Form.Field>
-                )}
-                {/* FORK PROJECT STUFF */}
-                <Form.Field>
-                  <Popup
-                    on="click"
-                    position="right center"
-                    trigger={
-                      <ProjectForkGenerator
-                        project={project}
-                        isForkPending={isForkPending}
-                        id="mgbjr-project-overview-fork"
+            <Grid.Row columns="equal">
+              <Grid.Column textAlign="center" style={sideBarColumnStyle}>
+                <Segment>
+                  <p>
+                    <ImageShowOrChange
+                      header="Project Avatar"
+                      imageSrc={getProjectAvatarUrl(project)}
+                      canEdit={canEdit}
+                      canLinkToSrc={canEdit}
+                      handleChange={(newUrl, avatarId) =>
+                        this.handleFieldChanged({ avatarAssetId: avatarId })}
+                    />
+                  </p>
+                  <Form>
+                    {isPartOfTeam && (
+                      <Form.Field>
+                        <QLink
+                          query={{
+                            _fp: `chat.${makeChannelName({
+                              scopeGroupName: 'Project',
+                              scopeId: project._id,
+                            })}`,
+                          }}
+                        >
+                          <Button fluid labelPosition="left" icon="chat" content="Chat" />
+                        </QLink>
+                      </Form.Field>
+                    )}
+                    {/* FORK PROJECT STUFF */}
+                    <Form.Field>
+                      <Popup
+                        on="click"
+                        position="right center"
+                        trigger={
+                          <ProjectForkGenerator
+                            project={project}
+                            isForkPending={isForkPending}
+                            id="mgbjr-project-overview-fork"
+                            fluid
+                            labelPosition="left"
+                            disabled={!project.allowForks || !currUser || isForkPending}
+                            loading={isForkPending}
+                          />
+                        }
+                      >
+                        {isForkPending ? (
+                          <div>Forking... please wait..</div>
+                        ) : (
+                          <div>
+                            <Header as="h4" content="New name for forked project" />
+                            <Input
+                              size="small"
+                              id="mgbjr-fork-project-name-input"
+                              placeholder="New Project name"
+                              defaultValue={project.name + ' (fork)'}
+                              ref="forkNameInput"
+                              action={{
+                                icon: 'fork',
+                                ref: 'forkGoButton',
+                                onClick: this.handleForkGo,
+                                content: 'Fork',
+                              }}
+                            />
+                          </div>
+                        )}
+                      </Popup>
+                    </Form.Field>
+                  </Form>
+                </Segment>
+                {this.canEdit() && (
+                  <Segment color="red">
+                    <Form>
+                      <Header color="red">
+                        <Icon name="lock" />
+                        Admin
+                      </Header>
+                      <Form.Button
                         fluid
                         labelPosition="left"
-                        disabled={!project.allowForks || !currUser || isForkPending}
-                        loading={isForkPending}
+                        icon={project.allowForks ? 'checkmark box' : 'square outline'}
+                        content="Allow Forks"
+                        onClick={() => this.handleFieldChanged({ allowForks: !project.allowForks })}
+                        title="Project Owner may allow other users to fork this Project and its Assets"
                       />
-                    }
-                  >
-                    {isForkPending ? (
-                      <div>Forking... please wait..</div>
-                    ) : (
-                      <div>
-                        <Header as="h4" content="New name for forked project" />
-                        <Input
-                          size="small"
-                          id="mgbjr-fork-project-name-input"
-                          placeholder="New Project name"
-                          defaultValue={project.name + ' (fork)'}
-                          ref="forkNameInput"
-                          action={{
-                            icon: 'fork',
-                            ref: 'forkGoButton',
-                            onClick: this.handleForkGo,
-                            content: 'Fork',
-                          }}
-                        />
-                      </div>
+                      <Form.Button
+                        fluid
+                        labelPosition="left"
+                        icon="trash"
+                        disabled={isDeleteComplete || isDeletePending}
+                        content={
+                          confirmDeleteNum < 0 ? (
+                            'Delete'
+                          ) : (
+                            `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`
+                          )
+                        }
+                        color={confirmDeleteNum < 0 ? null : 'red'}
+                        onClick={
+                          confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject
+                        }
+                      />
+                      {/* TODO: make this a basic Modal */}
+                      {isDeletePending && (
+                        <Message icon size="mini">
+                          <Icon name="circle notched" loading />
+                          <Message.Content>
+                            <Message.Header>Deleting Project</Message.Header>
+                            Please wait while we make sure it's really deleted...
+                          </Message.Content>
+                        </Message>
+                      )}
+                    </Form>
+                  </Segment>
+                )}
+              </Grid.Column>
+              <Grid.Column>
+                <Grid columns="equal">
+                  <Grid.Column stretched>
+                    <div>
+                      <Header as="h2" color="grey" style={{ flex: '0 0 auto' }}>
+                        Games
+                      </Header>
+                      <GamesAvailableGET
+                        canEdit={canEdit}
+                        currUser={currUser}
+                        scopeToUserId={project.ownerId}
+                        scopeToProjectName={project.name}
+                      />
+                    </div>
+                  </Grid.Column>
+                  <Grid.Column stretched>
+                    <Header
+                      as="h2"
+                      color="grey"
+                      floated="left"
+                      // Stretched columns force the width to be 100%
+                      // The text only should be clickable, limit the width to the length of the text
+                      style={{ flex: '0 0 auto', width: '3.75em', cursor: 'pointer' }}
+                      id="mgbjr-project-activity"
+                      onClick={() =>
+                        utilPushTo(null, `/u/${project.ownerName}/projects/${project.name}/activity`)}
+                    >
+                      Activity
+                    </Header>
+                    <ProjectHistoryRoute project={project} activities={activities} />
+                  </Grid.Column>
+                </Grid>
+                <Grid columns="1">
+                  <Grid.Column>
+                    <Header
+                      as="h2"
+                      color="grey"
+                      floated="left"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
+                    >
+                      Assets
+                    </Header>
+                    {canEdit && (
+                      <AssetCreateNewModal
+                        currUser={currUser}
+                        currUserProjects={currUserProjects}
+                        buttonProps={{ floated: 'right' }}
+                        viewProps={{
+                          showProjectSelector: false,
+                          suggestedParams: { projectName: project.name },
+                        }}
+                      />
                     )}
-                  </Popup>
-                </Form.Field>
-              </Form>
-            </Segment>
-            {this.canEdit() && (
-              <Segment color="red">
-                <Form>
-                  <Header color="red">
-                    <Icon name="lock" />
-                    Admin
-                  </Header>
-                  <Form.Button
-                    fluid
-                    labelPosition="left"
-                    icon={project.allowForks ? 'checkmark box' : 'square outline'}
-                    content="Allow Forks"
-                    onClick={() => this.handleFieldChanged({ allowForks: !project.allowForks })}
-                    title="Project Owner may allow other users to fork this Project and its Assets"
-                  />
-                  <Form.Button
-                    fluid
-                    labelPosition="left"
-                    icon="trash"
-                    disabled={isDeleteComplete || isDeletePending}
-                    content={
-                      confirmDeleteNum < 0 ? (
-                        'Delete'
-                      ) : (
-                        `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`
-                      )
-                    }
-                    color={confirmDeleteNum < 0 ? null : 'red'}
-                    onClick={
-                      confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject
-                    }
-                  />
-                  {/* TODO: make this a basic Modal */}
-                  {isDeletePending && (
-                    <Message icon size="mini">
-                      <Icon name="circle notched" loading />
-                      <Message.Content>
-                        <Message.Header>Deleting Project</Message.Header>
-                        Please wait while we make sure it's really deleted...
-                      </Message.Content>
-                    </Message>
-                  )}
-                </Form>
-              </Segment>
-            )}
-          </Grid.Column>
-          <Grid.Column>
-            <Grid columns="equal">
-              <Grid.Column stretched>
-                {!project.assignmentId ? (
-                  <div>
-                    <Header as="h2" color="grey" style={{ flex: '0 0 auto' }}>
-                      Games
+                    <Divider fitted hidden clearing />
+                    <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
+                  </Grid.Column>
+                  <Divider hidden />
+                  <Grid.Column>
+                    <Header as="h2" color="grey" floated="left">
+                      Members{' '}
+                      <small>
+                        ({project.memberIds.length} of{' '}
+                        {isUserSuperAdmin(currUser) ? (
+                          SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject
+                        ) : (
+                          SpecialGlobals.quotas.defaultNumMembersAllowedInProject
+                        )})
+                      </small>
                     </Header>
-                    <GamesAvailableGET
-                      canEdit={canEdit}
-                      currUser={currUser}
-                      scopeToUserId={project.ownerId}
-                      scopeToProjectName={project.name}
+                    {canEdit && (
+                      <Button
+                        color={showAddUserSearch ? 'black' : 'green'}
+                        icon={showAddUserSearch ? 'checkmark' : 'add user'}
+                        content={showAddUserSearch ? "I'm done" : 'Add Members'}
+                        floated="right"
+                        disabled={isDeletePending}
+                        onClick={() => {
+                          this.setState({ showAddUserSearch: !showAddUserSearch })
+                        }}
+                      />
+                    )}
+                    <Divider fitted hidden clearing />
+                    <p>Project Members may create, edit or delete Assets in this Project.</p>
+                    {showAddUserSearch && (
+                      <UserListRoute
+                        location={{ ...location, query: { ...location.query, limit: 13 } }}
+                        handleClickUser={this.handleClickUser}
+                        excludeUserIdsArray={[project.ownerId, ...project.memberIds]}
+                        renderVertical
+                      />
+                    )}
+                    <ProjectMembersGET
+                      project={project}
+                      enableRemoveButton={canEdit}
+                      enableLeaveButton={currUser ? currUser._id : null}
+                      handleRemove={this.handleRemoveMemberFromProject}
+                      handleLeave={this.handleMemberLeaveFromProject}
                     />
-                  </div>
-                ) : (
-                  <div>
-                    <Header as="h2" color="grey" style={{ flex: '0 0 auto' }}>
-                      Assignment
-                    </Header>
-                    <AssignmentCardGET assignmentId={project.assignmentId} />
-                  </div>
-                )}
+                    {project.assignmentId && <div>Assignment ID: {project.assignmentId}</div>}
+                  </Grid.Column>
+                </Grid>
               </Grid.Column>
-              <Grid.Column stretched>
-                <Header
-                  as="h2"
-                  color="grey"
-                  floated="left"
-                  // Stretched columns force the width to be 100%
-                  // The text only should be clickable, limit the width to the length of the text
-                  style={{ flex: '0 0 auto', width: '3.75em', cursor: 'pointer' }}
-                  id="mgbjr-project-activity"
-                  onClick={() =>
-                    utilPushTo(null, `/u/${project.ownerName}/projects/${project.name}/activity`)}
-                >
-                  Activity
-                </Header>
-                <ProjectHistoryRoute project={project} activities={activities} />
-              </Grid.Column>
-            </Grid>
-            <Grid columns="1">
-              <Grid.Column>
-                <Header
-                  as="h2"
-                  color="grey"
-                  floated="left"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
-                >
-                  Assets
-                </Header>
-                {canEdit && (
-                  <AssetCreateNewModal
-                    currUser={currUser}
-                    currUserProjects={currUserProjects}
-                    buttonProps={{ floated: 'right' }}
-                    viewProps={{
-                      showProjectSelector: false,
-                      suggestedParams: { projectName: project.name },
-                    }}
-                  />
-                )}
-                <Divider fitted hidden clearing />
-                <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
-              </Grid.Column>
-              <Divider hidden />
-              <Grid.Column>
-                <Header as="h2" color="grey" floated="left">
-                  Members{' '}
-                  <small>
-                    ({project.memberIds.length} of{' '}
-                    {isUserSuperAdmin(currUser) ? (
-                      SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject
-                    ) : (
-                      SpecialGlobals.quotas.defaultNumMembersAllowedInProject
-                    )})
-                  </small>
-                </Header>
-                {canEdit && (
-                  <Button
-                    color={showAddUserSearch ? 'black' : 'green'}
-                    icon={showAddUserSearch ? 'checkmark' : 'add user'}
-                    content={showAddUserSearch ? "I'm done" : 'Add Members'}
-                    floated="right"
-                    disabled={isDeletePending}
-                    onClick={() => {
-                      this.setState({ showAddUserSearch: !showAddUserSearch })
-                    }}
-                  />
-                )}
-                <Divider fitted hidden clearing />
-                <p>Project Members may create, edit or delete Assets in this Project.</p>
-                {showAddUserSearch && (
-                  <UserListRoute
-                    location={{ ...location, query: { ...location.query, limit: 13 } }}
-                    handleClickUser={this.handleClickUser}
-                    excludeUserIdsArray={[project.ownerId, ...project.memberIds]}
-                    renderVertical
-                  />
-                )}
-                <ProjectMembersGET
-                  project={project}
-                  enableRemoveButton={canEdit}
-                  enableLeaveButton={currUser ? currUser._id : null}
-                  handleRemove={this.handleRemoveMemberFromProject}
-                  handleLeave={this.handleMemberLeaveFromProject}
-                />
-                {project.assignmentId && <div>Assignment ID: {project.assignmentId}</div>}
-              </Grid.Column>
-            </Grid>
-          </Grid.Column>
-        </Grid.Row>
-        <Divider hidden section />
-      </Grid>
+            </Grid.Row>
+            <Divider hidden section />
+          </Grid>
+        )}
+      </div>
     )
   }
 }

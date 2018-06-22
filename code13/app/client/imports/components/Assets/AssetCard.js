@@ -152,11 +152,13 @@ const AssetCard = React.createClass({
                 seeLovers={false}
               />
             </span>
-            <WorkState
-              workState={asset.workState}
-              size={viewOpts.showExtra ? null : 'small'}
-              canEdit={false}
-            />
+            {asset.workState && (
+              <WorkState
+                workState={asset.workState}
+                size={viewOpts.showExtra ? null : 'small'}
+                canEdit={false}
+              />
+            )}
           </span>
 
           {!viewOpts.showExtra && (

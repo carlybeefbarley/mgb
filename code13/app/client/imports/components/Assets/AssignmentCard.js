@@ -18,9 +18,18 @@ const AssignmentCard = props => {
         <Card.Header>
           <Icon name="file alternate" /> {assignmentAsset.name}
         </Card.Header>
-        <Card.Meta>{dueDate && renderDueDate(dueDate)}</Card.Meta>
+        <Card.Meta>{dueDate && `Due ${renderDueDate(dueDate)}`}</Card.Meta>
         <Card.Description>
-          <ReactQuill readOnly theme={null} defaultValue={assignmentDetail} />
+          <ReactQuill
+            readOnly
+            modules={{
+              clipboard: {
+                matchVisual: false,
+              },
+            }}
+            theme={null}
+            defaultValue={assignmentDetail}
+          />
         </Card.Description>
         <Button
           compact

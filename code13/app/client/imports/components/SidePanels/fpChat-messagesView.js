@@ -277,7 +277,7 @@ const ChatMessagesView = React.createClass({
 
   render() {
     const { messageValue } = this.state
-    const { currUser, channelName, MessageContextComponent } = this.props
+    const { currUser, channelName, MessageContextComponent, tooltipPosition } = this.props
     const canSend = currUserCanSend(currUser, channelName)
     const isOpen = true
 
@@ -285,7 +285,8 @@ const ChatMessagesView = React.createClass({
       ? this.props.style
       : {
           position: 'absolute',
-          overflow: 'auto',
+          overflowY: 'auto',
+          overflowX: 'hidden',
           margin: '0',
           padding: '0 8px 0 8px',
           top: '5em',
@@ -336,7 +337,7 @@ const ChatMessagesView = React.createClass({
               disabled={!canSend || this.state.isMessagePending}
               content={this.state.isMessagePending ? 'Sending Message...' : 'Send Message'}
               data-tooltip="Shortcut: Ctrl-ENTER to send"
-              data-position="bottom right"
+              data-position={tooltipPosition ? tooltipPosition : 'bottom right'}
               data-inverted=""
               onClick={this.doSendMessage}
             />

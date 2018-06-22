@@ -28,6 +28,7 @@ import { getProjectAvatarUrl } from '../../helpers/assetFetchers'
 import AssignmentCardGET from '/client/imports/components/Assets/AssignmentCardGET'
 import ChatPanel from '/client/imports/components/Assets/ChatPanel.js'
 import StudentListGET from '/client/imports/routes/Projects/StudentListGET.js'
+import { Azzets } from '/imports/schemas'
 
 class ProjectOverview extends Component {
   static propTypes = {
@@ -258,11 +259,13 @@ class ProjectOverview extends Component {
         <Grid.Column>
           <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em', width: '100%' }}>
             <div style={{ display: 'flex', flexFlow: 'row', justifyContent: 'flex-end', width: '100%' }}>
-              <Button.Group>
-                <Button color="olive">Needs Work</Button>
-                <Button.Or />
-                <Button color="green">Complete</Button>
-              </Button.Group>
+              {
+                <Button.Group>
+                  <Button color="olive">Needs Work</Button>
+                  <Button.Or />
+                  <Button color="green">Complete</Button>
+                </Button.Group>
+              }
               <Button
                 labelPosition="left"
                 icon="calendar check"

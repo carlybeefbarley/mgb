@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-export const workStates = ['broken', 'unknown', 'working', 'polished']
+export const workStates = ['unknown', 'broken', 'working', 'polished']
 
 export const makeWorkstateNamesArray = hideWorkstateMask =>
   // Special case 0 which is the most common case to be the least work
@@ -10,24 +10,27 @@ export const defaultWorkStateName = 'unknown'
 export const bestWorkStateName = _.last(workStates)
 
 export const workStateIcons = {
-  broken: 'frown',
   unknown: 'asterisk',
+  broken: 'frown',
   working: 'meh',
   polished: 'smile',
 }
 
-export const assignmentStatuses = ['needs review', 'needs work', 'completed']
+export const workstateColors = {
+  unknown: 'grey',
+  broken: 'yellow',
+  working: 'olive',
+  polished: 'green',
+}
+
+// Statuses are for assignments, which are additional labels to workstates
+// These will just correspond the 'broken, working, polished' scale respectively
+
+export const assignmentStatuses = ['unknown', 'needs review', 'needs work', 'completed']
 
 export const statusIcons = {
   unknown: 'asterisk',
   'needs review': 'exclamation',
   'needs work': 'exclamation',
   completed: 'check',
-}
-
-export const statusColors = {
-  unknown: 'grey',
-  'needs review': 'yellow',
-  'needs work': 'olive',
-  completed: 'green',
 }

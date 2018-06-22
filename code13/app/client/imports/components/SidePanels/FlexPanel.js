@@ -292,7 +292,7 @@ const FlexPanel = React.createClass({
         }
 
     const miniNavClassNames = fpIsFooter
-      ? 'ui blue borderless labeled icon bottom fixed six item fluid menu'
+      ? 'ui blue borderless labeled icon bottom fixed seven item fluid menu'
       : 'ui blue borderless labeled icon right fixed vertical horizontally fitted menu'
     const miniNavStyle = _.assign(
       {

@@ -18,6 +18,7 @@ export default class ChatPanel extends React.Component {
             currUser={currUser}
             MessageContextComponent={null}
             channelName={channelName}
+            tooltipPosition="top right"
           />
         </Segment>
       </Grid.Column>

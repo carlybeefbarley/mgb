@@ -42,7 +42,15 @@ function canUserReallySendToChannel(currUser, channelName) {
 
     case 'User':
       return Boolean(currUser) //???
+
+    case 'Classroom':
+      console.warn(
+        'Reminder: Classroom chat permissions are open to all users. Scope to classroom participants.',
+      )
+      return Boolean(currUser)
+
     case 'DirectMessage':
+
     default:
       console.log(`Unhandled scopeGroupName ${channelObj.scopeGroupName} in canUserReallySendToChannel()`)
       return false

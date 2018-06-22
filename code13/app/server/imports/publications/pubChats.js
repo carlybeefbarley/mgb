@@ -39,6 +39,12 @@ Meteor.publish('chats.channelName', function(toChannelName, limit = 20) {
     case 'User':
       break // For now make these publicly readable. Maybe tighten up later
 
+    case 'Classroom':
+      console.warn(
+        'Reminder: Classroom chat permissions are open to all users. Scope to classroom participants.',
+      )
+      break // TODO
+
     case 'DirectMessage':
     default:
       console.log(`Unhandled scopeGroupName ${channelObj.scopeGroupName} in chats.channelName`)

@@ -1,4 +1,5 @@
 import React from 'react'
+import _ from 'lodash'
 import { Button, Grid, Header, Segment, List, TextArea } from 'semantic-ui-react'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import { createContainer } from 'meteor/react-meteor-data'
@@ -6,6 +7,29 @@ import { Classrooms } from '/imports/schemas'
 import SubmissionFeed from '/client/imports/components/Education/SubmissionFeed'
 
 class TeacherDashboardRoute extends React.Component {
+  renderClassesList = () => {
+    const { classrooms } = this.props
+    const list = _.map(classrooms, classroom => {
+      return (
+        <List.Item key={classroom.name}>
+          <List.Content>
+            <List.Header>{classroom.name}</List.Header>
+          </List.Content>
+        </List.Item>
+      )
+    })
+
+    if (list.length === 0)
+      return (
+        <List.Item key={'TOPBOY'}>
+          <List.Content>
+            <List.Header>No Classrooms Found.</List.Header>
+          </List.Content>
+        </List.Item>
+      )
+    return list
+  }
+
   render() {
     const { currUser } = this.props
 
@@ -49,7 +73,7 @@ class TeacherDashboardRoute extends React.Component {
           <Grid.Row>
             <Grid.Column width={5}>
               <Segment raised color="blue">
-                <Header style={titleStyle} as="h1" content={`${currUser.username}`} textAlign="center" />
+                <Header style={titleStyle} as="h1" content={currUser.username} textAlign="center" />
                 <ImageShowOrChange
                   id="mgbjr-profile-avatar"
                   maxHeight="11em"
@@ -70,13 +94,7 @@ class TeacherDashboardRoute extends React.Component {
             <Grid.Column width={11}>
               <Segment raised color="blue">
                 <Header as="h2" content="Your Classes" />
-                <ul style={ulStyle}>
-                  <li>Animation Class</li>
-                  <li>JavaScript Class</li>
-                  <li>Phaser Class</li>
-                  <li>Advanced JavaScript</li>
-                  <li>Advanced Animation</li>
-                </ul>
+                <List relaxed content={this.renderClassesList()} />
               </Segment>
             </Grid.Column>
           </Grid.Row>

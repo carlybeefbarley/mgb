@@ -7,20 +7,18 @@ export default class ChatPanel extends React.Component {
     const { currUser, channelName } = this.props
 
     return (
-      <Grid.Column stretched style={{ flex: '0 0 20em', overflowY: 'auto' }}>
-        <Segment style={{ position: 'absolute', top: 0, bottom: 0 }}>
-          <ChatMessagesView
-            style={{ display: 'flex', flexFlow: 'column', height: '100%' }}
-            pastMessageLimit={10}
-            handleExtendMessageLimit={() => {
-              return
-            }}
-            currUser={currUser}
-            MessageContextComponent={null}
-            channelName={channelName}
-          />
-        </Segment>
-      </Grid.Column>
+      <Segment style={{ position: 'absolute', top: 0, bottom: 0 }}>
+        <ChatMessagesView
+          style={{ display: 'flex', flexFlow: 'column', height: '100%' }}
+          pastMessageLimit={10}
+          handleExtendMessageLimit={() => {
+            return
+          }}
+          currUser={currUser}
+          MessageContextComponent={null}
+          channelName={channelName}
+        />
+      </Segment>
     )
   }
 }

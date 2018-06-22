@@ -5,7 +5,6 @@ import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrCh
 import { createContainer } from 'meteor/react-meteor-data'
 import { Classrooms } from '/imports/schemas'
 import SubmissionFeed from '/client/imports/components/Education/SubmissionFeed'
-import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 
 class TeacherDashboardRoute extends React.Component {
   renderClassesList = () => {
@@ -58,7 +57,6 @@ class TeacherDashboardRoute extends React.Component {
     return (
       <div style={containerStyle}>
         <Grid columns={1} padded>
-          <ChatPanel />
           <Grid.Column width={16}>
             <div>
               <Button color="orange" floated="right">

@@ -1,4 +1,6 @@
-class SubmissionFeed extends React.Component {
+import React from 'react'
+import { List } from 'semantic-ui-react'
+export default class SubmissionFeed extends React.Component {
   render() {
     return (
       <List>

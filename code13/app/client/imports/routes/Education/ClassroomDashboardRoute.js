@@ -4,7 +4,6 @@ import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesL
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 import { createContainer } from 'meteor/react-meteor-data'
-import UpcomingClassAssignmentsList from '/client/imports/components/Education/UpcomingClassAssignmentsList'
 import { Classrooms, Users } from '/imports/schemas'
 import Spinner from '../../components/Nav/Spinner'
 import ReactQuill from 'react-quill'
@@ -23,6 +22,11 @@ import {
 class ClassroomDashboard extends React.Component {
   render() {
     const { currUser, classroom, teacher, assignment } = this.props
+
+    if (!classroom) {
+      return <Spinner loadingMsg="Loading Classroom..." />
+    }
+
     const channelName = makeChannelName({ scopeGroupName: 'Classroom', scopeId: classroom._id })
     const containerStyle = {
       overflowY: 'auto',
@@ -39,9 +43,6 @@ class ClassroomDashboard extends React.Component {
     const infoStyle = {
       fontSize: '1.3em',
       textAlign: 'center',
-    }
-    if (!classroom) {
-      return <Spinner content="Loading Data..." />
     }
 
     return (

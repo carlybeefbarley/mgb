@@ -46,7 +46,6 @@ import { __NO_ASSET__ } from '/client/imports/stores/assetStore'
 import { canUserEditAssetIfUnlocked, fAllowSuperAdminToEditAnything } from '/imports/schemas/roles'
 
 import { learnSkill, forgetSkill } from '/imports/schemas/skills'
-import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes'
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 import FlagEntity from '/client/imports/components/Controls/FlagEntityUI'
 import ResolveReportEntity from '/client/imports/components/Controls/FlagResolve'
@@ -505,12 +504,7 @@ const AssetEditRoute = React.createClass({
     const hasUnsentSaves = !!this.m_deferredSaveObj
 
     const isGuest = currUser ? currUser.profile.isGuest : false
-    const isChallenge = asset.skillPath && isPathChallenge(asset.skillPath)
-    const isCodeTutorial = asset.skillPath && isPathCodeTutorial(asset.skillPath)
-    const isClassroom =
-      (currUser && (currUser.profile.isTeacher || currUser.profile.isStudent)) ||
-      isChallenge ||
-      isCodeTutorial
+
     return (
       <Grid
         padded
@@ -552,17 +546,14 @@ const AssetEditRoute = React.createClass({
               // TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
             }
             {this.state.isForkRevertPending && <Icon name="fork" loading />}
-            {!isClassroom && (
-              <span style={{ margin: '0 5px 0 5px' }}>
-                <UserLoves currUser={currUser} asset={asset} size="small" seeLovers />
-                <WorkState
-                  isClassroom={isClassroom}
-                  workState={asset.workState}
-                  canEdit={canEd}
-                  handleChange={this.handleWorkStateChange}
-                />
-              </span>
-            )}
+            <span style={{ margin: '0 5px 0 5px' }}>
+              <UserLoves currUser={currUser} asset={asset} size="small" seeLovers />
+              <WorkState
+                workState={asset.workState}
+                canEdit={canEd}
+                handleChange={this.handleWorkStateChange}
+              />
+            </span>
             &ensp;
             <AssetUrlGenerator showBordered asset={asset} />
             <StableState

@@ -339,6 +339,7 @@ class ProjectOverview extends Component {
       isDeletePending,
       isForkPending,
       showAddUserSearch,
+      ope,
     } = this.state
 
     if (loading) return <Spinner />

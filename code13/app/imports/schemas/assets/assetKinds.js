@@ -4,7 +4,7 @@
 // NOTE: It is intended that modules would import { AssetKinds } via   ../assets.js
 //   There are some more handy manipulators defined in assets.js such as AssetKindKeysALL etc
 
-import { roleSuperAdmin } from '/imports/schemas/roles'
+import { roleSuperAdmin, roleTeacher } from '/imports/schemas/roles'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
@@ -89,7 +89,7 @@ export const AssetKinds = {
     longName: 'Assignment',
     icon: 'file text outline',
     color: 'grey',
-    //FrequiresUserRole: roleSuperAdmin,
+    requiresUserRole: roleTeacher,
     description: 'Assignment',
     explanation: 'A class assignment with a due date.',
   },

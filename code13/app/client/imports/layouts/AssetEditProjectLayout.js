@@ -13,6 +13,8 @@ import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/Asse
 import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import { __NO_PROJECT__, __NO_ASSET__ } from '/client/imports/stores/assetStore'
+import ChatPanel from '/client/imports/components/Chat/ChatPanel'
+import { makeChannelName } from '/imports/schemas/chats'
 
 export default class AssetEditProjectContainer extends React.Component {
   renderProjectsList = currUserProjects => {

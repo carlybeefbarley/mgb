@@ -26,7 +26,7 @@ import { withMeteorData } from '../../hocs'
 import { getProjectAvatarUrl } from '../../helpers/assetFetchers'
 // import AssignmentCard from '/client/imports/components/Assets/AssignmentCard'
 import AssignmentCardGET from '/client/imports/components/Assets/AssignmentCardGET'
-import ChatPanel from '/client/imports/components/Assets/ChatPanel.js'
+import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import StudentListGET from '/client/imports/routes/Projects/StudentListGET.js'
 import WorkState from '/client/imports/components/Controls/WorkState'
 import { Azzets } from '/imports/schemas'
@@ -251,7 +251,7 @@ class ProjectOverview extends Component {
     }
 
     const { currUser, project } = this.props
-    const { confirmDeleteNum, isDeleteComplete, isDeletePending } = this.state
+    const { confirmDeleteNum, isDeleteComplete, isDeletePending, isForkPending } = this.state
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: project.assignmentId })
     const isOwnerTeacher = Azzets.findOne(project.assignmentId).ownerId === project.ownerId
 
@@ -384,7 +384,6 @@ class ProjectOverview extends Component {
       isDeletePending,
       isForkPending,
       showAddUserSearch,
-      ope,
     } = this.state
 
     if (loading) return <Spinner />

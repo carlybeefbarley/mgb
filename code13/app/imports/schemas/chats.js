@@ -21,6 +21,7 @@ import validate from '/imports/schemas/validate'
 //    'A':   scopeAsset   - used for asset-scoped chat   (with assetId).
 //    'U':   scopeUser    - used for wall-style user-scoped chat   (with userId).
 //    'D':   scope_DirectMessage  - used for 1:1 Direct Messages    (with user1+user2 id)
+//    'C':   scopeClassroom       - used for classroom-scoped chat (with classroomId)
 
 Chats are single-threaded conversations - effectively a linear, time-sorted list of messages.
 The Chats table essentially holds many of these 'chat threads' in the same table.
@@ -45,6 +46,7 @@ const _scopeGroupCharToFriendlyNames = {
   A: 'Asset',
   U: 'User',
   D: 'DirectMessage',
+  C: 'Classroom',
 }
 const _scopeGroupScopeFriendlyNamesToChars = _.invert(_scopeGroupCharToFriendlyNames)
 
@@ -104,6 +106,7 @@ Chat.channelName: (Indexed field, non-unique in Chats table, used to group the '
                                      // (TODO - needs a comments-policy in user.js)
   DirectMsg    D_{uid1+uid2}_        // such that uid1 is lexically less than uid2 and + is a separator
                                      // that will not be in the IDs
+  Classroom    C_{ClassroomId}_
 
 The trailing _ is to reserve namespacing for a future 'topics' part of a channelName
 which would enable a forum-type level of messages for projects/public chats, and also
@@ -186,6 +189,7 @@ Next, for user enumeration of channels related to them, the process is as follow
   Asset         Via user's Asset ownerships - usually view per asset.. but typically
                 we will hide this under Asset navigation/search unless pinned
   DirectMsg     Using the user.ChatChannels mentioned below...This requires special code in Chat.Send()
+  Classroom     Via user's Classroom ownerships/memberships
 
 To check read/unread situations, each User has some objects to support this chat model
   User.ChatChannels{}
@@ -348,6 +352,7 @@ export function currUserCanSend(currUser, channelName) {
 
   if (channelObj.scopeGroupName === 'Asset') return true // We may tighten this up later
   if (channelObj.scopeGroupName === 'User') return true
+  if (channelObj.scopeGroupName === 'Classroom') return true //TODO: Let teacher mute all other users in class chat via this?
 
   console.log('TODO: [User/DM]-chat currUserCanSend()')
   return false
@@ -402,6 +407,8 @@ export function makePresentedChannelName(channelName, objectName) {
       return `${objectName} - User Wall`
     case 'DirectMessage':
       return 'DirectMessage '
+    case 'Classroom':
+      return `${objectName} - Classroom Chat`
     default:
       console.trace('Unexpected ChatScope in channelName=', channelName)
   }
@@ -430,6 +437,7 @@ const _scopeGroupCharToIconNames = {
   A: 'pencil',
   U: 'user', // Note that slack uses circle.. good options here would be 'user outline' and 'user'
   D: 'comments outline',
+  C: 'student',
 }
 
 /**

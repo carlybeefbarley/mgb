@@ -27,7 +27,7 @@ import UX from '/client/imports/UX'
 import HoverImage from 'react-hover-image'
 import StudentDashboard from '/client/imports/components/Education/StudentDashboard'
 import TeacherDashboardRoute from '/client/imports/routes/Education/TeacherDashboardRoute'
-import ClassroomDashboardRoute from '/client/imports/routes/Education/ClassroomDashboardRoute'
+import ClassroomRoute from '/client/imports/routes/Education/ClassroomRoute'
 
 //import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
 //import RecentAssetAction from './Actions/RecentAssetAction'
@@ -1137,7 +1137,7 @@ export default class DashboardTabs extends React.Component {
         menuItem: 'Classroom 1',
         render: () => (
           <Tab.Pane>
-            <ClassroomDashboardRoute {...this.props} params={{classroomId: 'SbbGBBJc78KwYAH8C'}} />
+            <ClassroomRoute {...this.props} params={{classroomId: 'SbbGBBJc78KwYAH8C'}} />
           </Tab.Pane>
         ),
       },

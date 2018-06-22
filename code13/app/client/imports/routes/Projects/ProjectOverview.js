@@ -26,6 +26,7 @@ import { withMeteorData } from '../../hocs'
 import { getProjectAvatarUrl } from '../../helpers/assetFetchers'
 // import AssignmentCard from '/client/imports/components/Assets/AssignmentCard'
 import AssignmentCardGET from '/client/imports/components/Assets/AssignmentCardGET'
+import ProjectCard from '/client/imports/components/Projects/ProjectCard'
 
 class ProjectOverview extends Component {
   static propTypes = {
@@ -312,16 +313,13 @@ class ProjectOverview extends Component {
 
         <Grid.Row columns="equal">
           <Grid.Column textAlign="center" style={sideBarColumnStyle}>
+            <ProjectCard
+              project={project}
+              owner={this.props.user}
+              canEdit={canEdit}
+              handleFieldChanged={this.handleFieldChanged}
+            />
             <Segment>
-              <p>
-                <ImageShowOrChange
-                  header="Project Avatar"
-                  imageSrc={getProjectAvatarUrl(project)}
-                  canEdit={canEdit}
-                  canLinkToSrc={canEdit}
-                  handleChange={(newUrl, avatarId) => this.handleFieldChanged({ avatarAssetId: avatarId })}
-                />
-              </p>
               <Form>
                 {isPartOfTeam && (
                   <Form.Field>

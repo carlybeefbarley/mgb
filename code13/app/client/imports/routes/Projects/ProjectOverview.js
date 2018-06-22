@@ -28,6 +28,7 @@ import { getProjectAvatarUrl } from '../../helpers/assetFetchers'
 import AssignmentCardGET from '/client/imports/components/Assets/AssignmentCardGET'
 import ChatPanel from '/client/imports/components/Assets/ChatPanel.js'
 import StudentListGET from '/client/imports/routes/Projects/StudentListGET.js'
+import WorkState from '/client/imports/components/Controls/WorkState'
 import { Azzets } from '/imports/schemas'
 
 class ProjectOverview extends Component {
@@ -252,26 +253,31 @@ class ProjectOverview extends Component {
     const { currUser, project } = this.props
     const { confirmDeleteNum, isDeleteComplete, isDeletePending } = this.state
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: project.assignmentId })
+    const isOwnerTeacher = Azzets.findOne(project.assignmentId).ownerId === project.ownerId
 
     return (
       <Grid columns="equal" padded style={{ flex: '1 1 0' }}>
-        <ChatPanel currUser={currUser} channelName={channelName} />
+        <Grid.Column stretched style={{ flex: '0 0 20em', overflowY: 'auto' }}>
+          <ChatPanel currUser={currUser} channelName={channelName} />
+        </Grid.Column>
         <Grid.Column>
           <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em', width: '100%' }}>
             <div style={{ display: 'flex', flexFlow: 'row', justifyContent: 'flex-end', width: '100%' }}>
-              {
+              <WorkState workState={project.workState} />
+              {isOwnerTeacher ? (
                 <Button.Group>
                   <Button color="olive">Needs Work</Button>
                   <Button.Or />
                   <Button color="green">Complete</Button>
                 </Button.Group>
-              }
-              <Button
-                labelPosition="left"
-                icon="calendar check"
-                content={'Submit Assignment'}
-                onClick={this.handleSubmitAssignment}
-              />
+              ) : (
+                <Button
+                  labelPosition="left"
+                  icon="calendar check"
+                  content={'Submit Assignment'}
+                  onClick={this.handleSubmitAssignment}
+                />
+              )}
               <Button
                 labelPosition="left"
                 icon="trash"
@@ -286,6 +292,42 @@ class ProjectOverview extends Component {
                 color={confirmDeleteNum < 0 ? null : 'red'}
                 onClick={confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject}
               />
+              <Popup
+                on="click"
+                position="right center"
+                trigger={
+                  <ProjectForkGenerator
+                    project={project}
+                    isForkPending={isForkPending}
+                    id="mgbjr-project-overview-fork"
+                    fluid
+                    labelPosition="left"
+                    disabled={!project.allowForks || !currUser || isForkPending}
+                    loading={isForkPending}
+                  />
+                }
+              >
+                {isForkPending ? (
+                  <div>Forking... please wait..</div>
+                ) : (
+                  <div>
+                    <Header as="h4" content="New name for forked project" />
+                    <Input
+                      size="small"
+                      id="mgbjr-fork-project-name-input"
+                      placeholder="New Project name"
+                      defaultValue={project.name + ' (fork)'}
+                      ref="forkNameInput"
+                      action={{
+                        icon: 'fork',
+                        ref: 'forkGoButton',
+                        onClick: this.handleForkGo,
+                        content: 'Fork',
+                      }}
+                    />
+                  </div>
+                )}
+              </Popup>
             </div>
             <Grid.Row>
               <Header as="h2" color="grey" floated="left">

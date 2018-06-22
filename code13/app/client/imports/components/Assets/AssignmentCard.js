@@ -16,7 +16,7 @@ const AssignmentCard = props => {
     <Card fluid>
       <Card.Content>
         <Card.Header>
-          <Icon name="file alternate" /> {assignmentAsset.name}
+          <Icon name="file" /> {assignmentAsset.name}
         </Card.Header>
         <Card.Meta>{dueDate && `Due ${renderDueDate(dueDate)}`}</Card.Meta>
         <Card.Description>

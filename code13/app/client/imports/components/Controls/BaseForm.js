@@ -178,15 +178,27 @@ export default class BaseForm extends React.Component {
         title={fieldOptions && fieldOptions.title}
       >
         <label>{name}</label>
-        <ReactQuill
-          modules={modules}
-          formats={formats}
-          defaultValue={this.data[key]}
-          onChange={content => {
-            this.data[key] = content // This is an HTML string
-            this.props.onChange && this.props.onChange()
-          }}
-        />
+        {fieldOptions.canEdit ? (
+          <ReactQuill
+            modules={modules}
+            formats={formats}
+            defaultValue={this.data[key]}
+            onChange={content => {
+              this.data[key] = content // This is an HTML string
+              this.props.onChange && this.props.onChange()
+            }}
+          />
+        ) : (
+          <ReactQuill
+            readOnly
+            modules={{
+              clipboard: {
+                matchVisual: false,
+              },
+            }}
+            defaultValue={this.data[key]}
+          />
+        )}
       </div>
     )
   }

@@ -57,6 +57,8 @@ const ProjectCard = (props, context) => {
       <Card.Content>
         <span style={{ float: 'right' }}>
           <WorkState
+            iconOnly={!!project.assignmentId}
+            isAssignment={!!project.assignmentId}
             workState={workState}
             handleChange={
               !handleFieldChanged ? null : newWorkState => handleFieldChanged({ workState: newWorkState })

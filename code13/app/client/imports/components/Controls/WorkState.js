@@ -37,9 +37,21 @@ export const WorkStateMultiSelect = ({ style, hideMask, handleChangeMask }) => (
   </div>
 )
 
-const WorkState = ({ workState, canEdit, size, popupPosition, handleChange, labelStyle, onIconClick }) => (
+const WorkState = ({
+  workState,
+  isAssignment,
+  canEdit,
+  size,
+  popupPosition,
+  handleChange,
+  labelStyle,
+  onIconClick,
+  iconOnly,
+}) => (
   <div>
-    {_.includes(workStateNames, workState) && workState !== 'unknown' ? (
+    {_.includes(workStateNames, workState) && workState !== 'unknown' ? isAssignment ? (
+      <WorkStateStatus iconOnly={iconOnly} workState={workState} color={workstateColors[workState]} />
+    ) : (
       <Popup
         on="hover"
         hoverable={!!canEdit} // So mouse-over popup keeps it visible for Edit for example
@@ -85,24 +97,22 @@ const WorkState = ({ workState, canEdit, size, popupPosition, handleChange, labe
 
 const WorkStateStatus = ({ workState, labelStyle, color, iconOnly }) => (
   <span>
-    {workState !== 'unknown' &&
-      (iconOnly ? (
-        <Icon
-          circular
-          inverted
-          fitted
-          size="small"
-          title={workState}
-          color={color}
-          a
-          name={`${statusIcons[workState]}`}
-        />
-      ) : (
-        <Label className="workstate-label" style={labelStyle} color={color}>
-          <Icon name={statusIcons[workState]} />
-          {workState}
-        </Label>
-      ))}
+    {iconOnly ? (
+      <Icon
+        circular
+        inverted
+        fitted
+        size="small"
+        title={workState}
+        color={color}
+        name={`${statusIcons[workState]}`}
+      />
+    ) : (
+      <Label className="workstate-label" style={labelStyle} color={color}>
+        <Icon name={statusIcons[workState]} />
+        {workState}
+      </Label>
+    )}
   </span>
 )
 

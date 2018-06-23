@@ -79,7 +79,7 @@ class ProjectOverview extends Component {
   }
 
   handleForkGo = () => {
-    const newProjName = this.refs.forkNameInput.value
+    const newProjName = this.refs.forkNameInput.inputRef.value
     showToast.info(`Forking project '${this.props.project.name}' to '${newProjName}..`)
     this.setState({ isForkPending: true })
     const forkCallParams = {
@@ -88,13 +88,17 @@ class ProjectOverview extends Component {
       newProjectName: newProjName,
     }
     Meteor.call('Project.Azzets.fork', forkCallParams, (err, result) => {
-      if (err) showToast.error(`Could not fork project: ${err}`)
+      if (err || !result) showToast.error(`Could not fork project: ${err}`)
       else {
-        const msg = `Forked project '${this.props.project
-          .name}' to '${newProjName}, creating ${result.numNewAssets} new Assets`
-        logActivity('project.fork', msg)
-        showToast.warning(msg)
-        // TODO: navigate to /u/${currUser.username}/projects/${result.newProjectId}
+        if (result.error) {
+          showToast.error(results.message)
+        } else {
+          const msg = `Forked project '${this.props.project
+            .name}' to '${newProjName}, creating ${result.numNewAssets} new Assets`
+          logActivity('project.fork', msg)
+          showToast.warning(msg)
+          // TODO: navigate to /u/${currUser.username}/projects/${result.newProjectId}
+        }
       }
       this.setState({ isForkPending: false })
     })
@@ -168,6 +172,23 @@ class ProjectOverview extends Component {
           name: project.name,
         })
     })
+  }
+
+  // This should not conflict with the deferred changes since those don't change these fields :)
+  handleWorkStateChange = newWorkState => {
+    const { _id, workState } = this.props.project
+    const oldState = workState
+    if (newWorkState !== oldState) {
+      Meteor.call('Projects.update', _id, { workState: newWorkState }, (err, res) => {
+        if (err) showToast.error(err.reason)
+      })
+      logActivity(
+        'project.workState',
+        `WorkState changed from ${oldState} to "${newWorkState}"`,
+        null,
+        this.props.project,
+      )
+    }
   }
 
   /**
@@ -244,6 +265,45 @@ class ProjectOverview extends Component {
     )
   }
 
+  renderForkButton = (currUser, project, isForkPending) => {
+    return (
+      <Popup
+        on="click"
+        position="right center"
+        trigger={
+          <ProjectForkGenerator
+            project={project}
+            isForkPending={isForkPending}
+            id="mgbjr-project-overview-fork"
+            labelPosition="left"
+            disabled={!project.allowForks || !currUser || isForkPending}
+            loading={isForkPending}
+          />
+        }
+      >
+        {isForkPending ? (
+          <div>Forking... please wait..</div>
+        ) : (
+          <div>
+            <Header as="h4" content="New name for forked project" />
+            <Input
+              action
+              type="text"
+              ref="forkNameInput"
+              id="mgbjr-fork-project-name-input"
+              placeholder="New Project name"
+              defaultValue={project.name + ' (fork)'}
+              size="small"
+            >
+              <input />
+              <Button icon="fork" onClick={this.handleForkGo} />
+            </Input>
+          </div>
+        )}
+      </Popup>
+    )
+  }
+
   renderAssignmentView() {
     const listSty = {
       overflowY: 'auto',
@@ -253,7 +313,10 @@ class ProjectOverview extends Component {
     const { currUser, project } = this.props
     const { confirmDeleteNum, isDeleteComplete, isDeletePending, isForkPending } = this.state
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: project.assignmentId })
-    const isOwnerTeacher = Azzets.findOne(project.assignmentId).ownerId === project.ownerId
+    const assignmentOwner = Azzets.findOne(project.assignmentId)
+    const isOwnerTeacher =
+      assignmentOwner &&
+      (assignmentOwner.ownerId === project.ownerId && _.includes(assignmentOwner.roles, 'teacher'))
 
     return (
       <Grid columns="equal" padded style={{ flex: '1 1 0' }}>
@@ -263,19 +326,23 @@ class ProjectOverview extends Component {
         <Grid.Column>
           <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em', width: '100%' }}>
             <div style={{ display: 'flex', flexFlow: 'row', justifyContent: 'flex-end', width: '100%' }}>
-              <WorkState workState={project.workState} />
+              <WorkState isAssignment workState={project.workState} />
               {isOwnerTeacher ? (
                 <Button.Group>
-                  <Button color="olive">Needs Work</Button>
+                  <Button color="olive" onClick={() => this.handleSubmitAssignment('working')}>
+                    Needs Work
+                  </Button>
                   <Button.Or />
-                  <Button color="green">Complete</Button>
+                  <Button color="green" onClick={() => this.handleSubmitAssignment('polished')}>
+                    Complete
+                  </Button>
                 </Button.Group>
               ) : (
                 <Button
                   labelPosition="left"
                   icon="calendar check"
                   content={'Submit Assignment'}
-                  onClick={this.handleSubmitAssignment}
+                  onClick={() => this.handleSubmitAssignment('broken')}
                 />
               )}
               <Button
@@ -292,48 +359,13 @@ class ProjectOverview extends Component {
                 color={confirmDeleteNum < 0 ? null : 'red'}
                 onClick={confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject}
               />
-              <Popup
-                on="click"
-                position="right center"
-                trigger={
-                  <ProjectForkGenerator
-                    project={project}
-                    isForkPending={isForkPending}
-                    id="mgbjr-project-overview-fork"
-                    fluid
-                    labelPosition="left"
-                    disabled={!project.allowForks || !currUser || isForkPending}
-                    loading={isForkPending}
-                  />
-                }
-              >
-                {isForkPending ? (
-                  <div>Forking... please wait..</div>
-                ) : (
-                  <div>
-                    <Header as="h4" content="New name for forked project" />
-                    <Input
-                      size="small"
-                      id="mgbjr-fork-project-name-input"
-                      placeholder="New Project name"
-                      defaultValue={project.name + ' (fork)'}
-                      ref="forkNameInput"
-                      action={{
-                        icon: 'fork',
-                        ref: 'forkGoButton',
-                        onClick: this.handleForkGo,
-                        content: 'Fork',
-                      }}
-                    />
-                  </div>
-                )}
-              </Popup>
+              {this.renderForkButton(currUser, project)}
             </div>
             <Grid.Row>
               <Header as="h2" color="grey" floated="left">
                 Assignment Details
               </Header>
-              <AssignmentCardGET assignmentId={project.assignmentId} />
+              <AssignmentCardGET isOwnerTeacher={isOwnerTeacher} assignmentId={project.assignmentId} />
             </Grid.Row>
             <Grid.Row stretched>
               <Grid.Column style={{ height: 'auto' }}>
@@ -476,44 +508,7 @@ class ProjectOverview extends Component {
                       </Form.Field>
                     )}
                     {/* FORK PROJECT STUFF */}
-                    <Form.Field>
-                      <Popup
-                        on="click"
-                        position="right center"
-                        trigger={
-                          <ProjectForkGenerator
-                            project={project}
-                            isForkPending={isForkPending}
-                            id="mgbjr-project-overview-fork"
-                            fluid
-                            labelPosition="left"
-                            disabled={!project.allowForks || !currUser || isForkPending}
-                            loading={isForkPending}
-                          />
-                        }
-                      >
-                        {isForkPending ? (
-                          <div>Forking... please wait..</div>
-                        ) : (
-                          <div>
-                            <Header as="h4" content="New name for forked project" />
-                            <Input
-                              size="small"
-                              id="mgbjr-fork-project-name-input"
-                              placeholder="New Project name"
-                              defaultValue={project.name + ' (fork)'}
-                              ref="forkNameInput"
-                              action={{
-                                icon: 'fork',
-                                ref: 'forkGoButton',
-                                onClick: this.handleForkGo,
-                                content: 'Fork',
-                              }}
-                            />
-                          </div>
-                        )}
-                      </Popup>
-                    </Form.Field>
+                    <Form.Field>{this.renderForkButton(currUser, project, isForkPending)}</Form.Field>
                   </Form>
                 </Segment>
                 {this.canEdit() && (

@@ -445,7 +445,7 @@ Meteor.methods({
     data.ownerId = this.userId
     data.ownerName = username
     data.workState = defaultWorkStateName
-    data.allowForks = false
+    if (!_.has(data, 'allowForks')) data.allowForks = false
     data.memberIds = []
     if (!_.isString(data.avatarAssetId)) data.avatarAssetId = ''
 

@@ -1,12 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Grid, Button } from 'semantic-ui-react'
-import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
 import BaseForm from '/client/imports/components/Controls/BaseForm.js'
 import { showToast } from '/client/imports/modules'
 import { logActivity } from '/imports/schemas/activity'
 import { utilPushTo } from '/client/imports/routes/QLink'
-import ReactQuill from 'react-quill'
 
 const _defaultAssignmentMetadata = {
   assignmentDetail: '',
@@ -24,7 +22,7 @@ class EditAssignmentForm extends BaseForm {
       <div className="ui form">
         {this.date('Due Date', 'dueDate')}
         {this.bool('Is Team Project', 'isTeamProject')}
-        {this.textEditor('Assignment Detail', 'assignmentDetail')}
+        {this.textEditor('Assignment Detail', 'assignmentDetail', { canEdit: this.props.canEdit })}
       </div>
     )
   }
@@ -58,6 +56,7 @@ export default class EditAssignment extends React.Component {
       name,
       description: text,
       assignmentId: _id,
+      allowForks: true,
       workState: 'unknown',
     }
 

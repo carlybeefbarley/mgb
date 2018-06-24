@@ -1135,7 +1135,7 @@ export default class DashboardTabs extends React.Component {
         ),
       },
       {
-        menuItem: 'Classroom (Student & Teacher)',
+        menuItem: 'Classroom (Student & Teacher)  ',
         render: () => (
           <Tab.Pane>
             <div>Implemented - live demo</div>

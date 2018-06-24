@@ -10,46 +10,83 @@ import ReactQuill from 'react-quill'
 import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
-import { projectMakeSelector } from '/imports/schemas/projects'
 
+const cellStyle = {
+  textAlign: 'center',
+}
 /**
  * This file renders two different views depending on if the user is a teacher or a student of a given classroom.
  * Student/Teacher identity is resolved in the createContainer HOC.
+ * 
+ * Student projects are subscribed in HOC and and filtered to only show projects that have an assignment ID.
  */
-
 class TeacherView extends React.Component {
+  // Calls all the other table methods to render out the full table with both student names
+  // assignment names, and the status of said assignments in a coherent view.
   renderAssignmentTable = () => {
     const { assignments, students } = this.props
-    const studentCells = _.map(students, student => {
-      let assignmentCells = _.map(assignments, assignment => {
-        // if(assignment.)
-      })
-      return (
-        <Table.Row>
-          <Table.Cell>{student.name}</Table.Cell>
-          {assignmentCells}
-        </Table.Row>
-      )
-    })
 
     return (
       <Table celled striped>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell colSpan="1" /> {/* Top left spacer cell to fill out table. */}
-            {this.renderTableHeaderCells(assignments)}
+            {this.renderTableAssignmentHeaderCells(assignments)}
           </Table.Row>
         </Table.Header>
-        <Table.Body>{studentCells}</Table.Body>
+        <Table.Body>{this.renderStudentRows()}</Table.Body>
       </Table>
     )
   }
 
-  renderTableHeaderCells = assignments => {
+  // Renders out the assignment header cells based on the assignment's name
+  renderTableAssignmentHeaderCells = assignments => {
     let headerCells = _.map(assignments, assignment => {
-      return <Table.HeaderCell colSpan="1">{assignment.name}</Table.HeaderCell>
+      return <Table.HeaderCell colSpan="1" content={assignment.name} />
     })
     return headerCells
+  }
+  // Renders out the students names for the table.
+  renderStudentRows = () => {
+    const { assignments, students, studentProjects } = this.props
+
+    const rows = _.map(students, student => {
+      return (
+        <Table.Row>
+          <Table.Cell collapsing content={student.username} />
+          {this.renderStudentProjectStatusCells(student)}
+        </Table.Row>
+      )
+    })
+
+    return rows
+  }
+  // Render out the "assignment" cells for a student by seeing if they own a project that has
+  // the current row's assignmentId referenced in it. This is dependant on this.props.assignments to be
+  // in an array so that rows are sorted correctly.
+
+  renderStudentProjectStatusCells = student => {
+    const { assignments, students, studentProjects } = this.props
+
+    const cells = _.map(assignments, assignment => {
+      const hasAssignment = _.find(studentProjects, project => {
+        if (
+          project.ownerId === student._id &&
+          project.assignmentId &&
+          project.assignmentId === assignment._id
+        ) {
+          return true // TODO: Change to project workstate display string once finalized
+        }
+      })
+
+      return (
+        <Table.Cell style={cellStyle}>
+          <Icon name={hasAssignment ? 'check circle' : 'x'} color={hasAssignment ? 'green' : 'red'} />
+        </Table.Cell>
+      )
+    })
+
+    return cells
   }
 
   render() {
@@ -128,177 +165,13 @@ class TeacherView extends React.Component {
         </Grid>
         <Grid columns={1} padded>
           <Grid.Column width={16}>
+            <Header as="h3" content="Student Assignment Progress" />
             <Segment raised color="yellow">
-              <Grid.Row>
-                <Table celled striped>
-                  <Table.Header>
-                    <Table.Row>
-                      <Table.HeaderCell colSpan="1" /> {/* Spacer Cell to fill out table. */}
-                      {this.renderTableHeaderCells(assignments)}
-                    </Table.Row>
-                  </Table.Header>
-                  <Table.Body>
-                    <Table.Row>
-                      <Table.Cell collapsing>Jim Bob</Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="check circle" color="green" />
-                      </Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="check circle" color="green" />
-                      </Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="check circle" color="green" />
-                      </Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="x" color="red" />
-                      </Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="check circle" color="green" />
-                      </Table.Cell>
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Billy Bob Joe</Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="check circle" color="green" />
-                      </Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="x" color="red" />
-                      </Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="x" color="red" />
-                      </Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="x" color="red" />
-                      </Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="x" color="red" />
-                      </Table.Cell>
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Alexander Hamilton</Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="x" color="red" />
-                      </Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="plus circle" color="yellow" />
-                      </Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="plus circle" color="yellow" />
-                      </Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="plus circle" color="yellow" />
-                      </Table.Cell>
-                      <Table.Cell style={cellStyle}>
-                        <Icon name="check circle" color="green" />
-                      </Table.Cell>
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Maria Carey</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Kendrick Lamar</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Archibald T. Doodle</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Dolly Parton</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Howdy Doody</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Janelle Monae</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Ava Grace</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Cookie Monster</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Purple Telletubby</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Ginny Weasley</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Princess Nokia</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Richard Simmons</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                    </Table.Row>
-                    <Table.Row>
-                      <Table.Cell collapsing>Ada Lovelace</Table.Cell>
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                      <Table.Cell />
-                    </Table.Row>
-                  </Table.Body>
-                </Table>
-              </Grid.Row>
+              <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
+            </Segment>
+            <Header as="h3" content="All Assignments" />
+            <Segment raised color="green">
+              <AssignmentsListGET showUpcoming showPastDue showNoDueDate />
             </Segment>
           </Grid.Column>
         </Grid>
@@ -499,7 +372,10 @@ export default createContainer(props => {
       classroom.assignmentAssetIds.length > 0
     ) {
       handleForStudentProjects = Meteor.subscribe('projects.byUserList', classroom.studentIds)
-      studentProjectsCursor = Projects.find({ ownerId: { $in: classroom.studentIds } })
+      studentProjectsCursor = Projects.find({
+        ownerId: { $in: classroom.studentIds },
+        assignmentId: { $exists: true },
+      })
       studentProjects = studentProjectsCursor.fetch()
     }
   }

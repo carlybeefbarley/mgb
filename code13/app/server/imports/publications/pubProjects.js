@@ -17,15 +17,17 @@ Meteor.publish('projects.byUserId', function(userId, showOnlyForkable = false) {
   return Projects.find(selector)
 })
 
-// TODO: add assigmentId support and classroomId support to projectMakeSelector()
+/**
+ * Returns all projects that contain the assignmentId field given. Accepts a string or array of Ids.
+ */
 Meteor.publish('projects.byAssignmentId', function(assignmentId) {
-  const selector = projectMakeSelector(assignmentId)
+  const selector = projectMakeSelector(null, null, null, null, assignmentId)
+  console.log(selector)
   return Projects.find(selector)
 })
 
-//TODO: projects by classroom
-Meteor.publish('projects.byClassroomId', function(classroomId) {
-  const selector = projectMakeSelector(classroomId)
+Meteor.publish('projects.byUserList', userIdsArray => {
+  const selector = { ownerId: { $in: userIdsArray } }
   return Projects.find(selector)
 })
 

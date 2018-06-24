@@ -25,7 +25,7 @@ import HeroLayout from '/client/imports/layouts/HeroLayout'
 import QLink from '/client/imports/routes/QLink'
 import UX from '/client/imports/UX'
 import HoverImage from 'react-hover-image'
-import StudentDashboard from '/client/imports/components/Education/StudentDashboard'
+import StudentDashboardRoute from '/client/imports/routes/Education/StudentDashboardRoute'
 import TeacherDashboardRoute from '/client/imports/routes/Education/TeacherDashboardRoute'
 import ClassroomRoute from '/client/imports/routes/Education/ClassroomRoute'
 
@@ -750,7 +750,7 @@ class HomeHeroBanner extends React.Component {
   }
 }
 
-// TODO: Needs to be refactored to own route
+// DO NOT USE - Has been refactored into a single component along with student classroom as ClassroomRoute 
 class TeacherClassroom extends React.Component {
   render() {
     const { currUser } = this.props
@@ -1129,14 +1129,16 @@ export default class DashboardTabs extends React.Component {
         menuItem: 'Student Dashboard',
         render: () => (
           <Tab.Pane>
-            <StudentDashboard {...this.props} />
+            <div>Implemented - live demo</div>
+            <StudentDashboardRoute {...this.props} />
           </Tab.Pane>
         ),
       },
       {
-        menuItem: 'Classroom 1',
+        menuItem: 'Classroom (Student & Teacher)',
         render: () => (
           <Tab.Pane>
+            <div>Implemented - live demo</div>
             <ClassroomRoute {...this.props} params={{classroomId: 'SbbGBBJc78KwYAH8C'}} />
           </Tab.Pane>
         ),
@@ -1165,18 +1167,19 @@ export default class DashboardTabs extends React.Component {
           </Tab.Pane>
         ),
       },
-      {
-        menuItem: '(Teacher) Classroom',
-        render: () => (
-          <Tab.Pane>
-            <TeacherClassroom {...this.props} />
-          </Tab.Pane>
-        ),
-      },
+      // {
+      //   menuItem: '(Teacher) Classroom',
+      //   render: () => (
+      //     <Tab.Pane>
+      //       <TeacherClassroom {...this.props} />
+      //     </Tab.Pane>
+      //   ),
+      // },
       {
         menuItem: '(Teacher) Dashboard',
         render: () => (
           <Tab.Pane>
+            <div>Implemented - live demo</div>
             <TeacherDashboardRoute {...this.props} />
           </Tab.Pane>
         ),

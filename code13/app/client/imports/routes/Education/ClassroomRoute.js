@@ -4,12 +4,13 @@ import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesL
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 import { createContainer } from 'meteor/react-meteor-data'
-import { Classrooms, Users, Azzets } from '/imports/schemas'
+import { Classrooms, Users, Azzets, Projects } from '/imports/schemas'
 import Spinner from '../../components/Nav/Spinner'
 import ReactQuill from 'react-quill'
 import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
+import { projectMakeSelector } from '/imports/schemas/projects'
 
 /**
  * This file renders two different views depending on if the user is a teacher or a student of a given classroom.
@@ -17,10 +18,42 @@ import { makeChannelName } from '/imports/schemas/chats'
  */
 
 class TeacherView extends React.Component {
-  renderAssignmentTable = () => {}
+  renderAssignmentTable = () => {
+    const { assignments, students } = this.props
+    const studentCells = _.map(students, student => {
+      let assignmentCells = _.map(assignments, assignment => {
+        // if(assignment.)
+      })
+      return (
+        <Table.Row>
+          <Table.Cell>{student.name}</Table.Cell>
+          {assignmentCells}
+        </Table.Row>
+      )
+    })
+
+    return (
+      <Table celled striped>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell colSpan="1" /> {/* Top left spacer cell to fill out table. */}
+            {this.renderTableHeaderCells(assignments)}
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>{studentCells}</Table.Body>
+      </Table>
+    )
+  }
+
+  renderTableHeaderCells = assignments => {
+    let headerCells = _.map(assignments, assignment => {
+      return <Table.HeaderCell colSpan="1">{assignment.name}</Table.HeaderCell>
+    })
+    return headerCells
+  }
 
   render() {
-    const { currUser } = this.props
+    const { currUser, assignments } = this.props
 
     const containerStyle = {
       overflowY: 'auto',
@@ -41,10 +74,6 @@ class TeacherView extends React.Component {
     const cellStyle = {
       textAlign: 'center',
     }
-
-    // const buttonStyle = {
-    //   float: 'right',
-    // }
 
     return (
       <div style={containerStyle}>
@@ -83,7 +112,6 @@ class TeacherView extends React.Component {
             <Grid.Column width={11}>
               <Segment raised color="blue">
                 <Header as="h3" content="Upcoming Assignments" />
-
                 <AssignmentsListGET showUpcoming showPastDue={false} showNoDueDate={false} />
               </Segment>
             </Grid.Column>
@@ -105,12 +133,8 @@ class TeacherView extends React.Component {
                 <Table celled striped>
                   <Table.Header>
                     <Table.Row>
-                      <Table.HeaderCell colSpan="1" />
-                      <Table.HeaderCell colSpan="1">Assignment 1</Table.HeaderCell>
-                      <Table.HeaderCell colSpan="1">Assignment 2</Table.HeaderCell>
-                      <Table.HeaderCell colSpan="1">Assignment 3</Table.HeaderCell>
-                      <Table.HeaderCell colSpan="1">Assignment 4</Table.HeaderCell>
-                      <Table.HeaderCell colSpan="1">Assignment 5</Table.HeaderCell>
+                      <Table.HeaderCell colSpan="1" /> {/* Spacer Cell to fill out table. */}
+                      {this.renderTableHeaderCells(assignments)}
                     </Table.Row>
                   </Table.Header>
                   <Table.Body>
@@ -437,9 +461,11 @@ export default createContainer(props => {
     students = [],
     handleForAssignments,
     assignmentsCursor,
-    assignments = []
-
-  let teacher,
+    assignments = [],
+    handleForStudentProjects,
+    studentProjectsCursor,
+    studentProjects = [],
+    teacher,
     handleForUsers,
     isTeacher = false
 
@@ -463,6 +489,19 @@ export default createContainer(props => {
       assignmentsCursor = Azzets.find({ _id: { $in: classroom.assignmentAssetIds } })
       assignments = assignmentsCursor.fetch()
     }
+
+    // Subscribe to projects of students of classroom after subscribed to classroom
+    if (
+      classroom &&
+      classroom.studentIds &&
+      classroom.studentIds.length > 0 &&
+      classroom.assignmentAssetIds &&
+      classroom.assignmentAssetIds.length > 0
+    ) {
+      handleForStudentProjects = Meteor.subscribe('projects.byUserList', classroom.studentIds)
+      studentProjectsCursor = Projects.find({ ownerId: { $in: classroom.studentIds } })
+      studentProjects = studentProjectsCursor.fetch()
+    }
   }
 
   const returnProps = {
@@ -473,6 +512,7 @@ export default createContainer(props => {
     isTeacher,
     students,
     assignments,
+    studentProjects,
   }
   return returnProps
 }, Classroom)

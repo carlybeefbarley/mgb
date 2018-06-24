@@ -294,10 +294,21 @@ const schema = {
  * @param {String} userId. If provided, then filter to only select projects owmned by or joined by userId. If null/undefined, then this selector will *not* filter for ownership/membership.
  * @returns {Object} A MongoDB selector to find projects that userId is owner OR member of
  */
-export function projectMakeSelector(userId, nameSearch, showOnlyForkable = false, hideWorkstateMask = 0) {
+export function projectMakeSelector(
+  userId,
+  nameSearch,
+  showOnlyForkable = false,
+  hideWorkstateMask = 0,
+  assignmentId,
+) {
   const sel = {}
 
   if (userId) sel['$or'] = [{ ownerId: userId }, { memberIds: { $in: [userId] } }]
+
+  if (nameSearch && nameSearch.length > 0) {
+    // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
+    sel['name'] = { $regex: new RegExp('^.*' + nameSearch, 'i') }
+  }
 
   if (showOnlyForkable) sel.allowForks = true
 
@@ -306,12 +317,17 @@ export function projectMakeSelector(userId, nameSearch, showOnlyForkable = false
     sel['workState'] = { $in: wsNamesToLookFor }
   }
 
-  if (nameSearch && nameSearch.length > 0) {
-    // Using regex in Mongo since $text is a word stemmer. See https://docs.mongodb.com/v3.0/reference/operator/query/regex/#op._S_regex
-    sel['name'] = { $regex: new RegExp('^.*' + nameSearch, 'i') }
+  if (assignmentId) {
+    const assignments = makeAssignmentIdsArray(assignmentId)
+    sel['assignmentId'] = { $in: assignments }
   }
 
   return sel
+}
+
+const makeAssignmentIdsArray = assignmentsIds => {
+  if (typeof assignmentsIds === 'string') return [assignmentsIds]
+  else return [...assignmentsIds]
 }
 
 // MongoDB sorters for Projects collection

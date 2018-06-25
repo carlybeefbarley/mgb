@@ -63,8 +63,7 @@ class StudentDashboard extends React.Component {
                 </Container>
               </Segment>
               {/* Not sure if we are tracking skills with AIE
-                  
-                  <SkillAction currUser={currUser} />  
+                  <SkillAction currUser={currUser} />
                   <RecentAssetAction currUser={currUser} />*/}
             </Grid.Column>
 

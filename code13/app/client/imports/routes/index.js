@@ -12,6 +12,7 @@ import ForumRoute from './Forum'
 import PlayGameRoute from './PlayGameRoute'
 import BrowseGamesRoute from './BrowseGamesRoute'
 import DashboardRoute from './Dashboard/DashboardRoute'
+import EducationDashboardRoute from './Education/EducationDashboardRoute'
 import VideoRoute from './Video/VideoRoute'
 import NotificationsRoute from './Notifications/NotificationsRoute'
 
@@ -77,6 +78,7 @@ export function clientStartup() {
 
         <Route path="/hour-of-code" component={HourOfCode} name="Hour of Code™" />
         <Route path="/dashboard" component={DashboardRoute} name="Dashboard" />
+        <Route path="/dashboard-education" component={EducationDashboardRoute} name="Dashboard" />
         <Route path="/video" component={VideoRoute} name="Video" />
         <Route path="/notifications" component={NotificationsRoute} name="Notifications" />
 

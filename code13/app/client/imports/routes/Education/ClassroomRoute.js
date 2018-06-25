@@ -8,6 +8,7 @@ import { Classrooms, Users, Azzets, Projects } from '/imports/schemas'
 import Spinner from '../../components/Nav/Spinner'
 import ReactQuill from 'react-quill'
 import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
+import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
 
@@ -17,7 +18,7 @@ const cellStyle = {
 /**
  * This file renders two different views depending on if the user is a teacher or a student of a given classroom.
  * Student/Teacher identity is resolved in the createContainer HOC.
- * 
+ *
  * Student projects are subscribed in HOC and and filtered to only show projects that have an assignment ID.
  */
 class TeacherView extends React.Component {
@@ -90,7 +91,7 @@ class TeacherView extends React.Component {
   }
 
   render() {
-    const { currUser, assignments } = this.props
+    const { currUser, assignments, currUserProjects } = this.props
 
     const containerStyle = {
       overflowY: 'auto',
@@ -111,6 +112,7 @@ class TeacherView extends React.Component {
     const cellStyle = {
       textAlign: 'center',
     }
+    const project = { name: 'derp' }
 
     return (
       <div style={containerStyle}>
@@ -118,9 +120,15 @@ class TeacherView extends React.Component {
         <Grid columns={1} padded>
           <Grid.Column width={16}>
             <div>
-              <Button color="orange" floated="right">
-                Add New Assignment
-              </Button>
+              <AssetCreateNewModal
+                currUser={currUser}
+                currUserProjects={currUserProjects}
+                buttonProps={{ floated: 'right' }}
+                viewProps={{
+                  showProjectSelector: true,
+                  suggestedParams: { projectName: project.name },
+                }}
+              />
             </div>
           </Grid.Column>
         </Grid>

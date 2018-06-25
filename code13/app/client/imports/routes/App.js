@@ -16,7 +16,7 @@ import { JoyrideRootHelper } from '/client/imports/components/Joyride'
 import { getFeedSelector } from '/imports/schemas/activity'
 import { Activity, Projects, Settings, Sysvars, Skills, Users } from '/imports/schemas'
 import { isSameUser } from '/imports/schemas/users'
-import { isUserSuperAdmin } from '/imports/schemas/roles'
+import { isUserSuperAdmin, roleTeacher } from '/imports/schemas/roles'
 
 import { projectMakeSelector, defaultProjectSorter } from '/imports/schemas/projects'
 import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'

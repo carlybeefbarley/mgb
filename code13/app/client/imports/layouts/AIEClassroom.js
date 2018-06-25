@@ -1,3 +1,5 @@
+//@ts-check
+
 import React from 'react'
 import {
   Container,
@@ -25,8 +27,8 @@ import HeroLayout from '/client/imports/layouts/HeroLayout'
 import QLink from '/client/imports/routes/QLink'
 import UX from '/client/imports/UX'
 import HoverImage from 'react-hover-image'
-import StudentDashboardRoute from '/client/imports/routes/Education/StudentDashboardRoute'
-import TeacherDashboardRoute from '/client/imports/routes/Education/TeacherDashboardRoute'
+import StudentDashboard from '/client/imports/components/Education/StudentDashboard'
+import TeacherDashboard from '/client/imports/components/Education/TeacherDashboard'
 import ClassroomRoute from '/client/imports/routes/Education/ClassroomRoute'
 
 //import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
@@ -372,7 +374,6 @@ class TeacherProfile extends React.Component {
   }
 }
 
-
 // DO NOT USE
 // Moved to ClassroomDashboardRoute already implemented.
 class ClassroomDashboard extends React.Component {
@@ -489,7 +490,6 @@ class ClassroomDashboard extends React.Component {
     )
   }
 }
-
 
 // TODO: Needs to be refactored to own route
 class StudentProfile extends React.Component {
@@ -613,7 +613,6 @@ class HomePage extends React.Component {
   }
 }
 
-
 // TODO: Refactor to own class inside of HomePageRoute when refactoring class HomePage
 class HomeHeroBanner extends React.Component {
   render() {
@@ -661,7 +660,7 @@ class HomeHeroBanner extends React.Component {
           <Grid.Row centered>
             {userId ? (
               <p style={{ color: '#fff', fontSize: '1.5em', maxWidth: '450px' }}>
-                Welcome back, {username}!
+                Welcome back, {currUser.username}!
                 <br />
                 Last time you were working on{' '}
                 <em>
@@ -670,7 +669,7 @@ class HomeHeroBanner extends React.Component {
                 <br />
                 <Button
                   as={QLink}
-                  to={`/u/${username}/assets`}
+                  to={`/u/${currUser.username}/assets`}
                   color="green"
                   size="huge"
                   style={{ marginTop: '1.5em', marginRight: '0.5em' }}
@@ -750,7 +749,7 @@ class HomeHeroBanner extends React.Component {
   }
 }
 
-// DO NOT USE - Has been refactored into a single component along with student classroom as ClassroomRoute 
+// DO NOT USE - Has been refactored into a single component along with student classroom as ClassroomRoute
 class TeacherClassroom extends React.Component {
   render() {
     const { currUser } = this.props
@@ -1016,110 +1015,110 @@ class TeacherClassroom extends React.Component {
   }
 }
 
-// TODO: Needs to be refactored to own route
-class TeacherDashboard extends React.Component {
-  render() {
-    const { currUser } = this.props
+// DO NOT USE, has been refactored to own component and is controlled by EducationDashboard Route
+// class TeacherDashboard extends React.Component {
+//   render() {
+//     const { currUser } = this.props
 
-    const containerStyle = {
-      overflowY: 'auto',
-    }
-    const titleStyle = {
-      fontSize: '3em',
-      textAlign: 'center',
-    }
+//     const containerStyle = {
+//       overflowY: 'auto',
+//     }
+//     const titleStyle = {
+//       fontSize: '3em',
+//       textAlign: 'center',
+//     }
 
-    const { avatar } = currUser.profile
+//     const { avatar } = currUser.profile
 
-    const infoStyle = {
-      fontSize: '1.7em',
-      textAlign: 'center',
-    }
+//     const infoStyle = {
+//       fontSize: '1.7em',
+//       textAlign: 'center',
+//     }
 
-    const inputStyle = {
-      minHeight: '10em',
-      width: '100%',
-      opacity: '0.9',
-    }
+//     const inputStyle = {
+//       minHeight: '10em',
+//       width: '100%',
+//       opacity: '0.9',
+//     }
 
-    const ulStyle = {
-      listStyleType: 'none',
-      padding: '5px',
-    }
-    return (
-      <div style={containerStyle}>
-        <Grid columns={1} padded>
-          <Grid.Column width={16}>
-            <div>
-              <Button color="orange" floated="right">
-                Add New Class
-              </Button>
-            </div>
-          </Grid.Column>
-        </Grid>
-        <Grid columns={2} padded stretched>
-          <Grid.Row>
-            <Grid.Column width={5}>
-              <Segment raised color="blue">
-                <Header style={titleStyle} as="h1" content={`${currUser.username}`} textAlign="center" />
-                <ImageShowOrChange
-                  id="mgbjr-profile-avatar"
-                  maxHeight="11em"
-                  maxWidth="auto"
-                  imageSrc={avatar}
-                  header="User Avatar"
-                  canEdit={false}
-                />
-                <List style={infoStyle}>
-                  <List.Item>
-                    <List.Content>
-                      <List.Icon name="chat" color="blue" />Class Chat
-                    </List.Content>
-                  </List.Item>
-                </List>
-              </Segment>
-            </Grid.Column>
-            <Grid.Column width={11}>
-              <Segment raised color="blue">
-                <Header as="h2" content="Your Classes" />
-                <ul style={ulStyle}>
-                  <li>Animation Class</li>
-                  <li>JavaScript Class</li>
-                  <li>Phaser Class</li>
-                  <li>Advanced JavaScript</li>
-                  <li>Advanced Animation</li>
-                </ul>
-              </Segment>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-        <Grid columns={1} padded stackable>
-          <Grid.Column width={16}>
-            <Grid.Row>
-              <Segment raised color="yellow">
-                <Header as="h2" content="Submission Feed" />
-                <SubmissionFeed />
-              </Segment>
-            </Grid.Row>
-          </Grid.Column>
-        </Grid>
-        <Grid columns={1} padded stackable>
-          <Grid.Column width={16}>
-            <Grid.Row>
-              <Segment raised color="purple">
-                <Header as="h2" content="About You" />
-                <TextArea
-                  placeholder="Let your students know a little bit about your background and what kind of games you have worked on"
-                  style={inputStyle}
-                />
-              </Segment>
-            </Grid.Row>
-          </Grid.Column>
-        </Grid>
-      </div>
-    )
-  }
-}
+//     const ulStyle = {
+//       listStyleType: 'none',
+//       padding: '5px',
+//     }
+//     return (
+//       <div style={containerStyle}>
+//         <Grid columns={1} padded>
+//           <Grid.Column width={16}>
+//             <div>
+//               <Button color="orange" floated="right">
+//                 Add New Class
+//               </Button>
+//             </div>
+//           </Grid.Column>
+//         </Grid>
+//         <Grid columns={2} padded stretched>
+//           <Grid.Row>
+//             <Grid.Column width={5}>
+//               <Segment raised color="blue">
+//                 <Header style={titleStyle} as="h1" content={`${currUser.username}`} textAlign="center" />
+//                 <ImageShowOrChange
+//                   id="mgbjr-profile-avatar"
+//                   maxHeight="11em"
+//                   maxWidth="auto"
+//                   imageSrc={avatar}
+//                   header="User Avatar"
+//                   canEdit={false}
+//                 />
+//                 <List style={infoStyle}>
+//                   <List.Item>
+//                     <List.Content>
+//                       <List.Icon name="chat" color="blue" />Class Chat
+//                     </List.Content>
+//                   </List.Item>
+//                 </List>
+//               </Segment>
+//             </Grid.Column>
+//             <Grid.Column width={11}>
+//               <Segment raised color="blue">
+//                 <Header as="h2" content="Your Classes" />
+//                 <ul style={ulStyle}>
+//                   <li>Animation Class</li>
+//                   <li>JavaScript Class</li>
+//                   <li>Phaser Class</li>
+//                   <li>Advanced JavaScript</li>
+//                   <li>Advanced Animation</li>
+//                 </ul>
+//               </Segment>
+//             </Grid.Column>
+//           </Grid.Row>
+//         </Grid>
+//         <Grid columns={1} padded stackable>
+//           <Grid.Column width={16}>
+//             <Grid.Row>
+//               <Segment raised color="yellow">
+//                 <Header as="h2" content="Submission Feed" />
+//                 <SubmissionFeed />
+//               </Segment>
+//             </Grid.Row>
+//           </Grid.Column>
+//         </Grid>
+//         <Grid columns={1} padded stackable>
+//           <Grid.Column width={16}>
+//             <Grid.Row>
+//               <Segment raised color="purple">
+//                 <Header as="h2" content="About You" />
+//                 <TextArea
+//                   placeholder="Let your students know a little bit about your background and what kind of games you have worked on"
+//                   style={inputStyle}
+//                 />
+//               </Segment>
+//             </Grid.Row>
+//           </Grid.Column>
+//         </Grid>
+//       </div>
+//     )
+//   }
+// }
 
 // TODO: This boiler plate will be discarded once all other classes/routes are implemented.
 export default class DashboardTabs extends React.Component {
@@ -1130,7 +1129,7 @@ export default class DashboardTabs extends React.Component {
         render: () => (
           <Tab.Pane>
             <div>Implemented - live demo</div>
-            <StudentDashboardRoute {...this.props} />
+            <StudentDashboard {...this.props} />
           </Tab.Pane>
         ),
       },
@@ -1139,7 +1138,7 @@ export default class DashboardTabs extends React.Component {
         render: () => (
           <Tab.Pane>
             <div>Implemented - live demo</div>
-            <ClassroomRoute {...this.props} params={{classroomId: 'SbbGBBJc78KwYAH8C'}} />
+            <ClassroomRoute {...this.props} params={{ classroomId: 'SbbGBBJc78KwYAH8C' }} />
           </Tab.Pane>
         ),
       },
@@ -1180,7 +1179,7 @@ export default class DashboardTabs extends React.Component {
         render: () => (
           <Tab.Pane>
             <div>Implemented - live demo</div>
-            <TeacherDashboardRoute {...this.props} />
+            <TeacherDashboard {...this.props} />
           </Tab.Pane>
         ),
       },

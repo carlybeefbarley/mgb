@@ -1,7 +1,7 @@
 import ClassroomRoute from './ClassroomRoute'
-import TeacherDashboardRoute from './TeacherDashboardRoute'
+import EducationDashboardRoute from './EducationDashboardRoute'
 
 export default {
   ClassroomRoute,
-  TeacherDashboardRoute,
+  EducationDashboardRoute,
 }

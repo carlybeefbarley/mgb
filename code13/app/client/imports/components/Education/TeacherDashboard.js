@@ -53,71 +53,70 @@ class TeacherDashboard extends React.Component {
       }
 
     return (
-      <div style={containerStyle}>
-        <Grid columns={1} padded>
+      <Grid columns={1} padded style={containerStyle}>
+        <Grid.Row>
+          <Grid.Column width={3} />
           <Grid.Column width={10}>
-            <div>
-              <Button color="orange" floated="right">
-                Add New Class
-              </Button>
-            </div>
+            <Button color="orange" floated="right">
+              Add New Class
+            </Button>
           </Grid.Column>
-        </Grid>
-        <Grid columns={2} padded stretched>
-          <Grid.Row>
-            <Grid.Column width={4}>
-              <Segment raised color="blue">
-                <Header style={titleStyle} as="h1" content={currUser.username} textAlign="center" />
-                <ImageShowOrChange
-                  id="mgbjr-profile-avatar"
-                  maxHeight="11em"
-                  maxWidth="auto"
-                  canLinkToSrc
-                  imageSrc={avatar}
-                  header="User Avatar"
-                  canEdit={false}
-                />
-                <List style={infoStyle}>
-                  <List.Item>
-                    <List.Content>
-                      <List.Icon name="chat" color="blue" />Class Chat
-                    </List.Content>
-                  </List.Item>
-                </List>
-              </Segment>
-            </Grid.Column>
-            <Grid.Column width={6}>
-              <Segment raised color="blue">
-                <Header as="h2" content="Your Classes" />
-                <List relaxed content={this.renderClassesList()} />
-              </Segment>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-        <Grid columns={1} padded stackable>
+        </Grid.Row>
+
+        <Grid.Row>
+          <Grid.Column width={3} />
+          <Grid.Column width={4}>
+            <Segment raised color="blue">
+              <ImageShowOrChange
+                id="mgbjr-profile-avatar"
+                maxHeight="11em"
+                maxWidth="auto"
+                canLinkToSrc
+                imageSrc={avatar}
+                header="User Avatar"
+                canEdit={false}
+              />
+              <Header style={titleStyle} as="h1" content={currUser.username} textAlign="center" />
+              <List style={infoStyle}>
+                <List.Item>
+                  <List.Content>
+                    <List.Icon name="chat" color="blue" />Class Chat
+                  </List.Content>
+                </List.Item>
+              </List>
+            </Segment>
+          </Grid.Column>
+          <Grid.Column width={6}>
+            <Segment raised color="blue">
+              <Header as="h2" content="Your Classes" />
+              <List relaxed content={this.renderClassesList()} />
+            </Segment>
+          </Grid.Column>
+        </Grid.Row>
+
+        <Grid.Row>
+          <Grid.Column width={3} />
           <Grid.Column width={10}>
-            <Grid.Row>
-              <Segment raised color="yellow">
-                <Header as="h2" content="Submission Feed" />
-                <SubmissionFeed />
-              </Segment>
-            </Grid.Row>
+            <Segment raised color="yellow">
+              <Header as="h2" content="Submission Feed" />
+              <SubmissionFeed />
+            </Segment>
           </Grid.Column>
-        </Grid>
-        <Grid columns={1} padded stackable>
+        </Grid.Row>
+
+        <Grid.Row>
+          <Grid.Column width={3} />
           <Grid.Column width={10}>
-            <Grid.Row>
-              <Segment raised color="purple">
-                <Header as="h2" content="About You" />
-                <TextArea
-                  placeholder="Let your students know a little bit about your background and what kind of games you have worked on"
-                  style={inputStyle}
-                />
-              </Segment>
-            </Grid.Row>
+            <Segment raised color="purple">
+              <Header as="h2" content="About You" />
+              <TextArea
+                placeholder="Let your students know a little bit about your background and what kind of games you have worked on"
+                style={inputStyle}
+              />
+            </Segment>
           </Grid.Column>
-        </Grid>
-      </div>
+        </Grid.Row>
+      </Grid>
     )
   }
 }

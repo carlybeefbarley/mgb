@@ -7,6 +7,7 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import { showToast } from '/client/imports/modules'
 import EnrollButton from '/client/imports/components/HourOfCode/EnrollButton'
 import { logActivity } from '/imports/schemas/activity'
+import { roleTeacher } from '/imports/schemas/roles'
 
 // Heads up!
 // Keep in sync with landing-layout.less .mgb-menu-logo
@@ -50,6 +51,11 @@ const getNavPanels = (currUser, showAll) => {
   const showGuestOptions = (!isLoggingIn && !currUser) || showAll
   const showUserOptions = (!isLoggingIn && !!currUser) || showAll
   const isGuest = currUser ? currUser.profile.isGuest : false
+  const isTeacher =
+    currUser &&
+    currUser.permissions &&
+    currUser.permissions[0] &&
+    currUser.permissions[0].roles[0] === roleTeacher
   const isHocActivity = isGuest && _.startsWith(window.location.pathname, `/u/${currUser.username}/asset/`)
   const isHocRoute = window.location.pathname === '/hour-of-code'
 
@@ -205,6 +211,22 @@ const getNavPanels = (currUser, showAll) => {
     ],
     // Right side
     right: _.compact([
+      showUserOptions &&
+      isTeacher && {
+        name: 'classrooms',
+        explainClickAction: 'Select the classroom you would like to set as active.',
+        icon: { name: 'student' },
+        content: 'Classrooms',
+        to: ``,
+        menu: [
+          {
+            subcomponent: 'Item',
+            jrkey: 'listClass',
+            to: `/u/${currUser._id}/classroom/classroomId`,
+            content: `This is a nightmare :D`,
+          },
+        ],
+      },
       showUserOptions && {
         name: 'projects',
         explainClickAction: 'Clicking here jumps to the list of your Projects',

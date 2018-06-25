@@ -9,9 +9,7 @@ import TeacherDashboard from '/client/imports/components/Education/TeacherDashbo
 class EducationDashboardRoute extends React.Component {
   render() {
     const { isTeacher } = this.props
-    return (
-      <div>{isTeacher ? <TeacherDashboard {...this.props} /> : <StudentDashboard {...this.props} />}</div>
-    )
+    return isTeacher ? <TeacherDashboard {...this.props} /> : <StudentDashboard {...this.props} />
   }
 }
 

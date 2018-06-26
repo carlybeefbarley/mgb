@@ -22,9 +22,9 @@ Meteor.methods({
 Meteor.methods({
   'AccountsCreate.teacher'(data) {
     // check(data, _.omit(schema, '_id'))
-    let userId = Accounts.createUser(data)
+    const userId = Accounts.createUser(data)
     console.log('Teacher User Id:', userId)
-    // Accounts.sendEnrollmentEmail(userId)
+    Accounts.sendEnrollmentEmail(userId)
     return userId
   },
 })

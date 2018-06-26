@@ -50,6 +50,7 @@ class ProjectOverview extends Component {
     confirmDeleteNum: -1, // If >=0 then it indicates how many assets will be deleted. Used to flag 2-stage DELETE
     // PROJECT
     activities: [], // always array even empty one
+    assignmentAsset: null,
   }
 
   componentDidMount() {
@@ -73,6 +74,10 @@ class ProjectOverview extends Component {
     )
   }
 
+  getAssignmentAsset = assignmentAsset => {
+    this.setState({ assignmentAsset })
+  }
+
   canEdit = () => {
     const { loading, currUser, project } = this.props
     return !loading && project && currUser && (project.ownerId === currUser._id || isUserSuperAdmin(currUser))
@@ -91,7 +96,7 @@ class ProjectOverview extends Component {
       if (err || !result) showToast.error(`Could not fork project: ${err}`)
       else {
         if (result.error) {
-          showToast.error(results.message)
+          showToast.error(result.message)
         } else {
           const msg = `Forked project '${this.props.project
             .name}' to '${newProjName}, creating ${result.numNewAssets} new Assets`
@@ -304,19 +309,57 @@ class ProjectOverview extends Component {
     )
   }
 
-  renderAssignmentView() {
+  renderStudentView(project) {
+    return <div />
+  }
+
+  renderTeacherView(project) {
     const listSty = {
       overflowY: 'auto',
       height: '20em',
     }
 
+    return (
+      <Grid.Row stretched>
+        <Grid.Column style={{ height: 'auto' }}>
+          <Header
+            as="h2"
+            color="grey"
+            floated="left"
+            style={{ cursor: 'pointer' }}
+            onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
+          >
+            Completed
+          </Header>
+          <Segment padded raised style={listSty}>
+            <StudentListGET assignment={project} />
+          </Segment>
+        </Grid.Column>
+        <Grid.Column style={{ height: 'auto' }}>
+          <Header
+            as="h2"
+            color="grey"
+            floated="left"
+            // Stretched columns force the width to be 100%
+            // The text only should be clickable, limit the width to the length of the text
+            style={{ flex: '0 0 auto', width: '3.75em', cursor: 'pointer' }}
+            id="mgbjr-project-activity"
+            onClick={() => utilPushTo(null, `/u/${project.ownerName}/projects/${project.name}/activity`)}
+          >
+            Incomplete
+          </Header>
+          <Segment padded raised style={listSty} />
+        </Grid.Column>
+      </Grid.Row>
+    )
+  }
+
+  renderAssignmentView() {
     const { currUser, project } = this.props
-    const { confirmDeleteNum, isDeleteComplete, isDeletePending, isForkPending } = this.state
+    const { confirmDeleteNum, isDeleteComplete, isDeletePending, isForkPending, assignmentAsset } = this.state
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: project.assignmentId })
-    const assignmentOwner = Azzets.findOne(project.assignmentId)
-    const isOwnerTeacher =
-      assignmentOwner &&
-      (assignmentOwner.ownerId === project.ownerId && _.includes(assignmentOwner.roles, 'teacher'))
+
+    const isOwnerTeacher = assignmentAsset && assignmentAsset.ownerId === currUser._id
 
     return (
       <Grid columns="equal" padded style={{ flex: '1 1 0' }}>
@@ -359,46 +402,19 @@ class ProjectOverview extends Component {
                 color={confirmDeleteNum < 0 ? null : 'red'}
                 onClick={confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject}
               />
-              {this.renderForkButton(currUser, project)}
+              {this.renderForkButton(currUser, project, isForkPending)}
             </div>
             <Grid.Row>
               <Header as="h2" color="grey" floated="left">
                 Assignment Details
               </Header>
-              <AssignmentCardGET isOwnerTeacher={isOwnerTeacher} assignmentId={project.assignmentId} />
+              <AssignmentCardGET
+                isOwnerTeacher={isOwnerTeacher}
+                assignmentId={project.assignmentId}
+                getAssignmentAsset={this.getAssignmentAsset}
+              />
             </Grid.Row>
-            <Grid.Row stretched>
-              <Grid.Column style={{ height: 'auto' }}>
-                <Header
-                  as="h2"
-                  color="grey"
-                  floated="left"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
-                >
-                  Completed
-                </Header>
-                <Segment padded raised style={listSty}>
-                  <StudentListGET assignment={project} />
-                </Segment>
-              </Grid.Column>
-              <Grid.Column style={{ height: 'auto' }}>
-                <Header
-                  as="h2"
-                  color="grey"
-                  floated="left"
-                  // Stretched columns force the width to be 100%
-                  // The text only should be clickable, limit the width to the length of the text
-                  style={{ flex: '0 0 auto', width: '3.75em', cursor: 'pointer' }}
-                  id="mgbjr-project-activity"
-                  onClick={() =>
-                    utilPushTo(null, `/u/${project.ownerName}/projects/${project.name}/activity`)}
-                >
-                  Incomplete
-                </Header>
-                <Segment padded raised style={listSty} />
-              </Grid.Column>
-            </Grid.Row>
+            {isOwnerTeacher ? this.renderTeacherView(project) : this.renderStudentView(project)}
           </Grid>
         </Grid.Column>
       </Grid>

@@ -12,6 +12,7 @@ const renderDueDate = fuzzyDate => {
 const AssignmentCard = props => {
   const { assignmentDetail, dueDate = null } = props.assignmentAsset.metadata
   const { assignmentAsset, isOwnerTeacher } = props
+
   return (
     <Card raised fluid>
       <Card.Content>
@@ -20,16 +21,7 @@ const AssignmentCard = props => {
         </Card.Header>
         <Card.Meta>{dueDate && `Due ${renderDueDate(dueDate)}`}</Card.Meta>
         <Card.Description>
-          <ReactQuill
-            readOnly
-            modules={{
-              clipboard: {
-                matchVisual: false,
-              },
-            }}
-            theme={null}
-            defaultValue={assignmentDetail}
-          />
+          <ReactQuill readOnly theme={null} defaultValue={assignmentDetail} />
         </Card.Description>
         {isOwnerTeacher && (
           <Button

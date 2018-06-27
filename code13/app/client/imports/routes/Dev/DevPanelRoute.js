@@ -8,6 +8,7 @@ import Recaptcha from '/client/imports/components/Recaptcha/Recaptcha'
 import { roleTeacher } from '/imports/schemas/roles'
 import { Classrooms } from '/imports/schemas'
 import { createContainer } from 'meteor/react-meteor-data'
+import { showToast } from '/client/imports/modules'
 
 const mascotColumnStyle = {
   // allow click through, so users can play with the particles
@@ -111,12 +112,14 @@ export default class DevPanelRoute extends Component {
 
     console.log('Creating account with: ', data)
 
-    let enrollId = Meteor.call('AccountsCreate.teacher', data, (error, result) => {
+    let enrollId = Meteor.call('AccountsCreate.student', data, (error, result) => {
       if (error) {
         console.log('AccountsCreate.teacher failed with', error)
+        showToast.error(error)
       } else {
         this.subClassroom(classroomId, result)
         console.log(result)
+        showToast('Account Created Successfully')
         return result
       }
     })

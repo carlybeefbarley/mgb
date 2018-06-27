@@ -46,7 +46,7 @@ const attemptUpdate = (selector, operation) => {
 }
 
 /**
- * 
+ *
  * @param {string} userId User Id to search classroom documents in mongo.
  */
 export function classroomsMakeSelectorForStudent(userId) {

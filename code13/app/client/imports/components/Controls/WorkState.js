@@ -1,10 +1,15 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { workStateNames, workStateColors, workStateIcons, statusIcons } from '/imports/Enums/workStates'
+import {
+  workStates,
+  workStateColors,
+  workStateIcons,
+  statusIcons,
+  assignmentStatuses,
+} from '/imports/Enums/workStates'
 import { Header, Label, Icon, List, Popup } from 'semantic-ui-react'
 import './WorkState.css'
-import { workstateColors } from '../../../../imports/Enums/workStates'
 
 // Note that this is a Stateless function:
 //   See https://facebook.github.io/react/docs/reusable-components.html
@@ -24,7 +29,7 @@ export const WorkStateIcon = ({ workState, size, onIconClick, color, labelStyle 
 const _hiddenWorkstateStyle = { opacity: 0.1 }
 export const WorkStateMultiSelect = ({ style, hideMask, handleChangeMask }) => (
   <div style={style}>
-    {_.map(workStateNames, (workState, idx) => (
+    {_.map(workStates, (workState, idx) => (
       <WorkState
         key={workState}
         workState={workState}
@@ -49,30 +54,28 @@ const WorkState = ({
   iconOnly,
 }) => (
   <div>
-    {_.includes(workStateNames, workState) && workState !== 'unknown' ? isAssignment ? (
-      <WorkStateStatus iconOnly={iconOnly} workState={workState} color={workstateColors[workState]} />
+    {_.includes(workStates, workState) && workState !== 'unknown' && isAssignment ? (
+      <WorkStateStatus iconOnly={iconOnly} workState={workState} color={workStateColors[workState]} />
     ) : (
       <Popup
         on="hover"
         hoverable={!!canEdit} // So mouse-over popup keeps it visible for Edit for example
         position={popupPosition}
         trigger={
-          <span>
-            <WorkStateIcon
-              color={workstateColors[workState]}
-              size={size}
-              workState={workState}
-              labelStyle={labelStyle}
-              onIconClick={onIconClick}
-            />
-          </span>
+          <WorkStateIcon
+            color={workStateColors[workState]}
+            size={size}
+            workState={workState}
+            labelStyle={labelStyle}
+            onIconClick={onIconClick}
+          />
         }
       >
         <div>
           <Header content="Quality level" />
           <List selection>
             {_.map(
-              workStateNames,
+              workStates,
               name =>
                 (canEdit || name == workState) && (
                   <List.Item
@@ -83,7 +86,7 @@ const WorkState = ({
                       canEdit && handleChange && handleChange(name)
                     }}
                   >
-                    <WorkStateIcon color={workstateColors[workState]} size="large" workState={name} />
+                    <WorkStateIcon color={workStateColors[workState]} size="large" workState={name} />
                     <List.Content verticalAlign="middle">&nbsp;{name}</List.Content>
                   </List.Item>
                 ),
@@ -91,7 +94,7 @@ const WorkState = ({
           </List>
         </div>
       </Popup>
-    ) : null}
+    )}
   </div>
 )
 
@@ -108,9 +111,13 @@ const WorkStateStatus = ({ workState, labelStyle, color, iconOnly }) => (
         name={`${statusIcons[workState]}`}
       />
     ) : (
-      <Label className="workstate-label" style={labelStyle} color={color}>
-        <Icon name={statusIcons[workState]} />
-        {workState}
+      <Label
+        className="workstate-label"
+        style={{ verticalAlign: 'middle', margin: '5px', ...labelStyle }}
+        color={color}
+      >
+        <Icon name={statusIcons[assignmentStatuses[workState]]} />
+        {assignmentStatuses[workState]}
       </Label>
     )}
   </span>

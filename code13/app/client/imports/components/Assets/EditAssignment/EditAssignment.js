@@ -42,6 +42,10 @@ export default class EditAssignment extends React.Component {
     urlLocation: PropTypes.object,
   }
 
+  componentDidMount() {
+    if (!this.props.asset.metadata.projectId) this.handleCreateProjectFromAssignment()
+  }
+
   handleChange(key) {
     this.handleSave()
   }
@@ -51,7 +55,7 @@ export default class EditAssignment extends React.Component {
   }
 
   handleCreateProjectFromAssignment = () => {
-    const { currUser, asset: { _id, name, text } } = this.props
+    const { asset: { _id, name, text, metadata } } = this.props
     let newProj = {
       name,
       description: text,
@@ -64,13 +68,14 @@ export default class EditAssignment extends React.Component {
       if (error) showToast.error('Could not create project - ' + error.reason)
       else {
         logActivity('project.create', `Create project ${name}`)
-        utilPushTo(this.context.urlLocation.query, `/u/${currUser.profile.name}/projects/${name}`)
+        metadata.projectId = result
+        this.handleSave()
       }
     })
   }
 
   render() {
-    const { asset, canEdit, handleContentChange } = this.props
+    const { currUser, asset, canEdit, handleContentChange } = this.props
     if (!asset) return null
 
     if (!asset.metadata) asset.metadata = _defaultAssignmentMetadata
@@ -82,11 +87,21 @@ export default class EditAssignment extends React.Component {
             asset={asset}
             canEdit={canEdit}
             onChange={this.handleChange.bind(this)}
+            handleCreateProjectFromAssignment={this.handleCreateProjectFromAssignment}
             saveThumbnail={d => {
               handleContentChange(null, d, 'Updating thumbnail')
             }}
           />
-          <Button floated="right" onClick={this.handleCreateProjectFromAssignment} content="Create Project" />
+          <br />
+          <Button
+            floated="right"
+            onClick={() =>
+              utilPushTo(
+                this.context.urlLocation.query,
+                `/u/${currUser.profile.name}/projects/${asset.name}`,
+              )}
+            content="Go to Project"
+          />
         </Grid.Column>
       </Grid>
     )

@@ -16,7 +16,7 @@ export const workStateIcons = {
   polished: 'smile',
 }
 
-export const workstateColors = {
+export const workStateColors = {
   unknown: 'grey',
   broken: 'yellow',
   working: 'olive',
@@ -26,7 +26,12 @@ export const workstateColors = {
 // Statuses are for assignments, which are additional labels to workstates
 // These will just correspond the 'broken, working, polished' scale respectively
 
-export const assignmentStatuses = ['unknown', 'needs review', 'needs work', 'completed']
+export const assignmentStatuses = {
+  unknown: 'unknown',
+  broken: 'needs review',
+  working: 'needs work',
+  polished: 'completed',
+}
 
 export const statusIcons = {
   unknown: 'asterisk',

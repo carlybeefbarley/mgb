@@ -80,7 +80,10 @@ class ProjectOverview extends Component {
 
   canEdit = () => {
     const { loading, currUser, project } = this.props
-    return !loading && project && currUser && (project.ownerId === currUser._id || isUserSuperAdmin(currUser))
+    const canEdit =
+      !loading && project && currUser && (project.ownerId === currUser._id || isUserSuperAdmin(currUser))
+
+    return canEdit
   }
 
   handleForkGo = () => {
@@ -454,7 +457,7 @@ class ProjectOverview extends Component {
                     <Button
                       style={{ width: '10em' }}
                       color="olive"
-                      onClick={() => this.handleSubmitAssignment('working')}
+                      onClick={() => this.handleWorkStateChange('working')}
                     >
                       Needs Work
                     </Button>
@@ -462,7 +465,7 @@ class ProjectOverview extends Component {
                     <Button
                       style={{ width: '10em' }}
                       color="green"
-                      onClick={() => this.handleSubmitAssignment('polished')}
+                      onClick={() => this.handleworkStateChange('polished')}
                     >
                       Complete
                     </Button>
@@ -472,7 +475,7 @@ class ProjectOverview extends Component {
                     labelPosition="left"
                     icon="calendar check"
                     content={'Submit Assignment'}
-                    onClick={() => this.handleSubmitAssignment('broken')}
+                    onClick={() => this.handleWorkStateChange('broken')}
                   />
                 ))}
               {canEdit && (
@@ -785,6 +788,10 @@ class ProjectOverview extends Component {
         )}
       </div>
     )
+  }
+
+  newMethod() {
+    return this.canEdit
   }
 }
 

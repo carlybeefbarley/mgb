@@ -5,13 +5,16 @@ import validate from '/imports/schemas/validate'
 import { Container, Grid, Header, Segment, Form, Divider, Message, Image, Button } from 'semantic-ui-react'
 import LoginLinks from '../Users/LoginLinks'
 import Recaptcha from '/client/imports/components/Recaptcha/Recaptcha'
+import { roleTeacher } from '/imports/schemas/roles'
+import { Classrooms } from '/imports/schemas'
+import { createContainer } from 'meteor/react-meteor-data'
 
 const mascotColumnStyle = {
   // allow click through, so users can play with the particles
   pointerEvents: 'none',
 }
 
-const salutations = [
+const title = [
   { key: 0, text: 'Mr.', value: 0 },
   { key: 1, text: 'Mrs.', value: 1 },
   { key: 2, text: 'Ms.', value: 2 },
@@ -23,26 +26,35 @@ const salutations = [
 const teacherPermissions = {
   teamId: 'teachers',
   teamName: 'teachers',
-  roles: ['teacher'],
+  roles: [roleTeacher],
 }
 
 export default class DevPanelRoute extends Component {
   state = {
     errors: { teacher: {}, student: {} },
-    formDataTeacher: { salutation: 0 },
+    formDataTeacher: { title: 0 },
     formDataStudent: {},
     isLoading: false,
     isRecaptchaComplete: false,
-    salutationIndex: 0,
+    titleIndex: 0,
+  }
+
+  subClassroom = (classroomId, userId) => {
+    Meteor.call('Classroom.addStudent', classroomId, userId)
+  }
+
+  updateClass = (classroomId, userId) => {
+    const result = Classrooms.update({ _id: classroomId }, { $addToSet: userId })
+    console.log(result)
   }
 
   handleSubmitTeacher = () => {
     event.preventDefault()
     let { email, username } = this.state.formDataTeacher
-    const { salutationIndex } = this.state
+    const { titleIndex } = this.state
     const teacherErrors = this.state.errors.teacher
     const studentErrors = this.state.errors.student
-    const salutation = salutations[salutationIndex].text
+    const title = title[titleIndex].text
 
     const errors = {
       email: validate.emailWithReason(email),
@@ -55,7 +67,7 @@ export default class DevPanelRoute extends Component {
       profile: {
         name: username,
         institution: 'Academy of Interactive Entertainment',
-        salutation,
+        title,
       },
       permissions: [teacherPermissions],
     }
@@ -71,9 +83,9 @@ export default class DevPanelRoute extends Component {
     console.log('Returned ID is :', enrollId)
   }
 
-  handleSubmitStudent = () => {
+  handleSubmitStudent = event => {
     event.preventDefault()
-    let { email, username } = this.state.formDataStudent
+    let { email, username, classroomId } = this.state.formDataStudent
     const teacherErrors = this.state.errors.teacher
     const studentErrors = this.state.errors.student
 
@@ -99,7 +111,16 @@ export default class DevPanelRoute extends Component {
 
     console.log('Creating account with: ', data)
 
-    let enrollId = Meteor.call('AccountsCreate.teacher', data)
+    let enrollId = Meteor.call('AccountsCreate.teacher', data, (error, result) => {
+      if (error) {
+        console.log('AccountsCreate.teacher failed with', error)
+      } else {
+        this.subClassroom(classroomId, result)
+        console.log(result)
+        return result
+      }
+    })
+
     console.log('Returned ID is :', enrollId)
   }
 
@@ -133,15 +154,15 @@ export default class DevPanelRoute extends Component {
     }
   }
 
-  handleSetPermissions = e => {
-    Meteor.call('Users.setPermissions', { _id: 'mGeXxx6is7zKhXgnL' }, teacherPermissions)
+  handleSetClassroom = () => classroomId => {
+    Meteor.update()
   }
 
   handleSelect = event => {
-    const salutationIndex = _.find(salutations, { text: event.target.innerText })
+    const titleIndex = _.find(title, { text: event.target.innerText })
 
-    if (salutationIndex !== undefined) {
-      this.setState({ salutationIndex: salutationIndex.value })
+    if (titleIndex !== undefined) {
+      this.setState({ titleIndex: titleIndex.value })
     }
   }
 
@@ -182,10 +203,10 @@ export default class DevPanelRoute extends Component {
                           type="email"
                         />
                         <Form.Select
-                          label={'Salutation'}
-                          name="salutation"
-                          value={this.state.salutationIndex}
-                          options={salutations}
+                          label={'Title'}
+                          name="title"
+                          value={this.state.titleIndex}
+                          options={title}
                           onChange={e => this.handleSelect(e)}
                         />
                         <Form.Input
@@ -194,15 +215,7 @@ export default class DevPanelRoute extends Component {
                           label={errors.teacher.username || 'Username (used for profile)'}
                           name="username"
                           onBlur={this.checkUserName}
-                          placeholder={`${salutations[this.state.salutationIndex].text} Woodstock`}
-                        />
-                        <Button
-                          fluid
-                          primary
-                          content="Set Permissions"
-                          onClick={e => {
-                            this.handleSetPermissions(e)
-                          }}
+                          placeholder={`${title[this.state.titleIndex].text} Woodstock`}
                         />
                         <Button
                           fluid
@@ -229,9 +242,15 @@ export default class DevPanelRoute extends Component {
                     <Segment stacked>
                       <Form
                         onChange={this.handleStudentChange}
-                        onSubmit={() => this.handleSubmitStudent()}
+                        onSubmit={event => this.handleSubmitStudent(event)}
                         loading={isLoading}
                       >
+                        <Form.Input
+                          icon="student"
+                          label="CLASSROOM_ID"
+                          name="classroomId"
+                          placeholder="Id of classroom to attach student"
+                        />
                         <Form.Input
                           error={!!errors.email}
                           icon="envelope"
@@ -247,15 +266,7 @@ export default class DevPanelRoute extends Component {
                           label={errors.student.username || 'Username (used for profile)'}
                           name="username"
                           onBlur={this.checkUserName}
-                          placeholder={`${salutations[this.state.salutationIndex].text} Woodstock`}
-                        />
-                        <Button
-                          fluid
-                          primary
-                          content="Set Permissions"
-                          onClick={e => {
-                            this.handleSetPermissions(e)
-                          }}
+                          placeholder={`${title[this.state.titleIndex].text} Woodstock`}
                         />
                         <Button
                           fluid

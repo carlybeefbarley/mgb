@@ -11,23 +11,23 @@ const canEditClassroom = (classroom, userId) => {
 }
 
 /**
- * 
+ *
  * @param {Meteor Selector} selector Standard meteor collection selector syntax e.g. {_id: 'somestring'} 
  * @param {Meteor Operation} options options to perform upon successfully finding the document and updating it.
- * 
+ *
  * First loads the targeted Classroom Document via the Selector. Currently this only supports a single document. Attempting to modify many
  * documents at the same time will only affect the first document that the selector qualifies with. 
- * 
+ *
  * If the document doesn't exist, a 404 error is thrown.
- * 
+ *
  * Then assures that the user is either a "teacher" or the creator of the classroom. Note: there are no differences in how the creator or teachers
  * are treated when it comes to permissions, both have full read and write access. If the user is not a teacher or creator of the classroom
  * a 401 "unauthorized" error is thrown.
- * 
+ *
  * After permissions are sorted the document is then updated and time-stamped with the date of modification.
  * The document is NOT time-stamped if an error is thrown but is stamped if ANY changes are made to it, this does include overwrites
  * of data with duplicates.
- * 
+ *
  * Finally the function returns the ID of the document modified for debugging purposes if changes were successful.
  */
 const attemptUpdate = (selector, operation) => {

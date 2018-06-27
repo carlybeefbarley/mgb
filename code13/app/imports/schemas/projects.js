@@ -257,7 +257,7 @@ import SpecialGlobals from '/imports/SpecialGlobals.js'
 const optional = Match.Optional
 const schema = {
   _id: String,
-  assignmentId: optional(String), // if is project is an assignment
+  assignmentId: optional(String), // if project is an assignment
 
   createdAt: Date,
   updatedAt: Date,
@@ -461,7 +461,7 @@ Meteor.methods({
     data.ownerId = this.userId
     data.ownerName = username
     data.workState = defaultWorkStateName
-    data.allowForks = false
+    if (!_.has(data, 'allowForks')) data.allowForks = false
     data.memberIds = []
     if (!_.isString(data.avatarAssetId)) data.avatarAssetId = ''
 

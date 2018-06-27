@@ -1,13 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Grid, Button } from 'semantic-ui-react'
-import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
 import BaseForm from '/client/imports/components/Controls/BaseForm.js'
-import CreateProjectLinkButton from '/client/imports/components/Projects/NewProject/CreateProjectLinkButton.js'
 import { showToast } from '/client/imports/modules'
 import { logActivity } from '/imports/schemas/activity'
 import { utilPushTo } from '/client/imports/routes/QLink'
-import ReactQuill from 'react-quill'
 
 const _defaultAssignmentMetadata = {
   assignmentDetail: '',
@@ -23,10 +20,9 @@ class EditAssignmentForm extends BaseForm {
   render() {
     return (
       <div className="ui form">
-        {this.textEditor('Assignment Detail', 'assignmentDetail')}
-        {this.bool('Is Team Project', 'isTeamProject')}
         {this.date('Due Date', 'dueDate')}
-        {this.dropArea('Code', 'defaultAssetName', 'code', null)}
+        {this.bool('Is Team Project', 'isTeamProject')}
+        {this.textEditor('Assignment Detail', 'assignmentDetail', { canEdit: this.props.canEdit })}
       </div>
     )
   }
@@ -55,13 +51,12 @@ export default class EditAssignment extends React.Component {
   }
 
   handleCreateProjectFromAssignment = () => {
-    const { currUser, asset: { _id, name, text, metadata: { assignmentDetail, dueDate } } } = this.props
+    const { currUser, asset: { _id, name, text } } = this.props
     let newProj = {
       name,
       description: text,
-      assignmentDetail,
       assignmentId: _id,
-      dueDate,
+      allowForks: true,
       workState: 'unknown',
     }
 
@@ -83,7 +78,6 @@ export default class EditAssignment extends React.Component {
     return (
       <Grid centered container>
         <Grid.Column className="edit-assignment">
-          <Button onClick={this.handleCreateProjectFromAssignment} content="Create Project" />
           <EditAssignmentForm
             asset={asset}
             canEdit={canEdit}
@@ -92,6 +86,7 @@ export default class EditAssignment extends React.Component {
               handleContentChange(null, d, 'Updating thumbnail')
             }}
           />
+          <Button floated="right" onClick={this.handleCreateProjectFromAssignment} content="Create Project" />
         </Grid.Column>
       </Grid>
     )

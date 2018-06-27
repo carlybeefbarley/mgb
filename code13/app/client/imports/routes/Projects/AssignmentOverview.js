@@ -1,43 +1,22 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
-import Helmet from 'react-helmet'
-import {
-  Divider,
-  Form,
-  Grid,
-  Input,
-  Segment,
-  Checkbox,
-  Message,
-  Modal,
-  Icon,
-  Header,
-  Button,
-  Popup,
-  List,
-} from 'semantic-ui-react'
+
+import { Grid, Segment, Header, Button, List } from 'semantic-ui-react'
 import { showToast } from '/client/imports/modules'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import { Projects } from '/imports/schemas'
-import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
-import Spinner from '/client/imports/components/Nav/Spinner'
-import { joyrideStore } from '/client/imports/stores'
 import ProjectHistoryRoute from './ProjectHistoryRoute'
-import UserListRoute from '../Users/UserListRoute'
-import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
-import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailableGET'
 import { logActivity } from '/imports/schemas/activity'
-import ProjectForkGenerator from './ProjectForkGenerator'
-import { isUserSuperAdmin } from '/imports/schemas/roles'
-import SpecialGlobals from '/imports/SpecialGlobals.js'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 import { withMeteorData } from '../../hocs'
 import StudentListGET from '/client/imports/routes/Projects/StudentListGET.js'
-import AssignmentDetails from './AssignmentDetails'
+import AssignmentDetail from './AssignmentDetail'
 import ChatPanel from '/client/imports/components/Assets/ChatPanel.js'
 import { makeChannelName } from '/imports/schemas/chats'
+import WorkState from '/client/imports/components/Controls/WorkState'
+import AssignmentCardGET from '/client/imports/components/Assets/AssignmentCardGET'
 
 class AssignmentOverview extends Component {
   static propTypes = {
@@ -114,127 +93,6 @@ class AssignmentOverview extends Component {
     })
   }
 
-  renderStudentView = (project, activities) => {
-    return (
-      <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em', maxHeight: '100vh' }}>
-        <Grid.Row>
-          <Header as="h2" color="grey" floated="left">
-            Assignment Details
-          </Header>
-          <AssignmentDetails isStudent />
-        </Grid.Row>
-        <Grid.Row />
-        <Grid.Row stretched columns={2}>
-          <Grid.Column width={11}>
-            <Header
-              as="h2"
-              color="grey"
-              floated="left"
-              style={{ cursor: 'pointer' }}
-              onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
-            >
-              Assets
-            </Header>
-            <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
-          </Grid.Column>
-          <Grid.Column width={5}>
-            <Header
-              as="h2"
-              color="grey"
-              floated="left"
-              // Stretched columns force the width to be 100%
-              // The text only should be clickable, limit the width to the length of the text
-              style={{ flex: '0 0 auto', width: '3.75em', cursor: 'pointer' }}
-              id="mgbjr-project-activity"
-              onClick={() => utilPushTo(null, `/u/${project.ownerName}/projects/${project.name}/activity`)}
-            >
-              Activity
-            </Header>
-            <ProjectHistoryRoute project={project} activities={activities} style={{ clear: 'left' }} />
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    )
-  }
-
-  renderTeacherView = (project, activities) => {
-    const listSty = {
-      overflowY: 'auto',
-      height: '20em',
-    }
-
-    const { name, assignmentDetail, dueDate } = this.props.project
-    const { confirmDeleteNum, isDeleteComplete, isDeletePending } = this.state
-
-    return (
-      <Grid.Column>
-        <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em', width: '100%' }}>
-          <div style={{ float: 'right' }}>
-            <Button
-              labelPosition="left"
-              icon="trash"
-              disabled={isDeleteComplete || isDeletePending}
-              content={
-                confirmDeleteNum < 0 ? (
-                  'Delete'
-                ) : (
-                  `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`
-                )
-              }
-              color={confirmDeleteNum < 0 ? null : 'red'}
-              onClick={confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject}
-            />
-            <Button
-              labelPosition="left"
-              icon="calendar check"
-              content={'Submit Assignment'}
-              onClick={this.handleSubmitAssignment}
-            />
-          </div>
-          <Grid.Row>
-            <Header as="h2" color="grey" floated="left">
-              Assignment Details
-            </Header>
-            <AssignmentDetails name={name} detail={assignmentDetail} dueDate={dueDate} />
-          </Grid.Row>
-          <Grid.Row stretched>
-            <Grid.Column style={{ height: 'auto' }}>
-              <Header
-                as="h2"
-                color="grey"
-                floated="left"
-                style={{ cursor: 'pointer' }}
-                onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
-              >
-                Completed
-              </Header>
-              <Segment padded raised style={listSty}>
-                <StudentListGET assignment={project} />
-              </Segment>
-            </Grid.Column>
-            <Grid.Column style={{ height: 'auto' }}>
-              <Header
-                as="h2"
-                color="grey"
-                floated="left"
-                // Stretched columns force the width to be 100%
-                // The text only should be clickable, limit the width to the length of the text
-                style={{ flex: '0 0 auto', width: '3.75em', cursor: 'pointer' }}
-                id="mgbjr-project-activity"
-                onClick={() => utilPushTo(null, `/u/${project.ownerName}/projects/${project.name}/activity`)}
-              >
-                Incomplete
-              </Header>
-              <Segment padded raised style={listSty}>
-                {this.renderIncompleteList()}
-              </Segment>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Grid.Column>
-    )
-  }
-
   renderCompletedList = () => {
     const names = 'abcdefghijklmnopqrstuvwxyz'
 
@@ -276,12 +134,10 @@ class AssignmentOverview extends Component {
 
     const { activities } = this.state
 
-    const isStudent = false
+    const isStudent = true
 
     const currUser = Meteor.user()
-    const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: 'Rz3yh9K5zCHZxvEWJ' })
-
-    console.log(this)
+    const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: project.assignmentId })
 
     return (
       <Grid columns="equal" padded style={{ flex: '1 1 0' }}>

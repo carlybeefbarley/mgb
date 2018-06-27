@@ -60,11 +60,11 @@ Meteor.methods({
     // we need also name - as assets can be referenced from source as /assetName
     const srcAssetIds = Azzets.find(azzSel, { fields: { name: 1, _id: 1 } }).fetch()
 
-    if (srcAssetIds.length === 0)
-      return new Meteor.Error(
-        404,
-        `Source Project '${sourceProject.ownerName}:${opts.sourceProjectName}' contains no Assets. Cannot fork empty project`,
-      )
+    // if (srcAssetIds.length === 0)
+    //   return new Meteor.Error(
+    //     404,
+    //     `Source Project '${sourceProject.ownerName}:${opts.sourceProjectName}' contains no Assets. Cannot fork empty project`,
+    //   )
 
     // Initial validations seem ok. So 'unblock' to allow other Meteor.call() requests for this client
     // since it may take a while.. Otherwise other functions like chat will be disabled during the fork work
@@ -81,6 +81,8 @@ Meteor.methods({
       avatarAssetId: sourceProject.avatarAssetId || '',
       // forkParentChain will be handled in the code below...
     }
+
+    if (sourceProject.assignmentId) newProjData['assignmentId'] = sourceProject.assignmentId
 
     // This is the same shape as for Asset fork, but some params have different names:
     //   ≈  parentProjectName instead of parentAssetName

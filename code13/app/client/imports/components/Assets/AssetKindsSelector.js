@@ -44,7 +44,7 @@ const AssetKindsSelector = ({ showCompact, kindsActive, handleToggleKindCallback
     )
   })
 
-  const compactProps = showCompact ? { widths: 9 } : { vertical: true }
+  const compactProps = showCompact ? { widths: 6 } : { vertical: true }
 
   return (
     <Menu size="small" {...compactProps} fluid secondary pointing style={{ marginTop: 0 }}>

@@ -26,11 +26,7 @@ const ProjectMenu = ({ projects, ownedFlag, currUser, hazUnreadChats }) => {
       ? Empty
       : wantedProjects.map(p => (
           <Menu.Item key={p._id}>
-            <WorkState
-              isClassroom={currUser.profile.isTeacher | currUser.profile.isStudent}
-              workState={p.workState}
-              canEdit={false}
-            />
+            <WorkState workState={p.workState} canEdit={false} />
             {!ownedFlag && (
               <span>
                 <QLink to={`/u/${p.ownerName}`} altTo={`/u/${p.ownerName}/projects`}>

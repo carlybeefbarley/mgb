@@ -6,11 +6,13 @@ import { Azzets } from '/imports/schemas'
 const AssignmentCardLoading = props =>
   props.loading ? <div>Loading Assignment Info...</div> : <AssignmentCard {...props} />
 
-const AssignmentCardGET = createContainer(({ assignmentId }) => {
+const AssignmentCardGET = createContainer(({ assignmentId, getAssignmentAsset }) => {
   const handle = Meteor.subscribe('assets.public.byId', assignmentId)
+  const assignmentAsset = Azzets.findOne(assignmentId)
+  getAssignmentAsset(assignmentAsset)
 
   return {
-    assignmentAsset: Azzets.findOne(assignmentId),
+    assignmentAsset,
     loading: !handle.ready(),
   }
 }, AssignmentCardLoading)

@@ -1,34 +1,36 @@
 import _ from 'lodash'
 
-export const workStateQualities = ['broken', 'unknown', 'working', 'polished']
-export const workStateStatuses = ['needs review', 'needs work', 'completed']
+export const workStates = ['unknown', 'broken', 'working', 'polished']
 
 export const makeWorkstateNamesArray = hideWorkstateMask =>
   // Special case 0 which is the most common case to be the least work
-  hideWorkstateMask === 0
-    ? workStateQualities
-    : _.filter(workStateQualities, (n, idx) => !((1 << idx) & hideWorkstateMask))
+  hideWorkstateMask === 0 ? workStates : _.filter(workStates, (n, idx) => !((1 << idx) & hideWorkstateMask))
 
 export const defaultWorkStateName = 'unknown'
-export const bestWorkStateQuality = _.last(workStateQualities)
+export const bestWorkStateName = _.last(workStates)
 
-export const qualityIcons = {
+export const workStateIcons = {
+  unknown: 'asterisk',
   broken: 'frown',
-  unknown: 'help',
   working: 'meh',
   polished: 'smile',
 }
 
+export const workstateColors = {
+  unknown: 'grey',
+  broken: 'yellow',
+  working: 'olive',
+  polished: 'green',
+}
+
+// Statuses are for assignments, which are additional labels to workstates
+// These will just correspond the 'broken, working, polished' scale respectively
+
+export const assignmentStatuses = ['unknown', 'needs review', 'needs work', 'completed']
+
 export const statusIcons = {
-  unknown: 'help',
+  unknown: 'asterisk',
   'needs review': 'exclamation',
   'needs work': 'exclamation',
   completed: 'check',
-}
-
-export const statusColors = {
-  unknown: 'grey',
-  'needs review': 'yellow',
-  'needs work': 'yellow',
-  completed: 'green',
 }

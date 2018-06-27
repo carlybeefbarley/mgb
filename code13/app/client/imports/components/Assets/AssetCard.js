@@ -18,7 +18,6 @@ import assetStore from '/client/imports/stores/assetStore'
 import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes'
 
 import UserLoves from '/client/imports/components/Controls/UserLoves'
-import { workStateQualities, workStateStatuses } from '../../../../imports/Enums/workStates'
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
 
 export const assetViewChoices = {
@@ -119,10 +118,6 @@ const AssetCard = React.createClass({
 
     const isChallenge = asset.skillPath && isPathChallenge(asset.skillPath)
     const isCodeTutorial = asset.skillPath && isPathCodeTutorial(asset.skillPath)
-    const isClassroom =
-      (currUser && (currUser.profile.isTeacher || currUser.profile.isStudent)) ||
-      isChallenge ||
-      isCodeTutorial
 
     return (
       <Card
@@ -148,24 +143,24 @@ const AssetCard = React.createClass({
         </div>
 
         <Card.Content>
-          {!isClassroom && (
-            <span style={{ float: 'right' }}>
-              <span onMouseUp={_preventOnMouseUpClickSteal}>
-                <UserLoves
-                  currUser={currUser}
-                  asset={asset}
-                  size={viewOpts.showExtra ? null : 'small'}
-                  seeLovers={false}
-                />
-              </span>
-
+          <span style={{ float: 'right' }}>
+            <span onMouseUp={_preventOnMouseUpClickSteal}>
+              <UserLoves
+                currUser={currUser}
+                asset={asset}
+                size={viewOpts.showExtra ? null : 'small'}
+                seeLovers={false}
+              />
+            </span>
+            {asset.workState && (
               <WorkState
                 workState={asset.workState}
                 size={viewOpts.showExtra ? null : 'small'}
                 canEdit={false}
               />
-            </span>
-          )}
+            )}
+          </span>
+
           {!viewOpts.showExtra && (
             // This is used for SMALL sizes. It has a popup to show the Medium one!
             <Popup

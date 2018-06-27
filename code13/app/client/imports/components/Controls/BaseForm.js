@@ -23,10 +23,6 @@ export default class BaseForm extends React.Component {
     showQuillHtml: false,
   }
 
-  handleToggleShowQuillHtml = () => {
-    this.setState({ showQuillHtml: !this.state.showQuillHtml })
-  }
-
   options(name, key, options, fieldOptions = {}, mgbjrCT = '', id = '', func) {
     let val = this.data[key]
     if (val === void 0) console.warn('value not defined for:', name + '[' + key + ']')
@@ -182,28 +178,26 @@ export default class BaseForm extends React.Component {
         title={fieldOptions && fieldOptions.title}
       >
         <label>{name}</label>
-        {this.state.showQuillHtml ? (
-          <div>
-            <div
-              className="ql-container"
-              style={{ border: '1px solid lightgray', padding: '1em' }}
-              dangerouslySetInnerHTML={{ __html: this.data[key] }}
-            />
-            <Button icon="pencil" content="Edit" onClick={this.handleToggleShowQuillHtml} />
-          </div>
+        {fieldOptions.canEdit ? (
+          <ReactQuill
+            modules={modules}
+            formats={formats}
+            defaultValue={this.data[key]}
+            onChange={content => {
+              this.data[key] = content // This is an HTML string
+              this.props.onChange && this.props.onChange()
+            }}
+          />
         ) : (
-          <div>
-            <ReactQuill
-              modules={modules}
-              formats={formats}
-              defaultValue={this.data[key]}
-              onChange={content => {
-                this.data[key] = content // This is an HTML string
-                this.props.onChange && this.props.onChange()
-              }}
-            />
-            <Button icon="save" content="Save" onClick={this.handleToggleShowQuillHtml} />
-          </div>
+          <ReactQuill
+            readOnly
+            modules={{
+              clipboard: {
+                matchVisual: false,
+              },
+            }}
+            defaultValue={this.data[key]}
+          />
         )}
       </div>
     )

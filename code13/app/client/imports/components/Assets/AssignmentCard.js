@@ -1,19 +1,39 @@
 import React from 'react'
-import { Card, Icon, Popup } from 'semantic-ui-react'
+import { Card, Icon, Button } from 'semantic-ui-react'
 import ReactQuill from 'react-quill'
+import { openAssetById } from '/client/imports/routes/QLink'
+
+const renderDueDate = fuzzyDate => {
+  const actualDate = `${fuzzyDate.split('-')[1]}/${fuzzyDate.split('-')[2]}`
+  //TODO: Fix this so it works
+  return actualDate
+}
 
 const AssignmentCard = props => {
   const { assignmentDetail, dueDate = null } = props.assignmentAsset.metadata
-  const { assignmentAsset } = props
+  const { assignmentAsset, isOwnerTeacher } = props
+
   return (
-    <Card fluid>
+    <Card raised fluid>
       <Card.Content>
-        <Icon name="student" />
-        <Card.Header>{assignmentAsset.name}</Card.Header>
-        <Card.Meta>{dueDate && renderDueDate(dueDate)}</Card.Meta>
+        <Card.Header>
+          <Icon name="file" /> {assignmentAsset.name}
+        </Card.Header>
+        <Card.Meta>{dueDate && `Due ${renderDueDate(dueDate)}`}</Card.Meta>
         <Card.Description>
           <ReactQuill readOnly theme={null} defaultValue={assignmentDetail} />
         </Card.Description>
+        {isOwnerTeacher && (
+          <Button
+            compact
+            floated="right"
+            icon="pencil"
+            content="Edit"
+            onClick={() => {
+              openAssetById(props.assignmentId)
+            }}
+          />
+        )}
       </Card.Content>
     </Card>
   )

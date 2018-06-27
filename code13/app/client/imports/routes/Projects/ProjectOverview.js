@@ -270,7 +270,10 @@ class ProjectOverview extends Component {
     )
   }
 
-  renderForkButton = (currUser, project, isForkPending) => {
+  renderForkButton = () => {
+    const { project, currUser } = this.props
+    const { isForkPending } = this.state
+
     return (
       <Popup
         on="click"
@@ -309,11 +312,86 @@ class ProjectOverview extends Component {
     )
   }
 
-  renderStudentView(project) {
-    return <div />
+  renderStudentView(canEdit) {
+    const { project, currUser, currUserProjects } = this.props
+    const { showAddUserSearch, isDeletePending } = this.state
+
+    return (
+      <Grid columns="1">
+        <Grid.Column>
+          <Header
+            as="h2"
+            color="grey"
+            floated="left"
+            style={{ cursor: 'pointer' }}
+            onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
+          >
+            Assets
+          </Header>
+          {canEdit && (
+            <AssetCreateNewModal
+              currUser={currUser}
+              currUserProjects={currUserProjects}
+              buttonProps={{ floated: 'right' }}
+              viewProps={{
+                showProjectSelector: false,
+                suggestedParams: { projectName: project.name },
+              }}
+            />
+          )}
+          <Divider fitted hidden clearing />
+          <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
+        </Grid.Column>
+        <Divider hidden />
+        <Grid.Column>
+          <Header as="h2" color="grey" floated="left">
+            Members{' '}
+            <small>
+              ({project.memberIds.length} of{' '}
+              {isUserSuperAdmin(currUser) ? (
+                SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject
+              ) : (
+                SpecialGlobals.quotas.defaultNumMembersAllowedInProject
+              )})
+            </small>
+          </Header>
+          {canEdit && (
+            <Button
+              color={showAddUserSearch ? 'black' : 'green'}
+              icon={showAddUserSearch ? 'checkmark' : 'add user'}
+              content={showAddUserSearch ? "I'm done" : 'Add Members'}
+              floated="right"
+              disabled={isDeletePending}
+              onClick={() => {
+                this.setState({ showAddUserSearch: !showAddUserSearch })
+              }}
+            />
+          )}
+          <Divider fitted hidden clearing />
+          <p>Project Members may create, edit or delete Assets in this Project.</p>
+          {showAddUserSearch && (
+            <UserListRoute
+              location={{ ...location, query: { ...location.query, limit: 13 } }}
+              handleClickUser={this.handleClickUser}
+              excludeUserIdsArray={[project.ownerId, ...project.memberIds]}
+              renderVertical
+            />
+          )}
+          <ProjectMembersGET
+            project={project}
+            enableRemoveButton={canEdit}
+            enableLeaveButton={currUser ? currUser._id : null}
+            handleRemove={this.handleRemoveMemberFromProject}
+            handleLeave={this.handleMemberLeaveFromProject}
+          />
+        </Grid.Column>
+      </Grid>
+    )
   }
 
-  renderTeacherView(project) {
+  renderTeacherView(canEdit) {
+    const { project } = this.props
+
     const listSty = {
       overflowY: 'auto',
       height: '20em',
@@ -354,11 +432,11 @@ class ProjectOverview extends Component {
     )
   }
 
-  renderAssignmentView() {
-    const { currUser, project } = this.props
+  renderAssignmentView(canEdit) {
+    const { project, currUser } = this.props
     const { confirmDeleteNum, isDeleteComplete, isDeletePending, isForkPending, assignmentAsset } = this.state
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: project.assignmentId })
-
+    const isTeacherProject = assignmentAsset && assignmentAsset.ownerId === project.ownerId
     const isOwnerTeacher = assignmentAsset && assignmentAsset.ownerId === currUser._id
 
     return (
@@ -370,39 +448,52 @@ class ProjectOverview extends Component {
           <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em', width: '100%' }}>
             <div style={{ display: 'flex', flexFlow: 'row', justifyContent: 'flex-end', width: '100%' }}>
               <WorkState isAssignment workState={project.workState} />
-              {isOwnerTeacher ? (
-                <Button.Group>
-                  <Button color="olive" onClick={() => this.handleSubmitAssignment('working')}>
-                    Needs Work
-                  </Button>
-                  <Button.Or />
-                  <Button color="green" onClick={() => this.handleSubmitAssignment('polished')}>
-                    Complete
-                  </Button>
-                </Button.Group>
-              ) : (
+              {canEdit &&
+                (isOwnerTeacher ? (
+                  <Button.Group style={{ marginRight: '5px' }}>
+                    <Button
+                      style={{ width: '10em' }}
+                      color="olive"
+                      onClick={() => this.handleSubmitAssignment('working')}
+                    >
+                      Needs Work
+                    </Button>
+                    <Button.Or />
+                    <Button
+                      style={{ width: '10em' }}
+                      color="green"
+                      onClick={() => this.handleSubmitAssignment('polished')}
+                    >
+                      Complete
+                    </Button>
+                  </Button.Group>
+                ) : (
+                  <Button
+                    labelPosition="left"
+                    icon="calendar check"
+                    content={'Submit Assignment'}
+                    onClick={() => this.handleSubmitAssignment('broken')}
+                  />
+                ))}
+              {canEdit && (
                 <Button
                   labelPosition="left"
-                  icon="calendar check"
-                  content={'Submit Assignment'}
-                  onClick={() => this.handleSubmitAssignment('broken')}
+                  icon="trash"
+                  disabled={isDeleteComplete || isDeletePending}
+                  content={
+                    confirmDeleteNum < 0 ? (
+                      'Delete'
+                    ) : (
+                      `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`
+                    )
+                  }
+                  color={confirmDeleteNum < 0 ? null : 'red'}
+                  onClick={
+                    confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject
+                  }
                 />
               )}
-              <Button
-                labelPosition="left"
-                icon="trash"
-                disabled={isDeleteComplete || isDeletePending}
-                content={
-                  confirmDeleteNum < 0 ? (
-                    'Delete'
-                  ) : (
-                    `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`
-                  )
-                }
-                color={confirmDeleteNum < 0 ? null : 'red'}
-                onClick={confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject}
-              />
-              {this.renderForkButton(currUser, project, isForkPending)}
+              {isTeacherProject && this.renderForkButton(currUser, project, isForkPending)}
             </div>
             <Grid.Row>
               <Header as="h2" color="grey" floated="left">
@@ -414,15 +505,97 @@ class ProjectOverview extends Component {
                 getAssignmentAsset={this.getAssignmentAsset}
               />
             </Grid.Row>
-            {isOwnerTeacher ? this.renderTeacherView(project) : this.renderStudentView(project)}
+            {isOwnerTeacher ? (
+              this.renderTeacherView(project, canEdit)
+            ) : (
+              this.renderStudentView(project, canEdit)
+            )}
           </Grid>
         </Grid.Column>
       </Grid>
     )
   }
 
+  renderAssetsAndUsers(canEdit) {
+    const { project, currUser, currUserProjects, location } = this.props // One Project provided via
+
+    const { isDeletePending, showAddUserSearch } = this.state
+
+    return (
+      <Grid columns="1">
+        <Grid.Column>
+          <Header
+            as="h2"
+            color="grey"
+            floated="left"
+            style={{ cursor: 'pointer' }}
+            onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
+          >
+            Assets
+          </Header>
+          {canEdit && (
+            <AssetCreateNewModal
+              currUser={currUser}
+              currUserProjects={currUserProjects}
+              buttonProps={{ floated: 'right' }}
+              viewProps={{
+                showProjectSelector: false,
+                suggestedParams: { projectName: project.name },
+              }}
+            />
+          )}
+          <Divider fitted hidden clearing />
+          <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
+        </Grid.Column>
+        <Divider hidden />
+        <Grid.Column>
+          <Header as="h2" color="grey" floated="left">
+            Members{' '}
+            <small>
+              ({project.memberIds.length} of{' '}
+              {isUserSuperAdmin(currUser) ? (
+                SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject
+              ) : (
+                SpecialGlobals.quotas.defaultNumMembersAllowedInProject
+              )})
+            </small>
+          </Header>
+          {canEdit && (
+            <Button
+              color={showAddUserSearch ? 'black' : 'green'}
+              icon={showAddUserSearch ? 'checkmark' : 'add user'}
+              content={showAddUserSearch ? "I'm done" : 'Add Members'}
+              floated="right"
+              disabled={isDeletePending}
+              onClick={() => {
+                this.setState({ showAddUserSearch: !showAddUserSearch })
+              }}
+            />
+          )}
+          <Divider fitted hidden clearing />
+          <p>Project Members may create, edit or delete Assets in this Project.</p>
+          {showAddUserSearch && (
+            <UserListRoute
+              location={{ ...location, query: { ...location.query, limit: 13 } }}
+              handleClickUser={this.handleClickUser}
+              excludeUserIdsArray={[project.ownerId, ...project.memberIds]}
+              renderVertical
+            />
+          )}
+          <ProjectMembersGET
+            project={project}
+            enableRemoveButton={canEdit}
+            enableLeaveButton={currUser ? currUser._id : null}
+            handleRemove={this.handleRemoveMemberFromProject}
+            handleLeave={this.handleMemberLeaveFromProject}
+          />
+        </Grid.Column>
+      </Grid>
+    )
+  }
+
   render() {
-    const { currUser, currUserProjects, location, loading, params, project } = this.props // One Project provided via
+    const { currUser, loading, params, project } = this.props // One Project provided via
 
     const {
       activities,
@@ -431,7 +604,6 @@ class ProjectOverview extends Component {
       isDeleteComplete,
       isDeletePending,
       isForkPending,
-      showAddUserSearch,
     } = this.state
 
     if (loading) return <Spinner />
@@ -479,7 +651,7 @@ class ProjectOverview extends Component {
     return (
       <div>
         {project.assignmentId ? (
-          this.renderAssignmentView()
+          this.renderAssignmentView(canEdit)
         ) : (
           <Grid columns="equal" container style={{ overflowX: 'hidden' }}>
             <Helmet
@@ -605,76 +777,7 @@ class ProjectOverview extends Component {
                     <ProjectHistoryRoute project={project} activities={activities} />
                   </Grid.Column>
                 </Grid>
-                <Grid columns="1">
-                  <Grid.Column>
-                    <Header
-                      as="h2"
-                      color="grey"
-                      floated="left"
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
-                    >
-                      Assets
-                    </Header>
-                    {canEdit && (
-                      <AssetCreateNewModal
-                        currUser={currUser}
-                        currUserProjects={currUserProjects}
-                        buttonProps={{ floated: 'right' }}
-                        viewProps={{
-                          showProjectSelector: false,
-                          suggestedParams: { projectName: project.name },
-                        }}
-                      />
-                    )}
-                    <Divider fitted hidden clearing />
-                    <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
-                  </Grid.Column>
-                  <Divider hidden />
-                  <Grid.Column>
-                    <Header as="h2" color="grey" floated="left">
-                      Members{' '}
-                      <small>
-                        ({project.memberIds.length} of{' '}
-                        {isUserSuperAdmin(currUser) ? (
-                          SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject
-                        ) : (
-                          SpecialGlobals.quotas.defaultNumMembersAllowedInProject
-                        )})
-                      </small>
-                    </Header>
-                    {canEdit && (
-                      <Button
-                        color={showAddUserSearch ? 'black' : 'green'}
-                        icon={showAddUserSearch ? 'checkmark' : 'add user'}
-                        content={showAddUserSearch ? "I'm done" : 'Add Members'}
-                        floated="right"
-                        disabled={isDeletePending}
-                        onClick={() => {
-                          this.setState({ showAddUserSearch: !showAddUserSearch })
-                        }}
-                      />
-                    )}
-                    <Divider fitted hidden clearing />
-                    <p>Project Members may create, edit or delete Assets in this Project.</p>
-                    {showAddUserSearch && (
-                      <UserListRoute
-                        location={{ ...location, query: { ...location.query, limit: 13 } }}
-                        handleClickUser={this.handleClickUser}
-                        excludeUserIdsArray={[project.ownerId, ...project.memberIds]}
-                        renderVertical
-                      />
-                    )}
-                    <ProjectMembersGET
-                      project={project}
-                      enableRemoveButton={canEdit}
-                      enableLeaveButton={currUser ? currUser._id : null}
-                      handleRemove={this.handleRemoveMemberFromProject}
-                      handleLeave={this.handleMemberLeaveFromProject}
-                    />
-                    {project.assignmentId && <div>Assignment ID: {project.assignmentId}</div>}
-                  </Grid.Column>
-                </Grid>
+                {this.renderAssetsAndUsers(project, canEdit)}
               </Grid.Column>
             </Grid.Row>
             <Divider hidden section />

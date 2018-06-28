@@ -22,11 +22,22 @@ const cellStyle = {
  * Student projects are subscribed in HOC and and filtered to only show projects that have an assignment ID.
  */
 class TeacherView extends React.Component {
+  classroomHasStudents = () => {
+    const { students, assignments } = this.props
+    return students && students.length > 0 && assignments && assignments.length > 0
+  }
   // Calls all the other table methods to render out the full table with both student names
   // assignment names, and the status of said assignments in a coherent view.
   renderAssignmentTable = () => {
     const { assignments, students } = this.props
 
+    if (!this.classroomHasStudents()) {
+      return (
+        <Segment>
+          <Header> This classroom has no students and or assignments. </Header>
+        </Segment>
+      )
+    }
     return (
       <Table celled striped>
         <Table.Header>
@@ -62,6 +73,33 @@ class TeacherView extends React.Component {
 
     return rows
   }
+
+  getWorkStateStyleColor = workState => {
+    switch (workState) {
+      case 'broken':
+        return 'red'
+      case 'working':
+        return 'yellow'
+      case 'polished':
+        return 'green'
+      default:
+        return 'purple'
+    }
+  }
+
+  getWorkStateIconName = workState => {
+    switch (workState) {
+      case 'broken':
+        return 'remove circle'
+      case 'working':
+        return 'warning circle'
+      case 'polished':
+        return 'check circle'
+      default:
+        return 'question circle'
+    }
+  }
+
   // Render out the "assignment" cells for a student by seeing if they own a project that has
   // the current row's assignmentId referenced in it. This is dependant on this.props.assignments to be
   // in an array so that rows are sorted correctly.
@@ -70,7 +108,7 @@ class TeacherView extends React.Component {
     const { assignments, students, studentProjects } = this.props
 
     const cells = _.map(assignments, assignment => {
-      const hasAssignment = _.find(studentProjects, project => {
+      const cellProject = _.find(studentProjects, project => {
         if (
           project.ownerId === student._id &&
           project.assignmentId &&
@@ -79,10 +117,16 @@ class TeacherView extends React.Component {
           return true // TODO: Change to project workstate display string once finalized
         }
       })
-
+      console.log('Cell Project: ', cellProject)
+      let workState
+      if (cellProject) {
+        workState = cellProject.workState
+      } else {
+        workState = 'unknown'
+      }
       return (
         <Table.Cell style={cellStyle}>
-          <Icon name={hasAssignment ? 'check circle' : 'x'} color={hasAssignment ? 'green' : 'red'} />
+          <Icon name={this.getWorkStateIconName(workState)} color={this.getWorkStateStyleColor(workState)} />
         </Table.Cell>
       )
     })

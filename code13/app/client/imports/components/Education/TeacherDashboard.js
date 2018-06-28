@@ -5,15 +5,18 @@ import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrCh
 import { createContainer } from 'meteor/react-meteor-data'
 import { Classrooms } from '/imports/schemas'
 import SubmissionFeed from '/client/imports/components/Education/SubmissionFeed'
+import QLink from '/client/imports/routes/QLink'
 
 class TeacherDashboard extends React.Component {
   renderClassesList = () => {
-    const { classrooms } = this.props
+    const { classrooms, currUser } = this.props
     const list = _.map(classrooms, classroom => {
       return (
         <List.Item key={classroom.name}>
           <List.Content>
-            <List.Header>{classroom.name}</List.Header>
+            <QLink to={`/user/${currUser._id}/classroom/${classroom._id}`}>
+              <List.Header>{classroom.name}</List.Header>
+            </QLink>
           </List.Content>
         </List.Item>
       )

@@ -124,8 +124,16 @@ export function clientStartup() {
         <Route path="user/:id/projects" component={Projects.UserProjectList} name="Projects" />
         <Route path="u/:username/projects" component={Projects.UserProjectList} name="Projects" />
 
-        <Route path="user/:id/classroom/:classroomId" component={Education.ClassroomRoute} name="Classroom" />
-        <Route path="u/:id/classroom/:classroomId" component={Education.ClassroomRoute} name="Classroom" />
+        <Route
+          path="user/:userId/classroom/:classroomId"
+          component={Education.ClassroomRoute}
+          name="Classroom"
+        />
+        <Route
+          path="u/:userId/classroom/:classroomId"
+          component={Education.ClassroomRoute}
+          name="Classroom"
+        />
 
         <Route
           path="user/:id/projects/create"

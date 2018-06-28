@@ -313,7 +313,7 @@ const getNavPanels = (currUser, showAll) => {
         name: 'dashboard',
         explainClickAction: 'Clicking here jumps to the Learning Paths page',
         icon: { name: 'dashboard' },
-        to: `/dashboard`,
+        to: `/dashboard-education`,
         jrkey: 'dashboard',
         content: 'Dashboard',
       },

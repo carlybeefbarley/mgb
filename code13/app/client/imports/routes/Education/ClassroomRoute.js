@@ -247,7 +247,12 @@ class StudentView extends React.Component {
               <Segment raised color="blue">
                 <Header as="h3" content="About this Class" />
                 <Segment>
-                  <ReactQuill theme={null} readyOnly value={classroom && classroom.description} />
+                  <ReactQuill
+                    readOnly
+                    style={{ pointerEvents: 'none' }}
+                    theme={null}
+                    value={classroom && classroom.description}
+                  />
                 </Segment>
               </Segment>
             </Grid.Column>

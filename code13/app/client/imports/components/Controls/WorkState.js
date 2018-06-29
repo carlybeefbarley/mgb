@@ -113,7 +113,7 @@ const WorkStateStatus = ({ workState, labelStyle, color, iconOnly }) => (
         size="small"
         title={workState}
         color={color}
-        name={`${statusIcons[workState]}`}
+        name={statusIcons[assignmentStatuses[workState]]}
       />
     ) : (
       <Label

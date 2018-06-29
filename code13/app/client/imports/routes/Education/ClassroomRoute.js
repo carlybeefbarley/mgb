@@ -295,7 +295,7 @@ class StudentView extends React.Component {
                     readOnly
                     style={{ pointerEvents: 'none' }}
                     theme={null}
-                    value={classroom && classroom.description}
+                    defaultValue={classroom && classroom.description}
                   />
                 </Segment>
               </Segment>

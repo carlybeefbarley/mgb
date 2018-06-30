@@ -18,11 +18,26 @@ import UserList from '/client/imports/components/Users/UserList'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Users } from '/imports/schemas'
 
-const MAX_USERS_TO_LOAD = 10 // Default number of users to find in HOC. Prevents loading a very large number of users.
+const MAX_USERS_TO_LOAD = 25 // Default number of users to find in HOC. Prevents loading a very large number of users. This should probably be a global setting somewhere.
 class CreateClassroomModal extends React.Component {
-  state = { isOpen: false, accordionIsOpen: false, filterString: '' }
+  state = { isOpen: false, accordionIsOpen: false, filterString: '', formData: { studentIds: [] } }
 
+  handleCheckUser = (event, data) => {
+    this.setState(prevState => {
+      const prevStudentIds = prevState.formData.studentIds
+      let studentIds = []
+
+      if (data.checked) {
+        studentIds = _.union(prevStudentIds, [data.name])
+      } else {
+        studentIds = _.pull(prevStudentIds, data.name)
+      }
+
+      return { formData: { ...prevState.formData, studentIds } }
+    })
+  }
   renderUserList = () => {
+    const listStyle = { maxHeight: '25vh', overflowY: 'auto' } // So the list of users isn't massive and cause full page scrolling.
     const { users } = this.props
     const { filterString } = this.state
     const usersList = _.filter(users, user => {
@@ -35,7 +50,7 @@ class CreateClassroomModal extends React.Component {
             <Form.Checkbox
               label={user.username}
               name={user._id}
-              onChange={(e, data) => this.getFormData({ target: { name: data.name, value: data.checked } })}
+              onChange={(e, data) => this.handleCheckUser(e, data)}
               // Yeah Yeah I know, don't do that. I just need it to work, I never said anything
               // about it being pretty.
               // TODO: Less bad code here
@@ -53,13 +68,14 @@ class CreateClassroomModal extends React.Component {
         </Accordion.Title>
         <Accordion.Content active={this.state.accordionIsOpen}>
           <Input
+            placeholder="Search..."
             onChange={e => {
               e.persist()
               this.handleFilterUsers(e)
             }}
           />
           <Divider />
-          <List divided horizontal>
+          <List divided style={listStyle}>
             {(usersListElements.length && usersListElements) || <Segment> No Users Found </Segment>}
           </List>
         </Accordion.Content>
@@ -101,20 +117,26 @@ class CreateClassroomModal extends React.Component {
 
   handleSubmit = () => {
     const { formData } = this.state
-    Meteor.call('Classroom.create', formData.name, formData.description, (err, succubus) => {
-      if (err) {
-        showToast.error(`Failed to create new classroom: ${err.message}`)
-        throw new Meteor.Error(`Failed to create classroom "${formData.name}": `, err)
-      } else {
-        this.toggleIsOpen()
-        showToast.success(`Successfuly created a new classroom! Classroom: "${formData.name}"`)
-      }
-    })
+    Meteor.call(
+      'Classroom.create',
+      formData.name,
+      formData.description,
+      [], // TODO: Don't add any teachers to this classroom because we dont support that yet.
+      formData.studentIds,
+      (err, succubus) => {
+        if (err) {
+          showToast.error(`Failed to create new classroom: ${err.message}`)
+          throw new Meteor.Error(`Failed to create classroom "${formData.name}": `, err)
+        } else {
+          this.toggleIsOpen()
+          showToast.success(`Successfuly created a new classroom! Classroom: "${formData.name}"`)
+        }
+      },
+    )
   }
 
   render() {
     const { isOpen } = this.state
-    const { location, users, userListReady } = this.props
     return (
       <Modal
         open={isOpen}
@@ -145,7 +167,6 @@ class CreateClassroomModal extends React.Component {
             {/* {userListReady && <UserList users={users} />} */}
             {this.renderUserList()}
           </Form>
-          <Divider />
         </Modal.Content>
         <Modal.Actions>
           <Button icon color="red" floated="right" labelPosition="right" onClick={() => this.toggleIsOpen()}>
@@ -155,6 +176,7 @@ class CreateClassroomModal extends React.Component {
           <Button color="green" floated="right" onClick={() => this.handleSubmit()}>
             Create
           </Button>
+          <Divider hidden />
         </Modal.Actions>
       </Modal>
     )
@@ -162,7 +184,7 @@ class CreateClassroomModal extends React.Component {
 }
 
 export default createContainer(props => {
-  const handler = Meteor.subscribe('user', {})
+  const handler = Meteor.subscribe('user', {}, { limit: MAX_USERS_TO_LOAD })
   const cursor = Users.find({}, { fields: { username: 1, profile: 1 }, limit: MAX_USERS_TO_LOAD })
   const users = cursor.fetch()
 

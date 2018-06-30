@@ -21,7 +21,7 @@ const AssignmentCard = props => {
         </Card.Header>
         <Card.Meta>{dueDate && `Due ${renderDueDate(dueDate)}`}</Card.Meta>
         <Card.Description>
-          <ReactQuill readOnly theme={null} defaultValue={assignmentDetail} />
+          <ReactQuill readOnly style={{ pointerEvents: 'none' }} theme={null} value={assignmentDetail} />
         </Card.Description>
         {isOwnerTeacher && (
           <Button

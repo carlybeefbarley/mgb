@@ -15,15 +15,20 @@ import './WorkState.css'
 //   See https://facebook.github.io/react/docs/reusable-components.html
 
 export const WorkStateIcon = ({ workState, size, onIconClick, color, labelStyle }) => (
-  <Icon
-    inverted
-    name={workStateIcons[workState] || workStateIcons['unknown']}
-    style={labelStyle}
-    color={color}
-    size={size}
-    onClick={onIconClick}
-    className={`workstate-icon mgb-workstate-${workState}`}
-  />
+  <span>
+    {_.includes(workStates, workState) &&
+    workState !== 'unknown' && (
+      <Icon
+        inverted
+        name={workStateIcons[workState]}
+        style={labelStyle}
+        color={color}
+        size={size}
+        onClick={onIconClick}
+        className={`workstate-icon mgb-workstate-${workState}`}
+      />
+    )}
+  </span>
 )
 
 const _hiddenWorkstateStyle = { opacity: 0.1 }

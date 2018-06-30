@@ -440,7 +440,10 @@ class ProjectOverview extends Component {
     const { confirmDeleteNum, isDeleteComplete, isDeletePending, isForkPending, assignmentAsset } = this.state
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: project.assignmentId })
     const isTeacherProject = assignmentAsset && assignmentAsset.ownerId === project.ownerId
-    const isOwnerTeacher = assignmentAsset && assignmentAsset.ownerId === currUser._id
+    const isOwnerTeacher =
+      assignmentAsset &&
+      assignmentAsset.ownerId === currUser._id &&
+      _.includes(currUser.permissions[0].roles, 'teacher')
 
     return (
       <Grid columns="equal" padded style={{ flex: '1 1 0' }}>
@@ -454,19 +457,11 @@ class ProjectOverview extends Component {
               {canEdit &&
                 (isOwnerTeacher ? (
                   <Button.Group style={{ marginRight: '5px' }}>
-                    <Button
-                      style={{ width: '10em' }}
-                      color="olive"
-                      onClick={() => this.handleWorkStateChange('working')}
-                    >
+                    <Button style={{ width: '10em' }} onClick={() => this.handleWorkStateChange('working')}>
                       Needs Work
                     </Button>
                     <Button.Or />
-                    <Button
-                      style={{ width: '10em' }}
-                      color="green"
-                      onClick={() => this.handleworkStateChange('polished')}
-                    >
+                    <Button style={{ width: '10em' }} onClick={() => this.handleWorkStateChange('polished')}>
                       Complete
                     </Button>
                   </Button.Group>

@@ -184,9 +184,10 @@ class CreateClassroomModal extends React.Component {
 }
 
 export default createContainer(props => {
-  const handler = Meteor.subscribe('user', {}, { limit: MAX_USERS_TO_LOAD })
-  const cursor = Users.find({}, { fields: { username: 1, profile: 1 }, limit: MAX_USERS_TO_LOAD })
-  const users = cursor.fetch()
+  // Handles all of the user subscription for this component.
+  const handlerUsers = Meteor.subscribe('user', {}, { limit: MAX_USERS_TO_LOAD })
+  const cursorUsers = Users.find({}, { fields: { username: 1, profile: 1 }, limit: MAX_USERS_TO_LOAD })
+  const users = cursorUsers.fetch()
 
-  return { ...props, users, userListReady: users && handler.ready() }
+  return { ...props, users, userListReady: users && handlerUsers.ready() }
 }, CreateClassroomModal)

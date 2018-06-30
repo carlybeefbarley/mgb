@@ -3,7 +3,7 @@ import { createContainer } from 'meteor/react-meteor-data'
 import React from 'react'
 import { Button, Form, Grid, Header, List, Modal, Segment, TextArea } from 'semantic-ui-react'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
-import SubmissionFeed from '/client/imports/components/Education/SubmissionFeed'
+import SubmissionFeedGET from '/client/imports/components/Education/SubmissionFeedGET'
 import QLink from '/client/imports/routes/QLink'
 import { Classrooms } from '/imports/schemas'
 import CreateClassroomModal from '/client/imports/components/Education/CreateClassroomModal'
@@ -99,7 +99,7 @@ class TeacherDashboard extends React.Component {
           <Grid.Column width={10}>
             <Segment raised color="yellow">
               <Header as="h2" content="Submission Feed" />
-              <SubmissionFeed />
+              <SubmissionFeedGET />
             </Segment>
           </Grid.Column>
         </Grid.Row>
@@ -126,5 +126,6 @@ export default createContainer(props => {
   const classroomsHandler = Meteor.subscribe('classrooms.byUserId', userId)
   const classroomsCursor = Classrooms.find({ ownerId: userId })
   const classrooms = classroomsCursor.fetch()
+
   return { ...props, classrooms, loading: !classroomsHandler.ready() }
 }, TeacherDashboard)

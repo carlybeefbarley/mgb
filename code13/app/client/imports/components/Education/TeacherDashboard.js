@@ -1,11 +1,12 @@
-import React from 'react'
 import _ from 'lodash'
-import { Button, Grid, Header, Segment, List, TextArea } from 'semantic-ui-react'
-import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import { createContainer } from 'meteor/react-meteor-data'
-import { Classrooms } from '/imports/schemas'
+import React from 'react'
+import { Button, Form, Grid, Header, List, Modal, Segment, TextArea } from 'semantic-ui-react'
+import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import SubmissionFeed from '/client/imports/components/Education/SubmissionFeed'
 import QLink from '/client/imports/routes/QLink'
+import { Classrooms } from '/imports/schemas'
+import CreateClassroomModal from '/client/imports/components/Education/CreateClassroomModal'
 
 class TeacherDashboard extends React.Component {
   renderClassesList = () => {
@@ -33,8 +34,6 @@ class TeacherDashboard extends React.Component {
     return list
   }
 
-  handleCreateNewClass = () => {}
-
   render() {
     const { currUser } = this.props,
       containerStyle = {
@@ -60,9 +59,7 @@ class TeacherDashboard extends React.Component {
         <Grid.Row>
           <Grid.Column width={3} />
           <Grid.Column width={10}>
-            <Button color="orange" floated="right">
-              Add New Class
-            </Button>
+            <CreateClassroomModal />
           </Grid.Column>
         </Grid.Row>
 

@@ -11,6 +11,7 @@ import AssignmentsListGET from '/client/imports/components/Education/Assignments
 import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
+import ClassroomAddStudentModal from '/client/imports/components/Education/ClassroomAddStudentModal'
 
 const cellStyle = {
   textAlign: 'center',
@@ -208,11 +209,7 @@ class TeacherView extends React.Component {
         </Grid>
         <Grid columns={1} padded>
           <Grid.Column width={16}>
-            <div>
-              <Button color="green" floated="right">
-                Add New Student
-              </Button>
-            </div>
+            <ClassroomAddStudentModal {...this.props} />
           </Grid.Column>
         </Grid>
         <Grid columns={1} padded>
@@ -221,7 +218,7 @@ class TeacherView extends React.Component {
             <Segment raised color="yellow">
               <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
             </Segment>
-            <Header as="h3" content="All Assignments" />
+            <Header as="h3" content="All Classroom Assignments" />
             <Segment raised color="green">
               <AssignmentsListGET showUpcoming showPastDue showNoDueDate />
             </Segment>

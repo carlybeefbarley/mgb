@@ -135,7 +135,7 @@ class TeacherView extends React.Component {
   }
 
   render() {
-    const { currUser, assignments, currUserProjects } = this.props
+    const { currUser, assignments, currUserProjects, classroom } = this.props
 
     const containerStyle = {
       overflowY: 'auto',
@@ -180,7 +180,7 @@ class TeacherView extends React.Component {
           <Grid.Row>
             <Grid.Column width={5}>
               <Segment raised color="blue">
-                <Header style={titleStyle} as="h1" content={`Classroom Dashboard`} />
+                <Header style={titleStyle} as="h1" content={classroom.name} />
                 <ImageShowOrChange
                   id="mgbjr-profile-avatar"
                   maxHeight="11em"
@@ -191,7 +191,7 @@ class TeacherView extends React.Component {
                 />
                 <List style={infoStyle}>
                   <List.Item>
-                    <List.Content>
+                    <List.Content onClick={this.props.toggleChat}>
                       <List.Icon name="chat" color="blue" />Class Chat
                     </List.Content>
                   </List.Item>
@@ -279,7 +279,7 @@ class StudentView extends React.Component {
                     <List.Content>{teacher && teacher.username}</List.Content>
                   </List.Item>
                   <List.Item>
-                    <List.Content>
+                    <List.Content onClick={this.props.toggleChat}>
                       <List.Icon name="chat" color="blue" />Class Chat
                     </List.Content>
                   </List.Item>
@@ -339,8 +339,17 @@ class StudentView extends React.Component {
 }
 
 class Classroom extends React.Component {
+  state = { chatIsOpen: true }
+
+  toggleChat = () => {
+    this.setState(prevState => {
+      return { ...prevState, chatIsOpen: !prevState.chatIsOpen }
+    })
+  }
+
   render() {
     const { currUser, classroom, teacher, assignment, isTeacher } = this.props
+    const { chatIsOpen } = this.state
 
     if (!classroom) {
       return <Spinner loadingMsg="Loading Classroom..." />
@@ -368,10 +377,12 @@ class Classroom extends React.Component {
       <div style={containerStyle}>
         <Grid columns={16} stretched>
           <Grid.Column width={3}>
-            <ChatPanel currUser={currUser} channelName={channelName} />
+            {chatIsOpen && <ChatPanel currUser={currUser} channelName={channelName} />}
           </Grid.Column>
           <Grid.Column width={10}>
-            {(isTeacher && <TeacherView {...this.props} />) || <StudentView {...this.props} />}
+            {(isTeacher && <TeacherView {...this.props} toggleChat={this.toggleChat} />) || (
+              <StudentView {...this.props} toggleChat={this.toggleChat} />
+            )}
           </Grid.Column>
           <Grid.Column width={3} />
         </Grid>

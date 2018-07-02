@@ -19,7 +19,10 @@ import UserListRoute from '/client/imports/routes/Users/UserListRoute'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Users } from '/imports/schemas'
 
-const MAX_USERS_TO_LOAD = 25 // Default number of users to find in HOC. Prevents loading a very large number of users. This should probably be a global setting somewhere.
+// Default number of users to find in HOC. Prevents loading a very large number of users.
+// This should probably be a global setting somewhere.
+const MAX_USERS_TO_LOAD = 25
+
 class ClassroomCreateNewModal extends React.Component {
   state = {
     searchIsFocus: false,
@@ -41,6 +44,7 @@ class ClassroomCreateNewModal extends React.Component {
     this.setState(prevState => {
       const prevStudentIds = prevState.formData.studentIds
       const studentIds = _.pull(prevStudentIds, id)
+      console.log('Removed IDs:', studentIds)
       return { formData: { ...prevState.formData, studentIds } }
     })
   }
@@ -130,6 +134,7 @@ class ClassroomCreateNewModal extends React.Component {
           throw new Meteor.Error(`Failed to create classroom "${formData.name}": `, err)
         } else {
           this.toggleIsOpen()
+          this.setState({ formData: { studentIds: [], name: '', description: '' } })
           showToast.success(`Successfuly created a new classroom! Classroom: "${formData.name}"`)
         }
       },

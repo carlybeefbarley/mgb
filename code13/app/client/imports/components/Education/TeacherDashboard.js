@@ -6,7 +6,7 @@ import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrCh
 import SubmissionFeedGET from '/client/imports/components/Education/SubmissionFeedGET'
 import QLink from '/client/imports/routes/QLink'
 import { Classrooms } from '/imports/schemas'
-import ClassroomCreateNewModal from '/client/imports/components/Education/CreateClassroomModal'
+import ClassroomCreateNewModal from '/client/imports/components/Education/ClassroomCreateNewModal'
 
 class TeacherDashboard extends React.Component {
   renderClassesList = () => {
@@ -59,7 +59,7 @@ class TeacherDashboard extends React.Component {
         <Grid.Row>
           <Grid.Column width={3} />
           <Grid.Column width={10}>
-            <CreateClassroomModal {...this.props} />
+            <ClassroomCreateNewModal {...this.props} />
           </Grid.Column>
         </Grid.Row>
 

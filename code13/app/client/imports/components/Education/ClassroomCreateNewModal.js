@@ -15,78 +15,77 @@ import {
 } from 'semantic-ui-react'
 import { showToast } from '/client/imports/modules'
 import UserList from '/client/imports/components/Users/UserList'
+import UserListRoute from '/client/imports/routes/Users/UserListRoute'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Users } from '/imports/schemas'
 
 const MAX_USERS_TO_LOAD = 25 // Default number of users to find in HOC. Prevents loading a very large number of users. This should probably be a global setting somewhere.
-class CreateClassroomModal extends React.Component {
-  state = { isOpen: false, accordionIsOpen: false, filterString: '', formData: { studentIds: [] } }
+class ClassroomCreateNewModal extends React.Component {
+  state = {
+    searchIsFocus: false,
+    isOpen: false,
+    accordionIsOpen: false,
+    filterString: '',
+    formData: { studentIds: [] },
+  }
 
-  handleCheckUser = (event, data) => {
+  handleAddStudent = (id, username) => {
     this.setState(prevState => {
       const prevStudentIds = prevState.formData.studentIds
-      let studentIds = []
-
-      if (data.checked) {
-        studentIds = _.union(prevStudentIds, [data.name])
-      } else {
-        studentIds = _.pull(prevStudentIds, data.name)
-      }
-
+      const studentIds = _.union(prevStudentIds, [id])
       return { formData: { ...prevState.formData, studentIds } }
     })
   }
+
+  handleRemoveStudent = (id, username) => {
+    this.setState(prevState => {
+      const prevStudentIds = prevState.formData.studentIds
+      const studentIds = _.pull(prevStudentIds, id)
+      return { formData: { ...prevState.formData, studentIds } }
+    })
+  }
+
   renderUserList = () => {
-    const listStyle = { maxHeight: '25vh', overflowY: 'auto' } // So the list of users isn't massive and cause full page scrolling.
-    const { users } = this.props
-    const { filterString } = this.state
-    const usersList = _.filter(users, user => {
-      return user.username.includes(filterString)
-    })
-    const usersListElements = _.map(usersList, user => {
-      return (
-        <List.Item key={user._id}>
-          <List.Content>
-            <Form.Checkbox
-              label={user.username}
-              name={user._id}
-              onChange={(e, data) => this.handleCheckUser(e, data)}
-              // Yeah Yeah I know, don't do that. I just need it to work, I never said anything
-              // about it being pretty.
-              // TODO: Less bad code here
-            />
-          </List.Content>
-        </List.Item>
-      )
-    })
+    // const listStyle = { maxHeight: '25vh', overflowY: 'auto' } // So the list of users isn't massive and cause full page scrolling.
+    const { location } = this.props
 
     return (
       <Accordion>
         <Accordion.Title active={this.state.accordionIsOpen} index={0} onClick={this.handleAccordionClick}>
           <Icon name="dropdown" />
-          Add Students
+          Manage Students
         </Accordion.Title>
         <Accordion.Content active={this.state.accordionIsOpen}>
-          <Input
-            placeholder="Search..."
-            onChange={e => {
-              e.persist()
-              this.handleFilterUsers(e)
-            }}
+          <Divider horizontal content="Add Students" />
+          <UserListRoute
+            location={{ ...location, query: { ...location.query, limit: 13 } }}
+            handleClickUser={this.handleAddStudent}
+            renderVertical
+            excludeUserIdsArray={this.state.formData.studentIds}
           />
-          <Divider />
-          <List divided style={listStyle}>
-            {(usersListElements.length && usersListElements) || <Segment> No Users Found </Segment>}
-          </List>
+          <Divider horizontal content="Remove Students" />
+          {this.renderStudentsSelected()}
         </Accordion.Content>
       </Accordion>
     )
   }
 
-  handleFilterUsers = e => {
-    this.setState(prevState => {
-      return { ...prevState, filterString: e.target.value }
-    })
+  renderStudentsSelected = () => {
+    const { studentIds } = this.state.formData
+    const { users } = this.props
+    const studentObjects = _.compact(
+      _.map(users, student => {
+        if (studentIds.includes(student._id)) return student
+        return null
+      }),
+    )
+    console.log(studentObjects)
+    return <UserList users={studentObjects} handleClickUser={this.handleRemoveStudent} narrowItem />
+  }
+
+  setSearchFocusStatus = (event, value) => {
+    event.stopPropagation()
+    this.setState({ searchIsFocus: value })
   }
 
   handleAccordionClick = () => {
@@ -110,7 +109,9 @@ class CreateClassroomModal extends React.Component {
   }
 
   handleKeyDown = event => {
-    if (event.key === 'Enter') {
+    event.stopPropagation()
+    const { searchIsFocus } = this.state
+    if (event.key === 'Enter' && !searchIsFocus) {
       this.handleSubmit()
     }
   }
@@ -136,6 +137,7 @@ class CreateClassroomModal extends React.Component {
   }
 
   render() {
+    const { location } = this.props
     const { isOpen } = this.state
     return (
       <Modal
@@ -158,11 +160,23 @@ class CreateClassroomModal extends React.Component {
           >
             <Form.Field required>
               <label>Name</label>
-              <input name="name" type="text" placeholder="Classroom Name" />
+              <input
+                name="name"
+                type="text"
+                placeholder="Classroom Name"
+                onBlur={e => this.setSearchFocusStatus(e, true)}
+                onFocus={e => this.setSearchFocusStatus(e, false)}
+              />
             </Form.Field>
             <Form.Field>
               <label>Description</label>
-              <input name="description" type="text" placeholder="Brief Description of Classroom" />
+              <input
+                name="description"
+                type="text"
+                placeholder="Brief Description of Classroom"
+                onBlur={e => this.setSearchFocusStatus(e, true)}
+                onFocus={e => this.setSearchFocusStatus(e, false)}
+              />
             </Form.Field>
             {/* {userListReady && <UserList users={users} />} */}
             {this.renderUserList()}
@@ -190,4 +204,4 @@ export default createContainer(props => {
   const users = cursorUsers.fetch()
 
   return { ...props, users, userListReady: users && handlerUsers.ready() }
-}, CreateClassroomModal)
+}, ClassroomCreateNewModal)

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { Azzets } from '/imports/schemas'
 import { assetMakeSelector, allSorters } from '/imports/schemas/assets'
 import SpecialGlobals from '/imports/SpecialGlobals'
+import { check, Match } from 'meteor/check'
 
 //   aZZets !?
 //     ...Note that Meteor has a special reserved global "Assets" so we call these Azzets instead
@@ -113,6 +114,13 @@ Meteor.publish('assets.public.nameInfo.query', function(
 // Return one asset info only.
 Meteor.publish('assets.public.byId', function(assetId) {
   return Azzets.find(assetId, { fields: { content2: 0 } })
+})
+
+Meteor.publish('assets.byAssignmentsList', list => {
+  // if (!Array.isArray(list)) throw new Meteor.Error('Attempted to subscribe to wrong')
+  check(list, [String])
+  const selector = { _id: { $in: list } }
+  return Azzets.find(selector)
 })
 
 // Return one asset. This is a good subscription for AssetEditRoute

@@ -28,7 +28,7 @@ class ClassroomAddStudentModal extends React.Component {
     isOpen: false,
     accordionIsOpen: false,
     studentIds: [],
-    inviteStudentsQueue: [{ username: 'PH - User Name', email: 'PH@email.com' }],
+    inviteStudentsQueue: [],
     errors: {},
     formData: { username: '', email: '' },
   }
@@ -58,6 +58,7 @@ class ClassroomAddStudentModal extends React.Component {
   handleAddStudentToInviteList = () => {
     const { inviteStudentsQueue, formData } = this.state
 
+    // TODO: Clean this up so error handling is on a per-field basis.
     const alreadyInvited = _.find(inviteStudentsQueue, student => {
       return (
         student.username.toLowerCase() === formData.username.toLowerCase() ||
@@ -106,23 +107,39 @@ class ClassroomAddStudentModal extends React.Component {
         </List.Item>
       )
     })
+
+    if (returnList.length === 0) {
+      return (
+        <List.Item key={'No Students'}>
+          <List.Icon name="student" />
+          <List.Content>
+            <List.Header>
+              Fill out the form below and click "Add to List" to add a student to the list of students to
+              invite to your classroom.
+            </List.Header>
+            <List.Description />
+          </List.Content>
+        </List.Item>
+      )
+    }
     return returnList
   }
 
   handleInviteFormSubmit = () => {
     const { inviteStudentsQueue } = this.state
+    const { classroomId } = this.props.params
 
     const mappedStudents = _.map(inviteStudentsQueue, studentItem => {
-      // if (_.some(errors)) {
-      //   console.log('Invite Student Failed With Errors:', errors)
-      //   return
-      // }
+      const errors = {
+        email: validate.emailWithReason(studentItem.email),
+        username: validate.usernameWithReason(studentItem.username),
+      }
+      if (_.some(errors)) {
+        console.log('Invite Student Failed With Errors:', errors)
+      }
+
       const { username, email } = studentItem
       // TODO: Fix error checking for one last go before we send the batch off to the server.
-      const errors = {
-        email: validate.emailWithReason(email),
-        username: validate.usernameWithReason(username),
-      }
 
       return {
         username,
@@ -141,7 +158,7 @@ class ClassroomAddStudentModal extends React.Component {
       } else {
         // TODO: Need to remove them from the list at this point.
         _.forEach(idArray, id => {
-          Meteor.call('Classroom.addStudent', id)
+          Meteor.call('Classroom.addStudent', classroomId, id)
         })
       }
     })
@@ -188,10 +205,10 @@ class ClassroomAddStudentModal extends React.Component {
           </Form.Field>
 
           <Form.Button type="submit" color="green">
-            Invite
+            Add to List
           </Form.Button>
         </Form>
-        <Divider />
+        {/* <Divider />
         <Accordion>
           <Accordion.Title active={accordionIsOpen} onClick={(e, data) => this.handleAccordionClick(e, data)}>
             <Icon name="dropdown" />
@@ -207,7 +224,7 @@ class ClassroomAddStudentModal extends React.Component {
             {studentIds.length > 0 && <Divider />}
             {this.renderStudentsSelected()}
           </Accordion.Content>
-        </Accordion>
+        </Accordion> */}
       </div>
     )
   }
@@ -274,6 +291,16 @@ class ClassroomAddStudentModal extends React.Component {
     }))
   }
 
+  clearData = () => {
+    this.setState({
+      accordionIsOpen: false,
+      studentIds: [],
+      inviteStudentsQueue: [],
+      errors: {},
+      formData: { username: '', email: '' },
+    })
+  }
+
   handleSubmitStudent = event => {
     event.preventDefault()
 
@@ -325,17 +352,25 @@ class ClassroomAddStudentModal extends React.Component {
         onOpen={() => this.toggleIsOpen()}
         trigger={
           <Button color="green" floated="right">
-            Add New Student
+            Add New Students
           </Button>
         }
       >
-        <Modal.Header>Add Student</Modal.Header>
+        <Modal.Header>Add Students</Modal.Header>
         <Modal.Content>{this.renderUserList()}</Modal.Content>
         <Modal.Actions>
           <Button color="green" onClick={this.handleInviteFormSubmit}>
-            Confirm
+            Invite Students
           </Button>
-          <Button color="red">Cancel</Button>
+          <Button
+            color="red"
+            onClick={() => {
+              this.clearData()
+              this.toggleIsOpen()
+            }}
+          >
+            Cancel
+          </Button>
         </Modal.Actions>
       </Modal>
     )

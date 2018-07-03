@@ -33,7 +33,7 @@ const AssignmentProjectListGET = React.createClass({
   getProjectLists() {
     const lists = { completed: [], incompleted: [] }
     _.map(this.data.projects, project => {
-      if (project.workState === 'complete') lists.completed.push(project)
+      if (project.workState === 'polished') lists.completed.push(project)
       else lists.incompleted.push(project)
     })
     return lists

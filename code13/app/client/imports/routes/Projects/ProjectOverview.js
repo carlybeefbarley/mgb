@@ -481,7 +481,7 @@ class ProjectOverview extends Component {
                 getAssignment={this.getAssignment}
               />
             </Grid.Row>
-            {isTeacher ? this.renderTeacherView() : this.renderStudentView()}
+            {isTeacher && isOriginalProject ? this.renderTeacherView() : this.renderStudentView()}
           </Grid>
         </Grid.Column>
       </Grid>

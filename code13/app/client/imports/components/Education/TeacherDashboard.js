@@ -1,11 +1,12 @@
-import React from 'react'
 import _ from 'lodash'
-import { Button, Grid, Header, Segment, List, TextArea } from 'semantic-ui-react'
-import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import { createContainer } from 'meteor/react-meteor-data'
-import { Classrooms } from '/imports/schemas'
-import SubmissionFeed from '/client/imports/components/Education/SubmissionFeed'
+import React from 'react'
+import { Button, Form, Grid, Header, List, Modal, Segment, TextArea } from 'semantic-ui-react'
+import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
+import SubmissionFeedGET from '/client/imports/components/Education/SubmissionFeedGET'
 import QLink from '/client/imports/routes/QLink'
+import { Classrooms } from '/imports/schemas'
+import ClassroomCreateNewModal from '/client/imports/components/Education/ClassroomCreateNewModal'
 
 class TeacherDashboard extends React.Component {
   renderClassesList = () => {
@@ -33,8 +34,6 @@ class TeacherDashboard extends React.Component {
     return list
   }
 
-  handleCreateNewClass = () => {}
-
   render() {
     const { currUser } = this.props,
       containerStyle = {
@@ -60,9 +59,7 @@ class TeacherDashboard extends React.Component {
         <Grid.Row>
           <Grid.Column width={3} />
           <Grid.Column width={10}>
-            <Button color="orange" floated="right">
-              Add New Class
-            </Button>
+            <ClassroomCreateNewModal {...this.props} />
           </Grid.Column>
         </Grid.Row>
 
@@ -102,7 +99,7 @@ class TeacherDashboard extends React.Component {
           <Grid.Column width={10}>
             <Segment raised color="yellow">
               <Header as="h2" content="Submission Feed" />
-              <SubmissionFeed />
+              <SubmissionFeedGET />
             </Segment>
           </Grid.Column>
         </Grid.Row>
@@ -129,5 +126,6 @@ export default createContainer(props => {
   const classroomsHandler = Meteor.subscribe('classrooms.byUserId', userId)
   const classroomsCursor = Classrooms.find({ ownerId: userId })
   const classrooms = classroomsCursor.fetch()
+
   return { ...props, classrooms, loading: !classroomsHandler.ready() }
 }, TeacherDashboard)

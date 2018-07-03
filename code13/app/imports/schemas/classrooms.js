@@ -12,11 +12,11 @@ const canEditClassroom = (classroom, userId) => {
 
 /**
  *
- * @param {Meteor Selector} selector Standard meteor collection selector syntax e.g. {_id: 'somestring'} 
+ * @param {Meteor Selector} selector Standard meteor collection selector syntax e.g. {_id: 'somestring'}
  * @param {Meteor Operation} options options to perform upon successfully finding the document and updating it.
  *
  * First loads the targeted Classroom Document via the Selector. Currently this only supports a single document. Attempting to modify many
- * documents at the same time will only affect the first document that the selector qualifies with. 
+ * documents at the same time will only affect the first document that the selector qualifies with.
  *
  * If the document doesn't exist, a 404 error is thrown.
  *

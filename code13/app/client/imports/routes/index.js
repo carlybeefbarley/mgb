@@ -43,6 +43,8 @@ import TermsOfService from '/client/imports/legal/TermsOfService'
 import Privacy from '/client/imports/legal/Privacy'
 
 import AIE from '/client/imports/layouts/AIEClassroom'
+import HomePage from '/client/imports/components/Education/HomePage'
+import EducationProfileRoute from '/client/imports/routes/Education/EducationProfileRoute'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import DevPanelRoute from './Dev/DevPanelRoute'
@@ -71,7 +73,8 @@ export function clientStartup() {
       <Route component={App}>
         <Route path="/u/:username/play/:assetId" component={PlayGameRoute} name="Play Game" />
 
-        <Route path="/" component={Home} />
+        {/* <Route path="/" component={Home} /> */}
+        <Route path="/" component={HomePage} />
         <Redirect from="/whatsnew" to="/whats-new" />
         <Route path="/whats-new" component={WhatsNewRoute} name="What's New" />
         <Route path="/roadmap" component={Roadmap} name="Roadmap" />
@@ -112,8 +115,11 @@ export function clientStartup() {
 
         <Route path="u/:username/import" component={Import} name="Bulk Import" />
 
-        <Route path="user/:id" component={Users.Profile} name="Profile" />
-        <Route path="u/:username" component={Users.Profile} name="Profile" />
+        {/* <Route path="user/:id" component={Users.Profile} name="Profile" />
+        <Route path="u/:username" component={Users.Profile} name="Profile" /> */}
+
+        <Route path="user/:id" component={EducationProfileRoute} name="Profile" />
+        <Route path="u/:username" component={EducationProfileRoute} name="Profile" />
 
         <Route path="user/:id/assets" component={Azzets.UserAssetListRoute} name="Assets" />
         <Route path="u/:username/assets" component={Azzets.UserAssetListRoute} name="Assets" />

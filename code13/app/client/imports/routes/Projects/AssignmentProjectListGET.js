@@ -22,10 +22,9 @@ const AssignmentProjectListGET = React.createClass({
 
   getMeteorData() {
     const project = this.props.project
-    const handleForProject = Meteor.subscribe('projects.byAssignmentId', project.assignmentId)
-
+    const handleForProject = Meteor.subscribe('projects.byAssignmentId')
     return {
-      projects: Projects.findOne(project._id).forkChildren,
+      projects: Projects.find({ assignmentId: project.assignmentId }).fetch(),
       loading: !handleForProject.ready(),
     }
   },
@@ -39,6 +38,34 @@ const AssignmentProjectListGET = React.createClass({
     return lists
   },
 
+  renderList(list) {
+    return (
+      <Segment
+        style={{
+          clear: 'left',
+          overflowY: 'auto',
+          height: '20em',
+        }}
+      >
+        <List relaxed divided style={{ paddingBottom: '1em !important' }}>
+          {_.map(list, (proj, i) => {
+            return (
+              <List.Item
+                key={i}
+                as="a"
+                onClick={() =>
+                  utilPushTo(this.context.urlLocation.query, `/u/${proj.ownerName}/projects/${proj.name}`)}
+              >
+                {proj.ownerName}
+                <span style={{ float: 'right' }}>{proj.name}</span>
+              </List.Item>
+            )
+          })}
+        </List>
+      </Segment>
+    )
+  },
+
   render() {
     const { project } = this.props
     if (this.data.loading || !project) return <Spinner />
@@ -48,11 +75,6 @@ const AssignmentProjectListGET = React.createClass({
       flex: 1,
       margin: '0.5em',
     }
-    const listSty = {
-      clear: 'left',
-      overflowY: 'auto',
-      height: '20em',
-    }
 
     return (
       <div style={{ clear: 'left', display: 'flex', flexFlow: 'row' }}>
@@ -60,49 +82,15 @@ const AssignmentProjectListGET = React.createClass({
           <Header as="h3" floated="left">
             Completed
           </Header>
-          <Segment style={listSty}>
-            <List relaxed divided style={{ paddingBottom: '1em !important' }}>
-              {_.map(lists.completed, proj => {
-                return (
-                  <List.Item
-                    key={proj.projectId}
-                    as="a"
-                    onClick={() =>
-                      utilPushTo(
-                        this.context.urlLocation.query,
-                        `/u/${proj.forkedByUserName}/projects/${project.name}`,
-                      )}
-                  >
-                    {proj.forkedByUserName}
-                  </List.Item>
-                )
-              })}
-            </List>
-          </Segment>
+
+          {this.renderList(lists.completed)}
         </Segment>
         <Segment style={containerSty} padded raised>
           <Header as="h3" floated="left">
             Incomplete
           </Header>
-          <Segment style={listSty}>
-            <List relaxed divided style={{ paddingBottom: '1em !important' }}>
-              {_.map(lists.incompleted, proj => {
-                return (
-                  <List.Item
-                    key={proj.projectId}
-                    as="a"
-                    onClick={() =>
-                      utilPushTo(
-                        this.context.urlLocation.query,
-                        `/u/${proj.forkedByUserName}/projects/${project.name}`,
-                      )}
-                  >
-                    {proj.forkedByUserName}
-                  </List.Item>
-                )
-              })}
-            </List>
-          </Segment>
+
+          {this.renderList(lists.incompleted)}
         </Segment>
       </div>
     )

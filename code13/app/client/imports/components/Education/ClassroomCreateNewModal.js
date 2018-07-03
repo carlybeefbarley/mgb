@@ -184,7 +184,7 @@ class ClassroomCreateNewModal extends React.Component {
               />
             </Form.Field>
             {/* {userListReady && <UserList users={users} />} */}
-            {this.renderUserList()}
+            {/* {this.renderUserList()} Functionality removed to simplify classroom creation. */}
           </Form>
         </Modal.Content>
         <Modal.Actions>

@@ -51,10 +51,6 @@ export default class EditAssignment extends React.Component {
     urlLocation: PropTypes.object,
   }
 
-  componentDidMount() {
-    if (!this.props.asset.metadata.projectId) this.handleCreateProjectFromAssignment()
-  }
-
   getStudents = () => {
     let idArray = []
     const handleForUsers = Meteor.subscribe('users.getByIdList', idArray)
@@ -70,10 +66,10 @@ export default class EditAssignment extends React.Component {
   }
 
   handleCreateProjectFromAssignment = () => {
-    const { asset: { _id, name, description, metadata } } = this.props
+    const { currUser, asset: { _id, name, metadata } } = this.props
     let newProj = {
       name,
-      description,
+      description: metadata.description,
       assignmentId: _id,
       allowForks: true,
       workState: 'unknown',
@@ -87,6 +83,7 @@ export default class EditAssignment extends React.Component {
         this.handleSave()
       }
     })
+    utilPushTo(this.context.urlLocation.query, `/u/${currUser.profile.name}/projects/${name}`)
   }
 
   render() {
@@ -102,7 +99,6 @@ export default class EditAssignment extends React.Component {
             asset={asset}
             canEdit={canEdit}
             onChange={this.handleChange.bind(this)}
-            handleCreateProjectFromAssignment={this.handleCreateProjectFromAssignment}
             saveThumbnail={d => {
               handleContentChange(null, d, 'Updating thumbnail')
             }}
@@ -110,12 +106,16 @@ export default class EditAssignment extends React.Component {
           <br />
           <Button
             floated="right"
-            onClick={() =>
-              utilPushTo(
-                this.context.urlLocation.query,
-                `/u/${currUser.profile.name}/projects/${asset.name}`,
-              )}
-            content="Go to Project"
+            onClick={() => {
+              if (!asset.metadata.projectId) this.handleCreateProjectFromAssignment()
+              else {
+                utilPushTo(
+                  this.context.urlLocation.query,
+                  `/u/${currUser.profile.name}/projects/${asset.name}`,
+                )
+              }
+            }}
+            content={asset.metadata.projectId ? 'Go to Project' : 'Create Project'}
           />
         </Grid.Column>
       </Grid>

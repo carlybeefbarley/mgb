@@ -367,7 +367,14 @@ class ProjectOverview extends Component {
 
   renderAssignmentView() {
     const { project, currUser } = this.props
-    const { confirmDeleteNum, isDeleteComplete, isDeletePending, assignment, loading } = this.state
+    const {
+      confirmDeleteNum,
+      isDeleteComplete,
+      isDeletePending,
+      isForkPending,
+      assignment,
+      loading,
+    } = this.state
     const canEdit = this.canEdit(project, currUser, loading)
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: project.assignmentId })
     const isOriginalProject = assignment && assignment.ownerId === project.ownerId // Orignial project generated from assignment creation
@@ -410,6 +417,40 @@ class ProjectOverview extends Component {
                       />
                     )
                   ))}
+                <Popup
+                  on="click"
+                  position="right center"
+                  trigger={
+                    <ProjectForkGenerator
+                      project={project}
+                      isForkPending={isForkPending}
+                      id="mgbjr-project-overview-fork"
+                      labelPosition="left"
+                      disabled={!project.allowForks || !currUser || isForkPending}
+                      loading={isForkPending}
+                    />
+                  }
+                >
+                  {isForkPending ? (
+                    <div>Forking... please wait..</div>
+                  ) : (
+                    <div>
+                      <Header as="h4" content="New name for forked project" />
+                      <Input
+                        action
+                        type="text"
+                        ref="forkNameInput"
+                        id="mgbjr-fork-project-name-input"
+                        placeholder="New Project name"
+                        defaultValue={project.name + ' (fork)'}
+                        size="small"
+                      >
+                        <input />
+                        <Button icon="fork" onClick={this.handleForkGo} />
+                      </Input>
+                    </div>
+                  )}
+                </Popup>
                 {canEdit && (
                   <Button
                     labelPosition="left"

@@ -42,8 +42,9 @@ class TeacherView extends React.Component {
     return (
       <Table celled striped>
         <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell colSpan="1" /> {/* Top left spacer cell to fill out table. */}
+          <Table.Row key={'row_root'}>
+            <Table.HeaderCell colSpan="1" key={'column_root'} />
+            {/* Top left spacer cell to fill out table. */}
             {this.renderTableAssignmentHeaderCells(assignments)}
           </Table.Row>
         </Table.Header>
@@ -55,7 +56,7 @@ class TeacherView extends React.Component {
   // Renders out the assignment header cells based on the assignment's name
   renderTableAssignmentHeaderCells = assignments => {
     let headerCells = _.map(assignments, assignment => {
-      return <Table.HeaderCell colSpan="1" content={assignment.name} />
+      return <Table.HeaderCell colSpan="1" content={assignment.name} key={'column_' + assignment._id} />
     })
     return headerCells
   }
@@ -65,8 +66,8 @@ class TeacherView extends React.Component {
 
     const rows = _.map(students, student => {
       return (
-        <Table.Row>
-          <Table.Cell collapsing content={student.username} />
+        <Table.Row key={'row_' + student._id}>
+          <Table.Cell collapsing content={student.username} key={'cell_' + student._id} />
           {this.renderStudentProjectStatusCells(student)}
         </Table.Row>
       )
@@ -118,7 +119,7 @@ class TeacherView extends React.Component {
           return true // TODO: Change to project workstate display string once finalized
         }
       })
-      console.log('Cell Project: ', cellProject)
+      // console.log('Cell Project: ', cellProject)
       let workState
       if (cellProject) {
         workState = cellProject.workState
@@ -126,7 +127,7 @@ class TeacherView extends React.Component {
         workState = 'unknown'
       }
       return (
-        <Table.Cell style={cellStyle}>
+        <Table.Cell style={cellStyle} key={'cell_' + assignment._id + '_' + student._id}>
           <Icon name={this.getWorkStateIconName(workState)} color={this.getWorkStateStyleColor(workState)} />
         </Table.Cell>
       )
@@ -187,6 +188,7 @@ class TeacherView extends React.Component {
                   maxHeight="11em"
                   maxWidth="auto"
                   imageSrc={avatar}
+                  canLinkToSrc
                   header="User Avatar"
                   canEdit={false}
                 />

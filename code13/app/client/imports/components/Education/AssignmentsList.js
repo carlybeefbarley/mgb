@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import { List } from 'semantic-ui-react'
 import PropTypes from 'prop-types'
+import QLink from '/client/imports/routes/QLink'
 
 export default class AssignmentsList extends React.Component {
   static propTypes = {
@@ -66,6 +67,7 @@ export default class AssignmentsList extends React.Component {
   }
 
   renderListItems = viewAssets => {
+    const { currUser } = this.props
     if (viewAssets.length === 0) {
       return (
         <List.Item>
@@ -87,10 +89,12 @@ export default class AssignmentsList extends React.Component {
                 {`${isPassDue ? 'Past Due ' : ''}${assignmentAsset.metadata.dueDate || 'No Due Date'}`}
               </small>
             </List.Content>
-            <List.Header>{assignmentAsset.name}</List.Header>
-            <List.Description>
-              <small>{assignmentAsset.text}</small>
-            </List.Description>
+            <QLink to={`/u/${assignmentAsset.dn_ownerName}/asset/${assignmentAsset._id}`}>
+              <List.Header>{assignmentAsset.name}</List.Header>
+              <List.Description>
+                <small>{assignmentAsset.text}</small>
+              </List.Description>
+            </QLink>
           </List.Content>
         </List.Item>
       )

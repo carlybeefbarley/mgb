@@ -20,19 +20,23 @@ class EditAssignmentForm extends BaseForm {
 
   render() {
     return (
-      <div className="ui form">
-        {this.text('Description', 'description', 'text', {
-          title: 'Short description of assignment for teacher reference',
-        })}
-        {this.date('Due Date', 'dueDate')}
-        {this.bool('Is Team Project', 'isTeamProject', {
-          title: 'If the project should allow multiple members',
-        })}
-        {this.textEditor('Assignment Detail', 'assignmentDetail', {
-          title: 'Assignment details for students',
-          canEdit: this.props.canEdit,
-        })}
-      </div>
+      <Grid columns={1} padded>
+        <Grid.Row>
+          <div className="ui form">
+            {this.text('Description', 'description', 'text', {
+              title: 'Short description of assignment for teacher reference',
+            })}
+            {this.date('Due Date', 'dueDate')}
+            {this.bool('Is Team Project', 'isTeamProject', {
+              title: 'If the project should allow multiple members',
+            })}
+            {this.textEditor('Assignment Detail', 'assignmentDetail', {
+              title: 'Assignment details for students',
+              canEdit: this.props.canEdit,
+            })}
+          </div>
+        </Grid.Row>
+      </Grid>
     )
   }
 }

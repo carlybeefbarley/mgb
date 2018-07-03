@@ -381,7 +381,7 @@ class ProjectOverview extends Component {
     const isTeacher = currUser.permissions && _.includes(currUser.permissions[0].roles, 'teacher')
 
     return (
-      <Grid columns="equal" padded style={{ flex: '1 1 0' }}>
+      <Grid columns="equal" padded>
         <Grid.Column stretched style={{ flex: '0 0 20em', overflowY: 'auto' }}>
           <ChatPanel currUser={currUser} channelName={channelName} />
         </Grid.Column>
@@ -471,16 +471,23 @@ class ProjectOverview extends Component {
                 )}
               </div>
             </div>
-            <Grid.Row>
-              <Header as="h2" color="grey" floated="left">
-                Assignment Details
-              </Header>
-              <AssignmentCardGET
-                isOwnerTeacher={isOriginalProject && isTeacher}
-                assignmentId={project.assignmentId}
-                getAssignment={this.getAssignment}
-              />
-            </Grid.Row>
+
+            <Grid columns={1}>
+              <Grid.Row>
+                <Grid.Column width={16}>
+                  <Segment raised color="blue">
+                    <Header as="h2" color="grey" floated="left">
+                      Assignment Details
+                    </Header>
+                    <AssignmentCardGET
+                      isOwnerTeacher={isOriginalProject && isTeacher}
+                      assignmentId={project.assignmentId}
+                      getAssignment={this.getAssignment}
+                    />
+                  </Segment>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
             {isTeacher && isOriginalProject ? this.renderTeacherView() : this.renderStudentView()}
           </Grid>
         </Grid.Column>

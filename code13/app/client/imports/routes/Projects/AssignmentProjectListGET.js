@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { Button, Segment, List } from 'semantic-ui-react'
+import { Grid, Header, Segment, List } from 'semantic-ui-react'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
@@ -40,46 +40,71 @@ const AssignmentProjectListGET = React.createClass({
   },
 
   render() {
-    if (this.data.loading || !this.props.project) return <Spinner />
+    const { project } = this.props
+    if (this.data.loading || !project) return <Spinner />
+
     const lists = this.getProjectLists()
+    const containerSty = {
+      flex: 1,
+      margin: '0.5em',
+    }
+    const listSty = {
+      clear: 'left',
+      overflowY: 'auto',
+      height: '20em',
+    }
 
     return (
-      <Segment>
-        <List relaxed divided style={{ paddingBottom: '1em !important' }}>
-          {_.map(lists.completed, proj => {
-            return (
-              <List.Item
-                key={proj.projectId}
-                as="a"
-                onClick={() =>
-                  utilPushTo(
-                    this.context.urlLocation.query,
-                    `/u/${proj.forkedByUserName}/projects/${this.props.project.name}`,
-                  )}
-              >
-                {proj.forkedByUserName}
-              </List.Item>
-            )
-          })}
-        </List>
-        <List relaxed divided style={{ paddingBottom: '1em !important' }}>
-          {_.map(lists.incompleted, proj => {
-            return (
-              <List.Item
-                key={proj.projectId}
-                as="a"
-                onClick={() =>
-                  utilPushTo(
-                    this.context.urlLocation.query,
-                    `/u/${proj.forkedByUserName}/projects/${this.props.project.name}`,
-                  )}
-              >
-                {proj.forkedByUserName}
-              </List.Item>
-            )
-          })}
-        </List>
-      </Segment>
+      <div style={{ clear: 'left', display: 'flex', flexFlow: 'row' }}>
+        <Segment style={containerSty} padded raised>
+          <Header as="h3" floated="left">
+            Completed
+          </Header>
+          <Segment style={listSty}>
+            <List relaxed divided style={{ paddingBottom: '1em !important' }}>
+              {_.map(lists.completed, proj => {
+                return (
+                  <List.Item
+                    key={proj.projectId}
+                    as="a"
+                    onClick={() =>
+                      utilPushTo(
+                        this.context.urlLocation.query,
+                        `/u/${proj.forkedByUserName}/projects/${project.name}`,
+                      )}
+                  >
+                    {proj.forkedByUserName}
+                  </List.Item>
+                )
+              })}
+            </List>
+          </Segment>
+        </Segment>
+        <Segment style={containerSty} padded raised>
+          <Header as="h3" floated="left">
+            Incomplete
+          </Header>
+          <Segment style={listSty}>
+            <List relaxed divided style={{ paddingBottom: '1em !important' }}>
+              {_.map(lists.incompleted, proj => {
+                return (
+                  <List.Item
+                    key={proj.projectId}
+                    as="a"
+                    onClick={() =>
+                      utilPushTo(
+                        this.context.urlLocation.query,
+                        `/u/${proj.forkedByUserName}/projects/${project.name}`,
+                      )}
+                  >
+                    {proj.forkedByUserName}
+                  </List.Item>
+                )
+              })}
+            </List>
+          </Segment>
+        </Segment>
+      </div>
     )
   },
 })

@@ -348,41 +348,13 @@ class ProjectOverview extends Component {
   renderTeacherView() {
     const { project } = this.props
 
-    const listSty = {
-      overflowY: 'auto',
-      height: '20em',
-    }
-
     return (
       <Grid.Row stretched>
-        <Grid.Column style={{ height: 'auto' }}>
-          <Header
-            as="h2"
-            color="grey"
-            floated="left"
-            style={{ cursor: 'pointer' }}
-            onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
-          >
-            Completed
+        <Grid.Column>
+          <Header as="h2" color="grey" floated="left">
+            Assignment Project List
           </Header>
-          <Segment padded raised style={listSty}>
-            <AssignmentProjectListGET project={project} />
-          </Segment>
-        </Grid.Column>
-        <Grid.Column style={{ height: 'auto' }}>
-          <Header
-            as="h2"
-            color="grey"
-            floated="left"
-            // Stretched columns force the width to be 100%
-            // The text only should be clickable, limit the width to the length of the text
-            style={{ flex: '0 0 auto', width: '3.75em', cursor: 'pointer' }}
-            id="mgbjr-project-activity"
-            onClick={() => utilPushTo(null, `/u/${project.ownerName}/projects/${project.name}/activity`)}
-          >
-            Incomplete
-          </Header>
-          <Segment padded raised style={listSty} />
+          <AssignmentProjectListGET project={project} />
         </Grid.Column>
       </Grid.Row>
     )

@@ -100,7 +100,7 @@ class HomeHeroBanner extends React.Component {
               <p style={{ color: '#fff', fontSize: '3.5em', textAlign: 'center' }}>
                 Combining Forces So That You Can Learn How to Code Games With Your Class
                 <br />
-                <Button
+                {/* <Button
                   centered
                   as={QLink}
                   to={`/signup`}
@@ -108,7 +108,7 @@ class HomeHeroBanner extends React.Component {
                   size="massive"
                   style={{ marginTop: '0.5em' }}
                   content="Sign me up"
-                />
+                /> */}
               </p>
             )}
           </Grid.Row>

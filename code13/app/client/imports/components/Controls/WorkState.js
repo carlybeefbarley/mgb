@@ -19,7 +19,6 @@ export const WorkStateIcon = ({ workState, size, onIconClick, color, labelStyle 
     {_.includes(workStates, workState) &&
     workState !== 'unknown' && (
       <Icon
-        inverted
         name={workStateIcons[workState]}
         style={labelStyle}
         color={color}

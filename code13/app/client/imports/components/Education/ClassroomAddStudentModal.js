@@ -117,7 +117,7 @@ class ClassroomAddStudentModal extends React.Component {
       //   return
       // }
       const { username, email } = studentItem
-
+      // TODO: Fix error checking for one last go before we send the batch off to the server.
       const errors = {
         email: validate.emailWithReason(email),
         username: validate.usernameWithReason(username),
@@ -138,10 +138,9 @@ class ClassroomAddStudentModal extends React.Component {
       if (err) {
         showToast.error(err)
       } else {
-        // this.handleRemoveStudentFromInviteList(student.username) //TODO: This doesnt work in this iteration, need to get users by name and remove them.
-        // Direct reference to state is intentional as this callback is asynchronous.
-        this.setState(() => {
-          return { idsToAdd: idArray }
+        // TODO: Need to remove them from the list at this point.
+        _.forEach(idArray, id => {
+          Meteor.call('Classroom.addStudent', id)
         })
       }
     })

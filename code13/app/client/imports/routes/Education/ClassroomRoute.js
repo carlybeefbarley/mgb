@@ -157,6 +157,13 @@ class TeacherView extends React.Component {
     const cellStyle = {
       textAlign: 'center',
     }
+
+    const headerStyle = {
+      color: 'lightgrey',
+      fontSize: '2.5em',
+      textAlign: 'center',
+    }
+
     const project = { name: 'derp' }
 
     return (
@@ -174,7 +181,7 @@ class TeacherView extends React.Component {
                   suggestedParams: { projectName: project.name },
                 }}
               />
-              <Header as="h1" content="Classroom Dashboard" />
+              <Header as="h1" content="Classroom Dashboard" style={headerStyle} />
             </div>
           </Grid.Column>
         </Grid>

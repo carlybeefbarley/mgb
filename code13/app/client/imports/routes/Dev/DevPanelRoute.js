@@ -80,7 +80,10 @@ export default class DevPanelRoute extends Component {
 
     console.log('Creating account with: ', data)
 
-    let enrollId = Meteor.call('AccountsCreate.teacher', data)
+    let enrollId = Meteor.call('AccountsCreate.teacher', data, (data1, data2) => {
+      console.log('Data1:', data1)
+      console.log('Data2:', data2)
+    })
     console.log('Returned ID is :', enrollId)
   }
 

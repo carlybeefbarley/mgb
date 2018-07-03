@@ -27,16 +27,27 @@ Meteor.methods({
     Accounts.sendEnrollmentEmail(userId)
     return userId
   },
-}),
-  Meteor.methods({
-    'AccountsCreate.student'(data) {
-      // check(data, _.omit(schema, '_id'))
-      const userId = Accounts.createUser(data)
-      console.log('Teacher User Id:', userId)
-      Accounts.sendEnrollmentEmail(userId)
-      return userId
-    },
-  })
+})
+
+Meteor.methods({
+  'AccountsCreate.student'(data) {
+    // check(data, _.omit(schema, '_id'))
+    const userId = Accounts.createUser(data)
+    console.log('Teacher User Id:', userId)
+    Accounts.sendEnrollmentEmail(userId)
+    return userId
+  },
+})
+
+Meteor.methods({
+  'AccountsCreate.studentBatch'(data) {
+    const idArray = _.map(data, item => {
+      const studentId = Meteor.call('AccountsCreate.student', item)
+      return studentId
+    })
+    return idArray
+  },
+})
 
 const getGravatarUrl = email => '//www.gravatar.com/avatar/' + md5(email.trim().toLowerCase()) + '?s=155&d=mm'
 

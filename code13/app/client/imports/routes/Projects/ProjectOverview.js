@@ -191,6 +191,15 @@ class ProjectOverview extends Component {
         this.props.project,
       )
     }
+    if (newWorkState === 'completed')
+      this.handleAssignmentCompletion()
+  }
+
+  handleAssignmentCompletion = () => {
+    const { project } = this.props
+    Meteor.call('Projects.update', project._id, { completedAt: Date.now() }, (err, res) => {
+      if (err) showToast.error(err.reason)
+    })
   }
 
   /**
@@ -481,7 +490,7 @@ class ProjectOverview extends Component {
                 getAssignment={this.getAssignment}
               />
             </Grid.Row>
-            {isTeacher ? this.renderTeacherView() : this.renderStudentView()}
+            {isTeacher && isOriginalProject ? this.renderTeacherView() : this.renderStudentView()}
           </Grid>
         </Grid.Column>
       </Grid>

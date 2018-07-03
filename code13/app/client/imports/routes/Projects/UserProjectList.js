@@ -129,7 +129,7 @@ class UserProjectListUI extends React.PureComponent {
           <WorkStateMultiSelect
             hideMask={parseInt(qN.hidews)}
             handleChangeMask={this.handleChangeWorkstateHideMask}
-            style={{ marginTop: '0.5em', textAlign: 'center' }}
+            style={{ marginTop: '0.5em', display: 'flex', justifyContent: 'center' }}
           />
 
           <div style={{ marginTop: '1em', textAlign: 'center' }}>

@@ -123,6 +123,14 @@ Meteor.methods({
     check(studentId, String)
     attemptUpdate(classroomId, { $addToSet: { studentIds: studentId } })
   },
+  'Classroom.addStudentByList'(classroomId, List) {
+    checkIsLoggedInAndNotSuspended()
+    check(classroomId, String)
+    check(List, [String])
+    _.forEach(List, studentId => {
+      Meteor.call('Classroom.addStudent', classroomId, studentId)
+    })
+  },
   'Classroom.addAssignmentAsset'(classroomId, assetId) {
     checkIsLoggedInAndNotSuspended()
     check(classroomId, String)

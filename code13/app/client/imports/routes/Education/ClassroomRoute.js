@@ -12,6 +12,7 @@ import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/Asse
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
 import ClassroomAddStudentModal from '/client/imports/components/Education/ClassroomAddStudentModal'
+import ClassroomAddAssignmentModal from '/client/imports/components/Education/ClassroomAddAssignmentModal'
 
 const cellStyle = {
   textAlign: 'center',
@@ -165,17 +166,7 @@ class TeacherView extends React.Component {
         {/* FLoating doesn't seem to work unless I include columns */}
         <Grid columns={1} padded>
           <Grid.Column width={16}>
-            <div>
-              <AssetCreateNewModal
-                currUser={currUser}
-                currUserProjects={currUserProjects}
-                buttonProps={{ floated: 'right' }}
-                viewProps={{
-                  showProjectSelector: true,
-                  suggestedParams: { projectName: project.name },
-                }}
-              />
-            </div>
+            <ClassroomAddAssignmentModal />
           </Grid.Column>
         </Grid>
         <Grid columns={2} padded stretched>

@@ -7,6 +7,7 @@ import { logActivity } from '/imports/schemas/activity'
 import { utilPushTo } from '/client/imports/routes/QLink'
 
 const _defaultAssignmentMetadata = {
+  description: '',
   assignmentDetail: '',
   dueDate: '',
   workState: 'unknown',
@@ -20,9 +21,17 @@ class EditAssignmentForm extends BaseForm {
   render() {
     return (
       <div className="ui form">
+        {this.text('Description', 'description', 'text', {
+          title: 'Short description of assignment for teacher reference',
+        })}
         {this.date('Due Date', 'dueDate')}
-        {this.bool('Is Team Project', 'isTeamProject')}
-        {this.textEditor('Assignment Detail', 'assignmentDetail', { canEdit: this.props.canEdit })}
+        {this.bool('Is Team Project', 'isTeamProject', {
+          title: 'If the project should allow multiple members',
+        })}
+        {this.textEditor('Assignment Detail', 'assignmentDetail', {
+          title: 'Assignment details for students',
+          canEdit: this.props.canEdit,
+        })}
       </div>
     )
   }
@@ -55,10 +64,10 @@ export default class EditAssignment extends React.Component {
   }
 
   handleCreateProjectFromAssignment = () => {
-    const { asset: { _id, name, text, metadata } } = this.props
+    const { asset: { _id, name, description, metadata } } = this.props
     let newProj = {
       name,
-      description: text,
+      description,
       assignmentId: _id,
       allowForks: true,
       workState: 'unknown',

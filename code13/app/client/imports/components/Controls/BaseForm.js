@@ -19,10 +19,6 @@ import 'react-quill/dist/quill.snow.css'
 // }
 
 export default class BaseForm extends React.Component {
-  state = {
-    showQuillHtml: false,
-  }
-
   options(name, key, options, fieldOptions = {}, mgbjrCT = '', id = '', func) {
     let val = this.data[key]
     if (val === void 0) console.warn('value not defined for:', name + '[' + key + ']')
@@ -241,8 +237,8 @@ export default class BaseForm extends React.Component {
         <label>{name}</label>
         <input
           {...fieldOptions}
+          style={{ width: 'auto' }}
           type="date"
-          placeholder={name}
           value={this.data[key]}
           onChange={e => {
             this.data[key] = e.target.value

@@ -176,7 +176,8 @@ class ProjectOverview extends Component {
     })
   }
 
-  // This should not conflict with the deferred changes since those don't change these fields :)
+  // As specified in workStates.js, WorkStates have the following correspondence to assignment statuses:
+  // broken - needs review, working - needs work, polished - complete
   handleWorkStateChange = newWorkState => {
     const { _id, workState } = this.props.project
     const oldState = workState
@@ -191,13 +192,15 @@ class ProjectOverview extends Component {
         this.props.project,
       )
     }
-    if (newWorkState === 'completed')
-      this.handleAssignmentCompletion()
+    // Completed
+    if (newWorkState === 'polished') this.handleAssignmentCompletion()
   }
 
   handleAssignmentCompletion = () => {
     const { project } = this.props
-    Meteor.call('Projects.update', project._id, { completedAt: Date.now() }, (err, res) => {
+    const now = new Date()
+    console.log(typeof now)
+    Meteor.call('Projects.update', project._id, { completedAt: now }, (err, res) => {
       if (err) showToast.error(err.reason)
     })
   }

@@ -57,7 +57,9 @@ const AssignmentProjectListGET = React.createClass({
                   utilPushTo(this.context.urlLocation.query, `/u/${proj.ownerName}/projects/${proj.name}`)}
               >
                 {proj.ownerName}
-                <span style={{ float: 'right' }}>{proj.name}</span>
+                <span
+                  style={{ float: 'right' }}
+                >{`${proj.completedAt.getDay()}/${proj.completedAt.getMonth()}`}</span>
               </List.Item>
             )
           })}

@@ -30,6 +30,7 @@ class ClassroomAddStudentModal extends React.Component {
     studentIds: [],
     inviteStudentsQueue: [{ username: 'PH - User Name', email: 'PH@email.com' }],
     errors: {},
+    formData: { username: '', email: '' },
   }
   toggleIsOpen = () => {
     this.setState(prevState => {
@@ -156,7 +157,7 @@ class ClassroomAddStudentModal extends React.Component {
     // const listStyle = { maxHeight: '25vh', overflowY: 'auto' } // So the list of users isn't massive and cause full page scrolling.
     const { location } = this.props
     const classroomStudentIds = this.props.classroom.studentIds
-    const { inviteStudentsQueue, studentIds, errors, accordionIsOpen } = this.state
+    const { inviteStudentsQueue, studentIds, errors, accordionIsOpen, formData } = this.state
 
     return (
       <div>
@@ -168,6 +169,7 @@ class ClassroomAddStudentModal extends React.Component {
               label={errors.username || 'Username'}
               name="username"
               type="text"
+              value={formData.username}
               error={!!errors.username}
               placeholder="Student's Login Username"
               onBlur={e => this.checkUserName(e)}
@@ -178,6 +180,7 @@ class ClassroomAddStudentModal extends React.Component {
               label={errors.email || 'Email'}
               name="email"
               type="email"
+              value={formData.email}
               error={!!errors.email}
               placeholder="Student's Email Address"
               onBlur={e => this.checkEmail(e)}

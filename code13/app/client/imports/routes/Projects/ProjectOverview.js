@@ -299,32 +299,32 @@ class ProjectOverview extends Component {
           <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
         </Grid.Column>
         <Divider hidden />
-        <Grid.Column>
-          <Header as="h2" color="grey" floated="left">
-            Members{' '}
-            <small>
-              ({project.memberIds.length} of{' '}
-              {isUserSuperAdmin(currUser) ? (
-                SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject
-              ) : (
-                SpecialGlobals.quotas.defaultNumMembersAllowedInProject
-              )})
-            </small>
-          </Header>
-          {canEdit && (
-            <Button
-              color={showAddUserSearch ? 'black' : 'green'}
-              icon={showAddUserSearch ? 'checkmark' : 'add user'}
-              content={showAddUserSearch ? "I'm done" : 'Add Members'}
-              floated="right"
-              disabled={isDeletePending}
-              onClick={() => {
-                this.setState({ showAddUserSearch: !showAddUserSearch })
-              }}
-            />
-          )}
-          {assignment &&
-          assignment.metadata.isTeamProject && (
+        {assignment &&
+        assignment.metadata.isTeamProject && (
+          <Grid.Column>
+            <Header as="h2" color="grey" floated="left">
+              Members{' '}
+              <small>
+                ({project.memberIds.length} of{' '}
+                {isUserSuperAdmin(currUser) ? (
+                  SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject
+                ) : (
+                  SpecialGlobals.quotas.defaultNumMembersAllowedInProject
+                )})
+              </small>
+            </Header>
+            {canEdit && (
+              <Button
+                color={showAddUserSearch ? 'black' : 'green'}
+                icon={showAddUserSearch ? 'checkmark' : 'add user'}
+                content={showAddUserSearch ? "I'm done" : 'Add Members'}
+                floated="right"
+                disabled={isDeletePending}
+                onClick={() => {
+                  this.setState({ showAddUserSearch: !showAddUserSearch })
+                }}
+              />
+            )}
             <div>
               <Divider fitted hidden clearing />
               <p>Project Members may create, edit or delete Assets in this Project.</p>
@@ -344,8 +344,8 @@ class ProjectOverview extends Component {
                 handleLeave={this.handleMemberLeaveFromProject}
               />
             </div>
-          )}
-        </Grid.Column>
+          </Grid.Column>
+        )}
       </Grid>
     )
   }

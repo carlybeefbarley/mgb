@@ -8,7 +8,7 @@ import { Classrooms, Users, Azzets, Projects } from '/imports/schemas'
 import Spinner from '../../components/Nav/Spinner'
 import ReactQuill from 'react-quill'
 import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
-import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
+import AssetCreateNewAssignment from '/client/imports/components/Assets/NewAsset/AssetCreateNewAssignment'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
 import ClassroomAddStudentModal from '/client/imports/components/Education/ClassroomAddStudentModal'
@@ -165,7 +165,7 @@ class TeacherView extends React.Component {
         <Grid columns={1} padded>
           <Grid.Column width={16}>
             <div>
-              <AssetCreateNewModal
+              <AssetCreateNewAssignment
                 currUser={currUser}
                 currUserProjects={currUserProjects}
                 buttonProps={{ floated: 'right' }}
@@ -174,6 +174,7 @@ class TeacherView extends React.Component {
                   suggestedParams: { projectName: project.name },
                 }}
               />
+              <Header as="h1" content="Classroom Dashboard" />
             </div>
           </Grid.Column>
         </Grid>

@@ -269,7 +269,7 @@ class ProjectOverview extends Component {
 
   renderStudentView() {
     const { project, currUser, currUserProjects } = this.props
-    const { showAddUserSearch, isDeletePending, loading } = this.state
+    const { assignment, showAddUserSearch, isDeletePending, loading } = this.state
     const canEdit = this.canEdit(project, currUser, loading)
 
     return (
@@ -323,23 +323,28 @@ class ProjectOverview extends Component {
               }}
             />
           )}
-          <Divider fitted hidden clearing />
-          <p>Project Members may create, edit or delete Assets in this Project.</p>
-          {showAddUserSearch && (
-            <UserListRoute
-              location={{ ...location, query: { ...location.query, limit: 13 } }}
-              handleClickUser={this.handleClickUser}
-              excludeUserIdsArray={[project.ownerId, ...project.memberIds]}
-              renderVertical
-            />
+          {assignment &&
+          assignment.metadata.isTeamProject && (
+            <div>
+              <Divider fitted hidden clearing />
+              <p>Project Members may create, edit or delete Assets in this Project.</p>
+              {showAddUserSearch && (
+                <UserListRoute
+                  location={{ ...location, query: { ...location.query, limit: 13 } }}
+                  handleClickUser={this.handleClickUser}
+                  excludeUserIdsArray={[project.ownerId, ...project.memberIds]}
+                  renderVertical
+                />
+              )}
+              <ProjectMembersGET
+                project={project}
+                enableRemoveButton={canEdit}
+                enableLeaveButton={currUser ? currUser._id : null}
+                handleRemove={this.handleRemoveMemberFromProject}
+                handleLeave={this.handleMemberLeaveFromProject}
+              />
+            </div>
           )}
-          <ProjectMembersGET
-            project={project}
-            enableRemoveButton={canEdit}
-            enableLeaveButton={currUser ? currUser._id : null}
-            handleRemove={this.handleRemoveMemberFromProject}
-            handleLeave={this.handleMemberLeaveFromProject}
-          />
         </Grid.Column>
       </Grid>
     )
@@ -375,46 +380,55 @@ class ProjectOverview extends Component {
         </Grid.Column>
         <Grid.Column>
           <Grid columns="equal" container style={{ overflowX: 'hidden', marginTop: '1em', width: '100%' }}>
-            <div style={{ display: 'flex', flexFlow: 'row', justifyContent: 'flex-end', width: '100%' }}>
-              <WorkState isAssignment workState={project.workState} />
-              {canEdit &&
-                !isOriginalProject &&
-                (isTeacher ? (
-                  <Button.Group style={{ marginRight: '5px' }}>
-                    <Button style={{ width: '10em' }} onClick={() => this.handleWorkStateChange('working')}>
-                      Needs Work
-                    </Button>
-                    <Button.Or />
-                    <Button style={{ width: '10em' }} onClick={() => this.handleWorkStateChange('polished')}>
-                      Complete
-                    </Button>
-                  </Button.Group>
-                ) : (
+            <div style={{ width: '100%', padding: 0 }}>
+              <div style={{ float: 'left' }}>
+                <WorkState isAssignment workState={project.workState} />
+              </div>
+              <div style={{ float: 'right' }}>
+                {!isOriginalProject &&
+                  (isTeacher ? (
+                    <Button.Group style={{ marginRight: '5px' }}>
+                      <Button style={{ width: '10em' }} onClick={() => this.handleWorkStateChange('working')}>
+                        Needs Work
+                      </Button>
+                      <Button.Or />
+                      <Button
+                        style={{ width: '10em' }}
+                        onClick={() => this.handleWorkStateChange('polished')}
+                      >
+                        Complete
+                      </Button>
+                    </Button.Group>
+                  ) : (
+                    canEdit && (
+                      <Button
+                        labelPosition="left"
+                        icon="calendar check"
+                        disabled={project.workState === 'broken' || project.workState === 'polished'}
+                        content={'Submit Assignment'}
+                        onClick={() => this.handleWorkStateChange('broken')}
+                      />
+                    )
+                  ))}
+                {canEdit && (
                   <Button
                     labelPosition="left"
-                    icon="calendar check"
-                    content={'Submit Assignment'}
-                    onClick={() => this.handleWorkStateChange('broken')}
+                    icon="trash"
+                    disabled={isDeleteComplete || isDeletePending}
+                    content={
+                      confirmDeleteNum < 0 ? (
+                        'Delete'
+                      ) : (
+                        `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`
+                      )
+                    }
+                    color={confirmDeleteNum < 0 ? null : 'red'}
+                    onClick={
+                      confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject
+                    }
                   />
-                ))}
-              {canEdit && (
-                <Button
-                  labelPosition="left"
-                  icon="trash"
-                  disabled={isDeleteComplete || isDeletePending}
-                  content={
-                    confirmDeleteNum < 0 ? (
-                      'Delete'
-                    ) : (
-                      `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`
-                    )
-                  }
-                  color={confirmDeleteNum < 0 ? null : 'red'}
-                  onClick={
-                    confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject
-                  }
-                />
-              )}
+                )}
+              </div>
             </div>
             <Grid.Row>
               <Header as="h2" color="grey" floated="left">
@@ -499,15 +513,14 @@ class ProjectOverview extends Component {
               renderVertical
             />
           )}
-          {assignment.metadata.isTeamProject && (
-            <ProjectMembersGET
-              project={project}
-              enableRemoveButton={canEdit}
-              enableLeaveButton={currUser ? currUser._id : null}
-              handleRemove={this.handleRemoveMemberFromProject}
-              handleLeave={this.handleMemberLeaveFromProject}
-            />
-          )}
+
+          <ProjectMembersGET
+            project={project}
+            enableRemoveButton={canEdit}
+            enableLeaveButton={currUser ? currUser._id : null}
+            handleRemove={this.handleRemoveMemberFromProject}
+            handleLeave={this.handleMemberLeaveFromProject}
+          />
         </Grid.Column>
       </Grid>
     )

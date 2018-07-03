@@ -55,6 +55,12 @@ export default class EditAssignment extends React.Component {
     if (!this.props.asset.metadata.projectId) this.handleCreateProjectFromAssignment()
   }
 
+  getStudents = () => {
+    let idArray = []
+    const handleForUsers = Meteor.subscribe('users.getByIdList', idArray)
+    const selector = { _id: { $in: idArray } }
+  }
+
   handleChange(key) {
     this.handleSave()
   }

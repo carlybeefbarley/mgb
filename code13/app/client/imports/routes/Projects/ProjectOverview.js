@@ -24,12 +24,10 @@ import SpecialGlobals from '/imports/SpecialGlobals.js'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 import { withMeteorData } from '../../hocs'
 import { getProjectAvatarUrl } from '../../helpers/assetFetchers'
-// import AssignmentCard from '/client/imports/components/Assets/AssignmentCard'
 import AssignmentCardGET from '/client/imports/components/Assets/AssignmentCardGET'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
-import StudentListGET from '/client/imports/routes/Projects/StudentListGET.js'
+import AssignmentProjectListGET from '/client/imports/routes/Projects/AssignmentProjectListGET.js'
 import WorkState from '/client/imports/components/Controls/WorkState'
-import { Azzets } from '/imports/schemas'
 
 class ProjectOverview extends Component {
   static propTypes = {
@@ -50,7 +48,7 @@ class ProjectOverview extends Component {
     confirmDeleteNum: -1, // If >=0 then it indicates how many assets will be deleted. Used to flag 2-stage DELETE
     // PROJECT
     activities: [], // always array even empty one
-    assignmentAsset: null,
+    assignment: null,
   }
 
   componentDidMount() {
@@ -74,8 +72,8 @@ class ProjectOverview extends Component {
     )
   }
 
-  getAssignmentAsset = assignmentAsset => {
-    this.setState({ assignmentAsset })
+  getAssignment = assignment => {
+    this.setState({ assignment })
   }
 
   canEdit(project, currUser, loading) {
@@ -269,48 +267,6 @@ class ProjectOverview extends Component {
     )
   }
 
-  renderForkButton = () => {
-    const { project, currUser } = this.props
-    const { isForkPending } = this.state
-
-    return (
-      <Popup
-        on="click"
-        position="right center"
-        trigger={
-          <ProjectForkGenerator
-            project={project}
-            isForkPending={isForkPending}
-            id="mgbjr-project-overview-fork"
-            labelPosition="left"
-            disabled={!project.allowForks || !currUser || isForkPending}
-            loading={isForkPending}
-          />
-        }
-      >
-        {isForkPending ? (
-          <div>Forking... please wait..</div>
-        ) : (
-          <div>
-            <Header as="h4" content="New name for forked project" />
-            <Input
-              action
-              type="text"
-              ref="forkNameInput"
-              id="mgbjr-fork-project-name-input"
-              placeholder="New Project name"
-              defaultValue={project.name + ' (fork)'}
-              size="small"
-            >
-              <input />
-              <Button icon="fork" onClick={this.handleForkGo} />
-            </Input>
-          </div>
-        )}
-      </Popup>
-    )
-  }
-
   renderStudentView() {
     const { project, currUser, currUserProjects } = this.props
     const { showAddUserSearch, isDeletePending, loading } = this.state
@@ -410,7 +366,7 @@ class ProjectOverview extends Component {
             Completed
           </Header>
           <Segment padded raised style={listSty}>
-            <StudentListGET assignment={project} />
+            <AssignmentProjectListGET project={project} />
           </Segment>
         </Grid.Column>
         <Grid.Column style={{ height: 'auto' }}>
@@ -434,11 +390,11 @@ class ProjectOverview extends Component {
 
   renderAssignmentView() {
     const { project, currUser } = this.props
-    const { confirmDeleteNum, isDeleteComplete, isDeletePending, assignmentAsset, loading } = this.state
+    const { confirmDeleteNum, isDeleteComplete, isDeletePending, assignment, loading } = this.state
     const canEdit = this.canEdit(project, currUser, loading)
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: project.assignmentId })
-    const isTeacherOwnedProject = assignmentAsset && assignmentAsset.ownerId === project.ownerId
-    const isTeacher = _.includes(currUser.permissions[0].roles, 'teacher')
+    const isOriginalProject = assignment && assignment.ownerId === project.ownerId // Orignial project generated from assignment creation
+    const isTeacher = currUser.permissions && _.includes(currUser.permissions[0].roles, 'teacher')
 
     return (
       <Grid columns="equal" padded style={{ flex: '1 1 0' }}>
@@ -450,7 +406,7 @@ class ProjectOverview extends Component {
             <div style={{ display: 'flex', flexFlow: 'row', justifyContent: 'flex-end', width: '100%' }}>
               <WorkState isAssignment workState={project.workState} />
               {canEdit &&
-                !isTeacherOwnedProject &&
+                !isOriginalProject &&
                 (isTeacher ? (
                   <Button.Group style={{ marginRight: '5px' }}>
                     <Button style={{ width: '10em' }} onClick={() => this.handleWorkStateChange('working')}>
@@ -487,16 +443,15 @@ class ProjectOverview extends Component {
                   }
                 />
               )}
-              {isTeacherOwnedProject && this.renderForkButton()}
             </div>
             <Grid.Row>
               <Header as="h2" color="grey" floated="left">
                 Assignment Details
               </Header>
               <AssignmentCardGET
-                isOwnerTeacher={isTeacherOwnedProject && isTeacher}
+                isOwnerTeacher={isOriginalProject && isTeacher}
                 assignmentId={project.assignmentId}
-                getAssignmentAsset={this.getAssignmentAsset}
+                getAssignment={this.getAssignment}
               />
             </Grid.Row>
             {isTeacher ? this.renderTeacherView() : this.renderStudentView()}
@@ -508,7 +463,7 @@ class ProjectOverview extends Component {
 
   renderAssetsAndUsers() {
     const { project, currUser, currUserProjects, location } = this.props // One Project provided via
-    const { isDeletePending, showAddUserSearch, loading } = this.state
+    const { assignment, isDeletePending, showAddUserSearch, loading } = this.state
     const canEdit = this.canEdit(project, currUser, loading)
 
     return (
@@ -572,13 +527,15 @@ class ProjectOverview extends Component {
               renderVertical
             />
           )}
-          <ProjectMembersGET
-            project={project}
-            enableRemoveButton={canEdit}
-            enableLeaveButton={currUser ? currUser._id : null}
-            handleRemove={this.handleRemoveMemberFromProject}
-            handleLeave={this.handleMemberLeaveFromProject}
-          />
+          {assignment.metadata.isTeamProject && (
+            <ProjectMembersGET
+              project={project}
+              enableRemoveButton={canEdit}
+              enableLeaveButton={currUser ? currUser._id : null}
+              handleRemove={this.handleRemoveMemberFromProject}
+              handleLeave={this.handleMemberLeaveFromProject}
+            />
+          )}
         </Grid.Column>
       </Grid>
     )
@@ -593,6 +550,7 @@ class ProjectOverview extends Component {
       confirmDeleteNum,
       isDeleteComplete,
       isDeletePending,
+      isForkPending,
     } = this.state
 
     if (loading) return <Spinner />
@@ -685,7 +643,43 @@ class ProjectOverview extends Component {
                       </Form.Field>
                     )}
                     {/* FORK PROJECT STUFF */}
-                    <Form.Field>{this.renderForkButton()}</Form.Field>
+                    <Form.Field>
+                      {' '}
+                      <Popup
+                        on="click"
+                        position="right center"
+                        trigger={
+                          <ProjectForkGenerator
+                            project={project}
+                            isForkPending={isForkPending}
+                            id="mgbjr-project-overview-fork"
+                            labelPosition="left"
+                            disabled={!project.allowForks || !currUser || isForkPending}
+                            loading={isForkPending}
+                          />
+                        }
+                      >
+                        {isForkPending ? (
+                          <div>Forking... please wait..</div>
+                        ) : (
+                          <div>
+                            <Header as="h4" content="New name for forked project" />
+                            <Input
+                              action
+                              type="text"
+                              ref="forkNameInput"
+                              id="mgbjr-fork-project-name-input"
+                              placeholder="New Project name"
+                              defaultValue={project.name + ' (fork)'}
+                              size="small"
+                            >
+                              <input />
+                              <Button icon="fork" onClick={this.handleForkGo} />
+                            </Input>
+                          </div>
+                        )}
+                      </Popup>
+                    </Form.Field>
                   </Form>
                 </Segment>
                 {this.canEdit(project, currUser, loading) && (

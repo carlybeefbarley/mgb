@@ -22,7 +22,6 @@ Meteor.publish('projects.byUserId', function(userId, showOnlyForkable = false) {
  */
 Meteor.publish('projects.byAssignmentId', function(assignmentId) {
   const selector = projectMakeSelector(null, null, null, null, assignmentId)
-  console.log(selector)
   return Projects.find(selector)
 })
 

@@ -79,14 +79,14 @@ export default class AssignmentsList extends React.Component {
     }
 
     return _.map(viewAssets, assignmentAsset => {
-      const isPassDue = this.assignmentIsPastDue(assignmentAsset)
+      const isPastDue = this.assignmentIsPastDue(assignmentAsset)
       return (
         <List.Item key={assignmentAsset.name}>
           <List.Icon name="student" />
           <List.Content style={{ width: '100%' }}>
             <List.Content floated="right">
-              <small style={{ color: isPassDue ? 'red' : 'lightgray' }}>
-                {`${isPassDue ? 'Past Due ' : ''}${assignmentAsset.metadata.dueDate || 'No Due Date'}`}
+              <small style={{ color: isPastDue ? 'red' : 'lightgray' }}>
+                {`${isPastDue ? 'Past Due ' : ''}${assignmentAsset.metadata.dueDate || 'No Due Date'}`}
               </small>
             </List.Content>
             <QLink to={`/u/${assignmentAsset.dn_ownerName}/asset/${assignmentAsset._id}`}>

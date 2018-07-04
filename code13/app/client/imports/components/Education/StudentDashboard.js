@@ -8,13 +8,13 @@ import AssignmentsListGET from '/client/imports/components/Education/Assignments
 import { createContainer } from 'meteor/react-meteor-data'
 import { Classrooms, Users } from '/imports/schemas'
 import { classroomsMakeSelectorForStudent } from '/imports/schemas/classrooms'
+import QLink from '/client/imports/routes/QLink'
 
 class StudentDashboard extends React.Component {
   render() {
     const { currUser, classrooms, teacherName } = this.props,
       { avatar } = currUser.profile,
       titleStyle = {
-        fontSize: '3em',
         textAlign: 'center',
       },
       containerStyle = {
@@ -52,10 +52,21 @@ class StudentDashboard extends React.Component {
                     header="User Avatar"
                     canEdit
                   />
-                  <Header style={titleStyle} as="h1" content={`${currUser.username}`} textAlign="center" />
+                  <Header
+                    style={titleStyle}
+                    as="h3"
+                    color="grey"
+                    content={`${currUser.username}`}
+                    textAlign="center"
+                  />
                   <Container style={infoStyle}>
                     <p>
-                      {classrooms && classrooms[0] && classrooms[0].name}
+                      {classrooms &&
+                      classrooms[0] && (
+                        <QLink to={`/user/${currUser.username}/classroom/${classrooms[0]._id}`}>
+                          {classrooms[0].name}
+                        </QLink>
+                      )}
                       <br />
                       {teacherName && `Teacher: ${teacherName}`}
                     </p>

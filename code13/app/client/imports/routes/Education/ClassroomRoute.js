@@ -174,15 +174,7 @@ class TeacherView extends React.Component {
         <Grid columns={1} padded>
           <Grid.Column width={16}>
             <div>
-              <AssetCreateNewAssignment
-                currUser={currUser}
-                currUserProjects={currUserProjects}
-                buttonProps={{ floated: 'right' }}
-                viewProps={{
-                  showProjectSelector: true,
-                  suggestedParams: { projectName: project.name },
-                }}
-              />
+              <ClassroomAddAssignmentModal classroom={classroom} />
               <Header as="h1" content="Classroom Dashboard" style={headerStyle} />
             </div>
           </Grid.Column>

@@ -200,7 +200,7 @@ export default class BaseForm extends React.Component {
         <ReactQuill
           modules={modules}
           formats={formats}
-          defaultValue={this.state ? this.state.textEditorVal : this.data[key]}
+          defaultValue={this.state.textEditorVal ? this.state.textEditorVal[key] : this.data[key]}
           onChange={content => {
             this.data[key] = content // This is an HTML string
             let keyVal = this.state.textEditorVal

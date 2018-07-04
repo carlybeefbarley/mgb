@@ -58,7 +58,7 @@ export default class ClassroomAddAssignmentModal extends React.Component {
       .substring(7)}`
   }
 
-  onComponentWillUnmount() {
+  componentWillUnmount() {
     // if you navigate away or remove this modal from the dom in any way the assignment should be purged.
     this.onCancel()
   }

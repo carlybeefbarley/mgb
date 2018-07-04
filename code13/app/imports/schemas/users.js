@@ -4,6 +4,7 @@ import _ from 'lodash'
 import { Users } from '/imports/schemas'
 import { Match, check } from 'meteor/check'
 import { checkIsLoggedInAndNotSuspended, checkMgb } from './checkMgb'
+import { roleTeacher } from '/imports/schemas/roles'
 
 const optional = Match.Optional
 let count // TODO: IDK why I put this out here. Come back and move it into methods once I'm sure there wasn't some meteor-magic here.
@@ -173,4 +174,17 @@ export function isSameUser(user1, user2) {
 
 export function isSameUserId(id1, id2) {
   return id1 && id2 && id1 === id2
+}
+
+export function isTeacher(user) {
+  let returnValue = false
+  if (user.permissions) {
+    returnValue = !!_.compact(
+      _.map(user.permissions, permission => {
+        return permission.includes(roleTeacher)
+      }),
+    )
+  }
+
+  return returnValue
 }

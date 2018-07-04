@@ -1,6 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
-import { List } from 'semantic-ui-react'
+import { List, Button, Icon } from 'semantic-ui-react'
 import PropTypes from 'prop-types'
 import QLink from '/client/imports/routes/QLink'
 
@@ -67,7 +67,6 @@ export default class AssignmentsList extends React.Component {
   }
 
   renderListItems = viewAssets => {
-    const { currUser } = this.props
     if (viewAssets.length === 0) {
       return (
         <List.Item>
@@ -85,6 +84,10 @@ export default class AssignmentsList extends React.Component {
           <List.Icon name="student" />
           <List.Content style={{ width: '100%' }}>
             <List.Content floated="right">
+              <Button size="mini" compact>
+                <Icon name="sitemap" />
+                Create Project
+              </Button>
               <small style={{ color: isPastDue ? 'red' : 'lightgray' }}>
                 {`${isPastDue ? 'Past Due ' : ''}${assignmentAsset.metadata.dueDate || 'No Due Date'}`}
               </small>

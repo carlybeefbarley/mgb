@@ -4,6 +4,13 @@ import _ from 'lodash'
 //  getAllBadgesForUser(user) gets list of user's badges (returns array of keys into badgeList)
 
 export const badgeList = {
+  _blankBadge: {
+    name: '_blankBadge',
+    title: '',
+    img: '/images/badges/Empty Badge slot.png',
+    descr: 'Use MGB to Earn badges',
+    hideBeforeEnabled: true,
+  },
   emailVerified: {
     name: 'emailVerified',
     title: 'Validated',
@@ -14,7 +21,14 @@ export const badgeList = {
     name: 'mgbAdmin',
     title: 'MGB Admin',
     img: '/images/badges/gold/winner.png',
-    descr: 'Work at MGB',
+    descr: 'Works at MGB',
+    hideBeforeEnabled: true,
+  },
+  officialTeacher: {
+    name: 'officialTeacher',
+    title: 'Official Teacher Account',
+    img: '/images/badges/gold/teacher.png',
+    descr: 'Official Classroom teacher',
     hideBeforeEnabled: true,
   },
   hasAvatar: {

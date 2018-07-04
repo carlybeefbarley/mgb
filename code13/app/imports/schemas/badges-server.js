@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { hasMultipleSkills, hasSkillCount } from './skills'
 import { Skills, Projects, Users } from '/imports/schemas'
-import { isUserSuperAdmin } from '/imports/schemas/roles'
+import { isUserSuperAdmin, isUserTeacher } from '/imports/schemas/roles'
 import { logActivity } from '/imports/schemas/activity'
 import { badgeList } from '/imports/schemas/badges'
 
@@ -236,6 +236,10 @@ const _functionBasedBadges = [
     func: isUserSuperAdmin, // a function that takes a user-record as a parameter, and returns true if badge should be granted
   },
   {
+    newBadgeName: badgeList.officialTeacher.name,
+    func: isUserTeacher, // a function that takes a user-record as a parameter, and returns true if badge should be granted
+  },
+  {
     newBadgeName: badgeList.hasAvatar.name,
     func: user => _.startsWith(user.profile.avatar, '/api/asset'),
   },
@@ -360,12 +364,14 @@ Meteor.methods({
     if (!currUser || currUser.profile.isGuest) return false
     return _doRefreshBadgeStatus(currUser)
   },
-  // ,
-  // "User.refreshAllUserBadges": function() {   // e.g. call with   Meteor.call("User.refreshAllUserBadges")
-  //   console.log("---User.refreshAllUserBadges-start---")
-  //   Users.find( ).forEach(function(u) { _doRefreshBadgeStatus(u) } )
-  //   console.log("---User.refreshAllUserBadges-done---")
-  // }
+  // 'User.refreshAllUserBadges'() {
+  //   // e.g. call with   Meteor.call("User.refreshAllUserBadges")
+  //   console.log('---User.refreshAllUserBadges-start---')
+  //   Users.find().forEach(function(u) {
+  //     _doRefreshBadgeStatus(u)
+  //   })
+  //   console.log('---User.refreshAllUserBadges-done---')
+  // },
 })
 
 // Example of how to fix badges given by mistake:

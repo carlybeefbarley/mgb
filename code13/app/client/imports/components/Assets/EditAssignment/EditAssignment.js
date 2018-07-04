@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Grid, Button } from 'semantic-ui-react'
+import { Grid, Button, Header } from 'semantic-ui-react'
 import BaseForm from '/client/imports/components/Controls/BaseForm.js'
 import { showToast } from '/client/imports/modules'
 import { logActivity } from '/imports/schemas/activity'
@@ -19,19 +19,30 @@ class EditAssignmentForm extends BaseForm {
   }
 
   render() {
+    const headerStyle = {
+      fontSize: '1.5em',
+    }
+
     return (
-      <div className="ui form">
-        {this.text('Description', 'description', 'text', {
-          title: 'Short description of assignment for teacher reference',
-        })}
-        {this.date('Due Date', 'dueDate')}
-        {this.bool('Is Team Project', 'isTeamProject', {
-          title: 'If the project should allow multiple members',
-        })}
-        {this.textEditor('Assignment Detail', 'assignmentDetail', {
-          title: 'Assignment details for students',
-          canEdit: this.props.canEdit,
-        })}
+      <div>
+        <Header as="h1" content="Create New Assignment" style={headerStyle} />
+        <Grid columns={1} padded>
+          <Grid.Row>
+            <div className="ui form">
+              {this.text('Description', 'description', 'text', {
+                title: 'Short description of assignment for teacher reference',
+              })}
+              {this.date('Due Date', 'dueDate')}
+              {this.bool('Is Team Project', 'isTeamProject', {
+                title: 'If the project should allow multiple members',
+              })}
+              {this.textEditor('Assignment Detail', 'assignmentDetail', {
+                title: 'Assignment details for students',
+                canEdit: this.props.canEdit,
+              })}
+            </div>
+          </Grid.Row>
+        </Grid>
       </div>
     )
   }

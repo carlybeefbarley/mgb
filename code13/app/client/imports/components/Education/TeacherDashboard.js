@@ -54,12 +54,21 @@ class TeacherDashboard extends React.Component {
         opacity: '0.9',
       }
 
+    const headerStyle = {
+      color: 'lightgrey',
+      fontSize: '2.5em',
+      textAlign: 'center',
+    }
+
     return (
       <Grid columns={1} padded style={containerStyle}>
         <Grid.Row>
           <Grid.Column width={3} />
           <Grid.Column width={10}>
-            <ClassroomCreateNewModal {...this.props} />
+            <div>
+              <ClassroomCreateNewModal {...this.props} />
+              <Header as="h1" content="Teacher Dashboard" style={headerStyle} />
+            </div>
           </Grid.Column>
         </Grid.Row>
 

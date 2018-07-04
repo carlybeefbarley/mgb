@@ -31,27 +31,11 @@ class ClassroomAddStudentModal extends React.Component {
     inviteStudentsQueue: [],
     errors: {},
     formData: { username: '', email: '' },
+    submitButtonIsDisabled: false,
   }
   toggleIsOpen = () => {
     this.setState(prevState => {
       return { ...prevState, isOpen: !prevState.isOpen }
-    })
-  }
-
-  handleAddStudent = (id, username) => {
-    this.setState(prevState => {
-      const prevStudentIds = prevState.studentIds
-      const studentIds = _.union(prevStudentIds, [id])
-      return { ...prevState, studentIds }
-    })
-  }
-
-  handleRemoveStudent = (id, username) => {
-    this.setState(prevState => {
-      const prevStudentIds = prevState.studentIds
-      const studentIds = _.pull(prevStudentIds, id)
-      console.log('Removed IDs:', studentIds)
-      return { ...prevState, studentIds }
     })
   }
 
@@ -78,6 +62,7 @@ class ClassroomAddStudentModal extends React.Component {
     this.setState(prevState => {
       return { inviteStudentsQueue: newinviteStudentsQueue }
     })
+    this.clearForm()
   }
   handleRemoveStudentFromInviteList = username => {
     const { inviteStudentsQueue } = this.state
@@ -125,9 +110,23 @@ class ClassroomAddStudentModal extends React.Component {
     return returnList
   }
 
+  toggleSubmitButtonIsDisabled = override => {
+    // if there is an override, just set it to that.
+    if (typeof override === 'boolean') {
+      this.setState({ submitButtonIsDisabled: override })
+      return
+    }
+
+    // if the override is given a bad value or is empty, ignore it.
+    this.setState(prevState => {
+      return { submitButtonIsDisabled: prevState.submitButtonIsDisabled }
+    })
+  }
+
   handleInviteFormSubmit = () => {
     const { inviteStudentsQueue } = this.state
     const { classroomId } = this.props.params
+    this.toggleSubmitButtonIsDisabled(true)
 
     const mappedStudents = _.map(inviteStudentsQueue, studentItem => {
       const errors = {
@@ -157,24 +156,23 @@ class ClassroomAddStudentModal extends React.Component {
         showToast.error(err)
       } else {
         // TODO: Need to remove them from the list at this point.
-        _.forEach(idArray, id => {
-          Meteor.call('Classroom.addStudent', classroomId, id)
+        Meteor.call('Classroom.addStudentByList', classroomId, idArray, (err, success) => {
+          if (err) {
+            console.log(err)
+            this.toggleSubmitButtonIsDisabled(false)
+            this.clearData()
+          } else {
+            this.toggleSubmitButtonIsDisabled(false)
+            this.clearData()
+            this.toggleIsOpen()
+          }
         })
       }
     })
   }
 
-  handleAccordionClick = () => {
-    this.setState(prevState => {
-      return { ...prevState, accordionIsOpen: !prevState.accordionIsOpen }
-    })
-  }
-
   renderUserList = () => {
-    // const listStyle = { maxHeight: '25vh', overflowY: 'auto' } // So the list of users isn't massive and cause full page scrolling.
-    const { location } = this.props
-    const classroomStudentIds = this.props.classroom.studentIds
-    const { inviteStudentsQueue, studentIds, errors, accordionIsOpen, formData } = this.state
+    const { inviteStudentsQueue, errors, formData } = this.state
 
     return (
       <div>
@@ -208,37 +206,8 @@ class ClassroomAddStudentModal extends React.Component {
             Add to List
           </Form.Button>
         </Form>
-        {/* <Divider />
-        <Accordion>
-          <Accordion.Title active={accordionIsOpen} onClick={(e, data) => this.handleAccordionClick(e, data)}>
-            <Icon name="dropdown" />
-            Add Existing Users
-          </Accordion.Title>
-          <Accordion.Content active={accordionIsOpen}>
-            <UserListRoute
-              location={{ ...location, query: { ...location.query, limit: 13 } }}
-              handleClickUser={this.handleAddStudent}
-              renderVertical
-              excludeUserIdsArray={studentIds}
-            />
-            {studentIds.length > 0 && <Divider />}
-            {this.renderStudentsSelected()}
-          </Accordion.Content>
-        </Accordion> */}
       </div>
     )
-  }
-
-  renderStudentsSelected = () => {
-    const { studentIds } = this.state
-    const { users } = this.props
-    const studentObjects = _.compact(
-      _.map(users, student => {
-        if (studentIds.includes(student._id)) return student
-        return null
-      }),
-    )
-    return <UserList users={studentObjects} handleClickUser={this.handleRemoveStudent} narrowItem />
   }
 
   checkEmail = e => {
@@ -293,12 +262,19 @@ class ClassroomAddStudentModal extends React.Component {
 
   clearData = () => {
     this.setState({
-      accordionIsOpen: false,
       studentIds: [],
-      inviteStudentsQueue: [],
       errors: {},
-      formData: { username: '', email: '' },
     })
+    this.clearForm()
+    this.clearQueue()
+  }
+
+  clearForm = () => {
+    this.setState({ formData: { username: '', email: '' } })
+  }
+
+  clearQueue = () => {
+    this.setState({ inviteStudentsQueue: [] })
   }
 
   handleSubmitStudent = event => {
@@ -344,7 +320,7 @@ class ClassroomAddStudentModal extends React.Component {
   }
 
   render() {
-    const { isOpen } = this.state
+    const { isOpen, submitButtonIsDisabled, inviteStudentsQueue } = this.state
     return (
       <Modal
         open={isOpen}
@@ -359,7 +335,12 @@ class ClassroomAddStudentModal extends React.Component {
         <Modal.Header>Add Students</Modal.Header>
         <Modal.Content>{this.renderUserList()}</Modal.Content>
         <Modal.Actions>
-          <Button color="green" onClick={this.handleInviteFormSubmit}>
+          <Button
+            color="green"
+            disabled={submitButtonIsDisabled || inviteStudentsQueue.length === 0}
+            loading={submitButtonIsDisabled}
+            onClick={this.handleInviteFormSubmit}
+          >
             Invite Students
           </Button>
           <Button
@@ -369,7 +350,7 @@ class ClassroomAddStudentModal extends React.Component {
               this.toggleIsOpen()
             }}
           >
-            Cancel
+            Close
           </Button>
         </Modal.Actions>
       </Modal>

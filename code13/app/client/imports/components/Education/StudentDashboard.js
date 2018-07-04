@@ -76,7 +76,7 @@ class StudentDashboard extends React.Component {
                         </QLink>
                       )}
                       <br />
-                      {teacherName && `Teacher: ${teacherName}`}
+                      {teacherName && <QLink to={`/user/${teacherName}`}>{`Teacher: ${teacherName}`}</QLink>}
                     </p>
                   </Container>
                 </Segment>

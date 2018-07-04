@@ -191,8 +191,7 @@ class ProjectOverview extends Component {
         this.props.project,
       )
     }
-    if (newWorkState === 'completed')
-      this.handleAssignmentCompletion()
+    if (newWorkState === 'completed') this.handleAssignmentCompletion()
   }
 
   handleAssignmentCompletion = () => {
@@ -366,7 +365,7 @@ class ProjectOverview extends Component {
       <Grid.Row stretched>
         <Grid.Column>
           <Header as="h2" color="grey" floated="left">
-            Assignment Project List
+            Student Assignment Status
           </Header>
           <AssignmentProjectListGET project={project} />
         </Grid.Column>
@@ -388,6 +387,11 @@ class ProjectOverview extends Component {
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: project.assignmentId })
     const isOriginalProject = assignment && assignment.ownerId === project.ownerId // Orignial project generated from assignment creation
     const isTeacher = currUser.permissions && _.includes(currUser.permissions[0].roles, 'teacher')
+
+    const headerStyle = {
+      fontSize: '2.5em',
+      color: 'lightgrey',
+    }
 
     return (
       <Grid columns="equal" padded>
@@ -479,14 +483,15 @@ class ProjectOverview extends Component {
                   />
                 )}
               </div>
+              <Header as="h1" content="Assignment Overview" floated="left" style={headerStyle} />
             </div>
 
             <Grid columns={1}>
               <Grid.Row>
                 <Grid.Column width={16}>
                   <Segment raised color="blue">
-                    <Header as="h2" color="grey" floated="left">
-                      Assignment Details
+                    <Header as="h2" floated="left">
+                      Instructions
                     </Header>
                     <AssignmentCardGET
                       isOwnerTeacher={isOriginalProject && isTeacher}

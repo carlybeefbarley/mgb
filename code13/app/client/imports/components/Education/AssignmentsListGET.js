@@ -13,7 +13,7 @@ const AssignmentsListGET = createContainer(props => {
   const handle = Meteor.subscribe('classrooms.byUserId', userId)
   const cursor = Classrooms.find(classroomsMakeSelectorForStudent(userId))
   const classrooms = cursor.fetch()
-  let returnProps = { ...props, classrooms, loading: !handle.ready(), assignmentAssets }
+  let returnProps = { ...props, classrooms, loading: !handle.ready(), assignmentAssets: [] }
 
   const projectsHandle = Meteor.subscribe('projects.byUserId', userId)
   const projectsCursor = Projects.find({ ownerId: userId })
@@ -28,7 +28,6 @@ const AssignmentsListGET = createContainer(props => {
   }
 
   return returnProps
-  }
 }, AssignmentsListLoading)
 
 export default AssignmentsListGET

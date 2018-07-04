@@ -10,9 +10,16 @@ export default class AssignmentsList extends React.Component {
     showUpcoming: PropTypes.bool,
     showNoDueDate: PropTypes.bool,
     showCompleted: PropTypes.bool,
+    showProjectCreateButtons: PropTypes.bool,
   }
 
-  static defaultProps = { showPastDue: true, showUpcoming: true, showNoDueDate: true, showCompleted: true }
+  static defaultProps = {
+    showPastDue: true,
+    showUpcoming: true,
+    showNoDueDate: true,
+    showCompleted: true,
+    showProjectCreateButtons: false,
+  }
 
   getFutureAssignments = () => {
     const { assignmentAssets } = this.props
@@ -67,13 +74,11 @@ export default class AssignmentsList extends React.Component {
   }
 
   renderProjectButton = assignmentAsset => {
+    if (!this.props.showProjectCreateButtons) return
     const { currUserProjects } = this.props
     const project = _.find(currUserProjects, project => {
       return project.assignmentId && project.assignmentId === assignmentAsset._id
     })
-
-    console.log(project)
-
     if (project) {
       return (
         <Button

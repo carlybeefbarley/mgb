@@ -89,6 +89,7 @@ class StudentDashboard extends React.Component {
                     showUpcoming
                     showNoDueDate={false}
                     showPastDue={false}
+                    showProjectCreateButtons
                   />
                 </Segment>
               </Grid.Column>

@@ -12,6 +12,7 @@ import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
 import ClassroomAddStudentModal from '/client/imports/components/Education/ClassroomAddStudentModal'
 import ClassroomAddAssignmentModal from '/client/imports/components/Education/ClassroomAddAssignmentModal'
+import QLink from '/client/imports/routes/QLink'
 
 const cellStyle = {
   textAlign: 'center',
@@ -282,7 +283,9 @@ class StudentView extends React.Component {
                 />
                 <List style={infoStyle}>
                   <List.Item>
-                    <List.Content>{teacher && teacher.username}</List.Content>
+                    <List.Content>
+                      {teacher && <QLink to={`/u/${teacher.username}`}>{`${teacher.username}`}</QLink>}
+                    </List.Content>
                   </List.Item>
                   <List.Item>
                     <List.Content onClick={this.props.toggleChat}>

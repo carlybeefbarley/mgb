@@ -151,12 +151,16 @@ class ClassroomCreateNewModal extends React.Component {
         onOpen={() => this.toggleIsOpen()}
         trigger={
           <Button color="orange" floated="right">
-            Add New Class
+            Create New Classroom
           </Button>
         }
       >
-        <Modal.Header>Add A Classroom</Modal.Header>
+        <Modal.Header>Create New Classroom</Modal.Header>
         <Modal.Content>
+          <p>
+            This will create a new classroom. After creating the classroom, you will be able to invite
+            students to join the classroom and also create assignments for the students
+          </p>
           <Form
             onKeyDown={e => this.handleKeyDown(e)}
             onChange={e => {

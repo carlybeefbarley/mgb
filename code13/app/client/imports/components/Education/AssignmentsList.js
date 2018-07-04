@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import { List, Button, Icon } from 'semantic-ui-react'
 import PropTypes from 'prop-types'
-import QLink from '/client/imports/routes/QLink'
+import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 
 export default class AssignmentsList extends React.Component {
   static propTypes = {
@@ -66,6 +66,50 @@ export default class AssignmentsList extends React.Component {
     return returnArray
   }
 
+  renderProjectButton = assignmentAsset => {
+    const { currUserProjects } = this.props
+    const project = _.find(currUserProjects, project => {
+      return project.assignmentId && project.assignmentId === assignmentAsset._id
+    })
+
+    console.log(project)
+
+    if (project) {
+      return (
+        <Button
+          size="mini"
+          compact
+          color="green"
+          onClick={() => {
+            utilPushTo(null, `u/${Meteor.user().username}/projects/${project.name}`)
+          }}
+        >
+          <Icon name="sitemap" />
+          Go To Project
+        </Button>
+      )
+    } else {
+      return (
+        <Button size="mini" compact onClick={() => this.handleCreateProject(assignmentAsset)}>
+          <Icon name="sitemap" />
+          Create Project
+        </Button>
+      )
+    }
+  }
+
+  handleCreateProject = assignmentAsset => {
+    console.log('Click worked yo.')
+    const { currUser } = this.props
+    const data = {
+      name: `${currUser.username}'s Project for ${assignmentAsset.name}`,
+      description: '',
+      assignmentId: assignmentAsset._id,
+    }
+
+    Meteor.call('Projects.create', data)
+  }
+
   renderListItems = viewAssets => {
     if (viewAssets.length === 0) {
       return (
@@ -84,10 +128,7 @@ export default class AssignmentsList extends React.Component {
           <List.Icon name="student" />
           <List.Content style={{ width: '100%' }}>
             <List.Content floated="right">
-              <Button size="mini" compact>
-                <Icon name="sitemap" />
-                Create Project
-              </Button>
+              {this.renderProjectButton(assignmentAsset)}
               <small style={{ color: isPastDue ? 'red' : 'lightgray' }}>
                 {`${isPastDue ? 'Past Due ' : ''}${assignmentAsset.metadata.dueDate || 'No Due Date'}`}
               </small>

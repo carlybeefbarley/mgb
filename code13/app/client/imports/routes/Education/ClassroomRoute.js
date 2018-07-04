@@ -183,7 +183,7 @@ class TeacherView extends React.Component {
                   suggestedParams: { projectName: project.name },
                 }}
               />
-              <Header as="h1" content="Classroom Dashboard" style={headerStyle} />
+              <Header as="h1" content="Teacher Classroom Dashboard" style={headerStyle} />
             </div>
           </Grid.Column>
         </Grid>
@@ -265,9 +265,16 @@ class StudentView extends React.Component {
       fontSize: '1.3em',
       textAlign: 'center',
     }
+
+    const headerStyle = {
+      color: 'lightgrey',
+      fontSize: '2.5em',
+      textAlign: 'center',
+    }
     return (
       <div style={containerStyle}>
-        <Grid columns={10}>
+        <Header as="h1" content="Student Classroom Dashboard" style={headerStyle} />
+        <Grid columns={16} padded stackable>
           <Grid.Row>
             <Grid.Column width={5}>
               <Segment raised color="blue">
@@ -297,7 +304,7 @@ class StudentView extends React.Component {
 
             <Grid.Column width={11}>
               <Segment raised color="blue">
-                <Header as="h3" content="About this Class" />
+                <Header as="h2" content="About this Class" />
                 <Segment>
                   <ReactQuill
                     readOnly
@@ -327,15 +334,17 @@ class StudentView extends React.Component {
           <Grid.Column width={16}>
             <Grid.Row>
               <Segment raised color="purple">
+                <Header as="h2" content="Classmates" />
                 <UserColleaguesList user={currUser} narrowItem projects={currUserProjects} />
               </Segment>
             </Grid.Row>
           </Grid.Column>
-        </Grid>
-        <Grid columns={1} padded stackable>
+          {/* </Grid>
+        <Grid columns={1} padded stackable> */}
           <Grid.Column width={16}>
             <Grid.Row>
               <Segment raised color="teal">
+                <Header as="h2" content="Published Games from our Class" />
                 <UserProfileGamesList user={currUser} currUser={currUser} />
               </Segment>
             </Grid.Row>

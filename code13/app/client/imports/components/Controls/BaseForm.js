@@ -1,4 +1,5 @@
 import React from 'react'
+import _ from 'lodash'
 import { Checkbox, Button } from 'semantic-ui-react'
 import DropArea from './DropArea.js'
 import SmallDD from './SmallDD.js'
@@ -19,6 +20,22 @@ import 'react-quill/dist/quill.snow.css'
 // }
 
 export default class BaseForm extends React.Component {
+  // For reactive controlled inputs; used only for text inputs
+  // Components can have multiple form fields, so we need a state
+  // to represent the value for each one mapped by the unique given key
+  //   ex. textVal: {key1: val1, key2: val2}
+  state = {
+    textVal: undefined,
+    textAreaVal: undefined,
+    textEditorVal: undefined,
+    dateVal: undefined,
+  }
+
+  // Debounce text inputs to prevent onChange on every character
+  handleChange = _.debounce(() => {
+    this.props.onChange && this.props.onChange()
+  }, 250)
+
   options(name, key, options, fieldOptions = {}, mgbjrCT = '', id = '', func) {
     let val = this.data[key]
     if (val === void 0) console.warn('value not defined for:', name + '[' + key + ']')
@@ -82,10 +99,13 @@ export default class BaseForm extends React.Component {
           {...fieldOptions}
           placeholder={name}
           type={type == void 0 ? 'text' : type}
-          value={this.data[key]}
+          value={this.state.textVal ? this.state.textVal[key] : this.data[key]}
           onChange={e => {
             this.data[key] = e.target.value
-            this.props.onChange && this.props.onChange()
+            let keyVal = this.state.textVal
+            keyVal[key] = this.data[key]
+            this.setState({ keyVal })
+            this.handleChange()
           }}
           onBlur={() => {
             // special handling for input numbers and min/max value
@@ -97,7 +117,7 @@ export default class BaseForm extends React.Component {
                 this.data[key] = fieldOptions.max
               }
               if (fieldOptions.default != void 0 && !this.data[key]) this.data[key] = fieldOptions.default
-              this.props.onChange && this.props.onChange()
+              this.handleChange()
             }
           }}
         />
@@ -114,13 +134,15 @@ export default class BaseForm extends React.Component {
         <label>{name}</label>
         <textarea
           rows="3"
+          value={this.state ? this.state.textAreaVal : this.data[key]}
           onChange={e => {
-            const val = e.target.value
-            this.data[key] = val
-            this.props.onChange && this.props.onChange()
-            if (mgbjrCT) joyrideStore.completeTag(mgbjrCT + val)
+            this.data[key] = e.target.value
+            let keyVal = this.state.textAreaVal
+            keyVal[key] = this.data[key]
+            this.setState({ keyVal })
+            this.handleChange()
+            if (mgbjrCT) joyrideStore.completeTag(mgbjrCT + e.target.value)
           }}
-          value={this.data[key]}
         />
       </div>
     )
@@ -174,27 +196,19 @@ export default class BaseForm extends React.Component {
         title={fieldOptions && fieldOptions.title}
       >
         <label>{name}</label>
-        {fieldOptions.canEdit ? (
-          <ReactQuill
-            modules={modules}
-            formats={formats}
-            defaultValue={this.data[key]}
-            onChange={content => {
-              this.data[key] = content // This is an HTML string
-              this.props.onChange && this.props.onChange()
-            }}
-          />
-        ) : (
-          <ReactQuill
-            readOnly
-            modules={{
-              clipboard: {
-                matchVisual: false,
-              },
-            }}
-            defaultValue={this.data[key]}
-          />
-        )}
+
+        <ReactQuill
+          modules={modules}
+          formats={formats}
+          defaultValue={this.state ? this.state.textEditorVal : this.data[key]}
+          onChange={content => {
+            this.data[key] = content // This is an HTML string
+            let keyVal = this.state.textEditorVal
+            keyVal[key] = this.data[key]
+            this.setState({ keyVal })
+            this.handleChange()
+          }}
+        />
       </div>
     )
   }
@@ -239,10 +253,13 @@ export default class BaseForm extends React.Component {
           {...fieldOptions}
           style={{ width: 'auto' }}
           type="date"
-          value={this.data[key]}
+          value={this.state.dateVal ? this.state.dateVal[key] : this.data[key]}
           onChange={e => {
             this.data[key] = e.target.value
-            this.props.onChange && this.props.onChange()
+            let keyVal = this.state.dateVal
+            keyVal[key] = this.data[key]
+            this.setState({ keyVal })
+            this.handleChange()
           }}
         />
       </div>

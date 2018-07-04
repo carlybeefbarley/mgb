@@ -6,7 +6,7 @@ import { Popup } from 'semantic-ui-react'
 import { getFriendlyName } from '/imports/schemas/badges'
 
 const Badge = ({ name, forceSize }) => {
-  const badge = badgeList[name] || ['Unknown.png', `Badge "${name}" not recognised`]
+  const badge = badgeList[name] || { name: 'Unknown.png', descr: `Badge "${name}" not recognised` }
   const imgUrl = makeCDNLink(badge.img)
   const title = badge.descr
   const size = forceSize ? { width: `${forceSize}px`, height: `${forceSize}px` } : {}

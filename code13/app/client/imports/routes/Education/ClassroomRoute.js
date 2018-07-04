@@ -344,7 +344,7 @@ class StudentView extends React.Component {
           <Grid.Column width={16}>
             <Grid.Row>
               <Segment raised color="teal">
-                <Header as="h2" content="Published Games from our Class" />
+                <Header as="h2" content="Published Games from" />
                 <UserProfileGamesList user={currUser} currUser={currUser} />
               </Segment>
             </Grid.Row>

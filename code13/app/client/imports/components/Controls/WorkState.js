@@ -119,6 +119,7 @@ const WorkStateStatus = ({ workState, labelStyle, color, iconOnly }) => (
         className="workstate-label"
         style={{ verticalAlign: 'middle', margin: '5px', ...labelStyle }}
         color={color}
+        size="large"
       >
         <Icon name={statusIcons[assignmentStatuses[workState]]} />
         {assignmentStatuses[workState]}

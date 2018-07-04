@@ -11,7 +11,7 @@ const renderDueDate = fuzzyDate => {
 
 const AssignmentCard = props => {
   const { assignmentDetail, dueDate = null } = props.assignmentAsset.metadata
-  const { assignmentAsset, isOwnerTeacher } = props
+  const { assignmentAsset, canEdit } = props
 
   return (
     <Card raised fluid>
@@ -28,7 +28,7 @@ const AssignmentCard = props => {
             defaultValue={assignmentDetail}
           />
         </Card.Description>
-        {isOwnerTeacher && (
+        {canEdit && (
           <Button
             compact
             floated="right"

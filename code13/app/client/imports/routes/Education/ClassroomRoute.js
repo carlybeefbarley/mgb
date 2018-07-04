@@ -226,9 +226,9 @@ class TeacherView extends React.Component {
             <Segment raised color="yellow">
               <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
             </Segment>
-            <Header as="h3" content="All Classroom Assignments" />
+            <Header as="h3" content="Past Assignments" />
             <Segment raised color="green">
-              <AssignmentsListGET showUpcoming showPastDue showNoDueDate />
+              <AssignmentsListGET showPastDue showNoDueDate />
             </Segment>
           </Grid.Column>
         </Grid>

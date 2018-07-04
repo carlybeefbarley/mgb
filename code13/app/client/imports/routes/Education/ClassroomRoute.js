@@ -1,4 +1,5 @@
 import React from 'react'
+import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import { Grid, Header, Segment, List, Table, Icon, Button } from 'semantic-ui-react'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
@@ -165,8 +166,6 @@ class TeacherView extends React.Component {
       fontSize: '2.5em',
       textAlign: 'center',
     }
-
-    const project = { name: 'derp' }
 
     return (
       <div style={containerStyle}>
@@ -359,12 +358,12 @@ class Classroom extends React.Component {
   }
 
   render() {
-    const { currUser, classroom, teacher, assignment, isTeacher } = this.props
+    const { currUser, classroom, teacher, assignment, isTeacher, loading, params } = this.props
     const { chatIsOpen } = this.state
 
-    if (!classroom) {
-      return <Spinner loadingMsg="Loading Classroom..." />
-    }
+    if (loading) return <Spinner loadingMsg="Loading Classroom..." />
+
+    if (!classroom) return <ThingNotFound type="Classroom ID" id={params.classroomId} />
 
     const channelName = makeChannelName({ scopeGroupName: 'Classroom', scopeId: classroom._id })
     const containerStyle = {
@@ -404,9 +403,10 @@ class Classroom extends React.Component {
 
 export default createContainer(props => {
   const userId = Meteor.user()._id
+  const { classroomId } = props.params
   // Subscribe to the classroom at params.classroomId
-  const handleForClassroom = Meteor.subscribe('classrooms.oneClassroom', props.params.classroomId)
-  const classroomCursor = Classrooms.find(props.params.classroomId)
+  const handleForClassroom = Meteor.subscribe('classrooms.oneClassroom', classroomId)
+  const classroomCursor = Classrooms.find(classroomId)
   const classroom = classroomCursor.fetch()[0]
   let handleForStudents,
     studentsCursor,
@@ -423,7 +423,7 @@ export default createContainer(props => {
 
   if (classroom && classroom.ownerId) {
     handleForUsers = Meteor.subscribe('users.getByIdList', [classroom.ownerId])
-    teacher = Users.find(classroom.ownerId).fetch()[0]
+    teacher = Users.findOne(classroom.ownerId)
     if (classroom.ownerId === userId) isTeacher = true
 
     // Subscribe to student users of classroom after subscribed to classroom

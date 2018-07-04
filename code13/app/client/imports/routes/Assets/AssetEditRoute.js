@@ -546,14 +546,12 @@ const AssetEditRoute = React.createClass({
               // TODO: Take advantage of this by doing a partial render when data.asset is not yet loaded
             }
             {this.state.isForkRevertPending && <Icon name="fork" loading />}
-            <span style={{ margin: '0 5px 0 5px' }}>
-              <UserLoves currUser={currUser} asset={asset} size="small" seeLovers />
-              <WorkState
-                workState={asset.workState}
-                canEdit={canEd}
-                handleChange={this.handleWorkStateChange}
-              />
-            </span>
+            <UserLoves currUser={currUser} asset={asset} size="small" seeLovers />
+            <WorkState
+              workState={asset.workState}
+              canEdit={canEd}
+              handleChange={this.handleWorkStateChange}
+            />
             &ensp;
             <AssetUrlGenerator showBordered asset={asset} />
             <StableState

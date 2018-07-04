@@ -51,7 +51,6 @@ export default class EditAssignment extends React.Component {
     currUser: PropTypes.object,
     handleContentChange: PropTypes.func,
     editDeniedReminder: PropTypes.func,
-    project: PropTypes.string,
   }
 
   static contextTypes = {

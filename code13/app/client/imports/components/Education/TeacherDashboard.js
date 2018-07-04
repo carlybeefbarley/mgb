@@ -40,7 +40,7 @@ class TeacherDashboard extends React.Component {
         overflowY: 'auto',
       },
       titleStyle = {
-        fontSize: '3em',
+        fontSize: '2em',
         textAlign: 'center',
       },
       { avatar } = currUser.profile,
@@ -86,13 +86,6 @@ class TeacherDashboard extends React.Component {
                 canEdit={false}
               />
               <Header style={titleStyle} as="h1" content={currUser.username} textAlign="center" />
-              <List style={infoStyle}>
-                <List.Item>
-                  <List.Content>
-                    <List.Icon name="chat" color="blue" />Class Chat
-                  </List.Content>
-                </List.Item>
-              </List>
             </Segment>
           </Grid.Column>
           <Grid.Column width={6}>

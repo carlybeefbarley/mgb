@@ -8,11 +8,11 @@ import { Classrooms, Users, Azzets, Projects } from '/imports/schemas'
 import Spinner from '../../components/Nav/Spinner'
 import ReactQuill from 'react-quill'
 import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
-import AssetCreateNewAssignment from '/client/imports/components/Assets/NewAsset/AssetCreateNewAssignment'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
 import ClassroomAddStudentModal from '/client/imports/components/Education/ClassroomAddStudentModal'
 import ClassroomAddAssignmentModal from '/client/imports/components/Education/ClassroomAddAssignmentModal'
+import QLink from '/client/imports/routes/QLink'
 
 const cellStyle = {
   textAlign: 'center',
@@ -174,16 +174,8 @@ class TeacherView extends React.Component {
         <Grid columns={1} padded>
           <Grid.Column width={16}>
             <div>
-              <AssetCreateNewAssignment
-                currUser={currUser}
-                currUserProjects={currUserProjects}
-                buttonProps={{ floated: 'right' }}
-                viewProps={{
-                  showProjectSelector: true,
-                  suggestedParams: { projectName: project.name },
-                }}
-              />
-              <Header as="h1" content="Teacher Classroom Dashboard" style={headerStyle} />
+              <ClassroomAddAssignmentModal classroom={classroom} />
+              <Header as="h1" content="Classroom Dashboard" style={headerStyle} />
             </div>
           </Grid.Column>
         </Grid>
@@ -291,7 +283,9 @@ class StudentView extends React.Component {
                 />
                 <List style={infoStyle}>
                   <List.Item>
-                    <List.Content>{teacher && teacher.username}</List.Content>
+                    <List.Content>
+                      {teacher && <QLink to={`/u/${teacher.username}`}>{`${teacher.username}`}</QLink>}
+                    </List.Content>
                   </List.Item>
                   <List.Item>
                     <List.Content onClick={this.props.toggleChat}>

@@ -8,6 +8,7 @@ import { showToast } from '/client/imports/modules'
 import EnrollButton from '/client/imports/components/HourOfCode/EnrollButton'
 import { logActivity } from '/imports/schemas/activity'
 import { roleTeacher } from '/imports/schemas/roles'
+import { Classrooms } from '/imports/schemas'
 
 // Heads up!
 // Keep in sync with landing-layout.less .mgb-menu-logo
@@ -211,21 +212,12 @@ const getNavPanels = (currUser, showAll) => {
     ],
     // Right side
     right: _.compact([
-      showUserOptions &&
-      isTeacher && {
+      showUserOptions && {
         name: 'classrooms',
         explainClickAction: 'Select the classroom you would like to set as active.',
         icon: { name: 'student' },
-        content: 'Classrooms',
-        to: ``,
-        menu: [
-          {
-            subcomponent: 'Item',
-            jrkey: 'listClass',
-            to: `/u/${currUser._id}/classroom/classroomId`,
-            content: `This is a nightmare :D`,
-          },
-        ],
+        content: 'Classroom',
+        to: `/u/${currUser && currUser._id}/classroom/getClassrooms`,
       },
       showUserOptions && {
         name: 'projects',

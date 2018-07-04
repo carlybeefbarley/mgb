@@ -15,10 +15,11 @@ const AssignmentsListGET = createContainer(props => {
   const classrooms = cursor.fetch()
   let returnProps = { ...props, classrooms, loading: !handle.ready(), assignmentAssets: [] }
 
-  const projectsHandle = Meteor.subscribe('projects.byUserId', userId)
-  const projectsCursor = Projects.find({ ownerId: userId })
-  const projects = projectsCursor.fetch()
-  returnProps.projects = projects
+  // const projectsHandle = Meteor.subscribe('projects.byUserId', userId)
+  // const projectsCursor = Projects.find({ ownerId: userId })
+  // const projects = projectsCursor.fetch()
+  // returnProps.projects = projects
+
   // !!If users are able to be part of more than one class room this entire HOC will be completely useless.!!
   if (handle.ready() && classrooms && classrooms[0]) {
     returnProps.assignmentAssetIds = classrooms && classrooms[0] ? classrooms[0].assignmentAssetIds : []

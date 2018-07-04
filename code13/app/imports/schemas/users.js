@@ -175,16 +175,3 @@ export function isSameUser(user1, user2) {
 export function isSameUserId(id1, id2) {
   return id1 && id2 && id1 === id2
 }
-
-export function isTeacher(user) {
-  let returnValue = false
-  if (user.permissions) {
-    returnValue = !!_.compact(
-      _.map(user.permissions, permission => {
-        return permission.includes(roleTeacher)
-      }),
-    )
-  }
-
-  return returnValue
-}

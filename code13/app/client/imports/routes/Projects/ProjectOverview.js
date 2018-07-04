@@ -387,7 +387,7 @@ class ProjectOverview extends Component {
                       labelPosition="left"
                       icon={project.allowForks ? 'checkmark box' : 'square outline'}
                       content="Allow Forks"
-                      disabled={project.assignmentId}
+                      disabled={!!project.assignmentId}
                       onClick={() => this.handleFieldChanged({ allowForks: !project.allowForks })}
                       title="Project Owner may allow other users to fork this Project and its Assets"
                     />

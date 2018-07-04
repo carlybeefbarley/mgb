@@ -8,7 +8,7 @@ import { Classrooms, Users, Azzets, Projects } from '/imports/schemas'
 import Spinner from '../../components/Nav/Spinner'
 import ReactQuill from 'react-quill'
 import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
-import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
+import AssetCreateNewAssignment from '/client/imports/components/Assets/NewAsset/AssetCreateNewAssignment'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
 import ClassroomAddStudentModal from '/client/imports/components/Education/ClassroomAddStudentModal'
@@ -159,6 +159,13 @@ class TeacherView extends React.Component {
     const cellStyle = {
       textAlign: 'center',
     }
+
+    const headerStyle = {
+      color: 'lightgrey',
+      fontSize: '2.5em',
+      textAlign: 'center',
+    }
+
     const project = { name: 'derp' }
 
     return (
@@ -166,7 +173,18 @@ class TeacherView extends React.Component {
         {/* FLoating doesn't seem to work unless I include columns */}
         <Grid columns={1} padded>
           <Grid.Column width={16}>
-            <ClassroomAddAssignmentModal classroom={classroom} />
+            <div>
+              <AssetCreateNewAssignment
+                currUser={currUser}
+                currUserProjects={currUserProjects}
+                buttonProps={{ floated: 'right' }}
+                viewProps={{
+                  showProjectSelector: true,
+                  suggestedParams: { projectName: project.name },
+                }}
+              />
+              <Header as="h1" content="Classroom Dashboard" style={headerStyle} />
+            </div>
           </Grid.Column>
         </Grid>
         <Grid columns={2} padded stretched>
@@ -211,9 +229,9 @@ class TeacherView extends React.Component {
             <Segment raised color="yellow">
               <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
             </Segment>
-            <Header as="h3" content="All Classroom Assignments" />
+            <Header as="h3" content="Past Assignments" />
             <Segment raised color="green">
-              <AssignmentsListGET showUpcoming showPastDue showNoDueDate />
+              <AssignmentsListGET showPastDue showNoDueDate />
             </Segment>
           </Grid.Column>
         </Grid>

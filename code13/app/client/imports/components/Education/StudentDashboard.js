@@ -15,6 +15,7 @@ class StudentDashboard extends React.Component {
     const { currUser, classrooms, teacherName } = this.props,
       { avatar } = currUser.profile,
       titleStyle = {
+        fontSize: '2em',
         textAlign: 'center',
       },
       containerStyle = {
@@ -36,10 +37,17 @@ class StudentDashboard extends React.Component {
         opacity: '0.9',
       }
 
+    const headerStyle = {
+      color: 'lightgrey',
+      fontSize: '2.5em',
+      textAlign: 'center',
+    }
+
     return (
       <Grid columns={16} padded style={containerStyle}>
         <Grid.Column width={3} />
         <Grid.Column width={10}>
+          <Header as="h1" content="Student Dashboard" style={headerStyle} />
           <Grid columns={16}>
             <Grid.Row>
               <Grid.Column width={6}>

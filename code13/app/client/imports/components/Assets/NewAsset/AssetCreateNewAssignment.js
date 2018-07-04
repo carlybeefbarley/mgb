@@ -26,7 +26,7 @@ class AssetCreateNewModal extends Component {
           <Button
             color="green"
             icon="pencil"
-            content="Create New Asset"
+            content="Create New Assignment"
             disabled={!canCreate}
             {...buttonProps}
           />

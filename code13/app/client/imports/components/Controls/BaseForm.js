@@ -21,11 +21,9 @@ import 'react-quill/dist/quill.snow.css'
 
 export default class BaseForm extends React.Component {
   // For reactive controlled inputs; used only for text inputs
-  // to prevent onChange on every character change
-  //
   // Components can have multiple form fields, so we need a state
   // to represent the value for each one mapped by the unique given key
-  // ex. textVal: {key1: val, key2: val}
+  //   ex. textVal: {key1: val1, key2: val2}
   state = {
     textVal: undefined,
     textAreaVal: undefined,
@@ -33,14 +31,14 @@ export default class BaseForm extends React.Component {
     dateVal: undefined,
   }
 
-  // Debounce any text inputs
+  // Debounce text inputs to prevent onChange on every character
   handleChange = _.debounce(() => {
     this.props.onChange && this.props.onChange()
   }, 250)
 
   options(name, key, options, fieldOptions = {}, mgbjrCT = '', id = '', func) {
-    let value = this.data[key]
-    if (value === void 0) console.warn('value not defined for:', name + '[' + key + ']')
+    let val = this.data[key]
+    if (val === void 0) console.warn('value not defined for:', name + '[' + key + ']')
 
     return (
       <div
@@ -54,11 +52,11 @@ export default class BaseForm extends React.Component {
           onChange={val => {
             this.data[key] = val
             if (func) func()
-            if (mgbjrCT) joyrideStore.completeTag(mgbjrCT + value)
-            this.props.onChange && this.props.onChange(key)
+            if (mgbjrCT) joyrideStore.completeTag(mgbjrCT + val)
+            this.props.onChange && this.props.onChange()
           }}
           {...fieldOptions}
-          value={this.data[key]}
+          value={val}
         />
       </div>
     )
@@ -81,6 +79,7 @@ export default class BaseForm extends React.Component {
           checked={checked}
           onChange={() => {
             this.data[key] = fieldOptions.boolIsTF ? !checked : !checked ? '1' : '0'
+            console.log('onChange dataKey', this.data[key])
             if (mgbjrCT) joyrideStore.completeTag(mgbjrCT)
             this.props.onChange && this.props.onChange(key)
           }}

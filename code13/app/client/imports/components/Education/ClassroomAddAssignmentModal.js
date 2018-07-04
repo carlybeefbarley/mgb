@@ -24,8 +24,12 @@ import EditAssignment from '/client/imports/components/Assets/EditAssignment/Edi
 import AssetPathDetail from '/client/imports/components/Assets/AssetPathDetail'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import { Azzets } from '/imports/schemas'
+import PropTypes from 'prop-types'
 export default class ClassroomAddAssignmentModal extends React.Component {
-  state = { awaitingAsset: true, assignmentHandler: null }
+  static PropTypes = {
+    classroom: PropTypes.object.isRequired,
+  }
+  state = { awaitingAsset: true, assignmentHandler: null, isOpen: false, disableAcceptButton: false }
   defaultAsset = {
     name: `Assignment ${Math.random()
       .toString(36)
@@ -46,11 +50,17 @@ export default class ClassroomAddAssignmentModal extends React.Component {
         this.loadAsset(success)
       }
     })
+    this.setState({ isOpen: true })
     // Need to generate a new name every time you create an asset so future re-openings
     // dont create an asset with the same name.
     this.defaultAsset.name = `Assignment ${Math.random()
       .toString(36)
       .substring(7)}`
+  }
+
+  onComponentWillUnmount() {
+    // if you navigate away or remove this modal from the dom in any way the assignment should be purged.
+    this.onCancel()
   }
 
   loadAsset = assetId => {
@@ -75,7 +85,16 @@ export default class ClassroomAddAssignmentModal extends React.Component {
 
   closeModal = () => {
     this.stopHandler()
-    this.setState({ awaitingAsset: true, assignmentHandler: null, assignmentAsset: null })
+    this.setState({ awaitingAsset: true, assignmentHandler: null, assignmentAsset: null, isOpen: false })
+  }
+
+  onCancel = () => {
+    this.closeModal()
+    this.deleteAssignment()
+  }
+
+  deleteAssignment = () => {
+    this.handleChange({ isDeleted: true })
   }
 
   handleChange = data => {
@@ -105,13 +124,30 @@ export default class ClassroomAddAssignmentModal extends React.Component {
     this.handleChange({ metadata })
   }
 
+  handleAssignToClassroom = () => {
+    const { classroom } = this.props
+    const { assignmentAsset } = this.state
+    this.setState({ disableAcceptButton: true })
+    Meteor.call('Classroom.addAssignmentAsset', classroom._id, assignmentAsset._id, (err, success) => {
+      if (err) {
+        console.log('Failed to add assignment to classroom: ', err.reason)
+      } else {
+        this.setState({ disableAcceptButton: false })
+        this.closeModal()
+      }
+    })
+  }
+
   render() {
-    const { awaitingAsset, assignmentAsset } = this.state
+    const { awaitingAsset, assignmentAsset, disableAcceptButton, isOpen } = this.state
     const currUser = Meteor.user()
 
     return (
       <Modal
+        closeOnDimmerClick={false}
+        closeOnEscape={false}
         onClose={this.closeModal}
+        open={isOpen}
         trigger={
           <Button color="orange" floated="right" onClick={this.createNewAssignment}>
             Create Assignment
@@ -143,8 +179,17 @@ export default class ClassroomAddAssignmentModal extends React.Component {
           )}
         </Modal.Content>
         <Modal.Actions>
-          <Button color="green">Accept</Button>
-          <Button color="red">Cancel</Button>
+          <Button
+            color="green"
+            onClick={this.handleAssignToClassroom}
+            disabled={disableAcceptButton}
+            loading={disableAcceptButton}
+          >
+            Accept
+          </Button>
+          <Button color="red" onClick={this.onCancel}>
+            Cancel
+          </Button>
         </Modal.Actions>
       </Modal>
     )

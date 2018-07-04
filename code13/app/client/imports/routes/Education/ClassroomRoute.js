@@ -166,7 +166,7 @@ class TeacherView extends React.Component {
         {/* FLoating doesn't seem to work unless I include columns */}
         <Grid columns={1} padded>
           <Grid.Column width={16}>
-            <ClassroomAddAssignmentModal />
+            <ClassroomAddAssignmentModal classroom={classroom} />
           </Grid.Column>
         </Grid>
         <Grid columns={2} padded stretched>

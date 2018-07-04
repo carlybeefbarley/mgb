@@ -14,7 +14,7 @@ import { joyrideStore } from '/client/imports/stores'
 import { JoyrideRootHelper } from '/client/imports/components/Joyride'
 
 import { getFeedSelector } from '/imports/schemas/activity'
-import { Activity, Projects, Settings, Sysvars, Skills, Users } from '/imports/schemas'
+import { Activity, Projects, Settings, Sysvars, Skills, Users, Classrooms } from '/imports/schemas'
 import { isSameUser } from '/imports/schemas/users'
 import { isUserSuperAdmin, roleTeacher } from '/imports/schemas/roles'
 
@@ -574,6 +574,15 @@ export default _.flow(
       )
     }
 
+    // classrooms Stuff
+
+    const handleForStudentOfClassrooms = currUserId
+      ? Meteor.subscribe('classrooms.byStudentId', currUserId)
+      : null
+    const handleForTeacherOfClassrooms = currUserId
+      ? Meteor.subscribe('classrooms.byTeacherId', currUserId)
+      : null
+
     // projects stuff
     const handleForProjects = currUserId ? Meteor.subscribe('projects.byUserId', currUserId) : null
     const projectsReady = handleForProjects === null ? true : handleForProjects.ready()
@@ -613,6 +622,17 @@ export default _.flow(
     return {
       currUser: currUser ? currUser : null, // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user.
       // Putting it here makes it reactive
+
+      currStudentOfClassrooms: !handleForStudentOfClassrooms
+        ? []
+        : Classrooms.find({
+            studentIds: currUserId,
+          }).fetch(),
+      currTeacherOfClassrooms: !handleForTeacherOfClassrooms
+        ? []
+        : Classrooms.find({
+            teacherIds: currUserId,
+          }).fetch(),
 
       currUserProjects: !handleForProjects
         ? []

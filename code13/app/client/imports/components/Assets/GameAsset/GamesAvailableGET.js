@@ -64,7 +64,7 @@ const GamesAvailableGet = React.createClass({
           <p>There are no published games in this project, yet.</p>
           {canEdit && (
             <p>
-              <Icon name="lightbulb" /> Add an ActorMap asset or Code game asset to get started.
+              <Icon name="lightbulb" /> Add a Code game asset to get started.
             </p>
           )}
         </Segment>

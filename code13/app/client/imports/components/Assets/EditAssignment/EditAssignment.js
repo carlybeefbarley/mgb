@@ -67,6 +67,10 @@ export default class EditAssignment extends React.Component {
 
   handleCreateProjectFromAssignment = () => {
     const { currUser, asset: { _id, name, metadata } } = this.props
+
+    // Update list of assignments for classroom
+
+    // Create new project for assignment
     let newProj = {
       name,
       description: metadata.description,
@@ -88,6 +92,7 @@ export default class EditAssignment extends React.Component {
 
   render() {
     const { currUser, asset, canEdit, handleContentChange } = this.props
+    console.log(this.props)
     if (!asset) return null
 
     if (!asset.metadata) asset.metadata = _defaultAssignmentMetadata

@@ -28,6 +28,7 @@ import HoverImage from 'react-hover-image'
 class StudentProfile extends React.Component {
   render() {
     const { currUser } = this.props
+
     const containerStyle = {
       overflowY: 'auto',
     }
@@ -232,7 +233,9 @@ export default class EducationProfileRoute extends React.Component {
 
     return false
   }
+
   render() {
-    return this.isTeacher() ? <TeacherProfile /> : <StudentProfile />
+    const { currUser } = this.props
+    return this.isTeacher() ? <TeacherProfile currUser={currUser} /> : <StudentProfile currUser={currUser} />
   }
 }

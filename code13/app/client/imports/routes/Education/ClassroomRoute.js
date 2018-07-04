@@ -144,7 +144,7 @@ class TeacherView extends React.Component {
       overflowY: 'auto',
     }
 
-    const { avatar } = currUser.profile
+    const { avatar } = currUser && currUser.profile
 
     const titleStyle = {
       fontSize: '2em',
@@ -254,7 +254,7 @@ class StudentView extends React.Component {
       overflowX: 'hidden',
     }
 
-    const { avatar } = currUser.profile
+    const { avatar } = currUser && currUser.profile
 
     const titleStyle = {
       fontSize: '2em',
@@ -378,7 +378,7 @@ class Classroom extends React.Component {
       overflowX: 'hidden',
     }
 
-    const { avatar } = currUser.profile
+    const { avatar } = currUser && currUser.profile
 
     const titleStyle = {
       fontSize: '2em',

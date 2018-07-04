@@ -19,7 +19,7 @@ import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailabl
 import { logActivity } from '/imports/schemas/activity'
 import ProjectForkGenerator from './ProjectForkGenerator'
 import { makeChannelName } from '/imports/schemas/chats'
-import { isUserSuperAdmin } from '/imports/schemas/roles'
+import { isUserSuperAdmin, doesUserHaveRole, roleTeacher } from '/imports/schemas/roles'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 import { withMeteorData } from '../../hocs'
@@ -255,7 +255,7 @@ class ProjectOverview extends Component {
     const canEdit = this.canEdit(project, currUser, loading)
     const isMyProject = currUser && project && project.ownerId === currUser._id
     const relativeProjectName = project ? `${isMyProject ? '' : `${project.ownerName}:`}${project.name}` : ''
-    const isTeacher = currUser.permissions && _.includes(currUser.permissions[0].roles, 'teacher')
+    const isTeacher = doesUserHaveRole(currUser, roleTeacher)
     if (!project && isDeleteComplete)
       return (
         <Segment basic>

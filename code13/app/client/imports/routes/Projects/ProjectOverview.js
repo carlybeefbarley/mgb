@@ -19,7 +19,7 @@ import AssetsAvailableGET from '/client/imports/components/Assets/AssetsAvailabl
 import { logActivity } from '/imports/schemas/activity'
 import ProjectForkGenerator from './ProjectForkGenerator'
 import { makeChannelName } from '/imports/schemas/chats'
-import { isUserSuperAdmin } from '/imports/schemas/roles'
+import { isUserSuperAdmin, doesUserHaveRole, roleTeacher } from '/imports/schemas/roles'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 import { withMeteorData } from '../../hocs'
@@ -179,18 +179,34 @@ class ProjectOverview extends Component {
   // As specified in workStates.js, WorkStates have the following correspondence to assignment statuses:
   // broken - needs review, working - needs work, polished - complete
   handleWorkStateChange = newWorkState => {
-    const { _id, workState } = this.props.project
-    const oldState = workState
+    const { project } = this.props
+    const oldState = project.workState
     if (newWorkState !== oldState) {
-      Meteor.call('Projects.update', _id, { workState: newWorkState }, (err, res) => {
+      Meteor.call('Projects.update', project._id, { workState: newWorkState }, (err, res) => {
         if (err) showToast.error(err.reason)
       })
       logActivity(
         'project.workState',
-        `WorkState changed from ${oldState} to "${newWorkState}"`,
-        null,
-        this.props.project,
+        `WorkState changed from ${oldState} to ${newWorkState}`,
+        {
+          dn_ownerName: project.ownerName,
+          ownerId: project.ownerId,
+          _id: project._id,
+          name: project.name,
+        },
+        project,
       )
+    }
+  }
+
+  handleWorkStateCancel = () => {
+    const { _id, workState } = this.props.project
+    if (workState === 'working' || workState === 'polished') {
+      // Teacher cancelling 'needs work' or 'completed' workstate change
+      this.handleWorkStateChange('broken')
+    } else if (workState === 'broken') {
+      // Student cancelling 'needs review' workstate change
+      this.handleWorkStateChange('unknown')
     }
   }
 
@@ -255,7 +271,7 @@ class ProjectOverview extends Component {
     const canEdit = this.canEdit(project, currUser, loading)
     const isMyProject = currUser && project && project.ownerId === currUser._id
     const relativeProjectName = project ? `${isMyProject ? '' : `${project.ownerName}:`}${project.name}` : ''
-    const isTeacher = currUser.permissions && _.includes(currUser.permissions[0].roles, 'teacher')
+    const isTeacher = doesUserHaveRole(currUser, roleTeacher)
     if (!project && isDeleteComplete)
       return (
         <Segment basic>
@@ -462,6 +478,7 @@ class ProjectOverview extends Component {
                 </Segment>
               )}
             </Grid.Column>
+<<<<<<< HEAD
             <Grid.Column width={13}>
               <Segment raised color="blue">
                 <Header as="h2" content="Assignment Instructions" />
@@ -474,6 +491,106 @@ class ProjectOverview extends Component {
                 <div>
                   <Header as="h2" style={{ flex: '0 0 auto' }}>
                     Games
+=======
+            <Grid.Column>
+              {project.assignmentId && (
+                <Grid>
+                  <div style={{ width: '100%', marginBottom: '1em' }}>
+                    <div style={{ float: 'left' }}>
+                      <WorkState
+                        isAssignment
+                        canEdit={canEdit}
+                        workState={project.workState}
+                        handleWorkStateCancel={this.handleWorkStateCancel}
+                      />
+                    </div>
+                    <div style={{ float: 'right' }}>
+                      {isTeacher ? (
+                        <Button.Group
+                          style={{ marginRight: '5px' }}
+                          title={
+                            project.workState === 'unknown' ? (
+                              'Student has not submitted assignment for review yet'
+                            ) : (
+                              'Request more work or approve assignment for completion'
+                            )
+                          }
+                        >
+                          <Button
+                            color="yellow"
+                            style={{ width: '10em' }}
+                            disabled={project.workState === 'unknown'}
+                            onClick={() => this.handleWorkStateChange('working')}
+                          >
+                            Needs Work
+                          </Button>
+                          <Button.Or />
+                          <Button
+                            primary
+                            style={{ width: '10em' }}
+                            disabled={project.workState === 'unknown'}
+                            onClick={() => this.handleWorkStateChange('polished')}
+                          >
+                            Complete
+                          </Button>
+                        </Button.Group>
+                      ) : (
+                        canEdit && (
+                          <Button
+                            primary
+                            labelPosition="left"
+                            icon="calendar check"
+                            disabled={project.workState === 'broken' || project.workState === 'polished'}
+                            content={
+                              project.workState === 'broken' ? 'Pending Review...' : 'Submit Assignment'
+                            }
+                            onClick={() => this.handleWorkStateChange('broken')}
+                          />
+                        )
+                      )}
+                    </div>
+                  </div>
+                  <div style={{ width: '100%' }}>
+                    <Header as="h2" color="grey" floated="left">
+                      Assignment Details
+                    </Header>
+                    <AssignmentCardGET
+                      canEdit={isTeacher}
+                      assignmentId={project.assignmentId}
+                      getAssignment={this.getAssignment}
+                    />
+                  </div>
+                </Grid>
+              )}
+
+              <Grid columns="equal">
+                <Grid.Column stretched>
+                  <div>
+                    <Header as="h2" color="grey" style={{ flex: '0 0 auto' }}>
+                      Games
+                    </Header>
+                    <GamesAvailableGET
+                      canEdit={canEdit}
+                      currUser={currUser}
+                      scopeToUserId={project.ownerId}
+                      scopeToProjectName={project.name}
+                    />
+                  </div>
+                </Grid.Column>
+                <Grid.Column stretched>
+                  <Header
+                    as="h2"
+                    color="grey"
+                    floated="left"
+                    // Stretched columns force the width to be 100%
+                    // The text only should be clickable, limit the width to the length of the text
+                    style={{ flex: '0 0 auto', width: '3.75em', cursor: 'pointer' }}
+                    id="mgbjr-project-activity"
+                    onClick={() =>
+                      utilPushTo(null, `/u/${project.ownerName}/projects/${project.name}/activity`)}
+                  >
+                    Activity
+>>>>>>> aa11f4a35c52a0e4c55ee94ee93b2c7ac770a696
                   </Header>
                   <GamesAvailableGET
                     canEdit={canEdit}

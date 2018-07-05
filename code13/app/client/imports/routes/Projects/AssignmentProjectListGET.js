@@ -30,10 +30,10 @@ const AssignmentProjectListGET = React.createClass({
   },
 
   getProjectLists() {
-    const lists = { completed: [], incompleted: [] }
+    const lists = { completed: [], incomplete: [] }
     _.map(this.data.projects, project => {
       if (project.workState === 'polished') lists.completed.push(project)
-      else lists.incompleted.push(project)
+      else lists.incomplete.push(project)
     })
     return lists
   },
@@ -89,7 +89,7 @@ const AssignmentProjectListGET = React.createClass({
             Incomplete
           </Header>
 
-          {this.renderList(lists.incompleted)}
+          {this.renderList(lists.incomplete)}
         </Segment>
       </div>
     )

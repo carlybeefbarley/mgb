@@ -65,10 +65,7 @@ class TeacherDashboard extends React.Component {
         <Grid.Row>
           <Grid.Column width={3} />
           <Grid.Column width={10}>
-            <div>
-              <ClassroomCreateNewModal {...this.props} />
-              <Header as="h1" content="Teacher Dashboard" style={headerStyle} />
-            </div>
+            <Header as="h1" content="Teacher Dashboard" style={headerStyle} />
           </Grid.Column>
         </Grid.Row>
 
@@ -90,8 +87,9 @@ class TeacherDashboard extends React.Component {
           </Grid.Column>
           <Grid.Column width={6}>
             <Segment raised color="blue">
-              <Header as="h2" content="Your Classes" />
+              <Header as="h2" content="Your Classrooms" />
               <List relaxed content={this.renderClassesList()} />
+              <ClassroomCreateNewModal {...this.props} />
             </Segment>
           </Grid.Column>
         </Grid.Row>

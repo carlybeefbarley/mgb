@@ -328,7 +328,7 @@ class ClassroomAddStudentModal extends React.Component {
         onOpen={() => this.toggleIsOpen()}
         trigger={
           <Button color="green" floated="right">
-            Add New Students
+            Invite New Students
           </Button>
         }
       >

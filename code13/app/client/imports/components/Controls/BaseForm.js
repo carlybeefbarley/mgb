@@ -25,10 +25,10 @@ export default class BaseForm extends React.Component {
   // to represent the value for each one mapped by the unique given key
   //   ex. textVal: {key1: val1, key2: val2}
   state = {
-    textVal: undefined,
-    textAreaVal: undefined,
-    textEditorVal: undefined,
-    dateVal: undefined,
+    textVal: {},
+    textAreaVal: {},
+    textEditorVal: {},
+    dateVal: {},
   }
 
   // Debounce text inputs to prevent onChange on every character
@@ -99,7 +99,7 @@ export default class BaseForm extends React.Component {
           {...fieldOptions}
           placeholder={name}
           type={type == void 0 ? 'text' : type}
-          value={this.state.textVal ? this.state.textVal[key] : this.data[key]}
+          value={!_.isEmpty(this.state.textVal) ? this.state.textVal[key] : this.data[key]}
           onChange={e => {
             this.data[key] = e.target.value
             let keyVal = this.state.textVal
@@ -134,7 +134,7 @@ export default class BaseForm extends React.Component {
         <label>{name}</label>
         <textarea
           rows="3"
-          value={this.state ? this.state.textAreaVal : this.data[key]}
+          value={!_.isEmpty(this.state.textAreaVal) ? this.state.textAreaVal[key] : this.data[key]}
           onChange={e => {
             this.data[key] = e.target.value
             let keyVal = this.state.textAreaVal
@@ -200,7 +200,7 @@ export default class BaseForm extends React.Component {
         <ReactQuill
           modules={modules}
           formats={formats}
-          defaultValue={this.state.textEditorVal ? this.state.textEditorVal[key] : this.data[key]}
+          defaultValue={!_.isEmpty(this.state.textEditorVal) ? this.state.textEditorVal[key] : this.data[key]}
           onChange={content => {
             this.data[key] = content // This is an HTML string
             let keyVal = this.state.textEditorVal
@@ -253,7 +253,7 @@ export default class BaseForm extends React.Component {
           {...fieldOptions}
           style={{ width: 'auto' }}
           type="date"
-          value={this.state.dateVal ? this.state.dateVal[key] : this.data[key]}
+          value={!_.isEmpty(this.state.dateVal) ? this.state.dateVal[key] : this.data[key]}
           onChange={e => {
             this.data[key] = e.target.value
             let keyVal = this.state.dateVal

@@ -37,7 +37,7 @@ export default createContainer(props => {
   })
 
   const assignmentsSelector = { _id: { $in: allProjectAssignments } }
-  const hadleForAssignments = Meteor.subscribe('assets.byAssignmentsList', allProjectAssignments)
+  const handleForAssignments = Meteor.subscribe('assets.byAssignmentsList', allProjectAssignments)
   const cursorForAssignments = Azzets.find(assignmentsSelector)
   const assignments = cursorForAssignments.fetch()
 

@@ -84,7 +84,13 @@ class StudentDashboard extends React.Component {
               <Grid.Column width={10}>
                 <Segment raised color="blue" style={upcomingStyle}>
                   <Header as="h2" content="Upcoming Assignments" />
-                  <AssignmentsListGET showUpcoming showNoDueDate={false} showPastDue={false} />
+                  <AssignmentsListGET
+                    {...this.props}
+                    showUpcoming
+                    showNoDueDate={false}
+                    showPastDue={false}
+                    showProjectCreateButtons
+                  />
                 </Segment>
               </Grid.Column>
             </Grid.Row>

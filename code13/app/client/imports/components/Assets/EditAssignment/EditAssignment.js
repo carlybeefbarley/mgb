@@ -22,7 +22,7 @@ class EditAssignmentForm extends BaseForm {
 
     return (
       <div>
-        <Header as="h1" content="Create New Assignment" style={headerStyle} />
+        <Header as="h1" content="Edit Assignment" style={headerStyle} />
         <Grid columns={1} padded>
           <Grid.Row style={!this.props.canEdit ? { pointerEvents: 'none' } : {}}>
             <div className="ui form">
@@ -51,7 +51,6 @@ export default class EditAssignment extends React.Component {
     currUser: PropTypes.object,
     handleContentChange: PropTypes.func,
     editDeniedReminder: PropTypes.func,
-    project: PropTypes.string,
   }
 
   static contextTypes = {

@@ -39,3 +39,9 @@ export const statusIcons = {
   'needs work': 'exclamation',
   completed: 'check',
 }
+
+export const statusTitles = {
+  'needs review': 'Pending review from teacher',
+  'needs work': 'More work requested from teacher',
+  completed: 'Completion approved by teacher',
+}

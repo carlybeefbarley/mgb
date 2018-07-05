@@ -462,7 +462,7 @@ class ProjectOverview extends Component {
                       )}
                     </div>
                   </div>
-                  <div>
+                  <div style={{width: '100%'}}>
                     <Header as="h2" color="grey" floated="left">
                       Assignment Details
                     </Header>

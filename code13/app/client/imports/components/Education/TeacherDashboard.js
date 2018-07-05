@@ -87,7 +87,7 @@ class TeacherDashboard extends React.Component {
             </Segment>
           </Grid.Column>
           <Grid.Column width={6}>
-            <Segment raised color="blue">
+            <Segment raised color="green">
               <Header as="h2" content="Your Classrooms" />
               <List relaxed content={this.renderClassesList()} />
               <ClassroomCreateNewModal {...this.props} />
@@ -95,7 +95,9 @@ class TeacherDashboard extends React.Component {
           </Grid.Column>
         </Grid.Row>
 
-        <Grid.Row>
+        {/* Come back to the submission feed in the future for teachers with multiple classrooms */}
+
+        {/* <Grid.Row>
           <Grid.Column width={3} />
           <Grid.Column width={10}>
             <Segment raised color="yellow">
@@ -103,7 +105,7 @@ class TeacherDashboard extends React.Component {
               <SubmissionFeedGET />
             </Segment>
           </Grid.Column>
-        </Grid.Row>
+        </Grid.Row> */}
 
         <Grid.Row>
           <Grid.Column width={3} />

@@ -1,20 +1,21 @@
 import React from 'react'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-import { Grid, Header, Segment, List, Table, Icon } from 'semantic-ui-react'
+import { Grid, Header, Segment, List, Table, Icon, Button } from 'semantic-ui-react'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
-import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Classrooms, Users, Azzets, Projects } from '/imports/schemas'
 import Spinner from '../../components/Nav/Spinner'
 import ReactQuill from 'react-quill'
 import AssignmentsList from '/client/imports/components/Education/AssignmentsList'
 import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
+import StudentListGET from '/client/imports/components/Education/StudentListGET'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
 import ClassroomAddStudentModal from '/client/imports/components/Education/ClassroomAddStudentModal'
 import ClassroomAddAssignmentModal from '/client/imports/components/Education/ClassroomAddAssignmentModal'
 import QLink from '/client/imports/routes/QLink'
+import { doesUserHaveRole, roleTeacher } from '/imports/schemas/roles'
 
 const cellStyle = {
   textAlign: 'center',
@@ -89,20 +90,20 @@ class TeacherClassroomView extends React.Component {
       case 'polished':
         return 'green'
       default:
-        return 'purple'
+        return 'grey'
     }
   }
 
   getWorkStateIconName = workState => {
     switch (workState) {
       case 'broken':
-        return 'remove circle'
+        return 'remove'
       case 'working':
-        return 'warning circle'
+        return 'warning'
       case 'polished':
-        return 'check circle'
+        return 'check'
       default:
-        return 'question circle'
+        return ''
     }
   }
 
@@ -124,15 +125,17 @@ class TeacherClassroomView extends React.Component {
         }
       })
       // console.log('Cell Project: ', cellProject)
-      let workState
-      if (cellProject) {
-        workState = cellProject.workState
-      } else {
-        workState = 'unknown'
-      }
+      const workState = cellProject ? cellProject.workState : 'unknown'
       return (
         <Table.Cell style={cellStyle} key={'cell_' + assignment._id + '_' + student._id}>
-          <Icon name={this.getWorkStateIconName(workState)} color={this.getWorkStateStyleColor(workState)} />
+          <QLink to={cellProject && `/u/${cellProject.ownerName}/projects/${cellProject.name}`}>
+            <Icon
+              size="large"
+              name={this.getWorkStateIconName(workState)}
+              color={this.getWorkStateStyleColor(workState)}
+              title={workState}
+            />
+          </QLink>
         </Table.Cell>
       )
     })
@@ -148,6 +151,7 @@ class TeacherClassroomView extends React.Component {
     }
 
     const { avatar } = currUser && currUser.profile
+    const isTeacher = doesUserHaveRole(this.props.currUser, roleTeacher)
 
     const titleStyle = {
       fontSize: '2em',
@@ -197,18 +201,19 @@ class TeacherClassroomView extends React.Component {
                 <List style={infoStyle}>
                   <List.Item>
                     <List.Content onClick={toggleChat}>
-                      <List.Icon name="chat" color="blue" />Class Chat
+                      <Button icon="chat" color="blue" content="Class Chat" />
                     </List.Content>
                   </List.Item>
                 </List>
               </Segment>
             </Grid.Column>
-            <Grid.Column width={11}>
-              <Segment raised color="blue">
+            <Grid.Column width={8}>
+              <Segment raised color="green">
                 <Header as="h3" content="Upcoming Assignments" />
                 <AssignmentsList
                   assignmentAssets={assignments}
                   showUpcoming
+                  isTeacher={isTeacher}
                   showPastDue={false}
                   showNoDueDate={false}
                 />
@@ -218,7 +223,7 @@ class TeacherClassroomView extends React.Component {
           </Grid.Row>
         </Grid>
         <Grid columns={1} padded>
-          <Grid.Column width={16}>
+          <Grid.Column width={13}>
             <ClassroomAddStudentModal {...this.props} />
           </Grid.Column>
         </Grid>
@@ -230,8 +235,18 @@ class TeacherClassroomView extends React.Component {
             </Segment>
             <Header as="h3" content="Past Assignments" />
             <Segment raised color="green">
-              <AssignmentsListGET showPastDue showNoDueDate />
+              <AssignmentsListGET isTeacher={isTeacher} showPastDue showNoDueDate />
             </Segment>
+          </Grid.Column>
+        </Grid>
+        <Grid columns={1} padded>
+          <Grid.Column width={16}>
+            <Grid.Row>
+              <Segment raised color="purple">
+                <Header as="h2" content="Students" />
+                <StudentListGET studentIds={classroom.studentIds} />
+              </Segment>
+            </Grid.Row>
           </Grid.Column>
         </Grid>
       </div>
@@ -254,6 +269,7 @@ class StudentClassroomView extends React.Component {
     }
 
     const { avatar } = currUser && currUser.profile
+    const isTeacher = doesUserHaveRole(this.props.currUser, roleTeacher)
 
     const titleStyle = {
       fontSize: '2em',
@@ -273,6 +289,7 @@ class StudentClassroomView extends React.Component {
     return (
       <div style={containerStyle}>
         <Header as="h1" content="Student Classroom Dashboard" style={headerStyle} />
+
         <Grid columns={16} padded stackable>
           <Grid.Row>
             <Grid.Column width={5}>
@@ -296,15 +313,15 @@ class StudentClassroomView extends React.Component {
                   </List.Item>
                   <List.Item>
                     <List.Content onClick={toggleChat}>
-                      <List.Icon name="chat" color="blue" />Class Chat
+                      <Button icon="chat" color="blue" content="Class Chat" />
                     </List.Content>
                   </List.Item>
                 </List>
               </Segment>
             </Grid.Column>
 
-            <Grid.Column width={11}>
-              <Segment raised color="blue">
+            <Grid.Column width={8}>
+              <Segment raised color="green">
                 <Header as="h2" content="About this Class" />
                 <Segment>
                   <ReactQuill
@@ -318,34 +335,44 @@ class StudentClassroomView extends React.Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column width={8}>
+            <Grid.Column width={13}>
               <Segment raised color="yellow">
                 <Header as="h2" content="Upcoming Assignments" />
-                <AssignmentsListGET showUpcoming showPastDue={false} showNoDueDate={false} />
+                <AssignmentsListGET
+                  showUpcoming
+                  isTeacher={isTeacher}
+                  showPastDue={false}
+                  showNoDueDate={false}
+                />
               </Segment>
             </Grid.Column>
 
-            <Grid.Column width={8}>
+            {/* <Grid.Column width={5}>
               <Segment raised color="yellow">
                 <Header as="h2" content="Past Assignments" />
-                <AssignmentsListGET showPastDue showNoDueDate={false} showUpcoming={false} />
+                <AssignmentsListGET
+                  showPastDue
+                  isTeacher={isTeacher}
+                  showNoDueDate={false}
+                  showUpcoming={false}
+                />
               </Segment>
-            </Grid.Column>
+            </Grid.Column> */}
           </Grid.Row>
-          <Grid.Column width={16}>
+          <Grid.Column width={13}>
             <Grid.Row>
               <Segment raised color="purple">
-                <Header as="h2" content="Classmates" />
-                <UserColleaguesList user={currUser} narrowItem projects={currUserProjects} />
+                <Header as="h2" content="Students" />
+                <StudentListGET studentIds={classroom.studentIds} />
               </Segment>
             </Grid.Row>
           </Grid.Column>
           {/* </Grid>
         <Grid columns={1} padded stackable> */}
-          <Grid.Column width={16}>
+          <Grid.Column width={13}>
             <Grid.Row>
-              <Segment raised color="teal">
-                <Header as="h2" content="Published Games from" />
+              <Segment raised color="orange">
+                <Header as="h2" content="Published Games from this Class" />
                 <UserProfileGamesList user={currUser} currUser={currUser} />
               </Segment>
             </Grid.Row>

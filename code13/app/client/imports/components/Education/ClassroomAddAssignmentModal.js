@@ -149,9 +149,13 @@ export default class ClassroomAddAssignmentModal extends React.Component {
         onClose={this.closeModal}
         open={isOpen}
         trigger={
-          <Button color="orange" floated="right" onClick={this.createNewAssignment}>
-            Create Assignment
-          </Button>
+          <Button
+            color="green"
+            icon="pencil"
+            content="Create New Assignment"
+            floated="right"
+            onClick={this.createNewAssignment}
+          />
         }
       >
         <Modal.Header>Create a New Assignment</Modal.Header>

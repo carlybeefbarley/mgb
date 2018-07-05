@@ -481,6 +481,11 @@ class ProjectOverview extends Component {
             <Grid.Column width={13}>
               <Segment raised color="green">
                 <Header as="h2" content="Assignment Instructions" />
+                <AssignmentCardGET
+                  canEdit={isTeacher}
+                  assignmentId={project.assignmentId}
+                  getAssignment={this.getAssignment}
+                />
               </Segment>
             </Grid.Column>
           </Grid.Row>

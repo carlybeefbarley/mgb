@@ -479,7 +479,7 @@ class ProjectOverview extends Component {
               )}
             </Grid.Column>
             <Grid.Column width={13}>
-              <Segment raised color="blue">
+              <Segment raised color="green">
                 <Header as="h2" content="Assignment Instructions" />
               </Segment>
             </Grid.Column>

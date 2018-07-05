@@ -150,7 +150,7 @@ export default class ClassroomAddAssignmentModal extends React.Component {
         open={isOpen}
         trigger={
           <Button
-            color="violet"
+            color="green"
             icon="pencil"
             content="Create New Assignment"
             floated="right"

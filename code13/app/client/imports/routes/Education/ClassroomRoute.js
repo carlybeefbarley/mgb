@@ -204,7 +204,7 @@ class TeacherClassroomView extends React.Component {
               </Segment>
             </Grid.Column>
             <Grid.Column width={11}>
-              <Segment raised color="violet">
+              <Segment raised color="green">
                 <Header as="h3" content="Upcoming Assignments" />
                 <AssignmentsList
                   assignmentAssets={assignments}

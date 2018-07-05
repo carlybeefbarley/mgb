@@ -76,13 +76,13 @@ class StudentDashboard extends React.Component {
                         </QLink>
                       )}
                       <br />
-                      {teacherName && <QLink to={`/user/${teacherName}`}>{`Teacher: ${teacherName}`}</QLink>}
+                      {teacherName && <QLink to={`/user/${teacherName}`}>{`${teacherName}`}</QLink>}
                     </p>
                   </Container>
                 </Segment>
               </Grid.Column>
               <Grid.Column width={10}>
-                <Segment raised color="blue" style={upcomingStyle}>
+                <Segment raised color="green" style={upcomingStyle}>
                   <Header as="h2" content="Upcoming Assignments" />
                   <AssignmentsListGET
                     {...this.props}
@@ -97,8 +97,8 @@ class StudentDashboard extends React.Component {
 
             <Grid.Row>
               <Grid.Column width={16}>
-                <Header as="h2" content="About me" />
                 <Segment raised color="yellow" style={aboutMeStyle}>
+                  <Header as="h2" content="About me" />
                   <TextArea
                     placeholder="Tell the class a little about yourself and your goals for making games"
                     style={inputStyle}
@@ -115,7 +115,7 @@ class StudentDashboard extends React.Component {
 
             <Grid.Row>
               <Grid.Column width={16}>
-                <Segment raised color="blue">
+                <Segment raised color="purple">
                   <UserProfileGamesList user={currUser} currUser={currUser} />
                 </Segment>
               </Grid.Column>

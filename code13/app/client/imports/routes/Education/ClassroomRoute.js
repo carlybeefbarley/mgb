@@ -125,15 +125,16 @@ class TeacherClassroomView extends React.Component {
         }
       })
       // console.log('Cell Project: ', cellProject)
-      let workState
-      if (cellProject) {
-        workState = cellProject.workState
-      } else {
-        workState = 'unknown'
-      }
+      const workState = cellProject ? cellProject.workState : 'unknown'
       return (
         <Table.Cell style={cellStyle} key={'cell_' + assignment._id + '_' + student._id}>
-          <Icon name={this.getWorkStateIconName(workState)} color={this.getWorkStateStyleColor(workState)} />
+          <QLink to={cellProject && `/u/${cellProject.ownerName}/projects/${cellProject.name}`}>
+            <Icon
+              name={this.getWorkStateIconName(workState)}
+              color={this.getWorkStateStyleColor(workState)}
+              title={workState}
+            />
+          </QLink>
         </Table.Cell>
       )
     })

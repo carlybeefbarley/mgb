@@ -293,24 +293,64 @@ class ProjectOverview extends Component {
     const sideBarColumnStyle = { minWidth: '250px', maxWidth: '250px' }
 
     return (
-      <div style={{ height: '100%', overflowX: 'hidden' }}>
-        <Grid columns="equal" container>
-          <Helmet
-            title={`Project: ${relativeProjectName}`}
-            meta={[{ name: `Project: ${relativeProjectName}`, content: 'Project' }]}
-          />
-          <Grid.Row columns="equal">
-            <Grid.Column textAlign="center" style={sideBarColumnStyle} />
-            <Grid.Column>
-              <Header style={{ margin: '5px' }} as="h1" textAlign="center" dividing>
-                {project.name}
-              </Header>
+      <div style={{ height: '100%', overflowX: 'hidden', overflowY: 'auto' }}>
+        >
+        <Helmet
+          title={`Project: ${relativeProjectName}`}
+          meta={[{ name: `Project: ${relativeProjectName}`, content: 'Project' }]}
+        />
+        <Grid columns={16} padded stackable>
+          <Grid.Row>
+            <Grid.Column width={16}>
+              <div>
+                <Header style={{ margin: '5px' }} as="h1" textAlign="center" dividing>
+                  {project.name}
+                </Header>
+                {project.assignmentId && (
+                  <div style={{ width: '100%', marginBottom: '1em' }}>
+                    <div style={{ float: 'left' }}>
+                      <WorkState isAssignment workState={project.workState} />
+                    </div>
+                    <div style={{ float: 'right' }}>
+                      {isTeacher ? (
+                        <Button.Group style={{ marginRight: '5px' }}>
+                          <Button
+                            secondary
+                            style={{ width: '10em' }}
+                            onClick={() => this.handleWorkStateChange('working')}
+                          >
+                            Needs Work
+                          </Button>
+                          <Button.Or />
+                          <Button
+                            primary
+                            style={{ width: '10em' }}
+                            onClick={() => this.handleWorkStateChange('polished')}
+                          >
+                            Complete
+                          </Button>
+                        </Button.Group>
+                      ) : (
+                        canEdit && (
+                          <Button
+                            primary
+                            labelPosition="left"
+                            icon="calendar check"
+                            disabled={project.workState === 'broken' || project.workState === 'polished'}
+                            content={'Submit Assignment'}
+                            onClick={() => this.handleWorkStateChange('broken')}
+                          />
+                        )
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
             </Grid.Column>
           </Grid.Row>
-
-          <Grid.Row columns="equal">
-            <Grid.Column textAlign="center" style={sideBarColumnStyle}>
-              <Segment>
+          <Grid.Row>
+            <Grid.Column width={3} style={sideBarColumnStyle}>
+              <Segment raised color="blue">
                 <p>
                   <ImageShowOrChange
                     header="Project Avatar"
@@ -422,118 +462,72 @@ class ProjectOverview extends Component {
                 </Segment>
               )}
             </Grid.Column>
-            <Grid.Column>
-              {project.assignmentId && (
-                <Grid>
-                  <div style={{ width: '100%', marginBottom: '1em' }}>
-                    <div style={{ float: 'left' }}>
-                      <WorkState isAssignment workState={project.workState} />
-                    </div>
-                    <div style={{ float: 'right' }}>
-                      {isTeacher ? (
-                        <Button.Group style={{ marginRight: '5px' }}>
-                          <Button
-                            secondary
-                            style={{ width: '10em' }}
-                            onClick={() => this.handleWorkStateChange('working')}
-                          >
-                            Needs Work
-                          </Button>
-                          <Button.Or />
-                          <Button
-                            primary
-                            style={{ width: '10em' }}
-                            onClick={() => this.handleWorkStateChange('polished')}
-                          >
-                            Complete
-                          </Button>
-                        </Button.Group>
-                      ) : (
-                        canEdit && (
-                          <Button
-                            primary
-                            labelPosition="left"
-                            icon="calendar check"
-                            disabled={project.workState === 'broken' || project.workState === 'polished'}
-                            content={'Submit Assignment'}
-                            onClick={() => this.handleWorkStateChange('broken')}
-                          />
-                        )
-                      )}
-                    </div>
-                  </div>
-                  <div>
-                    <Header as="h2" color="grey" floated="left">
-                      Assignment Details
-                    </Header>
-                    <AssignmentCardGET
-                      canEdit={isTeacher}
-                      assignmentId={project.assignmentId}
-                      getAssignment={this.getAssignment}
-                    />
-                  </div>
-                </Grid>
-              )}
-
-              <Grid columns="equal">
-                <Grid.Column stretched>
-                  <div>
-                    <Header as="h2" color="grey" style={{ flex: '0 0 auto' }}>
-                      Games
-                    </Header>
-                    <GamesAvailableGET
-                      canEdit={canEdit}
-                      currUser={currUser}
-                      scopeToUserId={project.ownerId}
-                      scopeToProjectName={project.name}
-                    />
-                  </div>
-                </Grid.Column>
-                <Grid.Column stretched>
-                  <Header
-                    as="h2"
-                    color="grey"
-                    floated="left"
-                    // Stretched columns force the width to be 100%
-                    // The text only should be clickable, limit the width to the length of the text
-                    style={{ flex: '0 0 auto', width: '3.75em', cursor: 'pointer' }}
-                    id="mgbjr-project-activity"
-                    onClick={() =>
-                      utilPushTo(null, `/u/${project.ownerName}/projects/${project.name}/activity`)}
-                  >
-                    Activity
+            <Grid.Column width={13}>
+              <Segment raised color="blue">
+                <Header as="h2" content="Assignment Instructions" />
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={8}>
+              <Segment raised color="yellow">
+                <div>
+                  <Header as="h2" style={{ flex: '0 0 auto' }}>
+                    Games
+                  </Header>
+                  <GamesAvailableGET
+                    canEdit={canEdit}
+                    currUser={currUser}
+                    scopeToUserId={project.ownerId}
+                    scopeToProjectName={project.name}
+                  />
+                </div>
+              </Segment>
+            </Grid.Column>
+            <Grid.Column width={8}>
+              <Segment raised color="yellow">
+                <div>
+                  <Header as="h2" style={{ flex: '0 0 auto' }}>
+                    Recent Activity
                   </Header>
                   <ProjectHistoryRoute project={project} activities={activities} />
-                </Grid.Column>
-              </Grid>
-              <Grid columns="1">
-                <Grid.Column>
-                  <Header
-                    as="h2"
-                    color="grey"
-                    floated="left"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
-                  >
-                    Assets
-                  </Header>
-                  {canEdit && (
-                    <AssetCreateNewModal
-                      currUser={currUser}
-                      currUserProjects={currUserProjects}
-                      buttonProps={{ floated: 'right' }}
-                      viewProps={{
-                        showProjectSelector: false,
-                        suggestedParams: { projectName: project.name },
-                      }}
-                    />
-                  )}
-                  <Divider fitted hidden clearing />
-                  <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
-                </Grid.Column>
-                <Grid.Column>
-                  <Header as="h2" color="grey" floated="left">
-                    Members{' '}
+                </div>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={16}>
+              <Segment raised color="purple">
+                <Header
+                  as="h2"
+                  floated="left"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
+                >
+                  Assets
+                </Header>
+                {canEdit && (
+                  <AssetCreateNewModal
+                    currUser={currUser}
+                    currUserProjects={currUserProjects}
+                    buttonProps={{ floated: 'right' }}
+                    viewProps={{
+                      showProjectSelector: false,
+                      suggestedParams: { projectName: project.name },
+                    }}
+                  />
+                )}
+                <Divider fitted hidden clearing />
+                <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={16}>
+              <Segment raised color="teal">
+                <div>
+                  <Header as="h2" floated="left">
+                    Collaborators{' '}
                     <small>
                       ({project.memberIds.length} of{' '}
                       {isUserSuperAdmin(currUser) ? (
@@ -543,43 +537,180 @@ class ProjectOverview extends Component {
                       )})
                     </small>
                   </Header>
-                  {canEdit && (
-                    <Button
-                      color={showAddUserSearch ? 'black' : 'green'}
-                      icon={showAddUserSearch ? 'checkmark' : 'add user'}
-                      content={showAddUserSearch ? "I'm done" : 'Add Members'}
-                      floated="right"
-                      disabled={isDeletePending}
-                      onClick={() => {
-                        this.setState({ showAddUserSearch: !showAddUserSearch })
-                      }}
-                    />
-                  )}
-                  <Divider fitted hidden clearing />
-                  <p>Project Members may create, edit or delete Assets in this Project.</p>
-                  {showAddUserSearch && (
-                    <UserListRoute
-                      location={{ ...location, query: { ...location.query, limit: 13 } }}
-                      handleClickUser={this.handleClickUser}
-                      excludeUserIdsArray={[project.ownerId, ...project.memberIds]}
-                      renderVertical
-                    />
-                  )}
-
-                  <ProjectMembersGET
-                    project={project}
-                    enableRemoveButton={canEdit}
-                    enableLeaveButton={currUser ? currUser._id : null}
-                    handleRemove={this.handleRemoveMemberFromProject}
-                    handleLeave={this.handleMemberLeaveFromProject}
-                  />
-                </Grid.Column>
-              </Grid>
+                </div>
+              </Segment>
             </Grid.Column>
           </Grid.Row>
-          <Divider hidden section />
         </Grid>
       </div>
+
+      // <div style={{ height: '100%', overflowX: 'hidden' }}>
+      //   <Grid columns={16} padded stackable>
+
+      //     <Grid.Row>
+      //       <Grid.Column width={4} textAlign="center" style={sideBarColumnStyle}>
+      //
+
+      //       </Grid.Column>
+      //       <Grid.Column>
+      //         {/* {project.assignmentId && (
+      //           <Grid>
+      //             <div style={{ width: '100%', marginBottom: '1em' }}>
+      //               <div style={{ float: 'left' }}>
+      //                 <WorkState isAssignment workState={project.workState} />
+      //               </div>
+      //               <div style={{ float: 'right' }}>
+      //                 {isTeacher ? (
+      //                   <Button.Group style={{ marginRight: '5px' }}>
+      //                     <Button
+      //                       secondary
+      //                       style={{ width: '10em' }}
+      //                       onClick={() => this.handleWorkStateChange('working')}
+      //                     >
+      //                       Needs Work
+      //                     </Button>
+      //                     <Button.Or />
+      //                     <Button
+      //                       primary
+      //                       style={{ width: '10em' }}
+      //                       onClick={() => this.handleWorkStateChange('polished')}
+      //                     >
+      //                       Complete
+      //                     </Button>
+      //                   </Button.Group>
+      //                 ) : (
+      //                   canEdit && (
+      //                     <Button
+      //                       primary
+      //                       labelPosition="left"
+      //                       icon="calendar check"
+      //                       disabled={project.workState === 'broken' || project.workState === 'polished'}
+      //                       content={'Submit Assignment'}
+      //                       onClick={() => this.handleWorkStateChange('broken')}
+      //                     />
+      //                   )
+      //                 )}
+      //               </div>
+      //             </div>
+      //             <div>
+      //               <Header as="h2" color="grey" floated="left">
+      //                 Assignment Instructions
+      //               </Header>
+      //               <AssignmentCardGET
+      //                 canEdit={isTeacher}
+      //                 assignmentId={project.assignmentId}
+      //                 getAssignment={this.getAssignment}
+      //               />
+      //             </div>
+      //           </Grid>
+      //         )} */}
+
+      //         <Grid columns="equal">
+      //           <Grid.Column stretched>
+      //             <div>
+      //               <Header as="h2" color="grey" style={{ flex: '0 0 auto' }}>
+      //                 Games
+      //               </Header>
+      //               <GamesAvailableGET
+      //                 canEdit={canEdit}
+      //                 currUser={currUser}
+      //                 scopeToUserId={project.ownerId}
+      //                 scopeToProjectName={project.name}
+      //               />
+      //             </div>
+      //           </Grid.Column>
+      //           <Grid.Column stretched>
+      //             <Header
+      //               as="h2"
+      //               color="grey"
+      //               floated="left"
+      //               // Stretched columns force the width to be 100%
+      //               // The text only should be clickable, limit the width to the length of the text
+      //               style={{ flex: '0 0 auto', width: '3.75em', cursor: 'pointer' }}
+      //               id="mgbjr-project-activity"
+      //               onClick={() =>
+      //                 utilPushTo(null, `/u/${project.ownerName}/projects/${project.name}/activity`)}
+      //             >
+      //               Activity
+      //             </Header>
+      //             <ProjectHistoryRoute project={project} activities={activities} />
+      //           </Grid.Column>
+      //         </Grid>
+
+      //         <Grid columns="1">
+      //           <Grid.Column>
+      //             <Header
+      //               as="h2"
+      //               color="grey"
+      //               floated="left"
+      //               style={{ cursor: 'pointer' }}
+      //               onClick={() => utilPushTo(null, `/u/${project.name}/assets`)}
+      //             >
+      //               Assets
+      //             </Header>
+      //             {canEdit && (
+      //               <AssetCreateNewModal
+      //                 currUser={currUser}
+      //                 currUserProjects={currUserProjects}
+      //                 buttonProps={{ floated: 'right' }}
+      //                 viewProps={{
+      //                   showProjectSelector: false,
+      //                   suggestedParams: { projectName: project.name },
+      //                 }}
+      //               />
+      //             )}
+      //             <Divider fitted hidden clearing />
+      //             <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
+      //           </Grid.Column>
+      //           <Grid.Column>
+      //             <Header as="h2" color="grey" floated="left">
+      //               Members{' '}
+      //               <small>
+      //                 ({project.memberIds.length} of{' '}
+      //                 {isUserSuperAdmin(currUser) ? (
+      //                   SpecialGlobals.quotas.SUdefaultNumMembersAllowedInProject
+      //                 ) : (
+      //                   SpecialGlobals.quotas.defaultNumMembersAllowedInProject
+      //                 )})
+      //               </small>
+      //             </Header>
+      //             {canEdit && (
+      //               <Button
+      //                 color={showAddUserSearch ? 'black' : 'green'}
+      //                 icon={showAddUserSearch ? 'checkmark' : 'add user'}
+      //                 content={showAddUserSearch ? "I'm done" : 'Add Members'}
+      //                 floated="right"
+      //                 disabled={isDeletePending}
+      //                 onClick={() => {
+      //                   this.setState({ showAddUserSearch: !showAddUserSearch })
+      //                 }}
+      //               />
+      //             )}
+      //             <Divider fitted hidden clearing />
+      //             <p>Project Members may create, edit or delete Assets in this Project.</p>
+      //             {showAddUserSearch && (
+      //               <UserListRoute
+      //                 location={{ ...location, query: { ...location.query, limit: 13 } }}
+      //                 handleClickUser={this.handleClickUser}
+      //                 excludeUserIdsArray={[project.ownerId, ...project.memberIds]}
+      //                 renderVertical
+      //               />
+      //             )}
+
+      //             <ProjectMembersGET
+      //               project={project}
+      //               enableRemoveButton={canEdit}
+      //               enableLeaveButton={currUser ? currUser._id : null}
+      //               handleRemove={this.handleRemoveMemberFromProject}
+      //               handleLeave={this.handleMemberLeaveFromProject}
+      //             />
+      //           </Grid.Column>
+      //         </Grid>
+      //       </Grid.Column>
+      //     </Grid.Row>
+      //     <Divider hidden section />
+      //   </Grid>
+      // </div>
     )
   }
 }

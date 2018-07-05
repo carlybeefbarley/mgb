@@ -481,6 +481,11 @@ class ProjectOverview extends Component {
             <Grid.Column width={13}>
               <Segment raised color="green">
                 <Header as="h2" content="Assignment Instructions" />
+                <AssignmentCardGET
+                  canEdit={isTeacher}
+                  assignmentId={project.assignmentId}
+                  getAssignment={this.getAssignment}
+                />
               </Segment>
             </Grid.Column>
           </Grid.Row>
@@ -540,7 +545,7 @@ class ProjectOverview extends Component {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={16}>
-              <Segment raised color="teal">
+              <Segment raised color="orange">
                 <div>
                   <Header as="h2" floated="left">
                     Collaborators{' '}

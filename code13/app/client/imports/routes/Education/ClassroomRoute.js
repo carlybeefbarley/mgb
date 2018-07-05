@@ -215,45 +215,46 @@ class TeacherClassroomView extends React.Component {
             </Grid.Column>
             <Grid.Column width={8}>
               <Segment raised color="green">
-                <Header as="h3" content="Upcoming Assignments" />
-                <AssignmentsList
-                  assignmentAssets={assignments}
-                  showUpcoming
-                  isTeacher={isTeacher}
-                  showPastDue={false}
-                  showNoDueDate={false}
-                />
                 <ClassroomAddAssignmentModal classroom={classroom} />
+                <div>
+                  <Header as="h3" content="Upcoming Assignments" />
+                  <br />
+                  <AssignmentsList
+                    assignmentAssets={assignments}
+                    showUpcoming
+                    isTeacher={isTeacher}
+                    showPastDue={false}
+                    showNoDueDate={false}
+                  />
+                </div>
               </Segment>
             </Grid.Column>
           </Grid.Row>
-        </Grid>
-        <Grid columns={1} padded>
-          <Grid.Column width={13}>
-            <ClassroomAddStudentModal {...this.props} />
-          </Grid.Column>
-        </Grid>
-        <Grid columns={1} padded>
-          <Grid.Column width={16}>
-            <Header as="h3" content="Student Assignment Progress" />
-            <Segment raised color="yellow">
-              <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
-            </Segment>
-            <Header as="h3" content="Past Assignments" />
-            <Segment raised color="green">
-              <AssignmentsListGET isTeacher={isTeacher} showPastDue showNoDueDate />
-            </Segment>
-          </Grid.Column>
-        </Grid>
-        <Grid columns={1} padded>
-          <Grid.Column width={16}>
-            <Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={13}>
+              <Segment raised color="yellow">
+                <ClassroomAddStudentModal {...this.props} />
+                <div>
+                  <Header as="h3" content="Student Assignment Progress" />
+
+                  <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
+                </div>
+              </Segment>
+
               <Segment raised color="purple">
-                <Header as="h2" content="Students" />
+                <Header as="h3" content="Past Assignments" />
+                <AssignmentsListGET isTeacher={isTeacher} showPastDue showNoDueDate />
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={13}>
+              <Segment raised color="orange">
+                <Header as="h3" content="Students" />
                 <StudentListGET studentIds={classroom.studentIds} />
               </Segment>
-            </Grid.Row>
-          </Grid.Column>
+            </Grid.Column>
+          </Grid.Row>
         </Grid>
       </div>
     )
@@ -352,18 +353,6 @@ class StudentClassroomView extends React.Component {
                 />
               </Segment>
             </Grid.Column>
-
-            {/* <Grid.Column width={5}>
-              <Segment raised color="yellow">
-                <Header as="h2" content="Past Assignments" />
-                <AssignmentsListGET
-                  showPastDue
-                  isTeacher={isTeacher}
-                  showNoDueDate={false}
-                  showUpcoming={false}
-                />
-              </Segment>
-            </Grid.Column> */}
           </Grid.Row>
           <Grid.Column width={13}>
             <Grid.Row>
@@ -373,8 +362,7 @@ class StudentClassroomView extends React.Component {
               </Segment>
             </Grid.Row>
           </Grid.Column>
-          {/* </Grid>
-        <Grid columns={1} padded stackable> */}
+
           <Grid.Column width={13}>
             <Grid.Row>
               <Segment raised color="orange">

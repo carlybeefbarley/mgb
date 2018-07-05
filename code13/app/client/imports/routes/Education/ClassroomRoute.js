@@ -203,7 +203,7 @@ class TeacherClassroomView extends React.Component {
                 </List>
               </Segment>
             </Grid.Column>
-            <Grid.Column width={11}>
+            <Grid.Column width={8}>
               <Segment raised color="green">
                 <Header as="h3" content="Upcoming Assignments" />
                 <AssignmentsList
@@ -218,21 +218,34 @@ class TeacherClassroomView extends React.Component {
           </Grid.Row>
         </Grid>
         <Grid columns={1} padded>
-          <Grid.Column width={16}>
+          <Grid.Column width={13}>
             <ClassroomAddStudentModal {...this.props} />
           </Grid.Column>
-        </Grid>
-        <Grid columns={1} padded>
-          <Grid.Column width={16}>
-            <Header as="h3" content="Student Assignment Progress" />
-            <Segment raised color="yellow">
-              <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
-            </Segment>
-            <Header as="h3" content="Past Assignments" />
-            <Segment raised color="green">
-              <AssignmentsListGET showPastDue showNoDueDate />
-            </Segment>
-          </Grid.Column>
+          {/* </Grid>
+        <Grid columns={1} padded> */}
+          <Grid.Row>
+            <Grid.Column width={13}>
+              <Segment raised color="yellow">
+                <Header as="h3" content="Student Assignment Progress" />
+                <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={13}>
+              <Segment raised color="purple">
+                <Header as="h3" content="Students" />
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width={13}>
+              <Segment raised color="orange">
+                <Header as="h3" content="Past Assignments" />
+                <AssignmentsListGET showPastDue showNoDueDate />
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
         </Grid>
       </div>
     )

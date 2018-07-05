@@ -540,7 +540,7 @@ class ProjectOverview extends Component {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={16}>
-              <Segment raised color="teal">
+              <Segment raised color="orange">
                 <div>
                   <Header as="h2" floated="left">
                     Collaborators{' '}

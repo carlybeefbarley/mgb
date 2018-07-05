@@ -72,7 +72,9 @@ class TeacherClassroomView extends React.Component {
     const rows = _.map(students, student => {
       return (
         <Table.Row key={'row_' + student._id}>
-          <Table.Cell collapsing content={student.username} key={'cell_' + student._id} />
+          <Table.Cell collapsing key={'cell_' + student._id}>
+            <QLink to={`/u/${student.username}`}>{student.username}</QLink>
+          </Table.Cell>
           {this.renderStudentProjectStatusCells(student)}
         </Table.Row>
       )

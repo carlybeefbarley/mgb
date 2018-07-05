@@ -7,6 +7,7 @@ import SubmissionFeedGET from '/client/imports/components/Education/SubmissionFe
 import QLink from '/client/imports/routes/QLink'
 import { Classrooms } from '/imports/schemas'
 import ClassroomCreateNewModal from '/client/imports/components/Education/ClassroomCreateNewModal'
+import UserBioCard from '/client/imports/components/Users/UserBioCard'
 
 class TeacherDashboard extends React.Component {
   renderClassesList = () => {
@@ -107,13 +108,7 @@ class TeacherDashboard extends React.Component {
         <Grid.Row>
           <Grid.Column width={3} />
           <Grid.Column width={10}>
-            <Segment raised color="purple">
-              <Header as="h2" content="About You" />
-              <TextArea
-                placeholder="Let your students know a little bit about your background and what kind of games you have worked on"
-                style={inputStyle}
-              />
-            </Segment>
+            <UserBioCard {...this.props} />
           </Grid.Column>
         </Grid.Row>
       </Grid>

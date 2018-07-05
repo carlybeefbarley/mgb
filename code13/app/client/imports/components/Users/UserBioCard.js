@@ -14,7 +14,7 @@ class UserBioCard extends React.Component {
     return (
       <Segment raised color="purple">
         <Header as="h2" content="About You" />
-        <ReactQuill defaultValue={user.profile.bio || 'null'} />
+        <ReactQuill defaultValue={(user && user.profile.bio) || 'null'} />
       </Segment>
     )
   }

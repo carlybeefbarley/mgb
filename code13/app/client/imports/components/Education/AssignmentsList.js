@@ -6,6 +6,7 @@ import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 
 export default class AssignmentsList extends React.Component {
   static propTypes = {
+    assignmentAssets: PropTypes.array,
     showPastDue: PropTypes.bool,
     showUpcoming: PropTypes.bool,
     showNoDueDate: PropTypes.bool,

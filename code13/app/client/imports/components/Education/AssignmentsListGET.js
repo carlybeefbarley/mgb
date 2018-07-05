@@ -2,7 +2,7 @@ import React from 'react'
 import AssignmentsList from './AssignmentsList'
 import { createContainer } from 'meteor/react-meteor-data'
 import Spinner from '/client/imports/components/Nav/Spinner'
-import { Azzets, Classrooms, Projects } from '/imports/schemas'
+import { Azzets, Classrooms } from '/imports/schemas'
 import { classroomsMakeSelectorForStudent } from '/imports/schemas/classrooms'
 
 const AssignmentsListLoading = props =>

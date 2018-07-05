@@ -61,7 +61,11 @@ class TeacherClassroomView extends React.Component {
   // Renders out the assignment header cells based on the assignment's name
   renderTableAssignmentHeaderCells = assignments => {
     let headerCells = _.map(assignments, assignment => {
-      return <Table.HeaderCell colSpan="1" content={assignment.name} key={'column_' + assignment._id} />
+      return (
+        <Table.HeaderCell colSpan="1" key={'column_' + assignment._id}>
+          <QLink to={`/u/${assignment.dn_ownerName}/asset/${assignment._id}`}>{assignment.name}</QLink>
+        </Table.HeaderCell>
+      )
     })
     return headerCells
   }

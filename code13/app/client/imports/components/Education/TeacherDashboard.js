@@ -61,8 +61,14 @@ class TeacherDashboard extends React.Component {
       textAlign: 'center',
     }
 
+    const rowStyle = {
+      minHeight: '18em',
+      maxHeight: '18em',
+      marginBottom: '2em',
+    }
+
     return (
-      <Grid columns={1} padded style={containerStyle}>
+      <Grid columns={1} padded>
         <Grid.Row>
           <Grid.Column width={3} />
           <Grid.Column width={10}>
@@ -70,10 +76,10 @@ class TeacherDashboard extends React.Component {
           </Grid.Column>
         </Grid.Row>
 
-        <Grid.Row>
+        <Grid.Row style={rowStyle}>
           <Grid.Column width={3} />
           <Grid.Column width={4}>
-            <Segment raised color="blue">
+            <Segment raised color="blue" style={rowStyle}>
               <ImageShowOrChange
                 id="mgbjr-profile-avatar"
                 maxHeight="11em"
@@ -87,10 +93,12 @@ class TeacherDashboard extends React.Component {
             </Segment>
           </Grid.Column>
           <Grid.Column width={6}>
-            <Segment raised color="green">
-              <Header as="h2" content="Your Classrooms" />
-              <List relaxed content={this.renderClassesList()} />
+            <Segment raised color="green" style={rowStyle}>
               <ClassroomCreateNewModal {...this.props} />
+              <div>
+                <Header as="h2" content="Your Classrooms" />
+                <List relaxed content={this.renderClassesList()} />
+              </div>
             </Segment>
           </Grid.Column>
         </Grid.Row>

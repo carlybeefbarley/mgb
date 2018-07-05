@@ -11,8 +11,13 @@ const segmentStyle = {
 class UserBioCard extends React.Component {
   render() {
     const { user } = this.props
+
+    const rowStyle = {
+      minHeight: '13em',
+      marginBottom: '2em',
+    }
     return (
-      <Segment raised color="purple">
+      <Segment raised color="purple" style={rowStyle}>
         <Header as="h2" content="About You" />
         <ReactQuill defaultValue={(user && user.profile.bio) || 'null'} />
       </Segment>

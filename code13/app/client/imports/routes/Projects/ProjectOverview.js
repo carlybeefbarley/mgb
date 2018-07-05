@@ -317,7 +317,8 @@ class ProjectOverview extends Component {
         />
         <Grid columns={16} padded stackable>
           <Grid.Row>
-            <Grid.Column width={16}>
+            <Grid.Column width={3} />
+            <Grid.Column width={10}>
               <div>
                 <Header style={{ margin: '5px' }} as="h1" textAlign="center" dividing>
                   {project.name}
@@ -363,8 +364,10 @@ class ProjectOverview extends Component {
                 )}
               </div>
             </Grid.Column>
+            <Grid.Column width={3} />
           </Grid.Row>
           <Grid.Row>
+            <Grid.Column width={3} />
             <Grid.Column width={3} style={sideBarColumnStyle}>
               <Segment raised color="blue">
                 <p>
@@ -478,7 +481,7 @@ class ProjectOverview extends Component {
                 </Segment>
               )}
             </Grid.Column>
-            <Grid.Column width={13}>
+            <Grid.Column width={7}>
               <Segment raised color="green">
                 <Header as="h2" content="Assignment Instructions" />
                 <AssignmentCardGET
@@ -488,9 +491,11 @@ class ProjectOverview extends Component {
                 />
               </Segment>
             </Grid.Column>
+            <Grid.Column width={3} />
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column width={8}>
+            <Grid.Column width={3} />
+            <Grid.Column width={5}>
               <Segment raised color="yellow">
                 <div>
                   <Header as="h2" style={{ flex: '0 0 auto' }}>
@@ -505,7 +510,7 @@ class ProjectOverview extends Component {
                 </div>
               </Segment>
             </Grid.Column>
-            <Grid.Column width={8}>
+            <Grid.Column width={5}>
               <Segment raised color="yellow">
                 <div>
                   <Header as="h2" style={{ flex: '0 0 auto' }}>
@@ -517,7 +522,8 @@ class ProjectOverview extends Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column width={16}>
+            <Grid.Column width={3} />
+            <Grid.Column width={10}>
               <Segment raised color="purple">
                 <Header
                   as="h2"
@@ -542,9 +548,11 @@ class ProjectOverview extends Component {
                 <AssetsAvailableGET scopeToUserId={project.ownerId} scopeToProjectName={project.name} />
               </Segment>
             </Grid.Column>
+            <Grid.Column width={3} />
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column width={16}>
+            <Grid.Column width={3} />
+            <Grid.Column width={10}>
               <Segment raised color="orange">
                 <div>
                   <Header as="h2" floated="left">
@@ -561,7 +569,9 @@ class ProjectOverview extends Component {
                 </div>
               </Segment>
             </Grid.Column>
+            <Grid.Column width={3} />
           </Grid.Row>
+          {/* <Grid.Column width={3} /> */}
         </Grid>
       </div>
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-import { Grid, Header, Segment, List, Table, Icon, Button } from 'semantic-ui-react'
+import { Grid, Header, Segment, List, Table, Icon } from 'semantic-ui-react'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
@@ -8,6 +8,7 @@ import { createContainer } from 'meteor/react-meteor-data'
 import { Classrooms, Users, Azzets, Projects } from '/imports/schemas'
 import Spinner from '../../components/Nav/Spinner'
 import ReactQuill from 'react-quill'
+import AssignmentsList from '/client/imports/components/Education/AssignmentsList'
 import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
@@ -24,7 +25,7 @@ const cellStyle = {
  *
  * Student projects are subscribed in HOC and and filtered to only show projects that have an assignment ID.
  */
-class TeacherView extends React.Component {
+class TeacherClassroomView extends React.Component {
   classroomHasStudents = () => {
     const { students, assignments } = this.props
     return students && students.length > 0 && assignments && assignments.length > 0
@@ -37,10 +38,11 @@ class TeacherView extends React.Component {
     if (!this.classroomHasStudents()) {
       return (
         <Segment>
-          <Header> This classroom has no students and or assignments. </Header>
+          <Header>This classroom has no students and or assignments.</Header>
         </Segment>
       )
     }
+
     return (
       <Table celled striped>
         <Table.Header>
@@ -139,7 +141,7 @@ class TeacherView extends React.Component {
   }
 
   render() {
-    const { currUser, assignments, currUserProjects, classroom } = this.props
+    const { currUser, assignments, students, classroom, toggleChat } = this.props
 
     const containerStyle = {
       overflowY: 'auto',
@@ -173,6 +175,9 @@ class TeacherView extends React.Component {
         <Grid columns={1} padded>
           <Grid.Column width={16}>
             <Header as="h1" content="Teacher Classroom Dashboard" style={headerStyle} />
+            <p>
+              <small>{`${assignments.length} assignments, ${students.length} students.`}</small>
+            </p>
           </Grid.Column>
         </Grid>
         <Grid columns={2} padded stretched>
@@ -191,7 +196,7 @@ class TeacherView extends React.Component {
                 />
                 <List style={infoStyle}>
                   <List.Item>
-                    <List.Content onClick={this.props.toggleChat}>
+                    <List.Content onClick={toggleChat}>
                       <List.Icon name="chat" color="blue" />Class Chat
                     </List.Content>
                   </List.Item>
@@ -201,7 +206,12 @@ class TeacherView extends React.Component {
             <Grid.Column width={11}>
               <Segment raised color="blue">
                 <Header as="h3" content="Upcoming Assignments" />
-                <AssignmentsListGET showUpcoming showPastDue={false} showNoDueDate={false} />
+                <AssignmentsList
+                  assignmentAssets={assignments}
+                  showUpcoming
+                  showPastDue={false}
+                  showNoDueDate={false}
+                />
                 <ClassroomAddAssignmentModal classroom={classroom} />
               </Segment>
             </Grid.Column>
@@ -229,9 +239,9 @@ class TeacherView extends React.Component {
   }
 }
 
-class StudentView extends React.Component {
+class StudentClassroomView extends React.Component {
   render() {
-    const { currUser, classroom, teacher, assignment, isTeacher, currUserProjects } = this.props
+    const { currUser, classroom, teacher, assignments, currUserProjects, toggleChat } = this.props
 
     if (!classroom) {
       return <Spinner loadingMsg="Loading Classroom..." />
@@ -285,7 +295,7 @@ class StudentView extends React.Component {
                     </List.Content>
                   </List.Item>
                   <List.Item>
-                    <List.Content onClick={this.props.toggleChat}>
+                    <List.Content onClick={toggleChat}>
                       <List.Icon name="chat" color="blue" />Class Chat
                     </List.Content>
                   </List.Item>
@@ -356,7 +366,7 @@ class Classroom extends React.Component {
   }
 
   render() {
-    const { currUser, classroom, teacher, assignment, isTeacher, loading, params } = this.props
+    const { currUser, classroom, isTeacher, loading, params } = this.props
     const { chatIsOpen } = this.state
 
     if (loading) return <Spinner loadingMsg="Loading Classroom..." />
@@ -369,30 +379,19 @@ class Classroom extends React.Component {
       overflowX: 'hidden',
     }
 
-    const { avatar } = currUser && currUser.profile
-
-    const titleStyle = {
-      fontSize: '2em',
-      textAlign: 'center',
-    }
-
-    const infoStyle = {
-      fontSize: '1.3em',
-      textAlign: 'center',
-    }
-
     return (
       <div style={containerStyle}>
         <Grid columns={16} stretched>
           <Grid.Column width={3}>
             {chatIsOpen && <ChatPanel currUser={currUser} channelName={channelName} />}
           </Grid.Column>
-          <Grid.Column width={10}>
-            {(isTeacher && <TeacherView {...this.props} toggleChat={this.toggleChat} />) || (
-              <StudentView {...this.props} toggleChat={this.toggleChat} />
+          <Grid.Column width={13}>
+            {isTeacher ? (
+              <TeacherClassroomView {...this.props} toggleChat={this.toggleChat} />
+            ) : (
+              <StudentClassroomView {...this.props} toggleChat={this.toggleChat} />
             )}
           </Grid.Column>
-          <Grid.Column width={3} />
         </Grid>
       </div>
     )
@@ -433,9 +432,7 @@ export default createContainer(props => {
 
     // Subscribe to assignment assets of classroom after subscribed to classroom
     if (classroom && classroom.assignmentAssetIds && classroom.assignmentAssetIds.length > 0) {
-      handleForAssignments = Meteor.subscribe('assets.public.partial.bySelector', {
-        _id: { $in: classroom.assignmentAssetIds },
-      })
+      handleForAssignments = Meteor.subscribe('assets.byAssignmentsList', classroom.assignmentAssetIds)
       assignmentsCursor = Azzets.find({ _id: { $in: classroom.assignmentAssetIds } })
       assignments = assignmentsCursor.fetch()
     }

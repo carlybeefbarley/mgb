@@ -122,10 +122,10 @@ Meteor.methods({
     checkIsLoggedInAndNotSuspended()
     check(classroomId, String)
     check(studentId, String)
-    const userObject = Users.findOne(studentId)
-    if (isTeacher(userObject)) {
-      throw new Meteor.Error(405, 'Teachers cannot be added as students to classrooms.')
-    }
+    // const userObject = Users.findOne(studentId)
+    // if (isTeacher(userObject)) {
+    //   throw new Meteor.Error(405, 'Teachers cannot be added as students to classrooms.')
+    // }
     attemptUpdate(classroomId, { $addToSet: { studentIds: studentId } })
   },
   'Classroom.addStudentByList'(classroomId, List) {

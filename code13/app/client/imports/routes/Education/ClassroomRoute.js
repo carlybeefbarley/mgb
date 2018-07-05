@@ -3,13 +3,13 @@ import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import { Grid, Header, Segment, List, Table, Icon, Button } from 'semantic-ui-react'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
-import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Classrooms, Users, Azzets, Projects } from '/imports/schemas'
 import Spinner from '../../components/Nav/Spinner'
 import ReactQuill from 'react-quill'
 import AssignmentsList from '/client/imports/components/Education/AssignmentsList'
 import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
+import StudentListGET from '/client/imports/components/Education/StudentListGET'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
 import ClassroomAddStudentModal from '/client/imports/components/Education/ClassroomAddStudentModal'
@@ -237,6 +237,16 @@ class TeacherClassroomView extends React.Component {
             </Segment>
           </Grid.Column>
         </Grid>
+        <Grid columns={1} padded>
+          <Grid.Column width={16}>
+            <Grid.Row>
+              <Segment raised color="purple">
+                <Header as="h2" content="Students" />
+                <StudentListGET studentIds={classroom.studentIds} />
+              </Segment>
+            </Grid.Row>
+          </Grid.Column>
+        </Grid>
       </div>
     )
   }
@@ -350,8 +360,8 @@ class StudentClassroomView extends React.Component {
           <Grid.Column width={13}>
             <Grid.Row>
               <Segment raised color="purple">
-                <Header as="h2" content="Classmates" />
-                <UserColleaguesList user={currUser} narrowItem projects={currUserProjects} />
+                <Header as="h2" content="Students" />
+                <StudentListGET studentIds={classroom.studentIds} />
               </Segment>
             </Grid.Row>
           </Grid.Column>

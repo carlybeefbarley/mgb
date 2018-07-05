@@ -262,7 +262,6 @@ const schema = {
 
   createdAt: Date,
   updatedAt: Date,
-  completedAt: optional(Date),
 
   ownerId: String, // owner user id
   ownerName: String, // owner user name (DENORMALIZED)

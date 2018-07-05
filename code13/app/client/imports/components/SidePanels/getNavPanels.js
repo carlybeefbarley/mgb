@@ -212,13 +212,13 @@ const getNavPanels = (currUser, showAll) => {
     ],
     // Right side
     right: _.compact([
-      showUserOptions && {
-        name: 'classrooms',
-        explainClickAction: 'Select the classroom you would like to set as active.',
-        icon: { name: 'student' },
-        content: 'Classroom',
-        to: `/u/${currUser && currUser._id}/classroom/getClassrooms`,
-      },
+      // showUserOptions && {
+      //   name: 'classrooms',
+      //   explainClickAction: 'Select the classroom you would like to set as active.',
+      //   icon: { name: 'student' },
+      //   content: 'Classroom',
+      //   to: `/u/${currUser && currUser._id}/classroom/getClassrooms`,
+      // },
       showUserOptions && {
         name: 'projects',
         explainClickAction: 'Clicking here jumps to the list of your Projects',

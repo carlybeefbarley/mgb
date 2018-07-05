@@ -169,13 +169,10 @@ class TeacherView extends React.Component {
 
     return (
       <div style={containerStyle}>
-        {/* FLoating doesn't seem to work unless I include columns */}
+        {/* Floating doesn't seem to work unless I include columns - Hudson */}
         <Grid columns={1} padded>
           <Grid.Column width={16}>
-            <div>
-              <ClassroomAddAssignmentModal classroom={classroom} />
-              <Header as="h1" content="Classroom Dashboard" style={headerStyle} />
-            </div>
+            <Header as="h1" content="Teacher Classroom Dashboard" style={headerStyle} />
           </Grid.Column>
         </Grid>
         <Grid columns={2} padded stretched>
@@ -205,6 +202,7 @@ class TeacherView extends React.Component {
               <Segment raised color="blue">
                 <Header as="h3" content="Upcoming Assignments" />
                 <AssignmentsListGET showUpcoming showPastDue={false} showNoDueDate={false} />
+                <ClassroomAddAssignmentModal classroom={classroom} />
               </Segment>
             </Grid.Column>
           </Grid.Row>

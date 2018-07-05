@@ -94,7 +94,9 @@ class TeacherDashboard extends React.Component {
           </Grid.Column>
         </Grid.Row>
 
-        <Grid.Row>
+        {/* Come back to the submission feed in the future for teachers with multiple classrooms */}
+
+        {/* <Grid.Row>
           <Grid.Column width={3} />
           <Grid.Column width={10}>
             <Segment raised color="yellow">
@@ -102,12 +104,12 @@ class TeacherDashboard extends React.Component {
               <SubmissionFeedGET />
             </Segment>
           </Grid.Column>
-        </Grid.Row>
+        </Grid.Row> */}
 
         <Grid.Row>
           <Grid.Column width={3} />
           <Grid.Column width={10}>
-            <Segment raised color="purple">
+            <Segment raised color="yellow">
               <Header as="h2" content="About You" />
               <TextArea
                 placeholder="Let your students know a little bit about your background and what kind of games you have worked on"

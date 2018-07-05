@@ -28,7 +28,6 @@ import AssignmentCardGET from '/client/imports/components/Assets/AssignmentCardG
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import AssignmentProjectListGET from '/client/imports/routes/Projects/AssignmentProjectListGET.js'
 import WorkState from '/client/imports/components/Controls/WorkState'
-import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 
 class ProjectOverview extends Component {
   static propTypes = {

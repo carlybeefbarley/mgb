@@ -1,19 +1,23 @@
 import _ from 'lodash'
-import { Grid, Header, Segment, List } from 'semantic-ui-react'
+import { List } from 'semantic-ui-react'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import { Projects } from '/imports/schemas'
-import { utilPushTo } from '/client/imports/routes/QLink'
+import QLink from '/client/imports/routes/QLink'
+import WorkState from '/client/imports/components/Controls/WorkState'
 
 // ...GET - because this is a component that GETs it's own data via getMeteorData() callback
 
+// Contains list of projects with assignmentIds for the student
+// Ordered by due dates and workStates
 const AssignmentProjectListGET = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
-    project: PropTypes.object.isRequired, // A assignment record from the DB. See assignments.js
+    userId: PropTypes.string.isRequired,
+    assignmentAssetIds: PropTypes.array.isRequired, // Array of assignmentIds for the classroom
   },
 
   contextTypes: {
@@ -21,77 +25,46 @@ const AssignmentProjectListGET = React.createClass({
   },
 
   getMeteorData() {
-    const project = this.props.project
-    const handleForProject = Meteor.subscribe('projects.byAssignmentId')
+    const { userId, assignmentAssetIds } = this.props
+    const handleForProject = Meteor.subscribe('projects.byUserId')
+
     return {
-      projects: Projects.find({ assignmentId: project.assignmentId }).fetch(),
+      projects: Projects.find({ assignmentId: { $in: assignmentAssetIds }, ownerId: userId }).fetch(),
       loading: !handleForProject.ready(),
     }
   },
 
-  getProjectLists() {
-    const lists = { completed: [], incomplete: [] }
-    _.map(this.data.projects, project => {
-      if (project.workState === 'polished') lists.completed.push(project)
-      else lists.incomplete.push(project)
-    })
-    return lists
-  },
-
-  renderList(list) {
+  render() {
     return (
-      <Segment
-        style={{
-          clear: 'left',
-          overflowY: 'auto',
-          height: '20em',
-        }}
-      >
-        <List relaxed divided style={{ paddingBottom: '1em !important' }}>
-          {_.map(list, (proj, i) => {
+      <List>
+        {!this.data.projects ? (
+          <Spinner />
+        ) : this.data.projects.length === 0 ? (
+          <List.Item>
+            <List.Content>
+              <List.Header>You do not currently have any assignments.</List.Header>
+            </List.Content>
+          </List.Item>
+        ) : (
+          _.map(this.data.projects, project => {
             return (
-              <List.Item
-                key={i}
-                as="a"
-                onClick={() =>
-                  utilPushTo(this.context.urlLocation.query, `/u/${proj.ownerName}/projects/${proj.name}`)}
-              >
-                {proj.ownerName}
+              <List.Item key={project.name}>
+                <List.Icon>
+                  <WorkState isAssignment iconOnly size="small" workState={project.workState} />
+                </List.Icon>
+                <List.Content style={{ width: '100%' }}>
+                  <QLink to={`/u/${project.dn_ownerName}/projects/${project.name}`}>
+                    <List.Header>{project.name}</List.Header>
+                  </QLink>
+                  <List.Description>
+                    <small>{project.text}</small>
+                  </List.Description>
+                </List.Content>
               </List.Item>
             )
-          })}
-        </List>
-      </Segment>
-    )
-  },
-
-  render() {
-    const { project } = this.props
-    if (this.data.loading || !project) return <Spinner />
-
-    const lists = this.getProjectLists()
-    const containerSty = {
-      flex: 1,
-      margin: '0.5em',
-    }
-
-    return (
-      <div style={{ clear: 'left', display: 'flex', flexFlow: 'row' }}>
-        <Segment style={containerSty} padded raised>
-          <Header as="h3" floated="left">
-            Completed
-          </Header>
-
-          {this.renderList(lists.completed)}
-        </Segment>
-        <Segment style={containerSty} padded raised>
-          <Header as="h3" floated="left">
-            Incomplete
-          </Header>
-
-          {this.renderList(lists.incomplete)}
-        </Segment>
-      </div>
+          })
+        )}
+      </List>
     )
   },
 })

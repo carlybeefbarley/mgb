@@ -14,11 +14,12 @@ const AssignmentCard = props => {
   const { assignmentAsset, canEdit } = props
 
   return (
-    <Card raised fluid>
+    <Card fluid>
       <Card.Content>
-        <Card.Header>
+        {/* This is redundant information, the name of the assignment is the header of assignment overview */}
+        {/* <Card.Header>
           <Icon name="file" /> {assignmentAsset.name}
-        </Card.Header>
+        </Card.Header> */}
         <Card.Meta>{dueDate && `Due ${renderDueDate(dueDate)}`}</Card.Meta>
         <Card.Description>
           <ReactQuill

@@ -28,6 +28,7 @@ import AssignmentCardGET from '/client/imports/components/Assets/AssignmentCardG
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import AssignmentProjectListGET from '/client/imports/routes/Projects/AssignmentProjectListGET.js'
 import WorkState from '/client/imports/components/Controls/WorkState'
+import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 
 class ProjectOverview extends Component {
   static propTypes = {
@@ -369,7 +370,7 @@ class ProjectOverview extends Component {
           <Grid.Row>
             <Grid.Column width={3} />
             <Grid.Column width={3} style={sideBarColumnStyle}>
-              <Segment raised color="blue">
+              <Segment raised color="blue" textAlign="center">
                 <p>
                   <ImageShowOrChange
                     header="Project Avatar"
@@ -433,6 +434,7 @@ class ProjectOverview extends Component {
                     </Popup>
                   </Form.Field>
                 </Form>
+                <Button icon="chat" color="blue" content="Assignment Chat" />
               </Segment>
               {this.canEdit(project, currUser, loading) && (
                 <Segment color="red">

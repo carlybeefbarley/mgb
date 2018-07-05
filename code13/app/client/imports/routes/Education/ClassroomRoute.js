@@ -90,20 +90,20 @@ class TeacherClassroomView extends React.Component {
       case 'polished':
         return 'green'
       default:
-        return 'purple'
+        return 'grey'
     }
   }
 
   getWorkStateIconName = workState => {
     switch (workState) {
       case 'broken':
-        return 'remove circle'
+        return 'remove'
       case 'working':
-        return 'warning circle'
+        return 'warning'
       case 'polished':
-        return 'check circle'
+        return 'check'
       default:
-        return 'question circle'
+        return ''
     }
   }
 
@@ -130,6 +130,7 @@ class TeacherClassroomView extends React.Component {
         <Table.Cell style={cellStyle} key={'cell_' + assignment._id + '_' + student._id}>
           <QLink to={cellProject && `/u/${cellProject.ownerName}/projects/${cellProject.name}`}>
             <Icon
+              size="large"
               name={this.getWorkStateIconName(workState)}
               color={this.getWorkStateStyleColor(workState)}
               title={workState}

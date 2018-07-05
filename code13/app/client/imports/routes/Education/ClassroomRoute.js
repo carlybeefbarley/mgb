@@ -1,6 +1,6 @@
 import React from 'react'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-import { Grid, Header, Segment, List, Table, Icon } from 'semantic-ui-react'
+import { Grid, Header, Segment, List, Table, Icon, Button } from 'semantic-ui-react'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
@@ -197,14 +197,14 @@ class TeacherClassroomView extends React.Component {
                 <List style={infoStyle}>
                   <List.Item>
                     <List.Content onClick={toggleChat}>
-                      <List.Icon name="chat" color="blue" />Class Chat
+                      <Button icon="chat" color="blue" content="Class Chat" />
                     </List.Content>
                   </List.Item>
                 </List>
               </Segment>
             </Grid.Column>
             <Grid.Column width={11}>
-              <Segment raised color="blue">
+              <Segment raised color="violet">
                 <Header as="h3" content="Upcoming Assignments" />
                 <AssignmentsList
                   assignmentAssets={assignments}
@@ -296,7 +296,7 @@ class StudentClassroomView extends React.Component {
                   </List.Item>
                   <List.Item>
                     <List.Content onClick={toggleChat}>
-                      <List.Icon name="chat" color="blue" />Class Chat
+                      <Button icon="chat" color="blue" content="Class Chat" />
                     </List.Content>
                   </List.Item>
                 </List>

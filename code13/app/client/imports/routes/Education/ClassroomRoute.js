@@ -15,6 +15,7 @@ import { makeChannelName } from '/imports/schemas/chats'
 import ClassroomAddStudentModal from '/client/imports/components/Education/ClassroomAddStudentModal'
 import ClassroomAddAssignmentModal from '/client/imports/components/Education/ClassroomAddAssignmentModal'
 import QLink from '/client/imports/routes/QLink'
+import { doesUserHaveRole, roleTeacher } from '/imports/schemas/roles'
 
 const cellStyle = {
   textAlign: 'center',
@@ -148,6 +149,7 @@ class TeacherClassroomView extends React.Component {
     }
 
     const { avatar } = currUser && currUser.profile
+    const isTeacher = doesUserHaveRole(this.props.currUser, roleTeacher)
 
     const titleStyle = {
       fontSize: '2em',
@@ -209,6 +211,7 @@ class TeacherClassroomView extends React.Component {
                 <AssignmentsList
                   assignmentAssets={assignments}
                   showUpcoming
+                  isTeacher={isTeacher}
                   showPastDue={false}
                   showNoDueDate={false}
                 />
@@ -230,7 +233,7 @@ class TeacherClassroomView extends React.Component {
             </Segment>
             <Header as="h3" content="Past Assignments" />
             <Segment raised color="green">
-              <AssignmentsListGET showPastDue showNoDueDate />
+              <AssignmentsListGET isTeacher={isTeacher} showPastDue showNoDueDate />
             </Segment>
           </Grid.Column>
         </Grid>
@@ -254,6 +257,7 @@ class StudentClassroomView extends React.Component {
     }
 
     const { avatar } = currUser && currUser.profile
+    const isTeacher = doesUserHaveRole(this.props.currUser, roleTeacher)
 
     const titleStyle = {
       fontSize: '2em',
@@ -321,14 +325,24 @@ class StudentClassroomView extends React.Component {
             <Grid.Column width={8}>
               <Segment raised color="yellow">
                 <Header as="h2" content="Upcoming Assignments" />
-                <AssignmentsListGET showUpcoming showPastDue={false} showNoDueDate={false} />
+                <AssignmentsListGET
+                  showUpcoming
+                  isTeacher={isTeacher}
+                  showPastDue={false}
+                  showNoDueDate={false}
+                />
               </Segment>
             </Grid.Column>
 
             <Grid.Column width={8}>
               <Segment raised color="yellow">
                 <Header as="h2" content="Past Assignments" />
-                <AssignmentsListGET showPastDue showNoDueDate={false} showUpcoming={false} />
+                <AssignmentsListGET
+                  showPastDue
+                  isTeacher={isTeacher}
+                  showNoDueDate={false}
+                  showUpcoming={false}
+                />
               </Segment>
             </Grid.Column>
           </Grid.Row>

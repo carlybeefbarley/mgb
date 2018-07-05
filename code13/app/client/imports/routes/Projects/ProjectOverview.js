@@ -478,20 +478,6 @@ class ProjectOverview extends Component {
                 </Segment>
               )}
             </Grid.Column>
-<<<<<<< HEAD
-            <Grid.Column width={13}>
-              <Segment raised color="blue">
-                <Header as="h2" content="Assignment Instructions" />
-              </Segment>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column width={8}>
-              <Segment raised color="yellow">
-                <div>
-                  <Header as="h2" style={{ flex: '0 0 auto' }}>
-                    Games
-=======
             <Grid.Column>
               {project.assignmentId && (
                 <Grid>
@@ -590,7 +576,6 @@ class ProjectOverview extends Component {
                       utilPushTo(null, `/u/${project.ownerName}/projects/${project.name}/activity`)}
                   >
                     Activity
->>>>>>> aa11f4a35c52a0e4c55ee94ee93b2c7ac770a696
                   </Header>
                   <GamesAvailableGET
                     canEdit={canEdit}
@@ -598,8 +583,8 @@ class ProjectOverview extends Component {
                     scopeToUserId={project.ownerId}
                     scopeToProjectName={project.name}
                   />
-                </div>
-              </Segment>
+                </Grid.Column>
+              </Grid>
             </Grid.Column>
             <Grid.Column width={8}>
               <Segment raised color="yellow">

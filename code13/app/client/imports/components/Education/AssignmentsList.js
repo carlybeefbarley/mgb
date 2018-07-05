@@ -129,9 +129,10 @@ export default class AssignmentsList extends React.Component {
 
     return _.map(viewAssets, assignmentAsset => {
       const isPastDue = this.assignmentIsPastDue(assignmentAsset)
+
       return (
         <List.Item key={assignmentAsset.name}>
-          <List.Icon name="student" />
+          <List.Icon name="file" />
           <List.Content style={{ width: '100%' }}>
             <List.Content floated="right">
               {this.renderProjectButton(assignmentAsset)}
@@ -139,12 +140,16 @@ export default class AssignmentsList extends React.Component {
                 {`${isPastDue ? 'Past Due ' : ''}${assignmentAsset.metadata.dueDate || 'No Due Date'}`}
               </small>
             </List.Content>
-            <QLink to={`/u/${assignmentAsset.dn_ownerName}/asset/${assignmentAsset._id}`}>
+            {this.props.isTeacher ? (
+              <QLink to={`/u/${assignmentAsset.dn_ownerName}/asset/${assignmentAsset._id}`}>
+                <List.Header>{assignmentAsset.name}</List.Header>
+              </QLink>
+            ) : (
               <List.Header>{assignmentAsset.name}</List.Header>
-              <List.Description>
-                <small>{assignmentAsset.text}</small>
-              </List.Description>
-            </QLink>
+            )}
+            <List.Description>
+              <small>{assignmentAsset.text}</small>
+            </List.Description>
           </List.Content>
         </List.Item>
       )

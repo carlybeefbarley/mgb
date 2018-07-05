@@ -86,7 +86,7 @@ class TeacherDashboard extends React.Component {
             </Segment>
           </Grid.Column>
           <Grid.Column width={6}>
-            <Segment raised color="blue">
+            <Segment raised color="green">
               <Header as="h2" content="Your Classrooms" />
               <List relaxed content={this.renderClassesList()} />
               <ClassroomCreateNewModal {...this.props} />

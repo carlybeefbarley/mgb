@@ -1,6 +1,6 @@
 import React from 'react'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-import { Grid, Header, Segment, List, Table, Icon } from 'semantic-ui-react'
+import { Grid, Header, Segment, List, Table, Icon, Button } from 'semantic-ui-react'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
@@ -199,14 +199,14 @@ class TeacherClassroomView extends React.Component {
                 <List style={infoStyle}>
                   <List.Item>
                     <List.Content onClick={toggleChat}>
-                      <List.Icon name="chat" color="blue" />Class Chat
+                      <Button icon="chat" color="blue" content="Class Chat" />
                     </List.Content>
                   </List.Item>
                 </List>
               </Segment>
             </Grid.Column>
             <Grid.Column width={11}>
-              <Segment raised color="blue">
+              <Segment raised color="green">
                 <Header as="h3" content="Upcoming Assignments" />
                 <AssignmentsList
                   assignmentAssets={assignments}
@@ -277,6 +277,7 @@ class StudentClassroomView extends React.Component {
     return (
       <div style={containerStyle}>
         <Header as="h1" content="Student Classroom Dashboard" style={headerStyle} />
+
         <Grid columns={16} padded stackable>
           <Grid.Row>
             <Grid.Column width={5}>
@@ -300,15 +301,15 @@ class StudentClassroomView extends React.Component {
                   </List.Item>
                   <List.Item>
                     <List.Content onClick={toggleChat}>
-                      <List.Icon name="chat" color="blue" />Class Chat
+                      <Button icon="chat" color="blue" content="Class Chat" />
                     </List.Content>
                   </List.Item>
                 </List>
               </Segment>
             </Grid.Column>
 
-            <Grid.Column width={11}>
-              <Segment raised color="blue">
+            <Grid.Column width={8}>
+              <Segment raised color="green">
                 <Header as="h2" content="About this Class" />
                 <Segment>
                   <ReactQuill
@@ -322,7 +323,7 @@ class StudentClassroomView extends React.Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column width={8}>
+            <Grid.Column width={13}>
               <Segment raised color="yellow">
                 <Header as="h2" content="Upcoming Assignments" />
                 <AssignmentsListGET
@@ -334,7 +335,7 @@ class StudentClassroomView extends React.Component {
               </Segment>
             </Grid.Column>
 
-            <Grid.Column width={8}>
+            {/* <Grid.Column width={5}>
               <Segment raised color="yellow">
                 <Header as="h2" content="Past Assignments" />
                 <AssignmentsListGET
@@ -344,9 +345,9 @@ class StudentClassroomView extends React.Component {
                   showUpcoming={false}
                 />
               </Segment>
-            </Grid.Column>
+            </Grid.Column> */}
           </Grid.Row>
-          <Grid.Column width={16}>
+          <Grid.Column width={13}>
             <Grid.Row>
               <Segment raised color="purple">
                 <Header as="h2" content="Classmates" />
@@ -356,10 +357,10 @@ class StudentClassroomView extends React.Component {
           </Grid.Column>
           {/* </Grid>
         <Grid columns={1} padded stackable> */}
-          <Grid.Column width={16}>
+          <Grid.Column width={13}>
             <Grid.Row>
-              <Segment raised color="teal">
-                <Header as="h2" content="Published Games from" />
+              <Segment raised color="orange">
+                <Header as="h2" content="Published Games from this Class" />
                 <UserProfileGamesList user={currUser} currUser={currUser} />
               </Segment>
             </Grid.Row>

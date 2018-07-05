@@ -326,23 +326,19 @@ class ClassroomAddStudentModal extends React.Component {
         open={isOpen}
         onClose={() => this.toggleIsOpen()}
         onOpen={() => this.toggleIsOpen()}
-        trigger={
-          <Button color="green" floated="right">
-            Invite New Students
-          </Button>
-        }
+        trigger={<Button color="yellow" floated="right" icon="envelope" content="Invite New Students" />}
       >
         <Modal.Header>Add Students</Modal.Header>
         <Modal.Content>{this.renderUserList()}</Modal.Content>
         <Modal.Actions>
           <Button
             color="green"
+            icon="envelope"
+            content="Invite Students"
             disabled={submitButtonIsDisabled || inviteStudentsQueue.length === 0}
             loading={submitButtonIsDisabled}
             onClick={this.handleInviteFormSubmit}
-          >
-            Invite Students
-          </Button>
+          />
           <Button
             color="red"
             onClick={() => {

@@ -179,18 +179,34 @@ class ProjectOverview extends Component {
   // As specified in workStates.js, WorkStates have the following correspondence to assignment statuses:
   // broken - needs review, working - needs work, polished - complete
   handleWorkStateChange = newWorkState => {
-    const { _id, workState } = this.props.project
-    const oldState = workState
+    const { project } = this.props
+    const oldState = project.workState
     if (newWorkState !== oldState) {
-      Meteor.call('Projects.update', _id, { workState: newWorkState }, (err, res) => {
+      Meteor.call('Projects.update', project._id, { workState: newWorkState }, (err, res) => {
         if (err) showToast.error(err.reason)
       })
       logActivity(
         'project.workState',
-        `WorkState changed from ${oldState} to "${newWorkState}"`,
-        null,
-        this.props.project,
+        `WorkState changed from ${oldState} to ${newWorkState}`,
+        {
+          dn_ownerName: project.ownerName,
+          ownerId: project.ownerId,
+          _id: project._id,
+          name: project.name,
+        },
+        project,
       )
+    }
+  }
+
+  handleWorkStateCancel = () => {
+    const { _id, workState } = this.props.project
+    if (workState === 'working' || workState === 'polished') {
+      // Teacher cancelling 'needs work' or 'completed' workstate change
+      this.handleWorkStateChange('broken')
+    } else if (workState === 'broken') {
+      // Student cancelling 'needs review' workstate change
+      this.handleWorkStateChange('unknown')
     }
   }
 
@@ -427,14 +443,29 @@ class ProjectOverview extends Component {
                 <Grid>
                   <div style={{ width: '100%', marginBottom: '1em' }}>
                     <div style={{ float: 'left' }}>
-                      <WorkState isAssignment workState={project.workState} />
+                      <WorkState
+                        isAssignment
+                        canEdit={canEdit}
+                        workState={project.workState}
+                        handleWorkStateCancel={this.handleWorkStateCancel}
+                      />
                     </div>
                     <div style={{ float: 'right' }}>
                       {isTeacher ? (
-                        <Button.Group style={{ marginRight: '5px' }}>
+                        <Button.Group
+                          style={{ marginRight: '5px' }}
+                          title={
+                            project.workState === 'unknown' ? (
+                              'Student has not submitted assignment for review yet'
+                            ) : (
+                              'Request more work or approve assignment for completion'
+                            )
+                          }
+                        >
                           <Button
-                            secondary
+                            color="yellow"
                             style={{ width: '10em' }}
+                            disabled={project.workState === 'unknown'}
                             onClick={() => this.handleWorkStateChange('working')}
                           >
                             Needs Work
@@ -443,6 +474,7 @@ class ProjectOverview extends Component {
                           <Button
                             primary
                             style={{ width: '10em' }}
+                            disabled={project.workState === 'unknown'}
                             onClick={() => this.handleWorkStateChange('polished')}
                           >
                             Complete
@@ -455,14 +487,16 @@ class ProjectOverview extends Component {
                             labelPosition="left"
                             icon="calendar check"
                             disabled={project.workState === 'broken' || project.workState === 'polished'}
-                            content={'Submit Assignment'}
+                            content={
+                              project.workState === 'broken' ? 'Pending Review...' : 'Submit Assignment'
+                            }
                             onClick={() => this.handleWorkStateChange('broken')}
                           />
                         )
                       )}
                     </div>
                   </div>
-                  <div style={{width: '100%'}}>
+                  <div style={{ width: '100%' }}>
                     <Header as="h2" color="grey" floated="left">
                       Assignment Details
                     </Header>

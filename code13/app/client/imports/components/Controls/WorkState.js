@@ -7,6 +7,7 @@ import {
   workStateIcons,
   statusIcons,
   assignmentStatuses,
+  statusTitles,
 } from '/imports/Enums/workStates'
 import { Header, Label, Icon, List, Popup } from 'semantic-ui-react'
 import './WorkState.css'
@@ -56,10 +57,19 @@ const WorkState = ({
   labelStyle,
   onIconClick,
   iconOnly,
+  isTeacher,
+  handleWorkStateCancel,
 }) => (
   <div>
     {_.includes(workStates, workState) && workState !== 'unknown' && isAssignment ? (
-      <WorkStateStatus iconOnly={iconOnly} workState={workState} color={workStateColors[workState]} />
+      <WorkStateStatus
+        iconOnly={iconOnly}
+        isTeacher={isTeacher}
+        canEdit={canEdit}
+        workState={workState}
+        color={workStateColors[workState]}
+        handleWorkStateCancel={handleWorkStateCancel}
+      />
     ) : (
       <Popup
         on="hover"
@@ -102,7 +112,15 @@ const WorkState = ({
   </div>
 )
 
-const WorkStateStatus = ({ workState, labelStyle, color, iconOnly }) => (
+const WorkStateStatus = ({
+  workState,
+  labelStyle,
+  color,
+  iconOnly,
+  isTeacher,
+  canEdit,
+  handleWorkStateCancel,
+}) => (
   <span>
     {iconOnly ? (
       <Icon
@@ -120,9 +138,17 @@ const WorkStateStatus = ({ workState, labelStyle, color, iconOnly }) => (
         style={{ verticalAlign: 'middle', margin: '5px', ...labelStyle }}
         color={color}
         size="large"
+        title={statusTitles[assignmentStatuses[workState]]}
       >
         <Icon name={statusIcons[assignmentStatuses[workState]]} />
         {assignmentStatuses[workState]}
+        {workState === 'broken' ? (
+          canEdit && <Icon title="Cancel" color="red" onClick={() => handleWorkStateCancel()} name="delete" />
+        ) : (
+          isTeacher && (
+            <Icon title="Cancel" color="red" onClick={() => handleWorkStateCancel()} name="delete" />
+          )
+        )}
       </Label>
     )}
   </span>

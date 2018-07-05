@@ -100,6 +100,7 @@ export const ActivityTypes = {
   'project.destroy': { icon: 'red sitemap', pri: 4, description: 'Destroyed an Empty Project' },
   /* 'project.removeMember': { icon: 'sitemap', pri: 4, description: 'Removed a Membeer from a Project' }, */
   'project.leaveMember': { icon: 'sitemap', pri: 4, description: 'Left a Project' },
+  'project.workState': { icon: 'orange checkmark', pri: 6, description: 'Changed Project Work State'},
   // Helper functions that handles unknown asset kinds and gets good defaults for unknown items
   getIconClass(key) {
     return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].icon : 'warning sign') + ' icon'

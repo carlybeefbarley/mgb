@@ -60,9 +60,10 @@ const WorkState = ({
   isTeacher,
   handleWorkStateCancel,
 }) => (
-  <div>
+  <span>
     {_.includes(workStates, workState) && workState !== 'unknown' && isAssignment ? (
       <WorkStateStatus
+        size={size}
         iconOnly={iconOnly}
         isTeacher={isTeacher}
         canEdit={canEdit}
@@ -109,7 +110,7 @@ const WorkState = ({
         </div>
       </Popup>
     )}
-  </div>
+  </span>
 )
 
 const WorkStateStatus = ({
@@ -120,6 +121,7 @@ const WorkStateStatus = ({
   isTeacher,
   canEdit,
   handleWorkStateCancel,
+  size,
 }) => (
   <span>
     {iconOnly ? (
@@ -128,7 +130,7 @@ const WorkStateStatus = ({
         inverted
         fitted
         size="small"
-        title={workState}
+        title={statusTitles[assignmentStatuses[workState]]}
         color={color}
         name={statusIcons[assignmentStatuses[workState]]}
       />
@@ -137,7 +139,7 @@ const WorkStateStatus = ({
         className="workstate-label"
         style={{ verticalAlign: 'middle', margin: '5px', ...labelStyle }}
         color={color}
-        size="large"
+        size={size ? size : 'large'}
         title={statusTitles[assignmentStatuses[workState]]}
       >
         <Icon name={statusIcons[assignmentStatuses[workState]]} />

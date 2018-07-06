@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import WorkState from '/client/imports/components/Controls/WorkState'
 import Spinner from '/client/imports/components/Nav/Spinner'
+import moment from 'moment'
 
 export default class AssignmentsList extends React.Component {
   static propTypes = {
@@ -27,16 +28,12 @@ export default class AssignmentsList extends React.Component {
 
   getFutureAssignments = () => {
     const { assignmentAssets } = this.props
-
     return assignmentAssets
   }
 
   assignmentHasDueDate = assignment => {
     if (typeof assignment !== 'object') throw new Error('Invalid type passed, expect object.')
-    if (assignment && assignment.metadata && assignment.metadata.dueDate) {
-      return true
-    }
-    return false
+    return assignment && assignment.metadata && assignment.metadata.dueDate
   }
 
   assignmentIsPastDue = assignment => {
@@ -52,12 +49,6 @@ export default class AssignmentsList extends React.Component {
       }
     }
     console.warn(`Warning: ${assignment.name} does not have due date.`)
-  }
-
-  formatDueDate = fuzzyDate => {
-    const actualDate = `${fuzzyDate.split('-')[1]}/${fuzzyDate.split('-')[2]}`
-    //TODO: Fix this so it works
-    return actualDate
   }
 
   // TODO: Handle for completed past assignments
@@ -81,13 +72,18 @@ export default class AssignmentsList extends React.Component {
 
     if (returnArray.length === 0) console.warn('sortAssetList() No Assets Found!')
 
-    // Sort by due date
-    // Doesn't work for some reason
-    returnArray.sort((a, b) => {
-      return new Date(b.date) - new Date(a.date)
-    })
-
     return returnArray
+  }
+
+  // Returns a new array sorted by dueDate
+  sortAssetsByDate = list => {
+    // Sort by due date
+    const sortedDates = _.sortBy(list, [
+      asset => {
+        return new Date(asset.metadata.dueDate).getTime()
+      },
+    ])
+    return sortedDates
   }
 
   renderProjectButton = (assignmentAsset, project) => {
@@ -160,14 +156,15 @@ export default class AssignmentsList extends React.Component {
               {project && <WorkState isAssignment iconOnly size="small" workState={project.workState} />}
             </List.Icon>
           ) : (
-            <List.Icon fittedsize="small" style={verticalAlignSty} name="file" />
+            <List.Icon fitted size="small" style={verticalAlignSty} name="file" />
           )}
           <List.Content style={{ width: '100%' }}>
             <List.Content floated="right">
               {this.renderProjectButton(assignmentAsset, project)}
-              <small style={{ color: isPastDue ? 'red' : 'gray' }}>
-                {`${isPastDue ? 'Past Due ' : 'Due '}${this.formatDueDate(assignmentAsset.metadata.dueDate) ||
-                  'No Due Date'}`}
+              <small style={{ display: 'inline-block', minWidth: '8em', color: isPastDue ? 'red' : 'gray' }}>
+                {`${isPastDue ? 'Past Due ' : 'Due '}${moment(assignmentAsset.metadata.dueDate).format(
+                  'll',
+                ) || 'No Due Date'}`}
               </small>
             </List.Content>
             {this.props.isTeacher ? (
@@ -188,7 +185,10 @@ export default class AssignmentsList extends React.Component {
 
   render() {
     const { assignmentAssets } = this.props
-    const listItems = this.renderListItems(this.filterAssetList(assignmentAssets))
+    // debugger // eslint-disable-line
+    let list = this.filterAssetList(assignmentAssets)
+    list = this.sortAssetsByDate(list)
+    const listItems = this.renderListItems(list)
     return <List>{listItems}</List>
   }
 }

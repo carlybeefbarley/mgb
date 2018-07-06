@@ -128,7 +128,7 @@ class TeacherDashboard extends React.Component {
         <Grid.Row>
           <Grid.Column width={3} />
           <Grid.Column width={10}>
-            <UserBioCard {...this.props} />
+            <UserBioCard {...this.props} user={currUser} canEdit />
           </Grid.Column>
         </Grid.Row>
       </Grid>

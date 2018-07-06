@@ -3,9 +3,12 @@ import _ from 'lodash'
 import { List, Button, Icon } from 'semantic-ui-react'
 import PropTypes from 'prop-types'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
+import WorkState from '/client/imports/components/Controls/WorkState'
+import Spinner from '/client/imports/components/Nav/Spinner'
 
 export default class AssignmentsList extends React.Component {
   static propTypes = {
+    currUser: PropTypes.object,
     assignmentAssets: PropTypes.array,
     showPastDue: PropTypes.bool,
     showUpcoming: PropTypes.bool,
@@ -48,7 +51,13 @@ export default class AssignmentsList extends React.Component {
         return false
       }
     }
-    console.warn('Warning: Assignment does not have due date.')
+    console.warn(`Warning: ${assignment.name} does not have due date.`)
+  }
+
+  formatDueDate = fuzzyDate => {
+    const actualDate = `${fuzzyDate.split('-')[1]}/${fuzzyDate.split('-')[2]}`
+    //TODO: Fix this so it works
+    return actualDate
   }
 
   // TODO: Handle for completed past assignments
@@ -71,15 +80,20 @@ export default class AssignmentsList extends React.Component {
     })
 
     if (returnArray.length === 0) console.warn('sortAssetList() No Assets Found!')
+
+    // Sort by due date
+    // Doesn't work for some reason
+    returnArray.sort((a, b) => {
+      return new Date(b.date) - new Date(a.date)
+    })
+
     return returnArray
   }
 
-  renderProjectButton = assignmentAsset => {
-    if (!this.props.showProjectCreateButtons) return
-    const { currUserProjects } = this.props
-    const project = _.find(currUserProjects, project => {
-      return project.assignmentId && project.assignmentId === assignmentAsset._id
-    })
+  renderProjectButton = (assignmentAsset, project) => {
+    const { currUser, showProjectCreateButtons } = this.props
+    if (!showProjectCreateButtons) return
+
     if (project) {
       return (
         <Button
@@ -87,7 +101,7 @@ export default class AssignmentsList extends React.Component {
           compact
           color="green"
           onClick={() => {
-            utilPushTo(null, `u/${Meteor.user().username}/projects/${project.name}`)
+            utilPushTo(null, `u/${currUser.username}/projects/${project.name}`)
           }}
         >
           <Icon name="sitemap" />
@@ -105,7 +119,6 @@ export default class AssignmentsList extends React.Component {
   }
 
   handleCreateProject = assignmentAsset => {
-    console.log('Click worked yo.')
     const { currUser } = this.props
     const data = {
       name: `${currUser.username}'s Project for ${assignmentAsset.name}`,
@@ -117,6 +130,10 @@ export default class AssignmentsList extends React.Component {
   }
 
   renderListItems = viewAssets => {
+    if (!viewAssets) {
+      return <Spinner />
+    }
+
     if (viewAssets.length === 0) {
       return (
         <List.Item>
@@ -126,26 +143,39 @@ export default class AssignmentsList extends React.Component {
         </List.Item>
       )
     }
+    const { currUserProjects, showProjectCreateButtons } = this.props
 
     return _.map(viewAssets, assignmentAsset => {
       const isPastDue = this.assignmentIsPastDue(assignmentAsset)
+      const project = _.find(currUserProjects, project => {
+        return project.assignmentId && project.assignmentId === assignmentAsset._id
+      })
+
+      const verticalAlignSty = { lineHeight: '1.5em', verticalAlign: 'middle', padding: 0 }
 
       return (
         <List.Item key={assignmentAsset.name}>
-          <List.Icon name="file" />
+          {showProjectCreateButtons ? (
+            <List.Icon fitted size="small" style={{ minWidth: '1.5em', ...verticalAlignSty }}>
+              {project && <WorkState isAssignment iconOnly size="small" workState={project.workState} />}
+            </List.Icon>
+          ) : (
+            <List.Icon fittedsize="small" style={verticalAlignSty} name="file" />
+          )}
           <List.Content style={{ width: '100%' }}>
             <List.Content floated="right">
-              {this.renderProjectButton(assignmentAsset)}
-              <small style={{ color: isPastDue ? 'red' : 'lightgray' }}>
-                {`${isPastDue ? 'Past Due ' : ''}${assignmentAsset.metadata.dueDate || 'No Due Date'}`}
+              {this.renderProjectButton(assignmentAsset, project)}
+              <small style={{ color: isPastDue ? 'red' : 'gray' }}>
+                {`${isPastDue ? 'Past Due ' : 'Due '}${this.formatDueDate(assignmentAsset.metadata.dueDate) ||
+                  'No Due Date'}`}
               </small>
             </List.Content>
             {this.props.isTeacher ? (
               <QLink to={`/u/${assignmentAsset.dn_ownerName}/asset/${assignmentAsset._id}`}>
-                <List.Header>{assignmentAsset.name}</List.Header>
+                <List.Header style={verticalAlignSty}>{assignmentAsset.name}</List.Header>
               </QLink>
             ) : (
-              <List.Header>{assignmentAsset.name}</List.Header>
+              <List.Header style={verticalAlignSty}>{assignmentAsset.name}</List.Header>
             )}
             <List.Description>
               <small>{assignmentAsset.text}</small>

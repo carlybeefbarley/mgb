@@ -12,6 +12,7 @@ import UserBioCard from '/client/imports/components/Users/UserBioCard'
 class TeacherDashboard extends React.Component {
   renderClassesList = () => {
     const { classrooms, currUser } = this.props
+
     const list = _.map(classrooms, classroom => {
       return (
         <List.Item key={classroom.name}>
@@ -67,6 +68,12 @@ class TeacherDashboard extends React.Component {
       marginBottom: '2em',
     }
 
+    const listStyle = {
+      overflowY: 'scroll',
+      maxHeight: '12em',
+      minHeight: '12em',
+    }
+
     return (
       <Grid columns={1} padded>
         <Grid.Row>
@@ -97,7 +104,10 @@ class TeacherDashboard extends React.Component {
               <ClassroomCreateNewModal {...this.props} />
               <div>
                 <Header as="h2" content="Your Classrooms" />
-                <List relaxed content={this.renderClassesList()} />
+                <br />
+                <div style={listStyle}>
+                  <List relaxed content={this.renderClassesList()} />
+                </div>
               </div>
             </Segment>
           </Grid.Column>

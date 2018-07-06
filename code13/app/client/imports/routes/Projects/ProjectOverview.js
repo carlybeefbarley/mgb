@@ -313,6 +313,11 @@ class ProjectOverview extends Component {
       maxHeight: '20em',
     }
 
+    const secondRowStyle = {
+      minHeight: '15em',
+      maxHeight: '15em',
+    }
+
     return (
       <div style={{ height: '100%', overflowX: 'hidden', overflowY: 'auto' }}>
         <Helmet
@@ -383,22 +388,8 @@ class ProjectOverview extends Component {
                     handleChange={(newUrl, avatarId) => this.handleFieldChanged({ avatarAssetId: avatarId })}
                   />
                 </p>
-                <Form>
-                  {isPartOfTeam && (
-                    <Form.Field>
-                      <QLink
-                        query={{
-                          _fp: `chat.${makeChannelName({
-                            scopeGroupName: 'Project',
-                            scopeId: project._id,
-                          })}`,
-                        }}
-                      >
-                        <Button fluid labelPosition="left" icon="chat" content="Chat" />
-                      </QLink>
-                    </Form.Field>
-                  )}
-                  {/* FORK PROJECT STUFF */}
+                {/* <Form>
+                   FORK PROJECT STUFF...not using right now
                   <Form.Field>
                     {' '}
                     <Popup
@@ -436,27 +427,14 @@ class ProjectOverview extends Component {
                       )}
                     </Popup>
                   </Form.Field>
-                </Form>
+                </Form> */}
+
                 <Button icon="chat" color="blue" content="Assignment Chat" />
-              </Segment>
-              {this.canEdit(project, currUser, loading) && (
-                <Segment color="red">
+                {this.canEdit(project, currUser, loading) && (
                   <Form>
-                    <Header color="red">
-                      <Icon name="lock" />
-                      Manage Project
-                    </Header>
                     <Form.Button
-                      fluid
-                      labelPosition="left"
-                      icon={project.allowForks ? 'checkmark box' : 'square outline'}
-                      content="Allow Forks"
-                      disabled={!!project.assignmentId}
-                      onClick={() => this.handleFieldChanged({ allowForks: !project.allowForks })}
-                      title="Project Owner may allow other users to fork this Project and its Assets"
-                    />
-                    <Form.Button
-                      fluid
+                      style={{ marginTop: '1em' }}
+                      color="red"
                       labelPosition="left"
                       icon="trash"
                       disabled={isDeleteComplete || isDeletePending}
@@ -467,7 +445,6 @@ class ProjectOverview extends Component {
                           `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`
                         )
                       }
-                      color={confirmDeleteNum < 0 ? null : 'red'}
                       onClick={
                         confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject
                       }
@@ -483,8 +460,8 @@ class ProjectOverview extends Component {
                       </Message>
                     )}
                   </Form>
-                </Segment>
-              )}
+                )}
+              </Segment>
             </Grid.Column>
             <Grid.Column width={7}>
               <Segment raised color="green" style={rowStyle}>
@@ -501,9 +478,9 @@ class ProjectOverview extends Component {
           <Grid.Row>
             <Grid.Column width={3} />
             <Grid.Column width={5}>
-              <Segment raised color="yellow">
+              <Segment raised color="yellow" style={secondRowStyle}>
                 <div>
-                  <Header as="h2" style={{ flex: '0 0 auto' }}>
+                  <Header as="h3" style={{ flex: '0 0 auto' }}>
                     Games
                   </Header>
                   <GamesAvailableGET
@@ -516,9 +493,9 @@ class ProjectOverview extends Component {
               </Segment>
             </Grid.Column>
             <Grid.Column width={5}>
-              <Segment raised color="yellow">
+              <Segment raised color="pink" style={secondRowStyle}>
                 <div>
-                  <Header as="h2" style={{ flex: '0 0 auto' }}>
+                  <Header as="h3" style={{ flex: '0 0 auto' }}>
                     Recent Activity
                   </Header>
                   <ProjectHistoryRoute project={project} activities={activities} />
@@ -529,7 +506,7 @@ class ProjectOverview extends Component {
           <Grid.Row>
             <Grid.Column width={3} />
             <Grid.Column width={10}>
-              <Segment raised color="purple">
+              <Segment raised color="purple" style={secondRowStyle}>
                 <Header
                   as="h2"
                   floated="left"
@@ -558,7 +535,7 @@ class ProjectOverview extends Component {
           <Grid.Row>
             <Grid.Column width={3} />
             <Grid.Column width={10}>
-              <Segment raised color="orange">
+              <Segment raised color="orange" style={secondRowStyle}>
                 <div>
                   <Header as="h2" floated="left">
                     Collaborators{' '}

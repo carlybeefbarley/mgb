@@ -175,20 +175,21 @@ class TeacherClassroomView extends React.Component {
 
     const headerStyle = {
       color: 'lightgrey',
-      fontSize: '2.5em',
+      fontSize: '2em',
       textAlign: 'center',
+      lineHeight: '2em',
     }
 
     const rowStyle = {
-      minHeight: '21em',
-      maxHeight: '21em',
+      minHeight: '23em',
+      maxHeight: '23em',
       marginBottom: '2em',
     }
 
     const listStyle = {
       overflowY: 'auto',
-      maxHeight: '12em',
-      minHeight: '12em',
+      maxHeight: '14em',
+      minHeight: '14em',
     }
 
     return (
@@ -206,23 +207,25 @@ class TeacherClassroomView extends React.Component {
           <Grid.Row style={rowStyle}>
             <Grid.Column width={5}>
               <Segment raised style={rowStyle} color="blue">
-                <Header style={titleStyle} as="h1" content={classroom.name} />
-                <ImageShowOrChange
-                  id="mgbjr-profile-avatar"
-                  maxHeight="11em"
-                  maxWidth="auto"
-                  imageSrc={avatar}
-                  canLinkToSrc
-                  header="User Avatar"
-                  canEdit={false}
-                />
-                <List style={infoStyle}>
-                  <List.Item>
-                    <List.Content onClick={toggleChat}>
-                      <Button icon="chat" color="blue" content="Class Chat" />
-                    </List.Content>
-                  </List.Item>
-                </List>
+                <div>
+                  <Header style={titleStyle} as="h1" content={classroom.name} />
+                  <ImageShowOrChange
+                    id="mgbjr-profile-avatar"
+                    maxHeight="11em"
+                    maxWidth="auto"
+                    imageSrc={avatar}
+                    canLinkToSrc
+                    header="User Avatar"
+                    canEdit={false}
+                  />
+                  <List style={infoStyle}>
+                    <List.Item>
+                      <List.Content onClick={toggleChat}>
+                        <Button icon="chat" color="blue" content="Class Chat" />
+                      </List.Content>
+                    </List.Item>
+                  </List>
+                </div>
               </Segment>
             </Grid.Column>
             <Grid.Column width={8}>
@@ -250,7 +253,11 @@ class TeacherClassroomView extends React.Component {
               <Segment raised color="yellow">
                 <ClassroomAddStudentModal {...this.props} />
                 <div>
-                  <Header as="h3" content="Student Assignment Progress" />
+                  <Header
+                    style={{ lineHeight: '2em', verticalAlign: 'middle' }}
+                    as="h3"
+                    content="Student Assignment Progress"
+                  />
 
                   <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
                 </div>

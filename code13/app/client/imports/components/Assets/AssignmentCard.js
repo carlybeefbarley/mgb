@@ -30,7 +30,7 @@ const AssignmentCard = props => {
         <Card.Description>
           <ReactQuill
             readOnly
-            style={{ pointerEvents: 'none' }}
+            style={{ pointerEvents: 'none', height: '10em' }}
             theme={null}
             defaultValue={assignmentDetail}
           />

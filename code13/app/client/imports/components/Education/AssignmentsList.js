@@ -28,16 +28,12 @@ export default class AssignmentsList extends React.Component {
 
   getFutureAssignments = () => {
     const { assignmentAssets } = this.props
-
     return assignmentAssets
   }
 
   assignmentHasDueDate = assignment => {
     if (typeof assignment !== 'object') throw new Error('Invalid type passed, expect object.')
-    if (assignment && assignment.metadata && assignment.metadata.dueDate) {
-      return true
-    }
-    return false
+    return assignment && assignment.metadata && assignment.metadata.dueDate
   }
 
   assignmentIsPastDue = assignment => {
@@ -76,13 +72,18 @@ export default class AssignmentsList extends React.Component {
 
     if (returnArray.length === 0) console.warn('sortAssetList() No Assets Found!')
 
-    // Sort by due date
-    // Doesn't work for some reason
-    returnArray.sort((a, b) => {
-      return new Date(b.date) - new Date(a.date)
-    })
-
     return returnArray
+  }
+
+  // Returns a new array sorted by dueDate
+  sortAssetsByDate = list => {
+    // Sort by due date
+    const sortedDates = _.sortBy(list, [
+      asset => {
+        return new Date(asset.metadata.dueDate).getTime()
+      },
+    ])
+    return sortedDates
   }
 
   renderProjectButton = (assignmentAsset, project) => {
@@ -155,7 +156,7 @@ export default class AssignmentsList extends React.Component {
               {project && <WorkState isAssignment iconOnly size="small" workState={project.workState} />}
             </List.Icon>
           ) : (
-            <List.Icon fittedsize="small" style={verticalAlignSty} name="file" />
+            <List.Icon fitted size="small" style={verticalAlignSty} name="file" />
           )}
           <List.Content style={{ width: '100%' }}>
             <List.Content floated="right">
@@ -184,7 +185,10 @@ export default class AssignmentsList extends React.Component {
 
   render() {
     const { assignmentAssets } = this.props
-    const listItems = this.renderListItems(this.filterAssetList(assignmentAssets))
+    // debugger // eslint-disable-line
+    let list = this.filterAssetList(assignmentAssets)
+    list = this.sortAssetsByDate(list)
+    const listItems = this.renderListItems(list)
     return <List>{listItems}</List>
   }
 }

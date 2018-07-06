@@ -8,9 +8,15 @@ const AssignmentCard = props => {
   const { assignmentDetail, dueDate = null } = props.assignmentAsset.metadata
   const { assignmentAsset, canEdit } = props
 
+  const cardStyle = {
+    minHeight: '15em',
+    maxHeight: '15em',
+    overflow: 'auto',
+  }
+
   return (
     <Card fluid>
-      <Card.Content>
+      <Card.Content style={cardStyle}>
         {/* This is redundant information, the name of the assignment is the header of assignment overview */}
         {/* <Card.Header>
           <Icon name="file" /> {assignmentAsset.name}
@@ -19,7 +25,7 @@ const AssignmentCard = props => {
         <Card.Description>
           <ReactQuill
             readOnly
-            style={{ pointerEvents: 'none' }}
+            style={{ pointerEvents: 'none', height: '10em' }}
             theme={null}
             defaultValue={assignmentDetail}
           />

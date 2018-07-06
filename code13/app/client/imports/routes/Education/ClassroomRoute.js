@@ -157,7 +157,6 @@ class TeacherClassroomView extends React.Component {
     }
 
     const { avatar } = currUser && currUser.profile
-    const isTeacher = doesUserHaveRole(this.props.currUser, roleTeacher)
 
     const titleStyle = {
       fontSize: '2em',
@@ -175,20 +174,21 @@ class TeacherClassroomView extends React.Component {
 
     const headerStyle = {
       color: 'lightgrey',
-      fontSize: '2.5em',
+      fontSize: '2em',
       textAlign: 'center',
+      lineHeight: '2em',
     }
 
     const rowStyle = {
-      minHeight: '21em',
-      maxHeight: '21em',
+      minHeight: '23em',
+      maxHeight: '23em',
       marginBottom: '2em',
     }
 
     const listStyle = {
-      overflowY: 'scroll',
-      maxHeight: '12em',
-      minHeight: '12em',
+      overflowY: 'auto',
+      maxHeight: '14em',
+      minHeight: '14em',
     }
 
     return (
@@ -206,23 +206,25 @@ class TeacherClassroomView extends React.Component {
           <Grid.Row style={rowStyle}>
             <Grid.Column width={5}>
               <Segment raised style={rowStyle} color="blue">
-                <Header style={titleStyle} as="h1" content={classroom.name} />
-                <ImageShowOrChange
-                  id="mgbjr-profile-avatar"
-                  maxHeight="11em"
-                  maxWidth="auto"
-                  imageSrc={avatar}
-                  canLinkToSrc
-                  header="User Avatar"
-                  canEdit={false}
-                />
-                <List style={infoStyle}>
-                  <List.Item>
-                    <List.Content onClick={toggleChat}>
-                      <Button icon="chat" color="blue" content="Class Chat" />
-                    </List.Content>
-                  </List.Item>
-                </List>
+                <div>
+                  <Header style={titleStyle} as="h1" content={classroom.name} />
+                  <ImageShowOrChange
+                    id="mgbjr-profile-avatar"
+                    maxHeight="11em"
+                    maxWidth="auto"
+                    imageSrc={avatar}
+                    canLinkToSrc
+                    header="User Avatar"
+                    canEdit={false}
+                  />
+                  <List style={infoStyle}>
+                    <List.Item>
+                      <List.Content onClick={toggleChat}>
+                        <Button icon="chat" color="blue" content="Class Chat" />
+                      </List.Content>
+                    </List.Item>
+                  </List>
+                </div>
               </Segment>
             </Grid.Column>
             <Grid.Column width={8}>
@@ -231,13 +233,7 @@ class TeacherClassroomView extends React.Component {
                   <Header as="h3" content="Upcoming Assignments" />
 
                   <div style={listStyle}>
-                    <AssignmentsList
-                      assignmentAssets={assignments}
-                      showUpcoming
-                      isTeacher={isTeacher}
-                      showPastDue={false}
-                      showNoDueDate={false}
-                    />
+                    <AssignmentsList assignmentAssets={assignments} showUpcoming showNoDueDate />
                   </div>
                   <Divider />
                   <ClassroomAddAssignmentModal classroom={classroom} />
@@ -250,7 +246,11 @@ class TeacherClassroomView extends React.Component {
               <Segment raised color="yellow">
                 <ClassroomAddStudentModal {...this.props} />
                 <div>
-                  <Header as="h3" content="Student Assignment Progress" />
+                  <Header
+                    style={{ lineHeight: '2em', verticalAlign: 'middle' }}
+                    as="h3"
+                    content="Student Assignment Progress"
+                  />
 
                   <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
                 </div>
@@ -258,7 +258,7 @@ class TeacherClassroomView extends React.Component {
 
               <Segment raised color="purple">
                 <Header as="h3" content="Past Assignments" />
-                <AssignmentsListGET isTeacher={isTeacher} showPastDue showNoDueDate />
+                <AssignmentsList assignmentAssets={assignments} showPastDue />
               </Segment>
             </Grid.Column>
           </Grid.Row>
@@ -291,7 +291,6 @@ class StudentClassroomView extends React.Component {
     }
 
     const { avatar } = currUser && currUser.profile
-    const isTeacher = doesUserHaveRole(this.props.currUser, roleTeacher)
 
     const titleStyle = {
       fontSize: '2em',
@@ -360,12 +359,7 @@ class StudentClassroomView extends React.Component {
             <Grid.Column width={13}>
               <Segment raised color="yellow">
                 <Header as="h2" content="Upcoming Assignments" />
-                <AssignmentsListGET
-                  showUpcoming
-                  isTeacher={isTeacher}
-                  showPastDue={false}
-                  showNoDueDate={false}
-                />
+                <AssignmentsListGET showUpcoming showNoDueDate />
               </Segment>
             </Grid.Column>
           </Grid.Row>

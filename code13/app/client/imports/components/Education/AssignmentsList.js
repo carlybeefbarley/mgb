@@ -161,10 +161,15 @@ export default class AssignmentsList extends React.Component {
           <List.Content style={{ width: '100%' }}>
             <List.Content floated="right">
               {this.renderProjectButton(assignmentAsset, project)}
-              <small style={{ display: 'inline-block', minWidth: '8em', color: isPastDue ? 'red' : 'gray' }}>
-                {`${isPastDue ? 'Past Due ' : 'Due '}${moment(assignmentAsset.metadata.dueDate).format(
-                  'll',
-                ) || 'No Due Date'}`}
+              <small
+                style={{
+                  display: 'inline-block',
+                  minWidth: '6.5em',
+                  color: isPastDue ? 'lightgray' : 'dimgray',
+                  textAlign: 'right',
+                }}
+              >
+                <strong>{` ${moment(assignmentAsset.metadata.dueDate).format('ll') || ''}`}</strong>
               </small>
             </List.Content>
             {this.props.isTeacher ? (

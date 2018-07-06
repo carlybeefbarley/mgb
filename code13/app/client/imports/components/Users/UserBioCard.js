@@ -15,17 +15,6 @@ class UserBioCard extends React.Component {
 
   handleChange = bio => {
     const { user } = this.props
-<<<<<<< HEAD
-
-    const rowStyle = {
-      minHeight: '13em',
-      marginBottom: '2em',
-    }
-    return (
-      <Segment raised color="purple" style={rowStyle}>
-        <Header as="h2" content="About You" />
-        <ReactQuill defaultValue={(user && user.profile.bio) || 'null'} />
-=======
     let data = { profile: { bio } }
     Meteor.call('User.updateProfile', user._id, data, error => {
       if (error) console.error('Could not update profile:', error.reason)
@@ -71,7 +60,6 @@ class UserBioCard extends React.Component {
             this.handleQuillChange(data)
           }}
         />
->>>>>>> 7b319e2c619db3da49188dc0767da7be0287289b
       </Segment>
     )
   }

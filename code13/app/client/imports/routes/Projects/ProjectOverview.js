@@ -5,7 +5,7 @@ import Helmet from 'react-helmet'
 import { Divider, Form, Grid, Input, Segment, Message, Icon, Header, Button, Popup } from 'semantic-ui-react'
 import { showToast } from '/client/imports/modules'
 import QLink, { utilPushTo } from '/client/imports/routes/QLink'
-import { Projects } from '/imports/schemas'
+import { Projects, Users } from '/imports/schemas'
 import ProjectMembersGET from '/client/imports/components/Projects/ProjectMembersGET'
 import ProjectHistoryRoute from './ProjectHistoryRoute'
 import GamesAvailableGET from '/client/imports/components/Assets/GameAsset/GamesAvailableGET'
@@ -747,13 +747,16 @@ class ProjectOverview extends Component {
 }
 
 export default withMeteorData(props => {
-  const { params: { projectId, projectName }, user } = props
-  const sel = projectId ? { _id: projectId } : { ownerId: user._id, name: projectName }
+  const { projectName, username } = props.params // This is the data of the TARGET project, not the current user.
+  // const handleForProjectOwner = Meteor.subscribe('user.byName', userName)
+  // const projectOwner = Users.findOne({ username: userName })
 
-  const handleForProject = Meteor.subscribe('projects.oneProject', sel)
+  const projSelector = { name: projectName, ownerName: username }
+  const handleForProject = Meteor.subscribe('projects.oneProject', projSelector)
+  const project = Projects.findOne(projSelector)
 
   return {
-    project: Projects.findOne(sel),
+    project,
     loading: !handleForProject.ready(),
   }
 })(ProjectOverview)

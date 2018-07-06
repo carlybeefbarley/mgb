@@ -1,6 +1,6 @@
 import React from 'react'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-import { Grid, Header, Segment, List, Table, Icon, Button } from 'semantic-ui-react'
+import { Grid, Header, Segment, List, Table, Icon, Button, Divider } from 'semantic-ui-react'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import { createContainer } from 'meteor/react-meteor-data'
@@ -187,8 +187,8 @@ class TeacherClassroomView extends React.Component {
 
     const listStyle = {
       overflowY: 'scroll',
-      maxHeight: '15em',
-      minHeight: '15em',
+      maxHeight: '12em',
+      minHeight: '12em',
     }
 
     return (
@@ -227,10 +227,9 @@ class TeacherClassroomView extends React.Component {
             </Grid.Column>
             <Grid.Column width={8}>
               <Segment raised color="green" style={rowStyle}>
-                <ClassroomAddAssignmentModal classroom={classroom} />
                 <div>
                   <Header as="h3" content="Upcoming Assignments" />
-                  <br />
+
                   <div style={listStyle}>
                     <AssignmentsList
                       assignmentAssets={assignments}
@@ -240,6 +239,8 @@ class TeacherClassroomView extends React.Component {
                       showNoDueDate={false}
                     />
                   </div>
+                  <Divider />
+                  <ClassroomAddAssignmentModal classroom={classroom} />
                 </div>
               </Segment>
             </Grid.Column>

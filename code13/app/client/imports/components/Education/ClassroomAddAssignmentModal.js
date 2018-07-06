@@ -29,7 +29,13 @@ export default class ClassroomAddAssignmentModal extends React.Component {
   static PropTypes = {
     classroom: PropTypes.object.isRequired,
   }
-  state = { awaitingAsset: true, assignmentHandler: null, isOpen: false, disableAcceptButton: false }
+  state = {
+    awaitingAsset: true,
+    assignmentHandler: null,
+    isOpen: false,
+    disableAcceptButton: false,
+    assignmentAsset: null,
+  }
   defaultAsset = {
     name: `New Classroom Assignment`,
     ownerId: Meteor.user()._id,
@@ -138,9 +144,22 @@ export default class ClassroomAddAssignmentModal extends React.Component {
     })
   }
 
+  assignmentHasDefaultName = () => {
+    const { assignmentAsset, awaitingAsset } = this.state
+    if (awaitingAsset) return true
+    const assetName = assignmentAsset.name
+
+    if (assetName === this.defaultAsset.name) {
+      return true
+    } else {
+      return false
+    }
+  }
+
   render() {
     const { awaitingAsset, assignmentAsset, disableAcceptButton, isOpen } = this.state
     const currUser = Meteor.user()
+    const isDefaultName = this.assignmentHasDefaultName()
 
     return (
       <Modal
@@ -164,14 +183,22 @@ export default class ClassroomAddAssignmentModal extends React.Component {
             <Spinner />
           ) : (
             <Segment>
-              <AssetPathDetail
-                canEdit
-                ownerName={assignmentAsset.dn_ownerName}
-                kind={assignmentAsset.kind}
-                name={assignmentAsset.name}
-                handleNameChange={this.handleNameChange}
-                handleDescriptionChange={this.handleTextChange}
-              />
+              <Segment color={isDefaultName ? 'red' : ''}>
+                {isDefaultName ? (
+                  <span style={{ color: 'red' }}>You must change this assignment's name to save it.</span>
+                ) : (
+                  ''
+                )}
+                <Divider hidden />
+                <AssetPathDetail
+                  canEdit
+                  ownerName={assignmentAsset.dn_ownerName}
+                  kind={assignmentAsset.kind}
+                  name={assignmentAsset.name}
+                  handleNameChange={this.handleNameChange}
+                  handleDescriptionChange={this.handleTextChange}
+                />
+              </Segment>
               <Divider hidden />
               <EditAssignment
                 asset={assignmentAsset}
@@ -186,7 +213,7 @@ export default class ClassroomAddAssignmentModal extends React.Component {
           <Button
             color="green"
             onClick={this.handleAssignToClassroom}
-            disabled={disableAcceptButton}
+            disabled={disableAcceptButton || isDefaultName}
             loading={disableAcceptButton}
           >
             Accept

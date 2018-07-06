@@ -1,7 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
-import ReactQuill from 'react-quill'
 import { Segment, Header, Button, Divider, TextArea } from 'semantic-ui-react'
 import { createContainer } from 'meteor/react-meteor-data'
 
@@ -14,7 +13,7 @@ class UserBioCard extends React.Component {
 
   handleChange = bio => {
     const { user } = this.props
-    let data = { profile: { bio } }
+    let data = { 'profile.bio': bio }
     Meteor.call('User.updateProfile', user._id, data, error => {
       if (error) console.error('Could not update profile:', error.reason)
     })
@@ -44,12 +43,12 @@ class UserBioCard extends React.Component {
     const { user, canEdit } = this.props
     const { editing, bio } = this.state
     return (
-      <Segment raised color="purple">
+      <Segment raised color="yellow">
         <Header as="h2">
           {canEdit ? 'About You' : `About ${user.username}`}
           {canEdit && (
             <Button
-              color="green"
+              color="yellow"
               content={editing ? 'Save' : 'Edit'}
               floated="right"
               onClick={this.handleToggleEdit}

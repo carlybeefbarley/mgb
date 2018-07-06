@@ -310,7 +310,6 @@ class ProjectOverview extends Component {
 
     return (
       <div style={{ height: '100%', overflowX: 'hidden', overflowY: 'auto' }}>
-        >
         <Helmet
           title={`Project: ${relativeProjectName}`}
           meta={[{ name: `Project: ${relativeProjectName}`, content: 'Project' }]}

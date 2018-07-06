@@ -69,7 +69,7 @@ class TeacherDashboard extends React.Component {
     }
 
     const listStyle = {
-      overflowY: 'scroll',
+      overflowY: 'auto',
       maxHeight: '10em',
       minHeight: '10em',
     }

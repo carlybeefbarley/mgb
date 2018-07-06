@@ -186,7 +186,7 @@ class TeacherClassroomView extends React.Component {
     }
 
     const listStyle = {
-      overflowY: 'scroll',
+      overflowY: 'auto',
       maxHeight: '12em',
       minHeight: '12em',
     }

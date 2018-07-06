@@ -308,6 +308,11 @@ class ProjectOverview extends Component {
 
     const sideBarColumnStyle = { minWidth: '250px', maxWidth: '250px' }
 
+    const rowStyle = {
+      minHeight: '20em',
+      maxHeight: '20em',
+    }
+
     return (
       <div style={{ height: '100%', overflowX: 'hidden', overflowY: 'auto' }}>
         <Helmet
@@ -367,8 +372,8 @@ class ProjectOverview extends Component {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={3} />
-            <Grid.Column width={3} style={sideBarColumnStyle}>
-              <Segment raised color="blue" textAlign="center">
+            <Grid.Column width={3}>
+              <Segment raised color="blue" textAlign="center" style={rowStyle}>
                 <p>
                   <ImageShowOrChange
                     header="Project Avatar"
@@ -482,7 +487,7 @@ class ProjectOverview extends Component {
               )}
             </Grid.Column>
             <Grid.Column width={7}>
-              <Segment raised color="green">
+              <Segment raised color="green" style={rowStyle}>
                 <Header as="h2" content="Assignment Instructions" />
                 <AssignmentCardGET
                   canEdit={isTeacher}
@@ -491,7 +496,7 @@ class ProjectOverview extends Component {
                 />
               </Segment>
             </Grid.Column>
-            <Grid.Column width={3} />
+            {/* <Grid.Column width={3} /> */}
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={3} />

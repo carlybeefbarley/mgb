@@ -747,11 +747,11 @@ class ProjectOverview extends Component {
 }
 
 export default withMeteorData(props => {
-  const { projectName, userName } = props.params // This is the data of the TARGET project, not the current user.
+  const { projectName, username } = props.params // This is the data of the TARGET project, not the current user.
   // const handleForProjectOwner = Meteor.subscribe('user.byName', userName)
   // const projectOwner = Users.findOne({ username: userName })
 
-  const projSelector = { name: projectName }
+  const projSelector = { name: projectName, ownerName: username }
   const handleForProject = Meteor.subscribe('projects.oneProject', projSelector)
   const project = Projects.findOne(projSelector)
 

@@ -27,9 +27,7 @@ class UserBioCard extends React.Component {
     })
   }
 
-  handleQuillChange = (data1, data2, data3, data4) => {
-    this.handleChange(data1)
-  }
+  handleQuillChange = (content, delta, source, editor) => this.handleChange(content)
 
   render() {
     const { user, canEdit } = this.props
@@ -56,9 +54,7 @@ class UserBioCard extends React.Component {
           defaultValue={user.profile.bio}
           readOnly={!canEdit}
           disabled
-          onChange={data => {
-            this.handleQuillChange(data)
-          }}
+          onChange={this.handleQuillChange}
         />
       </Segment>
     )

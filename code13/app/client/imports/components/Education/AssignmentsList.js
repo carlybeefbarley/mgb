@@ -191,7 +191,8 @@ export default class AssignmentsList extends React.Component {
 
   render() {
     const { assignmentAssets } = this.props
-    // debugger // eslint-disable-line
+    console.log(assignmentAssets)
+
     let list = this.filterAssetList(assignmentAssets)
     list = this.sortAssetsByDate(list)
     const listItems = this.renderListItems(list)

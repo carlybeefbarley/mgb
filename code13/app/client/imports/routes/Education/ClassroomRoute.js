@@ -233,7 +233,7 @@ class TeacherClassroomView extends React.Component {
                   <Header as="h3" content="Upcoming Assignments" />
 
                   <div style={listStyle}>
-                    <AssignmentsList showUpcoming showNoDueDate />
+                    <AssignmentsList assignmentAssets={assignments} showUpcoming showNoDueDate />
                   </div>
                   <Divider />
                   <ClassroomAddAssignmentModal classroom={classroom} />

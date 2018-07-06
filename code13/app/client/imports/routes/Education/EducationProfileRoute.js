@@ -32,7 +32,7 @@ import { Users } from '/imports/schemas'
 
 class StudentProfile extends React.Component {
   render() {
-    const { currUser, canEdit, user } = this.props
+    const { currUser, canEdit, user, handleAvatarChange } = this.props
 
     const containerStyle = {
       overflowY: 'auto',
@@ -83,7 +83,9 @@ class StudentProfile extends React.Component {
                   maxWidth="auto"
                   imageSrc={avatar}
                   header="User Avatar"
-                  canEdit={false}
+                  canEdit={canEdit}
+                  canLinkToSrc={canEdit}
+                  handleChange={url => handleAvatarChange(url)}
                 />
                 <List>
                   <List.Item>
@@ -115,7 +117,7 @@ class StudentProfile extends React.Component {
 
 class TeacherProfile extends React.Component {
   render() {
-    const { currUser, canEdit, user } = this.props
+    const { currUser, canEdit, user, handleAvatarChange } = this.props
     const containerStyle = {
       overflowY: 'auto',
     }
@@ -163,7 +165,9 @@ class TeacherProfile extends React.Component {
                   maxWidth="auto"
                   imageSrc={avatar}
                   header="User Avatar"
-                  canEdit={false}
+                  canLinkToSrc={canEdit}
+                  canEdit={canEdit}
+                  handleChange={url => handleAvatarChange(url)}
                 />
                 <List>
                   <List.Item>
@@ -193,9 +197,17 @@ class TeacherProfile extends React.Component {
 }
 
 class EducationProfileRoute extends React.Component {
+  handleAvatarChange = newUrl => {
+    const { user } = this.props
+    Meteor.call('User.updateProfile', user._id, { 'profile.avatar': newUrl })
+  }
   render() {
     const { isTeacher } = this.props
-    return isTeacher ? <TeacherProfile {...this.props} /> : <StudentProfile {...this.props} />
+    return isTeacher ? (
+      <TeacherProfile {...this.props} handleAvatarChange={this.handleAvatarChange} />
+    ) : (
+      <StudentProfile {...this.props} handleAvatarChange={this.handleAvatarChange} />
+    )
   }
 }
 

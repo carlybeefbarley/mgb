@@ -2,16 +2,15 @@ import React from 'react'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import ReactQuill from 'react-quill'
-import { Segment, Header, Button, Divider } from 'semantic-ui-react'
+import { Segment, Header, Button, Divider, TextArea } from 'semantic-ui-react'
 import { createContainer } from 'meteor/react-meteor-data'
-import { Users } from '/imports/schemas'
 
 class UserBioCard extends React.Component {
   static propTypes = {
     canEdit: PropTypes.bool,
   }
 
-  state = { editing: false }
+  state = { editing: false, bio: this.props.user.profile.bio }
 
   handleChange = bio => {
     const { user } = this.props
@@ -21,41 +20,54 @@ class UserBioCard extends React.Component {
     })
   }
 
+  handleChangeLazy = _.debounce(this.handleChange, 750)
+
   handleToggleEdit = () => {
-    this.setState(prevState => {
-      return { editing: !prevState.editing }
-    })
+    this.setState(
+      prevState => {
+        return { editing: !prevState.editing }
+      },
+      () => this.handleChange(this.state.bio),
+    )
   }
 
-  handleQuillChange = (content, delta, source, editor) => this.handleChange(content)
+  handleBioChange = (event, data) => {
+    const bio = data.value
+    this.setState({ bio }, () => this.handleChangeLazy(bio))
+  }
+
+  componentWillUnmount() {
+    this.handleChange(this.state.bio)
+  }
 
   render() {
     const { user, canEdit } = this.props
-    const { editing } = this.state
+    const { editing, bio } = this.state
     return (
       <Segment raised color="purple">
         <Header as="h2">
           {canEdit ? 'About You' : `About ${user.username}`}
-          <Button
-            color="green"
-            content={editing ? 'Save' : 'Edit'}
-            floated="right"
-            onClick={this.handleToggleEdit}
-          />
+          {canEdit && (
+            <Button
+              color="green"
+              content={editing ? 'Save' : 'Edit'}
+              floated="right"
+              onClick={this.handleToggleEdit}
+            />
+          )}
         </Header>
-        {/* <TextArea placeholder={user.profile.bio} /> */}
+        {canEdit &&
+        editing && (
+          <TextArea
+            style={{ width: '100%' }}
+            value={bio}
+            placeholder={user.profile.bio}
+            onChange={this.handleBioChange}
+          />
+        )}
+        {!editing && <Segment content={bio} />}
 
         <Divider hidden />
-        <ReactQuill
-          theme={null}
-          modules={{}}
-          formats={[]}
-          style={editing ? { border: 'solid 1px grey' } : { pointerEvents: 'none' }}
-          defaultValue={user.profile.bio}
-          readOnly={!canEdit}
-          disabled
-          onChange={this.handleQuillChange}
-        />
       </Segment>
     )
   }

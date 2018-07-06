@@ -64,7 +64,7 @@ class HomeHeroBanner extends React.Component {
             </Grid.Column>
             <Grid.Column width={2} />
             <Grid.Column width={5}>
-              <Image size="large" centered src={UX.makeMascotImgLink('aie-logo')} />
+              <Image size="large" centered src={UX.makeMascotImgLink('AIE-logo')} />
             </Grid.Column>
             <Grid.Column width={2} />
           </Grid.Row>

@@ -31,10 +31,9 @@ export default class ClassroomAddAssignmentModal extends React.Component {
   }
   state = { awaitingAsset: true, assignmentHandler: null, isOpen: false, disableAcceptButton: false }
   defaultAsset = {
-    name: `Assignment ${Math.random()
-      .toString(36)
-      .substring(7)}`,
+    name: `New Classroom Assignment`,
     ownerId: Meteor.user()._id,
+    dn_ownerName: Meteor.user().username,
     kind: 'assignment',
     isCompleted: false,
     isDeleted: false,
@@ -51,11 +50,12 @@ export default class ClassroomAddAssignmentModal extends React.Component {
       }
     })
     this.setState({ isOpen: true })
-    // Need to generate a new name every time you create an asset so future re-openings
-    // dont create an asset with the same name.
-    this.defaultAsset.name = `Assignment ${Math.random()
-      .toString(36)
-      .substring(7)}`
+    // Assignment assets are created with the same name upon opening the assignment modal.
+    // This will cause repeated re-openings to create many assets with the same name.
+    this.defaultAsset.name = `New Classroom Assignment`
+    // ${Math.random()
+    //  .toString(36)
+    //  .substring(7)}`
   }
 
   componentWillUnmount() {

@@ -153,7 +153,7 @@ class HomeHeroBanner extends React.Component {
                 hoverSrc={UX.makeMascotImgLink('develop-practical-skills-demanded-by-industry2')}
               />
             </Grid.Column>
-            <Grid.Column minWidth={2} />
+            <Grid.Column width={2} />
           </Grid.Row>
         </Grid>
       </div>

@@ -179,6 +179,18 @@ class TeacherClassroomView extends React.Component {
       textAlign: 'center',
     }
 
+    const rowStyle = {
+      minHeight: '21em',
+      maxHeight: '21em',
+      marginBottom: '2em',
+    }
+
+    const listStyle = {
+      overflowY: 'scroll',
+      maxHeight: '15em',
+      minHeight: '15em',
+    }
+
     return (
       <div style={containerStyle}>
         {/* Floating doesn't seem to work unless I include columns - Hudson */}
@@ -191,9 +203,9 @@ class TeacherClassroomView extends React.Component {
           </Grid.Column>
         </Grid>
         <Grid columns={2} padded stretched>
-          <Grid.Row>
+          <Grid.Row style={rowStyle}>
             <Grid.Column width={5}>
-              <Segment raised color="blue">
+              <Segment raised style={rowStyle} color="blue">
                 <Header style={titleStyle} as="h1" content={classroom.name} />
                 <ImageShowOrChange
                   id="mgbjr-profile-avatar"
@@ -214,18 +226,20 @@ class TeacherClassroomView extends React.Component {
               </Segment>
             </Grid.Column>
             <Grid.Column width={8}>
-              <Segment raised color="green">
+              <Segment raised color="green" style={rowStyle}>
                 <ClassroomAddAssignmentModal classroom={classroom} />
                 <div>
                   <Header as="h3" content="Upcoming Assignments" />
                   <br />
-                  <AssignmentsList
-                    assignmentAssets={assignments}
-                    showUpcoming
-                    isTeacher={isTeacher}
-                    showPastDue={false}
-                    showNoDueDate={false}
-                  />
+                  <div style={listStyle}>
+                    <AssignmentsList
+                      assignmentAssets={assignments}
+                      showUpcoming
+                      isTeacher={isTeacher}
+                      showPastDue={false}
+                      showNoDueDate={false}
+                    />
+                  </div>
                 </div>
               </Segment>
             </Grid.Column>

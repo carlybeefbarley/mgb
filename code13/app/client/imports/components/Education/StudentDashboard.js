@@ -9,6 +9,7 @@ import { createContainer } from 'meteor/react-meteor-data'
 import { Classrooms, Users } from '/imports/schemas'
 import { classroomsMakeSelectorForStudent } from '/imports/schemas/classrooms'
 import QLink from '/client/imports/routes/QLink'
+import UserBioCard from '/client/imports/components/Users/UserBioCard'
 
 class StudentDashboard extends React.Component {
   render() {
@@ -97,13 +98,7 @@ class StudentDashboard extends React.Component {
 
             <Grid.Row>
               <Grid.Column width={16}>
-                <Segment raised color="yellow" style={aboutMeStyle}>
-                  <Header as="h2" content="About me" />
-                  <TextArea
-                    placeholder="Tell the class a little about yourself and your goals for making games"
-                    style={inputStyle}
-                  />
-                </Segment>
+                <UserBioCard {...this.props} user={currUser} canEdit />
               </Grid.Column>
             </Grid.Row>
 

@@ -25,15 +25,20 @@ import HeroLayout from '/client/imports/layouts/HeroLayout'
 import QLink from '/client/imports/routes/QLink'
 import UX from '/client/imports/UX'
 import HoverImage from 'react-hover-image'
+import UserBioCard from '/client/imports/components/Users/UserBioCard'
+import { createContainer } from 'meteor/react-meteor-data'
+import { teacherRole, isUserTeacher } from '/imports/schemas/roles'
+import { Users } from '/imports/schemas'
+
 class StudentProfile extends React.Component {
   render() {
-    const { currUser } = this.props
+    const { currUser, canEdit, user } = this.props
 
     const containerStyle = {
       overflowY: 'auto',
     }
 
-    const { avatar } = currUser && currUser.profile
+    const { avatar } = user && user.profile
 
     const TeacherNameStyle = {
       fontSize: '2.3em',
@@ -61,7 +66,7 @@ class StudentProfile extends React.Component {
               <Segment raised color="blue">
                 <List>
                   <List.Item>
-                    <List.Content style={TeacherNameStyle}>Student Name</List.Content>
+                    <List.Content style={TeacherNameStyle}>{user && user.username}</List.Content>
                   </List.Item>
                   <List.Item>
                     <List.Content style={SchoolNameStyle}>Classname</List.Content>
@@ -83,7 +88,7 @@ class StudentProfile extends React.Component {
                 <List>
                   <List.Item>
                     <List.Content style={ChatFontStyle}>
-                      <List.Icon name="chat" color="blue" />Student Chat
+                      {/* <List.Icon name="chat" color="blue" />Student Chat */}
                     </List.Content>
                   </List.Item>
                 </List>
@@ -91,27 +96,7 @@ class StudentProfile extends React.Component {
             </Grid.Column>
 
             <Grid.Column width={11}>
-              <Segment raised color="blue">
-                <Header as="h3" content="About Me" />
-                <Segment>
-                  <p style={ParagraphStyle}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-                    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                    est laborum.
-                  </p>
-                  <p style={ParagraphStyle}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-                    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                    est laborum.
-                  </p>
-                </Segment>
-              </Segment>
+              <UserBioCard {...this.props} canEdit={canEdit} />
             </Grid.Column>
           </Grid.Row>
 
@@ -130,12 +115,12 @@ class StudentProfile extends React.Component {
 
 class TeacherProfile extends React.Component {
   render() {
-    const { currUser } = this.props
+    const { currUser, canEdit, user } = this.props
     const containerStyle = {
       overflowY: 'auto',
     }
 
-    const { avatar } = currUser && currUser.profile
+    const { avatar } = user && user.profile
 
     const TeacherNameStyle = {
       fontSize: '2.6em',
@@ -164,7 +149,7 @@ class TeacherProfile extends React.Component {
               <Segment raised color="blue">
                 <List>
                   <List.Item>
-                    <List.Content style={TeacherNameStyle}>Teacher Name</List.Content>
+                    <List.Content style={TeacherNameStyle}>{user && user.username}</List.Content>
                   </List.Item>
                   <List.Item>
                     <List.Content style={SchoolNameStyle}>AIE</List.Content>
@@ -183,34 +168,14 @@ class TeacherProfile extends React.Component {
                 <List>
                   <List.Item>
                     <List.Content style={ChatFontStyle}>
-                      <List.Icon name="chat" color="blue" />Teacher Chat
+                      {/* <List.Icon name="chat" color="blue" />Teacher Chat */}
                     </List.Content>
                   </List.Item>
                 </List>
               </Segment>
             </Grid.Column>
             <Grid.Column width={11}>
-              <Segment raised color="blue">
-                <Header as="h3" content="About Me" />
-                <Segment>
-                  <p style={ParagraphStyle}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-                    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                    est laborum.
-                  </p>
-                  <p style={ParagraphStyle}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-                    sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                    est laborum.
-                  </p>
-                </Segment>
-              </Segment>
+              <UserBioCard {...this.props} canEdit={canEdit} />
             </Grid.Column>
           </Grid.Row>
 
@@ -227,15 +192,17 @@ class TeacherProfile extends React.Component {
   }
 }
 
-export default class EducationProfileRoute extends React.Component {
-  isTeacher() {
-    const { currUser } = this.props
-
-    return false
-  }
-
+class EducationProfileRoute extends React.Component {
   render() {
-    const { currUser } = this.props
-    return this.isTeacher() ? <TeacherProfile currUser={currUser} /> : <StudentProfile currUser={currUser} />
+    const { isTeacher } = this.props
+    return isTeacher ? <TeacherProfile {...this.props} /> : <StudentProfile {...this.props} />
   }
 }
+
+export default createContainer(props => {
+  const handleForUsers = Meteor.subscribe('user.byName', props.params.username)
+  const user = Users.findOne({ username: props.params.username })
+  const isTeacher = isUserTeacher(props.currUser)
+  const canEdit = props && props.currUser && user && user._id === props.currUser._id
+  return { ...props, isTeacher, user, canEdit }
+}, EducationProfileRoute)

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { createContainer } from 'meteor/react-meteor-data'
 import React from 'react'
-import { Button, Form, Grid, Header, List, Modal, Segment, TextArea } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, List, Modal, Segment, TextArea, Divider } from 'semantic-ui-react'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import SubmissionFeedGET from '/client/imports/components/Education/SubmissionFeedGET'
 import QLink from '/client/imports/routes/QLink'
@@ -63,15 +63,15 @@ class TeacherDashboard extends React.Component {
     }
 
     const rowStyle = {
-      minHeight: '18em',
-      maxHeight: '18em',
+      minHeight: '20em',
+      maxHeight: '20em',
       marginBottom: '2em',
     }
 
     const listStyle = {
       overflowY: 'scroll',
-      maxHeight: '12em',
-      minHeight: '12em',
+      maxHeight: '10em',
+      minHeight: '10em',
     }
 
     return (
@@ -87,6 +87,7 @@ class TeacherDashboard extends React.Component {
           <Grid.Column width={3} />
           <Grid.Column width={4}>
             <Segment raised color="blue" style={rowStyle}>
+              <br />
               <ImageShowOrChange
                 id="mgbjr-profile-avatar"
                 maxHeight="11em"
@@ -101,13 +102,13 @@ class TeacherDashboard extends React.Component {
           </Grid.Column>
           <Grid.Column width={6}>
             <Segment raised color="green" style={rowStyle}>
-              <ClassroomCreateNewModal {...this.props} />
               <div>
                 <Header as="h2" content="Your Classrooms" />
-                <br />
                 <div style={listStyle}>
                   <List relaxed content={this.renderClassesList()} />
                 </div>
+                <Divider />
+                <ClassroomCreateNewModal {...this.props} />
               </div>
             </Segment>
           </Grid.Column>

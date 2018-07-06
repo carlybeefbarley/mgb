@@ -117,7 +117,24 @@ Meteor.methods({
     if (!_.isUndefined(data.suIsBanned) || !_.isUndefined(data.suFlagId)) checkMgb.checkUserIsSuperAdmin()
 
     check(data, {
-      profile: schema.profile,
+      'profile.name': schema.profile.pattern.name, // TODO: Disallow?
+      'profile.avatar': schema.profile.pattern.avatar,
+      'profile.title': schema.profile.pattern.title,
+      'profile.bio': schema.profile.pattern.bio,
+      'profile.focusMsg': schema.profile.pattern.focusMsg,
+      'profile.focusStart': schema.profile.pattern.focusStart,
+      'profile.mgb1name': schema.profile.pattern.mgb1name,
+      //    "profile.mgb1namesVerified": optional(schema.profile.mgb1namesVerified),   // TODO: Some server-only validation for this
+      // Note that badges and badges_count have their own special api
+
+      'profile.images': schema.profile.pattern.images,
+      'profile.isDeleted': schema.profile.pattern.isDeleted,
+      'profile.projectNames': schema.profile.pattern.projectNames,
+      'profile.latestNewsTimestampSeen': schema.profile.pattern.latestNewsTimestampSeen,
+      // 'profile.HoC.currStepId': optional(schema.profile.HoC.currStepId),
+      // 'profile.HoC.stepToAssetMap': optional(schema.profile.HoC.stepToAssetMap),
+      // 'profile.HoC.email': optional(schema.profile.HoC.email),
+      // 'profile.HoC.username': optional(schema.profile.HoC.username),
       suIsBanned: schema.suIsBanned,
       suFlagId: schema.suFlagId,
     })

@@ -11,19 +11,11 @@ export default class AssignmentsList extends React.Component {
   static propTypes = {
     currUser: PropTypes.object,
     assignmentAssets: PropTypes.array,
+    showProjectCreateButtons: PropTypes.bool,
     showPastDue: PropTypes.bool,
     showUpcoming: PropTypes.bool,
     showNoDueDate: PropTypes.bool,
     showCompleted: PropTypes.bool,
-    showProjectCreateButtons: PropTypes.bool,
-  }
-
-  static defaultProps = {
-    showPastDue: true,
-    showUpcoming: true,
-    showNoDueDate: true,
-    showCompleted: true,
-    showProjectCreateButtons: false,
   }
 
   getFutureAssignments = () => {
@@ -51,43 +43,48 @@ export default class AssignmentsList extends React.Component {
     console.warn(`Warning: ${assignment.name} does not have due date.`)
   }
 
-  // TODO: Handle for completed past assignments
+  // Filter assignment assets list based on props
   filterAssetList = assignmentAssetList => {
-    const { showNoDueDate, showPastDue, showUpcoming } = this.props
-    const returnArray = assignmentAssetList.filter(assignmentAsset => {
-      if (showNoDueDate && !this.assignmentHasDueDate(assignmentAsset)) {
-        return assignmentAsset
-      }
-      if (showPastDue && this.assignmentIsPastDue(assignmentAsset)) {
-        return assignmentAsset
-      }
-      if (
-        showUpcoming &&
-        !this.assignmentIsPastDue(assignmentAsset) &&
-        this.assignmentHasDueDate(assignmentAsset)
-      ) {
-        return assignmentAsset
-      }
+    const { showNoDueDate, showPastDue, showUpcoming, exclusive } = this.props
+
+    // Split array by list with dates and list without dates
+    const splitByHasDate = _.partition(assignmentAssetList, assignmentAsset => {
+      return this.assignmentHasDueDate(assignmentAsset)
     })
+    const assignmentsWithDates = splitByHasDate[0]
+    const assignmentsWithoutDates = splitByHasDate[1]
 
-    if (returnArray.length === 0) console.warn('sortAssetList() No Assets Found!')
+    // Split array (with dates) by list of past due and list of upcoming
+    const splitByPastDue = _.partition(assignmentsWithDates, assignmentAsset => {
+      return this.assignmentIsPastDue(assignmentAsset)
+    })
+    const assignmentsPastDue = splitByPastDue[0]
+    const assignmentsUpcoming = splitByPastDue[1]
 
-    return returnArray
+    // Combine array based on props
+    let returnArr = []
+    if (showPastDue) returnArr = [...assignmentsPastDue, ...returnArr]
+    if (showUpcoming) returnArr = [...assignmentsUpcoming, ...returnArr]
+    if (showNoDueDate) returnArr = [...assignmentsWithoutDates, ...returnArr]
+
+    return returnArr
   }
 
   // Returns a new array sorted by dueDate
   sortAssetsByDate = list => {
     // Sort by due date
-    const sortedDates = _.sortBy(list, [
+    return _.sortBy(list, [
       asset => {
-        return new Date(asset.metadata.dueDate).getTime()
+        return new Date(asset.metadata.dueDate)
       },
     ])
-    return sortedDates
   }
 
   renderProjectButton = (assignmentAsset, project) => {
     const { currUser, showProjectCreateButtons } = this.props
+    const buttonSty = {
+      width: '11em',
+    }
     if (!showProjectCreateButtons) return
 
     if (project) {
@@ -96,6 +93,7 @@ export default class AssignmentsList extends React.Component {
           size="mini"
           compact
           color="green"
+          style={buttonSty}
           onClick={() => {
             utilPushTo(null, `u/${currUser.username}/projects/${project.name}`)
           }}
@@ -106,7 +104,12 @@ export default class AssignmentsList extends React.Component {
       )
     } else {
       return (
-        <Button size="mini" compact onClick={() => this.handleCreateProject(assignmentAsset)}>
+        <Button
+          size="mini"
+          compact
+          style={buttonSty}
+          onClick={() => this.handleCreateProject(assignmentAsset)}
+        >
           <Icon name="sitemap" />
           Create Project
         </Button>
@@ -134,7 +137,7 @@ export default class AssignmentsList extends React.Component {
       return (
         <List.Item>
           <List.Content>
-            <List.Header>You do not currently have any assignments.</List.Header>
+            <List.Header>There are no relevant assignments.</List.Header>
           </List.Content>
         </List.Item>
       )
@@ -169,16 +172,14 @@ export default class AssignmentsList extends React.Component {
                   textAlign: 'right',
                 }}
               >
-                <strong>{` ${moment(assignmentAsset.metadata.dueDate).format('ll') || ''}`}</strong>
+                <strong>{` ${moment(assignmentAsset.metadata.dueDate).format('ll') || ''}`}&nbsp;</strong>
               </small>
             </List.Content>
-            {this.props.isTeacher ? (
-              <QLink to={`/u/${assignmentAsset.dn_ownerName}/asset/${assignmentAsset._id}`}>
-                <List.Header style={verticalAlignSty}>{assignmentAsset.name}</List.Header>
-              </QLink>
-            ) : (
+
+            <QLink to={`/u/${assignmentAsset.dn_ownerName}/asset/${assignmentAsset._id}`}>
               <List.Header style={verticalAlignSty}>{assignmentAsset.name}</List.Header>
-            )}
+            </QLink>
+
             <List.Description>
               <small>{assignmentAsset.text}</small>
             </List.Description>

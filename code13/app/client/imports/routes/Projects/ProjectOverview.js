@@ -438,13 +438,7 @@ class ProjectOverview extends Component {
                       labelPosition="left"
                       icon="trash"
                       disabled={isDeleteComplete || isDeletePending}
-                      content={
-                        confirmDeleteNum < 0 ? (
-                          'Delete'
-                        ) : (
-                          `Confirm Delete of Project and ${confirmDeleteNum} Assets..?`
-                        )
-                      }
+                      content={confirmDeleteNum < 0 ? 'Delete' : `Confirm Delete`}
                       onClick={
                         confirmDeleteNum < 0 ? this.handleDeleteProject : this.handleConfirmedDeleteProject
                       }

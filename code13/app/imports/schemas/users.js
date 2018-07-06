@@ -20,7 +20,7 @@ export const schema = {
     },
   ],
   profile: optional({
-    // TODO: Flatten this out since user.profile is handle specially by Meteor and has security problems
+    // TODO: Flatten this out since user.profile is handled specially by Meteor and has security problems
     name: optional(String),
     latestNewsTimestampSeen: optional(String),
     avatar: optional(String), // url for the image that is the user Avatar
@@ -117,24 +117,7 @@ Meteor.methods({
     if (!_.isUndefined(data.suIsBanned) || !_.isUndefined(data.suFlagId)) checkMgb.checkUserIsSuperAdmin()
 
     check(data, {
-      'profile.name': optional(schema.profile.name), // TODO: Disallow?
-      'profile.avatar': optional(schema.profile.avatar),
-      'profile.title': optional(schema.profile.title),
-      'profile.bio': optional(schema.profile.bio),
-      'profile.focusMsg': optional(schema.profile.focusMsg),
-      'profile.focusStart': optional(schema.profile.focusStart),
-      'profile.mgb1name': optional(schema.profile.mgb1name),
-      //    "profile.mgb1namesVerified": optional(schema.profile.mgb1namesVerified),   // TODO: Some server-only validation for this
-      // Note that badges and badges_count have their own special api
-
-      'profile.images': optional(schema.profile.images),
-      'profile.isDeleted': optional(schema.profile.isDeleted),
-      'profile.projectNames': optional(schema.profile.projectNames),
-      'profile.latestNewsTimestampSeen': optional(schema.profile.latestNewsTimestampSeen),
-      'profile.HoC.currStepId': optional(schema.profile.HoC.currStepId),
-      'profile.HoC.stepToAssetMap': optional(schema.profile.HoC.stepToAssetMap),
-      'profile.HoC.email': optional(schema.profile.HoC.email),
-      'profile.HoC.username': optional(schema.profile.HoC.username),
+      profile: schema.profile,
       suIsBanned: schema.suIsBanned,
       suFlagId: schema.suFlagId,
     })

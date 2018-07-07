@@ -52,6 +52,8 @@ export default class DevPanelRoute extends Component {
 
   handleSubmitTeacher = () => {
     event.preventDefault()
+    // final catch to prevent non-developers from inviting teachers.
+    if (!isUserSuperAdmin(Meteor.user())) return
     let { email, username } = this.state.formDataTeacher
     const { titleIndex } = this.state
     const teacherErrors = this.state.errors.teacher
@@ -209,13 +211,15 @@ export default class DevPanelRoute extends Component {
                           placeholder="c.woodstock@CCH.edu"
                           type="email"
                         />
+                        {/* 
+                        May enable this at a later date, will not ship with release version for AIE
                         <Form.Select
                           label={'Title'}
                           name="title"
                           value={this.state.titleIndex}
                           options={titles}
                           onChange={e => this.handleSelect(e)}
-                        />
+                        /> */}
                         <Form.Input
                           error={!!errors.teacher.username}
                           icon="user"

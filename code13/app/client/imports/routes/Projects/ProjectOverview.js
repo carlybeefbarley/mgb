@@ -500,7 +500,7 @@ class ProjectOverview extends Component {
           <Grid.Row>
             <Grid.Column width={3} />
             <Grid.Column width={10}>
-              <Segment raised color="purple" style={secondRowStyle}>
+              <Segment raised color="purple">
                 <Header
                   as="h2"
                   floated="left"

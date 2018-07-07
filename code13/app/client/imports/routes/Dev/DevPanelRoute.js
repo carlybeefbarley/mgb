@@ -9,6 +9,7 @@ import { roleTeacher } from '/imports/schemas/roles'
 import { Classrooms } from '/imports/schemas'
 import { createContainer } from 'meteor/react-meteor-data'
 import { showToast } from '/client/imports/modules'
+import { isUserSuperAdmin } from '/imports/schemas/roles'
 
 const mascotColumnStyle = {
   // allow click through, so users can play with the particles
@@ -182,7 +183,7 @@ export default class DevPanelRoute extends Component {
 
     let renderItem
 
-    if (true) {
+    if (isUserSuperAdmin(currUser)) {
       renderItem = (
         <HeroLayout
           heroContent={
@@ -298,7 +299,13 @@ export default class DevPanelRoute extends Component {
         />
       )
     } else {
-      renderItem = <div style={{ color: 'red' }}> YOU ARE NOT WELCOME HERE </div>
+      renderItem = (
+        <Segment color="red">
+          <Header textAlign="center">
+            <span style={{ color: 'red' }}>YOU ARE NOT WELCOME HERE</span>
+          </Header>
+        </Segment>
+      )
     }
     return renderItem
   }

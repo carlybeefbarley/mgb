@@ -74,7 +74,8 @@ class LoginRoute extends Component {
         var userName = Meteor.user().profile.name
         logActivity('user.login', `Logging in "${userName}"`, null, null)
         joyride.stop() // It would be weird to continue one, and the main case will be the signup Tutorial
-        utilPushTo(this.context.urlLocation.query, '/dashboard')
+        // utilPushTo(this.context.urlLocation.query, '/dashboard') Changed to dashboard-education for AIE
+        utilPushTo(this.context.urlLocation.query, '/dashboard-education')
         showToast('Welcome back!', { title: 'Login' })
 
         // analytics.identify(Meteor.user()._id, {
@@ -149,7 +150,7 @@ class LoginRoute extends Component {
                   </Form>
                 </Segment>
                 {errors.server && <Message error content={errors.server} />}
-                <LoginLinks showSignup showForgot />
+                <LoginLinks showSignup={false} showForgot />
               </Grid.Column>
               <Grid.Column width={4} only="computer tablet" />
             </Grid>

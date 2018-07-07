@@ -186,29 +186,30 @@ const getNavPanels = (currUser, showAll) => {
           },
         ],
       },
-      {
-        name: 'meet',
-        explainClickAction: 'Clicking here jumps to the User search page',
-        icon: { name: 'users' },
-        content: 'Meet',
-        to: '/users',
-        menu: [
-          {
-            subcomponent: 'Item',
-            jrkey: 'allUsers',
-            to: '/users',
-            icon: { name: 'users' },
-            content: 'All Users',
-          },
-          {
-            subcomponent: 'Item',
-            jrkey: 'publicChat',
-            query: { _fp: 'chat.G_GENERAL_' },
-            icon: { name: 'chat' },
-            content: 'Public Chat',
-          },
-        ],
-      },
+      // Disabled for AIE subdomain, uncomment to re-enable.
+      // {
+      //   name: 'meet',
+      //   explainClickAction: 'Clicking here jumps to the User search page',
+      //   icon: { name: 'users' },
+      //   content: 'Meet',
+      //   to: '/users',
+      //   menu: [
+      //     {
+      //       subcomponent: 'Item',
+      //       jrkey: 'allUsers',
+      //       to: '/users',
+      //       icon: { name: 'users' },
+      //       content: 'All Users',
+      //     },
+      //     {
+      //       subcomponent: 'Item',
+      //       jrkey: 'publicChat',
+      //       query: { _fp: 'chat.G_GENERAL_' },
+      //       icon: { name: 'chat' },
+      //       content: 'Public Chat',
+      //     },
+      //   ],
+      // },
     ],
     // Right side
     right: _.compact([
@@ -379,12 +380,13 @@ const getNavPanels = (currUser, showAll) => {
         icon: { name: 'sign in' },
         to: '/login',
       },
-      showGuestOptions && {
-        name: 'signup',
-        content: <Button size="small" primary content="Sign Up" />,
-        icon: { name: 'signup' },
-        to: '/signup',
-      },
+      // Uncomment to enable user sign up to the public
+      // showGuestOptions && {
+      //   name: 'signup',
+      //   content: <Button size="small" primary content="Sign Up" />,
+      //   icon: { name: 'signup' },
+      //   to: '/signup',
+      // },
     ]),
   }
 }

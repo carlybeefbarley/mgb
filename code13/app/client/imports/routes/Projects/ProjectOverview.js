@@ -310,12 +310,10 @@ class ProjectOverview extends Component {
 
     const rowStyle = {
       minHeight: '20em',
-      maxHeight: '20em',
     }
 
     const secondRowStyle = {
       minHeight: '15em',
-      maxHeight: '15em',
     }
 
     return (
@@ -500,7 +498,7 @@ class ProjectOverview extends Component {
           <Grid.Row>
             <Grid.Column width={3} />
             <Grid.Column width={10}>
-              <Segment raised color="purple">
+              <Segment raised color="purple" style={secondRowStyle}>
                 <Header
                   as="h2"
                   floated="left"

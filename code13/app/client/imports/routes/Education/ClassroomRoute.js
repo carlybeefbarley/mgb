@@ -360,7 +360,7 @@ class StudentClassroomView extends React.Component {
             <Grid.Column width={13}>
               <Segment raised color="yellow">
                 <Header as="h2" content="Upcoming Assignments" />
-                <AssignmentsListGET showUpcoming showNoDueDate />
+                <AssignmentsListGET {...this.props} showUpcoming showNoDueDate showProjectCreateButtons />
               </Segment>
             </Grid.Column>
           </Grid.Row>

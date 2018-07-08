@@ -72,10 +72,6 @@ class ProjectOverview extends Component {
     )
   }
 
-  getAssignment = assignment => {
-    this.setState({ assignment })
-  }
-
   canEdit(project, currUser, loading) {
     return !loading && project && currUser && (project.ownerId === currUser._id || isUserSuperAdmin(currUser))
   }

@@ -28,11 +28,11 @@ import HoverImage from 'react-hover-image'
 import UserBioCard from '/client/imports/components/Users/UserBioCard'
 import { createContainer } from 'meteor/react-meteor-data'
 import { teacherRole, isUserTeacher } from '/imports/schemas/roles'
-import { Users } from '/imports/schemas'
+import { Users, Classrooms } from '/imports/schemas'
 
 class StudentProfile extends React.Component {
   render() {
-    const { currUser, canEdit, user, handleAvatarChange } = this.props
+    const { currUser, canEdit, user, handleAvatarChange, classroom } = this.props
 
     const containerStyle = {
       overflowY: 'auto',
@@ -69,10 +69,12 @@ class StudentProfile extends React.Component {
                     <List.Content style={TeacherNameStyle}>{user && user.username}</List.Content>
                   </List.Item>
                   <List.Item>
-                    <List.Content style={SchoolNameStyle}>Classname</List.Content>
+                    <QLink to={`/user/${currUser.username}/classroom/${classroom._id}`}>
+                      <List.Content style={SchoolNameStyle}>{classroom && classroom.name}</List.Content>
+                    </QLink>
                   </List.Item>
                   <List.Item>
-                    <List.Content style={SchoolNameStyle}>AIE</List.Content>
+                    <List.Content style={SchoolNameStyle}>Academy of Interactive Entertainment</List.Content>
                   </List.Item>
                 </List>
 
@@ -216,5 +218,8 @@ export default createContainer(props => {
   const user = Users.findOne({ username: props.params.username })
   const isTeacher = isUserTeacher(props.currUser)
   const canEdit = props && props.currUser && user && user._id === props.currUser._id
-  return { ...props, isTeacher, user, canEdit }
+
+  const handleForClassroom = Meteor.subscribe('classrooms.byStudentId', props.currUser._id)
+  const classroom = Classrooms.findOne()
+  return { ...props, isTeacher, user, canEdit, classroom }
 }, EducationProfileRoute)

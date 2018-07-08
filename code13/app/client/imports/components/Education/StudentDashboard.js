@@ -13,7 +13,7 @@ import UserBioCard from '/client/imports/components/Users/UserBioCard'
 
 class StudentDashboard extends React.Component {
   render() {
-    const { currUser, classrooms, teacherName } = this.props,
+    const { currUser, classrooms, teacherName, handleAvatarChange } = this.props,
       { avatar } = currUser.profile,
       titleStyle = {
         fontSize: '2em',
@@ -60,6 +60,7 @@ class StudentDashboard extends React.Component {
                     imageSrc={avatar}
                     header="User Avatar"
                     canEdit
+                    handleChange={url => handleAvatarChange(url)}
                   />
                   <Header
                     style={titleStyle}

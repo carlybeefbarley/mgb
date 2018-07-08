@@ -37,7 +37,7 @@ class TeacherDashboard extends React.Component {
   }
 
   render() {
-    const { currUser } = this.props,
+    const { currUser, handleAvatarChange } = this.props,
       containerStyle = {
         overflowY: 'auto',
       },
@@ -95,7 +95,8 @@ class TeacherDashboard extends React.Component {
                 canLinkToSrc
                 imageSrc={avatar}
                 header="User Avatar"
-                canEdit={false}
+                canEdit
+                handleChange={url => handleAvatarChange(url)}
               />
               <Header style={titleStyle} as="h1" content={currUser.username} textAlign="center" />
             </Segment>

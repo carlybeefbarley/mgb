@@ -14,13 +14,17 @@ class EducationDashboardRoute extends React.Component {
 }
 
 export default createContainer(props => {
+  const handleAvatarChange = newUrl => {
+    Meteor.call('User.updateProfile', props.currUser._id, { 'profile.avatar': newUrl })
+  }
+
   const currUser = Meteor.user(),
     userId = currUser._id,
     handle = Meteor.subscribe('classrooms.byUserId', userId),
     cursor = Classrooms.find(classroomsMakeSelectorForStudent(userId)),
     classrooms = cursor.fetch(),
     isTeacher = !!_.find(currUser.permissions, { teamId: 'teachers' })
-  let returnProps = { ...props, classrooms, isTeacher }
+  let returnProps = { ...props, classrooms, isTeacher, handleAvatarChange }
 
   // !!If users are able to be part of more than one class room this entire HOC will be completely useless.!!
   if (handle.ready() && classrooms && classrooms[0]) {

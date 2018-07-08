@@ -150,7 +150,7 @@ class TeacherClassroomView extends React.Component {
   }
 
   render() {
-    const { currUser, assignments, students, classroom, toggleChat } = this.props
+    const { currUser, assignments, students, classroom, toggleChat, handleAvatarChange } = this.props
 
     const containerStyle = {
       overflowY: 'auto',
@@ -215,7 +215,8 @@ class TeacherClassroomView extends React.Component {
                     imageSrc={avatar}
                     canLinkToSrc
                     header="User Avatar"
-                    canEdit={false}
+                    canEdit
+                    handleChange={url => handleAvatarChange(url)}
                   />
                   <List style={infoStyle}>
                     <List.Item>
@@ -430,6 +431,9 @@ class Classroom extends React.Component {
 
 export default createContainer(props => {
   const userId = Meteor.user()._id
+  const handleAvatarChange = newUrl => {
+    Meteor.call('User.updateProfile', userId, { 'profile.avatar': newUrl })
+  }
   const { classroomId } = props.params
   // Subscribe to the classroom at params.classroomId
   const handleForClassroom = Meteor.subscribe('classrooms.oneClassroom', classroomId)
@@ -493,6 +497,7 @@ export default createContainer(props => {
     students,
     assignments,
     studentProjects,
+    handleAvatarChange,
   }
   return returnProps
 }, Classroom)

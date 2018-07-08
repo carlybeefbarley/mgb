@@ -29,7 +29,7 @@ class ClassroomCreateNewModal extends React.Component {
     isOpen: false,
     accordionIsOpen: false,
     filterString: '',
-    formData: { studentIds: [] },
+    formData: { studentIds: [], description: '' },
   }
 
   handleAddStudent = (id, username) => {

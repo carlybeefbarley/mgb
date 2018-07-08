@@ -23,7 +23,6 @@ const Footer = () => (
           { key: 'terms', as: QLink, to: '/legal/tos', content: 'Terms of Service' },
           { key: 'privacy', as: QLink, to: '/legal/privacy', content: 'Privacy Policy' },
           { key: 'contact', as: 'a', href: 'mailto:hello@mygamebuilder.com', children: 'Contact Us' },
-          { key: 'AIE', as: 'a', href: '/layouts/AIEClassroom', content: 'AIE Classrom' },
         ]}
       />
     </Grid.Column>
